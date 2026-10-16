@@ -75,7 +75,7 @@ whole outside the repository; not yet seen in the game.
   grinds as the stone it is (`isActionDoorObject`); `wayWord`: above/below past `ECHO_VERT_M`, the compass way past
   `ECHO_FLAT_M`, in the compass's own frame - +x east, +z north - `systems/compassWords.js`, the angler's too).
 - **THE MAP.** Each such mover goes in the echo book (`createEchoBook`, at most 8, the oldest out first) and on the held
-  map's dungeon sheet as an echo mark (`ui/automapSheet.js` kind `echo`, `ui/inkAutomap.js`: a ring breaking into four
+  map's dungeon sheet as an echo mark (`ui/automap/automapSheet.js` kind `echo`, `ui/ink/inkAutomap.js`: a ring breaking into four
   rays, in the way-in's pen, named "Moved" in the names' pen), seen or not - the press said which way, and the mark is
   where it said. The sheet breathes while one stands on the sheet in view; on the solid map one off the floor in view
   names its floor.
@@ -90,8 +90,8 @@ whole outside the repository; not yet seen in the game.
 
 ## WAYOUT1 - THE WAY OUT ON THE COMPASS (SHIPPED 2026-10-05)
 
-`systems/wayOut.js`, read by `scenes/dungeonContext.js wayOutMark`, drawn by `ui/enhancedHud.js drawWayOutMark`
-(through `ui/hud.js drawHud`'s `wayOut`).
+`systems/wayOut.js`, read by `scenes/dungeonContext.js wayOutMark`, drawn by `ui/enhanced/enhancedHud.js drawWayOutMark`
+(through `ui/hud/hud.js drawHud`'s `wayOut`).
 
 - **THE TRAIL WALKED BACK.** The held map keeps where the player has STOOD (`systems/automap/automap.js automapTrailTick`, a
   one-metre grid at the scan's 5 Hz, saved) - and every cell between two samples up to `TRAIL_FILL_M` (3 m) apart, since
@@ -122,15 +122,15 @@ which draws them on the held map (`quests`) and the compass (`questCompassMark`,
 `06-Systems/Quest-Guide-Arc.md` GUIDE8 and DECISIONS 3.
 
 - **JOURNAL** is GUIDE5's law and the default.
-- **TOWN**: in the town of the building a quest's latest entry NAMES (its `_p_`, `ui/questLens.js entryTarget`'s
-  `building`), the held town map rings it, found or not (`townQuestBuildings`, `ui/townSheet.js`), and the compass points
+- **TOWN**: in the town of the building a quest's latest entry NAMES (its `_p_`, `ui/quest/questLens.js entryTarget`'s
+  `building`), the held town map rings it, found or not (`townQuestBuildings`, `ui/town/townSheet.js`), and the compass points
   at it (`townQuestCompassMark` - the building's place in the town map's own frame, `townBuildingLocal`, turned back by
   the translation and the origin the map opens with). The place the journal already gave, found in its streets.
 - **EXACT** holds the Town tier, and is the quest debugger's knowledge: every quest resource standing in the dungeon or
   the building - a stand that is active and not dead (an item not yet taken, a person), a live quest foe (a shared
   quest's foe a party mate's client owns too: `questFoeBehaviour`), a person of the place a quest has taken - never a
   hidden one (`dungeonQuestMarks`), named as the plaque names an item, a person or a foe by their own name.
-- **THE MAP**: GUIDE5's own diamond (`ui/inkMap.js paintQuestMark` - gold edged in ink, the followed quest's filled),
+- **THE MAP**: GUIDE5's own diamond (`ui/ink/inkMap.js paintQuestMark` - gold edged in ink, the followed quest's filled),
   its name under the spot in the names' pen, on its own storey (on the solid map, one off the floor in view names its
   floor); the hover says what a filled diamond is ("Followed quest") and measures to the diamond as well as the spot;
   the quest's floor is LISTED on the strip before it is walked and wears the diamond there (`floorStripLayout`'s `quest`,

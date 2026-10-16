@@ -17,7 +17,7 @@ import { wagonUpkeepRules, WAGON_UPKEEP_PREF } from '../src/systems/upkeep/upkee
 import { getPref, setPref, loadPrefs, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
-import { tileStates } from '../src/ui/enhancedMenu.js';
+import { tileStates } from '../src/ui/enhanced/enhancedMenu.js';
 import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeep/upkeepRuntime.js';
 import { wagonCondition, wagonPace, wagonSoldWhole, WAGON_UPKEEP_TEXT } from '../src/systems/wagon/wagonUpkeep.js';
 import { newWagonItem, WAGON_KIND_ORDER } from '../src/systems/wagon/wagonKinds.js';
@@ -25,7 +25,7 @@ import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/ite
 import { UPKEEP_ITEM } from '../src/systems/upkeep/upkeepItemRows.js';
 import { tradeCost, saleConditionPercentage } from '../src/systems/tradeModes.js';
 import { conditionBasedPricesOn } from '../src/systems/roleplayRealismItems/rriRealism.js';
-import { saddleMeters, saddleHint, saddleAlert } from '../src/ui/enhancedSaddle.js';
+import { saddleMeters, saddleHint, saddleAlert } from '../src/ui/enhanced/enhancedSaddle.js';
 import { wagonMeterTone } from '../src/ui/holdingsPages.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
@@ -46,7 +46,7 @@ function onPage(online, fn) {
     if (had === undefined) delete globalThis.location; else globalThis.location = had;
   }
 }
-/** The tile's press, as the Settings screen presses it (ui/enhancedMenu.js tileStates). */
+/** The tile's press, as the Settings screen presses it (ui/enhanced/enhancedMenu.js tileStates). */
 const press = (label) => { const st = tileStates(ROW); assert.equal(st.locked, false, 'the tile takes the press'); st.set(st.labels.indexOf(label)); };
 const pressed = () => { const st = tileStates(ROW); return st.labels[st.at]; };
 /** The upkeep as world.js and exterior.js build it - handed THE accessor - and its kit's Use registered as they do.

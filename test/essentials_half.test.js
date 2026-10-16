@@ -10,7 +10,7 @@ import { rentalDecision, roomPrice, eatOrDrink, tavernMenuLabels, tavernMenuPric
 import { tavernMenu } from '../src/systems/survival/tavernMenu.js';
 import { cureDiseaseOffer } from '../src/systems/guild/guildServiceActions.js';
 import { buyItemPrice, tradeCost, getTradePrice } from '../src/systems/tradeModes.js';
-import { scaleTripCost } from '../src/ui/travelPopUp.js';
+import { scaleTripCost } from '../src/ui/travel/travelPopUp.js';
 import { calculateTripCost } from '../src/systems/travel/travel.js';
 import { startDisease } from '../src/systems/diseases.js';
 import { SKILLS } from '../src/systems/skills.js';

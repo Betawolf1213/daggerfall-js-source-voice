@@ -163,7 +163,7 @@
   },
   {
     "name": "UI2-a-spell-icon-trimmed",
-    "file": "src/ui/enhancedArt.js",
+    "file": "src/ui/enhanced/enhancedArt.js",
     "old": "{ box, dpr, trim: false, onReady }",
     "new": "{ box, dpr, onReady }",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "UI2-an-index-past-the-sheet-cut",
-    "file": "src/ui/enhancedArt.js",
+    "file": "src/ui/enhanced/enhancedArt.js",
     "old": "  if (!Number.isInteger(index) || index < 0 || index >= SPELL_ICON_COUNT) return null;",
     "new": "  if (!Number.isInteger(index) || index < 0) return null;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "UI2-a-waiter-not-heard",
-    "file": "src/ui/enhancedArt.js",
+    "file": "src/ui/enhanced/enhancedArt.js",
     "old": "    if (onReady && wait && wait.size < CUT_WAKE_MAX) wait.add(onReady);\n",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "UI2-a-spell-slot-back-on-its-initials",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "    s.glyph.textContent = drew ? '' : sig;",
     "new": "    s.glyph.textContent = sig;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "UI2-the-drag-without-its-icon",
-    "file": "src/ui/enhancedSpellbook.js",
+    "file": "src/ui/enhanced/enhancedSpellbook.js",
     "old": "        icon: r.spell?.noIcon ? null : spellIconPicture(r.spell?.icon, { box: SPELL_DRAG_BOX }) });",
     "new": "        icon: null });",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "UI2-the-chip-without-its-icon",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  spellChip.append(spellTag, spellIcon, spellName);",
     "new": "  spellChip.append(spellTag, spellName);",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "UI2-the-hint-says-four-kinds",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "const HINT_DROP = 'Drag any item or a spell onto a slot. Drag a slot off the bar to clear it.';",
     "new": "const HINT_DROP = 'Drag a weapon, shield, potion, torch or spell onto a slot. Drag a slot off the bar to clear it.';",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "UI2-the-diamond-at-the-wide-box-on-a-phone",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "const QUICK_BOX = 40, QUICK_BOX_NARROW = 28;",
     "new": "const QUICK_BOX = 40, QUICK_BOX_NARROW = 40;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "AUDIT-UI-B2-every-picture-at-slot-1-s-box",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "const s = slots.find((x) => x.face?.offsetWidth > 0 && !!x.node.classList?.contains('hb-spell') === spell);",
     "new": "const s = slots.find((x) => x.face?.offsetWidth > 0);",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "AUDIT-UI-B2-a-spell-fitted-at-an-item-s-box",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "const fit = slotFit(!item && spellIcon != null);",
     "new": "const fit = slotFit();",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "AUDIT-UI-B3-the-ratio-off-a-slot",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "const barShown = barLayout > 0 ? (bar.getBoundingClientRect?.().width ?? barLayout) : 0;",
     "new": "const barShown = barLayout > 0 ? (s?.face.getBoundingClientRect?.().width ?? barLayout) : 0;",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "AUDIT-UI-B5-the-size-left-out-of-the-block-s-signature",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    `${last.scale ?? 1}x${screenDpr()}${(Number(globalThis.innerWidth) || 1000) <= 860 ? 'n' : ''}`,\n",
     "new": "",
     "tests": [

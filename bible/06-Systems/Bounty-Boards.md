@@ -46,7 +46,7 @@ Each is quoted where the code keeps it, beside the line it decided.
   then z, then y) and every other one is taken, from the first: two give one, four give two, five give two. A town with
   one board keeps it for DFU's rumour. Every client picks the same half, whatever order its blocks were laid.
 - **It names itself** "Bounty Board" on hover (`scenes/worldModes.js`); DFU's is "Bulletin Board". Its press opens
-  the board window (`ui/bountyWindow.js` through `ui/bountyDoor.js`) in the Enhanced Plus stone and brass on every
+  the board window (`ui/bounty/bountyWindow.js` through `ui/bounty/bountyDoor.js`) in the Enhanced Plus stone and brass on every
   skin - the window lays its own sheet on the classic skins, the Broker's precedent. The other boards open DFU's
   rumour exactly as before (`systems/bulletinBoard.js`; the ROAD A9 pins hold).
   SPAM-TAKE (`01-Overview/Field-Bugs-2026-10-10.md`): a take moves the window's card on to the next open notice, so
@@ -90,8 +90,8 @@ Each is quoted where the code keeps it, beside the line it decided.
   rides the room's lane online). Slots 0 and 1 always hunt the open ground. BOUNTY-LAIR (FIELD BUGS 2026-09-29h,
   Skibbster: "Bounty targets can spawn in inaccessible parts of dungeons"): the lair was any foe's place, and a foe
   stands at every enemy marker of every block - sealed rooms, water, the far side of a held door.
-- **The map**: a held bounty's pixel is a BLACK circle on both maps (`ui/bountyMapMark.js`; the held map's ink,
-  `ui/inkMap.js` paintBountyRing; the classic region page's texels) - black because green is the party's.
+- **The map**: a held bounty's pixel is a BLACK circle on both maps (`ui/bounty/bountyMapMark.js`; the held map's ink,
+  `ui/ink/inkMap.js` paintBountyRing; the classic region page's texels) - black because green is the party's.
 
 ## 4. A hunt, start to end (`scenes/bountyHost.js`)
 

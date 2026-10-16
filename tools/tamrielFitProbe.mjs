@@ -32,7 +32,7 @@ import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { PROVINCES, CITIES, COAST, ISLANDS, BORDERS, closedRing, pts, provinceAt } from '../src/world/tamriel/tamrielGeography.js';
 import { bayPictureRect, bayToPicture, BAY_W, BAY_H, BAY_ORIGIN, PIXELS_PER_PICTURE_UNIT } from '../src/world/tamriel/tamrielFrame.js';
 import { buildTamrielInk, STITCH_REACH } from '../src/ui/tamrielInk.js';
-import { landAt, coastChains } from '../src/ui/inkMap.js';
+import { landAt, coastChains } from '../src/ui/ink/inkMap.js';
 
 const A2 = process.env.ARENA2_PATH;
 if (!A2 || !existsSync(A2)) { console.error('ARENA2_PATH not set or missing'); process.exit(2); }

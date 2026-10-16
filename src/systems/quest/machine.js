@@ -1151,7 +1151,7 @@ export class QuestMachine {
    *  window closed) fails quietly. `uid` is coerced to a Number - the
    *  Map is keyed by the raw numeric uid, but questBridge.js's own
    *  questLog() stringifies it for the UI's `key`/`id` fields
-   *  (`String(q.uid)`, ui/questRail.js's own `id`), and Map.get uses
+   *  (`String(q.uid)`, ui/quest/questRail.js's own `id`), and Map.get uses
    *  strict identity: a caller handing this the UI's own id (a string)
    *  would otherwise miss every time, silently. */
   getShareableQuestData(uid) {

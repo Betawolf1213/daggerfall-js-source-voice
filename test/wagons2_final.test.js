@@ -95,7 +95,7 @@ test('WAGONS2 (FINAL AUDIT) A CARAVAN\'S SAVE THAT CANNOT COME BACK LANDS AT ITS
 });
 
 test('WAGONS2 (FINAL AUDIT) A HIRED TRADER IN A HOME ALONE: the trader is offered and sold where it trades - a home (worldModes.js openHomeVendor reads the home\'s town); in a caravan or a ship it was paid 25,000 gold for and never worked, telling owner and visitor alike it deals only online (mutants: offered in a caravan, sold in one, the view\'s word)', async () => {
-  const { setProfessionsPages } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages } = await import('../src/ui/professions/profPages.js');
   const { stationsOffered } = await import('../src/ui/decorPanel.js');
   setProfessionsPages({ book: { state: { open: true } } });
   try {
@@ -168,7 +168,7 @@ test('WAGONS2 (FINAL AUDIT) THE COUNTER\'S WAGON, ONE HOME: what a counter\'s cl
   assert.deepEqual(localClickDecision('Sell', caravan, sellGuardOf({ ...loaded, wagonItems: [] })), { kind: 'stage' }, 'empty, it sells');
   assert.equal(sellGuardOf({ items: [], bagItems: [grain] }).bagLoaded, true);
   assert.deepEqual(sellGuardOf(null), { wagonLoaded: false, bagLoaded: false, usedWagon: null });
-  const et = read('src/ui/enhancedTrade.js'), nt = read('src/ui/nativeTrade.js');
+  const et = read('src/ui/enhanced/enhancedTrade.js'), nt = read('src/ui/native/nativeTrade.js');
   assert.equal((et.match(/\.\.\.sellGuardOf\(deps\.entity\),/g) ?? []).length, 5, 'the enhanced window\'s five (its junk among them)');
   assert.equal((nt.match(/\.\.\.sellGuardOf\(this\.hooks\.entity\),/g) ?? []).length, 1, 'the classic window\'s one');
   for (const [f, src] of [['enhancedTrade', et], ['nativeTrade', nt]]) assert.doesNotMatch(src, /usedWagon:|wagonLoaded:/, `${f}: no copy of its own`);
@@ -182,7 +182,7 @@ test('WAGONS2 (FINAL AUDIT) THE COUNTER\'S WAGON, ONE HOME: what a counter\'s cl
 });
 
 test('WAGONS2 (FINAL AUDIT) THE STORE READS THE DRIVEN WAGON\'S CAPACITY AT EVERY PLAN: every planStore and planDropGold the two inventory windows make is handed wagonKgFor of the entity - a call without it plans against the Small Cart\'s 750 kg (a dropped one was pinned nowhere) (mutants: a window\'s call without it)', () => {
-  for (const f of ['src/ui/enhancedInventory.js', 'src/ui/nativeInventory.js']) {
+  for (const f of ['src/ui/enhanced/enhancedInventory.js', 'src/ui/native/nativeInventory.js']) {
     const src = read(f);
     const ast = parse(src, { ecmaVersion: 'latest', sourceType: 'module' });
     const calls = [];

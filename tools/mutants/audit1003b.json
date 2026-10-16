@@ -315,7 +315,7 @@
   },
   {
     "name": "AUDIT1003b-U4-HARD-DISABLED",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "'', x.name, { soft: true, quiet: true }));",
     "new": "'', x.name, { quiet: true }));",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "AUDIT1003b-U10-CODE-TWICE",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "        shown.setAttribute('aria-hidden', 'true');\n",
     "new": "",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "AUDIT1003b-U11-ENTER-MID-COMPOSITION",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "if (e.key === 'Enter' && !e.isComposing && !c.join.why)",
     "new": "if (e.key === 'Enter' && !c.join.why)",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "AUDIT1003b-U11-NO-CAPITALS",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "      input.setAttribute('autocapitalize', 'characters');\n",
     "new": "",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "AUDIT1003b-U1-CARD-IN-ONE-CELL",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".aw-bout-card.k-session { grid-column: 1 / -1; }\n",
     "new": "",
     "tests": [

@@ -89,7 +89,7 @@ test('V5: the vampire\'s gendered attack voice - 20% bark else attack, ALWAYS a 
 });
 
 test('V5: the three consumers order the override FIRST, as DFU does', () => {
-  const hl = read('src/ui/hudLarge.js');
+  const hl = read('src/ui/hud/hudLarge.js');
   const ov = hl.indexOf('racialOverrideHeadArt(entity)');
   assert.ok(ov > 0 && ov < hl.indexOf('headArchiveFor(entity);', ov), 'hudLarge: the override head before the racial one');
   assert.ok(hl.includes('const headKeyFor = (entity)') && hl.includes('${ov ? `${ov.file}#${ov.record}` : \'\'}'),

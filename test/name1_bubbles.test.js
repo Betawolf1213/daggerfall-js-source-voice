@@ -225,10 +225,10 @@ test('NAME1: the enhanced face - a DOM layer in PIXEL_STACK on bone, one element
   assert.match(NAME_CSS, /\.dfnames \{ position: fixed; inset: 0; z-index: 3; pointer-events: none;/, 'over the world, under the HUD, taking no click');
   assert.ok(Number(/\.dfnames \{[^}]*z-index: (\d+)/.exec(NAME_CSS)[1]) < 4, 'strictly below the HUD\'s own level');
   assert.match(NAME_CSS, /transform: translate\(-50%, -100%\);/, 'THE ANCHOR: the stack grows UP from the point, so its bottom edge is on it');
-  // AUDIT NAME1 F12: --bone's OWN fallback (ui/enhancedStyle.js :root), the one the party and friends panels use.
+  // AUDIT NAME1 F12: --bone's OWN fallback (ui/enhanced/enhancedStyle.js :root), the one the party and friends panels use.
   assert.match(NAME_CSS, /color: var\(--bone, #e9e4d9\)/, 'bone');
   assert.doesNotMatch(NAME_CSS.replace(/\/\*[\s\S]*?\*\//g, ' '), /#d8cfae/, 'and not .hud\'s ivory, which is a different colour wearing the same word');
-  assert.match(rd('src/ui/enhancedStyle.js'), /--bone: #e9e4d9;/, '...which is the token\'s real value');
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /--bone: #e9e4d9;/, '...which is the token\'s real value');
   assert.match(rd('src/ui/partyPanel.js'), /var\(--bone, #e9e4d9\)/, '...and the sibling panel\'s own fallback');
   assert.match(NAME_CSS, /max-width: 15em;/, 'and the bubble wraps at a bounded width');
   assert.equal(layer.root.attrs['aria-hidden'], 'true');
@@ -511,7 +511,7 @@ test('AUDIT NAME1 F3 (the size law ignored the frame): a name is sized by the VI
   const doc = fakeDocument();
   const layer = createNameLayer({ doc, now: () => 1000 });
   const rp = stand(peer);
-  // the rect is NORMALISED, as ui/hudLarge.js largeHudViewportRect mints it: a docked bar taking a third of the
+  // the rect is NORMALISED, as ui/hud/hudLarge.js largeHudViewportRect mints it: a docked bar taking a third of the
   // canvas leaves the world two thirds of 900 px
   rp.nameFrame({ proj: PROJ, view: VIEW, w: W, h: 900, eye: EYE, rect: { x: 0, y: 1 / 3, w: 1, h: 2 / 3 }, layer });
   assert.equal(layer.tagFor('bran').node.style.fontSize, '10.7px', 'the docked HUD shrank the world to 600 px and the name went with it');

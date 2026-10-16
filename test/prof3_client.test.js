@@ -186,7 +186,7 @@ test('PROF3 heat: the glow rises and falls; three strikes on the band are a clea
 });
 
 test('PROF3 anvil page: at a smith\'s forge - the families and metals, a recipe\'s inputs with the smith\'s stock where a fitting is short, the odds; Craft strikes the heat and asks the craft with its report; Quick craft skips it; away from a forge, the word where it is', async () => {
-  const { setProfessionsPages, drawStoresPage, STOCK_STAYS_LINE } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, STOCK_STAYS_LINE } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setPref('gentleActs', false);
   const held = new Map([['ingot:mithril', 3], ['metal:copper', 1]]);
@@ -264,6 +264,6 @@ test('PROF3 wiring: the host mints a craft\'s pieces once each by provenance, pa
   assert.match(w, /const profMintCraft = \(data, kept = null\) => \{\n\s*if \(kept\?\.fee > 0\) \{ deductGold\(playerEntity, Math\.min\(kept\.fee, totalGoldAmount\(playerEntity\)\)\); saveSoon\.changed\(\); \}/);
   assert.match(w, /heatBand: \(\) => heatBand\(\{ strength: liveStat\(playerEntity, 'strength'\), agility: liveStat\(playerEntity, 'agility'\) \}\),/);
   assert.match(src('src/scenes/shared.js'), /installSmithing\(\);/);
-  assert.match(src('src/ui/profPages.js'), /go\.disabled = _stores\.busy \|\| !withdrawable\(pick\.material\);/);
+  assert.match(src('src/ui/professions/profPages.js'), /go\.disabled = _stores\.busy \|\| !withdrawable\(pick\.material\);/);
   assert.equal(recipeById('longsword:mithril').templateIndex, 120);
 });

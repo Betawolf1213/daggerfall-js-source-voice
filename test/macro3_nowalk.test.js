@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { magicPowersLines, itemPowers, POWERS_UNKNOWN_TEXT, ARTIFACT_POWERS_TEXT_BASE } from '../src/systems/item/itemPowers.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
-import { powersRows } from '../src/ui/nativeInventory.js';
+import { powersRows } from '../src/ui/native/nativeInventory.js';
 import { expandRowValues, setMacroWorld } from '../src/systems/quest/questMacros.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -46,7 +46,7 @@ test('MACRO-3: record 1016’s %mpw row becomes one row per power, keeping its a
 });
 
 test('MACRO-3: the four boxes walk their records, each with the source DFU hands it', () => {
-  const inv = read('src/ui/nativeInventory.js');
+  const inv = read('src/ui/native/nativeInventory.js');
   assert.match(inv, /rows: expandRowValues\(this\.hooks\.rows\?\.\(ITEM_BROKEN_TEXT_ID\)\s+\?\? \[\{ text: 'This item is broken\.', center: true \}\], \{ it: this\._longName\(it\) \}\),/, 'broken: the item names %it');
   assert.match(inv, /lines: expandRowValues\(this\.hooks\.rows\?\.\(GOLD_TO_DROP_TEXT_ID\)[^\n]*, null\),/, 'drop gold: %gii is the world’s');
   assert.match(inv, /powersRows\(rows\(INFO_TEXT_POWERS\) \?\? \[\], magicPowersLines\(it, \{ identified: itemIsIdentified\(it\), lines: rows \}\)\)/, 'item powers: %mpw');

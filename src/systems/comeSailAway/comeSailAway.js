@@ -3193,7 +3193,7 @@ export function createComeSailAwayRuntime(deps) {
       if (!isSailing() || boat == null || IsBeached(boat)) return null;
       return { boat, velocity: quatRotate(boat.GameObject.rotation, state.velocityCurrent), turn: state.TurnCurrent };
     },
-    /** CSA-L: what the helm panel shows (ui/enhancedHelm.js) - read, never written: the sails raised, the square
+    /** CSA-L: what the helm panel shows (ui/enhanced/enhancedHelm.js) - read, never written: the sails raised, the square
      *  sails a hull with fore-and-aft ones too can raise alone and whether they stand, the lanterns, the time scale's
      *  step and value, and whether the trim is the player's (SailingAssist.AutoTrimming off) and on which sails. */
     helmPanelState() {

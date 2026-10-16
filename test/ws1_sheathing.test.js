@@ -391,7 +391,7 @@ test('WS1: the wiring, by source - the third-person build takes the addons and t
   assert.ok(!/mwSheathing: (true|false),/.test(rd('src/systems/uiPrefs.js')), 'and not on the shelf');
   // FT18: the card's own row drew NOTHING since FT13 (a moved key's prefRow answers null, and the bare append printed
   // "null" on the card) - the switch is the tile, and the tile's write rebuilds the standing body, as the row did
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(menu, /prefRow\('mwSheathing'/, 'no second switch, and no null on the card');
   // MW-STEEL1: the rebuild is one helper now, the Steel Helm's tile beside the sheathing's
   assert.match(menu, /const rebuildMorrowindBody = async \(\) => \{\s*\n\s*if \(!morrowindDataCount\(\) \|\| !playerEntity\?\.chargenDone\) return;[^\n]*\n\s*const \{ buildArmsFor \} = await import\('\.\.\/combat\/weaponRig\.js'\);\s*\n\s*await buildArmsFor\(playerEntity\);/, 'the tile rebuilds the holster into a standing body');

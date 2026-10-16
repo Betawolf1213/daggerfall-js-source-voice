@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 const rules = (css) => [...css.replace(/\/\*[^]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   .map((m) => ({ sels: m[1].split(',').map((s) => s.trim()), body: m[2] }));
@@ -31,5 +31,5 @@ test('LIST-FIT: a list tile whose tiered picture is capped at 100% is a FLEX roo
     assert.ok(!ruleFor(sheet, tile, 'overflow'), `${tile}: never clipped instead - the sigil rune and the padlock stand past its edge`);
   }
   // a player trade is a trade-shell too, so the one rule holds it
-  assert.match(readFileSync(new URL('../src/ui/enhancedPlayerTrade.js', import.meta.url), 'utf8'), /el\('div', 'px-home px-over trade-shell ptrade-shell'\)/);
+  assert.match(readFileSync(new URL('../src/ui/enhanced/enhancedPlayerTrade.js', import.meta.url), 'utf8'), /el\('div', 'px-home px-over trade-shell ptrade-shell'\)/);
 });

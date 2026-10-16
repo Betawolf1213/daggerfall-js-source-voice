@@ -49,7 +49,7 @@ import { SD_REALM_ARCHIVE } from '../world/superDungeon/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { SdStepsPass, SD_GHOST_STEPS, SD_GHOST } from '../render/sdStepsPass.js';
 import { SD_SKY_STEPS } from '../render/sdSky.js';
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 
 /** The Steps' words. */
 export const SD_STEPS_TEXT = Object.freeze({ cast: 'The Hour casts you back.' });
@@ -135,7 +135,7 @@ const hide = (d) => { if (d && !d.hidden) { d.object.matrix.fill(0); d.hidden = 
 /**
  * The Unmoored Steps.
  * @param {{ renderer?: any, audio?: any, ending?: string | null, lite?: boolean }} deps - SD-LOOK S9: `ending` the Hollow's Ending
- *   (net/superDungeon/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touchDevice.js isTouchDevice -
+ *   (net/superDungeon/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touch/touchDevice.js isTouchDevice -
  *   its own by default): two chunks a Crumble step, not four, and the pendulums' gears without teeth
  */
 export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice() } = {}) {

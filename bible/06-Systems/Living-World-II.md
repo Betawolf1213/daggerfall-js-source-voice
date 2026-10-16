@@ -348,7 +348,7 @@ Mac: "actual caravans utilizing horses and wagons".
     pool's `boxTriangles`) in a bucket of its own (`wagonBucket`), taken down when it moves or leaves; a moving wagon
     claims nothing.
   - `clear()` destroys every batch and takes down every box, with the roads' own clear.
-- **THE OVERWORLD**: a caravan's mark is its wagon - the bed and two wheels under it (`ui/travelViewHud.js`).
+- **THE OVERWORLD**: a caravan's mark is its wagon - the bed and two wheels under it (`ui/travel/travelViewHud.js`).
 
 ### 3.4 The four hosts, the measure, the pins
 
@@ -629,7 +629,7 @@ a region's towns, its roads, a seed and the clock); the hideout is stood by `src
   Hand keep a camp off this road." (BAND_WARNINGS) - of a band whose hideout lies within HEARD_PX (3 px) the character
   has not heard of; the character has heard of it (`heard`, the band's key).
 - **A HEARD MARK.** Each band heard of, standing, is marked on the Overworld as "Hideout of the Black Hand (rumoured)":
-  a dashed ring (`wayfarer hideout`, `ui/travelViewHud.js` TV_HIDEOUT_R) about a point up to RUMOUR_OFF_N (half a
+  a dashed ring (`wayfarer hideout`, `ui/travel/travelViewHud.js` TV_HIDEOUT_R) about a point up to RUMOUR_OFF_N (half a
   pixel) from it, never the point (`rumourAt`).
 - **NOT BUILT:** a talk's answer naming a band. **OPEN FOR MAC:** a band on the bounty board (section 11, call 3).
 
@@ -713,7 +713,7 @@ census's roster) and `src/systems/livingWorld/trips.js` (`leaderOf`, `ownTrip`, 
   Orcs" in a fight.
 - Its greeting names it (COMPANY_GREETINGS: "The Lantern Company - you've heard of us?"), by its head's regard. Each
   member keeps their own regard; the company's word to the player is its head's.
-- The chronicle's People page (`people.js peoplePage`, `ui/enhancedChronicle.js`): each card a member's company, and a
+- The chronicle's People page (`people.js peoplePage`, `ui/enhanced/enhancedChronicle.js`): each card a member's company, and a
   COMPANIES group - each company any of the known walk with, its town and the members the character knows.
 
 ### 6.3 The measure, the pins

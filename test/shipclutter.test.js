@@ -1,14 +1,14 @@
 // SHIP-CLUTTER (2026-10-02, Discord: "The sea screen shows an overabundance of ship text on the high seas") - off a
 // harbour every ship's tag stood on its own spar with nothing between them, and every one within TAG_DETAIL_M read its
 // second line: five names and five "Wayrest Navy Cutter - patrolling off Joyous Light of Akatosh" through each other.
-// Now (ui/navalHud.js layoutNavalTags): one second line - the card's ship's, else the tag nearest the crosshair within
+// Now (ui/naval/navalHud.js layoutNavalTags): one second line - the card's ship's, else the tag nearest the crosshair within
 // TAG_FOCUS_PX (with no crosshair, the nearest ship's) - and no tag over another: laid the line's ship first, then the
 // hostile, then the nearest, a tag that would touch one already laid is not drawn; one left out needs TAG_HOLD more
 // room to come back. Each pin is red on the record's code (42e50765).
 import { byClass } from './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { drawNavalTags, destroyNavalHud, layoutNavalTags, navalTagBox, tagLine, TAG_FOCUS_PX, TAG_CLEAR, TAG_HOLD, TAG_DETAIL_M } from '../src/ui/navalHud.js';
+import { drawNavalTags, destroyNavalHud, layoutNavalTags, navalTagBox, tagLine, TAG_FOCUS_PX, TAG_CLEAR, TAG_HOLD, TAG_DETAIL_M } from '../src/ui/naval/navalHud.js';
 
 const pt = (o = {}) => ({ id: 'a:1', name: 'Dibella\'s Wisdom', faction: 'merchant', hostile: false, friendly: true, line: 'Merchant Galleon', bound: 'moored at Joyous Light of Akatosh', hull: 1, state: 'afloat', boarded: false, target: false, distance: 120, x: 500, y: 300, ...o });
 const touch = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;

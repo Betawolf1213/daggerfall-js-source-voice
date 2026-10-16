@@ -19,7 +19,7 @@ import {
   ALLY_ARM_RADIUS, ALLY_ARMED_LINE, STRANGER_CAST_TYPES, strangerCastable, strangerEffect, allyCastable, allyCastSpell,
   allyCastCasterLineMany, ALLY_CAST_TYPES,
 } from '../src/systems/allyCast.js';
-import { activeSpellIcons } from '../src/ui/hudActiveSpells.js';
+import { activeSpellIcons } from '../src/ui/hud/hudActiveSpells.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { createInfection, INFECTION } from '../src/systems/infection.js';
@@ -165,7 +165,7 @@ test('SPELL-GIFT by source: the receiver takes a stranger\'s list only with the 
   assert.match(rd('src/scenes/dungeonContext.js'), /allyTarget: \(eye, dir, reach, sp\) => opts\.allyTarget\?\.\(eye, dir, reach, sp\) \?\? null,/);
   assert.equal(PREF_DEFAULTS.acceptStrangerSpells, true, 'on: the ask');
   assert.ok(ONLINE_PLAYERS_OWN_PREFS.includes('acceptStrangerSpells'), 'the player\'s own, online');
-  assert.match(rd('src/ui/enhancedMenu.js'), /c\.append\(prefRow\('acceptStrangerSpells', t\('menu\.peers\.spells', 'Spells from strangers'\),/);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /c\.append\(prefRow\('acceptStrangerSpells', t\('menu\.peers\.spells', 'Spells from strangers'\),/);
 });
 
 // ─── AUDIT (the batch's audit, agent B) ────────────────────────────────────────────────────────────────────────────

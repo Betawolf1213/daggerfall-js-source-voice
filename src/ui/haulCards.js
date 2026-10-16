@@ -38,7 +38,7 @@ export const HAUL_HOLD_MS = 3200;
 /** A Motherlode's card stands longer still - the day's one. */
 export const LODE_HOLD_MS = 5000;
 
-/** A material's tier as the cards colour it: the loot's own rarity names (ui/enhancedPlusStyle.js RARITY_VARS) -
+/** A material's tier as the cards colour it: the loot's own rarity names (ui/enhanced/enhancedPlusStyle.js RARITY_VARS) -
  *  tiers 1 and 2 plain, 3 magic's blue, 4 rare's gold, 5 legendary's orange, 6 artifact's violet; none while the
  *  player has the loot's tiers off (systems/loot/lootRarity.js), as an item's own name would wear none. */
 export const TIER_RARITY = Object.freeze([null, null, null, 'magic', 'rare', 'legendary', 'artifact']);

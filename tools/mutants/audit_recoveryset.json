@@ -203,7 +203,7 @@
   },
   {
     "name": "B1-close-on-the-code-stage",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (onClose && stage !== 'code') acts.append(",
     "new": "    if (onClose) acts.append(",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "B1-close-live-while-busy",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "{ key: 'close', disabled: busy }",
     "new": "{ key: 'close' }",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "B1-the-window-closes-over-codes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "const accountMayClose = () => !acctFlow || (acctFlow.stage !== 'code' && !acctFlow.busy);",
     "new": "const accountMayClose = () => true;",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "B1-a-flow-per-render",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  const fresh = !acctFlow;",
     "new": "  const fresh = true;",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "B1-escape-around-the-guard",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  const back = accountOpen ? () => closeAccount()",
     "new": "  const back = accountOpen ? () => { accountOpen = false; render(); }",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "B3-the-row-gone-from-the-section",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      recoveryRow();   // RECOVERY-SET\n",
     "new": "",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "B2-nowrap-above-a-phone",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".card .acctcode li code { white-space: nowrap; letter-spacing: 0.06em;",
     "new": ".card .acctcode li code { letter-spacing: 0.06em;",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "B2-nowrap-on-a-phone",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "letter-spacing: 0.04em; white-space: nowrap; }",
     "new": "letter-spacing: 0.04em; }",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "B2-two-columns-promised",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }",
     "new": ".card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(17em, 1fr)); gap: 8px; }",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "B5-the-acknowledgement-singular",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "'account.card.act.wroteIt', 'I have written them down'",
     "new": "'account.card.act.wroteIt', 'I have written it down'",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "B7-saved-before-it-is",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "'account.codes.saved', 'Saving as {name}.'",
     "new": "'account.codes.saved', 'Saved as {name}.'",
     "tests": [
@@ -331,7 +331,7 @@
   },
   {
     "name": "C9-unnumbered",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "el('span', 'acctcodeno', `${i + 1}.`)",
     "new": "el('span', 'acctcodeno', `${i}.`)",
     "tests": [
@@ -340,7 +340,7 @@
   },
   {
     "name": "C9-a-refused-copy-unsaid",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "'This page may not write the clipboard - save them as a file instead.'), true);",
     "new": "'This page may not write the clipboard - save them as a file instead.'));",
     "tests": [
@@ -349,7 +349,7 @@
   },
   {
     "name": "C9-a-refused-save-unsaid",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "'The file could not be saved - copy them instead.'), true);",
     "new": "'The file could not be saved - copy them instead.'));",
     "tests": [
@@ -358,7 +358,7 @@
   },
   {
     "name": "C9-the-url-kept",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      setTimeout(() => URL.revokeObjectURL(url), 1000);\n",
     "new": "",
     "tests": [
@@ -367,7 +367,7 @@
   },
   {
     "name": "C9-the-link-left",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      doc.body.append(link); link.click(); link.remove();",
     "new": "      doc.body.append(link); link.click();",
     "tests": [
@@ -376,7 +376,7 @@
   },
   {
     "name": "C9-untyped",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "], { type: 'text/plain' }));",
     "new": "]));",
     "tests": [
@@ -403,7 +403,7 @@
   },
   {
     "name": "C9-the-press-live-while-busy",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "{ disabled: !!flow.busy, key: 'codes' }",
     "new": "{ key: 'codes' }",
     "tests": [

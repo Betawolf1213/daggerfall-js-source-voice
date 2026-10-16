@@ -16,7 +16,7 @@ ride the pull request's description (CLAUDE.md), never the tree.
 
 Each delivered source file was compared with the main commit it was built on (the closest of its file's history).
 Where that base was main's current file, it was copied as delivered: `render/airPass.js`, `render/shadowPass.js`,
-`ui/enhancedRest.js`, `systems/quest/place.js`, the new `systems/quest/questReach.js`, and the delivered tests. Where
+`ui/enhanced/enhancedRest.js`, `systems/quest/place.js`, the new `systems/quest/questReach.js`, and the delivered tests. Where
 main had moved since, the change was three-way merged against its base: `systems/features.js` (base 7d3ebfdb1) and
 `ui/restWindow.js` (966e8041e), both clean. `test/features.test.js` was delivered on a base before IT1's Immersive Travel
 row, so it is main's file with the handoff's two changes (the `nearby-quests` id, the ceiling raised by its row's 289

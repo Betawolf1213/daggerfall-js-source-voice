@@ -1,7 +1,7 @@
 [
   {
     "name": "NEED-TIER-no-foot",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "String(c.foot) : c.tier ? `${c.tier}/${c.of}` : null",
     "new": "String(c.foot) : null",
     "why": "a need tile says no stage",
@@ -41,7 +41,7 @@
   },
   {
     "name": "NEED-TIER-a-stageless-need-footed",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "String(c.foot) : c.tier ? `${c.tier}/${c.of}` : null",
     "new": "String(c.foot) : `${c.tier}/${c.of}`",
     "why": "Stiff reads undefined/undefined",

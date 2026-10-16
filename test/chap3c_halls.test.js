@@ -17,7 +17,7 @@ import { createChapterSheet, SHEET_KEPT_MS, SHEET_STOPS } from '../src/net/chapt
 import { trainingOffer, canAffordTraining } from '../src/systems/guild/guildServiceActions.js';
 import { buildTrainingFlow, buildRefinedTrainingFlow } from '../src/ui/guildServiceWindows.js';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
-import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow } from '../src/ui/spell/spellMakerWindow.js';
 import { SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { calculateTradePrice, stockGuildPotions } from '../src/systems/shopStock.js';

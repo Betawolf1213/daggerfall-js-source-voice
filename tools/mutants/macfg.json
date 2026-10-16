@@ -1,7 +1,7 @@
 [
   {
     "name": "MAC-F-the-fold-key-forgets-which-tab-it-is-in",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "export const foldKey = (sec, index) => `${sec}:${index}`;",
     "new": "export const foldKey = (sec, index) => `${index}`;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MAC-F-toggle-only-ever-shuts-a-card",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  if (store.has(k)) store.delete(k); else store.add(k);",
     "new": "  store.add(k);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "MAC-F-an-empty-tab-offers-to-expand-nothing",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "export const allFolded = (store, sec, count) =>\n  count > 0 && Array.from({ length: count }, (_, i) => foldKey(sec, i)).every((k) => store.has(k));",
     "new": "export const allFolded = (store, sec, count) =>\n  Array.from({ length: count }, (_, i) => foldKey(sec, i)).every((k) => store.has(k));",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "MAC-F-all-folded-answers-on-one-shut-card",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "Array.from({ length: count }, (_, i) => foldKey(sec, i)).every((k) => store.has(k));",
     "new": "Array.from({ length: count }, (_, i) => foldKey(sec, i)).some((k) => store.has(k));",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "MAC-F-collapse-all-only-ever-collapses",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    if (shut) store.add(foldKey(sec, i)); else store.delete(foldKey(sec, i));",
     "new": "    store.add(foldKey(sec, i));",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "MAC-F-the-body-draws-through-the-fold",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (!isFolded(folded, section, i)) {\n          for (const line of e.body) entry.append(el('p', null, line));\n        }",
     "new": "        {\n          for (const line of e.body) entry.append(el('p', null, line));\n        }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "MAC-F-the-section-control-keeps-a-flag-of-its-own",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      const shutAll = allFolded(folded, section, rows.length);",
     "new": "      const shutAll = folded.size > 0;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "MAC-F-a-fold-outlives-the-window-it-was-made-in",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  folded.clear();   // MAC-F: a fresh open reads whole, as it always has",
     "new": "",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "MAC-G-the-sheet-forgets-the-blood",
-    "file": "src/ui/enhancedCharSheet.js",
+    "file": "src/ui/enhanced/enhancedCharSheet.js",
     "old": "    specials: classSpecials(e.career, raceTemplateOf(e)),",
     "new": "    specials: classSpecials(e.career),",
     "tests": [

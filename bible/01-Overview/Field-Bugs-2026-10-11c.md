@@ -64,10 +64,10 @@ so it is fixed with it; `scenes/dungeonContext.js` and `scenes/exterior.js` run 
 ## SEA-TOWN: the sea's HUDs ashore (1)
 
 `world.js` `navalHud` made the plate's three key names (three walks of the bindings), the HUD's scale, its helm bar, its
-vitals and quick rects and the classic compass box every frame, and `ui/navalHud.js` `drawNavalHud` read none of them
+vitals and quick rects and the classic compass box every frame, and `ui/naval/navalHud.js` `drawNavalHud` read none of them
 with no ship near or the HUD covered - it reads its clock and takes the plate down. It is handed exactly those now. The
 helm panel (`csaDrawHelmPanel`) made its free-mouse key's name and its cover's reads with no helm and nothing boarded, for
-`ui/enhancedHelm.js` `drawEnhancedHelm` to hide the panel unread; it is handed the empty state alone. About 25 KB a frame
+`ui/enhanced/enhancedHelm.js` `drawEnhancedHelm` to hide the panel unread; it is handed the empty state alone. About 25 KB a frame
 of the CSA-on arm's garbage, and a few hundredths of a millisecond.
 
 ## What is left

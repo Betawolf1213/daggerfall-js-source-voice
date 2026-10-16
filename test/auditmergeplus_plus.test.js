@@ -28,8 +28,8 @@ import {
   ITEM_BASED_TORCH_INTENSITY,
 } from '../src/systems/playerTorch.js';
 import { createBindings, resetDefaults, getBinding, setBinding } from '../src/systems/inputActions.js';
-import { applyPlusPadLayout, registerCrossbar, CROSSBAR_HOLD, PLUS_PAD_LAYOUT_VERSION } from '../src/ui/plusPad.js';
-import { plusPadLegend } from '../src/ui/plusPadBinds.js';
+import { applyPlusPadLayout, registerCrossbar, CROSSBAR_HOLD, PLUS_PAD_LAYOUT_VERSION } from '../src/ui/plus/plusPad.js';
+import { plusPadLegend } from '../src/ui/plus/plusPadBinds.js';
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';

@@ -15,7 +15,7 @@
   },
   {
     "name": "TOUCH-HELD-the-nav-row-deaf-to-the-hook",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "    const classicUp = !!hooks.overlayActive?.() && !overlayOpen();",
     "new": "    const classicUp = false && !overlayOpen();",
     "tests": ["test/fb0929h_touchheld.test.js"]

@@ -8,8 +8,8 @@ import { STAT_KEYS_ORDER } from '../src/systems/chargen.js';
 import {
   viewOnlyScreen, levelUpFrame, levelUpCrown, levelProgress, rolloutRows, rolloutPool, canAscend,
   raiseAt, lowerAt, ascend,
-} from '../src/ui/levelUpView.js';
-import { crownTitle, ASK_VIEW } from '../src/ui/enhancedLevelUp.js';
+} from '../src/ui/levelUp/levelUpView.js';
+import { crownTitle, ASK_VIEW } from '../src/ui/enhanced/enhancedLevelUp.js';
 
 // ASCEND-ANYTIME: the Ascension screen opens whenever the player asks. Nothing owed = a VIEW of the stars:
 // a pool of zero, no star moves, Close, and no level / stats / pool is ever written.
@@ -68,7 +68,7 @@ test('ASCEND-ANYTIME: a mod-law character\'s view reads the mod\'s bar, a classi
 });
 
 test('ASCEND-ANYTIME by source: the Stats page carries the door, the sheet overlay swaps in place, and nothing else moved', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const at = menu.indexOf('function pauseStats(body)');
   const fn = menu.slice(at, menu.indexOf('\nfunction ', at + 10));
   assert.match(fn, /if \(typeof hooks\.openAscend === 'function'\) \{/, 'drawn only when a host handed the hook');

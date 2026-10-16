@@ -217,7 +217,7 @@
   },
   {
     "name": "WB4-the-callout-after-the-landing",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "let callout = !s.fell && A && tel && !tel.over ?",
     "new": "let callout = !s.fell && A && tel ?",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "WB4-the-countdown-always",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "toWrath <= WRATH_WARN_MS ?",
     "new": "toWrath <= Infinity ?",
     "tests": [

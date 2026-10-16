@@ -9,7 +9,7 @@
 // the TRANSPORT arc closed TR1-TR5 (Systems-Arc.md), so one id named
 // two slices in two arcs and the ledger could not be grepped. The test
 // room is TSR; the transport arc keeps TR. Source comments in
-// ui/enhancedMenu.js and combat/weaponRig.js still carry the old
+// ui/enhanced/enhancedMenu.js and combat/weaponRig.js still carry the old
 // spelling.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -161,7 +161,7 @@ test('TSR2: armBuildOptsOf reads the STRING gender - the !! that built the femal
 
 test('TSR3: the three doors all read the one home', () => {
   // The pane shows TEST_PRESETS and fires test:<id>.
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /for \(const p of TEST_PRESETS\)/, 'the pane iterates the home, not a copy');
   assert.match(menu, /onAction\(`test:\$\{p\.id\}`\)/, 'a card press is the boot');
   assert.match(menu, /test: paneTest,/, 'the rail entry has a pane');
@@ -240,7 +240,7 @@ test('TSR4: the mount is the store\'s own horse, once, and the pack answers hasH
 });
 
 test('TSR4: the pane, the boot and the frame gate - the edge landing, the ONE transport door, never before the first stand', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /onAction\(`test:\$\{TEST_RIDE\.id\}`\)/, 'the ride card fires the same choice family');
   // TSR4b: the ride NEVER takes the classic start - that is Privateer's
   // Hold with StartInDungeon, and an exterior landing racing a dungeon

@@ -300,9 +300,9 @@ export function _resetArena() { _installed = null; }
 
 // ARENA-MAP (2026-10-03, the owner, live: "Arena doesn't show on town map"): THE ARENA ON THE TOWN MAP. Both town maps
 // draw a cell off its block's own 64 x 64 automap bytes (ui/exteriorAutomapWindow.js buildExteriorLayout; the enhanced
-// sheet's ui/inkTown.js townBytes) and letter only the buildings of the location's list. Kamer's automap draws the
+// sheet's ui/ink/inkTown.js townBytes) and letter only the buildings of the location's list. Kamer's automap draws the
 // colosseum in byte 117 - BuildingTypes.Special1 + 1, "never displayed on automap" (world/buildingNames.js; the show-all
-// set of ui/townQuarters.js: the classic map draws it in its Extra and All views alone, the enhanced sheet never) - and
+// set of ui/town/townQuarters.js: the classic map draws it in its Extra and All views alone, the enhanced sheet never) - and
 // the colosseum is no building of the list, so cell (4,3) read as empty street with no name on it. Now:
 // - THE FOOTPRINT. Every pixel of Kamer's bowl inside the colosseum's own box (Models/864102's aabb about its record) and
 //   off its sand takes a guild hall's byte, so both maps draw the walls and the stands as they draw the guilds and the
@@ -311,7 +311,7 @@ export function _resetArena() { _installed = null; }
 //   nothing walks differently; Kamer's stray past the box (his row 0) stays undrawn, as it was.
 // - THE NAME. The block's row on the town map carries a LANDMARK (both exterior hosts' `blocks`, scenes/world.js and
 //   scenes/exterior.js; the interior and dungeon hosts open no town map): "Arena" at the colosseum's place, lettered
-//   always (ui/exteriorAutomapWindow.js buildPlates, ui/townSheet.js named) - it has no door to discover and no name to
+//   always (ui/exteriorAutomapWindow.js buildPlates, ui/town/townSheet.js named) - it has no door to discover and no name to
 //   change.
 /** The byte the colosseum's ring takes: a guild hall's (the byte is BuildingType + 1) - the temple quarter. */
 export const ARENA_MAP_BYTE = BUILDING_TYPES.GuildHall + 1;

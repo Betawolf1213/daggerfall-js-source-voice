@@ -3,7 +3,7 @@
 // port's, not DFU's).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HudText, HUD_TEXT_POP_DELAY, HUD_TEXT_MAX_ROWS, HUD_TEXT_RUBBERBAND } from '../src/ui/hudText.js';
+import { HudText, HUD_TEXT_POP_DELAY, HUD_TEXT_MAX_ROWS, HUD_TEXT_RUBBERBAND } from '../src/ui/hud/hudText.js';
 import { BUILDING_TYPES, isNamedBuildingType, isResidence } from '../src/world/buildingNames.js';   // INFO1: why a residence has no name to say
 
 test('hudText: PopupText.AddText/Update - the queue never caps, the timer pops', () => {
@@ -49,19 +49,19 @@ test('hudText: the rubberband speedup only engages past maxRows', () => {
 // climates and calories need to utilize the enhanced notification
 // popup") moved it into the notice stack as TOASTS - one panel per row
 // in the same right-edge stack the message box slides into
-// (ui/enhancedNotice.js drawEnhancedToasts). These drive that arm over
+// (ui/enhanced/enhancedNotice.js drawEnhancedToasts). These drive that arm over
 // a fake document (the shape test/enhancedNotice.test.js drives its
 // panels through) and the classic arm over a recording renderer, and
 // each pin names the mutants it kills.
 import { readFileSync } from 'node:fs';
-import { drawEnhancedStatusLine, destroyEnhancedHudText, setEnhancedMidTextScale, midTextTopPx, ENHANCED_MID_TEXT_ID, ENHANCED_STATUS_ID } from '../src/ui/enhancedHudText.js';
-import { destroyEnhancedNotice, enhancedNoticeKeys, _setNoticeClockForTests, ENHANCED_NOTICE_ID } from '../src/ui/enhancedNotice.js';
-import { TOAST_FADE_MS } from '../src/ui/enhancedFrame.js';   // PLUS-ONLY: a toast's own fade
+import { drawEnhancedStatusLine, destroyEnhancedHudText, setEnhancedMidTextScale, midTextTopPx, ENHANCED_MID_TEXT_ID, ENHANCED_STATUS_ID } from '../src/ui/enhanced/enhancedHudText.js';
+import { destroyEnhancedNotice, enhancedNoticeKeys, _setNoticeClockForTests, ENHANCED_NOTICE_ID } from '../src/ui/enhanced/enhancedNotice.js';
+import { TOAST_FADE_MS } from '../src/ui/enhanced/enhancedFrame.js';   // PLUS-ONLY: a toast's own fade
 import { MidScreenText, MID_SCREEN_TEXT_DEFAULT_DELAY, midScreenText } from '../src/ui/midScreenText.js';
-import { ENHANCED_CSS, ENHANCED_STYLE_ID, injectEnhancedStyle } from '../src/ui/enhancedStyle.js';
-import * as enhancedStyle from '../src/ui/enhancedStyle.js';
-import { hideHudTextSurfaces } from '../src/ui/hud.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { ENHANCED_CSS, ENHANCED_STYLE_ID, injectEnhancedStyle } from '../src/ui/enhanced/enhancedStyle.js';
+import * as enhancedStyle from '../src/ui/enhanced/enhancedStyle.js';
+import { hideHudTextSurfaces } from '../src/ui/hud/hud.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -263,10 +263,10 @@ test('ENH-NOTICE3: the toast wears the popup\'s yellow on the box\'s dark, in th
   for (const name of ['HUD_TEXT_TOP_PX', 'HUD_TEXT_ROW_PX', 'HUD_TEXT_TOP_NARROW_PX', 'HUD_TEXT_TOP_CHAT_PX', 'HUD_TEXT_TOP_CHAT_TOUCH_PX']) {
     assert.equal(enhancedStyle[name], undefined, `mutant: ${name} exported again - a number for a surface that is not there`);
   }
-  const mod = rd('src/ui/enhancedHudText.js');
+  const mod = rd('src/ui/enhanced/enhancedHudText.js');
   assert.doesNotMatch(mod, /export function drawEnhancedHudText|export function releaseEnhancedHudText|ENHANCED_HUD_TEXT_ID/,
     'mutant: the column\'s draw back in the module - two enhanced faces for one PopupText');
-  assert.match(rd('src/ui/hudText.js'), /import \{ drawEnhancedToasts, releaseEnhancedToasts \} from '\.\/enhancedNotice\.js';/,
+  assert.match(rd('src/ui/hud/hudText.js'), /import \{ drawEnhancedToasts, releaseEnhancedToasts \} from '\.\/enhancedNotice\.js';/,
     'the model draws through the notice stack and nothing else');
 });
 
@@ -324,7 +324,7 @@ test('FONT1: the HUD\'s OTHER text surface - the mid-screen label - speaks in th
   // The one host-agnostic call owns both halves: drawHud paints the
   // label on a drawn frame and HIDES it on one that is not, so no host
   // can leave a DOM line standing (AUDIT 64 F37's law, FONT1's door).
-  assert.match(rd('src/ui/hud.js'), /if \(hudDrawn\) midScreenText\.draw\(renderer, canvas, font\); else midScreenText\.hide\(\);/,
+  assert.match(rd('src/ui/hud/hud.js'), /if \(hudDrawn\) midScreenText\.draw\(renderer, canvas, font\); else midScreenText\.hide\(\);/,
     'mutant: the hide door dropped from drawHud, so a hidden HUD keeps its last refusal on screen');
 });
 
@@ -353,7 +353,7 @@ test('FONT1: the online status line is the skin\'s face too, and every silent pa
     'mutants: the enhanced arm dropped, so the one online surface left in the 1996 face stays in it; the classic arm dropped, so a classic-skin probe loses the line');
   assert.equal((world.match(/sayNetStatus/g) ?? []).length, 4,
     'mutant: a silent return that does not hide the strip - the door is declared once and called on BOTH early returns as well as at the draw');
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.hudstatus \{[^}]*font-family: \$\{PIXEL_STACK\}; -webkit-font-smoothing: none;/,
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.hudstatus \{[^}]*font-family: \$\{PIXEL_STACK\}; -webkit-font-smoothing: none;/,
     'mutants: the strip in --data; the smoothing left on');
 });
 
@@ -449,7 +449,7 @@ test('AUDIT FONT F2: --hud-scale reaches the mid-screen label - a SIBLING of .hu
   });
   // ...and the one hand that knows the live scale calls it, beside the
   // damage-number layer it already fed for exactly this reason.
-  assert.match(rd('src/ui/enhancedHud.js'), /getElementById\('enhanced-hitnums'\)\?\.style\.setProperty\('--hud-scale', String\(scale\)\);[\s\S]{0,400}?\n[ \t]*setEnhancedMidTextScale\(scale, document\);/,   // AUDIT ENH-NOTICE3 A10: named for the one surface it scales; CSA-G's re-run: the call its own statement, so a commented-out one no longer matches
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /getElementById\('enhanced-hitnums'\)\?\.style\.setProperty\('--hud-scale', String\(scale\)\);[\s\S]{0,400}?\n[ \t]*setEnhancedMidTextScale\(scale, document\);/,   // AUDIT ENH-NOTICE3 A10: named for the one surface it scales; CSA-G's re-run: the call its own statement, so a commented-out one no longer matches
     'mutant: the propagation dropped out of the scale write, so nothing ever sets it on the label');
 });
 
@@ -568,7 +568,7 @@ test('AUDIT FONT F4: a canvas window covers the classic column, so the toasts go
   // ...and the model's own draw is back to three arguments: a fourth
   // positional slot on a `draw` in src/ui is the scale's (audit24
   // wave40's sweep), which is why this is a report and not an argument.
-  assert.match(rd('src/ui/hudText.js'), /  draw\(renderer, canvas, font\) \{/,
+  assert.match(rd('src/ui/hud/hudText.js'), /  draw\(renderer, canvas, font\) \{/,
     'mutant: the window slot smuggled into draw\'s argument list, where the sheet\'s forward fills the fourth with a number');
 });
 
@@ -633,14 +633,14 @@ test('AUDIT FONT F11: the mid-screen label lands on the CLASSIC label\'s own lin
 });
 
 test('AUDIT FONT F12: the teardown\'s doc names callers that exist', () => {
-  const s = rd('src/ui/enhancedHudText.js');
-  assert.doesNotMatch(s, /the same hand that calls ui\/enhancedHud\.js destroyEnhancedHud/,
+  const s = rd('src/ui/enhanced/enhancedHudText.js');
+  assert.doesNotMatch(s, /the same hand that calls ui\/enhanced\/enhancedHud\.js destroyEnhancedHud/,
     'mutant: the old sentence back - it named a caller that is nowhere in src/, and destroyEnhancedHud has none either');
   // The per-owner teardown a live host really does reach is the
   // toasts' (ENH-NOTICE3), through HudText.dispose.
-  assert.match(rd('src/ui/enhancedNotice.js'), /export function releaseEnhancedToasts\(key\)/,
+  assert.match(rd('src/ui/enhanced/enhancedNotice.js'), /export function releaseEnhancedToasts\(key\)/,
     'the per-owner teardown a live host really does reach');
-  assert.match(rd('src/ui/hudText.js'), /dispose\(\) \{\n    if \(typeof document !== 'undefined'\) releaseEnhancedToasts\(this\.key\);/,
+  assert.match(rd('src/ui/hud/hudText.js'), /dispose\(\) \{\n    if \(typeof document !== 'undefined'\) releaseEnhancedToasts\(this\.key\);/,
     'mutant: dispose no longer reaches it');
   assert.equal([...rd('src/scenes/dungeonContext.js').matchAll(/hudText\.dispose\(\);/g)].length, 1,
     'mutant: the context\'s rows never released, so a torn-down dungeon leaves its toasts on the page');

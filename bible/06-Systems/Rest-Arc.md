@@ -268,7 +268,7 @@ Existing TEXTURE.210 fires are rest points too (2.1); the law only adds where no
   through `byFire` / `fireNear` with no new law.
 - **A target** keyed `dfire:<i>` (its index in the chosen list), named "Campfire", its plaque rows Rest and Cook.
 - **On the map:** the enhanced held map marks a fire once the row it stands in is revealed (the TP-SEEN shape,
-  `src/ui/automapSheet.js` `seenPortals`; a new mark kind in `src/ui/inkAutomap.js`); the compass takes them through
+  `src/ui/automap/automapSheet.js` `seenPortals`; a new mark kind in `src/ui/ink/inkAutomap.js`); the compass takes them through
   the dungeon's `nodeMarks` seam as the veins do. The classic 3D map gains a marker model per fire.
 - **Online:** nothing to sync - every client stands the same fires. No relay bump.
 
@@ -491,7 +491,7 @@ QCLOCK-WORLD's clock, online only - the gate is the quest hooks' `sharedClock`, 
 - **The status widget**: **Next night** (a buff tile, its minutes left at its foot) through the night interval - "Rested"
   until AUDIT C&C (`06-Systems/Climates-Calories.md`), which renamed it beside Boons' Well rested.
 - **The rest window** online: gone. Offline: unchanged.
-- **The Online pane** (`src/ui/enhancedMenu.js`) says it: rest at fires and beds; a rest is a night; quest waits and
+- **The Online pane** (`src/ui/enhanced/enhancedMenu.js`) says it: rest at fires and beds; a rest is a night; quest waits and
   deadlines as OPEN 12 settles.
 
 ---

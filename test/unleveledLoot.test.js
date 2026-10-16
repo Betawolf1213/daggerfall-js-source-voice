@@ -222,7 +222,7 @@ test('UL1: the registry - installed, the two rolls answer the mod\'s when Enable
   setModSetting('unleveledLoot', 'Steel', 42); assert.equal(modSetting('unleveledLoot', 'Steel'), 9, 'a choice clamps to its options');
   setModSetting('unleveledLoot', 'Steel', -3); assert.equal(modSetting('unleveledLoot', 'Steel'), 0);
   _resetModSettings();
-  assert.match(rd('src/ui/enhancedMenu.js'), /if \(isChoiceKey\(def\)\) \{/, 'the pane steps the choice keys by name');
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /if \(isChoiceKey\(def\)\) \{/, 'the pane steps the choice keys by name');
   assert.ok(Object.keys(MOD_SETTINGS).indexOf('pcaao') < Object.keys(MOD_SETTINGS).indexOf('unleveledLoot'), 'listed after the overhaul, as its manifest orders it');
   const credit = CREDITS.mods.find((c) => c.title === 'Unleveled Loot');
   assert.ok(credit); assert.equal(credit.version, '1.1.2'); assert.deepEqual([...credit.vendor], ['unleveledLoot']);

@@ -10,7 +10,7 @@
 //   SEAMLESS BOARDING (scenes/navalHost.js beginFight) - her muster fights where her crew stands, the player lands across
 //   from where he stood, my hands are my own crew and land at her rail across from my ship; a repel's party is her own
 //   men (never her captain), over my rail across from her, and my hands stand to where they stand.
-//   THE WORDS (ui/navalHud.js drawCrewLines) and the world's wiring (scenes/world.js).
+//   THE WORDS (ui/naval/navalHud.js drawCrewLines) and the world's wiring (scenes/world.js).
 import './modsOff.js';
 import { byClass } from './chargenDom.mjs';
 import { test } from 'node:test';
@@ -27,7 +27,7 @@ import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { musterOf, MOBILE, CREW_PER_HAND, GRAPPLE_S, HAND } from '../src/systems/naval/navalBoarding.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
-import { drawCrewLines, destroyNavalHud, tagAlpha, CREW_SAY_RANGE, CREW_SAY_FADE_FROM, CREW_SAY_MAX, CREW_SAY_LIFT } from '../src/ui/navalHud.js';   // FIELD BUGS 2026-10-02 CREW-SAY: the foot's lift
+import { drawCrewLines, destroyNavalHud, tagAlpha, CREW_SAY_RANGE, CREW_SAY_FADE_FROM, CREW_SAY_MAX, CREW_SAY_LIFT } from '../src/ui/naval/navalHud.js';   // FIELD BUGS 2026-10-02 CREW-SAY: the foot's lift
 import { MODELS, ctxFor } from './csaScene.mjs';
 import { sea, readyPool } from './navalSea.mjs';
 

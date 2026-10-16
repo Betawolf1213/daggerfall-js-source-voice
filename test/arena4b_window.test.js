@@ -2,7 +2,7 @@
 // (systems/arena/arenaBoard.js recordsPageOnline over the board's `me.record` / `me.recent`, tolerant of an older service), the
 // header with no purses chip unless the board says one, the fastest Grand Champions each in their own season, the realm's
 // Hall of Champions under them (hallBoardOnline) and the Keeper's wall online (hallLinesOnline), and the window drawing all
-// of it on a fake page (ui/arenaWindow.js). Mac, 2026-10-02: "Joining a team comes with it's own enhanced UI where you can
+// of it on a fake page (ui/arena/arenaWindow.js). Mac, 2026-10-02: "Joining a team comes with it's own enhanced UI where you can
 // view your ranking and even player leaderboards".
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import * as LG from '../src/systems/arena/arenaLeague.js';
 import * as BK from '../src/systems/arena/arenaBook.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { withDom } from './invdrag.mjs';
-import { mountArenaWindow } from '../src/ui/arenaWindow.js';
+import { mountArenaWindow } from '../src/ui/arena/arenaWindow.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const O = ARENA_TEXT.online, W = ARENA_TEXT.window, U = ARENA_TEXT.undercroft;

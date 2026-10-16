@@ -26,7 +26,7 @@
 //    sender - so a Stop from a tab younger than the last canceller's was ignored, and a reload of the resting
 //    player's tab (the mark back at zero) let a follower's old request end their next rest on its first tick.
 //    Compared per sender against the value seen when THIS rest began, the same law `restEnemyAt` already keeps.
-import { optionPath } from '../../ui/settingsMap.js';   // ORG2: the rest message names the switch where the map puts it
+import { optionPath } from '../../ui/settings/settingsMap.js';   // ORG2: the rest message names the switch where the map puts it
 
 /** PARTY-REST2b, per-request (2026-09-22, "make this 60 seconds"): how long a vote stands - long enough to coordinate
  *  a round, short enough that a stale yes from an earlier attempt cannot approve a later one. Lived in world.js;

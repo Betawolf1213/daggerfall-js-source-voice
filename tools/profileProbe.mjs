@@ -46,7 +46,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [480, 800, 'narrow'], [390,
     document.body.style.cssText = 'margin:0;background:repeating-linear-gradient(45deg,#2a2721 0 14px,#231f1a 14px 28px);height:100vh';
     // online is the enhanced lane (systems/online/onlineLane.js forces the skin), so the card stands over the enhanced sheet in
     // play; bare, it must stand as well - it leans on none of the sheet's global rules (a `* { box-sizing }` among them)
-    if (sheet === 'enhanced') (await import('/src/ui/enhancedStyle.js')).injectEnhancedStyle();
+    if (sheet === 'enhanced') (await import('/src/ui/enhanced/enhancedStyle.js')).injectEnhancedStyle();
     // THE WIDEST OUTFIT A PLAYER CAN WEAR: for every slot, the longest name the pack gives an item that EQUIPS there -
     // every template of the look's groups in every material its group takes, placed by DFU's own GetEquipSlot
     // (systems/equip.js) and named by the pack's own namer (itemLongName). The second of a pair wears what the first can;

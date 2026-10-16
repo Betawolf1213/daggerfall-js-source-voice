@@ -122,7 +122,7 @@
   },
   {
     "name": "AUDITLIVED1-E-copy-to-offline-skips-the-door",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    snap = offlineCopyOf(snap);",
     "new": "",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "AUDITLIVED1-G-bring-online-skips-the-door",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "const copy = onlineCopyOf(snap, sharedClassicMinutes(Date.now()));",
     "new": "const copy = JSON.parse(JSON.stringify(snap));",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AUDITLIVED1-O-the-rest-card-says-no-clock",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "_restingRefs.clockLine.textContent = Number.isFinite(wm) ? restClockLine(wm, { loiter: overlay.mode === 'loiter' }) : '';",
     "new": "_restingRefs.clockLine.textContent = '';",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "AUDITLIVED1-T-the-cards-read-the-worlds-date",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "function saveOf(entry) {\n  const snap = entry.snap;\n  const date = Number.isFinite(snap.classicMinutes) ? dateFromClassicMinutes(snap.classicMinutes) : null;",
     "new": "function saveOf(entry) {\n  const snap = entry.snap;\n  const date = Number.isFinite(snap.worldMinutes ?? snap.classicMinutes) ? dateFromClassicMinutes(snap.worldMinutes ?? snap.classicMinutes) : null;",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "AUDITLIVED1-T7-heartsday-enhanced",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "date: { dayOfYear: dayOfYearFromMinutes(deps.worldNow?.() ?? now) }",
     "new": "date: { dayOfYear: dayOfYearFromMinutes(now) }",
     "tests": [
@@ -579,7 +579,7 @@
   },
   {
     "name": "AUDITLIVED1-T7-smith-words",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  const own = ownTimeLeftText(c.doneAt);",
     "new": "  const own = null;",
     "tests": [

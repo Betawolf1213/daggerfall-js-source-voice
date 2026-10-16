@@ -11,7 +11,7 @@
 //                 packet bound for her next port or lying off it (SEA-LANES), a relief coming to my aid; the card's
 //                 state line says the same after her stance
 // The host's own model (scenes/navalHost.js tagsModel, targetCardOf) through real frames over Come Sail Away's pool
-// (test/navalSea.mjs), and the HUD's own text and DOM (ui/navalHud.js). Each is red on the record's code (168bf2587).
+// (test/navalSea.mjs), and the HUD's own text and DOM (ui/naval/navalHud.js). Each is red on the record's code (168bf2587).
 // `03-World/Naval-Combat.md` (NAV-F).
 import { byClass } from './chargenDom.mjs';
 import { test } from 'node:test';
@@ -20,7 +20,7 @@ import { sea, knowAll } from './navalSea.mjs';
 import { provoke, PROVOKED_S, NAVY_HUNTS } from '../src/systems/naval/navalAI.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { classLine } from '../src/systems/naval/navalShips.js';
-import { drawNavalTags, drawNavalHud, destroyNavalHud, navalHudText, tagLine, TAG_DETAIL_M, NAVAL_HUD_CSS, CREW_GREEN } from '../src/ui/navalHud.js';
+import { drawNavalTags, drawNavalHud, destroyNavalHud, navalHudText, tagLine, TAG_DETAIL_M, NAVAL_HUD_CSS, CREW_GREEN } from '../src/ui/naval/navalHud.js';
 
 /** The coast of test/shiplife.test.js: land north of z = 200 and a headland east; the town behind the shore. */
 const coast = (x, z) => !(z > 200 || (x > 300 && x < 400 && z > -300));

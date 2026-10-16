@@ -1,7 +1,7 @@
 [
   {
     "name": "CLUTTER-overlap-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    if (placed.some((q) => b.left - pad < q.right",
     "new": "    if (false && placed.some((q) => b.left - pad < q.right",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CLUTTER-every-line-read",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    const detail = t === lead && tagLine(t) !== '';",
     "new": "    const detail = tagLine(t) !== '';",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CLUTTER-no-hold",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "(TAG_CLEAR + (held?.has(t.id) ? TAG_HOLD : 0)) * scale",
     "new": "TAG_CLEAR * scale",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CLUTTER-by-distance-alone",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "const rank = (t) => (t === lead ? 0 : t.hostile ? 1 : 2);",
     "new": "const rank = () => 0;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "CLUTTER-target-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "let lead = list.find((t) => t.target) ?? null;",
     "new": "let lead = null;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "CLUTTER-radius-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    let best = TAG_FOCUS_PX * scale;",
     "new": "    let best = Infinity;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "CLUTTER-draw-unlaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "const want = covered ? [] : layoutNavalTags(points, { scale, focus, held: tagHeld });",
     "new": "const want = covered ? [] : (points ?? []).map((t) => ({ ...t, detail: true }));",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CLUTTER-hold-never-kept",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  tagHeld = new Set((covered ? [] : points ?? []).filter((t) => t && !drawn.has(t.id)).map((t) => t.id));",
     "new": "  tagHeld = new Set();",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "GHOST-dim-undone",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  background: var(--v-body); opacity: 0.35; }",
     "new": "  background: linear-gradient(180deg, #fff6e4 0 2px, var(--v-hi) 2px 17px, var(--v-lite) 17px 100%);\n  opacity: 0.55; }",
     "tests": [

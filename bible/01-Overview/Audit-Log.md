@@ -384,7 +384,7 @@ unavailable)", "(the travel map art is unavailable)"). A door that
 declines in silence is indistinguishable from a press that never
 landed, which is precisely how this arrived: "it will fail to open".
 
-THE FIX IS ONE HOME, `ui/enhancedChunk.js`, and all seven doors go
+THE FIX IS ONE HOME, `ui/enhanced/enhancedChunk.js`, and all seven doors go
 through it: retry once (a transient fetch costs one round trip to rule
 out), then SPEAK in the door's own host element with inline style only
 - the error path must not depend on anything that could be the thing
@@ -485,8 +485,8 @@ is why a report like this cannot be answered from the text alone.
 
 
 **2026-08-25 - THE ENHANCED-MENU AUDIT (U49 and everything under it).**
-Mac's call the day the front door shipped. Scope: `ui/enhancedMenu.js`,
-`ui/enhancedStyle.js`, `systems/uiSkin.js`, the `main.js` routing and
+Mac's call the day the front door shipped. Scope: `ui/enhanced/enhancedMenu.js`,
+`ui/enhanced/enhancedStyle.js`, `systems/uiSkin.js`, the `main.js` routing and
 the two front doors, read adversarially against the port's own standing
 laws rather than against DFU - none of this HAS a DFU original, which
 is exactly why it needed reading. EIGHT findings, all fixed at root and

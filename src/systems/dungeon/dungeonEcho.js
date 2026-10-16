@@ -8,7 +8,7 @@
 // (`onPlayed`, the ActionObject plays) - so:
 //   - THE ECHO: when a press (a click, a plate stood on, a blow) sets a mover going OUT OF SIGHT and farther than
 //     ECHO_NEAR_M, one popup line says what and which way ("Stone grinds somewhere below you, to the west."); the place
-//     goes on the dungeon map as an echo mark (ui/automapSheet.js, kind 'echo') until it is found; and FOUND - in plain
+//     goes on the dungeon map as an echo mark (ui/automap/automapSheet.js, kind 'echo') until it is found; and FOUND - in plain
 //     sight within ECHO_FIND_M - it glows for a few seconds in the secrets' colour (systems/dungeon/dungeonSense.js), so what
 //     changed is seen when it is reached.
 //   - THE EXAMINE: in Info mode - Daggerfall's examining stance - the plaque over a lever or a wheel adds the way its

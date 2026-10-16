@@ -18,7 +18,7 @@ import { FactionFile, FACTION_TYPES as T } from '../src/formats/factionFile.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';
 import { DIVINES, ORDERS } from '../src/systems/guild/guildVariants.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { CATEGORIES } from '../src/ui/settingsMap.js';
+import { CATEGORIES } from '../src/ui/settings/settingsMap.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const HAVE_FACTIONS = !!ARENA2 && existsSync(join(ARENA2, 'FACTION.TXT'));
@@ -63,12 +63,12 @@ test('EVERY-STANDING: every organization by group - the guilds and temples the p
 
 test('EVERY-STANDING: on by default (STANDING-ON); on, the Standing page draws each group under its divider, a row its name and a signed number', async () => {
   assert.equal(PREF_DEFAULTS.standingAll, true);   // STANDING-ON (Mac, 2026-10-11)
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /statsGuilds\(detail, playerEntity\);\s*\n\s*if \(getPref\('standingAll'\)\) statsEveryStanding\(detail, playerEntity\);/);
   assert.match(menu, /out\.push\(prefRow\('standingAll', 'Every faction\\'s standing',/);
   const sheet = CATEGORIES.find((t) => t.id === 'interface').sections.find((s) => s.id === 'sheet');
   assert.deepEqual(sheet.items, ['port:standingAll']);
-  const { statsEveryStanding } = await import('../src/ui/enhancedMenu.js');
+  const { statsEveryStanding } = await import('../src/ui/enhanced/enhancedMenu.js');
   const make = (tag) => ({ tag, className: '', textContent: '', children: [], append(...c) { this.children.push(...c); } });
   globalThis.document = { createElement: make };
   try {

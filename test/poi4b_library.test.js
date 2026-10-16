@@ -7,7 +7,7 @@
 //     over one's own (an approver's, any), taken off the shelf, a builder's count bounded;
 //   - its picture (src/poi/poiThumb.js): drawn in software from its parts, written as a PNG the store reads;
 //   - keeping (src/poi/poiShelf.js): the law first, the picture uploaded, the entry put;
-//   - the library's dialogs (src/ui/poiLibraryPanel.js) over the shared fake document, and the placing that keeps an
+//   - the library's dialogs (src/ui/poi/poiLibraryPanel.js) over the shared fake document, and the placing that keeps an
 //     entry's turns, sizes and lights (src/scenes/poiEditorHost.js).
 import './chargenDom.mjs';
 import { test } from 'node:test';
@@ -23,8 +23,8 @@ import { forgetPoiFeed, POI_SHELF_MAX } from '../server-account/src/poi.js';
 import { renderThumb, encodePng, thumbEye, POI_THUMB_SIZE } from '../src/poi/poiThumb.js';
 import { shelfEntryOf, putOnShelf } from '../src/poi/poiShelf.js';
 import { poiShelve } from '../src/poi/poiService.js';
-import { createPoiEditorPanel } from '../src/ui/poiEditorPanel.js';
-import { shelfMatches, tagsOf, dataUrlOf } from '../src/ui/poiLibraryPanel.js';
+import { createPoiEditorPanel } from '../src/ui/poi/poiEditorPanel.js';
+import { shelfMatches, tagsOf, dataUrlOf } from '../src/ui/poi/poiLibraryPanel.js';
 import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
 import { createPoiEditorHost } from '../src/scenes/poiEditorHost.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
@@ -423,7 +423,7 @@ test('POI-4b RECORDS: the shelf in the migration and the routes in the service; 
   const index = src('server-account/src/index.js');
   assert.match(index, /route === 'shelf' && request\.method === 'GET'\) return answer\(poiPath\.id \? await shelfEntry\(/);
   assert.match(index, /if \(route === 'unshelve'\) return answer\(await unshelve\(pctx, me, env, \{ id: body\.id \}\)\);/);
-  const panel = src('src/ui/poiEditorPanel.js');
+  const panel = src('src/ui/poi/poiEditorPanel.js');
   assert.match(panel, /const keepToo = check\(true, \(\) => \{\}\);/);
   // PIN MOVED (AUDIT POI L7): kept with the lights it read (they were left behind, `lights: []`)
   assert.match(panel, /if \(keepToo\.checked\) \{[\s\S]{0,600}await library\.keepNow\(\{ name: r\.asset\.name, parts: r\.asset\.parts, lights: r\.asset\.lights \?\? \[\], meshes \}\);/);

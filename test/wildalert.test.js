@@ -3,7 +3,7 @@
 // bother the player"). The law (systems/wild/wildAlert.js: DFU's own stealth formula with the enemy's reach laid onto its
 // range, a check a classic minute apart on the traveller's clock), the alert predicate (systems/encounters.js
 // foeAlerted), the host's gate, band spotting and "!" marks lifted out of scenes/world.js and RUN, and the mark's DOM
-// layer (ui/wildMarks.js) over a fake document.
+// layer (ui/wild/wildMarks.js) over a fake document.
 import { concealmentFlags } from '../src/systems/effects.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +12,7 @@ import { noticeChance, createWildAlert, WILD_ROLL_S, WILD_MARK_S, WILD_MARK } fr
 import { stealthChance, STEALTH_MAX_DISTANCE, SIGHT_RADIUS } from '../src/characters/enemyMotor.js';
 import { foeAlerted, foeHostile, areEnemiesNearby } from '../src/systems/encounters.js';
 import { isLocalPlayerTarget, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
-import { drawWildMarks, destroyWildMarks, wildMarksMounted, wildMarkScale, wildMarkAlpha, WILD_MARK_RANGE, WILD_MARKS_MAX, WILD_MARKS_IDLE_MS } from '../src/ui/wildMarks.js';
+import { drawWildMarks, destroyWildMarks, wildMarksMounted, wildMarkScale, wildMarkAlpha, WILD_MARK_RANGE, WILD_MARKS_MAX, WILD_MARKS_IDLE_MS } from '../src/ui/wild/wildMarks.js';
 import { fakeDoc } from './decorFakes.mjs';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

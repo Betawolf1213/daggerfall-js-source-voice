@@ -199,7 +199,7 @@
   },
   {
     "name": "REVENANT-CARD-the-classic-skin-drawn",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "    if (!ev || !isEnhanced()) return false;",
     "new": "    if (!ev) return false;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "REVENANT-CARD-no-typing",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "typed: still ? full.length : 0,",
     "new": "typed: full.length,",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "REVENANT-CARD-the-clock-runs-hidden",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "  if (hidden) return _cards.length;\n",
     "new": "",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "REVENANT-CARD-a-revenant-twice",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "    if (ev.id) for (const c of _cards) if (c.ev.id === ev.id && c.outMs == null) c.outMs = REVENANT_SLIDE_MS;\n",
     "new": "",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "REVENANT-CARD-no-cap",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "    for (const c of _cards.slice(REVENANT_CARDS_MAX)) if (c.outMs == null) c.outMs = REVENANT_SLIDE_MS;\n",
     "new": "",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "REVENANT-CARD-no-hide-door",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawRevenantCards({ hidden: true });   // REVENANT-CARD: the same door\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "REVENANT-PAGE-the-fallen-among-the-living",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  const living = all.filter((r) => !r.defeated && !r.sworn)",
     "new": "  const living = all.filter((r) => !r.sworn)",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "REVENANT-PAGE-the-order",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": ".sort((a, b) => b.rank - a.rank || a.dueAt - b.dueAt);",
     "new": ".sort((a, b) => a.rank - b.rank || a.dueAt - b.dueAt);",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "REVENANT-AAA-zero-read-as-standing",
-    "file": "src/ui/revenantCard.js",
+    "file": "src/ui/revenant/revenantCard.js",
     "old": "  const gone = _cards.filter((c) => c.outMs != null && c.outMs <= 0);",
     "new": "  const gone = _cards.filter((c) => c.outMs && c.outMs <= 0);",
     "tests": [

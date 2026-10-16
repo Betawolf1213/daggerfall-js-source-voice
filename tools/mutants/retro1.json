@@ -37,7 +37,7 @@
   },
   {
     "name": "RETRO1-docked-ignores-LargeHUDDocked",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "  const retro = retroWorldAspect(retroRenderingMode(), dockedLargeHudHeight(bar) > 0);\n",
     "new": "  const retro = retroWorldAspect(retroRenderingMode(), !!bar && largeHudEnabled());\n",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "RETRO1-lens-keeps-the-window-aspect",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "  const retro = retroWorldAspect(retroRenderingMode(), dockedLargeHudHeight(bar) > 0);\n  if (retro) return retro;\n",
     "new": "  const retro = retroWorldAspect(retroRenderingMode(), dockedLargeHudHeight(bar) > 0);\n",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "RETRO1-pillarbox-without-retro-mode",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "  const aspect = retroRenderingMode() !== 0 ? retroAspectCorrection() : 0;",
     "new": "  const aspect = retroAspectCorrection();",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "RETRO1-pillarbox-drops-the-docked-bar",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "  return retroAspectViewportRect(canvasWidth, canvasHeight, aspect, dockedLargeHudHeight(bar));",
     "new": "  return retroAspectViewportRect(canvasWidth, canvasHeight, aspect, 0);",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "RETRO1-shift-f11-unbound",
-    "file": "src/ui/hudShortcuts.js",
+    "file": "src/ui/hud/hudShortcuts.js",
     "old": "  if (hotkeyHit('ToggleRetroPP', e.code, e, keys)) {\n    toggleRetroPostprocessing();\n    return true;\n  }\n",
     "new": "",
     "tests": [
@@ -470,7 +470,7 @@
   },
   {
     "name": "RETRO1-aspect-word-mangled",
-    "file": "src/ui/settingsLaw.js",
+    "file": "src/ui/settings/settingsLaw.js",
     "old": "values: ['Off', '4:3', '16:10']",
     "new": "values: ['Off', '4:03', '16:10']",
     "tests": [

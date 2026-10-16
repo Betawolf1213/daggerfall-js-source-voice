@@ -382,7 +382,7 @@
   },
   {
     "name": "SEAT1c-ink-no-fill",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  } else if (mark.fill) {",
     "new": "  } else if (false) {",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "SEAT1c-ink-no-siege-edge",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.strokeStyle = mark.siege ? SEAT_RING_SIEGE : mark.ring;",
     "new": "  ctx.strokeStyle = mark.ring;",
     "tests": [

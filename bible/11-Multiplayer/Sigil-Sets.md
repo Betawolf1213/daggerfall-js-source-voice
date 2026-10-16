@@ -491,8 +491,8 @@ rise mutant is re-aimed to the law's line.
   `RARITIES` (rank 4 - the Artifact moved to 5), `#bfe8ff` and a tint of its own. The ladder's roll takes the ROLLED
   tiers alone now (`applyRarity`: `ROLLED_TIERS.includes(tier)`), so nothing rolls the rung; a piece that wears it is
   never re-rolled. Every reader of the table is generic (the explorer's map, below), so the rung lands everywhere a
-  tier shows: the pack's frame and pips (`ui/enhancedPlusStyle.js`, the pip a diamond within a diamond), the name's
-  colour (`ui/enhancedStyle.js`), the native scroller's tint, the plaque, the hotbar, the quickslot diamond, the floor's
+  tier shows: the pack's frame and pips (`ui/enhanced/enhancedPlusStyle.js`, the pip a diamond within a diamond), the name's
+  colour (`ui/enhanced/enhancedStyle.js`), the native scroller's tint, the plaque, the hotbar, the quickslot diamond, the floor's
   line (`render/spoilsGlow.js`, 2.1 m, pulsing as a Legendary's does), the rare chime and light on the court's floor.
 - **The Regalia** (`systems/aetheric.js`, new): nine fixed records - the Horned Crown, the two Pauldrons, the
   Warden-Plate, the Brand-Gauntlets, the Greaves, the Cinder-Boots, the Gate-Shield (a Tower Shield) and the
@@ -726,7 +726,7 @@ Mac, after the merge: "we need to make sigil stones bound items and stackable, r
   moves, and the deploy drops nobody.
 - **Found by the probe**: each of the window's rows is its own grid, and the price's column was sized by its text, so
   the Regalia's "12 Sigil Stones" (108px) stood 7px left of the others (101px) at a desktop and a laptop. The column is
-  112px in every row now (`ui/enhancedPlusStyle.js`, the classic skin's sheet cut from the same rules). The probe's
+  112px in every row now (`ui/enhanced/enhancedPlusStyle.js`, the classic skin's sheet cut from the same rules). The probe's
   pack is a stack of seven and a locked stone: 359/359.
 
 Pinned: `test/ss1_stones.test.js` (8), `test/set7_broker.test.js` (the purse, the take and the sale over stacks, the
@@ -768,7 +768,7 @@ shouldnt be able to be sold".
   off the same list, so the piece bought is bound. `isBound` reads the mark or the row, and no mark unbinds what the
   row binds. What SS1 and SS3 close to a stone they close to a ware: the trade, the ground, every container, a peer's
   list.
-- **The counter** (`ui/enhancedTrade.js`, `ui/nativeTrade.js`). Neither skin's Sell nor Sell Magic stages a bound
+- **The counter** (`ui/enhanced/enhancedTrade.js`, `ui/native/nativeTrade.js`). Neither skin's Sell nor Sell Magic stages a bound
   piece, and the counter says why: "Sigil Stone is bound to you - it cannot be dropped, traded or sold." (`boundText`,
   the pack's own refusal; its words and the card's line say "sold" now). A shop's shelf is the room's online
   (WORLD6a), so a piece sold there would reach the next buyer. A smith's repair and a sage's identify still take a bound
@@ -794,13 +794,13 @@ the inventory and recieve back sigil stones".
   the ware out of the pack and puts its stones in - onto the pack's unlocked stack, since a locked one takes only
   locked stones - all of it or none of it; a worn ware is taken off first and a locked one is the player's own word
   (LOCK1), each refused with nothing moved. The day's mark stays: a ware dismantled is not bought again that day.
-- **The enhanced pack** (`ui/enhancedInventory.js`). A ware's card - and its right-click menu, built from the same row -
+- **The enhanced pack** (`ui/enhanced/enhancedInventory.js`). A ware's card - and its right-click menu, built from the same row -
   offers Dismantle beside Lock; a worn ware offers none (its Take off is beside it), and a locked one says why when
   pressed, as its Drop does. The press asks first, in the Info box's own stone window: "Dismantle Ruhn's Right
   Pauldron? It is gone for good, and you get 6 Sigil Stones back." - Dismantle does it and the pack says "Dismantled:
   Ruhn's Right Pauldron, for 6 Sigil Stones." (BROKER_SOLD's shape); Keep, Back or a press outside leave it. A second
   click of a pair never presses the question's Dismantle (pairGuard).
-- **The classic pack** (`ui/nativeInventory.js`, the Classic and GrimoireUI skins). Its six buttons are DFU's art and
+- **The classic pack** (`ui/native/nativeInventory.js`, the Classic and GrimoireUI skins). Its six buttons are DFU's art and
   its Use belongs to the ware's enchantments, so the offer comes where the player tries to be rid of a ware: Remove
   over the ground, which its binding refuses. The refusal and the offer stand in DFU's own Yes/No box
   (`ui/yesNoBox.js`) - Yes dismantles it and says so, No keeps it; a chest, a body or the wagon get the plain refusal.

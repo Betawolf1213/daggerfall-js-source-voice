@@ -341,7 +341,7 @@ export const ONLINE_ROOM_MOD_KEYS = Object.freeze({
   // options uses instant travel for the online mod, which shouldn't be the case"): online a trip on the map is TRAVELLED -
   // the mod's journey, or the Overworld's on the enhanced skin - never Daggerfall's fast travel, which online is a
   // teleport (it arrives at the world's present: no world time to spend). Three switches reached that teleport: the mod
-  // off, and either of the two dials that send a Cautious or an Inns trip down the journey (ui/travelPopUp.js
+  // off, and either of the two dials that send a Cautious or an Inns trip down the journey (ui/travel/travelPopUp.js
   // isPlayerControlledTravel; TO-LIVE put both on the tile). AUDIT TRAVEL-ONLINE T1: and a fourth - the ports rule. Off,
   // nothing knocks the ship toggle (on by default, travelMapState.js) off a trip from the wilderness to an inland place,
   // and a ship is never walked: the teleport again, free with Camp Out. All four are the room's, at the shipped defaults.

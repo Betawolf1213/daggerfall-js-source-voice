@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { TravelPopUpWindow, POPUP_RECTS, TOGGLE_POS, TOGGLE_SIZE, TRAVEL_TOGGLE_COLOR, LABEL_POS, COUNTDOWN_TICK } from '../src/ui/travelPopUp.js';
+import { TravelPopUpWindow, POPUP_RECTS, TOGGLE_POS, TOGGLE_SIZE, TRAVEL_TOGGLE_COLOR, LABEL_POS, COUNTDOWN_TICK } from '../src/ui/travel/travelPopUp.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 

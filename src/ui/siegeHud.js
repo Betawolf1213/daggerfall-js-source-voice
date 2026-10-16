@@ -6,7 +6,7 @@
 // this fighter's own vitality and wave (a spectator's count instead); at the end, the result card over it, with the
 // fighter's Honours once the service has answered its receipt.
 //
-// A READOUT, NOT A WINDOW (the gate's bar's law, ui/gateBossBar.js): no click but the card's Claim, one node made on the
+// A READOUT, NOT A WINDOW (the gate's bar's law, ui/gate/gateBossBar.js): no click but the card's Claim, one node made on the
 // first update and UPDATED, NOT REBUILT - each line written only when it changes - hidden (never removed) when there is
 // no battle. In every skin.
 //

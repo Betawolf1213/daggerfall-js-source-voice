@@ -353,7 +353,7 @@ test('LW15 drawn: the seed dealt to one of the town\'s households alike by every
   const h = createHash('sha256');
   for (let d = 200; d < 220; d++) for (const r of census.slice(0, 30)) for (const e of dayPlan(r, places, d, { mpm: CALENDAR_MPM })) h.update(`${e.kind}|${e.at?.key ?? e.at?.kind}|${e.t0}|${e.t1};`);
   assert.equal(h.digest('hex').slice(0, 16), '130ffff561ff4035', 'the plain plans LW14 laid');
-  const page = readFileSync(new URL('../src/ui/vendorPage.js', import.meta.url), 'utf8');
+  const page = readFileSync(new URL('../src/ui/vendor/vendorPage.js', import.meta.url), 'utf8');
   assert.match(page, /const sold = \[\.\.\.\(mine\.sold \?\? \[\]\), \.\.\.\(mine\.patronSold \?\? \[\]\)\]\.sort\(/);
   assert.match(page, /const who = s\.patron \? safe\(\(\) => p\.patronName\?\.\(s\.patron\), null\) : null;/);
   assert.match(page, /\$\{who \? `Sold to \$\{who\} - ` : ''\}/);

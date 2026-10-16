@@ -21,7 +21,7 @@ import { NAVAL_SFX, navalSoundRange } from '../src/systems/naval/navalSounds.js'
 import { hullBoxOf, rigBoxesOf, STRUCK_GRACE_S, TALLY_S, SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
-import { navalHudText } from '../src/ui/navalHud.js';
+import { navalHudText } from '../src/ui/naval/navalHud.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { sea } from './navalSea.mjs';
 

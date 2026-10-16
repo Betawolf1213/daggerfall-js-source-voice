@@ -21,7 +21,7 @@ const W = 640, H = 360;
 
 const PAGE = `<!doctype html><html><body style="margin:0;background:#1a2a3a"><canvas id=c width=${W} height=${H}></canvas><script type=module>
 import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S } from '/src/render/gateVeil.js';
-import { createGateVeil } from '/src/ui/gateVeil.js';
+import { createGateVeil } from '/src/ui/gate/gateVeil.js';
 const gl = document.getElementById('c').getContext('webgl2', { alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true });
 let pass = null, err = null;
 try { pass = new GateVeilRenderer(gl); } catch (e) { err = String(e.message ?? e); }

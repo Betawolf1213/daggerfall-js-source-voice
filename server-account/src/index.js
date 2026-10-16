@@ -988,7 +988,7 @@ const service = {
         // (RENOWN-CHAR: the named character's again - RENOWN-ACCOUNT read
         // the account's one track whichever was named.)
         // RENOWN4: and the track's TOTAL beside it in the answer (never in the token - a room needs the level, not the
-        // XP): the page's own bar is drawn from it the moment the character comes online (ui/hudRenown.js).
+        // XP): the page's own bar is drawn from it the moment the character comes online (ui/hud/hudRenown.js).
         const track = renownCharacterOk(body.character) ? ((await renownTrackOf(ctx, who.player.id, body.character)) ?? { xp: 0, level: 1 }) : null;
         const lv = track ? track.level : undefined;
         // GUILD1c: AND THE GUILD, the named character's - its id, its tag and its member row off the roster as it

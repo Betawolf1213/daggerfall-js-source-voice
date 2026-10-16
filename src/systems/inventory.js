@@ -72,7 +72,7 @@ export function isEnchanted(item) {
  *  D9's other finding stands and is why there is no filter here:
  *  DaggerfallInventoryWindow.AddLocalItem (:914-943) has NO Currency
  *  arm - its four tab tests are weapon/armor, enchanted, ingredient
- *  and everything-else, exactly what ui/nativeInventory.js
+ *  and everything-else, exactly what ui/native/nativeInventory.js
  *  filterByTab already ports. The list cannot show gold because the
  *  collection never holds any.
  *

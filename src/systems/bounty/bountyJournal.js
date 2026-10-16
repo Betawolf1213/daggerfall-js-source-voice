@@ -4,7 +4,7 @@
 //
 // A held bounty rides the quest log every journal face reads (scenes/questBridge.js questLog, wrapped by the world
 // host - scenes/world.js) as an active side quest whose id is `bounty:<bounty id>`. The faces (the pause window's
-// Quests tab, ui/enhancedMenu.js; the chronicle, ui/enhancedChronicle.js) are lazy chunks mounted by many hosts, so
+// Quests tab, ui/enhanced/enhancedMenu.js; the chronicle, ui/enhanced/enhancedChronicle.js) are lazy chunks mounted by many hosts, so
 // rather than thread two more hooks through every one of them, the host registers the bounty host's own doors here
 // once and the faces ask this leaf. It imports nothing, so any chunk can reach it without a cycle.
 

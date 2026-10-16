@@ -339,7 +339,7 @@ test('AUDIT POI M9: packing - an empty island is left out (the rest still packed
 });
 
 test('AUDIT POI M9: the panel\'s Pack says when the islands do not fit at its margin', async () => {
-  const { createPoiUvPanel } = await import('../src/ui/poiUvPanel.js');
+  const { createPoiUvPanel } = await import('../src/ui/poi/poiUvPanel.js');
   const pos = [], idx = [], uv = [];
   for (let q = 0; q < 400; q++) { const b = pos.length / 3; for (const [i, j] of [[0, 0], [1, 0], [1, 1], [0, 1]]) { pos.push(q * 3 + i, 0, j); uv.push(i, j); } idx.push(b, b + 2, b + 1, b, b + 3, b + 2); }
   const dlg = createPoiUvPanel({ doc: document, mesh: mk(pos, idx, uv), materials: 1, title: 'Pack', onApply: () => true, onClose() {} });

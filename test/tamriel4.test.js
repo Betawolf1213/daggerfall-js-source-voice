@@ -19,7 +19,7 @@ import {
   contourSegments, chaikinCapped, dropEdgeRuns, tracedChains, buildTamrielInk, STITCH_REACH, SMOOTH_PASSES, COAST_SIMPLIFY_PX,
   COAST_CUT_PX, BORDER_SNAP_PX,
 } from '../src/ui/tamrielInk.js';
-import { linkSegments } from '../src/ui/inkMap.js';
+import { linkSegments } from '../src/ui/ink/inkMap.js';
 import { RIVERS } from '../src/world/tamriel/tamrielGeography.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

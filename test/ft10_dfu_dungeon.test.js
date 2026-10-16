@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FEATURES, checkFeature, featureForControl } from '../src/systems/features.js';
 import { DEFAULTS, tierOf } from '../src/systems/settings/settings.js';
-import { labelOf } from '../src/ui/settingsCopy.js';
+import { labelOf } from '../src/ui/settings/settingsCopy.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

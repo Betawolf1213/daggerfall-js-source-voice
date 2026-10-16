@@ -1739,7 +1739,7 @@ What the numbers ask is fewer writes at the source.
     window, where a player just under the bound lost it.
 
   Otherwise what is earned waits RENOWN_COALESCE_MS (5 minutes). The bar draws it all the while as its ghost
-  (ui/hudRenown.js, RENOWN4), and a report's worth (5,000) still goes at once.
+  (ui/hud/hudRenown.js, RENOWN4), and a report's worth (5,000) still goes at once.
 - **The service says the room** (`server-account/src/renownTracks.js`): each answer carries `room`, what the account's
   open hour still takes. It is read back by the report's own decision, so it counts every writer's spend so far.
 - **The host keeps the room with the hour and the total it was said at** (`scenes/world.js` `_renownRoom`). Another

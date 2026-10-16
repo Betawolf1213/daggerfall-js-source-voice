@@ -17,7 +17,7 @@ import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';
 import { ControlsWindow, preloadControlsArt } from '../src/ui/controlsWindow.js';
 import { MouseControlsWindow, PROMPT_YES, PROMPT_NO, promptAnswer } from '../src/ui/mouseControlsWindow.js';
 import { JoystickControlsWindow, createJoystickUnsaved, AXIS_ROWS, UI_ROWS, JOY_SLIDERS, ENABLE_BOX, TITLE, UI_KEYS } from '../src/ui/joystickControlsWindow.js';
-import { paneControls, discardControlsStaging, controlsStaging } from '../src/ui/enhancedControls.js';
+import { paneControls, discardControlsStaging, controlsStaging } from '../src/ui/enhanced/enhancedControls.js';
 import { layoutMessageBox, MB_BUTTONS } from '../src/ui/messageBox.js';
 import { createUnsavedKeybinds, currentDict } from '../src/systems/controlsConfig.js';
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';

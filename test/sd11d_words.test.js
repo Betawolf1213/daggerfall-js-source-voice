@@ -17,13 +17,13 @@ import { SD_ARENA, realmToDungeon, SD_TURN_WAIT_LINE } from '../src/net/superDun
 import { SD_ENDINGS, sdEndingOf, sdMarksOf } from '../src/net/superDungeon/sdMarks.js';
 import { sdMarksLine, sdHourLine } from '../src/systems/superDungeon/sdOmen.js';
 import { SD_CLAIM_TEXT } from '../src/net/superDungeon/sdClaims.js';
-import { SD_MARK_TIPS } from '../src/ui/sdMarksView.js';
+import { SD_MARK_TIPS } from '../src/ui/superDungeon/sdMarksView.js';
 import { createSdRemnantBlows, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/sdRemnantBlows.js';
 import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
 import { BOSS_CUES, FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
-import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_ECHO_RISE_NEAR_MS } from '../src/ui/sdRemnantBar.js';
-import { damageChartModel, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
-import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES, VEIL_THEMES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gateVeil.js';
+import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_ECHO_RISE_NEAR_MS } from '../src/ui/superDungeon/sdRemnantBar.js';
+import { damageChartModel, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
+import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES, VEIL_THEMES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
 import { GATE_VEIL_FS } from '../src/render/gateVeil.js';
 import { TELEGRAPH_FS } from '../src/render/gateTelegraph.js';
 import { SOUND } from '../src/systems/soundClips.js';
@@ -195,7 +195,7 @@ test('SD11d THE ECHO\'S CLOCK AND THE RETURN (L6 F6, F10): a fallen Echo counts 
   assert.equal(both.host, 'Gold 80% - Silver 45%');
   const back = remnantBarModel(fight({ ph: 3, ou: NOW + 2400 }), NOW);
   assert.equal(back.callout.text, 'It returns - 3s', 'the Remnant rising, the Echoes gone');
-  const bar = read('src/ui/gateBossBar.js');
+  const bar = read('src/ui/gate/gateBossBar.js');
   assert.match(bar, /const hostNear = !!model\.host && !!model\.hostNear && !model\.fallen;/);
   assert.match(bar, /parts\.tags\[1\]\.className = hostNear \? 'wb-boss-tag wb-boss-host near' : 'wb-boss-tag wb-boss-host';/);
   assert.match(bar, /\.wb-boss-host\.near \{[^}]*animation: wb-wrath-near/);
@@ -472,7 +472,7 @@ test('SD11d THE CHART IN BRASS (L6 F11): the Remnant\'s damage chart heads its c
   assert.notEqual(hour.key, gate.key, 'the head redraws');
   assert.equal(damageChartModel(fell, { ...when, theme: 'brass" onclick' }).theme, null);
   assert.match(DAMAGE_CHART_CSS, /\.wb-dmg-chart\.wb-dmg-brass \{/);
-  assert.match(read('src/ui/gateDamageChart.js'), /\$\{model\.theme \? ` wb-dmg-\$\{model\.theme\}` : ''\}/);
+  assert.match(read('src/ui/gate/gateDamageChart.js'), /\$\{model\.theme \? ` wb-dmg-\$\{model\.theme\}` : ''\}/);
   assert.match(read('src/scenes/sdRemnantBlows.js'), /damageChartModel\(chartFell, \{ boss: SD_BLOWS_TEXT\.boss, me: me\(\), since: chartAt, now: t, crystals: SD_BLOWS_TEXT\.hearts, theme: 'brass' \}\)/);
 });
 

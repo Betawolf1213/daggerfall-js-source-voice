@@ -38,7 +38,7 @@ import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 import { openClassicPauseFlow, PAUSE_RECTS, PAUSE_PANEL_Y } from '../src/ui/pauseWindow.js';
 import { makeWindowStack } from '../src/ui/windowStack.js';
 import { SELECTED_TEXT_COLOR } from '../src/ui/listPicker.js';
-import { DEFAULT_SHADOW_COLOR } from '../src/ui/nativePanel.js';
+import { DEFAULT_SHADOW_COLOR } from '../src/ui/native/nativePanel.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

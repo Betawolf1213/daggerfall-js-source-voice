@@ -234,7 +234,7 @@
   },
   {
     "name": "CHAP3C-SPELLMAKER",
-    "file": "src/ui/spellMakerWindow.js",
+    "file": "src/ui/spell/spellMakerWindow.js",
     "old": "this.totalGoldCost = chapterPriced(gold, this.priceFactor?.() ?? 1);",
     "new": "this.totalGoldCost = chapterPriced(gold, 1);",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "CHAP3C-SPELLMAKER-SP",
-    "file": "src/ui/spellMakerWindow.js",
+    "file": "src/ui/spell/spellMakerWindow.js",
     "old": "    this.totalSpellPointCost = sp;\n  }",
     "new": "    { const f = this.priceFactor?.() ?? 1; this.totalSpellPointCost = f === 1 ? sp : Math.round(sp * f); }\n  }",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "CHAP3C-SPELLMAKER-KEPT",
-    "file": "src/ui/spellMakerWindow.js",
+    "file": "src/ui/spell/spellMakerWindow.js",
     "old": "    this.priceFactor = priceFactor;\n",
     "new": "",
     "tests": [

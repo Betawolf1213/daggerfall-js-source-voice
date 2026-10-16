@@ -182,7 +182,7 @@ said "What you gather online is kept here" beside a pack filling with lumber. Sk
 Knife has no Use: a body is its only gesture. The same misreading is 30's CHOP-WAIT ("the woodcutting animation") and
 29h's report 2 (the pack's Pick-Axe beside a vein, For Mac 1).
 
-**The first fix** (TOOL-SAID, `systems/foraging/foragingInstall.js`, `ui/profPages.js`, `scenes/world.js` `setForagingHost`),
+**The first fix** (TOOL-SAID, `systems/foraging/foragingInstall.js`, `ui/professions/profPages.js`, `scenes/world.js` `setForagingHost`),
 kept to laws 1 and 4: online, while the professions are the account's, a Use of the Wood-Axe, the Pick-Axe, the Sickle,
 the Basket or the Fishing-Net says after the mod's own words - in the same box, which the hotbar says too - that it earns
 no XP and where the profession is done, naming the node and the bound key ("No Logging XP from this. Logging is done at
@@ -229,7 +229,7 @@ button. The guild half cannot be the curse: a member sees Join again only as a v
 book, `guilds.js` activeMemberships - a cure gives the rank back) or expelled at a monthly review after a probation
 notice (`guilds.js`); nothing in the lycanthropy code touches either.
 
-**The fix** (`ui/enhancedPorts.js`): the teller's row reads "Account in <region>", and each other region holding gold
+**The fix** (`ui/enhanced/enhancedPorts.js`): the teller's row reads "Account in <region>", and each other region holding gold
 stands beneath it ("Banked in Daggerfall 12,345"), in both lanes; the classic parchment is DFU's and unchanged.
 `test/fb0930b_bankregion.test.js` (2): the report red on the code before, and the curse's walk a guard.
 
@@ -290,7 +290,7 @@ Buy it?".
   The quest's own house was named ("To The T'erdta Residence"), never for sale (`homePurchasable`,
   `isActiveQuestBuilding`), and opened - among doors that all asked to be bought.
 
-**The fix.** RES-RING (`ui/exteriorAutomapWindow.js`, `ui/townSheet.js`): the stamp says `questMarked` on either arm, and
+**The fix.** RES-RING (`ui/exteriorAutomapWindow.js`, `ui/town/townSheet.js`): the stamp says `questMarked` on either arm, and
 the sheet's pen and ring read it; the classic plate's ladder is unchanged. RES-MARK (Port-Ledger A,
 `systems/answerPipeline.js`): a quest's own building (its row a quest resource's) is marked by one who knows, outdoors,
 whatever the roll; every other building keeps DFU's roll, and indoors never marks. HOME-PLAQUE (`systems/online/onlineHomes.js`

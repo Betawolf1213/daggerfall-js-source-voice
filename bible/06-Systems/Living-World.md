@@ -570,7 +570,7 @@ by name, an enemy will not talk, and an armed one draws on you beyond the walls"
 
 ## LW7c - the people who know you (2026-10-05)
 
-`systems/livingWorld/people.js` (`residentOfId`, `peoplePage`, `personWords`), pure; `ui/enhancedChronicle.js` (the
+`systems/livingWorld/people.js` (`residentOfId`, `peoplePage`, `personWords`), pure; `ui/enhanced/enhancedChronicle.js` (the
 People section), `ui/chronicleDoor.js` (the `people` door), the host's (`scenes/world.js`).
 
 - **Nothing new is saved.** A resident's id names their town, roll, slot and generation, and the census's mint is a
@@ -732,7 +732,7 @@ found five in the town core; each is fixed and pinned (`test/lwfix3_town.test.js
   last noted, so a crowd's crime (every witness -15), long eased to nothing, outweighed every new acquaintance: once
   the bound was reached a word to a stranger was forgotten as it was said, and no new friend could be made. It reads
   the regard as it stands today, and never the one just noted.
-- **The chronicle's keys** (`ui/enhancedChronicle.js` onKey). The arrow keys walked the four old sections: LW7c's People
+- **The chronicle's keys** (`ui/enhanced/enhancedChronicle.js` onKey). The arrow keys walked the four old sections: LW7c's People
   was never reached from the History, and an arrow from it jumped. They walk the sections the window shows.
 - **A walk home cut at 04:00** (`dayPlan.js schedule`, an away window). A walk home after an away window that closed in
   the last minutes before the day's end ran past it, and the next day's plan - which drops that window - had the
@@ -1936,7 +1936,7 @@ PLEA_SCRIPTS, WATCH_CALLS, STALL_CRIES, BEGGAR_CRIES, DRINKING_SONGS).
   could not stand again): LW-SPACE's to settle.
 - **The four hosts.** LW-STIR is the living town's (`stir.js`, `lines.js`, `livingTown.js`, `meetups.js`,
   `dayPlan.js`): `scenes/world.js` - WIRED: its line layer passes each line's kind through (`livingLinePoints`: a shout
-  a shout, a song a song - `ui/navalHud.js` draws each its own way; the street's lines were all talk);
+  a shout, a song a song - `ui/naval/navalHud.js` draws each its own way; the street's lines were all talk);
   `scenes/worldModes.js` - FLAGGED: no incident indoors yet (a room's talk is LW8b's, all talk); `scenes/exterior.js` -
   FLAGGED as LW2 has it (no living town); `scenes/dungeonContext.js` - no town.
 - **Pinned** by `test/lwstir_street.test.js` (11: the gate - the halt's share, length and round, the plan's stay, the

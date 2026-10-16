@@ -3,7 +3,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { TravelMapWindow, FIND_PROMPT, FIND_MAX_CHARACTERS } from '../src/ui/travelMapWindow.js';
+import { TravelMapWindow, FIND_PROMPT, FIND_MAX_CHARACTERS } from '../src/ui/travel/travelMapWindow.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
 
 const make = () => {

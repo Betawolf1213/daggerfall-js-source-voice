@@ -145,7 +145,7 @@
   },
   {
     "name": "LEGACYSHEET-stats-never-asks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  const house = sheetHouse();",
     "new": "  const house = null;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "LEGACYSHEET-stats-no-word",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (house.word) detail.append(el('p', 'px-note', house.word));\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "LEGACYSHEET-stats-rows-unwritten",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    for (const [label, v] of house.rows) { const r = el('div', 'px-stat'); r.append(el('span', 'k', label), el('span', 'v', v)); h.append(r); }\n",
     "new": "",
     "tests": [

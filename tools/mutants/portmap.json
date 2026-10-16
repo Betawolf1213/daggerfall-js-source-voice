@@ -1,7 +1,7 @@
 [
   {
     "name": "PORT-MAP-far-again",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (opts.ports && m.port) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "new": "    if (opts.ports && m.port && band !== 'far') harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PORT-MAP-only-where-inked",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (opts.ports && m.port) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "new": "    if (opts.ports && m.port && ink) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PORT-MAP-never-on-the-place",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const ax = beside ? x + 8 : x, ay = beside ? y - 1 : y;",
     "new": "  const ax = x + 8, ay = y - 1;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PORT-MAP-no-halo",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.strokeStyle = PEN.halo; ctx.lineWidth = HARBOUR_HALO;\n  anchorPath(ctx, ax, ay);\n  ctx.stroke();\n",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "PORT-MAP-the-soft-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.strokeStyle = PEN.line; ctx.lineWidth = HARBOUR_PEN;",
     "new": "  ctx.strokeStyle = PEN.soft; ctx.lineWidth = HARBOUR_PEN;",
     "tests": [

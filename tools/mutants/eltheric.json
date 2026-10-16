@@ -19,7 +19,7 @@
   },
   {
     "name": "EL-yard-literal",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "a freeport of ${ETHER_SEA_NAME}, in",
     "new": "a freeport of the Eltheric Ocean, in",
     "tests": [

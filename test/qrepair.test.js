@@ -202,7 +202,7 @@ test('QREPAIR the door, by source: every host\'s pause hands repairQuests off it
   const qb = rd('src/scenes/questBridge.js');
   assert.match(qb, /repair\(\) \{\n\s+const world = ctx\.world \?\? null;\n\s+return repairActiveQuests\(machine, \{/);
   assert.match(qb, /mountCurrentSite: \(\) => world\?\.mountCurrentSiteQuestResources\?\.\(\),/);
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\.\.\.portRowsGame\(\{ pause \}\)/, 'ORG2: the screen builds it with the port\'s other rows, and the map puts it under Gameplay, Quests');
   assert.match(menu, /const can = pause && typeof hooks\?\.repairQuests === 'function';/, 'live only in a game\'s pause');
   assert.match(menu, /ask\(t\('menu\.questRepair\.title', 'Repair Active Quests'\), questRepairAsk\(\), t\('menu\.questRepair\.go', 'Repair'\), \(\) => \{/, 'confirmed first');

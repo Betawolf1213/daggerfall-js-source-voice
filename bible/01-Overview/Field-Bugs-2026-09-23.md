@@ -482,7 +482,7 @@ missing (Port-Status-2026-09.md:43).
 
 **Cause.** EM-BUG3's "village issue" was the enhanced town sheet laying
 +Z down the paper, so the plan was the north-south mirror of the world.
-The enhanced DUNGEON and interior sheet (`src/ui/automapSheet.js`) never
+The enhanced DUNGEON and interior sheet (`src/ui/automap/automapSheet.js`) never
 got that fix. Its `toPlan` measured y with +Z and the paper's y grows
 down, so north was down the sheet, while the caret's heading
 (`inkMap.js` `paintCaret`) is north-up. The arrow pointed right; the

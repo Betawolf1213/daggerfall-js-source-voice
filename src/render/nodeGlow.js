@@ -21,7 +21,7 @@
 // at the wrap is the picture at zero. Pure where it can be: `nodeGlows` (who is drawn, how bright) and `nodeGlowClock`.
 //
 // AUDIT NODE-MARKS (Mac: "Audit this"): UNDER REDUCED MOTION IT STANDS STILL - the halo steady, no shimmer, the motes
-// held where they are (`uStill`), the professions' own law (ui/profHud.js: every act has a still form); its program is
+// held where they are (`uStill`), the professions' own law (ui/professions/profHud.js: every act has a still form); its program is
 // built at idle once a node is first marked, never on the frame that first lights one (PERF-WARM's law); and a pass that
 // ran is a foreign pass whatever it drew.
 //
@@ -275,7 +275,7 @@ export class NodeGlowRenderer {
   }
 }
 
-/** AUDIT NODE-MARKS: the system's reduced motion, asked once a second at most - ui/profHud.js's own reading. */
+/** AUDIT NODE-MARKS: the system's reduced motion, asked once a second at most - ui/professions/profHud.js's own reading. */
 function reducedMotionReader() {
   let at = -Infinity, reduced = false;
   return (nowS) => {

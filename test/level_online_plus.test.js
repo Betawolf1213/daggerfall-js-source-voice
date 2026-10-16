@@ -21,7 +21,7 @@ import {
 } from '../src/ui/levelingChoice.js';
 import {
   LEVELING_FACE_ID, LEVELING_FACE_TEXT, levelingFaceOwner, releaseLevelingFace, _setLevelingFaceClockForTests,
-} from '../src/ui/enhancedLevelingChoice.js';
+} from '../src/ui/enhanced/enhancedLevelingChoice.js';
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../src/ui/drawWatchdog.js';
 import { crossLeveling, LEVELING_CROSS_LINE, applyCustoms, customsLines } from '../src/systems/realmCustoms.js';
 
@@ -186,7 +186,7 @@ test('LEVEL-PLUS: the classic skin keeps the canvas screen, a shut option saying
 });
 
 test('LEVEL-PLUS: the Plus sheet dresses the face, and a phone stacks the tiles', () => {
-  const css = read('src/ui/enhancedPlusStyle.js');
+  const css = read('src/ui/enhanced/enhancedPlusStyle.js');
   for (const rule of ['.lvl-shell', '.lvl-shell .px-win', '.lvl-opts', '.lvl-opt.is-on', '.lvl-opt:disabled', '.lvl-lock']) {
     assert.ok(css.includes(rule), rule);
   }
@@ -221,7 +221,7 @@ test('LEVEL-ONLINE-2: a character brought online is a NEW online character - it 
   // customs' own report stays the gold and the deeds - the door says the leveling line itself, first
   const snap = { level: 1, classicMinutes: 7, goldPieces: 0, items: [], wagonItems: [], bankAccounts: [] };
   assert.ok(!customsLines(applyCustoms(snap), { before: true }).includes(LEVELING_CROSS_LINE.before));
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const leveling = crossLeveling\(trial\);[^\n]*\n\s+const preview = \[\.\.\.\(leveling \? \[LEVELING_CROSS_LINE\.before\] : \[\]\), /, 'the Bring online question says it first');
   assert.match(menu, /const leveling = crossLeveling\(copy\);[^\n]*\n\s+const report = applyCustoms\(copy\);/, 'customs switches the realm\'s COPY - the offline character keeps its own');
   assert.match(menu, /lines: \[\.\.\.\(leveling \? \[LEVELING_CROSS_LINE\.after\] : \[\]\), \.\.\.customsLines\(report\)\]/, 'and the report after says it happened');

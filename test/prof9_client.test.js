@@ -44,7 +44,7 @@ import { SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, setDownProfAct, profActUnderWay, _cookForTests, _masonForTests,
   PAN_DOWN_LINE, FIRE_AWAY_LINE,
-} from '../src/ui/profPages.js';
+} from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { utcDay } from '../src/net/marksLaw.js';
 
@@ -499,9 +499,9 @@ test('PROF9 wiring: the fire is any lit one (the street\'s camps and braziers, a
   const sh = src('src/scenes/shared.js');
   assert.match(sh, /\n {2}installCooking\(\);   \/\/ PROF9/);
   assert.match(sh, /const tart = dishStaminaFactor\(entity\);/);
-  const p = src('src/ui/profPages.js');
+  const p = src('src/ui/professions/profPages.js');
   assert.match(p, /\['fire', \(d\) => drawCookFire\(d, rerender, kit\)\],   \/\/ PROF9/);   // PIN MOVED (MENU-ORDER)
-  assert.match(src('src/ui/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-panbar \{ background: linear-gradient/);
+  assert.match(src('src/ui/enhanced/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-panbar \{ background: linear-gradient/);
   const svc = src('server-account/src/professions.js');
   assert.match(svc, /const xp = scaleXp\(r\.kind === 'dish' \? cookXp\(rank, \{ clean: clean === true, steps: halls \}\) : craftXp\(r\.tier, rank, false\),/);   // PIN MOVED (PROF12): the Apothecary's steps - FIRM1: the Firmament's hand around it (scaleXp)
   assert.match(svc, /const hand = dishHand\(r, specs\[100\]\) \?\? jewelHand\(r, specs\[50\]\);/);   // PIN MOVED (PROF10): or a jeweller's hand

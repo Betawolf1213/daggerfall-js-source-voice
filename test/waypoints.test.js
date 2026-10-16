@@ -246,7 +246,7 @@ test('WAYPOINTS host: both maps take the right click as the store\'s - the Overw
   const hm = rd('src/ui/heldMap.js');
   assert.match(hm, /context: \(cx, cy\) => this\._waypointContext\(cx, cy\),/, 'the world sheet\'s arm (EM1: the window never asks which sheet)');
   assert.match(hm, /if \(e\.button === 2\) \{ e\.preventDefault\?\.\(\); this\._sheet\?\.context\(e\.clientX, e\.clientY\); \}/);
-  for (const f of ['src/ui/automapSheet.js', 'src/ui/townSheet.js']) assert.match(rd(f), /context\(\) \{ return false; \},/, `${f}: no waypoints there`);
+  for (const f of ['src/ui/automap/automapSheet.js', 'src/ui/town/townSheet.js']) assert.match(rd(f), /context\(\) \{ return false; \},/, `${f}: no waypoints there`);
   const w = rd('src/scenes/world.js');
   assert.match(w, /setWaypointSender\(\(ch, text\) => socialLink\(\)\?\.sendChat\(text, \{ ch \}\) \?\? false\);/, 'the hub\'s own channels - no relay change');
   assert.match(w, /if \(socialLink\(\)\?\.status === 'open' && social\) syncWaypointGroups\(\{ party: social\.party\?\.id \?\? null, guild: myGuildTag\(\) \}\);/, 'GROUP-LEAVE: told only while the hub is open, so a dropped link removes nothing');

@@ -17,7 +17,7 @@ import { promoteEliteFoe, eliteEligible, ELITE_FOE_MIN_LEVEL, ELITE_FOE_HEALTH_M
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { championName } from '../src/systems/champions.js';
 import { liveEntityName } from '../src/systems/worldTooltips.js';
-import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hudFoeTarget.js';
+import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hud/hudFoeTarget.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -65,7 +65,7 @@ test('FOE-TITLE: a revenant by its name, a champion by its trait, an elite as El
   markFoeStruck({ entity: { ...elite, name: 'Orc' }, dead: false });
   assert.equal(foeTarget().name, 'Elite Orc', 'the target bar');
   clearFoeTarget();
-  for (const f of ['src/ui/hudFoeTarget.js', 'src/systems/worldTooltips.js', 'src/systems/champions.js']) {
+  for (const f of ['src/ui/hud/hudFoeTarget.js', 'src/systems/worldTooltips.js', 'src/systems/champions.js']) {
     assert.match(read(f), /import \{ foeTitle \} from '[./]+(?:systems\/)?foeTitle\.js';/, `${f} asks the one home`);
   }
   assert.doesNotMatch(read('src/systems/foeTitle.js'), /^import /m, 'a leaf: the HUD\'s leaves may ask it');

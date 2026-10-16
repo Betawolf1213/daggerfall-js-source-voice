@@ -319,7 +319,7 @@
   },
   {
     "name": "AUDIT-WB11-C9-the-column-folded",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "  .wb-dmg-hosted .wb-dmg-row > .wb-dmg-host { display: block; }",
     "new": "  .wb-dmg-hosted .wb-dmg-row > .wb-dmg-host { display: none; }",
     "tests": [
@@ -328,7 +328,7 @@
   },
   {
     "name": "AUDIT-WB11-U1-the-long-tip",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "legion: 'Stop the Atronachs. Break the Ward-Bearers.',",
     "new": "legion: 'Cut down the Imps off whoever stands far from him, stop each Atronach before it reaches him, and break his Ward-Bearers to break his ward.',",
     "tests": [
@@ -464,7 +464,7 @@
   },
   {
     "name": "AUDIT-WB11-D7-the-foot-uncounted",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "host: (n) => `His host: ${n}`,",
     "new": "host: (n) => 'His host',",
     "tests": [

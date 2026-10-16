@@ -139,7 +139,7 @@ and carries no session: its interior frame and its town room disagreed
 with this host's, and one host is one frame.
 
 **The door.** The front door's rail gains ONLINE on both skins
-(`src/ui/enhancedMenu.js` `paneOnline`): a name for over the head (24
+(`src/ui/enhanced/enhancedMenu.js` `paneOnline`): a name for over the head (24
 plain characters, the relay's bound, and the pane says so) and the
 relay to join, on the prefs shelf (`onlineName`, `onlineServer`); every
 restorable save is a card and the one pressed is the character brought
@@ -7643,11 +7643,11 @@ recorded).
 
 ## DROPS (2026-09-22, Mac: "Alright this is a big one. These changes are made specific for our codebase") - four drops integrated, three additions
 
-**What arrived.** Four zips of whole files against older mains: `quest-sharing-FINAL`, `Trading`, `peer-footsteps-v3`, `EnemyDesyncDungeonFix`. Each file was three-way merged (`git merge-file`) against the main commit its copy was cut from (the smallest diff over the last six hundred), one drop at a time, conflicts resolved at BLOCK level - never a whole file taken from one side (that silently dropped main's hunks once before). The base-finder's smallest diff is not always the true base: for `ui/enhancedMenu.js` it chose a main from before BR1 and the merge quietly reverted the brand mark; the file was reset to main and only the two `prefRow` lines re-added. Every deletion against main was audited by hand; the rest were legitimate.
+**What arrived.** Four zips of whole files against older mains: `quest-sharing-FINAL`, `Trading`, `peer-footsteps-v3`, `EnemyDesyncDungeonFix`. Each file was three-way merged (`git merge-file`) against the main commit its copy was cut from (the smallest diff over the last six hundred), one drop at a time, conflicts resolved at BLOCK level - never a whole file taken from one side (that silently dropped main's hunks once before). The base-finder's smallest diff is not always the true base: for `ui/enhanced/enhancedMenu.js` it chose a main from before BR1 and the merge quietly reverted the brand mark; the file was reset to main and only the two `prefRow` lines re-added. Every deletion against main was audited by hand; the rest were legitimate.
 
-**QUEST1 - a quest shared with the party.** `systems/quest/questShare.js` (the three receiver gates over the catalog's own membership/minReq/oneTime rows) and `systems/quest/machine.js` (`getShareableQuestData`, `receiveSharedQuest` - a real live Quest rebuilt through restoreSaveData's own loop from a wire envelope, `updateSharedQuest` for a later resync, `REPLAYABLE_ONE_TIME_ACTIONS` = TeleportPc/GivePc/TrainPc re-armed on the receiver - GetItem since DISC28-I, RevealLocation since FIELD BUGS 2026-10-13e SHARE-REVEAL (the partner's `reveal` marked only the clicker's map); PayMoney and GiveItem deliberately not). The wire: `{t:'quest'}` under `QUEST_FRAME_MAX` (64 KiB, a quest's save-data is not a pose), `QUEST_HZ_MAX` = 0.1 (one share per ten seconds, `QUEST_SEND_MS`), `questShareGate`/`questInGate` as plain cooldowns (a sub-1 rate never passes a token bucket - the drop's own BUG note), the hub fans it to the sender's party. The Share button sits in the chronicle's opened quest frame (`ui/enhancedChronicle.js`, `.cr-rm cr-share`), through `chronicleDoor.js` to world.js `shareQuestWithParty`; a received quest lands as a HUD line (`setMidScreenText`). `receiveSharedQuest` is the FOURTH door a live quest is born through, so `world5`/`world7`'s `questClockStepMax` count moved 3 -> 4.
+**QUEST1 - a quest shared with the party.** `systems/quest/questShare.js` (the three receiver gates over the catalog's own membership/minReq/oneTime rows) and `systems/quest/machine.js` (`getShareableQuestData`, `receiveSharedQuest` - a real live Quest rebuilt through restoreSaveData's own loop from a wire envelope, `updateSharedQuest` for a later resync, `REPLAYABLE_ONE_TIME_ACTIONS` = TeleportPc/GivePc/TrainPc re-armed on the receiver - GetItem since DISC28-I, RevealLocation since FIELD BUGS 2026-10-13e SHARE-REVEAL (the partner's `reveal` marked only the clicker's map); PayMoney and GiveItem deliberately not). The wire: `{t:'quest'}` under `QUEST_FRAME_MAX` (64 KiB, a quest's save-data is not a pose), `QUEST_HZ_MAX` = 0.1 (one share per ten seconds, `QUEST_SEND_MS`), `questShareGate`/`questInGate` as plain cooldowns (a sub-1 rate never passes a token bucket - the drop's own BUG note), the hub fans it to the sender's party. The Share button sits in the chronicle's opened quest frame (`ui/enhanced/enhancedChronicle.js`, `.cr-rm cr-share`), through `chronicleDoor.js` to world.js `shareQuestWithParty`; a received quest lands as a HUD line (`setMidScreenText`). `receiveSharedQuest` is the FOURTH door a live quest is born through, so `world5`/`world7`'s `questClockStepMax` count moved 3 -> 4.
 
-**TRADE1 - player-to-player trade.** `net/tradeSession.js` (the state machine: ask/yes/no, offer revisions, lock/confirm on both sides, commit only after MY goods left the socket - LOOT-DUP's law, `TRADE_RANGE_M` 5 metres between the two BODIES, never a pixel) and `systems/tradePack.js` (the real pack: reserve, release, apply). The wire: `{t:'trade', data}` projected by `validTradeData` per kind, `TRADE_FRAME_MAX` 12 KiB, routed by the relay to ONE peer inside one room (`server/src/index.js` `_meterTrade`), `sendTrade` down whichever open socket reports the peer (own cell or a halo - `_socketFor`), `TRADE_RELAY_MIN = 91` so a client never sends a frame an older relay would close the socket on (`relaySupportsTrade` off the welcome). The F-menu grew a third row (`ui/socialMenu.js` `canTrade`/`tradeLabel`: 'Accept trade' when the peer already asked), and the window is `ui/enhancedPlayerTrade.js` behind `ui/playerTradeDoor.js` - a DOM door in the enhanced skin alone, its overlay arms one per line so CRASH2's window gate reads it (the drop had them on one line and the gate reported the door unread). `tradeFrame()` ticks on the online frame after `chatFrame()`, before the dead return.
+**TRADE1 - player-to-player trade.** `net/tradeSession.js` (the state machine: ask/yes/no, offer revisions, lock/confirm on both sides, commit only after MY goods left the socket - LOOT-DUP's law, `TRADE_RANGE_M` 5 metres between the two BODIES, never a pixel) and `systems/tradePack.js` (the real pack: reserve, release, apply). The wire: `{t:'trade', data}` projected by `validTradeData` per kind, `TRADE_FRAME_MAX` 12 KiB, routed by the relay to ONE peer inside one room (`server/src/index.js` `_meterTrade`), `sendTrade` down whichever open socket reports the peer (own cell or a halo - `_socketFor`), `TRADE_RELAY_MIN = 91` so a client never sends a frame an older relay would close the socket on (`relaySupportsTrade` off the welcome). The F-menu grew a third row (`ui/socialMenu.js` `canTrade`/`tradeLabel`: 'Accept trade' when the peer already asked), and the window is `ui/enhanced/enhancedPlayerTrade.js` behind `ui/playerTradeDoor.js` - a DOM door in the enhanced skin alone, its overlay arms one per line so CRASH2's window gate reads it (the drop had them on one line and the gate reported the door unread). `tradeFrame()` ticks on the online frame after `chatFrame()`, before the dead return.
 
 **PARTY-REST1/2/3 - came in with the Trading drop's tree, kept whole.** `composePartyPose` carries `bk` (the building), `rest` (the leader's live session) and `ready` (this tab's `/ready` vote); a follower NEAR the leader (`nearAccount`: the same pixel/mode/building AND within `PARTY_REST_RADIUS` = 15 m by the bodies) mirrors the leader's nap through `partyRestFollowTick` - the SAME `RestWindow` class over `partyRestMirrorDeps()` (no encounter roll, no trespass charge of its own); the leader's `toggleRest` is gated by `partyRestGate` (everyone near must have typed `/ready`). The drop's world.js imported a `createRestWindow` from a `ui/restDoor.js` that is not in this tree - the app would not have loaded; restored to `new RestWindow(...)` in both places, and `restlodging`'s "one rest window path" pin now names the mirror as the one permitted second.
 
@@ -7693,9 +7693,9 @@ Not verified in a browser: no online session exists in this container.
 
 ## PARTY-REST DROP (2026-09-22, Mac: "Add this to the batch") - the party-rest feature zip integrated over the audit, one getter per host, world93
 
-Eight files from Mac's tree (`net/wire.js`, `ui/enhancedRest.js`, `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/shared.js`, `systems/rest/restSession.js`, `systems/survival/rest.js`), each a whole-file copy against an older main, three-way merged per file against the main commit that minimised its diff, conflicts resolved at block level. What arrived, by the drop's own law names: PARTY-REST1 (the leader's live rest/loiter session rides the party pose; a follower near enough mirrors it - `partyRestFollowTick` every frame beside `partyFrame`, the mirror rolling no encounter of its own), PARTY-REST1c (ANY near resting member is mirrored, not the leader alone), PARTY-REST2/2b/2f/28 (`/ready` is a local chat command stamping `voteAt`, the vote expires in `PARTY_READY_TIMEOUT_MS`, `partyRestGate` refuses a rest until the near members are ready, `markPartyRestSpent` is the one reset every host runs on a granted rest, a refused gate clears back to -Infinity so a new vote can start), PARTY-REST4/4b (`partyRestMirrorDeps(restKind, targetAcct)` heals the follower at the leader's rate through `outdoorRestDeps.overrideRestKind`), PARTY-REST5/19 (the leader's `restEnemyAt` breaks every mirror; a follower's cancel rides `restCancelFor/At`), PARTY-REST6 (`restState` answers only while `state === 'resting'` - the wake box is not a live rest), PARTY-REST8 (`nearAccount`'s interior arm keys on `bk`, now 32-bit, PARTY-REST9), PARTY-REST10 (`restHour(entity, kind, tick, carry)`), PARTY-REST12/20/21/23/25/26/17/16/2d/2e (the gate's refusals and their cooldowns: `PARTY_REST_VOTE_COOLDOWN_MS` 60 s, `PARTY_REST_START_COOLDOWN_MS` 10 s), ONLINE-REST1 (the gate is enhanced+online only), TAVERN-REST1/GUILD-REST1 (`modes.insidePartyRestExempt`), STRANGER-REST1 (`strangerRestGate`: no rest within 100 m of a stranger outdoors, 30 m in a dungeon), REST-VITALS1/RESTFIX1/RESTFIX3/PARTY-REST1d (the enhanced rest window: vitals shown while healing, no rebuild per tick, the illegal-rest warning, pointer lock released for every member). The wire grew `rest.kind`, `voteAt`, `restEnemyAt`, `restCancelFor`, `restCancelAt`, `restStartedAt`; `RELAY_VERSION` is world93 (the LAW row hashed after the wire change; `server/src/index.js` is untouched by this drop - the version moves because the pose's shape did).
+Eight files from Mac's tree (`net/wire.js`, `ui/enhanced/enhancedRest.js`, `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/shared.js`, `systems/rest/restSession.js`, `systems/survival/rest.js`), each a whole-file copy against an older main, three-way merged per file against the main commit that minimised its diff, conflicts resolved at block level. What arrived, by the drop's own law names: PARTY-REST1 (the leader's live rest/loiter session rides the party pose; a follower near enough mirrors it - `partyRestFollowTick` every frame beside `partyFrame`, the mirror rolling no encounter of its own), PARTY-REST1c (ANY near resting member is mirrored, not the leader alone), PARTY-REST2/2b/2f/28 (`/ready` is a local chat command stamping `voteAt`, the vote expires in `PARTY_READY_TIMEOUT_MS`, `partyRestGate` refuses a rest until the near members are ready, `markPartyRestSpent` is the one reset every host runs on a granted rest, a refused gate clears back to -Infinity so a new vote can start), PARTY-REST4/4b (`partyRestMirrorDeps(restKind, targetAcct)` heals the follower at the leader's rate through `outdoorRestDeps.overrideRestKind`), PARTY-REST5/19 (the leader's `restEnemyAt` breaks every mirror; a follower's cancel rides `restCancelFor/At`), PARTY-REST6 (`restState` answers only while `state === 'resting'` - the wake box is not a live rest), PARTY-REST8 (`nearAccount`'s interior arm keys on `bk`, now 32-bit, PARTY-REST9), PARTY-REST10 (`restHour(entity, kind, tick, carry)`), PARTY-REST12/20/21/23/25/26/17/16/2d/2e (the gate's refusals and their cooldowns: `PARTY_REST_VOTE_COOLDOWN_MS` 60 s, `PARTY_REST_START_COOLDOWN_MS` 10 s), ONLINE-REST1 (the gate is enhanced+online only), TAVERN-REST1/GUILD-REST1 (`modes.insidePartyRestExempt`), STRANGER-REST1 (`strangerRestGate`: no rest within 100 m of a stranger outdoors, 30 m in a dungeon), REST-VITALS1/RESTFIX1/RESTFIX3/PARTY-REST1d (the enhanced rest window: vitals shown while healing, no rebuild per tick, the illegal-rest warning, pointer lock released for every member). The wire grew `rest.kind`, `voteAt`, `restEnemyAt`, `restCancelFor`, `restCancelAt`, `restStartedAt`; `RELAY_VERSION` is world93 (the LAW row hashed after the wire change; `server/src/index.js` is untouched by this drop - the version moves because the pose's shape did).
 
-**What the zip did not carry, written here.** The drop's three hosts import `ui/restDoor.js`, which no zip shipped: written - `createRestWindow(deps, ignoreAllocatedBed)` opens `ui/enhancedRest.js` under the enhanced skin (`openEnhancedRest`, the fixed host at z-index 13, `registerOverlay` around its `dispose`) and `new RestWindow(deps, ignoreAllocatedBed)` under the classic one; it touches no DOM itself, so CRASH2's door contract reads the view, not the door. The drop's own restlodging pins expect `createRestWindow` in `scenes/exterior.js` (not in the zip): converted. The drop's partyrest1 pins name `.rest-shell` rules `enhancedStyle.js` never had: added (the centred 420 px dialog, the hours field, the vitals line, `font-family: inherit` on the field - FONT1's law).
+**What the zip did not carry, written here.** The drop's three hosts import `ui/restDoor.js`, which no zip shipped: written - `createRestWindow(deps, ignoreAllocatedBed)` opens `ui/enhanced/enhancedRest.js` under the enhanced skin (`openEnhancedRest`, the fixed host at z-index 13, `registerOverlay` around its `dispose`) and `new RestWindow(deps, ignoreAllocatedBed)` under the classic one; it touches no DOM itself, so CRASH2's door contract reads the view, not the door. The drop's own restlodging pins expect `createRestWindow` in `scenes/exterior.js` (not in the zip): converted. The drop's partyrest1 pins name `.rest-shell` rules `enhancedStyle.js` never had: added (the centred 420 px dialog, the hours field, the vitals line, `font-family: inherit` on the field - FONT1's law).
 
 **Reconciled with AUDIT DROPS.** *D1 re-done, not doubled:* the drop wrote the building's `restState` getter onto `interiorKeyCtx` - the interior KEY table's own ctx, which the mode factory never returns - so `modes?.restState` read `undefined` from a tavern and broadcast `rest: null`: the very hole D1 had closed on the returned object. The merge left both, and in the dungeon two getters on one `api` literal (the later wins). One getter per host now, on the object world.js reads, in the drop's shape with its PARTY-REST6 words; pinned by count and by position (test/auditdrops.test.js D1), a shadowing plain key killed as a mutant. *D2's declined latch* is superseded by PARTY-REST19's own cancel fields and dropped. *D5* stands: the outdoor toggle runs `strangerRestGate` then `partyRestGate` then `markPartyRestSpent` only once `modes` exists. *PARTY-REST4 (mine, the far notice)* is renamed PARTY-REST-FAR1 so it no longer collides with the drop's PARTY-REST4 (the heal rate): it scans `social.others()` for ANY resting member I cannot mirror (PARTY-REST1c's law), falls back to 'A party member', and stays quiet while dead. `canRest` and `ILLEGAL_REST_WARNING` now have two window callers (restwhere's sweep admits the enhanced twin).
 
@@ -8110,7 +8110,7 @@ Shield the players took for "hard-coded self-only" is this: the maker lets Shiel
 
 **WHERE IT WILL LAND.** A readied spell aimed at a player it would land on raises the plaque with their name and
 "Cast Heal on Bran" alone - no verbs, no relation - menu or no menu (`scenes/world.js castPlaqueLine`): a cast
-about to land is no look. A gift sorts with the receiver's BUFFS (`ui/hudActiveSpells.js`: `selfCast || ally`).
+about to land is no look. A gift sorts with the receiver's BUFFS (`ui/hud/hudActiveSpells.js`: `selfCast || ally`).
 An area gift - around the caster or at range - reaching several says ONE line naming them all ("You cast Aura on
 Bran, Cass and Dee."), where it said a line per mate.
 
@@ -8139,7 +8139,7 @@ nothing on the caster's side knows what landed or how long it lasts. The party c
 
 **A MATE'S EFFECTS ARE THEIRS TO SAY** (`net/partyBuffs.js` composePartyFx; `net/wire.js` validPartyPose `fx`). Each
 member's party pose carries their own live spell effects, built from the same bundles their HUD rows
-(`systems/mysticism.js liveBundles`, which is what `ui/hudActiveSpells.js` reads). Each entry has:
+(`systems/mysticism.js liveBundles`, which is what `ui/hud/hudActiveSpells.js` reads). Each entry has:
 
 - `i`: the spell's icon, within the spellbook's 0..CAST_ICON_MAX;
 - `r`: the rounds left, which is the bundle's most (DFU's GetMaxRoundsRemaining - the icon belongs to the whole cast);
@@ -8156,7 +8156,7 @@ sends a changed pose no faster than PARTY_SEND_MS, the same rate as a member wal
 **THE CARD** (`ui/partyPanel.js` paintFx). The effects are a row of 16 px tiles under the bars, drawn only while there
 are any, so a party with nothing on it is still just names and bars (PARTY8-B). Each tile shows:
 
-- the spell's icon, which is the enhanced spellbook's own cut of ICON00I0 (`ui/enhancedArt.js spellIconUrl`), or its
+- the spell's icon, which is the enhanced spellbook's own cut of ICON00I0 (`ui/enhanced/enhancedArt.js spellIconUrl`), or its
   first letters while the sheet is on its way ("Reg", "FS");
 - the rounds left, over the tile's corner;
 - the name, the rounds and "(harmful)" on its title.
@@ -8172,7 +8172,7 @@ only when what it says moves (the key includes whether the art has landed). An a
   follower's pose carries no `rest` (the session belongs to the rester), so without `rs` a party's night would have
   floated every hour.
 - On my own screen, a heal I take floats "+N" in green just under the reticle, on the damage numbers' layer
-  (`ui/hitNumbers.js healNumberFor`, drawn by `ui/enhancedHud.js`; enhanced only, like HN1). The heal can come from my
+  (`ui/hitNumbers.js healNumberFor`, drawn by `ui/enhanced/enhancedHud.js`; enhanced only, like HN1). The heal can come from my
   spell, a potion or a friend's gift. The HUD compares the health between two frames it drew. A hidden frame forgets
   the reading, so what a window restored is not floated: the rest window, the level-up, a load or the death screen
   all pause the game and hide the HUD.
@@ -8202,9 +8202,9 @@ is the frame the Detect markers are measured in:
 stands at the end of the compass on the side to turn toward. Both are drawn in the party's one green (net/social.js
 PARTY_GREEN).
 
-- Classic: the Detect marker's 5x3 triangle, over the box's top edge (`ui/hud.js` drawPartyCompassMarks), drawn
+- Classic: the Detect marker's 5x3 triangle, over the box's top edge (`ui/hud/hud.js` drawPartyCompassMarks), drawn
   after the Detect markers.
-- Enhanced: a triangle a pixel wider on the strip (`ui/enhancedHud.js` drawPartyMarks). The marks are pooled and
+- Enhanced: a triangle a pixel wider on the strip (`ui/enhanced/enhancedHud.js` drawPartyMarks). The marks are pooled and
   hidden, never removed.
 
 The open world hands the whole party (`scenes/world.js` partyCompass). The building (`worldModes.js`) and the dungeon
@@ -8294,7 +8294,7 @@ relay change: the envelope is opaque to the hub. Pins: `test/sharemend.test.js` 
 
 ## TRADE-INFO + TRADE-FIT (2026-09-27, Discord - Tabitha: "magic item stats on the trade hover (own and other's)"; "Show enchantment stats in the inventory and trade - Enhanced+ doesn't show enchants") - an item's magic in words, and an offer that cannot go says so
 
-**ONE LIST** (`ui/enhancedInventory.js` itemPowerLines). The Enhanced card read `rarityLines` alone, which names
+**ONE LIST** (`ui/enhanced/enhancedInventory.js` itemPowerLines). The Enhanced card read `rarityLines` alone, which names
 enchantments only for an item the loot tiers rolled (`item.rarity`). A DFU magic item - a shop's, a dungeon's, the
 item maker's - read "Magic" and nothing more, and with the tiers off it read nothing. The list is now:
 
@@ -8304,7 +8304,7 @@ item maker's - read "Magic" and nothing more, and with the tiers off it read not
 - unidentified, "Powers unknown." - unless the tier list already said "Unidentified".
 
 The card, each trade row's hover (my pack, my offer and theirs) and the trade detail read it
-(`ui/enhancedPlayerTrade.js`).
+(`ui/enhanced/enhancedPlayerTrade.js`).
 
 **AN OFFER IS ONE FRAME** (`net/tradeSession.js` setOffer, `tradeFrameBytes`). An offer over TRADE_FRAME_MAX is never
 sent (net/online.js sendTrade - the relay would close the socket for it). It waited in the outbox for OUTBOX_TTL_MS,
@@ -8319,7 +8319,7 @@ frame, and the commit the goods will ride is the longer frame - it is measured n
 
 ## CHAT-POST (2026-09-27, Discord - Tabitha: "Link in chat / Post in chat"; "random magic items' details in chat") - an item posted in chat
 
-**ONE LINE** (`ui/enhancedInventory.js` itemChatText): the item's name in brackets, its headline stat (damage or
+**ONE LINE** (`ui/enhanced/enhancedInventory.js` itemChatText): the item's name in brackets, its headline stat (damage or
 armour), and its magic (itemPowerLines - TRADE-INFO's list, the card's own words). It is cut at a whole word to the
 chat's bound (net/wire.js CHAT_MAX) and ends "..." when cut. A chat line is words - the relay rebuilds a chat frame
 from its text alone - so the item travels as what a player would type to describe it; nothing is sent that a
@@ -8907,7 +8907,7 @@ nothing on the wire.
 ## WB6c (2026-09-25, Mac: "the transition and the arena needs to be an oblivion masterpiece") - the step through; see 11-Multiplayer/World-Bosses.md
 
 The gate's door and the court's way home are taken in fire - a vortex of flame closing over the screen, burning while
-the place beyond is built, opening onto it (`render/gateVeil.js`, `ui/gateVeil.js`); a court taken by force flashes.
+the place beyond is built, opening onto it (`render/gateVeil.js`, `ui/gate/gateVeil.js`); a court taken by force flashes.
 Online alone, as the gate is; client only; nothing on the wire.
 
 ## WB7 (2026-09-25, Mac: "Proper boss audio during the boss fight") - his voice and his music; see 11-Multiplayer/World-Bosses.md
@@ -9780,7 +9780,7 @@ Pinned: `test/decor2a.test.js` (7), `test/decor1.test.js` (+1: the service's hal
   character (the save's `furnishings`) and said once for the lot: "The Oak Chair will be delivered - set it down from
   the Decorate panel in any room you can decorate." On the shelf a piece shows its initials: Daggerfall gives the
   group no picture but the pillows', and the enhanced lists now draw none for archive 0, as the classic drawer never
-  did (`src/ui/enhancedInventory.js` itemLine), where they would have drawn TEXTURE.000's solid colour.
+  did (`src/ui/enhanced/enhancedInventory.js` itemLine), where they would have drawn TEXTURE.000's solid colour.
 - **Set down** from "Your things", listed after the pack's, free. A pillow stands as its own picture (TEXTURE.200
   record 11). Every other piece has no picture of its own (its row shows its kind's letters); "Choose its look" opens
   the panel's LOOK view - the catalogue on that piece's kinds alone (a bed any of the game's beds; a table or a chair
@@ -9835,7 +9835,7 @@ records re-aimed.
     alike. The swatch rides the mount's numbers (`decorItems.js` decorMountDyeTarget), an artifact's never dyed - one
     whose index was never recorded too (AUDIT DYE-ICON 7, below).
   - MOUNT-LAZY: the door decodes the record's own replacement by the dye before it uploads, as the pack's drawer does
-    (`ui/itemScroller.js` preloadIconRecord). A lazy one - Diverse Weapons' metals, Roleplay Realism Items' own
+    (`ui/item/itemScroller.js` preloadIconRecord). A lazy one - Diverse Weapons' metals, Roleplay Realism Items' own
     archives - is never decoded by the archive's preload, so a mount hung before any list drew its record hung as the
     classic picture, or as nothing where the mod's picture is the only one, and a ghost put up before the decode
     landed was not the picture that then stood.
@@ -10813,11 +10813,11 @@ and `test/decor2b.test.js` (the sale's line, the tap under a flight) and the ACC
   keeps only the traders `homeMayEnter` lets the character in on. A guild's hall stands no trader.
 - **The client.** A trader pressed in its home (`scenes/worldModes.js` openHomeVendor -> `scenes/world.js`
   openHomeVendorWindow) opens its stall in the Notice Board's window (`ui/noticeWindow.js` `traderOnly`,
-  `ui/vendorTab.js`): a visitor buys off the purse; the owner takes a piece back or puts one up from the pack. The
+  `ui/vendor/vendorTab.js`): a visitor buys off the purse; the owner takes a piece back or puts one up from the pack. The
   board's Vendors tab lists the region's reachable traders, searched, a row setting the WAYPOINT
-  (`systems/vendorWaypoint.js`) - a gold coin on both world maps (`ui/vendorMapMark.js`, apart from the map's one yellow
+  (`systems/vendorWaypoint.js`) - a gold coin on both world maps (`ui/vendor/vendorMapMark.js`, apart from the map's one yellow
   mark, which stays the player's), the house named on the town map, the compass on the town from the street, a mark in
-  the Overworld's travel view; walking into the house clears it. The Vendor page (`ui/vendorPage.js`) on the pause
+  the Overworld's travel view; walking into the house clears it. The Vendor page (`ui/vendor/vendorPage.js`) on the pause
   window's Character rail under the Professions (Mac: "add a Vendor tab under professions (not in)") holds my traders,
   their stock, what they sold and the takings, collected into the account of the region I stand in.
 - **Pinned** in `test/homevendor_service.test.js` and `test/homevendor_ui.test.js`; `tools/mutants/homevendor.json`.
@@ -11441,7 +11441,7 @@ as `acct61`, and main's own `acct47` (BOULDERS) and `acct48` (MORE-NODES) are di
 - **The arrival** (3.3): walking into a seat town says "Anticlere. Its Charter is unheld." (a crown: "Wayrest, capital
   of the Kingdom of Wayrest. Its Crown Charter is unheld.") in HUB1's place, and reports the seat; a hub that is no seat
   keeps HUB1's line.
-- **The map** (3.3; `ui/inkMap.js`, `ui/heldMap.js`): a seat's hollow ring in stone grey, under its glyph and round any
+- **The map** (3.3; `ui/ink/inkMap.js`, `ui/heldMap.js`): a seat's hollow ring in stone grey, under its glyph and round any
   hub's circle, the names kept clear of it (`markReach`); a crown in its kingdom's metal over a crown seat; a March's
   thin second ring half in each claiming crown's metal, a Free Land's green; the Charter's line in the map's box.
 - **The banners** (3.4; `src/scenes/seatBanners.js`): anchors measured where a seat town's pixel is built - the
@@ -11555,7 +11555,7 @@ Rides the undeployed `acct47` (migration 0050 - `acct45` and 0049 until main's P
 - **The client** (`net/townSeatBook.js` dressed, `scenes/world.js` seatHere): a seat this client derived is dressed in
   what the service says of it. The arrival names the holder ("Anticlere, held by the Silver Hand <SH>."); the map's ring
   is filled with the holder's field and edged in its border, split in a Contested seat's two contenders' fields, its
-  edge burning in a siege week (`ui/inkMap.js` paintSeatRing); the seat's banners fly the holder's own heraldry, the
+  edge burning in a siege week (`ui/ink/inkMap.js` paintSeatRing); the seat's banners fly the holder's own heraldry, the
   kingdom's plain banner while unheld or for a holder with none (`seatBannerOf` - Seats-Arc 13's "a held seat's banners
   in the guild's colours"); the Seat tab (`ui/seatTab.js`) stands under the holder's banner with the holder, the
   battle, the claim or defence line and the Chronicle, and offers the holder's guildmaster its Charter's relinquish,
@@ -12836,7 +12836,7 @@ siege HUD ... and the Chronicle".
   attacker its line never names; the Roll of Arms lists only the guilds a row's line names, in the line's order; the
   index keeps each tag's guild name (`heraldryIndex`, `armsNamed`), and a Chronicle row's guild - the Seat tab's and the
   Roll's - wears arms only where the tag's guild bears its name too (a disbanded guild's tag taken by a new guild shows
-  none of the new arms), a name tag still by tag alone; and the Overworld's name face (`ui/travelViewHud.js` badgeSprite)
+  none of the new arms), a name tag still by tag alone; and the Overworld's name face (`ui/travel/travelViewHud.js` badgeSprite)
   frames a `<TAG>` as the name over a head does - the plate in the border colour and the shield drawn on its canvas
   (`ui/heraldryArt.js` drawShield) into the kept sprite, keyed by the heraldry - off the same lookup
   (setTravelViewArmsOf(seatArmsOf)).
@@ -13769,7 +13769,7 @@ call: two faucets bounded by the UTC day instead - a gathering's find and a loot
   answered is KEPT (on the device) and settles - paid into the region it was sold in, for the character that sold it,
   under the account that made it - the next time a bank counter opens (ASYNC NEVER DROPS); one ask in flight at a time,
   one kept sale an account and character (AUDIT 28 M1, M2, M7). The face: the Enhanced Plus bank's
-  **Marks** group (held, sold today, the price) and **Sell Marks** (`ui/enhancedPorts.js`, `ui/bankWindow.js`'s port-only
+  **Marks** group (held, sold today, the price) and **Sell Marks** (`ui/enhanced/enhancedPorts.js`, `ui/bankWindow.js`'s port-only
   `MARKS_ENTRY`); the counting box stays until the service answers - fifteen seconds a try at most (AUDIT 28 M6). **FLAGGED by name**: the Classic skin's bank is
   DFU's own BANK00I0 panel, which has no room for it - Marks are sold under Enhanced Plus.
 - **A guild's Marks treasury** (`/v1/marks/guild/deposit`, `/withdraw`): any member puts Marks in from the account's
@@ -13781,7 +13781,7 @@ call: two faucets bounded by the UTC day instead - a gathering's find and a loot
   at the Marks and the cascade took them with no line; M5: behind a switch the guildmaster could not pass, a guild
   holding Marks could never go). The tab says where they go.
 - **The account**: `/v1/marks/balance` (the balance, today's gate strikes and Bank sales against their caps), and the
-  account card's **Marks** row (`/v1/account`'s `marks`, `ui/enhancedAccount.js`). A counted gate says its Marks in the
+  account card's **Marks** row (`/v1/account`'s `marks`, `ui/enhanced/enhancedAccount.js`). A counted gate says its Marks in the
   chat (`net/gate/gateClaims.js` onMarks).
 - **The weekly report** (`/v1/marks/report`, a developer's alone): the last seven UTC days' Marks struck by faucet, burnt
   by sink, moved; what is in circulation; the day-by-day line; the accounts at a cap, each once, with the account-days
@@ -13920,7 +13920,7 @@ now); one mutant was equivalent (re-aimed behavioural).
 finished page has left the slot; the hunt page hears Escape as townTalk hands it (`back`); Enter and Space on a DOM
 window's own button are the browser's press, never prevented by townTalk (`ui/input.js` isDomControlTarget); a payday
 notice taken down unread goes back in its queue, and a death in the building's or the dungeon's own slot takes the
-street's DOM windows down (`scenes/bountyHost.js` requeue, `ui/bountyDoor.js` close(read)); and what was asked every
+street's DOM windows down (`scenes/bountyHost.js` requeue, `ui/bounty/bountyDoor.js` close(read)); and what was asked every
 frame is worked out once - a pixel's bounty boards (`boardSplitOf`), the count over a board, the Bank face's kept sale
 (H8).
 
@@ -13959,8 +13959,8 @@ departure (`Port-Ledger.md` section A, PROFESSIONS).
   minted once when it settles; a delivery's id kept across presses; a region's writs cached a minute);
   `src/scenes/herbHost.js` in `scenes/world.js` (the patches in each built pixel's own list, the target, the prompt,
   the act, Escape, the swing held off for an act's length, the Sickle in the hand on the classic lane);
-  `src/systems/herbAct.js` (the hand, the steady hand, the Basket's search; Gentle acts); `src/ui/profHud.js` (the
-  prompt, the meter, four toasts of three seconds, the day's chip, the rank's banner); `src/ui/profPages.js` (the
+  `src/systems/herbAct.js` (the hand, the steady hand, the Basket's search; Gentle acts); `src/ui/professions/profHud.js` (the
+  prompt, the meter, four toasts of three seconds, the day's chip, the rank's banner); `src/ui/professions/profPages.js` (the
   Professions and Stores pages on the Stats rail; withdraw to pack); `ui/noticeWindow.js`'s Work tab (the region's
   writs, Take); `src/systems/professions/profItems.js` (a material as DFU's own item). The refusals are the service's own words
   (`net/accountClient.js`).
@@ -14001,9 +14001,9 @@ departure (`Port-Ledger.md` section A, MINING).
   else nature's ground; boulders only at a piece; a dungeon's veins on its walls; the plan; the Warhammer's StrikeDown
   frames); `src/systems/mineAct.js` (the Pick-Axe's act); `src/systems/professions/profTemplates.js` (the nineteen new templates on
   DFU's dyed pictures); `src/net/profBook.js` (the dungeons' witnessed state, a gem's Stores, the smelt, the asks on the
-  wire the pump skips); `src/ui/profHud.js` (the face, the glint, the aim and the pips); `src/ui/profPages.js` (Mining
-  practised, the Forge on the Stores page); the Prospector's veins on both compasses (`ui/hud.js`,
-  `ui/enhancedHud.js`); a home's forge station (`net/decorLaw.js`, 50,000 gold).
+  wire the pump skips); `src/ui/professions/profHud.js` (the face, the glint, the aim and the pips); `src/ui/professions/profPages.js` (Mining
+  practised, the Forge on the Stores page); the Prospector's veins on both compasses (`ui/hud/hud.js`,
+  `ui/enhanced/enhancedHud.js`); a home's forge station (`net/decorLaw.js`, 50,000 gold).
 - **The switch**: `PROFESSIONS_OPEN`, shipped at `dev`.
 - **Not built here** (PROF0 23): the Motherlodes and gate-touched ground (PROF2b), Daedric smelting, the held map's
   marks, a vein's cracks, the Morrowind lane's pick (FLAGGED), nodes in the fixed city (FLAGGED).
@@ -14593,7 +14593,7 @@ wait on trades"**.
   Escrowed Marks come back to the account, never the character, so an outbid bid or a closed order holds nothing up.
   A guild Stores deposit stays the guild's, as when a member leaves.
 - **The words:** the door says what to settle (`net/accountClient.js`), and the delete dialog now names "its
-  professions and their Stores" (`ui/enhancedMenu.js`).
+  professions and their Stores" (`ui/enhanced/enhancedMenu.js`).
 - `acct32`. Pins: `test/profdelete.test.js` (3). Mutants: `tools/mutants/profdelete.json` (18, all dead).
 
 ## SWITCH-ON (2026-09-29, Mac: "Fuck it lets switch everything on") - Marks and the professions opened to everyone
@@ -14659,7 +14659,7 @@ count, so every sentence was reworded to read right, never just swapped.
 - **Nothing stored moved, and the code keeps its names.** The balances, the ledger, the routes, `MARKS_OPEN`, the
   constants (`HERALDRY_CHANGE_DRAKES`, `tributeDrakes`, the `heraldry-drakes` and `market-drakes-goods` refusal codes,
   the `notice-seat-drakes` class), the service and the relay versions all stand; comments keep "Drakes" where they
-  said it (a CSS comment in `ui/enhancedPlusStyle.js` and SQL comments in `server-account/src/market.js` and
+  said it (a CSS comment in `ui/enhanced/enhancedPlusStyle.js` and SQL comments in `server-account/src/market.js` and
   `writs.js` are inside strings, and no player reads them).
 - **The metal is the metal.** "Silver", "Silver Ingot" and `metal:silver` are untouched; a line that names both reads
   the currency lowercase mid-sentence.
@@ -15016,7 +15016,7 @@ record; in short:
   Empire's account, held at Daggerfall's index (EMPIRE-BANK: the bank of Daggerfall became the bank of the Empire).
   Deposits, letters of credit, withdrawals, a letter drawn, a ship or house bought or sold, the Marks sold, and the
   online wallets (the market, a home, its yard, decor, a guild) all pay from it and into it; the bank window shows it
-  at every branch, and BANK-REGION's report (`ui/enhancedPorts.js`, merged beside it from #488) reads online as the
+  at every branch, and BANK-REGION's report (`ui/enhanced/enhancedPorts.js`, merged beside it from #488) reads online as the
   one account - "Empire account" - with only a branch not yet folded beneath it. Offline, Daggerfall's sixty-two accounts stand; a short table with no Empire account keeps its own.
 - **A loan still stands where it was taken.** Its due date, its default and the reputation a default costs are that
   region's; the gold it lends and the gold that repays it are the Empire account's. The overdue sweep and the join's
@@ -15436,7 +15436,7 @@ AUDIT LANDFORMS (2026-10-07, `01-Overview/Audit-Landforms.md`) added three:
   WOD6's backoff: 5 s, doubling to a minute, twelve more tries), the pixels
   roadless meanwhile and rebuilt when they land (ROADS 25); the port's own
   network only once every try has failed.
-- C4: the ground's lock note (`ui/enhancedMenu.js` ONLINE_GROUND_NOTE) names
+- C4: the ground's lock note (`ui/enhanced/enhancedMenu.js` ONLINE_GROUND_NOTE) names
   the rivers it now locks.
 - C2, TWO BUILDS IN ONE ROOM, named and left to Mac: nothing keeps a build
   without the landforms and one with them out of the same room (`worldRoom`

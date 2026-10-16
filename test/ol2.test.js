@@ -15,7 +15,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { RestWindow, restClockLine } from '../src/ui/restWindow.js';
-import { TravelPopUpWindow, ONLINE_TRAVEL_LINE, LABEL_POS } from '../src/ui/travelPopUp.js';
+import { TravelPopUpWindow, ONLINE_TRAVEL_LINE, LABEL_POS } from '../src/ui/travel/travelPopUp.js';
 import { CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
 import { ONLINE_MINUTES_PER_MS } from '../src/net/wire.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
@@ -97,7 +97,7 @@ test('OL2 (6) + TRAVEL-FARE + LIVED1: online the trip\'s days are the traveller\
   const font = { fnt: { glyphs: new Map(), ascent: 6, lineHeight: 8 }, texture: 't', drawGlyph: () => {}, glyphWidth: () => 4 };
   const renderer = { drawScreenQuad: () => {}, uploadTexture: () => 't', releaseTexture: () => {} };
   const orig = on.w.draw; void orig;
-  const src = rd('src/ui/travelPopUp.js');
+  const src = rd('src/ui/travel/travelPopUp.js');
   assert.match(src, /shadowText\(renderer, font, String\(this\.countdownValueTravelTimeDays\), m, LABEL_POS\.time\[0\], LABEL_POS\.time\[1\]\);/, 'LIVED1: the days, online too - OL2\'s "now" is gone');
   // TO-ONLINE (2026-09-19): ...and NOT over a walked trip. This line is DFU's
   // FAST TRAVEL talking, and while Travel Options stood down on the shared
@@ -120,7 +120,7 @@ test('OL2 (6) + TRAVEL-FARE + LIVED1: online the trip\'s days are the traveller\
   assert.equal(ONLINE_TRAVEL_LINE, 'Online: the days pass on your own clock. You arrive in the world\'s present.', 'LIVED1: whose days, and where the arrival lands');
   assert.deepEqual(LABEL_POS.time, [129, 117]);
   void painted; void font; void renderer;
-  assert.match(rd('src/ui/travelMapWindow.js'), /noWorldTime: this\.deps\.noWorldTime,/, 'threaded through the map window');
+  assert.match(rd('src/ui/travel/travelMapWindow.js'), /noWorldTime: this\.deps\.noWorldTime,/, 'threaded through the map window');
   assert.match(rd('src/scenes/world.js'), /noWorldTime: \(\) => sharedClockOn\(\),/, 'the world host\'s word');
   assert.match(rd('bible/06-Systems/Online-Arc.md'), /## OL2 \(2026-09-14\)/, 'the record');
 });

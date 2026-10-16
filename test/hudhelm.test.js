@@ -1,8 +1,8 @@
 // HUD-HELM (2026-10-15, Mac: "Yes, same branch" - the helm panel registered as the saddle panel was, HUD-SADDLE;
 // bible/01-Overview/Field-Bugs-2026-10-14-riding-panel.md): THE HELM PANEL IS A HUD PIECE. Come Sail Away's helm panel
-// (ui/enhancedHelm.js, CSA-L) is the saddle panel's twin - a whole-screen layer, its bar under the compass - and stood
+// (ui/enhanced/enhancedHelm.js, CSA-L) is the saddle panel's twin - a whole-screen layer, its bar under the compass - and stood
 // outside HUD-MOVE's list as the saddle did, so Alt+U could not move it, size it or turn it off. The bar is a piece now,
-// placed when it is built, with a preview of itself while nobody is at a helm; and the sea's target card (ui/navalHud.js)
+// placed when it is built, with a preview of itself while nobody is at a helm; and the sea's target card (ui/naval/navalHud.js)
 // stands under the bar wherever it is moved - its head the bar's foot, its centre the bar's - and comes back to the
 // compass's foot when the bar is turned off. Driven over test/hudPage.mjs's page with the real sweep and the real panel,
 // and the card through drawNavalHud on the naval suites' document.
@@ -10,9 +10,9 @@ import { byClass } from './chargenDom.mjs';   // the naval suites' document (ins
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { HUD_PIECES, HUD_LAYOUT_CSS, HUD_LOCK_PREF, sweepHudLayout, tickHudLayout, setHudLocked } from '../src/ui/hudLayout.js';
-import { drawEnhancedHelm, hideEnhancedHelm, buildHelmPreview, helmButtons, enhancedHelmBar, ENHANCED_HELM_ID } from '../src/ui/enhancedHelm.js';
-import { drawNavalHud, destroyNavalHud, cardCentreUnder, NAVAL_CARD_GAP, NAVAL_CARD_W } from '../src/ui/navalHud.js';
+import { HUD_PIECES, HUD_LAYOUT_CSS, HUD_LOCK_PREF, sweepHudLayout, tickHudLayout, setHudLocked } from '../src/ui/hud/hudLayout.js';
+import { drawEnhancedHelm, hideEnhancedHelm, buildHelmPreview, helmButtons, enhancedHelmBar, ENHANCED_HELM_ID } from '../src/ui/enhanced/enhancedHelm.js';
+import { drawNavalHud, destroyNavalHud, cardCentreUnder, NAVAL_CARD_GAP, NAVAL_CARD_W } from '../src/ui/naval/navalHud.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { fakePage, withHudPage, childOf } from './hudPage.mjs';
 
@@ -115,7 +115,7 @@ test('HUD-HELM THE CARD UNDER THE BAR: the sea\'s target card stands under the h
 });
 
 test('HUD-HELM THE FOUR HOSTS: the panel has one builder, and it places itself - world.js, the only host with a sea to sail, draws it; exterior.js, worldModes.js and dungeonContext.js draw none (mutant: the build\'s placing dropped)', () => {
-  const helm = rd('src/ui/enhancedHelm.js');
+  const helm = rd('src/ui/enhanced/enhancedHelm.js');
   assert.match(helm, /import \{ placeHudPieces \} from '\.\/hudPlacer\.js';/);
   assert.ok(!helm.includes("from './hudLayout.js'"), 'through the leaf');
   assert.match(helm, /doc\.body\.append\(host\);\n {4}placeHudPieces\(doc\);/, 'placed the moment it is put on the page');
@@ -124,7 +124,7 @@ test('HUD-HELM THE FOUR HOSTS: the panel has one builder, and it places itself -
 });
 
 test('HUD-HELM THE HUD STAYS LIGHT: the editor\'s preview reaches the panel\'s module, so the panel reads the helm keys and the hull names from their leaves (systems/comeSailAway/comeSailAwayActions.js, comeSailAwayHulls.js) - never from the sea\'s law or the boat, which would carry the quest machine onto the HUD (AUDIT GUIDE O6) - and the sea reads the one table back (mutants: the keys or the names read from the sea\'s module or the boat)', async () => {
-  const from = [...rd('src/ui/enhancedHelm.js').matchAll(/^import [^;]*? from '([^']+)';/gm)].map((m) => m[1]);
+  const from = [...rd('src/ui/enhanced/enhancedHelm.js').matchAll(/^import [^;]*? from '([^']+)';/gm)].map((m) => m[1]);
   assert.ok(from.includes('../systems/comeSailAway/comeSailAwayActions.js') && from.includes('../systems/comeSailAway/comeSailAwayHulls.js'), 'the two leaves');
   for (const heavy of ['../systems/comeSailAway/comeSailAway.js', '../systems/comeSailAway/comeSailAwayBoat.js']) assert.ok(!from.includes(heavy), `the panel reads nothing from ${heavy}`);
   assert.equal(/^import /m.test(rd('src/systems/comeSailAway/comeSailAwayActions.js')), false, 'the keys\' table a leaf');

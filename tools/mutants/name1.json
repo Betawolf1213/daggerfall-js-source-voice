@@ -174,7 +174,7 @@
   {
     "name": "NAME1-host-both-faces-drawn",
     "file": "src/net/remotePlayers.js",
-    "old": "    if (layer) {\n      // the world viewport's own height where the docked HUD shrinks it (E5) - the name is sized by the frame it\n      // is drawn into, not by the page (AUDIT NAME1 F3). The rect is NORMALISED (ui/hudLarge.js\n      // largeHudViewportRect: `{ x: 0, y: hudHeight, w: 1, h: 1 - hudHeight }`), so its height is a SHARE of the\n      // canvas and the pixels are that share of it.\n      layer.render({ points, log, covered, colorOf, viewport: (Number.isFinite(rect?.h) ? rect.h : 1) * h, hudScale });\n      return points.length;   // the NAMES the frame drew; the layer's own return is its bubbles (bubbleCount)\n    }",
+    "old": "    if (layer) {\n      // the world viewport's own height where the docked HUD shrinks it (E5) - the name is sized by the frame it\n      // is drawn into, not by the page (AUDIT NAME1 F3). The rect is NORMALISED (ui/hud/hudLarge.js\n      // largeHudViewportRect: `{ x: 0, y: hudHeight, w: 1, h: 1 - hudHeight }`), so its height is a SHARE of the\n      // canvas and the pixels are that share of it.\n      layer.render({ points, log, covered, colorOf, viewport: (Number.isFinite(rect?.h) ? rect.h : 1) * h, hudScale });\n      return points.length;   // the NAMES the frame drew; the layer's own return is its bubbles (bubbleCount)\n    }",
     "new": "    if (layer) layer.render({ points, log, covered, colorOf, viewport: (Number.isFinite(rect?.h) ? rect.h : 1) * h, hudScale });",
     "tests": [
       "test/name1_bubbles.test.js"

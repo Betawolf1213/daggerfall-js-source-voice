@@ -321,7 +321,7 @@ export const mobilePersonName = (nameNPC) => (nameNPC || null);
  * CHAMP-HOVER's exception - a hostile champion, elite or revenant named
  * here - is retired. The mod's law holds for every foe again: while a
  * special foe fights, its name and its trait stand on its health bar
- * alone (ui/hudFoeTarget.js, systems/foeTitle.js), and the first blow's
+ * alone (ui/hud/hudFoeTarget.js, systems/foeTitle.js), and the first blow's
  * line (LOOT7-CHECK CHAMP-SAID) still says a champion on every skin. At
  * peace it is named as ever, title and all (liveEntityName below) - a
  * sworn companion, a calmed one, and a kneeling revenant (its motor is

@@ -46,10 +46,10 @@ import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { LabGrassRenderer } from '../src/render/labGrass.js';
 import { drawRigSpriteBox } from '../src/render/characterSprite.js';
 import { setValue, resetToDefaults, getInt, _resetForTests } from '../src/systems/settings/settings.js';
-import { NUMBER_LAW } from '../src/ui/settingsLaw.js';
-import { helpOf } from '../src/ui/settingsCopy.js';
-import { largeHudWorldAspect, worldViewportRect, dockedLargeHudHeight } from '../src/ui/hudLarge.js';
-import { retroToggleKey, hudShortcutKey } from '../src/ui/hudShortcuts.js';
+import { NUMBER_LAW } from '../src/ui/settings/settingsLaw.js';
+import { helpOf } from '../src/ui/settings/settingsCopy.js';
+import { largeHudWorldAspect, worldViewportRect, dockedLargeHudHeight } from '../src/ui/hud/hudLarge.js';
+import { retroToggleKey, hudShortcutKey } from '../src/ui/hud/hudShortcuts.js';
 import { routeKey } from '../src/ui/input.js';
 import { E, stateGl, presents, retroCfg, fakeMesh, programBuilder } from './retroGl.mjs';
 

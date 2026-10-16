@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-SS-a-right-click-answers-the-question",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "      if (!right && !middle) box.click(vx, vy);",
     "new": "      box.click(vx, vy);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-SS-the-tooltip-over-the-question",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    this._tip.hide();   // AUDIT SS: the piece's tooltip drew over the question until the mouse moved\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-SS-the-own-pile-never-offered",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "const ground = t === REMOTE_TARGET_TYPES.Dropped || (t === REMOTE_TARGET_TYPES.Loot && this.hooks.loot?.playerOwned === true);",
     "new": "const ground = t === REMOTE_TARGET_TYPES.Dropped;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-SS-a-locked-ware-offered-over-its-own-pile",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "const n = ground && !dismantleRefusal(it) ? dismantleStones(it) : 0;",
     "new": "const n = ground ? dismantleStones(it) : 0;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-SS-the-reward-tray-speaks",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "      if (t !== REMOTE_TARGET_TYPES.Merchant) {",
     "new": "      if (true) {",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-SS-a-paintings-box-fitted",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "const rows = box.painting ? box.rows : fitBoxRows(font, box.rows);",
     "new": "const rows = fitBoxRows(font, box.rows);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-SS-the-enhanced-teardown-keeps-the-staged",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "      if (host) clear();\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-SS-the-classic-counter-with-no-dispose",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "  dispose() { if (!this.done) this._close(); }",
     "new": "  dispose() {}",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-SS-a-refused-sale-quoted",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (saleRefused(item)) return null;",
     "new": "  if (false) return null;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-SS-a-refused-sale-asked-how-many",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (side === 'local' && saleRefused(item)) return 0;",
     "new": "  if (false) return 0;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-SS-quick-sell-unguarded",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (isBound(item) || lockRefuses(item, 'sell')) return;   // AUDIT SS",
     "new": "  // AUDIT SS",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "AUDIT-SS-y-not-answered",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (yesKey) yes.onclick({ detail: 1, stopPropagation() {} }); else closeDismantle();",
     "new": "closeDismantle();",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "AUDIT-SS-n-not-answered",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "keepKey = e.key === 'Escape' || e.code === 'KeyN' || e.key === 'Enter' || e.code === 'NumpadEnter';",
     "new": "keepKey = e.key === 'Escape';",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "AUDIT-SS-the-questions-backdrop-inside",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeDismantle(); } };",
     "new": "const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeDismantle(); } };",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "AUDIT-SS-the-questions-first-listeners-left-behind",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  dismantleOff = () => { clearTimeout(timer); ",
     "new": "  dismantleOff = () => { ",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "AUDIT-SS-the-questions-listeners-never-removed",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  dismantleOff = () => { clearTimeout(timer); document.removeEventListener('pointerdown', away, true); document.removeEventListener('keydown', key, true); };",
     "new": "  dismantleOff = () => { clearTimeout(timer); };",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "AUDIT-SS-the-question-not-modal",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  dismantleEl.setAttribute('aria-modal', 'true');\n",
     "new": "",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "AUDIT-SS-the-press-time-refusal-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (!r.ok) { refusedFor(r.reason); return; }",
     "new": "    if (!r.ok) return;",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "AUDIT-SS-the-info-boxs-first-listeners-left-behind",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  infoOff = () => { clearTimeout(timer); ",
     "new": "  infoOff = () => { ",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "AUDIT-SS-the-info-boxs-backdrop-inside",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "new": "const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "AUDIT-SS-the-bound-line-under-the-cards-text",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".card .lockline, .card .boundline, .pack-shell .card p.lockline, .pack-shell .card p.boundline {",
     "new": ".card .lockline, .card .boundline {",
     "tests": [

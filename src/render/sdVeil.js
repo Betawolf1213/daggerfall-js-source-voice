@@ -1,6 +1,6 @@
 // @ts-check
 // SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md section 3): THE STEP THROUGH THE HOUR - the Shattered
-// Hour's own veil, chosen by theme in ui/gateVeil.js beside Dagon's fire (render/gateVeil.js keeps its program and its
+// Hour's own veil, chosen by theme in ui/gate/gateVeil.js beside Dagon's fire (render/gateVeil.js keeps its program and its
 // law: `veilAt` times this one too). One triangle over the veil's own canvas, as the fire's.
 //
 //   INTO THE HOUR - twelve heavy brass blades sweep in from the screen's edges, pivoting on the point where the Rift
@@ -19,7 +19,7 @@
 //   REDUCED MOTION - nothing spins, nothing shatters: the face holds still and an ordered dither wipes it.
 //
 // Every pixel posterized to six levels through the ordered dither, in the Hour's palette (world/superDungeon/sdLook.js); the canvas
-// is a third of the device's pixels (ui/gateVeil.js), drawn pixelated. Output premultiplied. Not a DFU member. Ledger A
+// is a third of the device's pixels (ui/gate/gateVeil.js), drawn pixelated. Output premultiplied. Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
 import { buildProgram } from './glProgram.js';
 import { BAYER_GLSL } from './orderedDither.js';
@@ -45,7 +45,7 @@ export const SD_VEIL_SHATTER = Object.freeze({ cols: 8, rows: 5, s: 1.4 });
 /**
  * THE HAND at `t` seconds shut in `mode`: its turn (radians, clockwise from XII as the screen shows it) - BACKWARDS into
  * the Hour (a turn in SD_VEIL_TURN_S, slowing to one in SD_VEIL_SLOW_S past SD_VEIL_SLOW_AFTER_S), FORWARD and slowing
- * out of it. Pure: the shader's own law (pinned equal), and the quarters' clock (ui/gateVeil.js strikes them as it passes
+ * out of it. Pure: the shader's own law (pinned equal), and the quarters' clock (ui/gate/gateVeil.js strikes them as it passes
  * IX, VI, III and XII).
  */
 export function sdVeilHand(t, mode) {

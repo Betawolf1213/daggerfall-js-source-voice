@@ -833,7 +833,7 @@ Mac, 2026-09-20: *"Shrink the inventory icon for the pellet ammo."*
 
 ### Fitting the cell was never the question
 
-The list cell is 50x38, and `makeIconDrawer` (`src/ui/itemScroller.js`)
+The list cell is 50x38, and `makeIconDrawer` (`src/ui/item/itemScroller.js`)
 never *enlarges*:
 
 ```js

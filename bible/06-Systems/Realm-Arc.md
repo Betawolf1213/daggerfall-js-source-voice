@@ -30,7 +30,7 @@ Offline play keeps every one of these decisions exactly as it stands.
 ### The trust boundary
 
 - **The Online door lists every local slot.** The pieces are `src/main.js` (the Online choice sets `load`, `online`
-  and `loadkey`), `src/systems/save/saveSlots.js` `restorableSaves`, and `src/ui/enhancedMenu.js`.
+  and `loadkey`), `src/systems/save/saveSlots.js` `restorableSaves`, and `src/ui/enhanced/enhancedMenu.js`.
   - `online` is only a URL flag (`src/systems/online/onlineLane.js` `isOnlinePage`).
   - The save is plain JSON with no signature or hash. Its only gate is `SAVE_VERSION` (`src/systems/save/save.js`).
 - **Online progress writes into every slot of the character.** Closing an online tab saves them all

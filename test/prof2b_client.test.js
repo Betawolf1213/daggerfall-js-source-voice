@@ -220,7 +220,7 @@ test('PROF2b the seams by source: the professions\' book sends a harvest\'s Watc
   assert.match(w, /for \(const l of motherlodeBook\.markedAll\(_lodesUp\)\) \{/);   // AUDIT SILVER-WAYS D7 (PIN MOVED): into the frame's own list; FIELD BUGS 2026-10-12g LODE-MARK (PIN MOVED): from its warning on
   assert.match(w, /return nodeCompassPoints\(far\.length \? \[\.\.\.far, \.\.\.\(near \?\? \[\]\)\] : near, trackerAnimals\(\)\);/);   // LODE-MARK (PIN MOVED): drawn over the near nodes
   assert.match(src('src/scenes/gatherHost.js'), /restandAt\(px, py\) \{ restandAt\(px, py\); \},/);
-  assert.doesNotMatch(src('src/ui/profPages.js'), /PROF2b/, 'no card waits on the Motherlodes');
+  assert.doesNotMatch(src('src/ui/professions/profPages.js'), /PROF2b/, 'no card waits on the Motherlodes');
   for (const e of ['motherlode-closed', 'motherlode-watch', 'motherlode-found', 'motherlode-full']) assert.ok(REFUSALS[e], e);
   const svc = src('server-account/src/index.js');
   assert.match(svc, /'\/v1\/prof\/harvest': \(\) => \(isMotherlodeNode\(body\?\.node\) \? strikeMotherlode\(ctx, who\.player, env, body\) : harvestNode\(ctx, who\.player, env, body\)\),/);

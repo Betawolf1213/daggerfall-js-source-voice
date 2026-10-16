@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   MODERN_TEXT_SCALE, MODERN_BLOCK_SIZE, MODERN_QUESTION_BG, MODERN_ANSWER_BG,
-} from '../src/ui/nativeTalk.js';
+} from '../src/ui/native/nativeTalk.js';
 import { LIVE } from '../src/systems/settings/settings.js';
 
 // UI6 - THE MODERN CONVERSATION STYLE (DaggerfallTalkWindow :53-60,
@@ -28,7 +28,7 @@ test('UI6: the four constants are DFU\'s (:53-54, :59-60)', () => {
 });
 
 test('UI6: the wrap narrows BEFORE the scale, the row pitch follows the scale, and the block is the LINE not the panel', () => {
-  const talk = read('src/ui/nativeTalk.js');
+  const talk = read('src/ui/native/nativeTalk.js');
   // MaxWidth *= 0.75 happens on the label, and the glyphs are then
   // drawn at 0.8 - so the wrap width in FONT units is the narrowed
   // box divided by the scale.
@@ -42,7 +42,7 @@ test('UI6: the wrap narrows BEFORE the scale, the row pitch follows the scale, a
 });
 
 test('UI6: shadowText grew a REAL scale - the option existed nowhere before, so a `scale:` would have been silently ignored', () => {
-  const panel = read('src/ui/nativePanel.js');
+  const panel = read('src/ui/native/nativePanel.js');
   // AUDIT 39 F128 added shadowOffset after scale (ListBox's selected
   // row draws with ShadowPosition zero); the pin keeps asking for the
   // scale option it was written for.
@@ -60,11 +60,11 @@ test('UI6: shadowText grew a REAL scale - the option existed nowhere before, so 
 });
 
 test('UI6: the classic path is untouched and the key is LIVE', () => {
-  const talk = read('src/ui/nativeTalk.js');
+  const talk = read('src/ui/native/nativeTalk.js');
   assert.match(talk, /const modern = getBool\('GUI', 'EnableModernConversationStyleInTalkWindow'\);/);
   // Off, every modern term collapses to the classic one.
   assert.match(talk, /const tw = measureText\(font\.fnt, text\) \* \(modern \? MODERN_TEXT_SCALE : 1\);/);
   assert.match(talk, /scale: modern \? MODERN_TEXT_SCALE : 1/);
   assert.match(read('src/systems/settings/settingsDefaults.js'), /"EnableModernConversationStyleInTalkWindow": "False"/, 'ships off');
-  assert.equal(LIVE['GUI/EnableModernConversationStyleInTalkWindow'], 'src/ui/nativeTalk.js');
+  assert.equal(LIVE['GUI/EnableModernConversationStyleInTalkWindow'], 'src/ui/native/nativeTalk.js');
 });

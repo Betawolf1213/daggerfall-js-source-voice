@@ -74,7 +74,7 @@
   },
   {
     "name": "EM1-8-the-slot-asks-the-TABLE-rather-than-what-it-can-ink",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "      if (!ids.includes(sheet) || sheet === live) return false;",
     "new": "      if (!sheetsFor(context).includes(sheet) || sheet === live) return false;",
     "tests": [
@@ -85,7 +85,7 @@
   },
   {
     "name": "EM1-9-the-slot-ignores-what-the-window-can-ink",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "  const ids = Object.freeze(has ? offer.filter((s) => has.includes(s)) : [...offer]);",
     "new": "  const ids = Object.freeze([...offer]);",
     "tests": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "EM1-10-a-sheet-forgets-where-it-was-looking",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "      if (currentView) views.set(live, { ...currentView });",
     "new": "",
     "tests": [
@@ -107,7 +107,7 @@
   },
   {
     "name": "EM1-11-the-remembered-view-is-the-window-s-own-object",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "      if (currentView) views.set(live, { ...currentView });",
     "new": "      if (currentView) views.set(live, currentView);",
     "tests": [
@@ -117,7 +117,7 @@
   },
   {
     "name": "EM1-12-a-refused-select-remembers-anyway",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "      if (!ids.includes(sheet) || sheet === live) return false;\n      if (currentView) views.set(live, { ...currentView });",
     "new": "      if (currentView) views.set(live, { ...currentView });\n      if (!ids.includes(sheet) || sheet === live) return false;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "EM1-13-the-toggle-does-not-wrap",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "      const next = ids[(((i + step) % ids.length) + ids.length) % ids.length];",
     "new": "      const next = ids[i + step];",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "EM1-14-the-strip-walks-the-TABLE-rather-than-the-slot",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "  for (const sheet of slot?.ids ?? []) {",
     "new": "  for (const sheet of sheetsFor(context)) {",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "EM1-15-the-tabs-overlap",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    x += w + gap;",
     "new": "    x += gap;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "EM1-16-a-tab-is-hit-only-on-its-own-ink",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "  const i = grabHit(tabs, px, py, STRIP.grab * (layout?.scale ?? 1));",
     "new": "  const i = grabHit(tabs, px, py, 0);",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "EM1-17-the-hit-box-has-no-bottom",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    if (px < b.x - g || px > b.x + b.w + g || py < b.y - g || py > b.y + b.h + g) continue;",
     "new": "    if (px < b.x - g || px > b.x + b.w + g || py < b.y - g) continue;",
     "tests": [
@@ -177,7 +177,7 @@
   },
   {
     "name": "EM1-18-the-tabs-are-lettered-without-a-halo",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    ctx.strokeText(t.title, t.x, t.y);\n",
     "new": "",
     "tests": [
@@ -187,7 +187,7 @@
   },
   {
     "name": "EM1-19-every-tab-is-drawn-live",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    ctx.fillStyle = t.live ? PEN.name : PEN.soft;",
     "new": "    ctx.fillStyle = PEN.name;",
     "tests": [
@@ -196,7 +196,7 @@
   },
   {
     "name": "EM1-20-the-strip-does-not-scale-with-the-paper",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "  return clamp((paperW || STRIP.refPaper) / STRIP.refPaper, STRIP.scaleMin, STRIP.scaleMax);",
     "new": "  return 1;",
     "tests": [
@@ -205,7 +205,7 @@
   },
   {
     "name": "EM1-21-the-strip-scale-is-unbounded",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "  return clamp((paperW || STRIP.refPaper) / STRIP.refPaper, STRIP.scaleMin, STRIP.scaleMax);",
     "new": "  return (paperW || STRIP.refPaper) / STRIP.refPaper;",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "EM1-32-the-grab-law-gives-an-overlap-to-the-FIRST-box-not-the-nearest",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    if (d < bestD) { bestD = d; best = i; }",
     "new": "    return i;",
     "tests": [
@@ -346,7 +346,7 @@
   },
   {
     "name": "EM1-33-the-grab-law-measures-to-the-GROWN-box-rather-than-the-ink",
-    "file": "src/ui/mapStrip.js",
+    "file": "src/ui/map/mapStrip.js",
     "old": "    const dx = Math.max(b.x - px, 0, px - (b.x + b.w));\n    const dy = Math.max(b.y - py, 0, py - (b.y + b.h));",
     "new": "    const dx = Math.max(b.x - g - px, 0, px - (b.x + b.w + g));\n    const dy = Math.max(b.y - g - py, 0, py - (b.y + b.h + g));",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "EM1-34-the-floor-strip-writes-its-own-hit-test",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "  const i = grabHit(rows, px, py, FLOOR_STRIP.grab * (layout?.scale ?? 1));",
     "new": "  const i = rows.findIndex((r) => px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h);",
     "tests": [

@@ -117,7 +117,7 @@ test('REL8: the game says it - the pause window\'s version line leads with the n
   const ver = (UPDATE, BUILD_TAG) => new Function('UPDATE', 'BUILD_TAG', `${line}\nreturn ver;`)(UPDATE, BUILD_TAG);
   assert.equal(ver('0.0.1', 'abcdef012345'), 'DFO Online 0.0.1 (abcdef012345)');
   assert.equal(ver(null, 'abcdef012345'), 'DFO Online abcdef012345');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\[t\('menu\.about\.update', 'Update'\), UPDATE \?\? t\('menu\.about\.devBuild', 'a development build'\)\],[^\n]*\n\s*\[t\('menu\.about\.build', 'Build'\), BUILD_TAG\],/);
 });
 

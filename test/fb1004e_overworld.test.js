@@ -15,7 +15,7 @@ import {
 import { FRIEND_CSS } from '../src/net/social.js';
 import { hasCarriageGate } from '../src/world/immersiveTravelGates.js';
 import { wheelPath, WHEEL_SPOKES } from '../src/ui/carriageWheel.js';
-import { buildInkMarks, paintCarriageWheel, carriageWheelAt, markReach, placeNames, CARRIAGE_WHEEL_R } from '../src/ui/inkMap.js';
+import { buildInkMarks, paintCarriageWheel, carriageWheelAt, markReach, placeNames, CARRIAGE_WHEEL_R } from '../src/ui/ink/inkMap.js';
 import { readTravellerMarks, travellerMarksKey } from '../src/ui/partyMapMarks.js';
 import { seatTipOf, seatInfoLine } from '../src/net/townSeatLaw.js';
 
@@ -110,8 +110,8 @@ test('OW-HUBS law: a town stands a carriage when one of its blocks is a gate Imm
   // the held map's marks carry it
   const marks = buildInkMarks({ summaries: [], carriageAt: () => true });
   assert.deepEqual(marks, []);
-  assert.match(rd('src/ui/inkMap.js'), /carriage: !!carriageAt\(m\.summary\),/);
-  assert.match(rd('src/ui/inkMap.js'), /for \(const \[beside, x, y, m\] of wheels\) paintCarriageWheel\(ctx, x, y, beside, m\);/);
+  assert.match(rd('src/ui/ink/inkMap.js'), /carriage: !!carriageAt\(m\.summary\),/);
+  assert.match(rd('src/ui/ink/inkMap.js'), /for \(const \[beside, x, y, m\] of wheels\) paintCarriageWheel\(ctx, x, y, beside, m\);/);
   assert.match(rd('src/ui/heldMap.js'), /carriageAt: \(s\) => !!this\.deps\.carriageAt\?\.\(s\),/);
 });
 
@@ -141,8 +141,8 @@ test('OW-KIN / OW-WHO on the travel map: the rows keep their kin and Renown, a k
   assert.match(H, /travellers: this\._trav\.filter\(\(t\) => playerShown\(t\)\)\.map\(\(t\) => \(\{ x: t\.x, y: t\.y, name: t\.name, color: TV_KIN_COLORS\[t\.kin\] \?\? TRAVELLER_MARK_CSS,/);
   assert.match(H, /for \(const \[kin, word\] of Object\.entries\(TV_KIN_LEGEND\)\) \{/);
   assert.match(H, /if \(this\._trav\.length\) \{\n\s*const row = el\('div', 'hmkeyrow'\);\n\s*row\.append\(el\('span', 'hmkeywho', TV_WHO_TEXT\.title\)\);/, 'the row\'s word is never a .hmkeyname (a phone hides those, and the grid would shift a column)');
-  assert.match(rd('src/ui/enhancedStyle.js'), /\n {2}\.hmkeyname \{ display: none; \}/, 'which a phone hides');
-  assert.ok(!/\.hmkeywho \{[^}]*display: none/.test(rd('src/ui/enhancedStyle.js')));
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\n {2}\.hmkeyname \{ display: none; \}/, 'which a phone hides');
+  assert.ok(!/\.hmkeywho \{[^}]*display: none/.test(rd('src/ui/enhanced/enhancedStyle.js')));
   assert.match(H, /if \(which === 'renown'\) cycleTravelViewRenown\(\); else toggleTravelViewWho\(which\);/);
   assert.match(H, /const tip = m\.seat \? readTip\(seatTipOf\(m\.seat\), \{ textMax: SEAT_TIP_TEXT_MAX \}\) : null;/, 'a seat\'s lines whole (SEAT_TIP_TEXT_MAX)');
   assert.match(H, /\.\.\.\(seat \? \[seatInfoLine\(seat, seat\.holder\?\.guild \?\? null\)\] : \[\]\)/);
@@ -216,7 +216,7 @@ const frame = (hud, marks) => hud.updateTravelViewHud({ feet: null, heading: nul
 test('OW-HUBS / SEAT-TIP readout: a carriage town wears its wheel in brass where another wears its dot, its plate edged in brass; a plate with a card shows it under the pointer and lets it go (mutants: the wheel never drawn; the card never shown)', async () => {
   // (the card made only for the plate under the pointer, its long lines whole, measured once, never over the block: below)
   _resetTravelViewFilters();
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const P = fakeDoc();
   hud.showTravelViewHud({}, P.doc);
   try {
@@ -243,7 +243,7 @@ test('OW-HUBS / SEAT-TIP readout: a carriage town wears its wheel in brass where
 
 test('SEAT-TIP readout: a seat\'s card is made only for the plate under the pointer; its long lines are whole (a holder and a battle name two guilds each); its box is measured once a card, not once a frame; over the block\'s own controls no plate is lit and no card shown (mutants: every card made; the seat\'s lines cut at 80; the box measured each frame; the block\'s controls a plate)', async () => {
   _resetTravelViewFilters();
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const P = fakeDoc();
   hud.showTravelViewHud({}, P.doc);
   try {
@@ -275,7 +275,7 @@ test('SEAT-TIP readout: a seat\'s card is made only for the plate under the poin
 
 test('OW-KIN / OW-WHO / OW-NODE-KM readout: a friend\'s and a guild-mate\'s names in their colours; the who\'s switches hide a kin and the floor a low Renown; the node reach hides a far group; the panel\'s presses are the store\'s (mutants: the name\'s colour the stranger\'s; the panel\'s presses dead)', async () => {
   _resetTravelViewFilters();
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const P = fakeDoc();
   hud.showTravelViewHud({}, P.doc);
   try {

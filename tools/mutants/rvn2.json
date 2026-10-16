@@ -505,7 +505,7 @@
   },
   {
     "name": "RVN2-the-page-unnamed",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "    for (const c of chips) { const chip = el('span', 'rvn-chip', c.name); chip.title = c.title; box.append(chip); }\n    text.append(box);\n    text.append(el('span', 'rvn-effects',",
     "new": "    text.append(box);\n    text.append(el('span', 'rvn-effects',",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "RVN2-the-page-name-moved",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "arrowWise: 'Arrow-wise',",
     "new": "arrowWise: 'Arrowwise',",
     "tests": [

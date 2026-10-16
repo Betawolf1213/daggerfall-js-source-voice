@@ -18,7 +18,7 @@
 // moving), how far it rolled (its odometer's metres since the last frame), on a road or not, the wagon's load, and
 // whether the wagon went with it (driven, or its team following). The motor asks `rideScale(mode)` for its ride's pace
 // and transport.js's gallop gate asks `gallopGate`, its walk `rideWalks` (HORSE-WALK); the HUD asks `bar()`; the Stable
-// card `model()` and `act()`; the Enhanced Plus saddle panel (ui/enhancedSaddle.js) `saddle(mode)` and `act()`.
+// card `model()` and `act()`; the Enhanced Plus saddle panel (ui/enhanced/enhancedSaddle.js) `saddle(mode)` and `act()`.
 //
 // A horse's breath is kept here, by its seed (no field: a gallop's breath is not a thing to save), and comes back whole
 // over any span of the clock skipped (steedCare.js SKIP_MINUTES - a rest, a wait, a journey, a load).
@@ -272,7 +272,7 @@ export function createUpkeep({ items, now, horseCare = () => null, wagonUpkeep =
   }
 
   /**
-   * STEED-UI: THE SADDLE PANEL'S READ (ui/enhancedSaddle.js) - the horse ridden, or the lead of the team driven (the
+   * STEED-UI: THE SADDLE PANEL'S READ (ui/enhanced/enhancedSaddle.js) - the horse ridden, or the lead of the team driven (the
    * pack's first horse either way: horseCoats.js activeHorseItem), and the wagon: the horse's breath while it is ridden
    * (`mode` 'Horse' - a team in harness never gallops), winded or not; its bond's word, its points, and the next word
    * and the points it is reached at (null at Kindred). The hunger is the one a hand should feed: astride, the horse
@@ -299,7 +299,7 @@ export function createUpkeep({ items, now, horseCare = () => null, wagonUpkeep =
           hunger: HUNGER[ns.hunger].name, hungerKey: ns.hunger, fedHours: f != null && f > t ? (f - t) / 60 : 0,
           full: f != null && f - t >= FULL_AHEAD, feed: Math.max(0, horses.indexOf(needy)), team: team.length,
           tier: st.tier, bond: st.bond, ...bondWay(st.bond),
-          hungerCosts: !!care.hungerCosts,   // HORSE-TIERS: NO RED where hunger costs nothing (ui/enhancedSaddle.js)
+          hungerCosts: !!care.hungerCosts,   // HORSE-TIERS: NO RED where hunger costs nothing (ui/enhanced/enhancedSaddle.js)
         };
       }
     }

@@ -13,7 +13,7 @@ import {
   csFloatString, mapOverlayDraws, MAP_MARKER_MODE_COLORS, MAP_MARKER_MODE_LABELS, MAP_HELP_LINES, DAGGERFALL_DEFAULT_TEXT_COLOR,
   COLOR_BLACK, COLOR_RED, LINE_TEXTURE,
 } from '../src/systems/comeSailAway/comeSailAwayMap.js';
-import { REGION_PANEL_OFFSET } from '../src/ui/travelMapWindow.js';
+import { REGION_PANEL_OFFSET } from '../src/ui/travel/travelMapWindow.js';
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND, hasActiveEffect, tickActiveEffects } from '../src/systems/effects.js';
 import { liveBundles } from '../src/systems/mysticism.js';
 

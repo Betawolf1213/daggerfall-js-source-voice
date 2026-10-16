@@ -10,7 +10,7 @@ import {
   toolTipsEnabled, toolTipDelay, ToolTip,
   DEFAULT_TOOLTIP_TEXT_BG, DEFAULT_TOOLTIP_TEXT_FG,
 } from '../src/ui/toolTip.js';
-import { NATIVE_W, NATIVE_H } from '../src/ui/nativePanel.js';
+import { NATIVE_W, NATIVE_H } from '../src/ui/native/nativePanel.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { DEFAULTS } from '../src/systems/settings/settings.js';
 

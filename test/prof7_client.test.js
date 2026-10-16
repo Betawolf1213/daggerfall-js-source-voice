@@ -27,7 +27,7 @@ import { HIDE_TEMPLATE_ROWS, SKINNING_KNIFE_ROW, knifeCustomItemsForGroup } from
 import { templateByIndex, customItemsForGroup, inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
-import { createProfHud } from '../src/ui/profHud.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { TEMPLATE as CC } from '../src/systems/survival/food.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
@@ -389,7 +389,7 @@ test('PROF7 pieces: the loom\'s - leather armour DFU\'s at Leather with the qual
 // ─── THE PAGES ───────────────────────────────────────────────────────
 
 test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held and the weave, the families, the clothing\'s groups and cloths, the Weavers\' Linen, a garment\'s dye, Craft drawn with the stitch (eight on the beat ask it clean, in the dye it began in), Quick craft; a home\'s sells nothing; away, the word; Hunting and Outfitting practised, Hunting\'s day the account\'s; Smithing\'s unlocks whole again', async () => {
-  const { setProfessionsPages, drawStoresPage, drawProfessionsPage, LOOM_FAMILIES, loomRecipes, dyeWord, PROF_STATIONS, stationColdLine } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, drawProfessionsPage, LOOM_FAMILIES, loomRecipes, dyeWord, PROF_STATIONS, stationColdLine } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setPref('gentleActs', false);
   const held = new Map([['hide:bear', 4], ['hide:spider', 3], ['leather:cured', 1]]);
@@ -450,7 +450,7 @@ test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held a
   assert.ok(bar, 'the stitch\'s bar');
   assert.match(text(), /The stitch - press on the beat, 8 in a row/);
   // eight stitches on the beat: the page's act ticked by hand, each stitch on it
-  const { _loomForTests } = await import('../src/ui/profPages.js');
+  const { _loomForTests } = await import('../src/ui/professions/profPages.js');
   const act = _loomForTests().act;
   for (let i = 0; i < 8; i++) { act.tick(0.75); buttons().find((b) => b.textContent === 'Stitch').onclick(); }
   await tick(); await tick();

@@ -18,7 +18,7 @@ import { createTownTalk } from '../src/scenes/townTalk.js';
 import { createArrestFlow, RELEASE_MINUTES } from '../src/scenes/arrestFlow.js';
 import { CourtScreenWindow, PrisonScreenWindow, PRISON_UPDATE_INTERVAL } from '../src/ui/prisonScreen.js';
 import { worldMinutes, setWorldMinutes, advanceWorldMinutes, MINUTES_PER_DAY } from '../src/systems/worldTick.js';
-import { preloadTalkArt } from '../src/ui/nativeTalk.js';
+import { preloadTalkArt } from '../src/ui/native/nativeTalk.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { TownPopulation } from '../src/systems/town/townPopulation.js';
 import { GENDERS, fullName, BANK_TYPES } from '../src/characters/nameHelper.js';

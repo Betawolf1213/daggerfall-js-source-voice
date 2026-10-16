@@ -144,7 +144,7 @@ registerPlayerStrikeListener(CHAMPIONS, championStrike);
 
 // ── LOOT7-CHECK CHAMP-SAID: a champion said, on either skin ─────────
 // Mac asked for "single named foes with visible traits", and a LIVING champion was named only on the enhanced skin's
-// target frame (ui/hudFoeTarget.js) and its plaque (the World Tooltips plaque is the enhanced skin's - ui/worldPlaque.js
+// target frame (ui/hud/hudFoeTarget.js) and its plaque (the World Tooltips plaque is the enhanced skin's - ui/worldPlaque.js
 // worldPlaqueOn): on the classic skin nothing said one stood until it died, and no screen anywhere said what its trait
 // does (CHAMPION_TRAITS' `text` was read by nothing). So the first blow that lands EITHER WAY - its on me, or mine on
 // it - says it on the line every skin draws (notify.js popupMessage: DaggerfallUI.PopupMessage, the line "%s just

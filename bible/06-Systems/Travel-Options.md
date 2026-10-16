@@ -23,7 +23,7 @@ wounds and the sea all able to interrupt it.
 Which of the two a trip takes is decided by the travel popup's own
 three choices against the player's settings, and by nothing else -
 `TravelOptionsPopUp.IsPlayerControlledTravel` (:80-83), ported in
-`src/ui/travelPopUp.js`:
+`src/ui/travel/travelPopUp.js`:
 
 ```
 (CautiousTravel || !SpeedCautious) && (StopAtInnsTravel || !SleepModeInn) && !TravelShip
@@ -52,14 +52,14 @@ and the journey runs to the next junction on its own.
 | `src/systems/travel/travelPorts.js` | `portLocationIds`, the 417-entry hand-written table of harbours |
 | `src/systems/travel/travelOptionsText.js` | `TravelOptionsModData.csv`, restated; the vendored file is the record and a pin holds them equal |
 | `src/systems/timeScale.js` | Unity's `Time.timeScale`, which the port did not have |
-| `src/ui/travelControlUI.js` | `TravelControlUI.cs` - the 320x27 strip, rect for rect |
-| `src/ui/travelJunctionMap.js` | the junction mini-map panel |
-| `src/ui/travelPathsOverlay.js` | `DrawPath` / `DrawLocation` / `DrawMapSection` - the three routines the map and the mini-map share |
-| `src/ui/travelMapOptions.js` | what the mod adds to the travel map: the ports button, the five-texel page, the info box, the resume prompt, the teleport charge |
-| `src/ui/enhancedTravelControl.js` | **the port's own** - the enhanced lane's travel panel (Mac's addition, not the mod's) |
+| `src/ui/travel/travelControlUI.js` | `TravelControlUI.cs` - the 320x27 strip, rect for rect |
+| `src/ui/travel/travelJunctionMap.js` | the junction mini-map panel |
+| `src/ui/travel/travelPathsOverlay.js` | `DrawPath` / `DrawLocation` / `DrawMapSection` - the three routines the map and the mini-map share |
+| `src/ui/travel/travelMapOptions.js` | what the mod adds to the travel map: the ports button, the five-texel page, the info box, the resume prompt, the teleport charge |
+| `src/ui/enhanced/enhancedTravelControl.js` | **the port's own** - the enhanced lane's travel panel (Mac's addition, not the mod's) |
 
 The travel map and the popup keep their own homes
-(`src/ui/travelMapWindow.js`, `src/ui/travelPopUp.js`): DFU's law lives
+(`src/ui/travel/travelMapWindow.js`, `src/ui/travel/travelPopUp.js`): DFU's law lives
 there and the mod's additions call into `travelMapOptions.js`.
 
 ## The journey, step by step
@@ -185,7 +185,7 @@ journey interrupts it on its own honest clock.
 
 ## The enhanced lane (Mac's addition, not the mod's)
 
-`src/ui/enhancedTravelControl.js` is the port's own: the same
+`src/ui/enhanced/enhancedTravelControl.js` is the port's own: the same
 controls (RATE-LAW: the rate a readout, no stepper) in the enhanced skin's brass and bone, at the screen's own
 resolution, with what a 320-pixel strip had no room for - the hours and
 minutes still to run, how far the destination is, whether the journey

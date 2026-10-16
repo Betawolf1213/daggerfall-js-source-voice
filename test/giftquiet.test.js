@@ -3,7 +3,7 @@
 // companion..."), the caster's ("You cast Heal on Hilda.") and a party mate's on the receiving end ("Bran casts Heal on
 // you.") - are said at most once in GIFT_LINE_QUIET_S of real time (systems/allyCast.js createGiftLineGate;
 // scenes/hostMagic.js sayGift and sayArm; scenes/world.js online.onCast). Each was a new toast every cast and told apart
-// from the line before it, so the notice stack's repeat guard (ui/hudText.js NOTICE-SPAM: the back row only) never
+// from the line before it, so the notice stack's repeat guard (ui/hud/hudText.js NOTICE-SPAM: the back row only) never
 // caught them - a heal cast again and again near a companion stacked three plates a cast in the Enhanced notice panel.
 // The 2026-10-04 audit: an arm unlike the last ready's is said whatever the window, and asking inside the window does
 // not hold a line back longer.
@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { COMPANION_ARMED_LINE, ALLY_ARMED_LINE, GIFT_LINE_QUIET_S, createGiftLineGate } from '../src/systems/allyCast.js';
 import { PRESS_BUTTON_TO_FIRE_SPELL } from '../src/systems/mysticism.js';
-import { HudText } from '../src/ui/hudText.js';
+import { HudText } from '../src/ui/hud/hudText.js';
 
 const fx = (type, subType = 0, mag = 20, dur = 0) => ({
   type, subType,

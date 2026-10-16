@@ -1021,7 +1021,7 @@ test('S40: worldModes only routes the large HUD in a mode it DRAWS', () => {
     /if \(mode === 'dungeon' \|\| mode === 'interior'\) \{\n\s+if \(routeLargeHudClick\(px, py, e\.button,/);
   // ...and the bar's REST panel is a real destination now, in the
   // hosts that own it.
-  assert.match(src('src/ui/hudLarge.js'), /key: 'rest',[^}]*action: 'Rest'/);
+  assert.match(src('src/ui/hud/hudLarge.js'), /key: 'rest',[^}]*action: 'Rest'/);
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     assert.match(src(f), /toggleRest: \(\) => toggleRest\(\),/, f);
   }

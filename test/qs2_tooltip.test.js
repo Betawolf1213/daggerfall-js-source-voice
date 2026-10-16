@@ -25,8 +25,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import {
   clearQuickslots, quickslotOf, quickslotEntry, assignQuickslot,
 } from '../src/systems/quickslots.js';
@@ -291,6 +291,6 @@ test('QS2 tooltip: the stylesheet reaches both new classes, in both faces - the 
   assert.match(ENHANCED_CSS, /\.acts \{ display: flex; gap: 8px; flex-wrap: wrap; \}/,
     'and the row WRAPS, so a narrow screen never cuts a button off');
   // The source says which module owns the law, so the next reader finds it.
-  assert.match(rd('src/ui/enhancedInventory.js'),
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'),
     /import \{ isQuickConsumable, canSwapTo, quickslotOf, assignQuickslot, clearQuickslot, hotbarSlotOf \} from '\.\.\/systems\/quickslots\.js';/);   // HB1: the hotbar's own slot law beside the diamond's
 });

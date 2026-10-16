@@ -10,7 +10,7 @@
   },
   {
     "name": "CEIL-GHOST-the-bar-over-the-ceiling",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  return [feet[0], Number.isFinite(up) ? Math.max(from, Math.min(want, from + up - CREW_BAR_UNDER_CEILING)) : want, feet[2]];",
     "new": "  return [feet[0], want, feet[2]];",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CEIL-GHOST-the-bar-into-the-floor",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "Number.isFinite(up) ? Math.max(from, Math.min(want, from + up - CREW_BAR_UNDER_CEILING)) : want",
     "new": "Number.isFinite(up) ? Math.min(want, from + up - CREW_BAR_UNDER_CEILING) : want",
     "tests": [

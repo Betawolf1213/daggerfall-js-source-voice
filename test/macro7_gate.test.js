@@ -80,9 +80,9 @@ const SITES = [
   // ── dungeonContext.js ──
   ['src/scenes/dungeonContext.js', 'textAt: (id) => textRsc?.plainText(id)', 'seam', 'src/scenes/shared.js'],
   ['src/scenes/dungeonContext.js', 'rows: (id) => textRsc?.variantLinesById(id) ?? [],', 'seam', 'src/ui/spellbookWindow.js'],
-  ['src/scenes/dungeonContext.js', '// AUDIT 22 F2', 'seam', 'src/ui/nativeInventory.js'],
+  ['src/scenes/dungeonContext.js', '// AUDIT 22 F2', 'seam', 'src/ui/native/nativeInventory.js'],
   ['src/scenes/dungeonContext.js', 'const v = textRsc?.plainText(id);', 'walk'],
-  ['src/scenes/dungeonContext.js', 'rows: (id, pick) => textRsc?.variantLinesById(id, pick ?? Math.random) ?? [],\n', 'seam', 'src/ui/nativeTrade.js'],
+  ['src/scenes/dungeonContext.js', 'rows: (id, pick) => textRsc?.variantLinesById(id, pick ?? Math.random) ?? [],\n', 'seam', 'src/ui/native/nativeTrade.js'],
   ['src/scenes/dungeonContext.js', 'randomText: (id) => textRsc?.randomTextById(', 'plain', { ids: [8999] }],
   ['src/scenes/dungeonContext.js', "the eight attribute popups'", 'seam', 'src/ui/charsheet.js'],
   // ── exterior.js ──
@@ -91,7 +91,7 @@ const SITES = [
   ['src/scenes/exterior.js', 'plainLines(townTalk.lines(rb.textId))', 'plain', { ids: REST_BOXES }],
   ['src/scenes/exterior.js', 'plainLines(townTalk.lines(d.textId))', 'plain', { ids: REST_BOXES }],
   ['src/scenes/exterior.js', 'plainLines(townTalk.lines(ANCHOR_MUST_BE_SET))', 'plain', { ids: [4001] }],
-  ['src/scenes/exterior.js', '// U25: the real item info', 'seam', 'src/ui/nativeInventory.js'],
+  ['src/scenes/exterior.js', '// U25: the real item info', 'seam', 'src/ui/native/nativeInventory.js'],
   ['src/scenes/exterior.js', 'swapQuickslot({', 'seam', 'src/systems/quickslots.js'],
   ['src/scenes/exterior.js', 'rows: (id, pick) => townTalk.lines(id, pick),\n', 'seam', 'src/ui/spellbookWindow.js'],
   ['src/scenes/exterior.js', "the eight attribute popups'", 'seam', 'src/ui/charsheet.js'],
@@ -116,7 +116,7 @@ const SITES = [
   ['src/scenes/world.js', 'const lines = plainLines(townTalk.lines(id));', 'plain', { ids: [20, 32] }],
   ['src/scenes/world.js', 'rows: (id, pick) => townTalk.lines(id, pick),\n', 'seam', 'src/ui/spellbookWindow.js'],
   ['src/scenes/world.js', 'swapQuickslot({', 'seam', 'src/systems/quickslots.js'],
-  ['src/scenes/world.js', '// U25: the real item info', 'seam', 'src/ui/nativeInventory.js'],
+  ['src/scenes/world.js', '// U25: the real item info', 'seam', 'src/ui/native/nativeInventory.js'],
   ['src/scenes/world.js', 'rows: (id, pick) => townTalk.lines(id, pick) });   // AUDIT TRADE-INFO D2', 'plain', { ids: range(8700, 8724) }],   // the trade window's reader reaches the artifact powers alone (systems/item/itemPowers.js magicPowersLines)
   ['src/scenes/world.js', "the eight attribute popups'", 'seam', 'src/ui/charsheet.js'],
   ['src/scenes/world.js', 'endLines: (id) => townTalk.lines(id),', 'seam', 'src/scenes/shared.js'],
@@ -132,7 +132,7 @@ const SITES = [
   ['src/scenes/world.js', 'expandMessageBoxTokens(townTalk.recordTokens(id), talkMcp())', 'walk'],
   // ── worldModes.js ──
   ['src/scenes/worldModes.js', 'textAt: (id) => townTalk?.lines?.(id) ?? null,', 'seam', 'src/scenes/shared.js'],
-  ['src/scenes/worldModes.js', 'rows: (id, pick) => townTalk?.lines?.(id, pick) ?? [],', 'seam', 'src/ui/nativeTrade.js'],
+  ['src/scenes/worldModes.js', 'rows: (id, pick) => townTalk?.lines?.(id, pick) ?? [],', 'seam', 'src/ui/native/nativeTrade.js'],
   ['src/scenes/worldModes.js', 'questBridge.offerBoxes(step, (id) => townTalk?.lines?.(id) ?? [])', 'plain', { ids: [600] }],
   ['src/scenes/worldModes.js', 'const rawRows = (id) => townTalk?.lines?.(id) ?? [];', 'walk'],
   ['src/scenes/worldModes.js', 'const rows = (id) => expandGuildRows(', 'walk'],
@@ -166,19 +166,19 @@ const SITES = [
   ['src/ui/chargenArt.js', 'linesById(SUMMARY_BONUS_TEXT_ID)', 'plain', { ids: [14] }],
   ['src/ui/charsheet.js', 'rows?.(NO_AFFILIATIONS_TEXT_ID)', 'plain', { ids: [19] }],
   ['src/ui/charsheet.js', 'statDescriptionRows(this.hooks.rows?.(', 'walk'],
-  ['src/ui/enhancedChargen.js', 'f.describeRace = ', 'plain', { ids: RACES }],
-  ['src/ui/enhancedChargen.js', 'f.describeClass = ', 'plain', { ids: CLASSES }],
-  ['src/ui/enhancedChargen.js', 'f.describeText = ', 'plain', { ids: CHARGEN_TEXT }],
-  ['src/ui/enhancedChargen.js', 'f.bonusPointsRows = ', 'plain', { ids: [14] }],
-  ['src/ui/enhancedTrade.js', 'return (deps.rows?.(id) ?? []).map(', 'walk'],
+  ['src/ui/enhanced/enhancedChargen.js', 'f.describeRace = ', 'plain', { ids: RACES }],
+  ['src/ui/enhanced/enhancedChargen.js', 'f.describeClass = ', 'plain', { ids: CLASSES }],
+  ['src/ui/enhanced/enhancedChargen.js', 'f.describeText = ', 'plain', { ids: CHARGEN_TEXT }],
+  ['src/ui/enhanced/enhancedChargen.js', 'f.bonusPointsRows = ', 'plain', { ids: [14] }],
+  ['src/ui/enhanced/enhancedTrade.js', 'return (deps.rows?.(id) ?? []).map(', 'walk'],
   ['src/ui/messageBox.js', 'box.rows ??= rows?.(box.textId) ?? [];', 'seam', 'src/scenes/worldModes.js'],
-  ['src/ui/nativeInventory.js', 'rows: expandRowValues(this.hooks.rows?.(ITEM_BROKEN_TEXT_ID)', 'walk'],
-  ['src/ui/nativeInventory.js', 'rows: this.hooks.rows?.(FORBIDDEN_EQUIPMENT_TEXT_ID)', 'plain', { ids: [1068] }],
-  ['src/ui/nativeInventory.js', 'lines: expandRowValues(this.hooks.rows?.(GOLD_TO_DROP_TEXT_ID)', 'walk'],
-  ['src/ui/nativeTrade.js', 'return (this.hooks.rows?.(id) ?? []).map(', 'walk'],
+  ['src/ui/native/nativeInventory.js', 'rows: expandRowValues(this.hooks.rows?.(ITEM_BROKEN_TEXT_ID)', 'walk'],
+  ['src/ui/native/nativeInventory.js', 'rows: this.hooks.rows?.(FORBIDDEN_EQUIPMENT_TEXT_ID)', 'plain', { ids: [1068] }],
+  ['src/ui/native/nativeInventory.js', 'lines: expandRowValues(this.hooks.rows?.(GOLD_TO_DROP_TEXT_ID)', 'walk'],
+  ['src/ui/native/nativeTrade.js', 'return (this.hooks.rows?.(id) ?? []).map(', 'walk'],
   // DaggerfallEffectSettingsEditorWindow puts SpellMakerDescription on a label with SetText (:262-268) - no MacroHelper pass
-  ['src/ui/spellMakerWindow.js', 'return this.deps.rows?.(id) ?? [];', 'plain', { ids: [...SPELLBOOK_DESCRIPTION_IDS.keys()].map(spellMakerDescriptionId) }],
-  ['src/ui/spellMakerWindow.js', 'const live = this.rows?.(id);', 'plain', { ids: [1702, 1703, 1704, 1705, 1707, 1708] }],
+  ['src/ui/spell/spellMakerWindow.js', 'return this.deps.rows?.(id) ?? [];', 'plain', { ids: [...SPELLBOOK_DESCRIPTION_IDS.keys()].map(spellMakerDescriptionId) }],
+  ['src/ui/spell/spellMakerWindow.js', 'const live = this.rows?.(id);', 'plain', { ids: [1702, 1703, 1704, 1705, 1707, 1708] }],
   ['src/ui/spellbookWindow.js', 'sourceValues(effectMacroSource(e))', 'walk'],
   ['src/ui/spellbookWindow.js', 'const raw = this.deps.rows?.(id) ?? [];', 'walk'],
 ];
@@ -266,7 +266,7 @@ test('MACRO-7: every PLAIN verdict’s records carry no token - checked against 
 /** Tokens TEXT.RSC carries that the ONE table has no row for (or C#'s
  *  null row) - each one's consumer, so none is a silent leak. */
 const TOKEN_LEDGER = {
-  '%tcn': 'the travel window: DaggerfallTravelMapWindow Replace("%tcn") on record 31 (ui/travelMapWindow.js)',
+  '%tcn': 'the travel window: DaggerfallTravelMapWindow Replace("%tcn") on record 31 (ui/travel/travelMapWindow.js)',
   '%dbp': '5292, the Dark Brotherhood codeword - no MacroHelper row in DFU either',
   '%dts': '3503-3509, classic summoning records DFU never shows (it speaks 480-484)',
   '%dfs': '3509, the same unshown summoning set',
@@ -299,7 +299,7 @@ test('MACRO-7: every token in DFU’s TEXT.RSC has a table row or a named consum
   const rowless = [...tokens].filter((tok) => !handled.includes(tok)).sort();
   assert.deepEqual(rowless, Object.keys(TOKEN_LEDGER).sort(),
     'a token with no row and no consumer - give it a source, or record who answers it and why');
-  assert.match(read('src/ui/travelMapWindow.js'), /%tcn/, '%tcn’s consumer still does its Replace');
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /%tcn/, '%tcn’s consumer still does its Replace');
 });
 
 test('MACRO-7: the gate’s own net - the census finds the read shapes it claims to', () => {

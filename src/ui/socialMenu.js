@@ -32,7 +32,7 @@ import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first tou
 
 export const SOCIAL_MENU_STYLE_ID = 'dagger-peermenu-style';
 
-/** The card's sheet: the enhanced tokens (ui/enhancedStyle.js) where the skin's sheet is loaded, a fallback where it
+/** The card's sheet: the enhanced tokens (ui/enhanced/enhancedStyle.js) where the skin's sheet is loaded, a fallback where it
  *  is not - the same pairing ui/chatPanel.js uses, so the two surfaces are one skin.
  *
  *  FONT1 (2026-09-16, Mac: "Any enhanced UI or text must be our enhanced version"): the face is the skin's pixel

@@ -760,7 +760,7 @@ the app must close for it either way. So:
   chosen once and kept (`arena2InGame`), goes straight in. The version
   played is kept as Play keeps it, for the launcher's NEW marks.
 - **The launcher answers a controller** (`app/launcher/pad.js`): the
-  game's own front-door loop (`src/ui/menuPad.js`, PAD-DOOR) over the
+  game's own front-door loop (`src/ui/menu/menuPad.js`, PAD-DOOR) over the
   page's own controls - the d-pad or left stick moves the focus, A or
   Start presses it, B is Escape. ONE module: the shell serves it at
   `dagger://launcher/menuPad.js` (`MENU_PAD`) - packed beside the page

@@ -131,7 +131,7 @@ height in a window capped at `min(660px, 94dvh)`; the dock took what was left. T
 whose rows are `auto`, a height that resolves to nothing, so the sprite stood at its bitmap size and nothing was left.
 U53's phone order rule had ordered nothing since PX19f wrapped `.charcol`.
 
-**The fix** (`ui/enhancedStyle.js`, `ui/enhancedInventory.js`, `systems/uiPrefs.js`): under 1000px the region shrinks
+**The fix** (`ui/enhanced/enhancedStyle.js`, `ui/enhanced/enhancedInventory.js`, `systems/uiPrefs.js`): under 1000px the region shrinks
 and scrolls on its own, the dock grows from nothing to at least 45% (the item count never sizes it), and the doll is
 capped at `min(34dvh, 240px)`. On a touch phone the body is hidden until the header's **Body** shows it, the choice
 remembered on the player's own shelf (`packPhoneDoll`); the worn panels take the doll's column and keep every act, the
@@ -148,7 +148,7 @@ down, UP a press at a time, `useResultAction`'s `repaint` was never read (the do
 closed saying "Worn yes" whatever the hood was.
 
 **The fix** (`systems/useItem.js` `toggleHood`, `systems/survival/temperature.js` `hoodCapable`/`hoodUp`,
-`ui/enhancedInventory.js`, `systems/vampirism.js`): a worn cloak's or plain robe's card carries **Raise hood** /
+`ui/enhanced/enhancedInventory.js`, `systems/vampirism.js`): a worn cloak's or plain robe's card carries **Raise hood** /
 **Lower hood** in Use's place and a Hood row, as a light carries Light and Lit; a press moves the garment to the same
 drape's other drawing (`variant ^ 1` - the felt temperature's tables pair the drawings, one hooded in each), says "You
 raise your hood." / "You lower your hood.", redraws the doll and keeps the card up; a raised hood puts a chip on its
@@ -168,7 +168,7 @@ runs to 150 and its quarter hour climbed again: a desert inn's juice read 150, 1
 the red, the Casual loan owed through three. No source of the mod's (the bundle carries a DLL) names a tavern refill.
 
 **The fixes** (`systems/survival/tavernMenu.js`, `temperature.js`, `needs.js`, `ui/tavernWindow.js`,
-`ui/enhancedTavern.js`), each a declared departure (Port-Ledger A) but one:
+`ui/enhanced/enhancedTavern.js`), each a declared departure (Port-Ledger A) but one:
 - **TAVERN-DRINK**: a drink quenches the thirst whole, whatever its kind, as a meal fills the stomach whole; its
   drunkenness by kind and its quarter hour stand, and the Casual loan comes back in the same pick. The desert juice:
   150 to 12.5 in one cup. `test/fb0930_cc_drink.test.js` (3).

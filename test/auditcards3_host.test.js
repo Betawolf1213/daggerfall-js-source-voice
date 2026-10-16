@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDoc } from './decorFakes.mjs';
-import { createCardTableHud } from '../src/ui/cardTableHud.js';
+import { createCardTableHud } from '../src/ui/card/cardTableHud.js';
 import { CardScene, tablePlaces } from '../src/world/card/cardScene.js';
 import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
 import { PUSH_S } from '../src/world/card/cardMotion.js';

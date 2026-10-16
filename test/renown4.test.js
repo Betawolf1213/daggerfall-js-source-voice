@@ -1,5 +1,5 @@
 // RENOWN4 (2026-09-25, Mac: "Also why is there no way to view my renown ingame?" - "Plus XP bar"): MY OWN RENOWN ON
-// MY OWN HUD. The row's law (ui/hudRenown.js renownHudView): the box, the bar only for a total that is the level's, the
+// MY OWN HUD. The row's law (ui/hud/hudRenown.js renownHudView): the box, the bar only for a total that is the level's, the
 // fill the service's credit, the ghost what is earned and not yet answered - never past the level's end - and the
 // words. The service's mint answers the track's total beside the token (acct13 - acct11, then acct12, on its branch; main's WB5b took acct11 first and BASE-HIDE acct12) and the minter hands it on; a report's
 // answer carries it through the one pure plan (renownAnswer); the page adopts it only upward, before the level, and
@@ -15,7 +15,7 @@ import { ACCOUNT_VERSION } from '../server-account/src/service.js';
 import { renownXpFor, RENOWN_XP_MAX } from '../src/net/renown.js';
 import { renownAnswer } from '../src/net/renownTracker.js';
 import { accountTokenMinter, SESSION_KEY } from '../src/net/accountClient.js';
-import { renownHudView, setHudRenown, hudRenown } from '../src/ui/hudRenown.js';
+import { renownHudView, setHudRenown, hudRenown } from '../src/ui/hud/hudRenown.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -160,7 +160,7 @@ test('RENOWN4 the client: the minter hands the total on beside the level - null 
 
 test('RENOWN4 the page: the total adopted from the mint (before the level, so no frame draws the new level over the old total) and from every report\'s answer, only ever upward and only online; the HUD\'s getter built only with the tracker (online), its pending none in an hour the bound has spent (mutants: a lower total taken; the answer\'s total unread; the mint\'s unread; the getter offline; the ghost in a spent hour)', () => {
   const W = src('src/scenes/world.js');
-  assert.match(W, /import \{ setHudRenown \} from '\.\.\/ui\/hudRenown\.js';/);
+  assert.match(W, /import \{ setHudRenown \} from '\.\.\/ui\/hud\/hudRenown\.js';/);
   assert.match(W, /const renownXpAdopt = \(xp\) => \{\n\s*if \(onlineOn && Number\.isSafeInteger\(xp\) && xp >= 0 && \(renownXp === null \|\| xp > renownXp\)\) renownXp = xp;\n\s*\};/);
   assert.match(W, /renownXpAdopt\(who\?\.xp\);[^\n]*\n\s*who = \{ \.\.\.who, level: renownAdopt\(who\?\.level\) \};/, 'the total first, then the level');
   assert.match(W, /const a = renownAnswer\(data, sent, renownSaid\);[^\n]*\n\s*renownXpAdopt\(a\.xp\);[^\n]*\n\s*if \(a\.room !== null\) _renownRoom = [^\n]*\n\s*renownAdopt\(a\.level\);/);   // SCALE4h (PIN MOVED): the hour's room kept between, against the total just adopted
@@ -198,7 +198,7 @@ test('RENOWN4 the HUD, executed: the row hangs under the vitals - the foot\'s la
     createElement: mkEl, createElementNS: (ns) => Object.assign(mkEl(), { ns }),
     getElementById: () => null, head: mkEl(), body: mkEl(),
   };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const entity = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
@@ -247,7 +247,7 @@ test('RENOWN4 the HUD, executed: the row hangs under the vitals - the foot\'s la
 });
 
 test('RENOWN4 the sheet: the row is off until lit, as wide as the vitals\' row on a desk and on a phone; the box is the name\'s gold in the HUD\'s square frame; the ghost is the fill\'s gold, faint; nobar takes the bar and leaves the box (mutants: the row always drawn; the widths drifted from the vitals\')', () => {
-  const CSS = src('src/ui/enhancedStyle.js');
+  const CSS = src('src/ui/enhanced/enhancedStyle.js');
   assert.match(CSS, /\.hud-renown \{ display: none; align-items: center; gap: 8px; height: 22px; width: calc\(3 \* min\(190px, 23vw\) \+ 28px\); \}[^\n]*\n\.hud-renown\.on \{ display: grid; grid-template-columns: 36px minmax\(0, 1fr\) 36px; \}/);   // RENOWN4b: and its height, which the lifts count (renown4b.test.js); RENOWN-BAR: lit, a grid of three with the bar on the middle (renownbar.test.js)
   assert.match(CSS, /\.hud-vital \.hud-track \{ width: min\(190px, 23vw\); height: 20px;/, 'the vitals the row is as wide as');
   assert.match(CSS, /\.hud-bars \{ display: flex; align-items: center; gap: 14px; \}/);

@@ -1,6 +1,6 @@
 // GUIDE3 (2026-09-29, Mac: "How can we set the foundation and improve the quest system substantially? Like really
 // modernize it, make it more accessible", then, of the Quest Guide arc: "This is your baby. Take your time") - THE
-// HERALD (ui/questHerald.js, bible/06-Systems/Quest-Guide-Arc.md): a quest's news as a notice in the enhanced stack.
+// HERALD (ui/quest/questHerald.js, bible/06-Systems/Quest-Guide-Arc.md): a quest's news as a notice in the enhanced stack.
 // Its laws, each over the real producers:
 //
 //   WHAT IT SAYS - the kind, the title, and one line: the newest entry's opening (the date header dropped, the
@@ -30,16 +30,16 @@ import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
 import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { makeWorld, seededRolls } from './guideWorld.mjs';   // the crafted world, the tables loaded
 import { getSeed, srand } from '../src/formats/dfRandom.js';
-import { quietLines } from '../src/ui/questLens.js';
-import { remainWords, entryOpening, OPENING_MAX, QUEST_URGENT_SECONDS } from '../src/ui/questRail.js';
+import { quietLines } from '../src/ui/quest/questLens.js';
+import { remainWords, entryOpening, OPENING_MAX, QUEST_URGENT_SECONDS } from '../src/ui/quest/questRail.js';
 import {
   QuestHerald, questHerald, drawQuestHerald, heraldOn, heraldTimeLeft,
   HERALD_PREF, HERALD_OWNER, HERALD_SECONDS, HERALD_MAX, HERALD_WORDS,
-} from '../src/ui/questHerald.js';
-import { destroyEnhancedNotice, enhancedNoticeKeys, _setNoticeClockForTests, ENHANCED_NOTICE_ID } from '../src/ui/enhancedNotice.js';
+} from '../src/ui/quest/questHerald.js';
+import { destroyEnhancedNotice, enhancedNoticeKeys, _setNoticeClockForTests, ENHANCED_NOTICE_ID } from '../src/ui/enhanced/enhancedNotice.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { TRACKER_PREF } from '../src/ui/questTracker.js';   // GUIDE4 listens to the same look: these pins hear the herald alone
-import { MARKS_PREF } from '../src/ui/questMarks.js';   // ...and GUIDE5's marks follow it too
+import { TRACKER_PREF } from '../src/ui/quest/questTracker.js';   // GUIDE4 listens to the same look: these pins hear the herald alone
+import { MARKS_PREF } from '../src/ui/quest/questMarks.js';   // ...and GUIDE5's marks follow it too
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { FEATURES } from '../src/systems/features.js';
 
@@ -448,7 +448,7 @@ test('GUIDE3 THE HUD\'S CLOCK, THE STACK\'S FACE - a notice is one toast in the 
 // ---------------------------------------------------------------
 
 test('GUIDE3 ONE CALL, EVERY HOST - drawHud draws the herald on its one call, OUTSIDE the skin\'s gate so off still reaches its hide door, on LV2\'s hide gate and the frame\'s seconds; the bridge hears the news after the machine\'s tick; the three hosts that hold quests tick the bridge and all four draw the HUD; the switch is a Features row on by default and the player\'s own online; the opening and the words have one home each (mutants: the draw inside the gate; news before the tick; the row\'s default)', () => {
-  const hud = rd('src/ui/hud.js');
+  const hud = rd('src/ui/hud/hud.js');
   const call = hud.indexOf('\n  drawQuestHerald({ hidden: cursorActive || !hudRenderEnabled(), dt });\n');   // its own statement, at the body's level
   const gate = hud.indexOf("if (isEnhanced() && typeof document !== 'undefined') {\n    drawLevelNotices(");
   assert.ok(call > 0 && gate > call, 'drawHud draws the herald, before (outside) the enhanced gate');
@@ -467,8 +467,8 @@ test('GUIDE3 ONE CALL, EVERY HOST - drawHud draws the herald on its one call, OU
     ['interface', ['enhanced'], 'prefs', HERALD_PREF, true, 'player']);
   assert.equal(PREF_DEFAULTS[HERALD_PREF], true, 'RF4: the shelf derives the default from the row');
   // one home each
-  assert.match(rd('src/ui/questHerald.js'), /import \{ entryOpening, timeLeftWords, QUEST_URGENT_SECONDS \} from '\.\/questRail\.js';/, 'the opening, the time left and the day: the rail\'s, one home each (GUIDE5 gave the phrase its home; AUDIT GUIDE H7 the day)');
-  for (const f of ['src/ui/questHerald.js', 'src/ui/questLens.js', 'src/scenes/questBridge.js', 'src/ui/hud.js']) {
+  assert.match(rd('src/ui/quest/questHerald.js'), /import \{ entryOpening, timeLeftWords, QUEST_URGENT_SECONDS \} from '\.\/questRail\.js';/, 'the opening, the time left and the day: the rail\'s, one home each (GUIDE5 gave the phrase its home; AUDIT GUIDE H7 the day)');
+  for (const f of ['src/ui/quest/questHerald.js', 'src/ui/quest/questLens.js', 'src/scenes/questBridge.js', 'src/ui/hud/hud.js']) {
     assert.doesNotMatch(rd(f), /DAY_NAMES|MONTH_NAMES/, `${f} keeps no copy of the date header`);
   }
   // THE HUD STAYS LIGHT. drawHud imports the herald, and the first full run of this slice met the cycle that makes
@@ -482,8 +482,8 @@ test('GUIDE3 ONE CALL, EVERY HOST - drawHud draws the herald on its one call, OU
     const text = readFileSync(join(ROOT, f), 'utf8');
     for (const m of text.matchAll(/^\s*(?:import|export)\s[^'"]*?from\s+['"](\.[^'"]+)['"]|^\s*import\s+['"](\.[^'"]+)['"]|\bimport\(\s*['"](\.[^'"]+)['"]\s*\)/gm)) walk(join(dirname(f), m[1] ?? m[2] ?? m[3]).replace(/\\/g, '/'));   // AUDIT GUIDE O6: a bare and a dynamic import too
   };
-  walk('src/ui/questHerald.js');
-  for (const f of ['src/ui/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud.js']) {
+  walk('src/ui/quest/questHerald.js');
+  for (const f of ['src/ui/quest/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud/hud.js']) {
     assert.equal(reach.has(f), false, `the herald's imports reach ${f}`);
   }
   assert.equal(QUEST_URGENT_SECONDS, 86400, 'the "Under a day left" line is the lens\'s urgent crossing, one number');

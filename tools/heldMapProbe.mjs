@@ -84,9 +84,9 @@ async function mount(page, { armed = false, gotoPlace = null, mod = false, party
       globalThis.__armCanvas = cv;
       globalThis.__armBuilt = { ok: built.ok, stage: built.stage, error: built.error };
     }
-    const { createTravelMapWindow } = await import('/src/ui/travelMapDoor.js');
+    const { createTravelMapWindow } = await import('/src/ui/travel/travelMapDoor.js');
     const travel = await import('/src/systems/travel/travel.js');
-    const ink = await import('/src/ui/inkMap.js');
+    const ink = await import('/src/ui/ink/inkMap.js');
     const held = await import('/src/ui/heldMap.js');
     const mapsFile = await import('/src/formats/mapsFile.js');
     const ports = await import('/src/systems/travel/travelPorts.js');

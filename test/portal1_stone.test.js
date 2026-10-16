@@ -28,13 +28,13 @@ import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
 import { useItem, USE_PENDING } from '../src/systems/useItem.js';
 import { survivalInfoTokens, itemStatRows } from '../src/systems/item/itemInfo.js';
-import { useResultAction, itemLine } from '../src/ui/enhancedInventory.js';
+import { useResultAction, itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import * as qs from '../src/systems/quickslots.js';
 import { createPortalGates } from '../src/scenes/portalGates.js';
 import { portalOpenAt, portalLife, PORTAL_MS, createPortalSet } from '../src/scenes/portalFx.js';
 import { FadeBehaviour } from '../src/ui/fadeLayer.js';
-import { MerchantServiceWindow, MERCHANT_PANEL_X, MERCHANT_PANEL_Y, MERCHANT_PANEL_H, portalRowRect, PORTAL_ROW_KEY } from '../src/ui/merchantServiceWindow.js';
-import { MerchantRepairWindow, REPAIR_PANEL_X, REPAIR_PANEL_Y, REPAIR_PANEL_H } from '../src/ui/merchantRepairWindow.js';
+import { MerchantServiceWindow, MERCHANT_PANEL_X, MERCHANT_PANEL_Y, MERCHANT_PANEL_H, portalRowRect, PORTAL_ROW_KEY } from '../src/ui/merchant/merchantServiceWindow.js';
+import { MerchantRepairWindow, REPAIR_PANEL_X, REPAIR_PANEL_Y, REPAIR_PANEL_H } from '../src/ui/merchant/merchantRepairWindow.js';
 import { REFORGE_ROW_BG } from '../src/ui/guildServiceWindow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -144,9 +144,9 @@ test('PORTAL1 the use: the stone hands itself to the host\'s door on every reade
   assert.equal(USE_PENDING.openPortal, PS.PORTAL_TEXT.notHere, 'the readers\' stand-in is the door\'s own refusal');
   assert.deepEqual(useResultAction(r, { openPortal: () => {} }), { kind: 'openPortal', item: pack[0], closeFirst: true });
   assert.deepEqual(useResultAction(r, {}), { kind: 'message', text: PS.PORTAL_TEXT.notHere });
-  const inv = read('src/ui/nativeInventory.js');
+  const inv = read('src/ui/native/nativeInventory.js');
   assert.match(inv, /if \(r\.kind === 'openPortal'\) \{\n\s+if \(this\.hooks\.openPortal\) \{ this\._closeSilently\(\); this\.hooks\.openPortal\(r\.item, collection\); \}\n\s+else this\.boxes = \[\{ rows: \[\{ text: USE_PENDING\.openPortal, center: true \}\] \}\];/);
-  assert.match(read('src/ui/enhancedInventory.js'), /const openPortal = deps\.openPortal;\n\s+onExit\(\);[^\n]*\n\s+openPortal\(act\.item, collection\);/, 'the hook read before the unmount clears it');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /const openPortal = deps\.openPortal;\n\s+onExit\(\);[^\n]*\n\s+openPortal\(act\.item, collection\);/, 'the hook read before the unmount clears it');
   const e = { items: pack, equipTable: {} };
   const press = (hooks) => {
     qs.clearHotbar();
@@ -505,12 +505,12 @@ test('PORTAL1 the counter\'s row on the classic popups: under the art, drawn in 
   slot.overlay = new MerchantServiceWindow(hooks);
   slot.overlay.input(PORTAL_ROW_KEY);
   assert.equal(slot.overlay, null, 'the popup out of the slot before the question');
-  const msw = read('src/ui/merchantServiceWindow.js');
+  const msw = read('src/ui/merchant/merchantServiceWindow.js');
   assert.match(msw, /drawRect\(renderer, m, px \+ rx, py \+ ry, rw, rh, REFORGE_ROW_BG\);\n\s+shadowText\(renderer, font, label, m, px \+ rx, py \+ ry \+ 2, \{ align: 'center', w: rw \}\);/, 'the Reforge row\'s one dark, the label centred on it');
   assert.deepEqual(REFORGE_ROW_BG, [0.16, 0.11, 0.06, 0.92]);
   assert.match(msw, /if \(this\.hooks\.portal\) drawPortalRow\(renderer, m, font, MERCHANT_PANEL_X, MERCHANT_PANEL_Y, MERCHANT_PANEL_H, this\.hooks\.portal\.label\);/, 'the plain popup draws it');
-  assert.match(read('src/ui/merchantRepairWindow.js'), /if \(this\.hooks\.portal && font\) drawPortalRow\(renderer, m, font, REPAIR_PANEL_X, REPAIR_PANEL_Y, REPAIR_PANEL_H, this\.hooks\.portal\.label\);/, 'the repair popup draws it');
-  for (const door of ['src/ui/merchantServiceDoor.js', 'src/ui/merchantRepairDoor.js']) {
+  assert.match(read('src/ui/merchant/merchantRepairWindow.js'), /if \(this\.hooks\.portal && font\) drawPortalRow\(renderer, m, font, REPAIR_PANEL_X, REPAIR_PANEL_Y, REPAIR_PANEL_H, this\.hooks\.portal\.label\);/, 'the repair popup draws it');
+  for (const door of ['src/ui/merchant/merchantServiceDoor.js', 'src/ui/merchant/merchantRepairDoor.js']) {
     assert.match(read(door), /\.\.\.\(hooks\.portal \? \[\{ label: hooks\.portal\.label, onClick: \(\) => \{ close\(\); hooks\.portal\.onBuy\?\.\(\); \} \}\] : \[\]\),[^\n]*\n\s+\{ label: 'Exit', onClick: close \},/, `${door}: the Enhanced Plus panel's button, above Exit`);
   }
 });

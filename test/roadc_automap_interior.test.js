@@ -29,7 +29,7 @@ import { INTERIOR_ELEMENT_NAMES, ELEMENT_MODELS, ELEMENT_DOORS } from '../src/sy
 import {
   AutomapWindow, signalAutomapReset, resetAutomapWindowState,
   automapRenderMode, _setAutomapArt,
-} from '../src/ui/automapWindow.js';
+} from '../src/ui/automap/automapWindow.js';
 import { AUTOMAP_MODE } from '../src/render/renderer.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 

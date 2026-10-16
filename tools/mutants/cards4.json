@@ -119,7 +119,7 @@
   },
   {
     "name": "CH-raise-line",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "`${who} raise${s} to ${e.to}.`",
     "new": "`${who} raise${s} ${e.to}.`",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "CH-keys-leak",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "{ if (e.target?.type === 'range' && SLIDER_KEYS.has(e.key)) e.stopPropagation(); }",
     "new": "{ if (e.target?.type === 'range' && SLIDER_KEYS.has(e.key)) void 0; }",
     "tests": [

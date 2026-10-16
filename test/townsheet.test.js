@@ -23,21 +23,21 @@ import {
   QUARTER_WASH, QUARTER_INK, ANCHOR_R, LEAD_AT,
   townBytes, townChains, quarterChains, townReader, isBuilt, isEnterable, isQuarter,
   paintTownStatic, paintTownOverlay, sheetY,
-} from '../src/ui/inkTown.js';
+} from '../src/ui/ink/inkTown.js';
 import {
   QUARTERS, quarterOf, quarterOfType, isShowAllByte, CLASSIC_ARGB, CLASSIC_SETTING, argbChannels,
   TEMPLE_SET, SHOP_SET, TAVERN_BYTE, HOUSE_SET, SHOWALL_SET, GROUND_FLAT_BYTE, STREET_BYTE,
-} from '../src/ui/townQuarters.js';
+} from '../src/ui/town/townQuarters.js';
 import {
   createTownSheet, NAME_ZOOM_MIN, NAME_SIZE, NAME_SIZE_MIN, NAME_SIZE_MAX, FIT_MARGIN,
   NAME_WEIGHT, QUEST_WEIGHT,
-} from '../src/ui/townSheet.js';
-import { isSheet, SHEET_MEMBERS } from '../src/ui/mapStrip.js';
+} from '../src/ui/town/townSheet.js';
+import { isSheet, SHEET_MEMBERS } from '../src/ui/map/mapStrip.js';
 import {
   PEN, HALO_PEN, boundarySegments, linkSegments, toPaper, scaleMinOf,
   INK_RGB, PARCHMENT_RGB, quarterWash, quarterInk, mixRgb, rgba,
   QUARTER_WASH_A, QUARTER_INK_MIX, QUARTER_WASH_DE, QUARTER_INK_DE, QUARTER_INK_PAPER_DE,
-} from '../src/ui/inkMap.js';
+} from '../src/ui/ink/inkMap.js';
 import { nameplateAnchor, WORLD_PER_PX } from '../src/ui/nameplateLayout.js';
 import { buildExteriorLayout } from '../src/ui/exteriorAutomapWindow.js';   // EM-BUG3: the shipped map's own composition, so the two sheets are checked against each other
 import { RMB_DIMENSION } from '../src/formats/blocksFile.js';   // EM-BUG3: the anchor's own divisor, so the pin builds a z rather than copying a row number
@@ -94,7 +94,7 @@ test('EM4: the town is drawn in the BAY\'s pen - not one colour is invented here
   for (const [name, value] of Object.entries(TOWN_PEN)) {
     assert.ok(Object.values(PEN).includes(value), `TOWN_PEN.${name} is a colour inkMap does not have`);
   }
-  const text = src('src/ui/inkTown.js');
+  const text = src('src/ui/ink/inkTown.js');
   assert.match(text, /PEN, HALO_PEN, NAME_FACE, toPaper, paintCaret, paintPartyCarets, CARET_R, quarterWash, quarterInk,\n\} from '\.\/inkMap\.js';/);
   assert.doesNotMatch(text, /rgba?\(/, 'a colour written out here is a colour that drifts');
   assert.doesNotMatch(text, /#[0-9a-fA-F]{3,8}\b/);
@@ -329,7 +329,7 @@ test('EM4: the plan is TRACED - the built-up pixels are an island and the street
   // own edge, which is the picture a reader wants anyway.
   const touching = ec.find((c) => c.some((p) => p.x === BLOCK_PX));
   assert.notDeepEqual(touching[0], touching[touching.length - 1], 'an edge-touching shore is open');
-  assert.match(src('src/ui/inkTown.js'), /ctx\.closePath\(\);/, 'and the painter closes it');
+  assert.match(src('src/ui/ink/inkTown.js'), /ctx\.closePath\(\);/, 'and the painter closes it');
 });
 
 test('EM7: the four QUARTERS go under the WALL, each in classic\'s own hue for it', () => {
@@ -405,7 +405,7 @@ test('EM7: the four QUARTERS go under the WALL, each in classic\'s own hue for i
 });
 
 test('EM7: the quarters and their colours have ONE HOME, and BOTH skins read it there', () => {
-  // The sets used to sit in ui/inkTown.js AND in
+  // The sets used to sit in ui/ink/inkTown.js AND in
   // ui/exteriorAutomapWindow.js at once, which is how the same building
   // could have come to be drawn as a shop on one map and a house on the
   // next. The ladder answers for both now.
@@ -428,7 +428,7 @@ test('EM7: the quarters and their colours have ONE HOME, and BOTH skins read it 
   // THE LADDER IS THE ONE THING isBuilt AND isEnterable ARE MADE OF -
   // derived, not a pair of sets kept beside it, so a byte regrouped
   // moves every answer at once.
-  const inkSrc = src('src/ui/inkTown.js');
+  const inkSrc = src('src/ui/ink/inkTown.js');
   assert.match(inkSrc, /isBuilt = \(byte\) => quarterOf\(byte\) !== null/);
   assert.doesNotMatch(inkSrc, /new Set\(\[/, 'a set here is a set that can drift from the ladder');
   for (const b of [...TEMPLE_SET, ...SHOP_SET, TAVERN_BYTE, ...HOUSE_SET]) {
@@ -531,8 +531,8 @@ test('EM7: every quarter\'s wash and ink are DERIVED from classic\'s own colour 
     'two towns with the same footprint and different quarters ink differently');
 
   // and none of it is written out in the ink module
-  assert.doesNotMatch(src('src/ui/inkTown.js'), /rgba?\(/);
-  assert.doesNotMatch(src('src/ui/townQuarters.js'), /rgba?\(/);
+  assert.doesNotMatch(src('src/ui/ink/inkTown.js'), /rgba?\(/);
+  assert.doesNotMatch(src('src/ui/town/townQuarters.js'), /rgba?\(/);
   // the mixing law is the one home for the strings
   assert.equal(rgba([1.4, 2.6, 3], 0.5), 'rgba(1, 3, 3, 0.5)');
   assert.deepEqual(mixRgb([0, 0, 0], [10, 20, 30], 0.5), [5, 10, 15]);
@@ -563,7 +563,7 @@ test('EM4: the town answers the whole sheet contract, from OUTSIDE the window', 
   assert.equal(s.id, 'town');
   assert.ok(isSheet(s), 'a member of the contract is missing');
   for (const m of SHEET_MEMBERS) assert.ok(m in s, `${m} is not even a key`);
-  const text = src('src/ui/townSheet.js')
+  const text = src('src/ui/town/townSheet.js')
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
   assert.doesNotMatch(text, /\bdocument\b|\bglobalThis\b|heldMap|renderer/);

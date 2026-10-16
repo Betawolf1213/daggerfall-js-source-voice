@@ -2,7 +2,7 @@
 // inventory we should be able to see the total AC of equipped items on our characters. Hovering our cursor over an item
 // ... should also allow us to see comparative stats ... a straight up + or - stat next to the items stats in green and
 // red so we can quickly see what is better or worse"). THE CHARACTER'S ARMOUR AT A GLANCE AND WHAT A WEAR WOULD CHANGE,
-// on the enhanced pack (ui/armourCard.js, composed by ui/enhancedInventory.js).
+// on the enhanced pack (ui/armourCard.js, composed by ui/enhanced/enhancedInventory.js).
 //
 // Every fixture is minted by the port's own makers (itemTemplates setItemFields + mintCondition, enemyEquipment
 // createWeapon, lootRarity applyRarity) and worn through the real equip path (equip.js equipItem); the pack is mounted
@@ -24,9 +24,9 @@ import { STRUCK_BODY_PARTS, struckBodyPartTable } from '../src/combat/formulas.j
 import { installPcaao, uninstallPcaao, PCAAO_BODY_PARTS } from '../src/combat/pcaao.js';
 import { weaponDamageRange, weaponDamageString, itemLongName } from '../src/systems/item/itemInfo.js';
 import { PART_NAMES, dollArmour, struckCounts, overallArmour, tenth, wearComparison, compareBlock } from '../src/ui/armourCard.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { PAGE_IDS } from '../src/ui/packPages.js';
-import { ARMOUR_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { ARMOUR_CSS, PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 setPref(LOOT_RARITY_KEY, true);   // the ladder is on, as it ships (LR5): an armour affix is one of the doll's points
 

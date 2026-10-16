@@ -1,6 +1,6 @@
 // @ts-check
 // SERPENT1 (2026-10-04, Mac: "a large scale sea serpent in the ocean"): SETHRAKUL'S BAR - the gate's boss bar
-// (ui/gateBossBar.js drawGateBossBar: one readout, one node, updated never rebuilt) in the sea's colours, its model made
+// (ui/gate/gateBossBar.js drawGateBossBar: one readout, one node, updated never rebuilt) in the sea's colours, its model made
 // here from the serpent host's (scenes/serpentHost.js bar). Its name over its epithet, its health with the two phase
 // marks cut in it, the ward while it turns a phase, the attack it winds up named in its colour with a line filling to
 // its landing (and MOVE when it is laid on my ship), its stun, the coil's health while one holds a ship, the ships in

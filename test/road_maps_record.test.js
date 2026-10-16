@@ -19,7 +19,7 @@ import {
   longitudeLatitudeToMapPixel, getMapPixelID,
 } from '../src/formats/mapsFile.js';
 import { BsaFile } from '../src/formats/bsaFile.js';
-import { OFFSET_LOOKUP, hasRegionPage, getRegionMapNames } from '../src/ui/travelMapWindow.js';
+import { OFFSET_LOOKUP, hasRegionPage, getRegionMapNames } from '../src/ui/travel/travelMapWindow.js';
 import { CUSTOM_LOCATION_OFFSET } from '../src/ui/exteriorAutomapWindow.js';
 import { hasCustomLocationPosition } from '../src/world/locationLayout.js';
 
@@ -41,7 +41,7 @@ function loadMapsOnly() {
 const src = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const MAPS_SRC = src('../src/formats/mapsFile.js');
 const BSA_SRC = src('../src/formats/bsaFile.js');
-const TRAVEL_SRC = src('../src/ui/travelMapWindow.js');
+const TRAVEL_SRC = src('../src/ui/travel/travelMapWindow.js');
 const AUTOMAP_SRC = src('../src/ui/exteriorAutomapWindow.js');
 
 // ---------------------------------------------------------------------------

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PlayerMotor, FIXED_DT, ODOMETER_MAX_SPEED } from '../src/player/motor.js';
 import { bridgedRoadLeg } from '../src/systems/travel/travelOptions.js';
-import * as hudMod from '../src/ui/travelViewHud.js';
+import * as hudMod from '../src/ui/travel/travelViewHud.js';
 import * as tvMod from '../src/scenes/travelView.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -68,9 +68,9 @@ test('TV-SMOOTH: the route line leaves from the drawn feet; the ring is placed b
   const w = rd('src/scenes/world.js');
   const route = /\n  function travelViewRoute\(\) \{\n[\s\S]*?\n  \}\n/.exec(w)?.[0] ?? '';
   assert.match(route, /const pts = \[player\.feetAt\(\)\];\n\s*const me = state\.worldCoords\(pts\[0\]\);/);
-  const hud = rd('src/ui/travelViewHud.js');
+  const hud = rd('src/ui/travel/travelViewHud.js');
   assert.match(hud, /translate3d\(\$\{f\.feet\.x\.toFixed\(1\)\}px, \$\{f\.feet\.y\.toFixed\(1\)\}px, 0\)/);
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   const ring = /\.tview-ring \{([^}]*)\}/.exec(css)?.[1] ?? '';
   const n = (k) => Number(new RegExp(`${k}: (-?\\d+)px`).exec(ring)?.[1]);
   assert.match(ring, /box-sizing: border-box/);
@@ -114,7 +114,7 @@ test('OW-DOTS-GROUND (Mac: "the dotted lines dont look still"): the route\'s dot
   assert.ok(common.length > 20 && kept / common.length >= 0.9, `${kept} of ${common.length} dots where they were on the land`);
   assert.equal(routeGroundDots([], camAt(0)).length, 0);
   assert.ok(routeGroundDots(route(0), camAt(0), { w: 1280, h: 720 }).every((q) => q.x >= -16 && q.x <= 1296 && q.y >= -16 && q.y <= 736), 'on the screen alone');
-  const hud = rd('src/ui/travelViewHud.js');
+  const hud = rd('src/ui/travel/travelViewHud.js');
   assert.match(hud, /const pairs = Array\.isArray\(f\.routeDots\) \? dotPairsFor\(f\.routeDotSizes\) : null;\n\s*const shown = pairs \? '' : Array\.isArray\(f\.routeDots\) \? routeDotsPath\(f\.routeDots, vw, vh\) : d;/, 'the readout draws the dots, a pair a size; the line where none are handed');
   assert.equal(hudMod.routeDotsPath([{ x: 1.26, y: 2 }, { x: 5000, y: 5 }, null], 100, 100), 'M1.3 2.0h0', 'a zero-length stroke each, off the screen none');
   assert.equal(hudMod.routeDotsPath([{ x: 1, y: 2, c: 0 }, { x: 3, y: 4, c: 2 }], 100, 100, 2), 'M3.0 4.0h0', 'one size\'s dots');
@@ -173,7 +173,7 @@ test('OW-DOTS-EVEN (Mac: "the dot spacing is still a bit weird make it more cons
   routeGroundDots(route, cam, { w: 1280, h: 720, keep: far });
   assert.equal(far.k, k0, 'far past it: picked again');
   assert.deepEqual([routeDotClass(1), routeDotClass(0.1), routeDotClass(2)], [0, ROUTE_DOT_SIZES.length - 1, 0]);
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.equal(Number(/\.tview-route-casing \{[^}]*stroke-width: (\d+);/.exec(css)?.[1]), hudMod.ROUTE_CASING_W, 'the casing\'s width pinned');
   assert.equal(Number(/\.tview-route-line \{[^}]*stroke-width: (\d+);/.exec(css)?.[1]), hudMod.ROUTE_LINE_W, 'the line\'s width pinned');
 });

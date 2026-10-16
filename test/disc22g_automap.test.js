@@ -12,7 +12,7 @@
 // AND WHAT THE 3D MAP HAD THAT THIS DID NOT: notes written with the middle button, teleporter ends joined (or named
 // by the storey they lead to), a way in that breathes, and a key that brings you back to where you stand.
 //
-// Driven through the real floor model (systems/automap/automapFloors.js), the real sheet (ui/automapSheet.js) and the real
+// Driven through the real floor model (systems/automap/automapFloors.js), the real sheet (ui/automap/automapSheet.js) and the real
 // note law (systems/automap/automap.js); the window's wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -20,8 +20,8 @@ import { readFileSync } from 'node:fs';
 import {
   floorTriangles, deriveFloors, floorAt, floorPlan, splitEdges, storeyOccupancy, planBounds, STOREY_MIN_AREA, FLOOR_MIN_GAP,
 } from '../src/systems/automap/automapFloors.js';
-import { createAutomapSheet, READABLE_SCALE } from '../src/ui/automapSheet.js';
-import { boundarySegments, linkSegments, scaleMinOf, SCALE_MAX } from '../src/ui/inkMap.js';
+import { createAutomapSheet, READABLE_SCALE } from '../src/ui/automap/automapSheet.js';
+import { boundarySegments, linkSegments, scaleMinOf, SCALE_MAX } from '../src/ui/ink/inkMap.js';
 
 /** A quad at height y over [x0,x1]x[z0,z1] whose FILE normal looks `ny` (+1 a floor, -1 a ceiling). */
 const quad = (key, y, x0, z0, x1, z1, ny = 1) => ({

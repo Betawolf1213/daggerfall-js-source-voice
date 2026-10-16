@@ -37,7 +37,7 @@
   },
   {
     "name": "KEEP-SPELLBOOK-the-classic-counter-sells-it",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if ((this.mode === 'Sell' || this.mode === 'SellMagic') && isKeptSpellbook(item)) {",
     "new": "    if (false) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "KEEP-SPELLBOOK-the-classic-sell-magic-sells-it",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if ((this.mode === 'Sell' || this.mode === 'SellMagic') && isKeptSpellbook(item)) {",
     "new": "    if (this.mode === 'Sell' && isKeptSpellbook(item)) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "KEEP-SPELLBOOK-the-enhanced-counter-sells-it",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (selling() && isKeptSpellbook(item)) {",
     "new": "  if (false) {",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "KEEP-SPELLBOOK-the-enhanced-counter-quotes-it",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "const saleRefused = (item) => selling() && (lockRefuses(item, 'sell') || isBound(item) || isKeptSpellbook(item));",
     "new": "const saleRefused = (item) => selling() && (lockRefuses(item, 'sell') || isBound(item));",
     "tests": [

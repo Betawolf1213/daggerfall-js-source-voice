@@ -16,11 +16,11 @@ import {
   rowTextColor, rowShadowOffset,
   SELECTED_TEXT_COLOR, HIGHLIGHTED_TEXT_COLOR, HIGHLIGHTED_SELECTED_TEXT_COLOR,
 } from '../src/ui/listPicker.js';
-import { DEFAULT_TEXT_COLOR } from '../src/ui/nativePanel.js';
+import { DEFAULT_TEXT_COLOR } from '../src/ui/native/nativePanel.js';
 import {
   arrowStates, playScrollerArrowClick, scrollThumbSpan, LIST_SLOTS,
   SCROLLBAR_H, SCROLLBAR_Y, SCROLLBAR_W, ARROWS_FULL, UP_ARROW_RECT, DOWN_ARROW_RECT, ARROW_H,
-} from '../src/ui/itemScroller.js';
+} from '../src/ui/item/itemScroller.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { readFileSync } from 'node:fs';
@@ -295,7 +295,7 @@ test('ROAD-A7: the scroller\'s thumb math is now the shared component\'s', () =>
 test('ROAD-A7: both default-rect scroller windows load and draw the arrows', () => {
   // The two windows whose lists ride ItemListScroller's DEFAULT rect
   // (9,0,50,152) - the only ones itemScroller.js's constants describe.
-  for (const rel of ['src/ui/nativeInventory.js', 'src/ui/nativeTrade.js']) {
+  for (const rel of ['src/ui/native/nativeInventory.js', 'src/ui/native/nativeTrade.js']) {
     const code = read(rel);
     assert.match(code, /preloadScrollerArrowArt\(deps\)/, `${rel} loads INVE06I0/INVE07I0`);
     assert.match(code, /drawScrollerArrows\(renderer, m, rect, scroll, items\.length\)/, `${rel} draws them`);
@@ -305,7 +305,7 @@ test('ROAD-A7: both default-rect scroller windows load and draw the arrows', () 
   // ...and the item maker, which hands the scroller its OWN rect
   // (DaggerfallItemMakerWindow.cs:44 - (10,0,50,148)), takes the
   // rect-independent SOUND and none of the rect-bound art.
-  const maker = read('src/ui/itemMakerWindow.js');
+  const maker = read('src/ui/item/itemMakerWindow.js');
   assert.match(maker, /playScrollerArrowClick\(/);
   assert.equal(/drawScrollerArrows/.test(maker), false,
     'the shared arrow art would land four pixels wrong in this window');
@@ -316,7 +316,7 @@ test('ROAD-A7: the picker\'s hover seam reaches it through every window that wra
   // both ride the host hover seam, so a picker inside another window
   // is only reachable if that window forwards it.
   for (const rel of ['src/ui/guildServiceWindows.js', 'src/ui/potionMakerWindow.js',
-    'src/ui/itemMakerWindow.js', 'src/ui/travelMapWindow.js']) {
+    'src/ui/item/itemMakerWindow.js', 'src/ui/travel/travelMapWindow.js']) {
     assert.match(read(rel), /picker\??\.hover\(vx, vy, e\)/, `${rel} forwards the hover`);
   }
   // and the two overlay channels carry the DOM event that stands in
@@ -327,7 +327,7 @@ test('ROAD-A7: the picker\'s hover seam reaches it through every window that wra
 });
 
 test('ROAD-A7: the painting box asks for the picture and sizes the parchment round it', () => {
-  const code = read('src/ui/nativeInventory.js');
+  const code = read('src/ui/native/nativeInventory.js');
   // ShowInfoPopup's painting arm (:1619-1631): the image, and NO
   // chained second box.
   assert.match(code, /this\.boxes = \[\{ rows: infoRows, painting: it\.paintingInfo \}\]/);

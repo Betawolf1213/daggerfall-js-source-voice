@@ -58,7 +58,7 @@
   },
   {
     "name": "CAP-OFF-pages-harvests-of-sixty",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'Today: {n, plural, one {# harvest} other {# harvests}}'",
     "new": "'Today: {n} of 60 harvests'",
     "tests": [
@@ -67,7 +67,7 @@
   },
   {
     "name": "CAP-OFF-pages-harvest-plural-lost",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "{n, plural, one {# harvest} other {# harvests}}",
     "new": "{n} harvests",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "CAP-OFF-pages-hauls-of-forty",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'Today: {hauls, plural, one {# haul} other {# hauls}} - your account\\'s",
     "new": "'Today: {hauls} of 40 hauls - your account\\'s",
     "tests": [
@@ -86,7 +86,7 @@
   },
   {
     "name": "CAP-OFF-pages-hides-of-thirty",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'Today: {hides, plural, one {# hide} other {# hides}}, ",
     "new": "'Today: {hides} of 30 hides, ",
     "tests": [

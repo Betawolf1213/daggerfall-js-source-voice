@@ -18,9 +18,9 @@ import { meteorFall, FX_KINDS, FX_LIGHT_MS, METEOR_FALL_MS, METEOR_ELEV_DEG, MET
 import { HIT_FLASH_PEAK, HIT_FLASH_S } from '../src/systems/hitFlash.js';
 import { numberFor } from '../src/ui/hitNumbers.js';
 import { shakePlayerDamage, flashPlayerDamage, setRemoveHealthListener, playerDamageFlash } from '../src/ui/damageFlash.js';
-import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
-import { destroyGateGround } from '../src/ui/gateGroundView.js';
+import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
+import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import { ENEMY_BASICS, ENEMY_NAMES } from '../src/characters/enemyBasics.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -102,7 +102,7 @@ test('WB13d a blow into his ward says Warded - never a number, the relay refuses
   assert.deepEqual(numberFor({ hit: true, damage: 14, target: { warded: true } }), { kind: 'warded', text: 'Warded', tag: null });
   assert.deepEqual(numberFor({ hit: true, damage: 14, target: { warded: false } }), { kind: 'hit', text: '14', tag: null });
   assert.deepEqual(numberFor({ hit: false, target: { warded: true } }), { kind: 'miss', text: 'Miss', tag: null }, 'a miss is a miss');
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hitnum-warded \{ font-size: calc\(20px \* var\(--hud-scale, 1\)\); font-weight: 600; color: #ffdf8e; \}/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hitnum-warded \{ font-size: calc\(20px \* var\(--hud-scale, 1\)\); font-weight: 600; color: #ffdf8e; \}/);
   assert.match(read('src/scenes/dungeonContext.js'), /b\.entity\.warded = !!b\.warded;/);
 });
 

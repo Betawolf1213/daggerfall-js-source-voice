@@ -18,7 +18,7 @@ import { PlayerWeapon, USING_RIGHT_HAND_TEXT, USING_LEFT_HAND_TEXT } from '../sr
 import { pickpocket } from '../src/systems/talk/talk.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { FEATURES } from '../src/systems/features.js';
-import { tileStates, barReading, classicSegment } from '../src/ui/enhancedMenu.js';
+import { tileStates, barReading, classicSegment } from '../src/ui/enhanced/enhancedMenu.js';
 import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 
 beforeEach(() => { tm._resetTextManagerForTests(); resetSettings(); });
@@ -77,12 +77,12 @@ test('L10N3d crossings: the dungeon-texture tile shows DFU\'s words in the playe
   assert.deepEqual(st.labels, en.labels, 'the law under the words never moves');
   assert.deepEqual(barReading(st), barReading(en), 'a choice with no Off in either language');
   assert.equal(classicSegment(row, st), 0, 'All off still presses Classic');
-  const src = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(src, /el\('button', `ft-segb\$\{i === r\.off \? ' off' : ''\}`, st\.shown\?\.\[i\] \?\? L\)/, 'the bar draws the shown word, else the law\'s');
 });
 
 test('L10N3d crossings: the menu clock reads the time off the date - never by splitting a formatted line at " on ", which a translation\'s pattern need not contain', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.equal(/split\(' on '\)/.test(src), false);
   assert.match(src, /el\('span', 'px-clocktime', formatText\('\{0:00\}:\{1:00\}:\{2:00\}', d\.hour, d\.minute, d\.second\)\)/);
   assert.equal(tm.formatText('{0:00}:{1:00}:{2:00}', 7, 5, 0), '07:05:00');
@@ -202,14 +202,14 @@ test('L10N3d crossings: the magic-item, transport, enchanting, level-up, trade a
   for (const [p, re] of [
     ['scenes/world.js', /if \(!taverns\.length\) return localizedText\('tavern', 'tavern'\);/],
     ['scenes/world.js', /\{ \.\.\.sale, text: cannotCarryText\(\) \}/],
-    ['ui/nativeTrade.js', /text: cannotRemoveItemText\(\), center: true/], ['ui/enhancedTrade.js', /text: cannotRemoveItemText\(\), center: true/],
-    ['ui/nativeTrade.js', /plan\.refusal\?\.text \?\? cannotCarryText\(\)/], ['ui/enhancedTrade.js', /plan\.refusal\?\.text \?\? cannotCarryText\(\)/],
-    ['ui/levelUpView.js', /LANE_VIRTUE \? REMAINING_POINTS_ERROR : mustDistributeBonusPointsText\(\)\);/],
+    ['ui/native/nativeTrade.js', /text: cannotRemoveItemText\(\), center: true/], ['ui/enhanced/enhancedTrade.js', /text: cannotRemoveItemText\(\), center: true/],
+    ['ui/native/nativeTrade.js', /plan\.refusal\?\.text \?\? cannotCarryText\(\)/], ['ui/enhanced/enhancedTrade.js', /plan\.refusal\?\.text \?\? cannotCarryText\(\)/],
+    ['ui/levelUp/levelUpView.js', /LANE_VIRTUE \? REMAINING_POINTS_ERROR : mustDistributeBonusPointsText\(\)\);/],
     ['combat/pcaao.js', /say\?\.\(successfulBackstabText\(\)\);/], ['combat/pcaao.js', /say\?\.\(materialIneffectiveText\(\)\);/],
-    ['ui/enhancedInventory.js', /potion: localizedText\('potionOf', 'Potion of %po'\)\.replaceAll\('%po', potionMacroName\(item\)\)/],
+    ['ui/enhanced/enhancedInventory.js', /potion: localizedText\('potionOf', 'Potion of %po'\)\.replaceAll\('%po', potionMacroName\(item\)\)/],
     ['ui/chargenArt.js', /shadowText\(renderer, font, raceDisplayName\(flow\.race\.key\)/], ['ui/provinceMap.js', /people: raceDisplayName\(race\.key\),/],
-    ['ui/enhancedChargen.js', /`Play as \$\{raceDisplayName\(flow\.race\.key\)\}`/], ['ui/chargen.js', /line\(`\$\{raceDisplayName\(this\.race\.key\)\} \$\{this\.gender\}`/],
-    ['ui/charsheet.js', /label\(processGrammar\(liveRaceName\(e\) \|\| 'Breton'\), 41, 14\);/], ['ui/enhancedCharSheet.js', /race: processGrammar\(liveRaceName\(e\) \|\| 'Breton'\),/],
+    ['ui/enhanced/enhancedChargen.js', /`Play as \$\{raceDisplayName\(flow\.race\.key\)\}`/], ['ui/chargen.js', /line\(`\$\{raceDisplayName\(this\.race\.key\)\} \$\{this\.gender\}`/],
+    ['ui/charsheet.js', /label\(processGrammar\(liveRaceName\(e\) \|\| 'Breton'\), 41, 14\);/], ['ui/enhanced/enhancedCharSheet.js', /race: processGrammar\(liveRaceName\(e\) \|\| 'Breton'\),/],
   ]) assert.match(rd(p), re, p);
   for (const h of ['world', 'worldModes', 'dungeonContext']) assert.match(rd(`scenes/${h}.js`), /noItemToActivateText\(\)\)/, `${h}: the U key`);
   for (const h of ['worldModes', 'dungeonContext']) assert.match(rd(`scenes/${h}.js`), /openTransport\(\) \{ [^}]*cannotChangeIndoorsText\(\)/, `${h}: the T key`);

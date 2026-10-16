@@ -27,8 +27,8 @@ the wallet's pieces unchanged, and no spender, save or service changed for it.
 | `src/systems/decor/decorItems.js`, `src/systems/revenant/revenant.js` | AUDIT 625 W1/W2: the two doors out of the pack that are no place - a home's decoration (`decorStandOf`) and a revenant's theft (`revenantMayTake`) - refuse a pack-only piece too |
 | `src/net/realm/realmTradeLaw.js` | `BOUND_TEMPLATES` names 580 - the realm's trade service refuses it as the client does (acct84) |
 | `src/ui/packPages.js` | the wallet's page is Valuables; and the letter of credit's (below) |
-| `src/ui/enhancedInventory.js` | `packModel`: what the wallet holds leaves the pages (`paged`) and rides `model.wallet`; the wallet's SHEET in its card's body (`walletSheet`); a held piece's way back (`walletBack`); the Use's arm (`pickWallet`); the pack-only refusal |
-| `src/ui/nativeInventory.js` | the Use's arm: DFU's own click-anywhere box, the wallet's lines; the pack-only refusal |
+| `src/ui/enhanced/enhancedInventory.js` | `packModel`: what the wallet holds leaves the pages (`paged`) and rides `model.wallet`; the wallet's SHEET in its card's body (`walletSheet`); a held piece's way back (`walletBack`); the Use's arm (`pickWallet`); the pack-only refusal |
+| `src/ui/native/nativeInventory.js` | the Use's arm: DFU's own click-anywhere box, the wallet's lines; the pack-only refusal |
 | `src/systems/quickslots.js` | a wallet pressed on the hotbar says its figures on the HUD's line |
 | `src/systems/item/itemInfo.js` | the wallet's card |
 | `src/systems/save/save.js`, `src/systems/startingGear.js` | the gift (below) |

@@ -148,7 +148,7 @@ test('audit26 F156: a map is intercepted in BOTH directions and never lands', ()
   assert.equal(take.map, true, 'remote -> local too');
   // the windows route a map plan to their use arm (the reveal), never
   // to applyTransfer
-  const w = rd('src/ui/nativeInventory.js');
+  const w = rd('src/ui/native/nativeInventory.js');
   assert.match(w, /if \(plan\.map\) \{ this\._use\(it, this\.hooks\.items\(\)\); return; \}/);
   assert.match(w, /if \(plan\.map\) \{ this\._use\(it, remote\); return; \}/);
 });
@@ -166,11 +166,11 @@ test('audit26 F157: a lit light source leaving the pack goes out', () => {
   clearLightSourceOnLeave(torch, e3, false);
   assert.equal(e3.lightSource, torch, 'and only when it LEAVES the pack (from == localItems)');
   // the sell staging clears too
-  assert.match(rd('src/ui/nativeTrade.js'), /clearLightSourceOnLeave\(item, this\.hooks\.entity, true\);/);
+  assert.match(rd('src/ui/native/nativeTrade.js'), /clearLightSourceOnLeave\(item, this\.hooks\.entity, true\);/);
 });
 
 test('audit26 F158: the basket takes the CanCarryAmount gate and splits', () => {
-  const t = rd('src/ui/nativeTrade.js');
+  const t = rd('src/ui/native/nativeTrade.js');
   const arm = t.slice(t.indexOf('_pickRemote(slot)'), t.indexOf('_clear()'));
   assert.ok(arm.includes('planTake(item, {'), 'the Buy-mode remote click routes through the ladder');
   assert.ok(arm.includes('bag: [...this.hooks.packItems(), ...this.basket.filter((x) => !isFurnishing(x))]'),

@@ -47,7 +47,7 @@ test('MF1: the portrait poses the body with ITS OWN stance idle, at its start, b
 });
 
 test('MF1: the pack draws the figure\'s PIXELS on a canvas - no PNG, no data URL, one repaint per frame while dragging', () => {
-  const pack = read('src/ui/enhancedInventory.js');
+  const pack = read('src/ui/enhanced/enhancedInventory.js');
   // the figure's own functions (the MW-D38 icon between them still
   // encodes its data URL - a list of thirty icons is the case for one)
   const block = pack.slice(pack.indexOf('// ── MW-D36: the model figure'), pack.indexOf('/** MW-D38: a Daggerfall item'))
@@ -68,7 +68,7 @@ test('MF1: the pack draws the figure\'s PIXELS on a canvas - no PNG, no data URL
   assert.match(pack, /const figure = modelFigure\(\);\s*\n\s*const dollUrl = figure \? null : paperDollDataUrl\(paperDollPixels\(\), \{ scale: 4 \}\);/);
   assert.match(pack, /if \(figure\) \{\s*\n\s*figure\.setAttribute\('role', 'img'\);[\s\S]{0,200}attachFigureTurn\(figure\);\s*\n\s*dollFrame\.append\(figure\);/);
   assert.match(pack, /subscribe\(\(\) => \{ _figureCache = \{ key: null, img: null \}; if \(host\) render\(\); \}\)/, 'a settlement drops the pixels and repaints');
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.pack-shell \.wornmap-doll\.model img, \.pack-shell \.wornmap-doll\.model canvas \{ cursor: ew-resize;/);
   assert.match(css, /\.pack-shell \.wornmap-doll img, \.pack-shell \.wornmap-doll canvas \{ display: block; height: 100%; width: 100%;/);
 });

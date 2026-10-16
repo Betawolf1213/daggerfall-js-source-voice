@@ -59,7 +59,7 @@ test('FT6: the registry row - Enhanced, over the pref, on by default, sound; the
   assert.equal(f.effect, 'Takes effect when the world next loads.');
   assert.deepEqual(checkFeature(f), []);
   assert.equal(featureForControl('prefs', 'enhancedWater'), f);
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.ok(!/prefRow\('enhancedWater'/.test(menu));
   assert.ok(!/function portRowsEnhanced\(/.test(menu), 'FT12: the Enhanced category is gone from the settings rail - its rows are the home\'s');
 });

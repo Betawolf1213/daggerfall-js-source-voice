@@ -8,17 +8,17 @@
 // body's (scenes/world.js peersNear), so the plans read a second dep - `partyNear`, the members whose bodies stand in
 // this room - drawn as a caret of the player's own shape in the party's green, on the member's own storey.
 //
-// Driven through the real sheets (ui/automapSheet.js, ui/townSheet.js), the real ink and the real floor model; the
+// Driven through the real sheets (ui/automap/automapSheet.js, ui/town/townSheet.js), the real ink and the real floor model; the
 // hosts' wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createAutomapSheet } from '../src/ui/automapSheet.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { createAutomapSheet } from '../src/ui/automap/automapSheet.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { readPartyBodies, PARTY_MARK_CSS, PARTY_LEGEND_TEXT } from '../src/ui/partyMapMarks.js';
-import { toPaper, CARET_R } from '../src/ui/inkMap.js';
-import { FLOOR_PARTY_DOT } from '../src/ui/inkAutomap.js';
-import { BLOCK_PX, WORLD_PER_PX } from '../src/ui/inkTown.js';
+import { toPaper, CARET_R } from '../src/ui/ink/inkMap.js';
+import { FLOOR_PARTY_DOT } from '../src/ui/ink/inkAutomap.js';
+import { BLOCK_PX, WORLD_PER_PX } from '../src/ui/ink/inkTown.js';
 import { RMB_DIMENSION } from '../src/formats/blocksFile.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -175,6 +175,6 @@ test('DISC23-A: the hosts hand the plans the party\'s bodies - the dungeon, the 
   assert.match(modes, /title: interiorBuilding\?\.name \?\? 'Interior',\s*\n\s*party: \(\) => host\.partyNear\?\.\(\) \?\? \[\],/, 'the building\'s map');
   assert.match(src('src/scenes/dungeonContext.js'), /title: dfLocation\?\.name \?\? 'Dungeon',\s*\n\s*party: opts\.party \?\? null,/);
   // the doors used to drop the key on the floor: each builds its sheet's bag by hand
-  assert.match(src('src/ui/automapDoor.js'), /party: deps\.party \?\? null,/);
-  assert.match(src('src/ui/townMapDoor.js'), /party: deps\.townParty \?\? null,/);
+  assert.match(src('src/ui/automap/automapDoor.js'), /party: deps\.party \?\? null,/);
+  assert.match(src('src/ui/town/townMapDoor.js'), /party: deps\.townParty \?\? null,/);
 });

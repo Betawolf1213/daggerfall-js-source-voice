@@ -57,7 +57,7 @@ test('DISC24-A: Yes gives the class that was READ - never a row clicked after it
 });
 
 test('DISC24-A: the enhanced stage and the pointer path both move the selection through the flow\'s one door', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   // the stage reads the header and the button off classListIndex and the words off classConfirm - the flow's door is
   // what keeps the two one row, so the stage is pinned as reaching the selection only through it
   assert.match(src, /const picked = flow\.classRowName\(flow\.classListIndex\);/);

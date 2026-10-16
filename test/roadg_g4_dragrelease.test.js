@@ -14,7 +14,7 @@
 //     outlived both halves of its blocker. DFU's own scroller is a live
 //     `VerticalScrollBar` (DaggerfallSpellBookWindow.cs:363-372) whose
 //     `Update` (:101-130) drags the thumb like any other.
-//   - `ui/spellIconPickerWindow.js` had the scroller's CLAMP alone: the
+//   - `ui/spell/spellIconPickerWindow.js` had the scroller's CLAMP alone: the
 //     rail took no press, the thumb no drag, and the window painted a
 //     grey trough with a grey block riding on it - pixels DFU does not
 //     draw at all, because `Draw` returns before `DrawScrollBar`
@@ -41,8 +41,8 @@ import { fileURLToPath } from 'node:url';
 import { SpellbookWindow, SPELLBOOK_RECTS, SPELLBOOK_LAYOUT } from '../src/ui/spellbookWindow.js';
 import {
   SpellIconPickerWindow, ICON_PICKER_PANEL_SIZE, ICON_PICKER_SCROLLER,
-} from '../src/ui/spellIconPickerWindow.js';
-import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
+} from '../src/ui/spell/spellIconPickerWindow.js';
+import { SpellMakerWindow } from '../src/ui/spell/spellMakerWindow.js';
 import { ListPickerWindow } from '../src/ui/listPicker.js';           // AUDIT 62 F25
 import { BankPurchaseWindow } from '../src/ui/bankPurchaseWindow.js'; // AUDIT 62 F24
 import { ChargenFlow } from '../src/ui/chargen.js';
@@ -274,7 +274,7 @@ test('G4-12: the hosts\' (-1,-1) SENTINEL never reaches ANY of the FIVE drags', 
   // - never had the arm, nor did `ui/bankPurchaseWindow.js`, which was
   // written after this review and copied the picker's unguarded line.
   // MUTANT: drop the `vy >= 0` guard from ANY of the five hovers
-  // (`ui/spellbookWindow.js`, `ui/spellIconPickerWindow.js`,
+  // (`ui/spellbookWindow.js`, `ui/spell/spellIconPickerWindow.js`,
   // `ui/chargen.js`, `ui/listPicker.js`, `ui/bankPurchaseWindow.js`).
   const w = book(40);
   w.scrollIndex = 12;
@@ -423,6 +423,6 @@ test('G4-11: EVERY host hands its overlay slot the DOM event with the hover', ()
   // VerticalScrollBar.Update polls.
   assert.match(read('src/ui/spellbookWindow.js'),
     /hover\(vx, vy, e = null\) \{/, 'the spellbook reads the event');
-  assert.match(read('src/ui/spellIconPickerWindow.js'),
+  assert.match(read('src/ui/spell/spellIconPickerWindow.js'),
     /hover\(vx, vy, e = null\) \{/, 'and so does the icon picker');
 });

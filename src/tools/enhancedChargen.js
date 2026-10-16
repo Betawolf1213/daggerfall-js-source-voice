@@ -1,6 +1,6 @@
 // The PROTOTYPE host for enhanced character creation, at /chargen.html.
 //
-// Thin, like the menu's: the screen lives in src/ui/enhancedChargen.js
+// Thin, like the menu's: the screen lives in src/ui/enhanced/enhancedChargen.js
 // and the game will mount that same module. What this adds is the
 // data - a REAL ChargenFlow off the real CLASS*.CFG, BIOG*.TXT,
 // CLASSES.DAT and FACTION.TXT, and the real TAMRIEL2 picker - so the
@@ -12,7 +12,7 @@
 // player has handed the file over. The pick is the same one the game
 // uses, and a refusal falls through to the map's named-list arm rather
 // than to a blank page.
-import { mountEnhancedChargen, attachChargenText } from '../ui/enhancedChargen.js';
+import { mountEnhancedChargen, attachChargenText } from '../ui/enhanced/enhancedChargen.js';
 import { createChargenFlow } from '../systems/chargenSession.js';
 import { ensureArena2, getBytes } from '../scenes/dataSource.js';
 import { ImgFile } from '../formats/imgFile.js';

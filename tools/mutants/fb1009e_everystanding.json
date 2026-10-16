@@ -36,7 +36,7 @@
   },
   {
     "name": "EVERY-STANDING-the-page-never-asks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (getPref('standingAll')) statsEveryStanding(detail, playerEntity);   // EVERY-STANDING",
     "new": "  void statsEveryStanding;",
     "tests": ["test/fb1009e_everystanding.test.js"]

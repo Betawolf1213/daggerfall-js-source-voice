@@ -489,7 +489,7 @@ test('DA13: the shell - the game\'s channel asked first everywhere, served by th
 
 test('DA13: the release pipeline - one shell id, the bundled game indexed in every installer, the pack cut once beside them, and the publish step that fails an update that is no longer per file', () => {
   // the shell is app/ and what its build takes from outside it - derived from the build config, never a list to forget
-  assert.deepEqual(shellInputs(), ['app', 'public/icons/icon-512.png', 'src/ui/menuPad.js', 'src/assets/branding/dfo-online.png']);
+  assert.deepEqual(shellInputs(), ['app', 'public/icons/icon-512.png', 'src/ui/menu/menuPad.js', 'src/assets/branding/dfo-online.png']);
   assert.deepEqual(shellInputs({ build: { files: [{ from: '../src/x', to: 'y', filter: ['a.js'] }, { from: '../dist', to: 'dist', filter: ['x.js'] }, 'lib/**'] } }), ['app', 'src/x/a.js'], 'the game is the channel\'s, never the shell\'s');
   const objects = { 'HEAD:app': 't1', 'HEAD:src/x/a.js': 'b1' };
   const id = shellId((args) => objects[args[1]], 'HEAD', ['app', 'src/x/a.js']);

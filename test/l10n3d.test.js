@@ -23,19 +23,19 @@ const EXPORTED = [
   ['src/systems/specialAdvantages.js', 'LABELS'],
   ['src/systems/talk/talk.js', 'DIRECTION_HINTS'],
   ['src/systems/useItem.js', 'USE_TEXT'],
-  ['src/ui/automapText.js', 'AUTOMAP_STRINGS'], ['src/ui/automapText.js', 'EXTERIOR_AUTOMAP_STRINGS'],
+  ['src/ui/automap/automapText.js', 'AUTOMAP_STRINGS'], ['src/ui/automap/automapText.js', 'EXTERIOR_AUTOMAP_STRINGS'],
   ['src/ui/saveWindow.js', 'SW_TEXT'],
-  ['src/ui/spellMakerWindow.js', 'SPELL_MAKER_TIPS'],
+  ['src/ui/spell/spellMakerWindow.js', 'SPELL_MAKER_TIPS'],
 ];
 /** The tables a module keeps to itself, read off its source. */
 const PRIVATE = [
   ['src/scenes/world.js', 'REVEAL_NOTE_TEXT'], ['src/systems/notebook.js', 'EN'], ['src/systems/quest/questMacros.js', 'EN'],
-  ['src/ui/enhancedChargen.js', 'REP_LABELS'], ['src/ui/questJournal.js', 'TITLES'],
+  ['src/ui/enhanced/enhancedChargen.js', 'REP_LABELS'], ['src/ui/quest/questJournal.js', 'TITLES'],
 ];
 
 /** The one key whose English is the port's own: the reputation window's group DFU calls 'commoners' ("Commoners") is
  *  "Peasants" on the painted art the port's label copies - its English stays, a translation takes DFU's row. */
-const OWN_ENGLISH = new Map([['src/ui/enhancedChargen.js REP_LABELS.commoners', 'Peasants']]);
+const OWN_ENGLISH = new Map([['src/ui/enhanced/enhancedChargen.js REP_LABELS.commoners', 'Peasants']]);
 const english = (file, name, k) => OWN_ENGLISH.get(`${file} ${name}.${k}`) ?? DFU.get(k);
 
 /** A private table's literal: [key, English] pairs off the `const NAME = localizedStrings({...})` in `file`. */
@@ -72,8 +72,8 @@ test('L10N3d parity: every key of every converted table is one of DFU\'s 990, ho
   }
   assert.equal(keys, 223, "every converted table's keys");
   assert.equal(DFU.get('commoners'), 'Commoners', 'the exception names a DFU key');
-  const [, from, to] = /repLabel = \(g\) => REP_LABELS\[g === '(\w+)' \? '(\w+)' : g\]/.exec(rd('src/ui/enhancedChargen.js')) ?? [];
-  const repKeys = new Set(privateTable('src/ui/enhancedChargen.js', 'REP_LABELS').map(([k]) => k));
+  const [, from, to] = /repLabel = \(g\) => REP_LABELS\[g === '(\w+)' \? '(\w+)' : g\]/.exec(rd('src/ui/enhanced/enhancedChargen.js')) ?? [];
+  const repKeys = new Set(privateTable('src/ui/enhanced/enhancedChargen.js', 'REP_LABELS').map(([k]) => k));
   for (const g of REP_GROUPS) assert.ok(repKeys.has(g === from ? to : g), `the reputation group ${g} reads its label`);
 });
 

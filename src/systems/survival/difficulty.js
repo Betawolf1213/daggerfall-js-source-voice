@@ -122,7 +122,7 @@ const TIER_OF_STORED = new Map(Object.entries(SURVIVAL_STORED).map(([tier, v]) =
 export const isStoredTier = (v) => TIER_OF_STORED.has(v);
 /** The tier a stored value names; anything else - the old `true`, a hand
  *  edit - is no tier and reads as the default, the same rule the Features
- *  bar draws it by (ui/enhancedMenu.js tileStates), and the shelf drops
+ *  bar draws it by (ui/enhanced/enhancedMenu.js tileStates), and the shelf drops
  *  it at the load (uiPrefs.js loadPrefs) so the two can never disagree. */
 export const tierOfStored = (v) => TIER_OF_STORED.get(v) ?? SURVIVAL_DEFAULT;
 

@@ -155,7 +155,7 @@ test('DA8: the page - its own files only, no inline code, every word as text, th
   assert.match(js, /if \(v\.panel === 'setup'\) document\.querySelector\('#setup \.plaque\.primary'\)\?\.focus\(\{ preventScroll: true \}\);\s*else if \(v\.play\.enabled && idle\) play\.focus\(\{ preventScroll: true \}\);/, 'only a primary answer takes Enter');
   assert.doesNotMatch(js, /querySelector\('(#setup )?\.plaque'\)\?\.focus|status-actions[^\n]*\.focus\(/);
   const css = rd('app/launcher/launcher.css');
-  const skin = rd('src/ui/enhancedStyle.js');
+  const skin = rd('src/ui/enhanced/enhancedStyle.js');
   const norm = (c) => c.toLowerCase().replace(/\s+/g, '');
   const colours = (text) => new Set([...text.matchAll(/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)/g)].map((m) => norm(m[0])));
   const plain = css.replace(/url\(data:[^)]*\)/g, '').replace(/\/\*[\s\S]*?\*\//g, '');

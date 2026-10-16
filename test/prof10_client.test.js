@@ -25,19 +25,19 @@ import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { itemEnchantmentPower, craftedJewelPoints, applyEnchantments, craftedJewelRecipe, keptEnchantments, enchantDecision } from '../src/systems/enchanting.js';
 import { enchantmentSettings } from '../src/systems/enchantmentCatalogue.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
-import { ItemMakerWindow, itemMakerFilter, ITEM_RECTS } from '../src/ui/itemMakerWindow.js';
+import { ItemMakerWindow, itemMakerFilter, ITEM_RECTS } from '../src/ui/item/itemMakerWindow.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { rarityEligible, RARE_FLAVOURS } from '../src/systems/loot/lootRarity.js';
-import { PORT_SPECS } from '../src/ui/enhancedPorts.js';   // AUDIT PROF-541 J3: the Enhanced+ skin's item maker
+import { PORT_SPECS } from '../src/ui/enhanced/enhancedPorts.js';   // AUDIT PROF-541 J3: the Enhanced+ skin's item maker
 import { enchantmentRowCost } from '../src/systems/enchanting.js';   // AUDIT PROF-541 J4
 import { MAX_ENCHANTMENTS } from '../src/systems/enchanting.js';   // AUDIT PROF-541 R2-C5
 import { pieceLines } from '../src/net/recipeLaw.js';   // AUDIT PROF-541 R2-C4
-import { scrollerToolTipText } from '../src/ui/itemScroller.js';
-import { itemPowerLines } from '../src/ui/enhancedInventory.js';
+import { scrollerToolTipText } from '../src/ui/item/itemScroller.js';
+import { itemPowerLines } from '../src/ui/enhanced/enhancedInventory.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, setDownProfAct, profActUnderWay, _jewelForTests, _cookForTests,
   PROF_STATIONS, stationColdLine, JEWEL_COLD_LINE, FACET_DOWN_LINE, jewelRecipes, jewelPointsLine,
-} from '../src/ui/profPages.js';
+} from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { utcDay } from '../src/net/marksLaw.js';
 
@@ -493,9 +493,9 @@ test('PROF10 wiring: the jeweller\'s bench a Pawn Shop\'s or a Gem Store\'s (ope
   const idx = src('server-account/src/index.js');
   assert.match(idx, /'prof-lapidary': 403,/);
   assert.match(idx, /POST \/v1\/prof\/craft \{ character, recipe, clean, name\?, heartwood\?, dye\?, cracked\?, rid \}/);
-  const p = src('src/ui/profPages.js');
+  const p = src('src/ui/professions/profPages.js');
   assert.match(p, /\['fire', \(d\) => drawCookFire\(d, rerender, kit\)\],   \/\/ PROF9\n\s*\['jeweller', \(d\) => drawJewellerBench\(d, rerender, kit\)\],   \/\/ PROF10/);   // PIN MOVED (MENU-ORDER): the stations a list of tiles
-  assert.match(src('src/ui/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-facetbar \{/);
+  assert.match(src('src/ui/enhanced/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-facetbar \{/);
   assert.match(src('src/scenes/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the jeweller\'s bench sold where the bench works, as the forge');
   // INT1 (PIN MOVED): the template read through `lookup` - templateByIndex by default, the item law's own on the service
   assert.match(src('src/systems/enchanting.js'), /export function itemEnchantmentPower\(item, lookup = templateByIndex\) \{[^]*?const basePower = craftedJewelPoints\(item\) \?\? lookup\(item\.templateIndex\)\?\.enchantmentPoints \?\? 0;/);
@@ -583,7 +583,7 @@ test('AUDIT PROF10 J2 (DECIDED, Mac: "Item maker can add to it"): DFU\'s item ma
   const plain = mintPiece({ recipe: 'ring:silver', quality: 1, seed: 1 }, PROV);
   applyEnchantments(plain, [talent]);
   assert.deepEqual(plain.enchantments.map((e) => [e.type, e.param]), [[ENCHANTMENT_TYPES.ImprovesTalents, 0]]);
-  assert.match(src('src/ui/itemMakerWindow.js'), /if \(!keptEnchantments\(item\) \|\| item\.group === 'UselessItems2'\) return false;/);
+  assert.match(src('src/ui/item/itemMakerWindow.js'), /if \(!keptEnchantments\(item\) \|\| item\.group === 'UselessItems2'\) return false;/);
 });
 
 // ─── AUDIT PROF-541 (2026-10-03) ─────────────────────────────────────

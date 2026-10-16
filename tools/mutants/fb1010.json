@@ -1,7 +1,7 @@
 [
   {
     "name": "SPAMTAKE-card-stays",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "landed = next === picked ? p.slotKey : null; picked = next; }",
     "new": "landed = next === picked ? p.slotKey : null; }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SPAMTAKE-next-not-open",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "    if (rows[i]?.state === 'open') return i;",
     "new": "    if (rows[i]) return i;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SPAMTAKE-next-no-wrap",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "    const i = (from + k) % rows.length;",
     "new": "    const i = from + k;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SPAMTAKE-give-up-once",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "        if (armed !== heldId) { armed = heldId; render(); return; }",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SPAMTAKE-pick-keeps-arm",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "      const pick = () => { picked = i; word = null; armed = null; landed = null; render(); };",
     "new": "      const pick = () => { picked = i; word = null; landed = null; render(); };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SPAMTAKE-give-up-under-take",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".bounty-acts .bounty-drop { margin-right: auto; }",
     "new": "",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "AUDIT-A1-landed-presses",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "    } else if (r.state === 'held' && landed === p.slotKey) {",
     "new": "    } else if (false) {",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "AUDIT-A1-never-landed",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "landed = next === picked ? p.slotKey : null;",
     "new": "landed = null;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "AUDIT-A1-pick-keeps-landed",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "      const pick = () => { picked = i; word = null; armed = null; landed = null; render(); };",
     "new": "      const pick = () => { picked = i; word = null; armed = null; render(); };",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "AUDIT-A2-focus-dropped",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "        armed = null;\n        render(keep);",
     "new": "        armed = null;\n        render();",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "AUDIT-A3-window-grows",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".bounty-win:not(.bounty-noticewin) { height: min(600px, 92vh); }\n",
     "new": "",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "AUDIT-A3-no-page",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "    const page = el('div', 'bounty-cardpage');",
     "new": "    const page = card;",
     "tests": [

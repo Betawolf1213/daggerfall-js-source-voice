@@ -27,7 +27,7 @@ import { goldSum, accountWords, EMPIRE_ACCOUNT_WORDS, REGION_ACCOUNT_WORDS } fro
 import { rentRowLabel, rentPickLines, rentDaysLines, rentConfirmLines, rentShortLine } from '../src/systems/homeRent.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createBankAccounts, createHouses, sellHouse, houseSellPrice, EMPIRE_ACCOUNT_REGION } from '../src/systems/banking.js';
-import { EXT_NUM_MAX_BLOCKS } from '../src/ui/automapCamera.js';
+import { EXT_NUM_MAX_BLOCKS } from '../src/ui/automap/automapCamera.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 

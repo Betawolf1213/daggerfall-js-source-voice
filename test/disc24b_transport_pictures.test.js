@@ -21,8 +21,8 @@ import { WAGON_KINDS, newWagonItem } from '../src/systems/wagon/wagonKinds.js';
 // the port's own build under its own id (ui/modelIcon.js's port door), no longer classic model 41214
 const WAGON_MODEL_ID = WAGON_KINDS.cart.icon;
 import { bakeModelIcon, requestModelIcon, requestModelIconUrl, _resetModelIcons, ICON_SIZE } from '../src/ui/modelIcon.js';
-import { makeIconDrawer, MODEL_ICON_ARCHIVE } from '../src/ui/itemScroller.js';
-import { itemLine, linePictureUrl } from '../src/ui/enhancedInventory.js';
+import { makeIconDrawer, MODEL_ICON_ARCHIVE } from '../src/ui/item/itemScroller.js';
+import { itemLine, linePictureUrl } from '../src/ui/enhanced/enhancedInventory.js';
 import { TRANSPORT_HORSE as SHOP_HORSE, TRANSPORT_SMALL_CART as SHOP_CART } from '../src/systems/shopStock.js';
 
 const cartItem = () => ({ templateIndex: TRANSPORT_SMALL_CART, group: 'Transportation', name: 'Small Cart' });
@@ -221,10 +221,10 @@ test('DISC24-B: the enhanced lists (pack, detail, shop, player trade) picture th
   // every enhanced list reads the door, not its own copy of the ternary
   const ROOT = new URL('..', import.meta.url);
   // UI1: through the FITTED door (linePicture), whose source is this one at scale 1 - the cart's bake included
-  for (const f of ['src/ui/enhancedTrade.js', 'src/ui/enhancedPlayerTrade.js']) {
+  for (const f of ['src/ui/enhanced/enhancedTrade.js', 'src/ui/enhanced/enhancedPlayerTrade.js']) {
     assert.match(readFileSync(new URL(f, ROOT), 'utf8'), /linePicture\(line, \{ box: SLOT_BOX\.row,/, f);
   }
-  const inv = readFileSync(new URL('src/ui/enhancedInventory.js', ROOT), 'utf8');
+  const inv = readFileSync(new URL('src/ui/enhanced/enhancedInventory.js', ROOT), 'utf8');
   assert.equal((inv.match(/linePicture\(line, \{ box(?:: SLOT_BOX\.card)?, onReady: ready(?:, snap)? \}\)/g) ?? []).length, 2, 'the pack\'s tile and its detail card');
   assert.match(inv, /requestFittedPicture\(name, \(wake\) => linePictureUrl\(line, \{ scale: 1, onReady: wake \}\),/, 'the fitted door asks this one');
 });

@@ -229,7 +229,7 @@ export function armourModString(item) {
  * U25 and had exactly one reader between them - `expandItemInfo`'s
  * `%wdm` and `%mod`, which fill the CLASSIC info popup's record. The
  * enhanced skin's detail card draws no record at all: it builds its own
- * rows out of `ui/enhancedInventory.js`'s `itemLine`, and that line
+ * rows out of `ui/enhanced/enhancedInventory.js`'s `itemLine`, and that line
  * carried weight, condition, material and stack. So the classic popup
  * told a player a longsword hits for 1-15 and the enhanced card, which
  * is the panel most players actually read, told them nothing.

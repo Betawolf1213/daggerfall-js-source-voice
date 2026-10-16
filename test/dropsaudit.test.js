@@ -11,9 +11,9 @@ import { applySpell, casterDamageScaled } from '../src/systems/effects.js';
 import { expandEliteEnemies, ELITE_FLOOR_STEP } from '../src/characters/dungeonEnemies.js';
 import { ENCOUNTER_CULL_DISTANCE, CAMP_CULL_DISTANCE } from '../src/scenes/exteriorFoes.js';
 import { MAX_CAMP_SPAWN_DISTANCE } from '../src/systems/campEncounters.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { PLUS_FIX_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { CURSOR_CSS } from '../src/ui/plusCursor.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { PLUS_FIX_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { CURSOR_CSS } from '../src/ui/plus/plusCursor.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -70,15 +70,15 @@ test('CAMP-CULL and CAMP-CAP: a camp member outlives the 100-150 m band it stand
 });
 
 test('F1 F3 F4: the loss nodes in the HUD tracks and the system dress on the Stats page are Plus\'s - and since PLUS-DEAD retired plain Enhanced they always stand; the base sheet\'s rules as they were (Plus\'s edits in the Plus sheet)', () => {
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.doesNotMatch(hud, /plusLoss|isEnhancedPlus/, 'no second face to build for');
   assert.match(hud, /const ghost = el\('i', 'hud-ghost'\);/);
   assert.match(hud, /track\.append\(ghost, \.\.\.chunks\); armChunks\(chunks\);/);
   assert.match(hud, /foeTrack\.append\(foeGhost, \.\.\.foeChunks\); armChunks\(foeChunks\);/);
   // PIN MOVED (HOLDINGS): the Holdings page wears the same dress - the pin reads the STATS page's own detail, by its F3 mark
   // (a match anywhere in the menu was satisfied by the Holdings page's and let the Stats page's go undressed)
-  assert.match(rd('src/ui/enhancedMenu.js'), /const detail = el\('div', 'px-qdetail px-sys'\);   \/\/ DROPS-AUDIT F3/);
-  const stats = rd('src/ui/enhancedMenu.js').slice(rd('src/ui/enhancedMenu.js').indexOf('function pauseStats(body)'));
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /const detail = el\('div', 'px-qdetail px-sys'\);   \/\/ DROPS-AUDIT F3/);
+  const stats = rd('src/ui/enhanced/enhancedMenu.js').slice(rd('src/ui/enhanced/enhancedMenu.js').indexOf('function pauseStats(body)'));
   assert.match(stats.slice(0, stats.indexOf('\n}\n')), /const detail = el\('div', 'px-qdetail px-sys'\);/, 'inside pauseStats');
   assert.match(ENHANCED_CSS, /color: var\(--dim\); background: transparent; border: 1px solid var\(--iron\);\n\}\n\.hmpick\.on \{ color: var\(--brass\); border-color: var\(--brass\); background: #12161b; \}/);
   assert.match(ENHANCED_CSS, /\.trade-shell \.packcol \{ padding: 0 2px 18px; overflow-y: auto; min-height: 0; \}/);
@@ -89,16 +89,16 @@ test('F1 F3 F4: the loss nodes in the HUD tracks and the system dress on the Sta
 });
 
 test('F2 F5 F6 F9 F10 F11: one press per dialog or list; Escape puts the menu away, not the pack; a notice takes the first click; the card and the menu answer only their own item and gesture; a ported window paints no preview', () => {
-  assert.match(rd('src/ui/enhancedDialog.js'), /if \(!active \|\| active\.spent\) return; active\.spent = true; press\(b\.button\); closeEnhancedDialog\(\);/);
-  const picker = rd('src/ui/enhancedPicker.js');
+  assert.match(rd('src/ui/enhanced/enhancedDialog.js'), /if \(!active \|\| active\.spent\) return; active\.spent = true; press\(b\.button\); closeEnhancedDialog\(\);/);
+  const picker = rd('src/ui/enhanced/enhancedPicker.js');
   assert.match(picker, /if \(!active \|\| active\.spent\) return; active\.spent = true; pickRow\(active, i, geo\); closeEnhancedPicker\(\);/);
   assert.match(picker, /if \(!active \|\| active\.spent\) return; active\.spent = true; replayClick\(active\.canvas, active\.m, 1, 1\); closeEnhancedPicker\(\);/);
-  const inv = rd('src/ui/enhancedInventory.js');
+  const inv = rd('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /function onKey\(e\) \{[\s\S]{0,400}?if \(menuEl && e\.key === 'Escape'\) \{ e\.preventDefault\(\); e\.stopPropagation\(\); closeMenu\(\); return; \}/, 'before anything else the pack does with the key');
   assert.match(inv, /\(\) => \{ if \(tipEl && tipFor === item\) showTip\(item, from, row\); \}/);
   assert.match(inv, /function hideTip\(\) \{ tipEl\?\.remove\(\); tipEl = null; tipFor = null; \}/);
   assert.match(inv, /row\.oncontextmenu = \(e\) => \{ e\.preventDefault\(\); if \(drag\) return; openMenu\(/);
-  const port = rd('src/ui/enhancedPort.js');
+  const port = rd('src/ui/enhanced/enhancedPort.js');
   assert.match(port, /if \(win\.box && !win\.box\.buttons\?\.length && !win\.picker\) \{ win\.click\?\.\(-1, -1\); return; \}\n\s*if \(!b \|\| b\.disabled\) return;/);
   assert.match(port, /win\.inPort = true;\n\s*const proxy = new Proxy\(win, \{/);
   assert.match(rd('src/ui/bankPurchaseWindow.js'), /if \(modelIdNum != null && !this\.inPort\) \{/);
@@ -106,5 +106,5 @@ test('F2 F5 F6 F9 F10 F11: one press per dialog or list; Escape puts the menu aw
 
 test('F7 F8: the gauntlet stands down where a controller hid the pointer; the bank\'s Cancel no longer names a key that closes the bank', () => {
   assert.match(CURSOR_CSS, /html:not\(\.plus-nocursor\) canvas\[style\*="cursor: none"\] \{ cursor: none !important; \}/);
-  assert.match(rd('src/ui/enhancedPorts.js'), /\{ label: 'Cancel', act: \(\) => \{ w\.transactionType = TRANSACTION_TYPE\.None; w\.value = ''; \} \}\]/);
+  assert.match(rd('src/ui/enhanced/enhancedPorts.js'), /\{ label: 'Cancel', act: \(\) => \{ w\.transactionType = TRANSACTION_TYPE\.None; w\.value = ''; \} \}\]/);
 });

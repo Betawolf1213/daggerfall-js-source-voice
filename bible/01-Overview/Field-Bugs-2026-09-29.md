@@ -136,7 +136,7 @@ every projected point of the journey, and a far pick is 139 legs and 557 points 
 projects hundreds of thousands of pixels out, so the path ran about 1.5 million pixels and the browser laid some
 100,000 dashes, off the screen too, and rastered them again every frame the camera moved: 383-433 ms a frame in
 Chromium, the median. PERF-TV's probe had timed JavaScript and layout, never paint, over a route that stayed on the
-screen. The line is cut to the screen grown by `ROUTE_CLIP_PX` now (`ui/travelViewHud.js`): on the screen it is the
+screen. The line is cut to the screen grown by `ROUTE_CLIP_PX` now (`ui/travel/travelViewHud.js`): on the screen it is the
 same line (byte for byte when it is all on screen), and a far pick draws in 16.7 ms. The planner and the journey are
 untouched. `test/fb0929_farroute.test.js` (4), `tools/mutants/fb0929_farroute.json` (13, 13 dead),
 `tools/travelViewPerf.mjs` times the frames now. `06-Systems/Travel-View.md` PERF-TV.

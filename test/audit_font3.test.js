@@ -4,9 +4,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PIXEL_FACE_CSS, PIXEL_FONT_CSS, PIXEL_READ_CSS } from '../src/ui/pixelifyFive.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { drawEnhancedTextLayer, hideEnhancedTextLayer } from '../src/ui/enhancedTextLayer.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { drawEnhancedTextLayer, hideEnhancedTextLayer } from '../src/ui/enhanced/enhancedTextLayer.js';
 import { PrisonScreenWindow, ENHANCED_PRISON_DAYS_ID } from '../src/ui/prisonScreen.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -38,7 +38,7 @@ test('AUDIT FONT3 F2: the held map\'s toolbar buttons take the face alone - thei
 });
 
 test('AUDIT FONT3 F3: the readied spell is "doubled" only while the spell chip or the hotbar is naming it', () => {
-  const hud = read('src/ui/enhancedHud.js');
+  const hud = read('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const named = getPref\('quickslots'\) !== false \|\| hotbarMode\(\);\n\s*const doubled = named && !!readySpell && !!slotSpell && slotSpell\.index === readySpell\.index;/);
   // the chip it defers to is hidden with the diamond (the reason the caption must speak then)
   assert.match(ENHANCED_CSS, /\.hud-quick\.nodiamond \.hud-qspell \{ display: none; \}/);
@@ -111,7 +111,7 @@ test('AUDIT FONT3 F6: the faces that are NOT the pixel face keep their own smoot
   assert.match(main, new RegExp(`font:12px monospace;${ok.source}`), 'the crash panel');
   const ds = read('src/scenes/dataSource.js');
   assert.equal((ds.match(new RegExp(`font:14px monospace;${ok.source}`, 'g')) ?? []).length, 2, 'both pickers\' monospace arms');
-  assert.match(read('src/ui/enhancedStyle.js'), /fallback \(monospace - since\n \*  FONT3 the whole skin is the pixel stack/, 'the ?nofonts record');
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /fallback \(monospace - since\n \*  FONT3 the whole skin is the pixel stack/, 'the ?nofonts record');
 });
 
 // ── the layout lens (L) and the record (C): each a rule the measurement found broken, held where it was fixed ──
@@ -119,7 +119,7 @@ import { PARTY_CSS } from '../src/ui/partyPanel.js';
 const ruleBody = (css, sel) => { const i = css.indexOf(`${sel} {`); assert.ok(i >= 0, `${sel} not found`); return css.slice(i, css.indexOf('}', i)); };
 
 test('AUDIT FONT3 L1: the naval plate\'s batteries hold their words on one line at the floor', () => {
-  const naval = read('src/ui/navalHud.js');
+  const naval = read('src/ui/naval/navalHud.js');
   assert.match(naval, /\.dfnaval-rose \{[^}]*gap: 4px; margin: 8px 3px 2px;/, 'the rose\'s side margin 3px');
   assert.match(naval, /\.dfnaval-gun \{ position: relative; overflow: hidden; padding: 3px 1px 4px;/, 'a battery\'s side padding 1px');
   assert.match(naval, /\.dfnaval-gun-side \{ font-size: 11px; letter-spacing: 0\.04em;/, 'STARBOARD inside its box');
@@ -132,7 +132,7 @@ test('AUDIT FONT3 L2: the party\'s place line keeps a row inside PARTY8\'s 48px'
 });
 
 test('AUDIT FONT3 L3/L6/L7: the corners and the narrow labels track none where the floor met a fixed box', () => {
-  assert.match(read('src/ui/enhancedHotbar.js'), /@media \(max-width: 480px\) \{[^\n]*\n\s*\/\*[^\n]*\*\/\n\s*\.hb-key, \.hb-count, \.hb-pip \{ line-height: 1; letter-spacing: 0; \} \}/);
+  assert.match(read('src/ui/enhanced/enhancedHotbar.js'), /@media \(max-width: 480px\) \{[^\n]*\n\s*\/\*[^\n]*\*\/\n\s*\.hb-key, \.hb-count, \.hb-pip \{ line-height: 1; letter-spacing: 0; \} \}/);
   // the phone override stands AFTER the shelf label's own rule, or it loses on order (the fix's own first cut did)
   const label = PLUS_CSS.indexOf('.pack-shell .shelflabel { max-width: 100%;');
   const phone = PLUS_CSS.indexOf('@media (max-width: 640px) { .pack-shell .shelflabel { letter-spacing: 0; } }');
@@ -144,7 +144,7 @@ test('AUDIT FONT3 L3/L6/L7: the corners and the narrow labels track none where t
 
 test('AUDIT FONT3 C2/C3: the dim a step under the mid, and the film\'s phone words at the floor', () => {
   assert.match(ENHANCED_CSS, /--dim: #9a9486;/);
-  const intro = read('src/ui/introScreen.js');
+  const intro = read('src/ui/intro/introScreen.js');
   assert.match(intro, /intro-continue\{bottom:23dvh;font-size:11px!important;/);
   assert.match(intro, /intro-footer\{font-size:11px\}/);
 });

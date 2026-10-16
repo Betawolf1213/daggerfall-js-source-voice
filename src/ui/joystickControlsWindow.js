@@ -74,7 +74,7 @@
 // JoystickAxisNButtonM as synthetic keydowns, the host's ladder hands
 // them to the overlay, and `input(code)` here is the capture.
 
-import { nativeMetrics, drawRect } from './nativePanel.js';
+import { nativeMetrics, drawRect } from './native/nativePanel.js';
 import { drawMenuBackdrop } from './chargenArt.js';
 import { drawText, measureText } from './text.js';
 import { layoutMessageBox, drawMessageBox } from './messageBox.js';
@@ -132,7 +132,7 @@ export const JOY_SLIDERS = Object.freeze([
 ]);
 /** AddOption(20, 20, GetText("enableController")) (:140). */
 export const ENABLE_BOX = Object.freeze({ x: 20, y: 20, get label() { return gameSettingsText('enableController', 'Enable Controller'); } });
-const MULTIPLE_ASSIGNMENTS = 'You have multiple assignments...';   // ui/enhancedControls.js's line; not a second export (AUDIT 24)
+const MULTIPLE_ASSIGNMENTS = 'You have multiple assignments...';   // ui/enhanced/enhancedControls.js's line; not a second export (AUDIT 24)
 
 const TEXT_COLOR = [0.9, 0.9, 0.75, 1];
 const WHITE = [1, 1, 1, 1];

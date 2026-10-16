@@ -28,11 +28,11 @@ import { veinYield } from '../src/net/nodeLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { oreMapTip } from '../src/ui/oreMapTip.js';
 import { lodeMapMarks, lodeLabel, lodeLegendText, LODE_RING_CSS, LODE_FILL_CSS, LODE_COMPASS_CSS, LODE_DOT_RGB, LODE_LEGEND_TEXT } from '../src/ui/lodeMapMark.js';
-import { PARCHMENT_RGB } from '../src/ui/inkMap.js';
+import { PARCHMENT_RGB } from '../src/ui/ink/inkMap.js';
 import { SERPENT_RING_MAP_CSS } from '../src/ui/serpentMapMark.js';
 import { createProfBook } from '../src/net/profBook.js';
-import { MINING_SURVEYOR_LINE } from '../src/ui/profPages.js';
-import { readBountyMarks, BOUNTY_RING_R } from '../src/ui/bountyMapMark.js';
+import { MINING_SURVEYOR_LINE } from '../src/ui/professions/profPages.js';
+import { readBountyMarks, BOUNTY_RING_R } from '../src/ui/bounty/bountyMapMark.js';
 import { createMotherlodeBook } from '../src/net/motherlodeBook.js';
 import { motherlodeKey } from '../src/net/motherlodeLaw.js';
 
@@ -356,7 +356,7 @@ test('AUDIT MINE-PERKS a change of mind come due is the book\'s at once - the se
 
 test('AUDIT MINE-PERKS the Mining page tells a Surveyor what their word does on unwitnessed ground, under the line that says Silver at most - theirs alone, the choice named by its card (mutants: said to anyone; never said)', () => {
   assert.equal(MINING_SURVEYOR_LINE, 'As a {name}, your own word witnesses the ground: your veins there can be any ore of its land. A region\'s own ore still waits on the witnesses.');
-  const src = read('src/ui/profPages.js');
+  const src = read('src/ui/professions/profPages.js');
   assert.match(src, /const miningSurveyorLine = \(\) => t\('prof\.page\.how\.miningSurveyor', MINING_SURVEYOR_LINE, \{ name: specOf\('mining', 100, SURVEYOR\)\?\.name \?\? '' \}\);/);
   assert.match(src, /if \(_sel === 'mining'\) pane\.append\(el\('p', 'px-note', miningGroundLine\(\)\)\);[^\n]*\n\s*if \(_sel === 'mining' && tr\.specs\?\.\[100\] === SURVEYOR\) pane\.append\(el\('p', 'px-note', miningSurveyorLine\(\)\)\);/);
 });
@@ -440,10 +440,10 @@ test('MINE-PERKS every map reads them: the held map (its poll, its sheet, its le
   assert.match(h, /lodes: this\._lodes,   \/\/ MINE-PERKS/);
   assert.match(h, /if \(this\._lodes\.length\) \{   \/\/ MINE-PERKS: and a Motherlode's teal circle\n\s*const dot = el\('span', 'hmlegdot'\);\n\s*dot\.style\.background = LODE_RING_CSS;\n\s*leg\.append\(dot, el\('span', 'hmlegtext', lodeLegendText\(\)\)\);/);
   assert.match(h, /&& !this\._vendor && !this\._lodes\.length\)/);
-  const t = read('src/ui/travelMapWindow.js');
+  const t = read('src/ui/travel/travelMapWindow.js');
   assert.match(t, /const lodes = readBountyMarks\(this\.deps\.lodes, \{ width: MAP_WIDTH, height: MAP_HEIGHT \}, LODE_LEGEND_TEXT\);\n\s*this\._lodesKey = bountyMarksKey\(lodes\);\n\s*if \(lodes\.length\) \{\n\s*const lodePx = packRGBA\(LODE_DOT_RGB\[0\], LODE_DOT_RGB\[1\], LODE_DOT_RGB\[2\], 255\);\n\s*for \(const \[x, y\] of bountyRingTexels\(lodes, originX, originY, width, height\)\) plot\(x, y, lodePx\);/);
   assert.match(t, /&& bountyMarksKey\(readBountyMarks\(this\.deps\.lodes, \{ width: MAP_WIDTH, height: MAP_HEIGHT \}, LODE_LEGEND_TEXT\)\) === \(this\._lodesKey \?\? ''\)/);
-  assert.match(read('src/ui/inkMap.js'), /for \(const b of opts\.lodes \?\? \[\]\) if \(visible\(b\.cx, b\.cy, b\.r \+ 2\)\) paintBountyRing\(ctx, view, b, pulse, LODE_INK\);/);
+  assert.match(read('src/ui/ink/inkMap.js'), /for \(const b of opts\.lodes \?\? \[\]\) if \(visible\(b\.cx, b\.cy, b\.r \+ 2\)\) paintBountyRing\(ctx, view, b, pulse, LODE_INK\);/);
   const w = read('src/scenes/world.js');
   assert.match(w, /lodes: \(\) => lodeMapMarksNow\(\),/);
 });

@@ -210,7 +210,7 @@
   },
   {
     "name": "E-hud-allin-state",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "h.allIn ? 'all in' : ",
     "new": "",
     "tests": [
@@ -229,7 +229,7 @@
   },
   {
     "name": "E-hud-out-state",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "!h ? (hand ? 'out' : '') :",
     "new": "!h ? '' :",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "E-hud-folded-backs",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": ": h && !h.folded ? [cardFace(-1), cardFace(-1)] : []",
     "new": ": h ? [cardFace(-1), cardFace(-1)] : []",
     "tests": [
@@ -267,7 +267,7 @@
   },
   {
     "name": "E-hud-empty-msg",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "why === 'empty' ? 'The table has emptied - every patron is broke.' :",
     "new": "why === 'empty' ? 'You leave the table.' :",
     "tests": [
@@ -286,7 +286,7 @@
   },
   {
     "name": "E-hud-allin-press",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "else if (a.id === 'allin') onPress('raise', a.to);",
     "new": "else if (a.id === 'allin') onPress('allin');",
     "tests": [
@@ -305,7 +305,7 @@
   },
   {
     "name": "E-hud-raise-press-min",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "b.addEventListener('click', () => onPress('raise', Number(range.value)));",
     "new": "b.addEventListener('click', () => onPress('raise', a.min));",
     "tests": [
@@ -324,7 +324,7 @@
   },
   {
     "name": "E-hud-bet-label",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "label: bet ? 'Bet' : 'Raise to'",
     "new": "label: 'Raise to'",
     "tests": [
@@ -1502,7 +1502,7 @@
   },
   {
     "name": "A2-hud-uncalled-wins",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "  const contested = sd.result.shown ? pots.filter((p) => p.eligible.length > 1) : pots.slice(0, 1);",
     "new": "  const contested = pots;",
     "tests": [
@@ -1521,7 +1521,7 @@
   },
   {
     "name": "A2-hud-no-showdown",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "  const sd = !hand ? view?.showdown ?? null : null;",
     "new": "  const sd = null;",
     "tests": [
@@ -1540,7 +1540,7 @@
   },
   {
     "name": "A2-hud-keys-all",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "{ if (e.target?.type === 'range' && SLIDER_KEYS.has(e.key)) e.stopPropagation(); }",
     "new": "{ e.stopPropagation(); }",
     "tests": [
@@ -1559,7 +1559,7 @@
   },
   {
     "name": "A2-hud-wide",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "min-width:min(520px,calc(100vw - 32px));",
     "new": "min-width:520px;",
     "tests": [
@@ -1578,7 +1578,7 @@
   },
   {
     "name": "A2-hud-third-person",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "  const me = e.seat === you;",
     "new": "  const me = false;",
     "tests": [

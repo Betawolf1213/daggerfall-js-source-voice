@@ -2,7 +2,7 @@
 // icons like spells, and you should be able to slot spells and different items") - THE HOTBAR, DRAWN FROM THE REAL
 // ARENA2 AND MEASURED.
 //
-// The REAL enhanced HUD (ui/enhancedHud.js drawEnhancedHud) with the hotbar chosen, over the real sheets, its slots
+// The REAL enhanced HUD (ui/enhanced/enhancedHud.js drawEnhancedHud) with the hotbar chosen, over the real sheets, its slots
 // holding every kind a slot now takes: three spells (their ICON00I0 icons off the real sheet, one of them a spell the
 // book has lost), a potion stack, a longsword, a kite shield, a cuirass, a ring, three rubies, a book, seven herbs, a
 // torch - and the crossbar's sixteen at a phone's width. At a desktop (1x, 2x), a laptop (1.25x) and a phone (2.625x) it reads:
@@ -38,7 +38,7 @@ import { createWeapon } from '/src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '/src/systems/armorMaterials.js';
 import { potionRecipeKeys } from '/src/systems/potions.js';
 import * as HB from '/src/systems/quickslots.js';
-import { drawEnhancedHud } from '/src/ui/enhancedHud.js';
+import { drawEnhancedHud } from '/src/ui/enhanced/enhancedHud.js';
 
 setPref('lootRarity', true);
 const armour = (t) => mintCondition(setItemFields({ group: 'Armor', templateIndex: t, material: ARMOR_MATERIAL.Steel, flags: 0 }));

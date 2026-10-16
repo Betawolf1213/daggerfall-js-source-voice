@@ -82,9 +82,9 @@ import { noteOfferPending } from '../ui/pendingOffer.js';   // AUDIT 58: Daggerf
 import { getTitle } from '../systems/guild/guilds.js';
 import { addQuestResourceObjects } from '../systems/quest/sceneMount.js';
 import { SITE_TYPES } from '../systems/quest/place.js';   // QUEST-HOME: a building's mount marks its sites reached
-import { QuestLens } from '../ui/questLens.js';   // GUIDE1: the modern faces' one read-only picture of this machine
-import { questHerald, heraldOn } from '../ui/questHerald.js';   // GUIDE3: the news the lens sees, told
-import { questTracker, followOn } from '../ui/questTracker.js';   // GUIDE4: the quest the HUD follows (GUIDE5: the card's or the marks')
+import { QuestLens } from '../ui/quest/questLens.js';   // GUIDE1: the modern faces' one read-only picture of this machine
+import { questHerald, heraldOn } from '../ui/quest/questHerald.js';   // GUIDE3: the news the lens sees, told
+import { questTracker, followOn } from '../ui/quest/questTracker.js';   // GUIDE4: the quest the HUD follows (GUIDE5: the card's or the marks')
 
 // AUDIT 24 (wave 24): SetLayoutData's three overloads and
 // GetPositionHash now live in characters/staticNpc.js, next to the
@@ -450,7 +450,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
   }
 
   // GUIDE3: THE NEWS - one lens look after each machine tick, handed to
-  // the herald (ui/questHerald.js), and only while it is listening (the
+  // the herald (ui/quest/questHerald.js), and only while it is listening (the
   // enhanced skin, its switch on), so a player who never hears it never
   // pays for the look. Here rather than in a host because every host
   // that has quests ticks this bridge (THE ONE CONSTRUCTION SEAM): the
@@ -476,7 +476,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     console.warn(`[quest herald] the lens could not look (${err?.message ?? err}); the news is silent, the machine is not`);
   };
   // GUIDE5: THE QUEST THE PLAYER FOLLOWS has two faces now - the tracker's
-  // card and the marks (ui/questMarks.js) - and one model (questTracker):
+  // card and the marks (ui/quest/questMarks.js) - and one model (questTracker):
   // it hears every look while either face is on, and when neither is, what
   // it followed is forgotten here (the player's tracked choice is the
   // save's and stays).
@@ -566,7 +566,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
         if (!les?.length) continue;
         // GUIDE1: each message beside the step it was written at -
         // `steps[i]` is `messages[i]`'s - so a face can order the
-        // entries by when they were written (ui/questRail.js
+        // entries by when they were written (ui/quest/questRail.js
         // writtenOrder) and tell a new one from one it has read.
         const messages = [], steps = [];
         for (const le of les) {
@@ -594,7 +594,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       }
       // JOURNAL-CLEAN: `hidden` is the uids the player hid from the journal. The rows stay in `active` - the lens,
       // the tracker and the marks read this walk and a hidden quest still runs - and the journal's rail
-      // (ui/questRail.js) is what leaves them out.
+      // (ui/quest/questRail.js) is what leaves them out.
       // AUDIT JOURNAL-CLEAN F3: an id hidden for a quest no longer running is dropped - whatever ended it
       notebook?.pruneHiddenQuests?.([...machine.quests.values()].filter((q) => !q.questComplete).map((q) => q.uid));
       return { active, finished: notebook?.getFinishedQuests() ?? [], ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved };
@@ -605,7 +605,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
      * your journal for a cleaner look?"): the enhanced journal's four tidy-ups, one home - every host that hands its
      * pause window `questLog` hands `journalClean` beside it (world.js, worldModes.js through world.js's host,
      * exterior.js, dungeonContext.js). Removing an archived entry and clearing the archive act on the notebook's
-     * filed entries (the classic logbook's right-click remove, ui/questJournal.js removeEntry, is the same store);
+     * filed entries (the classic logbook's right-click remove, ui/quest/questJournal.js removeEntry, is the same store);
      * hide/unhide only file a uid in the notebook's hidden list, which saves with the notebook.
      */
     journalClean: {

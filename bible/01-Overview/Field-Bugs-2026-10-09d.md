@@ -32,7 +32,7 @@ again (every carried act cuts the count to what the pack holds, never raises it)
   `acct101`, migration `0097_loose_origin.sql` (the audit's).
 - `net/profBook.js`: `workable` (a station's read); `ensureInStores(inputs, { work })` - a craft (and its chain), a
   brew, a smelt and a temper by `work`; a Court writ, a guild writ and the market by `spend`, as before.
-- `ui/profPages.js` workOf: every station's read, one home.
+- `ui/professions/profPages.js` workOf: every station's read, one home.
 
 Found on the way and fixed before it shipped: the service's statement bound `held` as `?9` for every order, and a
 `spend` or `all` deposit - every writ's, the market's and the Stores page's - answered `server` ("column index out of

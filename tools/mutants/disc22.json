@@ -37,7 +37,7 @@
   },
   {
     "name": "D22A-row-not-locked",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/disc22a_magic_repairs.test.js"
     ],
@@ -73,7 +73,7 @@
   },
   {
     "name": "D22B-landing-ignores-sections",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/disc22b_pause_settings.test.js"
     ],
@@ -163,7 +163,7 @@
   },
   {
     "name": "D22D-drawer-decodes-only-with-the-hook",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "tests": [
       "test/disc22d_flail_icon.test.js"
     ],
@@ -172,7 +172,7 @@
   },
   {
     "name": "D22D-accessory-drawer-skips-the-decode",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "tests": [
       "test/auditdw.test.js"
     ],
@@ -190,7 +190,7 @@
   },
   {
     "name": "D22D-trade-drops-the-metal",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "tests": [
       "test/disc22d_flail_icon.test.js"
     ],
@@ -208,7 +208,7 @@
   },
   {
     "name": "D22E-locked-click-taken",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "tests": [
       "test/disc22e_travel_click.test.js"
     ],
@@ -217,7 +217,7 @@
   },
   {
     "name": "D22E-any-button",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "tests": [
       "test/disc22e_travel_click.test.js"
     ],

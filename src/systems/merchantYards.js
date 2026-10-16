@@ -203,7 +203,7 @@ export const YARD_BENCH_ROW = Object.freeze({ id: 'bench', label: 'Workbench' })
 /** A yard's keeper's rows: the Stable's two, the Wagon Yard's three, the joinery's bench. */
 export const yardRowsFor = (kind) => (validYardKind(kind) === 'carpenter' ? [YARD_BENCH_ROW]
   : validYardKind(kind) === 'transport' ? [...YARD_ROWS, YARD_MEND_ROW] : [...YARD_ROWS]);
-/** CARP-YARD: what the joinery's carpenter says on Steal (the bench where the Stores page is not says ui/profPages.js
+/** CARP-YARD: what the joinery's carpenter says on Steal (the bench where the Stores page is not says ui/professions/profPages.js
  *  WORKBENCH_COLD_LINE, a home's workbench's own word). */
 export const CARPENTER_STEAL_TEXT = 'The carpenter never takes an eye off the tools.';
 

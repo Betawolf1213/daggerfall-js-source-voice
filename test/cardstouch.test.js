@@ -1,7 +1,7 @@
 // CARDS-TOUCH (2026-10-09, bible/11-Multiplayer/Tavern-Cards.md section 31; AUDIT CARDS-6 lane E's first HIGH, found
 // live on main): A PHONE'S FINGER AT A CARD TABLE IS THE TABLE'S. The cards' own listeners (scenes/worldModes.js
 // cardPointerListen) take a finger on the hand, the chips or the cloth at the capture phase - but the touch layer
-// (ui/touch.js) reads the raw touch events, not the pointer ones, and read the same finger again: a tap was the
+// (ui/touch/touch.js) reads the raw touch events, not the pointer ones, and read the same finger again: a tap was the
 // activate press (world.js inputHooks.tap -> the activate gate -> tryExit), and seated the press stands the player up -
 // folded out of turn, cashed out - from a tap on his own cards; a chip drag turned the seated head under the chips.
 // Driven: the real touch layer, over test/audit0928_input.test.js's stub document, its `cardTable` hook the hosts' own
@@ -10,8 +10,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { attachTouch } from '../src/ui/touch.js';
-import { HOLD_MS } from '../src/ui/touchGestures.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
+import { HOLD_MS } from '../src/ui/touch/touchGestures.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -114,7 +114,7 @@ test('CARDS-TOUCH by source: both hosts that enter a building through worldModes
     assert.ok(hooks.includes('    cardTable: () => !!modes?.cardSeated?.(),'), `${f}: the touch layer's hooks carry the seat`);
   }
   assert.match(read('src/scenes/worldModes.js'), /\n {4}cardSeated: \(\) => mode === 'interior' && !!cardSeat,\n/);
-  const touch = read('src/ui/touch.js');
+  const touch = read('src/ui/touch/touch.js');
   assert.ok(touch.includes("if (!(dt > 0) || dt > GYRO_MAX_DT || hooks.paused?.() || hooks.cardTable?.()) return;"), 'the gyro turns no seated head');
   assert.ok(touch.includes('if (!hooks.cardTable?.()) hooks.tap?.(stickOrigin[0], stickOrigin[1], { lockOnly: true });'), 'no lock pick from the seat');
   // the pad is untouched: it presses through its keys, and its look and swing are the hooks' own, not the layer's

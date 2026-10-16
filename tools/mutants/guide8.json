@@ -73,7 +73,7 @@
   },
   {
     "name": "GUIDE8-every-floor-for-a-quest",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "    for (const q of questSheets()) keep.add(q);   // GUIDE8: a quest's floor is on the strip before it is walked\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "GUIDE8-the-strip-unmarked",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      quest: !!opts.quest?.has?.(f.index),   // GUIDE8: a quest mark stands on this floor",
     "new": "      quest: false,",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "GUIDE8-the-quests-off-their-floor",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "    for (const q of questsHere()) {\n      const p = q.at;\n      if (!mine(p[1])) continue;",
     "new": "    for (const q of questsHere()) {\n      const p = q.at;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "GUIDE8-the-echo-does-not-breathe",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "breathes() { return !!entranceHere() || echoesBreathe() ||",
     "new": "breathes() { return !!entranceHere() ||",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "GUIDE8-an-echo-unpainted",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      paintMarkName(ctx, m.name, x, y + MARK_R * 2 + 2, PLAN_PEN.note);   // AUDIT DELVE D7: the names' pen (the beacon's was 3:1)\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-DELVE-TOWN-only-the-found-rung",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "      if (!named.has(b?.buildingKey) && (",
     "new": "      if ((true) && (",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-DELVE-TOWN-the-unnamed-building",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "    building: said.has(MACRO_TYPES.NameMacro1) && site.siteType === SITE_TYPES.Building",
     "new": "    building: site.siteType === SITE_TYPES.Building",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT-DELVE-E7-exact-unfed",
-    "file": "src/ui/questTracker.js",
+    "file": "src/ui/quest/questTracker.js",
     "old": "export const followOn = () => trackerOn() || marksOn() || guidanceTier() !== 'journal';",
     "new": "export const followOn = () => trackerOn() || marksOn();",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDIT-DELVE-D1-no-floor-word",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      return solidOn && s >= 0 && s !== index ?",
     "new": "      return false && s >= 0 && s !== index ?",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDIT-DELVE-D2-the-marks-off-the-paper",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "  const room = Math.max(padX, ...all.map((f) => marksW(f.index) + FLOOR_MARK.gap * scale));",
     "new": "  const room = padX;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "AUDIT-DELVE-D3-the-diamond-unpicked",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (m.kind === 'quest') d = Math.min(",
     "new": "      if (false) d = Math.min(",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "AUDIT-DELVE-D4-the-hollow-unsaid",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "${mark.followed ? QUEST_FOLLOWED_TEXT : QUEST_LEGEND_TEXT}",
     "new": "${QUEST_FOLLOWED_TEXT}",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDIT-DELVE-D7-the-faint-pen",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      paintMarkName(ctx, m.name, x, y + MARK_R + 2, PLAN_PEN.note);",
     "new": "      paintMarkName(ctx, m.name, x, y + MARK_R + 2, PLAN_PEN.mark);",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "AUDIT-DELVE-D11-breathes-anywhere",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "    return f.sheets.length > 0 && all.some((p) => sheetAt(f, p[1]) === index);",
     "new": "    return true;",
     "tests": [

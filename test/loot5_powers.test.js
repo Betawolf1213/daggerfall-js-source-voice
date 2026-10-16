@@ -329,5 +329,5 @@ test('LOOT5: the HUD\'s chips - the stacks, the charges and the recoveries, in t
   assert.deepEqual(chips.map((c) => [c.key, c.state]), [['flow', 'active'], ['dawnward', 'active'], ['grace', 'recovering']]);
   assert.ok(chips.every((c) => c.set === 'legendary'));
   assert.deepEqual(LP.lootHudChips({ ...me, peer: true }), []);
-  assert.match(read('src/ui/enhancedHud.js'), /t\.set === 'legendary' \? RARITIES\.legendary\.colour/);
+  assert.match(read('src/ui/enhanced/enhancedHud.js'), /t\.set === 'legendary' \? RARITIES\.legendary\.colour/);
 });

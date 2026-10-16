@@ -13,7 +13,7 @@ import { enchantmentMagicRound } from '../src/systems/enchantments.js';
 import { equipItem, unequipItem } from '../src/systems/equip.js';
 import { getReactionToPlayer } from '../src/systems/talk/talk.js';
 import { FACTION_TYPES, SOCIAL_GROUP_COUNT } from '../src/formats/factionFile.js';
-import { dressLine } from '../src/ui/enhancedMenu.js';
+import { dressLine } from '../src/ui/enhanced/enhancedMenu.js';
 import TEMPLATES from '../src/characters/itemTemplates.json' with { type: 'json' };
 
 const nameOf = (i) => (Array.isArray(TEMPLATES) ? TEMPLATES : Object.values(TEMPLATES)).find((t) => (t.index ?? t.Index) === i)?.name;

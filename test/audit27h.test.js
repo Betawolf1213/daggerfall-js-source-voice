@@ -7,18 +7,18 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sheetPageDoors } from '../src/ui/charSheetDoor.js';
 import { pauseMenuAct } from '../src/ui/pauseDoor.js';
-import { endingGesture } from '../src/ui/enhancedHud.js';
-import { activeSpellIconsPlaced } from '../src/ui/hud.js';
+import { endingGesture } from '../src/ui/enhanced/enhancedHud.js';
+import { activeSpellIconsPlaced } from '../src/ui/hud/hud.js';
 import { createShieldWidget, readShieldWidgetSettings, shieldTextureIndex, SHIELD_TEMPLATES } from '../src/combat/shieldWidget.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, detachedAutomapRecord, resetAutomapStore } from '../src/systems/automap/automap.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
-import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spell/spellMakerWindow.js';
 import { spellMakerGroups, spellMakerSubgroups } from '../src/systems/spell/spellEffects.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
-import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
+import { PORT_SPECS } from '../src/ui/enhanced/enhancedPorts.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -122,7 +122,7 @@ test('AUDIT 27h A4: a door that opened nothing RESUMES - the page gone and nothi
   assert.equal(sheetPageDoors({ openPack: () => false }, () => {}).openPack(), false);
   assert.equal(sheetPageDoors({ openPack: () => true }, () => {}).openPack(), true);
   // the Stats page's door, as written, over the pause door's own act law
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const at = menu.indexOf('function pauseStats(body)');
   const onclick = /b\.onclick = (\(\) => \{ onAction\('handoff'\); if \(fn\(\) === false\) onAction\('resume'\); \});/.exec(menu.slice(at, menu.indexOf('\nfunction ', at + 10)));
   assert.ok(onclick, 'the Stats door');
@@ -298,11 +298,11 @@ test('AUDIT 27h B1: a tile owns a press and ITS release - a press of the world\'
   const d7 = ev(A); idle.down(d7); const m7 = ev(A); idle.menu(m7);
   assert.deepEqual([d7.stopped, m7.prevented, ended.length], [false, false, 1]);
   // the wiring: every press anywhere clears it first (the window's capture), and the HUD's teardown takes that listener
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /globalThis\.addEventListener\?\.\('mousedown', g\.forget, true\);\n\s*holds\.push\(\{ off: \(\) => globalThis\.removeEventListener\?\.\('mousedown', g\.forget, true\) \}\);/);
   // HB1c's twin, the hotbar's sockets in mouse mode: the same law - a socket's press and ITS release, cleared at every
   // press by the bar's own window capture (onMouse) before a socket hears it
-  const bar = rd('src/ui/enhancedHotbar.js');
+  const bar = rd('src/ui/enhanced/enhancedHotbar.js');
   assert.match(bar, /function onMouse\(e\) \{\n\s*hbTook = null;/);
   assert.match(bar, /node\.addEventListener\('mousedown', \(e\) => \{\n\s*if \(!editable\(\)\) return;\n\s*hbTook = \{ node, button: e\.button \};\n\s*e\.stopPropagation\(\);\n\s*\}\);/);
   assert.match(bar, /node\.addEventListener\('mouseup', \(e\) => \{ if \(hbTook\?\.node === node && hbTook\.button === e\.button\) e\.stopPropagation\(\); \}\);/);
@@ -311,7 +311,7 @@ test('AUDIT 27h B1: a tile owns a press and ITS release - a press of the world\'
 
 test('AUDIT 27h B2: the classic icons are where they were last DRAWN - a hidden HUD answers none', () => {
   assert.deepEqual(activeSpellIconsPlaced(), [], 'never drawn, nothing to click');
-  const hud = rd('src/ui/hud.js');
+  const hud = rd('src/ui/hud/hud.js');
   assert.equal((hud.match(/if \(!hudDrawn\) \{ _placedSpellIcons = \[\]; return; \}/g) ?? []).length, 2, 'both skins\' hidden returns empty the rects (Shift-F10)');
   assert.match(hud, /export const activeSpellIconsPlaced = \(\) => \(nowMs\(\) - _placedAt <= PLACED_FRESH_MS \? _placedSpellIcons : \[\]\);/, 'and a placement no longer drawn answers none');
   assert.match(hud, /_placedSpellIcons = drawActiveSpells\([\s\S]{0,120}?\}\);\n\s*_placedAt = nowMs\(\);/);
@@ -350,12 +350,12 @@ test('AUDIT 27h H1: a spinner act of an editor since shut presses nothing - its 
   assert.equal(w.slots[0].settings.magnitudeBaseHigh, was, 'and no stale set wrote the slot');
   assert.equal(w.editor, null);
   // the port's own half: each repeat reads the LIVE view before it finds its button
-  const port = rd('src/ui/enhancedPort.js');
+  const port = rd('src/ui/enhanced/enhancedPort.js');
   assert.match(port, /try \{ view = win\.done \? null : spec\.view\(proxy\); \} catch \{ view = null; \}\n\s*if \(!view\) \{ stopHold\(\); return; \}\n\s*const vs = viewSig\(view\);\n\s*if \(vs !== sig\) \{ sig = vs; render\(view\); \} else acts = collectActs\(view\);\n\s*const btn = /);
 });
 
 test('AUDIT 27h H2-H7: the field keeps the browser\'s keys swallowed, its focus and its scroll; a typed value commits before a press; the pad\'s release is heard', () => {
-  const port = rd('src/ui/enhancedPort.js');
+  const port = rd('src/ui/enhanced/enhancedPort.js');
   // H2: F5/F6/F11 typed in the field - the hosts' swallow never heard them, and F5 reloaded the page
   assert.match(port, /e\.stopPropagation\(\);   \/\/ the field's keys are the field's\n\s*swallowBrowserKey\(e\);/);
   assert.match(port, /^import \{ swallowBrowserKey \} from '\.\/input\.js';/m);
@@ -372,5 +372,5 @@ test('AUDIT 27h H2-H7: the field keeps the browser\'s keys swallowed, its focus 
   assert.match(port, /e\.stopPropagation\(\);\n\s*if \(b && !b\.disabled\) commitTyped\(\);/);
   assert.match(port, /const commitTyped = \(\) => \{\n\s*const f = doc\.activeElement;\n\s*if \(f && host\?\.contains\?\.\(f\) && f\.matches\?\.\('input\[data-s\]'\)\) f\.blur\(\);\n\s*\};/);
   // ...and H1's second half: every spinner act is its own editor's
-  assert.match(rd('src/ui/enhancedPorts.js'), /const live = \(fn\) => \(\.\.\.a\) => \(w\.editor === ed \? fn\(\.\.\.a\) : undefined\);/);
+  assert.match(rd('src/ui/enhanced/enhancedPorts.js'), /const live = \(fn\) => \(\.\.\.a\) => \(w\.editor === ed \? fn\(\.\.\.a\) : undefined\);/);
 });

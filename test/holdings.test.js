@@ -1,7 +1,7 @@
 // HOLDINGS (2026-10-03, Mac: "Lets add a new tab to the pause menu as the stat page is starting to get bloated. Lets
 // organize everything appropriately. Under the new tab add a page that allows you to see your currently owned mounts
 // ships and carts. You can summon your horse/cart from this page/send away much like the companion system") - THE
-// HOLDINGS TAB and THE STABLE (bible/03-World/Holdings.md): the pause window's fourth tab and its rail (ui/enhancedMenu.js
+// HOLDINGS TAB and THE STABLE (bible/03-World/Holdings.md): the pause window's fourth tab and its rail (ui/enhanced/enhancedMenu.js
 // pauseHoldings), what moved off the Stats rail onto it, the landings; Horse Cart and Cargo's summon answered and its
 // new other half, Send away (systems/horse/horseCart.js summonTransport, sendTransportAway, renameHorse, stableView - the
 // real runtime over test/hccWorld.mjs); the Stable page's words and acts (ui/holdingsPages.js); the one construction
@@ -18,7 +18,7 @@ import {
 import { CSA_ITEM_TEMPLATES } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const MENU = read('src/ui/enhancedMenu.js');
+const MENU = read('src/ui/enhanced/enhancedMenu.js');
 
 // ── a fake DOM, the Companions page's (test/revenant_companions.test.js) ─────────────────────────────────────────────
 function fakeEl(tag) {

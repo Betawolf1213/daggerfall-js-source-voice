@@ -647,7 +647,7 @@
  },
  {
   "name": "KG3-P-role-dropped",
-  "file": "src/ui/enhancedFrame.js",
+  "file": "src/ui/enhanced/enhancedFrame.js",
   "old": "    'body .dfgambit-unit', 'body .dfgambit-stake', 'body .dfgambit-crown',",
   "new": "    'body .dfgambit-stake', 'body .dfgambit-crown',",
   "tests": [
@@ -710,7 +710,7 @@
  },
  {
   "name": "KG3-C-kit-selector",
-  "file": "src/ui/cardPanelKit.js",
+  "file": "src/ui/card/cardPanelKit.js",
   "old": "/\\.df(?:cards|iliac|gambit)(?![\\w-])|\\.dfgambit-[a-z]/",
   "new": "/\\.df(?:cards|iliac)(?![\\w-])/",
   "tests": [

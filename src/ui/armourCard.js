@@ -2,7 +2,7 @@
 // inventory we should be able to see the total AC of equipped items on our characters. Hovering our cursor over an item
 // ... should also allow us to see comparative stats ... a straight up + or - stat next to the items stats in green and
 // red so we can quickly see what is better or worse"): THE CHARACTER'S ARMOUR, READ AT A GLANCE, AND WHAT A WEAR WOULD
-// CHANGE. The enhanced pack only (ui/enhancedInventory.js composes all three drawings below); the classic window keeps
+// CHANGE. The enhanced pack only (ui/enhanced/enhancedInventory.js composes all three drawings below); the classic window keeps
 // DFU's doll and its seven labels, untouched.
 //
 // NOTHING HERE IS A NEW LAW. Every number is one the port already computes, read through the member that computes it:
@@ -26,7 +26,7 @@ import { computeEntityMods, entityArmorDisplayMod } from '../systems/entityMods.
 import { struckBodyPartTable } from '../combat/formulas.js';
 import { itemDamageLine, weaponDamageRange } from '../systems/item/itemInfo.js';
 import { itemIsIdentified } from '../systems/tradeModes.js';
-import { armorLabelValue } from './nativeInventory.js';
+import { armorLabelValue } from './native/nativeInventory.js';
 import { lineComparison, lootRarityOn } from '../systems/loot/lootRarity.js';   // LOOT18: the lines against what a wear replaces
 
 /** The seven parts in DFU's BodyParts order (ItemEnums.cs:140-150), named off the enum's own members ("RightArm" says
@@ -172,7 +172,7 @@ function delta(d, digits = 0) {
 }
 
 /** THE PART'S NUMBER ON ITS PANEL - the classic doll's label standing where the enhanced pack draws that body part (the
- *  worn map's panel for the part's own slot: ui/enhancedInventory.js wornPanel, through equip.js bodyPartForSlot). A
+ *  worn map's panel for the part's own slot: ui/enhanced/enhancedInventory.js wornPanel, through equip.js bodyPartForSlot). A
  *  panel shows it filled or empty, as the doll labels every part. */
 export function armourBadge(entity, part) {
   const v = dollArmour(entity)[part];
@@ -197,7 +197,7 @@ export function armourPlaque(entity) {
 }
 
 /**
- * THE CARD'S COMPARISON - what wearing the piece would change, beside its own stats (ui/enhancedInventory.js infoCard,
+ * THE CARD'S COMPARISON - what wearing the piece would change, beside its own stats (ui/enhanced/enhancedInventory.js infoCard,
  * the hover card and the picked one alike): the pieces it would take off, then a weapon's damage against the one it
  * would replace, the overall figure, and each part (the doll's number now and after, and the difference - green better,
  * red worse). Null where wearComparison is, and for a piece that is neither armour nor a weapon and moves no part (a

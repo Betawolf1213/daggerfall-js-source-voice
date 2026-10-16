@@ -50,21 +50,21 @@
  },
  {
   "name": "MACRO-4-native-trade-has-no-shop-arm",
-  "file": "src/ui/nativeTrade.js",
+  "file": "src/ui/native/nativeTrade.js",
   "old": "        guildTitle: this.hooks.guildTitle?.() ?? firstName(this.hooks.entity?.name ?? ''),",
   "new": "        guildTitle: this.hooks.guildTitle?.() ?? null,",
   "tests": ["test/macro4_guild.test.js"]
  },
  {
   "name": "MACRO-4-native-trade-ignores-the-guild",
-  "file": "src/ui/nativeTrade.js",
+  "file": "src/ui/native/nativeTrade.js",
   "old": "        guildTitle: this.hooks.guildTitle?.() ?? firstName(this.hooks.entity?.name ?? ''),",
   "new": "        guildTitle: firstName(this.hooks.entity?.name ?? ''),",
   "tests": ["test/macro4_guild.test.js"]
  },
  {
   "name": "MACRO-4-enhanced-trade-has-no-pct",
-  "file": "src/ui/enhancedTrade.js",
+  "file": "src/ui/enhanced/enhancedTrade.js",
   "old": "      guildTitle: deps.guildTitle?.() ?? firstName(deps.entity?.name ?? ''),",
   "new": "",
   "tests": ["test/macro4_guild.test.js"]

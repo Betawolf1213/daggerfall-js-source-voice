@@ -100,7 +100,7 @@
   },
   {
     "name": "D25A-sheet-no-pass",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      pass: passCells(f, index),   // DISC25-A: ...and an edge onto a stair's far side, on another sheet, is neither\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "D25A-sheet-no-grouping",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      const sheets = groupSheets(field, floors);",
     "new": "      const sheets = groupSheets(field, floors, { overlap: -1 });",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "D25A-unseen-stairs-drawn",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (!seen) continue;\n",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "D25A-inside-drawn-twice",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (inside && l.from > l.to) continue;   // the lower end draws a flight inside the sheet\n",
     "new": "",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "D25A-no-mark-merge",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (out.some((s) => s.to === to && s.up === up && Math.hypot(s.x - x, s.z - z) < STAIR_MERGE)) continue;\n",
     "new": "",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "D25A-north-down",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "        x, z, dx: l.dx, dz: -l.dz,   // plan y runs south, world z north",
     "new": "        x, z, dx: l.dx, dz: l.dz,   // plan y runs south, world z north",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "D25A-up-down-swapped",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "        name: inside ? '' : listed(to) ? `${up ? 'up' : 'down'} to ${sheets[to]?.label ?? ''}` : `${up ? 'up' : 'down'} - not explored yet`,",
     "new": "        name: inside ? '' : listed(to) ? `${up ? 'down' : 'up'} to ${sheets[to]?.label ?? ''}` : `${up ? 'up' : 'down'} - not explored yet`,",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "D25A-stair-not-pressed",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (stair?.cross && stair.known) setFloor(stair.to);",
     "new": "      if (false) setFloor(stair.to);",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "D25A-stair-not-named",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "      if (stair) return { label: stair.cross ? `Stairs ${stair.name}` : 'Stairs up', cursor: stair.cross && stair.known ? 'pointer' : '' };\n",
     "new": "",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "D25A-note-at-sheet-height",
-    "file": "src/ui/automapSheet.js",
+    "file": "src/ui/automap/automapSheet.js",
     "old": "          if (sheet.storeys.includes(s) && r.revealed.has(f.rows[fl.row[e]]?.key)) return f.floors[s].y;",
     "new": "          if (sheet.storeys.includes(s) && r.revealed.has(f.rows[fl.row[e]]?.key)) return sheet.y;",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "D25A-strip-ignores-hands",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "    max = Math.min(max, Math.floor((h.y0 - padY - top + gap) / (rowH + gap)));\n",
     "new": "",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "D25A-strip-any-hand",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "    if (h.x1 <= left || h.x0 >= paperW || h.y0 <= top) continue;",
     "new": "    if (h.y0 <= top) continue;",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "D25A-strip-min-one",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "  max = Math.max(FLOOR_STRIP_MIN, max);",
     "new": "  max = Math.max(1, max);",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "D25A-chevron-to-the-top",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "    above: hi < all.length - 1 ? all[hi + 1].index : -1,",
     "new": "    above: hi < all.length - 1 ? all[all.length - 1].index : -1,",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "D25A-never-faint",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      faint: !!opts.seen && !opts.seen.has(f.index) && f.index !== live,",
     "new": "      faint: false,",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "D25A-faint-not-drawn",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "    if (r.faint) ctx.globalAlpha = FLOOR_UNSEEN_ALPHA;\n",
     "new": "",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "D25A-you-not-marked",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      you: f.index === opts.you,",
     "new": "      you: false,",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "D25A-name-under-hand",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      if (under(lx, ly)) continue;\n",
     "new": "",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "D25A-names-overwrite",
-    "file": "src/ui/inkAutomap.js",
+    "file": "src/ui/ink/inkAutomap.js",
     "old": "      if (placed.some((b) => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;\n",
     "new": "",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "D25F-classic-counter-never-asks",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if (!splitRequired(item, max, this._controlDown)) { perform(max); return; }",
     "new": "    { perform(max); return; }",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "D25F-classic-seed-max-under-control",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "      value: this._controlDown ? '0' : String(max),",
     "new": "      value: String(max),",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "D25F-classic-control-never-up",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "  keyup(code, e = null) {\n    if (isControlCode(code, e)) this._controlDown = false;\n  }\n}",
     "new": "  keyup(code, e = null) {\n  }\n}",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "D25F-classic-box-not-modal",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if (this.inputBox) { this.inputBox.click(vx, vy); if (this.inputBox.done) this.inputBox = null; return true; }   // DISC25-F: modal\n",
     "new": "",
     "tests": [
@@ -462,7 +462,7 @@
   },
   {
     "name": "D25F-classic-sell-whole",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "      this._split(item, amountOf(item), (n) => this._moveCount(item, n, this.hooks.packItems(), this.remoteItems));",
     "new": "      this._moveCount(item, amountOf(item), this.hooks.packItems(), this.remoteItems);",
     "tests": [
@@ -471,7 +471,7 @@
   },
   {
     "name": "D25F-pack-ignores-field",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  return qty.item === item ? parseSplitAmount(qty.text, max) : max;",
     "new": "  return max;",
     "tests": [
@@ -480,7 +480,7 @@
   },
   {
     "name": "D25F-pack-no-field",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      if (qty && max > 1) acts.append(qtyField(picked, max));   // DISC25-F\n    }\n  } else {",
     "new": "    }\n  } else {",
     "tests": [
@@ -489,7 +489,7 @@
   },
   {
     "name": "D25F-pack-refused-count-moves",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const amount = chosenAmount(item, plan.amount);\n  if (amount == null) { notice = HOW_MANY_ITEMS(plan.amount); render(); return; }\n  // MAC-O6: the same cue",
     "new": "  const amount = chosenAmount(item, plan.amount) ?? plan.amount;\n  // MAC-O6: the same cue",
     "tests": [
@@ -498,7 +498,7 @@
   },
   {
     "name": "D25F-counter-ignores-field",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  return qty.item === item ? parseSplitAmount(qty.text, max) : max;",
     "new": "  return max;",
     "tests": [
@@ -507,7 +507,7 @@
   },
   {
     "name": "D25F-counter-buys-whole",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "    applyTransfer(item, { ...plan, amount }, deps.shelfItems(), basket);",
     "new": "    applyTransfer(item, plan, deps.shelfItems(), basket);",
     "tests": [
@@ -516,7 +516,7 @@
   },
   {
     "name": "D25F-counter-sells-whole",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "    if (amount < stackOf(item)) applyTransfer(item, { amount }, deps.packItems(), remoteItems(), { entity: deps.entity, fromLocal: true });\n    else {",
     "new": "    if (false) applyTransfer(item, { amount }, deps.packItems(), remoteItems(), { entity: deps.entity, fromLocal: true });\n    else {",
     "tests": [
@@ -525,7 +525,7 @@
   },
   {
     "name": "D25F-counter-no-field",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (max > 1) {\n    if (qty.item !== item) qty = { item, text: String(max) };",
     "new": "  if (false) {\n    if (qty.item !== item) qty = { item, text: String(max) };",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "D25F-enter-in-any-field-moves",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "isTextEntryTarget(e.target) && e.target.closest?.('.qtyfield') && selected",
     "new": "isTextEntryTarget(e.target) && selected",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "D25F-enter-in-field-confirms-the-lot",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (e.key === 'Enter' && isTextEntryTarget(e.target) && e.target.closest?.('.qtyfield') && selected) { e.preventDefault(); transferSelected(); render(); return; }\n",
     "new": "",
     "tests": [

@@ -14,7 +14,7 @@ import { dfuFile, missingDfu } from './dfuRoot.mjs';
 import { expandGuildMacros } from '../src/systems/guild/guildServiceActions.js';
 import { DEITY_DESCRIPTIONS } from '../src/systems/guild/guildServices.js';
 import { DIVINES } from '../src/systems/guild/guildVariants.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { setMacroWorld } from '../src/systems/quest/questMacros.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -73,7 +73,7 @@ test('MACRO-4: the hosts wire the sources', () => {
   assert.match(modes, /guildTitle: \(\) => getTitle\(membershipOf\(seated\(\), guild\), playerEntity, guild\),/, 'the popup: the rank, read at show time - PIN MOVED (AUDIT CHAP4 D3): the seated book\'s, a seat\'s title at its chapter\'s hall');
   assert.match(modes, /god: guild\?\.divine \?\? null,\s*godDesc: guild\?\.divine \? \(DEITY_DESCRIPTIONS\[guild\.divine\] \?\? null\) : null,\s*dungeon: \(\) => \(revealedDungeon \? getLocalizedLocationName\(revealedDungeon\.mapId, revealedDungeon\.name\) : null\),/, 'the popup: the deity and the revealed dungeon');
   assert.match(modes, /const g = guildFactionId != null \? guildOfFaction\(guildFactionId, resolveVariantGuild\(dict\), dict\) : null;\s*[^\n]*\n\s*return g \? getTitle\(membershipOf\(seatedBook\(activeMemberships\(playerEntity\), membershipKey\(g\), host\.chapterSeatRank\?\.\(g\.factionId\) \?\? null\), g\), playerEntity, g\) : null;/, 'the trade window: the counter’s guild - PIN MOVED (AUDIT CHAP4 D3): a seat\'s title at its counter');
-  assert.match(read('src/ui/enhancedTrade.js'), /guildTitle: deps\.guildTitle\?\.\(\) \?\? firstName\(deps\.entity\?\.name \?\? ''\),/, 'the enhanced trade skin reads the same hook');
+  assert.match(read('src/ui/enhanced/enhancedTrade.js'), /guildTitle: deps\.guildTitle\?\.\(\) \?\? firstName\(deps\.entity\?\.name \?\? ''\),/, 'the enhanced trade skin reads the same hook');
   const actions = read('src/systems/guild/guildServiceActions.js');
   assert.match(actions, /pct: guildTitle, lev: guildTitle,/);
   assert.match(actions, /gdd: godDesc,/);

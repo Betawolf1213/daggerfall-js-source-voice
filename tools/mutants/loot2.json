@@ -148,7 +148,7 @@
   },
   {
     "name": "LOOT2-the-pips-forgotten",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  `${scope}[data-rarity=\"legendary\"][data-exalted] { ${EXALTED_PIPS} }`].join('\\n');",
     "new": "].join('\\n');",
     "tests": [

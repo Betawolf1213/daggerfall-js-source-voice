@@ -35,7 +35,7 @@ import * as wire from '../src/net/wire.js';
 import { webcrypto } from 'node:crypto';
 import { mintStakeOrder, mintDeckOrder, deckDigest } from '../src/net/identityToken.js';
 import { readCardReceipt } from '../src/net/card/cardReceipt.js';
-import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
+import { HOLDEM_REFUSALS } from '../src/ui/card/cardTableHud.js';
 import { SIT_REFUSALS } from '../src/systems/card/cardRemoteTable.js';
 import { ILIAC_ONLINE_REFUSALS } from '../src/scenes/iliacTableGame.js';
 import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';

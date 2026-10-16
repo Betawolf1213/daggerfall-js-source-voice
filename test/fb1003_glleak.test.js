@@ -3,14 +3,14 @@
 // play length ... Might be related to some GL instances not being cleared through webgl ... Idling does not increase").
 //
 // Measured in the source, not guessed: the held map built a sheet per open and each sheet a WebGL2 context of its own
-// (ui/inkDungeonGL.js createDungeonInk: a paper-sized drawing buffer, its depth, a preserve copy and three paper-sized
+// (ui/ink/inkDungeonGL.js createDungeonInk: a paper-sized drawing buffer, its depth, a preserve copy and three paper-sized
 // textures - 30-40 MB at 1080p) on every M in a dungeon or a building - never deleted, never lost, its canvas off the
 // page and freed only when a collector reached it. And nothing let ANY context go as the page went. Over a fake WebGL2
 // that counts what is made, what is deleted and what is lost.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDungeonInk, dungeonInkFor, disposeDungeonInk } from '../src/ui/inkDungeonGL.js';
+import { createDungeonInk, dungeonInkFor, disposeDungeonInk } from '../src/ui/ink/inkDungeonGL.js';
 import { loseGlContext, onPageGone, releaseGlContexts } from '../src/render/glRelease.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -98,7 +98,7 @@ test('GL-LEAK the ink\'s mesh is the SHEET\'s: two sheets whose reveals count th
   assert.ok(uploads() > 0);
   disposeDungeonInk();
   // the sheet asks the page's ink, with its own rows' owner, and asks again when it was lost
-  const sheet = rd('src/ui/automapSheet.js');
+  const sheet = rd('src/ui/automap/automapSheet.js');
   assert.match(sheet, /if \(glInk === undefined \|\| glInk\?\.lost\?\.\(\)\) glInk = dungeonInkFor\(ctx\?\.canvas\?\.ownerDocument \?\? null\);/);
   assert.match(sheet, /glInk\.setMesh\(`\$\{r\?\.revealed\?\.size \?\? 0\}\|\$\{f\.rows\.length\}`, rowsIn\(f\.model, r\?\.revealed \?\? null\), solids\);/);
   assert.doesNotMatch(sheet, /createDungeonInk\(/, 'no sheet makes an ink of its own');
@@ -125,8 +125,8 @@ test('GL-LEAK AS THE PAGE GOES: every seated context let go once, an unseated on
   assert.match(main, /e\.preventDefault\(\);\n\s*if \(pageGoing\) return;/, 'no "context lost" banner over a closing tab');
   assert.match(main, /from '\.\/render\/glRelease\.js';/);
   assert.doesNotMatch(rd('src/render/glRelease.js'), /^\s*import\s/m, 'a leaf: the entry\'s static reach unchanged (BOOT1)');
-  assert.match(rd('src/ui/inkDungeonGL.js'), /if \(ink\) _shared = \{ doc, ink, unseat: onPageGone\(disposeDungeonInk\) \};/);
-  assert.match(rd('src/ui/gateVeil.js'), /unseat = onPageGone\(\(\) => loseGlContext\(gl\)\);/);
-  assert.match(rd('src/ui/gateVeil.js'), /loseGlContext\(veilGl\); unseat\?\.\(\);/, 'and its destroy lets it go');
-  assert.match(rd('src/ui/introLandscape.js'), /unseat\(\);\n\s*loseGlContext\(gl\);/);
+  assert.match(rd('src/ui/ink/inkDungeonGL.js'), /if \(ink\) _shared = \{ doc, ink, unseat: onPageGone\(disposeDungeonInk\) \};/);
+  assert.match(rd('src/ui/gate/gateVeil.js'), /unseat = onPageGone\(\(\) => loseGlContext\(gl\)\);/);
+  assert.match(rd('src/ui/gate/gateVeil.js'), /loseGlContext\(veilGl\); unseat\?\.\(\);/, 'and its destroy lets it go');
+  assert.match(rd('src/ui/intro/introLandscape.js'), /unseat\(\);\n\s*loseGlContext\(gl\);/);
 });

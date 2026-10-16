@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FEATURES, featureForControl } from '../src/systems/features.js';
-import { CATEGORY_IDS, keysOf } from '../src/ui/settingsMap.js';
+import { CATEGORY_IDS, keysOf } from '../src/ui/settings/settingsMap.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import '../src/world/landView.js';
 import '../src/world/outdoors.js';
@@ -36,7 +36,7 @@ test('FT13: the moved keys are real, are many, and stay in the total category ma
 });
 
 test('FT13: a moved key draws nothing - the seam answers null, every caller appends only what it is handed, every list and count filters first', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /function movedRow\(_f\) \{ return null; \}/, 'the seam answers null');
   // ORG2: every tab draws its items through one function, and it asks the registry before anything else; the rail's
   // count and the help pane's filter first too

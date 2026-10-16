@@ -71,7 +71,7 @@
   },
   {
     "name": "QT-LIVE1-words-ignore-urgency",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  return { text: t('pause.journal.timeRemains', 'Time remains: {left}', { left: remainWords(q.clockSeconds) }), urgent: q.clockSeconds < QUEST_URGENT_SECONDS };",
     "new": "  return { text: t('pause.journal.timeRemains', 'Time remains: {left}', { left: remainWords(q.clockSeconds) }), urgent: false };",
     "tests": [
@@ -80,7 +80,7 @@
   },
   {
     "name": "QT-LIVE1-words-for-a-clockless-quest",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (!q || q.clockSeconds == null) return null;",
     "new": "  if (!q) return null;",
     "tests": [
@@ -89,7 +89,7 @@
   },
   {
     "name": "QT-LIVE1-interval-reads-a-captured-log",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    const w = questTimerWords(hooks.questLog?.(), key);",
     "new": "    const w = questTimerWords(log0, key);",
     "tests": [
@@ -98,7 +98,7 @@
   },
   {
     "name": "QT-LIVE1-interval-once-a-minute",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    span.className = `px-qtimer${w.urgent ? ' urgent' : ''}`;\n  }, 1000);",
     "new": "    span.className = `px-qtimer${w.urgent ? ' urgent' : ''}`;\n  }, 60000);",
     "tests": [
@@ -107,7 +107,7 @@
   },
   {
     "name": "QT-LIVE1-rebuild-leaks-the-interval",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (groundTimer) { clearInterval(groundTimer); groundTimer = null; }\n  if (questTimer) { clearInterval(questTimer); questTimer = null; }\n  stopTimers();",
     "new": "  if (groundTimer) { clearInterval(groundTimer); groundTimer = null; }\n  stopTimers();",
     "tests": [
@@ -116,7 +116,7 @@
   },
   {
     "name": "QT-LIVE1-unmount-leaks-the-interval",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      if (questTimer) { clearInterval(questTimer); questTimer = null; }\n      stopTimers();   // TIMERS1",
     "new": "      stopTimers();   // TIMERS1",
     "tests": [
@@ -125,7 +125,7 @@
   },
   {
     "name": "QT-LIVE1-timer-never-armed",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "        armQuestTimer(timer, sel.key);",
     "new": "        void timer;",
     "tests": [
@@ -134,7 +134,7 @@
   },
   {
     "name": "QT-LIVE1-a-gone-clock-leaves-a-stale-line",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (!w) { render(); return; }",
     "new": "    if (!w) return;",
     "tests": [

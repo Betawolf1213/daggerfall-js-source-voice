@@ -7,7 +7,7 @@
 //
 // DFU's inventory has FOUR tabs - Weapons & Armor, Magic, Clothing &
 // Misc, Ingredients (DaggerfallInventoryWindow's AddLocalItem, the law
-// ui/nativeInventory.js's filterByTab carries) - and the fourth is a
+// ui/native/nativeInventory.js's filterByTab carries) - and the fourth is a
 // drawer: books, maps, potions, gems, jewellery, a horse, a torch and
 // the shirts all land in it together. The classic pack keeps DFU's
 // four (that window IS DFU's). The enhanced pack is the port's own
@@ -31,7 +31,7 @@
 //                until WALLET1 named it - and WALLET1's Wallet, which
 //                holds the currencies: while the pack holds a wallet,
 //                what it holds leaves the pages for its sheet
-//                (ui/enhancedInventory.js packModel)
+//                (ui/enhanced/enhancedInventory.js packModel)
 //   misc         the rest: the drugs, the jars and sacks, the torch
 //                and the bandage, the religious items, the soul trap,
 //                the recipe, the horse and the cart (which also keep
@@ -44,7 +44,7 @@
 
 import { isEquipped } from '../systems/equip.js';
 import { isEnchanted, LETTER_OF_CREDIT_TEMPLATE } from '../systems/inventory.js';
-import { isIngredientTemplate } from './nativeInventory.js';
+import { isIngredientTemplate } from './native/nativeInventory.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../systems/spell/spellMaker.js';
 import { POTION_TEMPLATE_INDEX } from '../systems/loot/loot.js';
 import { isCardBinder, isIliacCard } from '../systems/iliac/iliacItems.js';   // CARDS8: the binder and its cards

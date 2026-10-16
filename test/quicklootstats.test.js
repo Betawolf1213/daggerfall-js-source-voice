@@ -25,7 +25,7 @@ import { foldQuickLoot, quickLootStats, quickLootWheel, resetQuickLoot, quickLoo
 import { statsSide } from '../src/ui/worldPlaque.js';
 import { readFileSync } from 'node:fs';
 import { TEMPLATE, SURVIVAL_GROUP } from '../src/systems/survival/food.js';   // a real survival item, not a shape that looks like one
-import { ENHANCED_CSS, PLAQUE_MAX_W, STATS_W, STATS_GAP, STATS_MARGIN } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS, PLAQUE_MAX_W, STATS_W, STATS_GAP, STATS_MARGIN } from '../src/ui/enhanced/enhancedStyle.js';
 
 const sword = (extra = {}) => ({ name: 'Dagger', group: 'Weapons', templateIndex: 121, material: 3, maxCondition: 200, currentCondition: 150, ...extra });
 const mail = (extra = {}) => ({ name: 'Cuirass', group: 'Armor', templateIndex: 103, material: 0x0202, maxCondition: 100, currentCondition: 100, ...extra });
@@ -191,7 +191,7 @@ test('QUICK-LOOT-STATS: the side is decided by arithmetic at real widths, and th
   // INTERPOLATES the constant rather than restating the number - the
   // only shape in which one edit cannot move the drawing without
   // moving the arithmetic.
-  const sheet = readFileSync('src/ui/enhancedStyle.js', 'utf8');
+  const sheet = readFileSync('src/ui/enhanced/enhancedStyle.js', 'utf8');
   assert.match(sheet, /\.wplaque-stats \{[^}]*width: \$\{STATS_W\}px/, 'the drawn width IS the constant, not a copy of it');
   assert.match(sheet, /max-width: \$\{PLAQUE_MAX_W\}px/, 'and so is the plaque\'s own');
   assert.match(sheet, /\[data-side="right"\] \{ left: calc\(100% \+ \$\{STATS_GAP\}px\)/);

@@ -1,7 +1,7 @@
 [
   {
     "name": "AETHERICMAKER-filter-out",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "  if (itemMakerRefuses(item)) return false;   // AETHERIC-MAKER: an Aetheric piece is out of every tab\n",
     "new": "",
     "tests": [

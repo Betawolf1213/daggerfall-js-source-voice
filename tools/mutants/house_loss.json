@@ -124,7 +124,7 @@
   },
   {
     "name": "HOUSE-LOSS-the-door-deletes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "realmAct(() => realmUndo(realmIoNow(), row.id)",
     "new": "realmAct(() => realmDelete(realmIoNow(), row.id)",
     "tests": [
@@ -133,7 +133,7 @@
   },
   {
     "name": "HOUSE-LOSS-the-door-never-undoes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "row.customs && save.unfinished ? { label: t('menu.realm.undo', 'Undo bringing in')",
     "new": "false ? { label: t('menu.realm.undo', 'Undo bringing in')",
     "tests": [

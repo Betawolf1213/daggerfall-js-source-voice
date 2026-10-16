@@ -82,7 +82,7 @@
   },
   {
     "name": "GRIM1-theme-worn-under-dress",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "tests": [
       "test/grim1_dress.test.js"
     ],

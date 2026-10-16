@@ -7,7 +7,7 @@ import {
 } from '../src/systems/inputActions.js';
 import {
   applyPlusPadLayout, PLUS_PAD_LAYOUT, crossbarSlot, crossbarCodeOf, CROSSBAR_CODES, registerCrossbar, windowPrompts,
-} from '../src/ui/plusPad.js';
+} from '../src/ui/plus/plusPad.js';
 import { hdGlyphSvg, hdGlyphMarkup, HD_GLYPH_CODES } from '../src/ui/padGlyphsHD.js';
 import {
   HOTBAR_SIZE, HOTBAR_CAPACITY, setHotbarSlot, clearHotbar, firstFreeHotbarSlot, hotbarView, quickslotSaveData, restoreQuickslotSaveData, hotbarEntry,
@@ -300,7 +300,7 @@ test('PADPLUS4: the damage numbers\' layer (click-through, full screen) is not a
 });
 
 test('PADPLUS5: in a window X is the quick act on what is under the cursor, and the prompt bar names it while the pack is up', async () => {
-  const { registerQuickAct } = await import('../src/ui/plusPad.js');
+  const { registerQuickAct } = await import('../src/ui/plus/plusPad.js');
   assert.ok(windowPrompts({ quick: true }).some(([c, w]) => c[0] === 'JoystickButton2' && /Equip/.test(w)));
   assert.ok(!windowPrompts({ quick: false }).some(([c]) => c[0] === 'JoystickButton2'));
   const prevW = globalThis.window, prevD = globalThis.document;
@@ -367,13 +367,13 @@ test('PADPLUS6: looking at loot, d-pad up/down move the plaque\'s highlight (hel
 
 test('PADPLUS7: every carry out of the pack raises the tucked bar - the ghost starts it and ends it, so a mouse or pad drag (no finger hold, no drag lock) does too', async () => {
   const { readFileSync } = await import('node:fs');
-  const src = readFileSync(new URL('../src/ui/enhancedInventory.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedInventory.js', import.meta.url), 'utf8');
   const start = src.slice(src.indexOf('function ghostStart(item) {'), src.indexOf('}', src.indexOf('document.body?.appendChild(ghost);')) + 1);
   assert.match(start, /setHotbarDragging\(true\)/, 'the ghost raises it');
   assert.match(src, /const ghostEnd = \(\) => \{[^\n]*setHotbarDragging\(false\)/, 'and its end lowers it');
   const onMove = src.slice(src.indexOf('const onDragMove = (e) => {'), src.indexOf('dragTo(e.clientX, e.clientY);', src.indexOf('const onDragMove = (e) => {')));
   assert.match(onMove, /ghostStart\(drag\.item\)/, 'the mouse arm starts the ghost - the path PADPLUS5 missed');
-  const hb = readFileSync(new URL('../src/ui/enhancedHotbar.js', import.meta.url), 'utf8');
+  const hb = readFileSync(new URL('../src/ui/enhanced/enhancedHotbar.js', import.meta.url), 'utf8');
   assert.match(hb, /function arm\(\) \{[\s\S]{0,120}bar\?\.classList\.add\('dragging'\)/, 'a spell or slot carried out of the book raises it too');
 });
 

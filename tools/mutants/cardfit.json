@@ -1,7 +1,7 @@
 [
   {
     "name": "CARDFIT-the-cap-never-written",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  card.style.maxHeight = `${Math.round(room)}px`;\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CARDFIT-a-step-skipped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    card.classList.add(cls);\n    took.push(cls);\n",
     "new": "    took.push(cls);\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CARDFIT-shed-with-room-to-spare",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (!over()) break;\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CARDFIT-the-card-height-not-the-body",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const over = () => (body ? body.scrollHeight > body.clientHeight + 1 : card.scrollHeight > card.clientHeight + 1);",
     "new": "  const over = () => card.scrollHeight > card.clientHeight + 1;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "CARDFIT-fitted-after-the-height-is-read",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "        fitCard(card, (sheet ? Math.round(window.innerHeight * CARD_SHEET_SHARE) : bandFoot - bandTop) - chrome);\n        if (sheet) return;\n        const tw = tip.offsetWidth; const th = tip.offsetHeight;\n",
     "new": "        if (sheet) return;\n        const tw = tip.offsetWidth; const th = tip.offsetHeight;\n        fitCard(card, (sheet ? Math.round(window.innerHeight * CARD_SHEET_SHARE) : bandFoot - bandTop) - chrome);\n",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "CARDFIT-the-window-alone",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "bandFoot = Math.min(w.bottom, window.innerHeight) - 10;",
     "new": "bandFoot = w.bottom - 10;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "CARDFIT-the-frame-origin",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "        const box = tip.offsetParent ?? frame;\n",
     "new": "        const box = frame;\n",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CARDFIT-the-sheet-placed-as-a-tip",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "        if (sheet) return;\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "CARDFIT-the-buttons-inside-the-body",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const { c, line, big } = infoCard(picked, side, render, { body: true });",
     "new": "  const { c, line, big } = infoCard(picked, side, render, { body: false });",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "CARDFIT-the-lore-back-on-the-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "itemPowerLines(picked, deps, { set: false, lore: false, technique: false })",
     "new": "itemPowerLines(picked, deps, { set: false, lore: true, technique: false })",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "CARDFIT-the-info-box-without-the-tiers-lines",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (tier.length) boxes.splice(1, 0, tier.map((text) => ({ text, center: true }))); }",
     "new": "    void tier; }",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "CARDFIT-a-line-said-twice",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const tier = rarityLines(item, { sigil: false, set: false, technique: false }).filter((t) => t && !said.has(t));",
     "new": "    const tier = rarityLines(item, { sigil: false, set: false, technique: false }).filter((t) => t);",
     "tests": [
@@ -243,7 +243,7 @@
   },
   {
     "name": "CARDFIT-the-buttons-scroll-away",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".pack-shell .packtip.packdetail .card > .acts { flex: 0 0 auto; margin-top: 8px; padding-top: 10px;",
     "new": ".pack-shell .packtip.packdetail .card > .acts { margin-top: 8px; padding-top: 10px;",
     "tests": [
@@ -252,7 +252,7 @@
   },
   {
     "name": "CARDFIT-the-tip-stretched-to-the-column",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  max-height: none; bottom: auto; right: auto; }",
     "new": "  }",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "CARDFIT-the-sheet-with-no-foot",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "left: 0 !important; right: 0; top: auto !important; bottom: 0; max-height: none; }",
     "new": "left: 0 !important; right: 0; top: auto !important; }",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "CARDFIT-the-close-bar-on-a-tip",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (min-width: 641px) { .pack-shell .packtip.packdetail .sheet-close { display: none; } }\n",
     "new": "",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "CARDFIT-a-pair-in-the-grid",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".stats > .pair { display: contents; }",
     "new": "",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "CARDFIT-the-last-affix-as-lore",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".packdetail ul.rarity li.lore { color: var(--dim); font-style: italic; }",
     "new": ".packdetail ul.rarity li:last-child:not(:first-child):not(:nth-child(2)) { color: var(--dim); font-style: italic; }",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "CARDFIT-the-hover-pair-in-the-grid",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".inv-tip dl.stats > .pair { display: contents; }   /* CARD-FIT: a pair's group steps out of the hover card's grid */\n",
     "new": "",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "CARD-FIT-U4-brief-with-the-tiers-and-lore",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const lines = itemPowerLines(item, d, { set: false, lore: false });\n  const sigil = setSigilLines(item)[0];",
     "new": "  const lines = itemPowerLines(item, d);\n  const sigil = setSigilLines(item)[0];",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "CARD-FIT-U10-brief-without-the-sigil",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (sigil) lines.push(sigil);\n",
     "new": "",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "CARD-FIT-U10-post-with-the-posters-count",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (set) lines.push(worn ? (setLines(item)[0] ?? set.name) : `${set.name} set`);",
     "new": "  if (set) lines.push(setLines(item)[0] ?? set.name);",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "CARD-FIT-U10-post-on-the-long-list",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    ...itemBriefLines(item, d)].filter(Boolean);",
     "new": "    ...itemPowerLines(item, d)].filter(Boolean);",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "CARD-FIT-U4-strip-grows",
-    "file": "src/ui/enhancedPlayerTrade.js",
+    "file": "src/ui/enhanced/enhancedPlayerTrade.js",
     "old": ".ptrade-shell .trade-detail-info { max-height: min(30dvh, 180px); overflow-y: auto; overscroll-behavior: contain; }\n",
     "new": "",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "CARD-FIT-U4-strip-squeezed-on-a-phone",
-    "file": "src/ui/enhancedPlayerTrade.js",
+    "file": "src/ui/enhanced/enhancedPlayerTrade.js",
     "old": "@media (max-width: 640px) { .ptrade-shell .trade-detail { flex-wrap: wrap; }",
     "new": "@media (max-width: 640px) { .ptrade-shell .trade-detail { }",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "CARD-FIT-U6-back-past-the-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (overlayAction(e) === 'back' && picked) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) { picked = null; render(); } return; }\n",
     "new": "",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "CARD-FIT-U9-dim-read-as-inside",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "new": "  const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "CARD-FIT-U9-close-scrolls-away",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".inv-info > .card { width: min(380px, 92vw); max-height: 86vh; overflow: hidden;",
     "new": ".inv-info > .card { width: min(380px, 92vw); max-height: 86vh; overflow: auto;",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "CARD-FIT-U9-words-in-the-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const body = el('div', 'inv-info-body');\n  card.append(body);\n",
     "new": "  const body = card;\n",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "CARD-FIT-U14-hover-over-its-own-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (item === picked) return;   // CARD-FIT U14",
     "new": "  // CARD-FIT U14",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "CARD-FIT-U15-unanchored-unbounded",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "        if (!tip.isConnected) return;\n        const w = frame.getBoundingClientRect();",
     "new": "        if (!on || !tip.isConnected) return;\n        const w = frame.getBoundingClientRect();",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "CARD-FIT-U16-strip-grows",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  max-height: 136px; overflow-y: auto; overscroll-behavior: contain; }",
     "new": "  overscroll-behavior: contain; }",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "CARD-FIT-pips-lost-in-the-body",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ", .card[data-rarity] > .card-body > ul.rarity > li:first-child::before { content: var(--rar-pips);",
     "new": " { content: var(--rar-pips);",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "CARD-FIT-tier-colour-lost-in-the-body",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".card[data-rarity] > ul.rarity > li:first-child, .card[data-rarity] > .card-body > ul.rarity > li:first-child { color: var(--rar);",
     "new": ".card[data-rarity] > ul.rarity > li:first-child { color: var(--rar);",
     "tests": [

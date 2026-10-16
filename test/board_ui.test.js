@@ -14,12 +14,12 @@ import { questBoardIndices, noticeBoardIndex } from '../src/systems/bounty/bount
 import { mountNoticeBoard, BOARD_WORDS, GUILD_BOARD_EMPTY } from '../src/ui/noticeWindow.js';
 import { createMarketTab, MARKET_VIEW_GROUPS, MARKET_WORDS } from '../src/ui/marketTab.js';
 import { seatGuide, SEAT_PANELS, SEAT_TAB_WORDS } from '../src/ui/seatTab.js';
-import { VENDOR_TEXT, createVendorTab } from '../src/ui/vendorTab.js';
-import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
+import { VENDOR_TEXT, createVendorTab } from '../src/ui/vendor/vendorTab.js';
+import { WARM_CHUNKS } from '../src/ui/enhanced/enhancedChunk.js';
 import { createMarketBook } from '../src/net/marketBook.js';
 import { MARKET_VIEWS } from '../src/net/marketLaw.js';
 import { CLAIM_THRESHOLD, CLAIM_FEE, ACCOUNT_SEAT_WEEK_CAP, SEAT_PLEDGE_REGIONS_MAX } from '../src/net/townSeatLaw.js';
-import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = 1_800_000_000;
@@ -229,7 +229,7 @@ test('BOARD-UI the Seat tab: its parts each on a panel under its name, in order 
   assert.match(steps[3][1], new RegExp(`at least ${n(CLAIM_THRESHOLD.palace)}: the strongest challenger wins a Right of Siege`));
 });
 
-test('BOARD-UI the board\'s chunk warmed: the Notice Board\'s window - its tabs with it - is one of the chunks the one home fetches in idle time once the world boots (ui/enhancedChunk.js WARM_CHUNKS), so the first press finds it in the module map; no door fetches a chunk on its own (MENU1) (mutant: left out of the warm)', async () => {
+test('BOARD-UI the board\'s chunk warmed: the Notice Board\'s window - its tabs with it - is one of the chunks the one home fetches in idle time once the world boots (ui/enhanced/enhancedChunk.js WARM_CHUNKS), so the first press finds it in the module map; no door fetches a chunk on its own (MENU1) (mutant: left out of the warm)', async () => {
   const warm = WARM_CHUNKS.filter((f) => String(f).includes('noticeWindow.js'));
   assert.equal(warm.length, 1, 'warmed, once');
   assert.equal((await warm[0]()).mountNoticeBoard, mountNoticeBoard, 'the very module the door mounts');

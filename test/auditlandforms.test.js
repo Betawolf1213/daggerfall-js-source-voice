@@ -427,7 +427,7 @@ test('AUDIT LANDFORMS C3: online a failed fetch of Basic Roads\' arrays is asked
 });
 
 test('AUDIT LANDFORMS C4: the ground\'s online note names the rivers - their row is one of the ground\'s since LANDFORM3 cut their channels', () => {
-  const note = src('src/ui/enhancedMenu.js').match(/const ONLINE_GROUND_NOTE = '([^']*)';/);
+  const note = src('src/ui/enhanced/enhancedMenu.js').match(/const ONLINE_GROUND_NOTE = '([^']*)';/);
   assert.ok(note && /\brivers\b/.test(note[1]), note?.[1]);
 });
 

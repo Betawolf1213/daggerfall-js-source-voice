@@ -5,10 +5,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { eventTimerRows, timerText, localWhenText } from '../src/systems/eventTimers.js';
-import { timersMark, timersWindow, placeBeside } from '../src/ui/enhancedTimers.js';
+import { timersMark, timersWindow, placeBeside } from '../src/ui/enhanced/enhancedTimers.js';
 import { gateTimes, gameDayAt, gateAt } from '../src/net/gate/gateLaw.js';
 import { seatWeekOf, seatWeekStartMs, SEAT_RECKONING_MS, BATTLE_LENGTH_MS } from '../src/net/townSeatLaw.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const byId = (rows, id) => rows.find((r) => r.id === id);
@@ -184,12 +184,12 @@ test('TIMERS1: the hourglass - a button that opens, placed just left of the prof
 });
 
 test('TIMERS1 wiring: the pause face carries the hourglass where the host hands a source, and every host hands the world\'s', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /home\.append\(profileMark\(\)\);[\s\S]{0,600}?if \(hooks\.timers\?\.\(\)\) \{\s*\n\s*mark = timersMark\(document, \{ open: timersOpen,/, 'beside the profile mark, online only');
   assert.match(menu, /timersAnchor = anchorBeside\(mark, home\.querySelector\?\.\('\.px-profile'\), home\);/, 'AUDIT TIMERS1 UI-3: placed again on every resize');
   assert.match(menu, /for \(const n of \[stage, home\.querySelector\?\.\('\.px-profile'\), mark\]\) n\?\.setAttribute\?\.\('inert', ''\);/, 'AUDIT TIMERS1 UI-5/UI-7: the pause face under the window is out of reach');
   assert.match(menu, /read: \(\) => hooks\.timers\?\.\(\{ ask: true \}\) \?\? null/, 'AUDIT TIMERS1 UI-9: only the window read asks the service');
-  assert.match(read('src/ui/plusPad.js'), /const visible = \(n\) => !!n && n\.isConnected !== false && !n\.closest\?\.\('\[inert\]'\)/, 'a bumper turns no inert tabs');
+  assert.match(read('src/ui/plus/plusPad.js'), /const visible = \(n\) => !!n && n\.isConnected !== false && !n\.closest\?\.\('\[inert\]'\)/, 'a bumper turns no inert tabs');
   assert.match(menu, /const back = accountOpen \? \(\) => closeAccount\(\)[^\n]*\n\s*: timersOpen && timersView \? \(\) => \{ timersOpen = false; timersFocusBack = true; render\(\); \}/, 'Escape closes a DRAWN window before it resumes (AUDIT TIMERS1 UI-11)');
   assert.match(menu, /stopTimers\(\);   \/\/ TIMERS1: a rebuild/, 'a rebuild stops the old tick');
   assert.match(menu, /timersOpen = false;   \/\/ TIMERS1: and the timers window the same/, 'a visit\'s window');

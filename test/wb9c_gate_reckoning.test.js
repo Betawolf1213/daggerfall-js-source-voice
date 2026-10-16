@@ -12,7 +12,7 @@
 //   the link        net/gate/gateLink.js - the crystals folded, kept broken through the stun, cleared by the next word
 //   the court       scenes/gateCourt.js - the crystals as targets, a blow's number out, the call, the shatter and the
 //                   stun said and heard, the draw list and the lights; world/gate/gateBoss.js crystalStandIn
-//   the bar         ui/gateBossBar.js - what is left to break and how long; the stun; the next Reckoning's coming
+//   the bar         ui/gate/gateBossBar.js - what is left to break and how long; the stun; the next Reckoning's coming
 //   the draw        render/courtCrystals.js - the cluster, its growth, its pass
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 14 (WB9c).
@@ -33,9 +33,9 @@ import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { crystalStandIn, crystalColor, bossLookOf, BOSS_CUES, CRYSTAL_ARMOR, CRYSTAL_NAME, STUN_COLOR, ATTACK_COLORS, bossAct, bossGlow, bossCue } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt, COURT_RECKON_TEXT, RECKON_LATE_MS, CRYSTAL_STRIKE_GROWN } from '../src/scenes/gateCourt.js';
-import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
-import { destroyGateGround } from '../src/ui/gateGroundView.js';
+import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
+import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import {
   CourtCrystalRenderer, crystalCluster, crystalGrowth, crystalDrawn, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTALS_DRAW_MAX, CRYSTAL_VS, CRYSTAL_FS, CRYSTAL_GLOW_VS, CRYSTAL_GLOW_FS,
 } from '../src/render/courtCrystals.js';

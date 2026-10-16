@@ -64,7 +64,7 @@
   },
   {
     "name": "LOOT18-the-card-lock-keeps-the-junk",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    k.onclick = () => { toggleLocked(picked); lockLiftsJunk(picked); notice = null; render(); };",
     "new": "    k.onclick = () => { toggleLocked(picked); notice = null; render(); };",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "LOOT18-a-worn-piece-junked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (side === 'local' && !line.equipped && junkable(picked)) {",
     "new": "  if (side === 'local' && junkable(picked)) {",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "LOOT18-the-picture-unmarked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (isJunk(item)) node.dataset.junk = '';   // LOOT18: a junk piece's picture is dimmed (the sheet's own)\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "LOOT18-the-card-unsaid",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (isJunk(picked)) into.append(el('p', 'boundline junkline', JUNK_LINE));   // LOOT18: the lock's line style, without its padlock\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "LOOT18-the-counter-at-a-buy",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (!selling()) return [];\n  const equipped = deps.isEquipped ?? (() => false);\n  const held = remoteItems();\n  return (deps.packItems?.() ?? []).filter((it) => isJunk(it)",
     "new": "  const equipped = deps.isEquipped ?? (() => false);\n  const held = remoteItems();\n  return (deps.packItems?.() ?? []).filter((it) => isJunk(it)",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "LOOT18-a-worn-piece-sold",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "filter((it) => isJunk(it) && !equipped(it) && !held.includes(it) && !saleRefused(it)",
     "new": "filter((it) => isJunk(it) && !held.includes(it) && !saleRefused(it)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "LOOT18-a-bound-piece-sold",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "filter((it) => isJunk(it) && !equipped(it) && !held.includes(it) && !saleRefused(it)",
     "new": "filter((it) => isJunk(it) && !equipped(it) && !held.includes(it)",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "LOOT18-the-counter-takes-anything",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "    && localListAccepts(mode, it, { accepts: deps.accepts, enchanted: deps.enchanted }) && junkStages(it));\n}",
     "new": "    && junkStages(it));\n}",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "LOOT18-no-confirm",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  modeAction();   // the counter's own price and its confirm\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "LOOT18-a-press-for-nothing",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (junk.length) {\n    const j = el('button', 'act sell-junk'",
     "new": "  if (true) {\n    const j = el('button', 'act sell-junk'",
     "tests": [
@@ -402,7 +402,7 @@
   },
   {
     "name": "LOOT18-the-card-draws-none",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const lc = lineCompareBlock(deps.entity, picked, wear); if (lc) into.append(lc);   // LOOT18: and its lines against theirs\n",
     "new": "",
     "note": "Re-aimed by content (AUDIT LOOT II B6): the card makes one comparison and hands it to both blocks.",

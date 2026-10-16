@@ -1,6 +1,6 @@
 // AUDIT PRE-MERGE 1003 (2026-10-03) - LENS U: THE ARENA'S WINDOW AND ITS HUD, read on real Chromium before #545 merges
-// (src/ui/arenaWindow.js, arenaDoor.js, arenaHud.js, hudFoeTarget.js; src/systems/arena/arenaBoard.js, arenaText.js; the sheets
-// in src/ui/enhancedPlusStyle.js, enhancedStyle.js, partyPanel.js; the hosts' arena HUD in src/scenes/world.js and
+// (src/ui/arena/arenaWindow.js, arenaDoor.js, arenaHud.js, hudFoeTarget.js; src/systems/arena/arenaBoard.js, arenaText.js; the sheets
+// in src/ui/enhanced/enhancedPlusStyle.js, enhancedStyle.js, partyPanel.js; the hosts' arena HUD in src/scenes/world.js and
 // exterior.js). Each pin FAILED on the unfixed tree for its finding's reason; each fix carries an `AUDIT PRE-MERGE 1003
 // <ID>` comment. What a fake page cannot measure (where a rule puts a box) was measured in Chromium and its rule is pinned
 // here, the numbers in the audit's record: U1 the window draws itself online and keeps the hall while it stands; U2 a
@@ -21,14 +21,14 @@ import { newArenaLadder, ladderAfter, nextLadderBout } from '../src/systems/aren
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
-import { mountArenaWindow } from '../src/ui/arenaWindow.js';
-import * as Door from '../src/ui/arenaDoor.js';
+import { mountArenaWindow } from '../src/ui/arena/arenaWindow.js';
+import * as Door from '../src/ui/arena/arenaDoor.js';
 import { createArenaOnline, HALL_IDLE_MS } from '../src/scenes/arenaOnline.js';
-import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_WIDTH } from '../src/ui/arenaHud.js';
+import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_WIDTH } from '../src/ui/arena/arenaHud.js';
 import { newBout, boutTick, boutAtMarks, boutHealth, callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 import { newCrowd } from '../src/systems/arena/arenaCrowd.js';
-import { markFoeStruck, foeTarget, tickFoeTarget } from '../src/ui/hudFoeTarget.js';
-import { ARENA_WINDOW_CSS, TRAVEL_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { markFoeStruck, foeTarget, tickFoeTarget } from '../src/ui/hud/hudFoeTarget.js';
+import { ARENA_WINDOW_CSS, TRAVEL_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { PARTY_CSS } from '../src/ui/partyPanel.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -282,7 +282,7 @@ test('AUDIT PRE-MERGE 1003 U4: while the bar stands it says so (`.on`), and the 
   destroyArenaHud();
   // the widths the rules are drawn from: the bar's half against the card's 260 (+8) and the list's 200 (+8)
   assert.ok(1100 >= 2 * (ARENA_HUD_WIDTH / 2 + 268) && 980 >= 2 * (ARENA_HUD_WIDTH / 2 + 208));
-  assert.match(rd('src/ui/enhancedStyle.js'), /@media \(max-width: 1100px\) \{ body:has\(\.arena-hud\.on\) \.qtrack \{ visibility: hidden; \} \}/);
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /@media \(max-width: 1100px\) \{ body:has\(\.arena-hud\.on\) \.qtrack \{ visibility: hidden; \} \}/);
   assert.match(PARTY_CSS, /@media \(min-width: 561px\) and \(max-width: 980px\) \{ body:has\(\.arena-hud\.on\) \.dfparty \{ visibility: hidden; \} \}/);
 }));
 
@@ -346,11 +346,11 @@ test('AUDIT PRE-MERGE 1003 U7: A BANNER IS SAID - every pennant of a banner is a
 
 // ── U8 ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT PRE-MERGE 1003 U8: the HUD\'s toggle (F10) takes the bout\'s bar, the crowd\'s meter and the stands\' presses - both hosts\' arena HUD hidden while it is off, as every other HUD surface is (ui/hud.js) (mutant: one host\'s gate)', () => {
+test('AUDIT PRE-MERGE 1003 U8: the HUD\'s toggle (F10) takes the bout\'s bar, the crowd\'s meter and the stands\' presses - both hosts\' arena HUD hidden while it is off, as every other HUD surface is (ui/hud/hud.js) (mutant: one host\'s gate)', () => {
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const S = rd(f);
     assert.match(S, /drawHud: \(m, o\) => drawArenaHud\(m, \{ \.\.\.o, hidden: !!o\?\.hidden \|\| !hudRenderEnabled\(\) \}\),/, f);
-    assert.match(S, /import \{[^}]*\bhudRenderEnabled\b[^}]*\} from '\.\.\/ui\/hudShortcuts\.js';/, `${f} imports it`);
+    assert.match(S, /import \{[^}]*\bhudRenderEnabled\b[^}]*\} from '\.\.\/ui\/hud\/hudShortcuts\.js';/, `${f} imports it`);
   }
 });
 

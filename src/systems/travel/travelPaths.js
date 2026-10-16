@@ -3,8 +3,8 @@
 // arithmetic, extracted whole because three callers need it and none of
 // them should own it: the mod's own follow/circumnavigate machine
 // (systems/travel/travelOptions.js), the junction mini-map
-// (ui/travelJunctionMap.js) and the travel map's path overlay
-// (ui/travelPathsOverlay.js).
+// (ui/travel/travelJunctionMap.js) and the travel map's path overlay
+// (ui/travel/travelPathsOverlay.js).
 //
 // A LEAF: no DOM, no renderer, no world. Every function here takes
 // numbers and returns numbers, which is what lets the pins drive the
@@ -87,7 +87,7 @@ export function mapPixelWorldOrigin(mapPixelX, mapPixelY) {
 /** TravelOptionsMod.cs:427-434, GetNormalisedPlayerYaw. Degrees,
  *  clockwise from north, in [0, 360); `invert` answers the direction
  *  the player came FROM. The port's camera yaw is radians with 0 at
- *  +z (north) and the same clockwise sense (ui/hud.js:"heading01 is the"), so the
+ *  +z (north) and the same clockwise sense (ui/hud/hud.js:"heading01 is the"), so the
  *  caller converts once and this takes degrees. */
 export function normalisedYaw(yawDegrees, invert = false) {
   let yaw = (yawDegrees + (invert ? 180 : 0)) % 360;

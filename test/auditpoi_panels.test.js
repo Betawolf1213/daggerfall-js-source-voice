@@ -1,19 +1,19 @@
 // AUDIT POI, lane D (2026-10-15; bible/06-Systems/POI-Editor-Arc.md POI-3b, POI-4b, POI-5, POI-6) - THE PANELS, THEIR
 // ASYNC FLOWS AND THEIR WORDS. Mac: "Audit everything. Ensure perfection."
-//   - the editor's panel (src/ui/poiEditorPanel.js): a dock drawn again after a press (a pressed control keeps the focus
+//   - the editor's panel (src/ui/poi/poiEditorPanel.js): a dock drawn again after a press (a pressed control keeps the focus
 //     in a browser - here a press is focus() then click(), as Chromium and Electron press); each act bound to what it was
 //     drawn for; the store's acts one at a time a POI, a send and a take-back marking saved only what the store holds, a
 //     submission never saved beside itself; a POI opened from the store as what it is; the UV editor, the pack and the
 //     import let go of when they are left;
-//   - the library (src/ui/poiLibraryPanel.js), the approver's queue and a POI's history (src/ui/poiReviewPanel.js) and
-//     the UV editor (src/ui/poiUvPanel.js): an answer acting on the dialog that asked, and no other;
+//   - the library (src/ui/poi/poiLibraryPanel.js), the approver's queue and a POI's history (src/ui/poi/poiReviewPanel.js) and
+//     the UV editor (src/ui/poi/poiUvPanel.js): an answer acting on the dialog that asked, and no other;
 //   - the words (src/poi/poiText.js): counts in their plurals, glTF's names in words, lists as the language lists.
 // Over the shared fake document (test/chargenDom.mjs), as test/poi6_review.test.js drives it.
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createPoiEditorPanel, POI_PANEL_CSS } from '../src/ui/poiEditorPanel.js';
+import { createPoiEditorPanel, POI_PANEL_CSS } from '../src/ui/poi/poiEditorPanel.js';
 import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL } from '../src/poi/poiLaw.js';
@@ -679,7 +679,7 @@ test('AUDIT POI U12 T8 A LOOK REFUSED LEAVES THE LOOK BEFORE IT; LOOK AT IT AND 
 });
 
 test('AUDIT POI C1 C3 T8 THE QUEUE: a submission changed since it was listed is said and the queue asked again, the look ended; the document\'s hash sent with the word; more waiting than listed is said; the stale warning on a stale one alone; before a new POI and after a retirement nothing stands (mutants: no refresh on poi-changed; the hash not sent; the bound unsaid; the warning on every one; something shown for nothing)', async () => {
-  assert.match(src('src/ui/poiReviewPanel.js'), /poiReview\(i, item\.id, item\.rev, verdict, word \|\| null, item\.docSha \?\? null\)/, 'the hash the queue gave, sent with the word (contract C1)');
+  assert.match(src('src/ui/poi/poiReviewPanel.js'), /poiReview\(i, item\.id, item\.rev, verdict, word \|\| null, item\.docSha \?\? null\)/, 'the hash the queue gave, sent with the word (contract C1)');
   const P = await over({ approver: true });
   const live = docOf(P.sha, 'Old tower');
   const fresh = 'poi-0000000f00d0';
@@ -778,8 +778,8 @@ test('AUDIT POI U13 THE WORDS: counts in their plurals; glTF\'s object names sai
   const importPart = (a) => t('poi.editor.importPart', '{name}: {vertices, plural, one {{vertices, number} vertex} other {{vertices, number} vertices}}, {triangles, plural, one {{triangles, number} triangle} other {{triangles, number} triangles}}, {materials, plural, one {# material} other {# materials}}', a);
   assert.equal(importPart({ name: 'Roof', vertices: 3, triangles: 1, materials: 1 }), 'Roof: 3 vertices, 1 triangle, 1 material');
   assert.equal(importPart({ name: 'Keep', vertices: 262144, triangles: 2, materials: 4 }), 'Keep: 262,144 vertices, 2 triangles, 4 materials');
-  assert.match(src('src/ui/poiEditorPanel.js'), /t\('poi\.editor\.importPart', '\{name\}: \{vertices, plural, one \{\{vertices, number\} vertex\}/);
-  assert.match(src('src/ui/poiEditorPanel.js'), /t\('poi\.editor\.speed', 'Eye \{speed, number\} m\/s'/);
+  assert.match(src('src/ui/poi/poiEditorPanel.js'), /t\('poi\.editor\.importPart', '\{name\}: \{vertices, plural, one \{\{vertices, number\} vertex\}/);
+  assert.match(src('src/ui/poi/poiEditorPanel.js'), /t\('poi\.editor\.speed', 'Eye \{speed, number\} m\/s'/);
   assert.equal(problemText({ code: 'material-count', want: 1, have: 2 }), 'Its model has 1 material; the part has 2.');
   assert.equal(gltfErrorText('missing', { what: 'accessor', index: 3 }), 'This model refers to an accessor that is not there.');
   assert.equal(gltfErrorText('missing', { what: 'bufferView', index: 0 }), 'This model refers to a buffer view that is not there.');

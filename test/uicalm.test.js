@@ -7,10 +7,10 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { HOME_OFFLINE, HOME_LINKS, offlineSection } from '../src/ui/enhancedMenu.js';
-import { saddleShown, saddleAlert, saddleNote, saddleHello, SADDLE_HELLO_MS, SADDLE_PANEL_MODES } from '../src/ui/enhancedSaddle.js';
+import { HOME_OFFLINE, HOME_LINKS, offlineSection } from '../src/ui/enhanced/enhancedMenu.js';
+import { saddleShown, saddleAlert, saddleNote, saddleHello, SADDLE_HELLO_MS, SADDLE_PANEL_MODES } from '../src/ui/enhanced/enhancedSaddle.js';
 import { UI_CALM_CSS, P, CALM_INK } from '../src/ui/uiCalmStyle.js';
-import { classWayOf, leadingAttributes, CLASS_WAYS, muteConstellation, untangleLabels } from '../src/ui/enhancedChargen.js';
+import { classWayOf, leadingAttributes, CLASS_WAYS, muteConstellation, untangleLabels } from '../src/ui/enhanced/enhancedChargen.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
@@ -23,7 +23,7 @@ test('UI-CALM the front door asks which world first: Online and Offline the two 
   assert.deepEqual([...HOME_OFFLINE], ['Continue', 'New Game', 'Load Game', 'Test Room']);
   assert.deepEqual([...HOME_LINKS], ['Settings', 'Overhauls']);
   assert.deepEqual(['continue', 'new', 'load', 'test', 'online', 'settings', 'about'].map(offlineSection), [true, true, true, true, false, false, false]);
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const doors = menu.slice(menu.indexOf('function drawDoors(menu) {'), menu.indexOf('/** PX1b: three-zone foot'));
   assert.ok(doors.indexOf("doorBtn('online'") > 0 && doors.indexOf("doorBtn('online'") < doors.indexOf("doorBtn('offline'"), 'Online first');
   assert.match(doors, /more\.append\(doorBtn\('back', t\('menu\.home\.back', 'Back'\), '', level\('top'\)\)\);/, 'a way back from the offline doors');
@@ -67,7 +67,7 @@ test('UI-CALM the saddle panel is a block in the bottom-right corner, up and awa
   assert.match(rd('src/scenes/saddleHost.js'), /if \(s && toggle && !covered\) toggleSaddlePanel\(\);/);
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) assert.match(rd(host), /toggle: show && hccActionPressed\('SaddlePanel'\),/, host);
   // the block in the bottom-right corner, lifted only over a hotbar or vitals it would meet
-  const css = rd('src/ui/enhancedSaddle.js');
+  const css = rd('src/ui/enhanced/enhancedSaddle.js');
   assert.match(css, /\.saddlepanel-bar \{ position: absolute; right: calc\(16px \+ env\(safe-area-inset-right, 0px\)\); bottom: var\(--sp-bottom\);/);
   assert.match(css, /\.saddlepanel-btns \{ display: grid; grid-template-columns: 1fr 1fr; gap: 6px; \}/);
   assert.match(css, /\.saddlepanel\[data-show="none"\] \{ display: none; \}/);
@@ -78,10 +78,10 @@ test('UI-CALM the saddle panel is a block in the bottom-right corner, up and awa
 });
 
 test('UI-CALM the corner and the quiet HUD: the temperature plate the bottom-left caption\'s first word, its own piece inside the quick block, the glyph and the number alone while comfortable; the vitals rest while full and untouched (the Calm HUD row, on), never while the HUD is arranged (mutants: UICALM-plate-off-the-compass, UICALM-vitals-never-rest, UICALM-vitals-rest-hurt)', () => {
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /cap\.append\(temp, cornerWord, spellChip, readied\);/);
   assert.doesNotMatch(hud, /compass\.append\(temp\)/);
-  assert.match(rd('src/ui/hudLayout.js'), /\{ id: 'temp', sel: '\.hud \.hud-temp', name: 'Temperature', inside: 'quick' \}/);
+  assert.match(rd('src/ui/hud/hudLayout.js'), /\{ id: 'temp', sel: '\.hud \.hud-temp', name: 'Temperature', inside: 'quick' \}/);
   assert.match(UI_CALM_CSS, /\.hud \.hud-temp\[data-level="ok"\] \.hud-tempword, \.hud \.hud-temp\[data-level="ok"\] \.hud-tempscale \{ display: none; \}/);
   // PIN MOVED (AUDIT UICALM-FIRM1 L4 N1, M3): full short of no whole point; never at rest while the HUD is arranged
   assert.match(hud, /const allFull = rows\.every\(\(\[key, , now, max\]\) => \(key === 'magicka' && !\(Number\(vitals\.maxMagicka\) > 0\)\) \|\| now > max - 1\);/);
@@ -104,11 +104,11 @@ test('UI-CALM the windows read: the quiet ink a step lighter and the type floor 
   assert.ok(rules.length > 100, 'the sheet read rule by rule');
   const bare = rules.filter(([, sel, body]) => COLOUR.test(body) && sel.split(',').some((s) => !s.trim().startsWith(P))).map(([, sel]) => sel.trim());
   assert.deepEqual(bare, [], 'a colour said for both dresses');
-  assert.match(rd('src/ui/enhancedStyle.js'), /applyPlusTheme\(doc\);   \/\/ PLUS2: the stored colour\n    injectUiCalmStyle\(doc\);/);
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /applyPlusTheme\(doc\);   \/\/ PLUS2: the stored colour\n    injectUiCalmStyle\(doc\);/);
   const hold = rd('src/ui/holdingsPages.js');
   assert.match(hold, /const colours = choices\.map\(\(name\) => LOOK_SWATCHES\[name\] \?\? null\);\n  if \(colours\.every\(Boolean\)\) \{/);
   assert.match(hold, /if \(_lookOpen === 'horse'\) for \(const row of m\.look\.rows\) extra\.push\(choiceRow\(/);
-  assert.match(rd('src/ui/enhancedChargen.js'), /stagePrimary = \{ label: left > 0 \? `\$\{left\} left to spend` : 'Begin your life',/);
+  assert.match(rd('src/ui/enhanced/enhancedChargen.js'), /stagePrimary = \{ label: left > 0 \? `\$\{left\} left to spend` : 'Begin your life',/);
   assert.deepEqual(CLASS_WAYS.map(([w, names]) => [w, names.length]), [['Magic', 6], ['Stealth', 6], ['Combat', 6]]);
   assert.deepEqual(['Mage', 'Thief', 'Knight', 'Custom'].map(classWayOf), ['Magic', 'Stealth', 'Combat', null]);
   assert.deepEqual(leadingAttributes({ strength: 40, intelligence: 60, willpower: 72, agility: 48, endurance: 52, personality: 55, speed: 48, luck: 57 }), ['Willpower', 'Intelligence']);
@@ -129,7 +129,7 @@ test('UI-CALM the windows read: the quiet ink a step lighter and the type floor 
     f.applyHit({ confirmClass: true });
     assert.deepEqual(played, [SOUND.SelectClassDrums], 'the drums for the choice');
   } finally { audio.playOneShot = real; }
-  assert.match(rd('src/ui/enhancedChargen.js'), /stageSecondary = \{ label: 'Start over',/);
+  assert.match(rd('src/ui/enhanced/enhancedChargen.js'), /stageSecondary = \{ label: 'Start over',/);
 });
 
 test('UI-CALM II the walk polished (a player: "cheap letters, overlapping, dotted lines everywhere, the highlighting of words is bad, the summary board looks cut off"): the map\'s names are plates over it, moved off one another, the unchoosable one first; a confirm card scrolls its words and keeps its presses; no dotted rule left in DFO Grimoire; Settings and Overhauls in the foot\'s box; a refused Firmament read says so (mutants: UICALM-labels-stay-crossed, UICALM-inert-holds-its-place, UICALM-links-back-on-the-book, UICALM-firm-silent, UICALM-list-scrolls-again)', () => {
@@ -145,7 +145,7 @@ test('UI-CALM II the walk polished (a player: "cheap letters, overlapping, dotte
   // names apart already are left alone, and a name is kept inside the map
   assert.deepEqual(untangleLabels([{ x: 50, y: 50, w: 40, h: 20 }, { x: 300, y: 150, w: 40, h: 20 }], { width: 400, height: 200 }), [{ x: 50, y: 50 }, { x: 300, y: 150 }]);
   assert.deepEqual(untangleLabels([{ x: 2, y: 199, w: 40, h: 20 }], { width: 400, height: 200 }), [{ x: 20, y: 190 }]);
-  const wiz = rd('src/ui/enhancedChargen.js');
+  const wiz = rd('src/ui/enhanced/enhancedChargen.js');
   assert.match(wiz, /const tag = el\(p\.inert \? 'span' : 'button', `maplabel/, 'the names are the page\'s plates');
   assert.doesNotMatch(wiz, /svg\('text'/, 'not words in map units inside the picture');
   assert.equal((wiz.match(/const body = el\('div', 'dscroll'\);/g) ?? []).length, 2, 'the race\'s and the class\'s cards scroll their words');
@@ -164,7 +164,7 @@ test('UI-CALM II the walk polished (a player: "cheap letters, overlapping, dotte
   // a way out that is also a warn press (the Firmament's Close) is the Exit plate: its yellow, no line, lit under the pointer
   assert.match(grim, /\$\{G\} \[data-grim-exit\]:is\(\$\{list\(R\.warn\)\}\), \$\{G\} \[data-grim-on="wood"\]\[data-grim-exit\]:is\(\$\{list\(R\.warn\)\}\) \{ color: \$\{T\.yellow\} !important; text-decoration: none !important; \}/);
   // Settings and Overhauls: the foot's box, beside Screenshots and About - not the book
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const doors = menu.slice(menu.indexOf('function drawDoors(menu) {'), menu.indexOf('/** PX1b: three-zone foot'));
   assert.doesNotMatch(doors, /HOME_LINKS/, 'not on the book');
   assert.match(menu, /if \(twoQuestionDoor\(\)\) \{\n      for \(const label of HOME_LINKS\) \{/, 'in the foot');

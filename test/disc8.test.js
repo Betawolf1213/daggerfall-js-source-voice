@@ -10,8 +10,8 @@ import { Collider } from '../src/player/collider.js';
 import { applyFallLanding } from '../src/scenes/shared.js';
 import * as PE from '../src/characters/playerEntity.js';
 import { reviveForPlay } from '../src/systems/deathRespawn.js';
-import { createAutomapSheet } from '../src/ui/automapSheet.js';
-import * as cam from '../src/ui/automapCamera.js';
+import { createAutomapSheet } from '../src/ui/automap/automapSheet.js';
+import * as cam from '../src/ui/automap/automapCamera.js';
 import * as m4 from '../src/world/mat4.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

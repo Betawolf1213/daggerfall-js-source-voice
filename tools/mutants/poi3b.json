@@ -1,7 +1,7 @@
 [
   {
     "name": "POI3B-the-undo-always-on",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    undo.disabled = !edit.canUndo();",
     "new": "    undo.disabled = false;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "POI3B-the-tool-unpressed",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "b.setAttribute('aria-pressed', String(editor.mode() === m));",
     "new": "b.setAttribute('aria-pressed', 'false');",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "POI3B-a-field-with-no-step",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    const change = (label, fn) => edit.edit(sel.id, label, fn);",
     "new": "    const change = (label, fn) => { fn(edit.docOf(sel.id)); };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "POI3B-the-problems-unsaid",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "for (const p of ps.slice(0, 40)) {",
     "new": "for (const p of ps.slice(0, 0)) {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "POI3B-saved-with-assets-unknown",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    save.disabled = busy > 0 || !dirty || ps.length > 0 || checking;",
     "new": "    save.disabled = busy > 0 || !dirty || ps.length > 0;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "POI3B-the-revision-not-kept",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "edit.markSaved(id, { rev: r.data.rev, state: 'draft', doc: sent });",
     "new": "edit.markSaved(id, { rev: null, state: 'draft', doc: sent });",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "POI3B-another-draft-as-mine",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "me.handle && String(x.author).toLowerCase() === me.handle.toLowerCase());",
     "new": "!!me.handle);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "POI3B-the-base-lost",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": ": sentBack ? (pick.base ?? null) : (h.liveRev ?? null), rev:",
     "new": ": sentBack ? (pick.base ?? null) : null, rev:",
     "tests": [

@@ -122,7 +122,7 @@
   },
   {
     "name": "below-hangs-off-the-edge-like-a-right",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".wplaque-stats[data-side=\"below\"] { position: static;",
     "new": ".wplaque-stats[data-side=\"below\"] { position: absolute;",
     "tests": [

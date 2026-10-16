@@ -9,8 +9,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { drawEnhancedNotice, releaseEnhancedNotice, destroyEnhancedNotice, _setNoticeClockForTests, ENHANCED_NOTICE_ID, NOTICE_SLIDE_MS } from '../src/ui/enhancedNotice.js';
-import { sweepHudLayout, tickHudLayout, _resetHudLayoutForTests, HUD_LAYOUT_PREF } from '../src/ui/hudLayout.js';
+import { drawEnhancedNotice, releaseEnhancedNotice, destroyEnhancedNotice, _setNoticeClockForTests, ENHANCED_NOTICE_ID, NOTICE_SLIDE_MS } from '../src/ui/enhanced/enhancedNotice.js';
+import { sweepHudLayout, tickHudLayout, _resetHudLayoutForTests, HUD_LAYOUT_PREF } from '../src/ui/hud/hudLayout.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 
 /** One simple selector - `.a`, `#b`, `[c]`, `.a[c="v"]` - against a node; anything with a space matches nothing here. */
@@ -121,7 +121,7 @@ test('MOVED-NOTICE: a stack left where the sheet stands it is not marked moved -
 });
 
 test('MOVED-NOTICE: a moved stack\'s panels FADE where they stand - no slide in, no slide out - for notices and revenant cards alike; the rule outweighs the sheets\' own (mutants: the rule dropped; the out-state left sliding)', () => {
-  const hud = readFileSync(new URL('../src/ui/hudLayout.js', import.meta.url), 'utf8');
+  const hud = readFileSync(new URL('../src/ui/hud/hudLayout.js', import.meta.url), 'utf8');
   const style = (withPage({}, (doc) => { tickHudLayout(doc, 0); return doc.getElementById('hud-layout-style')?.textContent; })) ?? '';
   for (const [stack, card, inCls, outCls] of [['notice-stack', 'notice', 'notice-in', 'notice-out'], ['rvncard-stack', 'rvncard', 'rvncard-in', 'rvncard-out']]) {
     const rule = new RegExp(`\\.${stack}\\[data-hm-moved\\] > \\.${card}, \\.${stack}\\[data-hm-moved\\] > \\.${card}\\.${inCls},\\s*\\n\\.${stack}\\[data-hm-moved\\] > \\.${card}\\.${outCls} \\{ transform: none; \\}`);
@@ -133,7 +133,7 @@ test('MOVED-NOTICE: a moved stack\'s panels FADE where they stand - no slide in,
   assert.match(hud, /\.notice-stack\[data-hm-moved\] > \.notice\.notice-out/);
   assert.match(hud, /\.rvncard-stack\[data-hm-moved\] > \.rvncard\.rvncard-out/);
   // the fade is the sheets' own opacity transition, which leaves before the node is taken
-  const sheet = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+  const sheet = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
   const fade = Number(/\.notice \{[^}]*transition: transform \d+ms cubic-bezier\([^)]*\), opacity (\d+)ms/.exec(sheet)?.[1]);
   assert.ok(fade > 0 && fade <= NOTICE_SLIDE_MS, `the notice fades (${fade} ms) within the ${NOTICE_SLIDE_MS} ms the node stands`);
 });

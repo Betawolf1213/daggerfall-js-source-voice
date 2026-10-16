@@ -450,7 +450,7 @@ test('LW4 the streaming host: the trouble\'s world (the climate at the place, th
   assert.match(w, /if \(w\.length\) away\.set\(h\.id, w\);/);
   assert.match(w, /return \{ away, visitors, holders, news, places \};/);   // LW-TALK: PIN MOVED - the towns of its road
   assert.match(w, /foeName: livingFoeWord,/);
-  assert.match(rd('src/ui/travelViewHud.js'), /look === 'wayfarer' \? \(\/\\b\(fight\|hideout\)\\b\/\.test\(m\.kind \?\? ''\) \? C\.band : C\.wayfarer\)/);   // PIN MOVED (LW12): a rumoured hideout in the bands' red too
+  assert.match(rd('src/ui/travel/travelViewHud.js'), /look === 'wayfarer' \? \(\/\\b\(fight\|hideout\)\\b\/\.test\(m\.kind \?\? ''\) \? C\.band : C\.wayfarer\)/);   // PIN MOVED (LW12): a rumoured hideout in the bands' red too
   // the pace the trouble reads the lives at is the trips' own
   assert.equal(PERSON_MOVE_SPEED / 0.2, CALENDAR_MPM);
   assert.ok(TRIP_PACE.merchant > 0);

@@ -85,7 +85,7 @@ Two pairs at one old yarn were laid as one bubble by no name (147 frame-groups i
 battle at scale 2 a bubble jumped 247 px in a frame as two hands' distances crossed; on a 960x540 screen at scale 2,
 62 bubbles stood wholly off its top, 1,071 partly.
 
-**The fix.** `ui/navalHud.js` `layoutCrewLines`: only a line SUNG or SHOUTED by many is laid once; talk is keyed by its
+**The fix.** `ui/naval/navalHud.js` `layoutCrewLines`: only a line SUNG or SHOUTED by many is laid once; talk is keyed by its
 speaker (`who`, world.js's per-hand key). With a memory (`crewSayMemory`, `drawCrewLines`' own) a stack stands in the
 order its lines were first said - the nearest first among one frame's - and a bubble comes DOWN at CREW_SAY_EASE (160)
 px a second, held where it stands while an older bubble bars its way, UP at once; a lifted bubble whose top would

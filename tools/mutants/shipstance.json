@@ -208,7 +208,7 @@
   },
   {
     "name": "HUD-card-no-stance-word",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const stance = t.hostile ? 'Hostile' : t.friendly ? 'Friendly' : '';",
     "new": "  const stance = t.hostile ? 'Hostile' : '';",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "HUD-card-no-bound",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  return { text: [stance, t.bound].filter(Boolean).join(' - '), kind: t.hostile ? 'hostile' : t.friendly ? 'friendly' : '' };",
     "new": "  return { text: stance, kind: t.hostile ? 'hostile' : t.friendly ? 'friendly' : '' };",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "HUD-card-state-unkinded",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  return { text: [stance, t.bound].filter(Boolean).join(' - '), kind: t.hostile ? 'hostile' : t.friendly ? 'friendly' : '' };",
     "new": "  return { text: [stance, t.bound].filter(Boolean).join(' - '), kind: '' };",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "HUD-card-friendly-hostile",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "friendly: !!t.friendly && !t.hostile,",
     "new": "friendly: !!t.friendly,",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "HUD-card-class-unfriendly",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "${t.card.hostile ? ' hostile' : ''}${t.card.friendly ? ' friendly' : ''}${hit}",
     "new": "${t.card.hostile ? ' hostile' : ''}${hit}",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "HUD-tag-friendly-hostile",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "${t.friendly && !t.hostile ? ' friendly' : ''}",
     "new": "${t.friendly ? ' friendly' : ''}",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "HUD-tag-class-unfriendly",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "${t.friendly && !t.hostile ? ' friendly' : ''}",
     "new": "",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "HUD-green-bar-gone",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-tag.friendly .dfnaval-tag-bar > i { background: linear-gradient(180deg, #b8ffb8 0 1px, ${CREW_GREEN} 1px); }\n",
     "new": "",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "HUD-green-hull-gone",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-card.friendly .dfnaval-track.hull .dfnaval-fill { background: linear-gradient(180deg, #b9f0c4 0 2px, #5fc27c 2px 4px, #2f9152 4px 8px, #216b3b 8px 10px, #134526 10px); }\n",
     "new": "",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "HUD-card-state-green-gone",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-card-state.friendly { color: #9fe0a8; }\n",
     "new": "",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "HUD-tag-line-far",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  if (!((t.distance ?? Infinity) <= TAG_DETAIL_M)) return '';",
     "new": "  if (!((t.distance ?? Infinity) < TAG_DETAIL_M)) return '';",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "HUD-tag-line-always",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  if (!((t.distance ?? Infinity) <= TAG_DETAIL_M)) return '';",
     "new": "  if (false) return '';",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "HUD-tag-line-no-bound",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  return [t.line, t.bound].filter(Boolean).join(' - ');",
     "new": "  return t.line ?? '';",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "HUD-tag-line-out-of-place",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    n.append(name, line, bar, state);",
     "new": "    n.append(name, bar, line, state);",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "HUD-tag-line-unwritten",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    set('line', t.detail ? tagLine(t) : '', (v) => { slot.line.textContent = v; });",
     "new": "    set('line', t.detail ? tagLine(t) : '', () => {});",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "HUD-tag-line-empty-shown",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-tag-line:empty { display: none; }\n",
     "new": "",
     "tests": [

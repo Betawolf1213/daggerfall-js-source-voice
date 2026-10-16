@@ -48,7 +48,7 @@ const { getSeed, setSeed } = await import('../src/formats/dfRandom.js');
 const { rollMagnitude } = await import('../src/systems/spellcast.js');
 const { SPELL_CAST_SOUND } = await import('../src/systems/enemySpells.js');
 const { SOUND } = await import('../src/systems/soundClips.js');
-const { signatureWords } = await import('../src/ui/revenantPage.js');
+const { signatureWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn5') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, reflexes: 2, stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(40).fill(40), skillUses: new Array(40).fill(0), career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100, crimeCommitted: 4 });
@@ -472,5 +472,5 @@ test('RVN5 the page: from rank 2 its signature - its name and what it does, "uns
   assert.ok(signatureWords(r).endsWith('(with Enhanced AI).'), 'the switch read by default');
   setPref('enhancedAI', true);
   assert.ok(!signatureWords(r).includes('Enhanced AI'));
-  assert.match(read('src/ui/revenantPage.js'), /const sig = fallen \? '' : signatureWords\(r\);   \/\/ RVN5\n\s*if \(sig\) text\.append\(el\('span', 'rvn-will', sig\)\);/);
+  assert.match(read('src/ui/revenant/revenantPage.js'), /const sig = fallen \? '' : signatureWords\(r\);   \/\/ RVN5\n\s*if \(sig\) text\.append\(el\('span', 'rvn-will', sig\)\);/);
 });

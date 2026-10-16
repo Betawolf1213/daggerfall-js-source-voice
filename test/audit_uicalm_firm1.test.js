@@ -28,10 +28,10 @@ import { setFirmament, respecFirmament, FIRM_OPS_MAX, FIRM_PACKED_MAX } from '..
 import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
 import { renownMpOf } from '../src/systems/renownLayer.js';
-import { drawEnhancedSaddle, hideEnhancedSaddle, toggleSaddlePanel, saddlePanelOpen, saddleNote, SADDLE_PANEL_PREF, SADDLE_HELLO_MS } from '../src/ui/enhancedSaddle.js';
+import { drawEnhancedSaddle, hideEnhancedSaddle, toggleSaddlePanel, saddlePanelOpen, saddleNote, SADDLE_PANEL_PREF, SADDLE_HELLO_MS } from '../src/ui/enhanced/enhancedSaddle.js';
 import { getPref, setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
-import { HUD_LOCK_PREF } from '../src/ui/hudLayout.js';
-import { markFoeStruck } from '../src/ui/hudFoeTarget.js';
+import { HUD_LOCK_PREF } from '../src/ui/hud/hudLayout.js';
+import { markFoeStruck } from '../src/ui/hud/hudFoeTarget.js';
 import { fakeDoc, one } from './decorFakes.mjs';
 import { createCharacter } from '../src/systems/chargen.js';
 import { buildCustomCareer } from '../src/systems/customClass.js';
@@ -690,7 +690,7 @@ test('AUDIT UICALM-FIRM1 L5 M5 / L4 M1: the saddle panel When needed, on a page 
     toggleSaddlePanel();
     assert.equal(show({ saddle: SADDLE(), now: 9800 }), 'none', 'and its own key puts it away');
   } finally { hideEnhancedSaddle(); _resetPrefsForTests(); }
-  assert.match(read('src/ui/enhancedSaddle.js'), /if \(last\.place === 0\) \{ if \(state\.touch\) placeTouch\(doc, parts, last\); else placeBar\(doc, parts, last\); \}/, 'a finger\'s block placed under the compass');   // PIN MOVED (THE MERGE of main into FIELD BUGS 2026-10-14: HUD-SADDLE's preview paints through the same code, so the placers take the nodes they place)
+  assert.match(read('src/ui/enhanced/enhancedSaddle.js'), /if \(last\.place === 0\) \{ if \(state\.touch\) placeTouch\(doc, parts, last\); else placeBar\(doc, parts, last\); \}/, 'a finger\'s block placed under the compass');   // PIN MOVED (THE MERGE of main into FIELD BUGS 2026-10-14: HUD-SADDLE's preview paints through the same code, so the placers take the nodes they place)
 });
 
 test('AUDIT UICALM-FIRM1 L5 M7 / L4 M3, N1: the calm HUD - the vitals rest after VITALS_REST_S full, and not a moment before; the player\'s Off, a lost point, a foe in the bar and the HUD arranged keep them up', async () => {
@@ -709,7 +709,7 @@ test('AUDIT UICALM-FIRM1 L5 M7 / L4 M3, N1: the calm HUD - the vitals rest after
   };
   const prev = globalThis.document;
   globalThis.document = { createElement: (t) => mk(t), createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk(), querySelector: () => null, querySelectorAll: () => [] };
-  const { drawEnhancedHud, destroyEnhancedHud, HUD_CALM_PREF, VITALS_REST_S } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud, HUD_CALM_PREF, VITALS_REST_S } = await import('../src/ui/enhanced/enhancedHud.js');
   try {
     const v = { health: 300, maxHealth: 300, fatigue: 100, maxFatigue: 100, magicka: 50, maxMagicka: 50 };
     drawEnhancedHud(v, 0, 0, {});
@@ -769,10 +769,10 @@ test('AUDIT UICALM-FIRM1 L4 H1, M4, M5, L1-L4 (text pins - the window wants a ca
 });
 
 test('AUDIT UICALM-FIRM1 L3 H1, M1-M8, L1-L4, N1 (text pins - the door and the walk want a screen; each was proven by a probe): the stage ends at the measured foot, the book stands where it is tall enough, a double click is one door, a class\'s way by its key, the walk\'s bar and sheet keep the screen, a waiting way on reads, the map\'s plates re-laid as they grow, the Grimoire\'s phone rail on its page, the keyboard back on its door', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const calm = read('src/ui/uiCalmStyle.js');
   const grim = read('src/ui/grimoireDress.js');
-  const gen = read('src/ui/enhancedChargen.js');
+  const gen = read('src/ui/enhanced/enhancedChargen.js');
   // H1: the foot says its height, the stage ends there; a phone's plaques wrap
   assert.match(menu, /const reserve = \(\) => \{ const h = Math\.ceil\(foot\.getBoundingClientRect\?\.\(\)\.height \?\? 0\); if \(h > 0\) home\.style\?\.setProperty\?\.\('--px-foot-h', `\$\{h\}px`\); \};\n\s+reserve\(\);\n\s+try \{ footObs = new globalThis\.ResizeObserver\(reserve\); footObs\.observe\(foot\); \}/);
   assert.match(calm, /\.px-home:not\(\.px-over\)\[style\*="--px-foot-h"\] > \.px-stage:not\(\.px-acctstage\) \{ height: calc\(100% - var\(--px-foot-h\)\); padding-bottom: 12px; \}/);
@@ -814,10 +814,10 @@ test('AUDIT UICALM-FIRM1 L3 H1, M1-M8, L1-L4, N1 (text pins - the door and the w
 });
 
 test('AUDIT UICALM-FIRM1 L5 M9, L5 L3, L3 N2, N3 (text pins): the enhanced door\'s offline doors and the foot\'s plaques in the player\'s language; the class bars\' colours each dress\'s own; an Acrobat', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const calm = read('src/ui/uiCalmStyle.js');
   const grim = read('src/ui/grimoireDress.js');
-  const gen = read('src/ui/enhancedChargen.js');
+  const gen = read('src/ui/enhanced/enhancedChargen.js');
   // L5 M9: the two-question door's offline doors by railLabel (the L10N1b pin reads the classic list's loop alone)
   assert.match(menu, /for \(const label of HOME_OFFLINE\.slice\(0, 3\)\) games\.append\(doorBtn\(idOf\(label\), railLabel\(label\), '', \(\) => go\(idOf\(label\)\)\)\);/);
   assert.match(menu, /for \(const label of HOME_OFFLINE\.slice\(3\)\) more\.append\(doorBtn\(idOf\(label\), railLabel\(label\), '', \(\) => go\(idOf\(label\)\)\)\);/);

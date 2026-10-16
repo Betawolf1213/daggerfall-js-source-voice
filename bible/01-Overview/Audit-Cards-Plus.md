@@ -16,7 +16,7 @@ then every finding reproduced again on the LIVE tree before its fix:
 |---|---|---|
 | A - the Iliac Hand model and painter | `ui/iliacTableHud.js` against real games, the host and the relay | 500 real offline games (873,367 checks, from both seats and a watcher's), the real host's presses through the DOM, the real relay Room through every online state; the card lab in Chromium at 1280x760 and 390x844 |
 | B - the dress and the layout | the roles, the chrome, both panels' sheets, the Collections page's | Chromium over the card lab and the real Collections page: Enhanced Plus in all six colours, the classic skin, the DFO Grimoire dress; 390x844, 360x640, 844x390 and 640x360 touched; contrast sampled off the real grounds; every one of 16,870 UI rules matched against the panels |
-| C - Hold'em, the binder, Collections, the lab, the probe | `ui/cardTableHud.js`, `cardBinderPage.js`, `collectionsPage.js`, `cardPanelKit.js`, `tools/cardPanelsProbe.mjs` | 984 model states and 2,394 presses compared against the base (57a214095); pixel ratios 1 to 3; an instrumented probe |
+| C - Hold'em, the binder, Collections, the lab, the probe | `ui/card/cardTableHud.js`, `cardBinderPage.js`, `collectionsPage.js`, `cardPanelKit.js`, `tools/cardPanelsProbe.mjs` | 984 model states and 2,394 presses compared against the base (57a214095); pixel ratios 1 to 3; an instrumented probe |
 | D - the localization and the scan | the routed words, the thirteen languages' drafts, the meta records, `tools/l10nHardcoded.mjs` | every draft read in its UI context against its language's glossary and rows; the meta re-hashed with the pipeline's own hash; the scan run old and new over the whole tree and over adversarial strings |
 | E - the pins, the mutants, the record | `test/cardsplus.test.js`, the moved pins, `tools/mutants/cardsplus.json`, the bible, the PR's description | mutants written for every claim a test title makes, run against 59 card and kit suites; every doc line checked against the code |
 
@@ -47,7 +47,7 @@ branch's; never by hand.
 | B4 | LOW | Under the dress the torn page's frame ran off the screen's edges | FIXED: the panels are its small windows |
 | B5 | LOW | A target's brass hid who held the holding | FIXED: a target is a ring outside the plate; the plate's top edge stays the lead's |
 | B6 | LOW | The pot's own edge outweighed the kit's chip | FIXED with C3 |
-| B7 | LOW | The winner's seat lost its brass ground on five of the six colours | FIXED: each colour re-says it after its panel ground (`ui/enhancedFrame.js` themeCss) |
+| B7 | LOW | The winner's seat lost its brass ground on five of the six colours | FIXED: each colour re-says it after its panel ground (`ui/enhanced/enhancedFrame.js` themeCss) |
 | B8 | LOW | A choice that could not be made still lit and sank under the pointer | FIXED: it takes no pointer |
 | B9 | LOW | The keyboard on a staged card showed nothing (its dashed line outweighed the focus) | FIXED |
 | B10 | LOW | Hold'em's fold title stayed English | FIXED with D5 |
@@ -95,5 +95,5 @@ selectors and no prose; a repaint about 5 ms at a pixel ratio of 2, and only on 
 (`test/l10n4_hardcoded.test.js`), `tools/cardPanelsProbe.mjs` (1,690 checks over 105 pages). Mutants
 `tools/mutants/cardsplus.json`: 82, all dead, on the final tree (CP-watcher-end retired with the check it mutated - A6). Records re-aimed by content: `auditcards6_b` (AC6-B10-fallback-hand,
 AC6-B10-tab-walk), `fb1011_cardskept` (CP-fold-forgotten), and `cardsplus`'s own. The 127 older records aimed at the
-files the audit changed (`ui/cardTableHud.js` 41, `ui/grimoireDress.js` 33, `ui/enhancedFrame.js` 26,
+files the audit changed (`ui/card/cardTableHud.js` 41, `ui/grimoireDress.js` 33, `ui/enhanced/enhancedFrame.js` 26,
 `ui/iliacTableHud.js` 18, `tools/l10nHardcoded.mjs` 9 - 25 lists), run on the live tree: 127 dead.

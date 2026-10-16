@@ -127,7 +127,7 @@
   },
   {
     "name": "BOAT-MARK-classic-the-bearing-ignored",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "(boxRight - boxLeft) * lerp;\n    for (let r = 0; r < BOAT_GLYPH_ROWS.length; r++) {",
     "new": "(boxRight - boxLeft) * 0.5;\n    for (let r = 0; r < BOAT_GLYPH_ROWS.length; r++) {",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "BOAT-MARK-classic-the-glyph-hung-below-the-edge",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  const my = by - BOAT_GLYPH_ROWS.length * s;",
     "new": "  const my = by;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "BOAT-MARK-classic-a-row-dropped",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "    for (let r = 0; r < BOAT_GLYPH_ROWS.length; r++) {",
     "new": "    for (let r = 1; r < BOAT_GLYPH_ROWS.length; r++) {",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "BOAT-MARK-classic-the-boats-never-drawn",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawBoatCompassMarks(renderer, boats, playerXZ, heading01, { bx, by, bw, s });",
     "new": "  void boats;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "BOAT-MARK-classic-the-boats-drawn-over-the-ships",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawShipCompassMarks(renderer, ships, playerXZ, heading01, { bx, by, bw, s });   // AUDIT NAV1: the sea's ships\n",
     "new": "  drawShipCompassMarks(renderer, ships, playerXZ, heading01, { bx, by, bw, s });   // AUDIT NAV1: the sea's ships\n  drawBoatCompassMarks(renderer, boats, playerXZ, heading01, { bx, by, bw, s });\n",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "BOAT-MARK-enhanced-the-boats-not-handed",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "      boats: boats ?? null,",
     "new": "      boats: null,",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "BOAT-MARK-enhanced-the-marks-never-placed",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    if (node._bm.left !== l) { node._bm.left = l; node.style.left = l; }",
     "new": "    if (node._bm.left !== l) { node._bm.left = l; }",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "BOAT-MARK-enhanced-the-pool-rebuilt",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  while (parts.boatMarks.length < list.length) {",
     "new": "  parts.boatMarks.length = 0; while (parts.boatMarks.length < list.length) {",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "BOAT-MARK-enhanced-the-bearing-ignored",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "compassMarkerLerp(list[i], playerXZ, heading01)));\n    const l = `${(at * 100).toFixed(1)}%`;\n    if (node._bm.left",
     "new": "0.5));\n    const l = `${(at * 100).toFixed(1)}%`;\n    if (node._bm.left",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "BOAT-MARK-enhanced-a-gone-boat-shown",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    const node = parts.boatMarks[i];\n    if (i >= list.length) {\n      if (node.style.display !== 'none') node.style.display = 'none';\n      continue;\n    }",
     "new": "    const node = parts.boatMarks[i];\n    if (i >= list.length) {\n      continue;\n    }",
     "tests": [

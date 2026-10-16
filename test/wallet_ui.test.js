@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 import { mintWallet, walletContents, walletLedger, walletLine, walletLines, setWalletSilver, _resetWalletForTests } from '../src/systems/walletItem.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
 import { sigilStone } from '../src/systems/gate/gateSpoils.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { withDom } from './invdrag.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

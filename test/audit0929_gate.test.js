@@ -19,7 +19,7 @@ import {
 import { inAttack } from '../src/net/gate/gateStrike.js';
 import { GATE_BRAIN_V } from '../src/net/wire.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
-import { bossBarModel } from '../src/ui/gateBossBar.js';
+import { bossBarModel } from '../src/ui/gate/gateBossBar.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A seeded [0,1) source (mulberry32) - the room suite's own dice. */
@@ -109,6 +109,6 @@ test('AUDIT PRE-MERGE 0929 W2-2: the marks are found once an array, not re-read 
   const words = gateModsWords(gateModsOf(3));
   assert.ok(tip.lines.includes(`${words.charAt(0).toUpperCase()}${words.slice(1)}`));
   assert.match(read('src/systems/gate/gateOmen.js'), /if \(day !== _marksDay\) \{/, 'the card words its marks once a day');
-  assert.doesNotMatch(read('src/ui/gateBossBar.js'), /trials\.map\(/, 'the bar joins no trials a frame');
+  assert.doesNotMatch(read('src/ui/gate/gateBossBar.js'), /trials\.map\(/, 'the bar joins no trials a frame');
   assert.equal(GATE_FEEDS_MAX, 5);
 });

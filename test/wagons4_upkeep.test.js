@@ -198,7 +198,7 @@ test('WAGONS4 A SMITH MENDS NO HORSE AND NO WAGON: a wagon left at a smith\'s co
   assert.equal(repairRefusal({ templateIndex: 94, currentCondition: 10, maxCondition: 100 }), 'transport');
   assert.equal(repairRefusal({ templateIndex: 113, group: 'Weapons', currentCondition: 10, maxCondition: 100 }), null);
   assert.match(TRANSPORT_CANNOT_BE_REPAIRED_TEXT, /Wagon Yard mends wagons/);
-  for (const f of ['src/ui/enhancedTrade.js', 'src/ui/nativeTrade.js']) assert.match(rd(f), /transport: \[\{ text: TRANSPORT_CANNOT_BE_REPAIRED_TEXT, center: true \}\],/, f);
+  for (const f of ['src/ui/enhanced/enhancedTrade.js', 'src/ui/native/nativeTrade.js']) assert.match(rd(f), /transport: \[\{ text: TRANSPORT_CANNOT_BE_REPAIRED_TEXT, center: true \}\],/, f);
   assert.match(rd('src/scenes/worldModes.js'), /: refusal === 'transport' \? \[TRANSPORT_CANNOT_BE_REPAIRED_TEXT\]/);
 });
 

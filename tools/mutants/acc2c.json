@@ -25,7 +25,7 @@
   },
   {
     "name": "ONLY-4-download-wired-to-push",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  runCloud(card, (io) => pullSlot(io, appStorage(), card), 'download');",
     "new": "  runCloud(card, (io) => pushSlot(io, appStorage(), card.saveName), 'download');",
     "tests": ["test/cloudsaves.test.js"],
@@ -49,7 +49,7 @@
   },
   {
     "name": "ONLY-7-no-saved-games-over-a-shelf-of-backups",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (!saves.length && !onlyCloud) body.append(empty(t('menu.saves.none', 'No saved games'), t('menu.load.noneHint', 'Save a game and every slot of it appears here.')));",
     "new": "  if (!saves.length) body.append(empty(t('menu.saves.none', 'No saved games'), t('menu.load.noneHint', 'Save a game and every slot of it appears here.')));",
     "tests": ["test/cloudsaves.test.js"],

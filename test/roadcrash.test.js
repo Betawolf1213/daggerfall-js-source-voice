@@ -25,7 +25,7 @@ import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import {
   readTravelOptionsSettings, createTravelOptions, locationRectsOf, circumnavigateTarget,
 } from '../src/systems/travel/travelOptions.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { modSetting } from '../src/systems/modSettings.js';
 

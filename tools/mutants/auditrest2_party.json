@@ -403,7 +403,7 @@
  },
  {
   "name": "AUDITREST2-P-P8-the-enhanced-hold-to-its-end",
-  "file": "src/ui/enhancedRest.js",
+  "file": "src/ui/enhanced/enhancedRest.js",
   "old": "{ _actT += dt; if (channelBroken(act, overlay._pendingEnemySpawn,",
   "new": "{ _actT += dt; if (_actT >= act.channelSeconds && channelBroken(act, overlay._pendingEnemySpawn,",
   "tests": [

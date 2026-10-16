@@ -46,7 +46,7 @@ export const BUILDING_TYPES = Object.freeze({
  *  player could neither see nor ask after. DFU keeps its type off the Where-is page (TalkManager
  *  CheckBuildingTypeInSkipList) and groups its automap byte with the houses (ExteriorAutomap.cs:1482-1541); the port
  *  asks after it under its group's word (systems/topicTree.js, scenes/townTalk.js) and draws it in the shop's colour on
- *  both town maps (ui/townQuarters.js). DFU's own tables stay as they are. */
+ *  both town maps (ui/town/townQuarters.js). DFU's own tables stay as they are. */
 export const OPENED_SHOP_TYPES = Object.freeze([BUILDING_TYPES.FurnitureStore]);
 /** Each opened shop's Where-is group, worded as DFU's are ("Clothing stores", "General stores"). */
 export const OPENED_SHOP_GROUPS = Object.freeze({ [BUILDING_TYPES.FurnitureStore]: 'Furniture stores' });

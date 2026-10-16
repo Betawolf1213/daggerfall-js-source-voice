@@ -19,9 +19,9 @@ import {
   DUNGEON_ACTIONS, EXTERIOR_ACTIONS, RIGHT_DOWN_GUARD,
   HOLD_BUTTONS, CLICK_BUTTONS, TOOL_TIP_DELAY, DOUBLE_CLICK_TIME,
   AutomapChrome, hitChrome, hitChromeAt, compassHeading01,
-} from '../src/ui/automapChrome.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
-import { SCROLL_FORWARD_BACKWARD_SPEED } from '../src/ui/automapCamera.js';
+} from '../src/ui/automap/automapChrome.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
+import { SCROLL_FORWARD_BACKWARD_SPEED } from '../src/ui/automap/automapCamera.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -369,7 +369,7 @@ test('c2/S4 SOURCE PINS: ALL FOUR HOSTS route down, move AND up - a missing up l
   assert.match(wm, /an open window withholds the pointer lock, as in dungeon\.js/);
 
   // and the chrome module really is ONE module with TWO TABLES
-  const chrome = src('src/ui/automapChrome.js')
+  const chrome = src('src/ui/automap/automapChrome.js')
     .replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');   // comments describe the rule; the CODE must obey it
   assert.equal(/if \(.*exterior/i.test(chrome), false, 'no if(exterior) ladder inside the module');
   assert.equal(/isExterior|isDungeon/.test(chrome), false, 'and no per-window flag either - the table IS the difference');

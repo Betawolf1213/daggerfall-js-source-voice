@@ -129,7 +129,7 @@ docks for the town ("The Sentinel Light", "Sentinel Docks" - `portPlaceName`).
 
 On the shipmaster, the SHIPS board or the hull on the stocks: the plaque names the shipyard, its shipmaster and its
 trade, with four rows - **Ships for sale**, **Your fleet**, **Shipwright**, **Refits** - each opening the shipmaster's
-window (`ui/shipyardWindow.js`, through the sea fight's door: `ui/navalPlunderDoor.js`'s third slot) on that page; a
+window (`ui/shipyardWindow.js`, through the sea fight's door: `ui/naval/navalPlunderDoor.js`'s third slot) on that page; a
 press with no row lit opens Ships for sale. On the crewmaster, the CREW board, the notice board or a sailor: **Sign on
 hands** - the window's Crew Hall. Info names who they are; Steal takes nothing ("The shipmaster never takes an eye off
 his yard"); a shipwright says his work. Too far speaks the street's refusal; the reach is a static NPC's (6.4 m). Its
@@ -320,10 +320,10 @@ piece's body out of the gangway's lane, the lanterns' light where the berth lies
   book never sounds). The rows are `world/portSites.js` `portPlaceRows`'s, the berth's point `sceneToLocationXZ`'s, a port
   by its data `systems/portPlaces.js` `portTownByData`'s and on the open sea `world/portSites.js` `portTownOnSea`'s
   (INLAND-PORTS) - each executed by the tests, never read off world.js (L6-10).
-- **The town maps** (`world/merchantYards/merchantYardMap.js` `yardTownBlocks`, `ui/townMapDoor.js`): the shipyard's ground in a
+- **The town maps** (`world/merchantYards/merchantYardMap.js` `yardTownBlocks`, `ui/town/townMapDoor.js`): the shipyard's ground in a
   shop's byte, the lighthouse's in a house's (`PORT_MAP_TYPE`), each lettered by its own name. The docks lie out on the
   water past the town's blocks, which is all a town map draws.
-- **The Overworld** (`scenes/portHost.js` and `scenes/quayPool.js` `overworldMarks`, `ui/travelViewHud.js`
+- **The Overworld** (`scenes/portHost.js` and `scenes/quayPool.js` `overworldMarks`, `ui/travel/travelViewHud.js`
   `portGlyph`): the shipyard (an anchor), the lighthouse (a tower under its light) and the docks (a bollard on its quay),
   each named, with the Towns switch and never counted a town.
 
@@ -342,7 +342,7 @@ any other laid up where she was bought, brought round from the shipyard's Your f
 the port" - she lies in the book until summoned). **Shipwrights** became **Shipyards** (`shipyard`, "Port towns have a
 shipyard by the water" - L7-6: not every port has room): the shipmaster's
 trade, the crew hall, and the shipwright reached from the helm as before - and the shipmaster's window pops it as the
-shipwright's does (`ui/navalPlunderDoor.js` openNavalWindow: only a prize's hold pops the sea fight's page).
+shipwright's does (`ui/naval/navalPlunderDoor.js` openNavalWindow: only a prize's hold pops the sea fight's page).
 **Lighthouses** (`lighthouse`) is new, popped by a climb up the host made (`scenes/portHost.js` - never the way down,
 never a refused stair).
 

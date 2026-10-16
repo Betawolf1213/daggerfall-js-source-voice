@@ -21,7 +21,7 @@ import {
 import {
   SPELL_ICON_COUNT, SPELL_ICON_ROW_COUNT, TARGET_ICON_W, ELEMENT_ICON_W, ICON_H,
   spellIconRect, targetIconRect, elementIconRect, _setSpellIconsForTests,
-} from '../src/ui/spellIcons.js';
+} from '../src/ui/spell/spellIcons.js';
 import { HOLIDAYS, getHolidayId } from '../src/systems/holidays.js';
 import { DOUBLE_CLICK_DELAY_MS } from '../src/ui/chargenArt.js';   // OT1: the ListBox double-click window
 import { calculateTradePrice } from '../src/systems/shopStock.js';
@@ -29,7 +29,7 @@ import { SPELLBOOK_TEMPLATE_INDEX, MAX_SPELL_NAME } from '../src/systems/spell/s
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { cureOfferMessageOffset } from '../src/systems/guild/guildServiceActions.js';
-import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spellIcons.js';
+import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spell/spellIcons.js';
 import { SPELLBOOK_DESCRIPTION_IDS, spellBookDescriptionId, SPELL_MAKER_EFFECTS, portEffectDescription } from '../src/systems/spell/spellEffects.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';

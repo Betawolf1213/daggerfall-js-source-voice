@@ -169,7 +169,7 @@ Mac: *"This should work for both morrowind and the sprite system."* The layer as
 for the item's **Morrowind** picture first - `combat/fpArm.js mountPicture`, the
 item's Morrowind ground mesh face-on, the decor room's own door (MW-MOUNT) - while a
 Morrowind build stands (attached data is the switch, MWA4), and the pack's
-**classic** picture otherwise (`ui/itemIconColor32.js` - the classic TEXTURE art, a
+**classic** picture otherwise (`ui/item/itemIconColor32.js` - the classic TEXTURE art, a
 replacement, the item's dye, for the wearer's gender and race). A build that lands
 or goes (`mountPictureStamp`) has every item ask again. Either is cut to its visible
 texels and sized by the mod's law above, under the pseudo-archive 38161.

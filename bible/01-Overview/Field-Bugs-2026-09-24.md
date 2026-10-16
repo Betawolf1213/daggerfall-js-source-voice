@@ -715,8 +715,8 @@ and find each other."*
 
 **Cause.** The party was on the bay only (SOC6), read off the hub's travel
 pixel, and a pixel is the whole town or the whole dungeon. The town and
-dungeon plans took no party at all. Both doors (`ui/automapDoor.js`,
-`ui/townMapDoor.js`) build their sheet's bag key by key, so nothing a host
+dungeon plans took no party at all. Both doors (`ui/automap/automapDoor.js`,
+`ui/town/townMapDoor.js`) build their sheet's bag key by key, so nothing a host
 handed could reach them, and neither sheet had anywhere to draw a member.
 
 **Fix.** A plan needs metres. The only metres this client has for another

@@ -15,9 +15,9 @@ import { planStore, REFUSAL, isKeptSpellbook } from '../src/systems/item/itemTra
 import { shiftDrop } from '../src/systems/physicalItems.js';
 import { setLocked } from '../src/systems/item/itemLock.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
-import { tabAccepts } from '../src/ui/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
+import { tabAccepts } from '../src/ui/native/nativeInventory.js';
 import { withDom } from './invdrag.mjs';
 
 const blob = (x, y) => { const dx = (x - 520) / 38, dy = (y - 110) / 24; return dx * dx + dy * dy + 0.15 * Math.sin(x / 5) < 1; };

@@ -50,7 +50,7 @@ ships them and named where they stand.
 | `src/systems/immersiveTravelTables.js` | the three tables the static constructors fill out of field data: 40 capitals, 15 large docks, 382 dock pixels |
 | `src/world/immersiveTravelGates.js` | the gate records as a layer on whichever gate block is served (below) |
 | `tools/immersiveTravelPatches.mjs` | the four gate patches out of the shipped bundle |
-| `src/ui/travelMapWindow.js`, `src/ui/travelPopUp.js` | the classic skin: the CarriageMap's five-texel page, its refusal box, the mod's three popups |
+| `src/ui/travel/travelMapWindow.js`, `src/ui/travel/travelPopUp.js` | the classic skin: the CarriageMap's five-texel page, its refusal box, the mod's three popups |
 | `src/ui/heldMap.js` | the enhanced sheet: the same maps and popups as the sheet's card |
 | `src/scenes/world.js` | `openImmersiveMap` (the services' push, and online the sun's refusal), PlayerGPS for the laws (`itHere`) |
 | `src/scenes/worldModes.js` | a street merchant's popup in the street's slot, and the service's door (`enemiesNearby`, `openImmersiveMap`) |

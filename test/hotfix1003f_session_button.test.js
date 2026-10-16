@@ -1,12 +1,12 @@
 // HOTFIX 1003f (2026-10-03, the owner, live): "the arena button for the host needs to be on the screen. Not inside the
-// pause menu" (ui/arenaSessionButton.js, wired in scenes/world.js arenaFrame); "crackling still happens after the bout
+// pause menu" (ui/arena/arenaSessionButton.js, wired in scenes/world.js arenaFrame); "crackling still happens after the bout
 // ends" (the verdict's roar, systems/arena/arenaCrowd.js); "get rid of the static crowd noise when cheering and booing"
 // (systems/arena/arenaSound.js); "it shouldnt kick players after a bout" (world.js myHealth - the relay's 0 a fall, never a death).
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createArenaSessionButton, ARENA_SESSION_KEY } from '../src/ui/arenaSessionButton.js';
+import { createArenaSessionButton, ARENA_SESSION_KEY } from '../src/ui/arena/arenaSessionButton.js';
 import { synthCheer, synthBoo, synthBed } from '../src/systems/arena/arenaSound.js';
 
 const all = (n) => (n?.children ?? []).flatMap((c) => (c?.tagName ? [c, ...all(c)] : []));

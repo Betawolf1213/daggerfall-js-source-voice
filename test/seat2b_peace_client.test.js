@@ -2,7 +2,7 @@
 // Watchtowers' word asked ten minutes apart and said once a challenger, a week and a share, kept on the device; the
 // seats dressed in their works; the Seat tab's towers lines; a craft carrying the town its station stands in; the host's
 // seams - a members' Harbour a Travel Options port, a coast the sea beside the town, the Ram Kit's words (bible/
-// 11-Multiplayer/Seats-Arc.md 7.5; src/net/townSeatBook.js, src/net/profBook.js, src/ui/seatTab.js, src/ui/profPages.js,
+// 11-Multiplayer/Seats-Arc.md 7.5; src/net/townSeatBook.js, src/net/profBook.js, src/ui/seatTab.js, src/ui/professions/profPages.js,
 // src/scenes/world.js). `06-Systems/Online-Arc.md` SEAT2b part two.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
 import { createTownSeatBook, SEAT_TOWERS_KEY, SEAT_TOWERS_SAID_MAX, SEAT_TOWERS_EVERY_MS } from '../src/net/townSeatBook.js';
 import { storedText } from '../src/systems/smithItems.js';
-import { SIEGE_STAYS_LINE, STOCK_STAYS_LINE } from '../src/ui/profPages.js';
+import { SIEGE_STAYS_LINE, STOCK_STAYS_LINE } from '../src/ui/professions/profPages.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const memStore = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), m }; };
@@ -136,7 +136,7 @@ test('SEAT2b part two THE HOST\'S SEAMS: a members\' Harbour is the travel map\'
   assert.match(SIEGE_STAYS_LINE, /Siege Camp/);
   // BAG1 (PIN MOVED): one law for the Stores page and the bag's page - the line chosen in `staysLine`, which both call;
   // PIN MOVED (L10N4): said through their readers
-  const pp = readFileSync(new URL('../src/ui/profPages.js', import.meta.url), 'utf8');
+  const pp = readFileSync(new URL('../src/ui/professions/profPages.js', import.meta.url), 'utf8');
   assert.match(pp, /: pick\.family === 'siege' \? siegeStaysLine\(\) : stockStaysLine\(\)\);/);
   assert.equal(pp.match(/: staysLine\(pick\)\)\);/g)?.length, 2, 'both pages say it');
 });

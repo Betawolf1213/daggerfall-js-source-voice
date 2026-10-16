@@ -16,11 +16,11 @@ import { readFileSync, readdirSync } from 'node:fs';
 import {
   HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired,
 } from '../src/systems/item/itemTransfer.js';
-import * as nativeInventory from '../src/ui/nativeInventory.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import * as nativeInventory from '../src/ui/native/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
 import { howManyField } from '../src/ui/howManyField.js';
 import { withDom } from './invdrag.mjs';
 
@@ -223,7 +223,7 @@ test('DISC25-F F3: the enhanced counter asks how many - buying part of a shelf\'
     view.unmount();
   });
   // ONE constructor for both windows (AUDIT 17i)
-  assert.match(rd('src/ui/enhancedInventory.js'), /howManyField\(\{ max, text: qty\.text,/);
-  assert.match(rd('src/ui/enhancedTrade.js'), /howManyField\(\{ max, text: qty\.text,/);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /howManyField\(\{ max, text: qty\.text,/);
+  assert.match(rd('src/ui/enhanced/enhancedTrade.js'), /howManyField\(\{ max, text: qty\.text,/);
   assert.equal(typeof howManyField, 'function');
 });

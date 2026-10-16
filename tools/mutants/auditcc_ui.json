@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITCC-UI-S1-the-row-on-one-line",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  plaques.style.gridArea = '1 / 2 / 2 / 3';",
     "new": "  plaques.style.gridArea = '1 / 2';",
     "why": "the row on '1 / 2' - an absolutely placed grid child's unnamed end lines run to the map's edge, and the Felt plaque stood on the R-Weapon panel",
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDITCC-UI-S1-the-felt-plaque-first",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  plaques.append(armourPlaque(deps.entity));\n  const temp = temperaturePlaque(deps.entity);\n  if (temp) plaques.append(temp);",
     "new": "  const temp = temperaturePlaque(deps.entity);\n  if (temp) plaques.append(temp);\n  plaques.append(armourPlaque(deps.entity));",
     "why": "the Felt plaque at the Armour plaque's end of the row",
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDITCC-UI-S1-the-row-never-wraps",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "display: flex; flex-wrap: wrap;\n  justify-content: space-between;",
     "new": "display: flex; flex-wrap: nowrap;\n  justify-content: space-between;",
     "why": "a narrow figure: the two plaques overrun the cell instead of the Felt one wrapping under the Armour one",
@@ -31,7 +31,7 @@
   },
   {
     "name": "AUDITCC-UI-S1-the-plaques-bunched",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "justify-content: space-between; align-items: flex-start; gap: 4px; pointer-events: none; }",
     "new": "justify-content: flex-start; align-items: flex-start; gap: 4px; pointer-events: none; }",
     "why": "the Felt plaque beside the Armour one, not at the row's other end",
@@ -41,7 +41,7 @@
   },
   {
     "name": "AUDITCC-UI-S1-the-felt-plaque-placed-alone",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .wornmap .worntemp-total { position: relative;",
     "new": ".pack-shell .wornmap .worntemp-total { position: absolute;",
     "why": "the Felt plaque out of the row's flow",
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDITCC-UI-S1-the-armour-plaque-placed-alone",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .wornmap .wornac-total { position: relative;",
     "new": ".pack-shell .wornmap .wornac-total { position: absolute;",
     "why": "the Armour plaque out of the row's flow, the Felt one under it",
@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDITCC-UI-S3-no-piece-of-its-own",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'quick' },\n",
     "new": "",
     "why": "the plate the quick block's: its X hides the plate, the plate has no X and no move of its own",
@@ -71,7 +71,7 @@
   },
   {
     "name": "AUDITCC-UI-S3-not-inside-the-quick-block",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "name: 'Temperature', inside: 'quick' }",
     "new": "name: 'Temperature' }",
     "why": "the quick block's move and size not undone on the plate: it moves twice (UI-CALM: the corner's caption is its place)",
@@ -81,7 +81,7 @@
   },
   {
     "name": "AUDITCC-UI-S3-the-quick-block-off-takes-it",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": ".hud-quick[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }",
     "new": "",
     "why": "the quick block switched off hides the plate with it while the plate's own part stands on (UI-CALM: the plate's outer piece)",
@@ -311,7 +311,7 @@
   },
   {
     "name": "AUDITCC-UI-S9-the-hud-hands-no-air",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "{ rules: survivalRules(), env: live?.env ?? null }",
     "new": "{ rules: survivalRules(), env: null }",
     "why": "the plate's fire the record's",
@@ -321,7 +321,7 @@
   },
   {
     "name": "AUDITCC-UI-S9-the-strip-handed-nothing",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  drawStatus(vitals, opts, live);",
     "new": "  drawStatus(vitals, opts);",
     "why": "the strip reads the record, the plate the live air",
@@ -462,7 +462,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-tile-unsaid",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "say: c.level === 'boon' ? null : levelSaid(String(c.text ?? ''), c.level), cost:",
     "new": "say: null, cost:",
     "why": "a need's tile says no level",
@@ -472,7 +472,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-a-boon-said-as-a-level",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "say: c.level === 'boon' ? null : levelSaid(String(c.text ?? ''), c.level), cost:",
     "new": "say: levelSaid(String(c.text ?? ''), c.level), cost:",
     "why": "a boon's tile titled as a need",
@@ -482,7 +482,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-no-cost-flag",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "cost: c.level === 'danger' });",
     "new": "cost: false });",
     "why": "a costing need's tile unmarked",
@@ -492,7 +492,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-tile-unmarked",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "${t.cost ? ' hst-cost' : ''}",
     "new": "",
     "why": "the HUD draws no mark on a costing tile",
@@ -502,7 +502,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-tile-untitled",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  if (t.say) { cell.title = t.say; cell.setAttribute('aria-label', t.say); }",
     "new": "",
     "why": "the HUD says no level on a tile",
@@ -512,7 +512,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-plate-untitled",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    t.el.title = said;\n",
     "new": "",
     "why": "the plate says its level in colour alone",
@@ -522,7 +522,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-plate-unlabelled",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    t.el.setAttribute('aria-label', said);\n",
     "new": "",
     "why": "a reader of the label hears no level",
@@ -532,7 +532,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-no-mark",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hst-cell.hst-cost .hst-tile::after { content: '!';",
     "new": ".hst-cell.hst-cost .hst-tile::after { content: '';",
     "why": "no mark on a costing plate or tile",
@@ -542,7 +542,7 @@
   },
   {
     "name": "AUDITCC-UI-S14-the-plaque-unmarked",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .worntemp-total[data-level=\"danger\"]::after { content: '!';",
     "new": ".pack-shell .worntemp-total[data-level=\"danger\"]::after { content: '';",
     "why": "no mark on a costing plaque",
@@ -572,7 +572,7 @@
   },
   {
     "name": "AUDITCC-UI-D6-the-red-thermometer",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "r: '#b8ab8c', h: '#efe6cf'",
     "new": "r: '#e0584a', h: '#ffb0a0'",
     "why": "the comfortable reading's thermometer in the red of a cost",
@@ -603,7 +603,7 @@
   },
   {
     "name": "AUDITCC-UI-R7-the-plate-s-tier-unread",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "{ rules: survivalRules(), env: live?.env ?? null }",
     "new": "{ rules: null, env: live?.env ?? null }",
     "why": "the plate wears the record's tier until a minute runs",
@@ -613,7 +613,7 @@
   },
   {
     "name": "AUDITCC-UI-R7-the-strip-s-tier-unread",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "endurance: liveStat(vitals, 'endurance'), rules: survivalRules(), live })",
     "new": "endurance: liveStat(vitals, 'endurance'), live })",
     "why": "the strip wears the record's tier until a minute runs",
@@ -653,7 +653,7 @@
   },
   {
     "name": "AUDITCC-UI-R5-the-rows-undrawn",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    r.append(el('span', 'k', k), el('span', 'v', v));\n    detail.append(r);",
     "new": "    r.append(el('span', 'k', k), el('span', 'v', v));",
     "why": "the Attributes page's Boons divider over nothing",
@@ -663,7 +663,7 @@
   },
   {
     "name": "AUDITCC-UI-R5-one-boon",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  for (const [k, v] of boons) {\n    const r = el('div', 'px-stat');",
     "new": "  for (const [k, v] of boons.slice(0, 1)) {\n    const r = el('div', 'px-stat');",
     "why": "one boon of four",
@@ -673,7 +673,7 @@
   },
   {
     "name": "AUDITCC-UI-R5-the-character-page-stands-in",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "attributes: statsAttributes,",
     "new": "attributes: statsCharacter,",
     "why": "the Attributes press draws the Character page",
@@ -683,7 +683,7 @@
   },
   {
     "name": "AUDITCC-UI-R5-no-divider",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  detail.append(pxDivider('Boons'));",
     "new": "",
     "why": "the boons run on under the meters, unnamed",
@@ -713,7 +713,7 @@
   },
   {
     "name": "AUDITCC-UI-R-the-boon-tile-amber",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "kind: c.level === 'boon' ? 'buff' : c.level === 'danger'",
     "new": "kind: c.level === 'boon' ? 'warn' : c.level === 'danger'",
     "tests": [
@@ -733,7 +733,7 @@
   },
   {
     "name": "AUDITCC-UI-S-the-night-tile-named-rested",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "name: 'Next night', foot: `${rested.minutes}m`",
     "new": "name: 'Rested', foot: `${rested.minutes}m`",
     "tests": [

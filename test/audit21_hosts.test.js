@@ -344,7 +344,7 @@ test('AUDIT 21 hosts F7: every gameplay host draws the HUD', () => {
   // and it vanishes. Inside a BUILDING it vanished too, because drawHud lived
   // inside dungeonContext.drawFoes, which the interior arm never calls.
   //
-  // ui/hud.js was already host-agnostic. This is a rule because the hosts have
+  // ui/hud/hud.js was already host-agnostic. This is a rule because the hosts have
   // no node coverage; tools/hudProbe.mjs is the other half - it boots both
   // exterior hosts for real and counts saturated pixels where the bars belong,
   // calibrated by mutation (1600/1799 with the draw, 438 without).
@@ -363,6 +363,6 @@ test('AUDIT 21 hosts F7: every gameplay host draws the HUD', () => {
 
   // and drawHud must no-op rather than throw when the art is missing, which is
   // what lets a host without ARENA2 still boot
-  assert.match(code('ui/hud.js'), /if \(!art\) return;/,
+  assert.match(code('ui/hud/hud.js'), /if \(!art\) return;/,
     'drawHud tolerates missing art - a missing file costs a HUD, never a boot');
 });

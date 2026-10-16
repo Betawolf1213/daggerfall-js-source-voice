@@ -9,7 +9,7 @@ import {
 import { mintBountyItem } from '../src/systems/bounty/bountyReward.js';
 import { createBountyHost } from '../src/scenes/bountyHost.js';
 import { validPartyPose } from '../src/net/wire.js';
-import { readBountyMarks, bountyRingTexels } from '../src/ui/bountyMapMark.js';
+import { readBountyMarks, bountyRingTexels } from '../src/ui/bounty/bountyMapMark.js';
 
 const allLand = () => true;
 const TOWN = { px: 300, py: 200, name: 'Daggerfall' };
@@ -287,7 +287,7 @@ test('BOUNTY-FARM: only notices about farms raise one, never a dungeon\'s', () =
 
 test('BOUNTY1: a bounty is in the quest log as a side quest with its clock, and the journal can abandon it', async () => {
   const { abandonBountyQuest, isBountyQuestId, bountyQuestShareable } = await import('../src/systems/bounty/bountyJournal.js');
-  const { questRail } = await import('../src/ui/questRail.js');
+  const { questRail } = await import('../src/ui/quest/questRail.js');
   let board = null;
   const host = createBountyHost({
     now: () => 900 * 1440 + 60, level: () => 3, entity: () => ({ goldPieces: 0, items: [] }), townName: () => 'Daggerfall',

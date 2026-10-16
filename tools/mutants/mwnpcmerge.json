@@ -200,7 +200,7 @@
  },
  {
   "name": "MWNPCMERGE-row-off-settings",
-  "file": "src/ui/settingsMap.js",
+  "file": "src/ui/settings/settingsMap.js",
   "old": "\"feat:mw-spell-effects\", \"feat:mw-npc-bodies\", \"feat:mw-billboard-look\"]),",
   "new": "\"feat:mw-spell-effects\", \"feat:mw-billboard-look\"]),",
   "tests": [

@@ -247,7 +247,7 @@
  },
  {
   "name": "NAMEAS-the-toggle-unwired",
-  "file": "src/ui/enhancedAccount.js",
+  "file": "src/ui/enhanced/enhancedAccount.js",
   "old": "      b.onclick = () => flow.chooseName(as);",
   "new": "      b.onclick = () => {};",
   "tests": [
@@ -256,7 +256,7 @@
  },
  {
   "name": "NAMEAS-the-pressed-state-inverted",
-  "file": "src/ui/enhancedAccount.js",
+  "file": "src/ui/enhanced/enhancedAccount.js",
   "old": "      const on = a.nameAs === as;",
   "new": "      const on = a.nameAs !== as;",
   "tests": [
@@ -265,7 +265,7 @@
  },
  {
   "name": "NAMEAS-a-toggle-for-an-old-service",
-  "file": "src/ui/enhancedAccount.js",
+  "file": "src/ui/enhanced/enhancedAccount.js",
   "old": "    if (a?.nameAs !== 'account' && a?.nameAs !== 'character') return;\n",
   "new": "",
   "tests": [

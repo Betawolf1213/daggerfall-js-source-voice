@@ -16,7 +16,7 @@ import { readFileSync } from 'node:fs';
 import * as tm from '../src/systems/textManager.js';
 import { srand, randomRange } from '../src/formats/dfRandom.js';
 import { RumorMill, RUMOR_TYPE, RESOLVING_ERROR, resolvingErrorText } from '../src/systems/rumorMill.js';
-import { NativeTalkWindow, TALK_RECTS } from '../src/ui/nativeTalk.js';
+import { NativeTalkWindow, TALK_RECTS } from '../src/ui/native/nativeTalk.js';
 import { TopicTree, EN, LIST_ITEM_TYPE, buildingTypeToGroupString, regionalBuildingNames } from '../src/systems/topicTree.js';
 import { TOPIC_CATEGORIES } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES, generateBuildingName, rulerTitle, RULER_TITLES } from '../src/world/buildingNames.js';

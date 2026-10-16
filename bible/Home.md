@@ -306,7 +306,7 @@ alone, flagged at its new site inside calculateAttackDamage.
 - `src/scenes/world.js` - FLAGGED (Legacy-Arc.md section 3): exterior.js, the fixed city, keeps DFU's death - no streamer to birth an heir into.
 - `src/systems/playerTorch.js` - arm is FLAGGED here rather than guessed - see the note below.
 - `src/systems/playerTorch.js` - FLAGGED (blocked on data this reference tree does not carry): the
-- `src/ui/enhancedMenu.js` - FLAGGED: the rest of the keyboard. The wizard walks to `done` with
+- `src/ui/enhanced/enhancedMenu.js` - FLAGGED: the rest of the keyboard. The wizard walks to `done` with
 - `src/ui/pauseWindow.js` - FLAGGED: PauseOptionsDropdown (:83-84) - DFU's own quick-settings
 - `src/world/wagonModels.js` - FLAGGED: the Small Cart has no bench (Mac's choice) - its driver rides its horse the mod's way, and RIDE-POV keeps the Morrowind body in the head on it (bible/06-Systems/Wagons.md WAGONS3).
 
@@ -346,7 +346,7 @@ held by text pins - tdz_selfreference.test.js is the standing guard.
 
 ## Ground rules carried from project-final
 
-- Desktop-first. A mobile touch layer (`src/ui/touch.js`: virtual stick +
+- Desktop-first. A mobile touch layer (`src/ui/touch/touch.js`: virtual stick +
   look/attack drag + button row speaking the desktop input language) ships
   for on-device testing and is wired into all four hosts - Port-Doctrine.md (Rebuilt on our stack, 3),
   approved by Mac 2026-08-13. (AUDIT 18: this bullet denied the touch

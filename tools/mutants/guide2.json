@@ -1,7 +1,7 @@
 [
   {
     "name": "GUIDE2-note-on-an-unasked-map",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "    note: target.locationName && target.onMap === false ? WHERE_TEXT.offMap : null,",
     "new": "    note: target.locationName && !target.onMap ? WHERE_TEXT.offMap : null,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GUIDE2-building-dropped",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  const where = [target.buildingName, place].filter(Boolean).join(', ');",
     "new": "  const where = [place].filter(Boolean).join(', ');",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GUIDE2-here-unsaid",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "    where: target.here ? `${where} (${WHERE_TEXT.here})` : where,",
     "new": "    where,",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GUIDE2-phrase-drifted",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  formatText(localizedText('locationInRegionProvince', '{0} in {1} province'), locationName, regionName);",
     "new": "  formatText(localizedText('locationInRegionProvince', '{0}, {1}'), locationName, regionName);",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "GUIDE2-unasked-map-is-a-no",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  const onMap = where.canFindPlace ? !!where.canFindPlace(site.regionName, site.locationName) : null;",
     "new": "  const onMap = where.canFindPlace ? !!where.canFindPlace(site.regionName, site.locationName) : false;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "GUIDE2-a-token-array-is-read-as-a-message",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  if (typeof message?.getTextTokens !== 'function') return null;\n",
     "new": "",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "GUIDE2-pause-button-without-a-door",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (said.find && door) {\n    const go = el('button', 'act', WHERE_TEXT.show);",
     "new": "  if (said.find) {\n    const go = el('button', 'act', WHERE_TEXT.show);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "GUIDE2-pause-door-before-the-handoff",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    go.onclick = () => { onAction('handoff'); if (door(find) === false) onAction('resume'); };",
     "new": "    go.onclick = () => { if (door(find) === false) onAction('resume'); onAction('handoff'); };",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "GUIDE2-pause-no-resume-on-a-refusal",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    go.onclick = () => { onAction('handoff'); if (door(find) === false) onAction('resume'); };",
     "new": "    go.onclick = () => { onAction('handoff'); door(find); };",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "GUIDE2-pause-the-first-entry-for-the-latest",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      const where = questWhere(sel.written?.at(-1)?.message, 'px-qwhere');",
     "new": "      const where = questWhere(sel.written?.[0]?.message, 'px-qwhere');",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "GUIDE2-pause-trail-without-a-door",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (!said || (wayOnly && !(said.find && door)) || (skip &&",
     "new": "  if (!said || (wayOnly && !said.find) || (skip &&",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "GUIDE2-pause-the-place-offered-twice",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": " || (skip && said.find?.locationName === skip.locationName && said.find?.regionName === skip.regionName)) return null;",
     "new": ") return null;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "GUIDE2-chronicle-door-read-after-the-close",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      go.onclick = () => { onExit(); door(find); };",
     "new": "      go.onclick = () => { onExit(); deps.showQuestPlace?.(find); };",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "GUIDE2-chronicle-map-before-the-close",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      go.onclick = () => { onExit(); door(find); };",
     "new": "      go.onclick = () => { door(find); onExit(); };",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "GUIDE2-chronicle-line-hidden-when-shut",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (section === 'quests' && e.uid != null) {\n          const state = questState(e);",
     "new": "        if (section === 'quests' && e.uid != null && !isFolded(folded, section, i)) {\n          const state = questState(e);",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "GUIDE2-chronicle-button-without-a-door",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    if (e.find && typeof door === 'function') {",
     "new": "    if (e.find) {",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "GUIDE2-chronicle-timer-never-armed",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  armClocks();   // GUIDE2: after the spans exist\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "GUIDE2-chronicle-interval-outlives-the-window",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    destroy() {\n      disarmClocks();\n",
     "new": "    destroy() {\n",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "GUIDE2-chronicle-stopped-clock-left-standing",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      if (!Number.isFinite(left)) { render(); return; }",
     "new": "      if (!Number.isFinite(left)) continue;",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "GUIDE2-chronicle-words-drifted",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      span.textContent = `Time remains: ${remainWords(left)}`;",
     "new": "      span.textContent = `${remainWords(left)}`;",
     "tests": [

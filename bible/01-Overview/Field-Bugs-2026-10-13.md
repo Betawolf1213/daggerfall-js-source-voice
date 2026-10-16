@@ -8,7 +8,7 @@ DFO Online mark filling the screen, the rail along the bottom, and Settings' tab
 ## TALL-TOUCH: any landscape screen keeps the two columns
 
 **The cause.** The front door stacks into one column wherever `(max-width: 860px), (pointer: coarse)` holds
-(`ui/enhancedStyle.js`, PHONE): the brand on top, the pane, the rail at the bottom. In that stack the mark is sized by
+(`ui/enhanced/enhancedStyle.js`, PHONE): the brand on top, the pane, the rail at the bottom. In that stack the mark is sized by
 the screen's WIDTH - 59.5% of it, at its 1.63:1 - so a screen held sideways gives it at least half its height, whatever
 the height is. The Ally X is a 1080p touch screen; at Windows' 150% the page is 1280x720, its pointer coarse, and the
 mark stood about 762x467 px of 720, the Settings pane what was left. SHORT-TOUCH (Field-Bugs-2026-09-27e) had given a

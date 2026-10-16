@@ -91,7 +91,7 @@
   },
   {
     "name": "FB0929-door-never-asks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  return ask(t('menu.online.bringAsk', 'Bring {name} online?', { name: save.name }), preview.join(' '), t('menu.online.bring', 'Bring online'), () => { customsNow(save); });",
     "new": "  return customsNow(save);",
     "tests": [

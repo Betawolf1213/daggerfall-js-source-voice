@@ -49,7 +49,7 @@ import { ChatLog } from '../src/net/chat.js';
 import { ControlsWindow } from '../src/ui/controlsWindow.js';
 import { MouseControlsWindow, KEYBIND_ROWS, toNative } from '../src/ui/mouseControlsWindow.js';
 import { PauseOptionsWindow } from '../src/ui/pauseWindow.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { takeScreenshot, REVOKE_AFTER_MS } from '../src/ui/screenshot.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -287,7 +287,7 @@ test('AUDIT KB1 (UI 5): a hotbar slot bound to a mouse button presses it while t
     await withDom(async (wl) => {
       _resetForTests();
       setPref('quickbarStyle', 'hotbar');
-      const hb = await import('../src/ui/enhancedHotbar.js');
+      const hb = await import('../src/ui/enhanced/enhancedHotbar.js');
       hb.mountHotbarDock(mkEl('div'));
       hb.drawEnhancedHotbar(null, { paused: false });
       const down = wl.filter((l) => l.t === 'mousedown');
@@ -312,7 +312,7 @@ test('AUDIT KB1 (UI 2/3): the enhanced book closes on its key\'s PRESS - a held 
   setBindings(store);
   try {
     await withDom(async (wl) => {
-      const { mountEnhancedSpellbook } = await import('../src/ui/enhancedSpellbook.js');
+      const { mountEnhancedSpellbook } = await import('../src/ui/enhanced/enhancedSpellbook.js');
       let exits = 0;
       mountEnhancedSpellbook(mkEl('div'), { spells: () => [], castCost: () => 0, entity: { magicka: 1 }, onExit: () => { exits++; } });
       const send = (ev) => { for (const l of wl) if (l.t === 'keydown') l.f(ev); return ev; };
@@ -341,14 +341,14 @@ test('AUDIT KB1 (UI 3 + hosts 4): eventAction reads the event\'s own flags and b
     assert.equal(eventAction({ code: 'JoystickButton6' }), 'Inventory', 'a pad button (a secondary)');
     assert.equal(eventAction({ code: 'KeyZ', shiftKey: true }), 'ReadyWeapon', 'a modifier with no combo bound leaves the plain key');
     assert.equal(JSON.stringify([...modifierHeldFirstDict(store)]), before, 'the latch is untouched');
-    for (const f of ['src/ui/enhancedHotbar.js', 'src/ui/pixelDial.js', 'src/ui/enhancedOverlays.js', 'src/ui/enhancedSpellbook.js', 'src/ui/enhancedChronicle.js', 'src/ui/charSheetDoor.js', 'src/ui/enhancedInventory.js']) {
+    for (const f of ['src/ui/enhanced/enhancedHotbar.js', 'src/ui/pixelDial.js', 'src/ui/enhanced/enhancedOverlays.js', 'src/ui/enhanced/enhancedSpellbook.js', 'src/ui/enhanced/enhancedChronicle.js', 'src/ui/charSheetDoor.js', 'src/ui/enhanced/enhancedInventory.js']) {
       assert.doesNotMatch(rd(f), /actionOf\(e(, eventModifiers\(e\))?\)/, `${f} reads the event through eventAction`);
     }
   } finally { setBindings(null); }
 });
 
 test('AUDIT KB1 (UI 4): Escape on the Controls pane\'s prompt answers No - the menu\'s back stack asks the pane before it leaves the section (mutant: the arm dropped, so Escape discards every staged bind)', () => {
-  const m = rd('src/ui/enhancedMenu.js');
+  const m = rd('src/ui/enhanced/enhancedMenu.js');
   const arm = m.indexOf(': controlsPromptOpen() ? () => dismissControlsPrompt()');
   // PIN MOVED (AUDIT UICALM-FIRM1 L3 L1): the section's way back now puts the keyboard on its door - the order held
   const leave = m.indexOf(": section !== 'home' ? () => { const from = section; go('home');");

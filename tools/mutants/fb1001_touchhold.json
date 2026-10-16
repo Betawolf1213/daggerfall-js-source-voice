@@ -1,7 +1,7 @@
 [
   {
     "name": "TOUCH-HOLD-the-third-slot-none",
-    "file": "src/ui/touchButtons.js",
+    "file": "src/ui/touch/touchButtons.js",
     "old": "touchButton2: 'ReadyWeapon', touchButton3: 'Interact' });",
     "new": "touchButton2: 'ReadyWeapon', touchButton3: 'none' });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TOUCH-HOLD-interact-a-tap",
-    "file": "src/ui/touchButtons.js",
+    "file": "src/ui/touch/touchButtons.js",
     "old": "glyph: 'E', kind: 'hold', w: 52 },",
     "new": "glyph: 'E', kind: 'tap', w: 52 },",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TOUCH-HOLD-no-interact-choice",
-    "file": "src/ui/touchButtons.js",
+    "file": "src/ui/touch/touchButtons.js",
     "old": "  { id: 'Interact', label: 'Interact (the use key)', glyph: 'E', kind: 'hold', w: 52 },\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "TOUCH-HOLD-plus-lt-recast",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "  ['JoystickAxis9Button0', 'Interact'],      // LT",
     "new": "  ['JoystickAxis9Button0', 'RecastSpell'],      // LT",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "TOUCH-HOLD-plus-layout-not-bumped",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "export const PLUS_PAD_LAYOUT_VERSION = 2;",
     "new": "export const PLUS_PAD_LAYOUT_VERSION = 1;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "TOUCH-HOLD-the-retired-row-kept",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "for (const [code, action] of [...DEFAULT_SECONDARY_BINDINGS, ...PLUS_PAD_RETIRED]) {",
     "new": "for (const [code, action] of DEFAULT_SECONDARY_BINDINGS) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "TOUCH-HOLD-recast-dropped",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "right: Object.freeze({ tap: 'Rest', hold: 'RecastSpell' }),",
     "new": "right: Object.freeze({ tap: 'Rest', hold: null }),",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "TOUCH-HOLD-no-bind-row",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "  { id: 'interact', label: 'Interact (the use key)', sec: 'Interact' },",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "TOUCH-HOLD-the-meter-names-a-key",
-    "file": "src/ui/profReticle.js",
+    "file": "src/ui/professions/profReticle.js",
     "old": " : byUse ? t('prof.reticle.trace.aim', 'aim the knife at the first point')\n        : s.slips",
     "new": "\n        : s.slips",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "TOUCH-HOLD-the-gentle-meter-names-a-key",
-    "file": "src/ui/profReticle.js",
+    "file": "src/ui/professions/profReticle.js",
     "old": "? (byUse ? t('prof.reticle.hold.skinning', 'skinning...') : t('prof.reticle.hold.hold', 'hold {key}', { key: label || useKey() }))",
     "new": "? (t('prof.reticle.hold.hold', 'hold {key}', { key: label || useKey() }))",
     "tests": [

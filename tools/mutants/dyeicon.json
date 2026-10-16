@@ -118,7 +118,7 @@
   },
   {
     "name": "DYE-ICON-the-enhanced-door-asking-undyed",
-    "file": "src/ui/enhancedArt.js",
+    "file": "src/ui/enhanced/enhancedArt.js",
     "old": "{ scale: 2, dye: img.dye, dyeTarget: img.dyeTarget }",
     "new": "{ scale: 2, dye: img.dye }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "DYE-ICON-the-list-warm-key-by-name-alone",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "old": "${img.dyeTarget != null ? `_t${img.dyeTarget}d${img.dye}` : ''}`;",
     "new": "`;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "DYE-ICON-the-list-asking-undyed",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "{ mips: false, removeMask: true, dye: img.dye, dyeTarget: img.dyeTarget }",
     "new": "{ mips: false, removeMask: true, dye: img.dye }",
     "tests": [

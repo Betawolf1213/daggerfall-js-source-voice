@@ -20,7 +20,7 @@ import {
 } from '../src/net/wire.js';
 import { OnlineSession } from '../src/net/online.js';
 import { HOST_COMMANDS, HELP_LINES, parseChatLine } from '../src/net/chatCommands.js';
-import { TravelPopUpWindow } from '../src/ui/travelPopUp.js';
+import { TravelPopUpWindow } from '../src/ui/travel/travelPopUp.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 

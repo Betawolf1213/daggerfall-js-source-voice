@@ -24,19 +24,19 @@ import { ATLAS_COLS, ATLAS_ROWS, measureText } from '../src/ui/text.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { TextRsc, RSC } from '../src/formats/textRsc.js';
-import { HudText } from '../src/ui/hudText.js';
+import { HudText } from '../src/ui/hud/hudText.js';
 import { presentNpcInfoText } from '../src/player/activate.js';
 import { layoutMessageBox, _setMessageBoxArtForTests } from '../src/ui/messageBox.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { ToolTip } from '../src/ui/toolTip.js';
-import { exteriorAutomapTooltipFor } from '../src/ui/automapText.js';
+import { exteriorAutomapTooltipFor } from '../src/ui/automap/automapText.js';
 import { ExteriorAutomapWindow, stampResidenceQuestNames, _resetZoomForTests } from '../src/ui/exteriorAutomapWindow.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
 import { discoverBuilding, discoveredBuildings, restoreDiscovery } from '../src/systems/discovery.js';
 import { PlayerHistoryWindow } from '../src/ui/playerHistory.js';
 import { daysUntilFreedomText, PrisonScreenWindow } from '../src/ui/prisonScreen.js';
 import { CharSheet, preloadCharSheetArt } from '../src/ui/charsheet.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS, SKILL_NAMES, SKILL_COUNT } from '../src/systems/skills.js';
 import { ChargenFlow, handHeroGenderToGrammar } from '../src/ui/chargen.js';
@@ -44,8 +44,8 @@ import { finishChargen, handHeroGenderToGrammar as sessionHeroGender } from '../
 import { CLASS_CAREERS } from '../src/systems/chargen.js';
 import { parseQuestionLibrary } from '../src/systems/classQuestions.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
-import { NativeTalkWindow, preloadTalkArt } from '../src/ui/nativeTalk.js';
-import { talkPanelModel } from '../src/ui/enhancedTalk.js';
+import { NativeTalkWindow, preloadTalkArt } from '../src/ui/native/nativeTalk.js';
+import { talkPanelModel } from '../src/ui/enhanced/enhancedTalk.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 beforeEach(() => { tm._resetTextManagerForTests(); _resetFrenchGrammarForTests(); });
@@ -56,11 +56,11 @@ const GRAMMAR = {
   'src/systems/quest/questMacros.js': 1,
   'src/ui/chargen.js': 2,
   'src/ui/charsheet.js': 1,
-  'src/ui/enhancedCharSheet.js': 1,
+  'src/ui/enhanced/enhancedCharSheet.js': 1,
   'src/ui/exteriorAutomapWindow.js': 2,
-  'src/ui/hudText.js': 1,
+  'src/ui/hud/hudText.js': 1,
   'src/ui/messageBox.js': 3,
-  'src/ui/nativeTalk.js': 6,
+  'src/ui/native/nativeTalk.js': 6,
   'src/ui/playerHistory.js': 1,
   'src/ui/prisonScreen.js': 1,
   'src/ui/toolTip.js': 1,

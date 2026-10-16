@@ -14,7 +14,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { sheetModel, SKILL_GROUPS } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel, SKILL_GROUPS } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { createCharSheetWindow, charSheetDoorReady } from '../src/ui/charSheetDoor.js';
 import { carriedWeight } from '../src/ui/charsheet.js';
 import { SKILL_NAMES } from '../src/systems/skills.js';
@@ -223,10 +223,10 @@ test('PX27: the child-push machinery went WITH the overlay, and nothing needs it
   for (const arm of ['inventory', 'spellbook', 'logbook']) {
     assert.ok(!src.includes(`hooks.${arm}()`), `${arm}: the factory is never called by the page - what it builds, no slot holds`);
   }
-  // ui/enhancedCharSheet.js STAYS: sheetModel is the model both sheets
+  // ui/enhanced/enhancedCharSheet.js STAYS: sheetModel is the model both sheets
   // always read, and the one that remains reads it.
-  assert.match(read('src/ui/enhancedMenu.js'), /import \{ sheetModel \} from '\.\/enhancedCharSheet\.js';/);
-  assert.match(read('src/ui/enhancedCharSheet.js'), /export function sheetModel/);
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /import \{ sheetModel \} from '\.\/enhancedCharSheet\.js';/);
+  assert.match(read('src/ui/enhanced/enhancedCharSheet.js'), /export function sheetModel/);
 });
 
 // ── THE RETIRED VIEW ─────────────────────────────────────────────
@@ -242,7 +242,7 @@ test('PX27: the child-push machinery went WITH the overlay, and nothing needs it
 // view is gone; the pins go with it, replaced by the law that put them
 // out of work.
 test('AUDIT 39: the module is the MODEL and nothing else - the view left with its caller', () => {
-  const src = read('src/ui/enhancedCharSheet.js');
+  const src = read('src/ui/enhanced/enhancedCharSheet.js');
   for (const gone of ['export function mountEnhancedCharSheet', 'addEventListener',
     'document.createElement', 'globalThis.__sheet']) {
     assert.ok(!src.includes(gone), `${gone} retired with the view that owned it`);
@@ -254,14 +254,14 @@ test('AUDIT 39: the module is the MODEL and nothing else - the view left with it
   // ...and the surface the live sheet actually reads is still here.
   assert.match(src, /export function sheetModel/);
   assert.match(src, /export const SKILL_GROUPS/);
-  assert.match(read('src/ui/enhancedMenu.js'), /import \{ sheetModel \} from '\.\/enhancedCharSheet\.js';/);
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /import \{ sheetModel \} from '\.\/enhancedCharSheet\.js';/);
 });
 
 test('U52: it draws no paperdoll, and the reason is written down', () => {
   // The classic sheet composes it at DFU's (200,8). Dropping it
   // silently is the thing this project's audits punish; the module
   // says which slice owns it and why it is not this one.
-  const src = read('src/ui/enhancedCharSheet.js');
+  const src = read('src/ui/enhanced/enhancedCharSheet.js');
   assert.doesNotMatch(src, /drawPaperDoll|refreshPaperDoll/);
   assert.match(src, /THE PAPERDOLL\./);
   assert.match(src, /inventory slice with the equip map/);

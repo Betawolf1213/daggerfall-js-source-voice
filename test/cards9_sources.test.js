@@ -122,7 +122,7 @@ test('CARDS9 the counter: a pack\'s price is the counter\'s (DFU\'s CalculateTra
   assert.deepEqual(buyCardPack(poor, { quality: 10, skills, online: false }), { ok: false, price, why: 'gold' });
   assert.deepEqual([poor.goldPieces, poor.items.length], [price - 1, 0]);
   // the doors: the Enhanced tavern's row and the card table's panel (CARDS10, scenes/worldModes.js)
-  const tav = read('src/ui/enhancedTavern.js');
+  const tav = read('src/ui/enhanced/enhancedTavern.js');
   assert.match(tav, /const pack = el\('button', 'act tavern-act', `Card pack \(\$\{packPrice\(\)\} gold\)`\);\s*pack\.onclick = buyPack;/);
   assert.match(tav, /wrap\.append\(room, talkBtn, food, pack, exit\);/);
   assert.match(tav, /const r = buyCardPack\(deps\.entity, \{ quality: deps\.quality\?\.\(\) \?\? 10, skills: deps\.skills\?\.\(\) \?\? \{\} \}\);\s*if \(!r\.ok\) \{ say\(rows\(NOT_ENOUGH_GOLD_ID, \{ amount: r\.price \}\)\); return; \}/);

@@ -49,7 +49,7 @@ test('ARENA3 the Hall: this save\'s Grand Champions - mine, then the banners\' b
 });
 
 test('ARENA3 the sheet: the Arena lines carry the banner - shown for a fighter of a banner who has not fought yet', async () => {
-  const { sheetModel } = await import('../src/ui/enhancedCharSheet.js');
+  const { sheetModel } = await import('../src/ui/enhanced/enhancedCharSheet.js');
   const hero = { name: 'A', race: 'Breton', level: 2, career: { name: 'Knight', primarySkills: [], majorSkills: [], minorSkills: [] },
     stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 },
     activeEffects: [], skills: {}, health: 10, maxHealth: 10, magicka: 0, maxMagicka: 0, fatigue: 100, goldPieces: 0, items: [] };
@@ -60,7 +60,7 @@ test('ARENA3 the sheet: the Arena lines carry the banner - shown for a fighter o
   const g = sheetModel({ ...hero, arenaLadder: { ...grandLadder(), record: { ...newArenaLadder().record, wins: 40, losses: 2 } }, arenaLeague: joined }).arena;
   assert.deepEqual(g, { title: 'Grand Champion', record: '40 won, 2 lost', banner: 'The Blue Banner' });
   assert.equal(sheetModel({ ...hero, arenaLadder: ladderAfter(newArenaLadder(), { won: true }).ladder }).arena.banner, null, 'no banner, no line for it');
-  assert.match(readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8'), /\.\.\.\(m\.arena\.banner \? \[\['Banner', m\.arena\.banner\]\] : \[\]\)/, 'the pause window\'s sheet draws it');
+  assert.match(readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8'), /\.\.\.\(m\.arena\.banner \? \[\['Banner', m\.arena\.banner\]\] : \[\]\)/, 'the pause window\'s sheet draws it');
 });
 
 test('ARENA3 on the sand: the Herald cries me by my title; the title on the window\'s card and the leaderboard', async () => {

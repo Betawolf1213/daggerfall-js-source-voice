@@ -68,7 +68,7 @@
   },
   {
     "name": "the-menu-lock-gives-the-lanes-reason-for-a-ground-switch",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (ground !== undefined) lockOnline(b, null, { note: modLockNote(vendor, key), value: ground });",
     "new": "    if (ground !== undefined) lockOnline(b, null);",
     "tests": [
@@ -78,7 +78,7 @@
   },
   {
     "name": "the-mods-pane-goes-back-to-the-lanes-note",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (tab.id === 'mods' && isOnlinePage()) body.append(el('p', 'meta opt-note', noteText(ONLINE_MODS_NOTE)));",
     "new": "  if (tab.id === 'mods' && isOnlinePage()) body.append(el('p', 'meta opt-note', noteText(ONLINE_LOCK_NOTE)));",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "every-locked-row-wears-the-grounds-reason-again",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "ONLINE_GROUND_VENDORS.includes(vendor) || ONLINE_GROUND_KEYS[vendor]?.includes(key) ? ONLINE_GROUND_NOTE : ONLINE_RULESET_KEYS[vendor]?.includes(key) ? ONLINE_RULESET_NOTE : ONLINE_WORLD_EVENT_VENDORS.includes(vendor) ? ONLINE_WORLD_EVENT_NOTE : ONLINE_TRAVEL_VENDORS.includes(vendor) ? ONLINE_TRAVEL_NOTE : ONLINE_CARRIAGE_VENDORS.includes(vendor) ? ONLINE_CARRIAGE_NOTE : ONLINE_SHARED_NOTE",
     "new": "ONLINE_GROUND_NOTE",
     "tests": [

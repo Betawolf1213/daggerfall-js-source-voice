@@ -17,13 +17,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { expandRowValues, getMacroValue } from '../src/systems/quest/questMacros.js';
 import { useItem, MAP_TEXT_ID } from '../src/systems/useItem.js';
-import { useResultAction } from '../src/ui/enhancedInventory.js';
+import { useResultAction } from '../src/ui/enhanced/enhancedInventory.js';
 import { expandGuildMacros, expandGuildRows } from '../src/systems/guild/guildServiceActions.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
 test('X1 MENU-EXIT1: the enhanced menu\'s repaint answers nothing once the screen is destroyed - the confirm card\'s yes runs the action FIRST and repaints after (mutant: the guard removed, which is the crash on every exit through the confirm)', () => {
-  const src = rd('src/ui/enhancedMenu.js');
+  const src = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /function render\(\) \{\s*(?:\/\/[^\n]*\n\s*)*if \(!app\) return;\s*repaintKeepingScroll\(app, \(\) => renderInto\(\)(?:, \{[^}]*\})?\);(?:[ \t]*\/\/[^\n]*)?\s*\}/, 'render() guards on the screen before it paints');
   assert.match(src, /onClick: \(\) => \{ const f = confirming\.onYes; confirming = null; f\(\); render\(\); \}/, 'and the confirm card still runs the action before the repaint - the order DFU\'s yes-button has, which is why the guard is where it is');
   assert.match(src, /host\.innerHTML = '';\s*app = null;/, 'destroy() nulls the screen the guard reads');
@@ -51,9 +51,9 @@ test('X2 MACROS1: a map read carries its revealed name as the record\'s macro, t
   }
   // the outcome shape, by the arm that makes it (the item above may not be the map template the predicate reads)
   assert.match(rd('src/systems/useItem.js'), /\{ kind: 'map', textId: MAP_TEXT_ID, revealed, macros: \{ map: revealed \} \}/);
-  assert.match(rd('src/ui/enhancedInventory.js'), /if \(r\.macros\) out\.macros = r\.macros;/);
-  assert.match(rd('src/ui/enhancedInventory.js'), /expandRowValues\(deps\.rows\(act\.textId\) \?\? \[\], act\.macros \?\? null\)/);
-  assert.match(rd('src/ui/nativeInventory.js'), /expandRowValues\(this\.hooks\.rows\(r\.textId\) \?\? \[\], r\.macros \?\? null\)/);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /if \(r\.macros\) out\.macros = r\.macros;/);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /expandRowValues\(deps\.rows\(act\.textId\) \?\? \[\], act\.macros \?\? null\)/);
+  assert.match(rd('src/ui/native/nativeInventory.js'), /expandRowValues\(this\.hooks\.rows\(r\.textId\) \?\? \[\], r\.macros \?\? null\)/);
   assert.match(rd('src/systems/quickslots.js'), /expandRowValues\(hooks\.rows\(res\.textId\) \?\? \[\], res\.macros \?\? null\)/);
   // the quest table's own %map
   assert.equal(getMacroValue('%map', null, { world: { locationRevealedByMapItem: () => 'Privateers Hold' } }), 'Privateers Hold');

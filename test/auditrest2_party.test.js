@@ -388,7 +388,7 @@ async function enhanced(over, fn) {
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.requestAnimationFrame = () => 0;
   try {
-    const { mountEnhancedRest } = await import('../src/ui/enhancedRest.js');
+    const { mountEnhancedRest } = await import('../src/ui/enhanced/enhancedRest.js');
     const calls = { night: 0, meditate: 0, breaks: 0 };
     const hp = { v: 50 };
     const deps = {

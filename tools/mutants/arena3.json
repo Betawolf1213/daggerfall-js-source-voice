@@ -429,7 +429,7 @@
   },
   {
     "name": "ARENA3-WINDOW-TABS-UNTURNED",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "    t.setAttribute('role', 'tab');\n",
     "new": "",
     "tests": [
@@ -438,7 +438,7 @@
   },
   {
     "name": "ARENA3-WINDOW-DEAD-PRESS-LIVES",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "    const b = button(`aw-act${cls ? ` ${cls}` : ''}`, a.label, () => { if (!a.why) onPress(); });",
     "new": "    const b = button(`aw-act${cls ? ` ${cls}` : ''}`, a.label, () => { onPress(); });",
     "tests": [
@@ -447,7 +447,7 @@
   },
   {
     "name": "ARENA3-WINDOW-WAGER-SIDE",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "      doAct('wager', { hour: c.hour, side, stake });",
     "new": "      doAct('wager', { hour: c.hour, side: 0, stake });",
     "tests": [
@@ -456,7 +456,7 @@
   },
   {
     "name": "ARENA3-WINDOW-KEYS",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "    const n = /^Digit([1-6])$/.exec(e.code ?? '');",
     "new": "    const n = null;",
     "tests": [
@@ -465,7 +465,7 @@
   },
   {
     "name": "ARENA3-WINDOW-LISTENER-LEAK",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "      globalThis.removeEventListener('keydown', onKey, { capture: true });",
     "new": "",
     "tests": [
@@ -520,7 +520,7 @@
   },
   {
     "name": "ARENA3-HUD-NO-TEAM",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "    team: teams?.[f.id] === 'red' || teams?.[f.id] === 'blue' ? teams[f.id] : '',",
     "new": "    team: '',",
     "tests": [
@@ -547,7 +547,7 @@
   },
   {
     "name": "ARENA3-SHEET-NO-BANNER",
-    "file": "src/ui/enhancedCharSheet.js",
+    "file": "src/ui/enhanced/enhancedCharSheet.js",
     "old": "  if (!raw && !team) return null;",
     "new": "  if (!raw) return null;",
     "tests": [

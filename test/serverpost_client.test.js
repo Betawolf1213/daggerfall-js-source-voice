@@ -1,7 +1,7 @@
 // SERVER-POST (2026-10-08, Mac: "Let's develop an ingame server mailbox that goes next to the hourglass in the pause
 // menu. It should show notifications whenever players have a message. First use is to utilize it for players being
 // granted items."): THE CLIENT'S SIDE - net/serverPost.js PostBox over the real service (a look, a notice, a piece
-// opened, an item claimed into the pack through the realm's act), ui/enhancedPost.js (the envelope and its count, the
+// opened, an item claimed into the pack through the realm's act), ui/enhanced/enhancedPost.js (the envelope and its count, the
 // window), and the pause face's and the hosts' wiring.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,10 +12,10 @@ import { PostBox, postNoticeText } from '../src/net/serverPost.js';
 import { partAnswer } from '../src/net/heartbeat.js';
 import { POST_SENDER, POST_POLL_MS } from '../src/net/postLaw.js';
 import { MAIL_POLL_MS } from '../src/net/mail.js';
-import { postMark, setPostCount, watchPostMark, postWindow, postRefusalText, postRarity, anchorPost } from '../src/ui/enhancedPost.js';
+import { postMark, setPostCount, watchPostMark, postWindow, postRefusalText, postRarity, anchorPost } from '../src/ui/enhanced/enhancedPost.js';
 import { RARITIES } from '../src/systems/loot/lootRarity.js';
 import { HELP_LINES, HOST_COMMANDS } from '../src/net/chatCommands.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { mintHourlock } from '../src/systems/gilded.js';
 
@@ -221,7 +221,7 @@ test('SERVER-POST the window: the box\'s pieces as it lists them, unread (said, 
   // LR1's own hexes, each pinned against the ladder (AUDIT SERVER-POST: the sheet never imports it - it reaches the combat graph)
   for (const [k, r] of Object.entries(RARITIES)) if (k !== 'common') assert.ok(ENHANCED_CSS.includes(`.px-postwin [data-rarity="${k}"] { color: ${r.colour}; }`), k);
   for (const k of ['magic', 'legendary', 'artifact']) assert.match(ENHANCED_CSS, new RegExp(`:root\\[data-plus-theme="stone"\\] \\.px-postwin \\[data-rarity="${k}"\\] \\{ color: #[0-9a-f]{6}; \\}`), `${k} lifted on Stone`);
-  assert.doesNotMatch(src('src/ui/enhancedStyle.js'), /from '\.\.\/systems\/loot\/lootRarity\.js'/, 'the stylesheet imports no loot ladder');
+  assert.doesNotMatch(src('src/ui/enhanced/enhancedStyle.js'), /from '\.\.\/systems\/loot\/lootRarity\.js'/, 'the stylesheet imports no loot ladder');
 
   // OPENED
   await view.openOne(post[0].id);
@@ -274,7 +274,7 @@ test('SERVER-POST the window: the box\'s pieces as it lists them, unread (said, 
 });
 
 test('SERVER-POST the wiring: the pause face stands the envelope beside the hourglass where the host hands a box, opens its window on the hourglass\'s stage with its own scrim, Escapes it before resuming, stops its ticks on every rebuild and unmount; every host hands the world\'s box, online only and never a throw before the boot declared it; the world host makes the box beside the letterbox, says its news on the world tab and rides the heartbeat (mutants: the envelope without a box; a host that forgets it)', () => {
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const envelope = postEnvelope\(home, mark\);/, 'beside the hourglass');
   assert.match(menu, /function postEnvelope\(home, glass\) \{\n  if \(!hooks\.post\?\.\(\)\) return null;/, 'online only - where the host hands a box');
   assert.match(menu, /postAnchor = anchorPost\(envelope, glass, home\.querySelector\?\.\('\.px-profile'\), home\);/);
@@ -392,7 +392,7 @@ test('AUDIT SERVER-POST the doors: /mail opens the mailbox on either skin and wh
   assert.match(door, /if \(hooks\.at === 'mailbox' && typeof document !== 'undefined'\) return enhancedPauseOverlay\(show, hooks\);/, 'either skin');
   assert.ok(door.indexOf("hooks.at === 'mailbox'") < door.indexOf('if (isEnhanced() && typeof document'), 'before the skin is asked');
   assert.match(door, /\.filter\(\(n\) => !n\.closest\?\.\('\[inert\]'\)\);/, 'Tab never into what is out of reach');
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /else if \(at === 'mailbox'\) postOpen = true;/, 'the door lands on the window');
   assert.match(menu, /closeOnOutsideTap\(home, '\.px-acctwin', [^\n]*\n\s*for \(const n of \[stage, mark, envelope\]\) n\?\.setAttribute\?\.\('inert', ''\);/, 'the face under the account window inert');
   assert.match(menu, /postKeep = \{\};\n/, 'the window\'s place reset with the visit');

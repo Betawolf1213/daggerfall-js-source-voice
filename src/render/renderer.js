@@ -2011,7 +2011,7 @@ export class Renderer {
    * camera's rect every frame from the HUD's height; this is that
    * rect, in Unity's own normalized BOTTOM-LEFT space, which is also
    * gl.viewport's - so `{ x: 0, y: hudHeight, w: 1, h: 1 - hudHeight }`
-   * ports digit for digit (ui/hudLarge.js owns the arithmetic).
+   * ports digit for digit (ui/hud/hudLarge.js owns the arithmetic).
    *
    * CONSUMED BY THE NEXT beginFrame, exactly as DFU recomputes the
    * rect every frame ("Check size every frame as HUD height can

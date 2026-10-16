@@ -58,11 +58,11 @@ export const TECHNIQUE_BANDS = Object.freeze({ magic: Object.freeze([5, 15]), ra
  *  Legendary not quite half; a Magic piece one in eight. */
 export const TECHNIQUE_PER_MILLE = Object.freeze({ magic: 120, rare: 300, legendary: 450 });
 
-/** The HUD's chip for a technique (ui/enhancedHud.js - a power's chip wears its set's colour): the blue the player's own
+/** The HUD's chip for a technique (ui/enhanced/enhancedHud.js - a power's chip wears its set's colour): the blue the player's own
  *  marks on the ground wear (combat/techniques.js TECH_COLOR, [0.35, 0.78, 1]). Here, in the leaf, because the HUD never
  *  imports a runtime that reaches half the game. */
 export const TECH_CHIP_COLOUR = '#59c7ff';
-/** The registry action (systems/inputActions.js) - here, in the leaf, so the card's host (ui/enhancedInventory.js
+/** The registry action (systems/inputActions.js) - here, in the leaf, so the card's host (ui/enhanced/enhancedInventory.js
  *  techniqueKeyWord) names the key without importing the runner; combat/techniques.js answers it and exports it on. */
 export const TECHNIQUE_ACTION = 'WeaponTechnique';
 

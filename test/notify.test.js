@@ -32,7 +32,7 @@ import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/t
 import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -250,7 +250,7 @@ test('ENH-NOTICE3: toRows - SetText\'s one Text token, rows as given, and never 
 test('ENH-NOTICE3: notify decides WHICH MODEL, the draw decides WHICH FACE - the door never imports the skin', () => {
   const s = src('src/systems/notify.js');
   // The skin fork lives where the enhanced idiom already put it: the
-  // box's own draw (ui/actionText.js), the HUD text's (ui/hudText.js),
+  // box's own draw (ui/actionText.js), the HUD text's (ui/hud/hudText.js),
   // the label's (ui/midScreenText.js). A second fork here would be a
   // second home for the skin decision and the faces would drift.
   // the file SAYS so in its header ("does not import ui/uiSkin.js and
@@ -259,7 +259,7 @@ test('ENH-NOTICE3: notify decides WHICH MODEL, the draw decides WHICH FACE - the
   const code = s.split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   assert.equal(/uiSkin/.test(code), false, 'systems/notify.js must not import or read ui/uiSkin.js');
   assert.equal(/enhancedSkin|isEnhanced|skin\(\)/.test(code), false, 'nor ask which skin is on by another name');
-  assert.equal(/from '\.\.\/ui\/enhancedNotice\.js'/.test(code), false, 'nor the enhanced panel itself');
+  assert.equal(/from '\.\.\/ui\/enhanced\/enhancedNotice\.js'/.test(code), false, 'nor the enhanced panel itself');
   // the two it DOES stand on are the model's own, not a face's
   assert.match(code, /import \{ ActionTextBox \} from '\.\.\/ui\/actionText\.js';/);
 });

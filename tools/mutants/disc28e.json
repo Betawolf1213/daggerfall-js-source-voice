@@ -30,7 +30,7 @@
   },
   {
     "name": "LEVEL-PCT-oghma-reads-the-lane",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  if (levelUpLane(screen) === LANE_VIRTUE || usesVirtueLeveling(e)) {",
     "new": "  if (levelUpLane(screen) === LANE_VIRTUE) {",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "LEVEL-PCT-crown-own-copy",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "      now: levelBarProgress(e),",
     "new": "      now: e.levelProgress ?? 0,",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "ASCEND-LIVE-live-is-permanent",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  liveStat({ stats: { [key]: permanent }, activeEffects: entity?.activeEffects, _mods: entity?._mods }, key);",
     "new": "  permanent;",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "ASCEND-LIVE-capped-never",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return { live, capped: canRaise && liveAttribute(entity, key, value + 1) === live };",
     "new": "  return { live, capped: false };",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "ASCEND-LIVE-capped-unraisable",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return { live, capped: canRaise && liveAttribute(entity, key, value + 1) === live };",
     "new": "  return { live, capped: liveAttribute(entity, key, value + 1) === live };",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "ASCEND-LIVE-classic-working-ignored",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "      ...liveOf(screen.entity, key, value, canRaise),",
     "new": "      ...liveOf(screen.entity, key, base, canRaise),",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "ASCEND-LIVE-virtue-delta-ignored",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "        ...liveOf(screen.entity, key, base + delta, canRaise),",
     "new": "        ...liveOf(screen.entity, key, base, canRaise),",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "ASCEND-LIVE-note-silent-when-capped",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return row.capped ? `${said} - a point here won't show` : said;",
     "new": "  return said;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "ASCEND-LIVE-note-lowered-as-bonus",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  const said = row.live > row.value ? `${row.live} with its bonus` : `${row.live} for now`;",
     "new": "  const said = `${row.live} with its bonus`;",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "ASCEND-LIVE-star-permanent",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      s.val.textContent = String(r.live);",
     "new": "      s.val.textContent = String(r.value);",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "ASCEND-LIVE-pick-unpainted",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      a.line.textContent = liveNote(r);",
     "new": "      a.line.textContent = '';",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "ASCEND-LIVE-star-figure-kept-as-comment",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      s.val.textContent = String(r.live);",
     "new": "      s.val.textContent = String(r.value); // s.val.textContent = String(r.live);",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "ASCEND-LIVE-star-boosted-kept-as-comment",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      s.node.classList.toggle('boosted', tint === 'boosted');",
     "new": "      s.node.classList.toggle('boosted', false); // s.node.classList.toggle('boosted', tint === 'boosted');",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "ASCEND-LIVE-star-lowered-unpainted",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      s.node.classList.toggle('lowered', tint === 'lowered');",
     "new": "      s.node.classList.toggle('lowered', false);",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "ASCEND-LIVE-pick-lowered-unpainted",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      a.line.classList.toggle('lowered', liveTint(r) === 'lowered');",
     "new": "      a.line.classList.toggle('lowered', false);",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "ASCEND-LIVE-aria-built-inline-again",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      s.node.setAttribute('aria-label', starLabel(r));",
     "new": "      s.node.setAttribute('aria-label', `${r.label} ${r.value}`);",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "ASCEND-LIVE-tint-lowered-never",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": ": row.live < row.value ? 'lowered' : '');",
     "new": ": '');",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "ASCEND-LIVE-aria-own-value-dropped",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return `${row.label} ${row.live}${row.live !== row.value ? ` (${row.value} of its own)` : ''}`",
     "new": "  return `${row.label} ${row.live}`",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "ASCEND-LIVE-aria-capped-dropped",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    + `${row.capped ? ', a point here will not show for now' : ''}`;",
     "new": "    ;",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "ASCEND-LIVE-folds-dropped",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "activeEffects: entity?.activeEffects, _mods: entity?._mods }, key);",
     "new": "activeEffects: entity?.activeEffects }, key);",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "ASCEND-LIVE-boosted-colour-not-DFUs",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".lv-star.boosted:not(.full) .lv-val { color: rgb(178,207,255);",
     "new": ".lv-star.boosted:not(.full) .lv-val { color: rgb(255,255,255);",
     "tests": [
@@ -320,7 +320,7 @@
   },
   {
     "name": "ASCEND-LIVE-drained-line-colour-not-DFUs",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".lv-live.lowered { color: rgb(190,85,24); }",
     "new": ".lv-live.lowered { color: rgb(255,0,0); }",
     "tests": [
@@ -329,7 +329,7 @@
   },
   {
     "name": "ASCEND-LIVE-floor-unflagged",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return { live, capped: canRaise && liveAttribute(entity, key, value + 1) === live };",
     "new": "  return { live, capped: canRaise && live >= MAX_STAT_VALUE };",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "ASCEND-LIVE-floor-said-as-bonus",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return row.capped ? `${said} - a point here won't show` : said;",
     "new": "  return row.capped ? `${row.live} with its bonus - a point here won't show` : said;",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "ASCEND-LIVE-tint-under-the-raised-gold",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".lv-star.boosted:not(.full) .lv-val {",
     "new": ".lv-star.boosted .lv-val {",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "ASCEND-LIVE-blurbs-unstacked",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".lv-blurb > .lv-about { grid-area: 1 / 1; min-width: 0; visibility: hidden; }",
     "new": ".lv-blurb > .lv-about { min-width: 0; visibility: hidden; }",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "ASCEND-LIVE-phone-line-beside-its-blurb",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .lv-about:has(> .lv-live:not(:empty)) > p { display: none; }\n",
     "new": "",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "ASCEND-LIVE-short-line-wraps",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .lv-live { height: 1.3em; max-height: none; white-space: nowrap; }\n",
     "new": "",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "ASCEND-LIVE-luck-the-long-one-again",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  luck: 'Rides every swing with agility, and tilts what the dead and dungeons hold.',",
     "new": "  luck: 'Rides every swing beside agility - and tilts what the dead and the dungeons are carrying.',",
     "tests": [
@@ -392,7 +392,7 @@
   },
   {
     "name": "ASCEND-LIVE-every-line-unwritten",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "      a.line.textContent = liveNote(r);",
     "new": "      a.line.textContent = k === m.focus ? liveNote(r) : '';",
     "tests": [
@@ -536,7 +536,7 @@
   },
   {
     "name": "SHIP-SAIL-popup-built-unpriced",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "      if (refusal) { this._itText = IT_TEXT[refusal]; this.top = 'itPush'; }\n    }\n    this.refresh();",
     "new": "      if (refusal) { this._itText = IT_TEXT[refusal]; this.top = 'itPush'; }\n    }",
     "tests": [
@@ -690,7 +690,7 @@
   },
   {
     "name": "FPS-VSYNC-screen-hides-row",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "function drawsFlat(key) { const t = tierOf(key); return t === 'live' || t === 'restart'; }",
     "new": "function drawsFlat(key) { const t = tierOf(key); return t === 'live'; }",
     "tests": [
@@ -717,7 +717,7 @@
   },
   {
     "name": "FPS-VSYNC-restart-said-live",
-    "file": "src/ui/settingsCopy.js",
+    "file": "src/ui/settings/settingsCopy.js",
     "old": "restart: 'Takes effect the next time the app starts.',",
     "new": "restart: 'This works now.',",
     "tests": [
@@ -726,7 +726,7 @@
   },
   {
     "name": "FPS-VSYNC-drawsFlat-kept-as-comment",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "function drawsFlat(key) { const t = tierOf(key); return t === 'live' || t === 'restart'; }",
     "new": "function drawsFlat(key) { const t = tierOf(key); return t === 'live'; } // function drawsFlat(key) { const t = tierOf(key); return t === 'live' || t === 'restart'; }",
     "tests": [
@@ -735,7 +735,7 @@
   },
   {
     "name": "FPS-VSYNC-sub-rail-counts-live-only",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "if (isSettingItem(item)) { if (!featureForControl('settings', item) && drawsHere(item, ctx.pause)) n++; }",
     "new": "if (isSettingItem(item)) { if (!featureForControl('settings', item) && tierOf(item) === 'live') n++; }",
     "tests": [
@@ -753,7 +753,7 @@
   },
   {
     "name": "FPS-VSYNC-restart-dot-grey",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".tier.restart { background: transparent; box-shadow: inset 0 0 0 1.5px var(--verdigris); }\n",
     "new": "",
     "tests": [

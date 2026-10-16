@@ -26,9 +26,9 @@ What they found, with the gap each surface leaves:
 
 | Surface | What it shows | The gap |
 |---|---|---|
-| Pause window, Quests tab (`src/ui/enhancedMenu.js` pauseQuests; PX4, PX22, QT-LIVE1) | Main / Side / Archived rail; the LATEST entry as the description; the trail newest-first; the live "Time remains", gold under a day | No "where"; no way to the map; and "latest" was the last entry of the machine's first-logged order - a step logged again showed a superseded entry (GUIDE1 fixed) |
-| Chronicle (`src/ui/enhancedChronicle.js`, the L key; MAC-K2) | A card per quest, entries newest first, fold, Share to the party | No timer, no Main/Side split, no "where" |
-| Classic logbook (`src/ui/questJournal.js`, U32) | DaggerfallQuestJournalWindow verbatim, with HandleQuestClicks' "Travel to location?" | None - it is DFU's |
+| Pause window, Quests tab (`src/ui/enhanced/enhancedMenu.js` pauseQuests; PX4, PX22, QT-LIVE1) | Main / Side / Archived rail; the LATEST entry as the description; the trail newest-first; the live "Time remains", gold under a day | No "where"; no way to the map; and "latest" was the last entry of the machine's first-logged order - a step logged again showed a superseded entry (GUIDE1 fixed) |
+| Chronicle (`src/ui/enhanced/enhancedChronicle.js`, the L key; MAC-K2) | A card per quest, entries newest first, fold, Share to the party | No timer, no Main/Side split, no "where" |
+| Classic logbook (`src/ui/quest/questJournal.js`, U32) | DaggerfallQuestJournalWindow verbatim, with HandleQuestClicks' "Travel to location?" | None - it is DFU's |
 | Quest popups (`say`, `prompt`) | The enhanced notice panel (ENH-NOTICE1) or DFU's parchment | None by themselves |
 | News | Nothing. `log` is a bare addLogStep; no "journal updated", no "quest complete" (DISC6's player: "Theres no quest notification when you killed all monsters and no quest update in the log") | Everything |
 | Marks | One: a residence an NPC marked, named on the town map (`stampResidenceQuestNames`, the town sheet's ring) | Nothing on the travel map, the held map, the compass or the dungeon map |
@@ -50,7 +50,7 @@ What they found, with the gap each surface leaves:
    find-place box would say. A face that wants more - a marker inside a
    dungeon - is an opt-in tier with its own row (GUIDE8), never a default.
 3. **ONE WALK.** `questBridge.questLog()` (MAC-K2) walks the machine;
-   `ui/questRail.js` decides which entries and in what order; the lens
+   `ui/quest/questRail.js` decides which entries and in what order; the lens
    adds the rest. A face never walks the machine, and never builds a lens:
    the bridge makes the one (THE ONE CONSTRUCTION SEAM), so every host
    that has quests has it.
@@ -66,7 +66,7 @@ What they found, with the gap each surface leaves:
 
 ## GUIDE1 - THE QUEST LENS (SHIPPED 2026-09-29)
 
-`src/ui/questLens.js`, made once by `createQuestBridge`
+`src/ui/quest/questLens.js`, made once by `createQuestBridge`
 (`src/scenes/questBridge.js`, `bridge.lens`) and reset by its `restore` -
 a loaded game's quests are the lens's baseline, not news. No face draws
 from it yet; it is the floor every face of this arc stands on.
@@ -89,7 +89,7 @@ are what changed since the previous look: `started`, `updated` (naming
 the new entries - a step and message not written before: the same words
 logged again at a new time are no news, AUDIT GUIDE H4), `urgent` (the
 named deadline crossing under
-`QUEST_URGENT_SECONDS`, one home in `ui/questRail.js`, shared with the
+`QUEST_URGENT_SECONDS`, one home in `ui/quest/questRail.js`, shared with the
 pause window's gold line), and `completed` / `ended` - the notebook's
 own two verdicts, off the walk's new `ended` list (a quest the machine
 has completed and still holds as a tombstone, with `questSuccess`). The
@@ -203,7 +203,7 @@ enhanced journal faces the way there, and says the place beside it.
 
 **What the player sees.**
 
-- **The pause window's Quests tab** (`ui/enhancedMenu.js` `questWhere`):
+- **The pause window's Quests tab** (`ui/enhanced/enhancedMenu.js` `questWhere`):
   under the quest's name and deadline, the WHERE LINE - the latest
   entry's target in the find-place box's own phrase ("Llugwych in
   Wayrest province", "The Feather and Dog, Bigtown in ... province",
@@ -220,7 +220,7 @@ enhanced journal faces the way there, and says the place beside it.
   2.5.3). The line and the button are the enhanced skin's alone: the
   classic skin's pause page reaches this tab too and draws neither (AUDIT
   GUIDE W3).
-- **The chronicle** (the window the L key opens, `ui/enhancedChronicle.js`
+- **The chronicle** (the window the L key opens, `ui/enhanced/enhancedChronicle.js`
   `questState`): the same line and the same way there on every live
   quest's card, under its head and standing when the card is folded -
   and the DEADLINE the pause tab has carried since PX5, which this
@@ -262,7 +262,7 @@ says, and offers no note and no way there.
 **ONE HOMES.** DFU's `locationInRegionProvince` phrase moved from the
 classic logbook into the lens (`locationInRegionText`; FIND_PLACE_TEXT
 reads it); `remainWords` moved from the pause window into
-`ui/questRail.js`, so the chronicle's deadline reads exactly as the tab's.
+`ui/quest/questRail.js`, so the chronicle's deadline reads exactly as the tab's.
 
 **Found on the way.** `test/chargenDom.mjs` had no `childNodes`, which
 the Quests tab's PX22 meta line reads - so the tab had never been mounted
@@ -311,7 +311,7 @@ skin says news - and nothing the quest itself says moves: its `say`
 popups are the quest's, and stay the box they are.
 
 **What the player sees.** A notice in the enhanced stack
-(`ui/enhancedNotice.js`, ENH-NOTICE1/3 - the right edge; spoken through
+(`ui/enhanced/enhancedNotice.js`, ENH-NOTICE1/3 - the right edge; spoken through
 the herald's own live region, below), one per quest, three rows in three
 weights: the KIND ("New
 quest", "Journal updated", "Under a day left", "Quest completed", "Quest
@@ -342,7 +342,7 @@ word, a new quest stays new while its first entries land, and a deadline
 outranks a routine entry while it is still under a day (AUDIT GUIDE H7:
 a deadline that moved out of its last day is no longer the news).
 
-**THE OPENING** (`entryOpening`, `ui/questRail.js` - one home, which
+**THE OPENING** (`entryOpening`, `ui/quest/questRail.js` - one home, which
 GUIDE4's tracker will read, beside `journalLines` and not in the lens: see
 THE HUD STAYS LIGHT below). A logged entry is its author's 1996 text:
 hard-wrapped for the logbook under a `%qdt:` date header. The opening
@@ -374,7 +374,7 @@ talk topics, seed, quest rolls and engine draws. It costs about 40
 microseconds a look over three quests, at the machine's ten ticks a
 second.
 
-**ITS CLOCK IS THE HUD'S.** `ui/hud.js` `drawHud` - the one call all four
+**ITS CLOCK IS THE HUD'S.** `ui/hud/hud.js` `drawHud` - the one call all four
 hosts make - draws it, OUTSIDE the skin's gate so that off (the classic
 skin, the switch) it still reaches its hide door (AUDIT 64 F37): the
 queue empties and the toasts slide out. It ticks on the frame's REAL
@@ -390,7 +390,7 @@ H8: the stack's 90vh clip had cut it).
 
 **THE HUD STAYS LIGHT - learned on the slice's first full run.** The
 opening first lived in the lens, and the herald imported it from there.
-But `ui/hud.js` imports the herald, and `save.js` reaches `hud.js`
+But `ui/hud/hud.js` imports the herald, and `save.js` reaches `hud.js`
 (through the escort faces) from inside the quest layer: `place.js ->
 talkTopics -> interiorPeople -> shopStock -> guilds -> factionRep ->
 save.js -> hudEscortFaces -> hud.js -> questHerald -> questLens ->
@@ -442,7 +442,7 @@ when is a window away - and the enhanced journal (GUIDE2) is still a
 window. GUIDE4 puts the quest the player follows on the HUD, quietly.
 
 **What the player sees.** A card at the HUD's right-upper edge
-(`ui/questTracker.js`, `#enhanced-questtracker`): the quest's TITLE (a
+(`ui/quest/questTracker.js`, `#enhanced-questtracker`): the quest's TITLE (a
 main quest's in brass, and its time row says "Main Quest" - AUDIT GUIDE
 H10) behind a mark - the filled diamond for a quest
 the player tracks, the hollow one for a quest the card is following -
@@ -566,7 +566,7 @@ screen's title and time.
 ## GUIDE5 - THE MARKS (SHIPPED 2026-09-29)
 
 Where a quest points, drawn where a player looks: the held map and the
-enhanced compass (`ui/questMarks.js`).
+enhanced compass (`ui/quest/questMarks.js`).
 
 **ONLY WHAT THE PLAYER'S MAP ALREADY HOLDS.** A mark stands exactly
 where DFU's own logbook would offer the travel map - a target with
@@ -580,7 +580,7 @@ person who knows marks it). Nothing here is the quest debugger's
 knowledge; GUIDE8's Exact tier is that, off by default.
 
 **THE HELD MAP** (the enhanced map's world sheet, `ui/heldMap.js` over
-`ui/inkMap.js` `paintQuestMark`): every active quest's place - a
+`ui/ink/inkMap.js` `paintQuestMark`): every active quest's place - a
 diamond in the journal's gold (`QUEST_MARK_CSS`) standing above the
 place's own mark (`QUEST_MARK_LIFT`; over a raided town `QUEST_RAID_LIFT`,
 clear of the raid's blades, so neither overprints the other - AUDIT
@@ -606,7 +606,7 @@ card, which names them (AUDIT GUIDE K8/U15). The classic travel map is
 DFU's and draws none: a player who chose DFU's own maps (the
 `enhanced-map` switch) chose DFU's look.
 
-**THE COMPASS** (`ui/enhancedHud.js` `drawQuestMark`): one mark - the
+**THE COMPASS** (`ui/enhanced/enhancedHud.js` `drawQuestMark`): one mark - the
 tracker's quest's place - a HOLLOW gold diamond edged dark, so it never
 reads as the gate's burning one, at the gate's bearing law
 (`compassMarkerLerp`, clamped: a place behind the player stands at the
@@ -615,7 +615,7 @@ and dungeons steer by their own frames. Hidden, never removed.
 
 **THE HOST** (`scenes/world.js`): `questPixel` resolves a place with the
 held map's own goto law - CanFindPlace's first half, `placePixelOf`
-(`ui/travelMapWindow.js`: the region by name, the place by its map name,
+(`ui/travel/travelMapWindow.js`: the region by name, the place by its map name,
 the row's longitude and latitude) - through the host's one memo of it,
 `placePixelMemo`, which the look's `canFindPlace` shares (AUDIT GUIDE
 O3: MapsFile keeps one region, and a look asking about places in two
@@ -644,7 +644,7 @@ stays). GUIDE4's card no longer forgets on its own switch; it only
 leaves the page.
 
 **ONE PHRASE.** The herald, the card and a mark's card all say the time
-left; `timeLeftWords` (`ui/questRail.js`) is its one home now.
+left; `timeLeftWords` (`ui/quest/questRail.js`) is its one home now.
 
 **THE HUD STAYS LIGHT.** The marks module imports the skin, the prefs
 and the rail alone - the enhanced HUD reads its gold and the bridge its

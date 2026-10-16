@@ -440,7 +440,7 @@
   },
   {
     "name": "ARENA2-HUD-HINT",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "    hint: mine && live && !mine.out && fighterShare(mine) <= YIELD_SHARE ? ARENA_TEXT.hud.yieldHint : '',",
     "new": "    hint: '',",
     "tests": [
@@ -450,7 +450,7 @@
   },
   {
     "name": "ARENA2-HUD-LEFT",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "  const leftSide = mine ? mine.side : bout.fighters[0].side;",
     "new": "  const leftSide = bout.fighters[0].side;",
     "tests": [
@@ -459,7 +459,7 @@
   },
   {
     "name": "ARENA2-HUD-DIFF",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "    if (was[i] === key) return;",
     "new": "",
     "tests": [
@@ -468,7 +468,7 @@
   },
   {
     "name": "ARENA2-HUD-REDUCED",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "@media (prefers-reduced-motion: reduce) { .arena-fill { transition: none; } }",
     "new": "",
     "tests": [

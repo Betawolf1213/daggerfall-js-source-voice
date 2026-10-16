@@ -14,10 +14,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import './chargenDom.mjs';
 import { SUPPORT_ASKS, SUPPORT_MARKS_CSS, MARK_PX, MARK_BODY_ROWS, markCss } from '../src/ui/supportAsks.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { FRAME_ROLES, OUTSET } from '../src/ui/enhancedFrame.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { FRAME_ROLES, OUTSET } from '../src/ui/enhanced/enhancedFrame.js';
 import { MOTION_WINDOWS } from '../src/ui/windowMotion.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
 
 console.warn = () => {};
 

@@ -127,7 +127,7 @@
   },
   {
     "name": "WAYOUT1-the-compass-left-blank",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "      wayOut: wayOut ?? null,",
     "new": "      wayOut: null,",
     "tests": [

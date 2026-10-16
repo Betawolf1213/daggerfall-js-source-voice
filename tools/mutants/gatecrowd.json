@@ -208,7 +208,7 @@
   },
   {
     "name": "GATECROWD-row-gone",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  c.append(choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "new": "  void (choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "GATECROWD-row-key",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "new": "choiceRow('gateCrowds', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "GATECROWD-tiers-twice",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "GATE_CROWD_TIERS.map((n) => [n, n ?",
     "new": "[12, 24, 0].map((n) => [n, n ?",
     "tests": [

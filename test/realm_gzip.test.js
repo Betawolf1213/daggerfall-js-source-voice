@@ -275,7 +275,7 @@ test('REALM-GZIP by source: every host that sends a realm save hands on the serv
   const world = src('src/scenes/world.js');
   assert.match(world, /createRealmSession\(\{ io: realmIoNow\(\), id: params\.get\('realm'\), lease: realmBoot\.lease, seq: realmBoot\.seq, gzip: realmBoot\.gzip, onLost:/);
   assert.match(world, /realmPut\(io, made\.data\.id, \{ lease: made\.data\.lease, seq: 1, summary: realmSummaryOf\(playerEntity\) \}, text, \{ gzip: made\.data\.gzip === true \}\)/);
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /realmPut\(io, made\.data\.id, \{ lease: made\.data\.lease, seq: 1, summary: realmSummaryOf\(copy\) \}, JSON\.stringify\(copy\), \{ gzip: made\.data\.gzip === true \}\)/);
   // and the Worker bundles the law: the deploy fires on it
   assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/realm\/realmSaveCodec\.js"/);

@@ -3,7 +3,7 @@
 // Mac: "changing keybinds in classic/enhanced do not work". The
 // classic grid worked; the DEFAULT skin simply had no door to it, so
 // on the skin almost everyone plays there was no way to rebind a key
-// at all. src/ui/enhancedControls.js is that door.
+// at all. src/ui/enhanced/enhancedControls.js is that door.
 //
 // These are BEHAVIOURAL pins, not source sweeps, and they are driven
 // against a minimal fake document — the same shape test/hitNumbers.js
@@ -32,9 +32,9 @@ import { readFileSync } from 'node:fs';
 import {
   paneControls, discardControlsStaging, captureArmed, controlsStaging, controlsPromptOpen, dismissControlsPrompt,
   controlsDuplicates, shownGroups, MULTIPLE_ASSIGNMENTS, DEFAULTS_PROMPT, CONFIRM_LABEL, promptMarks,
-} from '../src/ui/enhancedControls.js';
-import { CATEGORY_IDS, whereIs as whereIsOption } from '../src/ui/settingsMap.js';   // AUDIT FT16 CTRL-a: the door the bindings live behind (ORG2: and where on it)
-import { SYSTEM_PANES } from '../src/ui/enhancedMenu.js';
+} from '../src/ui/enhanced/enhancedControls.js';
+import { CATEGORY_IDS, whereIs as whereIsOption } from '../src/ui/settings/settingsMap.js';   // AUDIT FT16 CTRL-a: the door the bindings live behind (ORG2: and where on it)
+import { SYSTEM_PANES } from '../src/ui/enhanced/enhancedMenu.js';
 import { KEYBIND_ROWS } from '../src/ui/mouseControlsWindow.js';
 import { bindings, setBindings, isTextEntryTarget } from '../src/ui/input.js';
 import {
@@ -162,7 +162,7 @@ const clearBtn = (view, action) => {
 // not the reachability - so the pin walks the two places that render
 // them rather than the two rails that used to carry them.
 test('FT16: the key bindings live inside Settings, and both doors still reach them', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const list = (name) => {
     const m = new RegExp(`const ${name} = \\[([^\\]]*)\\]`).exec(src);
     assert.ok(m, `${name} is gone`);
@@ -289,8 +289,8 @@ test('FIX-F: Escape binds like any other key, and the shell stands down for it',
   // exposed :174-177), so the capture gate that consults it
   // (DaggerfallControlsWindow.cs:410) never refuses a key - Escape
   // included. The shell's own Escape handler stands down for it.
-  assert.match(read('src/ui/enhancedMenu.js'), /if \(captureArmed\(\)\) return;/,
-    'ui/enhancedMenu.js’s onKey must stand down while a rebind is armed');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /if \(captureArmed\(\)\) return;/,
+    'ui/enhanced/enhancedMenu.js’s onKey must stand down while a rebind is armed');
   withPane(({ doc, view }) => {
     keyBtn(view, 'Jump').onclick();
     doc.listeners[0].fn(keyEvent('Escape'));
@@ -559,7 +559,7 @@ test('FIX-F: leaving without CONTINUE discards', () => {
     assert.equal(keyBtn(view, 'MoveForwards').textContent, 'W');
   });
   // ...and the shell calls it on every way out.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.equal((src.match(/discardControlsStaging\(\)/g) ?? []).length >= 5, true,
     'the rail, the tabs, go(), the mount reset and the unmount all drop the staging');
   const unmount = src.slice(src.indexOf('    unmount() {'));
@@ -653,7 +653,7 @@ test('UXB1-D: a replace prompt is a tooltip on the changed binding, marks both r
     assert.equal(doc.activeElement.textContent, 'Yes', 'the first answer owns keyboard focus');
     assert.equal(keyBtn(view, 'Jump').attrs.inert, '', 'background controls are outside the tab order');
     assert.equal(tip.querySelector('[autofocus]').attrs.inert, undefined, 'the answers remain reachable');
-    const css = read('src/ui/enhancedStyle.js');
+    const css = read('src/ui/enhanced/enhancedStyle.js');
     assert.match(css, /\.ctl-tooltip \{[\s\S]*?position: fixed;[\s\S]*?top: 50%; left: 50%;[\s\S]*?max-height: calc\(100dvh - 24px\)/,
       'without CSS anchors the top-layer dialog is fitted to and centred in the viewport');
     assert.match(css, /@supports \(position-anchor:[\s\S]*?position-area: bottom span-left;[\s\S]*?position-try-fallbacks: flip-block, flip-inline;/,
@@ -747,7 +747,7 @@ test('FIX-F / KB1: DEFAULTS resets behind a confirm, through the registry’s ow
     assert.equal(getBinding(store, 'MoveForwards', true), 'KeyW', 'Continue commits it');
     assert.equal(store.removedPrimary.has('QuickSwap'), false, 'with the live reset\'s own law - the removal marks go too');
   });
-  assert.match(read('src/ui/enhancedControls.js'), /if \(pendingDefaults\) \{ resetDefaults\(bindings\(\)\); pendingDefaults = false; \}/);
+  assert.match(read('src/ui/enhanced/enhancedControls.js'), /if \(pendingDefaults\) \{ resetDefaults\(bindings\(\)\); pendingDefaults = false; \}/);
 });
 
 test('FIX-F: the PRIMARY/SECONDARY toggle is refused while the shown dict clashes', () => {
@@ -772,7 +772,7 @@ test('FIX-F: the PRIMARY/SECONDARY toggle is refused while the shown dict clashe
 // ── AND THE PANE IS PAINTED IN THE SKIN, NOT BESIDE IT ───────────
 
 test('FIX-F: the pane wears the skin’s own classes and adds no face of its own', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const rule of ['.ctl-key {', '.ctl-key.ctl-dupe {', '.ctl-key.ctl-cross {',
     '.ctl-notice.bad {', '.px-sys .ctl-key {']) {
     assert.ok(css.includes(rule), `enhancedStyle.js must carry ${rule}`);
@@ -780,7 +780,7 @@ test('FIX-F: the pane wears the skin’s own classes and adds no face of its own
   const block = css.slice(css.indexOf('/* ── FIX-F: THE CONTROLS PANE'), css.indexOf('.px-qdetail {'));
   assert.ok(!/font-family/.test(block),
     'the shell and the pause window already put Pixelify over everything inside them');
-  const src = read('src/ui/enhancedControls.js');
+  const src = read('src/ui/enhanced/enhancedControls.js');
   assert.ok(!/style\.cssText|\.style\./.test(src), 'no inline styling - the sheet is the one place a media query can see');
   // and the law is BORROWED, never restated
   for (const fn of ['createUnsavedKeybinds', 'setUnsavedBinding', 'checkDuplicates',

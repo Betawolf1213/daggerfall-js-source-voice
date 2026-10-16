@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-IT1-C2-the-carriage-map-restores-the-store",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    if (!this._carriageMap) Object.assign(this.popUp, travelMapPopUpState());",
     "new": "    Object.assign(this.popUp, travelMapPopUpState());",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-IT1-C1-the-drivers-map-rides-the-store",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    this.filters = deps.immersive ? freshTravelMapFilters() : travelMapFilters();",
     "new": "    this.filters = travelMapFilters();",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-IT1-C1-the-drivers-map-marks",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    if (this._it) return;   // AUDIT IT1 C1: CarriageMap has no MarkLocationHandler - its markedLocationId stays -1\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-IT1-C6-the-middle-click-under-the-popup",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "      if (this.popUp || this.telePopUp || this.picker || this.top || this.infoBox) return true;",
     "new": "      if (this.telePopUp || this.picker || this.top || this.infoBox) return true;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-IT1-C4-show-only-docks-on-the-dots-alone",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    if (this._it) return this._it.kind === IT_POPUP.seafarer ? seafarerDiscovered(summary, checkLocationDiscovered(summary), this._it.settings) : checkLocationDiscovered(summary);",
     "new": "    if (this._it) return checkLocationDiscovered(summary);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-IT1-C3-the-countdown-under-the-box",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    if (this.top) return;   // AUDIT IT1 C3",
     "new": "    // AUDIT IT1 C3",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-IT1-C7-the-box-ok-silent",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    this._click();\n    if (this.top === 'itPush') { this._click(); this.top = null;",
     "new": "    if (this.top === 'itPush') { this._click(); this.top = null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-IT1-C7-onpush-one-click",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    if (this.top === 'itPush') { this._click(); this.top = null;",
     "new": "    if (this.top === 'itPush') { this.top = null;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-IT1-C5-i-on-every-popup",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    if (key === 'KeyI' && !this.coordsOnly && this._to) {",
     "new": "    if (key === 'KeyI' && !this.coordsOnly) {",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT-IT1-W1-the-sell-label",
-    "file": "src/ui/merchantServiceDoor.js",
+    "file": "src/ui/merchant/merchantServiceDoor.js",
     "old": "          { label: hooks.label ?? merchantServiceLabel(hooks.service), onClick:",
     "new": "          { label: merchantServiceLabel(hooks.service), onClick:",
     "tests": [

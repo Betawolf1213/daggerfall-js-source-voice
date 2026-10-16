@@ -12,7 +12,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { installCursor, CLASSIC_CURSOR_STYLE_ID } from '../src/ui/cursor.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 

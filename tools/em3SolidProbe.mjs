@@ -12,7 +12,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
 page.on('pageerror', (e) => console.log('PAGEERR', e.message));
 // EM3-3D merge: the floor LIST this probe clicks is the flat plan's - the 3D map moved its floors to the window's
-// button bar - so it opens the 2D Enhanced map, the dungeon-map-3d row's Off (ui/mapSkin.js dungeonMap3dOn)
+// button bar - so it opens the 2D Enhanced map, the dungeon-map-3d row's Off (ui/map/mapSkin.js dungeonMap3dOn)
 await page.goto('http://127.0.0.1:5241/menu.html?skin=enhanced&dungeonmap=flat', { waitUntil: 'networkidle' });
 await page.evaluate(async () => {
   document.getElementById('enhanced-menu')?.remove();

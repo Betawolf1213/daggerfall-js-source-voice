@@ -27,7 +27,7 @@ import {
 import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
 import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64, verifyToken } from '../src/net/identityToken.js';
-import { accountCard, renownTracksOfCard } from '../src/ui/enhancedAccount.js';
+import { accountCard, renownTracksOfCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { r2, seatRealm } from './realmSeat.mjs';   // AUDIT REALM2 S2: a founder is a realm character
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
@@ -357,7 +357,7 @@ test('RENOWN-CHAR the client: the account card draws the characters\' tracks - t
   const w = src('src/scenes/world.js');
   assert.match(w, /onRecorded: \(data\) => \{\n\s+if \(data\?\.renown\?\.character !== characterIdOf\(playerEntity\)\) return;[^\n]*\n\s+const a = renownAnswer\(\{ \.\.\.data\.renown, order: data\.order \?\? null \}, data\.renown\.credited \?\? 0, renownSaid\);/);
   // THE DELETE DIALOG: the Renown goes with the character again
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /- its Renown, its professions and their Stores, its home and its guild place with it\. A copy you made offline stays\./);   // PROF-DELETE: and its professions
   assert.doesNotMatch(menu, /Your Renown belongs to your account/);
 });

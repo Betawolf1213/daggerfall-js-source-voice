@@ -956,7 +956,7 @@ export function restoreQuickslotSaveData(data) {
 // host edited.
 
 export const HOTBAR_SIZE = 10;
-/** PADPLUS1: THE CROSSBAR'S SIXTEEN. The Enhanced Plus crossbar (ui/enhancedHotbar.js, two sets of eight under LB
+/** PADPLUS1: THE CROSSBAR'S SIXTEEN. The Enhanced Plus crossbar (ui/enhanced/enhancedHotbar.js, two sets of eight under LB
  *  and RB) is the same bar, grown: slots 1-10 are the keyboard's 1-0 and the crossbar's first ten, slots 11-16 are
  *  the crossbar's alone. One model, so a potion dragged on with the mouse is on the pad's bar too, and one save. */
 export const HOTBAR_CAPACITY = 16;
@@ -994,7 +994,7 @@ export const HOTBAR_KINDS = Object.freeze(['consumable', 'weapon', 'light', 'shi
  *  light, but a lit torch that is ALSO equippable must read as a light.
  *
  *  UI2 (2026-09-27, Mac: "you should be able to slot spells and different items"): ANY ITEM GOES ON THE BAR, and a
- *  press is the pack's own primary act on it (ui/enhancedInventory.js localPrimaryAct, the PAD's quick act): a piece
+ *  press is the pack's own primary act on it (ui/enhanced/enhancedInventory.js localPrimaryAct, the PAD's quick act): a piece
  *  a slot of the body takes - armour, clothing, jewellery, a gem's crystal - is WORN, put on or taken off when it is
  *  on; everything else is USED, the pack's Use - a book read, a map read, the spellbook opened, food eaten, a tent
  *  pitched, and what cannot be used saying so. Which slot takes a piece is the equip table's answer, as the pack's. */
@@ -1143,7 +1143,7 @@ export function hotbarView(entity, { readiedIndex = null, size = HOTBAR_CAPACITY
 /** UI2: which slots show their piece's wear - the kinds that wear in use (a weapon, a shield, a light), and of the worn
  *  pieces what the pack's tile shows a bar on (armour, and anything enchanted: its powers spend its condition). Never
  *  a gem, a book or a potion - a bar on everything is the noise the bar exists to cut. THUNDERLOCK-ART: and never
- *  ammunition, the pack's own word (ui/enhancedInventory.js wearPct: "an arrow is spent, not worn") - a stack of arrows
+ *  ammunition, the pack's own word (ui/enhanced/enhancedInventory.js wearPct: "an arrow is spent, not worn") - a stack of arrows
  *  or pellets slotted as a weapon drew a bar under its count, the two on top of each other. */
 const showsWear = (kind, item) => !isAmmunition(item) && (kind === 'weapon' || kind === 'shield' || kind === 'light'
   || item.group === 'Armor' || isEnchanted(item));   // AUDIT UI B6: anything enchanted - the Sanguine Rose spends its condition as a ring does (the pack's wearPct)

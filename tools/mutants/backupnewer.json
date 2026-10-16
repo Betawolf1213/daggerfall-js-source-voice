@@ -92,7 +92,7 @@
   },
   {
     "name": "BACKUP-NEWER-menu-never-hands-the-local-time",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    localTime: save.dateAndTime,   // FIELD 2026-09-27",
     "new": "    // FIELD 2026-09-27",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "BACKUP-NEWER-slot-carries-no-time",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    dateAndTime: entry.info?.dateAndTime ?? null,   // FIELD 2026-09-27",
     "new": "    // FIELD 2026-09-27",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "BACKUP-NEWER-restore-on-one-press",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "          : { label: t('menu.cloud.restoreBackup', 'Restore backup'), primary: true, onClick: () => { cloudArm = `restore|${save.key}`; render(); } });",
     "new": "          : { label: t('menu.cloud.restoreBackup', 'Restore backup'), primary: true, onClick: () => restoreBackup(save, card) });",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "BACKUP-NEWER-older-over-newer-on-one-press",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    : { label, onClick: () => { cloudArm = `push|${save.key}`; render(); } };",
     "new": "    : { label, onClick: () => backUp(save) };",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "BACKUP-NEWER-restore-adds-a-twin",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "pullSlot(io, appStorage(), card, { replaces })",
     "new": "pullSlot(io, appStorage(), card)",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "BACKUP-NEWER-restore-on-every-pane",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "function tileOf(save, { actions, current = false, restore = false }) {",
     "new": "function tileOf(save, { actions, current = false, restore = true }) {",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT0927B-B1-try-again-pushes-whatever-failed",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      const act = cloudWhy?.slot === slot ? cloudWhy.act : 'push';",
     "new": "      const act = 'push';",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "AUDIT0927B-B1-failed-push-over-newer-one-press",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      else if (newerBackup(card, save.dateAndTime)) line.actions.push(guardedPush(save, t('menu.cloud.tryAgain', 'Try again')));\n",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "AUDIT0927B-B1-refusal-forgets-its-act",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (!r.ok) cloudWhy = { slot, key: save?.key, error: r.error, act };",
     "new": "    if (!r.ok) cloudWhy = { slot, key: save?.key, error: r.error };",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "AUDIT0927B-B2-stale-listing-kept",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (r.ok || r.error === 'stale') { cloudAsked = false; ensureCloud(); }",
     "new": "    if (r.ok) { cloudAsked = false; ensureCloud(); }",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AUDIT0927B-B5-armed-by-slot",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "        line.actions.push(cloudArm === `restore|${save.key}`",
     "new": "        line.actions.push(cloudArm === `restore|${slot}`",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "AUDIT0927B-B5-armed-across-panes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  section = id; pickedKey = null; sheetOpen = false; confirming = null; cloudArm = null; render();",
     "new": "  section = id; pickedKey = null; sheetOpen = false; confirming = null; render();",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "AUDIT0927B-options-not-handed-whole",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  for (const save of saves) grid.append(tileOf(save, forSave(save)));",
     "new": "  for (const save of saves) { const o = forSave(save); grid.append(tileOf(save, { actions: o.actions, current: o.current })); }",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "AUDIT0927B-restore-refusal-on-every-twin",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    error: cloudWhy?.slot === slot && (cloudWhy.act !== 'restore' || cloudWhy.key === save.key) ? cloudWhy.error : null,",
     "new": "    error: cloudWhy?.slot === slot ? cloudWhy.error : null,",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "AUDIT0927B-stale-refusal-sticks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (cloudWhy?.error === 'stale') cloudWhy = null;   // 0927b: the list it said had changed is here - the line reads it\n",
     "new": "",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AUDIT0927B-refusal-outlives-the-visit",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  cloudWhy = null;   // the pre-merge audit (0927b): a refusal is last visit's news - this visit asks the service again\n",
     "new": "",
     "tests": [

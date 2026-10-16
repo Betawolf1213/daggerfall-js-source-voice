@@ -15,9 +15,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { legacyModelOptions, legacyModelScreen, LEGACY_CHOICE_FACE, LEGACY_CHOICE_TEXT, LEGACY_MODEL_FACE, LEGACY_MODEL_TAGS } from '../src/ui/legacyModelChoice.js';
+import { legacyModelOptions, legacyModelScreen, LEGACY_CHOICE_FACE, LEGACY_CHOICE_TEXT, LEGACY_MODEL_FACE, LEGACY_MODEL_TAGS } from '../src/ui/legacy/legacyModelChoice.js';
 import { LevelingChoiceScreen, stackedTops, choiceAtNative, choiceHeight, choiceKeysWord, CHOICE_STACK_GAP, CHOICE_TOP } from '../src/ui/levelingChoice.js';
-import { LEVELING_FACE_ID, levelingFaceOwner, _setLevelingFaceClockForTests } from '../src/ui/enhancedLevelingChoice.js';
+import { LEVELING_FACE_ID, levelingFaceOwner, _setLevelingFaceClockForTests } from '../src/ui/enhanced/enhancedLevelingChoice.js';
 import { MODELS, NO_LINEAGE, isLegacyChoice, familyRng, LEGACY_MOD } from '../src/systems/legacy/family.js';
 import { createLegacyHost } from '../src/scenes/legacyHost.js';
 import { loadFamily, listFamilies } from '../src/systems/legacy/store.js';
@@ -188,7 +188,7 @@ test('LEGACY-CHOICE the popup: on Enhanced Plus the online question wears the Pl
     assert.equal(find(root, 'lvl-title')[0].textContent, LEGACY_MODEL_FACE.title);
     q.answer(q.defaultId);
   }, { doc: true });
-  const css = read('src/ui/enhancedPlusStyle.js');
+  const css = read('src/ui/enhanced/enhancedPlusStyle.js');
   assert.match(css, /\.lvl-shell \.px-win\.lvl-three \{ width: min\(1000px, 100%\); \}/);
   assert.match(css, /\.lvl-three \.lvl-opts \{ grid-template-columns: repeat\(auto-fit, minmax\(210px, 1fr\)\); \}/);
   assert.equal(LEGACY_CHOICE_TEXT.lines.length, 2, 'the classic face\'s two lines over the options');

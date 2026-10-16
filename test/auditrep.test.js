@@ -10,7 +10,7 @@ import { setSharedClock, hearSharedClock, trustedWorldMinutes, worldMinutes } fr
 import { banish, isBanished, banishmentLeft, BANISHMENT_MINUTES, PARDON_BASE_PRICE } from '../src/systems/standing.js';
 import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 import { buildDonationFlow } from '../src/ui/guildServiceWindows.js';
-import { lawRows } from '../src/ui/enhancedMenu.js';
+import { lawRows } from '../src/ui/enhanced/enhancedMenu.js';
 import { createStandingWatch, STANDING_LOOK_MS, installLegalNotices } from '../src/scenes/standingHost.js';
 import { grantRaidReputation } from '../src/systems/raidingParties.js';
 
@@ -79,7 +79,7 @@ test('AUDIT REP F2: a banishment\'s term reads the world\'s calendar only when i
     ['src/scenes/exterior.js', /ownNow: \(\) => ownMinutes\(\), worldNow: \(\) => trustedWorldMinutes\(\),/],
     ['src/scenes/worldModes.js', /ownNow: \(\) => ownMinutes\(\), worldNow: \(\) => trustedWorldMinutes\(\),/],
     ['src/scenes/arrestFlow.js', /banish\(playerEntity, region\(\), trustedWorldMinutes\(\)\);/],
-    ['src/ui/enhancedMenu.js', /export function statsLaw\(detail, entity, \{ worldNow = trustedWorldMinutes\(\) \} = \{\}\)/],
+    ['src/ui/enhanced/enhancedMenu.js', /export function statsLaw\(detail, entity, \{ worldNow = trustedWorldMinutes\(\) \} = \{\}\)/],
   ]) assert.match(src(file), re, file);
 });
 

@@ -204,7 +204,7 @@ test('AUDIT REST-PARTY A5: the channel held to its end asks again - a fire gone 
   assert.deepEqual(actAtChannelEnd(bed, { point: null, night: true }, 50, 60), bed, 'a ship\'s press lasts only the press - its bed stands');
   const candle = { point: { kind: 'candle', where: 'candle' }, meditate: true };
   assert.equal(actAtChannelEnd(candle, null, 50, 10), candle, 'a kneel is its own');
-  for (const f of ['src/ui/restWindow.js', 'src/ui/enhancedRest.js']) {
+  for (const f of ['src/ui/restWindow.js', 'src/ui/enhanced/enhancedRest.js']) {
     const s = rd(f);
     assert.match(s, /actAtChannelEnd\(/, `${f} asks`);
     assert.match(s, /text: REST_ACT_TEXT\.interrupted/, `${f} says it`);

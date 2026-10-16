@@ -3,7 +3,7 @@
 // Three surfaces meet in this stage and each fails differently, so the
 // pins are grouped that way:
 //
-//   1. THE TRANSFORM TABLE (ui/automapMarkers.js) - every colour, scale
+//   1. THE TRANSFORM TABLE (ui/automap/automapMarkers.js) - every colour, scale
 //      and local offset against its C# line, and the ONE arrangement a
 //      reader is most likely to "simplify" wrongly: the two rotation
 //      arrows are CHILDREN of a cylinder scaled (0.15, 50.2, 0.15), so
@@ -35,13 +35,13 @@ import {
   BEACON_COLOURS, BEACON_SCALES, ROTATE_ARROW_LOCAL, MARKER_TEXELS, MARKER_TEX,
   RAY_PLAYER_POS_OFFSET, RAY_ENTRANCE_POS_OFFSET,
   automapMarkerSet, markerModels, buildCylinderModel, buildCubeModel,
-} from '../src/ui/automapMarkers.js';
+} from '../src/ui/automap/automapMarkers.js';
 import { buildAutomapModel } from '../src/systems/automap/automapModel.js';
-import { AUTOMAP_STRINGS } from '../src/ui/automapText.js';
+import { AUTOMAP_STRINGS } from '../src/ui/automap/automapText.js';
 import {
   AutomapWindow, resetAutomapWindowState, signalAutomapReset, _setAutomapArt,
-} from '../src/ui/automapWindow.js';
-import { CHROME_RECTS } from '../src/ui/automapChrome.js';
+} from '../src/ui/automap/automapWindow.js';
+import { CHROME_RECTS } from '../src/ui/automap/automapChrome.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

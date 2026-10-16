@@ -44,7 +44,7 @@ import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.
 import { SKILLS } from '../src/systems/skills.js';
 import { modDials } from '../src/systems/features.js';
 import { withDom } from './invdrag.mjs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { PAGE_IDS } from '../src/ui/packPages.js';
 import { PlayerMotor, FIXED_DT, walkSpeed, runSpeed } from '../src/player/motor.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, FP_FIELD_OF_VIEW } from '../src/combat/fpArm.js';

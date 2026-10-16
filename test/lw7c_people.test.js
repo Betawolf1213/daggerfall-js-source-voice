@@ -10,7 +10,7 @@ import { synthTown } from './lwTown.mjs';
 import { residentOfId, peoplePage, personWords, RESIDENT_ID, PEOPLE_MAX } from '../src/systems/livingWorld/people.js';
 import { townCensus, mintResident } from '../src/systems/livingWorld/census.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
-import { CHRONICLE_SECTIONS, PEOPLE_SECTION, chronicleSections, chronicleModel, mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { CHRONICLE_SECTIONS, PEOPLE_SECTION, chronicleSections, chronicleModel, mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = Object.freeze({ mapId: 12345, blocks: 9, region: 17, people: 3, port: true, name: 'Synth' });

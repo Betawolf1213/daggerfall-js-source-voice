@@ -335,7 +335,7 @@ test('PI1 the seams: ONE construction - the pool is the only maker of the layer 
     assert.ok(s.includes(`${pool}.physical.owns(`) && s.includes(`${pool}.physical.pick(`), `${host} takes on the press`);
     assert.ok(s.includes(`${pool}.dropPhysical(`) && s.includes('physicalDropOn:'), `${host} hands the pack its shift-drop`);
   }
-  for (const w of ['ui/nativeInventory.js', 'ui/enhancedInventory.js']) assert.ok(/shiftDrop\(/.test(src(w)) && /physicalDropOn\?\.\(\)/.test(src(w)), w);
+  for (const w of ['ui/native/nativeInventory.js', 'ui/enhanced/enhancedInventory.js']) assert.ok(/shiftDrop\(/.test(src(w)) && /physicalDropOn\?\.\(\)/.test(src(w)), w);
   assert.match(src('scenes/exteriorFoes.js'), /physicalCorpses: \(\) => physicalCorpseSources\(foes, 'foeCorpse', corpseLens\)/);
   assert.match(src('scenes/cityGuards.js'), /physicalCorpses: \(\) => physicalCorpseSources\(guards, 'guardCorpse', corpseLens\)/);
   const lens = { isCorpse: (e) => !!e.corpse, feetOf: (e) => e.corpseMarker?.pos ?? null, idOf: (e) => e.uid };

@@ -18,7 +18,7 @@ import { MOD_SETTINGS, modSetting, _resetModSettings } from '../src/systems/modS
 import { landViewDistance, LAND_VIEW_TIERS, LAND_VIEW_MAX, LAND_VIEW_DEFAULT, LAND_VIEW_DFU_MAX } from '../src/world/landView.js';
 import { TERRAIN_DISTANCE } from '../src/world/streamingWorld.js';
 import { bindCursorToggle, makeLookGate, requestLook, cursorActive, setCursorActive, RELOCK_GRACE_MS } from '../src/player/pointerLock.js';
-import { registerOverlay } from '../src/ui/enhancedOverlays.js';
+import { registerOverlay } from '../src/ui/enhanced/enhancedOverlays.js';
 import { Collider } from '../src/player/collider.js';
 import { STEP_OFFSET } from '../src/player/motor.js';
 
@@ -68,7 +68,7 @@ test('LV1: the enhanced lane streams its own radius - 5 by default, 6 at most - 
   const world = read('src/scenes/world.js');
   assert.match(world, /const fogDistance = landViewRead\(\);/, 'ONE read for the fog scale and the grid (FT2: the module\'s)');
   assert.match(world, /new StreamingWorldState\(fogDistance\)/);
-  assert.ok(!/choiceRow\('landViewDistance'/.test(read('src/ui/enhancedMenu.js')), 'FT2: the row left the Enhanced category for the Features home (systems/features.js)');
+  assert.ok(!/choiceRow\('landViewDistance'/.test(read('src/ui/enhanced/enhancedMenu.js')), 'FT2: the row left the Enhanced category for the Features home (systems/features.js)');
 });
 
 // A window/document just real enough for pointerLock.js's toggle and net.

@@ -15,7 +15,7 @@ import { goodOfTemplate } from '../src/systems/naval/tradeGoods.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { mulberry32 } from '../src/combat/bloodArt.js';
 import { CHART_ZOOMS, CHART_ZOOM_DEFAULT, toScreen, toChart, chartZoomAt, clampChartView, chartModel, wayWords, isleWords, LABEL_ZOOM } from '../src/ui/etherChartWindow.js';
-import { officeText, etherOfficeText } from '../src/ui/navalYardWindow.js';
+import { officeText, etherOfficeText } from '../src/ui/naval/navalYardWindow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const wilds = () => { const out = []; for (let cy = 230; cy < 270; cy++) for (let cx = 700; cx < 790; cx++) { const i = isleOfCell(cx, cy); if (i?.kind === 'wild') out.push(i); } return out; };
@@ -276,7 +276,7 @@ test('ETHER-CHART the doors: the travel map\'s door opens the chart past the Vei
   assert.match(src, /\{ const p = playerTravelPixel\(\); if \(etherSea && inEther\(p\.x, p\.y\)\) return openEtherChart\(\); \}/);
   assert.match(src, /const word = \(\) => \{ const p = playerTravelPixel\(\); return etherHost\.chart\(p\.x, p\.y, heading\(\)\); \};/);   // PIN MOVED (AUDIT CAPTAIN'S SEA X16): the ship's heading at her helm
   assert.match(src, /const heading = \(\) => \{ const boat = csaRuntime\?\.isSailing\?\.\(\) \? csaRuntime\.state\.CurrentBoat : null; if \(!boat\) return cam\.yaw; const f = boatForward\(boat\); return Math\.atan2\(f\[0\], f\[2\]\); \};/);
-  const door = read('src/ui/navalPlunderDoor.js');
+  const door = read('src/ui/naval/navalPlunderDoor.js');
   assert.match(door, /load: \(\) => import\('\.\/etherChartWindow\.js'\),/);
   const o = { ether: true, port: 'Veilhaven', waters: 'the Shallows, 7 leagues past the Veil', rumours: ['A tale.', 'Another.'], charted: 1, chart: { price: 150, fresh: 12, can: true, why: '' } };
   const t = officeText(o);

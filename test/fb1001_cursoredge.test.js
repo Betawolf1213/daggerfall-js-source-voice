@@ -23,9 +23,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { CURSOR_CSS, GAUNTLET_POINT, GAUNTLET_PRESS } from '../src/ui/plusCursor.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { CURSOR_CSS, GAUNTLET_POINT, GAUNTLET_PRESS } from '../src/ui/plus/plusCursor.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

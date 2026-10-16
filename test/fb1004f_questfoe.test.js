@@ -125,7 +125,7 @@ test('QUEST-FOE-LINE, the law: a hostile foe says nothing; a foe no quest stood 
   // the line is the journal's word for the quest, cut of its kind label as every journal face cuts it
   assert.equal(QUEST_FOE_PREFIX, 'Quest: ');
   quest.displayName = 'Main Quest: The Assassin';
-  assert.deepEqual(questFoeSubs(f), ['Quest: The Assassin'], 'ui/questRail.js questTitleOf');
+  assert.deepEqual(questFoeSubs(f), ['Quest: The Assassin'], 'ui/quest/questRail.js questTitleOf');
   quest.displayName = 'The Assassin';
   // NOTHING THE JOURNAL HAS NOT SAID
   quest.removeLogStep(0);

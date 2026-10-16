@@ -173,7 +173,7 @@ async function frontDoor(choice, legacyBirth = null) {
   const body = MAIN.slice(at0 + "if (choice !== 'begin') {".length, end + 'return bootWorld(canvas, renderer, params, status);'.length).replace(/await import\(/g, 'await load(');
   const params = new URLSearchParams('?fps');
   const load = async (p) => {
-    if (p === './ui/enhancedMenu.js') return { takePickedSaveKey: () => null, takePickedRealmId: () => null, takePickedLegacyBirth: () => legacyBirth };
+    if (p === './ui/enhanced/enhancedMenu.js') return { takePickedSaveKey: () => null, takePickedRealmId: () => null, takePickedLegacyBirth: () => legacyBirth };
     if (p === './systems/testRoom.js') return { testStartsOutdoors };
     throw new Error(`the front door imports ${p}: the pin needs it`);
   };

@@ -655,7 +655,7 @@
   },
   {
     "name": "SPY-N-press-unshown",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const glassOn = !!p && touch;",
     "new": "  const glassOn = false;",
     "tests": [
@@ -664,7 +664,7 @@
   },
   {
     "name": "SPY-N-tap-kept",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "export function navalTouchGlass() { const tapped = touchGlass > 0; touchGlass = 0; return tapped; }",
     "new": "export function navalTouchGlass() { return touchGlass > 0; }",
     "tests": [
@@ -673,7 +673,7 @@
   },
   {
     "name": "SPY-N-brass-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  cls('glassc', parts.glassBtn, glassUp ? 'dfnaval-glassbtn down' : 'dfnaval-glassbtn');",
     "new": "  cls('glassc', parts.glassBtn, 'dfnaval-glassbtn');",
     "tests": [

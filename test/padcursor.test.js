@@ -1,7 +1,7 @@
 // PAD-CURSOR (2026-10-08, Port-Ledger A; the player: "For controllers, where applicable, can we add a sort of
 // navigatable cursor? Like destiny? For all the menus"). The controller cursor's Destiny feel - the curve, the ramp,
 // the boost, the friction over a control and the pull to its centre (systems/padCursor.js) - in the game's pad layer
-// on both skins (ui/gamepadInput.js) and at the front door (ui/menuPad.js); `padCursorAssist` off is DFU's linear
+// on both skins (ui/gamepadInput.js) and at the front door (ui/menu/menuPad.js); `padCursorAssist` off is DFU's linear
 // cursor (test/gamepad.test.js GP3 holds that law).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +17,7 @@ import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setControllerLook } from '../src/player/lookFilter.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 import { setPref, resetPrefs } from '../src/systems/uiPrefs.js';
-import { padDoorCursorFrame, padDoorFrame, DOOR_CURSOR_DEADZONE } from '../src/ui/menuPad.js';
+import { padDoorCursorFrame, padDoorFrame, DOOR_CURSOR_DEADZONE } from '../src/ui/menu/menuPad.js';
 import { padDoorCursorLaw } from '../src/systems/padCursor.js';
 import { UNITY_AXIS_DEAD } from '../src/systems/gamepad.js';
 import { readFileSync } from 'node:fs';
@@ -151,7 +151,7 @@ test('PAD-CURSOR switch off: the door\'s cursor steps DFU\'s linear law and neve
 });
 
 test('PAD-CURSOR x DA12: the door\'s loop stays a LEAF - the desktop launcher serves it alone under its CSP, so it imports nothing and the cursor comes in from main.js; a page that hands no cursor keeps the stick on the focus walk; the restated dead zone is Unity\'s (mutants: an import in menuPad.js; the launcher losing its stick)', () => {
-  const src = readFileSync(new URL('../src/ui/menuPad.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/menu/menuPad.js', import.meta.url), 'utf8');
   assert.doesNotMatch(src, /^\s*import\s|import\(/m, 'no static or dynamic import');
   assert.equal(DOOR_CURSOR_DEADZONE, UNITY_AXIS_DEAD);
   const focused = [];

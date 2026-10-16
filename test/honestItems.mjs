@@ -117,7 +117,7 @@ const TALK = await load('../src/systems/talk/talkTopics.js');
 const KNIGHT = await load('../src/systems/knightlyGifts.js');
 const BAG_LAW = await load('../src/net/bagLaw.js');
 const OCEAN = await load('../src/world/oceanHoles.js');
-const MAKER_UI = await load('../src/ui/itemMakerWindow.js');
+const MAKER_UI = await load('../src/ui/item/itemMakerWindow.js');
 const RACES = await load('../src/systems/races.js');
 
 // ── the seeded streams ───────────────────────────────────────────────
@@ -851,7 +851,7 @@ function runCrafts(run, seedsOf, S, minted) {
 
 // ── 10. the item maker ───────────────────────────────────────────────
 
-/** ui/itemMakerWindow.js itemMakerFilter's predicate, any tab: what the window lists at all. */
+/** ui/item/itemMakerWindow.js itemMakerFilter's predicate, any tab: what the window lists at all. */
 function makerTakes(item) {
   if (MAKER_UI?.itemMakerFilter) return ['WeaponsAndArmor', 'Ingredients', 'ClothingAndMisc'].some((tab) => MAKER_UI.itemMakerFilter(item, tab, null));
   if (!ENCH.keptEnchantments(item) || item.group === 'UselessItems2' || ENCH.itemMakerRefuses(item)) return false;
@@ -859,7 +859,7 @@ function makerTakes(item) {
 }
 
 /**
- * ONE HONEST SESSION AT THE ITEM MAKER over `item`, as ui/itemMakerWindow.js drives it: the picker's guard
+ * ONE HONEST SESSION AT THE ITEM MAKER over `item`, as ui/item/itemMakerWindow.js drives it: the picker's guard
  * (openPickerDecision), its primary list (primaryPickerList, the pack's souls among it), the secondary (primaryPick) and
  * the room check (pickEnchantment - a bound soul's forced set beside it), a row the budget cannot hold taken back off
  * (removeEnchantment, the list's own remove), and the Enchant button only when enchantDecision says 'enchant' -

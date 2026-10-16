@@ -14,8 +14,8 @@
 //
 // THE PORT'S LAW IS THE ASSEMBLY. The bundle carries ImmersiveTravel.dll and no C# source; every rule here is read off
 // its IL (vendor/immersive-travel/il/ImmersiveTravel.il.txt, `tools/ilDump.py`), cited `IL_xxxx`, the mod's own bugs
-// carried as it ships them and named where they stand. DFU's own popup is ui/travelPopUp.js; this module is what the
-// mod changes about it, as pure functions both map skins run (ui/travelMapWindow.js + ui/travelPopUp.js, the classic
+// carried as it ships them and named where they stand. DFU's own popup is ui/travel/travelPopUp.js; this module is what the
+// mod changes about it, as pure functions both map skins run (ui/travel/travelMapWindow.js + ui/travel/travelPopUp.js, the classic
 // window; ui/heldMap.js, the enhanced one).
 //
 // A LEAF apart from the settings store: no DOM, no world - the hosts hand in what PlayerGPS and the maps answer.
@@ -166,7 +166,7 @@ export function carriageRefusal(settings, { here, dest, politicAt }) {
 }
 
 /** CarriageMap.IsLocationLarge (IL_1468-1483) - a city or a hamlet, or every place with ClearerMapDots off. Travel
- *  Options' own rule over its own switch (ui/travelPathsOverlay.js isLocationLarge), the mod's copy of it. */
+ *  Options' own rule over its own switch (ui/travel/travelPathsOverlay.js isLocationLarge), the mod's copy of it. */
 export const carriageLocationLarge = (locationType, settings) =>
   locationType === T.TownCity || locationType === T.TownHamlet || !settings?.clearerMapDots;
 
@@ -271,7 +271,7 @@ export function itMapRefusal(kind, settings, { here, summary, politicAt }) {
 }
 
 /** The carriage map's roads and tracks (CarriageMap..cctor IL_1538-1579): each drawn only with Basic Roads loaded and
- *  its own switch on - in the five-texel page's path order (ui/travelMapOptions.js: roads, tracks, rivers, streams;
+ *  its own switch on - in the five-texel page's path order (ui/travel/travelMapOptions.js: roads, tracks, rivers, streams;
  *  the mod draws no water). */
 export const itMapPaths = (settings) => [!!(settings?.basicRoads && settings.drawRoads), !!(settings?.basicRoads && settings.drawTracks), false, false];
 
@@ -300,7 +300,7 @@ export function playerPopUpRefusal(settings, destLocationType) {
 
 /**
  * The popup's three toggles under the mod's overrides, as one decision over the state - DFU's handlers
- * (ui/travelPopUp.js) are the `base` the overrides fall through to. `press`:
+ * (ui/travel/travelPopUp.js) are the `base` the overrides fall through to. `press`:
  *   - 'transportClick' with `ship` (the button: true the ship row, false foot/horse) - TransportModeButtonOnClickHandler
  *   - 'transportToggle' - ToggleTransportModeButtonOnScrollHandler, which is also the T hotkey's (DFU routes the
  *     footHorse button's keyboard event to it)

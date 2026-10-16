@@ -14,7 +14,7 @@ import { webcrypto } from 'node:crypto';
 import { fakeRoom } from './fakeRoom.mjs';
 import { TITLES, GLYPHS, claimsValid, mintToken, verifyToken, importPublicKeyB64 } from '../src/net/identityToken.js';
 import { TITLE_TEXT, TITLE_RGBA, GLYPH_RGBA, GLYPH_MARK, GLYPH_PATH, GLYPH_STROKE, FONT_GLYPH_MIN, FONT_GLYPH_MAX, cssRgba, titleBadge, glyphBadges } from '../src/ui/playerBadge.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
 import { titlesHeld, glyphsOf, equipRefusal, titleWorn, aurasHeld, auraWorn, canModerate, TIER_LISTS, TIER_GLYPH, FOUNDER_UNTIL } from '../server-account/src/titles.js';
 import { parseClient, dmGate, redGate, DM_HZ_MAX, RED_HZ_MAX, DM_RELAY_MIN, relaySupportsDm, RELAY_VERSION, readBadge } from '../src/net/wire.js';
 import { HOST_COMMANDS, parseChatLine } from '../src/net/chatCommands.js';

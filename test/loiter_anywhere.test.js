@@ -105,7 +105,7 @@ async function enhanced(over, fn) {
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.requestAnimationFrame = () => 0;
   try {
-    const { mountEnhancedRest } = await import('../src/ui/enhancedRest.js');
+    const { mountEnhancedRest } = await import('../src/ui/enhanced/enhancedRest.js');
     const calls = { night: 0, advance: 0 };
     const deps = {
       setResting() {}, setLoitering() {}, enemiesNearby: () => false, dead: () => false, fullyHealed: () => false, endLines: (id) => [`text ${id}`],

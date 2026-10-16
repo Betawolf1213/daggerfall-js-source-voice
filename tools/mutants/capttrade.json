@@ -352,7 +352,7 @@
   },
   {
     "name": "TAB-trade-unbought",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "      mk('Buy 1', r.canBuy, () => press(x.buy(r.id, 1)));",
     "new": "      mk('Buy 1', r.canBuy, () => press(null));",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "TAB-trade-stand-unsaid",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "  const STAND = { makes: 'Made here - cheap', wants: 'Wanted here - dear', neither: '' };",
     "new": "  const STAND = { makes: '', wants: '', neither: '' };",
     "tests": [

@@ -33,8 +33,8 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewp
 </style></head><body>
 <div class="world"></div>
 <script type="module">
-import { drawEnhancedHud } from '/src/ui/enhancedHud.js';
-import { drawEnhancedToasts } from '/src/ui/enhancedNotice.js';
+import { drawEnhancedHud } from '/src/ui/enhanced/enhancedHud.js';
+import { drawEnhancedToasts } from '/src/ui/enhanced/enhancedNotice.js';
 import { drawLootBanners, clearLootBanners, _setLootBannerForTests } from '/src/ui/lootBanner.js';
 import { setPref } from '/src/systems/uiPrefs.js';
 import * as LR from '/src/systems/loot/lootRarity.js';

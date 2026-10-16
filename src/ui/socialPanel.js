@@ -39,9 +39,9 @@
 // is ChatLog's law (ui/chatPanel.js paintWho) applied before it can be missed.
 //
 // Not a DFU member: Daggerfall Unity has no friends and no parties. Ledger A row (ONLINE).
-import { overlayOpen } from './enhancedOverlays.js';
+import { overlayOpen } from './enhanced/enhancedOverlays.js';
 import { isTextEntryTarget, swallowBrowserKey } from './input.js';   // DISC25-E: a letter's keys are the letter's
-import { isTouchDevice } from './touch.js';
+import { isTouchDevice } from './touch/touch.js';
 import { PARTY_MAX } from '../net/wire.js';
 import { lastOnlineText, PARTY_GREEN_CSS, FRIEND_CSS } from '../net/social.js';
 import { NAME_ORDER } from '../net/roster.js';   // AUDIT 637 A11: the roster's name order, one collator
@@ -398,7 +398,7 @@ textarea.dfsocial-field { resize: vertical; min-height: 120px; line-height: 1.4;
 
 /* AUDIT SOC C8: THE FINGER'S OWN SIZES. Every control this panel draws was built at the mouse's scale - the tabs 29
    tall, Close 27x19, Invite and Remove 22 - and online forces the enhanced lane on a phone as readily as on a
-   desktop. Under the touch skin each one is at least the 44px the platforms ask for (ui/touch.js draws its own
+   desktop. Under the touch skin each one is at least the 44px the platforms ask for (ui/touch/touch.js draws its own
    buttons at 48), and nothing moves on a desktop. */
 .dfsocial.touch .dfsocial-tab { min-height: 44px; padding: 10px 12px; }
 .dfsocial.touch .dfsocial-close { min-height: 44px; min-width: 44px; padding: 4px 12px; }

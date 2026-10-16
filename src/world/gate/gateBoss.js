@@ -137,7 +137,7 @@ export const CORPSE_SCALE = 3;
 /** WB13e: HIS WAKE - this long before the opening ends (the relay's `op`), his roar, his flare and his name. */
 export const WAKE_LEAD_MS = 1200;
 export const WAKE_FLARE_MS = 1500;
-/** WB13e: under this share of his health his ember sputters (and the bar pulses - ui/gateBossBar.js). */
+/** WB13e: under this share of his health his ember sputters (and the bar pulses - ui/gate/gateBossBar.js). */
 export const LOW_HEALTH = 0.1;
 
 /** The attacks' colours - the telegraph's on the ground and the glow on him - display-encoded (a foreign pass draws into

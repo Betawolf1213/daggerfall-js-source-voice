@@ -15,7 +15,7 @@ import { DatabaseSync } from 'node:sqlite';
 
 import { TERMS_VERSION, PRIVACY_VERSION, ACCEPTED } from '../src/net/legalLaw.js';
 import { AccountFlow, LOCAL_REFUSALS } from '../src/ui/accountFlow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { DEFAULT_ACCOUNT_SERVICE, REFUSALS, accountRefusalText } from '../src/net/accountClient.js';
 import { ACCOUNT_VERSION } from '../server-account/src/service.js';
 import worker from '../server-account/src/index.js';

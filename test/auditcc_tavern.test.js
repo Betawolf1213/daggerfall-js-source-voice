@@ -16,7 +16,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setSharedClock, setWorldMinutes, setOwnMinutes, ownMinutes, skyMinutes, alignEntityClocks, resetMagicRoundMarker } from '../src/systems/worldTick.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
-import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
+import { mountEnhancedTavern } from '../src/ui/enhanced/enhancedTavern.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { CLIMATES, REGION_NAMES } from '../src/formats/mapsFile.js';
 import { withDom } from './invdrag.mjs';

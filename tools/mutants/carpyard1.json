@@ -154,7 +154,7 @@
   },
   {
     "name": "CARP-YARD-the-glyph-a-horseshoe",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  return k === 'transport' || k === 'carpenter' || k === 'shipyard' || k === 'lighthouse' || k === 'docks' ? k : 'stable';",
     "new": "  return k === 'transport' || k === 'shipyard' || k === 'lighthouse' || k === 'docks' ? k : 'stable';",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "CARP-YARD-the-linen-at-the-joinery",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "bench.kind === 'shop' && !bench.yard) counterBuy(",
     "new": "bench.kind === 'shop') counterBuy(",
     "tests": [

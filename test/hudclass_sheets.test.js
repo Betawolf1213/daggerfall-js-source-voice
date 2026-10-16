@@ -1,6 +1,6 @@
 // HUD-CLASS (AUDIT 2026-10-05, the audit of the field fixes - POISE-BOX was the owner's screenshot, "enemies seem to
 // have this black transparent bar"): EVERY CLASS THE HUD WRITES IS ITS OWN. Every module under src/ui may lay a sheet
-// in the one game document, and the windows' sheet (ui/enhancedStyle.js) names its components with bare words - .side
+// in the one game document, and the windows' sheet (ui/enhanced/enhancedStyle.js) names its components with bare words - .side
 // (a column on --ink), .empty (a dashed box, 26px of padding, 16px under it). A HUD element wearing one of those words
 // wears the component: the poise track's idle 'empty' stood a 54 px box under every foe's health (POISE-BOX), the
 // status widget beside the diamond wore the --ink ground as a dark box behind its tiles ('side'), the empty spell
@@ -17,7 +17,7 @@ import { chunkFrame } from '../src/ui/barLoss.js';
 import { SHIP_CLASSES } from '../src/systems/naval/navalShips.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const HUD = ['src/ui/enhancedHud.js', 'src/ui/navalHud.js'];
+const HUD = ['src/ui/enhanced/enhancedHud.js', 'src/ui/naval/navalHud.js'];
 
 // THE HOLES: a class word the HUD fills from data - the poise track's state was one ('empty'). Each bare one is named
 // here with what its producer mints, read from that producer; a new one fails the pin until it is named (or wears a
@@ -25,17 +25,17 @@ const HUD = ['src/ui/enhancedHud.js', 'src/ui/navalHud.js'];
 const chunks = [...new Set([0, 1, 2, 3, 4, 5, 6, 7].map((n) => chunkFrame(n).cls))];
 const factions = [...new Set(SHIP_CLASSES.map((c) => c.faction))];
 const HOLES = {
-  'src/ui/enhancedHud.js': {
-    'statTile:t.kind': mintedFor('src/ui/hudStatus.js', 'kind'),   // a status tile's kind (hudStatus.js statusTiles)
+  'src/ui/enhanced/enhancedHud.js': {
+    'statTile:t.kind': mintedFor('src/ui/hud/hudStatus.js', 'kind'),   // a status tile's kind (hudStatus.js statusTiles)
     'dropChunk:cls': chunks,   // the bitten span's frame (barLoss.js chunkFrame)
   },
-  'src/ui/navalHud.js': {
+  'src/ui/naval/navalHud.js': {
     'cardLoss:frame': chunks,
-    'drawNavalHud:c': mintedFor('src/ui/navalHud.js', 'chips', { within: 'navalHudText' }),   // the plate's chips
+    'drawNavalHud:c': mintedFor('src/ui/naval/navalHud.js', 'chips', { within: 'navalHudText' }),   // the plate's chips
     'drawNavalHud:t.card.faction': factions,   // her class's (navalShips.js SHIP_CLASSES; a raider is a pirate)
     'drawNavalTags:t.faction': factions,
-    'drawNavalHud:t.card.stateKind': mintedFor('src/ui/navalHud.js', 'kind', { within: 'cardState' }),
-    'drawNavalHud:c.kind': mintedFor('src/ui/navalHud.js', 'kind', { within: 'fightCard' }),
+    'drawNavalHud:t.card.stateKind': mintedFor('src/ui/naval/navalHud.js', 'kind', { within: 'cardState' }),
+    'drawNavalHud:c.kind': mintedFor('src/ui/naval/navalHud.js', 'kind', { within: 'fightCard' }),
     'drawCrewLines:p.kind': ['shout', 'sing'],   // the write's own guard (pinned below)
   },
 };
@@ -90,15 +90,15 @@ test('HUD-CLASS: every sheet the game injects is read - the 65 a module exports,
   assert.deepEqual(uncomputed, [], 'a sheet whose selectors are built where it is laid, and so never read');
   assert.ok(evaluated >= 65 && rules.length > 12000, `${evaluated} sheets, ${rules.length} rules`);
   const has = (where, sel) => rules.some((r) => r.where === where && r.sel === sel);
-  assert.ok(has('src/ui/enhancedStyle.js ENHANCED_CSS', '.side') && has('src/ui/enhancedStyle.js ENHANCED_CSS', '.empty'), 'the windows\' bare components - what took the HUD\'s words');
-  assert.ok(has('src/ui/enhancedStyle.js ENHANCED_CSS', '.hud-stat.stat-side') && has('src/ui/enhancedStyle.js ENHANCED_CSS', '.hud-qspell.qspell-empty'));
-  assert.ok(has('src/ui/navalHud.js NAVAL_HUD_CSS', '.dfnaval-gun.gun-empty'));
-  assert.ok(rules.some((r) => r.where === 'src/ui/hudLayout.js HUD_LAYOUT_CSS' && r.sel.split(',\n').includes('.qtrack[data-hm]')), 'the layout editor\'s rule, its selectors built from the pieces');
-  assert.ok(rules.some((r) => r.where.startsWith('src/ui/plusPad.js:') && r.sel === `#${HOLE}.on`), 'a sheet no module exports, read from its literal (an id\'s rule)');
+  assert.ok(has('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS', '.side') && has('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS', '.empty'), 'the windows\' bare components - what took the HUD\'s words');
+  assert.ok(has('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS', '.hud-stat.stat-side') && has('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS', '.hud-qspell.qspell-empty'));
+  assert.ok(has('src/ui/naval/navalHud.js NAVAL_HUD_CSS', '.dfnaval-gun.gun-empty'));
+  assert.ok(rules.some((r) => r.where === 'src/ui/hud/hudLayout.js HUD_LAYOUT_CSS' && r.sel.split(',\n').includes('.qtrack[data-hm]')), 'the layout editor\'s rule, its selectors built from the pieces');
+  assert.ok(rules.some((r) => r.where.startsWith('src/ui/plus/plusPad.js:') && r.sel === `#${HOLE}.on`), 'a sheet no module exports, read from its literal (an id\'s rule)');
 });
 
 test('HUD-CLASS: every class the HUD writes is read - at its helpers\' callers, through a callback\'s host, a for-of\'s array - and every word the data chooses is named with what its producer mints: no bare hole unnamed, none named that is gone (mutants: the poise state bare again; the crew line\'s guard dropped)', () => {
-  const ehud = classWrites('src/ui/enhancedHud.js'), naval = classWrites('src/ui/navalHud.js');
+  const ehud = classWrites('src/ui/enhanced/enhancedHud.js'), naval = classWrites('src/ui/naval/navalHud.js');
   for (const w of ['hud-stat', 'stat-side', 'stat-tight', 'stat-noroom', 'hud-qspell', 'qspell-empty', 'hud-qwear', 'hud-qstop', 'hud-qcell']) assert.ok(ehud.words.has(w), w);
   for (const w of ['side', 'tight', 'noroom', 'empty']) assert.equal(ehud.words.has(w), false, `the bare '${w}'`);
   for (const w of ['dfnaval-gun', 'gun-empty', 'port', 'starboard', 'dfnaval-say', 'mate', 'target', 'dfnaval-track', 'hull', 'sail']) assert.ok(naval.words.has(w), w);
@@ -108,13 +108,13 @@ test('HUD-CLASS: every class the HUD writes is read - at its helpers\' callers, 
     const bare = classWrites(f).holes.filter((h) => h.bare).map((h) => h.key).sort();
     assert.deepEqual(bare, Object.keys(HOLES[f]).sort(), `${f}: the words its data chooses, each named with its producer`);
   }
-  assert.deepEqual(HOLES['src/ui/enhancedHud.js']['statTile:t.kind'], ['buff', 'danger', 'debuff', 'more', 'set', 'warn']);
+  assert.deepEqual(HOLES['src/ui/enhanced/enhancedHud.js']['statTile:t.kind'], ['buff', 'danger', 'debuff', 'more', 'set', 'warn']);
   assert.deepEqual(chunks, ['fa', 'fb']);
   assert.deepEqual(factions, ['pirate', 'merchant', 'navy']);
-  assert.deepEqual(HOLES['src/ui/navalHud.js']['drawNavalHud:c'], ['brace', 'fire', 'mend', 'repair', 'wreck']);
-  assert.deepEqual(HOLES['src/ui/navalHud.js']['drawNavalHud:t.card.stateKind'], ['board', 'friendly', 'hostile', 'sinking']);
-  assert.deepEqual(HOLES['src/ui/navalHud.js']['drawNavalHud:c.kind'], ['board', 'sinking']);
-  assert.match(rd('src/ui/navalHud.js'), /p\.kind === 'sing' \|\| p\.kind === 'shout' \? `dfnaval-say \$\{p\.kind\}` : 'dfnaval-say'/, 'the crew line\'s word is one of the two its guard lets through');
+  assert.deepEqual(HOLES['src/ui/naval/navalHud.js']['drawNavalHud:c'], ['brace', 'fire', 'mend', 'repair', 'wreck']);
+  assert.deepEqual(HOLES['src/ui/naval/navalHud.js']['drawNavalHud:t.card.stateKind'], ['board', 'friendly', 'hostile', 'sinking']);
+  assert.deepEqual(HOLES['src/ui/naval/navalHud.js']['drawNavalHud:c.kind'], ['board', 'sinking']);
+  assert.match(rd('src/ui/naval/navalHud.js'), /p\.kind === 'sing' \|\| p\.kind === 'shout' \? `dfnaval-say \$\{p\.kind\}` : 'dfnaval-say'/, 'the crew line\'s word is one of the two its guard lets through');
 });
 
 test('HUD-CLASS: NO RULE IN ANY SHEET STYLES A CLASS THE HUD WRITES FROM OUTSIDE THE HUD - and the law bites on the real sheets: given the field\'s bare words back, it finds the windows\' .side and .empty (mutants: the status widget\'s side, the socket\'s and the battery\'s empty bare again; a bare .on rule; a tile kind, a chunk frame, a chip, a card state and a faction minted as a component\'s word)', async () => {
@@ -123,6 +123,6 @@ test('HUD-CLASS: NO RULE IN ANY SHEET STYLES A CLASS THE HUD WRITES FROM OUTSIDE
   assert.deepEqual(collisions(rules, words, own), [], 'a rule from outside the HUD styles a class the HUD writes');
   // the positive control: the words the field fixes took away
   const back = collisions(rules, new Set([...words, 'side', 'empty']), own);
-  assert.ok(back.some((c) => c.startsWith('src/ui/enhancedStyle.js ENHANCED_CSS .side {')), back.join('\n'));
-  assert.ok(back.some((c) => c.startsWith('src/ui/enhancedStyle.js ENHANCED_CSS .empty {')), back.join('\n'));
+  assert.ok(back.some((c) => c.startsWith('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS .side {')), back.join('\n'));
+  assert.ok(back.some((c) => c.startsWith('src/ui/enhanced/enhancedStyle.js ENHANCED_CSS .empty {')), back.join('\n'));
 });

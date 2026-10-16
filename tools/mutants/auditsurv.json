@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDITSURV-the-enhanced-card-carries-no-survival-tokens",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    survival: isSurvivalItem(item) || isRestItem(item) ? survivalInfoTokens(item).slice(2).map((r) => r.text) : null,",
     "new": "    survival: null,",
     "tests": [
@@ -268,7 +268,7 @@
   },
   {
     "name": "AUDITSURV-wear-on-a-waterskin",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (getEquipSlot(entity ?? {}, item) === EQUIP_SLOTS.None) return null;\n",
     "new": "",
     "tests": [

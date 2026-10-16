@@ -13,7 +13,7 @@ import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { readFileSync } from 'node:fs';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 /** A stream that walks a fixed list, so a draw order can be chosen. */

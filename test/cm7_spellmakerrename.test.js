@@ -4,7 +4,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow } from '../src/ui/spell/spellMakerWindow.js';
 import { ENTER_SPELL_NAME } from '../src/ui/spellbookWindow.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
 import { MAX_SPELL_NAME } from '../src/systems/spell/spellMaker.js';

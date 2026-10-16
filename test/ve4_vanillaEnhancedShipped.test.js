@@ -283,7 +283,7 @@ test('VE4 wiring: the store\'s one registration puts the pack in before the atta
   // PIN MOVED (AUDIT VE R2): the boot seam's registration is the store's one, which puts the pack in first
   assert.match(src('scenes/shared.js'), /const textures = registerTextureStore\(\)/);
   assert.match(src('scenes/dataSource.js'), /installVanillaEnhancedPack\(\);   \/\/ VE4[^\n]*\n\s+const names = await storedTextureNames\(\);/);
-  assert.match(src('ui/enhancedMenu.js'), /function packsCard\(\) \{\n[^\n]*\n\s+installVanillaEnhancedPack\(\);/);   // PIN MOVED (AUDIT VE R2): after the wait for the store
+  assert.match(src('ui/enhanced/enhancedMenu.js'), /function packsCard\(\) \{\n[^\n]*\n\s+installVanillaEnhancedPack\(\);/);   // PIN MOVED (AUDIT VE R2): after the wait for the store
   // PIN MOVED (AUDIT VE R13): a mod switched on that carries doll art, not any attached mod
   assert.match(src('ui/paperDoll.js'), /const composeScale = \(\) => \(dfmodCarriesDollArt\(\) \? PAPERDOLL_HD_SCALE : 1\);/);
   assert.match(src('systems/vanillaEnhanced/vanillaEnhanced.js'), /const doorMods = \(\) => \{ installVanillaEnhancedPack\(\); return attachedDfmods\(\); \};/);

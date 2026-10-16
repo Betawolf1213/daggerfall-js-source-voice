@@ -38,7 +38,7 @@ test('FIELD BUGS 2026-09-29 (the sea) #5: THE SEA BATTLE\'S DOOR - one entry thr
   assert.equal(getPref('naval'), true, 'Naval Combat on');
   _resetModSettings(); _resetPrefs();
   // the pane's card, the same `test:<id>` family
-  assert.match(read('src/ui/enhancedMenu.js'), /TEST_SEA\.label[\s\S]*?onAction\(`test:\$\{TEST_SEA\.id\}`\)/, 'the pane\'s card');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /TEST_SEA\.label[\s\S]*?onAction\(`test:\$\{TEST_SEA\.id\}`\)/, 'the pane\'s card');
 });
 
 /** world.js's seaTest, lifted whole with its two lets, over a scope of stubs; `console` shadowed for its warn. */

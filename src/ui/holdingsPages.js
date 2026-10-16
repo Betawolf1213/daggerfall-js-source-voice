@@ -3,7 +3,7 @@
 // organize everything appropriately. Under the new tab add a page that allows you to see your currently owned mounts
 // ships and carts. You can summon your horse/cart from this page/send away much like the companion system. You can also
 // do this with ships instead of relying on a deed item") - THE HOLDINGS TAB's own pages (bible/03-World/Holdings.md).
-// The tab (ui/enhancedMenu.js pauseHoldings) is a rail of what the player owns and who follows them: these two pages,
+// The tab (ui/enhanced/enhancedMenu.js pauseHoldings) is a rail of what the player owns and who follows them: these two pages,
 // and the Companions, Revenants and Stores pages that stood on the Stats rail before it.
 //
 //  - THE STABLE: the horse and the wagon - owned or not, where each is (ridden, following, parked or waiting how far
@@ -13,7 +13,7 @@
 //  - THE FLEET: every ship the player holds - drawn by ui/fleetPage.js over the same provider.
 //
 // THE PROVIDER is the host's (scenes/world.js, scenes/exterior.js - setHoldingsProvider): what the pages read and the
-// acts they ask, so this file touches no runtime. Dressed by the stone-and-brass kit's roles (ui/enhancedFrame.js
+// acts they ask, so this file touches no runtime. Dressed by the stone-and-brass kit's roles (ui/enhanced/enhancedFrame.js
 // FRAME_ROLES: a card a panel, a picture a well, a state a chip) - this sheet writes geometry and
 // the words' colours alone, as the Companions page's does.
 
@@ -22,7 +22,7 @@ import { paintDrivenWagon, outsidePaintRow, LOOK_TEXT } from '../systems/wagon/w
 import { restyleRiddenHorse, horseLookRows, birthHorses, HORSE_LOOK_PARTS } from '../systems/horse/horseCoats.js';   // COATS1: and the horse's look
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { WAGON_MODE, HORSE_MODE, TRANSPORT, HORSE_NAME_MAX } from '../systems/horse/horseCartLaw.js';
-import { optionPath } from './settingsMap.js';   // ORG2: a switch named in a window says where it lives
+import { optionPath } from './settings/settingsMap.js';   // ORG2: a switch named in a window says where it lives
 import { upkeepReach } from '../systems/upkeep/upkeepRuntime.js';   // STEED1/WAGONS4: a horse fed by hand only beside it, a kit spent only at the wagon
 import { t } from '../systems/textManager.js';   // HORSE-TIERS: Boons' two hunger lines in the player's language
 

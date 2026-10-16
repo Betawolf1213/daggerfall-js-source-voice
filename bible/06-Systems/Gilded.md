@@ -26,9 +26,9 @@ Every reader of the ladder carries it - each found by grepping the Aetheric's ow
 
 | Reader | What it does with the rung |
 |---|---|
-| `ui/enhancedPlusStyle.js` RARITY_VARS | gold, gold-hi, gold-lo; two stars for pips (`\2726\2726`, the Artifact's one doubled) |
-| `ui/enhancedPlusStyle.js` `gilded-glow` | the frame of a Gilded row, slot, hotbar cell and quick-diamond cell breathes - stepped (8 steps over 2.6 s); under reduced motion, a still glow at its brighter end |
-| `ui/enhancedStyle.js` | the name in gold in a list, a card, a plaque |
+| `ui/enhanced/enhancedPlusStyle.js` RARITY_VARS | gold, gold-hi, gold-lo; two stars for pips (`\2726\2726`, the Artifact's one doubled) |
+| `ui/enhanced/enhancedPlusStyle.js` `gilded-glow` | the frame of a Gilded row, slot, hotbar cell and quick-diamond cell breathes - stepped (8 steps over 2.6 s); under reduced motion, a still glow at its brighter end |
+| `ui/enhanced/enhancedStyle.js` | the name in gold in a list, a card, a plaque |
 | `render/spoilsGlow.js` SPOILS_LINE_H | 2.5 m - the tallest line, at the line's own cap (WB5's "a line, not a beam") |
 | `systems/physicalItems.js` PI_RIM | 0.8 - the strongest rim |
 | `systems/reforge.js` salvageRefusal | `'gilded'` - "A Gilded piece will not break" (ui/reforgeWindow.js) |

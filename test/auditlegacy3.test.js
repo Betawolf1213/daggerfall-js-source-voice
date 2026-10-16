@@ -51,8 +51,8 @@ import {
 import { layoutTree } from '../src/systems/legacy/tree.js';
 import { facePose } from '../src/systems/legacy/facePose.js';
 import { COMMON_FACES_FILE, createFaceLoader } from '../src/ui/partyPanel.js';
-import { PORTRAIT_ARCHIVE } from '../src/ui/nativeTalk.js';
-import { legacyModelOptions, BLOODLINE_ONLINE_LINE } from '../src/ui/legacyModelChoice.js';
+import { PORTRAIT_ARCHIVE } from '../src/ui/native/nativeTalk.js';
+import { legacyModelOptions, BLOODLINE_ONLINE_LINE } from '../src/ui/legacy/legacyModelChoice.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
@@ -1604,11 +1604,11 @@ test('AUDIT LEGACY III A11/F10/U7/U9/P17: THE CARD SAYS WHAT THE HOUSE KEEPS - n
   const oc = cardOf(f, other.id).card;
   assert.equal(factsOf(oc).Died, undefined, 'one gone from the realm died on no day of ours');
   assert.ok(chipsOf(oc).includes('Gone from the realm'));
-  // one pose for every window: the meeting's card asks it too (ui/legacySuccession.js face)
+  // one pose for every window: the meeting's card asks it too (ui/legacy/legacySuccession.js face)
   // PIN MOVED (PORTRAIT3D): and their census id beside it - the seed their Morrowind head is walked off, as their body's
   assert.deepEqual(facePose(spouse), { race: 'Breton', gender: 'male', face: 0, common: 20, resident: 'L120.9' });
   assert.deepEqual(facePose(me), { race: me.race, gender: me.gender, face: me.face });
-  assert.match(rd('src/ui/legacySuccession.js'), /faces\(facePose\(who\)\)/);
+  assert.match(rd('src/ui/legacy/legacySuccession.js'), /faces\(facePose\(who\)\)/);
   // PIN MOVED (MW-HEADS2): and whether they are the one played - a member not played is one of the people
   assert.match(rd('src/ui/familyPages.js'), /faces\(facePose\(p, \{ currentId: _provider\?\.family\?\.\(\)\?\.currentId \?\? null \}\)\)/);
   // the loader draws it from the talk window's own CommonFaces archive

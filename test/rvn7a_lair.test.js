@@ -25,7 +25,7 @@ const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { getSeed, setSeed } = await import('../src/formats/dfRandom.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { bountyDungeons, BOUNTY_MIN_PX, BOUNTY_MAX_PX } = await import('../src/systems/bounty/bountyBoard.js');
-const { lairWords } = await import('../src/ui/revenantPage.js');
+const { lairWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn7') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, stats: {}, skills: [], career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100 });
@@ -155,5 +155,5 @@ test('RVN7a the page: its lair as I know it - roaming, unknown, or named (mutant
   assert.equal(lairWords({ lair: null }), 'Lair: none - it roams.');
   assert.equal(lairWords({ lair: D(1, 2, 'Tomb of Vaness'), lairKnown: false }), 'Lair: unknown - the towns about it may have heard.');
   assert.equal(lairWords({ lair: D(1, 2, 'Tomb of Vaness'), lairKnown: true }), 'Lair: Tomb of Vaness - on your map.');   // PIN MOVED (RVN7c: and marked on the map)
-  assert.match(read('src/ui/revenantPage.js'), /if \(!fallen\) text\.append\(el\('span', 'rvn-will', lairWords\(r\)\)\);   \/\/ RVN7/);
+  assert.match(read('src/ui/revenant/revenantPage.js'), /if \(!fallen\) text\.append\(el\('span', 'rvn-will', lairWords\(r\)\)\);   \/\/ RVN7/);
 });

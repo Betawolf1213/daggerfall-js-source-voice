@@ -1,7 +1,7 @@
 [
   {
     "name": "TRADE-LOC-II-a-the-row-without-it",
-    "file": "src/ui/enhancedPlayerTrade.js",
+    "file": "src/ui/enhanced/enhancedPlayerTrade.js",
     "old": "const sub = [letterWorthLine(item), line.material, line.word]",
     "new": "const sub = [line.material, line.word]",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TRADE-LOC-II-b-the-card-without-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  pair('Worth', letterWorthGold(picked));",
     "new": "  pair('Worth', null);",
     "tests": [

@@ -373,7 +373,7 @@
   },
   {
     "name": "ARENAFIX-HUD-CROWD-QUIET",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "    crowd: quiet ? null : {",
     "new": "    crowd: false ? null : {",
     "tests": [

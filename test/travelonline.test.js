@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travel/travelOptions.js';
 import { modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS, ONLINE_LAND_TRAVEL_REFUSAL } from '../src/systems/online/onlineLane.js';
-import { isPlayerControlledTravel, enforceShipRestriction } from '../src/ui/travelPopUp.js';
+import { isPlayerControlledTravel, enforceShipRestriction } from '../src/ui/travel/travelPopUp.js';
 
 const CAUTIOUS = 'CautiousTravel.PlayerControlledCautiousTravel', INNS = 'StopAtInnsTravel.PlayerControlledInnsTravel', PORTS = 'ShipTravel.OnlyFromPorts';
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -51,7 +51,7 @@ test('TRAVEL-ONLINE by source: the world loads the mod through modSetting (the r
   const w = read('src/scenes/world.js');
   assert.match(w, /const travelOptionsOn = modSetting\(TRAVEL_OPTIONS_VENDOR, 'Enabled'\);/);
   assert.match(w, /travelOptions = travelOptionsOn \? createTravelOptions\(\{/);
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const ONLINE_TRAVEL_VENDORS = Object\.freeze\(\['travel-options'\]\);/);
   assert.match(menu, /const ONLINE_TRAVEL_NOTE = 'On for everyone online: every trip over land is travelled, and ships sail only from ports\.[^']*';/);
   assert.match(menu, /Travel Options is on for everyone, so every trip over land is travelled and ships sail only from ports\./, 'the pane\'s own line names it');

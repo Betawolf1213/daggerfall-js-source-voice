@@ -23,9 +23,9 @@ import { SKILLS } from '../src/systems/skills.js';
 import { RACES } from '../src/systems/races.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
-import { itemLine, localPrimaryAct } from '../src/ui/enhancedInventory.js';
+import { itemLine, localPrimaryAct } from '../src/ui/enhanced/enhancedInventory.js';
 import { usableItem } from '../src/systems/useItem.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
@@ -229,7 +229,7 @@ test('AUDIT SURV C: what the player is told - a vampire\'s strip has no hunger o
   assert.match(survivalInfoTokens(skin).map((r) => r.text).join('\n'), /Weight: [0-9.]+ kilograms/, 'DFU\'s word, shortened by the panel alone');
   assert.equal(isSurvivalItem(skin), true);
   assert.match(ENHANCED_CSS, /\.hud-stat:empty\s*\{\s*display:\s*none;?\s*\}/, 'no gap for an empty widget (UI3: the needs are its tiles)');
-  const hud = read('src/ui/enhancedHud.js');
+  const hud = read('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /survivalHudChips\(vitals, Math\.floor\(ownMinutes\(\)\), \{ vampire: !!liveVampirism\(vitals\), endurance: liveStat\(vitals, 'endurance'\), rules: survivalRules\(\), live \}\)/);   // PIN MOVED (AUDIT SURV-BOONS C14): and the live tier   // LIVED1: the needs read the character's own clock   // PIN MOVED (AUDIT C&C S5/S9): the live tier's rules, and the frame's one live reading
   // Mac (review): "Hide wear for non wearables. Same for use for non-usables"
   const wearer = { equip: null, activeEffects: [] };
@@ -243,7 +243,7 @@ test('AUDIT SURV C: what the player is told - a vampire\'s strip has no hunger o
   assert.equal(usableItem({ group: 'Armor', templateIndex: 102 }), false); assert.equal(usableItem({ group: 'Gems', templateIndex: 0 }), false);
   assert.equal(usableItem({ group: 'Weapons', templateIndex: 113, questItem: true }), true, 'a quest item is watched');
   assert.equal(usableItem(null), false);
-  const invSrc = read('src/ui/enhancedInventory.js');
+  const invSrc = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(invSrc, /if \(getEquipSlot\(entity \?\? \{\}, item\) === EQUIP_SLOTS\.None\) return null;/, 'the card asks the equip table');
   assert.match(invSrc, /if \(act\) \{   \/\/ null: nothing would wear it/, 'no button without an act');
   // HOOD-SAID (FIELD BUGS 2026-09-30, PIN MOVED): and not on a worn hooded piece, whose hood has its own button - unless

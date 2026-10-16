@@ -3,7 +3,7 @@
 // develop enhanced plus UI elements?"). The boat under way says its way (systems/comeSailAway/comeSailAwayWire.js `m`) and its
 // readers lead it (scenes/comeSailAwayPeers.js); another player's boat is boarded, stood on, carried by and left
 // (scenes/comeSailAwayAboard.js), the deck standing for everyone (FIELD BUGS 2026-10-01b); the others aboard are seen on the deck; the helm's
-// nine keys are a panel (ui/enhancedHelm.js) and a pad's d-pad (ui/gamepadInput.js), pressing the registry's actions
+// nine keys are a panel (ui/enhanced/enhancedHelm.js) and a pad's d-pad (ui/gamepadInput.js), pressing the registry's actions
 // through the host's one seam (scenes/world.js). The boats are the vendored hulls over a stand-in renderer and pipeline
 // (test/csa_online.test.js's); world.js's own statements are mounted where they are behaviour (audit0928_online's law).
 import { test } from 'node:test';
@@ -23,9 +23,9 @@ import { TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { activationModelOf, boardPlaceOf, BOAT_ACTIONS, carriedPoint, yawDelta } from '../src/systems/comeSailAway/comeSailAway.js';
 import { raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { quatAngleAxis, quatMultiply } from '../src/world/quat.js';
-import { helmButtons, drawEnhancedHelm, hideEnhancedHelm, enhancedHelmMounted, enhancedHelmBar, helmPadGesture, helmPadPrompts, HELM_ACTIONS, HELM_CSS, ENHANCED_HELM_ID } from '../src/ui/enhancedHelm.js';
-import { HELM_DPAD } from '../src/ui/plusPad.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { helmButtons, drawEnhancedHelm, hideEnhancedHelm, enhancedHelmMounted, enhancedHelmBar, helmPadGesture, helmPadPrompts, HELM_ACTIONS, HELM_CSS, ENHANCED_HELM_ID } from '../src/ui/enhanced/enhancedHelm.js';
+import { HELM_DPAD } from '../src/ui/plus/plusPad.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { fakeDoc, all, one } from './decorFakes.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -626,7 +626,7 @@ test('CSA-L: the panel wears the Plus kit - its bar a window of the kit and its 
   assert.match(css, /\.helmpanel \{[^}]*pointer-events: none/, 'the panel lets the world have the pointer');
   assert.match(css, /\.helmpanel-btn \{[^}]*pointer-events: auto/, 'its buttons take it');
   assert.match(css, /\.helmpanel\.touch \.helmpanel-btn \{ min-height: 44px; min-width: 44px; \}/, 'a finger\'s size');
-  const src = rd('src/ui/enhancedHelm.js');
+  const src = rd('src/ui/enhanced/enhancedHelm.js');
   assert.match(src, /for \(const t of \['pointerdown', 'mousedown', 'mouseup', 'click', 'touchstart', 'wheel', 'contextmenu'\]\) node\.addEventListener\(t, swallow\);/);
 });
 
@@ -660,7 +660,7 @@ test('CSA-L: the pad layer at the helm - the d-pad is the helm\'s (a tap, a hold
   const { setBindings } = await import('../src/ui/input.js');
   const { setPref, _resetForTests: resetPrefs } = await import('../src/systems/uiPrefs.js');
   const { _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
-  const { registerCrossbar } = await import('../src/ui/plusPad.js');
+  const { registerCrossbar } = await import('../src/ui/plus/plusPad.js');
   const prevW = globalThis.window;
   globalThis.window = { addEventListener() {}, removeEventListener() {}, dispatchEvent() {} };
   resetPrefs(); resetSettings();

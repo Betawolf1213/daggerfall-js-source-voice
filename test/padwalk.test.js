@@ -1,7 +1,7 @@
 // PADWALK: walk mode and mouselook, one button each, bindable on the controller.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
+import { PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
 import { ACTIONS, ACTION_GROUPS } from '../src/systems/inputActions.js';
 import { walkModeOn, setWalkMode, toggleWalkMode, bindWalkMode } from '../src/player/walkMode.js';
 

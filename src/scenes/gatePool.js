@@ -31,7 +31,7 @@ import { gateArt } from '../world/gate/gateArt.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';
 import { gateSceneXZ } from '../systems/gate/gateOmen.js';
 import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';
-import { marksCardModel } from '../ui/gateMarksView.js';   // WB9a: tonight's marks, over the screen before the gate is entered
+import { marksCardModel } from '../ui/gate/gateMarksView.js';   // WB9a: tonight's marks, over the screen before the gate is entered
 import { trs } from '../world/mat4.js';
 import { RAY_DISTANCE } from '../player/activate.js';
 import { CAPSULE_RADIUS } from '../player/motor.js';
@@ -153,7 +153,7 @@ export function gateLocal(place, p) {
  *   groundAt?: ((px:number, py:number, x:number, z:number) => number)|null,
  *   marks?: (card: any) => void,
  * }} deps
- *   WB9a: `marks` is handed the marks' card while the banner stands (ui/gateMarksView.js marksCardModel - the day's
+ *   WB9a: `marks` is handed the marks' card while the banner stands (ui/gate/gateMarksView.js marksCardModel - the day's
  *   marks, the ones the relay's fight is born under), null otherwise.
  */
 export function createGatePool({

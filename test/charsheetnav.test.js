@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CharSheet, CHARSHEET_RECTS, NAV_BUTTONS } from '../src/ui/charsheet.js';
 import { charSheetHooks } from '../src/ui/charSheetNav.js';
-import { QuestJournalWindow, JOURNAL_RECTS, JOURNAL_MODES } from '../src/ui/questJournal.js';
+import { QuestJournalWindow, JOURNAL_RECTS, JOURNAL_MODES } from '../src/ui/quest/questJournal.js';
 import { PlayerHistoryWindow, HISTORY_RECTS } from '../src/ui/playerHistory.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -191,7 +191,7 @@ test('U32: the spellbook is the ONE that already existed - no second implementat
   // classic art (ui/spellbookWindow.js) and DELETED the U4 keyed
   // window rather than leaving two - which is what this pin is for,
   // so it follows the home instead of pinning the old address.
-  const files = ['ui/spellbookWindow.js', 'ui/deathScreen.js', 'ui/charsheet.js', 'ui/charSheetNav.js', 'ui/questJournal.js', 'ui/playerHistory.js'];
+  const files = ['ui/spellbookWindow.js', 'ui/deathScreen.js', 'ui/charsheet.js', 'ui/charSheetNav.js', 'ui/quest/questJournal.js', 'ui/playerHistory.js'];
   const declarers = files.filter((f) => /export class SpellbookWindow/.test(src(f)));
   assert.deepEqual(declarers, ['ui/spellbookWindow.js'], 'SpellbookWindow must be declared exactly once, where it now lives');
   // and the hosts hand the sheet THAT window. U52 re-aimed the address

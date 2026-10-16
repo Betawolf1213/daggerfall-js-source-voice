@@ -175,7 +175,7 @@ The player picks a language, and the port's text in it is fetched, applied and r
   static graph). `?lang=` wins for one visit; otherwise the `language` pref. A failure leaves English standing.
 - The page's `lang` and `dir` follow the locale, for the browser's fonts, hyphenation and screen readers.
 
-**The menu** - `ui/enhancedMenu.js`:
+**The menu** - `ui/enhanced/enhancedMenu.js`:
 - The rail's thirteen words go through `t()` (`menu.rail.*`). Their ids stay the English labels', so the probes'
   `door-<id>` selectors hold in every language.
 - **The Language row** heads Settings > Interface on the front door only; a running game keeps the language it booted
@@ -854,7 +854,7 @@ our code is an anchor now, never a line number (`bible/Home.md`, A CITE NAMES WH
   this branch's routing laid over it (a routed key keeps its key and takes main's English). `huntWindow.js` stays
   deleted (HUNT-OUT).
 - **Where main's code met the arc's readers:**
-  - ORG2's one-map Settings screen draws only what `ui/settingsMap.js` places, so the Language row has its own
+  - ORG2's one-map Settings screen draws only what `ui/settings/settingsMap.js` places, so the Language row has its own
     section, Interface > Language (`port:language`), with the translation-pack row under it.
   - SUPPORT1's asks hold the front door's top-left corner. The first-run language offer stands under them.
   - `MONTH_NAMES` is L10N3e's `monthNames()` reader. Main's arena board and Project Legacy's date line read it.
@@ -914,7 +914,7 @@ French and in English.
 ## The chronicle's quest Abandon, routed from the start (2026-10-13, QUEST-SHELF-MAIN)
 
 QUEST-SHELF-MAIN (`06-Systems/Quest-Arc.md`) was written before the ratchet reached main, and its Abandon in the
-chronicle (`ui/enhancedChronicle.js`) carried four new literals of prose. It landed with them routed instead: the label,
+chronicle (`ui/enhanced/enhancedChronicle.js`) carried four new literals of prose. It landed with them routed instead: the label,
 the armed label, the title and both aria-labels are `chronicle.quests.*` (5 keys - the catalog's 2,511 at its merge of
 main), read when the button is drawn, so the file's count stays at 35. They are drafted in-session into the thirteen
 whole languages, and `abandon (a quest)` and `reclaim (a quest)` were added to those languages' glossaries. The twelve
@@ -927,7 +927,7 @@ A third change from outside the arc held to L10N6's laws, after the Eltheric cha
 section 39 its audit).
 - **Its new words go through the text core**, read where they are shown: Iliac Hand's verdict (`VERDICT_WORDS`, a frozen
   table of getters), the setup's heads and boxes, the track, the other player's line and state, the empty tray - 15
-  port keys under `cards.iliac.` - and the fold's two (`cards.table.fold.*`, `ui/cardPanelKit.js` foldWords - both
+  port keys under `cards.iliac.` - and the fold's two (`cards.table.fold.*`, `ui/card/cardPanelKit.js` foldWords - both
   card tables' fold, its tooltip and its name to a screen reader: "Collapse the panel" and "Expand the panel"; AUDIT
   CARDS-PLUS D5 moved them off "Hide the table", which said the reverse of what the player sees), and the magicka by
   DFU's own key (`localizedText('magicka', 'Magicka')`, as the vitals' meter reads it). Drafted in the thirteen
@@ -940,7 +940,7 @@ section 39 its audit).
   CSS identifiers - never a digit first, so `#1` is no id - with a class among them and no English stopword in it, is
   CSS. The identifier runs read only words and dots, so a kit role such as `body .dfiliac button[data-kind="warn"]`
   counted as a sentence. Over the whole tree it takes out five literals, every one a selector - CARDS-PLUS's three
-  roles, `ui/enhancedFrame.js`'s `#wp-menu input.wpm-name`, `ui/grimoireDress.js`'s `:scope > .px-tabs button` - and
+  roles, `ui/enhanced/enhancedFrame.js`'s `#wp-menu input.wpm-name`, `ui/grimoireDress.js`'s `:scope > .px-tabs button` - and
   no prose: the map's `enhancedFrame.js` 3 to 2, `grimoireDress.js` 14 to 13. AUDIT CARDS-PLUS D1: its first form
   asked for no class and let a digit open a name, so it read "press [E] when ready", "[locked] needs more gold",
   "rank #1 player wins" and "item:sword equipped" as selectors and let them past the ratchet; none stood in the tree.
@@ -972,7 +972,7 @@ could not be written beside them. No card's words had reached a player in their 
 - **The ratchet:** `net/iliac/iliacCards.js` 234 -> 52 (its two-word names; the nine's four among them); the words module 0.
 - **Still owed (L10N4's cards batch):** a card's name shown through Daggerfall Unity's own tables where it is one of
   theirs (an enemy's, a spell's, an artifact's, a faction's, a place's), and the Iliac panels' own sentences round it -
-  `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliac/iliacItems.js`'s first line - routed with it, so no
+  `scenes/iliacTableGame.js`, `ui/card/cardBinderPage.js`, `systems/iliac/iliacItems.js`'s first line - routed with it, so no
   sentence glues a translated name into English.
 
 ## KG3 (2026-10-13): The King's Gambit's table, in the player's language from the first press

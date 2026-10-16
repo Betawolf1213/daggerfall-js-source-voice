@@ -19,7 +19,7 @@ import { GUILDS, getTitle, NON_MEMBER_TITLE } from '../src/systems/guild/guilds.
 import { templeOf, orderOf, DIVINES, TEMPLE_RANK_TITLES, KNIGHTLY_RANK_TITLES, getDivineLocalized } from '../src/systems/guild/guildVariants.js';
 import { DEITY_DESCRIPTIONS, AVOID_DEATH_TEXT, avoidDeathText, GUILD_SERVICES } from '../src/systems/guild/guildServices.js';
 import { SERVICE_LABEL, serviceLabel, serviceAccess, SERVICE_MEMBERS_ONLY } from '../src/systems/guild/guildServiceFlow.js';
-import { MERCHANT_SERVICE_LABEL, merchantServiceLabel } from '../src/ui/merchantServiceWindow.js';
+import { MERCHANT_SERVICE_LABEL, merchantServiceLabel } from '../src/ui/merchant/merchantServiceWindow.js';
 import { QuestOfferFlow, GETTING_QUESTS_1, GETTING_QUESTS_2 } from '../src/systems/quest/offerFlow.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { receiveHouseDecision, ALREADY_GIVEN_HOUSE, alreadyGivenHouseText } from '../src/systems/knightlyGifts.js';
@@ -33,7 +33,7 @@ import {
   identifiedTallyText, NOT_ENOUGH_SPELL_POINTS_TEXT, notEnoughSpellPointsText, LETTER_OF_CREDIT_TEXT, letterOfCreditText,
   DOESNT_NEED_IDENTIFY, doesntNeedIdentifyText,
 } from '../src/systems/tradeModes.js';
-import { NativeTradeWindow, STEAL_SUCCESS_TEXT, STEAL_FAILURE_TEXT, stealSuccessText, stealFailureText } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow, STEAL_SUCCESS_TEXT, STEAL_FAILURE_TEXT, stealSuccessText, stealFailureText } from '../src/ui/native/nativeTrade.js';
 import { shopliftingLoad } from '../src/systems/theft.js';
 import { calculateShopliftingChance } from '../src/combat/formulas.js';
 import { BankWindow, CANNOT_CARRY_GOLD } from '../src/ui/bankWindow.js';
@@ -326,14 +326,14 @@ test('L10N3d services: the tavern - its eleven menu lines each in its own place 
 // ── the enhanced skins, by source ───────────────────────────────────────────────────────────────────────────────────
 
 test('L10N3d services by source: the enhanced trade and tavern skins read the same routed readers the classic windows do - no copy of the English left in them', () => {
-  const trade = rd('src/ui/enhancedTrade.js');
+  const trade = rd('src/ui/enhanced/enhancedTrade.js');
   for (const reader of ['cannotBeRepairedText()', 'doesntNeedIdentifyText()', 'interruptRepairText()', 'stealSuccessText()', 'stealFailureText()']) {
     assert.ok(trade.includes(reader), `enhancedTrade.js reads ${reader}`);
   }
   assert.equal(trade.split('letterOfCreditText()').length - 1, 2, 'both letter-of-credit boxes read the reader');
   for (const en of [LETTER_OF_CREDIT_TEXT, CANNOT_BE_REPAIRED_TEXT, INTERRUPT_REPAIR_TEXT, DOESNT_NEED_IDENTIFY]) assert.ok(!trade.includes(en), `no copy of "${en}"`);
   assert.doesNotMatch(trade, /\b(CANNOT_BE_REPAIRED_TEXT|INTERRUPT_REPAIR_TEXT|DOESNT_NEED_IDENTIFY|STEAL_SUCCESS_TEXT|STEAL_FAILURE_TEXT)\b/, 'no bare constant shown');
-  const tavernSkin = rd('src/ui/enhancedTavern.js');
+  const tavernSkin = rd('src/ui/enhanced/enhancedTavern.js');
   for (const reader of ['roomFreeForKnightText()', 'roomFreeHeartsDayText()', 'youAreNotHungryText()', 'tavernMenuLines()']) {
     assert.ok(tavernSkin.includes(reader), `enhancedTavern.js reads ${reader}`);
   }

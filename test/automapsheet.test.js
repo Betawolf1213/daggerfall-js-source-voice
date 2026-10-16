@@ -23,11 +23,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createAutomapSheet, FIT_MARGIN, READABLE_SCALE } from '../src/ui/automapSheet.js';
-import { isSheet, SHEET_MEMBERS } from '../src/ui/mapStrip.js';
+import { createAutomapSheet, FIT_MARGIN, READABLE_SCALE } from '../src/ui/automap/automapSheet.js';
+import { isSheet, SHEET_MEMBERS } from '../src/ui/map/mapStrip.js';
 import { deriveFloors, floorTriangles, groupSheets, levelField, planBounds } from '../src/systems/automap/automapFloors.js';
-import { scaleMinOf, toPaper, SCALE_MAX } from '../src/ui/inkMap.js';
-import { PLAN_PEN } from '../src/ui/inkAutomap.js';
+import { scaleMinOf, toPaper, SCALE_MAX } from '../src/ui/ink/inkMap.js';
+import { PLAN_PEN } from '../src/ui/ink/inkAutomap.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -86,7 +86,7 @@ test('EM3: the automap answers the whole sheet contract, from OUTSIDE the window
   for (const m of SHEET_MEMBERS) assert.ok(m in s, `${m} is not even a key`);
   // and it is genuinely free of the window: no DOM, no renderer, no
   // import of heldMap. This is the whole reason EM1 built a contract.
-  const text = src('src/ui/automapSheet.js')
+  const text = src('src/ui/automap/automapSheet.js')
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
   assert.doesNotMatch(text, /\bdocument\b|\bglobalThis\b|heldMap|renderer/);
@@ -357,7 +357,7 @@ test('EM3: the storeys the sheet names are the floor model\'s own, over the whol
   // lie over one another, so two storeys are two floors
   assert.deepEqual(s.floors(), groupSheets(levelField(LEVEL, storeys, { bounds: planBounds(floorTriangles(LEVEL), 1) }), storeys));
   assert.deepEqual(s.floors().map((f) => f.storeys), [[0], [1]]);
-  const text = src('src/ui/automapSheet.js');
+  const text = src('src/ui/automap/automapSheet.js');
   assert.match(text, /deriveFloors\(tris\)/, 'the storeys come from the model');
   assert.match(text, /groupSheets\(field, floors\)/, 'and the sheets');
   assert.match(text, /floorAt\(f\.floors, /, 'and so does every "which storey is this on"');

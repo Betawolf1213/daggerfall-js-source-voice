@@ -163,7 +163,7 @@ test('REALM P1.5 end to end: customs on a copy, the realm character made once fr
   // P1.4: and back out again as a NEW offline character - the realm's save, a new id (the door's copyToOffline)
   const got = await realmFetch(io, made.data.id);
   assert.equal(JSON.parse(got.text).characterId, made.data.id);
-  const door = src('src/ui/enhancedMenu.js');
+  const door = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(door, /snap\.characterId = mintCharacterId\(\);\s*\n\s*const r = saveSlot\(snap\.name \|\| row\.name, 'Copied from the realm', snap, \{ storage: appStorage\(\) \}\);/);
 });
 
@@ -221,7 +221,7 @@ test('REALM P1.3 by source: the boot joins before any save is read, never a slot
   assert.match(shared, /export function exitToTitleMenu\(\) \{\n\s+claimFrame\(\);[^\n]*\n\s*\/\/[^\n]*\n\s*if \(_beforeTitleExit\) \{ const f = _beforeTitleExit; _beforeTitleExit = null; Promise\.resolve\(\)\.then\(f\)\.catch\(\(\) => \{\}\)\.finally\(\(\) => exitToTitleMenu\(\)\); return; \}/, 'the last checkpoint once, then the door');
   const main = src('src/main.js');
   assert.match(main, /const realmId = choice === 'online' \? takePickedRealmId\(\) : null;\s*\n\s*if \(realmId\) params\.set\('realm', realmId\);\s*\n\s*else params\.delete\('realm'\);\s*\n\s*if \(choice === 'online-new'\) params\.set\('realmnew', '1'\);\s*\n\s*else params\.delete\('realmnew'\);/);
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\{ label: save\.unfinished \? t\('menu\.realm\.neverSaved', 'Never saved'\) : t\('menu\.realm\.play', 'Play'\), primary: true, disabled: realmBusy \|\| save\.unfinished, onClick: \(\) => \{ _pickedRealmId = row\.id; onAction\('online'\); \} \}/);
   assert.match(menu, /\{ label: t\('menu\.realm\.new', 'New online character'\), primary: !realmRows\.length, disabled: realmBusy \|\| realmRows\.length >= realmMax, onClick: \(\) => onAction\('online-new'\) \}/);
   assert.match(menu, /label: t\('menu\.realm\.delete', 'Delete character'\), disabled: realmBusy, onClick: \(\) => ask\(/, 'a delete asks first');

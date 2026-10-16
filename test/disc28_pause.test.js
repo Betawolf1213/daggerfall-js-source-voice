@@ -18,7 +18,7 @@ import assert from 'node:assert/strict';
 import { keydown, keyup } from './chargenDom.mjs';
 import { createBindings, resetDefaults, setBinding, shareBinding, actionsForCode } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
 
 console.warn = () => {};
 
@@ -91,7 +91,7 @@ test('DISC28-A: the boot menu is no pause screen - the pause key means nothing t
 
 test('DISC28-A: a mod TextKey capture waiting for its key owns it - the back stack stands down, the capture has one owner', async () => {
   const { readFileSync } = await import('node:fs');
-  const src = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   const onKey = src.slice(src.indexOf('function onKey(e)'), src.indexOf('function releaseLock()'));
   assert.ok(onKey.indexOf('if (textKeyCapture) return;') > 0 && onKey.indexOf('if (textKeyCapture) return;') < onKey.indexOf('const pauseKey'),
     'standing down before the pause key is read');

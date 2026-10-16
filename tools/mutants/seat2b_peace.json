@@ -564,7 +564,7 @@
   },
   {
     "name": "SEAT2b2-stores-stock-words",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": ": pick.family === 'siege' ? siegeStaysLine() : stockStaysLine());",
     "new": ": stockStaysLine());",
     "tests": [

@@ -285,7 +285,7 @@
   },
   {
     "name": "AUDIT-LEGACY-II-U1-held-key-presses",
-    "file": "src/ui/legacyDoor.js",
+    "file": "src/ui/legacy/legacyDoor.js",
     "old": "{ if (!e?.repeat) (btns[at] ?? btns[0]).click?.(); return true; }",
     "new": "{ (btns[at] ?? btns[0]).click?.(); return true; }",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "AUDIT-LEGACY-II-U14-back-over-the-succession",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "  if (back) rows.push([[uiBack], 'Back']);",
     "new": "  rows.push([[uiBack], 'Back']);",
     "tests": [

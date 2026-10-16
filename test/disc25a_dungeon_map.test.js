@@ -27,12 +27,12 @@ import {
   STAIR_RISE, SHEET_OVERLAP, LINK_JOIN, FLOOR_MIN_GAP,
 } from '../src/systems/automap/automapFloors.js';
 import { STEP_OFFSET } from '../src/player/motor.js';
-import { createAutomapSheet, AUTOMAP_HINT, STAIR_MERGE } from '../src/ui/automapSheet.js';
+import { createAutomapSheet, AUTOMAP_HINT, STAIR_MERGE } from '../src/ui/automap/automapSheet.js';
 import {
   floorStripLayout, floorStripHit, paintFloorStrip, paintStairs, PLAN_PEN, FLOOR_STRIP, FLOOR_STRIP_MAX,
   FLOOR_STRIP_MIN, FLOOR_UNSEEN_ALPHA, STAIR_GLYPH,
-} from '../src/ui/inkAutomap.js';
-import { boundarySegments, linkSegments, toPaper, PEN } from '../src/ui/inkMap.js';
+} from '../src/ui/ink/inkAutomap.js';
+import { boundarySegments, linkSegments, toPaper, PEN } from '../src/ui/ink/inkMap.js';
 import { MAP_HINT, thumbBox, HeldMapWindow, THUMB_ZONES, PAPER as SPRITE_PAPER } from '../src/ui/heldMap.js';
 import { NOTE_SPAWN_NORMAL_OFFSET } from '../src/systems/automap/automap.js';
 

@@ -268,7 +268,7 @@ test('WATER1: both exterior hosts - the gate, the has-water skip, and the slot a
 
 test('WATER1: the switch, the row, the sky\'s colours, the lab, the probe and the record', () => {
   assert.match(rd('src/systems/features.js'), /key: 'enhancedWater', initial: true, online: 'player'/, 'on by default like the other enhanced visuals (RF4: declared on its row; the shelf derives it) - WATER-OFF: the player\'s online too');
-  assert.ok(!/prefRow\('enhancedWater'/.test(rd('src/ui/enhancedMenu.js')), 'FT6: the row is the Features home\'s (systems/features.js)');
+  assert.ok(!/prefRow\('enhancedWater'/.test(rd('src/ui/enhanced/enhancedMenu.js')), 'FT6: the row is the Features home\'s (systems/features.js)');
   const shared = rd('src/scenes/shared.js');
   assert.match(shared, /waterSky\(\) \{\s*\n\s*if \(enhancedSky\?\.state\) return dreaded\(\{ zenith: enhancedSky\.state\.zenith, horizon: enhancedSky\.state\.horizon \}\);/, 'the dome\'s own state');
   assert.match(shared, /const h = dynamic\?\.fogColor \?\? dynamicSky\.clearColor;\s*\n\s*return dreaded\(\{ zenith: \[h\[0\] \* 0\.55, h\[1\] \* 0\.65, h\[2\] \* 0\.85\], horizon: h \}\);/, 'the mod\'s one colour, with a zenith derived from it (WATER-AUDIT L3: the mod\'s fill IS its clear IS its fog - a copy made the reflection flat)');

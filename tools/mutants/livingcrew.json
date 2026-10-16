@@ -325,7 +325,7 @@
   },
   {
     "name": "SAY-every-line",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const chosen = [...said.values()].slice(0, CREW_SAY_MAX);",
     "new": "  const chosen = [...said.values()];",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SAY-rebuilt",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  while (saySlots.length < want.length) {",
     "new": "  if (want.length) saySlots = [];\n  while (saySlots.length < want.length) {",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SAY-never-hidden",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const want = covered ? [] : layoutCrewLines(points, { scale, memory: sayMemory, dt, top: 0 });",
     "new": "  const want = layoutCrewLines(points, { scale, memory: sayMemory, dt, top: 0 });",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SAY-fade-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "tagAlpha(p.distance, CREW_SAY_RANGE, CREW_SAY_FADE_FROM)",
     "new": "tagAlpha(0, CREW_SAY_RANGE, CREW_SAY_FADE_FROM)",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "SAY-song-plain",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    set('kind', p.kind === 'sing' || p.kind === 'shout' ? `dfnaval-say ${p.kind}` : 'dfnaval-say', (v) => { slot.n.className = v; });",
     "new": "    set('kind', 'dfnaval-say', (v) => { slot.n.className = v; });",
     "tests": [

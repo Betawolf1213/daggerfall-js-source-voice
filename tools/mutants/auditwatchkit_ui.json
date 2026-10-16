@@ -127,7 +127,7 @@
   },
   {
     "name": "WK-U8-scale-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const dpr = clampDpr(screenDpr() * scale);",
     "new": "  const dpr = clampDpr(screenDpr());",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WK-U8-dpr-dropped",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "return iconOf(e.i, { box: MATE_FX_BOX, dpr });",
     "new": "return iconOf(e.i, { box: MATE_FX_BOX });",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WK-U8-picture-unsized",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "tile.append(showFitted(img, pics[k]));",
     "new": "img.src = pics[k].src; tile.append(img);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WK-U8-tile-12",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "width: ${MATE_FX_BOX}px; height: ${MATE_FX_BOX}px; box-shadow",
     "new": "width: 12px; height: 12px; box-shadow",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WK-U8-img-forced",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-crew-fxe > img { image-rendering: pixelated; display: block; }",
     "new": ".dfnaval-crew-fxe > img { width: 12px; height: 12px; image-rendering: pixelated; display: block; }",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WK-U8-never-refitted",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "join('')}@${dpr}`, () => {",
     "new": "join('')}`, () => {",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "WK-U8-box-not-the-icons",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "export const MATE_FX_BOX = 16;",
     "new": "export const MATE_FX_BOX = 12;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "WK-U9-debuff-dark",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-crew-fxe.debuff { box-shadow: 0 0 0 1px #e2554c; }",
     "new": ".dfnaval-crew-fxe.debuff { box-shadow: 0 0 0 1px #6b1d14; }",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "LD-NH-art-landing-ignored",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "set('fx', `${partyFxKey(fx)}#${pics.map((u) => (u ? 1 : 0)).join('')}@${dpr}`,",
     "new": "set('fx', `${partyFxKey(fx)}@${dpr}`,",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "LD-NH-debuff-unmarked",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "`dfnaval-crew-fxe${e.d ? ' debuff' : ''}`",
     "new": "'dfnaval-crew-fxe'",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "LD-NH-mate-bar-narrow",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-crew.mate { width: ${MATE_BAR_W}px; height: 5px; }",
     "new": ".dfnaval-crew.mate { height: 5px; }",
     "tests": [

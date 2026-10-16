@@ -9,7 +9,7 @@
 //
 //   WBX1 the one index type          render/renderer.js createMesh; the gate's, the court's and the land's builders
 //   WBX2 the portal home             scenes/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
-//   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/itemIconColor32.js
+//   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/item/itemIconColor32.js
 //   WBX4 his damage and his mark     net/gate/gateBrain.js `base`, net/gate/gateStrike.js strikeDamage; render/gateTelegraph.js mark
 //   WBX5 the phases                  net/gate/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
 //   WBX6 no regeneration, no wear    systems/courtRules.js; combat/formulas.js damageEquipment and the stand-in's spareGear
@@ -36,10 +36,10 @@ import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, 
 import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gate/gateBoss.js';
 import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
-import { bossBarModel, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';
+import { bossBarModel, BOSS_BAR_TEXT } from '../src/ui/gate/gateBossBar.js';
 import { createSpoilsPool, iconSize, SPOILS_ICON_ARCHIVE, SPOILS_ICON_MAX_M, SPOILS_ICON_M_PER_PX } from '../src/scenes/spoilsPool.js';
 import { lineHeight } from '../src/render/spoilsGlow.js';
-import { itemIconKey, itemIconColor32 } from '../src/ui/itemIconColor32.js';
+import { itemIconKey, itemIconColor32 } from '../src/ui/item/itemIconColor32.js';
 import { setCourtRules, regenBarred } from '../src/systems/courtRules.js';
 import { applySpell } from '../src/systems/effects.js';
 import { passiveSpecialsMagicRound, REGENERATE_AMOUNT, REGENERATE_PER_ROUNDS } from '../src/systems/passiveSpecials.js';
@@ -246,7 +246,7 @@ test('WBX3 the picture, the burst and the pieces\' words: the icon\'s key is its
   const { iconName } = await import('../src/ui/textureCanvas.js');
   assert.equal(itemIconKey({ archive: 207, record: 3, dye: 25, dyeTarget: 1 }), iconName(207, 3, 25, 1), 'F3: the pack\'s own name - the dye and its swatch');
   assert.notEqual(itemIconKey({ archive: 207, record: 3, dye: 18, dyeTarget: 1 }), itemIconKey({ archive: 207, record: 3, dye: 18 }), 'a silver blade is not the base one');
-  assert.match(read('src/ui/itemIconColor32.js'), /requestIcon\(img\.archive, img\.record, \{ scale: 1, dye: img\.dye, dyeTarget: img\.dyeTarget \?\? null \}\)/, 'F3: and asked by it');
+  assert.match(read('src/ui/item/itemIconColor32.js'), /requestIcon\(img\.archive, img\.record, \{ scale: 1, dye: img\.dye, dyeTarget: img\.dyeTarget \?\? null \}\)/, 'F3: and asked by it');
   assert.equal(await itemIconColor32(null), null);
   assert.equal(await itemIconColor32({ templateIndex: 101 }), null, 'node has no canvas - the pile stands');
   const gc = read('src/scenes/gateCourt.js');

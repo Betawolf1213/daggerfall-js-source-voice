@@ -933,7 +933,7 @@
   },
   {
     "name": "BAY-A10-wrap-let-back",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }",
     "new": "  overflow: hidden; text-overflow: ellipsis; }",
     "tests": [

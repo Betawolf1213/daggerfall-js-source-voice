@@ -62,7 +62,7 @@ import { morrowindDataGeneration } from '../scenes/dataSource.js';
 import { objectAabb, rayAabb, hasMeshCollider, RAY_DISTANCE } from '../player/activate.js';   // AUDIT 63 F37: one live box for both rays
 import { SOUND } from '../systems/soundClips.js';
 import { equipSoundFor } from '../characters/weapons.js';   // F023: GetEquipSound
-import { setMidScreenText } from '../ui/midScreenText.js'; import { weaponOffsetHeight } from '../ui/hudLarge.js';   // AUDIT 64 F34: FPSWeapon.cs:365's mid-screen line; CLIMB4: OnGUI's own offset, the climb's drop under it
+import { setMidScreenText } from '../ui/midScreenText.js'; import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';   // AUDIT 64 F34: FPSWeapon.cs:365's mid-screen line; CLIMB4: OnGUI's own offset, the climb's drop under it
 import { createWeaponWidget } from './weaponWidget.js';
 import { atlasFileName } from './diverseWeapons.js';   // DW1: the art cache's third key
 // SW1: SHIELD WIDGET. The sibling, beside the weapon's clone and driven
@@ -283,7 +283,7 @@ export async function autoBuildArms(entity, { dataCount = morrowindDataCount, me
   // AUDIT MW-EARLY F1: the early door's word first - its build may not be under way yet (`intent` is that door's own)
   if (_armsIntent && _armsIntent !== intent) await _armsIntent.done;
   // MWA4: the attached files are the switch - MWA1's `mwArms` pref (and MWA2's On/Off row over it) is retired, and
-  // Remove data is the off (ui/enhancedMenu.js morrowindCard)
+  // Remove data is the off (ui/enhanced/enhancedMenu.js morrowindCard)
   if (!entity?.chargenDone || !(dataCount() > 0) || standing(entity)) return null;
   // AUDIT 65 XL-6: the boot menu only COUNTS the store now (names, no
   // sizes), so this can run before the host bootstrap's fingerprint
@@ -391,7 +391,7 @@ export function muzzleRay(drawn, fovRad, forward = MUZZLE_FORWARD) {
  *  draw, take the sheet, let it go, where are the sheet's corners) - and
  *  wrote it inline in world.js's TRAVEL map builder. Then EM3/EM4 gave
  *  the SAME window its M-key doors (the town plan, the dungeon and
- *  building automaps) through ui/townMapDoor.js and ui/automapDoor.js,
+ *  building automaps) through ui/town/townMapDoor.js and ui/automap/automapDoor.js,
  *  and none of those doors passed a holder: every sheet opened with M
  *  fell to the painted gauntlets, and a player with Morrowind arms saw
  *  the Morrowind map only on V, outdoors. The holder is written once

@@ -12,7 +12,7 @@
 //   the link        net/gate/gateLink.js - the host folded, the gone kept for the court to play out
 //   the court       scenes/gateHost.js through scenes/gateCourt.js - bodies, blows judged on me, words, the targets
 //   the look        world/gate/gateBoss.js hostLookOf, hostAct, hostCue, hostStandIn
-//   the bar         ui/gateBossBar.js - the Ward-Bearers standing, his host counted
+//   the bar         ui/gate/gateBossBar.js - the Ward-Bearers standing, his host counted
 //   the plumbing    the dungeon context's swing, shaft and spell; the magic host's marks; the world host's doors
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 17.
@@ -37,10 +37,10 @@ import { hostLookOf, hostAct, hostFallAct, hostCue, hostStandIn, HOST_LOOKS, HOS
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { COURT_HOST_TEXT, hostShapes, HOST_SHAPES_MAX } from '../src/scenes/gateHost.js';
-import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard, MARK_TIPS, MARK_ICONS } from '../src/ui/gateMarksView.js';
-import { destroyGateGround } from '../src/ui/gateGroundView.js';
-import { damageChartModel, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_TEXT } from '../src/ui/gateDamageChart.js';
+import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard, MARK_TIPS, MARK_ICONS } from '../src/ui/gate/gateMarksView.js';
+import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
+import { damageChartModel, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_TEXT } from '../src/ui/gate/gateDamageChart.js';
 import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { fakeRooms } from './fakeRoom.mjs';

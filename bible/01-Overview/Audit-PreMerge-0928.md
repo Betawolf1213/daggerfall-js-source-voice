@@ -69,7 +69,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 | M3 | low | The billboard frame block's reset of the water column's switch had no pin that could fail. | A two-frame, two-call case in DW-F E-1 and the column in LA-COST1's EVERY-DRAW run. |
 | N7 | low | The merge made DW-F E-1's `${HIT_FLASH_GLSL}` group optional: deleting the classic flats' declaration passed every pin, though BB_FS calls hitFlashLit and would not compile. | Required again. |
 
-**Input and the UI** (`scenes/world.js`, `ui/touch.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`)
+**Input and the UI** (`scenes/world.js`, `ui/touch/touch.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

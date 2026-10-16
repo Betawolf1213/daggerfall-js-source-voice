@@ -9,9 +9,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { liveBundles, canEndBundle, endBundle, endedSpellText, ENDABLE_KINDS } from '../src/systems/mysticism.js';
 import { BUFF_KINDS } from '../src/systems/effects.js';
-import { statusTiles } from '../src/ui/hudStatus.js';
-import { activeSpellIcons, setHudPointer } from '../src/ui/hudActiveSpells.js';
-import { routeSpellIconClick } from '../src/ui/hudLarge.js';
+import { statusTiles } from '../src/ui/hud/hudStatus.js';
+import { activeSpellIcons, setHudPointer } from '../src/ui/hud/hudActiveSpells.js';
+import { routeSpellIconClick } from '../src/ui/hud/hudLarge.js';
 import { setCursorActive } from '../src/player/pointerLock.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -49,7 +49,7 @@ test('BUFF-END: ending takes every entry of that one bundle and nothing else, sa
 });
 
 test('BUFF-END: both HUDs carry the bundle and whether it may be ended - the enhanced tile, the classic icon', async () => {
-  const { effectRows } = await import('../src/ui/enhancedHud.js');
+  const { effectRows } = await import('../src/ui/enhanced/enhancedHud.js');
   const entity = { activeEffects: [e(1, 'shield'), e(3, 'shield', { bundleType: 'HeldMagicItem', bundleName: 'Ring' })] };
   const rows = effectRows(entity);
   assert.deepEqual(rows.map((r) => [r.name, r.bundleId, r.endable]), [['Shield Group', 1, true], ['Ring', 3, false]]);
@@ -76,7 +76,7 @@ test('BUFF-END: the classic right-click - the freed mouse over an icon the playe
     assert.equal(routeSpellIconClick(2, { entity, placed }), true);
     assert.deepEqual(entity.activeEffects.map((a) => a.bundleId), [3], 'the Shield Group is gone');
   } finally { setCursorActive(false); setHudPointer(-1, -1); }
-  const large = rd('src/ui/hudLarge.js');
+  const large = rd('src/ui/hud/hudLarge.js');
   assert.match(large, /if \(routeSpellIconClick\(button, \{ windowUp \}\)\) \{ event\?\.preventDefault\?\.\(\); return true; \}/, 'the icon\'s press raises no mousedown - no swing, no armed cast');
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeon.js']) {
     assert.match(rd(host), /routeLargeHudClick\([\s\S]{0,260}?event: e \}\)\) return/, `${host} hands the click door its event`);
@@ -84,14 +84,14 @@ test('BUFF-END: the classic right-click - the freed mouse over an icon the playe
 });
 
 test('BUFF-END: the enhanced widget takes the pointer only with the mouse freed, and the Stats page lists every spell with an End on the ones that may be ended', () => {
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const ending = cursorActive\(\) && !overlayOpen\(\) && !controllerLook\(\);/);
   assert.match(hud, /const g = endingGesture\(cellOf, \(bundle\) => \{\n\s*const name = endBundle\(last\.statEntity, bundle\);/);
   assert.match(hud, /stat\.addEventListener\('contextmenu', g\.menu\);/);
   // AUDIT 27h B1: the press is the widget's - no swing under it - and so is ITS release, and only its (test/audit27h.test.js runs the gesture)
   assert.match(hud, /stat\.addEventListener\('mousedown', g\.down\);\n\s*stat\.addEventListener\('mouseup', g\.up\);/);
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.hud-stat\.ending \.hst-cell\.can-end \{ pointer-events: auto; cursor: pointer; \}/);
-  const menu = rd('src/ui/enhancedMenu.js');
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.hud-stat\.ending \.hst-cell\.can-end \{ pointer-events: auto; cursor: pointer; \}/);
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\['effects', 'Effects'\],/);
   const at = menu.indexOf('function statsEffects(detail) {');
   const fn = menu.slice(at, menu.indexOf('\n}\n', at));

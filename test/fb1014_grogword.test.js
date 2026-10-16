@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { provisionOffer } from '../src/systems/naval/navalYard.js';
-import { yardText } from '../src/ui/navalYardWindow.js';
+import { yardText } from '../src/ui/naval/navalYardWindow.js';
 import { spiritsOf } from '../src/systems/naval/shipCrew.js';
 
 const ship = { hull: 10, maxHull: 10, sail: 10, maxSail: 10, crew: 8, maxCrew: 8, barrels: 0 };

@@ -211,7 +211,7 @@ test('CAP-OFF the host: five hundred Mining harvests today, the vein is ready - 
 // ─── THE PAGE AND THE WORDS ──────────────────────────────────────────
 
 test('CAP-OFF the Professions page: a gathering profession\'s day is its count - "Today: 61 harvests", "Today: 1 harvest" - Fishing\'s its hauls and Hunting\'s its hides, the rare hides still against their three (mutants: the old "of 60", "of 40", "of 30"; the plural lost)', async () => {
-  const { setProfessionsPages, drawProfessionsPage } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawProfessionsPage } = await import('../src/ui/professions/profPages.js');
   const tracks = new Map();
   const book = {
     state: { open: true, day: 1, character: 'c', account: 'a', readAt: Date.now(), stores: new Map(), tracks, today: { mining: 61, herbalism: 1 },

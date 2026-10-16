@@ -34,7 +34,7 @@ import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
 import { rollSerpentSpoils } from '../src/systems/serpent/serpentSpoils.js';
 import { rollSdSpoils } from '../src/systems/superDungeon/sdSpoils.js';
 import { socketWells, socketChooser, markSocketFrame, wellText, GEM_GRADE_COLOURS } from '../src/ui/socketWells.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { UNSET_ASK } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
 
@@ -499,8 +499,8 @@ test('GEM3 the wells, the chooser and the pips - and in the pack: an empty well 
     assert.equal(setIn(() => {}), false, 'the ladder off: never');
     on();
   } finally { delete globalThis.location; }   // AUDIT GEM: the page's word back whatever failed
-  assert.match(read('src/ui/enhancedInventory.js'), /markSocketFrame\(node, item\);/);
-  assert.match(read('src/ui/enhancedInventory.js'), /const w = socketBlock\(picked, side === 'local' && body, ready\);/);
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /markSocketFrame\(node, item\);/);
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /const w = socketBlock\(picked, side === 'local' && body, ready\);/);
   off();
   withDom(() => assert.equal(socketWells(holes(weapon(130))), null, 'off: nothing drawn'));
 });

@@ -17,7 +17,7 @@ import { FISH_ACT, tugWindow, PEARL, fishBand } from '../src/net/professionLaw.j
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { PASSIVE_FISH_SPECIES } from '../src/world/passiveFish.js';
 import { climateToBiome } from '../src/world/underwater/underwaterDecorations.js';
-import { createProfHud } from '../src/ui/profHud.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { WORLD_MAP_TILE_DIM } from '../src/world/terrain/terrainTiles.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
@@ -347,7 +347,7 @@ test('PROF8 book, page, words and wiring: the book keeps the account\'s hauls (t
   assert.match(pb, /applyHauls\(data\?\.hauls\);/);
   assert.match(pb, /applyHauls\(r\.data\?\.hauls\);/);
   assert.doesNotMatch(pb, /'prof-fish-cap'/, 'no forty to learn');   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills")
-  const pp = src('src/ui/profPages.js');
+  const pp = src('src/ui/professions/profPages.js');
   assert.match(pp, /const PRACTISED = Object\.freeze\(\['herbalism', 'mining', 'hunting', 'fishing',/);
   assert.match(pp, /t\('prof\.page\.today\.hauls', 'Today: \{hauls, plural, one \{# haul\} other \{# hauls\}\} - your account\\'s, across your characters', \{ hauls \}\)/);   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills"): 'of forty'; PIN MOVED (L10N4): the line through t(), its plural ICU's
   const w = src('src/scenes/world.js');

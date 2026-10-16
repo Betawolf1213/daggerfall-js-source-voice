@@ -111,7 +111,7 @@ test('DISC22-C: without the pack it is DFU\'s tooltip box; a frame with no loot 
 });
 
 test('DISC22-C: drawHud draws it on both classic branches, and the DOM plaque stays the enhanced skin\'s', () => {
-  const hud = readFileSync(join(ROOT, 'src/ui/hud.js'), 'utf8');
+  const hud = readFileSync(join(ROOT, 'src/ui/hud/hud.js'), 'utf8');
   assert.equal((hud.match(/drawClassicLoot\(renderer, canvas, font\);/g) ?? []).length, 2, 'the large-HUD branch and the plain one');
   assert.match(hud, /const loot = classicLootFrame\(frameMark\(\)\);/);
   assert.match(hud, /if \(loot\) drawLootPanel\(renderer, nativeMetrics\(canvas\), font, loot\.frame, loot\.lit, at\);/);   // AUDIT RETRO1 G5: `at` - beside the reticle where it is, above the bar

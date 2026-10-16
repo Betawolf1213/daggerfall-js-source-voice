@@ -26,7 +26,7 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { markGroup } from '../src/systems/travel/travelViewFilters.js';
-import { TRAVEL_VIEW_MARK_COLORS } from '../src/ui/travelViewHud.js';
+import { TRAVEL_VIEW_MARK_COLORS } from '../src/ui/travel/travelViewHud.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const O = () => ({ mpm: CALENDAR_MPM, memo: new Map() });
@@ -405,7 +405,7 @@ test('LW3 the Overworld knows a party on the road: the `wayfarer` kind is the tr
   assert.equal(markGroup('wayfarer'), 'travellers');
   assert.equal(markGroup('wayfarer caravan'), 'travellers');
   assert.equal(TRAVEL_VIEW_MARK_COLORS.wayfarer, '#c9a96e');
-  const hud = rd('src/ui/travelViewHud.js');
+  const hud = rd('src/ui/travel/travelViewHud.js');
   assert.match(hud, /if \(k === 'wayfarer'\) return k;/);
   // LW10: PIN MOVED - a caravan's mark is its wagon now (lw10_wagons.test.js); the rest keep the square
   // AUDIT LW-II F6: the square tied to the wayfarer's own branch again (its caravan's wagon between) - loose, any square drew it

@@ -23,7 +23,7 @@ import assert from 'node:assert/strict';
 import { keydown, keyup, windowListenerCount } from './chargenDom.mjs';
 import { createBindings, resetDefaults, setBinding } from '../src/systems/inputActions.js';
 import { setBindings, actionsOf } from '../src/ui/input.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
 import { PauseOptionsWindow } from '../src/ui/pauseWindow.js';
 
 console.warn = () => {};
@@ -143,7 +143,7 @@ test('AUDIT DISC28 UI-2: an inner layer backs out on the release too, a press ar
   assert.equal(up.stopped, false);
   next.menu.unmount();
   // ...and the boot door is no DFU window: it answers on the press, as it always has - the menu pad's Back
-  // (ui/menuPad.js) sends a press alone
+  // (ui/menu/menuPad.js) sends a press alone
   const boot = mountEnhancedMenu(globalThis.document.createElement('div'), { mode: 'boot', hooks: {}, onAction: () => {}, at: 'about' });
   assert.equal(sectionNow(), 'about');
   keydown('Escape', undefined, { key: 'Escape' });

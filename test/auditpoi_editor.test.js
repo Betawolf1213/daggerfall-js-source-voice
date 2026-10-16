@@ -8,7 +8,7 @@
 //     the handles and the lines of a POI shown as another (E17); the lines in the world pass's own pixels (E18); the
 //     editor's input, routed - the panel's controls (E2), what is let go (E14), the browser's own keys (E16);
 //   - the world (src/scenes/world.js, by source - its boot cannot run in node): the boot's key listeners stand down
-//     under the editor (E1, the bar's by behaviour: src/ui/enhancedHotbar.js), the held keys let go (E3), on foot alone
+//     under the editor (E1, the bar's by behaviour: src/ui/enhanced/enhancedHotbar.js), the held keys let go (E3), on foot alone
 //     (E12), 'here' on known ground (E13), leaving on a mode change, a load and a death (E14), a live POI clicked
 //     opened (E15).
 import './modsOff.js';
@@ -392,7 +392,7 @@ test('AUDIT POI E1: the bar\'s keys stand down while a hold stands - a digit und
   try {
     _resetForTests();
     setPref('quickbarStyle', 'hotbar');
-    const hb = await import('../src/ui/enhancedHotbar.js');
+    const hb = await import('../src/ui/enhanced/enhancedHotbar.js');
     hb.mountHotbarDock(mkEl('div'));
     hb.drawEnhancedHotbar(null, { paused: false });
     const send = () => { const e = ev({ type: 'keydown', code: 'Digit1', key: '1', repeat: false, target: { tagName: 'CANVAS' } }); for (const l of wl) if (l.t === 'keydown') l.f(e); return e; };

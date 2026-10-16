@@ -552,7 +552,7 @@
   },
   {
     "name": "GEM3-no-pips",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  markSocketFrame(node, item);   // GEM3: a socket's pip a socket in the top edge; a graded gem's ring (ui/socketWells.js)\n",
     "new": "",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "GEM3-the-wells-dead",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const w = socketBlock(picked, side === 'local' && body, ready); if (w) into.append(...w); }",
     "new": "  { const w = socketBlock(picked, false, ready); if (w) into.append(...w); }",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "GEM3-shattered-unasked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (wellAsk?.item !== item || wellAsk.at !== at) { wellAsk = { item, at }; wellOpen = null; notice = UNSET_ASK(v); render(); return; }\n",
     "new": "",
     "tests": [
@@ -597,7 +597,7 @@
   },
   {
     "name": "GEM3-the-gem-goes-nowhere",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "          const r = setGemPiece(home, /** @type {string} */ (gem), gemWho(), null, { from: picked });",
     "new": "          const r = { ok: false, reason: 'not' };",
     "tests": [
@@ -654,7 +654,7 @@
   },
   {
     "name": "AUDIT-GEM-set-in-off",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "side === 'local' && lootRarityOn() && gemKindOf(picked)",
     "new": "side === 'local' && gemKindOf(picked)",
     "tests": [
@@ -663,7 +663,7 @@
   },
   {
     "name": "AUDIT-GEM-unknown-homes",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "emptySockets(it) > 0 && itemIsIdentified(it));",
     "new": "emptySockets(it) > 0);",
     "tests": [
@@ -672,7 +672,7 @@
   },
   {
     "name": "AUDIT-GEM-a-stale-question",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (body && picked !== wellPick) { wellOpen = null; wellAsk = null; gemTargets = null; wellPick = picked; }",
     "new": "",
     "tests": [

@@ -184,7 +184,7 @@ Mac's answers: a Features switch beside Weapon Sheathing, **closed by default**.
 group Combat, the port's own): pref `mwSteelHelm`, `closed` or `open` (ownArmorModels.js STEEL_HELM_STYLES - the
 switch's values ARE the helm's styles). It is the VIEWER's, as the sheathing is: read where the worn set is composed
 (fpArm.js, beside Show Nudity's weld), it is how this machine draws a steel helm - the player's and every peer's - and
-it never reaches the wire. Thrown, the tile rebuilds the standing body at once (ui/enhancedMenu.js TILE_AFTER, whose
+it never reaches the wire. Thrown, the tile rebuilds the standing body at once (ui/enhanced/enhancedMenu.js TILE_AFTER, whose
 after-step a choice's write takes as a switch's does); a peer's body takes it at its next build.
 
 ## Not done here

@@ -869,7 +869,7 @@
   },
   {
     "name": "SILVER-FINDS-bank-rows",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "            ['Found in loot today', `${(w.hooks.marks.today()?.found ?? 0)} of ${w.hooks.marks.today()?.findMax ?? MARKS_FAUCETS.find.perDay}`],   // SILVER-FINDS\n",
     "new": "",
     "why": "the Bank never says the day's finds",
@@ -879,7 +879,7 @@
   },
   {
     "name": "SILVER-FINDS-bank-serpents",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "['From gates, raids and serpents today',",
     "new": "['From gates and raids today',",
     "why": "the serpents unnamed under the cap they share",

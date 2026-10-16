@@ -237,7 +237,7 @@ killed by a mutant in `tools/mutants/hcc.json`.
   world pass.
 - U5: the naming prompt (and every DaggerfallInputMessageBox) drew DFU's
   parchment in the bitmap font under the enhanced skin. Under the enhanced
-  skin it is its own window in the skin's face (`ui/enhancedInputBox.js`):
+  skin it is its own window in the skin's face (`ui/enhanced/enhancedInputBox.js`):
   centred, the notice's panel and rule, the label and the live entry with a
   caret, and a caption that says Enter accepts and Escape cancels -
   ENH-NOTICE1's law kept, a field is a decision and never a notice.

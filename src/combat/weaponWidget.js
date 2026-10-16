@@ -69,7 +69,7 @@ import {
   getMeleeWeaponAnimTime, getBowCooldownTime, CLASSIC_UPDATE_INTERVAL, HIT_FRAME_MELEE, HIT_FRAME_BOW, MELEE_NUM_FRAMES, BOW_NUM_FRAMES,
 } from '../characters/weaponStates.js';
 import { WEAPON_TYPES, STATE_INDEX, ALIGN, NATIVE_W, NATIVE_H, WEAPON_FILE, weaponTypeForItem } from './fpsWeapon.js';
-import { weaponOffsetHeight } from '../ui/hudLarge.js';
+import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';
 import { swingSoundFor } from '../systems/soundClips.js';
 import { isEnchanted } from '../systems/inventory.js';
 import { atlasFileName, customTextureNames } from './diverseWeapons.js';   // DW1

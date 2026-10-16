@@ -8,7 +8,7 @@ import {
   BLINK_INTERVAL, MAX_ICON_POOL, ICON_SCHEMES, iconScheme,
   maxRoundsRemaining, activeSpellIcons, alignIcons, iconVisible,
   createBlinkClock, setHudPointer, hudPointer, activeSpellAt,
-} from '../src/ui/hudActiveSpells.js';
+} from '../src/ui/hud/hudActiveSpells.js';
 import { liveBundles } from '../src/systems/mysticism.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');
@@ -76,7 +76,7 @@ test('activeSpells: the scheme name is lowercased, and an unknown one falls to C
   // which throws on the first icon; the port names Classic instead.
   assert.equal(iconScheme('nonsense'), ICON_SCHEMES.classic);
   assert.equal(iconScheme(''), ICON_SCHEMES.classic);
-  assert.match(src('ui/hudActiveSpells.js'), /toLowerCase\(\)/, 'IconsPositioningScheme.ToLower');
+  assert.match(src('ui/hud/hudActiveSpells.js'), /toLowerCase\(\)/, 'IconsPositioningScheme.ToLower');
 });
 
 // ---------------------------------------------------------------
@@ -255,7 +255,7 @@ test('activeSpells: the icon under the pointer is the tooltip\'s, and the store 
 });
 
 test('activeSpells: the rows ride the ONE HUD call, on BOTH its branches, and all four hosts feed the pointer', () => {
-  const hud = src('ui/hud.js');
+  const hud = src('ui/hud/hud.js');
   // DaggerfallHUD.cs:209 enables activeSpells from ShowActiveSpells
   // alone; the large-HUD block at :214-220 turns off the vitals, the
   // compass and the mode icon and never touches these - so the rows

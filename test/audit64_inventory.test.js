@@ -29,13 +29,13 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { NativeInventoryWindow, INV_RECTS, ACCESSORY_RECTS, goldPanelRows } from '../src/ui/nativeInventory.js';
-import { NativeTradeWindow, TRADE_RECTS, REPAIR_ITEM_BG } from '../src/ui/nativeTrade.js';
+import { NativeInventoryWindow, INV_RECTS, ACCESSORY_RECTS, goldPanelRows } from '../src/ui/native/nativeInventory.js';
+import { NativeTradeWindow, TRADE_RECTS, REPAIR_ITEM_BG } from '../src/ui/native/nativeTrade.js';
 import {
   CELL_X, SLOT_H, CELL_W, LIST_SLOTS, ARROW_H, DOWN_ARROW_Y,
   itemBackgroundColour, drawCellBackground,
   QUEST_ITEM_BG, LIGHT_SOURCE_BG, SUMMONED_ITEM_BG,
-} from '../src/ui/itemScroller.js';
+} from '../src/ui/item/itemScroller.js';
 import {
   infoPanelShorten, itemInfoRows, itemInfoPanelRows,
   PANEL_KG_SRC, PANEL_KG_REP, PANEL_DAM_SRC, PANEL_DAM_REP, PANEL_AR_SRC, PANEL_AR_REP,
@@ -222,7 +222,7 @@ test('AUDIT 64 F48: the tip is DRAWN, and drawn LAST - after the message-box pas
   // pinned off the source the way F53's cell pass is. What this
   // catches is the whole visible half of F48 going missing: a window
   // that resolves, feeds and times a tooltip nothing ever paints.
-  const src = read('src/ui/nativeInventory.js');
+  const src = read('src/ui/native/nativeInventory.js');
   const body = src.slice(src.indexOf('\n  draw(renderer, canvas, font) {'));
   const end = body.indexOf('\n  }\n');
   assert.ok(end > 0, 'draw() has a body');
@@ -381,7 +381,7 @@ test('AUDIT 64 F51: BOTH panel arms end in the one pass, as DFU\'s two callers d
   // then calls UpdateItemInfoPanel(tokens) - the SAME member the item
   // overload ends in. Wrapping only the item branch would leave the
   // gold arm on a different door than the reference's.
-  const inv = read('src/ui/nativeInventory.js');
+  const inv = read('src/ui/native/nativeInventory.js');
   const call = /const panelRows = infoPanelShorten\(this\.infoGold\s*\n\s*\? goldPanelRows\(/;
   assert.match(inv, call, 'the shortening wraps the WHOLE ternary, not one branch');
   // it is a no-op on today's gold strings, which already spell kg
@@ -562,8 +562,8 @@ test('AUDIT 64 F53: the quad fills the WHOLE 50x38 button cell, not the icon int
   // and BOTH windows' cell loops paint it FIRST, ahead of the icon:
   // the button's background colour precedes its child icon panel.
   for (const [file, icon] of [
-    ['src/ui/nativeInventory.js', 'this._icon('],
-    ['src/ui/nativeTrade.js', 'this._drawIcon('],
+    ['src/ui/native/nativeInventory.js', 'this._icon('],
+    ['src/ui/native/nativeTrade.js', 'this._drawIcon('],
   ]) {
     const src = read(file);
     const bg = src.indexOf('drawCellBackground(renderer, m, rect, s,');

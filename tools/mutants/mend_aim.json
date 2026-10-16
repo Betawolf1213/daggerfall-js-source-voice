@@ -43,35 +43,35 @@
   },
   {
     "name": "MEND-AIM-classic-never-asks",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "      target, chooseTarget: target == null,",
     "new": "      target, chooseTarget: false,",
     "tests": ["test/mend_aim.test.js"]
   },
   {
     "name": "MEND-AIM-classic-pick-unaimed",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "        onPick: (i) => this._use(r.item, collection, r.targets[i]),",
     "new": "        onPick: () => this._use(r.item, collection, r.targets[0]),",
     "tests": ["test/mend_aim.test.js"]
   },
   {
     "name": "MEND-AIM-pack-never-asks",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (act.kind === 'chooseTarget') { askTarget(act, collection); return; }   // MEND-AIM\n",
     "new": "",
     "tests": ["test/mend_aim.test.js"]
   },
   {
     "name": "MEND-AIM-pack-row-unaimed",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "closeTarget(); use(act.item, collection, piece); };",
     "new": "closeTarget(); use(act.item, collection, act.targets[0]); };",
     "tests": ["test/mend_aim.test.js"]
   },
   {
     "name": "MEND-AIM-back-closes-the-pack",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "(infoEl || menuEl || dismantleEl || targetEl)",
     "new": "(infoEl || menuEl || dismantleEl)",
     "tests": ["test/mend_aim.test.js"]

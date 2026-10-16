@@ -208,11 +208,11 @@ test('SURV5: by source - the four hosts chain the third box, the enhanced HUD ca
   // ...and the ONE place it becomes rows, so the page cannot be dropped
   // by a host that forgets it.
   assert.match(read('src/ui/statusBox.js'), /if \(survival\) rows\.push\('', \.\.\.survivalStatusRows\(entity, survival\.minutes, \{ rules: survivalRules\(\), \.\.\.survival \}\)\);/);   // PIN MOVED (AUDIT C&C S11): and the live tier, read once
-  const hud = read('src/ui/enhancedHud.js');
+  const hud = read('src/ui/enhanced/enhancedHud.js');
   // UI3: the needs are the status widget's tiles - a felt need amber, one that costs red
   assert.match(hud, /const needs = survivalOn\(\) \? survivalHudChips\(vitals, Math\.floor\(ownMinutes\(\)\), \{ vampire: !!liveVampirism\(vitals\), endurance: liveStat\(vitals, 'endurance'\), rules: survivalRules\(\), live \}\) : \[\];/);   // PIN MOVED (AUDIT SURV-BOONS C14): and the live tier   // PIN MOVED (AUDIT C&C S5/S9): its rules, and the frame's one live reading
   assert.match(hud, /const all = statusTiles\(\{ spells, powers, afflictions: afflictionRows\(vitals\), needs, rested \}\);/);   // REST1: and the Next night tile
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hst-cell\.danger \{/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hst-cell\.danger \{/);
   const wm = read('src/scenes/worldModes.js');
   assert.match(wm, /climateIndex: \(\) => host\.climateIndex\?\.\(\) \?\? 232,\s*\n\s*advanceMinutes: \(n\) => interiorTicker\.advance\(n\),\s*\n\s*endurance: \(\) => liveStat\(playerEntity, 'endurance'\),/);
   assert.match(read('src/scenes/world.js'), /climateIndex: \(\) => maps\.getClimateIndex\(playerTravelPixel\(\)\.x, playerTravelPixel\(\)\.y\),   \/\/ SURV5/);

@@ -108,7 +108,7 @@ A developer's alone, as every review route.
 
 - `scenes/world.js` - WIRED: the worn offer; its street's foe pool (the grant, the heir) through `exteriorFoes.js`.
 - `scenes/worldModes.js` (interiors) - WIRED: a building's containers through `world/interior/interiorShared.js`; its foe pool
-  through `exteriorFoes.js`; the classic pack's put through `ui/nativeInventory.js`.
+  through `exteriorFoes.js`; the classic pack's put through `ui/native/nativeInventory.js`.
 - `scenes/dungeonContext.js` - WIRED: its three sites (a record said, a record heard, a body on the wire).
 - `scenes/exterior.js` - NOT WIRED on purpose: the offline fixed city has no relay and no other player; its pack's put
   reads DFU's law offline.

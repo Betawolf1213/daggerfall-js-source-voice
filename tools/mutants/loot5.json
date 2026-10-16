@@ -325,7 +325,7 @@
   },
   {
     "name": "LOOT5-the-chip-uncoloured",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    const colour = set?.colour ?? (t.set === 'legendary' ? RARITIES.legendary.colour : undefined);",
     "new": "    const colour = set?.colour;",
     "tests": [

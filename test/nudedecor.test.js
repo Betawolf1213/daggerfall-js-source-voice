@@ -217,7 +217,7 @@ const NO_PERSON = Object.freeze({
   'src/scenes/spoilsPool.js': 'a boss\'s spoils',
   'src/scenes/treeHost.js': 'felled trees',
   'src/scenes/yardNature.js': 'a yard\'s trees and plants',
-  'src/ui/automapWindow.js': 'the automap\'s markers',
+  'src/ui/automap/automapWindow.js': 'the automap\'s markers',
 });
 
 test('NUDE-HOSTS by source: every file of src/ that batches a billboard is named - a person host asks drawnFlat, any other says what it draws instead; Come Sail Away\'s prefabs stand none of the table\'s figures (a new host fails here the day it lands)', () => {

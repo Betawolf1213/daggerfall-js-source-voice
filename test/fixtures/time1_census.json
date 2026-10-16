@@ -882,25 +882,25 @@
    "why": "the nightfall words"
   },
   {
-   "file": "src/ui/enhancedMenu.js",
+   "file": "src/ui/enhanced/enhancedMenu.js",
    "has": "const copy = onlineCopyOf(snap, sharedClassicMinutes(Date.now()));",
    "clock": "event",
    "why": "the event minute a character joins at"
   },
   {
-   "file": "src/ui/enhancedMenu.js",
+   "file": "src/ui/enhanced/enhancedMenu.js",
    "has": "const d = dateFromClassicMinutes(Math.floor(skyMinutes()));",
    "clock": "sky",
    "why": "the menu's date and time"
   },
   {
-   "file": "src/ui/enhancedMenu.js",
+   "file": "src/ui/enhanced/enhancedMenu.js",
    "has": "export function statsLaw(detail, entity, { worldNow = trustedWorldMinutes() } = {}) {",
    "clock": "event",
    "why": "a banishment's term"
   },
   {
-   "file": "src/ui/enhancedMenu.js",
+   "file": "src/ui/enhanced/enhancedMenu.js",
    "has": "const midnight = wallMsForSkyMinutes(Math.ceil(skyClassicMinutes(turn) / 1440) * 1440);",
    "clock": "sky",
    "why": "the Online pane's sentence: the sky's first midnight after its switch, said in local minutes (TIME4)"

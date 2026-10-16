@@ -5,10 +5,10 @@
 // the staging model, which is what the source actually carries.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { NativeTradeWindow, TRADE_RECTS, LIST_SLOTS, SLOT_H, CELL_W, CELL_X, ARROW_H, DOWN_ARROW_Y } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow, TRADE_RECTS, LIST_SLOTS, SLOT_H, CELL_W, CELL_X, ARROW_H, DOWN_ARROW_Y } from '../src/ui/native/nativeTrade.js';
 import { LETTER_OF_CREDIT_TEXT } from '../src/systems/tradeModes.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
-import { preloadTradeArt, tradeArtLoaded } from '../src/ui/nativeTrade.js';
+import { preloadTradeArt, tradeArtLoaded } from '../src/ui/native/nativeTrade.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';

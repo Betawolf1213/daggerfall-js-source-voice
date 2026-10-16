@@ -354,7 +354,7 @@
   },
   {
     "name": "SD25-the-hold-dropped",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const held = seconds(t) >= (VEIL_HOUR_HOLD_S[hourMode()] ?? 0);",
     "new": "const held = true;",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "SD25-one-ratchet",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "for (const want = Math.min(3, 1 + Math.floor((seconds(t) / VEIL_CLOSE_S) * 3)); ratchets < want; ratchets++)",
     "new": "for (const want = 1; ratchets < want; ratchets++)",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "SD25-the-quarters-mended-going-in",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const notes = m === SD_VEIL_MODE.home ? H.mended : H.quarters;",
     "new": "const notes = H.mended;",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "SD25-the-centre-unclamped",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "centre = l > VEIL_CENTRE_MAX ? [(x / l) * VEIL_CENTRE_MAX, (y / l) * VEIL_CENTRE_MAX] : [x, y];",
     "new": "centre = [x, y];",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "SD25-reduced-motion-never-asked",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "try { reduce = !!win.matchMedia?.(REDUCE_QUERY)?.matches; } catch { reduce = false; }",
     "new": "reduce = false;",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "SD25-the-veil-drawn-smooth",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const px = hp ? 'pixelated' : '';",
     "new": "const px = '';",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "SD25-the-veil-at-the-fire-scale",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const k = hp ? VEIL_HOUR_SCALE : VEIL_SCALE;",
     "new": "const k = VEIL_SCALE;",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "SD25-the-aim-never-read",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const c = opts?.centre ?? (fresh ? [aimX, aimY] : null),",
     "new": "const c = opts?.centre,",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "SD25-a-stale-aim-kept",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const fresh = now() - aimAt < VEIL_AIM_MS && theme !== VEIL_THEMES.hourCast;",
     "new": "const fresh = theme !== VEIL_THEMES.hourCast;",
     "tests": [
@@ -579,7 +579,7 @@
   },
   {
     "name": "SD25-the-forced-shatter-aimed",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "const fresh = now() - aimAt < VEIL_AIM_MS && theme !== VEIL_THEMES.hourCast;",
     "new": "const fresh = now() - aimAt < VEIL_AIM_MS;",
     "tests": [

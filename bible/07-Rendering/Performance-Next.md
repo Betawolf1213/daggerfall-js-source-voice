@@ -45,7 +45,7 @@ arrays, the same in every arm of an A/B).
 | allocated a frame (collected objects included) | - | 2.1 MB, 1.1 MB of it in the shadow replays |
 
 Outside the frame, on their own timers (a cost a second, not a frame - at ~0.4 fps here they read as a frame's): the
-music synth (~2.2 ms a second here), and the movable HUD's sweep (`ui/hudLayout.js`, ~31 `querySelectorAll` a sweep,
+music synth (~2.2 ms a second here), and the movable HUD's sweep (`ui/hud/hudLayout.js`, ~31 `querySelectorAll` a sweep,
 on a 250 ms interval AND from the HUD's frame tick, so about eight sweeps a second where four were meant).
 
 ## PERF-ON3 — the chat roster, derived once and not once a frame

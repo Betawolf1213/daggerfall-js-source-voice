@@ -28,7 +28,7 @@ import {
 import { createPageWindow, pageView, PAGE_CSS, PAGE_KEEP_TEXT, PAGE_KEPT_TEXT, PAGE_CLOSE_TEXT } from '../src/ui/pageWindow.js';
 import { socialMenuRows, socialPlaqueRows, plaqueRowFor } from '../src/ui/socialMenu.js';
 import { createSocialPanel, LETTER_KEPT_NOTE, LETTER_KEEP_FAILED_TEXT } from '../src/ui/socialPanel.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 import { SocialState } from '../src/net/social.js';
 import { MailBox } from '../src/net/mail.js';
 import { fakeRoom } from './fakeRoom.mjs';
@@ -505,7 +505,7 @@ test('JOURNAL1 the chronicle\'s Share: a NOTE offers to be shown or sent where t
   // THE SHEET (tools/journalProbe.mjs measures it): a word too long for the column breaks inside the card - the probe
   // found a note's seventy-column run of one word running out of it and the section scrolling sideways - and a reader's
   // name at its bound breaks inside its button; on a finger's device the strip's buttons are a finger's
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.cr-shell \.cr-prose p, \.cr-shell \.cr-entry p \{[^}]*overflow-wrap: anywhere;/);
   assert.match(css, /\.cr-shell \.cr-sharebox \.act \{ max-width: 100%; overflow-wrap: anywhere;/);
   assert.match(css, /@media \(pointer: coarse\) \{ \.cr-shell \.cr-sharebox \.act \{ min-height: 44px; \} \}/);
@@ -601,7 +601,7 @@ test('JOURNAL1 host by source: a page held out to me is HELD with its writer\'s 
   assert.match(onPage, /if \(!socialMenu \|\| !pageWin \|\| !d\?\.page\) return;\s*\n\s*if \(!pageOffers\.offer\(id, d\.page, peerName\(id\)\)\) return;\s*\n\s*tradeSay\(pageOfferText\(peerName\(id\), pageReadHow\(\)\)\);/);
   assert.doesNotMatch(onPage, /pageWin\.show|readPage/, 'nothing opens over the reader\'s game on its own');
   const block = w.slice(w.indexOf('const pageReadHow = () => {'), w.indexOf('const pageFrame = () => {'));
-  assert.match(block, /if \(isTouchDevice\(\)\) return 'face them and press /, 'on a phone, the social button - ui/touch.js\'s own F');
+  assert.match(block, /if \(isTouchDevice\(\)\) return 'face them and press /, 'on a phone, the social button - ui/touch/touch.js\'s own F');
   assert.match(block, /const tag = quickslotTag\('SocialInteract', \{ bindings: bindings\(\) \}\);\s*\n\s*return tag\?\.kind === 'key' \? `press \$\{tag\.text\} on them` : null;/, 'the F-menu\'s own key, off the live bindings');
   assert.match(w, /canInspect: true, canReadPage: !!pageOffers\.get\(peerId\), \.\.\.duelActionsFor\(peerId\) \}\);/, 'the one bag');
   assert.match(w, /if \(act\.k === 'page\.read'\) \{ readPage\(act\.peer\); return; \}/);

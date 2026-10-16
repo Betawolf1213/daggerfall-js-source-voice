@@ -35,8 +35,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createInventoryWindow } from '../src/ui/inventoryDoor.js';
-import { INV_RECTS } from '../src/ui/nativeInventory.js';
-import { CELL_X, SLOT_H } from '../src/ui/itemScroller.js';
+import { INV_RECTS } from '../src/ui/native/nativeInventory.js';
+import { CELL_X, SLOT_H } from '../src/ui/item/itemScroller.js';
 import { equipOf } from '../src/systems/equip.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

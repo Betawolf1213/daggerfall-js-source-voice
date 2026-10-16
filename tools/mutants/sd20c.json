@@ -406,7 +406,7 @@
   },
   {
     "name": "SD20C-V5-the-stone-light-made",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  const o = out ?? { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], stone: -1 };",
     "new": "  const o = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], stone: -1 };",
     "tests": [

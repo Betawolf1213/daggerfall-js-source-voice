@@ -202,7 +202,7 @@ The ring is drawn in HUB1's order (under the glyph, before any halo) and names a
 BUILT (SEAT1a): the unheld words (townSeatLaw.js charterName, seatArrivalLine - an unheld crown "Wayrest, capital of the
 Kingdom of Wayrest. Its Crown Charter is unheld.", the record naming only a held one) said in HUB1's place at a seat
 town's gate (a hub that is no seat keeps HUB1's line); the unheld ring, a crown's crown, a March's and a Free Land's
-second ring on the held map (ui/inkMap.js paintSeatRing, under the glyph, round a hub's circle), and the Charter in the
+second ring on the held map (ui/ink/inkMap.js paintSeatRing, under the glyph, round a hub's circle), and the Charter in the
 map's box. The held, Contested and siege-week marks come with their slices.
 
 ### 3.4 Banners and heraldry in the town
@@ -991,7 +991,7 @@ relay stamps on every row naming its wearer and both name faces draw as a thin b
 `net/remotePlayers.js`). DECIDED: a member who joined after that Turning wears none, and one who leaves the guild loses
 it at the next token; the colours are the guild's as they are now (a banner changed is a ribbon changed), Argent
 bordered Ash for a guild with no heraldry; AUDIT-SEATS: the Overworld travel view's badge draws it too (a band under
-the row, `ui/travelViewHud.js` TRAVEL_VIEW_RIBBON), and a guild taken off a socket takes its ribbon (the relay's
+the row, `ui/travel/travelViewHud.js` TRAVEL_VIEW_RIBBON), and a guild taken off a socket takes its ribbon (the relay's
 `_unguild`, the client's guild frame). The Chronicle as a book is part three's (9.2). The fortifications'
 wear - BUILT (SEAT2b part one; `server-account/src/seatForts.js` fortsSeasonStatements, every work a tier down at the
 Turning that ends a Season, in `seatTurning.js`; Season 0's wipe takes them instead).
@@ -1008,7 +1008,7 @@ from templates in the law module:
 - "Anticlere rose against the Silver Hand. The rebel captain fell at the palace door, and the Charter held."
 - "Under the Silver Hand, Anticlere proclaimed a Festival."
 
-The book is read through the enhanced book window the port already has (`src/ui/enhancedBook.js`).
+The book is read through the enhanced book window the port already has (`src/ui/enhanced/enhancedBook.js`).
 
 BUILT (SEASON1 part three, 2026-10-01, `acct59`; `06-Systems/Online-Arc.md` SEASON1 part three): the Chronicle in its
 Season's words (`townSeatLaw.js` `chronicleWhen` - "In the third week of the Season of Morning Star", the week's number
@@ -1216,7 +1216,7 @@ Every law in Home.md's Process section, and what it demands of this arc:
 | **ASYNC NEVER DROPS** | Every service call (pledge, tribute, window, edict, sign) carries a request id; a second press while one is in flight coalesces; a lost answer is re-asked with the same id (Renown's `last_rid` pattern). DECIDED (the audit of the arc, recording the departure): only two seat calls carry a request id - Tribute and a work's funding (`net/accountClient.js` accountSeats `tribute`, `fortFund`); the set-state acts carry none, because a re-asked one is idempotent or refused as a repeat: a pledge, a window and an Edict are upserts (`seatInfluence.js` pledgeSeat, `seatBattles.js` setWindow, `seatHolding.js` proclaimEdict - the same row written again, another of the hour's rate spent; a taking-down asked twice answers `seat-no-pledge`/`seat-no-edict`); a signing answers `sign-twice` and a hire `hire-twice` (`seatBattles.js` signBattle, hireSellsword). The second press is the Seat tab's one-at-a-time door (`ui.run`). NOT YET: a lost answer to a set-state act re-asked by itself - the player presses again |
 | **EVERY ALLOCATION HAS AN OWNER** | Banner quads are owned by the town's layout and freed with it; the siege HUD's elements by the siege room's session; the relay's siege state by its room, dropped when the window closes - all but its unposted result and Honours receipts, which it keeps with their ids until the service accepts them (17) |
 | **THE ONE CONSTRUCTION SEAM** | One constructor builds the board's window for every host; a test sweeps the source so no host `new`s it |
-| **THE NATIVE-WINDOW RULE** | It governs DFU's native windows: the offline bulletin board's parchment stays native, its ROAD A9 cites intact. The Seat tab and the siege HUD are the port's own Enhanced Plus windows and cite `src/ui/enhancedStyle.js`, not DFU rects |
+| **THE NATIVE-WINDOW RULE** | It governs DFU's native windows: the offline bulletin board's parchment stays native, its ROAD A9 cites intact. The Seat tab and the siege HUD are the port's own Enhanced Plus windows and cite `src/ui/enhanced/enhancedStyle.js`, not DFU rects |
 | **A SLICE CLOSES ITS LEDGER ROW** | SEAT1a adds Port-Ledger section A's row (EVERY PALACE A SEAT, online's own) with its first visible departures - the map rings, the arrival lines, the banners; each later slice narrows it; none leaves it stale |
 | **RETIRING A FLAG DELETES THE SENTENCE** | The fixed-city FLAGGED site above is listed in Home.md's open flags by the regenerator; the day it is wired, the sentence goes |
 | **DO NOT FIX WHILE THE VERIFIER IS READING** | Every slice's pre-merge audit runs on a frozen tree |

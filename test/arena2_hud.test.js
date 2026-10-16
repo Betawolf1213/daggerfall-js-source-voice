@@ -1,4 +1,4 @@
-// ARENA2 (2026-10-02, Mac: "All UI elements and text must be enhanced UI plus"): THE BOUT'S HUD (ui/arenaHud.js) - its
+// ARENA2 (2026-10-02, Mac: "All UI elements and text must be enhanced UI plus"): THE BOUT'S HUD (ui/arena/arenaHud.js) - its
 // pure model (the versus bar's two sides, my own row, the darling and the villain, the clock, the crowd's band, my
 // stamina, the yield hint, the crowd's shout), its DOM (textContent only, written on change, hidden never removed, no
 // colour inline, the touch size, reduced motion), its dress through the kit's roles and the Plus sheet; THE HERALD'S
@@ -7,14 +7,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_STYLE_ID, HUD_ROWS_MAX } from '../src/ui/arenaHud.js';
+import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_STYLE_ID, HUD_ROWS_MAX } from '../src/ui/arena/arenaHud.js';
 import { newBout, boutTick, boutAtMarks, callMs, COUNT_MS, boutHealth, BOUT_LIMIT_MS } from '../src/systems/arena/arenaBout.js';
 import { newCrowd } from '../src/systems/arena/arenaCrowd.js';
 import { heraldChoice, FIGHT_HEALTH_MIN } from '../src/systems/arena/arenaHerald.js';
 import { newArenaLadder, ladderAfter } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT, allArenaLines } from '../src/systems/arena/arenaText.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
-import { ONLINE_DRESS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
+import { ONLINE_DRESS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const RING = { centre: [0, 0], radius: 14 };
@@ -144,7 +144,7 @@ test('ARENA2 HUD sheet and dress: the pixel face, reduced motion, touch sizes, t
   for (const sel of ['body .arena-hud', 'body .arena-track', 'body .arena-fill', 'body .arena-stam .arena-fill', 'body .arena-crowd .arena-fill', 'body .arena-tag[data-tag="villain"]', 'body .arena-crowd-word[data-band="roar"]']) {
     assert.ok(ONLINE_DRESS_CSS.includes(sel), `the Plus sheet dresses ${sel}`);
   }
-  const hud = rd('src/ui/arenaHud.js');
+  const hud = rd('src/ui/arena/arenaHud.js');
   assert.ok(!/innerHTML/.test(hud), 'textContent only');
   assert.ok(!/style\.(color|background)/.test(hud), 'no colour written inline');
 });
@@ -208,7 +208,7 @@ test('ARENA2 words: one frozen table, every line plain - no long dash, no engine
 });
 
 test('ARENA2 sheet: the character sheet carries the arena\'s title and record - and nothing for one who never fought', async () => {
-  const { sheetModel } = await import('../src/ui/enhancedCharSheet.js');
+  const { sheetModel } = await import('../src/ui/enhanced/enhancedCharSheet.js');
   const hero = { name: 'A', race: 'Breton', level: 2, career: { name: 'Knight', primarySkills: [], majorSkills: [], minorSkills: [] },
     stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 },
     activeEffects: [], skills: {}, health: 10, maxHealth: 10, magicka: 0, maxMagicka: 0, fatigue: 100, goldPieces: 0, items: [] };

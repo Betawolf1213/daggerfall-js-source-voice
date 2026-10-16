@@ -20,7 +20,7 @@ import { LYCANTHROPY_SPELL_TAG, LYCANTHROPY_SPELL_ID } from '../src/systems/lyca
 import { getPref, setPref, _resetForTests, loadPrefs, PREF_DEFAULTS, overridesOf } from '../src/systems/uiPrefs.js';
 import { quickSlotsRead, quickSlotsWrite, QUICK_SLOTS_DEFAULT } from '../src/systems/featureLanes.js';
 import { FEATURES } from '../src/systems/features.js';
-import { hotbarMode } from '../src/ui/enhancedHotbar.js';
+import { hotbarMode } from '../src/ui/enhanced/enhancedHotbar.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -120,7 +120,7 @@ test('HB-LYCFREE: the free flag is keyed on the TAG, the books\' own test - one 
   assert.match(q, /const freeReady = \(sp\) => \(\{ free: sp\?\.tag === LYCANTHROPY_SPELL_TAG \}\);/);
   assert.equal((q.match(/magic\?\.readySpell\?\.\(r\.spell, freeReady\(r\.spell\)\)/g) ?? []).length, 2, 'both arms of the press');
   assert.equal((q.match(/magic\?\.readySpell\?\.\(r\.spell\)/g) ?? []).length, 0, 'no priced ready of the slot\'s spell left');
-  for (const f of ['src/ui/enhancedSpellbook.js', 'src/ui/spellbookWindow.js']) assert.match(read(f), /noSpellPointCost: [a-z.?]*spell\??\.tag === LYCANTHROPY_SPELL_TAG/, f);
+  for (const f of ['src/ui/enhanced/enhancedSpellbook.js', 'src/ui/spellbookWindow.js']) assert.match(read(f), /noSpellPointCost: [a-z.?]*spell\??\.tag === LYCANTHROPY_SPELL_TAG/, f);
 });
 
 // ── THE DEFAULT ──────────────────────────────────────────────────────

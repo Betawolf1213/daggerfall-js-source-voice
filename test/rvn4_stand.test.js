@@ -34,7 +34,7 @@ const { liveBlows, resetBlows } = await import('../src/ai/foeBlows.js');
 const { Collider } = await import('../src/player/collider.js');
 const { EnemyAI } = await import('../src/characters/enemyMotor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
-const { lastStandWords } = await import('../src/ui/revenantPage.js');
+const { lastStandWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn4') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, reflexes: 2, stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(40).fill(40), skillUses: new Array(40).fill(0), career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100, crimeCommitted: 4 });

@@ -98,7 +98,7 @@ test('CAMP-GROUND: the host wires the door that sees terrain, and falls back rat
 // else can be read. DEATHLOOP2 closed the loop that was producing
 // them; this closes the ring that was willing to draw them.
 test('NOTICE-SPAM: an immediate repeat refreshes the row it would have duplicated', async () => {
-  const { HudText } = await import('../src/ui/hudText.js');
+  const { HudText } = await import('../src/ui/hud/hudText.js');
   const h = new HudText();
 
   h.add('You are freezing.');
@@ -134,7 +134,7 @@ test('NOTICE-SPAM: an immediate repeat refreshes the row it would have duplicate
 });
 
 test('NOTICE-SPAM: only the IMMEDIATE repeat collapses - two real events both stand', async () => {
-  const { HudText } = await import('../src/ui/hudText.js');
+  const { HudText } = await import('../src/ui/hud/hudText.js');
   const h = new HudText();
 
   // "You are hit" twice with something between them is two blows, and

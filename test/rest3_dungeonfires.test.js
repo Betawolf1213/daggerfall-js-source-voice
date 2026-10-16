@@ -166,8 +166,8 @@ test('REST3 by source: the dungeon places them after its geometry and before its
   assert.match(dc, /if \(spot && [^\n]*inFireWard\(dungeonFires, spot\)\) spot = null;/);   // AUDIT REST-PARTY (PIN MOVED): the spawn asks the ward - C1's online gate before it is C1's own pin
   assert.match(dc, /fires: dungeonFires,/);
   assert.match(dc, /withFireMarks\(opts\.nodeMarks\?\.\(playerFeet\) \?\? null, dungeonFires, playerFeet\)/);
-  assert.match(rd('src/ui/automapDoor.js'), /fires: deps\.fires \?\? null,/);
-  assert.match(rd('src/ui/automapSheet.js'), /out\.push\(\{ x, z, y: p\[1\], kind: 'fire', name: 'Campfire' \}\);/);
-  assert.match(rd('src/ui/inkAutomap.js'), /if \(m\.kind === 'fire'\) \{/);
+  assert.match(rd('src/ui/automap/automapDoor.js'), /fires: deps\.fires \?\? null,/);
+  assert.match(rd('src/ui/automap/automapSheet.js'), /out\.push\(\{ x, z, y: p\[1\], kind: 'fire', name: 'Campfire' \}\);/);
+  assert.match(rd('src/ui/ink/inkAutomap.js'), /if \(m\.kind === 'fire'\) \{/);
   assert.match(rd('src/scenes/camps.js'), /hearths\?\.\(\)\?\.\[Number\(key\.slice\(7\)\)\]\?\.placed \? 'Campfire' : 'Fire'/);
 });

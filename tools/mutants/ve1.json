@@ -289,7 +289,7 @@
   },
   {
     "name": "VE3-packs-card-loses-the-switch",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],

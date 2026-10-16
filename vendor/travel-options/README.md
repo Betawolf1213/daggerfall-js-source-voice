@@ -89,13 +89,13 @@ roads-hazelnut/README.md`) records a permission from the same author.]**
 `src/systems/travel/travelOptions.js` is the mod (`TravelOptionsMod.cs`),
 `src/systems/travel/travelAutopilot.js` is Jedidia's `PlayerAutoPilot.cs`,
 `src/systems/travel/travelPaths.js` the path-following geometry,
-`src/ui/travelControlUI.js` the control panel (`TravelControlUI.cs`),
-`src/ui/travelJunctionMap.js` the junction mini-map, and
-`src/ui/travelPathsOverlay.js` the map window's path and dot drawing
+`src/ui/travel/travelControlUI.js` the control panel (`TravelControlUI.cs`),
+`src/ui/travel/travelJunctionMap.js` the junction mini-map, and
+`src/ui/travel/travelPathsOverlay.js` the map window's path and dot drawing
 (`TravelOptionsMapWindow.DrawPath` / `DrawLocation` /
 `DrawMapSection`). The travel map and popup overrides live in the
-port's own `src/ui/travelMapWindow.js` and `src/ui/travelPopUp.js`.
+port's own `src/ui/travel/travelMapWindow.js` and `src/ui/travel/travelPopUp.js`.
 The enhanced lane's control panel and junction map are
-`src/ui/enhancedTravelControl.js` - the port's own, not the mod's.
+`src/ui/enhanced/enhancedTravelControl.js` - the port's own, not the mod's.
 
 See `bible/06-Systems/Travel-Options.md`. Thank you, Hazelnut.

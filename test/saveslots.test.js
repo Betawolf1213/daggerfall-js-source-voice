@@ -223,7 +223,7 @@ test('SAV4: the host wiring source pins - per-character quickslots, the boot arm
   const menu = readFileSync(new URL('../src/scenes/menu.js', import.meta.url), 'utf8');
   assert.match(menu, /export const hasSavedGame = \(\) => !!mostRecentRestorable\(\);/);
 
-  const enhanced = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const enhanced = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(enhanced, /deleteSave\(save\.key\)/, 'the enhanced delete removes the SLOT it shows');
   assert.doesNotMatch(enhanced, /removeItem\(QUICKSAVE_KEY\)/);
 });

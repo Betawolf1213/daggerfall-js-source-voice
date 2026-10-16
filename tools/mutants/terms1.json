@@ -137,7 +137,7 @@
   },
   {
     "name": "TERMS1-a-box-drawn-ticked",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    box.checked = flow.agreed?.[key] === true;",
     "new": "    box.checked = true;",
     "tests": ["test/terms1.test.js"],
@@ -145,7 +145,7 @@
   },
   {
     "name": "TERMS1-the-link-in-the-games-tab",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    link.target = '_blank';\n",
     "new": "",
     "tests": ["test/terms1.test.js"],

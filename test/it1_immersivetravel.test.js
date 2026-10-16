@@ -20,7 +20,7 @@ import { customFactions, _resetCustomFactions } from '../src/formats/factionFile
 import { getCustomMerchantService, getCustomMerchantServiceLabel, hasCustomMerchantService, _resetMerchantServices } from '../src/systems/guild/guildServices.js';
 import { calculateTripCost, calculateTravelTime } from '../src/systems/travel/travel.js';
 import { guildFastTravel } from '../src/systems/guild/guildVariants.js';
-import { TravelPopUpWindow } from '../src/ui/travelPopUp.js';
+import { TravelPopUpWindow } from '../src/ui/travel/travelPopUp.js';
 import { staticNpcRoute } from '../src/systems/guild/guildServiceFlow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

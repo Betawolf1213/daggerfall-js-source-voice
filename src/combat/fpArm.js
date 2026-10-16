@@ -2637,7 +2637,7 @@ export async function buildFpArm({
     const robe = werewolf ? werewolfRobeOf(clothes) : null;
     // MW-STEEL1: THE STEEL HELM SWITCH (systems/features.js, pref `mwSteelHelm`) - closed or open, read here where the
     // worn set is composed, so the player's own figure and every peer's are drawn by the viewer's switch, as Show
-    // Nudity's weld below is. A switch thrown rebuilds the player (ui/enhancedMenu.js TILE_AFTER); a peer, its next build.
+    // Nudity's weld below is. A switch thrown rebuilds the player (ui/enhanced/enhancedMenu.js TILE_AFTER); a peer, its next build.
     const helmStyle = getPref('mwSteelHelm');
     // MW-LOAD: covers clothingColourOf's two synchronous reads (a
     // garment's part mesh and its texture) for every candidate the

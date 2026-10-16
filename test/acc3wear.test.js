@@ -19,7 +19,7 @@
 // wear anything, which is the hole ACC1g shut one field over.
 //
 // AND THE CARD MUST NOT STYLE ITSELF. ACC1e's own pin forbids a colour
-// in `ui/enhancedAccount.js`, and the first cut of this slice broke it
+// in `ui/enhanced/enhancedAccount.js`, and the first cut of this slice broke it
 // by writing `style.color` from the badge table. The colour moved into
 // the skin, WALKED out of the vocabulary, so the gold on the card and
 // the gold over a head stay one fact.
@@ -29,9 +29,9 @@ import { readFileSync } from 'node:fs';
 
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { SESSION_KEY, DEFAULT_ACCOUNT_SERVICE, REFUSALS, accountRefusalText } from '../src/net/accountClient.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
 import { TITLE_TEXT, TITLE_RGBA, GLYPH_RGBA, badgeCss, badgeClass, cssRgba } from '../src/ui/playerBadge.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { TITLES, GLYPHS } from '../src/net/identityToken.js';
 import { rosterRows } from '../src/net/roster.js';
 
@@ -206,7 +206,7 @@ test('ACC3c: the card writes a CLASS and the skin carries the colour - walked ou
   // this slice broke it by setting `style.color` off the badge table.
   // That pin was right: two copies of a design language is how the
   // front door and the rooms behind it drift apart.
-  const js = src('src/ui/enhancedAccount.js')
+  const js = src('src/ui/enhanced/enhancedAccount.js')
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|[ \t])\/\/[^\n]*/gm, '$1');
   assert.doesNotMatch(js, /\.style\./, 'the card styles itself again');
@@ -231,7 +231,7 @@ test('ACC3c: the card writes a CLASS and the skin carries the colour - walked ou
 });
 
 test('ACC3c, GLYPH-WEAR: a glyph is a button now - Mac (2026-10-02): "can we make it where players can also equip/unequip their glyphs" - pressed off and on through the flow, and it says which way it will go', () => {
-  const js = src('src/ui/enhancedAccount.js');
+  const js = src('src/ui/enhanced/enhancedAccount.js');
   // Read off the source, as the pin it replaces was: the glyph arm builds a button, hangs the flow's toggle on it, and
   // says whether it is shown - the title's own picker shape.
   const wardrobe = js.slice(js.indexOf('function wardrobe()'), js.indexOf('function paint()'));

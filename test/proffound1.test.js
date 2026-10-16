@@ -4,7 +4,7 @@
 // counter (DECOR2b) and Carpentry's workbench (PROF4) - was the one DFU keeps off the Where-is page (TalkManager
 // CheckBuildingTypeInSkipList) and draws in the house colour (ExteriorAutomap.cs:1482-1541), because classic never
 // opened it. It is asked after under its own group now (systems/topicTree.js, scenes/townTalk.js's fallback) and drawn
-// in the shop's colour on both town maps (ui/townQuarters.js), from one law (world/buildingNames.js OPENED_SHOP_TYPES).
+// in the shop's colour on both town maps (ui/town/townQuarters.js), from one law (world/buildingNames.js OPENED_SHOP_TYPES).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,10 +14,10 @@ import { TopicTree, LIST_ITEM_TYPE, QUESTION_TYPE, EN, checkBuildingTypeInSkipLi
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
 import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk/talk.js';
 import { yardDirectoryRows } from '../src/systems/merchantYards.js';
-import { quarterOf, quarterOfType, SHOP_SET, HOUSE_SET, OPENED_SHOP_BYTES, CLASSIC_ARGB } from '../src/ui/townQuarters.js';
-import { isEnterable } from '../src/ui/inkTown.js';
+import { quarterOf, quarterOfType, SHOP_SET, HOUSE_SET, OPENED_SHOP_BYTES, CLASSIC_ARGB } from '../src/ui/town/townQuarters.js';
+import { isEnterable } from '../src/ui/ink/inkTown.js';
 import { buildExteriorLayout } from '../src/ui/exteriorAutomapWindow.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

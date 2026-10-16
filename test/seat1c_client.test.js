@@ -13,7 +13,7 @@ import {
   SEAT_RING_SIEGE,
 } from '../src/net/townSeatLaw.js';
 import { createTownSeatBook } from '../src/net/townSeatBook.js';
-import { paintSeatRing } from '../src/ui/inkMap.js';
+import { paintSeatRing } from '../src/ui/ink/inkMap.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { SEAT_RELINQUISH_ARM_MS } from '../src/ui/seatTab.js';
 

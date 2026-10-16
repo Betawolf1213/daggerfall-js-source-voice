@@ -11,11 +11,11 @@ import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS, FELL_HOLD_MS, FELL_FADE_MS, CALLOUT_OUT_MS, INTRO_MS,
   FLASH_MS, WRATH_NEAR_MS,
-} from '../src/ui/gateBossBar.js';
-import { MARKS_CARD_CSS, aspectCss, drawGateMarksCard, destroyGateMarksCard, marksCardModel } from '../src/ui/gateMarksView.js';
-import { DAMAGE_CHART_CSS, CHART_IN_MS, CHART_ROW_STEP_MS, CHART_FILL_MS, DAMAGE_CHART_ROWS, DAMAGE_CHART_DELAY_MS, damageChartModel, drawGateDamageChart, destroyGateDamageChart } from '../src/ui/gateDamageChart.js';
-import { drawGateBanner, destroyGateBanner } from '../src/ui/gateBanner.js';
-import { drawGateGround, destroyGateGround, groundViewModel } from '../src/ui/gateGroundView.js';
+} from '../src/ui/gate/gateBossBar.js';
+import { MARKS_CARD_CSS, aspectCss, drawGateMarksCard, destroyGateMarksCard, marksCardModel } from '../src/ui/gate/gateMarksView.js';
+import { DAMAGE_CHART_CSS, CHART_IN_MS, CHART_ROW_STEP_MS, CHART_FILL_MS, DAMAGE_CHART_ROWS, DAMAGE_CHART_DELAY_MS, damageChartModel, drawGateDamageChart, destroyGateDamageChart } from '../src/ui/gate/gateDamageChart.js';
+import { drawGateBanner, destroyGateBanner } from '../src/ui/gate/gateBanner.js';
+import { drawGateGround, destroyGateGround, groundViewModel } from '../src/ui/gate/gateGroundView.js';
 import { GHOST_HOLD, GHOST_RATE } from '../src/ui/barLoss.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -265,7 +265,7 @@ test('WB13c the classic face is loaded by the gate\'s own screens - each asks fo
     assert.match(read(`src/ui/${f}.js`), /if \(doc\.head\) injectEnhancedFonts\(doc\);/, f);
   }
   assert.match(MARKS_CARD_CSS, /\.wb-marks-text \{ font-size: 13px; opacity: 0\.92; \}\n\.wb-marks-tip \{ font-size: 13px; opacity: 0\.85; color: #e9c9a6; \}/);
-  const plus = read('src/ui/enhancedPlusStyle.js');
+  const plus = read('src/ui/enhanced/enhancedPlusStyle.js');
   assert.match(plus, /body \.wb-ground-warn \{ \$\{PIXEL_FONT_CSS\} font-size: 16px;[\s\S]{0,120}background: rgba\(5,6,8,0\.55\);/);   // FONT3: the reading weight, not 400
   assert.match(plus, /body \.wb-boss-ward \{ inset: -5px; border-color: #ffe9a8;/, 'the ward a lit cage, apart from the frame\'s brass');
   assert.match(plus, /body \.wb-boss-track \{ margin: 7px 0 6px;/, 'room for the cage above and below');

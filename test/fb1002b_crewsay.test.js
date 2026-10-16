@@ -1,5 +1,5 @@
 // FIELD BUGS 2026-10-02b - THE CREW'S WORDS AUDITED (Mac: "Audit this"). FIELD BUGS 2026-10-02's CREW-SAY laid the
-// crew's bubbles clear of each other (ui/navalHud.js layoutCrewLines) - and its audit, over five minutes of real crews
+// crew's bubbles clear of each other (ui/naval/navalHud.js layoutCrewLines) - and its audit, over five minutes of real crews
 // at the helm and on deck, found three things wrong with how:
 //   TALK IS HIS OWN   - every line said by two at once was laid once, by no name: right for the chorus and a battle's
 //                       cry, wrong for talk - two pairs at one old yarn ("Heard the court at Daggerfall's hiring
@@ -19,7 +19,7 @@ import { createCrewLife, crewRoster, CHANTIES, sung } from '../src/systems/naval
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';
 import { buildDeck } from '../src/systems/naval/navalDeck.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
-import * as hud from '../src/ui/navalHud.js';
+import * as hud from '../src/ui/naval/navalHud.js';
 
 const { drawCrewLines, layoutCrewLines, crewSayBox, destroyNavalHud, CREW_SAY_LIFT, CREW_SAY_GAP } = hud;
 const EASE = hud.CREW_SAY_EASE ?? Infinity;

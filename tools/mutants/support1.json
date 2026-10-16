@@ -94,7 +94,7 @@
   },
   {
     "name": "SUPPORT1-door-without-asks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  home.append(supportMarks());",
     "new": "  void supportMarks;",
     "tests": [
@@ -104,7 +104,7 @@
   },
   {
     "name": "SUPPORT1-door-asks-inside-the-game",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "a.href = ask.url; a.target = '_blank';",
     "new": "a.href = ask.url; a.target = '_self';",
     "tests": [
@@ -114,7 +114,7 @@
   },
   {
     "name": "SUPPORT1-door-mark-read-aloud",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    mark.setAttribute('aria-hidden', 'true');\n    a.append(mark);",
     "new": "    a.append(mark);",
     "tests": [
@@ -124,7 +124,7 @@
   },
   {
     "name": "SUPPORT1-door-asks-over-a-game",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    home.append(profileMark());\n    // TIMERS1",
     "new": "    home.append(profileMark()); home.append(supportMarks());\n    // TIMERS1",
     "tests": [
@@ -134,7 +134,7 @@
   },
   {
     "name": "SUPPORT1-skin-without-the-marks",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "${SUPPORT_MARKS_CSS}\n.px-support {",
     "new": "\n.px-support {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SUPPORT1-plaque-top-right",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-support { position: absolute; top: 16px; left: 18px;",
     "new": ".px-support { position: absolute; top: 16px; right: 18px;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "SUPPORT1-cell-under-44",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "justify-content: center; width: 44px; height: 44px;\n  padding-bottom: 12px;",
     "new": "justify-content: center; width: 40px; height: 44px;\n  padding-bottom: 12px;",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "SUPPORT1-bodies-off-centre",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  padding-bottom: 12px; border: 0; outline: none; }",
     "new": "  padding-bottom: 8px; border: 0; outline: none; }",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "SUPPORT1-phone-offsets",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-support { top: 10px; left: 10px; }",
     "new": ".px-support { top: 10px; left: 16px; }",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "SUPPORT1-band-threshold",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (min-width: 481px) and (max-width: 788px) {",
     "new": "@media (min-width: 481px) and (max-width: 789px) {",
     "tests": [
@@ -195,7 +195,7 @@
   },
   {
     "name": "SUPPORT1-band-top-on-the-marks",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "{ padding: 84px 24px 76px; }",
     "new": "{ padding: 80px 24px 76px; }",
     "tests": [
@@ -205,7 +205,7 @@
   },
   {
     "name": "SUPPORT1-band-foot-short",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "{ padding: 84px 24px 76px; }",
     "new": "{ padding: 84px 24px 60px; }",
     "tests": [
@@ -215,7 +215,7 @@
   },
   {
     "name": "SUPPORT1-band-phone-floor",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "padding-top: max(7dvh, 72px);",
     "new": "padding-top: max(7dvh, 64px);",
     "tests": [
@@ -225,7 +225,7 @@
   },
   {
     "name": "SUPPORT1-no-plus-frame",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "    '.px-support',   // SUPPORT1",
     "new": "    // SUPPORT1",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "SUPPORT1-door-fit-no-centring",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "> :first-child { margin-top: auto; }",
     "new": "> :first-child { margin-top: 0; }",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "SUPPORT1-door-fit-bottom-margin",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "> :last-child { margin-bottom: auto; }",
     "new": "> :last-child { margin-bottom: 0; }",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "SUPPORT1-door-fit-no-scroll",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "{ justify-content: flex-start; overflow-y: auto; }",
     "new": "{ justify-content: flex-start; overflow-y: visible; }",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "SUPPORT1-door-fit-on-a-phone",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (min-width: 481px) {\n  .px-home:not(.px-over) > .px-stage:not(.px-acctstage) { justify-content: flex-start; overflow-y: auto; }",
     "new": "@media (min-width: 0px) {\n  .px-home:not(.px-over) > .px-stage:not(.px-acctstage) { justify-content: flex-start; overflow-y: auto; }",
     "tests": [
@@ -375,7 +375,7 @@
   },
   {
     "name": "SUPPORT1-caption-line-unbounded",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-home:not(.px-over) .px-profilesub { max-width: min(22ch, 140px); }",
     "new": ".px-home:not(.px-over) .px-profilesub { max-width: 22ch; }",
     "tests": [
@@ -385,7 +385,7 @@
   },
   {
     "name": "SUPPORT1-caption-bound-the-fonts",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "min(22ch, 140px)",
     "new": "min(22ch, 158px)",
     "tests": [
@@ -395,7 +395,7 @@
   },
   {
     "name": "SUPPORT1-caption-name-unbounded",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-home:not(.px-over) .px-profilename { max-width: min(14ch, 140px); }",
     "new": ".px-home:not(.px-over) .px-profilename { max-width: 14ch; }",
     "tests": [

@@ -75,9 +75,9 @@ import { ALIGN } from './weaponAlign.js';
 
 // The classic 320x200 design surface every weapon image overlays.
 // AUDIT 24 (wave 24): the classic 320x200 panel has one home in
-// ui/nativePanel.js.
-import { NATIVE_W, NATIVE_H } from '../ui/nativePanel.js';
-import { weaponOffsetHeight } from '../ui/hudLarge.js';   // ROAD-D D10: LargeHUDUndockedOffsetWeapon / the docked force
+// ui/native/nativePanel.js.
+import { NATIVE_W, NATIVE_H } from '../ui/native/nativePanel.js';
+import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';   // ROAD-D D10: LargeHUDUndockedOffsetWeapon / the docked force
 import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 
 export { NATIVE_W, NATIVE_H };

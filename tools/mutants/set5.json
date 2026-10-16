@@ -154,7 +154,7 @@
   },
   {
     "name": "SET5-the-info-box-without-the-block",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const set = setCard(item, deps.entity, itemLongName, { full: true }); if (set) body.append(set); }   // SET5: ...and a set piece's, its set (CARD-FIT: whole)\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SET5-the-strip-never-drawn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (sets) col2.append(sets);\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SET5-the-hotbars-key-blind-to-the-set",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "${validSigil(v.item.sigil) ? '*' : ''}${setIdOf(v.item) ?? ''}` : ''}",
     "new": "${validSigil(v.item.sigil) ? '*' : ''}` : ''}",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SET5-the-stage-line-outranked",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .card .setbox p.set-stage, .inv-info .setbox p.set-stage, .setbox p.set-stage {",
     "new": ".setbox p.set-stage {",
     "tests": [

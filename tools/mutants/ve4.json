@@ -155,7 +155,7 @@
   },
   {
     "name": "VE4-addon-rows-when-not-worn",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -164,7 +164,7 @@
   },
   {
     "name": "VE4-shipped-mod-removable",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -173,7 +173,7 @@
   },
   {
     "name": "VE4-packs-card-before-a-boot-empty",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js"
     ],

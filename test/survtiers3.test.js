@@ -307,7 +307,7 @@ test('the third pass: a Hard blackout says the waking - the classic window\'s bo
   const i = w.flow.top.picker.findIndex((t) => /Rye Liquor/.test(t));
   const box = w.flow.top.onPick(i);
   assert.deepEqual(box[0].rows.map((r) => r.text), [TAVERN_MENU_TEXT.blackout, TAVERN_MENU_TEXT.woke], 'the fall and the waking');
-  assert.match(read('src/ui/enhancedTavern.js'), /say\(b \? \[\.\.\.line\(r\.text\), \.\.\.line\(b\.text\)\] : line\(r\.text\)\);/, 'the enhanced window says both, as the classic one does');
+  assert.match(read('src/ui/enhanced/enhancedTavern.js'), /say\(b \? \[\.\.\.line\(r\.text\), \.\.\.line\(b\.text\)\] : line\(r\.text\)\);/, 'the enhanced window says both, as the classic one does');
   assert.doesNotMatch(STATUS_TEXT.stiff, /ground/, 'the page\'s stiff line fits the tavern floor too');
 });
 

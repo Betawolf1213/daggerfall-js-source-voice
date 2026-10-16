@@ -212,7 +212,7 @@ async function enhanced(over, fn) {
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.requestAnimationFrame = () => 0;
   try {
-    const { mountEnhancedRest } = await import('../src/ui/enhancedRest.js');
+    const { mountEnhancedRest } = await import('../src/ui/enhanced/enhancedRest.js');
     const calls = { night: 0, finished: 0 };
     const deps = {
       setResting() {}, setLoitering() {}, enemiesNearby: () => false, endLines: (id) => [`text ${id}`],
@@ -256,11 +256,11 @@ test('REST1 by source: every host that rests online names its rest point - the o
 });
 
 test('REST1 the Next night tile: a buff while the night interval runs, its real minutes at its foot, the campfire glyph; none once a night may pass', async () => {
-  const { statusTiles } = await import('../src/ui/hudStatus.js');
+  const { statusTiles } = await import('../src/ui/hud/hudStatus.js');
   const [t] = statusTiles({ rested: { minutes: 7 } });
   assert.deepEqual([t.key, t.kind, t.name, t.foot, t.glyph], ['rested', 'buff', 'Next night', '7m', 'rested']);   // PIN MOVED (AUDIT C&C, lens S): "Rested" stood beside Boons' Well rested
   assert.equal(t.name, REST_ACT_TEXT.rested, 'the act\'s own word for it');
   assert.deepEqual(statusTiles({ rested: { minutes: 0 } }), []);
   assert.deepEqual(statusTiles({ rested: null }), []);
-  assert.match(rd('src/ui/enhancedHud.js'), /const rested = sharedClockOn\(\) \? \{ minutes: nightRealMinutesLeft\(vitals, ownMinutes\(\)\) \} : null;/);
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /const rested = sharedClockOn\(\) \? \{ minutes: nightRealMinutesLeft\(vitals, ownMinutes\(\)\) \} : null;/);
 });

@@ -18,7 +18,7 @@
 // round-trip - a round-trip alone would bless two matching mistakes.
 //
 // THE RECT. ROAD-E E5: the world pass draws into the strip ABOVE a
-// docked large HUD (ui/hudLarge.js largeHudViewportRect - a normalized
+// docked large HUD (ui/hud/hudLarge.js largeHudViewportRect - a normalized
 // GL rect, y from the bottom), so screen<->NDC maps through that rect,
 // not the canvas. A finger in the bar's strip is no world tap at all:
 // the ray answers null and the host leaves the tap alone.

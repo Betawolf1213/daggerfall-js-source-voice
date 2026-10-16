@@ -412,7 +412,7 @@ test('PROF6 wiring: the routes behind a session and in the Worker\'s table with 
   assert.match(world, /\(!named \|\| named\.has\(it\.provenance\)\)\n\s*&& commissionFilledBy\(c, \{ recipe: pieceOfRecipe\(it, c\.recipe\) \? c\.recipe : null, quality: it\.quality \?\? null \}\) && wearOf\(it\) === WEAR_WHOLE/);
   assert.match(world, /const prof = professionName\(d\.track\?\.profession\) \|\| 'profession';/);
   assert.doesNotMatch(world, /Herbalism XP\./, 'the XP its writ\'s own profession\'s');
-  const css = src('src/ui/enhancedPlusStyle.js');
+  const css = src('src/ui/enhanced/enhancedPlusStyle.js');
   assert.match(css, /\.notice-card\.seal-commission, \.notice-read\.seal-commission \{ --seal: #3f7a3a; \}/);
   assert.match(css, /\.work-row \{ display: flex; flex-wrap: wrap;/);
   assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/writLaw\.js"/);

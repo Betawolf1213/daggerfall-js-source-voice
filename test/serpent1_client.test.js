@@ -28,8 +28,8 @@ import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
 import { NAVAL_CLASSIC } from '../src/systems/naval/navalSounds.js';
 import { rollSerpentSpoils, serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_GOLD_PER_LEVEL, STOOD_GOLD, SERPENT_SPOILS_KEYS } from '../src/systems/serpent/serpentSpoils.js';
 import { RAID_SPOILS_KEYS } from '../src/systems/raidSpoils.js';
-import { paintGateRing } from '../src/ui/inkMap.js';
-import { GATE_RING_CSS, readGateMark } from '../src/ui/gateMapMark.js';
+import { paintGateRing } from '../src/ui/ink/inkMap.js';
+import { GATE_RING_CSS, readGateMark } from '../src/ui/gate/gateMapMark.js';
 import { SERPENT_MAP_INK, SERPENT_RING_MAP_CSS } from '../src/ui/serpentMapMark.js';
 
 const close = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;

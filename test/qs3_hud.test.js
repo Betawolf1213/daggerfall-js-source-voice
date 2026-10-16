@@ -37,8 +37,8 @@ import { setPref } from '../src/systems/uiPrefs.js';
 setPref('quickbarStyle', 'quickbar');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const HUD = read('src/ui/enhancedHud.js');
-const CSS = read('src/ui/enhancedStyle.js');
+const HUD = read('src/ui/enhanced/enhancedHud.js');
+const CSS = read('src/ui/enhanced/enhancedStyle.js');
 
 const CODES = [...Array.from({ length: 10 }, (_, i) => `JoystickButton${i}`), ...GLYPH_AXIS_KEYS];   // PAD1: the ten buttons and the six axis keys
 
@@ -320,7 +320,7 @@ test('QS3: the sheet - clipped not rotated, one number for the geometry, and the
   // The narrow sheet shrinks the whole thing by the same one number...
   assert.match(CSS, /--qs-cell: 60px; --qs-box: 124px;/);
   // ...and lifts it over the touch layer's bottom-right button row.
-  // ui/touch.js puts Jump, the sheathe, the mode cycle and the social
+  // ui/touch/touch.js puts Jump, the sheathe, the mode cycle and the social
   // door there at edge 16, 48 tall; the leftmost starts at W - 280,
   // which is x 150 on a 430px phone - and the right tag reached it.
   // 76 is the number ui/partyPanel.js already uses to clear that
@@ -343,11 +343,11 @@ test('QS3: the block is written only when it CHANGED, and a phone can press it',
   // NOT by importing that 2200-line window into the HUD.
   assert.match(HUD, /import \{ modelIconUrl \} from '\.\/itemIconUrl\.js';/);
   assert.doesNotMatch(HUD, /from '\.\/enhancedInventory\.js'/, 'the window is named in a comment and imported nowhere');
-  assert.match(read('src/ui/enhancedInventory.js'), /import \{ modelIconUrl as modelIconUrlOf \} from '\.\/itemIconUrl\.js';/,
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /import \{ modelIconUrl as modelIconUrlOf \} from '\.\/itemIconUrl\.js';/,
     'and the window still draws its tiles with it');
-  assert.match(read('src/ui/enhancedInventory.js'), /const modelIconUrl = \(item, size\) => modelIconUrlOf\(item, size, deps\.fpArm\);/,
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /const modelIconUrl = \(item, size\) => modelIconUrlOf\(item, size, deps\.fpArm\);/,
     'through its own injected rig, exactly as before');
-  assert.doesNotMatch(read('src/ui/itemIconUrl.js'), /^import /m, 'the shared module imports nothing at all');
+  assert.doesNotMatch(read('src/ui/item/itemIconUrl.js'), /^import /m, 'the shared module imports nothing at all');
   // DEPARTURE 2: on a phone the cells are the only control for these
   // actions (AUDIT SOC C9's lesson). The `.hud` root stays unclickable.
   assert.match(CSS, /@media \(pointer: coarse\) and \(hover: none\) \{\s*\n\s*\.hud-qcell \{ pointer-events: auto; touch-action: none; \}/);
@@ -399,7 +399,7 @@ test('QS4: every host hands drawHud the diamond\'s three doors - a tap on a phon
 });
 
 test('QS3: drawHud forwards the sheathe state and the two phone doors', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   // `weaponSheathed` has reached drawHud since AUDIT 28 W2 (the arrow
   // counter's gate) and was never passed on, so the enhanced skin could
   // not tell a drawn sword from a put-away one.
@@ -467,7 +467,7 @@ test('QS3 the states, executed: the socket, the sheathed hand, the ghost\'s 0, a
     createElement: mkEl, createElementNS: (ns, tag) => Object.assign(mkEl(), { ns }),
     getElementById: () => null, head: mkEl(), body: mkEl(),
   };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { assignQuickslot, clearQuickslots } = await import('../src/systems/quickslots.js');
   const { setBindings } = await import('../src/ui/input.js');
   const { EQUIP_SLOTS } = await import('../src/characters/paperdoll.js');
@@ -563,8 +563,8 @@ test('QS3 the states, executed: the socket, the sheathed hand, the ghost\'s 0, a
 });
 
 test('QS the switch: the features row hides the DIAMOND alone - the caption and the keys stand', () => {
-  const HUD = read('src/ui/enhancedHud.js');
-  const CSS = read('src/ui/enhancedStyle.js');
+  const HUD = read('src/ui/enhanced/enhancedHud.js');
+  const CSS = read('src/ui/enhanced/enhancedStyle.js');
   // The read is the prefs shelf's, each frame, guarded on change like every other write here.
   assert.match(HUD, /const off = getPref\('quickslots'\) === false;/);
   assert.match(HUD, /parts\.quick\.classList\.toggle\('nodiamond', off\);/);
@@ -602,7 +602,7 @@ test('AUDIT QS6 F3/F4: the cycling lamp falls with the hold, and a finger mid-cy
   globalThis.clearTimeout = (h) => { if (h) live--; };
   globalThis.setInterval = (fn) => { live++; started.push(fn); return { id: live }; };
   globalThis.clearInterval = (h) => { if (h) live--; };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const q = await import('../src/systems/quickslots.js');
   const { setBindings } = await import('../src/ui/input.js');
   const store = createBindings();

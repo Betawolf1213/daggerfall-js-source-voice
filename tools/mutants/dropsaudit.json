@@ -64,7 +64,7 @@
   },
   {
     "name": "DA-F1-the-tracks-lose-their-loss-nodes",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    track.append(ghost, ...chunks); armChunks(chunks);",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DA-F2-dialog-double-press",
-    "file": "src/ui/enhancedDialog.js",
+    "file": "src/ui/enhanced/enhancedDialog.js",
     "old": "if (!active || active.spent) return; active.spent = true; press(b.button); closeEnhancedDialog();",
     "new": "press(b.button);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "DA-F3-the-stats-page-undressed",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  const detail = el('div', 'px-qdetail px-sys');   // DROPS-AUDIT F3",
     "new": "  const detail = el('div', 'px-qdetail');   // DROPS-AUDIT F3",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DA-F5-escape-closes-the-pack",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (menuEl && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(); return; }\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "DA-F6-notice-lets-tiles-act",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      if (win.box && !win.box.buttons?.length && !win.picker) { win.click?.(-1, -1); return; }\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "DA-F9-late-picture-any-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (tipEl && tipFor === item) showTip(item, from, row);",
     "new": "if (tipEl) showTip(item, from, row);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "DA-F10-menu-mid-drag",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "row.oncontextmenu = (e) => { e.preventDefault(); if (drag) return; openMenu(item, from,",
     "new": "row.oncontextmenu = (e) => { e.preventDefault(); openMenu(item, from,",
     "tests": [

@@ -4,7 +4,7 @@
 //
 //   (The keyed INVENTORY window that lived here is DELETED at U26.
 //   It was the dungeon host's until that slice swapped in the classic
-//   ui/nativeInventory.js window, after which nothing imported it.
+//   ui/native/nativeInventory.js window, after which nothing imported it.
 //   Its one law - EquipItem excludes exactly Weapons/Arrow and hands
 //   everything else to the equip table - was never the window's: it
 //   lives in systems/equip.js, where every host now reaches it.)
@@ -31,7 +31,7 @@ import { PlayerDeathSequence, DEATH_TIME_BEFORE_RESET } from '../systems/playerD
 import { playerEntity } from '../characters/playerEntity.js';   // D1: the death clip's race/gender
 import { audio } from '../systems/audio.js';
 import { isEnhanced } from '../systems/uiSkin.js';   // DEATH2: the enhanced skin paints its own
-import { drawEnhancedDeath, removeEnhancedDeath } from './enhancedDeath.js';
+import { drawEnhancedDeath, removeEnhancedDeath } from './enhanced/enhancedDeath.js';
 import { EYE_HEIGHT } from '../player/motor.js';   // DEATH3: the standing eye the fall starts from
 import { isOnlinePage } from '../systems/online/onlineLane.js';   // DEATH4: the online screen counts down, the offline one waits
 import { stateDeathLoss, deathGoldLoss, deathPenaltyLine } from '../systems/deathPenalty.js';   // DEATH-PENALTY: the screen says what the respawn is about to take

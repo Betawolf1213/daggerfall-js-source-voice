@@ -1,7 +1,7 @@
 // TI2 - THE PHONE IN HAND, TUNED (2026-09-11, Mac: "enhance the mobile
 // element of DFJS in terms of camera movement, character movement and
 // a more phone built feel where it doesnt seem so non-native"). The
-// pure halves EXECUTE (ui/touchLook.js, the MoveAxes joystick arm);
+// pure halves EXECUTE (ui/touch/touchLook.js, the MoveAxes joystick arm);
 // the layer runs against the same stub document AUDIT 62 built; the
 // hosts, the pane, the manifest and the prefs are text-pinned. Every
 // pin names the mutant that kills it.
@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lookNormalisation, analogAxes, gyroLookDelta, TOUCH_REF_HEIGHT, STICK_DEAD_ZONE } from '../src/ui/touchLook.js';
+import { lookNormalisation, analogAxes, gyroLookDelta, TOUCH_REF_HEIGHT, STICK_DEAD_ZONE } from '../src/ui/touch/touchLook.js';
 import { MoveAxes, MOVE_ACCELERATION_CONST } from '../src/player/moveAxes.js';
-import { attachTouch } from '../src/ui/touch.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { setBindings } from '../src/ui/input.js';
 import { createBindings, setBinding } from '../src/systems/inputActions.js';
 import { PREF_DEFAULTS, setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -263,7 +263,7 @@ test('TI2 touch.js: the gyro listener follows the pref, and dispose removes it (
 // the text pins
 // ---------------------------------------------------------------
 test('TI2 pins: the layer\'s chrome - safe-area edges, the inline name field, no window.prompt, the fullscreen ask from the first touch, haptics through the pref (mutant: any one back to TI1)', () => {
-  const s = read('src/ui/touch.js');
+  const s = read('src/ui/touch/touch.js');
   assert.match(s, /const edge = \(side, px\) => `\$\{side\}:calc\(\$\{px\}px \+ env\(safe-area-inset-\$\{side\}, 0px\)\)`;/, 'the safe-area helper');
   assert.doesNotMatch(s, /'(left|right|top|bottom):\d+px'/, 'no control is placed by a bare pixel edge any more');
   assert.doesNotMatch(s, /window\.prompt\(/, 'the native prompt is gone');
@@ -301,7 +301,7 @@ test('TI2 pins: the prefs shelf carries the touch knobs with their shipped answe
   assert.equal(PREF_DEFAULTS.touchGyroSensitivity, 1);
   assert.equal(PREF_DEFAULTS.touchHaptics, true);
   assert.equal(PREF_DEFAULTS.touchFullscreen, true);
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /import \{ isTouchDevice \} from '\.\/touch\.js';/);
   // SO1: the touch knobs are rows under CONTROLS (beside the mouse and
   // the pad), and the whole set is gated on the device the same way.

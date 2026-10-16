@@ -50,7 +50,7 @@ const { EnemyAI } = await import('../src/characters/enemyMotor.js');
 const { EnemyAttack } = await import('../src/characters/enemyAttack.js');
 const { MobileUnit } = await import('../src/characters/mobileUnit.js');
 const { SOUND } = await import('../src/systems/soundClips.js');
-const { weaknessWords, willWords } = await import('../src/ui/revenantPage.js');
+const { weaknessWords, willWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });

@@ -1,6 +1,6 @@
 // POI-3b (2026-10-14; bible/06-Systems/POI-Editor-Arc.md) - THE EDITOR'S PANEL, ITS IMPORT, AND ITS PLACE IN THE WORLD.
 // Mac: "a tool my developers can use without having to access the codebase ... I need to be able to approve changes".
-//   - the panel (src/ui/poiEditorPanel.js), headless over the shared fake document: the bar follows the editor's tools
+//   - the panel (src/ui/poi/poiEditorPanel.js), headless over the shared fake document: the bar follows the editor's tools
 //     and the undo; the outliner its POIs and their states; the inspector's fields each one step; what is wrong said in
 //     words, the asset check waiting for the assets; the store's acts - save, send, take back, refusals as sentences;
 //     opening from the store's list (my draft before the live revision); a close that asks again over unsaved work;
@@ -14,7 +14,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
-import { createPoiEditorPanel, stateText, stepText, createAssetFacts } from '../src/ui/poiEditorPanel.js';
+import { createPoiEditorPanel, stateText, stepText, createAssetFacts } from '../src/ui/poi/poiEditorPanel.js';
 import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
 import { prepareImport, uploadImport } from '../src/poi/poiImport.js';
 import { encodePoiMesh, POI_MESH_LIMITS } from '../src/poi/poiMesh.js';

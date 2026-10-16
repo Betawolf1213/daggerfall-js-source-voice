@@ -73,7 +73,7 @@
   },
   {
     "name": "STATION-DOOR-table-narrowed",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const STORES_ACT_STATIONS = Object.freeze({ alchemy: 'Brew', enchant: 'Disenchant' });",
     "new": "export const STORES_ACT_STATIONS = Object.freeze({ enchant: 'Disenchant' });",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "STATION-DOOR-table-widened",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const STORES_ACT_STATIONS = Object.freeze({ alchemy: 'Brew', enchant: 'Disenchant' });",
     "new": "export const STORES_ACT_STATIONS = Object.freeze({ alchemy: 'Brew', enchant: 'Disenchant', spells: 'Spell' });",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "STATION-DOOR-never-scrolled",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    globalThis.requestAnimationFrame?.(() => globalThis.document?.getElementById(head.id)?.scrollIntoView?.({ block: 'start' }));",
     "new": "    void head;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "STATION-DOOR-scrolled-every-draw",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    _storesFocus = null;\n    globalThis.requestAnimationFrame",
     "new": "    globalThis.requestAnimationFrame",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "STATION-DOOR-the-wrong-section",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  detail.append(stationHead(divider, t('prof.page.enchant', 'The Enchanting Station'), 'enchant'));   // STATION-DOOR",
     "new": "  detail.append(stationHead(divider, t('prof.page.enchant', 'The Enchanting Station'), 'alchemy'));   // STATION-DOOR",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "STATION-DOOR-how-says-nowhere",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "(a Mages Guild hall or your own home) from the Stores page. ",
     "new": "(a Mages Guild hall or your own home). ",
     "tests": [

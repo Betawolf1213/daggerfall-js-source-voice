@@ -276,7 +276,7 @@
   },
   {
     "name": "SEAT1a-map-no-seat",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    ...seatMarkOf(seatAt(m.summary)),",
     "new": "    ...seatMarkOf(null),",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "SEAT1a-map-reach-ignores-the-ring",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": " + (m.seat ? SEAT_RING_PAD : 0);",
     "new": " + 0;",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "SEAT1a-map-no-second-ring",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  if (mark.second?.length) {",
     "new": "  if (false) {",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "SEAT1a-map-no-crown",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  if (mark.crown) {",
     "new": "  if (false) {",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "SEAT1a-map-ring-over-the-glyph",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  for (const [m, x, y] of inked) if (m.seatMark) paintSeatRing(ctx, x, y, markReach(m), m.seatMark);\n  for (const [m, x, y] of inked) paintGlyph(ctx, m.kind, x, y, true);",
     "new": "  for (const [m, x, y] of inked) paintGlyph(ctx, m.kind, x, y, true);\n  for (const [m, x, y] of inked) if (m.seatMark) paintSeatRing(ctx, x, y, markReach(m), m.seatMark);",
     "tests": [

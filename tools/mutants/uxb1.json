@@ -10,7 +10,7 @@
   },
   {
     "name": "UXB1-D-clear-asks-nothing-and-clears-nothing",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  setUnsavedBinding(unsaved, action, null);\n  refresh();\n  repaint();\n}\n\nfunction answerPrompt(yes) {",
     "new": "  refresh();\n  repaint();\n}\n\nfunction answerPrompt(yes) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "UXB1-J-major-falls-into-the-last-column",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "    const col = cols[g < 2 ? 1 : 2];",
     "new": "    const col = cols[Math.min(2, g + (g >= 2 ? 0 : 1))];",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "UXB1-S-the-page-never-offers-both",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  if (prompt.kind === 'replace' && canShareKey(unsaved, prompt.action, prompt.code, prompt.holders)) {",
     "new": "  if (false) {",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "UXB1-S-a-shared-row-says-nothing",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  if (also.length) main.append(el('div', 'row-sub ctl-alsos',",
     "new": "  if (false) main.append(el('div', 'row-sub ctl-alsos',",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "UXB1-S-the-key-states-lose-to-the-shell",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".shell .ctl-key.ctl-shared, .px-sys .ctl-key.ctl-shared { color: #6fcf8a; border-color: #6fcf8a; }\n",
     "new": "",
     "tests": [
@@ -319,7 +319,7 @@
   },
   {
     "name": "UXB1-S-the-sticky-head-shows-the-rows-through",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".shell .card.ctl-head, .px-sys .card.ctl-head { background: #0d1014; }\n",
     "new": "",
     "tests": [
@@ -409,7 +409,7 @@
   },
   {
     "name": "AUDIT-UXB1-F4-a-returned-lot-stands-apart",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    addItem(this.hooks.shelfItems(), item);",
     "new": "    this.hooks.shelfItems().push(item);",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "AUDIT-UXB1-F4-the-enhanced-lot-back-beside-its-stack",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "    else unstageToShelf(item);   // AUDIT UXB1 F4: the whole lot rejoins its stack",
     "new": "    else move(item, basket, deps.shelfItems());",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "AUDIT-UXB1-F4-the-enhanced-clear-pushes",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (inBuy()) { while (basket.length) unstageToShelf(basket[0]); return; }",
     "new": "  if (inBuy()) { while (basket.length) move(basket[0], basket, deps.shelfItems()); return; }",
     "tests": [

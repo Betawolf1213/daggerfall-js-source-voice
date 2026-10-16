@@ -82,7 +82,7 @@
   },
   {
     "name": "OVH-loadimg-hands-the-pack-size",
-    "file": "src/ui/nativePanel.js",
+    "file": "src/ui/native/nativePanel.js",
     "tests": [
       "test/overhauls.test.js"
     ],
@@ -91,7 +91,7 @@
   },
   {
     "name": "OVH-loadimg-asks-no-pack",
-    "file": "src/ui/nativePanel.js",
+    "file": "src/ui/native/nativePanel.js",
     "tests": [
       "test/overhauls.test.js"
     ],

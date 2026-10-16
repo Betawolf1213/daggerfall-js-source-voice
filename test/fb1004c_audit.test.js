@@ -121,7 +121,7 @@ test('AUDIT WHERE-ROBES: a partner\'s envelope from before the pickup, landing A
 // ── the menu's click: its side and its place ──────────────────────────────────────────────────────────────────────
 
 test('AUDIT WHERE-ROBES: the enhanced menu sends the quest click for a LOOT row the moment it opens - a menu closed unused has clicked, as a look counts - and never for a row of the player\'s own pack (LocalItemListScroller_OnItemClick sends none) (mutants: the click moved into the take; the side gate dropped)', async () => {
-  const { hidePlusFloaters } = await import('../src/ui/enhancedInventory.js');
+  const { hidePlusFloaters } = await import('../src/ui/enhanced/enhancedInventory.js');
   const e = examination();
   const letter = e.q.getItem({ name: 'letter' });
   overPile(e, [e.robes], ({ host, rowOf }) => {

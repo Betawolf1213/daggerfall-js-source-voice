@@ -281,7 +281,7 @@
   },
   {
     "name": "LOOT7-hud-unnamed",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "    name: String(titled(e, e.name ?? e.career?.name ?? 'Foe')),",
     "new": "    name: String(e.name ?? e.career?.name ?? 'Foe'),",
     "tests": [

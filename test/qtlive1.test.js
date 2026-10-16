@@ -14,7 +14,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Clock, PLAYED_STEP_MAX_SECONDS } from '../src/systems/quest/clock.js';
-import { questTimerWords } from '../src/ui/enhancedMenu.js';
+import { questTimerWords } from '../src/ui/enhanced/enhancedMenu.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const questFor = (now, step) => ({ rolls: () => 0.5, nowSeconds: () => now.t, questClockStepMax: () => step.v, resources: new Map(), getPlace: () => null, travelSecondsTo: () => null, getTask: () => null });
@@ -74,7 +74,7 @@ test('QT-LIVE1c questTimerWords: the line for the selected quest off a FRESH log
 });
 
 test('QT-LIVE1d the journal arms the once-a-second redraw ONLY under a timer, reads the host\'s log fresh each time, rewrites the span in place, and repaints when the line is gone', () => {
-  const src = rd('src/ui/enhancedMenu.js');
+  const src = rd('src/ui/enhanced/enhancedMenu.js');
   const meta = src.slice(src.indexOf('if (sel.clockSeconds != null) {'), src.indexOf('if (meta.childNodes.length)'));
   assert.match(meta, /armQuestTimer\(timer, sel\.key\);/, 'armed inside the timer block, keyed on the selected row');
   const arm = src.slice(src.indexOf('function armQuestTimer(span, key) {'), src.indexOf('function remainWords(s) {'));
@@ -93,7 +93,7 @@ test('QT-LIVE1d the journal arms the once-a-second redraw ONLY under a timer, re
 // is the second interval, and a third cannot arrive without both
 // clears - the population is every `X = setInterval(` in the file.
 test('QT-LIVE1e every setInterval in the enhanced menu is cleared by the rebuild and by the unmount (derived)', () => {
-  const src = rd('src/ui/enhancedMenu.js');
+  const src = rd('src/ui/enhanced/enhancedMenu.js');
   const owners = new Set([...src.matchAll(/(\w+) = setInterval\(/g)].map((m) => m[1]));
   assert.ok(owners.has('groundTimer') && owners.has('questTimer'), `the intervals: ${[...owners].join(', ')}`);
   const rebuild = src.slice(src.indexOf('function renderInto() {'), src.indexOf('const shell = el(\'div\', \'shell\');'));

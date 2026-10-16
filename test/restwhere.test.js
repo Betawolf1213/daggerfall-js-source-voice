@@ -357,10 +357,10 @@ test('rest: both above-ground hosts run the DISPATCH, and ONLY its enemies arm r
   // the Vagrancy charge live in exactly one place each, and it is
   // never a host.
   assert.deepEqual(modulesMatching(/(?<![\w.])canRest\(/),
-    ['systems/rest/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js'],
+    ['systems/rest/restSession.js', 'ui/enhanced/enhancedRest.js', 'ui/restWindow.js'],
     'CanRest is DECLARED in restSession and CALLED by the two windows (PARTY-REST DROP: the enhanced rest window is the classic one\'s twin over the same session) - by no host');
   assert.deepEqual(modulesMatching(/ILLEGAL_REST_WARNING|illegalRestWarningText/),
-    ['systems/rest/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js']);
+    ['systems/rest/restSession.js', 'ui/enhanced/enhancedRest.js', 'ui/restWindow.js']);
   assert.deepEqual(modulesMatching(/getBool\('GUI', 'IllegalRestWarning'\)/),
     ['systems/rest/restSession.js'], 'the setting has one reader');
   // ...and the settings ledger names that reader. It named

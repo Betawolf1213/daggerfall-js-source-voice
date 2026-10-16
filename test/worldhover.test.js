@@ -32,8 +32,8 @@ import {
 } from '../src/ui/worldPlaque.js';
 import { foldQuickLoot, quickLootWheel, resetQuickLoot, quickLootRow, quickLootStats, quickLootTake } from '../src/systems/quickLoot.js';   // QUICK-LOOT B3: the two draw pins at the foot of this file drive the highlight through its own module
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
-import { CROSSHAIR_ARM, crosshairCentreY } from '../src/ui/hudCrosshair.js';
-import { hudScale } from '../src/ui/hud.js';
+import { CROSSHAIR_ARM, crosshairCentreY } from '../src/ui/hud/hudCrosshair.js';
+import { hudScale } from '../src/ui/hud/hud.js';
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../src/ui/drawWatchdog.js';   // DISC29-D: frames that pass undrawn
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -2095,7 +2095,7 @@ test('AUDIT-WH R7/R8/P7/P9: the list has a cap, a readout is the player\'s onlin
   // six-row pile under the reticle walked off the bottom of a short
   // viewport. The cap is the room BELOW the cross, which the anchor
   // already knows - `--wp-top` IS the plaque's top edge.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // LOOT-STACK: ...DOWNWARD only - `hidden` clipped across too and cut the highlight band off at the list's edges
   // (tools/lootStackProbe.mjs); `hidden` stays as the fallback a browser without `clip` keeps
   assert.match(css, /\.wplaque-list \{ display: block; max-height: calc\(100vh - var\(--wp-top, 55%\) - 24px\);\s*\n\s*overflow: hidden; overflow-x: visible; overflow-y: clip; \}/);

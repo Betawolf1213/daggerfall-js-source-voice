@@ -411,7 +411,7 @@ structure ours.
   End turn, Forfeit (two presses); the information box, filled by a press as by a hover; the log; the result. Every
   surface, line and number is section 14's (AUDIT KG D2-D23).
 - Not the native-window rule's - no DFU window stands behind it (`Tavern-Cards.md` section 14) - and no free style
-  either: it wears the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS), and the stone-and-brass kit paints it by
+  either: it wears the card tables' kit (`ui/card/cardPanelKit.js`, CARDS-PLUS), and the stone-and-brass kit paints it by
   role, as every Enhanced Plus screen (section 14.1). Its words are
   ours, plain, through the text core (14.4, 14.6); the mod's (section 2) are its record, never the screen's.
 
@@ -489,8 +489,8 @@ structure ours.
 - ASYNC NEVER DROPS: the relay's frames folded into one view, a word on its way said again (Hold'em's and Iliac Hand's
   client mirrors).
 - A SLICE CLOSES ITS LEDGER ROW: each slice opens or narrows its section A row.
-- THE CARD TABLES' KIT BY ROLE (AUDIT KG D1-D4, D23): the panel wears `ui/cardPanelKit.js`'s chrome, as Hold'em's and
-  Iliac Hand's do (CARDS-PLUS), and the stone-and-brass kit paints its every surface by role (`ui/enhancedFrame.js`
+- THE CARD TABLES' KIT BY ROLE (AUDIT KG D1-D4, D23): the panel wears `ui/card/cardPanelKit.js`'s chrome, as Hold'em's and
+  Iliac Hand's do (CARDS-PLUS), and the stone-and-brass kit paints its every surface by role (`ui/enhanced/enhancedFrame.js`
   FRAME_ROLES; PLUS-DRESS), in the pixel face (FONT1), at the type floor (FONT3) - 14.1, 14.2.
 - A FINGER HAS NO HOVER, AND IT IS 44 PX: what a hover says a press says; every press a finger's size on a phone (Plain
   Words law 5; U51) - 14.3.
@@ -508,7 +508,7 @@ Each ships alone and is verifiable without the next.
 | **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambit/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, the tiers over a regular's seed, the regular's army by the law's AutoFill (AUDIT KG C4). MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** SHIPPED (section 15) | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
-| **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
+| **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/card/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** SHIPPED (section 17) | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** SHIPPED (section 18) | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** SHIPPED (section 19) | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
@@ -930,7 +930,7 @@ sections above, each marked AUDIT KG and its id. In short:
   px, a press for every hover, the four plain-words blocks with every number the law's, the words through the text core
   with no pronoun guessed, and the cloth's marks in the house's coat, never colour alone. Hold'em's and Iliac Hand's
   panels, which had shipped outside the kit, were dressed in it the same day by CARDS-PLUS (`Tavern-Cards.md` section
-  38) through a shared kit, `ui/cardPanelKit.js`; the game's panel is the third to wear it (D1).
+  38) through a shared kit, `ui/card/cardPanelKit.js`; the game's panel is the third to wear it (D1).
 - THE RECORD'S OWN WORDS (K1, the author's): the regulars are of both genders, and this record, the KG2 module, its
   tests and its Ledger row called every one "he". Each is the regular, or the regular's name, now.
 
@@ -948,7 +948,7 @@ section (14.9).
 ### 14.1 ONE TABLE, ONE COAT - the card tables' kit
 
 - THE CARD TABLES' KIT (CARDS-PLUS, `Tavern-Cards.md` section 38, merged to main the same day; AUDIT KG D1). Hold'em's
-  `.dfcards` and Iliac Hand's `.dfiliac` wear the stone-and-brass kit through one home, `ui/cardPanelKit.js`: the chrome
+  `.dfcards` and Iliac Hand's `.dfiliac` wear the stone-and-brass kit through one home, `ui/card/cardPanelKit.js`: the chrome
   both wear (`cardPanelChromeCss` - the window's box, bounded by the screen's height and scrolling inside; the header
   band `.tablehead` and its `.fold`; the `.tablenote`; the line `.msg` and its tones; the presses' row `.tableacts` and
   their kinds, `data-kind` primary, quiet and warn; the `.log`), the classic skin's copy of the kit cut to the panels
@@ -1116,7 +1116,7 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 - Every word a player reads goes through `t(key, en, args)` under `cards.kingsGambit.*`, read when it is shown, never at
   a module's load (`tools/l10n/ROUTE-BRIEF.md`); one sentence one pattern, plurals by ICU, never fragments glued. The new
   modules hold no hard-coded prose (the ratchet holds a new file at 0) and the files they touch hold their counts:
-  `ui/cardTableHud.js` (80 at KG3), `ui/iliacTableHud.js` (63), `world/card/cardRegulars.js` (10), `systems/modSettings.js`
+  `ui/card/cardTableHud.js` (80 at KG3), `ui/iliacTableHud.js` (63), `world/card/cardRegulars.js` (10), `systems/modSettings.js`
   (243), `systems/tutorialCatalogue.js` (219), and at KG3 `ui/credits.js` (86), `systems/features.js` (135),
   `scenes/worldModes.js` (84) and `scenes/world.js` (350). Every key ships its drafts in the thirteen whole languages
   (L10N6's rule; the twelve drafting owe them - 16.5).

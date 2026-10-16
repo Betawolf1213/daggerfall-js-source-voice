@@ -277,7 +277,7 @@ test('audit24 wave39: which hits flash is a LAW, not an omission', () => {
   // THE FOUR HOSTS RULE: it rides the one drawHud call all four make,
   // and runs BEFORE the no-art return because a host with no HUD art
   // still takes damage.
-  const hud = rd('src/ui/hud.js');
+  const hud = rd('src/ui/hud/hud.js');
   const body = hud.slice(hud.indexOf('export function drawHud('));
   assert.ok(body.indexOf('playerDamageFlash.draw(') < body.indexOf('if (!art) return;'), 'before the art guard');
   assert.match(hud, /export function drawHud\(renderer, canvas, art, vitals, heading01, dt = 0,/);

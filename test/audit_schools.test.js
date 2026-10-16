@@ -5,7 +5,7 @@
 // engine (scenes/hostMagic.js createPlayerMagic: its release, its missiles, its doors), real foes (characters/
 // enemyEntity.js makeEnemyEntity over enemyBasics.js), the save (systems/save/save.js), the round (systems/worldTick.js
 // runMagicRoundsFor), the one ask (scenes/shared.js raisePlayerSkills), the classic sheet (ui/charsheet.js CharSheet)
-// and the enhanced pause window (ui/enhancedMenu.js) - each number on both sides of its line, and each window just
+// and the enhanced pause window (ui/enhanced/enhancedMenu.js) - each number on both sides of its line, and each window just
 // before its end and just after.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -43,7 +43,7 @@ import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { duelStandIn } from '../src/combat/duelCombat.js';
 import { raisePlayerSkills } from '../src/scenes/shared.js';
 import { CharSheet } from '../src/ui/charsheet.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 
 const { Destruction: DES, Restoration: RES, Illusion: ILL, Alteration: ALT, Thaumaturgy: THA, Mysticism: MYS } = SKILLS;
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -771,7 +771,7 @@ test('AUDIT SCHOOLS L4 8 / L5 H3: THE ENHANCED MODEL - each path names its two s
 
 test('AUDIT SCHOOLS L5 H3: THE ENHANCED PAUSE WINDOW, DRIVEN - its Master Skills door counts the waiting specialisation, the page\'s Specialisation card names each path with its schools, Choose asks in the skin\'s Yes/No card and Yes chooses; a class that can never meet a path sees no card (mutants: the door\'s count; the card gone; Choose chooses nothing)', async () => {
   await import('./chargenDom.mjs');   // the pause window's document - its globals stand for the rest of this file: this test is the last
-  const { mountEnhancedMenu } = await import('../src/ui/enhancedMenu.js');
+  const { mountEnhancedMenu } = await import('../src/ui/enhanced/enhancedMenu.js');
   const kept = { ...playerEntity };
   const restore = () => { for (const k of Object.keys(playerEntity)) if (!(k in kept)) delete playerEntity[k]; Object.assign(playerEntity, kept); };
   try {

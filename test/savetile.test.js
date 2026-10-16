@@ -144,7 +144,7 @@ test('TILE2/ACC2: the cloud line, and the state that draws NONE of it', () => {
 
 test('AUDIT-312 F3: the cloud line\'s STATE is decided where a pin can reach it', () => {
   // WHY THIS PIN EXISTS. This arithmetic lived inside
-  // `ui/enhancedMenu.js` - DOM, a boot, and nothing node can drive - so
+  // `ui/enhanced/enhancedMenu.js` - DOM, a boot, and nothing node can drive - so
   // the audit's mutation campaign put three mutants of it through the
   // WHOLE SUITE and all three survived: an unfinished upload reading as
   // a finished backup, a listing never re-asked after a push, and every
@@ -180,7 +180,7 @@ test('AUDIT-312 F3: the cloud line\'s STATE is decided where a pin can reach it'
     { state: 'bad', when: null, error: 'too-large' });
 
   // ...AND THE TWO THINGS ONLY THE MENU CAN DO, held where they live.
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   // THE SLOT KEY IS THE SERVICE'S, and it comes from the module that
   // owns "a slot is (character, save name)". The menu's own copy had
   // dropped the character half, which makes every character's QuickSave
@@ -200,7 +200,7 @@ test('AUDIT-312 F1: the cloud DELETE has a door, and it asks twice', () => {
   // to "delete a save there to make room". An account at SAVES_MAX
   // could never back up again, and the only sentence it was given named
   // an act the game did not offer.
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /removeCloudSlot/, 'the menu calls the delete');
   // ...AND IT SAYS `backup`: the tile already has a Delete, the pane's
   // own, which removes the save from this device. Two buttons reading
@@ -237,7 +237,7 @@ test('AUDIT-312 F5: the ten heads stay POSITIONAL - the index IS the identity', 
   assert.doesNotMatch(face, /^\s*return set\.filter/m, 'a compacted set is a different index');
   // Both readers already draw something where a face is missing, which
   // is what makes the hole safe to keep.
-  assert.match(rd('src/ui/enhancedChargen.js'), /const art = faces\?\.canvases\?\.\[i\];/);
+  assert.match(rd('src/ui/enhanced/enhancedChargen.js'), /const art = faces\?\.canvases\?\.\[i\];/);
   assert.match(face, /const art = set\[i\] \?\? set\[0\] \?\? null;/);
 });
 
@@ -290,7 +290,7 @@ test('TILE2: a disabled action is not wired, and the actions are the PANE\'S - t
 });
 
 test('TILE2: ONE tile for THREE panes, and the classes it draws belong to nobody else', () => {
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   // The drift this retired: three hand-rolled copies of the same four
   // lines is how three panes come to disagree about what a save is.
   assert.doesNotMatch(menu, /function slotCard\(/, 'the old per-pane card is gone');
@@ -309,7 +309,7 @@ test('TILE2: ONE tile for THREE panes, and the classes it draws belong to nobody
   // ═══ THE CLASS NAMES ARE THIS TILE'S ALONE ══════════════════════
   //
   // The probe found `.tile` was ALREADY the inventory and trade item
-  // icon (30x30, ui/enhancedInventory.js and ui/enhancedTrade.js), so
+  // icon (30x30, ui/enhanced/enhancedInventory.js and ui/enhanced/enhancedTrade.js), so
   // the save tiles were being squashed by a rule written for something
   // else - and every check about their size read 34x34. A source sweep
   // could have caught it and did not, because nobody thought to look.
@@ -362,7 +362,7 @@ test('TILE1: the face has ONE home, and it is not the one chargenArt already own
   // put race, gender and faceIndex on the envelope. Nothing new is
   // stored; the menu's row simply stopped throwing three fields away.
   assert.match(rd('src/systems/save/save.js'), /'name', 'gender', 'race', 'raceId', 'faceIndex'/);
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /race: typeof snap\.race === 'string' \? snap\.race : null,/);
   assert.match(menu, /faceIndex: Number\.isInteger\(snap\.faceIndex\) \? snap\.faceIndex : 0,/);
 });

@@ -593,7 +593,7 @@
   },
   {
     "name": "SURVTIERS-enhanced-serves-what-the-house-refused",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  if (!order.ok) { say(line(order.text)); return; }",
     "new": "",
     "tests": [
@@ -602,7 +602,7 @@
   },
   {
     "name": "SURVTIERS-enhanced-closes-the-menu-on-a-refusal",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  if (!order.ok) { say(line(order.text)); return; }",
     "new": "  if (!order.ok) { menu = null; say(line(order.text)); return; }",
     "tests": [
@@ -795,7 +795,7 @@
   },
   {
     "name": "SURVTIERS-the-shut-kitchen-serves-nothing",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  if (m.closed) { say(line(m.closedText)); return; }\n  render();\n}",
     "new": "  if (m.closed) { menu = null; say(line(m.closedText)); return; }\n  render();\n}",
     "tests": [
@@ -804,7 +804,7 @@
   },
   {
     "name": "SURVTIERS-enhanced-asks-the-house-before-the-gold",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  if (totalGoldAmount(h.entity) < row.price) { say(rows(NOT_ENOUGH_GOLD_ID)); return; }\n  // SURV-TIERS: the tier refuses before the coin changes hands - the drink that would take the night, the meal that would go to waste\n  const order = tavernOrder(s, now, row, { endurance, rules, items: h.entity.items });   // INN-WATER: the pack, for the skins the water asks after\n  if (!order.ok) { say(line(order.text)); return; }",
     "new": "  // SURV-TIERS: the tier refuses before the coin changes hands - the drink that would take the night, the meal that would go to waste\n  const order = tavernOrder(s, now, row, { endurance, rules, items: h.entity.items });   // INN-WATER: the pack, for the skins the water asks after\n  if (!order.ok) { say(line(order.text)); return; }\n  if (totalGoldAmount(h.entity) < row.price) { say(rows(NOT_ENOUGH_GOLD_ID)); return; }",
     "note": "INN-WATER (FIELD BUGS 2026-09-30, PIN MOVED): the order call names the pack now (items: h.entity.items) - the record re-aimed to the new line, the mutant (the house asked before the gold) unchanged",
@@ -832,7 +832,7 @@
   },
   {
     "name": "SURVTIERS-the-classic-window-forgets-the-wagon",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    }), collection);\n  }",
     "new": "    }));\n  }",
     "tests": [
@@ -841,7 +841,7 @@
   },
   {
     "name": "SURVTIERS-the-enhanced-window-forgets-the-wagon",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    place(act.item, collection);",
     "new": "    place(act.item);",
     "tests": [

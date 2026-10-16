@@ -57,19 +57,19 @@ import { PORT_LOCATION_IDS, PORT_LOCATION_IDS_MAIN, PORT_LOCATION_IDS_EXTRAS, ma
 import {
   drawPath, drawLocation, drawMapSection, isLocationLarge, packColor, packRGBA, DOT_SCALE,
   ROAD_COLOR, TRACK_COLOR, JUNCTION_HERE_PT, JUNCTION_MAP_WIDTH, junctionDirectionIndex,
-} from '../src/ui/travelPathsOverlay.js';
+} from '../src/ui/travel/travelPathsOverlay.js';
 import {
   portsBarAnchors, portsFilterAllows, PORT_FILTER_POS, PORT_FILTER_MOVED,
   HORIZ_ARROW_POS, HORIZ_ARROW_MOVED, VERT_ARROW_POS, VERT_ARROW_MOVED, PORTS_SIZE,
   locationInfoRows, teleportCost, TELEPORT_RANK_FREE, TELEPORT_COST_PER_RANK,
   drawRegionPageWithPaths,
-} from '../src/ui/travelMapOptions.js';
-import { TravelControlUI, CONTROL_RECTS, MESSAGE_SECONDS, _setTravelControlArtForTests } from '../src/ui/travelControlUI.js';
-import { TravelJunctionMap, JUNCTION_TEX_W, JUNCTION_TEX_H, filterModeName } from '../src/ui/travelJunctionMap.js';
-import { etaText, distanceText } from '../src/ui/enhancedTravelControl.js';
-import { POPUP_RECTS } from '../src/ui/travelPopUp.js';   // AUDIT-TO1 D3/D4: the camp-out and inns rects the wheel pins hover
+} from '../src/ui/travel/travelMapOptions.js';
+import { TravelControlUI, CONTROL_RECTS, MESSAGE_SECONDS, _setTravelControlArtForTests } from '../src/ui/travel/travelControlUI.js';
+import { TravelJunctionMap, JUNCTION_TEX_W, JUNCTION_TEX_H, filterModeName } from '../src/ui/travel/travelJunctionMap.js';
+import { etaText, distanceText } from '../src/ui/enhanced/enhancedTravelControl.js';
+import { POPUP_RECTS } from '../src/ui/travel/travelPopUp.js';   // AUDIT-TO1 D3/D4: the camp-out and inns rects the wheel pins hover
 // AUDIT-TO1 part 2: the pins for the sweep's confirmed findings
-import { TravelPopUpWindow, isPlayerControlledTravel, enforceShipRestriction as enforceShipRestrictionPure, shipTravelRefusal as shipTravelRefusalPure } from '../src/ui/travelPopUp.js';
+import { TravelPopUpWindow, isPlayerControlledTravel, enforceShipRestriction as enforceShipRestrictionPure, shipTravelRefusal as shipTravelRefusalPure } from '../src/ui/travel/travelPopUp.js';
 import { travelMapMarkedMapId, setTravelMapMarkedMapId, resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE, travelRateOf } from '../src/systems/timeScale.js';
 import { FIXED_DT, MAX_FRAME_DT } from '../src/player/motor.js';
@@ -1312,7 +1312,7 @@ test('TO1: the wiring - one construction, the fork on the popup\'s word, the pan
 });
 
 test('TO1: the map and the popup carry the mod\'s own additions', () => {
-  const m = read('src/ui/travelMapWindow.js');
+  const m = read('src/ui/travel/travelMapWindow.js');
   // the five-texel page, only with his roads integration on
   assert.match(m, /this\._dotsScale = DOT_SCALE;/);
   assert.match(m, /if \(this\._to\?\.settings\?\.roadsIntegration && this\.selectedRegion !== 61 && this\._dotsScale === DOT_SCALE\) \{/,
@@ -1332,7 +1332,7 @@ test('TO1: the map and the popup carry the mod\'s own additions', () => {
   assert.match(m, /if \(!this\._resumeAsked\) \{/);
   assert.match(m, /if \(!this\._teleportChargeDone && this\.teleportationTravel && this\._to\?\.settings\?\.teleportCost\) \{/);
 
-  const p = read('src/ui/travelPopUp.js');
+  const p = read('src/ui/travel/travelPopUp.js');
   assert.match(p, /isPlayerControlledTravel\(\) \{/);
   // AUDIT-TO1 C1: the fork is ONE pure law now, shared with the enhanced map
   assert.match(p, /return \(settings\.cautiousTravel \|\| !speedCautious\) && \(settings\.stopAtInnsTravel \|\| !sleepModeInn\) && !travelShip;/);
@@ -1611,34 +1611,34 @@ test('AUDIT-TO1 G4: the middle-click mark outlives the window, like the eight fi
   setTravelMapMarkedMapId(7);
   resetTravelMapState();
   assert.equal(travelMapMarkedMapId(), -1, 'a new game forgets it');
-  const m = read('src/ui/travelMapWindow.js');
+  const m = read('src/ui/travel/travelMapWindow.js');
   assert.match(m, /get: \(\) => travelMapMarkedMapId\(\),/, 'the window reads the store');
   assert.match(m, /set: \(v\) => setTravelMapMarkedMapId\(v\),/);
 });
 
 test('AUDIT-TO1 E1/E2/E3: the vendored art is UPLOADED before it is drawn, and the junction disc draws through a real quad', () => {
-  const c = read('src/ui/travelControlUI.js');
+  const c = read('src/ui/travel/travelControlUI.js');
   assert.match(c, /uploadTexture\?\.\('img', 'travelopts:TOcontrolUI', px, \{ mips: false, variant: '#travelopts' \}\)/, 'the strip becomes a texture');
   assert.match(c, /strip = tex \? \{ tex, w: px\.width, h: px\.height, key: 'TOcontrolUI' \} : null;/, 'in drawImg\'s own shape');
   assert.match(c, /if \(_art\?\.strip\?\.tex\) drawImg\(renderer, _art\.strip, m, x0, 0, pw, ph\);/);
   assert.ok(!/strip\.img/.test(c), 'the untextured shape is gone');
-  const m = read('src/ui/travelMapWindow.js');
+  const m = read('src/ui/travel/travelMapWindow.js');
   assert.match(m, /uploadTexture\?\.\('img', `travelopts:\$\{name\}`, px, \{ mips: false, variant: '#travelopts' \}\)/, 'the two ports buttons too');
   assert.match(m, /return tex \? \{ tex, w: px\.width, h: px\.height \} : null;/);
-  const j = read('src/ui/travelJunctionMap.js');
+  const j = read('src/ui/travel/travelJunctionMap.js');
   assert.match(j, /renderer\.drawScreenQuad\?\.\(this\._tex, \{ x: m\.ox \+ x \* m\.s, y: m\.oy \+ y \* m\.s, w: w \* m\.s, h: h \* m\.s \}\);/,
     'no third argument: that slot is the SOURCE RECT, and `{ filter }` there fed NaN into uSrc');
   assert.match(j, /\{ smooth: filterModeName\(s\.junctionMapFilterMode \?\? 0\) === 'linear', mips: false, variant: '#travelto' \}/, 'the filter is set where the port sets one - at upload');
 });
 
 test('AUDIT-TO1 F1/L7: the junction disc outlives the bar on the enhanced lane, and a window over the HUD covers the panel', () => {
-  const e = read('src/ui/enhancedTravelControl.js');
+  const e = read('src/ui/enhanced/enhancedTravelControl.js');
   assert.match(e, /const junctionOnly = !state\.showing && !!state\.junction\?\.on;/);
   assert.match(e, /if \(!state\.showing && !junctionOnly\) \{ hideEnhancedTravelControl\(\); return null; \}/, 'torn down only when BOTH are down');
   assert.match(e, /if \(state\.covered\) \{/);
   assert.match(e, /parts\.root\.style\.display = 'none';/);
   assert.match(e, /title="\$\{T\.TipMap\}"/, 'and the two tooltips the mod carries reach the DOM (H3)');
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.travelpanel-bar\.hidden \{ display: none; \}/);
   const w = read('src/scenes/world.js');
   assert.match(w, /covered: townTalk\.hudCovered \|\| \(modes\?\.hudCovered \?\? false\) \|\| gamePaused\(\),\s*\n\s*destination: travelControlUI\?\.destinationName/);
@@ -1690,7 +1690,7 @@ test('AUDIT-TO1 G1/G2/G3/I2/I3/I4/I6/J1/K2/H1/H2: the host seams the sweep found
   // I4: the coordinates door acts on its refusal, and the popup opens only where it is honoured
   assert.match(w, /if \(!beginAcceleratedTravel\(pick, opts, \{ coords: true \}\)( && !tvRoutesJourneys\(\))?\) townTalk\.say\('You cannot travel there now\.'\);/);   // AUDIT OW3 J2: the Overworld says its own (PIN MOVED, TO-ROADS: a first-person route's too)
   assert.match(w, /coordsAllowed: \(\) => !!travelOptions,/, 'TO-ONLINE: the door opens wherever the journey runs, which is now everywhere the mod is on');
-  assert.match(read('src/ui/travelMapWindow.js'), /\(this\.deps\.coordsAllowed\?\.\(\) \?\? true\)/);
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /\(this\.deps\.coordsAllowed\?\.\(\) \?\? true\)/);
   // I6: the discovery store is read by the key its writers use
   assert.match(w, /return loc\?\.name \? discoveredBuildings\(`\$\{summary\.regionIndex\}:\$\{loc\.name\}`\) : \[\];/);
   assert.match(w, /discoveryLocationId: \(\) => `\$\{_questLoc\(\)\?\.regionIndex \?\? -1\}:\$\{_questLoc\(\)\?\.name \?\? ''\}`,/, 'the writer\'s own key shape');
@@ -1712,7 +1712,7 @@ test('AUDIT-TO1 G1/G2/G3/I2/I3/I4/I6/J1/K2/H1/H2: the host seams the sweep found
   assert.match(w, /const code = action === 'TravelExit' \? sequenceString\(shortcutBinding\('TravelExit'\)\) : getBinding\(bindings\(\), action\);/);
   assert.match(w, /return String\(code \?\? ''\)\.replace\(\/\^Key\/, ''\);/);
   // G3: NO on the resume prompt leaves the map open
-  const m = read('src/ui/travelMapWindow.js');
+  const m = read('src/ui/travel/travelMapWindow.js');
   assert.match(m, /if \(code === 'KeyN' \|\| code === 'Escape'\) \{ this\._click\(\); this\.top = null; \}\s*\n\s*return;\s*\n\s*\}\s*\n\s*\/\/ TO1 \(:477-497\): the teleport fee/);
   // D1: the two reads the popup needed - the location through SHIP-PORT's travelOriginMapId since 2026-09-28:
   // PlayerGPS.CurrentLocation's MapId ashore, the boarding port's on the player's own ship (disc28e_shipport)
@@ -1723,7 +1723,7 @@ test('AUDIT-TO1 G1/G2/G3/I2/I3/I4/I6/J1/K2/H1/H2: the host seams the sweep found
   assert.match(m, /this\.popUp\.enforceShipRestriction\(\);/, 'OnPush\'s guard has a caller');
   assert.equal((m.match(/this\.popUp\.enforceShipRestriction\(\);/g) || []).length, 2, 'at both construction sites');
   // I5: the popup's I, and the box drawn above it
-  assert.match(read('src/ui/travelPopUp.js'), /if \(key === 'KeyI' && !this\.coordsOnly && this\._to\) \{ this\.deps\.displayLocationInfo\?\.\(\); return; \}/);   // AUDIT IT1 C5 (PIN MOVED): TravelOptionsPopUp's Update alone polls I
+  assert.match(read('src/ui/travel/travelPopUp.js'), /if \(key === 'KeyI' && !this\.coordsOnly && this\._to\) \{ this\.deps\.displayLocationInfo\?\.\(\); return; \}/);   // AUDIT IT1 C5 (PIN MOVED): TravelOptionsPopUp's Update alone polls I
   assert.match(m, /displayLocationInfo: \(\) => this\._displayLocationInfo\(\),/);
   assert.match(m, /this\.popUp\.draw\(renderer, canvas, font\);\s*\n[\s\S]{0,300}?if \(this\.infoBox\) \{\s*\n\s*this\._box = layoutMessageBox\(font, this\.infoBox\.rows, \[\]\);/);
   // C3: the fee on the default skin
@@ -1904,7 +1904,7 @@ test('TO-ONLINE: an online trip the toggles call WALKED is a ride, and the "you 
   // wait. You arrive now, and no inn is paid." It was true of every
   // online trip while the journey stood down and the teleport was the
   // only arrival there was. It is false over a walked one.
-  const pop = read('src/ui/travelPopUp.js');
+  const pop = read('src/ui/travel/travelPopUp.js');
   assert.match(pop, /if \(this\.noWorldTime\(\) && !this\.walkedTrip\) ONLINE_TRAVEL_ROWS\.forEach\(\(row, i\) => shadowText\(renderer, font, row,/,   // AUDIT LIVED1b U1: the line in two rows
     'the classic popup gates the line off the walked trip');
   // and the enhanced skin bills the same trip, so it says the same thing

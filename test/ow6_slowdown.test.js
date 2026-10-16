@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { THREAT_WARN_S, metresToReach, threatStep, threatCap, foePaced } from '../src/systems/travel/travelThreat.js';
 import { createLoadGovernor } from '../src/systems/travel/travelGovernor.js';
-import { TRAVEL_HELD_TEXT, TRAVEL_HELD_WHY } from '../src/ui/enhancedTravelControl.js';
+import { TRAVEL_HELD_TEXT, TRAVEL_HELD_WHY } from '../src/ui/enhanced/enhancedTravelControl.js';
 import { foeHostile, foeAlerted, areEnemiesNearby } from '../src/systems/encounters.js';
 import { TRAVEL_VIEW_TEXT, travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
 import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial

@@ -325,7 +325,7 @@
   },
   {
     "name": "SD8C-the-gates-marks",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    frac, marks: [...SD_PHASE_AT], phase: s.ph,",
     "new": "    frac, marks: [0.66, 0.33], phase: s.ph,",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SD8C-the-hours-blow-behind",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    else if (clk) callout = callOf(clk, s.ph, SD_BODY.hour, now);",
     "new": "    else if (false) callout = callOf(clk, s.ph, SD_BODY.hour, now);",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD8C-the-end-never-counted",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    wrath: s.fell ? null : sdHourOver(s, now) ? SD_BAR_TEXT.ended : toEnd <= SD_ENDS_WARN_MS ?",
     "new": "    wrath: s.fell ? null : sdHourOver(s, now) ? SD_BAR_TEXT.ended : false ?",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SD8C-unwarded-asleep",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "  const warded = !s.fell && (asleep || outside);",
     "new": "  const warded = !s.fell && outside;",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "SD8C-the-bar-from-afar",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": " <= SD_ARENA.r + SD_BAR_NEAR_M;",
     "new": " <= SD_ARENA.r + SD_BAR_NEAR_M + 5;",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "SD8C-the-echoes-unsaid",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    host: ec ? SD_BAR_TEXT.echoes(",
     "new": "    host: false ? SD_BAR_TEXT.echoes(",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "SD8C-the-marks-laid-once",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "  if (marksAt !== shown.marksAt) {",
     "new": "  if (false) {",
     "tests": [

@@ -6,14 +6,14 @@
 // combat" - read a leader a hair below it as a descent and turned it up: it climbed till its feet were a metre off the
 // floor or its body met the ceiling, its 2.6 m into the roof. Its bar stood 0.3 m over its top - over the ceiling - and
 // the sight test hid it. The lift is combat's alone now (never while following), and the bar stands under the ceiling
-// over the body (ui/navalHud.js crewBarPoint). `01-Overview/Field-Bugs-2026-10-09c.md`.
+// over the body (ui/naval/navalHud.js crewBarPoint). `01-Overview/Field-Bugs-2026-10-09c.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { runTargetMachine } from '../src/characters/enemyTargets.js';
-import { crewBarPoint, CREW_BAR_LIFT, CREW_BAR_UNDER_CEILING, CREW_BAR_FROM } from '../src/ui/navalHud.js';
+import { crewBarPoint, CREW_BAR_LIFT, CREW_BAR_UNDER_CEILING, CREW_BAR_FROM } from '../src/ui/naval/navalHud.js';
 
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 const UP = new Uint32Array([0, 1, 2, 0, 2, 3]), DOWN = new Uint32Array([0, 2, 1, 0, 3, 2]);

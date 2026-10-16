@@ -40,10 +40,10 @@
 // trait, glow and (REVENANT-WIRE) its NAME, the foe record's `nm`, so every puppet is called what its owner calls it.
 //
 // REVENANT-CARD: everything a revenant says or does is an EVENT (below) - its portrait, its name, its words - which the
-// enhanced skin draws as a card (ui/revenantCard.js, through systems/revenant/revenantVoice.js) and the classic says as a line.
+// enhanced skin draws as a card (ui/revenant/revenantCard.js, through systems/revenant/revenantVoice.js) and the classic says as a line.
 // REVENANT-HARM: a death no blow names (a spell, a lingering effect, a poison) goes to the foe whose harm last reached
 // the player (systems/harmMark.js). REVENANT-DUNGEON: a dungeon foe of mine alone may run and escape too.
-// REVENANT-PAGE: the pause menu's Stats rail lists them (ui/revenantPage.js).
+// REVENANT-PAGE: the pause menu's Stats rail lists them (ui/revenant/revenantPage.js).
 // ═══════════════════════════════════════════════════════════════════
 
 import { lootRarityOn } from '../loot/lootRarity.js';
@@ -208,7 +208,7 @@ export const revenantOn = () => lootRarityOn();
 /** RENOWN-GATE: are this page's revenants HELD - online under REVENANT_MIN_RENOWN, or before the page knows its Renown
  *  (sigil.js renownOpens; offline never)? Held, every door that makes, stands, spreads or marks one answers as the
  *  switch's off does - none is made or flees, none returns or keeps its lair, no rumor or hunt points at one, none
- *  festers - and what is remembered stays on the page (ui/revenantPage.js says it is held) while the sworn keep their days.
+ *  festers - and what is remembered stays on the page (ui/revenant/revenantPage.js says it is held) while the sworn keep their days.
  *  @param {{ online?: boolean, renown?: number|null }} [o] */
 export const revenantHeld = (o) => !renownOpens(REVENANT_MIN_RENOWN, o);
 const nowMinutes = () => { try { return Math.floor(ownMinutes()); } catch { return 0; } };
@@ -878,7 +878,7 @@ function carryTaken(entity) {
 }
 
 // ── what is said ────────────────────────────────────────────────────
-// Every word below comes two ways: the EVENT a face draws (REVENANT-CARD - ui/revenantCard.js on the enhanced skin: the
+// Every word below comes two ways: the EVENT a face draws (REVENANT-CARD - ui/revenant/revenantCard.js on the enhanced skin: the
 // portrait, the name, what it says in its own voice, what happens in the narrator's) and the one LINE a text surface
 // says instead (the classic skin, a page without a document). `revenantSay` hands an event to the face, or its line to
 // the host's own `say`.
@@ -1086,7 +1086,7 @@ export function revenantRumor(here, session, { rolls = Math.random } = {}) {
   return words;
 }
 /** RVN7c (bible/12-Enhanced-AI/Feud-Arc.md 18.3): THE LAIRS HEARD OF, ON THE MAPS - a circle at each living, unsworn
- *  revenant's lair the player knows (`lairKnown`), named for it (ui/bountyMapMark.js's shape, in blood red). */
+ *  revenant's lair the player knows (`lairKnown`), named for it (ui/bounty/bountyMapMark.js's shape, in blood red). */
 export function revenantMapMarks() {
   if (revenantHeld()) return [];   // RENOWN-GATE: held - no lair marked where none waits
   if (!revenantOn()) return [];

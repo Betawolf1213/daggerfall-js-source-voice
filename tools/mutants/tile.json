@@ -83,7 +83,7 @@
   },
   {
     "name": "TILE-9-the-save-envelope-s-identity-is-thrown-away-again",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    faceIndex: Number.isInteger(snap.faceIndex) ? snap.faceIndex : 0,",
     "new": "",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "TILE-11-one-pane-keeps-its-own-card",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  const grid = tileGrid(mine, (save) => ({",
     "new": "  const grid = el('div', 'svgrid'); void ((save) => ({",
     "tests": [

@@ -17,7 +17,7 @@
 // both handlers, and `cursorActive()` could never rise in either
 // shipping outdoor host - which makes the large HUD's eleven panels
 // unreachable by mouse, since IsLargeHUDInteractable IS that flag
-// (ui/hudLarge.js's activeMouseOverLargeHUD and routeLargeHudClick,
+// (ui/hud/hudLarge.js's activeMouseOverLargeHUD and routeLargeHudClick,
 // PlayerActivate.cs:230-236). The second flip also ran releaseLook()
 // then requestLook() back to back inside one event - the post-exit
 // cooldown requestLook's own header says the browser refuses.

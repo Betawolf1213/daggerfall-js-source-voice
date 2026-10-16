@@ -686,7 +686,7 @@ export function fieldOccupancy(field, storeys, { rowMask = null } = {}) {
  * second transform.
  *
  * `link` and `segments` are the ink renderer's own two functions
- * (ui/inkMap.js boundarySegments / linkSegments), handed in rather
+ * (ui/ink/inkMap.js boundarySegments / linkSegments), handed in rather
  * than imported so this module stays free of the UI layer - the same
  * shape `inkMap` itself is driven with, and the pins drive it with the
  * real pair.

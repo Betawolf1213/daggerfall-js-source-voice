@@ -39,7 +39,7 @@
   },
   {
     "name": "MAC-C-the-pack-goes-back-to-the-hardcoded-F6",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (overlayAction(e) !== 'back' && !acts.includes('Inventory')) return;",
     "new": "  if (overlayAction(e) !== 'back' && e.key !== 'F6') return;",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "MAC-C-the-pack-opens-the-sheet-BEFORE-it-closes-itself",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const openCharSheet = deps.openCharSheet;\n    onExit();                 // the pack's own close law runs FIRST...\n    openCharSheet();          // ...and this replaces the slot it just freed",
     "new": "    const openCharSheet = deps.openCharSheet;\n    openCharSheet();\n    onExit();",
     "tests": [

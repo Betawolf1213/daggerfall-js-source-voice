@@ -462,7 +462,7 @@ test('TUT1: the seams, swept both ways - every page that pops has a seam in src/
   assert.ok(named.size >= 50, `${named.size} systems wired`);
   // the shared doors carry their pages (one door, every host)
   for (const [file, id] of [['src/ui/inventoryDoor.js', 'inventory'], ['src/ui/spellbookDoor.js', 'spellbook'], ['src/ui/restDoor.js', 'rest'],
-    ['src/ui/talkDoor.js', 'talk'], ['src/ui/tradeDoor.js', 'shops'], ['src/ui/travelMapDoor.js', 'travel-map'], ['src/ui/automapDoor.js', 'automap'],
+    ['src/ui/talkDoor.js', 'talk'], ['src/ui/tradeDoor.js', 'shops'], ['src/ui/travel/travelMapDoor.js', 'travel-map'], ['src/ui/automap/automapDoor.js', 'automap'],
     ['src/ui/charSheetDoor.js', 'character-sheet'], ['src/ui/tavernDoor.js', 'tavern'], ['src/ui/chronicleDoor.js', 'quests']]) {
     assert.ok(named.get(id)?.has(file), `${file} pops ${id}`);
   }
@@ -481,7 +481,7 @@ test('TUT1: the four hosts register the popups\' handler (THE FOUR HOSTS RULE); 
 // ── THE MENU ───────────────────────────────────────────────────
 
 test('TUT1: the menu - a Tutorials tab in the pause window, a Tutorials section on every rail, one pane for both, let go at unmount', () => {
-  const s = read('src/ui/enhancedMenu.js');
+  const s = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(s, /const PAUSE_TABS = Object\.freeze\(\[[^\n]*\['tutorials', 'Tutorials'\], \['system', 'System'\]\]\);/);
   assert.match(s, /tutorials: drawTutorialsPane, system: pauseSystem \}\)\[pauseTab\]\(body\);/);
   for (const rail of ['SECTIONS_BOOT', 'SECTIONS_CLASSIC', 'SECTIONS_PAUSE']) {

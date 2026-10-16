@@ -17,8 +17,8 @@ import { readFileSync } from 'node:fs';
 
 import * as CSA from '../src/systems/comeSailAway/comeSailAway.js';
 import { BOAT_ACTIONS } from '../src/systems/comeSailAway/comeSailAway.js';
-import { helmHint } from '../src/ui/enhancedHelm.js';
-import { navalHudText } from '../src/ui/navalHud.js';
+import { helmHint } from '../src/ui/enhanced/enhancedHelm.js';
+import { navalHudText } from '../src/ui/naval/navalHud.js';
 import { FEATURES } from '../src/systems/features.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { quatRotate } from '../src/world/quat.js';

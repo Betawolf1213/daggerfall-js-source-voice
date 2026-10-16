@@ -224,7 +224,7 @@ The new `src/ui/socketWells.js`: `socketWells` (a round well a socket - an empty
 its grade's ring, `GEM_GRADE_COLOURS` - pressable when handed `onWell`, the asked one marked), `socketChooser` (a press a
 held gem, each with the line it would give this piece) and `markSocketFrame` (a socketed piece's pips in the frame's
 top edge, filled for a set gem; a graded gem's own ring), with its own sheet (`SOCKET_WELLS_CSS`, one style tag, both
-skins). `src/ui/enhancedInventory.js`: the card's wells under the picture (`socketBlock`, live on the pack's own piece's
+skins). `src/ui/enhanced/enhancedInventory.js`: the card's wells under the picture (`socketBlock`, live on the pack's own piece's
 detail card: an empty well opens the chooser, a set one asks first and its second press shatters), every frame's pips
 (`markItemFrame`), and a loose gem's "Set in..." (the pieces with an empty socket, a press each). The Test Room lays a
 Rare long bow with its three wells empty and four graded gems.
@@ -245,7 +245,7 @@ retired, the extraction's added in `gem1.json`).
 
 THE FOUR HOSTS. The rows register in every host through `scenes/shared.js` and `systems/worldTick.js`; the door's
 passes and the gem find run inside the shared rolls every host already calls (`rollLootRarity`, `rollCorpseKit`); the
-wells are the shared pack's (`ui/enhancedInventory.js`); the Reforge's extraction is `worldModes.js`'s (the Mages Guild
+wells are the shared pack's (`ui/enhanced/enhancedInventory.js`); the Reforge's extraction is `worldModes.js`'s (the Mages Guild
 stands in a building). `exterior.js`, `world.js` and `dungeonContext.js` are FLAGGED for the extraction: no guild
 counter there.
 

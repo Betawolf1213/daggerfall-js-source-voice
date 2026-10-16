@@ -4,7 +4,7 @@
 // the port's places, its key after theirs, its one row, the bench as a station), its place (world/merchantYards/merchantYardSites.js
 // craftYardSitesOn, scenes/world.js townPlacesFor), its timber and its pictures (world/merchantYards/merchantYardModels.js,
 // world/merchantYards/merchantYardArt.js), the pool's press and its bench (scenes/merchantYardsHost.js), the town's talk, its map and the
-// Overworld's glyph, and the street's workbench the Stores page reads (scenes/world.js workbenchHere, ui/profPages.js).
+// Overworld's glyph, and the street's workbench the Stores page reads (scenes/world.js workbenchHere, ui/professions/profPages.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -20,9 +20,9 @@ import { buildYardModel, buildCarpenterModel, CARPENTER_YARD, SIGN_BOARD, signBo
 import { yardArt, yardSignArt, YARD_ARCHIVE, YARD_REC, signGlyph, SAW_BLADE, SIGN_EMBLEM } from '../src/world/merchantYards/merchantYardArt.js';
 import { createMerchantYards, yardToScene, YARD_REACH, YARD_BENCH_RISE } from '../src/scenes/merchantYardsHost.js';
 import { yardTownBlocks, YARD_MAP_BYTE } from '../src/world/merchantYards/merchantYardMap.js';
-import { quarterOf } from '../src/ui/townQuarters.js';
+import { quarterOf } from '../src/ui/town/townQuarters.js';
 import { TopicTree, EN, QUESTION_TYPE } from '../src/systems/topicTree.js';
-import { yardGlyph, yardMarkKind } from '../src/ui/travelViewHud.js';
+import { yardGlyph, yardMarkKind } from '../src/ui/travel/travelViewHud.js';
 import { markGroup, isYardMark } from '../src/systems/travel/travelViewFilters.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { NAV_CELL } from '../src/world/city/cityNavigation.js';
@@ -282,7 +282,7 @@ test('CARP-YARD THE HOSTS: the street\'s workbench is the host\'s own question -
   assert.match(w, /function openYardBench\(\) \{\n\s+if \(!forgeOffered\(\)\) \{ townTalk\.say\(stationColdLine\('workbench'\)\); return true; \}[^\n]*\n\s+focusStoresStation\('workbench'\);\n\s+hudCtx\.togglePause\(\{ at: 'stores' \}\);/);
   assert.match(w, /`The \$\{f\.who \?\? st\.who\} asks \$\{f\.fee\} gold for the use of the \$\{st\.noun\}\.`/);
   assert.match(w, /bench \? \(f\.who \?\? 'furnisher'\) : 'smith'/);
-  const pp = read('src/ui/profPages.js');
+  const pp = read('src/ui/professions/profPages.js');
   assert.match(pp, /detail\.append\(stationHead\(divider, t\('prof\.page\.bench', 'The Workbench'\), 'workbench'\)\);/);
   assert.match(pp, /const who = bench\.who \?\? 'furnisher';/);
   assert.match(pp, /sale\?\.counter === 'furnisher' && have < inp\.n && bench\.kind === 'shop' && !bench\.yard\) counterBuy\(/);

@@ -354,7 +354,7 @@ port's `Enabled` and that one (HT-WAIST below).
 - `systems/playerTorch.js`: `setPlayerTorchOffsetOverride`;
   `systems/lycanthropy.js`: `isTransformedLycanthrope`;
   `systems/features.js`: the Mod Authored row; `ui/credits.js`: the
-  credit; `ui/enhancedMenu.js`: the key capture and the pair steppers.
+  credit; `ui/enhanced/enhancedMenu.js`: the key capture and the pair steppers.
 
 ## Does Morrowind have its own torch model?
 

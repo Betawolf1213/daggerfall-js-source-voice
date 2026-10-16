@@ -75,7 +75,7 @@
  },
  {
   "name": "AUDITREST-F5-a-loiter-is-a-night-enhanced",
-  "file": "src/ui/enhancedRest.js",
+  "file": "src/ui/enhanced/enhancedRest.js",
   "old": "    if (overlay.mode !== 'loiter' && (overlay.session?.totalHours ?? 0) >= 6)",
   "new": "    if ((overlay.session?.totalHours ?? 0) >= 6)",
   "tests": [

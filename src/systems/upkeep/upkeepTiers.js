@@ -27,7 +27,7 @@
 //      (`refusedRunWalks` false), so Run held is never slower than DFU's horse. The walk with Run let go is the
 //      owner's HORSE-WALK, every caring tier's way to ride - not a price of neglect.
 //   4. NO RED (Climates & Calories' rule 4: RED MEANS IT COSTS). Where hunger costs nothing its chip goes no further than
-//      amber (ui/enhancedSaddle.js, ui/holdingsPages.js read `hungerCosts`).
+//      amber (ui/enhanced/enhancedSaddle.js, ui/holdingsPages.js read `hungerCosts`).
 //
 // Every reader asks the tier through ONE accessor, systems/upkeep/upkeepSwitch.js horseCareRules (null for Off), and the laws
 // take the rules as an argument (systems/steedCare.js) - a law handed none runs HARD, the system as it stood, so every
@@ -56,7 +56,7 @@ export const isStoredHorseCare = (v) => TIER_OF_STORED.has(v);
 export const HORSE_CARE_OLD_ON = true;
 export const HORSE_CARE_OLD_ON_TIER = 'hard';
 /** The tier a stored value names; anything else reads as the default, the same rule the Features bar draws it by
- *  (ui/enhancedMenu.js tileStates), and the shelf drops it at the load (uiPrefs.js loadPrefs). */
+ *  (ui/enhanced/enhancedMenu.js tileStates), and the shelf drops it at the load (uiPrefs.js loadPrefs). */
 export const horseCareTierOfStored = (v) => TIER_OF_STORED.get(v) ?? HORSE_CARE_DEFAULT;
 
 const deepFreeze = (o) => {
@@ -98,7 +98,7 @@ export const horseCareRulesForTier = (tier) => (typeof tier === 'string' && Obje
 //   BOONS  THE DEFAULT: the same world - it wears by the road, a journey and the watch, its states are said, a Wagon
 //          Yard and a kit mend it - and NOTHING IS EVER TAKEN: a worn wagon rolls at DFU's pace (`wearSlows`) and a
 //          counter buys it as a whole one (`wearPrices`), so it is never worse than DFU's plain wagon. NO RED where wear
-//          costs nothing (ui/enhancedSaddle.js, ui/holdingsPages.js read `wearSlows`). And A WAGON KEPT EARNS (Mac,
+//          costs nothing (ui/enhanced/enhancedSaddle.js, ui/holdingsPages.js read `wearSlows`). And A WAGON KEPT EARNS (Mac,
 //          2026-10-15: "Sound wagon rolls faster"): a Sound one - 60% of whole and up - rolls at WAGON_SOUND_BOON times
 //          DFU's pace (`soundPace`), every other state at DFU's. Online the boon is the player's own, earned by keeping
 //          the wagon, as Climates & Calories' boons are (AUDIT C&C B1, BOONS ONLINE: KEPT).

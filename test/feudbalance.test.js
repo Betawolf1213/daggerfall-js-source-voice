@@ -21,7 +21,7 @@ const N = await import('../src/systems/revenant/revenant.js');
 const F = await import('../src/systems/revenant/revenantFeud.js');
 const L = await import('../src/systems/feudLedger.js');
 const FT = await import('../src/systems/revenant/revenantFate.js');
-const PG = await import('../src/ui/revenantPage.js');
+const PG = await import('../src/ui/revenant/revenantPage.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 

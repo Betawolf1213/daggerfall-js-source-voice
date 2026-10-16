@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { CLASSIC_DIAL, CLASSIC_ICON_SCALE, CLASSIC_FACE_SCALE, CLASSIC_FACE_MAX, CLASSIC_BAR_FILE, faceScale, paintedBox, spansOf, cutBarIcon, faceSourceOf } from '../src/ui/dialClassicArt.js';
-import { LARGE_HUD_RECTS, LARGE_HUD_W, LARGE_HUD_H } from '../src/ui/hudLarge.js';
+import { LARGE_HUD_RECTS, LARGE_HUD_W, LARGE_HUD_H } from '../src/ui/hud/hudLarge.js';
 import { raceArt } from '../src/systems/races.js';
 import { kitCss, G, GRIMOIRE_DIALS, grimoireDial, setGrimoireDial } from '../src/ui/grimoireDress.js';
 import { setPref, getPref, PREF_DEFAULTS, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -92,7 +92,7 @@ test('DIAL-PACK (Mac: "add the old Tab selector as optional to the overhaul opti
     assert.ok(css.includes(`${G} .px-dial .px-arm[data-grim-icon="${k}"] .px-c { width: calc(`) && css.includes(`background-image: var(--grim-${dialArtName(k)}, none);`), `${k}: the pack's painting, the base`);
     assert.ok(css.includes(`${G}:not([data-grim-dial="pack"]) .px-dial .px-arm[data-grim-icon="${k}"] .px-c { width: calc(var(--dial-classic-w-${k}, `), `${k}: Daggerfall's, off the pack's choice`);
   }
-  assert.match(src('src/ui/enhancedMenu.js'), /card\.append\(choiceRow\('Tab dial', GRIMOIRE_DIALS, grimoireDial\(\), \(id\) => setGrimoireDial\(id\)\)\);/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /card\.append\(choiceRow\('Tab dial', GRIMOIRE_DIALS, grimoireDial\(\), \(id\) => setGrimoireDial\(id\)\)\);/);
   assert.match(src('src/ui/grimoireDress.js'), /root\.dataset\.grimDial = grimoireDial\(\);/);
   _resetForTests();
 });

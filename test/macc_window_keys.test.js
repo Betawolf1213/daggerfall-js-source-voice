@@ -74,7 +74,7 @@ test('MAC-C: the classic sheet CROSSES OVER to the pack, and only with a door', 
 });
 
 test('MAC-C: the enhanced pack reads the registry for BOTH keys', () => {
-  const s = rd('src/ui/enhancedInventory.js');
+  const s = rd('src/ui/enhanced/enhancedInventory.js');
   // the CODE, not the note above it - the header quotes the retired
   // line by name, and a history that cannot be written down is a
   // history nobody reads.

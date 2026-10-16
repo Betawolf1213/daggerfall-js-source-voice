@@ -24,7 +24,7 @@ import { STAT_KEYS_ORDER, createCharacter } from '../src/systems/chargen.js';
 import { MAX_STAT_VALUE } from '../src/ui/chargen.js';
 import { SKILLS, SKILL_NAMES, setSkillRecentlyIncreased } from '../src/systems/skills.js';
 import { levelUpSkillSum, LEVELUP_SKILL_SUM_PER_LEVEL, LEVELUP_BONUS_POOL_MIN, LEVELUP_BONUS_POOL_MAX } from '../src/systems/advancement.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { citedLines } from '../tools/citeAnchor.mjs';   // CITE-ANCHOR: a cite names its line by a quote, resolved as the gate does
 import { damageModifier, magicResist } from '../src/combat/formulas.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';
@@ -46,7 +46,7 @@ import {
   STAR_FIGURE, STAR_MIN_APART_X, STAR_MIN_APART_Y, crowdedStarPairs,
   ATTRIBUTE_BLURB, attributeLabel, starBrightness,
   ROLE_COUNTS, ROLE_DROPPED, ROLE_BEST, ROLE_IDLE, ROLE_NOTE,
-} from '../src/ui/levelUpView.js';
+} from '../src/ui/levelUp/levelUpView.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, f), 'utf8');
@@ -88,7 +88,7 @@ test('LV1: the window reads WHICH LAW is live off the screen, not off a setting'
   // DUCK TYPES, not instanceof: the scenes ask the same way, and a
   // type test here would drag two UI classes into every caller's
   // import graph.
-  const v = src('src/ui/levelUpView.js');
+  const v = src('src/ui/levelUp/levelUpView.js');
   assert.match(v, /screen\.isVirtueLevelUp/);
   assert.doesNotMatch(v, /instanceof (Virtue)?LevelUpScreen/);
   assert.doesNotMatch(v, /^import .*(LevelUpScreen|VirtueLevelUpScreen)/m, 'neither screen class is imported at all');
@@ -103,7 +103,7 @@ test('LV1: each lane is counted and refused IN ITS OWN WORDS, imported rather th
   assert.notEqual(poolLabel(classic), poolLabel(mod));
   // The strings are IMPORTED. A window that retyped a refusal is a
   // window that keeps saying it after the law's own words change.
-  const v = src('src/ui/levelUpView.js');
+  const v = src('src/ui/levelUp/levelUpView.js');
   assert.doesNotMatch(v, /'You must distribute/, 'quoted, never copied');
   assert.doesNotMatch(v, /'You must distribute all your points/);
   assert.match(v, /import \{ mustDistributeBonusPointsText \} from '\.\/charsheet\.js'/);   // L10N3d: the row, read in the player's language
@@ -195,8 +195,8 @@ test('LV1: every press goes through the SCREEN\'s own input - one door, both lan
   ], 'select, then press - the two moves the keyboard makes');
   // The view module never writes an entity. Every mutation is the
   // screen's, and the screen commits through its own law module.
-  const v = src('src/ui/levelUpView.js');
-  const w = src('src/ui/enhancedLevelUp.js');
+  const v = src('src/ui/levelUp/levelUpView.js');
+  const w = src('src/ui/enhanced/enhancedLevelUp.js');
   for (const [name, s] of [['levelUpView', v], ['enhancedLevelUp', w]]) {
     assert.doesNotMatch(s, /entity\.(level|maxHealth|stats)\s*[+-]?=[^=]/, `${name}: writes no entity state`);
     // The commits are NAMED in both files' reasoning and IMPORTED by
@@ -317,7 +317,7 @@ test('LV1: DaggerfallStats.IsAllMax has ONE home, and both faces read it', () =>
     'no second copy of IsAllMax');
   assert.match(src('src/ui/chargen.js'), /export const allStatsMax =/, 'the one home is beside statUp/statDown');
   // The VIEW asks the screen rather than re-deriving it from the rows.
-  assert.match(src('src/ui/levelUpView.js'), /typeof screen\?\.allMax === 'function' && screen\.allMax\(\)/);
+  assert.match(src('src/ui/levelUp/levelUpView.js'), /typeof screen\?\.allMax === 'function' && screen\.allMax\(\)/);
 });
 
 // ── THE CROWN AND THE BAR ─────────────────────────────────────────
@@ -343,7 +343,7 @@ test('LV1: the bar under the level is the LAW\'s remainder, in both lanes', () =
   assert.equal(g.now, 2, 'the remainder, not the whole sum');
   // The DIVISOR is imported: a screen that quotes a law by copying its
   // number goes stale the day the law moves (ORL1's deep audit).
-  assert.doesNotMatch(src('src/ui/levelUpView.js'), /\/ 15\b/, 'the 15 is LEVELUP_SKILL_SUM_PER_LEVEL, never a literal');
+  assert.doesNotMatch(src('src/ui/levelUp/levelUpView.js'), /\/ 15\b/, 'the 15 is LEVELUP_SKILL_SUM_PER_LEVEL, never a literal');
   const vp = virtuePlayer({ levelProgress: 38, levelRollUp: 6 });
   const vg = levelProgress(vp, new VirtueLevelUpScreen(vp, { settings: S(), rolls: seq(0) }));
   assert.deepEqual([vg.now, vg.max, vg.carried], [38, LEVELUP_TOTAL, 6]);
@@ -463,7 +463,7 @@ test('LV1: every attribute has the port\'s OWN sentence, and no ARENA2 is read t
   // TEXT.RSC records 0..7 are DFU's attribute descriptions and they are
   // GAME DATA. ui/charSheetDoor.js promises the enhanced skin reads
   // none, so neither of this window's two files may reach for it.
-  for (const f of ['src/ui/levelUpView.js', 'src/ui/enhancedLevelUp.js']) {
+  for (const f of ['src/ui/levelUp/levelUpView.js', 'src/ui/enhanced/enhancedLevelUp.js']) {
     // The IMPORTS are the test: TEXT.RSC is named in the reasoning
     // above `ATTRIBUTE_BLURB`, which is exactly where it should be
     // named - as the thing these words exist INSTEAD of.
@@ -477,7 +477,7 @@ test('LV1: every attribute has the port\'s OWN sentence, and no ARENA2 is read t
   // modifier, which the hit roll does not read - so the sentence
   // described a number that rides nothing. A blurb is a promise about
   // the code, so the code it points at has to be the code that runs.
-  const v = src('src/ui/levelUpView.js');
+  const v = src('src/ui/levelUp/levelUpView.js');
   // CITE-ANCHOR: each sentence names its consumer by the consumer's own words, wherever it stands (a number into the
   // motor went stale three times) - and the line it names is the one that reads the stat
   const names = (target, re) => citedLines(v, target).some((c) => re.test(c.text ?? ''));
@@ -539,7 +539,7 @@ test('LV1: the RETIRED sentence is gone from where it stood', () => {
   // RETIRING A FLAG DELETES THE SENTENCE (bible/Home.md): the enhanced
   // sheet's header said the level-up screen stays classic and is "not
   // this door's business". It is now.
-  const sheet = src('src/ui/enhancedCharSheet.js');
+  const sheet = src('src/ui/enhanced/enhancedCharSheet.js');
   assert.doesNotMatch(sheet, /THE LEVEL-UP SCREEN stays classic/);
   assert.match(sheet, /LV1/, 'and says what replaced it');
 });
@@ -554,7 +554,7 @@ test('LV1: the lab page is a real route, or it is dead the moment it is deployed
   // ...and it loads the view the way the DOOR loads it - a dynamic
   // import. A static one put the module in the lab's own graph, which
   // closed the very gap the door lane exists to show (LV1b).
-  assert.match(lab, /await import\('\.\.\/ui\/enhancedLevelUp\.js'\)/);
+  assert.match(lab, /await import\('\.\.\/ui\/enhanced\/enhancedLevelUp\.js'\)/);
   assert.doesNotMatch(lab, /^import \{ mountEnhancedLevelUp \}/m);
   assert.match(lab, /new LevelUpScreen|new VirtueLevelUpScreen/);
   assert.match(lab, /createCharSheetWindow\(\{ entity \}\)/, 'and one lane drives the real door');
@@ -620,7 +620,7 @@ test('LV1: a repaint reads the FRAME, and the frame carries nothing a repaint do
   assert.equal('vitals' in frame, false);
   assert.deepEqual(Object.keys(model).filter((k) => !(k in frame)), ['ribbon', 'vitals']);
   for (const k of Object.keys(frame)) assert.deepEqual(model[k], frame[k], `${k} agrees`);
-  assert.match(src('src/ui/enhancedLevelUp.js'), /const m = levelUpFrame\(entity, screen, refused\);/,
+  assert.match(src('src/ui/enhanced/enhancedLevelUp.js'), /const m = levelUpFrame\(entity, screen, refused\);/,
     'and the repaint takes the frame');
 });
 
@@ -699,7 +699,7 @@ test('LV1b: the CHRONICLE answers the key it is named after, off the registry', 
   // chronicle was left out - so L opened it and L did nothing, a press
   // the host consumed (the overlay is `isChoiceWindow`, so both key
   // seams hand it the raw code and return) and nobody answered.
-  const cr = src('src/ui/enhancedChronicle.js');
+  const cr = src('src/ui/enhanced/enhancedChronicle.js');
   assert.match(cr, /import \{ overlayAction, eventMeans \} from '\.\/input\.js'/);   // AUDIT KB1: the event's own read; UXB1-S: shared or not
   assert.match(cr, /if \(eventMeans\(e, 'LogBook'\)\) \{/, 'off the REGISTRY, never the literal KeyL (AUDIT KB1: eventAction - a combo closes what it opened)');
   assert.doesNotMatch(cr, /e\.code === 'KeyL'/, 'a rebound key that cannot close its own window is the same bug one layer down');

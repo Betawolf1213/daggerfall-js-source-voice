@@ -12,8 +12,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FEATURES, checkFeature, featureForControl } from '../src/systems/features.js';
 import { DEFAULTS, tierOf } from '../src/systems/settings/settings.js';
-import { ENUM_LAW, widgetFor } from '../src/ui/settingsLaw.js';
-import { labelOf } from '../src/ui/settingsCopy.js';
+import { ENUM_LAW, widgetFor } from '../src/ui/settings/settingsLaw.js';
+import { labelOf } from '../src/ui/settings/settingsCopy.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -59,7 +59,7 @@ test('FT11: dungeon wall style - the one choice, its five modes the settings law
 
 test('FT11: the port reads each key where DFU reads it', () => {
   assert.match(read('src/combat/combatVoices.js'), /export const combatVoicesEnabled = \(\) => getBool\('Enhancements', 'CombatVoices'\);/);
-  assert.match(read('src/ui/hud.js'), /enabled: getBool\('Enhancements', 'NearDeathWarning'\),/, 'per cycle, inside the flicker');
+  assert.match(read('src/ui/hud/hud.js'), /enabled: getBool\('Enhancements', 'NearDeathWarning'\),/, 'per cycle, inside the flicker');
   assert.match(read('src/combat/playerWeapon.js'), /bowSwitching = getBool\('Enhancements', 'BowLeftHandWithSwitching'\),/);
   assert.match(read('src/characters/equipTable.js'), /bowLeftHand = getBool\('Enhancements', 'BowLeftHandWithSwitching'\)/, 'the hands an item takes');
   assert.match(read('src/scenes/questBridge.js'), /get guildQuestListBox\(\) \{ return getBool\('Enhancements', 'GuildQuestListBox'\); \},/, 'a getter - read at the offer');

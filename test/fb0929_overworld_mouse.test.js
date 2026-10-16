@@ -20,7 +20,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { bindCursorToggle, makeLookGate, requestLook, releaseLook, cursorActive, setCursorActive } from '../src/player/pointerLock.js';
-import { overlayOpen } from '../src/ui/enhancedOverlays.js';
+import { overlayOpen } from '../src/ui/enhanced/enhancedOverlays.js';
 import { createTravelView } from '../src/scenes/travelView.js';
 import { TV_RISE_S, TV_FALL_S, forwardOf } from '../src/player/travelCamera.js';
 import { actionsOf, setBindings } from '../src/ui/input.js';

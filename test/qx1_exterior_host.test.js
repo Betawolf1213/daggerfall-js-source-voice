@@ -47,7 +47,7 @@ import { liveVampirism } from '../src/systems/racialLive.js';
 import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile } from '../src/scenes/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { QuestJournalWindow, JOURNAL_RECTS } from '../src/ui/questJournal.js';
+import { QuestJournalWindow, JOURNAL_RECTS } from '../src/ui/quest/questJournal.js';
 import { isPlayerInTown } from '../src/systems/nearbyObjects.js';
 
 const SRC = readFileSync(new URL('../src/scenes/exterior.js', import.meta.url), 'utf8');

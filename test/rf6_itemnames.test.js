@@ -29,7 +29,7 @@ import { TEMPLATES } from '../src/systems/useItem.js';
 import { SOUL_TRAP_TEMPLATE } from '../src/systems/mysticism.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
-import { itemLine } from '../src/ui/enhancedInventory.js';
+import { itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { hoverLines } from '../src/systems/worldHover.js';   // WORLD-HOVER: the itemising is the MODEL's, not the draw's
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -124,7 +124,7 @@ test('RF6: the enhanced line and the plaque read the parts - the same name and m
 test('RF6: no second derivation - the enhanced modules read the resolver, never materialName, resolveItemName or the raw record name for a label', () => {
   const info = read('src/systems/item/itemInfo.js');
   assert.match(info, /export function itemLongName\(item, opts\) \{\s*const \{ name, material \} = itemNameParts\(item, opts\);\s*if \(!material\) return name;\s*return formatText\(item\?\.group === 'Armor'\s*\? localizedText\('longArmorNameFormatString', '\{0\} \{1\}'\)\s*: localizedText\('longWeaponNameFormatString', '\{0\} \{1\}'\), material, name\);\s*\}/, 'the long name IS the join');
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /const parts = itemNameParts\(item, \{ getQuest: deps\.getQuest \?\? null \}\);/, 'the line reads the parts, the quest machine through');
   assert.match(inv, /name: parts\.name \|\| t\?\.name \|\| 'Unknown',/);
   assert.match(inv, /material: parts\.material \|\| null,/);
@@ -133,7 +133,7 @@ test('RF6: no second derivation - the enhanced modules read the resolver, never 
   // QS3: the HUD's hand plaque became the quickslot diamond, whose every
   // cell is named by the model's one `cell()` through the resolver.
   assert.match(read('src/systems/quickslots.js'), /const cell = \(item, extra = \{\}\) => \(\{ item, name: itemLongName\(item\), condition: conditionPercentage\(item\), \.\.\.extra \}\);/, 'the HUD\'s held weapon');
-  assert.doesNotMatch(read('src/ui/enhancedHud.js'), /materialName\(|resolveItemName\(/, 'the diamond derives no name of its own');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedHud.js'), /materialName\(|resolveItemName\(/, 'the diamond derives no name of its own');
   const files = readdirSync(join(root, 'src/ui'), { recursive: true }).filter((f) => /^enhanced.*\.js$|^worldPlaque\.js$|^hud.*\.js$/.test(f.split(/[\\/]/).pop()));   // WORLD-HOVER: lootHover.js is worldPlaque.js - a rename drops a file out of this sweep SILENTLY, so the name moves with it
   assert.ok(files.length >= 12);
   for (const f of files) {

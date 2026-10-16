@@ -282,7 +282,7 @@
   },
   {
     "name": "PROF8-page-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'hunting', 'fishing', 'logging',",
     "new": "'hunting', 'logging',",
     "tests": [

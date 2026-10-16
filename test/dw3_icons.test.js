@@ -32,7 +32,7 @@ import { diverseWeaponsIconEntries, installDiverseWeaponsIcons, _resetDiverseWea
 import { hasDiverseWeaponsSprite, DIVERSE_WEAPONS_SPRITE_COUNT } from '../src/combat/diverseWeaponsAssets.js';
 import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeaponsIndex.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { makeIconDrawer } from '../src/ui/itemScroller.js';
+import { makeIconDrawer } from '../src/ui/item/itemScroller.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(root, p), 'utf8');
@@ -245,18 +245,18 @@ test('DW3 wiring: the paper doll asks by item.dyeColor and blits an imported tex
   assert.match(doll, /loadRecord\(res\.archive, res\.record, deps\.getTexture, itemDyeColor\(it\), S\)/, 'the item\'s own dyeColor, not the remap\'s (an artifact\'s is Unchanged)');
   assert.match(doll, /loadRecord\(t\.playerTextureArchive \+ \(raceByKey\(deps\.race\)\?\.morphologyIndex \?\? HUMAN_MORPHOLOGY\), t\.playerTextureRecord, deps\.getTexture, itemDyeColor\(it\), S\)/, 'the cloak interior too');
   // DISC24-B: the pack's tile and detail ask through its one picture door (linePictureUrl), and the door asks by the dye
-  assert.match(rd('src/ui/enhancedInventory.js'), /if \(line\.image\) return requestIcon\(line\.image\.archive, line\.image\.record, \{ scale, dye: line\.image\.dye, dyeTarget: line\.image\.dyeTarget, onReady \}\);/);   // DYE-ICON: and the swatch the dye changes
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /if \(line\.image\) return requestIcon\(line\.image\.archive, line\.image\.record, \{ scale, dye: line\.image\.dye, dyeTarget: line\.image\.dyeTarget, onReady \}\);/);   // DYE-ICON: and the swatch the dye changes
   // UI1: the tile and the card ask the FITTED door, whose name carries the dye and whose source is the dyed door above
-  assert.match(rd('src/ui/enhancedInventory.js'), /function itemTile\(line, box, ready = render, snap = true\) \{[\s\S]*?linePicture\(line, \{ box, onReady: ready, snap \}\)/);
-  assert.match(rd('src/ui/enhancedInventory.js'), /function infoCard\(picked, side, ready = render, \{ body = false \} = \{\}\)[\s\S]*?linePicture\(line, \{ box: SLOT_BOX\.card, onReady: ready \}\)/, 'PLUS7: the card redraws through its caller - the detail column by default, the hover card its own');
-  assert.match(rd('src/ui/enhancedInventory.js'), /const name = line\.image \? iconName\(line\.image\.archive, line\.image\.record, line\.image\.dye, line\.image\.dyeTarget\)/, 'UI1: two dyes, two fitted pictures - and (MERGE, DYE-ICON) two swatches');
-  assert.match(rd('src/ui/enhancedHud.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box, dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);   // UI2: the diamond's picture fitted, still by the dye; DYE-ICON: and its swatch
-  assert.match(rd('src/ui/enhancedHotbar.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady: again \}\)/);   // UI2 + DYE-ICON: the bar's slot the same
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /function itemTile\(line, box, ready = render, snap = true\) \{[\s\S]*?linePicture\(line, \{ box, onReady: ready, snap \}\)/);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /function infoCard\(picked, side, ready = render, \{ body = false \} = \{\}\)[\s\S]*?linePicture\(line, \{ box: SLOT_BOX\.card, onReady: ready \}\)/, 'PLUS7: the card redraws through its caller - the detail column by default, the hover card its own');
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /const name = line\.image \? iconName\(line\.image\.archive, line\.image\.record, line\.image\.dye, line\.image\.dyeTarget\)/, 'UI1: two dyes, two fitted pictures - and (MERGE, DYE-ICON) two swatches');
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box, dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);   // UI2: the diamond's picture fitted, still by the dye; DYE-ICON: and its swatch
+  assert.match(rd('src/ui/enhanced/enhancedHotbar.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady: again \}\)/);   // UI2 + DYE-ICON: the bar's slot the same
   assert.match(rd('src/ui/textureCanvas.js'), /\(wake\) => requestIcon\(archive, record, \{ scale: 1, dye, dyeTarget, onReady: wake \}\)/, 'MERGE (UI1 x DYE-ICON): the fitted door asks its source by the swatch too');
   // PIN MOVED (AUDIT VE R2): before the store's one registration - the seam's own copy of it is gone
   assert.match(rd('src/scenes/shared.js'), /installDiverseWeaponsIcons\(\);[^\n]*\n\s+installRoleplayRealismItems\(\);[^\n]*\n\s+installRoleplayRealism\(\);[^\n]*\n(?:\s+\/\/[^\n]*\n)*\s+const textures = registerTextureStore\(\)/, 'installed at the scene boot, before the archives load - not at worldTick\'s module scope (a TDZ through the cycle)');
   assert.ok(!/installDiverseWeaponsIcons/.test(rd('src/systems/worldTick.js')));
-  for (const f of ['src/ui/itemScroller.js', 'src/ui/nativeInventory.js']) {
+  for (const f of ['src/ui/item/itemScroller.js', 'src/ui/native/nativeInventory.js']) {
     assert.match(rd(f), /icons\.uploadRecord\(img\.archive, img\.record, \{ mips: false, removeMask: true, dye: img\.dye, dyeTarget: img\.dyeTarget \}\)/, f);
     assert.match(rd(f), /sizes\.set\(key, tex\.getSize\(img\.record\)\);/, `${f}: the CLASSIC record's size (ItemListScroller.cs:440-441)`);
   }

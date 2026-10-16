@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { readTravelOptionsSettings, TRAVEL_OPTIONS_RESTART_KEYS, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travel/travelOptions.js';
 import { modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { isPlayerControlledTravel } from '../src/ui/travelPopUp.js';
+import { isPlayerControlledTravel } from '../src/ui/travel/travelPopUp.js';
 import { MOD_CURATED, modDials } from '../src/systems/features.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

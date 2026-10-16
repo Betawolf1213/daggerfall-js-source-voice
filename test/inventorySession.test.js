@@ -140,7 +140,7 @@ test('U57 closeSession: the drop pile mints, and only when there is one', () => 
 });
 
 test('U57: the classic window runs this module rather than a second reading', () => {
-  const ui = new URL('../src/ui/nativeInventory.js', import.meta.url);
+  const ui = new URL('../src/ui/native/nativeInventory.js', import.meta.url);
   const s = readFileSync(ui, 'utf8');
   for (const fn of ['openState(hooks)', 'remoteTarget(this.hooks', 'planWagonToggle(this.hooks', 'closeSession(this.hooks']) {
     assert.ok(s.includes(fn), `the window does not call ${fn}`);

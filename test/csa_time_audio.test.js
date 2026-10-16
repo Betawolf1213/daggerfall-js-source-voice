@@ -11,13 +11,13 @@ import { readFileSync } from 'node:fs';
 import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { spawnBoat, TRIGGER_MODEL, animatorOf, AUDIO_CLIPS, goModelName } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, TIME_SCALES, BOAT_ACTIONS, BOAT_TIME_ACTIONS, HELM_TIME_LOCKED_TEXT, customModelOf, activationModelOf } from '../src/systems/comeSailAway/comeSailAway.js';
-import { helmButtons, helmPadGesture, helmPadPrompts, HELM_ACTIONS } from '../src/ui/enhancedHelm.js';
+import { helmButtons, helmPadGesture, helmPadPrompts, HELM_ACTIONS } from '../src/ui/enhanced/enhancedHelm.js';
 import { BED_MODELS } from '../src/systems/roleplayRealism/rrRealism.js';
 import { createAnimator, pathHash } from '../src/world/unityAnimator.js';
 import { PrefabNode, instantiatePrefab } from '../src/world/prefabNode.js';
 import { instanceParticleSystems, constantCurve } from '../src/world/unityParticles.js';
 import { MidScreenText } from '../src/ui/midScreenText.js';
-import { HudText } from '../src/ui/hudText.js';
+import { HudText } from '../src/ui/hud/hudText.js';
 import { _setTimeScaleForTest } from '../src/systems/timeScale.js';
 import { logarithmicRolloff, plainSourceGain } from '../src/systems/audio.js';
 

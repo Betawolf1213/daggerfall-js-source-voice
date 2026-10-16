@@ -257,7 +257,7 @@
   },
   {
     "name": "WILD-marks-uncapped",
-    "file": "src/ui/wildMarks.js",
+    "file": "src/ui/wild/wildMarks.js",
     "old": "    .sort((a, b) => a.distance - b.distance).slice(0, WILD_MARKS_MAX);",
     "new": "    .sort((a, b) => a.distance - b.distance);",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "WILD-mark-slot-shared",
-    "file": "src/ui/wildMarks.js",
+    "file": "src/ui/wild/wildMarks.js",
     "old": "    if (slot.k.key != null && wantKeys.has(slot.k.key) && !held.has(slot.k.key)) held.set(slot.k.key, slot);",
     "new": "    if (false) held.set(slot.k.key, slot);",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "WILD-marks-watchdog-unarmed",
-    "file": "src/ui/wildMarks.js",
+    "file": "src/ui/wild/wildMarks.js",
     "old": "  watch(want.length > 0, timers);\n",
     "new": "",
     "tests": [

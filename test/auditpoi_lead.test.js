@@ -22,8 +22,8 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createPoiEditorPanel, createAssetFacts, PRESS_HOLD_MS } from '../src/ui/poiEditorPanel.js';
-import { createPoiUvPanel } from '../src/ui/poiUvPanel.js';
+import { createPoiEditorPanel, createAssetFacts, PRESS_HOLD_MS } from '../src/ui/poi/poiEditorPanel.js';
+import { createPoiUvPanel } from '../src/ui/poi/poiUvPanel.js';
 import { createPoiEdit, newPart, newLight, lawName } from '../src/poi/poiEdit.js';
 import { encodePoiMesh, decodePoiMesh, decodePoiMeshSteps, poiMeshError, poiMeshFacts, meshBoxOf, POI_MESH_STEP } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL, POI_LIMITS, POI_BUDGET, poiDocProblems } from '../src/poi/poiLaw.js';
@@ -426,7 +426,7 @@ test('AUDIT POI L9 THE EDITOR READS AN ASSET AS THE STORE\'S LAW DOES: a model\'
   assert.deepEqual({ ...facts, bytes: held.byteLength }, want);
   // every fact the panel is told carries the bytes the budget reads: a picture put, a UV edit put, a pack's (its own
   // bytes beside its facts), an import's (its metas, above) - by source, the bytes being read by the budget alone
-  const panelSrc = readFileSync(new URL('../src/ui/poiEditorPanel.js', import.meta.url), 'utf8');
+  const panelSrc = readFileSync(new URL('../src/ui/poi/poiEditorPanel.js', import.meta.url), 'utf8');
   const told = [...panelSrc.matchAll(/facts\.put\(([^\n]*)\);/g)].map((m) => m[1]);
   assert.deepEqual(told, [
     "r.data.sha, { kind: 'texture', ...r.data.meta, bytes: bytes.byteLength }",

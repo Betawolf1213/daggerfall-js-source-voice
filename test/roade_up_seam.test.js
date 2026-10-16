@@ -17,7 +17,7 @@
 //     ROAD-A7 and never called, so the thumb-drag latch survived the
 //     button coming up and dropped only on the next `hover`
 //     (Port-Ledger C :466's remainder).
-//   - `ui/automapWindow.js` - the dungeon automap's twenty-two
+//   - `ui/automap/automapWindow.js` - the dungeon automap's twenty-two
 //     `IsPressedWith` camera arms fired at the browser's key-repeat
 //     rate instead of once per frame, and its two-phase toggle-close
 //     drained in `tick()` rather than on the key UP DFU closes on
@@ -49,14 +49,14 @@ import { thumbSpan } from '../src/ui/verticalScrollBar.js';
 import {
   AutomapWindow, HOTKEYS_HELD, HOTKEYS_DOWN, TELEPORT_JUMP_DURATION,
   resetAutomapWindowState, signalAutomapReset, automapCameraState, _setAutomapArt,
-} from '../src/ui/automapWindow.js';
+} from '../src/ui/automap/automapWindow.js';
 import { RestWindow } from '../src/ui/restWindow.js';
 import { PauseOptionsWindow } from '../src/ui/pauseWindow.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { createBindings, setBinding } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { shortcutOrFallback } from '../src/ui/automapText.js';
+import { shortcutOrFallback } from '../src/ui/automap/automapText.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -456,25 +456,25 @@ test('E1: every window DFU reads on GetKeyUp answers on the RELEASE - all four, 
   // four separate files, because they are ONE law with one blocker.
   const WINDOWS = [
     // DaggerfallAutomapWindow.cs:707-713 / ExteriorAutomapWindow.cs:589-596
-    { file: 'src/ui/automapWindow.js', member: /^  keyup\(code, e = null\) \{$/m },
+    { file: 'src/ui/automap/automapWindow.js', member: /^  keyup\(code, e = null\) \{$/m },
     { file: 'src/ui/exteriorAutomapWindow.js', member: /^  keyup\(code, e = null\) \{$/m },
     // DaggerfallRestWindow.cs:193-196 and StopButton_OnKeyboardEvent :714-726
     { file: 'src/ui/restWindow.js', member: /^  keyup\(action, e = null\) \{$/m },
     // DaggerfallPauseOptionsWindow.cs:183-188
     { file: 'src/ui/pauseWindow.js', member: /^  keyup\(code, e = null\) \{$/m },   // AUDIT DISC28 UI-1: the release's event, as its siblings take it
     // D4 got there first, on the travel popup's EXIT (:482-495)
-    { file: 'src/ui/travelPopUp.js', member: /^  keyup\(code, e = null\) \{$/m },
+    { file: 'src/ui/travel/travelPopUp.js', member: /^  keyup\(code, e = null\) \{$/m },
   ];
   for (const w of WINDOWS) assert.match(src(w.file), w.member, `${w.file}: the release edge`);
 
   // and the two-phase latch each of the three that HAS one keeps
-  for (const f of ['src/ui/automapWindow.js', 'src/ui/exteriorAutomapWindow.js', 'src/ui/restWindow.js']) {
+  for (const f of ['src/ui/automap/automapWindow.js', 'src/ui/exteriorAutomapWindow.js', 'src/ui/restWindow.js']) {
     assert.match(src(f), /isCloseWindowDeferred/, `${f}: DFU's own field name`);
   }
 });
 
 test('E1: the retired DEPARTURES are gone from both automap windows, and the Ledger row is struck', () => {
-  const dungeon = src('src/ui/automapWindow.js');
+  const dungeon = src('src/ui/automap/automapWindow.js');
   const exterior = src('src/ui/exteriorAutomapWindow.js');
   // The old claims survive ONLY as quotations inside the retirement
   // record - the site says what it used to say and then what shipped,

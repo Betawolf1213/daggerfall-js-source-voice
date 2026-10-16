@@ -127,7 +127,7 @@
   },
   {
     "name": "POI5-the-header-unread",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    if ('error' in meta) { say(imageErrorText(meta.error), 'bad'); return false; }\n    const r = await act((i) => poiPutAsset(i, bytes, 'texture'));",
     "new": "    const r = await act((i) => poiPutAsset(i, bytes, 'texture'));",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "POI5-the-strength-unread",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "numberInput(strength, (k2) => change('material', mat((x) => { x.emissiveColor = glowAs(glow.value, k2); })),",
     "new": "numberInput(strength, (k2) => change('material', mat((x) => { x.emissiveColor = glowAs(glow.value, 1); })),",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "POI5-the-zoom-drifts",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "      v.cu = before[0] - (x - v.w / 2) / k(); v.cv = before[1] - (y - v.h / 2) / k();",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "POI5-the-part-never-wears-it",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "        edit.edit(id, 'uv', (x) => { const p = x.parts.find((q) => q.key === key); if (p) p.mesh = r.data.sha; });",
     "new": "        void id;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "POI5-the-first-act-frees-the-save",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    try { return await fn(i); } finally { busy--; schedule(); }",
     "new": "    try { return await fn(i); } finally { busy = 0; schedule(); }",
     "tests": [

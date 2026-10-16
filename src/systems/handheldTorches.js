@@ -50,7 +50,7 @@ import { getItem, addItem } from './inventory.js';
 import { conditionWord, itemLongName } from './item/itemInfo.js';
 import { getItemHands, EQUIP_SLOTS, ITEM_HANDS, addEquipChangeListener } from './equip.js';   // HT6: the worn set's own door - the hand law runs at the equip moment too
 import { weaponTypeForItem, WEAPON_TYPES, NATIVE_W, NATIVE_H } from '../combat/fpsWeapon.js';
-import { weaponOffsetHeight } from '../ui/hudLarge.js';
+import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';
 import { SOUND } from './soundClips.js';
 import { moveTowards, moveTowards2, snap, BOB_SHAPE, STEP_CONDITION } from '../combat/weaponWidget.js';   // WW1: Unity's pieces and the two choice tables, one home
 import { setPlayerTorchOffsetOverride } from './playerTorch.js';
@@ -588,7 +588,7 @@ export function createHandheldTorches({
    *  by `overlayHeld` at every host) - so a shield equipped in an OPEN
    *  inventory window did not reach the law until the window closed,
    *  and the window went on painting a lit torch (`lit:` in
-   *  ui/enhancedInventory.js reads entity.lightSource at render time)
+   *  ui/enhanced/enhancedInventory.js reads entity.lightSource at render time)
    *  beside the shield the player had just put on the same hand. The
    *  equip table fires its listeners inside equipItem / unequipSlot
    *  (equip.js's fireEquipChange), so the SAME block runs the moment

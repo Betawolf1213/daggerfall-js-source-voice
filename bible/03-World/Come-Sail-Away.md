@@ -1354,7 +1354,7 @@ which ARE those keys (`BOAT_TIME_ACTIONS`) - say *"Online, time at sea
 keeps the world's pace."* (`HELM_TIME_LOCKED_TEXT`, a second and a half)
 and move nothing (`updateSailing` returns before the three key lines, which
 stand byte for byte); `helmPanelState().timeDial` is false, so the
-enhanced helm draws no `−` / `×N` / `+` (`ui/enhancedHelm.js helmButtons`),
+enhanced helm draws no `−` / `×N` / `+` (`ui/enhanced/enhancedHelm.js helmButtons`),
 the pad's left and right step nothing and, held, only trim
 (`helmPadGesture`), and the prompt row says "Trim (hold)" or nothing
 (`helmPadPrompts`). ResetTimeScale itself is untouched - it is how a
@@ -1370,7 +1370,7 @@ add Time.deltaTime, which the scale scales, where the port handed its HUD
 the frame's real dt, so a message at a journey's or the helm's scale stood
 its scale's times too long ("Time scale set to 30." for ninety seconds).
 The two models take the frame's dt at Time.timeScale (`ui/midScreenText.js`,
-`ui/hudText.js`).
+`ui/hud/hudText.js`).
 
 ### The oars' events
 
@@ -2186,7 +2186,7 @@ avatar collide (peers never stand in the collider).
 The port's own (DECLARED (41)): the player's ask (2026-09-28), "instead of
 an overuse of keybinds, is there a way we can instead develop enhanced plus
 UI elements?" - and AUDIT PRE-MERGE 0928 U4's open question (the helm's
-nine actions on a phone and a pad) with it. `ui/enhancedHelm.js`, Enhanced
+nine actions on a phone and a pad) with it. `ui/enhanced/enhancedHelm.js`, Enhanced
 Plus only; the classic skin keeps the mod's keys as the mod drew them.
 
 - **Every button is its key.** A press is the registry action the key
@@ -2214,7 +2214,7 @@ Plus only; the classic skin keeps the mod's keys as the mod drew them.
   position box's own reading, from the wheel - DECLARED: the box is out of
   reach there); leaving the helm.
 - **The HUD's kind of thing, not a window** (the journey bar's law,
-  `ui/enhancedTravelControl.js`): it pauses nothing, registers with no
+  `ui/enhanced/enhancedTravelControl.js`): it pauses nothing, registers with no
   overlay stack, and only its buttons take the pointer, their presses
   swallowed (never a swing or an activation in the world). It stands under
   the compass where the journey bar stands (a journey and a helm are never
@@ -2238,7 +2238,7 @@ Plus only; the classic skin keeps the mod's keys as the mod drew them.
 - **Aboard another's boat** (CSA-K) the same bar names whose deck you stand
   on ("Aboard Ann's Large Boat") and holds no button - the helm is theirs.
 
-It is dressed by the kit (`ui/enhancedFrame.js` FRAME_ROLES: the bar a
+It is dressed by the kit (`ui/enhanced/enhancedFrame.js` FRAME_ROLES: the bar a
 window, the presses buttons); its own sheet only places and letters.
 
 ## The arrows are the helm (HELM-KEYS, 2026-09-29 - DECLARED)
@@ -2265,7 +2265,7 @@ on the mod's own states (`bible/10-UI/Controls.md` HELM-KEYS has the keys):
   once how she comes out, again only after
   she has been out of them - `IRONS_TEXT` (strike sail and row her round), and
   `helmPanelState().inIrons` puts it, with the keys, on the panel's line while it
-  lasts (`ui/enhancedHelm.js helmHint`). The Classic helm's alone: under the
+  lasts (`ui/enhanced/enhancedHelm.js helmHint`). The Classic helm's alone: under the
   Responsive one (SAIL-FREE, below) her canvas draws in the wind's eye and drives her
   up into it, so she is never in irons.
 - **The panel teaches the arrows**: its line is the helm's hand at a glance.
@@ -2399,7 +2399,7 @@ the mod to the letter:
   make (her canvas's) comes off no slower than her coast - at the oars' rate both ways, a galleon struck and rowed took
   48 s and 400 m to come down to their way. The mod's own helm keeps its rates.
 - **HELM-SPEED** (2026-10-06, Mac: "add a speed indicator for when you're sailing"): the helm panel says her way through
-  the water beside her name, the runtime's own, in knots to a tenth (`helmPanelState` `way`; ui/enhancedHelm.js
+  the water beside her name, the runtime's own, in knots to a tenth (`helmPanelState` `way`; ui/enhanced/enhancedHelm.js
   `helmSpeedText`).
 - **Her sails draw on every heading**: no fore-and-aft sail luffs in the wind's eye, no square sail is laid aback (its
   Animator's Wind the wind's own), and the square-sail assist stows none upwind - raised there (RaiseSails) or brought
@@ -2527,7 +2527,7 @@ mark; the port's (`ui/boatMarks.js`, a leaf):
 - **None for the boat at my helm** (`csaBoatUnderMe`), **nor one within `BOAT_MARK_NEAR_M`** (12 m, flat) of my feet:
   at her, aboard or on the quay beside her, the bearing would swing with every step.
 - **The mark is a little boat** - a sail over a hull - in one sea-glass teal (`BOAT_MARK_CSS` `#20e0b0`), at least 103
-  RGB from every other mark on the strip (the test holds NODE-MARKS' 75). The classic box (`ui/hud.js
+  RGB from every other mark on the strip (the test holds NODE-MARKS' 75). The classic box (`ui/hud/hud.js
   drawBoatCompassMarks`) draws it 7x5 native pixels, its foot on the box's top edge, by the Detect markers' bearing
   law (clamped: a boat behind pins to the end to turn toward), after the professions' nodes and under the Detect
   markers, the party and the ships. The enhanced strip draws the same boat as a 14x12 SVG on the strip's middle,

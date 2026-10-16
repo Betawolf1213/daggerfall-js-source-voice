@@ -30,7 +30,7 @@ kept by every member who heard it, and moved only by its author (a line's sender
 may rename or drop one on their own screen alone). `ui/waypointMenu.js` is the right-click box both maps open - add one
 where the map was pressed (a name, the kind, the colour), or a flag's own menu: rename, recolour, follow, travel there,
 share again, remove. `ui/waypointFlags.js` paints the flag once for both (a party's pip, a guild's bar - the kind never
-told by colour alone). The Overworld (`ui/travelViewHud.js`) draws every shown waypoint where it lies and a FOLLOWED one
+told by colour alone). The Overworld (`ui/travel/travelViewHud.js`) draws every shown waypoint where it lies and a FOLLOWED one
 held at the screen's edge with its distance; its filter block has a switch per kind, a dropdown that follows one and the
 followed list (Go, unfollow). The held map (`ui/heldMap.js`) draws the flags on the bay, names one under the pointer,
 and its key has the kinds' switches. GROUP-LEAVE ("i hope the waypoints are removed when leaving party"): the world host
@@ -45,7 +45,7 @@ ladder (5, 10, 20, 30, 40, 60, 100) - the journey's Speed and the Near enemies f
 RATE-LAW's x100 and x60 are the dial's two ceilings now: x100 is chosen on a road alone, and leaving a road takes a dial
 at x100 to x60 at once, never climbing back. Every reader asks this module (`systems/timeScale.js` travelRateOf,
 `systems/travel/travelThreat.js` foePaced), and the world host tells it the ground every frame a journey or the Overworld runs,
-so every skin runs under one law. `ui/travelPaceControls.js` builds the steppers for the Overworld's block, the enhanced
+so every skin runs under one law. `ui/travel/travelPaceControls.js` builds the steppers for the Overworld's block, the enhanced
 journey bar and - for the classic strip and GrimoireUI - a pace box of its own while a journey runs. The default is x60:
 RATE-LAW's road ran at x100 by itself; under the dials a road is x100 when the player sets it there.
 
@@ -86,7 +86,7 @@ Each against a law of this tree the patches did not know:
   `appStorage()` (AUDIT DA's pin: one storage seam, so the desktop app's file store sees it too).
 - **One shape for a batch** (`render/renderer.js`, `render/contract.js`). IDLER-STICKY's `_shIdler` is minted undefined
   in createBillboardBatch's literal and declared in the contract (PERF-EXT10, HARD3: 53 fields).
-- **The held map never asks which sheet** (`ui/heldMap.js`, `ui/mapStrip.js`, `ui/automapSheet.js`, `ui/townSheet.js`).
+- **The held map never asks which sheet** (`ui/heldMap.js`, `ui/map/mapStrip.js`, `ui/automap/automapSheet.js`, `ui/town/townSheet.js`).
   The waypoints' right click branched on the 'world' sheet by name (EM1); the sheet contract grew `context` - the world
   sheet's opens the waypoint menu, the dungeon plan's and the street's answer false - and the flag's hover is the world
   sheet's own `_hoverLabel`.

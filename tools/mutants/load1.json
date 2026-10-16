@@ -469,7 +469,7 @@
  },
  {
   "name": "LOAD1-pane-release-gone",
-  "file": "src/ui/enhancedMenu.js",
+  "file": "src/ui/enhanced/enhancedMenu.js",
   "old": "      releaseShotsPane();   // LOAD1",
   "new": "      // LOAD1",
   "tests": [

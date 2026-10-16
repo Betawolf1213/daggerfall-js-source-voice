@@ -9,12 +9,12 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createProfHud } from '../src/ui/profHud.js';
-import { buildActReticle, marksOf, offsetOf, reachPx, HINT_MS, FOCAL_FALLBACK, NOTCH_PX, BASKET_SPREAD } from '../src/ui/profReticle.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
+import { buildActReticle, marksOf, offsetOf, reachPx, HINT_MS, FOCAL_FALLBACK, NOTCH_PX, BASKET_SPREAD } from '../src/ui/professions/profReticle.js';
 import { reticleAnchor } from '../src/ui/worldPlaque.js';
 import { PROF_CUES, profCue, setProfCueSink } from '../src/systems/professions/profSounds.js';
-import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { PROF_ACT_CSS } from '../src/ui/profActStyle.js';
+import { PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { PROF_ACT_CSS } from '../src/ui/professions/profActStyle.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { createMineAct, MINE_POINTS } from '../src/systems/mineAct.js';
 import { createChopAct } from '../src/systems/chopAct.js';
@@ -266,7 +266,7 @@ test('PROF-RETICLE cues (PIN MOVED, GATHER-FEEL): the HUD draws the act and says
   assert.equal(profCue('nothing'), false);
   assert.deepEqual(PROF_CUES.strike.clips, [SOUND.Hit1, SOUND.Hit1 + 1, SOUND.Hit1 + 2, SOUND.Hit1 + 3, SOUND.Hit1 + 4], 'DFU\'s five hit clips');
   assert.deepEqual(PROF_CUES.clean.clips, [SOUND.ActivateLockUnlock]);
-  assert.doesNotMatch(src('src/ui/profHud.js'), /profCue|profSounds/, 'the HUD imports no voice');
+  assert.doesNotMatch(src('src/ui/professions/profHud.js'), /profCue|profSounds/, 'the HUD imports no voice');
 });
 
 test('PROF-RETICLE host: the marks stand round the crosshair\'s middle and read the frame\'s lens (the anchor\'s focal); the world gives it reticleAnchor through fieldOfView; the last frame drawn before the act ends, a clean finish rung; the sheet appended after the old meter\'s rules, no plate, still forms under reduced motion (mutants: each wire cut)', () => {

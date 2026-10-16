@@ -14,10 +14,10 @@ import {
   SpellIconPickerWindow, buildIconPickerLayout, visibleIconPickerItems,
   ICON_PICKER_PANEL_SIZE, ICON_PICKER_SCROLL_PANEL, ICON_PICKER_SCROLLER,
   ICONS_PER_ROW, ICON_PICKER_ICON_SIZE, ICON_SPACING, CLASSIC_ICONS_HEADER,
-} from '../src/ui/spellIconPickerWindow.js';
-import { SPELL_ICON_COUNT } from '../src/ui/spellIcons.js';
+} from '../src/ui/spell/spellIconPickerWindow.js';
+import { SPELL_ICON_COUNT } from '../src/ui/spell/spellIcons.js';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
-import { SpellMakerWindow, SPELL_MAKER_RECTS } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow, SPELL_MAKER_RECTS } from '../src/ui/spell/spellMakerWindow.js';
 import { DEFAULT_SPELL_ICON } from '../src/systems/spell/spellMaker.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -252,5 +252,5 @@ test('MC1 maker: the bought spell carries the picked icon', () => {
   w.click(...iconCenter(55));
   assert.equal(w.icon, 55);
   // buildCustomSpell reads this.icon (:232's shape) - pinned at the source
-  assert.match(src('ui/spellMakerWindow.js'), /name: this\.name\.trim\(\), icon: this\.icon,/);
+  assert.match(src('ui/spell/spellMakerWindow.js'), /name: this\.name\.trim\(\), icon: this\.icon,/);
 });

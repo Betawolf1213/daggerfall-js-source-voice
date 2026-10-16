@@ -1,7 +1,7 @@
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT ON THE
 // PAGE - the fight as the page holds it (net/superDungeon/sdFightLink.js: the realm's words folded, my place in the fight), the arena's
 // set (scenes/sdRemnant.js: the bodies where the realm says, my `in`, my blows through the gate's three seams), its bar
-// (ui/sdRemnantBar.js on the gate's own), its bodies made (world/superDungeon/sdRemnantModel.js, world/superDungeon/sdRemnantArt.js), the arena's
+// (ui/superDungeon/sdRemnantBar.js on the gate's own), its bodies made (world/superDungeon/sdRemnantModel.js, world/superDungeon/sdRemnantArt.js), the arena's
 // pillars on the collider, and the realm's `me`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -24,8 +24,8 @@ import {
   SD_GEAR_DRAWS,
   SD_DECOR_DRAWS,
 } from '../src/scenes/sdRemnant.js';
-import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_BAR_NEAR_M, SD_ENDS_WARN_MS, SD_ENDS_NEAR_MS } from '../src/ui/sdRemnantBar.js';
-import { drawGateBossBar, destroyGateBossBar, FELL_HOLD_MS, FELL_FADE_MS } from '../src/ui/gateBossBar.js';
+import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_BAR_NEAR_M, SD_ENDS_WARN_MS, SD_ENDS_NEAR_MS } from '../src/ui/superDungeon/sdRemnantBar.js';
+import { drawGateBossBar, destroyGateBossBar, FELL_HOLD_MS, FELL_FADE_MS } from '../src/ui/gate/gateBossBar.js';
 import { buildRemnantModel, buildHeartModel, remnantMatrix, remnantScale, SD_REMNANT_WEAR, SD_REMNANT_HEART_RECORD, SD_REMNANT_EYE_RECORD } from '../src/world/superDungeon/sdRemnantModel.js';
 import { SD_RIG_PARTS } from '../src/scenes/sdRemnantRig.js';   // SD17 (PIN MOVED): the bodies' parts
 import { remnantArt, echoMetalArt, SD_REMNANT_GOLD_RECORD, SD_REMNANT_SILVER_RECORD, SD_REMNANT_ART_SIZE, SD_ECHO_METALS } from '../src/world/superDungeon/sdRemnantArt.js';

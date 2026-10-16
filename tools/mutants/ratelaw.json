@@ -174,7 +174,7 @@
   },
   {
     "name": "RATE-strip-readout-steps",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "old": "  setRate(rate, onRoad = false) {\n    this.timeAcceleration = rate;",
     "new": "  setRate(rate, onRoad = false) {\n    this.timeAcceleration = rate + 5;",
     "tests": [

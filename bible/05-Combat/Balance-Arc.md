@@ -320,7 +320,7 @@ health with the ladder, DFU's with it off or on a location's ground); the dungeo
 source (world.js's wilds pass the location rect; exterior.js's city and worldModes.js's interiors pass none).
 
 **BAL4** - `systems/eliteFoes.js` elitesAllowed; `systems/features.js` 'enhanced-ai' `initial: true`; `systems/uiPrefs.js`
-PREF1_ADOPT_NEW_DEFAULT; `ui/deathScreen.js` `rises` and riseHint, `ui/enhancedDeath.js` deathKeys' Rise; the hosts'
+PREF1_ADOPT_NEW_DEFAULT; `ui/deathScreen.js` `rises` and riseHint, `ui/enhanced/enhancedDeath.js` deathKeys' Rise; the hosts'
 `rises` (`world.js`, `worldModes.js` and its dungeon opts, `dungeonContext.js`); `legacyDeathReset`; Privateer's Hold;
 `systems/deathPenalty.js`'s header. Pinned: elites by the ladder and the lane, and the open world's own roll by
 execution; the AI's default, the brain's and the cover's switch; the death cost by execution (a rising screen states

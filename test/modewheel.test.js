@@ -14,7 +14,7 @@ import {
   DEFAULT_BINDINGS, ACTIONS, PORT_ACTIONS, KEYBINDS_VERSION, createBindings, resetDefaults, serializeKeyBinds, loadKeyBinds,
   migrateKeyBinds, getBinding, actionForCode,
 } from '../src/systems/inputActions.js';
-import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touchButtons.js';
+import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touch/touchButtons.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;

@@ -150,7 +150,7 @@ test('U43: the two journal doors are in the ONE dispatch, and are one window', (
   // GameManager.Update (:541-548) dispatches LogBook and NoteBook in
   // the same flat chain as CharacterSheet and Inventory. The port has
   // bound L and N since I1 and read NEITHER anywhere in src/, while
-  // ui/questJournal.js sat built with all four of its pages - the
+  // ui/quest/questJournal.js sat built with all four of its pages - the
   // exact shape of a binding table nobody consults.
   withDefaults();
   const calls = [];

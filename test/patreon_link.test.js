@@ -18,7 +18,7 @@ import {
 } from '../server-account/src/patreon.js';
 import { titlesHeld, glyphsOf, titleWorn, equipRefusal } from '../server-account/src/titles.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { SESSION_KEY, REFUSALS } from '../src/net/accountClient.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -475,7 +475,7 @@ function cardDoc() {
 }
 
 test('PATREON-LINK: the card - Link Patreon is a LINK that opens at once in a new tab (the system browser in the app); linked, what the pledge holds, Refresh and Unlink; nothing for a guest or while linking is off; every class one the skin defines (mutants: the row drawn for a guest; the link not a link; the row drawn while off)', async () => {
-  const css = src('src/ui/enhancedStyle.js');
+  const css = src('src/ui/enhanced/enhancedStyle.js');
   const draw = (patreon, account = ACCOUNT, titles = []) => {
     const flow = AccountFlow({ io: service([answer(patreon, titles)]).io, storage: memStorage() });
     flow.stage = 'in';

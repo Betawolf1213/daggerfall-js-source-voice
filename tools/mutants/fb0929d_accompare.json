@@ -263,7 +263,7 @@
   },
   {
     "name": "ACCOMPARE-an-empty-panels-number",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (part >= 0) d.append(armourBadge(deps.entity, part));   // AC-COMPARE\n",
     "new": "",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "ACCOMPARE-a-filled-panels-number",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (part >= 0) b.append(armourBadge(deps.entity, part));   // AC-COMPARE: the part's armour, as on the empty panel\n",
     "new": "",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "ACCOMPARE-the-head-panel-loses-its-part",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const part = rows.map((r) => bodyPartForSlot(r.slot)).find((p) => p >= 0) ?? -1;",
     "new": "const part = rows.map((r) => bodyPartForSlot(r.slot)).find((p) => p > 0) ?? -1;",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "ACCOMPARE-the-plaque-never-stands",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  plaques.append(armourPlaque(deps.entity));\n",
     "new": "",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "ACCOMPARE-the-card-carries-no-comparison",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "wear); if (cmp) into.append(cmp);",
     "new": "wear);",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "ACCOMPARE-the-sheet-without-the-rules",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "${LAYOUT_CSS}\n${ARMOUR_CSS}\n",
     "new": "${LAYOUT_CSS}\n",
     "tests": [

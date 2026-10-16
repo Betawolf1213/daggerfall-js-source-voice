@@ -28,7 +28,7 @@
 // step by the same number (player/motor.js); and (CSA-G) the HUD's two
 // message clocks, which DFU counts in `Time.deltaTime` - game time -
 // where the port hands its HUD the frame's real dt (ui/midScreenText.js,
-// ui/hudText.js). The mods whose Unity code reads `Time.timeScale` read
+// ui/hud/hudText.js). The mods whose Unity code reads `Time.timeScale` read
 // it here too (AUDIT OW5, the audit before the merge, counted them: the
 // bands' and the raiders' chases, the sea's helm, Come Sail Away, Warm
 // Ashes, the horse and cart, Deep Waters, Ocean Holes). A system that

@@ -97,7 +97,7 @@ character's - if it predates the loss, the items can be read out of it and given
 ## QUEST-TOWN: a site taken in another town is on the map and in the quest list (4)
 
 `src/systems/quest/place.js` `siteDetails.nearSite` (the first seat's NEAR-SITE and the re-seat's);
-`src/systems/quest/machine.js` revealNearSites; `src/ui/questLens.js` entryTarget, movedSiteOf.
+`src/systems/quest/machine.js` revealNearSites; `src/ui/quest/questLens.js` entryTarget, movedSiteOf.
 
 FOUND. "Open a Chest" is N0B00Y16: `Place _shop_ local pawnshop`, `place npc _merchant_ at _shop_`; the town is named only
 in the offer (`__shop_`, "The best locksmiths in ..."), and the log entry (`log 1020 step 0`) names two persons, "a local

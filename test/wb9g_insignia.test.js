@@ -30,7 +30,7 @@ import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import { fakeDom } from './invdrag.mjs';
 import { mountBrokerWindow, insigniaLabel, INSIGNIA_HEAD, INSIGNIA_CARD, stonesText } from '../src/ui/brokerWindow.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { standService, T0 } from './accountDb.mjs';
 import { aurasHeld, auraWorn, auraRefusal, titlesHeld, wardrobeOf } from '../server-account/src/titles.js';
 import { buyInsignia as serviceBuyInsignia } from '../server-account/src/accounts.js';   // AUDIT WB9 (insignia F3): the sale itself, under the interleaving real D1 allows

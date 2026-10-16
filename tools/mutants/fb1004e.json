@@ -1,7 +1,7 @@
 [
   {
     "name": "PADBINDS-no-overworld-row",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "  { id: 'overworld', label: 'Overworld', sec: 'TravelView' },\n",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "PADBINDS-quick-dial-on-the-wrong-action",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "{ id: 'quickdial', label: 'Quick dial', sec: 'QuickDial' }",
     "new": "{ id: 'quickdial', label: 'Quick dial', sec: 'TravelView' }",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "PADBINDS-no-overworld-on-the-dpad",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "['QuickDial', 'Quick dial'], ['TravelView', 'Overworld'],\n",
     "new": "['QuickDial', 'Quick dial'],\n",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "PADARRANGE-add-takes-the-first-free-slot",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "  const e = padInHand() && hotbarAcceptsDrops() ? hotbarEntryForItem(item) : null;",
     "new": "  const e = null;",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "PADARRANGE-the-bar-stays-tucked",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "  bar.classList.toggle('dragging', extDragging || !!hbDrag?.moved || arranging || !!hand);",
     "new": "  bar.classList.toggle('dragging', extDragging || !!hbDrag?.moved);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "PADARRANGE-the-tap-picks-nothing",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "    else if (commit && d.payload.tapPick) takeHotbarHand(d.payload.slot);",
     "new": "",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "PADARRANGE-the-hand-outlives-the-window",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "dragEnd(false); hand = null; arranging = false; handPress = -1; raiseSync(); }",
     "new": "dragEnd(false); raiseSync(); }",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "PADARRANGE-no-LT-prompt",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "  if (hotbar) rows.push([[HOTBAR_ARRANGE_CODE], hotbar === 'off' ? 'Arrange hotbar' : 'Hotbar done']);\n",
     "new": "",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "PADARRANGE-tabs-kept-in-hand",
-    "file": "src/ui/plusPad.js",
+    "file": "src/ui/plus/plusPad.js",
     "old": "  else if (tabs) rows.push(",
     "new": "  if (tabs) rows.push(",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "PADARRANGE-put-down-on-the-press",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "{ e.preventDefault(); handPress = i; return; }",
     "new": "{ e.preventDefault(); placeHotbarHand(i); return; }",
     "tests": [
@@ -141,7 +141,7 @@
   },
   {
     "name": "PADARRANGE-any-click-places",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "    if (!hand || handPress !== i) return;",
     "new": "    if (!hand) return;",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "PADARRANGE-the-cleared-slot-kept-in-hand",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "    if (hand?.kind === 'slot' && hand.slot === i) { hand = null; handPress = -1; raiseSync(); }",
     "new": "",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "PADARRANGE-the-hand-kept-off-the-pad",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "  if ((hand || arranging) && !padInHand()) { hand = null; arranging = false; handPress = -1; raiseSync(); }\n",
     "new": "",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "PADBINDS-the-cleared-row-said-to-swap",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "cleared: !!other && !old }",
     "new": "cleared: false }",
     "tests": [
@@ -441,7 +441,7 @@
   },
   {
     "name": "ARENATEAMS-the-melee-test-inverted",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "const melee = bout.fighters.length > 2 && new Set",
     "new": "const melee = bout.fighters.length <= 2 && new Set",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "ARENATEAMS-the-word-never-written",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "parts.vs.textContent = shown.vs; }",
     "new": "}",
     "tests": [
@@ -601,7 +601,7 @@
   },
   {
     "name": "OWKIN-the-name-the-strangers",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  x.font = rowFont; x.fillStyle = party ? N.party : (TV_KIN_COLORS[m.kin] ?? N.name);",
     "new": "  x.font = rowFont; x.fillStyle = party ? N.party : N.name;",
     "tests": [
@@ -611,7 +611,7 @@
   },
   {
     "name": "OWWHO-the-panel-dead",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    b.onclick = (e) => { e.preventDefault(); toggleTravelViewWho(g); };",
     "new": "    b.onclick = (e) => { e.preventDefault(); };",
     "tests": [
@@ -621,7 +621,7 @@
   },
   {
     "name": "OWHUBS-the-wheel-never-drawn",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    } else if ((look === 'place' || look === 'far') && m.hub) {",
     "new": "    } else if (false) {",
     "tests": [
@@ -631,7 +631,7 @@
   },
   {
     "name": "SEATTIP-the-card-never-shown",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  showMarkTip(hover ? placed.find((q) => q.m.key === hover)?.m.tip ?? null : null, pointer, vw, vh);",
     "new": "  showMarkTip(null, pointer, vw, vh);",
     "tests": [
@@ -721,7 +721,7 @@
   },
   {
     "name": "OWHUBS-the-wheel-on-the-mark",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "(beside ? [x - markReach(m) - CARRIAGE_WHEEL_R - 1, y - 1] : [x, y])",
     "new": "(beside ? [x - 9, y - 1] : [x, y])",
     "tests": [
@@ -731,7 +731,7 @@
   },
   {
     "name": "OWHUBS-the-wheels-ground-unreserved",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (m.carriage) {   // OW-HUBS: and a carriage town's wheel beside it\n",
     "new": "    if (false) {   // OW-HUBS: and a carriage town's wheel beside it\n",
     "tests": [
@@ -741,7 +741,7 @@
   },
   {
     "name": "OWHUBS-the-left-name-on-the-wheel",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "(m.carriage ? markReach(m) + 2 * CARRIAGE_WHEEL_R + 2 : glyph)",
     "new": "glyph",
     "tests": [
@@ -751,7 +751,7 @@
   },
   {
     "name": "SEATTIP-the-seats-lines-cut-at-80",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "readTip(typeof tip === 'function' ? tip() : tip, { textMax: SEAT_TIP_TEXT_MAX })",
     "new": "readTip(typeof tip === 'function' ? tip() : tip)",
     "tests": [
@@ -771,7 +771,7 @@
   },
   {
     "name": "SEATTIP-measured-each-frame",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (!tipSize || tipSize.vw !== vw) {",
     "new": "  if (true) {",
     "tests": [
@@ -781,7 +781,7 @@
   },
   {
     "name": "SEATTIP-the-blocks-controls-a-plate",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "i >= 0 && pointer && !pointer.ui; i--)",
     "new": "i >= 0 && pointer; i--)",
     "tests": [
@@ -791,7 +791,7 @@
   },
   {
     "name": "SEATTIP-a-function-tip-unread",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "typeof tip === 'function' ? tip() : tip",
     "new": "tip",
     "tests": [

@@ -14,16 +14,16 @@ import {
   MidScreenText, midScreenText, setMidScreenText,
   MID_SCREEN_TEXT_DEFAULT_Y, MID_SCREEN_TEXT_DEFAULT_DELAY,
 } from '../src/ui/midScreenText.js';
-import { HudText, HUD_TEXT_POP_DELAY } from '../src/ui/hudText.js';
+import { HudText, HUD_TEXT_POP_DELAY } from '../src/ui/hud/hudText.js';
 import {
   hudRenderEnabled, toggleHudRender, hudShortcutKey, _resetHudRender,
-} from '../src/ui/hudShortcuts.js';
-import { drawHud, hudScale, HUD_BORDER, BREATH_BAR_LEFT, BREATH_BAR_BOTTOM, BREATH_BAR_WIDTH } from '../src/ui/hud.js';
+} from '../src/ui/hud/hudShortcuts.js';
+import { drawHud, hudScale, HUD_BORDER, BREATH_BAR_LEFT, BREATH_BAR_BOTTOM, BREATH_BAR_WIDTH } from '../src/ui/hud/hud.js';
 import {
   initEscortFaces, restoreEscortFacesSaveData, clearEscortFaces, drawEscortFaces,
   ESCORT_SPECIAL_FACE_SIZE, ESCORT_START_X, ESCORT_START_Y,
-} from '../src/ui/hudEscortFaces.js';
-import { routeLargeHudClick, LARGE_HUD_W, LARGE_HUD_H } from '../src/ui/hudLarge.js';
+} from '../src/ui/hud/hudEscortFaces.js';
+import { routeLargeHudClick, LARGE_HUD_W, LARGE_HUD_H } from '../src/ui/hud/hudLarge.js';
 import { makeWindowStack, paintsPreviousWindow } from '../src/ui/windowStack.js';
 import { ActionTextBox, ActionInputBox } from '../src/ui/actionText.js';
 import { audio } from '../src/systems/audio.js';
@@ -513,8 +513,8 @@ test('AUDIT 64 F36/F37: the arm is in every host that dispatches keys - routeKey
   const input = src('ui/input.js');
   assert.ok(input.indexOf('if (hudShortcutKey(e, keys)) return true;') > input.indexOf('if (ctx.uiOverlayActive) {'));
   // the write is the in-memory setting DFU assigns (:311) - not a save
-  assert.match(src('ui/hudShortcuts.js'), /setValue\('GUI', 'LargeHUD', !getBool\('GUI', 'LargeHUD'\)\)/);
-  assert.equal(/saveSettings/.test(src('ui/hudShortcuts.js')), false, 'DaggerfallHUD.cs:311 assigns, it does not persist');
+  assert.match(src('ui/hud/hudShortcuts.js'), /setValue\('GUI', 'LargeHUD', !getBool\('GUI', 'LargeHUD'\)\)/);
+  assert.equal(/saveSettings/.test(src('ui/hud/hudShortcuts.js')), false, 'DaggerfallHUD.cs:311 assigns, it does not persist');
 });
 
 test('AUDIT 64 F37: renderHUD suppresses the whole Draw, and Update keeps running', () => {
@@ -560,7 +560,7 @@ test('AUDIT 64 F37: the popup column is a HUD component too, so its DRAW is gate
     assert.match(s, /hudRenderEnabled\(\)\) hud(Text)?\.draw\(/, `${host} gates the popup draw`);
     // FONT1 (2026-09-16, Mac: "Any enhanced UI or text must be our
     // enhanced version"): AND THE REFUSED FRAME IS SAID OUT LOUD. The
-    // enhanced skin draws this column in the DOM (ui/enhancedHudText.js),
+    // enhanced skin draws this column in the DOM (ui/enhanced/enhancedHudText.js),
     // and a DOM column is not repainted - it stays until it is told
     // otherwise, which is THIS finding's own law. A gate that merely
     // skips the paint cannot hide it, so every gated site carries the

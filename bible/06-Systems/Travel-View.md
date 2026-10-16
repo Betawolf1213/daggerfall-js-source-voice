@@ -202,7 +202,7 @@ as lead and are recorded as such; each is one line to change if Mac calls otherw
 - `src/scenes/travelView.js` - the HOST'S MACHINE: `createTravelView(deps)` owning the
   state (`off` / `rising` / `up` / `falling`), the input while up, and every way out. Its
   header is THE FOUR HOSTS RULE's record.
-- `src/ui/travelViewHud.js` - the READOUT: the traveller's ring and chevron on the
+- `src/ui/travel/travelViewHud.js` - the READOUT: the traveller's ring and chevron on the
   projected feet, the compass, the bar (title, place, hints, Return). Keyed marks
   (`marks`) are its seam for TV2's route and TV3's travellers.
 - `src/render/fogGlsl.js` `FOCUS_GLSL` + `renderer.setFocus` - THE FOCUS: one uniform
@@ -506,7 +506,7 @@ fixed; every fix pinned and every pin made to FAIL (`tools/mutants/tv1.json` 30,
 - **B2 a refused hold stuck.** `mwViewHoldThird(true)` answers false when no body can leave
   the head (a mount) but keeps an empty hold; the view released only a hold that answered
   true, so every later ask was refused for good. The view now releases what it ASKED.
-- **B3 touch.** The view takes pointer events; `ui/touch.js` listens to TOUCH events on the
+- **B3 touch.** The view takes pointer events; `ui/touch/touch.js` listens to TOUCH events on the
   same canvas, so a drag that orbited the view also swung the weapon or walked the stick. The
   view takes a canvas `touchstart` in the capture phase while up - the START only, so a
   finger down before the rise ends as the touch layer's own and its stick lets go.
@@ -758,7 +758,7 @@ held mark. 256 travellers cost two frames.
 
 **What changed.**
 - **One canvas.** Every mark - dots, plates, edge arrows, the destination's ring - is drawn
-  on the readout's one canvas (`ui/travelViewHud.js` `drawMarks`); each label is a sprite
+  on the readout's one canvas (`ui/travel/travelViewHud.js` `drawMarks`); each label is a sprite
   drawn once and reused (`SPRITES_MAX` 512, dropped when the display face arrives). The
   screen's size is read ONCE a frame, before any write. A picture that did not change (a
   camera at rest) is not drawn again - the frame's signature is compared first.
@@ -974,7 +974,7 @@ redrawn); `tools/mutants/tv3.json` and `tv5.json` (the OVERWORLD-NAMES records).
   journey through the mod's own `ClearTravelDestination` (`onForgetTravel`); Resume and Not now are the mod's.
 - **OW-THEME** ("The overworld ui needs to follow enhanced ui theme"): the bar (`.tview-bar`, the journey bar's
   window role), its Return (`.tview-back`, a button) and its compass (`.tview-compass`, a well) are in the Enhanced
-  Plus frame roles (`ui/enhancedFrame.js` FRAME_ROLES - paint only), and the canvas's plates are drawn in the
+  Plus frame roles (`ui/enhanced/enhancedFrame.js` FRAME_ROLES - paint only), and the canvas's plates are drawn in the
   theme's own stone (`themePlate`: the page's `--slate` at 0.78 alpha, read at each open; a new stone lets
   the old plate images go).
 - **OW-BIG** ("The player sprite needs to appear larger. Like it shouldnt be at the tiny scale"): under the view the
@@ -1808,7 +1808,7 @@ Mac: *"allow them to appear in the overworld without being overwhelming, maybe a
 them are"*; asked, "Groups nearby". One mark a profession a stood pixel (`gather <profession>`): a diamond in the
 profession's compass colour (`ui/nodeMarks.js`) at the middle of its nodes not yet worked today, its count beside it,
 the nearest twelve within 3 km, read again twice a second (`scenes/gatherHost.js` overworldGroups); a sixth filter,
-Gathering (`systems/travel/travelViewFilters.js`); drawn by `ui/travelViewHud.js` (look `gather`, `m.color`); fed beside the
+Gathering (`systems/travel/travelViewFilters.js`); drawn by `ui/travel/travelViewHud.js` (look `gather`, `m.color`); fed beside the
 camps in `scenes/travelViewMarks.js` travelViewMarks (HOST-SPLIT 1 moved it out of world.js). Not pickable - a click there falls to the ground and walks to it. See
 `06-Systems/Professions-Arc.md` (MORE-NODES, GATHER-OW). Pins `test/gatherow.test.js`.
 
@@ -1817,7 +1817,7 @@ camps in `scenes/travelViewMarks.js` travelViewMarks (HOST-SPLIT 1 moved it out 
 Mac: *"Can we also find a way to reduce the overwhelming player markers that flood the screen? I like it, dont get me
 wrong, but there must be a way to make it where its not overwhelming"*. Every player of the region was their own mark
 wearing their whole badge (the title, the Renown, the name, the guild's tag, the glyphs - OVERWORLD NAMES), and each off
-the picture their own arrow at the edge. Now, as the marks are placed on the screen (`ui/travelViewHud.js`
+the picture their own arrow at the edge. Now, as the marks are placed on the screen (`ui/travel/travelViewHud.js`
 declutterTravellers, between the placement and the edges' spread): travellers drawn within TV_CROWD_PX (36 px) of one
 another are one mark at their middle, a larger dot named "N travellers"; arrows at the edge within TV_CROWD_EDGE_PX
 (56 px) one arrow, the nearest's place and way; and of those still alone in the picture only the TV_BADGES_MAX (6)
@@ -1886,7 +1886,7 @@ within the classic band (27 m) unaware or not. Now:
   down as they do now"). The journey's own enemy stop and the view's `danger` count no gated foe (`wildSeen`).
 - **The "!"** (`WILD_MARK`). On the Overworld a chase's mark reads "! Orc, 4" and a camp a member of which is alerted
   "! Orc camp, 4" (mine, or a peer's by its frames' tag - `wildCampKeys`). In play, over each alerted wilderness foe's
-  head (`ui/wildMarks.js`, both skins, the HUD lines' outlined gold in the pixel face): it pops in as the foe notices,
+  head (`ui/wild/wildMarks.js`, both skins, the HUD lines' outlined gold in the pixel face): it pops in as the foe notices,
   stands while a fast traveller's clock is held for it, and in plain play for `WILD_MARK_S` (3 s) from the notice; never
   in a town, under a window or under the Overworld (whose marks carry it). The layer owns its own end: a standing mark
   arms a watchdog each frame, and a frame that does not come (a host's loop gone) takes it down.

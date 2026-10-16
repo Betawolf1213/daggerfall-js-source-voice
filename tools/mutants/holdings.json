@@ -55,7 +55,7 @@
   },
   {
     "name": "HOLD-stores-landing-on-stats",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  else if (PROF_HOLD_SECTIONS.some(([id]) => id === at)) { pauseTab = 'holdings'; holdSec = at; }",
     "new": "  else if (PROF_HOLD_SECTIONS.some(([id]) => id === at)) { pauseTab = 'stats'; holdSec = at; }",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "HOLD-stats-rail-keeps-the-stores",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "...(profPagesShown() ? PROF_STATS_SECTIONS : []), ...(vendorPageShown()",
     "new": "...(profPagesShown() ? PROF_PAGE_SECTIONS : []), ...(vendorPageShown()",
     "tests": [

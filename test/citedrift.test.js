@@ -6,7 +6,7 @@
 // page or a test header naming a line that had been exact one commit
 // earlier and named a stranger at the merge.
 //
-//   - `ui/spellMakerWindow.js` declared "RECORDED DEPARTURES" and closed
+//   - `ui/spell/spellMakerWindow.js` declared "RECORDED DEPARTURES" and closed
 //     the first with "Ledger A carries the widget row already
 //     (Port-Ledger.md:929)". Section A carried no widget row at all -
 //     the AUDIT 17m / F7 shape, a claim of approval standing in for one -
@@ -130,14 +130,14 @@ test('CD1: Ledger A row TB1 exists, in section A, STRUCK by the classic-modals c
   assert.ok(struck(row), 'TB1 is struck: the field is one pushed DaggerfallInputMessageBox now');
   assert.match(row, /CLOSED \(CM3-CM11/);
   assert.match(row, /DaggerfallInputMessageBox/);
-  for (const f of ['src/ui/spellMakerWindow.js', 'src/ui/itemMakerWindow.js',
-    'src/ui/spellbookWindow.js', 'src/ui/travelMapWindow.js', 'src/ui/automapWindow.js']) {
+  for (const f of ['src/ui/spell/spellMakerWindow.js', 'src/ui/item/itemMakerWindow.js',
+    'src/ui/spellbookWindow.js', 'src/ui/travel/travelMapWindow.js', 'src/ui/automap/automapWindow.js']) {
     assert.ok(row.includes(f), `Ledger A row TB1 does not name ${f}`);
   }
 
   // ...and the two sites that declare the departure cite it BY NAME, with
   // no bare Ledger line number left to rot.
-  for (const f of ['src/ui/spellMakerWindow.js', 'src/ui/itemMakerWindow.js']) {
+  for (const f of ['src/ui/spell/spellMakerWindow.js', 'src/ui/item/itemMakerWindow.js']) {
     const text = read(f);
     // Comments WRAP - flagsweep.js learned the same lesson - so the
     // citation is read off the unwrapped prose, not off one line.
@@ -201,7 +201,7 @@ test('CD1: Ledger A row TB1 exists, in section A, STRUCK by the classic-modals c
     [/THE CONVERSATION SAVE STORES `dictQuestInfo` AS PLAIN DATA/,
       ['src/systems/topicTree.js']],
     [/ART LANDS ASYNC, AND A MISSING RECORD COSTS THE PICTURE RATHER THAN THE SESSION/,
-      ['src/ui/hudEscortFaces.js', 'src/ui/nativeTalk.js']],
+      ['src/ui/hud/hudEscortFaces.js', 'src/ui/native/nativeTalk.js']],
     [/THE TOWN MAP'S PLATE LABEL AND ROTATION ARROW ARE THE PORT'S OWN PIXELS/,
       ['src/ui/exteriorAutomapWindow.js']],
     [/E ACTIVATES BESIDE MOUSE0, AND THE SWING IS ROUTED OFF THE RAW BUTTON/,
@@ -241,7 +241,7 @@ test('CD1: Ledger A row TB1 exists, in section A, STRUCK by the classic-modals c
     [/THE `AdvancedClimbing` SCAFFOLDING IS OFF-ROAD/,
       ['src/player/moveScanner.js', 'src/player/motor.js', 'src/player/climbing.js']],
     [/THE MERCHANT SERVICE POPUP'S ACCELERATORS ARE THE PORT'S OWN/,
-      ['src/ui/merchantServiceWindow.js']],
+      ['src/ui/merchant/merchantServiceWindow.js']],
     [/THE PORT'S CLOCK IS A SCALAR/,
       ['src/systems/repairService.js', 'src/systems/quest/quest.js']],
   ];
@@ -439,7 +439,7 @@ test('CD2: both status pages state the open-flag count Home.md actually holds', 
   // into its file that names a line (CITE-ANCHOR).
   const roadText = read(ROAD);
   for (const site of ['src/combat/fpsSpellCasting.js', 'src/characters/enemyCasting.js',
-    'src/systems/inventory.js', 'src/systems/talk/talkMacros.js', 'src/ui/hudLarge.js',
+    'src/systems/inventory.js', 'src/systems/talk/talkMacros.js', 'src/ui/hud/hudLarge.js',
     'src/ui/exteriorAutomapWindow.js']) {
     assert.ok(citedLines(roadText, site, root).some((c) => c.line), `Road-To-1-1.md does not name the retired flag in ${site}`);
   }
@@ -588,8 +588,8 @@ const SOURCE_CITES = [
     'src/scenes/cityGuards.js', /const _gParalyzed = entityIsParalyzed\(g\.entity\)/],
   ['src/scenes/cityGuards.js', /encounter pool's is \(exteriorFoes\.js:"([^"]+)"(?:\.\."([^"]+)")?\)\. \*\//,
     'src/scenes/exteriorFoes.js', /^\s*return \{ foes, spawnFoe, damageFoe,/],
-  ['src/systems/quest/questMacros.js', /ui\/travelMapWindow\.js:"([^"]+)"(?:\.\."([^"]+)")? after it\)/,
-    'src/ui/travelMapWindow.js', /\.replace\('%tcn', name\)/],
+  ['src/systems/quest/questMacros.js', /ui\/travel\/travelMapWindow\.js:"([^"]+)"(?:\.\."([^"]+)")? after it\)/,
+    'src/ui/travel/travelMapWindow.js', /\.replace\('%tcn', name\)/],
   ['tools/toneProbe.mjs', /`native` \(townTalk\.js:"([^"]+)"(?:\.\."([^"]+)")?, true only/,
     'src/scenes/townTalk.js', /native: !!overlay\?\.conversation/],
   ['tools/worldWhereIsProbe.mjs', /townTalk's live slot \(townTalk\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/,
@@ -828,7 +828,7 @@ const SOURCE_CITES = [
   ['tools/mwRigProbe.mjs', /as world\.js:"([^"]+)"(?:\.\."([^"]+)")? writes it/, WO, /const weaponRig = createWeaponRig\(\{/],
   ['test/inputmap.test.js', /overlay \(townTalk\.js:"([^"]+)"(?:\.\."([^"]+)")?, townTalk\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)\)/, 'src/scenes/townTalk.js', /^ {4}hud\.tick\(dt\);$/],
   ['test/inputmap.test.js', /overlay \(townTalk\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?), townTalk\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/, 'src/scenes/townTalk.js', /hud\.draw\(renderer, canvas, font, s\)/],
-  ['test/enhancedInventory.test.js', /hand \(enhancedInventory\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/, 'src/ui/enhancedInventory.js', /const carried = items\.reduce/],
+  ['test/enhancedInventory.test.js', /hand \(enhancedInventory\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/, 'src/ui/enhanced/enhancedInventory.js', /const carried = items\.reduce/],
 ];
 
 const NO_LINE_LEFT = [
@@ -954,8 +954,8 @@ test('CD5: a `Port-Ledger.md:NNN` cite anywhere in the tree lands on its own row
 //
 // AUDIT 58 R1 (e). The AUDIT 58 F5 wave inserted one Ledger row and
 // re-resolved the `:NNN` identifiers that moved with it - correctly. The
-// same pass also added +1 to four cites into `src/ui/hud.js` and
-// `src/ui/nativeInventory.js`, two files that wave did not touch at all,
+// same pass also added +1 to four cites into `src/ui/hud/hud.js` and
+// `src/ui/native/nativeInventory.js`, two files that wave did not touch at all,
 // so three cites that had been EXACT became wrong (`:456` -> `:457`, a
 // comment; `:459` -> `:460`, the body of the enhanced branch instead of
 // the branch; `:470` -> `:471`, the wrong field) and a fourth stale one
@@ -965,7 +965,7 @@ test('CD5: a `Port-Ledger.md:NNN` cite anywhere in the tree lands on its own row
 // resolved against the line it names.
 const STATUS_SOURCE_CITES = [
   // the ui-hud row: four cites (a full one and three continuations, each written out in full since CITE-ANCHOR)
-  ['| **ui-hud** |', 'src/ui/hud.js', [
+  ['| **ui-hud** |', 'src/ui/hud/hud.js', [
     /const rig = updateHudVitals\(/,
     /drawNearDeathFlicker\(renderer, canvas, cur/,
     /if \(isEnhanced\(\) && typeof document/,
@@ -1001,10 +1001,10 @@ test('CD6: every `src/` line Port-Status cites is the line it describes', () => 
   // opens it (a range, named by its first line), and the host arm that
   // fills it.
   const text = read(STATUS);
-  const hook = new RegExp(String.raw`\`ui\/nativeInventory\.js:${AT}\``).exec(text);
+  const hook = new RegExp(String.raw`\`ui\/native\/nativeInventory\.js:${AT}\``).exec(text);
   assert.ok(hook, 'Port-Status no longer cites the nativeInventory reveal hook');
-  const at = anchoredAt('src/ui/nativeInventory.js', hook[1], hook[2]);
-  const slice = lines('src/ui/nativeInventory.js').slice(at - 1, at + 4).join('\n');   // the hook's comment and the hook
+  const at = anchoredAt('src/ui/native/nativeInventory.js', hook[1], hook[2]);
+  const slice = lines('src/ui/native/nativeInventory.js').slice(at - 1, at + 4).join('\n');   // the hook's comment and the hook
   assert.match(slice, /RecordLocationFromMap's DiscoverRandomLocation/, 'the cited range is not the reveal hook');
   assert.match(slice, /revealMap: this\.hooks\.revealMap \?\? null,/, 'the cited range misses the hook itself');
   const host = new RegExp(String.raw`\`scenes\/world\.js:${AT}\``).exec(text);
@@ -1200,7 +1200,7 @@ test('CD8b: the C# members ROAD-G G4 names EXIST, and at the lines it cites', ()
     assert.match(text.replace(/\s+/g, ' '), /UpdateSelection`?'s scroller block \(:507, :509-512\)/,
       `${f} does not cite UpdateSelection's scroller block`);
   }
-  const icons = read('src/ui/spellIconPickerWindow.js');
+  const icons = read('src/ui/spell/spellIconPickerWindow.js');
   const icon = /Scroller_OnScroll's UpdateSelectedIcon \(:(\d+)\)/.exec(icons);
   assert.ok(icon, 'the icon picker no longer cites Scroller_OnScroll\'s UpdateSelectedIcon');
   // The LITERAL, held here because the reference tree is external and
@@ -1230,7 +1230,7 @@ test('CD8b: the C# members ROAD-G G4 names EXIST, and at the lines it cites', ()
     assert.equal(/IsAlreadyPlaced/.test(read(f)), false,
       `${f} names IsAlreadyPlaced; DFU's guard is IsAlreadyInjected (GameObjectHelper.cs:978)`);
   }
-  for (const f of ['src/ui/enhancedControls.js', 'src/ui/enhancedMenu.js',
+  for (const f of ['src/ui/enhanced/enhancedControls.js', 'src/ui/enhanced/enhancedMenu.js',
     'src/ui/controlsWindow.js', 'test/enhancedControls.test.js']) {
     const prose = read(f).replace(/^\s*(\/\/|\*)\s?/gm, '').replace(/\s+/g, ' ');
     assert.match(prose, /ReservedKeys is empty in DFU \(InputManager\.cs:73 `new KeyCode\[\] \{ \}`, exposed :174-177\), so the (capture )?gate that consults it \(DaggerfallControlsWindow\.cs:410\)/,
@@ -1343,7 +1343,7 @@ test('CD8c: the sentinel guard the docs claim is on ALL FIVE drag machines', () 
   // drag machines" / "ALL THREE drag machines" wording.
   const GUARDED = [
     ['src/ui/spellbookWindow.js', /!this\.top && vy >= 0 && this\._syncScrollBar\(\)\.update\(/],
-    ['src/ui/spellIconPickerWindow.js', /if \(vx >= 0 && vy >= 0\) this\._syncScroller\(\)\.update\(/],
+    ['src/ui/spell/spellIconPickerWindow.js', /if \(vx >= 0 && vy >= 0\) this\._syncScroller\(\)\.update\(/],
     ['src/ui/chargen.js', /if \(vy >= 0 && this\.pickBar\.update\(/],
     ['src/ui/listPicker.js', /if \(vy >= 0 && this\.scrollBar\.update\(/],
     ['src/ui/bankPurchaseWindow.js', /if \(vy >= 0 && this\.scrollBar\.update\(/],

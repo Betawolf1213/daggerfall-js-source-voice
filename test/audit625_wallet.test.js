@@ -12,8 +12,8 @@ import { letterOfCredit } from '../src/systems/inventory.js';
 import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
-import { mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhancedInventory.js';
-import { ITEM_FRAME_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhanced/enhancedInventory.js';
+import { ITEM_FRAME_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import * as qs from '../src/systems/quickslots.js';
 import { _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 import { withDom } from './invdrag.mjs';
@@ -100,7 +100,7 @@ test('AUDIT 625 W3: each piece the wallet holds is the pack\'s own ROW in its sh
   });
   // and each is the dock's own tile: laid as the dock lays them, the tier on its frame, its pips, its count's corner and
   // a drag's insertion mark (the Plus skin's frames named the dock's rows alone)
-  assert.match(src('src/ui/enhancedStyle.js'), /\.pack-shell \.walletsheet \.walletpieces \{ display: flex; flex-wrap: wrap; gap: 6px;/);
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.pack-shell \.walletsheet \.walletpieces \{ display: flex; flex-wrap: wrap; gap: 6px;/);
   for (const tail of ['[data-rarity] {', '[data-rarity]::before {', ' .count {', '.hasbar .count {', '[data-locked] .count {', '[data-rarity].dragover {', '.hasbar[data-rarity]::before {']) {
     const sel = tail.slice(0, -2);
     assert.ok(ITEM_FRAME_CSS.includes(`.pack-shell .walletpieces .itemrow${sel}, .pack-shell .pack-dock .itemrow${tail}`), `the wallet's tile${sel}`);

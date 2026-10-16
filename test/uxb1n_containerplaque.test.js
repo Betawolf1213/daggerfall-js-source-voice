@@ -15,7 +15,7 @@ import { houseContainerHover, PRIVATE_PROPERTY_SUB, SEARCHED_SUB, PRIVATE_TONE }
 import { stockSearched, needsRestock } from '../src/systems/shopStock.js';
 import { resolveHover, frameSignature } from '../src/systems/worldHover.js';
 import { showWorldPlaque, destroyWorldPlaque } from '../src/ui/worldPlaque.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const hit = (key) => ({ key, distance: 1, reach: 3.2 });

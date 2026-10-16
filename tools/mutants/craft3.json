@@ -236,7 +236,7 @@
   },
   {
     "name": "CRAFT3-page-discipline-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (two) card.append(el('i', 'prof-of', disciplineName(specDiscipline(s.id))));",
     "new": "      if (false) card.append(el('i', 'prof-of', disciplineName(specDiscipline(s.id))));",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "CRAFT3-page-free-paid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      const free = tr.free?.includes(r) === true;",
     "new": "      const free = false;",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "CRAFT3-page-unlocks-one-discipline",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (of.length < 2) return UNLOCKS[track]?.() ?? null;",
     "new": "  if (of.length < 99) return UNLOCKS[track]?.() ?? null;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "CRAFT3-page-unlocks-unsorted",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    .sort((a, b) => a.tier - b.tier || a.i - b.i)",
     "new": "    .sort((a, b) => a.i - b.i)",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "CRAFT3-page-building-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'logging', 'smithing', 'building', 'outfitting', 'provisioning', 'enchanting']);",
     "new": "'logging', 'smithing', 'outfitting', 'provisioning', 'enchanting']);",
     "tests": [

@@ -15,7 +15,7 @@ import { survivalOf, thirstStage, NEED, SURVIVAL_TEXT } from '../src/systems/sur
 import { SURVIVAL_RULES } from '../src/systems/survival/difficulty.js';
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
-import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
+import { mountEnhancedTavern } from '../src/ui/enhanced/enhancedTavern.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setWorldMinutes, ownMinutes } from '../src/systems/worldTick.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';

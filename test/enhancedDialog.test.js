@@ -2,10 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { dialogFits, dialogSig, BUTTON_LABELS, BUTTON_KEYS, PRIMARY_BUTTONS, drawEnhancedDialog } from '../src/ui/enhancedDialog.js';
+import { dialogFits, dialogSig, BUTTON_LABELS, BUTTON_KEYS, PRIMARY_BUTTONS, drawEnhancedDialog } from '../src/ui/enhanced/enhancedDialog.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
 import { motionEnabled, MOTION_WINDOWS } from '../src/ui/windowMotion.js';
-import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
+import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const yn = { rows: [{ text: 'Exit?' }], buttons: [{ button: MB_BUTTONS.Yes, rect: [0, 0, 32, 16] }, { button: MB_BUTTONS.No, rect: [64, 0, 32, 16] }] };

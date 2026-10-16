@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { restorableSaves, mostRecentRestorable, saveSlot, SAVE_INFO_PREFIX } from '../src/systems/save/saveSlots.js';
 import { SAVE_VERSION } from '../src/systems/save/save.js';
-import { takePickedSaveKey, takePickedSaveName } from '../src/ui/enhancedMenu.js';
+import { takePickedSaveKey, takePickedSaveName } from '../src/ui/enhanced/enhancedMenu.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -45,7 +45,7 @@ test('SLOTS1: restorableSaves lists every slot this build can restore, most rece
 
 test('SLOTS1: the pick seams hand a key and a name over once (mutant: a pick taken twice boots the next Continue into the wrong save)', () => {
   assert.equal(takePickedSaveKey(), null); assert.equal(takePickedSaveName(), null);
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /export function takePickedSaveKey\(\) \{ const k = _pickedSaveKey; _pickedSaveKey = null; return k; \}/);
   assert.match(menu, /export function takePickedSaveName\(\) \{ const n = _pickedSaveName; _pickedSaveName = null; return n; \}/);
   // the panes set them beside the verb the census pins
@@ -112,7 +112,7 @@ test('SLOTS1: the doors act on the pick - main.js sets ?loadkey for load and onl
   const main = rd('src/main.js');
   const branch = main.slice(main.indexOf("if (choice !== 'begin') {"), main.indexOf('// FD1: BEGIN'));
   // REALM P1.3: online no longer brings a local slot in - the Online door's character is the realm's, its id rides ?realm
-  assert.match(branch, /const \{ takePickedSaveKey, takePickedRealmId \} = await import\('\.\/ui\/enhancedMenu\.js'\);\s*\n\s*const picked = takePickedSaveKey\(\);\s*\n\s*if \(choice === 'load' && picked != null\) params\.set\('loadkey', String\(picked\)\);[^\n]*\n\s*else params\.delete\('loadkey'\);/);
+  assert.match(branch, /const \{ takePickedSaveKey, takePickedRealmId \} = await import\('\.\/ui\/enhanced\/enhancedMenu\.js'\);\s*\n\s*const picked = takePickedSaveKey\(\);\s*\n\s*if \(choice === 'load' && picked != null\) params\.set\('loadkey', String\(picked\)\);[^\n]*\n\s*else params\.delete\('loadkey'\);/);
   assert.ok(branch.indexOf("params.set('loadkey'") < branch.indexOf('return bootWorld('), 'before the boot');
   const door = rd('src/ui/pauseDoor.js');
   assert.match(door, /function enhancedPauseOverlay\(show, base\) \{/);

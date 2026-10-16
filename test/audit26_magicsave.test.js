@@ -192,7 +192,7 @@ test('audit26 magic-save: GetMaxEncumbrance adds the IncreasedWeightAllowance mu
   assert.match(rd('src/systems/item/itemTransfer.js'), /entityMaxEncumbrance\(entity\)/);
   assert.ok(!/maxEncumbrance\(liveStat\(/.test(rd('src/systems/item/itemTransfer.js')),
     'the bare strength formula is back in the carry gate');
-  for (const f of ['src/ui/enhancedInventory.js', 'src/ui/enhancedCharSheet.js']) {
+  for (const f of ['src/ui/enhanced/enhancedInventory.js', 'src/ui/enhanced/enhancedCharSheet.js']) {
     assert.match(rd(f), /entityMaxEncumbrance\(/, `${f} reads the bare formula`);
     assert.ok(!/maxEncumbrance\(liveStat\(|maxEncumbrance\(strength\)/.test(rd(f)),
       `${f} still has the pre-audit formula in it`);

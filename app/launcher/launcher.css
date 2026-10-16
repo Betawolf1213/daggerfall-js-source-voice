@@ -1,6 +1,6 @@
 /* DA8 - THE LAUNCHER'S FACE. The brand's own: the landing page's night,
    wordmark, rule and gem, and its plaques - every colour here is one the
-   Enhanced skin already uses (src/ui/enhancedStyle.js), and
+   Enhanced skin already uses (src/ui/enhanced/enhancedStyle.js), and
    test/da8_launcher.test.js holds it to that the way landing.test.js
    holds the site. The two faces are on disk (fonts/README.md): this window
    runs before anything is known about the network.

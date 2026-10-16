@@ -199,7 +199,7 @@
   },
   {
     "name": "OWS3-hud-raider-dressed-traveller",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "|| k === 'band' || k === 'raider' || k === 'camp' ? k : 'traveller';",
     "new": "|| k === 'band' || k === 'camp' ? k : 'traveller';",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "OWS3-hud-raider-name-bone",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": ": look === 'raider' ? C.raider : look === 'stranger' ? C.stranger : C.bone;   // OWS3",
     "new": ": look === 'stranger' ? C.stranger : C.bone;   // OWS3",
     "tests": [

@@ -22,13 +22,13 @@ is written once, with both names.
 
 ## Fixed
 
-**The lens and the bridge** (`src/ui/questLens.js`, `src/scenes/questBridge.js`, `src/ui/questRail.js`,
-`src/scenes/world.js`, `src/ui/travelMapWindow.js`)
+**The lens and the bridge** (`src/ui/quest/questLens.js`, `src/scenes/questBridge.js`, `src/ui/quest/questRail.js`,
+`src/scenes/world.js`, `src/ui/travel/travelMapWindow.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
 | H1, L2 | high | THE HUD COUNTED DOWN CLOCKS THE PLAYER WAS NEVER TOLD OF. A quest's "time left" was the walk's tightest running clock - any clock: a letter's arrival, the hour a quest waits before it closes itself. On every new game _BRISIEN logs "I met a lady" and starts `_oneday_`, whose task only ends the quest: "Under a day left - Lady Brisienna - 23 hours 59 min left" on the herald, the card's time gold, and a day later "Quest ended". A0C01Y09 said "1 hour left" with 29 days on its deadline; K0C00Y00 counted down to a letter. DFU's journal shows no clock at all. Of 234 clocked quests that log, 83 run a clock no logged entry names, 30 of them under a day. | The HUD's faces count only a clock a logged entry NAMES (`=clock_`, Clock.ExpandMacro's DetailsMacro, read unexpanded): the walk hands each quest's `clocks`, the lens keeps the tightest named one, and a deadline once told stays told. The pause tab's and the chronicle's "Time remains" keep main's DEAD-CLOCK number - Mac's call (below). |
-| O3, L5 | med | A look asked the map about every entry of every quest, every tick: `canFindPlace` -> `getRegionByName`, and MapsFile keeps one region, so quests in two regions re-parsed them 20-30 times a second (and the held map's poll and the compass did it again). 90% of a look's time; 14.5 MB/s of garbage with 30 quests. Nobody read an older entry's target. | Only the latest entry is given a target; the archive is not parsed (nobody reads it); a place's pixel is read once a session through the host's `placePixelMemo` (`ui/travelMapWindow.js`), which `canFindPlace`, the marks and the compass share - the discovered half stays live. |
+| O3, L5 | med | A look asked the map about every entry of every quest, every tick: `canFindPlace` -> `getRegionByName`, and MapsFile keeps one region, so quests in two regions re-parsed them 20-30 times a second (and the held map's poll and the compass did it again). 90% of a look's time; 14.5 MB/s of garbage with 30 quests. Nobody read an older entry's target. | Only the latest entry is given a target; the archive is not parsed (nobody reads it); a place's pixel is read once a session through the host's `placePixelMemo` (`ui/travel/travelMapWindow.js`), which `canFindPlace`, the marks and the compass share - the discovered half stays live. |
 | H4, O4 | low | "Journal updated" when nothing was new: the news key held the entry's TIME, so P0B10L07's re-log on every click, and a shared quest's resync rewriting the times, were news each time. | News is a step and message not written before (`newsKey`); the same words at a new time are not. |
 | L3 | low | The quiet read was loud for a quest LETTER: an entry naming one reads its signoff through DFU's own path (Item.expandMacro -> questLetterName -> ExpandLetterSignoff), which reveals talk topics with no flag and draws on the engine's roll. No logged corpus entry names a letter yet. | For the read, the quest's hooks answer nothing (addDialog, dialogLink) and the engine's roll is the quiet one - both put back however the read ends. |
 | L4 | low | A face that threw while HEARING a look (the herald's `hear`, the tracker's) escaped the bridge's tick every tick and reached the host's frame, which has no try: the crash overlay. Only the look was contained. | The look and its listeners in one try: a face that throws costs the news and one warning, never the frame. |
@@ -40,7 +40,7 @@ is written once, with both names.
 | W2 | low | "(you are here)" is a CLAIM, and it was made by name alone: standing in a Llugwych the map says is not the one the entry names, the entry's town and region were revealed and the off-map note dropped. | Here needs the map's yes (or no map to ask); a place the map lacks is never here. `find` keeps DFU's name-only gate (DaggerfallQuestJournalWindow.cs:448-450). |
 | W4 | low | The opening's first sentence stopped at "St." and at initials, ran on past a stop inside a closing quote (P0A01L00:1015), knew only ASCII capitals, and found the date header only on the first line. | A stop is `[.!?]` with its closing quotes before a capital (`\p{Lu}`); abbreviations and initials are not stops; the header is the first non-empty line. |
 
-**The herald** (`src/ui/questHerald.js`, `src/ui/enhancedNotice.js`, `src/ui/hud.js`, `src/ui/enhancedStyle.js`)
+**The herald** (`src/ui/quest/questHerald.js`, `src/ui/enhanced/enhancedNotice.js`, `src/ui/hud/hud.js`, `src/ui/enhanced/enhancedStyle.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -52,8 +52,8 @@ is written once, with both names.
 | H8 | low | The stack's 90vh clip hid a three-row notice whole on a short screen, or clipped the HUD's own lines beside it. | Under 520 pixels tall the herald's third line goes; the kind and title stay. |
 | H10, U11 | low | A main quest was told by colour alone, on the herald and on the card (WCAG 1.4.1; the arc's LAW 5). | Said: "New quest - Main Quest" on the kind row, "Main Quest" on the card's time row (the pause tab's own tag). |
 
-**The tracker** (`src/ui/questTracker.js`, `src/ui/enhancedMenu.js`, `src/ui/enhancedChronicle.js`,
-`src/ui/enhancedStyle.js`, `src/ui/partyPanel.js`, `src/ui/travelViewHud.js`)
+**The tracker** (`src/ui/quest/questTracker.js`, `src/ui/enhanced/enhancedMenu.js`, `src/ui/enhanced/enhancedChronicle.js`,
+`src/ui/enhanced/enhancedStyle.js`, `src/ui/partyPanel.js`, `src/ui/travel/travelViewHud.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -70,7 +70,7 @@ is written once, with both names.
 | U10 | low | Under forced colours the card's plate - a background image - went, and its text stood on the sky. | A plate of the system's own `Canvas`. |
 | U17 | low | Off a touch screen the party list had no height cap: a full party ran off the foot of a short window once it stepped under the card. | Capped at the window's foot, less the card's line. |
 
-**The way there** (`src/ui/enhancedMenu.js`, `src/scenes/exterior.js`, `src/ui/questLens.js`)
+**The way there** (`src/ui/enhanced/enhancedMenu.js`, `src/scenes/exterior.js`, `src/ui/quest/questLens.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -79,7 +79,7 @@ is written once, with both names.
 | W6 | low | On the `?exterior` route a building's Quests tab lost "(you are here)", which the chronicle and the card kept: the route's worldModes bag had no `questLocationName`. | The route hands its buildings the city it stands in. |
 | U12 | low | "Show on map"'s accessible name did not begin with its visible words (WCAG 2.5.3). | "Show on map: Llugwych in Wayrest province". |
 
-**The marks** (`src/ui/questMarks.js`, `src/ui/heldMap.js`, `src/ui/inkMap.js`, `src/ui/enhancedStyle.js`)
+**The marks** (`src/ui/quest/questMarks.js`, `src/ui/heldMap.js`, `src/ui/ink/inkMap.js`, `src/ui/enhanced/enhancedStyle.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -93,8 +93,8 @@ is written once, with both names.
 | U16 | low | The followed quest's filled diamond differed from the hollow one by a gold fill on the paper, 2:1 (WCAG 1.4.11), and the legend showed one kind. | Filled with the pen's ink (8:1); the legend names both, "Followed quest" and "Quest". |
 | U18 | low | The decorative ◈ before a where line was read aloud as text. | Its alt text is empty (`content: '\25c8' / ''`). |
 
-**The record** (`bible/06-Systems/Quest-Guide-Arc.md`, `bible/10-UI/UI-Arc.md`, `src/ui/questJournal.js`,
-`src/ui/enhancedHudText.js`, `src/ui/questLens.js`, the patch notes, the GUIDE suites)
+**The record** (`bible/06-Systems/Quest-Guide-Arc.md`, `bible/10-UI/UI-Arc.md`, `src/ui/quest/questJournal.js`,
+`src/ui/enhanced/enhancedHudText.js`, `src/ui/quest/questLens.js`, the patch notes, the GUIDE suites)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

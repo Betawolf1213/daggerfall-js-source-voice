@@ -4,12 +4,12 @@
 // every fresh loss restarted the strip's hold, so a bar losing a little every few frames never drained it: fatigue
 // through a fight read as the fight's first level, in the bar's palest tone under a cream line at 0.55 - a white bar
 // still full. Now the strip stands GHOST_HOLD_MAX at the most, however the losses come, and wears the bar's own body
-// tone, faint (ui/barLoss.js stepGhost, ui/enhancedPlusStyle.js VITALS_CSS). Each pin is red on the record's code
+// tone, faint (ui/barLoss.js stepGhost, ui/enhanced/enhancedPlusStyle.js VITALS_CSS). Each pin is red on the record's code
 // (42e50765).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { stepGhost, GHOST_HOLD, GHOST_HOLD_MAX, GHOST_RATE } from '../src/ui/barLoss.js';
-import { VITALS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { VITALS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 test('GHOST-CAP A STEADY DRAIN DRAINS ITS STRIP: a bar losing a little every frame holds its strip GHOST_HOLD_MAX at the most, then the strip follows it down - it stood at the first level for as long as the losses came (mutants: the cap unread, the stood clock never kept)', () => {
   const dt = 1 / 60;

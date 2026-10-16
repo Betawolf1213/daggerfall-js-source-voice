@@ -25,9 +25,9 @@ Not a DFU member - the port's own (Ledger A, PORTAL1).
 | `src/systems/reforge.js` | the purse spends a shard unlocked AND unworn (AUDIT PORTAL1 I1) |
 | `src/scenes/portalGates.js` | the host's pool: the portals in the WORLD frame, COMPANION-PORTAL's vortex held for each one's time, the step and its forgetting, mine on the wire and a peer's landed |
 | `src/scenes/portalFx.js` | the vortex takes `holdMs` (a hold of its own) and `fixed` (stands where it opened), and `remove` - the companions' defaults unchanged |
-| `src/ui/merchantServiceWindow.js`, `src/ui/merchantRepairWindow.js` | the classic popups' port row under the art (`portalRowRect`, key P, `drawPortalRow`) - the Reforge row's law and its one dark (`guildServiceWindow.js` `REFORGE_ROW_BG`) |
-| `src/ui/merchantServiceDoor.js`, `src/ui/merchantRepairDoor.js` | the Enhanced Plus panel's button, above Exit |
-| `src/ui/nativeInventory.js`, `src/ui/enhancedInventory.js`, `src/systems/quickslots.js`, `src/systems/useItem.js` | the `openPortal` result routed on every reader - the pack closes and hands the stone to the host's door; a host with none says `USE_PENDING.openPortal` |
+| `src/ui/merchant/merchantServiceWindow.js`, `src/ui/merchant/merchantRepairWindow.js` | the classic popups' port row under the art (`portalRowRect`, key P, `drawPortalRow`) - the Reforge row's law and its one dark (`guildServiceWindow.js` `REFORGE_ROW_BG`) |
+| `src/ui/merchant/merchantServiceDoor.js`, `src/ui/merchant/merchantRepairDoor.js` | the Enhanced Plus panel's button, above Exit |
+| `src/ui/native/nativeInventory.js`, `src/ui/enhanced/enhancedInventory.js`, `src/systems/quickslots.js`, `src/systems/useItem.js` | the `openPortal` result routed on every reader - the pack closes and hands the stone to the host's door; a host with none says `USE_PENDING.openPortal` |
 | `src/systems/item/itemInfo.js` | the stone's card: what it does and how long it stands, on both skins |
 | `src/systems/save/save.js` | the gift's mark (`portalGift`), the gift given at the restore, and `restoresSoFar` - the count every load moves |
 | `src/scenes/worldModes.js` | THE COUNTER: `portalRow` / `askPortalStone` / `buyPortalStoneNow` |

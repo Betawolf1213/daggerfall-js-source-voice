@@ -31,7 +31,7 @@
   },
   {
     "name": "OW-THEME-bar-unthemed",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "    '.tview-bar', '.tview-side',",
     "new": "    '.tview-side',",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW-THEME-return-unthemed",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "    '.tview-back', '.tview-mode',",
     "new": "    '.tview-mode',",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "OW-THEME-compass-unthemed",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "    '.tview-compass',\n",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "OW-THEME-plates-fixed",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    x.fillStyle = plateFill; x.fillRect(0.5, 0.5, w - 1, h - 1);",
     "new": "    x.fillStyle = C.plate; x.fillRect(0.5, 0.5, w - 1, h - 1);",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "OW-THEME-slate-unread",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (!m) return TRAVEL_VIEW_MARK_COLORS.plate;\n  const n = parseInt(m[1], 16);",
     "new": "  if (m) return TRAVEL_VIEW_MARK_COLORS.plate;\n  const n = parseInt('171b21', 16);",
     "tests": [

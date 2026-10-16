@@ -1,7 +1,7 @@
 // ARENA1 (2026-10-02): THE ARENA'S WORDS, in one frozen table so a test can pin them (the gate chart's
 // GATE_CHART_TEXT is the precedent). Mac, 2026-10-02: "All aspects ... All UI elements and text must be enhanced UI
 // plus" - the lines here are said through the port's one box (ui/actionText.js ActionTextBox), which the enhanced
-// skin draws as its notice panel (ui/enhancedNotice.js) and the classic skin as Daggerfall's parchment.
+// skin draws as its notice panel (ui/enhanced/enhancedNotice.js) and the classic skin as Daggerfall's parchment.
 //
 // ARENA2 (2026-10-02): THE BOUTS' WORDS - the Herald's choice at the gate, his calls and verdicts on the sand, the
 // countdown, the crowd's barks, the HUD's labels and the refusals of a bout in play (bible/11-Multiplayer/Arena.md
@@ -189,7 +189,7 @@ export const ARENA_TEXT = F({
   }),
   /** A home town's chant, roared for its own fighter ("Wayrest! Wayrest!"). */
   chant: (town) => `${town}! ${town}!`,
-  /** The crowd's mood, by its band (ui/arenaHud.js). */
+  /** The crowd's mood, by its band (ui/arena/arenaHud.js). */
   mood: F({ boo: 'Booing', jeer: 'Jeering', murmur: 'Murmuring', cheer: 'Cheering', roar: 'Roaring' }),
 
   // ── THE HUD ────────────────────────────────────────────────────────────────────────────────────────────
@@ -360,7 +360,7 @@ export const ARENA_TEXT = F({
     whyRefused: F({ none: 'No bout this hour.', closed: 'Betting is closed.', placed: 'You already bet on this bout.', stake: 'Bets are 10 to 1000 gold.', gold: 'Not enough gold.', price: 'No bets on that fighter.' }),
   }),
 
-  // ── THE ARENA WINDOW (ARENA3; ui/arenaWindow.js, systems/arena/arenaBoard.js) ───────────────────────────────────────
+  // ── THE ARENA WINDOW (ARENA3; ui/arena/arenaWindow.js, systems/arena/arenaBoard.js) ───────────────────────────────────────
   window: F({
     title: 'The Arena of Daggerfall',
     tabs: F({ bouts: 'Bouts', ladder: 'Ladder', team: 'Team', boards: 'Leaderboards', records: 'Records', rules: 'Rules' }),
@@ -626,7 +626,7 @@ export const ARENA_TEXT = F({
     watchingLine: (a, b) => `Watching ${a} vs ${b}.`,
     cheer: 'Cheer',
     boo: 'Boo',
-    /** ARENA4b: the keys the stands' two presses answer (ui/arenaHud.js STANDS_KEYS), shown on them. */
+    /** ARENA4b: the keys the stands' two presses answer (ui/arena/arenaHud.js STANDS_KEYS), shown on them. */
     cheerKey: '+',
     booKey: '-',
     seatsFull: 'The stands are full.',

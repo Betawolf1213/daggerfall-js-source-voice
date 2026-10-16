@@ -18,7 +18,7 @@ import {
 } from '../src/net/townSeatLaw.js';
 import { witnessedFact } from '../src/net/nodeLaw.js';
 import { createTownSeatBook, parseSeatCommand, SEAT_USAGE, SEAT_LIST_CACHE_MS, SEAT_REPORTED_KEY } from '../src/net/townSeatBook.js';
-import { buildInkMarks, markReach, paintSeatRing, SEAT_RING_PAD, SEAT_SECOND_PAD } from '../src/ui/inkMap.js';
+import { buildInkMarks, markReach, paintSeatRing, SEAT_RING_PAD, SEAT_SECOND_PAD } from '../src/ui/ink/inkMap.js';
 import { plainBannerOf } from '../src/ui/heraldryArt.js';
 import { seatBannerAnchors, gateBannerAnchor, boardPennantAnchor, palaceKeysOf, townCentreOf, createSeatBanners, GATE_BANNER_DROP_M, BOARD_PENNANT_RISE_M } from '../src/scenes/seatBanners.js';
 import { countSeats } from '../tools/seatCount.mjs';
@@ -214,7 +214,7 @@ test('SEAT1a the map: a seat\'s mark carries its ring, round any hub\'s circle, 
   paintSeatRing(ctx, 10, 20, 7, seatMapMark({ region: 23, tier: 'crown' }));
   assert.deepEqual(calls.filter((c) => c[0] === 'set' && c[1] === 'fillStyle').map((c) => c[2]), ['#b3262e'], 'Wayrest\'s crown, in crimson');
   assert.equal(calls.filter((c) => c[0] === 'fill').length, 1);
-  const w = src('src/ui/inkMap.js');
+  const w = src('src/ui/ink/inkMap.js');
   assert.match(w, /for \(const \[m, x, y\] of inked\) if \(m\.seatMark\) paintSeatRing\(ctx, x, y, markReach\(m\), m\.seatMark\);/);
   assert.ok(w.indexOf('paintSeatRing(ctx, x, y, markReach(m), m.seatMark)') < w.indexOf('for (const [m, x, y] of inked) paintGlyph(ctx, m.kind, x, y, true);'), 'under the glyph and its halo');
 });

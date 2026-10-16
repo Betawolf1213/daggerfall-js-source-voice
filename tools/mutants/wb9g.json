@@ -372,7 +372,7 @@
   },
   {
     "name": "WB9g-no-aura-row",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (auras.length) {",
     "new": "    if (false) {",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "WB9g-the-aura-button-wears-a-title",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "        b.onclick = () => flow.wearAura(key);",
     "new": "        b.onclick = () => flow.equip(key);",
     "tests": [

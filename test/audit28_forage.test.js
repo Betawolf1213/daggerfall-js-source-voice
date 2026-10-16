@@ -1,7 +1,7 @@
 // AUDIT 28 (2026-09-28, Mac: "let's audit everything we have so far before we continue") - Foraging's findings and the
 // hosts' seams: the online wait (scenes/foragingWait.js), a switched-off mod's console command
 // (systems/consoleCommands.js), a DOM window's button keys (scenes/townTalk.js), the bounty notice kept until read
-// (ui/bountyDoor.js, scenes/bountyHost.js) - each failing on the code before the fix. (H7, the hunt page's Escape, retired
+// (ui/bounty/bountyDoor.js, scenes/bountyHost.js) - each failing on the code before the fix. (H7, the hunt page's Escape, retired
 // with the text hunt, 2026-10-04: the wait page that remains takes no key at all.)
 // bible/06-Systems/Foraging.md 13 (AUDIT 28).
 import { test } from 'node:test';
@@ -131,7 +131,7 @@ test('AUDIT 28 H12: a payday notice taken down unread goes back in the queue - n
   host.requeue(notice);   // taken down under the reader
   host.requeue(notice);   // ...and never twice in the queue
   assert.equal(host.pendingNotices(), 1);
-  const door = src('src/ui/bountyDoor.js');
+  const door = src('src/ui/bounty/bountyDoor.js');
   assert.match(door, /onExit: \(\) => close\(true\)/);
   assert.match(door, /deps\.onClose\?\.\(read\);/);
   assert.match(door, /registerOverlay\(\(\) => close\(true\)\)/, 'the stack\'s Escape is the player\'s own dismissal');

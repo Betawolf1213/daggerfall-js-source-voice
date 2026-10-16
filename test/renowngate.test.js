@@ -21,7 +21,7 @@ globalThis.localStorage = {
 };
 
 const N = await import('../src/systems/revenant/revenant.js');
-const P = await import('../src/ui/revenantPage.js');
+const P = await import('../src/ui/revenant/revenantPage.js');
 const E = await import('../src/systems/eliteFoes.js');
 const { rollSearchElite } = await import('../src/systems/searchables.js');
 const { setSigilOnline, setSigilRenown, renownOpens, _resetSigilForTests } = await import('../src/systems/sigil/sigil.js');

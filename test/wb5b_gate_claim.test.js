@@ -309,7 +309,7 @@ test('WB5b the words and the cards: the account card\'s row says the count or "N
   assert.deepEqual(all(w.root.children[0], 'dfprofile-gates').map((n) => n.textContent), ['Breaches closed: 3'], 'the Inspect card\'s line');
   w.update('peer-1', profileView({ name: 'Bran', state: 'asking', record: { wins: 0, losses: 0, gates: { closed: 0 } } }));
   assert.equal(all(w.root.children[0], 'dfprofile-gates').length, 0, 'and none for none');
-  const card = src('src/ui/enhancedAccount.js');
+  const card = src('src/ui/enhanced/enhancedAccount.js');
   assert.match(card, /const gates = gateRecordText\(flow\.account\.gates\);\s*\n\s*if \(gates\) row\(t\('account\.card\.gates', 'Breaches closed'\), gates\);/, 'the main menu\'s account card');   // L10N4 (PIN MOVED): the row's word through t()
 });
 

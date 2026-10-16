@@ -190,7 +190,7 @@
   },
   {
     "name": "WAGONS2-FINAL-a-windows-own-copy",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "      ...sellGuardOf(this.hooks.entity),",
     "new": "      wagonLoaded: false,",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "WAGONS2-FINAL-a-plan-without-the-driven-wagon",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "        wagonKg: wagonKgFor(this.hooks.entity),   // WAGONS1: the driven wagon's capacity\n        bagLoaded: !bagMayLeave(this.hooks.entity),",
     "new": "        bagLoaded: !bagMayLeave(this.hooks.entity),",
     "tests": [

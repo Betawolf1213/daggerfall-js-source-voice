@@ -108,7 +108,7 @@ test('CHARID1: both births mint, both hosts load by id, both windows find and ov
   }
   const win = read('src/ui/saveWindow.js');
   assert.ok(win.includes("this.currentCharacterId = hooks.playerId?.() ?? null;") && win.includes('return findSave(this.currentPlayerName, this.nameText, undefined, this.currentCharacterId);'), 'the classic window finds the slot by id');
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.ok(menu.includes("const myId = hooks.playerId?.() ?? null;") && menu.includes('(myId ? s.characterId === myId : s.characterName === me)'), 'the enhanced Save pane’s overwrite candidates are this character’s by id');
   assert.ok(menu.includes('characterId: entry.info?.characterId ?? null,'), 'the card reader carries the id');
   // the slot store's identity law, by execution: an id never matches a card without one

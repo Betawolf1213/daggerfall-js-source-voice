@@ -439,7 +439,7 @@ worn unknowing, a curse bites unsaid.
 `liftRefusal` ('off', 'not', 'unknown', 'worn', 'gold'), `cursedKnown` and `liftCurse` - paid, the drawback out of the
 enchantments, the mark gone, the line and the price kept. The temple's row: `src/ui/guildServiceWindow.js` `LIFT_ROW`
 and `LIFT_KEY` (L, after DFU's own keys) in the Reforge's place when the host hands `hooks.lift`, and
-`src/ui/enhancedPorts.js` on the Plus face; `src/scenes/worldModes.js` hands it to a temple's Cure Disease priest
+`src/ui/enhanced/enhancedPorts.js` on the Plus face; `src/scenes/worldModes.js` hands it to a temple's Cure Disease priest
 (HolyOrder), and `openLift` opens the Reforge's window on its one page - `src/ui/reforgeWindow.js` 'lift'
 (`REFORGE_GUILD_PAGES` keeps the guild's four when a host names none).
 
@@ -508,14 +508,14 @@ element the wearer's rolled gear counts now and would count after, under LOOT12'
 off, while the piece is unknown, or with no known piece to set it against (a worn piece not yet identified is set
 aside). `src/ui/armourCard.js` `lineCompareBlock` draws it under AC-COMPARE's numbers - `▲6`, `▼5`, `new`, a lost line
 struck through and `lost`, a resistance line's "20% → 15% counts" - over `wearComparison`'s own replaced pieces, so a
-second sword that would go to a free off-hand (DFU's EquipItem) compares with nothing; `src/ui/enhancedInventory.js`
+second sword that would go to a free off-hand (DFU's EquipItem) compares with nothing; `src/ui/enhanced/enhancedInventory.js`
 `infoCard` hangs it under the compare block.
 
 **Junk.** `src/systems/item/itemJunk.js` (new), the lock's twin: `junk: true` (a declared item field), on gear alone
 (`JUNK_GROUPS` - never a quest's item or a bound one, which no counter takes); marked, a piece's lock is lifted, and
 locked (`lockLiftsJunk`, the card's Lock), its mark is - the later word stands. The pack's card offers Junk beside the
 lock on a piece in the pack, not worn, says `JUNK_LINE`, and the picture of a junk piece is dimmed and greyed
-(`data-junk`, the Plus sheet). `src/ui/enhancedTrade.js`: at a Sell or Sell Magic counter the footer's `Sell junk (n)`
+(`data-junk`, the Plus sheet). `src/ui/enhanced/enhancedTrade.js`: at a Sell or Sell Magic counter the footer's `Sell junk (n)`
 lays every junk piece the counter would take (not worn, accepted by the shop, its sale not refused) on the counter in
 one press, by the counter's own click law, and opens the counter's own price and YesNo confirm; never at a Buy.
 

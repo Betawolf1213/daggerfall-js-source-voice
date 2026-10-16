@@ -9,9 +9,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { GOLD_TEMPLATE } from '../src/systems/inventory.js';
 import { equipItem } from '../src/systems/equip.js';
@@ -319,7 +319,7 @@ test('GOLD-DROP: with the wagon showing the button is Stow and the gold goes int
 });
 
 test('GOLD-DROP: by source - the button rides the pack\'s footer and its field the footer too (AUDIT GOLD-DROP 1); the remote bar carries none, by any label; the field\'s verb is the button\'s (mutants: the bar\'s button back)', () => {
-  const s = src('src/ui/enhancedInventory.js');
+  const s = src('src/ui/enhanced/enhancedInventory.js');
   const remoteCol = s.slice(s.indexOf('function remoteCol()'), s.indexOf('function goldField()'));
   assert.ok(!/'Gold'\)/.test(remoteCol) && !/goldField\(\)/.test(remoteCol), 'no gold on the remote window');
   assert.ok(!/el\('button'[^;]*gold/i.test(remoteCol), 'AUDIT GOLD-DROP 5: nor a gold button under another word - "Drop gold", "Store gold"');

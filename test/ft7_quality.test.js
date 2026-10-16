@@ -48,7 +48,7 @@ test('FT7: cloud quality - the tiers are the march table\'s own keys, default by
 });
 
 test('FT7: the Enhanced category\'s two rows left with their copy', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.ok(!/choiceRow\('grassDensity'|choiceRow\('cloudQuality'/.test(menu));
   assert.ok(!/function portRowsEnhanced\(/.test(menu), 'FT12: the Enhanced category is gone from the settings rail - its rows are the home\'s');
 });

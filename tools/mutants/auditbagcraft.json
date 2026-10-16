@@ -166,7 +166,7 @@
   },
   {
     "name": "AUDITBAGCRAFT-A1-pages-split-silent",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "loose ? t('prof.page.stores.fromPack', '{n} from your pack', { n: loose }) : null]",
     "new": "null]",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "AUDITBAGCRAFT-A1-pages-line-undrawn",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if ((pick.loose | 0) > 0) detail.append(el('p', 'px-note', looseGoodsLine()));   // AUDIT BAG-CRAFT A1: a carrying book's page\n",
     "new": "",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "AUDITBAGCRAFT-A1-pages-total-without",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "total: s.own + s.bought + (s.gold | 0) + (s.loose | 0), carried:",
     "new": "total: s.own + s.bought + (s.gold | 0), carried:",
     "tests": [
@@ -193,7 +193,7 @@
   },
   {
     "name": "AUDITBAGCRAFT-A1-pages-room-without",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "(row?.gold | 0) + (row?.loose | 0)));",
     "new": "(row?.gold | 0)));",
     "tests": [

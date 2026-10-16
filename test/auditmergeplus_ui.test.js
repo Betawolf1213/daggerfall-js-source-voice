@@ -24,9 +24,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ITEM_FRAME_CSS, PLUS_CSS, ONLINE_DRESS_CSS, STONE_DIM, STONE_WORD, STONE_AMBER, STONE_RED } from '../src/ui/enhancedPlusStyle.js';
-import { FRAME_CSS, FRAME_ROLES, PLUS_THEMES } from '../src/ui/enhancedFrame.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ITEM_FRAME_CSS, PLUS_CSS, ONLINE_DRESS_CSS, STONE_DIM, STONE_WORD, STONE_AMBER, STONE_RED } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { FRAME_CSS, FRAME_ROLES, PLUS_THEMES } from '../src/ui/enhanced/enhancedFrame.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { SIGIL_RUNE_TILE_URL } from '../src/ui/sigilRune.js';
 import { SKIN_NAMES } from '../src/systems/uiSkin.js';
 import { OVERHAUL_PANELS } from '../src/systems/overhauls.js';
@@ -170,7 +170,7 @@ test('AUDIT MERGE-PLUS D5 + D6 the corner rune is a picture with its outline dra
   }
   assert.ok(ruleFor(list, '.dragghost[data-sigil] .tile', 'position')?.body.includes('position: relative'), 'the ghost\'s tile holds the corner');
   assert.ok(ruleFor(list, '.trade-shell .itemrow .tile', 'position')?.body.includes('position: relative'));
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /ghost = markItemFrame\(el\('div', 'dragghost'\), item\);/, 'the ghost is marked');
   assert.match(inv, /if \(validSigil\(item\?\.sigil\)\) node\.dataset\.sigil = '';/, 'and the mark is the sigil\'s');
 });
@@ -184,12 +184,12 @@ test('AUDIT MERGE-PLUS D7 a settings label is never cut for its value: in the se
   assert.ok(ctl && ctl.sels.includes('.px-setwrap .row > .ctl') && /flex-shrink: 1;/.test(ctl.body));
   assert.ok(atLeast(weight('.panes .row > .ctl'), weight('.ctl')) && ctl.i > ruleFor(list, '.ctl', 'flex').i, 'over the base cell\'s `flex: 0 0 auto`');
   assert.ok(!main.sels.some((s) => s.includes('wizard')) && !ctl.sels.some((s) => s.includes('wizard')));
-  assert.match(read('src/ui/enhancedMenu.js'), /const panes = el\('div', 'panes opt'\);[\s\S]{0,4000}?el\('div', 'list'\)/, 'the settings\' rows stand in .panes (ORG2: .panes.opt)');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /const panes = el\('div', 'panes opt'\);[\s\S]{0,4000}?el\('div', 'list'\)/, 'the settings\' rows stand in .panes (ORG2: .panes.opt)');
   assert.ok(SKIN_NAMES.enhanced.length > 'Enhanced'.length, 'the name that found it');
 });
 
 test('AUDIT MERGE-PLUS D8 the Interface Style help that said the retired word is gone with its row (MENU-TOGGLE), and the UI panel\'s enhanced card (enhanced-plus since PLUS-ONLY) keeps the emblem colour the retired id carried (mutants: the card\'s emblem plain)', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(menu, /'ui:skin'|Enhanced is these screens/, 'no help for a row that is not there');
   const ui = OVERHAUL_PANELS.find((p) => p.id === 'ui');
   const ids = ui.options.map((o) => o.id);

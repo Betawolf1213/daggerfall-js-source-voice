@@ -29,7 +29,7 @@ colour's one home, the one SOCIAL Ledger row).
 onlineLane.js` - the skin enhanced, every enhancement on), so every surface
 below is the enhanced skin's DOM beside the chat; the classic skin never
 runs online and gets no social surface. The classic TRAVEL MAP is reached
-from the enhanced lane's fork (`ui/travelMapDoor.js`) and gets the party's
+from the enhanced lane's fork (`ui/travel/travelMapDoor.js`) and gets the party's
 dots in its own idiom.
 
 ## The two decisions everything else follows from
@@ -382,7 +382,7 @@ Record: `01-Overview/Field-Bugs-2026-09-23.md`.
 ## SOC6 - the party on the map
 
 **One seam, two drawings.** The travel map's one dep bag (`world.js`
-buildTravelMapWindow -> `ui/travelMapDoor.js`) carries `party: () =>
+buildTravelMapWindow -> `ui/travel/travelMapDoor.js`) carries `party: () =>
 [{acct, name, px, py, in, loc, online, leader}]` - a FUNCTION, read on
 each window's own refresh and never snapshot at open, because members
 travel, step into a dungeon, drop and join while a map is up.
@@ -691,7 +691,7 @@ container).
   under 840 wide the panel opened over the chat box. Every control is 44
   under the touch skin (desktop sizes pinned unchanged, no horizontal
   overflow at 430), and under 840 the panel stands below the box.
-- **C9, no phone control for F.** `ui/touch.js` draws a button when the
+- **C9, no phone control for F.** `ui/touch/touch.js` draws a button when the
   host hands it `socialInteract` - the host's own door, never a synthetic
   key - beside the mode button.
 - **C10/D5, the legend on the chips.** The overworld's party legend was

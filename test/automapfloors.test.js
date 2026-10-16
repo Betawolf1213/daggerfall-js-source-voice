@@ -24,7 +24,7 @@ import {
   floorTriangles, deriveFloors, floorAt, floorOccupancy, planBounds, floorPlan,
   FLOOR_NY, LEVEL_NY, FLOOR_MIN_GAP, PLAN_CELL, MIN_TRI_AREA,
 } from '../src/systems/automap/automapFloors.js';
-import { boundarySegments, linkSegments } from '../src/ui/inkMap.js';
+import { boundarySegments, linkSegments } from '../src/ui/ink/inkMap.js';
 import { SLOPE_LIMIT_DEG, CAPSULE_HEIGHT } from '../src/player/motor.js';
 
 /** A flat quad at height y over [x0,x1]x[z0,z1], as a row the reveal

@@ -318,7 +318,7 @@
   },
   {
     "name": "RS-the-row-gone",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "  function recoveryRow() {\n    if (!flow.account?.handle || !Number.isSafeInteger(flow.account.recoveryLeft)) return;",
     "new": "  function recoveryRow() {\n    return;",
     "tests": [
@@ -327,7 +327,7 @@
   },
   {
     "name": "RS-the-row-for-a-guest",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (!flow.account?.handle || !Number.isSafeInteger(flow.account.recoveryLeft)) return;",
     "new": "    if (!Number.isSafeInteger(flow.account?.recoveryLeft)) return;",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "RS-the-act-gone",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    row.append(act(t('account.card.act.makeCodes', 'Make new codes'), () => flow.go('codes'), { disabled: !!flow.busy, key: 'codes' }));\n",
     "new": "",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "RS-the-act-for-an-old-service",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (!flow.account?.handle || !Number.isSafeInteger(flow.account.recoveryLeft)) return;",
     "new": "    if (!flow.account?.handle) return;",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "RS-copy-writes-nothing",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "await globalThis.navigator.clipboard.writeText(recoveryCodesText(flow.codesFor, flow.recoveryCodes ?? []));",
     "new": "await globalThis.navigator.clipboard.writeText('');",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "RS-save-names-no-file",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      link.href = url; link.download = name;\n",
     "new": "      link.href = url;\n",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "RS-save-never-asked",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      doc.body.append(link); link.click(); link.remove();\n",
     "new": "      doc.body.append(link); link.remove();\n",
     "tests": [

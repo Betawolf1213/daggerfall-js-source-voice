@@ -289,7 +289,7 @@
   },
   {
     "name": "QS-no-abandoned-section",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (shelved.length) section(t('pause.journal.abandoned', 'Abandoned'), shelved, ' done');\n",
     "new": "",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "QS-no-reclaim",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "        const rc = el('button', 'act', 'Reclaim quest');",
     "new": "        const rc = el('button', 'act', 'Reclaim');",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "QS-A-the-lens-forgets",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "    for (const [id, was] of this._last ?? []) if (away.has(id) && !last.has(id)) last.set(id, was);\n",
     "new": "",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "QS-A-the-rail-unordered",
-    "file": "src/ui/questRail.js",
+    "file": "src/ui/quest/questRail.js",
     "old": "  return (log?.shelved ?? []).map((q, i) => railRow(q, i, readLines, 's'));",
     "new": "  return (log?.shelved ?? []).map((q, i) => ({ ...railRow(q, i, readLines, 's'), entries: (q.messages ?? []).map((m) => readLines(m, null, q) ?? []).filter((x) => x.length) }));",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "QS-A-the-selection-jumps",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "if (out?.ok) questSel = `a:${sel.id}`;",
     "new": "questSel = `a:${sel.id}`;",
     "tests": [
@@ -496,7 +496,7 @@
   },
   {
     "name": "QS-A-the-selection-jumps-too",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "          if (out?.ok) questSel = `s:${sel.id}`;",
     "new": "          questSel = `s:${sel.id}`;",
     "tests": [

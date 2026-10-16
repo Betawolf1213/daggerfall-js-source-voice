@@ -41,7 +41,7 @@ import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { getPref, setPref, loadPrefs, PREF_DEFAULTS, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import * as CounterModule from '../src/ui/fpsCounter.js';
-import { featureTile } from '../src/ui/enhancedMenu.js';
+import { featureTile } from '../src/ui/enhanced/enhancedMenu.js';
 
 // The slice's new names are read off their modules' namespaces, and its new module is loaded here rather than linked,
 // so that with src/ set back to the base each pin below FAILS ON ITS OWN rather than the file failing to link.

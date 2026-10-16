@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { HudText } from '../src/ui/hudText.js';
+import { HudText } from '../src/ui/hud/hudText.js';
 import { PlayerNotebook } from '../src/systems/notebook.js';
 import { STATIC_NPC_ACTIVATION_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../src/systems/talk/talk.js';
 import { midDateTimeString } from '../src/systems/gameDate.js';
@@ -37,7 +37,7 @@ test('audit24 wave22: every HUD popup files into the notebook message ring', () 
 });
 
 test('audit24 wave22: the two hosts hand their HudText the notebook sink', () => {
-  assert.match(rd('src/ui/hudText.js'), /this\.lines\.push\(\{ id: \+\+this\._nextId, text: pgText \}\);\s*\n\s*this\.onMessage\?\.\(pgText\);/,   // ENH-NOTICE3: the row carries its toast's id
+  assert.match(rd('src/ui/hud/hudText.js'), /this\.lines\.push\(\{ id: \+\+this\._nextId, text: pgText \}\);\s*\n\s*this\.onMessage\?\.\(pgText\);/,   // ENH-NOTICE3: the row carries its toast's id
     'AddText files AFTER it queues, as C# does');
   // AUDIT 65 MC-1: BOTH walkable outdoor hosts, which is what this
   // test's title has always said. exterior.js handed down `notebookSink`

@@ -18,7 +18,7 @@
 // it: LocalItemListScroller_OnItemClick (:1976-1985) sends the item to
 // `UseItem(item)` with NO collection (AUDIT 22 F6), and UseItem's
 // light arm is what lights a torch in play. The port's CLASSIC window
-// carries that arm (ui/nativeInventory.js's equip branch, which cites
+// carries that arm (ui/native/nativeInventory.js's equip branch, which cites
 // those lines); the ENHANCED pack never grew it - and the enhanced
 // skin is the default one (systems/uiSkin.js) and the only one online
 // (OL1), so in practice the port shipped with no way to light a torch
@@ -39,7 +39,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { localPrimaryAct, itemLine } from '../src/ui/enhancedInventory.js';
+import { localPrimaryAct, itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { useItem, isLightSource, TEMPLATES } from '../src/systems/useItem.js';
 import { equipItem, getEquipSlot } from '../src/systems/equip.js';
 import { EQUIP_SLOTS, ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
@@ -97,7 +97,7 @@ test('HT2 the pack SAYS which torch burns: itemLine.lit is the reference compare
 });
 
 test('HT2 the view performs the act it was handed, and the card no longer calls a torch worn', () => {
-  const src = read('src/ui/enhancedInventory.js');
+  const src = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(src, /const act = localPrimaryAct\(picked, deps\.entity\);/);
   assert.match(src, /const b = el\('button', 'act primary', act\.label\);/, 'the label is the act\'s, not a literal');
   assert.match(src, /act\.kind === 'takeOff' \? \(\) => takeOff\(picked\.equipSlot\)/);
@@ -106,7 +106,7 @@ test('HT2 the view performs the act it was handed, and the card no longer calls 
   assert.match(src, /if \(isLightSource\(picked\)\) pair\('Lit', line\.lit \? 'yes' : 'no'\);/);
   assert.match(src, /line\.lit \? 'lit' : null/, 'and the row says it too');
   // the two skins agree: the classic window's own arm is still there
-  assert.match(read('src/ui/nativeInventory.js'), /if \(isLightSource\(it\)\) \{ this\._use\(it, null\); return; \}/);
+  assert.match(read('src/ui/native/nativeInventory.js'), /if \(isLightSource\(it\)\) \{ this\._use\(it, null\); return; \}/);
 });
 
 test('MODS-ON, executed: the two switches a lit torch was invisible without are ON by the port\'s decision - and the sources they depart from still say otherwise', async () => {

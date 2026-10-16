@@ -16,7 +16,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { saveSlot, mostRecentRestorable, restorableSaves, firstRestorable, SAVE_DATA_PREFIX } from '../src/systems/save/saveSlots.js';
-import { newestPortraitSave } from '../src/ui/enhancedMenu.js';
+import { newestPortraitSave } from '../src/ui/enhanced/enhancedMenu.js';
 import { portraitSave } from '../src/ui/profileBadge.js';
 import { SAVE_VERSION } from '../src/systems/save/save.js';
 
@@ -90,8 +90,8 @@ test('SLOTS2: the recency order has ONE home, and both walks read it; the doors 
   assert.match(src, /export function mostRecentRestorable\(storage = store\(\)\) \{\n\s*const first = firstRestorable\(undefined, storage\);/, 'the most-recent question is that walk, accepting any');
   assert.match(rd('src/scenes/world.js'), /mostRecent \? \(mostRecentRestorable\(\)\?\.snap \?\? null\)/, 'the boot\'s ?load door');
   assert.match(rd('src/scenes/menu.js'), /export const hasSavedGame = \(\) => !!mostRecentRestorable\(\);/, 'the start menu');
-  assert.match(rd('src/ui/enhancedMenu.js'), /try \{ entry = mostRecentRestorable\(\); \}/, 'the Continue card');
-  assert.match(rd('src/ui/enhancedMenu.js'), /: newestPortraitSave\(\);/, 'the door\'s portrait (AUDIT S1)');
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /try \{ entry = mostRecentRestorable\(\); \}/, 'the Continue card');
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /: newestPortraitSave\(\);/, 'the door\'s portrait (AUDIT S1)');
 });
 
 test('AUDIT SLOTS2 S1: the door\'s portrait reads the saves only as far as portraitSave\'s answer - the same save the whole list gave, past a newest one still in chargen and one with no race; firstRestorable hands its question every restorable slot newest first and stops at the first it takes (mutant: the whole list read on every render again)', () => {

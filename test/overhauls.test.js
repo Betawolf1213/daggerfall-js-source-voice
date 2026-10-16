@@ -14,7 +14,7 @@ import { UI_PACKS, activeUiPack, packIndex, packImgUrl, packCifRciUrl, packColou
 import { getPref, setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { modSetting, setModSetting } from '../src/systems/modSettings.js';
 import { packTexture, _setPackDecodeForTests } from '../src/ui/packArt.js';
-import { loadImg } from '../src/ui/nativePanel.js';
+import { loadImg } from '../src/ui/native/nativePanel.js';
 import { measureText, drawText, SDF_POINT_SIZE } from '../src/ui/text.js';
 import { Renderer } from '../src/render/renderer.js';
 import { playerTradeReady } from '../src/ui/playerTradeDoor.js';
@@ -202,7 +202,7 @@ test('OVH3: the online windows are the page\'s, not the skin\'s - player trade o
 });
 
 test('OVH2 by source: the classic art doors ask the pack first - the HUD\'s own loader, chargen\'s (keeping the raw bitmap its masks read), the message box\'s buttons, the save window\'s textures and the paper doll\'s backdrop drawn under a composite made on nothing', () => {
-  assert.match(rd('src/ui/hud.js'), /const packed = await packImgTexture\(renderer, name\);[^\n]*\n\s*return \{ tex: packed \?\? renderer\.uploadTexture\('img', name,/);
+  assert.match(rd('src/ui/hud/hud.js'), /const packed = await packImgTexture\(renderer, name\);[^\n]*\n\s*return \{ tex: packed \?\? renderer\.uploadTexture\('img', name,/);
   assert.match(rd('src/ui/chargenArt.js'), /const packed = await packImgTexture\(deps\.renderer, name\);\s*return \{ tex: packed \?\? [^\n]*, bmp \};/);
   const mb = rd('src/ui/messageBox.js');
   assert.match(mb, /const packUrl = _packFailed\.has\(record\) \? null : packCifRciUrl\('BUTTONS\.RCI', record, 0\);/);
@@ -243,8 +243,8 @@ test('PLUS-ONLY: plain Enhanced is retired - the UI panel offers Classic, Enhanc
 });
 
 test('PLUS1: the enhanced sheet is the base and carries none of the refresh - the kit, the dialog and the motion are the Plus sheet\'s, laid over it with the kit last (PLUS-ONLY: every enhanced page lays both)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
-  const { PLUS_CSS } = await import('../src/ui/enhancedPlusStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
+  const { PLUS_CSS } = await import('../src/ui/enhanced/enhancedPlusStyle.js');
   for (const mark of ['FRAME1: THE STONE-AND-BRASS KIT', 'DLG1: THE DECISION BOX', 'WM1: WINDOWS UNFOLD', 'PORT5: THE PORTED WINDOWS', 'VB2: THE VITALS, DRESSED']) {
     assert.ok(!ENHANCED_CSS.includes(mark), `Enhanced carries no ${mark}`);
     assert.ok(PLUS_CSS.includes(mark), `Plus carries ${mark}`);
@@ -254,8 +254,8 @@ test('PLUS1: the enhanced sheet is the base and carries none of the refresh - th
 });
 
 test('PLUS2: Enhanced Plus colours - six stones, Slate the default, a stored choice worn on the page root, a bad value read as Slate; each coloured stone repaints the surfaces under its own root attribute and Stone is textured (mutants: a theme without rules; the choice not worn)', async () => {
-  const { PLUS_THEMES, THEME_CSS, FRAME_CSS } = await import('../src/ui/enhancedFrame.js');
-  const { plusTheme, setPlusTheme, applyPlusTheme } = await import('../src/ui/enhancedPlusStyle.js');
+  const { PLUS_THEMES, THEME_CSS, FRAME_CSS } = await import('../src/ui/enhanced/enhancedFrame.js');
+  const { plusTheme, setPlusTheme, applyPlusTheme } = await import('../src/ui/enhanced/enhancedPlusStyle.js');
   assert.deepEqual(Object.keys(PLUS_THEMES), ['slate', 'stone', 'iron', 'ember', 'forest', 'night']);
   assert.equal(plusTheme(), 'slate');
   for (const id of ['stone', 'iron', 'ember', 'forest', 'night']) assert.ok(THEME_CSS.includes(`:root[data-plus-theme="${id}"]`), id);

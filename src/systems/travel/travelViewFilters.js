@@ -3,7 +3,7 @@
 // OW-FILTER - WHAT THE OVERWORLD SHOWS (bible/06-Systems/Travel-View.md).
 //
 // The player's ask (2026-09-29): "all the locations show cause a lot of clutters add a filers to the bottom right
-// segments". Five groups, each a switch in the view's corner (ui/travelViewHud.js), kept on the device as the path
+// segments". Five groups, each a switch in the view's corner (ui/travel/travelViewHud.js), kept on the device as the path
 // mode is:
 //   towns      - the places in the grid, their plates (kind 'place'); YARDS-FOUND: and the towns' Stables and Wagon Yards
 //                ('yard <kind>'), shown and hidden with them but never counted as a town
@@ -18,7 +18,7 @@
 // OW-WHO and OW-NODE-KM (FIELD BUGS 2026-10-04e, Discord: "Add a distance filter so players can decide how many km away
 // they hide nodes"; "Change name colors of players in your guild or friend list"; "More filters for players in general
 // (filter by guild, friend, level etc), both in Overworld map and travel map"). Beside the six switches, the WHO -
-// kept on the device under its own key, as the switches are, and read by both maps (ui/travelViewHud.js, ui/heldMap.js):
+// kept on the device under its own key, as the switches are, and read by both maps (ui/travel/travelViewHud.js, ui/heldMap.js):
 //   friends / guild / others - the players by who they are to me (`travellerKin`: a friend, one of my guild, anyone
 //                              else); a player who is both is a friend
 //   renown                   - the least Renown (online's level, the number boxed beside a name) a player shows at

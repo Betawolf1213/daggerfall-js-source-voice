@@ -236,6 +236,6 @@ test('LOOT10: the pages - the Codex alone from the pack, the Imprint at the guil
     } finally { view.unmount(); }
   });
   assert.match(read('src/scenes/worldModes.js'), /imprint: \(item, id\) => imprintPiece\(item, id, playerEntity\),/, 'the guild\'s window imprints on the player\'s own');
-  assert.match(read('src/ui/enhancedInventory.js'), /if \(lootRarityOn\(\)\) \{\s*const codex = el\('button', 'act codexbtn', 'Codex'\);/, 'the pack opens the Codex');
-  assert.match(read('src/ui/enhancedInventory.js'), /createReforgeOverlay\(\{ pages: \['codex'\], page: 'codex',/);
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /if \(lootRarityOn\(\)\) \{\s*const codex = el\('button', 'act codexbtn', 'Codex'\);/, 'the pack opens the Codex');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /createReforgeOverlay\(\{ pages: \['codex'\], page: 'codex',/);
 });

@@ -13,7 +13,7 @@ import {
 } from '../src/systems/bounty/bountyBoard.js';
 import { createBountyHost, BOUNTY_REFUSALS } from '../src/scenes/bountyHost.js';
 import { createBountyFarms } from '../src/scenes/bountyFarms.js';
-import { mountBountyBoard } from '../src/ui/bountyWindow.js';
+import { mountBountyBoard } from '../src/ui/bounty/bountyWindow.js';
 import { validPartyPose, RELAY_VERSION } from '../src/net/wire.js';
 import { applyDeathPenalty, stateDeathLoss, statedDeathLoss } from '../src/systems/deathPenalty.js';
 
@@ -211,8 +211,8 @@ test('AUDIT 28 B11: the board keeps the keyboard\'s place through its repaint, a
   assert.notEqual(after, before, 'the row was rebuilt');
   assert.equal(document.activeElement, after, 'and the rebuilt row has the focus');
   view.unmount();
-  assert.match(src('src/ui/enhancedMenu.js'), /bountyAbandonArmed = null;   \/\/ AUDIT 28 B11/);
-  assert.match(src('src/ui/enhancedChronicle.js'), /bountyArmed = null;   \/\/ AUDIT 28 B11/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /bountyAbandonArmed = null;   \/\/ AUDIT 28 B11/);
+  assert.match(src('src/ui/enhanced/enhancedChronicle.js'), /bountyArmed = null;   \/\/ AUDIT 28 B11/);
 });
 
 test('AUDIT 28 B12: a mate\'s copy taken up is mine - rebuilt at my level where its tier is mine', () => {

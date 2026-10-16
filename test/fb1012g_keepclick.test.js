@@ -23,7 +23,7 @@ function withStorage(fn) {
   }
 }
 
-// the Controls pane as the player drove it: each bind answered Yes to "give it to ... instead?" (ui/enhancedControls.js)
+// the Controls pane as the player drove it: each bind answered Yes to "give it to ... instead?" (ui/enhanced/enhancedControls.js)
 function bindAsThePaneDoes(live, rows) {
   const u = createUnsavedKeybinds(live);
   for (const [action, code] of rows) {

@@ -109,7 +109,7 @@
   },
   {
     "name": "CRAFT1-anvil-not-offered",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const ready = recipeOpen(r, rank) && (craftable(r, held, spends) || chain?.ok === true) && !_anvil.busy",
     "new": "    const ready = recipeOpen(r, rank) && craftable(r, held, spends) && !_anvil.busy",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "CRAFT1-loom-not-offered",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const ready = recipeOpen(r, rank) && (craftable(r, held) || chain?.ok === true) && !_loom.busy",
     "new": "    const ready = recipeOpen(r, rank) && craftable(r, held) && !_loom.busy",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-F1-rows-unheld",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  hold = hold || chaining();   // AUDIT CRAFT1 F1: held under a craft running its chain\n",
     "new": "",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-F1-rows-held-under-every-craft",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "some((s) => s.crafting && s.chained === true);",
     "new": "some((s) => s.crafting);",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-anvil-locked-anyway",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const row = el('button', `prof-recipe${state.pattern === pt.id ? ' on' : ''}${s.can || s.raw ? '' : ' prof-locked'}`);",
     "new": "    const row = el('button', `prof-recipe${state.pattern === pt.id ? ' on' : ''}${s.can ? '' : ' prof-locked'}`);",
     "tests": [
@@ -318,7 +318,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-bench-locked-anyway",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    return { open, can, raw: open && !can && fromRaw(sp, book), share: heldShare(sp, held) };   // CRAFT1: made from raw (a log sawn first)",
     "new": "    return { open, can, raw: false, share: heldShare(sp, held) };   // CRAFT1: made from raw (a log sawn first)",
     "tests": [
@@ -328,7 +328,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-loom-locked-anyway",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    return { open, can, raw: open && !can && fromRaw(x.inputs, book), share: heldShare(x.inputs, held) };   // CRAFT1: made from raw",
     "new": "    return { open, can, raw: false, share: heldShare(x.inputs, held) };   // CRAFT1: made from raw",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-mason-locked-anyway",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "${_mason.picked === r.id ? ' on' : ''}${can || raw ? '' : ' prof-locked'}",
     "new": "${_mason.picked === r.id ? ' on' : ''}${can ? '' : ' prof-locked'}",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-jewel-locked-anyway",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "${_jewel.picked === r.id ? ' on' : ''}${can || raw ? '' : ' prof-locked'}",
     "new": "${_jewel.picked === r.id ? ' on' : ''}${can ? '' : ' prof-locked'}",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-bench-word",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "x.later ? LATER_WORDS.SEAT2 : s.open ? makeWord(s.can, s.raw)",
     "new": "x.later ? LATER_WORDS.SEAT2 : s.open ? makeWord(s.can, false)",
     "tests": [
@@ -366,7 +366,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-mason-word",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "open ? makeWord(can, raw) : t('prof.page.mason.sculptors', 'a Sculptor\\'s')",
     "new": "open ? makeWord(can, false) : t('prof.page.mason.sculptors', 'a Sculptor\\'s')",
     "tests": [
@@ -375,7 +375,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-loom-raw",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const b = el('button', `prof-family${x.id === r.id ? ' on' : ''}${s.can || s.raw ? '' : ' prof-locked'}`,",
     "new": "    const b = el('button', `prof-family${x.id === r.id ? ' on' : ''}${s.can ? '' : ' prof-locked'}`,",
     "tests": [
@@ -385,7 +385,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-jewel-raw",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const raw = open && !can && fromRaw(r.inputs, book);   // CRAFT1\n    const row = el('button', `prof-recipe${_jewel.picked",
     "new": "    const raw = false;\n    const row = el('button', `prof-recipe${_jewel.picked",
     "tests": [
@@ -394,7 +394,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R2-rank-locked-raw",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "raw: open && !can && fromRaw(x.inputs, book), share",
     "new": "raw: !can && fromRaw(x.inputs, book), share",
     "tests": [
@@ -404,7 +404,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R3-note-yield",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "w.count * chainYield(r, (prof) => book.track(prof))",
     "new": "w.count * r.per",
     "tests": [
@@ -413,7 +413,7 @@
   },
   {
     "name": "AUDIT-CRAFT1-R3-note-verbs",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "['burn', 'saw', 'cure', 'weave', 'cut', 'mix'].includes(v)",
     "new": "['burn', 'cure'].includes(v)",
     "tests": [

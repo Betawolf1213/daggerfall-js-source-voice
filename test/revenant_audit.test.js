@@ -23,7 +23,7 @@ const H = await import('../src/systems/harmMark.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
 const { validFoeRecord } = await import('../src/net/wire.js');
-const { fateKey } = await import('../src/ui/revenantFateView.js');
+const { fateKey } = await import('../src/ui/revenant/revenantFateView.js');
 const { createInventoryWindow } = await import('../src/ui/inventoryDoor.js');
 const { createPortalSet, PORTAL_SOUND } = await import('../src/scenes/portalFx.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
@@ -273,14 +273,14 @@ test('AUDIT D1/D4/D5: Enter on a focused button is that button\'s; the judgement
 });
 
 test('AUDIT D2/D6-D12: the window fits a phone; an armed Release never outlives the visit; the bar the green it wears; the costly presses in blood; the rows cards, not presses; the trophy\'s card on the hover; the keys a disabled choice is not offered (source)', () => {
-  const v = read('src/ui/revenantFateView.js');
+  const v = read('src/ui/revenant/revenantFateView.js');
   assert.match(v, /\.pack-shell \.loot-win\.fate \{ width: 380px; max-height: min\(700px, 92dvh\); overflow-y: auto; \}/);
   assert.match(v, /\.pack-shell \.fatecol \.fatelist \{ flex: 0 0 auto; min-height: auto; \}/);
   assert.match(v, /fate\.options\.filter\(\(o\) => !o\.disabled\)\.map\(\(o\) => `\$\{o\.key\} \$\{o\.label\.toLowerCase\(\)\}`\)/);
-  assert.match(read('src/ui/enhancedMenu.js'), /resetCompanionRoster\(\);   \/\/ COMPANION-ROSTER: nor an armed Release/);
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /resetCompanionRoster\(\);   \/\/ COMPANION-ROSTER: nor an armed Release/);
   const roster = read('src/ui/companionRoster.js');
   assert.match(roster, /meter\(Math\.max\(0, Math\.round\(h\)\), Math\.round\(hm\), 'verdigris'\)/);
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /row\.onmouseenter = \(\) => \{ if \(getPref\('plusItemHover'\) !== false\) showTip\(item, 'remote', row\); \};\n\s*row\.onmouseleave = hideTip;\n\s*\},/, 'the trophy\'s card');
   assert.match(inv, /if \(id\) host\?\.querySelector\?\.\('\.fate-confirm'\)\?\.scrollIntoView\?\.\(\{ block: 'nearest' \}\);/, 'the confirm brought into view');
 });

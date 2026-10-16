@@ -27,7 +27,7 @@ const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8
 const M = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
 const CHECK = /\n(    if \(playerSpawned && playerEntity\.health <= 0 [^\n]*presentPlayerDeath\(playerEntity\);)\n/.exec(W);
 /** The frame's check, lifted: one frame of it over the given world. AUDIT LEGACY B1: `w.succession` - Project Legacy's
- *  Succession standing, the death's own screen (ui/legacyDoor.js successionOpen). */
+ *  Succession standing, the death's own screen (ui/legacy/legacyDoor.js successionOpen). */
 const frameCheck = (w) => new Function('playerSpawned', 'playerEntity', 'worldMoveBusy', 'townTalk', 'DeathScreen', 'modes', 'presentPlayerDeath', 'successionOpen', CHECK[1])(
   w.spawned ?? true, w.entity, () => !!w.moving, w.townTalk, DeathScreen, w.modes, presentPlayerDeath, () => !!w.succession);
 

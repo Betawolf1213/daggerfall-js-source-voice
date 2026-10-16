@@ -55,7 +55,7 @@
  },
  {
   "name": "SWING-LABEL-the-pane-never-shows-the-line",
-  "file": "src/ui/enhancedControls.js",
+  "file": "src/ui/enhanced/enhancedControls.js",
   "old": "if (action === 'SwingWeapon' && unsaved.usingPrimary)",
   "new": "if (action === 'SwingWeaponX' && unsaved.usingPrimary)",
   "tests": [

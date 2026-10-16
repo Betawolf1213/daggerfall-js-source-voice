@@ -125,7 +125,7 @@ test('TORCH-BIND (re-aimed by KB1): every key a vendored mod answers is a regist
 });
 
 test('TORCH-BIND, driven: the controls pane carries TWO Continues - the head card, sticky, and a foot card after the last group - and the foot one saves', async () => {
-  const { paneControls, discardControlsStaging } = await import('../src/ui/enhancedControls.js');
+  const { paneControls, discardControlsStaging } = await import('../src/ui/enhanced/enhancedControls.js');
   const { createBindings, resetDefaults } = await import('../src/systems/inputActions.js');
   const { setBindings } = await import('../src/ui/input.js');
   const fakeEl = (tag) => {
@@ -149,7 +149,7 @@ test('TORCH-BIND, driven: the controls pane carries TWO Continues - the head car
     conts[1].onclick();
     assert.equal(find(view.body, 'ctl-notice')[0]?.textContent, 'Controls saved.', 'the foot Continue is applyAndSave');
   } finally { discardControlsStaging(); globalThis.document = prev; }
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.ctl-head \{ position: sticky; top: 0; z-index: 2; \}/, 'the head card stays in view while the list scrolls');
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.ctl-head \{ position: sticky; top: 0; z-index: 2; \}/, 'the head card stays in view while the list scrolls');
 });
 
 // ── HOTSLOT ──────────────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ test('HOTSLOT, driven: the enhanced spellbook slots a spell - Quickslot on the p
   globalThis.document = { createElement: mkEl, createTextNode: (t) => ({ text: t, className: '' }), getElementById: () => null, head: mkEl('head'), body: mkEl('body'), addEventListener() {}, removeEventListener() {} };
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   try {
-    const { mountEnhancedSpellbook } = await import('../src/ui/enhancedSpellbook.js');
+    const { mountEnhancedSpellbook } = await import('../src/ui/enhanced/enhancedSpellbook.js');
     clearQuickslots();
     const spark = { index: 5, name: 'Spark', effects: [] }, shock = { index: 9, name: 'Shock', effects: [] };
     const host = mkEl('div');
@@ -209,9 +209,9 @@ test('HOTSLOT, driven: the enhanced spellbook slots a spell - Quickslot on the p
 });
 
 test('HOTSLOT by source: the HUD\'s empty spell chip is a SOCKET (drawn dim, wearing its key, so a finger has a chip to fill), and the pane says hold', () => {
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /chip\.chip\.classList\.toggle\('qspell-empty', !sp\);[^\n]*\s*if \(!sp\) \{\s*chip\.chip\.classList\.remove\('readied', 'ghost', 'cycling'\);\s*chip\.name\.textContent = 'No spell';\s*quickTag\(chip, 'spellcap', tag\);\s*return;\s*\}/);
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.hud-qspell\.qspell-empty \{ display: flex; opacity: 0\.55; \}/);   // PIN MOVED (HUD-CLASS): the socket's own word - the bare 'empty' took the sheet's .empty component
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.hud-qspell\.qspell-empty \{ display: flex; opacity: 0\.55; \}/);   // PIN MOVED (HUD-CLASS): the socket's own word - the bare 'empty' took the sheet's .empty component
   assert.match(rd('src/systems/inputActions.js'), /\['QuickSpell', 'Ready quickslot spell \(hold to cycle the book\) \/ hotbar slot 3'\]/, 'KB1: the label lives in the registry\'s groups');
 });
 

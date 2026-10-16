@@ -412,7 +412,7 @@
   },
   {
     "name": "AUDIT28-B11-the-repaint-drops-the-focus",
-    "file": "src/ui/bountyWindow.js",
+    "file": "src/ui/bounty/bountyWindow.js",
     "old": "    if (keep) /** @type {HTMLElement|null} */ (win.querySelector?.(`.${keep}`))?.focus?.();",
     "new": "    if (keep && false) /** @type {HTMLElement|null} */ (win.querySelector?.(`.${keep}`))?.focus?.();",
     "tests": [

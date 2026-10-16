@@ -560,7 +560,7 @@ test('MAP3 world.js: the holder rides the ONE dep bag, asked per open through th
   assert.match(bag, /holder: sheetHolderOf\(\(\) => weaponRig\),/, 'the one holder, off the live rig');
   assert.doesNotMatch(bag, /available: \(\) =>/, 'no inline holder left in the travel builder');
   assert.match(src, /window\.__heldPose = \(spec\) => \(spec \? weaponRig\?\.setHeldPose\?\.\(spec\) : weaponRig\?\.heldPose\?\.\(\)\);/);
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   // MAP-FIELD2: the root is clear for BOTH lanes now (the sprite lane is
   // held at the bottom of the screen over the world too), so this lane
   // needs no rule of its own - what it still needs is the world behind it.
@@ -660,7 +660,7 @@ test('MAP-WEAPON / EM-BUG1: EVERY host asks its own live slot, and the tag it as
 
 test('MAP-WEAPON / EM4: the travel tag answers for the place, not for the class', async () => {
   const { HeldMapWindow } = await import('../src/ui/heldMap.js');
-  const { createSheetSlot } = await import('../src/ui/mapStrip.js');
+  const { createSheetSlot } = await import('../src/ui/map/mapStrip.js');
   // the slot is the law the tag reads, so it is asked directly here -
   // the window's own construction needs a document, and this is about
   // the ANSWER rather than about the wiring (heldmap.test.js drives the

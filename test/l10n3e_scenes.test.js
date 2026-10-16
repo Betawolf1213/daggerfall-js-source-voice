@@ -34,7 +34,7 @@ import { questLetterName, shownItemName } from '../src/systems/item/itemInfo.js'
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { setSpellRecordsByIndex, shownSpellName } from '../src/systems/loot/loot.js';
 import { liveBundles, dispellableBundles, dispelBundle, DISPEL_MAGIC_TEXT } from '../src/systems/mysticism.js';
-import { effectRows } from '../src/ui/enhancedHud.js';
+import { effectRows } from '../src/ui/enhanced/enhancedHud.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { allyCastable, allyReachFor, allyCastPlaqueLine, strangerCastable } from '../src/systems/allyCast.js';
 import { championName } from '../src/systems/champions.js';   // LOOT7 (main): a champion's body by its name
@@ -411,7 +411,7 @@ test('L10N3e scenes: the readied spell on the classic HUD (dungeonContext.js) an
   const all = (n, out = []) => { for (const c of n.children ?? []) { out.push(c); all(c, out); } return out; };
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const chip = (sp) => {
     destroyEnhancedHud();
     globalThis.document.body = mkEl();

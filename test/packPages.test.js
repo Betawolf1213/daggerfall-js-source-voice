@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PACK_PAGES, PAGE_IDS, pageOf, filterByPage } from '../src/ui/packPages.js';
-import { TABS, filterByTab } from '../src/ui/nativeInventory.js';
+import { TABS, filterByTab } from '../src/ui/native/nativeInventory.js';
 import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplates.js';
 import { createPotion, POTION_TEMPLATE_INDEX } from '../src/systems/loot/loot.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
@@ -81,7 +81,7 @@ test('PX31: where things live - the pages a player looks for', () => {
 });
 
 test('PX31: the pack draws the pages; the classic keeps DFU\'s four', () => {
-  const src = read('src/ui/enhancedInventory.js');
+  const src = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(src, /import \{ PACK_PAGES, PAGE_IDS, pageOf, filterByPage \} from '\.\/packPages\.js';/);
   assert.doesNotMatch(src.replace(/^\s*(\/\/|\*|\/\*).*$/gm, ''), /filterByTab\(|\bTABS\b/, 'the pack no longer reads the four (its prose may still name them)');
   // PIN MOVED (WALLET1): the pages are drawn from the pack less what its wallet holds (`paged` - systems/walletItem.js)
@@ -89,7 +89,7 @@ test('PX31: the pack draws the pages; the classic keeps DFU\'s four', () => {
   assert.match(src, /const paged = held\.size \? items\.filter\(\(it\) => !held\.has\(it\)\) : items;/);
   assert.match(src, /for \(const \{ tab: t, label, items: rows \} of model\.tabs\) \{\s*\n\s*const n = rows\.length;\s*\n(?:\s*\/\/[^\n]*\n)*\s*const b = el\('button', `packtab\$\{t === tab \? ' on' : ''\}\$\{n \? '' : ' tabempty'\}`, label\);/, 'each page by its label, dimmed when empty');
   assert.match(src, /tab = pageOf\(taken\);/, 'the page follows what arrived');
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.packtab\.empty \{ opacity: 0\.45; \}/);
   assert.match(css, /\.pack-shell \.pack-dock \.packcats \.packtabs \{ display: grid;\s*\n\s*grid-template-columns: repeat\(3, 1fr\);/, 'three by three on the phone dock');
   assert.deepEqual([...TABS], ['weapons', 'magic', 'clothing', 'ingredients'], 'DFU\'s four stand for the classic window');

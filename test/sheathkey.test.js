@@ -118,7 +118,7 @@ test('SHEATH: every ctx the large HUD is handed carries the panel\u2019s door (T
   assert.match(read('src/scenes/dungeonContext.js'), /^    toggleSheath: weaponRig\.toggleSheath,$/m,
     'the dungeon ctx keeps the door it has carried since U45');
   // and the panel is still the eleventh panel, still posting the action
-  assert.match(read('src/ui/hudLarge.js'), /\{ key: 'sheath', rect: LARGE_HUD_RECTS\.sheath, action: 'ReadyWeapon' \}/);
+  assert.match(read('src/ui/hud/hudLarge.js'), /\{ key: 'sheath', rect: LARGE_HUD_RECTS\.sheath, action: 'ReadyWeapon' \}/);
   assert.match(read('src/ui/input.js'), /case 'ReadyWeapon': return ctx\.toggleSheath \? \(ctx\.toggleSheath\(\), true\) : false;/);
 });
 

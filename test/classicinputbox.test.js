@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { InputMessageBoxWindow, DEFAULT_INPUT_MAX } from '../src/ui/inputMessageBox.js';
 import { noteInputBoxClosed, cursorToggleRefused } from '../src/player/pointerLock.js';
 import { ActionInputBox, MAX_INPUT } from '../src/ui/actionText.js';
-import { ItemMakerWindow, MAX_ITEM_NAME, ENTER_NEW_NAME } from '../src/ui/itemMakerWindow.js';
+import { ItemMakerWindow, MAX_ITEM_NAME, ENTER_NEW_NAME } from '../src/ui/item/itemMakerWindow.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -144,17 +144,17 @@ test('CM3-CM11: THE ROSTER - every DaggerfallInputMessageBox in src/ui is a push
   // again is what the second half catches.
   const raisers = {
     'src/ui/actionText.js': 'ShowTextWithInput (DaggerfallAction.cs:566)',
-    'src/ui/automapWindow.js': 'EditUserNote (Automap.cs:1593-1608)',
+    'src/ui/automap/automapWindow.js': 'EditUserNote (Automap.cs:1593-1608)',
     'src/ui/charsheet.js': 'NameButton_OnMouseClick (DaggerfallCharacterSheetWindow.cs:769-777)',
     'src/ui/guildServiceWindows.js': 'DaggerfallGuildServiceDonation :44-51 and the tavern\'s day count',
-    'src/ui/itemMakerWindow.js': 'NameItemButon_OnMouseClick (DaggerfallItemMakerWindow.cs:799-811)',
-    'src/ui/nativeInventory.js': 'the split popup (:1523-1536) and GoldButton_OnMouseClick (:1269-1284)',
-    'src/ui/nativeTrade.js': 'the split popup, inherited (DaggerfallTradeWindow.cs:31 over DaggerfallInventoryWindow.cs:1523-1536) - DISC25-F',
-    'src/ui/questJournal.js': 'EnterNote (DaggerfallQuestJournalWindow.cs:507-526) - NOTE-KEYS',
+    'src/ui/item/itemMakerWindow.js': 'NameItemButon_OnMouseClick (DaggerfallItemMakerWindow.cs:799-811)',
+    'src/ui/native/nativeInventory.js': 'the split popup (:1523-1536) and GoldButton_OnMouseClick (:1269-1284)',
+    'src/ui/native/nativeTrade.js': 'the split popup, inherited (DaggerfallTradeWindow.cs:31 over DaggerfallInventoryWindow.cs:1523-1536) - DISC25-F',
+    'src/ui/quest/questJournal.js': 'EnterNote (DaggerfallQuestJournalWindow.cs:507-526) - NOTE-KEYS',
     'src/ui/saveWindow.js': 'RenameSaveButton_OnMouseClick (DaggerfallUnitySaveGameWindow.cs:566-570)',
-    'src/ui/spellMakerWindow.js': 'NameSpellButton_OnMouseClick (DaggerfallSpellMakerWindow.cs:911-918)',
+    'src/ui/spell/spellMakerWindow.js': 'NameSpellButton_OnMouseClick (DaggerfallSpellMakerWindow.cs:911-918)',
     'src/ui/spellbookWindow.js': 'SpellNameLabel_OnMouseClick (DaggerfallSpellBookWindow.cs:927-938)',
-    'src/ui/travelMapWindow.js': 'FindlocationButtonClickHandler (DaggerfallTravelMapWindow.cs:959-975)',
+    'src/ui/travel/travelMapWindow.js': 'FindlocationButtonClickHandler (DaggerfallTravelMapWindow.cs:959-975)',
   };
   const files = readdirSync(join(ROOT, 'src/ui'), { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => `src/ui/${f}`);
   const raising = files.filter((f) => /new InputMessageBoxWindow\(|extends InputMessageBoxWindow/.test(rd(f)) && f !== 'src/ui/inputMessageBox.js');
@@ -170,8 +170,8 @@ test('CM3-CM11: THE ROSTER - every DaggerfallInputMessageBox in src/ui is a push
   assert.deepEqual(typing.filter((f) => !inlineInDfu.has(f)), [], 'no window types a DaggerfallInputMessageBox field into its own art');
   // ...and the inline copies the arc retired are gone by name
   for (const [f, needle] of [
-    ['src/ui/spellbookWindow.js', 'renameText'], ['src/ui/travelMapWindow.js', 'findText'], ['src/ui/spellMakerWindow.js', '_nameInput'],
-    ['src/ui/itemMakerWindow.js', 'this.renaming'], ['src/ui/automapWindow.js', '_noteBoxInput'], ['src/ui/nativeInventory.js', 'goldEntry'],
+    ['src/ui/spellbookWindow.js', 'renameText'], ['src/ui/travel/travelMapWindow.js', 'findText'], ['src/ui/spell/spellMakerWindow.js', '_nameInput'],
+    ['src/ui/item/itemMakerWindow.js', 'this.renaming'], ['src/ui/automap/automapWindow.js', '_noteBoxInput'], ['src/ui/native/nativeInventory.js', 'goldEntry'],
     ['src/ui/saveWindow.js', 'renameText'], ['src/ui/guildServiceWindows.js', 'this.value.slice'],
   ]) assert.equal(rd(f).includes(needle), false, `${f} no longer carries ${needle}`);
 });

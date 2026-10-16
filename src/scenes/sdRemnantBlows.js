@@ -15,7 +15,7 @@
 //     and its base; the Stomp's ring on the ground alone; the Hand outrun or shaded by a pillar; the burning brass a bite
 //     each POOL_TICK_MS I stand in it.
 //   SAID: the Reset gathering, the Hour's End; and its FALL - its body's thud, the line, the fight's damage chart
-//     (ui/gateDamageChart.js, the gate's own).
+//     (ui/gate/gateDamageChart.js, the gate's own).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { setBossStruck } from '../systems/sigil/sigilSetPowers.js';   // AUDIT SD: a body's blow, marked for Gearward
@@ -26,7 +26,7 @@ import { strikeDamage, savedShare } from '../net/gate/gateStrike.js';
 import { sdBodyAt, sdEndAgain, SD_HEARTS_KEY } from '../net/superDungeon/sdFightLink.js';
 import { sdBlowVerdict, sdVolleyPools, sdPoolUnder } from '../net/superDungeon/sdStrike.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_STYLE, TELEGRAPH_POOL, TELEGRAPH_FLASH_MS, TELEGRAPH_POINTS_MAX } from '../render/gateTelegraph.js';
-import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gateDamageChart.js';
+import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gate/gateDamageChart.js';
 import { BODY_FALL, BURNING, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS, BOSS_CUES } from '../world/gate/gateBoss.js';
 import { SD_VOICE_AWAY_MS } from './sdRemnantVoice.js';
 

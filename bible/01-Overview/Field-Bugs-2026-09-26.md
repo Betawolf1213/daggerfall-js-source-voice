@@ -165,7 +165,7 @@ opens that window two-way (PlayerActivate.cs:902-925).
 The host says `loot.storage` for the player's own (`scenes/worldModes.js`:
 an owned cupboard - `openLoot` without private property - and an owner's
 placed piece); that session opens beside the pack, its side titled
-Storage, with a Store verb (`ui/enhancedInventory.js`). A body, a
+Storage, with a Store verb (`ui/enhanced/enhancedInventory.js`). A body, a
 stranger's cupboard and a closed shop's shelf keep MAC-M2 B's frame.
 
 `test/shipstore.test.js` (3); `tools/mutants/shipstore.json` 6, 6 dead.

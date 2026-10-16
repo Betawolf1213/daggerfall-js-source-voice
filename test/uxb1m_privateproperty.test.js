@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
 import { YesNoBoxWindow, YES_NO_BOX_ID, YES_NO_LABELS, yesNoFaceOwner, releaseYesNoFace, _setYesNoClockForTests } from '../src/ui/yesNoBox.js';
 import { MB_BUTTONS, _setMessageBoxArtForTests } from '../src/ui/messageBox.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 import { privatePropertyRows, PRIVATE_PROPERTY_FALLBACK_ROWS } from '../src/systems/shopStock.js';
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../src/ui/drawWatchdog.js';   // DISC29-D: frames that pass undrawn
 

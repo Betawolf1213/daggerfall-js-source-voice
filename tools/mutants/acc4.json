@@ -111,7 +111,7 @@
   },
   {
     "name": "ACC4-12-guest-date-is-1970",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "  if (!Number.isSafeInteger(s) || s <= 0) return null;",
     "new": "  if (!Number.isSafeInteger(s)) return null;",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "ACC4-13-guest-gets-a-date-row",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      if (joined) row(t('account.card.registered', 'Registered'), joined);",
     "new": "      row(t('account.card.registered', 'Registered'), joined ?? '-');",
     "tests": [

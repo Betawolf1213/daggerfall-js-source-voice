@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA4B-STANDS-FIGHTER",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "stands: stands && !mine && !quiet ?",
     "new": "stands: stands && !quiet ?",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA4B-STANDS-REFUSED-LET",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "if (!shown?.standsReady || typeof cheerDoor !== 'function') return false;",
     "new": "if (typeof cheerDoor !== 'function') return false;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA4B-STANDS-KEYS-LINGER",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "  listenKeys(standing, doc);\n",
     "new": "  if (standing) listenKeys(true, doc);\n",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENA4B-STANDS-ARIA",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "if (!was) { parts.stands.style.display = ''; root.removeAttribute('aria-hidden'); }",
     "new": "if (!was) { parts.stands.style.display = ''; }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA4B-STANDS-FIELD",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(String(t.tagName ?? '')))) return;",
     "new": "if (false) return;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA4B-STANDS-MODIFIER",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "if (!e || e.defaultPrevented || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;",
     "new": "if (!e) return;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA4B-STANDS-SWING",
-    "file": "src/ui/arenaHud.js",
+    "file": "src/ui/arena/arenaHud.js",
     "old": "b.onclick = (e) => { e?.stopPropagation?.(); shout(dir); };",
     "new": "b.onclick = () => { shout(dir); };",
     "tests": [

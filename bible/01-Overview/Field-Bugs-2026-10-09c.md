@@ -55,7 +55,7 @@ DFU's combat clause - "Stop fliers from moving too near the floor during combat"
 up to `FLYER_FLOOR_LIFT` - so a leader a millimetre lower climbed the ghost until its feet were a metre up or its body
 met the ceiling, and at heel it hovered there. Its bar stood 0.3 m over its top, over the ceiling, and the crew's sight
 test (the place's collider) hid it. The lift is combat's now and never runs while following, and the bar stands under
-the ceiling over the body (`ui/navalHud.js` crewBarPoint). THE FOUR HOSTS: world.js owns the one bar drawer and both
+the ceiling over the body (`ui/naval/navalHud.js` crewBarPoint). THE FOUR HOSTS: world.js owns the one bar drawer and both
 companion layers; worldModes.js and dungeonContext.js call it and step the companion on the shared motor; exterior.js
 stands no companion. A ghost may still sit up to a jump's height above the floor at heel after the player jumps while
 it walks; its next walk brings it down. Pinned by `test/fb1009c_ceilghost.test.js` (a Spectral EnemyAI over a real

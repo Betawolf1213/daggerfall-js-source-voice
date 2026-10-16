@@ -133,7 +133,7 @@ test('AUDIT-RR F14/F25: the neck band is the sprite\'s BOTTOM fifth (Unity v = 0
   assert.deepEqual(band, { u0: RR_RIDING.extX, u1: RR_RIDING.extX + RR_RIDING.extW, v0: 0.8, v1: 0.8 + 0.1, widthTrim: 14 });
   assert.equal(rrRidingNeckBand(0).v1, 0.8, 'no lift, no band');
   const mr = rd('src/player/mountRig.js');
-  assert.match(mr, /import \{ horseOffsetHeight, dockedLargeHudHeight \} from '\.\.\/ui\/hudLarge\.js'/);
+  assert.match(mr, /import \{ horseOffsetHeight, dockedLargeHudHeight \} from '\.\.\/ui\/hud\/hudLarge\.js'/);
   assert.match(mr, /const offset = Math\.trunc\(dockedLargeHudHeight\(\)\);[^\n]*\n\s+rect\.y = c\.height - \(\(art\.height \+ yAdj\) \* scaleY\) - offset;\s+return \{ yAdj, scaleY, c, offset \};/);   // AUDIT-RR2 G4: `(int)` (EnhancedRiding.cs:257)
   assert.match(mr, /function drawNeckBand\(\{ yAdj, scaleY, c, offset \}, rect, art, r\)/);
   assert.match(mr, /\{ u0: band\.u0, v0: band\.v0, u1: band\.u1, v1: band\.v1 \}/);

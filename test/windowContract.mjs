@@ -160,7 +160,7 @@ export function hostArms() {
  * WHICH CLASSES A DOOR CAN HAND BACK, and where each one lives.
  *
  * EM3: a SKIN DOOR is the port's one idiom for "the classic skin gets
- * DFU's window, the enhanced skin gets ours" (ui/travelMapDoor.js and
+ * DFU's window, the enhanced skin gets ours" (ui/travel/travelMapDoor.js and
  * six before it). When the dungeon automap grew one, interior.js's
  * population stopped being a set of `new X(...)` literals and the
  * closedness pin below went red - correctly, because it had lost sight

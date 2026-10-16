@@ -515,7 +515,7 @@ test('GUILD2c (AUDIT G11-G14): a hole shows the field beneath it - both colours 
   paintSwatch(img, { ...WOLF, division: 'pale', field2: 'sable', charge: 'argent' });
   assert.notEqual(img.src, first);
   assert.equal(img.alt, heraldryText({ ...WOLF, division: 'pale', field2: 'sable', charge: 'argent' }));
-  for (const f of ['src/ui/nameLayer.js', 'src/ui/travelViewHud.js']) assert.match(src(f), /heraldryKey\((arms|h)\)/, f);
+  for (const f of ['src/ui/nameLayer.js', 'src/ui/travel/travelViewHud.js']) assert.match(src(f), /heraldryKey\((arms|h)\)/, f);
   // G13
   assert.equal(heraldryOf({ ...owl, field2: 'gold', charge: 'argent' }), null, 'a border of the second colour, the device its own');
   assert.equal(armsWhy({ ...owl, field2: 'gold', charge: 'argent' }), 'a border unlike either field colour');

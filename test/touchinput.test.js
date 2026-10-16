@@ -11,7 +11,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { perspective, mirrorProjectionX, lookAt } from '../src/world/mat4.js';
 import { invert4, ndcFromScreen, rayDirFromScreen, projectToScreen, worldRectPx } from '../src/player/tapRay.js';
-import { createGestureRecognizer, TAP_PX, TAP_MS, HOLD_MS } from '../src/ui/touchGestures.js';
+import { createGestureRecognizer, TAP_PX, TAP_MS, HOLD_MS } from '../src/ui/touch/touchGestures.js';
 import { createActivateGate, activateFrame } from '../src/systems/activateGate.js';
 import { createLockOn, wrapAngle, chestPoint, CHEST_FRACTION, LOCK_BREAK_DISTANCE } from '../src/player/lockOn.js';
 import { LookFilter } from '../src/player/lookFilter.js';
@@ -224,7 +224,7 @@ test('TI1b end to end: a tap on a foe LOCKS it through the real gate, ray and pi
 
 // ---- the DOM layer and the hosts, by text ----
 test('TI1 touch.js: the five buttons, the gate-by-hook dial, and the three routes (mutant: any removed button back, or a route dropped)', () => {
-  const s = read('src/ui/touch.js');
+  const s = read('src/ui/touch/touch.js');
   for (const gone of ["'\\u2694'", "'E'", "'F5'", "'F6'", "'SV'", "'LD'", "'\\u2630'", "'\\u2328'", "tap('F9')", "tap('F11')", "tap('Backspace')", "down('KeyE')"]) {
     assert.ok(!s.includes(gone), `${gone} is an unneeded button and must be gone`);
   }
@@ -239,11 +239,11 @@ test('TI1 touch.js: the five buttons, the gate-by-hook dial, and the three route
   // the keys no OTHER live control still wants down - because a combo
   // binding shares its modifier with the stick's Run (the fixture is in
   // test/audit62_touch.test.js, executed both ways).
-  // TOUCH-BUTTONS: jump and sheathe are the corner's two default HOLD slots (ui/touchButtons.js), each held on its
+  // TOUCH-BUTTONS: jump and sheathe are the corner's two default HOLD slots (ui/touch/touchButtons.js), each held on its
   // action's live code and lifted against liveNeeds() - the same arm for any held action a player puts there
   assert.match(s, /if \(action\.kind === 'hold'\) \{\s*\n\s*b = button\(action\.glyph, \.\.\.at, \(\) => \{ slotHeld\.set\(b, downAction\(action\.id\)\); \}, \(\) => \{ const c = slotHeld\.get\(b\) \?\? null; slotHeld\.delete\(b\); upCode\(c, liveNeeds\(\)\); \}\);/, 'a held slot, on its action\'s live code');
   // PIN MOVED (2026-10-01 part four, TOUCH-HOLD - Mac: "Interact button + knife Use"): and Interact, the third
-  assert.match(read('src/ui/touchButtons.js'), /TOUCH_BUTTON_DEFAULTS = Object\.freeze\(\{ touchButton1: 'Jump', touchButton2: 'ReadyWeapon', touchButton3: 'Interact' \}\)/, 'jump and sheathe by default, and Interact');
+  assert.match(read('src/ui/touch/touchButtons.js'), /TOUCH_BUTTON_DEFAULTS = Object\.freeze\(\{ touchButton1: 'Jump', touchButton2: 'ReadyWeapon', touchButton3: 'Interact' \}\)/, 'jump and sheathe by default, and Interact');
   assert.match(s, /on\('MoveForwards',[\s\S]*on\('Run',/, 'the stick holds the four move actions and Run');
   assert.doesNotMatch(s, /\['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft'\]/, 'and releases what it HOLDS, not a frozen literal list');
   assert.match(s, /createGestureRecognizer\(\{ locked: \(\) => !!hooks\.locked\?\.\(\) \}\)/, 'the recogniser takes the host\'s lock predicate');
@@ -291,7 +291,7 @@ test('TI1 hosts: the three combat hosts wire swipe, tap, lock and dial; the fly-
 // lock-only flag, every host publishes it, and every ladder stops
 // after the lock pick when it is up - the quest-click arm included.
 test('TS1: the stick-half tap LOCKS and opens nothing - the flag from touch.js through every host and every ladder (mutant: any ladder running on)', () => {
-  const touch = read('src/ui/touch.js');
+  const touch = read('src/ui/touch/touch.js');
   assert.match(touch, /hooks\.tap\?\.\(stickOrigin\[0\], stickOrigin\[1\], \{ lockOnly: true \}\);/, 'the stick half says which tap it is');
   assert.match(touch, /hooks\.tap\?\.\(ev\.x, ev\.y\);/, 'the look half\'s tap is the plain one - it still activates');
   for (const h of ['world', 'exterior', 'dungeon']) {

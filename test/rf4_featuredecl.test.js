@@ -78,8 +78,8 @@ test('RF4: the registry sits under the stores - it imports neither, the lanes re
   assert.match(read('src/systems/uiPrefs.js'), /^import \{ FEATURE_PREF_DEFAULTS \} from '\.\/features\.js';/m);
   assert.match(read('src/world/landView.js'), /^registerFeatureLane\('landView', \{ tiers: LAND_VIEW_TIERS, read: landViewRead, write: landViewWrite \}\);/m);
   assert.match(read('src/world/outdoors.js'), /^registerFeatureLane\('outdoors', \{ tiers: OUTDOORS_TIERS, default: OUTDOORS_DEFAULT, read: outdoorsRead, write: outdoorsWrite \}\);/m);
-  assert.match(read('src/ui/enhancedMenu.js'), /const c = resolveControl\(f\);/, 'the menu draws the resolved control');
-  assert.match(read('src/ui/enhancedMenu.js'), /^import '\.\.\/world\/landView\.js';/m, 'and loads the lanes so they are registered before a row is drawn');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /const c = resolveControl\(f\);/, 'the menu draws the resolved control');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /^import '\.\.\/world\/landView\.js';/m, 'and loads the lanes so they are registered before a row is drawn');
   assert.ok(featureLane('landView') && featureLane('outdoors'));
   assert.equal(featureLane('nope'), null);
   registerFeatureLane('rf4-lane', { tiers: [[1, 'One'], [2, 'Two']], read: () => 2, write: () => {} });

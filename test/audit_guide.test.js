@@ -12,15 +12,15 @@ import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
 import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { makeWorld, seededRolls } from './guideWorld.mjs';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { QuestLens } from '../src/ui/questLens.js';
-import { QUEST_URGENT_SECONDS } from '../src/ui/questRail.js';
-import { QuestHerald, questHerald, drawQuestHerald, HERALD_PREF, HERALD_SECONDS, HERALD_MAX } from '../src/ui/questHerald.js';
-import { questTracker, drawQuestTracker, trackButton, TRACKER_PREF, _resetQuestTrackerForTests } from '../src/ui/questTracker.js';
-import { MARKS_PREF } from '../src/ui/questMarks.js';
-import { hideHudTextSurfaces } from '../src/ui/hud.js';
-import { destroyEnhancedNotice, _setNoticeClockForTests } from '../src/ui/enhancedNotice.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { QuestLens } from '../src/ui/quest/questLens.js';
+import { QUEST_URGENT_SECONDS } from '../src/ui/quest/questRail.js';
+import { QuestHerald, questHerald, drawQuestHerald, HERALD_PREF, HERALD_SECONDS, HERALD_MAX } from '../src/ui/quest/questHerald.js';
+import { questTracker, drawQuestTracker, trackButton, TRACKER_PREF, _resetQuestTrackerForTests } from '../src/ui/quest/questTracker.js';
+import { MARKS_PREF } from '../src/ui/quest/questMarks.js';
+import { hideHudTextSurfaces } from '../src/ui/hud/hud.js';
+import { destroyEnhancedNotice, _setNoticeClockForTests } from '../src/ui/enhanced/enhancedNotice.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -448,7 +448,7 @@ test('AUDIT GUIDE O3/L5: a look asks the host\'s map once per quest (the latest 
   assert.equal(asks.length, 1, `the map asked once, for the latest entry: ${asks}`);
   assert.equal(seen.quests[0].entries[0].target, null, 'an older entry carries no target');
   assert.ok(seen.quests[0].target?.locationName, 'the latest does');
-  const { placePixelMemo } = await import('../src/ui/travelMapWindow.js');
+  const { placePixelMemo } = await import('../src/ui/travel/travelMapWindow.js');
   let reads = 0;
   const region = { mapNameLookup: new Map([['Bigtown', 0]]), mapTable: [{ longitude: 1000, latitude: 2000 }] };
   const maps = { getRegionByName: (n) => { reads++; return n === 'Devilrock' ? region : null; } };
@@ -479,7 +479,7 @@ const LETTER = [
 ];
 
 test('AUDIT GUIDE L3: a look at an entry that names a quest LETTER (Item.expandMacro -> questLetterName -> expandLetterSignoff, DFU\'s own path) opens no talk topic and draws nothing from the engine\'s Math.random - the quiet read quiets the letter\'s signoff and its variant roll as it quiets the entry\'s own (mutants: the hooks kept loud; the engine roll kept)', async () => {
-  const { quietLines } = await import('../src/ui/questLens.js');
+  const { quietLines } = await import('../src/ui/quest/questLens.js');
   resetUid(); ensureUidAtLeast(1000);
   const clock = { now: 1000 };
   const topics = [];
@@ -626,7 +626,7 @@ test('AUDIT GUIDE H3/U19: the herald speaks through a live region of its own tha
 // ---------------------------------------------------------------
 
 test('AUDIT GUIDE T1/D1, U1, U7: the card steps aside - its line kept, so the party list never jumps - for what stands in its corner a while: the Overworld\'s block at the top of a touch screen, a narrow screen\'s chat lines, a journey\'s junction disc (mutants: each rule dropped)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
   const css = ENHANCED_CSS.replace(/\s+/g, ' ');
   assert.match(css, /:root\[data-tview-block="top"\] \.qtrack,/, 'the Overworld\'s block (main\'s OW-NOTICES attribute)');
   assert.match(css, /body:has\(\.travelpanel-junction\.show\) \.qtrack \{ visibility: hidden; \}/, 'the junction disc (enhancedTravelControl.js .show)');
@@ -634,7 +634,7 @@ test('AUDIT GUIDE T1/D1, U1, U7: the card steps aside - its line kept, so the pa
 });
 
 test('AUDIT GUIDE U8: the card\'s top clears the compass and the foe frame at the HUD\'s own scale - the card carries the HUD\'s --hud-scale, and a touch screen\'s top is the larger of its line and the compass\'s foot (mutants: the scale not copied; the touch top fixed)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
   withSwitches(() => {
     const was = globalThis.document;
     const doc = globalThis.document = fakePage();
@@ -682,7 +682,7 @@ test('AUDIT GUIDE O5/T4/U2: the card re-measures whenever its box changes (a pho
 }, { tracker: true }));
 
 test('AUDIT GUIDE U9, U10, U17, U18, H8: the card\'s plate is the toast\'s and its dim rows lighter (4.5:1 over snow); forced colours keep a plate; a full party is cut at the window\'s foot, not pushed off it; the decorative place mark is never read aloud; a short screen keeps the herald\'s kind and title (mutants: each)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
   const { PARTY_CSS } = await import('../src/ui/partyPanel.js');
   const css = ENHANCED_CSS.replace(/\s+/g, ' ');
   assert.match(css, /background: linear-gradient\(90deg, rgba\(10,12,17,0\) 0%, rgba\(10,12,17,0\.82\) 32%\);/, 'U9: the plate');
@@ -725,7 +725,7 @@ function awayQuest() {
 }
 
 test('AUDIT GUIDE W1: an entry that names a place\'s town and not its region says the region only when DFU\'s find-place box would (the place on the player\'s map) or the player stands in it - THE LAWS 2, the GUIDE2 Ledger row (mutant: the town\'s name unlocking the region)', async () => {
-  const { entryTarget, targetWords, WHERE_TEXT } = await import('../src/ui/questLens.js');
+  const { entryTarget, targetWords, WHERE_TEXT } = await import('../src/ui/quest/questLens.js');
   const { q } = awayQuest();
   const off = targetWords(entryTarget(q.getMessage(1010), { canFindPlace: () => false, currentLocationName: () => '' }));
   assert.deepEqual([off.where, off.note], ['Llugwych', WHERE_TEXT.offMap], 'off the map: the name the entry says, and the talk arc\'s answer');
@@ -734,7 +734,7 @@ test('AUDIT GUIDE W1: an entry that names a place\'s town and not its region say
 });
 
 test('AUDIT GUIDE W2: "(you are here)" is a claim - never made when the player\'s map says the place is not on it (you cannot stand in a place your map lacks: a place of the same name elsewhere is not it); the find box keeps DFU\'s own name-only gate (mutant: the claim on the name alone)', async () => {
-  const { entryTarget, targetWords, WHERE_TEXT } = await import('../src/ui/questLens.js');
+  const { entryTarget, targetWords, WHERE_TEXT } = await import('../src/ui/quest/questLens.js');
   const { q } = awayQuest();
   const t = entryTarget(q.getMessage(1010), { canFindPlace: () => false, currentLocationName: () => 'Llugwych' });
   const w = targetWords(t);
@@ -758,7 +758,7 @@ test('AUDIT GUIDE W3: the where line and its "Show on map" ask isEnhanced() like
 });
 
 test('AUDIT GUIDE W4: an opening is a SENTENCE - a stop inside a closing quote ends it, an abbreviation or an initial does not, a capital beyond ASCII starts the next, and the date header is dropped on the first line that has words (mutants: each)', async () => {
-  const { entryOpening } = await import('../src/ui/questRail.js');
+  const { entryOpening } = await import('../src/ui/quest/questRail.js');
   assert.equal(entryOpening(['I must visit St. Delyn before dawn. Then home.']), 'I must visit St. Delyn before dawn.', 'St.');
   assert.equal(entryOpening(['Speak to Jolin D. Ferrow at once. He waits.']), 'Speak to Jolin D. Ferrow at once.', 'an initial');
   assert.equal(entryOpening(['I received a letter from my "family." I have been told to slay one.']), 'I received a letter from my "family."', 'a closing quote');
@@ -767,8 +767,8 @@ test('AUDIT GUIDE W4: an opening is a SENTENCE - a stop inside a closing quote e
 });
 
 test('AUDIT GUIDE W5, W6, U12: the trail offers a place once by its region AND its name (two towns may share one); the fixed-town route\'s buildings ask the location question the chronicle and the card ask; "Show on map" is named with its own words first (WCAG 2.5.3) (mutants: each)', async () => {
-  const { WHERE_TEXT } = await import('../src/ui/questLens.js');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const { WHERE_TEXT } = await import('../src/ui/quest/questLens.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /skip && said\.find\?\.locationName === skip\.locationName && said\.find\?\.regionName === skip\.regionName/, 'W5');
   assert.match(rd('src/scenes/exterior.js'), /questLocationName: \(\) => dfLocation\.name \?\? locationName,/, 'W6');
   assert.match(WHERE_TEXT.showLabel('Llugwych in Wayrest province'), /^Show on map: Llugwych in Wayrest province$/, 'U12');
@@ -780,9 +780,9 @@ test('AUDIT GUIDE W5, W6, U12: the trail offers a place once by its region AND i
 
 const heldMapKit = async () => {
   const { HeldMapWindow } = await import('../src/ui/heldMap.js');
-  const { toPaper, PEN, paintQuestMark } = await import('../src/ui/inkMap.js');
+  const { toPaper, PEN, paintQuestMark } = await import('../src/ui/ink/inkMap.js');
   const { getMapPixelID, LOCATION_TYPES, CLIMATES } = await import('../src/formats/mapsFile.js');
-  const qm = await import('../src/ui/questMarks.js');
+  const qm = await import('../src/ui/quest/questMarks.js');
   const { _resetForTests } = await import('../src/systems/uiPrefs.js');
   const town = { id: getMapPixelID(3, 7), mapID: 1, regionIndex: 17, mapIndex: 0, locationType: LOCATION_TYPES.TownCity, discovered: true };
   const crypt = { id: getMapPixelID(6, 4), mapID: 2, regionIndex: 17, mapIndex: 1, locationType: LOCATION_TYPES.DungeonRuin, discovered: true };
@@ -927,7 +927,7 @@ test('AUDIT GUIDE U16: the followed quest\'s diamond is filled with the pen\'s I
 });
 
 test('AUDIT GUIDE K3/K6: while a place is picked the card stands above the foot (the foot\'s buttons took the card\'s Travel press), and a phone\'s legend wraps inside the foot rather than running off the screen (mutants: each rule)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
   const css = ENHANCED_CSS.replace(/\s+/g, ' ');
   assert.match(css, /\.hmroot\.hmcardup \.hmcard \{ z-index: 1; \}/, 'K3');
   const wrap = css.indexOf('.hmlegend { flex: 1 1 auto; flex-wrap: wrap; min-width: 0; }');
@@ -959,16 +959,16 @@ function reachOf(entries) {
 }
 
 test('AUDIT GUIDE O6: THE HUD STAYS LIGHT, walked from the HUD itself (hud.js, enhancedHud.js) and through every way a module is reached - a static import, a bare side-effect import, a literal dynamic import(): none reaches the lens, place.js or the machine (the cycle GUIDE3 met); and the arc\'s three pins read those forms too (mutant: a bare import of the lens from a HUD face)', () => {
-  const reach = reachOf(['src/ui/hud.js', 'src/ui/enhancedHud.js']);
+  const reach = reachOf(['src/ui/hud/hud.js', 'src/ui/enhanced/enhancedHud.js']);
   assert.ok(reach.size > 100, `the walk is the HUD's whole graph: ${reach.size}`);
-  for (const f of ['src/ui/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js']) assert.equal(reach.has(f), false, `the HUD reaches ${f}`);
+  for (const f of ['src/ui/quest/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js']) assert.equal(reach.has(f), false, `the HUD reaches ${f}`);
   for (const t of ['test/guide3_herald.test.js', 'test/guide4_tracker.test.js', 'test/guide5_marks.test.js']) {
     assert.match(rd(t), /import\\\(/, `${t} reads a dynamic import`);
   }
 });
 
 test('AUDIT GUIDE D1: the Overworld\'s held edge marks stand clear of the quest card, as of the HUD\'s other furniture (mutant: the card left out)', () => {
-  assert.match(rd('src/ui/travelViewHud.js'), /const FURNITURE = '[^']*\.qtrack';/);
+  assert.match(rd('src/ui/travel/travelViewHud.js'), /const FURNITURE = '[^']*\.qtrack';/);
 });
 
 test('AUDIT GUIDE H6 (the draw): the frame that shows the HUD again after a window refreshes a waiting deadline\'s count (mutant: the call dropped from the draw)', () => withSwitches(() => {

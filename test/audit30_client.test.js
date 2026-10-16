@@ -18,9 +18,9 @@ import { courierFee } from '../src/net/marketLaw.js';
 import { xpForRank, WEAVERS_STOCK } from '../src/net/professionLaw.js';
 import { mintPiece, repairKitUse } from '../src/systems/smithItems.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
-import { setProfessionsPages, drawStoresPage } from '../src/ui/profPages.js';
+import { setProfessionsPages, drawStoresPage } from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

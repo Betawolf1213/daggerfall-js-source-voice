@@ -17,7 +17,7 @@ import {
   matchRecoveryCode, RECOVERY_SET_SIZE, RECOVERY_CODE_ITERS, PBKDF2_ITERS,
 } from '../server-account/src/password.js';
 import { AccountFlow, STAGES, FIELDS, codesOf, recoveryCodesText, recoveryCodesFileName } from '../src/ui/accountFlow.js';
-import { accountCard, STAGE_COPY, STAGE_ACTS } from '../src/ui/enhancedAccount.js';
+import { accountCard, STAGE_COPY, STAGE_ACTS } from '../src/ui/enhanced/enhancedAccount.js';
 import { SESSION_KEY, DEFAULT_ACCOUNT_SERVICE, accountRefusalText } from '../src/net/accountClient.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 

@@ -11,7 +11,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { traceProvinces, PROVINCE_NAMES, INERT_REGION, MAP_W, MAP_H } from '../src/ui/provinceMap.js';
-import { STAGE_RAIL, muteConstellation } from '../src/ui/enhancedChargen.js';
+import { STAGE_RAIL, muteConstellation } from '../src/ui/enhanced/enhancedChargen.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { STAT_KEYS_ORDER } from '../src/systems/chargen.js';
 import { RACE_TEMPLATES } from '../src/systems/races.js';
@@ -170,7 +170,7 @@ test('every wizard state belongs to exactly one rail stage', () => {
 // not see it, because the rail folds both into 'Class'.
 test('AUDIT 39: every wizard state has a renderer, not a fallback pane', () => {
   const flowSrc = readFileSync(new URL('../src/ui/chargen.js', import.meta.url), 'utf8');
-  const view = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const view = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   const states = [...flowSrc.match(/const STATES = \[([^\]]+)\]/)[1].matchAll(/'([a-zA-Z]+)'/g)]
     .map((x) => x[1]).filter((s) => s !== 'done');
   const map = view.slice(view.indexOf('const STAGES = {'), view.indexOf('};', view.indexOf('const STAGES = {')));
@@ -180,7 +180,7 @@ test('AUDIT 39: every wizard state has a renderer, not a fallback pane', () => {
 });
 
 test('AUDIT 39: the two new stages speak through the flow\'s own doors', () => {
-  const view = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const view = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   // THE QUESTIONS. displayQuestion already says where each answer
   // starts, so a) b) c) are three buttons rather than a scroll to hunt
   // in - and the answer goes through applyHit, not a second law.
@@ -299,7 +299,7 @@ test('AUDIT-39r: the enhanced quiz answers on the PRESS - no invisible constella
 
   // ...and the view really does cut that seam, rather than the pin
   // proving a helper nobody calls.
-  const view = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const view = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(view, /flow = muteConstellation\(f\);/, 'the mount mutes the flow it is handed');
   assert.doesNotMatch(view, /startConstellationAnim returns 0 seconds without it/,
     'and the false premise is gone from the stage that rested on it');
@@ -350,7 +350,7 @@ test('AUDIT 39: the class list\'s last row reaches a builder the view can drive'
 // wizard to `done` without a pointer event. What a sweep holds is the
 // three things that would rot quietly.
 test('the wizard routes keys through the SHARED table, not a second map', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(src, /import \{ overlayAction, isTextEntryTarget \} from '\.\/input\.js'/,
     'a second key map is how the two skins come to disagree about what Escape does');
   assert.match(src, /const action = overlayAction\(e\);/);
@@ -358,7 +358,7 @@ test('the wizard routes keys through the SHARED table, not a second map', () => 
 });
 
 test('the key handler has an owner - it is removed on unmount', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(src, /addEventListener\('keydown'/);
   const unmount = src.slice(src.indexOf('unmount()'));
   assert.match(unmount, /removeEventListener\('keydown'/,
@@ -366,7 +366,7 @@ test('the key handler has an owner - it is removed on unmount', () => {
 });
 
 test('a real text field keeps its own keys', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   const fn = src.slice(src.indexOf('function onKey'), src.indexOf('\n}', src.indexOf('function onKey')));
   assert.match(fn, /if \(isTextEntryTarget\(e\.target\) && action !== 'back'\) return;/,
     'the name boxes feed the flow themselves - every key but Escape, which no field types (DISC10-B) - a stolen key is a doubled letter (CG2: the one shared rule, and the host\'s ladder leaves the field\'s key alone too)');
@@ -423,7 +423,7 @@ test('the FOUR HOSTS are each named at the seam', () => {
 // view. Both halves are the same fact - the host was reading input
 // underneath a screen that had it.
 test('the wizard drops the pointer lock, and keeps dropping it', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(src, /document\.exitPointerLock\(\)/,
     'a LOCKED pointer never reaches the DOM - every mouse event goes to the '
     + 'locked element as a delta, so a fixed div is invisible to it at any z-index');
@@ -434,7 +434,7 @@ test('the wizard drops the pointer lock, and keeps dropping it', () => {
 });
 
 test('keys are captured, so the host never sees one the wizard used', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(src, /addEventListener\('keydown', keyHandler, \{ capture: true \}\)/,
     'the host walks the player and routes dungeon keys off its own window keydown');
   const fn = src.slice(src.indexOf('function onKey'), src.indexOf('\n}', src.indexOf('function onKey')));

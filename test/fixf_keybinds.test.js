@@ -1,7 +1,7 @@
 // FIX-F (2026-09-08, Mac: "Changing keybinds in classic/enhanced do not
 // work"). Two defects, neither in the rebinding law itself (which
 // round-trips): the enhanced skin - the default - had NO door to it
-// (ui/enhancedControls.js, pinned in its own file), and on the classic
+// (ui/enhanced/enhancedControls.js, pinned in its own file), and on the classic
 // skin the controls window offered rows that nothing read: the swing was
 // the raw right button in every host while the registry carried
 // Mouse1 -> SwingWeapon; TurnLeft/TurnRight/LookUp/LookDown had no

@@ -12,7 +12,7 @@
 //     through their anchors (chainSwing, chainMatrix), the Works turned a tooth a tick, neighbours opposite (worksMatrix),
 //     the far set turned once a sky period (render/sdSky.js SD_SKY_PERIOD). Every matrix written in place: a frame makes
 //     nothing (AUDIT SD II L2 F9).
-//   THE PHONES' TIER (`lite`, ui/touchDevice.js isTouchDevice): one spire a root, no far islands, two Works gears, the
+//   THE PHONES' TIER (`lite`, ui/touch/touchDevice.js isTouchDevice): one spire a root, no far islands, two Works gears, the
 //     chains still (their draws stood at rest and never swung).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
@@ -20,7 +20,7 @@ import { SD_HANG_ISLANDS, SD_HANG_STAGES, buildHangModel, buildChainModel, build
 import { SD_WORKS, SD_HANG_NOW, buildWorksGear, worksMatrix } from '../world/superDungeon/sdWorksModel.js';
 import { sdTick } from '../world/superDungeon/sdLook.js';
 import { sdSkyClock, SD_SKY_PERIOD } from '../render/sdSky.js';
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 import { identity } from '../world/mat4.js';
 
 /** The far set's turns a sky period (a whole number, so the set never jumps as the clock wraps): once, backwards - time

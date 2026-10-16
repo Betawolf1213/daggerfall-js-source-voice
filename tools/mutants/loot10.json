@@ -337,7 +337,7 @@
   },
   {
     "name": "LOOT10-codex-button-off",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (lootRarityOn()) {\n      const codex = el('button', 'act codexbtn', 'Codex');",
     "new": "    if (true) {\n      const codex = el('button', 'act codexbtn', 'Codex');",
     "tests": [

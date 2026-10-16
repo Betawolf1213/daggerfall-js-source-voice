@@ -63,7 +63,7 @@ async function withDocumentAsync(fn) {
  *  first so the import resolves from the registry rather than off the
  *  disk, then a few turns of the loop for the .then to run. */
 async function settleImport() {
-  await import('../src/ui/enhancedMenu.js');
+  await import('../src/ui/enhanced/enhancedMenu.js');
   for (let i = 0; i < 5; i++) await new Promise((r) => setTimeout(r, 0));
 }
 
@@ -160,7 +160,7 @@ test('PX2: both doors open on the pixel home', () => {
   // opens on the SAME pixel home as boot, Save Game one visible press
   // away, and Escape on the face resumes. The MEASURED half below
   // holds the resume arm - a home that cannot resume is a trap.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /^  section = 'home';$/m);
   assert.match(src, /mode === 'pause' \? \(\) => onAction\('resume'\)/,
     'Escape on the pause face must resume');
@@ -169,13 +169,13 @@ test('PX2: both doors open on the pixel home', () => {
 test('U51: the pause door mounts the FRONT DOOR, not a second design', () => {
   const src = read('src/ui/pauseDoor.js');
   assert.match(src, /import\('\.\/enhancedMenu\.js'\)/,
-    'the pause screen IS ui/enhancedMenu.js');
+    'the pause screen IS ui/enhanced/enhancedMenu.js');
   // PX26 added the LANDING to this call; the law U51 guards is
   // unchanged - pause mode, the host's own hooks, one front door.
   assert.match(src, /mountEnhancedMenu\(host, \{ mode: 'pause', hooks, onAction: act, at: hooks\.at \?\? null \}\)/,
     'mounted in pause mode with the host’s own hooks');
   // and it carries no design of its own, exactly as menu.html carries
-  // none - the tokens and the layout live in ui/enhancedStyle.js
+  // none - the tokens and the layout live in ui/enhanced/enhancedStyle.js
   assert.ok(!/--brass|--verdigris|\.railbtn|grid-template-columns/.test(src),
     'ui/pauseDoor.js must hold no layout - one design language, one home');
 });
@@ -217,7 +217,7 @@ test('U51: the enhanced screen is a DYNAMIC import - classic pays nothing', () =
   // never reports done. Six doors carried that catch by hand and a
   // seventh (charSheetDoor) carried none at all, which is how a deploy
   // that moved a chunk made the enhanced menus silently refuse to
-  // open. The handling is `ui/enhancedChunk.js` now, and it satisfies
+  // open. The handling is `ui/enhanced/enhancedChunk.js` now, and it satisfies
   // the rule with a way OUT rather than a disappearance: the notice it
   // paints carries the door's own close, and where the notice cannot
   // paint it falls back to exactly the old answer. Asked of the ONE
@@ -225,7 +225,7 @@ test('U51: the enhanced screen is a DYNAMIC import - classic pays nothing', () =
   assert.match(src, /mountEnhancedChunk\(\{/, 'the door mounts through the one home');
   assert.match(src, /onDismiss: \(\) => \{ host\.remove\(\); fired = true; \}/,
     'and hands it the teardown that takes the empty div with it');
-  const home = read('src/ui/enhancedChunk.js');
+  const home = read('src/ui/enhanced/enhancedChunk.js');
   assert.match(home, /if \(!notice\(host, \{ err, onDismiss \}\)\) onDismiss\?\.\(\);/,
     'a failed load must take its empty div with it when it cannot show a way out, or the host '
     + 'holds an overlay that never reports done - a frozen game');
@@ -276,7 +276,7 @@ test('U51: the host arms are no-ops BY DESIGN, and say so', () => {
 });
 
 test('U51: Escape closes the pause door, through the shared table', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /import \{ overlayAction, bindings, eventMeans \} from '\.\/input\.js'/,   // UXB1-F: and the live bindings a Features tile names; DISC28-A: the pause action's own key
     'not a second key map - the same table every other window answers through');
   const onKey = src.slice(src.indexOf('function onKey(e)'), src.indexOf('function releaseLock()'));
@@ -309,7 +309,7 @@ test('U51: every listener has an owner', () => {
   // A window-level keydown outlives the DOM it was mounted for. On the
   // pause door that is not a leak, it is a game that can never be
   // paused again: the dead listener keeps swallowing Escape.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const unmount = src.slice(src.indexOf('    unmount() {'));
   assert.match(unmount, /removeEventListener\('keydown', keyHandler, \{ capture: true \}\)/);
   assert.match(unmount, /removeEventListener\('pointerlockchange', lockHandler\)/);
@@ -322,7 +322,7 @@ test('U51: the pointer lock is dropped, and kept dropped', () => {
   // travel through the DOM at all: every mouse event goes to the
   // locked element as a movement delta, so a fixed div is invisible to
   // it however high its z-index.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /document\.exitPointerLock\(\)/);
   assert.match(src, /addEventListener\('pointerlockchange', lockHandler\)/,
     'a host that re-takes the lock must have it taken back');
@@ -335,7 +335,7 @@ test('U51: the pointer lock is dropped, and kept dropped', () => {
 // and a rail with the row removed would teach the player the door was
 // never there.
 test('U51: save and load answer the host, not the rail', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const save = src.slice(src.indexOf('function paneSave(body)'), src.indexOf('function paneExit(body)'));
   assert.match(save, /hooks\.savingPrevented\?\.\(\) \|\| typeof hooks\.quickSave !== 'function'/,
     'the classic gate, plus a host that hands no hook at all');
@@ -365,7 +365,7 @@ test('U51: save and load answer the host, not the rail', () => {
 // code did exactly that. Mac's call reshapes it: three named sections,
 // always, and no tag.
 test('PX22: the rail is three named sections, always - Main, Side, Archived', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const at = src.indexOf('const mains = active.filter');
   const fn = src.slice(at, src.indexOf('wrap.append(rail);', at));
   // One helper, three calls, in order - not a conditional pair.
@@ -384,11 +384,11 @@ test('PX22: the rail is three named sections, always - Main, Side, Archived', ()
   // learns the main section exists rather than meeting a different
   // window later.
   assert.match(fn, /if \(items\.length\) railList\(items, cls\);\s*\n\s*else rail\.append\(el\('div', 'px-qnone', '\\u2014'\)\);/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.px-qnone \{/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.px-qnone \{/);
 });
 
 test('PX22: a quest is filed under its kind, never TITLED by it', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const jat = src.indexOf('const mains = active.filter');
   const detail = src.slice(src.indexOf("const head2 = el('div', 'px-qname');", jat), src.indexOf('// Active: the LATEST', jat));
   // The detail's meta line carried "Main Quest"/"Side Quest" beside the
@@ -401,14 +401,14 @@ test('PX22: a quest is filed under its kind, never TITLED by it', () => {
   assert.match(detail, /if \(meta\.childNodes\.length\) detail\.append\(meta\);/);
   // The GROUPING still uses the same law it always did - the pack's own
   // naming, S0000*.txt - so nothing about which quest is which changed.
-  // MAC-K2: the grouping law moved to `ui/questRail.js` with the rest
+  // MAC-K2: the grouping law moved to `ui/quest/questRail.js` with the rest
   // of the walk - the chronicle's Quests section needed the same rows
   // and a second copy is two laws. It is still the pack's own naming,
   // S0000*.txt, so nothing about which quest is which changed.
-  assert.match(read('src/ui/questRail.js'), /main: isMainQuest\(q\.questName\)/);
+  assert.match(read('src/ui/quest/questRail.js'), /main: isMainQuest\(q\.questName\)/);
   // AUDIT 68 S31-questshare-mainquest-dup: MOVED, deliberately - the predicate had a second copy in
   // systems/quest/questShare.js; its one home is systems/quest/questLists.js and the rail imports it.
-  assert.match(read('src/ui/questRail.js'), /import \{ isMainQuestName as isMainQuest \} from '\.\.\/systems\/quest\/questLists\.js';/);
+  assert.match(read('src/ui/quest/questRail.js'), /import \{ isMainQuestName as isMainQuest \} from '\.\.\/systems\/quest\/questLists\.js';/);
   assert.match(read('src/systems/quest/questLists.js'),
     /export const isMainQuestName = \(questName\) => \/\^S0000\/\.test\(questName \?\? ''\) \|\| questName === '_BRISIEN';/);
   assert.match(src, /from '\.\/questRail\.js'/, 'and the pause window takes it from there');
@@ -423,11 +423,11 @@ test('PX22: the timer PX5 designed is still there, and only when there is one', 
   // Mac, checking: "the timer we also designed is integrated when
   // needed, correct?" It was never pinned - PX5 shipped it live-probed
   // - so it is pinned now, on the way past.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   // THE WORDS. Days show days and hours; under a day, hours and
   // minutes; under an hour, minutes alone, never zero.
-  // GUIDE2: the words live in ui/questRail.js now, shared with the chronicle's deadline.
-  const rail = read('src/ui/questRail.js');
+  // GUIDE2: the words live in ui/quest/questRail.js now, shared with the chronicle's deadline.
+  const rail = read('src/ui/quest/questRail.js');
   assert.match(rail, /export function remainWords\(s\) \{/);
   assert.match(src, /remainWords \} from '\.\/questRail\.js'/);
   const words = rail.slice(rail.indexOf('function remainWords(s) {'), rail.indexOf('function remainWords(s) {') + 420);
@@ -440,12 +440,12 @@ test('PX22: the timer PX5 designed is still there, and only when there is one', 
   assert.match(src, /if \(sel\.clockSeconds != null\) \{/);
   assert.match(src, /'Time remains: \{left\}', \{ left: remainWords\(sel\.clockSeconds\) \}/);
   // URGENT below one GAME DAY - the threshold in seconds, not a guess.
-  // GUIDE1: the number has one home (ui/questRail.js), shared with the
+  // GUIDE1: the number has one home (ui/quest/questRail.js), shared with the
   // quest lens's `urgent` news, so the gold line and the notice cannot
   // disagree about what "under a day" is.
   assert.match(src, /const urgent = sel\.clockSeconds < QUEST_URGENT_SECONDS;/);
-  assert.match(read('src/ui/questRail.js'), /export const QUEST_URGENT_SECONDS = 86400;/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.px-qtimer\.urgent/);
+  assert.match(read('src/ui/quest/questRail.js'), /export const QUEST_URGENT_SECONDS = 86400;/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.px-qtimer\.urgent/);
   // THE CLOCK ITSELF is the quest machine's: the TIGHTEST running
   // Clock resource on the quest, by clockEnabled && !clockFinished.
   //
@@ -477,7 +477,7 @@ test('PX22: the timer PX5 designed is still there, and only when there is one', 
 // buttons need somewhere to be, or retiring it ships a window that can
 // do less.
 test('PX25: the Stats page carries the doors, and only the ones a host handed over', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const at = src.indexOf('function pauseStats(body)');
   const fn = src.slice(at, src.indexOf('\nfunction ', at + 10));
   assert.match(fn, /\[t\('pause\.door\.pack', 'Pack'\), hooks\.openPack\], \[t\('pause\.door\.spellbook', 'Spellbook'\), hooks\.openSpellbook\], \[t\('pause\.door\.chronicle', 'Chronicle'\), hooks\.openChronicle\],/);
@@ -491,7 +491,7 @@ test('PX25: the Stats page carries the doors, and only the ones a host handed ov
   // stacking bug U55 found the other way round on this seam. ESC-BOOK:
   // as a handoff - the door's window takes the slot, nothing relocks.
   assert.match(fn, /b\.onclick = \(\) => \{ onAction\('handoff'\); if \(fn\(\) === false\) onAction\('resume'\); \};/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.px-sheetdoors \.act \{ min-height: 44px; \}/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.px-sheetdoors \.act \{ min-height: 44px; \}/);
 });
 
 test('PX25: every host hands the pause window the arms it already had', () => {
@@ -538,7 +538,7 @@ test('PX25: every host hands the pause window the arms it already had', () => {
 // the F5 overlay - the last pre-PX surface, and the one whose
 // three-column grid fills the viewport from the left edge.
 test('PX26: the pause window lands on the page the door was pressed for', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /^  at = null,$/m);
   // The landing is applied AFTER the reset, which is what keeps the
   // reset the default rather than something this works around.
@@ -605,7 +605,7 @@ test('PX28b: TAB ITSELF closes an open window - the registry answers the key', (
   // and that was the wrong half: openPixelDial is only reached through
   // the HOST's key routing, and while an enhanced window is up the
   // WINDOW owns the keyboard - so Tab never got there.
-  const reg = read('src/ui/enhancedOverlays.js');
+  const reg = read('src/ui/enhanced/enhancedOverlays.js');
   // ONE listener, where the registry already knows what is open, so a
   // window added later is covered by having registered at all.
   assert.match(reg, /window\.addEventListener\('keydown', onTab, true\);/, 'capture phase');
@@ -644,7 +644,7 @@ test('PX28: Tab puts away what it opened, then raises the dial', () => {
   // A STACK of close-arms, holding FUNCTIONS and never DOM: a registry
   // that reached into windows would be a second owner of them, and
   // every one already owns its own teardown.
-  const reg = read('src/ui/enhancedOverlays.js');
+  const reg = read('src/ui/enhanced/enhancedOverlays.js');
   assert.match(reg, /export function registerOverlay\(close\)/);
   assert.match(reg, /export function closeTopOverlay\(\)/);
   assert.doesNotMatch(reg, /document\.|querySelector|innerHTML/, 'it holds functions, never DOM');
@@ -665,12 +665,12 @@ test('PX29: the framed windows are CENTRED, and it is the family that is fixed',
   // position:fixed inset:0 with no flex; the pause face centres its
   // window by putting it in a .px-stage, and neither of these two got
   // one.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.sb-shell, \.cr-shell \{ display: flex; align-items: center; justify-content: center; \}/,
     'the FOURTH shared-part fault of this arc, fixed for the family');
   // ...and the shells really are the ones the two windows mount.
-  assert.match(read('src/ui/enhancedSpellbook.js'), /'px-home px-over sb-shell'/);
-  assert.match(read('src/ui/enhancedChronicle.js'), /'px-home px-over cr-shell'/);
+  assert.match(read('src/ui/enhanced/enhancedSpellbook.js'), /'px-home px-over sb-shell'/);
+  assert.match(read('src/ui/enhanced/enhancedChronicle.js'), /'px-home px-over cr-shell'/);
 });
 
 // ── AUDIT UI 2 (2026-08-27): THE TWO FAULTS THAT KEPT RECURRING ───
@@ -684,15 +684,15 @@ test('AUDIT UI 2: no part is styled for one shell and left bare in another', () 
   // and PX29's stage were each scoped to ONE shell while another
   // window drew the same class - so each rendered as bare text until
   // someone looked. Four times.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   const body = css.slice(css.indexOf('export const ENHANCED_CSS = `'));
   const produces = (f) => new Set([...read(f).matchAll(/'([a-z][\w-]*(?: [a-z][\w-]*)*)'/g)]
     .flatMap((m) => m[1].split(/\s+/)));
   const shells = {
-    'sb-shell': produces('src/ui/enhancedSpellbook.js'),
-    'cr-shell': produces('src/ui/enhancedChronicle.js'),
-    'pack-shell': produces('src/ui/enhancedInventory.js'),
-    'px-home': produces('src/ui/enhancedMenu.js'),
+    'sb-shell': produces('src/ui/enhanced/enhancedSpellbook.js'),
+    'cr-shell': produces('src/ui/enhanced/enhancedChronicle.js'),
+    'pack-shell': produces('src/ui/enhanced/enhancedInventory.js'),
+    'px-home': produces('src/ui/enhanced/enhancedMenu.js'),
   };
   const bare = [];
   for (const m of body.matchAll(/^([^{@\n][^{]*)\{/gm)) {
@@ -722,13 +722,13 @@ test('AUDIT UI 2: no part is styled for one shell and left bare in another', () 
 // hangs beneath. That is the very "bare running text" fault the pin
 // was written for, arriving by the door it does not watch.
 test('AUDIT 39: an annotation drawn by an enhanced view has a rule of its own', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   const body = css.slice(css.indexOf('export const ENHANCED_CSS = `'));
   // The classes that ANNOTATE a label rather than being one. Each must
   // read as a note; without a rule each inherits the body font and
   // outweighs the thing it explains.
   const annotations = ['row-note', 'row-sub', 'note'];
-  const drawnBy = ['src/ui/enhancedMenu.js', 'src/ui/enhancedChargen.js']
+  const drawnBy = ['src/ui/enhanced/enhancedMenu.js', 'src/ui/enhanced/enhancedChargen.js']
     .map((f) => read(f)).join('\n');
   for (const cls of annotations) {
     assert.ok(new RegExp(`el\\('\\w+', '${cls}'`).test(drawnBy), `nothing draws .${cls} any more`);
@@ -771,13 +771,13 @@ test('AUDIT UI 2: every enhanced window is REACHABLE from a host', () => {
     'a window nothing reaches is a window nobody can open');
   // ...and no src/ui module at all is orphaned. THE STAGING EXEMPTION
   // IS GONE, as its own counter-pin instructed: flight 2 mounted
-  // ui/automapChrome.js from BOTH ends - c2/S5's native dungeon window
+  // ui/automap/automapChrome.js from BOTH ends - c2/S5's native dungeon window
   // and c2/S10's exterior town map - so the chrome is reached from the
   // hosts like everything else, the list is empty and the sweep is
   // unconditional again, which is the state it has to be in for PX24's
   // fault (a window nothing reaches) to stay caught.
   assert.deepEqual(files.filter((f) => f.startsWith('src/ui/') && !seen.has(f)), [],
     'a src/ui module nothing reaches is a module nobody can open');
-  assert.ok(seen.has('src/ui/automapChrome.js'),
+  assert.ok(seen.has('src/ui/automap/automapChrome.js'),
     'the automap chrome is reachable - flight 2 mounted it in both automap windows');
 });

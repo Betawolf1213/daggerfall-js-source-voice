@@ -231,7 +231,7 @@ test('seams review 2: item icons are UI art - the icon door uploads a world arch
   assert.equal(calls(log, 'generateMipmap').length, 0, 'no chain');
   assert.equal(calls(log, 'texParameteri').find((c) => c[2] === 'TEXTURE_MIN_FILTER')[3], 'NEAREST');
   assert.ok(r.textures.has('505_1#season3') && !r.textures.has('505_1#season3#ui'), 'under the plain batch key');
-  for (const f of ['src/ui/nativeInventory.js', 'src/ui/itemScroller.js']) {
+  for (const f of ['src/ui/native/nativeInventory.js', 'src/ui/item/itemScroller.js']) {
     assert.match(src(f), /icons\.uploadRecord\(img\.archive, img\.record, \{ mips: false, removeMask: true, dye: img\.dye, dyeTarget: img\.dyeTarget \}\);/, `${f} asks for the UI variant (HM1: with the mask stripped; DYE-ICON: its metal dyed)`);
     assert.match(src(f), /icons\.textures\.get\(glKeys\.get\(key\) \?\? `\$\{img\.archive\}_\$\{img\.record\}#ui`\)/, `${f} reads it back (DW3: by the variant the upload answered, the shared #ui when none)`);
   }

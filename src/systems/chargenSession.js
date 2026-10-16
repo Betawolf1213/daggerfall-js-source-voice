@@ -44,7 +44,7 @@ import { LevelingChoiceScreen } from '../ui/levelingChoice.js';
 import { oblivionLevelingEnabled, initVirtueLeveling, LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling.js';
 import { isOnlinePage } from './online/onlineLane.js';   // LEVEL-ONLINE-2: Oblivion's leveling is offline-only for a new character
 import { legacyOn } from './legacy/settings.js';   // LEGACY2: Project Legacy's question - the family's model
-import { legacyModelScreen } from '../ui/legacyModelChoice.js';
+import { legacyModelScreen } from '../ui/legacy/legacyModelChoice.js';
 import { isLegacyChoice } from './legacy/family.js';   // LEGACY-CHOICE: the answer kept on the character
 
 /** SPELLS.STD as an index -> spell map. AUDIT 17f: the exterior
@@ -358,7 +358,7 @@ export async function createChargenFlow(fetchBytes, { rolls = Math.random } = {}
  *  CONSTRUCTION SEAM (AUDIT 17i split it out because three separate
  *  bugs came from hosts wiring chargen by hand), so the enhanced
  *  wizard mounts through the same door rather than teaching each host
- *  a second one. A host that reached for ui/enhancedChargen.js itself
+ *  a second one. A host that reached for ui/enhanced/enhancedChargen.js itself
  *  would be the 17i shape again, and a sweep fails the suite if one
  *  does.
  *
@@ -620,7 +620,7 @@ function enhancedChargenOverlay(flow, { onDone, onCancel, hudScale = 2 } = {}) {
   host.id = 'enhanced-chargen';
   host.style.cssText = 'position:fixed;inset:0;z-index:14;background:#0e1013;overflow:hidden';
   document.body.append(host);
-  import('../ui/enhancedChargen.js').then(async ({ mountEnhancedChargen, attachChargenText }) => {
+  import('../ui/enhanced/enhancedChargen.js').then(async ({ mountEnhancedChargen, attachChargenText }) => {
     const deps = await chargenViewDeps();
     attachChargenText(flow, deps.textRsc);
     view = mountEnhancedChargen(host, { flow, ...deps, onExit: finish });

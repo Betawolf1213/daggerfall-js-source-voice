@@ -154,7 +154,7 @@ small-frame rule (frames 0 and 5 always, fire's frame 4 as well) and
 `AlignLeftHand`/`AlignRightHand` verbatim, and `OnGUI`'s two draws
 under the large HUD's `weaponOffsetHeight` - which is FPSWeapon's own
 rule word for word (":86-95, Same logic as in FPSWeapon"), so it reads
-`ui/hudLarge.js` rather than restating the gate.
+`ui/hud/hudLarge.js` rather than restating the gate.
 
 THE ART rides the path the weapon sprite already rides: the user's own
 ARENA2 at runtime through `CifRciFile`, ART_PAL.COL, fpsWeapon's

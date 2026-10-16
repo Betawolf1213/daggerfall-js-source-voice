@@ -153,7 +153,7 @@ performance with player's exterior decor items". Read from the code, not measure
 **The fix.**
 
 - **A distance of the player's own.** The Other players card has a Yard decorations row beside Draw distance
-  (`ui/enhancedMenu.js`, `yardRange` on the prefs shelf; the law `net/yardRange.js`): Off, 75 m, 150 m or 300 m - the
+  (`ui/enhanced/enhancedMenu.js`, `yardRange` on the prefs shelf; the law `net/yardRange.js`): Off, 75 m, 150 m or 300 m - the
   default, the distance every yard was drawn at before. The distance is from the eye to a yard's house on the ground,
   read every frame (it lands at once). Off stands no stranger's yard at all - taken down where it stood, nothing drawn,
   solid or lit - and stands it again the moment another choice is made. One's own yard (a home's, a hall's its keeper
@@ -433,7 +433,7 @@ stands nowhere on this screen - no body, sprite, name, light, cast, spark or ste
 whole list above it, stay.
 - THE CHOICES: 150, 300 or 600 m on the ground, or Everyone (`PEER_RANGE_TIERS`; `systems/uiPrefs.js` `peerRange`, a
   literal pinned equal to the law's for GATE-CROWD's boot-path reason; the card's Draw distance row,
-  `ui/enhancedMenu.js` `peerSpritesCard`).
+  `ui/enhanced/enhancedMenu.js` `peerSpritesCard`).
 - THE DEFAULT, 300 m, IS PAST A SHOT'S REACH: another player's arrow or spell flies `MISSILE_SPEED` for
   `MISSILE_LIFESPAN_S` - 200 m (the one faster shot is a foe archer's aimed one, x1.3 `BLOW.aimed.speed`, 260 m - short of
   the default too). Nobody who can reach me with a shot is cut at the default; the near tier can hide an archer, and its

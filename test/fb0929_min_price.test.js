@@ -27,8 +27,8 @@ import { GUILDS } from '../src/systems/guild/guilds.js';
 import { reducedRepairCost } from '../src/systems/guild/guildServices.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { yardStock } from '../src/systems/merchantYards.js';   // MERCHANT-YARDS: the horse is the Stable's now
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A source file with its comments gone (disc25f_stack_split.test.js's reading). */

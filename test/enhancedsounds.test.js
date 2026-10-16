@@ -53,7 +53,7 @@ test('ES1 the switch: the enhanced skin and the pref; the wind rides it and keep
 });
 
 test('MAC-O6 + ES1 + SND1 by source: the enhanced inventory plays DoTransferItem’s cue on take AND store, off `plan.sound`, ALWAYS - as the classic window and DFU do (SND1, Discord 2026-09-23: every take clicks, gold plays the gold sound); the wind gate composes the switch (mutant: a cue gated or one door dropped)', () => {
-  const inv = rd('src/ui/enhancedInventory.js');
+  const inv = rd('src/ui/enhanced/enhancedInventory.js');
   const cues = inv.match(/^  audio\.playOneShot\(plan\.sound === 'gold' \? SOUND\.GoldPieces : SOUND\.ButtonClick, 1\);/gm) ?? [];
   assert.equal(cues.length, 2, 'take and store, each unguarded');
   // PI1 (PIN MOVED): and the shift-drop's, DoTransferItem's own cue on its own transfer (systems/physicalItems.js shiftDrop's sound)
@@ -61,7 +61,7 @@ test('MAC-O6 + ES1 + SND1 by source: the enhanced inventory plays DoTransferItem
   assert.equal((inv.match(/audio\.playOneShot\(/g) ?? []).length, 3, 'and no other cue in this window');
   assert.doesNotMatch(inv, /enhancedSoundsOn\(\)\) audio\.playOneShot\(plan\.sound/, 'the take cue is no longer behind the Enhanced sounds switch');
   // the classic window's own call is the reference, unchanged
-  assert.match(rd('src/ui/nativeInventory.js'), /audio\.playOneShot\(plan\.sound === 'gold' \? SOUND\.GoldPieces : SOUND\.ButtonClick, 1\);/, 'the classic window plays it always, as DFU does');
+  assert.match(rd('src/ui/native/nativeInventory.js'), /audio\.playOneShot\(plan\.sound === 'gold' \? SOUND\.GoldPieces : SOUND\.ButtonClick, 1\);/, 'the classic window plays it always, as DFU does');
   const wind = rd('src/systems/wind/windAudio.js');
   assert.match(wind, /return enhancedSoundsOn\(\) && pageParam\('windaudio', search\) !== 'off';/, 'the wind reads the one switch (PERF-URL: its door through the page query\'s one parse)');
   assert.doesNotMatch(wind, /getPref\('windSound'\)/, 'no pref of its own any more');

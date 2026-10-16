@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createDroppedLoot, RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS } from '../src/scenes/droppedLoot.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activate.js';   // AUDIT 65 MC-2: the ray's reach, and the handler's own
 
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };

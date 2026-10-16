@@ -102,8 +102,8 @@ test('WW1: the Mods pane entry is the shipped modsettings.json - every key, its 
   setModSetting(WEAPON_WIDGET_VENDOR, 'Swings.Speed', 'x');
   assert.equal(modSettingsOf(WEAPON_WIDGET_VENDOR)['Swings.Speed'], 1, 'a non-number reads as the default');
   _resetModSettings();
-  assert.match(rd('src/ui/enhancedMenu.js'), /isFloatKey\(def\)/, 'the pane has a float stepper');
-  assert.match(rd('src/ui/enhancedMenu.js'), /def\.step \?\? 0\.1/, 'stepping by the key\'s own step');
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /isFloatKey\(def\)/, 'the pane has a float stepper');
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /def\.step \?\? 0\.1/, 'stepping by the key\'s own step');
 });
 
 test('WW1: LoadSettings - the fields carry the mod\'s own multipliers (Offset x10, Bob.Length /100, Size x2, SpeedMove x4, SpeedState x500, Shape x0.5, Inertia x500, Forward x0.2, Chance /100)', () => {

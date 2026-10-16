@@ -2,7 +2,7 @@
 // ARENA2 (2026-10-02): THE HERALD'S CHOICE at the arena's gate - "Watch the exhibition", "Fight on the ladder", "Go
 // down to the fighters' hall", "Leave" - what he says before it (the bout on the sand or the next one, the player's next
 // ladder bout, the title the arena calls them by) and which choices stand. The full Arena window is ARENA3's; this is
-// a keyed choice (ui/talkWindow.js ChoiceWindow), the enhanced dialog on the Plus skin (ui/enhancedDialog.js
+// a keyed choice (ui/talkWindow.js ChoiceWindow), the enhanced dialog on the Plus skin (ui/enhanced/enhancedDialog.js
 // drawEnhancedChoice) and the classic panel on the other. A choice that cannot be taken is not offered, and HIS LINES
 // SAY WHY (the house's refusal rule: a sentence, never a button that silently vanishes).
 //

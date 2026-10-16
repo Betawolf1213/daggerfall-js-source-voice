@@ -242,7 +242,7 @@ test('MOVE-REAL: running constantly, the climb from 100 takes the hours the note
 // ---- MASTER-DOOR ------------------------------------------------------------------------------------------------------
 
 test('MASTER-DOOR: the stats page keeps the off-rail Master Skills page instead of turning it into Character', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const at = menu.indexOf('function pauseStats(body)');
   const body = menu.slice(at, menu.indexOf('\n}\n', at));
   assert.match(body, /const offRail = statsSec === 'master' && !!m\.master;/);

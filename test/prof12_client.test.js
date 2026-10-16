@@ -27,7 +27,7 @@ import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
 import { useItem } from '../src/systems/useItem.js';
 import { enchantDecision } from '../src/systems/enchanting.js';
-import { ItemMakerWindow } from '../src/ui/itemMakerWindow.js';
+import { ItemMakerWindow } from '../src/ui/item/itemMakerWindow.js';
 import { ITEM_FIELDS, isDeclaredItemField } from '../src/systems/item/itemFields.js';
 import { materialLabel, materialCountLabel, mintMaterialItem } from '../src/systems/professions/profItems.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
@@ -36,7 +36,7 @@ import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, enchantGoldPct, _alchemyForTests, ALCHEMY_AWAY_LINE, ENCHANT_AWAY_LINE,
   ESSENCE_STAYS_LINE,   // AUDIT PROF12 E1
   POTENT_NONE_LINE, ENCHANT_FULL_LINE,   // AUDIT PROF-541 B3, B8
-} from '../src/ui/profPages.js';
+} from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { utcDay } from '../src/net/marksLaw.js';
 
@@ -260,7 +260,7 @@ test('PROF12 pages: The Enchanting Station - away, the word; at a Mages Guild ha
 
 test('PROF12 pages: Alchemy and Enchanting practised on the Professions page - their cards chosen at their ranks, Alchemy\'s unlocks by DFU\'s twenty, how each is practised said', () => {
   stubPages({ alchemyTrack: { rank: 100, specs: { 50: null, 100: null } } });
-  const src0 = src('src/ui/profPages.js');
+  const src0 = src('src/ui/professions/profPages.js');
   // PIN MOVED (CRAFT3): PRACTISED is the ten tracks - Alchemy practised as Provisioning's, beside Enchanting
   assert.match(src0, /const PRACTISED = Object\.freeze\(\['herbalism', 'mining', 'hunting', 'fishing', 'logging', 'smithing', 'building', 'outfitting', 'provisioning', 'enchanting'\]\);/);
   const page = pageOf(drawProfessionsPage);
@@ -385,7 +385,7 @@ test('PROF12 wiring: the alchemy station an Alchemist\'s (open for trade) or a h
   assert.match(m, /guildGroupOfFaction\(townTalk\?\.factionDict \?\? null, interiorBuilding\.factionId\) === GUILD_GROUPS\.MagesGuild\) return \{ kind: 'shop', fee: ENCHANT_FEE \};/);
   assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'enchant'\)\) return \{ kind: 'home', fee: 0 \};/);
   assert.match(m, /goldDiscountPct: \(\) => enchantGoldPct\(\),/);
-  assert.match(src('src/ui/itemMakerWindow.js'), /enchantDecision\(this\.selected, this\.powers, this\.sideEffects, \{ gold: this\.gold\(\), discountPct: this\.goldDiscountPct\(\) \}\)/);
+  assert.match(src('src/ui/item/itemMakerWindow.js'), /enchantDecision\(this\.selected, this\.powers, this\.sideEffects, \{ gold: this\.gold\(\), discountPct: this\.goldDiscountPct\(\) \}\)/);
   const w = src('src/scenes/world.js');
   assert.match(w, /alchemy: \(\) => modes\?\.alchemyHere\?\.\(\) \?\? null,/);
   assert.match(w, /const myHall = \(profession\) => hallStepsFor\(seatHere\(_musicLoc\?\.mapTableData\?\.mapId\), guildBook\?\.guild\?\.id \?\? null, profession\);\n\s*const alchemyHall = \(\) => myHall\('alchemy'\);/);   // PIN MOVED (AUDIT PROF-541 R2-H1): the guard fortLaw.js hallStepsFor's (prof9_client.test.js drives it)
@@ -399,7 +399,7 @@ test('PROF12 wiring: the alchemy station an Alchemist\'s (open for trade) or a h
   assert.match(idx, /'\/v1\/prof\/brew': \(\) => brewAtStation\(ctx, who\.player, env, body\),/);
   assert.match(idx, /'\/v1\/prof\/disenchant': \(\) => disenchantPiece\(\{ \.\.\.ctx, bucket: env\.SAVES \}, who\.player, env, body\),/);
   assert.match(src('server-account/src/service.js'), /'\/v1\/prof\/brew', '\/v1\/prof\/disenchant',/);
-  assert.match(src('src/ui/profPages.js'), /\['jeweller', \(d\) => drawJewellerBench\(d, rerender, kit\)\],   \/\/ PROF10\n\s*\['alchemy', \(d\) => drawAlchemyStation\(d, rerender, kit\)\],   \/\/ PROF12\n\s*\['enchant', \(d\) => drawEnchantingStation\(d, rerender, kit\)\],   \/\/ PROF12/);   // PIN MOVED (MENU-ORDER)
+  assert.match(src('src/ui/professions/profPages.js'), /\['jeweller', \(d\) => drawJewellerBench\(d, rerender, kit\)\],   \/\/ PROF10\n\s*\['alchemy', \(d\) => drawAlchemyStation\(d, rerender, kit\)\],   \/\/ PROF12\n\s*\['enchant', \(d\) => drawEnchantingStation\(d, rerender, kit\)\],   \/\/ PROF12/);   // PIN MOVED (MENU-ORDER)
   assert.equal(POTENT.pct, 25);
 });
 

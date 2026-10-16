@@ -58,10 +58,10 @@ const HOMONYMS = new Map([
   // its fighters' health and blows, in the relay's import graph, where the game's table cannot go); test/arena4_client
   // pins the keys equal. The season: a town seat's numbered season from a week and a zero (net/townSeatLaw.js) and
   // the arena's eight-week season from a day (systems/arena/arenaLeague.js). The state word: a relay bout's, on the wire
-  // (net/arena/arenaBrain.js), and a bounty row's, in its window (ui/bountyWindow.js).
+  // (net/arena/arenaBrain.js), and a bounty row's, in its window (ui/bounty/bountyWindow.js).
   ['ARENA_BEASTS', "the game's set of beast mobiles vs the relay's beast bodies by mobile (their keys pinned equal by arena4_client)"],
   ['seasonOf', "a town seat's season from a week and its zero vs the arena's eight-week season from a day"],
-  ['stateWord', "a relay bout's state on the wire (net/arena/arenaBrain.js) vs a bounty row's state in its window's words (ui/bountyWindow.js)"],
+  ['stateWord', "a relay bout's state on the wire (net/arena/arenaBrain.js) vs a bounty row's state in its window's words (ui/bounty/bountyWindow.js)"],
   // SHIPS-2: the port's ships each carry their own measures under one name - the galleon's (world/ships/galleonModel.js,
   // galleonRig.js, galleonArt.js), the carrack's (carrackModel.js, carrackRig.js, carrackArt.js) and the large boat's
   // (largeBoatModel.js, largeBoatRig.js, largeBoatArt.js): three ships, three things each, read as `ship.MEASURED`.

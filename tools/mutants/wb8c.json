@@ -276,7 +276,7 @@
   },
   {
     "name": "WB8c-an-epithet-unmarked",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "    epithet: P.md ? P.aspect.epithet : '',",
     "new": "    epithet: P.aspect.epithet,",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "WB8c-the-callout-the-table-s-name",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "{ text: P.atk[A.key].name, color: css(attackColor(A, P)), t:",
     "new": "{ text: A.name, color: css(attackColor(A, P)), t:",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "WB8c-an-empty-trials-line-shown",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "parts.marks.style.display = view ? '' : 'none';",
     "new": "parts.marks.style.display = '';",
     "tests": [

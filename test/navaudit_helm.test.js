@@ -14,14 +14,14 @@ import { BOARD_RANGE, BOARD_SPEED } from '../src/systems/naval/navalBoarding.js'
 import { NAVAL_DEG, shotPosition, segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
 import { hullBoxOf, rigBoxesOf, AIM_CAM_OUT, AIM_CAM_UP, AIM_CAM_AFT, AIM_CAM_TAU, AIM_CAM_CLEAR, RAM_REACH, RAM_MEMORY_S, RAM_DAMAGE, RAM_RECOIL, BOW_RECOIL, GALLEY_RAM, RAM_SPEED, RAM_COOLDOWN_S, HEAVE_TO_DECEL, HEAVE_TO_S, HEAVE_TO_M, heaveToDecel, heaveToRun, COMPASS_SHIP_RANGE, PLAYER_SKILL, PLAYER_SKILL_THIN } from '../src/scenes/navalHost.js';
 import { CSA_BRAKE_MAX } from '../src/systems/comeSailAway/comeSailAway.js';
-import { drawShipCompassMarks, SHIP_MARK_COLORS, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud.js';
-import { navalHudText, drawNavalHud, destroyNavalHud, navalTouchBrace, NAVAL_BRACE_H, NAVAL_HUD_CSS } from '../src/ui/navalHud.js';
+import { drawShipCompassMarks, SHIP_MARK_COLORS, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud/hud.js';
+import { navalHudText, drawNavalHud, destroyNavalHud, navalTouchBrace, NAVAL_BRACE_H, NAVAL_HUD_CSS } from '../src/ui/naval/navalHud.js';
 import { NavalRenderer, NAVAL_STRIDE, aimTone, AIM_TONES, AIM_POST_HALF_W, AIM_POST_HALF_H, AIM_STRIKE_HALF, flatAcross } from '../src/render/navalRender.js';
 import { yardOffer, yardAll, fieldMend, YARD_PRICE, BARREL_PRICE, FIELD_QUIET_S, FIELD_MEND_PER_S, FIELD_MEND_ALONE, FIELD_MEND_CAP, FIELD_REFLOAT } from '../src/systems/naval/navalYard.js';
 import { REPAIR_PRICE } from '../src/systems/naval/navalDamage.js';
-import { yardText, yardNote, mountNavalYardWindow } from '../src/ui/navalYardWindow.js';
-import { createNavalYardOverlay, navalYardOpen, closeNavalYard } from '../src/ui/navalPlunderDoor.js';
-import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
+import { yardText, yardNote, mountNavalYardWindow } from '../src/ui/naval/navalYardWindow.js';
+import { createNavalYardOverlay, navalYardOpen, closeNavalYard } from '../src/ui/naval/navalPlunderDoor.js';
+import { WARM_CHUNKS } from '../src/ui/enhanced/enhancedChunk.js';
 import { sea, knowAll } from './navalSea.mjs';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
@@ -908,7 +908,7 @@ test('AUDIT NAV1 H17 the sea\'s ships on the compass: within COMPASS_SHIP_RANGE,
   assert.equal(quads[2].rect.x, box.bx + (box.bw - mw) * compassMarkerLerp([0, 50], [0, 0], 0));
   assert.equal(quads[0].rect.y, box.by - DETECT_MARKER_H * box.s, 'over the box\'s top edge');
   assert.equal(drawShipCompassMarks(renderer, null, [0, 0], 0, box), 0);
-  const H = src('ui/hud.js');
+  const H = src('ui/hud/hud.js');
   assert.match(H, /drawShipCompassMarks\(renderer, ships, playerXZ, heading01, \{ bx, by, bw, s \}\);/);
   assert.match(H, /ships: ships \?\? null,/);
   assert.match(src('scenes/world.js'), /ships: navalOn\(\) && _mode\(\) === 'exterior' \? naval\?\.compassShips\(\) \?\? null : null,/);
@@ -923,7 +923,7 @@ test('AUDIT NAV1 H17 the sea\'s ships on the compass: within COMPASS_SHIP_RANGE,
   const findAll = (n, cls, out = []) => { if (String(n.className ?? '').split(/\s+/).includes(cls)) out.push(n); for (const c of n.children ?? []) findAll(c, cls, out); return out; };
   const prev = globalThis.document;
   globalThis.document = { createElement: mk, createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk() };
-  const { drawEnhancedHud, destroyEnhancedHud, SHIP_MARK_CSS } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud, SHIP_MARK_CSS } = await import('../src/ui/enhanced/enhancedHud.js');
   const me = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
   try {
     const frame = (ships) => drawEnhancedHud(me, 0, 0, { weapon: null, weaponSheathed: true, playerXZ: [0, 0], ships });

@@ -6,7 +6,7 @@
 // traveller stands on - each asked of the clock only when it changes, and said on the panel.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
 import { mapPixelWorldOrigin, MAX_CIRCUMNAVIGATION_ACCEL } from '../src/systems/travel/travelPaths.js';
 import { TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../src/systems/timeScale.js';

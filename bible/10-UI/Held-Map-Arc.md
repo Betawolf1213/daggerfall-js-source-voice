@@ -74,7 +74,7 @@ mini-map stays what it is - a HUD disc - and reads the same ink.
   ink renderer over MAPS/WOODS/politic/roads, pan, zoom bands, the
   discovery law, the name face, the click-to-select and the one card
   wired through the pure laws. `ui/overworldMap.js` retired with its
-  flight and chip row; `ui/travelMapDoor.js` opens this on the enhanced
+  flight and chip row; `ui/travel/travelMapDoor.js` opens this on the enhanced
   skin. Pins: the ink renderer as a pure function over a table of
   fixtures (a coast, a border, a road, a junction, a discovered and an
   undiscovered town), the clamp, the zoom bands, the selection.
@@ -97,8 +97,8 @@ repo through this arc, and the pin that holds the allow-list holds it.
 
 ## MAP1 - the held parchment window (SHIPPED 2026-09-18)
 
-`src/ui/heldMap.js` (the window) and `src/ui/inkMap.js` (the ink);
-`src/ui/travelMapDoor.js` opens the window on the enhanced skin.
+`src/ui/heldMap.js` (the window) and `src/ui/ink/inkMap.js` (the ink);
+`src/ui/travel/travelMapDoor.js` opens the window on the enhanced skin.
 RETIRED: `src/ui/overworldMap.js` and `src/render/overworldRenderer.js`;
 RETIRED with them: `tools/overworldProbe.mjs` and `test/overworldmap.test.js`.
 `src/ui/overworldModel.js` stays, because its water, marker, trace and
@@ -156,7 +156,7 @@ foreign-pass count fell by one (four passes now).
 
 Every addition the mod makes to the classic map lands on the held map
 through the SAME function the classic window calls
-(`src/ui/travelMapOptions.js`, `src/systems/travel/travelPorts.js`), so the two
+(`src/ui/travel/travelMapOptions.js`, `src/systems/travel/travelPorts.js`), so the two
 skins cannot drift:
 
 - **The ports filter.** `portsFilterAllows` over `hasPort`, asked
@@ -203,7 +203,7 @@ skins cannot drift:
 
 **Departure from the MAP0 page, recorded.** MAP0 said the junction disc
 would read the ink renderer's road picture. It does not: the disc is
-Travel Options' own five-texel DrawMapSection (`src/ui/travelJunctionMap.js`),
+Travel Options' own five-texel DrawMapSection (`src/ui/travel/travelJunctionMap.js`),
 carried 1:1 in both lanes, and a second drawing of the same roads through
 the ink would be a departure from the mod for no gain. The disc reads the
 same MARK the sheet inks (the shared store), which is the tie that
@@ -323,7 +323,7 @@ and CHARGED unscaled: the popup runs the mod's `_scaleTripCost`
 (FastTravelCostScaleFactor over the inn nights, ShipTravelCostScaleFactor
 over the passage, each through the shop-price formula), the enhanced
 skin never had since the relief map, and the bible called it faithful;
-the law is one pure export now (`scaleTripCost`, `ui/travelPopUp.js`)
+the law is one pure export now (`scaleTripCost`, `ui/travel/travelPopUp.js`)
 that both skins call. D3 No on the FEE prompt and an empty purse left
 the map up, where the C#'s ChargeForTeleport and the classic window's
 two arms close it; they close it (DFU's fee-less teleport popup still
@@ -1144,8 +1144,8 @@ corners; otherwise Mac's painted gauntlets stand. The lane opens on one
 thing - the `holder` the host hands the window, the arm's four doors -
 and MAP3 wrote that holder INLINE in world.js's TRAVEL map builder, the
 only door there was at the time. Then EM3 and EM4 gave the same window
-its M-key doors (the town plan through ui/townMapDoor.js, the dungeon
-and building automaps through ui/automapDoor.js), and none of those
+its M-key doors (the town plan through ui/town/townMapDoor.js, the dungeon
+and building automaps through ui/automap/automapDoor.js), and none of those
 passed a holder. So a player with Morrowind arms saw the Morrowind hands
 on V outdoors and the painted gauntlets everywhere else - in a town, in
 a dungeon, in a building - which is most of the times a map is opened.
@@ -1177,12 +1177,12 @@ re-aimed at the shared holder, still dead.
 
 ## MAP-TOGGLE + MAP-FIELD8 - the sheet is a switch, and the fourth painting (2026-09-22, Mac)
 
-Mac asked whether the enhanced map was a toggle; it was not - the three map doors (`ui/travelMapDoor.js`,
-`ui/automapDoor.js`, `ui/townMapDoor.js`) forked on `isEnhanced()` alone, so DFU's own maps came back only with
+Mac asked whether the enhanced map was a toggle; it was not - the three map doors (`ui/travel/travelMapDoor.js`,
+`ui/automap/automapDoor.js`, `ui/town/townMapDoor.js`) forked on `isEnhanced()` alone, so DFU's own maps came back only with
 the whole classic skin. "Yes needs to be a toggle. Along with this change, replace the current paperdoll
 integration with this replacement" - and a fourth painting.
 
-**MAP-TOGGLE.** One gate, `ui/mapSkin.js`: `enhancedMapOn()` is the Features row `enhanced-map` (Sight,
+**MAP-TOGGLE.** One gate, `ui/map/mapSkin.js`: `enhancedMapOn()` is the Features row `enhanced-map` (Sight,
 enhanced-only, prefs `heldMap`, on by default - the sheet is what the enhanced skin has drawn since MAP1);
 `heldMapChosen()` is the skin AND the switch; `heldMapWorn()` is chosen AND a document to mount in. The three
 doors read the gate and ask no skin of their own: the travel door's readiness is `heldMapChosen() ||
@@ -1240,7 +1240,7 @@ its pre-weather self plus MAP-FIELD8 and MAP-FIT1. Pinned by
 Mac: *"I also want to add a tooltip to the map for these type of events"* - the Oblivion Gate's ring and, folded in with
 #414, a town under a raid. `ui/eventMapMarks.js` is the law (the raid marks off the raid records, the card's bounds, where
 it stands); the sheet polls the host's `raids` on the party's own cadence beside `gate`, paints each raided town
-(`ui/inkMap.js paintRaidMark`), names it in the legend, and the hover asks a party member, a raided town, a place's
+(`ui/ink/inkMap.js paintRaidMark`), names it in the legend, and the hover asks a party member, a raided town, a place's
 mark, the gate's ring (an AREA - anywhere in it), then the province. The one writer of the label writes the card too: a
 DOM card at the pointer (`.hmtip`, the pixel home's plaque; `pointer-events: none`), turned where the screen would cut
 it, rewritten only when its words change, refreshed on the poll under a STILL pointer (the label with it), hidden on
@@ -1323,7 +1323,7 @@ only when the view leaves the Bay. The record is `03-World/Tamriel.md`.
 
 A 1440p player: "icons and text too small on high resolutions". The paper fits the screen, and its names, glyphs and
 marks were inked in fixed paper pixels, its chrome in fixed CSS pixels - at 1440p the paper grew by a third and nothing
-on it did. `ui/mapScale.js` mapUiScale is the map's scale: Auto is the screen's height over 1080 to the twentieth, held
+on it did. `ui/map/mapScale.js` mapUiScale is the map's scale: Auto is the screen's height over 1080 to the twentieth, held
 to 1-2 (1 at 1080p and under, as it was), or the player's own 0.75-2 on the Interface tab's Maps row, "Map text and
 icons" (prefs `mapScale`). `_layout` inks on the fitted paper over the scale at full device resolution, and the
 pointer, the hover card and the hands lane come back over it; the chrome is zoomed by `--hm-ui`, each of its

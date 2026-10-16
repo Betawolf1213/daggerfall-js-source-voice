@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-ROBES-menu-side-gate-dropped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (from === 'remote') sendQuestItemClick(item, deps.getQuest ?? null);\n  const acts",
     "new": "  sendQuestItemClick(item, deps.getQuest ?? null);\n  const acts",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-ROBES-menu-click-only-on-take",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (from === 'remote') sendQuestItemClick(item, deps.getQuest ?? null);\n  const acts",
     "new": "  const acts",
     "tests": [

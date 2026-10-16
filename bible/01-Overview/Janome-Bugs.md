@@ -20,7 +20,7 @@ All eight are fixed. Four are one-line reads of the wrong bag or the
 wrong ring; four are laws that lived in one host, or one frame, and were
 met from another.
 
-## 1 - the pack's F5 (`ui/enhancedInventory.js`)
+## 1 - the pack's F5 (`ui/enhanced/enhancedInventory.js`)
 
 The CharacterSheet key arm called `onExit()` - which unmounts, and the
 unmount clears the module's `deps` to `{}` - and THEN read

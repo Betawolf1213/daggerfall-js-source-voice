@@ -37,7 +37,7 @@ ray winner in reach when no row of the node is pressable, so a door or a body be
 PROF-SCENES first drew each act as an illustrated scene in the plaque's frame - the rock's face, the trunk and its
 notch, the plant, the leaf litter, the pelt, the water. Mac saw it and asked for less: nothing that covers the screen.
 PROF-RETICLE replaced it (`ui/profScenes.js` deleted): no box, no title, no picture. Each act's mechanic is drawn on and
-about the reticle (`ui/profReticle.js`, dressed by `ui/profActStyle.js`), round the crosshair's middle as the world
+about the reticle (`ui/professions/profReticle.js`, dressed by `ui/professions/profActStyle.js`), round the crosshair's middle as the world
 draws it (`ui/worldPlaque.js` `reticleAnchor`: the middle under a docked large HUD, and the frame's focal length through
 `fieldOfView`, so an angle `a` off the look stands `focal x tan(a)` from the middle):
 
@@ -67,7 +67,7 @@ WORLD ON A GPU: the probe draws the marks over a flat ground through a 65 degree
 ## PROF-STATIONS: the stations' bars, dressed (3)
 
 The anvil's heat, the loom's beat (both the heat's bar) and the workbench's board keep their markup and their rules,
-dressed in the plaque's frame and the kit's tones (`ui/profStationStyle.js`): the craft box the plaque's ink ground and
+dressed in the plaque's frame and the kit's tones (`ui/professions/profStationStyle.js`): the craft box the plaque's ink ground and
 stone border, the bar a carved well, the band and the marker edged in ink, the strikes the acts' diamond pips. No
 picture: an illustrated forge, cloth and board were built aside and left out at Mac's word.
 

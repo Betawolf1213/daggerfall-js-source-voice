@@ -54,7 +54,7 @@ async function atTheFire({ kind = REST_KIND.Camp, tier = 'casual', skin = 'class
   const deps = { ...bag, enemiesNearby: () => foes, restNight: () => { calls.night++; return wake(); }, restShort: wake, ...over };
   let w, host = null;
   if (skin === 'classic') w = new (await import('../src/ui/restWindow.js')).RestWindow(deps);
-  else { host = mkEl('div'); w = (await import('../src/ui/enhancedRest.js')).mountEnhancedRest(host, deps); }
+  else { host = mkEl('div'); w = (await import('../src/ui/enhanced/enhancedRest.js')).mountEnhancedRest(host, deps); }
   return { e, w, host, bag, calls, half: Math.round(maxFatigue(e) / 2), max: maxFatigue(e), foesComing: () => { foes = true; } };
 }
 

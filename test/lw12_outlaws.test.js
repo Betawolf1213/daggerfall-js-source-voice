@@ -394,7 +394,7 @@ test('LW12 heard of: a band near the player not yet heard of is warned of in a t
   assert.match(roads, /if \(band\) \{ text = `\$\{text\} \$\{fillLine\(BAND_WARNINGS\[[^\]]+\], \{ band: band\.name \}\)\}`; deps\.heard\?\.\(band\); \}/);
   assert.match(roads, /const foe = pair\.warned \? \(pair\.warned\.trip\.enc\.bandName \?\? deps\.foeName/);
   assert.match(roads, /const beset = foes\.length \? \(p\.trip\.enc\?\.bandName \?\? deps\.foeName/);
-  const hud = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
+  const hud = readFileSync(new URL('../src/ui/travel/travelViewHud.js', import.meta.url), 'utf8');
   assert.match(hud, /\} else if \(look === 'wayfarer' && \/\\bhideout\\b\/\.test\(m\.kind \?\? ''\)\) \{[^\n]*\n\s*g\.beginPath\(\); g\.arc\(x, y, TV_HIDEOUT_R, 0, Math\.PI \* 2\);/);
 });
 

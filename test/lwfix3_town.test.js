@@ -15,7 +15,7 @@ import { townPlaces } from '../src/systems/livingWorld/places.js';
 import { townCensus } from '../src/systems/livingWorld/census.js';
 import { createRelations, RELATIONS_MAX, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND;
 const MPM = PERSON_MOVE_SPEED / RATE;

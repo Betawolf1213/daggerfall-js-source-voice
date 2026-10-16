@@ -21,7 +21,7 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, typeAtKey, mark, SPAWN, ITEM } from './fb1004dTowns.mjs';
 import { fakeBlocks } from './wd3Fakes.mjs';
 import { readFileSync } from 'node:fs';
-import { entryTarget } from '../src/ui/questLens.js';   // FIELD BUGS 2026-10-12g QUEST-TOWN
+import { entryTarget } from '../src/ui/quest/questLens.js';   // FIELD BUGS 2026-10-12g QUEST-TOWN
 
 loadTables();
 const BV = 'beautiful-villages';

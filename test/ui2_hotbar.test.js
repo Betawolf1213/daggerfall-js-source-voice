@@ -3,7 +3,7 @@
 //
 // THE HOTBAR: any item on a slot, its press the pack's own primary act (systems/quickslots.js - a worn piece put on
 // or taken off, anything else USED through the pack's Use and its three window doors, which every host now hands the
-// quick use); a spell's slot showing its ICON00I0 icon (ui/enhancedArt.js spellIconPicture, fitted by UI1's law), the
+// quick use); a spell's slot showing its ICON00I0 icon (ui/enhanced/enhancedArt.js spellIconPicture, fitted by UI1's law), the
 // icon riding the entry so a forgotten spell keeps it, the spellbook's drag and the diamond's spell chip wearing it
 // too; a stack's count on any slot, a worn piece's wear. What only a browser with the real ARENA2 can say is
 // tools/uiHotbarProbe.mjs's.
@@ -18,7 +18,7 @@ import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE as SURV } from '../src/systems/survival/food.js';
-import { spellIconPicture, sheetCutUrl } from '../src/ui/enhancedArt.js';
+import { spellIconPicture, sheetCutUrl } from '../src/ui/enhanced/enhancedArt.js';
 import { _fittedKeys } from '../src/ui/textureCanvas.js';
 import { fitCanvas } from '../src/ui/bitmapCanvas.js';
 
@@ -251,7 +251,7 @@ test('UI2 spell icons: a spell\'s icon is ICON00I0\'s 16px tile FITTED to its sl
 });
 
 test('UI2 wiring: the bar\'s slots draw fitted pictures at a measured box - an item\'s by its dye, a spell\'s icon (its initials only while it loads) - the spellbook\'s drag and the diamond\'s spell chip wear the icon, the drop hint says any item; the box off a slot of the picture\'s own kind, the ratio off the bar (mutants: a spell slot back on its initials; the drag without its icon; the chip without its icon; every picture at slot 1\'s box; a spell fitted at an item\'s box; the ratio off a slot)', () => {
-  const bar = read('src/ui/enhancedHotbar.js');
+  const bar = read('src/ui/enhanced/enhancedHotbar.js');
   assert.match(bar, /const drew = iconFor\(s, v\.slot, null, entity, v\.noIcon \? null : v\.icon\);[^\n]*\n\s+const sig = v\.noIcon \? spellInitials\(v\.name\) : spellSigil\(v\.name\);\n\s+s\.glyph\.textContent = drew \? '' : sig;/);
   assert.match(bar, /pic = spellIconPicture\(spellIcon, \{ box: fit\.box, dpr: fit\.dpr, onReady: again \}\);/);
   assert.match(bar, /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady: again \}\)/);   // MERGE (UI2 x DYE-ICON): and the swatch
@@ -264,18 +264,18 @@ test('UI2 wiring: the bar\'s slots draw fitted pictures at a measured box - an i
   assert.match(bar, /const HINT_DROP = 'Drag any item or a spell onto a slot\. Drag a slot off the bar to clear it\.';/);
   assert.match(bar, /if \(hbDrag\.icon\?\.src\) tile\.append\(fittedImg\(hbDrag\.icon\)\);/);
   assert.match(bar, /icon: slotPicture\(s\.icon\),/, 'a slot carried keeps its picture');
-  const book = read('src/ui/enhancedSpellbook.js');
+  const book = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.match(book, /icon: r\.spell\?\.noIcon \? null : spellIconPicture\(r\.spell\?\.icon, \{ box: SPELL_DRAG_BOX \}\) \}\);/);
-  const hud = read('src/ui/enhancedHud.js');
+  const hud = read('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const pic = sp\?\.spell && !sp\.spell\.noIcon \? spellIconPicture\(sp\.spell\.icon, \{ box: SPELL_CHIP_BOX, dpr: clampDpr\(screenDpr\(\) \* \(last\.scale \?\? 1\)\), onReady: \(\) => \{ last\.qspell = null; \} \}\) : null;/);
   assert.match(hud, /spellChip\.append\(spellTag, spellIcon, spellName\);/);
   // the diamond's cells: fitted too, their boxes the sheet's caps less two a side
-  const E = read('src/ui/enhancedStyle.js');
+  const E = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(E, /\.hud-qicon \{ display: block; max-width: 44px; max-height: 44px;/);
   assert.match(E, /@media \(max-width: 860px\) \{[\s\S]{0,4000}?\.hud-qicon \{ max-width: 32px; max-height: 32px; \}/);
   assert.match(hud, /const QUICK_BOX = 40, QUICK_BOX_NARROW = 28;\nconst QUICK_NARROW = '\(max-width: 860px\)';/);
   assert.match(hud, /const key = `\$\{iconKeyOf\(item\)\}@\$\{box\}x\$\{dpr\}`;/, 'a new size or scale draws it anew');
-  const art = read('src/ui/enhancedArt.js');
+  const art = read('src/ui/enhanced/enhancedArt.js');
   assert.match(art, /return requestFittedPicture\(`spellicon\$\{index\}`, \(wake\) => sheetCutUrl\('ICON00I0\.IMG', rect, 1, wake\), \{ box, dpr, trim: false, onReady \}\);/);
 });
 
@@ -318,7 +318,7 @@ test('UI2 AUDIT UI B5: the diamond\'s cells are fitted again when the HUD\'s sca
   });
   const prev = globalThis.document;
   globalThis.document = { createElement: mk, createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { setPref, getPref } = await import('../src/systems/uiPrefs.js');
   const was = getPref('hudScale');
   const style = getPref('quickbarStyle');
@@ -347,7 +347,7 @@ test('UI2 AUDIT UI B5: the diamond\'s cells are fitted again when the HUD\'s sca
 test('UI2 x DYE-ICON (AUDIT FINAL F2, the merge with main): a garment\'s slot draws the garment it shows, in its own dye - Blue and Red Straps are one kind and one name, and DYE-ICON dyes the cloth, so the slot asks the shown item\'s own picture and repaints when the shown item\'s dye changes (mutants: the picture keyed by its kind alone; the dye out of the bar\'s signature)', async () => {
   await import('./modsOff.js');
   const { withDom } = await import('./invdrag.mjs');
-  const { mountHotbarDock, drawEnhancedHotbar } = await import('../src/ui/enhancedHotbar.js');
+  const { mountHotbarDock, drawEnhancedHotbar } = await import('../src/ui/enhanced/enhancedHotbar.js');
   const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
   const { inventoryItemImage } = await import('../src/systems/item/itemTemplates.js');
   const { iconName } = await import('../src/ui/textureCanvas.js');

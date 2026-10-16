@@ -11,17 +11,17 @@ import { sparsOf, FLAME_AWASH, BLAST_SHAKE, NEAR_BOOM_M, FAR_FADE_M, FAR_MATCH, 
   NAVAL_TAG_RANGE, NAVAL_TAG_NEAR, NAVAL_TAG_MAX, TAG_LIFT, SAIL_HO_RANGE, SAIL_HO_GAP_S, SAIL_HO_CHECK_S, bearingWords, withArticle,
   SMOKE_FROM, SMOKE_SPAN, DAMAGE_LIST_FROM, DAMAGE_LIST_MAX, DAMAGE_LIST_EASE_S, TIMBER_PER_HIT, sailsShown, lineOver } from '../src/scenes/navalHost.js';
 import { createNavalEffects, TIMBER_LIFE, SMOLDER_RATE } from '../src/systems/naval/navalEffects.js';
-import { drawNavalTags, tagState, tagAlpha, TAG_FADE_FROM, TAG_FADE_TO } from '../src/ui/navalHud.js';
+import { drawNavalTags, tagState, tagAlpha, TAG_FADE_FROM, TAG_FADE_TO } from '../src/ui/naval/navalHud.js';
 import { NAVY_HUNTS } from '../src/systems/naval/navalAI.js';
 import { NavalRenderer, NAVAL_GL_TEXTURES, NAVAL_STRIDE, ARC_WIDTH_VH, ARC_DASH_M, ARC_DASH_SPEED } from '../src/render/navalRender.js';
 import { READY_FLASH_S } from '../src/systems/naval/navalGunnery.js';
 import { NAVAL_SFX, NAVAL_SOUND_RANGE, NAVAL_CLASSIC, NAVAL_SINK_LOOP } from '../src/systems/naval/navalSounds.js';
 import { navalHudText, drawNavalHud, destroyNavalHud, NAVAL_HUD_CSS, CARD_HIT_S, platePlace, cardScale, cardTopPx, navalPadPrompts, NAVAL_PLATE_BOTTOM, NAVAL_PLATE_TOUCH_BOTTOM,
   PLATE_GAP, PLATE_SCALE_MIN, PLATE_LAYOUT_S, NAVAL_SHORT_H, NAVAL_CARD_H, CARD_SCALE_MIN, NAVAL_CARD_GAP, NAVAL_WARN_UP, NAVAL_WARN_UP_SHORT, NAVAL_AIM_DOWN, NAVAL_AIM_DOWN_SHORT,
-  NAVAL_CROSS_R, NAVAL_STACK_H, NAVAL_STACK_HALF, NAVAL_WARN_H, NAVAL_WARN_HALF, NAVAL_WARN_HALF_TOUCH, NAVAL_BRACE_H, NAVAL_BRACE_W, NAVAL_CARD_ASIDE_H, NAVAL_PLATE_W } from '../src/ui/navalHud.js';
-import { HELM_CSS } from '../src/ui/enhancedHelm.js';
-import { ONLINE_DRESS_CSS, STONE_DIM } from '../src/ui/enhancedPlusStyle.js';
-import { NAVAL_PLUNDER_CSS } from '../src/ui/navalPlunderWindow.js';
+  NAVAL_CROSS_R, NAVAL_STACK_H, NAVAL_STACK_HALF, NAVAL_WARN_H, NAVAL_WARN_HALF, NAVAL_WARN_HALF_TOUCH, NAVAL_BRACE_H, NAVAL_BRACE_W, NAVAL_CARD_ASIDE_H, NAVAL_PLATE_W } from '../src/ui/naval/navalHud.js';
+import { HELM_CSS } from '../src/ui/enhanced/enhancedHelm.js';
+import { ONLINE_DRESS_CSS, STONE_DIM } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { NAVAL_PLUNDER_CSS } from '../src/ui/naval/navalPlunderWindow.js';
 import { byClass } from './chargenDom.mjs';
 import { FLAG_DONOR_HULL } from '../src/scenes/comeSailAwayPool.js';
 import { Boat, meshLocalBounds, worldBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
@@ -786,7 +786,7 @@ test('AUDIT NAV1 (the presentation) THE SKINS AND THE WORDS: the kit\'s face on 
   assert.match(NAVAL_PLUNDER_CSS, /\.dfnaval-choice:disabled \{ cursor: default; background-color: rgba\(8,9,12,0\.6\); \}\n\.dfnaval-choice:disabled b \{ color: #8f8670;[^}]*\}\n\.dfnaval-choice:disabled span \{ color: #c9bfa4; \}/);
   assert.doesNotMatch(NAVAL_PLUNDER_CSS, /\.dfnaval-choice:disabled \{[^}]*opacity/);
   assert.match(HELM_CSS, /\.helmpanel-bar \{[^}]*width: max-content; max-width: calc\(100vw - 24px\);/);
-  const t = readFileSync(new URL('../src/ui/touch.js', import.meta.url), 'utf8');
+  const t = readFileSync(new URL('../src/ui/touch/touch.js', import.meta.url), 'utf8');
   assert.match(t, /button\('≡', edge\('left', hooks\.dial \? 72 : 16\), edge\('top', 16\), 48,/);
   assert.match(HELM_CSS, /\.helmpanel\.touch \.helmpanel-bar \{ top: calc\(8px \+ env\(safe-area-inset-top, 0px\)\); left: calc\(50% \+ 56px \+ \(env\(safe-area-inset-left, 0px\) - env\(safe-area-inset-right, 0px\)\) \/ 2\);\n\s+max-width: calc\(100vw - 144px - env\(safe-area-inset-left, 0px\) - env\(safe-area-inset-right, 0px\)\); \}/);
   assert.equal(144, 72 + 48 + 8 + 16, 'the menu\'s press, air, and the right margin');

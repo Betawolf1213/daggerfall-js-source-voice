@@ -23,7 +23,7 @@
 //                    (every Crumble pin touched that long ago: 0-0.7 its crack stages, 0.7-5.1 its chunks falling, 5.1-5.7
 //                    flying back); ?span=0|1|2 (the waystone my cast-back would take me to); ?rewind=<s since>&on=0|1|2
 //                    (the cast-back's gold rewind burst on that checkpoint, scenes/sdFx.js); ?grey the frame in grey (a screenshot's);
-//                    ?touch=on the phone's tier (two chunks a Crumble pin, toothless pendulum gears - ui/touchDevice.js)
+//                    ?touch=on the phone's tier (two chunks a Crumble pin, toothless pendulum gears - ui/touch/touchDevice.js)
 //   ?hours=<six hours, 0-11, by commas>&lit=<n>&fray=<n>   the Orrery's hall as the realm says it (SD-LOOK S10) - the
 //                    stones' hours (the slot's start by default), the dial's count (the hours' own by default) and the fray
 //   ?turn=<stone>&tt=<s since>   a turn of that stone heard: its hand and its gear on the way, its partners', its bezel gold
@@ -486,7 +486,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-// ?veil: the Hour's veil on a canvas of its own over the frame, a third of its pixels and drawn pixelated (ui/gateVeil.js)
+// ?veil: the Hour's veil on a canvas of its own over the frame, a third of its pixels and drawn pixelated (ui/gate/gateVeil.js)
 let veilPass = null, veilCanvas = null;
 function drawVeil() {
   const mode = SD_VEIL_MODE[params.get('veil') ?? ''];

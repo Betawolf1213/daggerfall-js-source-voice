@@ -3,8 +3,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createBindings, resetDefaults, getBinding, getJoystickUIBinding, setBinding } from '../src/systems/inputActions.js';
-import { applyPlusPadLayout, registerCrossbar, plusDpadMap, setPlusDpad, scaleStick, plusStickSens, setPlusStickSens } from '../src/ui/plusPad.js';
-import { bindPlusRow, clearPlusRow, bindRefusal, rowCode, PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
+import { applyPlusPadLayout, registerCrossbar, plusDpadMap, setPlusDpad, scaleStick, plusStickSens, setPlusStickSens } from '../src/ui/plus/plusPad.js';
+import { bindPlusRow, clearPlusRow, bindRefusal, rowCode, PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setInteractionMode } from '../src/player/interactionMode.js';

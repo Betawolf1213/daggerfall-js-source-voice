@@ -135,7 +135,7 @@ export const ACTIONS = Object.freeze([
   'TravelView',
   // PADWALK (Mac: "make ... walk mode bindable on controller"): one key or button that turns walking - DFU's slow,
   // quiet walk (Sneak) - on and off (player/walkMode.js). Appended, like every port action before it. Ships unbound;
-  // the Controls pane and the Controller bindings window (ui/plusPadBinds.js) both draw its row.
+  // the Controls pane and the Controller bindings window (ui/plus/plusPadBinds.js) both draw its row.
   'WalkMode',
   // VIEW-TOGGLE (Mac: "a force first person/third person toggle"): one press, the other view, for whichever body
   // answers (player/mwView.js mwViewTogglePerspective). Appended, like every port action before it.
@@ -182,7 +182,7 @@ export const ACTIONS = Object.freeze([
   'Spyglass',
   // UI-CALM (2026-10-14, a player: "the horse riding menu would be great in a blocky form in the bottom right and we
   // need a keybind to make it appear and disappear"): THE SADDLE PANEL'S KEY - one press shows the panel while riding, the
-  // next puts it away (ui/enhancedSaddle.js toggleSaddlePanel). On F2: the letters are spent, and Slash, Minus and
+  // next puts it away (ui/enhanced/enhancedSaddle.js toggleSaddlePanel). On F2: the letters are spent, and Slash, Minus and
   // Equal are the decorator's (scenes/decorTool.js DECOR_FREE_KEYS); F1-F4 are free since MODE-WHEEL let the four modes
   // go, and a file that still keeps GrabMode on F2 keeps it (the action stands unbound until the player gives it a key).
   // Appended, like every port action before it.
@@ -196,7 +196,7 @@ export const ACTIONS = Object.freeze([
  *  row they could not see, could not clear, and could not close the window past. So the port's own actions YIELD
  *  there: systems/controlsConfig.js checkDuplicates takes `{ yield: PORT_ACTIONS }` from the two classic windows
  *  and unbinds the port's row rather than colouring a clash nobody can resolve. The ENHANCED window passes nothing,
- *  because it draws the row (ui/enhancedControls.js over ACTION_GROUPS, the 'Online' group) and can rebind it.
+ *  because it draws the row (ui/enhanced/enhancedControls.js over ACTION_GROUPS, the 'Online' group) and can rebind it.
  *  QS2: the three quickslot actions join it for the same reason, off the same face - the enhanced pane draws them
  *  under their own 'Quickslots' heading and the classic windows cannot draw them at all. */
 export const PORT_ACTIONS = Object.freeze(['SocialInteract', 'QuickUse1', 'QuickUse2', 'QuickSwap', 'QuickOffHand', 'QuickSpell', 'QuickLootAll', 'QuickLootOpen', 'FreeMouse',
@@ -496,7 +496,7 @@ export function actionLive(action) {
 
 /**
  * KB1: THE CONTROLS PAGE'S ORDER - every action, in the group a player looks for it under, with the words they would
- * use. ONE table, read by the enhanced Controls pane (ui/enhancedControls.js), the replace prompt's names
+ * use. ONE table, read by the enhanced Controls pane (ui/enhanced/enhancedControls.js), the replace prompt's names
  * (systems/controlsConfig.js actionLabel) and bible Controls.md; test/kb1_keybinds.test.js holds that every action
  * in ACTIONS is in exactly one group or in HIDDEN_ACTIONS. A group with `mod` is that vendored mod's keys, drawn only
  * while the mod is on (the readers' actionLive gate is the same switch).

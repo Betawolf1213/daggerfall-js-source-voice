@@ -39,7 +39,7 @@ import {
   MUTE_MAX_MIN, MUTE_DEFAULT_MIN, MUTE_USAGE,
 } from '../src/net/moderation.js';
 import { GLYPH_RGBA, GLYPH_PATH, GLYPH_MARK } from '../src/ui/playerBadge.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
 import { REFUSALS, accountRefusalText } from '../src/net/accountClient.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

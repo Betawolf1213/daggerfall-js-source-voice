@@ -48,7 +48,7 @@
 import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../gate/gateScore.js';
 import { SD_ARENA } from '../../net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../../world/superDungeon/sdHall.js';
-import { SD_BAR_NEAR_M } from '../../ui/sdRemnantBar.js';
+import { SD_BAR_NEAR_M } from '../../ui/superDungeon/sdRemnantBar.js';
 
 /** The songs' names - their own, beside MIDI.BSA's and the Warden's. */
 export const HOUR_SONGS = Object.freeze({
@@ -529,7 +529,7 @@ export function sdScoreSongs() {
  *  forth switched the war and the Steps' song every few strides, each switch a fade out and in. */
 export const SD_SCORE_HOLD_M = 4;
 /**
- * WHERE I STAND IN THE HOUR, by the realm's frame (net/superDungeon/sdBrain.js): near the arena as its bar is (ui/sdRemnantBar.js
+ * WHERE I STAND IN THE HOUR, by the realm's frame (net/superDungeon/sdBrain.js): near the arena as its bar is (ui/superDungeon/sdRemnantBar.js
  * SD_BAR_NEAR_M), on the Steps from the first step's near edge on, else the hall (the Threshold, the Orrery, the
  * bridge) - `was` where I stood last, held SD_SCORE_HOLD_M past the edge it began at. Pure.
  * @param {number} x @param {number} z @param {string | null} [was]

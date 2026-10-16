@@ -33,7 +33,7 @@ import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createClimbFeelHost } from '../src/player/climbFeel.js';
 import { SpellImpactFx, TECH_FX_LOOK, TECH_FX_RECIPES, FX_MAX_PARTS } from '../src/render/spellImpactFx.js';
-import { CATEGORIES } from '../src/ui/settingsMap.js';
+import { CATEGORIES } from '../src/ui/settings/settingsMap.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => readFileSync(join(ROOT, f), 'utf8');
@@ -570,7 +570,7 @@ test('TECHFX1 THE FOUR HOSTS\' DOORS: each hands its rig the burst (its cast eng
 });
 
 test('TECHFX1 THE SETTING: "Technique camera motion" is a port row under Game (Full, 75%, Half, Low, Off), found by its key, and Settings > Accessibility > Motion lists it after the recoil\'s strength (mutants: the row unbuilt; unmapped; the default off)', () => {
-  const menu = code('src/ui/enhancedMenu.js');
+  const menu = code('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /return \[row, techniqueMotionRow\(\)\];/);
   assert.match(menu, /choiceRow\('techniqueMotion', 'Technique camera motion',[^;]*\[\[1, 'Full'\], \[0\.75, '75%'\], \[0\.5, 'Half'\], \[0\.25, 'Low'\], \[0, 'Off'\]\]\);/);
   assert.match(menu, /row\.dataset\.opt = 'techniqueMotion';/);

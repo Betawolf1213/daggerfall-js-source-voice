@@ -3,8 +3,8 @@
 // AS A SHOP IS: rows of the town's talk directory under a key no building holds (systems/merchantYards.js
 // yardDirectoryRows), their own groups on the Where-is page (systems/topicTree.js), answered as a building is (the
 // compass, the knowledge roll, the map's mark); their ground and their names on both town maps (world/merchantYards/merchantYardMap.js
-// yardTownBlocks, ui/townMapDoor.js, ui/exteriorAutomapWindow.js, ui/townSheet.js); and their marks on the Overworld
-// (scenes/merchantYardsHost.js overworldMarks, ui/travelViewHud.js yardGlyph, systems/travel/travelViewFilters.js). Every site
+// yardTownBlocks, ui/town/townMapDoor.js, ui/exteriorAutomapWindow.js, ui/town/townSheet.js); and their marks on the Overworld
+// (scenes/merchantYardsHost.js overworldMarks, ui/travel/travelViewHud.js yardGlyph, systems/travel/travelViewFilters.js). Every site
 // here is the producer's own (world/merchantYards/merchantYardSites.js yardSitesOn, the host's keeper beside it).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,14 +21,14 @@ import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talk/talkTopics.
 import { TopicTree, LIST_ITEM_TYPE, QUESTION_TYPE, EN } from '../src/systems/topicTree.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
 import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk/talk.js';
-import { quarterOf } from '../src/ui/townQuarters.js';
+import { quarterOf } from '../src/ui/town/townQuarters.js';
 import { nameplateAnchor, WORLD_PER_PX } from '../src/ui/nameplateLayout.js';
 import { ExteriorAutomapWindow, _resetZoomForTests } from '../src/ui/exteriorAutomapWindow.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 import { createMerchantYards, YARD_MARK_LIFT } from '../src/scenes/merchantYardsHost.js';
 import { markGroup, markShown, countGroups, isYardMark } from '../src/systems/travel/travelViewFilters.js';
-import { yardGlyph, TV_YARD_R } from '../src/ui/travelViewHud.js';
+import { yardGlyph, TV_YARD_R } from '../src/ui/travel/travelViewHud.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const FONT = { fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } };
@@ -229,7 +229,7 @@ test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map 
   assert.match(tvm, /for \(const m of host\.merchantYards\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
   assert.ok(tvm.indexOf('merchantYards?.overworldMarks()') > tvm.indexOf('function travelViewMarks()'), 'in the Overworld\'s marks');
   assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get merchantYards\(\) \{ return merchantYards; \},[^]*?\n\s+\}\);/, 'handed over live');
-  const door = read('src/ui/townMapDoor.js');
+  const door = read('src/ui/town/townMapDoor.js');
   assert.match(door, /if \(deps\.yards\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.yards\) \};\n\s+if \(heldMapWorn\(\)\) \{/, 'laid before either map is built');
   const tt = read('src/scenes/townTalk.js');
   assert.match(tt, /directory = buildBuildingDirectory\(topics\.exteriorBuildings, topics\.blocks, opts\);\n(?:\s+\/\/[^\n]*\n)*\s+directory\.push\(\.\.\.yardDirectoryRows\(topics\.yards\)\);/, 'joined to the directory');
@@ -237,7 +237,7 @@ test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map 
   assert.match(tt, /\.\.\.FOUND_KIND_ORDER\.map\(\(k\) => \(\{ label: FOUND_TALK_GROUPS\[k\], buildings: directory\.filter\(\(b\) => b\.yard === k\) \}\)\),/, 'the fallback\'s groups');
   assert.doesNotMatch(read('src/scenes/exterior.js'), /merchantYards|yardTownBlocks/, 'the bench stands no yard');
   for (const host of ['src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.doesNotMatch(read(host), /createTownMapWindow/, `${host} opens no town map`);
-  assert.match(read('src/ui/travelViewHud.js'), /if \(k === 'yard'\) return k;/, 'the HUD\'s look');
+  assert.match(read('src/ui/travel/travelViewHud.js'), /if \(k === 'yard'\) return k;/, 'the HUD\'s look');
 });
 
 function close(a, b, eps, msg = '') { assert.ok(Math.abs(a - b) < eps, `${msg}: ${a} vs ${b}`); }

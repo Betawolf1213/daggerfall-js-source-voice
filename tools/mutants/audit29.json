@@ -284,7 +284,7 @@
   },
   {
     "name": "AUDIT29-C1-the-page-redraws-on-the-backoff",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  book.refresh().then(() => { if (book.state.readAt !== before) rerender(); }, () => {});",
     "new": "  book.refresh().then(() => { rerender(); }, () => {});",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "AUDIT29-B2-a-forge-on-the-classic-skin",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const forgeOffered = () => profPagesShown();",
     "new": "export const forgeOffered = () => true;",
     "tests": [

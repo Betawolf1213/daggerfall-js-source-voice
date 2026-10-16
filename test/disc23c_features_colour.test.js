@@ -10,10 +10,10 @@
 // store, against a fake document; the cascade is read off the real ENHANCED_CSS.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { featureTile, barReading, OFF_LABEL } from '../src/ui/enhancedMenu.js';
+import { featureTile, barReading, OFF_LABEL } from '../src/ui/enhanced/enhancedMenu.js';
 import { FEATURES } from '../src/systems/features.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { ENHANCED_CSS, ENHANCED_TOKENS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS, ENHANCED_TOKENS } from '../src/ui/enhanced/enhancedStyle.js';
 
 function fakeEl(tag) {
   const n = {

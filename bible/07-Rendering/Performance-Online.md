@@ -128,7 +128,7 @@ records on the moved line re-aimed by content. AUDIT PERF-ON4 added the crowds, 
 
 ## PERF-HUD1 — the movable HUD on one clock
 
-PERF-NEXT item 5. `ui/hudLayout.js` swept (34 querySelectorAll over the page) on its 250 ms interval AND from the HUD's
+PERF-NEXT item 5. `ui/hud/hudLayout.js` swept (34 querySelectorAll over the page) on its 250 ms interval AND from the HUD's
 frame tick, each on its own clock: about eight sweeps a second at 60 fps where four were meant. The interval is the
 clock; the tick sweeps once at the start, and on its own clock only on a page the start set no interval for (a page
 without events: a test's stub - every real page sets one). Five sweeps in a second, where there were nine. (At

@@ -21,7 +21,7 @@ import { textureReplacementCount, textureReplacementEnabled } from '../textureRe
 import { isIilMod } from '../improvedInteriorLighting.js';   // the lighting mod rides the same store and is no texture mod
 import { setValue, saveSettings } from '../settings/settings.js';
 import { getPref, setPref } from '../uiPrefs.js';
-import { optionPath } from '../../ui/settingsMap.js';   // ORG2: the packs card named where the map puts it
+import { optionPath } from '../../ui/settings/settingsMap.js';   // ORG2: the packs card named where the map puts it
 
 /** The Base's Mod.FileName - the name its add-ons depend on. */
 export const VE_BASE = 'vanilla enhanced - base';

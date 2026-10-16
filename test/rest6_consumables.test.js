@@ -251,7 +251,7 @@ test('REST6 the cards: each item\'s lines under its name and weight', () => {
 });
 
 test('REST6 by source: the windows kneel by the candle, the hosts\' rest points read the Bedroll, the shelves stock at their end, the loot hooks subscribe last, the cards read the seven', () => {
-  for (const f of ['src/ui/restWindow.js', 'src/ui/enhancedRest.js']) {
+  for (const f of ['src/ui/restWindow.js', 'src/ui/enhanced/enhancedRest.js']) {
     const s = rd(f);
     assert.match(s, /meditate\) \{ (this\.|overlay\.)_end\((this\.)?deps\.restMeditate\?\.\(\)/, f);   // CAMP-ROLL (RE-AIMED): the kneel ends on its own line - a night goes to the camp's step
     assert.match(s, /REST_ACT_TEXT\.meditating/, f);
@@ -268,5 +268,5 @@ test('REST6 by source: the windows kneel by the candle, the hosts\' rest points 
   assert.match(shared, /if \(_rules && _place === REST_KIND\.Rough && draughtTaken\(entity\) && \(!sharedClockOn\(\) \|\| nightDue\(entity, ownMinutes\(\)\)\)\) \{ _place = REST_KIND\.Bed; _kind = REST_KIND\.Bed; _draughtFrom = ownMinutes\(\); \}/);
   assert.match(shared, /if \(_draughtFrom != null && ownMinutes\(\) - _draughtFrom >= DRAUGHT_SPENT_MINUTES\) spendDraught\(entity\); _draughtFrom = null;/);
   assert.match(rd('src/systems/item/itemInfo.js'), /if \(isSurvivalItem\(item\) \|\| isRestItem\(item\)\) record = survivalInfoTokens\(item\);/);
-  assert.match(rd('src/ui/enhancedInventory.js'), /survival: isSurvivalItem\(item\) \|\| isRestItem\(item\) \?/);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /survival: isSurvivalItem\(item\) \|\| isRestItem\(item\) \?/);
 });

@@ -19,7 +19,7 @@
 // WHAT THIS FILE OWNS: the view's four states, the input it captures
 // while up, the camera it hands the frame, and every way out. What it
 // does NOT own: the camera's numbers (player/travelCamera.js, pure), the
-// readout (ui/travelViewHud.js), the body (player/mwView.js holds it in
+// readout (ui/travel/travelViewHud.js), the body (player/mwView.js holds it in
 // third person), the cursor (player/pointerLock.js) - each reached
 // through the deps the host hands in, so the pins drive this whole
 // machine against a fake host.
@@ -210,7 +210,7 @@ export function travelViewLine({ place = null, near = null, region = '' } = {}) 
  * @param {() => string} [deps.trip] - TV2: the journey in words
  * @param {() => {move?:string, out?:string}} [deps.hintKeys] - AUDIT DEEP T1-12: the keys the hint names, read on the way up
  * @param {{show:Function, hide:Function, update:Function, pickAt?:(x:number, y:number) => string|null}} [deps.hud] -
- *   ui/travelViewHud.js (PERF-TV: `pickAt`, the pickable mark drawn under a click)
+ *   ui/travel/travelViewHud.js (PERF-TV: `pickAt`, the pickable mark drawn under a click)
  * @param {() => void} [deps.openMap] - OW-BLOCK: the block's Map button
  * @param {(id:string) => void} [deps.onWaypointGo] - WAYPOINTS: a followed waypoint's Go
  * @param {() => Record<string,string>|null} [deps.followDist] - WAYPOINTS: each followed waypoint's distance, in words
@@ -421,7 +421,7 @@ export function createTravelView(deps) {
     swallow(e);
   }
   /** AUDIT TV B3: a finger on the canvas is the view's (its pointer events orbit, pinch and pick) - the touch layer
-   *  (ui/touch.js) never starts a stick, a look or a tap under it. Only the START is taken: a finger down before the view
+   *  (ui/touch/touch.js) never starts a stick, a look or a tap under it. Only the START is taken: a finger down before the view
    *  rose ends as the touch layer's own, so its stick lets go. */
   function onTouchStart(e) {
     if (state === 'off' || gone() || !isCanvasEvent(e)) return;

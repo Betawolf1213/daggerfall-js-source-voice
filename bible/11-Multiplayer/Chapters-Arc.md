@@ -1460,7 +1460,7 @@ whole: the week's Merit, the Turning's Strength, its band on the writs and the h
   the halls' door, asked at a town's entry, handed to the interiors as `chapterStrength`); `src/scenes/worldModes.js`
   (the hall's chapter read off its guild and building, its factor to training, the spellbook and the spellmaker, its
   quality to the three shelves); `src/systems/guild/guildServiceActions.js` and `src/ui/guildServiceWindows.js` (training's
-  offer and gold check by a factor, DFU's own at 1); `src/ui/spellbookWindow.js` and `src/ui/spellMakerWindow.js` (the
+  offer and gold check by a factor, DFU's own at 1); `src/ui/spellbookWindow.js` and `src/ui/spell/spellMakerWindow.js` (the
   trade price and the gold cost by a factor). No service change; still `acct95`.
 - **Pins.** `test/chap3c_halls.test.js`, 9 tests: the law against literals (the factor by band and unknown, a price laid
   over and its rounding, the shelf's quality, its bounds, DFU's potion count read through it); the sheet over a fake door

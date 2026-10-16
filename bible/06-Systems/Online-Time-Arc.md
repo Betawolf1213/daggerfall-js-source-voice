@@ -214,7 +214,7 @@ migration.
 | Night's spawns, and the overworld's bands at night | `encounters.js`, `campEncounters.js` (`skyMinutes`); `world.js` `bandNight` |
 | Enchantments and loot powers that read the season or the moon | `hostEnchant.js`, `lootPowers.js` |
 | A torch doused by day on leaving a dungeon | `worldModes.js` (`rrDouseOnDungeonExit`) |
-| The date and time the menus show, the rest windows' world time, the sea map's date marks | `ui/enhancedMenu.js`, `ui/restWindow.js`, `ui/enhancedRest.js`, `shared.js` (`sharedMinutes`), `world.js` (the sea map's `date`) |
+| The date and time the menus show, the rest windows' world time, the sea map's date marks | `ui/enhanced/enhancedMenu.js`, `ui/restWindow.js`, `ui/enhanced/enhancedRest.js`, `shared.js` (`sharedMinutes`), `world.js` (the sea map's `date`) |
 | The vampire's nightfall words | `worldTick.js worldNightfallText` (reading, rate and inverse) |
 | A quest's hour window and date | `quest/actions.js DailyFrom` (TIME3) |
 
@@ -245,7 +245,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
 | The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |
 | The captain's day: a port's board and exchange, the Eltheric strands' regrowth, the legends' rise (CAPT-BOARD, ETHER-SEA, 2026-10-11) | `world.js` (the harbour office's and the Eltheric host's `day`), `scenes/harbourOffice.js`, `scenes/etherHost.js` |
-| The minute a character joins online at | `ui/enhancedMenu.js` (`onlineCopyOf`) |
+| The minute a character joins online at | `ui/enhanced/enhancedMenu.js` (`onlineCopyOf`) |
 
 ### 5.3 Your clock
 
@@ -387,7 +387,7 @@ stays), and online a quest's countdowns are WORLD7's again:
 
 Pins: `test/time3_quests.test.js` (the Clock, the wave, the party's copies and the rest re-aimed - a rest spends
 nothing, the same mechanics driven by lived play), `test/world7.test.js`, `test/world5.test.js`,
-`test/auditworld78.test.js` (the charge's source); `ui/enhancedMenu.js` says it at the door. `tools/mutants/time3.json`
+`test/auditworld78.test.js` (the charge's source); `ui/enhanced/enhancedMenu.js` says it at the door. `tools/mutants/time3.json`
 re-aimed (61, all dead): TIME3's law back - the raise charged whole - is a mutant now.
 
 ### 6.3d Quest waits on the short wait (REST8, 2026-10-03) [SUPERSEDES 6.3c's delays on played time; 6.3b's DELAY HALF RESTORED]
@@ -505,7 +505,7 @@ does online: "Short real wait"; asked whether the bounties, the curse quests and
 - **The date and time the menus show, and the rest window's "World time":** the sky.
 - **The Online pane's rules,** said at the door: "A day in the world is half an hour: midnight on the
   hour and the half hour, dusk at :22 and :52. Your own time runs as Daggerfall's does - resting and
-  travel spend it, being away does not." [TIME4, as built: `ui/enhancedMenu.js skyDayWords` says the first
+  travel spend it, being away does not." [TIME4, as built: `ui/enhanced/enhancedMenu.js skyDayWords` says the first
   sentence as it is true when the pane opens - before the switch, "a day in the world is two hours of real time
   until" the switch in the player's own time - and the sentences after it add that a full moon holds a
   lycanthrope for its night alone and that quest timers run on the character's own time, so a rest spends a
@@ -536,7 +536,7 @@ does online: "Short real wait"; asked whether the bounties, the curse quests and
   `skySecondsOfEvent` the journal's dates.
 - **`systems/quest/questStamps.js`** (new, TIME3): the stamps by clock, the walk that moves them, the load's and
   a share's moves (6.3a).
-- **`ui/enhancedMenu.js skyDayWords`** (TIME4): the Online pane's sentence, true when it opens - before the switch
+- **`ui/enhanced/enhancedMenu.js skyDayWords`** (TIME4): the Online pane's sentence, true when it opens - before the switch
   it says when the sky turns.
 - **`systems/worldTick.js`:**
   - `setSharedClock(source, wallOf, { sky, skyWall })`: the event clock's source as today, the sky's beside

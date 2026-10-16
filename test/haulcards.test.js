@@ -22,7 +22,7 @@ import { MARKS_COMBAT } from '../src/net/marksLaw.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { herbKind } from '../src/scenes/herbHost.js';
 import { createGatherHost, aimAt, storesWhereLine } from '../src/scenes/gatherHost.js';
-import { createToastQueue } from '../src/ui/profHud.js';
+import { createToastQueue } from '../src/ui/professions/profHud.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';

@@ -161,7 +161,7 @@ test('EV5: the wiring - three lit shaders, the latched flat tint, the studio, th
     'the Hour\'s key, in the Hour alone, straight after the court\'s (SD5a)');
   assert.equal((wm.match(/renderer\.setIndirectLight\(NO_INDIRECT_POS, 0, NO_INDIRECT_COLOR\);/g) || []).length, 2,
     'the stale exterior indirect goes dark with it (the same leak family)');
-  const am = readFileSync('src/ui/automapWindow.js', 'utf8');
+  const am = readFileSync('src/ui/automap/automapWindow.js', 'utf8');
   assert.equal((am.match(/renderer\.setMoonlight\(null\);/g) || []).length, 2,
     'the map pass clears it too - in the bracket setup, and again when the beacon group hands the unlit state back');
   // ROAD-C c2 flight 2: the ONE non-null call in the window is not

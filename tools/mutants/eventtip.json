@@ -199,7 +199,7 @@
   },
   {
     "name": "EVENT-TIP-the-map-drops-the-ring's-card",
-    "file": "src/ui/gateMapMark.js",
+    "file": "src/ui/gate/gateMapMark.js",
     "old": ", phase: String(m.phase ?? ''), tip: readTip(m.tip) };",
     "new": ", phase: String(m.phase ?? '') };",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "EVENT-TIP-the-overlay-paints-no-raids",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  for (const m of opts.raids ?? []) if (visible(m.x, m.y)) paintRaidMark(ctx, view, m, pulse);\n",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "EVENT-TIP-the-blades-on-the-town",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const cy = y - 18, s = 5, g = 2, h = s * 0.55;",
     "new": "  const cy = y, s = 5, g = 2, h = s * 0.55;",
     "tests": [

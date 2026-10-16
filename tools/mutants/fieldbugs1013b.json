@@ -1,7 +1,7 @@
 [
   {
     "name": "PLEA-LOOP-the-press-ignores-the-stack",
-    "file": "src/ui/enhancedDialog.js",
+    "file": "src/ui/enhanced/enhancedDialog.js",
     "old": "          if (windowCovered(owner)) return;   // PLEA-LOOP: asked at the press - a covered window answers nothing\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PLEA-LOOP-the-dialog-never-wears-the-cover",
-    "file": "src/ui/enhancedDialog.js",
+    "file": "src/ui/enhanced/enhancedDialog.js",
     "old": "  const covered = windowCovered(owner);",
     "new": "  const covered = false;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PLEA-LOOP-the-cover-takes-the-pointer",
-    "file": "src/ui/enhancedDialogStyle.js",
+    "file": "src/ui/enhanced/enhancedDialogStyle.js",
     "old": ".dlg-shell.dlg-covered { pointer-events: none; }",
     "new": ".dlg-shell.dlg-covered { }",
     "tests": [

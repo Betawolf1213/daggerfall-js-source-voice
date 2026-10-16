@@ -5,7 +5,7 @@
 // The lock's twin (systems/item/itemLock.js, LOCK1). One flag on the item (`junk: true`, declared in systems/item/itemFields.js,
 // so it rides the save and the wire as every other field does), set and cleared from the item's own card. Where the
 // lock closes the ways out, the mark opens two: a shop's Sell lays every junk piece of the pack on its counter in one
-// press (ui/enhancedTrade.js), at the counter's own price and confirm; and quick loot's take-all leaves a junk piece
+// press (ui/enhanced/enhancedTrade.js), at the counter's own price and confirm; and quick loot's take-all leaves a junk piece
 // where it lies (systems/quickLoot.js takeAllLeaves). A piece is one or the other: marked junk, its lock is lifted;
 // locked, its mark is - the player's last word is the one that stands.
 //

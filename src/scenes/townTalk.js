@@ -38,10 +38,10 @@ import { racialSuppressTalk } from '../systems/lycanthropy.js';   // V4: the tra
 import { TextRsc } from '../formats/textRsc.js';
 import { FntFile } from '../formats/fntFile.js';
 import { makeFont } from '../ui/text.js';
-import { HudText } from '../ui/hudText.js';
+import { HudText } from '../ui/hud/hudText.js';
 import { TalkWindow } from '../ui/talkWindow.js';
-import { hudScale } from '../ui/hud.js';
-import { hudRenderEnabled } from '../ui/hudShortcuts.js';   // AUDIT 64 F37: DaggerfallHUD's Draw override covers popupText too
+import { hudScale } from '../ui/hud/hud.js';
+import { hudRenderEnabled } from '../ui/hud/hudShortcuts.js';   // AUDIT 64 F37: DaggerfallHUD's Draw override covers popupText too
 import { setMidScreenText, midScreenText } from '../ui/midScreenText.js';   // AUDIT 64 F34: the HUD's OTHER text surface, and its notebook tail
 import { overlayAction, actionsOf, isTextEntryTarget, isDomControlTarget, isDomFocusWalk } from '../ui/input.js';   // AUDIT 58: the mode keys read the registry, not e.code; CG2: a DOM field's key is the field's
 import { makeWindowStack, pauseWhileOpen, hidesHud } from '../ui/windowStack.js';   // ROAD-B B1: UserInterfaceManager's stack, under this host's one slot; ROAD-tail: and its PAUSE
@@ -76,11 +76,11 @@ import { skillValue, tallySkill, SKILLS } from '../systems/skills.js';
 import { liveStat } from '../systems/statMods.js';   // AUDIT 63 F4: TalkManager.cs:665 reads Stats.LivePersonality (DaggerfallStats.cs:55), not the base
 import { ActionTextBox } from '../ui/actionText.js';   // ROAD-D D10: DaggerfallUI.MessageBox, the port's parchment
 import { registerPresenter, messageBox } from '../systems/notify.js';   // ENH-NOTICE3: this slot and this PopupText, offered to the one door every message goes through - and the door itself, for this host's own box seam
-import { preloadTalkArt, setNpcPortrait, clearNpcPortrait } from '../ui/nativeTalk.js';   // U8b   // ROAD-D D10: SetNPCPortrait
+import { preloadTalkArt, setNpcPortrait, clearNpcPortrait } from '../ui/native/nativeTalk.js';   // U8b   // ROAD-D D10: SetNPCPortrait
 import { npcHeadImage } from '../characters/headPortraits.js';   // PORTRAIT3D: the face as the head the body wears
 import { createTalkWindow, talkDoorReady } from '../ui/talkDoor.js';   // ET1: the ONE door - the classic window or the enhanced panel over it
 import { requestLook } from '../player/pointerLock.js';   // ET1: the panel's Goodbye relocks inside its own gesture (MAC1)
-import { nativeMetrics, pointToNative } from '../ui/nativePanel.js';   // U8b: pointer routing
+import { nativeMetrics, pointToNative } from '../ui/native/nativePanel.js';   // U8b: pointer routing
 import { preloadExteriorAutomapArt } from '../ui/exteriorAutomapWindow.js';   // ROAD-C c2/S10: the town map's native art
 
 export const TONE_NAMES = ['Polite', 'Normal', 'Blunt'];   // T3f: TalkTone -> index (DFU TalkToneToIndex)
@@ -1298,7 +1298,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
     // DaggerfallHUD.Update, which renderHUD does not touch.
     // FONT1: ...and the ELSE says so out loud. The enhanced skin draws
     // these rows in the DOM (toasts in the notice stack since
-    // ENH-NOTICE3, ui/enhancedNotice.js), and a DOM face stays painted
+    // ENH-NOTICE3, ui/enhanced/enhancedNotice.js), and a DOM face stays painted
     // unless it is told to hide - AUDIT 64 F37's own law - so a frame
     // the gate refuses must reach `hide()` rather than simply skip the
     // paint. On the classic skin `hide()` does nothing, which is what
@@ -1366,7 +1366,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
    * ROAD-C c2/S10: THE OTHER TWO POINTER PHASES, on this slot.
    * dungeonContext has carried `overlayPointer` since c2/S4 because the
    * automap's chrome is press-HOLD and drag driven; the town map is the
-   * same machine (ui/automapChrome.js, EXTERIOR_ACTIONS) in the
+   * same machine (ui/automap/automapChrome.js, EXTERIOR_ACTIONS) in the
    * exterior hosts' slot, and a host that delivers `down` alone latches
    * a drag that spins the map forever - with nothing to error on.
    *
@@ -1443,7 +1443,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
   // replace is showOverlay (the dispatching door); no close callback
   // rides the door (AUDIT ENH-NOTICE3 F6). No unregister: this
   // host lives as long as the page (every scene change in this port
-  // ends in location.replace - ui/enhancedHudText.js, AUDIT FONT F12).
+  // ends in location.replace - ui/enhanced/enhancedHudText.js, AUDIT FONT F12).
   registerPresenter({
     mount: (win, { push }) => { if (push) return pushOverlay(win); showOverlay(win); return true; },
     hudText: (line, delayInSeconds) => { hud.add(line, delayInSeconds); return true; },

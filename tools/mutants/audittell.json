@@ -515,7 +515,7 @@
   },
   {
     "name": "AUDITTELL-U7-duel",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "(_sinceStruck < THREAT_YIELD_S || _foe.duel)",
     "new": "_sinceStruck < THREAT_YIELD_S",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "AUDITTELL-U4-flash",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "const flash = pk === 'staggered' && last.foePoiseRef === ref && last.foePoise !== 'staggered';",
     "new": "const flash = pk === 'staggered';",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "AUDITTELL-U5-sig",
-    "file": "src/ui/questTracker.js",
+    "file": "src/ui/quest/questTracker.js",
     "old": "${foe?.classList?.contains?.('poised') ? '|poised' : ''}`;",
     "new": "`;",
     "tests": [

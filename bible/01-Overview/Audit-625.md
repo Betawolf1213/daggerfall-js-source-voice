@@ -76,8 +76,8 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 | P6 | low (doc) | Sea-Serpent.md section 11's deploy order was stale (acct78, migration 0081). | It now names the account deploy (acct84 since the merge of main past CRYSTAL-FIST's acct83) and migration 0083, with the hoard law's place in that order. |
 | D2 | low | The serpent's silver card (`CLAIM_SOURCE.serpent`, "Serpent slain") and its embers' glow tier were not pinned. | Both are pinned: the serpent's own source, and the gate's tier (`spoilsPool.js` SIGIL_TIER). |
 
-**The wallet** (`src/systems/decor/decorItems.js`, `src/systems/revenant/revenant.js`, `src/ui/enhancedInventory.js`,
-`src/ui/enhancedStyle.js`, `src/ui/enhancedPlusStyle.js`, `src/systems/walletItem.js`, `src/systems/quickslots.js`,
+**The wallet** (`src/systems/decor/decorItems.js`, `src/systems/revenant/revenant.js`, `src/ui/enhanced/enhancedInventory.js`,
+`src/ui/enhanced/enhancedStyle.js`, `src/ui/enhanced/enhancedPlusStyle.js`, `src/systems/walletItem.js`, `src/systems/quickslots.js`,
 `src/systems/startingGear.js`)
 
 | ID | Sev | Finding | Fix |

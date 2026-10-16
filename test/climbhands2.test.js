@@ -18,7 +18,7 @@ import { POSE } from '../src/player/climbPose.js';
 import { SETTINGS_DEFAULTS } from '../src/systems/settings/settingsDefaults.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { fieldOfView } from '../src/ui/viewSettings.js';
-import { weaponOffsetHeight } from '../src/ui/hudLarge.js';
+import { weaponOffsetHeight } from '../src/ui/hud/hudLarge.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { resetToDefaults } from '../src/systems/settings/settings.js';
 

@@ -321,7 +321,7 @@ export const STATS_CARD_CSS = `
 .sf-res .sf-pill.imm b { color: #8fd18a; }
 .sf-res .sf-pill.up b { color: #d9c27a; }
 .sf-res .sf-pill.down b { color: #e08a72; }
-/* STATS-CARD, dressed as Enhanced Plus. PAINT is the stone-and-brass kit's: every part has a ROLE in ui/enhancedFrame.js
+/* STATS-CARD, dressed as Enhanced Plus. PAINT is the stone-and-brass kit's: every part has a ROLE in ui/enhanced/enhancedFrame.js
    (the back is a panel, Stats / Paperdoll a button, the headline tiles and the armour pills chips, the foe chips tiles,
    each section a well with an engraved head, each line a rule), so all six Plus themes - Stone's grit and marble
    included - dress it, as they dress the pack beside it. This sheet is injected AFTER the kit, so it writes only what a

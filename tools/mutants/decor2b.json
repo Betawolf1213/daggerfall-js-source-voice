@@ -248,7 +248,7 @@
   },
   {
     "name": "DECOR2b-the-gate-asked-of-furniture",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "const plan = isFurnishing(item) ? { ok: true, amount: item.stackCount ?? 1 } : planTake(item, {",
     "new": "const plan = planTake(item, {",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "DECOR2b-the-basket-furniture-weighed",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "bag: [...this.hooks.packItems(), ...this.basket.filter((x) => !isFurnishing(x))],",
     "new": "bag: [...this.hooks.packItems(), ...this.basket],",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "DECOR2b-the-walk-out-weight-with-furniture",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "return carriedWeight(this.hooks.entity ?? {}) + totalWeight(this.basket.filter((x) => !isFurnishing(x)));",
     "new": "return carriedWeight(this.hooks.entity ?? {}) + totalWeight(this.basket);",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "DECOR2b-stolen-furniture-carried",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "      this._deliverFurniture(this.basket);   // DECOR2b\n",
     "new": "",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "DECOR2b-no-delivery-no-guard",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if (!this.hooks.deliver) return;\n    const going = list.filter(isFurnishing);",
     "new": "    const going = list.filter(isFurnishing);",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "DECOR2b-enhanced-gate-asked-of-furniture",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (isFurnishing(item)) return { ok: true, amount: item.stackCount ?? 1 };\n",
     "new": "",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "DECOR2b-enhanced-stolen-basket-carried",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "if (basket.length) { deliverFurniture(basket); transferAll(basket, deps.packItems()); }",
     "new": "if (basket.length) transferAll(basket, deps.packItems());",
     "tests": [
@@ -672,7 +672,7 @@
   },
   {
     "name": "DECOR2b-a-solid-colour-for-no-picture",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    image: img?.archive ? img : null,",
     "new": "    image: img,",
     "tests": [

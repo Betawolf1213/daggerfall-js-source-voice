@@ -727,7 +727,7 @@ and a tap mid-act is a strike (`inputHooks.tap`, right after the decorator's fli
 armed an activation that did nothing mid-act); the press that
 lands while an act plays is its strike on the next frame - that act's, never one Escape and E swapped in under it - a
 held finger or a swinging stick strikes once, and a press with no act is never banked for one that starts after. The meter names it: "click to strike the glint", "click as the
-ring meets the notch" (`ui/profHud.js`). THE FOUR HOSTS: the streaming world wired (the street, and the dungeon and the
+ring meets the notch" (`ui/professions/profHud.js`). THE FOUR HOSTS: the streaming world wired (the street, and the dungeon and the
 buildings through the same hooks); the fixed city (`scenes/exterior.js`) stands no nodes (PROF0 17.1, FLAGGED there);
 the interiors (`scenes/worldModes.js`) and the dungeon (`scenes/dungeonContext.js`) hold their swing off an act as
 before and are reached by the world host's hooks. `test/fb1001_mining.test.js` (ACT-TOUCH 4, ACT-CLICK 1).
@@ -818,7 +818,7 @@ to the same drape's other drawing (`toggleHood`, `variant ^ 1`), so of the casua
 0/1, 2/3 and 4/5, each one hood down and one hood up - two drapes were out of reach while worn. Taken off, its Use from
 the pack still stepped them; the classic window's Use and middle click were never changed.
 
-**The fix** (`systems/useItem.js` nextDrape, drapeCount; `ui/enhancedInventory.js`): a worn hooded garment of more than
+**The fix** (`systems/useItem.js` nextDrape, drapeCount; `ui/enhanced/enhancedInventory.js`): a worn hooded garment of more than
 one drape - the casual cloak - carries Change drape beside the hood: the next drape, the hood as it was, said ("You
 rearrange your cloak."), the doll redrawn and the card kept up, as the hood's press is. A formal cloak and plain robes
 hang one way and get none; an enchanted casual cloak keeps its Use beside it. `test/fb1001_drape.test.js` (2).
@@ -939,12 +939,12 @@ ground a client stands on, the counters, the pad, the finger, and part four's ow
 | RATE-KEPT | 5 | `prof-rate` ("Try again later") let the harvest go after the act | kept and asked again inside its ten minutes (`net/profBook.js` send) |
 | NODE-SPAN | 3; 2 | a node is found up its upright, base to aim point; a tree's is 1.2 m and its glow 3.4 m - a level look from two metres passed over it, a look up never found it, the saddle never; a patch glowed 1.3 m and was found 0.3 m up its centre | the upright runs to the glow's top where that stands higher (`gatherHost.js` findTarget) |
 | NODE-CLEAR | 2; 3 | VEIN-CLEAR kept veins out of the rock pieces; a patch or a tree could stand inside one, glowing, unreachable | a patch inside a piece stands nowhere, a tree claims the nearest flat outside every one (`world/terrain/terrainNature.js` insideRocks, one home; `herbHost.js`, `treeHost.js`) |
-| STEADY-SAID | 2 | the steady hand ends when E is let go, and its meter said "hold still" and no key: a tap of E ended it, nothing taken | the meter names the key E's start holds (the Sickle's Use holds it itself, and names none) (`herbHost.js`; `ui/profHud.js`) |
+| STEADY-SAID | 2 | the steady hand ends when E is let go, and its meter said "hold still" and no key: a tap of E ended it, nothing taken | the meter names the key E's start holds (the Sickle's Use holds it itself, and names none) (`herbHost.js`; `ui/professions/profHud.js`) |
 | SEASONAL-EYE | 2 | Herbalism 100's Seasonal Eye chosen mid-session stood nothing again until the next state read or the day's turn - a winter day's patches named herbs the service did not roll | a change of it stands the pixels again (`gatherHost.js` tick) |
 | PAD-PULSE | 1; 3, 4 | the Plus pad's gesture swing re-draws its stroke every 0.4 s while RT is held, and each was a press: RT held felled a tree, caught every tug, mined a vein by itself - against ACT-TOUCH's own "a held press strikes once" | a stroke after the first is the hold's, marked, and no act's strike (`ui/gamepadInput.js`; `world.js`; `gatherHost.js` strike) |
-| TOUCH-RETAP | 1 | the Attack button's lift waits two frames (TOUCH-BUTTONS A1); a second tap inside them cancelled the lift, so the hook heard held, held - no second press to an act | a press lifts the one before it first (`ui/touch.js`) |
-| CHARCOAL-BUY | 3 | "Steel wants Charcoal ... and the smith sells it" - but the smith's stock was bought only on an anvil recipe short of an input, and none takes Charcoal: no counter stood anywhere, and a smith who felled no tree smelted no Steel | the Forge offers it at a smith's forge (`ui/profPages.js` drawForge) |
-| COUNTER-GATES | 3 | the anvil's and the workbench's counters took none of AUDIT 32 P6's gates (the loom's): offered with Marks shut or too few held, refused after the press | one counter's buy for all four (`ui/profPages.js` counterBuy) |
+| TOUCH-RETAP | 1 | the Attack button's lift waits two frames (TOUCH-BUTTONS A1); a second tap inside them cancelled the lift, so the hook heard held, held - no second press to an act | a press lifts the one before it first (`ui/touch/touch.js`) |
+| CHARCOAL-BUY | 3 | "Steel wants Charcoal ... and the smith sells it" - but the smith's stock was bought only on an anvil recipe short of an input, and none takes Charcoal: no counter stood anywhere, and a smith who felled no tree smelted no Steel | the Forge offers it at a smith's forge (`ui/professions/profPages.js` drawForge) |
+| COUNTER-GATES | 3 | the anvil's and the workbench's counters took none of AUDIT 32 P6's gates (the loom's): offered with Marks shut or too few held, refused after the press | one counter's buy for all four (`ui/professions/profPages.js` counterBuy) |
 | PAD-CLASSIC | 3 | the Professions pages are DOM on the classic skin too, and the pad's cursor clicked the DOM only under Plus: the Forge, the Anvil, Withdraw unpressable on Classic with a pad | the pad's click reaches the page on every skin, as a mouse's does (`ui/gamepadInput.js` pointerAt) |
 | NAVAL-E | 4 | at sea the net's cast stands in the look and the node had E first: the readout said "E: board her" and E cast the net (with a foe near, it said "You cannot fish with enemies nearby!") | the street asks the sea first (`scenes/navalHost.js` takesActivate; `world.js`) |
 
@@ -1002,25 +1002,25 @@ Asked as the audit closed, each with its options: TOUCH-HOLD - Mac: **"Interact 
 **TOUCH-HOLD.** A phone and a pad could not play a common herb, Hunting or the net's haul: E is the professions' start
 and their hold, and neither had an E.
 
-- **The touch corner.** Its third slot - empty by default - is Interact (`ui/touchButtons.js`: glyph E, a HOLD slot,
+- **The touch corner.** Its third slot - empty by default - is Interact (`ui/touch/touchButtons.js`: glyph E, a HOLD slot,
   so the Interact action's live key is down while the finger is; `systems/uiPrefs.js`). A choice on the Touch card like
   any other. The default corner runs 16..344 px (the mode cycle and F a slot further in), inside the widest corner the
   HUD keeps clear of (`TOUCH_CORNER_MAX`, 392).
 - **The pad, classic layer.** B is Interact in the world (`systems/inputActions.js` `DEFAULT_SECONDARY_BINDINGS` - a
   PAD1 row, filled into an old file at the next load). B did nothing in the world: DFU's Back answers only while a
   window is up, and a window's press never reaches the world's edge ring (`ui/input.js`); in a window it is Back still.
-- **The pad, Enhanced Plus.** Every button held a row, so LT is Interact (`ui/plusPad.js`, layout 2): a trigger holds
+- **The pad, Enhanced Plus.** Every button held a row, so LT is Interact (`ui/plus/plusPad.js`, layout 2): a trigger holds
   while the right thumb draws the knife's line. Recast, which LT held, is the d-pad's right held (`PLUS_DPAD_DEFAULTS`
   - so right's tap, Rest, fires on its release, as up's, down's and left's do). A store on layout 1 moves once, taking
   back layout 1's Recast on LT where it still stands (`PLUS_PAD_RETIRED`); a row the player set themselves stands. The
-  Controller bindings window has an Interact row (`ui/plusPadBinds.js`).
+  Controller bindings window has an Interact row (`ui/plus/plusPadBinds.js`).
 - **The prompts.** With a pad in hand the professions' prompts, meters and tool lines name its button - "[LT] Pick Red
   Rose", "hold B and keep still" - as the sea's readout names its own (AUDIT NAV1); else the key (`scenes/world.js`
   `actKeyWord`). They said "[E]" to a hand holding no keyboard.
 - **The Skinning Knife's Use.** From the hotbar or a quick slot at a body it is E there (TOOL-USE - `scenes/huntHost.js`
   `tools`, `systems/foraging/foragingInstall.js` the knife's use handler and its line), and it HOLDS the knife, as the Sickle's
   Use holds the steady hand: the line is drawn by the look alone - a swipe, the right stick, the mouse - with no key held
-  (`heldByUse`); the meter says "aim the knife at the first point", never a key (`ui/profHud.js` `byUse`). It skins
+  (`heldByUse`); the meter says "aim the knife at the first point", never a key (`ui/professions/profHud.js` `byUse`). It skins
   whatever the choice key picked, the pick unmoved; away from a body it says where Hunting is done; offline, or with the
   professions shut, it has no Use (the knife is the professions' alone). The Hunting card and the empty Stores say so.
 
@@ -1229,7 +1229,7 @@ left. `test/fb1001_slowfall.test.js`.
 **Reproduced first** (the real `HeldMapWindow`'s stage listeners): a right-drag of 30 px across, then 40 down, then 20
 on the diagonal handed the 3D sheet `[10,0] [20,0] [0,0] [0,0] [20,0]` - all 60 px down dropped. TURN-STEADY's lock
 (`ui/heldMap.js`), from Mac's "its a bit hard to control", let the first 8 px choose for the whole drag; Shift + left (a
-trackpad's) the same. DFU's automap turns and orbits from one drag (`ui/automapCamera.js` dragRotate - the classic
+trackpad's) the same. DFU's automap turns and orbits from one drag (`ui/automap/automapCamera.js` dragRotate - the classic
 automap port is unaffected), and the held sheet's own `orbitBy` already takes both.
 
 **Asked** - the report against Mac's own call. Mac: *"Unlock on intent"*. **Built**: the lock still settles in the first
@@ -1242,12 +1242,12 @@ release, the held-back travel spent first. A sideways sweep that drifts or wobbl
 
 **Measured** in Chromium 141 under Xvfb, the X server's own cursor read back through XFixes while a real pointer moved:
 over the Settings list's scrollbar the platform arrow; within 31 px of the right edge and 34 px of the foot the arrow.
-`ui/enhancedStyle.js` dressed the menus' scrollbars with `::-webkit-scrollbar` AND set `scrollbar-width` and
+`ui/enhanced/enhancedStyle.js` dressed the menus' scrollbars with `::-webkit-scrollbar` AND set `scrollbar-width` and
 `scrollbar-color` on `.shell, .px-win`; since Chromium 121 either standard property draws the native bar and turns the
 dress off, and `scrollbar-color` inherits - every scroller in every menu was a 15 px native bar, and Blink shows its
 own arrow over a native scrollbar whatever `cursor` the scroller wears. A custom scrollbar's parts take the scroller's
 cursor. And Blink drops a cursor image over 32 DIP a side for the next in its list wherever it would not lie wholly
-inside the viewport: the gauntlet (`ui/plusCursor.js`) was 31x34, the classic CURSOR.IMG at 2x 64 px wide.
+inside the viewport: the gauntlet (`ui/plus/plusCursor.js`) was 31x34, the classic CURSOR.IMG at 2x 64 px wide.
 
 **The fix.** One unscoped `::-webkit-scrollbar` dress; the standard pair only under `@supports not
 selector(::-webkit-scrollbar)` (Firefox), the pack card's thin bar the same; the gauntlet 31x32 (two near-twin rows of
@@ -1379,6 +1379,6 @@ from 300 m (no anisotropy on model textures) - and the spire is seen from hundre
 repeat"* - ROCK-CAP: a rock pebble's face tiles no finer than one repeat per 8 m in its finest direction (8 texels a
 metre), its grain's proportions kept; a pebble already coarser keeps its own, and a plank, a block or a palisade its
 model's (`WOD_ROCK_MAX_REPEATS_PER_M`). Seen and left (before part five, not asked): the
-Enhanced Plus gauntlet's pressed frame draws its fingertip about 14 px right of its hotspot (`ui/plusCursor.js`). Seen and left (no diff, every
+Enhanced Plus gauntlet's pressed frame draws its fingertip about 14 px right of its hotspot (`ui/plus/plusCursor.js`). Seen and left (no diff, every
 fall's): a peer's body has no in-air pose - the others see a slow faller walk or stand mid-air (a pose field, a relay). Seen and left (main's
 own): `auditworld34` A1 fails one run in two or three on main as on the branch (its 25 ms windows).

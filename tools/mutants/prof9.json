@@ -1036,7 +1036,7 @@
   },
   {
     "name": "PROF9-pages-cooking-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  cooking: () => [[t('prof.page.unlocks.cooking1', 'Hunter\\'s Stew, Fisherman\\'s Supper'), 1],",
     "new": "  cookery: () => [[t('prof.page.unlocks.cooking1', 'Hunter\\'s Stew, Fisherman\\'s Supper'), 1],",
     "tests": [
@@ -1046,7 +1046,7 @@
   },
   {
     "name": "PROF9-pages-feast-unlock-55",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  cooking: () => [[t('prof.page.unlocks.cooking1', 'Hunter\\'s Stew, Fisherman\\'s Supper'), 1], [t('prof.page.unlocks.cooking2', 'Orchard Tart'), 2], [t('prof.page.unlocks.cooking6', 'Feast of the Hearth'), 6]],",
     "new": "  cooking: () => [[t('prof.page.unlocks.cooking1', 'Hunter\\'s Stew, Fisherman\\'s Supper'), 1], [t('prof.page.unlocks.cooking2', 'Orchard Tart'), 2], [t('prof.page.unlocks.cooking6', 'Feast of the Hearth'), 5]],",
     "tests": [
@@ -1055,7 +1055,7 @@
   },
   {
     "name": "PROF9-pages-skillet-unread",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "done: panWindow(rank, p.panBand?.() ?? 1, skillet) });",
     "new": "done: panWindow(rank, p.panBand?.() ?? 1, false) });",
     "tests": [
@@ -1064,7 +1064,7 @@
   },
   {
     "name": "PROF9-pages-always-clean",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const res = await p.craft(id, { clean: clean === true && getPref('gentleActs') !== true });",
     "new": "const res = await p.craft(id, { clean: true });",
     "tests": [
@@ -1073,7 +1073,7 @@
   },
   {
     "name": "PROF9-pages-gentle-pan",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (gentle) { void finishFor(r.id)(false); return; }   // Gentle acts: a plain dish, no pan\n",
     "new": "",
     "tests": [
@@ -1082,7 +1082,7 @@
   },
   {
     "name": "PROF9-pages-hands-not-at-the-fire",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": ": me !== _cook && (_cook.act || _cook.crafting) ? 'fire' : me !== _jewel",
     "new": ": me !== _jewel",
     "tests": [
@@ -1091,7 +1091,7 @@
   },
   {
     "name": "PROF9-pages-escape-leaves-the-pan",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (_cook.act) { _cook.act.cancel(); endPan(); _cook.word = panDownLine(); return true; }   // PROF9\n",
     "new": "",
     "tests": [
@@ -1100,7 +1100,7 @@
   },
   {
     "name": "PROF9-pages-burnt-never-ends",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (_cook.act.state.done) { ended(); return; }   // the last pan burnt on the fire\n",
     "new": "",
     "tests": [
@@ -1109,7 +1109,7 @@
   },
   {
     "name": "PROF9-pages-shut-page-holds-the-pan",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (!els?.bar || els.bar.isConnected === false) { _cook.act.cancel(); endPan(); return; }   // the page shut under the act: nothing spent",
     "new": "      if (!els?.bar || els.bar.isConnected === false) { return; }   // the page shut under the act: nothing spent",
     "tests": [
@@ -1118,7 +1118,7 @@
   },
   {
     "name": "PROF9-pages-repeat-takes",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  const key = (e) => actKey(e, _cook.els?.hit, take);",
     "new": "  const key = (e) => { if (e.code === 'Space') take(e); };",
     "tests": [
@@ -1127,7 +1127,7 @@
   },
   {
     "name": "PROF9-pages-fire-away-offers",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    detail.append(el('p', 'px-note', fireAwayLine()));\n    return;",
     "new": "    detail.append(el('p', 'px-note', fireAwayLine()));",
     "tests": [
@@ -1136,7 +1136,7 @@
   },
   {
     "name": "PROF9-pages-servings-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "${serves > 1 ? t('prof.page.fire.servesTwo', 'Two servings (a Cook\\'s), into your pack.') : t('prof.page.fire.servesOne', 'One serving, into your pack.')}",
     "new": "${t('prof.page.fire.servesOne', 'One serving, into your pack.')}",
     "tests": [
@@ -1145,7 +1145,7 @@
   },
   {
     "name": "PROF9-pages-no-pan-css",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".prof-heatbar.prof-panbar { background: linear-gradient(",
     "new": ".prof-heatbar.prof-pan-bar { background: linear-gradient(",
     "tests": [
@@ -1338,7 +1338,7 @@
   },
   {
     "name": "AUDIT-PROF-541-K7-steps-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "xp: steps > 0 ? cookXp(rank, { steps }) : cookXp(rank),",
     "new": "xp: cookXp(rank),",
     "tests": [
@@ -1348,7 +1348,7 @@
   },
   {
     "name": "AUDIT-PROF-541-K7-steps-unread",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const steps = Math.max(0, Math.trunc(Number(p.cookSteps?.()) || 0));",
     "new": "const steps = 0;",
     "tests": [

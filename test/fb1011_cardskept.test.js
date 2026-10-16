@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCardStakes, CARD_STAKES_KEY } from '../src/net/card/cardStakes.js';
 import { spoilsStore } from '../src/scenes/spoilsPool.js';
-import { cardHudModel, createCardTableHud, buyInPicks, raisePicks } from '../src/ui/cardTableHud.js';
+import { cardHudModel, createCardTableHud, buyInPicks, raisePicks } from '../src/ui/card/cardTableHud.js';
 import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 import { fakeDoc, all, text } from './decorFakes.mjs';
 

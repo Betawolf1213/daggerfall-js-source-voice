@@ -39,15 +39,15 @@
 | 171 keys / 13 sections, all raw strings | `src/systems/settings/settingsDefaults.js`, pinned `test/settings.test.js:"Object.keys(DEFAULTS).length, 13"` |
 | Tier counts today: **8 live, 18 unavailable, 145 stored** | `src/systems/settings/settings.js:"---- the tiers (see the header)"` |
 | `canvas.width = canvas.clientWidth` — CSS px, **DPR 1** | `src/render/renderer.js:"const w = this.canvas.clientWidth"` |
-| `nativeMetrics` floors to **s=1 on every phone in both orientations** | `src/ui/nativePanel.js:"export function nativeMetrics"` |
+| `nativeMetrics` floors to **s=1 on every phone in both orientations** | `src/ui/native/nativePanel.js:"export function nativeMetrics"` |
 | Today's launcher draws at a **hardcoded `s=2`** | `src/scenes/launcherScene.js:62`, `:82` | *(DELETED at FD1, 2026-09-11)*
 | FONT0003: `fixedWidth 5`, `fixedHeight 7`, space glyph 4 | pinned `test/audit18_ui_native.test.js:"assert.equal(f.fixedWidth, 5, 'FONT0003 header')"` |
 | `FNT_ASCII_START = 33`; codes < 33 draw as a space; **no arrow / ellipsis / degree / middle‑dot glyph exists** | `src/formats/fntFile.js:"export const FNT_ASCII_START"`, `src/ui/text.js:"The fold, then DrawText's"` |
 | `measureText` takes `font.fnt`, returns virtual px at scale 1 | `src/ui/text.js:"Advance-only pass"` |
-| `drawRect` / `shadowText` / `drawImg` consume `{s, ox, oy}` — **any** metric object works | `src/ui/nativePanel.js:"img, m, x, y, w ="` |
+| `drawRect` / `shadowText` / `drawImg` consume `{s, ox, oy}` — **any** metric object works | `src/ui/native/nativePanel.js:"img, m, x, y, w ="` |
 | `layoutMessageBox` hard‑codes `(320‑w)/2, (200‑h)/2`; `drawMessageBox` returns `false` unless SPOP.RCI is preloaded — and nothing preloads it before the game | `src/ui/messageBox.js:"x = Math.round((320 - w) / 2)"`, `src/ui/messageBox.js:"export function drawMessageBox"` |
 | `ListPickerWindow.draw` calls `nativeMetrics(canvas)` **itself** | `src/ui/listPicker.js:"keeps the ListBox"` |
-| `attachTouch` is called only by world/interior/exterior/dungeon; it unconditionally builds F5/F6/☰/C/SV/LD + a movement stick claiming the left half of the viewport | `src/ui/touch.js:"export function attachTouch"` |
+| `attachTouch` is called only by world/interior/exterior/dungeon; it unconditionally builds F5/F6/☰/C/SV/LD + a movement stick claiming the left half of the viewport | `src/ui/touch/touch.js:"export function attachTouch"` |
 | `ensureAudio(fetch)` is exported from `src/scenes/shared.js:"export function ensureAudio"`, is safe un‑awaited, and `audio.ensure` attaches its own gesture‑resume (`src/systems/audio.js:"ensure(fetchBytes)"`, `ensure`) | — |
 | `audio._out()` re‑reads `Controls/SoundVolume` on every connection (`audio.js:"this._booted = null"`) — so a `DungeonDoorOpen` preview really demonstrates the slider | — |
 | `lookSettings.js:"ROAD-G G6 WIDENED"` clamps `MouseLookSensitivity` to **0.1..4.0** while DFU's slider runs to 16.0 | — |
@@ -497,7 +497,7 @@ Text inside a filled button (PLAY, a selected rail plate, a dialog button) is dr
 
 Rule 8 is the honesty rule: **the port never invents a range or an option name.** ~60 stored numeric keys become read‑only rows with a stated reason rather than sliders that pretend to know DFU's limits. Every bool remains fully operable because a bool needs no law beyond `True`/`False`.
 
-### 3.2 The law tables (`src/ui/settingsLaw.js`)
+### 3.2 The law tables (`src/ui/settings/settingsLaw.js`)
 
 **`ENUM_LAW`** — names and order are DFU's, verbatim, cited. `encode` says what the store holds.
 
@@ -749,9 +749,9 @@ No zebra striping (a 1.1:1 band does nothing but add a second ground to test aga
 | file | exports |
 |---|---|
 | `src/ui/settingsMetrics.js` | `PAGE_W`, `MIN_PAGE_W`, `MIN_PAGE_H`, `settingsMetrics(canvas, opts)`, `pointToPage(m, px, py)`, `tapMin(m)` | *(DELETED at FD1, 2026-09-11)*
-| `src/ui/settingsMap.js` | `CATEGORY_IDS` (ordered 7), `KEY_CATEGORY` (171 entries), `KEY_ORDER`, `categoryOf(key)`, `keysOf(catId)` |
-| `src/ui/settingsCopy.js` | `CATEGORIES` (`{id,title,blurb}`×7), `LABELS`, `HELP`, `READOUT`, `INSTEAD`, `DFU_TEXT_KEY`, `TIER_TEXT`, `DIALOG_TEXT`, `labelOf(key)`, `helpOf(key)` |
-| `src/ui/settingsLaw.js` | `ENUM_LAW`, `NUMBER_LAW`, `TEXT_LAW`, `COLOUR_KEYS`, `BLOCKED_REASON`, `widgetFor(key)`, `formatValue(key, raw)`, `parseColour(hex)`, `stepValue(key, raw, dir, coarse)` |
+| `src/ui/settings/settingsMap.js` | `CATEGORY_IDS` (ordered 7), `KEY_CATEGORY` (171 entries), `KEY_ORDER`, `categoryOf(key)`, `keysOf(catId)` |
+| `src/ui/settings/settingsCopy.js` | `CATEGORIES` (`{id,title,blurb}`×7), `LABELS`, `HELP`, `READOUT`, `INSTEAD`, `DFU_TEXT_KEY`, `TIER_TEXT`, `DIALOG_TEXT`, `labelOf(key)`, `helpOf(key)` |
+| `src/ui/settings/settingsLaw.js` | `ENUM_LAW`, `NUMBER_LAW`, `TEXT_LAW`, `COLOUR_KEYS`, `BLOCKED_REASON`, `widgetFor(key)`, `formatValue(key, raw)`, `parseColour(hex)`, `stepValue(key, raw, dir, coarse)` |
 | `src/ui/settingsWidgets.js` | `drawSwitch/drawEnum/drawNumber/drawColour/drawText/drawReadout/drawGroup/drawInfo/drawButton`, `drawTriangle(renderer,m,rect,dir,color)`, `drawPadlock(...)` — each takes `(renderer, m, font, item, state)` and draws **only** inside the rects `layout()` produced |  <!-- DELETED from the plan: folded into settingsWindow.js -->
 | `src/ui/settingsDialog.js` | `layoutDialog(font, m, {title, body, buttons, list})`, `drawDialog(renderer, m, font, d)`, `dialogHit(d, vx, vy)` (returns a button id or `'outside'`) |  <!-- DELETED from the plan: folded into settingsWindow.js -->
 | `src/ui/settingsWindow.js` | `class SettingsWindow` — see 7.3 | *(DELETED at FD1, 2026-09-11)*
@@ -945,14 +945,14 @@ detail." The categories were the only structure a page had. Interface drew forty
 tooltip's colour, a shop's sign and five map colours in the map's storage order - and Video's nine live rows sat over
 fifty-one folded ones with nothing to say which belonged together.
 
-- **Each category is cut into sections** (`ui/settingsMap.js` `CATEGORY_SECTIONS`): a title, a line of what it holds,
+- **Each category is cut into sections** (`ui/settings/settingsMap.js` `CATEGORY_SECTIONS`): a title, a line of what it holds,
   and its keys in the order they draw. The map is total and disjoint over every category's keys - stored, unavailable
   and moved keys keep a place for the day they draw flat - and `test/org1_sections.test.js` pinned both ways (DELETED by ORG2, section 11 - `test/org2_options.test.js` holds the one map).
   Interface: HUD, Tooltips, Inventory talk & shops, Messages & prompts, Travel map, Town map, Dungeon map. Video:
   Display, Brightness & light, Retro look, Shadows, Textures & detail, Post effects. Game: Quests, Play, Starting a new
   game, Advanced. Controls: Mouse & looking, Attacking, Moving, Game controller, Touchscreen. Accessibility: Motion,
   Readability, Large status bar. Audio and Data & Mods are one section each.
-- **A page draws a head per section it fills** (`ui/enhancedMenu.js` `sectionedRows`): the title, how many rows, the
+- **A page draws a head per section it fills** (`ui/enhanced/enhancedMenu.js` `sectionedRows`): the title, how many rows, the
   line. A page that fills one section is its own heading and draws none. The port's own rows stand first in their
   section - a row says its section (`inSection`), else its category's `PORT_SECTION` (the quest repair under Quests,
   the pad's cursor under Game controller, the HUD's rows) - then the store keys in the section's order.
@@ -976,7 +976,7 @@ categories, the port's rows and the mods under Features in seven groups of their
 Settings > Video and the grass under Features > Sight; "the graphics" were behind two doors and a long scroll each.
 This supersedes section 1's category map and section 10.
 
-- **One map, tabs by subject** (`ui/settingsMap.js` `CATEGORIES`): Graphics, Gameplay, Combat, World, Interface,
+- **One map, tabs by subject** (`ui/settings/settingsMap.js` `CATEGORIES`): Graphics, Gameplay, Combat, World, Interface,
   Audio, Controls, Accessibility, Mods & files - each a title and SECTIONS (a title and its items in the order they
   draw). An item is one of DFU's keys (`Section/Key`), a Features row (`feat:<id>`), one of the port's own
   rows (`port:<id>`, the id each row carries as `dataset.opt`), a card (`card:morrowind`, `card:packs`,

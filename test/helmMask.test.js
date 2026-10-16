@@ -40,7 +40,7 @@ test('HM1: changeMask is ImageProcessing.ChangeMask - 0xFF becomes the cutout, o
 test('HM1: the DOM icon strips the mask (GetInventoryImage), and so do the classic pack\'s two drawers', () => {
   assert.match(src('src/ui/textureCanvas.js'), /const bmp = changeDyeBitmap\(changeMask\(got\.file\.getDFBitmap\(record, 0\)\), dye, dyeTarget\);/,
     'requestIcon rasterizes the mask-stripped clone (DYE-ICON: then dyed, the mask first)');
-  for (const f of ['src/ui/nativeInventory.js', 'src/ui/itemScroller.js']) {
+  for (const f of ['src/ui/native/nativeInventory.js', 'src/ui/item/itemScroller.js']) {
     assert.match(src(f), /icons\.uploadRecord\(img\.archive, img\.record, \{ mips: false, removeMask: true, dye: img\.dye, dyeTarget: img\.dyeTarget \}\);/,
       `${f} asks the pipeline for the mask-stripped UI variant`);
   }

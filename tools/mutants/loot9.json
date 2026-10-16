@@ -427,7 +427,7 @@
   },
   {
     "name": "LOOT9-plus-face-no-row",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "        ...(w.hooks.reforge ? [{ label: REFORGE_ROW, act: () => w._reforge() }] : []),",
     "new": "        ...([]),",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "LOOT9-card-salvages-the-worn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (side === 'local' && !line.equipped && (salvageShards(picked) > 0 ||",
     "new": "if (side === 'local' && (salvageShards(picked) > 0 ||",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "LOOT9-card-breaks-unasked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    v.onclick = () => askSalvage(picked);",
     "new": "    v.onclick = () => { salvagePiece(picked, { items: deps.items?.() ?? [] }); refresh(); render(); };",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "LOOT9-keep-breaks-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  no.onclick = (e) => { e?.stopPropagation?.(); closeDismantle(); };   // the piece kept",
     "new": "  no.onclick = (e) => { e?.stopPropagation?.(); closeDismantle(); salvagePiece(item, { items: deps.items?.() ?? [] }); };",
     "tests": [

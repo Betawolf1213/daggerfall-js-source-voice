@@ -95,7 +95,7 @@
   },
   {
     "name": "SPELL-GIFT-gift-in-the-debuff-row",
-    "file": "src/ui/hudActiveSpells.js",
+    "file": "src/ui/hud/hudActiveSpells.js",
     "old": "    (bundle.selfCast || bundle.ally ? self : other).push(item);",
     "new": "    (bundle.selfCast ? self : other).push(item);",
     "tests": [

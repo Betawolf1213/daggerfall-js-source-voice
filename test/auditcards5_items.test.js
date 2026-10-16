@@ -21,7 +21,7 @@ import { shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { cardRules, cardFlavor } from '../src/systems/iliac/iliacCardWords.js';
-import { packModel, mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
+import { packModel, mountEnhancedInventory, useResultAction } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -71,7 +71,7 @@ test('AUDIT CARDS-5 C2/C3/C4/C5: no shop buys a card; the hotbar tells one card 
   const binder = mintBinder();
   assert.deepEqual(useItem(binder, [binder]), { kind: 'binder', item: binder });
   assert.deepEqual(useResultAction({ kind: 'binder', item: 'b' }), { kind: 'pickWallet', item: 'b' });
-  assert.match(read('src/ui/nativeInventory.js'), /if \(r\.kind === 'binder'\) \{ this\.boxes = \[\{ rows: BINDER_CARD_LINES\.map/);
+  assert.match(read('src/ui/native/nativeInventory.js'), /if \(r\.kind === 'binder'\) \{ this\.boxes = \[\{ rows: BINDER_CARD_LINES\.map/);
 });
 
 test('AUDIT CARDS-5 C lane\'s survivors: a card is a card only with its card; its lines by kind; worth a coin; the mints bounded and their lists their own; a two-copy deck the binder cannot back; a deck list replaced and never a hole; the gift merged into the pack\'s stacks; no pack, no throw', () => {

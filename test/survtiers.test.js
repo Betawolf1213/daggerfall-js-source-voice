@@ -23,7 +23,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { useItem } from '../src/systems/useItem.js';
 import { NOT_ENOUGH_GOLD_ID } from '../src/systems/tavern.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
-import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
+import { mountEnhancedTavern } from '../src/ui/enhanced/enhancedTavern.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { setPref, loadPrefs, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -143,12 +143,12 @@ test('SURV-TIERS: the switch - on is anything but Off; the live rules are the ti
   assert.equal(survivalTier(), 'boons'); assert.equal(survivalOn(), true); assert.equal(survivalRules(), SURVIVAL_RULES.boons);   // PIN MOVED (BOONS-DEFAULT)
   setPref(SURVIVAL_PREF, 'hard'); assert.equal(survivalTier(), 'hard'); assert.equal(survivalRules(), HARD); assert.equal(survivalOn(), true);
   setPref(SURVIVAL_PREF, false); assert.equal(survivalTier(), 'off'); assert.equal(survivalOn(), false); assert.equal(survivalRules(), null);
-  // BLOOD AUDIT 5's rule (ui/enhancedMenu.js tileStates): a value that is no tier shows as the default - so the laws
+  // BLOOD AUDIT 5's rule (ui/enhanced/enhancedMenu.js tileStates): a value that is no tier shows as the default - so the laws
   // read it the same way, and the bar and the game can never disagree about which tier is live
   for (const junk of [true, 'off', 'Hard', 2]) {
     setPref(SURVIVAL_PREF, junk); assert.equal(survivalTier(), SURVIVAL_DEFAULT, `${JSON.stringify(junk)} names no tier`);   // BOONS-DEFAULT: the default, by name
   }
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const fallback = Math\.max\(0, c\.tiers\.findIndex\(\(\[v\]\) => String\(v\) === String\(c\.default \?\? c\.initial\)\)\);/, 'the bar\'s own fallback is the row\'s default');
   _resetForTests();
 });
@@ -589,7 +589,7 @@ test('SURV-TIERS: the tavern - the house asks after the gold and before the coin
   }
   _resetForTests();
   // both windows: the gold, then the house, then the coin
-  for (const [file, fn] of [['src/ui/tavernWindow.js', '_survivalFood()'], ['src/ui/enhancedTavern.js', 'function pickSurvival(']]) {
+  for (const [file, fn] of [['src/ui/tavernWindow.js', '_survivalFood()'], ['src/ui/enhanced/enhancedTavern.js', 'function pickSurvival(']]) {
     const src = read(file); const at = src.indexOf(fn);
     const part = src.slice(at, src.indexOf('deductGold(h.entity, row.price);', at));
     // INN-WATER (FIELD BUGS 2026-09-30, PIN MOVED): the order's bag names the pack now (`items`, the skins the water asks after) - the call, read to its opening brace
@@ -874,7 +874,7 @@ test('AUDIT SURV-TIERS (the second pass): the needs\' drain is capped where the 
 });
 
 test('AUDIT SURV-TIERS (the second pass): a tent used from the WAGON leaves the wagon - both inventory windows hand the list it came from and every host places off it (one tent had pitched from the wagon and packed into the pack, a new tent a time)', async () => {
-  const { NativeInventoryWindow } = await import('../src/ui/nativeInventory.js');
+  const { NativeInventoryWindow } = await import('../src/ui/native/nativeInventory.js');
   const { createCamps } = await import('../src/scenes/camps.js');
   _resetForTests(); setWorldMinutes(100);
   const entity = { isPlayer: true, items: [], wagonItems: [createSurvivalItem(TEMPLATE.CampingEquipment)], activeEffects: [], stats: { luck: 50 }, spells: [] };
@@ -893,7 +893,7 @@ test('AUDIT SURV-TIERS (the second pass): a tent used from the WAGON leaves the 
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) {
     assert.match(read(f), /placeCamp: \(item, list\) => camps\.placeItem\(item, list \?\? playerEntity\.items \?\? \[\]\),/, `${f}: off the list the item was used from`);
   }
-  assert.match(read('src/ui/enhancedInventory.js'), /place\(act\.item, collection\);/, 'the enhanced window hands its list too');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /place\(act\.item, collection\);/, 'the enhanced window hands its list too');
   _resetForTests(); setWorldMinutes(0);
 });
 

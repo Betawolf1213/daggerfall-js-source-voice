@@ -577,7 +577,7 @@
   },
   {
     "name": "RVN10-page-name-dropped",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "(d?.deed === 'felled' && typeof d.ally === 'string' && d.ally ? `felled ${d.ally}` : d?.deed === 'fled'",
     "new": "(d?.deed === 'fled'",
     "tests": [

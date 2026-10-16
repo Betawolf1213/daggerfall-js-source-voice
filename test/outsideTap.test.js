@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { closeOnOutsideTap } from '../src/ui/enhancedOverlays.js';
+import { closeOnOutsideTap } from '../src/ui/enhanced/enhancedOverlays.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -42,7 +42,7 @@ test('OT1 helper: a primary press on the shell outside the kept selector closes;
 });
 
 test('OT1 wiring: every scrimmed enhanced window closes on a tap outside, the front door\'s account window included', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   // PROFILE2: the pause face carries the profile mark and its window now - with the window open the tap is the
   // window's (it closes, the pause window stands), otherwise the scrim resumes and the mark is inside
   // TIMERS1: and the timers window the hourglass beside the mark opens - its own scrim, its tap closing it alone; the
@@ -73,14 +73,14 @@ test('OT1 wiring: every scrimmed enhanced window closes on a tap outside, the fr
   // PIN MOVED: AUDIT RECOVERY-SET B1 - both account scrims close through `closeAccount`, which will not close over codes
   assert.match(menu, /if \(accountOpen\) \{[\s\S]{0,600}?closeOnOutsideTap\(home, '\.px-win', closeAccount\);/,
     'the account scrim is wired unconditionally - the front door would close on every tap');
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /host\.append\(shell\);\s*\n(\s*\/\/[^\n]*\n)*\s*closeOnOutsideTap\(shell, '\.pack-win, \.loot-win', \(\) => onExit\(\)\);/, 'the pack closes through its own exit, so the drop and the equip cue run');
-  const sb = read('src/ui/enhancedSpellbook.js');
+  const sb = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.equal((sb.match(/closeOnOutsideTap\(shell, '\.px-win', \(\) => onExit\(\)\);/g) ?? []).length, 2, 'the book, empty or not');
   assert.match(sb, /win\.append\(deleteScrim\(\)\);/, 'the YesNo stands INSIDE the window, so a press on it is not outside');
-  assert.match(read('src/ui/enhancedChronicle.js'), /closeOnOutsideTap\(shell, '\.px-win', \(\) => onExit\(\)\);/);
-  assert.match(read('src/ui/enhancedTalk.js'), /closeOnOutsideTap\(shell, '\.talk-panel', \(\) => act\(\(\) => model\.press\('goodbye'\)\)\);/, 'goodbye through the model, the relock riding the tap');
+  assert.match(read('src/ui/enhanced/enhancedChronicle.js'), /closeOnOutsideTap\(shell, '\.px-win', \(\) => onExit\(\)\);/);
+  assert.match(read('src/ui/enhanced/enhancedTalk.js'), /closeOnOutsideTap\(shell, '\.talk-panel', \(\) => act\(\(\) => model\.press\('goodbye'\)\)\);/, 'goodbye through the model, the relock riding the tap');
   // the two that already closed on a tap beside them
   assert.match(read('src/ui/pixelDial.js'), /root\.onclick = \(e\) => \{ if \(e\.target === root\) close\(\); \};/);
-  assert.match(read('src/ui/enhancedBook.js'), /if \(hit === 'outside'\) \{ exit\(\); return; \}/);
+  assert.match(read('src/ui/enhanced/enhancedBook.js'), /if \(hit === 'outside'\) \{ exit\(\); return; \}/);
 });

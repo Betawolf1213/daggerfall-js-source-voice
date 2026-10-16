@@ -32,7 +32,7 @@ import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { midScreenText } from '../src/ui/midScreenText.js';
 import { tickPlayerTorch } from '../src/systems/playerTorch.js';
-import { announceSkillRaise } from '../src/ui/levelNotice.js';
+import { announceSkillRaise } from '../src/ui/levelUp/levelNotice.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { ClimbingState } from '../src/player/climbing.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';

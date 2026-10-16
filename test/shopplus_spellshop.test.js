@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
-import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
+import { PORT_SPECS } from '../src/ui/enhanced/enhancedPorts.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 
 const fx = (type, subType, o = {}) => ({ type, subType, magnitudeBaseLow: 0, magnitudeBaseHigh: 0, durationBase: 0, chanceBase: 0, ...o });
@@ -53,7 +53,7 @@ test('SHOP-PLUS: choosing a row selects it; the chosen spell says its effects wi
   assert.equal(w.selected.name, 'Frostbite');
   const fx = find(v.blocks, (b) => b.type === 'rows' && b.key === 'fx');
   assert.deepEqual(fx.items.map((r) => r.label), ['Damage Health', 'Continuous Damage Fatigue']);
-  // SB-FX: MOVED with the book's reading (ui/enhancedSpellbook.js effectWords) - the component's header row of DFU's
+  // SB-FX: MOVED with the book's reading (ui/enhanced/enhancedSpellbook.js effectWords) - the component's header row of DFU's
   // spellbook description, over ClassicEffectRecordToEffectSettings' settings, and Damage Health's magnitude alone
   assert.equal(fx.items[0].sub, 'Magnitude: 4 - 9 + 0 - 0 per 1 level(s)');
   assert.equal(fx.items[1].sub, 'Duration: 2 + 0 per 1 level(s) · Magnitude: 1 - 3 + 0 - 0 per 1 level(s)');

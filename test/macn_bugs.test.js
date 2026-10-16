@@ -30,9 +30,9 @@ import { setItemFields, itemBaseValue, templateByIndex, mintCondition } from '..
 import { createWeapon, bowDamageArrow, assignEnemyEquipment, equipmentItems, ARMOR_ENUM, WEAPONS_ENUM } from '../src/combat/enemyEquipment.js';
 import { stacksWith, isEnchanted } from '../src/systems/inventory.js';
 import { tradeCost } from '../src/systems/tradeModes.js';
-import { NativeTradeWindow, TRADE_RECTS, initialTradeTab, _setTradeArtForTests } from '../src/ui/nativeTrade.js';
-import { INV_RECTS, TABS, tabAccepts, filterByTab, NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { scrollerHit, scrollThumbSpan, beginScrollerDrag, dragScrollerIndex, LIST_SLOTS, SCROLLBAR_Y, SCROLLBAR_H } from '../src/ui/itemScroller.js';
+import { NativeTradeWindow, TRADE_RECTS, initialTradeTab, _setTradeArtForTests } from '../src/ui/native/nativeTrade.js';
+import { INV_RECTS, TABS, tabAccepts, filterByTab, NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
+import { scrollerHit, scrollThumbSpan, beginScrollerDrag, dragScrollerIndex, LIST_SLOTS, SCROLLBAR_Y, SCROLLBAR_H } from '../src/ui/item/itemScroller.js';
 import { dragScrollIndex } from '../src/ui/verticalScrollBar.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
@@ -239,7 +239,7 @@ test('MAC-N2: tabAccepts is AddLocalItem verbatim, and filterByTab is FilterLoca
   assert.equal(on('ingredients'), 1);
   assert.equal(on('clothing'), 1);
   assert.equal(filterByTab(items, 'weapons').length, 2, 'FilterLocalItems drops the worn one first');
-  assert.match(rd('src/ui/nativeInventory.js'), /export function filterByTab\(items, tab\) \{\s*return items\.filter\(\(it\) => \{\s*if \(isEquipped\(it\)\) return false;[^\n]*\n\s*return tabAccepts\(it, tab\);/,
+  assert.match(rd('src/ui/native/nativeInventory.js'), /export function filterByTab\(items, tab\) \{\s*return items\.filter\(\(it\) => \{\s*if \(isEquipped\(it\)\) return false;[^\n]*\n\s*return tabAccepts\(it, tab\);/,
     'one law, read by both windows');
 });
 
@@ -250,7 +250,7 @@ test('MAC-N2: the four tab hotkeys work on the shop screen, in the parent\'s add
   w.input('F3'); assert.equal(w.tab, 'clothing', 'InventoryClothing');
   w.input('F1'); assert.equal(w.tab, 'weapons', 'InventoryWeapons');
   assert.equal(w.done, false, 'none of them closed anything');
-  assert.match(rd('src/ui/nativeTrade.js'), /const hit = firstHotkey\(\[\s*\.\.\.Object\.keys\(TAB_BUTTONS\),\s*\.\.\.\(this\.mode === 'Buy' \? \['TradeSteal'\] : \[\]\),\s*\.\.\.\(action \? \[action\] : \[\]\),\s*'TradeClear',\s*'TradeExit',\s*\], code, e\);/,
+  assert.match(rd('src/ui/native/nativeTrade.js'), /const hit = firstHotkey\(\[\s*\.\.\.Object\.keys\(TAB_BUTTONS\),\s*\.\.\.\(this\.mode === 'Buy' \? \['TradeSteal'\] : \[\]\),\s*\.\.\.\(action \? \[action\] : \[\]\),\s*'TradeClear',\s*'TradeExit',\s*\], code, e\);/,
     'SetupTabPageButtons (:228) before SetupActionButtons (:229) before the exit button (:249)');
   w.input('KeyX'); assert.equal(w.done, true, 'and exit is still X at the tail');
 });
@@ -358,7 +358,7 @@ test('MAC-N2: the selected tab is drawn as the INVE01I0 cutout over the base, an
     assert.deepEqual(gold[0].src, { u0: x / 320, v0: y / 200, u1: (x + cw) / 320, v1: (y + ch) / 200 }, 'the SUBRECT of the sheet, not the whole of it');
     assert.ok(calls.findIndex((c) => c.tex === 'base') < calls.indexOf(gold[0]), 'over the base');
   } finally { _setTradeArtForTests(null); }
-  assert.match(rd('src/ui/nativeTrade.js'), /loadImg\(deps, 'INVE01I0\.IMG'\)/, 'goldTexture (:757) is loaded with the rest');
+  assert.match(rd('src/ui/native/nativeTrade.js'), /loadImg\(deps, 'INVE01I0\.IMG'\)/, 'goldTexture (:757) is loaded with the rest');
 });
 
 test('MAC-N2: every host that hands a window its pointer hands the trade window the event and the release it drags by', () => {
@@ -434,7 +434,7 @@ test('MAC-N3: main.js publishes before BOTH world boots the front door reaches, 
   const main = rd('src/main.js');
   const before = main.match(/publishBootParams\(params\);[^\n]*\n\s*return bootWorld\(canvas, renderer, params, status\);/g) ?? [];
   assert.equal(before.length, 2, 'the enhanced menu\'s door and the classic Begin door');
-  assert.match(main, /for \(const k of BOOT_DOOR_KEYS\) params\.delete\(k\);\s*\n\s*publishBootParams\(params\);\s*\n\s*const \{ runEnhancedMenu \} = await import\('\.\/ui\/enhancedMenu\.js'\);/,
+  assert.match(main, /for \(const k of BOOT_DOOR_KEYS\) params\.delete\(k\);\s*\n\s*publishBootParams\(params\);\s*\n\s*const \{ runEnhancedMenu \} = await import\('\.\/ui\/enhanced\/enhancedMenu\.js'\);/,
     'a stale ?online off a previous session\'s URL must not lock the Mods pane of a player who has not chosen yet');
   // BOOT_DOOR_KEYS is exactly the set main.js decides per choice - derived from the source, not listed twice
   const decided = [...new Set([...main.matchAll(/params\.(?:set|delete)\('(\w+)'/g)].map((m) => m[1]))].sort();

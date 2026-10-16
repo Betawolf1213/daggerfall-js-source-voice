@@ -1,4 +1,4 @@
-// AUDIT 32 (2026-09-30, Mac: "Audit this") - PROF7'S PAGES AND HUD AS THE AUDIT FOUND THEM (src/ui/profPages.js,
+// AUDIT 32 (2026-09-30, Mac: "Audit this") - PROF7'S PAGES AND HUD AS THE AUDIT FOUND THEM (src/ui/professions/profPages.js,
 // profHud.js, domRepaint.js, enhancedMenu.js, enhancedPlusStyle.js; src/systems/stitchAct.js, heatAct.js): a press
 // judged at its own moment, the act's button pressed on the pointer's down and its Space and Enter the act's (P1); one
 // act a page (P2); a held key's repeats no presses (P4); the loom's cures held while it sews, a craft's own flag in
@@ -17,11 +17,11 @@ import { STITCH_ACT, beatAt, onBeat, glowAt } from '../src/net/recipeLaw.js';
 import { createStitchAct, PRESS_LEAD_MAX_S } from '../src/systems/stitchAct.js';
 import { createHeatAct } from '../src/systems/heatAct.js';
 import { createTraceAct } from '../src/systems/traceAct.js';
-import { createProfHud } from '../src/ui/profHud.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
 import { repaintKeepingScroll } from '../src/ui/domRepaint.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, setDownProfAct, profActUnderWay, _loomForTests,
-} from '../src/ui/profPages.js';
+} from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -240,7 +240,7 @@ test('AUDIT 32 P12: Escape sets an act under way down before it closes the windo
     p.draw();
     assert.match(p.text(), /You set the needle down; nothing is spent\./);
     assert.deepEqual(p.calls.filter((c) => c[0] === 'craft'), []);
-    assert.match(src('src/ui/enhancedMenu.js'), /: profActUnderWay\(\) \? \(\) => \{ setDownProfAct\(\); render\(\); \}\n\s*: confirming/, 'the back stack asks it first');
+    assert.match(src('src/ui/enhanced/enhancedMenu.js'), /: profActUnderWay\(\) \? \(\) => \{ setDownProfAct\(\); render\(\); \}\n\s*: confirming/, 'the back stack asks it first');
   } finally { resetProfPages(); setProfessionsPages(null); }
 });
 
@@ -273,18 +273,18 @@ test('AUDIT 32 P3/P13: the pause window\'s redraw keeps the field typed in and i
   repaintKeepingScroll(host, () => { n = build(); });
   assert.equal(document.activeElement, document.body, 'without the option (the inventory, the wizard) nothing is kept');
   host.remove();
-  assert.match(src('src/ui/enhancedMenu.js'), /repaintKeepingScroll\(app, \(\) => renderInto\(\), \{ focus: true \}\);/);
-  assert.doesNotMatch(src('src/ui/profPages.js'), /setSelectionRange\?\.\(s\.value\.length, s\.value\.length\)/, 'P13');
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /repaintKeepingScroll\(app, \(\) => renderInto\(\), \{ focus: true \}\);/);
+  assert.doesNotMatch(src('src/ui/professions/profPages.js'), /setSelectionRange\?\.\(s\.value\.length, s\.value\.length\)/, 'P13');
 });
 
 // ─── P7 + P9: THE RULES CHROMIUM MEASURED ────────────────────────────
 
 test('AUDIT 32 P7/P9: the work rows placed, never flowed (measured in Chromium at 360 and 800); the body\'s prompt wraps inside the screen, the choice key\'s line its own on a phone', () => {
-  const css = src('src/ui/enhancedPlusStyle.js');
+  const css = src('src/ui/enhanced/enhancedPlusStyle.js');
   assert.match(css, /\.prof-smelt \{ display: grid; grid-template-columns: minmax\(0, 1fr\) 64px auto;/);
   assert.match(css, /\.prof-smelt b \{ grid-column: 1; grid-row: 1; \} \.prof-smelt \.prof-qty \{ grid-column: 2; grid-row: 1; \}/);
   assert.match(css, /\.prof-smelt \.act \{ grid-column: 3; grid-row: 1; \} \.prof-smelt \.prof-split \{ grid-column: 1 \/ -1; grid-row: 2; \}/);
   assert.match(css, /\.prof-prompt \{ position: fixed;[\s\S]*?width: max-content; max-width: calc\(100vw - 24px\); box-sizing: border-box; white-space: normal;/);
   assert.match(css, /@media \(max-width: 560px\) \{ \.prof-prompt \.prof-alt \{ display: block; \} \}/);
-  assert.match(src('src/ui/profHud.js'), /d\.className = 'dim prof-alt';/);
+  assert.match(src('src/ui/professions/profHud.js'), /d\.className = 'dim prof-alt';/);
 });

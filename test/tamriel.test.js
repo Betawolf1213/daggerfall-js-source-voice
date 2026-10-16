@@ -8,7 +8,7 @@
 // pixel is Tamriel's), the GEOGRAPHY (world/tamriel/tamrielGeography.js - rings of named vertices whose shared edges ARE the
 // borders, held by classifyEdges), the INK (ui/tamrielInk.js - clipped to the outside of the Bay, stitched to its
 // coast, painted only when the view leaves it) and the RASTER (world/tamriel/tamrielRaster.js - the frame in WOODS' own
-// shape, the Bay's bytes composed over it). Then the clamp's origin (ui/inkMap.js), the continent band, the switch
+// shape, the Bay's bytes composed over it). Then the clamp's origin (ui/ink/inkMap.js), the continent band, the switch
 // and the source sweeps. The window's own behaviour is in test/heldmap.test.js (TAMRIEL1 there).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -28,13 +28,13 @@ import {
   paintTamrielInk, tamrielPlaceAt,
 } from '../src/ui/tamrielInk.js';
 import { rasterizeTamriel, composeBay, PROVINCE_NONE, SHORE_BYTE, SNOW_BYTE } from '../src/world/tamriel/tamrielRaster.js';
-import { clampView, scaleMinOf, CONTINENT_BAND, BAND_MARKS, CARET_STEP, buildInkModel, paintInkStatic, PEN, penOf, spacedName } from '../src/ui/inkMap.js';
+import { clampView, scaleMinOf, CONTINENT_BAND, BAND_MARKS, CARET_STEP, buildInkModel, paintInkStatic, PEN, penOf, spacedName } from '../src/ui/ink/inkMap.js';
 import { PROVINCE_NAMES, INERT_REGION } from '../src/ui/provinceMap.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { PIXEL_UNITS } from '../src/net/wire.js';
 import { FEATURES } from '../src/systems/features.js';
-import { tamrielMapOn } from '../src/ui/mapSkin.js';
+import { tamrielMapOn } from '../src/ui/map/mapSkin.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { SNOWLINE_BYTE } from '../src/ui/overworldModel.js';
 

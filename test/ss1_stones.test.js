@@ -11,14 +11,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sigilStone, restackStones, isSigilStone, SIGIL_STONE_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
 import { isBound, BOUND_LINE, BOUND_TRADE_TEXT, BOUND_KEEPS, boundRefusesPut, boundText, unbound } from '../src/systems/item/itemBound.js';
-import { NativeInventoryWindow, tabAccepts } from '../src/ui/nativeInventory.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
+import { NativeInventoryWindow, tabAccepts } from '../src/ui/native/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
 import { mountBrokerWindow } from '../src/ui/brokerWindow.js';
 import { brokerStock, brokerSale, brokerDay, BROKER_DAY_MS, BROKER_PRICES, BROKER_DISMANTLE_SHARE, dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLE_INSTEAD, DISMANTLE_WORN, DISMANTLED, stonesText, brokerBought, markBrokerBought, _resetBrokerForTests } from '../src/systems/sigil/sigilBroker.js';
 import { stonesText as windowStonesText } from '../src/ui/brokerWindow.js';
 import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';
-import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
+import { destroyEnhancedNotice } from '../src/ui/enhanced/enhancedNotice.js';
 import { fitBoxRows, BOX_FIT_W, layoutMessageBox } from '../src/ui/messageBox.js';
 import { measureText } from '../src/ui/text.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
@@ -35,7 +35,7 @@ import { addItem, stacksWith, splitStack } from '../src/systems/inventory.js';
 import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { restorePlayer, snapshotPlayer } from '../src/systems/save/save.js';
 import { withDom, fakeDom } from './invdrag.mjs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -182,12 +182,12 @@ test('SS1 the card says a bound piece is bound, in the lock\'s own line style wi
       assert.deepEqual(host.querySelectorAll('.boundline'), [], 'a gem says nothing of it');
     } finally { view.unmount(); }
   });
-  assert.match(read('src/ui/enhancedPlusStyle.js'), /\.card \.lockline, \.card \.boundline, \.pack-shell \.card p\.lockline, \.pack-shell \.card p\.boundline \{/, 'the lock\'s line style - on the pack\'s own card too, over `.pack-shell .card p` (AUDIT SS)');
-  assert.doesNotMatch(read('src/ui/enhancedPlusStyle.js'), /\.boundline::before/, 'without its padlock');
+  assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /\.card \.lockline, \.card \.boundline, \.pack-shell \.card p\.lockline, \.pack-shell \.card p\.boundline \{/, 'the lock\'s line style - on the pack\'s own card too, over `.pack-shell .card p` (AUDIT SS)');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedPlusStyle.js'), /\.boundline::before/, 'without its padlock');
 });
 
 test('SS2 the Broker\'s price column is one width in every row, wide enough for a two-digit price - "12 Deadlands Embers" measures 108px in the window\'s 12px face, "4 Deadlands Embers" 101 (tools/brokerProbe.mjs measures it on the real page; each row is its own grid, so a column sized by its text moved the Regalia\'s price 7px out of the line) (mutants: the price column sized by its text)', () => {
-  const css = read('src/ui/enhancedPlusStyle.js');
+  const css = read('src/ui/enhanced/enhancedPlusStyle.js');
   const grid = /\.broker-offer \{ display: grid; grid-template-columns: 48px minmax\(0, 1fr\) (\d+)px 148px;/.exec(css);
   assert.ok(grid, 'the price column has a width of its own');
   assert.ok(Number(grid[1]) >= 109, `wide enough for the widest price (${grid[1]}px)`);
@@ -657,8 +657,8 @@ test('SS5 a classic box holds its rows on the screen: a row wider than fourteen 
   assert.deepEqual(fitBoxRows(font, ['a b', 'c']), ['a b', 'c'], 'string rows too');
   assert.deepEqual(fitBoxRows(null, [{ text: long }]), [{ text: long }], 'no font: nothing to measure by');
   // the three classic doors a refusal or the dismantle's question comes through (pinned at their one line each)
-  assert.match(read('src/ui/nativeInventory.js'), /const rows = box\.painting \? box\.rows : fitBoxRows\(font, box\.rows\);/, 'the pack\'s boxes - never a painting\'s, whose picture wrapping would push off the panel');
-  assert.match(read('src/ui/nativeTrade.js'), /this\._boxLayout = layoutMessageBox\(font, fitBoxRows\(font, this\.box\.rows\), buttons\);/, 'the counter\'s box');
+  assert.match(read('src/ui/native/nativeInventory.js'), /const rows = box\.painting \? box\.rows : fitBoxRows\(font, box\.rows\);/, 'the pack\'s boxes - never a painting\'s, whose picture wrapping would push off the panel');
+  assert.match(read('src/ui/native/nativeTrade.js'), /this\._boxLayout = layoutMessageBox\(font, fitBoxRows\(font, this\.box\.rows\), buttons\);/, 'the counter\'s box');
   assert.match(read('src/ui/yesNoBox.js'), /const box = layoutMessageBox\(font, fitBoxRows\(font, this\.rows\), this\.okOnly \? \[MB_BUTTONS\.OK\] : \[MB_BUTTONS\.Yes, MB_BUTTONS\.No\]\);/, 'the Yes/No box (and SOFTCAP3\'s OK box)');
 });
 
@@ -773,7 +773,7 @@ test('AUDIT SS nothing bound goes out on the wire: a building\'s container recor
   const wm = read('src/scenes/worldModes.js');
   assert.match(wm, /shopBuysItem\(interiorBuilding\.buildingType, it\) && !isEquipped\(it\) && !isBound\(it\) && !lockRefuses\(it, 'sell'\) && !isSummoned\(it\)\);/, 'the keyed shelf lists neither');   // PIN MOVED (CRAFT-WORTH): nor a conjured piece
   assert.match(wm, /function doSell\(shelf, it\) \{\n    if \(isBound\(it\) \|\| lockRefuses\(it, 'sell'\)\) return 0;/, 'and sells neither');
-  assert.match(read('src/ui/enhancedTrade.js'), /const item = selected\.item;\n  if \(isBound\(item\) \|\| lockRefuses\(item, 'sell'\)\) return;/, 'the dead quick sell refuses both');
+  assert.match(read('src/ui/enhanced/enhancedTrade.js'), /const item = selected\.item;\n  if \(isBound\(item\) \|\| lockRefuses\(item, 'sell'\)\) return;/, 'the dead quick sell refuses both');
   assert.match(read('src/scenes/world.js'), /if \(!onlineOn && modes\?\.gateArenaDay\?\.\(\) != null\) \{ ejectFromCourt\(COURT_TEXT\.collapse\); gateCourt\?\.leave\(\);/, 'offline, the floor into the pack on the way out');
 });
 

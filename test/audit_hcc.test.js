@@ -17,7 +17,7 @@ import { STORAGE_CONTEXT } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool, KEY_HORSE } from '../src/scenes/horseCartPool.js';
 import { HorseNameTooltip, HORSE_TOOLTIP_Y } from '../src/ui/horseNameTooltip.js';
 import { InputMessageBoxWindow, INPUT_BOX_HINT } from '../src/ui/inputMessageBox.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const V = 'horse-cart-and-cargo';
@@ -66,7 +66,7 @@ test('AUDIT HCC K1: a mod-settings file that SAVED the first departure\'s F7 / F
 });
 
 test('AUDIT HCC K4: a TextKey\'s capture has a clear that writes None (the controls pane\'s own control and class) - the capture alone could never disable one', () => {
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const clear = el\('button', 'act ctl-clear', '\\u2715'\);[\s\S]{0,200}clear\.onclick = \(\) => \{ b\.textContent = setModSetting\(vendor, key, KEYCODE_NONE\); \};\n\s+ctl\.append\(b, clear\);/);
   for (const k of ['Hotkeys.QuickMountDismount', 'Hotkeys.SummonTransport']) {
     assert.doesNotMatch(MOD_SETTINGS[V].keys[k].description, /Enter a Unity KeyCode name/, `${k}: the note says the port's control, not the mod's text box`);
@@ -123,7 +123,7 @@ test('AUDIT HCC I1: the exit request is IsPlayerInsideDungeon && allowDungeonWag
 });
 
 test('AUDIT HCC I2: the ENHANCED pack takes the opening refusal as its notice and carries the granted flag into its session (mutants: either dropped - a silent pack, or "Access your wagon by activating the dungeon exit" after doing exactly that)', () => {
-  const inv = rd('src/ui/enhancedInventory.js');
+  const inv = rd('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /dungeonExitAccessGranted: !!open\.dungeonExitAccessGranted,/);
   assert.match(inv, /if \(open\.refusal\?\.text\) notice = open\.refusal\.text;\n\s+refresh\(\);\n\s+render\(\);/);
 });
@@ -161,7 +161,7 @@ test('AUDIT HCC U6: HorseNameTooltipController\'s label - the classic face is DF
   void KEY_HORSE;
   // the hosts gate it: outdoors, walking, IsPlayingGame, and only where the plaque is not already naming it
   assert.match(rd('src/scenes/world.js'), /const tipOn = hcc\.enabled && walkMode && _mode\(\) === 'exterior' && !worldPlaqueOn\(\) && !gamePaused\(\) && !pointerSurfaces\.size;/);
-  assert.match(rd('src/ui/hud.js'), /if \(hudDrawn\) horseNameTooltip\.draw\(renderer, canvas, font\); else horseNameTooltip\.hide\(\);/);
+  assert.match(rd('src/ui/hud/hud.js'), /if \(hudDrawn\) horseNameTooltip\.draw\(renderer, canvas, font\); else horseNameTooltip\.hide\(\);/);
 });
 
 test('AUDIT HCC U5: the input box\'s classic face is untouched - the parchment on the classic skin, the enhanced window only under the enhanced one, and its caption says what closes a FIELD', () => {

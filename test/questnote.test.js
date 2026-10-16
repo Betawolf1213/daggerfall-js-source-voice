@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { ServiceFlowWindow } from '../src/ui/guildServiceWindows.js';
-import { LevelNotices, NOTICE_QUEST, questSlainTitle, ANNOUNCE_MS, announceQuestFoeSlain } from '../src/ui/levelNotice.js';
+import { LevelNotices, NOTICE_QUEST, questSlainTitle, ANNOUNCE_MS, announceQuestFoeSlain } from '../src/ui/levelUp/levelNotice.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');

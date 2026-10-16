@@ -2,7 +2,7 @@
 // KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; bible/06-Systems/Localization-Arc.md, "KG-SET:
 // the Iliac set's words"): THE SET'S WORDS IN THE PLAYER'S LANGUAGE - every card's and every holding's rules and its
 // flavor, said through the text core (`t`, Port_Strings) when they are shown: the face painter's rules box
-// (render/iliacCardFaces.js), the binder's look and its tiles' titles (ui/cardBinderPage.js), a card item's lines
+// (render/iliacCardFaces.js), the binder's look and its tiles' titles (ui/card/cardBinderPage.js), a card item's lines
 // (systems/iliac/iliacItems.js) and the table panel's card titles (ui/iliacTableHud.js).
 //
 // WHY HERE, NOT IN THE CATALOG: the catalog (net/iliac/iliacCards.js) is relay law - it imports nothing, so the relay's bundle

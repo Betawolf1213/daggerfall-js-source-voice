@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-SET-the-test-rooms-button-live",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      disabled: !who || save.testRoom,",
     "new": "      disabled: !who,",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-SET-the-lines-left-to-the-cards-rule",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .card .sigilbox p.sigil-effect { font-size: 13px;",
     "new": ".pack-shell .card .sigilbox-x p.sigil-effect { font-size: 13px;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-SET-the-dormant-colour-lost",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .card .sigilbox[data-stage=\"dormant\"] p.sigil-effect, .pack-shell .card .sigilbox[data-stage=\"dormant\"] p.sigil-progress { color: #9aa6a3; }\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-SET-the-card-never-fitted",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  fitTip(tipEl);   // AUDIT SET U13\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-SET-a-step-skipped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "export const TIP_FITS = Object.freeze(['tip-compact', 'tip-tight']);",
     "new": "export const TIP_FITS = Object.freeze(['tip-tight']);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-SET-shed-with-room-to-spare",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (!(node.scrollHeight > room)) return;",
     "new": "    if (false) return;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-SET-the-tight-card-keeping-the-tiers-words",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".inv-tip.tip-tight .bigicon, .inv-tip.tip-tight .set-tier-text, .inv-tip.tip-tight .sigil-note { display: none; }",
     "new": ".inv-tip.tip-tight .bigicon, .inv-tip.tip-tight .sigil-note { display: none; }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-SET-the-item-lists-tip-unwrapped",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "old": "const tip = new ToolTip(null, { wrapFrom: 1 });",
     "new": "const tip = new ToolTip();",
     "tests": [

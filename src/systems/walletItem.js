@@ -8,7 +8,7 @@
 // door that reads or spends one reads it where it always did: the bank's letters and the court's fines
 // (systems/banking.js, court.js), the Broker's embers (sigilBroker.js), the Reforge's shards (reforge.js), the save, the
 // realm's customs and its gold law. What the wallet changes is where the ENHANCED pack shows them - in the wallet's
-// sheet, not on its pages (ui/enhancedInventory.js packModel) - beside the two currencies that are no pieces at all: the
+// sheet, not on its pages (ui/enhanced/enhancedInventory.js packModel) - beside the two currencies that are no pieces at all: the
 // purse's gold (`entity.goldPieces`, E4's counter) and the account's silver (online, the marks book's balance -
 // `setWalletSilver`). The classic window is DFU's and keeps DFU's four tabs; there the wallet's Use says what it holds.
 //

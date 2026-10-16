@@ -739,7 +739,7 @@
   },
   {
     "name": "PROF4-smithing-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const PRACTISED = Object.freeze(['herbalism', 'mining', 'hunting', 'fishing', 'logging', 'smithing', 'building', 'outfitting', 'provisioning', 'enchanting']);",
     "new": "const PRACTISED = Object.freeze(['herbalism', 'mining', 'hunting', 'fishing', 'logging', 'building', 'outfitting', 'provisioning', 'enchanting']);",
     "tests": [
@@ -749,7 +749,7 @@
   },
   {
     "name": "PROF4-workbench-no-linen",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (sale?.counter === 'furnisher' && have < inp.n && bench.kind === 'shop' && !bench.yard) counterBuy(",
     "new": "      if (sale?.counter === 'smith' && have < inp.n && bench.kind === 'shop' && !bench.yard) counterBuy(",
     "tests": [
@@ -758,7 +758,7 @@
   },
   {
     "name": "PROF4-bench-no-heartwood",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "        _bench.actRecipe = r.id; _bench.actWood = _bench.heartwood && takesHeartwood(r);",
     "new": "        _bench.actRecipe = r.id; _bench.actWood = false;",
     "tests": [
@@ -767,7 +767,7 @@
   },
   {
     "name": "PROF4-anvil-lists-basket",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const anvilRecipes = (family, metal = null) => RECIPES.filter((r) => r.profession === 'smithing' && r.family === family",
     "new": "export const anvilRecipes = (family, metal = null) => RECIPES.filter((r) => r.family === family",
     "tests": [
@@ -776,7 +776,7 @@
   },
   {
     "name": "PROF4-forge-no-burns",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  const burns = BURN_RECIPES.filter((r) => workOf(book, r.inputs[0].key) > 0);",
     "new": "  const burns = [];",
     "tests": [

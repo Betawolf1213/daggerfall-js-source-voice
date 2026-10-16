@@ -73,7 +73,7 @@
   },
   {
     "name": "DISC12-pack-right-hand-always",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "slots?.[deps.usingRightHand?.() === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand]",
     "new": "slots?.[EQUIP_SLOTS.RightHand]",
     "tests": [

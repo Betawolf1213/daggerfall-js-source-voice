@@ -11,7 +11,7 @@
 // until the fire is swept off the screen. What the fire has not yet taken is tinted toward the Deadlands' red as it
 // closes.
 //
-// Output premultiplied: the layer's canvas is composited over the game's by the page (ui/gateVeil.js holds the canvas,
+// Output premultiplied: the layer's canvas is composited over the game's by the page (ui/gate/gateVeil.js holds the canvas,
 // its loop and its sounds; this module is the law and the shader, and imports nothing of the DOM).
 // Not a DFU member. Ledger A (WB).
 import { buildProgram } from './glProgram.js';

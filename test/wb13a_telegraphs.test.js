@@ -15,7 +15,7 @@ import { inAttack } from '../src/net/gate/gateStrike.js';
 import { attackColor } from '../src/world/gate/gateBoss.js';
 import { hostShapes } from '../src/scenes/gateHost.js';
 import { perilAt, wayOut, screenBearing, PERIL_RIM_M } from '../src/scenes/gateCourt.js';
-import { groundViewModel, GROUND_VIEW_TEXT, PERIL_EDGE, PERIL_EDGE_NOW, PERIL_ARROW_STEP } from '../src/ui/gateGroundView.js';
+import { groundViewModel, GROUND_VIEW_TEXT, PERIL_EDGE, PERIL_EDGE_NOW, PERIL_ARROW_STEP } from '../src/ui/gate/gateGroundView.js';
 
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });
 /** A fighter's run, m/s (net/gate/gateBrain.js's escape law). */

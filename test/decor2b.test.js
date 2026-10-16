@@ -2,7 +2,7 @@
 // "DF's own, delivered", and a delivered piece takes its look from Daggerfall's own pieces of its kind - "You pick it"):
 // THE FURNISHER. The law's furniture on a model (net/decorLaw.js), the furnisher's pieces and how each stands
 // (systems/decor/decorFurnish.js), the Furniture Store's stock (systems/shopStock.js), the shop screens' carry gate and their
-// steal (ui/nativeTrade.js driven, ui/enhancedTrade.js by source), the save's deliveries (systems/save/save.js), the panel's
+// steal (ui/native/nativeTrade.js driven, ui/enhanced/enhancedTrade.js by source), the save's deliveries (systems/save/save.js), the panel's
 // look view (ui/decorPanel.js), the tool setting furniture down as its look and taking it back (scenes/decorTool.js),
 // and the host's wiring by source. The service's half is pinned with the service (decor1.test.js).
 // `06-Systems/Online-Arc.md` DECOR2.
@@ -19,14 +19,14 @@ import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot/loot.js';
 import { stockShopShelf, SHOP_ITEM_GROUPS, FURNISHER_CHANCE, isShop, shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { planTake } from '../src/systems/item/itemTransfer.js';
-import { NativeTradeWindow, TRADE_RECTS } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow, TRADE_RECTS } from '../src/ui/native/nativeTrade.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { decorCatalogue, collectDecor } from '../src/systems/decor/decorCatalogue.js';
 import {
   createDecorPanel, decorFurnishLine, decorBackTo, decorPlacedSub, decorRowSub, DECOR_LOOK_BUTTON, DECOR_LOOK_LINE,
 } from '../src/ui/decorPanel.js';
 import { decorLookEntry } from '../src/scenes/decorTool.js';
-import { itemLine } from '../src/ui/enhancedInventory.js';
+import { itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { settle, fakeDoc, fakeWin, all, one, catalogue, rows, rmb, toolRig } from './decorFakes.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -161,7 +161,7 @@ test('DECOR2b the shop screens: a piece of furniture is staged whatever it weigh
   try { const [x, y, rw, rh] = TRADE_RECTS.steal; bare.w.click(x + rw / 2, y + rh / 2); } finally { Math.random = real; }
   assert.deepEqual(bare.pack.map((it) => it.templateIndex), [229], 'carried as before');
   // the enhanced screen, by source
-  const e = src('src/ui/enhancedTrade.js');
+  const e = src('src/ui/enhanced/enhancedTrade.js');
   assert.match(e, /if \(inBuy\(\)\) return buyPlan\(item\)\.ok;/, 'the selection\'s dry run asks the one gate');
   assert.match(e, /function pickRemote\(item\) \{\n  if \(inBuy\(\)\) \{\n    const plan = buyPlan\(item\);/, 'and so does the click');
   assert.match(e, /function buyPlan\(item\) \{\n  if \(isFurnishing\(item\)\) return \{ ok: true, amount: item\.stackCount \?\? 1 \};\n  return planTake\(item, \{ bag: \[\.\.\.deps\.packItems\(\), \.\.\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\], entity: deps\.entity \?\? null \}\);/);
@@ -429,7 +429,7 @@ test('DECOR2b the host (worldModes.js) by source: the tool reads the deliveries;
   assert.match(m, /if \(own\.length\) say\(ownBackLines\(own, decorOwnBackLine\)\);/, 'a sold house or ship');
   assert.match(m, /homeSoldLine\(r\.refund, r\.decorBack, r\.rent \?\? 0\) \+ \(own\.length \? ` \$\{ownBackLines\(own, decorOwnBackLine\)\}` : ''\)/, 'a sold online home');
   assert.match(m, /if \(back\.length\) say\(ownBackLines\(back, \(n\) =>/, 'the strays');
-  const n = src('src/ui/nativeTrade.js');
+  const n = src('src/ui/native/nativeTrade.js');
   assert.match(n, /this\._deliverFurniture\(this\.basket\);[^\n]*\n\s*transferAll\(this\.basket, this\.hooks\.packItems\(\)\);/);
   assert.match(n, /const plan = isFurnishing\(item\) \? \{ ok: true, amount: item\.stackCount \?\? 1 \} : planTake\(item, \{\n\s*bag: \[\.\.\.this\.hooks\.packItems\(\), \.\.\.this\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\],/);
   const save = src('src/systems/save/save.js');

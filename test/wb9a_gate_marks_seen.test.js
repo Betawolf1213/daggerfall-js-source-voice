@@ -6,7 +6,7 @@
 // sign, name and line, his aspect in its colour), and the marks' card - near the gate before it is entered, and as a
 // fighter steps into the court - each mark with its line and how to meet it.
 //
-// Pinned here: the view (ui/gateMarksView.js marksViewOf - every mark in the tables has a sign and a way to meet it),
+// Pinned here: the view (ui/gate/gateMarksView.js marksViewOf - every mark in the tables has a sign and a way to meet it),
 // the card's clock (it stands while he is read and fades), its node (made once, written on change, hidden with the
 // HUD), the bar's row (written when the marks change, never a frame), the gate's card (near an unentered gate, gone
 // when it collapses), and the court's card (from the step in, never for a Warden already fallen, never over the fire).
@@ -16,10 +16,10 @@ import assert from 'node:assert/strict';
 import {
   marksViewOf, marksCardModel, drawGateMarksCard, destroyGateMarksCard, markIconSvg, aspectCss,
   MARK_ICONS, MARK_TIPS, ASPECT_ELEMENT, MARKS_CARD_ARRIVE_MS, MARKS_CARD_FADE_MS, MARKS_CARD_TEXT, MARKS_CARD_CSS,
-} from '../src/ui/gateMarksView.js';
+} from '../src/ui/gate/gateMarksView.js';
 import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
 import { ASPECT_COLORS, EMBER_COLOR } from '../src/world/gate/gateBoss.js';
-import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gateBossBar.js';
+import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { createGatePool } from '../src/scenes/gatePool.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { gateTimes, gateModsOf, gateBossOf } from '../src/net/gate/gateLaw.js';
@@ -117,7 +117,7 @@ test('WB9a the card\'s node: made once, written when its marks change (never its
   assert.equal(styles.filter((s) => s.textContent === MARKS_CARD_CSS).length, 1, 'the sheet, once');
   for (const c of ['wb-marks-card', 'wb-marks-title', 'wb-marks-sub', 'wb-marks-name', 'wb-marks-text', 'wb-marks-tip']) {
     assert.match(MARKS_CARD_CSS, new RegExp(`\\.${c} \\{`), c);
-    assert.match(read('src/ui/enhancedPlusStyle.js'), new RegExp(`body \\.${c}\\b`), `${c} is dressed under Plus`);
+    assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), new RegExp(`body \\.${c}\\b`), `${c} is dressed under Plus`);
   }
   destroyGateMarksCard();
   assert.ok(root.gone);

@@ -12,7 +12,7 @@ import { drawRigSpriteBox } from '../src/render/characterSprite.js';
 import { multiply, perspective, lookAt } from '../src/world/mat4.js';
 import { setPref, getPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { CATEGORIES, categoryOf } from '../src/ui/settingsMap.js';
+import { CATEGORIES, categoryOf } from '../src/ui/settings/settingsMap.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const canvas = { clientWidth: 1600, clientHeight: 1000 };

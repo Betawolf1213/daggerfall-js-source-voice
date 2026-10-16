@@ -198,7 +198,7 @@ test('BAG-CRAFT the stations read what may be worked: a Steel Longsword whose go
   for (const [m, n] of Object.entries({ 'ingot:steel': 3, 'metal:copper': 1, 'leather:cured': 1, 'log:pine': 2 })) mintCarried(e, m, n);
   const book = createProfBook({ door, storage: memStorage(), character: () => mac.character, sleep: noWait, carry: hands(e) });
   assert.equal((await book.refresh()).ok, true);
-  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   resetProfPages();
   setPref('gentleActs', true);

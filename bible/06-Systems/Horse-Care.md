@@ -43,7 +43,7 @@ differ on it:
    walks too). Mac, 2026-10-15: *"Keep the walk"* - DECIDED: Boons' "never below DFU's horse" is the pace with Run held;
    the walk with Run let go stands on every caring tier.
 4. **No red** (Climates & Calories' rule 4, RED MEANS IT COSTS). Where hunger costs nothing its chip stops at amber - the
-   saddle panel's (`ui/enhancedSaddle.js`) and the Stable card's (`ui/holdingsPages.js` hungerTone) - and the Stable
+   saddle panel's (`ui/enhanced/enhancedSaddle.js`) and the Stable card's (`ui/holdingsPages.js` hungerTone) - and the Stable
    page says only what Boons charges: "Hungry - it costs nothing yet.", "Starving - no gallop until it eats. Feed it."
 
 **Off's minutes are nobody's needs** (Climates & Calories' Off, SURV-TIERS). Off, a horse is DFU's and needs nothing, so
@@ -241,7 +241,7 @@ What reads the gait:
   was its history's: a trot from a stand, a slow-motion gallop after a gallop. Held under, it trots - the Courser's
   stride that carries 5 m/s (its walk covers 0.67).
 - **Eye Of The Beholder's rider** draws MoveHorse at the walk and GallopHorse at the gallop, by its own speed law.
-- **The saddle panel** says Walking (`ui/enhancedSaddle.js` saddleGait - the very walk the motor took, its
+- **The saddle panel** says Walking (`ui/enhanced/enhancedSaddle.js` saddleGait - the very walk the motor took, its
   `rideWalking`, handed by the host's frame through `scenes/saddleHost.js` motion: HORSE-TIERS, since only the motor knows
   a gallop asked and refused), Galloping on the run, Trotting at DFU's ride (Off, and on Boons a gallop refused).
 - **The head's bob** is DFU's Horse style at the walk, by its velocity; the gallop's is Running's (HeadBobber's order).
@@ -270,12 +270,12 @@ only within Horse Cart and Cargo's own mount reach (a horse waiting across the m
 (`upkeepRuntime.js` upkeepReach).
 
 The HUD: the ridden horse's breath in the climb's grip bar's place (a rider holds no wall) - the classic HUD's bar
-(`ui/hud.js` drawGripBar), the enhanced HUD's under the word Horse (`ui/enhancedHud.js`); short when winded, under a
+(`ui/hud/hud.js` drawGripBar), the enhanced HUD's under the word Horse (`ui/enhanced/enhancedHud.js`); short when winded, under a
 quarter, or starving.
 
 ## The saddle panel (STEED-UI - `10-UI/Controls.md`, THE SADDLE PANEL)
 
-On Enhanced Plus, astride or on a wagon's bench, the horse is on screen under the compass (`ui/enhancedSaddle.js`, off
+On Enhanced Plus, astride or on a wagon's bench, the horse is on screen under the compass (`ui/enhanced/enhancedSaddle.js`, off
 `upkeepRuntime.js` saddle): its breath, its hunger with its food's hours, its bond to the next word, the gait and the
 pace; and its doors - Feed oats, an Apple, the Stable page, Dismount. On a bench the hunger is the TEAM's (the
 hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's. It is a HUD-MOVE

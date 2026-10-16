@@ -1137,7 +1137,7 @@ test('ORL1: the mod\'s window is the door\'s, in BOTH lanes, and the classic she
   assert.match(door, /const virtue = !deps\.entity\?\.oghmaLevelUp && usesVirtueLeveling\(deps\.entity\);/,
     'the mod\'s question is asked first, and the book is not the mod\'s');
   // LV2 re-aimed this BY CONTENT: both constructions now carry the
-  // fanfare answer (ui/levelNotice.js played it at the moment the level
+  // fanfare answer (ui/levelUp/levelNotice.js played it at the moment the level
   // was earned, which on the enhanced skin is not this moment), and the
   // law this pin holds - WHICH screen the answer above chooses - is
   // unchanged.

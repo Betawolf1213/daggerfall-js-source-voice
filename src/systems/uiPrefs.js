@@ -43,7 +43,7 @@ export const PREF_DEFAULTS = Object.freeze({
   language: 'en',
   languageOffered: false,
   // MAP-SCALE (FIELD BUGS 2026-10-09e, "Desktop client in-game map icons and text too small on high resolutions"): the
-  // held map's interface scale - 'auto' (the screen's height over 1080) or a number (ui/mapScale.js).
+  // held map's interface scale - 'auto' (the screen's height over 1080) or a number (ui/map/mapScale.js).
   mapScale: 'auto',
   // EVERY-STANDING (FIELD BUGS 2026-10-09e, "Could we have a setting to see our reputation with every guild/kingdoms?"):
   // the character sheet's Standing page lists every organization's standing, not only the player's memberships
@@ -53,7 +53,7 @@ export const PREF_DEFAULTS = Object.freeze({
   // HUD-MOVE (2026-10-01, Mac: "make chat, hp mana stamina bar segment and all the element moveable and add a reset UI
   // and lock UI in the settings (lock should be on by default)"): the Enhanced Plus HUD's own layout. `hudLocked` is the
   // lock (on: nothing moves, the HUD is pointer-transparent as ever); `hudLayout` is { id: { x, y } }, each piece's
-  // nudge in screen pixels from where the sheet stands it (ui/hudLayout.js). null is every piece where the sheet puts it.
+  // nudge in screen pixels from where the sheet stands it (ui/hud/hudLayout.js). null is every piece where the sheet puts it.
   hudLocked: true,
   hudLayout: null,
   // HUD-MOVE (Mac: "an option to move the magicka, health and fatigue bar separately"): off, the three bars move as
@@ -76,7 +76,7 @@ export const PREF_DEFAULTS = Object.freeze({
   // PLUS1 (2026-09-25): Enhanced Plus - the refreshed dress over the enhanced skin (systems/uiSkin.js isEnhancedPlus).
   // PLUS-ONLY (2026-09-26): `enhancedPlus`, the switch between it and plain Enhanced (PLUS-DEFAULT turned it on), is
   // RETIRED - plain Enhanced is gone and Plus is simply the enhanced skin. A stored value is read by nothing.
-  // PLUS2: Enhanced Plus's colours - a ui/enhancedFrame.js PLUS_THEMES id; 'slate' is the kit as it ships.
+  // PLUS2: Enhanced Plus's colours - a ui/enhanced/enhancedFrame.js PLUS_THEMES id; 'slate' is the kit as it ships.
   plusTheme: 'slate',  plusCursor: true,   // PLUS6: the gauntlet cursor - off gives the system pointer back
   plusItemHover: true,   // PLUS7: the inventory's hover card - off keeps the right-click menu, drops the card
   // GRIM1 (2026-10-09): THE DFO GRIMOIRE DRESS over the enhanced skin ('none' or 'grimoire' - ui/grimoireDress.js), and
@@ -97,9 +97,9 @@ export const PREF_DEFAULTS = Object.freeze({
   chatTrade: false, chatLfg: false,
   packPhoneDoll: false,   // PACK-PHONE (FIELD BUGS 2026-09-30): the pack's body on a phone - hidden until the header's Body shows it
   // PADPLUS1: the Plus controller - the crossbar ('auto' while a pad is connected, 'on', 'off'), run as a toggle on
-  // the Run button, and the version of the one-time layout move already made (ui/plusPad.js)
+  // the Run button, and the version of the one-time layout move already made (ui/plus/plusPad.js)
   plusCrossbar: 'auto', plusToggleRun: true, plusPadLayout: 0,
-  // PADPLUS10: the d-pad's tap and hold per direction (null = the defaults, ui/plusPad.js PLUS_DPAD_DEFAULTS) and the
+  // PADPLUS10: the d-pad's tap and hold per direction (null = the defaults, ui/plus/plusPad.js PLUS_DPAD_DEFAULTS) and the
   // two sticks' sensitivity multipliers - the Controller bindings window writes them
   plusDpad: null, plusStickLeft: 1, plusStickRight: 1,
   // PAD-CURSOR: the controller cursor's assisted feel (systems/padCursor.js) - its curve, ramp, boost and the pull to
@@ -129,7 +129,7 @@ export const PREF_DEFAULTS = Object.freeze({
   // element... camera movement, character movement and a more phone
   // built feel"). The touch layer's own knobs - DFU has no touch input
   // (Ledger A, TI1) so none of these is a DFU setting and none may go
-  // in the baked catalog. Read at the point of use by ui/touch.js; set
+  // in the baked catalog. Read at the point of use by ui/touch/touch.js; set
   // from the Enhanced pane's Touch card, which mounts only where the
   // device reports touch.
   touchLookSensitivity: 1,   // a multiplier on the mouse sensitivity the drag already rides (0.25..4)
@@ -139,7 +139,7 @@ export const PREF_DEFAULTS = Object.freeze({
   touchGyroSensitivity: 1,   // 1 = a degree of phone is a degree of camera
   touchHaptics: true,        // a short vibration on a button, an armed swipe and a lock
   touchFullscreen: true,     // the first touch asks for fullscreen and a landscape lock where the browser allows it
-  // TOUCH-BUTTONS (2026-09-27): the corner's three slots, from the corner in (ui/touchButtons.js) - TI1's two, and
+  // TOUCH-BUTTONS (2026-09-27): the corner's three slots, from the corner in (ui/touch/touchButtons.js) - TI1's two, and
   // TOUCH-HOLD's Interact (2026-10-01 part four: the professions' E, which a phone never had)
   touchButton1: 'Jump',
   touchButton2: 'ReadyWeapon',
@@ -153,7 +153,7 @@ export const PREF_DEFAULTS = Object.freeze({
   gentleActs: false,
   showToTravellers: true,   // TV3: off - the region's travellers do not see where I am (my party always does)
   // MWA4 (2026-09-25): `mwArms` (MWA1's arms switch) is retired - the attached Morrowind files are the switch, and
-  // Remove data the off (combat/weaponRig.js autoBuildArms, ui/enhancedMenu.js morrowindCard). A stored value is
+  // Remove data the off (combat/weaponRig.js autoBuildArms, ui/enhanced/enhancedMenu.js morrowindCard). A stored value is
   // read by nothing.
   // 2026-09-17 (per-request): a peer without a Morrowind body is drawn as their class's animated sprite by default
   // (net/remotePlayers.js classMobileType/_syncMobilePeer) - the same billboard a hostile Warrior/Mage/etc. already

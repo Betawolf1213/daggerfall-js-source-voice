@@ -273,7 +273,7 @@
   },
   {
     "name": "TEMPUI-the-plate-reads-the-record",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const live = survivalOn() ? feltNow(vitals) : null;",
     "new": "  const live = null;",
     "why": "AUDIT TEMP-UI E9: a door read the street's for five seconds",
@@ -283,7 +283,7 @@
   },
   {
     "name": "TEMPUI-the-part-ignored",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const on = survivalOn() && getPref(TEMP_HUD_PREF) !== false;",
     "new": "  const on = survivalOn();",
     "why": "the plate's part cannot hide it",
@@ -293,7 +293,7 @@
   },
   {
     "name": "TEMPUI-comfortable-in-the-sun",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "const TEMP_GLYPHS = Object.freeze({ cold: 'cold', hot: 'hot', mild: 'thermo' });",
     "new": "const TEMP_GLYPHS = Object.freeze({ cold: 'cold', hot: 'hot', mild: 'hot' });",
     "why": "comfortable drawn as the sun",
@@ -303,7 +303,7 @@
   },
   {
     "name": "TEMPUI-written-every-frame",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  if (last.temp !== k) {\n    last.temp = k;",
     "new": "  if (true) {\n    last.temp = k;",
     "why": "the plate rewritten sixty times a second",
@@ -313,7 +313,7 @@
   },
   {
     "name": "TEMPUI-the-plate-off-the-kit",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "'.hud-qspell', '.hud-temp', '.pack-shell .sf-tile',",
     "new": "'.hud-qspell', '.pack-shell .sf-tile',",
     "why": "the plate undressed by every dress",
@@ -393,7 +393,7 @@
   },
   {
     "name": "TEMPUI-the-plaque-not-mounted",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (temp) plaques.append(temp);\n",
     "new": "",
     "why": "the plaque never stands on the figure",
@@ -403,7 +403,7 @@
   },
   {
     "name": "TEMPUI-the-card-without-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const tc = temperatureCompareBlock(deps.entity, picked, wear); if (tc) into.append(tc);",
     "new": "",
     "why": "the card says no temperature",
@@ -423,7 +423,7 @@
   },
   {
     "name": "TEMPUI-the-plaque-undressed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .wornmap .wornplaques { position: absolute; left: 4px;",
     "new": ".pack-shell .wornmap .wornplaques { position: static; left: 4px;",
     "why": "the plaque out of its corner",
@@ -443,7 +443,7 @@
   },
   {
     "name": "TEMPUI-the-thermometer-gone",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "  thermo: Object.freeze({",
     "new": "  thermoX: Object.freeze({",
     "why": "no thermometer to draw",

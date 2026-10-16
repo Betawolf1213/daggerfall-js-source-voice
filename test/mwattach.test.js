@@ -45,7 +45,7 @@ test('MWFIX 1: the asset picker OUTRANKS every overlay in src/ - the gate, not a
   assert.deepEqual(above, [],
     `nothing may stand at or above the picker (${ASSET_PICKER_Z}); found: ${above.map((x) => `${x.file}=${x.z}`).join(', ')}`);
   // and the shell it is opened from is genuinely below it
-  const shell = all.find((x) => x.file === 'src/ui/enhancedMenu.js');
+  const shell = all.find((x) => x.file === 'src/ui/enhanced/enhancedMenu.js');
   assert.ok(shell && shell.z < ASSET_PICKER_Z, 'the enhanced shell sits below the picker it opens');
   // the literal is GONE from the picker - it reads the constant
   const ds = rd('src/scenes/dataSource.js');
@@ -92,7 +92,7 @@ test('MWFIX 2b: the picker OWNS THE KEYBOARD while it is up - found by the probe
   assert.match(ds, /globalThis\.addEventListener\('keydown', onKey, true\)/, 'it listens where the shell listens');
   assert.match(ds, /globalThis\.removeEventListener\('keydown', onKey, true\)/, 'and leaves cleanly');
 
-  const em = rd('src/ui/enhancedMenu.js');
+  const em = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(em, /if \(assetPickerOpen\(\)\) return;/, 'the shell yields to it');
   // the yield is BEFORE the shell consumes the key
   const fn = em.slice(em.indexOf('function onKey(e) {'));
@@ -131,7 +131,7 @@ test('MWFIX2: the mesh-viewer link resolved to the SITE ROOT, from the game as w
   // why it shipped.
   // MWA4 ("only keep attach and remove data buttons"): the viewer's and the inspector's doors left the assets card -
   // the pages stand at their addresses - so no link remains to resolve, and none may come back bare.
-  const em = rd('src/ui/enhancedMenu.js');
+  const em = rd('src/ui/enhanced/enhancedMenu.js');
   assert.ok(!em.includes("window.open('mw-viewer.html'"), 'the bare relative form stays gone');
   assert.doesNotMatch(em, /mw-viewer\.html|mw-inspect\.html/, 'MWA4: the card keeps Attach and Remove alone');
 

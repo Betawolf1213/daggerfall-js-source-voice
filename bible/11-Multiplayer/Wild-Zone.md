@@ -265,7 +265,7 @@ with the minutes left.
   (`wildRingChains`, smoothed - section 18) - the lines alone since PVPDUNGEONS (the owner: "The 25%,50,75,100% marker
   shown on the world map when not clicking on the zone have to be removed",
   `wildZoneMap.js:"25%,50,75,100% marker shown"`): the zone map and its legend name each ring and its bonus.
-  `ui/wildZoneMap.js` paintWildRings.
+  `ui/wild/wildZoneMap.js` paintWildRings.
 - WILD2: THE ZONE MAP. A press on the zone on the world map - anything there since ZONE-ZOOM (section 18) - or the
   key's "Zone map" button holds the world sheet to the Wrothgarian Mountains (`_openZoneMap`): the same paper, ink and
   marks, the view fitted to the zone in the room the legend leaves (`zoneMapView`, the clamp `zoneMapLimits` - never
@@ -277,12 +277,12 @@ with the minutes left.
   and a dark line where a deeper ring begins, and a key of the four in the page's lower left (`_drawWildKey`).
 
 - THE WORLD MAP (enhanced, `src/ui/heldMap.js`): the zone under a drifting fog, built once on its own canvas
-  (`src/ui/wildMapInk.js` - the feathered mask times three octaves of value noise, in ash and dried blood) and drawn
+  (`src/ui/wild/wildMapInk.js` - the feathered mask times three octaves of value noise, in ash and dried blood) and drawn
   between the land and the marks, so a town in it still reads; its edge a red line over a dark halo, dashed brighter
   past the far band, never drawn along the map's own upper edge where the map ends; a key row "Open PvP zone". Over
   it since the later passes: the day's halls, the crows, my locks, the Greater Giants' skulls, and the border alight
   under the pointer (sections 12-18).
-- THE CLASSIC MAP (`src/ui/travelMapWindow.js`, which GrimoireUI dresses): the same zone as a dithered fog layer and a
+- THE CLASSIC MAP (`src/ui/travel/travelMapWindow.js`, which GrimoireUI dresses): the same zone as a dithered fog layer and a
   red rim, over the province map and over the Wrothgarian Mountains' own page, under the dots. CLASSIC-CUT
   (2026-10-08): on the province map too it is the cut alone, never the whole region - the picker bitmap's region laid
   over the map's by their two boxes (`wildPictureZone`, `wildZone.js:"export function wildPictureZone"`, over the

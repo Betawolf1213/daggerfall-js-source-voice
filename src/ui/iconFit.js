@@ -87,13 +87,13 @@ export const SLOT_BOX = Object.freeze({
   card: 96,           // the hover card and the pack's detail card: the picture's own 96px box, no frame
   broker: 32,         // the Sigil Broker's offer: a 36px tile inside its 44px frame
 });
-/** The pack's own phone line (ui/enhancedStyle.js's `@media (max-width: 640px)`). */
+/** The pack's own phone line (ui/enhanced/enhancedStyle.js's `@media (max-width: 640px)`). */
 export const PHONE_QUERY = '(max-width: 640px)';
 /** The screen's device pixel ratio, as the law honours it. */
 export const screenDpr = () => clampDpr(globalThis.devicePixelRatio);
 /** The pack grid's box on this screen: a phone's slot is smaller. A page with no `matchMedia` (node) is a desktop. */
 export const gridBox = () => (globalThis.matchMedia?.(PHONE_QUERY)?.matches ? SLOT_BOX.gridPhone : SLOT_BOX.grid);
-/** The pack's desktop line (ui/enhancedStyle.js's `@media (min-width: 1000px)`): the body's slots are plates there. */
+/** The pack's desktop line (ui/enhanced/enhancedStyle.js's `@media (min-width: 1000px)`): the body's slots are plates there. */
 export const WIDE_QUERY = '(min-width: 1000px)';
 /** A worn panel's box on this screen - `half`, a split panel's. A page with no `matchMedia` (node) is not wide. */
 export const wornBox = (half = false) => (globalThis.matchMedia?.(WIDE_QUERY)?.matches

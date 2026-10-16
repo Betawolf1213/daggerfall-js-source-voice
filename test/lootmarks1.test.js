@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TIER_MARKS, tierMarkCss, TIER_GEM_PX } from '../src/ui/lootTierMarks.js';
 import { RARITIES } from '../src/systems/loot/lootRarity.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { kitCss, G, RARITY_INK } from '../src/ui/grimoireDress.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

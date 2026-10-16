@@ -1,7 +1,7 @@
 // TRADE-INFO + TRADE-FIT (2026-09-27, Discord - Tabitha: "General Trade Improvements" - "magic item stats on the trade
 // hover (own and other's)", "Show enchantment stats in the inventory and trade - Enhanced+ doesn't show enchants").
 //
-// AN ITEM'S MAGIC IN WORDS, ONE LIST (ui/enhancedInventory.js itemPowerLines): the tier's lines (lootRarity
+// AN ITEM'S MAGIC IN WORDS, ONE LIST (ui/enhanced/enhancedInventory.js itemPowerLines): the tier's lines (lootRarity
 // rarityLines - a rolled item's affixes and enchantments), and for an enchanted item the tier list does not name - DFU's
 // own magic items and the item maker's carry no `rarity`, and with the tiers off it names none - DFU's own Info box
 // powers (itemPowers magicPowersLines), "Powers unknown." until it is identified. The Enhanced card, the trade row's
@@ -10,7 +10,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { itemPowerLines } from '../src/ui/enhancedInventory.js';
+import { itemPowerLines } from '../src/ui/enhanced/enhancedInventory.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { POWERS_UNKNOWN_TEXT } from '../src/systems/item/itemPowers.js';
@@ -38,9 +38,9 @@ test('TRADE-INFO itemPowerLines: a DFU magic item names its powers in DFU\'s own
 });
 
 test('TRADE-INFO the surfaces: the Enhanced card, the trade row\'s hover and the trade detail read the one list (mutants: a surface on rarityLines alone)', () => {
-  const inv = src('src/ui/enhancedInventory.js');
+  const inv = src('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /\{ const lines = itemPowerLines\(picked, deps, \{ set: false, lore: false, technique: false \}\); if \(lines\.length\) \{ const ul = el\('ul', 'rarity'\);/);   // CARD-FIT: the lore is the Info box's; PIN MOVED (TECH-CARD): less a technique's line, its block's
-  const t = src('src/ui/enhancedPlayerTrade.js');
+  const t = src('src/ui/enhanced/enhancedPlayerTrade.js');
   // CARD-FIT U4: both in brief (itemBriefLines: the tier, its affixes, the sigil's line, the set's name and what I wear of it)
   assert.match(t, /b\.title = \[line\.name, letterWorthLine\(item\), \.\.\.itemBriefLines\(item, deps, \{ worn: true \}\), \.\.\.setLines\(item\)\.slice\(1\)\]\.filter\(Boolean\)\.join\('\\n'\);/, 'the row\'s hover - mine and theirs alike');
   assert.match(t, /const powers = itemBriefLines\(selected\.item, deps, \{ worn: true \}\);\n\s*if \(powers\.length\) \{\n\s*const ul = el\('ul', 'rarity'\);\n\s*for \(const p of powers\) ul\.append\(el\('li', null, p\)\);\n\s*const tiers = setLines\(selected\.item\)\.slice\(1\);\n\s*if \(tiers\.length\) ul\.title = tiers\.join\('\\n'\);\n\s*info\.append\(ul\);/, 'and the detail, a line each');
@@ -121,7 +121,7 @@ test('TRADE-LOC (Dudey: "when players trade in any ui the letter of credit doesn
   assert.equal(letterWorthLine({ templateIndex: 113, value: 900 }), null, 'a sword is not a letter');
   const [arrived] = validLootList([JSON.parse(JSON.stringify(letterOfCredit(4321)))]);
   assert.equal(letterWorthLine(arrived), 'Worth 4,321 gold', 'the letter the peer offered, through the wire clamp, keeps its worth');
-  const t = src('src/ui/enhancedPlayerTrade.js');
+  const t = src('src/ui/enhanced/enhancedPlayerTrade.js');
   assert.match(t, /const bits = \[letterWorthLine\(selected\.item\), line\.material, line\.word,/, 'the detail a click opens - the window every skin wears');
   assert.match(src('src/ui/playerTradeDoor.js'), /import\('\.\/enhancedPlayerTrade\.js'\)/, 'one window over either skin');
 });

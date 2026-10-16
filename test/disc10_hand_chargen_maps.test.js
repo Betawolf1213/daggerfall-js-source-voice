@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { keydown, byClass, text, Node_ } from './chargenDom.mjs';
-import { mountEnhancedChargen } from '../src/ui/enhancedChargen.js';
+import { mountEnhancedChargen } from '../src/ui/enhanced/enhancedChargen.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { SKILLS } from '../src/systems/skills.js';
 

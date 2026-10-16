@@ -745,7 +745,7 @@ test('ACC2b: a real slot written by saveSlots.js pushes - the two ends agree abo
 });
 
 test('AUDIT-312 F3: the slot key carries BOTH halves, and one module writes it', () => {
-  // `ui/enhancedMenu.js` held its own copy of this and the audit's
+  // `ui/enhanced/enhancedMenu.js` held its own copy of this and the audit's
   // mutation campaign dropped the character half out of it without a
   // single pin firing. Two characters both called their save QuickSave
   // - which is what two people do - and one backup's spinner, one
@@ -772,7 +772,7 @@ test('ACC2c: `cloudOnly` is the set difference that gives a save with no local s
   // here rather than in the menu: AUDIT-312 F3 found the menu's own
   // copy of this key had dropped the character half, which makes every
   // character's QuickSave one slot - and the mutant survived the whole
-  // suite, because ui/enhancedMenu.js is DOM and a boot.
+  // suite, because ui/enhanced/enhancedMenu.js is DOM and a boot.
   const here = [
     { characterId: 'a', saveName: 'QuickSave' },
     { characterId: 'a', saveName: 'Before the lich' },
@@ -808,8 +808,8 @@ test('ACC2c: `cloudOnly` is the set difference that gives a save with no local s
   assert.equal(cloudOnly(cards, null).length, 4);
 });
 
-test('ACC2c: the DOWNLOAD reaches a player - the pane, the act and the one sentence, read off ui/enhancedMenu.js (mutants: the grid on a pane that cannot use it; Download wired to push; the listing patched rather than re-asked; "No saved games" printed over a shelf of backups)', () => {
-  const menu = src('src/ui/enhancedMenu.js');
+test('ACC2c: the DOWNLOAD reaches a player - the pane, the act and the one sentence, read off ui/enhanced/enhancedMenu.js (mutants: the grid on a pane that cannot use it; Download wired to push; the listing patched rather than re-asked; "No saved games" printed over a shelf of backups)', () => {
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   // THE CALLER pullSlot NEVER HAD. This is the finding itself: the
   // function was written, pinned end to end above, and reached by
   // nothing.
@@ -994,7 +994,7 @@ test('FIELD 2026-09-27: what a restore never removes - the backup\'s own save, a
 });
 
 test('FIELD 2026-09-27: the menu names a newer backup and asks twice before either act that replaces a copy - Restore (on the Load pane, ACC2c\'s door for a download) and Back up again; a failed act\'s Try again is THAT act; an armed press is this copy\'s and never outlives its pane (the pre-merge audit 0927b B1, B5; mutants: the local time never handed; the restore on one press; the upload over a newer backup on one press; Try again pushing whatever failed; the arming by slot; the restore offered on the Save pane)', () => {
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /dateAndTime: entry\.info\?\.dateAndTime \?\? null,/, 'each slot carries when this device saved it');
   assert.match(menu, /localTime: save\.dateAndTime,/, 'and the state is asked with it');
   const newer = menu.slice(menu.indexOf("    case 'newer':"), menu.indexOf("    default:   // 'none'"));

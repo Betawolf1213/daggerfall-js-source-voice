@@ -1,7 +1,7 @@
 [
   {
     "name": "canRaise-restates-the-law-instead-of-asking-it",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    const canRaise = statUp(value, pool).working !== value;",
     "new": "    const canRaise = pool > 0;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "canLower-always-true",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "      canLower: statDown(value, base, pool).working !== value,",
     "new": "      canLower: true,",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "a-press-does-not-aim-before-it-presses",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  screen.cursor = index;\n  screen.input(action);",
     "new": "  screen.input(action);",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "the-HIGHEST-major-is-dropped-from-the-sum",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    for (const id of majors) if (value(id) < value(lowest)) lowest = id;",
     "new": "    for (const id of majors) if (value(id) > value(lowest)) lowest = id;",
     "tests": [
@@ -40,7 +40,7 @@
   },
   {
     "name": "the-WORST-minor-is-the-one-that-counts",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    for (const id of minors) if (value(id) > value(best)) best = id;",
     "new": "    for (const id of minors) if (value(id) < value(best)) best = id;",
     "tests": [
@@ -49,7 +49,7 @@
   },
   {
     "name": "the-ribbon-does-not-lead-with-what-rose",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    .sort((a, b) => (Number(b.r.risen) - Number(a.r.risen)) || (a.i - b.i))",
     "new": "    .sort((a, b) => (a.i - b.i))",
     "tests": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "the-bar-shows-the-whole-sum-instead-of-the-remainder",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    now: ((span % per) + per) % per,",
     "new": "    now: span,",
     "tests": [
@@ -67,7 +67,7 @@
   },
   {
     "name": "the-oghma-is-promised-a-level-it-does-not-grant",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    to: (viewOnly || lane === LANE_OGHMA) ? from : (e.pendingLevel ?? from + 1),",
     "new": "    to: viewOnly ? from : (e.pendingLevel ?? from + 1),",
     "tests": [
@@ -77,7 +77,7 @@
   },
   {
     "name": "the-commit-is-allowed-with-points-unspent",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "export const canAscend = (screen) => !!screen && (rolloutPool(screen) === 0 || allMaxed(screen));",
     "new": "export const canAscend = (screen) => !!screen && (rolloutPool(screen) >= 0 || allMaxed(screen));",
     "tests": [
@@ -87,7 +87,7 @@
   },
   {
     "name": "each-lane-is-refused-in-the-other-lanes-words",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  (levelUpLane(screen) === LANE_VIRTUE ? REMAINING_POINTS_ERROR : mustDistributeBonusPointsText());",
     "new": "  (levelUpLane(screen) === LANE_VIRTUE ? mustDistributeBonusPointsText() : REMAINING_POINTS_ERROR);",
     "tests": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "two-stars-are-drawn-on-the-same-point",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "    luck: Object.freeze({ x: 64, y: 51 }),",
     "new": "    luck: Object.freeze({ x: 40, y: 31 }),",
     "tests": [
@@ -106,7 +106,7 @@
   },
   {
     "name": "a-fortified-attribute-overflows-its-star",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "export const starBrightness = (value) => Math.max(0, Math.min(1, (value ?? 0) / MAX_STAT_VALUE));",
     "new": "export const starBrightness = (value) => (value ?? 0) / MAX_STAT_VALUE;",
     "tests": [
@@ -135,7 +135,7 @@
   },
   {
     "name": "the-window-forgets-CheckIfDoneLevelings-second-term",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "export const canAscend = (screen) => !!screen && (rolloutPool(screen) === 0 || allMaxed(screen));",
     "new": "export const canAscend = (screen) => !!screen && rolloutPool(screen) === 0;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "a-maxed-character-is-told-to-take-a-point-back",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  return allMaxed(screen) ? ALL_MAX_LINE : TAKE_ONE_BACK_HINT;",
     "new": "  return TAKE_ONE_BACK_HINT;",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "willpower-cites-the-display-instead-of-the-consumer",
-    "file": "src/ui/levelUpView.js",
+    "file": "src/ui/levelUp/levelUpView.js",
     "old": "  // systems/spellcast.js:\"saving += magicResist(liveStat(target, 'willpower'))\" - `saving += magicResist(liveStat(target,",
     "new": "  // systems/quest/questMacros.js:\"return e ? String(Math.floor(liveStat(e, 'willpower') / 10))\" - `saving += magicResist(liveStat(target,",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "the-repaint-rebuilds-the-whole-sheet-on-every-keystroke",
-    "file": "src/ui/enhancedLevelUp.js",
+    "file": "src/ui/enhanced/enhancedLevelUp.js",
     "old": "    const m = levelUpFrame(entity, screen, refused);",
     "new": "    const m = levelUpModel(entity, screen, refused);",
     "tests": [
@@ -244,12 +244,12 @@
   {
     "name": "the-warm-shouts-about-a-stale-chunk-at-boot",
     "file": "src/ui/charSheetDoor.js",
-    "old": "  return import('./enhancedLevelUp.js').catch(() => null);",
-    "new": "  return import('./enhancedLevelUp.js');",
+    "old": "  return import('./enhanced/enhancedLevelUp.js').catch(() => null);",
+    "new": "  return import('./enhanced/enhancedLevelUp.js');",
     "tests": [
       "test/enhancedLevelUp.test.js"
     ],
-    "why": "An unhandled rejection at boot about a screen nobody has asked for is the silence-and-noise pair ui/enhancedChunk.js exists to get right."
+    "why": "An unhandled rejection at boot about a screen nobody has asked for is the silence-and-noise pair ui/enhanced/enhancedChunk.js exists to get right."
   },
   {
     "name": "the-warm-fires-in-the-classic-skin-too",
@@ -271,7 +271,7 @@
   },
   {
     "name": "the-chronicle-forgets-the-key-it-is-named-after",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  if (eventMeans(e, 'LogBook')) {   // UXB1-S: its key, shared or not",
     "new": "  if (false) {",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "the-chronicle-reads-the-literal-instead-of-the-registry",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  if (eventMeans(e, 'LogBook')) {   // UXB1-S: its key, shared or not",
     "new": "  if (e.code === 'KeyL') {",
     "tests": [

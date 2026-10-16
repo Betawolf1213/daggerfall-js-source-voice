@@ -6,7 +6,7 @@
 // nights and 400 in passage, scaled x4 and x3, a traveller at Mercantile 90 paid a novice's 1686 for a 1068 fare.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { scaleTripCost } from '../src/ui/travelPopUp.js';
+import { scaleTripCost } from '../src/ui/travel/travelPopUp.js';
 import { calculateTradePrice } from '../src/systems/shopStock.js';
 import { SKILLS } from '../src/systems/skills.js';
 

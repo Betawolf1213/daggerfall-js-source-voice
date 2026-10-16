@@ -228,7 +228,7 @@ resort still checks nothing (reached far less often); a swimmer restored mid-wat
 
 ## BOOK-RISE (7)
 
-`ui/enhancedBook.js` (frame). There was no hung tab: the book stood open for good and refused every way out.
+`ui/enhanced/enhancedBook.js` (frame). There was no hung tab: the book stood open for good and refused every way out.
 `exit()` latched `closing` and asked Raum's `closeBook`, which refuses a book still rising (its 260 ms 'slide-in'), so a
 close asked in the rise was dropped, and the latch refused every later one - Escape, Enter, E, a tap (any tap while the
 book moves reads as outside), Tab, the host's own close. frame() finished only a close the book had taken, so the door

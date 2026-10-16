@@ -1,7 +1,7 @@
 [
   {
     "name": "JAN1-the-hook-is-read-after-the-close",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const openCharSheet = deps.openCharSheet;\n    onExit();                 // the pack's own close law runs FIRST...\n    openCharSheet();",
     "new": "    onExit();                 // the pack's own close law runs FIRST...\n    deps.openCharSheet();",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "JAN1-the-arm-takes-a-truthy-bag-entry",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (acts.includes('CharacterSheet') && typeof deps?.openCharSheet === 'function') {",
     "new": "if (acts.includes('CharacterSheet') && deps?.openCharSheet) {",
     "tests": [

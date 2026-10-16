@@ -215,7 +215,7 @@ test('CUSTOMS-CARRY: the door says what customs will do BEFORE it runs - the loa
 });
 
 test('CUSTOMS-CARRY: "Bring online" asks first - the preview off a copy, and customs runs only on the answer; a press customs refuses before the service still says why at once', () => {
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   const bring = menu.slice(menu.indexOf('function bringOnline(save) {'), menu.indexOf('function customsNow(save) {'));
   assert.ok(bring.length > 0 && menu.indexOf('function customsNow(save) {') > 0);
   assert.match(bring, /const trial = JSON\.parse\(JSON\.stringify\(snap\)\);\n\s+const leveling = crossLeveling\(trial\);[^\n]*\n\s+const preview = \[\.\.\.\(leveling \? \[LEVELING_CROSS_LINE\.before\] : \[\]\), \.\.\.customsLines\(applyCustoms\(trial\), \{ before: true \}\)\];/);

@@ -13,8 +13,8 @@ import {
 import { scanGatePixels, findGateSite, gateRegions, politicClaimed, gateSeaPixel, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX, GATE_TOWN_TYPES } from '../src/systems/gate/gateSite.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { createGateOmen, insideGateRing, gateSceneXZ, omenTimeLine, openTimeLine, sealTimeLine, riteOmenLine } from '../src/systems/gate/gateOmen.js';   // TIME1: the lines that name a time say local time alone
-import { readGateMark, gateMarkKey, gateRingKey, gateRingTexels, GATE_RING_BAND } from '../src/ui/gateMapMark.js';
-import { paintGateRing } from '../src/ui/inkMap.js';
+import { readGateMark, gateMarkKey, gateRingKey, gateRingTexels, GATE_RING_BAND } from '../src/ui/gate/gateMapMark.js';
+import { paintGateRing } from '../src/ui/ink/inkMap.js';
 import { hash32, spawnsDungeon, WORLD_SALT } from '../src/world/spawnedDungeons.js';
 import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
@@ -363,15 +363,15 @@ test('WB1 the seams: online alone, the omen before the dead return, both maps ha
   assert.match(world, /gate: gateCompassMark\(\),/);
   assert.match(world, /now: \(\) => Date\.now\(\) \+ _sharedOffsetMs,/, 'the relay\'s clock, as the sky reads it');
   assert.match(world, /say: \(text\) => chatNotice\(text\),/, 'a line on every tab - the gate happened to the whole game');
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   assert.match(hud, /gate: gate \?\? null,/);
-  const ehud = read('src/ui/enhancedHud.js');
+  const ehud = read('src/ui/enhanced/enhancedHud.js');
   assert.match(ehud, /drawGateMark\(opts\.gate \?\? null, opts\.playerXZ \?\? null, heading01\);/);
   assert.match(ehud, /compassMarkerLerp\(gate, playerXZ, heading01\)/, 'the Detect markers\' own bearing law');
   const held = read('src/ui/heldMap.js');
   assert.match(held, /readGateMark\(this\.deps\.gate, this\._size\)/);
   assert.match(held, /gate: this\._gate,/);
-  const page = read('src/ui/travelMapWindow.js');
+  const page = read('src/ui/travel/travelMapWindow.js');
   assert.match(page, /gateRingTexels\(gate, originX, originY, width, height\)\) plot\(x, y, gatePx\)/);
   assert.match(page, /gateRingKey\(readGateMark\(this\.deps\.gate,/, 'the page rebuilds when the ring comes, goes or moves');
   // the law is the relay's to import later (WB3): it reaches for wire.js and (WB8b) the marks' leaf alone

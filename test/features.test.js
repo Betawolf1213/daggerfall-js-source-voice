@@ -99,7 +99,7 @@ test('FT0: the filter shows a two-kind row under both kinds, and the counts say 
 });
 
 test('FT0: every feature is reachable from every rail - ORG2: through Settings, whose tabs hold its rows - and the screen is the registry over the three builders', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   for (const rail of ['SECTIONS_BOOT', 'SECTIONS_CLASSIC', 'SECTIONS_PAUSE']) {
     const m = new RegExp(`const ${rail} = \\[([^\\]]*)\\]`).exec(menu);
     assert.ok(m, rail);
@@ -134,8 +134,8 @@ test('FT0: every feature is reachable from every rail - ORG2: through Settings, 
 // feature/mod adjustments into the toggle themselves and move away from the
 // scrolling list format") ──────────────────────────────────────────────
 test('FT14: the panel is tiles grouped by what they change, the control is always a BAR, and the Mods pane is gone', async () => {
-  const { whereIs } = await import('../src/ui/settingsMap.js');
-  const menu = read('src/ui/enhancedMenu.js');
+  const { whereIs } = await import('../src/ui/settings/settingsMap.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
 
   // (1) THE MODS PANE IS GONE - not hidden behind a flag, gone from the file
   assert.doesNotMatch(menu, /function paneMods\b/, 'the pane itself');
@@ -184,7 +184,7 @@ test('FT14: the panel is tiles grouped by what they change, the control is alway
 
   // (7) the classes are NAMESPACED. `.tile` and `.seg` were already the inventory icon and a
   // progress strip; the first cut collided with both and the grid collapsed into a column.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const c of ['ft-tile', 'ft-tile-ctl', 'ft-seg', 'ft-segb', 'ft-card', 'ft-mchip']) {
     assert.ok(css.includes(`.${c} `) || css.includes(`.${c}[`) || css.includes(`.${c}{`) || css.includes(`.${c} {`), `.${c} is styled`);
   }
@@ -223,7 +223,7 @@ test('AUDIT FT14: every vendored mod reaches a tile, and the curation hides keys
 });
 
 test('FT0: the three kinds have three colours, all the skin\'s own tokens', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const [k, tok] of [['enhanced', '--brass'], ['mod', '--verdigris'], ['classic', '--bone']]) {
     assert.match(css, new RegExp(`\\.kind\\.${k} \\{ color: var\\(${tok}\\);`), `${k} wears ${tok}`);
     assert.match(css, new RegExp(`\\.chip\\.${k}\\.on \\{ color: var\\(${tok}\\);`), `${k}'s chip lights the same colour`);
@@ -280,7 +280,7 @@ test('FT15: every note is one or two sentences, and the panel stays under its bu
 // into the tokens instead of under `.shell` would have taken that with it, which is
 // why this pin holds the SCOPE as well as the rules.
 test('FT16: the feature tiles take the shell\'s transparent paint, and only under the shell', () => {
-  const css = readFileSync('src/ui/enhancedStyle.js', 'utf8');
+  const css = readFileSync('src/ui/enhanced/enhancedStyle.js', 'utf8');
   // ORG2: a tile is a ROW of the one Settings screen now, and stands on the list as a row does - no ground of its own in
   // either paint: the list's opaque --slate in the pause window, the list's scrim where the sky is behind it
   const base = css.slice(css.indexOf('\n.ft-tile {'), css.indexOf('}', css.indexOf('\n.ft-tile {')));
@@ -328,7 +328,7 @@ test('FT16: the feature tiles take the shell\'s transparent paint, and only unde
 // outdoors switch measured 20px on a phone. tools/enhancedMenuProbe.mjs, which
 // measures it in a real browser, had been red since FT14 and so nobody saw it.
 test('FT16: every control on a tile is a thumb\'s target where there is a thumb', () => {
-  const css = readFileSync('src/ui/enhancedStyle.js', 'utf8');
+  const css = readFileSync('src/ui/enhanced/enhancedStyle.js', 'utf8');
   const at = css.indexOf('@media (pointer: coarse) {\n  .step { width: 44px; height: 44px; }');
   assert.ok(at > 0, 'the coarse-pointer law is where it was');
   const law = css.slice(at, css.indexOf('\n}', at));

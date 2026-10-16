@@ -132,7 +132,7 @@ test('AUDIT 39 #152: no host hides drawHud behind the classic HUD art', () => {
   // hudArt starts null and is filled by a fire-and-forget load whose
   // failure leaves it null forever: no vitals for the first frames of
   // every session, and none at all when MAIN/HUD cannot be read.
-  const hud = src('src/ui/hud.js');
+  const hud = src('src/ui/hud/hud.js');
   const flashAt = hud.indexOf('playerDamageFlash.tick(dt);');
   const enhancedAt = hud.indexOf('if (isEnhanced() && typeof document !== \'undefined\') {');
   const returnAt = hud.indexOf('if (!art) return;');

@@ -181,7 +181,7 @@
   },
   {
     "name": "OW6-S-reason-unshown",
-    "file": "src/ui/enhancedTravelControl.js",
+    "file": "src/ui/enhanced/enhancedTravelControl.js",
     "old": "  const foesHold = held != null && state.heldWhy === 'foes';",
     "new": "  const foesHold = false;",
     "tests": [

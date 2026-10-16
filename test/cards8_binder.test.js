@@ -1,5 +1,5 @@
 // CARDS8 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 26): THE CARDS AND THE CARD BINDER AS ITEMS
-// (systems/iliac/iliacItems.js) and THE CARDS PART of the Holdings rail's Collections page (ui/cardBinderPage.js). A card is
+// (systems/iliac/iliacItems.js) and THE CARDS PART of the Holdings rail's Collections page (ui/card/cardBinderPage.js). A card is
 // one template named by its `card`: two of one card stack, two cards do not, and a split keeps it; its name is the
 // catalog's. The binder is the Wallet's shape - one a character, bound, pack-only, holding the decks; every character is
 // given it once with the starter deck's thirty cards. The pack shows the cards in the binder's sheet. The Cards part
@@ -22,7 +22,7 @@ import { pageOf } from '../src/ui/packPages.js';
 import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { cardRules } from '../src/systems/iliac/iliacCardWords.js';
 import { deckValid } from '../src/net/iliac/iliacHand.js';
-import { drawCardsPart, cardsPartShown, resetCardsPart, deckCards, deckRefusal, DECK_REFUSAL_WORDS } from '../src/ui/cardBinderPage.js';
+import { drawCardsPart, cardsPartShown, resetCardsPart, deckCards, deckRefusal, DECK_REFUSAL_WORDS } from '../src/ui/card/cardBinderPage.js';
 import { collectionsPageShown, collectionParts } from '../src/ui/collectionsPage.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -98,7 +98,7 @@ test('CARDS8 the decks: replaced whole when they change (the save\'s snapshot is
 });
 
 test('CARDS8 the pack: while a binder is carried its cards leave the pages for its sheet - the Wallet\'s partition; a card\'s way back to the binder', () => {
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /const binder = binderItem \? \{ item: binderItem, held: items\.filter\(\(it\) => isIliacCard\(it\) && !isEquipped\(it\)\) \} : null;/);
   assert.match(inv, /const held = new Set\(\[\.\.\.\(wallet\?\.held \?\? \[\]\), \.\.\.\(binder\?\.held \?\? \[\]\)\]\);/);
   assert.match(inv, /if \(side === 'local' && model\?\.binder && picked === model\.binder\.item\) \(c\.querySelector\('\.card-body'\) \?\? c\)\.append\(binderSheet\(model\.binder\)\);/);

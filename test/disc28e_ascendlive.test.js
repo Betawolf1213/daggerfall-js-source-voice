@@ -19,13 +19,13 @@ import { liveStat } from '../src/systems/statMods.js';
 import { isDayFromMinutes, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
 import { applySpell } from '../src/systems/effects.js';
 import { LevelUpScreen, STAT_INCREASED_COLOR, STAT_DRAINED_COLOR } from '../src/ui/charsheet.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { LV2_CSS } from '../src/ui/levelUpStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { LV2_CSS } from '../src/ui/levelUp/levelUpStyle.js';
 import { registerEntityFold, computeEntityMods } from '../src/systems/entityMods.js';
 import { codeHasOnce } from './codeOnly.mjs';
 import { VirtueLevelUpScreen } from '../src/ui/virtueLevelUp.js';
-import { rolloutRows, liveNote, liveTint, starLabel, viewOnlyScreen, raiseAt, focusAt, canAscend, ATTRIBUTE_BLURB } from '../src/ui/levelUpView.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { rolloutRows, liveNote, liveTint, starLabel, viewOnlyScreen, raiseAt, focusAt, canAscend, ATTRIBUTE_BLURB } from '../src/ui/levelUp/levelUpView.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { initVirtueLeveling, LEVELING_VIRTUE, levelingSettings, ORL_VENDOR } from '../src/systems/oblivionLeveling.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 
@@ -171,7 +171,7 @@ test('ASCEND-LIVE: the stars wear the classic sheet\'s own two colours - over a 
 });
 
 test('ASCEND-LIVE by source: the window paints the live value on the star, its brightness, its tint, its words and its line', () => {
-  const w = readFileSync(new URL('../src/ui/enhancedLevelUp.js', import.meta.url), 'utf8');
+  const w = readFileSync(new URL('../src/ui/enhanced/enhancedLevelUp.js', import.meta.url), 'utf8');
   const paint = w.slice(w.indexOf('    for (const s of stars) {'), w.indexOf('    // A LINE LIGHTS WHEN BOTH ITS STARS HAVE RISEN.'));
   codeHasOnce(paint, /s\.val\.textContent = String\(r\.live\);/);
   codeHasOnce(paint, /s\.gem\.style\.opacity = String\(0\.45 \+ 0\.55 \* starBrightness\(r\.live\)\);/);

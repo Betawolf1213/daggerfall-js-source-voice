@@ -158,7 +158,7 @@ async function withRestWindow(fn, over = {}) {
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.requestAnimationFrame = () => 0;
   try {
-    const { mountEnhancedRest } = await import('../src/ui/enhancedRest.js');
+    const { mountEnhancedRest } = await import('../src/ui/enhanced/enhancedRest.js');
     const calls = { moveToBed: [], onRentExpired: 0, updateNpcPresence: 0, onRestFinished: 0, onManualStop: 0, onClose: 0, loiter: [] };
     const deps = {
       setResting() {}, setLoitering(v) { calls.loiter.push(v); },

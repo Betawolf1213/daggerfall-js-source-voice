@@ -1,8 +1,8 @@
 // HUD-SADDLE (FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor (Alt+U)" - and
 // "the horse care toggle in the settings menu doesn't seem to work"; bible/01-Overview/Field-Bugs-2026-10-14-riding-panel.md).
 //
-// THE RIDING PANEL IS A HUD PIECE. The saddle panel (ui/enhancedSaddle.js, STEED-UI) shipped ten days after HUD-MOVE
-// (ui/hudLayout.js) and never joined its registry, so Alt+U framed the compass, the boss bar, the target bar and the
+// THE RIDING PANEL IS A HUD PIECE. The saddle panel (ui/enhanced/enhancedSaddle.js, STEED-UI) shipped ten days after HUD-MOVE
+// (ui/hud/hudLayout.js) and never joined its registry, so Alt+U framed the compass, the boss bar, the target bar and the
 // temperature plate and left the panel under them with no frame: nothing could move it, size it or turn it off. Driven
 // over a page that answers the selectors HUD-MOVE asks (descendants among them - the panel's bar stands inside its
 // whole-screen layer) with the real sweep, the real panel and the real editor's key and handles.
@@ -16,8 +16,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   HUD_PIECES, HUD_LAYOUT_CSS, HUD_LAYOUT_PREF, HUD_LOCK_PREF, sweepHudLayout, tickHudLayout, setHudLocked, resetHudLayout,
-} from '../src/ui/hudLayout.js';
-import { drawEnhancedSaddle, hideEnhancedSaddle, buildSaddlePreview, ENHANCED_SADDLE_ID } from '../src/ui/enhancedSaddle.js';
+} from '../src/ui/hud/hudLayout.js';
+import { drawEnhancedSaddle, hideEnhancedSaddle, buildSaddlePreview, ENHANCED_SADDLE_ID } from '../src/ui/enhanced/enhancedSaddle.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { fakePage, withHudPage } from './hudPage.mjs';
 
@@ -120,7 +120,7 @@ test('HUD-SADDLE THE PREVIEW: with the editor open and nobody riding, the riding
     assert.equal(ghosts().length, 0, 'locked: no preview');
   });
   // the preview alone: built, not put on the page (HUD-MOVE puts it there); at a finger's place where the hosts' touch
-  // layer stands (ui/touch.js attachTouch asks isTouchDevice, and the panel's `touch` is that layer)
+  // layer stands (ui/touch/touch.js attachTouch asks isTouchDevice, and the panel's `touch` is that layer)
   const doc = fakePage();
   const p = buildSaddlePreview(doc);
   assert.deepEqual([p.className, p.parentElement, p.id], ['saddlepanel', null, '']);
@@ -134,13 +134,13 @@ test('HUD-SADDLE THE FOUR HOSTS: the panel has one builder, and it places itself
   const walk = (dir) => { for (const f of readdirSync(dir)) { const p = join(dir, f); if (statSync(p).isDirectory()) walk(p); else if (f.endsWith('.js')) files.push(p); } };
   walk(SRC);
   const rel = (p) => p.slice(SRC.length);
-  assert.deepEqual(files.filter((p) => /className = 'saddlepanel(-bar)?'/.test(readFileSync(p, 'utf8'))).map(rel), ['ui/enhancedSaddle.js'], 'one builder');
-  assert.deepEqual(files.filter((p) => readFileSync(p, 'utf8').includes('drawEnhancedSaddle(')).map(rel).sort(), ['scenes/saddleHost.js', 'ui/enhancedSaddle.js'], 'one glue draws it');
+  assert.deepEqual(files.filter((p) => /className = 'saddlepanel(-bar)?'/.test(readFileSync(p, 'utf8'))).map(rel), ['ui/enhanced/enhancedSaddle.js'], 'one builder');
+  assert.deepEqual(files.filter((p) => readFileSync(p, 'utf8').includes('drawEnhancedSaddle(')).map(rel).sort(), ['scenes/saddleHost.js', 'ui/enhanced/enhancedSaddle.js'], 'one glue draws it');
   for (const host of ['world.js', 'exterior.js']) assert.match(rd(`src/scenes/${host}`), /import \{ createSaddleHost \} from '\.\/saddleHost\.js';/, `${host}: rides, through the glue`);
   for (const host of ['worldModes.js', 'dungeonContext.js']) assert.ok(!/saddleHost|enhancedSaddle/.test(rd(`src/scenes/${host}`)), `${host}: no transport - named, not wired`);
-  const saddle = rd('src/ui/enhancedSaddle.js');
+  const saddle = rd('src/ui/enhanced/enhancedSaddle.js');
   assert.match(saddle, /import \{ placeHudPieces \} from '\.\/hudPlacer\.js';/);
   assert.ok(!saddle.includes("from './hudLayout.js'"), 'through the leaf, not the editor and its previews\' hosts');
   assert.match(saddle, /doc\.body\.append\(host\);\n {4}placeHudPieces\(doc\);/, 'placed the moment it is put on the page');
-  assert.match(rd('src/ui/enhancedHud.js'), /import \{ tickHudLayout, hudArranging \} from '\.\/hudLayout\.js';/, 'the HUD every host draws seats the sweep');   // PIN MOVED (THE MERGE of main: AUDIT UICALM-FIRM1 imports hudArranging beside the sweep)
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /import \{ tickHudLayout, hudArranging \} from '\.\/hudLayout\.js';/, 'the HUD every host draws seats the sweep');   // PIN MOVED (THE MERGE of main: AUDIT UICALM-FIRM1 imports hudArranging beside the sweep)
 });

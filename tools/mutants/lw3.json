@@ -516,7 +516,7 @@
   },
   {
     "name": "LW3-wayfarer-look",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (k === 'wayfarer') return k;   // LW3: the living world's parties on the road",
     "new": "  if (false) return k;   // LW3: the living world's parties on the road",
     "tests": [

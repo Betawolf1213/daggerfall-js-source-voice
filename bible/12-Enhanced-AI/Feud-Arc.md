@@ -135,7 +135,7 @@ wait for the Enhanced AI switch; the rest work without it (section 2.1).
    companions, nothing about you running.
 9. **The sworn are furniture.** A spared revenant's personality colours its words and nothing else.
 10. **Two stale lines in its record**, corrected with this proposal (section 32): `Revenants.md` put its pages on the
-    Stats rail (both moved to the Holdings tab with HOLDINGS, 2026-10-03 - `ui/enhancedMenu.js pauseHoldings`), and
+    Stats rail (both moved to the Holdings tab with HOLDINGS, 2026-10-03 - `ui/enhanced/enhancedMenu.js pauseHoldings`), and
     named its relay `world144` / `world152` (the branch-era numbers; it shipped as `world153`,
     `test/relayversion.test.js`).
 
@@ -310,7 +310,7 @@ nothing is host-local but the routes into the watch's door (the arrows' kind, th
   the quad must upload for a glint as well as for an elite (today `drawOne` sends it only when `eliteGlow != 0`).
 - **The curve**: a pulse to 0.9 over 0.15 s at the start; a steady 0.2 rim through the wind-up; a rise to 1.0 through
   its last `TELL_NOW` (0.2 s) - "now". The colour is the blow's: amber, iron red, a revenant's ember for its signature.
-- **Reduced motion** (the system's `prefers-reduced-motion`, read as `ui/revenantCard.js` reads it): a steady 0.45 rim
+- **Reduced motion** (the system's `prefers-reduced-motion`, read as `ui/revenant/revenantCard.js` reads it): a steady 0.45 rim
   through the whole wind-up, no pulses.
 - **A feint never glints** (7.3).
 
@@ -519,7 +519,7 @@ client.
 
 ### 11.1 The target bar (Enhanced)
 
-- A foe that winds up at me becomes the bar's foe (`ui/hudFoeTarget.js`, a new `markFoeThreat` beside
+- A foe that winds up at me becomes the bar's foe (`ui/hud/hudFoeTarget.js`, a new `markFoeThreat` beside
   `markFoeStruck`) unless I struck another in the last 2 s; today the bar follows only foes I struck.
 - A **poise track** under the health: empty outside a wind-up; amber, filling toward P, during one; red with "Iron" for
   an iron blow; a white flash and "Staggered" at a break; "Open" through an overreach.
@@ -758,8 +758,8 @@ deed underground makes that dungeon its lair.
 ### 18.3 The map and the journal
 
 - A known lair is drawn on the travel maps: a new `revenants` mark list beside `bounties` in the world host's map deps,
-  read where the bounty circle is read (`ui/heldMap.js`, `ui/travelMapWindow.js`, `ui/inkMap.js`) - a blood-red ring
-  with its name, in `ui/bountyMapMark.js`'s shape.
+  read where the bounty circle is read (`ui/heldMap.js`, `ui/travel/travelMapWindow.js`, `ui/ink/inkMap.js`) - a blood-red ring
+  with its name, in `ui/bounty/bountyMapMark.js`'s shape.
 - A known lair is a journal row ("Hunt: Grushnak the Butcher - near the Tomb of Vaness, northeast") in the quest log's
   port-own fold (`scenes/bountyHost.js questLogEntries`'s precedent). Abandoning it forgets `lairKnown`.
 - **As built (RVN7c; the record at the foot)**: the circle is the bounty's, its radius and its reader
@@ -859,7 +859,7 @@ deed underground makes that dungeon its lair.
 ### 21.3 The words for both
 
 The deed union (`RevenantDeed` in `revenant.js`), the epithet pools (`REVENANT_EPITHETS`), and
-`ui/revenantPage.js DEED_WORDS`.
+`ui/revenant/revenantPage.js DEED_WORDS`.
 
 - **As built (RVN10; the record at the foot)**: the knock-out arm notes the striker of the blow that knocked him DOWN
   (a later blow on the body down names nobody); a striker dead or down by the layer's next frame fells nobody. "Its
@@ -947,7 +947,7 @@ The Companions page (`ui/companionRoster.js`): a loyalty bar beside its health, 
 
 ## 24. The page and the card (RVN12)
 
-### 24.1 The Revenants page (`ui/revenantPage.js`, on the Holdings tab)
+### 24.1 The Revenants page (`ui/revenant/revenantPage.js`, on the Holdings tab)
 
 For the living, under what it is:
 
@@ -960,7 +960,7 @@ For the living, under what it is:
   Daggerfall" / "Roams"); **Festering** (three pips); **Scars** (its last fights' leading ways).
 - For the sworn: loyalty. For the fallen: "Escaped unbroken" among the deeds.
 
-### 24.2 The card (`ui/revenantCard.js`)
+### 24.2 The card (`ui/revenant/revenantCard.js`)
 
 - Kickers: *Last stand*, *Signature*, *Grows bolder*, *It took*, *Oathbreaker*, *Betrayed*, *Weakness*.
 - Edges: blood with an ember rim for a last stand; iron red for a signature; amber for a theft; black for a betrayal.
@@ -1642,7 +1642,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   (the spell stays readied).
 - **The bleed** - `startBleed`/`tickBleed`: a tick a second, its foe's mark on each (REVENANT-HARM's struck mark - a
   death it brings is its foe's); any rise in health ends it (a spell, a potion, a bandage, a rest); a second adds what
-  the first had left; a death ends it. Shown with the debuffs (`ui/hudActiveSpells.js`: "Bleeding", its last tick
+  the first had left; a death ends it. Shown with the debuffs (`ui/hud/hudActiveSpells.js`: "Bleeding", its last tick
   blinking) under `BLEED_ICON` - the atlas's first icon, as every bundle that names none draws; a bleed's own icon is
   TELL9's to choose.
 - **Not built here** - a peer's (each client applies its own, TELL8); the bleed's own icon (TELL9).
@@ -1660,7 +1660,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
 
 ### TELL9 - BUILT 2026-10-04 (the Enhanced AI switch on; the enhanced HUD, the ground, both skins' debuffs): on screen
 
-- **The bar's foe on a threat** - `ui/hudFoeTarget.js markFoeThreat`: a foe whose wind-up at me begins (the cues'
+- **The bar's foe on a threat** - `ui/hud/hudFoeTarget.js markFoeThreat`: a foe whose wind-up at me begins (the cues'
   start, `hostCombat.tellCues`, its blow's board the local player's) takes the target bar unless I struck another in
   the last `THREAT_YIELD_S` (2 s - `markFoeStruck` stamps it, the bar's frame tick counts it); its own next wind-up
   refreshes its welcome; a bout's fighter (the versus bar's), a dead foe or a record with no entity never.
@@ -1669,11 +1669,11 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   sets the poise), 'iron' ("Iron", full), 'staggered' ("Staggered", full), 'open' ("Open") through an overreach. A
   charge's run reads as its wind-up; a feint as any wind-up (the bar tells no more than the ground); a cut one is gone.
   The HUD's leaf imports no brain: `scenes/hostCombat.js` registers the reading (`setFoePoiseReader`) and `foeTarget()`
-  carries it. `ui/enhancedHud.js` draws it under the health (`.hud-foepoise`, its state a class, its fill, its word
+  carries it. `ui/enhanced/enhancedHud.js` draws it under the health (`.hud-foepoise`, its state a class, its fill, its word
   beside it): amber; red and HATCHED for iron (never by colour alone); a white flash at a break (none under reduced
   motion); "Open" with a gold rim. The quest card clears the taller bar (+12 px at the HUD's scale).
   POISE-BOX (field, 2026-10-05, the owner's screenshot - "enemies seem to have this black transparent bar"): the state
-  classes were bare words, and the idle state's `empty` took the sheet's `.empty` component (`ui/enhancedStyle.js`, the
+  classes were bare words, and the idle state's `empty` took the sheet's `.empty` component (`ui/enhanced/enhancedStyle.js`, the
   windows' "nothing here" box: a dashed border, 26 px of padding), so every foe at rest wore a 54 px dark box under its
   health where the 6 px track should be - measured in Chromium, the other states untouched. Every class the track wears
   is its own now (`poise-<state>`, `poise-flash`), and `tell9_screen`'s POISE-BOX pin reads the producer's states and
@@ -1695,7 +1695,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   its hatch alone (no dots on iron), so every guard wears a pattern. A cut feint dashes the bold mark too.
 - **The Features note** - one sentence on the blows ("Wound-up blows are marked on the ground: hit hard to stagger,
   dodge to punish; red, hatched iron cannot be stopped."); the rest said shorter to stay inside FT15's 450 (449).
-- **The bleed's own icon** - `ui/hudStatus.js STATUS_GLYPHS.bleed`: two drops of blood on the kit's 16 px grid,
+- **The bleed's own icon** - `ui/hud/hudStatus.js STATUS_GLYPHS.bleed`: two drops of blood on the kit's 16 px grid,
   outlined 8-way (the kit's law), seen in Chromium over dark and light. Both skins: the enhanced widget's tile
   (`afflictionRows` - "Bleeding", its ticks at its foot, the last blinking; TELL6e had shown the bleed on the classic
   row alone, and the enhanced widget, which reads the bundles, never) and the classic row (`hudActiveSpells.js`, its
@@ -1910,7 +1910,7 @@ and `dungeonContext.js`.
   now (its weakness drawn against its career's tolerance flags, `entity.career`); `sanitizeCompanion(c, personality)`
   adds `loyalty` (`LOYALTY_START`, else 60); the store's `lastDay` (`sanitizeDay`; the mirror's and the save's merged
   by `laterDay`) in the slot, the mirror, the restore and a new game. The deed union gains `felled`, `routed`,
-  `festered`, `deserted`, `betrayed`, `laststand`, and `ui/revenantPage.js DEED_WORDS` words them.
+  `festered`, `deserted`, `betrayed`, `laststand`, and `ui/revenant/revenantPage.js DEED_WORDS` words them.
 - **The draws** - on the id's own stream (`idStream`: FNV-1a, then mulberry32; `revenant.js` takes `hashStr` from
   here), never the shared DFRandom: the weakness from section 14.1's pool by kind (`weaknessPool`; decided here: an
   OPPOSITE only for the fire and frost daedra and atronachs - the Daedroth, a Seducer, the Daedra Lord and the iron and
@@ -2198,17 +2198,17 @@ and `dungeonContext.js`.
 ### RVN7c - BUILT 2026-10-04 (the loot-rarity row on; the world host's maps and journal)
 
 - **The marks** - `revenant.revenantMapMarks()`: a circle at each living, unsworn revenant's lair the player has heard
-  of, at its pixel's middle, `LAIR_RING_R` (a bounty's 1.5), named for it. `ui/bountyMapMark.js` gains the lair's ink
+  of, at its pixel's middle, `LAIR_RING_R` (a bounty's 1.5), named for it. `ui/bounty/bountyMapMark.js` gains the lair's ink
   (`REVENANT_RING_CSS` blood red, its wash, its texel, its legend "Revenant lair") and the reader's fallback label.
 - **The maps** - the world host's map deps gain `revenants`; the held map (`ui/heldMap.js`) reads it on the bounty
-  circle's poll, hands it to the sheet and adds its legend; the ink sheet (`ui/inkMap.js paintInkOverlay`) paints it
-  with `paintBountyRing`'s new ink; the classic region page (`ui/travelMapWindow.js`) plots its ring's texels and
+  circle's poll, hands it to the sheet and adds its legend; the ink sheet (`ui/ink/inkMap.js paintInkOverlay`) paints it
+  with `paintBountyRing`'s new ink; the classic region page (`ui/travel/travelMapWindow.js`) plots its ring's texels and
   repaints when it changes.
 - **The journal** - `revenant.revenantHuntEntries(here)`: each lair heard of as an active side quest, `hunt:<id>`, the
   way there from my map pixel (the boards' words), no clock; the world host folds them into `questBridge.questLog`
   beside the bounties (the dungeon reads the same bridge). `systems/huntJournal.js` (a new leaf: 396 systems modules)
-  carries the Abandon - the pause window's Quests tab (`ui/enhancedMenu.js`) and the chronicle
-  (`ui/enhancedChronicle.js`) give a hunt its press (twice), never a share; `revenant.forgetRevenantLair` forgets the
+  carries the Abandon - the pause window's Quests tab (`ui/enhanced/enhancedMenu.js`) and the chronicle
+  (`ui/enhanced/enhancedChronicle.js`) give a hunt its press (twice), never a share; `revenant.forgetRevenantLair` forgets the
   lair and saves (heard again, it comes back).
 - **The page** - "Lair: Tomb of Vaness - on your map." once heard of.
 - **Four hosts** - `scenes/world.js` WIRED (the maps' dep, the quest log's fold); `scenes/worldModes.js` and
@@ -2437,14 +2437,14 @@ and `dungeonContext.js`.
 
 ### RVN12b - BUILT 2026-10-05 (the Enhanced Plus page and card)
 
-- **The page** - `ui/revenantPage.js`: `ADAPT_EFFECTS` (13.2's table in a chip's words), `learnedChips(r)` (drawn as
+- **The page** - `ui/revenant/revenantPage.js`: `ADAPT_EFFECTS` (13.2's table in a chip's words), `learnedChips(r)` (drawn as
   `rvn-chip`s, each its effect on its title, and an `rvn-effects` line), `tookWords(r)` (RVN8's pieces by their pack
   names), `festerPips(r)` (RVN9's wrath of WRATH_MAX, three pips and their words), `swornLoyaltyWords(r)` (RVN11's), and
   `historyWords` saying "escaped unbroken".
 - **The record** - `revenant.js`: `revenantDeed(..., { unbroken })` writes `unbroken` on a `fled` entry (a history entry
   now takes its extra fields whole - `deed(r, d, at, extra)`); `historyOf` keeps it for a `fled` alone. The tear-aways
   (`scenes/exteriorFoes.js escapeFoe`, `scenes/dungeonContext.js escapeDungeonFoe`) pass it.
-- **The card** - `ui/revenantCard.js`: the edges for every FEUD kind (24.2's four, and the rest by their kin).
+- **The card** - `ui/revenant/revenantCard.js`: the edges for every FEUD kind (24.2's four, and the rest by their kin).
 - **Four hosts** - the page and the card are the Enhanced Plus menu's and HUD's, every host's; the record's `unbroken`
   is written by the street's and the dungeon's tear-away (`scenes/worldModes.js`'s interiors the street pool's kind;
   `scenes/exterior.js` - no `fates`, so no tear-away there: FLAGGED as ever, section 32).

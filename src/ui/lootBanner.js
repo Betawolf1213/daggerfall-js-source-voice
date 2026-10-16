@@ -21,7 +21,7 @@
 // THE LAW: three standing at most, the newest on top; each holds LOOT_BANNER_HOLD_MS (a big one LOOT_BANNER_BIG_HOLD_MS)
 // and slides out; what arrives while three stand waits, the best tier first, at most LOOT_BANNER_PENDING_MAX. A second
 // card of a kind whose banner stands or waits adds to its count. Its clock is the frame's and takes the HUD's hide gate
-// (ui/hud.js drawHud, beside the revenant's cards and the herald): under a window - the loot window, a shop's counter,
+// (ui/hud/hud.js drawHud, beside the revenant's cards and the herald): under a window - the loot window, a shop's counter,
 // the Broker's - it stands hidden and nothing ages, so a piece bought or taken there is announced when the window goes.
 // A piece no longer held when its turn comes (a zone remains the room gave to another) never stands.
 //
@@ -34,7 +34,7 @@
 //
 // ENHANCED PLUS ONLY. The classic skin is Daggerfall's: nothing here builds a node or a sheet there (AUDIT 39's law) - the
 // watcher still reads and marks, so a skin switched later finds nothing stale. The HUD-MOVE layer moves the stack like
-// any HUD piece (ui/hudLayout.js 'loot'); left where the sheet stands it, it steps below the notice stack rather than
+// any HUD piece (ui/hud/hudLayout.js 'loot'); left where the sheet stands it, it steps below the notice stack rather than
 // over it. Reduced motion: no slide, no sweep, no glow.
 // ═══════════════════════════════════════════════════════════════════
 
@@ -49,10 +49,10 @@ import { paintIliacCard, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { screenDpr } from './iconFit.js';
 import { PIXEL_STACK, PIXEL_FONT_CSS, PIXELIFY_FIVE_FACE, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';
-import { rarityVarsCss } from './enhancedPlusStyle.js';
-import { FRAME_TONES, PLUS_THEMES, hudVeil } from './enhancedFrame.js';
+import { rarityVarsCss } from './enhanced/enhancedPlusStyle.js';
+import { FRAME_TONES, PLUS_THEMES, hudVeil } from './enhanced/enhancedFrame.js';
 import { armDrawWatchdog, disarmDraw } from './drawWatchdog.js';
-import { sweepHudLayout } from './hudLayout.js';
+import { sweepHudLayout } from './hud/hudLayout.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { enhancedSoundsOn } from '../systems/enhancedSounds.js';
@@ -69,7 +69,7 @@ export const LOOT_BANNER_PENDING_MAX = 12;
 /** A banner's hold once it has landed, and a big one's. */
 export const LOOT_BANNER_HOLD_MS = 4500;
 export const LOOT_BANNER_BIG_HOLD_MS = 7000;
-/** The slide in and out (the notices' own, ui/enhancedNotice.js NOTICE_SLIDE_MS). */
+/** The slide in and out (the notices' own, ui/enhanced/enhancedNotice.js NOTICE_SLIDE_MS). */
 export const LOOT_BANNER_SLIDE_MS = 260;
 /** The picture's box, CSS pixels, and a big banner's. */
 export const LOOT_BANNER_ICON_BOX = 40;
@@ -497,7 +497,7 @@ function place(d) {
 }
 
 /**
- * ONE FRAME (ui/hud.js drawHud, every host): read what arrived in `entity`'s keeping (the watcher marks what it reads,
+ * ONE FRAME (ui/hud/hud.js drawHud, every host): read what arrived in `entity`'s keeping (the watcher marks what it reads,
  * on any skin), queue its banners (Enhanced Plus), and draw them - `hidden`, the HUD's hide gate, stands the stack
  * hidden with its clock still. Answers the banners standing and waiting.
  */
@@ -601,7 +601,7 @@ export const _lootBanners = () => ({
 });
 export function _resetLootBannersForTests() { clearLootBanners(); watch.reset(); _entity = null; _faultSaid = false; }
 
-/** HUD-MOVE's preview (ui/hudLayout.js): a banner standing where the real ones will, while the UI is unlocked. */
+/** HUD-MOVE's preview (ui/hud/hudLayout.js): a banner standing where the real ones will, while the UI is unlocked. */
 export function buildLootBannerPreview(doc) {
   ensureStyle(doc);
   const stack = doc.createElement('div');

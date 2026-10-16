@@ -64,7 +64,7 @@
   },
   {
     "name": "OWS1-hud-no-ship",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    } else if (isShipKind(m)) {",
     "new": "    } else if (false) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "OWS1-hud-kind-loose",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "export const isShipKind = (m) => /\\bship\\b/.test(m.kind ?? '');",
     "new": "export const isShipKind = (m) => /ship/.test(m.kind ?? '');",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "OWS1-name-into-sail",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "(isShipKind(m) ? SHIP_MARK_RISE + 2 : NAME_ABOVE)",
     "new": "(isShipKind(m) ? NAME_ABOVE : NAME_ABOVE)",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OWS1-hull-above-the-point",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "g.moveTo(x - 7, y + 1); g.lineTo(x + 7, y + 1);",
     "new": "g.moveTo(x - 7, y - 1); g.lineTo(x + 7, y + 1);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "OWS1-sail-unfilled",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "g.moveTo(x - 1, y - SHIP_MARK_RISE); g.lineTo(x - 1, y - 1); g.lineTo(x + 6, y - 1); g.closePath();\n  g.fill(); g.stroke();",
     "new": "g.moveTo(x - 1, y - SHIP_MARK_RISE); g.lineTo(x - 1, y - 1); g.lineTo(x + 6, y - 1); g.closePath();\n  g.stroke();",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "OWS1-held-map-ring",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (t.ship) inkShip(ctx, x, y);",
     "new": "    if (false) inkShip(ctx, x, y);",
     "tests": [

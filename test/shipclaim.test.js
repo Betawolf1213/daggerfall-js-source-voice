@@ -25,7 +25,7 @@ import { MORALE_START } from '../src/systems/naval/shipCrew.js';
 import { FIELD_QUIET_S } from '../src/systems/naval/navalYard.js';
 import { NAVAL_CLASSIC } from '../src/systems/naval/navalSounds.js';
 import { quatRotate } from '../src/world/quat.js';
-import { plunderText, mountNavalPlunderWindow } from '../src/ui/navalPlunderWindow.js';
+import { plunderText, mountNavalPlunderWindow } from '../src/ui/naval/navalPlunderWindow.js';
 
 // The suite's minimal DOM as nav_f_ui drives the window: the `disabled` and `hidden` attributes reflected onto their
 // properties, `removeAttribute`, `dataset`.
@@ -426,7 +426,7 @@ test('SHIP-CLAIM online, my own stood prize: claimed, she leaves the room\'s sea
   assert.equal(B.host._shots.floaters().filter((f) => f.kind === 'flotsam').length, 0);
 });
 
-// ── the window (ui/navalPlunderWindow.js) ──────────────────────────────────────────────────────────────────────────
+// ── the window (ui/naval/navalPlunderWindow.js) ──────────────────────────────────────────────────────────────────────────
 
 test('SHIP-CLAIM the window: "Claim her" beside Scuttle and Cast adrift while the host offers it, its line under them saying what she becomes; pressed, her fate is the host\'s to decide - claimed, the window leaves; refused, it stays with a word and the press goes; no offer, no claim; a voyage raid\'s window none at all (mutants: the claim always shown, a raid offered it, the press untold, a refusal leaving, the line unsaid)', () => {
   const detail = 'Keep her as your own Small Ship: her title to your Fleet ledger, her hold aboard her. She has no crew.';

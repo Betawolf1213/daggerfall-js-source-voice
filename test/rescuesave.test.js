@@ -551,7 +551,7 @@ test('AUDIT RESCUE-SAVE A7: the Online door drops a copy of the account\'s own c
   assert.equal(sweepUnsent(dev.storage, (await realmList(dev.io)).characters), 1);
   assert.equal(readUnsent(dev.storage, c.id), null);
   assert.ok(readUnsent(dev.storage, stranger), 'not listed: not the door\'s to drop');
-  assert.match(src('src/ui/enhancedMenu.js'), /realmRows = r\.ok \? r\.characters : \[\];\n\s*if \(r\.ok\) sweepUnsent\(appStorage\(\), r\.characters, storedSession\(appStorage\(\)\)\?\.id \?\? null\);/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /realmRows = r\.ok \? r\.characters : \[\];\n\s*if \(r\.ok\) sweepUnsent\(appStorage\(\), r\.characters, storedSession\(appStorage\(\)\)\?\.id \?\? null\);/);
   claimUnsent(dev.storage, stranger, 'a'.repeat(32));
   assert.equal(keepUnsent(dev.storage, stranger, 4, '{"v":2}', { lease: 'b'.repeat(32) }), false, 'A4 by the letter: another lease writes nothing');
 });

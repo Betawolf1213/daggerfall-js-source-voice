@@ -2,7 +2,7 @@
 // BOUNTY1 (2026-09-28): THE BOUNTY BOARD IN THE WORLD - the ledger held, the packs stood and counted, the purse paid.
 //
 // The law is systems/bounty/bountyBoard.js (what a board posts, what it pays) and systems/bounty/bountyReward.js (the piece); the
-// windows are ui/bountyWindow.js through ui/bountyDoor.js. This file is the host's half, and it reaches the world only
+// windows are ui/bounty/bountyWindow.js through ui/bounty/bountyDoor.js. This file is the host's half, and it reaches the world only
 // through the deps the world host (scenes/world.js) hands it - so it can be driven headless by a test.
 //
 // A HUNT, START TO END:
@@ -31,7 +31,7 @@ import {
 import { mintBountyItem, bountyItemName, bountyRewardRows } from '../systems/bounty/bountyReward.js';
 import { registerModSaveData } from '../systems/modSaveData.js';
 import { addGoldPieces, addItem } from '../systems/inventory.js';
-import { BOUNTY_RING_R } from '../ui/bountyMapMark.js';
+import { BOUNTY_RING_R } from '../ui/bounty/bountyMapMark.js';
 import { setBountyJournal, BOUNTY_QUEST_PREFIX } from '../systems/bounty/bountyJournal.js';
 import { rewardContract } from '../systems/standing.js';   // REP4: a contract finished, the region's law two points better
 import { sharedClockOn } from '../systems/worldTick.js';   // AUDIT REST II Q3: the never-lapse build's rows, re-stamped online

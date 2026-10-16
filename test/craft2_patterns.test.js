@@ -1,6 +1,6 @@
 // CRAFT2 (2026-10-07, Mac: "How could we enhance the profession element of the game while reducing complexity and
 // making crafting more viable"; then "Lets do it") - PATTERNS, NOT A MATRIX: a station lists the pieces it makes, each
-// once whatever it is made of, and the material is chosen from what is held (ui/profPages.js patternRows, pickedOf,
+// once whatever it is made of, and the material is chosen from what is held (ui/professions/profPages.js patternRows, pickedOf,
 // materialRow); the first-make 500 is a pattern's at a tier (net/recipeLaw.js firstCraftKey, firstCraftKin), the
 // service's recipes as they were. The done-when: an Adamantium Longsword pays its first, an Ebony one after it none (one
 // pattern, one tier), a Mithril one its own - through the real Worker. bible/06-Systems/Professions-Arc.md 41.
@@ -96,7 +96,7 @@ test('CRAFT2 law: the first-make 500 a pattern\'s at a tier - Adamantium, Ebony,
 });
 
 test('CRAFT2 law: what a picked pattern is made of - the last craft\'s material where it can be made; else the highest tier made now, then made from raw; else the open one holding most of its inputs; else the last\'s, else the first', async () => {
-  const { pickedOf, patternLead, heldShare, standings } = await import('../src/ui/profPages.js');
+  const { pickedOf, patternLead, heldShare, standings } = await import('../src/ui/professions/profPages.js');
   const sword = patternsOf(station('smithing', 'weapons')).find((p) => p.id === 'longsword');
   const at = (o) => (r) => ({ open: true, can: false, raw: false, share: 0, ...(o[r.madeOf] ?? {}) });
   assert.equal(pickedOf(sword, at({ Iron: { can: true }, Ebony: { can: true } }), 'Iron').madeOf, 'Iron', 'the last craft\'s, made now');
@@ -120,7 +120,7 @@ test('CRAFT2 law: what a picked pattern is made of - the last craft\'s material 
 
 /** The Stores page over a stub book at a home's anvil or (`at`) workbench or loom, `held` its goods, every track at `rank`. */
 async function pageAt(heldIn, rank = 70, at = 'forge') {
-  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   resetProfPages();
   setPref('gentleActs', true);

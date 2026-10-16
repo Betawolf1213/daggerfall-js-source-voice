@@ -9,8 +9,8 @@ import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createTradePack } from '../src/systems/tradePack.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { magicPowersLines } from '../src/systems/item/itemPowers.js';
-import { powersRows } from '../src/ui/nativeInventory.js';
-import { itemInfoBoxes } from '../src/ui/enhancedInventory.js';
+import { powersRows } from '../src/ui/native/nativeInventory.js';
+import { itemInfoBoxes } from '../src/ui/enhanced/enhancedInventory.js';
 import { SOUL_TRAP_TEMPLATE } from '../src/systems/mysticism.js';
 
 afterEach(() => setDefaultEnchantCtx(null));

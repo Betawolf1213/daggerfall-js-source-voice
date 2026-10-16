@@ -232,8 +232,8 @@ export const ITEM_BROKEN_TEXT_ID = 29;
  *  ABOVE the prohibition chain), and ItemEquipTable.EquipItem
  *  (ItemEquipTable.cs:94-154) has no condition test at any point.
  *  This predicate is therefore for the two WINDOW callers
- *  (ui/nativeInventory.js's _refuseForbidden and
- *  ui/enhancedInventory.js's wear) and for nobody below them - the
+ *  (ui/native/nativeInventory.js's _refuseForbidden and
+ *  ui/enhanced/enhancedInventory.js's wear) and for nobody below them - the
  *  port had it inside equipItem, at the table seam, and every caller
  *  DFU lets equip past the window paid for it. The one that showed:
  *  PlayerEntity.cs:959 imports a classic save's worn gear with

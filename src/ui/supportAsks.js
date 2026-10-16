@@ -3,7 +3,7 @@
 // to add the patron/kofi ingame on the main menu as 2 icons"): THE PROJECT'S ASKS, ONE HOME.
 //
 // Two doors ask for support now - the website's (index.html, the corner plaques U64 and PATREON1 built) and the game's
-// own front door (ui/enhancedMenu.js, two icons in the top-left corner) - and they must ask at the same addresses under
+// own front door (ui/enhanced/enhancedMenu.js, two icons in the top-left corner) - and they must ask at the same addresses under
 // the same marks. The game imports this module. The site is a document that runs no script, so scripts/landingHtml.mjs
 // injects SUPPORT_MARKS_CSS into it at serve and build - the seam that already gives it the skin's tokens and the
 // menu's night - and test/landing.test.js holds the site's links, README.md, SUPPORT.md and the repository's Sponsor

@@ -1,19 +1,19 @@
 // TOWN-MARKS (2026-09-29, Mac: "For the notice boards in town. Can we physically mark them on the town map, and also mark
 // owned player housing"; bible/10-UI/UI-Arc.md TOWN-MARKS): THE TOWN MAP'S NOTICE BOARDS AND PLAYER HOUSING. The data
-// (ui/townMapMarks.js: which boards, which houses, what each is called), the ink (ui/inkTown.js paintBoardMark,
-// paintHomeMark - under the names, lifted above their place), the sheet (ui/townSheet.js: into sheet space by the
+// (ui/town/townMapMarks.js: which boards, which houses, what each is called), the ink (ui/ink/inkTown.js paintBoardMark,
+// paintHomeMark - under the names, lifted above their place), the sheet (ui/town/townSheet.js: into sheet space by the
 // plates' and the party's own seams, answered under the pointer, a repaint when the homes answer), and the wiring
-// (ui/townMapDoor.js, scenes/world.js toggleExteriorAutomap).
+// (ui/town/townMapDoor.js, scenes/world.js toggleExteriorAutomap).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import {
   readTownBoards, readTownHomes, townBoardRows, townHomeRows, boardMarkLabel, TOWN_BOARD_LABEL, TOWN_HOUSE_LABEL, TOWN_MARK_REACH,
-} from '../src/ui/townMapMarks.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
-import { TOWN_PEN, TOWN_MARK_HALF, ANCHOR_R, sheetY, WORLD_PER_PX, paintBoardMark, paintHomeMark } from '../src/ui/inkTown.js';
-import { toPaper, PEN, CARET_R } from '../src/ui/inkMap.js';
+} from '../src/ui/town/townMapMarks.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
+import { TOWN_PEN, TOWN_MARK_HALF, ANCHOR_R, sheetY, WORLD_PER_PX, paintBoardMark, paintHomeMark } from '../src/ui/ink/inkTown.js';
+import { toPaper, PEN, CARET_R } from '../src/ui/ink/inkMap.js';
 import { nameplateAnchor } from '../src/ui/nameplateLayout.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -215,7 +215,7 @@ test('TOWN-MARKS the repaint: the homes answer after the map is open - the plan 
 });
 
 test('TOWN-MARKS the wiring: the door hands the marks to the enhanced town map; the host marks the open Notice Board\'s boards and the town\'s housing, and asks for the town\'s homes as the map opens (mutants: a key dropped at the door; the board marked while closed; the homes never asked)', () => {
-  const door = src('src/ui/townMapDoor.js');
+  const door = src('src/ui/town/townMapDoor.js');
   assert.match(door, /boards: deps\.townBoards \?\? null,/);
   assert.match(door, /homes: deps\.townHomes \?\? null,/);
   assert.match(door, /homesVersion: deps\.townHomesVersion \?\? null,/);

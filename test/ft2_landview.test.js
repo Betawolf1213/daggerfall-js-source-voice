@@ -121,7 +121,7 @@ test('FT2: a condensed row\'s read and write are functions and come together - t
 });
 
 test('FT2: every builder asks the registry (one home per idea, every store), the home passes read/write, and the old rows are gone', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /function prefRow\(key, name, note, \{ onChange = null, home = false \} = \{\}\) \{\s*if \(!home\) \{ const moved = featureForControl\('prefs', key\); if \(moved\) return movedRow\(moved\); \}/);
   assert.match(menu, /function choiceRow\(key, name, note, tiers, \{ home = false, read = null, write = null \} = \{\}\) \{\s*if \(!home\) \{ const moved = featureForControl\('prefs', key\); if \(moved\) return movedRow\(moved\); \}/);
   assert.match(menu, /function modRow\(vendor, key, def, \{ name = null, note = null, home = false \} = \{\}\) \{\s*if \(!home\) \{ const moved = featureForControl\('mods', key, vendor\); if \(moved\) return movedRow\(moved\); \}/);
@@ -135,5 +135,5 @@ test('FT2: every builder asks the registry (one home per idea, every store), the
   assert.match(world, /const fogDistance = landViewRead\(\);/);
   assert.ok(!/landViewDistance\(\{/.test(world), 'no second composition of the read');
   // the DFU key stays in its category (the map is total) and its settings row is settingRow's pointer, through featureForControl
-  assert.match(read('src/ui/settingsMap.js'), /"Experimental\/TerrainDistance",/);
+  assert.match(read('src/ui/settings/settingsMap.js'), /"Experimental\/TerrainDistance",/);
 });

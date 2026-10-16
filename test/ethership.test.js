@@ -16,7 +16,7 @@ import { createNavalDirector, encounterClasses } from '../src/systems/naval/nava
 import { rangeOfHull } from '../src/systems/naval/navalAI.js';
 import { BANDS, VEIL_X, LEAGUE_PX, veilhaven, etherDepthAt, etherBandOf, inEther } from '../src/world/ethericSea.js';
 import { coloursWords } from '../src/systems/naval/shipKnowledge.js';
-import { etherWatersWords, navalHudText } from '../src/ui/navalHud.js';
+import { etherWatersWords, navalHudText } from '../src/ui/naval/navalHud.js';
 import { mulberry32 } from '../src/combat/bloodArt.js';
 import { sea } from './navalSea.mjs';
 

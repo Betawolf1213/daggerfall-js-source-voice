@@ -210,7 +210,7 @@
   },
   {
     "name": "WB5b-no-account-card-row",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      if (gates) row(t('account.card.gates', 'Breaches closed'), gates);   // WB12a",
     "new": "",
     "tests": [

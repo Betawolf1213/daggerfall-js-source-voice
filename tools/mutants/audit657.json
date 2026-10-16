@@ -76,7 +76,7 @@
   },
   {
     "name": "AUDIT657-B1-the-line-under-the-strip",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-tab.on { color: #f3cf86; box-shadow: inset 0 -2px 0 #c08a3e; }",
     "new": ".notice-tab.on { color: #f3cf86; border-bottom: 2px solid #c08a3e; margin-bottom: -2px; }",
     "tests": [
@@ -85,7 +85,7 @@
   },
   {
     "name": "AUDIT657-B1-the-ring-left-to-the-browser",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-tab:focus-visible { outline: 2px solid #f3cf86; outline-offset: -2px; }",
     "new": ".notice-tab:focus-visible { }",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "AUDIT657-B1-the-forced-colours-outline-gone",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "@media (forced-colors: active) { .notice-tab.on { outline: 2px solid Highlight; outline-offset: -2px; } }",
     "new": "@media (forced-colors: active) { }",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "AUDIT657-B2-four-columns-at-a-phones-width",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".market-counterrow { grid-template-columns: minmax(0, 1fr) 4.5em auto; } .market-counterrow > b { grid-column: 1 / -1; }",
     "new": "/* none */",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "AUDIT657-B3-the-stalls-controls-loose",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "fields.append(field('Piece', sel, 'market-field-wide'), field('Price in gold', price), go);\n    box.append(fields, el('p', 'notice-tip', VENDOR_TEXT.stockTip));",
     "new": "box.append(sel, price, go, el('p', 'notice-tip', VENDOR_TEXT.stockTip));",
     "tests": [

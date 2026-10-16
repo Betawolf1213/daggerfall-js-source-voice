@@ -20,7 +20,7 @@ import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { SWING_FATIGUE_COST } from '../src/scenes/hostCombat.js';
-import { itemChatText, itemBriefLines } from '../src/ui/enhancedInventory.js';
+import { itemChatText, itemBriefLines } from '../src/ui/enhanced/enhancedInventory.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { techniquePierces, shaftSequence } from '../src/combat/arrowFlight.js';
 import { mountReforgeWindow } from '../src/ui/reforgeWindow.js';

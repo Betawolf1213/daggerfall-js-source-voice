@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDITLOOT-F6-codex-rows-in-the-picture-column",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".broker-offer.codex-row, .broker-offer.codex-set { grid-template-columns: minmax(0, 1fr); }\n",
     "new": "\n",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "AUDITLOOT-F6-keep-in-the-picture-column",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".broker-offer > .reforge-keep { grid-column: 4; }\n",
     "new": "\n",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDITLOOT-F6-hidden-tabs-shown",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".reforge-tabs[hidden] { display: none; }\n",
     "new": "\n",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "AUDITLOOT-F6-plus-sheet-without",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "${BROKER_CSS}\n${REFORGE_CSS}\n",
     "new": "${BROKER_CSS}\n",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "AUDITLOOT-F6-a-phones-keep-on-break",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  .broker-offer > .reforge-keep { grid-column: 3; grid-row: 3; }",
     "new": "  .broker-offer > .reforge-keep { grid-column: 3; }",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "AUDITLOOT-F6-a-hint-cut-short",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".broker-offer.codex-row .broker-set, .broker-offer.codex-set .broker-set { white-space: normal; }",
     "new": ".broker-offer.codex-set .broker-set { white-space: normal; }",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDITLOOT-F7-the-pack-closes-under-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (reforgeDoorOpen()) { if (overlayAction(e) === 'back') { e.preventDefault(); e.stopPropagation(); closeReforgeDoor(); } return; }\n",
     "new": "\n",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "AUDITLOOT-F7-keys-reach-the-pack",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (reforgeDoorOpen()) { if (overlayAction(e) === 'back') { e.preventDefault(); e.stopPropagation(); closeReforgeDoor(); } return; }",
     "new": "  if (reforgeDoorOpen() && overlayAction(e) === 'back') { e.preventDefault(); e.stopPropagation(); closeReforgeDoor(); return; }",
     "tests": [

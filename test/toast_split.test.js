@@ -1,7 +1,7 @@
 // TOAST-SPLIT (2026-09-29, Mac: "So it seems like the enhanced plus UI regressed. The notifications arent enhanced plus
 // anymore"; bible/10-UI/UI-Arc.md TOAST-SPLIT): THE TOASTS AND THE NOTICE BOARD SHARE NO CLASS. The Notice
 // Board (NOTICE1) drew its cork in `.notice-body` and its small italic lines in `.notice-hint` - the HUD toast stack's own
-// two classes (ui/enhancedNotice.js, ui/enhancedInputBox.js, ui/yesNoBox.js) - so the board's sheet (NOTICE_CSS, in the
+// two classes (ui/enhanced/enhancedNotice.js, ui/enhanced/enhancedInputBox.js, ui/yesNoBox.js) - so the board's sheet (NOTICE_CSS, in the
 // Enhanced Plus sheet since MERGE 2, and laid on the classic skin when a board opens) put the cork behind every toast's
 // words and its brown italic on every hint, and the toasts' sheet put its capitals and rule on the board's lines. The
 // board's are `.notice-cork` and `.notice-tip` now, and the sheet a board lays on the classic skin takes the kit's rules
@@ -10,11 +10,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { NOTICE_CSS, PROF_CSS, BOUNTY_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { NOTICE_CSS, PROF_CSS, BOUNTY_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { noticeSkinCss } from '../src/ui/noticeWindow.js';
 import { scopeRules } from '../src/ui/brokerWindow.js';
-import { frameCss } from '../src/ui/enhancedFrame.js';
+import { frameCss } from '../src/ui/enhanced/enhancedFrame.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -37,7 +37,7 @@ function drawnClasses(file) {
 }
 
 /** The toast stack's classes: what its three drawers hand their elements. */
-const TOAST_FILES = ['src/ui/enhancedNotice.js', 'src/ui/enhancedInputBox.js', 'src/ui/yesNoBox.js'];
+const TOAST_FILES = ['src/ui/enhanced/enhancedNotice.js', 'src/ui/enhanced/enhancedInputBox.js', 'src/ui/yesNoBox.js'];
 const TOAST = new Set(TOAST_FILES.flatMap((f) => [...drawnClasses(f)]).filter((c) => /^notice(-|$)/.test(c)));
 /** The board's windows: the Notice Board and its three tabs. */
 const BOARD_FILES = ['src/ui/noticeWindow.js', 'src/ui/marketTab.js', 'src/ui/workTab.js'];

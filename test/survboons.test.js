@@ -16,7 +16,7 @@ import { TEMPLATE, eatLaw } from '../src/systems/survival/food.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { tavernOrder, TAVERN_MENU_TEXT } from '../src/systems/survival/tavernMenu.js';
 import { sleepShortRest, NIGHT_MINUTES } from '../src/systems/rest/restAct.js';
-import { statusTiles, needGlyph, STATUS_GLYPHS } from '../src/ui/hudStatus.js';
+import { statusTiles, needGlyph, STATUS_GLYPHS } from '../src/ui/hud/hudStatus.js';
 import { boonStatRows } from '../src/ui/temperatureCard.js';
 import { liveStat, maxFatigue } from '../src/systems/statMods.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
@@ -423,7 +423,7 @@ test('SURV-BOONS: the sheet explains the points - the Stats side\'s Boons rows i
   setPref(SURVIVAL_PREF, 'casual');
   assert.deepEqual(boonStatRows(e), [], 'another tier: none');
   assert.match(read('src/ui/statsCard.js'), /const boonRows = boonStatRows\(entity\);\n {2}if \(boonRows\.length\) \{\n {4}const bn = section\('Boons', 14\);/);
-  assert.match(read('src/ui/enhancedHud.js'), /if \(needs\.some\(\(c\) => c\.level !== 'boon'\)\) noteFirstUse\('survival'\);/, 'a boon is no felt need');
+  assert.match(read('src/ui/enhanced/enhancedHud.js'), /if \(needs\.some\(\(c\) => c\.level !== 'boon'\)\) noteFirstUse\('survival'\);/, 'a boon is no felt need');
   const page = TUTORIALS.find((t) => t.id === 'survival');
   assert.deepEqual(page.body, [
     'You need food, water, warmth and sleep. Icons at the screen\'s left edge show what you are short on, and on Boons what you have earned.',   // PIN MOVED (AUDIT C&C S13): where the tiles stand

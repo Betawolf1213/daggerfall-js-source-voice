@@ -56,7 +56,7 @@ test('DISC22-B: the screen lands on Settings, and its Resume returns to the clas
   assert.match(door, /enhancedPauseOverlay\(show, \{ \.\.\.hooks, at: 'settings', onResume: again \}\)/, 'opened on the Settings page, Resume wired back');
   assert.match(door, /const again = \(\) => classicPauseWithSettings\(show, hooks\);/, 'back to the same classic window, its Controls button live again');
   assert.match(door, /if \(action === 'resume' && typeof hooks\.onResume === 'function'\) \{ hooks\.onResume\(\); return; \}/, 'Resume returns rather than relocking into the world');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /else if \(at && sections\.some\(\(l\) => idOf\(l\) === at\)\) section = at;/, 'a landing may name a rail section');
   assert.match(menu, /const SECTIONS_PAUSE = \[[^\]]*'Settings'/, 'and the pause rail carries Settings');
 });

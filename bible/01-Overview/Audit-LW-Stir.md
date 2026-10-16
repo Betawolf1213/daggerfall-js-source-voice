@@ -95,7 +95,7 @@ the old line put back. Each change carries an `AUDIT LW-STIR` comment.
 ### The four hosts
 
 LW-STIR's law is the living town's (`stir.js`, `livingTown.js`). `scenes/world.js` - WIRED as LW-STIR has it (the line
-layer passes each line's kind; `ui/navalHud.js` draws a shout and a song their own way); `scenes/worldModes.js` -
+layer passes each line's kind; `ui/naval/navalHud.js` draws a shout and a song their own way); `scenes/worldModes.js` -
 FLAGGED: no incident indoors (a room's talk is LW8b's, all talk); `scenes/exterior.js` - FLAGGED as LW2 has it (no living
 town); `scenes/dungeonContext.js` - no town. Lens C found each claim true; this audit changes no host.
 

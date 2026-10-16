@@ -12,7 +12,7 @@ import {
   shortcutBinding, hotkeyHit, firstHotkey, BUTTONS, SHORTCUT_TEXT,
 } from '../src/systems/dialogShortcuts.js';
 import { RestWindow } from '../src/ui/restWindow.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -266,17 +266,17 @@ test('A8: the trade window exits on X, and its mode action wears the MODE\'s let
 // ── source pins: the wiring, where the behaviour is host-side ───────
 
 test('A8: the four wired windows read the table rather than literals', () => {
-  const inv = readFileSync(join(root, 'src/ui/nativeInventory.js'), 'utf8');
+  const inv = readFileSync(join(root, 'src/ui/native/nativeInventory.js'), 'utf8');
   assert.match(inv, /from '\.\.\/systems\/dialogShortcuts\.js'/);
   // the interim digit-tab accelerator is gone: DFU's tabs are F1-F4
   assert.ok(!/digits jump tabs/.test(inv), 'the interim tab comment is retired');
   assert.ok(!/Digit\(\[1-4\]\)/.test(inv), 'the digit tab arm is retired');
   // ...and E no longer closes the inventory, because E is Equip
   assert.ok(!/code === 'KeyE'/.test(inv), 'E is InventoryEquip, not an exit');
-  const trade = readFileSync(join(root, 'src/ui/nativeTrade.js'), 'utf8');
+  const trade = readFileSync(join(root, 'src/ui/native/nativeTrade.js'), 'utf8');
   assert.match(trade, /from '\.\.\/systems\/dialogShortcuts\.js'/);
   assert.ok(!/code === 'KeyE'/.test(trade));
-  const travel = readFileSync(join(root, 'src/ui/travelPopUp.js'), 'utf8');
+  const travel = readFileSync(join(root, 'src/ui/travel/travelPopUp.js'), 'utf8');
   assert.match(travel, /firstHotkey\(TRAVEL_BUTTONS/);
   const rest = readFileSync(join(root, 'src/ui/restWindow.js'), 'utf8');
   assert.match(rest, /hotkeyHit/);

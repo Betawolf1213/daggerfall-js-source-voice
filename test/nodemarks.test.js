@@ -8,7 +8,7 @@
 //     on its nodes (`mark`: its glow's footprint, its reach - a Prospector's veins from 200 m), the street's pixels or
 //     the dungeon's veins, and the loose bodies, nearest first, NODE_MARK_MAX at most;
 //   - both compasses mark them in their profession's colour (ui/nodeMarks.js), the nearer brighter - the classic box
-//     (ui/hud.js drawNodeCompassMarks) and the enhanced strip (ui/enhancedHud.js) - with a Tracker's animals in
+//     (ui/hud/hud.js drawNodeCompassMarks) and the enhanced strip (ui/enhanced/enhancedHud.js) - with a Tracker's animals in
 //     Hunting's;
 //   - each glows in the same colour (render/nodeGlow.js): a halo low on the node, a shimmer climbing it, motes rising
 //     out of it, kindling as it first stands near and fading out with distance; added onto the frame, fogged.
@@ -27,10 +27,10 @@ import { treeKind, TREE_MARK } from '../src/scenes/treeHost.js';
 import { fishKind, SCHOOL_MARK } from '../src/scenes/fishHost.js';
 import { createGatherHost, NODE_MARK_M, NODE_MARK_MAX, NODE_MARK_SIZE } from '../src/scenes/gatherHost.js';
 import { NODE_MARK_CSS, nodeMarkCss, nodeMarkRgb, nodeMarkAlpha, nodeCompassPoints, NODE_MARK_FAR_DIM } from '../src/ui/nodeMarks.js';
-import { drawNodeCompassMarks, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud.js';
+import { drawNodeCompassMarks, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud/hud.js';
 import { PARTY_GREEN_CSS } from '../src/net/social.js';
-import { SHIP_MARK_CSS } from '../src/ui/enhancedHud.js';
-import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
+import { SHIP_MARK_CSS } from '../src/ui/enhanced/enhancedHud.js';
+import { QUEST_MARK_CSS } from '../src/ui/quest/questMarks.js';
 import {
   NODE_GLOW_M, NODE_GLOW_FADE_M, NODE_GLOW_MAX, NODE_GLOW_KINDLE_S, NODE_GLOW_PERIOD, NODE_GLOW_PULL, NODE_GLOW_MOTES,
   NODE_GLOW_VS, NODE_GLOW_FS, nodeGlows, createNodeGlowState, nodeGlowClock, nodeGlowRatesWhole, nodeGlowSeed,
@@ -292,7 +292,7 @@ test('NODE-MARKS nodeCompassPoints: the host\'s marks in their professions, the 
 });
 
 test('NODE-MARKS AUDIT the classic compass\'s order: the node marks are drawn FIRST, after the strip, so the Detect markers (a spell\'s whole output), the party and the ships stand over them (mutant: the nodes drawn last again)', () => {
-  const H = src('src/ui/hud.js');
+  const H = src('src/ui/hud/hud.js');
   const body = H.slice(H.indexOf('export function drawHud('), H.indexOf('export function drawPartyCompassMarks('));
   const nodesAt = body.indexOf('drawNodeCompassMarks(renderer, nodes,');
   assert.ok(nodesAt > body.indexOf('drawCompassStrip(renderer, art, bx, by, s, heading01)'), 'over the strip');
@@ -344,7 +344,7 @@ const findAll = (n, cls, out = []) => { if (String(n.className ?? '').split(/\s+
 test('NODE-MARKS the enhanced strip: a mark per node at its bearing in its profession\'s colour and opacity, pooled - a node gone hides its mark, never removes it; the party\'s marks their own (mutants: the marks never placed; one colour; the pool rebuilt)', async () => {
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const me = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
@@ -618,5 +618,5 @@ test('NODE-MARKS the hosts by source: the street\'s compass and the dungeon\'s t
   assert.match(w, /^import \{ mineKind \} from '\.\/mineHost\.js'; import \{ nodeCompassPoints \} from '\.\.\/ui\/nodeMarks\.js'; import \{ createNodeGlowPass \} from '\.\.\/render\/nodeGlow\.js';/m);
   assert.match(src('src/scenes/worldModes.js'), /party: \(\) => host\.partyNear\?\.\(\) \?\? \[\], nodeMarks: \(feet\) => host\.professionMarks\?\.\(feet\) \?\? null,/);
   assert.match(src('src/scenes/dungeonContext.js'), /party: partyCompassPoints\(\{ bodies: opts\.party \?\? null \}\), nodes: playerFeet \? withFireMarks\(opts\.nodeMarks\?\.\(playerFeet\) \?\? null, dungeonFires, playerFeet\) : null,/, 'REST3: the dungeon\'s campfires ride the same field');
-  assert.match(src('src/ui/hud.js'), /nodes: nodes \?\? null,/, 'handed to the enhanced skin');
+  assert.match(src('src/ui/hud/hud.js'), /nodes: nodes \?\? null,/, 'handed to the enhanced skin');
 });

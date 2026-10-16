@@ -23,9 +23,9 @@ import {
 import {
   kingName, kingShort, pieceName, unitName, refusalWords, logLine, gambitGuide, gambitWords, gambitWhat, resultGold, nextStep, barkEnd, regularLines,
 } from '../src/ui/gambitTableWords.js';
-import { cardPanelChromeCss, isCardPanelSelector } from '../src/ui/cardPanelKit.js';
+import { cardPanelChromeCss, isCardPanelSelector } from '../src/ui/card/cardPanelKit.js';
 import { PIXELIFY_FIVE_FACE } from '../src/ui/pixelifyFive.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { SMALL_WINDOWS, kitCss, G, GRIM_TONES, INK_ROOTS, WOOD_ROOTS } from '../src/ui/grimoireDress.js';
 import * as tm from '../src/systems/textManager.js';
 import { _resetTutorialTriggerForTests, setTutorialHandler } from '../src/systems/tutorials.js';

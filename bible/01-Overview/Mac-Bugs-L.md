@@ -268,7 +268,7 @@ it. Found by searching rather than by remembering where they were.
 
 ### F4 — L1 had a SECOND route, and the report only named one
 
-`ui/hudLarge.js` dispatches its clicked panels through the same table,
+`ui/hud/hudLarge.js` dispatches its clicked panels through the same table,
 and the options panel's action is `Escape`. So on `ff0cb3b` the crash was
 reachable **by mouse, with no key pressed at all**.
 

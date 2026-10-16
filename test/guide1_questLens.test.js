@@ -1,5 +1,5 @@
 // GUIDE1 (2026-09-29, Mac: "How can we set the foundation and improve the quest system substantially? Like really
-// modernize it, make it more accessible") - THE QUEST LENS, the Quest Guide arc's foundation (ui/questLens.js,
+// modernize it, make it more accessible") - THE QUEST LENS, the Quest Guide arc's foundation (ui/quest/questLens.js,
 // bible/06-Systems/Quest-Guide-Arc.md). Its three laws, each over the real producers:
 //
 //   THE MACHINE NEVER KNOWS - the quiet read over every message of the vendored corpus leaves the quest's latches,
@@ -26,9 +26,9 @@ import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { REGION_TEMPLES } from '../src/formats/mapsFile.js';
 import { REGION, RI, makeWorld, seededRolls } from './guideWorld.mjs';   // the crafted world, the tables loaded
 import { getSeed, setSeed, srand } from '../src/formats/dfRandom.js';
-import { QuestLens, quietLines, entryTarget, lastPlaceMentionedInMessage } from '../src/ui/questLens.js';
-import { questRail, writtenOrder, journalLines, QUEST_URGENT_SECONDS } from '../src/ui/questRail.js';
-import { questTimerWords } from '../src/ui/enhancedMenu.js';
+import { QuestLens, quietLines, entryTarget, lastPlaceMentionedInMessage } from '../src/ui/quest/questLens.js';
+import { questRail, writtenOrder, journalLines, QUEST_URGENT_SECONDS } from '../src/ui/quest/questRail.js';
+import { questTimerWords } from '../src/ui/enhanced/enhancedMenu.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');
@@ -392,7 +392,7 @@ test('GUIDE1 NOTHING THE JOURNAL HAS NOT SAID - the target over producer-minted 
 });
 
 test('GUIDE1 ONE WALK, ONE HOME - the classic logbook takes GetLastPlaceMentionedInMessage from the lens and keeps no copy; the bridge makes the one lens and a host makes none; Message.getTextTokens still reveals by default (C#\'s literal true) and does not when told; the pause window\'s urgent line is QUEST_URGENT_SECONDS - not urgent at a day, urgent a second under (mutants: the default reveal off; the argument ignored; the literal back)', () => {
-  const journal = rd('src/ui/questJournal.js');
+  const journal = rd('src/ui/quest/questJournal.js');
   assert.match(journal, /import \{ lastPlaceMentionedInMessage\b[^}]*\} from '\.\/questLens\.js';/);
   assert.doesNotMatch(journal, /getMessageResources|_lastPlaceMentionedInMessage/, 'no private copy of the law');
   assert.match(journal, /const place = lastPlaceMentionedInMessage\(message\);/);
@@ -413,5 +413,5 @@ test('GUIDE1 ONE WALK, ONE HOME - the classic logbook takes GetLastPlaceMentione
   assert.equal(QUEST_URGENT_SECONDS, 86400);
   assert.equal(questTimerWords(log(86400), 'a:1').urgent, false);
   assert.equal(questTimerWords(log(86399), 'a:1').urgent, true);
-  assert.doesNotMatch(rd('src/ui/enhancedMenu.js'), /clockSeconds < 86400/, 'one number, one home');
+  assert.doesNotMatch(rd('src/ui/enhanced/enhancedMenu.js'), /clockSeconds < 86400/, 'one number, one home');
 });

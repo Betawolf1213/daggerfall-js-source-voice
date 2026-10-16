@@ -166,7 +166,7 @@ test('CARDS3b the host: the held two drawn from the view, the press on the stack
   assert.match(listen, /if \(!place \|\| d\.off \|\| onPanel\(e\) \|\| !inBetZone\(d\.point, place, g\.scene\.places\.table\)\) return;/, 'C6: let go on the table, never over the panel');
   assert.match(listen, /if \(still && still\.id === d\.bet\.id && still\.value === d\.bet\.value\) cardPress\(g, d\.bet\.id, d\.bet\.value\);/, 'C10: the bet as the table stands at the letting go');
   assert.match(body('closeCardGame'), /g\.unlisten\?\.\(\);/, 'the listeners gone with the game');
-  assert.match(read('src/ui/cardTableHud.js'), /sliderValue: \(\) => sliderValue,/);
+  assert.match(read('src/ui/card/cardTableHud.js'), /sliderValue: \(\) => sliderValue,/);
 });
 
 test('AUDIT CARDS-3 C1: the held hand lifts clear of the panel - by the pixels it is under it, at the hand\'s depth and the frame\'s field of view; never past HELD_LIFT_MAX', () => {

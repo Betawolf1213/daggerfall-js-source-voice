@@ -173,7 +173,7 @@ export const sunlightTravelText = () => localizedText('sunlightDamageFastTravelD
  *  HOOD-SAID (FIELD BUGS 2026-09-30): AND THE BUTTON THAT DOES IT. The
  *  line sent a player to raise a hood with no button of that name: the
  *  pack's card offered Use, which stepped the cloak through its drawings
- *  and drew nothing. The card carries Raise hood now (ui/enhancedInventory.js),
+ *  and drew nothing. The card carries Raise hood now (ui/enhanced/enhancedInventory.js),
  *  and the line names it. The classic window has no such button - its
  *  Use on the doll steps DFU's drawings, the doll redrawn at each - so
  *  on that skin the line says that. */

@@ -192,7 +192,7 @@ test('AUDIT 18: Ledger C does not list breath/drowning + the crouch motor, which
   assert.match(dungeon, /breathStep/, 'P18: dungeonContext no longer drives the extracted breath clause');
   assert.match(read('src/systems/breath.js'), /currentBreath/, 'the P12/P18 breath clause is gone from systems/breath.js');
   assert.match(read('src/systems/save/save.js'), /currentBreath/, 'save.js no longer persists currentBreath');
-  assert.match(read('src/ui/hud.js'), /breathShort|breathNormal/, 'hud.js no longer draws the breath bar');
+  assert.match(read('src/ui/hud/hud.js'), /breathShort|breathNormal/, 'hud.js no longer draws the breath bar');
   assert.match(read('src/player/motor.js'), /CROUCH_HEIGHT/, 'the P12 crouch motor is gone from motor.js');
 
   const live = ledgerSectionC().filter((r) => !r.struck);
@@ -303,7 +303,7 @@ test('AUDIT 18: Systems-Arc only claims a spell-cost row that spellcost.js actua
 
 test('AUDIT 18: Home.md does not call the port desktop-only while the touch layer ships', () => {
   const hosts = ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js', 'src/scenes/interior.js'];
-  const wired = existsSync(join(root, 'src/ui/touch.js')) && hosts.every((h) => /attachTouch\(/.test(read(h)));
+  const wired = existsSync(join(root, 'src/ui/touch/touch.js')) && hosts.every((h) => /attachTouch\(/.test(read(h)));
   assert.ok(wired, 'the touch layer is no longer wired into all four hosts - re-read Port-Doctrine.md (Rebuilt on our stack, 3) before editing Home.md');
   const home = read('bible/Home.md');
   // Scoped to the ground rules themselves: the Audits section below quotes
@@ -675,18 +675,18 @@ test('WAVE D: two ACTIVE arc pages stop describing work this wave shipped', () =
   // 1. D10 shipped the two large-HUD offsets, and tiered both live.
   assert.equal(/both settings stay read by nothing/.test(ui), false,
     'UI-Arc still records the two large-HUD offsets as read by nothing');
-  const hud = read('src/ui/hudLarge.js');
+  const hud = read('src/ui/hud/hudLarge.js');
   assert.match(hud, /export function horseOffsetHeight\(/);
   assert.match(hud, /export function weaponOffsetHeight\(/);
   const settings = read('src/systems/settings/settings.js');
-  assert.match(settings, /'GUI\/LargeHUDOffsetHorse': 'src\/ui\/hudLarge\.js'/);
-  assert.match(settings, /'GUI\/LargeHUDUndockedOffsetWeapon': 'src\/ui\/hudLarge\.js'/);
+  assert.match(settings, /'GUI\/LargeHUDOffsetHorse': 'src\/ui\/hud\/hudLarge\.js'/);
+  assert.match(settings, /'GUI\/LargeHUDUndockedOffsetWeapon': 'src\/ui\/hud\/hudLarge\.js'/);
 
   // 2. D4 built the fade layer, so no page may say the port has none.
   assert.equal(/fade layer the port does not have/.test(ui), false,
     'UI-Arc still says the fast-travel smash waits on a fade layer that exists');
   assert.match(read('src/ui/fadeLayer.js'), /smashHUDToBlack/);
-  assert.match(read('src/ui/travelPopUp.js'), /hudFade\.smashHUDToBlack\(\);/);
+  assert.match(read('src/ui/travel/travelPopUp.js'), /hudFade\.smashHUDToBlack\(\);/);
 
   // 3. ...and Systems-Arc's TP1 section cited a pin for a claim that
   //    pin now REFUTES: travelguild.test.js used to assert both flags
@@ -696,7 +696,7 @@ test('WAVE D: two ACTIVE arc pages stop describing work this wave shipped', () =
   assert.match(read('test/travelguild.test.js'),
     /no fade layer in the port\/\.test\(unquoted\), false/,
     'the cited pin is the INVERTED one');
-  assert.match(read('src/ui/travelPopUp.js'), /this\.isCloseWindowDeferred = true;/);
+  assert.match(read('src/ui/travel/travelPopUp.js'), /this\.isCloseWindowDeferred = true;/);
 });
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // @ts-check
 // FOE-TITLE (2026-10-02): WHAT A SPECIAL FOE IS CALLED - one home for every surface that names a foe (the HUD's target
 // bar, the hover - at peace only since HOVER-PLAIN, 2026-10-03 - the death line, the body's title). Before it, three copies spelt a LOOT7 champion's trait each their
-// own way (ui/hudFoeTarget.js, systems/worldTooltips.js, systems/champions.js championName) and an ELITE FOE was named
+// own way (ui/hud/hudFoeTarget.js, systems/worldTooltips.js, systems/champions.js championName) and an ELITE FOE was named
 // on the target bar alone.
 //
 //   - a REVENANT (systems/revenant/revenant.js) is called by its own name - "Grushnak the Kinslayer" - and nothing else;

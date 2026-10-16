@@ -392,11 +392,11 @@ test('ROADS 25: the network is traced into chains, simplified, rounded and lifte
   const fs = await import('node:fs');
   // MAP1 (2026-09-18) re-aimed this half: the 3D relief and its renderer
   // are RETIRED, and the network is INK on the held parchment
-  // (ui/inkMap.js) - traced by the same traceChains, softened by the
+  // (ui/ink/inkMap.js) - traced by the same traceChains, softened by the
   // same simplify/Chaikin pair, and inked ONLY when the network is the
   // mod's own arrays (the `source` word world/roadsProducer.js puts on
   // it), never the port's generated one (bible/03-World/Roads.md).
-  const ink = fs.readFileSync('src/ui/inkMap.js', 'utf8');
+  const ink = fs.readFileSync('src/ui/ink/inkMap.js', 'utf8');
   assert.match(ink, /if \(!net \|\| net\.source !== 'basic-roads'\) return \{ roads: \[\], tracks: \[\] \};/, 'only the mod\'s arrays are inked');
   assert.match(ink, /traceChains\(mask, width, height\)\.map\(\(c\) => roundCorners\(simplifyChain\(centre\(c\)\)\)\)/, 'traced, simplified, rounded (the bounded cut) - the ROADS 25 chain');
   assert.match(ink, /stroke\(model\.roads, band === 'far' \? 1 : 1\.5, PEN\.line\)/, 'the roads are LINES in the pen');
@@ -533,7 +533,7 @@ test('ROADS 12: the two chips ride the store, default shown, and the relief is k
   // store, the classic window's chips still set them, and the held map
   // READS them at paint time - a flag TRUE hides its layer, the classic
   // inversion (AUDIT 47 A1's law: read from the store, not assumed).
-  const ink = (await import('node:fs')).readFileSync('src/ui/inkMap.js', 'utf8');
+  const ink = (await import('node:fs')).readFileSync('src/ui/ink/inkMap.js', 'utf8');
   assert.match(ink, /if \(!opts\.filters\?\.roads\) stroke\(model\.roads/, 'a hidden roads flag is not inked');
   assert.match(ink, /if \(band !== 'far' && !opts\.filters\?\.tracks\) stroke\(model\.tracks/, 'the tracks likewise - and never at the far band');
   // MAP-FIELD2: `names` is a literal null now (Mac: the town names are

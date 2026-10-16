@@ -20,10 +20,10 @@ import { setValue } from '../src/systems/settings/settings.js';
 // REPAIR-EASE: InstantRepairs is the port's default now - the counters these pins read are a booked repair's, so they run with it off
 setValue('Controls', 'InstantRepairs', 'False');
 import { OIL_TEMPLATE } from '../src/systems/inventory.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { HOW_MANY_ITEMS } from '../src/ui/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { HOW_MANY_ITEMS } from '../src/ui/native/nativeInventory.js';
 import { planTake, splitRequired } from '../src/systems/item/itemTransfer.js';
-import { mountEnhancedTrade, repairReadyLine } from '../src/ui/enhancedTrade.js';
+import { mountEnhancedTrade, repairReadyLine } from '../src/ui/enhanced/enhancedTrade.js';
 import { withDom } from './invdrag.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -66,7 +66,7 @@ test('UXB1-K: the CLASSIC counter draws DFU\'s misc label - "DONE" or "N days" o
   assert.equal(labels.get(finished), 'DONE');
   assert.equal(new NativeTradeWindow({ mode: 'Buy', shelfItems: () => [], packItems: () => [] })._repairLabels(), null, 'Repair mode\'s scroller only (:244)');
   // drawn where ItemListScroller's miscLabelTemplate puts it: top-left inside the button's margins
-  const src = read('src/ui/nativeTrade.js');
+  const src = read('src/ui/native/nativeTrade.js');
   assert.match(src, /if \(label\) shadowText\(renderer, font, label, m, rect\[0\] \+ CELL_X \+ CELL_MARGIN, rect\[1\] \+ s \* SLOT_H \+ CELL_MARGIN\);/);
   assert.match(src, /if \(this\.mode !== 'Repair' \|\| getBool\('Controls', 'InstantRepairs'\)\) return null;/);
 });
@@ -129,8 +129,8 @@ test('UXB1-L: a stack only partly carried asks too, seeded with what fits - and 
   assert.equal(splitRequired(oil(1), 0, true), false, 'never a single item');
   assert.equal(splitRequired(oil(12), 12, false), false);
   // one law, both windows (the pack and the counter) - systems/item/itemTransfer.js's, since DISC25-F gave it one home
-  assert.match(read('src/ui/nativeInventory.js'), /return splitRequired\(it, plan\.amount, this\._controlDown\);/);
-  const trade = read('src/ui/nativeTrade.js');
+  assert.match(read('src/ui/native/nativeInventory.js'), /return splitRequired\(it, plan\.amount, this\._controlDown\);/);
+  const trade = read('src/ui/native/nativeTrade.js');
   assert.match(trade, /this\._split\(item, plan\.amount, \(amount\) => applyTransfer\(item, \{ \.\.\.plan, amount \}, this\.hooks\.shelfItems\(\), this\.basket\)\);/);
 });
 
@@ -150,7 +150,7 @@ test('AUDIT UXB1 F4: a split lot put back on the classic shelf rejoins its stack
   w._clear();   // the Clear button, and OnPop
   assert.equal(w.basket.length, 0);
   assert.deepEqual(shelf.map((i) => i.stackCount), [12], '...and the shelf as it empties');
-  const src = read('src/ui/nativeTrade.js');
+  const src = read('src/ui/native/nativeTrade.js');
   assert.match(src, /if \(d\.kind === 'unstage'\) \{ this\._split\(item, amountOf\(item\), \(n\) => this\._unstage\(item, n\)\); return; \}/);
   assert.match(src, /while \(this\.basket\.length\) this\._unstage\(this\.basket\[0\]\);/);
 });

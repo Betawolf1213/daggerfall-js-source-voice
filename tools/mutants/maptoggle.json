@@ -1,7 +1,7 @@
 [
   {
     "name": "MT-switch-ignored",
-    "file": "src/ui/mapSkin.js",
+    "file": "src/ui/map/mapSkin.js",
     "old": "export const enhancedMapOn = () => !!getPref('heldMap');",
     "new": "export const enhancedMapOn = () => true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MT-skin-ignored",
-    "file": "src/ui/mapSkin.js",
+    "file": "src/ui/map/mapSkin.js",
     "old": "export const heldMapChosen = () => isEnhanced() && enhancedMapOn();",
     "new": "export const heldMapChosen = () => enhancedMapOn();",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "MT-worn-without-a-document",
-    "file": "src/ui/mapSkin.js",
+    "file": "src/ui/map/mapSkin.js",
     "old": "export const heldMapWorn = () => heldMapChosen() && typeof document !== 'undefined';",
     "new": "export const heldMapWorn = () => heldMapChosen();",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "MT-travel-door-asks-the-skin-alone",
-    "file": "src/ui/travelMapDoor.js",
+    "file": "src/ui/travel/travelMapDoor.js",
     "old": "  return heldMapChosen() || travelMapArtLoaded();",
     "new": "  return isEnhancedSkinOnly() || travelMapArtLoaded();\n}\nfunction isEnhancedSkinOnly() { return (globalThis.location?.search ?? '').includes('skin=enhanced');",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "MT-automap-door-off-still-held",
-    "file": "src/ui/automapDoor.js",
+    "file": "src/ui/automap/automapDoor.js",
     "old": "  if (heldMapWorn()) {",
     "new": "  if (typeof document !== 'undefined') {",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "MT-town-door-off-still-held",
-    "file": "src/ui/townMapDoor.js",
+    "file": "src/ui/town/townMapDoor.js",
     "old": "  if (heldMapWorn()) {",
     "new": "  if (typeof document !== 'undefined') {",
     "tests": [

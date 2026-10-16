@@ -14,7 +14,7 @@ import { createSurvivalItem, SURVIVAL_USE_TEXT, CAMPING_USES } from '../src/syst
 import { TEMPLATE, FOOD_STAGE, foodStage } from '../src/systems/survival/food.js';
 import { setWorldMinutes, worldMinutes } from '../src/systems/worldTick.js';
 import { raceActivation } from '../src/player/activationRace.js';
-import { useResultAction } from '../src/ui/enhancedInventory.js';
+import { useResultAction } from '../src/ui/enhanced/enhancedInventory.js';
 import { USE_PENDING } from '../src/systems/useItem.js';
 import { createSceneCache, cacheScene, restoreCachedScene } from '../src/systems/sceneCache.js';
 import { POSE_BOUND } from '../src/net/wire.js';
@@ -319,9 +319,9 @@ test('SURV3: the pack\'s hand-off - both skins close and hand the placeable to t
   assert.deepEqual(useResultAction(r, { placeCamp: () => {} }), { kind: 'placeCamp', item: r.item, closeFirst: true });
   assert.deepEqual(useResultAction({ kind: 'placeFire', item: r.item }, {}), { kind: 'message', text: USE_PENDING.placeFire });
   assert.equal(USE_PENDING.pitchCamp, 'There is nowhere to set that up here.');
-  const native = read('src/ui/nativeInventory.js');
+  const native = read('src/ui/native/nativeInventory.js');
   assert.match(native, /if \(r\.kind === 'pitchCamp' \|\| r\.kind === 'placeFire'\) \{\s*\n\s*if \(this\.hooks\.placeCamp\) \{ this\._closeSilently\(\); this\.hooks\.placeCamp\(r\.item, collection\); \}/);   // AUDIT SURV-TIERS: with the list it came from (the wagon's tent)
-  const enh = read('src/ui/enhancedInventory.js');
+  const enh = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(enh, /if \(act\.kind === 'placeCamp'\) \{\s*\n\s*const place = deps\.placeCamp;\s*\n\s*onExit\(\);[^\n]*\n\s*place\(act\.item, collection\);/);
   const cache = createSceneCache();
   cacheScene(cache, 'x', { camps: [{ id: 'a', pos: [1, 2, 3] }], droppedTorches: [{ position: [1, 2, 3], time: 5, itemTemplateIndex: 247 }] });

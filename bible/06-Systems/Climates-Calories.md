@@ -92,13 +92,13 @@ carry, and everything static.
 | SURV2 | the items: templates 530-541, minting, spoilage, the use handlers, the general store's provisions, the starting kit, the corpse's meat, the mod's icons through a vendor-only archive | `survival/items.js`, `loot.js`, `switch.js`; `itemTemplates.js` custom rows; `textureReplacement.js` vendor art; `useItem.js`, `shopStock.js`, `equip.js` |
 | SURV3 | camps: the tent and the fire as placed objects with a menu, cooking, the water sources, shared online | `survival/camp.js` (the law), `scenes/camps.js` (the pool), the three hosts' mounts, `player/activationRace.js`, both inventory skins, `sceneCache.js` |
 | SURV4 | the rest law: a bed or a fire sleeps whole, the window alone is rough - half the hour, the roll twice, a stiff morning; the felt temperature can refuse the sleep | `survival/rest.js` (the law), `scenes/shared.js` createRestDeps (the composed hour and the kind), `encounters.js` (the second ask), the four hosts' `restKind` |
-| SURV5 | what the player is told: the HUD's needs strip, the status page's third box, the survival items' info box; the mod's regional tavern menus with the meal, the drink and the blackout | `survival/status.js`, `survival/tavernMenu.js`; `ui/enhancedHud.js` + `enhancedStyle.js`; `itemInfo.js`; `ui/tavernWindow.js` + the interior host's hooks; the four hosts' status chain |
+| SURV5 | what the player is told: the HUD's needs strip, the status page's third box, the survival items' info box; the mod's regional tavern menus with the meal, the drink and the blackout | `survival/status.js`, `survival/tavernMenu.js`; `ui/enhanced/enhancedHud.js` + `enhancedStyle.js`; `itemInfo.js`; `ui/tavernWindow.js` + the interior host's hooks; the four hosts' status chain |
 | SURV6 | RETIRED by HUNT-OUT (2026-10-04) - was: hunting, foraging and the water search as real-time events: the wilderness roll, the Yes/No box, the busy page, the finds and the harms, the hunted | DELETED: `survival/hunting.js`, `scenes/hunting.js`, `ui/huntWindow.js` (its busy page kept as `ui/waitWindow.js`, Foraging's wait), the overworld host's bag and tick |
 | SURV7 | the feed: the four hosts say where the player stands and the minute law runs in every mode; the rest gate on DFU's seam; the needs aligned at a load and an arrival; fast travel charged; the records | `survival/env.js` (the feed, the gate); `scenes/shared.js` createPlayerTicker's `survivalEnv`; the four hosts' readers; `save.js`'s load arm; `worldTick.js` tickPlayerMinutes' `survival` |
 | SURV-TIERS | Off, Casual (the default) and Hard on the one key: the tiers as data, every charging law reading its tier's rules, Off stored as the old switch's own `false`; AUDIT SURV-TIERS: the loan, a rest is a rest, the house's order, Off keeping the camps and the place, four laws Hard shares | `survival/difficulty.js` (the table, the stored values), `survival/switch.js` (`survivalTier`, `survivalRules`), the laws (`needs.js`, `rest.js`, `food.js`, `tavernMenu.js`, `temperature.js`; `hunting.js` until HUNT-OUT DELETED it), the compositions (`env.js`, `scenes/shared.js`, `scenes/hunting.js` until HUNT-OUT, `scenes/camps.js`, `useItem.js`, both tavern windows), `encounters.js` (the asks), `uiPrefs.js` (the load), the four hosts' `restKind`, the Features row |
-| SURV-BOONS | Boons, the fourth tier: nothing taken, a need met earns a boon - Well fed, Quenched, Well rested (banked by a bed or a fire), Thriving, the hearth; green tiles on the strip, no red need | `survival/difficulty.js` (the tier), `survival/needs.js` (`BOON`, `survivalBoons`, the bank in `paySleep`, the minute law's grant), `survival/status.js` (the chips and lines), `ui/hudStatus.js` (the buff tiles, the Thriving glyph), the Features row |
-| AUDIT SURV-BOONS | the over-ceiling pool, Well rested beside a debt, Casual's loan kept, the hearth in a jump, the boons said once at a landing and a load, the tutorial, the drink's chip first, the sheet's Boons rows, the live tier on the strip | `survival/needs.js`, `difficulty.js`, `status.js`, `save.js`, `ui/enhancedHud.js`, `ui/hudStatus.js` (the Hearth's flame), `ui/temperatureCard.js`, `ui/statsCard.js`, `tutorialCatalogue.js`, `ui/credits.js` |
-| TEMP-UI | the temperature shown: the HUD plate, the pack's plaque, the card's comparison, the Stats side's breakdown, the Status page's number | `survival/temperature.js` (`naturalParts`, `temperatureBreakdown`, `signedDegrees`, the sum's parts on `feltTemperature`), `survival/env.js` (`feltNow`, the feed kept), `survival/needs.js` (`feltCtx`), `survival/status.js` (`temperatureReadout`), `ui/enhancedHud.js`, `ui/temperatureCard.js`, `ui/armourCard.js` (`modsForSlots`, the wear's `worn`), `ui/statsCard.js`, the sheets |
+| SURV-BOONS | Boons, the fourth tier: nothing taken, a need met earns a boon - Well fed, Quenched, Well rested (banked by a bed or a fire), Thriving, the hearth; green tiles on the strip, no red need | `survival/difficulty.js` (the tier), `survival/needs.js` (`BOON`, `survivalBoons`, the bank in `paySleep`, the minute law's grant), `survival/status.js` (the chips and lines), `ui/hud/hudStatus.js` (the buff tiles, the Thriving glyph), the Features row |
+| AUDIT SURV-BOONS | the over-ceiling pool, Well rested beside a debt, Casual's loan kept, the hearth in a jump, the boons said once at a landing and a load, the tutorial, the drink's chip first, the sheet's Boons rows, the live tier on the strip | `survival/needs.js`, `difficulty.js`, `status.js`, `save.js`, `ui/enhanced/enhancedHud.js`, `ui/hud/hudStatus.js` (the Hearth's flame), `ui/temperatureCard.js`, `ui/statsCard.js`, `tutorialCatalogue.js`, `ui/credits.js` |
+| TEMP-UI | the temperature shown: the HUD plate, the pack's plaque, the card's comparison, the Stats side's breakdown, the Status page's number | `survival/temperature.js` (`naturalParts`, `temperatureBreakdown`, `signedDegrees`, the sum's parts on `feltTemperature`), `survival/env.js` (`feltNow`, the feed kept), `survival/needs.js` (`feltCtx`), `survival/status.js` (`temperatureReadout`), `ui/enhanced/enhancedHud.js`, `ui/temperatureCard.js`, `ui/armourCard.js` (`modsForSlots`, the wear's `worn`), `ui/statsCard.js`, the sheets |
 | AUDIT TEMP-UI | the body's warmth unresisted, the swim soaks, the dungeon's air, the clothes eased, the drink's floor, the landing floored, the shown weather, a NaN record mended | `survival/temperature.js`, `env.js`, `needs.js`, `scenes/dungeonContext.js`, `scenes/world.js` |
 | SURV-OFFSIGHT | Off sees another player's camp - the flame, its light, the tent - and uses none of it; its own stay out of sight | `scenes/camps.js` (`seen`, the doors of sight, beside `shown`, the doors of use) |
 | BOONS-DEFAULT | Boons is the default tier (Mac, 2026-10-13: "make boons the default"); a record no rewarding tier wrote reads as Casual where no tier is handed in | `survival/difficulty.js` (`SURVIVAL_DEFAULT`), `systems/features.js` (the row's `initial`), `survival/status.js` (`tierOf`), the first-need page and the credits |
@@ -821,7 +821,7 @@ its own way - which is why nothing in the suite noticed: every pin the
 SURV2 work wrote held the registration, the decode and the addressing,
 and all three were correct.
 
-**THE GL DOOR** (`ui/itemScroller.js`, `ui/nativeInventory.js`) asks the
+**THE GL DOOR** (`ui/item/itemScroller.js`, `ui/native/nativeInventory.js`) asks the
 pipeline for the archive and then gates on
 
 ```js
@@ -1837,7 +1837,7 @@ and as law in `survival/needs.js`:
    folds it away first. The boons are the strip's GREEN tiles (`level:
    'boon'`, a `buff` tile): the need's own glyph for the need it rewards, a
    flame for the Hearth (its own - REST1's Next night is the campfire), a gold
-   sparkle for Thriving (`ui/hudStatus.js` `STATUS_GLYPHS`), Well rested's
+   sparkle for Thriving (`ui/hud/hudStatus.js` `STATUS_GLYPHS`), Well rested's
    whole hours left at its foot. The status page says each in a line read off
    `BOON` - "Well fed: +5 Strength, +5 Endurance." - with Well rested's bank
    in a line of its own after it ("Rested for another 12 hours.", AUDIT C&C
@@ -2011,7 +2011,7 @@ producers before it was fixed.
 
 ### What the player sees
 
-- **The HUD plate** (`ui/enhancedHud.js`, the enhanced skin): at the
+- **The HUD plate** (`ui/enhanced/enhancedHud.js`, the enhanced skin): at the
   compass's right end, on its middle - where the eye already goes for where
   you are, clear of the quest card (92 px down the right edge), the status
   widget (the left edge) and the foe's bar (under the compass's middle). A
@@ -2954,7 +2954,7 @@ dead.
 
 ## UI-CALM - the plate in the corner (2026-10-14)
 
-A player: "I like the temperature indicator, but it would fit better in the bottom-left corner." The HUD plate (TEMP-UI) now stands as the first word of the bottom-left block's caption, beside the mode's word (`ui/enhancedHud.js`), its own HUD piece inside the quick block (`ui/hudLayout.js`); comfortable it shows the glyph and the number alone, felt or costing its word and scale too. The fit off the compass's right end (AUDIT C&C S3, S10, S12 and lens S: beside, compact, hung, aside) is retired with that place. `10-UI/UI-Calm.md`.
+A player: "I like the temperature indicator, but it would fit better in the bottom-left corner." The HUD plate (TEMP-UI) now stands as the first word of the bottom-left block's caption, beside the mode's word (`ui/enhanced/enhancedHud.js`), its own HUD piece inside the quick block (`ui/hud/hudLayout.js`); comfortable it shows the glyph and the number alone, felt or costing its word and scale too. The fit off the compass's right end (AUDIT C&C S3, S10, S12 and lens S: beside, compact, hung, aside) is retired with that place. `10-UI/UI-Calm.md`.
 
 ## WET-FALL - the soak reads what falls (2026-10-15)
 

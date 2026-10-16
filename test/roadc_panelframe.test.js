@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { identity } from '../src/world/mat4.js';
 import { Renderer, PANEL_CLEAR_RGBA, AUTOMAP_PANEL_NATIVE_RECT } from '../src/render/renderer.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -280,7 +280,7 @@ test('c2/S2 SOURCE PIN: no automap file, and no host, may set renderer GL state 
     assert.ok(begun.includes(`s.${f}`), `${f} is saved AND restored`);
   }
 
-  for (const f of ['src/ui/automapWindow.js', 'src/ui/exteriorAutomapWindow.js']) {
+  for (const f of ['src/ui/automap/automapWindow.js', 'src/ui/exteriorAutomapWindow.js']) {
     const body = src(f);
     for (const setter of ['setScreenScissor', 'clearScreenScissor', 'setFog', 'setLighting', 'setMoonlight', 'setScreenOffset']) {
       const outside = new RegExp(`renderer\\.${setter}\\(`, 'g');
@@ -302,7 +302,7 @@ test('c2/S2 SOURCE PIN: no automap file, and no host, may set renderer GL state 
   assert.equal(/gl\.scissor\(rect\.x/.test(wm), false, 'the hand-rolled scissor is gone');
 
   // and the dungeon window's own save/restore block is gone with it
-  const aw = src('src/ui/automapWindow.js');
+  const aw = src('src/ui/automap/automapWindow.js');
   assert.match(aw, /renderer\.panelFrame\(\{/);
   assert.equal(/const off = renderer\.screenOffset/.test(aw), false, 'the hand-rolled restore list is deleted');
   assert.match(aw, /AUTOMAP_PANEL_NATIVE_RECT/, 'and the 3D lands in DFU\'s render panel');

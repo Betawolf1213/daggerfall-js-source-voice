@@ -99,7 +99,7 @@ Two kinds stand on the held map now, each answering the pointer with a CARD at t
   *Collapsing*) / *Valkynaz Ruhn, Warden of the Burning Gate* (or *... has fallen*). The omen builds it
   (`systems/gate/gateOmen.js gateTip`, beside the label it already built), `readGateMark` carries it.
 - **a town under attack** - NEW on the map: every raid RUNNING now (`raidActive`: begun, not withdrawn, not cleansed) at
-  its town, a crimson ring about the town's mark with two blades crossed above it (`ui/inkMap.js paintRaidMark`; a colour
+  its town, a crimson ring about the town's mark with two blades crossed above it (`ui/ink/inkMap.js paintRaidMark`; a colour
   the sheet did not speak in), in the legend as *Town under attack*: *RAIDING PARTY* / *Gothway Garden, Daggerfall* /
   *Orcs attacking* / *12 of 20 driven off* (only once some deaths are known here) / *Withdraws at 12:00*. The host hands
   the map `raids` - `raidMapMarks` over `raidState()` on the raids' own clock, none while the mod is off.

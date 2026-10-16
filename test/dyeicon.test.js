@@ -163,7 +163,7 @@ test('DYE-ICON: a replacement answered by the dye is drawn as it is - never dyed
 });
 
 test('DYE-ICON: every icon door asks with the swatch - the GL lists, the enhanced door (its cache keyed by dye and swatch), the hotbar, the HUD, the pack, the decorator\'s thumbnails and the hung pictures (mutants: a door asking undyed)', () => {
-  for (const f of ['src/ui/itemScroller.js', 'src/ui/nativeInventory.js']) {
+  for (const f of ['src/ui/item/itemScroller.js', 'src/ui/native/nativeInventory.js']) {
     const s = src(f);
     assert.match(s, /icons\.uploadRecord\(img\.archive, img\.record, \{ mips: false, removeMask: true, dye: img\.dye, dyeTarget: img\.dyeTarget \}\)/, f);
     assert.match(s, /const key = `\$\{img\.archive\}_\$\{img\.record\}\$\{token \? `_\$\{token\}` : ''\}\$\{img\.dyeTarget != null \? `_t\$\{img\.dyeTarget\}d\$\{img\.dye\}` : ''\}`;/, `${f}: its warm key tells a silver blade from an artifact`);
@@ -171,11 +171,11 @@ test('DYE-ICON: every icon door asks with the swatch - the GL lists, the enhance
   const canvas = src('src/ui/textureCanvas.js');
   assert.match(canvas, /const bmp = changeDyeBitmap\(changeMask\(got\.file\.getDFBitmap\(record, 0\)\), dye, dyeTarget\);/, 'the DOM door\'s classic arm dyes');
   assert.match(canvas, /const dyed = dyeTarget != null && dye != null && dye !== '';\n  return `\$\{archive\}_\$\{record\}_\$\{scale\}\$\{token \? `_\$\{token\}` : ''\}\$\{dyed \? `_t\$\{dyeTarget\}d\$\{dye\}` : ''\}`;/, 'and keys by dye and swatch');
-  assert.match(src('src/ui/enhancedArt.js'), /requestIcon\(img\.archive, img\.record, \{ scale: 2, dye: img\.dye, dyeTarget: img\.dyeTarget \}\)/);
+  assert.match(src('src/ui/enhanced/enhancedArt.js'), /requestIcon\(img\.archive, img\.record, \{ scale: 2, dye: img\.dye, dyeTarget: img\.dyeTarget \}\)/);
   // MERGE (UI2 x DYE-ICON): the bar's slot and the diamond's cell ask the FITTED door (UI2) - with the swatch, which it hands
   // its source (textureCanvas.js requestFittedIcon) and names its picture by
-  assert.match(src('src/ui/enhancedHotbar.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
-  assert.match(src('src/ui/enhancedHud.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box, dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
+  assert.match(src('src/ui/enhanced/enhancedHotbar.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
+  assert.match(src('src/ui/enhanced/enhancedHud.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box, dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
   assert.match(src('src/scenes/worldModes.js'), /iconUrl: \(a, r, dye = null, dyeTarget = null\) => loadIcon\(a, r, \{ scale: 1, dye, dyeTarget \}\)/);
   assert.match(src('src/scenes/decorTool.js'), /deps\.iconUrl\?\.\(entry\.icon\.archive, entry\.icon\.record, entry\.icon\.dye \?\? null, entry\.icon\.dyeTarget \?\? null\)/);
   assert.match(src('src/scenes/decorRoom.js'), /loadMountArt\(deps, flat\[0\], flat\[1\], decorMountDye\(d\), decorMountDyeTarget\(d\)\)/);

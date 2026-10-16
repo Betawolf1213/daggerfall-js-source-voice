@@ -46,7 +46,7 @@ standing quietly where Rodyn Buckingston was said to be, and the plaque calling 
 1033) still saying the man "is usually at" the place.
 
 So a quest's foe at peace says whose it is. Under its name the enhanced plaque carries one line, "Quest: " and the
-quest's title as every journal face cuts it (`ui/questRail.js` `questTitleOf`) - "Rogue / Quest: The Assassin". The
+quest's title as every journal face cuts it (`ui/quest/questRail.js` `questTitleOf`) - "Rogue / Quest: The Assassin". The
 line is read off the foe's own QuestResourceBehaviour (every pool's record carries it, `scenes/questFoeHost.js`
 `bindQuestFoeHost`) and never kept, and the machine is only asked: the quest that stood it, the resource a Foe of it,
 the journal holding an entry (Quest.GetLogMessages, empty once the quest has ended too - the Quest Guide's second law,

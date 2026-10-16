@@ -25,7 +25,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { LIVE } from '../src/systems/settings/settings.js';
-import { NUMBER_LAW } from '../src/ui/settingsLaw.js';
+import { NUMBER_LAW } from '../src/ui/settings/settingsLaw.js';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {

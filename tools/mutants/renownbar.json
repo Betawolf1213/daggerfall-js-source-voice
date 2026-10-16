@@ -1,7 +1,7 @@
 [
   {
     "name": "UI3-the-words-gone-from-the-bar",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  renownTrack.append(renownFill, renownGhost, renownNum);\n",
     "new": "  renownTrack.append(renownFill, renownGhost);\n",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "UI3-the-words-stale",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    put(parts.renownNum, 'renownT', rv.text);   // UI3: the XP in the bar\n",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "RENOWN-BAR-the-mirror-column-dropped",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-renown.on { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; }",
     "new": ".hud-renown.on { display: grid; grid-template-columns: 36px minmax(0, 1fr); }",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "RENOWN-BAR-the-row-a-flex-again",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-renown.on { display: grid;",
     "new": ".hud-renown.on { display: flex;",
     "tests": [
@@ -40,7 +40,7 @@
   },
   {
     "name": "RENOWN-BAR-the-columns-narrower-than-the-box",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "grid-template-columns: 36px minmax(0, 1fr) 36px; }",
     "new": "grid-template-columns: 30px minmax(0, 1fr) 30px; }",
     "tests": [
@@ -49,7 +49,7 @@
   },
   {
     "name": "UI3-the-bar-thin-again",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-renown .hud-renowntrack { width: auto; height: 20px;",
     "new": ".hud-renown .hud-renowntrack { width: auto; height: 8px;",
     "tests": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "RENOWN-BAR-the-profile-row-loses-its-numbers",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "'{name} - Renown {level}, {progress}', ",
     "new": "'{name} - Renown {level}', ",
     "tests": [

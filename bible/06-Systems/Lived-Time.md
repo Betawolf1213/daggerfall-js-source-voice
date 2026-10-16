@@ -298,8 +298,8 @@ it.
   - `world.js` only: the journey's days, the cautious heal, the nightfall words, and the arrival.
 - `scenes/arrestFlow.js` (the sentence), `systems/rest/rest.js` (the collapse), `systems/save/save.js` (the
   envelope and the arrival).
-- The words: `ui/restWindow.js`, `ui/travelPopUp.js`, `ui/heldMap.js`, `ui/tavernWindow.js`,
-  `ui/enhancedTavern.js`, `ui/enhancedTrade.js`, `ui/enhancedHud.js`, `ui/enhancedMenu.js`.
+- The words: `ui/restWindow.js`, `ui/travel/travelPopUp.js`, `ui/heldMap.js`, `ui/tavernWindow.js`,
+  `ui/enhanced/enhancedTavern.js`, `ui/enhanced/enhancedTrade.js`, `ui/enhanced/enhancedHud.js`, `ui/enhanced/enhancedMenu.js`.
 - Spawns: `systems/encounters.js` and `systems/campEncounters.js` (`skyMinutes`).
 - The curses: `systems/lycanthropy.js` and `systems/vampirism.js` (`skyMinutes` for the moon and
   the day).

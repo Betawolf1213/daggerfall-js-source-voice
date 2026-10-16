@@ -2,13 +2,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { quietRenderer, centreOf } from '../src/ui/enhancedPort.js';
-import { PORT_SPECS, enhancedWindow } from '../src/ui/enhancedPorts.js';
-import { classicScope, inClassicScope } from '../src/ui/enhancedScope.js';
-import { drawEnhancedDialog } from '../src/ui/enhancedDialog.js';
+import { quietRenderer, centreOf } from '../src/ui/enhanced/enhancedPort.js';
+import { PORT_SPECS, enhancedWindow } from '../src/ui/enhanced/enhancedPorts.js';
+import { classicScope, inClassicScope } from '../src/ui/enhanced/enhancedScope.js';
+import { drawEnhancedDialog } from '../src/ui/enhanced/enhancedDialog.js';
 import { GuildServiceWindow, GUILD_RECTS, PANEL_X, PANEL_Y } from '../src/ui/guildServiceWindow.js';
 import { TransportWindow } from '../src/ui/transportWindow.js';
-import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
+import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const acts = (view) => {
@@ -69,7 +69,7 @@ test('PORT0: inside the classic scope the enhanced boxes stand down (the classic
     assert.equal(drawEnhancedDialog({}, { ox: 0, oy: 0, s: 1 }, box, {}, fakeDoc), false);
   });
   assert.equal(inClassicScope(), false);
-  assert.match(read('src/ui/travelMapWindow.js'), /TravelMapWindow\.prototype\.draw = function draw\(\.\.\.args\) \{ return classicScope/);
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /TravelMapWindow\.prototype\.draw = function draw\(\.\.\.args\) \{ return classicScope/);
 });
 
 test('PORT3: the list hands its draw to the enhanced list under the enhanced skin only', () => {

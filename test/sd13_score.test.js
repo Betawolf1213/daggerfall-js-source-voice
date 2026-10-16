@@ -20,7 +20,7 @@ import {
 import { gateScoreSongs, midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../src/systems/gate/gateScore.js';
 import { SD_ARENA, SD_ORRERY, dungeonToRealm, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
-import { SD_BAR_NEAR_M } from '../src/ui/sdRemnantBar.js';
+import { SD_BAR_NEAR_M } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { sdPhase } from '../src/net/superDungeon/sdLaw.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

@@ -2418,7 +2418,7 @@
   },
   {
     "name": "BLOOD2e-the-hud-forgets-the-lens",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  if (blow && bloodScreenOn() && lastHealthLostPercent() >= SCREEN_SPATTER_MIN) playerBloodScreen.spatter(lastHealthLostPercent(), bloodAtlas());\n",
     "new": "",
     "tests": [
@@ -2571,7 +2571,7 @@
   },
   {
     "name": "AUDIT5-the-lens-spatters-without-a-blow",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  if (blow && bloodScreenOn() && lastHealthLostPercent()",
     "new": "  if (bloodScreenOn() && lastHealthLostPercent()",
     "tests": [
@@ -2598,7 +2598,7 @@
   },
   {
     "name": "AUDIT5-the-detector-reset-does-nothing",
-    "file": "src/ui/hudVitals.js",
+    "file": "src/ui/hud/hudVitals.js",
     "old": "export function resetVitalsDetector() { _detector.primed = false; }",
     "new": "export function resetVitalsDetector() { }",
     "tests": [
@@ -2769,7 +2769,7 @@
   },
   {
     "name": "AUDIT5-the-menu-shows-the-first-tier",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      const at = found >= 0 ? found : fallback;",
     "new": "      const at = Math.max(0, found);",
     "tests": [

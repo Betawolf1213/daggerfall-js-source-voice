@@ -11,7 +11,7 @@ import { createGateCourt, FALL_CRY_LATE_MS } from '../src/scenes/gateCourt.js';
 import { createGateLink, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
 import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { BOSS_CUES, THUD_AT_MS } from '../src/world/gate/gateBoss.js';
-import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
+import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const state = (over = {}) => ({ ...GATE_STATE_EMPTY, day: 700, boss: 'ruhn', hp: 900, max: 1000, fighters: 3, wrathAt: 10_000_000, ...over });

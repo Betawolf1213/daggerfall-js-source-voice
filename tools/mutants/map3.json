@@ -636,7 +636,7 @@
  },
  {
   "name": "foot-no-scrim",
-  "file": "src/ui/enhancedStyle.js",
+  "file": "src/ui/enhanced/enhancedStyle.js",
   "old": ".hmroot .hmfoot { background: rgba(10, 12, 17, 0.94); padding: 6px 10px; border-radius: 4px;",
   "new": ".hmroot .hmfoot { padding: 6px 10px; border-radius: 4px;",
   "tests": [

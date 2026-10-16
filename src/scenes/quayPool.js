@@ -196,7 +196,7 @@ export function createQuayPool(deps) {
   const laid = (key, index) => !!quays.get(key)?.berths[index]?.stood;
   /** SHIPYARDS-FOUND (2026-10-11, Mac: "Everything should show on the map/overworld"): each harbour whose quays stand, as
    *  an Overworld mark over its first laid quay - "<Town> Docks" (systems/portPlaces.js portPlaceName), its kind the look's
-   *  (`yard docks` - ui/travelViewHud.js portGlyph: a bollard) and the Towns switch's. */
+   *  (`yard docks` - ui/travel/travelViewHud.js portGlyph: a bollard) and the Towns switch's. */
   function overworldMarks() {
     const out = [];
     if (!quays.size) return out;

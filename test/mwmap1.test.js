@@ -13,8 +13,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sheetHolderOf } from '../src/combat/weaponRig.js';
-import { createTownMapWindow } from '../src/ui/townMapDoor.js';
-import { createAutomapWindow } from '../src/ui/automapDoor.js';
+import { createTownMapWindow } from '../src/ui/town/townMapDoor.js';
+import { createAutomapWindow } from '../src/ui/automap/automapDoor.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 
@@ -78,5 +78,5 @@ test('MW-MAP1: by source - every host with a rig hands sheetHolderOf(() => its r
   assert.match(m, /if \(!automapDoorReady\(\)\) return;[^\n]*\n\s*mwViewFirstPerson\(\);[^\n]*\n\s*interiorOverlay = createAutomapWindow\(\{\s*\n\s*holder: sheetHolderOf\(\(\) => interiorWeapon\),/, 'a building\'s M, off the INTERIOR arm');
   const i = rd('src/scenes/interior.js');
   assert.doesNotMatch(i, /sheetHolderOf|holder:/, 'the ?interior probe host has no rig and hands none');
-  for (const door of ['src/ui/townMapDoor.js', 'src/ui/automapDoor.js']) assert.match(rd(door), /holder: deps\.holder \?\? null,/, `${door} passes it through`);
+  for (const door of ['src/ui/town/townMapDoor.js', 'src/ui/automap/automapDoor.js']) assert.match(rd(door), /holder: deps\.holder \?\? null,/, `${door} passes it through`);
 });

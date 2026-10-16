@@ -199,7 +199,7 @@
   },
   {
     "name": "CRAFT5-pages-kit-odds",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (rollsQuality(r) && recipeOpen(r, rank)) {   // CRAFT5: a Repair Kit's quality too",
     "new": "    if (takesQuality(r) && recipeOpen(r, rank)) {   // CRAFT5: a Repair Kit's quality too",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "CRAFT5-pages-kit-reach",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (r.kind === 'kit') box.append(el('p', 'px-note', KIT_REACH_LINE));\n",
     "new": "",
     "tests": [

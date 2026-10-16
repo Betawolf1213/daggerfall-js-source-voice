@@ -17,12 +17,12 @@ import { NIGHT_DARK_SIGHT } from '../src/systems/naval/shipWatch.js';
 import { DEEP_TIER } from '../src/systems/naval/navalDirector.js';
 import { GLASS_AIM_LIFT } from '../src/scenes/navalHost.js';
 import { drawSpyglass, glassFootWords, spyglassTaps, nextGlassZoom } from '../src/ui/spyglassView.js';
-import { drawNavalHud, destroyNavalHud } from '../src/ui/navalHud.js';
-import { helmPadPrompts } from '../src/ui/enhancedHelm.js';
+import { drawNavalHud, destroyNavalHud } from '../src/ui/naval/navalHud.js';
+import { helmPadPrompts } from '../src/ui/enhanced/enhancedHelm.js';
 import { createBindings, resetDefaults, setBinding, getBinding, clearBinding, addRemovedPrimaryAction, serializeKeyBinds, loadKeyBinds } from '../src/systems/inputActions.js';
-import { attachTouch } from '../src/ui/touch.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { attachGamepad, GLASS_PAD_ZOOM } from '../src/ui/gamepadInput.js';
-import { applyPlusPadLayout, registerCrossbar, crossbarApi, setPlusDpad } from '../src/ui/plusPad.js';
+import { applyPlusPadLayout, registerCrossbar, crossbarApi, setPlusDpad } from '../src/ui/plus/plusPad.js';
 import { setBindings } from '../src/ui/input.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
@@ -300,8 +300,8 @@ test('AUDIT CAPTAIN\'S SEA S10/S17: the glass\'s window is the world\'s strip - 
   assert.deepEqual(sheet.match(/[\d.]*vmin/g), ['1vmin'], 'no length off the window but the measure\'s own fallback');
   assert.match(css, /\.dfglass \{ position: fixed; left: var\(--g-x, 0px\); top: var\(--g-y, 0px\); width: var\(--g-w, 100vw\); height: var\(--g-h, 100vh\);/);
   assert.match(css, /pointer-events: none; z-index: 4;/);
-  assert.match(rd('src/ui/navalHud.js'), /\.dfnaval-tags \{ position: fixed; inset: 0; pointer-events: none; z-index: 3;/);
-  assert.match(rd('src/ui/wildMarks.js'), /\.dfwild-marks \{ position: fixed; inset: 0; pointer-events: none; z-index: 3;/);
+  assert.match(rd('src/ui/naval/navalHud.js'), /\.dfnaval-tags \{ position: fixed; inset: 0; pointer-events: none; z-index: 3;/);
+  assert.match(rd('src/ui/wild/wildMarks.js'), /\.dfwild-marks \{ position: fixed; inset: 0; pointer-events: none; z-index: 3;/);
   assert.match(rd('src/ui/nameLayer.js'), /\.dfnames \{ position: fixed; inset: 0; z-index: 3;/);
   assert.match(rd('src/scenes/world.js'), /rect: w > 0 && h > 0 \? worldRectPx\(worldViewportRect\(w, h\), w, h\) : null,/);
 });
@@ -805,7 +805,7 @@ test('AUDIT CAPTAIN\'S SEA X5/X10/X11/X17: no chart is sold past the charts\' ro
   assert.deepEqual(heard.heard(), [], 'nothing heard by building the tab\'s model');
   office.hear();
   assert.equal(heard.heard().length, (await import('../src/systems/naval/etherShips.js')).LEGENDS.length, 'every legend heard when the tab is shown');
-  const y = rd('src/ui/navalYardWindow.js');
+  const y = rd('src/ui/naval/navalYardWindow.js');
   assert.match(y, /b\.can \? b\.terms : \[b\.terms, b\.why\]\.filter\(Boolean\)\.join\(' - '\)/);
   assert.match(y, /const renderOffice = \(o\) => \{\n\s+o\.hear\?\.\(\);/);
   const { isleWords, capFirst } = await import('../src/ui/etherChartWindow.js');
@@ -1302,7 +1302,7 @@ test('AUDIT CAPTAIN\'S SEA D17: the Lantern-Eater is abroad between dusk and daw
 });
 
 test('AUDIT CAPTAIN\'S SEA D19/D20: in the Veil itself the plate says "The Veil" (never "The Shallows, 0 leagues past the Veil"); the Isles\' ship names two words of each trade\'s own, 256 a trade - a harbour\'s ships seldom share one (mutants: the Veil\'s word, the lists)', async () => {
-  const { etherWatersWords } = await import('../src/ui/navalHud.js');
+  const { etherWatersWords } = await import('../src/ui/naval/navalHud.js');
   const { ETHER_PIRATE_NAMES, ETHER_MERCHANT_NAMES } = await import('../src/systems/naval/etherShips.js');
   assert.equal(etherWatersWords({ bandName: 'the Shallows', depth: 0, veil: true }), 'The Veil');
   assert.equal(etherWatersWords({ bandName: 'the Reaches', depth: 23 }), 'The Reaches, 23 leagues past the Veil');
@@ -1381,7 +1381,7 @@ test('AUDIT CAPTAIN\'S SEA L4: the captain\'s days cross the lanes with the cloc
 test('AUDIT CAPTAIN\'S SEA L5/L10/B14/B15: the Captain page\'s meter below nothing reads what the next rank wants; a crown that keeps no favours never says its navy hunts (it hunts at twice it); "an Admiral"; the shipwright\'s discount named for what it covers, and a purse that pays for her whole offered her whole (mutants: the meter, the words, the article, the row\'s whole gold)', async () => {
   const { standingMeter, perkWords } = await import('../src/ui/captainPage.js');
   const { crownRankOf, RANK_PERKS } = await import('../src/systems/naval/captainLedger.js');
-  const { officeText, yardText } = await import('../src/ui/navalYardWindow.js');
+  const { officeText, yardText } = await import('../src/ui/naval/navalYardWindow.js');
   const { yardOffer } = await import('../src/systems/naval/navalYard.js');
   assert.deepEqual(standingMeter(-99, crownRankOf(-99)), { now: 0, max: 114, label: '114 to Sworn Captain' });
   assert.deepEqual(standingMeter(30, crownRankOf(30)), { now: 15, max: 35, label: '20 to Privateer' }, 'mid-rank: what the next still wants');
@@ -1469,7 +1469,7 @@ test('AUDIT CAPTAIN\'S SEA B2/B16: no shop buys the exchange\'s goods (a General
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
   const { mintGood, GOODS } = await import('../src/systems/naval/tradeGoods.js');
   for (const g of GOODS) for (const t of [BUILDING_TYPES.GeneralStore, BUILDING_TYPES.PawnShop]) assert.equal(shopBuysItem(t, mintGood(g.id, 2)), false, g.id);
-  const { exchangeText } = await import('../src/ui/navalYardWindow.js');
+  const { exchangeText } = await import('../src/ui/naval/navalYardWindow.js');
   const row = { id: 'starglass', name: 'Starglass', unit: 'shard', units: 'shards', stand: 'wants', sell: 400, buy: 420, sells: 0, buys: 30, exotic: true, have: 0 };
   assert.match(exchangeText({ port: 'Wayrest', weight: 0, gold: 0, rows: [row] }).rows[0].words, /not sold here/);
   const { createHarbourOffice } = await import('../src/scenes/harbourOffice.js');
@@ -1577,7 +1577,7 @@ test('AUDIT CAPTAIN\'S SEA B9/B11/B13: a cache\'s and a chart\'s things kept in 
   assert.ok(r.ok);
   const again = office.exchange({ cargo: hold, room }).buy('wine', 1);
   assert.deepEqual([again.ok, again.text], [false, 'She can carry no more - laden deeper, she would lie dead in the water.']);
-  const { exchangeText } = await import('../src/ui/navalYardWindow.js');
+  const { exchangeText } = await import('../src/ui/naval/navalYardWindow.js');
   assert.match(exchangeText({ port: 'Wayrest', weight: 40, room: 10, gold: 5, rows: [] }).lede, /room for 10 kg more before she lies dead in the water/);
   const { contractLine } = await import('../src/systems/naval/harbourBoard.js');
   assert.equal(contractLine({ until: 30, title: 't', words: 'w', kind: 'hunt', done: 0, need: 2, pay: 5 }, 0).left, '1 hour left');

@@ -1,6 +1,6 @@
 // ORG2 (2026-10-09, Mac: "Graphic settings needs its own tab, etc. I really need you to go all in"): ONE SETTINGS
 // SCREEN FOR EVERY OPTION. Settings (DFU's 171 keys) and the Features home (the port's rows and the mods) were two doors
-// over one subject; one map (ui/settingsMap.js) now places everything in a TAB, then a SECTION, and the screen draws
+// over one subject; one map (ui/settings/settingsMap.js) now places everything in a TAB, then a SECTION, and the screen draws
 // every option as a row of one shape. These pins hold the map total and disjoint over all three kinds of option, the
 // words every message uses for where a switch lives, the Graphics tab's quality preset, and one tab's restore.
 
@@ -13,14 +13,14 @@ import '../src/world/landView.js';   // RF4: the lanes register themselves
 import '../src/world/outdoors.js';
 import '../src/systems/featureLanes.js';
 import { FEATURES, featureForControl, resolveControl } from '../src/systems/features.js';
-import { CATEGORIES, CATEGORY_IDS, whereIs, optionPath, isSettingItem, keysOf } from '../src/ui/settingsMap.js';
+import { CATEGORIES, CATEGORY_IDS, whereIs, optionPath, isSettingItem, keysOf } from '../src/ui/settings/settingsMap.js';
 import { GRAPHICS_PRESETS, PRESET_ROWS, presetNow } from '../src/systems/graphicsPresets.js';
 import { ALL_KEYS, DEFAULTS, effectiveSettings, setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { getPref, setPref, PREF_DEFAULTS, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { _resetRenderScaleDoor } from '../src/systems/renderScale.js';
 import { restAloneText } from '../src/systems/party/partyRestLaw.js';
-import { tileStates, defaultSegment, applyGraphicsPreset, portPool, restoreTabDefaults } from '../src/ui/enhancedMenu.js';
+import { tileStates, defaultSegment, applyGraphicsPreset, portPool, restoreTabDefaults } from '../src/ui/enhanced/enhancedMenu.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -179,7 +179,7 @@ test('ORG2: a tab restores its own defaults and leaves every other tab as it is 
 });
 
 test('ORG2 by source: one screen - the rail is the tabs and counts what each draws, the search reads every tab, the filters and the actions sit over the rows, the pause window draws the same screen, and an old door named features lands on it', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const pane = menu.slice(menu.indexOf('function paneSettings('), menu.indexOf('\n}\n', menu.indexOf('function paneSettings(')));
   assert.match(pane, /for \(const cat of CATEGORIES\) \{/, 'the rail is the map\'s tabs');
   // PIN MOVED (UNSAVED-MARK, FIELD BUGS 2026-10-11): the toolbar is named, so the list can measure it for the bindings'

@@ -10,7 +10,7 @@
 // steer it. Which of the two a trip uses is decided by the popup's own
 // three choices (cautious/reckless, foot/horse/ship, inns/camp out)
 // against the player's settings: TravelOptionsPopUp.IsPlayerControlledTravel
-// (:80-83), ported in ui/travelPopUp.js.
+// (:80-83), ported in ui/travel/travelPopUp.js.
 //
 // The other half is BASIC ROADS. With Hazelnut's own road mod present -
 // and the port has it, vendored, as `world/roadsProducer.js` MOD_ROADS -
@@ -196,7 +196,7 @@ export function readTravelOptionsSettings(read = modSetting, boot = null) {
     fastTravelCostScaleFactor: get('FastTravelCostScaling.FastTravelCostScaleFactor') | 0,
     shipTravelCostScaleFactor: get('FastTravelCostScaling.ShipTravelCostScaleFactor') | 0,
     // :251-271 - the fourteen dot colours, in GetPixelColorIndex's own
-    // index order (ui/travelMapWindow.js getPixelColorIndex: 0
+    // index order (ui/travel/travelMapWindow.js getPixelColorIndex: 0
     // DungeonLabyrinth ... 13 TownVillage), which is why the mod's
     // fourteen keys line up with it one for one.
     locationColors: Object.freeze([

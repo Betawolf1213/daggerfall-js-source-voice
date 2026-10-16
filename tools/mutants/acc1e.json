@@ -57,7 +57,7 @@
   },
   {
     "name": "ACC1e-8-a-password-box-is-drawn-in-the-clear",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    input.type = spec.secret ? 'password' : 'text';",
     "new": "    input.type = 'text';",
     "tests": ["test/enhancedaccount.test.js"],
@@ -65,7 +65,7 @@
   },
   {
     "name": "ACC1e-9-the-recovery-code-stage-gains-a-second-way-off",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      acts.append(act(t('account.card.act.wroteIt', 'I have written them down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));",
     "new": "      acts.append(act(t('account.card.act.wroteIt', 'I have written them down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));\n      acts.append(act('Later', () => flow.go('in')));",
     "tests": ["test/enhancedaccount.test.js"],
@@ -73,7 +73,7 @@
   },
   {
     "name": "ACC1e-10-F1-the-ash-token-comes-back",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".card label.field .fieldlabel { font-size: 13px; color: var(--dim); letter-spacing: 0.02em; }",
     "new": ".card label.field .fieldlabel { font-size: 13px; color: var(--ash); letter-spacing: 0.02em; }",
     "tests": ["test/enhancedaccount.test.js"],
@@ -81,7 +81,7 @@
   },
   {
     "name": "ACC1e-11-the-card-wears-a-class-the-skin-does-not-style",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      const plaque = el('div', 'acctcode');",
     "new": "      const plaque = el('div', 'acct-code-plaque');",
     "tests": ["test/enhancedaccount.test.js"],

@@ -24,7 +24,7 @@ import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
 import { rollRaidSpoils } from '../src/systems/raidSpoils.js';
 import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { AETHERIC_RECORDS, mintAetheric } from '../src/systems/aetheric.js';
-import { rarityVarsCss, EXALTED_PIPS } from '../src/ui/enhancedPlusStyle.js';
+import { rarityVarsCss, EXALTED_PIPS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { seedTestLoot } from '../src/systems/testRoom.js';
 
 const on = () => { _resetForTests(); setPref('lootRarity', true); };

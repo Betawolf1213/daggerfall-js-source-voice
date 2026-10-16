@@ -19,7 +19,7 @@ is walked, travelled, streamed or picked.
    own data is the one kept.
 2. **Authored, ours.** TMAP00I0.IMG is game data and a trace of it is a render of game data (Port-Doctrine): the
    outlines are drawn by hand from the lore map, on the picture's GRID (320 x 200) so a local probe can lay them over
-   the player's own picture and the numbers can be corrected from it. The precedent is `ui/introMap.js`: authored
+   the player's own picture and the numbers can be corrected from it. The precedent is `ui/intro/introMap.js`: authored
    geography, nothing of the game's rasters. The classic travel map is untouched - it is DFU's.
 3. **One grid, one offset, no scale.** A Tamriel pixel is 819.2 m, the Bay's own (MapsFile's 32768 world units at 40 a
    metre). The continent is 6000 x 3750 of them (4,915 km by 3,072 km) and the Bay stands in it at BAY_ORIGIN; every
@@ -68,7 +68,7 @@ else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correctio
 ## The ink (`ui/tamrielInk.js`)
 
 - **Built once a data set** (`tamrielInkFor`, a WeakMap on the Bay model's own coast array): the coast FRETTED (one
-  point a picture unit, displaced across the line by seeded value noise - `ui/introMap.js`'s own, one home - calm
+  point a picture unit, displaced across the line by seeded value noise - `ui/intro/introMap.js`'s own, one home - calm
   within FRET_CALM of the Bay's rectangle, every authored vertex kept exactly), CLIPPED to the outside of the Bay's
   rectangle (`clipOutsideRect`: cut exactly on the edge, a closed ring that never touches it kept closed, a ring's
   wrapping run joined) and STITCHED to the Bay's own coast (`stitchToBay`: a cut end on an edge is moved onto the
@@ -81,7 +81,7 @@ else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correctio
   ends, the capitals at any zoom and every city once the sheet is in to the Bay's own scale, the province names in
   `spacedName`'s thin-spaced capitals (now the one spelling the Bay's region names use too), the seas in italic.
 - **The continent flag.** Past CONTINENT_BELOW (0.85) of the Bay's own fit the world sheet hands the Bay's painter
-  `continent: true` beside the band (`ui/inkMap.js`): the carets thin to CARET_STEP.continent (12, the highBands key
+  `continent: true` beside the band (`ui/ink/inkMap.js`): the carets thin to CARET_STEP.continent (12, the highBands key
   of that name) and no region names are lettered - the Bay is a hand's width there and its sixty-two names would be a
   smudge; the continent's province names stand instead. The band stays the band's (far, at any real paper: the roads
   at the far width, no tracks, the cities alone). Not a ZOOM_BAND, which are pure on the scale: the Bay's fit depends
@@ -90,7 +90,7 @@ else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correctio
   (beyond the Bay)", "Skyrim (beyond the Bay)", "Sea of Ghosts" - and null on the Bay's own ground, where the window's
   reads stand. A press beyond the Bay picks nothing: `_pickAt` was not touched.
 
-## The window (`ui/heldMap.js`, `ui/inkMap.js`)
+## The window (`ui/heldMap.js`, `ui/ink/inkMap.js`)
 
 - The world sheet hands `frame` (the continent's box in the Bay's coordinates) and `_limits()` carries it as
   `mapW`/`mapH` with `mapX0`/`mapY0`; `clampView` takes the origin (absent, zero - every other sheet unchanged). The

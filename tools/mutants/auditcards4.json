@@ -705,7 +705,7 @@
   },
   {
     "name": "AC4-T-hud-no-topup",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "if (phase === 'playing' && topUp > 0)",
     "new": "if (false)",
     "tests": [

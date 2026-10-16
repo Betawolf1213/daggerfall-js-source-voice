@@ -13,19 +13,19 @@
 // The pins drive the field's book whole and headless: the seat derived as every client derives it (systems/town/townSeats.js),
 // its Chronicle read through the client's own seat book, the window built by the world host's own expression
 // (scenes/world.js hallOfRecords.read), mounted by the host's first draw through the reader's one door (ui/bookDoor.js),
-// the real face (ui/enhancedBook.js) and the real vendored book (vendor/raum-book/book.js) on a canvas that paints
+// the real face (ui/enhanced/enhancedBook.js) and the real vendored book (vendor/raum-book/book.js) on a canvas that paints
 // nothing, under a clock the test turns.
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
-import '../src/ui/enhancedBook.js';   // the chunk the door imports, warm: the door's dynamic import lands at once
+import '../src/ui/enhanced/enhancedBook.js';   // the chunk the door imports, warm: the door's dynamic import lands at once
 import { BOOK } from '../vendor/raum-book/book.js';
 import { hallOfRecordsWindow } from '../src/ui/hallOfRecords.js';
 import { HALL_OF_RECORDS_EMPTY } from '../src/net/townSeatLaw.js';
 import { createTownSeatBook } from '../src/net/townSeatBook.js';
 import { seatOfLocation } from '../src/systems/town/townSeats.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { closeTopOverlay, clearOverlays, overlayOpen } from '../src/ui/enhancedOverlays.js';
+import { closeTopOverlay, clearOverlays, overlayOpen } from '../src/ui/enhanced/enhancedOverlays.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 

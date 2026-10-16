@@ -182,7 +182,7 @@
   },
   {
     "name": "REALM-GZIP-customs-drops-the-word",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "JSON.stringify(copy), { gzip: made.data.gzip === true });",
     "new": "JSON.stringify(copy));",
     "tests": [

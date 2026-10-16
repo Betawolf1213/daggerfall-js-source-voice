@@ -21,7 +21,7 @@
   },
   {
     "name": "WB13b-two-subtitles",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "  gate: (boss, epithet) => `${boss} comes ${epithet} tonight`,",
     "new": "  gate: (boss, epithet) => `Beyond the breach ${boss} waits, ${epithet}`,",
     "tests": [
@@ -87,7 +87,7 @@
   },
   {
     "name": "WB13b-the-tip-commenting",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "  colossal: 'Give his Ground Slam a wider berth.',",
     "new": "  colossal: 'Give his slam a wider berth - and bring the whole court: he takes longer to fell.',",
     "tests": [

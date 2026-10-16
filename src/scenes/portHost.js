@@ -589,7 +589,7 @@ export function createPortHost({
       return _glows;
     },
     /** SHIPYARDS-FOUND: each place standing, as an Overworld mark - its name over it, its kind the look's (`yard
-     *  shipyard`, `yard lighthouse` - ui/travelViewHud.js yardGlyph: an anchor, a tower) and the Towns switch's. */
+     *  shipyard`, `yard lighthouse` - ui/travel/travelViewHud.js yardGlyph: an anchor, a tower) and the Towns switch's. */
     overworldMarks() {
       const out = [];
       for (const pl of places.values()) {

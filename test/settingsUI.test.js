@@ -13,9 +13,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ALL_KEYS, tierOf, LIVE, DEFAULTS, effectiveSettings, _resetForTests } from '../src/systems/settings/settings.js';
-import { CATEGORIES, CATEGORY_IDS, keysOf, categoryOf } from '../src/ui/settingsMap.js';
-import { LABELS, labelOf, helpOf, READOUT, INSTEAD } from '../src/ui/settingsCopy.js';
-import { widgetFor, formatValue, stepValue, NUMBER_LAW, ENUM_LAW, COLOUR_KEYS } from '../src/ui/settingsLaw.js';
+import { CATEGORIES, CATEGORY_IDS, keysOf, categoryOf } from '../src/ui/settings/settingsMap.js';
+import { LABELS, labelOf, helpOf, READOUT, INSTEAD } from '../src/ui/settings/settingsCopy.js';
+import { widgetFor, formatValue, stepValue, NUMBER_LAW, ENUM_LAW, COLOUR_KEYS } from '../src/ui/settings/settingsLaw.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, 'src', f), 'utf8');
@@ -137,7 +137,7 @@ test('FD1: the launcher and the keyed settings window are gone, nothing imports 
 });
 
 test('FD1: both skins open on the enhanced door; classic collapses its game doors into BEGIN, which resolves into the classic sequence with the data gated first (mutant: Begin on the enhanced rail, or the classic rail keeping New Game)', () => {
-  const menu = src('ui/enhancedMenu.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const SECTIONS_CLASSIC = \['Begin', 'Online', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'\];/);   // TUT1: the tutorials   // LOAD1: the gallery's door   // OVH1: the three looks   // FT16: Controls is a Settings category   // ORG2: Features is Settings' tabs
   assert.match(menu, /const SECTIONS_BOOT = \['Online', 'Continue', 'New Game', 'Load Game', 'Test Room', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'\];/, 'the enhanced rail keeps its three doors and loses the Enhanced entry (SO1), the Controls one (FT16) and the Features one (ORG2)');
   assert.match(menu, /sections = mode === 'pause' \? SECTIONS_PAUSE : isEnhanced\(\) \? SECTIONS_BOOT : SECTIONS_CLASSIC;/);
@@ -155,8 +155,8 @@ test('FD1: both skins open on the enhanced door; classic collapses its game door
 });
 
 test('SO1: the settings pane is organised - the port\'s rows sit in the categories a player looks in, the live store keys lie flat, the two other tiers fold under counted headings remembered per category, and the sub-rail counts what works (mutant: a tier hidden, or the count the file\'s row count)', async () => {
-  const { whereIs } = await import('../src/ui/settingsMap.js');
-  const menu = src('ui/enhancedMenu.js');
+  const { whereIs } = await import('../src/ui/settings/settingsMap.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(menu, /function paneEnhanced\(/, 'the Enhanced pane is gone');
   assert.doesNotMatch(menu, /inertRow\(/, 'and the row about a removed feature with it');
   for (const fn of ['portRowsGame', 'portRowsAudio', 'portRowsControls', 'portRowsInterface', 'portPool', 'morrowindCard', 'peerSpritesCard', 'packsCard', 'itemNodes', 'tabSections', 'tabCount', 'tierGroup']) {
@@ -200,7 +200,7 @@ test('SO1: the settings pane is organised - the port\'s rows sit in the categori
   // the pause's condensed pane: the same screen, the live keys alone and the reload-free port rows (PX10)
   assert.match(menu, /const drawsHere = \(key, pause\) => \(pause \? tierOf\(key\) === 'live' : drawsFlat\(key\)\);/);
   assert.match(menu, /paneSettings\(detail, \{ pause: true \}\);/);
-  assert.match(src('ui/enhancedStyle.js'), /\.group-head \{/);
+  assert.match(src('ui/enhanced/enhancedStyle.js'), /\.group-head \{/);
   // ORG2: Graphics leads the rail - the tab Mac asked for by name
   assert.equal(CATEGORIES[0].id, 'graphics');
   assert.equal(keysOf('enhanced').length, 0, 'no such category');

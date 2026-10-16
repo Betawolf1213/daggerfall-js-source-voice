@@ -20,7 +20,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
-`src/ui/profPages.js` holdsHead (drawStationTiles).
+`src/ui/professions/profPages.js` holdsHead (drawStationTiles).
 
 THE REPORT. Two players at Newtower's Joinery (CARP-YARD): the bench's press crashed the game, and so did Esc, Stores,
 after it. The crash box's stack: `TypeError: ((intermediate value) ?? []).some is not a function`, at the Stores page
@@ -61,7 +61,7 @@ Pinned by `test/fb1014_innbeds.test.js` (`tools/mutants/fb1014_innbeds.json`, 1,
 
 ## GROG-WORD: the yard says a crew's spirits as the helm does (3)
 
-`src/systems/naval/navalYard.js` provisionOffer; `src/ui/navalYardWindow.js` yardText.
+`src/systems/naval/navalYard.js` provisionOffer; `src/ui/naval/navalYardWindow.js` yardText.
 
 THE REPORT. The shipwright's window (opened at a port or from the Fleet page) and the helm disagreed on the crew's
 spirits; the guns reloaded slow while the yard would sell no grog.

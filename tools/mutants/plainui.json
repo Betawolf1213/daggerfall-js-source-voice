@@ -127,7 +127,7 @@
   },
   {
     "name": "PLAINUI-family-page-undrawn",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "hall: drawHallPage, guide: drawGuidePage })[famSec]",
     "new": "hall: drawHallPage, guide: drawHallPage })[famSec]",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "PLAINUI-panel-size-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-panel { margin: 0 0 12px; padding: 12px 14px; font-size: 15px;",
     "new": ".notice-panel { margin: 0 0 12px; padding: 12px 14px; font-size: 13px;",
     "tests": [

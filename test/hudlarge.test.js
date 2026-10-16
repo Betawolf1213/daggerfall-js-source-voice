@@ -12,15 +12,15 @@ import {
   routeLargeHudClick,   // AUDIT 65 UI-4
   headArchiveFor, horseOffsetHeight, weaponOffsetHeight,
   dockedLargeHudHeight, largeHudViewportRect, largeHudWorldAspect, STANDARD_VIEWPORT_RECT,   // ROAD-E E5
-} from '../src/ui/hudLarge.js';
-import { crosshairCentreY, drawCrosshairAndModeIcon } from '../src/ui/hudCrosshair.js';   // ROAD-E E5
+} from '../src/ui/hud/hudLarge.js';
+import { crosshairCentreY, drawCrosshairAndModeIcon } from '../src/ui/hud/hudCrosshair.js';   // ROAD-E E5
 import { Renderer } from '../src/render/renderer.js';   // ROAD-E E5: the viewport is the renderer's own frame state
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { ridingRect } from '../src/systems/riding.js';
 import { MODES, nextInteractionMode } from '../src/player/interactionMode.js';
 import { routeAction } from '../src/ui/input.js';
 import { resolveAnchor, maskAnchors } from '../tools/citeAnchor.mjs';   // CITE-ANCHOR: a cite names its line by a quote
-import { drawHud } from '../src/ui/hud.js';                  // AUDIT 65 UI-4: largeHudBar() is the LAST DRAWN bar
+import { drawHud } from '../src/ui/hud/hud.js';                  // AUDIT 65 UI-4: largeHudBar() is the LAST DRAWN bar
 import { audio } from '../src/systems/audio.js';             // AUDIT 65 UI-4
 import { SOUND } from '../src/systems/soundClips.js';        // AUDIT 65 UI-4
 import { setCursorActive } from '../src/player/pointerLock.js';   // AUDIT 65 UI-4: IsLargeHUDInteractable's own half
@@ -393,13 +393,13 @@ test('hudLarge: all four hosts draw the bar and offer it the click, and the cros
   // scenes/ import closure and drives one Enter through the real
   // module. What stays here is the consumer end - the two reads that
   // made the defect visible.
-  const hl = src('ui/hudLarge.js');
+  const hl = src('ui/hud/hudLarge.js');
   assert.match(hl, /export const activeMouseOverLargeHUD = \(\) =>\n {2}_overBar && largeHudEnabled\(\) && cursorActive\(\);/);
   assert.match(hl, /if \(!largeHudEnabled\(\) \|\| windowUp \|\| !cursorActive\(\)\) return false;/);
   // DaggerfallHUD.cs:214-220: the bar turns OFF the vitals, the
   // compass and the mode icon - and nothing else. The crosshair is
   // still drawn on the large-HUD branch.
-  const hud = src('ui/hud.js');
+  const hud = src('ui/hud/hud.js');
   const bStart = hud.indexOf('if (largeHud?.art) {');
   assert.ok(bStart > 0, 'the large-HUD branch exists');
   const branch = hud.slice(bStart, hud.indexOf('lastLargeHudBar = null;', bStart));
@@ -493,7 +493,7 @@ test('D10: the narrowed flag\'s citation resolves to the activation ray it rests
   // E5 shipped what "WHAT REALLY REMAINS" named and rewrote that
   // paragraph; the withdrawal above it stands unchanged, so the split
   // moves to the block that now follows it.
-  const header = src('ui/hudLarge.js').split('WHAT E5 DID NOT TAKE')[0];
+  const header = src('ui/hud/hudLarge.js').split('WHAT E5 DID NOT TAKE')[0];
   const cites = [...header.matchAll(/scenes\/([A-Za-z0-9_]+)\.js:"([^"]+)"(?:\.\."([^"]+)")?/g)]
     .map((m) => [`scenes/${m[1]}.js`, resolveAnchor(maskAnchors(src(`scenes/${m[1]}.js`)), src(`scenes/${m[1]}.js`).split('\n'), m[2], m[3] ?? null).line ?? 0]);
   assert.ok(cites.length >= 2, 'the withdrawal cites the hosts it rests on');
@@ -787,5 +787,5 @@ test('E5: every host that draws the bar shrinks its world pass AND its lens', ()
   assert.equal(/drawHud\(|drawCrosshairAndModeIcon\(|largeHudOptions\(/.test(interior), false,
     'interior.js still draws no HUD; the day it does, it takes this law too');
   // the crosshair's own re-centre is fed from the ONE home
-  assert.match(src('ui/hud.js'), /largeHudHeight: dockedLargeHudHeight\(lastLargeHudBar\)/);
+  assert.match(src('ui/hud/hud.js'), /largeHudHeight: dockedLargeHudHeight\(lastLargeHudBar\)/);
 });

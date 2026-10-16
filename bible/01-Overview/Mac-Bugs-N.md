@@ -74,7 +74,7 @@ made this a single-player-shaped report from an online player.
 `SelectTabPage` (:253), and its `FilterLocalItems` (:672-703) hands every
 local item — the basket's and the pack's — through the parent's
 `AddLocalItem` (:914-944), which is the tab's filter. The port's
-`ui/nativeTrade.js` was written as a composition over the inventory
+`ui/native/nativeTrade.js` was written as a composition over the inventory
 window's *geometry* and took none of the inherited *behaviour*. Three
 consequences, and Mac named all three:
 
@@ -88,7 +88,7 @@ consequences, and Mac named all three:
   method at all — the U-scroll seam reached it and found nothing — and
   neither item window could drag the thumb. AUDIT 64 F52's own record
   had flagged the first half: "Adjacent and NOT taken here:
-  `ui/nativeTrade.js` has no `wheel` either ... it wants its own
+  `ui/native/nativeTrade.js` has no `wheel` either ... it wants its own
   finding." This is that finding.
 
 **What ships.** The four tab pages, with `tabAccepts` split out of

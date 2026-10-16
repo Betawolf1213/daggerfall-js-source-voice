@@ -545,7 +545,7 @@ export class Place extends QuestResource {
       if (near) {
         this.p2 = near.houseFallback ? -1 : asked.p2;
         // FIELD BUGS 2026-10-12g QUEST-TOWN: marked as taken in another town - the travel map is shown it at the quest's
-        // start and the quest's lens points at it (machine.js revealNearSites, ui/questLens.js entryTarget)
+        // start and the quest's lens points at it (machine.js revealNearSites, ui/quest/questLens.js entryTarget)
         this.siteDetails = { ...near.found[this._range(near.found.length)], nearSite: true };
         return;
       }

@@ -190,7 +190,7 @@ export const NAME_BASE_PX = 16;
 //
 // THEY ARE KEPT APART from `nameScaleFor` on purpose. The depth law is the one number BOTH faces read off the
 // point; the terms below are measured in each face's OWN pixels - the DOM face in CSS px (so it takes the viewport
-// term by value) and the classic bitmap face in drawing-buffer px, where the host's own `hudScale` (ui/hud.js: the
+// term by value) and the classic bitmap face in drawing-buffer px, where the host's own `hudScale` (ui/hud/hud.js: the
 // 320x200 fit) is already that term. The LENS term belongs to neither face in particular - it is the lens both of
 // them drew the sprite through - so it rides the point itself.
 /** The viewport height, in a face's own pixels, the size law is normalised at. */
@@ -1329,7 +1329,7 @@ export class RemotePlayers {
       const run = `${lead ? `[${lead}] ` : ''}${marks ? `${named} ${marks}` : named}`;
       const tw = measureText(font.fnt, run) * s;
       // AUDIT NAME1 F13: the gap takes the HOST's scale, and only that one. NAME_GAP_PX is a clearance in SCREEN
-      // pixels and this face draws in the drawing buffer's, where `scale` (ui/hud.js hudScale, the 320x200 fit) is
+      // pixels and this face draws in the drawing buffer's, where `scale` (ui/hud/hud.js hudScale, the 320x200 fit) is
       // what carries one into the other - the same number the glyph box takes before the point's own perspective
       // term multiplies it. Unscaled, the classic face put a 5-buffer-pixel gap under a label drawn five times
       // over, which is a fifth of the clearance the DOM face leaves at the same size: the two faces disagreeing
@@ -1424,7 +1424,7 @@ export class RemotePlayers {
     }
     if (layer) {
       // the world viewport's own height where the docked HUD shrinks it (E5) - the name is sized by the frame it
-      // is drawn into, not by the page (AUDIT NAME1 F3). The rect is NORMALISED (ui/hudLarge.js
+      // is drawn into, not by the page (AUDIT NAME1 F3). The rect is NORMALISED (ui/hud/hudLarge.js
       // largeHudViewportRect: `{ x: 0, y: hudHeight, w: 1, h: 1 - hudHeight }`), so its height is a SHARE of the
       // canvas and the pixels are that share of it.
       layer.render({ points, log, covered, colorOf, viewport: (Number.isFinite(rect?.h) ? rect.h : 1) * h, hudScale });

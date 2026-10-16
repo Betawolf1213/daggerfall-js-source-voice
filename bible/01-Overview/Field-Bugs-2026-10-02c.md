@@ -18,7 +18,7 @@ mutation-checked.
 
 ## SHIP-CLUTTER (1)
 
-`ui/navalHud.js` `layoutNavalTags`, `navalTagBox`; `scenes/world.js` `navalTags`. The tags are laid before they are worn:
+`ui/naval/navalHud.js` `layoutNavalTags`, `navalTagBox`; `scenes/world.js` `navalTags`. The tags are laid before they are worn:
 one second line - the card's ship's, else the tag nearest the crosshair (the world strip's middle, `focus`) within
 TAG_FOCUS_PX, else none; and no tag over another - the line's ship first, then the hostile, then the nearest, a tag
 whose box would come within TAG_CLEAR of one laid is not drawn that frame, and one left out needs TAG_HOLD more room to
@@ -31,14 +31,14 @@ three suites that drew several tags at one point (`shipstance`, `shipfade`, `nav
 ## TO-LIVE (2)
 
 `systems/travel/travelOptions.js` `readTravelOptionsSettings(read, boot)`, `TRAVEL_OPTIONS_RESTART_KEYS`; `scenes/world.js`
-`refreshTravelOptionsSettings`; `ui/travelControlUI.js` `setAccelerationLimit`; `systems/features.js`. DFU re-runs
+`refreshTravelOptionsSettings`; `ui/travel/travelControlUI.js` `setAccelerationLimit`; `systems/features.js`. DFU re-runs
 the mod's LoadSettings on every change of its settings - only the readme's starred keys wait for a restart - and the
 port read the whole bag once, at the world's load. Now on a change of any mod setting (`modSettingsGeneration`) the
 bag is read afresh with the starred half (the roads integration and its arms, the junction map and its placement,
 paid teleportation) carried from the load's, and handed to the mod - at the maps' open (the fare deps' handle) and in
 the journey's frame - and the panel's Acceleration Limit follows its dial. Inns (`StopAtInnsTravel.PlayerControlledInnsTravel`)
 is on the tile beside Cautiously: TO-FIELD2 turned it on and FT14 took the pane it could be turned off in, so a trip
-stopping at inns, Recklessly's too, was always a journey. The rule itself (ui/travelPopUp.js isPlayerControlledTravel,
+stopping at inns, Recklessly's too, was always a journey. The rule itself (ui/travel/travelPopUp.js isPlayerControlledTravel,
 TravelOptionsMod's IsPlayerControlledTravel) is unchanged: Recklessly camping out is the mod's journey whatever the
 dials say (its readme, :11). The mod's own switch stays the load's (AUDIT PRE-MERGE 0928 U7), and the tile's effect
 line is the switch's (FT9), unchanged. `test/to_live.test.js`.
@@ -58,7 +58,7 @@ own flag aside, read only under a death screen); with the latch taken out it nam
 
 ## GHOST-DIM, GHOST-CAP (4)
 
-`ui/enhancedPlusStyle.js` VITALS_CSS; `ui/barLoss.js` `stepGhost`, GHOST_HOLD_MAX. The vitals' strip wears the bar's
+`ui/enhanced/enhancedPlusStyle.js` VITALS_CSS; `ui/barLoss.js` `stepGhost`, GHOST_HOLD_MAX. The vitals' strip wears the bar's
 own body tone at 0.35 - darker than any band of the fill, lost reading as lost (it was `--v-hi` under `#fff6e4` at
 0.55: on fatigue about #6a9073, the brightest and least saturated of the three). And the strip stands GHOST_HOLD_MAX
 (1.2 s) in all at the most before it drains, however the losses keep coming - a flurry inside it still reads as one run

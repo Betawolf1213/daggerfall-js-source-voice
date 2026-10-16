@@ -8,9 +8,9 @@
 //     whether it is in its last moment, its colour, and the nearest way out (`sdWayOut`, over the arena's floor) as the
 //     screen turns it; the Stomp's ring rolling out toward me once it has landed: "jump!" (it is jumped, not run from).
 //     The Hour's own blows over the whole floor (the Pulse, the Reset, the End) are none - no step escapes them. Drawn
-//     by the gate's own ground view (ui/gateGroundView.js): the rim pulsing in the blow's colour, the warning under the
+//     by the gate's own ground view (ui/gate/gateGroundView.js): the rim pulsing in the blow's colour, the warning under the
 //     crosshair, the arrow; and the burning brass under my feet felt the same way.
-//   THE BEATS (`createSdBeats`): the fight's turns, large, on the Hour's own card (ui/sdTitleCard.js) - its wake, the
+//   THE BEATS (`createSdBeats`): the fight's turns, large, on the Hour's own card (ui/superDungeon/sdTitleCard.js) - its wake, the
 //     Dragon Break, the Last Moment, the Hour's last minute, its fall - each heard live alone (a page that comes late
 //     shows none of what it missed).
 //
@@ -23,8 +23,8 @@ import { TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
 import { screenBearing } from './gateCourt.js';
 import { SD_ELEMENT_COLOR, SD_ELEMENT_GROUND, sdTint } from './sdRemnantBlows.js';
 import { sdEndingOf } from '../net/superDungeon/sdMarks.js';
-import { TITLE_HOLD_MS, TITLE_IN_MS, TITLE_OUT_MS } from '../ui/gateTitleCard.js';
-import { groundViewModel } from '../ui/gateGroundView.js';
+import { TITLE_HOLD_MS, TITLE_IN_MS, TITLE_OUT_MS } from '../ui/gate/gateTitleCard.js';
+import { groundViewModel } from '../ui/gate/gateGroundView.js';
 
 /** The way out: this many bearings, stepped this fine, this far at most, kept this far inside the arena's rim. */
 export const SD_PERIL_BEARINGS = 24;
@@ -296,7 +296,7 @@ export const SD_BURNING_GROUND = 'Burning brass';
 /** The burning brass's colour (scenes/sdRemnantBlows.js SD_POOL_COLOR's). */
 const POOL_RGB = Object.freeze([1.0, 0.45, 0.16]);
 /**
- * WHAT THE GROUND VIEW SAYS IN THE HOUR (ui/gateGroundView.js groundViewModel - the gate's own rim, warning and arrow):
+ * WHAT THE GROUND VIEW SAYS IN THE HOUR (ui/gate/gateGroundView.js groundViewModel - the gate's own rim, warning and arrow):
  * the burning brass under my feet (`burning`), a blow still to come on them (`peril`, sdPerilAt's) - the Stomp's ring
  * in its own words, "jump!". Pure.
  */

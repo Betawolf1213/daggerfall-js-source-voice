@@ -354,7 +354,7 @@
   },
   {
     "name": "AUDIT-BAG1-H2-no-door-on-a-plain-pack",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (bagDoorShown() && remote?.kind === 'ground' && !(remote.count > 0)) {",
     "new": "    if (false) {",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "AUDIT-BAG1-H1-the-door-over-a-tray",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const bagDoorShown = () => hasMaterialsBag(deps.items?.() ?? []) && !(session.chooseOne && !session.usingBag);",
     "new": "const bagDoorShown = () => hasMaterialsBag(deps.items?.() ?? []);",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "AUDIT-BAG1-a-dagger-offered-the-bag",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (bagRefuses(item)) return false;   // AUDIT BAG1: no",
     "new": "  if (false) return false;   // AUDIT BAG1: no",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "AUDIT-BAG1-put-everything-in-stops-at-a-refusal",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (res?.kept) stop = res.text ?? null; else refused.push({ name: r.name, text: res?.text ?? null }); left = -1; break;",
     "new": "stop = res?.text ?? null; left = -1; break;",
     "tests": [
@@ -616,7 +616,7 @@
   },
   {
     "name": "AUDIT2-BAG1-H1-no-way-out-of-the-bag",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if ((bag.count ?? 0) > 0 && p.emptyBag) {",
     "new": "  if (false) {",
     "tests": [
@@ -643,7 +643,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U1-the-stores-room-unread",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const inMost = Math.min(DEPOSIT_MAX, pick.carried + (pick.uncounted | 0), storesRoomOf(book, pick));",
     "new": "    const inMost = Math.min(DEPOSIT_MAX, pick.carried + (pick.uncounted | 0));",
     "tests": [
@@ -652,7 +652,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U1-put-everything-asks-a-full-store",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "        let room = storesRoomOf(book, r);",
     "new": "        let room = Infinity;",
     "tests": [
@@ -661,7 +661,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U14-the-reason-a-title-alone",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (why.length) detail.append(el('p', 'px-note prof-why', why.join(' ')));",
     "new": "      if (false) detail.append(el('p', 'px-note prof-why', why.join(' ')));",
     "tests": [
@@ -670,7 +670,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U14-the-qty-unlabelled",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    qty.setAttribute('aria-label', 'How many');",
     "new": "    void 0;",
     "tests": [
@@ -688,7 +688,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U3-the-bag-button-an-act",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".pack-shell .packbar .bagbtn { align-self: center; margin: -6px 0 -6px 12px; min-height: 32px; padding: 0 12px;\n  font-size: 12px; }",
     "new": "",
     "tests": [
@@ -697,7 +697,7 @@
   },
   {
     "name": "AUDIT2-BAG1-U8-the-field-back",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  // amount came back over the list it was never meant for when the bag closed\n  goldEntry = null;",
     "new": "  // amount came back over the list it was never meant for when the bag closed",
     "tests": [
@@ -769,7 +769,7 @@
   },
   {
     "name": "AUDIT2-BAG1-D3-a-refusal-ends-the-run",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "        if (stop) break;",
     "new": "        if (stop || refused.length) break;",
     "tests": [

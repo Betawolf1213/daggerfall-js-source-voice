@@ -163,7 +163,7 @@
   },
   {
     "name": "PARTY-BUFFS-hud-reading-kept-under-a-window",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    last.hpSeen = null;   // PARTY-BUFFS: what a window restored (a rest, a level-up, a load, a rise) is no heal to float\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "PARTY-BUFFS-hud-heal-never-shown",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  if (heal) showNumber(heal);\n",
     "new": "",
     "tests": [

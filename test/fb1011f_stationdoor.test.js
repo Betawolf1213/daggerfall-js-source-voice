@@ -17,7 +17,7 @@ import { xpForRank, trackOf } from '../src/net/professionLaw.js';
 import {
   STORES_ACT_STATIONS, PROF_STATIONS, focusStoresStation, setProfessionsPages, drawStoresPage, resetProfPages,
   ENCHANTING_HOW, ALCHEMY_HOW,
-} from '../src/ui/profPages.js';
+} from '../src/ui/professions/profPages.js';
 
 const require = createRequire(import.meta.url);
 const { parse } = require('acorn');

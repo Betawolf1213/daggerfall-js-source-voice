@@ -210,7 +210,7 @@ test('TC1 ledger: the six re-measured section-C rows are struck, and each names 
     { head: /~~Biography GP arm ledger note/, slice: /TC1 2026-09-02/,
       file: 'src/formats/faceUVTool.js', built: /Can not normalize a vector when it/ },
     { head: /~~THE MAGIC CRAFTING WINDOWS~~/, slice: /TC1 2026-09-02/,
-      file: 'src/ui/spellIconPickerWindow.js', built: /SpellIconPickerWindow/ },
+      file: 'src/ui/spell/spellIconPickerWindow.js', built: /SpellIconPickerWindow/ },
   ];
   const rows = LEDGER.split('\n').filter((l) => l.startsWith('|'));
   const missing = [];

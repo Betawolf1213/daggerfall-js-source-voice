@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { restartRefusalText, shelfRefusalText } from '../src/scenes/questBridge.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 import { partyQuestFoe, countsByName } from '../src/scenes/questFoeHost.js';
 import { mapPixelToWorldCoord, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 
@@ -147,7 +147,7 @@ test('QUEST-RESET the bridge\'s words: every refusal says why in its own words; 
   const bridge = src('src/scenes/questBridge.js');
   assert.match(bridge, /restart\(id\) \{\n\s+const r = machine\.restartQuest\(Number\(id\), \{ refuse: refuseRaid \}\);/);
   assert.match(bridge, /canRestart: \(id\) => machine\.restartRefusal\(Number\(id\), \{ refuse: refuseRaid \}\) === null,/);
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /clean\.restart && clean\.canRestart\?\.\(sel\.id\)/, 'the pause journal draws it where the door allows');
   assert.match(menu, /const out = clean\.restart\(sel\.id\);/);
 });

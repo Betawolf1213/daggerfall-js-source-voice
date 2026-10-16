@@ -29,7 +29,7 @@ vendored packs show, said so below. Nothing here was seen in a browser.
 
 ## RAMP-INK (1)
 
-`ui/inkDungeonGL.js` (`FLOOR_FACE_NY`, `faceInkOf`). The held map's 3D sheet (`10-UI/Dungeon-Map-3D.md`) shades a face
+`ui/ink/inkDungeonGL.js` (`FLOOR_FACE_NY`, `faceInkOf`). The held map's 3D sheet (`10-UI/Dungeon-Map-3D.md`) shades a face
 by its normal's lean: floors take the pencil and the flagstones, ceilings a flat tone, walls a light wash by the light
 with strokes on the shaded side. The floor test was `n.y > 0.6` - 53.13 degrees - in four places of the shader (the
 climb the All-floors cut spares, the stones, the pencil, a flooded floor's wash) and in the stair-tread mark. The motor

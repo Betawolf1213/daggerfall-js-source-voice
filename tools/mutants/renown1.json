@@ -309,7 +309,7 @@
   },
   {
     "name": "RENOWN1-card-shows-the-oldest-track",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    const lvText = renownText(tracks[0]?.level);",
     "new": "    const lvText = renownText(tracks.at(-1)?.level);",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "RENOWN1-heading-changed-for-everyone",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    } else head.append(el('h3', null, heading));",
     "new": "    } else { const plain = el('h3', null, null); plain.append(el('span', 'acctname', heading)); head.append(plain); }",
     "tests": [

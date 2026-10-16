@@ -89,7 +89,7 @@ The shop's list rows (a player trade's too - it is a trade-shell) frame each pic
 item's picture is capped at `max-height: 100%` inside the tier's 2px frame (AUDIT MERGE-PLUS D2). The base tile is a
 GRID, and a grid's auto row gives that percentage nothing to resolve against: only the width was held, and a tall
 picture hung out of its box. The trade tile is a flex room now, centred, as the loot window's has been since UI1
-(`ui/enhancedPlusStyle.js`) - never `overflow: hidden`, which would clip the sigil rune and the padlock standing past
+(`ui/enhanced/enhancedPlusStyle.js`) - never `overflow: hidden`, which would clip the sigil rune and the padlock standing past
 the edge. Measured in Chromium over the injected sheets (a pauldron, a dai-katana, a staff, a spellbook; fitted,
 Morrowind-square, grid-sized and raw 2x pictures): eight tiered trade rows overflowed before, none after. The UI pass's
 fit law (UI1, merged the same day) had already sized each picture under the box, so the report's build may have been
@@ -136,7 +136,7 @@ choice to end one:
   online it does, AUDIT B3): the enhanced status widget's tile for
   a spell that may be ended takes the pointer (only then - the HUD stays pointer-transparent) and a right-click ends it;
   its press goes no further (no swing). The classic HUD's icon the same, through the HUD click door every host already
-  calls (`ui/hudLarge.js` routeSpellIconClick): the pointerdown is cancelled, so neither the swing nor an armed cast
+  calls (`ui/hud/hudLarge.js` routeSpellIconClick): the pointerdown is cancelled, so neither the swing nor an armed cast
   hears it; and the classic icon's name now shows with the mouse freed too (DFU's tooltip gate, which the hosts'
   paused flag had halved).
 - **The pause window's Stats page, Effects** - every spell on you with its rounds, and an End on each that may be
@@ -147,7 +147,7 @@ choice to end one:
 
 ## HOLD-STEP: hold to repeat, and a typed value (8)
 
-The Enhanced Plus spell maker's effect editor (the port of DFU's window, `ui/enhancedPort.js`'s spinner block):
+The Enhanced Plus spell maker's effect editor (the port of DFU's window, `ui/enhanced/enhancedPort.js`'s spinner block):
 
 - **Hold** a + or - button: the first repeat after 400 ms, then one every 100 ms, every 40 after ten - a 1 to 100 field
   in under five seconds. Every step rebuilds the port's DOM under the finger, so the hold is keyed by the button's

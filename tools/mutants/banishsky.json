@@ -172,7 +172,7 @@
   },
   {
     "name": "BANISH-SKY-the-page-counts-event-days",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    const days = banishmentDaysLeft(entity, i, worldNow);",
     "new": "    const days = Math.ceil(left / 1440);",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "BANISH-SKY-the-page-says-no-real-time",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "const real = Number.isFinite(left) ? worldSpanRealWords(left) : null;",
     "new": "const real = null;",
     "tests": [

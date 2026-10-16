@@ -74,7 +74,7 @@ duplication the old note feared is answered where it actually lives:
 
 - the **walk** (`{active, finished}` off the machine) is
   `scenes/questBridge.js`'s `questLog()`;
-- the **rail** it builds is `ui/questRail.js`;
+- the **rail** it builds is `ui/quest/questRail.js`;
 - both are shared with the pause window's Quests tab, so the two faces
   cannot disagree about which quests are live or what they say.
 

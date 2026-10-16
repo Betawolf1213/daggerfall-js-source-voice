@@ -2,7 +2,7 @@
 // is the ONE place a trade reaches the player's real inventory: what may be offered, how an offer is written for the
 // wire, how the peer's records are minted here, how goods are taken out (reserved) and put back, and whether a lot fits.
 //
-// THE LAWS IT BORROWS, not rewrites (the same standing rule ui/enhancedTrade.js states for the shop):
+// THE LAWS IT BORROWS, not rewrites (the same standing rule ui/enhanced/enhancedTrade.js states for the shop):
 //   - the wire projection is systems/loot/loot.js validLootList/validLootItem - the clamp every peer-borne item already goes
 //     through (WORLD4): shape and depth bounds, a declared-field kind check, the value floored at what the port itself
 //     mints, `equipSlot` and `questItem` stripped (they are the RECEIVER's marks, never the sender's word);

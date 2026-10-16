@@ -4,13 +4,13 @@
 // THE PARTY ON THE COMPASS: one reading of where each mate is, in the scene's XZ (ui/partyMapMarks.js
 // partyCompassPoints - the bodies this client draws where they stand; outdoors the rest where their poses say), marked
 // on both compasses with the Detect markers' triangle and bearing law in the party's one green - the classic box
-// (ui/hud.js drawPartyCompassMarks, driven over a stub renderer) and the enhanced strip (ui/enhancedHud.js, over a
+// (ui/hud/hud.js drawPartyCompassMarks, driven over a stub renderer) and the enhanced strip (ui/enhanced/enhancedHud.js, over a
 // stub document) - and handed by all three hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { partyCompassPoints } from '../src/ui/partyMapMarks.js';
-import { drawPartyCompassMarks, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud.js';
+import { drawPartyCompassMarks, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud/hud.js';
 import { PARTY_GREEN, PARTY_GREEN_CSS } from '../src/net/social.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -65,7 +65,7 @@ test('COMPASS-PARTY the classic compass: a green 5x3 triangle per mate over the 
   assert.equal(drawPartyCompassMarks(renderer, [], me, 0, box), 0);
   assert.equal(drawPartyCompassMarks(renderer, [[0, 50]], null, 0, box), 0);
   assert.equal(quads.length, 0);
-  const H = src('src/ui/hud.js');
+  const H = src('src/ui/hud/hud.js');
   assert.match(H, /drawPartyCompassMarks\(renderer, party, playerXZ, heading01, \{ bx, by, bw, s \}\);/, 'drawn after the Detect markers on the classic box');
   assert.match(H, /party: party \?\? null,   \/\/ COMPASS-PARTY/, 'and handed to the enhanced skin');
 });
@@ -89,7 +89,7 @@ const findAll = (n, cls, out = []) => { if (String(n.className ?? '').split(/\s+
 test('COMPASS-PARTY the enhanced strip: a green mark per mate at its bearing, pooled - a mate gone hides a mark, never removes it (mutants: the marks never placed; the pool rebuilt)', async () => {
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const me = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };

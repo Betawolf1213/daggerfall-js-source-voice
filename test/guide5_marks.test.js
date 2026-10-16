@@ -1,6 +1,6 @@
 // GUIDE5 (2026-09-29, Mac: "How can we set the foundation and improve the quest system substantially? Like really
 // modernize it, make it more accessible", then, of the Quest Guide arc: "This is your baby. Take your time") - THE
-// MARKS (ui/questMarks.js, bible/06-Systems/Quest-Guide-Arc.md): where a quest points, on the held map and the enhanced
+// MARKS (ui/quest/questMarks.js, bible/06-Systems/Quest-Guide-Arc.md): where a quest points, on the held map and the enhanced
 // compass. Its laws, each over the real producers:
 //
 //   ONLY WHAT THE MAP HOLDS - a mark stands only for a target with `find` (DFU's own find-place gate: on the player's
@@ -23,18 +23,18 @@ import { fileURLToPath } from 'node:url';
 import {
   questMapMarks, readQuestMarks, questMarksKey, marksOn, QUEST_FOLLOWED_TEXT,
   MARKS_PREF, QUEST_MARK_CSS, QUEST_LEGEND_TEXT, QUEST_HIT_PX, QUEST_MARK_LIFT,
-} from '../src/ui/questMarks.js';
-import { timeLeftWords } from '../src/ui/questRail.js';
-import { questTracker, drawQuestTracker, _resetQuestTrackerForTests, TRACKER_PREF } from '../src/ui/questTracker.js';
-import { HERALD_PREF } from '../src/ui/questHerald.js';
+} from '../src/ui/quest/questMarks.js';
+import { timeLeftWords } from '../src/ui/quest/questRail.js';
+import { questTracker, drawQuestTracker, _resetQuestTrackerForTests, TRACKER_PREF } from '../src/ui/quest/questTracker.js';
+import { HERALD_PREF } from '../src/ui/quest/questHerald.js';
 import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { makeWorld, seededRolls, REGION } from './guideWorld.mjs';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
-import { toPaper, paintQuestMark, PEN } from '../src/ui/inkMap.js';
+import { toPaper, paintQuestMark, PEN } from '../src/ui/ink/inkMap.js';
 import { RAID_MARK_CSS, raidMapMarks } from '../src/ui/eventMapMarks.js';
 import { CLIMATES, LOCATION_TYPES, getMapPixelID, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
-import { placePixelOf } from '../src/ui/travelMapWindow.js';   // AUDIT GUIDE O3: the goto law's one home
-import { compassMarkerLerp } from '../src/ui/hud.js';
+import { placePixelOf } from '../src/ui/travel/travelMapWindow.js';   // AUDIT GUIDE O3: the goto law's one home
+import { compassMarkerLerp } from '../src/ui/hud/hud.js';
 import { setPref, PREF_DEFAULTS, _resetForTests } from '../src/systems/uiPrefs.js';
 import { FEATURES } from '../src/systems/features.js';
 
@@ -79,7 +79,7 @@ test('GUIDE5 ONLY WHAT THE MAP HOLDS - a mark for each quest whose target the pl
   const noWords = questMapMarks([view('9', { find: find('Bigtown') })], null, pixelOf);
   assert.equal(noWords[0].label, 'Q9 - Bigtown', 'no words from the lens: the place\'s own name');
 
-  // the resolver: the held map's goto law over the host's maps (AUDIT GUIDE O3: one home, ui/travelMapWindow.js
+  // the resolver: the held map's goto law over the host's maps (AUDIT GUIDE O3: one home, ui/travel/travelMapWindow.js
   // placePixelOf - the host reads it through its memo; questMarks.js's copy retired)
   const region = { mapNameLookup: new Map([['Bigtown', 1]]), mapTable: [{ longitude: 0, latitude: 0 }, { longitude: 12345, latitude: 23456 }] };
   const maps = { getRegionByName: (n) => (n === REGION ? region : null) };
@@ -319,7 +319,7 @@ const findAll = (n, cls, out = []) => { if (String(n.className ?? '').split(/\s+
 test('GUIDE5 THE COMPASS - one mark, the tracker\'s quest\'s place: a hollow diamond in the marks\' gold on the enhanced strip at the gate\'s bearing law, clamped to the strip; no point, no mark - hidden and never removed (mutants: the mark never placed; the gate\'s filled orange; the node rebuilt)', async () => {
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const me = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
@@ -358,9 +358,9 @@ test('GUIDE5 ONE HOST, ITS LAWS - the street resolves a place with the held map\
   assert.match(W, /quests: \(\) => \(marksOn\(\) \? questMapMarks\(questTracker\.views, questTracker\.shown\(\)\?\.id \?\? null, questPixel\) : \[\]\),/);
   assert.match(W, /const questCompassMark = \(\) => \{\n\s*if \(!marksOn\(\) \|\| \(modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) return null;\n\s*const find = questTracker\.shown\(\)\?\.target\?\.find;\n\s*const p = find \? questPixel\(find\) : null;\n\s*if \(!p\) return null;\n\s*const t = state\.pixelTranslation\(p\.x, p\.y\);\n\s*return \[t\[0\] \+ TERRAIN_SIZE \/ 2, t\[2\] \+ TERRAIN_SIZE \/ 2\];/);
   assert.match(W, /quest: (?:vendorCompassMark\(\) \?\? )?(?:townQuestCompassMark\(\) \?\? )?questCompassMark\(\),   \/\/ GUIDE5/);   // HOME-VENDOR: a trader's waypoint first, while it is set
-  assert.match(rd('src/ui/hud.js'), /quest: quest \?\? null,   \/\/ GUIDE5/);
-  assert.match(rd('src/ui/enhancedHud.js'), /drawQuestMark\(opts\.quest \?\? null, opts\.playerXZ \?\? null, heading01\);   \/\/ GUIDE5/);
-  assert.doesNotMatch(rd('src/ui/travelMapWindow.js'), /quests/, 'the classic travel map is DFU\'s: a player who chose DFU\'s maps chose its look');
+  assert.match(rd('src/ui/hud/hud.js'), /quest: quest \?\? null,   \/\/ GUIDE5/);
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /drawQuestMark\(opts\.quest \?\? null, opts\.playerXZ \?\? null, heading01\);   \/\/ GUIDE5/);
+  assert.doesNotMatch(rd('src/ui/travel/travelMapWindow.js'), /quests/, 'the classic travel map is DFU\'s: a player who chose DFU\'s maps chose its look');
   const row = FEATURES.find((f) => f.id === 'quest-marks');
   assert.ok(row);
   assert.deepEqual([row.group, row.kinds, row.control.store, row.control.key, row.control.initial, row.control.online],
@@ -374,8 +374,8 @@ test('GUIDE5 ONE HOST, ITS LAWS - the street resolves a place with the held map\
     reach.add(f);
     for (const m of readFileSync(join(ROOT, f), 'utf8').matchAll(/^\s*(?:import|export)\s[^'"]*?from\s+['"](\.[^'"]+)['"]|^\s*import\s+['"](\.[^'"]+)['"]|\bimport\(\s*['"](\.[^'"]+)['"]\s*\)/gm)) walk(join(dirname(f), m[1] ?? m[2] ?? m[3]).replace(/\\/g, '/'));   // AUDIT GUIDE O6: a bare and a dynamic import too
   };
-  walk('src/ui/questMarks.js');
-  for (const f of ['src/ui/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud.js', 'src/formats/mapsFile.js', 'src/systems/raidingParties.js']) {
+  walk('src/ui/quest/questMarks.js');
+  for (const f of ['src/ui/quest/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud/hud.js', 'src/formats/mapsFile.js', 'src/systems/raidingParties.js']) {
     assert.equal(reach.has(f), false, `the marks' imports reach ${f}`);
   }
   assert.equal(typeof drawQuestTracker, 'function');

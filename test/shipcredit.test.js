@@ -11,11 +11,11 @@ import { readFileSync } from 'node:fs';
 import * as banking from '../src/systems/banking.js';
 import * as tradeModes from '../src/systems/tradeModes.js';
 import * as fleet from '../src/systems/fleet.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 const MODES = src('scenes/worldModes.js');
-const ENHANCED = src('ui/enhancedTrade.js');
+const ENHANCED = src('ui/enhanced/enhancedTrade.js');
 
 const deed = () => ({ templateIndex: 1321, name: "Deed to Small Ship 'I'", value: 100000, message: 20 });
 const hooks = (o = {}) => ({

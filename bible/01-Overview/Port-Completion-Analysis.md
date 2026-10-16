@@ -180,16 +180,16 @@ AUDIT 24's regeneration gate rebuilds that set from the source tree.
 
 | Subsystem | DFU loc | Notes |
 |---|---|---|
-| ~~Interior automap~~ SHIPPED (A-slices: systems/automap/automap.js + ui/automapWindow.js) | 5,091 | struck 2026-08-27 |
+| ~~Interior automap~~ SHIPPED (A-slices: systems/automap/automap.js + ui/automap/automapWindow.js) | 5,091 | struck 2026-08-27 |
 | ~~Controls / keybinding + InputManager~~ SHIPPED (SETT: ui/input.js + ui/controlsWindow.js + systems/settings/settings.js; gamepad still absent) | 4,110 | struck 2026-08-27 |
 | ~~Exterior automap~~ SHIPPED (ui/exteriorAutomapWindow.js) | 3,582 | struck 2026-08-27 |
 | ~~Enchanting effect tree~~ SHIPPED (E1/E2 2026-08-23 + V3's nine artifacts 2026-08-27) | 3,498 | struck 2026-08-27 |
-| ~~HUD component set~~ MOSTLY SHIPPED (ui/hudLarge.js with compass/vitals/head incl. V5's curse heads; HUDActiveSpells, place marker, escorting faces still absent) | 3,272 | narrowed 2026-08-27 |
+| ~~HUD component set~~ MOSTLY SHIPPED (ui/hud/hudLarge.js with compass/vitals/head incl. V5's curse heads; HUDActiveSpells, place marker, escorting faces still absent) | 3,272 | narrowed 2026-08-27 |
 | Classic-save import (`API/Save/*`) | 3,200 | SaveTree, SaveVars, SaveGames, CharacterRecord + 7 typed records |
 | ~~Lycanthropy / vampirism / artifact effects~~ SHIPPED WHOLE (V1-V5 + V3, 2026-08-24..27) | 2,527 | struck 2026-08-27 |
-| ~~Spell maker~~ SHIPPED (systems/spell/spellMaker.js + ui/spellMakerWindow.js) | 2,390 | struck 2026-08-27 |
+| ~~Spell maker~~ SHIPPED (systems/spell/spellMaker.js + ui/spell/spellMakerWindow.js) | 2,390 | struck 2026-08-27 |
 | ~~Banking~~ SHIPPED (systems/banking.js + the H-slices through H4's 3D preview) | 1,707 | struck 2026-08-27 |
-| ~~Item maker / enchanting UI~~ SHIPPED (ui/itemMakerWindow.js) | 1,320 | struck 2026-08-27 |
+| ~~Item maker / enchanting UI~~ SHIPPED (ui/item/itemMakerWindow.js) | 1,320 | struck 2026-08-27 |
 | Save/load game windows | 937 | STILL OPEN (re-verified 2026-08-27) - the pause menu rides the quicksave; no slot UI |
 | ~~Rappel / hanging~~ SHIPPED (player/climbing.js + motor.js); HeadBobber still absent (a settings toggle only) | 857 | narrowed 2026-08-27 |
 | ~~Potion maker~~ SHIPPED (ui/potionMakerWindow.js) | 408 | struck 2026-08-27 |
@@ -197,7 +197,7 @@ AUDIT 24's regeneration gate rebuilds that set from the source tree.
 One architectural note that changes the arithmetic: DFU carries a
 16,404-loc retained widget toolkit (`Game/UserInterface`) under 37,693 loc
 of windows. The port draws immediate-mode onto a virtual 320x200 surface
-(`ui/nativePanel.js`), so each remaining window is far cheaper than its C#
+(`ui/native/nativePanel.js`), so each remaining window is far cheaper than its C#
 line count - but there is no `ListBox`, `HorizontalSlider`, `MultiTextBox`
 or `Paginator` to reuse either, which is why every window has cost a whole
 slice. Whether to build a small widget layer before the remaining ~20

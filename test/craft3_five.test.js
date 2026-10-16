@@ -221,7 +221,7 @@ test('CRAFT3 service source: every track read and credit is the craft\'s - the c
 // ─── THE PAGE ────────────────────────────────────────────────────────
 
 test('CRAFT3 page: the Professions tab lists the ten; Building\'s four cards a rank, each its discipline\'s name, a free change said "free, once"; its unlocks both disciplines\', each named; the limit "of 2"', async () => {
-  const { setProfessionsPages, drawProfessionsPage, resetProfPages, unlocksOf } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawProfessionsPage, resetProfPages, unlocksOf } = await import('../src/ui/professions/profPages.js');
   resetProfPages();
   const tracks = new Map(PROFESSIONS.map((p) => [p.id, { profession: p.id, xp: 0, rank: 0, specs: { 50: null, 100: null }, respec: null }]));
   tracks.set('building', { profession: 'building', xp: xpForRank(60), rank: 60, specs: { 50: 'quarryman', 100: null }, respec: null, free: [50] });

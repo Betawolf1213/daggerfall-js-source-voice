@@ -11,10 +11,10 @@ import { dungeonTemperature, resistTemperature } from '../src/systems/survival/t
 import { survivalFeed, feltNow, feltBreakdownNow, lastSurvivalFeed } from '../src/systems/survival/env.js';
 import { HUD_NEED_WORDS, STATUS_TEXT, TEMP_SCALE, survivalHudChips, survivalStatusLines, temperatureReadout } from '../src/systems/survival/status.js';
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
-import { STATUS_GLYPHS, statusGlyphSvg, statusGlyphSrc } from '../src/ui/hudStatus.js';
+import { STATUS_GLYPHS, statusGlyphSvg, statusGlyphSrc } from '../src/ui/hud/hudStatus.js';
 import { COMFORT, discomfort, packTemperature, breakdownLines, temperaturePlaque, temperatureWear, temperatureCompareBlock, temperatureStatRows } from '../src/ui/temperatureCard.js';
 import { wearComparison } from '../src/ui/armourCard.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -211,7 +211,7 @@ test('TEMP-UI: the HUD plate, executed - UI-CALM: in the bottom-left corner\'s c
   };
   const prev = globalThis.document;
   globalThis.document = { createElement: (t) => mk(t), createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk(), querySelector: () => null, querySelectorAll: () => [] };
-  const { drawEnhancedHud, destroyEnhancedHud, TEMP_HUD_PREF } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud, TEMP_HUD_PREF } = await import('../src/ui/enhanced/enhancedHud.js');
   try {
     const entity = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: createEquipTable(), lightSource: null, activeEffects: [], survival: newSurvival(0) };   // PIN MOVED (AUDIT C&C R7): the equip table the game mints
     setPref(SURVIVAL_PREF, 'casual');
@@ -254,7 +254,7 @@ test('TEMP-UI: the HUD plate, executed - UI-CALM: in the bottom-left corner\'s c
     globalThis.document = prev;
   }
   // the sheet and the kit
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // UI-CALM: in the caption's flow, not hung off the compass; comfortable, the glyph and the number alone
   const calm = read('src/ui/uiCalmStyle.js');
   assert.match(calm, /\.hud \.hud-qcap \.hud-temp \{ position: relative; left: auto; top: auto; right: auto; transform: none;/);
@@ -326,11 +326,11 @@ test('TEMP-UI: the pack - the plaque says the live felt temperature, its word in
   assert.deepEqual(COMFORT, { low: -10, high: 10 });
   assert.deepEqual([-25, -10, 0, 10, 31].map(discomfort), [15, 0, 0, 0, 21]);
   // wired where the pack draws: the plaque in the figure's head cell, the block under the card's comparisons, the section on the Stats side
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /plaques\.style\.gridArea = '1 \/ 2 \/ 2 \/ 3';\n {2}plaques\.append\(armourPlaque\(deps\.entity\)\);\n {2}const temp = temperaturePlaque\(deps\.entity\);\n {2}if \(temp\) plaques\.append\(temp\);/);   // PIN MOVED (AUDIT C&C S1): the two in one row on the figure's first cell named whole
   assert.match(inv, /const tc = temperatureCompareBlock\(deps\.entity, picked, wear\); if \(tc\) into\.append\(tc\);/);
   assert.match(read('src/ui/statsCard.js'), /const tempRows = temperatureStatRows\(entity\);\n {2}if \(tempRows\.length\) \{\n {4}const tp = section\('Temperature', 13\);/);
-  assert.match(read('src/ui/enhancedPlusStyle.js'), /\.pack-shell \.wornmap \.wornplaques \{ position: absolute; left: 4px; right: 4px; top: 4px; z-index: 2; display: flex; flex-wrap: wrap;\n {2}justify-content: space-between;/, 'the Armour plaque\'s twin, at the other end of their row');   // PIN MOVED (AUDIT C&C S1): the row's, wrapping under on a narrow figure
+  assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /\.pack-shell \.wornmap \.wornplaques \{ position: absolute; left: 4px; right: 4px; top: 4px; z-index: 2; display: flex; flex-wrap: wrap;\n {2}justify-content: space-between;/, 'the Armour plaque\'s twin, at the other end of their row');   // PIN MOVED (AUDIT C&C S1): the row's, wrapping under on a narrow figure
   assert.match(read('src/ui/grimoireDress.js'), /\$\{G\} \.statflip-btn, \$\{G\} \.wornac-total, \$\{G\} \.worntemp-total \{ background:/, 'the Grimoire dress paints it as the Armour plaque');
 });
 
@@ -463,7 +463,7 @@ test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI 
   const prev = globalThis.document, prevW = globalThis.innerWidth;
   globalThis.document = { createElement: (t) => mk(t), createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk(), querySelector: () => null, querySelectorAll: () => [] };
   globalThis.innerWidth = 1440;
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   try {
     setPref(SURVIVAL_PREF, 'casual');
     const e = player({ health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, lightSource: null });
@@ -485,6 +485,6 @@ test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI 
     globalThis.document = prev; globalThis.innerWidth = prevW;
   }
   // PIN MOVED (AUDIT UICALM-FIRM1 L5 M10): the compass's plate, its compact and hung kinds, are gone from every sheet
-  for (const f of ['src/ui/enhancedStyle.js', 'src/ui/grimoireDress.js', 'src/ui/uiCalmStyle.js']) assert.doesNotMatch(read(f), /hud-temp\.compact|temp-hung|temp-aside|\.hud-temp \{[^}]*calc\(100% \+/, f);
+  for (const f of ['src/ui/enhanced/enhancedStyle.js', 'src/ui/grimoireDress.js', 'src/ui/uiCalmStyle.js']) assert.doesNotMatch(read(f), /hud-temp\.compact|temp-hung|temp-aside|\.hud-temp \{[^}]*calc\(100% \+/, f);
 });
 

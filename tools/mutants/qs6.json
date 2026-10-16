@@ -258,7 +258,7 @@
   },
   {
     "name": "QS6-the-caption-doubles-the-readied-spell-the-chip-already-names",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const readyName = readySpell && !doubled ? String(shownSpellName(readySpell) ?? '') : null;",
     "new": "  const readyName = readySpell ? String(shownSpellName(readySpell) ?? '') : null;",
     "tests": [
@@ -267,7 +267,7 @@
   },
   {
     "name": "QS6-a-fingers-hold-performs-the-slot-on-release-as-well-as-cycling",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "        if (!held) act();",
     "new": "        act();",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "QS6-the-spell-chip-is-never-drawn",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  cap.append(temp, cornerWord, spellChip, readied);",
     "new": "  cap.append(temp, cornerWord, readied);",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "QS6-F4-the-cell-lamp-is-not-in-the-blocks-signature-so-it-never-goes-out",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    quickslotCycling() ?? '',\n",
     "new": "",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "QS6-F4-the-lamp-never-lights-at-all",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const lamp = quickslotCycling();",
     "new": "  const lamp = null;",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "QS6-F3-the-fingers-timers-outlive-the-HUD",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  for (const h of holds) h.off();   // AUDIT QS6 F3: a finger mid-cycle does not outlive the HUD\n  detachHotbarDock();",
     "new": "  detachHotbarDock();",
     "tests": [
@@ -339,7 +339,7 @@
   },
   {
     "name": "QS6-F3-a-finger-lifted-leaves-its-timer-running",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "        const held = cycled;\n        stop();",
     "new": "        const held = cycled;",
     "tests": [

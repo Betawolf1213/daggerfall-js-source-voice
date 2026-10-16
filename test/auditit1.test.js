@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
+import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
@@ -25,7 +25,7 @@ function settings(over = {}) {
   return readImmersiveTravelSettings((v, k) => (v === 'roads-hazelnut' ? true : all[k]));
 }
 
-// ── the classic window (ui/travelMapWindow.js, ui/travelPopUp.js) ─────────────────────────────────────────────────
+// ── the classic window (ui/travel/travelMapWindow.js, ui/travel/travelPopUp.js) ─────────────────────────────────────────────────
 const DAGGERFALL = 17;
 const mapIdOf = (x, y) => (DAGGERFALL << 20) | getMapPixelID(x, y);
 const row = (x, y, locationType) => ({ mapId: mapIdOf(x, y), longitude: x * 128, latitude: (499 - y) * 128, locationType, discovered: true, dungeonType: 255 });
@@ -307,7 +307,7 @@ test('AUDIT IT1 G1/G2: the layer lays only the author\'s records - a patch WD1 d
   assert.match(src, /try \{\s*\n?\s*installImmersiveTravelGates\(/, 'the install guarded: a world loads whatever the layer\'s patches say');
 });
 
-// ── the host and the online lane (systems/immersiveTravel.js, scenes/world.js, ui/merchantServiceDoor.js) ────────────
+// ── the host and the online lane (systems/immersiveTravel.js, scenes/world.js, ui/merchant/merchantServiceDoor.js) ────────────
 import { installImmersiveTravel, immersiveTravelLoaded, _resetImmersiveTravel, IT_FACTIONS, CARRIAGE_DRIVERS_FACTION_ID, SAILORS_FACTION_ID } from '../src/systems/immersiveTravel.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { customFactions, registerCustomFaction, _resetCustomFactions } from '../src/formats/factionFile.js';
@@ -355,7 +355,7 @@ test('AUDIT IT1 L3: Init registers its services only once BOTH factions went in 
 });
 
 test('AUDIT IT1 W1: the enhanced skin\'s merchant popup names a registered service by its own label - the driver\'s button said "Sell"', () => {
-  assert.match(read('src/ui/merchantServiceDoor.js'), /\{ label: hooks\.label \?\? merchantServiceLabel\(hooks\.service\), onClick: \(\) => \{ close\(\); hooks\.onService\?\.\(\); \} \},/);
+  assert.match(read('src/ui/merchant/merchantServiceDoor.js'), /\{ label: hooks\.label \?\? merchantServiceLabel\(hooks\.service\), onClick: \(\) => \{ close\(\); hooks\.onService\?\.\(\); \} \},/);
 });
 
 test('AUDIT IT1 L1/W2/W6: the driver\'s map reads PlayerGPS\'s region (politic 64 is 31), refuses a sun-averse traveller by day ONLINE as the travel map\'s door does (no arrival clamp there), and says why when it does not open', () => {

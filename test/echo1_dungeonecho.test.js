@@ -16,7 +16,7 @@ import { COMPASS_WORDS, sceneCompassWord } from '../src/systems/compassWords.js'
 import { bearingWord } from '../src/scenes/fishHost.js';
 import { ActionSystem, PLAY_DEPTH_MAX } from '../src/world/actionSystem.js';
 import { TRIGGER_FLAGS, ACTION_FLAGS } from '../src/world/rdbLayout.js';
-import { compassMarkerLerp } from '../src/ui/hud.js';
+import { compassMarkerLerp } from '../src/ui/hud/hud.js';
 import { FEATURES } from '../src/systems/features.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -194,7 +194,7 @@ test('ECHO1: the dungeon hears the cascade alone, says one line a press, marks a
   assert.match(s, /const why = named && !hide && getInteractionMode\(\) === 'info' && echoesOn\(\) \? examineLine\(o, \(x\) => actions\.nextOf\(x\), objectAabb\) : null;/);
   assert.match(s, /echoes: \(\) => \(echoesOn\(\) \? echoBook\.points\(\) : null\),/);
   assert.match(s, /echoPulse\.clear\(\); echoBook\.clear\(\);[^\n]*actions\.onPlayed = null;/);
-  assert.match(src('src/ui/automapDoor.js'), /echoes: deps\.echoes \?\? null,/);
+  assert.match(src('src/ui/automap/automapDoor.js'), /echoes: deps\.echoes \?\? null,/);
 });
 
 test('ECHO1: the Features row - Enhanced, on by default, the player\'s own online', () => {

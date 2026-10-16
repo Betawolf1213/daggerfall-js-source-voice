@@ -80,7 +80,7 @@
   },
   {
     "name": "AUDIT0929-W2-2-the-trials-joined-a-frame",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "trials: P.trialsLine,",
     "new": "trials: P.trials.map((t) => t.name).join(' - '),",
     "tests": [

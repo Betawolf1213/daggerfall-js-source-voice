@@ -14,8 +14,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { stripTakesClick, createTravelControlUI, CONTROL_RECTS, UD_SPINNER } from '../src/ui/travelControlUI.js';
-import { NATIVE_W } from '../src/ui/nativePanel.js';
+import { stripTakesClick, createTravelControlUI, CONTROL_RECTS, UD_SPINNER } from '../src/ui/travel/travelControlUI.js';
+import { NATIVE_W } from '../src/ui/native/nativePanel.js';
 
 const base = { showing: true, paused: false, locked: false, button: 0, enhancedDom: false };
 

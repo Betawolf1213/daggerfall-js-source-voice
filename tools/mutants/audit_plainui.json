@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-U-press-dead",
-    "file": "src/ui/enhancedTalk.js",
+    "file": "src/ui/enhanced/enhancedTalk.js",
     "old": "    r.onclick = () => { regardOpen = !regardOpen; render(); };",
     "new": "    r.onclick = () => {};",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-U-mark-fixed",
-    "file": "src/ui/enhancedTalk.js",
+    "file": "src/ui/enhanced/enhancedTalk.js",
     "old": "    mark.style.left = `${(m.regard.share * 100).toFixed(1)}%`;",
     "new": "    mark.style.left = '50.0%';",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-U-open-kept-across-mounts",
-    "file": "src/ui/enhancedTalk.js",
+    "file": "src/ui/enhanced/enhancedTalk.js",
     "old": "  lastLogCount = -1; lastTopicsKey = null; regardOpen = false;",
     "new": "  lastLogCount = -1; lastTopicsKey = null;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-T5-charter-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".seat-head .seat-charter { margin: 0; font-size: 17px;",
     "new": ".seat-head .seat-charter { margin: 0; font-size: 15px;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-T5-battle-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-seat-battle { margin: 0 0 6px; font-size: 15px;",
     "new": ".notice-seat-battle { margin: 0 0 6px; font-size: 14px;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-T5-writ-count-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 15px;",
     "new": ".notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 13px;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-U3-target-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-panel > summary { margin: -11px 0; padding: 11px 0; cursor: pointer; }",
     "new": ".notice-panel > summary { margin: 0; cursor: pointer; }",
     "tests": [

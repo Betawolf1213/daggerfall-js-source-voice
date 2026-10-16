@@ -37,7 +37,7 @@
   },
   {
     "name": "CLASSICPAGES-forge-never-offered",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const forgeOffered = () => profPagesShown();",
     "new": "export const forgeOffered = () => profPagesShown() && false;",
     "tests": [

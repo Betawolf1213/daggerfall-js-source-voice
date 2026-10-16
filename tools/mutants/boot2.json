@@ -3,23 +3,23 @@
     "name": "BOOT2-the-cursor-takes-the-helper-from-the-hud-again",
     "file": "src/ui/cursor.js",
     "old": "import { APP_ROOT } from '../systems/appRoot.js';",
-    "new": "import { APP_ROOT } from '../systems/appRoot.js';\nimport { drawHud } from './hud.js';",
+    "new": "import { APP_ROOT } from '../systems/appRoot.js';\nimport { drawHud } from './hud/hud.js';",
     "tests": [
       "test/boot2.test.js"
     ]
   },
   {
     "name": "BOOT2-the-hud-re-exports-the-helper",
-    "file": "src/ui/hud.js",
-    "old": "import { bitmapToColor32 } from '../formats/color32Order.js';",
-    "new": "import { bitmapToColor32 } from '../formats/color32Order.js';\nexport { bitmapToColor32 };",
+    "file": "src/ui/hud/hud.js",
+    "old": "import { bitmapToColor32 } from '../../formats/color32Order.js';",
+    "new": "import { bitmapToColor32 } from '../../formats/color32Order.js';\nexport { bitmapToColor32 };",
     "tests": [
       "test/boot2.test.js"
     ]
   },
   {
     "name": "BOOT2-a-second-definition-in-the-hud",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "export const hudScale = (canvasWidth, canvasHeight) =>",
     "new": "export const bitmapToColor32 = () => null;\nexport const hudScale = (canvasWidth, canvasHeight) =>",
     "syntax": true,

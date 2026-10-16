@@ -28,7 +28,7 @@ import { createTravelOptions, readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR }
 import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { planRoute, routeLegs, routeGround, joinPoint, routeDrawPoints, roadShare, crossesWater, dryLine, TV_MOUNTAIN_CLIMATE } from '../src/systems/travel/travelRoute.js';
 import { WATER_BYTE } from '../src/world/roadsProducer.js';
 import { DIR_DELTA } from '../src/world/road/roadNetwork.js';

@@ -17,7 +17,7 @@ const { ONLINE_FORCED_PREFS, ONLINE_FORCED_SETTINGS, ONLINE_ROOM_MOD_KEYS, ONLIN
 const { getPref, setPref, _resetForTests: resetPrefs } = await import('../src/systems/uiPrefs.js');
 const { getString, getBool, setValue, saveSettings, _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
 const { modSetting, setModSetting, _resetModSettings, MOD_SETTINGS } = await import('../src/systems/modSettings.js');
-const { onlineSyncCard, ONLINE_SYNC_TITLE, ONLINE_SYNC_SAME } = await import('../src/ui/enhancedMenu.js');
+const { onlineSyncCard, ONLINE_SYNC_TITLE, ONLINE_SYNC_SAME } = await import('../src/ui/enhanced/enhancedMenu.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 function fresh() {
@@ -195,7 +195,7 @@ test('UXB1-E: the Online pane\'s card - what differs, now and then, one press to
     delete globalThis.document;
   }
   // on the pane, with saves and without: under the rules it copies
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const pane = menu.slice(menu.indexOf('function paneOnline(body)'), menu.indexOf('export const ONLINE_SYNC_TITLE'));
   assert.equal((pane.match(/body\.append\(onlineSyncCard\(\)\);/g) ?? []).length, 2);
   assert.ok(pane.indexOf("body.append(foot);\n  body.append(onlineSyncCard());") > 0, 'after the footer that names the room\'s switches');

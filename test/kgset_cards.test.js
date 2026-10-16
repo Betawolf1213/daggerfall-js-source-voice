@@ -12,7 +12,7 @@ import { ILIAC_CARDS, ILIAC_LOCATIONS, CARD_EMBLEMS, cardById } from '../src/net
 import { fxText, fxRefusal, deckValid } from '../src/net/iliac/iliacHand.js';
 import { cardRules, cardFlavor, cardWords, CARD_WORD_IDS } from '../src/systems/iliac/iliacCardWords.js';
 import { paintIliacCard, EMBLEM_KEYS, wrapCardText } from '../src/render/iliacCardFaces.js';
-import { cardCanvas, _clearCardFacesForTests, drawCardsPart, resetCardsPart } from '../src/ui/cardBinderPage.js';
+import { cardCanvas, _clearCardFacesForTests, drawCardsPart, resetCardsPart } from '../src/ui/card/cardBinderPage.js';
 import { iliacFace } from '../src/ui/iliacTableHud.js';
 import { iliacCardLines, mintIliacCard, giveBinder } from '../src/systems/iliac/iliacItems.js';
 import { FOE_CARDS } from '../src/systems/card/cardSources.js';

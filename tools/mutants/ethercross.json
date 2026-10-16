@@ -496,7 +496,7 @@
   },
   {
     "name": "OFFICE-ether-tab",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "  if (o.ether) return etherOfficeText(o);   // ETHER-SEA",
     "new": "  if (false) return etherOfficeText(o);   // ETHER-SEA",
     "tests": [
@@ -505,7 +505,7 @@
   },
   {
     "name": "OFFICE-rumour-press",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "({ id: `rumour:${i}`, title: 'Talk on the quay', words: r, terms: '', press: '', can: false, why: '' })",
     "new": "({ id: `rumour:${i}`, title: 'Talk on the quay', words: r, terms: '', press: 'Take', can: false, why: '' })",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "OFFICE-isles-plural",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "Your charts hold ${o.charted} ${o.charted === 1 ? 'isle' : 'isles'}.",
     "new": "Your charts hold ${o.charted} isles.",
     "tests": [

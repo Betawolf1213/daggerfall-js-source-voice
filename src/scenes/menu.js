@@ -39,7 +39,7 @@ import { SAVEVARS_FILENAME } from '../formats/saveVarsFile.js';
 import { setPendingClassicSave } from '../systems/classicSave.js';
 import { DFPalette } from '../formats/dfPalette.js';
 import { FntFile } from '../formats/fntFile.js';
-import { loadImg, nativeMetrics, pointToNative } from '../ui/nativePanel.js';
+import { loadImg, nativeMetrics, pointToNative } from '../ui/native/nativePanel.js';
 import { makeFont } from '../ui/text.js';
 import { bitmapToColor32 } from '../formats/color32Order.js';
 import { SaveWindow } from '../ui/saveWindow.js';   // SAV4: the start menu's Load door

@@ -89,12 +89,12 @@ to the ships that fought it."* Each client says it for its own site's serpent al
 **The ring.** `mapMark()` gives a ring of radius `SERPENT_RING_PIXELS` (3) map pixels (about 2.5 km), its centre pulled up to
 `SERPENT_RING_SHIFT_PIXELS` (1.2) off the site by the day's roll, so the ring marks the waters and not the spot. Its
 label says the countdown, and its card names the serpent, the port it lies off and the packet lane it hunts. The held
-map draws it with the gate's own reader and painter in the sea's colours (`ui/serpentMapMark.js`, `ui/inkMap.js`
+map draws it with the gate's own reader and painter in the sea's colours (`ui/serpentMapMark.js`, `ui/ink/inkMap.js`
 `paintGateRing`'s `ink`, `ui/heldMap.js`: the legend's "Sea serpent", the card under the pointer). The classic region
 page draws no serpent: a province's sheet shows little of the open sea it hunts.
 
 **The compass.** Inside the ring, the enhanced HUD's strip carries a sea-green diamond where it hunts
-(`ui/enhancedHud.js` `drawSerpentMark`, `scenes/world.js` `serpentCompassMark`).
+(`ui/enhanced/enhancedHud.js` `drawSerpentMark`, `scenes/world.js` `serpentCompassMark`).
 
 ## 3. Where it rises - the packet lanes
 
@@ -569,7 +569,7 @@ After the kill the bar holds a moment and fades.
 The owner, once SERPENT1 was live: *"So this also shows in the pause menu timer?"* - it did not - and then *"This needs
 to happen, the discord integration needs to happen"*. Both are the gate's own features, given to the serpent.
 
-**The Timers window** (`systems/eventTimers.js`, `ui/enhancedTimers.js`). The serpent has its own kind, `serpent`, after
+**The Timers window** (`systems/eventTimers.js`, `ui/enhanced/enhancedTimers.js`). The serpent has its own kind, `serpent`, after
 the gate's, marked in its ring's colour (`SERPENT_RING_MAP_CSS`). Its row follows its day:
 
 | Phase | Row | Counts to |

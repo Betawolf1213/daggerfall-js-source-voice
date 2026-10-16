@@ -2,7 +2,7 @@
 // CARDS5 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 17): THE RELAY'S TABLE AS THIS CLIENT SEES IT -
 // pure, DOM-free. The relay deals and runs the table (net/holdemTable.js); this folds its frames - the room's events
 // and the table as it stands, my own hole cards, my turn - into the very shapes the offline evening offers
-// (systems/card/cardTableSession.js view(), legal(), drain()), so the panel (ui/cardTableHud.js) and the cloth
+// (systems/card/cardTableSession.js view(), legal(), drain()), so the panel (ui/card/cardTableHud.js) and the cloth
 // (world/card/cardScene.js) read the one or the other alike. A seat is a CHAIR (the relay's own law): `seats` runs over the
 // table's chairs, an empty one `kind: 'empty'`, mine `kind: 'player'`, another player's `kind: 'peer'`.
 //

@@ -17,7 +17,7 @@ import { markQuiver, refundQuiver, QUIVER_TEMPLATES } from '../src/systems/arena
 import { keptOffArenaGround, ARENA_GROUND_M, ARENA_GROUND_QUESTS } from '../src/systems/arena/arenaGround.js';
 import { boutTeammates } from '../src/combat/friendlyFire.js';
 import { boutGate } from '../src/characters/enemyTargets.js';
-import { arenaHudModel } from '../src/ui/arenaHud.js';
+import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { undercroftPopulation, deepFoesOf, undercroftHallNear, UNDERCROFT_DEEP_M, UNDERCROFT_BEASTS, UNDERCROFT_PEOPLE } from '../src/world/arena/arenaUndercroft.js';
 import { spendAmmoFor, ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { startShotTally, stopShotTally, noteShot, noteShotRecoverable } from '../src/systems/shotTally.js';
@@ -173,7 +173,7 @@ test('ARENA-TEAMS: the HUD calls a Grand Melee "each alone" between its columns,
   assert.equal(at([f('you', 0), f('a', 1), f('b', 2), f('c', 3)]).vs, ARENA_TEXT.hud.eachAlone, 'every fighter a side of its own');
   assert.equal(at([f('you', 0), f('a', 1), f('b', 1)]).vs, ARENA_TEXT.hud.vs, 'two against one: a team');
   assert.equal(at([f('you', 0), f('a', 1)]).vs, ARENA_TEXT.hud.vs, 'a duel');
-  assert.match(read('src/ui/arenaHud.js'), /if \(\(model\.vs \?\? ARENA_TEXT\.hud\.vs\) !== shown\.vs\) \{ shown\.vs = model\.vs \?\? ARENA_TEXT\.hud\.vs; parts\.vs\.textContent = shown\.vs; \}/);
+  assert.match(read('src/ui/arena/arenaHud.js'), /if \(\(model\.vs \?\? ARENA_TEXT\.hud\.vs\) !== shown\.vs\) \{ shown\.vs = model\.vs \?\? ARENA_TEXT\.hud\.vs; parts\.vs\.textContent = shown\.vs; \}/);
 });
 
 // ── CURSE-OFF-SAND ──────────────────────────────────────────────────────────────────────────────────────────────────

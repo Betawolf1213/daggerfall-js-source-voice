@@ -3,7 +3,7 @@
 Mac: **"Alright, one last comprehensive audit to ensure this is perfection"**. The audit of section 26 of
 `11-Multiplayer/Tavern-Cards.md` - the Holdings rail's COLLECTIONS page (Codex and Cards), CARDS7 (Iliac Hand's rules,
 `net/iliac/iliacHand.js`), CARDS8 (the catalog `net/iliac/iliacCards.js`, the painted faces `render/iliacCardFaces.js`, the Card
-Binder `systems/iliac/iliacItems.js` and its page `ui/cardBinderPage.js`) - and of AUDIT CARDS-4's and CARDS6b's fixes to the
+Binder `systems/iliac/iliacItems.js` and its page `ui/card/cardBinderPage.js`) - and of AUDIT CARDS-4's and CARDS6b's fixes to the
 gold tables (`Audit-Cards-4.md`, Tavern-Cards sections 24-25). What it changed there is Tavern-Cards section 27.
 
 ## How it was run
@@ -74,7 +74,7 @@ after the lane (the painter and its test alone), looked at again in Chromium at 
 | D11 | LOW | Faces blurry at phone width: a 156x224 backing store stretched 1.47x by the `1fr` grid | FIXED: the columns the tile's own width |
 | D12 | LOW | Not quite "the rows the Reforge's Codex page draws": no "Legendary · group" line, no sets' counts, an unfound record's hint alone | FIXED: the opened row's lines the Reforge's, in its order, and each set's count; the Scry door stays the guilds' window's (said in the header) |
 | D13 | LOW | "Your binder holds 2 Rat" | FIXED: "copy" and "copies" |
-| D14 | INFO | No landing for the page (`at: 'collections'` opened on System); the binder's sheet names the page with no door to it | FIXED in part: `at: 'collections'`, `'cards'` or `'codex'` lands on the page and its part (`src/ui/enhancedMenu.js:"setCollectionsPart(at)"`). RECORDED: the pack is its own window with no road into the pause menu's pages, so the sheet names where the decks are built rather than opening it |
+| D14 | INFO | No landing for the page (`at: 'collections'` opened on System); the binder's sheet names the page with no door to it | FIXED in part: `at: 'collections'`, `'cards'` or `'codex'` lands on the page and its part (`src/ui/enhanced/enhancedMenu.js:"setCollectionsPart(at)"`). RECORDED: the pack is its own window with no road into the pause menu's pages, so the sheet names where the decks are built rather than opening it |
 | R1 | LOW (record) | Loot-Arc section 12 said the Codex window "lists all thirty"; it draws 37, and the Collections page was unnamed | FIXED: every Legendary record (thirty at LOOT10, the wardrobe's six and the Thunderlock since), and the Collections page named |
 | T1 | MED (pins) | No test drew `drawCollectionsPage`; no chip, Cancel, filter or second deck pressed; the visit reset and the menu's `player:` wiring unpinned | FIXED: `test/auditcards5_ui.test.js` drives both parts and the menu's wiring |
 | NEW-1 | HIGH | The service refused a seat's receipt above six deep stakes (`why: 'sum'`), but a seat leaves with more once losers re-buy or top up; the device let 'sum' go as dead, acked, and the room forgot it - the winner's stack destroyed (repro: 1,400 gold), his row HELD for good. The evenings never reached it; the pure-table fuzz once | FIXED: a cash-out bounded by every stake that came to its table - its room, table and blinds within a receipt's life (`server-account/src/cards.js:"if (c.r > Number(into?.n ?? 0))"`); 'sum' out of `CARD_RECEIPT_DEAD`, kept by the device |

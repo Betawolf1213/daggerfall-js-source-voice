@@ -22,10 +22,10 @@ by tests that fail on the record's own code (7305011de), the new pins mutation-c
 
 ## RETRO-UI (1)
 
-`ui/uiScreen.js` (new): `uiCanvas`, `onUiScreen`, `toUiPoint`, `fromUiPoint`; `ui/hud.js` drawHud; `combat/weaponRig.js`
-(`cv`, `draw`, drawThunderlock's `_tlDrawn`); `player/mountRig.js`; `ui/hudLarge.js` routeLargeHudClick,
-trackLargeHudPointer; `ui/hudActiveSpells.js` trackHudPointer; `ui/enhancedHud.js` wearUiPillar;
-`ui/enhancedStyle.js`, `ui/revenantCard.js` (`--ui-pillar`). With retro mode's aspect correction on, DFU's 2D layer
+`ui/uiScreen.js` (new): `uiCanvas`, `onUiScreen`, `toUiPoint`, `fromUiPoint`; `ui/hud/hud.js` drawHud; `combat/weaponRig.js`
+(`cv`, `draw`, drawThunderlock's `_tlDrawn`); `player/mountRig.js`; `ui/hud/hudLarge.js` routeLargeHudClick,
+trackLargeHudPointer; `ui/hud/hudActiveSpells.js` trackHudPointer; `ui/enhanced/enhancedHud.js` wearUiPillar;
+`ui/enhanced/enhancedStyle.js`, `ui/revenant/revenantCard.js` (`--ui-pillar`). With retro mode's aspect correction on, DFU's 2D layer
 lays out in CustomScreenRect (BaseScreenComponent.cs :1135-1137; FPSWeapon.cs :128-129; FPSSpellCasting.cs :88-89;
 TransportManager.cs :290-291). The port's canvas 2D layer now lays out on a canvas of `retroScreenRect`'s size - the
 world rect's own pillar (`retroPillarWidth`) - and draws through the renderer's screen offset (the overlay letterbox
@@ -48,7 +48,7 @@ the picture's width while the arm is drawn over the canvas's. `test/fb1003_retro
 
 ## MOVED-NOTICE (2)
 
-`ui/enhancedNotice.js` buildStack; `ui/hudPlacer.js` (new); `ui/hudLayout.js` paint, its sheet. The stack is placed as
+`ui/enhanced/enhancedNotice.js` buildStack; `ui/hud/hudPlacer.js` (new); `ui/hud/hudLayout.js` paint, its sheet. The stack is placed as
 it is built - before its first panel's resting style is flushed - as revenantCard's `ensure()` places its own; through
 a leaf seat (`placeHudPieces`, which hudLayout fills with its sweep) because the notice module is on the quest
 herald's light path, which must not reach the quest machine through hudLayout's previews (`test/guide3_herald.test.js`
@@ -80,8 +80,8 @@ the rule now.
 
 ## GL-LEAK (4)
 
-`ui/inkDungeonGL.js` dungeonInkFor, disposeDungeonInk, the ink's `dispose`, `program`; `ui/automapSheet.js`;
-`render/glRelease.js` (new); `main.js`; `ui/gateVeil.js`; `ui/introLandscape.js`. Measured in the source: the held map
+`ui/ink/inkDungeonGL.js` dungeonInkFor, disposeDungeonInk, the ink's `dispose`, `program`; `ui/automap/automapSheet.js`;
+`render/glRelease.js` (new); `main.js`; `ui/gate/gateVeil.js`; `ui/intro/introLandscape.js`. Measured in the source: the held map
 builds a sheet per open, and each sheet built its own ink - `createDungeonInk`'s WebGL2 context, a paper-sized drawing
 buffer with its depth and preserve copy and three paper-sized textures, 30-40 MB at 1080p and past 150 at 4K - on every
 M in a dungeon or a building; nothing deleted it, nothing lost it, and its canvas, off the page, was freed only when a

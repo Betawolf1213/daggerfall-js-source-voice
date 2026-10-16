@@ -385,7 +385,7 @@
   },
   {
     "name": "DISC10-D-V5-the-enhanced-sheet-reads-the-birth-race",
-    "file": "src/ui/enhancedCharSheet.js",
+    "file": "src/ui/enhanced/enhancedCharSheet.js",
     "old": "    race: processGrammar(liveRaceName(e) || 'Breton'),",
     "new": "    race: processGrammar(e.race ?? 'Breton'),",
     "tests": [

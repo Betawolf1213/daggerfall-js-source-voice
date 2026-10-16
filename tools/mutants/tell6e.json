@@ -245,7 +245,7 @@
   },
   {
     "name": "TELL6e-hud-no-bleed",
-    "file": "src/ui/hudActiveSpells.js",
+    "file": "src/ui/hud/hudActiveSpells.js",
     "old": "  if (bleed && bleed.left > 0) other.push(",
     "new": "  if (false) other.push(",
     "tests": [

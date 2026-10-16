@@ -3,7 +3,7 @@
 // AUDIT 32 S1 KEPT, AND SAID. The +500 first-make XP (recipeLaw FIRST_CRAFT_XP) is withheld from a pattern made wholly of
 // goods only a counter sells (recipeLaw firstCraftPays over professionLaw COUNTER_ONLY - the Weavers' Linen and Wool),
 // and nothing in the game said so. Now every station's box says its pattern's XP and its first's, or that the Weavers'
-// cloth earns none (ui/craftXpWords.js craftXpLine, read by ui/profPages.js), and the craft's word says a first, and why
+// cloth earns none (ui/craftXpWords.js craftXpLine, read by ui/professions/profPages.js), and the craft's word says a first, and why
 // none came (craftXpText, read by scenes/world.js's `craft`). Built from the producers: the recipe tables, the account
 // service's craft answer through the real Worker (test/accountDb.mjs), and a book that reads it (net/profBook.js).
 // bible/06-Systems/Professions-Arc.md 41.9.
@@ -18,7 +18,7 @@ import { createProfBook } from '../src/net/profBook.js';
 import { RECIPES, COOKING_RECIPES, recipeById, firstCraftPays, SCULPTOR } from '../src/net/recipeLaw.js';
 import { MASON_RECIPES, WEAVERS_STOCK, xpForRank } from '../src/net/professionLaw.js';
 import { craftXpLine, craftXpText } from '../src/ui/craftXpWords.js';
-import { setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/profPages.js';
+import { setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { utcDay } from '../src/net/marksLaw.js';
 

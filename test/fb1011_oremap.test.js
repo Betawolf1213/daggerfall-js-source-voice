@@ -18,7 +18,7 @@ import { REGION_NAMES } from '../src/formats/mapsTables.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
-import { MINING_GROUND_LINE } from '../src/ui/profPages.js';
+import { MINING_GROUND_LINE } from '../src/ui/professions/profPages.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const GLENUMBRA = 59, SENTINEL = 20, ORSINIUM = 26, ALIKR = 0, BETONY = 19;

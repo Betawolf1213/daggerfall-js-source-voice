@@ -7,10 +7,10 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { _resetForTests, setPref, getPref } from '../src/systems/uiPrefs.js';
-import { enhancedMapOn, heldMapChosen, heldMapWorn } from '../src/ui/mapSkin.js';
-import { travelMapDoorReady, createTravelMapWindow } from '../src/ui/travelMapDoor.js';
-import { automapDoorReady, createAutomapWindow } from '../src/ui/automapDoor.js';
-import { townMapDoorReady, createTownMapWindow } from '../src/ui/townMapDoor.js';
+import { enhancedMapOn, heldMapChosen, heldMapWorn } from '../src/ui/map/mapSkin.js';
+import { travelMapDoorReady, createTravelMapWindow } from '../src/ui/travel/travelMapDoor.js';
+import { automapDoorReady, createAutomapWindow } from '../src/ui/automap/automapDoor.js';
+import { townMapDoorReady, createTownMapWindow } from '../src/ui/town/townMapDoor.js';
 import { FEATURES } from '../src/systems/features.js';
 import { SPRITE, PAPER, THUMB_ZONES, SPRITE_ART_FOOT, CUFF_BAND, HAND_CHROMA } from '../src/ui/heldMap.js';
 
@@ -61,7 +61,7 @@ test('MAP-TOGGLE by source: the Features row - interface (FT18; sight before), e
   assert.equal(row.group, 'interface'); assert.deepEqual([...row.kinds], ['enhanced']);   // FT18: a map is drawn over the world, not in it
   assert.deepEqual({ ...row.control }, { store: 'prefs', key: 'heldMap', initial: true, online: 'player' });
   assert.match(row.note, /Off uses the classic three map windows/, 'the note says what off is');   // PIN MOVED: BR5
-  const gate = rd('src/ui/mapSkin.js');
+  const gate = rd('src/ui/map/mapSkin.js');
   assert.match(gate, /export const enhancedMapOn = \(\) => !!getPref\('heldMap'\);/);
   assert.match(gate, /export const heldMapChosen = \(\) => isEnhanced\(\) && enhancedMapOn\(\);/);
   assert.match(gate, /export const heldMapWorn = \(\) => heldMapChosen\(\) && typeof document !== 'undefined';/);

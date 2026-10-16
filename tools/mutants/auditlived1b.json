@@ -565,7 +565,7 @@
   },
   {
     "name": "AUDITLIVED1B-U1-one-row",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "if (this.noWorldTime() && !this.walkedTrip) ONLINE_TRAVEL_ROWS.forEach((row, i) => shadowText(renderer, font, row,",
     "new": "if (this.noWorldTime() && !this.walkedTrip) [ONLINE_TRAVEL_LINE].forEach((row, i) => shadowText(renderer, font, row,",
     "tests": [
@@ -576,7 +576,7 @@
   },
   {
     "name": "AUDITLIVED1B-U2-the-row-ceils-online",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (!own || own === 'now') return repairCountdownText(c);\n  return c.estimate ? `About ${own}` : `Ready in ${own}`;",
     "new": "  void own;\n  return repairCountdownText(c);",
     "tests": [
@@ -596,7 +596,7 @@
   },
   {
     "name": "AUDITLIVED1B-U4-the-offline-card-relabelled",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "[empire ? 'Loan due' : 'Loan due by', L.loanByFull ?? L.loanBy]",
     "new": "['Loan due', L.loanByFull ?? L.loanBy]",
     "tests": [
@@ -614,7 +614,7 @@
   },
   {
     "name": "AUDITLIVED1B-U7-the-vitals-dress",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "const clockLine = el('p', 'clock-line');",
     "new": "const clockLine = el('p', 'vitals-line');",
     "tests": [
@@ -968,7 +968,7 @@
   },
   {
     "name": "AUDITLIVED1B-T8-ui-enhanced-tavern-kitchen-own",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "hour: Math.trunc((((h.worldNow?.() ?? now) % 1440) + 1440) % 1440 / 60) });",
     "new": "hour: Math.trunc((((now) % 1440) + 1440) % 1440 / 60) });",
     "tests": [
@@ -977,7 +977,7 @@
   },
   {
     "name": "AUDITLIVED1B-T8-ui-enhanced-tavern-meal-holiday-own",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "gameMinutes: h.worldNow?.() ?? now });",
     "new": "gameMinutes: now });",
     "tests": [
@@ -986,7 +986,7 @@
   },
   {
     "name": "AUDITLIVED1B-T8-ui-enhanced-tavern-no-own-time",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  const t = deps.ownTimeOf?.(expiry);",
     "new": "  const t = deps.realTimeOf?.(expiry);",
     "tests": [
@@ -995,16 +995,16 @@
   },
   {
     "name": "AUDITLIVED1B-T8-ui-hud-needs-on-the-worlds-clock",
-    "file": "src/ui/enhancedHud.js",
-    "old": "import { ownMinutes, sharedClockOn } from '../systems/worldTick.js';",
-    "new": "import { worldMinutes as ownMinutes, sharedClockOn } from '../systems/worldTick.js';",
+    "file": "src/ui/enhanced/enhancedHud.js",
+    "old": "import { ownMinutes, sharedClockOn } from '../../systems/worldTick.js';",
+    "new": "import { worldMinutes as ownMinutes, sharedClockOn } from '../../systems/worldTick.js';",
     "tests": [
       "test/auditlived1b_t.test.js"
     ]
   },
   {
     "name": "AUDITLIVED1B-T8-ui-ports-loan-row-short-words",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "[empire ? 'Loan due' : 'Loan due by', L.loanByFull ?? L.loanBy]",
     "new": "[empire ? 'Loan due' : 'Loan due by', L.loanBy]",
     "tests": [

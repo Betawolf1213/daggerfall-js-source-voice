@@ -278,7 +278,7 @@ export function hullKept(e, { fought, boardingId = null }) {
  * the sea said, and a pirate turning on me said nothing). A TAG over each ship within NAVAL_TAG_RANGE of the eye and
  * past NAVAL_TAG_NEAR (nearer, she fills the view), NAVAL_TAG_MAX of them nearest first - her name, her hull, what
  * she is to me and her state - TAG_LIFT over her highest spar as she stands (the host's `tags`; the world projects
- * them, ui/navalHud.js drawNavalTags wears them). And the lookout's SAIL HO! as a ship afloat turns hostile within
+ * them, ui/naval/navalHud.js drawNavalTags wears them). And the lookout's SAIL HO! as a ship afloat turns hostile within
  * SAIL_HO_RANGE - her class, and where she bears off my bow at the helm - SAIL_HO_GAP_S apart at the least, looked
  * for every SAIL_HO_CHECK_S.
  */
@@ -2819,7 +2819,7 @@ export function createNavalHost(deps) {
     deps.say?.(said, 3);
     return { ok: true, said };
   }
-  /** The yard's model for the shipwright's window (ui/navalYardWindow.js): her state, the offer against the purse, and
+  /** The yard's model for the shipwright's window (ui/naval/navalYardWindow.js): her state, the offer against the purse, and
    *  the presses - each row as far as the purse pays, or all of them. */
   function yardModel(boat) {
     const st = myBoatState(boat);
@@ -3713,7 +3713,7 @@ export function createNavalHost(deps) {
 
   /**
    * The prize's window: her hold (what is left of it), the captor's one choice and her fate - the plunder window's
-   * model (ui/navalPlunderWindow.js). Shut without a fate, she lies taken where she is and Activate opens her again.
+   * model (ui/naval/navalPlunderWindow.js). Shut without a fate, she lies taken where she is and Activate opens her again.
    */
   function openPrize(entry) {
     const s = entry.ship;
@@ -5010,7 +5010,7 @@ export function createNavalHost(deps) {
 
   // ── the HUD's model ──────────────────────────────────────────────────────────────────────────────────────────────
   /**
-   * What the naval HUD draws this frame (ui/navalHud.js). At a helm: the plate, the rose, the aim, the card and the
+   * What the naval HUD draws this frame (ui/naval/navalHud.js). At a helm: the plate, the rose, the aim, the card and the
    * prompt. On foot: the card alone, and only while a struck ship or a prize of mine is in reach - the prompt that says
    * which key goes over her rail. Otherwise null.
    */
@@ -5324,7 +5324,7 @@ export function createNavalHost(deps) {
     gunDeckOf: (boat) => galleonGuns.read(boat, clock),
     fleetStatus, repairAway, refitBoat, openYard, freeBerth, crewHands, assignRole,   // HOLDINGS: the Fleet page's (scenes/fleetHost.js) - with giveOrder and hostileNear, below
     enlistHand, swapHand, releaseHand, forgetBoat, handsAshore,   // SHIPYARDS: the crew hall's recruits signed on (in a hand's place, AUDIT SHIPYARDS) and paid off, a ship sold, her hands ashore
-    /** SHIPYARDS: the shipwright's model of a boat of mine (ui/navalYardWindow.js's - its rows, its presses), for the
+    /** SHIPYARDS: the shipwright's model of a boat of mine (ui/naval/navalYardWindow.js's - its rows, its presses), for the
      *  shipmaster's window's Shipwright page (ui/shipyardWindow.js) - the one the yard's own window reads. */
     yardModelOf: (boat) => yardModel(boat),
     harbourList, warp, dockedAt, gangways,   // QUAYS: the harbours the quays stand off (scenes/quayPool.js), Come Sail Away's warp seam, where a boat lies made fast, the gangways run out
@@ -5439,7 +5439,7 @@ export function createNavalHost(deps) {
     saveRefused,   // AUDIT NAV1 (B14): no save in a boarding or on a sea ship's deck
     threats,   // THE MERGE (OW6): the hostile ships a journey slows for
     tags: tagsModel,   // AUDIT NAV1 (#14): the ships the tags stand over (the world projects them)
-    /** AUDIT NAV1 (the helm): the sea's ships on the compass (ui/hud.js drawShipCompassMarks, ui/enhancedHud.js) -
+    /** AUDIT NAV1 (the helm): the sea's ships on the compass (ui/hud/hud.js drawShipCompassMarks, ui/enhanced/enhancedHud.js) -
      *  within COMPASS_SHIP_RANGE of the player, afloat or struck: `[{ x, z, kind }]` in scene XZ, `kind` 'hostile' (a
      *  ship afloat that would take me), 'struck' (her colours down, or taken) or 'ship'. None with the arc off. */
     compassShips() {

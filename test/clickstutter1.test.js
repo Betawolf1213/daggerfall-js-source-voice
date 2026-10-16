@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { markGroup } from '../src/systems/travel/travelViewFilters.js';
-import { installPlusCursor } from '../src/ui/plusCursor.js';
+import { installPlusCursor } from '../src/ui/plus/plusCursor.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

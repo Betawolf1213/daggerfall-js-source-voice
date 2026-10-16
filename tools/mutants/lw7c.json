@@ -163,7 +163,7 @@
   },
   {
     "name": "LW7c-section-always",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "export const chronicleSections = (d) => (d?.people ? [...CHRONICLE_SECTIONS, PEOPLE_SECTION] : CHRONICLE_SECTIONS);",
     "new": "export const chronicleSections = (d) => [...CHRONICLE_SECTIONS, PEOPLE_SECTION];",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "LW7c-section-never",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "export const chronicleSections = (d) => (d?.people ? [...CHRONICLE_SECTIONS, PEOPLE_SECTION] : CHRONICLE_SECTIONS);",
     "new": "export const chronicleSections = (d) => CHRONICLE_SECTIONS;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "LW7c-model-people",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "...(d.people ? { people: d.people() ?? { friends: [], enemies: [], known: [] } } : {}) };",
     "new": "...({}) };",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "LW7c-count",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    people: model.people ? model.people.friends.length + model.people.enemies.length + model.people.known.length : 0 };   // LW7c",
     "new": "    people: 0 };   // LW7c",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "LW7c-rail-four",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  for (const [id, label] of sections) {",
     "new": "  for (const [id, label] of CHRONICLE_SECTIONS) {",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "LW7c-open-unknown",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "  section = chronicleSections(d).some(([id]) => id === d.section) ? d.section : 'quests';",
     "new": "  section = CHRONICLE_SECTIONS.some(([id]) => id === d.section) ? d.section : 'quests';",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "LW7c-empty-silent",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    if (!counts.people) detail.append(el('p', 'px-note', 'No one in the Bay knows you yet.'));",
     "new": "    void 0;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "LW7c-group-empty-drawn",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      if (!rows.length) continue;",
     "new": "      void 0;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "LW7c-card-town",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (p.town) top.append(el('span', 'sb-chip', p.town));",
     "new": "        top.append(el('span', 'sb-chip', p.town));",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "LW7c-card-words",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        words.append(el('p', null, p.words ?? ''));",
     "new": "        words.append(el('p', null, ''));",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "LW7c-card-name",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        top.append(el('span', 'cr-when', p.name));",
     "new": "        top.append(el('span', 'cr-when', ''));",
     "tests": [

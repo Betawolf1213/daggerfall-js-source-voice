@@ -23,7 +23,7 @@ import { groundAt } from '../src/world/terrain/terrainNature.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { nodeMarkCss } from '../src/ui/nodeMarks.js';
 import { TV_FILTER_GROUPS, TV_FILTER_TEXT, markGroup, markShown, countGroups } from '../src/systems/travel/travelViewFilters.js';
-import * as hud from '../src/ui/travelViewHud.js';
+import * as hud from '../src/ui/travel/travelViewHud.js';
 
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;
 const NOON_MS = (20500 * 86_400 + 43_200) * 1000;
@@ -199,7 +199,7 @@ test('GATHER-OW the filter: a switch of its own, Gathering - its marks counted u
   assert.equal(markShown(m, { gathering: true }), true);
   assert.equal(markShown(m, { gathering: false }), false);
   assert.equal(countGroups([m, { kind: 'gather mining' }, { kind: 'camp' }]).gathering, 2);
-  const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
   assert.match(css, /\.tview-fdot-gathering \{ background: [^}]+\}/, 'its switch\'s dot');
 });
 

@@ -2,7 +2,7 @@
 // ARENA2 (2026-10-02, Mac: "Players can choose to watch AI fights ... and climb esclating tiers of opponents"; "During
 // fights, the crowd is present and can cheer/boo you"; "extremely detailed and authentic"): THE BOUT ON THIS SCREEN -
 // the bout law (systems/arena/arenaBout.js) driven over real bodies, its crowd (systems/arena/arenaCrowd.js) seen and heard, its
-// HUD (ui/arenaHud.js), its music (systems/arena/arenaScore.js), its Herald. Design: bible/11-Multiplayer/Arena.md "2. The
+// HUD (ui/arena/arenaHud.js), its music (systems/arena/arenaScore.js), its Herald. Design: bible/11-Multiplayer/Arena.md "2. The
 // fights", "4. The crowd".
 //
 // ONE DRIVER, TWO FLOORS. A bout stands on a STAGE the host hands in (`setStage`): the CITY's floor (the colosseum in
@@ -38,7 +38,7 @@ import { markQuiver, refundQuiver } from '../systems/arena/arenaQuiver.js';   //
 import { startShotTally, stopShotTally } from '../systems/shotTally.js';   // ARENA-ARROWS: ...with what the bout loosed, no more
 import { arenaScoreFor } from '../systems/arena/arenaScore.js';
 import { crowdSeats, pickSeats, RING_R } from '../world/arena/arenaFloor.js';
-import { arenaHudModel } from '../ui/arenaHud.js';
+import { arenaHudModel } from '../ui/arena/arenaHud.js';
 import { rollLeague, leagueAfterBout, laurelWorn, laurelBanner, LAUREL_FAVOUR } from '../systems/arena/arenaLeague.js';   // ARENA3: the banners, the laurel, the Records page
 import { mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../net/arena/arenaLink.js';
 import { ARENA_PUPPET_OWNER, ARENA_CHEER_MS, ARENA_FLOOR_CENTRE } from '../net/arena/arenaLaw.js';   // ARENA4: a bout the relay runs, mirrored here; ARENA4b: the stands' allowance, the relay's frame (the instance's)
@@ -920,7 +920,7 @@ export function createArenaBouts(deps) {
     deps.sound?.cue(crowdShout(C.crowd, dir, 1, t), 1);
     return true;
   }
-  /** The stands' door for the HUD's presses (ui/arenaHud.js drawArenaHud `cheer`), one function for every frame. */
+  /** The stands' door for the HUD's presses (ui/arena/arenaHud.js drawArenaHud `cheer`), one function for every frame. */
   const cheerDoor = (dir) => cheer(dir);
   /** A RELAY'S WORD on the bout standing here (one of `startRelay`'s): its whole state, its events, its health, its
    *  fighters' walks and blows, the stands' shouts. Answers whether it was this bout's. */

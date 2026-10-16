@@ -18,10 +18,10 @@ import {
   createGateCourt, courtPhaseCard, courtSaySeconds, COURT_READ_S, COURT_WRATH_TEXT, WRATH_WARN_AT_MS, ROAR_AFTER_MS, SPEW_AT_MS, FALL_CARD_MS,
   FALL_FLASH_MS, FALL_SHAKE, COLUMN_BURSTS, COLUMN_STEP_MS, WAKE_LATE_MS, SPUTTER_EVERY_MS, WRATH_LIGHT_RANGE,
 } from '../src/scenes/gateCourt.js';
-import { titleCardModel, drawGateTitleCard, destroyGateTitleCard, TITLE_IN_MS, TITLE_OUT_MS, TITLE_HOLD_MS, TITLE_CARD_CSS } from '../src/ui/gateTitleCard.js';
-import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
-import { destroyGateGround } from '../src/ui/gateGroundView.js';
+import { titleCardModel, drawGateTitleCard, destroyGateTitleCard, TITLE_IN_MS, TITLE_OUT_MS, TITLE_HOLD_MS, TITLE_CARD_CSS } from '../src/ui/gate/gateTitleCard.js';
+import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
+import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import { FX_KINDS } from '../src/render/gateFx.js';
 import { profileOf } from '../src/net/gate/gateBrain.js';
 

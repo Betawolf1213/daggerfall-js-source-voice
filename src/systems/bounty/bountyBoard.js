@@ -16,7 +16,7 @@
 // the same purse (scenes/bountyHost.js).
 //
 // This file owns the numbers, the words and the ledger's rules. The world (spawning, the map, the purse, the pose)
-// is scenes/bountyHost.js; the window is ui/bountyWindow.js.
+// is scenes/bountyHost.js; the window is ui/bounty/bountyWindow.js.
 
 import { MINUTES_PER_DAY } from '../gameDate.js';
 import { BOUNTY_POSE_MAX } from '../../net/wire.js';

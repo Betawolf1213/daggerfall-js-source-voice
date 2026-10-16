@@ -29,7 +29,7 @@ import { TravelAutopilot, calculateYaw, rectDistance, ARRIVAL_BUFFER } from '../
 import { readTravelOptionsSettings, createTravelOptions } from '../src/systems/travel/travelOptions.js';
 import { TRAVEL_OPTIONS_TEXT, TRAVEL_NAV_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin, E, W } from '../src/systems/travel/travelPaths.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { Collider } from '../src/player/collider.js';
 import { FIXED_DT, MAX_FRAME_DT, CAPSULE_RADIUS, STEP_OFFSET, SLOPE_LIMIT_DEG, DIAGONAL_FACTOR } from '../src/player/motor.js';
 import { MOD_SETTINGS, modSetting, _resetModSettings } from '../src/systems/modSettings.js';

@@ -3,7 +3,7 @@
 // THE LAST MOMENT'S FIGHT - the realm's words (net/wire.js validSdOut's fight kinds) folded into one state, as
 // net/gate/gateLink.js folds a gate's: the Remnant's health and phase, where each body stands and walks (the Remnant, and in
 // the Dragon Break the GOLD and SILVER Echoes), the blow each has in flight and the Hour's own, the Reset's Hearts, the
-// stun, the fall and the loss. The arena's set draws from it (scenes/sdRemnant.js), the bar reads it (ui/sdRemnantBar.js).
+// stun, the fall and the loss. The arena's set draws from it (scenes/sdRemnant.js), the bar reads it (ui/superDungeon/sdRemnantBar.js).
 //
 // PURE in its fold (`foldSdFight`): a state and a word in, the next state out. The link around it keeps the state, says
 // the fight's turns in words once each, and keeps MY PLACE IN IT: the realm counts me in only when it answers my `in`

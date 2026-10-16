@@ -5,8 +5,8 @@
 //   - a model back out as glTF (src/poi/gltfExport.js), read again by the editor's own importer to the same model;
 //   - a pack (src/poi/poiPack.js): written, read, and every way it is refused; carried into the store
 //     (src/poi/poiTransfer.js);
-//   - the approver's queue and a POI's history (src/ui/poiReviewPanel.js) and the panel's out-and-in buttons
-//     (src/ui/poiEditorPanel.js) over the shared fake document.
+//   - the approver's queue and a POI's history (src/ui/poi/poiReviewPanel.js) and the panel's out-and-in buttons
+//     (src/ui/poi/poiEditorPanel.js) over the shared fake document.
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -23,7 +23,7 @@ import { encodePoiMesh } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL, poiDocProblems } from '../src/poi/poiLaw.js';
 import { mat4FromQuatPosScale, quatAngleAxis } from '../src/world/quat.js';
 import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
-import { createPoiEditorPanel } from '../src/ui/poiEditorPanel.js';
+import { createPoiEditorPanel } from '../src/ui/poi/poiEditorPanel.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const sha256 = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((b) => b.toString(16).padStart(2, '0')).join('');

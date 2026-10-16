@@ -35,7 +35,7 @@ import { getInt } from './settings/settings.js';
 export const FRAME_CAP_MAX = 300;
 /** StartGameBehaviour.cs:246-247: "anything below 30 is ignored and treated as disabled". */
 export const FRAME_CAP_FLOOR = 30;
-/** The rates the settings row steps through (ui/settingsLaw.js): Off, then what screens run at. */
+/** The rates the settings row steps through (ui/settings/settingsLaw.js): Off, then what screens run at. */
 export const FRAME_CAP_STOPS = Object.freeze([0, 30, 45, 60, 75, 90, 120, 144, 165, 240, FRAME_CAP_MAX]);
 /** A frame due within this much of its slot is drawn. rAF stamps wobble by a fraction of a millisecond,
  *  and a frame that just missed its slot would otherwise wait a whole extra refresh - a 60 cap on a 60 Hz

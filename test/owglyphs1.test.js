@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { skullGlyph, dungeonGlyph, personGlyph, crowdGlyph, packGlyph, gatherGlyph, crossGlyph, TV_CROSS_R, TV_CROSS_GOLD } from '../src/ui/travelViewHud.js';
+import { skullGlyph, dungeonGlyph, personGlyph, crowdGlyph, packGlyph, gatherGlyph, crossGlyph, TV_CROSS_R, TV_CROSS_GOLD } from '../src/ui/travel/travelViewHud.js';
 import { NODE_MARK_CSS } from '../src/ui/nodeMarks.js';
 
 /** A canvas that records each call and the box every point it is handed lies in. */
@@ -65,7 +65,7 @@ test('OW-GLYPHS: the shapes are their own - a skull\'s two eyes, a crowd\'s two 
 });
 
 test('OW-GLYPHS: the readout draws each look by its glyph (by source)', () => {
-  const hud = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
+  const hud = readFileSync(new URL('../src/ui/travel/travelViewHud.js', import.meta.url), 'utf8');
   assert.match(hud, /look === 'gather'\) \{[^\n]*\n\s*gatherGlyph\(g, x, y, \(m\.kind \?\? ''\)\.split\(' '\)\[1\] \?\? '', color\);/);
   assert.match(hud, /look === 'band' \|\| look === 'raider'\) \{[^\n]*\n\s*skullGlyph\(g, x, y\);/);
   assert.match(hud, /look === 'lair' \|\| \(\(look === 'far' \|\| look === 'place'\) && \/\\bdungeon\\b\/\.test\(m\.kind \?\? ''\)\)\) \{[^\n]*\n\s*dungeonGlyph\(g, x, y\);/);   // OW-DUNGEON-DOT: a found dungeon's plate in the grid too
@@ -88,6 +88,6 @@ test('OW-CROSS (Mac: "where you click a cross mark not a circle"): the spot a cl
     assert.ok(box.y0 >= -8 && box.y1 <= 7.5 && box.x0 >= -9 && box.x1 <= 9, `within the dots' room (its shadow brushing a label's top): ${JSON.stringify(box)}`);
     assert.deepEqual([t.fillStyle, t.strokeStyle, t.lineWidth, t.lineCap], ['#4e7f72', '#000', 1, 'butt']);
   }
-  const hud = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
+  const hud = readFileSync(new URL('../src/ui/travel/travelViewHud.js', import.meta.url), 'utf8');
   assert.match(hud, /look === 'target' \|\| look === 'dest'\) \{[^\n]*\n\s*crossGlyph\(g, x, y, look === 'dest' \? TV_CROSS_R \+ 0\.5 : TV_CROSS_R\);/);
 });

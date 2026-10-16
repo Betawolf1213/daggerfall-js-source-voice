@@ -75,11 +75,11 @@ test('HN1: the notes channel reports the critical strike without changing a roll
 });
 
 test('HN1: the overlay is enhanced-only, one node per number, removed when done', async () => {
-  const hud = readFileSync('src/ui/enhancedHud.js', 'utf8');
+  const hud = readFileSync('src/ui/enhanced/enhancedHud.js', 'utf8');
   assert.match(hud, /mountHitNumbers\(\);/, 'the enhanced HUD must register the numbers');
-  const classic = readFileSync('src/ui/hud.js', 'utf8');
+  const classic = readFileSync('src/ui/hud/hud.js', 'utf8');
   assert.ok(!/hitNumbers|mountHitNumbers/.test(classic), 'the classic HUD path must not register the numbers');
-  const css = readFileSync('src/ui/enhancedStyle.js', 'utf8');
+  const css = readFileSync('src/ui/enhanced/enhancedStyle.js', 'utf8');
   assert.match(css, /#enhanced-hitnums \{ position: fixed; inset: 0; pointer-events: none;/);
   assert.match(css, /\.hitnum-crit \{ font-size: calc\(36px \* var\(--hud-scale, 1\)\); font-weight: 700; color: #f1c04f;/, 'the crit must be brass and larger');
   // HN1b: the skin's own face, unsmoothed

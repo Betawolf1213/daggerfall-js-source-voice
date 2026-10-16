@@ -7,8 +7,8 @@ import { readFileSync } from 'node:fs';
 import { JOURNEY_FOE_PACE, foePaced } from '../src/systems/travel/travelThreat.js';
 
 const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const panel = readFileSync(new URL('../src/ui/enhancedTravelControl.js', import.meta.url), 'utf8');
-const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+const panel = readFileSync(new URL('../src/ui/enhanced/enhancedTravelControl.js', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
 
 test('ENEMY-PACE x RATE-LAW: the enemies\' cap is floored at the fixed pace on both governed paths, and no stepper is wired (mutants: a path left on the raw cap, the floor moved)', () => {
   assert.match(world, /foePaced\(foes\.cap, travelAsked\)/, 'the classic skin\'s journey on the ground');

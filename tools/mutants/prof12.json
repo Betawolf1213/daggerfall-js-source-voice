@@ -476,7 +476,7 @@
   },
   {
     "name": "PROF12-discount-window-unread",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "goldDiscountPct() { const v = this.hooks.goldDiscountPct?.(); return Number.isSafeInteger(v) && v > 0 && v < 100 ? v : 0; }",
     "new": "goldDiscountPct() { return 0; }",
     "tests": [
@@ -485,7 +485,7 @@
   },
   {
     "name": "PROF12-discount-pages-offline",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (!profPagesShown()) return 0;\n  const t = _provider?.book?.track?.('enchanting');",
     "new": "  const t = _provider?.book?.track?.('enchanting');",
     "tests": [
@@ -1250,7 +1250,7 @@
   },
   {
     "name": "PROF12-pages-alchemy-undrawn",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    ['alchemy', (d) => drawAlchemyStation(d, rerender, kit)],   // PROF12\n",
     "new": "",
     "tests": [
@@ -1259,7 +1259,7 @@
   },
   {
     "name": "PROF12-pages-enchant-undrawn",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    ['enchant', (d) => drawEnchantingStation(d, rerender, kit)],   // PROF12\n",
     "new": "",
     "tests": [
@@ -1268,7 +1268,7 @@
   },
   {
     "name": "PROF12-pages-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "'provisioning', 'enchanting']);",
     "new": "]);",
     "tests": [
@@ -1278,7 +1278,7 @@
   },
   {
     "name": "PROF12-pages-dis-once",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (!armed) { _enchant.armed = pc.provenance; rerender(); return; }\n",
     "new": "",
     "tests": [
@@ -1287,7 +1287,7 @@
   },
   {
     "name": "PROF12-pages-counter-unoffered",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (sale && have < inp.n) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'apothecaries', counter: 'apothecaries' });",
     "new": "      if (sale && have < 0) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'apothecaries', counter: 'apothecaries' });",
     "tests": [
@@ -1296,7 +1296,7 @@
   },
   {
     "name": "PROF12-pages-transmute-anyone",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (specs[100] === TRANSMUTER.id) workRows(",
     "new": "    if (specs[100] !== 'nobody') workRows(",
     "tests": [
@@ -1305,7 +1305,7 @@
   },
   {
     "name": "PROF12-pages-brew-wrong-keys",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      const res = await p.brew(potion.id, keys);",
     "new": "      const res = await p.brew(potion.id, potion.ingredients.map(String));",
     "tests": [
@@ -1425,7 +1425,7 @@
   },
   {
     "name": "PROF12-E1-page-offers-withdraw",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (withdrawable(pick.material)) bar.append(qty, go);",
     "new": "    bar.append(qty, go);",
     "tests": [
@@ -1434,7 +1434,7 @@
   },
   {
     "name": "PROF12-E1-page-essence-line",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "(pick.family === 'essences' ? essenceStaysLine() : pick.family === 'siege' ? siegeStaysLine() : stockStaysLine());",
     "new": "(pick.family === 'siege' ? siegeStaysLine() : stockStaysLine());",
     "tests": [
@@ -1492,7 +1492,7 @@
   },
   {
     "name": "PROF12-E2-page-no-recipe",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "disenchantXp(recipeById(pc.recipe), rank, base)",
     "new": "disenchantXp(recipeById('longsword:iron'), rank, base)",
     "tests": [
@@ -1647,7 +1647,7 @@
   },
   {
     "name": "PROF12-A3-page-words",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    : potentLasts(potion) ? t('prof.page.alchemy.potentLasts', 'Potent {c}% (lasts {pct}% longer)', { c, pct }) : t('prof.page.alchemy.potent', 'Potent {c}% (+{pct}% magnitude)', { c, pct });",
     "new": "    : false ? t('prof.page.alchemy.potentLasts', 'Potent {c}% (lasts {pct}% longer)', { c, pct }) : t('prof.page.alchemy.potent', 'Potent {c}% (+{pct}% magnitude)', { c, pct });",
     "tests": [
@@ -1656,7 +1656,7 @@
   },
   {
     "name": "PROF12-A3-page-station-words",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  return !potion ? t('prof.page.alchemy.potentAny', 'Potent {c}% (+{pct}% magnitude or duration)', { c, pct })",
     "new": "  return !potion ? t('prof.page.alchemy.potentAny', 'Potent {c}% (+{pct}% magnitude)', { c, pct })",
     "tests": [
@@ -1674,7 +1674,7 @@
   },
   {
     "name": "PROF12-E3-page-three",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "turns two of a metal and a Mercury into one of the next",
     "new": "turns three of a metal and a Mercury into one of the next",
     "tests": [
@@ -1731,7 +1731,7 @@
   },
   {
     "name": "PROF-541-B3-line",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (potion && !potentAble(potion)) return t('prof.page.alchemy.neverPotent', POTENT_NONE_LINE);",
     "new": "  if (potion && !potion) return t('prof.page.alchemy.neverPotent', POTENT_NONE_LINE);",
     "tests": [
@@ -1740,7 +1740,7 @@
   },
   {
     "name": "PROF-541-B4-steps",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "potentChance(rank, { distiller: specs?.[50] === DISTILLER, unbruised, steps })",
     "new": "potentChance(rank, { distiller: specs?.[50] === DISTILLER, unbruised })",
     "tests": [
@@ -1886,7 +1886,7 @@
   },
   {
     "name": "PROF-541-B8-full",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "b.disabled = _enchant.busy || !!short || full;",
     "new": "b.disabled = _enchant.busy || !!short;",
     "tests": [
@@ -1931,7 +1931,7 @@
   },
   {
     "name": "PROF-541-R2-C3-unclamped",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const steps = Math.max(0, Math.trunc(Number(p.alchemySteps?.()) || 0));",
     "new": "const steps = p.alchemySteps?.() ?? 0;",
     "tests": [
@@ -1962,7 +1962,7 @@
   },
   {
     "name": "PROF541-R2-S1-page-potion",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const made = brewCount(rank, specs[50], potion);",
     "new": "const made = n;",
     "tests": [
@@ -1972,7 +1972,7 @@
   },
   {
     "name": "PROF541-R2-S1-page-note",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  detail.append(el('p', 'px-note', `${station.kind === 'shop' ? t('prof.page.alchemy.shop', 'The alchemist\\'s station - {fee} gold a brew.', { fee: station.fee }) : t('prof.page.alchemy.home', 'Your alchemy station.')} ${brewLine}${n > 1 ? ` ${t('prof.page.alchemy.counterOne', 'A potion wholly of the Apothecaries\\' goods brews one.')}` : ''}`));   // AUDIT PROF-541 R2-S1",
     "new": "  detail.append(el('p', 'px-note', `${station.kind === 'shop' ? t('prof.page.alchemy.shop', 'The alchemist\\'s station - {fee} gold a brew.', { fee: station.fee }) : t('prof.page.alchemy.home', 'Your alchemy station.')} ${brewLine}${n > 9 ? ` ${t('prof.page.alchemy.counterOne', 'A potion wholly of the Apothecaries\\' goods brews one.')}` : ''}`));   // AUDIT PROF-541 R2-S1",
     "tests": [

@@ -19,8 +19,8 @@ import {
   GLYPH_STROKE, FONT_GLYPH_MIN, FONT_GLYPH_MAX, cssRgba, cssGradient, titleBadge, glyphBadges, glyphSvgNode, glyphArtNode,
   titlePaint, TITLE_PAINT_KEYS, gradientAt, badgeCss, badgeClass,
 } from '../src/ui/playerBadge.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { isStaff } from '../src/net/staffCommands.js';
 import { titlesHeld, glyphsOf, equipRefusal, titleWorn, wardrobeOf, TIER_LISTS, TIER_GLYPH, FOUNDER_UNTIL } from '../server-account/src/titles.js';
 import { readBadge } from '../src/net/wire.js';

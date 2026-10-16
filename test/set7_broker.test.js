@@ -26,7 +26,7 @@ import { withDom, fakeDom } from './invdrag.mjs';
 import { mountBrokerWindow, brokerTurnText, stonesText, purseText, buyLabel, brokerSkinCss, scopeRules, BROKER_SKIN_STYLE_ID, BROKER_SOLD, BROKER_REPAINT_MS } from '../src/ui/brokerWindow.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 import { createBrokerOverlay, brokerDoorOpen, closeBrokerDoor, repaintBrokerDoor } from '../src/ui/brokerDoor.js';
-import { overlayOpen, clearOverlays } from '../src/ui/enhancedOverlays.js';
+import { overlayOpen, clearOverlays } from '../src/ui/enhanced/enhancedOverlays.js';
 import { setLocked } from '../src/systems/item/itemLock.js';
 
 const DAY = brokerDay(Date.parse('2026-09-27T12:00:00Z'));

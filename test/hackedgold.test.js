@@ -30,7 +30,7 @@ import { creditAmount } from '../src/systems/court.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { wearableItem } from '../src/systems/equip.js';
 import { sigilStone } from '../src/systems/gate/gateSpoils.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { BOAT_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 
@@ -200,7 +200,7 @@ test('HACKED-GOLD the put: online a letter of credit goes into no container but 
   } finally { if (had === undefined) delete globalThis.location; else globalThis.location = had; }
   // the enhanced pack: a loot session never opens the pack (MAC-M2 B), so the gate stands where the law would reach a
   // container the day one does - read at both of its gates
-  const ei = read('src/ui/enhancedInventory.js');
+  const ei = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(ei, /const letterRefuses = \(item\) => letterRefusesPut\(item, \{ container: remote\?\.kind === 'container', own: deps\.loot\?\.playerOwned === true \}\);/);
   assert.match(ei, /if \(remote && letterRefuses\(item\)\) return \{ kind: 'stow', label: null, speaks: true \};/, 'the drag\'s ghost');
   assert.match(ei, /if \(remote && letterRefuses\(item\)\) \{\n\s+notice = letterPutText\(itemLongName\(item, \{ getQuest: deps\.getQuest \?\? null \}\)\);\n\s+return render\(\);/, 'the stow');

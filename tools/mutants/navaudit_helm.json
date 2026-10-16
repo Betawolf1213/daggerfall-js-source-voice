@@ -228,7 +228,7 @@
   },
   {
     "name": "NAV1H-the-tail-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "hot: !!a.hot && (a.state ?? 'ready') === 'ready', dim: !!a.state && a.state !== 'ready', target: aimTail(a),",
     "new": "hot: !!a.hot && (a.state ?? 'ready') === 'ready', dim: !!a.state && a.state !== 'ready', target: a.hot ? ' - on target' : '',",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "NAV1H-never-dimmed",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "dim: !!a.state && a.state !== 'ready', target: aimTail(a),",
     "new": "dim: false, target: aimTail(a),",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "NAV1H-crippled-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    case 'crippled': return ' - guns silent';\n",
     "new": "",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "NAV1H-the-finger-uncaught",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  brace.addEventListener?.('touchstart', hold(true), { passive: false });",
     "new": "  brace.addEventListener?.('touchstart', () => {}, { passive: false });",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "NAV1H-the-finger-to-the-look",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const hold = (on) => (e) => { e?.preventDefault?.(); e?.stopPropagation?.(); touchBrace = on; };",
     "new": "  const hold = (on) => (e) => { e?.preventDefault?.(); touchBrace = on; };",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "NAV1H-a-press-surviving-its-plate",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "if (!braceOn) touchBrace = false; }",
     "new": "}",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "NAV1H-a-press-surviving-a-cover",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  if (!want) { shown.braceBtn = false; touchBrace = false; for",
     "new": "  if (!want) { shown.braceBtn = false; for",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "NAV1H-the-brace-for-a-mouse",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    brace: touch && !!model.armed,",
     "new": "    brace: !!model.armed,",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "NAV1H-the-finger-told-crouch",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const bracePress = touch ? 'hold Brace' : `${braceKey}: brace`;",
     "new": "  const bracePress = `${braceKey}: brace`;",
     "tests": [
@@ -835,7 +835,7 @@
   },
   {
     "name": "NAV1H-the-mend-chip-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "ship.repairing ? 'repair' : ship.mending ? 'mend' : null]",
     "new": "ship.repairing ? 'repair' : null]",
     "tests": [
@@ -845,7 +845,7 @@
   },
   {
     "name": "NAV1H-the-wreck-hint-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "      : ship.wrecked ? (ship.repairing ? 'Crippled - her crew at the repairs' : ship.repairOrdered ? 'Crippled - her crew stands to the repairs' : ship.stores > 0 ? 'Crippled - order repairs, or make port' : 'Crippled - make port for a shipwright')   // AUDIT NAV1: the way out of a wreck, said - SEA-REPAIR: her stores the other\n",
     "new": "",
     "tests": [
@@ -855,7 +855,7 @@
   },
   {
     "name": "NAV1H-the-yard-a-ship-to-board",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "`open ${model.board.name}'s hold` : model.board.kind === 'yard' ? model.board.name\n",
     "new": "`open ${model.board.name}'s hold`\n",
     "tests": [
@@ -864,7 +864,7 @@
   },
   {
     "name": "NAV1H-a-rows-press-unwired",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "      const press = button(r.press, 'dfnaval-btn dfnaval-yardbuy', () => { note = yardNote(m.buy?.(r.id)); render(); });",
     "new": "      const press = button(r.press, 'dfnaval-btn dfnaval-yardbuy', () => {});",
     "tests": [
@@ -873,7 +873,7 @@
   },
   {
     "name": "NAV1H-the-whole-press-unwired",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "  const whole = button('', 'dfnaval-btn dfnaval-take dfnaval-whole', () => { note = yardNote(m.buyAll?.()); render(); });",
     "new": "  const whole = button('', 'dfnaval-btn dfnaval-take dfnaval-whole', () => {});",
     "tests": [
@@ -882,7 +882,7 @@
   },
   {
     "name": "NAV1H-the-yard-note-unsaid",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "    noteLine.textContent = note ? note.text : '';",
     "new": "    noteLine.textContent = '';",
     "tests": [
@@ -891,7 +891,7 @@
   },
   {
     "name": "NAV1H-a-crewless-boats-hands",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "r.id === 'crew' ? sh.maxCrew > 0 :",
     "new": "r.id === 'crew' ? true :",
     "tests": [
@@ -900,7 +900,7 @@
   },
   {
     "name": "NAV1H-never-greyed",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "      able(press, r.can);\n      li.append(el('b', null, r.label), el('span', null, r.state), press);\n      list.append(li);",
     "new": "      able(press, true);\n      li.append(el('b', null, r.label), el('span', null, r.state), press);\n      list.append(li);",
     "tests": [
@@ -910,7 +910,7 @@
   },
   {
     "name": "NAV1H-the-yard-back-key-deaf",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "    if (overlayAction(e) === 'back') { e.preventDefault(); e.stopPropagation(); exit('close'); }",
     "new": "    void e;",
     "tests": [
@@ -919,8 +919,8 @@
   },
   {
     "name": "NAV1H-the-yard-chunk-cold",
-    "file": "src/ui/enhancedChunk.js",
-    "old": "  () => import('./navalYardWindow.js'),   // AUDIT NAV1: the shipwright's - a port's, after a fight\n",
+    "file": "src/ui/enhanced/enhancedChunk.js",
+    "old": "  () => import('../naval/navalYardWindow.js'),   // AUDIT NAV1: the shipwright's - a port's, after a fight\n",
     "new": "",
     "tests": [
       "test/navaudit_helm.test.js"
@@ -991,7 +991,7 @@
   },
   {
     "name": "NAV1H-the-heaving-card-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    if (mine && board.kind === 'heave') return { text: board.heaving ? 'Colours struck - heaving to' : `Colours struck - ${key}: heave to`, kind: 'board' };\n",
     "new": "",
     "tests": [
@@ -1000,7 +1000,7 @@
   },
   {
     "name": "NAV1H-the-heave-hint-a-boarding",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "        : model.board.kind === 'heave' ? `heave to beside ${model.board.name}` : `board ${model.board.name}`}`)",
     "new": " : `board ${model.board.name}`}`)",
     "tests": [
@@ -1081,7 +1081,7 @@
   },
   {
     "name": "NAV1H-the-ship-marks-undrawn",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawShipCompassMarks(renderer, ships, playerXZ, heading01, { bx, by, bw, s });   // AUDIT NAV1: the sea's ships\n",
     "new": "",
     "tests": [
@@ -1090,7 +1090,7 @@
   },
   {
     "name": "NAV1H-the-party-triangle",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  const rows = [...DETECT_MARKER_ROWS].reverse();",
     "new": "  const rows = DETECT_MARKER_ROWS;",
     "tests": [
@@ -1099,7 +1099,7 @@
   },
   {
     "name": "NAV1H-one-colour-for-all",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "    const col = SHIP_MARK_COLORS[t.kind] ?? SHIP_MARK_COLORS.ship;",
     "new": "    const col = SHIP_MARK_COLORS.ship;",
     "tests": [
@@ -1108,7 +1108,7 @@
   },
   {
     "name": "NAV1H-the-strip-colourless",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    if (node.style.borderBottomColor !== c) node.style.borderBottomColor = c;\n",
     "new": "",
     "tests": [
@@ -1117,7 +1117,7 @@
   },
   {
     "name": "NAV1H-the-strip-unmarked",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  drawShipMarks(opts.ships ?? null, opts.playerXZ ?? null, heading01);   // AUDIT NAV1: the sea's ships\n",
     "new": "",
     "tests": [

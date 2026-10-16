@@ -8,8 +8,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { uiCanvas, onUiScreen, toUiPoint, fromUiPoint, _resetUiScreenForTests } from '../src/ui/uiScreen.js';
-import { drawHud, largeHudBar } from '../src/ui/hud.js';
-import { dockedLargeHudHeight, worldViewportRect } from '../src/ui/hudLarge.js';
+import { drawHud, largeHudBar } from '../src/ui/hud/hud.js';
+import { dockedLargeHudHeight, worldViewportRect } from '../src/ui/hud/hudLarge.js';
 import { drawFpsWeapon, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { muzzleRay } from '../src/combat/weaponRig.js';
 import { setUiSkin } from '../src/systems/uiSkin.js';
@@ -87,10 +87,10 @@ test('RETRO-UI the large HUD: docked under the pillarbox it is the picture\'s wi
     const main = r.quads.find((q) => q.tex === 'tex:MAIN00I0');
     assert.ok(main && Math.abs(main.x - 240) < 1e-6 && Math.abs(main.w - 1440) < 1e-6, `the bar at the picture's place (${main?.x}, ${main?.w})`);
   });
-  const hl = src('ui/hudLarge.js');
+  const hl = src('ui/hud/hudLarge.js');
   assert.match(hl, /const hit = largeHudClick\(largeHudBar\(\), \.\.\.toUiPoint\(px, py\), button\);/);
   assert.match(hl, /_overBar = !!largeHudPoint\(bar, \.\.\.toUiPoint\(/);
-  assert.match(src('ui/hudActiveSpells.js'), /pointToNative\(nativeMetrics\(uiCanvas\(canvas\)\), \.\.\.toUiPoint\(/, 'the spell icons\' tooltip and right-click the same');
+  assert.match(src('ui/hud/hudActiveSpells.js'), /pointToNative\(nativeMetrics\(uiCanvas\(canvas\)\), \.\.\.toUiPoint\(/, 'the spell icons\' tooltip and right-click the same');
 });
 
 test('RETRO-UI the viewmodel and the horse: a right-aligned weapon\'s edge is the picture\'s (FPSWeapon\'s screenRect, CustomScreenRect), the rig and the mount lay out on the UI canvas and draw at its place, and the gun\'s muzzle is measured back on the real canvas (mutants: the rig on the canvas; the draw not bracketed; the muzzle in the layer\'s pixels)', () => {
@@ -122,13 +122,13 @@ test('RETRO-UI the viewmodel and the horse: a right-aligned weapon\'s edge is th
 });
 
 test('RETRO-UI the enhanced skin: the HUD\'s root stands inside the pillars, as the held map does (DISC25-B), and the pieces fixed at the screen\'s edges apart from it read the pillar - the notices, the quest tracker, the status line, the revenant\'s cards (mutants: the root not inset; a piece at the screen\'s edge)', () => {
-  const hud = src('ui/enhancedHud.js');
+  const hud = src('ui/enhanced/enhancedHud.js');
   assert.match(hud, /wearUiPillar\(document, host\);/);
   assert.match(hud, /root\.style\.left = inset; root\.style\.right = inset;/);
   assert.match(hud, /doc\.documentElement\?\.style\?\.setProperty\?\.\('--ui-pillar', inset\)/);
-  const sheet = src('ui/enhancedStyle.js');
+  const sheet = src('ui/enhanced/enhancedStyle.js');
   assert.match(sheet, /\.notice-stack \{\n\s*position: fixed; right: var\(--ui-pillar, 0px\);/);
   assert.match(sheet, /\.qtrack \{\n\s*position: fixed; right: calc\(8px \+ var\(--ui-pillar, 0px\)/);
   assert.match(sheet, /\.hudstatus \{ position: fixed; left: calc\(8px \+ var\(--ui-pillar, 0px\)/);
-  assert.match(src('ui/revenantCard.js'), /left: calc\(12px \+ var\(--ui-pillar, 0px\)/);
+  assert.match(src('ui/revenant/revenantCard.js'), /left: calc\(12px \+ var\(--ui-pillar, 0px\)/);
 });

@@ -42,13 +42,13 @@ function enhancedBranch() {
 test('the prototype page carries no design of its own', () => {
   const html = read('menu.html');
   assert.ok(!/--brass|--verdigris|\.railbtn|\.subbtn/.test(html),
-    'menu.html must not hold tokens or layout - they live in src/ui/enhancedStyle.js');
+    'menu.html must not hold tokens or layout - they live in src/ui/enhanced/enhancedStyle.js');
   assert.match(html, /src\/tools\/enhancedMenu\.js/);
 });
 
 test('the prototype host is a mount and nothing else', () => {
   const src = read('src/tools/enhancedMenu.js');
-  assert.match(src, /from '\.\.\/ui\/enhancedMenu\.js'/, 'it must mount the shipping module');
+  assert.match(src, /from '\.\.\/ui\/enhanced\/enhancedMenu\.js'/, 'it must mount the shipping module');
   // if this host ever grows a screen of its own it stops being a
   // prototype OF anything
   assert.ok(src.split('\n').filter((l) => l.trim() && !l.trim().startsWith('//')).length < 12,
@@ -56,7 +56,7 @@ test('the prototype host is a mount and nothing else', () => {
 });
 
 test('the style module writes nothing at import time', () => {
-  const src = read('src/ui/enhancedStyle.js');
+  const src = read('src/ui/enhanced/enhancedStyle.js');
   const top = src.split('export function')[0];
   assert.ok(!/document\.(head|body)\.append|appendChild/.test(top),
     'a module that touches the document when merely IMPORTED cannot be imported by a test');
@@ -98,7 +98,7 @@ test('the classic door still gates its data first', () => {
 // save, exit) and the pin now states both halves rather than a number
 // that has to be edited every time the rail grows.
 test('only game actions resolve the door - never a destination', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const calls = [...new Set([...src.matchAll(/onAction\('([a-z]+)'\)/g)].map((m) => m[1]))].sort();
   assert.deepEqual(calls, ['begin', 'continue', 'exit', 'handoff', 'load', 'new', 'online', 'resume', 'save'],
     'boot resolves continue/new/load/online (and begin on the classic rail, FD1); pause resolves resume/save/exit, and handoff - ESC-BOOK: the Stats page\'s doors, which leave for another window');
@@ -113,7 +113,7 @@ test('only game actions resolve the door - never a destination', () => {
 // mounts; Resume, Save and Exit ask "what now", which is the only
 // thing a running game has left to ask.
 test('the two rails differ only where the question does', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const list = (name) => {
     const m = new RegExp(`const ${name} = \\[([^\\]]*)\\]`).exec(src);
     assert.ok(m, `${name} is gone`);
@@ -180,7 +180,7 @@ test('R7/SO1/FT12: the port\'s own switches are the Features home\'s, every one 
   // exist on the prefs shelf, and a feature that was built and
   // REVERTED WHOLE (the generative music, the first Morrowind 3D
   // layer) must not be drawn as one.
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(src, /function paneEnhanced\(|function portRowsEnhanced\(/, 'the pane and the category are gone');
   const reg = read('src/systems/features.js');
   // RF4: the row IS the shelf's declaration of its key (initial + online) and PREF_DEFAULTS derives it - so a key the home
@@ -202,7 +202,7 @@ test('R7/SO1/FT12: the port\'s own switches are the Features home\'s, every one 
 // always asked, and Delete did nothing at all while drawn undimmed and
 // operable-looking. Delete is wired now; both go through one ask().
 test('the destructive actions ask first', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /const ask = \(title, body, label, onYes\)/, 'one confirm, not two');
   // PIN MOVED (L10N4): the toolbar's reset and its ask said in the player's language (resetAllAsk reads RESET_ALL_ASK)
   const resetAt = src.indexOf("label: t('menu.settings.reset', 'Reset everything to defaults')");
@@ -233,7 +233,7 @@ test('the destructive actions ask first', () => {
 // every rail button against the viewport and names the ones outside
 // it. This holds the rule so it cannot be deleted as dead CSS.
 test('U51: the phone rail wraps, and the wizard rail does not', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   const phone = css.slice(css.indexOf('@media (max-width: 860px)'),
     css.indexOf('@media (prefers-reduced-motion'));
   assert.ok(phone.length > 0, 'the phone media query is gone');
@@ -253,7 +253,7 @@ test('U51: the phone rail wraps, and the wizard rail does not', () => {
 // full width of a desktop pane and every screen but Settings - which
 // owns its own three columns - read as mostly empty.
 test('U51: the body is a column, and the flush body is not', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.body \{ padding: [^}]*max-width: 720px; \}/);
   assert.match(css, /\.body\.flush \{ padding: 0; max-width: none; \}/,
     'the settings pane owns its own columns and must not be capped');
@@ -265,7 +265,7 @@ test('U51: the body is a column, and the flush body is not', () => {
 // time" is how they come to disagree about which of those a player is
 // shown before overwriting or discarding a game.
 test('U51: the saved game is rendered from one place', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /^const saveLine = \(save\) =>/m);
   assert.match(src, /^const saveStats = \(save\) =>/m);
   const joins = [...src.matchAll(/'level \{level\}', \{ level: save\.level \}/g)];
@@ -287,13 +287,13 @@ test('U51: the saved game is rendered from one place', () => {
 // reached at all. A second tap on the ACTIVE category opens it, which
 // is settingsWindow's own second-tap-acts gesture one level up.
 test('the category card is reachable on a phone', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const at = src.indexOf('const rail = el(\'div\', \'subrail\')');
   const arm = src.slice(at, at + 2000);   // ORG2: the tab's arm also leaves the search and the Features row
   assert.match(arm, /if \(on\) \{[^}]*sheetOpen = true;/,
     'a second tap on the active category must raise the sheet');
   assert.match(arm, /more-dot/, 'and the gesture needs a visible affordance');
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   const phone = css.slice(css.indexOf('@media (max-width: 860px)'));
   assert.match(phone, /\.subbtn\.on \.more-dot \{[\s\S]{0,140}display: inline-block/,
     'the dot shows on the phone, where the gesture is the only way in');
@@ -302,7 +302,7 @@ test('the category card is reachable on a phone', () => {
 // AUDIT F5: colour rows drew a value with no control and no reason,
 // which reads as broken rather than as unbuilt.
 test('colour settings have an editor, and it keeps the alpha byte', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const at = src.indexOf("widget === 'colour'");
   const arm = src.slice(at, at + 900);
   assert.match(arm, /sw\.type = 'color'/, 'the browser gives us the right widget - use it');
@@ -314,7 +314,7 @@ test('colour settings have an editor, and it keeps the alpha byte', () => {
 
 // AUDIT F7: this read the whole 171-key store once PER ROW.
 test('the settings pane reads the store once, not once per row', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(src, /_eff \?\?= effectiveSettings\(\)/);
   // count CALLS, not mentions: the import has no parentheses and the
   // comment explaining the fix names the function it is about.
@@ -335,7 +335,7 @@ test('both front doors test the save VERSION, through one predicate', () => {
   // it; both menus ask THAT, never the raw envelope.
   assert.match(read('src/systems/save/saveSlots.js'),
     /export function restorableSlot[\s\S]{0,220}snap\.v === SAVE_VERSION/);
-  for (const f of ['src/ui/enhancedMenu.js', 'src/scenes/menu.js']) {
+  for (const f of ['src/ui/enhanced/enhancedMenu.js', 'src/scenes/menu.js']) {
     const src = read(f);
     assert.match(src, /mostRecentRestorable/, `${f} must ask whether a save is RESTORABLE`);
     assert.ok(!/[^a-zA-Z]readQuicksave\(/.test(src),
@@ -362,7 +362,7 @@ test('main.js maps the actions to the load flag, both ways', () => {
 // enhanced panes are built from the save, so a button that loads
 // nothing cannot be drawn in the first place.
 test('Load and Continue are only drawn when there IS a save', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const cont = src.slice(src.indexOf('function paneContinue'), src.indexOf('// ── NEW GAME'));
   assert.match(cont, /if \(!save\) \{/, 'Continue answers the empty case before it draws a button');
   assert.ok(cont.indexOf("onAction('continue')") > cont.indexOf('if (!save)'),
@@ -389,7 +389,7 @@ test('Load and Continue are only drawn when there IS a save', () => {
 // The live sweep across every enhanced surface, at desktop, phone and
 // TABLET, found one real fault and one cause worth naming.
 test('AUDIT UI: the 44px law follows the POINTER, not the viewport width', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // Every 44px rule hung off `max-width: 860px`, which is a PROXY for
   // touch - and it fails on the device the proxy stands in for.
   // Measured on an iPad in landscape: 1080px wide, pointer:coarse true,
@@ -402,7 +402,7 @@ test('AUDIT UI: the 44px law follows the POINTER, not the viewport width', () =>
   // `b.style.minHeight = '38px'` - and an inline style is unreachable
   // by a media query, so the coarse rule could not have raised it
   // however it was written. The size lives in the sheet now.
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(menu, /style\.minHeight/, 'no control sizes itself inline');
   assert.doesNotMatch(menu, /b\.style\.padding = '8px 16px'/);
   assert.equal((menu.match(/classList\.add\('rowact'\)/g) ?? []).length, 2, 'both sites take the class (the skin row, the third, retired with MENU-TOGGLE)');
@@ -418,7 +418,7 @@ test('EE1: one switch for the whole outdoors, migrated once from the old sky ans
     'the old key stays only for the migration');
   assert.match(prefs, /if \(p\.enhancedEnvironments === undefined && p\.proceduralSky !== undefined\) \{\s*\n\s*_prefs\.enhancedEnvironments = !!p\.proceduralSky;/,
     'a player who switched the sky off must not be surprised by a lit world');
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.ok(!/prefRow\('enhancedEnvironments'/.test(menu), 'FT4: Enhanced environments left the Enhanced category for the Features home (systems/features.js)');
   assert.ok(!/prefRow\('proceduralSky'/.test(menu), 'the old row must be gone, not doubled');
   // AUDIT FT15 (drift): the claim is that the row names the sky the tree
@@ -458,7 +458,7 @@ test('EE1: the migration, exercised - stale OFF comes up OFF, an explicit answer
 
 // ═══ EE13: a season test door - drop into a random town ═════════════
 test('EE13: the Enhanced pane offers a season/weather test that spawns in a random town, and stores nothing', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const from = menu.indexOf('function outdoorsTestRow(');   // SO1: the door was a row of the Enhanced category; FT12: it is the Test Room's
   const pane = menu.slice(from, menu.indexOf('\n}', from));
   assert.match(pane, /el\('div', 'row-name', t\('menu\.test\.outdoorsName', 'Test the outdoors'\)\)/, 'the row exists');
@@ -489,7 +489,7 @@ test('EE13: the Enhanced pane offers a season/weather test that spawns in a rand
 // rather than drawing it blank. Both cards that show the numbers -
 // Continue and Save - silently lost their whole Gold row.
 test('A54: the save card reads the purse off the COUNTER, not the item list', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const at = src.indexOf('function savedGame()');
   const body = src.slice(at, src.indexOf('\n}', at));
   assert.match(body, /gold: snap\.goldPieces \?\? null,/, 'the envelope\'s own counter');

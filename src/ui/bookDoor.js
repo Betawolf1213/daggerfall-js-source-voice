@@ -18,7 +18,7 @@
 // constructor plays OpenBook, its lines are LocalizedBook's converted
 // rows, its input arm is the exit's ButtonClick. Under the enhanced
 // skin the face over it is project-raum's animated book
-// (ui/enhancedBook.js over vendor/raum-book/), which cuts the model's
+// (ui/enhanced/enhancedBook.js over vendor/raum-book/), which cuts the model's
 // laid-out labels into leaves and sets them in the skin's serif.
 //
 // ── THE HAND-OFF LAW STANDS ──────────────────────────────────────
@@ -36,8 +36,8 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { isEnhanced } from '../systems/uiSkin.js';
-import { mountEnhancedChunk } from './enhancedChunk.js';   // MENU1: the one lazy-chunk door
-import { registerOverlay } from './enhancedOverlays.js';   // PX28: Tab puts it away
+import { mountEnhancedChunk } from './enhanced/enhancedChunk.js';   // MENU1: the one lazy-chunk door
+import { registerOverlay } from './enhanced/enhancedOverlays.js';   // PX28: Tab puts it away
 import { requestLook } from '../player/pointerLock.js';   // MAC1: the relock rides the closing gesture
 import { BookReaderWindow } from './bookReader.js';
 import { BookFile } from '../formats/bookFile.js';
@@ -135,9 +135,9 @@ function enhancedBookOverlay(model) {
     el.style.cssText = 'position:fixed;inset:0;width:100vw;height:100dvh;z-index:14;image-rendering:pixelated;touch-action:none';
     document.body.append(el);
     unregister = registerOverlay(exit);
-    // MENU1: the ONE lazy-chunk door (ui/enhancedChunk.js).
+    // MENU1: the ONE lazy-chunk door (ui/enhanced/enhancedChunk.js).
     mountEnhancedChunk({
-      load: () => import('./enhancedBook.js'),
+      load: () => import('./enhanced/enhancedBook.js'),
       mount: ({ mountEnhancedBook }) => { view = mountEnhancedBook(el, { model, onExit: teardown, relock }); },
       alive: () => !torn, host: el, onDismiss: exit, label: 'book',
     });

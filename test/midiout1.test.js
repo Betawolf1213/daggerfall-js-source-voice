@@ -12,8 +12,8 @@ import { setValue, _resetForTests as resetSettings } from '../src/systems/settin
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { gateScoreSongs } from '../src/systems/gate/gateScore.js';
 import { MusicService } from '../src/systems/music.js';
-import { whereIs, CATEGORIES } from '../src/ui/settingsMap.js';
-import { restoreTabDefaults } from '../src/ui/enhancedMenu.js';
+import { whereIs, CATEGORIES } from '../src/ui/settings/settingsMap.js';
+import { restoreTabDefaults } from '../src/ui/enhanced/enhancedMenu.js';
 
 /** A device: every message as [bytes..., ms] (the ms to the microsecond, so sums of ticks compare). */
 function fakeOutput(name = 'Synth A') {

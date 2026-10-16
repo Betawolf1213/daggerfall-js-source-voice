@@ -2,7 +2,7 @@
 //
 // THE WAY OUT ON THE COMPASS: the held map's walked trail walked back to the way in - a breadth-first field over the
 // cells stood in, each walked teleporter an edge from its entrance to its exit - and the compass pointing at the farthest
-// cell along it the eye can see (systems/wayOut.js, scenes/dungeonContext.js wayOutMark, ui/enhancedHud.js).
+// cell along it the eye can see (systems/wayOut.js, scenes/dungeonContext.js wayOutMark, ui/enhanced/enhancedHud.js).
 // bible/03-World/Delve-Arc.md, WAYOUT1.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import {
 } from '../src/systems/wayOut.js';
 import { automapTrailTick, TRAIL_FILL_M, SCAN_INTERVAL_S, teleporterConnection } from '../src/systems/automap/automap.js';
 import { walkSpeed, runSpeed } from '../src/player/motor.js';
-import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
+import { QUEST_MARK_CSS } from '../src/ui/quest/questMarks.js';
 import { FEATURES } from '../src/systems/features.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -298,10 +298,10 @@ test('WAYOUT1: the dungeon hands the compass its way out once the way in is foun
   assert.match(s, /return !stepHitCuts\(collider\.raycast\(a, \[dx \/ len, dy \/ len, dz \/ len\], len, PROF_VEIN_ONLY\), len\);/);
   assert.match(s, /const PROF_VEIN_ONLY = Object\.freeze\(\{ only: Object\.freeze\(\['dungeon'\]\) \}\);/);
   assert.match(s, /wayOut: wayOutMark\(playerFeet, eye\),/);
-  const hud = src('src/ui/hud.js');
+  const hud = src('src/ui/hud/hud.js');
   assert.match(hud, /gate = null, quest = null, wayOut = null, party = null,/);
   assert.match(hud, /wayOut: wayOut \?\? null,/);
-  const eh = src('src/ui/enhancedHud.js');
+  const eh = src('src/ui/enhanced/enhancedHud.js');
   assert.match(eh, /drawWayOutMark\(opts\.wayOut \?\? null, opts\.playerXZ \?\? null, heading01\);/);
   assert.match(eh, /questMark: null, wayOutMark: null,/);
 });

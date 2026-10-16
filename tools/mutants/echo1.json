@@ -217,7 +217,7 @@
   },
   {
     "name": "ECHO1-the-map-left-blank",
-    "file": "src/ui/automapDoor.js",
+    "file": "src/ui/automap/automapDoor.js",
     "old": "        echoes: deps.echoes ?? null,",
     "new": "        echoes: null,",
     "tests": [

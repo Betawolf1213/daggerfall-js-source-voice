@@ -191,7 +191,7 @@
   },
   {
     "name": "SD11D-the-pulse-first-again",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    if (asleep) callout = { text: SD_BAR_TEXT.stirs(",
     "new": "    if (clk) callout = callOf(clk, s.ph, SD_BODY.hour, now);\n    else if (asleep) callout = { text: SD_BAR_TEXT.stirs(",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "SD11D-a-landed-blow-over-the-pulse",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "} else if (rem && s.ph !== 2 && now < rem.at) callout = callOf(rem, s.ph, SD_BODY.remnant, now);",
     "new": "} else if (rem && s.ph !== 2) callout = callOf(rem, s.ph, SD_BODY.remnant, now);",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "SD11D-the-stun-over-the-pulse",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    else if (clk) callout = callOf(clk, s.ph, SD_BODY.hour, now);\n    else if (stunned)",
     "new": "    else if (stunned && !clk) callout = { text: '', color: '', t: null, dagon: false, move: false };\n    else if (clk) callout = callOf(clk, s.ph, SD_BODY.hour, now);\n    else if (stunned)",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "SD11D-no-echo-clock",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    else if (fallen >= 0) callout = ",
     "new": "    else if (false) callout = ",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "SD11D-no-rise-pulse",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    hostNear: !!ec && ec.some(",
     "new": "    hostNear: false && ec.some(",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "SD11D-the-chip-says-fallen",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "const chip = (E) => { const r = riseIn(E); return r === null ? SD_BAR_TEXT.echoLeft(E.h, E.m) : SD_BAR_TEXT.risesIn(Math.ceil(r / 1000)); };",
     "new": "const chip = (E) => SD_BAR_TEXT.echoLeft(E.h, E.m);",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "SD11D-the-return-outside-time",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "    else if (outside) callout = { text: SD_BAR_TEXT.returns(Math.max(0, Math.ceil((s.ou - now) / 1000))),",
     "new": "    else if (outside) callout = { text: SD_BAR_TEXT.outside,",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "SD11D-the-host-chip-never-pulses",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "  const hostNear = !!model.host && !!model.hostNear && !model.fallen;",
     "new": "  const hostNear = false;",
     "tests": [
@@ -525,7 +525,7 @@
   },
   {
     "name": "SD11D-the-hearts-head-ignored",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "(crystals === DAMAGE_CHART_TEXT.head[6] ? DAMAGE_CHART_TEXT.head : DAMAGE_CHART_TEXT.head.map((c, i) => (i === 6 ? crystals : c)))",
     "new": "(DAMAGE_CHART_TEXT.head)",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "SD11D-a-junk-theme-kept",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "theme: typeof theme === 'string' && /^[a-z]+$/.test(theme) ? theme : null,",
     "new": "theme,",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "SD11D-the-key-blind-to-the-head",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "key: `${crystals}:${dm.length}:",
     "new": "key: `${dm.length}:",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "SD11D-the-brass-never-drawn",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "else pass.draw(w, h, (t - began) / 1000, current(t), m !== undefined ? VEIL_THEMES.brass : theme);",
     "new": "else pass.draw(w, h, (t - began) / 1000, current(t));",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "SD11D-the-fires-cues",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "for (const c of (theme === VEIL_THEMES.brass ? VEIL_BRASS_CUES : VEIL_CUES)[name]) {",
     "new": "for (const c of VEIL_CUES[name]) {",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "SD11D-a-look-changed-mid-step",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "      if (phase === 'idle') takeLook(look, opts);\n",
     "new": "      takeLook(look, opts);\n",
     "tests": [
@@ -579,7 +579,7 @@
   },
   {
     "name": "SD11D-a-flash-in-fire",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "      takeLook(look, opts);\n      if (phase === 'idle') show(t);",
     "new": "      if (phase === 'idle') show(t);",
     "tests": [

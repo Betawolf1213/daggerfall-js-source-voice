@@ -1060,7 +1060,7 @@ test('doctrine: .gitignore still blocks the game data it claims to block', () =>
 // `player/cameraRecoiler.js`, `player/moveScanner.js`, `scenes/menu.js`,
 // `systems/repairService.js`, `systems/riding.js`, seven of
 // `systems/quest/*` (clock, foe, message, parser, person, quest, questLists),
-// `ui/enhancedCharSheet.js`, `ui/merchantServiceWindow.js` and
+// `ui/enhanced/enhancedCharSheet.js`, `ui/merchant/merchantServiceWindow.js` and
 // `ui/transportWindow.js`. Each was adjudicated one of three ways and none
 // was waved through: the ROW EXISTED and the cite was silent about it (the
 // engine-PRNG rule, which now carries its live roster; the dungeon-seed

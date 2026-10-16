@@ -19,7 +19,7 @@
   },
   {
     "name": "DRAKES-the-bank-button-old",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "'Sell silver'",
     "new": "'Sell Marks'",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DRAKES-the-account-card-old",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "row(t('account.card.silver', 'Silver'), marksText",
     "new": "row(t('account.card.silver', 'Marks'), marksText",
     "tests": [

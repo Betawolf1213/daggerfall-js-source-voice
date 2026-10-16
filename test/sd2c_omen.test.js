@@ -11,11 +11,11 @@ import { sdOmenLight, sdOmenSeen, sdMapMark, sdNoticeCard, sdRumor, sdRumorLine,
 import { SdOmenPassRenderer, SD_OMEN_COLOR } from '../src/render/sdOmenPass.js';
 import { BEACON_VS, BEACON_FS, BEACON_RADIUS_M, BEACON_COLOR, beaconVertices } from '../src/render/gatePass.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
-import { readGateMark, gateMarkKey } from '../src/ui/gateMapMark.js';
+import { readGateMark, gateMarkKey } from '../src/ui/gate/gateMapMark.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
-import { TIMER_KINDS } from '../src/ui/enhancedTimers.js';
+import { TIMER_KINDS } from '../src/ui/enhanced/enhancedTimers.js';
 import { noticeCards } from '../src/ui/noticeWindow.js';
-import { SD_RING_MAP_CSS, SD_MAP_INK, SD_LEGEND_TEXT } from '../src/ui/sdMapMark.js';
+import { SD_RING_MAP_CSS, SD_MAP_INK, SD_LEGEND_TEXT } from '../src/ui/superDungeon/sdMapMark.js';
 import { MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS } from '../src/systems/rumorMill.js';
 import { createSdHost } from '../src/scenes/sdHost.js';
 import { sdCities, sdTemplates, findSdSite, pixelOfLoc } from '../src/systems/superDungeon/sdSite.js';
@@ -105,7 +105,7 @@ test('SD2c the Timers row: none while it has only risen, its fading once found, 
   assert.deepEqual(rows(f, T0 + 2 * H, { name: null, place: null }).map((x) => [x.title, x.where]), [['The Abyss Dungeon stands', null]], 'its name and city not known yet');
   assert.deepEqual(eventTimerRows({ now: T0 }).filter((x) => x.kind === 'super'), [], 'offline: no record');
   assert.deepEqual(TIMER_KINDS.slice(0, 3), ['gate', 'serpent', 'super']);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.px-timerswin \.tm-super \{ --tm-kind: \$\{SD_RING_MAP_CSS\}; \}/, 'its row in the ring\'s brass');
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.px-timerswin \.tm-super \{ --tm-kind: \$\{SD_RING_MAP_CSS\}; \}/, 'its row in the ring\'s brass');
 });
 
 test('SD2c the taverns: "Any news?" in the city it stands by, while it has risen or been found, one time in SD_RUMOR_CHANCE - the person\'s one answer spent, the spymaster past the gate; nowhere else, not after the kill (mutants: told anywhere; told after the kill; the answer unspent; the cap unread; the chance unrolled)', () => {
@@ -253,8 +253,8 @@ test('SD2c the hosts by source: world.js hands the held map, the compass, the Ti
   const hm = read('src/ui/heldMap.js');
   assert.match(hm, /const sd = readGateMark\(this\.deps\.sd, this\._size\);/);
   assert.match(hm, /\n {10}sd: this\._sd,   \/\/ SD2c/);
-  assert.match(read('src/ui/inkMap.js'), /if \(opts\.sd && visible\(opts\.sd\.cx, opts\.sd\.cy, opts\.sd\.r \+ 2\)\) paintGateRing\(ctx, view, opts\.sd, pulse, SD_MAP_INK\);/);
-  assert.match(read('src/ui/enhancedHud.js'), /drawSdMark\(opts\.sd \?\? null, opts\.playerXZ \?\? null, heading01\);/);
+  assert.match(read('src/ui/ink/inkMap.js'), /if \(opts\.sd && visible\(opts\.sd\.cx, opts\.sd\.cy, opts\.sd\.r \+ 2\)\) paintGateRing\(ctx, view, opts\.sd, pulse, SD_MAP_INK\);/);
+  assert.match(read('src/ui/enhanced/enhancedHud.js'), /drawSdMark\(opts\.sd \?\? null, opts\.playerXZ \?\? null, heading01\);/);
   assert.match(read('src/ui/noticeWindow.js'), /sd: deps\.sd\?\.\(\) \?\? null,/);
   const rec = read('bible/11-Multiplayer/Super-Dungeons.md');
   assert.match(rec, /### SD2c - shipped 2026-10-06/);

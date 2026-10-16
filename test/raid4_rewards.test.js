@@ -294,7 +294,7 @@ test('RAID4 the cards: the account card\'s row and the Inspect card\'s line say 
   const v = profileView({ name: 'Ann', peer: null, look: null, card: null, state: 'silent', record: { raids: { defended: 4 } } });
   assert.equal(v.raids, 'Towns defended: 4');
   assert.equal(typeof createProfileWindow, 'function');
-  const acct = src('src/ui/enhancedAccount.js');
+  const acct = src('src/ui/enhanced/enhancedAccount.js');
   assert.match(acct, /const raids = raidRecordText\(flow\.account\.raids\);\n\s+if \(raids\) row\(t\('account\.card\.raids', 'Towns defended'\), raids\);/);   // L10N4 (PIN MOVED): the row's word through t()
 });
 

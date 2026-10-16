@@ -89,7 +89,7 @@ test('AUDIT REST-OPT C3 + F4: a night granted as my own stays my own to its end 
   assert.match(W, /_partyRestStartWaived = false;   \/\/ PARTY-REST29: a real \(mirrored\) rest cools down again\n\s*_restAloneNight = false;/, 'a mirror is the party\'s');
   // ORG2: the switch is named where the one Settings screen draws it - the Other players card, on the Gameplay tab
   assert.equal(restAloneText(false), 'You rest on your own. Turn on "Rest with my party" (Settings \u203a Gameplay \u203a Other players) to rest with them.');
-  assert.match(src('src/ui/enhancedMenu.js'), /peerSprites: \(\) => peerSpritesCard\(\)/, 'the Other players card is drawn by the Settings screen');
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /peerSprites: \(\) => peerSpritesCard\(\)/, 'the Other players card is drawn by the Settings screen');
 });
 
 test('AUDIT COMPASS-PARTY C4 + C6: a concealed mate is no compass mark (the leader\'s own feet followed them); out of a party the room\'s players are not walked each frame for it (mutants: the poses unfiltered; the walk first)', () => {

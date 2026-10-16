@@ -1,7 +1,7 @@
 [
  {
   "name": "EM3-MAPCHOICE-the-switch-ignored",
-  "file": "src/ui/mapSkin.js",
+  "file": "src/ui/map/mapSkin.js",
   "old": "export const dungeonMap3dOn = () => getPref('dungeonMap3d') !== false && !dungeonMapUrlFlat();",
   "new": "export const dungeonMap3dOn = () => !dungeonMapUrlFlat();",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "EM3-MAPCHOICE-the-kill-door-ignored",
-  "file": "src/ui/mapSkin.js",
+  "file": "src/ui/map/mapSkin.js",
   "old": "export const dungeonMap3dOn = () => getPref('dungeonMap3d') !== false && !dungeonMapUrlFlat();",
   "new": "export const dungeonMap3dOn = () => getPref('dungeonMap3d') !== false;",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "EM3-MAPCHOICE-the-kill-door-inverted",
-  "file": "src/ui/mapSkin.js",
+  "file": "src/ui/map/mapSkin.js",
   "old": "return pageParam('dungeonmap') === 'flat';",
   "new": "return pageParam('dungeonmap') !== 'flat';",
   "tests": [

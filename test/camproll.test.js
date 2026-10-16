@@ -251,7 +251,7 @@ test('CAMP-ROLL the enhanced card: the wait card names the roller and is built o
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.requestAnimationFrame = () => 0;
   try {
-    const { mountEnhancedRest } = await import('../src/ui/enhancedRest.js');
+    const { mountEnhancedRest } = await import('../src/ui/enhanced/enhancedRest.js');
     const mount = (verdicts) => {
       const calls = { night: 0, camp: [], opened: [] };
       const host = mkEl('div');
@@ -285,7 +285,7 @@ test('CAMP-ROLL the enhanced card: the wait card names the roller and is built o
 });
 
 test('CAMP-ROLL by source: both windows open the camp and take the one step; the outdoor host and the dungeon carry the camp, the building none; the carry loop says nothing of a night my window takes; a rest\'s ambush keeps its band from the camp', () => {
-  for (const f of ['src/ui/restWindow.js', 'src/ui/enhancedRest.js']) {
+  for (const f of ['src/ui/restWindow.js', 'src/ui/enhanced/enhancedRest.js']) {
     const s = rd(f);
     assert.match(s, /deps\.camp\?\.open\?\.\(!!(this\._act|act)\.night\);/, `${f}: opened with the channel`);
     assert.match(s, /campNightStep\((this\.)?deps, (this\._actPlan|_actPlan), (this|overlay)\._remainingHoursRented\)/, `${f}: the one step`);

@@ -6,14 +6,14 @@
 // Journal is GUIDE5's law, and the default: a quest is marked only where the player's map already holds its place, and
 // never inside a dungeon. EXACT is the quest debugger's knowledge (DFU's HUDQuestDebugger draws the same markers): every
 // quest resource standing in the dungeon - an item not yet taken, a person, a foe not yet killed - on the held map's
-// dungeon sheet (ui/automapSheet.js, kind 'quest', its floor marked on the strip) and the followed quest's nearest on
+// dungeon sheet (ui/automap/automapSheet.js, kind 'quest', its floor marked on the strip) and the followed quest's nearest on
 // the compass. It is the one tier that can spoil a quest, so it is asked for by name (the `quest-guidance` row) and
 // off by default. AUDIT DELVE E6: a shared quest's foe a party mate's client owns (a puppet, its behaviour the share's)
 // and a dungeon's own quest people are marked too; and the tier reaches INTO BUILDINGS (scenes/worldModes.js
 // interiorQuestMarksHere: the held map's interior sheet and the compass).
 //
 // AUDIT DELVE (the open item closed): THE TOWN TIER, between them. In the town of the building a quest's latest entry
-// NAMES (its `_p_` - ui/questLens.js entryTarget's `building`), the town map rings that building and the compass points
+// NAMES (its `_p_` - ui/quest/questLens.js entryTarget's `building`), the town map rings that building and the compass points
 // at it (scenes/world.js townQuestCompassMark) - the place the journal already gave, found in the streets, never a
 // thing inside. Exact holds it too.
 //
@@ -111,7 +111,7 @@ export function questCompassPick(marks, feet) {
 }
 
 /**
- * THE TOWN TIER'S BUILDINGS in the town whose map id is `mapId`: of the quest views (ui/questTracker.js `views` - each
+ * THE TOWN TIER'S BUILDINGS in the town whose map id is `mapId`: of the quest views (ui/quest/questTracker.js `views` - each
  * active quest's latest entry's target), each building an entry names there (`target.building`), once, by key, the
  * followed quest's (`followedId`) said. Pure.
  * @param {ReadonlyArray<any>|null|undefined} views @param {number|null|undefined} mapId @param {string|null} [followedId]

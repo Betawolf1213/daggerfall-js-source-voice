@@ -32,8 +32,8 @@ import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import { resolveItemName, itemLongName } from '../src/systems/item/itemInfo.js';
 import { withDom } from './invdrag.mjs';
 import { mountReforgeWindow, REFORGE_REFUSALS } from '../src/ui/reforgeWindow.js';
-import { mountEnhancedInventory, SALVAGE_CLASSIC } from '../src/ui/enhancedInventory.js';
-import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
+import { mountEnhancedInventory, SALVAGE_CLASSIC } from '../src/ui/enhanced/enhancedInventory.js';
+import { destroyEnhancedNotice } from '../src/ui/enhanced/enhancedNotice.js';
 import { DFU_MAGIC_ITEMS } from './dfuMagicItems.mjs';
 
 const on = () => { _resetForTests(); setPref('lootRarity', true); };

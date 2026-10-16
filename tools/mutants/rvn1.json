@@ -703,7 +703,7 @@
   },
   {
     "name": "RVN1-scars-unshown",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (scars) text.append(el('span', 'rvn-scars', scars));\n",
     "new": "",
     "tests": [
@@ -712,7 +712,7 @@
   },
   {
     "name": "RVN1-a-deed-scar-shown",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "    const w = SCAR_WORDS[s?.k];",
     "new": "    const w = SCAR_WORDS[s?.k] ?? s?.k;",
     "tests": [
@@ -721,7 +721,7 @@
   },
   {
     "name": "RVN1-scars-oldest-first",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  for (const s of [...(r?.scars ?? [])].reverse()) {",
     "new": "  for (const s of [...(r?.scars ?? [])]) {",
     "tests": [

@@ -10,7 +10,7 @@ import {
   BANK_PANEL_W, BANK_PANEL_H, BANK_PANEL_X, BANK_PANEL_Y,
   BANK_RECTS, BANK_LABELS, AMOUNT_FIELD, CANNOT_CARRY_GOLD, BankWindow,
 } from '../src/ui/bankWindow.js';
-import { NATIVE_W, NATIVE_H } from '../src/ui/nativePanel.js';
+import { NATIVE_W, NATIVE_H } from '../src/ui/native/nativePanel.js';
 import {
   TRANSACTION_TYPE, TRANSACTION_RESULT, createBankAccounts,
   accountTotal, loanedTotal, borrowLoan, bankButtonEnabled,

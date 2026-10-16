@@ -54,7 +54,7 @@ and stands about 250 px, the rail wraps to two rows, and the pane between them, 
 and Play online button lives, came to 5 px (0 on a 393 px screen). The title and the rail drew; each rail press
 opened a pane nobody could see, and its sliver was the "tiny space" that scrolled. Where height is the constraint
 and width is not, the desk's two columns come back - the rail down the side with 44 px rows, the pane the whole
-height (`ui/enhancedStyle.js`, not the chargen wizard, whose phone strip is its own). The first visit's sign-in
+height (`ui/enhanced/enhancedStyle.js`, not the chargen wizard, whose phone strip is its own). The first visit's sign-in
 window opened 270 px down the screen with its Close off the bottom and the menu under it; on a short screen it
 takes the height now. Measured: `tools/shortTouchProbe.mjs` (four handheld viewports - 24 failures before, none
 after: every door's pane shows the whole height and its first button can be reached). Pinned:
@@ -64,7 +64,7 @@ after: every door's pane shows the whole height and its first button can be reac
 
 The AYN Thor has its controller built in, and the game's pad layer (`ui/gamepadInput.js`) attaches with a scene -
 so the intro, the menu, its sign-in window and the boot settings answered a finger or a mouse and never the pad.
-`ui/menuPad.js` is the door's own small loop over the page's own controls: the d-pad or the left stick moves the
+`ui/menu/menuPad.js` is the door's own small loop over the page's own controls: the d-pad or the left stick moves the
 focus to the nearest control that way (the one in line before the one off to the side), A or Start presses it, B
 is Escape - the menu's own back - and left and right step a list box or a slider. A control under something drawn
 over it (the sign-in scrim over the home) is not a place the focus goes; a press that redraws the menu puts the
@@ -74,7 +74,7 @@ standard pad by `tools/menuPadProbe.mjs`: the intro, the sign-in window closed w
 the rail walked to Online, into its pane, and back home.
 
 The "1.0" was a readout. The four gamepad settings (Gamepad Look Speed, Cursor Speed, Movement Threshold, Stick
-Deadzone) went live at GP1 and never got a row in `ui/settingsLaw.js` NUMBER_LAW, so each fell through to the
+Deadzone) went live at GP1 and never got a row in `ui/settings/settingsLaw.js` NUMBER_LAW, so each fell through to the
 honest readout for a number with no stated range - a bare value with nothing to press. They are numbers with
 steppers now, over their consumer's own clamps (`systems/gamepad.js` controllerSettings - the range-equals-clamp
 law), shown as x1.0 and percentages. Pinned: `test/menupad.test.js` (9; 13 with the AUDIT's), `tools/mutants/pad_door.json` (13, all dead).
@@ -83,7 +83,7 @@ law), shown as x1.0 and percentages. Pinned: `test/menupad.test.js` (9; 13 with 
 
 TI1 fixed the corner at two buttons - Jump and Ready Weapon - and took the sword away for the swipe (hold a finger
 still, then stroke), and nothing on the Touch card could change either. The corner is three slots now
-(`ui/touchButtons.js`), each any of eighteen actions or none, chosen with steppers on Settings > Controls > Touch
+(`ui/touch/touchButtons.js`), each any of eighteen actions or none, chosen with steppers on Settings > Controls > Touch
 and re-laid live as soon as no finger holds a corner button; TI1's two stay the defaults. A HOLD slot keeps its
 action's key down while the finger is, a TAP slot presses it once, and ATTACK swings through the swipe's own seam -
 a readied spell fires first, as the swipe's press fires it, and the stroke is drawn from DFU's click-to-attack table
@@ -181,7 +181,7 @@ guild. Temple and knightly-order quests never had a gate. `06-Systems/Online-Arc
 
 The Enhanced item card listed enchantments only for items rolled by the loot tiers (`item.rarity`). DFU's own magic
 items and the item maker's said "Magic" and nothing more, and with the tiers off they said nothing. The card now
-reads one list (`ui/enhancedInventory.js` itemPowerLines): the tier's lines, then, for an enchanted item the tiers do
+reads one list (`ui/enhanced/enhancedInventory.js` itemPowerLines): the tier's lines, then, for an enchanted item the tiers do
 not name, DFU's own Info-box powers ("Potent vs Daedra", "Feather weight"), or "Powers unknown." until it is
 identified. The player trade window reads the same list on each row's hover (mine and theirs) and in its detail.
 

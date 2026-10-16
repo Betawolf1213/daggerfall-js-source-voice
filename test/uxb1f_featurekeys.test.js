@@ -14,8 +14,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { featureTile, FEATURE_KEYS_NOTE } from '../src/ui/enhancedMenu.js';
-import { paneControls, discardControlsStaging, controlsStaging, FIXED_KEYS_HEAD } from '../src/ui/enhancedControls.js';
+import { featureTile, FEATURE_KEYS_NOTE } from '../src/ui/enhanced/enhancedMenu.js';
+import { paneControls, discardControlsStaging, controlsStaging, FIXED_KEYS_HEAD } from '../src/ui/enhanced/enhancedControls.js';
 import { FEATURES } from '../src/systems/features.js';
 import { fixedKeyRows, modKeyRows, shortcutKeyText, buttonText, setUnsavedBinding, FIXED_KEY_ROWS, TRANSPORT_KEY_ROWS } from '../src/systems/controlsConfig.js';
 import { MOD_ACTIONS, ACTION_GROUPS, createBindings, resetDefaults, setBinding, codeForAction } from '../src/systems/inputActions.js';
@@ -72,7 +72,7 @@ test('UXB1-F: the fixed keys are READ off the shortcut table - the HUD\'s three 
   assert.equal(fixedKeyRows(codeForAction(store, 'Transport'))[4].key, 'J, then H');
   assert.equal(fixedKeyRows(null)[4].key, 'Transport (unbound), then H');
   // the buttons are the ones the game answers: the HUD's arms and the Transport window read these very names
-  const hud = read('src/ui/hudShortcuts.js');
+  const hud = read('src/ui/hud/hudShortcuts.js');
   for (const b of ['LargeHUDToggle', 'HUDToggle', 'ToggleRetroPP']) assert.match(hud, new RegExp(`hotkeyHit\\('${b}', e\\.code, e, keys\\)`), b);
   const tw = read('src/ui/transportWindow.js');
   for (const b of ['TransportHorse', 'TransportCart']) assert.match(tw, new RegExp(`'${b}'`), b);
@@ -139,7 +139,7 @@ test('UXB1-F: the tile\'s door counts its keys, and its drawer names them read-o
     assert.equal(to.title, FEATURE_KEYS_NOTE);
     find(t, 'ft-tile-more')[0].onclick({ stopPropagation() {} });   // and shut again, for the next test
   });
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /function openControls\(\) \{\n\s+category = 'controls';\n\s+optQuery = ''; optFilter = 'all';[^\n]*\n\s+optScrollTo = 'sec-controls-bindings';[^\n]*\n\s+go\('settings'\);\n\}/, 'the press lands on Settings, Controls - ORG2: on the bindings, past any search or filter');
   assert.match(menu, /if \(keys\.length\) pair\(t\('menu\.features\.keysLabel', 'Keys'\), /, 'and the reading rail names them for the tile pointed at');
   // KB1's law stands: the keys are not dials - nothing in the curated table reaches for a key

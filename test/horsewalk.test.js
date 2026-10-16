@@ -4,7 +4,7 @@
 // IsMovingLessThanHalfSpeed, the gallop on the ride base as ever; systems/transport.js setRideWalk; systems/upkeep/upkeepRuntime.js
 // rideWalks), and everything that reads the gait: the riding sprite and its clop (systems/riding.js, player/mountRig.js),
 // the peers' clop (the pose's `hs`, motor.js slowRide), the 3D horse under its rider (world/horseModel.js gaitFor's
-// `gallops`, world/horseRig.js, player/mwView.js, net/peer/peerBodies.js), the saddle panel (ui/enhancedSaddle.js,
+// `gallops`, world/horseRig.js, player/mwView.js, net/peer/peerBodies.js), the saddle panel (ui/enhanced/enhancedSaddle.js,
 // scenes/saddleHost.js), a town under Roleplay & Realism (TOWN-GALLOP: Galloping In Towns on, as the port ships it), the
 // Features row, the Horses tutorial and the four hosts.
 import { test } from 'node:test';
@@ -20,7 +20,7 @@ import { steedStats, steedSpeedScale, WINDED_UNTIL } from '../src/systems/steedC
 import { RidingAnimator, RIDING_SOUND, RIDING_VOLUME_SCALE, ANIM_FRAME_TIME, WALK_FRAME_TIME } from '../src/systems/riding.js';
 import { gaitFor, horseGait, stepHorseGait, gaitShare } from '../src/world/horseModel.js';
 import { createHorseRig } from '../src/world/horseRig.js';
-import { saddleGait, drawEnhancedSaddle, hideEnhancedSaddle } from '../src/ui/enhancedSaddle.js';
+import { saddleGait, drawEnhancedSaddle, hideEnhancedSaddle } from '../src/ui/enhanced/enhancedSaddle.js';
 import { createSaddleHost } from '../src/scenes/saddleHost.js';
 import { AudioEngine } from '../src/systems/audio.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';

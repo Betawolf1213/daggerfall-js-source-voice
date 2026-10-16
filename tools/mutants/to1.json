@@ -399,7 +399,7 @@
   },
   {
     "name": "draw-path-centre-only",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "  if ((data & 32) !== 0) { buf[offset + (width * 2) + 3] = px; buf[offset + (width * 2) + 4] = px; }  // E",
     "new": "  if ((data & 32) !== 0) { buf[offset + (width * 2) + 3] = px; }  // E",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "draw-path-diagonal-straight",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "  if ((data & 64) !== 0) { buf[offset + (width * 3) + 3] = px; buf[offset + (width * 4) + 4] = px; }  // NE",
     "new": "  if ((data & 64) !== 0) { buf[offset + (width * 3) + 3] = px; buf[offset + (width * 4) + 3] = px; }  // NE",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "dot-small-always",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "  const st = large ? 0 : 1;\n  const en = large ? 5 : 4;",
     "new": "  const st = 1;\n  const en = 4;",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "large-dots-inverted",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "  return locationType === LOCATION_TYPES.TownCity || locationType === LOCATION_TYPES.TownHamlet || !!onlyLargeDots;",
     "new": "  return locationType === LOCATION_TYPES.TownCity || locationType === LOCATION_TYPES.TownHamlet || !onlyLargeDots;",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "here-pt",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "export const JUNCTION_HERE_PT = (JUNCTION_MAP_H2 * JUNCTION_MAP_WIDTH * 25) - (3 * JUNCTION_MAP_WIDTH * 5) + (JUNCTION_MAP_W2 * 5) + 2;",
     "new": "export const JUNCTION_HERE_PT = (JUNCTION_MAP_H2 * JUNCTION_MAP_WIDTH * 25) - (2 * JUNCTION_MAP_WIDTH * 5) + (JUNCTION_MAP_W2 * 5) + 2;",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "direction-index-north-down",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "    case 128: return here + w5;         // N",
     "new": "    case 128: return here - w5;         // N",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "map-section-no-circle",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "      if (circular && height === width",
     "new": "      if (false && height === width",
     "tests": [
@@ -462,7 +462,7 @@
   },
   {
     "name": "map-section-roads-under-tracks",
-    "file": "src/ui/travelPathsOverlay.js",
+    "file": "src/ui/travel/travelPathsOverlay.js",
     "old": "      if (showPaths[1]) drawPath(buf, offset5, width5, pathsAt(mpX, mpY, 1), trackPx);\n      if (showPaths[0]) drawPath(buf, offset5, width5, pathsAt(mpX, mpY, 0), roadPx);",
     "new": "      if (showPaths[0]) drawPath(buf, offset5, width5, pathsAt(mpX, mpY, 0), roadPx);\n      if (showPaths[1]) drawPath(buf, offset5, width5, pathsAt(mpX, mpY, 1), trackPx);",
     "tests": [
@@ -473,7 +473,7 @@
   },
   {
     "name": "ports-bar-no-shuffle",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "  return paging\n    ? { ports: PORT_FILTER_MOVED, horizontalArrow: HORIZ_ARROW_MOVED, verticalArrow: VERT_ARROW_MOVED }\n    : { ports: PORT_FILTER_POS, horizontalArrow: HORIZ_ARROW_POS, verticalArrow: VERT_ARROW_POS };",
     "new": "  return { ports: PORT_FILTER_POS, horizontalArrow: HORIZ_ARROW_POS, verticalArrow: VERT_ARROW_POS };",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "ports-filter-passes-all",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "  return !portsFilter || hasPort(mapId);",
     "new": "  return true;",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "info-refuses-nothing",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "  if (INFO_REFUSED_TYPES.includes(locationType)) return null;",
     "new": "  if (false) return null;",
     "tests": [
@@ -500,7 +500,7 @@
   },
   {
     "name": "guild-halls-counted",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "      continue;   // :404-406 - a guild hall is named, never counted",
     "new": "      // counted too",
     "tests": [
@@ -509,7 +509,7 @@
   },
   {
     "name": "teleport-free-rank",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "export const TELEPORT_RANK_FREE = 8;",
     "new": "export const TELEPORT_RANK_FREE = 6;",
     "tests": [
@@ -518,7 +518,7 @@
   },
   {
     "name": "teleport-cost-per-rank",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "export const TELEPORT_COST_PER_RANK = 200;",
     "new": "export const TELEPORT_COST_PER_RANK = 100;",
     "tests": [
@@ -554,7 +554,7 @@
   },
   {
     "name": "cancel-does-not-close",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "old": "    this.deps.onCancel?.();\n    this.deps.onClose?.();",
     "new": "    this.deps.onCancel?.();",
     "tests": [
@@ -563,7 +563,7 @@
   },
   {
     "name": "message-never-clears",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "old": "export const MESSAGE_SECONDS = 3;",
     "new": "export const MESSAGE_SECONDS = 3000;",
     "tests": [
@@ -572,7 +572,7 @@
   },
   {
     "name": "map-button-rect",
-    "file": "src/ui/travelControlUI.js",
+    "file": "src/ui/travel/travelControlUI.js",
     "old": "  map: [183, 3, 45, 21],",
     "new": "  map: [183, 3, 40, 21],",
     "tests": [
@@ -581,7 +581,7 @@
   },
   {
     "name": "junction-redraw-every-frame",
-    "file": "src/ui/travelJunctionMap.js",
+    "file": "src/ui/travel/travelJunctionMap.js",
     "old": "    if (this.lastDrawn && this.lastDrawn.x === mapPixel.x && this.lastDrawn.y === mapPixel.y\n      && this.lastDrawn.direction === direction) return false;",
     "new": "    if (false) return false;",
     "tests": [
@@ -590,7 +590,7 @@
   },
   {
     "name": "junction-trilinear-is-nearest",
-    "file": "src/ui/travelJunctionMap.js",
+    "file": "src/ui/travel/travelJunctionMap.js",
     "old": "export const filterModeName = (i) => (i === 0 ? 'nearest' : 'linear');",
     "new": "export const filterModeName = () => 'nearest';",
     "tests": [
@@ -599,7 +599,7 @@
   },
   {
     "name": "eta-hours-dropped",
-    "file": "src/ui/enhancedTravelControl.js",
+    "file": "src/ui/enhanced/enhancedTravelControl.js",
     "old": "  return h > 0 ? `${h}h ${String(m).padStart(2, '0')}m` : `${m}m`;",
     "new": "  return `${m}m`;",
     "tests": [
@@ -734,7 +734,7 @@
   },
   {
     "name": "d1-not-at-port-ignores-location",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "  return currentLocationMapId == null || !hasPort(currentLocationMapId);",
     "new": "  return true;",
     "tests": [
@@ -743,7 +743,7 @@
   },
   {
     "name": "d2-onpush-guard-not-called-site-a",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    this.popUp.enforceShipRestriction();\n    this.popUp.refresh();\n  }\n\n  /** TO1 (:505-530 and TravelOptionsPopUp.cs:151-163): the popup on",
     "new": "    this.popUp.refresh();\n  }\n\n  /** TO1 (:505-530 and TravelOptionsPopUp.cs:151-163): the popup on",
     "tests": [
@@ -752,7 +752,7 @@
   },
   {
     "name": "d4-wheel-refusal-dropped",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "        if (refusal) { this._click(); this.top = refusal; return; }\n      }\n      this._click(); this.travelShip = !this.travelShip; this.refresh();",
     "new": "      }\n      this._click(); this.travelShip = !this.travelShip; this.refresh();",
     "tests": [
@@ -761,7 +761,7 @@
   },
   {
     "name": "d3-campout-click-keeps-ship",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "      if (this._to?.settings?.shipTravelPortsOnly && this.shipTravelRefusal()) this.travelShip = false;\n      this.refresh(); return true;",
     "new": "      this.refresh(); return true;",
     "tests": [
@@ -770,7 +770,7 @@
   },
   {
     "name": "d3-campout-wheel-over-inns-too",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "      if (this._to?.settings?.shipTravelPortsOnly && inRect(POPUP_RECTS.campout, vx, vy)) this.travelShip = false;",
     "new": "      if (this._to?.settings?.shipTravelPortsOnly) this.travelShip = false;",
     "tests": [
@@ -799,7 +799,7 @@
   },
   {
     "name": "e3-filter-back-in-src-slot",
-    "file": "src/ui/travelJunctionMap.js",
+    "file": "src/ui/travel/travelJunctionMap.js",
     "old": "      renderer.drawScreenQuad?.(this._tex, { x: m.ox + x * m.s, y: m.oy + y * m.s, w: w * m.s, h: h * m.s });",
     "new": "      renderer.drawScreenQuad?.(this._tex, { x: m.ox + x * m.s, y: m.oy + y * m.s, w: w * m.s, h: h * m.s }, { filter: 'nearest' });",
     "tests": [
@@ -817,7 +817,7 @@
   },
   {
     "name": "f1-enhanced-mount-torn-down-with-bar",
-    "file": "src/ui/enhancedTravelControl.js",
+    "file": "src/ui/enhanced/enhancedTravelControl.js",
     "old": "  if (!state.showing && !junctionOnly) { hideEnhancedTravelControl(); return null; }",
     "new": "  if (!state.showing) { hideEnhancedTravelControl(); return null; }",
     "tests": [
@@ -926,7 +926,7 @@
   },
   {
     "name": "g3-resume-no-closes-the-map",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "      if (code === 'KeyN' || code === 'Escape') { this._click(); this.top = null; }\n      return;\n    }\n    // TO1 (:477-497): the teleport fee",
     "new": "      if (code === 'KeyN' || code === 'Escape') { this._click(); this.top = null; this.closeTravelWindows(true); }\n      return;\n    }\n    // TO1 (:477-497): the teleport fee",
     "tests": [
@@ -964,7 +964,7 @@
   },
   {
     "name": "l6-containment-back-on-the-mods-page",
-    "file": "src/ui/travelMapOptions.js",
+    "file": "src/ui/travel/travelMapOptions.js",
     "old": "      // a neighbouring province's included. Kept as the mod draws it.",
     "new": "      // a neighbouring province's included. Kept as the mod draws it.\n      if (deps.politicAt(mpX, mpY) - 128 !== selectedRegion) continue;",
     "tests": [
@@ -1090,7 +1090,7 @@
   },
   {
     "name": "to-online-the-teleport-line-sits-over-a-walked-ride",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    if (this.noWorldTime() && !this.walkedTrip) ONLINE_TRAVEL_ROWS.forEach(",
     "new": "    if (this.noWorldTime()) ONLINE_TRAVEL_ROWS.forEach(",
     "tests": [

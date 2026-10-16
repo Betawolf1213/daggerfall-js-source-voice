@@ -19,12 +19,12 @@ import { LETTER_OF_CREDIT_TEMPLATE, letterOfCredit, effectiveUnitWeightInKg } fr
 import { sigilStone, welkyndShards, portalStones, SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
 import { isBound, boundRefusesPut, BOUND_KEEPS, packOnlyText } from '../src/systems/item/itemBound.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
-import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
+import { destroyEnhancedNotice } from '../src/ui/enhanced/enhancedNotice.js';
 import { BOUND_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { useItem } from '../src/systems/useItem.js';
 import { pageOf } from '../src/ui/packPages.js';
-import { packModel, useResultAction, mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhancedInventory.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { packModel, useResultAction, mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhanced/enhancedInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import * as qs from '../src/systems/quickslots.js';
 import { itemInfoRows } from '../src/systems/item/itemInfo.js';
 import { withDom, fakeDom } from './invdrag.mjs';
@@ -46,7 +46,7 @@ async function withDomAsync(fn) {
     for (const [k, [had, v]] of Object.entries(saved)) { if (had) globalThis[k] = v; else delete globalThis[k]; }
   }
 }
-/** WALLET-UI: the silver row's figure in a wallet sheet (ui/enhancedInventory.js walletSheet). */
+/** WALLET-UI: the silver row's figure in a wallet sheet (ui/enhanced/enhancedInventory.js walletSheet). */
 const silverOf = (sheet) => sheet.querySelectorAll('.wallet-row').find((r) => r.dataset.key === 'silver').children[1].textContent;
 const pack = () => {
   const embers = Object.assign(sigilStone(), { stackCount: 12 });

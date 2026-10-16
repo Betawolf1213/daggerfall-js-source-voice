@@ -12,7 +12,7 @@ import {
 } from '../src/systems/naval/navalDirector.js';
 import { temperOf, TEMPERS, BOLD_SHARE } from '../src/systems/naval/navalAI.js';
 import { classById } from '../src/systems/naval/navalShips.js';
-import { navalHudText } from '../src/ui/navalHud.js';
+import { navalHudText } from '../src/ui/naval/navalHud.js';
 import { sea } from './navalSea.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

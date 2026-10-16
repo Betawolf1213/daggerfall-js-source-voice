@@ -73,7 +73,7 @@
   },
   {
     "name": "QRESET-chronicle-door-unasked",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (reset?.restart && reset.canRestart?.(e.uid)) {",
     "new": "        if (reset?.restart) {",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "QRESET-chronicle-unarmed",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "            if (bountyArmed !== `r:${e.uid}`) { bountyArmed = `r:${e.uid}`; render(); return; }",
     "new": "            void 0;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "QRESET-chronicle-silent",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "            shelfWord = reset.restart(e.uid)?.text ?? '';",
     "new": "            reset.restart(e.uid);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "QRESET-chronicle-label-english",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "t('chronicle.quests.restartLabel', 'Restart this quest')",
     "new": "'Restart'",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "QRESET-pause-door-unasked",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "clean.restart && clean.canRestart?.(sel.id)) {",
     "new": "clean.restart) {",
     "tests": [

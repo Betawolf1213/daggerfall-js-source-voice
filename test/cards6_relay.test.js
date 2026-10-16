@@ -11,7 +11,7 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { mintStakeOrder } from '../src/net/identityToken.js';
 import { readCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_FIRST_MS, newTable, sit, stand, tick, actAt, publicView } from '../src/net/holdemTable.js';
-import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
+import { HOLDEM_REFUSALS } from '../src/ui/card/cardTableHud.js';
 
 const { subtle } = webcrypto;
 const ROOM = 'interior:m100.200';

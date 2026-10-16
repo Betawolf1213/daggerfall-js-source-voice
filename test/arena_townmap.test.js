@@ -1,6 +1,6 @@
 // ARENA-MAP (2026-10-03, the owner, live: "Arena doesn't show on town map") - THE ARENA ON THE TOWN MAP
 // (`world/arena/arenaCity.js` arenaAutoMap / arenaTownLandmark, `ui/exteriorAutomapWindow.js` buildPlates,
-// `ui/townSheet.js` named, the two exterior hosts' `blocks`). Both town maps draw a cell off its block's own automap
+// `ui/town/townSheet.js` named, the two exterior hosts' `blocks`). Both town maps draw a cell off its block's own automap
 // bytes, and Kamer's bowl is byte 117 - BuildingTypes.Special1 + 1, "never displayed on automap" - so cell (4,3) of
 // Daggerfall read as empty street; and the colosseum is no building of the list, so no name stood on it. Each pin is red
 // on the tree before the fix (the served block carried the vendored bytes, and no row carried a landmark).
@@ -14,10 +14,10 @@ import {
 import { SAND_R } from '../src/world/arena/arenaFloor.js';
 import { getDFBlockReplacementData } from '../src/formats/worldDataReplacement.js';
 import { CityNavigation } from '../src/world/city/cityNavigation.js';
-import { quarterOf, isShowAllByte } from '../src/ui/townQuarters.js';
-import { townBytes, townReader, quarterChains, sheetY, BLOCK_PX } from '../src/ui/inkTown.js';
-import { boundarySegments, linkSegments } from '../src/ui/inkMap.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { quarterOf, isShowAllByte } from '../src/ui/town/townQuarters.js';
+import { townBytes, townReader, quarterChains, sheetY, BLOCK_PX } from '../src/ui/ink/inkTown.js';
+import { boundarySegments, linkSegments } from '../src/ui/ink/inkMap.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { ExteriorAutomapWindow, buildExteriorLayout, toPanelScreen, _resetZoomForTests } from '../src/ui/exteriorAutomapWindow.js';
 import { nameplateAnchor } from '../src/ui/nameplateLayout.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
@@ -135,5 +135,5 @@ test('ARENA-MAP: both exterior hosts hand the landmark on the town map\'s block 
     assert.match(s, /blocks: (?:b\.locBlocks|loc\.blocks)\.map\(\(bl\) => \(\{ x: bl\.x, y: bl\.y, autoMap: bl\.dfBlock\?\.rmbBlock\?\.fldHeader\?\.autoMapData, landmark: arenaTownLandmark\(bl\.dfBlock\) \}\)\),/, `${host}'s town map rows`);
   }
   for (const host of ['src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.doesNotMatch(read(host), /createTownMapWindow/, `${host} opens no town map`);
-  assert.match(read('src/ui/townMapDoor.js'), /blocks: deps\.blocks \?\? \[\],/, 'the held map\'s town sheet takes the same rows');
+  assert.match(read('src/ui/town/townMapDoor.js'), /blocks: deps\.blocks \?\? \[\],/, 'the held map\'s town sheet takes the same rows');
 });

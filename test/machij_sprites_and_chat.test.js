@@ -34,7 +34,7 @@ import { Renderer, FLAT_LIGHT_FLOOR, STUDIO_AMBIENT, STUDIO_KEY } from '../src/r
 import { fpLightingOn } from '../src/combat/fpsWeapon.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { CHAT_CSS } from '../src/ui/chatPanel.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

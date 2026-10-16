@@ -26,7 +26,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dfuFile, missingDfu } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 import { LightningFlash } from '../src/systems/dynamicSkies/dynamicSkies.js';
-import { attachTouch } from '../src/ui/touch.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { setBindings } from '../src/ui/input.js';
 import {
   createBindings, setBinding, getBinding, loadKeyBinds, resetDefaults,
@@ -387,7 +387,7 @@ test('ROAD-H H8: the tap guard reads the layer\'s OWN held latch (mutant: a SECO
   // guard consults IS the name `down` adds to and `up` deletes from,
   // and the tap path consults no other - and it is read structurally,
   // not as source text, so a reformat or a rename of `ks` is silent.
-  const t = read('src/ui/touch.js');
+  const t = read('src/ui/touch/touch.js');
   const dm = /const down = \(code\) =>[\s\S]{0,160}?!(\w+)\.has\(code\)/.exec(t);
   const um = /const up = \(code\) =>[\s\S]{0,160}?(\w+)\.has\(code\)/.exec(t);
   assert.ok(dm && um, 'the layer still keeps its down/up latch pair');

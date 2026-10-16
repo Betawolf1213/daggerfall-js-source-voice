@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PlayerNotebook } from '../src/systems/notebook.js';
-import { questRail } from '../src/ui/questRail.js';
+import { questRail } from '../src/ui/quest/questRail.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -125,7 +125,7 @@ test('JOURNAL-CLEAN: every host that hands the pause window questLog hands journ
 });
 
 test('JOURNAL-CLEAN: the Quests tab draws Remove (armed twice), Clear archive (armed twice), Hide/Unhide and Show hidden', () => {
-  const src = read('src/ui/enhancedMenu.js');
+  const src = read('src/ui/enhanced/enhancedMenu.js');
   const start = src.indexOf('function pauseQuests(body) {');
   const tab = src.slice(start, src.indexOf('\nfunction render() {', start));
   assert.match(tab, /const clean = hooks\.journalClean\?\.\(\) \?\? null;/);

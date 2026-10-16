@@ -1086,7 +1086,7 @@ ACC0's wall is at cloud saves and nowhere else.
 ### The split: the flow thinks, the card draws
 
 `ui/accountFlow.js` holds every stage, every field, every refusal and
-every rule about what may be pressed. `ui/enhancedAccount.js` walks what
+every rule about what may be pressed. `ui/enhanced/enhancedAccount.js` walks what
 the flow says and makes DOM. That is `ChargenFlow` / `enhancedChargen.js`
 again, and `test/enhancedChargen.test.js` says why: *"node cannot draw
 them; what IS testable is the part that does arithmetic."* Everything a
@@ -1771,7 +1771,7 @@ for a tile is facts and no prose.
 ### F3 — the menu's cloud arithmetic was where no pin could reach it
 
 The decision about what a tile says — signed in, legacy, busy, refused,
-backed up — lived inside `ui/enhancedMenu.js`, which is DOM and a boot
+backed up — lived inside `ui/enhanced/enhancedMenu.js`, which is DOM and a boot
 and which no node test in this tree can drive. Three mutants of it went
 through **the whole suite** untouched:
 
@@ -1987,7 +1987,7 @@ and the relay vouches for the name inside it. What it actually divides
 is **a name the player TYPED from a name the service ISSUED**:
 
 - **No session.** The hello carries whatever stands in `onlineName` —
-  the *"Name over your head"* field in `ui/enhancedMenu.js` — and the
+  the *"Name over your head"* field in `ui/enhanced/enhancedMenu.js` — and the
   relay only sanitises it for length and for the word filter. It can be
   anybody's, which is the impersonation hole ACC1a opened this arc to
   close.
@@ -2131,7 +2131,7 @@ things this slice deletes.
 and the pin asserts exactly that, card by card.
 
 It is not in the menu, and that is AUDIT-312 F3's finding taken
-seriously rather than repeated: `ui/enhancedMenu.js` is DOM and a boot,
+seriously rather than repeated: `ui/enhanced/enhancedMenu.js` is DOM and a boot,
 and the last copy of a slot key written there had **dropped the
 character half** — which makes every character's QuickSave one slot —
 and the mutant of it went through the whole suite untouched. Here, that
@@ -2194,10 +2194,10 @@ that could ever release it. Same word, same arm.
   (appended, so nothing positional moves); `cloudStateOf` takes `local`,
   defaulting **true** so every caller written before this slice reads
   exactly what it read.
-- `src/ui/enhancedMenu.js` — `download` (the caller `pullSlot` never
+- `src/ui/enhanced/enhancedMenu.js` — `download` (the caller `pullSlot` never
   had, through `runCloud`), `cloudForCard`, `cloudOnlyGrid`, and the
   narrowed empty case.
-- `src/ui/enhancedStyle.js` — `.svcloudonly` and `.svcloud.is-only`.
+- `src/ui/enhanced/enhancedStyle.js` — `.svcloudonly` and `.svcloud.is-only`.
 - Pins: `test/cloudsaves.test.js` 19 → **21**, `test/savetile.test.js`
   11 → **13**. Probe: `npm run savetile` 18 → **29 checks**, which is
   where the heading's face, the brass, and a tile that could have
@@ -2325,7 +2325,7 @@ wins"*.
   ride one drop).
 - `src/net/online.js`, `src/net/chat.js` — no `v` on a peer or a line.
 - `src/net/remotePlayers.js`, `src/ui/nameLayer.js` — the mark retired.
-- `src/ui/enhancedMenu.js` — the name field replaced by who you are; the
+- `src/ui/enhanced/enhancedMenu.js` — the name field replaced by who you are; the
   button gated on a session. `src/scenes/world.js` — the two typed name
   sources gone. `src/systems/uiPrefs.js` — `onlineName` gone.
 - `test/fakeRoom.mjs` — `roomSigner`, shared with slam5's own harness.
@@ -2382,7 +2382,7 @@ the bible cannot reach them; they are simply no longer in the way.
 
 **The Relay field went with it,** and that is a compromise stated as
 one: Settings is where an override a player sets once belongs, but
-`ui/settingsMap.js` has no free-text row kind yet, and inventing one
+`ui/settings/settingsMap.js` has no free-text row kind yet, and inventing one
 inside this change is how a diff stops being reviewable. It cannot just
 go — `scenes/world.js` still reads `onlineServer`, and deleting the only
 way to set it would leave a read nothing can answer. **Owed: a text row
@@ -2637,7 +2637,7 @@ offered to be. A pin reads the source to hold that.
 
 ### The card almost broke ACC1e's own rule, and the pin caught it
 
-`ui/enhancedAccount.js` **may not style itself** — enhancedStyle.js's
+`ui/enhanced/enhancedAccount.js` **may not style itself** — enhancedStyle.js's
 header says why: *two copies of a design language is how the front door
 and the rooms behind it drift apart*. The first cut of this slice wrote
 `style.color` straight off the badge table, and ACC1e's pin went red.
@@ -2674,8 +2674,8 @@ model and wrong on screen until somebody else joined the room.
 - `src/net/accountClient.js` — `equipTitle`; `not-held` and `no-title`
   in the refusal table, two sentences because they are two situations.
 - `src/ui/accountFlow.js` — `wardrobe` beside `account`, and `equip`.
-- `src/ui/enhancedAccount.js` — the picker, `GLYPH_LABEL`.
-- `src/ui/enhancedStyle.js` — the wardrobe's rules, plus `badgeCss()`.
+- `src/ui/enhanced/enhancedAccount.js` — the picker, `GLYPH_LABEL`.
+- `src/ui/enhanced/enhancedStyle.js` — the wardrobe's rules, plus `badgeCss()`.
 - `src/ui/playerBadge.js` — `cssRgba`, `badgeClass`, `badgeCss`.
 - `src/net/roster.js`, `src/ui/chatPanel.js` — the badge on a row.
 - `test/acc3wear.test.js` — 10 pins. `tools/mutants/acc3c.json` — 12,
@@ -3056,7 +3056,7 @@ same sixty files in the same order, so its hash did not move.
   `startPlayClock`.
 - `src/net/accountClient.js` — `beatPlay`, `accountPlayBeat`.
 - `src/scenes/world.js` — the clock starts, gated on visibility.
-- `src/ui/enhancedAccount.js` — `registeredText`, `playedText`, the two
+- `src/ui/enhanced/enhancedAccount.js` — `registeredText`, `playedText`, the two
   rows. It still styles nothing.
 - `.github/workflows/account-deploy.yml` — the filter; the smoke step
   now beats a throwaway guest on real D1 and requires `playedS: 0`,
@@ -3173,7 +3173,7 @@ patreon titles. These also recieve their own unique glyphs. The account Dutchess
   `apostle` and `hierophant`, and the glyphs are `dm`, `disciple`, `apostle` and `hierophant`. Each title carries its
   own glyph. `src/ui/playerBadge.js` gives each title its word and colour: the Dungeon Master is orange (#ff8c1a), and
   the tiers are teal, violet and rose, since Mac named no colours for them. Each glyph takes its title's colour, and
-  has its own shape (a d20, a flame, an open book, a crown) and a classic mark. `src/ui/enhancedAccount.js` names each
+  has its own shape (a d20, a flame, an open book, a crown) and a classic mark. `src/ui/enhanced/enhancedAccount.js` names each
   one on the card.
 - **The grants** (`server-account/src/titles.js`, `TIER_LISTS`): each title is a handle list in `wrangler.toml`, which
   is the developers' own law. `DUNGEON_MASTER_HANDLES = "SquidKamer"` and `DISCIPLE_HANDLES = "Dutchess,Satranath,Skibbster"` (Mac added Satranath the same day, and Skibbster after it: "Skibbster needs to be a disciple ingame"); `APOSTLE_HANDLES = "SirMcMobdon"`
@@ -3305,7 +3305,7 @@ at the session the door hands the badge. Mutants:
 Mac: *"Go ahead and make the profile icon visible somehow on the pause
 menu and allow changes"*.
 
-**The mark over the game** (`ui/enhancedMenu.js` renderHome's pause
+**The mark over the game** (`ui/enhanced/enhancedMenu.js` renderHome's pause
 branch):
 - The pause screen wears PROFILE1's portrait top-right, a size smaller
   (48px, `.px-over .px-profile`) so it stands above the pause window.
@@ -3588,7 +3588,7 @@ true.
   at full magicka came back with 2 of 34. The magery reads Daggerfall's own maximum; and a maximum of 0 holds nothing
   (`keepFraction` answered 1).
 
-**The displays** (`ui/enhancedAccount.js`, `enhancedStyle.js`, `profileWindow.js`, `world.js`):
+**The displays** (`ui/enhanced/enhancedAccount.js`, `enhancedStyle.js`, `profileWindow.js`, `world.js`):
 
 - **UI-1:** the account card's values could not shrink, and the Renown rows ran off both sides of a phone's window (the
   key and the start of the name cut away where nothing could scroll to them); they shrink and wrap now. **UI-6:** a
@@ -3653,7 +3653,7 @@ Mac: "Also why is there no way to view my renown ingame?" - and "Plus XP bar". R
 beside every name, on the main menu, the profile and Inspect, and the account card's row said how far the track had
 come; the one face that never showed it was the player's own while playing.
 
-- **The row** (`src/ui/hudRenown.js renownHudView`, drawn by `src/ui/enhancedHud.js`). Under the three vitals and as
+- **The row** (`src/ui/hud/hudRenown.js renownHudView`, drawn by `src/ui/enhanced/enhancedHud.js`). Under the three vitals and as
   wide as them: the box every name wears ("12", in the name's gold), a thin bar to the next level, and "490 / 2,150
   XP" into the level ("Highest" at the cap). Online only - the online lane is the enhanced lane, so the classic HUD
   never needs one - and only once the page knows the level. The bar draws only for a total that is that level's; a
@@ -3682,7 +3682,7 @@ holding the sheet to every number it reads), and it found two things:
   and the Renown row, under the vitals, lifts that line by its own 22px and the gap. On a 1024px screen at scale 1 (on
   a 1280px one past 1.16, on a phone past about 1.2) the magicka bar stood in the diamond. While the row is lit the
   block now goes up by the same amount (`.hud:has(.hud-renown.on) .hud-quick`: 32 x scale on a desk, 30 on a phone).
-- **On a touch screen the row stood in the touch buttons.** The bottom-right from 16 to 64px up is `ui/touch.js`'s
+- **On a touch screen the row stood in the touch buttons.** The bottom-right from 16 to 64px up is `ui/touch/touch.js`'s
   (jump, sheathe, the mode, the social door). There the row stands ABOVE the vitals and never lower than 68px (a
   margin divided by the scale, so it holds at every scale, with the safe area), and the block rides two pixels above
   it - by a row of effect or need chips more when there are chips.
@@ -3706,13 +3706,13 @@ HUD in Chromium): the bar's middle stood 42px left of the vitals' at a level par
 the box on one side, the wider readout on the other. The first cut drew the numbers in a 16px bar; having seen it, Mac:
 "Actually lets just keep the other bar and remove the xp. Just have it visible in the player profile".
 
-- **No numbers on the HUD** (`src/ui/enhancedHud.js`, `src/ui/hudRenown.js`): the row is the box and RENOWN4's thin 8px
+- **No numbers on the HUD** (`src/ui/enhanced/enhancedHud.js`, `src/ui/hud/hudRenown.js`): the row is the box and RENOWN4's thin 8px
   bar - the fill and the ghost - and nothing else; `renownHudView` answers no words.
 - **The numbers are the profile menu's** - the account card the pause screen's portrait opens, where the duels and the
-  gates closed are (`src/ui/enhancedAccount.js`): its Renown row already said them for each of the five characters most
+  gates closed are (`src/ui/enhanced/enhancedAccount.js`): its Renown row already said them for each of the five characters most
   recently played ("Mara Venn - Renown 10, 490 / 2,150 XP to Renown 11", `net/renown.js renownProgressText`; RENOWN1),
   so nothing there changed; `test/renownbar.test.js` now holds the row to its numbers.
-- **The bar is on the middle** (`src/ui/enhancedStyle.js`): the row lit is a grid of three columns - the box (36px, its
+- **The bar is on the middle** (`src/ui/enhanced/enhancedStyle.js`): the row lit is a grid of three columns - the box (36px, its
   own width: 1.6em of 13px, 5px of padding and a 2px frame a side), the bar, and an empty column as wide as the box - so
   the bar's middle is the row's, and the row is as wide as the vitals' and centred under them. Its 22px height is
   RENOWN4b's, so the lifts and their model stand unchanged.
@@ -3964,7 +3964,7 @@ the operator's workflow is its only sender.
   claimed piece or a message alone may go - deleted as it was read, so a claim that lands between leaves it claimed.
 - **The heartbeat carries it** (`post`, SCALE4c's fourth part): the box is looked at on the letterbox's clock
   (`POST_POLL_MS`, three minutes) while the online lane runs.
-- **The mailbox** (`src/net/serverPost.js` PostBox, `src/ui/enhancedPost.js`): an envelope left of the hourglass on the
+- **The mailbox** (`src/net/serverPost.js` PostBox, `src/ui/enhanced/enhancedPost.js`): an envelope left of the hourglass on the
   pause face - online, where the host hands its box (`hooks.post`, every host forwarding it as TIMERS1's source) - with
   a count while anything waits (a piece unread, or an item not yet claimed, each once), kept live off the box's version.
   It opens a window on the hourglass's stage: the pieces newest first, unread and waiting gifts marked, an item named in
@@ -4289,7 +4289,7 @@ also stores an optional email (ACC1c), cloud save backups with a screenshot each
   and that repaint rebuilt the card under the player's fingers (after "Type your username" the rest of "Nystul" went
   nowhere but its N; a Space on the Terms box left the next Tab on Username). Every control is built under a name, and
   the one the keyboard was on - with its caret - has it back after the redraw, on a card of the same stage
-  (`src/ui/enhancedAccount.js`); pre-existing since ACC1e for the fields, every tick since TERMS1.
+  (`src/ui/enhanced/enhancedAccount.js`); pre-existing since ACC1e for the fields, every tick since TERMS1.
 - **T4** - the route table's `{ label? }` body and legalLaw.js's "a relative link would open nothing" said what the
   code does not; corrected.
 Pinned: `test/audit0929_terms.test.js` (6), `test/terms1.test.js`'s refusals; `tools/mutants/audit0929_terms.json` (14,
@@ -4445,7 +4445,7 @@ title they hold: upgraded, downgraded and lapsed by Patreon's own webhook, with 
   equip does.
 - **The pages** are HTML a person reads, in the game's dark and brass: every word of a player's escaped, no script, a
   policy that lets the one form post here and nothing frame it, never cached, no Referer.
-- **The card** (`ui/enhancedAccount.js`, `ui/accountFlow.js`): a Patreon row for a registered account while linking is
+- **The card** (`ui/enhanced/enhancedAccount.js`, `ui/accountFlow.js`): a Patreon row for a registered account while linking is
   on - Link Patreon, or "Linked - Disciple" with Refresh (the same link: Patreon asked again) and Unlink. When the window
   has the focus again the card reads the account again (`flow.refresh`), so the player comes back to the link that
   landed. Nothing for a guest, nothing while linking is off, nothing from a service before acct45.
@@ -4620,7 +4620,7 @@ glyph design if possible. with the same color of the name".
   (`claimsValid`), so the relay is **world162** and the account service **acct76** (acct75 here until HOME-PRICE took it); the account deploy waits for the
   relay's `/health` to serve world162. No frame changes shape.
 - **The title** (`src/ui/playerBadge.js`): "Primarch" in ONE colour, as asked - #d8cfae, the pixel menu's text
-  (`ui/enhancedStyle.js .px-mname`, the very rule the screenshot's name is drawn by; the screenshot's letters sample at
+  (`ui/enhanced/enhancedStyle.js .px-mname`, the very rule the screenshot's name is drawn by; the screenshot's letters sample at
   #d4ccb0 through its JPEG, the swatch at #e5e09e). A pin holds the title to that rule, so the two cannot drift. A
   one-colour title wears every face's black text shadow (no gradient, no `TITLE_EDGE`); it read on all five grounds - a
   night sky, a day sky, stone, grass and snow - in Chromium at 13 to 64 px. It is paler and greyer than the Founder's
@@ -5494,9 +5494,9 @@ signs it.
   streaming exterior, `scenes/worldModes.js`'s interiors and `scenes/dungeonContext.js`'s dungeons, one online
   session for all three, so no pause hook is threaded; `scenes/exterior.js`, the single-town bench, runs no online
   session and has nothing to say a hello in.
-- **The card** (`src/ui/enhancedAccount.js` nameAsRow, NAME_AS_CHOICES). In the Account section, beside the name it goes
+- **The card** (`src/ui/enhanced/enhancedAccount.js` nameAsRow, NAME_AS_CHOICES). In the Account section, beside the name it goes
   by: "Name in game", Account name / Character name, the chosen one pressed (`aria-pressed`) and worn in the
-  wardrobe's own vocabulary - the card brings no design language of its own; `src/ui/enhancedStyle.js` holds the one
+  wardrobe's own vocabulary - the card brings no design language of its own; `src/ui/enhanced/enhancedStyle.js` holds the one
   rule, the note tight under its buttons - and one line under them: "Others see <account name> over your head and in
   chat." or "Others see the name of the character you play online, or <account name> where it cannot be shown." A
   service before NAME-AS states no choice, and gets no toggle.

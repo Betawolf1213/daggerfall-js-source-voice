@@ -115,7 +115,7 @@ test('DISC23-B2: the PROFILE carries the skin - every set as its own picture, th
     assert.equal(heads().length, 2);
   });
   // the profile window draws it, under the account card
-  assert.match(src('src/ui/enhancedMenu.js'), /body\.append\(accountBody\(\)\);\s*\n\s*body\.append\(skinCard\(document\)\.root\);/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /body\.append\(accountBody\(\)\);\s*\n\s*body\.append\(skinCard\(document\)\.root\);/);
   _resetModSettings();
 });
 

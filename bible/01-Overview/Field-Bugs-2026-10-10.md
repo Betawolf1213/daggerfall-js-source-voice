@@ -16,7 +16,7 @@ author's permission.
 
 ## SPAM-TAKE: Take takes the board's notices in order (2)
 
-`ui/bountyWindow.js` mountBountyBoard. A Take left the card on the notice it took, now held, and the held card's row
+`ui/bounty/bountyWindow.js` mountBountyBoard. A Take left the card on the notice it took, now held, and the held card's row
 drew Give up - one press - in Take's place: the row is right-aligned (`BOUNTY_CSS` `.bounty-acts`), so the press after
 a take gave the notice back, the next took it again, and a run of presses see-sawed on the top notice. It was not the
 focus: the board keeps the focused act's class through a repaint (AUDIT 28 B11), and the Take it kept was gone.
@@ -38,7 +38,7 @@ notices in order and touched nothing else, and four Enters took four.
 The board is the port's (BOUNTY1, Port-Ledger A; DFU has none) and the fix is inside its window, so every host that
 mounts it has it: world.js's `openBoardWindow`, which worldModes.js reaches through `bountyHost.openBoard`; exterior.js
 (the fixed city) keeps DFU's board, and dungeonContext.js stands none. Pinned by `test/fb1010_spamtake.test.js` (5, on
-the real host's board, attached as `ui/bountyDoor.js` attaches it); `tools/mutants/fb1010.json`.
+the real host's board, attached as `ui/bounty/bountyDoor.js` attaches it); `tools/mutants/fb1010.json`.
 
 ## FIND-FIRST: the Enhanced world map opens on me (3)
 
@@ -58,7 +58,7 @@ The Bay's fit (TAMRIEL1) is still the sheet's home, and the glide starts there. 
 open - the Morrowind arm taking the sheet a few ticks late, or giving it back unfitted (MAP-FIT1) - keeps the map point
 at its middle (`_layout`); it kept its top-left, and the glide landed 224 by 137 paper pixels off me (AUDIT FB1010 B1 -
 MAP2's journey centring and a journal's place shared the root and are mended with it). The held map is the Enhanced
-skin's with the Enhanced map on (`ui/mapSkin.js` heldMapChosen); the classic map is DFU's TravelMapWindow, has no
+skin's with the Enhanced map on (`ui/map/mapSkin.js` heldMapChosen); the classic map is DFU's TravelMapWindow, has no
 `openOnMe`, and keeps DFU's open (the province, my region flashing). THE FOUR HOSTS: world.js wired; exterior.js mounts
 no travel map; worldModes.js and dungeonContext.js open none of their own - indoors the map key is not offered, and the
 journal's and the Party tab's doors are refused at world.js's (DFU's cannotTravelIndoors). Not a departure from DFU (the
@@ -140,7 +140,7 @@ shelves are C&C's again.
 
 ## Waiting: Spell Icon Overhaul (4)
 
-The picker offers ICON00I0's 69 icons (`ui/spellIconPickerWindow.js`; `ui/enhancedPorts.js` iconPickerView), and the
+The picker offers ICON00I0's 69 icons (`ui/spell/spellIconPickerWindow.js`; `ui/enhanced/enhancedPorts.js` iconPickerView), and the
 spell maker keeps every icon inside them (`systems/spell/spellMaker.js` buildCustomSpell wraps the index by SPELL_ICON_COUNT).
 Spell Icon Overhaul is a third party's art. Every pack this tree carries was handed over by the owner, nearly all on his
 word of their authors' permission (`01-Overview/Mod-Registry.md`; some authors' own words are still RECORD OPEN there),

@@ -18,10 +18,10 @@ import {
   GLYPH_STROKE, FONT_GLYPH_MIN, FONT_GLYPH_MAX, cssRgba, cssGradient, titleBadge, glyphBadges, glyphSvgNode, glyphArtNode,
   titlePaint, TITLE_PAINT_KEYS, paintTitle, gradientAt, badgeCss, badgeClass,
 } from '../src/ui/playerBadge.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
 import { PROFILE_CSS } from '../src/ui/profileWindow.js';
 import { renameGhostIds } from '../src/ui/windowMotion.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { titlesHeld, glyphsOf, equipRefusal, titleWorn, wardrobeOf, TIER_LISTS, TIER_GLYPH } from '../server-account/src/titles.js';
 import { readBadge, NAME_MAX } from '../src/net/wire.js';
 import { createNameLayer } from '../src/ui/nameLayer.js';
@@ -289,7 +289,7 @@ test('SHADOW-FANG the account card: the button keeps the plain crimson (its bord
   assert.ok(ENHANCED_CSS.includes(rule), 'and it reached the skin');
   assert.ok(ENHANCED_CSS.includes(`.card button.acttitle.${badgeClass('tl', 'shadowfang')} { color: #d3193c; }`));
   assert.equal((badgeCss().match(/\.acttitleword/g) ?? []).length, Object.keys(TITLE_GRADIENT).length, 'only a gradient title gets a word rule - Shadow Fang\'s, and since PENITENT Penitent\'s');
-  const js = rd('src/ui/enhancedAccount.js');
+  const js = rd('src/ui/enhanced/enhancedAccount.js');
   const wardrobe = js.slice(js.indexOf('function wardrobe()'), js.indexOf('function paint()'));
   assert.match(wardrobe, /b\.append\(el\('span', 'acttitleword', TITLE_TEXT\[key\] \?\? key\)\);/);
   assert.match(wardrobe, /const svg = glyphArtNode\(doc, g, 'acctglyphart', 1\.6\);/);

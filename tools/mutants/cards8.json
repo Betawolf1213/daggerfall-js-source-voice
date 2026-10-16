@@ -184,7 +184,7 @@
   },
   {
     "name": "C8-pack-pages-cards",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const held = new Set([...(wallet?.held ?? []), ...(binder?.held ?? [])]);",
     "new": "  const held = new Set([...(wallet?.held ?? [])]);",
     "tests": [
@@ -198,7 +198,7 @@
   },
   {
     "name": "C8-builder-past-held",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "    else if (inDeck >= held) _said =",
     "new": "    else if (false) _said =",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "C8-keep-unlawful",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "  keep.disabled = !!why;",
     "new": "  keep.disabled = false;",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "C8-drop-at-once",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "      if (_dropArmed !== i) { _dropArmed = i; rerender(); return; }\n",
     "new": "",
     "tests": [
@@ -270,7 +270,7 @@
   },
   {
     "name": "COLL-rail-hidden",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "...(collectionsPageShown(playerEntity) ? COLLECTION_PAGE_SECTIONS : [])];",
     "new": "];",
     "tests": [

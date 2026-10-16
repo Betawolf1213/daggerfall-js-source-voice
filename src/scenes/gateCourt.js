@@ -12,7 +12,7 @@
 //
 // THE PARTS, each pure where it can be: the look (world/gate/gateBoss.js bossAct/bossFrame/bossGlow/BOSS_CUES), the ground
 // (render/gateTelegraph.js telegraphShape and its pass), the verdict (net/gate/gateStrike.js strikeVerdict), the bar
-// (ui/gateBossBar.js bossBarModel). This file is their driver: it holds the sprite's texture and batch, the attacks it
+// (ui/gate/gateBossBar.js bossBarModel). This file is their driver: it holds the sprite's texture and batch, the attacks it
 // has already cued, landed and judged, and the host's doors.
 //
 // Not a DFU member. Ledger A (WB).
@@ -32,11 +32,11 @@ import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';   // WBX
 import { gateArchProfile } from '../world/gate/gateModel.js';
 import { ONLINE_MINUTES_PER_MS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../net/wire.js';   // WBX7: a soul trap's rounds on the shared world's clock; GATE-HEAL: the heal word's bounds
 import { spoilsLevel } from './spoilsPool.js';   // AUDIT WBX S2: the spoils never rolled past the level the fight admitted
-import { bossBarModel, drawGateBossBar, BOSS_BAR_TEXT } from '../ui/gateBossBar.js';
-import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitleCard.js';   // WB13e: the fight's beats, large
-import { marksCardModel, drawGateMarksCard } from '../ui/gateMarksView.js';   // WB9a: the night's marks over the screen as a fighter steps in
-import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // WB9d: his ground and his element, felt
-import { damageChartModel, drawGateDamageChart } from '../ui/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
+import { bossBarModel, drawGateBossBar, BOSS_BAR_TEXT } from '../ui/gate/gateBossBar.js';
+import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gate/gateTitleCard.js';   // WB13e: the fight's beats, large
+import { marksCardModel, drawGateMarksCard } from '../ui/gate/gateMarksView.js';   // WB9a: the night's marks over the screen as a fighter steps in
+import { groundViewModel, drawGateGround } from '../ui/gate/gateGroundView.js';   // WB9d: his ground and his element, felt
+import { damageChartModel, drawGateDamageChart } from '../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../net/gate/gateReceipt.js';
 import { bodySayer } from '../net/bossBody.js';   // INT15: my body, said to the court's room
 import { createGateHost } from './gateHost.js';   // WB11c: the Legion-Lord's host - its bodies, blows, words and sounds
@@ -57,7 +57,7 @@ export const COURT_STRIKE_TEXT = Object.freeze({
   burning: 'burning ground',
 });
 /** WBX5: THE TURN OF A PHASE, as he leaps into the court's heart - each phase by its name (net/gate/gateBrain.js PHASE_NAMES)
- *  and what it asks. WB13e (2026-10-01, Mac: "AAA grade polish"): a title card (ui/gateTitleCard.js) - its numeral, its
+ *  and what it asks. WB13e (2026-10-01, Mac: "AAA grade polish"): a title card (ui/gate/gateTitleCard.js) - its numeral, its
  *  name, and its one order under it until he lands (WB9b/c: the turn crosses to the next court); nothing said beside it. */
 export const PHASE_NUMERALS = Object.freeze(['I', 'II', 'III']);
 export const courtPhaseOrder = (n) => (n === 2 ? 'Follow him over the walkway.' : n === 3 ? 'Follow him to the last court.' : null);
@@ -249,7 +249,7 @@ export const HEAL_SEND_MS = 1000;
  * }} deps
  *   WB13d: `shake` the camera's (systems/betterAmbience.js weaponKick, under the player's own maxShake) - his landings near
  *   me felt.
- *   WB9a: `veiled` - the step's fire is over the screen (ui/gateVeil.js): the marks' card waits under it. WB9c:
+ *   WB9a: `veiled` - the step's fire is over the screen (ui/gate/gateVeil.js): the marks' card waits under it. WB9c:
  *   `sendCrystal` - a blow of mine on a crystal of Oblivion, to the court's room (the wire's `xhit`). WB11c: `sendHost` -
  *   a blow of mine on one of his host, to the court's room (the wire's `ahit`). GATE-HEAL: `sendHeal` - what my mates'
  *   spells healed in me, and whose, to the court's room (the wire's `heal`). INT15: `sendBody` - my body's share in
@@ -332,7 +332,7 @@ export function createGateCourt({
   let poolDraw = NONE;
   let _mark = markShape([0, 0], 0, MARK_COLOR), _markOf = null, markEmber = MARK_COLOR;   // WB8b: his mark and its ember, remade when his profile is another
   /** WB8c: whether his marks have been said to me on this entry, and the last feeding heard; WB9a: when they were (the
-   *  marks' card stands from then - ui/gateMarksView.js MARKS_CARD_ARRIVE_MS) */
+   *  marks' card stands from then - ui/gate/gateMarksView.js MARKS_CARD_ARRIVE_MS) */
   let marksSaid = false, fedHeard = null, marksAt = null;
   /** GATE-UX: when this screen first saw his fall (the relay's clock) - the damage chart stands from then */
   let chartAt = null;
@@ -496,7 +496,7 @@ export function createGateCourt({
     if (!pools.length || !f || !e || !(e.health > 0) || s.fell || s.wrath != null) { inFire = false; return; }
     const p = poolUnder(pools, f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2], t);
     if (!p) { if (inFire) { inFire = false; outAt = t; } return; }
-    // WB9d: the ground I stand in, named and coloured for the rim and the warning (ui/gateGroundView.js); a step in
+    // WB9d: the ground I stand in, named and coloured for the rim and the warning (ui/gate/gateGroundView.js); a step in
     // hisses under my feet at once - the bite is a tick off, the warning is not
     groundName = P.aspect.ground; groundColor = poolColor(P);
     if (!inFire && t - outAt >= POOL_TICK_MS) sound(groundStepCue(P), s, t, null, f);

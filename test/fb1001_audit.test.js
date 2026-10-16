@@ -7,7 +7,7 @@
 // long as they stayed shut. Now a shut frame clears the target.
 //
 // STICK-TAP. ACT-TOUCH made a tap mid-act the act's strike - asked before the tap's lock-only flag, so TS1's thumb
-// re-placed on the move stick (ui/touch.js, "the lock pick and nothing below it") struck the vein, the notch or the
+// re-placed on the move stick (ui/touch/touch.js, "the lock pick and nothing below it") struck the vein, the notch or the
 // Basket's glint at a moment the player never chose (every strike counts toward the node's; one off the glint loses the
 // clean finish). Now the stick's tap is no strike.
 //

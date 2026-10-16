@@ -6,12 +6,12 @@
 // dropdown menu. Add Waypoints to the filter on the worldmap").
 //
 // ONE STORE, BOTH MAPS. A waypoint is a point on the Iliac Bay in MAP PIXELS (floats - the held map's own unit,
-// ui/inkMap.js toMap; the Overworld converts its native world point: mx = x / 32768, my = 500 - z / 32768, the inverse
+// ui/ink/inkMap.js toMap; the Overworld converts its native world point: mx = x / 32768, my = 500 - z / 32768, the inverse
 // of MapsFile.MapPixelToWorldCoords plus the pixel's own span), a name, a flag colour and a KIND:
 //   personal - mine alone, kept on this device
 //   party    - said to my party on the hub's party channel, kept by every member who heard it
 //   guild    - said to my guild on the hub's guild channel, the same way
-// The Overworld (ui/travelViewHud.js) and the held map (ui/heldMap.js) both draw them as small flags, both take a
+// The Overworld (ui/travel/travelViewHud.js) and the held map (ui/heldMap.js) both draw them as small flags, both take a
 // right-click to add one or to rename, recolour, follow or remove one (ui/waypointMenu.js), and both read the same
 // show-switches (one per kind). FOLLOWED waypoints are the ones the player picked from the Overworld's dropdown: those
 // stay on the screen's edge with their distance wherever they are; the rest are drawn only where they lie in the view.

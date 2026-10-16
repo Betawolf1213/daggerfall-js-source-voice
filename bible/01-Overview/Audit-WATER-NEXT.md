@@ -55,7 +55,7 @@ its own (G2). Its shading is within 2-3% of main's. A real GPU was not measured 
 | F3 | low | The restride kept the whole bed, including the carved copies already on the GPU (about 400 KB a near pixel), where the build kept the grid and the depths. | One shape on both (`hostBed`): the grid as it stood, its normals for a re-carve, the depths, the sheet's depths, the halo. |
 | F4 | low | The swimmer's stir read `player.swimming`, which outdoors is Deep Waters' forge's alone, so a swimmer in a moat stirred like a wader. | `player.isPlayerSwimming \|\| player.swimming`, in both hosts. |
 | m12 = F9 | medium | THE FOUR HOSTS: the ripple field was wired in the streaming world alone. The fixed town's moats drew no ring round a wading player, and the stir was one host's closure. | The hosts' one stir (`waterRipples.js createRippleStir`) runs in the streaming world and the fixed town. The interiors (`worldModes.js`) and the dungeons (`dungeonContext.js`) draw no enhanced water: their pools are the classic plane (`drawWater`), which reads no field. |
-| m8 | low | PUDDLE-DRY carried its own 56, the fifth copy of MeshReader.cs:487's marker limit. | `terrainTiles.js GROUND_RECORD_LIMIT`, imported by the stamp, `rmbLayout.js`, the fixed town and `puddleDry.js`. The tie to the first ground in the walk is pinned, and so is the absence of a puddle law in `world.js` and `ui/inkTown.js`. |
+| m8 | low | PUDDLE-DRY carried its own 56, the fifth copy of MeshReader.cs:487's marker limit. | `terrainTiles.js GROUND_RECORD_LIMIT`, imported by the stamp, `rmbLayout.js`, the fixed town and `puddleDry.js`. The tie to the first ground in the walk is pinned, and so is the absence of a puddle law in `world.js` and `ui/ink/inkTown.js`. |
 
 **The GL and the shader** (G)
 

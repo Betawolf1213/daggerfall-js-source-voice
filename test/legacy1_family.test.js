@@ -21,7 +21,7 @@ import { birthSearch, loadSearch, nearestTown, townAt } from '../src/systems/leg
 import { layoutTree } from '../src/systems/legacy/tree.js';
 import { createLegacyHost } from '../src/scenes/legacyHost.js';
 import { zoomAbout, centreOn, personChips } from '../src/ui/familyPages.js';
-import { legacyModelOptions } from '../src/ui/legacyModelChoice.js';
+import { legacyModelOptions } from '../src/ui/legacy/legacyModelChoice.js';
 import { CLASS_CAREERS } from '../src/systems/chargen.js';
 import { REALM_BIRTH_WEALTH_MAX } from '../src/net/realm/realmGoldLaw.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';

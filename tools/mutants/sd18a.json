@@ -318,7 +318,7 @@
   },
   {
     "name": "SD18A-rises-again-at-fifteen",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "(s.ec[fallen].dn + sdProfileOf(s).pairMs - now)",
     "new": "(s.ec[fallen].dn + 15_000 - now)",
     "tests": [

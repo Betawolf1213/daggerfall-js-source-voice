@@ -14,7 +14,7 @@ import { courierFee, roadPixels, wearOf, wearCondition, auctionNext, saleTax, AU
 import { WEAVERS_STOCK } from '../src/net/professionLaw.js';
 import { mintPiece } from '../src/systems/smithItems.js';
 import { createMarketTab } from '../src/ui/marketTab.js';
-import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { readFileSync } from 'node:fs';
 
 const noWait = () => Promise.resolve();

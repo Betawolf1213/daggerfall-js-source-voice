@@ -55,7 +55,7 @@ export class MoveAxes {
    * One Update: flags cleared, forces for the held actions, friction.
    * @param {number} dt - Time.deltaTime
    * @param {{forwards?:boolean, backwards?:boolean, left?:boolean, right?:boolean, autorun?:boolean, analog?:{x:number,y:number}|null}} held
-   *   `analog` is TI2's stick reading (ui/touchLook.js analogAxes): x
+   *   `analog` is TI2's stick reading (ui/touch/touchLook.js analogAxes): x
    *   strafe right +, y forward +, each -1..1. InputManager.Update's
    *   JOYSTICK arm, beside :548's FindKeyboardActions: the force's
    *   scale is the axis's own reading rather than the keyboard's +/-1,

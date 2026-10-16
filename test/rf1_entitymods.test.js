@@ -155,10 +155,10 @@ test('RF1: the read sites - one accessor per channel in the formulas, the field 
   assert.doesNotMatch(read('src/systems/mentorMode.js'), /^import /m, 'mentorMode is import-free');
   assert.match(read('src/systems/skills.js'), /mod \+= entity\._mods\?\.skills\?\.\[skillId\] \?\? 0;/, 'skillValue');
   assert.match(read('src/systems/spellcast.js'), /saving \+= entityResistMod\(target, RESIST_NAMES/, 'the saving throw');
-  assert.match(read('src/ui/nativeInventory.js'), /armorLabelValue\(av\[i\] \?\? 100, entityArmorDisplayMod\(this\.hooks\.entity, i\)\)/, 'the doll');
+  assert.match(read('src/ui/native/nativeInventory.js'), /armorLabelValue\(av\[i\] \?\? 100, entityArmorDisplayMod\(this\.hooks\.entity, i\)\)/, 'the doll');
   assert.match(read('src/systems/worldTick.js'), /enchantmentMagicRound\(entity, r \+ 1, \{[\s\S]*?\}\);\s*\/\/ RF1[\s\S]*?computeEntityMods\(entity\);/, 'the magic round, after the enchant fold');
   assert.match(read('src/systems/entityMods.js'), /addEquipChangeListener\(computeEntityMods\);/, 'the equip seam');
-  for (const file of ['src/combat/formulas.js', 'src/combat/pcaao.js', 'src/systems/statMods.js', 'src/systems/skills.js', 'src/systems/spellcast.js', 'src/ui/nativeInventory.js', 'src/systems/worldTick.js']) {
+  for (const file of ['src/combat/formulas.js', 'src/combat/pcaao.js', 'src/systems/statMods.js', 'src/systems/skills.js', 'src/systems/spellcast.js', 'src/ui/native/nativeInventory.js', 'src/systems/worldTick.js']) {
     assert.doesNotMatch(read(file), /affixArmor|affixWeightMult|affixWeaponDamage|affixResist|_affixMods|computeAffixMods|lootRarity\.js/, `${file} reads no fold by name`);
   }
   assert.ok(newMods().armorParts.length === NUMBER_BODY_PARTS && Object.isFrozen(EMPTY_MODS));

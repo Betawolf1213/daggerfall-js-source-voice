@@ -6,7 +6,7 @@ import { ATTACK_THRESHOLD } from '../src/characters/weaponStates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { DIRECTION_TO_STRIKE } from '../src/characters/anims.js';
 import { setValue, resetToDefaults, LIVE, getFloat } from '../src/systems/settings/settings.js';
-import { NUMBER_LAW, ENUM_LAW, formatValue } from '../src/ui/settingsLaw.js';
+import { NUMBER_LAW, ENUM_LAW, formatValue } from '../src/ui/settings/settingsLaw.js';
 
 // AUDIT 28 - W11: WeaponAttackThreshold + WeaponSwingMode. The gesture
 // gate is Settings.WeaponAttackThreshold (StartGameBehaviour :263 writes

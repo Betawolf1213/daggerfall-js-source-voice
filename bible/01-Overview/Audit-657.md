@@ -37,7 +37,7 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 
 ## Fixed
 
-**The board** (`src/ui/enhancedPlusStyle.js`, `src/ui/marketTab.js`, `src/ui/noticeWindow.js`, `src/ui/vendorTab.js`,
+**The board** (`src/ui/enhanced/enhancedPlusStyle.js`, `src/ui/marketTab.js`, `src/ui/noticeWindow.js`, `src/ui/vendor/vendorTab.js`,
 `src/ui/workTab.js`, `src/ui/seatTab.js`, `src/systems/siegeField.js`, `src/net/boardLaw.js`)
 
 | ID | Sev | Finding | Fix |

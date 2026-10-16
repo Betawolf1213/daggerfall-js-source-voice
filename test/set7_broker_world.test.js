@@ -625,7 +625,7 @@ test('SET7 the host\'s seams: online alone (with the omen), stood each frame rig
   assert.match(w, /if \(win\) townTalk\.showOverlay\(win\);/);
   assert.match(w, /const _brokerNow = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/, 'the shared clock\'s day, never this machine\'s');
   assert.match(read('src/scenes/shared.js'), /import '\.\.\/systems\/sigil\/sigilBroker\.js';/, 'the record\'s save slot in every host');
-  assert.match(read('src/ui/enhancedChunk.js'), /\(\) => import\('\.\/brokerWindow\.js'\),/, 'warmed with the doors');
+  assert.match(read('src/ui/enhanced/enhancedChunk.js'), /\(\) => import\('\.\/brokerWindow\.js'\),/, 'warmed with the doors');
   const door = read('src/ui/brokerDoor.js');
   assert.match(door, /load: \(\) => import\('\.\/brokerWindow\.js'\),/, 'the door\'s chunk through the one home');
 });

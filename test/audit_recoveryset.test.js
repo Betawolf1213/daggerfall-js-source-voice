@@ -12,8 +12,8 @@ import {
   hashPassword, parseStored, codeForHashing, mintRecoverySet, recoveryLeft, RECOVERY_SET_SIZE, RECOVERY_CODE_ITERS, PBKDF2_ITERS,
 } from '../server-account/src/password.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { SESSION_KEY, DEFAULT_ACCOUNT_SERVICE, accountRefusalText } from '../src/net/accountClient.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 
@@ -265,7 +265,7 @@ test('AUDIT RECOVERY-SET B1 C8: in its host - a Close passed - the code stage of
   card.paint();
   assert.equal(buttons(card).find((b) => b.textContent === 'Close')?.disabled, false);
 
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const accountMayClose = \(\) => !acctFlow \|\| \(acctFlow\.stage !== 'code' && !acctFlow\.busy\);\nfunction closeAccount\(\) \{\n  if \(!accountMayClose\(\)\) return;/);
   // every door out of the window is that one: its Close, a tap outside (both hosts), Escape
   assert.match(menu, /onClose: closeAccount,/);

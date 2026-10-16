@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';   // PORTRAIT1: the host hand-off is a source read
 
-import { NativeTalkWindow, TALK_RECTS, TOPIC_ROWS, TOPIC_ROW_H, CONV_LINE_H, ROW_H, ROW_SPACING, QUESTION_COLOR, ANSWER_COLOR, SELECTED_TEXT_COLOR, TOPIC_SELECTED_TEXT_COLOR, topicRowStyle, PORTRAIT_RECT, PORTRAIT_ARCHIVE } from '../src/ui/nativeTalk.js';
+import { NativeTalkWindow, TALK_RECTS, TOPIC_ROWS, TOPIC_ROW_H, CONV_LINE_H, ROW_H, ROW_SPACING, QUESTION_COLOR, ANSWER_COLOR, SELECTED_TEXT_COLOR, TOPIC_SELECTED_TEXT_COLOR, topicRowStyle, PORTRAIT_RECT, PORTRAIT_ARCHIVE } from '../src/ui/native/nativeTalk.js';
 import { portraitIndexFromStaticNPCBillboard, OOPS_PORTRAIT_RECORD } from '../src/systems/npcSession.js';
 import { PERSON_FACE_RECORDS, PERSON_TEXTURES, NUM_PERSON_FACE_VARIANTS } from '../src/characters/mobilePerson.js';
 

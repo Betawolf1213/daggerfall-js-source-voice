@@ -238,7 +238,7 @@ const mkEl = () => ({
 test('PARTY-BUFFS the HUD: a heal I took rises as "+N" on the damage numbers\' layer - once per rise, never for a loss, and never for what a window restored (the frames under a rest, a level-up, a load or a death are hidden, and the first one back is a fresh reading) (mutants: the reading kept through a hidden frame; the float never shown)', async () => {
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const heals = () => document.body.children.flatMap((layer) => layer.children ?? []).filter((n) => n.className === 'hitnum hitnum-heal').map((n) => n.textContent);
@@ -264,7 +264,7 @@ test('PARTY-BUFFS the HUD: a heal I took rises as "+N" on the damage numbers\' l
     clearQuickslots();
     globalThis.document = prev;
   }
-  assert.match(src('src/ui/enhancedStyle.js'), /\.hitnum-heal \{ top: 50%; color: #8fe27f;/);
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.hitnum-heal \{ top: 50%; color: #8fe27f;/);
 });
 
 // ─── AUDIT (the batch's audit, agent B) ────────────────────────────────────────────────────────────────────────────

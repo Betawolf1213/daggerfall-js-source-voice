@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { CameraRecoiler, recoilTimerStart, recoilRotationScalar, BASE_MAX_RECOIL_SEVERITY, MIN_PERCENT_THRESHOLD, TIMER_SPEED, RECOIL_FRACTION } from '../src/player/cameraRecoiler.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
-import { lastHealthLostPercent } from '../src/ui/hudVitals.js';
+import { lastHealthLostPercent } from '../src/ui/hud/hudVitals.js';
 
 // AUDIT 28 - W9: CAMERA RECOIL (CameraRecoiler.cs, whole). The setting
 // ships 3 (High) - DFU's camera reels on a hit by default - and the

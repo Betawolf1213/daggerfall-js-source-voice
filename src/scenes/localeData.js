@@ -243,7 +243,7 @@ export function browserLanguages() {
 
 /** THE BOOT'S LANGUAGE: `?lang=` for one visit, else the player's own choice (uiPrefs `language`). While English
  *  stands and the front door has not yet offered the browser's own language, that language's text is fetched too, so
- *  the offer can ask in it (ui/enhancedMenu.js languageOffer). A failure leaves English standing and the game starts. */
+ *  the offer can ask in it (ui/enhanced/enhancedMenu.js languageOffer). A failure leaves English standing and the game starts. */
 export async function initLocale(params = null, { languages = browserLanguages() } = {}) {
   try {
     _packs = await packStore.installedPacks();   // L10N3b: before anything is registered, so a pack's language is offered

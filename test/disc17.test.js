@@ -22,7 +22,7 @@ import { drawOnce, shade } from './wispShade.mjs';
 import { AudioEngine } from '../src/systems/audio.js';
 import { THUNDER_SOURCE_M, thunderSourceAt } from '../src/systems/distantStorms.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
-import { SHEET_MEMBERS } from '../src/ui/mapStrip.js';
+import { SHEET_MEMBERS } from '../src/ui/map/mapStrip.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 
@@ -183,7 +183,7 @@ test('DISC17-C: the weather layer is gone from the tree - no module, no import, 
   assert.doesNotMatch(build, /weather:/, 'the map is handed no weather');
   assert.match(build, /getClimateIndex: \(x, yy\) => maps\.getClimateIndex\(x, yy\),/, 'and the climate lookup it had before the weather (the travel time\'s, the ink\'s)');
   assert.equal(SHEET_MEMBERS.includes('paintUnder'), false);
-  for (const f of ['src/ui/townSheet.js', 'src/ui/automapSheet.js', 'src/ui/mapStrip.js']) assert.doesNotMatch(rd(f), /paintUnder/, f);
+  for (const f of ['src/ui/town/townSheet.js', 'src/ui/automap/automapSheet.js', 'src/ui/map/mapStrip.js']) assert.doesNotMatch(rd(f), /paintUnder/, f);
   // what the map read stays the sim's: the forecast law and the ground law are the weather map's own
   assert.match(rd('src/systems/weather/weatherMap.js'), /export function forecastAt\(/);
   assert.match(rd('src/systems/weather/weatherSim.js'), /export function mapGround\(climateAt\)/);

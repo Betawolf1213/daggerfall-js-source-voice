@@ -15,8 +15,8 @@ import {
   GRIMOIRE_SPELLBOOKS, grimoireSpellbook, bookSound, BOOK_BEAT_MS, UNROLL_SEL, DIAL_WORD, ATTRIBUTE_WORD, VITAL_WORD,
 } from '../src/ui/grimoireDress.js';
 import { GRIMOIRE_CROPS, GRIMOIRE_SIZES, TEAR_LUMA, FRAME_ART, grimoireGrid, DIAL_ICONS, dialIconBox, dialIconSize, dialRows, dialArtName, NATIVE, VIAL_CUT } from '../src/ui/grimoireArt.js';
-import { applyPlusTheme, REFORGE_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { applyPlusTheme, REFORGE_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url));
 const manifest = JSON.parse(rd('vendor/grimoire-ui/grimoire-ui.files.json').toString('utf8'));
@@ -315,8 +315,8 @@ test('GRIM6: the front door\'s desk is the pack\'s painting at its own resolutio
 
 test('TURN1 + FLIP-FIT: the compass turns over in the HUD editor (Alt+U) - the press shows only under the dress, turned the box stands the way the pack painted it and the strip\'s letters rise to the needle, the turn kept in the layout; the pack card\'s Stats side held to the card\'s width (mutants: the press hidden under the dress; the box left hanging when turned; the turn not saved; the back free to grow)', async () => {
   const css = kitCss() + rosterCss();
-  const hl = await import('../src/ui/hudLayout.js');
-  const src = readFileSync(new URL('../src/ui/hudLayout.js', import.meta.url), 'utf8');
+  const hl = await import('../src/ui/hud/hudLayout.js');
+  const src = readFileSync(new URL('../src/ui/hud/hudLayout.js', import.meta.url), 'utf8');
   assert.equal(hl.HUD_PIECES.find((p) => p.id === 'compass')?.turn, true, 'the compass is a piece that turns');
   assert.match(hl.HUD_LAYOUT_CSS, /i\[data-hm-handle="turn"\] \{ display: none;/, 'no press where a dress draws no top and bottom');
   assert.match(css, /#hud-layout-handles i\[data-hm-handle="turn"\] \{ display: block; \}/, 'the press under the dress');
@@ -434,11 +434,11 @@ test('FOE-PLATE / VIAL-LONG (2026-10-11: the foe\'s and the boss\'s bars, the lo
   assert.match(css, /\.wb-boss-bar\[data-hm-len\] \{ width: calc\(var\(--grim-boss-w\) \* var\(--hml, 1\)\) !important; \}/);
   assert.match(css, /data-grim-vitals="upright"\] \.hud \.hud-bars, [^{]*\{ --hm-len-axis: y; \}/, 'the stood vials\' length runs up');
   assert.match(css, /\.hud-health\[data-hm-len\] \.hud-fill \{ background: var\(--grim-vialHealthUpFoot/, 'and a taller vial is drawn out from its foot');
-  const { HUD_LAYOUT_CSS, HUD_PIECES } = await import('../src/ui/hudLayout.js');
+  const { HUD_LAYOUT_CSS, HUD_PIECES } = await import('../src/ui/hud/hudLayout.js');
   assert.equal(HUD_PIECES.find((p) => p.id === 'boss').len, true, 'the boss bar has a length');
   assert.match(HUD_LAYOUT_CSS, /\.wb-boss-bar\[data-hm-len\] \{ width: calc\(460px \* var\(--hml, 1\)\)/);
   assert.match(HUD_LAYOUT_CSS, /i\[data-hm-handle="len"\]\[data-axis="y"\]/, 'the handle on the top edge of a stood bar');
-  const src = readFileSync(new URL('../src/ui/hudLayout.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/hud/hudLayout.js', import.meta.url), 'utf8');
   assert.match(src, /per = \(axis === 'y' \? a\.top - b\.top : b\.right - a\.right\)/, 'the handle\'s travel per length is measured');
   assert.match(src, /else want = keepOnScreen\(want\);/, 'a size or a length never carries a piece off the screen');
   const art = readFileSync(new URL('../src/ui/grimoireArt.js', import.meta.url), 'utf8');
@@ -448,7 +448,7 @@ test('FOE-PLATE / VIAL-LONG (2026-10-11: the foe\'s and the boss\'s bars, the lo
 test('GRIM-FIELD (2026-10-11, the DFO Grimoire bug thread): the Controls head sticks as ONE line over the book\'s short scroll; a chosen chip says so over its shelf-box picture; a setting\'s words are a scroll BESIDE the book in game (out of the page column\'s clip, slid in only as far as the screen asks) and the held-out scroll in the front door\'s column; Find me off the dungeon\'s sheet alone (mutants: the head\'s sentence kept, the inset shadow trusted, the sheet left in the column)', () => {
   const css = rosterCss();
   assert.match(css, /\.ctl-head:not\(\.ctl-asking\) > p\.meta \{ display: none !important; \}/, 'the head\'s sentence is the intro\'s own law - said there');
-  assert.match(readFileSync(new URL('../src/ui/enhancedControls.js', import.meta.url), 'utf8'), /ctl-intro-law/, '...and the intro still says it');
+  assert.match(readFileSync(new URL('../src/ui/enhanced/enhancedControls.js', import.meta.url), 'utf8'), /ctl-intro-law/, '...and the intro still says it');
   assert.match(css, /@media \(any-pointer: fine\) \{\n\s+:root\[data-plus-dress="grimoire"\] \.px-journal \.ctl-row \{ padding-top: 3px !important;/, 'a key\'s row a line where there is no thumb');
   assert.match(css, /\[aria-pressed="true"\][^{]*\{ color: #fff27a !important; outline: 2px solid #d8b04a !important; outline-offset: -3px;/, 'the chosen chip\'s mark stands OVER the picture');
   assert.match(css, /\.px-setwrap \.panes \{ position: static !important; \}/, 'the page column is no longer the sheet\'s anchor');

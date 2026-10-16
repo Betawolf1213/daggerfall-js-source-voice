@@ -109,7 +109,7 @@ test('ENH-NOTICE3: the seam is imported where the hosts build their deps, and no
   }
   assert.deepEqual(offenders, [], 'a system or a mod module importing a box class is a producer naming the window - it must name the kind through the host\'s deps (or systems/notify.js)');
   // ...and notify.js itself never forks on the skin: the face is the
-  // draw's decision (ui/actionText.js, ui/hudText.js), not the door's.
+  // draw's decision (ui/actionText.js, ui/hud/hudText.js), not the door's.
   const notify = rd('src/systems/notify.js');
   assert.doesNotMatch(notify, /from '\.\/uiSkin\.js'|isEnhanced\(/, 'mutant: a skin fork in the door - a second home for the skin decision');
   assert.match(notify, /import \{ ActionTextBox \} from '\.\.\/ui\/actionText\.js';/, 'the one box class, the port\'s home for DaggerfallUI.MessageBox');

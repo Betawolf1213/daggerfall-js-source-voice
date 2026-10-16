@@ -25,7 +25,7 @@ import { EL_MESH_FS } from '../src/render/enhancedLighting.js';
 import { classicShadowLane } from '../src/render/classicShadowLane.js';
 import { DESPAWN_BEYOND } from '../src/systems/naval/navalDirector.js';
 import { RAIDER_DROP_M } from '../src/systems/naval/navalRaiders.js';
-import { drawNavalTags, destroyNavalHud, tagAlpha } from '../src/ui/navalHud.js';
+import { drawNavalTags, destroyNavalHud, tagAlpha } from '../src/ui/naval/navalHud.js';
 
 const RENDERER = readFileSync(new URL('../src/render/renderer.js', import.meta.url), 'utf8');
 const coast = (x, z) => !(z > 200 || (x > 300 && x < 400 && z > -300));

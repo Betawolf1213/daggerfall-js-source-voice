@@ -109,7 +109,7 @@ test('AUDIT 29 A15: a specialisation is asked with the choice the client saw sta
 });
 
 test('AUDIT 29 C1: a page drawn over a stale state it cannot read draws again only when a NEW read answers - never on the backoff\'s last answer (the loop that starved the tab)', async () => {
-  const { setProfessionsPages, drawStoresPage, drawProfessionsPage } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, drawProfessionsPage } = await import('../src/ui/professions/profPages.js');
   let asked = 0, t = T;
   const door = { account: () => 'acct-1', state: async () => { asked++; return { ok: false, error: 'no-session' }; } };
   const book = createProfBook({ door, storage: memStorage(), character: () => 'c1', now: () => t, sleep: noWait });
@@ -127,7 +127,7 @@ test('AUDIT 29 C1: a page drawn over a stale state it cannot read draws again on
 });
 
 test('AUDIT 29 B2: a home\'s Forge station is offered, and sold, only where a Forge works - the pages shown (online, the trades open); CLASSIC-PAGES: on either skin', async () => {
-  const { setProfessionsPages, forgeOffered, FORGE_COLD_LINE } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, forgeOffered, FORGE_COLD_LINE } = await import('../src/ui/professions/profPages.js');
   const { stationsOffered } = await import('../src/ui/decorPanel.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setProfessionsPages(null);

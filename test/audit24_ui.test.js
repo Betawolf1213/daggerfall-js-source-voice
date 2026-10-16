@@ -2,12 +2,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { NativeInventoryWindow, INV_RECTS } from '../src/ui/nativeInventory.js';
-import { QuestJournalWindow, JOURNAL_COLORS } from '../src/ui/questJournal.js';
-import { DEFAULT_TEXT_COLOR } from '../src/ui/nativePanel.js';
+import { NativeInventoryWindow, INV_RECTS } from '../src/ui/native/nativeInventory.js';
+import { QuestJournalWindow, JOURNAL_COLORS } from '../src/ui/quest/questJournal.js';
+import { DEFAULT_TEXT_COLOR } from '../src/ui/native/nativePanel.js';
 import { PlayerHistoryWindow } from '../src/ui/playerHistory.js';
 import { LABEL_HIT_HEIGHT, TANDEM_SPACING, LABEL_SPACING } from '../src/systems/specialAdvantages.js';
-import { SCREEN_DIM, DEFAULT_SHADOW_COLOR } from '../src/ui/nativePanel.js';
+import { SCREEN_DIM, DEFAULT_SHADOW_COLOR } from '../src/ui/native/nativePanel.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
@@ -82,7 +82,7 @@ test('audit24 ui: the journal counts the formattings the notebook actually emits
   // and the four page TITLES are Internal_Strings_en's own, ids 628 /
   // 630 / 632 / 634 - two of them were the port's sentence case where
   // the table title-cases both words
-  const src = rd('src/ui/questJournal.js');
+  const src = rd('src/ui/quest/questJournal.js');
   assert.match(src, /activeQuests: 'Active Quests',/);
   assert.match(src, /finishedQuests: 'Finished Quests',/);
   assert.match(src, /notebook: 'Notebook',/);
@@ -92,7 +92,7 @@ test('audit24 ui: the journal counts the formattings the notebook actually emits
 test('audit24 ui: the journal body shadow is the olive default, and rows advance by an INT', () => {
   // MultiFormatTextLabel never sets ShadowColor, so it keeps
   // DaggerfallDefaultShadowColor = Color32(93, 77, 12) (:37, :232).
-  const t = rd('src/ui/questJournal.js');
+  const t = rd('src/ui/quest/questJournal.js');
   assert.match(t, /m\.s \* scale, DEFAULT_SHADOW_COLOR\)/, 'the body shadow is the default olive');
   assert.equal(/m\.s \* scale, \[0, 0, 0, 1\]\)/.test(t), false, 'and no opaque black is left');
   assert.deepEqual(DEFAULT_SHADOW_COLOR, [93 / 255, 77 / 255, 12 / 255, 1]);
@@ -104,8 +104,8 @@ test('audit24 ui: the journal body shadow is the olive default, and rows advance
 
 test('audit24 ui: the ScreenDimColor windows paint no letterbox, and the dim is Color.clear', () => {
   assert.deepEqual(SCREEN_DIM, [0, 0, 0, 0], 'DaggerfallPopupWindow.cs:27 - Color.clear');
-  for (const f of ['src/ui/nativeInventory.js', 'src/ui/charsheet.js', 'src/ui/nativeTalk.js',
-    'src/ui/questJournal.js', 'src/ui/nativeTrade.js']) {
+  for (const f of ['src/ui/native/nativeInventory.js', 'src/ui/charsheet.js', 'src/ui/native/nativeTalk.js',
+    'src/ui/quest/questJournal.js', 'src/ui/native/nativeTrade.js']) {
     assert.match(rd(f), /drawScreenDimBackdrop\(renderer, canvas\)/, `${f}: the letterbox is not painted`);
   }
   // the three chargen popups draw the previous window and then assign
@@ -118,7 +118,7 @@ test('audit24 ui: the ScreenDimColor windows paint no letterbox, and the dim is 
 test('audit24 ui: the wagon button clicks ONCE and lights while in use', () => {
   // WagonButton_OnMouseClick plays exactly one ButtonClick, at the end
   // (:1242); ShowWagon(true) sets wagonSelected (:1051).
-  const inv = rd('src/ui/nativeInventory.js');
+  const inv = rd('src/ui/native/nativeInventory.js');
   const wagonFn = inv.slice(inv.indexOf('  _wagon() {'), inv.indexOf('  _dropGold('));
   assert.equal(/playOneShot\(SOUND\.ButtonClick/.test(wagonFn), false,
     '_wagon plays no sound of its own - the click loop already did');
@@ -155,7 +155,7 @@ test('audit24 ui: the empty-page fallback survived the row-shape change', () => 
   // "Nothing is written here yet." fallback went unreachable the same
   // day it was written. The audit's own regression, caught by the
   // audit.
-  const src = rd('src/ui/questJournal.js');
+  const src = rd('src/ui/quest/questJournal.js');
   assert.match(src, /if \(!lines\.some\(\(l\) => l\.text\)\)/,
     'the emptiness test reads the row\'s TEXT, not the row');
   assert.doesNotMatch(src, /if \(!lines\.some\(\(l\) => l\)\)/, 'and not the object');

@@ -1,21 +1,21 @@
 [
   {
     "name": "FB0929D-MAPKEY-the-flip-only-hides",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "  filters[which] = !filters[which];\n  return true;",
     "new": "  filters[which] = true;\n  return true;",
     "tests": ["test/fb0929d_mapkey.test.js", "test/travelmapwindow.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-flip-takes-any-name",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "  if (!filters || !(which in filters)) return false;",
     "new": "  if (!filters) return false;",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-classic-flips-its-own-copy",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    if (!flipTravelMapFilter(this.filters, which)) return;\n    this._updateMapLocationDotsTexture();",
     "new": "    if (!(which in this.filters)) return;\n    this.filters[which] = !this.filters[which];\n    this._updateMapLocationDotsTexture();",
     "why": "the law re-spelled in the classic window rather than pressed: the same behaviour, so only the source pin (ONE flip, both skins) can see it - and it does",
@@ -23,49 +23,49 @@
   },
   {
     "name": "FB0929D-MAPKEY-the-unpack-swaps-green",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "const unpackRGB = (c) => ({ r: c & 0xff, g: (c >>> 8) & 0xff, b: (c >>> 16) & 0xff });",
     "new": "const unpackRGB = (c) => ({ r: c & 0xff, g: (c >>> 16) & 0xff, b: (c >>> 16) & 0xff });",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-filter-asks-nothing",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "getPixelColorIndex(t, { [filter]: true }) < 0",
     "new": "getPixelColorIndex(t, { [filter]: false }) < 0",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-label-is-the-store-word",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      filter, label: filter[0].toUpperCase() + filter.slice(1),",
     "new": "      filter, label: filter,",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-a-kind-takes-its-last-bucket",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "if (c && !(k in out)) out[k] = markInk(c);",
     "new": "if (c) out[k] = markInk(c);",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-no-palette-is-a-palette",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "export function markInks(colors) {\n  if (!colors) return null;",
     "new": "export function markInks(colors) {\n  if (!colors) return {};",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-mark-ink-is-the-quarters",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "export const markInk = (c) => quarterInk(c, MARK_INK_MIX);",
     "new": "export const markInk = (c) => quarterInk(c);",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-mix-too-light",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "export const MARK_INK_MIX = 0.58;",
     "new": "export const MARK_INK_MIX = 0.57;",
     "why": "killed by the measurement against the player's own FMAP_PAL.COL (ARENA2_PATH): the city's tint falls to 44.9 off the paper, under EM7's floor of 45",
@@ -73,7 +73,7 @@
   },
   {
     "name": "FB0929D-MAPKEY-the-mix-past-the-smallest",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "export const MARK_INK_MIX = 0.58;",
     "new": "export const MARK_INK_MIX = 0.59;",
     "why": "killed by the measurement against the player's own FMAP_PAL.COL (ARENA2_PATH): a step lighter still clears the floor, so the mix is spending hue it does not need",
@@ -81,35 +81,35 @@
   },
   {
     "name": "FB0929D-MAPKEY-the-paint-drops-the-inks",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    paintGlyph(ctx, m.kind, x, y, false, opts.inks?.[m.kind] ?? (m.kind === 'hall' ? HALL_INK : undefined));",
     "new": "    paintGlyph(ctx, m.kind, x, y, false, (m.kind === 'hall' ? HALL_INK : undefined));",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-glyph-strokes-in-the-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.strokeStyle = halo ? PEN.halo : ink;",
     "new": "  ctx.strokeStyle = halo ? PEN.halo : PEN.line;",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-glyph-fills-in-the-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.fillStyle = halo ? PEN.halo : ink;",
     "new": "  ctx.fillStyle = halo ? PEN.halo : PEN.line;",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-chip-is-in-the-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  paintGlyph(ctx, kind, c, c, false, ink);",
     "new": "  paintGlyph(ctx, kind, c, c, false);",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-chip-has-no-paper",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.fillRect(0, 0, KEY_CHIP_PX, KEY_CHIP_PX);\n",
     "new": "",
     "tests": ["test/fb0929d_mapkey.test.js"]
@@ -259,21 +259,21 @@
   },
   {
     "name": "FB0929D-MAPKEY-the-key-stands-over-the-card",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .hmroot.hmcardup .hmkey { display: none; }\n",
     "new": "",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-key-lets-presses-through",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  padding: 6px 10px; border-radius: 4px; background: rgba(10, 12, 17, 0.94); pointer-events: auto; }",
     "new": "  padding: 6px 10px; border-radius: 4px; background: rgba(10, 12, 17, 0.94); }",
     "tests": ["test/fb0929d_mapkey.test.js"]
   },
   {
     "name": "FB0929D-MAPKEY-the-key-floats",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hmkey { position: absolute; left: 0; bottom: calc(100% + 4px);",
     "new": ".hmkey { position: absolute; left: 0; bottom: 70px;",
     "tests": ["test/fb0929d_mapkey.test.js"]

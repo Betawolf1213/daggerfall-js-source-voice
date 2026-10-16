@@ -364,7 +364,7 @@ test('a11: an all-max character closes with the pool unspent', () => {
 test('a11: the door sends the CLASSIC skin to the sheet and keeps the screen for enhanced', () => {
   const door = src('src/ui/charSheetDoor.js');
   // LV1 MOVED THIS PIN, and only this far: the enhanced skin's
-  // level-up is now its own window (ui/enhancedLevelUp.js) rather than
+  // level-up is now its own window (ui/enhanced/enhancedLevelUp.js) rather than
   // the canvas rollout, so the arm this used to quote verbatim is the
   // HEADLESS enhanced path - node drives these hosts with no document
   // and keeps the canvas window, exactly as the sheet fork above it

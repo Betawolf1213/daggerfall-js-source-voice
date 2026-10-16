@@ -26,7 +26,7 @@ import { HIT_KINDS, dpsRef, MELEE_REACH } from '../src/net/gate/gateBrain.js';
 import { runSpeed, JUMP_SPEED, GRAVITY, CAPSULE_RADIUS } from '../src/player/motor.js';
 import { createSdRemnant, remnantOpenAt } from '../src/scenes/sdRemnant.js';
 import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
-import { remnantBarModel, SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
+import { remnantBarModel, SD_BAR_TEXT } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
 import { SD_STEPS_COURSE } from '../src/world/superDungeon/sdSteps.js';
 

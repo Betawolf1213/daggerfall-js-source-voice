@@ -6,7 +6,7 @@
 // THIS IS OURS, AND IT IS DAGGERFALL'S TAMRIEL. The outlines below are drawn by hand from the lore map of
 // Daggerfall's day - the continent CreateCharRaceSelect shows (nine provinces, SUMURSET spelled the game's way, the
 // Imperial Province for the heart of it) - and not traced off TMAP00I0, which is game data and never ships (the
-// Port-Doctrine's RENDER rule; ui/introMap.js is the precedent: authored geography, no raster of the game's). Where
+// Port-Doctrine's RENDER rule; ui/intro/introMap.js is the precedent: authored geography, no raster of the game's). Where
 // the lore maps of later games moved a coast, the 1996 shape is kept, because it is the one the Bay's own data joins.
 //
 // ONE VERTEX, MANY RINGS. Every province is a ring (or rings - an island is a ring of its own) of NAMED vertices, and

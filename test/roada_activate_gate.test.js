@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { createActivateGate, activateFrame, setClickDelay } from '../src/systems/activateGate.js';
 import {
   trackLargeHudPointer, activeMouseOverLargeHUD, _resetLargeHud, largeHudRect,
-} from '../src/ui/hudLarge.js';
+} from '../src/ui/hud/hudLarge.js';
 import { setCursorActive } from '../src/player/pointerLock.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 

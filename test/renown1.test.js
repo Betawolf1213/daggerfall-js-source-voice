@@ -39,7 +39,7 @@ import { snapshotPlayer } from '../src/systems/save/save.js';
 import { createNameLayer } from '../src/ui/nameLayer.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { profileView, createProfileWindow } from '../src/ui/profileWindow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
@@ -652,7 +652,7 @@ test('RENOWN1 the main menu\'s account card: the level of the character most rec
   card.paint();
   const plain = card.root.all.find((n) => n.tag === 'h3');
   assert.deepEqual([plain.textContent, plain.children.length], ['Lattymoy', 0], 'no track: the heading it always drew');
-  assert.match(src('src/ui/enhancedStyle.js'), /\.card h3 \.acctrenown \{/, 'the chip\'s colour is the skin\'s sheet, never the card\'s');
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.card h3 \.acctrenown \{/, 'the chip\'s colour is the skin\'s sheet, never the card\'s');
 });
 
 // ── THE PLAQUE (RENOWN2) ────────────────────────────────────────────
@@ -710,5 +710,5 @@ test('RENOWN2 the plaque: a player\'s Renown rides the hover frame BESIDE the ti
     destroyWorldPlaque();
     delete globalThis.document; delete globalThis.window; delete globalThis.location;
   }
-  assert.match(src('src/ui/enhancedStyle.js'), /\.wplaque-renown \{[^}]*border: 1px solid rgba\(242, 196, 107, 0\.8\);/, 'the plaque\'s box is the one over their head');
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.wplaque-renown \{[^}]*border: 1px solid rgba\(242, 196, 107, 0\.8\);/, 'the plaque\'s box is the one over their head');
 });

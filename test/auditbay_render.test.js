@@ -18,7 +18,7 @@ import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPo
 import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createNavalFlames } from '../src/scenes/navalFlames.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
-import { NAVAL_HUD_CSS } from '../src/ui/navalHud.js';
+import { NAVAL_HUD_CSS } from '../src/ui/naval/navalHud.js';
 import { SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 

@@ -8,7 +8,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 import { ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 
@@ -35,7 +35,7 @@ test('CART-FIT: the pack beside a side window is PAIRED - the wagon and the play
 });
 
 test('CART-FIT: paired, the two frames share one viewport - the side window one column, the pack what is left; the full pair from 1770 px; the phone keeps its stack', () => {
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   const narrow = /@media \(min-width: 641px\) \{\n {2}\.pack-shell\.paired \.loot-win, \.pack-shell\.paired \.loot-win\.wide \{ width: 340px; \}\n {2}\.pack-shell\.paired \.loot-win\.wide \.remotelist \{ display: block; \}\n {2}\.pack-shell\.paired \.pack-win \{ width: min\(1040px, calc\(100vw - 32px - 18px - 340px\)\); \}\n\}/;
   assert.match(css, narrow, 'below the full pair: 340 + the 18 px gap + the page\'s margin come off the pack');
   assert.match(css, /@media \(min-width: 1770px\) \{\n {2}\.pack-shell\.paired \.loot-win\.wide \{ width: 680px; \}\n {2}\.pack-shell\.paired \.loot-win\.wide \.remotelist \{ display: grid; \}\n\}/,
@@ -45,6 +45,6 @@ test('CART-FIT: paired, the two frames share one viewport - the side window one 
   assert.match(css, /\.pack-win \{[^}]*width: min\(1040px, 95vw\)/);
   // the gap the arithmetic subtracts is the shell's own
   assert.match(css, /grid-auto-flow: column; gap: 18px/);
-  const src = rd('src/ui/enhancedInventory.js');
+  const src = rd('src/ui/enhanced/enhancedInventory.js');
   assert.match(src, /if \(packOpen && loot\) shell\.classList\.add\('paired'\);\n {4}if \(packOpen\) shell\.append\(win\);/);
 });

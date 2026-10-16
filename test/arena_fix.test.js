@@ -18,7 +18,7 @@ import { boutGate } from '../src/characters/enemyTargets.js';
 import { practiceBout, hallOfChampions, newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaBouts, YOU, CROWD_SCALE, WALK_PACE, CRIT_SHARE } from '../src/scenes/arenaBouts.js';
-import { arenaHudModel } from '../src/ui/arenaHud.js';
+import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { CROWD_PEOPLE } from '../src/systems/arena/arenaCrowd.js';
 import { EnemyAI, WALK_ARRIVE_M } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';

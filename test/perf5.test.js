@@ -23,7 +23,7 @@ test('PERF5 pins: the context adds each static placement to the builder after it
   assert.ok(!loop.includes('staticBuilder.add'), 'the move and specialDoor arms `continue` before the add: an action object is never batched');
   assert.match(c, /get staticBatch\(\) \{[^\n]*\n\s+if \(!staticBuilt\) \{ staticBuilt = true; const m = staticBuilder\.finish\(\); staticBatch = m \? renderer\.createMesh\(m\) : null; \}/, 'merged once, on the first frame that asks');
   assert.match(c, /if \(staticBatch\) \{ renderer\.destroyMesh\(staticBatch\); staticBatch = null; \}/, 'freed with the level');
-  assert.match(read('src/ui/automapWindow.js'), /for \(const d of this\.deps\.drawList\) push\(d\.mesh, d\.matrix, d\.key\);/, 'the automap still reveals per model');
+  assert.match(read('src/ui/automap/automapWindow.js'), /for \(const d of this\.deps\.drawList\) push\(d\.mesh, d\.matrix, d\.key\);/, 'the automap still reveals per model');
 });
 
 test('PERF5 pins: both dungeon hosts draw the merge with the identity before the per-model loop and skip the batched entries; the dynamic draws follow as before (mutant: a host dropped, or the skip dropped)', () => {

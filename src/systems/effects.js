@@ -124,7 +124,7 @@ export const BUFF_KINDS = Object.freeze({
   // effects half of Detect is three rows: the entry's PRESENCE is DFU's registeredDetectors membership, exactly
   // as jumping/climbing above are IsEnhancedJumping/IsEnhancedClimbing.
   // The scan and the compass markers live in systems/nearbyObjects.js
-  // and ui/hud.js - neither belongs to the effect, which in DFU does
+  // and ui/hud/hud.js - neither belongs to the effect, which in DFU does
   // nothing but hold a list refreshed once a magic round.
   '39,0': 'detectMagic',
   '39,1': 'detectEnemy',

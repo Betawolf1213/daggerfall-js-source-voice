@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDITREP-F2-the-page-on-the-machine-clock",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "{ worldNow = trustedWorldMinutes() } = {}) {   // AUDIT REP F2",
     "new": "{ worldNow = worldMinutes() } = {}) {   // AUDIT REP F2",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITREP-F2-the-page-drops-an-unknown-term",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "if (rep === 0 && left === 0) continue;",
     "new": "if (rep === 0 && !Math.ceil(left / 1440)) continue;",
     "tests": [

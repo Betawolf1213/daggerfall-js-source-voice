@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDIT-LEGACY-U3-keyboard-dead",
-    "file": "src/ui/legacyDoor.js",
+    "file": "src/ui/legacy/legacyDoor.js",
     "old": "{ if (!e?.repeat) (btns[at] ?? btns[0]).click?.(); return true; }",
     "new": "{ if (!e?.repeat) btns[0].click?.(); return true; }",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "AUDIT-LEGACY-U7-standard-toll-said",
-    "file": "src/ui/legacyModelChoice.js",
+    "file": "src/ui/legacy/legacyModelChoice.js",
     "old": "  const pct = Math.round(tollShare * 100);",
     "new": "  const pct = 6;",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "AUDIT-LEGACY-B4-bloodline-open-online",
-    "file": "src/ui/legacyModelChoice.js",
+    "file": "src/ui/legacy/legacyModelChoice.js",
     "old": "title: 'Bloodline', locked: false,",
     "new": "title: 'Bloodline', locked: !!online,",
     "tests": [

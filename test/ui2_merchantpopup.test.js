@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   MerchantServiceWindow, MERCHANT_RECTS, MERCHANT_PANEL_W, MERCHANT_PANEL_H,
   MERCHANT_PANEL_X, MERCHANT_PANEL_Y, merchantServiceLabel, MERCHANT_SERVICE_LABEL,
-} from '../src/ui/merchantServiceWindow.js';
+} from '../src/ui/merchant/merchantServiceWindow.js';
 
 // UI2 - THE MERCHANT SERVICE POPUP (DaggerfallMerchantServicePopupWindow,
 // whole). The port SKIPPED it: staticNpcRoute has answered 'sell' and

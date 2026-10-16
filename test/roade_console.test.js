@@ -32,7 +32,7 @@ import {
   resetAutomapStore, registerAutomapConsoleCommands, automapDebugTeleportMode,
 } from '../src/systems/automap/automap.js';
 import { ExteriorAutomapWindow, registerExteriorAutomapConsoleCommands } from '../src/ui/exteriorAutomapWindow.js';
-import { registerTravelMapConsoleCommands, revealUndiscoveredLocations } from '../src/ui/travelMapWindow.js';
+import { registerTravelMapConsoleCommands, revealUndiscoveredLocations } from '../src/ui/travel/travelMapWindow.js';
 
 const src = (f) => readFileSync(join(process.cwd(), f), 'utf8');
 

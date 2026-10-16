@@ -91,7 +91,7 @@
   },
   {
     "name": "AF-V1-page-long",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": ".map((it) => takenName(it)).filter(Boolean);",
     "new": ".map((it) => `The ${takenName(it)}`).filter(Boolean);",
     "tests": [

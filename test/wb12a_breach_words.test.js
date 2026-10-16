@@ -16,8 +16,8 @@ import { omenPost, fellPost } from '../src/net/gate/gateHerald.js';
 import { GATE_NO_WORDS } from '../src/net/wire.js';
 import { fellLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time, in local time alone
 import { GATE_TEXT } from '../src/scenes/gatePool.js';
-import { GATE_LEGEND_TEXT } from '../src/ui/gateMapMark.js';
-import { MARKS_CARD_TEXT } from '../src/ui/gateMarksView.js';
+import { GATE_LEGEND_TEXT } from '../src/ui/gate/gateMapMark.js';
+import { MARKS_CARD_TEXT } from '../src/ui/gate/gateMarksView.js';
 import { GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';
 import { MARKS_TEXT } from '../src/net/marksBook.js';
 import { profileGateLine } from '../src/ui/profileWindow.js';
@@ -93,7 +93,7 @@ test('WB12a the names on screen: the plaque, the banner and the map\'s legend sa
   assert.equal(GATE_CLAIM_TEXT.guest, 'Breach not recorded. Add a username within a week to keep it.');
   assert.equal(MARKS_TEXT.capped, 'No silver for this breach. The counting-houses strike 150 silver a day for breaches closed, towns defended and serpents slain.');   // SILVER: the currency's name; PIN MOVED (SILVER-WAYS): the day's cap the gates' and the raids'
   assert.equal(profileGateLine({ gates: { closed: 3 } }), 'Breaches closed: 3');
-  assert.match(read('src/ui/enhancedAccount.js'), /if \(gates\) row\(t\('account\.card\.gates', 'Breaches closed'\), gates\);/);   // L10N4 (PIN MOVED): the row's word through t()
+  assert.match(read('src/ui/enhanced/enhancedAccount.js'), /if \(gates\) row\(t\('account\.card\.gates', 'Breaches closed'\), gates\);/);   // L10N4 (PIN MOVED): the row's word through t()
   assert.equal(accountRefusalText('short'), 'Your account has too few embers for that.');   // AUDIT WB12d (A4): a rite's ember counts
   assert.deepEqual([BROKER_TEXT.trade, BROKER_TEXT.steal, BROKER_TEXT.gone], ['Trades in Deadlands Embers', 'The Broker\'s eyes never leave her embers.', 'The Sigil Broker leaves for the night.']);   // BROKER-CAGE: midnight takes her, not the breach (a Warden fallen early leaves her standing)
   assert.equal(INSIGNIA_LINE.title, 'A title worn over your name');

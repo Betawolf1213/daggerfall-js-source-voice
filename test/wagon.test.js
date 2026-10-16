@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import {
   NativeInventoryWindow, NO_WAGON_TEXT, EXIT_TOO_FAR_TEXT, CANNOT_HOLD_TEXT,
   WAGON_KG_LIMIT, SMALL_CART_TEMPLATE, wagonFullGoldText,
-} from '../src/ui/nativeInventory.js';
+} from '../src/ui/native/nativeInventory.js';
 
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };
 const cart = () => ({ group: 'Transportation', templateIndex: SMALL_CART_TEMPLATE, name: 'Small Cart' });

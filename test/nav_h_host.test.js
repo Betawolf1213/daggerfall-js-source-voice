@@ -463,7 +463,7 @@ test('NAV-H the attack\'s five doors: a readied spell eats the press first, the 
   const pad = src('ui/gamepadInput.js');
   assert.match(pad, /&& !hooks\.aimHold\?\.\(\);/, 'the pad holds RT plainly at the guns');
   assert.match(pad, /if \(swinging && !plus && !hooks\.aimHold\?\.\(\)\) hooks\.attack\?\./, 'and its right stick looks');
-  const touch = src('ui/touch.js');
+  const touch = src('ui/touch/touch.js');
   assert.match(touch, /if \(swiping && hooks\.aimHold\?\.\(\)\) \{ hooks\.look\?\.\(ev\.dx \* TOUCH_LOOK_GAIN \* lookNorm\(\), ev\.dy \* TOUCH_LOOK_GAIN \* lookNorm\(\)\); continue; \}/, 'the finger\'s drag under the hold is a look');
 });
 

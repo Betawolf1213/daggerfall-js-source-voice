@@ -104,7 +104,7 @@ who rolls the port now. Pinned on both screens, every tick.
 `boundOf`: afloat, answering the guns, nothing (a relief comes to your aid); another's ship lying still at a berth of
 a harbour I know is moored at it (`berthOf`); departing a harbour with no name, her lane's words; a packet - mine or
 another's, by her own leg and its port (A22) - lying off her port within LINER_PORT_M of her leg's end, else bound for
-it; a port with no name says nothing. `ui/navalHud.js`: the card's state on one line, cut at its edge (`white-space:
+it; a port with no name says nothing. `ui/naval/navalHud.js`: the card's state on one line, cut at its edge (`white-space:
 nowrap; text-overflow: ellipsis`) - the aside card's 64 px held.
 
 ## Everything of her fading with her (A12-A14)

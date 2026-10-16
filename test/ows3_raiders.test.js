@@ -7,7 +7,7 @@
 //
 // Pinned here: the law (systems/seaRaiders.js - the seed, the birth on the open sea, the course, the cells about the
 // traveller, the chase), the mod's seen raid (systems/warmAshesShips.js raidAtSea - its sailing arm's one home, the
-// coroutine, the refusals), the readout's raider (ui/travelViewHud.js) and the world host's wiring by source.
+// coroutine, the refusals), the readout's raider (ui/travel/travelViewHud.js) and the world host's wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -182,7 +182,7 @@ test('OWS3 Warm Ashes: a raider alongside makes the mod\'s own raid - armed as a
 // ── THE READOUT ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 test('OWS3 readout: a raider is a ship in the cinnabar, "Pirates" under it in the same', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   assert.equal(hud.TRAVEL_VIEW_MARK_COLORS.raider, '#bf2a1f');
   const calls = [];
   const fills = [];

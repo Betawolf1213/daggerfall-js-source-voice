@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { profileBadge, portraitSave, characterLine } from '../src/ui/profileBadge.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 function fakeEl(tag) {
   let text = '';
@@ -104,7 +104,7 @@ test('PROFILE1: it is drawn as a portrait, not a button - no box, a round rimmed
   assert.match(rule('.px-profilegem.on'), /color: var\(--brass\);/);
   // the door hands it the store's session, the newest finished character and that character's face - a COPY,
   // because the Continue pane's tile may draw the same face on the same screen
-  const menu = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const menu = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   const door = menu.slice(menu.indexOf('function profileMark()'), menu.indexOf('function profileMark()') + 500);
   // PROFILE-MENU: the law in one function the mark and the card it opens both ask (PIN MOVED: it was the mark's own line)
   assert.match(door, /const save = profileCharacter\(\);/, 'the mark asks the one law');

@@ -30,7 +30,7 @@ alone). A crossing shares no bit: the water and the path meet at the centre from
 causeway stands. A departure from the mod (Port-Ledger A, CANAL-ARM; `03-World/Roads.md`).
 
 NOT CONFIRMED: the report's second screenshot is the held map, its bands a wash under a firm line - the pen the ink
-map draws the COAST with (`ui/inkMap.js` paintInkStatic's shore), not a road's or a river's. The coast is WOODS.WLD's
+map draws the COAST with (`ui/ink/inkMap.js` paintInkStatic's shore), not a road's or a river's. The coast is WOODS.WLD's
 land and water under the one water law, and nothing in this slice or the ones before it writes those bytes; a narrow
 sea inlet traced as a coast reads as such a band, ending in a ring. Where that map stands was not found from its names.
 If the bands are new, their place is wanted.

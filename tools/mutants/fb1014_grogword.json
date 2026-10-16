@@ -10,7 +10,7 @@
   },
   {
     "name": "GROG-WORD-the-word-dropped",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "      : r.drunk ? t('naval.yard.grogDrunk',",
     "new": "      : false ? t('naval.yard.grogDrunk',",
     "tests": [

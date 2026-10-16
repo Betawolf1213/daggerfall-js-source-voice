@@ -84,7 +84,7 @@
   },
   {
     "name": "HT6-the-window-reads-the-lit-flag-off-the-equip-table",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    lit: !!item && identity?.lightSource === item,",
     "new": "    lit: !!item && isEquipped(item),",
     "tests": [

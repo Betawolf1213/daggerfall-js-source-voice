@@ -92,7 +92,7 @@
   },
   {
     "name": "PERF-TV-screen-read-per-mark",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    const held = m.edge ? (edgeHold(m, vw, vh,",
     "new": "    const held = m.edge ? (edgeHold(m, win?.innerWidth ?? 0, win?.innerHeight ?? 0,",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "PERF-TV-drawn-every-frame",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (sig.length === canvasSig.length && sig.every((v, i) => v === canvasSig[i])) return;",
     "new": "  if (false) return;",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "PERF-TV-a-move-not-drawn",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (sig.length === canvasSig.length && sig.every((v, i) => v === canvasSig[i])) return;",
     "new": "  if (sig.length === canvasSig.length) return;",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "PERF-TV-plate-off-the-screen",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "const inScreen = (x0, w, vw) => (vw > w + 8 ? Math.min(Math.max(4, x0), vw - 4 - w) : x0);",
     "new": "const inScreen = (x0) => x0;",
     "tests": [
@@ -132,7 +132,7 @@
   },
   {
     "name": "PERF-TV-every-mark-takes-a-click",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  for (const q of placed) if (q.m.pick) nextHits.push({ key: q.m.key, ...pickBox(q, vw) });",
     "new": "  for (const q of placed) nextHits.push({ key: q.m.key, ...pickBox(q, vw) });",
     "tests": [
@@ -142,7 +142,7 @@
   },
   {
     "name": "PERF-TV-hidden-still-clicked",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  hits = []; setHover(null);",
     "new": "  setHover(null);",
     "tests": [
@@ -152,7 +152,7 @@
   },
   {
     "name": "PERF-TV-the-bottom-plate-takes-it",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  for (let i = hits.length - 1; i >= 0; i--) {",
     "new": "  for (let i = 0; i < hits.length; i++) {",
     "tests": [
@@ -162,7 +162,7 @@
   },
   {
     "name": "PERF-TV-fonts-never-redrawn",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  doc.fonts?.addEventListener?.('loadingdone', () => { dropSprites(); canvasSig = []; });\n",
     "new": "",
     "tests": [
@@ -242,7 +242,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-never-spread",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  spreadHeld(placed, vw, vh);\n",
     "new": "",
     "tests": [
@@ -252,7 +252,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-no-push",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "        if (p.at + shift <= r.at) break;",
     "new": "        if (true) break;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-out-of-order",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    items.sort((u, v) => u.pos - v.pos || (u.q.m.key < v.q.m.key ? -1 : u.q.m.key > v.q.m.key ? 1 : 0));",
     "new": "",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-top-parted-downward",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (side < 2) {\n      const b = markBox(q, vw);",
     "new": "    if (true) {\n      const b = markBox(q, vw);",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-crowd-off-the-screen",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      const even = r.span > z - a;   // more than the edge holds: spaced evenly along it",
     "new": "      const even = false;",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "EDGE-DECLUTTER-pushed-one-way",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "        p.at = p.sum / p.n; p.at = fit(p);",
     "new": "        p.at = fit(p);",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "EDGE-FURNITURE-held-under-the-bar",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  const sx = (cx - margin) / Math.max(1e-6, Math.abs(dx)), sy = (dy < 0 ? cy - top : cy - foot) / Math.max(1e-6, Math.abs(dy));",
     "new": "  const sx = (cx - margin) / Math.max(1e-6, Math.abs(dx)), sy = (cy - margin) / Math.max(1e-6, Math.abs(dy));",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "EDGE-FURNITURE-drawn-under-the-bar",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (p.front && p.x >= margin && p.x <= w - margin && p.y >= top && p.y <= h - foot) return null;",
     "new": "  if (p.front && p.x >= margin && p.x <= w - margin && p.y >= margin && p.y <= h - margin) return null;",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "EDGE-FURNITURE-name-under-its-arrow",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    let ly = q.side === 3 ? y - 10 - sp.h - (sb ? sb.h : 0) :",
     "new": "    let ly = false ? y - 10 - sp.h - (sb ? sb.h : 0) :",
     "tests": [
@@ -332,7 +332,7 @@
   },
   {
     "name": "EDGE-FURNITURE-click-box-in-the-bar",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (q.side === 3) return { x0: x0 - 4, x1: x0 + w + 4, y0: q.y - 14 - h - extraLines(q), y1: q.y + 10 };   // its label above it\n",
     "new": "",
     "tests": [
@@ -342,7 +342,7 @@
   },
   {
     "name": "EDGE-FURNITURE-measured-every-frame",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (now - furniture.at < FURNITURE_EVERY_MS && furniture.vw === vw && furniture.vh === vh) return;",
     "new": "  if (false) return;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "EDGE-FURNITURE-stale-on-show",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  furniture.at = -Infinity;   // EDGE-FURNITURE: what stands at the edges now (a journey's panel may have come or gone)\n",
     "new": "",
     "tests": [
@@ -362,7 +362,7 @@
   },
   {
     "name": "EDGE-FURNITURE-foot-unmeasured",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      if (band) f.footNotch.push({ x0: r.left - G, x1: r.right + G, d: Math.max(M, vh - r.top + G) });",
     "new": "      if (band) f.footNotch = f.footNotch;",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "EDGE-FURNITURE-side-label-in-the-bar",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  const bounds = [[F.lTop, vh - F.lFoot], [F.rTop, vh - F.rFoot], [F.topLo, F.topHi], [F.footLo, F.footHi]];",
     "new": "  const bounds = [[F.top, vh - F.foot], [F.top, vh - F.foot], [F.topLo, F.topHi], [F.footLo, F.footHi]];",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "EDGE-FURNITURE-a-renamed-piece",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "const FURNITURE = '.hud-top, .hud-bottom, .hud-quick, .travelpanel-bar, .travelpanel-junction, .dftouch-btn, .qtrack';",
     "new": "const FURNITURE = '.hud-top, .hud-bottom, .hud-quick, .travel-panel-bar, .travelpanel-junction, .dftouch-btn, .qtrack';",
     "tests": [
@@ -392,7 +392,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E1-the-bar-on-the-vitals",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    for (const r of rects) if (r.top >= vh / 2 && r.right > br.left && r.left < br.right && (band(r) || underBack(r))) barFoot = Math.max(barFoot, vh - r.top + BAR_AIR);\n",
     "new": "",
     "tests": [
@@ -402,7 +402,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E1-the-bar-never-moved",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (furniture.bar !== barFoot) { furniture.bar = barFoot; if (bar.style) bar.style.bottom = `${Math.round(barFoot)}px`; }",
     "new": "    if (furniture.bar !== barFoot) { furniture.bar = barFoot; }",
     "tests": [
@@ -412,7 +412,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E3-lone-mark-unclamped",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      r.at = fit(r);   // AUDIT DEEP2 E3: a lone mark kept inside its stretch BEFORE it is weighed against the run above it\n",
     "new": "",
     "tests": [
@@ -422,7 +422,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E4-corners-apart",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (q.x + half > vw - m) { q.x = Math.round(vw - m); return 1; }\n",
     "new": "",
     "tests": [
@@ -432,7 +432,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E5-the-arrow-a-triangle",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      g.beginPath(); g.moveTo(0, -10); g.lineTo(7, 7); g.lineTo(0, 2); g.lineTo(-7, 7); g.closePath(); g.fill(); g.stroke();",
     "new": "      g.beginPath(); g.moveTo(0, -8); g.lineTo(7, 5); g.lineTo(-7, 5); g.closePath(); g.fill(); g.stroke();",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E6-bands-unshared",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  [f.top, f.foot] = clearBands(f.top, f.foot, vh);\n",
     "new": "  [f.top, f.foot] = [Math.min(f.top, vh * 0.3), Math.min(f.foot, vh * 0.3)];\n",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E7-corner-piece-ignored",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      else if (mid <= vw * 0.3) f.footLo = Math.max(f.footLo, r.right + G);\n",
     "new": "",
     "tests": [
@@ -462,7 +462,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E7-side-over-the-block",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      if (r.left < SIDE_REACH) f.lFoot = Math.max(f.lFoot, vh - r.top + G);\n",
     "new": "",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E8-foot-ends-overlap",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    const fit = (r) => Math.min(Math.max(r.at, lo + items[r.i0].a), hi - r.span - items[r.i1].b);",
     "new": "    const fit = (r) => Math.min(Math.max(r.at, lo + (s < 2 ? items[r.i0].a : 0)), hi - r.span - (s < 2 ? items[r.i1].b : 0));",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E9-distance-over-the-dot",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "plate && !held ? y - 24 - sp.h / 2 - (sb ? sb.h : 0) :",
     "new": "plate && !held ? y - 24 - sp.h / 2 :",
     "tests": [
@@ -492,7 +492,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E11-a-bare-sans",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    : plate ? `${size}px ${TRAVEL_VIEW_PLATE_FONT}` : `${size}px ${TRAVEL_VIEW_LABEL_FONT}`;",
     "new": "    : plate ? `${size}px ${TRAVEL_VIEW_PLATE_FONT}` : `${size}px sans-serif`;",
     "tests": [
@@ -502,7 +502,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E15-nothing-said",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  sayPlaces(placed);\n",
     "new": "",
     "tests": [
@@ -512,7 +512,7 @@
   },
   {
     "name": "AUDIT-DEEP2-NaN-poisons-an-edge",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (!Number.isFinite(m.x) || !Number.isFinite(m.y)) continue;   // AUDIT DEEP2 E: one NaN poisoned its whole edge's run\n",
     "new": "",
     "tests": [
@@ -522,7 +522,7 @@
   },
   {
     "name": "AUDIT-DEEP2-F11-screen-read-twice",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  drawMarks(all.filter((m) => markShown(m, fl)), vw, vh, dpr, f.feet?.front ? f.feet : null);",
     "new": "  drawMarks(all.filter((m) => markShown(m, fl)), win?.innerWidth ?? 0, win?.innerHeight ?? 0, dpr, f.feet?.front ? f.feet : null);",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E13-bar-click-through",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".tview-bar { position: absolute; right: 18px; bottom: 18px; pointer-events: auto; box-sizing: border-box;",
     "new": ".tview-bar { position: absolute; right: 18px; bottom: 18px; box-sizing: border-box;",
     "tests": [
@@ -542,7 +542,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E2-lifted-over-a-corner-block",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": " && (band(r) || underBack(r))) barFoot",
     "new": ") barFoot",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "AUDIT-DEEP2-E2-a-taller-bar-unmeasured",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (`${last.where}|${last.hint}|${last.trip}` !== words) furniture.at = -Infinity;",
     "new": "",
     "tests": [
@@ -612,7 +612,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-a-bare-label",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (q.m.badge) { q.bk = badgeKey(q.m.badge); q.sp = badgeSprite(",
     "new": "    if (false) { q.bk = badgeKey(q.m.badge); q.sp = badgeSprite(",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-title-in-party-green",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      x.fillStyle = P.title.rgba ? cssRgba(P.title.rgba) : N.name;",
     "new": "      x.fillStyle = party ? N.party : N.name;",
     "tests": [
@@ -632,7 +632,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-party-not-green",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  x.font = rowFont; x.fillStyle = party ? N.party : (TV_KIN_COLORS[m.kin] ?? N.name);",
     "new": "  x.font = rowFont; x.fillStyle = (TV_KIN_COLORS[m.kin] ?? N.name);",
     "tests": [
@@ -642,7 +642,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-renown-dropped",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (P.lv) {   // the Renown, boxed, left of the name",
     "new": "  if (false) {   // the Renown, boxed, left of the name",
     "tests": [
@@ -652,7 +652,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-guild-dropped",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  } else if (P.gt) { x.font = smallFont;",
     "new": "  } else if (false) { x.font = smallFont;",
     "tests": [
@@ -662,7 +662,7 @@
   },
   {
     "name": "OVERWORLD-NAMES-badge-unsigned",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": ", q.m.kind ?? '', q.bk, q.fade ? 1 : 0, q.m.kin",
     "new": ", q.m.kind ?? '', q.fade ? 1 : 0, q.m.kin",
     "tests": [
@@ -672,7 +672,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-1-every-badge-at-once",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (badgeBuilds <= 0) return null;   // N1-1",
     "new": "  if (false) return null;   // N1-1",
     "tests": [
@@ -682,7 +682,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-1-waiting-badges-never-made",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (unmade) canvasSig = [];\n",
     "new": "",
     "tests": [
@@ -692,7 +692,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-5-the-estimate",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (q.sp) return q.sp.w;\n",
     "new": "",
     "tests": [
@@ -702,7 +702,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-6-corners-ignored",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (s < 2) cornersOf(bounds[s], s, items, sides, vw);\n",
     "new": "",
     "tests": [
@@ -712,7 +712,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-2-title-blurred",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      x.shadowBlur = 0; x.shadowOffsetY = 0;\n      const edge",
     "new": "      const edge",
     "tests": [
@@ -722,7 +722,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-2-no-edge",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      x.fillStyle = '#000'; x.fillText(P.title.text, tx, 3);\n",
     "new": "",
     "tests": [
@@ -732,7 +732,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-9-title-flat",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      x.fillStyle = gr;\n      x.fillText(P.title.text, tx, 1);",
     "new": "      x.fillStyle = edge;\n      x.fillText(P.title.text, tx, 1);",
     "tests": [
@@ -742,7 +742,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-3-no-eye",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      if (g.detail?.path) { x.fillStyle",
     "new": "      if (false) { x.fillStyle",
     "tests": [
@@ -752,7 +752,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-3-stroke-width",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "x.lineWidth = GLYPH_NAME_W;",
     "new": "x.lineWidth = 1.8;",
     "tests": [
@@ -762,7 +762,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-3-renown-unshadowed",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    x.shadowBlur = 3; x.shadowOffsetY = 1;   // N1-3",
     "new": "    x.shadowBlur = 0; x.shadowOffsetY = 0;   // N1-3",
     "tests": [
@@ -772,7 +772,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-9-glyphs-bone",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "      const col = g.rgba ? cssRgba(g.rgba) : N.name;",
     "new": "      const col = N.name;",
     "tests": [
@@ -782,7 +782,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-9-no-glyphs",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (glyphW && typeof globalThis.Path2D === 'function') {",
     "new": "  if (false) {",
     "tests": [
@@ -792,7 +792,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-9-key-without-party",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "`badge|${size}|${party ? 1 : 0}|",
     "new": "`badge|${size}|",
     "tests": [
@@ -802,7 +802,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-9-key-without-dpr",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "|${journey ? 1 : 0}|${dpr}|${m.label}|${bk}`",
     "new": "|${journey ? 1 : 0}|${m.label}|${bk}`",
     "tests": [
@@ -812,7 +812,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-4-not-the-name-face",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "const rowFont = `${size}px ${PIXEL_STACK}`, smallFont = `${small}px ${PIXEL_STACK}`;",
     "new": "const rowFont = `${size}px ${TRAVEL_VIEW_LABEL_FONT}`, smallFont = `${small}px ${TRAVEL_VIEW_LABEL_FONT}`;",
     "tests": [
@@ -822,7 +822,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-7-under-the-head",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "m.badge && !held ? y - (isShipKind(m) ? SHIP_MARK_RISE + 2 : NAME_ABOVE) - sp.h : ",
     "new": "",
     "tests": [
@@ -832,7 +832,7 @@
   },
   {
     "name": "AUDIT-NAMES-N2-4-names-cross",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    if (m.badge && !held) ly = clearOfNames(",
     "new": "    if (false) ly = clearOfNames(",
     "tests": [
@@ -842,7 +842,7 @@
   },
   {
     "name": "AUDIT-NAMES-N1-8-pixels-unbounded",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "sprites.size >= SPRITES_MAX || spritePixels + px > SPRITE_PIXELS_MAX",
     "new": "sprites.size >= SPRITES_MAX",
     "tests": [

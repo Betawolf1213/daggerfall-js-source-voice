@@ -44,7 +44,7 @@ import { expandRowValues } from '../systems/quest/questMacros.js';   // MACRO-3:
 // LV2: the level-up notification's seams. The CLASSIC lane's line and
 // box are still this file's - the seam takes them and uses them - so
 // nothing about the old skin is decided in a UI module.
-import { announceSkillRaise, announceMastery, announceSkillMilestone } from '../ui/levelNotice.js';
+import { announceSkillRaise, announceMastery, announceSkillMilestone } from '../ui/levelUp/levelNotice.js';
 import { masterSkillsBoxDue, setMasterSkills, MASTER_SKILLS_OFFER_ROWS, MASTER_SKILLS_INFO_ROWS, MASTER_SKILLS_DECLINED_TEXT, MASTER_SKILLS_INTRO_ROWS, nextMasteryChoice, masteryChoiceRows, masterSkill } from '../systems/masterSkills.js';   // SOFTCAP3/4
 import { nextPathChoice, pathChoices, pathChoiceRows, pathsOpenRows, choosePath, pathDeclinedText } from '../systems/arcanePaths.js';   // SCHOOLS1: the specialisation's one ask
 import { DOOR_SPELL_TEXT, castBySkeletonKey } from '../systems/mysticism.js';   // X1: the door-spell alert lines; D9: Open.CheckCastByItem
@@ -1473,7 +1473,7 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
   // two skills reads in the source's order.
   // LV2 - THE RISING (Mac, 2026-09-19: the enhanced level-up
   // notification, "all of the above"): on the ENHANCED skin the two
-  // presentations below move to the notice strip (ui/levelNotice.js).
+  // presentations below move to the notice strip (ui/levelUp/levelNotice.js).
   // The raise leaves the popup column - a skill going up is a change
   // to the CHARACTER, not another thing the world said - and the
   // mastery leaves its click-anywhere box, which carries news and no

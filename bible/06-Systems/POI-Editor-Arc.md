@@ -177,7 +177,7 @@ the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
   for (R5, R6); any other is reloaded. A POI whose assets would not load is tried again after `POI_RETRY_MS` (a minute),
   everything a load made freed on every way out that does not stand (AUDIT POI R2) and a picture that failed let go at
   once, so a POI sharing it tries again (R3). Its lights join the scene's selection (`flicker` stepped at 12 Hz); its
-  marks go to both world maps (`src/ui/poiMapMark.js`, a violet circle on the bounty's reader and painter, under a cap
+  marks go to both world maps (`src/ui/poi/poiMapMark.js`, a violet circle on the bounty's reader and painter, under a cap
   of their own, `POI_MARKS_MAX` (256) - AUDIT POI R7: the bounty's eight). Wired in `world.js` only; the bench
   (`exterior.js`) has no feed - FLAGGED.
 - **THE MATERIALS** (`src/poi/poiRuntime.js`, pure): a material's LOOK (picture, tint, alpha, sampler, emission) is one
@@ -293,7 +293,7 @@ button opens it again after an exit.
   by itself when the world goes from under it - a change of mode or a load 'away', the eye and the body where that
   change put them; a death 'back' - and a release it never heard (over a window, a capture lost, the window's blur) lets
   go of what it holds (E14). The **map** jumps: the body taken to the square picked by the same door, the eye above it.
-- **THE PANEL** (`src/ui/poiEditorPanel.js`): the bar (the tools Q W E R, world or own axes X, snap and its three steps,
+- **THE PANEL** (`src/ui/poi/poiEditorPanel.js`): the bar (the tools Q W E R, world or own axes X, snap and its three steps,
   undo and redo saying what they undo, the eye's speed, New POI, Import model, Map, the two exits); the outliner (each
   POI being edited with its state - new, draft, sent for approval, live, sent back, changed - its parts and lights;
   every POI the store holds, searched, to open: my own open draft of it when I have one, with the base it was made from
@@ -407,7 +407,7 @@ without its file.
 - **KEEPING** (`src/poi/poiShelf.js`): the law asked first (nothing is uploaded for an entry it refuses), the picture
   drawn and uploaded, then the entry put wearing it; a picture that will not draw leaves the entry without one - still
   kept, and shown by its initial. The store's refusal brings the law's problems back to the dialog.
-- **THE LIBRARY** (`src/ui/poiLibraryPanel.js`; the bar's **Library**): every entry, newest change first - its picture,
+- **THE LIBRARY** (`src/ui/poi/poiLibraryPanel.js`; the bar's **Library**): every entry, newest change first - its picture,
   name, tags, maker, parts and triangles - searched by any words of its name, tags or maker, or mine alone; **Place**
   stands it where the next click meets the ground (or a model on it); **Change...** (its name, tags and words) and
   **Take off the shelf** (asked twice) on mine, or on any for an approver. **Keep it in the library...** in a POI's
@@ -430,7 +430,7 @@ Pinned by `test/poi4b_library.test.js` (7); `tools/mutants/poi4b.json` 23, all d
 
 Mac, asked what "UV map" covers: **"Full UV editor"**.
 
-- **THE MATERIAL EDITOR** (`src/ui/poiEditorPanel.js`, a part's materials in the inspector): its picture and its glow
+- **THE MATERIAL EDITOR** (`src/ui/poi/poiEditorPanel.js`, a part's materials in the inspector): its picture and its glow
   picture - **Choose...** a file, read by its header (`decodeImage`, the import's reader: one the store would refuse is
   said in words and nothing is uploaded), uploaded once by its name and worn as one step; **Take off**. The glow's colour
   and its strength (the colour times the strength, up to 16 - KHR_materials_emissive_strength's meaning). Where the
@@ -469,7 +469,7 @@ Mac, asked what "UV map" covers: **"Full UV editor"**.
   `UV_UNDO_BYTES` (128 MB), the latest always kept - M6: a hundred nudges of a big part had held a gigabyte), a drag one
   step however long; a selection's corners read from a table of the UV vertices kept for each change of the UVs (M5:
   seconds a frame at 12,800 faces).
-- **THE PANEL** (`src/ui/poiUvPanel.js`): a dialog over the editor, a canvas - the material's picture, the square's
+- **THE PANEL** (`src/ui/poi/poiUvPanel.js`): a dialog over the editor, a canvas - the material's picture, the square's
   grid, the faces, the seams red, the selection lit (in vertex mode the vertices selected, none when none is - AUDIT POI
   L3). 1 2 3 4 the modes, M T S the drag's tool, Ctrl+Z / Ctrl+Y, Ctrl+A, Escape - none of them taken from its fields
   (U6: "256" had left "56"); the wheel zooms at the pointer, the middle button (or Alt) pans. **Unwrap** says it is
@@ -487,7 +487,7 @@ POI: `test/auditpoi_uv.test.js` (14), `tools/mutants/auditpoi_uv.json` 40, all d
 Mac: **"I need to be able to approve changes"**; "the ability to import models ... a tool my developers can use without
 having to access the codebase".
 
-- **APPROVALS** (`src/ui/poiReviewPanel.js`; the bar's **Approvals**, an approver's alone): the oldest submissions,
+- **APPROVALS** (`src/ui/poi/poiReviewPanel.js`; the bar's **Approvals**, an approver's alone): the oldest submissions,
   fifty to an answer and a line saying when more wait (AUDIT POI S10, C3) - its name, who sent it and how long ago, new,
   a change or a retirement, and whether it was made from a revision no longer live (approving it puts back over what
   went live since). **What it changes** against the live one (`src/poi/poiDiff.js`: renamed, moved so many metres,

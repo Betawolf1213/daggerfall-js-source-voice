@@ -216,7 +216,7 @@
   },
   {
     "name": "ARENA2-TRIAGE-5-the-arrow-falls-back-to-the-quad",
-    "file": "src/ui/automapWindow.js",
+    "file": "src/ui/automap/automapWindow.js",
     "old": "if (this.deps.arrowMesh) renderer.drawMesh(this.deps.arrowMesh, mk.matrix, this.deps.texRemap);",
     "new": "if (false) renderer.drawMesh(this.deps.arrowMesh, mk.matrix, this.deps.texRemap);",
     "tests": [
@@ -225,7 +225,7 @@
   },
   {
     "name": "ARENA2-TRIAGE-5-the-grid-cut-off-the-background",
-    "file": "src/ui/automapWindow.js",
+    "file": "src/ui/automap/automapWindow.js",
     "old": "export const GRID_CUTOUT = Object.freeze({ x: 78, y: 171, w: 27, h: 19 });",
     "new": "export const GRID_CUTOUT = Object.freeze({ x: 298, y: 171, w: 27, h: 19 });",
     "tests": [

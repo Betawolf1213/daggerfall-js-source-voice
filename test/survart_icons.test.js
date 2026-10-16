@@ -6,7 +6,7 @@
 // because both of the port's icon doors dropped them on the last step
 // and each did it in its own way:
 //
-//   THE GL DOOR (ui/itemScroller.js, ui/nativeInventory.js) asks the
+//   THE GL DOOR (ui/item/itemScroller.js, ui/native/nativeInventory.js) asks the
 //   pipeline for the archive and then gates on
 //   `if (img.record < tex.recordCount)` before it uploads, measuring
 //   with `tex.getSize(record)` inside. For a vendored archive the
@@ -161,7 +161,7 @@ test('SURV-ART: both doors keep the arm that reaches the vendored art', () => {
   const read = (p) => readFileSync(p, 'utf8');
   // the GL door's gate and its measurement, at both call sites - the
   // two lines the stand-in has to satisfy
-  for (const f of ['src/ui/itemScroller.js', 'src/ui/nativeInventory.js']) {
+  for (const f of ['src/ui/item/itemScroller.js', 'src/ui/native/nativeInventory.js']) {
     assert.match(read(f), /if \(img\.record < tex\.recordCount\) \{/, `${f}: the gate`);
     assert.match(read(f), /sizes\.set\(key, tex\.getSize\(img\.record\)\)/, `${f}: the measurement`);
   }

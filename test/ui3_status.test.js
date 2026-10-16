@@ -3,7 +3,7 @@
 // icons with glyphs for each effect (climates and calories included) which then gives more space for the XP bar and
 // being able to fit the XP amounts inside").
 //
-// THE STATUS WIDGET (ui/hudStatus.js, drawn by ui/enhancedHud.js): the effects leave the HUD's foot for a column of
+// THE STATUS WIDGET (ui/hud/hudStatus.js, drawn by ui/enhanced/enhancedHud.js): the effects leave the HUD's foot for a column of
 // square tiles standing on the quickslot block's caption at the left edge - a spell's own ICON00I0 icon, a set power's
 // rune in its set's colour, the port's pixel glyphs for the needs and for a poison and a disease (shown at last, on
 // the Status box's own law); the frame says the kind, the foot the time left, an ending tile blinks; the band it grows
@@ -17,18 +17,18 @@ import {
   statusTiles, afflictionRows, needGlyph, statusGlyphSvg, statusGlyphSrc, statRoom, statRows, statSide, statPlace, statColumns, statOverflow,
   STATUS_GLYPHS, STAT_TILE, STAT_PIC, STAT_GAP, STAT_AIR, STAT_LIFT, STAT_TIGHT_ROWS, STAT_WIDE_COLUMNS, STAT_METRICS, STAT_SHORT_QUERY, STAT_MIDDLE_CLEAR,
   STAT_NAME_MAX, STAT_NAME_GAP,
-} from '../src/ui/hudStatus.js';
+} from '../src/ui/hud/hudStatus.js';
 import { DISEASE_NAMES, DISEASE_DATA, DISEASES } from '../src/systems/diseases.js';
 import { POISONS } from '../src/systems/poisons.js';
 import { healthStatusRows } from '../src/systems/healthStatus.js';
 import { HUD_NEED_WORDS } from '../src/systems/survival/status.js';
 import { createInfection } from '../src/systems/infection.js';
 import { sigilRuneTileSrc, sigilRuneTileUrl, SIGIL_RUNE_TILE_URL } from '../src/ui/sigilRune.js';
-import { setHudRenown } from '../src/ui/hudRenown.js';
-import { BLINK_INTERVAL } from '../src/ui/hudActiveSpells.js';
+import { setHudRenown } from '../src/ui/hud/hudRenown.js';
+import { BLINK_INTERVAL } from '../src/ui/hud/hudActiveSpells.js';
 import { _fittedKeys } from '../src/ui/textureCanvas.js';
-import { initEscortFaces, restoreEscortFacesSaveData, clearEscortFaces, escortFacesBottom, ESCORT_START_Y, ESCORT_SPECIAL_FACE_SIZE } from '../src/ui/hudEscortFaces.js';
-import { escortBottomPx } from '../src/ui/hud.js';
+import { initEscortFaces, restoreEscortFacesSaveData, clearEscortFaces, escortFacesBottom, ESCORT_START_Y, ESCORT_SPECIAL_FACE_SIZE } from '../src/ui/hud/hudEscortFaces.js';
+import { escortBottomPx } from '../src/ui/hud/hud.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const rule = (sheet, sel) => {
@@ -71,7 +71,7 @@ test('UI3 the tiles: a spell mine on me a buff and another\'s a debuff, its roun
 });
 
 test('UI3 the spells, bundle by bundle (AUDIT UI C3/C5): a party mate\'s gift is a buff; each tile its own bundle\'s rounds, never another of its name\'s; an item\'s held magic no time at its foot (mutants: a mate\'s gift framed a debuff; the mate\'s mark dropped; the rounds by name; an item\'s rounds at its foot)', async () => {
-  const { effectRows } = await import('../src/ui/enhancedHud.js');
+  const { effectRows } = await import('../src/ui/enhanced/enhancedHud.js');
   const b = (id, name, self, rounds, extra = {}) => ({ kind: 'shield', bundleId: id, bundleName: name, bundleIcon: 7, bundleSelfCast: self, roundsRemaining: rounds, ...extra });
   const rows = effectRows({ activeEffects: [
     b(1, 'Heal', true, 30), b(2, 'Heal', false, 1, { bundleAlly: true }), b(3, 'Curse', false, 9),
@@ -299,7 +299,7 @@ test('UI3 the HUD, executed: the widget is the quickslot block\'s first child, o
     querySelectorAll: (sel) => [...(chat && sel.includes('.dfchat') ? [chat] : []), ...(touchBtn && sel.includes('.dftouch-btn') ? [touchBtn] : [])],
   };
   let touchBtn = null;
-  const { drawEnhancedHud, destroyEnhancedHud, setHudSetChips } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud, setHudSetChips } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const entity = {
@@ -459,7 +459,7 @@ test('UI3 AUDIT UI C: a new window size measures the band on the frame it comes,
     querySelector: () => null,
     querySelectorAll: (sel) => (chat && sel.includes('.dfchat') ? [chat] : []),
   };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const entity = {
@@ -503,14 +503,14 @@ test('UI3 AUDIT UI C: a new window size measures the band on the frame it comes,
     if (hadDpr) Object.defineProperty(globalThis, 'devicePixelRatio', hadDpr); else delete globalThis.devicePixelRatio;
   }
   // AUDIT UI C4: the touch layer's presses are found by their class, wherever the safe area puts them
-  assert.match(read('src/ui/touch.js'), /const b = document\.createElement\('div'\);\n\s+b\.className = 'dftouch-btn';/);
+  assert.match(read('src/ui/touch/touch.js'), /const b = document\.createElement\('div'\);\n\s+b\.className = 'dftouch-btn';/);
 });
 
 // ── THE SHEET ───────────────────────────────────────────────────────
 
 test('UI3 the sheet: the tile, its picture, the rows\' gap and the lift are the module\'s numbers; the frame\'s kinds; an empty widget takes no room; the names go on a phone, a short screen and a tight band; an ending picture blinks DFU\'s own quarter second and stands still for reduced motion; the phone\'s vitals say their numbers alone; no status row, and no chips in the kit (mutants: the tile\'s size drifted from the module; the names kept on a phone; the blink never stilled; the phone\'s words kept)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
-  const { PLUS_CSS } = await import('../src/ui/enhancedPlusStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
+  const { PLUS_CSS } = await import('../src/ui/enhanced/enhancedPlusStyle.js');
   const C = ENHANCED_CSS;
   assert.match(rule(C, '.hst-tile'), new RegExp(`width: ${STAT_TILE}px; height: ${STAT_TILE}px;[^}]*border: 2px solid;`));
   assert.equal(STAT_TILE - 2 * 2, STAT_PIC, 'the picture fills the frame');
@@ -541,8 +541,8 @@ test('UI3 the sheet: the tile, its picture, the rows\' gap and the lift are the 
   assert.match(PLUS_CSS, /@media \(max-width: 640px\) \{\n {2}\.hud-vlabel \{ display: none; \}\n {2}\.hud-vital \.hud-track \{ justify-content: center; \}\n {2}\.hud-num \{ padding-right: 0; \}\n\}/);
   assert.ok(PLUS_CSS.indexOf('@media (max-width: 640px) {\n  .hud-vlabel') > PLUS_CSS.indexOf('.hud-num { position: relative; z-index: 1; padding-right: 10px;'), 'after the number\'s own padding, so it wins');
   assert.doesNotMatch(C, /\.hud-effects|\.hud-needs|\.hud-status|\.hud-eff\b|\.hud-need\b/);
-  assert.doesNotMatch(read('src/ui/enhancedFrame.js'), /'\.hud-eff'|'\.hud-need'/, 'the kit dresses no chip that is gone');
-  const hud = read('src/ui/enhancedHud.js');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedFrame.js'), /'\.hud-eff'|'\.hud-need'/, 'the kit dresses no chip that is gone');
+  const hud = read('src/ui/enhanced/enhancedHud.js');
   assert.doesNotMatch(hud, /'hud-effects'|'hud-needs'|'hud-status'|hud-eff |hud-need /, 'the HUD builds none');
-  assert.match(read('src/ui/hud.js'), /\n {6}escortBottom: escortBottomPx\(canvas\),/, 'the host hands the widget the escort faces\' bottom');
+  assert.match(read('src/ui/hud/hud.js'), /\n {6}escortBottom: escortBottomPx\(canvas\),/, 'the host hands the widget the escort faces\' bottom');
 });

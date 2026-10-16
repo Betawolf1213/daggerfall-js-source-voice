@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { HudFlicker, HudFlickerController, playerCondition, INJURED_THRESHOLD, WOUNDED_THRESHOLD } from '../src/ui/hudFlicker.js';
+import { HudFlicker, HudFlickerController, playerCondition, INJURED_THRESHOLD, WOUNDED_THRESHOLD } from '../src/ui/hud/hudFlicker.js';
 import { LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W2d: THE NEAR-DEATH WARNING (HUDFlickerController.cs + the
@@ -119,7 +119,7 @@ test('AUDIT 28 W2d: NextCycle - the setting gates it, Normal clears, Injured run
 });
 
 test('AUDIT 28 W2d: drawn as the parent panel\'s tint UNDER the bars in both HUD branches, off the detector\'s HealthLost', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   // AUDIT 39 F131 MOVED THIS PIN: the detector and the tint used to be
   // written twice, once per classic branch, and both sat BELOW the
   // enhanced-skin return - so under the shipping default skin neither
@@ -145,6 +145,6 @@ test('AUDIT 28 W2d: drawn as the parent panel\'s tint UNDER the bars in both HUD
   // holds DFU's - the one call, for every branch below it.
   assert.equal((hud.match(/drawNearDeathFlicker\(renderer, canvas, cur, cursorActive \? 0 : dt, hudDrawn\)/g) || []).length, 1);
   assert.match(hud, /enabled: getBool\('Enhancements', 'NearDeathWarning'\)/);
-  assert.match(read('src/ui/hudVitals.js'), /_lastHealthLost = ev\.health\?\.lost \?\? 0;/);
-  assert.equal(LIVE['Enhancements/NearDeathWarning'], 'src/ui/hud.js');
+  assert.match(read('src/ui/hud/hudVitals.js'), /_lastHealthLost = ev\.health\?\.lost \?\? 0;/);
+  assert.equal(LIVE['Enhancements/NearDeathWarning'], 'src/ui/hud/hud.js');
 });

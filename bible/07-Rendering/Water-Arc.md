@@ -864,7 +864,7 @@ every reader of the ground sees one ground with no puddle law of its own:
 the streamed stamp (`terrainTiles.js` setLocationTiles), the fixed town
 (`scenes/exterior.js`), the streamed town's tilemap (`scenes/world.js`),
 the layout (`rmbLayout.js` buildGroundTilemap), the townsfolk's paths
-(`cityNavigation.js`), the town map (`ui/inkTown.js`); the feet
+(`cityNavigation.js`), the town map (`ui/ink/inkTown.js`); the feet
 (`exteriorSurface.js`, PUDDLE-RAIN's whole-tile swim gone with the tile),
 the grass (GRASS-WET1) and the water pass follow. `readClassicBlock` (a
 mod's diff base) keeps the file's bytes. Both skins: the classic town

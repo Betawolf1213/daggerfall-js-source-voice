@@ -15,7 +15,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { QuestJournalWindow, preloadQuestJournalArt, questJournalLargeFont } from '../src/ui/questJournal.js';
+import { QuestJournalWindow, preloadQuestJournalArt, questJournalLargeFont } from '../src/ui/quest/questJournal.js';
 import { PlayerHistoryWindow } from '../src/ui/playerHistory.js';
 import { CharSheet, NAV_BUTTONS } from '../src/ui/charsheet.js';
 import { measureText } from '../src/ui/text.js';
@@ -132,7 +132,7 @@ test('audit24 wave40: the large font is a module warm, and it is the one DFU nam
   // `LargeFont => GetFont(FontName.FONT0000)`. The port had that law
   // written as a draw parameter no caller ever passed, so the title has
   // always drawn in the host font. It loads beside the art now.
-  const src = rd('src/ui/questJournal.js');
+  const src = rd('src/ui/quest/questJournal.js');
   assert.match(src, /const tf = _largeFont \?\? font;/);
   assert.doesNotMatch(src, /draw\([^)]*largeFont/, 'and not as a draw parameter any more');
   assert.doesNotMatch(src, /draw\(renderer, canvas, font, /, 'the signature is three, like its native-panel siblings');
@@ -159,7 +159,7 @@ test('audit24 wave40: the warm is DRIVEN, not merely written down', async () => 
   // the warm above already filled `_largeFont`, and the guard would
   // skip the fetch entirely, so the throwing path would never be
   // reached and the pin would pass on a mutant that rethrows.
-  const fresh = await import(`../src/ui/questJournal.js?fallback=${Date.now()}`);
+  const fresh = await import(`../src/ui/quest/questJournal.js?fallback=${Date.now()}`);
   const boom = { renderer: RENDERER, fetchBytes: async () => { throw new Error('no such file'); } };
   await assert.doesNotReject(() => fresh.preloadQuestJournalArt(boom));
   assert.equal(fresh.questJournalLargeFont(), null, 'and it really did fail to load');

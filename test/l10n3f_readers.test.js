@@ -25,12 +25,12 @@ import { bookTitle, getRandomBookID, localizedBookMeetsConditions, setBookGlobal
 import { BOOK_ID_TITLES } from '../src/systems/booksData.js';
 import { bookshelfTitles, populateBookshelf } from '../src/systems/bookshelf.js';
 import { resolveItemName, expandItemInfo, getBookAuthor } from '../src/systems/item/itemInfo.js';
-import { scrollerToolTipText } from '../src/ui/itemScroller.js';
+import { scrollerToolTipText } from '../src/ui/item/itemScroller.js';
 import { BookReaderWindow, layoutLocalizedBookLines, placeBookLabels, preloadBookArt, parseBookColor, parseBookScale } from '../src/ui/bookReader.js';
 import { makeOpenBookHook } from '../src/ui/bookDoor.js';
-import { paginateBook, rowInk, scaledFace, INK, canvasFace } from '../src/ui/enhancedBook.js';
+import { paginateBook, rowInk, scaledFace, INK, canvasFace } from '../src/ui/enhanced/enhancedBook.js';
 import { RSC } from '../src/formats/textRsc.js';
-import { DEFAULT_TEXT_COLOR } from '../src/ui/nativePanel.js';
+import { DEFAULT_TEXT_COLOR } from '../src/ui/native/nativePanel.js';
 import { loadQuestTables, resetQuestTables } from '../src/systems/quest/tables.js';
 import {
   fullName, surname, monsterName, BANK_TYPES, GENDERS, parseFsJson, nameBanksOf, loadNameGenData, resetNameBanks,
@@ -259,7 +259,7 @@ test('L10N3f books: a -LOC label\'s colour and scale - placed at MaxWidth / scal
     assert.equal(big.fnt.font, base.fnt.font.replace('20px', '30px'), 'the same cut, scale times the size');
     assert.equal(scaledFace(base, 1.5), big, 'made once');
   } finally { delete globalThis.document; }
-  assert.match(read('src/ui/enhancedBook.js'), /paintRow\(pctx, scaledFace\(row\.face \?\? faces\[0\], row\.scale\), row\.text, [^\n]*color: rowInk\(row\.color\) \}\);/,
+  assert.match(read('src/ui/enhanced/enhancedBook.js'), /paintRow\(pctx, scaledFace\(row\.face \?\? faces\[0\], row\.scale\), row\.text, [^\n]*color: rowInk\(row\.color\) \}\);/,
     'each leaf row is painted at its scale, in its colour');
 });
 

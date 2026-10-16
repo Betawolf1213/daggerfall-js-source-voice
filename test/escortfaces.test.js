@@ -14,7 +14,7 @@ import {
   initEscortFaces, addEscortFace, dropEscortFace, clearEscortFaces, escortQuestEnded,
   getEscortFacesSaveData, restoreEscortFacesSaveData, _escortFaces,
   ESCORT_MAX_FACES, CHILDREN_FACTION_ID,
-} from '../src/ui/hudEscortFaces.js';
+} from '../src/ui/hud/hudEscortFaces.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { RACES, raceArt } from '../src/systems/races.js';
@@ -195,7 +195,7 @@ test('FE1 world: the ctx mounts, the session init, the faction-face read', () =>
 });
 
 test('FE1 hud: drawn on EVERY branch - the large-HUD force-off never names the faces', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   // AUDIT 39 F133 MOVED THIS PIN from 2 to 3: the ENHANCED skin is the
   // shipping default and returned before either call, so the escort
   // column never drew for a default player. DaggerfallHUD adds the

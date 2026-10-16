@@ -14,11 +14,11 @@ import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.
 import { createWeapon, ARROW_TEMPLATE } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { LEGENDARIES } from '../src/systems/loot/lootRarity.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { fitTip, TIP_FITS } from '../src/ui/enhancedInventory.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { fitTip, TIP_FITS } from '../src/ui/enhanced/enhancedInventory.js';
 import { wrapToolTipRows, TOOLTIP_WRAP_W, ToolTip } from '../src/ui/toolTip.js';
-import { makeSlotToolTip } from '../src/ui/itemScroller.js';
-import { NATIVE_W } from '../src/ui/nativePanel.js';
+import { makeSlotToolTip } from '../src/ui/item/itemScroller.js';
+import { NATIVE_W } from '../src/ui/native/nativePanel.js';
 import { SIGIL_SETS, tierValues } from '../src/systems/sigil/sigilSets.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -83,7 +83,7 @@ test('AUDIT SET D4: a Test Room character stays offline - the mark rides its sav
   const said = W.indexOf('if (testRoomOffline) townTalk.say(TEST_ROOM_OFFLINE_TEXT);');
   assert.ok(said > W.indexOf("? { key: Number(params.get('loadkey')) }") && said < W.indexOf('if (!_loadedGame) mwViewNewGame('), 'said after the load, once the boot has its character');
   // the Online pane: the tile's button is dead and says why
-  const M = strip(read('src/ui/enhancedMenu.js'));
+  const M = strip(read('src/ui/enhanced/enhancedMenu.js'));
   assert.match(M, /testRoom: snap\.testRoom === true,/);
   assert.match(M, /label: save\.testRoom \? t\('menu\.online\.testRoomOffline', 'Test Room: offline only'\) : t\('menu\.online\.bring', 'Bring online'\),/);   // REALM P1.5: the Online pane's local tile brings a character in through customs
   assert.match(M, /disabled: !who \|\| save\.testRoom,/);
@@ -165,7 +165,7 @@ test('AUDIT SET U13: a hover card taller than the screen sheds what a glance can
   assert.ok(PLUS_CSS.includes('.inv-tip.tip-compact .bigicon img { width: 56px; height: 56px; }'));
   assert.ok(PLUS_CSS.includes('.inv-tip.tip-compact .set-tier-text { font-size: 11px; line-height: 1.2; }'));
   assert.ok(PLUS_CSS.includes('.inv-tip.tip-tight .bigicon, .inv-tip.tip-tight .set-tier-text, .inv-tip.tip-tight .sigil-note { display: none; }'));
-  assert.match(strip(read('src/ui/enhancedInventory.js')), /document\.body\.append\(tipEl\);\s*fitTip\(tipEl\);\s*placeBeside\(tipEl, row\);/, 'fitted before it is placed');
+  assert.match(strip(read('src/ui/enhanced/enhancedInventory.js')), /document\.body\.append\(tipEl\);\s*fitTip\(tipEl\);\s*placeBeside\(tipEl, row\);/, 'fitted before it is placed');
 });
 
 test('AUDIT SET U2: in the item lists\' classic tooltip a row of the port\'s own wider than TOOLTIP_WRAP_W wraps at its spaces, each continuation indented two, so a set\'s line never runs off the 320px screen; a row that fits is drawn exactly as it was, spaces and all; a word wider than the whole stands alone; DFU\'s rows - the item\'s name, every other window\'s tips - never wrap (mutants: the wrap never asked; a continuation unindented; a short row wrapped; wrapped past the width; the name wrapped; every tooltip wrapped)', () => {

@@ -227,7 +227,7 @@ test('AUDIT-AMAP H5/H6/H8/H9/H12 SOURCE: the bracket saves the trilight, a mover
   const r = rd('src/render/renderer.js');
   assert.match(r, /ambientTri: this\._ambientTri \? \{ sky: Array\.from\(this\._ambientTri\.sky\), ground: Array\.from\(this\._ambientTri\.ground\) \} : null,/, 'H5: saved by name');
   assert.match(r, /this\.setLighting\(s\.ambient, s\.sunScale, s\.sunColor\);\n\s*this\.setAmbientTrilight\(s\.ambientTri\);/, 'H5: and restored after setLighting nulls it');
-  const w = rd('src/ui/automapWindow.js');
+  const w = rd('src/ui/automap/automapWindow.js');
   assert.match(w, /for \(const d of this\.deps\.dynamicDraws\) push\(d\.gpu, byKey\?\.get\(d\.object\.key\)\?\.matrix \?\? d\.object\.matrix, d\.object\.key\);/, 'H6: the at-rest matrix the index and the picker hold');
   assert.match(w, /\n  onPop\(\) \{/, 'H9: OnPop is public');
   assert.doesNotMatch(w, /_onPop/, 'H9: no private twin left');

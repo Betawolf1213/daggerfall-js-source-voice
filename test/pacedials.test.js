@@ -14,7 +14,7 @@ import {
 } from '../src/systems/travel/travelPace.js';
 import { MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE, travelRateOf } from '../src/systems/timeScale.js';
 import { foePaced, JOURNEY_FOE_PACE } from '../src/systems/travel/travelThreat.js';
-import { buildPaceControls } from '../src/ui/travelPaceControls.js';
+import { buildPaceControls } from '../src/ui/travel/travelPaceControls.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const fresh = () => { delete globalThis.localStorage; _resetTravelPace(); };

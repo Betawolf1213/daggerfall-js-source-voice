@@ -3,7 +3,7 @@
 //
 // The Overworld drew every player of the region as their own mark, wearing their whole badge (the title, the Renown, the
 // name, the guild's tag, the glyphs), and each off the picture as their own arrow at the edge - a town's crowd, or a
-// region's worth at one edge, was a wall of names. Now, as they are placed on the screen (ui/travelViewHud.js
+// region's worth at one edge, was a wall of names. Now, as they are placed on the screen (ui/travel/travelViewHud.js
 // declutterTravellers): travellers drawn within TV_CROWD_PX of one another are one mark, "N travellers", at their
 // middle; arrows at the edge within TV_CROWD_EDGE_PX one arrow, the nearest's; and of those still alone in the picture
 // only the TV_BADGES_MAX nearest my own mark wear their badge - the rest their name. My party, the places, the bands and
@@ -12,7 +12,7 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import * as hud from '../src/ui/travelViewHud.js';
+import * as hud from '../src/ui/travel/travelViewHud.js';
 
 const { declutterTravellers, TV_CROWD_PX, TV_CROWD_EDGE_PX, TV_BADGES_MAX, crowdLabel } = hud;
 const BADGE = { title: null, glyphs: [], lv: 12, gt: null };

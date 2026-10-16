@@ -4,9 +4,9 @@
 // as a ship (a hull under a sail, where the dot stood), riding the sea's top, and the held map inks it so.
 //
 // Pinned here: the law (systems/travellerMarks.js TRAV_SHIP and isShipMark, the relay's own shape law taking it, the
-// cadence sending a changed way at once), the readout (ui/travelViewHud.js: the ship drawn for the kind, the dot for
+// cadence sending a changed way at once), the readout (ui/travel/travelViewHud.js: the ship drawn for the kind, the dot for
 // the rest, a name over a ship standing over its sail), the held map (ui/partyMapMarks.js's `ship`, its key, and
-// ui/inkMap.js's ink), and the world host's wiring by source.
+// ui/ink/inkMap.js's ink), and the world host's wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,7 +14,7 @@ import { validTravellerMark, TRAV_MODES } from '../src/net/wire.js';
 import { travellerMarkOf, travellerDue, TRAV_SHIP, isShipMark } from '../src/systems/travellerMarks.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { readTravellerMarks, travellerMarksKey, TRAVELLER_MARK_CSS } from '../src/ui/partyMapMarks.js';
-import { paintInkOverlay } from '../src/ui/inkMap.js';
+import { paintInkOverlay } from '../src/ui/ink/inkMap.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -57,7 +57,7 @@ test('OWS1 law: the mark\'s way at sea is TRAV_MODES\' ship - the mark of a trav
 });
 
 test('OWS1 readout: a mark whose kind says ship is drawn as a hull under a sail - no dot - and the dot stays everyone else\'s; a name over a ship stands over its sail', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   assert.equal(hud.isShipKind({ kind: 'traveller ship journey' }), true);
   assert.equal(hud.isShipKind({ kind: 'party ship' }), true);
   assert.equal(hud.isShipKind({ kind: 'traveller journey' }), false);

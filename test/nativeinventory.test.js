@@ -4,8 +4,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { NativeInventoryWindow, INV_RECTS, TABS, filterByTab, isIngredientTemplate, NO_WAGON_TEXT, USE_PENDING,
   goldPanelRows,
-} from '../src/ui/nativeInventory.js';
-import { scrollerHit, applyScroll, LIST_SLOTS, CELL_X, ARROW_H, DOWN_ARROW_Y, SLOT_H } from '../src/ui/itemScroller.js';
+} from '../src/ui/native/nativeInventory.js';
+import { scrollerHit, applyScroll, LIST_SLOTS, CELL_X, ARROW_H, DOWN_ARROW_Y, SLOT_H } from '../src/ui/item/itemScroller.js';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -257,7 +257,7 @@ test('U44: the window FORWARDS its item-use hooks into the law', () => {
   // it here is invisible: the arm falls back to its `pending` line,
   // which is exactly the "You drink the potion." lie U44 removed.
   const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..',
-    'src/ui/nativeInventory.js'), 'utf8');
+    'src/ui/native/nativeInventory.js'), 'utf8');
   const call = src.slice(src.indexOf('this._useResult(useItem('), src.indexOf('}));', src.indexOf('this._useResult(useItem(')));
   assert.match(call, /revealMap: this\.hooks\.revealMap \?\? null/, 'the reveal hook is forwarded');
   assert.match(call, /drinkPotion: this\.hooks\.drinkPotion \?\? null/, 'and the drink hook');

@@ -37,7 +37,7 @@ import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { SKILL_NAMES } from '../systems/skills.js';
 import { drawText, measureText } from './text.js';
-import { nativeMetrics } from './nativePanel.js';
+import { nativeMetrics } from './native/nativePanel.js';
 import { chargenArtLoaded, drawChargenNative, loadFaceSet, chargenHit, raceDescriptionLines, classDescriptionLines, textRecordLines, DOUBLE_CLICK_DELAY_MS, CLASS_LIST_ROWS, ADV_PICKER_ITEM_COUNT, PLAYER_REFLEXES, REFLEX_COUNT, QUESTION_ROW_H, QSCROLL_H, QSCROLL_TEXT_OFFSET, QSCROLL_FRAMES, PICK_SCROLL_RECT, startConstellationAnim, tickConstellationAnim, stopConstellationAnim } from './chargenArt.js';   // U10 / U17 / U18 / U20a
 
 // AUDIT 24 (wave 24): FormulaHelper.MaxStatValue, one home.
@@ -1183,7 +1183,7 @@ export class ChargenFlow {
    *  list to row 0. The FRAME is skipped, never the latch:
    *  `releasePickBar()` is what ends a drag, which is why the two
    *  sibling machines (`ui/spellbookWindow.js`,
-   *  `ui/spellIconPickerWindow.js`) carry the identical arm. */
+   *  `ui/spell/spellIconPickerWindow.js`) carry the identical arm. */
   hover(vx, vy, e = null) {
     const p = this.syncPickBar();
     if (!p) return;

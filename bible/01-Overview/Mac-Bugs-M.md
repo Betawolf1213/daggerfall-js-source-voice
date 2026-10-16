@@ -31,7 +31,7 @@ Between them those two functions had **exactly one reader**:
 TEXT.RSC record.
 
 The enhanced skin's detail card — the panel most players actually read —
-builds its rows from `ui/enhancedInventory.js`'s `itemLine`, and draws
+builds its rows from `ui/enhanced/enhancedInventory.js`'s `itemLine`, and draws
 **no record at all**. `itemLine` carried name, weight, condition,
 material, stack, equipped, lit, broken. So the classic popup told a
 player a dwarven longsword hits for 4-18 and the enhanced card told them

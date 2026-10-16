@@ -49,7 +49,7 @@ measurement as taken, kept because the two lists are read against it.
 | `src/` lines | 164,220 | **186,438** | same list, concatenated through `wc -l` |
 | test files | 529 | **588** | `git ls-tree -r <sha> --name-only \| grep -c '^test/.*\.test\.js$'` |
 | suite | 5,110 tests | **6,050 tests, 5,841 pass, 0 fail, 208 data-gated skips** | `node --test` at the close |
-| open flags | 151 | **19** | `node tools/regenOpenFlags.mjs --check` answers 19 (POI-2 added one, the `?exterior` bench's POI feed - `06-Systems/POI-Editor-Arc.md` POI-2; GLASS-ALL retired RW1's, the interior glass read off 0xff: a real ARENA2 read, the rule rewritten off it - `07-Rendering/Real-Windows.md` GLASS-ALL; SHIPYARDS added one, the `?exterior` bench's port; WARDEN1 added one, the `?exterior` bench's town watch; AUDIT WAGONS3 added four - WAGONS3's own limits, written only in Wagons.md until it: the Small Cart's saddle, Eye Of The Beholder's standing driver, a peer's pair drawn whole for want of a count, the harness's ends on a picture; MERCHANT-YARDS added one, the `?exterior` bench's yards; RW1 added one, the interior glass read off 0xff - unverified without the player's data; "11 entries, up to date" - TAVERN-TABLE retired CARDS2's, the card table's one nameable model id: the card table is a prop of its own; AUDIT CARDS added the twelfth, the sprite lane standing at its seat (`player/seatPose.js`); CARDS2 added the eleventh, the card table's one nameable model id (`world/card/cardTables.js`); LEGACY1 added the tenth, the fixed city keeping DFU's death (`scenes/world.js`: no streamer to birth an heir into - Legacy-Arc.md section 3 names it FLAGGED); AUDIT TELL added the ninth, the dungeon stream's gap (`scenes/dungeonContext.js`: it carries none of the street record's `z`, `nm`, `yd`, `ex`, `sp` - Feud-Arc.md 10.1 and 32 name it FLAGGED); SEAT1a added the eighth, the fixed city's seat banners (`scenes/seatBanners.js`: the bench runs no account service, so no seat is open there - Seats-Arc 15.1 names it FLAGGED); ARENA2's came and, at ARENA-FIX, went - ONLINE-DUNGEON-FOES came and, at SUMMON-SYNC, went; AUDIT 29 added the seventh, the classic skin's pause with no professions pages, `ui/profPages.js`, and CLASSIC-PAGES retired it; PROF4 the eighth, the woods' pictures untinted, `net/professionLaw.js`). It answered 19 when this table was taken - 17 at `c3c12ee`, plus the two the closeout tail's spell-hand port added - Wave E then retired six, named in list 1, the ship landing a seventh, ROAD-F three more (GS1 `scenes/worldModes.js`, GS2 `systems/skills.js`, DR1 `scenes/dungeonContext.js`), and QX1 the next (`scenes/exterior.js`'s PX3, struck in list 1); the same grep over `git show 6881171:bible/Home.md` returns 151 |
+| open flags | 151 | **19** | `node tools/regenOpenFlags.mjs --check` answers 19 (POI-2 added one, the `?exterior` bench's POI feed - `06-Systems/POI-Editor-Arc.md` POI-2; GLASS-ALL retired RW1's, the interior glass read off 0xff: a real ARENA2 read, the rule rewritten off it - `07-Rendering/Real-Windows.md` GLASS-ALL; SHIPYARDS added one, the `?exterior` bench's port; WARDEN1 added one, the `?exterior` bench's town watch; AUDIT WAGONS3 added four - WAGONS3's own limits, written only in Wagons.md until it: the Small Cart's saddle, Eye Of The Beholder's standing driver, a peer's pair drawn whole for want of a count, the harness's ends on a picture; MERCHANT-YARDS added one, the `?exterior` bench's yards; RW1 added one, the interior glass read off 0xff - unverified without the player's data; "11 entries, up to date" - TAVERN-TABLE retired CARDS2's, the card table's one nameable model id: the card table is a prop of its own; AUDIT CARDS added the twelfth, the sprite lane standing at its seat (`player/seatPose.js`); CARDS2 added the eleventh, the card table's one nameable model id (`world/card/cardTables.js`); LEGACY1 added the tenth, the fixed city keeping DFU's death (`scenes/world.js`: no streamer to birth an heir into - Legacy-Arc.md section 3 names it FLAGGED); AUDIT TELL added the ninth, the dungeon stream's gap (`scenes/dungeonContext.js`: it carries none of the street record's `z`, `nm`, `yd`, `ex`, `sp` - Feud-Arc.md 10.1 and 32 name it FLAGGED); SEAT1a added the eighth, the fixed city's seat banners (`scenes/seatBanners.js`: the bench runs no account service, so no seat is open there - Seats-Arc 15.1 names it FLAGGED); ARENA2's came and, at ARENA-FIX, went - ONLINE-DUNGEON-FOES came and, at SUMMON-SYNC, went; AUDIT 29 added the seventh, the classic skin's pause with no professions pages, `ui/professions/profPages.js`, and CLASSIC-PAGES retired it; PROF4 the eighth, the woods' pictures untinted, `net/professionLaw.js`). It answered 19 when this table was taken - 17 at `c3c12ee`, plus the two the closeout tail's spell-hand port added - Wave E then retired six, named in list 1, the ship landing a seventh, ROAD-F three more (GS1 `scenes/worldModes.js`, GS2 `systems/skills.js`, DR1 `scenes/dungeonContext.js`), and QX1 the next (`scenes/exterior.js`'s PX3, struck in list 1); the same grep over `git show 6881171:bible/Home.md` returns 151 |
 | ARENA2-gated tests | 199 | **207** | the runner's own `# skipped` line |
 
 Both volume figures reproduce the superseded page exactly at its own
@@ -145,7 +145,7 @@ The same hand-check disposes of the loudest-looking misses elsewhere.
 `NewLocationAlert` is `systems/discovery.js:"export function discoverLocation"`'s `discoverLocation`;
 `CivilianEntity` and `MobilePersonNPC` are `characters/mobilePerson.js`
 (whose `SetPerson` face tables D10 took at `:42`); `PlayerCompass` is
-`ui/hud.js`'s HUDCompass port. Exactly two misses survive the check:
+`ui/hud/hud.js`'s HUDCompass port. Exactly two misses survive the check:
 the pair of input-config windows in the next section, and this one.
 
 **`FPSSpellCasting.cs` (324 lines) is uncited in `src/`, and the miss is
@@ -184,16 +184,16 @@ The superseded page listed "the multi-slot save/load window and the
 native automap windows (AMAP00I0/TOWN00I0: the 3D view, render modes,
 note markers, teleporter portals)" as "the two largest genuinely-unbuilt
 reference surfaces". Both ship: `ui/saveWindow.js` (782 lines, ROAD-C
-C1) and the automap pair - `ui/automapWindow.js` 1,504,
+C1) and the automap pair - `ui/automap/automapWindow.js` 1,504,
 `ui/exteriorAutomapWindow.js` 1,072, over `systems/automap/automapModel.js` 282,
-`ui/automapCamera.js` 606, `ui/automapChrome.js` 349,
-`ui/automapMarkers.js` 530 and `systems/automap/automapPick.js` 399 (ROAD-C C2,
+`ui/automap/automapCamera.js` 606, `ui/automap/automapChrome.js` 349,
+`ui/automap/automapMarkers.js` 530 and `systems/automap/automapPick.js` 399 (ROAD-C C2,
 ten stages in two flights). 5,524 lines of window that did not exist
 when the superseded page was written.
 
 ~~One window is drawn in a different idiom and says so: the spell maker.~~
 **CLOSED (E-group, 2026-09-02): the spell maker is native too.**
-`ui/spellMakerWindow.js` is DaggerfallSpellMakerWindow on INFO01I0.IMG
+`ui/spell/spellMakerWindow.js` is DaggerfallSpellMakerWindow on INFO01I0.IMG
 with the MASK01I0 selected-state marks and
 DaggerfallEffectSettingsEditorWindow on MASK05I0 beside it - DFU's hit
 rects digit for digit, its tip label and lock quirk, the eighteen
@@ -321,7 +321,7 @@ reference surface absent · **Departure** = deliberate, ledgered.
 | **sys-audio** | Data verbatim / engine risk | **Verbatim** | 133 songs, 39 playlists, 76 named clips. |
 | **sys-save** | Broad / three features silently dropped | **Verbatim** | ROAD-A A4 took the envelope stragglers (resistances, `skillsRecentlyRaised`, `minMetalToHit`, `previousVampireClan`, `timeToBecomeVampireOrWerebeast`, `playerTeleportedIntoDungeon`); ROAD-C C1 built the multi-slot window over the store. |
 | **ui-core** | Verbatim | **Verbatim** | ROAD-A A7 built a real `VerticalScrollBar` with a draggable thumb, the item scroller's arrow states, the list picker's double-click law and the message box's scrolling variant with its image panel - and with it, paintings. |
-| **ui-hud** | Verbatim (classic) / Partial (enhanced default) | **Verbatim on both skins** | The skin fork moved BELOW the game-state seams: `ui/hud.js:"const rig = updateHudVitals"` runs `updateHudVitals` and `ui/hud.js:"canvas, cur, cursorActive"` `drawNearDeathFlicker`, both above the enhanced branch at `ui/hud.js:"if (isEnhanced() && typeof document !== 'undefined')"` and above the `!art` return, and the enhanced HUD takes the Detect markers at `ui/hud.js:"detected: detected"`. `lastHealthLost()` is no longer pinned at 0, so `CameraRecoiler` lives in all three hosts. |
+| **ui-hud** | Verbatim (classic) / Partial (enhanced default) | **Verbatim on both skins** | The skin fork moved BELOW the game-state seams: `ui/hud/hud.js:"const rig = updateHudVitals"` runs `updateHudVitals` and `ui/hud/hud.js:"canvas, cur, cursorActive"` `drawNearDeathFlicker`, both above the enhanced branch at `ui/hud/hud.js:"if (isEnhanced() && typeof document !== 'undefined')"` and above the `!art` return, and the enhanced HUD takes the Detect markers at `ui/hud/hud.js:"detected: detected"`. `lastHealthLost()` is no longer pinned at 0, so `CameraRecoiler` lives in all three hosts. |
 | **ui-windows-a** | Rect parity excellent / two crash doors | **Verbatim** | ROAD-D D2 shipped both scroll thumbs (`chargenArt.js:"does. The held-button"` over `RECTS.pickScroll`, `spellbookWindow.js:"m, [PANEL_X + sbx, PANEL_Y + sby, sbw, sbh]"` over the 7-wide rail). |
 | **ui-windows-b** | Broadly ported | **Verbatim** | Both automaps are native windows. ROAD-D D6 built the ship purchase over the shared bank-market mount and gave `buildingIsUnlocked` the `ownsShip` key its last arm needed. |
 | **ui-enhanced** | Departure lane | **Departure lane, scoped** | `ui/worldPlaque.js:"THE SKIN GATE IS"` puts the skin gate above `ensure()`, so the unscoped `*`/`html`/`body`/`button`/`#app` rules never reach the classic page. 9 modules / 8,940 lines. |
@@ -403,7 +403,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   "DR1: THE TWO WINDOW SEAMS, MOUNTED"), pinned by three DR1 cases in
   `test/x11b.test.js`. This was also Ledger row `:835`'s adjudication,
   and that row is struck with it.
-- **`src/ui/enhancedMenu.js` line 4213** - the rest of the keyboard; the
+- **`src/ui/enhanced/enhancedMenu.js` line 4213** - the rest of the keyboard; the
   wizard walks to `done` with no pointer. *The enhanced menu is the
   enhanced skin, a Ledger A departure, so no C# line is owed. The flag
   names its own blocker: focus order across a rail, a settings list and
@@ -582,11 +582,11 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   and the port has no console host. The flag they set,
   `revealUndiscoveredBuildings`, is live and pinned in both states by
   `test/automap_ext.test.js`; what is missing is the console seam
-  alone, the same stance `ui/travelMapWindow.js` already records for
+  alone, the same stance `ui/travel/travelMapWindow.js` already records for
   `map_reveallocations`. D5 shipped the other two thirds of this
   header - the residence-with-active-quest plates and the eight button
   tooltips.*
-- ~~**`src/ui/hudLarge.js:75`** - the docked bar occludes, it does not
+- ~~**`src/ui/hud/hudLarge.js:75`** - the docked bar occludes, it does not
   shrink.~~ **SHIPPED (E-group, 2026-09-02, E5): the docked bar SHRINKS
   the world pass now - `ViewportChanger.cs:52-67`'s camera rect and
   `HUDCrosshair.cs:43-52`'s re-centring both landed.** *Multi-host and
@@ -653,7 +653,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
 
 **Added after this page was measured.**
 
-- ~~**`src/ui/profPages.js:105`** - the professions' pages on the classic skin
+- ~~**`src/ui/professions/profPages.js:105`** - the professions' pages on the classic skin
   (AUDIT 29, 2026-09-28). *The Professions and Stores pages, and the Forge on the Stores page, are the Enhanced pause
   menu's Stats rail; the classic skin's pause (DFU's own) has no pages, so a classic player reaches them only through
   its Controls button's settings screen, and a home's Forge station is not offered there. The professions are a Ledger
@@ -688,7 +688,7 @@ could see the others' closures until the squash, which is how "leaving
   closed section C's `playSound` row with them;
 - `systems/inventory.js:"E4 (2026-09-02) RETIRED"` (gold as a bag stack) - **E4**;
 - `systems/talk/talkMacros.js:"ordering: the scan"` (`GetValue`'s empty-string arm) - **E7**;
-- `ui/hudLarge.js:"THE DOCKED BAR SHRINKS"` (the docked bar occludes) - **E5**;
+- `ui/hud/hudLarge.js:"THE DOCKED BAR SHRINKS"` (the docked bar occludes) - **E5**;
 - `ui/exteriorAutomapWindow.js:"rect and was being"` (the two console verbs) - **E1**
   narrowed the header and **E3** built the console host they needed.
 
@@ -757,7 +757,7 @@ that was a claim once and is a pointer at a stranger now.
   wrote it landed on the town-talk topics table, not on a chargen line).
   Each is re-resolved BY CONTENT and pinned into `test/citedrift.test.js`
   CD4, with this page's one still-open `exterior.js` row into CD6. Only
-  `ui/hudLarge.js`'s activation-ray cite and `Home.md`'s generated flag
+  `ui/hud/hudLarge.js`'s activation-ray cite and `Home.md`'s generated flag
   were already exact.*
 - ~~The doctrine gate's blind half.~~ **CLOSED.** *`test/doctrine.test.js`
   scanned only files shouting a DEPARTURE token, so AUDIT 21 F7's other
@@ -1002,7 +1002,7 @@ ships, which is the warning the section's own preamble opens with.
 9. **`:722` UseItem's unbuilt destinations.** Every arm the row names is
    built: `DrinkPotion` (`systems/useItem.js:"entity = null, rolls"`, `systems/useItem.js:"B1: the book arm"`),
    `RecordLocationFromMap`/`DiscoverRandomLocation`
-   (`ui/nativeInventory.js:"U44: RecordLocationFromMap's"`, `scenes/world.js:"revealMap: () => {"`), the
+   (`ui/native/nativeInventory.js:"U44: RecordLocationFromMap's"`, `scenes/world.js:"revealMap: () => {"`), the
    quest-item click (`useItem.js:"const questItem ="`, `useItem.js:"if (!resource.useClicked && resource.actionWatching)"`) and
    `DoItemEnchantmentPayloads(Used)` (already struck at E2). D10 closed
    the last residue in the row's book-reader clause - the fixed 10px row
@@ -1026,9 +1026,9 @@ ships, which is the warning the section's own preamble opens with.
     `src/formats/mapsFile.js:"export function patchRegionIndex"`, with the C# line range cited.
 12. **`:821` the magic crafting windows.** The row's FLAGGED residue is
     three items and all three are answered: spell icons ship and are
-    drawn (`ui/spellIcons.js`, imported at
+    drawn (`ui/spell/spellIcons.js`, imported at
     `ui/spellbookWindow.js:"preloadSpellIcons,"`, drawn at `ui/spellbookWindow.js:"The name and the"`), the icon picker
-    ships (`ui/spellIconPickerWindow.js`), and the
+    ships (`ui/spell/spellIconPickerWindow.js`), and the
     inert-catalogue count is gated at 0. What survives is not residue
     ~~but a **departure with no Ledger row**: DFU's native INFO01I0 art
     window is a keyed text window here.~~ **THAT SHIPPED TOO (E-group,
@@ -1168,7 +1168,7 @@ focus order across the enhanced menu's rail. One is mod infrastructure
 the port does not have - `TextureReplacement`'s loose-file CIF
 override, a Ledger A departure recorded here for the count. Two are the
 professions', Ledger A departures too: the classic skin's pause has no
-pages to reach them from (AUDIT 29, `ui/profPages.js`), and the woods'
+pages to reach them from (AUDIT 29, `ui/professions/profPages.js`), and the woods'
 pictures stand untinted until the owner has looked (PROF4,
 `net/professionLaw.js`). (The gamepad, which this paragraph named until
 PROF4, is no longer a flag: `systems/gamepad.js` is the layer.)

@@ -171,7 +171,7 @@ export function applyCustoms(snap) {
  * binder's "Starter Deck" naming cards the realm character no longer held. A card in the pack is spare while the pack
  * holds more of it than the deck that names the most of it (iliacItems.js binderDecks); one outside the pack is spare
  * already (a deck is dealt from the pack - deckHeldRefusal). What a deck still lost is said (applyCustoms' `decksShort`,
- * customsLines): the table deals no deck its binder cannot back, and says why (ui/cardBinderPage.js DECK_REFUSAL_WORDS
+ * customsLines): the table deals no deck its binder cannot back, and says why (ui/card/cardBinderPage.js DECK_REFUSAL_WORDS
  * 'not held').
  * @param {any} snap
  */
@@ -242,7 +242,7 @@ const REST_ITEM_IDS = new Set(Object.values(REST_ITEM));
  * are forced into oblivion"): A CHARACTER COMING IN IS A NEW ONLINE CHARACTER, so it crosses onto the online law's
  * system - Daggerfall's - the one law a new character's system goes through (oblivionLeveling.js
  * newCharacterLevelingSystem). It is run at the Bring online door beside applyCustoms, not inside it - customs is the
- * gold and the deeds, and its report keeps saying only that (ui/enhancedMenu.js bringOnline/customsNow say this line
+ * gold and the deeds, and its report keeps saying only that (ui/enhanced/enhancedMenu.js bringOnline/customsNow say this line
  * first). An Oblivion character's bar is dropped and its skill sum re-anchored at the START of the level it has
  * (advancement.js levelUpSkillSumAnchor) - Daggerfall's sum was never its measure, so read raw it could pay out
  * several levels at once or owe them; a level-up already earned is kept (the anchor is the pending level's, and the

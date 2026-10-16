@@ -1777,8 +1777,8 @@ sun-averse producers, spawn prevention - is ONE ledger row.
 
 ### S31 addendum (U41, 2026-08-24): the WINDOW paragraph above is
 history. `ui/travelMap.js` is DELETED and the keyed typeahead with
-it: the classic art window ships in `ui/travelMapWindow.js` +
-`ui/travelPopUp.js` (UI-Arc's U41), so the region-map click surface,
+it: the classic art window ships in `ui/travel/travelMapWindow.js` +
+`ui/travel/travelPopUp.js` (UI-Arc's U41), so the region-map click surface,
 the location dots, the find box and the popup's own art are all
 real. The LAW half of this slice is untouched - `systems/travel/travel.js`
 still owns the calculator, the cost and the clamps, and world.js's
@@ -2486,7 +2486,7 @@ row in `diseases.test.js`. 18 mutations, 18 dead.
 
 `src/systems/potions.js` (the twenty recipes widened, plus
 DrinkPotion's bundle) + `src/systems/effects.js` (the one effect with
-no classic key) + `src/systems/useItem.js` + `src/ui/nativeInventory.js`
+no classic key) + `src/systems/useItem.js` + `src/ui/native/nativeInventory.js`
 + the four hosts. `test/potions.test.js` (+5),
 `test/useitem.test.js` (+1), `test/nativeinventory.test.js` (+1).
 
@@ -4595,7 +4595,7 @@ smash-to-black fade and EXIT's key-up deferral - stayed named, and a
 pin asserted they stayed named, so this slice could not be read as
 having closed the whole row. **WAVE D's D4 closed both** and inverted
 that pin: the fade is `src/ui/fadeLayer.js` (FadeBehaviour.cs whole)
-fired from `ui/travelPopUp.js` on the frame the counter empties, the
+fired from `ui/travel/travelPopUp.js` on the frame the counter empties, the
 deferral is travelPopUp's KeyDown-arms / KeyUp-pops
 `isCloseWindowDeferred` over the travelMapWindow keyup seam, and
 `test/travelguild.test.js` now asserts neither flag survives in that
@@ -5833,7 +5833,7 @@ transport arc above closed TR1-TR5, so two arcs claimed the same three
 ids and a grep for "TR2" answered with the riding sprite AND the
 gender bug. The room is **TSR** from now on (renumbered in
 `test/testroom.test.js` and Testing.md's row); the transport arc keeps
-TR. Source comments in `ui/enhancedMenu.js` and `combat/weaponRig.js`
+TR. Source comments in `ui/enhanced/enhancedMenu.js` and `combat/weaponRig.js`
 still carry the old spelling, which this paragraph exists to catch.
 
 **TSR1 - ONE HOME.** `systems/testRoom.js` holds all three parts: the
@@ -6460,7 +6460,7 @@ instead (`null` means "do not ask", which is every non-maker caller).
 its mirror, carrying DFU's own asymmetry verbatim: an ordinary trap
 counts only when its soul is `!= None && < 43` (`:115`), while a
 filled Azura's Star is counted with no bound at all (`:121-125`).
-`ui/itemMakerWindow.js` enumerates ONCE, in its constructor, and both
+`ui/item/itemMakerWindow.js` enumerates ONCE, in its constructor, and both
 picker seams read that snapshot - see the review round below for why.
 
 That makes a comment in `enchantmentCatalogue.js` false and it is
@@ -6498,7 +6498,7 @@ registration.
 own work.
 
 *The host wiring had no pin.* The two `souls:` arguments in
-`ui/itemMakerWindow.js` were the ONLY place the filter reached the
+`ui/item/itemMakerWindow.js` were the ONLY place the filter reached the
 catalogue, and nothing in the suite constructed an `ItemMakerWindow` -
 `test/audit63_effects.test.js` drove `primaryPickerList`/`primaryPick`
 directly, so deleting both arguments restored the whole defect with the
@@ -8159,7 +8159,7 @@ line.
   rough - half the hour's recovery, the resting roll asked twice, a
   stiff morning; the felt temperature can refuse the sleep. 7 tests.
 - SURV5 what the player is told (`survival/status.js`,
-  `tavernMenu.js`, `ui/enhancedHud.js`, `ui/tavernWindow.js`): the
+  `tavernMenu.js`, `ui/enhanced/enhancedHud.js`, `ui/tavernWindow.js`): the
   HUD's needs strip, the status page's third box, the items' info box,
   the mod's regional tavern menus keyed by climate with the meal, the
   drink and the blackout. 6 tests.

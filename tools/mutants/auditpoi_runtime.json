@@ -164,7 +164,7 @@
   },
   {
     "name": "AUDITPOI-R7-the-cap-unread",
-    "file": "src/ui/bountyMapMark.js",
+    "file": "src/ui/bounty/bountyMapMark.js",
     "old": "    if (out.length >= max) break;",
     "new": "    if (out.length >= BOUNTY_MARKS_MAX) break;",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "AUDITPOI-R7-the-region-page-under-the-bountys-cap",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "poiLegendText(), POI_MARKS_MAX);   // AUDIT POI R7",
     "new": "poiLegendText());   // AUDIT POI R7",
     "tests": [

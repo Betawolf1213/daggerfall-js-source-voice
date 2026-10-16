@@ -57,7 +57,7 @@ test('SKIN-CARRY by source: the UI Overhaul card\'s choice reads the store\'s wo
   assert.match(fn, /url\.searchParams\.delete\('skin'\);/, 'a stored choice rides no override');
   assert.match(fn, /if \(setUiSkin\(skin\) === null\) url\.searchParams\.set\('skin', skin\);/, 'a refused one rides the URL');
   assert.match(fn, /return url\.toString\(\);/);
-  assert.doesNotMatch(rd('src/ui/enhancedMenu.js'), /function switchSkin\(/, 'the menu\'s own door is retired (MENU-TOGGLE)');
+  assert.doesNotMatch(rd('src/ui/enhanced/enhancedMenu.js'), /function switchSkin\(/, 'the menu\'s own door is retired (MENU-TOGGLE)');
   assert.match(rd('src/systems/uiSkin.js'), /return setPref\('skin', skin\) === false \? null : skin;/);
   assert.match(rd('src/systems/uiPrefs.js'), /export function setPref\(k, v\) \{ if \(_prefs === null\) loadPrefs\(\); _prefs\[k\] = v; return savePrefs\(\); \}/);
 });

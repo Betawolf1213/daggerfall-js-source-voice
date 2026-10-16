@@ -34,9 +34,9 @@ import { capLootList } from '../src/systems/foeLootCap.js';
 import { POTION_TEMPLATE_INDEX } from '../src/systems/loot/loot.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
 import { noteTaken, droughtOf, _setDroughtForTests } from '../src/systems/loot/lootDrought.js';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
 import { mountReforgeWindow, EVERY_MAGIC_ASK, UNSET_ASK, GEMS_NONE } from '../src/ui/reforgeWindow.js';
-import { REFORGE_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { REFORGE_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { lineCompareBlock, wearComparison } from '../src/ui/armourCard.js';
 import { withDom } from './invdrag.mjs';
 
@@ -407,7 +407,7 @@ test('AUDIT LOOT II B6: the card makes one comparison for both its blocks, and t
       assert.equal(lineCompareBlock(e, next, untouched), null, 'off: none, and nothing compared');
     } finally { on(); }
   });
-  const card = read('src/ui/enhancedInventory.js');
+  const card = read('src/ui/enhanced/enhancedInventory.js');
   assert.equal((card.match(/wearComparison\(/g) ?? []).length, 1, 'one comparison a card');
   assert.match(card, /compareBlock\(deps\.entity, picked, \(it\) => itemLongName\(it, \{ getQuest: deps\.getQuest \?\? null \}\), wear\)/);
 });

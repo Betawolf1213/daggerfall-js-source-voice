@@ -100,7 +100,7 @@ colosseum's own box and off its sand take a guild hall's byte, so both maps draw
 the guilds and temples (the temple quarter's colour), a ring round the sand - which keeps Kamer's 117, an open court as
 a temple's courtyard is. The navgrid asks nonzero alone, so nothing walks differently. And the block's row on the town
 map carries a landmark (`arenaTownLandmark`, handed by both exterior hosts): "Arena", lettered at the colosseum's place
-by the building plates' own law (`ui/exteriorAutomapWindow.js` buildPlates, `ui/townSheet.js` named), always - there is
+by the building plates' own law (`ui/exteriorAutomapWindow.js` buildPlates, `ui/town/townSheet.js` named), always - there is
 no door to discover it by and no record to rename. `scenes/worldModes.js` and `scenes/dungeonContext.js` open no town
 map. Tests: `test/arena_townmap.test.js` (4); mutants: `tools/mutants/arena_map.json` (14, all dead).
 
@@ -204,7 +204,7 @@ tiers, hundreds at a sold-out bout. They live:
 ## 5. The Arena window (enhanced UI plus) (ARENA3)
 
 One window, opened by the Herald (and from the pause menu's Arena entry once you have joined), the kit's own
-(`ui/enhancedFrame.js` roles, the Plus sheet, the pixel face, `role="tab"` so the pad turns its tabs):
+(`ui/enhanced/enhancedFrame.js` roles, the Plus sheet, the pixel face, `role="tab"` so the pad turns its tabs):
 - **Bouts** - the live and coming bouts: the exhibition on the city floor, players' bouts to watch, the ladder's next;
   each a card with the two fighters, their records, the odds, Watch / Wager / Fight.
 - **Ladder** - the ten tiers as a column, your place, each tier's three opponents and its champion, cleared marks,
@@ -407,7 +407,7 @@ table names two pairs for three bouts); Tier 10's three Grand Melees are Knight/
 Monk at 21, and the champions' survivors (Vampire, Daedra Seducer, Orc Warlord), then the Iron Atronach. Purses: bouts
 50-1,800, champions 200-5,400, the Grand Champion 10,000. The save's `arena` (versioned `v: 1`; any older or broken shape
 reads back whole; a pre-ARENA2 save climbs from the Pit). Titles (Pit Fighter ... Paragon, Grand Champion) offline: in
-the Herald's lines and the character sheet's Arena section (`ui/enhancedCharSheet.js arenaSheetLine`).
+the Herald's lines and the character sheet's Arena section (`ui/enhanced/enhancedCharSheet.js arenaSheetLine`).
 
 **The crowd** (`systems/arena/arenaCrowd.js`, `systems/arena/arenaSound.js`). Mood -1..1 (boo, jeer, murmur, cheer, roar), each event's
 push, settling over 7 s; favour per fighter (Daggerfall's own start loved; the beast tier starts sour and pities the
@@ -424,7 +424,7 @@ bed's gain by mood and distance. Words: barks gapped 2.6 s, never repeated twice
 **Music** (`systems/arena/arenaScore.js`): ARENAMAR (B-flat march, 116 BPM, 16 bars) through the call and the fight, ARENAWIN
 for 9 s from the verdict, then quiet; held by world.js beside the court's score.
 
-**The HUD** (`ui/arenaHud.js`, a readout like the gate bar): the versus bar (names, banner marks for ARENA3, health, the
+**The HUD** (`ui/arena/arenaHud.js`, a readout like the gate bar): the versus bar (names, banner marks for ARENA3, health, the
 darling and villain marks, Yielded/Down/Out), my stamina, the crowd's meter and its word, the clock, the crowd's shout,
 the yield hint; the Herald's calls and 3 - 2 - 1 - Fight! mid-screen (`setMidScreenText`). Its own sheet in the pixel face
 (both skins), dressed on Plus by the kit's roles (`.arena-plate` a panel, `.arena-timer`/`.arena-tag` chips) and
@@ -581,7 +581,7 @@ the house's - the stake lost whichever fighter led (a fall already standing is i
 here, to its verdict or left, takes no wager after, and the Herald's Watch does not fight it again (AUDIT PRE-MERGE 1003
 B3). Winnings wait at the stall ("C - Collect your 175 gold"): he pays in person.
 
-**The Arena window** (`src/ui/arenaWindow.js` over `src/systems/arena/arenaBoard.js`; `src/ui/arenaDoor.js`, the Reforge's
+**The Arena window** (`src/ui/arena/arenaWindow.js` over `src/systems/arena/arenaBoard.js`; `src/ui/arena/arenaDoor.js`, the Reforge's
 door's shape). Bouts (the hour's exhibition or the next - the Red's fighter against the Blue's, each with pennant, home,
 epithet, class and level, record, price and the favourite; Watch and Wager - whom, how much, placed; the players' bouts
 said online; the ladder's next - Fight; every press refused at the press with its reason under it: at the gate only
@@ -605,7 +605,7 @@ card and the leaderboard show it; the character sheet's Arena lines carry the ba
 (`hallOfChampions`, the Keeper's) reads every Grand Champion this save has seen: yours first, then the banners' who took
 the title, each season since the save first saw the arena (`since`), the newest first, home and banner.
 
-**The versus bar** (`ui/arenaHud.js`): each fighter of a banner wears its pennant before the name (`data-team`) - mine in
+**The versus bar** (`ui/arena/arenaHud.js`): each fighter of a banner wears its pennant before the name (`data-team`) - mine in
 a ladder bout under one, an exhibition's Red against Blue; the house's fighters none. ARENA2's `data-banner` unchanged.
 
 **The save**: `arenaLeague` (versioned `v: 1`, beside ARENA2's `arena`): the banner, the quit, the season's points, the
@@ -726,7 +726,7 @@ held to sword reach), one number a cast.
 but red or blue dropped, never refused); the relay bills it (`_bill`, the live list); the exhibition's sides are Red and
 Blue. Cosmetic only - a banner's points come from the service's own `arena_members` rows.
 
-**5. The stands' cheer** (section 4). A watcher of a relay bout has two presses under the plate (`ui/arenaHud.js` -
+**5. The stands' cheer** (section 4). A watcher of a relay bout has two presses under the plate (`ui/arena/arenaHud.js` -
 Cheer and Boo, 36 px, 48 on touch; the `=` and `-` keys, never in a text field, with a modifier or on a held repeat), one
 shout every 1.75 s (the relay's 1.5 s and a quarter second); my shout moves my crowd at once and the relay's echo plays
 only the others'.
@@ -952,7 +952,7 @@ keeps the seat or the place on the sand it held (1003b R5).
   alarm). Every member's screen leaves the floor's instance on the word.
 
 **The client** (`scenes/arenaOnline.js` `enterSession` / `sessionTick` / `sessionState` / `sessionAct`;
-`systems/arena/arenaBoard.js sessionCard`; `ui/arenaWindow.js`; `scenes/arenaGate.js` routes the `priv*` presses). The Arena
+`systems/arena/arenaBoard.js sessionCard`; `ui/arena/arenaWindow.js`; `scenes/arenaGate.js` routes the `priv*` presses). The Arena
 window's Bouts tab carries a **Private session** card - first on the page while in one (1003b U6), spanning it (U1):
 out of one, *Host a session* (a registered account's) and a labelled code box with *Join* (and *Rejoin session <code>*
 for a session this screen stepped out of - C8 - with the last word the session said, a wrong code's included - U3/U8);
@@ -1014,8 +1014,8 @@ rules for them: a press is one to three words, a verb first where it acts ("Host
 "Place bet", "Cancel bout", "Replay"); a line is one short sentence, with no clause hung on " - ", no semicolon, no
 hedge and no word about the machinery ("relay", "socket", "the realm keeps..."); a refusal still says what is wrong.
 The crowd's barks, the Herald's calls on the sand, the verdicts, the tiers, titles and epithets kept their voice. The
-bookmaker's "wager" is a "bet" on every press and line. `ui/arenaWindow.js`, `ui/arenaHud.js`,
-`ui/arenaSessionButton.js` and `systems/arena/arenaBoard.js` draw these words and needed none of their own changed.
+bookmaker's "wager" is a "bet" on every press and line. `ui/arena/arenaWindow.js`, `ui/arena/arenaHud.js`,
+`ui/arena/arenaSessionButton.js` and `systems/arena/arenaBoard.js` draw these words and needed none of their own changed.
 
 **Tests.** The suites that pinned a line by its words now pin the new words (`arena2_hud`, `arena3_book`,
 `arena3_window`, `arena5_plaques`, `arena_fix`, `audit1003b_client`); no test added or removed. Mutant records whose

@@ -48,7 +48,7 @@ function withDom(fn) {
 const text = (n) => (n.textContent || '') + n.children.map(text).join('|');
 
 test('GUILD-REP: the enhanced Standing page draws each guild - name, rank and a signed, toned reputation', async () => {
-  const { statsGuilds } = await import('../src/ui/enhancedMenu.js');
+  const { statsGuilds } = await import('../src/ui/enhanced/enhancedMenu.js');
   withDom((make) => {
     const detail = make('div');
     statsGuilds(detail, hero({
@@ -78,7 +78,7 @@ test('GUILD-REP: the enhanced Standing page draws each guild - name, rank and a 
 
 test('GUILD-REP: one model, both skins - the classic box and the enhanced page read the same book', () => {
   assert.match(read('src/ui/charsheet.js'), /const book = affiliations\(entity\);/);
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const book = affiliations\(entity\);/);
   // REP5: PIN MOVED - the law of each region stands between the social groups and the guilds (test/rep5_notices.test.js)
   // DRESS1 (2026-09-30): PIN MOVED again - the Dress line (test/dress_standing.test.js) sits under the groups, before the law

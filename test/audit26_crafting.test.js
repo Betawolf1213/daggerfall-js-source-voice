@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ItemMakerWindow, ITEM_RECTS, rowLayout, _setItemMakerArtForTests,
-} from '../src/ui/itemMakerWindow.js';
+} from '../src/ui/item/itemMakerWindow.js';
 import {
   enchantmentParamName, enchantmentSettings, PARAM_NONE,
 } from '../src/systems/enchantmentCatalogue.js';

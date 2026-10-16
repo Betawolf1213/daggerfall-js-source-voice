@@ -449,9 +449,9 @@ half the lanes' own mutation tallies could not see.
   ("the port's host channel delivers a bare sign" - the hosts carry the
   point now, and that window still ignores it, having one list), and
   the three "the overlay wheel seam carries no position" sentences in
-  `ui/automapWindow.js` and `ui/mouseControlsWindow.js`. FLAGGED, same
-  shape, not wired: `ui/automapWindow.js`, `ui/mouseControlsWindow.js`,
-  `ui/nativeTalk.js` and `ui/itemMakerWindow.js` each route a notch by
+  `ui/automap/automapWindow.js` and `ui/mouseControlsWindow.js`. FLAGGED, same
+  shape, not wired: `ui/automap/automapWindow.js`, `ui/mouseControlsWindow.js`,
+  `ui/native/nativeTalk.js` and `ui/item/itemMakerWindow.js` each route a notch by
   a point seeded before the first mousemove and now discard the live
   one the hosts hand them; they seed `[0,0]`, not the leave sentinel -
   the finder's "same seeded sentinel" was wrong, and this is no

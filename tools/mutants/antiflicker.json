@@ -46,7 +46,7 @@
   },
   {
     "name": "POISE-QUIET-the-empty-track-drawn",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    const p = t.poise && t.poise.state && t.poise.state !== 'empty' ? t.poise : null;",
     "new": "    const p = t.poise;",
     "tests": [

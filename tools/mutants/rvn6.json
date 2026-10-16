@@ -388,7 +388,7 @@
   },
   {
     "name": "RVN6-page-rank-1",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  const members = name ? bandMembers(r, 1) : [];",
     "new": "  const members = bandMembers({ ...r, rank: Math.max(2, r?.rank | 0) }, 1);",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "RVN6-page-uncounted",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  for (const m of members) counts.set(m.mobileType, (counts.get(m.mobileType) ?? 0) + 1);",
     "new": "  for (const m of members) counts.set(m.mobileType, 1);",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "RVN6-page-plural-f",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": ": /f$/i.test(name) ? `${name.slice(0, -1)}ves`",
     "new": ": /f$/i.test(name) ? `${name}s`",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "RVN6-page-plural-y",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": ": /[^aeiou]y$/i.test(name) ? `${name.slice(0, -1)}ies`",
     "new": ": /[^aeiou]y$/i.test(name) ? `${name}s`",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "RVN6-page-plural-fish",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "const many = /fish$/i.test(name) ? name :",
     "new": "const many =",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "RVN6-page-article",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "if (n === 1) return `${/^[AEIOU]/i.test(name) ? 'an' : 'a'} ${name}`;",
     "new": "if (n === 1) return `a ${name}`;",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "RVN6-page-unnamed",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  return `Band: rides with ${list} - ${name}.`;",
     "new": "  return `Band: rides with ${list}.`;",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "RVN6-page-row-unwired",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (band) text.append(el('span', 'rvn-will', band));\n",
     "new": "",
     "tests": [

@@ -11,16 +11,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { byClass, text, Node_ } from './chargenDom.mjs';
-import { mountEnhancedChargen, classFileName, CLASS_FILE_EXT } from '../src/ui/enhancedChargen.js';
+import { mountEnhancedChargen, classFileName, CLASS_FILE_EXT } from '../src/ui/enhanced/enhancedChargen.js';
 import { ChargenFlow, NAME_MAX_CHARACTERS } from '../src/ui/chargen.js';
 import {
   daggerY, daggerFraction, DAGGER_Y_MIN, DAGGER_Y_MAX, DAGGER_Y_DEFAULT, DIFFICULTY_MIN, DIFFICULTY_MAX,
   advancementMultiplier, customClassDoc, parseCustomClassDoc, CLASS_FILE_FORMAT, CLASS_FILE_VERSION,
 } from '../src/systems/customClass.js';
-import { ATTRIBUTE_BLURB } from '../src/ui/levelUpView.js';
+import { ATTRIBUTE_BLURB } from '../src/ui/levelUp/levelUpView.js';
 import { STAT_KEYS_ORDER } from '../src/systems/chargen.js';
 import { SKILLS, SKILL_NAMES } from '../src/systems/skills.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 const CAREER = { name: 'Mage', hitPointsPerLevel: 8, advancementMultiplier: 1, strength: 40, intelligence: 60, willpower: 72, agility: 48, endurance: 52, personality: 55, speed: 48, luck: 57,
   primarySkills: [SKILLS.Mysticism, SKILLS.Alteration, SKILLS.Thaumaturgy], majorSkills: [SKILLS.Illusion, SKILLS.Destruction, SKILLS.Restoration],
@@ -109,7 +109,7 @@ test('UXB1-G: every attribute row says what it does on hover, and the selected o
 });
 
 test('UXB1-G by source: the rolled stats and the review carry the same hover, and the stats card the selected line', () => {
-  const view = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const view = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   const stats = view.slice(view.indexOf('function statsStage()'), view.indexOf('function skillsStage()'));
   assert.match(stats, /main\.title = ATTRIBUTE_BLURB\[key\];/);
   assert.match(stats, /d\.append\(attrHelp\(STAT_KEYS_ORDER\[flow\.statCursor\]\)\);/);
@@ -343,7 +343,7 @@ test('UXB1-J: the builder\'s DOM keeps the phone\'s reading order and the desk p
   assert.match(block, /\.wizard \.skillpane\.skills3 \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
   assert.match(block, /\.wizard \.reviewgrid \{ display: grid; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
   assert.doesNotMatch(block, /pointer: coarse/, 'the finger keeps its 44px floor');
-  const view = readFileSync(new URL('../src/ui/enhancedChargen.js', import.meta.url), 'utf8');
+  const view = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
   assert.match(view, /const list = el\('div', 'list classlist'\);/);
   assert.match(view, /const wrap = el\('div', 'skillpane skills3'\);/);
 });

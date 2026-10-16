@@ -12,9 +12,9 @@
 //      as a second row beside the stack it came from.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { itemLine } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedTrade } from '../src/ui/enhanced/enhancedTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { createBook, bookTitle, setBookPrice, clearBookPrices } from '../src/systems/books.js';
 import { createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';
 import { addItem, splitStack, ARROW_TEMPLATE } from '../src/systems/inventory.js';

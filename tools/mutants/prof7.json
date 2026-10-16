@@ -928,7 +928,7 @@
   },
   {
     "name": "PROF7-hud-trace-unlit",
-    "file": "src/ui/profReticle.js",
+    "file": "src/ui/professions/profReticle.js",
     "old": "setClass(n, st.tracing && i <= st.reached ? `prof-glint",
     "new": "setClass(n, false ? `prof-glint",
     "tests": [
@@ -1011,7 +1011,7 @@
   },
   {
     "name": "PROF7-pages-hunting-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const PRACTISED = Object.freeze(['herbalism', 'mining', 'hunting', 'fishing', 'logging', 'smithing', 'building', 'outfitting', 'provisioning', 'enchanting']);",
     "new": "const PRACTISED = Object.freeze(['herbalism', 'mining', 'fishing', 'logging', 'smithing', 'building', 'outfitting', 'provisioning', 'enchanting']);",
     "tests": [
@@ -1021,7 +1021,7 @@
   },
   {
     "name": "PROF7-pages-smithing-unlocks-swallowed",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    [localizedText('silver', 'Silver'), 3], [t('prof.page.unlocks.smithing4', 'Elven, Dwarven'), 4], [localizedText('mithril', 'Mithril'), 5], [t('prof.page.unlocks.smithing6'",
     "new": "    [t('prof.page.unlocks.smithing6'",
     "tests": [
@@ -1030,7 +1030,7 @@
   },
   {
     "name": "PROF7-pages-loom-dye-dropped",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const res = await p.craft(id, { clean: clean && getPref('gentleActs') !== true, dye: d });",
     "new": "const res = await p.craft(id, { clean: clean && getPref('gentleActs') !== true, dye: null });",
     "tests": [
@@ -1039,7 +1039,7 @@
   },
   {
     "name": "PROF7-pages-weavers-unnamed",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      if (sale && have < inp.n && loom.kind === 'shop') counterBuy(line, { el, p, state: _loom, rerender, key: inp.key, need: inp.n - have, sale, who: 'weavers', counter: 'weavers' });",
     "new": "      if (sale && have < inp.n && loom.kind === 'shop') counterBuy(line, { el, p, state: _loom, rerender, key: inp.key, need: inp.n - have, sale, who: 'weavers' });",
     "tests": [
@@ -1048,7 +1048,7 @@
   },
   {
     "name": "PROF7-pages-undyed-offered",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (r.kind === 'garment' && r.dyes === true) {",
     "new": "    if (r.kind === 'garment') {",
     "tests": [
@@ -1059,7 +1059,7 @@
   },
   {
     "name": "PROF7-pages-hunt-day-characters",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "{ hides: h.hides, high:",
     "new": "{ hides: 0, high:",
     "tests": [

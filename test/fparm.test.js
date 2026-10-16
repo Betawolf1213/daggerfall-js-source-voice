@@ -1440,7 +1440,7 @@ test('MW-D27: the faceIndex THREAD is unbroken, swept at the source', () => {
   // sweep follows the thread there (menu -> buildArmsFor ->
   // armBuildOptsOf -> fpArm.build), because a sweep of a door that no
   // longer carries the wire proves nothing.
-  const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
+  const menu = readFileSync('src/ui/enhanced/enhancedMenu.js', 'utf8');
   assert.match(menu, /buildArmsFor\(playerEntity\)/,
     'the card no longer routes the live player through the one home');
   const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
@@ -1998,7 +1998,7 @@ test('MW-D33: the worn verdicts reach status() - one per piece, dressed or reaso
   // nothing composed out again, and said so)
   assert.match(arm, /worn: wornVerdicts\(armor \?\? \[\], wornBuilt\),/);
   assert.match(arm, /worn: built && built\.ok \? built\.worn : null,/);
-  const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
+  const menu = readFileSync('src/ui/enhanced/enhancedMenu.js', 'utf8');
   assert.doesNotMatch(menu, /armState\.worn/, 'MWA4: the card keeps the failure lines alone');
 });
 
@@ -2444,7 +2444,7 @@ test('MW-D36: figure() is null without a body, subscribe() fires on settlement a
 });
 
 test('MW-D36: the pack takes the model only when it stands, and never lets the model unequip', () => {
-  const pack = readFileSync('src/ui/enhancedInventory.js', 'utf8');
+  const pack = readFileSync('src/ui/enhanced/enhancedInventory.js', 'utf8');
   assert.match(pack, /const figure = modelFigure\(\);/);   // MF1: a canvas of the pixels, not a data URL
   assert.match(pack, /const dollUrl = figure \? null : paperDollDataUrl\(paperDollPixels\(\), \{ scale: 4 \}\);/,
     'the classic doll must remain the fallback');
@@ -2457,7 +2457,7 @@ test('MW-D36: the pack takes the model only when it stands, and never lets the m
   // enhanced only: the door that hands over the arm module is the enhanced door.
   const door = readFileSync('src/ui/inventoryDoor.js', 'utf8');
   assert.match(door, /fpArm: armMod\?\.fpArm \?\? null/);
-  const classic = readFileSync('src/ui/nativeInventory.js', 'utf8');
+  const classic = readFileSync('src/ui/native/nativeInventory.js', 'utf8');
   assert.ok(!/fpArm|figure\(/.test(classic), 'the classic inventory must not know the model exists');
   const rend = readFileSync('src/render/renderer.js', 'utf8');
   assert.match(rend, /renderCharacterSpriteImage\(mesh, modelMatrix, proj, view, pw, ph, \{ studio = true \} = \{\}\)/);
@@ -2476,7 +2476,7 @@ test('AUDIT 33: the figure stands in ANY view, through the one upload, at a quan
   assert.equal((arm.match(/uploadThirdMesh\(t\);/g) || []).length, 2, 'the upload has two callers and one body');
   assert.equal((arm.match(/renderer\.createCharacterMesh\(thirdPacked\.packed/g) || []).length, 1, 'a second third-mesh upload is growing');
   // F2: the pack quantises the yaw before it asks.
-  const pack = readFileSync('src/ui/enhancedInventory.js', 'utf8');
+  const pack = readFileSync('src/ui/enhanced/enhancedInventory.js', 'utf8');
   assert.match(pack, /const yaw = Math\.round\(_figureYaw \/ 0\.1\) \* 0\.1;/);
   assert.match(pack, /armMod\.figure\(\{ yaw, height: 384 \}\)/);
 });
@@ -2626,7 +2626,7 @@ test('IG6: the arms are FIXED TO THE SCREEN by default - the owner\'s final call
   // lands every player on the fixed default.
   assert.match(arm, /const FOLLOW_CAMERA_KEY = 'dagger\.mwArmsFollowCamera3';/,
     'the storage key is the v3 - the v2 value is abandoned with its button');
-  const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
+  const menu = readFileSync('src/ui/enhanced/enhancedMenu.js', 'utf8');
   assert.doesNotMatch(menu, /setFollowCamera|'Arms mode'/, 'MWA4: no switch and no mode row on the card');
   // The probe measures BOTH modes: the law layers with the flag off,
   // the shipped fix with it on (cy invariant under every look, the
@@ -2725,12 +2725,12 @@ test('MW-D38: iconFrame fits every corner of the bounds under a three-quarter or
 test('MW-D38: itemIcon is null without a build; the pack takes the model icon first and the classic second', () => {
   const arm = createFpArm();
   assert.equal(arm.itemIcon({ group: 'Weapons', templateIndex: 115, material: 0 }), null);
-  const pack = readFileSync('src/ui/enhancedInventory.js', 'utf8');
+  const pack = readFileSync('src/ui/enhanced/enhancedInventory.js', 'utf8');
   assert.match(pack, /const pic = modelPicture\(line\.item, box\)\n    \|\| linePicture\(line,/, 'the tile does not try the model icon first');   // DISC24-B: the classic second, through the pack's one door; UI1: both fitted to the box
   assert.match(pack, /const big = modelPicture\(line\.item, SLOT_BOX\.card\)\n    \|\| linePicture\(line,/, 'the detail does not try the model icon first');
   assert.match(pack, /function modelPicture\(item, box\) \{\n {2}const src = modelIconUrl\(item, Math\.round\(box \* screenDpr\(\)\)\);/, 'UI1: the model rendered at the box\'s device size');
   assert.match(pack, /item,   \/\/ MW-D38/, 'the line no longer carries its item');
-  const classic = readFileSync('src/ui/nativeInventory.js', 'utf8');
+  const classic = readFileSync('src/ui/native/nativeInventory.js', 'utf8');
   assert.ok(!/itemIcon|modelIconUrl/.test(classic), 'the classic inventory must not know the model icons exist');
   const src = readFileSync('src/combat/fpArm.js', 'utf8');
   assert.match(src, /const catalog = \{ archives, parts, armors, clothes, weapons: allWeapons, gen \};/, 'the build keeps no catalog for the icons');
@@ -2813,7 +2813,7 @@ test('PX25: a worn change during a rebuild is applied when the build settles, no
 });
 
 test('PX25: the pack hands the rig the worn table on every refresh', () => {
-  const pack = readFileSync('src/ui/enhancedInventory.js', 'utf8');
+  const pack = readFileSync('src/ui/enhanced/enhancedInventory.js', 'utf8');
   const refresh = pack.slice(pack.indexOf('const refresh = () => {'), pack.indexOf('const refresh = () => {') + 1400);
   assert.match(refresh, /arm\.setWorn\(dfWornEquipment\(equipTableOf\(deps\.entity\), EQUIP_SLOTS, ARMOR_ENUM\)\)/,
     'refresh must tell the rig what is worn');
@@ -3166,7 +3166,7 @@ test('PX26 F1/F2/F3: the menu figure carries the hand, instantly, and a mid-buil
   assert.match(fig, /if \(r\.slot === 'weapon'\) r\.hidden = false;/, 'a paperdoll shows what you carry, drawn or not');
   assert.match(fig, /else if \(r\.slot === 'arrow'\) r\.hidden = !arrowShown;/, 'the arrow still follows its shoot keys');
   // F2: the pack hands the rig the hand as well as the worn table
-  const pack = readFileSync('src/ui/enhancedInventory.js', 'utf8');
+  const pack = readFileSync('src/ui/enhanced/enhancedInventory.js', 'utf8');
   assert.match(pack, /arm\.setWeapon\?\.\(slots\?\.\[deps\.usingRightHand\?\.\(\) === false \? EQUIP_SLOTS\.LeftHand : EQUIP_SLOTS\.RightHand\] \?\? null,/, 'the pack must hand over the hand while a window is up - the hand IN USE (DISC12: the left hand\'s weapon when the player swapped to it)');
   assert.match(pack, /hasAmmo: hasDaggerfallArrows\(deps\.entity\.items\)/, 'and the port\u2019s own arrow test, not a second one');
   // F3: a swap during a build waits, exactly as the worn table does.

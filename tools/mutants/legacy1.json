@@ -211,7 +211,7 @@
   },
   {
     "name": "LEGACY3-family-tab-whatever-the-switch",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "const pauseTabShown = (id) => id !== 'family' || legacyOn();",
     "new": "const pauseTabShown = (id) => true;",
     "tests": [

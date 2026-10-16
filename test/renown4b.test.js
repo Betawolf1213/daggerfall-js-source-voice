@@ -8,7 +8,7 @@
 // is gone from the column - its chips are the status widget's tiles, on the quickslot block - so the model has no
 // status row, and the sheet no lift for one.)
 import { test } from 'node:test';
-import { TOUCH_CORNER_MAX, layoutTouchCorner, touchButtonSlots, TOUCH_BUTTON_ACTIONS } from '../src/ui/touchButtons.js';   // TOUCH-BUTTONS
+import { TOUCH_CORNER_MAX, layoutTouchCorner, touchButtonSlots, TOUCH_BUTTON_ACTIONS } from '../src/ui/touch/touchButtons.js';   // TOUCH-BUTTONS
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
@@ -81,8 +81,8 @@ test('RENOWN4b the model: over every width, HUD scale, dress, pointer and safe a
 });
 
 test('RENOWN4b the sheet: every number the model reads is the sheet\'s - the column, the vitals, the row, the block and its lifts, the touch order and margins, Plus\'s widths (mutants: any of them moved without the model)', async () => {
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
-  const { PLUS_CSS } = await import('../src/ui/enhancedPlusStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
+  const { PLUS_CSS } = await import('../src/ui/enhanced/enhancedPlusStyle.js');
   const C = ENHANCED_CSS;
   // the column and the vitals (desk and phone)
   assert.match(C, /\.hud-bottom \{ position: absolute; left: 50%; bottom: 22px;\n\s*transform: translateX\(-50%\) scale\(var\(--hud-scale\)\); transform-origin: bottom center;\n\s*display: flex; flex-direction: column; align-items: center; gap: 10px; \}/);
@@ -109,7 +109,7 @@ test('RENOWN4b the sheet: every number the model reads is the sheet\'s - the col
   assert.match(touch, /^@media \(pointer: coarse\) and \(hover: none\) \{\n {2}\.hud-bars \{ order: 1; \}\n {2}\.hud-renown \{ margin-bottom: max\(0px, calc\(\(46px \+ env\(safe-area-inset-bottom, 0px\)\) \/ var\(--hud-scale\) - 30px\)\); \}\n {2}\.hud:has\(\.hud-renown\.on\) \.hud-quick \{ bottom: calc\(max\(24px \+ 62px \* var\(--hud-scale\), 70px \+ 32px \* var\(--hud-scale\)\) \+ env\(safe-area-inset-bottom, 0px\)\); \}\n\}\n@media \(pointer: coarse\) and \(hover: none\) and \(max-width: 860px\) \{\n {2}\.hud-renown \{ margin-bottom: max\(0px, calc\(\(56px \+ env\(safe-area-inset-bottom, 0px\)\) \/ var\(--hud-scale\) - 28px\)\); \}\n {2}\.hud:has\(\.hud-renown\.on\) \.hud-quick \{ bottom: calc\(max\(14px \+ 58px \* var\(--hud-scale\), 70px \+ 30px \* var\(--hud-scale\)\) \+ env\(safe-area-inset-bottom, 0px\)\); \}\n\}/);
   assert.ok(C.indexOf('@media (pointer: coarse) and (hover: none) {\n  .hud-bars { order: 1; }') > C.indexOf('  .hud:has(.hud-renown.on) .hud-quick { bottom: calc(46px'), 'the touch rules come after the phone\'s, or the phone\'s lift would stand on a touch phone');
   // the touch layer's buttons the model keeps clear of
-  const T = src('src/ui/touch.js');
+  const T = src('src/ui/touch/touch.js');
   // TOUCH-BUTTONS: the corner is laid by touchButtons.js - TI1's default at the 16..280 px it always held (Jump at 16,
   // F at 232), every control 48 tall on the 16 px bottom edge, and the model above takes the WIDEST corner a player
   // can choose (TOUCH_CORNER_MAX), so a third button cannot walk under the row

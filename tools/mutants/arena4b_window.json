@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA4B-PURSE-CHIP-AT-ZERO",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "if (Number.isSafeInteger(h.purses) && h.purses > 0) id.append",
     "new": "if (Number.isSafeInteger(h.purses)) id.append",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA4B-HALL-CARD-UNDRAWN",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "if (boardPicked === 'fast' && m.hall) body.append(hallCard(m.hall));",
     "new": "if (false) body.append(hallCard(m.hall));",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-NOTE-MISSING",
-    "file": "src/ui/arenaWindow.js",
+    "file": "src/ui/arena/arenaWindow.js",
     "old": "if (m.online) body.append(el('p', 'aw-line aw-online', m.online));   // ARENA4b",
     "new": "if (false) body.append(el('p', 'aw-line aw-online', m.online));   // ARENA4b",
     "tests": [

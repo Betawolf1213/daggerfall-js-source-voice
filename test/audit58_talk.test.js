@@ -11,7 +11,7 @@ import {
   NativeTalkWindow, TALK_RECTS, TALK_STRIP_SOURCES, TALK_CATEGORIES,
   talkButtonStrips, talkStripSource, topicSliderThumb, clampTopicHScroll,
   TALK_CATEGORIES_IMG, TALK_HIGHLIGHT_IMG,
-} from '../src/ui/nativeTalk.js';
+} from '../src/ui/native/nativeTalk.js';
 import { TOO_FAR_AWAY_TEXT, YOU_SEE_TEXT, presentNpcInfoText } from '../src/player/activate.js';
 import { TOO_FAR_AWAY_TEXT as BOARD_TOO_FAR } from '../src/systems/bulletinBoard.js';
 import { MODE_ACTIONS, MODES, getInteractionMode, setInteractionMode } from '../src/player/interactionMode.js';
@@ -21,7 +21,7 @@ import { createBindings, resetDefaults, setBinding } from '../src/systems/inputA
 import {
   MerchantRepairWindow, REPAIR_RECTS, REPAIR_PANEL_X, REPAIR_PANEL_Y,
   REPAIR_PANEL_W, REPAIR_PANEL_H, MERCHANT_REPAIR_BUTTONS,
-} from '../src/ui/merchantRepairWindow.js';
+} from '../src/ui/merchant/merchantRepairWindow.js';
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -249,7 +249,7 @@ test('AUDIT 58 talk: the topic list PANS - two arrows, a slider, no truncation (
   assert.equal(w.topicHScroll, 0);
   // ...and the row text is no longer CUT: ListBox.cs:556-557 sets
   // MaxWidth = -1 in the PixelWise mode this listbox declares (:545).
-  const nt = src('src/ui/nativeTalk.js');
+  const nt = src('src/ui/native/nativeTalk.js');
   assert.equal(nt.includes('const fit = (t, w) =>'), false, 'the truncation helper is gone');
   assert.ok(nt.includes('R.topicList[0] - this.topicHScroll'), 'rows lay out at x = -horizontalScrollIndex');
   assert.ok(nt.includes('renderer.setScreenScissor'), 'RectRestrictedRenderArea over the listbox box (:546)');

@@ -12,17 +12,17 @@ import { fileURLToPath } from 'node:url';
 
 import {
   scrollerHit, applyScroll, scrollThumbSpan, LIST_SLOTS, SCROLLBAR_Y, SCROLLBAR_H,
-} from '../src/ui/itemScroller.js';
+} from '../src/ui/item/itemScroller.js';
 import { measureText, drawText, spaceGlyphWidth, asciiFold, hasGlyph, FNT_ERROR_CODE } from '../src/ui/text.js';
-import { shadowText, DEFAULT_TEXT_COLOR } from '../src/ui/nativePanel.js';
+import { shadowText, DEFAULT_TEXT_COLOR } from '../src/ui/native/nativePanel.js';
 import { rowTextColor, rowShadowOffset, SELECTED_TEXT_COLOR } from '../src/ui/listPicker.js';
 import { resolveNameplates } from '../src/ui/nameplateLayout.js';
-import { drawCrosshairAndModeIcon, modeIconEnabled } from '../src/ui/hudCrosshair.js';
+import { drawCrosshairAndModeIcon, modeIconEnabled } from '../src/ui/hud/hudCrosshair.js';
 import {
   drawVitalsBars, mathfRound, vitalsSkin, createVitalsRig, synchronizeImmediately,
   lastHealthLost, lastHealthLostPercent, _resetHudVitals,
-} from '../src/ui/hudVitals.js';
-import { drawHud } from '../src/ui/hud.js';
+} from '../src/ui/hud/hudVitals.js';
+import { drawHud } from '../src/ui/hud/hud.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { setInteractionMode } from '../src/player/interactionMode.js';
 
@@ -104,19 +104,19 @@ test('AUDIT 39 F126: a rail click pages by the thumb, and a click ON the thumb m
 });
 
 test('AUDIT 39 F126: the three item windows hand the rail their live scroll and length', () => {
-  assert.match(read('src/ui/nativeInventory.js'),
+  assert.match(read('src/ui/native/nativeInventory.js'),
     /scrollerHit\(R\.localList, vx, vy, this\.scroll, this\._filtered\(\)\.length\)/);
-  assert.match(read('src/ui/nativeInventory.js'),
+  assert.match(read('src/ui/native/nativeInventory.js'),
     /scrollerHit\(R\.remoteList, vx, vy, this\.remoteScroll, this\._remote\(\)\.length\)/);
-  assert.match(read('src/ui/nativeTrade.js'), /scrollerHit\(rect, vx, vy, this\[which\], items\.length\)/);
-  assert.match(read('src/ui/itemMakerWindow.js'),
+  assert.match(read('src/ui/native/nativeTrade.js'), /scrollerHit\(rect, vx, vy, this\[which\], items\.length\)/);
+  assert.match(read('src/ui/item/itemMakerWindow.js'),
     /scrollerHit\(ITEM_RECTS\.itemList, vx, vy, safeScrollIndex\(this\.scroll, list\.length\), list\.length\)/);
 });
 
 // ---------------------------------------------------------------
 // F127 - the touch attack hook nothing called (2026-08-14 to
 // 2026-09-05). REWRITTEN BY TI1: the drag hook is BACK and LIVE - the
-// swipe calls it (ui/touchGestures.js classifies the drag, touch.js
+// swipe calls it (ui/touch/touchGestures.js classifies the drag, touch.js
 // routes a 'swipe' to hooks.attack), and the sword BUTTON is gone with
 // the E button and the rest. The original finding was a hook nothing
 // called; the inverse condition is pinned in the same spirit - a hook
@@ -124,7 +124,7 @@ test('AUDIT 39 F126: the three item windows hand the rail their live scroll and 
 // ---------------------------------------------------------------
 
 test('AUDIT 39 F127 / TI1: the drag hook is live - the swipe calls it, and no button pretends to', () => {
-  const touch = read('src/ui/touch.js');
+  const touch = read('src/ui/touch/touch.js');
   assert.match(touch, /hooks\.attack\?\.\(ev\.dx, ev\.dy, ev\.held\)/, 'the swipe reaches the drag seam');
   assert.doesNotMatch(touch, /hooks\.attackTap/, 'the tap-to-attack button is gone (the tap is the activation now)');
   // AUDIT SOC C9 re-pinned: `socialInteract` joined the list - the phone's door to SOC5's action, which had no
@@ -283,12 +283,12 @@ test('AUDIT 39 F131: the vitals detector runs before the skin fork AND before th
 // ---------------------------------------------------------------
 
 test('AUDIT 39 F133: the Detect markers reach the skin that replaces the classic compass', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   const branch = hud.slice(hud.indexOf('if (isEnhanced() && typeof document'), hud.indexOf('if (!art) return;'));
   assert.match(branch, /detected: detected \?\? null,/);
   assert.match(branch, /playerXZ: playerXZ \?\? null,/);
   assert.match(branch, /drawEscortFaces\(renderer, canvas\);/, 'and the escort column draws too');
-  const en = read('src/ui/enhancedHud.js');
+  const en = read('src/ui/enhanced/enhancedHud.js');
   assert.match(en, /drawDetectMarkers\(opts\.detected \?\? null, opts\.playerXZ \?\? null, heading01\)/);
   // The bearing is the classic box's own law, Mathf.Lerp's clamp
   // included - one home for it, not a second copy here.
@@ -333,7 +333,7 @@ test('AUDIT 39 F135: the docked bar SHRINKS the world pass, and the head records
   // full-canvas frame. E5 landed both halves together, which is the
   // condition this test used to hold the flag open for - so it now
   // pins the ship, and the flag TOKEN is pinned GONE.
-  const large = read('src/ui/hudLarge.js');
+  const large = read('src/ui/hud/hudLarge.js');
   const head = large.slice(0, large.indexOf('import '));
   assert.equal(/FLAGGED|INTERIM/.test(head), false, 'the flag is retired, not re-worded');
   assert.match(head, /SHIPPED \(ROAD-E E5, 2026-09-02\)/);
@@ -342,7 +342,7 @@ test('AUDIT 39 F135: the docked bar SHRINKS the world pass, and the head records
   // ...and the crosshair marks the centre of the VIEWPORT, which is
   // the camera centre in both states - the half that could not move on
   // its own.
-  assert.match(read('src/ui/hudCrosshair.js'),
+  assert.match(read('src/ui/hud/hudCrosshair.js'),
     /const cx = canvas\.width \/ 2, cy = crosshairCentreY\(canvas\.height, largeHudHeight\);/);
 });
 

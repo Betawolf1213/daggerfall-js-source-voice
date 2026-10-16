@@ -20,8 +20,8 @@ import { mintMaterialItem, materialLabel, materialCountLabel, withdrawIntoPack, 
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { mixCauldron, POTION_RECIPES, isIngredient } from '../src/systems/potions.js';
 import { patchPlan, standPatches, patchFlats, PATCH_FLATS } from '../src/scenes/herbHost.js';
-import { createToastQueue, PROF_TOASTS_MAX, PROF_TOAST_S } from '../src/ui/profHud.js';
-import { storesRows, xpLine, craftsAboveJourneyman } from '../src/ui/profPages.js';
+import { createToastQueue, PROF_TOASTS_MAX, PROF_TOAST_S } from '../src/ui/professions/profHud.js';
+import { storesRows, xpLine, craftsAboveJourneyman } from '../src/ui/professions/profPages.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { foragingCustomItemsForGroup } from '../src/systems/foraging/foragingInstall.js';
 import { FORAGING_GROUP, TOOL_TEMPLATES, FORAGING_TEMPLATES, FT } from '../src/systems/foraging/foragingLaw.js';

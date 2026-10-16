@@ -31,7 +31,7 @@
 //     press, the EXTRACTION: the gem out whole, for gold by its grade.
 //
 // The window (ui/reforgeWindow.js) and the pack card's Salvage button
-// (ui/enhancedInventory.js) draw and ask; everything they do is here.
+// (ui/enhanced/enhancedInventory.js) draw and ask; everything they do is here.
 // OFF IS DFU EXACTLY: with the loot-rarity row off nothing salvages and
 // nothing is reforged.
 // ═══════════════════════════════════════════════════════════════════

@@ -25,7 +25,7 @@ import { register, creditPlay, createGuest, accountView } from '../server-accoun
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { PLAY_BEAT_S, PLAY_GRACE_S, startPlayClock } from '../src/net/playClock.js';
 import { accountPlayBeat, SESSION_KEY, DEFAULT_ACCOUNT_SERVICE } from '../src/net/accountClient.js';
-import { accountCard, registeredText, playedText } from '../src/ui/enhancedAccount.js';
+import { accountCard, registeredText, playedText } from '../src/ui/enhanced/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

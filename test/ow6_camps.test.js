@@ -10,7 +10,7 @@ import './modsOff.js';
 import { CAMP_KINDS, campKindCode, campKindOf, CAMP_TAGS_MAX, campTagsOf, validCampTags, groupCamps, campLabel } from '../src/world/campShared.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { CAMP_SIGHT_RADIUS, CAMP_ALERT_RADIUS, PACK_ALERT_RADIUS } from '../src/systems/campEncounters.js';
-import { TRAVEL_VIEW_MARK_COLORS } from '../src/ui/travelViewHud.js';
+import { TRAVEL_VIEW_MARK_COLORS } from '../src/ui/travel/travelViewHud.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -174,7 +174,7 @@ test('OW6 camps wiring: the host stands each group under the pool\'s one counter
   const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
   assert.match(tvm, /for \(const c of travelViewCamps\(\)\) marks\.push\(\{ key: `camp:\$\{c\.key\}`, at: \[c\.at\[0\], c\.at\[1\] \+ 2, c\.at\[2\]\], label: wildCamps\.has\(c\.key\) \? `\$\{WILD_MARK\} \$\{c\.label\}` : c\.label, kind: 'camp', pick: true \}\);/);   // WILD-ALERT: an alerted camp's mark wears the "!"   // OW-ATTACK: pressable
   assert.equal(TRAVEL_VIEW_MARK_COLORS.camp, '#d9622b');
-  const hud = read('src/ui/travelViewHud.js');
+  const hud = read('src/ui/travel/travelViewHud.js');
   assert.match(hud, /\|\| k === 'camp' \? k : 'traveller';/);
   assert.match(hud, /\} else if \(look === 'camp'\) \{[^\n]*\n\s*g\.beginPath\(\); g\.moveTo\(x, y - 6\);/);
 });

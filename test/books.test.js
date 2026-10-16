@@ -253,7 +253,7 @@ test('books: handing off to the reader RUNS the inventory close law (the dropped
   // AUDIT B-C1: the port has ONE overlay slot, so showing the reader
   // REPLACES the inventory without closing it - and the world pile
   // only mints on close, so a session drop was silently lost.
-  const { NativeInventoryWindow } = await import('../src/ui/nativeInventory.js');
+  const { NativeInventoryWindow } = await import('../src/ui/native/nativeInventory.js');
   const dropped = [];
   let closed = false, asked = null;
   const bag = [{ group: 'Books', templateIndex: 92, message: 42 }];

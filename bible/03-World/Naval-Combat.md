@@ -31,10 +31,10 @@ carries its row instead. It stands on three things the port already had:
 | NAV-C | THE SHIPS OF THE ILIAC BAY: nine classes in three trades, their names and captains off the region's name bank, the crowns their navies serve; the captains' seamanship; the traffic | `systems/naval/navalShips.js` (SHIP_CLASSES, CROWNS), `navalAI.js`, `navalDirector.js`, `scenes/comeSailAwayPool.js` (seaBoats, spawnSeaNow) |
 | NAV-D | BOARDING, PLUNDER, THE LAW AND THE QUESTS: grapples, musters, the prize window's model, holds and flotsam, notoriety and the crowns' law, Warm Ashes' raids started and gated | `systems/naval/navalBoarding.js`, `navalPlunder.js`, `navalLaw.js`, `systems/warmAshesShips.js` (the gate) |
 | NAV-E | THE SOUNDS: six synthesised clips baked to DAGGER.SND's own format (a seventh and an eighth, the run-out and the ready, with AUDIT NAV1), and the distances every naval sound carries | `tools/navalSfx.mjs`, `tools/sfxSynth.mjs`, `systems/naval/navalSounds.js`, `public/sfx/naval-*.wav` |
-| NAV-F | THE UI, ENHANCED PLUS: the helm's readout (ship plate, battery rose, aim, target card) and the plunder window, in the stone-and-brass kit on either skin | `ui/navalHud.js`, `ui/navalPlunderDoor.js`, `ui/navalPlunderWindow.js`, `ui/enhancedFrame.js` (FRAME_ROLES, scopeRules) |
+| NAV-F | THE UI, ENHANCED PLUS: the helm's readout (ship plate, battery rose, aim, target card) and the plunder window, in the stone-and-brass kit on either skin | `ui/naval/navalHud.js`, `ui/naval/navalPlunderDoor.js`, `ui/naval/navalPlunderWindow.js`, `ui/enhanced/enhancedFrame.js` (FRAME_ROLES, scopeRules) |
 | NAV-G | ONLINE: one player stands the sea for everyone near; the ships, volleys and barrels ride the foes frame; a blow on another's ship goes to its owner; a boarding claims the ship | `systems/naval/navalWire.js`, `scenes/exteriorFoes.js` (setOnNaval), `scenes/comeSailAwayPeers.js` (helmBoats) |
 | NAV-H | THE HOST: the sea fight stood in the streaming world - the frame, the input, the activation, the draw, the lights, the origin, the colliders, the save, the transitions, the quests, the settings | `scenes/navalHost.js`, `scenes/world.js` (the NAV-H block) |
-| AUDIT NAV1 | THE DEEP AUDIT (2026-09-29): six lenses measured the arc against Black Flag on its own harnesses; the captains' seamanship rebuilt (below), the hulls kept apart, a galley's ram, the sea on the world's clock; THE GUNS - the captains' gunnery and the run-out that tells a broadside is coming, the rig a target, fire, the prize kept a prize, the readout's warning and tally | `systems/naval/navalAI.js`, `navalShips.js` (the hulls' extents and rigs, the classes' pace, the carriages), `navalDirector.js` (the berths), `navalDamage.js`, `navalShots.js`, `navalGunnery.js`, `navalWire.js` (the run-out's bits, a barrel's fire), `navalSounds.js` and `tools/navalSfx.mjs` (the run-out), `navalEffects.js` (the glint, the shreds), `scenes/navalHost.js` (`stepSea`, `separateHulls`, `checkShipRams`, `strike`, the tell and the tally), `ui/navalHud.js` (the warning, the tally), `scenes/comeSailAwayPeers.js` (helmBoats' hull and heading); THE HELM - the aim a look lays and its red, the broadside camera, the brace, the ram, her hurts in her handling, the shipwright and the mending at sea: `navalGunnery.js` (lookReach), `navalYard.js`, `systems/comeSailAway/comeSailAway.js` (wayScale, sailRefused), `render/navalRender.js` (the posts, the strikes, the tones), `ui/navalYardWindow.js`, `ui/navalPlunderDoor.js` (one door for both windows) |
+| AUDIT NAV1 | THE DEEP AUDIT (2026-09-29): six lenses measured the arc against Black Flag on its own harnesses; the captains' seamanship rebuilt (below), the hulls kept apart, a galley's ram, the sea on the world's clock; THE GUNS - the captains' gunnery and the run-out that tells a broadside is coming, the rig a target, fire, the prize kept a prize, the readout's warning and tally | `systems/naval/navalAI.js`, `navalShips.js` (the hulls' extents and rigs, the classes' pace, the carriages), `navalDirector.js` (the berths), `navalDamage.js`, `navalShots.js`, `navalGunnery.js`, `navalWire.js` (the run-out's bits, a barrel's fire), `navalSounds.js` and `tools/navalSfx.mjs` (the run-out), `navalEffects.js` (the glint, the shreds), `scenes/navalHost.js` (`stepSea`, `separateHulls`, `checkShipRams`, `strike`, the tell and the tally), `ui/naval/navalHud.js` (the warning, the tally), `scenes/comeSailAwayPeers.js` (helmBoats' hull and heading); THE HELM - the aim a look lays and its red, the broadside camera, the brace, the ram, her hurts in her handling, the shipwright and the mending at sea: `navalGunnery.js` (lookReach), `navalYard.js`, `systems/comeSailAway/comeSailAway.js` (wayScale, sailRefused), `render/navalRender.js` (the posts, the strikes, the tones), `ui/naval/navalYardWindow.js`, `ui/naval/navalPlunderDoor.js` (one door for both windows) |
 | NAV-R | WARM ASHES' RAIDERS AS SHIPS (merged OWS3): a raider near the player at sea stood as a pirate of her seed's own class and name, sailing her seeded course until her lookout sights a boat, then fighting and boarding as any pirate; spent for her life; one copy between two players | `systems/naval/navalRaiders.js`, `scenes/navalHost.js` (`raiders`, `raiderShipOf`), `systems/naval/navalAI.js` (`sight`, `course`), `scenes/world.js` (`raidShips`, the marks) |
 | AUDIT NAV2 | THE SECOND PASS'S DEEP AUDIT (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far"): seven lenses over SEA-PEACE, HELM-KEYS, DECK-FIELD, HELM-WAY, DECK-WALK, SHIPMATES and LIVING CREW and the merges that carried them - sixty-two findings, each pinned red first, fixed and mutation-proven: the captain's temper and a boat's hands on the word, a boarding shared with the room, the stern chase, the way round land, the dead zone, a fighting power the duels bear out (Mac's call), the helm's handling and its advice, a shipmate no mark, a deck of every level, the crew at a boarding at hand (`01-Overview/Audit-NAV2.md`) | `systems/naval/navalWire.js` (`k`, `m`), `navalAI.js` (`strikeTime`, `odds`, `layMin`, `routeTo`), `navalDeck.js` (levels, pieces, `mainLevel`), `crewLife.js`, `scenes/navalHost.js`, `scenes/navalCrew.js`, `scenes/world.js`, `systems/comeSailAway/comeSailAway.js`, `systems/helmWay.js`, `player/mobileEnemyActivate.js`, `scenes/hostEnchant.js`, `characters/enemyCasting.js` |
 | SHIP-LIFE | SHIPS THAT BERTH AND GO SOMEWHERE (Mac's item 1, slice E): a port's harbour found off the terrain, its berths and mouth; a bounded A* over the water; the errands - moored, depart, voyage, arrive, patrol, lurk - drawn off a ship's seed; the harbour roll of moored ships, the port's and the day's | `systems/naval/shipLife.js`, `navalAI.js` (the cruise branch's errand, `moor`), `navalDirector.js` (`berthed`), `scenes/navalHost.js` (`harbourFrame`, the errands' door), `scenes/world.js` (`navalHarbourNear`) |
@@ -155,7 +155,7 @@ silent, until it is repaired - at a port's shipwright, with a prize's timber, or
 is a possession bought for up to two hundred thousand gold; losing one to a lucky broadside is a punishment
 Daggerfall never deals.
 
-**The shipwright** (AUDIT NAV1, `systems/naval/navalYard.js`, `ui/navalYardWindow.js`): at the helm in a port town's
+**The shipwright** (AUDIT NAV1, `systems/naval/navalYard.js`, `ui/naval/navalYardWindow.js`): at the helm in a port town's
 waters (the host's `nearPort`), her way under YARD_SPEED and no hostile ship near, Activate opens his yard - the
 plate's hint names him. He sells her HULL and CANVAS back by the point (REPAIR_PRICE), HANDS by the man and FIRE
 BARRELS by the barrel (BARREL_PRICE) - each as much as the purse pays for (coins and letters of credit, DFU's
@@ -469,7 +469,7 @@ them, and no captain takes them for a contact.
 
 ## The UI (NAV-F) - Enhanced Plus
 
-- **The helm's readout** (`ui/navalHud.js`) is a READOUT, not a window (the gate bar's law): built once, updated in
+- **The helm's readout** (`ui/naval/navalHud.js`) is a READOUT, not a window (the gate bar's law): built once, updated in
   place, hidden with the HUD and under every window. The SHIP PLATE (bottom right): the hull, sails and crew as the
   vitals' banded bars with brass clasps (the hull in health's red, the canvas in bone, the crew in fatigue's green; a
   hull under a quarter pulses), chips for fire, brace and a crippled ship, the crown's waters and four notoriety
@@ -535,17 +535,17 @@ them, and no captain takes them for a contact.
   are read (`placeParts`) on a change of the screen, the scale, the skin or her rows and every PLATE_LAYOUT_S - never
   every frame. The helm panel's bar is as wide as its buttons (it wrapped at half the screen), and a finger's stands
   centred in the room right of the corner's two presses (its 60 px reserve left the menu's press under it).
-- **The plunder window** (`ui/navalPlunderWindow.js`, a lazy chunk behind `ui/navalPlunderDoor.js`, the Sigil
+- **The plunder window** (`ui/naval/navalPlunderWindow.js`, a lazy chunk behind `ui/naval/navalPlunderDoor.js`, the Sigil
   Broker's door's shape): her colours, name, class and captain; HER HOLD (the first HOLD_ROWS by name, Take all, Open
   her hold); TAKE FROM HER (the three tiles); HER FATE (Scuttle her - the warn role's blood edge - and Cast her adrift);
   a raid's prize has Sail on. The back key and the scrim leave; the pad lands on the press the window is for.
-- **The shipwright's window** (AUDIT NAV1, `ui/navalYardWindow.js`, a lazy chunk behind the plunder window's own door -
+- **The shipwright's window** (AUDIT NAV1, `ui/naval/navalYardWindow.js`, a lazy chunk behind the plunder window's own door -
   one door shape for the sea fight's two windows, `openNavalWindow`): the purse; HER NEEDS - her hull, canvas, hands
   (a crewed ship's) and fire barrels (a ship whose stern rolls them), each what she has, what is wanting at what a
   piece, and its press (all of it, as much as the purse pays, or greyed - "Whole", or the price a piece); MAKE HER
   WHOLE or "Make good what your purse pays"; the last press's word under the title. The same kit and sheet as the
   plunder window (`injectNavalWindowStyle`), the rows its list well's.
-- **The kit's roles** (`ui/enhancedFrame.js` FRAME_ROLES, each `body .dfnaval-*`): window `dfnaval-win`, panel
+- **The kit's roles** (`ui/enhanced/enhancedFrame.js` FRAME_ROLES, each `body .dfnaval-*`): window `dfnaval-win`, panel
   `dfnaval-plate` and `dfnaval-card`, button `dfnaval-btn`, primary `dfnaval-take`, warn `dfnaval-scuttle`, tile
   `dfnaval-choice`, chip `dfnaval-chip` and `dfnaval-gun`, well `dfnaval-holdlist`, header `dfnaval-winhead`,
   headerRule `dfnaval-sechead`, listRow `dfnaval-item`. On Enhanced Plus the Plus sheet carries the kit; on the
@@ -686,7 +686,7 @@ sea is sailed at the lowest Ships at sea among the players who share it (Online,
 - **The player's boat is wrecked, never sunk.**
 - **At a helm with guns the attack is the broadside's** (How it plays): the press lays them after a readied spell, the
   release fires as its own ungated statement beside the rig's, and the drag and the look under the held attack are
-  the aim's - `scenes/world.js`'s five attack doors, `ui/gamepadInput.js` and `ui/touch.js` (`aimHold`); the pins that
+  the aim's - `scenes/world.js`'s five attack doors, `ui/gamepadInput.js` and `ui/touch/touch.js` (`aimHold`); the pins that
   hold the old doors were re-pinned with the law they state intact.
 - **Come Sail Away's soft drop premultiplied** (above) - a fix, recorded because the pin moved.
 
@@ -1094,7 +1094,7 @@ Carrack's hold).
   crewman's missile flies past the player but meets no pirate - an enemy's missile meets the player alone (no crewman
   casts today). A town's defender keeps his own laws (the shaft and spell spare him, the swing by the
   setting - DISC19 W5).
-- **The crew's bars** (`ui/navalHud.js drawCrewBars`, `world.js navalCrewBars`): a green bar a shipmate - the party's
+- **The crew's bars** (`ui/naval/navalHud.js drawCrewBars`, `world.js navalCrewBars`): a green bar a shipmate - the party's
   one green (PARTY_GREEN_CSS) - over his head within CREW_BAR_RANGE, whole to CREW_FADE_FROM, behind the land by a sight
   cache of the crew's own, under the covers the ships' tags keep; every clear hides them.
 - **Online**: the owner's foes frame names its crew (`cw`, `exteriorFoes.js`), and a reader stands each as its own ally
@@ -1169,7 +1169,7 @@ with crew naturally getting into position and fighting enemies".
   mobile units (the classes' sprites, idle and walking, turned to the eye - `MobileUnit`), carried by her mesh node, and
   the mod's people flats on and above her deck stand down in their places (their renderer off - the pool's flats pass
   skips them; a galley's rowers below never touched); past it they stand again. The lines over their heads go to the
-  naval HUD (`ui/navalHud.js drawCrewLines`: the CREW_SAY_MAX nearest, a song's in brass, a shout's in red, fading to
+  naval HUD (`ui/naval/navalHud.js drawCrewLines`: the CREW_SAY_MAX nearest, a song's in brass, a shout's in red, fading to
   CREW_SAY_RANGE, behind the land by the crew's own sight cache). CREW-SAY (FIELD BUGS 2026-10-02, Mac: "your crew
   mates speaking sometimes seems like gibberish"): laid by `layoutCrewLines` - a line two or more say at once once,
   over the nearest and by no name; a line said alone by its speaker's first name; each foot clear of a mate's bar and
@@ -1441,7 +1441,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   ("You cast Heal on Hilda.", one or many, a companion's or a party mate's) and a party mate's on the receiving end
   ("Bran casts Heal on you.", `world.js online.onCast`) - are said at most once in `allyCast.js GIFT_LINE_QUIET_S`
   (10 s) of real time, through one gate (`createGiftLineGate`; `hostMagic.js sayGift`). Every cast near a companion
-  said three different lines, so the notice stack's repeat guard (`ui/hudText.js` NOTICE-SPAM, the back row only)
+  said three different lines, so the notice stack's repeat guard (`ui/hud/hudText.js` NOTICE-SPAM, the back row only)
   never caught them: six heals a second apart held eleven Enhanced plates at once, now three. THE AUDIT (2026-10-04):
   the window is counted from when a line was SAID, never refreshed by asking - and on the real clock, not an engine's
   frames, which stopped with the engine (the world's, under a dungeon) and stretched at a low frame rate; and an ARM
@@ -1477,7 +1477,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   the dungeon's companion bodies are `scenes/dungeonContext.js`'s own records, found by that activation);
   `scenes/exterior.js` stands no crew companion and has no pack door - FLAGGED, CREW-COMPANIONS' own.
   `test/companion_weight.test.js`.
-- **The bar** (`ui/navalHud.js drawCrewBars`): a companion's is wider (`MATE_BAR_W`), his name and health in digits
+- **The bar** (`ui/naval/navalHud.js drawCrewBars`): a companion's is wider (`MATE_BAR_W`), his name and health in digits
   over it and his live effects' icons under it (`MATE_FX_MAX`, the party card's own row: `composePartyFx`; fitted by
   `iconFit.js`'s law, a harmful one ringed as the card rings it); a deck hand's stays bare. Another player's companion:
   his name (his owner's foes frame names him, `cn` beside `cp`, on the street's lane and the dungeon's) and no digits
@@ -1613,7 +1613,7 @@ rules"*: at a shop's counter a lot of boats alone that the purse fell short of w
 at least and the shop region's bank the rest under BorrowLoan's law. Withdrawn whole on Mac's word, 2026-10-08:
 *"Remove ship buying loan from the bank."*
 
-- **The counter** (`ui/nativeTrade.js`, `ui/enhancedTrade.js`): a purse short of a boat is refused as any purchase is,
+- **The counter** (`ui/native/nativeTrade.js`, `ui/enhanced/enhancedTrade.js`): a purse short of a boat is refused as any purchase is,
   the gold's own records and no Yes; a Buy's Yes hands the commit no proceeds.
 - **The host** (`scenes/worldModes.js`): hands the trade window no credit hook, and its Buy commit (`commitTrade`) pays
   the whole price from the purse. A deed bought goes to the Fleet's book with the port she waits at and never a claim.
@@ -1637,7 +1637,7 @@ Mac: *"provide more accessibility options to acquiring"* ships - and of the choi
 Keep a ship you take by boarding as your own boat, instead of scuttling her or casting her adrift"*. Daggerfall has no
 ships and Come Sail Away no captured one; the claim is the port's own, and the boat she becomes is the mod's.
 
-- **Her third fate** (`ui/navalPlunderWindow.js`): HER FATE has CLAIM HER beside Scuttle her and Cast her adrift, and
+- **Her third fate** (`ui/naval/navalPlunderWindow.js`): HER FATE has CLAIM HER beside Scuttle her and Cast her adrift, and
   under the three a line saying what she becomes ("Keep her as your own Small Ship: her deed to your pack, her hold
   aboard her. She has no crew."; a small boat's "Keep her as your own Large Boat where she lies, her hold aboard
   her."). Offered (the model's `claimOffer`, `navalHost.js claimable`) for a prize I stand - one another player stands
@@ -1713,7 +1713,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   hostile ship's red as before, "Hostile" in red; a pirate not after me now is neither (her bar red still: no lawful
   flag); a struck ship is neither (the card read a struck ship provoked once hostile, her tag never did). The blow
   forgotten, she is friendly again.
-- **SHIP-TAGS** (`navalHost.js boundOf`, `ui/navalHud.js tagLine`). Within TAG_DETAIL_M (400 m) of the eye the one tag
+- **SHIP-TAGS** (`navalHost.js boundOf`, `ui/naval/navalHud.js tagLine`). Within TAG_DETAIL_M (400 m) of the eye the one tag
   SHIP-CLUTTER picks (below) reads a second line under her name: her class (a crown's by her crown, "Wayrest War Galley") and where she is bound -
   moored at, leaving, patrolling off or bound for a harbour by its town's name (the world hands the name with the
   port's footprint, `navalHarbourNear`), a lane's packet bound for her next port or lying off it, a relief coming to
@@ -1724,7 +1724,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   your aid (A11: she read "bound out to sea"); a packet leaving a harbour with no name reads her lane's next port
   (A16); another player's packet, known by her seed, reads her lane along her own leg (A22, below), and another's ship
   lying still at a berth of a harbour I know reads moored at it (A9: both read nothing).
-- **SHIP-CLUTTER** (FIELD BUGS 2026-10-02c, `01-Overview/Field-Bugs-2026-10-02c.md`; `ui/navalHud.js layoutNavalTags`,
+- **SHIP-CLUTTER** (FIELD BUGS 2026-10-02c, `01-Overview/Field-Bugs-2026-10-02c.md`; `ui/naval/navalHud.js layoutNavalTags`,
   `navalTagBox`; `scenes/world.js navalTags`). Off a harbour every tag stood on its own spar and every one within
   TAG_DETAIL_M read its second line - five names through five lines (Discord: "an overabundance of ship text on the
   high seas"). The tags are laid before they are worn: ONE second line - the card's ship's, else the tag nearest the

@@ -1,7 +1,7 @@
 [
   {
     "name": "HUD-CLASS-bare-side",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "parts.stat.classList.toggle('stat-side', side); }",
     "new": "parts.stat.classList.toggle('side', side); }",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "HUD-CLASS-bare-socket",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "chip.chip.classList.toggle('qspell-empty', !sp);",
     "new": "chip.chip.classList.toggle('empty', !sp);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "HUD-CLASS-bare-battery",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "${b.empty ? ' gun-empty' : ''}",
     "new": "${b.empty ? ' empty' : ''}",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "HUD-CLASS-sheet-bare-on",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-qspell.on { display: flex; }",
     "new": ".on { display: flex; }",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "HUD-CLASS-tile-kind-a-component",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "{ key: 'more', kind: 'more',",
     "new": "{ key: 'more', kind: 'side',",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "HUD-CLASS-chip-a-component",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "ship.fire ? 'fire' : null",
     "new": "ship.fire ? 'empty' : null",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "HUD-CLASS-card-state-a-component",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "return { text: 'Going down', kind: 'sinking' };",
     "new": "return { text: 'Going down', kind: 'empty' };",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "HUD-CLASS-poise-state-unnamed",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "` poise-${p.state}`",
     "new": "` ${p.state}`",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "HUD-CLASS-crew-guard-dropped",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "p.kind === 'sing' || p.kind === 'shout' ?",
     "new": "p.kind ?",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "HUD-CLASS-layout-sheet-unexported",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "export const HUD_LAYOUT_CSS = `",
     "new": "const HUD_LAYOUT_CSS = `",
     "tests": [

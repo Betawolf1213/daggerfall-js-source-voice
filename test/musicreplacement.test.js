@@ -223,7 +223,7 @@ test('music: AssetInjection is a REAL setting now, and the docs cannot say other
   const s = src('systems/settings/settings.js');
   assert.doesNotMatch(s, /'Enhancements\/AssetInjection': 'no mod system/);
   assert.match(s, /'Enhancements\/AssetInjection': 'src\/systems\/musicReplacement\.js'/);
-  const copy = src('ui/settingsCopy.js');
+  const copy = src('ui/settings/settingsCopy.js');
   assert.doesNotMatch(copy, /'Enhancements\/AssetInjection': 'Nothing to add yet/);
   // NOTHING SHIPS: the repo carries no audio and the deploy serves none
   assert.match(src('scenes/dataSource.js'), /NOTHING SHIPS WITH THE GAME/);

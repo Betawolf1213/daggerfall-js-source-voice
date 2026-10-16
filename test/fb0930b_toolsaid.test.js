@@ -27,12 +27,12 @@ import {
 import { FT, FORAGING_REFUSALS } from '../src/systems/foraging/foragingLaw.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import * as qs from '../src/systems/quickslots.js';
-import { useResultAction } from '../src/ui/enhancedInventory.js';
+import { useResultAction } from '../src/ui/enhanced/enhancedInventory.js';
 import { registerPresenter } from '../src/systems/notify.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';
-import { GATHER_HOW, STORES_EMPTY_LINE, STORES_EMPTY_CARRY_LINE } from '../src/ui/profPages.js';
+import { GATHER_HOW, STORES_EMPTY_LINE, STORES_EMPTY_CARRY_LINE } from '../src/ui/professions/profPages.js';
 import { createGatherHost, aimAt, ACT_STOPPED_LINE } from '../src/scenes/gatherHost.js';
 import { herbKind, SICKLE_HAND } from '../src/scenes/herbHost.js';
 import { mineKind, PICK_HAND } from '../src/scenes/mineHost.js';
@@ -462,7 +462,7 @@ test('TOOL-USE: the Professions page says a tool\'s Use at the node is the key\'
   for (const k of ['herbalism', 'mining', 'logging']) assert.doesNotMatch(GATHER_HOW[k], /Foraging|earns no XP/);
   // PIN MOVED (2026-10-01 part four, TOUCH-HOLD): and the Skinning Knife's Use
   assert.match(STORES_EMPTY_LINE, /or use the matching tool from your hotbar or a quick slot\. Tools used from your pack gather nothing\.$/);
-  const src = readFileSync(new URL('../src/ui/profPages.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/professions/profPages.js', import.meta.url), 'utf8');
   assert.match(src, /if \(GATHER_HOW\[_sel\]\) pane\.append\(el\('p', 'px-note', gatherHow\(_sel\)\)\);/);   // PIN MOVED (L10N4): said through its reader
   assert.match(src, /: storesEmptyLine\(\)\)\);/);
   assert.match(src, /const gatherHow = \(id\) => \(id === 'herbalism' \? t\('prof\.page\.how\.herbalism', GATHER_HOW_HERBALISM\)/);

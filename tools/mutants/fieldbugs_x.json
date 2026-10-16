@@ -1,7 +1,7 @@
 [
   {
     "name": "X1-menu-guard-removed",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (!app) return;\n  repaintKeepingScroll(app, () => renderInto(), { focus: true });",
     "new": "  repaintKeepingScroll(app, () => renderInto(), { focus: true });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "X2-inventory-drops-the-macro",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "else if (r.textId) { out.textId = r.textId; if (r.macros) out.macros = r.macros; }",
     "new": "else if (r.textId) out.textId = r.textId;",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "CHAT-POST-magic-left-off",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    ...itemBriefLines(item, d)].filter(Boolean);",
     "new": "    ].filter(Boolean);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CHAT-POST-bound-not-kept",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (text.length <= CHAT_MAX) return text;",
     "new": "  return text;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CHAT-POST-cut-mid-word",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  return `${cut.slice(0, Math.max(cut.lastIndexOf(' '), line.name.length + 2)).replace(/[\\s·]+$/, '')}...`;",
     "new": "  return `${cut}...`;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CHAT-POST-offered-offline",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (deps.canPostItem?.()) {",
     "new": "  if (true) {",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-FINAL-F1-the-strip-s-pick-keeps-the-field",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "onPick: (it) => { picked = it; goldEntry = null; pickedAt = 'worn';",
     "new": "onPick: (it) => { picked = it; pickedAt = 'worn';",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-FINAL-F2-the-picture-keyed-by-its-kind-alone",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "${image ? `#${iconName(image.archive, image.record, image.dye, image.dyeTarget)}` : ''}",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-FINAL-F2-the-dye-out-of-the-bar-s-signature",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "      + `|${v.item && v.type !== 'spell' ? itemDyeColor(v.item) ?? '' : ''}`",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-FINAL-F3-the-swatch-out-of-the-floor-s-key",
-    "file": "src/ui/itemIconColor32.js",
+    "file": "src/ui/item/itemIconColor32.js",
     "old": "  return `${img?.archive}_${img?.record}${token ? `_${token}` : ''}${dyed ? `_t${dyeTarget}d${dye}` : ''}`;",
     "new": "  return `${img?.archive}_${img?.record}${token ? `_${token}` : ''}`;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-FINAL-F3-the-floor-asked-undyed",
-    "file": "src/ui/itemIconColor32.js",
+    "file": "src/ui/item/itemIconColor32.js",
     "old": "dye: img.dye, dyeTarget: img.dyeTarget ?? null });",
     "new": "dye: img.dye });",
     "tests": [

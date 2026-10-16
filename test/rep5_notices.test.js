@@ -10,7 +10,7 @@ import { legalStandingWord } from '../src/systems/legalBands.js';
 import { lowerRepForCrime, raiseRepForSentence, changeLegalRep, normalizeReputations, CRIMES } from '../src/systems/court.js';
 import { banish } from '../src/systems/standing.js';
 import { createRegionConditions } from '../src/systems/region/regionConditions.js';
-import { lawRows } from '../src/ui/enhancedMenu.js';
+import { lawRows } from '../src/ui/enhanced/enhancedMenu.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -59,6 +59,6 @@ test('REP5: the Standing page\'s law - every region with a name, worst first, it
     { region: 'Daggerfall Bluffs', rep: 15, word: 'respected', note: '' },
   ]);
   assert.equal(lawRows({ legalRep: { 2: 0 } }, 0).length, 0);
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\n {2}statsLaw\(detail, playerEntity\);\n {2}statsGuilds\(detail, playerEntity\);/, 'drawn between the groups and the guilds');
 });

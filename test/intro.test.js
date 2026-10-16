@@ -4,9 +4,9 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { IntroTheme, audibleContextTime, INTRO_THEME_GAIN, MENU_THEME_GAIN } from '../src/systems/introTheme.js';
-import { introTitleAt, introFrameAt, introCameraAt, INTRO_CREDITS, TITLE_IMPACT_TIME, TITLE_ENTER_TIME, TITLE_READY_TIME, LANDSCAPE_HOLD_TIME, TITLE_DEPTH, TITLE_BLUR } from '../src/ui/introCue.js';
-import { introTerrainGrid } from '../src/ui/introLandscape.js';
-import { buildIliac, SEA_LEVEL, seaDistance, BALFIERA } from '../src/ui/introMap.js';
+import { introTitleAt, introFrameAt, introCameraAt, INTRO_CREDITS, TITLE_IMPACT_TIME, TITLE_ENTER_TIME, TITLE_READY_TIME, LANDSCAPE_HOLD_TIME, TITLE_DEPTH, TITLE_BLUR } from '../src/ui/intro/introCue.js';
+import { introTerrainGrid } from '../src/ui/intro/introLandscape.js';
+import { buildIliac, SEA_LEVEL, seaDistance, BALFIERA } from '../src/ui/intro/introMap.js';
 import { brandMark } from '../src/ui/brandMark.js';
 
 const read = (p) => readFileSync(new URL('../' + p, import.meta.url));
@@ -217,7 +217,7 @@ test('INTRO2: the shared logo has accessible text and its exact natural aspect r
 // "For the first screen where you have to touch to begin. Remove all the
 // text except the begin button."
 test('INTRO-FIELD: the gate is the BEGIN button and nothing drawn beside it - the status line is spoken, not shown (mutants: INTROFIELD-*)', () => {
-  const src = String(read('src/ui/introScreen.js'));
+  const src = String(read('src/ui/intro/introScreen.js'));
 
   // 1. NOTHING BUT THE BUTTON IS APPENDED. The kicker, the title and the
   // ornament rule are gone from the gate, not merely hidden - a hidden

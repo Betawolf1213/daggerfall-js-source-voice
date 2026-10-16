@@ -7,12 +7,12 @@ import { byClass, keydown, windowListenerCount, Node_ } from './chargenDom.mjs';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
-import { navalHudText, drawNavalHud, destroyNavalHud, navalKitCss, injectNavalKit, NAVAL_HUD_CSS, NAVAL_CARD_GAP, NAVAL_PLATE_TOUCH_BOTTOM } from '../src/ui/navalHud.js';
-import { HELM_CSS } from '../src/ui/enhancedHelm.js';
-import { plunderText, takenText, thingsText, mountNavalPlunderWindow, HOLD_ROWS } from '../src/ui/navalPlunderWindow.js';
-import { createNavalPlunderOverlay, navalPlunderOpen, closeNavalPlunder } from '../src/ui/navalPlunderDoor.js';
-import { FRAME_ROLES, frameCss } from '../src/ui/enhancedFrame.js';
-import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
+import { navalHudText, drawNavalHud, destroyNavalHud, navalKitCss, injectNavalKit, NAVAL_HUD_CSS, NAVAL_CARD_GAP, NAVAL_PLATE_TOUCH_BOTTOM } from '../src/ui/naval/navalHud.js';
+import { HELM_CSS } from '../src/ui/enhanced/enhancedHelm.js';
+import { plunderText, takenText, thingsText, mountNavalPlunderWindow, HOLD_ROWS } from '../src/ui/naval/navalPlunderWindow.js';
+import { createNavalPlunderOverlay, navalPlunderOpen, closeNavalPlunder } from '../src/ui/naval/navalPlunderDoor.js';
+import { FRAME_ROLES, frameCss } from '../src/ui/enhanced/enhancedFrame.js';
+import { WARM_CHUNKS } from '../src/ui/enhanced/enhancedChunk.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 
 // The suite's minimal DOM, three steps nearer a browser for a window that greys its presses: the `disabled` and
@@ -128,7 +128,7 @@ test('NAV-F a finger\'s screen: no key is named - a tap boards her and opens her
   assert.equal(navalHudText(helm(), KEYS).plate.hint, 'Hold RIGHT CLICK to aim - C: brace');
   assert.equal(navalHudText(helm({ aiming: true }), KEYS).plate.hint, 'Let go to fire - E: hold fire');
   // the plate over the corner: the touch layer's presses stand 16px up and 48px tall, and the plate a gap above them
-  const touchSrc = readFileSync(new URL('../src/ui/touch.js', import.meta.url), 'utf8');
+  const touchSrc = readFileSync(new URL('../src/ui/touch/touch.js', import.meta.url), 'utf8');
   assert.match(touchSrc, /const at = \[edge\('right', right\), edge\('bottom', 16\), action\.w \?\? 60\];/);
   assert.match(touchSrc, /width:\$\{w\}px;height:48px;/);
   assert.equal(NAVAL_PLATE_TOUCH_BOTTOM, 16 + 48 + 12);

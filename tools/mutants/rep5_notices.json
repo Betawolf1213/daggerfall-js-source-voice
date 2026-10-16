@@ -37,7 +37,7 @@
   },
   {
     "name": "REP5-the-zero-row-drawn",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (rep === 0 && left === 0) continue;\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "REP5-the-order",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  return out.sort((a, b) => a.rep - b.rep);",
     "new": "  return out;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "REP5-the-law-not-drawn",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  statsLaw(detail, playerEntity);\n  statsGuilds(detail, playerEntity);",
     "new": "  statsGuilds(detail, playerEntity);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "REP5-the-stop's-price-not-said",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "t('pause.law.known', 'known to the watch (a stop: {gold} gold)', { gold: challengeFine(entity, i, { worldNow }) })",
     "new": "'known to the watch'",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "REP5-the-pardon's-price-not-said",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "t('pause.law.banishedDays', 'banished, {days, plural, one {# day} other {# days}} left (a pardon: {gold} gold)', { days, gold: pardonPrice(entity, i) })",
     "new": "t('pause.law.banishedDays', 'banished, {days, plural, one {# day} other {# days}} left', { days })",
     "tests": [

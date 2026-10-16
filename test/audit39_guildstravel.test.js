@@ -251,7 +251,7 @@ test('F101: a knight with free tavern rooms pays no inn leg of the fare', () => 
 });
 
 test('F101/F115: both fast-travel callers now supply the perk', () => {
-  const pop = src('ui/travelPopUp.js');
+  const pop = src('ui/travel/travelPopUp.js');
   const cost = pop.indexOf('calculateTripCost(');
   assert.ok(cost > 0);
   assert.match(pop.slice(cost, cost + 500), /freeTavernRooms: this\.freeTavernRooms\(\),/);
@@ -261,7 +261,7 @@ test('F101/F115: both fast-travel callers now supply the perk', () => {
     'the enhanced skin bills the same fare as the native popup');
   // the native window is opened by travelMapWindow, so the hook has to
   // ride the popup's own dep bag too
-  assert.match(src('ui/travelMapWindow.js'), /freeTavernRooms: this\.deps\.freeTavernRooms,/);
+  assert.match(src('ui/travel/travelMapWindow.js'), /freeTavernRooms: this\.deps\.freeTavernRooms,/);
   // and the host answers it with the KnightlyOrder read, the one
   // hasShip's FreeShipTravel arm already makes
   const w = src('scenes/world.js');

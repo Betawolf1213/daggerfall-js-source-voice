@@ -37,7 +37,7 @@
   },
   {
     "name": "HELM-TIME-presses-kept-online",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "  if (h.timeDial !== false) out.push({ act: 'slower'",
     "new": "  out.push({ act: 'slower'",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "HELM-TIME-pad-still-steps",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "    else if (h.timeDial === false) return false;   // HELM-TIME-ONLINE: no dial to step\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "HELM-TIME-pad-hold-puts-back",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "  if (h.timeDial === false) return false;   // HELM-TIME-ONLINE: no time to put back\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "HELM-TIME-prompt-says-the-dial",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "  if (h.timeDial === false) { if (trims) rows.push",
     "new": "  if (false) { if (trims) rows.push",
     "tests": [

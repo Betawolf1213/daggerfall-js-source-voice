@@ -259,7 +259,7 @@ test('MW-HEADS1: the Breton men\'s pools are the port\'s own wherever a PLAYER\'
   const pairs = new Set(Array.from({ length: 300 }, (_, s) => face({ faceIndex: s % 10, walk: npcFaceOf(npcHint(s * 2654435761 >>> 0, 0)) }).map((r) => r.record.id).join()));
   assert.equal(pairs.size, 16, 'four heads times four hairs');
   assert.ok([...pairs].every((p) => /^b_n_breton_m_head_0\d,b_n_breton_m_hair_0\d$/.test(p)), 'the data\'s, every one');
-  // a player's portrait not asked as one (an escort's face - ui/hudEscortFaces.js): the data's, the curated pair absent
+  // a player's portrait not asked as one (an escort's face - ui/hud/hudEscortFaces.js): the data's, the curated pair absent
   const [npcHead] = face({ faceIndex: 6 });
   assert.match(npcHead.record.id, /^b_n_breton_m_head_0\d$/);
   // a Breton vampire's head is the race's vampire head, over his own; his hair his own
@@ -342,7 +342,7 @@ test('MW-HEADS2: the port\'s own heads are a player\'s alone - the local player\
   assert.match(heads, /faceIndex: Number\.isInteger\(who\.faceIndex\) \? who\.faceIndex : 0, ownHeads: !who\.npc, px, ph,/, 'a player-shaped face asks - an NPC\'s (`npc`) does not');
   assert.match(heads, /skin: o\.skin, ownHeads: o\.ownHeads, px, ph \}\);/, 'a live player as its build');
   assert.doesNotMatch(heads.slice(heads.indexOf('export async function npcHeadImage(')), /ownHeads/, 'an NPC\'s talk-window face never asks');
-  assert.match(rd('src/ui/hudEscortFaces.js'), /playerHeadImage\(\{ race, gender, faceIndex: face\.faceIndex \| 0, npc: true \}/, 'an escort is an NPC');
+  assert.match(rd('src/ui/hud/hudEscortFaces.js'), /playerHeadImage\(\{ race, gender, faceIndex: face\.faceIndex \| 0, npc: true \}/, 'an escort is an NPC');
   const fp = rd('src/combat/fpArm.js');
   assert.match(fp, /const fkey = `\$\{gen\}:\$\{race\}:\$\{female \? 'f' : 'm'\}:\$\{faceIndex \| 0\}:\$\{fnv\(measured\)\}`;/, 'a player\'s and an escort\'s verdicts are two');
   assert.match(fp, /vampire: !!vampire, walk: npcFace, ownHeads: !!ownHeads \}\);/, 'the third-person body asks as the build was asked');

@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { StartWindow, START_BUTTONS, START_IMG } from '../src/ui/startWindow.js';
-import { NATIVE_W, NATIVE_H, nativeMetrics, SCREEN_DIM } from '../src/ui/nativePanel.js';
+import { NATIVE_W, NATIVE_H, nativeMetrics, SCREEN_DIM } from '../src/ui/native/nativePanel.js';
 import { ImgFile } from '../src/formats/imgFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 
@@ -393,7 +393,7 @@ test('U21c: the logo uploads LINEAR/CLAMP, where classic art stays NEAREST/REPEA
 
 test('U21d: with no logo the title falls back to CLASSIC art, on the native panel', async () => {
   const { TitleScreen, loadTitleArt, TITLE_IMG } = await import('../src/ui/titleScreen.js');
-  const { nativeMetrics } = await import('../src/ui/nativePanel.js');
+  const { nativeMetrics } = await import('../src/ui/native/nativePanel.js');
 
   assert.equal(TITLE_IMG, 'TITL00I0.IMG');
 
@@ -506,8 +506,8 @@ test('AUDIT 19 F2 / AUDIT 24: the letterbox rule, and the windows C# exempts fro
   // but which COLOUR the helper paints is the window's own C# to answer.
   const BLACK_PANEL = ['src/ui/startWindow.js', 'src/ui/titleScreen.js', 'src/ui/videoPlayer.js'];
   const CLEAR_PANEL = [
-    'src/ui/charsheet.js', 'src/ui/nativeTalk.js',
-    'src/ui/nativeTrade.js', 'src/ui/nativeInventory.js', 'src/ui/questJournal.js',
+    'src/ui/charsheet.js', 'src/ui/native/nativeTalk.js',
+    'src/ui/native/nativeTrade.js', 'src/ui/native/nativeInventory.js', 'src/ui/quest/questJournal.js',
   ];
   for (const f of BLACK_PANEL) {
     const text = readFileSync(f, 'utf8');

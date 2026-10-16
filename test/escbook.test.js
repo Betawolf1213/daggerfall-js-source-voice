@@ -85,7 +85,7 @@ test('ESC-BOOK: a door that opens another window HANDS OFF - the pause window do
   assert.deepEqual(seen, ['close'], 'the door\'s window takes the slot; its own close relocks');
   act('resume');
   assert.deepEqual(seen, ['close', 'close', 'back'], 'Resume still goes back to the classic window (DISC22-B)');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const at = menu.indexOf('function pauseStats(body)');
   assert.match(menu.slice(at, menu.indexOf('\nfunction ', at + 10)), /b\.onclick = \(\) => \{ onAction\('handoff'\); if \(fn\(\) === false\) onAction\('resume'\); \};/);
 });

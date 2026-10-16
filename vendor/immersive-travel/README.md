@@ -85,7 +85,7 @@ carriage's and the captain's laws and calculators, its popup's overrides;
 `src/systems/immersiveTravelTables.js` its tables; `src/world/immersiveTravelGates.js`
 lays its gate records onto whichever gate block the door serves (Beautiful Cities' too -
 a recorded departure). The two map skins carry its maps and popups:
-`src/ui/travelMapWindow.js` and `src/ui/travelPopUp.js` (the classic window),
+`src/ui/travel/travelMapWindow.js` and `src/ui/travel/travelPopUp.js` (the classic window),
 `src/ui/heldMap.js` (the enhanced sheet). `src/scenes/world.js` opens a driver's map
 (`openImmersiveMap`) and travels it; online it is the one fast travel the room keeps
 (`src/systems/online/onlineLane.js`).

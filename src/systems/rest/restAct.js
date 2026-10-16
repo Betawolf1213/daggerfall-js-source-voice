@@ -51,7 +51,7 @@ export const REST_ACT_TEXT = Object.freeze({
   meditating: 'Meditating by the candle...',   // REST6: the Meditation Candle's kneel
   noVote: 'Online there is no vote: rest at a fire, a tent or a bed, and your party within 15 m rests with you.',   // AUDIT REST: /ready online
   nextNight: (minutes) => `A night can pass again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`,
-  rested: 'Next night',   // AUDIT C&C (lens S): the interval's tile (ui/hudStatus.js) - "Rested" stood beside Boons' Well rested
+  rested: 'Next night',   // AUDIT C&C (lens S): the interval's tile (ui/hud/hudStatus.js) - "Rested" stood beside Boons' Well rested
   carried: (name) => `${name} rests here, and you rest with them through the night.`,   // REST5: a member's night, carried
   carriedShort: (name) => `${name} rests here, and you rest a while with them.`,
   carriedSkipped: (name) => `${name} rests here - you are too busy to rest with them.`,

@@ -23,7 +23,7 @@ import { composeLook } from '../src/net/remotePlayers.js';
 import { validLook, FOOT_SKINS } from '../src/net/wire.js';
 import { createPeerWalkers, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { skinCard, skinSets, FOOT_GROUPS } from '../src/ui/skinCard.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 
 const V = 'eye-of-the-beholder';
 const png = (key) => new URL(`../vendor/class-skins/Textures/${key.split('_')[0]}/${key}.png`, import.meta.url);

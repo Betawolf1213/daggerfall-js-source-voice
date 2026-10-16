@@ -88,10 +88,10 @@ test('audit24 wave29: a BROKEN item cannot be equipped', () => {
   assert.notEqual(sound.equipSlot, undefined);
 
   // the refusal is the WINDOW's, and it runs BEFORE the prohibition chain
-  const ui = rd('src/ui/nativeInventory.js');
+  const ui = rd('src/ui/native/nativeInventory.js');
   const fn = ui.slice(ui.indexOf('_refuseForbidden(it) {'), ui.indexOf('/** ShowInfoPopup'));
   assert.ok(fn.indexOf('isBrokenItem(it)') < fn.indexOf('isForbiddenEquip('), 'broken first, as DFU orders it');
   assert.match(fn, /ITEM_BROKEN_TEXT_ID/);
   // ...and the enhanced pack's own door carries it too
-  assert.match(rd('src/ui/enhancedInventory.js'), /if \(isBrokenItem\(item\)\) \{ notice = /);
+  assert.match(rd('src/ui/enhanced/enhancedInventory.js'), /if \(isBrokenItem\(item\)\) \{ notice = /);
 });

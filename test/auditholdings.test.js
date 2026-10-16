@@ -17,7 +17,7 @@ import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createShipCrew } from '../src/systems/naval/shipCrew.js';
 import { createCrewLife, LOOKOUT_YIELD } from '../src/systems/naval/crewLife.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 import { findHarbour, alongside, stepErrand, createWaterGrid, BERTH_SNAP_M } from '../src/systems/naval/shipLife.js';
 import { quatOfYaw, createSeaShip } from '../src/systems/naval/navalAI.js';
@@ -226,7 +226,7 @@ test('AUDIT HOLDINGS C8: a Gunner past her guns stands beside one, never on its 
 // ── THE TAB AND THE STABLE ────────────────────────────────────────────────────────────────────────────────────────────
 
 test('AUDIT HOLDINGS C1: no note in FRAME_ROLES swallows a selector - every selector the source names is a selector the kit dresses (the Companions page\'s slots, faces and chips, the HUD\'s quick chips, the Settings search, the cards)', () => {
-  const src = read('src/ui/enhancedFrame.js');
+  const src = read('src/ui/enhanced/enhancedFrame.js');
   const a = src.indexOf('export const FRAME_ROLES'), b = src.indexOf('\n});', a);
   const text = src.slice(a, b);
   for (const line of text.split('\n')) {
@@ -239,7 +239,7 @@ test('AUDIT HOLDINGS C1: no note in FRAME_ROLES swallows a selector - every sele
 });
 
 test('AUDIT HOLDINGS C4: four tabs never cut on a narrow window - the strip wraps as a last resort, tighter under 900 px and 660 px (the diamonds gone); measured in Chromium over 320-1280 px, one row from 320', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.px-tabs \{ display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;/);
   assert.match(css, /@media \(max-width: 900px\) \{\n  \.px-tabs button \{ font-size: 18px; letter-spacing: 0\.1em; text-indent: 0\.1em; padding: 6px 10px; gap: 6px; \}\n\}/);
   assert.match(css, /@media \(max-width: 660px\) \{\n  \.px-tabs button \{ font-size: 15px; letter-spacing: 0\.06em; text-indent: 0\.06em; padding: 6px 6px; gap: 0; \}\n  \.px-tabs button \.px-c \{ display: none; \}\n\}/);
@@ -254,7 +254,7 @@ test('AUDIT HOLDINGS C5/C6: a horse never named, renamed with nothing, keeps no 
   assert.deepEqual(p.stableAct('rename', 'Shadowmere'), { ok: true, text: 'Your horse is called Shadowmere.' });
   owns = false;
   assert.deepEqual(p.stableAct('rename', 'X'), { ok: false, text: 'You do not own a horse.' });
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /if \(!secs\.length\) \{\n    detail\.append\(el\('div', 'px-qverdict', 'Nothing here to hold'\)/);
 });
 

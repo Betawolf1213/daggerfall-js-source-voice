@@ -1020,7 +1020,7 @@
   },
   {
     "name": "DW-E3-no-fish-icon",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "return own ? { image: own, label: shown.label } : shown;",
     "new": "return shown;",
     "tests": [

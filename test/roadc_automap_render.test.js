@@ -38,8 +38,8 @@ import {
   AutomapWindow, RENDER_MODES, ABOVE_SLICE_MODES, nextRenderMode,
   HOTKEYS_DOWN, HOTKEY_VERBS, automapRenderMode,
   signalAutomapReset, resetAutomapWindowState, _setAutomapArt,
-} from '../src/ui/automapWindow.js';
-import { automapTooltipFor } from '../src/ui/automapText.js';
+} from '../src/ui/automap/automapWindow.js';
+import { automapTooltipFor } from '../src/ui/automap/automapText.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -168,7 +168,7 @@ test('c2/S6 the recorded substitutions are STATED, at their true size', () => {
   assert.match(r, /lineWidth/, 'and the 1 px WebGL2 cap, which is the only real delta');
   assert.match(r, /DO NOT "fix" this with a barycentric vertex variant/i,
     'with the instruction that closes the door on the memory-doubling "fix"');
-  const w = src('src/ui/automapWindow.js');
+  const w = src('src/ui/automap/automapWindow.js');
   assert.match(w, /DFU RENDERS BOTH PASSES PER OBJECT/, 'the window records the group-by-group substitution');
   assert.match(w, /the artifacts ARE the classic look/,
     'and says the unsorted blend is the target, not a bug to fix');
@@ -554,7 +554,7 @@ test('c2/S6 the water level rides per BLOCK, uploaded only when it changes, and 
   assert.deepEqual(groups[4].water, [null], 'beacons are Standard-material in DFU and never saw _WaterLevel');
 
   // nothing in the draw path sorts
-  const w = src('src/ui/automapWindow.js');
+  const w = src('src/ui/automap/automapWindow.js');
   const body = w.slice(w.indexOf('_partitionDraws(rec) {'), w.indexOf('// ── draw ─'));
   assert.equal(/\.sort\(/.test(body), false, 'NO SORTING - DFU sorts nothing and its artifacts are the target');
 });
@@ -618,7 +618,7 @@ test('c2/S6 the mode tooltips were already law-complete - and now the keys they 
   // S5 transcribed Internal_Strings:874-890 whole, so the stair
   // buttons' tooltips have named the three render modes and the Return
   // cycle since then - documenting a surface that did not yet exist.
-  // Nothing in ui/automapChrome.js needed changing for this stage; what
+  // Nothing in ui/automap/automapChrome.js needed changing for this stage; what
   // this pin holds is the LOOP - the key the tooltip PRINTS is the key
   // that sets the mode the sentence beside it names.
   _resetForTests(); resetAutomapWindowState(); _setAutomapArt(null); signalAutomapReset();

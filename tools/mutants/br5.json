@@ -52,7 +52,7 @@
   },
   {
     "name": "BR5-chargen-masthead-back",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "brand.append(el('div', 'sub', 'DFO Online'));",
     "new": "brand.append(el('div', 'sub', 'Daggerfall'));",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "BR5-door-width-at-the-old-ratio",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-wordmark:has(.brand-logo) { width: min(321px, 50vw);",
     "new": ".px-wordmark:has(.brand-logo) { width: min(540px, 84vw);",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "BR5-short-screen-width-at-the-old-ratio",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-wordmark:has(.brand-logo) { width: min(234px, 33.3vw); }",
     "new": ".px-wordmark:has(.brand-logo) { width: min(394px, 56vw); }",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "BR5-masthead-full-width",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".brand-home .brand-logo { width: 59.5%; margin: 0 auto; }",
     "new": ".brand-home .brand-logo { width: 100%; margin: 0 auto; }",
     "tests": [
@@ -123,7 +123,7 @@
   },
   {
     "name": "BR5-empty-rows-pulled-again",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".brand-home .brand-logo { width: 59.5%; margin: 0 auto; }",
     "new": ".brand-home .brand-logo { width: 59.5%; margin: 0 auto; }\n.px-wordmark .brand-logo, .brand-home .brand-logo { margin-bottom: calc(-100% * 81 / 2112); }",
     "tests": [
@@ -133,7 +133,7 @@
   },
   {
     "name": "BR5-film-box-at-the-old-ratio",
-    "file": "src/ui/introScreen.js",
+    "file": "src/ui/intro/introScreen.js",
     "old": "width:min(56.5vw,815px);",
     "new": "width:min(86vw,1240px);",
     "tests": [
@@ -143,7 +143,7 @@
   },
   {
     "name": "BR5-film-short-box-at-the-old-ratio",
-    "file": "src/ui/introScreen.js",
+    "file": "src/ui/intro/introScreen.js",
     "old": ".intro-title{width:min(48.7vw,657px)}",
     "new": ".intro-title{width:min(74vw,1000px)}",
     "tests": [
@@ -193,7 +193,7 @@
   },
   {
     "name": "BR5-instead-the-game",
-    "file": "src/ui/settingsCopy.js",
+    "file": "src/ui/settings/settingsCopy.js",
     "old": "\"You get the original game's own climbing, exactly as it shipped.\"",
     "new": "\"You get Daggerfall's own climbing, exactly as it shipped.\"",
     "tests": [
@@ -233,7 +233,7 @@
   },
   {
     "name": "BR5-classic-door-the-game",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "c.append(el('h3', null, t('menu.begin.title', 'Classic')));\n  c.append(el('p', 'meta', t('menu.begin.blurb', 'The classic start:",
     "new": "c.append(el('h3', null, t('menu.begin.title', 'Daggerfall')));\n  c.append(el('p', 'meta', t('menu.begin.blurb', 'The classic start:",
     "tests": [
@@ -243,7 +243,7 @@
   },
   {
     "name": "BR5-about-tagline-the-game",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "'An open-source reimplementation of a classic 1996 RPG.'",
     "new": "'An open-source reimplementation of The Elder Scrolls II: Daggerfall.'",
     "tests": [

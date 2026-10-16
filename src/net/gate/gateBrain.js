@@ -146,7 +146,7 @@ export const CHECKPOINT_MS = 2000;
 /** The longest step one beat credits: a room woken after a long sleep stands nobody the time it slept. */
 export const STEP_MAX_MS = 1000;
 /** He stands this long after the first fighter enters before he moves - time to see him. WB9a: and to read his marks
- *  (ui/gateMarksView.js - the card stands MARKS_CARD_ARRIVE_MS as a fighter steps in). */
+ *  (ui/gate/gateMarksView.js - the card stands MARKS_CARD_ARRIVE_MS as a fighter steps in). */
 export const OPENING_MS = 8000;
 /** A walk is said again when its goal moves this far (metres) or this long has passed (ms). */
 export const MOVE_RESAY_M = 1.5;
@@ -199,7 +199,7 @@ export const PHASE3_WINDUP = 0.8;
  *  fire and reach (Hellfire and the Meteor leave the floor burning, the Flame Nova, the Crushing Leap at whoever stands
  *  far off); Dagon's Champion adds the Spokes of Dagon - four lanes of fire from his feet, and then the four between
  *  them. Not faster: Mac, of a player's ask for mechanics half again as fast, "I dont think making mechanics faster is
- *  the play". The names are the bar's (ui/gateBossBar.js) and the turn's words (scenes/gateCourt.js). */
+ *  the play". The names are the bar's (ui/gate/gateBossBar.js) and the turn's words (scenes/gateCourt.js). */
 export const PHASE_NAMES = Object.freeze(['The Warden', 'The Burning Court', "Dagon's Champion"]);
 
 // ── the attacks ────────────────────────────────────────────────────────

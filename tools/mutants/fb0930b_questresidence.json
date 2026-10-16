@@ -1,14 +1,14 @@
 [
   {
     "name": "RES-RING-the-ring-keyed-on-questName-alone",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "if (!named.has(b?.buildingKey) && (!(b?.questName || b?.questMarked) || !found.has(b.buildingKey))) continue;   // RES-RING",
     "new": "if (!named.has(b?.buildingKey) && (!b?.questName || !found.has(b.buildingKey))) continue;   // RES-RING",
     "tests": ["test/fb0930b_questresidence.test.js"]
   },
   {
     "name": "RES-RING-the-pen-left-off-the-override-arm",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "          quest = !!b.questMarked;   // RES-RING: a quest's marked residence, override-named at its discovery",
     "new": "",
     "tests": ["test/fb0930b_questresidence.test.js"]

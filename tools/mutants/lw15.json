@@ -535,7 +535,7 @@
   },
   {
     "name": "LW15-page-merge",
-    "file": "src/ui/vendorPage.js",
+    "file": "src/ui/vendor/vendorPage.js",
     "old": "    const sold = [...(mine.sold ?? []), ...(mine.patronSold ?? [])]",
     "new": "    const sold = [...(mine.sold ?? [])]",
     "tests": [
@@ -544,7 +544,7 @@
   },
   {
     "name": "LW15-page-who",
-    "file": "src/ui/vendorPage.js",
+    "file": "src/ui/vendor/vendorPage.js",
     "old": "const who = s.patron ? safe(() => p.patronName?.(s.patron), null) : null;",
     "new": "const who = null;",
     "tests": [

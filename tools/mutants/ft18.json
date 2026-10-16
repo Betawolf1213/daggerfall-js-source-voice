@@ -101,7 +101,7 @@
   },
   {
     "name": "FPSCAP-the-row-walks-the-range",
-    "file": "src/ui/settingsLaw.js",
+    "file": "src/ui/settings/settingsLaw.js",
     "old": "    if (law.stops) return stepStops(law, raw, dir, coarse);   // FPS-CAP1\n",
     "new": "",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "FPSCAP-zero-reads-as-a-number",
-    "file": "src/ui/settingsLaw.js",
+    "file": "src/ui/settings/settingsLaw.js",
     "old": "  if (law.offBelow !== undefined && n < law.offBelow) return 'Off';   // FPS-CAP1\n",
     "new": "",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "FT18-all-off-moves-the-rooms-rows",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (!st || st.locked) continue;\n    const to = classicSegment(f, st);",
     "new": "    if (!st) continue;\n    const to = classicSegment(f, st);",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "FT18-a-second-press-overwrites-the-keep",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  for (const { f, st } of plan) if (!Object.hasOwn(keep, f.id)) keep[f.id] = st.labels[st.at];",
     "new": "  for (const { f, st } of plan) keep[f.id] = st.labels[st.at];",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "FT18-the-keep-never-spent",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  setPref(FEATURES_RESTORE_PREF, null);\n  return n;",
     "new": "  return n;",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "FT18-classic-ignored",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (c?.classic !== undefined) {\n    const i = c.store === 'settings'",
     "new": "  if (false) {\n    const i = c.store === 'settings'",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "FT18-the-search-repaints",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    paintOptionsBody(body, { pause });\n    // the rail says no tab",
     "new": "    render();\n    // the rail says no tab",
     "tests": [
@@ -319,7 +319,7 @@
   },
   {
     "name": "FT18-all-off-unasked",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "{ label: t('menu.features.allOff', 'All off'), onClick: () => ask(t('menu.features.allOffTitle', 'Turn Everything Off'), allOffAsk(), t('menu.features.allOff', 'All off'), () => { featuresAllOff(); }) },",
     "new": "{ label: t('menu.features.allOff', 'All off'), onClick: () => { featuresAllOff(); render(); } },",
     "tests": [
@@ -328,7 +328,7 @@
   },
   {
     "name": "FT18-the-query-outlives-the-visit",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  optQuery = '';   // FT18: a fresh visit searches nothing (ORG2: over every tab)\n",
     "new": "",
     "tests": [
@@ -337,7 +337,7 @@
   },
   {
     "name": "FT18-a-chip-writes-nothing",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      else b.onclick = () => { setPref(pt.key, !on); render(); };",
     "new": "      else b.onclick = () => { render(); };",
     "tests": [
@@ -346,7 +346,7 @@
   },
   {
     "name": "FT18-the-holster-not-rebuilt",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      set: (i) => { setPref(c.key, i === 1); TILE_AFTER[c.key]?.(); } };",
     "new": "      set: (i) => { setPref(c.key, i === 1); } };",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "FT18-an-empty-search-says-nothing",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (!found) body.append(empty('No matches'));",
     "new": "    if (false) body.append(empty('No matches'));",
     "tests": [

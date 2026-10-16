@@ -1,6 +1,6 @@
 // project-dagger entry point.
 // Hand-rolled WebGL2, no framework. Same doctrine as project-final.
-// Desktop-first; touch devices get the ui/touch.js layer (stick +
+// Desktop-first; touch devices get the ui/touch/touch.js layer (stick +
 // drag-look + buttons) speaking the same input language.
 // Scene router: bare = the classic start (Privateer's Hold + chargen);
 // ?interior, ?dungeon=<name>, ?world, ?exterior (or ?region/?loc)
@@ -179,15 +179,15 @@ async function boot() {
     // every door below sets or deletes each one again (F12's law).
     for (const k of BOOT_DOOR_KEYS) params.delete(k);
     publishBootParams(params);
-    const { runEnhancedMenu } = await import('./ui/enhancedMenu.js');
-    const { runCinematicFrontDoor } = await import('./ui/introScreen.js');
+    const { runEnhancedMenu } = await import('./ui/enhanced/enhancedMenu.js');
+    const { runCinematicFrontDoor } = await import('./ui/intro/introScreen.js');
     // PAD-DOOR (2026-09-27, Discord - an AYN Thor: "unable to select online, load game anything"): the intro, the menu
-    // and its windows answer a controller - the d-pad moves, A presses, B backs out (ui/menuPad.js) - until a game is
+    // and its windows answer a controller - the d-pad moves, A presses, B backs out (ui/menu/menuPad.js) - until a game is
     // chosen, when the scene's own pad layer takes over.
     // PAD-CURSOR: and the stick is the game's own cursor here - its law and the gauntlet handed in, because the
     // door's loop is a leaf the desktop launcher serves alone (DA12)
     const [{ attachMenuPad }, { padDoorCursorLaw }, { GAUNTLET_POINT }] = await Promise.all([
-      import('./ui/menuPad.js'), import('./systems/padCursor.js'), import('./ui/plusCursor.js'),
+      import('./ui/menu/menuPad.js'), import('./systems/padCursor.js'), import('./ui/plus/plusCursor.js'),
     ]);
     const detachMenuPad = attachMenuPad({ cursor: { law: padDoorCursorLaw, art: GAUNTLET_POINT } });
     // SND2: the door's presses sound as the game's do - the click's sound bank read through this file's data gate, the
@@ -228,7 +228,7 @@ async function boot() {
     else params.delete('online');
     // SLOTS1: the Load and Online panes pick a slot; the boot's load arm
     // reads the key (world.js, the SAV4 arm). The same SET-or-DELETE law.
-    const { takePickedSaveKey, takePickedRealmId } = await import('./ui/enhancedMenu.js');
+    const { takePickedSaveKey, takePickedRealmId } = await import('./ui/enhanced/enhancedMenu.js');
     const picked = takePickedSaveKey();
     if (choice === 'load' && picked != null) params.set('loadkey', String(picked));   // REALM P1.3: never online - a local slot is not the realm's
     else params.delete('loadkey');
@@ -242,7 +242,7 @@ async function boot() {
     else params.delete('realmnew');
     // HOUSE-WAITS (FIELD BUGS 2026-10-09f): a waiting house answered on the Online page - its member is born online
     // through the world host's own birth door (`legacyborn`, in the seat the line keeps). The same SET-or-DELETE law.
-    const { takePickedLegacyBirth } = await import('./ui/enhancedMenu.js');
+    const { takePickedLegacyBirth } = await import('./ui/enhanced/enhancedMenu.js');
     const legacyBirth = choice === 'online-new' ? takePickedLegacyBirth() : null;
     if (legacyBirth) {
       params.set('legacyborn', String(legacyBirth.personId));

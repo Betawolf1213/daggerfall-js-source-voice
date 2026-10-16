@@ -965,7 +965,7 @@
   },
   {
     "name": "PROF5-host-crafts-wait",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if ((book.pendingWithdrawals || book.pendingCrafts || book.pendingDeposits) && p.settle && Date.now() - _stores.settledAt > 30_000) {",
     "new": "  if ((book.pendingWithdrawals || book.pendingDeposits) && p.settle && Date.now() - _stores.settledAt > 30_000) {",
     "tests": [
@@ -975,7 +975,7 @@
   },
   {
     "name": "PROF5-host-plane-undressed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".prof-grain { fill: none; stroke: #3b2a18;",
     "new": ".prof-grain { stroke: #3b2a18;",
     "tests": [

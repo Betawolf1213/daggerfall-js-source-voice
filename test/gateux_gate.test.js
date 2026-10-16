@@ -1,25 +1,25 @@
 // GATE-UX (2026-10-01, Mac: "1. In the oblivion boss gate, move the modifer panel that shows away from center of the
 // screen, it's obstructive 2. Remove the text below each boss health bar that shows phase details 3. Loot at the end can
 // still be walked over and picked up 4. Develop a detailed damage chart after the boss kill, showing and ranking
-// everyone's damage"): THE COURT, LESS IN THE WAY AND MORE TO READ. The marks' card to the side (ui/gateMarksView.js);
-// the bar's foot without its phase line (ui/gateBossBar.js); the spoils taken by the press alone (scenes/spoilsPool.js -
+// everyone's damage"): THE COURT, LESS IN THE WAY AND MORE TO READ. The marks' card to the side (ui/gate/gateMarksView.js);
+// the bar's foot without its phase line (ui/gate/gateBossBar.js); the spoils taken by the press alone (scenes/spoilsPool.js -
 // the walk-over's own pins moved with it: wb5, wb9f, wbx); and THE DAMAGE CHART - counted by the relay's brain
 // (net/gate/gateBrain.js damageChart), carried with the kill (net/wire.js `dm`, relay world136), folded (net/gate/gateLink.js) and
-// drawn to the side once he has fallen (ui/gateDamageChart.js, scenes/gateCourt.js). Design:
+// drawn to the side once he has fallen (ui/gate/gateDamageChart.js, scenes/gateCourt.js). Design:
 // bible/11-Multiplayer/World-Bosses.md section 16.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { MARKS_CARD_CSS } from '../src/ui/gateMarksView.js';
-import { BOSS_BAR_CSS, BOSS_BAR_TOP, bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';
+import { MARKS_CARD_CSS } from '../src/ui/gate/gateMarksView.js';
+import { BOSS_BAR_CSS, BOSS_BAR_TOP, bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT } from '../src/ui/gate/gateBossBar.js';
 import { PHASE_NAMES, newFight, joinFight, applyHit, applyCrystalHit, stepBrain, stateOf, damageChart, topDealers, DAMAGE_CHART_MAX, HIT_KINDS, COURTS, GATE_FIGHTERS_MAX, ATTACKS } from '../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_CHART_MAX, GATE_TOP_MAX, RELAY_VERSION } from '../src/net/wire.js';
 import { foldGate, createGateLink, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   damageChartModel, drawGateDamageChart, destroyGateDamageChart, chartNumber, chartShare,
   DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS, DAMAGE_CHART_FADE_MS, DAMAGE_CHART_ROWS, DAMAGE_CHART_TEXT, DAMAGE_CHART_CSS,
-} from '../src/ui/gateDamageChart.js';
+} from '../src/ui/gate/gateDamageChart.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T0 = 1_000_000;
@@ -58,8 +58,8 @@ test('GATE-UX 1 the marks\' card as a fighter steps in stands low on the right, 
   assert.match(arrive, /bottom: max\(96px, 14vh\);/);
   assert.doesNotMatch(arrive, /left: 50%|translateX\(-50%\)|top:/, 'not centred, not hung from the top');
   assert.match(MARKS_CARD_CSS, /\.wb-marks-card\.wb-marks-gate \{ right: 18px; top: 104px; width: 340px; \}/, 'by the gate: as it was');
-  assert.match(read('src/ui/enhancedPlusStyle.js'), /body \.wb-marks-card \{/, 'Plus dresses it, and places it nowhere else');
-  assert.doesNotMatch(/body \.wb-marks-card \{[^}]*\}/.exec(read('src/ui/enhancedPlusStyle.js'))[0], /left:|top:|transform:/);
+  assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /body \.wb-marks-card \{/, 'Plus dresses it, and places it nowhere else');
+  assert.doesNotMatch(/body \.wb-marks-card \{[^}]*\}/.exec(read('src/ui/enhanced/enhancedPlusStyle.js'))[0], /left:|top:|transform:/);
 });
 
 // ═══ 2. THE BAR'S FOOT WITHOUT ITS PHASE LINE ══════════════════════════════════════════════════════════════════════
@@ -299,7 +299,7 @@ test('GATE-UX 4 the chart\'s node: made once, its rows written when the chart ch
   assert.match(box, /right: 18px; bottom: max\(96px, 14vh\);/);
   assert.match(box, /pointer-events: none;/, 'a readout: no click');
   assert.doesNotMatch(box, /left: 50%|translateX/);
-  const plus = read('src/ui/enhancedPlusStyle.js');
+  const plus = read('src/ui/enhanced/enhancedPlusStyle.js');
   for (const c of ['wb-dmg-chart', 'wb-dmg-title', 'wb-dmg-sub', 'wb-dmg-head', 'wb-dmg-name', 'wb-dmg-lv', 'wb-dmg-you', 'wb-dmg-num', 'wb-dmg-track', 'wb-dmg-fill', 'wb-dmg-mine', 'wb-dmg-more']) {
     assert.match(DAMAGE_CHART_CSS, new RegExp(`\\.${c} \\{`), c);
     assert.match(plus, new RegExp(`body \\.${c}\\b`), `${c} is dressed under Plus`);

@@ -66,7 +66,7 @@ test('DISC12 doll: a peer in beast form stands as the werewolf or the wereboar -
 
 test('DISC12 pack: the enhanced pack hands the Morrowind figure the weapon of the hand in USE - the live rig\'s, handed by the host (mutant: the right hand always)', async () => {
   const { withDom } = await import('./invdrag.mjs');
-  const { mountEnhancedInventory } = await import('../src/ui/enhancedInventory.js');
+  const { mountEnhancedInventory } = await import('../src/ui/enhanced/enhancedInventory.js');
   const { equipItem } = await import('../src/systems/equip.js');
   const mk = () => ({ group: 'Weapons', templateIndex: 120, material: 0, name: 'Longsword', currentCondition: 800, maxCondition: 1000 });
   const dag = () => ({ group: 'Weapons', templateIndex: 113, material: 3, name: 'Dagger', currentCondition: 50, maxCondition: 100 });

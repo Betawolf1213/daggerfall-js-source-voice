@@ -558,7 +558,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
   }
 
   loadFlats();   // warm it with the scene; the getters answer null until it lands
-  // DISC22-D: the icon doors' per-record decode is the drawer's own (ui/itemScroller.js preloadIconRecord) - the
+  // DISC22-D: the icon doors' per-record decode is the drawer's own (ui/item/itemScroller.js preloadIconRecord) - the
   // handout this bag once carried was taken by no scene, which is how the Steel Light Flail drew nothing.
   return { textureFiles, getTexture, getTextureSize, uploadRecord: pinnedUpload, uploadRecordFrame: pinnedUploadFrame, getGpuMesh: pinnedGpuMesh, getWindmillMeshes, getMachineryParts, gpuMeshes, cpuModels, palette,
     markClassicArt, isClassicArt,   // AUDIT GN2-PF5

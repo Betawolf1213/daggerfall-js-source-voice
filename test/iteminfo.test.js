@@ -329,7 +329,7 @@ test('ROAD-U (was AUDIT 22 F11): artifact IDENTITY is the enchantment record, no
 // Also, not sure if armor has values either."
 //
 // The ENHANCED card was the one at fault and is fixed in
-// `ui/enhancedInventory.js`. But "not sure" is the important half of
+// `ui/enhanced/enhancedInventory.js`. But "not sure" is the important half of
 // that sentence: the claim that the CLASSIC popup was always right was,
 // until this pin, unverified. `%wdm` and `%mod` had no test anywhere -
 // the two macros a player picks a weapon by, unpinned since U25 - so
@@ -359,7 +359,7 @@ test('MAC-M1: the classic popup and the enhanced card print the SAME number', as
   // The law that matters most, and the one this port keeps having to
   // re-establish: two surfaces describing one item may not disagree.
   // They share the producer, so this drives both and compares.
-  const { itemLine } = await import('../src/ui/enhancedInventory.js');
+  const { itemLine } = await import('../src/ui/enhanced/enhancedInventory.js');
   const cases = [
     { group: 'Weapons', templateIndex: 113, material: 0, condition: 100, maxCondition: 100, stackCount: 1 },
     { group: 'Weapons', templateIndex: 122, material: 9, condition: 100, maxCondition: 100, stackCount: 1 },

@@ -6,8 +6,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { compassPlace, COMPASS_POINTS, COMPASS_SPAN } from '../src/ui/enhancedHud.js';
-import { markFoeStruck, foeTarget, foeTargetRef, tickFoeTarget, clearFoeTarget, FOE_TARGET_SECONDS } from '../src/ui/hudFoeTarget.js';
+import { compassPlace, COMPASS_POINTS, COMPASS_SPAN } from '../src/ui/enhanced/enhancedHud.js';
+import { markFoeStruck, foeTarget, foeTargetRef, tickFoeTarget, clearFoeTarget, FOE_TARGET_SECONDS } from '../src/ui/hud/hudFoeTarget.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -55,14 +55,14 @@ test('PX30 target: the blow you landed, and it FADES', () => {
 });
 
 test('PX30: the HUD rides the ONE host-agnostic call, and the classic keeps its own', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   // drawHud is what all four hosts already make, "last, over the
   // viewmodel" - the same reasoning the damage flash rides.
   // PX30b gave the call the two hands; the shape it guards is
   // unchanged - one branch, on the skin, and it RETURNS.
   // LV2 re-aimed this BY CONTENT: the branch is still ONE branch on the
   // skin and it still returns, but the enhanced skin now has a second
-  // surface inside it - ui/levelNotice.js's strip, which rides the same
+  // surface inside it - ui/levelUp/levelNotice.js's strip, which rides the same
   // one call for the same reason and takes the same hide gate. What the
   // pin is about is the BRANCH, not the number of lines in it.
   assert.match(hud, /if \(isEnhanced\(\) && typeof document !== 'undefined'\) \{\s*\n\s*drawLevelNotices\(\{ hidden: cursorActive \|\| !hudRenderEnabled\(\) \}\);\s*\n\s*drawEnhancedHud\(vitals, heading01, dt, \{/);
@@ -85,8 +85,8 @@ test('PX30: the HUD rides the ONE host-agnostic call, and the classic keeps its 
 });
 
 test('PX30: it is a READOUT, and it is updated rather than rebuilt', () => {
-  const src = read('src/ui/enhancedHud.js');
-  const css = read('src/ui/enhancedStyle.js');
+  const src = read('src/ui/enhanced/enhancedHud.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // Nothing is pressed, nothing registers with the overlay stack, and
   // Tab does not close it - it is the game's own face.
   assert.match(css, /\.hud \{ position: fixed; inset: 0; z-index: 4; pointer-events: none;/);
@@ -126,13 +126,13 @@ test('PX30: it is a READOUT, and it is updated rather than rebuilt', () => {
   // BUFF-END: beside it, the ONE law of which bundle the player may end
   assert.match(src, /import \{ liveBundles, canEndBundle, endBundle, endedSpellText \} from '\.\.\/systems\/mysticism\.js'/);
   assert.doesNotMatch(src, /entity\?\.effects\?\.bundles/, 'no second walk');
-  assert.match(read('src/ui/hudActiveSpells.js'), /import \{ liveBundles, canEndBundle \} from '\.\.\/systems\/mysticism\.js'/,
+  assert.match(read('src/ui/hud/hudActiveSpells.js'), /import \{ liveBundles, canEndBundle \} from '\.\.\/systems\/mysticism\.js'/,
     'the same one the classic icons read');
 });
 
 test('PX30b: the breath bar and the two hands - each only when there is one', () => {
-  const src = read('src/ui/enhancedHud.js');
-  const css = read('src/ui/enhancedStyle.js');
+  const src = read('src/ui/enhanced/enhancedHud.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // THE BREATH is DFU's own two laws, imported rather than restated:
   // drawn only while holding breath (Amount 0 draws nothing) and RED
   // below (endurance >> 3) + 4.
@@ -144,7 +144,7 @@ test('PX30b: the breath bar and the two hands - each only when there is one', ()
   // restated, so the pin asks for the name, not the whole list.
   assert.match(src, /import \{ compassScroll, breathShortThreshold[^}]*\} from '\.\/hud\.js'/,
     'the threshold is the classic HUD\'s own');
-  assert.match(read('src/ui/hud.js'), /export const breathShortThreshold = \(liveEndurance\) => \(liveEndurance >> 3\) \+ 4;/);
+  assert.match(read('src/ui/hud/hud.js'), /export const breathShortThreshold = \(liveEndurance\) => \(liveEndurance >> 3\) \+ 4;/);
   assert.match(src, /maxBreath\(vitals\) \|\| 1/, 'and the ceiling is statMods\', not a number typed here');
   assert.match(css, /\.hud-breath \{ display: none;[\s\S]{0,80}\.hud-breath\.on \{ display: flex; \}/);
   // THE HANDS. The reference's ability bar has no Daggerfall
@@ -162,7 +162,7 @@ test('PX30b: the breath bar and the two hands - each only when there is one', ()
   // the "each only when filled" half of this law now lives where it was
   // made: on the CHIP, which carries a name and says nothing without
   // one. The cells are the arc's recorded departure (see
-  // test/qs3_hud.test.js and ui/enhancedHud.js's header): an empty cell
+  // test/qs3_hud.test.js and ui/enhanced/enhancedHud.js's header): an empty cell
   // is a SOCKET, because the diamond's shape is the readout.
   assert.match(src, /parts\.readied\.classList\.toggle\('on', !!readyName\);/);
   assert.doesNotMatch(css, /\.hud-hand \{|\.hud-hands|\.hud-hand\.on/, 'the plaques went with the diamond');
@@ -176,8 +176,8 @@ test('PX30b: the breath bar and the two hands - each only when there is one', ()
   // host that knows neither passes neither.
   // AUDIT 28 W2a re-aimed from the literal bag-tail: the bag grew
   // weaponSheathed after these two, and the law is that both are there.
-  assert.match(read('src/ui/hud.js'), /readied = null, weapon = null(, [^}]*)? \} = \{\}[,)]/s);
-  assert.match(read('src/ui/hud.js'), /readied: readied \?\? null,\s*\n\s*weapon: weapon \?\? null,/);
+  assert.match(read('src/ui/hud/hud.js'), /readied = null, weapon = null(, [^}]*)? \} = \{\}[,)]/s);
+  assert.match(read('src/ui/hud/hud.js'), /readied: readied \?\? null,\s*\n\s*weapon: weapon \?\? null,/);
   // ...and both are still GUARDED writes, like everything else here.
   assert.match(src, /if \(last\.readied !== readyName\) \{/);
   assert.match(src, /if \(last\.quick === sig\) return;/);
@@ -211,8 +211,8 @@ test('AUDIT 39: every host that draws a HUD fills the two hands', () => {
 });
 
 test('PX30c: the HUD scales from a SETTING, and the percentage lives in the bar', () => {
-  const src = read('src/ui/enhancedHud.js');
-  const css = read('src/ui/enhancedStyle.js');
+  const src = read('src/ui/enhanced/enhancedHud.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // THE SCALE is a setting beside DFU's own LargeHUDUndockedScale and
   // read the same way, so it lands in the catalog the enhanced screens
   // already render and is saved with everything else - no new
@@ -226,13 +226,13 @@ test('PX30c: the HUD scales from a SETTING, and the percentage lives in the bar'
   assert.doesNotMatch(read('src/systems/settings/settings.js'), /EnhancedHUDScale/);
   assert.match(read('src/systems/uiPrefs.js'), /^\s*hudScale: 1,$/m);
   assert.match(src, /getPref\('hudScale'\)/);
-  assert.match(read('src/ui/enhancedMenu.js'), /setPref\('hudScale', next\);/);
-  assert.match(read('src/ui/enhancedMenu.js'), /'Gameplay HUD scale'/);
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /setPref\('hudScale', next\);/);
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /'Gameplay HUD scale'/);
   // NAMED apart from the classic HUD's own `hudScale(canvas)` - the
   // one-home pin caught that collision on the first full run.
   assert.match(src, /export const enhancedHudScale = \(\) => \{/);
   assert.doesNotMatch(src, /export const hudScale\b/);
-  assert.match(read('src/ui/hud.js'), /hudScale\(/, 'the classic one keeps its name');
+  assert.match(read('src/ui/hud/hud.js'), /hudScale\(/, 'the classic one keeps its name');
   // CLAMPED: a HUD is not a place to let a typo hide the game.
   assert.match(src, /export const HUD_SCALE_MIN = 0\.5;/);
   assert.match(src, /export const HUD_SCALE_MAX = 2;/);
@@ -270,13 +270,13 @@ test('PX30d: fatigue has no FIELD, it has a LAW - and the bar said 576000%', () 
   // with maxFatigue(vitals) in it, and this branch returns BEFORE that
   // snapshot is built: it was reading the raw entity while the classic
   // read the law. Same law, same module, is the fix.
-  const src = read('src/ui/enhancedHud.js');
+  const src = read('src/ui/enhanced/enhancedHud.js');
   assert.match(src, /import \{ maxBreath, maxFatigue, liveStat \} from '\.\.\/systems\/statMods\.js'/);
   assert.match(src, /\['fatigue', parts\.fatigue, vitals\.fatigue \?\? 0, maxFatigue\(vitals\) \|\| vitals\.maxFatigue \|\| 1\]/);
   assert.match(read('src/systems/statMods.js'),
     /export function maxFatigue\(entity\) \{\s*\n\s*return \(liveStat\(entity, 'strength'\) \+ liveStat\(entity, 'endurance'\)\) \* FATIGUE_MULTIPLIER;/);
   // ...and it is the SAME line the classic HUD's own snapshot uses.
-  assert.match(read('src/ui/hud.js'), /maxFatigue: maxFatigue\(vitals\) \|\| 1,/);
+  assert.match(read('src/ui/hud/hud.js'), /maxFatigue: maxFatigue\(vitals\) \|\| 1,/);
   // Health and magicka DO have fields, and are left reading them.
   assert.match(src, /\['health', parts\.health, vitals\.health \?\? 0, vitals\.maxHealth \|\| 1\]/);
   assert.match(src, /\['magicka', parts\.magicka, vitals\.magicka \?\? 0, vitals\.maxMagicka \|\| 1\]/);
@@ -293,7 +293,7 @@ test('PX32: the reticle - the enhanced skin had NO crosshair and NO mode word', 
   // IMPORTED: which setting shows a crosshair, which style makes the
   // mode's word the crosshair (Grab alone keeps the plain cross - it is
   // the mode you aim in), which styles show a corner word.
-  const src = read('src/ui/enhancedHud.js');
+  const src = read('src/ui/enhanced/enhancedHud.js');
   assert.match(src, /import \{ crosshairEnabled, interactionIconStyle, iconReplacesCrosshair, modeIconEnabled, MODE_LABEL \} from '\.\/hudCrosshair\.js'/);
   assert.match(src, /import \{ getInteractionMode \} from '\.\.\/player\/interactionMode\.js'/);
   assert.match(src, /const showCross = aim && crosshairEnabled\(\) && !\(asCross && mode !== 'grab'\);/);
@@ -303,7 +303,7 @@ test('PX32: the reticle - the enhanced skin had NO crosshair and NO mode word', 
   // Guarded like every other write here.
   assert.match(src, /if \(last\.reticle !== rk\) \{/);
   // A reticle is a POINT: it is not scaled by the HUD's scale.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.hud-reticle \{ position: absolute; left: 50%; top: 50%; transform: translate\(-50%, -50%\);/);
   assert.doesNotMatch(css, /\.hud-reticle \{[^}]*--hud-scale/);
   assert.match(css, /\.hud-cross::before, \.hud-cross::after \{ content: ''; position: absolute; background: #d8cfae;/);
@@ -311,7 +311,7 @@ test('PX32: the reticle - the enhanced skin had NO crosshair and NO mode word', 
 });
 
 test('VB2: the lost chunk holds, then drains to the bar - and a gain snaps it', async () => {
-  const { stepGhost, GHOST_HOLD, GHOST_RATE } = await import('../src/ui/enhancedHud.js');
+  const { stepGhost, GHOST_HOLD, GHOST_RATE } = await import('../src/ui/enhanced/enhancedHud.js');
   let g = stepGhost(null, 80, 0);
   assert.deepEqual([g.at, g.pct], [80, 80], 'the first frame has nothing lost');
   g = stepGhost(g, 50, 0.016);
@@ -340,7 +340,7 @@ test('FRAME1b: the foe bar knows WHICH foe, not just its name - two rats are two
   assert.equal(foeTargetRef(), null);
   clearFoeTarget();
   // the HUD keys its loss readout on the ref, never on the name
-  const src = readFileSync(new URL('../src/ui/enhancedHud.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedHud.js', import.meta.url), 'utf8');
   assert.match(src, /last\.foeRef !== ref/);
   assert.doesNotMatch(src, /last\.foe !== t\.name\) \{[^}]*ghosts\.foe = null/);
 });

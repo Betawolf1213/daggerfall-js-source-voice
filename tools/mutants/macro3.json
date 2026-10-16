@@ -1,7 +1,7 @@
 [
  {
   "name": "MACRO-3-the-broken-box-forgets-its-item",
-  "file": "src/ui/nativeInventory.js",
+  "file": "src/ui/native/nativeInventory.js",
   "old": "?? [{ text: 'This item is broken.', center: true }], { it: this._longName(it) }),",
   "new": "?? [{ text: 'This item is broken.', center: true }], null),",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "MACRO-3-the-drop-gold-prompt-walks-nothing",
-  "file": "src/ui/nativeInventory.js",
+  "file": "src/ui/native/nativeInventory.js",
   "old": "      lines: expandRowValues(this.hooks.rows?.(GOLD_TO_DROP_TEXT_ID) ?? [{ text: 'How much gold?', center: true }], null),",
   "new": "      lines: this.hooks.rows?.(GOLD_TO_DROP_TEXT_ID) ?? [{ text: 'How much gold?', center: true }],",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "MACRO-3-the-powers-row-is-not-spread",
-  "file": "src/ui/nativeInventory.js",
+  "file": "src/ui/native/nativeInventory.js",
   "old": "    for (const p of powers) out.push({ ...row, text: String(row.text).replace('%mpw', p) });",
   "new": "    out.push({ ...row, text: String(row.text).replace('%mpw', powers.join(' ')) });",
   "tests": [

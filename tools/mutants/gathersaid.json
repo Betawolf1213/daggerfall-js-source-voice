@@ -1,7 +1,7 @@
 [
   {
     "name": "GATHERSAID-queue-keep-ignored",
-    "file": "src/ui/profHud.js",
+    "file": "src/ui/professions/profHud.js",
     "old": "        const i = rows.findIndex((r) => !r.keep);",
     "new": "        const i = 0;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GATHERSAID-queue-overflow-unbounded",
-    "file": "src/ui/profHud.js",
+    "file": "src/ui/professions/profHud.js",
     "old": "      while (rows.length > max) {",
     "new": "      while (rows.length > max + 1) {",
     "tests": [

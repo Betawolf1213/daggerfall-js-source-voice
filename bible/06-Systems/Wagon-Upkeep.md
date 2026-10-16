@@ -49,7 +49,7 @@ Boons' rules, each a field of `WAGON_UPKEEP_RULES` because the tiers differ on i
    travel's days read no ride pace, this one's as none before it. The Stable page says it: "Sound - it rolls faster
    for it."
 4. **No red** (RED MEANS IT COSTS). Where wear costs nothing a failing wagon's chip on the saddle panel stops at amber
-   (`ui/enhancedSaddle.js`), its bar on the Stable page is rickety's plain (`ui/holdingsPages.js` wagonMeterTone), the
+   (`ui/enhanced/enhancedSaddle.js`), its bar on the Stable page is rickety's plain (`ui/holdingsPages.js` wagonMeterTone), the
    panel says no pace to get back, the Stable page says "Rickety - it still rolls at its pace." and "Failing - it
    still rolls at its pace.", and a step down is said without the slowness: "Your Small Cart is rickety. A Wagon Yard
    can mend it.", "Your Small Cart is falling apart. A Wagon Yard or a Wagon Repair Kit will mend it."
@@ -116,7 +116,7 @@ A wagon left parked does not wear.
 Worn as far as wear takes it, a wagon is Failing: on Hard its team pulls it at 0.7 of its pace (`upkeepRuntime.js`
 rideScale, times its team's Strength under its load - horse care's), on Boons at its pace, and it is driven, hitched,
 followed and taken on a journey like any other on every tier. On Hard the Stable page, the saddle panel and its line
-(`ui/enhancedSaddle.js` saddleHint) say to mend it to get its pace back.
+(`ui/enhanced/enhancedSaddle.js` saddleHint) say to mend it to get its pace back.
 
 ## Mending
 
@@ -145,7 +145,7 @@ and **Use a repair kit** while a kit would mend it (`ui/holdingsPages.js` wagonL
 
 ## The saddle panel (STEED-UI - `10-UI/Controls.md`, THE SADDLE PANEL)
 
-On Enhanced Plus, on the bench, the wagon is on screen under the compass (`ui/enhancedSaddle.js`): its state and share
+On Enhanced Plus, on the bench, the wagon is on screen under the compass (`ui/enhanced/enhancedSaddle.js`): its state and share
 of whole, its load against its limit, and its doors - **Repair kit** (where a kit would mend it, dark without a kit or
 the wagon's reach), **Cargo** (its load opened with the wagon chosen, where Horse Cart and Cargo's own reach allows -
 `systems/horse/horseCart.js` openWagonCargo), **Climb down**. On Hard a failing wagon's line says to mend it to get its pace

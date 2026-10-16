@@ -26,7 +26,7 @@ import {
   openDropIcon, canChangeDropIcon, cycleDropIcon, dropIconRecord, nextDropArchive,
   remoteTargetType, REMOTE_TARGET_TYPES, closeSession,
 } from '../src/systems/inventorySession.js';
-import { NativeInventoryWindow, INV_RECTS } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow, INV_RECTS } from '../src/ui/native/nativeInventory.js';
 import { createDroppedLoot, droppedLootHooks, containerDropPos } from '../src/scenes/droppedLoot.js';
 import { createSceneCache, cacheScene, restoreCachedScene, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 import { audio } from '../src/systems/audio.js';
@@ -36,7 +36,7 @@ import {
   _resetDropIconsForTests, _setDropIconForTests, _setContainerIconsForTests,
   CONTAINER_IMAGES, REMOTE_TARGET_ICON_RECT,
 } from '../src/ui/targetIconPanel.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -168,7 +168,7 @@ const AT = [PANEL[0] + 2, PANEL[1] + 2];
 test('G5: the WINDOW seeds through openDropIcon (:593-631), not a constant of its own', () => {
   // MUTANT: `this.dropIcon = openDropIcon(hooks, this.chooseOne);` ->
   // `this.dropIcon = { archive: 216, texture: -1 };` in
-  // src/ui/nativeInventory.js. RED on both rows below - and ONLY on
+  // src/ui/native/nativeInventory.js. RED on both rows below - and ONLY on
   // them: every other window fixture in this file opens on a target
   // whose correct seed IS that constant, which is exactly why the
   // window could be cut loose from the seed with the suite green.
@@ -282,7 +282,7 @@ test('G5: UpdateRemoteTargetIcon\'s ladder (:865-890) - chosen flat, then the ta
     // MUTANT: drop the `rti.image` argument from the draw call. The pin
     // is the SOURCE, because the window's panel is a GL draw; what the
     // panel then DOES with the flat is pinned behaviourally below.
-    assert.match(src('ui/nativeInventory.js'),
+    assert.match(src('ui/native/nativeInventory.js'),
       /drawTargetIconPanel\(renderer, m, font, INV_RECTS\.remoteTargetIcon, rti\.container, rti\.label, rti\.image\);/,
       'the flat reaches the panel');
     assert.match(src('ui/targetIconPanel.js'), /const icon = image \?\? _icons\?\.get\(containerType\) \?\? null;/,

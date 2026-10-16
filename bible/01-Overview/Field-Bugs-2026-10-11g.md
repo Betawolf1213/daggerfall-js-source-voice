@@ -34,7 +34,7 @@ law - seated, the broke `leave`, the frame's own draw site after it; and E8's re
 
 ## SLOPE-ALL: Daggerfall's own ramp climbs under All (2)
 
-The held map's 3D sheet (`ui/automapSheet.js`, drawn by `ui/inkDungeonGL.js`) has an All button: ALL-FLOORS cuts each
+The held map's 3D sheet (`ui/automap/automapSheet.js`, drawn by `ui/ink/inkDungeonGL.js`) has an All button: ALL-FLOORS cuts each
 placed model at the slice of the storey it stands on, so every floor lies open, and spares a face that CLIMBS between
 storeys - a ramp, a flight's tread - or a ramp would be cut at its foot. FS_A called a face a climb under a literal
 `n.y < 0.97`, 14.07 degrees. Daggerfall's dungeon ramp is 1:4: 14.04 degrees, n.y 0.97014. So every such ramp failed
@@ -47,7 +47,7 @@ model 61015, a 12.8 m ramp placed 17 times, the top ~41% of each; over it and th
 
 "An issue like this once before" is RAMP-INK (`Field-Bugs-2026-10-05c.md`): it moved the climb's LOWER bound to the
 plan's floor law and left the upper one, and its pin read 30 to 65 degree ramps, never a gentle one. The bound is one
-constant now, `ui/inkDungeonGL.js` CLIMB_NY (0.999, 2.56 degrees - past the 1:4 ramp, short of a level floor's 0.9999),
+constant now, `ui/ink/inkDungeonGL.js` CLIMB_NY (0.999, 2.56 degrees - past the 1:4 ramp, short of a level floor's 0.9999),
 and `climbsOf` states the shader's law in JS; FS_A reads it as a template constant beside FNY. Across the 26 dungeons
 no ramp area is lost at 0.999 (0.995 still lost 23 m²). What it newly spares are small real slopes - an uneven cave
 floor, a prop's top - which still stand under the global slice. Left as it was: a climbing row's side WALLS above its
@@ -153,7 +153,7 @@ reviewing a character in this trade". Two investigations looked for a road from 
 found none:
 
 - the item law: every real steal path driven through the client online with the shipped mods - an open shop's Steal
-  (`ui/nativeTrade.js` _doSteal), a closed shop's shelf, a house's containers - then the server's judgeSave and the
+  (`ui/native/nativeTrade.js` _doSteal), a closed shop's shelf, a house's containers - then the server's judgeSave and the
   trade's wire: ~67,000 stolen pieces a run, seven variants, no finding and no hold; and end to end through the real
   Worker - steal, checkpoint, trade the goods, drop them, checkpoint twice, steal again, trade gold - never held;
 - the id ledger: stolen commons carry no `uid` (`systems/item/itemIds.js` valuablePiece), so no copy can be counted against

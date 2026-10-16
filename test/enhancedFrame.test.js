@@ -1,8 +1,8 @@
-// FRAME1: the stone-and-brass kit (ui/enhancedFrame.js).
+// FRAME1: the stone-and-brass kit (ui/enhanced/enhancedFrame.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FRAME_ROLES, FRAME_CSS, frameSvg, BAND, EDGE, OUTSET } from '../src/ui/enhancedFrame.js';
-import { PLUS_CSS as ENHANCED_CSS, OVER_KIT_CSS, ITEM_FRAME_CSS, ONLINE_DRESS_CSS } from '../src/ui/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
+import { FRAME_ROLES, FRAME_CSS, frameSvg, BAND, EDGE, OUTSET } from '../src/ui/enhanced/enhancedFrame.js';
+import { PLUS_CSS as ENHANCED_CSS, OVER_KIT_CSS, ITEM_FRAME_CSS, ONLINE_DRESS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
 
 test('FRAME1: the kit is the LAST thing in the sheet, so it dresses every screen by role - but for the layers named to stand over it (RARITY-UI\'s tier frames, PLUS-DRESS\'s online screens), in that order', () => {
   assert.deepEqual(OVER_KIT_CSS, [ITEM_FRAME_CSS, ONLINE_DRESS_CSS]);

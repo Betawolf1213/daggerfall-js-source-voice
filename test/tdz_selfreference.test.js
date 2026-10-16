@@ -73,10 +73,10 @@ test('no const/let initialiser reads its own binding (the TDZ that broke boot)',
 // initialization" out of a chunk `/play/` loads.
 //
 // THE SHAPE, and it takes three ingredients that are each harmless:
-//   1. Two modules that import each other. `ui/hud.js` and
-//      `ui/enhancedHud.js` have for most of this port's life.
+//   1. Two modules that import each other. `ui/hud/hud.js` and
+//      `ui/enhanced/enhancedHud.js` have for most of this port's life.
 //   2. One of them RE-EXPORTING a binding it got from the other
-//      (`ui/enhancedHud.js`: `export { compassScroll }`, which is
+//      (`ui/enhanced/enhancedHud.js`: `export { compassScroll }`, which is
 //      hud.js's const). Also long-standing and, on its own, fine.
 //   3. Anyone anywhere asking for a NAMESPACE over that module - a
 //      dynamic `import()` or an `import * as`. A namespace object is

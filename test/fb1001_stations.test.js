@@ -7,13 +7,13 @@
 //
 // COUNTER-GATES. AUDIT 32 P6 gave the loom's Weavers counter its gates - offered only while Marks are struck, the price
 // held or said before the press - and the anvil's and the workbench's counters took neither: offered with Marks shut or
-// none held, and refused after the press. Now every counter is one buy (ui/profPages.js counterBuy). The real Stores
+// none held, and refused after the press. Now every counter is one buy (ui/professions/profPages.js counterBuy). The real Stores
 // page over the DOM (test/audit32_pages's harness, lane 3's reproduction turned).
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { xpForRank, stockOf } from '../src/net/professionLaw.js';
-import { setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/profPages.js';
+import { setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/professions/profPages.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };

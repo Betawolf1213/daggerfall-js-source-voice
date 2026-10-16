@@ -797,7 +797,7 @@ export class NPCSession {
  *      field and returns immediately - and the archive test is
  *      INVERTED against intuition: `face > 60` is a COMMON face
  *      (TFAC00I0.RCI), 60 and below a SPECIAL one (FACES.CIF), which
- *      is the same split ui/hudEscortFaces.js resolveFaceImage keeps;
+ *      is the same split ui/hud/hudEscortFaces.js resolveFaceImage keeps;
  *   2. everyone else starts at record 410 - DFU's own comment calls
  *      it "oops", the face shown when nothing else resolves;
  *   3. the faction's FLAT (flat1, or flat2 for a female NPC) is

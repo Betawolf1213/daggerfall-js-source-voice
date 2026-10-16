@@ -218,7 +218,7 @@ test('HT1: the Mods pane entry is the shipped modsettings.json - every key, its 
   setModSetting(V, 'Presentation.Offset', 'x');
   assert.deepEqual([...modSettingsOf(V)['Presentation.Offset']], [0.5, 0.5]);
   _resetModSettings();
-  const pane = rd('src/ui/enhancedMenu.js');
+  const pane = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(pane, /\} else if \(isTextKey\(def\)\) \{/, 'the pane has a key capture');
   assert.match(pane, /b\.textContent = t\('mods\.pane\.pressKey', 'press a key'\);/);   // L10N4: in the player's language
   assert.match(pane, /const name = e\.code === 'Escape' \? null : keyCodeForDomCode\(e\.code\);/, 'the capture spells the key as Unity would; Escape cancels');

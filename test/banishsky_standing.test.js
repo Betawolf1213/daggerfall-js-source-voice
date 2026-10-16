@@ -18,7 +18,7 @@ import { sharedClassicMinutes, wallMsForClassicMinutes } from '../src/net/wire.j
 import { skyClassicMinutes, wallMsForSkyMinutes, SKY_SEGMENTS } from '../src/net/skyLaw.js';
 import { offlineCopyOf, onlineCopyOf } from '../src/systems/offlineCopy.js';
 import { buildDonationFlow } from '../src/ui/guildServiceWindows.js';
-import { lawRows } from '../src/ui/enhancedMenu.js';
+import { lawRows } from '../src/ui/enhanced/enhancedMenu.js';
 
 afterEach(() => { setSharedClock(null); });
 

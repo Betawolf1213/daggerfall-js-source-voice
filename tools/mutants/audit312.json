@@ -5,7 +5,7 @@
     "old": "  if (card && (card.bytes ?? 0) > 0) {",
     "new": "  if (card) {",
     "tests": ["test/savetile.test.js"],
-    "note": "`bytes` stays 0 until the data lands, on purpose - the service keeps a half-finished upload visible rather than letting it pass for a backup. This mutant SURVIVED the whole suite before the audit, because the decision lived in ui/enhancedMenu.js where no node pin could reach it."
+    "note": "`bytes` stays 0 until the data lands, on purpose - the service keeps a half-finished upload visible rather than letting it pass for a backup. This mutant SURVIVED the whole suite before the audit, because the decision lived in ui/enhanced/enhancedMenu.js where no node pin could reach it."
   },
   {
     "name": "A312-2-a-legacy-card-is-silently-off",
@@ -33,7 +33,7 @@
   },
   {
     "name": "A312-5-the-listing-is-patched-rather-than-asked",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (r.ok || r.error === 'stale') { cloudAsked = false; ensureCloud(); }",
     "new": "    if (r.ok || r.error === 'stale') { ensureCloud(); }",
     "tests": ["test/savetile.test.js"],
@@ -41,7 +41,7 @@
   },
   {
     "name": "A312-6-the-cloud-latch-outlives-the-visit",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  cloudAsked = false;\n  cloudArm = null;\n  cloudWhy = null;",
     "new": "  cloudArm = null;\n  cloudWhy = null;",
     "tests": ["test/savetile.test.js"],
@@ -49,7 +49,7 @@
   },
   {
     "name": "A312-7-the-delete-does-not-ask-twice",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "      line.actions.push(cloudArm === slot\n        ? { label: t('menu.cloud.deleteBackupAsk', 'Delete backup?'), primary: true, onClick: () => removeBackup(save) }\n        : { label: t('menu.cloud.deleteBackup', 'Delete backup'), onClick: () => { cloudArm = slot; render(); } });",
     "new": "      line.actions.push({ label: t('menu.cloud.deleteBackup', 'Delete backup'), onClick: () => removeBackup(save) });",
     "tests": ["test/savetile.test.js"],

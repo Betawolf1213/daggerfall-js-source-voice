@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isServiceBox } from '../src/systems/guild/guildServiceFlow.js';
-import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow } from '../src/ui/spell/spellMakerWindow.js';
 import { GuildServiceWindow } from '../src/ui/guildServiceWindow.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

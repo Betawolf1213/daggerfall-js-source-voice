@@ -181,7 +181,7 @@
   },
   {
     "name": "MO1-the-device-row-unmapped",
-    "file": "src/ui/settingsMap.js",
+    "file": "src/ui/settings/settingsMap.js",
     "old": "      \"Audio/AlternateMusic\", \"Audio/SoundFont\", \"port:midiOut\"]),",
     "new": "      \"Audio/AlternateMusic\", \"Audio/SoundFont\"]),",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "MO1A-6-restore-writes-the-shelf-alone",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (pref === MIDI_OUT_PREF) setMidiOut(PREF_DEFAULTS[pref]);",
     "new": "    if (false) setMidiOut(PREF_DEFAULTS[pref]);",
     "tests": [

@@ -8,7 +8,7 @@ import {
   wildDeathLines, setWildHere, wildHere,
 } from '../src/systems/wild/wildZone.js';
 import { keptOnWildDeath, wildCanLose, takeWildDrop, wornOffer, wildRecord, wildChunks, wildSpawnSpot } from '../src/systems/wild/wildDeath.js';
-import { fogPixels } from '../src/ui/wildMapInk.js';
+import { fogPixels } from '../src/ui/wild/wildMapInk.js';
 import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { REGION_NAMES } from '../src/formats/mapsTables.js';

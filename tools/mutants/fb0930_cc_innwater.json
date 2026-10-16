@@ -100,7 +100,7 @@
   },
   {
     "name": "INN-WATER-the-enhanced-window-pours-a-drink-for-the-water",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "tavernEat(s, now, row.worth) : row.kind === 'water' ? tavernWater(h.entity, now) : tavernDrink(s, row.strength, { endurance, rules });\n  h.advanceMinutes",
     "new": "tavernEat(s, now, row.worth) : tavernDrink(s, row.strength, { endurance, rules });\n  h.advanceMinutes",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "INN-WATER-the-enhanced-window-never-names-the-skins",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  const order = tavernOrder(s, now, row, { endurance, rules, items: h.entity.items });",
     "new": "  const order = tavernOrder(s, now, row, { endurance, rules });",
     "tests": [

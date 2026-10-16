@@ -22,7 +22,7 @@
 // ONE DOOR. It runs where a block is served (formats/blocksFile.js getBlock, BLOCKS.BSA's and a world-data mod's
 // alike), so every reader of the ground - the streamed terrain's stamp (terrainTiles.js setLocationTiles), the fixed
 // town (scenes/exterior.js), the streamed town's tilemap (scenes/world.js), the layout (rmbLayout.js
-// buildGroundTilemap), the townsfolk's paths (cityNavigation.js), the town map (ui/inkTown.js) - sees one ground, and
+// buildGroundTilemap), the townsfolk's paths (cityNavigation.js), the town map (ui/ink/inkTown.js) - sees one ground, and
 // the feet, the grass and the paths follow it with no seam of their own. readClassicBlock (a mod's diff base) stays
 // BLOCKS.BSA's bytes.
 // ═══════════════════════════════════════════════════════════════════

@@ -13,9 +13,9 @@ import { readFileSync } from 'node:fs';
 import { packCapacityKg, PACK_DEFAULT_STRENGTH } from '../src/systems/naval/crewCompanions.js';
 import { storeCapacityOf } from '../src/systems/inventorySession.js';
 import { planStore, planDropGold, packFullText, packFullGoldText, packGoneText } from '../src/systems/item/itemTransfer.js';
-import { remoteModel, mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { CELL_X } from '../src/ui/itemScroller.js';
+import { remoteModel, mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
+import { CELL_X } from '../src/ui/item/itemScroller.js';
 import { _resetForTests } from '../src/systems/settings/settings.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
@@ -177,7 +177,7 @@ test('COMPANION-WEIGHT through the CLASSIC window: Remove refuses a sword into h
 });
 
 test('COMPANION-WEIGHT: every store and gold door of both windows hands the limit in - counted in the code, never a comment (mutants: a door without it)', () => {
-  const e = code('src/ui/enhancedInventory.js'), n = code('src/ui/nativeInventory.js');
+  const e = code('src/ui/enhanced/enhancedInventory.js'), n = code('src/ui/native/nativeInventory.js');
   assert.equal((e.match(/capacity: storeCapacityOf\(deps, session\)/g) ?? []).length, 5, 'the enhanced window: canStow, the label, the split, the store, the gold');
   assert.equal((n.match(/capacity: storeCapacityOf\(this\.hooks, \{ usingWagon: this\.usingWagon, chooseOne: this\.chooseOne \}\)/g) ?? []).length, 2, 'the classic window: the store and the gold');
   const loot = { storage: true, items: () => swords(2), capacity: () => HILDA };

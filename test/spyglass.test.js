@@ -19,11 +19,11 @@ import { classById, CROWNS, NAVAL_FACTIONS, shipNames, classLine } from '../src/
 import { NIGHT_LIT_SIGHT, NIGHT_DARK_SIGHT } from '../src/systems/naval/shipWatch.js';
 import { GLASS_AIM_LIFT } from '../src/scenes/navalHost.js';
 import { easeLens, glassFov, glassLookScale, GLASS_EASE_S, glassFootWords, drawSpyglass, GLASS_TONES } from '../src/ui/spyglassView.js';
-import { drawNavalHud, navalTouchGlass, destroyNavalHud } from '../src/ui/navalHud.js';
+import { drawNavalHud, navalTouchGlass, destroyNavalHud } from '../src/ui/naval/navalHud.js';
 import { ACTIONS, PORT_ACTIONS, DEFAULT_SHARES, DEFAULT_BINDINGS, ACTION_GROUPS, MOD_ACTIONS } from '../src/systems/inputActions.js';
-import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touchButtons.js';
-import { PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
-import { DPAD_CHOICES } from '../src/ui/plusPad.js';
+import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touch/touchButtons.js';
+import { PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
+import { DPAD_CHOICES } from '../src/ui/plus/plusPad.js';
 import { DESPAWN_BEYOND } from '../src/systems/naval/navalDirector.js';
 import { sea, knowAll } from './navalSea.mjs';
 

@@ -133,7 +133,7 @@ test('L10N1b executed: a language\'s file patched in speaks through t(); tIn ask
   assert.equal(tm.t('menu.rail.new', 'New Game'), 'Nouvelle partie');
   assert.equal(tm.t('settings.language.name', 'Language'), 'Langue');
   // the menu's own table, read off its source: each entry's English is the label whose id it answers
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const entries = [...menu.matchAll(/^ {2}(\w+): \(\) => t\('menu\.rail\.(\w+)', '([^']+)'\),$/gm)];
   assert.equal(entries.length, 15);
   const labels = new Set();
@@ -234,7 +234,7 @@ test('L10N1b by source: the boot loads the language behind a door before every o
   assert.doesNotMatch(main, /^import .*localeData/m, 'behind a door - BOOT2\'s ceiling on the entry\'s static graph');
   assert.equal(PREF_DEFAULTS.language, 'en');
   assert.equal(PREF_DEFAULTS.languageOffered, false);
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /menu\.append\(doorBtn\(id, railLabel\(label\), '', RAIL_ACTS/, 'the front door\'s buttons (UI-CALM: through the one door maker)');
   assert.match(menu, /b\.append\(el\('span', 'rk', railLabel\(label\)\)\);/, 'the shell rail');
   assert.match(menu, /if \(!pause\) out\.push\(languageRow\(\)\);/, 'the language row on the front door alone');

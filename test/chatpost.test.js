@@ -1,6 +1,6 @@
 // CHAT-POST (2026-09-27, Discord - Tabitha: "Link in chat / Post in chat"; "random magic items' details in chat").
 //
-// AN ITEM IN CHAT IS ONE LINE (ui/enhancedInventory.js itemChatText): its name in brackets, its headline stat and its
+// AN ITEM IN CHAT IS ONE LINE (ui/enhanced/enhancedInventory.js itemChatText): its name in brackets, its headline stat and its
 // magic (itemPowerLines, TRADE-INFO's list), cut at a whole word to the chat's bound (CHAT_MAX) - a chat line is words,
 // and the relay carries text alone. The pack's card and right-click menu offer "Post in chat" wherever the host hands
 // the door (online, with a chat tab open), and the host says it on the chat's open tab through chatSend - every tab's
@@ -8,7 +8,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { itemChatText, itemPowerLines, POSTED_TEXT, NOT_POSTED_TEXT } from '../src/ui/enhancedInventory.js';
+import { itemChatText, itemPowerLines, POSTED_TEXT, NOT_POSTED_TEXT } from '../src/ui/enhanced/enhancedInventory.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { CHAT_MAX, sanitizeChat } from '../src/net/wire.js';
@@ -38,7 +38,7 @@ test('CHAT-POST itemChatText: the name in brackets, then the magic, a line the c
 });
 
 test('CHAT-POST the card and the hosts: "Post in chat" only where the host hands the door, said on the chat\'s open tab through chatSend, in the three hosts that open a pack (mutants: offered offline; sent past chatSend; a host that hands none)', () => {
-  const inv = src('src/ui/enhancedInventory.js');
+  const inv = src('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /if \(deps\.canPostItem\?\.\(\)\) \{\n\s*const post = el\('button', 'act', 'Post in chat'\);\n\s*post\.onclick = \(\) => \{ notice = deps\.postItem\?\.\(itemChatText\(picked\)\) \? POSTED_TEXT : NOT_POSTED_TEXT; render\(\); \};/);
   assert.equal(POSTED_TEXT, 'Posted in chat.');
   assert.match(NOT_POSTED_TEXT, /Could not post/);

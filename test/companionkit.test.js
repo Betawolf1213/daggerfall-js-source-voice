@@ -8,7 +8,7 @@
 //   THE PACK (systems/naval/crewCompanions.js, scenes/navalHost.js, player/mobileEnemyActivate.js) - his live list,
 //   saved with the party through the item codec, opened by activating him, stowed in his boat's hold when he goes
 //   back aboard, is knocked out or falls.
-//   THE BAR (ui/navalHud.js drawCrewBars) - his name, his health in digits and his effects' icons.
+//   THE BAR (ui/naval/navalHud.js drawCrewBars) - his name, his health in digits and his effects' icons.
 //   THE PARTY PANEL (ui/partyPanel.js) - his card under the party's seats, offline as well.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -20,7 +20,7 @@ import { COMPANION_ARMED_LINE, ALLY_TOUCH_REACH } from '../src/systems/allyCast.
 import { PRESS_BUTTON_TO_FIRE_SPELL } from '../src/systems/mysticism.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
-import { drawCrewBars, MATE_FX_MAX } from '../src/ui/navalHud.js';
+import { drawCrewBars, MATE_FX_MAX } from '../src/ui/naval/navalHud.js';
 import { createPartyPanel, companionKey } from '../src/ui/partyPanel.js';
 import { composePartyFx } from '../src/net/partyBuffs.js';
 import { HULL } from '../src/systems/naval/navalShips.js';

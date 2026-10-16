@@ -52,7 +52,7 @@ import {
 } from '../systems/inputActions.js';
 // AUDIT 64 F36/F37: DaggerfallHUD.Update's own shortcut arms. A leaf
 // on systems/ alone, so this module can take it without a cycle.
-import { hudShortcutKey, retroToggleKey } from './hudShortcuts.js';
+import { hudShortcutKey, retroToggleKey } from './hud/hudShortcuts.js';
 import { hotbarInForce } from '../systems/uiSkin.js';   // AUDIT CONTRIB H1: the diamond's actions stand down while the hotbar is in force
 import { statusReadoutTakesAction, setStatusBindings } from '../systems/statusReadout.js';   // STATUS-LIVE: the readout yields to whatever wants the slot, and the panel names the live Status key. A LEAF - this module is in ui/actionText.js's own import ring (through ui/inputMessageBox.js), so reaching for the BOX from here put its class body in a temporal dead zone
 import { printScreen } from './screenshot.js';   // AUDIT KB1: PrintScreen is routed like every world action, so a window's F8 stays the window's
@@ -956,7 +956,7 @@ export function routeAction(action, ctx, setPlayerPos = null) {
     // U43: the two journal doors. GameManager's chain has had both
     // since the quest machine landed (:541-548) and the bindings have
     // been in the table since I1 - L and N - with NOTHING in src/
-    // reading either, while ui/questJournal.js sat fully built with
+    // reading either, while ui/quest/questJournal.js sat fully built with
     // all four of its pages. They are ONE window: LogBook pushes it as
     // it stands, NoteBook sets DisplayMode = Notebook first
     // (DaggerfallUI.cs:704-711).

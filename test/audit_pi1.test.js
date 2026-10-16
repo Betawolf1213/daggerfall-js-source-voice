@@ -25,8 +25,8 @@ import { quickLootArm, foldQuickLoot, quickLootTake, resetQuickLoot, tookItemTex
 import { resolveHover } from '../src/systems/worldHover.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { setSilverFinder, silverFindAt, _resetSilverFindsForTests } from '../src/systems/silverFinds.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { CELL_X } from '../src/ui/itemScroller.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
+import { CELL_X } from '../src/ui/item/itemScroller.js';
 import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

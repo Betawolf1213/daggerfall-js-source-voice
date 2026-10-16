@@ -78,28 +78,28 @@
   },
   {
     "name": "FB0929-the-classic-offer-drops-the-pieces",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    const price = getTradePrice(this.mode, cost, ctx.quality ?? 0, ctx.skills ?? {}, pieces);",
     "new": "    const price = getTradePrice(this.mode, cost, ctx.quality ?? 0, ctx.skills ?? {});",
     "tests": ["test/fb0929_min_price.test.js"]
   },
   {
     "name": "FB0929-the-enhanced-quote-drops-the-pieces",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "return getTradePrice(m, lot.cost, quality, skills, lot.pieces); };",
     "new": "return getTradePrice(m, lot.cost, quality, skills); };",
     "tests": ["test/fb0929_min_price.test.js"]
   },
   {
     "name": "FB0929-the-enhanced-offer-drops-the-pieces",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  const price = getTradePrice(mode, c, ctx.quality ?? 0, ctx.skills ?? {}, pieces);",
     "new": "  const price = getTradePrice(mode, c, ctx.quality ?? 0, ctx.skills ?? {});",
     "tests": ["test/fb0929_min_price.test.js"]
   },
   {
     "name": "FB0929-the-quick-sale-drops-the-pieces",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  const price = getTradePrice('Sell', c, ctx.quality ?? 0, ctx.skills ?? {}, pieces);",
     "new": "  const price = getTradePrice('Sell', c, ctx.quality ?? 0, ctx.skills ?? {});",
     "tests": ["test/fb0929_min_price.test.js"]

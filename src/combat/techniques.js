@@ -718,7 +718,7 @@ export const CHIP_UNBOUND = 'unbound';
 const _chip = { key: 'technique', set: 'technique', name: '', text: '', state: 'active' };
 const _chips = Object.freeze([_chip]);
 let _chipSecs = -1, _chipSecsText = '';
-/** The HUD's chip for the technique in hand (ui/enhancedHud.js setHudSetChips' shape): its name, and its seconds while it
+/** The HUD's chip for the technique in hand (ui/enhanced/enhancedHud.js setHudSetChips' shape): its name, and its seconds while it
  *  recovers - or its key while ready. `keyName` the key's word, or a function that answers it - asked only when ready
  *  (AUDIT TECH-FX: the host's key lookup walked every binding a frame, whether a technique was in hand or not); with no
  *  key bound, `CHIP_UNBOUND`. [] with none in hand, with the ladder off, or in a duel (FINAL AUDIT).

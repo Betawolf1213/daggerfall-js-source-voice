@@ -19,7 +19,7 @@ import { herbKind } from '../src/scenes/herbHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { treeKind } from '../src/scenes/treeHost.js';
 import { NET_WHERE, NET_WHERE_WORDS } from '../src/scenes/fishHost.js';
-import { FISHING_HOW } from '../src/ui/profPages.js';
+import { FISHING_HOW } from '../src/ui/professions/profPages.js';
 import { trees, veins, boulders, nodeKey, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';

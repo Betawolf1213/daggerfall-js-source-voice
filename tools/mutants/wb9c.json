@@ -237,7 +237,7 @@
   },
   {
     "name": "WB9c-the-count-of-all-crystals",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "    for (const q of s.cx.c) if (q[2] > 0) left++;",
     "new": "    for (const q of s.cx.c) left++;",
     "tests": [

@@ -7,8 +7,8 @@
 //   - every boat Come Sail Away keeps for me is a point (ui/boatMarks.js boatCompassPoints): in sight where she floats;
 //     out of sight where she floats while that stands on her own pixel in this frame, else her pixel's middle (a
 //     dungeon's boat always); never the boat at my helm, nor one I stand at;
-//   - both compasses draw each as a little boat - a sail over a hull - in one teal: the classic box (ui/hud.js
-//     drawBoatCompassMarks) and the enhanced strip (ui/enhancedHud.js);
+//   - both compasses draw each as a little boat - a sail over a hull - in one teal: the classic box (ui/hud/hud.js
+//     drawBoatCompassMarks) and the enhanced strip (ui/enhanced/enhancedHud.js);
 //   - the street's host hands them on the street alone, under the travel view too (scenes/world.js), line-neutral.
 // bible/03-World/Come-Sail-Away.md, BOAT-MARK.
 import { test } from 'node:test';
@@ -19,12 +19,12 @@ import {
   BOAT_MARK_CSS, BOAT_MARK_RGB, BOAT_MARK_NEAR_M, BOAT_PIXEL_SLACK_M, BOAT_GLYPH_W, BOAT_GLYPH_ROWS, BOAT_GLYPH_SVG,
   BOAT_GLYPH_URL, boatMarkAt, boatCompassPoints,
 } from '../src/ui/boatMarks.js';
-import { drawBoatCompassMarks, compassMarkerLerp } from '../src/ui/hud.js';
+import { drawBoatCompassMarks, compassMarkerLerp } from '../src/ui/hud/hud.js';
 import { NODE_MARK_CSS } from '../src/ui/nodeMarks.js';
-import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
+import { QUEST_MARK_CSS } from '../src/ui/quest/questMarks.js';
 import { PARTY_GREEN_CSS } from '../src/net/social.js';
-import { SHIP_MARK_CSS } from '../src/ui/enhancedHud.js';
-import { GATE_RING_CSS } from '../src/ui/gateMapMark.js';
+import { SHIP_MARK_CSS } from '../src/ui/enhanced/enhancedHud.js';
+import { GATE_RING_CSS } from '../src/ui/gate/gateMapMark.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
 import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
@@ -153,7 +153,7 @@ test('BOAT-MARK the classic compass: the glyph per boat, its foot on the box\'s 
 });
 
 test('BOAT-MARK the classic compass\'s order: the boats are drawn after the nodes and before the Detect markers, the party and the ships, which stand over them; drawHud hands the boats to the enhanced skin (mutants: the boats never drawn; drawn again over the ships)', () => {
-  const H = src('src/ui/hud.js');
+  const H = src('src/ui/hud/hud.js');
   const body = H.slice(H.indexOf('export function drawHud('), H.indexOf('export function drawPartyCompassMarks('));
   const boatsAt = body.indexOf('drawBoatCompassMarks(renderer, boats, playerXZ, heading01, { bx, by, bw, s });');
   assert.ok(boatsAt > body.indexOf('drawNodeCompassMarks(renderer, nodes,'), 'over the nodes');
@@ -184,7 +184,7 @@ const findAll = (n, cls, out = []) => { if (String(n.className ?? '').split(/\s+
 test('BOAT-MARK the enhanced strip: a boat glyph per boat at its bearing on the strip\'s middle, pooled - a boat gone hides its mark, never removes it; a bearing unchanged is not written again (mutants: the marks never placed; the pool rebuilt; the bearing ignored)', async () => {
   const prev = globalThis.document;
   globalThis.document = { createElement: mkEl, createElementNS: () => mkEl(), getElementById: () => null, head: mkEl(), body: mkEl() };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const me = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
@@ -220,7 +220,7 @@ test('BOAT-MARK the enhanced strip: a boat glyph per boat at its bearing on the 
 test('BOAT-MARK the street\'s host by source: my boats from Come Sail Away\'s own list, the boat under me (my helm\'s) left out, my feet and the streaming world\'s own frame, on the street alone (the travel view is the street\'s); the runtime keeps what the mark reads; every edit to world.js line-neutral (the import folded beside the quest marks\', the door beside the ships\')', () => {
   const w = src('src/scenes/world.js');
   assert.match(w, /ships: navalOn\(\) && _mode\(\) === 'exterior' \? naval\?\.compassShips\(\) \?\? null : null, boats: csaRuntime && _mode\(\) === 'exterior' \? boatCompassPoints\(csaRuntime\.AllBoats, csaBoatUnderMe\(\), enchantFeet\(\), state, TERRAIN_SIZE\) : null,/);
-  assert.match(w, /^import \{ marksOn, questMapMarks \} from '\.\.\/ui\/questMarks\.js'; import \{ boatCompassPoints \} from '\.\.\/ui\/boatMarks\.js';/m);
+  assert.match(w, /^import \{ marksOn, questMapMarks \} from '\.\.\/ui\/quest\/questMarks\.js'; import \{ boatCompassPoints \} from '\.\.\/ui\/boatMarks\.js';/m);
   assert.match(w, /const csaBoatUnderMe = \(\) => \(csaRuntime\?\.isSailing\(\) \? csaRuntime\.state\.CurrentBoat : null\) \?\? csaAboard\.aboard\?\.boat \?\? null;/, 'the boat at my helm');
   assert.match(w, /const state = new StreamingWorldState\(/, 'the streaming world the mark reads its frame from');
   // what the mark reads off a boat is the runtime's own: her pixel, her dungeon flag, whether she stands in sight

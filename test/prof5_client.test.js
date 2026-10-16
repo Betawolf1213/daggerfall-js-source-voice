@@ -21,7 +21,7 @@ import { mintPiece, mintPieces } from '../src/systems/smithItems.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
 import { createMarketTab, medianLineNode, arrivalText, MARKET_VIEW_GROUPS } from '../src/ui/marketTab.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();
@@ -283,7 +283,7 @@ test('PROF5 wiring: the host builds the market book online, its answers told to 
   assert.match(w, /if \(heldProvenances\(\)\.has\(piece\.provenance\)\) return;\n\s*const it = mintPiece\(piece, piece\.provenance\);\n\s*if \(!it\) return;\n\s*if \(it\.maxCondition > 0\) it\.currentCondition = wearCondition\(it\.maxCondition, piece\.wear\);/);
   assert.match(w, /\.filter\(\(it\) => it\?\.provenance && asMinted\(it\) && !tradeRefusal\(it\) && !isLocked\(it\) && !pieceKept\(it\.provenance\)\)/);   // AUDIT 30 C2
   assert.match(w, /const r = await profBook\.stock\(material, qty\);\n\s*toldBalance\(r\?\.data\?\.balance\);/);   // AUDIT 32 B3: the Bank's book and the market's
-  assert.match(src('src/ui/profPages.js'), /if \(\(book\.pendingWithdrawals \|\| book\.pendingCrafts \|\| book\.pendingDeposits\) && p\.settle/);   // BAG1 (PIN MOVED): a kept deposit settles too
+  assert.match(src('src/ui/professions/profPages.js'), /if \(\(book\.pendingWithdrawals \|\| book\.pendingCrafts \|\| book\.pendingDeposits\) && p\.settle/);   // BAG1 (PIN MOVED): a kept deposit settles too
   assert.match(src('src/scenes/gatherHost.js'), /if \(book\.pendingWithdrawals \|\| book\.pendingCrafts \|\| book\.pendingDeposits\) deps\.onSettle\?\.\(\);/);   // PIN MOVED (AUDIT2 BAG1 K3): and a kept deposit
   for (const rule of [/\.prof-grain \{ fill: none; stroke:/, /\.prof-trail \{ fill: none; stroke:/, /\.prof-board \{ position: relative; height: 96px; touch-action: none;/, /\.prof-boardhead \{ fill:/]) {
     assert.match(PROF_CSS, rule, 'the plane dressed');

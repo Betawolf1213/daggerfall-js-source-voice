@@ -12,7 +12,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { paginateBook, leafSize, uiScale, LEAF_INSET, bookKey, canvasFace, bodySize, FACE_OF_PREFIX, BOOK_FAMILY } from '../src/ui/enhancedBook.js';
+import { paginateBook, leafSize, uiScale, LEAF_INSET, bookKey, canvasFace, bodySize, FACE_OF_PREFIX, BOOK_FAMILY } from '../src/ui/enhanced/enhancedBook.js';
 import { measureText } from '../src/ui/text.js';
 import { wrapText } from '../src/ui/talkWindow.js';
 import { placeBookLabels, BookReaderWindow } from '../src/ui/bookReader.js';
@@ -53,7 +53,7 @@ test('EB1 door: the reader has ONE construction site, the hook lives there, and 
   assert.match(door, /draw\(renderer, canvas\) \{\s*\n\s*hostCanvas = canvas \?\? hostCanvas;\s*\n\s*if \(!mounted\) mount\(\);/, 'the canvas mounts on the first draw');
   assert.doesNotMatch(door.slice(door.indexOf('function enhancedBookOverlay')).split('const mount = ')[0], /document\.body\.append/, 'and never at construction');
   // the hand-off law (UI-Arc: hand over, THEN close) is the inventory's and untouched
-  assert.match(read('src/ui/enhancedInventory.js'), /kind: 'openBook', item: r\.item, failText: r\.failText, closeFirst: false/);
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /kind: 'openBook', item: r\.item, failText: r\.failText, closeFirst: false/);
   // headless: the door hands back the classic window, and it is the model
   const fake = { title: 'The Real Barenziah', author: 'Anonymous', pageCount: 1, getPageTokens: () => [{ formatting: TOKEN_TEXT, text: 'Once' }, { formatting: RSC.NewLine }] };
   const w = createBookReaderWindow(fake);
@@ -142,7 +142,7 @@ test('EB1 keys and the vendored book: Mac\'s own, its seams marked, its fold unt
   assert.match(book, /paperScale: 1,/);
   assert.match(book, /const pixelLayer = \(ctx, w, h, draw\) => \{/, 'EB2: the paper, the board and the stack at Raum\'s pixel size, blitted up');
   // the face: paint and bones - the model's law is imported, never re-read
-  const src = read('src/ui/enhancedBook.js');
+  const src = read('src/ui/enhanced/enhancedBook.js');
   assert.match(src, /import \{ placeBookLabels \} from '\.\/bookReader\.js';/);
   assert.doesNotMatch(src.replace(/^\s*\/\/.*$/gm, ''), /getPageTokens|RSC\.|TOKEN_TEXT/, 'no second reading of the token stream');
   assert.match(src, /placeBookLabels\(model\.lines, \(x\) => faces\[x\] \?\? faces\[0\], wrapW\)/, "LayoutBookLabels over FontPrefix's five cuts, at the leaf's width");
@@ -176,7 +176,7 @@ test('EB2 type: a canvas face wears FntFile\'s shape, so the classic\'s measure 
   assert.equal(bodySize(756, 1), 22, 'about twenty-seven lines a leaf');
   assert.equal(bodySize(300, 3), 39, 'never under thirteen CSS pixels on a phone');
   assert.equal(bodySize(100, 1), 13);
-  const src = read('src/ui/enhancedBook.js');
+  const src = read('src/ui/enhanced/enhancedBook.js');
   assert.match(src, /injectEnhancedFonts\(\);/, 'the one web-font request the skin makes');
   assert.match(src, /BOOK\.paperScale = uiScale\(W, H, dpr\);/, 'the paper stays pixel art at the old scale');
   assert.match(src, /ctx\.fillText\(text, Math\.round\(dx\), Math\.round\(y\)\);/, 'the type is drawn by the browser, anti-aliased');

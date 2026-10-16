@@ -5,14 +5,14 @@
 // called a face a climb under a literal n.y < 0.97 (14.07 degrees), and Daggerfall's own ramp is 1:4: 14.04 degrees, n.y
 // 0.97014 - so every such ramp was cut at its lower storey's slice and its upper run vanished. RAMP-INK (2026-10-05c)
 // moved the climb's lower bound to the plan's floor law and left the upper one. The bound is one constant now
-// (ui/inkDungeonGL.js CLIMB_NY, climbsOf), and the shader's own expression is read here and run.
+// (ui/ink/inkDungeonGL.js CLIMB_NY, climbsOf), and the shader's own expression is read here and run.
 // bible/01-Overview/Field-Bugs-2026-10-11g.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { rowMesh, climbsOf, CLIMB_NY, FLOOR_FACE_NY, faceInkOf } from '../src/ui/inkDungeonGL.js';
+import { rowMesh, climbsOf, CLIMB_NY, FLOOR_FACE_NY, faceInkOf } from '../src/ui/ink/inkDungeonGL.js';
 
-const SRC = readFileSync(new URL('../src/ui/inkDungeonGL.js', import.meta.url), 'utf8');
+const SRC = readFileSync(new URL('../src/ui/ink/inkDungeonGL.js', import.meta.url), 'utf8');
 /** A slope along +z rising `rise` in a metre, wound to look up (as the world pass culls it), through the sheet's own mesh. */
 const slope = (rise) => rowMesh({ positions: new Float32Array([0, 0, 0, 0, rise, 1, 1, rise, 1, 1, 0, 0]), indices: new Uint16Array([0, 1, 2, 0, 2, 3]), matrix: null });
 const deg = (d) => Math.tan((d * Math.PI) / 180);

@@ -163,7 +163,7 @@
   },
   {
     "name": "EMPIRE-BANK-teller-classic",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "    const empire = isOnlinePage();",
     "new": "    const empire = false;",
     "tests": [

@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isMainQuestName } from '../src/systems/quest/questLists.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

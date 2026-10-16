@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NativeTalkWindow, TALK_RECTS } from '../src/ui/nativeTalk.js';
+import { NativeTalkWindow, TALK_RECTS } from '../src/ui/native/nativeTalk.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');

@@ -416,7 +416,7 @@
   },
   {
     "name": "SHIP-plate-words",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "[model.ether ? etherWatersWords(model.ether) : `${model.notoriety.crown}",
     "new": "[false ? etherWatersWords(model.ether) : `${model.notoriety.crown}",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "SHIP-plate-anchors",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "anchors: model.ether ? 0 : model.notoriety.level,",
     "new": "anchors: model.notoriety.level,",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "SHIP-plate-league",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "Math.round(Number(e.depth) || 0) === 1 ? 'league' : 'leagues'",
     "new": "'leagues'",
     "tests": [

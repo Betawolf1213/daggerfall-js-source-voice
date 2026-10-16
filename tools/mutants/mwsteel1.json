@@ -82,7 +82,7 @@
   },
   {
     "name": "MWSTEEL1-tile-does-not-rebuild",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  mwSteelHelm: rebuildMorrowindBody,   // MW-STEEL1",
     "new": "  // mwSteelHelm: rebuildMorrowindBody,   // MW-STEEL1",
     "tests": [

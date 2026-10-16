@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { nativeMetrics, pointToNative, loadImg, NATIVE_W, NATIVE_H, DEFAULT_TEXT_COLOR } from '../src/ui/nativePanel.js';
+import { nativeMetrics, pointToNative, loadImg, NATIVE_W, NATIVE_H, DEFAULT_TEXT_COLOR } from '../src/ui/native/nativePanel.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

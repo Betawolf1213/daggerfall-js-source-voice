@@ -1,6 +1,6 @@
 // STEED-UI (2026-10-11, the owner: "Proper UI elements for the horse + wagon/cart (Enhanced plus)") - THE SADDLE PANEL
 // (bible/10-UI/Controls.md, THE SADDLE PANEL): the horse ridden and the wagon driven on screen in Enhanced Plus, the
-// helm panel's kind (ui/enhancedHelm.js). The panel's pure reads (ui/enhancedSaddle.js - its gait, its meters, its
+// helm panel's kind (ui/enhanced/enhancedHelm.js). The panel's pure reads (ui/enhanced/enhancedSaddle.js - its gait, its meters, its
 // buttons, its line), the panel on a page, the upkeep's read (systems/upkeep/upkeepRuntime.js saddle), the hosts' one glue
 // (scenes/saddleHost.js), Horse Cart and Cargo's Cargo door (systems/horse/horseCart.js openWagonCargo), the view's own word
 // (player/mwView.js mwViewCanTogglePerspective), the Plus kit's dress, and the four hosts.
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import {
   saddleGait, saddleSpeedText, saddleTitle, saddleMeters, saddleButtons, saddleHint, fedText, drawEnhancedSaddle, hideEnhancedSaddle,
   enhancedSaddleMounted, enhancedSaddleBar, ENHANCED_SADDLE_ID, SADDLE_ACTIONS, STANDING_MPS, SADDLE_BREATH_LOW, SADDLE_CSS,
-} from '../src/ui/enhancedSaddle.js';
+} from '../src/ui/enhanced/enhancedSaddle.js';
 import { createSaddleHost, SADDLE_SPEED_TAU, SADDLE_MODES } from '../src/scenes/saddleHost.js';
 import { createUpkeep, BREATH_LOW } from '../src/systems/upkeep/upkeepRuntime.js';
 import { OATS_TEMPLATE, APPLE_TEMPLATES, BOND_TIERS, FULL_AHEAD } from '../src/systems/steedCare.js';
@@ -20,7 +20,7 @@ import { UPKEEP_ITEM } from '../src/systems/upkeep/upkeepItemRows.js';
 import { newWagonItem } from '../src/systems/wagon/wagonKinds.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { HCC_MOUNT_ACTION } from '../src/systems/horse/horseCart.js';
-import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
+import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { SMALL_WINDOWS } from '../src/ui/grimoireDress.js';
 import { makeWorld } from './hccWorld.mjs';
 import { fakeDoc, all, one } from './decorFakes.mjs';
@@ -380,7 +380,7 @@ test('AUDIT STEED-UI no button keeps the keyboard\'s focus: a press is never a f
     btn.fire('click');
     assert.deepEqual([blurred, calls], [true, ['kit']], 'a click lets it go');
   } finally { hideEnhancedSaddle(); }
-  const { drawEnhancedHelm, hideEnhancedHelm } = await import('../src/ui/enhancedHelm.js');
+  const { drawEnhancedHelm, hideEnhancedHelm } = await import('../src/ui/enhanced/enhancedHelm.js');
   const hdoc = fakeDoc();
   try {
     drawEnhancedHelm({ helm: { hull: 1, hasSails: true, sailsUp: false, light: false, timeScaleIndex: 0, timeScaleMax: 4, timeScale: 1 } }, { press: () => {} }, { doc: hdoc });

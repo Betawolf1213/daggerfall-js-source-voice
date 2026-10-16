@@ -21,13 +21,13 @@ globalThis.localStorage = {
 const N = await import('../src/systems/revenant/revenant.js');
 const F = await import('../src/systems/revenant/revenantFeud.js');
 const HJ = await import('../src/systems/huntJournal.js');
-const BM = await import('../src/ui/bountyMapMark.js');
-const { paintInkOverlay } = await import('../src/ui/inkMap.js');
+const BM = await import('../src/ui/bounty/bountyMapMark.js');
+const { paintInkOverlay } = await import('../src/ui/ink/inkMap.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
-const { lairWords } = await import('../src/ui/revenantPage.js');
+const { lairWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn7c') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, stats: {}, skills: [], career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100 });
@@ -97,10 +97,10 @@ test('RVN7c EVERY MAP READS IT: the held map (its poll, its sheet, its legend), 
   assert.match(h, /revenants: this\._revenants,   \/\/ RVN7c/);
   assert.match(h, /if \(this\._revenants\.length\) \{   \/\/ RVN7c: and a lair's blood-red circle\n\s*const dot = el\('span', 'hmlegdot'\);\n\s*dot\.style\.background = REVENANT_RING_CSS;/);
   assert.match(h, /!this\._bounties\.length && !this\._revenants\.length && !this\._raids\.length/);
-  const t = read('src/ui/travelMapWindow.js');
+  const t = read('src/ui/travel/travelMapWindow.js');
   assert.match(t, /const lairs = readBountyMarks\(this\.deps\.revenants, \{ width: MAP_WIDTH, height: MAP_HEIGHT \}, REVENANT_LEGEND_TEXT\);\n\s*this\._revenantsKey = bountyMarksKey\(lairs\);\n\s*if \(lairs\.length\) \{\n\s*const lairPx = packRGBA\(REVENANT_DOT_RGB\[0\], REVENANT_DOT_RGB\[1\], REVENANT_DOT_RGB\[2\], 255\);\n\s*for \(const \[x, y\] of bountyRingTexels\(lairs, originX, originY, width, height\)\) plot\(x, y, lairPx\);/);
   assert.match(t, /bountyMarksKey\(readBountyMarks\(this\.deps\.revenants, \{ width: MAP_WIDTH, height: MAP_HEIGHT \}, REVENANT_LEGEND_TEXT\)\) === \(this\._revenantsKey \?\? ''\)\n[^\n]*\) return false;/);   // PIN MOVED (FEUD's merge of main): HOME-VENDOR's trader is asked after the lairs
-  assert.match(read('src/ui/inkMap.js'), /for \(const b of opts\.revenants \?\? \[\]\) if \(visible\(b\.cx, b\.cy, b\.r \+ 2\)\) paintBountyRing\(ctx, view, b, pulse, REVENANT_INK\);/);
+  assert.match(read('src/ui/ink/inkMap.js'), /for \(const b of opts\.revenants \?\? \[\]\) if \(visible\(b\.cx, b\.cy, b\.r \+ 2\)\) paintBountyRing\(ctx, view, b, pulse, REVENANT_INK\);/);
   assert.match(read('src/scenes/world.js'), /revenants: \(\) => revenantMapMarks\(\),/);
 });
 
@@ -151,9 +151,9 @@ test('RVN7c THE HUNT IN THE JOURNAL: each lair heard of a side quest - "Hunt: <n
 });
 
 test('RVN7c THE FACES AND THE HOST: the pause window\'s Quests tab and the chronicle each give a hunt its Abandon (twice), never a share; the world host folds the hunts into the quest log beside the bounties, the way from where I stand (mutants: a face unwired; a hunt shared; the log unwired)', () => {
-  const m = read('src/ui/enhancedMenu.js');
+  const m = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(m, /if \(sel\.entries && isHuntQuestId\(sel\.id\)\) \{[\s\S]{0,400}const ab = el\('button', 'act', armed \? 'Click again to abandon' : 'Abandon hunt'\);[\s\S]{0,200}abandonHuntQuest\(sel\.id\);/);
-  const c = read('src/ui/enhancedChronicle.js');
+  const c = read('src/ui/enhanced/enhancedChronicle.js');
   assert.match(c, /if \(section === 'quests' && isHuntQuestId\(e\.uid\)\) \{[\s\S]{0,500}abandonHuntQuest\(e\.uid\);/);
   assert.match(c, /!e\.main && !isBountyQuestId\(e\.uid\) && !isHuntQuestId\(e\.uid\)/, 'never the quest share');
   assert.match(read('src/scenes/world.js'), /const extra = \[\.\.\.\(bountyHost\?\.questLogEntries\?\.\(\) \?\? \[\]\), \.\.\.revenantHuntEntries\(rumorHere\(\)\), \.\.\.\(legacyHost\?\.questLogEntries\(\) \?\? \[\]\)\];/);   // LEGACY4: the death quests after them

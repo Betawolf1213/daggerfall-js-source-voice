@@ -1,7 +1,7 @@
 [
   {
     "name": "HI1-corner-no-resScale",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],
@@ -10,7 +10,7 @@
   },
   {
     "name": "HI1-xhair-takes-resScale",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],
@@ -19,7 +19,7 @@
   },
   {
     "name": "HI1-xhair-not-centred",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],
@@ -28,7 +28,7 @@
   },
   {
     "name": "HI1-corner-also-draws-word",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],
@@ -37,7 +37,7 @@
   },
   {
     "name": "HI1-corner-picture-dropped",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],
@@ -46,7 +46,7 @@
   },
   {
     "name": "HI1-xhair-picture-dropped",
-    "file": "src/ui/hudCrosshair.js",
+    "file": "src/ui/hud/hudCrosshair.js",
     "tests": [
       "test/hud_icon1.test.js"
     ],

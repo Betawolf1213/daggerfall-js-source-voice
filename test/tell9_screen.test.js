@@ -1,6 +1,6 @@
 // TELL9 - ON SCREEN (bible/12-Enhanced-AI/Feud-Arc.md section 11; Mac, 2026-10-04: "breath more depth into it", then
 // "Go" on every call). The fight the ground and the ear tell, read where the player looks:
-//   THE BAR'S FOE ON A THREAT - a foe that winds up at me takes the target bar (ui/hudFoeTarget.js markFoeThreat) unless
+//   THE BAR'S FOE ON A THREAT - a foe that winds up at me takes the target bar (ui/hud/hudFoeTarget.js markFoeThreat) unless
 //     I struck another in the last 2 s;
 //   THE POISE TRACK - under its health: empty outside a wind-up, amber and filling toward its poise, red and hatched
 //     "Iron", a white flash and "Staggered" at a break, "Open" through an overreach (ai/tactics.js poiseTrack);
@@ -22,14 +22,14 @@ import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { setTacticsClock, resetTactics, noteLocalPlayer, poiseTrack, LOCAL_TARGET } from '../src/ai/tactics.js';
 import { liveBlows, resetBlows, makeBlow, BLOW_COLOR } from '../src/ai/foeBlows.js';
-import { markFoeStruck, markFoeThreat, tickFoeTarget, foeTarget, clearFoeTarget, THREAT_YIELD_S, FOE_TARGET_SECONDS } from '../src/ui/hudFoeTarget.js';
+import { markFoeStruck, markFoeThreat, tickFoeTarget, foeTarget, clearFoeTarget, THREAT_YIELD_S, FOE_TARGET_SECONDS } from '../src/ui/hud/hudFoeTarget.js';
 import { HIT_TAGS, TAG_JOIN_MS, tagHit, showWord, mountHitNumbers, unmountHitNumbers } from '../src/ui/hitNumbers.js';
 import { reportPlayerAttack } from '../src/combat/formulas.js';
 import { windupDoor, windupTag, tellCues } from '../src/scenes/hostCombat.js';
 import { FEATURES } from '../src/systems/features.js';
-import { STATUS_GLYPHS, afflictionRows, statusTiles, statusGlyphColor32 } from '../src/ui/hudStatus.js';
-import { activeSpellIcons, drawActiveSpells, BLEED_ICON, BLEED_GLYPH } from '../src/ui/hudActiveSpells.js';
-import { _setSpellIconsForTests } from '../src/ui/spellIcons.js';
+import { STATUS_GLYPHS, afflictionRows, statusTiles, statusGlyphColor32 } from '../src/ui/hud/hudStatus.js';
+import { activeSpellIcons, drawActiveSpells, BLEED_ICON, BLEED_GLYPH } from '../src/ui/hud/hudActiveSpells.js';
+import { _setSpellIconsForTests } from '../src/ui/spell/spellIcons.js';
 import { TELEGRAPH_STYLE_GLSL, CONTRAST_DOTS, CONTRAST_DOT_R } from '../src/render/telegraphStyle.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -358,7 +358,7 @@ test('TELL9: the Enhanced AI note gains its line - wound-up blows, the stagger, 
 });
 
 test('TELL9: the enhanced HUD draws the track under the foe\'s health - its state a class, its fill, its word; the sheet colours it (amber, iron red and hatched, the staggered flash, open) and honours reduced motion; the quest card clears the taller bar; the words wear the numbers\' face (mutants: the track never drawn; the hatch gone; the flash under reduced motion)', () => {
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const foePoise = el\('div', 'hud-foepoise'\);/);
   assert.match(hud, /foe\.append\(foeName, foeTrack, foeBlade, foePoise\);/);
   // POISE-QUIET (2026-10-06, the player: "the block under the monsters hp must go"): an EMPTY track - no wind-up, no iron, no
@@ -367,7 +367,7 @@ test('TELL9: the enhanced HUD draws the track under the foe\'s health - its stat
   assert.match(hud, /parts\.foe\.classList\.toggle\('poised', !!p\)/);
   assert.match(hud, /width\(parts\.foePoiseFill, 'foePoiseFill', p\.fill \* 100\);/);
   assert.match(hud, /put\(parts\.foePoiseWord, 'foePoiseWord', p\.word\);/);
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.hud-foe\.poised \.hud-foepoise \{ display: block; \}/);
   assert.match(css, /\.hud-foepoise\.poise-windup \.hud-poisefill \{ background: #e0a43a; \}/);   // PIN MOVED (POISE-BOX): the state classes are the track's own
   assert.match(css, /\.hud-foepoise\.poise-iron \.hud-poisefill \{ background: repeating-linear-gradient\(/, 'iron never by colour alone');
@@ -387,14 +387,14 @@ test('POISE-BOX (field, 2026-10-05, the owner\'s screenshot of a black box under
     .map((tac) => poiseTrack({ _tac: tac }).state);
   assert.deepEqual(states, ['empty', 'windup', 'iron', 'staggered', 'open']);
   // the classes the HUD writes for them
-  const write = /parts\.foePoise\.className = `hud-foepoise\$\{p \? ` ([\w-]*)\$\{p\.state\}` : ''\}\$\{flash \? ' ([\w-]+)' : ''\}`;/.exec(rd('src/ui/enhancedHud.js'));
+  const write = /parts\.foePoise\.className = `hud-foepoise\$\{p \? ` ([\w-]*)\$\{p\.state\}` : ''\}\$\{flash \? ' ([\w-]+)' : ''\}`;/.exec(rd('src/ui/enhanced/enhancedHud.js'));
   assert.ok(write, 'the HUD no longer writes the track\'s classes in the shape this pin reads');
   const worn = [...states.map((s) => write[1] + s), write[2]];
   // every rule naming one of them names it ON the track - in every UI module's sheets, each of which may inject one,
   // read as RULES (HUD-CLASS, test/sheetRules.mjs: a comment or a JS read is never a selector there)
   const { rules, unread } = literalSheetRules();
   assert.deepEqual(unread, [], 'a sheet the reader could not read');
-  assert.ok(rules.some((r) => r.where.startsWith('src/ui/enhancedStyle.js:') && r.sel === '.hud-foepoise.poise-windup .hud-poisefill'), 'the reader sees the track\'s own rules');
+  assert.ok(rules.some((r) => r.where.startsWith('src/ui/enhanced/enhancedStyle.js:') && r.sel === '.hud-foepoise.poise-windup .hud-poisefill'), 'the reader sees the track\'s own rules');
   const off = [];
   for (const r of rules) {
     for (const sel of selectorsOf(r)) for (const c of compounds(sel)) if (classesOf(c).some((x) => worn.includes(x)) && !classesOf(c).includes('hud-foepoise')) off.push(`${r.where} ${sel}`);

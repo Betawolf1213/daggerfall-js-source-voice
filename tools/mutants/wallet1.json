@@ -334,7 +334,7 @@
   },
   {
     "name": "WALLET1-pages-unsplit",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const paged = held.size ? items.filter((it) => !held.has(it)) : items;",
     "new": "const paged = items;",
     "why": "the held pieces on the pages and in the wallet both",
@@ -345,7 +345,7 @@
   },
   {
     "name": "WALLET1-model-no-wallet",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const walletItem = items.find(isWalletItem) ?? null;",
     "new": "const walletItem = null;",
     "why": "the pack never finds its wallet",
@@ -355,7 +355,7 @@
   },
   {
     "name": "WALLET1-use-a-message",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (r.kind === 'wallet' || r.kind === 'binder') return { kind: 'pickWallet', item: r.item };",
     "new": "if (r.kind === 'binder') return { kind: 'pickWallet', item: r.item };",
     "why": "the wallet's Use falls to the readers' message",
@@ -365,7 +365,7 @@
   },
   {
     "name": "WALLET1-pick-arm-lost",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (act.kind === 'pickWallet') { picked = act.item; side = 'local'; return render(); }",
     "new": "  if (act.kind === 'pickWallet') return render();",
     "why": "the Use opens nothing",
@@ -375,7 +375,7 @@
   },
   {
     "name": "WALLET1-sheet-unshown",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (side === 'local' && model?.wallet && picked === model.wallet.item) (c.querySelector('.card-body') ?? c).append(walletSheet(model.wallet));",
     "new": "if (false) (c.querySelector('.card-body') ?? c).append(walletSheet(model.wallet));",
     "why": "the wallet's card with no sheet",
@@ -385,7 +385,7 @@
   },
   {
     "name": "WALLET1-way-back-lost",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (side === 'local' && model?.wallet?.held.includes(picked)) acts.append(walletBack(model.wallet.item));",
     "new": "if (false) acts.append(walletBack(model.wallet.item));",
     "why": "a held piece's card with no way back",
@@ -395,7 +395,7 @@
   },
   {
     "name": "WALLET1-piece-unreachable",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    for (const it of w.held) rows.append(itemRow(it));",
     "new": "    for (const it of w.held) rows.append(el('p', 'meta', itemLine(it, deps.entity).name));",
     "why": "a held piece's row opens nothing",
@@ -405,7 +405,7 @@
   },
   {
     "name": "WALLET1-way-back-dead",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  b.onclick = () => { picked = wallet; side = 'local'; notice = null; render(); };\n  return b;",
     "new": "  b.onclick = () => {};\n  return b;",
     "why": "the way back goes nowhere",
@@ -415,7 +415,7 @@
   },
   {
     "name": "WALLET1-asked-every-draw",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    walletAsked = true;\n    refreshWalletSilver()",
     "new": "    refreshWalletSilver()",
     "why": "the silver asked at every draw of the sheet",
@@ -425,7 +425,7 @@
   },
   {
     "name": "WALLET1-asked-never-again",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  walletAsked = false;   // WALLET1",
     "new": "",
     "why": "a second mount never asks the silver",
@@ -435,7 +435,7 @@
   },
   {
     "name": "WALLET1-answer-unredrawn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "refreshWalletSilver().then(() => { if (host) { refresh(); render(); } });",
     "new": "refreshWalletSilver();",
     "why": "the answer never reaches the sheet",
@@ -445,7 +445,7 @@
   },
   {
     "name": "WALLET1-answer-under-piece-lost",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "refreshWalletSilver().then(() => { if (host) { refresh(); render(); } });",
     "new": "refreshWalletSilver().then(() => { if (host && picked === model?.wallet?.item) { refresh(); render(); } });",
     "why": "an answer landing while a piece is picked is lost for the mount (the bug the pin found)",
@@ -455,7 +455,7 @@
   },
   {
     "name": "WALLET1-enh-pack-only-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (remote && isPackOnly(item)) {",
     "new": "  if (false) {",
     "why": "the enhanced pack's refusal in the bound law's words",
@@ -465,7 +465,7 @@
   },
   {
     "name": "WALLET1-classic-box-unsaid",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "if (r.kind === 'wallet') { this.boxes = [{ rows: walletLines(walletContents(this.hooks.items(), this.hooks.entity)).map((text) => ({ text, center: true })) }]; void refreshWalletSilver(); return; }",
     "new": "if (r.kind === 'wallet') { void refreshWalletSilver(); return; }",
     "why": "the classic Use says nothing",
@@ -475,7 +475,7 @@
   },
   {
     "name": "WALLET1-classic-silver-unasked",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "center: true })) }]; void refreshWalletSilver(); return; }",
     "new": "center: true })) }]; return; }",
     "why": "the classic Use never asks the silver",
@@ -485,7 +485,7 @@
   },
   {
     "name": "WALLET1-classic-pack-only-silent",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "        if (isPackOnly(it)) { this._refuse(",
     "new": "        if (false) { this._refuse(",
     "why": "the classic window's refusal in the bound law's words",

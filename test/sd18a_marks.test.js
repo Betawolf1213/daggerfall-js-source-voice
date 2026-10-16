@@ -26,7 +26,7 @@ import { validSdOut, SD_TARGETS_MAX } from '../src/net/wire.js';
 import { foldSdFight, SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { dpsRef, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
-import { remnantBarModel } from '../src/ui/sdRemnantBar.js';
+import { remnantBarModel } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { createSdBeats, sdBreakSub, sdPerilAt } from '../src/scenes/sdArenaRead.js';
 import { remnantRig, sdBeamsAt, TWIST } from '../src/scenes/sdRemnantRig.js';
 

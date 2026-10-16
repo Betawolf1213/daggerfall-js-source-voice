@@ -1,6 +1,6 @@
 // AUDIT POI (2026-10-15; bible/06-Systems/POI-Editor-Arc.md POI-2) - LANE B, THE GAME RUNTIME: the host that stands the
 // approved POIs (scenes/poiHost.js), their pictures and models (poi/poiRuntime.js, poi/poiImageDecode.js), the feed
-// (poi/poiFeed.js), their marks (ui/poiMapMark.js through ui/bountyMapMark.js readBountyMarks) and the world's draw order
+// (poi/poiFeed.js), their marks (ui/poi/poiMapMark.js through ui/bounty/bountyMapMark.js readBountyMarks) and the world's draw order
 // (scenes/world.js). One test a finding, each red on the code the audit read (0c78d81a85).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,8 +9,8 @@ import { createPoiHost, POI_RETRY_MS, POI_STAND_BUDGET_MS } from '../src/scenes/
 import { createPoiFeed, POI_FEED_CACHE_KEY, POI_FEED_POLL_MS } from '../src/poi/poiFeed.js';
 import { bakeAlbedo, poiPartModels, createTextureBook, materialLook } from '../src/poi/poiRuntime.js';
 import { decodePoiImageSteps } from '../src/poi/poiImageDecode.js';
-import { poiMapMarks, POI_MARKS_MAX } from '../src/ui/poiMapMark.js';
-import { readBountyMarks, BOUNTY_MARKS_MAX } from '../src/ui/bountyMapMark.js';
+import { poiMapMarks, POI_MARKS_MAX } from '../src/ui/poi/poiMapMark.js';
+import { readBountyMarks, BOUNTY_MARKS_MAX } from '../src/ui/bounty/bountyMapMark.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL } from '../src/poi/poiLaw.js';
 
@@ -287,7 +287,7 @@ test('AUDIT POI R7: every marked POI is on the map, past the bounty\'s eight - t
   assert.equal(read.length, 20);
   assert.equal(readBountyMarks(() => poiMapMarks(marks), { width: 1000, height: 500 }).length, BOUNTY_MARKS_MAX, 'a hunter\'s map as it was');
   assert.ok(POI_MARKS_MAX > BOUNTY_MARKS_MAX);
-  for (const f of ['src/ui/heldMap.js', 'src/ui/travelMapWindow.js']) {
+  for (const f of ['src/ui/heldMap.js', 'src/ui/travel/travelMapWindow.js']) {
     const s = src(f);
     const reads = s.match(/readBountyMarks\(this\.deps\.pois,[^\n]*?poiLegendText\(\)(, POI_MARKS_MAX)?\)/g);
     assert.ok(reads.length >= 1 && reads.every((r) => r.endsWith(', POI_MARKS_MAX)')), `${f}: the POIs read under their cap`);

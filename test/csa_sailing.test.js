@@ -15,7 +15,7 @@ import {
   mathfMoveTowards, mathfClamp, yawOfForward, PASSENGERS_ABOARD_TEXT, NICE_BOAT_TEXT, boardPlaceOf, carriedPoint, yawDelta,
   IRONS_TELL_DEG, IRONS_TELL_WAY, IRONS_TELL_S, IRONS_TEXT, OAR_RUNG_TEXT, OAR_ASTERN_TEXT,
 } from '../src/systems/comeSailAway/comeSailAway.js';
-import { helmButtons, helmHint, helmSpeedText, KNOTS_PER_MPS } from '../src/ui/enhancedHelm.js';   // HELM-LADDER: the sails' button is the toggle, the line the ladder - HELM-SPEED: her way
+import { helmButtons, helmHint, helmSpeedText, KNOTS_PER_MPS } from '../src/ui/enhanced/enhancedHelm.js';   // HELM-LADDER: the sails' button is the toggle, the line the ladder - HELM-SPEED: her way
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { quatRotate, quatAngleAxis } from '../src/world/quat.js';
 

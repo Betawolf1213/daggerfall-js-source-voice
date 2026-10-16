@@ -388,7 +388,7 @@ test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a chil
     const { createSdRemnant } = await import(${url('src/scenes/sdRemnant.js')});
     const { sdGearsAt, sdBeamDraws, sdKeptList } = await import(${url('src/scenes/sdRemnantRig.js')});
     const { SdBeamRenderer } = await import(${url('src/render/sdBeam.js')});
-    const { sdEndingStoneLight } = await import(${url('src/ui/sdMarksView.js')});
+    const { sdEndingStoneLight } = await import(${url('src/ui/superDungeon/sdMarksView.js')});
     const { sdPerilAt } = await import(${url('src/scenes/sdArenaRead.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { sdBodyAt } = await import(${url('src/net/superDungeon/sdFightLink.js')});

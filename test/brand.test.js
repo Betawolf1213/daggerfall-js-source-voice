@@ -87,7 +87,7 @@ test('BR1: every surface the player reads carries the one name', () => {
   // wherever the halves live.
   // INTRO2 (Mac, 2026-09-18): his supplied logo replaces the in-game
   // wordmark. The landing page and archived prototypes keep BR3's type.
-  assert.match(read('src/ui/enhancedMenu.js'), /mark\.append\(brandMark\(\)\)/,
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /mark\.append\(brandMark\(\)\)/,
     'the front door uses the same accessible mark as the cinematic');
   assert.match(read('src/ui/brandMark.js'), new RegExp(`export const BRAND_LOGO_ALT = '${NAME}';`), 'the mark\'s own alt text - the product\'s name and no other game\'s (BR5)');
   for (const proto of ['menu-pixel.html', 'menu-redesign.html']) {
@@ -128,9 +128,9 @@ test('BR1: the tagline is one sentence, and it is the same sentence everywhere',
   // implementation language as if it were the product.
   assert.ok(read('index.html').includes(TAGLINE), 'the landing page\'s description');
   assert.ok(JSON.parse(read('public/manifest.webmanifest')).description.startsWith(TAGLINE), 'the PWA\'s');
-  assert.ok(read('src/ui/enhancedMenu.js').includes(`'${TAGLINE}.'`), 'the About panel\'s');
+  assert.ok(read('src/ui/enhanced/enhancedMenu.js').includes(`'${TAGLINE}.'`), 'the About panel\'s');
   assert.ok(read('README.md').includes(`${TAGLINE.toLowerCase().replace('rpg', 'RPG')},\nplayed from your own copy of The Elder Scrolls II: Daggerfall.`), 'and the README\'s - with the copy a player brings, named');
-  assert.match(read('src/ui/enhancedMenu.js'), new RegExp(`el\\('h3', null, '${NAME}'\\)`), 'the About panel names the product');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), new RegExp(`el\\('h3', null, '${NAME}'\\)`), 'the About panel names the product');
 });
 
 test('BR1: no surface still says the old name', () => {
@@ -172,7 +172,7 @@ test('BR1: what the rebrand deliberately did NOT touch, and why', () => {
     'a technical statement about the language survives the rebrand');
   // And a QUOTE is a quote. TI2's header quotes Mac asking to "enhance
   // the mobile element of DFJS" - his words, at the time he said them.
-  assert.match(read('src/ui/touchLook.js'), /element of DFJS in terms of camera movement/,
+  assert.match(read('src/ui/touch/touchLook.js'), /element of DFJS in terms of camera movement/,
     'the owner\'s own words are not edited to match a later name');
 
   // THE KEYS OTHER SYSTEMS HOLD. Each of these is the old spelling on
@@ -199,13 +199,13 @@ test('BR1: what the rebrand deliberately did NOT touch, and why', () => {
 });
 
 test('BR4: the intro and the doors carry the name too', () => {
-  const intro = read('src/ui/introScreen.js');
+  const intro = read('src/ui/intro/introScreen.js');
   assert.match(intro, new RegExp(`host\\.setAttribute\\('aria-label', t\\('menu\\.intro\\.aria', '${NAME} introduction'\\)\\)`), 'what a screen reader hears as the film opens');
   assert.match(intro, new RegExp(`'intro-title-fallback', '${NAME}'`), 'and the title the film draws if the logo cannot load');
-  assert.match(read('src/ui/enhancedMenu.js'), new RegExp(`homeMark\\.setAttribute\\('aria-label', t\\('menu\\.home\\.homeAria', '${NAME} — main menu'\\)\\)`), 'the masthead\'s way home');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), new RegExp(`homeMark\\.setAttribute\\('aria-label', t\\('menu\\.home\\.homeAria', '${NAME} — main menu'\\)\\)`), 'the masthead\'s way home');
   assert.match(read('src/systems/save/saveTransfer.js'), new RegExp(`TRANSFER_ZIP_NAME = '${FILE_NAME}-Saves\\.zip'`), 'the saves a player carries away are named for it');
   assert.match(read('src/systems/customClass.js'), new RegExp(`That is not a ${NAME} class file\\.`), 'the class importer\'s refusal');
-  assert.match(read('src/ui/enhancedChargen.js'), new RegExp(`Paste it into Import on any ${NAME} character\\.`), 'and its copy note');
+  assert.match(read('src/ui/enhanced/enhancedChargen.js'), new RegExp(`Paste it into Import on any ${NAME} character\\.`), 'and its copy note');
   assert.match(read('SUPPORT.md'), new RegExp(`^# Support ${NAME}\\n`), 'the support page\'s first line');
 });
 
@@ -217,7 +217,7 @@ test('BR4: the logo is Mac’s transparent cut, and nothing blends it away - BR5
   const mark = read('src/ui/brandMark.js');
   assert.match(mark, /new URL\('\.\.\/assets\/branding\/dfo-online\.png', import\.meta\.url\)/, 'the one asset');
   assert.match(mark, /image\.className = 'brand-logo';/);
-  const intro = read('src/ui/introScreen.js'), style = read('src/ui/enhancedStyle.js');
+  const intro = read('src/ui/intro/introScreen.js'), style = read('src/ui/enhanced/enhancedStyle.js');
   const introTitle = intro.match(/\.intro-title\{[^}]*\}/)[0];
   assert.doesNotMatch(introTitle, /mix-blend-mode/, 'the film draws it as it is');
   const logoRule = style.match(/\n\.brand-logo \{[^}]*\}/)[0];
@@ -336,7 +336,7 @@ test('BR5: no surface still says Daggerfall Online - whole, split across a wordm
     assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
   }
   assert.equal(split, '', `a wordmark still spells the old name across two elements:\n${split}`);
-  assert.match(read('src/ui/enhancedChargen.js'), new RegExp(`brand\\.append\\(el\\('div', 'sub', '${NAME}'\\)\\);`), 'the new character\'s masthead');
+  assert.match(read('src/ui/enhanced/enhancedChargen.js'), new RegExp(`brand\\.append\\(el\\('div', 'sub', '${NAME}'\\)\\);`), 'the new character\'s masthead');
   // AUDIT BR5: the launcher wears the logo too, the game's own file, named by its alt
   assert.ok(read('app/launcher/index.html').includes(`<h1 class="wordmark"><img src="dfo-online.png" alt="${NAME}" width="526" height="322"></h1>`), 'and the desktop launcher\'s');
   assert.match(read('src/ui/screenshot.js'), /return `dfo-\$\{d\.getFullYear\(\)\}/, 'a screenshot is named for the product');
@@ -367,7 +367,7 @@ test('BR5: the original game is named only where it must be - in what a player r
   const { MOD_SETTINGS } = await import('../src/systems/modSettings.js');
   const { levelingOptions } = await import('../src/ui/levelingChoice.js');
   const { LEVELING_CROSS_LINE } = await import('../src/systems/realmCustoms.js');
-  const { INSTEAD } = await import('../src/ui/settingsCopy.js');
+  const { INSTEAD } = await import('../src/ui/settings/settingsCopy.js');
   const { FOOT_GROUPS } = await import('../src/ui/skinCard.js');
   const { LAND_VIEW_TIERS } = await import('../src/world/landView.js');
   const said = [
@@ -388,7 +388,7 @@ test('BR5: the original game is named only where it must be - in what a player r
   assert.deepEqual(naming, [], 'a player reads the original game\'s name where it is not owed');
   assert.ok(said.some(([, v]) => /the original game/.test(v)), 'and reads what it is instead');
   // The doors' own words, which are drawn rather than exported.
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   // PIN MOVED (L10N4): the classic door's words said through t(), its English as BR5 left it
   assert.match(menu, /c\.append\(el\('h3', null, t\('menu\.begin\.title', 'Classic'\)\)\);\n {2}c\.append\(el\('p', 'meta', t\('menu\.begin\.blurb', 'The classic start: the original game\\u2019s own title, intro and menu/, 'the classic door');
   assert.doesNotMatch(TAGLINE, /Daggerfall|Elder Scrolls/, 'and the sentence that says what this is names only what it is');
@@ -414,8 +414,8 @@ test('AUDIT BR5: the drawn words no producer exports - the profession pages, the
     "<p>Daggerfall's game data is freeware but can't be bundled.</p>",
     'none of them Daggerfall\\u2019s). Pick the ARENA2 folder itself',
   ];
-  const DRAWN = ['src/ui/profPages.js', 'src/ui/statsCard.js', 'src/ui/decorPanel.js', 'src/ui/shotsPane.js', 'src/scenes/dataSource.js',
-    'src/ui/enhancedMenu.js', 'src/ui/pauseWindow.js', 'src/systems/passiveSpecials.js', 'src/systems/customClass.js',
+  const DRAWN = ['src/ui/professions/profPages.js', 'src/ui/statsCard.js', 'src/ui/decorPanel.js', 'src/ui/shotsPane.js', 'src/scenes/dataSource.js',
+    'src/ui/enhanced/enhancedMenu.js', 'src/ui/pauseWindow.js', 'src/systems/passiveSpecials.js', 'src/systems/customClass.js',
     'src/systems/shellUpdates.js', 'src/main.js', 'src/ui/screenshot.js', 'src/ui/tutorialsPane.js', 'src/systems/tutorialCatalogue.js'];
   const named = [], owed = new Set();
   for (const f of DRAWN) {
@@ -442,7 +442,7 @@ test('AUDIT BR5: the drawn words no producer exports - the profession pages, the
   assert.equal(owed.size, OWED.length, 'and every owed line is still where it was read - the walk still sees the files');
   // A-2, A-4 and A-5 as they read now: the potion maker is the classic one, the map joins the BAY's own coast (not
   // "the classic coast", which said nothing), and the cries are the ORIGINAL game's (not "the game", which is this one)
-  assert.ok(read('src/ui/profPages.js').includes("The classic potion maker still works but gives no Provisioning XP.';"), 'A-2');
+  assert.ok(read('src/ui/professions/profPages.js').includes("The classic potion maker still works but gives no Provisioning XP.';"), 'A-2');
   const { FEATURES } = await import('../src/systems/features.js');
   const note = (id) => FEATURES.find((f) => f.id === id)?.note ?? '';
   assert.match(note('tamriel-map'), /joined to the Bay’s own coast\./, 'A-4');

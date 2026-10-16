@@ -344,4 +344,4 @@ export const enchantmentCostLabel = (cost, power) => `${cost}/${power}`;
 
 // M4 closed both of M3's flags: systems/enchantmentCatalogue.js
 // gathers every effect's EnchantmentSettings and SoulBound's forced
-// sets, and ui/itemMakerWindow.js is the window.
+// sets, and ui/item/itemMakerWindow.js is the window.

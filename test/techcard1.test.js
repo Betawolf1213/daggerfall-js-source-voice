@@ -17,8 +17,8 @@ import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil/sigil
 import { techniqueCard, TECH_HOW, TECH_UNBOUND, TECH_DUEL_NOTE } from '../src/ui/techniqueCard.js';
 import { TECHNIQUE_GLYPH_ROWS, TECHNIQUE_GLYPH_SVG, TECHNIQUE_GLYPH_BLUE, techniqueGlyphTileSrc } from '../src/ui/techniqueGlyph.js';
 import { SIGIL_RUNE_SVG, sigilRuneTileSrc } from '../src/ui/sigilRune.js';
-import { TECH_BLOCK_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { mountEnhancedInventory, TIP_FITS, CARD_FITS } from '../src/ui/enhancedInventory.js';
+import { TECH_BLOCK_CSS, PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { mountEnhancedInventory, TIP_FITS, CARD_FITS } from '../src/ui/enhanced/enhancedInventory.js';
 import { createBindings, setBinding, clearBinding, actionForCode } from '../src/systems/inputActions.js';
 import { actionKeyWord } from '../src/ui/quickslotTags.js';
 
@@ -282,8 +282,8 @@ test('TECH-CARD the HUD\'s chip, executed: a technique\'s tile wears the techniq
     createElement: (t) => mkEl(t), createElementNS: (ns) => Object.assign(mkEl(), { ns }),
     getElementById: () => null, head: mkEl(), body: mkEl(), querySelector: () => null, querySelectorAll: () => [],
   };
-  const { drawEnhancedHud, destroyEnhancedHud, setHudSetChips, setHudTechniqueChips } = await import('../src/ui/enhancedHud.js');
-  const { setHudRenown } = await import('../src/ui/hudRenown.js');
+  const { drawEnhancedHud, destroyEnhancedHud, setHudSetChips, setHudTechniqueChips } = await import('../src/ui/enhanced/enhancedHud.js');
+  const { setHudRenown } = await import('../src/ui/hud/hudRenown.js');
   setHudSetChips(() => [{ key: 'wrath', set: 'ruhn', name: 'Wrath', text: '45s', state: 'active' }]);
   setHudTechniqueChips(() => [{ key: 'technique', set: 'technique', name: 'Leap Strike', text: 'MOUSE3', state: 'active' }]);
   const entity = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null, activeEffects: [] };

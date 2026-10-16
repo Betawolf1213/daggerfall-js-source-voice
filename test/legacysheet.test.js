@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { byClass, text } from './chargenDom.mjs';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
 import { setFamilyProvider, sheetHouse, ageWord, SHEET_HOUSE_TEXT, resetFamilyPages } from '../src/ui/familyPages.js';
 import { foundFamily, familyRng, MODELS, LEGACY_MOD } from '../src/systems/legacy/family.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';

@@ -65,7 +65,7 @@ test('AUDIT 68 S31-enhanced-rename-mutates-shared-spell: the enhanced book renam
   globalThis.document = { createElement: mkEl, createTextNode: (t) => ({ text: t, className: '' }), getElementById: () => null, head: mkEl('head'), body: mkEl('body'), addEventListener() {}, removeEventListener() {} };
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   try {
-    const { mountEnhancedSpellbook } = await import('../src/ui/enhancedSpellbook.js');
+    const { mountEnhancedSpellbook } = await import('../src/ui/enhanced/enhancedSpellbook.js');
     // Two characters' books from RRI's own AssignSkillSpells: both hold the one frozen Candle.
     const mine = [], theirs = [];
     assignSkillSpells(mine, SKILLS.Illusion, false, null);

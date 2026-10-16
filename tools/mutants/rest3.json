@@ -185,7 +185,7 @@
  },
  {
   "name": "REST3-the-held-map-loses-the-fires",
-  "file": "src/ui/automapSheet.js",
+  "file": "src/ui/automap/automapSheet.js",
   "old": "      out.push({ x, z, y: p[1], kind: 'fire', name: 'Campfire' });",
   "new": "",
   "tests": [

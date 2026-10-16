@@ -9,7 +9,7 @@ import { validPartyPose, PARTY_WALK_RELAY_MIN, relaySupportsPartyWalk, RELAY_VER
 import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
 import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
 import { memberPresent } from '../src/systems/party/partyRestLaw.js';
 import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';

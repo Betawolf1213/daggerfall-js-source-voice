@@ -35,7 +35,7 @@ import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/m
 import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { FEATURES } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { travelMapPickerData, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
+import { travelMapPickerData, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VENDOR = join(ROOT, 'vendor/world-events-raiding-parties');

@@ -10,7 +10,7 @@ court) and `0cbe849f` (the bodies, after main's #842 was merged in); the owner's
 
 ## PLEA-LOOP: the plea under the Crime page answers nothing (1)
 
-`src/ui/windowStack.js` windowCovered; `src/ui/enhancedDialog.js` drawEnhancedChoice; `src/ui/enhancedDialogStyle.js`
+`src/ui/windowStack.js` windowCovered; `src/ui/enhanced/enhancedDialog.js` drawEnhancedChoice; `src/ui/enhanced/enhancedDialogStyle.js`
 (`.dlg-covered`); `src/ui/talkWindow.js` ChoiceWindow.input; `src/scenes/arrestFlow.js` step, release.
 
 THE CHARGE IS THE WATCH'S, as REP1 built it. The quest's killing was a crime, the region's standing fell past -10, and a

@@ -29,9 +29,9 @@ import { equipItem } from '../src/systems/equip.js';
 import { withDom } from './invdrag.mjs';
 import { mountReforgeWindow, reforgeLabel, reforgePurseText, reforgePriceText, REFORGED, SALVAGED, REFORGE_REFUSALS } from '../src/ui/reforgeWindow.js';
 import { GuildServiceWindow, REFORGE_RECT, REFORGE_ROW, REFORGE_KEY, PANEL_X, PANEL_Y, _setGuildServiceArtForTests } from '../src/ui/guildServiceWindow.js';
-import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
+import { destroyEnhancedNotice } from '../src/ui/enhanced/enhancedNotice.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
-import { mountEnhancedInventory, SALVAGE_ASK } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory, SALVAGE_ASK } from '../src/ui/enhanced/enhancedInventory.js';
 import { _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -296,7 +296,7 @@ test('LOOT9: the Mages Guild\'s fourth row - the classic popup\'s port-drawn row
   assert.equal(asked, 2);
   assert.equal(REFORGE_ROW, 'Reforge');
   assert.ok(ry >= 51, 'under DFU\'s panel, never over its art');
-  assert.match(read('src/ui/enhancedPorts.js'), /\.\.\.\(w\.hooks\.reforge \? \[\{ label: REFORGE_ROW, act: \(\) => w\._reforge\(\) \}\] : \[\]\)/, 'the Plus face lists it beside the service');
+  assert.match(read('src/ui/enhanced/enhancedPorts.js'), /\.\.\.\(w\.hooks\.reforge \? \[\{ label: REFORGE_ROW, act: \(\) => w\._reforge\(\) \}\] : \[\]\)/, 'the Plus face lists it beside the service');
   assert.match(read('src/scenes/worldModes.js'), /reforge: route\.guildGroup === GUILD_GROUPS\.MagesGuild && service === 'Identify' && lootRarityOn\(\) \? \(\) => shutBox\(\) \?\? \(openReforge\(\) \? \{ dispatched: true \} : null\) : null,/, 'the Mages Guild\'s Identify NPC alone, the row on');   // PIN MOVED (AUDIT CHAP5 D2): a shut hall's row refused on the popup
   assert.match(read('src/scenes/worldModes.js'), /reforge: \(item, line\) => reforgePiece\(item, line, playerEntity\),\s*salvage: \(item\) => salvagePiece\(item, \{ items: \(playerEntity\.items \?\?= \[\]\) \}\),/, 'the law\'s, on the player\'s own pack and purse');
   _setGuildServiceArtForTests(null);
@@ -339,5 +339,5 @@ test('LOOT9: the pack card offers Salvage for a graded piece - asked first, Keep
   });
   // PIN MOVED (SALVAGE-CLASSIC, bible/01-Overview/Field-Bugs-2026-10-12d.md): a piece that wears Magic and never breaks
   // (DFU's own magic, salvageRefusal 'classic') shows the button too, and its press says why (test/fb1012d_salvageclassic.test.js)
-  assert.match(read('src/ui/enhancedInventory.js'), /if \(side === 'local' && !line\.equipped && \(salvageShards\(picked\) > 0 \|\| salvageRefusal\(picked\) === 'classic'\) && !\['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'\]\.includes\(salvageRefusal\(picked\) \?\? ''\)\) \{/, 'never a worn piece, never one that will not break - but classic magic says why');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /if \(side === 'local' && !line\.equipped && \(salvageShards\(picked\) > 0 \|\| salvageRefusal\(picked\) === 'classic'\) && !\['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'\]\.includes\(salvageRefusal\(picked\) \?\? ''\)\) \{/, 'never a worn piece, never one that will not break - but classic magic says why');
 });

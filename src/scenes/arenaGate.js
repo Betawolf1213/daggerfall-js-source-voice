@@ -2,7 +2,7 @@
 // ARENA3 (2026-10-02, Mac: "join a team (red and blue)"; "Joining a team comes with it's own enhanced UI"): THE GATE'S
 // PEOPLE WHO ARE NOT THE HERALD - the Red and Blue Banners' recruiters, and (with the book) the bookmaker - answered in
 // ONE place for both hosts that stand the colosseum (scenes/world.js, the streaming world; scenes/exterior.js, the city
-// alone), so the two never drift; and THE ARENA WINDOW's model and its presses (ui/arenaDoor.js, systems/arena/arenaBoard.js).
+// alone), so the two never drift; and THE ARENA WINDOW's model and its presses (ui/arena/arenaDoor.js, systems/arena/arenaBoard.js).
 // Design: bible/11-Multiplayer/Arena.md "3. The teams", "5. The Arena window".
 //
 // Each person's word is a keyed choice (ui/talkWindow.js ChoiceWindow - the enhanced dialog on the Plus skin, the panel
@@ -34,7 +34,7 @@ import { PLAQUE_MAX } from '../world/arena/arenaPlaques.js';   // ARENA5: the wa
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 import { nextLadderBout, arenaLadderRestore } from '../systems/arena/arenaLadder.js';
 import { FIGHT_HEALTH_MIN } from '../systems/arena/arenaHerald.js';
-import { createArenaOverlay, closeArenaDoor } from '../ui/arenaDoor.js';
+import { createArenaOverlay, closeArenaDoor } from '../ui/arena/arenaDoor.js';
 import { bookRestore, houseOutcome } from '../systems/arena/arenaBook.js';   // ARENA4b: online the relay's verdict settles, the house's only for an hour it never ran
 import { bookSaw } from '../systems/arena/arenaBook.js';   // AUDIT PRE-MERGE 1003 B3: an hour seen here is not fought again
 
@@ -88,7 +88,7 @@ export function recruiterChoiceOnline({ banner, board, guest = false, window = t
  *   openWindow?: ((page?: string) => any) | null, liveHour?: () => (number|null), begun?: () => boolean,
  *   heraldAct?: (a: string) => void, atGate?: () => boolean, onSand?: () => ({ a: string, b: string } | null),
  *   online?: () => any,
- * }} deps `openWindow` a door to the Arena window in place of the gate's own (ui/arenaDoor.js - null: none opens);
+ * }} deps `openWindow` a door to the Arena window in place of the gate's own (ui/arena/arenaDoor.js - null: none opens);
  *   `heraldAct` the Herald's own doors (watch, fight - the window's presses), `atGate` whether the player stands at the
  *   gate (systems/arenaGate.js nearArenaGate), `onSand` the names on the city's sand now;
  *   `liveHour` the hour whose exhibition stands on a floor here (its wager waits for its verdict), `begun` whether that
@@ -98,7 +98,7 @@ export function recruiterChoiceOnline({ banner, board, guest = false, window = t
  */
 export function createArenaGate(deps) {
   const P = deps.playerEntity;
-  /** The window's door: the host's own, or the gate's (ui/arenaDoor.js, shown in the host's slot). */
+  /** The window's door: the host's own, or the gate's (ui/arena/arenaDoor.js, shown in the host's slot). */
   const openWindow = deps.openWindow === undefined ? (page) => { const ov = windowOverlay(page); if (ov) deps.showOverlay(ov); return !!ov; } : deps.openWindow;
   const gm = () => Math.floor(Number(deps.gameMinutes()) || 0);
   const say = (line) => deps.say?.(line);

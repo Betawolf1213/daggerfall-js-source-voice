@@ -470,7 +470,7 @@ export const RUMOR_WEAK = 0.5;
 export const RUMOR_NAMED = 1 / 3;
 /** RVN7b (18.2): a weakness hinted in a town's words, by its kind. */
 export const RUMOR_HINTS = Object.freeze({ element: 'some element is its bane', metal: 'a metal bites it deep', weapon: 'one kind of weapon hurts it more than the rest', sun: 'it shuns the sun' });
-/** RVN7c (18.3): a lair's circle on the maps, map pixels - a bounty's (ui/bountyMapMark.js BOUNTY_RING_R). */
+/** RVN7c (18.3): a lair's circle on the maps, map pixels - a bounty's (ui/bounty/bountyMapMark.js BOUNTY_RING_R). */
 export const LAIR_RING_R = 1.5;
 /** RVN7 (18.4): a lair stand's drop - its gold x1.25. */
 export const LAIR_GOLD = 1.25;

@@ -16,8 +16,8 @@ import { corpseLootTargets, pileBody } from '../src/scenes/corpseMarker.js';
 import { worldHoverFrame, destroyWorldPlaque, bodyStackText } from '../src/ui/worldPlaque.js';
 import { setBindings } from '../src/ui/input.js';
 import { ACTIONS, DEFAULT_BINDINGS, ACTION_GROUPS, createBindings, resetDefaults } from '../src/systems/inputActions.js';
-import { mountEnhancedInventory, remoteModel } from '../src/ui/enhancedInventory.js';
-import { NativeInventoryWindow, pileLabel } from '../src/ui/nativeInventory.js';
+import { mountEnhancedInventory, remoteModel } from '../src/ui/enhanced/enhancedInventory.js';
+import { NativeInventoryWindow, pileLabel } from '../src/ui/native/nativeInventory.js';
 import { REMOTE_TARGET_ICON_RECT } from '../src/ui/targetIconPanel.js';
 import { withDom } from './invdrag.mjs';
 
@@ -262,7 +262,7 @@ test('LOOT-STACK the classic window: the body\'s picture turns the pile - LEFT t
   assert.equal(alone._remoteTargetIcon().label, '');
   alone.click(...at);
   assert.equal(alone.done, false, 'a body alone: the click the panel always refused');
-  const src = rd('src/ui/nativeInventory.js');
+  const src = rd('src/ui/native/nativeInventory.js');
   assert.ok(src.includes('    this._close();\n    pile.open(next.key);'), 'by source: the window closed, then the body handed over');
 });
 
@@ -323,7 +323,7 @@ test('LOOT-STACK the producers say which targets are bodies: the two surface poo
 });
 
 test('LOOT-STACK the plaque\'s dress, which tools/lootStackProbe.mjs measures in Chromium: the divider is the LIST\'s top edge, under the whole label (a sub-line - a pile\'s mark, a chest\'s lock level - is the label\'s, never the list\'s first row); the lit band\'s margin is the plaque\'s own padding at every width and its padding matches it, so the lit name stands where every name stands; the list clips DOWNWARD only (mutants: the divider back at the title\'s foot; the band\'s margin a literal; the band\'s left padding 12; the narrow sheet\'s padding a literal; the clip across again)', () => {
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\n\.wplaque-list \{ padding-top: 8px; margin-top: 8px; border-top: 2px solid rgba\(125,116,96,0\.3\); \}/, 'the divider on the list');
   assert.doesNotMatch(css, /\.wplaque-title \{[^}]*border-bottom/, 'and nowhere at the title\'s foot');
   assert.match(css, /\n\.wplaque \{[\s\S]{0,300}?--wp-pad-x: 14px; padding: 10px var\(--wp-pad-x\);/, 'the plaque\'s padding is one number');   // (its rule holds a ${} placeholder, so no [^}] walk)

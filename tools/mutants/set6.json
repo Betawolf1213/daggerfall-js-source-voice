@@ -145,7 +145,7 @@
   },
   {
     "name": "SET6-the-rung-unframed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  aetheric: `--rar: #bfe8ff; --rar-hi: #f0faff; --rar-lo: #4d7fa3; --rar-rgb: 191,232,255; --rar-pips: '\\\\25c8';`,\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SET6-the-rung-uncoloured",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".itemrow[data-rarity=\"aetheric\"] .itemname > span:first-child, .packdetail .card[data-rarity=\"aetheric\"] h3, .wplaque-row[data-rarity=\"aetheric\"] > span:first-child { color: #bfe8ff; }\n",
     "new": "",
     "tests": [

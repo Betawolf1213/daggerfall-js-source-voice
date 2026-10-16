@@ -461,8 +461,8 @@ test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names t
 });
 
 test('AUDIT MERCHANT-YARDS Y1: THE YARD\'S WINDOW TAKES NO STEAL - the classic window\'s Steal says the keeper\'s word and nothing is rolled, tallied, moved or closed (a roll that would get away with anything), the enhanced window stands no Steal; a shop\'s counter keeps both (mutants: the classic\'s refusal unread, the enhanced\'s button kept)', async () => {
-  const { NativeTradeWindow, TRADE_RECTS } = await import('../src/ui/nativeTrade.js');
-  const { mountEnhancedTrade } = await import('../src/ui/enhancedTrade.js');
+  const { NativeTradeWindow, TRADE_RECTS } = await import('../src/ui/native/nativeTrade.js');
+  const { mountEnhancedTrade } = await import('../src/ui/enhanced/enhancedTrade.js');
   const { withDom } = await import('./invdrag.mjs');
   const b = yardCounter('transport', 17, 'Moorhart\'s Wagon Yard');
   const counter = (refuse) => {

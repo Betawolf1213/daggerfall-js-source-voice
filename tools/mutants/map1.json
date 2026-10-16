@@ -1,7 +1,7 @@
 [
   {
     "name": "coast-through-pixel-centres",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      if (x + 1 < width && here !== inside(x + 1, y)) segs.push([x + 1, y, x + 1, y + 1]);",
     "new": "      if (x + 1 < width && here !== inside(x + 1, y)) segs.push([x + 0.5, y, x + 0.5, y + 1]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "coast-ignores-climate",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    return !isWaterPixel(climate, byte);",
     "new": "    return byte > 0 || climate === -2;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "border-on-the-coast",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      if (x + 1 < width && isLand(x + 1, y)) {",
     "new": "      if (x + 1 < width) {",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "border-through-unnamed",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "        if (q >= 0 && q !== r) segs.push([x + 1, y, x + 1, y + 1]);",
     "new": "        if (q !== r) segs.push([x + 1, y, x + 1, y + 1]);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "generated-network-inked",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  if (!net || net.source !== 'basic-roads') return { roads: [], tracks: [] };",
     "new": "  if (!net) return { roads: [], tracks: [] };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "tracks-dropped",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  return { roads: soften(net.roads), tracks: soften(net.tracks) };",
     "new": "  return { roads: soften(net.roads), tracks: [] };",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "undiscovered-inked",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const opts = isDiscovered ? { isDiscovered } : {};",
     "new": "  const opts = { isDiscovered: () => true };",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "far-shows-hamlets",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  far: new Set([11]),\n  mid: new Set([0, 1, 2, 8, 9, 10, 11, 12, 13]),",
     "new": "  far: new Set([11, 12]),\n  mid: new Set([0, 1, 2, 8, 9, 10, 11, 12, 13]),",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "band-boundaries-moved",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  Object.freeze({ name: 'mid', min: 2.4 }),",
     "new": "  Object.freeze({ name: 'mid', min: 2.5 }),",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "clamp-no-centre",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (visible >= map) return lo + (map - visible) / 2;",
     "new": "    if (visible >= map) return lo;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "clamp-lets-edge-in",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    return Math.min(lo + map - visible, Math.max(lo, o));",
     "new": "    return Math.max(lo, o);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ceiling-dropped",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const scale = Math.max(scaleMin, Math.min(SCALE_MAX, view.scale));",
     "new": "  const scale = Math.max(scaleMin, view.scale);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "zoom-not-at-cursor",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  return { ox: mx - px / scale, oy: my - py / scale, scale };",
     "new": "  return { ox: view.ox, oy: view.oy, scale };",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "overlap-drawn",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const hits = (box) => boxes.some((b) => b.x < box.x + box.w && b.x + b.w > box.x && b.y < box.y + box.h && b.y + b.h > box.y);",
     "new": "  const hits = () => false;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "rank-ignored",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    .sort((a, b) => (rank.get(a.colorIndex) ?? 99) - (rank.get(b.colorIndex) ?? 99));",
     "new": "    ;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "no-clear",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.clearRect(0, 0, paperW, paperH);\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "wash-dropped",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  stroke(model.coast, Math.max(3, s * 1.6), PEN.wash);\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "roads-flag-ignored",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  if (!opts.filters?.roads) stroke(model.roads, band === 'far' ? 1 : 1.5, PEN.line);",
     "new": "  stroke(model.roads, band === 'far' ? 1 : 1.5, PEN.line);",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "tracks-at-far",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  if (band !== 'far' && !opts.filters?.tracks) stroke(model.tracks, 1, PEN.soft, [2, 3]);",
     "new": "  if (!opts.filters?.tracks) stroke(model.tracks, 1, PEN.soft, [2, 3]);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "party-in-ink-colour",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    ctx.strokeStyle = m.color; ctx.lineWidth = 2.2;",
     "new": "    ctx.strokeStyle = PEN.line; ctx.lineWidth = 2.2;",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "label-ignores-view",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    const [x, y] = toPaper(view, m.x, m.y);\n    ctx.strokeStyle = m.color;",
     "new": "    const [x, y] = [m.x * view.scale, m.y * view.scale];\n    ctx.strokeStyle = m.color;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "names-not-in-the-face",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      ctx.font = nameFont(n.mark, n.size);\n      ctx.fillText(n.mark.name, n.x, n.y);",
     "new": "      ctx.font = `${n.size}px sans-serif`;\n      ctx.fillText(n.mark.name, n.x, n.y);",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "MAPFIELD2-the-root-paints-its-own-black-again",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  background: transparent; cursor: grab; touch-action: none;",
     "new": "  background: #000; cursor: grab; touch-action: none;",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "MAPFIELD2-the-hide-is-subject-to-the-large-HUD-carve-out",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  const hudCovered = hudHidden || ((windowCoversHud ?? cursorActive) && !largeHud?.art);",
     "new": "  const hudCovered = (hudHidden || (windowCoversHud ?? cursorActive)) && !largeHud?.art;",
     "tests": [
@@ -524,7 +524,7 @@
   },
   {
     "name": "MAPFIELD6-names-ignore-glyphs",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  for (const m of marks) {\n    if (!shown.has(m.colorIndex) || !onSheet(m)) continue;\n    const [px, py] = toPaper(view, m.x, m.y);\n    const r = markReach(m) + 1;   // HUB1: a hub's circle is ground its glyph holds\n    boxes.push({ x: px - r, y: py - r, w: r * 2, h: r * 2 });\n    if (m.carriage) {   // OW-HUBS: and a carriage town's wheel beside it\n      const [wx, wy] = carriageWheelAt(m, px, py), wr = CARRIAGE_WHEEL_R + 1;\n      boxes.push({ x: wx - wr, y: wy - wr, w: wr * 2, h: wr * 2 });\n    }\n  }",
     "new": "",
     "note": "re-aimed BY CONTENT (FIELD BUGS 2026-10-04e, OW-HUBS): the seeding loop grew a carriage wheel's ground",
@@ -534,7 +534,7 @@
   },
   {
     "name": "MAPFIELD6-one-candidate-only",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    const fit = cands.map((c) => ({ ...c, box: nameBox(c.x, c.base, w, size) }))",
     "new": "    const fit = [cands[0]].map((c) => ({ ...c, box: nameBox(c.x, c.base, w, size) }))",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "MAPFIELD6-the-glyphs-lose-their-halo",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  for (const [m, x, y] of inked) paintGlyph(ctx, m.kind, x, y, true);",
     "new": "",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "MAPFIELD6-the-halo-is-drawn-per-mark-not-per-pass",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  for (const [m, x, y] of inked) paintGlyph(ctx, m.kind, x, y, true);\n  for (const [m, x, y] of inked) {\n    paintGlyph(ctx, m.kind, x, y, false, opts.inks?.[m.kind]",
     "new": "  for (const [m, x, y] of inked) {\n    paintGlyph(ctx, m.kind, x, y, true);\n    paintGlyph(ctx, m.kind, x, y, false, opts.inks?.[m.kind]",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "MAPFIELD6-the-names-lose-their-halo",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    for (const n of opts.names) {\n      ctx.font = nameFont(n.mark, n.size);\n      ctx.strokeText(n.mark.name, n.x, n.y);\n    }",
     "new": "",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "MAPFIELD6-the-halo-is-no-fatter-than-the-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "export const HALO_PEN = 1.6;",
     "new": "export const HALO_PEN = 0;",
     "tests": [
@@ -633,7 +633,7 @@
   },
   {
     "name": "MAPFIELD6-a-name-may-sit-off-the-paper",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      .find((c) => c.box.x >= 2 && c.box.x + c.box.w <= paperW - 2\n        && c.box.y >= 2 && c.box.y + c.box.h <= paperH - 2 && !hits(c.box));",
     "new": "      .find((c) => c.box.x >= 2 && c.box.x + c.box.w <= paperW - 2 && !hits(c.box));",
     "tests": [
@@ -642,7 +642,7 @@
   },
   {
     "name": "MAPFIELD6-the-reserved-box-is-not-the-inks",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  return { x, y: baseline - (size * NAME_ASC), w, h: size * (NAME_ASC + NAME_DESC) };",
     "new": "  return { x, y: baseline - (size * 0.55), w, h: size * 1.1 };",
     "tests": [
@@ -687,7 +687,7 @@
   },
   {
     "name": "AUDITMAPFIELD-the-carets-are-ink-again",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  ctx.strokeStyle = PEN.relief;",
     "new": "  ctx.strokeStyle = PEN.soft;",
     "tests": [
@@ -696,7 +696,7 @@
   },
   {
     "name": "AUDITMAPFIELD-the-halo-is-the-pen",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  halo: rgba(PARCHMENT_RGB, 0.80),    // MAP-FIELD6: the parchment, quieted under a glyph or a name",
     "new": "  halo: rgba(INK_RGB, 0.80),    // MAP-FIELD6: the parchment, quieted under a glyph or a name",
     "tests": [
@@ -705,7 +705,7 @@
   },
   {
     "name": "AUDITMAPFIELD-the-filled-halo-is-not-stroked",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const solid = () => { ctx.fill(); if (halo) ctx.stroke(); };",
     "new": "  const solid = () => { ctx.fill(); };",
     "tests": [

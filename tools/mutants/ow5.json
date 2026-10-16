@@ -155,7 +155,7 @@
   },
   {
     "name": "OW5-G1-words",
-    "file": "src/ui/enhancedTravelControl.js",
+    "file": "src/ui/enhanced/enhancedTravelControl.js",
     "old": "ground: 'until the Overworld rises'",
     "new": "ground: 'while the land loads'",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "OW5-R3-said-every-tick",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (last.saidNames === names && at - (last.saidAt ?? -Infinity) < TV_SAID_DISTANCE_MS) return;\n",
     "new": "",
     "tests": [

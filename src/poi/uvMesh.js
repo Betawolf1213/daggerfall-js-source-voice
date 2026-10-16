@@ -4,7 +4,7 @@
 //
 // Mac: "the ability to import models, texture, UV map"; asked what "UV map" covers: "Full UV editor" - select vertices,
 // edges, faces and islands; move, rotate, scale; seams; unwrap; pack (bible/06-Systems/POI-Editor-Arc.md POI-5).
-// Pure - no DOM, no GL - so the editor's UV panel (ui/poiUvPanel.js) and the tests read a mesh the same way:
+// Pure - no DOM, no GL - so the editor's UV panel (ui/poi/poiUvPanel.js) and the tests read a mesh the same way:
 //
 //   - THE SESSION (`uvSessionOf`): a POI mesh (poi/poiMesh.js) as its triangles, each CORNER with a UV of its own, and
 //     its vertices WELDED by position (a model's vertices are split wherever its UVs or normals part; the weld is the

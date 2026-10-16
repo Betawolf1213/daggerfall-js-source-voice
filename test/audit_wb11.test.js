@@ -20,12 +20,12 @@ import { createEnchantCtx } from '../src/scenes/hostEnchant.js';
 import { setDefaultEnchantCtx, ENCHANTMENT_TYPES as ET, PAYLOAD, doItemEnchantmentPayloads } from '../src/systems/enchantments.js';
 import { stateAnims, HURT_ANIMS, MOVE_ANIMS, mobileOrientation, FLY_ANIM_SPEED } from '../src/characters/mobileUnit.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
-import { MARK_TIPS } from '../src/ui/gateMarksView.js';
+import { DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
+import { MARK_TIPS } from '../src/ui/gate/gateMarksView.js';
 import { GATE_TRIALS } from '../src/net/gate/gateMods.js';   // WB13b
-import { bossBarModel, destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
-import { destroyGateGround } from '../src/ui/gateGroundView.js';
+import { bossBarModel, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
+import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import { marksLine, gateModsOf, gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

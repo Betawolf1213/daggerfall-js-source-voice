@@ -4,8 +4,8 @@
 // appear on the compass. The node itself should also stand out with a
 // detailed slight glow or something"): A PROFESSION'S NODES, IN ITS
 // OWN COLOUR - every herb patch, vein, boulder, tree, school and body
-// standing near the player on the compass (both skins: ui/hud.js
-// drawNodeCompassMarks, ui/enhancedHud.js) and lit in the world by its
+// standing near the player on the compass (both skins: ui/hud/hud.js
+// drawNodeCompassMarks, ui/enhanced/enhancedHud.js) and lit in the world by its
 // glow (render/nodeGlow.js), one colour a profession in both, so a mark
 // and the light it points at read as one thing. The nodes themselves
 // are the gathering host's (scenes/gatherHost.js marks).

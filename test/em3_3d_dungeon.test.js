@@ -2,8 +2,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildSolid, orbitFrame, toSheet, fromSheet, easeOrbit, ORBIT, SOLID, ORBIT_BUTTONS } from '../src/ui/inkDungeonSolid.js';
-import { createAutomapSheet } from '../src/ui/automapSheet.js';
+import { buildSolid, orbitFrame, toSheet, fromSheet, easeOrbit, ORBIT, SOLID, ORBIT_BUTTONS } from '../src/ui/ink/inkDungeonSolid.js';
+import { createAutomapSheet } from '../src/ui/automap/automapSheet.js';
 import { levelField, deriveFloors, floorTriangles, planBounds } from '../src/systems/automap/automapFloors.js';
 
 const row = (key, y, x0, z0, x1, z1) => ({
@@ -258,7 +258,7 @@ test('EM3-3D fix: a turn re-cuts the kept classification instead of rebuilding w
 });
 
 test('EM3-3D classic: a face is drawn exactly when the GAME would draw it - its wound normal at the eye', async () => {
-  const { rowMesh, createDungeonInk, SLICE_ABOVE } = await import('../src/ui/inkDungeonGL.js');
+  const { rowMesh, createDungeonInk, SLICE_ABOVE } = await import('../src/ui/ink/inkDungeonGL.js');
   const { perspective, lookAt, mirrorProjectionX } = await import('../src/world/mat4.js');
   const { slicingPositionY, DEFAULT_SLICING_BIAS_Y } = await import('../src/systems/automap/automap.js');
   const { EYE_HEIGHT } = await import('../src/player/motor.js');
@@ -280,7 +280,7 @@ test('EM3-3D classic: a face is drawn exactly when the GAME would draw it - its 
 });
 
 test('EM3-3D classic: a step\'s riser joins its flight, so a stair is never inked solid; a wall stays a wall', async () => {
-  const { rowMesh, RISER_MAX } = await import('../src/ui/inkDungeonGL.js');
+  const { rowMesh, RISER_MAX } = await import('../src/ui/ink/inkDungeonGL.js');
   const quad = (pts) => ({ positions: new Float32Array(pts.flat()), indices: new Uint16Array([0, 1, 2, 0, 2, 3]), matrix: null });
   const riser = rowMesh(quad([[0, 0, 0], [1, 0, 0], [1, 0.25, 0], [0, 0.25, 0]]));
   const wall = rowMesh(quad([[0, 0, 0], [1, 0, 0], [1, 3, 0], [0, 3, 0]]));
@@ -290,7 +290,7 @@ test('EM3-3D classic: a step\'s riser joins its flight, so a stair is never inke
 });
 
 test('FIELD BUGS 2026-10-05c RAMP-INK ("where there is a steep upward incline in a hallway, never gets filled properly"): a ramp the player walks is inked as floor - 55 and 65 degrees, Daggerfall\'s steep hallways - by the plan\'s own law (automapFloors FLOOR_NY, the motor\'s slope limit), and a face steeper than the motor walks stays a wall; the shader reads the one constant, no literal (mutants: the old 0.6, the law not the plan\'s)', async () => {
-  const { rowMesh, FLOOR_FACE_NY, faceInkOf } = await import('../src/ui/inkDungeonGL.js');
+  const { rowMesh, FLOOR_FACE_NY, faceInkOf } = await import('../src/ui/ink/inkDungeonGL.js');
   const { FLOOR_NY } = await import('../src/systems/automap/automapFloors.js');
   assert.equal(FLOOR_FACE_NY, FLOOR_NY, 'one law for the plan and the 3D sheet');
   // a hallway's climb along +z, wound so its face looks up (as the world pass culls it)
@@ -305,7 +305,7 @@ test('FIELD BUGS 2026-10-05c RAMP-INK ("where there is a steep upward incline in
   }
   assert.equal(faceInkOf(ramp(75).nrm[1]), 'wall', 'steeper than the motor walks: a wall');
   assert.equal(faceInkOf(-1), 'ceiling');
-  const src = readFileSync(new URL('../src/ui/inkDungeonGL.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/ink/inkDungeonGL.js', import.meta.url), 'utf8');
   assert.equal((src.match(/n\.y > \$\{FNY\}/g) ?? []).length, 4, 'the climb, the stones, the pencil, the wet floor: the one constant');
   assert.doesNotMatch(src, /n\.y > 0\.6/, 'no literal floor lean left in the shader');
 });
@@ -348,7 +348,7 @@ test('EM3-3D: the right stick zooms the held map - forward in, back out', async 
 test('EM3-3D: the 3D map tilts from straight down all the way to level, and water carries its level to the ink', async () => {
   assert.equal(ORBIT.pitchMax, Math.PI / 2, 'straight down');
   assert.ok(ORBIT.pitchMin > 0.1 && ORBIT.pitchMin < 0.35, 'down to nearly side-on - never level, never under the floor');
-  const { rowMesh, WAVE_STEP, WAVE_SHARE } = await import('../src/ui/inkDungeonGL.js');
+  const { rowMesh, WAVE_STEP, WAVE_SHARE } = await import('../src/ui/ink/inkDungeonGL.js');
   const floor = { positions: new Float32Array([0, 0, 0, 0, 0, 1, 1, 0, 0]), indices: new Uint16Array([0, 1, 2]), matrix: null };
   assert.ok(rowMesh({ ...floor, waterLevel: 0.6 }).water.every((w) => Math.abs(w - 0.6) < 1e-6), 'a watered block\'s level rides every vertex');
   assert.ok(rowMesh({ ...floor }).water.every((w) => w < -1e8), 'a dry one is never under water');
@@ -383,7 +383,7 @@ test('TURN-FIXED: a held turn and a tilt all the way down to level keep the midd
 
 // ME-PAN fix: the pan clamp keeps a sheet's drawn box on the paper, but always lets the player be centred.
 test('ME-PAN: clampView with a pan box holds the drawn map on the paper and allows the view centred on the player', async () => {
-  const { clampView, PAN_SLACK } = await import('../src/ui/inkMap.js');
+  const { clampView, PAN_SLACK } = await import('../src/ui/ink/inkMap.js');
   const L = { mapW: 5000, mapH: 5000, paperW: 800, paperH: 600, pan: { x0: 1000, y0: 1000, x1: 1400, y1: 1300, me: [1395, 1010] } };
   const far = clampView({ ox: 0, oy: 0, scale: 4 }, L);          // dragged way off to the top left
   assert.ok(far.ox >= 1000 - 200 * PAN_SLACK - 1e-9 && far.oy >= Math.min(1000 - 150 * PAN_SLACK, 1010 - 75) - 1e-9);
@@ -410,7 +410,7 @@ test('ME-PAN: Home puts the player in the middle of the paper, not the middle of
 });
 
 test('ME-PAN: the border stops a drag outward but never snaps a view back', async () => {
-  const { clampView } = await import('../src/ui/inkMap.js');
+  const { clampView } = await import('../src/ui/ink/inkMap.js');
   const L = { mapW: 5000, mapH: 5000, paperW: 800, paperH: 600, pan: { x0: 1000, y0: 1000, x1: 1400, y1: 1300 } };
   // a turn left the middle 300 units west of the drawn box: a drag further west is stopped where it was...
   const was = { ox: 700 - 100, oy: 1100 - 75, scale: 4 };
@@ -476,7 +476,7 @@ test('ALL-FLOORS: L (or the All button) shows every explored floor, Me keeps it,
 });
 
 test('ALL-FLOORS: a row belongs to the storey of its FLOOR, not of the rock under it', async () => {
-  const { rowMesh } = await import('../src/ui/inkDungeonGL.js');
+  const { rowMesh } = await import('../src/ui/ink/inkDungeonGL.js');
   // a room's floor at 5 m over a block of rock whose underside is at 2 m (both level faces; the floor is the bigger)
   const q = (y, s, up) => { const a = [0, y, 0], b = [s, y, 0], c = [s, y, s], d = [0, y, s]; return up ? [a, d, c, a, c, b] : [a, b, c, a, c, d]; };
   const tris = [...q(5, 10, true), ...q(2, 4, false)];

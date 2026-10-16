@@ -21,7 +21,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { customFrames, WEAPON_TYPES, STATE_INDEX, GENERAL_ANIMS } from '../src/combat/fpsWeapon.js';
-import { makeIconDrawer } from '../src/ui/itemScroller.js';
+import { makeIconDrawer } from '../src/ui/item/itemScroller.js';
 import { createWeaponWidget, readWidgetSettings, WEAPON_WIDGET_VENDOR } from '../src/combat/weaponWidget.js';
 import { createWeaponMachine, machineStep } from '../src/characters/weaponStates.js';
 import { WEAPON_MATERIALS, WEAPONS } from '../src/characters/weapons.js';
@@ -82,8 +82,8 @@ test('AUDIT-DW F1: the list drawer decodes THE RECORD it draws before the upload
   assert.ok(d2(renderer, { s: 1, ox: 0, oy: 0 }, { group: 'Books', templateIndex: 277 }, [0, 0, 100, 100], 0));
   // the same seam in the other three doors, by source
   // DISC22-D: the drawer's own decode - the hook is a spy's seam, and a host without it decodes through the module
-  for (const f of ['src/ui/itemScroller.js', 'src/ui/nativeInventory.js']) assert.match(rd(f), /await preloadIconRecord\(icons, img\);/, f);
-  assert.match(rd('src/ui/itemScroller.js'), /const ask = icons\?\.preloadRecord \?\? \(\(archive, record, dye\) => preloadTextureRecord\(archive, record, 0, 'Albedo', dye\)\.catch\(\(\) => null\)\);/);
+  for (const f of ['src/ui/item/itemScroller.js', 'src/ui/native/nativeInventory.js']) assert.match(rd(f), /await preloadIconRecord\(icons, img\);/, f);
+  assert.match(rd('src/ui/item/itemScroller.js'), /const ask = icons\?\.preloadRecord \?\? \(\(archive, record, dye\) => preloadTextureRecord\(archive, record, 0, 'Albedo', dye\)\.catch\(\(\) => null\)\);/);
   assert.match(rd('src/ui/textureCanvas.js'), /\? preloadTextureRecord\(archive, record, 0, 'Albedo', dye\)\.catch\(\(\) => null\)/, 'the DOM door');
   assert.match(rd('src/ui/paperDoll.js'), /await preloadTextureRecord\(archive, record, 0, 'Albedo', dye\);[^\n]*\n\s+const swap = decodedTextureTopDown/, 'the doll');
   assert.match(rd('src/combat/diverseWeaponsIcons.js'), /gate: moddedWeaponHUDAnimsEnabled, lazy: true/, 'the mod\'s icons are lazy');

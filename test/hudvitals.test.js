@@ -1,6 +1,6 @@
 // VB1 - THE VITALS INDICATORS (F148) + THE COLOUR SWAP (F149).
 // HUDVitals.cs, VerticalProgressSmoother.cs, VitalsChangeDetector.cs
-// (MIT, Daggerfall Workshop), ported whole into ui/hudVitals.js.
+// (MIT, Daggerfall Workshop), ported whole into ui/hud/hudVitals.js.
 // EnableVitalsIndicators ships TRUE, so the damage trail is the
 // DEFAULT look and the old three plain bars were the setting-FALSE
 // path all along.
@@ -19,10 +19,10 @@ import {
   createVitalsDetector, detectVitals,
   createVitalsRig, synchronizeImmediately, applyVitalsChange, updateAllVitals,
   updateHudVitals, _resetHudVitals, vitalsSkin, drawVitalsBars,
-} from '../src/ui/hudVitals.js';
+} from '../src/ui/hud/hudVitals.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
-import { drawHud } from '../src/ui/hud.js';
-import { drawHudLarge } from '../src/ui/hudLarge.js';
+import { drawHud } from '../src/ui/hud/hud.js';
+import { drawHudLarge } from '../src/ui/hud/hudLarge.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, 'src', p), 'utf8');
@@ -266,7 +266,7 @@ test('VB1 draw: without indicators only the three mains draw - the old HUD exact
 // ---------------------------------------------------------------
 
 test('VB1 wiring: drawHud runs the rig on BOTH branches and hudLarge draws through the same law', () => {
-  const hud = src('ui/hud.js');
+  const hud = src('ui/hud/hud.js');
   // AUDIT 39 F131 MOVED THIS PIN: the two calls became ONE, above the
   // skin fork - `!!largeHud?.art` names which instance is enabled, the
   // same question the branch below asks, and the detector now runs
@@ -276,7 +276,7 @@ test('VB1 wiring: drawHud runs the rig on BOTH branches and hudLarge draws throu
     'one detector call, and the large HUD is the OTHER instance');
   assert.equal((hud.match(/updateHudVitals\(/g) || []).length, 1, 'called ONCE, not once per branch');
   assert.match(hud, /drawVitalsBars\(renderer, rig, skin, rects, indicators\)/);
-  const large = src('ui/hudLarge.js');
+  const large = src('ui/hud/hudLarge.js');
   assert.match(large, /drawVitalsBars\(renderer, vitalsBars\.rig, vitalsBars\.skin, \{/,
     'the large HUD draws its vitals through the shared nine-bar law');
   assert.match(large, /import \{ drawVitalsBars \} from '\.\/hudVitals\.js';/);
@@ -284,7 +284,7 @@ test('VB1 wiring: drawHud runs the rig on BOTH branches and hudLarge draws throu
   // in BOTH instances' constructors). The idle rig's copy is masked
   // from behaviour by the toggle reset - which is exactly why DFU
   // needs that reset - so the subscription is pinned at the source.
-  assert.match(src('ui/hudVitals.js'),
+  assert.match(src('ui/hud/hudVitals.js'),
     /applyVitalsChange\(_rigs\.small, k, c, cur\); applyVitalsChange\(_rigs\.large, k, c, cur\);/,
     'change events reach both instances');
 });

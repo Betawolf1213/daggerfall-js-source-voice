@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
 const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 function lifted(name, next, scope) {

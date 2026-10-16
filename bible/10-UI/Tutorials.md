@@ -143,7 +143,7 @@ constructor, so a beat after the court opens the page stands over the plea; the 
 dialog, answered its own buttons wherever it stood, and its scrim took the click the page's "click or press any key"
 asked for. A Guilty pressed under the page pleaded, the prison screen replaced the PAGE, and the answered plea stayed in
 the stack, painted with live buttons - a loop of pleas (`01-Overview/Field-Bugs-2026-10-13b.md` PLEA-LOOP). A covered
-keyed menu now takes no pointer and answers nothing (`ui/windowStack.js` windowCovered, `ui/enhancedDialog.js`): the
+keyed menu now takes no pointer and answers nothing (`ui/windowStack.js` windowCovered, `ui/enhanced/enhancedDialog.js`): the
 click falls through to the canvas and puts the page away, as a key does. A buttoned box (`ui/messageBox.js`'s, DLG1)
 always replayed its press on the canvas, so its host handed that to the top window; the keyed menu was the one
 dialog that reached its window directly.

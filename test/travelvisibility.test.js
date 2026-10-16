@@ -12,7 +12,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
+import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
 import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
@@ -103,7 +103,7 @@ test('TV: a hidden dungeon has no dot, cannot be hovered, and cannot be found', 
 });
 
 test('TV: the law has ONE home, and the world still writes on entry', () => {
-  const tm = readFileSync(new URL('../src/ui/travelMapWindow.js', import.meta.url), 'utf8');
+  const tm = readFileSync(new URL('../src/ui/travel/travelMapWindow.js', import.meta.url), 'utf8');
   assert.ok(tm.includes('hasDiscoveredLocationId(summary.id) || !!summary.discovered'),
     'checkLocationDiscovered is the store OR the baked flag, no type arm');
   // Every gate goes through the one member, never through the flag.

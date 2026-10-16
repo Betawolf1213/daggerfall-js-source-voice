@@ -27,7 +27,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { CharSheet } from '../src/ui/charsheet.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { SKILLS, SKILL_NAMES, skillValue, permanentSkillValue } from '../src/systems/skills.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import {
@@ -149,7 +149,7 @@ test('AUDIT 65 CV-1: the enhanced skin reads the same law - the number AND the m
   assert.equal(m.attributes.length > 0, true);
   // The accessor's ONE consumer draws the value text and the bar from
   // it, so the meter tracks the same figure the attribute bars do.
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /el\('span', 'v', m\.skillText \? m\.skillText\(id\) : String\(m\.skill\(id\)\)\)/, 'the number reads through the model');   // SOFTCAP1: \"85 (150)\" while mentoring
   assert.match(menu, /skillMeter\(m\.skillBase \? m\.skillBase\(id\) : m\.skill\(id\), mastered\)/, '...and so does the meter beside it');   // SOFTCAP6: and the mastery's gold track   // SOFTCAP1: the 0..100 bar and the gold 100..200 one
   // sheetModel's empty-entity path stays safe: `entity ?? {}` and

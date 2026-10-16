@@ -7,7 +7,7 @@
 // here: the camera's law (player/travelCamera.js, pure), the host's half driven against a fake host
 // (scenes/travelView.js - its states, the input it owns, every way out), the body held out of the head for the view
 // (player/mwView.js), the fog and the sun's cascades measured from the traveller (render/fogGlsl.js FOCUS_GLSL,
-// render/shadowPass.js, render/renderer.js setFocus), the readout (ui/travelViewHud.js), and the world host's wiring
+// render/shadowPass.js, render/renderer.js setFocus), the readout (ui/travel/travelViewHud.js), and the world host's wiring
 // by source - the one host the view lives in.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ import {
   orbitBy, turnCamera, stepCamera, blendView, anglesOf, angleDelta,
 } from '../src/player/travelCamera.js';
 import { createTravelView, TRAVEL_VIEW_TEXT, travelViewLine, TV_CLICK_SLOP, TV_LOOK_ACTIONS, TV_HEARTBEAT_MS, wheelNotches, TV_WORLD_ACTIONS } from '../src/scenes/travelView.js';
-import { compassDegrees, chevronDegrees, TRAVEL_VIEW_TITLE, TRAVEL_VIEW_HINTS, travelViewMouseHint } from '../src/ui/travelViewHud.js';
+import { compassDegrees, chevronDegrees, TRAVEL_VIEW_TITLE, TRAVEL_VIEW_HINTS, travelViewMouseHint } from '../src/ui/travel/travelViewHud.js';
 import { FOG_GLSL, FOCUS_GLSL } from '../src/render/fogGlsl.js';
 import { SHADOW_GLSL } from '../src/render/shadowPass.js';
 import { VC_PROFILE } from '../src/render/volumetricClouds.js';
@@ -535,7 +535,7 @@ test('AUDIT TV B1/B5/B6/B8/B9 by source: the focus is a frame\'s (a beginFrame n
   assert.match(w, /if \(!pointerSurfaces\.size && !gamePaused\(\)\) \{ if \(travelView\?\.active\) setCursorActive\(true\); else requestLook\(canvas\); \}/);
   assert.match(w, /: mwv0\.ownEye \? \{ \.\.\.mwv0, eye: tvHeadEye \} : mwv0;/);
   assert.match(w, /freeCursor: \(free\) => \{ if \(free\) \{ tvCursorWas = cursorActive\(\); setCursorActive\(true\); releaseLook\(\); \} else \{ setCursorActive\(tvCursorWas\); if \(!tvCursorWas && !gamePaused\(\) && !pointerSurfaces\.size && !\(modes\?\.modalWindowUp\?\.\(\) \?\? false\) && !overlayOpen\(\)\) requestLook\(canvas\); \} \},/, 'AUDIT DEEP T1-5: never the lock under a surface or a window - AUDIT DEEP2 A3: nor an overlay');
-  const hud = rd('src/ui/travelViewHud.js');
+  const hud = rd('src/ui/travel/travelViewHud.js');
   assert.match(hud, /const own = \(e\) => e\.stopPropagation\?\.\(\);\n\s*r\.addEventListener\?\.\('mousedown', own\);\n\s*r\.addEventListener\?\.\('mouseup', own\);/);
 });
 
@@ -565,8 +565,8 @@ test('AUDIT DEEP T1-7/X-1/X-2/T1-5: a look key let go in a text box still stops 
   assert.match(eb, /cam\.pos, cam\.feet, face\?\.yaw \?\? cam\.yaw, cfg\.scale/, 'the lantern\'s quad too');
   // T1-9: no crosshair on a camera 450 m up - the HUD's own reticle, told by the host, the vitals kept
   assert.match(w, /\{ font: townTalk\.font, cursorActive: gamePaused\(\), reticleHidden: !!tvf,/);
-  assert.match(rd('src/ui/hud.js'), /\n\s*reticleHidden,   \/\/ AUDIT DEEP T1-9/);
-  const eh = rd('src/ui/enhancedHud.js');
+  assert.match(rd('src/ui/hud/hud.js'), /\n\s*reticleHidden,   \/\/ AUDIT DEEP T1-9/);
+  const eh = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(eh, /const aim = !opts\.reticleHidden;\n\s*const showCross = aim && /);
   assert.match(eh, /const showCentreWord = aim && /);
   assert.match(eh, /const showCorner = aim && /);
@@ -591,7 +591,7 @@ test('TV1 host: the readout - the traveller\'s ring on the projected feet, the c
   assert.match(TRAVEL_VIEW_HINTS.mouse, /Click to travel/);
   // AUDIT DEEP T1-12: the keys the player really has - read on the way up, handed to the readout
   assert.equal(TRAVEL_VIEW_HINTS.mouse, travelViewMouseHint(), 'the defaults\' words when the host names none');
-  assert.match(rd('src/ui/travelViewHud.js'), /put\(parts\.hint, 'hint', f\.touch \? TRAVEL_VIEW_HINTS\.touch : travelViewMouseHint\(f\.keys \?\? \{\}\)\);/, 'the readout writes them');
+  assert.match(rd('src/ui/travel/travelViewHud.js'), /put\(parts\.hint, 'hint', f\.touch \? TRAVEL_VIEW_HINTS\.touch : travelViewMouseHint\(f\.keys \?\? \{\}\)\);/, 'the readout writes them');
   assert.match(travelViewMouseHint({ move: 'ESDF', out: 'P' }), /ESDF to walk · P to return$/);
   {
     const q = rig({ hintKeys: () => ({ move: 'ESDF', out: 'P' }) });
@@ -793,7 +793,7 @@ test('AUDIT DEEP2 A2/A3/A4/A6/A7 view: a wheel zooms by its size; a repeat of a 
 });
 
 test('AUDIT DEEP2 A1/A2/A5/A8/A9 by source: the travel panel keeps its presses; the pad is a cursor under the view; the key never repeats and answers indoors; a duel refuses the view', () => {
-  const panel = rd('src/ui/enhancedTravelControl.js');
+  const panel = rd('src/ui/enhanced/enhancedTravelControl.js');
   assert.match(panel, /bar\.addEventListener\('mousedown', \(e\) => \{ if \(e\.target\?\.closest\?\.\('\[data-act\]'\)\) e\.stopPropagation\(\); \}\);/);
   assert.doesNotMatch(panel, /addEventListener\('mouseup', \(e\) => \{ if \(e\.target\?\.closest/, 'never the release (AUDIT CHAT C5)');
   const w = rd('src/scenes/world.js');

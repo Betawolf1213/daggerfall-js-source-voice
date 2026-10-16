@@ -18,12 +18,12 @@ import { readFileSync } from 'node:fs';
 
 import {
   NativeTalkWindow, TALK_RECTS, CONVERSATION_ARROW_SCROLL, conversationScroll,
-} from '../src/ui/nativeTalk.js';
+} from '../src/ui/native/nativeTalk.js';
 import {
   ItemMakerWindow, ITEM_RECTS, rowLayout, enchContentH,
   ENCH_SCROLLER_STEP, ROWS_VISIBLE, ROW_START_Y, ROW_H_PLAIN, ROW_GAP,
-} from '../src/ui/itemMakerWindow.js';
-import { QuestJournalWindow, JOURNAL_RECTS, CONFIRM_TEXT, ENTER_NOTE_PROMPT, ENTER_NOTE_LABEL, ENTER_NOTE_WIDTH_OVERRIDE } from '../src/ui/questJournal.js';
+} from '../src/ui/item/itemMakerWindow.js';
+import { QuestJournalWindow, JOURNAL_RECTS, CONFIRM_TEXT, ENTER_NOTE_PROMPT, ENTER_NOTE_LABEL, ENTER_NOTE_WIDTH_OVERRIDE } from '../src/ui/quest/questJournal.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
 import { PlayerNotebook } from '../src/systems/notebook.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
@@ -58,7 +58,7 @@ test('F159: the conversation scroll PERSISTS - pinned to the newest row only on 
   // the ONE _pushQA helper - which is DFU's own shape, since
   // SetQuestionAnswerPairInConversationListbox (:1290-1293) is the
   // single writer both the topic ask and ButtonOkay's Work arm reach.
-  const s = src('ui/nativeTalk.js');
+  const s = src('ui/native/nativeTalk.js');
   assert.equal((s.match(/this\.conversationScroll = null;\s+\/\/ F159/g) ?? []).length, 1,
     'the one conversation writer resets to the newest row');
   assert.equal((s.match(/this\._pushQA\(/g) ?? []).length, 2, 'and both askers go through it');
@@ -124,7 +124,7 @@ test('F170: rowLayout shifts by the scroll and the wheel drives it, 8 a notch pa
 });
 
 test('F170: clicks and draw both map through the live offset', () => {
-  const s = src('ui/itemMakerWindow.js');
+  const s = src('ui/item/itemMakerWindow.js');
   assert.ok(s.includes('const hit = rowLayout(list, this[scrollKey]).find('),
     'the remove click rides the scrolled layout');
   assert.ok(s.includes('for (const row of rowLayout(list, this[scrollKey])) {'),
@@ -241,7 +241,7 @@ test('F160: EnterNote is the NOTEBOOK\'s alone (:509); finished quests still mov
   assert.equal(w.noteBox, null, 'no note door outside the notebook');
   assert.equal(ENTER_NOTE_PROMPT, 'Enter your note:');
   // the dispatchers cover finishedQuests through the store
-  const s = src('ui/questJournal.js');
+  const s = src('ui/quest/questJournal.js');
   assert.ok(s.includes("if (this.mode === 'finishedQuests') return nb?.getFinishedQuest(i) ?? null;"));
   assert.ok(s.includes("if (this.mode === 'finishedQuests') nb?.moveFinishedQuest(src, dst);"));
 });

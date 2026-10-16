@@ -343,7 +343,7 @@
   },
   {
     "name": "LW13-chronicle",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (p.company) top.append(el('span', 'sb-chip', p.company));   // LW13: the company they walk with\n",
     "new": "",
     "tests": [

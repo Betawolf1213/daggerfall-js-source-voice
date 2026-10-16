@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { newTable, sit, stand, tick, actAt, HOLDEM_FIRST_MS, HOLDEM_CLOCK_MS, HOLDEM_GAP_MS, HOLDEM_RUNOUT_MS } from '../src/net/holdemTable.js';
 import { HOLDEM_SIT_ROOM_HZ_MAX, CLOSE_REPLACED } from '../src/net/wire.js';
-import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
+import { HOLDEM_REFUSALS } from '../src/ui/card/cardTableHud.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 const seeded = (seed = 99) => { let x = seed >>> 0; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; return x >>>= 0; }; };

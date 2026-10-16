@@ -7,7 +7,7 @@
 //   - the card's WORDS for every Aetheric piece stay under a budget (the set's and the sigil's blocks in their card dress,
 //     the tier's lines without the lore), and the Info box (their whole dress) says more;
 //   - the card's height is capped at its window and it sheds a step at a time before its BODY scrolls - its buttons are
-//     a row of their own under the body, never inside it (ui/enhancedInventory.js fitCard, the placement, the sheet);
+//     a row of their own under the body, never inside it (ui/enhanced/enhancedInventory.js fitCard, the placement, the sheet);
 //   - the Info box is the whole read: the tier's lines and the lore, the sigil and the set whole.
 // A layout engine is the last word: tools/cardFitProbe.mjs presses every button of the heaviest cards at six screens.
 import './modsOff.js';
@@ -22,8 +22,8 @@ import { rarityLines, LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js'
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { sigilCard } from '../src/ui/sigilCard.js';
 import { setCard } from '../src/ui/setCard.js';
-import { fitCard, CARD_FITS, CARD_SHEET_SHARE, itemBriefLines, itemChatText, mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { fitCard, CARD_FITS, CARD_SHEET_SHARE, itemBriefLines, itemChatText, mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { wrapToolTipRows, TOOLTIP_WRAP_W } from '../src/ui/toolTip.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -119,7 +119,7 @@ test('CARD-FIT fitCard: the card is capped at its room, sheds CARD_FITS a step a
 });
 
 test('CARD-FIT the placement: the band a card may stand in is its window\'s AND the screen\'s, its room that band less what the tip carries beside its card; fitted BEFORE its height is read; written in the tip\'s own containing block\'s frame; a phone\'s sheet rises to its share of the screen from the screen\'s foot (mutants: fitted after the height is read; the window\'s height alone - a window taller than the screen; the frame\'s origin for a box that is not it; the sheet placed as a tip)', () => {
-  const inv = strip(read('src/ui/enhancedInventory.js'));
+  const inv = strip(read('src/ui/enhanced/enhancedInventory.js'));
   assert.match(inv, /const card = tip\.querySelector\('\.card'\);\s*const chrome = card \? Math\.max\(0, tip\.offsetHeight - card\.offsetHeight\) : 0;\s*const sheet = window\.getComputedStyle\(tip\)\.position === 'fixed';\s*const bandTop = Math\.max\(w\.top, 0\) \+ 10, bandFoot = Math\.min\(w\.bottom, window\.innerHeight\) - 10;\s*fitCard\(card, \(sheet \? Math\.round\(window\.innerHeight \* CARD_SHEET_SHARE\) : bandFoot - bandTop\) - chrome\);\s*if \(sheet\) return;\s*const tw = tip\.offsetWidth; const th = tip\.offsetHeight;/);
   assert.match(inv, /const top = Math\.max\(bandTop, Math\.min\(r\.top \+ r\.height \/ 2 - th \/ 2, bandFoot - th\)\);/);
   assert.match(inv, /const box = tip\.offsetParent \?\? frame;\s*const b = box\.getBoundingClientRect\(\);\s*tip\.style\.left = `\$\{Math\.round\(left - b\.left - \(box\.clientLeft \?\? 0\)\)\}px`;\s*tip\.style\.top = `\$\{Math\.round\(top - b\.top - \(box\.clientTop \?\? 0\)\)\}px`;/);
@@ -129,7 +129,7 @@ test('CARD-FIT the placement: the band a card may stand in is its window\'s AND 
 });
 
 test('CARD-FIT the sheet: the tip\'s card a column - its body the one thing that scrolls, its buttons a row of their own pinned under it - the tip free of the phone column\'s sheet, the phone\'s card a sheet at the screen\'s foot, its close bar the sheet\'s alone; the numbers as whole pairs; the lore\'s dim italic by its own class (mutants: the buttons inside the scroll; the tip stretched to the column\'s foot; the sheet with no foot; a pair broken across two lines; the last affix dressed as lore)', () => {
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.ok(css.includes('.pack-shell .packtip.packdetail .card { display: flex; flex-direction: column; overflow: hidden; }'));
   assert.match(css, /\.pack-shell \.packtip\.packdetail \.card-body \{ flex: 1 1 auto; min-height: 0; overflow-y: auto;/);
   assert.match(css, /\.pack-shell \.packtip\.packdetail \.card > \.acts \{ flex: 0 0 auto;/);
@@ -146,7 +146,7 @@ test('CARD-FIT the sheet: the tip\'s card a column - its body the one thing that
 });
 
 test('CARD-FIT the Info box is the whole read: the tier\'s lines and the lore (a line the powers box says is not said twice), then the sigil and the set in their whole dress; the card\'s own list leaves the lore out (mutants: the Info box without the tier\'s lines; a line said twice; the card with the lore)', () => {
-  const inv = strip(read('src/ui/enhancedInventory.js'));
+  const inv = strip(read('src/ui/enhanced/enhancedInventory.js'));
   assert.match(inv, /const said = new Set\(boxes\.flat\(\)\.map\(\(r\) => String\(r\?\.text \?\? r \?\? ''\)\.trim\(\)\)\);\s*const tier = rarityLines\(item, \{ sigil: false, set: false, technique: false \}\)\.filter\(\(t\) => t && !said\.has\(t\)\);\s*if \(tier\.length\) boxes\.splice\(1, 0, tier\.map\(\(text\) => \(\{ text, center: true \}\)\)\);/);   // PIN MOVED (TECH-CARD): the Info box's list leaves a technique to its whole block
   assert.match(inv, /\{ const sb = sigilCard\(item, \{ full: true \}\); if \(sb\) body\.append\(sb\); \}/);
   assert.match(inv, /\{ const set = setCard\(item, deps\.entity, itemLongName, \{ full: true \}\); if \(set\) body\.append\(set\); \}/);
@@ -181,10 +181,10 @@ test('CARD-FIT U4 + U10: a strip or a chat line says an item in BRIEF - the tier
     const cleave = itemChatText(blade, {});
     assert.match(cleave, /Sigil \([^)]+\): \+[\d.]+% damage/, 'a weapon\'s post carries its blow');
   } finally { setSetsWearer(() => null); _resetSigilSetsForTests(); _resetSigilForTests(); _resetForTests(); }
-  const t = strip(read('src/ui/enhancedPlayerTrade.js'));
+  const t = strip(read('src/ui/enhanced/enhancedPlayerTrade.js'));
   assert.match(t, /const powers = itemBriefLines\(selected\.item, deps, \{ worn: true \}\);/, 'the trade strip reads the brief');
-  assert.match(read('src/ui/enhancedPlayerTrade.js'), /\.ptrade-shell \.trade-detail-info \{ max-height: min\(30dvh, 180px\); overflow-y: auto;/, 'in a box that scrolls rather than grows');
-  assert.match(read('src/ui/enhancedPlayerTrade.js'), /@media \(max-width: 640px\) \{ \.ptrade-shell \.trade-detail \{ flex-wrap: wrap; \}/, 'the buttons under the words on a phone');
+  assert.match(read('src/ui/enhanced/enhancedPlayerTrade.js'), /\.ptrade-shell \.trade-detail-info \{ max-height: min\(30dvh, 180px\); overflow-y: auto;/, 'in a box that scrolls rather than grows');
+  assert.match(read('src/ui/enhanced/enhancedPlayerTrade.js'), /@media \(max-width: 640px\) \{ \.ptrade-shell \.trade-detail \{ flex-wrap: wrap; \}/, 'the buttons under the words on a phone');
 });
 
 test('CARD-FIT U6: Back with a card open puts the CARD away and keeps the pack - a second Back closes the pack (mutants: Back past the card)', () => {
@@ -212,7 +212,7 @@ test('CARD-FIT U6: Back with a card open puts the CARD away and keeps the pack -
 
 test('CARD-FIT U5 + U9 + U14 + U15 + U16 + the tier\'s mark: the pack\'s host clips rather than scrolls; the Info box\'s words scroll under a Close that stays and a press on its dim closes it; no hover card over the item\'s own open card; a pick with no row drawn still fits; the worn sets\' strip scrolls past five lines; the tier\'s word keeps its colour and pips inside the card\'s body (mutants: the host a scroller; the dim read as inside; Close scrolling away; the hover over its own card; the unanchored card unbounded; the strip growing; the pips lost in the body)', () => {
   assert.match(read('src/ui/inventoryDoor.js'), /host\.style\.cssText = 'position:fixed;inset:0;z-index:13;background:transparent;overflow:hidden;overflow:clip';/);
-  const inv = strip(read('src/ui/enhancedInventory.js'));
+  const inv = strip(read('src/ui/enhanced/enhancedInventory.js'));
   assert.match(inv, /const body = el\('div', 'inv-info-body'\);\s*card\.append\(body\);/, 'the Info box\'s words in a body of their own');
   assert.match(inv, /const close = el\('button', 'act', 'Close'\);\s*close\.onclick = \(e\) => \{ e\.stopPropagation\(\); closeInfo\(\); \};\s*card\.append\(close\);/, 'Close under the body, never in it');
   assert.match(inv, /const mine = infoEl;\s*const away = \(e\) => \{ if \(e\.target === mine \|\| !mine\.contains\(e\.target\)\) \{ e\.stopPropagation\(\); closeInfo\(\); \} \};/, 'a press on the dim is outside');   // the merge with main: AUDIT SS's `mine` (the listeners are this box's) carries U9's law

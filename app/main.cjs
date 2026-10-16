@@ -344,7 +344,7 @@ const fileResponse = (p, mime) => net.fetch(pathToFileURL(p).toString(), { bypas
 // storage, and the same traversal law.
 const LAUNCHER_DIR = path.join(__dirname, 'launcher');
 const LAUNCHER_URL = 'dagger://launcher/index.html';
-// DA12: the controller loop is the game's own front door's (src/ui/menuPad.js) - ONE module, packed beside the
+// DA12: the controller loop is the game's own front door's (src/ui/menu/menuPad.js) - ONE module, packed beside the
 // launcher's page (package.json build.files) and read from the source tree when the shell runs unpacked.
 const MENU_PAD = app.isPackaged ? path.join(LAUNCHER_DIR, 'menuPad.js') : path.join(__dirname, '..', 'src', 'ui', 'menuPad.js');
 // AUDIT BR5: the launcher's wordmark is the product's logo, and the logo is the GAME's own file

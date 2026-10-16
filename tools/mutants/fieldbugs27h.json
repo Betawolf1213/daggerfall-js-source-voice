@@ -28,7 +28,7 @@
   },
   {
     "name": "ESC-BOOK-stats-door-resumes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "b.onclick = () => { onAction('handoff'); if (fn() === false) onAction('resume'); };",
     "new": "b.onclick = () => { onAction('resume'); if (fn() === false) onAction('resume'); };",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "LIST-FIT-grid-tile",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  display: flex; align-items: center; justify-content: center; }",
     "new": "  align-items: center; justify-content: center; }",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "BUFF-END-hud-all-endable",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "endable: canEndBundle(b),",
     "new": "endable: true,",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "BUFF-END-tile-without-bundle",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "endable: !!e.endable && e.bundleId != null",
     "new": "endable: !!e.endable",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "BUFF-END-classic-any-button",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "if (button !== 2 || windowUp || !cursorActive()) return false;\n  const at = hudPointer();",
     "new": "if (windowUp || !cursorActive()) return false;\n  const at = hudPointer();",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "BUFF-END-classic-look-held",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "if (button !== 2 || windowUp || !cursorActive()) return false;\n  const at = hudPointer();",
     "new": "if (button !== 2 || windowUp) return false;\n  const at = hudPointer();",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "BUFF-END-classic-item-icon",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "if (!hit?.endable) return false;",
     "new": "if (!hit) return false;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "BUFF-END-press-swings",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "{ event?.preventDefault?.(); return true; }",
     "new": "{ return true; }",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "BUFF-END-widget-ungated",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "const ending = cursorActive() && !overlayOpen() && !controllerLook();",
     "new": "const ending = !overlayOpen() && !controllerLook();",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "BUFF-END-stats-end-any",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (canEndBundle(b)) {\n      const end = el('button', 'act', t('pause.effects.end', 'End'));",
     "new": "    if (b) {\n      const end = el('button', 'act', t('pause.effects.end', 'End'));",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "HOLD-STEP-no-first-wait",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "Object.freeze({ delay: 400, every: 100, fast: 40, fastAfter: 10 })",
     "new": "Object.freeze({ delay: 100, every: 100, fast: 40, fastAfter: 10 })",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "HOLD-STEP-late-quicken",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "n < HOLD_REPEAT.fastAfter ? HOLD_REPEAT.every",
     "new": "n <= HOLD_REPEAT.fastAfter ? HOLD_REPEAT.every",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "HOLD-STEP-four-digits",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "\\d{1,3}\\s*$/.test",
     "new": "\\d{1,4}\\s*$/.test",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "HOLD-STEP-disabled-takes",
-    "file": "src/ui/spellMakerWindow.js",
+    "file": "src/ui/spell/spellMakerWindow.js",
     "old": "if (!this.enabled(field) || !Number.isFinite(Number(value))) return;",
     "new": "if (!Number.isFinite(Number(value))) return;",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "HOLD-STEP-walk-skips-set",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "if (b.down) out.push(b.down); if (b.set) out.push(b.set); if (b.up) out.push(b.up);",
     "new": "if (b.down) out.push(b.down); if (b.up) out.push(b.up);",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "HOLD-STEP-release-clicks",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "if (hold.n > 0) { swallowClick = true;",
     "new": "if (hold.n > 99999) { swallowClick = true;",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "HOLD-STEP-view-no-setter",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "set: live((v) => ed.setValue(field, v)),",
     "new": "set: undefined,",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "HOLD-STEP-presses-what-stands-there",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      const fn = btn && !btn.disabled && btn.dataset.a != null ? acts[Number(btn.dataset.a)] : null;",
     "new": "      const fn = btn && !btn.disabled && btn.dataset.a != null ? acts[Number(btn.dataset.a)] : acts[h.pos];",
     "tests": [

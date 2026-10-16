@@ -16,14 +16,14 @@ import {
   drawEnhancedNotice, releaseEnhancedNotice, destroyEnhancedNotice, enhancedNoticeKeys, noticeDraw, noticeKey,
   noticeHold, drawEnhancedToasts, releaseEnhancedToasts, enhancedToastOwners,
   _setNoticeClockForTests, ENHANCED_NOTICE_ID, NOTICE_SLIDE_MS, NOTICE_WATCHDOG_MS, NOTICE_HINT,
-} from '../src/ui/enhancedNotice.js';
-import { TOAST_FADE_MS } from '../src/ui/enhancedFrame.js';   // PLUS-ONLY: a toast's own fade
+} from '../src/ui/enhanced/enhancedNotice.js';
+import { TOAST_FADE_MS } from '../src/ui/enhanced/enhancedFrame.js';   // PLUS-ONLY: a toast's own fade
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../src/ui/drawWatchdog.js';   // DISC29-D: the draws stop when FRAMES pass undrawn
 import { ActionTextBox, ActionInputBox } from '../src/ui/actionText.js';
-import { enhancedInputBoxOwner } from '../src/ui/enhancedInputBox.js';   // AUDIT HCC U5
+import { enhancedInputBoxOwner } from '../src/ui/enhanced/enhancedInputBox.js';   // AUDIT HCC U5
 import { StatusReadout } from '../src/ui/statusBox.js';   // STATUS-LIVE: the one box whose caption is not ClickAnywhereToClose
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
-import { ENHANCED_CSS, ENHANCED_STYLE_ID } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS, ENHANCED_STYLE_ID } from '../src/ui/enhanced/enhancedStyle.js';
 
 function fakeNode(tag, doc) {
   const n = {
@@ -272,7 +272,7 @@ test('ENH-NOTICE1: the input box is a decision, not a notice - it keeps its own 
     const r = recorder();
     box.draw(r, CANVAS, FONT, 2);
     assert.equal(stackOf(doc), null, 'mutants: the input box handed to the panel');
-    // AUDIT HCC U5: its own window is the skin's face now (ui/enhancedInputBox.js), not the parchment's quads
+    // AUDIT HCC U5: its own window is the skin's face now (ui/enhanced/enhancedInputBox.js), not the parchment's quads
     assert.equal(r.quads.length, 0, 'mutants: the parchment painted under the enhanced window');
     assert.equal(enhancedInputBoxOwner(), box._faceKey, 'the field stands in its own window');
     box.input('Escape');
@@ -335,7 +335,7 @@ test('ENH-NOTICE1: the sheet - right edge, pointer-transparent, a slide the modu
 // `noticeFrame` is their seam: rows while such a box is up, null when
 // none - or when the box up is a decision or a field.
 import { readFileSync, readdirSync } from 'node:fs';
-import { noticeFrame, noticeRelease } from '../src/ui/enhancedNotice.js';
+import { noticeFrame, noticeRelease } from '../src/ui/enhanced/enhancedNotice.js';
 import { GuildServiceWindow, _setGuildServiceArtForTests } from '../src/ui/guildServiceWindow.js';
 import { CovenWindow, _setCovenArtForTests } from '../src/ui/covenWindow.js';
 import { ServiceFlowWindow } from '../src/ui/guildServiceWindows.js';
@@ -474,7 +474,7 @@ test('ENH-NOTICE2: THE ROSTER - the eight windows drawn on both skins that raise
   // quest herald (GUIDE3) takes drawEnhancedToasts as PopupText does.
   // TIDY2: an importer is one whose import RESOLVES to the notice, wherever the two stand - a spelled `./enhancedNotice.js`
   // stopped meaning that the day the windows went into feature folders
-  const NOTICE = 'src/ui/enhancedNotice.js';
+  const NOTICE = 'src/ui/enhanced/enhancedNotice.js';
   const resolvesTo = (from, spec) => new URL(spec, new URL(`../${from}`, import.meta.url)).href === new URL(`../${NOTICE}`, import.meta.url).href;
   const importers = readdirSync(new URL('../src/ui/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js'))
     .filter((f) => [...rd(`src/ui/${f}`).matchAll(/from '(\.[^']+)'/g)].some((m) => resolvesTo(`src/ui/${f}`, m[1])))

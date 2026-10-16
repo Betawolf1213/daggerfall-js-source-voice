@@ -13,9 +13,9 @@ import { T0 } from './accountDb.mjs';
 import { createMotherlodeBook, MOTHERLODE_TEXT } from '../src/net/motherlodeBook.js';
 import { motherlodeKey } from '../src/net/motherlodeLaw.js';
 import { nodeMarkCss, nodeMarkRgb, nodeCompassPoints, MOTHERLODE_MARK_CSS, NODE_MARK_CSS, FIRE_MARK_CSS } from '../src/ui/nodeMarks.js';
-import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
+import { QUEST_MARK_CSS } from '../src/ui/quest/questMarks.js';
 import { PARTY_GREEN_CSS } from '../src/net/social.js';
-import { SHIP_MARK_CSS } from '../src/ui/enhancedHud.js';
+import { SHIP_MARK_CSS } from '../src/ui/enhanced/enhancedHud.js';
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 const DAY0 = Math.floor(T0 / 86400);

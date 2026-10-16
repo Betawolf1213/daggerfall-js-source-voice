@@ -5,7 +5,7 @@
 // first window (DA8) - but a game manager starts a game and watches its process, and an update installed before
 // play (the app quits, the installer reopens it) reads as the game having quit. `--play` goes straight into the
 // game, its updates the game's (the HUD line, installed at quit), and opens the launcher only when it has
-// something to ask. And the launcher answers a controller: the game's own front-door loop (src/ui/menuPad.js),
+// something to ask. And the launcher answers a controller: the game's own front-door loop (src/ui/menu/menuPad.js),
 // served to its page as the one module, never a copy.
 //
 // The choice is pure (app/lib/launcherState.cjs directPlay) and driven here; the shell's wiring, the page and the
@@ -14,7 +14,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { attachMenuPad } from '../src/ui/menuPad.js';
+import { attachMenuPad } from '../src/ui/menu/menuPad.js';
 
 const require = createRequire(import.meta.url);
 const L = require('../app/lib/launcherState.cjs');

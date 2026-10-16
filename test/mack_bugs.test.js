@@ -99,7 +99,7 @@ test('MAC-K1: the crossed middle name is spelled ONCE, and the hosts read that t
   assert.equal(mouseCode(5), null, 'a sixth button is not a KeyCode');
   assert.equal(mouseCode(-1), null);
   for (const f of [...HOSTS.map((h) => `src/scenes/${h}.js`), 'src/scenes/dungeon.js',
-    'src/ui/controlsWindow.js', 'src/ui/enhancedControls.js']) {
+    'src/ui/controlsWindow.js', 'src/ui/enhanced/enhancedControls.js']) {
     const src = rd(f);
     if (!src.includes('mouseCode')) continue;
     assert.ok(!/['"`]Mouse['"`]\s*\+/.test(src), `${f} must not spell the crossing a second time`);
@@ -115,7 +115,7 @@ test('MAC-K1: BOTH controls skins can capture a mouse button, which is what "not
   //
   // DFU's WaitForKeyPress is `Input.GetKeyDown` walked over every
   // KeyCode, and Mouse0/1/2 are KeyCodes like any other.
-  const enh = rd('src/ui/enhancedControls.js');
+  const enh = rd('src/ui/enhanced/enhancedControls.js');
   assert.match(enh, /document\.addEventListener\('mousedown', armedMouse, \{ capture: true \}\);/);
   assert.match(enh, /document\.removeEventListener\('mousedown', armedMouse, \{ capture: true \}\);/,
     'and it leaves with the capture - a listener outliving its screen is its own bug');
@@ -261,7 +261,7 @@ test('AUDIT-MACK F1: every ctx door routeAction dispatches is reachable BY ITS A
   // routes the large HUD's panel clicks into a ctx must route its KEYS
   // into that same ctx. The panel and the key are two ways to the same
   // door, and `routeLargeHudClick` reaches `routeAction` directly
-  // (ui/hudLarge.js) while a hand-written key ladder reaches only what
+  // (ui/hud/hudLarge.js) while a hand-written key ladder reaches only what
   // someone wrote down. That is how `openTransport` came to answer a
   // click and ignore the T key.
   //
@@ -782,7 +782,7 @@ test('AUDIT-MACL F3: every door the GAME opens stands the unload guard down firs
 });
 
 test('AUDIT-MACL F4: the large HUD’s options panel is a SECOND route to the same door', async () => {
-  // MAC-L1 named the keyboard route and stopped there. `ui/hudLarge.js`
+  // MAC-L1 named the keyboard route and stopped there. `ui/hud/hudLarge.js`
   // dispatches its clicked panels through the SAME table -
   // `routeAction(hit.action, ctx)` - and the options panel's action is
   // `Escape`. So on `ff0cb3b` the crash was reachable by MOUSE, with no
@@ -791,8 +791,8 @@ test('AUDIT-MACL F4: the large HUD’s options panel is a SECOND route to the sa
   //
   // That matters beyond bookkeeping. A bug with two routes and one
   // named route is a bug that looks fixed from the report and is not.
-  const { LARGE_HUD_PANELS } = await import('../src/ui/hudLarge.js').catch(() => ({}));
-  const hud = rd('src/ui/hudLarge.js');
+  const { LARGE_HUD_PANELS } = await import('../src/ui/hud/hudLarge.js').catch(() => ({}));
+  const hud = rd('src/ui/hud/hudLarge.js');
   assert.match(hud, /\{ key: 'options', rect: LARGE_HUD_RECTS\.options, action: 'Escape' \}/,
     'the options panel really does route Escape');
   assert.match(hud.replace(/^\s*\/\/.*$/gm, ''), /routeAction\(hit\.action, ctx\)/,
@@ -826,7 +826,7 @@ test('AUDIT-MACL F5: the guard PREVENTS the menu and does not STOP the event', a
   // row it clears the binding. The document guard must `preventDefault`
   // (kill the browser menu) and must NOT `stopPropagation`, or both
   // features die silently the day someone "simplifies" it.
-  for (const f of ['src/ui/enhancedTalk.js', 'src/ui/enhancedControls.js']) {
+  for (const f of ['src/ui/enhanced/enhancedTalk.js', 'src/ui/enhanced/enhancedControls.js']) {
     assert.match(rd(f), /oncontextmenu = /, `${f} uses the right button as a control`);
   }
   const guard = rd('src/ui/input.js');
@@ -857,7 +857,7 @@ test('AUDIT-MACL F6 (MAC-L2): the banker’s popup is DRIVEN through both arms, 
   // the slot can disagree. That is the mechanism worth a pin whether or
   // not it is the reported crash.
   const { makeWindowStack } = await import('../src/ui/windowStack.js');
-  const { MerchantServiceWindow } = await import('../src/ui/merchantServiceWindow.js');
+  const { MerchantServiceWindow } = await import('../src/ui/merchant/merchantServiceWindow.js');
 
   const host = () => {
     let slot = null;
@@ -871,7 +871,7 @@ test('AUDIT-MACL F6 (MAC-L2): the banker’s popup is DRIVEN through both arms, 
     return { stack, mount, get slot() { return slot; }, set slot(v) { slot = v; } };
   };
   const press = (w, rect) => w.click(95 + rect[0] + 1, 79 + rect[1] + 1);
-  const { MERCHANT_RECTS } = await import('../src/ui/merchantServiceWindow.js');
+  const { MERCHANT_RECTS } = await import('../src/ui/merchant/merchantServiceWindow.js');
 
   // ARM ONE - SERVICE. The bank window is assigned to the slot directly
   // while the stack still holds the popup; `reconcile` must replace the

@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { playerTravelPosition, calculateTravelTime, travelDays } from '../src/systems/travel/travel.js';
 import { shipTransition, shipMemory, isOnShip } from '../src/systems/ship.js';
 import { assignShipToPlayer, SHIP_TYPES, SHIP_COORDS } from '../src/systems/banking.js';
-import { shipTravelRefusal, isPlayerControlledTravel, TravelPopUpWindow } from '../src/ui/travelPopUp.js';
+import { shipTravelRefusal, isPlayerControlledTravel, TravelPopUpWindow } from '../src/ui/travel/travelPopUp.js';
 import { readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
 import { hasPort } from '../src/systems/travel/travelPorts.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';

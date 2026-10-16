@@ -52,7 +52,7 @@
 //     NULL on failure where C# returns a default-constructed DFRegion or
 //     DFLocation with Loaded = false (MapsFile.cs:723-816). This is the
 //     port-wide convention and every consumer found - scenes/world.js,
-//     systems/quest/place.js, ui/travelMapWindow.js, systems/map/mapDirectory.js,
+//     systems/quest/place.js, ui/travel/travelMapWindow.js, systems/map/mapDirectory.js,
 //     ui/heldMap.js, world/roadsProducer.js - already guards with
 //     `?.` / `?? null`.
 //   - loadRegion memoizes; C# re-reads the four records every call. See the

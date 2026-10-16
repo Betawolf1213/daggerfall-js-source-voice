@@ -21,7 +21,7 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { validFoeRecord } from '../src/net/wire.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
-import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hudFoeTarget.js';
+import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hud/hudFoeTarget.js';
 import { liveEntityName } from '../src/systems/worldTooltips.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { isAmmunition } from '../src/systems/item/itemTemplates.js';

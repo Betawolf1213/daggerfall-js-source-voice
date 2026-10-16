@@ -11,7 +11,7 @@
   },
   {
     "name": "BR4-intro-title-screen-blend",
-    "file": "src/ui/introScreen.js",
+    "file": "src/ui/intro/introScreen.js",
     "old": "opacity:0;pointer-events:none;transform-origin:50% 50%",
     "new": "opacity:0;pointer-events:none;mix-blend-mode:screen;transform-origin:50% 50%",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "BR4-door-logo-screen-blend",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".brand-logo { display: block; width: 100%; height: auto; object-fit: contain;\n  image-rendering: auto; }",
     "new": ".brand-logo { display: block; width: 100%; height: auto; object-fit: contain;\n  mix-blend-mode: screen; image-rendering: auto; }",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "BR4-intro-aria-old-name",
-    "file": "src/ui/introScreen.js",
+    "file": "src/ui/intro/introScreen.js",
     "old": "host.setAttribute('aria-label', t('menu.intro.aria', 'DFO Online introduction'));",
     "new": "host.setAttribute('aria-label', t('menu.intro.aria', 'Daggerfall Enhanced introduction'));",
     "tests": [

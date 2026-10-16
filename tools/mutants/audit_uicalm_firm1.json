@@ -613,7 +613,7 @@
   },
   {
     "name": "AUF-L5M5-saddle-dom-always",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "  const mode = state.panel ?? saddlePanelMode();",
     "new": "  const mode = 'always';",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "AUF-L5M5-saddle-dom-ignores-show",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "  if (show === 'none') return;\n",
     "new": "",
     "tests": [
@@ -633,7 +633,7 @@
   },
   {
     "name": "AUF-L5M5-saddle-dataset-full",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "parts.root.dataset.show = show;",
     "new": "parts.root.dataset.show = 'full';",
     "tests": [
@@ -642,7 +642,7 @@
   },
   {
     "name": "AUF-L5M5-toggle-not-kept",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "  setPref(SADDLE_OPEN_PREF, { open: next, mode });\n",
     "new": "",
     "tests": [
@@ -651,7 +651,7 @@
   },
   {
     "name": "AUF-L5M5-open-default-up",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "typeof v.open === 'boolean' ? v.open : mode === 'always';",
     "new": "typeof v.open === 'boolean' ? v.open : true;",
     "tests": [
@@ -660,7 +660,7 @@
   },
   {
     "name": "AUF-L5M5-off-touch-no-chip",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "  if (mode === 'off') return state.touch ? 'chip' : 'none';",
     "new": "  if (mode === 'off') return 'none';",
     "tests": [
@@ -669,7 +669,7 @@
   },
   {
     "name": "AUF-L5M5-hello-hours",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "export const SADDLE_HELLO_MS = 6000;",
     "new": "export const SADDLE_HELLO_MS = 600000;",
     "tests": [
@@ -678,7 +678,7 @@
   },
   {
     "name": "AUF-L5M5-hello-no-key-name",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "saddleHello(s, state.keyOf?.(SADDLE_PANEL_ACTION) ?? '')",
     "new": "saddleHello(s, '')",
     "tests": [
@@ -687,7 +687,7 @@
   },
   {
     "name": "AUF-L4M1-press-outlives-choice",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "v && typeof v === 'object' && v.mode === mode && typeof v.open === 'boolean'",
     "new": "v && typeof v === 'object' && typeof v.open === 'boolean'",
     "tests": [
@@ -696,7 +696,7 @@
   },
   {
     "name": "AUF-L4M2-finger-on-the-compass",
-    "file": "src/ui/enhancedSaddle.js",
+    "file": "src/ui/enhanced/enhancedSaddle.js",
     "old": "  if (last.place === 0) { if (state.touch) placeTouch(doc, parts, last); else placeBar(doc, parts, last); }",
     "new": "  if (last.place === 0 && !state.touch) placeBar(doc, parts, last);",
     "tests": [
@@ -705,7 +705,7 @@
   },
   {
     "name": "AUF-L5M7-calm-ignores-pref",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull &&",
     "new": "  const calm = !hudArranging() && allFull &&",
     "tests": [
@@ -714,7 +714,7 @@
   },
   {
     "name": "AUF-L5M7-calm-ignores-foe",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": " && allFull && !parts.foe?.classList?.contains?.('on');",
     "new": " && allFull;",
     "tests": [
@@ -723,7 +723,7 @@
   },
   {
     "name": "AUF-L5M7-rest-at-once",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "export const VITALS_REST_S = 4;",
     "new": "export const VITALS_REST_S = 0;",
     "tests": [
@@ -732,7 +732,7 @@
   },
   {
     "name": "AUF-L5M7-rest-toggle-dropped",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "parts.bars?.classList?.toggle?.('rest', rest);",
     "new": "void rest;",
     "tests": [
@@ -741,7 +741,7 @@
   },
   {
     "name": "AUF-L4M3-rest-while-arranged",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull &&",
     "new": "  const calm = getPref(HUD_CALM_PREF) !== false && allFull &&",
     "tests": [
@@ -750,7 +750,7 @@
   },
   {
     "name": "AUF-L4N1-a-share-of-the-maximum",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "|| now > max - 1);",
     "new": "|| now >= max * 0.995);",
     "tests": [
@@ -885,7 +885,7 @@
   },
   {
     "name": "AUF-L3H1-foot-unmeasured",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "if (h > 0) home.style?.setProperty?.('--px-foot-h', `${h}px`); };",
     "new": "if (h > 0) void h; };",
     "tests": [
@@ -894,7 +894,7 @@
   },
   {
     "name": "AUF-L3H1-foot-unwatched",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "footObs = new globalThis.ResizeObserver(reserve); footObs.observe(foot);",
     "new": "footObs = null;",
     "tests": [
@@ -930,7 +930,7 @@
   },
   {
     "name": "AUF-L3M2-double-click-two-doors",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "b.onclick = (e) => { if (e?.detail > 1) return; onClick(e); };",
     "new": "b.onclick = onClick;",
     "tests": [
@@ -939,7 +939,7 @@
   },
   {
     "name": "AUF-L3M3-way-by-shown-name",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "const w = custom ? 'Your own' : classWayOf(flow.careers[i]?.name);",
     "new": "const w = custom ? 'Your own' : classWayOf(name);",
     "tests": [
@@ -948,7 +948,7 @@
   },
   {
     "name": "AUF-L3M3-picked-way-by-shown-name",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "null : classWayOf(flow.careers[flow.classListIndex]?.name);",
     "new": "null : classWayOf(picked);",
     "tests": [
@@ -993,7 +993,7 @@
   },
   {
     "name": "AUF-L3M6-plates-unwatched",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "    for (const q of plates) ro.observe(q.tag);\n",
     "new": "",
     "tests": [
@@ -1038,7 +1038,7 @@
   },
   {
     "name": "AUF-L3L1-section-focus-lost",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "go('home'); if (mode !== 'pause') focusDoor(from); }",
     "new": "go('home'); void from; }",
     "tests": [
@@ -1047,7 +1047,7 @@
   },
   {
     "name": "AUF-L3L1-level-focus-lost",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "homeLevel = 'top'; render(); focusDoor(from); }",
     "new": "homeLevel = 'top'; render(); void from; }",
     "tests": [
@@ -1056,7 +1056,7 @@
   },
   {
     "name": "AUF-L3L2-health-up-to",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "`${Math.trunc(career.hitPointsPerLevel / 2)}-${career.hitPointsPerLevel} a level, more with Endurance`",
     "new": "`up to ${career.hitPointsPerLevel} a level`",
     "tests": [
@@ -1092,7 +1092,7 @@
   },
   {
     "name": "AUF-L3N1-links-reset-level",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "else if (section === 'online') homeLevel = 'top';",
     "new": "else if (section === 'online' || HOME_LINKS.some((l) => idOf(l) === section)) homeLevel = 'top';",
     "tests": [
@@ -1101,7 +1101,7 @@
   },
   {
     "name": "AUF-L5M9-offline-doors-untranslated",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "games.append(doorBtn(idOf(label), railLabel(label), ''",
     "new": "games.append(doorBtn(idOf(label), label, ''",
     "tests": [
@@ -1110,7 +1110,7 @@
   },
   {
     "name": "AUF-L5M9-elsewhere-doors-untranslated",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "more.append(doorBtn(idOf(label), railLabel(label), ''",
     "new": "more.append(doorBtn(idOf(label), label, ''",
     "tests": [
@@ -1119,7 +1119,7 @@
   },
   {
     "name": "AUF-L3N3-tutorials-english",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "'px-about px-tuts door-tutorials', RAIL_TEXT.tutorials());",
     "new": "'px-about px-tuts door-tutorials', 'Tutorials');",
     "tests": [
@@ -1128,7 +1128,7 @@
   },
   {
     "name": "AUF-L3N3-screenshots-english",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "'px-about px-shots', RAIL_TEXT.screenshots());",
     "new": "'px-about px-shots', 'Screenshots');",
     "tests": [
@@ -1183,7 +1183,7 @@
   },
   {
     "name": "AUF-L3N2-a-acrobat",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "`Play as ${/^[aeiou]/i.test(named) ? 'an' : 'a'} ${named}`",
     "new": "`Play as a ${named}`",
     "tests": [
@@ -1192,7 +1192,7 @@
   },
   {
     "name": "AUF-L3N2-a-archer",
-    "file": "src/ui/enhancedChargen.js",
+    "file": "src/ui/enhanced/enhancedChargen.js",
     "old": "`Play as ${/^[aeiou]/i.test(picked) ? 'an' : 'a'} ${picked}`",
     "new": "`Play as a ${picked}`",
     "tests": [

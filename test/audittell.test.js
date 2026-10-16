@@ -26,7 +26,7 @@ import { BLOW_EFFECT, blowEffectOf, queueBlowEffect, drainBlowEffects, knockedDo
 import { createBleedLedger, WOUND_SHARE, WOUND_WAIT, BLEED_THRESHOLD } from '../src/combat/bloodBleed.js';
 import { setBatchGlint } from '../src/systems/hitFlash.js';
 import { tellCues } from '../src/scenes/hostCombat.js';
-import { markFoeStruck, markFoeThreat, foeTarget, clearFoeTarget, tickFoeTarget, THREAT_YIELD_S } from '../src/ui/hudFoeTarget.js';
+import { markFoeStruck, markFoeThreat, foeTarget, clearFoeTarget, tickFoeTarget, THREAT_YIELD_S } from '../src/ui/hud/hudFoeTarget.js';
 import { TELEGRAPH_STYLE_GLSL, TELEGRAPH_BAND_CAP, CONTRAST_BAND_CAP } from '../src/render/telegraphStyle.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -368,14 +368,14 @@ test('AUDIT TELL U1/U2/U8/U10: the bands metres-capped inside the 0.5 m the pass
 });
 
 test('AUDIT TELL U3/U4/U5: the poise word centred under the track, the quest card clearing it; the flash on THIS foe\'s break alone; the card re-measured when the track comes or goes (mutants: the flash on a target switch; the card blind to the track)', () => {
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.hud-poiseword \{ position: absolute; left: 50%; top: calc\(100% \+ 3px\); transform: translateX\(-50%\);/);
   assert.match(css, /body:has\(\.hud-foe\.on\.blade\.poised\) \.qtrack \{ --qt-clear: calc\(18px \+ 28px \* var\(--hud-scale, 1\) \+ 30px \+ 104px \* var\(--hud-scale, 1\)\); \}/);
   assert.match(css, /\.hud-foepoise\.poise-staggered\.poise-flash \.hud-poisefill \{ animation: hud-poise-flash/);   // PIN MOVED (POISE-BOX): the state classes are the track's own
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const flash = pk === 'staggered' && last\.foePoiseRef === ref && last\.foePoise !== 'staggered';/);
   assert.match(hud, /parts\.foePoise\.className = `hud-foepoise\$\{p \? ` poise-\$\{p\.state\}` : ''\}\$\{flash \? ' poise-flash' : ''\}`;/);
-  assert.match(rd('src/ui/questTracker.js'), /\$\{foe\?\.classList\?\.contains\?\.\('poised'\) \? '\|poised' : ''\}`;/);
+  assert.match(rd('src/ui/quest/questTracker.js'), /\$\{foe\?\.classList\?\.contains\?\.\('poised'\) \? '\|poised' : ''\}`;/);
 });
 
 test('AUDIT TELL U7: no foe\'s wind-up takes the bar from my duel\'s opponent; another foe\'s still yields after THREAT_YIELD_S (mutants: the duel bar stolen)', () => {

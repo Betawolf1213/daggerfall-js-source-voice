@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 
 import { generateBackstory, biogMacroSource } from '../src/systems/biography.js';
 import { repChangeStr, repBoxRowsFrom, statView } from '../src/ui/chargenArt.js';
-import { attachChargenText } from '../src/ui/enhancedChargen.js';
+import { attachChargenText } from '../src/ui/enhanced/enhancedChargen.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { setSeed, rand } from '../src/formats/dfRandom.js';
 import { GENDERS, getNameBank, fullName } from '../src/characters/nameHelper.js';

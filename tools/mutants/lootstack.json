@@ -191,7 +191,7 @@
   },
   {
     "name": "LS-pile-on-every-frame",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    pile: kind === 'container' ? deps.loot?.pile ?? null : null,",
     "new": "    pile: deps.loot?.pile ?? null,",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "LS-lit-tab-lost",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const on = b.key === pile.current;",
     "new": "    const on = false;",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "LS-tab-row-dropped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (remote.pile) col.append(pileTabs(remote.pile));",
     "new": "",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "LS-open-before-close",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "        onExit();\n        pile.open(b.key);",
     "new": "        pile.open(b.key);\n        onExit();",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "LS-classic-no-wrap",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    const next = pile.bodies[(at + by + n) % n];",
     "new": "    const next = pile.bodies[Math.max(0, Math.min(n - 1, at + by))];",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "LS-classic-right-forward",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "      if (!middle && this._turnPile(right ? -1 : 1)) return true;",
     "new": "      if (!middle && this._turnPile(1)) return true;",
     "tests": [
@@ -251,7 +251,7 @@
   },
   {
     "name": "LS-classic-open-before-close",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    this._close();\n    pile.open(next.key);",
     "new": "    pile.open(next.key);\n    this._close();",
     "tests": [
@@ -261,7 +261,7 @@
   },
   {
     "name": "LS-classic-turn-over-wagon",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    const pile = this.usingWagon ? null : this.hooks.loot?.pile;",
     "new": "    const pile = this.hooks.loot?.pile;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "LS-classic-label-off-by-one",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "  return at < 0 ? '' : `${at + 1} of ${pile.bodies.length}`;",
     "new": "  return at < 0 ? '' : `${at} of ${pile.bodies.length}`;",
     "tests": [

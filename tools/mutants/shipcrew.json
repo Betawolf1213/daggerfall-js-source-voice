@@ -350,7 +350,7 @@
   },
   {
     "name": "SCW-panel-orders-off",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "  if (h.orders) out.push({ act: 'orders', label: 'Orders', kind: 'hook' });",
     "new": "",
     "tests": [

@@ -16,7 +16,7 @@ import { CHART_TEMPLATE, CHART_ROW, CHART_CHANCE, CHART_PX, CACHE_GOLD, CHART_SI
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { createCaptainLedger, CHARTS_MAX } from '../src/systems/naval/captainLedger.js';
 import { createHarbourOffice } from '../src/scenes/harbourOffice.js';
-import { exchangeText, mountNavalYardWindow } from '../src/ui/navalYardWindow.js';
+import { exchangeText, mountNavalYardWindow } from '../src/ui/naval/navalYardWindow.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { SITE_LOT, CACHE_LOTS } from '../src/scenes/navalHost.js';
 import { STRONGBOX_KEY, STRONGBOX_RARITY_TIER } from '../src/systems/naval/navalPlunder.js';

@@ -26,7 +26,7 @@ import { TERRAIN_EDGE } from '../systems/comeSailAway/comeSailAway.js';
 import { batteriesOf } from '../systems/naval/navalShips.js';
 import { CREW_ORDERS, CREW_ROLES } from '../systems/naval/shipCrew.js';
 import { MOBILE } from '../systems/naval/navalBoarding.js';
-import { optionPath } from '../ui/settingsMap.js';   // ORG2: a switch named in a line says where it lives
+import { optionPath } from '../ui/settings/settingsMap.js';   // ORG2: a switch named in a line says where it lives
 
 /** The hulls whose prefab carries a live `Crewed` node (Come Sail Away's Small Ship, Large Galley and Carrack - the
  *  Rowboat's is inactive): a ship with hands, who sail her to a port and mend her where she lies. */

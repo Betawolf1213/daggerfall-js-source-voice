@@ -29,7 +29,7 @@ import { WEAPONS } from '../src/characters/weapons.js';
 import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { drawCrewBars, destroyNavalHud, tagAlpha, CREW_BAR_RANGE, CREW_FADE_FROM, CREW_GREEN, TAG_FADE_TO } from '../src/ui/navalHud.js';
+import { drawCrewBars, destroyNavalHud, tagAlpha, CREW_BAR_RANGE, CREW_FADE_FROM, CREW_GREEN, TAG_FADE_TO } from '../src/ui/naval/navalHud.js';
 import { PARTY_GREEN_CSS } from '../src/net/social.js';
 import { crewTeamOf, CREW_TEAMS, GRAPPLE_S, HAND } from '../src/systems/naval/navalBoarding.js';
 import { sea } from './navalSea.mjs';

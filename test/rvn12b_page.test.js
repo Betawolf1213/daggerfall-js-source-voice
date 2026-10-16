@@ -18,8 +18,8 @@ globalThis.localStorage = {
 
 const N = await import('../src/systems/revenant/revenant.js');
 const F = await import('../src/systems/revenant/revenantFeud.js');
-const PG = await import('../src/ui/revenantPage.js');
-const { REVENANT_CARD_CSS } = await import('../src/ui/revenantCard.js');
+const PG = await import('../src/ui/revenant/revenantPage.js');
+const { REVENANT_CARD_CSS } = await import('../src/ui/revenant/revenantCard.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');

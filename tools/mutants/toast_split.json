@@ -100,7 +100,7 @@
   },
   {
     "name": "TOAST-SPLIT-cork-rule-on-the-toasts-body",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-cork { padding: 14px 16px 16px;",
     "new": ".notice-body { padding: 14px 16px 16px;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "TOAST-SPLIT-tip-rule-on-the-toasts-hint",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-tip { margin: 0; font-size: 12px;",
     "new": ".notice-hint { margin: 0; font-size: 12px;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TOAST-SPLIT-phone-cork-on-the-toasts-body",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  .notice-cork { padding: 10px; }",
     "new": "  .notice-body { padding: 10px; }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "TOAST-SPLIT-market-ink-on-the-toasts-hint",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".market-body .notice-tip, .market-body .notice-label",
     "new": ".market-body .notice-hint, .market-body .notice-label",
     "tests": [

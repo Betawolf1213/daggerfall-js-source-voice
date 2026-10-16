@@ -14,7 +14,7 @@ import { heraldryText } from '../src/net/heraldryLaw.js';
 import { heraldryByTag, heraldryIndex, armsNamed } from '../src/net/heraldryIndex.js';
 import { shieldSvg, drawShield, SHIELD_CLOTH, SHIELD_DEVICE, DEVICE_ART } from '../src/ui/heraldryArt.js';
 import { chronicleLine } from '../src/net/townSeatLaw.js';   // AUDIT HERALDRY H1-H2: what each row's line names
-import * as tvHud from '../src/ui/travelViewHud.js';   // AUDIT HERALDRY H4: the Overworld's name face
+import * as tvHud from '../src/ui/travel/travelViewHud.js';   // AUDIT HERALDRY H4: the Overworld's name face
 import { heraldrySwatchSrc, heraldrySwatch, paintSwatch, heraldryLookup, chronicleGuildOf, HERALDRY_SWATCH_CLASS, HERALDRY_SWATCH_PX } from '../src/ui/heraldrySwatch.js';
 import { createNameLayer, NAME_CSS } from '../src/ui/nameLayer.js';
 import { foldSiege, siegeHudModel, fightArmed, SIEGE_STATE_EMPTY } from '../src/net/siege/siegeLink.js';

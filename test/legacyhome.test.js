@@ -427,7 +427,7 @@ test('LEGACY-HOME wiring: the town\'s extra people are the host\'s; a family hou
   assert.ok(i < t.indexOf('function converse(target) {'), 'before the words');
   assert.equal((t.match(/portrait: portraitOf\(/g) ?? []).length, 2, 'both mobile doors');
   assert.match(t, /person\?\.living\?\.res\?\.portrait \?\? \{ archive: 'CommonFaces'/);
-  assert.match(rd('src/ui/nativeTalk.js'), /PORTRAIT_ARCHIVE\[archive\] \?\? \(HEADS_FILE\.test\(String\(archive\)\) \? String\(archive\) : PORTRAIT_ARCHIVE\.CommonFaces\)/);
+  assert.match(rd('src/ui/native/nativeTalk.js'), /PORTRAIT_ARCHIVE\[archive\] \?\? \(HEADS_FILE\.test\(String\(archive\)\) \? String\(archive\) : PORTRAIT_ARCHIVE\.CommonFaces\)/);
   assert.match(rd('src/scenes/livingIndoors.js'), /\.filter\(\(x\) => !b\.only \|\| b\.only\(x\.res\)\)/);
 });
 

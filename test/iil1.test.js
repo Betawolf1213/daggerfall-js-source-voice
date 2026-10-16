@@ -130,7 +130,7 @@ test('IIL2 the mod\'s own shadows: a classic-look lane - the lane shaders with D
 });
 
 test('IIL3 the lighting mod has its own section and button - it is listed there and not among the texture packs, and the button refuses anything else', () => {
-  const menu = src('ui/enhancedMenu.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   assert.match(menu, /c\.append\(el\('h3', null, t\('menu\.packs\.lighting', 'Lighting mod'\)\)\);/);
   assert.match(menu, /const lighting = mods\.filter\(isIilMod\);\n\s+mods = mods\.filter\(\(m\) => !isIilMod\(m\)\);/, 'not listed twice');
   assert.match(menu, /label: t\('menu\.packs\.attachLighting', 'Attach lighting mod'\), primary: true, onClick: async \(\) => \{ const ds = await import\('\.\.\/scenes\/dataSource\.js'\); await ds\.pickLightingModFiles\(\); render\(\); \}/);

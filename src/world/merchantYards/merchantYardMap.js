@@ -1,7 +1,7 @@
 // @ts-check
 // YARDS-FOUND (2026-10-10, from play: "The new stable and transport merchant shops dont show on town maps/overworld"):
 // THE YARDS ON THE TOWN MAP. Both town maps draw a town off its blocks' own automap bytes (the classic window -
-// ui/exteriorAutomapWindow.js buildExteriorLayout; the held map's sheet - ui/inkTown.js townBytes) and letter the
+// ui/exteriorAutomapWindow.js buildExteriorLayout; the held map's sheet - ui/ink/inkTown.js townBytes) and letter the
 // buildings of its list, and a yard is neither: its ground is open street to the bytes (a navgrid cell is open only
 // where its byte is 0 - world/city/cityNavigation.js setBlockData - and a yard stands on open cells alone), and no building
 // record names it. So a Stable stood in the street and the map showed paving.

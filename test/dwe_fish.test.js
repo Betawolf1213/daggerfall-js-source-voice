@@ -448,7 +448,7 @@ test('DW-E3: the world host - the pulse and PumpAll after the decorations, the p
   assert.match(w, /playerPosition: \(\) => \(dwPlaying\(\) \? dwPlayerObjectPosition\(\) : null\),/);
   assert.match(w, /for \(const pool of \[exteriorFoes\.foes, cityGuards\.guards\]\) \{[\s\S]{0,300}rayUprightCapsule\(o, d, reach, feet, BODY_CAPSULE_RADIUS, f\.ai\.height \?\? CAPSULE_HEIGHT\);/, 'the probe meets the foes\' CharacterControllers (every layer, triggers ignored)');
   assert.match(w, /const td = decodedTextureTopDown\(a, 0\);[\s\S]{0,120}renderer\.uploadTexture\('img', `dwfish:\$\{a\}`, \{ width: td\.width, height: td\.height, colors: td\.rgba \}\)/, 'the icon uploads top-down, as the panel\'s drawImgCrop samples UI art');
-  const inv = rd('src/ui/nativeInventory.js');
+  const inv = rd('src/ui/native/nativeInventory.js');
   assert.match(inv, /const own = this\.hooks\.loot\?\.remoteImage\?\.\(\);\n\s+return own \? \{ image: own, label: shown\.label \} : shown;/, 'UpdateFishLootIcon: over whatever the window drew, its label kept');
   const r = rd('src/render/deepWatersRender.js');
   assert.match(r, /gl\.uniform1f\(u\.uCutoff, g\.cutoff \?\? DECORATION_CUTOFF\);/);

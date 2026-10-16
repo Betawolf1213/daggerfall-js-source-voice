@@ -14,7 +14,7 @@ import {
   SESSION_KEY, DEFAULT_ACCOUNT_SERVICE, REFUSALS,
 } from '../src/net/accountClient.js';
 import { AccountFlow, NAME_AS_NOTE } from '../src/ui/accountFlow.js';
-import { accountCard, NAME_AS_CHOICES } from '../src/ui/enhancedAccount.js';
+import { accountCard, NAME_AS_CHOICES } from '../src/ui/enhanced/enhancedAccount.js';
 import { ownNameAsAt } from '../src/systems/ownGlyphs.js';
 import { MailBox } from '../src/net/mail.js';
 import { NAME_MAX } from '../src/net/wire.js';

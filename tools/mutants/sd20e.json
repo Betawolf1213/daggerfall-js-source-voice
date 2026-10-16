@@ -10,7 +10,7 @@
   },
   {
     "name": "SD20E-T1-nowrap-back",
-    "file": "src/ui/gateBanner.js",
+    "file": "src/ui/gate/gateBanner.js",
     "old": "width: max-content; max-width: calc(100vw - 32px); text-align: center; line-height: 1.3; }",
     "new": "white-space: nowrap; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD20E-T3-the-banner-never-brass",
-    "file": "src/ui/gateBanner.js",
+    "file": "src/ui/gate/gateBanner.js",
     "old": "const cls = look === 'brass' ? 'wb-gate-banner sd-brass' : 'wb-gate-banner';",
     "new": "const cls = 'wb-gate-banner';",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD20E-T3-the-brass-never-taken-off",
-    "file": "src/ui/gateBanner.js",
+    "file": "src/ui/gate/gateBanner.js",
     "old": "if (cls !== shownCls) { shownCls = cls; node.className = cls; }",
     "new": "if (cls !== shownCls && look === 'brass') { shownCls = cls; node.className = cls; }",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD20E-T3-the-card-unmodelled",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "alpha: Math.round(alpha * 100) / 100, look: 'brass',",
     "new": "alpha: Math.round(alpha * 100) / 100,",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD20E-T3-the-class-unput",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "const mode = `${model.mode}${model.look === 'brass' ? ' sd-brass' : ''}`;",
     "new": "const mode = model.mode;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD20E-T3-the-omens-red",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "look === 'brass' ? '#e8c060' : '#ffb27a'",
     "new": "'#ffb27a'",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD20E-T3-the-plus-glow-over-the-outline",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "body .wb-gate-banner.sd-brass { text-shadow: ${OUTLINED}; }",
     "new": "body .wb-gate-banner.sd-brass { }",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD20E-T2-the-card-on-the-chips",
-    "file": "src/ui/sdTitleCard.js",
+    "file": "src/ui/superDungeon/sdTitleCard.js",
     "old": ".sd-title-card { top: 40%; }",
     "new": ".sd-title-card { top: 30%; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD20E-T2-the-sideways-card",
-    "file": "src/ui/sdTitleCard.js",
+    "file": "src/ui/superDungeon/sdTitleCard.js",
     "old": ".sd-title-card { top: 46%; }",
     "new": ".sd-title-card { top: 48%; }",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD20E-T2-the-foot-stays",
-    "file": "src/ui/sdTitleCard.js",
+    "file": "src/ui/superDungeon/sdTitleCard.js",
     "old": "@media (max-height: 480px) { body:has(.sd-title-card.on:not([style*=\"display: none\"])) .wb-boss-foot { display: none; } }\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD20E-T2-the-chevron-on-the-plate",
-    "file": "src/ui/gateGroundView.js",
+    "file": "src/ui/gate/gateGroundView.js",
     "old": "@media (max-height: 480px) { .wb-ground-arrow svg { top: ${-PERIL_ARROW_R_LOW - 14}px; } }\n",
     "new": "",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD20E-T4-the-card-in-the-serif",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "body .sd-title-card { ${PIXEL_FONT_CSS} color: #efe8d6;",
     "new": "body .sd-title-card { color: #efe8d6;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD20E-T5-the-count-in-the-head",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "rises: (e, secs) => `${e === 0 ? 'Gold' : 'Silver'} rises - ${secs}s`,",
     "new": "rises: (e, secs) => `${e === 0 ? 'Gold' : 'Silver'} rises in ${secs}s`,",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD20E-T10-the-gates-word",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "fallen: !!s.fell, fallenText: SD_BAR_TEXT.undone, callout,",
     "new": "fallen: !!s.fell, callout,",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD20E-T10-the-bar-deaf-to-it",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "model.fallen ? model.fallenText ?? BOSS_BAR_TEXT.fallen :",
     "new": "model.fallen ? BOSS_BAR_TEXT.fallen :",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD20E-T14-the-tip-another-form",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "blades: 'Fell Gold and Silver within ten seconds of each other.',",
     "new": "blades: 'Strike down both Echoes together.',",
     "tests": [

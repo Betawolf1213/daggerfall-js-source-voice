@@ -21,7 +21,7 @@ differently:
 | **all 8 loot files** | = | = | HEAD | **0** |
 | `src/net/remotePlayers.js` | 217 | 217 | `b9d8ee76` | 0 |
 | `src/systems/campEncounters.js` | 63 | 63 | `c3ec6275` | 0 |
-| `src/ui/enhancedMenu.js` | 43 | 26 | `d0cab242` | 1 |
+| `src/ui/enhanced/enhancedMenu.js` | 43 | 26 | `d0cab242` | 1 |
 | `src/ui/pauseWindow.js` | 14 | 10 | `65b730d9` | 19 |
 | `src/scenes/exterior.js` | 184 | **18** | `dfd6f597` | 28 |
 | `src/scenes/world.js` | **1143** | **155** | `dfd6f597` | **29** |

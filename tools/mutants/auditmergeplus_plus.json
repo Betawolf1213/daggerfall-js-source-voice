@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-MERGE-PLUS-B5-the-row-labelled-as-before",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "crossbar && CROSSBAR_HOLD.includes(c) ? `${row.label} (off while the crossbar holds it)` : row.label",
     "new": "row.label",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-MERGE-PLUS-B5-the-menus-legend-never-asks-the-crossbar",
-    "file": "src/ui/plusPadBinds.js",
+    "file": "src/ui/plus/plusPadBinds.js",
     "old": "export function plusPadLegend(store, { crossbar = crossbarInForce() } = {}) {",
     "new": "export function plusPadLegend(store, { crossbar = false } = {}) {",
     "tests": [

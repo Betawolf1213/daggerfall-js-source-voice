@@ -88,7 +88,7 @@ test('a corrupt stored value falls to the default, never throws', () => {
 // DELETED; the classic skin opens on this same door with the Begin
 // rail, and the way back is the door's own switch - the pin below.
 test('FD1: the CLASSIC skin opens on the same door, whose Overhauls page is its way back', () => {
-  const src = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(src, /const SECTIONS_CLASSIC = \['Begin', 'Online', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'\]/);   // TUT1   // LOAD1   // OVH1   // FT16   // ORG2: Features is Settings' tabs
   assert.match(src, /sections = mode === 'pause' \? SECTIONS_PAUSE : isEnhanced\(\) \? SECTIONS_BOOT : SECTIONS_CLASSIC;/);
   assert.ok(!existsSync(new URL('../src/ui/settingsWindow.js', import.meta.url)), 'the keyed screen is gone');
@@ -99,7 +99,7 @@ test('MENU-TOGGLE: the menu\'s Enhanced/Classic toggle is retired - the door\'s 
   // Settings row; MENU-TOGGLE (2026-09-26, Mac: "We really need to remove the enhanced/classic menu toggle and ensure
   // all the UI is linked up properly") retired all three. PLUS-ONLY had already made the UI Overhaul card the choice
   // of the three looks (Classic, Enhanced Plus, GrimoireUI), and a second switch offering two of them drifted from it.
-  const src = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   const code = src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
   for (const gone of [/function skinSwitch\(/, /function switchSkin\(/, /function skinRow\(/, /'ui:skin'/, /'switch anytime'/, /skinopt/]) {
     assert.doesNotMatch(code, gone, `${gone} is retired`);
@@ -116,7 +116,7 @@ test('MENU-TOGGLE: the menu\'s Enhanced/Classic toggle is retired - the door\'s 
   const ovh = readFileSync(new URL('../src/systems/overhauls.js', import.meta.url), 'utf8');
   assert.match(ovh, /if \(setUiSkin\(skin\) === null\) url\.searchParams\.set\('skin', skin\);/);
   assert.equal((src.match(/setUiSkin\(/g) ?? []).length, 0, 'the menu writes no skin of its own');
-  const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
   assert.doesNotMatch(css, /\.skinopt|\.skinswitch/, 'no rule for a control that is gone');
   assert.match(css, /\.px-foot \.px-about \{ grid-column: 3; \}/, 'About keeps the right of the foot');
 });

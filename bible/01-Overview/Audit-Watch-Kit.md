@@ -70,7 +70,7 @@ service bundles: see The deploy.
 | P5 | Minor | His pack given up with no boat of his found and my pack full was thrown away while the HUD said "stowed in your pack"; his gold arrived as an unspendable pile. | Never thrown away: into my pack past its gate if it must ("more than you can carry"), his gold to my purse, said as it went. |
 | P6 | Minor | His pack opened from 76.8 m away; every other storage asks 3.2 m. | Past `TREASURE_ACTIVATION_DISTANCE`, "You are too far away", as any storage. |
 
-## The bars and the party panel (`ui/partyPanel.js`, `ui/navalHud.js`, `world.js`, `exteriorFoes.js`, `dungeonContext.js`)
+## The bars and the party panel (`ui/partyPanel.js`, `ui/naval/navalHud.js`, `world.js`, `exteriorFoes.js`, `dungeonContext.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

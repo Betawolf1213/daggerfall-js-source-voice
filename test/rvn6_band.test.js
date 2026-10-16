@@ -36,7 +36,7 @@ const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { getTargets } = await import('../src/characters/enemyTargets.js');
 const { foeTitle } = await import('../src/systems/foeTitle.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
-const { bandWords, pluralKind } = await import('../src/ui/revenantPage.js');
+const { bandWords, pluralKind } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn6') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, reflexes: 2, stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(40).fill(40), skillUses: new Array(40).fill(0), career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100, crimeCommitted: 4 });
@@ -291,5 +291,5 @@ test('RVN6 the page: from rank 2 who rides with it, counted, and its band\'s nam
   assert.equal(pluralKind('Harpy', 2), 'two Harpies');
   assert.equal(pluralKind('Slaughterfish', 2), 'two Slaughterfish');
   assert.equal(pluralKind('Werewolf', 1), 'a Werewolf');
-  assert.match(read('src/ui/revenantPage.js'), /const band = fallen \? '' : bandWords\(r, kindName\);   \/\/ RVN6\n\s*if \(band\) text\.append\(el\('span', 'rvn-will', band\)\);/);
+  assert.match(read('src/ui/revenant/revenantPage.js'), /const band = fallen \? '' : bandWords\(r, kindName\);   \/\/ RVN6\n\s*if \(band\) text\.append\(el\('span', 'rvn-will', band\)\);/);
 });

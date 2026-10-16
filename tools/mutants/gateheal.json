@@ -236,7 +236,7 @@
   },
   {
     "name": "GATE-HEAL-the-column-always",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "const healed = dm.some((r) => r.hl !== undefined);",
     "new": "const healed = true;",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "GATE-HEAL-the-column-never",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "const healed = dm.some((r) => r.hl !== undefined);",
     "new": "const healed = false;",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "GATE-HEAL-the-narrow-fold",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "  .wb-dmg-healed .wb-dmg-row > .wb-dmg-heal { display: block; }",
     "new": "  .wb-dmg-healed .wb-dmg-row > .wb-dmg-heal { display: none; }",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "GATE-HEAL-the-cell-unwritten",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "  r.cells[9].textContent = m.heal ?? '';",
     "new": "",
     "tests": [

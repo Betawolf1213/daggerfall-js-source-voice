@@ -521,7 +521,7 @@ export const shiftDropRefusal = (item) => (item?.group === 'Transportation' ? { 
   : isKeptSpellbook(item) ? { text: SPELLBOOK_KEPT_TEXT } : null);
 
 /**
- * THE SHIFT-DROP, ONE LAW FOR BOTH PACKS (ui/nativeInventory.js, ui/enhancedInventory.js): QueueInventoryPhysicalDrop
+ * THE SHIFT-DROP, ONE LAW FOR BOTH PACKS (ui/native/nativeInventory.js, ui/enhanced/enhancedInventory.js): QueueInventoryPhysicalDrop
  * [IL_34b8] moves the item through DFU's own TransferItem onto a fresh container - so the pack's ground guards hold
  * exactly as a Remove onto the ground holds them: the Transportation refusal above (in the mod's words - planStore's own
  * says nothing), a locked piece (LOCK1), a pack-only piece (WALLET1), a bound piece (SS3 - the ground is "elsewhere"),

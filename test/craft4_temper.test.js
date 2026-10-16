@@ -250,7 +250,7 @@ test('CRAFT4 the Reforge with Essence on the piece: the Loot arc\'s own Reforge 
 // ─── THE PAGES AND THE HOST ──────────────────────────────────────────
 
 test('CRAFT4 pages: the anvil\'s and the loom\'s Temper - each piece its step, its input and XP, Temper pressed or the rank said, the input short said; the enchanting station\'s Reforge with Essence its rank line below 50, each line a press from it', async () => {
-  const { setProfessionsPages, drawStoresPage, TEMPER_NONE, ESSENCE_REFORGE_RANK_LINE, _temperForTests } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, TEMPER_NONE, ESSENCE_REFORGE_RANK_LINE, _temperForTests } = await import('../src/ui/professions/profPages.js');
   const held = new Map([[STEEL, 2], ['leather:cured', 1], [ARCANE_ESSENCE.key, 3]]);
   const ranks = { smithing: 10, outfitting: 5, enchanting: 49 };
   const book = {

@@ -168,13 +168,13 @@ test('DFMOD1 wiring: the boot, the pick, the doll, the portraits and the packs c
   assert.match(ds, /export async function removeStoredDfmod\(key\)/);
   assert.match(ds, /export async function clearStoredMusic\(\)/);
   assert.match(ds, /export async function clearStoredTexturePack\(\)/);
-  const menu = src('ui/enhancedMenu.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   for (const label of ['Add texture mods', 'Remove music pack', 'Remove sound pack', 'Remove texture pack', 'Remove all texture mods']) assert.ok(menu.includes(`'${label}'`), label);
   assert.match(menu, /d\.removeStoredDfmod\(m\.key\)/);
   const doll = src('ui/paperDoll.js');
   assert.match(doll, /alt: await dfmodAlt\(dfmodImgImage\(name\), bmp\)/);
   assert.match(doll, /alt: await dfmodAlt\(dfmodCifRciImage\(art\.heads, fi, 0\), headBmp\)/);
-  assert.match(src('ui/nativeTalk.js'), /hasDfmodCifRci\(file, recordId, 0\)/);
+  assert.match(src('ui/native/nativeTalk.js'), /hasDfmodCifRci\(file, recordId, 0\)/);
 });
 
 test('DFMOD1-E: the Enhanced Plus avatar follows the attached mods - the composite knows its mod generation, the art reloads, the pack asks', () => {
@@ -185,7 +185,7 @@ test('DFMOD1-E: the Enhanced Plus avatar follows the attached mods - the composi
   assert.match(doll, /else if \(_ident && !_identity\?\.endsWith\(`#\$\{dfmodGeneration\(\)\}`\)\) await preloadPaperDollArt\(_deps, _ident\);/, 'a boot-time art set is reloaded once the mods land');
   assert.match(doll, /_composedGen = gen;/);
   assert.match(doll, /if \(!_live \|\| paperDollStale\(\)\) refreshPaperDoll\(entity\);/, 'the classic doll recomposes on its draw');
-  assert.match(src('ui/enhancedInventory.js'), /if \(paperDollStale\(\)\) refreshFigure\(\);\n\s*const figure = modelFigure\(\);/, 'the enhanced pack asks for a fresh avatar');
+  assert.match(src('ui/enhanced/enhancedInventory.js'), /if \(paperDollStale\(\)\) refreshFigure\(\);\n\s*const figure = modelFigure\(\);/, 'the enhanced pack asks for a fresh avatar');
   assert.match(src('ui/textureCanvas.js'), /if \(_iconsGen !== dfmodGeneration\(\)\) \{ icons\.clear\(\); _iconsGen = dfmodGeneration\(\); \}/, 'and its icons are drawn again');
 });
 
@@ -224,7 +224,7 @@ test('DFMOD2 wiring: the boot never indexes on its way in, opens by range and wa
   assert.match(src('scenes/dataSource.js'), /const index = await indexDfmodBytes\(f\);/, 'an attach reads the picked File by range, not whole');
   // PIN MOVED (AUDIT VE R11): the escape hatch is the door's own rule, wherever a registration comes from
   assert.match(door, /const names = noMods \? \[\] : stored;/, 'the ?nomods escape hatch');
-  assert.match(src('ui/enhancedMenu.js'), /label: t\('menu\.packs\.detail', 'Texture detail: \{detail\}', \{ detail: detailLabel \}\)/);
+  assert.match(src('ui/enhanced/enhancedMenu.js'), /label: t\('menu\.packs\.detail', 'Texture detail: \{detail\}', \{ detail: detailLabel \}\)/);
 });
 
 test('DFMOD2 detail: unset is the default, 0 is full, a number is its own', async () => {
@@ -243,7 +243,7 @@ test('DFMOD2 memory: Seasons\' door opens only its own bundle, not every attache
   const { DFMOD_DETAIL_DEFAULT } = await import('../src/systems/dfmodTextures.js');
   assert.equal(DFMOD_DETAIL_DEFAULT, 256);
   assert.match(src('systems/dfmodTextures.js'), /error: _openErrors\.get\(key\) \?\? null,/);
-  assert.match(src('ui/enhancedMenu.js'), /if \(m\.error\) row\.append\(el\('p', 'meta', t\('menu\.packs\.notWorking', 'Not working: \{error\}\.', \{ error: m\.error \}\)\)\);/);
+  assert.match(src('ui/enhanced/enhancedMenu.js'), /if \(m\.error\) row\.append\(el\('p', 'meta', t\('menu\.packs\.notWorking', 'Not working: \{error\}\.', \{ error: m\.error \}\)\)\);/);
   assert.match(src('combat/diverseWeaponsAssets.js'), /return \(await dfmodWeaponImage\(name\)\) \?\? \(await weaponModImage\(name\)\);/, 'DWHD1: an attached replacer first');
 });
 

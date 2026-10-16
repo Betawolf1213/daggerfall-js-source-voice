@@ -34,7 +34,7 @@ import { playerEntity } from '../src/characters/playerEntity.js';
 import { registerPresenter, _resetNotifyForTests } from '../src/systems/notify.js';
 import { mobileEntityName, liveEntityName } from '../src/systems/worldTooltips.js';
 import { resolveHover } from '../src/systems/worldHover.js';
-import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hudFoeTarget.js';   // HOVER-PLAIN: the name's one place
+import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hud/hudFoeTarget.js';   // HOVER-PLAIN: the name's one place
 import { MOBILE_NPC_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';

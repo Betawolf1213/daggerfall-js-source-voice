@@ -30,7 +30,7 @@ import { offlineCopyOf, onlineCopyOf, QUEST_WORLD_SECOND_KEYS, QUEST_OWN_SECOND_
 import { startDisease, DISEASES } from '../src/systems/diseases.js';
 import { NORMALIZE_INTERVAL_MINUTES } from '../src/systems/court.js';
 import { bankingStatusRows } from '../src/systems/banking.js';
-import { repairReadyLine } from '../src/ui/enhancedTrade.js';
+import { repairReadyLine } from '../src/ui/enhanced/enhancedTrade.js';
 import { restClockLine } from '../src/ui/restWindow.js';
 import { TavernWindow, TAVERN_RECTS, TAVERN_PANEL_X, TAVERN_PANEL_Y, OWN_TIME_ROOM, OWN_TIME_ROOM_NOTE } from '../src/ui/tavernWindow.js';
 import { RACES } from '../src/systems/races.js';
@@ -215,7 +215,7 @@ test('AUDIT LIVED1 E (S3/R5, S5/U4) + G (R6): the doors between the lanes rebase
   const back = player({ factionRep: null });
   restorePlayer(back, joined);
   assert.equal(back.legalRep[0], -15, 'three of the world\'s boundaries lay between the calendars, and none of them was an absence');
-  const m = rd('src/ui/enhancedMenu.js');
+  const m = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(m, /snap = offlineCopyOf\(snap\);/, 'Copy to offline goes through the door');
   assert.match(m, /const copy = onlineCopyOf\(snap, sharedClassicMinutes\(Date\.now\(\)\)\);/, 'and so does Bring online');
   assert.equal((m.match(/const date = Number\.isFinite\(snap\.classicMinutes\) \? dateFromClassicMinutes\(snap\.classicMinutes\) : null;/g) ?? []).length, 2, 'both cards read the one clock the slot loads at (E: S5/U4)');
@@ -304,7 +304,7 @@ test('AUDIT LIVED1 M/N/O/S (U1, U2, U3, U8): the words fit their screens - the n
   assert.deepEqual(tav.flow.top.rows.slice(1).map((r) => r.text), [`${OWN_TIME_ROOM} 2 days 20 hours of your time`, `(5h 43m of play)${OWN_TIME_ROOM_NOTE}`]);
   assert.equal(restClockLine(900 * D + 15 * H + 5, { loiter: true }), 'World time 15:05 - you wait on your own clock');
   assert.equal(restClockLine(900 * D + 15 * H + 5), 'World time 15:05 - you rest on your own clock');
-  const er = rd('src/ui/enhancedRest.js');
+  const er = rd('src/ui/enhanced/enhancedRest.js');
   assert.match(er, /_restingRefs\.clockLine\.textContent = Number\.isFinite\(wm\) \? restClockLine\(wm, \{ loiter: overlay\.mode === 'loiter' \}\) : '';/);
   assert.match(rd('src/ui/restWindow.js'), /lines\.push\(restClockLine\(st\.worldMinutes, \{ loiter: this\.mode === 'loiter' \}\)\);/);
 });
@@ -339,7 +339,7 @@ test('AUDIT LIVED1 T3/T4/T6/T7/T8 + V: by source, every host read LIVED1 re-poin
   for (const [src, re, what] of personal) assert.match(src, re, `${what} reads the character's clock`);
   // T7: the sky's and the calendar's feeds
   assert.match(w, /skyMinutes: sharedClockOn\(\) \? Math\.floor\(skyMinutes\(\)\) : null/, 'the encounter roll\'s table reads the world\'s hour');   // TIME1: the sky's own clock
-  assert.match(rd('src/ui/enhancedTavern.js'), /date: \{ dayOfYear: dayOfYearFromMinutes\(deps\.worldNow\?\.\(\) \?\? now\) \}/, 'the enhanced tavern\'s Heart\'s Day');
+  assert.match(rd('src/ui/enhanced/enhancedTavern.js'), /date: \{ dayOfYear: dayOfYearFromMinutes\(deps\.worldNow\?\.\(\) \?\? now\) \}/, 'the enhanced tavern\'s Heart\'s Day');
   const tw = rd('src/ui/tavernWindow.js');
   assert.match(tw, /hour: Math\.trunc\(\(\(\(h\.worldNow\?\.\(\) \?\? now\) % 1440\) \+ 1440\) % 1440 \/ 60\)/, 'the kitchen\'s hours');
   assert.match(tw, /gameMinutes: h\.worldNow\?\.\(\) \?\? now \}\);/, 'the meal\'s holiday');

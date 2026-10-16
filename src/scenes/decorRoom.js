@@ -195,7 +195,7 @@ export function loadMountArt({ getTexture, uploadRecord, renderer }, a, r, dye, 
   return Promise.resolve(getTexture?.(a)).then(async (t) => {
     if (!t || !(r < t.recordCount)) return null;
     // MOUNT-LAZY: the record's replacement by the item's dye, decoded BEFORE the upload asks for it - the pack's own ask
-    // (ui/itemScroller.js preloadIconRecord). A lazy one (Diverse Weapons' metals, Roleplay Realism Items' archives) is
+    // (ui/item/itemScroller.js preloadIconRecord). A lazy one (Diverse Weapons' metals, Roleplay Realism Items' archives) is
     // never decoded by the archive's preload: a mount hung before any list drew its record hung as the classic
     // picture, or as nothing where the mod's picture is the only one, and a ghost put up before the decode landed was
     // not the picture that then stood (Mac, the house: "changes after placment", "disapeared").

@@ -17,10 +17,10 @@ import { fitCanvas, TRIM_ALPHA } from '../src/ui/bitmapCanvas.js';
 import { requestFittedPicture, requestFittedIcon, requestIcon, fittedImg, iconName, _fittedKeys } from '../src/ui/textureCanvas.js';
 import { addVendorTextures, clearVendorTextures, preloadTextureArchive } from '../src/systems/textureReplacement.js';
 import { VENDOR_ICON_FILES } from '../src/systems/survival/items.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { HOTBAR_CSS } from '../src/ui/enhancedHotbar.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { HOTBAR_CSS } from '../src/ui/enhanced/enhancedHotbar.js';
 import { PAGE_IDS } from '../src/ui/packPages.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { setItemFields, mintCondition, inventoryItemImage } from '../src/systems/item/itemTemplates.js';
@@ -251,8 +251,8 @@ test('UI1 element: a fitted picture carries its own size, never past its box, ne
     assert.equal(fittedImg({ src: 'y', w: 1, h: 1, smooth: true }).className, 'fit smooth');
   });
   assert.equal(iconName(233, 5, null), '233_5');
-  const { ENHANCED_CSS } = await import('../src/ui/enhancedStyle.js');
-  const { PLUS_CSS } = await import('../src/ui/enhancedPlusStyle.js');
+  const { ENHANCED_CSS } = await import('../src/ui/enhanced/enhancedStyle.js');
+  const { PLUS_CSS } = await import('../src/ui/enhanced/enhancedPlusStyle.js');
   assert.match(ENHANCED_CSS, /\nimg\.fit \{ image-rendering: pixelated; \}/, 'the sheet draws it pixel for pixel');
   assert.match(PLUS_CSS, /@media \(max-width: 640px\) \{ \.pack-shell \.wornsock \.tile img\.fit \{ image-rendering: auto; \} \}/, 'the phone\'s socket smooths what it shrinks');
 });
@@ -417,7 +417,7 @@ test('UI1b sheet: THE SLOT IS THE FRAME - the tier on the slot\'s own border and
 });
 
 test('UI1 wiring: every enhanced surface draws its item through the one fitted door, each at its box (mutants: a surface back on the unfitted door)', () => {
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /export function linePicture\(line, \{ box, onReady = null, snap = true \} = \/\*\* @type \{any\} \*\/ \(\{\}\)\) \{\n {2}if \(!line\.image && line\.model == null\) return null;\n {2}\/\/ MERGE \(UI1 x DYE-ICON\)[^\n]*\n {2}const name = line\.image \? iconName\(line\.image\.archive, line\.image\.record, line\.image\.dye, line\.image\.dyeTarget\) : `model\$\{line\.model\}`;\n {2}return requestFittedPicture\(name, \(wake\) => linePictureUrl\(line, \{ scale: 1, onReady: wake \}\), \{ box, dpr: screenDpr\(\), onReady, snap \}\);/);
   assert.match(inv, /const pic = modelPicture\(line\.item, box\)\n {4}\|\| linePicture\(line, \{ box, onReady: ready, snap \}\);/, 'the tile: the Morrowind icon, then the classic record');
   assert.match(inv, /const big = modelPicture\(line\.item, SLOT_BOX\.card\)\n {4}\|\| linePicture\(line, \{ box: SLOT_BOX\.card, onReady: ready \}\);/, 'the card');
@@ -426,7 +426,7 @@ test('UI1 wiring: every enhanced surface draws its item through the one fitted d
   assert.match(inv, /b\.append\(tileWithWear\(line, b, SLOT_BOX\.socket, false\)\);/);
   assert.match(inv, /node\.append\(line \? itemTile\(line, wornBox\(true\), render, false\) :/);
   assert.match(inv, /const tile = \(\) => itemTile\(line, gridBox\(\), \(\) => \{ if \(ghost === g\) g\.querySelector\('\.tile'\)\?\.replaceWith\(tile\(\)\); \}\);/);
-  for (const f of ['src/ui/enhancedTrade.js', 'src/ui/enhancedPlayerTrade.js']) {
+  for (const f of ['src/ui/enhanced/enhancedTrade.js', 'src/ui/enhanced/enhancedPlayerTrade.js']) {
     assert.match(read(f), /linePicture\(line, \{ box: SLOT_BOX\.row, onReady:/, f);
     assert.doesNotMatch(read(f), /linePictureUrl/, `${f}: nothing on the unfitted door`);
   }
@@ -473,13 +473,13 @@ test('UI1 AUDIT UI A2/A3/A4: a tiered worn panel keeps its glow under a textured
 });
 
 test('HOTBAR-LAG (2026-10-11, Mac: "spamming or just pressing the hotbar buttons makes the game lag"): a press PLAYS the caption\'s fade - the browser\'s animation, cancelled and played again - never a class off, a forced layout and the class back (two full restyles a press: ~10 ms on the main thread under DFO Grimoire, whose ground for the caption is a picture held in a custom property); the class stays the door where there is no animate() (mutants: the forced layout before the animation, the keyframes drifting from the sheet\'s)', async () => {
-  const src = read('src/ui/enhancedHotbar.js');
+  const src = read('src/ui/enhanced/enhancedHotbar.js');
   const fn = src.slice(src.indexOf('function showCaption('), src.indexOf('/** The modifiers an event carries'));
   const anim = fn.indexOf("if (typeof caption.animate === 'function') {");
   assert.ok(anim > 0, 'the animation first');
   assert.ok(fn.indexOf('void caption.offsetWidth') > anim, 'the forced layout only on the fallback, after the animation\'s return');
   assert.match(fn, /captionFade\?\.cancel\?\.\(\);\n\s+captionFade = caption\.animate\(CAPTION_FADE, \{ duration: CAPTION_MS, easing: 'linear', fill: 'forwards' \}\);\n\s+return;/);
-  const { CAPTION_FADE, CAPTION_ON, HOTBAR_CSS: css } = await import('../src/ui/enhancedHotbar.js');
+  const { CAPTION_FADE, CAPTION_ON, HOTBAR_CSS: css } = await import('../src/ui/enhanced/enhancedHotbar.js');
   // the played keyframes ARE the sheet's own hb-cap
   const kf = /@keyframes hb-cap \{ 0% \{ opacity: 0; \} 8% \{ opacity: 1; \} 75% \{ opacity: 1; \} 100% \{ opacity: 0; \} \}/;
   assert.match(css, kf);

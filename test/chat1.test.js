@@ -43,7 +43,7 @@ import { RELAY_VERSION } from '../src/net/wire.js';   // LOCALDEV1: the worker e
 import { OnlineSession, HEARTBEAT_MS, BACKOFF_MIN_MS } from '../src/net/online.js';
 import { ChatLog, CHAT_TABS, CHAT_KEEP, CHAT_FADE_MS, CHAT_PEEK, CHAT_REJOIN_MS, tagOf } from '../src/net/chat.js';
 import { createChatPanel, isOpenKey, CHAT_STYLE_ID, CHAT_OPEN_ACTION, clockOf, CHAT_CSS } from '../src/ui/chatPanel.js';
-import { registerOverlay, overlayOpen } from '../src/ui/enhancedOverlays.js';
+import { registerOverlay, overlayOpen } from '../src/ui/enhanced/enhancedOverlays.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 

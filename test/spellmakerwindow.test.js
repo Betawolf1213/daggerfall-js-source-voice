@@ -24,7 +24,7 @@ import {
   EDITOR_RECTS, SPINNER_UP, SPINNER_DOWN, SPINNER_VALUE, spinnerPart,
   SELECT_SUBRECTS, TARGET_BUTTONS, ELEMENT_BUTTONS,
   EDITOR_DESCRIPTION_PANEL, _setSpellMakerArtForTests,
-} from '../src/ui/spellMakerWindow.js';
+} from '../src/ui/spell/spellMakerWindow.js';
 import {
   SPELLBOOK_TEMPLATE_INDEX, _resetCustomIndexForTests, blankEffectSettings,
   SPELL_ICON_COUNT,
@@ -546,7 +546,7 @@ test('E8 wiring pin: the guild destination mounts the NATIVE window behind an ar
   assert.match(src('src/systems/guild/guildServices.js'), /case 'MakeSpells':/);
   // ...and the window really is native now: no `isChoiceWindow` false,
   // and the three ARENA2 sheets DFU names are the ones it loads.
-  const file = src('src/ui/spellMakerWindow.js');
+  const file = src('src/ui/spell/spellMakerWindow.js');
   assert.match(file, /INFO01I0\.IMG/);
   assert.match(file, /MASK01I0\.IMG/);
   assert.match(file, /MASK05I0\.IMG/);

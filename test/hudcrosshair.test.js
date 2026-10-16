@@ -8,8 +8,8 @@ import {
   ICON_STYLE_SCALE, iconStyleScale, iconReplacesCrosshair, iconResScale,
   modeIconPosition, MODE_LABEL, crosshairEnabled, interactionIconStyle,
   drawCrosshairAndModeIcon,
-} from '../src/ui/hudCrosshair.js';
-import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud.js';
+} from '../src/ui/hud/hudCrosshair.js';
+import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud/hud.js';
 import { MODES, setInteractionMode } from '../src/player/interactionMode.js';
 import { setValue, _resetForTests, DEFAULTS } from '../src/systems/settings/settings.js';
 
@@ -132,9 +132,9 @@ test('U38: drawHud is the ONE call - all four hosts get both components', () => 
   const code = (rel) => readFileSync(join(root, 'src', rel), 'utf8');
   // hud.js calls it, and passes ITS OWN constants rather than letting
   // hudCrosshair import back (which would be a cycle)
-  assert.match(code('ui/hud.js'), /drawCrosshairAndModeIcon\(renderer, canvas, font,/);
-  assert.match(code('ui/hud.js'), /border: HUD_BORDER, barWidth: HUD_NATIVE_BAR_WIDTH/);
-  assert.doesNotMatch(code('ui/hudCrosshair.js'), /from '\.\/hud\.js'/,
+  assert.match(code('ui/hud/hud.js'), /drawCrosshairAndModeIcon\(renderer, canvas, font,/);
+  assert.match(code('ui/hud/hud.js'), /border: HUD_BORDER, barWidth: HUD_NATIVE_BAR_WIDTH/);
+  assert.doesNotMatch(code('ui/hud/hudCrosshair.js'), /from '\.\/hud\.js'/,
     'the dependency runs ONE way - hud.js -> hudCrosshair.js');
   // and the hosts hand it a font and their cursor state
   // AUDIT 39 (#132) MOVED THIS PIN. The comment that stood here -

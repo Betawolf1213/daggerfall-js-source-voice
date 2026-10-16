@@ -355,7 +355,7 @@
   },
   {
     "name": "PROF2-40-smeltable-past-the-most",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  let n = SMELT_MAX;\n  for (const inp of r.inputs)",
     "new": "  let n = Infinity;\n  for (const inp of r.inputs)",
     "tests": [

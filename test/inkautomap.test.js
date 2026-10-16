@@ -20,9 +20,9 @@ import {
   PLAN_PEN, WALL_PEN, WALL_PEN_MIN, CARET_R, BEACON_R, MARK_R,
   FLOOR_STRIP, FLOOR_STRIP_MAX, visibleFloors,
   paintPlanStatic, paintPlanOverlay, floorStripLayout, floorStripHit, paintFloorStrip,
-} from '../src/ui/inkAutomap.js';
-import { PEN, HALO_PEN, NAME_FACE, toPaper, boundarySegments, linkSegments } from '../src/ui/inkMap.js';
-import { STRIP, stripScale, grabHit } from '../src/ui/mapStrip.js';
+} from '../src/ui/ink/inkAutomap.js';
+import { PEN, HALO_PEN, NAME_FACE, toPaper, boundarySegments, linkSegments } from '../src/ui/ink/inkMap.js';
+import { STRIP, stripScale, grabHit } from '../src/ui/map/mapStrip.js';
 import { floorPlan } from '../src/systems/automap/automapFloors.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -66,7 +66,7 @@ test('EM3: the dungeon is drawn in the BAY\'s pen - not one colour is invented h
   // and the two sheets share the hand at the SOURCE too: the pen, the
   // halo and the face all come from inkMap, and the strip's scale from
   // the tab strip, so nothing here can drift away from the world map
-  const text = src('src/ui/inkAutomap.js');
+  const text = src('src/ui/ink/inkAutomap.js');
   assert.match(text, /import \{ PEN, HALO_PEN, NAME_FACE, toPaper, paintCaret, paintPartyCarets, CARET_R \} from '\.\/inkMap\.js';/);
   assert.match(text, /import \{ STRIP, stripScale, grabHit \} from '\.\/mapStrip\.js';/);
   assert.doesNotMatch(text, /rgba?\(/, 'a colour written out here is a colour that drifts');
@@ -354,6 +354,6 @@ test('EM3: two grabbed boxes that overlap give the press to the NEAREST - the se
   assert.equal(grabHit(boxes, 5, 11, 6), 0, 'nearer the first');
   assert.equal(grabHit(boxes, 5, 13, 6), 1, 'nearer the second');
   assert.equal(grabHit(boxes, 5, 40, 6), -1, 'clear of both');
-  assert.match(src('src/ui/inkAutomap.js'), /grabHit\(rows, px, py/, 'the floor strip does not write its own');
-  assert.match(src('src/ui/mapStrip.js'), /grabHit\(tabs, px, py/, 'nor does the tab strip');
+  assert.match(src('src/ui/ink/inkAutomap.js'), /grabHit\(rows, px, py/, 'the floor strip does not write its own');
+  assert.match(src('src/ui/map/mapStrip.js'), /grabHit\(tabs, px, py/, 'nor does the tab strip');
 });

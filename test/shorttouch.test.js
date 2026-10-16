@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
 const SHORT = '@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {';
 const block = () => {
   const at = css.indexOf(SHORT);

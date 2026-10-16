@@ -127,7 +127,7 @@
  },
  {
   "name": "CHARID1-the-enhanced-pane-overwrites-a-namesake",
-  "file": "src/ui/enhancedMenu.js",
+  "file": "src/ui/enhanced/enhancedMenu.js",
   "old": "  const mine = savedGames().filter((s) => (myId ? s.characterId === myId : s.characterName === me));",
   "new": "  const mine = savedGames().filter((s) => s.characterName === me);",
   "tests": [

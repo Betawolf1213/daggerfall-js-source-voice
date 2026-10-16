@@ -987,7 +987,7 @@
   },
   {
     "name": "PROF10-pages-no-jeweller-station",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "export const PROF_STATIONS = Object.freeze(['forge', 'workbench', 'loom', 'mason', 'jeweller']);",
     "new": "export const PROF_STATIONS = Object.freeze(['forge', 'workbench', 'loom', 'mason']);",
     "tests": [
@@ -997,7 +997,7 @@
   },
   {
     "name": "PROF10-pages-jeweller-cold-as-a-forge",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": ": station === 'jeweller' ? t('prof.page.cold.jeweller', JEWEL_COLD_LINE) : forgeColdLine());",
     "new": ": forgeColdLine());",
     "tests": [
@@ -1006,7 +1006,7 @@
   },
   {
     "name": "PROF10-pages-hands-not-at-the-bench",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": ": me !== _jewel && (_jewel.act || _jewel.crafting) ? 'jeweller' : null);",
     "new": ": null);",
     "tests": [
@@ -1015,7 +1015,7 @@
   },
   {
     "name": "PROF10-pages-escape-keeps-the-stone",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (_jewel.act) { _jewel.act.cancel(); endFacet(); _jewel.word = facetDownLine(); return true; }   // PROF10\n",
     "new": "",
     "tests": [
@@ -1024,7 +1024,7 @@
   },
   {
     "name": "PROF10-pages-facet-no-act",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "_cook.act || _jewel.act);",
     "new": "_cook.act);",
     "tests": [
@@ -1033,7 +1033,7 @@
   },
   {
     "name": "PROF10-pages-visit-keeps-the-piece",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "_jewel.piece = 'ring'; _jewel.base = 'silver'; _jewel.picked = null;",
     "new": "_jewel.picked = null;",
     "tests": [
@@ -1042,7 +1042,7 @@
   },
   {
     "name": "PROF10-pages-gold-at-40",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  jewelcrafting: () => [[t('prof.page.unlocks.jewelcrafting1', 'Silver pieces; the Cloth Amulet'), 1], [t('prof.page.unlocks.jewelcrafting3', 'Gold pieces'), 3],",
     "new": "  jewelcrafting: () => [[t('prof.page.unlocks.jewelcrafting1', 'Silver pieces; the Cloth Amulet'), 1], [t('prof.page.unlocks.jewelcrafting3', 'Gold pieces'), 4],",
     "tests": [
@@ -1051,7 +1051,7 @@
   },
   {
     "name": "PROF10-pages-jewelcrafting-unpractised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  jewelcrafting: () => [[t('prof.page.unlocks.jewelcrafting1', 'Silver pieces; the Cloth Amulet'), 1],",
     "new": "  jewels: () => [[t('prof.page.unlocks.jewelcrafting1', 'Silver pieces; the Cloth Amulet'), 1],",
     "tests": [
@@ -1061,7 +1061,7 @@
   },
   {
     "name": "PROF10-pages-no-bench",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    ['jeweller', (d) => drawJewellerBench(d, rerender, kit)],   // PROF10\n",
     "new": "",
     "tests": [
@@ -1070,7 +1070,7 @@
   },
   {
     "name": "PROF10-pages-bench-no-fee-said",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const short = purseShort(bench, 'jeweller');",
     "new": "const short = null;",
     "tests": [
@@ -1079,7 +1079,7 @@
   },
   {
     "name": "PROF10-pages-linen-a-row",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (bases.length > 1) {\n    const row = el('div', 'prof-families prof-metals');\n    for (const base of bases) {",
     "new": "  if (bases.length > 0) {\n    const row = el('div', 'prof-families prof-metals');\n    for (const base of bases) {",
     "tests": [
@@ -1088,7 +1088,7 @@
   },
   {
     "name": "PROF10-pages-base-never-reset",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (!bases.some((b) => b.id === _jewel.base)) _jewel.base = bases[0].id;",
     "new": "if (false) _jewel.base = bases[0].id;",
     "tests": [
@@ -1097,7 +1097,7 @@
   },
   {
     "name": "PROF10-pages-cracked-unoffered-in-the-list",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": " || (lapidary && takesCracked(r) && craftable(r, held, spendsFor(r, false, true)))",
     "new": "",
     "tests": [
@@ -1106,7 +1106,7 @@
   },
   {
     "name": "PROF10-pages-cracked-for-anyone",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (lapidary && takesCracked(r) && crackedHeld > 0) {\n      // A LAPIDARY'S",
     "new": "    if (takesCracked(r) && crackedHeld > 0) {\n      // A LAPIDARY'S",
     "tests": [
@@ -1115,7 +1115,7 @@
   },
   {
     "name": "PROF10-pages-cracked-unspent",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "cracked: cracked && lapidary && takesCracked(r) });",
     "new": "cracked: false });",
     "tests": [
@@ -1124,7 +1124,7 @@
   },
   {
     "name": "PROF10-pages-points-no-hand",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "{ points: jewelPointsLine(r, hand),",
     "new": "{ points: jewelPointsLine(r, null),",
     "tests": [
@@ -1133,7 +1133,7 @@
   },
   {
     "name": "PROF10-pages-hand-at-100",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const hand = jewelHand(r, specs[50]);",
     "new": "const hand = jewelHand(r, specs[100]);",
     "tests": [
@@ -1142,7 +1142,7 @@
   },
   {
     "name": "PROF10-pages-odds-no-master-jeweller",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const odds = qualityOdds(rank - r.rank, { masterwright: masterworkSpec(specs[100], r) });   // CRAFT3",
     "new": "const odds = qualityOdds(rank - r.rank, { masterwright: false });   // CRAFT3",
     "tests": [
@@ -1152,7 +1152,7 @@
   },
   {
     "name": "PROF10-pages-no-heartwood",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    heartwoodToggle(box, el, r, book, _jewel, rerender, cutting);   // a Wand's plank",
     "new": "    void heartwoodToggle;   // a Wand's plank",
     "tests": [
@@ -1161,7 +1161,7 @@
   },
   {
     "name": "PROF10-pages-facets-three",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "createFacetAct({ facets: facetCount(r), windowDeg:",
     "new": "createFacetAct({ facets: 3, windowDeg:",
     "tests": [
@@ -1170,7 +1170,7 @@
   },
   {
     "name": "PROF10-pages-window-a-novices",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "windowDeg: facetWindow(rank, p.facetBand?.() ?? 1) });",
     "new": "windowDeg: facetWindow(0, p.facetBand?.() ?? 1) });",
     "tests": [
@@ -1179,7 +1179,7 @@
   },
   {
     "name": "PROF10-pages-act-forgets-its-gem",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "_jewel.actWood = wood; _jewel.actCracked = crack;",
     "new": "_jewel.actWood = wood; _jewel.actCracked = false;",
     "tests": [
@@ -1188,7 +1188,7 @@
   },
   {
     "name": "PROF10-pages-craft-forgets-its-gem",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "heartwood: wood, cracked });",
     "new": "heartwood: wood });",
     "tests": [
@@ -1197,7 +1197,7 @@
   },
   {
     "name": "PROF10-pages-gentle-cuts",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (gentle) { void finishFor(r.id, wood, crack)(false); return; }   // Gentle acts: a plain piece, no facet",
     "new": "// Gentle acts: a plain piece, no facet",
     "tests": [
@@ -1206,7 +1206,7 @@
   },
   {
     "name": "PROF10-pages-round-never-ends",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (_jewel.act.state.done) { ended(); return; }   // the last facet let go round",
     "new": "// the last facet let go round",
     "tests": [
@@ -1215,7 +1215,7 @@
   },
   {
     "name": "PROF10-pages-shut-page-cuts-on",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (!els?.bar || els.bar.isConnected === false) { _jewel.act.cancel(); endFacet(); return; }",
     "new": "if (!els?.bar) { _jewel.act.cancel(); endFacet(); return; }",
     "tests": [
@@ -1224,7 +1224,7 @@
   },
   {
     "name": "PROF10-pages-facet-deaf",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const key = (e) => actKey(e, _jewel.els?.hit, stop);",
     "new": "const key = () => {};",
     "tests": [
@@ -1233,7 +1233,7 @@
   },
   {
     "name": "PROF10-pages-one-act-a-page-unkept",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "(craftable(r, held, spends) || chain?.ok === true) && !_jewel.crafting && !_jewel.act && !elsewhere && !short;",
     "new": "(craftable(r, held, spends) || chain?.ok === true) && !_jewel.crafting && !_jewel.act && !short;",
     "tests": [
@@ -1242,7 +1242,7 @@
   },
   {
     "name": "PROF10-pages-no-jewel-cold-line",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "Jewelcrafting is done online, from your Stores page.';   // PROF10",
     "new": "Smelting is done online, from your Stores page.';   // PROF10",
     "tests": [
@@ -1350,7 +1350,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-filter-refuses-crafted",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "if (!keptEnchantments(item) || item.group === 'UselessItems2') return false;",
     "new": "if (item.enchantments?.length || item.group === 'UselessItems2') return false;",
     "tests": [
@@ -1395,7 +1395,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-label-kept-free",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "totalEnchantmentCost(this.powers, this.sideEffects) + enchantmentListCost(keptEnchantments(this.selected) ?? []), itemEnchantmentPower",
     "new": "totalEnchantmentCost(this.powers, this.sideEffects), itemEnchantmentPower",
     "tests": [
@@ -1413,7 +1413,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-kept-row-removable",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "if (hit && !hit.entry.kept && (hit.entry.parentEnchantment ?? 0) === 0) this._removeRow(hit.entry);",
     "new": "if (hit && (hit.entry.parentEnchantment ?? 0) === 0) this._removeRow(hit.entry);",
     "tests": [
@@ -1422,7 +1422,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-guard-own-rows",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "      item: this.selected, powers: all.powers, sideEffects: all.sideEffects,\n    });\n    if (d.kind === 'refuse')",
     "new": "      item: this.selected, powers: this.powers, sideEffects: this.sideEffects,\n    });\n    if (d.kind === 'refuse')",
     "tests": [
@@ -1431,7 +1431,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-lists-no-kept",
-    "file": "src/ui/itemMakerWindow.js",
+    "file": "src/ui/item/itemMakerWindow.js",
     "old": "return { powers: [...k.powers, ...this.powers], sideEffects: [...k.sideEffects, ...this.sideEffects] };",
     "new": "return { powers: this.powers, sideEffects: this.sideEffects };",
     "tests": [
@@ -1440,7 +1440,7 @@
   },
   {
     "name": "AUDIT-PROF10-J2-bench-words",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    box.append(el('p', 'px-note', t('prof.page.jewel.pointsNote', '{points}{hand, select, goldsmith { - a Goldsmith\\'s Silver, counted as Gold} gemcutter { - a Gemcutter\\'s gem} other {}}. The item maker spends them{wand, select, yes {} other {, beside a Masterwork\\'s own enchantment}}.',",
     "new": "    box.append(el('p', 'px-note', t('prof.page.jewel.pointsNote', '{points}{hand, select, goldsmith { - a Goldsmith\\'s Silver, counted as Gold} gemcutter { - a Gemcutter\\'s gem} other {}}. The item maker spends them{wand, select, yes {} other {}}.',",
     "tests": [
@@ -1449,7 +1449,7 @@
   },
   {
     "name": "AUDIT-PROF-541-J3-port-own-rows-only",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "items: enchantRows(w, shown.powers) }",
     "new": "items: enchantRows(w, w.powers) }",
     "tests": [
@@ -1458,7 +1458,7 @@
   },
   {
     "name": "AUDIT-PROF-541-J3-kept-row-removable",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "act: forced || kept ? null",
     "new": "act: forced ? null",
     "tests": [
@@ -1467,7 +1467,7 @@
   },
   {
     "name": "AUDIT-PROF-541-J3-kept-row-loud",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "muted: forced || kept,",
     "new": "muted: forced,",
     "tests": [
@@ -1513,7 +1513,7 @@
   },
   {
     "name": "AUDIT-PROF-541-J5-wand-promised",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "wand: r.product === 'wand' ? 'yes' : 'no'",
     "new": "wand: r.product === 'wands' ? 'yes' : 'no'",
     "tests": [
@@ -1567,7 +1567,7 @@
   },
   {
     "name": "PROF-541-R2-C4-tooltip-raw",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "old": "pieceLines(item, craftedJewelPoints(item))",
     "new": "pieceLines(item)",
     "tests": [
@@ -1576,7 +1576,7 @@
   },
   {
     "name": "PROF-541-R2-C4-card-raw",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "pieceLines(item, craftedJewelPoints(item))",
     "new": "pieceLines(item)",
     "tests": [
@@ -1603,7 +1603,7 @@
   },
   {
     "name": "PROF-541-R2-C6-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "{odds}{steps, plural, =0 {} one { (+# step from the town\\'s Apothecary)} other { (+# steps from the town\\'s Apothecary)}}.",
     "new": "{odds}.",
     "tests": [
@@ -1612,7 +1612,7 @@
   },
   {
     "name": "PROF-541-R2-C6-unclamped",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const steps = Math.max(0, Math.trunc(Number(p.jewelSteps?.()) || 0));",
     "new": "const steps = p.jewelSteps?.() ?? 0;",
     "tests": [

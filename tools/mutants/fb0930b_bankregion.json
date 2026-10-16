@@ -1,7 +1,7 @@
 [
   {
     "name": "BANK-REGION-the-region-unnamed",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "here ? `Account in ${here}` : 'Account balance', L.account]",
     "new": "'Account balance', L.account]",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "BANK-REGION-the-others-unlisted",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "L.account], ...elsewhere, ['Gold carried', L.inventory],",
     "new": "L.account], ['Gold carried', L.inventory],",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "BANK-REGION-the-account-itself-listed-again",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "(i !== gold && a?.accountGold > 0 ?",
     "new": "(a?.accountGold > 0 ?",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "BANK-REGION-every-empty-account-listed",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "(i !== gold && a?.accountGold > 0 ?",
     "new": "(i !== gold && a ?",
     "tests": [

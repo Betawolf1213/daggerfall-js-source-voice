@@ -15,9 +15,9 @@ import {
 } from '../src/net/bagLaw.js';
 import { leftWords, actMaterial } from '../src/scenes/gatherHost.js';
 import { survivalMinute } from '../src/systems/survival/needs.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
-import { BAG_PAGE_WORDS, setProfessionsPages, drawStoresPage, resetProfPages, storesRoomOf } from '../src/ui/profPages.js';
+import { BAG_PAGE_WORDS, setProfessionsPages, drawStoresPage, resetProfPages, storesRoomOf } from '../src/ui/professions/profPages.js';
 import {
   hasBag, bagItemsOf, materialKeyOfItem, isMaterialItem, heldOf, unitKgOf, bagWeight, roomFor, mintCarried, takeCarried,
   bagStoreRefusal, bagMayLeave, isBagItem, giveCarried, bagTakesOf, emptyBagIntoPack,
@@ -176,7 +176,7 @@ test('BAG1 a loaded bag stays: it leaves the pack - dropped, stored, sold - only
   assert.equal(bagMayLeave({ bagItems: [] }), true);
   assert.equal(bagMayLeave({ bagItems: [mintMaterialItem(OAK)] }), false);
   // every window that plans a move says whether the bag is loaded
-  for (const f of ['src/ui/enhancedInventory.js', 'src/ui/nativeInventory.js', 'src/ui/enhancedTrade.js', 'src/ui/nativeTrade.js']) {
+  for (const f of ['src/ui/enhanced/enhancedInventory.js', 'src/ui/native/nativeInventory.js', 'src/ui/enhanced/enhancedTrade.js', 'src/ui/native/nativeTrade.js']) {
     assert.match(src(f), /bagLoaded/, f);
   }
 });
@@ -800,7 +800,7 @@ test('BAG1 (AUDIT): Put everything in says what went in and each material refuse
   assert.equal(BAG_PAGE_WORDS.allInDone(12), '12 put in the Stores.');
   assert.equal(BAG_PAGE_WORDS.allInDone(12, [{ name: 'Oak Log', text: 'Your Stores hold 5,000 of that already.' }]), '12 put in the Stores. Oak Log: Your Stores hold 5,000 of that already.');
   assert.equal(BAG_PAGE_WORDS.allInDone(3, [], 'slow'), '3 put in the Stores. slow');
-  const page = src('src/ui/profPages.js');
+  const page = src('src/ui/professions/profPages.js');
   assert.match(page, /if \(res\?\.kept\) stop = res\.text \?\? null; else refused\.push\(\{ name: r\.name, text: res\?\.text \?\? null \}\); left = -1; break;/);   // PIN MOVED (LOOT-LOOSE, FIELD BUGS 2026-10-15c): the counted and the loose each a pass, a refusal ending this material's
   assert.match(page, /const carriedAny = \[\.\.\.all\.values\(\)\]\.some/);
   assert.match(src('src/ui/workTab.js'), /w\.carrying\?\.\(\) \? t\('prof\.work\.writ\.heldCarried', '\{n, number\} held', \{ n: Number\(held\) \}\) : t\('prof\.work\.writ\.held', '\{n, number\} in your Stores', \{ n: Number\(held\) \}\)/);

@@ -20,7 +20,7 @@
 //
 // THE ART IS OURS (Port-Doctrine, A RENDER OF GAME DATA IS GAME DATA; section 6.2): every face is painted here, on a
 // canvas, from paths - no ARENA2 pixel, no font glyph for a charge. One painter serves the cloth's atlas
-// (render/cardTableDraw.js) and the panel's little cards (ui/cardTableHud.js) - the suits' ONE home.
+// (render/cardTableDraw.js) and the panel's little cards (ui/card/cardTableHud.js) - the suits' ONE home.
 //
 // THE TABLES ARE PURE (SUIT_CROWNS, courtOf, cardTitle, PIP_LAYOUT): pinned by test/cardsbay_faces.test.js; only the
 // painting needs a page (the probe's shots look at it).

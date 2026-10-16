@@ -15,7 +15,7 @@
   },
   {
     "name": "AUDITPOI-E1-the-bar-s-hold-unread",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "  if (keyHolds.size) return;   // AUDIT POI E1",
     "new": "  // AUDIT POI E1",
     "tests": ["test/auditpoi_editor.test.js"]

@@ -15,7 +15,7 @@ import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
 import { newArenaLadder, nextLadderBout, exhibitionFor, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
-import { arenaHudModel } from '../src/ui/arenaHud.js';
+import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { MINUTES_PER_DAY, DAYS_PER_YEAR } from '../src/systems/gameDate.js';
 import { createArenaGate, RECRUITER_BANNER } from '../src/scenes/arenaGate.js';
 

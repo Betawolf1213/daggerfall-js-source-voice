@@ -13,7 +13,7 @@ import {
 import { MapsFile, LOCATION_TYPES, mapPixelToLongitudeLatitude, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
 import {
   buildInkModel, buildInkMarks, paintInk, placeNames, markReach, paintHubCircle, HUB_CIRCLE, HUB_CIRCLE_PAD, GLYPH_R, PEN, toPaper,
-} from '../src/ui/inkMap.js';
+} from '../src/ui/ink/inkMap.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

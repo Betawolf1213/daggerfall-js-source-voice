@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITPOI-L1-the-press-unheard",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "  root.addEventListener('pointerdown', () => { pressAt = Date.now(); }, true);",
     "new": "  root.addEventListener('pointerdown', () => {}, true);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITPOI-L1-the-release-unheard",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "  const released = () => { setTimeout(() => { pressAt = -Infinity; schedule(); }, 0); };",
     "new": "  const released = () => { setTimeout(() => { schedule(); }, 0); };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITPOI-L1-the-hold-unbounded",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    if (pressed < PRESS_HOLD_MS) { setTimeout(() => schedule(), PRESS_HOLD_MS - pressed + 1); return; }",
     "new": "    if (pressAt > -Infinity) { setTimeout(() => schedule(), PRESS_HOLD_MS); return; }",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDITPOI-L1-the-destroyed-panel-drawn",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    if (gone) return;\n    const pressed = Date.now() - pressAt;",
     "new": "    const pressed = Date.now() - pressAt;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDITPOI-L2-the-unwrap-on-this-thread",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "      ed.unwrapOffThread().then((n) => {",
     "new": "      Promise.resolve(ed.unwrap()).then((n) => {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDITPOI-L2-apply-unheld",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "    apply.disabled = applying || ed.busy();",
     "new": "    apply.disabled = applying;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDITPOI-L2-applys-press-unguarded",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "    if (applying || ed.busy()) return;",
     "new": "    if (applying) return;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDITPOI-L2-the-worker-kept-at-close",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "closed = true; ed.dispose(); root.remove?.();",
     "new": "closed = true; root.remove?.();",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITPOI-L2-the-answer-said-after-close",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "        if (closed) return;\n        say(t('poi.uv.unwrapped'",
     "new": "        say(t('poi.uv.unwrapped'",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDITPOI-L3-lit-by-the-tools-corners",
-    "file": "src/ui/poiUvPanel.js",
+    "file": "src/ui/poi/poiUvPanel.js",
     "old": "    if (mode === 'vertex' && ed.selection().size) {",
     "new": "    if (mode === 'vertex') {",
     "tests": [
@@ -109,16 +109,16 @@
   },
   {
     "name": "AUDITPOI-L4-openpack-inflating-the-whole-archive",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "      pack = await readPackBytes(bytes);",
-    "new": "      pack = await (await import('../poi/poiPack.js')).readPack(await (await import('../scenes/dataSource.js')).readZipEntries({ arrayBuffer: async () => bytes.slice().buffer }));",
+    "new": "      pack = await (await import('../../poi/poiPack.js')).readPack(await (await import('../../scenes/dataSource.js')).readZipEntries({ arrayBuffer: async () => bytes.slice().buffer }));",
     "tests": [
       "test/auditpoi_lead.test.js"
     ]
   },
   {
     "name": "AUDITPOI-L5-the-problems-undrawn",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    for (const p of (r.problems ?? []).slice(0, 12)) {",
     "new": "    for (const p of [].slice(0, 12)) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDITPOI-L6-the-lists-change-outside-the-refusal",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "(v) => { split = v; if (lastRead) shown(lastRead); });",
     "new": "(v) => { split = v; if (lastRead) show(lastRead); });",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDITPOI-L7-the-lights-unlisted",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "      if (prep.lights?.length) rows.push(",
     "new": "      if (prep.lights?.length < 0) rows.push(",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDITPOI-L7-kept-without-them",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "lights: r.asset.lights ?? [], meshes });",
     "new": "lights: [], meshes });",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDITPOI-L9-a-models-facts-its-submeshes-alone",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "{ kind: 'mesh', ...poiMeshFacts(m.mesh), bytes: bytes.byteLength }",
     "new": "{ kind: 'mesh', submeshes: m.mesh.submeshes.length }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDITPOI-L9-a-pictures-bytes-unread",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "{ kind: 'texture', w: im.w, h: im.h, bytes: bytes.byteLength }",
     "new": "{ kind: 'texture', w: im.w, h: im.h }",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDITPOI-L9-a-picture-puts-bytes-untold",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "{ kind: 'texture', ...r.data.meta, bytes: bytes.byteLength }",
     "new": "{ kind: 'texture', ...r.data.meta }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDITPOI-L9-a-uv-puts-bytes-untold",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "{ kind: 'mesh', ...r.data.meta, bytes: out.byteLength }",
     "new": "{ kind: 'mesh', ...r.data.meta }",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDITPOI-L9-a-packs-bytes-untold",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "facts.put(sha, { ...a, bytes: bytes.byteLength });",
     "new": "facts.put(sha, { ...a, bytes });",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDITPOI-L10-read-as-taken-back-to-its-own",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "    if (r.data?.state === 'withdrawn') {",
     "new": "    if (r.data?.state === 'never') {",
     "tests": [

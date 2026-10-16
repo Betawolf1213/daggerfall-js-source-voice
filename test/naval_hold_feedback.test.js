@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
-import { mountNavalPlunderWindow } from '../src/ui/navalPlunderWindow.js';
+import { mountNavalPlunderWindow } from '../src/ui/naval/navalPlunderWindow.js';
 import { racialSuppressInventory } from '../src/systems/lycanthropy.js';
 const source = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const functions = source.slice(source.indexOf('  function navalOpenPlunder(model)'), source.indexOf('  const navalFlames ='));

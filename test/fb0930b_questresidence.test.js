@@ -26,7 +26,7 @@ const { AnswerPipeline, TALK_STRINGS } = await import('../src/systems/answerPipe
 const { expandRandomTextRecord } = await import('../src/systems/talk/talkMacros.js');
 const { discoverBuilding, discoveredBuildings, undiscoverBuilding, restoreDiscovery } = await import('../src/systems/discovery.js');
 const { stampResidenceQuestNames } = await import('../src/ui/exteriorAutomapWindow.js');
-const { createTownSheet } = await import('../src/ui/townSheet.js');
+const { createTownSheet } = await import('../src/ui/town/townSheet.js');
 const { BUILDING_TYPES: T, isResidence } = await import('../src/world/buildingNames.js');
 const { makeBuildingKey } = await import('../src/systems/talk/talkTopics.js');
 

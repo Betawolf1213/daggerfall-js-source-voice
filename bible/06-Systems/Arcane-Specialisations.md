@@ -216,7 +216,7 @@ BUSY-GATE and CRAFT-PROCS at the merge of main).
   builds the engine has the paths' powers - the standalone dungeon page had their price and none of their powers
   (AUDIT SCHOOLS L2 F8).
 - `scenes/worldModes.js` - the shelf (section 6).
-- `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhancedCharSheet.js` / `ui/enhancedMenu.js` - the choice.
+- `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhanced/enhancedCharSheet.js` / `ui/enhanced/enhancedMenu.js` - the choice.
 - `systems/save/save.js` - `arcanePath` and `pathPrompted`.
 
 ## 9. Departures, and what is recorded rather than built

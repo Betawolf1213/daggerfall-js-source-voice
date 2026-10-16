@@ -237,7 +237,7 @@
   },
   {
     "name": "BOARD-UI-the-strip-free-to-shrink",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "\n.notice-tabs { flex: none; display: flex;",
     "new": "\n.notice-tabs { display: flex;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "BOARD-UI-the-cards-stretched",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".notice-grid { list-style: none; margin: 0 0 16px; padding: 4px; display: grid; gap: 14px; align-items: start;",
     "new": ".notice-grid { list-style: none; margin: 0 0 16px; padding: 4px; display: grid; gap: 14px;",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "BOARD-UI-the-tilt-back",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  cursor: pointer; color: #2a1f12;\n",
     "new": "  cursor: pointer; color: #2a1f12; transform: rotate(var(--tilt, 0deg));\n",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "BOARD-UI-the-select-tall",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "\n.market-field > * { flex: 0 0 auto; }",
     "new": "\n.market-field > * { flex: 1 1 auto; }",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "BOARD-UI-the-vendors-unnamed",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "      if (found.length) list.append(listHead(['Item', 'Condition', 'Price', 'Sold at']));\n",
     "new": "",
     "tests": [
@@ -282,8 +282,8 @@
   },
   {
     "name": "BOARD-UI-the-board-left-cold",
-    "file": "src/ui/enhancedChunk.js",
-    "old": "  () => import('./noticeWindow.js'),   // BOARD-UI: a town's Notice Board - online's, its tabs (the Market, the Work, the Seat) with it\n",
+    "file": "src/ui/enhanced/enhancedChunk.js",
+    "old": "  () => import('../noticeWindow.js'),   // BOARD-UI: a town's Notice Board - online's, its tabs (the Market, the Work, the Seat) with it\n",
     "new": "",
     "tests": [
       "test/board_ui.test.js"

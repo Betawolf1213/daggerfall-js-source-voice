@@ -2,10 +2,10 @@
 // existed on a phone or in the pad's shipped layouts, and E is the professions' start and their hold: there a common
 // herb (no tool picks it) could not be started, Hunting could not be started at all (the Skinning Knife had no Use) nor
 // its line held, and the net's haul could not hold its band (299 of 300 seeded hauls slipped to a plain net). Now:
-//   - THE TOUCH CORNER's third slot is Interact by default ('E', held while the finger is - ui/touchButtons.js), a choice
+//   - THE TOUCH CORNER's third slot is Interact by default ('E', held while the finger is - ui/touch/touchButtons.js), a choice
 //     on the Touch card like any other;
 //   - THE PAD: B is Interact in the world on the classic layer (systems/inputActions.js DEFAULT_SECONDARY_BINDINGS - Back
-//     in a window still), LT under Enhanced Plus (ui/plusPad.js, layout 2 - Recast, which LT held, is the d-pad's right
+//     in a window still), LT under Enhanced Plus (ui/plus/plusPad.js, layout 2 - Recast, which LT held, is the d-pad's right
 //     held); the Controller bindings window has its row; the professions' prompts name the pad's button while it is in
 //     hand (scenes/world.js actKeyWord);
 //   - THE SKINNING KNIFE's Use from the hotbar or a quick slot is E at a body, and holds the knife - the line drawn with
@@ -15,22 +15,22 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { TOUCH_BUTTON_DEFAULTS, touchButtonChoices } from '../src/ui/touchButtons.js';
-import { attachTouch } from '../src/ui/touch.js';
+import { TOUCH_BUTTON_DEFAULTS, touchButtonChoices } from '../src/ui/touch/touchButtons.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { setBindings, held } from '../src/ui/input.js';
 import { createBindings, setBinding, getBinding, resetDefaults } from '../src/systems/inputActions.js';
 import { setPref, getPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
-import { applyPlusPadLayout, ensurePlusPadLayout, plusDpadMap, PLUS_PAD_LAYOUT, PLUS_PAD_LAYOUT_VERSION } from '../src/ui/plusPad.js';
-import { PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
+import { applyPlusPadLayout, ensurePlusPadLayout, plusDpadMap, PLUS_PAD_LAYOUT, PLUS_PAD_LAYOUT_VERSION } from '../src/ui/plus/plusPad.js';
+import { PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
 import { installForaging, setForagingHost, professionToolLine, PROFESSION_TOOL_HOW } from '../src/systems/foraging/foragingInstall.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import * as qs from '../src/systems/quickslots.js';
 import { createBodyStamps, bodiesOf, huntKind, KNIFE_HAND } from '../src/scenes/huntHost.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { registerPlayerKillListener, reportPlayerKill } from '../src/systems/playerKills.js';
-import { createProfHud } from '../src/ui/profHud.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
 import { createTraceAct } from '../src/systems/traceAct.js';
 import { SKINNING_KNIFE } from '../src/net/professionLaw.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';

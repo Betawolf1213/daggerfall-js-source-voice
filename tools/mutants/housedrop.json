@@ -64,7 +64,7 @@
   },
   {
     "name": "HOUSE-classic-asks-nothing",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "        groundRefusal: groundRefusalOf(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }),   // HOUSE-DROP: a floor that refuses a drop",
     "new": "        groundRefusal: null,",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "HOUSE-classic-gold-silent",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "if (!plan.ok) { if (plan.refusal?.reason === 'ground') this._refuse(plan.refusal); return; }",
     "new": "if (!plan.ok) return;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "HOUSE-enhanced-stow-asks-nothing",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    getQuest: deps.getQuest ?? null,\n    groundRefusal: groundRefusalOf(deps, session),   // HOUSE-DROP: a floor that refuses a drop",
     "new": "    getQuest: deps.getQuest ?? null,",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "HOUSE-enhanced-gold-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  else if (!plan.ok && plan.refusal?.reason === 'ground') notice = plan.refusal.text;",
     "new": "  void 0;",
     "tests": [

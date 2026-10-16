@@ -127,7 +127,7 @@
   },
   {
     "name": "GUN-HOLD-hint-unsaid",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    hint: model.aiming && model.armed && !ship.wrecked ?",
     "new": "    hint: false ?",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "GUN-HOLD-wreck-hidden",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "model.aiming && model.armed && !ship.wrecked ?",
     "new": "model.aiming && model.armed ?",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "GUN-HOLD-pad-row-lost",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  if (codes.board && model.aiming) rows.push([[codes.board], 'Hold fire']);",
     "new": "  if (false) rows.push([[codes.board], 'Hold fire']);",
     "tests": [

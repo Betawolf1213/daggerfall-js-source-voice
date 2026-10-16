@@ -356,7 +356,7 @@
  },
  {
   "name": "AUDITRESTPARTY-A2-enhanced-quest-foe-lost",
-  "file": "src/ui/enhancedRest.js",
+  "file": "src/ui/enhanced/enhancedRest.js",
   "old": "    else if (!ambushNight()) overlay._pendingEnemySpawn = true;",
   "new": "    else overlay._pendingEnemySpawn = true;",
   "tests": [

@@ -149,7 +149,7 @@ Everything a revenant says or does is an **event** (`revenantEvent` and the buil
 
 `systems/revenant/revenantVoice.js` (a leaf) hands an event to the registered face, or speaks its line through the host's `say`.
 
-The face is `ui/revenantCard.js`, on the enhanced skin only:
+The face is `ui/revenant/revenantCard.js`, on the enhanced skin only:
 
 - **Placement and lifetime**: the notices' twin at the LEFT edge, sliding in and out. One card per revenant, two at most. The words are typed at 42 letters a second, then held 3.5 to 7.5 s.
 - **Colours**: a blood edge for a taunt or a rise, amber for a flight or an escape, brass for a fall (the portrait grey and struck through).
@@ -160,7 +160,7 @@ The face is `ui/revenantCard.js`, on the enhanced skin only:
 
 ## 7b. The page (REVENANT-PAGE)
 
-`ui/revenantPage.js` is the **Revenants** page on the Enhanced pause menu's Holdings tab (the Stats rail until HOLDINGS,
+`ui/revenant/revenantPage.js` is the **Revenants** page on the Enhanced pause menu's Holdings tab (the Stats rail until HOLDINGS,
 2026-10-03), shown while revenants are made or any is remembered. The living come first, strongest first, each with:
 
 - its portrait and rank;
@@ -247,7 +247,7 @@ Mac: "Players should have the option to kill or spare"; "the choice popup should
   hunts it (`enemyTargets.js`), never in the save. Its plea is said in its voice; its record notes the deed. Its
   TROPHY is rolled now, so the choice shows it.
 - **The choice** is the loot window's: activating it (at the treasure's reach, as a body - `mobileEnemyActivate.js`)
-  opens the window with its FATE side (`ui/enhancedInventory.js` + `ui/revenantFateView.js`): the loot frame's own head
+  opens the window with its FATE side (`ui/enhanced/enhancedInventory.js` + `ui/revenant/revenantFateView.js`): the loot frame's own head
   (its name, what it is, its personality), its plea, and two of the loot list's rows - KILL, drawn as the trophy weapon
   is drawn when looted (its tile, its rarity's colour), and SPARE, its portrait and where it would stand. A row is
   picked, then confirmed (a second press, the confirm button, Enter); K and S pick; Back steps out of a pick, then closes
@@ -669,7 +669,7 @@ that makes, stands, spreads or marks one answers as the Loot rarity row's off do
 
 What is remembered stays. The page lists every one, each **Held** - "It will not come for you before Renown 10." - with
 its lair named but promised on no map and by no town, and with none it says revenants come from Renown 10
-(`ui/revenantPage.js` comeWords, lairWords). The sworn keep their days: loyalty moves and a desertion leaves, as it
+(`ui/revenant/revenantPage.js` comeWords, lairWords). The sworn keep their days: loyalty moves and a desertion leaves, as it
 stands nothing (a deserter's return is held like any).
 
 **The rate.** A due revenant takes 40% of the encounter rolls (`REVENANT_RETURN_CHANCE`, 0.5 before) - a fifth fewer

@@ -957,7 +957,7 @@
   },
   {
     "name": "AUDIT-LEGACY-III-P17-the-meeting-asks-head-nought",
-    "file": "src/ui/legacySuccession.js",
+    "file": "src/ui/legacy/legacySuccession.js",
     "old": "    faces(facePose(who)).then((img) => {",
     "new": "    faces({ race: who.race, gender: who.gender, face: who.face }).then((img) => {",
     "tests": [
@@ -1110,7 +1110,7 @@
   },
   {
     "name": "AUDIT-LEGACY-III-U8-the-end-unsaid-online",
-    "file": "src/ui/legacyModelChoice.js",
+    "file": "src/ui/legacy/legacyModelChoice.js",
     "old": "      'With no one left, the line ends.',\n      // AUDIT LEGACY III U8: online says where the line is kept BESIDE that - it replaced it, and the end went unsaid\n      ...(online ? [BLOODLINE_ONLINE_LINE] : []),",
     "new": "      online ? BLOODLINE_ONLINE_LINE : 'With no one left, the line ends.',",
     "tests": [

@@ -840,7 +840,7 @@ export const ONLINE_SALE_SHARE = 0.5;
  *  the pile's gold divided by level) and left what they PAY where DFU put it, so a bed, a meal, a cure, a fare and a
  *  potion ate a far bigger share of a far smaller purse. The essentials - a tavern room and its food and drink
  *  (tavern.js, survival/tavernMenu.js), a temple's disease cure (guildServiceActions.js cureDiseaseOffer), a travel
- *  fare (ui/travelPopUp.js scaleTripCost, both map skins) and a POTION bought at any counter (tradeModes.js
+ *  fare (ui/travel/travelPopUp.js scaleTripCost, both map skins) and a POTION bought at any counter (tradeModes.js
  *  buyItemPrice, which every shelf's Buy walks - the guild shelves' too) - cost ONLINE_ESSENTIALS_PRICE_SCALE of
  *  their price online. Nothing else moves: repairs, training, spells, enchanting, houses and ships keep theirs.
  *  The half ROUNDS UP and a priced essential asks at least a gold - a free one (a holiday's, a knight's room) stays

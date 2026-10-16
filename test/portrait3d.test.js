@@ -26,13 +26,13 @@ import { facePose } from '../src/systems/legacy/facePose.js';
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { npcHint, npcHintOf, npcFaceOf } from '../src/characters/wardrobe.js';
 import { textSeed } from '../src/systems/livingWorld/seed.js';
-import { escortHeadKey } from '../src/ui/hudEscortFaces.js';
+import { escortHeadKey } from '../src/ui/hud/hudEscortFaces.js';
 import { RACES } from '../src/systems/races.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { headDialPicture, alphaBox, wearClassicDial, HEAD_DIAL_PX, CLASSIC_FACE_MAX } from '../src/ui/dialClassicArt.js';
 import { setPortraitRenderer, portraitRenderer } from '../src/render/portraitRenderer.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { preloadTalkArt, setNpcPortrait, clearNpcPortrait, npcPortraitKey, npcPortraitPixels } from '../src/ui/nativeTalk.js';
+import { preloadTalkArt, setNpcPortrait, clearNpcPortrait, npcPortraitKey, npcPortraitPixels } from '../src/ui/native/nativeTalk.js';
 import { multiply, transformPoint, trs } from '../src/world/mat4.js';
 import { retailSkeleton } from './fixtures/mw/retailRig.mjs';
 
@@ -293,7 +293,7 @@ test('PORTRAIT3D: the player\'s faces - the one home (ui/facePortrait.js) draws 
   assert.match(face, /const img = await playerHeadImage\(\{ race: raceKey, gender, faceIndex: i \}, \{ px: w \* 2, ph: h \* 2 \}\);/);
   assert.match(face, /if \(canvas\) heads\.set\(key, \{ canvas \}\); else heads\.delete\(key\);/, 'a face with no head is not kept');
   assert.match(face, /const face = await headFace\(raceKey, gender, scale, set\[i\] \? i : 0, art\);/);
-  const hud = src('src/ui/hudLarge.js');
+  const hud = src('src/ui/hud/hudLarge.js');
   const head = hud.slice(hud.indexOf('export async function loadHudLargeHead('));
   assert.ok(head.indexOf('playerHeadImage(entity') < head.indexOf('racialOverrideHeadArt(entity)'), 'the Morrowind head first - the curse\'s too (the owner: "Do this") - Daggerfall\'s override where none is drawn');
   assert.match(hud, /\|mw\$\{playerHeadKey\(entity\)\}`;/, 'the key: the data, and the helm worn (characters/headPortraits.js playerHeadKey)');
@@ -398,7 +398,7 @@ test('PORTRAIT3D: the faces of the record - the party\'s plate, the family\'s ca
     assert.equal(headSuffix(), '', 'the data gone: the record\'s key again');
   } finally { _setHeadDataForTests(null); setPortraitRenderer(null); }
   assert.match(party, /const key = p \? `\$\{faceKeyOf\(p\)\}\$\{headSuffix\(\)\}` : null;/);
-  for (const page of ['src/ui/familyPages.js', 'src/ui/legacySuccession.js']) {
+  for (const page of ['src/ui/familyPages.js', 'src/ui/legacy/legacySuccession.js']) {
     assert.match(src(page), /if \(img\.scale > 0\) Object\.assign\(cv\.style, \{ width: `\$\{img\.width \/ img\.scale\}px`, height: `\$\{img\.height \/ img\.scale\}px`, imageRendering: 'auto' \}\);/, `${page}: the head at the record's size, smooth`);
   }
 });
@@ -414,7 +414,7 @@ test('PORTRAIT3D: the escorts\' faces - an adult\'s face of the race\'s heads is
     _setHeadDataForTests(STORE(7, 0));
     assert.equal(escortHeadKey(face()), null, 'no data');
   } finally { _setHeadDataForTests(null); }
-  const esc = src('src/ui/hudEscortFaces.js');
+  const esc = src('src/ui/hud/hudEscortFaces.js');
   assert.match(esc, /const panel = \{ special, img: \(head && _textures\.get\(head\)\) \|\| \(_textures\.get\(`\$\{file\}#\$\{record\}`\) \?\? null\) \};/);
   assert.match(esc, /if \(!\(head && _textures\.has\(head\)\)\) panel\.img = _textures\.get\(key\);/, 'a record landing late is not drawn over the head');
   assert.match(esc, /if \(headDataStamp\(\) !== _headStamp\) refreshFaces\(\);/);

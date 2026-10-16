@@ -37,7 +37,7 @@ import {
 import { HIT_KINDS, dpsRef } from '../src/net/gate/gateBrain.js';
 import { SD_FIGHT_EMPTY, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/superDungeon/sdFightLink.js';
 import { sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
-import { SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
+import { SD_BAR_TEXT } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
 import * as LP from '../src/systems/loot/lootPowers.js';

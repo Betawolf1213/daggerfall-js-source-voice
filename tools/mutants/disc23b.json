@@ -145,7 +145,7 @@
   },
   {
     "name": "D23B2-not-on-profile",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  body.append(skinCard(document).root);",
     "new": "  void skinCard;",
     "tests": [

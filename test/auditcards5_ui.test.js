@@ -13,7 +13,7 @@ import * as CX from '../src/systems/loot/lootCodex.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { GILDED_RECORDS, DRAGONFIRE_OATH, mintGilded } from '../src/systems/gilded.js';   // AUDIT WORLD-REWARDS A5: the Gilded rung's rows
 import { drawCollectionsPage, collectionsPageShown, collectionParts, resetCollectionsPage, setCollectionsPart, disarmCollectionsPage } from '../src/ui/collectionsPage.js';
-import { drawCardsPart, resetCardsPart, cardCanvas, _clearCardFacesForTests, copiesAllowed, TILE_H } from '../src/ui/cardBinderPage.js';
+import { drawCardsPart, resetCardsPart, cardCanvas, _clearCardFacesForTests, copiesAllowed, TILE_H } from '../src/ui/card/cardBinderPage.js';
 import { giveBinder, binderOf, mintIliacCard } from '../src/systems/iliac/iliacItems.js';
 import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { ILIAC_DECK_SIZE } from '../src/net/iliac/iliacHand.js';
@@ -109,7 +109,7 @@ test('AUDIT CARDS-5 D12/D14: the Codex part - every Legendary row, found and not
   assert.deepEqual(collectionParts(me).map(([id]) => id), ['cards']);
   assert.equal(collectionsPageShown({ items: [] }), false);
   // the menu's wiring
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /collections: \(d\) => drawCollectionsPage\(d, render, \{ \.\.\.kit, player: playerEntity \}\),/);
   assert.match(menu, /resetHoldingsPages\(\); resetFleetPage\(\); resetCollectionsPage\(\);/);
   assert.match(menu, /else if \(at === 'collections' \|\| at === 'cards' \|\| at === 'codex'\) \{ pauseTab = 'holdings'; holdSec = 'collections'; if \(at !== 'collections'\) setCollectionsPart\(at\); \}/);

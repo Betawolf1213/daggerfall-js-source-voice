@@ -1,5 +1,5 @@
 // ARENA3, MEASURED (2026-10-02, Mac: "Joining a team comes with it's own enhanced UI where you can view your ranking and
-// even player leaderboards"; "All UI elements and text must be enhanced UI plus"): THE ARENA WINDOW (ui/arenaWindow.js)
+// even player leaderboards"; "All UI elements and text must be enhanced UI plus"): THE ARENA WINDOW (ui/arena/arenaWindow.js)
 // drawn over the real sheets in Chromium - the Enhanced Plus skin and the classic skin's own sheet - at a desktop's
 // width, a narrow window's and a phone's, on every page (Bouts with the wager open, Ladder, Team, each Leaderboard,
 // Records, Rules), over a save with something on every page: a fighter of the Red Banner two tiers up, in the laurel,
@@ -41,7 +41,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
     const AL = await import('/src/systems/arena/arenaLadder.js');
     const AB = await import('/src/systems/arena/arenaBoard.js');
     const RP = await import('/src/systems/arena/arenaReplay.js');   // ARENA5
-    const { mountArenaWindow } = await import('/src/ui/arenaWindow.js');
+    const { mountArenaWindow } = await import('/src/ui/arena/arenaWindow.js');
     document.body.innerHTML = '';
     document.body.style.cssText = 'margin:0;background:repeating-linear-gradient(45deg,#2a2721 0 14px,#231f1a 14px 28px);height:100vh';
     // a save with something on every page: noon of day 200 of 3E 405, the Red Banner, in the laurel
@@ -86,7 +86,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
       // ARENA4b: the window remounted over a realm's board - the account's record and last bouts, the realm's Hall
       await page.evaluate(async () => {
         const AB = await import('/src/systems/arena/arenaBoard.js');
-        const { mountArenaWindow } = await import('/src/ui/arenaWindow.js');
+        const { mountArenaWindow } = await import('/src/ui/arena/arenaWindow.js');
         const L = await import('/src/net/arena/arenaLaw.js');
         window.__arenaView.unmount();
         const atS = (n, d) => L.ARENA_SEASON_EPOCH_S + (n - 1) * L.ARENA_SEASON_S + (d - 1) * 86400 + 3600;

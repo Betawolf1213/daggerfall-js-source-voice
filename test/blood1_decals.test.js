@@ -3563,7 +3563,7 @@ test('BLOOD2e: blood on the lens - a real blow throws drops that slide and fade,
   assert.ok(row.control.parts.some((pt) => pt.key === 'blood-screen'), 'its own switch, in the tile\'s drawer');
   assert.match(a4Read('src/combat/bloodSwitch.js'), /export const bloodScreenOn = \(\) => getPref\(BLOOD_SCREEN_PREF\) !== false;/);
   // the HUD's one call: spattered off the detector CameraRecoiler reads, ticked and drawn above the `!art` return
-  const hud = a4Read('src/ui/hud.js');
+  const hud = a4Read('src/ui/hud/hud.js');
   const spat = hud.indexOf("if (blow && bloodScreenOn() && lastHealthLostPercent() >= SCREEN_SPATTER_MIN) playerBloodScreen.spatter(lastHealthLostPercent(), bloodAtlas());");
   assert.ok(hud.indexOf('const blow = playerDamageFlash.takeBlow();') > 0 && hud.indexOf('const blow = playerDamageFlash.takeBlow();') < spat, 'BLOOD AUDIT 5: and a BLOW - the RemoveHealth latch, read once, before the amount');
   const tick = hud.indexOf('playerBloodScreen.tick(dt);');
@@ -3700,7 +3700,7 @@ test('BLOOD2g: the gore dial - one tier sets the amount and the count, the row n
 // ── BLOOD AUDIT 5 (2026-09-21, Mac: "Lets audit this") - four lenses over
 // BLOOD2e..2g and AUDIT 4's own fixes, every finding paid (Blood-Arc item 12) ──
 import { createDamageFlash as a5Flash } from '../src/ui/damageFlash.js';
-import { updateHudVitals as a5Vitals, resetVitalsDetector as a5Reset, lastHealthLostPercent as a5Lost, _resetHudVitals as a5Fresh } from '../src/ui/hudVitals.js';
+import { updateHudVitals as a5Vitals, resetVitalsDetector as a5Reset, lastHealthLostPercent as a5Lost, _resetHudVitals as a5Fresh } from '../src/ui/hud/hudVitals.js';
 import { STEP_ABOVE } from '../src/combat/bloodMarks.js';
 
 test('BLOOD AUDIT 5: the lens needs a BLOW - the RemoveHealth latch answers once; a load resets the detector, so the loaded health is no loss', () => {
@@ -3725,7 +3725,7 @@ test('BLOOD AUDIT 5: the lens needs a BLOW - the RemoveHealth latch answers once
   // the two load sites, beside the recoiler's own reset
   assert.match(a4Read('src/scenes/world.js'), /cameraRecoiler\.reset\(\);\s*\n\s*resetVitalsDetector\(\);/, 'the world’s quickload');
   assert.match(a4Read('src/scenes/dungeonContext.js'), /hitEffects\.clear\(\);\s*\n\s*resetVitalsDetector\(\);/, 'the dungeon’s restore');
-  assert.match(a4Read('src/ui/hudVitals.js'), /export function resetVitalsDetector\(\) \{ _detector\.primed = false; \}/);
+  assert.match(a4Read('src/ui/hud/hudVitals.js'), /export function resetVitalsDetector\(\) \{ _detector\.primed = false; \}/);
 });
 
 test('BLOOD AUDIT 5: the lens keeps the NEWEST drops, a drip that landed nothing does not flash, the drops stay in the band, the bleed flash is 0.12', () => {
@@ -3790,7 +3790,7 @@ test('BLOOD AUDIT 5: the ring is minted once, the mirror goes with dispose, a su
 });
 
 test('BLOOD AUDIT 5: by source - the menu shows a row’s default for a stored value that is no tier, the gore effect says when', () => {
-  const menu = a4Read('src/ui/enhancedMenu.js');
+  const menu = a4Read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const found = c\.tiers\.findIndex\(\(\[v\]\) => String\(v\) === cur\);\s*\n\s*const at = found >= 0 \? found : fallback;/, 'the tile');
   assert.match(menu, /const fallback = Math\.max\(0, c\.tiers\.findIndex\(\(\[v\]\) => String\(v\) === String\(c\.default \?\? c\.initial\)\)\);/);
   assert.match(menu, /const found = tiers\.findIndex\(\(\[v\]\) => String\(v\) === cur\);\s*\n\s*const at = found >= 0 \? found : Math\.max\(0, tiers\.findIndex/, 'the chooser');

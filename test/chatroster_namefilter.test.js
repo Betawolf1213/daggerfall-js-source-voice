@@ -327,7 +327,7 @@ test('NAME-F2: the filter is in the RELAY’s graph, and the entry pane is the o
   assert.match(acct, /if \(!nameIsIssuable\(h\)\) return 'refused';/, 'NAME-F1/F2, at the one entry there is');
   assert.match(rd('src/net/identityToken.js'), /&& sanitizeName\(name\) === name;/,
     "and `nameIsIssuable` IS sanitizeName - so a handle goes through the relay's own filter");
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.doesNotMatch(menu, /entryVerdict|onlineName/,
     'the typed name, its field and its entry-side verdict are gone from the menu entirely');
 
@@ -359,7 +359,7 @@ test('AUDIT-CHATR F6: the Online pane\u2019s copy says what sanitizeName actuall
   assert.equal(sanitizeName('\u00c4sa'), 'sa', 'what really goes is everything outside printable ASCII');
   assert.equal(sanitizeName('x'.repeat(NAME_MAX + 9)).length, NAME_MAX, 'and the 24 is real');
 
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   // ACC1g: THE LINE IS GONE WITH THE FIELD IT DESCRIBED. F6's law was
   // that a promise to a player is a claim about the code; the strongest
   // form of that law is that the pane makes no promise about a name the

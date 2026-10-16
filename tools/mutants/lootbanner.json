@@ -244,7 +244,7 @@
   },
   {
     "name": "LOOT-BANNER-drawHud-never-reads",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawLootBanners({ entity: vitals, hidden: cursorActive || !hudRenderEnabled(), dt });\n",
     "new": "",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "LOOT-BANNER-the-hide-door-forgotten",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawLootBanners({ hidden: true });   // LOOT-BANNER: the same door\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "LOOT-BANNER-no-hud-piece",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "  { id: 'loot', sel: '.lootbanner-stack', name: 'Loot banners', dummy: true, ghost: 'loot' },   // LOOT-BANNER\n",
     "new": "",
     "tests": [

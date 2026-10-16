@@ -11,7 +11,7 @@
 // neither the strings nor a hover seam to hang them on.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { QuestJournalWindow, JOURNAL_RECTS, JOURNAL_MODES, JOURNAL_TIPS, JOURNAL_TOOLTIP_DELAY } from '../src/ui/questJournal.js';
+import { QuestJournalWindow, JOURNAL_RECTS, JOURNAL_MODES, JOURNAL_TIPS, JOURNAL_TOOLTIP_DELAY } from '../src/ui/quest/questJournal.js';
 import { ToolTip, toolTipDelay } from '../src/ui/toolTip.js';
 
 const win = () => new QuestJournalWindow({ questMessages: () => [], notebook: () => null });

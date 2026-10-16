@@ -171,7 +171,7 @@
   },
   {
     "name": "AUDIT625-W3-the-sheet-buttons-again",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    for (const it of w.held) rows.append(itemRow(it));",
     "new": "    for (const it of w.held) { const b = el('button', 'act walletpiece', itemLine(it, deps.entity).name); b.onclick = () => { picked = it; side = 'local'; notice = null; render(); }; rows.append(b); }",
     "why": "a held piece a button that only opens its card",
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT625-W3-the-tiles-unframed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .walletpieces .itemrow[data-rarity], .pack-shell .pack-dock .itemrow[data-rarity] {",
     "new": ".pack-shell .pack-dock .itemrow[data-rarity] {",
     "why": "the sheet's tiles without the tier's frame",
@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDIT625-W3-the-tiles-unlaid",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".pack-shell .walletsheet .walletpieces { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 0 2px; }",
     "new": "",
     "why": "the sheet's tiles unlaid",

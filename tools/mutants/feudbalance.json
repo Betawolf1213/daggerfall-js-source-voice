@@ -37,7 +37,7 @@
   },
   {
     "name": "FB-page-old-words",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "'Its will must be broken - strike its weakness, stagger it, or dodge its blow perfectly.'",
     "new": "'Its will must be broken - strike its weakness, or stagger it twice.'",
     "tests": [

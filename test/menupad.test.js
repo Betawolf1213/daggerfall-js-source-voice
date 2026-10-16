@@ -1,6 +1,6 @@
 // PAD-DOOR + PAD-SETTINGS (2026-09-27, Discord - an AYN Thor: "i can login get to the main screen but im unable to
 // select online, load game anything" - "doesnt seem to let me change controller sensitivity either, i press the 1.0
-// to try and change it but it doesnt register"). The front door answers a controller (ui/menuPad.js - walked in a
+// to try and change it but it doesnt register"). The front door answers a controller (ui/menu/menuPad.js - walked in a
 // real page by tools/menuPadProbe.mjs), and the four gamepad settings are numbers with steppers, not readouts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,8 +8,8 @@ import { readFileSync } from 'node:fs';
 import {
   PAD, STICK_DIRECTION, REPEAT_DELAY_MS, REPEAT_MS, REFOCUS_MS, padDirection, pickDoorPad, nextFocus, nearestTo,
   padDoorFrame, attachMenuPad, domDoorUi,
-} from '../src/ui/menuPad.js';
-import { widgetFor, formatValue, stepValue, NUMBER_LAW } from '../src/ui/settingsLaw.js';
+} from '../src/ui/menu/menuPad.js';
+import { widgetFor, formatValue, stepValue, NUMBER_LAW } from '../src/ui/settings/settingsLaw.js';
 
 const pad = (held = [], axes = [0, 0]) => ({
   mapping: 'standard', connected: true, axes,
@@ -151,7 +151,7 @@ test('PAD-DOOR: a press that redraws the menu puts the focus back on the control
 test('PAD-DOOR: main.js attaches it around the front door and stops it when a game is chosen; no page, no loop', () => {
   const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
   // PAD-CURSOR: with the cursor's law and art handed in - the loop is a leaf the launcher serves alone (DA12)
-  assert.match(main, /const \[\{ attachMenuPad \}, \{ padDoorCursorLaw \}, \{ GAUNTLET_POINT \}\] = await Promise\.all\(\[\s*\n\s*import\('\.\/ui\/menuPad\.js'\), import\('\.\/systems\/padCursor\.js'\), import\('\.\/ui\/plusCursor\.js'\),\s*\n\s*\]\);\s*\n\s*const detachMenuPad = attachMenuPad\(\{ cursor: \{ law: padDoorCursorLaw, art: GAUNTLET_POINT \} \}\);/);
+  assert.match(main, /const \[\{ attachMenuPad \}, \{ padDoorCursorLaw \}, \{ GAUNTLET_POINT \}\] = await Promise\.all\(\[\s*\n\s*import\('\.\/ui\/menu\/menuPad\.js'\), import\('\.\/systems\/padCursor\.js'\), import\('\.\/ui\/plus\/plusCursor\.js'\),\s*\n\s*\]\);\s*\n\s*const detachMenuPad = attachMenuPad\(\{ cursor: \{ law: padDoorCursorLaw, art: GAUNTLET_POINT \} \}\);/);
   assert.match(main, /choice = await runCinematicFrontDoor\([\s\S]{0,900}?\}\)\.finally\(detachMenuPad\);/,
     'the door\'s pad stops with the choice, before the scene\'s pad starts');
   assert.equal(typeof attachMenuPad({ doc: null }), 'function', 'without a page it answers a no-op detach');
@@ -239,5 +239,5 @@ test('AUDIT PAD-SETTINGS A3 + A9: the Stick Deadzone stops at DFU\'s 0.9 - at 1.
   assert.match(readFileSync(new URL('../src/systems/gamepad.js', import.meta.url), 'utf8'), /deadzone: getFloat\('Controls', 'JoystickDeadzone', 0, 0\.9\),/);
   assert.equal(stepValue('Controls/JoystickDeadzone', '0.85', +1, false), '0.9', 'the stepper stops there');
   assert.equal(stepValue('Controls/JoystickDeadzone', '0.9', +1, false), '0.9');
-  assert.match(readFileSync(new URL('../src/ui/settingsCopy.js', import.meta.url), 'utf8'), /"Controls\/JoystickMovementThreshold": "Gamepad Movement Threshold",/, 'DFU\'s "Maximum Movement Threshold" - the lean at full speed, no deadzone');
+  assert.match(readFileSync(new URL('../src/ui/settings/settingsCopy.js', import.meta.url), 'utf8'), /"Controls\/JoystickMovementThreshold": "Gamepad Movement Threshold",/, 'DFU\'s "Maximum Movement Threshold" - the lean at full speed, no deadzone');
 });

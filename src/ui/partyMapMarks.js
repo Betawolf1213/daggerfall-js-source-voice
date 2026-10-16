@@ -8,7 +8,7 @@
 // The two travel maps could not be less alike - the enhanced one is a
 // parchment in the player's hands with the bay inked on (ui/heldMap.js), the classic
 // one is a 320x160 region page painted out of TRAV0I00's art
-// (ui/travelMapWindow.js) - and neither of them should be the place
+// (ui/travel/travelMapWindow.js) - and neither of them should be the place
 // that decides what a party member IS. So the host says it once, in
 // the plainest shape it can (`party: () => [{acct, name, px, py, in,
 // loc, online, leader}]`, scenes/world.js partyMarkers), and this
@@ -219,7 +219,7 @@ export function readPartyBodies(party) {
 /**
  * COMPASS-PARTY (2026-09-27, Discord - Ashley: "being able to see where party members are on compass? - just lil green
  * marks that point in that direction"; Satranath: "Party members show up on the map but not compass"): THE POINTS THE
- * COMPASS MARKS, in the scene's own XZ - the frame the Detect markers are measured in (ui/hud.js compassMarkerLerp).
+ * COMPASS MARKS, in the scene's own XZ - the frame the Detect markers are measured in (ui/hud/hud.js compassMarkerLerp).
  *
  * A mate whose BODY this client draws is marked where it stands (`bodies`, the plans' own dep - readPartyBodies). The
  * rest are marked only OUTDOORS (`here`, my travel pixel; indoors it is null and the bodies are the whole answer - a

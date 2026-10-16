@@ -219,7 +219,7 @@
   },
   {
     "name": "WB1-an-off-map-ring-drawn",
-    "file": "src/ui/gateMapMark.js",
+    "file": "src/ui/gate/gateMapMark.js",
     "old": "  if (cx + r < 0 || cy + r < 0 || cx - r > size.width || cy - r > size.height) return null;\n",
     "new": "",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "WB1-the-page-rebuilt-for-the-words",
-    "file": "src/ui/gateMapMark.js",
+    "file": "src/ui/gate/gateMapMark.js",
     "old": "export const gateRingKey = (m) => (m ? `${m.day}|${m.cx.toFixed(3)}|${m.cy.toFixed(3)}|${m.r}` : '');",
     "new": "export const gateRingKey = (m) => (m ? `${m.day}|${m.cx.toFixed(3)}|${m.cy.toFixed(3)}|${m.r}|${m.label}` : '');",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "WB1-the-ring-broken-into-dots",
-    "file": "src/ui/gateMapMark.js",
+    "file": "src/ui/gate/gateMapMark.js",
     "old": "export const GATE_RING_BAND = 1;",
     "new": "export const GATE_RING_BAND = 0.5;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "WB1-the-ring-lost-at-the-far-zoom",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "  const r = Math.max(GATE_RING_MIN_PX, g.r * view.scale);\n  ctx.save();",
     "new": "  const r = g.r * view.scale;\n  ctx.save();",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "WB1-the-compass-never-told",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  drawGateMark(opts.gate ?? null, opts.playerXZ ?? null, heading01);   // WB1\n",
     "new": "  drawGateMark(null, opts.playerXZ ?? null, heading01);   // WB1\n",
     "tests": [

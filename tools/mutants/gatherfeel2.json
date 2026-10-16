@@ -145,7 +145,7 @@
  },
  {
   "name": "GF2-BLOWSHAKE-the-setting-silent",
-  "file": "src/ui/enhancedMenu.js",
+  "file": "src/ui/enhanced/enhancedMenu.js",
   "old": "'How much a weapon technique shakes and tilts the view and dips your hands - and, on the Enhanced skin, how far a tool\\'s blow dips them as you gather.',",
   "new": "'How much a weapon technique shakes and tilts the view and dips your hands.',",
   "tests": [

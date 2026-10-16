@@ -320,7 +320,7 @@
   },
   {
     "name": "IT1-33-classic-fare-dfus",
-    "file": "src/ui/travelPopUp.js",
+    "file": "src/ui/travel/travelPopUp.js",
     "old": "    if (this.itKind) {\n      const t = itTrip(",
     "new": "    if (false) {\n      const t = itTrip(",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "IT1-34-classic-carriage-map-with-to",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "    this._carriageMap = !!this._it || (!!this._itSettings && !this._to);",
     "new": "    this._carriageMap = !!this._it || !!this._itSettings;",
     "tests": [
@@ -340,7 +340,7 @@
   },
   {
     "name": "IT1-35-classic-escape-closes",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "      if (code === 'Enter' || code === 'NumpadEnter' || code === 'KeyO') { this._click(); this.top = null; this._itRefusal = null; }",
     "new": "      this._click(); this.top = null; this._itRefusal = null;",
     "tests": [

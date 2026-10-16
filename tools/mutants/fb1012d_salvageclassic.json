@@ -73,7 +73,7 @@
   },
   {
     "name": "SALVAGE-CLASSIC-the-card-offers-nothing",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": " || salvageRefusal(picked) === 'classic') && !['off',",
     "new": ") && !['off',",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SALVAGE-CLASSIC-the-card-press-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "why === 'classic' ? SALVAGE_CLASSIC(name) : null; refresh(); render(); };",
     "new": "null; refresh(); render(); };",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SALVAGE-CLASSIC-the-card-says-another-reason",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "export const SALVAGE_CLASSIC = (name) => `${name} will not break: its magic is classic, the kind the guilds sell and make. Welkynd Shards come only from a piece the loot ladder graded.`;",
     "new": "export const SALVAGE_CLASSIC = (name) => `${name} will not break.`;",
     "tests": [

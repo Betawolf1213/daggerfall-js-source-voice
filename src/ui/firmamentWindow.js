@@ -1,7 +1,7 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
 // FIRM1 (2026-10-13; bible/06-Systems/Firmament.md) - THE FIRMAMENT, DRAWN: the whole sky over the whole screen, as Path
-// of Exile opens its tree - and as the Ascension opens its stars (ui/enhancedLevelUp.js: a screen that is the whole screen,
+// of Exile opens its tree - and as the Ascension opens its stars (ui/enhanced/enhancedLevelUp.js: a screen that is the whole screen,
 // swapped in over the pause window, which it puts back when it closes).
 //
 // WHAT A PLAYER DOES HERE
@@ -13,7 +13,7 @@
 //     refunds and the silver a refund costs (free below Renown 10). The book asks the service the whole tree.
 //   Drag pans, the wheel (or a pinch) zooms, F finds your sign, the search lights every star whose words match.
 //
-// TWO DRESSES, ONE WINDOW. Its frames are the stone-and-brass kit's roles (ui/enhancedFrame.js FRAME_ROLES: the bar a
+// TWO DRESSES, ONE WINDOW. Its frames are the stone-and-brass kit's roles (ui/enhanced/enhancedFrame.js FRAME_ROLES: the bar a
 // window, the tip and the side panels, the presses buttons), so Enhanced Plus carves them and DFO Grimoire turns them into
 // its pages and planks with no rule of this file's. The SKY is a canvas, and reads the dress itself: on Plus a night of
 // brass and gold over a dithered dark; under the Grimoire a star-chart inked on the page - brown ink, red for what is held,
@@ -31,12 +31,12 @@ import {
 } from '../net/firmament/firmamentLaw.js';
 import { firmamentBook } from '../net/firmament/firmamentBook.js';
 import { accountRefusalText } from '../net/accountClient.js';   // AUDIT UICALM-FIRM1 L4 L4: a refusal the window has no words for, in the account's
-import { FRAME_TONES } from './enhancedFrame.js';
+import { FRAME_TONES } from './enhanced/enhancedFrame.js';
 import { GRIM_TONES, GRIMOIRE_STACK, px } from './grimoireDress.js';
 import { artVar } from './grimoireArt.js';
 import { wrapAngle } from '../world/mat4.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
-import { registerOverlay } from './enhancedOverlays.js';
+import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedStyle.js';
+import { registerOverlay } from './enhanced/enhancedOverlays.js';
 import { audio } from '../systems/audio.js';   // the UI's own click, for a press on the sky (its buttons click through ui/uiClickSound.js)
 import { SOUND } from '../systems/soundClips.js';
 

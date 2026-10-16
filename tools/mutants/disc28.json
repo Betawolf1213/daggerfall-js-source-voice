@@ -1,7 +1,7 @@
 [
   {
     "name": "DISC28-A-pause-key-not-back",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "if (overlayAction(e) !== 'back' && !pauseKey) return;",
     "new": "if (overlayAction(e) !== 'back') return;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DISC28-A-repeat-closes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (!e.repeat) backArmed = e.code;\n    return;\n",
     "new": "    if (!e.repeat) { backArmed = e.code; return; }\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DISC28-A-textkey-capture-eaten",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (textKeyCapture) return;\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DISC28-A-textkey-capture-leaks",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "        textKeyCapture = null;\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DISC28-C-shop-box-no-layer",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".trade-shell .sb-ask { position: absolute; inset: 0; display: flex; align-items: center;\n  justify-content: center; background: rgba(10,12,17,0.72); padding: 20px;\n  z-index: 10; }",
     "new": ".trade-shell .sb-ask { position: absolute; inset: 0; display: flex; align-items: center;\n  justify-content: center; background: rgba(10,12,17,0.72); padding: 20px; }",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "DISC28-C-shop-box-under-the-rune",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".trade-shell .sb-ask { position: absolute; inset: 0; display: flex; align-items: center;\n  justify-content: center; background: rgba(10,12,17,0.72); padding: 20px;\n  z-index: 10; }",
     "new": ".trade-shell .sb-ask { position: absolute; inset: 0; display: flex; align-items: center;\n  justify-content: center; background: rgba(10,12,17,0.72); padding: 20px;\n  z-index: 2; }",
     "tests": [

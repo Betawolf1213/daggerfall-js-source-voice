@@ -355,7 +355,7 @@ test('SD-LOOK THE WINDOW: the Hour\'s own painted sky through the iris (the fetc
 // S5 - THE STEP THROUGH THE HOUR: the Hour's own veil.
 // ---------------------------------------------------------------------------------------------------------------------
 import { SD_VEIL_FS, SD_VEIL_MODE, SD_VEIL_TURN_S, SD_VEIL_SLOW_AFTER_S, sdVeilHand, sdVeilQuarters } from '../src/render/sdVeil.js';
-import { createGateVeil, VEIL_THEMES, VEIL_HOUR_CUES, VEIL_HOUR_HOLD_S, VEIL_HOUR_SCALE, VEIL_SCALE, VEIL_CENTRE_MAX, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gateVeil.js';
+import { createGateVeil, VEIL_THEMES, VEIL_HOUR_CUES, VEIL_HOUR_HOLD_S, VEIL_HOUR_SCALE, VEIL_SCALE, VEIL_CENTRE_MAX, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
 import { VEIL_CLOSE_S } from '../src/render/gateVeil.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../src/systems/superDungeon/sdScore.js';
 import { midiNote } from '../src/systems/gate/gateScore.js';

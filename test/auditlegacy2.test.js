@@ -22,8 +22,8 @@ import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { isDomFocusWalk } from '../src/ui/input.js';
-import { walkButtons } from '../src/ui/legacyDoor.js';
-import { windowPrompts } from '../src/ui/plusPad.js';
+import { walkButtons } from '../src/ui/legacy/legacyDoor.js';
+import { windowPrompts } from '../src/ui/plus/plusPad.js';
 import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { synthTown } from './lwTown.mjs';
@@ -507,11 +507,11 @@ test('AUDIT LEGACY II U1/U2/U11/U14: a held key presses once; the meeting lights
   assert.deepEqual(clicks, [], 'U1: a repeat presses nothing');
   walkButtons(root, 'Enter', { repeat: false });
   assert.deepEqual(clicks, [1]);
-  const succ = rd('src/ui/legacySuccession.js');
+  const succ = rd('src/ui/legacy/legacySuccession.js');
   assert.match(succ, /if \(e\.repeat && \(e\.key === 'Enter' \|\| e\.key === ' '\)\) \{ e\.preventDefault\(\); e\.stopPropagation\(\); \}/, 'U1: the browser\'s own repeat press too');
   assert.match(succ, /if \(c\.confirm && armed !== c\.key\) \{ armed = c\.key; draw\(\); return; \}/, 'U2: asked twice');
   assert.match(succ, /go\.setAttribute\('aria-disabled', 'true'\);\n\s*go\.setAttribute\('aria-describedby', shut\.id\);/, 'U14: in the walk, described');
-  const door = rd('src/ui/legacyDoor.js');
+  const door = rd('src/ui/legacy/legacyDoor.js');
   assert.match(door, /lit: 'lgs-act-talk',/, 'U2: Talk lit');
   assert.match(door, /confirm: `Yes - \$\{deps\.act/);
   // U11: the switch's marker never reaches the card as a word
@@ -553,11 +553,11 @@ test('AUDIT LEGACY II U4-U10/U12/U13: the Family pages - no hidden scroll, a see
   assert.match(fam, /n\.setAttribute\('data-focus', 'fam-home-said'\);/, 'U7: the keyboard kept on the homes');
   assert.match(fam, /if \(drag && e\.buttons !== undefined && !\(e\.buttons & 1\)\) \{ endDrag\(\); return; \}/, 'U8');
   assert.match(fam, /view\.onpointercancel = endDrag;/, 'U8');
-  assert.match(rd('src/ui/enhancedStyle.js'), /@media \(max-width: 420px\) \{\n\s*\.px-tabs \{ gap: 2px;/, 'U9');
-  assert.match(rd('src/ui/enhancedPlusStyle.js'), /\.lvl-opt-head \{ display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; \}/, 'U10');
-  assert.match(rd('src/ui/legacySuccession.js'), /\.lgs-name \{ font-size: 15px; color: #f3cf86; overflow-wrap: anywhere; \}/, 'U12');
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /@media \(max-width: 420px\) \{\n\s*\.px-tabs \{ gap: 2px;/, 'U9');
+  assert.match(rd('src/ui/enhanced/enhancedPlusStyle.js'), /\.lvl-opt-head \{ display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; \}/, 'U10');
+  assert.match(rd('src/ui/legacy/legacySuccession.js'), /\.lgs-name \{ font-size: 15px; color: #f3cf86; overflow-wrap: anywhere; \}/, 'U12');
   assert.match(fam, /display: inline-block; padding: 5px 0; \}/, 'U13');
-  assert.match(rd('src/ui/legacySuccession.js'), /@media \(max-width: 520px\) \{ \.lgs-card \{ grid-template-columns: 52px minmax\(0, 1fr\); \} \.lgs-card \.lgs-go \{ grid-column: 1 \/ -1; \} \}/, 'F11: AUDIT LEGACY U9, the phone\'s two-column card, pinned at last');
+  assert.match(rd('src/ui/legacy/legacySuccession.js'), /@media \(max-width: 520px\) \{ \.lgs-card \{ grid-template-columns: 52px minmax\(0, 1fr\); \} \.lgs-card \.lgs-go \{ grid-column: 1 \/ -1; \} \}/, 'F11: AUDIT LEGACY U9, the phone\'s two-column card, pinned at last');
 });
 
 // ---- lens F: the records -------------------------------------------------------------------------------------------

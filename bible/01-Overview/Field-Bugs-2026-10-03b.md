@@ -172,7 +172,7 @@ Totem rides on the next entry.
 
 ## AETHERIC-MAKER (5)
 
-`systems/enchanting.js` itemMakerRefuses, AETHERIC_TAKES_NO_ENCHANTMENT, enchantDecision; `ui/itemMakerWindow.js`
+`systems/enchanting.js` itemMakerRefuses, AETHERIC_TAKES_NO_ENCHANTMENT, enchantDecision; `ui/item/itemMakerWindow.js`
 itemMakerFilter. DFU's maker refuses an item by what it carries - `AddFilteredItem` (:419-422) skips
 `item.IsEnchanted`, `HasLegacyEnchantments || HasCustomEnchantments` - and has no artifact or quest-item check:
 an artifact is out because it is enchanted. An Aetheric piece (`aetheric.js` mintAetheric) is the port's own tier,

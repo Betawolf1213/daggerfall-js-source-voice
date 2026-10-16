@@ -10,7 +10,7 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { xpForRank, trackOf } from '../src/net/professionLaw.js';
-import { focusStoresStation, setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/profPages.js';
+import { focusStoresStation, setProfessionsPages, drawStoresPage, resetProfPages } from '../src/ui/professions/profPages.js';
 
 // A browser's Element.children: indexed, iterable, a length - and none of Array's methods. The fake's own append and
 // prepend still push through it.

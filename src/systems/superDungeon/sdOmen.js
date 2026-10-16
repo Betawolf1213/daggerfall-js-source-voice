@@ -58,7 +58,7 @@ export function sdStateWords(rec, now) {
 
 /**
  * The held map's mark while it is news (found, or collapsing after the kill): its ring round its pixel, its name and
- * its state, its card - the gate's mark's shape (ui/gateMapMark.js readGateMark), the slot in place of the gate's day.
+ * its state, its card - the gate's mark's shape (ui/gate/gateMapMark.js readGateMark), the slot in place of the gate's day.
  * @param {import('../../net/wire.js').SdRecord|null|undefined} rec
  * @param {{ s:number, site?:any, loc?:any }|null|undefined} hollow
  * @param {number} now

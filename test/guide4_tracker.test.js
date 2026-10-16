@@ -1,6 +1,6 @@
 // GUIDE4 (2026-09-29, Mac: "How can we set the foundation and improve the quest system substantially? Like really
 // modernize it, make it more accessible", then, of the Quest Guide arc: "This is your baby. Take your time") - THE
-// TRACKER (ui/questTracker.js, bible/06-Systems/Quest-Guide-Arc.md): the quest you follow, as a card on the HUD. Its
+// TRACKER (ui/quest/questTracker.js, bible/06-Systems/Quest-Guide-Arc.md): the quest you follow, as a card on the HUD. Its
 // laws, each over the real producers:
 //
 //   WHICH QUEST - the one the player tracks, else the one the journal last changed (started, updated, urgent), else the
@@ -27,19 +27,19 @@ import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
 import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { REGION, makeWorld, seededRolls } from './guideWorld.mjs';
 import { getSeed, srand } from '../src/formats/dfRandom.js';
-import { entryOpening, remainWords } from '../src/ui/questRail.js';
+import { entryOpening, remainWords } from '../src/ui/quest/questRail.js';
 import {
   QuestTracker, questTracker, drawQuestTracker, trackerOn, trackButton, _resetQuestTrackerForTests,
   TRACKER_PREF, TRACKER_ID, TRACKER_SAVE, TRACKER_OPENING_MAX, TRACKER_HEIGHT_VAR, TRACKER_GAP, TRACKER_WORDS,
-} from '../src/ui/questTracker.js';
-import { HERALD_PREF } from '../src/ui/questHerald.js';
-import { MARKS_PREF } from '../src/ui/questMarks.js';   // GUIDE5: the marks follow the same model - off in these pins unless asked
+} from '../src/ui/quest/questTracker.js';
+import { HERALD_PREF } from '../src/ui/quest/questHerald.js';
+import { MARKS_PREF } from '../src/ui/quest/questMarks.js';   // GUIDE5: the marks follow the same model - off in these pins unless asked
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registeredModSaveVendors } from '../src/systems/modSaveData.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { FEATURES } from '../src/systems/features.js';
 import { PARTY_CSS } from '../src/ui/partyPanel.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -479,7 +479,7 @@ test('GUIDE4 THE JOURNAL\'S TOGGLE - the pause window\'s Quests tab: one Track b
   });
 });
 
-test('GUIDE4 THE JOURNAL\'S TOGGLE - the chronicle: every live quest\'s card carries the same Track toggle (one home, ui/questTracker.js trackButton) in its state line, a card with no place and no clock included; pressed, the quest is tracked and the window redraws with the choice; the tracker off, none (mutants: the toggle only where there is a place; the chronicle\'s own copy)', () => {
+test('GUIDE4 THE JOURNAL\'S TOGGLE - the chronicle: every live quest\'s card carries the same Track toggle (one home, ui/quest/questTracker.js trackButton) in its state line, a card with no place and no clock included; pressed, the quest is tracked and the window redraws with the choice; the tracker off, none (mutants: the toggle only where there is a place; the chronicle\'s own copy)', () => {
   withSwitches(() => {
     const { b, bq } = twoQuests();
     globalThis.window ??= globalThis;
@@ -512,7 +512,7 @@ test('GUIDE4 THE JOURNAL\'S TOGGLE - the chronicle: every live quest\'s card car
 // ---------------------------------------------------------------
 
 test('GUIDE4 ONE CALL, EVERY HOST - drawHud draws the card on its one call, outside the skin\'s gate, on the HUD\'s hide gate; the bridge feeds the tracker every look and asks the host\'s questions; the street hands both questions, the fixed-town route the one it can answer; the party list steps under the card; the Toggle has one home; the switch is a Features row, on and the player\'s own online; and the tracker\'s imports never reach the quest machine (mutants: the draw inside the gate; the host\'s questions dropped; the party list over the card)', () => {
-  const hud = rd('src/ui/hud.js');
+  const hud = rd('src/ui/hud/hud.js');
   const call = hud.indexOf('\n  drawQuestTracker({ hidden: cursorActive || !hudRenderEnabled() });');
   const gate = hud.indexOf("if (isEnhanced() && typeof document !== 'undefined') {\n    drawLevelNotices(");
   assert.ok(call > 0 && gate > call, 'drawHud draws the card before (outside) the enhanced gate');
@@ -525,7 +525,7 @@ test('GUIDE4 ONE CALL, EVERY HOST - drawHud draws the card on its one call, outs
   assert.match(PARTY_CSS, /\.dfparty \{[^}]*top: calc\(92px \+ var\(--dfquest-h, 0px\)/, 'the party list steps under the card');
   assert.match(PARTY_CSS, /\.dfparty\.touch \{ top: calc\(76px \+ var\(--dfquest-h, 0px\)/);
   assert.equal(TRACKER_HEIGHT_VAR, '--dfquest-h');
-  for (const f of ['src/ui/enhancedMenu.js', 'src/ui/enhancedChronicle.js']) {
+  for (const f of ['src/ui/enhanced/enhancedMenu.js', 'src/ui/enhanced/enhancedChronicle.js']) {
     assert.match(rd(f), /trackButton\(document, /, `${f} draws the one toggle`);
     assert.doesNotMatch(rd(f), /qtrack-pin|TRACKER_WORDS/, `${f} keeps no copy of it`);
   }
@@ -542,8 +542,8 @@ test('GUIDE4 ONE CALL, EVERY HOST - drawHud draws the card on its one call, outs
     reach.add(f);
     for (const m of readFileSync(join(ROOT, f), 'utf8').matchAll(/^\s*(?:import|export)\s[^'"]*?from\s+['"](\.[^'"]+)['"]|^\s*import\s+['"](\.[^'"]+)['"]|\bimport\(\s*['"](\.[^'"]+)['"]\s*\)/gm)) walk(join(dirname(f), m[1] ?? m[2] ?? m[3]).replace(/\\/g, '/'));   // AUDIT GUIDE O6: a bare and a dynamic import too
   };
-  walk('src/ui/questTracker.js');
-  for (const f of ['src/ui/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud.js']) {
+  walk('src/ui/quest/questTracker.js');
+  for (const f of ['src/ui/quest/questLens.js', 'src/systems/quest/place.js', 'src/systems/quest/machine.js', 'src/ui/hud/hud.js']) {
     assert.equal(reach.has(f), false, `the tracker's imports reach ${f}`);
   }
 });

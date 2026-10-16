@@ -64,9 +64,9 @@ World Tooltips names a quest item stand `ResolveItemLongName(((Item)qrb.TargetRe
 
 `systems/item/itemTransfer.js` sendQuestItemClick - "Send click to quest system", the FIRST act of
 RemoteItemListScroller_OnItemClick, ONE home; the right click is the same member (:2070-2073). Its callers: the native
-skin's one remote handler (`ui/nativeInventory.js` _pickRemote, which had it inline), the enhanced skin's loot row
+skin's one remote handler (`ui/native/nativeInventory.js` _pickRemote, which had it inline), the enhanced skin's loot row
 (inline before), its menu on a loot row (a right click: the click goes first, a menu closed unused included, as a look
-counts) and its pad's quick act (`ui/enhancedInventory.js` openMenu, inventoryQuickAct), and quick loot's take
+counts) and its pad's quick act (`ui/enhanced/enhancedInventory.js` openMenu, inventoryQuickAct), and quick loot's take
 (`systems/quickLoot.js` takeThrough - the row's click with no window around it, sent before the plan as DFU sends it
 before CanCarryAmount, and once per quest item for P's take-all). Every quickLootTake call (seven, in the four hosts)
 already carried the quest resolver (QL-WEIGHT1). Not changed, and why: a body holding only arrows is taken whole with no click, as DFU's

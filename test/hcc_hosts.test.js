@@ -202,7 +202,7 @@ test('HCC hosts: worldModes fires the mod\'s transition handlers - pre before th
   assert.equal((m.match(/host\.horseCart\?\.\(\)\?\.handleExteriorTransition\(\);/g) ?? []).length, 3, 'the building exit, the dungeon exit, the load or teleport out');
   assert.match(m, /horseCart: \(\) => host\.horseCart\?\.\(\) \?\? null,\s+\/\/ HCC: the wagon's storage access at a dungeon exit/);
   assert.match(rd('src/scenes/dungeonContext.js'), /horseCart: \(\) => opts\.horseCart\?\.\(\) \?\? null,/);
-  const inv = rd('src/ui/nativeInventory.js');
+  const inv = rd('src/ui/native/nativeInventory.js');
   assert.match(inv, /this\.dungeonExitAccessGranted = !!open\.dungeonExitAccessGranted;/);
   assert.match(inv, /if \(open\.refusal\) this\.boxes = \[\{ rows: \[\{ text: open\.refusal\.text, center: true \}\] \}\];/);
 });

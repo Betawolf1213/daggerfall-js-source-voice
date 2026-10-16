@@ -475,7 +475,7 @@ threshold, past its cap but never past the Rare threshold; `rarityChances` takes
 a wall, as Cleave and the Nova do.
 
 **Seen.** `lootHudChips` - Flow's and Bedrock's stacks, Dawnward's charges, a recovery running - beside the sets' chips
-(`scenes/world.js` hands the HUD both, line-neutral), in the Legendary's orange (`ui/enhancedHud.js`).
+(`scenes/world.js` hands the HUD both, line-neutral), in the Legendary's orange (`ui/enhanced/enhancedHud.js`).
 
 **What it moved.** SET5's pin on the HUD's wiring reads both lists; five mutant records whose anchors the arc's edits
 moved were re-aimed by content (DISC29-B's unguarded name, SET3's import and its fall, SET5's chips, LOOT4's focus
@@ -538,7 +538,7 @@ save keeps it (`champion` on the pool's record) and a load stands it again, neve
 relay's and never a pool foe.
 
 **Its name** is the trait's and its own - `Mighty Orc` - on the hover over it alive (`worldTooltips.js`
-`liveEntityName`, every pool's one namer), the HUD's target bar (`ui/hudFoeTarget.js`), its body (both pools) and
+`liveEntityName`, every pool's one namer), the HUD's target bar (`ui/hud/hudFoeTarget.js`), its body (both pools) and
 its death line (`corpseMarker.js` `sayEnemyDied`). LOOT7-CHECK (section 17) found two of the four untrue as
 shipped - the hover never named a HOSTILE champion (the plaque's own law) and no dungeon death was ever said - and
 fixed both.
@@ -638,9 +638,9 @@ set's share stays).
   Broker's own classes, so both skins dress it as they dress his.
 - THE MAGES GUILD (`scenes/worldModes.js` `openGuildService`): the Identify NPC's popup carries a `reforge` hook (the
   Mages Guild's group, the Identify service, the row on) - a dispatch, as a service's is. On the Enhanced Plus face
-  (`ui/enhancedPorts.js`) it is a row beside the service; on the classic popup (`ui/guildServiceWindow.js`) a port-drawn
+  (`ui/enhanced/enhancedPorts.js`) it is a row beside the service; on the classic popup (`ui/guildServiceWindow.js`) a port-drawn
   row UNDER DFU's 130x51 panel (`REFORGE_RECT`, its key F, its click the ButtonClick its four sisters play).
-- THE PACK CARD (`ui/enhancedInventory.js`): Salvage beside the Broker's Dismantle, for a graded piece that will break
+- THE PACK CARD (`ui/enhanced/enhancedInventory.js`): Salvage beside the Broker's Dismantle, for a graded piece that will break
   and is not worn, asked first in the dismantle's own question slot (Keep, N, Enter, Escape or a press outside keep it).
 
 **What moved from the design.** "At the Mages Guild (both skins)": the salvage's guild face is the Reforge's window, which
@@ -696,7 +696,7 @@ negative day or a fraction is dropped, and junk is none.
 **The page.** The Reforge's window gains its third and fourth pages (`ui/reforgeWindow.js`): IMPRINT (below) and CODEX -
 the thirty in the table's order, a found record whole (its lines, its power, its lore, the day), an unfound one by its
 group and where it is said to be (`FAMILY_HINT`, by LOOT6's family - *"Said to be carried by the undead"*), then the
-Aetheric sets piece by piece. The pack opens the Codex alone (`ui/enhancedInventory.js`: a Codex button in its header
+Aetheric sets piece by piece. The pack opens the Codex alone (`ui/enhanced/enhancedInventory.js`: a Codex button in its header
 while the row is on - the same window, its one page, no tabs).
 
 **The imprint.** At the Reforge, a Rare (known, not worn, not imprinted already) takes the POWER of a found Legendary of
@@ -790,7 +790,7 @@ seeded doors' draws), the bible against the code, and the screens and keys. Nine
   phone's Keep its own row under Break it.
 - **F7 - Back with the Codex over the pack closed the pack.** The pack's capture listener was laid first and heard every
   key: Back put both away, and the pack's Inventory key left the Codex standing over the world. The pack yields while
-  the Codex stands (`ui/enhancedInventory.js` `onKey`, `reforgeDoor.js` `reforgeDoorOpen`): Back puts the Codex away and
+  the Codex stands (`ui/enhanced/enhancedInventory.js` `onKey`, `reforgeDoor.js` `reforgeDoorOpen`): Back puts the Codex away and
   keeps the pack, as the Info box's does, and no other key reaches the pack under it.
 - **F8 - the thirty-first Legendary had no power, and the codex took it and never listed it.** The Thunderlock's own
   record, *The Last Lock* (registered by `systems/thunderlock.js`, `exclusive` to the gun), is found as a Legendary and
@@ -873,7 +873,7 @@ half and a seventh, each at least 1 a blow - the floor is what lifts both on sma
   is whole (`10-UI/UI-Arc.md`, WORLD-HOVER's departures).
 - **CHAMP-SAID - on the classic skin a champion was invisible until it died, and no screen said what a trait does.**
   The plaque is the enhanced skin's (`ui/worldPlaque.js` `worldPlaqueOn`: `isEnhanced() && !isTouchDevice()`; the
-  classic face resolves quick loot's piles alone), so is the target frame (`ui/hudFoeTarget.js`, PX30), and
+  classic face resolves quick loot's piles alone), so is the target frame (`ui/hud/hudFoeTarget.js`, PX30), and
   `CHAMPION_TRAITS`' `text` was read by nothing. `champions.js` `sayChampion`: the first blow that lands EITHER WAY -
   its on me, mine on it, through formulas.js's struck and strike tails under their own name (`CHAMPIONS_SAID`), the
   seams every pool already shares (the dungeon's, the street's, a building's, a puppet's), so no host stands it - says

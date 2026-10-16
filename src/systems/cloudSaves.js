@@ -341,7 +341,7 @@ const holdsSave = (storage, card, except) => [...enumerateSaves(storage).info.en
  * three feet away and nothing on screen admitting they existed.
  *
  * THE ANSWER IS A SET DIFFERENCE AND IT LIVES HERE, not in the menu:
- * AUDIT-312 F3's finding was that `ui/enhancedMenu.js` is DOM and a
+ * AUDIT-312 F3's finding was that `ui/enhanced/enhancedMenu.js` is DOM and a
  * boot, so arithmetic written there is arithmetic no pin can drive -
  * three mutants of exactly that kind went through the whole suite
  * untouched. The key is `slotKeyOf`'s, so this asks the question the

@@ -92,7 +92,7 @@
   },
   {
     "name": "FB1015C-anvil-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'))));   // CRAFT-FIRST-SHOWN\n",
     "new": "",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "FB1015C-anvil-past-rank",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'))));",
     "new": "    box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'))));",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "FB1015C-bench-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (!r.later && recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('carpentry'))));   // CRAFT-FIRST-SHOWN: Building's\n",
     "new": "",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "FB1015C-loom-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('outfitting'))));\n",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "FB1015C-loom-named-smithing",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "craftXpLine(r, rank, professionName('outfitting'))",
     "new": "craftXpLine(r, rank, professionName('smithing'))",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "FB1015C-mason-works-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  detail.append(el('p', 'px-note', masonWorksFirstLine(rank, professionName('masonry'))));   // CRAFT-FIRST-SHOWN: a work's first, the service's (smeltAtForge)\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "FB1015C-mason-carving-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'))));   // CRAFT-FIRST-SHOWN\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "FB1015C-fire-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (first) box.append(el('p', 'px-note', first));\n",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "FB1015C-jewel-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('jewelcrafting'))));   // CRAFT-FIRST-SHOWN: its XP moved here, beside its first's\n",
     "new": "",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "FB1015C-alchemy-shop-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "brewFirstPays(potion) ? t('prof.page.alchemy.xpFirst'",
     "new": "true ? t('prof.page.alchemy.xpFirst'",
     "tests": [

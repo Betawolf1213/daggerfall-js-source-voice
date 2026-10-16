@@ -7,7 +7,7 @@
 // BEATEN, A REVENANT YIELDS. The blow that would kill one of the player's revenants instead leaves it at the edge of
 // death, on its knees - its fight done, untouchable, its plea said in its own voice (REVENANT-VOICE) - and its fate
 // is the player's:
-//  - THE CHOICE is the loot menu's (ui/enhancedInventory.js, the loot window's FATE side; the classic skin a keyed
+//  - THE CHOICE is the loot menu's (ui/enhanced/enhancedInventory.js, the loot window's FATE side; the classic skin a keyed
 //    box): activate the kneeling foe as a body is searched, and the window shows its name, its plea, and two rows -
 //    KILL, with the very weapon it will drop (pre-rolled at the yield: revenantTrophy.js), and SPARE, with where it
 //    will stand (at the player's side, or away when the companion slots are full).

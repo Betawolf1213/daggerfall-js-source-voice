@@ -24,7 +24,7 @@ import {
   isWaterPixel, OVERWORLD_SEA_LEVEL, OVERWORLD_RELIEF,
   OVERWORLD_DOT_COLORS, OVERWORLD_DOT_SIZES, OVERWORLD_CLIMATE_COLORS,
 } from '../src/ui/overworldModel.js';
-import { createTravelMapWindow, travelMapDoorReady } from '../src/ui/travelMapDoor.js';
+import { createTravelMapWindow, travelMapDoorReady } from '../src/ui/travel/travelMapDoor.js';
 import { hidesHud } from '../src/ui/windowStack.js';   // MAP-FIELD2: the window that takes the HUD away
 import {
   HeldMapWindow, HELD_MAP_URL, appRootFrom, SPRITE, PAPER, THUMB_ZONES, HAND_CHROMA, THUMB_GROW, HELD_MAP_HEIGHT, HELD_MAP_BITE, SPRITE_ART_FOOT, heldStageRect, heldStageRectArm, HELD_MAP_CLOSE, CUFF_BAND, extendCuffs, keyThumbPixels, rgbaCss, wheelPixels,
@@ -34,21 +34,21 @@ import { simplifyChain, traceChains } from '../src/ui/overworldModel.js';
 import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travel/travelMapState.js';
 import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../src/systems/travel/travelOptionsText.js';
 import { hasPort, PORT_LOCATION_IDS } from '../src/systems/travel/travelPorts.js';
-import { scaleTripCost, ONLINE_TRAVEL_LINE } from '../src/ui/travelPopUp.js';
-import { teleportCost } from '../src/ui/travelMapOptions.js';
+import { scaleTripCost, ONLINE_TRAVEL_LINE } from '../src/ui/travel/travelPopUp.js';
+import { teleportCost } from '../src/ui/travel/travelMapOptions.js';
 import { guildFastTravel } from '../src/systems/guild/guildVariants.js';
 import {
   buildInkModel, buildInkMarks, paintInk, placeNames, zoomBand, clampView, scaleMinOf, zoomAt, viewCentredOn,
   toPaper, toMap, boundarySegments, linkSegments, landAt, roadChains, markKind, roundCorners,
   paintInkStatic, paintInkOverlay, nameFont, HARBOUR_PEN, HARBOUR_HALO,
   BAND_MARKS, BAND_NAMES, SCALE_MAX, PEN, GLYPH_R, paintGlyph, spacedName,   // TAMRIEL1: the region name's spelling
-} from '../src/ui/inkMap.js';
+} from '../src/ui/ink/inkMap.js';
 import { PARTY_MARK_CSS } from '../src/ui/partyMapMarks.js';
 import { quadPlacement } from '../src/ui/quadMap.js';   // MAP3
 // EM1: one map, three sheets
-import { createSheetSlot, stripScale, isSheet, stripHit, STRIP } from '../src/ui/mapStrip.js';
+import { createSheetSlot, stripScale, isSheet, stripHit, STRIP } from '../src/ui/map/mapStrip.js';
 import { MAP_SHEETS } from '../src/systems/map/mapTabs.js';
-import { getPixelColorIndex } from '../src/ui/travelMapWindow.js';
+import { getPixelColorIndex } from '../src/ui/travel/travelMapWindow.js';
 import { CLIMATES, LOCATION_TYPES, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 import { SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
 import {
@@ -61,7 +61,7 @@ import { _resetForTests, setPref } from '../src/systems/uiPrefs.js';   // TAMRIE
 // test/enhancedNotice.test.js does.
 import {
   enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID,
-} from '../src/ui/enhancedNotice.js';
+} from '../src/ui/enhanced/enhancedNotice.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const skin = (v) => { _resetForTests(); globalThis.location = { search: `?skin=${v}` }; };
@@ -288,7 +288,7 @@ function fakeDocument() {
       addEventListener(t, fn) { (n.listeners ||= []).push([t, fn]); }, removeEventListener() {},
       setPointerCapture() {}, querySelectorAll: () => [],
       // ENH-NOTICE3: the window raises the enhanced notice panel now,
-      // and ui/enhancedNotice.js's stack sets aria-live on its root -
+      // and ui/enhanced/enhancedNotice.js's stack sets aria-live on its root -
       // so the stub grows the one method that reaches.
       className: '', textContent: '', id: '', attrs: {},
       setAttribute(k, v) { n.attrs[k] = v; },
@@ -334,19 +334,19 @@ test('U61: the classic skin still gets the canvas map - or its honest null witho
   });
 });
 
-test('U61 + MAP-TOGGLE: the fork asks the SKIN and the player\'s SWITCH, not only the document - one gate, ui/mapSkin.js, for all three doors', () => {
-  const gate = read('src/ui/mapSkin.js');
+test('U61 + MAP-TOGGLE: the fork asks the SKIN and the player\'s SWITCH, not only the document - one gate, ui/map/mapSkin.js, for all three doors', () => {
+  const gate = read('src/ui/map/mapSkin.js');
   assert.match(gate, /export const enhancedMapOn = \(\) => !!getPref\('heldMap'\);/);
   assert.match(gate, /export const heldMapChosen = \(\) => isEnhanced\(\) && enhancedMapOn\(\);/);
   assert.match(gate, /export const heldMapWorn = \(\) => heldMapChosen\(\) && typeof document !== 'undefined';/, 'the skin, the switch, the document - in that order');
-  for (const door of ['src/ui/travelMapDoor.js', 'src/ui/automapDoor.js', 'src/ui/townMapDoor.js']) {
+  for (const door of ['src/ui/travel/travelMapDoor.js', 'src/ui/automap/automapDoor.js', 'src/ui/town/townMapDoor.js']) {
     const d = read(door);
     assert.match(d, /if \(heldMapWorn\(\)\) \{/, `${door} opens the held sheet through the gate`);
     assert.doesNotMatch(d, /isEnhanced\(\)/, `${door} asks no skin of its own`);
   }
-  assert.match(read('src/ui/travelMapDoor.js'), /return heldMapChosen\(\) \|\| travelMapArtLoaded\(\);/);
-  assert.match(read('src/ui/automapDoor.js'), /return heldMapWorn\(\) \|\| automapArtLoaded\(\);/);
-  assert.match(read('src/ui/townMapDoor.js'), /return heldMapWorn\(\) \|\| exteriorAutomapArtLoaded\(\);/);
+  assert.match(read('src/ui/travel/travelMapDoor.js'), /return heldMapChosen\(\) \|\| travelMapArtLoaded\(\);/);
+  assert.match(read('src/ui/automap/automapDoor.js'), /return heldMapWorn\(\) \|\| automapArtLoaded\(\);/);
+  assert.match(read('src/ui/town/townMapDoor.js'), /return heldMapWorn\(\) \|\| exteriorAutomapArtLoaded\(\);/);
 });
 
 test('U61: a host with no document keeps the classic arm, on either skin', () => {
@@ -382,7 +382,7 @@ test('MAP1: the enhanced skin gets the HELD MAP, holding the classic contract', 
     assert.equal(win.done, true);
     assert.equal(win.teleportationTravel, false);
     // the door names the successor and records the retirement
-    const door = read('src/ui/travelMapDoor.js');
+    const door = read('src/ui/travel/travelMapDoor.js');
     assert.match(door, /import \{ HeldMapWindow \} from '\.\/heldMap\.js';/);
     assert.doesNotMatch(door, /OverworldMapWindow/, 'the relief map is gone from the door');
     assert.match(door, /ui\/overworldMap\.js, RETIRED 2026-09-18/, 'and said so');
@@ -416,7 +416,7 @@ test('U61: the other three hosts still refuse the map, by name', () => {
 });
 
 test('U61: the door is a STATIC fork and says why', () => {
-  const src = read('src/ui/travelMapDoor.js');
+  const src = read('src/ui/travel/travelMapDoor.js');
   assert.doesNotMatch(src, /import\(/, 'no dynamic import');
   assert.match(src, /STATIC import/, 'the departure from the DOM doors\' lazy shape is reasoned');
 });
@@ -425,10 +425,10 @@ test('MAP1: the relief map, its renderer and its probe are RETIRED - no file, no
   for (const f of ['src/ui/overworldMap.js', 'src/render/overworldRenderer.js', 'tools/overworldProbe.mjs']) {
     assert.equal(existsSync(new URL(`../${f}`, import.meta.url)), false, `${f} is gone`);
   }
-  for (const f of ['src/ui/travelMapDoor.js', 'src/ui/heldMap.js', 'src/ui/inkMap.js', 'src/scenes/world.js']) {
+  for (const f of ['src/ui/travel/travelMapDoor.js', 'src/ui/heldMap.js', 'src/ui/ink/inkMap.js', 'src/scenes/world.js']) {
     assert.doesNotMatch(read(f), /overworldRenderer|from '\.\/overworldMap\.js'/, `${f} imports nothing retired`);
   }
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.doesNotMatch(css, /\.ov[a-z]/, 'the .ov* rules went with the window they dressed');
   // MAP-FIELD2: the root is CLEAR on both lanes now - the map is held,
   // so the world is behind it, and the black was what made the sprite a
@@ -859,7 +859,7 @@ test('U61: the window computes no travel law of its own', () => {
   }
   // and the ink's marks go through the classic window's laws by way of
   // the ONE marker model, never a copied table
-  const ink = code('src/ui/inkMap.js');
+  const ink = code('src/ui/ink/inkMap.js');
   assert.ok(ink.includes('buildMarkerModel('), 'the one bucket-and-discovery law');
   assert.doesNotMatch(ink, /237|240, 243/, 'no copied FMAP palette indices');
   assert.doesNotMatch(ink, /hasDiscoveredLocationId|_revealUndiscoveredLocations/, 'discovery is not re-read here');
@@ -958,7 +958,7 @@ test('MAP1 ink: the corner cut is BOUNDED - a pixel staircase rounds, a long str
   assert.ok(rs.some((p) => Math.abs(p.x - 0.75) < 1e-9 && p.y === 0), 'a quarter along a one-pixel leg');
   assert.equal(roundCorners([{ x: 0, y: 0 }, { x: 3, y: 0 }]).length, 2, 'two points are a line, untouched');
   // the roads take the same cut
-  const ink = read('src/ui/inkMap.js');
+  const ink = read('src/ui/ink/inkMap.js');
   assert.match(ink, /roundCorners\(simplifyChain\(centre\(c\)\)\)/, 'roads');
   assert.match(ink, /return roundCorners\(simplifyChain\(chain, eps\)\);/, 'and the coast and borders');
 });
@@ -1898,7 +1898,7 @@ test('MAP2 coordinates: a bare pixel is a destination only when the mod allows i
     assert.equal(win._panel, 'travel', 'the decision opens itself, as the coordinates popup does');
     const st = win._panelState;
     assert.equal(st.trip.walked, true);
-    // the estimate, verbatim what ui/travelPopUp.js computes for its labels
+    // the estimate, verbatim what ui/travel/travelPopUp.js computes for its labels
     const s = win._to.settings;
     const w = calculateTravelTime({ x: 5, y: 5 }, { x: 1, y: 1 }, {
       speedCautious: st.opts.speedCautious && !s.cautiousTravel, sleepModeInn: st.opts.sleepModeInn && !s.stopAtInnsTravel,
@@ -2177,7 +2177,7 @@ test('AUDIT-MAP D2: the card bills the mod\'s SCALED fare through the popup\'s o
   assert.equal(both.piecesCost, 100);
   assert.ok(both.totalCost - both.piecesCost > 60);
   // the popup's method IS the export
-  assert.match(read('src/ui/travelPopUp.js'), /_scaleTripCost\(c\) \{[\s\S]{0,400}?return scaleTripCost\(c, this\._to\?\.settings, this\.deps\.playerEntity\?\.\(\) \?\? null\);/);
+  assert.match(read('src/ui/travel/travelPopUp.js'), /_scaleTripCost\(c\) \{[\s\S]{0,400}?return scaleTripCost\(c, this\._to\?\.settings, this\.deps\.playerEntity\?\.\(\) \?\? null\);/);
   // the card, driven: the same fare the popup would show, and the commit charges it
   withDocument(() => {
     const win = open(mkWin(modDeps({ getClimateIndex: (x) => (x >= 8 ? CLIMATES.Ocean : CLIMATES.Woodlands), hasShip: () => true }, { fastTravelCostScaleFactor: 4, shipTravelCostScaleFactor: 3, cautiousTravel: false, stopAtInnsTravel: false, shipTravelPortsOnly: false })));
@@ -2315,7 +2315,7 @@ test('AUDIT-MAP perf: the carets are thinned once per band at build; the harbour
   const ctx = recordingCtx();
   paintInk(ctx, model, { ox: 0, oy: 0, scale: 5 }, { paperW: 60, paperH: 60, band: 'far' });
   assert.equal(ctx.calls.filter((c) => c.fn === 'moveTo').length, 4, 'four carets at far, off the thinned list');
-  assert.match(read('src/ui/inkMap.js'), /ctx\.moveTo\(ax \+ 3 \* Math\.cos\(Math\.PI \* 0\.15\), ay \+ 0\.5 \+ 3 \* Math\.sin\(Math\.PI \* 0\.15\)\);\s*\n\s*ctx\.arc\(ax, ay \+ 0\.5, 3, Math\.PI \* 0\.15, Math\.PI \* 0\.85\);/);
+  assert.match(read('src/ui/ink/inkMap.js'), /ctx\.moveTo\(ax \+ 3 \* Math\.cos\(Math\.PI \* 0\.15\), ay \+ 0\.5 \+ 3 \* Math\.sin\(Math\.PI \* 0\.15\)\);\s*\n\s*ctx\.arc\(ax, ay \+ 0\.5, 3, Math\.PI \* 0\.15, Math\.PI \* 0\.85\);/);
 });
 
 test('AUDIT-MAP A8: every step of the glide is a view the clamp allows (mutants: glide-unclamped)', () => {
@@ -2384,7 +2384,7 @@ test('AUDIT-MAP H6/perf: a box holds the whole chrome (the modal class), the sta
   assert.match(src, /this\._chrome\.root\.classList\.toggle\('hmmodal', modal\);/);
   assert.match(src, /const modal = !!this\._info \|\| this\._top === 'resume';/,
     'mutants: the modality re-derived from the drawn box, which the panel arm leaves shut');
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hmroot\.hmmodal \.hmtop, \.hmroot\.hmmodal \.hmcard, \.hmroot\.hmmodal \.hmfoot \{ pointer-events: none; \}/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hmroot\.hmmodal \.hmtop, \.hmroot\.hmmodal \.hmcard, \.hmroot\.hmmodal \.hmfoot \{ pointer-events: none; \}/);
   assert.match(src, /if \(key !== this\._staticKey \|\| !lctx\) \{/, 'the static half is painted only when its key moves');
   assert.match(src, /this\._marksVersion, this\._portsShown\(\) \? 1 : 0, this\.markedMapId,/, 'and the key carries what the static half reads');
   assert.equal((src.match(/paintInkStatic\(/g) || []).length, 1);
@@ -2445,7 +2445,7 @@ test('MAP3 hands lane: when the holder says the arm is drawn and takes the sheet
       // AUDIT-MAP2: the lane class on the root is NOT the thumbs canvas's
       // class - `.hmhands` is `pointer-events: none`, and the first hands
       // lane in a browser ignored every click for exactly that reason
-      const src = read('src/ui/heldMap.js'), css = read('src/ui/enhancedStyle.js');
+      const src = read('src/ui/heldMap.js'), css = read('src/ui/enhanced/enhancedStyle.js');
       assert.match(src, /c\.root\.classList\.toggle\('hmlanehands', true\);/);
       assert.doesNotMatch(src, /classList\.toggle\('hmhands'/);
       assert.match(css, /\.hmroot \{[^}]*background: transparent;/, 'MAP-FIELD2: the root is clear for BOTH lanes, so the hands lane needs no rule of its own');
@@ -2773,7 +2773,7 @@ test('AUDIT-MAP2 perf and polish: the kept static layer is not reset on every pa
   assert.doesNotMatch(src, /byRoad: false/);
   assert.doesNotMatch(src, /walkTravelPath\(/, 'the walk is calculateTravelTime\'s own');
   assert.match(src, /typeof maps\?\.getRegionIndexAt === 'function' \? maps\.getRegionIndexAt\(x, y\)/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hmroot \.hmfoot \{ background: rgba\(10, 12, 17, 0\.94\);/, 'the foot has its own scrim over the world - MAP-FIELD2: on both lanes, neither having a black behind it; EM3-3D fix: near-opaque, so the HUD does not read through it');
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hmroot \.hmfoot \{ background: rgba\(10, 12, 17, 0\.94\);/, 'the foot has its own scrim over the world - MAP-FIELD2: on both lanes, neither having a black behind it; EM3-3D fix: near-opaque, so the HUD does not read through it');
   withDocument(() => {
     // the region read: a host maps file whose getRegionIndexAt carries the fixups
     const politic = () => 64;   // the High Rock sea coast byte
@@ -2923,7 +2923,7 @@ test('MAP-FIELD2: the sheet is HELD - bottom-anchored with the arms past the edg
   assert.equal(hidesHud({ hidesHud: 1 }), false, 'the field is the literal true, as previousWindow is');
   assert.equal(hidesHud({}), false); assert.equal(hidesHud(null), false);
   assert.match(src, /this\.hidesHud = true;/, 'the sheet declares it');
-  assert.match(read('src/ui/hud.js'), /const hudCovered = hudHidden \|\| \(\(windowCoversHud \?\? cursorActive\) && !largeHud\?\.art\);/,
+  assert.match(read('src/ui/hud/hud.js'), /const hudCovered = hudHidden \|\| \(\(windowCoversHud \?\? cursorActive\) && !largeHud\?\.art\);/,
     'and the hide is OUTSIDE the large-HUD carve-out - inside it, the enhanced skin would keep its bars on the knuckles');
   // the overlay's answer takes NO pause gate: the held map does not stop
   // the world, and the vitals go anyway
@@ -2934,7 +2934,7 @@ test('MAP-FIELD2: the sheet is HELD - bottom-anchored with the arms past the edg
   // and none of DFU's windows claims it, so no DFU window moved (a mod's may: Come Sail Away's position map takes the
   // HUD away by its own PauseGame(true, true) - AUDIT PRE-MERGE 0928 U8, audit0928_input.test.js)
   const claims = [];
-  for (const f of ['src/ui/heldMap.js', 'src/ui/travelMapWindow.js', 'src/ui/inventoryWindow.js', 'src/ui/charsheet.js', 'src/ui/pauseWindow.js'])
+  for (const f of ['src/ui/heldMap.js', 'src/ui/travel/travelMapWindow.js', 'src/ui/inventoryWindow.js', 'src/ui/charsheet.js', 'src/ui/pauseWindow.js'])
     if (existsSync(new URL(`../${f}`, import.meta.url)) && /\bhidesHud = true/.test(read(f))) claims.push(f);
   assert.deepEqual(claims, ['src/ui/heldMap.js'], 'of these windows the held map alone takes the HUD away');
 });
@@ -3330,9 +3330,9 @@ test('EM-BUG2: the key that opens the sheet shuts it - the AutoMap binding as we
   assert.equal((held.match(/const _acts = actionsForCode\(bindings\(\), code\);/g) || []).length, 1);
   // ...and the classic twin has always taken its own binding back, which
   // is the law this one is keeping rather than inventing
-  const classic = readFileSync(new URL('../src/ui/automapWindow.js', import.meta.url), 'utf8');
+  const classic = readFileSync(new URL('../src/ui/automap/automapWindow.js', import.meta.url), 'utf8');
   assert.match(classic, /if \(this\.automapBinding && normalizeCode\(code, e\) === this\.automapBinding\)/,
-    'ui/automapWindow.js: DFU’s own window closes on the AutoMap key');
+    'ui/automap/automapWindow.js: DFU’s own window closes on the AutoMap key');
   // the binding the sheet answers to is the PLAYER's, read live off the
   // store - a rebound map key still closes the map it opened
   assert.match(held, /import \{[^}]*actionsForCode[^}]*\} from/);   // UXB1-S: every action on the key, off the store
@@ -3499,7 +3499,7 @@ test('MAP-SCALE (FIELD BUGS 2026-10-09e, "icons and text too small on high resol
       const tr = w2._paperPoint(650, 300);
       assert.ok(Math.abs(tr[0] - w2._paper.w) < 1e-6 && Math.abs(tr[1]) < 1e-6, 'the top-right corner is the paper\'s (w, 0)');
       w2.dispose();
-      const css = read('src/ui/enhancedStyle.js');
+      const css = read('src/ui/enhanced/enhancedStyle.js');
       assert.match(css, /\.hmroot \{ --hm-ui: 1; \}\n\.hmroot > :not\(\.hmstage\) \{ zoom: var\(--hm-ui, 1\); \}/, 'every piece over the sheet zoomed as one');
     } finally { setPref('mapScale', 'auto'); delete globalThis.innerWidth; delete globalThis.innerHeight; }
   });

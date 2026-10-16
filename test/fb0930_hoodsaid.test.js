@@ -20,9 +20,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDom } from './invdrag.mjs';
 import { PAGE_IDS } from '../src/ui/packPages.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '../src/ui/enhancedNotice.js';
-import { ARMOUR_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '../src/ui/enhanced/enhancedNotice.js';
+import { ARMOUR_CSS, PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { toggleHood, nextVariant, HOOD_TEXT, VARIANT_CHANGEABLE } from '../src/systems/useItem.js';
 import {
   hoodCapable, hoodUp, cloakState, HOODED_CLOAK_VARIANTS, CLOAK_WARMTH, CASUAL_CLOAKS, FORMAL_CLOAKS, HOODED_ROBES,
@@ -219,7 +219,7 @@ test('HOOD-SAID: plain robes worn hood down say so and raise the same way; a clo
       view.unmount();
     }
   });
-  const src = read('src/ui/enhancedInventory.js');
+  const src = read('src/ui/enhanced/enhancedInventory.js');
   const use = src.slice(src.indexOf('function use(item'), src.indexOf('export function inventoryQuickAct('));
   assert.match(use, /\n {2}refresh\(\);\n {2}if \(act\.repaint\) refreshFigure\(\);/, 'the use path reads the flag');
 });
@@ -240,7 +240,7 @@ test('HOOD-SAID: the door\'s hint names the button that raises the hood - the pa
     if (had === undefined) delete globalThis.location; else globalThis.location = had;
   }
   // the enhanced hint's button is the card's own label; the classic's is the window's Use mode (nativeInventory MODES)
-  assert.match(read('src/ui/enhancedInventory.js'), /hoodUp\(picked\) \? 'Lower hood' : 'Raise hood'/);
-  assert.match(read('src/ui/nativeInventory.js'), /const MODES = \['wagon', 'info', 'equip', 'remove', 'use', 'gold'\];/);
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /hoodUp\(picked\) \? 'Lower hood' : 'Raise hood'/);
+  assert.match(read('src/ui/native/nativeInventory.js'), /const MODES = \['wagon', 'info', 'equip', 'remove', 'use', 'gold'\];/);
   assert.doesNotMatch(VAMPIRE_HOOD_TEXT_CLASSIC, /Raise hood/, 'the classic window has no such button');
 });

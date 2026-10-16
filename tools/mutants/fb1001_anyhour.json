@@ -43,7 +43,7 @@
   },
   {
     "name": "ANY-HOUR-the-page-by-daylight",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "stand at sea, at any hour. Hold",
     "new": "stand at sea, by daylight. Hold",
     "tests": [

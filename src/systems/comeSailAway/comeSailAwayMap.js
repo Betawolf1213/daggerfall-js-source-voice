@@ -16,7 +16,7 @@
 
 import { roundToInt } from '../mathf.js';   // Mathf.RoundToInt's one home
 import { MAP_WIDTH, MAP_HEIGHT } from '../../formats/woodsFile.js';   // the world map's 1000x500: one texel a map pixel
-import { REGION_PANEL_OFFSET } from '../../ui/travelMapWindow.js';   // DaggerfallTravelMapWindow.regionPanelOffset's one home
+import { REGION_PANEL_OFFSET } from '../../ui/travel/travelMapWindow.js';   // DaggerfallTravelMapWindow.regionPanelOffset's one home
 
 const f = Math.fround;
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "QS3-the-sheathe-state-never-reaches-the-diamond",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "      weaponSheathed: weaponSheathed,",
     "new": "      weaponSheathed: true,",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "QS3-the-block-is-written-every-frame",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  if (last.quick === sig) return;",
     "new": "  if (sig === undefined) return;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "QS3-the-icon-is-re-requested-whenever-anything-changed",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  if (last[`${slot}Icon`] === key) return;",
     "new": "  if (key === undefined) return;",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "QS3-an-empty-hand-is-an-absence-again-not-a-socket",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    socket: !m, sheathed: !!m?.sheathed, ghost: false, count: null,",
     "new": "    socket: false, sheathed: !!m?.sheathed, ghost: false, count: null,",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "QS3-a-put-away-weapon-reads-as-a-drawn-one",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    cls.toggle('sheathed', !!s.sheathed);",
     "new": "    cls.toggle('sheathed', false);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "QS3-a-slot-whose-kind-left-the-pack-is-not-a-ghost",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "      socket: !c, sheathed: false, ghost: !!c && c.count === 0, count: c ? c.count : null,",
     "new": "      socket: !c, sheathed: false, ghost: false, count: c ? c.count : null,",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "QS3-the-durability-strip-reads-full-whatever-the-condition",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    const off = (WEAR_LEN * (1 - Math.max(0, Math.min(100, s.condition)) / 100)).toFixed(1);",
     "new": "    const off = '0';",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "QS3-the-worn-line-never-trips",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    const worn = s.condition < QUICK_WORN_PCT;",
     "new": "    const worn = s.condition < 0;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "QS3-the-block-stands-on-a-fixed-virtual-stick",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    parts.quick.classList.toggle('stickclear', fixedStick);",
     "new": "    parts.quick.classList.toggle('stickclear', false);",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "QS3-the-switch-hides-the-whole-block-mode-word-and-all",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-quick.nodiamond .hud-qdiamond { display: none; }",
     "new": ".hud-quick.nodiamond { display: none; }",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "QS3-the-switch-is-never-read",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const off = getPref('quickslots') === false;",
     "new": "  const off = false;",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "AUDITQS-F1-the-cell-is-a-square-again",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-qcell { position: absolute; width: var(--qs-cell); height: var(--qs-cell);\n  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }",
     "new": ".hud-qcell { position: absolute; width: var(--qs-cell); height: var(--qs-cell); }",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "AUDITQS-F8-a-mouse-on-a-touchscreen-fires-the-slot",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const finger = (e) => !(e && e.pointerType != null && e.pointerType !== 'touch' && e.pointerType !== 'pen');",
     "new": "  const finger = () => true;",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "AUDITQS-F8-coarse-alone-is-touch-first",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (pointer: coarse) and (hover: none) {\n  .hud-qcell { pointer-events: auto; touch-action: none; }",
     "new": "@media (pointer: coarse) {\n  .hud-qcell { pointer-events: auto; touch-action: none; }",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "AUDITQS-F10-the-keyboard-chip-stays-on-the-phone",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .hud-qstag.key { display: none; }",
     "new": "",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "AUDITQS-the-block-steps-30-per-unit-and-stands-in-the-bar-at-1.5",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  bottom: calc(22px + 32px * var(--hud-scale) + env(safe-area-inset-bottom, 0px));",
     "new": "  bottom: calc(24px + 30px * (var(--hud-scale) - 1) + env(safe-area-inset-bottom, 0px));",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "QS5-the-gauge-drains-from-the-corners-inward-not-the-point-outward",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "const WEAR_L = `50 ${50 + WEAR_INSET} L ${50 - WEAR_INSET} 50`;",
     "new": "const WEAR_L = `${50 - WEAR_INSET} 50 L 50 ${50 + WEAR_INSET}`;",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "QS5-the-gauge-is-minted-as-an-HTML-element",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const n = doc.createElementNS(SVG_NS, tag);",
     "new": "  const n = doc.createElement(tag);",
     "tests": [
@@ -258,7 +258,7 @@
   },
   {
     "name": "QS4-the-off-cells-tap-does-the-swap-in-every-state",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "    if (offKind === 'swap') liveOpts.quickSwap?.(); else liveOpts.quickOffHand?.();",
     "new": "    liveOpts.quickSwap?.();",
     "tests": [

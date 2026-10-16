@@ -147,7 +147,7 @@
   },
   {
     "name": "RENOWN-CHAR-a-track-of-any-shape-drawn",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "  return Array.isArray(r) ? r.filter((t) => renownText(t?.level) && Number.isSafeInteger(t?.xp) && t.xp >= 0) : [];",
     "new": "  return Array.isArray(r) ? r : [];",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "RENOWN-CHAR-the-dialogs-old-word",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "- its Renown, its professions and their Stores, its home and its guild place with it. A copy you made offline stays.",
     "new": "- its home and its guild place with it. Your Renown belongs to your account and stays, as does a copy you made offline.",
     "tests": [

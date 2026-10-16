@@ -265,7 +265,7 @@ court and the painted horizon, what moves in the air over it, and what it sounds
 
 **The step through (WB6c, 2026-09-25, Mac: "the transition and the arena needs to be an oblivion masterpiece").** The
 door had been a cut: the street one frame, the court the next. Now the step is taken in fire (`render/gateVeil.js`, the
-law and the shader; `ui/gateVeil.js`, the canvas, its loop and its sounds):
+law and the shader; `ui/gate/gateVeil.js`, the canvas, its loop and its sounds):
 
 - **Closing**: flame tongues come in from past the screen's corners, spiralling toward the middle; what they have not
   taken reddens; the fire's cast roars, pitched down, over the deep wind. In 1.2 s the screen is all fire - a vortex of
@@ -618,7 +618,7 @@ mechanics faster is the play."* Nothing here is faster than it was.
 |---|---|---|
 | WBX1 | **none of the made geometry drew.** The gate's stone, the court (floor, rune ring, spires, braziers, the bridge and its way home) and the Deadlands' islands and shards were built with a `Uint16Array` of indices (under 65,536 vertices each), and every draw of a bundle reads `gl.UNSIGNED_INT` - half the bytes the draw asked for, so WebGL refused each one (`INVALID_OPERATION: Insufficient buffer size`) and nothing was there; the colliders, which read numbers and not bytes, stood the floor where it should be. Every probe had drawn the stone with its own stand-in program, never the renderer's | `renderer.createMesh` widens any element array to 32 bits once, at upload (the one index type), and the three builders hand 32 bits in. Seen through the real renderer headless: the stone, the court and the land (0 pixels before, the whole silhouette after) |
 | WBX2 | **no way home after the fight** (the bridge's membrane was part of the invisible court) | once his body is gone (`PORTAL_AFTER_MS` into his fall) the gate's own fire - its arch and its beacon, without the stone, so no plinth rises over the spoils - stands where he fell and rises over `PORTAL_RISE_MS`, *The way home tears open where he fell.*; pressing it (its door is laid into the court's exit doors) is the way home - `gateWayHome`, the one door the bridge's membrane takes too. SS3 (2026-09-27): it is never WALKED through - it stands where the spoils land, and a player going for them walked out of the court |
-| WBX3 | **the loot**: every piece lay as the same treasure heap in a beam 8 m tall; and "pillaged by others" - the spoils were always the player's alone, but a fighter standing where they fell had walked over them the second they landed | each item stands as its own picture on the floor - the pack's (`ui/itemIconColor32.js`, `textureCanvas.js`'s own door with the item's dye), uploaded under `SPOILS_ICON_ARCHIVE` - and its tier's colour leaves the top of that sprite as a thin line (`render/spoilsGlow.js`: 0.7-2.3 m by tier, never thinner than two pixels on the screen, brightest where it leaves the sprite); gold keeps its pile. A piece is taken only `SPOILS_TAKE_AFTER_MS` after it rests, and the burst says *...spoils spill across the floor - yours alone to take.* |
+| WBX3 | **the loot**: every piece lay as the same treasure heap in a beam 8 m tall; and "pillaged by others" - the spoils were always the player's alone, but a fighter standing where they fell had walked over them the second they landed | each item stands as its own picture on the floor - the pack's (`ui/item/itemIconColor32.js`, `textureCanvas.js`'s own door with the item's dye), uploaded under `SPOILS_ICON_ARCHIVE` - and its tier's colour leaves the top of that sprite as a thin line (`render/spoilsGlow.js`: 0.7-2.3 m by tier, never thinner than two pixels on the screen, brightest where it leaves the sprite); gold keeps its pile. A piece is taken only `SPOILS_TAKE_AFTER_MS` after it rests, and the burst says *...spoils spill across the floor - yours alone to take.* |
 | WBX4 | **his damage and his mark** | every attack takes a larger share of the struck player's own health and `base` points beside it (Cleave 35% + 8, Slam 40% + 10, Charge 30% + 8, Hellfire 30% + 6, Nova 45% + 10, Leap 35% + 8, Meteor 50% + 12, Spokes 40% + 10) - two of his blade's or his weight's landings leave a fighter of 150 health or more low and a third ends them, and the Flame Nova and the Meteor, near half each, end anyone in two who has not healed between; and **his mark** on the floor, always: a ring about his feet a little wider than his body and a chevron before it where he faces (`render/gateTelegraph.js` kind 7), his ember, gold while the ward holds |
 | WBX5 | **the phases** | each phase has a name and a shape - **The Warden** (blade and weight: Cleave, Ground Slam, Charge), **The Burning Court** (fire and reach: Hellfire and the new **Meteor of Oblivion** leave the floor BURNING - pools that bite every second a player stays in them, the first bite a second after stepping in - the Flame Nova, and the **Crushing Leap** at whoever stands more than 10 m off), **Dagon's Champion** (the **Spokes of Dagon**: four lanes of fire from his feet). A phase's turn is a sequence: he leaps into the court's heart under his ward, then casts its signature - the Nova as the ward breaks; the spokes and at once the four between them as he becomes Dagon's Champion. The bar names the phase; the turn is said over the screen. The relay's brain (`PHASE_TURN`, three new attack ids inside the `a` bound the wire always had) - world116 |
 | WBX6 | **regeneration, and broken weapons** | the court keeps no regeneration (`systems/courtRules.js`, set by the world host each frame the court stands: the Regenerate effect's round, a RegensHealth enchantment's and a career's Regenerate Health heal nothing; a Heal, a potion or a friend's cast land as ever - nothing is wiped). A blow on him wears no gear (`combat/formulas.js damageEquipment` spares the stand-in's `spareGear` - a fight of hundreds of blows was breaking weapons) |
@@ -929,11 +929,11 @@ performance as it's unplayable with so many players around."
 ### The marks seen (WB9a)
 
 Under his health, a row of three chips - his aspect's sign, name and element in its colour, then each trial's sign,
-name and one line (`ui/gateMarksView.js marksViewOf`, made once a marks array; `ui/gateBossBar.js` writes a chip only
+name and one line (`ui/gate/gateMarksView.js marksViewOf`, made once a marks array; `ui/gate/gateBossBar.js` writes a chip only
 when the night's marks change). Before the fight, a card: beside the gate's countdown in the street while it stands
 (`scenes/gatePool.js`, "Tonight's marks"), and over the court as a fighter steps in (`scenes/gateCourt.js`,
 MARKS_CARD_ARRIVE_MS, 9 s, fading over MARKS_CARD_FADE_MS) - each mark's sign, name, line and how to meet it
-(MARK_TIPS) - never over the step's fire (`ui/gateVeil.js`), never for a Warden already fallen.
+(MARK_TIPS) - never over the step's fire (`ui/gate/gateVeil.js`), never for a Warden already fallen.
 
 ### Three courts and the walkways (WB9b)
 
@@ -1003,7 +1003,7 @@ standing a beam into his chest while the Reckoning winds up; a light over each s
 
 Every pool bites half again what it did (POOLS: Hellfire's 8% and 3 a second, a meteor's 10% and 4; Scarring's scars
 alike). The law of the bite is WBX5's (a tick after the step in - a step through is free, standing is not); what moved
-is that it SAYS itself (`ui/gateGroundView.js`): the screen's rim glows in the ground's colour while I stand in it
+is that it SAYS itself (`ui/gate/gateGroundView.js`): the screen's rim glows in the ground's colour while I stand in it
 (breathing), flares at each bite, and his elemental blows flare it in their own colour as they land on me; the ground's
 name and "step out!" stand under the crosshair while I am in it; and the step in hisses at my feet at once
 (`world/gate/gateBoss.js groundStepCue` - the burning ground's hiss, or his aspect's element's cast). DFU's red flash stays a
@@ -1089,7 +1089,7 @@ THE WINDOW AND THE CARD. Under the day's stock the Broker's window (`ui/brokerWi
 piece in the wares' own grid (the title's word in its own fire, the aura's ring turning), a control the pad and the
 keyboard reach (U10's `pressable`, one home for both kinds of row), its price or Owned or Worn, and a button that says
 why not or what a press does (Buy, "Need 12 more", Wear, Take off - "Buying..." until the account answers, nothing else
-pressable meanwhile); pressed, the piece's card. The account card (`ui/enhancedAccount.js`) draws an Aura row beside the
+pressable meanwhile); pressed, the piece's card. The account card (`ui/enhanced/enhancedAccount.js`) draws an Aura row beside the
 titles, in the Gatebreaker's own fire (`ui/playerBadge.js`: coal-crimson through fire to ember, edged in black).
 AEGIS (2026-10-03) added a second aura that is not sold here: the Oblivion Ward, granted by name with Sureme's Aegis of
 Oblivion title (`06-Systems/Accounts-And-Cloud-Saves-Arc.md`, AEGIS) and drawn by the same pass; each aura's card
@@ -1148,7 +1148,7 @@ and R-1's fogged programs (TV4), the Broker's rows (SET7's U10 - one `pressable`
 The branch audited in five parts before the merge - the relay's brain (WB9b/c), the court's client and its drawing
 (WB9a/c/d/e), the spoils (WB9f), the Broker's insignia (WB9g) and the bodies in a crowd (WB9h) - each finding reproduced
 by a script against the real modules before anything changed, and shots of the aura and the title taken in a real
-browser (the court's own floor, `render/auraRing.js`, `ui/nameLayer.js`, `ui/brokerWindow.js`, `ui/enhancedAccount.js`).
+browser (the court's own floor, `render/auraRing.js`, `ui/nameLayer.js`, `ui/brokerWindow.js`, `ui/enhanced/enhancedAccount.js`).
 Nineteen were real.
 
 | # | found | now |
@@ -1244,13 +1244,13 @@ picked up 4. Develop a detailed damage chart after the boss kill, showing and ra
 
 **The marks' card to the side.** WB9a stood the card over the middle of the screen as a fighter stepped into the court
 (`max(30%, 206px)` from the top, centred) for MARKS_CARD_ARRIVE_MS - over the crosshair, over the Warden, at the moment
-the fight opened. The arrive mode now stands low on the right (`ui/gateMarksView.js MARKS_CARD_CSS`: 18 px in, at
+the fight opened. The arrive mode now stands low on the right (`ui/gate/gateMarksView.js MARKS_CARD_CSS`: 18 px in, at
 `max(96px, 14vh)` from the bottom, 340 px wide), clear of the bar at the top, the chat at the top left and the party
 panel at the top right; the street's card keeps its own place under the compass line. Nothing else about it moved: its
 clock, its fade, its rows.
 
 **No phase under his health.** WBX5 wrote the phase he fights in ("II - The Burning Court") first in the bar's foot. It
-is gone (`ui/gateBossBar.js` - `BOSS_BAR_TEXT.phase` and the model's `phaseName` with it): the two marks cut in his
+is gone (`ui/gate/gateBossBar.js` - `BOSS_BAR_TEXT.phase` and the model's `phaseName` with it): the two marks cut in his
 health say where the phases turn, and each turn is still said over the screen as it comes (`scenes/gateCourt.js
 courtPhaseText`). The foot keeps the court's fighters, the next Reckoning (WB9c) and the Wrath's countdown.
 
@@ -1282,7 +1282,7 @@ three names, `topDealers`), and said only the three names at the kill. Now:
   drawn.
 - THE FOLD (`net/gate/gateLink.js`): the chart is kept with the fall; when the hub's chartless echo of the kill came first,
   the court's word brings it after.
-- THE READOUT (`ui/gateDamageChart.js`): from DAMAGE_CHART_DELAY_MS (1.5 s) after this screen first saw the fall - his
+- THE READOUT (`ui/gate/gateDamageChart.js`): from DAMAGE_CHART_DELAY_MS (1.5 s) after this screen first saw the fall - his
   body's fall and the spoils' burst first - for DAMAGE_CHART_MS (a minute), in over a quarter second and out over its
   last second; to the side, where the marks' card stood (gone by the fall), never the middle; no click, no key, hidden
   with the HUD and under the step's fire. A title, "<boss> has fallen - N challengers", a head row, then each fighter:
@@ -1290,7 +1290,7 @@ three names, `topDealers`), and said only the three names at the kill. Now:
   the share of the court's whole, blows, best, crystals, falls. My row - by my name on the relay (`net/online.js`
   `name`, the host's `me`) - is ringed and says "(you)" in words, never in colour alone. The first DAMAGE_CHART_ROWS
   (10) are shown; when I am further down, my own row stands under them at my rank, and the fighters not shown are
-  counted. One node, written only when the chart changes; dressed under Plus (`ui/enhancedPlusStyle.js`). On a narrow
+  counted. One node, written only when the chart changes; dressed under Plus (`ui/enhanced/enhancedPlusStyle.js`). On a narrow
   screen the blows, the best and the crystals fold away. Seen in headless Chromium in both skins and at phone width (a
   mock court of fifteen) before it shipped; not yet seen over a real fight.
 
@@ -1557,7 +1557,7 @@ It buys nothing: no receipt, no share, no threat, no spoils - a figure on the ch
 
 **The chart.** A row carries `hl`, what that challenger healed in others, when they healed anyone (`damageChart`;
 `validGateOut` projects it whole and bounded - anything else is no chart, never a refused kill). On the round-up
-(`ui/gateDamageChart.js`) a **Healed** column after the rest - after the host's on a Legion-Lord night - whenever anyone
+(`ui/gate/gateDamageChart.js`) a **Healed** column after the rest - after the host's on a Legion-Lord night - whenever anyone
 in the court healed another, none in a court nobody did. On a narrow screen it takes the share's place (the share is
 the damage over the court's whole, the bar beside it says as much; the healing is said nowhere else), as wide as the
 damage's. The ranking is the damage's still - a healer stands where their damage puts them, their healing beside it.
@@ -2097,7 +2097,7 @@ the play"*), and what a player must do is shown before it is said.
 
 The hit law does not move except T2's ring: what lands is what the ground shows.
 
-**As built** (`render/gateTelegraph.js`, `scenes/gateCourt.js` perilAt, `ui/gateGroundView.js`, `scenes/gateHost.js`,
+**As built** (`render/gateTelegraph.js`, `scenes/gateCourt.js` perilAt, `ui/gate/gateGroundView.js`, `scenes/gateHost.js`,
 `net/gate/gateBrain.js` ATTACKS.nova):
 - The shader was rewritten from the lane's prototype, rendered beside the shipped one in Chromium.
 - The cone's edge is one continuous distance, so its line can be read off its own derivative (AUDIT WB9 F1's jump is
@@ -2194,7 +2194,7 @@ What changes beyond the wording:
 - The chart drops two columns on narrow screens and enters row by row.
 
 **As built:**
-- The bar (`ui/gateBossBar.js`):
+- The bar (`ui/gate/gateBossBar.js`):
   - A trailing segment behind the fill, held 0.55 s and drained at 70% a second (`ui/barLoss.js`). The fill eases over
     250 ms.
   - The ward is a class. The cage fades in over 160 ms, the fill dims under it, and its failing flashes the track for
@@ -2289,7 +2289,7 @@ What changes beyond the wording:
 - **Lines that stay readable:** a line on the middle of the screen stays for its length (WB13b keeps them short).
 
 **As built:**
-- The card is `ui/gateTitleCard.js`. It sits over the middle of the screen, above the crosshair and clear of his bar,
+- The card is `ui/gate/gateTitleCard.js`. It sits over the middle of the screen, above the crosshair and clear of his bar,
   and hides with the HUD and under the step-through fire.
 - His wake:
   - The relay's state says when the opening ends (`op`).
@@ -2593,8 +2593,8 @@ pin for the next relay slice.
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
 the chat's words), `systems/gate/gateSite.js` (the site over the map files), `systems/gate/gateOmen.js` (each moment's line once,
-the map's mark, the compass's), `ui/gateMapMark.js` with the ring on both maps (`ui/inkMap.js paintGateRing`, the held
-map's poll and legend, the classic page's texels on the open province), the compass's diamond (`ui/enhancedHud.js
+the map's mark, the compass's), `ui/gate/gateMapMark.js` with the ring on both maps (`ui/ink/inkMap.js paintGateRing`, the held
+map's poll and legend, the classic page's texels on the open province), the compass's diamond (`ui/enhanced/enhancedHud.js
 drawGateMark`), and `scenes/world.js` (`gateOmen`, `gateFrame` in the online frame before the dead return,
 `gateCompassMark`, the travel map's `gate`). Two changes from the page above, both the pins' finds: the province is a
 SHUFFLE BAG, not a bare roll (a bare roll's "never the day before's" repeated after its own bump), and the classic
@@ -2610,7 +2610,7 @@ round the rim clear of the ways in, basalt split by veins of fire and a ring of 
 mesh - and the beacon from its crown, widening with distance so it still stands on the sky a kilometre off),
 `scenes/gatePool.js` (the gate stood each exterior frame where the omen says, rising and sinking with the clock, its
 collider once risen, its light, the eye's box on the fire alone, the door and the walk through the fire, the countdown
-over the screen within 60 m - `ui/gateBanner.js`), the activation race's `gate` family, and the world host's seams.
+over the screen within 60 m - `ui/gate/gateBanner.js`), the activation race's `gate` family, and the world host's seams.
 The door answers *The gate will not open to you yet.* until WB3's relay. Pins `test/wb2_gate.test.js` (13); mutants
 `tools/mutants/wb2.json` (28 dead); `tools/gatePassProbe.mjs` compiles, links and draws the pass in a real WebGL2 (9
 checks). Seen in a headless browser with its own stand-in lighting (the stone, its art, the fire and the beacon); not
@@ -2662,7 +2662,7 @@ low ember otherwise. His voice is his own mobile's, pitched down and heard acros
 wind-up, the attack at a landing, the fire's cast by its sound ID and the burning under each Hellfire target, a roar
 for a phase crossed. On the floor (`render/gateTelegraph.js`, the duel wall's law): one quad and the shape as the
 fragment's question - dim at the word, filling toward the edge as the wind-up runs, bright at the landing, gone after
-- the same law a struck player's feet are tested by, held to it point for point. His bar (`ui/gateBossBar.js`) says
+- the same law a struck player's feet are tested by, held to it point for point. His bar (`ui/gate/gateBossBar.js`) says
 his name and title over his health with the two phase marks, the ward's gold, the attack coming in its colour, and
 the Wrath's countdown in the last five minutes. AND THE BLOW LANDS ON THE STRUCK PLAYER'S MACHINE (`net/gate/gateStrike.js`,
 `scenes/gateCourt.js`): at the first frame on the landing - never judged late - its feet against the shape; the
@@ -2815,7 +2815,7 @@ device keeps the old verdict), `scenes/gateCourt.js` (the burst's account), `sce
 
 **AUDIT WB - the look and the sound (2026-09-25).** D2-D10 above: `systems/gate/gateScore.js` (`createCourtScore`, the war
 songs `seamless`), `systems/music.js` (`fadeOut`), `systems/song/songPlayer.js` (the seamless loop), `scenes/gateCourt.js`
-(the grunt's count, the lists refilled), `ui/gateVeil.js` (`frameDrawn`, `warm`, the flash drawn at once),
+(the grunt's count, the lists refilled), `ui/gate/gateVeil.js` (`frameDrawn`, `warm`, the flash drawn at once),
 `render/deadlands.js` (`anchoredClock`, the falls' two layers, `RIDGES_TOP`), `scenes/spoilsPool.js` and
 `world/gate/gateArena.js` (nothing made for an empty floor, the braziers' lights once), `scenes/worldModes.js` (the court's
 equator one array), `scenes/world.js` (the score's fade, the veil told and warmed, the clock, the court's hooks). Pins
@@ -2830,11 +2830,11 @@ spoils' and claims', 9 of the look and the sound - each pinned and mutated.
 **WBX (2026-09-26) - after the first fights.** Section 12 above, whole: `render/renderer.js` (the one index type),
 `world/gate/gateModel.js`, `world/gate/gateArena.js`, `world/deadlandsLand.js` (32-bit indices; `portalDoor`, `PORTAL_AFTER_MS`),
 `scenes/gateCourt.js` (the portal, the mark, the burning ground and its bite, the turn said, the soul trap kept and
-rolled), `scenes/spoilsPool.js` and `ui/itemIconColor32.js` (each piece its own picture, the take after rest),
+rolled), `scenes/spoilsPool.js` and `ui/item/itemIconColor32.js` (each piece its own picture, the take after rest),
 `render/spoilsGlow.js` (the line), `render/gateTelegraph.js` (the spokes, the mark, the pools), `world/gate/gateBoss.js` (the
 leap's flight and hop, the new cues and colours, the stand-in's `spareGear` and mobile), `net/gate/gateBrain.js` (`base`,
 `POOLS`, the three attacks, `PHASE_NAMES`, `PHASE_TURN`), `net/gate/gateStrike.js` (`spokeLanes`, `landingPools`,
-`poolUnder`, `strikeDamage`'s base), `ui/gateBossBar.js` (the phase's name), `systems/courtRules.js` with
+`poolUnder`, `strikeDamage`'s base), `ui/gate/gateBossBar.js` (the phase's name), `systems/courtRules.js` with
 `systems/effects.js`, `systems/enchantments.js` and `systems/passiveSpecials.js` (no regeneration), `combat/formulas.js`
 (no wear on him), `scenes/hostMagic.js` and `scenes/dungeonContext.js` (a Soul Trap meets him), `scenes/worldModes.js`
 (`gateWayHome`, `onBossTrap`) and `scenes/world.js` (the seams). RELAY_VERSION world116 - the brain's law moved; no
@@ -2925,7 +2925,7 @@ refusal's words, his aspect's colours and voice), `systems/effects.js`, `scenes/
 unflashed in their casts), `net/gate/gateMods.js` (the marks' tables), `net/gate/gateLaw.js` (the cycle, the marks' line),
 `net/gate/gateBrain.js` (the fight's profile and each trial's law), `net/wire.js` (`md`, `fed`, the brain's law 3,
 world128 - world126 on its branch), `server/src/index.js`, `net/gate/gateStrike.js`, `net/gate/gateLink.js`, `scenes/gateCourt.js`,
-`render/gateTelegraph.js`, `ui/gateBossBar.js`, `systems/gate/gateOmen.js`, `net/gate/gateHerald.js`, `scenes/world.js`.
+`render/gateTelegraph.js`, `ui/gate/gateBossBar.js`, `systems/gate/gateOmen.js`, `net/gate/gateHerald.js`, `scenes/world.js`.
 Not seen in a browser or on the deployed relay: the colours and the cues are the tables' until a court under each
 aspect has been looked at and heard.
 
@@ -2935,12 +2935,12 @@ without one starts), `systems/gate/gateScore.js` (`SCORE_PRESS`; the war songs r
 voices and law - the villain's harmony, the brass pedal, open fifths, the low bell, the kit without its hat). Measured
 through the real player by `tools/gateScoreProbe.mjs`; not heard by a person before it shipped.
 
-**GATE-UX (2026-10-01) - the court less in the way, and the damage chart.** Section 16 above: `ui/gateMarksView.js` (the
-arrive card to the side), `ui/gateBossBar.js` (no phase line), `scenes/spoilsPool.js` and `scenes/world.js` (the press
+**GATE-UX (2026-10-01) - the court less in the way, and the damage chart.** Section 16 above: `ui/gate/gateMarksView.js` (the
+arrive card to the side), `ui/gate/gateBossBar.js` (no phase line), `scenes/spoilsPool.js` and `scenes/world.js` (the press
 the only take; no feet), `net/gate/gateBrain.js` (the counts, `damageChart`, the chart on the fall and the state),
 `net/wire.js` (GATE_CHART_MAX, the chart's projection, RELAY_VERSION world136), `server/src/index.js` (the court's
-`fell` carries it), `net/gate/gateLink.js` (the fold), `ui/gateDamageChart.js` (the readout), `scenes/gateCourt.js` (drawn
-from the fall, put away on leaving), `ui/enhancedPlusStyle.js` (its dress). Not seen over a real fight or on the
+`fell` carries it), `net/gate/gateLink.js` (the fold), `ui/gate/gateDamageChart.js` (the readout), `scenes/gateCourt.js` (drawn
+from the fall, put away on leaving), `ui/enhanced/enhancedPlusStyle.js` (its dress). Not seen over a real fight or on the
 deployed relay: the readout was looked at in headless Chromium over a mock court.
 
 **WB11 (2026-10-01) - his host, the Legion-Lord.** Section 17 above, whole, in three slices on one branch:
@@ -2952,8 +2952,8 @@ blows, the drinking, the bearers' wait, the crumbling, `applyHostHit`, the state
 `legion`), `net/wire.js` (the six words, GATE_HOST_MAX, the brain's law 5, RELAY_VERSION world138 - world140 at the merge), `server/src/index.js`.
 **WB11c** - `net/gate/gateLink.js` (the fold), `net/gate/gateStrike.js` (`hostVerdict`, `hostTelegraphAt`), `world/gate/gateBoss.js` (the
 looks, the acts, the fall, the cues, the stand-in), `scenes/gateHost.js` (new: the court's host), `scenes/gateCourt.js`,
-`scenes/dungeonContext.js`, `scenes/hostMagic.js`, `scenes/worldModes.js`, `scenes/world.js`, `ui/gateBossBar.js`,
-`ui/gateMarksView.js`, `ui/gateDamageChart.js` (the host's column - the chart's DOM pins in `gateux_gate` took its empty
+`scenes/dungeonContext.js`, `scenes/hostMagic.js`, `scenes/worldModes.js`, `scenes/world.js`, `ui/gate/gateBossBar.js`,
+`ui/gate/gateMarksView.js`, `ui/gate/gateDamageChart.js` (the host's column - the chart's DOM pins in `gateux_gate` took its empty
 cell). What moved from the page as written: a FIRST SIMULATED COURT found a Sapper risen beside the challenger he then
 leapt to, drunk 2.75 s after it rose - so each kind now RISES (HOST_RISE_MS: 0.8, 2.5, 1.5 s) before it walks or strikes
 and is never drunk while rising, and a Sapper rises SAP_SPAWN_CLEAR (8 m) clear of every challenger. The swing on one of
@@ -2968,7 +2968,7 @@ HEAL_SEND_MS, fractions and a refused word kept, what is owed sent as the court 
 door tells the court; the court's `sendHeal`), `net/online.js` (`gateHealOk` from the welcome), `net/wire.js` (`heal`,
 GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX, GATE_HEAL_RELAY_MIN, the chart row's `hl`), `net/gate/gateBrain.js` (`applyHeal` -
 never the receiver itself - the heal bucket, the record's `healed`, the row's `hl`), `server/src/index.js` (the gate arm's
-`heal`: the caster by peer id, the receiver's own pose), `ui/gateDamageChart.js` (the Healed column - after the host's on a
+`heal`: the caster by peer id, the receiver's own pose), `ui/gate/gateDamageChart.js` (the Healed column - after the host's on a
 Legion-Lord night, in the share's place on a narrow screen). The first cut also counted a fighter's own potions and
 spells, by a watch on its health; asked, Mac took allies only, and the watch went. RELAY_VERSION world138 (WB11's,
 never deployed) re-hashed in place - world140 at the merge. Pins `test/gateheal.test.js` (10); the chart's DOM pins in `gateux_gate` took
@@ -2998,7 +2998,7 @@ Mehrunes Dagon's day (WB12b) was dropped before it shipped (Mac: *"Let's forgoe 
 **WB13a (2026-10-01) - the telegraphs, honed.** Section 20 above, T1-T14:
 - `render/gateTelegraph.js`: the shader rewritten, every pool drawn, a quad per shape.
 - `net/gate/gateBrain.js`: the Flame Nova's ring to 16 m.
-- `scenes/gateCourt.js` perilAt and `ui/gateGroundView.js`: a blow to come on your feet, said with the way out.
+- `scenes/gateCourt.js` perilAt and `ui/gate/gateGroundView.js`: a blow to come on your feet, said with the way out.
 - `scenes/gateHost.js`: paths and tethers as flowing dashes.
 - world141 re-hashed in place; the brain's law stays 5.
 - Pins `test/wb13a_telegraphs.test.js` (13), with WB4, WB9d, WB9e and AUDIT WB9 re-pinned; mutants
@@ -3103,6 +3103,6 @@ The gate's law at sea: `Sea-Serpent.md`. Sethrakul, the Old Coil, rises every ot
 the dawn watch so it never stands beside a gate. It hunts one of the Bay's packet lanes, and its fight is kept by the
 cell room its site stands in. Like the gate it follows Option B, with the claim sets what a fighter brings and deals,
 receipts under the relay's one key (`l1`), the hub's word of the kill, and the account service's one row per (day,
-account). It reuses the gate's boss bar (`ui/gateBossBar.js`, theme `sea`) and its map ring's reader and painter.
+account). It reuses the gate's boss bar (`ui/gate/gateBossBar.js`, theme `sea`) and its map ring's reader and painter.
 SERPENT2 gave it the gate's two other features: a row in the Timers window and a Discord herald (`Sea-Serpent.md`
 section 14; this page's herald, at sea).

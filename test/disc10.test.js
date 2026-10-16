@@ -13,7 +13,7 @@ import { AnswerPipeline, TALK_STRINGS } from '../src/systems/answerPipeline.js';
 import { expandRandomTextRecord } from '../src/systems/talk/talkMacros.js';
 import { discoverBuilding, discoveredBuildings, undiscoverBuilding, restoreDiscovery } from '../src/systems/discovery.js';
 import { stampResidenceQuestNames } from '../src/ui/exteriorAutomapWindow.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 
 const MAP_ID = 4242, LOC = '17:Woodhearth', KEY = (1 << 16) + (2 << 8) + 5;

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { planStore, planDropGold } from '../src/systems/item/itemTransfer.js';
 import { groundRefusalOf } from '../src/systems/inventorySession.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { createHandheldTorches, readTorchSettings, HANDHELD_TORCHES_VENDOR, ON_STOW } from '../src/systems/handheldTorches.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
@@ -85,7 +85,7 @@ test('HOUSE-DROP by source: the building\'s refusal is a VISITOR\'s in someone e
   assert.match(wm, /dropRefusal: \(\) => visitorDropRefusal\(\),\n/, 'the window asks');
   assert.match(wm, /dropRefusal: \(\) => visitorDropRefusal\(\),   \/\/ HOUSE-DROP: and a light/, 'and the rig');
   assert.match(rd('src/combat/weaponRig.js'), /createHandheldTorches\(\{ audio, say, torches, dropRefusal \}\)/);
-  const nat = rd('src/ui/nativeInventory.js'), enh = rd('src/ui/enhancedInventory.js');
+  const nat = rd('src/ui/native/nativeInventory.js'), enh = rd('src/ui/enhanced/enhancedInventory.js');
   assert.equal((nat.match(/groundRefusal: groundRefusalOf\(this\.hooks, \{ usingWagon: this\.usingWagon, chooseOne: this\.chooseOne \}\)/g) ?? []).length, 2, 'the classic window: the item and the gold');
   assert.match(nat, /if \(!plan\.ok\) \{ if \(plan\.refusal\?\.reason === 'ground'\) this\._refuse\(plan\.refusal\); return; \}/, 'and the gold\'s refusal is said');
   assert.equal((enh.match(/groundRefusal: groundRefusalOf\(deps, session\)/g) ?? []).length, 5, 'the enhanced skin: every store plan, its dry runs and the gold');

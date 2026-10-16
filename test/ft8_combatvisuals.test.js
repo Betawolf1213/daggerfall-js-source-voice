@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { FEATURES, checkFeature, featureForControl, featureCounts } from '../src/systems/features.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { combatVisualsOn } from '../src/systems/combatVisuals.js';
-import { CATEGORIES } from '../src/ui/settingsMap.js';
+import { CATEGORIES } from '../src/ui/settings/settingsMap.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -34,7 +34,7 @@ test('FT8: the registry row - Enhanced, over the pref, on by default, taking eff
 });
 
 test('FT8/FT12: the Enhanced category emptied into the home and then left the settings rail; its test door is the Test Room\'s', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.ok(!/function portRowsEnhanced\(|function featuresPointerRow\(/.test(menu), 'FT12: no category, no pointer - the rail has no Enhanced entry to point from');
   assert.equal(CATEGORIES.find((c) => c.id === 'enhanced'), undefined, 'gone from the category map');
   const test = menu.slice(menu.indexOf('function paneTest('), menu.indexOf('\n}', menu.indexOf('function paneTest(')));

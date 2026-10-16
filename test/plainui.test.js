@@ -24,8 +24,8 @@ import { CHILD_DAYS, CHILDREN_MAX } from '../src/systems/legacy/marriage.js';
 import { regardBadge, STANDING_NAMES } from '../src/systems/livingWorld/people.js';
 import { FRIEND_AT, ENEMY_AT, HOSTILE_AT } from '../src/systems/livingWorld/relations.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
-import { talkPanelModel } from '../src/ui/enhancedTalk.js';
-import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { talkPanelModel } from '../src/ui/enhanced/enhancedTalk.js';
+import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -160,7 +160,7 @@ test('PLAIN-UI How chapters work stands over the chapters\' cards - open for a r
 
 test('PLAIN-UI the Family tab\'s How it works - the house\'s own model (both before one is founded), the toll the Features tile chose, every number the law\'s; a page of its own on the rail, drawn by the pause window (mutants: the models swapped; the toll typed; the page undrawn)', () => {
   assert.deepEqual(FAMILY_PAGE_SECTIONS.at(-1), ['guide', 'How it works']);
-  assert.match(src('src/ui/enhancedMenu.js'), /\{ tree: drawTreePage, house: drawHousePage, hall: drawHallPage, guide: drawGuidePage \}\)\[famSec\]\(detail, render, kit\);/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /\{ tree: drawTreePage, house: drawHousePage, hall: drawHallPage, guide: drawGuidePage \}\)\[famSec\]\(detail, render, kit\);/);
   const death = (model, toll) => familyGuide(model, toll).find(([k]) => k === 'Death')[1];
   assert.match(death(MODELS.enduring, 0.06), /^In an Enduring house a death is not the end, but it costs years: Arkay's toll takes 6% of your race's lifespan each time \(a vampire or a werebeast pays none\)\. From 75% of the span you are an Elder;/);
   assert.match(death(MODELS.enduring, 0.1), /takes 10% of your race's lifespan/);
@@ -199,7 +199,7 @@ test('PLAIN-UI the talk panel\'s regard badge - a living resident\'s standing in
     question: '', topics: [], selected: -1, hooks: { npcName: 'Ysolde', tone: () => 1, regard: () => f } };
   assert.equal(talkPanelModel(model).regard, f);
   assert.equal(talkPanelModel({ ...model, hooks: { npcName: 'Ysolde', tone: () => 1 } }).regard, null);
-  const panel = src('src/ui/enhancedTalk.js');
+  const panel = src('src/ui/enhanced/enhancedTalk.js');
   assert.match(panel, /const r = el\('button', `talk-regard \$\{m\.regard\.standing\}`\);/, 'a press says what it means - a finger has no hover');
   assert.match(panel, /if \(m\.regard && regardOpen\) head\.append\(el\('p', 'talk-regard-words', m\.regard\.words\)\);/);
 });

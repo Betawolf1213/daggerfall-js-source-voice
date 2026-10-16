@@ -1,6 +1,6 @@
 // FIELD BUGS 2026-10-02 - CREW-SAY. Mac, testing sailing: "your crew mates speaking sometimes seems like gibberish".
 // Nothing scrambles a crewman's words - every line is the tables' own English (systems/naval/crewLife.js,
-// shipCrew.js) - but the bubbles that carry them (ui/navalHud.js drawCrewLines) stood on their own heads with nothing
+// shipCrew.js) - but the bubbles that carry them (ui/naval/navalHud.js drawCrewLines) stood on their own heads with nothing
 // between them, at 0.62 of an opaque ground, the farther painted OVER the nearer: the chorus is every hand at once (each
 // copy behind its own name, so each wrapped at its own words) and stood up to six deep; a talk's two lines stood side by
 // side over two hands side by side; and a bubble's foot, 6 px over the head point a hand's bar stands on, covered a
@@ -25,7 +25,7 @@ import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import {
   drawCrewLines, layoutCrewLines, crewSayBox, destroyNavalHud, NAVAL_HUD_CSS,
   CREW_SAY_MAX, CREW_SAY_LIFT, CREW_SAY_GAP,
-} from '../src/ui/navalHud.js';
+} from '../src/ui/naval/navalHud.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** livingcrew's plain deck: a flat 8 m by 24 m at 2 m with a mast amidships. */

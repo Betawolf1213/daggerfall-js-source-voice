@@ -22,17 +22,17 @@ where a picture cannot say it (a price, a name).
   (Move, Turn left, Turn right, Light, Holds things, the station's craft, its licence, Remove), Remove dressed as any
   other; the placing bar's keys one run-on sentence over its buttons. On a phone the filters took the card and the list
   was gone.
-- **The shop counter** (`src/ui/enhancedTrade.js`): the player's column unnamed under the shop's "On the shelf"; one
+- **The shop counter** (`src/ui/enhanced/enhancedTrade.js`): the player's column unnamed under the shop's "On the shelf"; one
   footer span "Cost: 0   Gold: 1840", its spaces collapsed; a price only after a row was clicked; Steal beside Clear;
   a magic-only counter titled "Sell"; the empty strip's hint in #7d745f, under FONT3's dim; four page tabs four rows
   deep on a phone.
-- **The Stores page** (`src/ui/profPages.js`): every station drawn one after another whether the player stood at it or
+- **The Stores page** (`src/ui/professions/profPages.js`): every station drawn one after another whether the player stood at it or
   not - at a smith's forge, eleven Smelt rows (nine of them "(0)") and fifteen Anvil patterns, each a full-width line;
   away from a station, its "is done at..." paragraph, so a player at no bench read nine of them.
 
 ## 2. What changed
 
-- **MENU-ORDER a, the pictures** (`src/ui/menuGlyphs.js`, new). A 12x12 pixel glyph each for the catalogue's kinds
+- **MENU-ORDER a, the pictures** (`src/ui/menu/menuGlyphs.js`, new). A 12x12 pixel glyph each for the catalogue's kinds
   (every `DECOR_KINDS` key), the views, the sizes, the stations and the presses, typed as rows of `#` - the port's own
   art, no ARENA2 pixel (Port-Doctrine, A RENDER OF GAME DATA IS GAME DATA). An element asks for one by `data-dficon`;
   `DFICON_CSS` draws it as the element's `::before` through a CSS mask over `currentColor`, so it takes the word's own
@@ -67,10 +67,10 @@ where a picture cannot say it (a price, a name).
   "Continue"). A Market material row, a supplier's row (the Weavers', the Apothecaries'), a pack piece listed for gold, a
   trader's piece and a Stores card each wear the game's own item picture before their name: the item the Stores would
   hand the material out as (systems/professions/profItems.js `mintMaterialItem`), or the piece itself, read off its inventory record
-  and fitted to a row's box (`src/ui/menuPicture.js`, new: `materialPicture`, `itemPicture` - the pack's and the shop's
+  and fitted to a row's box (`src/ui/menu/menuPicture.js`, new: `materialPicture`, `itemPicture` - the pack's and the shop's
   own door, `requestFittedIcon`). The tabs read no game law, so the host hands the picture over (`picture`,
   `itemPicture` on the board's market, `picture` on its traders, a stall's and the Stores page's provider) and the tab
-  draws it (`pictureNode`, `ui/menuGlyphs.js`); with no data there is none and the row is its words. The Market's views
+  draws it (`pictureNode`, `ui/menu/menuGlyphs.js`); with no data there is none and the row is its words. The Market's views
   are pictured chips (`MARKET_VIEW_ICONS`: ore, hammer, gavel, pack, list, coin, chart), never a second row of the
   board's tabs. FOUND on the way: on a phone the views' row scrolled sideways inside the tab's column and took no height
   at all (`overflow-x` makes `min-height: auto` nought) - a phone's Market showed Materials and nothing to switch to;
@@ -115,7 +115,7 @@ where a picture cannot say it (a price, a name).
     her size still (a Rowboat's picture the card's half, a Large Galley's its width) over her glyph. Ports are the
     streaming world's, so world.js is the one host that opens the window and the one that draws her.
   - **A portrait phone's placing bar** stands under the touch layer's two top-left presses (16px down, 48px tall,
-    `ui/touch.js`) at the screen's width; a 390px phone had given it 118px beside them. A landscape screen keeps its
+    `ui/touch/touch.js`) at the screen's width; a 390px phone had given it 118px beside them. A landscape screen keeps its
     clearance.
 
 THE FOUR HOSTS (Home.md, 17e): the decorator, the counter and the pages are each one surface every host opens through

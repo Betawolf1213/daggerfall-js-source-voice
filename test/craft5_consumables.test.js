@@ -134,7 +134,7 @@ test('CRAFT5 MEASURED: a dish\'s buff and a Potent potion stand together - the F
 // ─── THE PAGE ────────────────────────────────────────────────────────
 
 test('CRAFT5 the anvil\'s kit box: its quality odds, and the reach a Superior or Masterwork kit gives', () => {
-  const p = src('src/ui/profPages.js');
+  const p = src('src/ui/professions/profPages.js');
   assert.match(p, /if \(rollsQuality\(r\) && recipeOpen\(r, rank\)\) \{   \/\/ CRAFT5: a Repair Kit's quality too/);
   assert.match(p, /if \(r\.kind === 'kit'\) box\.append\(el\('p', 'px-note', KIT_REACH_LINE\)\);/);
   assert.match(p, /up to three quarters of it, or nine tenths from a Superior or Masterwork kit\./);

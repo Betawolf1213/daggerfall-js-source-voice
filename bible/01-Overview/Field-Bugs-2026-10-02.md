@@ -480,7 +480,7 @@ deep), each copy behind its own name and so wrapped at its own words; a talk's t
 hands side by side; a bubble's foot, 6 px over the head point, covered a mate's name and health bar. At 0.62 of an opaque
 ground, the farther painted over the nearer, they read through each other.
 
-**The fix.** `ui/navalHud.js` `layoutCrewLines`, which `drawCrewLines` lays: a line said by two or more at once is laid
+**The fix.** `ui/naval/navalHud.js` `layoutCrewLines`, which `drawCrewLines` lays: a line said by two or more at once is laid
 once, over the nearest of them and by no name (it is theirs together; world.js hands a speaker's first name beside his
 line, never in it); a line said alone keeps its speaker's name; each foot CREW_SAY_LIFT (26 px) over the head, clear of a
 mate's bar and the name over it by the sheet's own numbers; each farther bubble lifted over every nearer one it would
@@ -507,7 +507,7 @@ cover, CREW_SAY_GAP apart, in whole pixels; the nearest drawn over the rest. A b
 ## Found on the way, not changed
 
 Re-judging every record the change can move (the four moved pins' and every record on `player/collider.js`,
-`systems/comeSailAway/comeSailAway.js` and `ui/navalHud.js`: 869 - 863 dead, 4 equivalent as recorded) left two survivors, and each
+`systems/comeSailAway/comeSailAway.js` and `ui/naval/navalHud.js`: 869 - 863 dead, 4 equivalent as recorded) left two survivors, and each
 survives on this tree's base (d96bdc123) alike - older than this work, in code it does not touch, reported for their own
 fix: `auditdisc28_motion.json` AUDIT-DISC28-MO2-rest-kills-PH1 (`player/collider.js` `lowOneWay`, PH1 at rest, against
 `test/disc28_swim.test.js`) and `fb0929h_lostboat.json` LOST-BOAT-a-crewed-hull-packed (`systems/comeSailAway/comeSailAway.js`
@@ -536,7 +536,7 @@ A #bug-reports thread through Mac (a screenshot, 2026-10-02), and Mac's ask unde
 
 | | Report | Reporter | What it was | Done |
 |---|---|---|---|---|
-| 1 | "Doesn't make mouse appear when the minigame starts, so cant click on the targets" | miö | the Basket's glints stand about the crosshair (`ui/profReticle.js` `BASKET_SPREAD`, up to about 40 px off it at HUD scale 1), drawn as targets with "tap the glint" under them. The mouse stayed locked to the look, so moving it toward a glint turned the view and the glint turned with it: no glint could be put under the pointer. A press anywhere while a glint showed did find it (ACT-CLICK), but nothing on the screen said so, and a press during the gap spends the next glint (AUDIT 29 C9) | fixed (HERB-CURSOR) |
+| 1 | "Doesn't make mouse appear when the minigame starts, so cant click on the targets" | miö | the Basket's glints stand about the crosshair (`ui/professions/profReticle.js` `BASKET_SPREAD`, up to about 40 px off it at HUD scale 1), drawn as targets with "tap the glint" under them. The mouse stayed locked to the look, so moving it toward a glint turned the view and the glint turned with it: no glint could be put under the pointer. A press anywhere while a glint showed did find it (ACT-CLICK), but nothing on the screen said so, and a press during the gap spends the next glint (AUDIT 29 C9) | fixed (HERB-CURSOR) |
 | 2 | "Also check the other minigames" | Mac | every act read for what it needs of the mouse: the mine's points, the knife's line and the net's throw (the school its release lands in - the audit, C1) are aimed by the look itself, and a cursor the player had freed (FreeMouse; Enter only offline, or with the chat put away) left them unaimable by the mouse; the chop's ring, the hand and the steady hold need neither; the stations (the heat, the stitch, the plane, the chisel) are Stores-page sections, under the pause window's free cursor | fixed (HERB-CURSOR); the rest checked, unchanged |
 
 ## HERB-CURSOR: the act says what it needs of the mouse (1, 2)

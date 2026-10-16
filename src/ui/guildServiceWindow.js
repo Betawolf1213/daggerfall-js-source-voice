@@ -49,12 +49,12 @@
 // because a member panel drops Join and because Spymaster's S and
 // SellMagicItems' S sit under a Talk that is T, never colliding.
 
-import { loadImg, nativeMetrics, drawImg, drawRect, shadowText, DEFAULT_TEXT_COLOR } from './nativePanel.js';
+import { loadImg, nativeMetrics, drawImg, drawRect, shadowText, DEFAULT_TEXT_COLOR } from './native/nativePanel.js';
 import { drawScreenDimBackdrop } from './chargenArt.js';
 import { audio } from '../systems/audio.js';   // F141: the ButtonClick roster
 import { SOUND } from '../systems/soundClips.js';
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, latchBoxRows } from './messageBox.js';
-import { noticeFrame, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
+import { noticeFrame, noticeRelease } from './enhanced/enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
 import { drawText, measureText } from './text.js';
 import { serviceLabel, serviceShortcutButton, isServiceBox } from '../systems/guild/guildServiceFlow.js';
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
@@ -79,7 +79,7 @@ export const SERVICE_LABEL_OFFSET_Y = 1;
  *  offers a fourth press, the Reforge's window (ui/reforgeDoor.js), when its host hands `hooks.reforge`. DFU's 130x51
  *  art has no room for it, so this one row is the port's own, drawn under the panel in the parchment's dark (the
  *  classic skin's first port-drawn row - PORTAL1's Portal Stone row on the two shop popups took its law; the Enhanced
- *  Plus face lists it beside the service - ui/enhancedPorts.js), and
+ *  Plus face lists it beside the service - ui/enhanced/enhancedPorts.js), and
  *  its key is F. Panel-relative, as the four are. */
 export const REFORGE_RECT = Object.freeze([5, 53, 120, 10]);
 export const REFORGE_ROW = 'Reforge';

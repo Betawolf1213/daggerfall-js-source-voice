@@ -23,7 +23,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
 import { createPartyPanel, companionKey, PARTY_CSS } from '../src/ui/partyPanel.js';
-import * as NH from '../src/ui/navalHud.js';   // a namespace: a new export reads undefined on the code as it stood, never a link error
+import * as NH from '../src/ui/naval/navalHud.js';   // a namespace: a new export reads undefined on the code as it stood, never a link error
 import { fitIcon } from '../src/ui/iconFit.js';
 import { partyFxAbbrev } from '../src/net/partyBuffs.js';
 import { SocialState } from '../src/net/social.js';
@@ -255,7 +255,7 @@ test('AUDIT WK-U8 (minor): THE FIT LAW over his bar (ui/iconFit.js) - each effec
   destroyNavalHud();
   const doc = fakeDocument();
   const asked = [];
-  // ui/enhancedArt.js spellIconPicture's own shape, by the law's own numbers for a 16px icon
+  // ui/enhanced/enhancedArt.js spellIconPicture's own shape, by the law's own numbers for a 16px icon
   const fitted = (i, { box, dpr }) => {
     asked.push([i, box, dpr]);
     const f = fitIcon(16, 16, { box, dpr });

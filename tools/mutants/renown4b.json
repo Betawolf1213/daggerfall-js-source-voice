@@ -1,7 +1,7 @@
 [
   {
     "name": "RENOWN4b-the-desk-lift-short",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "\n.hud:has(.hud-renown.on) .hud-quick { bottom: calc(22px + 64px * var(--hud-scale)",
     "new": "\n.hud:has(.hud-renown.on) .hud-quick { bottom: calc(22px + 32px * var(--hud-scale)",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RENOWN4b-the-phone-lift-short",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .hud:has(.hud-renown.on) .hud-quick { bottom: calc(46px + 60px * var(--hud-scale)",
     "new": "  .hud:has(.hud-renown.on) .hud-quick { bottom: calc(46px + 30px * var(--hud-scale)",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RENOWN4b-the-row-under-the-vitals-on-touch",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (pointer: coarse) and (hover: none) {\n  .hud-bars { order: 1; }\n",
     "new": "@media (pointer: coarse) and (hover: none) {\n",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RENOWN4b-the-touch-margin-unscaled",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "calc((56px + env(safe-area-inset-bottom, 0px)) / var(--hud-scale) - 28px)",
     "new": "calc(56px + env(safe-area-inset-bottom, 0px) - 28px)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RENOWN4b-the-tablet-lift-one-line",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "bottom: calc(max(24px + 62px * var(--hud-scale), 70px + 32px * var(--hud-scale))",
     "new": "bottom: calc(max(70px + 32px * var(--hud-scale), 70px + 32px * var(--hud-scale))",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RENOWN4b-the-plus-width-plain",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "\n.hud-renown { width: calc(3 * min(190px, 23vw) + 32px); }",
     "new": "\n.hud-renown { width: calc(3 * min(190px, 23vw) + 28px); }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RENOWN4b-the-row-height-unset",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hud-renown { display: none; align-items: center; gap: 8px; height: 22px; width:",
     "new": ".hud-renown { display: none; align-items: center; gap: 8px; width:",
     "tests": [

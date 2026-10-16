@@ -1,7 +1,7 @@
 [
   {
     "name": "MENUORDER-glyph-pixel-dropped",
-    "file": "src/ui/menuGlyphs.js",
+    "file": "src/ui/menu/menuGlyphs.js",
     "old": "if (row[x] === '#') rects.push(",
     "new": "if (row[x] === '#' && x > 0) rects.push(",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MENUORDER-glyph-mask-unnamed",
-    "file": "src/ui/menuGlyphs.js",
+    "file": "src/ui/menu/menuGlyphs.js",
     "old": "`[data-dficon=\"${k}\"] { --dficon: ${dficonUrl(k)}; }`",
     "new": "`[data-dficon=\"${k}\"] { }`",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "MENUORDER-glyph-own-colour",
-    "file": "src/ui/menuGlyphs.js",
+    "file": "src/ui/menu/menuGlyphs.js",
     "old": "  background-color: currentColor; -webkit-mask: var(--dficon)",
     "new": "  background-color: #fff; -webkit-mask: var(--dficon)",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "MENUORDER-trade-row-price-dropped",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (price != null) row.append(el('span', 'itemprice', tradeGoldText(price)));\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "MENUORDER-trade-shelf-unpriced",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "if (from === 'remote') return inBuy() ? (quotePriceFor(item, 'remote')?.price ?? null) : null;",
     "new": "if (from === 'remote') return null;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "MENUORDER-trade-figures-together",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "figs.append(fig(TRADE_COST_WORD[mode] ?? TRADE_COST_WORD.Buy, tradeGoldText(c)), fig(t('trade.counter.gold', TRADE_GOLD_WORD), tradeGoldText(deps.gold?.() ?? 0)));",
     "new": "figs.append(fig(TRADE_COST_WORD[mode] ?? TRADE_COST_WORD.Buy, `${tradeGoldText(c)} ${tradeGoldText(deps.gold?.() ?? 0)}`));",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "MENUORDER-trade-switch-dead",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "b.onclick = () => { tradeView = v; render(); };",
     "new": "b.onclick = () => { render(); };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "MENUORDER-trade-magic-title",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "get SellMagic() { return t('trade.counter.title.sellMagic', 'Sell magic items'); } });",
     "new": "get SellMagic() { return t('trade.counter.title.sellMagic', 'Sell'); } });",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "MENUORDER-trade-own-column-unnamed",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  head.append(who);\n  col.append(head);\n  const tabsEl",
     "new": "  col.append(head);\n  const tabsEl",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "MENUORDER-stores-away-shown",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "for (const { id, box } of away) { box.hidden = _stores.awayPick !== id; notes.append(box); }",
     "new": "for (const { box } of away) { box.hidden = false; notes.append(box); }",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "MENUORDER-stores-press-never-folds",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "_stores.awayPick = _stores.awayPick === id ? null : id;",
     "new": "_stores.awayPick = id;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "MENUORDER-stores-button-read-as-away",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "if (/^(button|input|select|textarea)$/i.test(",
     "new": "if (/^(input|select|textarea)$/i.test(",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "MENUORDER-stores-here-unlit",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "`prof-stile${here ? ' here' : ''}",
     "new": "`prof-stile${''}",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "MENUORDER-stores-works-a-column",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const cards = el('div', 'prof-works');",
     "new": "const cards = el('div', 'prof-works-off');",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "MENUORDER-stores-patterns-a-column",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const grid = el('div', 'prof-recipes');",
     "new": "const grid = el('div', 'prof-recipes-off');",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "MENUORDER-market-phone-views-collapsed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  .market-views { flex: none; flex-wrap: nowrap;",
     "new": "  .market-views { flex-wrap: nowrap;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "MENUORDER-vendor-unpictured",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "const pic = pictureNode(v.picture?.(row.item, wake) ?? null, el, 'market-pic');",
     "new": "const pic = null;",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "MENUORDER-stores-card-unpictured",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "const pic = pictureNode(_provider?.picture?.(r.material, rerender) ?? null, el, 'prof-matpic');",
     "new": "const pic = null;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "MENUORDER-vendorpage-unpictured",
-    "file": "src/ui/vendorPage.js",
+    "file": "src/ui/vendor/vendorPage.js",
     "old": "const pic = pictureNode(safe(() => p.picture?.(item, rerender), null), el, 'vendor-pic');",
     "new": "const pic = null;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "MENUORDER-reforge-name-squeezed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ":not(:has(> button)) { grid-template-columns: 48px minmax(0, 1fr) max-content; }",
     "new": ":not(:has(> button)) { }",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "MENUORDER-navalyard-tabs-bare",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "  yardTab.setAttribute('data-dficon', 'saw'); officeTab.setAttribute('data-dficon', 'anchor'); tradeTab.setAttribute('data-dficon', 'treasure');   // MENU-ORDER: each page its picture\n",
     "new": "",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "MENUORDER-merchant-bare",
-    "file": "src/ui/enhancedMerchantPanel.js",
+    "file": "src/ui/enhanced/enhancedMerchantPanel.js",
     "old": "    if (icon) btn.setAttribute('data-dficon', icon);\n",
     "new": "",
     "tests": [
@@ -513,7 +513,7 @@
   },
   {
     "name": "MENUORDER-refused-grey-dropped",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "body .broker-shell .broker-win .act[aria-disabled=\"true\"]:active, body .broker-shell .broker-win .act[aria-disabled=\"true\"]:focus-visible {",
     "new": "body .broker-shell .broker-win .act[aria-disabled=\"true\"]:active {",
     "tests": [
@@ -964,7 +964,7 @@
   },
   {
     "name": "AUDITMO-C2-section-guessed",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const here = typeof at === 'function' ? !!at() : stationWorkable(box);",
     "new": "    const here = stationWorkable(box);",
     "tests": [
@@ -1000,7 +1000,7 @@
   },
   {
     "name": "AUDITMO-C5-closure-a-row",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "v.picture?.(row.item, wake)",
     "new": "v.picture?.(row.item, () => ui.rerender())",
     "tests": [
@@ -1027,7 +1027,7 @@
   },
   {
     "name": "AUDITMO-U2-kit-outweighs",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "body .broker-shell .broker-win .act[aria-disabled=\"true\"], body .broker-shell .broker-win .act[aria-disabled=\"true\"]:hover,",
     "new": ".broker-shell .act[aria-disabled=\"true\"], .broker-shell .act[aria-disabled=\"true\"]:hover,",
     "tests": [
@@ -1036,7 +1036,7 @@
   },
   {
     "name": "AUDITMO-U3-focus-unringed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "body .broker-shell .broker-win .act[aria-disabled=\"true\"]:focus-visible { outline: 2px solid #9c937d; outline-offset: 2px; }",
     "new": "",
     "tests": [
@@ -1108,7 +1108,7 @@
   },
   {
     "name": "AUDITMO-U7-title-squeezed",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .trade-shell .sb-top { grid-template-columns: 1fr auto; grid-template-areas: \"who who\" \"view close\"; row-gap: 8px; }",
     "new": "",
     "tests": [
@@ -1117,7 +1117,7 @@
   },
   {
     "name": "AUDITMO-U8-glyphs-plus-only",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "   that: its tabs wore no picture */\n${DFICON_CSS}\n",
     "new": "   that: its tabs wore no picture */\n",
     "tests": [
@@ -1135,7 +1135,7 @@
   },
   {
     "name": "AUDITMO-U13-packtabs-one-row",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "  .trade-shell .packtabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }",
     "new": "",
     "tests": [
@@ -1144,7 +1144,7 @@
   },
   {
     "name": "AUDITMO-U13-hint-escaped",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".trade-shell .trade-detail-empty .meta { margin: 0; font-size: 13px; color: var(--dim); letter-spacing: 0.04em; }",
     "new": ".trade-shell .trade-detail-empty .meta { margin: 0; font-size: 12px; color: #7d745f; letter-spacing: 0.04em; }",
     "tests": [
@@ -1153,7 +1153,7 @@
   },
   {
     "name": "AUDITMO-U14-switch-small",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (pointer: coarse) { .trade-shell .trade-view .act { min-height: 44px; } }",
     "new": "",
     "tests": [
@@ -1162,7 +1162,7 @@
   },
   {
     "name": "AUDITMO-U14-views-small",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "@media (pointer: coarse) { .market-views .market-view { min-height: 44px; } }",
     "new": "",
     "tests": [
@@ -1180,7 +1180,7 @@
   },
   {
     "name": "AUDITMO-U15-tile-unsaid",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (!here) t.setAttribute('aria-expanded', _stores.awayPick === id ? 'true' : 'false');",
     "new": "",
     "tests": [

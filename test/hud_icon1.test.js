@@ -6,7 +6,7 @@
 // that name was three times the HUD font - large text where DFU shows a small sprite. The sixteen icons are DFU's own
 // MIT art, so they are vendored and drawn now, at DFU's size law, in both arms (HUDInteractionModeIcon.cs :87-129).
 //
-// Driven through the real draw (ui/hudCrosshair.js) with the REAL vendored PNGs; only
+// Driven through the real draw (ui/hud/hudCrosshair.js) with the REAL vendored PNGs; only
 // the fetch and the decode are seams (the file off disk, through tools/pngIO.mjs - node has no createImageBitmap).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,9 +14,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { drawCrosshairAndModeIcon, modeIconPosition, iconResScale } from '../src/ui/hudCrosshair.js';
+import { drawCrosshairAndModeIcon, modeIconPosition, iconResScale } from '../src/ui/hud/hudCrosshair.js';
 import { modeIcon, modeIconSet, MODE_ICON_SUFFIX, _setModeIconSeamsForTests } from '../src/ui/modeIcons.js';
-import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud.js';
+import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud/hud.js';
 import { setInteractionMode } from '../src/player/interactionMode.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { readPng } from '../tools/pngIO.mjs';   // the node-side decoder the shipped-art tests use (the browser's is createImageBitmap)

@@ -19,7 +19,7 @@
   },
   {
     "name": "UI2-the-media-gate-dropped",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "@media (any-pointer: fine) {   /* AUDIT part five UI2: a touch screen keeps its overlay scrollbar - no cursor to keep */\n::-webkit-scrollbar { width: 10px; height: 10px; } }",
     "new": "::-webkit-scrollbar { width: 10px; height: 10px; }",
     "tests": [

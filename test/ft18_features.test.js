@@ -24,7 +24,7 @@ import { OUTDOORS_TIERS } from '../src/world/outdoors.js';
 import { getPref, setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { _resetModSettings, MOD_SETTINGS, modSetting, setModSetting } from '../src/systems/modSettings.js';
-import { tileStates, classicSegment, allOffPlan, featuresAllOff, featuresRestore, featureTile, barReading, FEATURES_RESTORE_PREF, ALL_OFF_ASK, defaultSegment, featuresDefaults, RESET_ALL_ASK } from '../src/ui/enhancedMenu.js';
+import { tileStates, classicSegment, allOffPlan, featuresAllOff, featuresRestore, featureTile, barReading, FEATURES_RESTORE_PREF, ALL_OFF_ASK, defaultSegment, featuresDefaults, RESET_ALL_ASK } from '../src/ui/enhanced/enhancedMenu.js';
 import { modModules } from '../src/systems/features.js';
 import { renderScaleSetting, _resetRenderScaleDoor } from '../src/systems/renderScale.js';
 
@@ -271,7 +271,7 @@ test('FEATURES-DEFAULTS (issue #399): online the room\'s rows stay as the room h
   } finally { delete globalThis.location; fresh(); }
   assert.match(RESET_ALL_ASK, /key bindings are kept\./, 'and it says what it leaves');
   // ORG2: the button is the Settings toolbar's one reset - beside All off, asked first - and it runs this
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const bar = menu.slice(menu.indexOf('function optionsToolbar('), menu.indexOf('\n}', menu.indexOf('function optionsToolbar(')));
   // PIN MOVED (L10N4): the button's words said through t(), their English as FEATURES-DEFAULTS left them
   assert.match(bar, /\{ label: t\('menu\.settings\.reset', 'Reset everything to defaults'\), onClick: \(\) => ask\(t\('menu\.settings\.resetTitle', 'Reset Everything'\), resetAllAsk\(\), t\('menu\.settings\.resetYes', 'Reset'\), \(\) => \{ resetEverything\(\); \}\) \}/, 'Defaults is asked first');
@@ -329,7 +329,7 @@ test('FT18: a condensed tile opens its parts - switches as chips, a choice as a 
 });
 
 test('FT18 by source: the pane\'s search filters in place and All off asks first; the query is per mount; the Morrowind card draws no bare row (mutant: a repaint on every key, the confirm skipped, or the null back)', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   // ORG2: the search is the Settings toolbar's, over every tab - it repaints the BODY under it in place, never the
   // screen, so the field keeps its keys and its caret
   const bar = menu.slice(menu.indexOf('function optionsToolbar('), menu.indexOf('\n}', menu.indexOf('function optionsToolbar(')));
@@ -351,6 +351,6 @@ test('FT18 by source: the pane\'s search filters in place and All off asks first
   const card = menu.slice(at, menu.indexOf('\n}', at));
   assert.doesNotMatch(card, /prefRow\(/, 'MWA4: no switch row on the card, so no bare row');
   assert.doesNotMatch(card, /prefRow\('mwSheathing'/);
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(read('src/systems/uiPrefs.js'), /featuresRestore: null,/, 'the keep is a pref: Restore survives a relaunch');
 });

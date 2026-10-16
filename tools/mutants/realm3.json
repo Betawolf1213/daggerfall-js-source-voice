@@ -154,7 +154,7 @@
   },
   {
     "name": "REALM3-customs-on-the-slot",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    const copy = onlineCopyOf(snap, sharedClassicMinutes(Date.now()));",
     "new": "    const copy = snap;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "REALM3-room-character-in",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    if (snap.testRoom === true) return { ok: false, error: 'test-room' };   // AUDIT SET D4's law: the room's characters play offline\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "REALM3-copy-keeps-realm-id",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    snap.characterId = mintCharacterId();\n",
     "new": "",
     "tests": [

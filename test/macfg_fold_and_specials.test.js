@@ -27,11 +27,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   foldKey, isFolded, toggleFold, allFolded, setSectionFold,
-} from '../src/ui/enhancedChronicle.js';
+} from '../src/ui/enhanced/enhancedChronicle.js';
 import {
   parseCareerData, classSpecials, DEFAULT_MAGERY_BITS, SPECIAL_ABILITY_BITS,
 } from '../src/systems/specialAdvantages.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { RACE_TEMPLATES } from '../src/systems/races.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -78,7 +78,7 @@ test('MAC-F: the fold laws, which are a Set and four functions', () => {
 });
 
 test('MAC-F: the head is the handle, and the body goes with the fold', () => {
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   // The caret and the date are ONE button - the handle is the thing the
   // player was already reading, which is what the screenshot pointed at.
   assert.match(cr, /const fold = el\('button', 'cr-fold'\);/);
@@ -97,7 +97,7 @@ test('MAC-F: the head is the handle, and the body goes with the fold', () => {
 });
 
 test('MAC-F: the tab folds all of them at once, and the control reads the cards', () => {
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   assert.match(cr, /const shutAll = allFolded\(folded, section, rows\.length\);/);
   assert.match(cr, /shutAll \? 'Expand all' : 'Collapse all'/);
   assert.match(cr, /setSectionFold\(folded, section, rows\.length, !shutAll\);/);
@@ -111,7 +111,7 @@ test('MAC-F: the tab folds all of them at once, and the control reads the cards'
 });
 
 test('MAC-F: a fold is a reading position, not a setting', () => {
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   // cleared when the window opens and when it is torn down: a player who
   // shut every quest last night opens the book READ this morning
   assert.match(cr, /folded\.clear\(\);   \/\/ MAC-F/);
@@ -121,7 +121,7 @@ test('MAC-F: a fold is a reading position, not a setting', () => {
   // the style carries the fold's own parts, including the SHUT card -
   // a card that keeps a rule under its title looks like one whose body
   // failed to draw
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.cr-shell \.cr-fold \{ flex: 1;/);
   assert.match(css, /\.cr-shell \.cr-entry\.cr-shut \.cr-head \{ padding-bottom: 0; margin-bottom: 0; border-bottom: 0; \}/);
 });
@@ -256,14 +256,14 @@ test('MAC-G: the sheet carries the list, and the pause page draws it', () => {
   assert.equal(sheetModel({ raceId: 5, career: blankCareer() }).specials[0]?.label, 'Immunity To Paralysis');
   assert.deepEqual(sheetModel({}).specials, [], 'no career is no rows, not a crash');
 
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\['skills', 'Skills'\], \['specials', 'Advantages'\], \['standing', 'Standing'\]/);
   assert.match(menu, /specials: statsSpecials/);
   assert.match(menu, /\[\['advantage', t\('pause\.stats\.advantages', 'Advantages'\)\], \['disadvantage', t\('pause\.specials\.disadvantages', 'Disadvantages'\)\]\]/);
   // the SOURCE tag, because Resistance To Magic from the blood and from
   // the class are different facts about a re-rollable character
   assert.match(menu, /r\.source === 'race' \? \(m\.race \|\| t\('pause\.specials\.race', 'Race'\)\) : \(m\.career \|\| t\('pause\.specials\.class', 'Class'\)\)/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.px-stat \.v\.px-src \{ font-size: 13px;/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.px-stat \.v\.px-src \{ font-size: 13px;/);
 });
 
 test('MAC-F + MAC-G: both were driven in a real browser', () => {

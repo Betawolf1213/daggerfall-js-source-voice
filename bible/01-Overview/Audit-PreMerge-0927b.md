@@ -15,7 +15,7 @@ lens re-ran its eight repros against the fixed tree: every loss it had shown was
 
 ## Fixed
 
-**BACKUP-NEWER** (`systems/cloudSaves.js`, `ui/enhancedMenu.js`, `ui/saveTile.js`)
+**BACKUP-NEWER** (`systems/cloudSaves.js`, `ui/enhanced/enhancedMenu.js`, `ui/saveTile.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -36,7 +36,7 @@ lens re-ran its eight repros against the fixed tree: every loss it had shown was
 | F3 | low | A DFU wear pin (the 20% floor roll) had no seam and passed because its 0.195 also rounded the scaled point up; three pins hard-coded the scaled numbers, so "a turn is one line" was false. | Seamed; derived from the constants - a turn is the constant and `test/balance1.test.js`'s own pins (measured by turning both). |
 | - | low | Two re-aimed pins could not tell a truncation from a rounding at x0.9 (7.425, 59.4); the overhaul's roll hand-through was never read (every case whole); the overload's no-sink arm had only a source pin. | The x0.8 rows (6.6, 52.8); a fractional overhaul case with `Math.random` answering the other way; the no-sink round driven. |
 
-**CHARGEN-PHONE** (`ui/enhancedChargen.js`, `ui/enhancedStyle.js`)
+**CHARGEN-PHONE** (`ui/enhanced/enhancedChargen.js`, `ui/enhanced/enhancedStyle.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

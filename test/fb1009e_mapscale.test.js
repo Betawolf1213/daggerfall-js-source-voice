@@ -4,7 +4,7 @@
 // I'm using a 2k monitor".
 //
 // The held map inked its names and glyphs in fixed paper pixels and its chrome in fixed CSS pixels, on a paper fitted
-// to the screen: at 1440p the paper grew by a third and nothing on it did. THE MAP'S SCALE (ui/mapScale.js) inks the
+// to the screen: at 1440p the paper grew by a third and nothing on it did. THE MAP'S SCALE (ui/map/mapScale.js) inks the
 // sheet on the fitted paper over the scale, at full device resolution, and zooms the chrome by the same - Auto the
 // screen's height over 1080, or the player's own choice on the Interface tab's Maps row. The window's half is pinned in
 // test/heldmap.test.js (MAP-SCALE). `01-Overview/Field-Bugs-2026-10-09e.md`.
@@ -14,9 +14,9 @@ import { readFileSync } from 'node:fs';
 
 import {
   mapUiScale, mapScaleLabel, nextMapScale, MAP_SCALE_BASE_H, MAP_SCALE_MIN, MAP_SCALE_MAX, MAP_SCALE_CHOICES,
-} from '../src/ui/mapScale.js';
+} from '../src/ui/map/mapScale.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { CATEGORIES } from '../src/ui/settingsMap.js';
+import { CATEGORIES } from '../src/ui/settings/settingsMap.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -44,7 +44,7 @@ test('MAP-SCALE row: Auto then the fixed scales, a range held at its ends; the w
   assert.equal(mapScaleLabel('auto', 1440), 'Auto (1.35×)');
   assert.equal(mapScaleLabel('auto', 900), 'Auto (1.00×)');
   assert.equal(mapScaleLabel(1.5, 1440), '1.50×');
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /row\.dataset\.opt = 'mapScale'; row\.dataset\.pref = 'mapScale';/);
   assert.match(menu, /const next = nextMapScale\(getPref\('mapScale'\), dir\);\s*\n\s*setPref\('mapScale', next\);/);
   assert.match(menu, /out\.push\(hudScaleRow\(\)\);\s*\n\s*out\.push\(mapScaleRow\(\)\);/, 'on the Interface card, under the HUD\'s');
@@ -60,7 +60,7 @@ test('MAP-SCALE by source: the window reads the scale at every layout (a choice 
   // every rule whose selector names a held-map class (the innermost rules, so a media block's own are read), each
   // viewport-relative length in its body
   let rules = 0;
-  for (const file of ['src/ui/enhancedStyle.js', 'src/ui/enhancedPlusStyle.js']) {
+  for (const file of ['src/ui/enhanced/enhancedStyle.js', 'src/ui/enhanced/enhancedPlusStyle.js']) {
     for (const [, sel, body] of read(file).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       if (!/\.hm[a-z]/.test(sel) || /\.hm(stage|ink|sprite|hands)\b/.test(sel)) continue;
       for (const m of body.matchAll(/[\d.]+v[wh]\b[^;]*/g)) {

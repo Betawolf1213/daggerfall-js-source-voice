@@ -23,10 +23,10 @@ import { fileURLToPath } from 'node:url';
 import './chargenDom.mjs';   // the minimal DOM - globals
 import { REGION, RI, makeWorld, seededRolls } from './guideWorld.mjs';
 import { createQuestBridge } from '../src/scenes/questBridge.js';
-import { entryTarget, targetWords, locationInRegionText, WHERE_TEXT } from '../src/ui/questLens.js';
-import { FIND_PLACE_TEXT } from '../src/ui/questJournal.js';
-import { mountEnhancedMenu } from '../src/ui/enhancedMenu.js';
-import { mountEnhancedChronicle } from '../src/ui/enhancedChronicle.js';
+import { entryTarget, targetWords, locationInRegionText, WHERE_TEXT } from '../src/ui/quest/questLens.js';
+import { FIND_PLACE_TEXT } from '../src/ui/quest/questJournal.js';
+import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';
+import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -281,7 +281,7 @@ test('GUIDE2 THE CHRONICLE\'S DEADLINE - the "Time remains" the pause tab has ca
     c.view.destroy();
   }
   assert.equal(intervals.size, 0, 'destroy leaves nothing standing');
-  const src = rd('src/ui/enhancedChronicle.js');
+  const src = rd('src/ui/enhanced/enhancedChronicle.js');
   assert.match(src, /destroy\(\) \{\n\s*disarmClocks\(\);/, 'destroy clears it');
   assert.match(src, /function render\(\) \{\n\s*disarmClocks\(\);/, 'every render clears it first');
   assert.equal((src.match(/setInterval\(/g) ?? []).length, 1, 'one interval in the window');

@@ -11,7 +11,7 @@
   },
   {
     "name": "KGSET-face-cache-stale",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "  if (_facesRev !== textRevision()) { _faces.clear(); _facesRev = textRevision(); }",
     "new": "  if (_facesRev < 0) { _facesRev = textRevision(); }",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "KGSET-binder-look-rules",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "    words.append(el('div', null, look.name), el('div', null, cardRules(look)));",
     "new": "    words.append(el('div', null, look.name), el('div', null, look.name));",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "KGSET-binder-tile-title",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "    tile.title = `${c.name} - ${cardRules(c)}`;",
     "new": "    tile.title = `${c.name}`;",
     "tests": [

@@ -769,7 +769,7 @@
   },
   {
     "name": "RVN5-page-rank-1",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  const sig = signatureStamp(r);\n  if (!sig?.name) return '';",
     "new": "  const sig = signatureStamp({ ...r, rank: Math.max(2, r?.rank | 0) });\n  if (!sig?.name) return '';",
     "tests": [
@@ -778,7 +778,7 @@
   },
   {
     "name": "RVN5-page-switch-unread",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "${enhanced ? '' : ' (with Enhanced AI)'}.`;",
     "new": ".`;",
     "tests": [
@@ -787,7 +787,7 @@
   },
   {
     "name": "RVN5-page-iron-unsaid",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "${sig.iron ? ', unstoppable' : ''}",
     "new": "",
     "tests": [
@@ -796,7 +796,7 @@
   },
   {
     "name": "RVN5-page-shape-unsaid",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "${what ? ` - ${what}` : ''}",
     "new": "",
     "tests": [
@@ -805,7 +805,7 @@
   },
   {
     "name": "RVN5-page-row-unwired",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (sig) text.append(el('span', 'rvn-will', sig));\n",
     "new": "",
     "tests": [

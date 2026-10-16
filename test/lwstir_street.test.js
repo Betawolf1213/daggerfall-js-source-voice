@@ -576,11 +576,11 @@ test('LW-STIR every reader alike: two readers of a town - one stood through the 
   assert.ok(shouts > 5 && lines > 40, `shouted ${shouts}, said ${lines}`);
 });
 
-test('LW-STIR the host: the street\'s words reach the one layer as they are said - a shout a shout, a song a song (world.js livingLinePoints: the kind passed through; ui/navalHud.js draws each its own way); a room\'s talk is talk (FLAGGED: no incident indoors yet)', () => {
+test('LW-STIR the host: the street\'s words reach the one layer as they are said - a shout a shout, a song a song (world.js livingLinePoints: the kind passed through; ui/naval/navalHud.js draws each its own way); a room\'s talk is talk (FLAGGED: no incident indoors yet)', () => {
   const w = rd('src/scenes/world.js');
   assert.match(w, /name: livingRelations\.known\(id\) \? firstNameOf\(l\.person\.nameNPC\) : null, who: key, kind: l\.kind \?\? 'talk', distance: d \}\);   \/\/ LW-STIR: a shout, a song/);
-  assert.match(rd('src/ui/navalHud.js'), /\.dfnaval-say\.sing \{/);
-  assert.match(rd('src/ui/navalHud.js'), /\.dfnaval-say\.shout \{/);
+  assert.match(rd('src/ui/naval/navalHud.js'), /\.dfnaval-say\.sing \{/);
+  assert.match(rd('src/ui/naval/navalHud.js'), /\.dfnaval-say\.shout \{/);
   assert.match(w, /points\.push\(\{ x: at\.x, y: at\.y, text: l\.text, who: key, kind: 'talk', distance: d, name: livingRelations\.known\(id\) \? firstNameOf\(l\.person\.nameNPC\) : null \}\);/, 'a room\'s talk');
   assert.equal(BUILDING_TYPES.Tavern, 15);
 });

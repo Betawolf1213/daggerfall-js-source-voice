@@ -246,7 +246,7 @@
   },
   {
     "name": "AUDITRETRO2-G5-the-panel-on-the-screens-middle",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  if (loot) drawLootPanel(renderer, nativeMetrics(canvas), font, loot.frame, loot.lit, at);",
     "new": "  if (loot) drawLootPanel(renderer, nativeMetrics(canvas), font, loot.frame, loot.lit);",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "AUDITRETRO2-G5-the-reticle-unmoved",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "reticleY: crosshairCentreY(canvas.height, hudReticle(canvas).largeHudHeight)",
     "new": "reticleY: crosshairCentreY(canvas.height, 0)",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "AUDITRETRO2-G5-the-docked-bar-only",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "floorY: lastLargeHudBar?.y ?? canvas.height",
     "new": "floorY: canvas.height",
     "tests": [

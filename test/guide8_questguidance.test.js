@@ -4,24 +4,24 @@
 // THE GUIDANCE TIERS, and the Exact tier underground: every quest resource standing in the dungeon on the held map's
 // dungeon sheet (its floor on the strip, listed before it is walked) and the followed quest's nearest on the compass -
 // off by default, its own row (systems/quest/questGuidance.js, scenes/worldModes.js dungeonQuestMarksHere,
-// scenes/dungeonContext.js, ui/automapSheet.js, ui/inkAutomap.js). And ECHO1's mark on the same sheet.
+// scenes/dungeonContext.js, ui/automap/automapSheet.js, ui/ink/inkAutomap.js). And ECHO1's mark on the same sheet.
 // bible/03-World/Delve-Arc.md, GUIDE8.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { GUIDANCE_PREF, GUIDANCE_TIERS, guidanceTier, townTierOn, dungeonQuestMarks, questCompassPick, townQuestBuildings, townBuildingLocal } from '../src/systems/quest/questGuidance.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { nameplateAnchor, WORLD_PER_PX } from '../src/ui/nameplateLayout.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';
 import { questStandBox } from '../src/systems/quest/sceneMount.js';
-import { followOn } from '../src/ui/questTracker.js';
-import { QUEST_MARK_LIFT, QUEST_FOLLOWED_TEXT, QUEST_LEGEND_TEXT } from '../src/ui/questMarks.js';
+import { followOn } from '../src/ui/quest/questTracker.js';
+import { QUEST_MARK_LIFT, QUEST_FOLLOWED_TEXT, QUEST_LEGEND_TEXT } from '../src/ui/quest/questMarks.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
-import { createAutomapSheet } from '../src/ui/automapSheet.js';
-import { floorStripLayout, paintFloorStrip, MARK_R, PLAN_PEN } from '../src/ui/inkAutomap.js';
-import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
+import { createAutomapSheet } from '../src/ui/automap/automapSheet.js';
+import { floorStripLayout, paintFloorStrip, MARK_R, PLAN_PEN } from '../src/ui/ink/inkAutomap.js';
+import { QUEST_MARK_CSS } from '../src/ui/quest/questMarks.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -140,7 +140,7 @@ test('GUIDE8: the host hands the Exact tier\'s marks to the dungeon, which draws
   assert.match(ctx, /quests: \(\) => opts\.questMarks\?\.\(\) \?\? null,/);
   assert.match(ctx, /quest: questCompassMark\(playerFeet\),/);
   assert.match(ctx, /return questCompassPick\(feet \? opts\.questMarks\?\.\(\) \?\? null : null, feet\);/, 'the followed quest\'s first, else the nearest (questGuidance.js questCompassPick)');
-  assert.match(src('src/ui/automapDoor.js'), /quests: deps\.quests \?\? null,/);
+  assert.match(src('src/ui/automap/automapDoor.js'), /quests: deps\.quests \?\? null,/);
 });
 
 // the sheet: a two-storey level (disc22g's fixture), rooms a and b side by side at 0, room c at 12
@@ -207,7 +207,7 @@ test('AUDIT DELVE D3/D4: the diamond is the mark under the pointer, and the hove
 
 test('AUDIT DELVE D1: on the solid map an echo or a quest off the floor in view says its floor', () => {
   const quests = [{ at: [105, 0, 205], name: 'Totem of Wyrd', followed: true }, { at: [105, 12, 205], name: 'Ulric', followed: false }];
-  const sheet = src('src/ui/automapSheet.js');
+  const sheet = src('src/ui/automap/automapSheet.js');
   assert.match(sheet, /return solidOn && s >= 0 && s !== index \? ` \\u00b7 \$\{f\.sheets\[s\]\.label\}` : '';/);
   assert.match(sheet, /name: `Moved\$\{floorOf\(p\[1\]\)\}`/);
   assert.match(sheet, /name: `\$\{q\.name \?\? ''\}\$\{floorOf\(p\[1\]\)\}`/);
@@ -252,7 +252,7 @@ test('GUIDE8: the strip lists a quest\'s floor before it is walked, and marks it
     const bare = floorStripLayout([{ index: 0, label: 'Floor 1' }], 0, { paperW });
     assert.equal(bare.rows[0].x + bare.rows[0].w, paperW - 26 * bare.scale, 'with no marks the words keep their pad');
   }
-  const sheet = src('src/ui/automapSheet.js');
+  const sheet = src('src/ui/automap/automapSheet.js');
   assert.match(sheet, /for \(const q of questSheets\(\)\) keep\.add\(q\);/, 'listed before it is walked');
   assert.match(sheet, /you: youSheet\(\), exit: exitSheet\(\), seen: c\?\.seen \?\? null, quest: questSheets\(\),/);
 });
@@ -293,7 +293,7 @@ test('GUIDE8 TOWN TIER (AUDIT DELVE): the town map rings a building the journal 
   assert.equal(mk(() => []).quests().length, 0, 'unfound and unnamed by a quest: no ring');
   assert.equal(mk(() => [{ buildingKey: KEY, followed: true }]).quests().length, 1, 'the building the journal names: ringed, found or not');
   assert.equal(mk(null).quests().length, 0);
-  assert.match(src('src/ui/townMapDoor.js'), /questBuildings: deps\.townQuestBuildings \?\? null,/);
+  assert.match(src('src/ui/town/townMapDoor.js'), /questBuildings: deps\.townQuestBuildings \?\? null,/);
   const w = src('src/scenes/world.js');
   assert.match(w, /townQuestBuildings: \(\) => \(townTierOn\(\) \? townQuestBuildings\(questTracker\.views, dfLoc\.mapTableData\?\.mapId, questTracker\.tracked\(\)\?\.id \?\? null\) : \[\]\),/);
   assert.match(w, /quest: vendorCompassMark\(\) \?\? townQuestCompassMark\(\) \?\? questCompassMark\(\),/);

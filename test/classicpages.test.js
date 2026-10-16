@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openPauseFlow, PROF_PAGES_CLOSED_LINE, profPageAt } from '../src/ui/pauseDoor.js';
-import { setProfessionsPages, forgeOffered, stationColdLine, PROF_PAGE_SECTIONS } from '../src/ui/profPages.js';
+import { setProfessionsPages, forgeOffered, stationColdLine, PROF_PAGE_SECTIONS } from '../src/ui/professions/profPages.js';
 import { storesWhereLine } from '../src/scenes/gatherHost.js';
 import { routeAction } from '../src/ui/input.js';
 import { ACTIONS, DEFAULT_BINDINGS, DEFAULT_SHARES, ACTION_GROUPS, PORT_ACTIONS } from '../src/systems/inputActions.js';

@@ -73,7 +73,7 @@
   },
   {
     "name": "HOOD-SAID-use-kept-on-a-hooded-piece",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (usableItem(picked) && (!hooded || isEnchanted(picked))) {",
     "new": "  if (usableItem(picked)) {",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "HOOD-SAID-the-enchanted-cloaks-used-payload-out-of-reach",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (usableItem(picked) && (!hooded || isEnchanted(picked))) {",
     "new": "  if (usableItem(picked) && !hooded) {",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "HOOD-SAID-no-hood-button",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const hooded = side === 'local' && line.equipped && hoodCapable(picked);",
     "new": "  const hooded = false;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "HOOD-SAID-a-carried-cloaks-hood",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const hooded = side === 'local' && line.equipped && hoodCapable(picked);",
     "new": "  const hooded = side === 'local' && hoodCapable(picked);",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "HOOD-SAID-the-label-backwards",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    const h = el('button', 'act', hoodUp(picked) ? 'Lower hood' : 'Raise hood');",
     "new": "    const h = el('button', 'act', hoodUp(picked) ? 'Raise hood' : 'Lower hood');",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "HOOD-SAID-no-hood-row",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (line.equipped && hoodCapable(picked)) pair('Hood', hoodUp(picked) ? 'up' : 'down');",
     "new": "    if (false) pair('Hood', hoodUp(picked) ? 'up' : 'down');",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "HOOD-SAID-nothing-said",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = hoodUp(item) ? HOOD_TEXT.raise : HOOD_TEXT.lower;",
     "new": "  notice = null;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "HOOD-SAID-the-card-closed",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = hoodUp(item) ? HOOD_TEXT.raise : HOOD_TEXT.lower;",
     "new": "  notice = hoodUp(item) ? HOOD_TEXT.raise : HOOD_TEXT.lower; picked = null;",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "HOOD-SAID-the-doll-not-redrawn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = hoodUp(item) ? HOOD_TEXT.raise : HOOD_TEXT.lower;\n  refresh();\n  refreshFigure();\n",
     "new": "  notice = hoodUp(item) ? HOOD_TEXT.raise : HOOD_TEXT.lower;\n  refresh();\n",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "HOOD-SAID-the-repaint-flag-unread",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (act.repaint) refreshFigure();   // HOOD-SAID: a garment's drawing changed - the doll wears the new one (useResultAction's flag, unread until now)\n",
     "new": "",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "HOOD-SAID-the-panel-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (hoodUp(top.item)) b.append(el('span', 'wornhood', 'Hood'));\n",
     "new": "",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "HOOD-SAID-the-chip-left-up",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (hoodUp(top.item)) b.append(el('span', 'wornhood', 'Hood'));",
     "new": "  if (hoodCapable(top.item)) b.append(el('span', 'wornhood', 'Hood'));",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "HOOD-SAID-the-chip-undressed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .equipped .wornhood { position: absolute; right: 3px; top: 3px; z-index: 2;",
     "new": ".pack-shell .equipped .wornhood-gone { position: absolute; right: 3px; top: 3px; z-index: 2;",
     "tests": [
@@ -193,7 +193,7 @@
   },
   {
     "name": "HOOD-SAID-the-chip-on-the-count",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .equipped .worncount ~ .wornhood { right: 20px; }\n",
     "new": "",
     "tests": [

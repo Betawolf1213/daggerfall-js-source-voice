@@ -16,7 +16,7 @@ import '../src/systems/professions/profTemplates.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { withDom } from './invdrag.mjs';
-import { BAG_PAGE_WORDS, setProfessionsPages, drawStoresPage, resetProfPages, carryRows } from '../src/ui/profPages.js';
+import { BAG_PAGE_WORDS, setProfessionsPages, drawStoresPage, resetProfPages, carryRows } from '../src/ui/professions/profPages.js';
 import { heldOf, heldKeysOf, materialKeyOfItem, roomFor, mintCarried, bagWeight } from '../src/systems/materialsBag.js';
 import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { generateRandomLoot } from '../src/systems/loot/loot.js';

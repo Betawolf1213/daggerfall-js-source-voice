@@ -76,7 +76,7 @@ test('PAD1-A the poller dispatches its synthetic keys on the DOCUMENT when there
     _resetForTests();
   }
   // the pane's capture is a document listener, which is the half of this that makes it matter
-  assert.match(rd('src/ui/enhancedControls.js'), /document\.addEventListener\('keydown', armedHandler, \{ capture: true \}\);/);
+  assert.match(rd('src/ui/enhanced/enhancedControls.js'), /document\.addEventListener\('keydown', armedHandler, \{ capture: true \}\);/);
   assert.match(rd('src/ui/gamepadInput.js'), /\(globalThis\.document \?\? window\)\.dispatchEvent\(new KeyboardEvent\(type, \{ code, key: code, bubbles: true \}\)\);/);
 });
 
@@ -255,7 +255,7 @@ test('PAD1-D the glyphs: the four d-pad directions and the two triggers, square,
 // legacy Slide, CenterView, PrintScreen). A new action nobody routes, or
 // one of the four gaining a reader, both land here.
 test('PAD1-E every registry action has a consumer, or is on the recorded list of four (derived)', () => {
-  const EDITORS = new Set(['src/systems/inputActions.js', 'src/ui/controlsWindow.js', 'src/ui/enhancedControls.js', 'src/systems/controlsConfig.js', 'src/ui/joystickControlsWindow.js', 'src/ui/mouseControlsWindow.js', 'src/ui/quickslotTags.js', 'src/ui/padGlyphs.js', 'src/systems/dialogShortcuts.js', 'src/systems/gamepad.js', 'src/systems/keyCodes.js']);
+  const EDITORS = new Set(['src/systems/inputActions.js', 'src/ui/controlsWindow.js', 'src/ui/enhanced/enhancedControls.js', 'src/systems/controlsConfig.js', 'src/ui/joystickControlsWindow.js', 'src/ui/mouseControlsWindow.js', 'src/ui/quickslotTags.js', 'src/ui/padGlyphs.js', 'src/systems/dialogShortcuts.js', 'src/systems/gamepad.js', 'src/systems/keyCodes.js']);
   // CODE, not prose: a comment naming DFU's ConsoleUI.ToggleConsole is not a reader of the action
   const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/.*$/gm, '$1');
   const files = [];
@@ -294,9 +294,9 @@ test('PAD1-F a rebind through the controls pane changes the quickslot chip: the 
   applyUnsavedKeybinds(store, u);
   assert.deepEqual(quickslotTag('QuickUse1', { ...pad, controller: false }), { kind: 'key', text: 'L' });
   // the HUD's frame reads the LIVE store and keys its repaint on the tag
-  const hud = rd('src/ui/enhancedHud.js');
+  const hud = rd('src/ui/enhanced/enhancedHud.js');
   assert.match(hud, /const tagOpts = \{ bindings: bindings\(\), controller, family: family \?\? 'xbox' \};/, 'the registry, read in the frame - never captured at build');
   assert.match(hud, /\.\.\.\['main', 'off', 'c1', 'c2'\]\.map\(\(k\) => tagKey\(tags\[k\]\)\),/, 'the tags are in the block\'s signature');
   assert.match(rd('src/ui/quickslotTags.js'), /export const tagKey = \(t\) => \(t \? \(t\.kind === 'glyph' \? `g:\$\{t\.family\}:\$\{t\.code\}` : `k:\$\{t\.text\}`\) : ''\);/, 'the key carries the code');
-  assert.match(rd('src/ui/enhancedControls.js'), /applyUnsavedKeybinds\(bindings\(\), unsaved\);/, 'the pane writes the same registry');
+  assert.match(rd('src/ui/enhanced/enhancedControls.js'), /applyUnsavedKeybinds\(bindings\(\), unsaved\);/, 'the pane writes the same registry');
 });

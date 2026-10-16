@@ -28,7 +28,7 @@ import { SD_STEPS_SOUNDS } from '../src/scenes/sdSteps.js';
 import { SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
 import { SD_CHECKPOINTS } from '../src/world/superDungeon/sdSteps.js';
 import { SD_ARENA, SD_ORRERY, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
-import { SD_BAR_NEAR_M } from '../src/ui/sdRemnantBar.js';
+import { SD_BAR_NEAR_M } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { sdPhase } from '../src/net/superDungeon/sdLaw.js';
 

@@ -24,7 +24,7 @@
 // THE OUTPUT IS color32 (formats/color32Order.js: RGBA bytes, row 0 the
 // picture's BOTTOM), the shape every TEXTURE record reaches the GL in, so
 // the classic list uploads it and draws it through the one V-flipped quad
-// it draws every item with (ui/itemScroller.js), and the DOM lists turn
+// it draws every item with (ui/item/itemScroller.js), and the DOM lists turn
 // it into a canvas the way they turn a replacement PNG (bitmapCanvas.js
 // color32Canvas).
 //

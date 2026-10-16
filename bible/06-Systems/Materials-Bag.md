@@ -43,7 +43,7 @@ crafting materials in the inventory itself." And: "This is something I really wa
 
 ## 2. The window
 
-The enhanced inventory's remote pane shows the bag as it shows the wagon (`ui/enhancedInventory.js`,
+The enhanced inventory's remote pane shows the bag as it shows the wagon (`ui/enhanced/enhancedInventory.js`,
 `systems/inventorySession.js`): a **Materials Bag** button in the pane's header (no bag: "You have no Materials Bag.
 Every General Store sells one."), the bag's list as the remote list while it shows, its 300 kg on the weight line,
 **Put in bag** on a material's menu (never on what the bag refuses), a move refused past the weight in the companion's
@@ -87,7 +87,7 @@ ground - `scenes/world.js` `_storesReached`). Away from one the page reads, and 
 to any town to put materials in or take them out." **The town is the client's convention, not the service's law**: the
 service checks no place, and a station's shortfall is put in wherever the station stands (section 6).
 
-The Stores page (`ui/profPages.js`; the pause menu's Holdings tab since HOLDINGS, `03-World/Holdings.md`) shows each
+The Stores page (`ui/professions/profPages.js`; the pause menu's Holdings tab since HOLDINGS, `03-World/Holdings.md`) shows each
 material's Stores count and, beside it, what is carried; for a
 material, **Take out** (into the bag, then the pack) and **Put in** (from the bag, then the pack), and **Put everything
 in** - every counted unit the bag and the pack hold, in one press, whatever the page's filter shows: it says how many
@@ -108,7 +108,7 @@ counted, by the same law; letting the count travel with a trade is the owner's c
 **LOOT-LOOSE (FIELD BUGS 2026-10-15c, "a lot of alchemy and some other ingredients when looted from a dungeon are
 unstorable", a second player confirming; Mac, asked: "Store as loose").** The page's Put in and Put everything in take
 the units past the count now, as **loose** - BAG-CRAFT's origin (section 15), by its `work` order: what the service counts
-goes first by `all`, every origin as it was, then the rest held by `work` (`src/ui/profPages.js`; the host hands the
+goes first by `all`, every origin as it was, then the rest held by `work` (`src/ui/professions/profPages.js`; the host hands the
 order through, `world.js` deposit). Loose units serve every crafting station and never a writ, the guild Stores or a
 Drakes listing (`WRIT_ORIGINS`), so law 3's wall stands: nothing past the count reaches the economy. The card says
 "N loose" and the picked bar says what loose means. No service change - a `work` put-in was already a request any
@@ -336,7 +336,7 @@ With the count's goods the path was whole (a Steel Longsword from a bag of count
 
 - **A station works what is carried, counted or not** (`profBook.workable`, `bagLaw.js` carriedWorkable): the Stores
   and every unit the bag, the pack and the wagon hold, but the gold-bought units the count still names (GOLD-MARKET's
-  wall). Every station's read is that (`ui/profPages.js` workOf - the anvil, the forge, the workbench, the loom, the
+  wall). Every station's read is that (`ui/professions/profPages.js` workOf - the anvil, the forge, the workbench, the loom, the
   mason's bench, the cook fire, the jeweller's bench, the alchemy and enchanting stations, the temper), and a craft's
   chain plans from it (CRAFT1).
 - **Its put-in is the deposit's `work` order** (`DEPOSIT_ORDERS.work`, `looseOrder`) - a craft, a brew, a smelt and a

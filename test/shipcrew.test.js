@@ -18,8 +18,8 @@ import { crewRoster, createCrewLife, CHANTY_FIRST_S } from '../src/systems/naval
 import { seaRepair, wantsRepair, provisionOffer, grogPrice, SEA_REPAIR_PER_S, SEA_REPAIR_UNDER_FIRE, STORE_POINTS, STORE_PRICE, STORES_STOCK, FIELD_QUIET_S, FIELD_MEND_CAP, storesToWhole } from '../src/systems/naval/navalYard.js';
 import { mintStores, storesIn, spendStore, STORES_TEMPLATE } from '../src/systems/naval/navalStores.js';
 import { createGunDeck } from '../src/systems/naval/navalGunnery.js';
-import { yardText } from '../src/ui/navalYardWindow.js';
-import { helmButtons } from '../src/ui/enhancedHelm.js';
+import { yardText } from '../src/ui/naval/navalYardWindow.js';
+import { helmButtons } from '../src/ui/enhanced/enhancedHelm.js';
 import { boatMenuRows, BOAT_VERB } from '../src/systems/comeSailAway/csaBoatMenu.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 

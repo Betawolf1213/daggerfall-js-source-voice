@@ -10,9 +10,9 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ACTIONS, PORT_ACTIONS, DEFAULT_BINDINGS, ACTION_GROUPS, actionLabel } from '../src/systems/inputActions.js';
-import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touchButtons.js';
-import { DPAD_CHOICES } from '../src/ui/plusPad.js';
-import { PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
+import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touch/touchButtons.js';
+import { DPAD_CHOICES } from '../src/ui/plus/plusPad.js';
+import { PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
 import { TECHNIQUE_ACTION } from '../src/combat/techniques.js';
 import { TECH_CHIP_COLOUR } from '../src/combat/techniqueRoster.js';
 
@@ -115,11 +115,11 @@ test('TECH1 THE WORLD HOST\'S OWN: the chip off the MODE\'s rig with its key\'s 
   // PIN MOVED (AUDIT TECH-FX): the key's word through a thunk the chip asks only when ready, cached on the store's rev
   assert.match(w, /setHudTechniqueChips\(\(e\) => techniqueHudChips\(e, \(modes\?\.liveArm\?\.\(\)\?\.rig \?\? weaponRig\)\?\.playerWeapon, techniqueKeyWord\)\);/);
   assert.match(w, /const b = bindings\(\), rev = b\?\.rev \?\? 0, pad = controllerLook\(\) \? \(padFamily\(\) \?\? 'xbox'\) : null;\s*if \(_techKey === null \|\| _techKeyStore !== b \|\| _techKeyRev !== rev \|\| _techKeyPad !== pad\) \{ _techKeyStore = b; _techKeyRev = rev; _techKeyPad = pad; _techKey = actionKeyWord\(TECHNIQUE_ACTION, \{ bindings: b, controller: pad !== null, family: pad \?\? 'xbox' \}\); \}/);   // PIN MOVED (FINAL AUDIT): the card's word (actionKeyWord - the key that answers, a pad's button while a pad is in hand), asked again when the pad is taken up or put down
-  assert.match(code('src/ui/enhancedHud.js'), /const powers = setPowerChips\(vitals\);\s*powers\.push\(\.\.\.techniqueChips\(vitals\)\);/, 'the chip after the set powers\'');
+  assert.match(code('src/ui/enhanced/enhancedHud.js'), /const powers = setPowerChips\(vitals\);\s*powers\.push\(\.\.\.techniqueChips\(vitals\)\);/, 'the chip after the set powers\'');
   assert.match(w, /offsetTactics\(r\.offset\);\s*offsetTechniques\(r\.offset\);/);
   assert.equal(TECH_CHIP_COLOUR, '#59c7ff');
-  assert.match(code('src/ui/enhancedHud.js'), /const shade = t\.set === 'technique' \? TECH_CHIP_COLOUR : colour;/);
-  assert.doesNotMatch(read('src/ui/enhancedHud.js'), /from '\.\.\/combat\/techniques\.js'/, 'the HUD never imports the runtime (it reaches half the game)');
+  assert.match(code('src/ui/enhanced/enhancedHud.js'), /const shade = t\.set === 'technique' \? TECH_CHIP_COLOUR : colour;/);
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedHud.js'), /from '\.\.\/combat\/techniques\.js'/, 'the HUD never imports the runtime (it reaches half the game)');
   for (const file of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js']) {
     assert.match(code(file), /for \(const kind of \['mousedown', 'mouseup'\]\) addEventListener\(kind, \(e\) => \{ if \(e\.button === 3 \|\| e\.button === 4\) e\.preventDefault\(\); \}\);/, file);
   }

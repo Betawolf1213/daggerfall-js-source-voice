@@ -12,8 +12,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createBindings, resetDefaults, getBinding } from '../src/systems/inputActions.js';
-import { applyPlusPadLayout, registerCrossbar, crossbarApi, registerQuickAct, quickActApi, setPlusDpad, plusDpadMap, DPAD_CHOICES, windowPrompts, HOTBAR_ARRANGE_CODE } from '../src/ui/plusPad.js';
-import { bindPlusRow, PLUS_BIND_ROWS, rowCode } from '../src/ui/plusPadBinds.js';
+import { applyPlusPadLayout, registerCrossbar, crossbarApi, registerQuickAct, quickActApi, setPlusDpad, plusDpadMap, DPAD_CHOICES, windowPrompts, HOTBAR_ARRANGE_CODE } from '../src/ui/plus/plusPad.js';
+import { bindPlusRow, PLUS_BIND_ROWS, rowCode } from '../src/ui/plus/plusPadBinds.js';
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
@@ -52,7 +52,7 @@ test('PAD-BINDS: the Controller bindings window has an Overworld and a Quick dia
   const r3 = bindPlusRow(t, 'jump', rowCode(t, PLUS_BIND_ROWS.find((x) => x.id === 'crouch')), noSave);
   assert.deepEqual({ swapped: r3.swapped, cleared: r3.cleared }, { swapped: 'Crouch', cleared: false }, 'a row with a button swaps it');
   const { readFileSync } = await import('node:fs');
-  assert.match(readFileSync(new URL('../src/ui/plusPadBinds.js', import.meta.url), 'utf8'), /note = r\.ok \? \(r\.cleared \? `Bound\. \$\{r\.swapped\} is unbound now\.` : r\.swapped \? `Bound\. \$\{r\.swapped\} took the old button\.` : 'Bound\.'\)/, 'the note');
+  assert.match(readFileSync(new URL('../src/ui/plus/plusPadBinds.js', import.meta.url), 'utf8'), /note = r\.ok \? \(r\.cleared \? `Bound\. \$\{r\.swapped\} is unbound now\.` : r\.swapped \? `Bound\. \$\{r\.swapped\} took the old button\.` : 'Bound\.'\)/, 'the note');
 });
 
 test('PAD-BINDS: the d-pad offers Quick dial and Overworld for a tap or a hold - Quick dial presses its key, the Overworld (on no key) is the host\'s padAction (mutants: either choice gone; the unbound action dropped)', () => {
@@ -188,7 +188,7 @@ async function withBar(fn) {
   setPref('quickbarStyle', 'hotbar');
   setPref('plusCrossbar', 'on');
   try {
-    const hb = await import('../src/ui/enhancedHotbar.js');
+    const hb = await import('../src/ui/enhanced/enhancedHotbar.js');
     const dock = dom.mk('div');
     dom.body.append(dock);
     hb.mountHotbarDock(dock);

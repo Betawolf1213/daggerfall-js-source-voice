@@ -10,10 +10,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PIXEL_FONT_CSS, PIXEL_READ_CSS, PIXEL_STACK, PIXEL_FAMILIES, PIXELIFY_FIVE_FACE } from '../src/ui/pixelifyFive.js';
-import { ENHANCED_CSS, ENHANCED_TOKENS } from '../src/ui/enhancedStyle.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { DEATH_CSS } from '../src/ui/enhancedDeath.js';
-import { TEXT_LAYER_CSS, TEXT_LAYER_FIT, drawEnhancedTextLayer, hideEnhancedTextLayer } from '../src/ui/enhancedTextLayer.js';
+import { ENHANCED_CSS, ENHANCED_TOKENS } from '../src/ui/enhanced/enhancedStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { DEATH_CSS } from '../src/ui/enhanced/enhancedDeath.js';
+import { TEXT_LAYER_CSS, TEXT_LAYER_FIT, drawEnhancedTextLayer, hideEnhancedTextLayer } from '../src/ui/enhanced/enhancedTextLayer.js';
 import { PrisonScreenWindow, ENHANCED_PRISON_DAYS_ID } from '../src/ui/prisonScreen.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -28,11 +28,11 @@ test('FONT3: the reading pair rides the one trio, after the stack, so a rule tha
   assert.ok(PIXEL_FONT_CSS.trimEnd().endsWith(PIXEL_READ_CSS), 'the pair last');
   assert.equal(PIXEL_STACK, `${PIXEL_FAMILIES}, monospace`, 'the families are the stack\'s own head');
   // the touch layer was the one place a weight stood BEFORE the trio - turned round, or the entry field's 600 is lost
-  const touch = read('src/ui/touch.js');
+  const touch = read('src/ui/touch/touch.js');
   assert.match(touch, /`\$\{PIXEL_FONT_CSS\}font-weight:500;font-size:15px;`/);
   assert.match(touch, /`\$\{PIXEL_FONT_CSS\}font-weight:600;font-size:18px;`/);
   // the request already carries 500 - nothing new is fetched for the pair
-  assert.match(read('src/ui/enhancedStyle.js'), /FONT_PIXEL_DATA = 'Pixelify\+Sans:wght@400;500'/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /FONT_PIXEL_DATA = 'Pixelify\+Sans:wght@400;500'/);
 });
 
 test('FONT3: the enhanced body wears the whole trio, and the menu-era tokens name the pixel stack in the game\'s sheet alone', () => {
@@ -53,14 +53,14 @@ test('FONT3: the recovery code is the one word named outside the pixel face - it
 });
 
 // THE FLOOR. Every sheet an enhanced surface lays; the number is the one the codemod held them to.
-const FLOOR_SHEETS = ['src/ui/enhancedStyle.js', 'src/ui/enhancedPlusStyle.js', 'src/ui/chatPanel.js', 'src/ui/socialPanel.js',
-  'src/ui/partyPanel.js', 'src/ui/socialMenu.js', 'src/ui/decorPanel.js', 'src/ui/enhancedDialogStyle.js', 'src/ui/enhancedHelm.js',
-  'src/ui/enhancedHotbar.js', 'src/ui/enhancedPortStyle.js', 'src/ui/nameLayer.js', 'src/ui/navalHud.js', 'src/ui/navalPlunderWindow.js',
-  'src/ui/pageWindow.js', 'src/ui/pickupFeed.js', 'src/ui/plusPadBinds.js', 'src/ui/profActStyle.js', 'src/ui/profStationStyle.js',
-  'src/ui/profileWindow.js', 'src/ui/travelViewHud.js', 'src/ui/enhancedDeath.js', 'src/ui/enhancedPlayerTrade.js', 'src/ui/plusPad.js',
-  'src/ui/enhancedFrame.js', 'src/ui/introScreen.js',   // AUDIT FONT3 C3: the film's words are the pixel face too
-  'src/ui/waypointMenu.js', 'src/ui/travelPaceControls.js',   // WAYPOINTS and PACE-DIALS (2026-10-06): the right-click menu and the pace box lay sheets of their own
-  'src/ui/cardPanelKit.js', 'src/ui/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js'];   // KG3: the card tables' panels - the chrome, Hold'em, Iliac Hand and The King's Gambit
+const FLOOR_SHEETS = ['src/ui/enhanced/enhancedStyle.js', 'src/ui/enhanced/enhancedPlusStyle.js', 'src/ui/chatPanel.js', 'src/ui/socialPanel.js',
+  'src/ui/partyPanel.js', 'src/ui/socialMenu.js', 'src/ui/decorPanel.js', 'src/ui/enhanced/enhancedDialogStyle.js', 'src/ui/enhanced/enhancedHelm.js',
+  'src/ui/enhanced/enhancedHotbar.js', 'src/ui/enhanced/enhancedPortStyle.js', 'src/ui/nameLayer.js', 'src/ui/naval/navalHud.js', 'src/ui/naval/navalPlunderWindow.js',
+  'src/ui/pageWindow.js', 'src/ui/pickupFeed.js', 'src/ui/plus/plusPadBinds.js', 'src/ui/professions/profActStyle.js', 'src/ui/professions/profStationStyle.js',
+  'src/ui/profileWindow.js', 'src/ui/travel/travelViewHud.js', 'src/ui/enhanced/enhancedDeath.js', 'src/ui/enhanced/enhancedPlayerTrade.js', 'src/ui/plus/plusPad.js',
+  'src/ui/enhanced/enhancedFrame.js', 'src/ui/intro/introScreen.js',   // AUDIT FONT3 C3: the film's words are the pixel face too
+  'src/ui/waypointMenu.js', 'src/ui/travel/travelPaceControls.js',   // WAYPOINTS and PACE-DIALS (2026-10-06): the right-click menu and the pace box lay sheets of their own
+  'src/ui/card/cardPanelKit.js', 'src/ui/card/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js'];   // KG3: the card tables' panels - the chrome, Hold'em, Iliac Hand and The King's Gambit
 // a ◆, a rarity pip, the emblem's word, an SVG's own units - and (AUDIT FONT3 C3) the effect words and rounds INSIDE a
 // 16px effect icon (the party card's and the crew's), which are the icon's own marks at the icon's own scale
 const GLYPH_ONLY = /::?before|::?after|insignia-word|provlabel|dfparty-fx[wr]|dfnaval-crew-fxe/;
@@ -105,16 +105,16 @@ test('FONT3: ONE FACE - the death screen\'s words, the gate\'s ground warning, t
   for (const s of ['body .wb-boss-bar', 'body .wb-gate-banner', 'body .wb-marks-card', 'body .wb-dmg-chart']) {
     assert.doesNotMatch(ruleOf(PLUS_CSS, s), /font-weight: 400/, `${s}: the reading weight is not undone`);
   }
-  const pad = read('src/ui/plusPad.js');
+  const pad = read('src/ui/plus/plusPad.js');
   assert.doesNotMatch(pad, /var\(--pixel-font/, 'a variable nothing declares');
   assert.match(pad, /\$\{PIXEL_FONT_CSS\} font-size: 13px; line-height: 1;/);
-  const intro = read('src/ui/introScreen.js');
+  const intro = read('src/ui/intro/introScreen.js');
   assert.match(intro, /const STYLE = `\$\{PIXELIFY_FIVE_FACE\}\n#intro\{[^}]*\$\{PIXEL_FONT_CSS\}/);
   assert.doesNotMatch(/const STYLE = `[\s\S]*?`;/.exec(intro)[0], /Georgia|system-ui/, 'no other face left in the film\'s sheet');
   assert.match(intro, /injectEnhancedFonts\(doc\);/);
   // the two inline-only cards name the face first and load nothing for it
   assert.match(read('src/ui/charSheetDoor.js'), /font:500 20px\/1\.6 \$\{PIXEL_FAMILIES\},system-ui,sans-serif;/);
-  assert.match(read('src/ui/enhancedChunk.js'), /font:500 14px\/1\.5 \$\{PIXEL_FAMILIES\},system-ui,sans-serif;/);
+  assert.match(read('src/ui/enhanced/enhancedChunk.js'), /font:500 14px\/1\.5 \$\{PIXEL_FAMILIES\},system-ui,sans-serif;/);
   assert.match(read('src/scenes/dataSource.js'), /const face = isEnhanced\(\) \? `\$\{PIXEL_FONT_CSS\}font-size:14px;` : 'font:14px monospace;-webkit-font-smoothing:antialiased;letter-spacing:normal;';/);
 });
 

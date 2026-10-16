@@ -27,14 +27,14 @@ import {
   EXT_HOTKEYS_DOWN, EXT_HOTKEYS_HELD, EXT_HOTKEY_VERBS, EXT_BACKGROUND_HOTKEYS,
   residenceQuestName, stampResidenceQuestNames,
 } from '../src/ui/exteriorAutomapWindow.js';
-import { EXTERIOR_AUTOMAP_STRINGS, exteriorAutomapTooltipFor } from '../src/ui/automapText.js';
+import { EXTERIOR_AUTOMAP_STRINGS, exteriorAutomapTooltipFor } from '../src/ui/automap/automapText.js';
 import { TopicTree, QUEST_INFO_RESOURCE_TYPE, BUILDING_HINT_TYPE } from '../src/systems/topicTree.js';
 import { shortcutBinding, sequenceString } from '../src/systems/dialogShortcuts.js';
 import { nameplatesIntersect, resolveNameplates, nameplateAnchor } from '../src/ui/nameplateLayout.js';
-import { CAPTION_STRIP, CAPTION_SWATCHES, CHROME_RECTS } from '../src/ui/automapChrome.js';
+import { CAPTION_STRIP, CAPTION_SWATCHES, CHROME_RECTS } from '../src/ui/automap/automapChrome.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { EXT_ZOOM_SPEED, EXT_SCROLL_UP_DOWN_SPEED } from '../src/ui/automapCamera.js';
+import { EXT_ZOOM_SPEED, EXT_SCROLL_UP_DOWN_SPEED } from '../src/ui/automap/automapCamera.js';
 import { rasterizeTopDown, rasterizeDisc, STAMP_INK } from '../src/ui/meshStamp.js';
 import { measureText } from '../src/ui/text.js';
 import { buildingSummaries, buildingPosition } from '../src/world/buildingSummaries.js';
@@ -719,12 +719,12 @@ test('A2 wiring pins: the M-outside dispatch in both exterior hosts, gated on a 
   assert.match(w, /if \(!dfLoc \|\| !b\?\.locBlocks \|\| !b\.locOrigin\) return;/, 'empty wilderness opens nothing');
   // EM4: the town map is behind a SKIN DOOR now - the classic skin
   // still gets `new ExteriorAutomapWindow(...)`, from inside
-  // ui/townMapDoor.js, and the host opens whichever the skin wears.
+  // ui/town/townMapDoor.js, and the host opens whichever the skin wears.
   // The law this line holds is that the host builds a town map at all,
   // so it follows the build to the door rather than to the class.
   const e = src('src/scenes/exterior.js');
   assert.match(e, /createTownMapWindow\(/, 'the host opens a town map');
-  assert.match(src('src/ui/townMapDoor.js'), /new ExteriorAutomapWindow\(/,
+  assert.match(src('src/ui/town/townMapDoor.js'), /new ExteriorAutomapWindow\(/,
     'and the classic arm of that door still builds DFU\'s own window');
   assert.match(src('src/scenes/world.js'), /createTownMapWindow\(/, 'both exterior hosts, one door');
   assert.match(src('src/systems/inputActions.js'), /\['KeyM', 'AutoMap'\]/, 'and M is that action\'s default');
@@ -798,7 +798,7 @@ test('A2 grayscale pins: the shader law and the two-tier dungeon pass (Daggerfal
   assert.match(r, /1\.0 - clamp\(sliceDist \/ 20\.0, 0\.0, 0\.6\)/, 'the slice-distance dim, floored at 40%');
   assert.match(r, /dot\(outColor\.rgb, vec3\(0\.3, 0\.59, 0\.11\)\)/, 'the luminance weights digit for digit');
   assert.match(r, /setAutomapMode\(m\) \{/, 'the immediate-upload setter');
-  const aw = src('src/ui/automapWindow.js');
+  const aw = src('src/ui/automap/automapWindow.js');
   // c2/S6 named the six presentations and moved the two-tier split
   // into _partitionDraws, so the LAW reads through the names now - the
   // draw groups are still issued colour-then-grayscale, and the

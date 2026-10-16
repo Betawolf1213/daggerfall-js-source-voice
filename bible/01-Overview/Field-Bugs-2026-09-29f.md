@@ -69,7 +69,7 @@ Found on MERC-CAP's way and first left for a word; Mac's: *"Fix the separate bug
 90 alike. **Why.** The mod puts each scaled half through `FormulaHelper.CalculateTradePrice(cost, 10, false)`
 (TravelTimeCalculatorTO.CalculateTripCost, read off the mod's own source), which reads the live Mercantile SKILL
 (GetLiveSkillValue, FormulaHelper.cs:1992/1998); the port read `liveStat(e, 'mercantile')`, a stat by the skill's name,
-which no entity has - 0 for everyone. **The fix.** `ui/travelPopUp.js` `scaleTripCost` reads `skillValue(e,
+which no entity has - 0 for everyone. **The fix.** `ui/travel/travelPopUp.js` `scaleTripCost` reads `skillValue(e,
 SKILLS.Mercantile)`, the read every counter makes: the fare at Mercantile 90 is the mod's own 1068, and a worn Enhances
 Skill haggles too. It reaches play wherever a player sets the mod's fare scaling past 1 (the mod suggests x4-x6 beside
 Climates & Calories; the dials are the player's own online, `ONLINE_PLAYERS_OWN_MODS`), through both maps and a party's

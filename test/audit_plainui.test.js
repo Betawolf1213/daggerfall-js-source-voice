@@ -20,8 +20,8 @@ import { setModSetting, modSetting } from '../src/systems/modSettings.js';
 import { regardBadge } from '../src/systems/livingWorld/people.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { createLivingRoads } from '../src/scenes/livingRoads.js';
-import { mountEnhancedTalk } from '../src/ui/enhancedTalk.js';
-import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountEnhancedTalk } from '../src/ui/enhanced/enhancedTalk.js';
+import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { FAMILY_CSS } from '../src/ui/familyPages.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
@@ -183,7 +183,7 @@ test('AUDIT PLAIN-UI U the talk badge pressed says its words and pressed again h
   assert.equal(byClass(host, 'talk-regard-words').length, 0, 'the next conversation starts with them hidden');
   view.destroy();
   host.remove();
-  assert.match(src('src/ui/enhancedStyle.js'), /\.talk-regard-words \{[^}]*max-height: 4\.4em; overflow-y: auto; max-width: 72ch; \}/);
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.talk-regard-words \{[^}]*max-height: 4\.4em; overflow-y: auto; max-width: 72ch; \}/);
 });
 
 test('AUDIT PLAIN-UI T5 the sizes the record claims, every one pinned - the Charter\'s head, the battle, the day\'s writ count, the Family tab\'s chips and its card (mutants: each back)', () => {
@@ -235,7 +235,7 @@ test('AUDIT PLAIN-UI U3 U6 U8 U10 U11 a fold\'s line a finger\'s target with its
     how.onclick();
     assert.deepEqual(goneTo, ['guide']);
   } finally { setFamilyProvider(null); }
-  assert.match(src('src/ui/enhancedMenu.js'), /goto: \(id\) => \{ famSec = id; disarmFamilyPages\(\); render\(\); \} \};/, 'the pause window hands the tree its way');
-  assert.match(src('src/ui/enhancedStyle.js'), /\.talk-regard-value::after \{ content: ' \?';/);
+  assert.match(src('src/ui/enhanced/enhancedMenu.js'), /goto: \(id\) => \{ famSec = id; disarmFamilyPages\(\); render\(\); \} \};/, 'the pause window hands the tree its way');
+  assert.match(src('src/ui/enhanced/enhancedStyle.js'), /\.talk-regard-value::after \{ content: ' \?';/);
   assert.match(src('src/scenes/townTalk.js'), /if \(refusal\) \{ const b = livingTalk\?\.regard\?\.\(target\.person\) \?\? null; setMidScreenText\(b \? `\$\{refusal\} \(\$\{b\.label\}, \$\{b\.value\}\)` : refusal\); return; \}/);
 });

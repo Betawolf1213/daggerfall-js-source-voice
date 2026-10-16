@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { routeKey } from '../src/ui/input.js';
 import { DeathScreen } from '../src/ui/deathScreen.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
 import { makeWindowStack } from '../src/ui/windowStack.js';

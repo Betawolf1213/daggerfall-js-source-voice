@@ -427,7 +427,7 @@
   },
   {
     "name": "AUDIT30-U13-the-purse-unasked",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (have >= station.fee) return null;\n  const a = { fee: station.fee, have };",
     "new": "  return null;\n  const a = { fee: station.fee, have };",
     "tests": [
@@ -436,7 +436,7 @@
   },
   {
     "name": "AUDIT30-U20-every-row-busy",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "state.busy && _workingOn === r.id ? busyVerb : verb",
     "new": "state.busy ? busyVerb : verb",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "AUDIT30-A2-a-hover-planes",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    if (!((e.buttons ?? 1) & 1)) { act.release(); rerender(); return; }\n",
     "new": "",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "AUDIT30-A2-a-lost-drag-kept",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (act.state.planing) act.release();\n",
     "new": "",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "AUDIT30-A3-the-bench-s-rows-open-mid-pass",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "word: (x, s) => (x.later ? LATER_WORDS.SEAT2 : s.open ? makeWord(s.can, s.raw) : rankWord(x.rank)), locked: planing });",
     "new": "word: (x, s) => (x.later ? LATER_WORDS.SEAT2 : s.open ? makeWord(s.can, s.raw) : rankWord(x.rank)), locked: false });",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "AUDIT30-A3-the-quick-craft-s-heartwood-dropped",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "    const finish = craftOf(r.id, _bench.heartwood && takesHeartwood(r));",
     "new": "    const finish = craftOf(r.id, false);",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "AUDIT30-A9-a-field-s-space-struck",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "  if (isTextEntryTarget(e.target) || (isDomControlTarget(e.target) && e.target !== ownButton)) return;   // AUDIT 30 A9",
     "new": "  // AUDIT 30 A9",
     "tests": [

@@ -29,8 +29,8 @@ import { intermittentEnemySpawn, passiveGuardSpawns } from '../src/systems/encou
 import { partyExtraFoes } from '../src/systems/party/partyScale.js';
 import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
 import { RAIDING_PARTIES_VENDOR, newRaidSaveData } from '../src/systems/raidingParties.js';
-import { ONLINE_TRAVEL_ROWS, ONLINE_TRAVEL_LINE } from '../src/ui/travelPopUp.js';
-import { repairRowText } from '../src/ui/enhancedTrade.js';
+import { ONLINE_TRAVEL_ROWS, ONLINE_TRAVEL_LINE } from '../src/ui/travel/travelPopUp.js';
+import { repairRowText } from '../src/ui/enhanced/enhancedTrade.js';
 import { OWN_TIME_ROOM_NOTE } from '../src/ui/tavernWindow.js';
 import { RACES } from '../src/systems/races.js';
 import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
@@ -516,11 +516,11 @@ test('AUDIT LIVED1b U1-U8, D3: the words - two rows on the classic panel, one ro
   setSharedClock(null);
   assert.equal(repairRowText({ done: false, doneAt: 1441, minutesLeft: 1441, estimate: false }), 'Ready in 2 days', 'offline, DFU\'s ceiling');
   assert.match(rd('src/scenes/worldModes.js'), /if \(left === 'now'\) return short \? 'now' : 'due now';/, 'U3');
-  assert.match(rd('src/ui/enhancedPorts.js'), /\[empire \? 'Loan due' : 'Loan due by', L\.loanByFull \?\? L\.loanBy\]/, 'U4');
+  assert.match(rd('src/ui/enhanced/enhancedPorts.js'), /\[empire \? 'Loan due' : 'Loan due by', L\.loanByFull \?\? L\.loanBy\]/, 'U4');
   assert.equal(WT.realTimeText, undefined, 'U6');
   assert.equal(WT.sharedRealTimeText, undefined);
-  assert.match(rd('src/ui/enhancedRest.js'), /const clockLine = el\('p', 'clock-line'\);/, 'U7');
-  for (const s of ['src/ui/enhancedPlusStyle.js', 'src/ui/enhancedStyle.js']) assert.match(rd(s), /\.rest-shell \.clock-line:empty \{ display: none; \}/, s);
+  assert.match(rd('src/ui/enhanced/enhancedRest.js'), /const clockLine = el\('p', 'clock-line'\);/, 'U7');
+  for (const s of ['src/ui/enhanced/enhancedPlusStyle.js', 'src/ui/enhanced/enhancedStyle.js']) assert.match(rd(s), /\.rest-shell \.clock-line:empty \{ display: none; \}/, s);
   assert.equal(OWN_TIME_ROOM_NOTE, ' - a rest spends it, logging off does not.', 'U8');
   assert.match(rd('src/scenes/world.js'), /LIVED1: the cure's minute is the character's own time/, 'D3');
 });

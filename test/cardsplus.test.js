@@ -2,7 +2,7 @@
 // minigame visuals and ensure the general card UI uses enhanced plus and our fonts. Currently it doesnt"): THE CARD UI IN
 // THE STONE-AND-BRASS KIT AND THE GAME'S FACE, AND ILIAC HAND'S TABLE MADE TO READ AS A GAME.
 //
-// The roles (ui/enhancedFrame.js FRAME_ROLES) name the two table panels and the Collections page's controls; the panels'
+// The roles (ui/enhanced/enhancedFrame.js FRAME_ROLES) name the two table panels and the Collections page's controls; the panels'
 // own sheets write the pixel face on their roots and no serif; on the classic skin a panel lays the kit cut to the panels
 // and asks for the face; every class word either panel paints - read off the REAL painters over every phase - is styled
 // by no rule from outside them in any sheet the game injects (test/sheetRules.mjs, HUD-CLASS's own reader); Iliac Hand's
@@ -12,15 +12,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { FRAME_ROLES, FRAME_CSS, frameCss } from '../src/ui/enhancedFrame.js';
-import { PLUS_CSS, STONE_DIM, STONE_WORD, STONE_RED } from '../src/ui/enhancedPlusStyle.js';
+import { FRAME_ROLES, FRAME_CSS, frameCss } from '../src/ui/enhanced/enhancedFrame.js';
+import { PLUS_CSS, STONE_DIM, STONE_WORD, STONE_RED } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { PIXEL_FONT_CSS, PIXELIFY_FIVE_FACE } from '../src/ui/pixelifyFive.js';
-import { cardPanelChromeCss, cardKitCss, dressCardPanel, isCardPanelSelector, CARD_KIT_STYLE_ID } from '../src/ui/cardPanelKit.js';
+import { cardPanelChromeCss, cardKitCss, dressCardPanel, isCardPanelSelector, CARD_KIT_STYLE_ID } from '../src/ui/card/cardPanelKit.js';
 import { kitCss, G, SMALL_WINDOWS } from '../src/ui/grimoireDress.js';
-import { createCardTableHud, cardHudModel, CARD_TABLE_CSS } from '../src/ui/cardTableHud.js';
+import { createCardTableHud, cardHudModel, CARD_TABLE_CSS } from '../src/ui/card/cardTableHud.js';
 import { createIliacTableHud, iliacHudModel, holdingLead, iliacOutcome, VERDICT_WORDS, stagedRefusal, ILIAC_TABLE_CSS, ILIAC_HAND_CARD_H, ILIAC_LANE_CARD_H, ILIAC_PLACE_CARD_H } from '../src/ui/iliacTableHud.js';
 import { createGambitTableHud, GAMBIT_TABLE_CSS } from '../src/ui/gambitTableHud.js';
-import { cardCanvas, cardCanvasCopy, _clearCardFacesForTests, CARD_BINDER_CSS } from '../src/ui/cardBinderPage.js';
+import { cardCanvas, cardCanvasCopy, _clearCardFacesForTests, CARD_BINDER_CSS } from '../src/ui/card/cardBinderPage.js';
 import { COLLECTION_PAGE_CSS } from '../src/ui/collectionsPage.js';
 import { ILIAC_TILE_MAX_H } from '../src/render/iliacCardFaces.js';
 import { STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
@@ -145,7 +145,7 @@ test('CARDS-PLUS the face: every card panel\'s sheet (Hold\'em\'s, Iliac Hand\'s
     assert.ok(rootRule.body.includes('--cp-red: #ff9a8a;') && r.some((x) => x.sels.includes(`:root[data-plus-theme="stone"] ${root}`) && x.body.includes(`--cp-red: ${STONE_RED};`)), `${name}: Stone's reds`);
     assert.doesNotMatch(css, /Georgia|serif/, `${name}: no serif of its own`);
   }
-  for (const f of ['src/ui/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js', 'src/ui/cardPanelKit.js']) assert.doesNotMatch(read(f).replace(/^\s*\/\/.*$/gm, ''), /Georgia/, f);
+  for (const f of ['src/ui/card/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js', 'src/ui/card/cardPanelKit.js']) assert.doesNotMatch(read(f).replace(/^\s*\/\/.*$/gm, ''), /Georgia/, f);
 });
 
 test('CARDS-PLUS the classic skin: a panel lays the kit cut to the card panels (once, whichever panel comes first - each alone on its own page, and all three in either order: Hold\'em, Iliac Hand and since KG3 The King\'s Gambit) and asks for the game\'s face; on Enhanced Plus it lays no cut - the Plus sheet carries the kit - and asks for the face itself (mutants: the cut never laid; the cut laid whole; the face never asked for; Iliac Hand never dressing; Hold\'em never dressing; The King\'s Gambit never dressing)', () => {

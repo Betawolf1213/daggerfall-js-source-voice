@@ -96,7 +96,7 @@ await page.screenshot({ path: `${OUT}/grim-ascend.png` });
 await frontDoor();
 await page.evaluate(async () => {
   document.getElementById('enhanced-menu')?.remove();
-  const { drawEnhancedHud } = await import('/src/ui/enhancedHud.js');
+  const { drawEnhancedHud } = await import('/src/ui/enhanced/enhancedHud.js');
   const e = { name: 'A', stats: {}, health: 9, maxHealth: 40, fatigue: 150, maxFatigue: 200, magicka: 12, maxMagicka: 20, items: [], spells: [] };
   const f = () => { drawEnhancedHud(e, 0.25, 1 / 60, {}); requestAnimationFrame(f); }; f();
 });

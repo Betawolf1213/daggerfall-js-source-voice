@@ -618,7 +618,7 @@ INVISLOOK's late-pass mutants re-aimed by content.
   Steel Helm is, read every frame, so it lands at once. On ORG2's one
   Settings screen (main's, met at the arc's merge of main, 2026-10-10) it
   stands in Combat > With Morrowind data, beside the Steel Helm and the
-  Morrowind Spell Effects (`ui/settingsMap.js`).
+  Morrowind Spell Effects (`ui/settings/settingsMap.js`).
 
 PROVEN. `test/mwnpc5_foes.test.js` (3): the class foe alone; one seed,
 one person on every machine, another place or species another; a

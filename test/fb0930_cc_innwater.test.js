@@ -22,7 +22,7 @@ import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
 import { NOT_ENOUGH_GOLD_ID } from '../src/systems/tavern.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
-import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
+import { mountEnhancedTavern } from '../src/ui/enhanced/enhancedTavern.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { withDom } from './invdrag.mjs';

@@ -1,16 +1,16 @@
 // POI-5 (2026-10-14; bible/06-Systems/POI-Editor-Arc.md) - THE MATERIAL EDITOR AND THE UV EDITOR'S PANEL.
 // Mac, asked what "UV map" covers: "Full UV editor".
-//   - the material editor (src/ui/poiEditorPanel.js): a picture taken from a file - read by its header, refused in words
+//   - the material editor (src/ui/poi/poiEditorPanel.js): a picture taken from a file - read by its header, refused in words
 //     when it is not one, uploaded by its name and worn as one step; the glow's colour and strength; where the picture
 //     lies (its offset, repeats and turn);
-//   - the UV editor's panel (src/ui/poiUvPanel.js): its view (UV to the canvas and back, a zoom that keeps the point
+//   - the UV editor's panel (src/ui/poi/poiUvPanel.js): its view (UV to the canvas and back, a zoom that keeps the point
 //     under the pointer); a click takes the face under it, a drag from empty space a box, the keys its modes; Apply
 //     uploads the mesh made again and the part wears it as one step.
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createPoiEditorPanel } from '../src/ui/poiEditorPanel.js';
-import { uvView } from '../src/ui/poiUvPanel.js';
+import { createPoiEditorPanel } from '../src/ui/poi/poiEditorPanel.js';
+import { uvView } from '../src/ui/poi/poiUvPanel.js';
 import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
 import { encodePoiMesh, decodePoiMesh } from '../src/poi/poiMesh.js';
 

@@ -180,7 +180,7 @@ again - you walk up its steps to the door. Merdale's Chantry steps are clear of 
 
 ## CRAFT-FIRST-SHOWN: the first-time bonus said where it is earned (4)
 
-`src/ui/craftXpWords.js` (new) craftXpLine, dishFirstLine, masonWorksFirstLine, craftXpText; `src/ui/profPages.js` the
+`src/ui/craftXpWords.js` (new) craftXpLine, dishFirstLine, masonWorksFirstLine, craftXpText; `src/ui/professions/profPages.js` the
 station boxes; `src/scenes/world.js` the craft's word (one call). The record of the design: `06-Systems/Professions-Arc.md`
 41.9.
 

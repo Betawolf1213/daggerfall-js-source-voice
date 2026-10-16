@@ -40,7 +40,7 @@ export const GATE_REGION_MIN_PIXELS = 24;
 
 /** Is a politic value a province's (MapsFile.getRegionIndexAt's own bands: a region's 128 + index, and the one known
  *  bad value 128 + 105 that DFU reads as the Wrothgarian Mountains)? AUDIT WB C1: not High Rock's sea coast's 64 - it
- *  is the sea's value (ui/travelMapWindow.js), and no province an omen can name. */
+ *  is the sea's value (ui/travel/travelMapWindow.js), and no province an omen can name. */
 export const politicClaimed = (pol) => (pol >= 128 && pol < 128 + REGION_NAMES.length) || pol === 128 + 105;
 /** Is a pixel water - the ONE law (ui/overworldModel.js isWaterPixel, pinned equal): an Ocean climate, or a height
  *  byte at or under the ocean's elevation. */

@@ -19,7 +19,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QUEST_CTX_CONTRACT } from '../src/scenes/questBridge.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';
 // ENH-NOTICE3: the wait page is a parchment of its own and rides the enhanced notice panel
-import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '../src/ui/enhancedNotice.js';
+import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '../src/ui/enhanced/enhancedNotice.js';
 import { withDom } from './invdrag.mjs';
 import { _setMessageBoxArtForTests } from '../src/ui/messageBox.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';

@@ -12,7 +12,7 @@
 //     their versions and held to a hash of their words;
 //   - the FORM: ui/accountFlow.js refuses to send anything until both
 //     boxes are ticked, then sends the versions ticked;
-//   - the CARD: ui/enhancedAccount.js draws each box unticked with its
+//   - the CARD: ui/enhanced/enhancedAccount.js draws each box unticked with its
 //     document linked beside it;
 //   - the SERVICE: the two routes that make an account refuse a request
 //     that did not tick them, and the row records what was agreed and
@@ -25,9 +25,9 @@ import { DatabaseSync } from 'node:sqlite';
 
 import { TERMS_VERSION, PRIVACY_VERSION, LEGAL_VERSION_RE, TERMS_URL, PRIVACY_URL, ACCEPTED } from '../src/net/legalLaw.js';
 import { AccountFlow, STAGES, AGREEMENTS, AGREEMENT_SPEC, LOCAL_REFUSALS } from '../src/ui/accountFlow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { SESSION_KEY, DEFAULT_ACCOUNT_SERVICE, REFUSALS } from '../src/net/accountClient.js';
-import { ENHANCED_TOKENS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_TOKENS } from '../src/ui/enhanced/enhancedStyle.js';
 import { PIXELIFY_FIVE_FACE } from '../src/ui/pixelifyFive.js';
 import { DOCUMENT_PATHS, DOCUMENT_CSS, transformDocument, landingHtml } from '../scripts/landingHtml.mjs';
 import worker from '../server-account/src/index.js';
@@ -176,7 +176,7 @@ test('TERMS1: the build seam dresses both documents in the skin - its tokens, th
 });
 
 test('TERMS1: the documents own no colour and read in the pixel face without its ligatures - the landing page\'s law', () => {
-  const skin = read('src/ui/enhancedStyle.js');
+  const skin = read('src/ui/enhanced/enhancedStyle.js');
   const norm = (c) => c.toLowerCase().replace(/\s+/g, '');
   const colours = (css) => [
     ...[...css.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => norm(m[0])),

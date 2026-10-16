@@ -117,6 +117,6 @@ test('HOLD-SHARED: in the Hold a Local line goes to the room, two party members 
   assert.equal('SOLO_LOCAL_TEXT' in chat, false);
   const inHold = { px: 109, py: 158, in: 1, loc: "Privateer's Hold" };
   assert.equal(withMe({ ...inHold }, { ...inHold }), true, 'two members in the Hold: together');
-  assert.doesNotMatch(read('src/ui/enhancedMenu.js'), /Privateer\\u2019s Hold, where every character begins, is each player\\u2019s own/, 'the Online pane');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedMenu.js'), /Privateer\\u2019s Hold, where every character begins, is each player\\u2019s own/, 'the Online pane');
   assert.doesNotMatch(read('src/systems/tutorialCatalogue.js'), /starting cave is yours alone/, 'the Playing Online page');
 });

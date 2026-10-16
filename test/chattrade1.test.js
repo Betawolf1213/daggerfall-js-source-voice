@@ -103,7 +103,7 @@ test('CHAT-TRADE host: each tab follows its choice - on the bar while joined, jo
   assert.match(host, /if \(cmd\.kind === 'channel' && Object\.hasOwn\(OPT_CHANNELS, cmd\.tab\) && !optJoined\(cmd\.tab\)\) \{\n          optSet\(cmd\.tab, true, \{ say: true \}\);\n          return false;\n        \}/);
   const at = host.indexOf("if (cmd.kind === 'channel' && Object.hasOwn(OPT_CHANNELS");
   assert.ok(at > 0 && at < host.indexOf("if (cmd.kind === 'channel') return chatSend("), 'the join comes before the channel\'s own send');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /prefRow\('chatTrade', t\('menu\.chat\.trade', 'Trade channel'\),/);
   assert.match(menu, /prefRow\('chatLfg', t\('menu\.chat\.lfg', 'LFG channel'\),/);
 });

@@ -109,14 +109,14 @@ test('DISC29-D: the ticker counts animation frames only while a face is armed', 
 
 test('DISC29-D: all eight faces read the one law, and none keeps a wall-clock watchdog', () => {
   const faces = {
-    'src/ui/enhancedNotice.js': 'NOTICE_WATCHDOG_MS',
-    'src/ui/enhancedDialog.js': 'DIALOG_WATCHDOG_MS',
-    'src/ui/enhancedPicker.js': 'PICKER_WATCHDOG_MS',
-    'src/ui/enhancedPort.js': 'PORT_WATCHDOG_MS',
-    'src/ui/enhancedInputBox.js': 'INPUT_BOX_WATCHDOG_MS',
+    'src/ui/enhanced/enhancedNotice.js': 'NOTICE_WATCHDOG_MS',
+    'src/ui/enhanced/enhancedDialog.js': 'DIALOG_WATCHDOG_MS',
+    'src/ui/enhanced/enhancedPicker.js': 'PICKER_WATCHDOG_MS',
+    'src/ui/enhanced/enhancedPort.js': 'PORT_WATCHDOG_MS',
+    'src/ui/enhanced/enhancedInputBox.js': 'INPUT_BOX_WATCHDOG_MS',
     'src/ui/yesNoBox.js': 'YES_NO_WATCHDOG_MS',
     'src/ui/worldPlaque.js': 'PLAQUE_WATCHDOG_MS',
-    'src/ui/enhancedDeath.js': 'STALE_MS',
+    'src/ui/enhanced/enhancedDeath.js': 'STALE_MS',
   };
   for (const [f, ms] of Object.entries(faces)) {
     const s = src(f).split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*\*)/.test(l)).join('\n');   // the code, not the prose about it

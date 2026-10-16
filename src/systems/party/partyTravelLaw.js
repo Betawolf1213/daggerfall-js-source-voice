@@ -7,7 +7,7 @@
 // Two arms, both online-only (the party is the hub's; offline there is none):
 //  - TO THE LEADER. A member away from the leader - on another map pixel - is offered the journey to where the leader
 //    stands: a prompt when they join the party or the leader has travelled on, the same prompt when they open the travel
-//    map, and `/leader` in the chat. It is the travel map's own FAST travel (ui/travelPopUp.js prices it - the fare, the
+//    map, and `/leader` in the chat. It is the travel map's own FAST travel (ui/travel/travelPopUp.js prices it - the fare, the
 //    two-sided gold check, the guild's blessing, the Travel Options scale - and online it takes no world time, WORLD5),
 //    to the leader's pixel; in the open air it lands BESIDE the leader (their feet ride the leader's party pose, `wx`,
 //    `wy`, `wz`), inside a dungeon or a building at that place's own door (the map's DirectionFromStartMarker arrival).
@@ -32,7 +32,7 @@
 import { PARTY_READY_TIMEOUT_MS, stampOf, memberPresent } from './partyRestLaw.js';
 import { worldCoordToMapPixel } from '../../formats/mapsFile.js';
 
-/** The three toggles a trip is priced by (ui/travelPopUp.js speedCautious / sleepModeInn / travelShip), as the
+/** The three toggles a trip is priced by (ui/travel/travelPopUp.js speedCautious / sleepModeInn / travelShip), as the
  *  proposal's small `o` on the wire - the leader's choice, which each member's own fare is priced with. */
 export const TRIP_CAUTIOUS = 1;
 export const TRIP_INN = 2;

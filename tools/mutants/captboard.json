@@ -595,7 +595,7 @@
   },
   {
     "name": "TAB-office-unshown",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "    officeTab.style.display = o ? '' : 'none';",
     "new": "    officeTab.style.display = 'none';",
     "tests": [
@@ -604,7 +604,7 @@
   },
   {
     "name": "TAB-take-unpressed",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "b.press, b.can, () => { const r = o.take(b.id);",
     "new": "b.press, b.can, () => { const r = null;",
     "tests": [
@@ -613,7 +613,7 @@
   },
   {
     "name": "TAB-lede-rank",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "    : `${o.port} - ${o.crown}'s harbourmaster. You are ${o.rank === 'Unsworn' ? 'Unsworn' : `${/^[aeiou]/i.test(o.rank) ? 'an' : 'a'} ${o.rank}`} of ${o.crown} (standing ${o.standing}).`;",
     "new": "    : `${o.port} - ${o.crown}'s harbourmaster.`;",
     "tests": [

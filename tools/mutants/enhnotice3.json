@@ -445,7 +445,7 @@
   },
   {
     "name": "AUDIT-the-box-under-the-toasts",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "  if (firstToast) stack.insertBefore(host, firstToast); else stack.append(host);",
     "new": "  stack.append(host); void firstToast;",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "TAV-yes-no-decision-routed-to-the-panel",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "noticeHold(noticeOwner, box.buttons ? null : box.rows)",
     "new": "noticeHold(noticeOwner, box.rows)",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "TAV-scrim-is-not-the-click",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "    scrim.onclick = dismiss;\n",
     "new": "",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "TAV-no-release-when-the-box-clears",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  } else noticeRelease(noticeOwner);",
     "new": "  } else if (false) noticeRelease(noticeOwner);",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "TAV-no-release-on-unmount",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "      noticeRelease(noticeOwner);\n      host = null;",
     "new": "      host = null;",
     "tests": [
@@ -490,7 +490,7 @@
   },
   {
     "name": "TAV-owner-minted-per-render",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "const noticeOwner = {};",
     "new": "let noticeOwner = {};",
     "tests": [
@@ -499,7 +499,7 @@
   },
   {
     "name": "INV-line-left-on-the-sheet-too",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (notice && !onPanel) win.append(el('p', 'sheet-notice', notice));",
     "new": "    if (notice) win.append(el('p', 'sheet-notice', notice));",
     "tests": [
@@ -508,7 +508,7 @@
   },
   {
     "name": "INV-loot-frame-line-left-too",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      if (!packOpen && notice && !onPanel) loot.append(el('p', 'sheet-notice', notice));",
     "new": "      if (!packOpen && notice) loot.append(el('p', 'sheet-notice', notice));",
     "tests": [
@@ -517,7 +517,7 @@
   },
   {
     "name": "INV-no-release-on-unmount",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      noticeRelease(noticeOwner);\n      hostEl.innerHTML = '';",
     "new": "      hostEl.innerHTML = '';",
     "tests": [
@@ -526,7 +526,7 @@
   },
   {
     "name": "INV-hold-lifted-above-the-host-guard",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (!host) return;\n  repaints++;",
     "new": "  repaints++;\n  if (!host) { noticeHold(noticeOwner, notice ? [{ text: notice, center: true }] : null); return; }",
     "tests": [
@@ -625,7 +625,7 @@
   },
   {
     "name": "TAV-a-fresh-owner-at-every-raise",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  const onPanel = noticeHold(noticeOwner, box.buttons ? null : box.rows);",
     "new": "  const onPanel = noticeHold({}, box.buttons ? null : box.rows);",
     "tests": [
@@ -634,7 +634,7 @@
   },
   {
     "name": "TAV-dismiss-does-not-repaint",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  const cb = box?.onDismiss;\n  box = null;\n  cb?.();\n  render();",
     "new": "  const cb = box?.onDismiss;\n  box = null;\n  cb?.();",
     "tests": [
@@ -652,7 +652,7 @@
   },
   {
     "name": "INV-loot-frame-line-left-too-with-map-tests",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      if (!packOpen && notice && !onPanel) loot.append(el('p', 'sheet-notice', notice));",
     "new": "      if (!packOpen && notice) loot.append(el('p', 'sheet-notice', notice));",
     "tests": [
@@ -733,7 +733,7 @@
   },
   {
     "name": "AUDIT4-A1-the-stack-spills",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  max-width: min(520px, 70vw); max-height: 90vh; overflow: hidden;",
     "new": "  max-width: min(520px, 70vw); max-height: 900vh;",
     "tests": [
@@ -743,7 +743,7 @@
   },
   {
     "name": "AUDIT4-A6-the-toast-row-escapes-the-phone-block",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  .notice-row, .notice.notice-toast .notice-row { font-size: 13px; }\n  .notice-cell:first-child { min-width: 5em; }",
     "new": "  .notice-row { font-size: 13px; }\n  .notice-cell:first-child { min-width: 5em; }",
     "tests": [
@@ -752,7 +752,7 @@
   },
   {
     "name": "AUDIT4-A7-the-stack-back-on-the-tie",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  z-index: 31; pointer-events: none;",
     "new": "  z-index: 30; pointer-events: none;",
     "tests": [
@@ -761,7 +761,7 @@
   },
   {
     "name": "AUDIT4-A10-the-toast-loses-its-dark",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "border-left-color: rgba(243,239,44,0.55);\n  background: rgba(10,12,17,0.82);",
     "new": "border-left-color: rgba(243,239,44,0.55);\n  background: rgba(10,12,17,0.06);",
     "tests": [
@@ -770,7 +770,7 @@
   },
   {
     "name": "AUDIT4-A1-the-enhanced-arm-paints-both-faces",
-    "file": "src/ui/hudText.js",
+    "file": "src/ui/hud/hudText.js",
     "old": "      drawEnhancedToasts({ ...this.frame(), visible: !this.covered }, undefined, this.key);\n      return;",
     "new": "      drawEnhancedToasts({ ...this.frame(), visible: !this.covered }, undefined, this.key);",
     "tests": [
@@ -779,7 +779,7 @@
   },
   {
     "name": "AUDIT4-A7-the-waiting-timer-assigned",
-    "file": "src/ui/hudText.js",
+    "file": "src/ui/hud/hudText.js",
     "old": "    else if (this.timer >= 0) this.timer = Math.max(this.timer, delayInSeconds);",
     "new": "    else if (this.timer >= 0) this.timer = delayInSeconds;",
     "tests": [
@@ -788,7 +788,7 @@
   },
   {
     "name": "AUDIT4-A8-the-next-pop-delay-assigned",
-    "file": "src/ui/hudText.js",
+    "file": "src/ui/hud/hudText.js",
     "old": "    else if (this.timer >= 0) this.timer = Math.max(this.timer, delayInSeconds);\n    else this.nextPopDelay = Math.max(this.nextPopDelay, delayInSeconds);",
     "new": "    else if (this.timer >= 0) this.timer = Math.max(this.timer, delayInSeconds);\n    else this.nextPopDelay = delayInSeconds;",
     "tests": [
@@ -797,7 +797,7 @@
   },
   {
     "name": "AUDIT4-A6-the-next-pop-delay-never-reset",
-    "file": "src/ui/hudText.js",
+    "file": "src/ui/hud/hudText.js",
     "old": "      this.lines.shift();\n      this.nextPopDelay = HUD_TEXT_POP_DELAY;",
     "new": "      this.lines.shift();",
     "tests": [
@@ -806,7 +806,7 @@
   },
   {
     "name": "AUDIT4-A2-the-watchdog-leaves-the-owner-set",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "    if (mine) { mine.delete(p.rowId); if (!mine.size) toasts.delete(p.toastOwner); }",
     "new": "    void mine;",
     "tests": [
@@ -815,7 +815,7 @@
   },
   {
     "name": "AUDIT4-A2-a-covered-pop-merely-hidden",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "    if (!visible && !ids.length) {",
     "new": "    if (!visible) {",
     "tests": [
@@ -824,7 +824,7 @@
   },
   {
     "name": "AUDIT4-A12-a-covered-arrival-counted",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "    if (host) {\n      const p = panels.get(toastKey(key, ids[i]));",
     "new": "    mine.add(ids[i]);\n    if (host) {\n      const p = panels.get(toastKey(key, ids[i]));",
     "tests": [
@@ -833,7 +833,7 @@
   },
   {
     "name": "AUDIT4-B2-the-hint-option-ignored",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "  const caption = toast ? false : (hint === undefined ? NOTICE_HINT : hint);",
     "new": "  const caption = toast ? false : NOTICE_HINT;",
     "tests": [
@@ -845,7 +845,7 @@
   },
   {
     "name": "AUDIT4-B1-the-scrim-window-sized",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "    scrim.className = 'sb-ask sb-screen';\n",
     "new": "",
     "tests": [
@@ -854,7 +854,7 @@
   },
   {
     "name": "AUDIT4-B1-the-scrim-on-the-window",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "    (scrim.className.includes('sb-screen') ? shell : win).append(scrim);",
     "new": "    win.append(scrim);",
     "tests": [
@@ -881,7 +881,7 @@
   },
   {
     "name": "INV-nothing-on-the-panel",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const onPanel = noticeHold(noticeOwner, notice ? [{ text: notice, center: true }] : null, { hint: false });",
     "new": "  const onPanel = noticeHold(noticeOwner, null, { hint: false });",
     "tests": [

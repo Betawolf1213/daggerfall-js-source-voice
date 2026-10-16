@@ -17,7 +17,7 @@
 // Lapidary's Siege-cracked Gem, and the facet they are cut with.
 //
 // PURE, and both ends import it: the account service decides a craft by it (server-account/src/professions.js
-// craftAtAnvil), the client draws the anvil by it (ui/profPages.js) and mints the piece by it (systems/smithItems.js).
+// craftAtAnvil), the client draws the anvil by it (ui/professions/profPages.js) and mints the piece by it (systems/smithItems.js).
 //
 // THE PIECE IS DFU'S. A recipe names a DFU template and a DFU material (ItemEnums.cs WeaponMaterialTypes; armour's
 // ArmorMaterialTypes - plate 0x0200 + the metal, chain 0x0100); the item is minted by DFU's own law and the quality
@@ -597,7 +597,7 @@ export const recipeById = (id) => (typeof id === 'string' ? BY_ID.get(id) ?? nul
 /**
  * A RECIPE'S PATTERN: the piece it makes, whatever it is made of - its `product` (`longsword`, `chain-cuirass`,
  * `garment-163`, `arrows`, `stew`, `ring`). A station lists its patterns, and the material is chosen from what is held
- * (ui/profPages.js); the service's recipes stand as they are - a craft still asks `longsword:mithril`. FACT, pinned: no
+ * (ui/professions/profPages.js); the service's recipes stand as they are - a craft still asks `longsword:mithril`. FACT, pinned: no
  * product id is two professions'.
  * @param {Recipe|null} r
  */

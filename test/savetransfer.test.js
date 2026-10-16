@@ -106,7 +106,7 @@ test('SP1: import never overwrites - a taken number moves to the first free one,
 });
 
 test('SP1: the doors - the Load pane carries Export and both Imports, on the title and the pause menu alike', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const pane = menu.slice(menu.indexOf('function paneLoad(body) {'), menu.indexOf('function transferCard('));
   assert.ok(pane.includes('body.append(transferCard(saves.length));'), 'the card rides the Load pane, after the slots');
   const cardSrc = menu.slice(menu.indexOf('function transferCard('), menu.indexOf('// ── SAVE GAME (pause only)'));

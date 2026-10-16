@@ -1093,7 +1093,7 @@
   },
   {
     "name": "D-hud-timeout-line",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "      if (e.timeout) return `${who} ${me ? 'are' : 'is'} out of time and",
     "new": "      if (false) return `${who} ${me ? 'are' : 'is'} out of time and",
     "tests": [
@@ -1115,7 +1115,7 @@
   },
   {
     "name": "D-hud-sit-line",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "    case 'sit': return me ? 'You sit down.' : `${e.name} sits down.`;",
     "new": "    case 'sit': return '';",
     "tests": [
@@ -1137,7 +1137,7 @@
   },
   {
     "name": "D-hud-empty-shown",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "  const present = seats.filter((_, i) => view.seats[i].kind !== 'empty');",
     "new": "  const present = seats;",
     "tests": [
@@ -1269,7 +1269,7 @@
   },
   {
     "name": "D2-hud-no-clock",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "(online?.clock ? `Your turn - ${online.clock} s.` : 'Your turn.')",
     "new": "'Your turn.'",
     "tests": [
@@ -1291,7 +1291,7 @@
   },
   {
     "name": "D2-hud-refusal-raw",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "`${message} (${HOLDEM_REFUSALS[online.error] ?? 'The table refused that.'})`",
     "new": "`${message} (${online.error})`",
     "tests": [
@@ -2110,7 +2110,7 @@
   },
   {
     "name": "B5-rebuilt-every-second",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "      if (key === shownKey && msgEl) { msgEl.textContent = m.message; return; }\n",
     "new": "",
     "tests": [
@@ -2132,7 +2132,7 @@
   },
   {
     "name": "B5-reset-keeps-slider",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "    resetSlider() { sliderValue = null; shownKey = null; },",
     "new": "    resetSlider() { sliderValue = null; },",
     "tests": [
@@ -2154,7 +2154,7 @@
   },
   {
     "name": "B7-leave-third-person",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": ": me ? (e.broke ? 'You are out of chips and stand up.' : 'You stand up.') : e.broke",
     "new": ": e.broke",
     "tests": [
@@ -2462,7 +2462,7 @@
   },
   {
     "name": "BAY-panel-unpainted",
-    "file": "src/ui/cardTableHud.js",
+    "file": "src/ui/card/cardTableHud.js",
     "old": "    if (c.back) paintBack(ctx, cv.width, cv.height); else paintFace(ctx, c.card, cv.width, cv.height);",
     "new": "    void c;",
     "tests": [

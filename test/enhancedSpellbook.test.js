@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { bookModel, effectWords } from '../src/ui/enhancedSpellbook.js';
+import { bookModel, effectWords } from '../src/ui/enhanced/enhancedSpellbook.js';
 import {
   spellPointCost, EFFECT_NOT_FOUND,
   CANNOT_DELETE_VAMP, CANNOT_DELETE_WERE,
@@ -76,7 +76,7 @@ test('PX23 book: it borrows every law and invents none', () => {
   assert.equal(rows[2].effects.length, 0);
   assert.ok(rows[0].effects[0].group.length > 0);
   // ...and the source of the naming is the classic book's own module.
-  const book = read('src/ui/enhancedSpellbook.js');
+  const book = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.match(book, /from '\.\.\/systems\/spell\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
   assert.match(book, /spellEffects, spellPointCost, effectNotFoundText,/, 'the laws are imported, not rewritten');
   assert.doesNotMatch(book, /tag === 'lycanthrope'|tag === 'vampire'/, 'the tags are constants, never typed');
@@ -90,7 +90,7 @@ test('AUDIT 39: DELETE is two presses in BOTH books, and the words are the class
   // "deleteSpell", and only DeleteSpellConfirm_OnButtonClick's Yes arm
   // (:840-852) deletes. The port's CLASSIC window carries all of that,
   // so the two skins disagreed about an unrecoverable act.
-  const src = read('src/ui/enhancedSpellbook.js');
+  const src = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.match(src, /deleteSpellPrompt\(\)/, 'the prompt is the classic\'s own string, imported');
   assert.doesNotMatch(src, /'Do you want to delete this spell\?'/, 'and never retyped');
   assert.match(src, /^let deleting = null;/m, 'deleteSpellIndex, by another name');
@@ -126,7 +126,7 @@ test('AUDIT 39: DELETE is two presses in BOTH books, and the words are the class
   assert.match(scrim, /win\.querySelectorAll\('button, input'\)\) b\.disabled = true;/,
     'every control beneath the prompt goes dead');
   assert.match(scrim, /win\.append\(deleteScrim\(\)\);/, 'and the prompt is drawn OVER the window');
-  assert.match(read('src/ui/enhancedStyle.js'), /\.sb-shell \.sb-ask \{ position: absolute; inset: 0;/,
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.sb-shell \.sb-ask \{ position: absolute; inset: 0;/,
     'the scrim is a scrim, not a card parked in the detail column');
   // ...and it answers to the same two keys the classic window does
   // (spellbookWindow.js KeyY/KeyN), which the first version had not:
@@ -149,8 +149,8 @@ test('AUDIT 39: DELETE is two presses in BOTH books, and the words are the class
 });
 
 test('PX23 book: the pixel family\'s own bones, and no invented furniture', () => {
-  const book = read('src/ui/enhancedSpellbook.js');
-  const css = read('src/ui/enhancedStyle.js');
+  const book = read('src/ui/enhanced/enhancedSpellbook.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   // The journal's bones a fifth time - the same classes PX4 gave the
   // quest page, so one structure learned once is the whole window's.
   for (const cls of ['px-journal', 'px-qrail', 'px-qdetail', 'px-qname', 'px-qwing']) {
@@ -158,7 +158,7 @@ test('PX23 book: the pixel family\'s own bones, and no invented furniture', () =
   }
   // The divider is the pause window's, gem-word-gem, not one invented here.
   assert.match(book, /d\.append\(el\('span', 'px-gem'\), el\('span', 'px-divword', word\), el\('span', 'px-gem'\)\);/);
-  assert.match(read('src/ui/enhancedMenu.js'), /d\.append\(el\('span', 'px-gem'\), el\('span', 'px-divword', word\), el\('span', 'px-gem'\)\);/,
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /d\.append\(el\('span', 'px-gem'\), el\('span', 'px-divword', word\), el\('span', 'px-gem'\)\);/,
     'and it matches the window it was borrowed from');
   // The head is the pack's three zones (PX19/PX21d), centred.
   // PX24: the head is the FAMILY's now - shared with the chronicle
@@ -175,8 +175,8 @@ test('PX23 book: the pixel family\'s own bones, and no invented furniture', () =
 // The chronicle's two lessons, applied here: an effect carries NUMBERS
 // the first draft never read, and the classic can RENAME while the
 // first draft could not.
-import { effectWords as ew, spellFrame } from '../src/ui/enhancedSpellbook.js';
-import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spellIcons.js';
+import { effectWords as ew, spellFrame } from '../src/ui/enhanced/enhancedSpellbook.js';
+import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spell/spellIcons.js';
 
 test('PX23b: an effect carries magnitude, duration and chance - and the first draft read none', () => {
   // spellEffects hands back the effect RECORDS; the cast engine
@@ -205,7 +205,7 @@ test('PX23b: an effect carries magnitude, duration and chance - and the first dr
   assert.deepEqual(ew({ ...rec(4, 0), magnitudePerLevel: 0 }).parts, ['Magnitude: 8 - 20 + 2 - 5 per 1 level(s)']);
   // ...and the names still come from the classic's own key lookup.
   assert.ok(e.group.length > 0);
-  const src = read('src/ui/enhancedSpellbook.js');
+  const src = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.match(src, /const s = classicEffectSettings\(effect\);/, 'the record is read as DFU instantiates it, not just its type');
 });
 
@@ -222,13 +222,13 @@ test('PX23b: the two icons the classic only shows on HOVER are printed as words'
   assert.equal(spellFrame({ rangeType: 0 }).target, TARGET_DESCRIPTIONS[0], 'an explicit 0 IS Caster only');
   assert.deepEqual(spellFrame({ rangeType: 99, element: 99 }), { target: null, element: null },
     'an index off the end is nothing, not a blank chip');
-  const src = read('src/ui/enhancedSpellbook.js');
+  const src = read('src/ui/enhanced/enhancedSpellbook.js');
   assert.match(src, /from '\.\/spellIcons\.js'/, 'the words are imported, never retyped');
   assert.doesNotMatch(src, /'Caster only'|'Fire based'/);
 });
 
 test('PX23b: RENAME comes back, and the book says when you cannot afford a spell', () => {
-  const src = read('src/ui/enhancedSpellbook.js');
+  const src = read('src/ui/enhanced/enhancedSpellbook.js');
   // The classic asks "Enter spell name : " (:934); the first draft
   // dropped it - a prettier window that can do less.
   assert.match(src, /enterSpellNameLabel\(\)/);
@@ -241,14 +241,14 @@ test('PX23b: RENAME comes back, and the book says when you cannot afford a spell
   // classic answers only by failing at the cast.
   assert.match(src, /const short = Number\.isFinite\(magicka\) && sel\.cost > magicka;/);
   assert.match(src, /not enough magicka/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.sb-shell \.sb-rename input \{[\s\S]{0,120}min-height: 44px;/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.sb-shell \.sb-rename input \{[\s\S]{0,120}min-height: 44px;/);
 });
 
 // ── SB-FX (2026-10-14, a player on Discord: "The spell details panel in the Spellbook shows placeholder values
 // instead of what the spell actually does") ─────────────────────────────────────────────────────────────────────────
 // Built from the PRODUCER, not a literal: the spell the real SpellMakerWindow inscribes, through its own clicks and
 // its own typed spinner field, then saved and restored the way a player's book is.
-import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spellMakerWindow.js';
+import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spell/spellMakerWindow.js';
 import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { spellMakerGroups, spellMakerSubgroups, SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
@@ -256,7 +256,7 @@ import { readSpellsStd } from '../src/formats/spellsStd.js';
 import { join } from 'node:path';
 
 /** A spell made at the maker, as a player makes one: each effect picked from the two lists, its settings typed into
- *  the editor's fields (the enhanced port's door - ui/enhancedPorts.js spellEditorView's `set`), the editor shut, a
+ *  the editor's fields (the enhanced port's door - ui/enhanced/enhancedPorts.js spellEditorView's `set`), the editor shut, a
  *  target and an element pressed, a name, Buy. Answers the record the book is handed. */
 function madeSpell(effects, { target, element, name }) {
   const entity = { name: 'S', level: 1, stats: {}, skills: [50], maxMagicka: 40, goldPieces: 100000,

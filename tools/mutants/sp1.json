@@ -93,7 +93,7 @@
  },
  {
   "name": "SP1-the-load-pane-lost-the-card",
-  "file": "src/ui/enhancedMenu.js",
+  "file": "src/ui/enhanced/enhancedMenu.js",
   "old": "  body.append(transferCard(saves.length));\n}",
   "new": "}",
   "tests": [
@@ -102,7 +102,7 @@
  },
  {
   "name": "SP1-the-zip-import-inflates-everything",
-  "file": "src/ui/enhancedMenu.js",
+  "file": "src/ui/enhanced/enhancedMenu.js",
   "old": "readZipEntries(f, { pick: (names) => names.filter((n) => slotPathOf(n)) })",
   "new": "readZipEntries(f)",
   "tests": [

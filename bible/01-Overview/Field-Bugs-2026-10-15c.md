@@ -97,7 +97,7 @@ on every base and material, through `applyRarity` and the equip door); `fb1015c_
 
 ## LOOT-LOOSE: a looted material goes into the Stores as loose (6)
 
-`src/ui/profPages.js` the Stores page's Put in and Put everything in; `src/scenes/world.js` the deposit's order.
+`src/ui/professions/profPages.js` the Stores page's Put in and Put everything in; `src/scenes/world.js` the deposit's order.
 
 FOUND. Law 3 as written (`06-Systems/Materials-Bag.md` 5): the service counts only what it handed out, and a looted
 unit - rolled on the client - is held and never counted, so the page named it "unstorable" and Put in moved nothing.
@@ -172,7 +172,7 @@ moved. `Port-Ledger.md` MW-D9's row corrected.
 
 `src/scenes/mineHost.js` BOULDER_LIFT.
 
-FOUND. A node's act - its face and its glint (`ui/profReticle.js`) - stands at the node's aim point, its foot plus its
+FOUND. A node's act - its face and its glint (`ui/professions/profReticle.js`) - stands at the node's aim point, its foot plus its
 `lift`. A boulder's lift was half its ROCK's height (to 1.2 m), set over the loose stones the player sees as the boulder:
 the face stood 30 degrees over the stones at a metre and a half, against 8.7 for a vein. Not changed, recorded: a
 boulder's stones stand off the rock's box (`rockFoot`), which for a turned rock can be far from the rock as it shows.

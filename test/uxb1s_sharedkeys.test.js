@@ -24,7 +24,7 @@ import {
   createUnsavedKeybinds, setUnsavedBinding, currentDict, checkDuplicates, applyUnsavedKeybinds, bindingHolders,
   canShareKey, stageShare, keySharers, replacePromptRows, SHARE_KEY_ROW, SHARE_KEY_LABEL, SHARED_KEY_COLOR,
 } from '../src/systems/controlsConfig.js';
-import { paneControls, discardControlsStaging, controlsStaging, SHARED_KEY_PREFIX, CONFIRM_LABEL } from '../src/ui/enhancedControls.js';
+import { paneControls, discardControlsStaging, controlsStaging, SHARED_KEY_PREFIX, CONFIRM_LABEL } from '../src/ui/enhanced/enhancedControls.js';
 import { ControlsWindow } from '../src/ui/controlsWindow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -224,8 +224,8 @@ test('UXB1-S by source: the two self-routing hosts run their ladder once per act
   assert.match(read('src/scenes/interior.js'), /if \(actionsOf\(e, keys\)\.includes\('AutoMap'\)\)/);
   assert.match(read('src/scenes/townTalk.js'), /const m = actionsOf\(e, keys\)\.map\(\(a\) => MODE_ACTIONS\[a\]\)\.find\(Boolean\);/);
   assert.match(read('src/ui/spellbookWindow.js'), /codeMeans\(bindings\(\), code, 'CastSpell'\)/);
-  assert.match(read('src/ui/travelMapWindow.js'), /codeMeans\(bindings\(\), code, 'TravelMap'\)/);
-  assert.match(read('src/ui/enhancedChronicle.js'), /eventMeans\(e, 'LogBook'\)/);
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /codeMeans\(bindings\(\), code, 'TravelMap'\)/);
+  assert.match(read('src/ui/enhanced/enhancedChronicle.js'), /eventMeans\(e, 'LogBook'\)/);
 });
 
 // ── THE LAW, STAGED ──────────────────────────────────────────────
@@ -311,7 +311,7 @@ test('UXB1-S: the enhanced page - a key in use offers "Use for both"; the answer
     delete globalThis.document;
     setBindings(null);
   }
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.ctl-key\.ctl-shared \{ color: #6fcf8a;/, 'its own colour, neither of DFU\'s two');
   // ...and it READS in both faces: the door's `.shell .act` outranked the bare two-class rule, so on the main menu's
   // Settings even DFU's red clash drew as a plain key (measured in a browser: the key's computed colour was the bone)

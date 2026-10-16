@@ -228,7 +228,7 @@
   },
   {
     "name": "AUDITVE-R2-cards-read-before-the-store",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -237,7 +237,7 @@
   },
   {
     "name": "AUDITVE-R2-use-offered-while-reading",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "tests": [
       "test/auditve.test.js"
     ],

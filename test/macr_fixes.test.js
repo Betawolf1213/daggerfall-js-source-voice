@@ -9,7 +9,7 @@ import { FP_FIELD_OF_VIEW, frustum, fpFrameWindow } from '../src/combat/fpArm.js
 import { offHandQuickslot, quickslotView, assignQuickslot, clearQuickslots, QUICKSLOT_TEXT } from '../src/systems/quickslots.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 
 // ═══ MAC-R (2026-09-17): FOUR UNRELATED BUGS, MAC'S LIST ═══════════
@@ -152,10 +152,10 @@ test('MAC-R3 by source: the four hosts hand the rig\'s switchHand beside the lig
   assert.match(wm, /switchHand: \(\) => interiorWeapon\.switchHand\(\),[^\n]*\n\s*toggleLight: \(\) => interiorWeapon\.toggleLight\(\) \}\);/, 'the interior: THIS mode\'s rig');
   assert.match(wm, /quickSwitchHand\(\) \{ interiorWeapon\.switchHand\(\); return true; \},/);
   assert.match(wm, /quickSpell: \(\) => interiorKeyCtx\.quickSpell\(\), quickSwitchHand: \(\) => interiorKeyCtx\.quickSwitchHand\(\),/);
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   assert.match(hud, /quickSpell = null, quickSwitchHand = null \} = \{\}\) \{/);
   assert.match(hud, /quickSwitchHand: quickSwitchHand \?\? null,/);
-  const eh = read('src/ui/enhancedHud.js');
+  const eh = read('src/ui/enhanced/enhancedHud.js');
   assert.match(eh, /cells\.main\.cell\.addEventListener\('pointerdown', tap\(\(\) => \{ liveOpts\.quickSwitchHand\?\.\(\); \}\)\);/);
   assert.doesNotMatch(eh, /bindHold\(cells\.main/, 'no hold on the hand: what is in it is not a list');
   assert.match(eh, /if \(offKind === 'swap'\) liveOpts\.quickSwap\?\.\(\); else liveOpts\.quickOffHand\?\.\(\);/, 'the off cell still presses what it shows through the host');
@@ -198,10 +198,10 @@ test('MAC-R4: a touch press gives the row\'s implicit capture back at once, noth
     assert.deepEqual(released, []);
     dom.win.fire('pointerup', { pointerId: 8, clientX: 10, clientY: 10 });
   });
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.itemrow \{ touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; \}/, 'iOS: no callout over a held tile');
   assert.match(css, /\.wornrow \{ touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; \}/, 'nor over a held panel');
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.doesNotMatch(inv, /addEventListener\?\.\('lostpointercapture'/, 'INV2\'s lost-capture end is retired');
   assert.match(inv, /const onDragMenu = \(e\) => \{ if \(drag && e\.cancelable\) e\.preventDefault\(\); \};/);
   assert.match(inv, /if \(touch\) \{ giveBack\(\); row\.addEventListener\?\.\('gotpointercapture', giveBack, \{ once: true \}\); \}/, 'given back now, and again if it is granted after');

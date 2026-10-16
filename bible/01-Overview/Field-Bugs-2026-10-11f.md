@@ -11,7 +11,7 @@ this wave is read from the two sentences alone, on the code as it stands at main
 
 ## STATION-DOOR: a station's press offers its profession's act (1)
 
-`scenes/worldModes.js` useDecorStation, openStationMaker, offerStationActs; `ui/profPages.js` STORES_ACT_STATIONS,
+`scenes/worldModes.js` useDecorStation, openStationMaker, offerStationActs; `ui/professions/profPages.js` STORES_ACT_STATIONS,
 focusStoresStation.
 
 FOUND. HOME-STATIONS (`06-Systems/Online-Arc.md`, THE PRESS) made a pressed station open its craft's Daggerfall maker

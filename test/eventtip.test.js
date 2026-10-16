@@ -11,11 +11,11 @@ import {
 } from '../src/ui/eventMapMarks.js';
 import { RAID_DURATION_MINUTES } from '../src/systems/raidingParties.js';
 import { createGateOmen, gateTip } from '../src/systems/gate/gateOmen.js';
-import { readGateMark, GATE_RING_CSS } from '../src/ui/gateMapMark.js';
+import { readGateMark, GATE_RING_CSS } from '../src/ui/gate/gateMapMark.js';
 import { gateTimes, gatePhase, gateCountdown, countdownText, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { gateModsWords } from '../src/net/gate/gateMods.js';   // WB8c: tonight's marks on the card
 import { HeldMapWindow, TAP_TIP_S } from '../src/ui/heldMap.js';
-import { toPaper, paintRaidMark } from '../src/ui/inkMap.js';
+import { toPaper, paintRaidMark } from '../src/ui/ink/inkMap.js';
 import { CLIMATES, LOCATION_TYPES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 
@@ -257,9 +257,9 @@ test('EVENT-TIP by source: the host hands the map the raids running now, the poi
   assert.match(h, /stage\.addEventListener\('pointerleave', \(e\) => \{ if \(e\.pointerType !== 'mouse' && this\._tipUntil !== null\) return; this\._hoverAt = null; this\._showTip\(null\); \}\);/, 'WB13c: a tap\'s card outlives the finger\'s leaving');
   assert.match(h, /stage\.addEventListener\('pointerdown', \(\) => \{ this\._hoverAt = null; this\._tipUntil = null; this\._showTip\(null\); \}\);/);
   assert.match(h, /if \(gateMoved\) this\._refreshTip\(\);/, 'a poll that moved the marks refreshes the card under a still pointer');
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hmtip \{ position: absolute; z-index: 3; display: none; pointer-events: none;/, 'the card never takes the pointer');
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hmtip \{ position: absolute; z-index: 3; display: none; pointer-events: none;/, 'the card never takes the pointer');
   // the classic page is DFU's window: it draws the gate's ring, and no raids and no card
-  const classic = read('src/ui/travelMapWindow.js');
+  const classic = read('src/ui/travel/travelMapWindow.js');
   assert.doesNotMatch(classic, /deps\.raids|hmtip|eventMapMarks/);
 });
 

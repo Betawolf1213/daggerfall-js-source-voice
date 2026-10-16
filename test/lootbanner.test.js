@@ -28,7 +28,7 @@ import { validLootItem } from '../src/systems/loot/loot.js';
 import { wildRecord } from '../src/systems/wild/wildDeath.js';
 import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
-import { HUD_PIECES } from '../src/ui/hudLayout.js';
+import { HUD_PIECES } from '../src/ui/hud/hudLayout.js';
 import { registerPresenter } from '../src/systems/notify.js';
 import { setOneShotObserver } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
@@ -328,7 +328,7 @@ test('LOOT-BANNER THE CODEX: a first find is said on the banner on Enhanced Plus
 }));
 
 test('LOOT-BANNER THE WIRING: drawHud reads the player entity it is handed on every skin, under the HUD\'s gate, and its hide door hides the stack; the stack is a HUD-MOVE piece with a preview; the stack steps under the notice stack and never past the window\'s foot; the codex hands its find through the leaf (mutants: the call inside the skin\'s gate; the hide door forgotten; no HUD piece; the layout over the notices)', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   assert.match(hud, /\n  drawLootBanners\(\{ entity: vitals, hidden: cursorActive \|\| !hudRenderEnabled\(\), dt \}\);\n  if \(isEnhanced\(\) && typeof document !== 'undefined'\) \{/, 'beside the revenant\'s cards, before the skin\'s gate');
   assert.match(hud, /drawRevenantCards\(\{ hidden: true \}\);[^\n]*\n  drawLootBanners\(\{ hidden: true \}\);[^\n]*\n\}/, 'the hide door');
   for (const host of ['world.js', 'worldModes.js', 'dungeonContext.js', 'exterior.js']) {

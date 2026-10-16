@@ -246,7 +246,7 @@ measured in the real game - the data's host is refused where it was made.)
 - **The flats' draw count** (PERF-NEXT 10), ~1,000 draws a frame in a town - the billboard pass records for the shadow
   maps, so it waits on the lighting's own work.
 - **Four mutants that survive on main as it stood before the port** (57818ecb, and on this pass's own tree alike): two of
-  UXB1's in `ui/enhancedTrade.js` (F4's lot back beside its stack, the clear's pushes), NAVF's grid stopping early
+  UXB1's in `ui/enhanced/enhancedTrade.js` (F4's lot back beside its stack, the clear's pushes), NAVF's grid stopping early
   (`world/prefabColliders.js`) and AUDIT PRE-MERGE 0928 R5's flat scale walked again (`comeSailAwayPool.js`). Found by
   running the lists the port touched; none is the port's - each its own slice.
 

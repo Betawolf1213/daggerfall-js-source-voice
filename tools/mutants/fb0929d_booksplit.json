@@ -64,14 +64,14 @@
   },
   {
     "name": "BOOK-SPLIT-the-enhanced-counter-pushes",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (i >= 0) from.splice(i, 1);\n  addItem(to, item, item?.questItem ? 'front' : 'dontCare');\n}",
     "new": "  if (i >= 0) from.splice(i, 1);\n  to.push(item);\n}",
     "tests": ["test/fb0929d_booksplit.test.js"]
   },
   {
     "name": "BOOK-SPLIT-the-classic-counter-pushes",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if (i >= 0) from.splice(i, 1);\n    addItem(to, item, item?.questItem ? 'front' : 'dontCare');\n  }",
     "new": "    if (i >= 0) from.splice(i, 1);\n    to.push(item);\n  }",
     "tests": ["test/fb0929d_booksplit.test.js"]

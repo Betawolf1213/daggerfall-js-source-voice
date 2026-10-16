@@ -15,8 +15,8 @@ import {
   TITLE_TEXT, TITLE_RGBA, TITLE_GRADIENT, TITLE_EDGE, GLYPH_RGBA, GLYPH_GRADIENT, GLYPH_DETAIL, GLYPH_MARK, GLYPH_PATH,
   GLYPH_STROKE, FONT_GLYPH_MIN, FONT_GLYPH_MAX, cssRgba, titleBadge, glyphBadges, glyphSvgNode, titlePaint, badgeCss,
 } from '../src/ui/playerBadge.js';
-import { GLYPH_LABEL } from '../src/ui/enhancedAccount.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { GLYPH_LABEL } from '../src/ui/enhanced/enhancedAccount.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { isStaff } from '../src/net/staffCommands.js';
 import { titlesHeld, glyphsOf, equipRefusal, titleWorn, TIER_LISTS, TIER_GLYPH } from '../server-account/src/titles.js';
 import { PATREON_TITLES, patreonTierMap } from '../server-account/src/patreon.js';

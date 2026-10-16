@@ -1,7 +1,7 @@
 [
   {
     "name": "RETROUI-hud-on-canvas",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  if (ui !== canvas) return onUiScreen(renderer, ui, () => drawHud(renderer, ui, art, vitals, heading01, dt, arguments[6]));",
     "new": "  if (false && ui !== canvas) return onUiScreen(renderer, ui, () => drawHud(renderer, ui, art, vitals, heading01, dt, arguments[6]));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RETROUI-enhanced-root",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  root.style.left = inset; root.style.right = inset;",
     "new": "  root.style.left = ''; root.style.right = '';",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "MOVED-no-build-sweep",
-    "file": "src/ui/enhancedNotice.js",
+    "file": "src/ui/enhanced/enhancedNotice.js",
     "old": "  placeHudPieces(doc);\n  return root;",
     "new": "  return root;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "MOVED-always",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "  if (o && (o.x || o.y)) { if (!node.hasAttribute('data-hm-moved'))",
     "new": "  if (true) { if (!node.hasAttribute('data-hm-moved'))",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "MOVED-by-scale",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": "  if (o && (o.x || o.y)) { if (!node.hasAttribute('data-hm-moved'))",
     "new": "  if (o && (o.x || o.y || (o.s && o.s !== 1))) { if (!node.hasAttribute('data-hm-moved'))",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "MOVED-out-slides",
-    "file": "src/ui/hudLayout.js",
+    "file": "src/ui/hud/hudLayout.js",
     "old": ".notice-stack[data-hm-moved] > .notice.notice-out { transform: none; }",
     "new": ".notice-stack[data-hm-moved] > .notice.notice-outX { transform: none; }",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "GLLEAK-ink-per-open",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "  if (_shared && _shared.doc === doc && !_shared.ink.lost()) return _shared.ink;",
     "new": "  if (false) return _shared.ink;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "GLLEAK-dispose-keeps",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "      for (const b of Object.values(buf)) gl.deleteBuffer(b);",
     "new": "      for (const b of []) gl.deleteBuffer(b);",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "GLLEAK-owner-unkeyed",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "      if (key === meshKey && owner === meshOwner) return;",
     "new": "      if (key === meshKey) return;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "GLLEAK-fail-keeps-context",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "catch { loseGlContext(gl); return null; }",
     "new": "catch { return null; }",
     "tests": [

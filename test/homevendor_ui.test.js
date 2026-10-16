@@ -3,11 +3,11 @@
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createVendorTab } from '../src/ui/vendorTab.js';
-import { setVendorPage, drawVendorPage, vendorPageShown, resetVendorPage, VENDOR_PAGE_SECTIONS } from '../src/ui/vendorPage.js';
+import { createVendorTab } from '../src/ui/vendor/vendorTab.js';
+import { setVendorPage, drawVendorPage, vendorPageShown, resetVendorPage, VENDOR_PAGE_SECTIONS } from '../src/ui/vendor/vendorPage.js';
 import { setVendorWaypoint, clearVendorWaypoint, vendorWaypointKey, isVendorWaypoint, vendorWaypointLabel } from '../src/systems/vendorWaypoint.js';
 import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travel/travelMapState.js';
-import { readVendorMark, vendorMarkKey, vendorRingTexels, paintVendorMark, VENDOR_RING_R } from '../src/ui/vendorMapMark.js';
+import { readVendorMark, vendorMarkKey, vendorRingTexels, paintVendorMark, VENDOR_RING_R } from '../src/ui/vendor/vendorMapMark.js';
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 const texts = (n) => [...n.querySelectorAll('*')].map((x) => x.textContent).join('|');

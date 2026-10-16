@@ -25,9 +25,9 @@ import { fileURLToPath } from 'node:url';
 import { createActivateGate, activateFrame, setClickDelay } from '../src/systems/activateGate.js';
 import { createLockOn, LOCK_BREAK_DISTANCE } from '../src/player/lockOn.js';
 import { LookFilter } from '../src/player/lookFilter.js';
-import { HOLD_MS } from '../src/ui/touchGestures.js';
-import { attachTouch } from '../src/ui/touch.js';
-import { TOUCH_REF_HEIGHT } from '../src/ui/touchLook.js';   // TI2
+import { HOLD_MS } from '../src/ui/touch/touchGestures.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
+import { TOUCH_REF_HEIGHT } from '../src/ui/touch/touchLook.js';   // TI2
 import { setBindings, held } from '../src/ui/input.js';
 import { createBindings, setBinding, clearBinding } from '../src/systems/inputActions.js';
 
@@ -173,7 +173,7 @@ test('AUDIT 62 F7: under a window the finger\'s look is DROPPED and its held swi
     canvas.fire('touchstart', tev('touchstart', [[3, 700, 300]], 2000));
     canvas.fire('touchmove', tev('touchmove', [[3, 780, 320]], 2010));
     assert.equal(looks.length, 1, 'and the very next unpaused drag is NOT paid the banked residual - only its own delta');
-    // TI2: the drag is a fraction of the canvas height now (ui/touchLook.js
+    // TI2: the drag is a fraction of the canvas height now (ui/touch/touchLook.js
     // lookNormalisation) - the stub canvas is 600 tall against the
     // 400 reference, so the gain rides 2/3 of TI1b's.
     const norm = TOUCH_REF_HEIGHT / 600;
@@ -194,7 +194,7 @@ test('AUDIT 62 F7: all three hosts hand the layer the SAME predicate their mouse
     assert.match(read(h), /paused: \(\) => gamePaused\(\),/, `${h}: gamePaused() is townTalk's slot OR modes.overlayHeld`);
   }
   assert.match(read('src/scenes/dungeon.js'), /paused: \(\) => !!ctx\.uiOverlayActive,/, 'dungeon: its own mouse predicate');
-  assert.match(read('src/ui/touch.js'), /const paused = !!hooks\.paused\?\.\(\);/, 'the gate lives at the one door all three share');
+  assert.match(read('src/ui/touch/touch.js'), /const paused = !!hooks\.paused\?\.\(\);/, 'the gate lives at the one door all three share');
 });
 
 // ---------------------------------------------------------------
@@ -382,7 +382,7 @@ test('AUDIT 62 F9: nextMode refuses under a window, on the same predicate the F1
     'and the gate comes BEFORE the mode is set');
   // the touch button reads the returned mode as its label, so refusing
   // must answer the CURRENT mode rather than nothing.
-  assert.match(read('src/ui/touch.js'), /modeBtn\.textContent = hooks\.cycleMode\(\)/, 'the label is the hook\'s answer');
+  assert.match(read('src/ui/touch/touch.js'), /modeBtn\.textContent = hooks\.cycleMode\(\)/, 'the label is the hook\'s answer');
 });
 
 // ---------------------------------------------------------------

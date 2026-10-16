@@ -77,7 +77,7 @@
   },
   {
     "name": "A4-stats-door-never-resumes",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "b.onclick = () => { onAction('handoff'); if (fn() === false) onAction('resume'); };",
     "new": "b.onclick = () => { onAction('handoff'); fn(); };",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "B1-tile-swallows-any-release",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "up: (e) => { if (took && took.button === e.button) e.stopPropagation(); },",
     "new": "up: (e) => { if (cellOf(e)) e.stopPropagation(); },",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "B1-menu-ends-a-press-begun-elsewhere",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "      if (took?.bundle !== cell.dataset.bundle || took.button !== 2) return;",
     "new": "",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "B1-a-press-of-the-world-inherits",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  globalThis.addEventListener?.('mousedown', g.forget, true);\n",
     "new": "",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "B1-press-keyed-by-the-node",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "took = { bundle: cell.dataset.bundle, button: e.button };",
     "new": "took = { bundle: cell, button: e.button };",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "B2-hidden-large-hud-keeps-the-rects",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "    if (!hudDrawn) { _placedSpellIcons = []; return; }",
     "new": "    if (!hudDrawn) return;",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "B2-hidden-classic-hud-keeps-the-rects",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  // of the two HUD panels (DaggerfallHUD.cs:157-192).\n  if (!hudDrawn) { _placedSpellIcons = []; return; }",
     "new": "  // of the two HUD panels (DaggerfallHUD.cs:157-192).\n  if (!hudDrawn) return;",
     "tests": [
@@ -320,7 +320,7 @@
   },
   {
     "name": "B2-placement-never-goes-stale",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "export const activeSpellIconsPlaced = () => (nowMs() - _placedAt <= PLACED_FRESH_MS ? _placedSpellIcons : []);",
     "new": "export const activeSpellIconsPlaced = () => _placedSpellIcons;",
     "tests": [
@@ -329,7 +329,7 @@
   },
   {
     "name": "H1-repeat-on-the-last-drawn-view",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      if (vs !== sig) { sig = vs; render(view); } else acts = collectActs(view);\n",
     "new": "",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "H1-stale-editor-acts-press",
-    "file": "src/ui/enhancedPorts.js",
+    "file": "src/ui/enhanced/enhancedPorts.js",
     "old": "const live = (fn) => (...a) => (w.editor === ed ? fn(...a) : undefined);",
     "new": "const live = (fn) => fn;",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "H2-field-lets-the-browser-steal",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      swallowBrowserKey(e);   // AUDIT 27h H2: ...but F5, F6 and F11 are still not the browser's - the hosts' swallow never heard them here, and F5 reloaded the page (chatPanel.js's own guard)\n",
     "new": "",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "H3-clamped-value-left-standing",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      sig = '';   // AUDIT 27h H3: repainted from the model - a value clamped to the one already set changes no view, and \"999\" stood in the field\n",
     "new": "",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "H4-typed-text-lost-in-a-rebuild",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      if (kept.dirty) nf.value = kept.value;\n",
     "new": "",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "H5-body-scroll-resets",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "    main.dataset.scrollKey = `body:${view.title ?? ''}`;   // AUDIT 27h H5: the body keeps its place too - each step's rebuild put a phone's scrolled editor back at the top, the held spinner out from under the finger\n",
     "new": "",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "H6-pad-release-unheard",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "        spin.addEventListener('pointerup', onRelease, { once: true });\n",
     "new": "",
     "tests": [
@@ -392,7 +392,7 @@
   },
   {
     "name": "H7-press-before-the-commit",
-    "file": "src/ui/enhancedPort.js",
+    "file": "src/ui/enhanced/enhancedPort.js",
     "old": "      if (b && !b.disabled) commitTyped();",
     "new": "",
     "tests": [
@@ -401,7 +401,7 @@
   },
   {
     "name": "B1-hotbar-socket-inherits-a-world-press",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "  hbTook = null;   // AUDIT 27h B1 (HB1c's twin)",
     "new": "  // AUDIT 27h B1 (HB1c's twin)",
     "tests": [
@@ -410,7 +410,7 @@
   },
   {
     "name": "B1-hotbar-socket-swallows-any-release",
-    "file": "src/ui/enhancedHotbar.js",
+    "file": "src/ui/enhanced/enhancedHotbar.js",
     "old": "node.addEventListener('mouseup', (e) => { if (hbTook?.node === node && hbTook.button === e.button) e.stopPropagation(); });",
     "new": "node.addEventListener('mouseup', (e) => { if (editable()) e.stopPropagation(); });",
     "tests": [

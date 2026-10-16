@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { stripTakesClick as realStripTakesClick } from '../src/ui/travelControlUI.js';   // DISC22-E: the pointerdown rung's gate
+import { stripTakesClick as realStripTakesClick } from '../src/ui/travel/travelControlUI.js';   // DISC22-E: the pointerdown rung's gate
 
 // Mutation campaign: 13 reintroductions, 13 killed. Both hosts'
 // pointerdown and wheel lines back to the method guard (the shipped

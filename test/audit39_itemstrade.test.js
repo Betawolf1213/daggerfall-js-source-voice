@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { tradeCost } from '../src/systems/tradeModes.js';
 import { generateItems, createPotion, createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe, setMagicItemTemplates, getMagicItemTemplates } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';

@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDIT0929-T3-no-focus-back",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    painted = stage;\n    focusBack(stage);",
     "new": "    painted = stage;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDIT0929-T3-caret-dropped",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      try { n.setSelectionRange(wanted.caret[0], wanted.caret[1]); } catch { /* a box or a button has no caret */ }",
     "new": "      /* the caret dropped */",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDIT0929-T3-focus-across-stages",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (wanted.stage !== stage) { wanted = null; return; }",
     "new": "    if (false) { wanted = null; return; }",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDIT0929-T3-a-disabled-control-focused",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (!n || n.disabled || typeof n.focus !== 'function') return;",
     "new": "    if (!n || typeof n.focus !== 'function') return;",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "AUDIT0929-T3-the-box-unkeyed",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    const box = keyedAs(el('input'), `agree:${key}`);",
     "new": "    const box = el('input');",
     "tests": [

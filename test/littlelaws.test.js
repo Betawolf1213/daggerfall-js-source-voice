@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { canHoldAmount, weightInGPUnits, effectiveUnitWeightInKg, itemWeight, totalWeight, goldStack, carriedWeight } from '../src/systems/inventory.js';
 import { maxEncumbrance, calculateAttackDamage, MATERIAL_INEFFECTIVE_TEXT } from '../src/combat/formulas.js';
 import { checkForLevelUp } from '../src/systems/advancement.js';
-import { NativeInventoryWindow, CANNOT_CARRY_TEXT } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow, CANNOT_CARRY_TEXT } from '../src/ui/native/nativeInventory.js';
 
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };
 

@@ -456,7 +456,7 @@
   },
   {
     "name": "AUDITREST3-C6-the-enhanced-card-unasked",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": ", () => deps.restAct?.() ?? null)) finishAct(); else { overlay._actHealth = channelHealTick(",
     "new": ")) finishAct(); else { overlay._actHealth = channelHealTick(",
     "tests": [

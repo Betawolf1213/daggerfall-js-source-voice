@@ -71,7 +71,7 @@
   },
   {
     "name": "DA12-11-focusStyle-is-ignored",
-    "file": "src/ui/menuPad.js",
+    "file": "src/ui/menu/menuPad.js",
     "old": "  const style = focusStyle ? doc.createElement('style') : null;\n",
     "new": "  const style = doc.createElement('style');\n",
     "tests": ["test/da12_directplay.test.js"]

@@ -46,7 +46,7 @@
 import { getFloat } from '../systems/settings/settings.js';   // SETT: DaggerfallVideo reads SoundVolume per clip
 import { UP_Y } from '../world/mat4.js';   // EV2: the shared billboard up axis
 import { VidFile, VID_BLOCK_TYPES } from '../formats/vidFile.js';
-import { NATIVE_W, NATIVE_H, drawImg, nativeMetrics } from './nativePanel.js';
+import { NATIVE_W, NATIVE_H, drawImg, nativeMetrics } from './native/nativePanel.js';
 import { drawMenuBackdrop } from './chargenArt.js';
 import { audio } from '../systems/audio.js';
 // AUDIT 64 F41: the two global events DaggerfallVidPlayerWindow raises

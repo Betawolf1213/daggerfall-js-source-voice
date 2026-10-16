@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSdBeats, SD_BEAT_TEXT, SD_BEAT_LAST_MS } from '../src/scenes/sdArenaRead.js';
-import { titleCardModel } from '../src/ui/gateTitleCard.js';
-import { sdBarNear, remnantBarModel, SD_BAR_CSS } from '../src/ui/sdRemnantBar.js';
+import { titleCardModel } from '../src/ui/gate/gateTitleCard.js';
+import { sdBarNear, remnantBarModel, SD_BAR_CSS } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { SD_ARENA, orreryOf } from '../src/net/superDungeon/sdBrain.js';
 import { createSdVoice, SD_VOICE_RANK, SD_VOICE_READ_MS, SD_VOICE_WAIT_MS } from '../src/scenes/sdVoice.js';
 import { SD_BLOWS_TEXT } from '../src/scenes/sdRemnantBlows.js';
@@ -22,15 +22,15 @@ import { SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
 import { SD_RECEIPT_WAIT_MS } from '../src/scenes/sdSpoils.js';
 import { courtSaySeconds } from '../src/scenes/gateCourt.js';
 import { MidScreenText } from '../src/ui/midScreenText.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { MARKS_CARD_CSS } from '../src/ui/gateMarksView.js';
-import { DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
-import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_CSS } from '../src/ui/gateBossBar.js';
-import { ONLINE_DRESS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { MARKS_CARD_CSS } from '../src/ui/gate/gateMarksView.js';
+import { DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
+import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_CSS } from '../src/ui/gate/gateBossBar.js';
+import { ONLINE_DRESS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { SD_BLOWS, SD_BODY } from '../src/net/superDungeon/sdRemnant.js';
 import { sdMarksLine, sdHourLine, SD_HOUR_LEFT_MS } from '../src/systems/superDungeon/sdOmen.js';
 import { sdMarksOf, sdEndingOf } from '../src/net/superDungeon/sdMarks.js';
-import { SD_MARK_TIPS } from '../src/ui/sdMarksView.js';
+import { SD_MARK_TIPS } from '../src/ui/superDungeon/sdMarksView.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
@@ -212,7 +212,7 @@ test('SD26 THE MESSAGE LINE OVER THE CARDS (T4): the marks card as I arrive (gat
     assert.ok(up && Number(up[1]) > z, `.${cls} standing: the line over it (${up?.[1]} over ${z})`);
   }
   // the selector's word is the cards' own hide
-  for (const f of ['src/ui/gateMarksView.js', 'src/ui/gateDamageChart.js']) assert.match(read(f), /root\.style\.display = want \? '' : 'none';/, f);
+  for (const f of ['src/ui/gate/gateMarksView.js', 'src/ui/gate/gateDamageChart.js']) assert.match(read(f), /root\.style\.display = want \? '' : 'none';/, f);
 });
 
 test('SD26 THE MESSAGE LINE ITS OWN WIDTH, ON THE SCREEN AT EVERY HUD SCALE (T5): `.hudmid` is fixed at left 50% with no width, so it shrank to the half of the screen right of it and its 86vw cap never held - a 390 px phone wrapped every line at 195 px, the Hour\'s longest into four rows over the ground\'s warning (enhancedHelm.js\'s bar had the same cause). Its width is its content\'s, to the cap - and the cap is divided by the HUD scale, which grows the box after it is laid out: the cap alone put a scale-2 line off both sides (in headless Chromium: 27-363 px on a 390 px phone and 300-980 on a 1280 px screen at every scale 0.5-2). The prison\'s line, never scaled, keeps the cap whole (mutants: the half-screen squeeze; the cap unscaled; the prison\'s cap scaled)', () => {

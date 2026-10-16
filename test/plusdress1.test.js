@@ -1,12 +1,12 @@
 // PLUS-DRESS (2026-09-26, Mac: "just ensure any of the new UI elements are also apart of how enhanced plus looks"):
-// the online lane's newer screens in the stone-and-brass kit. The roles are the kit's table (ui/enhancedFrame.js
+// the online lane's newer screens in the stone-and-brass kit. The roles are the kit's table (ui/enhanced/enhancedFrame.js
 // FRAME_ROLES), read here against each screen's OWN sheet so a role can never name a class nothing draws; what a role
-// cannot say is ui/enhancedPlusStyle.js ONLINE_DRESS_CSS, read as rules; the gate's bar and banner are BUILT on fake
+// cannot say is ui/enhanced/enhancedPlusStyle.js ONLINE_DRESS_CSS, read as rules; the gate's bar and banner are BUILT on fake
 // documents to show they paint from classes now (the Plus sheet cannot outweigh an inline style).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FRAME_ROLES, FRAME_CSS } from '../src/ui/enhancedFrame.js';
-import { ONLINE_DRESS_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { FRAME_ROLES, FRAME_CSS } from '../src/ui/enhanced/enhancedFrame.js';
+import { ONLINE_DRESS_CSS, PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { SOCIAL_CSS } from '../src/ui/socialPanel.js';
 import { SOCIAL_MENU_CSS } from '../src/ui/socialMenu.js';
 import { DECOR_CSS } from '../src/ui/decorPanel.js';
@@ -15,8 +15,8 @@ import { PAGE_CSS } from '../src/ui/pageWindow.js';
 import { PROFILE_CSS } from '../src/ui/profileWindow.js';
 import { PARTY_CSS } from '../src/ui/partyPanel.js';
 import { NAME_CSS } from '../src/ui/nameLayer.js';
-import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_CSS, BOSS_BAR_STYLE_ID } from '../src/ui/gateBossBar.js';
-import { drawGateBanner, destroyGateBanner, GATE_BANNER_CSS, GATE_BANNER_STYLE_ID } from '../src/ui/gateBanner.js';
+import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_CSS, BOSS_BAR_STYLE_ID } from '../src/ui/gate/gateBossBar.js';
+import { drawGateBanner, destroyGateBanner, GATE_BANNER_CSS, GATE_BANNER_STYLE_ID } from '../src/ui/gate/gateBanner.js';
 import { PIXEL_STACK } from '../src/ui/pixelifyFive.js';
 
 /** A sheet as rules: each rule's selectors (trimmed) and its body. Comments out first. */

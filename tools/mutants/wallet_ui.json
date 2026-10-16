@@ -37,7 +37,7 @@
   },
   {
     "name": "WALLET-UI-the-why-for-a-figure-lost",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "el('span', `wallet-v${r.figure == null ? ' why' : ''}`, r.figure ?? r.note)",
     "new": "el('span', 'wallet-v', r.figure ?? '-')",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WALLET-UI-the-silver-why-said-twice",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      if (r.figure != null && r.note) box.append(el('p', 'wallet-note', r.note));",
     "new": "      if (r.note) box.append(el('p', 'wallet-note', r.note));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WALLET-UI-the-empty-one-unmarked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      const row = el('div', `wallet-row${r.none ? ' none' : ''}`);",
     "new": "      const row = el('div', 'wallet-row');",
     "tests": [

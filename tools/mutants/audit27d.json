@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-A1-lift-at-once",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "afterFrames(() => { if (attacking === b && attackSeq === mine) { attacking = null; hooks.attack(0, 0, false); } });",
     "new": "if (attacking === b) { attacking = null; hooks.attack(0, 0, false); }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-A1-stale-lift-lets-go",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "if (attacking === b && attackSeq === mine) {",
     "new": "if (attacking === b) {",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-A2-escape-on-the-field",
-    "file": "src/ui/menuPad.js",
+    "file": "src/ui/menu/menuPad.js",
     "old": "if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable === true)) { target.blur?.(); target = doc.body; }",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-A3-row-to-one",
-    "file": "src/ui/settingsLaw.js",
+    "file": "src/ui/settings/settingsLaw.js",
     "old": "'Controls/JoystickDeadzone': { min: 0, max: 0.9,",
     "new": "'Controls/JoystickDeadzone': { min: 0, max: 1,",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-A5-lost-kept",
-    "file": "src/ui/menuPad.js",
+    "file": "src/ui/menu/menuPad.js",
     "old": "    if (held) { state.lastEl = held; state.lastRect = ui.candidates().find((c) => c.el === held)?.rect ?? null; state.lostAt = null; }\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-A6-larger-axis-alone",
-    "file": "src/ui/menuPad.js",
+    "file": "src/ui/menu/menuPad.js",
     "old": "  if (prev && still[prev]) return prev;\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-A7-left-folds-up",
-    "file": "src/ui/touchButtons.js",
+    "file": "src/ui/touch/touchButtons.js",
     "old": "Left: [-1, 0]",
     "new": "Left: [-1, -1]",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-A9-called-a-deadzone",
-    "file": "src/ui/settingsCopy.js",
+    "file": "src/ui/settings/settingsCopy.js",
     "old": "\"Controls/JoystickMovementThreshold\": \"Gamepad Movement Threshold\",",
     "new": "\"Controls/JoystickMovementThreshold\": \"Gamepad Movement Deadzone\",",
     "tests": [
@@ -404,7 +404,7 @@
   },
   {
     "name": "AUDIT-D6-repeat-dropped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "if (t && !tier.has(t)) lines.push(t);",
     "new": "if (t && !lines.includes(t)) lines.push(t);",
     "tests": [

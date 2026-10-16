@@ -13,15 +13,15 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as tm from '../src/systems/textManager.js';
-import { ENUM_LAW, enumWords, formatValue, stepValue } from '../src/ui/settingsLaw.js';
-import { LABELS, labelOf, helpOf } from '../src/ui/settingsCopy.js';
+import { ENUM_LAW, enumWords, formatValue, stepValue } from '../src/ui/settings/settingsLaw.js';
+import { LABELS, labelOf, helpOf } from '../src/ui/settings/settingsCopy.js';
 import {
   MouseControlsWindow, KEYBIND_ROWS, KEYBIND_LABELS, SLIDERS, CHECKBOXES, THRESHOLD, SMOOTHING_STRENGTHS, WEAPON_SWING_MODES,
   CHECK_SIZE, CHECK_TEXT_OFFSET,
 } from '../src/ui/mouseControlsWindow.js';
 import { JoystickControlsWindow, createJoystickUnsaved } from '../src/ui/joystickControlsWindow.js';
 import { ControlsWindow } from '../src/ui/controlsWindow.js';
-import { paneControls, discardControlsStaging, MULTIPLE_ASSIGNMENTS, DEFAULTS_PROMPT } from '../src/ui/enhancedControls.js';
+import { paneControls, discardControlsStaging, MULTIPLE_ASSIGNMENTS, DEFAULTS_PROMPT } from '../src/ui/enhanced/enhancedControls.js';
 import { createUnsavedKeybinds, removeKeybindPromptRows, splitCamel, buttonText } from '../src/systems/controlsConfig.js';
 import { createBindings, resetDefaults, setBinding, comboCode, getBinding } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';

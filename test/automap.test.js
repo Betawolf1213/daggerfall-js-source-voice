@@ -21,11 +21,11 @@ import {
 import {
   AutomapWindow, buildMicroMap, hexColor32, MICRO_SIZE_MIN, MICRO_BLOCK_PX,
   resetAutomapWindowState, signalAutomapReset, automapCameraState,
-} from '../src/ui/automapWindow.js';
-// ONE HOME, ROAD-C c2/S5: the lens constants live in ui/automapCamera.js
+} from '../src/ui/automap/automapWindow.js';
+// ONE HOME, ROAD-C c2/S5: the lens constants live in ui/automap/automapCamera.js
 // with the rest of the control law - the window stopped re-exporting them
 // when it stopped owning a camera of its own.
-import { FIELD_OF_VIEW_2D, CAMERA_HEIGHT_VIEW_FROM_TOP, VIEW_2D, VIEW_3D } from '../src/ui/automapCamera.js';
+import { FIELD_OF_VIEW_2D, CAMERA_HEIGHT_VIEW_FROM_TOP, VIEW_2D, VIEW_3D } from '../src/ui/automap/automapCamera.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
@@ -278,7 +278,7 @@ test('A1 micro-map: the 2px/block grid with sizeMin 7, B-prefix border colour, h
 // nine buttons on their own rects, press-HOLD polled per frame, mouse
 // drags, and the DialogShortcuts hotkey table. The replacement laws are
 // pinned against the C# in test/roadc_automap_window.test.js, where the
-// camera they drive (ui/automapCamera.js) also lives. What stays here is
+// camera they drive (ui/automap/automapCamera.js) also lives. What stays here is
 // the slice bias, which is still this arc's state and still resets on
 // open unless the setting holds.
 test('c2/S5: the slice bias still resets on open unless AutomapRememberSliceLevel holds (:567-572)', () => {
@@ -325,7 +325,7 @@ test('A1 wiring pins: the M binding and the mesh shader slice seam', () => {
   assert.match(r, /gl\.uniform1f\(this\._solidFog\.clipY, this\._clipY\)/, 'setClipY uploads immediately - the window lifts the slice MID-pass for the beacons');
   // the window rides the mirrored projection (its mesh pass CULLS -
   // the handedness law) and hands lighting/fog/slice back after
-  const w = src('src/ui/automapWindow.js');
+  const w = src('src/ui/automap/automapWindow.js');
   assert.match(w, /mirrorProjectionX\(perspective\(lens\.fov \* DEG/, 'HANDEDNESS: the culling pass mirrors, at the LIVE mode\'s lens (c2/S5)');
   // PIN MOVED, ROAD-C c2/S2: the window no longer holds its own
   // save/restore list at all - `renderer.panelFrame` saves the whole

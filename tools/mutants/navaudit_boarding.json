@@ -336,7 +336,7 @@
   },
   {
     "name": "NAVB-B11-leave-a-plain-close",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "() => exit(m.raid ? 'close' : 'leave')",
     "new": "() => exit('close')",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "NAVB-B9-the-card-undrawn",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const c = t.card ?? t.fight;",
     "new": "  const c = t.card;",
     "tests": [

@@ -3,7 +3,7 @@
 // "Actually lets just keep the other bar and remove the xp. Just have it visible in the player profile"): THE HUD'S
 // RENOWN ROW IS THE BOX AND THE THIN BAR, AND THE BAR IS ON THE MIDDLE. RENOWN4 drew box, bar, numbers - the numbers a
 // readout beside the bar, so the bar's middle stood 42px left of the vitals' (57px at the widest numbers,
-// tools/renownBarProbe.mjs). Now there are no numbers on the HUD - they are the profile menu's (ui/enhancedAccount.js,
+// tools/renownBarProbe.mjs). Now there are no numbers on the HUD - they are the profile menu's (ui/enhanced/enhancedAccount.js,
 // its Renown row: "Mara Venn - Renown 10, 490 / 2,150 XP to Renown 11", renown1.test.js drives it) - the bar is
 // RENOWN4's own 8px, and the row is a grid of three columns - the box, the bar and an empty column the box's width -
 // so the bar's middle is the row's, and the row is as wide as the vitals' and centred under them. The probe measures it
@@ -16,11 +16,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { renownXpFor, RENOWN_MAX, renownProgressText } from '../src/net/renown.js';
-import { setHudRenown } from '../src/ui/hudRenown.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { setHudRenown } from '../src/ui/hud/hudRenown.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const CSS = src('src/ui/enhancedStyle.js');
+const CSS = src('src/ui/enhanced/enhancedStyle.js');
 const rule = (sheet, sel) => {
   const at = sheet.indexOf(`\n${sel} {`);
   assert.ok(at >= 0, `${sel} has a rule`);
@@ -56,7 +56,7 @@ test('RENOWN-BAR the HUD, executed: the row is the box and the bar and nothing e
     createElement: mkEl, createElementNS: (ns) => Object.assign(mkEl(), { ns }),
     getElementById: () => null, head: mkEl(), body: mkEl(),
   };
-  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhancedHud.js');
+  const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { clearQuickslots } = await import('../src/systems/quickslots.js');
   clearQuickslots();
   const entity = { health: 40, maxHealth: 80, magicka: 0, maxMagicka: 10, fatigue: 100, items: [], equip: { slots: {} }, lightSource: null };
@@ -114,6 +114,6 @@ test('RENOWN-BAR the sheet: the row lit is a grid of three columns with the oute
 test('RENOWN-BAR the numbers are the profile menu\'s: its Renown row says how far into the level the character is - "1,453 / 3,460 XP to Renown 13" - and the highest at the cap (mutants: the profile\'s row loses its numbers)', () => {
   assert.equal(renownProgressText(renownXpFor(12) + 1453), '1,453 / 3,460 XP to Renown 13');
   assert.equal(renownProgressText(renownXpFor(RENOWN_MAX)), 'the highest there is');
-  const A = src('src/ui/enhancedAccount.js');
+  const A = src('src/ui/enhanced/enhancedAccount.js');
   assert.match(A, /row\(t\('account\.card\.renown', 'Renown'\), t\('account\.card\.renownRow', '\{name\} - Renown \{level\}, \{progress\}', \{ name: typeof tr\.name === 'string' && tr\.name \? tr\.name : t\('account\.card\.aCharacter', 'A character'\), level: tr\.level, progress: renownProgressText\(tr\.xp\) \}\)\);/, 'each character\'s row: its name, its Renown and the numbers');   // L10N4 (PIN MOVED): one pattern through t(), the numbers its arguments
 });

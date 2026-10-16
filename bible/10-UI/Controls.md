@@ -6,7 +6,7 @@ does need keybinds, what does, and ensuring keybinds are organized and working a
 This page is the standard. The code that holds it is `src/systems/inputActions.js` (the registry: `ACTIONS`,
 `DEFAULT_BINDINGS`, `ACTION_GROUPS`, `MOD_ACTIONS`, `HIDDEN_ACTIONS`, `actionLive`, `migrateKeyBinds`),
 `src/ui/input.js` (the readers every key goes through), and the three controls windows (the enhanced pane
-`src/ui/enhancedControls.js`, the classic grid `src/ui/controlsWindow.js` and its ADVANCED popup
+`src/ui/enhanced/enhancedControls.js`, the classic grid `src/ui/controlsWindow.js` and its ADVANCED popup
 `src/ui/mouseControlsWindow.js`). The laws are pinned by execution in `test/kb1_keybinds.test.js`; the Ledger A row
 THE KEYBINDING STANDARD records every departure from DFU's table.
 
@@ -117,7 +117,7 @@ registry's). The map is a window in the mode's slot, so those keys reach it and 
 number row is not the quick slots there, nor Escape the pause menu.
 
 CSA-L (2026-09-28, a player's ask: "instead of an overuse of keybinds, is there a way we can instead develop enhanced
-plus UI elements?"): on Enhanced Plus the nine are also a HELM PANEL under the compass (`ui/enhancedHelm.js`) - Raise
+plus UI elements?"): on Enhanced Plus the nine are also a HELM PANEL under the compass (`ui/enhanced/enhancedHelm.js`) - Raise
 or Stow sails, the square sails alone where the modifier's chord would raise them, the trim while it is the player's
 (held), Light or Douse lanterns, the time scale's minus, one and plus (offline: HELM-TIME-ONLINE draws no dial online,
 and the d-pad's left and right then step nothing, held they only trim), the position reading and Leave the helm - each
@@ -194,7 +194,7 @@ panel's buttons and the pad's d-pad at the helm are Come Sail Away's nine and no
 The owner, after horse care and wagon upkeep (`06-Systems/Horse-Care.md`, `06-Systems/Wagon-Upkeep.md`): "Proper UI
 elements for the horse + wagon/cart (Enhanced plus)". CSA-L's answer for the helm is the answer for the saddle: on
 Enhanced Plus, astride a horse or on a wagon's bench outdoors, a SADDLE PANEL stands under the compass where the helm
-stands (`ui/enhancedSaddle.js` - the two are never up together), the helm's kind of thing: the HUD's, not a window -
+stands (`ui/enhanced/enhancedSaddle.js` - the two are never up together), the helm's kind of thing: the HUD's, not a window -
 it pauses nothing, and a window over the HUD, the HUD toggled off, a pause or a journey (the travel view, Travel
 Options' bar) hides it. It spends NO key of its own and adds no binding.
 
@@ -225,7 +225,7 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
   (Alt+U)" - `01-Overview/Field-Bugs-2026-10-14-riding-panel.md`): the bar is a HUD-MOVE piece, "Riding panel"
   (`hudLayout.js:"{ id: 'saddle', sel: '.saddlepanel .saddlepanel-bar'"`) - Alt+U frames it, a drag moves it, its
   corner sizes it, its X turns it off in play, and a double-click or Reset puts it back. A panel built at a mount stands
-  where the player put it from its first frame (`ui/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
+  where the player put it from its first frame (`ui/hud/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
   the editor is open and nobody rides it stands as a preview of itself ("Riding panel (preview)", `buildSaddlePreview`).
   The helm panel, its twin at the same place, is a piece too (HUD-HELM, above).
 
@@ -261,10 +261,10 @@ hold - so a common herb, a body and the net's haul could not be played there. No
   up, and a window's press never reaches the world's edge ring - `ui/input.js`); in a window it is Back still.
 - **The pad, Enhanced Plus**: LT (`JoystickAxis9Button0`) is `Interact` - every Plus button held a row, and a trigger
   holds while the right thumb draws the knife's line. Recast, which LT held, is the d-pad's right held. Layout 2
-  (`ui/plusPad.js` `PLUS_PAD_LAYOUT_VERSION`): a store on layout 1 moves once, taking back layout 1's Recast on LT
+  (`ui/plus/plusPad.js` `PLUS_PAD_LAYOUT_VERSION`): a store on layout 1 moves once, taking back layout 1's Recast on LT
   where it still stands (`PLUS_PAD_RETIRED`); a row the player set themselves stands. The Controller bindings window
   has the row.
-- **The touch corner**: its third slot is `Interact` by default (`ui/touchButtons.js`, glyph E, held while the finger
+- **The touch corner**: its third slot is `Interact` by default (`ui/touch/touchButtons.js`, glyph E, held while the finger
   is) - the mode cycle and F a slot further in, the corner 16..344 px, inside the widest the HUD keeps clear of.
 - **The prompts**: with a pad in hand the professions' prompts and lines name its button (B, LT, Circle) - the sea's
   readout's law (AUDIT NAV1); else the key.
@@ -514,4 +514,4 @@ act); on the row of ten the bumpers stay the tabs'. The mouse taking the hands b
 
 ## UI-CALM - the saddle panel when it is wanted (2026-10-14)
 
-A player: "Why is there a huge, unmovable panel showing horse/cart info at the top of my screen? It's intrusive and ruins immersion. Put that info in a separate menu." The saddle panel now stands over the vitals and the hotbar, and only when wanted (`ui/enhancedSaddle.js` saddleShown): the whole panel when its key (F2, `SaddlePanel`) puts it up or the choice is Always; one line when the horse or the wagon needs the rider; the horse's name for six seconds after mounting; a finger's plate a tap from the panel; else nothing. The Horse care row's part *Saddle panel* chooses When needed (default), Always or Off. The Stable page is its separate menu. `10-UI/UI-Calm.md`.
+A player: "Why is there a huge, unmovable panel showing horse/cart info at the top of my screen? It's intrusive and ruins immersion. Put that info in a separate menu." The saddle panel now stands over the vitals and the hotbar, and only when wanted (`ui/enhanced/enhancedSaddle.js` saddleShown): the whole panel when its key (F2, `SaddlePanel`) puts it up or the choice is Always; one line when the horse or the wagon needs the rider; the horse's name for six seconds after mounting; a finger's plate a tap from the panel; else nothing. The Horse care row's part *Saddle panel* chooses When needed (default), Always or Off. The Stable page is its separate menu. `10-UI/UI-Calm.md`.

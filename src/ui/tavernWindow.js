@@ -54,7 +54,7 @@
 //   its "-- Taverns menu" block (:175-179) puts EXIT on G, not on the
 //   E the port had assumed.
 
-import { loadImg, nativeMetrics, drawImg } from './nativePanel.js';
+import { loadImg, nativeMetrics, drawImg } from './native/nativePanel.js';
 import { drawMenuBackdrop } from './chargenArt.js';
 import { ServiceFlowWindow, macroRows } from './guildServiceWindows.js';
 import { goldAmount, totalGoldAmount, deductGold } from '../systems/court.js';

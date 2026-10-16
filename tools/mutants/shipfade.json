@@ -301,7 +301,7 @@
   },
   {
     "name": "HUD-tag-not-faded",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "tagAlpha(t.distance, reach) * Math.max(0, Math.min(1, t.fade ?? 1)) * 100",
     "new": "tagAlpha(t.distance, reach) * 100",
     "tests": [

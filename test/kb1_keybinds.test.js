@@ -31,7 +31,7 @@ import { bindCursorToggle, claimCursorKey, cursorKeyClaimed, cursorActive, setCu
 import { setScreenshotCanvas, screenshotName } from '../src/ui/screenshot.js';
 import { LookFilter, takeFrameLook } from '../src/player/lookFilter.js';
 import { PauseOptionsWindow } from '../src/ui/pauseWindow.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { bindingHolders, createUnsavedKeybinds, replaceKeybindPromptRows, stageReplace, currentDict } from '../src/systems/controlsConfig.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -226,7 +226,7 @@ test('KB1: a window closes on the key that opened it, wherever it is bound - the
   inv.input('KeyI');
   assert.equal(inv.done, true, 'the pack closes on Inventory\'s key');
   setBindings(null);
-  assert.match(rd('src/ui/enhancedSpellbook.js'), /if \(overlayAction\(e\) !== 'back' && !eventMeans\(e, 'CastSpell'\)\) return;/, 'the enhanced book on its own key too (AUDIT KB1: the event\'s own read; UXB1-S: shared or not)');
+  assert.match(rd('src/ui/enhanced/enhancedSpellbook.js'), /if \(overlayAction\(e\) !== 'back' && !eventMeans\(e, 'CastSpell'\)\) return;/, 'the enhanced book on its own key too (AUDIT KB1: the event\'s own read; UXB1-S: shared or not)');
 });
 
 // ── LAW 4: ASKED, NOT TAKEN ────────────────────────────────────────────
@@ -243,7 +243,7 @@ test('KB1 law 4: a held key names its holder - across both dicts - and Yes gives
   stageReplace(u, 'Jump', 'KeyG', [{ action: 'TorchDrop', primary: true }]);
   assert.equal(u.primary.get('TorchDrop'), null);
   assert.equal(currentDict(u).get('Jump'), 'KeyG');
-  for (const f of ['src/ui/enhancedControls.js', 'src/ui/controlsWindow.js', 'src/ui/mouseControlsWindow.js']) {
+  for (const f of ['src/ui/enhanced/enhancedControls.js', 'src/ui/controlsWindow.js', 'src/ui/mouseControlsWindow.js']) {
     assert.match(rd(f), /bindingHolders\(/, `${f} asks`);
   }
 });

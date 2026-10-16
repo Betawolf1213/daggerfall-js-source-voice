@@ -3,8 +3,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { mountEnhancedInventory, itemLine } from '../src/ui/enhancedInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
+import { mountEnhancedInventory, itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 import { randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot/loot.js';
 import { potionRecipeIngredientNames } from '../src/systems/item/itemInfo.js';

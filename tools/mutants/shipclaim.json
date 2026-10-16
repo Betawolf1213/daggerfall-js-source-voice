@@ -418,7 +418,7 @@
   },
   {
     "name": "SC-win-text-raid-offered",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "claim: model.raid ? null : model.claimOffer?.()?.detail ?? null,",
     "new": "claim: model.claimOffer?.()?.detail ?? null,",
     "tests": [
@@ -427,7 +427,7 @@
   },
   {
     "name": "SC-win-raid-has-claim",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "const claim = sail ? null : button('Claim her',",
     "new": "const claim = button('Claim her',",
     "tests": [
@@ -436,7 +436,7 @@
   },
   {
     "name": "SC-win-always-shown",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "for (const n of [claim, claimNote]) if (n) { if (t.claim) n.removeAttribute('hidden'); else n.setAttribute('hidden', ''); }",
     "new": "for (const n of [claim, claimNote]) if (n) n.removeAttribute('hidden');",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "SC-win-press-untold",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "    if (m.fate?.('claim') === false) {",
     "new": "    if (false) {",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "SC-win-refusal-leaves",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "{ note = { text: 'She cannot be claimed.', warn: true }; render(); return; }",
     "new": "{ note = { text: 'She cannot be claimed.', warn: true }; render(); }",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "SC-win-line-unsaid",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "    claimNote.textContent = t.claim ?? '';\n",
     "new": "",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "SC-win-title-unset",
-    "file": "src/ui/navalPlunderWindow.js",
+    "file": "src/ui/naval/navalPlunderWindow.js",
     "old": "    if (claim && t.claim) claim.setAttribute('title', t.claim);\n",
     "new": "",
     "tests": [

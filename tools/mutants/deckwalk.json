@@ -416,7 +416,7 @@
   },
   {
     "name": "SHIPMATES-bars-another-green",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "export const CREW_GREEN = PARTY_GREEN_CSS;",
     "new": "export const CREW_GREEN = '#73ff74';",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "SHIPMATES-bars-rebuilt",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  while (crewSlots.length < want.length) {",
     "new": "  if (want.length) crewSlots = [];\n  while (crewSlots.length < want.length) {",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "SHIPMATES-bars-never-hidden",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "  const want = covered ? [] : points ?? [];\n  if (!tagRoot) {\n    if (!want.length || !doc?.createElement) return;\n    injectSheets(doc);\n    tagRoot = el(doc, 'div', 'dfnaval-tags');\n    tagRoot.setAttribute?.('aria-hidden', 'true');\n    (doc.body ?? doc.documentElement)?.append(tagRoot);\n  }\n  while (crewSlots",
     "new": "  const want = points ?? [];\n  if (!tagRoot) {\n    if (!want.length || !doc?.createElement) return;\n    injectSheets(doc);\n    tagRoot = el(doc, 'div', 'dfnaval-tags');\n    tagRoot.setAttribute?.('aria-hidden', 'true');\n    (doc.body ?? doc.documentElement)?.append(tagRoot);\n  }\n  while (crewSlots",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "SHIPMATES-bars-fade-reversed",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "tagAlpha(p.distance, CREW_BAR_RANGE, CREW_FADE_FROM)",
     "new": "tagAlpha(CREW_BAR_RANGE - p.distance, CREW_BAR_RANGE, CREW_FADE_FROM)",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "SHIPMATES-bars-the-ships-fade",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "tagAlpha(p.distance, CREW_BAR_RANGE, CREW_FADE_FROM)",
     "new": "tagAlpha(p.distance, CREW_BAR_RANGE)",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "SHIPMATES-bars-fill-unread",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "set('share', pct(p.share), (v) => { slot.fill.style.width",
     "new": "set('share', pct(1), (v) => { slot.fill.style.width",
     "tests": [

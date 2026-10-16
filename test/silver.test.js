@@ -32,15 +32,15 @@ function code(text) {
 /** Every file that shows the currency to a player - DRAKES' twelve and the seats' seven. */
 const SHOWN = [
   'src/net/marksLaw.js', 'src/net/marksBook.js', 'src/net/accountClient.js', 'src/scenes/world.js', 'src/ui/bankWindow.js',
-  'src/ui/enhancedAccount.js', 'src/ui/enhancedPorts.js', 'src/ui/marketTab.js', 'src/ui/workTab.js', 'src/ui/noticeWindow.js',
-  'src/ui/profPages.js', 'src/ui/socialPanel.js',
+  'src/ui/enhanced/enhancedAccount.js', 'src/ui/enhanced/enhancedPorts.js', 'src/ui/marketTab.js', 'src/ui/workTab.js', 'src/ui/noticeWindow.js',
+  'src/ui/professions/profPages.js', 'src/ui/socialPanel.js',
   'src/net/royalLink.js', 'src/net/tideLaw.js', 'src/net/townSeatBook.js', 'src/net/townSeatLaw.js', 'src/systems/seatEdicts.js',
   'src/ui/seatTab.js', 'src/ui/seatWorks.js',
 ];
 
 /** Where the old name is left on purpose: a CSS comment inside a style sheet's string, and SQL comments in the service's
  *  statements - no player reads either. */
-const LEFT = new Set(['src/ui/enhancedPlusStyle.js', 'server-account/src/market.js', 'server-account/src/writs.js']);
+const LEFT = new Set(['src/ui/enhanced/enhancedPlusStyle.js', 'server-account/src/market.js', 'server-account/src/writs.js']);
 
 const DRAKE = /\bDrakes?\b|Drake's/;
 
@@ -66,9 +66,9 @@ test('SILVER no word a player reads says Drakes any more - the Bank, the account
   const still = all.filter((f) => !LEFT.has(f) && DRAKE.test(code(src(f))));
   assert.deepEqual(still, [], 'a file still shows the old name');
   // the places it is said, by name
-  const ports = src('src/ui/enhancedPorts.js');
+  const ports = src('src/ui/enhanced/enhancedPorts.js');
   for (const w of ["'Silver to sell'", "title: 'Silver'", "['Silver held'", '`${MARKS_BANK.goldPerMark} gold for each silver`', "'Sell silver'"]) assert.ok(ports.includes(w), w);
-  assert.match(src('src/ui/enhancedAccount.js'), /row\(t\('account\.card\.silver', 'Silver'\), marksText\(flow\.account\.marks\)\)/, 'the account card');   // L10N4 (PIN MOVED): the row's word through t()
+  assert.match(src('src/ui/enhanced/enhancedAccount.js'), /row\(t\('account\.card\.silver', 'Silver'\), marksText\(flow\.account\.marks\)\)/, 'the account card');   // L10N4 (PIN MOVED): the row's word through t()
   assert.match(src('src/ui/socialPanel.js'), /el\('div', 'dfsocial-sec', 'Silver treasury'\)/, 'the guild\'s treasury');
   assert.match(src('src/ui/bankWindow.js'), /MARKS_COUNTING = 'The Bank counts your silver\.\.\.'/);
   assert.match(src('src/ui/workTab.js'), /labelled\(t\('prof\.work\.label\.paySilver', 'Pay \(silver\)'\), pay\)/);   // PIN MOVED (L10N4): the label through t()

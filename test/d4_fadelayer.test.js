@@ -16,8 +16,8 @@ import { fileURLToPath } from 'node:url';
 import {
   FadeBehaviour, hudFade, FADE_STEP, DEFAULT_FADE_DURATION, FADE_BLACK, FADE_CLEAR,
 } from '../src/ui/fadeLayer.js';
-import { HudFlickerController } from '../src/ui/hudFlicker.js';
-import { TravelPopUpWindow } from '../src/ui/travelPopUp.js';
+import { HudFlickerController } from '../src/ui/hud/hudFlicker.js';
+import { TravelPopUpWindow } from '../src/ui/travel/travelPopUp.js';
 import { TeleportPopUpWindow } from '../src/ui/teleportPopUp.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -151,9 +151,9 @@ test('D4: the HUD parent panel is ONE colour with TWO writers', () => {
     health: 100, maxHealth: 100, dt: 0.02, parentAlpha: 0.9, rolls: never,
   }), [0, 0, 0, 0]);
 
-  // ...and ui/hud.js actually feeds both from the fade layer, in DFU's
+  // ...and ui/hud/hud.js actually feeds both from the fade layer, in DFU's
   // order: tick the fade, let the flicker overwrite, draw once.
-  const hud = src('ui/hud.js');
+  const hud = src('ui/hud/hud.js');
   assert.match(hud, /import \{ hudFade \} from '\.\/fadeLayer\.js'/);
   const tick = hud.indexOf('hudFade.tickFade(dt);');
   const cycle = hud.indexOf('_flicker.nextCycle({');
@@ -318,7 +318,7 @@ test('D4: the overlay seam carries the key-up edge the hosts already bind', () =
   }
   // ...and the travel map routes it to whichever sub-window has the
   // keyboard, exactly as `input` does.
-  const map = src('ui/travelMapWindow.js');
+  const map = src('ui/travel/travelMapWindow.js');
   assert.match(map, /keyup\(code, e = null\) \{/);
   assert.match(map, /this\.popUp\.keyup\?\.\(code, e\);/);
   assert.match(map, /this\.telePopUp\.keyup\?\.\(code, e\);/);

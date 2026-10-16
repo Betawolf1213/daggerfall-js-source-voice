@@ -144,7 +144,7 @@
 //                             pushed - there is nothing left under it.
 // } - absent hooks dim their doors, the pause window's own posture.
 
-import { nativeMetrics, drawRect, shadowText, pointToNative } from './nativePanel.js';
+import { nativeMetrics, drawRect, shadowText, pointToNative } from './native/nativePanel.js';
 import { measureText } from './text.js';
 // DaggerfallUI.cs:62's DaggerfallDefaultSelectedTextColor, which
 // ListBox hands every selected row (ListBox.cs:43) - one home for the

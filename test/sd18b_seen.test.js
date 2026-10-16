@@ -1,5 +1,5 @@
 // SD18b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD18b;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MARKS, SEEN (ui/sdMarksView.js) - its Ending
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MARKS, SEEN (ui/superDungeon/sdMarksView.js) - its Ending
 // and its omens as the gate shows the Warden's: the gate's own card as a fighter steps into the Hour, a row under the
 // Remnant's bar all fight long, each in the Hour's own signs; its wake's card naming the Ending it keeps; its own blows'
 // colours leaning to its element and its brass burning in it (rimed, charged, venomed, soul-lit - the gate's grains); a
@@ -12,8 +12,8 @@ import { readFileSync } from 'node:fs';
 import {
   sdMarksViewOf, sdMarksCardModel, sdEndingCss, sdEndingStoneLight, SD_MARK_ICONS, SD_MARK_TIPS, SD_ELEMENT_WORD, SD_MARKS_ARRIVE_MS,
   SD_MARKS_FADE_MS, SD_MARKS_CARD_TEXT, SD_STONE_LIGHT,
-} from '../src/ui/sdMarksView.js';
-import { markIconHtml, markIconSvg, marksViewOf } from '../src/ui/gateMarksView.js';
+} from '../src/ui/superDungeon/sdMarksView.js';
+import { markIconHtml, markIconSvg, marksViewOf } from '../src/ui/gate/gateMarksView.js';
 import { SD_ENDINGS, SD_OMENS, sdMarksOf, sdEndingOf } from '../src/net/superDungeon/sdMarks.js';
 import { SD_STONES, SD_STONE_POS, realmToDungeon, SD_FRAY_MAX, orreryOf } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOWS, newRemnantFight, joinRemnant, remnantStateOf } from '../src/net/superDungeon/sdRemnant.js';
@@ -25,7 +25,7 @@ import {
 } from '../src/scenes/sdRemnantBlows.js';
 import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
 import { createSdBeats, sdGroundModel, sdWakeText, SD_BEAT_TEXT } from '../src/scenes/sdArenaRead.js';
-import { remnantBarModel } from '../src/ui/sdRemnantBar.js';
+import { remnantBarModel } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { createSdHall } from '../src/scenes/sdHall.js';
 import { stonePoint } from '../src/world/superDungeon/sdHall.js';
 import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
@@ -61,7 +61,7 @@ test('SD18b THE MARKS AS THEY ARE SHOWN: the Ending first - its signature, its e
   const gate = marksViewOf(['burning', 'colossal', 'vengeful']);
   assert.equal(markIconHtml(gate.aspect, 20), markIconSvg('burning', 20), 'the gate\'s own as it was');
   // the gate's card's rows and its bar's chips draw a mark's own sign
-  const gmv = readFileSync(new URL('../src/ui/gateMarksView.js', import.meta.url), 'utf8'), gbb = readFileSync(new URL('../src/ui/gateBossBar.js', import.meta.url), 'utf8');
+  const gmv = readFileSync(new URL('../src/ui/gate/gateMarksView.js', import.meta.url), 'utf8'), gbb = readFileSync(new URL('../src/ui/gate/gateBossBar.js', import.meta.url), 'utf8');
   assert.match(gmv, /r\.icon\.innerHTML = markIconHtml\(m, 20\);/);
   assert.match(gbb, /c\.icon\.innerHTML = markIconHtml\(m, 12\);/);
 });

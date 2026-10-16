@@ -192,7 +192,7 @@ test('MODS-ONLINE-2 by source: the port resolves each freed mod where the actor 
 });
 
 test('MODS-ONLINE-2: the lock, the pane and the door all say the same true thing', () => {
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   // A lock that gives the wrong reason is as bad as no reason: the two
   // road rows are not locked because "online is the enhanced lane".
   assert.match(menu, /const ONLINE_GROUND_NOTE = '[^']*same ground[^']*';/, 'the ground lock has its own words');

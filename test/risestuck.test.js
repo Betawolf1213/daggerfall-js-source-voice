@@ -16,7 +16,7 @@ import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
 import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';

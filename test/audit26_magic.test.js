@@ -11,7 +11,7 @@ import {
   ENCHANTMENT_TYPES as T, computeEnchantmentMods,
   enchantArmorMod, enchantArmorDisplayMod, enchantChanceToHitMod,
 } from '../src/systems/enchantments.js';
-import { armorLabelValue } from '../src/ui/nativeInventory.js';
+import { armorLabelValue } from '../src/ui/native/nativeInventory.js';
 import { fatigueLossMultiplierFor } from '../src/scenes/shared.js';
 import { SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 import { applySpell, REGENERATING_TEXT, FEEL_DRAINED_TEXT } from '../src/systems/effects.js';
@@ -131,7 +131,7 @@ test('audit26 F122: the paperdoll armorMod is Decreased MINUS Increased, the com
   assert.equal(armorLabelValue(60, enchantArmorDisplayMod(strong)), 13);
 
   // ...and the window actually feeds it, which it never did before.
-  assert.match(src('src/ui/nativeInventory.js'),
+  assert.match(src('src/ui/native/nativeInventory.js'),
     /armorLabelValue\(av\[i\] \?\? 100, entityArmorDisplayMod\(this\.hooks\.entity, i\)\)/);   // RF1: through the entity's channel - Decreased MINUS Increased plus the port's points on the part (entityMods.entityArmorDisplayMod)
 });
 

@@ -13,9 +13,9 @@ import {
 } from '../src/systems/smithItems.js';
 import { useItem } from '../src/systems/useItem.js';
 import { weaponOfMaterial, armorOfMaterial, createWeapon, ARROW_TEMPLATE } from '../src/combat/enemyEquipment.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
 import { ListPickerWindow, _setListPickerArtForTests } from '../src/ui/listPicker.js';
-import { mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory, useResultAction } from '../src/ui/enhanced/enhancedInventory.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { withDom } from './invdrag.mjs';
 import { _resetForTests } from '../src/systems/uiPrefs.js';

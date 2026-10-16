@@ -11,8 +11,8 @@ import {
 import { plainFoeLootRule } from '../src/systems/foeLootCap.js';
 import { GOLD_TEMPLATE } from '../src/systems/inventory.js';
 import { wildLootAfter } from '../src/scenes/hostCombat.js';
-import { ringPixels, zoneMapView, zoneMapLimits, smoothChain, RING_INK } from '../src/ui/wildZoneMap.js';
-import { scaleMinOf } from '../src/ui/inkMap.js';
+import { ringPixels, zoneMapView, zoneMapLimits, smoothChain, RING_INK } from '../src/ui/wild/wildZoneMap.js';
+import { scaleMinOf } from '../src/ui/ink/inkMap.js';
 import { setPaceZoneCap, paceRateOn, paceNow, paceCanRise, WILD_PACE_CAP, _resetTravelPace } from '../src/systems/travel/travelPace.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 

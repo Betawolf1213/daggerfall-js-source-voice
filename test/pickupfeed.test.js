@@ -240,11 +240,11 @@ test('PICKUP-FEED: the keep-outs name the surfaces they mean - the plaque, its s
   assert.match(plaque, /node\.className = 'wplaque';/);
   assert.match(plaque, /n\.classList\.add\('on'\);/);
   assert.match(plaque, /panel\.className = 'wplaque-stats';/);
-  const prof = rd('src/ui/profHud.js');
+  const prof = rd('src/ui/professions/profHud.js');
   assert.match(prof, /mk\('prof-meter'\)/);
   assert.match(prof, /mk\('prof-prompt'\)/);
   assert.match(prof, /meter\.hidden = true;/);
-  assert.match(rd('src/ui/enhancedHud.js'), /hud-bottom/);
+  assert.match(rd('src/ui/enhanced/enhancedHud.js'), /hud-bottom/);
 });
 
 // ── THE TAKE'S SEAM ──────────────────────────────────────────────

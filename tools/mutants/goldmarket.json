@@ -298,7 +298,7 @@
   },
   {
     "name": "GOLDMARKET-stores-total-no-gold",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "total: s.own + s.bought + (s.gold | 0) + (s.loose | 0), carried: s.carried | 0, uncounted: s.uncounted | 0 };",
     "new": "total: s.own + s.bought + (s.loose | 0), carried: s.carried | 0, uncounted: s.uncounted | 0 };",
     "tests": [

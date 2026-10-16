@@ -10,7 +10,7 @@
   },
   {
     "name": "ACS-B16-words",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "r.sells > 0 ? `buy at ${g(r.sell)} a ${r.unit} (${r.sells} left today)` : r.exotic ? 'not sold here' : 'none to buy today'",
     "new": "r.sells > 0 ? `buy at ${g(r.sell)} a ${r.unit} (${r.sells} left today)` : 'none to buy today'",
     "tests": [
@@ -277,7 +277,7 @@
   },
   {
     "name": "ACS-B11-lede",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "const room = x.room == null ? '' : x.room > 0 ? ` - room for ${x.room} kg more before she lies dead in the water` : ' - she can carry no more';",
     "new": "const room = '';",
     "tests": [
@@ -896,7 +896,7 @@
   },
   {
     "name": "ACS-D19-word",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "export const etherWatersWords = (e) => (e.veil ? 'The Veil' :",
     "new": "export const etherWatersWords = (e) => (false ? 'The Veil' :",
     "tests": [
@@ -1781,7 +1781,7 @@
   },
   {
     "name": "ACS-L10-office-words",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "harbourmaster grants you no favours while your notoriety in its waters stands so high.`",
     "new": "navy hunts you: its harbourmaster grants no favours until your notoriety falls.`",
     "tests": [
@@ -1799,7 +1799,7 @@
   },
   {
     "name": "ACS-B14-an",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "`${/^[aeiou]/i.test(o.rank) ? 'an' : 'a'} ${o.rank}`",
     "new": "`a ${o.rank}`",
     "tests": [
@@ -1817,7 +1817,7 @@
   },
   {
     "name": "ACS-B15-whole-gold",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "const c = Math.ceil(n * r.price - 1e-9); paid += c; purse -= c; }",
     "new": "const c = n * r.price; paid += c; purse -= c; }",
     "tests": [
@@ -1991,7 +1991,7 @@
   },
   {
     "name": "ACS-S2-corner-share",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "const shared = DEFAULT_SHARES.some(([, a]) => a === action.id);",
     "new": "const shared = false;",
     "tests": [
@@ -2054,7 +2054,7 @@
   },
   {
     "name": "ACS-S3-prompts",
-    "file": "src/ui/enhancedHelm.js",
+    "file": "src/ui/enhanced/enhancedHelm.js",
     "old": "  for (const { dir, kind } of glass) if (own[dir]) own[dir][kind] = 'spyglass';",
     "new": "  void glass;",
     "tests": [
@@ -2342,7 +2342,7 @@
   },
   {
     "name": "ACS-S17-order-tags",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": ".dfnaval-tags { position: fixed; inset: 0; pointer-events: none; z-index: 3;",
     "new": ".dfnaval-tags { position: fixed; inset: 0; pointer-events: none; z-index: 5;",
     "tests": [
@@ -2351,7 +2351,7 @@
   },
   {
     "name": "ACS-S17-order-marks",
-    "file": "src/ui/wildMarks.js",
+    "file": "src/ui/wild/wildMarks.js",
     "old": ".dfwild-marks { position: fixed; inset: 0; pointer-events: none; z-index: 3;",
     "new": ".dfwild-marks { position: fixed; inset: 0; pointer-events: none; z-index: 5;",
     "tests": [
@@ -2533,7 +2533,7 @@
   },
   {
     "name": "ACS-S24-hud-bars",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    show('cardhull', parts.cardHull, bars);",
     "new": "    show('cardhull', parts.cardHull, true);",
     "tests": [
@@ -2542,7 +2542,7 @@
   },
   {
     "name": "ACS-S24-hud-gate",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "const bars = t.card?.hull != null;",
     "new": "const bars = !!t.card;",
     "tests": [
@@ -2762,7 +2762,7 @@
   },
   {
     "name": "ACS-X10-join",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "b.can ? b.terms : [b.terms, b.why].filter(Boolean).join(' - ')",
     "new": "b.can ? b.terms : `${b.terms} - ${b.why}`",
     "tests": [
@@ -2771,7 +2771,7 @@
   },
   {
     "name": "ACS-X11-heard-shown",
-    "file": "src/ui/navalYardWindow.js",
+    "file": "src/ui/naval/navalYardWindow.js",
     "old": "    o.hear?.();   // AUDIT CAPTAIN'S SEA X11",
     "new": "    void o;   // AUDIT CAPTAIN'S SEA X11",
     "tests": [
@@ -2997,7 +2997,7 @@
   },
   {
     "name": "ACS-V8-the-chart-pops-a-page",
-    "file": "src/ui/navalPlunderDoor.js",
+    "file": "src/ui/naval/navalPlunderDoor.js",
     "old": "  if (slot !== ETHER_CHART) noteFirstUse(slot === PLUNDER",
     "new": "  noteFirstUse(slot === PLUNDER",
     "tests": [

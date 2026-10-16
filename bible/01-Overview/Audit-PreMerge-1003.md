@@ -92,8 +92,8 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | WD3 | low | The READMEs and the Mod Registry said the packs name a classic piece by its sha256; they name it by `$c` (its block's index and path, checked by name in `classicNames`) - the sha256 is the builder's key. | Said so. |
 | WD4, D8 | low | Beautiful-Towns and Arena.md named the layout's migration 0046 (guild halls). | Its number (0073, M1). |
 
-**The window and the HUD** (`src/ui/arenaDoor.js`, `src/ui/arenaWindow.js`, `src/ui/arenaHud.js`,
-`src/ui/enhancedPlusStyle.js`, `src/ui/hudFoeTarget.js`, `src/systems/arena/arenaBoard.js`, `src/systems/arena/arenaText.js`,
+**The window and the HUD** (`src/ui/arena/arenaDoor.js`, `src/ui/arena/arenaWindow.js`, `src/ui/arena/arenaHud.js`,
+`src/ui/enhanced/enhancedPlusStyle.js`, `src/ui/hud/hudFoeTarget.js`, `src/systems/arena/arenaBoard.js`, `src/systems/arena/arenaText.js`,
 `src/scenes/world.js`, `src/scenes/exterior.js`; the pins in `test/audit1003_ui.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -186,7 +186,7 @@ the pin in `test/audit1003_record.test.js`)
 ## Pre-existing on main
 
 - The kit's brass presses on the stone read 4.41-4.44:1 (the arena's Wager, Fight and chosen side inherit them).
-- The gate's boss bar (`ui/gateBossBar.js`) has U3's geometry and U8's F10 gap.
+- The gate's boss bar (`ui/gate/gateBossBar.js`) has U3's geometry and U8's F10 gap.
 - No house window moves the focus into itself on open; none is `aria-modal`.
 - Forced colours are kept by one rule house-wide (`.qtrack`).
 - `auditsilver_service` B1 (main's, SILVER-WAYS) fails about one run in ten - two concurrent claims race to one batch.
@@ -261,7 +261,7 @@ comment.
 | C8 | low | A HOST WHO STEPPED OUT LOST THE CODE - Host drew a new one while the old session held everyone. | The card offers **Rejoin session <code>**. |
 | S6 | low | THE HERALD CALLED EVERY PLAYERS' BOUT "A RATED BOUT" - a session's and the casual queue's. | A casual bout is called as one. |
 
-**The card** (`src/systems/arena/arenaBoard.js`, `src/ui/arenaWindow.js`, `src/ui/enhancedPlusStyle.js`, `src/systems/arena/arenaText.js`)
+**The card** (`src/systems/arena/arenaBoard.js`, `src/ui/arena/arenaWindow.js`, `src/ui/enhanced/enhancedPlusStyle.js`, `src/systems/arena/arenaText.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -283,7 +283,7 @@ comment.
 | M1 | low | TWO CITES THE MERGE LEFT WRONG in Field-Bugs-2026-09-24 (`online.js`, `worldModes.js`), in a paragraph already stale on both sides. | The paragraph's every cite re-aimed. |
 | M4, D7, D8, D9, D20 | low | THE PR DESCRIPTION: "the last three merges" (four), "number-only conflicts in cites" (two were counts), a stale Verification, a deploy line without ARENA6. | Rewritten. |
 
-**The record** (lens D): D1 (above); D2 the arena6 test's "the result listed" (it voids); D3 `ui/arenaWindow.js` claimed
+**The record** (lens D): D1 (above); D2 the arena6 test's "the result listed" (it voids); D3 `ui/arena/arenaWindow.js` claimed
 tested and mounted nowhere (now `test/audit1003b_ui.test.js`); D4 Home.md's index; D5/C9 the ARENA6 record's four hosts;
 D6 arenaGate's "from anywhere online"; D10-D13 "six-letter", the refusal words, "picked" for "called", the keep's order;
 D14-D15 a JSDoc's `busy`, tick's stranded doc; D16-D19 the patch notes (the alphabet "read aloud", the box's name, the

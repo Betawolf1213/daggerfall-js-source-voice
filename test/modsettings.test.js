@@ -41,7 +41,7 @@ test('ROADS 24: the switches reach the kernel on both paths, and the Mods pane s
   assert.match(host, /setRoads\(settlementsOf\(maps\), logRoads, roadSwitches\)/, 'and on the fallback');
   const worker = readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   assert.match(worker, /\.\.\.\(m\.switches \?\? \{\}\)/, 'the worker attaches them to the built network');
-  const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
+  const menu = readFileSync('src/ui/enhanced/enhancedMenu.js', 'utf8');
   // FT14: the Mods pane is gone - every vendored mod reaches the player as a TILE on the features
   // home (features.js modFeature walks MOD_SETTINGS), and its own keys open inside that tile.
   assert.match(readFileSync('src/systems/features.js', 'utf8'), /modFeature\(/, 'every vendored mod has a row');

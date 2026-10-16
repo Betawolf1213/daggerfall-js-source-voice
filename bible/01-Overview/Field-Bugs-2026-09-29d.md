@@ -29,7 +29,7 @@ its own beside the stack it left: the "duplicate".
 
 **The fix.** `systems/inventory.js` `splitStack` keeps the three identity terms and the price and picture a book's id
 and a potion's recipe set (`splitPricedByIdentity`); the rest is still the fresh mint - condition, material, variant,
-flags, enchantments (Port-Ledger A). `ui/enhancedTrade.js` `move` and `ui/nativeTrade.js` `_move` are Transfer: out of
+flags, enchantments (Port-Ledger A). `ui/enhanced/enhancedTrade.js` `move` and `ui/native/nativeTrade.js` `_move` are Transfer: out of
 one list, AddItem into the other, a quest item to the front as DoTransferItem places it. AddItem gained
 FindExistingStack's first term, `checkItem != item`. A2's and ROAD-Ar R5's pins flipped to the new law (R5's re-merge
 now on a potion the producer mints). `test/fb0929d_booksplit.test.js` (4), `tools/mutants/fb0929d_booksplit.json` (11,

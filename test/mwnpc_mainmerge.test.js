@@ -18,7 +18,7 @@ import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { createFpArm, pieceLanes } from '../src/combat/fpArm.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { whereIs } from '../src/ui/settingsMap.js';
+import { whereIs } from '../src/ui/settings/settingsMap.js';
 import { bowClip, T } from './fixtures/mw/bowClip.mjs';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';
 import { retailSkeleton } from './fixtures/mw/retailRig.mjs';

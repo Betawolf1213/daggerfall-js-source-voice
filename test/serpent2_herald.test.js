@@ -4,7 +4,7 @@
 // AT it), the wire's `site` word (net/wire.js), the hub over the real Room with Discord stubbed (server/src/index.js: the
 // alarm at the bells, the posts, a forged site's kill never posted, a refusal posted again, nothing without a webhook),
 // the client's word (net/online.js sendSerpentSite, systems/serpent/serpentOmen.js ahead, scenes/world.js), and the Timers
-// window's rows (systems/eventTimers.js, ui/enhancedTimers.js).
+// window's rows (systems/eventTimers.js, ui/enhanced/enhancedTimers.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -19,8 +19,8 @@ import {
 } from '../src/net/wire.js';
 import { createSerpentOmen } from '../src/systems/serpent/serpentOmen.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
-import { TIMER_KINDS } from '../src/ui/enhancedTimers.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { TIMER_KINDS } from '../src/ui/enhanced/enhancedTimers.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { SERPENT_RING_MAP_CSS } from '../src/ui/serpentMapMark.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { OnlineSession } from '../src/net/online.js';
@@ -386,7 +386,7 @@ test('SERPENT2 timers: the serpent\'s row through its day - its rising counted d
   // its kind in the window: after the gate's, in its waters' own colour, named in the button
   assert.deepEqual(TIMER_KINDS.slice(0, 2), ['gate', 'serpent']);
   assert.ok(ENHANCED_CSS.includes(`.px-timerswin .tm-serpent { --tm-kind: ${SERPENT_RING_MAP_CSS}; }`));
-  assert.match(rd('src/ui/enhancedTimers.js'), /'Timers: gates, the sea serpent, the Abyss Dungeon, raids, battles and resets'/);   // PIN MOVED (SD2c): the Super dungeon's row beside the serpent's; ABYSS-NAME: named the player's way
+  assert.match(rd('src/ui/enhanced/enhancedTimers.js'), /'Timers: gates, the sea serpent, the Abyss Dungeon, raids, battles and resets'/);   // PIN MOVED (SD2c): the Super dungeon's row beside the serpent's; ABYSS-NAME: named the player's way
   const w = rd('src/scenes/world.js');
   assert.match(w, /serpent: \{ place: serpentOmen\?\.current\?\.\(\)\?\.site\?\.near \?\? null, fellAt: \(day\) => \{ const site = serpentOmen\?\.current\?\.\(\)\?\.site; return site && site\.day === day \? serpentLink\?\.fellAt\?\.\(day, site\) \?\? null : null; \} \},/, 'the host hands the omen\'s port and its own site\'s kill');
 });

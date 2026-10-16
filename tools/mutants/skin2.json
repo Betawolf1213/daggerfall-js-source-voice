@@ -231,7 +231,7 @@
   },
   {
     "name": "S2-open-panel-no-edge",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".card .skinpanel.open { border-color: var(--brass); }",
     "new": ".card .skinpanel.open { }",
     "tests": [

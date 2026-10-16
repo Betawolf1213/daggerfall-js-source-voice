@@ -18,7 +18,7 @@ import { xpForRank, STORES_MAX } from '../src/net/professionLaw.js';
 import { accountProf, SESSION_KEY } from '../src/net/accountClient.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { storesRoom } from '../src/net/chainLaw.js';
-import { storesSplit, storesRows, storesRoomOf, LOOSE_GOODS_LINE } from '../src/ui/profPages.js';
+import { storesSplit, storesRows, storesRoomOf, LOOSE_GOODS_LINE } from '../src/ui/professions/profPages.js';
 import { heldOf, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf } from '../src/systems/materialsBag.js';
 import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
@@ -224,7 +224,7 @@ test('AUDIT BAG-CRAFT A1 client: the Stores page says the loose units - counted 
   assert.deepEqual(await book.ensureInStores([{ key: 'metal:iron', n: 3 }], { work: true }), { ok: true, moved: 3 });
   assert.deepEqual(book.store('metal:iron'), { material: 'metal:iron', own: 0, bought: 0, loose: 3 }, 'the service\'s answer, loose');
   assert.deepEqual([book.storesWorkable('metal:iron'), book.storesHeld('metal:iron')], [3, 0]);
-  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/professions/profPages.js');
   resetProfPages();
   setProfessionsPages({ book, name: (k) => k, withdraw: async () => ({ ok: true, text: '' }), inTown: () => true, carriedHeld: (k) => heldOf(e, k), room: (k) => roomFor(e, k),
     bag: () => ({ has: true, kg: 0, max: 300, count: e.bagItems.length }) });

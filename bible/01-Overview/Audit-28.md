@@ -163,7 +163,7 @@ target in this host. 3 pins; 4 mutants, 4 killed.
 ### W2d CLOSED: the near-death warning (HUDFlickerController.cs)
 
 `Enhancements/NearDeathWarning` ships True and the port had nothing
-behind it. `ui/hudFlicker.js` is the four classes whole and pure:
+behind it. `ui/hud/hudFlicker.js` is the four classes whole and pure:
 below 40% health a fast red flicker (7/s to alpha 0.4, seven reversals
 and out, restarted by every new HealthLost), below 20% a slow throb
 (0.1..0.4 at 0.2/s, never timing out on its own) between bursts. The

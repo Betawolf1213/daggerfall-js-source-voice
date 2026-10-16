@@ -25,4 +25,4 @@ Provenance: https://github.com/Interkarma/daggerfall-unity
 generated from those files, not written by hand, and test/doctrine.test.js
 reads it as the authority for what may stand under public/art/dfu-icons/.
 
-Read by `src/ui/modeIcons.js`; drawn by `src/ui/hudCrosshair.js` (HUD-ICON1).
+Read by `src/ui/modeIcons.js`; drawn by `src/ui/hud/hudCrosshair.js` (HUD-ICON1).

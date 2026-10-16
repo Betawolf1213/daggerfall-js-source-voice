@@ -16,13 +16,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { getPref, setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { ONLINE_PLAYERS_OWN_PREFS, ONLINE_FORCED_PREFS } from '../src/systems/online/onlineLane.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 
-const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
 const STACKED = '@media (max-width: 999px) {';
 const PHONE = '@media (pointer: coarse) and (hover: none) and (max-width: 640px), (pointer: coarse) and (hover: none) and (max-height: 540px) {';
 const SIDE = '@media (pointer: coarse) and (hover: none) and (orientation: landscape) and (max-height: 540px) {';

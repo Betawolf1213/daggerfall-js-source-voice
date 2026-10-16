@@ -2,7 +2,7 @@
 // ARENA3 (2026-10-02, Mac: "Joining a team comes with it's own enhanced UI where you can view your ranking and even
 // player leaderboards"; "extremely detailed and authentic"): WHAT THE ARENA WINDOW SAYS - every page of it, as data,
 // built from the save (the ladder, the league and its book), the game's clock and the gate's state. The window
-// (ui/arenaWindow.js) draws these and asks the host to act; nothing here touches a door. Design:
+// (ui/arena/arenaWindow.js) draws these and asks the host to act; nothing here touches a door. Design:
 // bible/11-Multiplayer/Arena.md "5. The Arena window" - Bouts, Ladder, Team, Leaderboards, Records, Rules.
 //
 // ARENA4b: online the account is the record and the realm the field - the Records page is the account's

@@ -37,7 +37,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NativeTalkWindow, TALK_RECTS } from '../src/ui/nativeTalk.js';
+import { NativeTalkWindow, TALK_RECTS } from '../src/ui/native/nativeTalk.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(root, p), 'utf8');
@@ -123,7 +123,7 @@ test('questflatanchor: the gate is SILENT - the click sound sits inside it', () 
   // handlers (:1465-1498). A gate that returns AFTER the sound would
   // still be wrong: the buttons are greyed out, and greyed-out buttons
   // in this window are silent.
-  const s = rd('src/ui/nativeTalk.js');
+  const s = rd('src/ui/native/nativeTalk.js');
   const gates = [...s.matchAll(/if \(this\._talkOption !== 'whereIs'\) return true;[^\n]*\n\s*audio\.playOneShot/g)];
   assert.equal(gates.length, 4, 'all four category buttons gate BEFORE the sound');
   // ...and Tell-me-about and Where-is themselves are never gated -

@@ -169,35 +169,35 @@
   },
   {
     "name": "RENOWN-GATE-page-held-words-dropped",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (held) return { tag: 'Held', cls: 'is-waiting', line: `It will not come for you before Renown ${REVENANT_MIN_RENOWN}.` };",
     "new": "",
     "tests": ["test/renowngate.test.js"]
   },
   {
     "name": "RENOWN-GATE-page-come-door-unread",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "export function comeWords(r, now, held = revenantHeld()) {",
     "new": "export function comeWords(r, now, held = false) {",
     "tests": ["test/renowngate.test.js"]
   },
   {
     "name": "RENOWN-GATE-page-lair-words-dropped",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (held) return r.lairKnown ? `Lair: ${r.lair.name}.` : 'Lair: unknown.';",
     "new": "",
     "tests": ["test/renowngate.test.js"]
   },
   {
     "name": "RENOWN-GATE-page-lair-door-unread",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "export function lairWords(r, held = revenantHeld()) {",
     "new": "export function lairWords(r, held = false) {",
     "tests": ["test/renowngate.test.js"]
   },
   {
     "name": "RENOWN-GATE-page-note-unsaid",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "(revenantHeld() ? `From Renown ${REVENANT_MIN_RENOWN}, an` : 'An')",
     "new": "'An'",
     "tests": ["test/renowngate.test.js"]

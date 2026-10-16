@@ -288,7 +288,7 @@ test('LW13 seen: a company in file by role (warriors, thieves, mages), its mark 
   const name = namedIn(c, 'Wayrest').name;
   assert.ok(page.known.slice(0, 2).every((r) => r.company === name));
   assert.deepEqual(page.companies, [{ name, town: 'Wayrest', members: page.known.filter((r) => r.company === name).map((r) => r.name) }]);
-  const chron = readFileSync(new URL('../src/ui/enhancedChronicle.js', import.meta.url), 'utf8');
+  const chron = readFileSync(new URL('../src/ui/enhanced/enhancedChronicle.js', import.meta.url), 'utf8');
   assert.match(chron, /if \(p\.company\) top\.append\(el\('span', 'sb-chip', p\.company\)\);/);
   assert.match(chron, /line\.append\(el\('span', 'sb-chip', `Companies \\u00b7 \$\{page\.companies\.length\}`\)\);/);
 });

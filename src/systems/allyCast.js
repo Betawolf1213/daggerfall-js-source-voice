@@ -91,7 +91,7 @@ export const COMPANION_ARMED_LINE = 'Aim at your companion to cast it on them, o
  *  armed ready's ("Press button to fire spell." and the line above it), the caster's ("You cast Heal on Hilda.") and a
  *  party mate's on the receiving end ("Bran casts Heal on you.") - are said at most once in this many seconds of real
  *  time. Each was a new toast every cast, and told apart from the line before it, so the notice stack's repeat guard
- *  (ui/hudText.js NOTICE-SPAM: the back row only) never caught them: a heal cast again and again near a companion
+ *  (ui/hud/hudText.js NOTICE-SPAM: the back row only) never caught them: a heal cast again and again near a companion
  *  stacked three plates a cast. */
 export const GIFT_LINE_QUIET_S = 10;
 /** GIFT-QUIET: the gate a gift's line is said through - `pass(key, fresh)` answers whether the line keyed `key` is said

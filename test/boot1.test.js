@@ -61,7 +61,7 @@ test('BOOT1: no scene host is on the entry\'s static import graph - walked trans
 test('BOOT1: the world host warms up behind the menu, before the menu is awaited, and never rejects unhandled', () => {
   const main = rd('src/main.js');
   const warm = main.indexOf("import('./scenes/world.js').catch(() => {});");
-  const menu = main.indexOf("const { runEnhancedMenu } = await import('./ui/enhancedMenu.js');");
+  const menu = main.indexOf("const { runEnhancedMenu } = await import('./ui/enhanced/enhancedMenu.js');");
   assert.ok(warm > 0, 'the warm-up is gone - Play pays for the world host at the click');
   assert.ok(menu > 0, 'the enhanced menu door is gone - re-aim this pin');
   assert.ok(warm < menu, 'the warm-up must START before the menu is awaited, or it downloads after the player has already clicked Play');

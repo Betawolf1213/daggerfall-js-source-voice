@@ -181,7 +181,7 @@
   },
   {
     "name": "BAGCRAFT-pages-read-held",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "(typeof book?.workable === 'function' ? book.workable(k) : book.held(k));",
     "new": "book.held(k);",
     "tests": [

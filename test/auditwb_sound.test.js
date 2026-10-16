@@ -14,7 +14,7 @@ import { createSpoilsPool } from '../src/scenes/spoilsPool.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon, courtLights } from '../src/world/gate/gateArena.js';
 import { BOSS_CUES, HURT_SHARE, HURT_GAP_MS } from '../src/world/gate/gateBoss.js';
-import { createGateVeil, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gateVeil.js';
+import { createGateVeil, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
 import {
   anchoredClock, DEAD_SKY_FS, FALL_TURNS, FALL_SLIDE, DEAD_CLOCK_PERIOD, RIDGES_TOP, RIDGES, SIGIL_TOWER, LESSER_TOWERS,
 } from '../src/render/deadlands.js';

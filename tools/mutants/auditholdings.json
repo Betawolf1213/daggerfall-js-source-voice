@@ -595,7 +595,7 @@
   },
   {
     "name": "AH-C1-a-note-mid-line",
-    "file": "src/ui/enhancedFrame.js",
+    "file": "src/ui/enhanced/enhancedFrame.js",
     "old": "'.px-sys .cmp-rank', '.px-sys .cmp-mood', '.hud-qspell',",
     "new": "'.px-sys .cmp-rank',   // a note '.px-sys .cmp-mood', '.hud-qspell',",
     "tests": [
@@ -604,7 +604,7 @@
   },
   {
     "name": "AH-C4-the-tabs-never-wrap",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;",
     "new": ".px-tabs { display: flex; justify-content: center; gap: 4px;",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "AH-C6-the-stable-on-an-empty-rail",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  if (!secs.length) {\n    detail.append(el('div', 'px-qverdict', 'Nothing here to hold')",
     "new": "  if (false) {\n    detail.append(el('div', 'px-qverdict', 'Nothing here to hold')",
     "tests": [

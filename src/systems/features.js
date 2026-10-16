@@ -1,7 +1,7 @@
 // FT0 (2026-09-14, Mac: "merging mods, certain setting toggles and
 // enhanced pane toggles into one universal place to toggle enhanceable
 // features"): THE FEATURES REGISTRY - the one declared list behind the
-// FEATURES home on the menu rail (ui/enhancedMenu.js paneFeatures).
+// FEATURES home on the menu rail (ui/enhanced/enhancedMenu.js paneFeatures).
 //
 // A feature is a ROW: a title, a note, the kinds it wears as coloured
 // labels, and ONE control that names the store and key already
@@ -43,7 +43,7 @@ import { declareOnlinePrefs } from './online/onlineLane.js';   // RF4: the lane 
 import { t, localizedText } from './textManager.js';   // L10N4: the screen's words in the player's language, read as they are read
 
 /** The three kinds, in label order. `label` is what the row wears and
- *  the chip says; the colour is the skin's (ui/enhancedStyle.js .kind).
+ *  the chip says; the colour is the skin's (ui/enhanced/enhancedStyle.js .kind).
  *  L10N4: every word on this page is a getter over t(), so a reader reads
  *  the player's language at the moment it reads - never English frozen at
  *  load, before the boot has chosen the language. */
@@ -236,7 +236,7 @@ export const MOD_CURATED = Object.freeze({
   // OW-TOGGLE: and the port's own first-person switch, on the tile for the same reason.
   // TO-ROADS: and its roads, beside it - a first-person journey that follows them.
   // TO-LIVE (2026-10-02, Discord: "both cautious and reckless travel initiate time accelerated travel"): and Inns,
-  // beside Cautiously - the other half of the mod's rule (ui/travelPopUp.js isPlayerControlledTravel). TO-FIELD2 turned
+  // beside Cautiously - the other half of the mod's rule (ui/travel/travelPopUp.js isPlayerControlledTravel). TO-FIELD2 turned
   // it on and FT14 took the pane it could be turned off in, so a trip stopping at inns - Recklessly's too - was always
   // a journey and no dial on any screen said why.
   // IT1: the four a player reaches for first - whether the carriage is the only fast travel, what the driver charges,
@@ -391,7 +391,7 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({
       store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeep/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: upkeepTiers.js HORSE_CARE_DEFAULT
       tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.horseCare.boons', 'Boons')), tier('hard', () => t('features.horseCare.hard', 'Hard'))]),
-      // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhancedSaddle.js saddleShown) - the player's own, offline
+      // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhanced/enhancedSaddle.js saddleShown) - the player's own, offline
       // and online: When needed (its key, F2; a need; the first seconds in the saddle), Always (STEED-UI's), Off
       also: Object.freeze([Object.freeze({ store: 'prefs', key: 'saddlePanel', initial: 'auto', online: 'player' })]),
       parts: Object.freeze([Object.freeze({
@@ -821,7 +821,7 @@ export const FEATURES = Object.freeze([
   // MAP-TOGGLE (2026-09-22, Mac: "is the enhanced map a toggle?" - "Yes
   // needs to be a toggle"): the held sheet was the enhanced skin's alone,
   // with no way to keep the skin and take DFU's own maps back. The three
-  // map doors read this beside the skin now (ui/mapSkin.js heldMapWorn).
+  // map doors read this beside the skin now (ui/map/mapSkin.js heldMapWorn).
   Object.freeze({
     id: 'enhanced-map',
     group: 'interface',   // FT18: was sight
@@ -833,9 +833,9 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({ store: 'prefs', key: 'heldMap', initial: true, online: 'player' }),   // the player's own: what THEIR map looks like
   }),
   // EM3-3D (2026-09-27, Mac: "The dungeon map becomes the new default option, the current 2d enhanced becomes an
-  // option, not removed"): the held map's dungeon sheet in the round (ui/inkDungeonSolid.js, ui/inkDungeonGL.js) -
+  // option, not removed"): the held map's dungeon sheet in the round (ui/ink/inkDungeonSolid.js, ui/ink/inkDungeonGL.js) -
   // turned, tilted and zoomed as DFU's 3D automap is - is the default; off is EM3's flat plan, whole. Read where the
-  // sheet is built (ui/mapSkin.js dungeonMap3dOn), so a change takes the next map opened; `?dungeonmap=flat` stays
+  // sheet is built (ui/map/mapSkin.js dungeonMap3dOn), so a change takes the next map opened; `?dungeonmap=flat` stays
   // the kill door. The held map's own row above still decides whether there is a held map at all.
   Object.freeze({
     id: 'dungeon-map-3d',
@@ -850,7 +850,7 @@ export const FEATURES = Object.freeze([
   // TAMRIEL1 (2026-10-08, Mac: "building the entirety of tamriel that connects accurately to Daggerfall. Not actually
   // traversalable but used and connected as a gigantic map ... seen by players ingame"): the held map's world sheet
   // zooms out past the Bay onto the whole continent, authored in the same hand (ui/tamrielInk.js,
-  // world/tamriel/tamrielGeography.js, bible/03-World/Tamriel.md). Read where the window is built (ui/mapSkin.js
+  // world/tamriel/tamrielGeography.js, bible/03-World/Tamriel.md). Read where the window is built (ui/map/mapSkin.js
   // tamrielMapOn), so a change takes the next map opened; `?tamriel=off` is the kill door.
   Object.freeze({
     id: 'tamriel-map',
@@ -1159,7 +1159,7 @@ export const FEATURES = Object.freeze([
   // type"): the steel plate's helm, two ways - closed (a visor and a plume) or open (a nasal helm, the face showing).
   // Mac's answers: a switch here beside Weapon Sheathing, closed by default. The VIEWER'S, as the sheathing is: it is
   // how this machine draws a steel helm - the player's and every peer's - and it never reaches the wire. Read where the
-  // worn set is composed (combat/fpArm.js); the tile rebuilds the body at once (ui/enhancedMenu.js TILE_AFTER).
+  // worn set is composed (combat/fpArm.js); the tile rebuilds the body at once (ui/enhanced/enhancedMenu.js TILE_AFTER).
   Object.freeze({
     id: 'steel-helm',
     group: 'combat',
@@ -1279,7 +1279,7 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({ store: 'settings', key: 'Enhancements/CombatVoices' }),
   }),
   // UI-CALM (2026-10-14, a player: "Not everything needs to be visible constantly. Show information when it's
-  // relevant."): THE CALM HUD (ui/enhancedHud.js HUD_CALM_PREF) - the vitals rest while full and untouched, and come
+  // relevant."): THE CALM HUD (ui/enhanced/enhancedHud.js HUD_CALM_PREF) - the vitals rest while full and untouched, and come
   // back with the first point lost or spent. On by default; the player's own, online too.
   Object.freeze({
     id: 'calm-hud',
@@ -1352,8 +1352,8 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({
-      store: 'prefs', key: 'quickbarStyle', initial: 'hotbar', online: 'player', lane: 'quickSlots',   // HB1: ui/enhancedHotbar.js HOTBAR_PREF
-      also: Object.freeze([Object.freeze({ store: 'prefs', key: 'quickslots', initial: true, online: 'player' })]),   // QS: ui/enhancedHud.js hides the diamond on false
+      store: 'prefs', key: 'quickbarStyle', initial: 'hotbar', online: 'player', lane: 'quickSlots',   // HB1: ui/enhanced/enhancedHotbar.js HOTBAR_PREF
+      also: Object.freeze([Object.freeze({ store: 'prefs', key: 'quickslots', initial: true, online: 'player' })]),   // QS: ui/enhanced/enhancedHud.js hides the diamond on false
     }),
   }),
   // LOAD1 (2026-10-05, Mac: "add loading screens where needed for the game in an enhanced UI type fashion, maybe make
@@ -1376,7 +1376,7 @@ export const FEATURES = Object.freeze([
     }),
   }),
   // GUIDE3 (2026-09-29, Mac: "...make it more accessible", then "This is your baby"): THE HERALD - a quest's news as
-  // a notice in the enhanced stack (ui/questHerald.js), fed by the quest bridge's tick. On by default (the arc's
+  // a notice in the enhanced stack (ui/quest/questHerald.js), fed by the quest bridge's tick. On by default (the arc's
   // DECISIONS: the silence it answers is DISC6's report); the player's own online, since news is no one else's.
   Object.freeze({
     id: 'quest-herald',
@@ -1386,9 +1386,9 @@ export const FEATURES = Object.freeze([
       + 'under a day left, and when it ends. Off is the classic silence: the journal changes without a word.'); },   // AUDIT GUIDE H1
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'questHerald', initial: true, online: 'player' }),   // ui/questHerald.js HERALD_PREF
+    control: Object.freeze({ store: 'prefs', key: 'questHerald', initial: true, online: 'player' }),   // ui/quest/questHerald.js HERALD_PREF
   }),
-  // GUIDE4 (2026-09-29): THE TRACKER - the quest you follow as a card at the HUD's right-upper edge (ui/questTracker.js),
+  // GUIDE4 (2026-09-29): THE TRACKER - the quest you follow as a card at the HUD's right-upper edge (ui/quest/questTracker.js),
   // fed by the same look. On by default but quiet (DECISIONS 2): it follows the quest the journal last changed until
   // the player tracks one from the journal, and shows nothing with no quest to follow. The player's own online.
   Object.freeze({
@@ -1399,9 +1399,9 @@ export const FEATURES = Object.freeze([
       + 'the time left - or the one you track from the journal. Off is the classic HUD, which says nothing of quests.'); },
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'questTracker', initial: true, online: 'player' }),   // ui/questTracker.js TRACKER_PREF
+    control: Object.freeze({ store: 'prefs', key: 'questTracker', initial: true, online: 'player' }),   // ui/quest/questTracker.js TRACKER_PREF
   }),
-  // GUIDE5 (2026-09-29): THE MARKS - where a quest points, on the held map and the enhanced compass (ui/questMarks.js):
+  // GUIDE5 (2026-09-29): THE MARKS - where a quest points, on the held map and the enhanced compass (ui/quest/questMarks.js):
   // only a place the player's map already holds, never the quest debugger's knowledge. On by default (DECISIONS 7).
   Object.freeze({
     id: 'quest-marks',
@@ -1411,7 +1411,7 @@ export const FEATURES = Object.freeze([
       + 'already holds. Off is the classic map and compass, which mark nothing for a quest.'); },
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'questMarks', initial: true, online: 'player' }),   // ui/questMarks.js MARKS_PREF
+    control: Object.freeze({ store: 'prefs', key: 'questMarks', initial: true, online: 'player' }),   // ui/quest/questMarks.js MARKS_PREF
   }),
   // GUIDE8 (2026-10-05, the delve arc - Quest-Guide-Arc.md DECISIONS 3, "a player who cannot read a dungeon should be
   // able to ask for it"): THE GUIDANCE TIERS. Journal is GUIDE5's law; Exact is the quest debugger's knowledge - every
@@ -1618,7 +1618,7 @@ export const FEATURES = Object.freeze([
     // the same reading holds: a boon is MY body's, so the tier is the player's online.
     //
     // TEMP-UI (2026-10-12, the owner: "add a temperature widget to the UI"): THE TEMPERATURE PLATE IS A PART - shown by
-    // default beside the compass (ui/enhancedHud.js), a picture with no gameplay in it, so each player's own online.
+    // default beside the compass (ui/enhanced/enhancedHud.js), a picture with no gameplay in it, so each player's own online.
     control: Object.freeze({
       store: 'prefs', key: 'survival', initial: 'boons', online: 'player',   // BOONS-DEFAULT: difficulty.js SURVIVAL_DEFAULT
       tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.mod.climatesCalories.boons', 'Boons')), tier('casual', () => t('features.mod.climatesCalories.casual', 'Casual')), tier('hard', () => t('features.mod.climatesCalories.hard', 'Hard'))]),

@@ -17,7 +17,7 @@ import {
 import { OnlineSession } from '../src/net/online.js';
 import { composeCard, createCardAnswerGate, CARD_WAIT_MS, CARD_ANSWER_MS, CARD_ANSWER_ASKERS_MAX } from '../src/net/profileCard.js';
 import { composeLook } from '../src/net/remotePlayers.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { STAT_KEYS_ORDER } from '../src/systems/chargen.js';
 import { MAX_STAT_VALUE } from '../src/systems/statMods.js';
 import { profileView, profileNote, gearRows, GEAR_ROWS, ATTR_SHORT, VITAL_LABELS, PROFILE_CSS, createProfileWindow } from '../src/ui/profileWindow.js';

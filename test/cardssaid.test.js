@@ -12,7 +12,7 @@ import { HOLDEM_GOLD_TABLE } from '../src/net/holdemTable.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';
-import * as hudm from '../src/ui/cardTableHud.js';
+import * as hudm from '../src/ui/card/cardTableHud.js';
 import { holdCursor } from '../src/player/pointerLock.js';
 import { regularsToStand, regularBark, BARK_MS } from '../src/world/card/cardRegulars.js';
 import { fakeDoc } from './decorFakes.mjs';

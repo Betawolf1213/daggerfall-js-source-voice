@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-SLOTS2-S1-the-portrait-reads-every-save",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    const hit = firstRestorable((entry) => portraitSave([saveOf(entry)]) !== null, storage);\n    return hit ? saveOf(hit) : null;",
     "new": "    return portraitSave(restorableSaves(storage).map(saveOf));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-SLOTS2-S1-the-newest-save-whatever-its-face",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "firstRestorable((entry) => portraitSave([saveOf(entry)]) !== null, storage)",
     "new": "firstRestorable(() => true, storage)",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-SLOTS2-S1-the-door-reads-the-list-again",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": ": newestPortraitSave();",
     "new": ": portraitSave(savedGames());",
     "tests": [

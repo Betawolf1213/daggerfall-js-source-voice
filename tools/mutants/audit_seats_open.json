@@ -112,7 +112,7 @@
  },
  {
   "name": "ASO-tv-ribbon-h",
-  "file": "src/ui/travelViewHud.js",
+  "file": "src/ui/travel/travelViewHud.js",
   "old": "const ribbonH = P.rb ? TRAVEL_VIEW_RIBBON.gap + TRAVEL_VIEW_RIBBON.band + TRAVEL_VIEW_RIBBON.edge : 0;",
   "new": "const ribbonH = 0;",
   "tests": [
@@ -121,7 +121,7 @@
  },
  {
   "name": "ASO-tv-badge-rb",
-  "file": "src/ui/travelViewHud.js",
+  "file": "src/ui/travel/travelViewHud.js",
   "old": "glyphs: glyphBadges(b), rb: ribbonColours(b?.rb), arms: badgeArms(b) };",
   "new": "glyphs: glyphBadges(b), rb: null, arms: badgeArms(b) };",
   "tests": [
@@ -130,7 +130,7 @@
  },
  {
   "name": "ASO-tv-badgekey",
-  "file": "src/ui/travelViewHud.js",
+  "file": "src/ui/travel/travelViewHud.js",
   "old": "|${(Array.isArray(b.rb) ? b.rb : []).join('/')}|${h ?",
   "new": "|${h ?",
   "tests": [
@@ -276,7 +276,7 @@
  },
  {
   "name": "ASO-loom-note",
-  "file": "src/ui/profPages.js",
+  "file": "src/ui/professions/profPages.js",
   "old": "if (r.cloth === STANDARD_SILK.key) box.append(",
   "new": "if (r.cloth === 'nothing') box.append(",
   "tests": [

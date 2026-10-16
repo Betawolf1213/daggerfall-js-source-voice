@@ -62,7 +62,7 @@ test('CG2: a DOM text field owns its key - the dungeon route neither routes nor 
   assert.equal(routeKey({ code: 'KeyM', key: 'm', target: { tagName: 'INPUT' } }, { uiOverlayActive: false, toggleAutomap: () => calls.push(['map']) }, null, new Set()), false, 'no overlay: a field\'s M is typed, not the map');
   assert.equal(calls.length, 1, 'and the map did not open');
   // the wizard's own capture listener uses the one definition and lets the field's key bubble
-  const wiz = read('src/ui/enhancedChargen.js');
+  const wiz = read('src/ui/enhanced/enhancedChargen.js');
   assert.match(wiz, /if \(isTextEntryTarget\(e\.target\) && action !== 'back'\) return;/, 'steps aside for a field - for every key it can type (DISC10-B: Escape is the wizard\'s)');
   assert.doesNotMatch(wiz, /t\.tagName === 'INPUT'/, 'no second copy of the rule');
   // the hosts' ladders still put townTalk first, so the fix sits where the swallow was

@@ -16,13 +16,13 @@ import { horseCareRules, HORSE_CARE_PREF } from '../src/systems/upkeep/upkeepSwi
 import { getPref, setPref, loadPrefs, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
-import { tileStates } from '../src/ui/enhancedMenu.js';
+import { tileStates } from '../src/ui/enhanced/enhancedMenu.js';
 import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeep/upkeepRuntime.js';
 import { steedStats, steedSpeedScale, teamDraftScale, stepBreath, bornStats, bondAt, feedHorse, HUNGER, MINUTES_A_DAY, STARVING_AFTER, OATS_TEMPLATE } from '../src/systems/steedCare.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { TRANSPORT_MODES, setRideWalk, setGallopGate, setCanRunOverride, canRunUnlessRiding, rideWalks } from '../src/systems/transport.js';
-import { saddleMeters } from '../src/ui/enhancedSaddle.js';
+import { saddleMeters } from '../src/ui/enhanced/enhancedSaddle.js';
 import { hungerLine, hungerTone } from '../src/ui/holdingsPages.js';
 import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
 
@@ -51,7 +51,7 @@ function onPage(online, fn) {
     if (had === undefined) delete globalThis.location; else globalThis.location = had;
   }
 }
-/** The tile's press, as the Settings screen presses it (ui/enhancedMenu.js tileStates). */
+/** The tile's press, as the Settings screen presses it (ui/enhanced/enhancedMenu.js tileStates). */
 const press = (label) => { const st = tileStates(ROW); assert.equal(st.locked, false, 'the tile takes the press'); st.set(st.labels.indexOf(label)); };
 const pressed = () => { const st = tileStates(ROW); return st.labels[st.at]; };
 /** A motor on a floor, standing, stats DFU's shape (Speed 50, Running 40). */

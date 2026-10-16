@@ -25,7 +25,7 @@ import {
 import { expandMessageBoxTokens } from '../src/systems/talk/talkMacros.js';
 import { TextRsc, RSC, TOKEN_TEXT } from '../src/formats/textRsc.js';
 import { tokenRows } from '../src/ui/messageBox.js';
-import { NativeTalkWindow, TALK_RECTS, COPIED_SHADOW_COLOR } from '../src/ui/nativeTalk.js';
+import { NativeTalkWindow, TALK_RECTS, COPIED_SHADOW_COLOR } from '../src/ui/native/nativeTalk.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 
@@ -750,7 +750,7 @@ test('AUDIT 63 F5: the conversation panel is click-selectable, by ListBox\'s Pix
   assert.equal(w.conversationSelected, 2);
 
   // The DRAW must read that live selection, not restate it.
-  const s = src('ui/nativeTalk.js');
+  const s = src('ui/native/nativeTalk.js');
   assert.match(s, /const selected = index === this\.conversationSelected;/);
   assert.equal(s.includes('const newest = index === entries.length - 1;'), false,
     'the constant that stood in for listboxConversation.SelectedIndex is gone');

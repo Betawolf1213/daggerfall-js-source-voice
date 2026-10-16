@@ -31,7 +31,7 @@
   },
   {
     "name": "QS2-the-quickslot-rows-hidden-under-the-Online-heading",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  for (const grp of shownGroups()) group(body, grp.title, grp.rows.map((r) => [r.action, r.label]));",
     "new": "  group(body, 'Online', shownGroups().flatMap((grp) => grp.rows.map((r) => [r.action, r.label])));",
     "tests": [
@@ -117,7 +117,7 @@
   },
   {
     "name": "QS2-the-slot-buttons-drawn-on-a-loot-row-too",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (side === 'local') for (const b of quickslotActs(picked)) acts.append(b);",
     "new": "  for (const b of quickslotActs(picked)) acts.append(b);",
     "tests": [
@@ -126,7 +126,7 @@
   },
   {
     "name": "QS2-the-consumable-test-inverted",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (isQuickConsumable(item)) return [button('c1', 'Slot 1', 'Unslot 1'), button('c2', 'Slot 2', 'Unslot 2')];",
     "new": "  if (!isQuickConsumable(item)) return [button('c1', 'Slot 1', 'Unslot 1'), button('c2', 'Slot 2', 'Unslot 2')];",
     "tests": [
@@ -135,7 +135,7 @@
   },
   {
     "name": "QS2-Unslot-assigns-again-so-nothing-can-be-cleared",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      if (on) clearQuickslot(slot); else assignQuickslot(slot, item);",
     "new": "      assignQuickslot(slot, item);",
     "tests": [
@@ -144,7 +144,7 @@
   },
   {
     "name": "QS2-slotting-closes-the-tooltip-like-a-use",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "      refresh();   // the pack list is where the chips are drawn\n      render();   // ...and the card stays up, with its labels flipped",
     "new": "      refresh();\n      picked = null;\n      render();",
     "tests": [
@@ -153,7 +153,7 @@
   },
   {
     "name": "QS2-the-row-chip-dropped",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (slot) row.append(el('span', 'qs-mark', slot === 'swap' ? 'SWAP' : (slot === 'c1' ? '1' : '2')));",
     "new": "    if (slot === 'nothing') row.append(el('span', 'qs-mark', slot));",
     "tests": [
@@ -162,7 +162,7 @@
   },
   {
     "name": "QS2-the-chip-drawn-on-remote-rows-too",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (from === 'local') {\n    if (hotbarMode()) {",
     "new": "  if (from === 'local' || from === 'remote') {\n    if (hotbarMode()) {",
     "tests": [
@@ -173,7 +173,7 @@
     "name": "QS2-the-model-reaches-back-up-into-the-window",
     "file": "src/systems/quickslots.js",
     "old": "import { isPotion, isDrug, isLightSource, useItem, USE_PENDING } from './useItem.js';   // ...and the ladder's own stand-ins for a host that handed no hook",
-    "new": "import { isPotion, isDrug, isLightSource, useItem } from './useItem.js';\nimport { USE_PENDING } from '../ui/nativeInventory.js';",
+    "new": "import { isPotion, isDrug, isLightSource, useItem } from './useItem.js';\nimport { USE_PENDING } from '../ui/native/nativeInventory.js';",
     "tests": [
       "test/qs2_inputs.test.js",
       "test/droppedloot.test.js"

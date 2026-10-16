@@ -92,7 +92,7 @@
   },
   {
     "name": "KB1-the-pack-closes-on-a-literal-F6",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    if (code === 'Escape' || code === 'Enter' || (!!this.toggleClosedBinding && code === this.toggleClosedBinding)\n      || (!!this.toggleClosedSecondary && code === this.toggleClosedSecondary)) { this._close(); return; }",
     "new": "    if (code === 'Escape' || code === 'Enter' || code === 'F6') { this._close(); return; }",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "KB1-defaults-save-on-the-spot",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "    unsaved = stagedDefaults(bindings());",
     "new": "    resetDefaults(bindings()); saveKeyBinds(bindings()); unsaved = stagedDefaults(bindings());",
     "tests": [

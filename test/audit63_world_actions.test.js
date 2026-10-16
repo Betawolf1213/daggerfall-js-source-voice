@@ -35,7 +35,7 @@ import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
 import { objectAabb, worldAabb, activationTargets, pickActivatable } from '../src/player/activate.js';
 import { envAttack } from '../src/combat/weaponRig.js';
-import { HudText, HUD_TEXT_POP_DELAY } from '../src/ui/hudText.js';
+import { HudText, HUD_TEXT_POP_DELAY } from '../src/ui/hud/hudText.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

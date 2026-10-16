@@ -216,9 +216,9 @@ test('TV7 host: the bands about the traveller kept a life and a pixel; made once
   assert.match(tvm, /const chasing = _bandChase\.has\(b\.id\), p = bandPlace\(b, bms\);\n\s*marks\.push\(\{ key: `band:\$\{b\.id\}`, at: tvSceneKept\(b, p\.x, p\.z, 2\), label: chasing \? `\$\{WILD_MARK\} \$\{bandLabel\(mk\.name, mk\.mobileTypes\.length\)\}` : bandLabel\(mk\.name, mk\.mobileTypes\.length\), kind: chasing \? 'band chase' : 'band', edge: chasing, pick: true \}\);/, 'seen from above (OW-ATTACK: and pressed - twice, the attack; WILD-ALERT: a chase, a band that noticed me, wears the "!")');
   assert.match(w, /bandFrame\(performance\.now\(\), dt\);   \/\/ TV7/, 'on the frame\'s own clock (AUDIT OW5b B1)');
   assert.match(w, /tvBandSeen = \{ at: null, life: -1, list: \[\] \}; _bandChase\.clear\(\); _bandSpent\.clear\(\); _bandMake\.clear\(\); _bandPos\.clear\(\); _bandPeer\.clear\(\); _bandSpentAt\.length = 0;/, 'a load forgets them - and what the peers said (TV7b)');
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   assert.equal(hud.TRAVEL_VIEW_MARK_COLORS.band, '#e0503c');
-  assert.match(rd('src/ui/travelViewHud.js'), /\|\| k === 'lair' \|\| k === 'band'(?: \|\| k === 'raider')?(?: \|\| k === 'camp')? \? k : 'traveller';/);
+  assert.match(rd('src/ui/travel/travelViewHud.js'), /\|\| k === 'lair' \|\| k === 'band'(?: \|\| k === 'raider')?(?: \|\| k === 'camp')? \? k : 'traveller';/);
 });
 
 test('TV7b THE CHASE, SHARED: the band word - my chases where they are, then the bands spent here, at most BANDS_WIRE_MAX; heard, only what a band word can be; two chasers of one band settled by id alike on every client', () => {

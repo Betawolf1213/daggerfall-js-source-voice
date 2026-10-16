@@ -30,7 +30,7 @@ import { createBindings, resetDefaults, saveKeyBinds, onSavedKeyBinds } from '..
 import {
   getBool, getFloat, getInt, setValue, effectiveSettings, _resetForTests,
 } from '../src/systems/settings/settings.js';
-import { NUMBER_LAW } from '../src/ui/settingsLaw.js';
+import { NUMBER_LAW } from '../src/ui/settings/settingsLaw.js';
 import { measureText } from '../src/ui/text.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -407,7 +407,7 @@ test('G6: the checkboxes, the field focus and the capture take pointer input', (
 
 test('G6: HorizontalSlider.cs has ONE home, and the topic bar uses it', () => {
   // nativeTalk.js carried half of DrawSlider before this slice.
-  const talk = code('ui/nativeTalk.js');
+  const talk = code('ui/native/nativeTalk.js');
   assert.match(talk, /import \{ sliderThumb \} from '\.\/horizontalSlider\.js';/);
   assert.match(talk, /export const topicSliderThumb = sliderThumb;/);
   assert.equal(/const thumbW = Math\.max\(10,/.test(talk), false,

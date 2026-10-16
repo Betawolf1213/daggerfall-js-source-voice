@@ -1,6 +1,6 @@
 [
-  {"name": "AUDIT-MERCHANT-YARDS-Y1-the-classic-steal-taken", "file": "src/ui/nativeTrade.js", "old": "    if (refused) { this.hooks.say?.(refused, 2); return; }", "new": "    void refused;", "tests": ["test/merchantyards1.test.js"]},
-  {"name": "AUDIT-MERCHANT-YARDS-Y1-the-enhanced-steal-kept", "file": "src/ui/enhancedTrade.js", "old": "  if (inBuy() && !deps.stealRefusal?.()) {", "new": "  if (inBuy()) {", "tests": ["test/merchantyards1.test.js"]},
+  {"name": "AUDIT-MERCHANT-YARDS-Y1-the-classic-steal-taken", "file": "src/ui/native/nativeTrade.js", "old": "    if (refused) { this.hooks.say?.(refused, 2); return; }", "new": "    void refused;", "tests": ["test/merchantyards1.test.js"]},
+  {"name": "AUDIT-MERCHANT-YARDS-Y1-the-enhanced-steal-kept", "file": "src/ui/enhanced/enhancedTrade.js", "old": "  if (inBuy() && !deps.stealRefusal?.()) {", "new": "  if (inBuy()) {", "tests": ["test/merchantyards1.test.js"]},
   {"name": "AUDIT-MERCHANT-YARDS-Y1-the-counter-silent", "file": "src/systems/merchantYards.js", "old": "priceIndex: YARD_PRICE_INDEX, noSteal: YARD_TEXT.steal,", "new": "priceIndex: YARD_PRICE_INDEX,", "tests": ["test/merchantyards1.test.js"]},
   {"name": "AUDIT-MERCHANT-YARDS-Y1-the-window-unhanded", "file": "src/scenes/worldModes.js", "old": "stealRefusal: () => b.noSteal ?? null,", "new": "stealRefusal: () => null,", "tests": ["test/merchantyards1.test.js"]},
   {"name": "AUDIT-MERCHANT-YARDS-Y2-the-regions-walk", "file": "src/scenes/worldModes.js", "old": "    if (Number.isFinite(b?.priceIndex)) return b.priceIndex;", "new": "    if (Number.isFinite(b?.priceIndex) && false) return b.priceIndex;", "tests": ["test/merchantyards1.test.js"]},

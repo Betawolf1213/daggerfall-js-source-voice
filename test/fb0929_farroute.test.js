@@ -4,7 +4,7 @@
 // (bible/06-Systems/Travel-View.md, FB0929.)
 //
 // THE FAR JOURNEY'S LINE. TV2's route line is an SVG path through every projected point of the journey - four a leg -
-// dashed over a dark casing (ui/enhancedStyle.js .tview-route-line). A click in the view is a few legs, all on the
+// dashed over a dark casing (ui/enhanced/enhancedStyle.js .tview-route-line). A click in the view is a few legs, all on the
 // screen; a pick on the travel map is a hundred and more, and a point of it beside the eye's plane projects hundreds of
 // thousands of pixels out. The browser lays a dash every 15 px of the WHOLE path, off the screen too, and rasters it
 // again every frame the camera moves: 1,500,000 px of path, 100,000 dashes a frame. The planner, the legs and the
@@ -25,7 +25,7 @@ import { forwardOf, TV_RISE_S } from '../src/player/travelCamera.js';
 import { projectToScreen } from '../src/player/tapRay.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 import { StreamingWorldState, mapPixelToWorldCoords } from '../src/world/streamingWorld.js';
-import * as hud from '../src/ui/travelViewHud.js';
+import * as hud from '../src/ui/travel/travelViewHud.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const bytes = (n) => new Uint8Array(readFileSync(new URL(`../vendor/roads-hazelnut/${n}`, import.meta.url)));
@@ -37,7 +37,7 @@ const FAR = { x: 595, y: 5 };   // four hundred off: a pick on the travel map
 const SPOT_M = 300;   // a click on the ground the view shows: 300 m north, in the traveller's own pixel (40 native units a metre)
 
 // the line's paint, read off the style sheet: the dash's period and the casing's width
-const CSS = rd('src/ui/enhancedStyle.js');
+const CSS = rd('src/ui/enhanced/enhancedStyle.js');
 // OW-DOTS-GROUND: the line is drawn as dots now (the view's world points, scenes/travelView.js routeGroundDots) - the
 // path's length is still the measure of what an uncut line would cost, a dot every ROUTE_DOT_PX at the finest
 const DASH = [null, '0', String(ROUTE_DOT_PX)];

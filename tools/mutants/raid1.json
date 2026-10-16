@@ -421,7 +421,7 @@
   },
   {
     "name": "RAID1-picker-never-at-hand",
-    "file": "src/ui/travelMapWindow.js",
+    "file": "src/ui/travel/travelMapWindow.js",
     "old": "export const travelMapPickerData = () => _art?.pickerBitmap?.data ?? null;",
     "new": "export const travelMapPickerData = () => null;",
     "tests": ["test/raid1_raidingParties.test.js"]

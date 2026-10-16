@@ -41,7 +41,7 @@
   },
   {
     "name": "JRN-composer-hands-the-raw-text",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "deps.notebook().addNote(breakableNote(text));",
     "new": "deps.notebook().addNote(text);",
     "tests": ["test/journal1.test.js", "test/enhancedChronicle.test.js"],
@@ -417,7 +417,7 @@
   },
   {
     "name": "JRN-share-on-every-section",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    const share = section === 'notes' && deps.notebook?.() ? (deps.pageShare?.() ?? null) : null;",
     "new": "    const share = deps.notebook?.() ? (deps.pageShare?.() ?? null) : null;",
     "tests": ["test/journal1.test.js"],
@@ -425,7 +425,7 @@
   },
   {
     "name": "JRN-strip-on-every-note",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "        if (share && sharing === e.index) entry.append(shareStrip(share, e.index));",
     "new": "        if (share) entry.append(shareStrip(share, e.index));",
     "tests": ["test/journal1.test.js"],
@@ -433,7 +433,7 @@
   },
   {
     "name": "JRN-share-the-cards-place",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "entry.append(shareStrip(share, e.index));",
     "new": "entry.append(shareStrip(share, i));",
     "tests": ["test/journal1.test.js"],
@@ -441,7 +441,7 @@
   },
   {
     "name": "JRN-remove-the-cards-place",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "deps.notebook().removeNote(e.index);",
     "new": "deps.notebook().removeNote(i);",
     "tests": ["test/journal1.test.js", "test/enhancedChronicle.test.js"],
@@ -449,7 +449,7 @@
   },
   {
     "name": "JRN-letter-left-standing",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "      if (w === true) { onExit(); return; }",
     "new": "      if (w === true) { return; }",
     "tests": ["test/journal1.test.js"],
@@ -537,7 +537,7 @@
   },
   {
     "name": "JRN-chronicle-words-run-out",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  line-height: 1.65; color: #d8cfae; text-shadow: 2px 2px 0 rgba(0,0,0,0.8);\n  overflow-wrap: anywhere; }",
     "new": "  line-height: 1.65; color: #d8cfae; text-shadow: 2px 2px 0 rgba(0,0,0,0.8); }",
     "tests": ["test/journal1.test.js"],

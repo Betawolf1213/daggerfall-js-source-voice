@@ -38,7 +38,7 @@ test('PROFILE2: paused, the portrait is the character being PLAYED - its race, s
 });
 
 test('PROFILE2: the pause face carries the mark and its window - the window innermost, and the door reads the live character only when paused', () => {
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   const mark = menu.slice(menu.indexOf('function profileMark()'), menu.indexOf('function profileMark()') + 600);
   assert.match(mark, /const save = profileCharacter\(\);/);   // PROFILE-MENU: PIN MOVED - the law is one function the card asks too
   assert.match(menu, /function profileCharacter\(\) \{\n  return mode === 'pause' \? liveCharacter\(playerEntity\) : newestPortraitSave\(\);\n\}/);
@@ -50,7 +50,7 @@ test('PROFILE2: the pause face carries the mark and its window - the window inne
   // and a visit's: a window left open on the door does not stand over the next pause unasked
   const mount = menu.slice(menu.indexOf('export function mountEnhancedMenu('), menu.indexOf('export function mountEnhancedMenu(') + 5000);
   assert.match(mount, /questRepairSaid = null;[^\n]*\n(\s*\/\/[^\n]*\n)*\s*accountOpen = false;\n/);
-  const css = src('src/ui/enhancedStyle.js');
+  const css = src('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\n\.px-over \.px-profile \{ top: 10px; right: 12px; \}/, 'a size smaller over the game, above the pause window');
   assert.match(css, /\n\.px-over \.px-portrait \{ width: 48px; height: 48px; \}/);
   assert.match(css, /\n\.px-over \.px-acctstage \{[^}]*align-items: center;/, 'its window centred - no wordmark to sit under');

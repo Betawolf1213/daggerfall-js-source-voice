@@ -1,6 +1,6 @@
 // AUDIT PRE-MERGE 1003b (2026-10-03, the owner: "We're going to do one last deep audit on everything before we push this.
-// It needs to be perfection"): THE PRIVATE SESSION'S CARD IN THE ARENA WINDOW (ARENA6; src/ui/arenaWindow.js over
-// src/systems/arena/arenaBoard.js sessionCard, src/ui/enhancedPlusStyle.js) - lens U's findings, each red first, on chargenDom's
+// It needs to be perfection"): THE PRIVATE SESSION'S CARD IN THE ARENA WINDOW (ARENA6; src/ui/arena/arenaWindow.js over
+// src/systems/arena/arenaBoard.js sessionCard, src/ui/enhanced/enhancedPlusStyle.js) - lens U's findings, each red first, on chargenDom's
 // page as test/audit1003_ui.test.js mounts the window. The layout's measure is Chromium's (the lens's probe); the rules
 // that make it are pinned here. The record: bible/01-Overview/Audit-PreMerge-1003.md, its second pass.
 import './chargenDom.mjs';
@@ -8,8 +8,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as AB from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { mountArenaWindow } from '../src/ui/arenaWindow.js';
-import { ARENA_WINDOW_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountArenaWindow } from '../src/ui/arena/arenaWindow.js';
+import { ARENA_WINDOW_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const O = ARENA_TEXT.online;
 const CODE = 'K7PX2M';
@@ -110,9 +110,9 @@ test('AUDIT PRE-MERGE 1003b U1: the session\'s card spans the Bouts page and a m
 });
 
 test('AUDIT PRE-MERGE 1003b M2: under retro mode\'s pillarbox the quest card steps aside for the versus bar by the PICTURE\'s width - #551 inset the card into the picture, and U4\'s 1100 px read the window\'s: at 1366x768 in 4:3 the card overlapped the bar 36x54 px (mutants: the narrow mark never written; the rule gone)', async () => {
-  const src = (await import('node:fs')).readFileSync(new URL('../src/ui/enhancedHud.js', import.meta.url), 'utf8');
+  const src = (await import('node:fs')).readFileSync(new URL('../src/ui/enhanced/enhancedHud.js', import.meta.url), 'utf8');
   assert.match(src, /const narrow = !!ui && ui\.w <= ARENA_CARD_ROOM_PX;/, 'the picture\'s width read');
   assert.match(src, /if \(narrow\) doc\.documentElement\?\.setAttribute\?\.\('data-ui-narrow', ''\); else doc\.documentElement\?\.removeAttribute\?\.\('data-ui-narrow'\);/, 'and worn on the root');
-  const css = (await import('node:fs')).readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
+  const css = (await import('node:fs')).readFileSync(new URL('../src/ui/enhanced/enhancedStyle.js', import.meta.url), 'utf8');
   assert.match(css, /:root\[data-ui-narrow\] body:has\(\.arena-hud\.on\) \.qtrack \{ visibility: hidden; \}/, 'the card steps aside in a narrow picture');
 });

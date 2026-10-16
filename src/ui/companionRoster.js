@@ -1,7 +1,7 @@
 // @ts-check
 // COMPANION-ROSTER (2026-10-02, Mac: "Spare should allow you to free the enemy, which then adds them as a companion,
 // which you could keep send them away or keep them with you ... Companion slots should still be limited and will need a
-// new enhanced plus UI feature") - THE COMPANIONS PAGE on the Enhanced pause menu's Holdings rail (ui/enhancedMenu.js
+// new enhanced plus UI feature") - THE COMPANIONS PAGE on the Enhanced pause menu's Holdings rail (ui/enhanced/enhancedMenu.js
 // pauseHoldings - HOLDINGS moved it off the Stats rail, 2026-10-03), beside the Revenants page.
 //
 //  - THE SLOTS: a strip of COMPANION_SLOTS wells (systems/companionSlots.js) - each filled one shows who stands in it (a
@@ -17,7 +17,7 @@
 // The acts are the companions' own (systems/revenant/revenantCompanions.js); the host hears them (setRetinueListener) and the
 // companion layer carries them out the moment the menu closes - the portals, the words.
 //
-// Dressed by the stone-and-brass kit's roles (ui/enhancedFrame.js FRAME_ROLES): a row a tile, a portrait and a slot a
+// Dressed by the stone-and-brass kit's roles (ui/enhanced/enhancedFrame.js FRAME_ROLES): a row a tile, a portrait and a slot a
 // well, the rank and the personality chips, the acts buttons (Release the warn) - this sheet writes geometry and the
 // words' colours alone.
 

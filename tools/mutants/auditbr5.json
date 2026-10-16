@@ -183,7 +183,7 @@
   },
   {
     "name": "AUDITBR5-the-potion-maker-named",
-    "file": "src/ui/profPages.js",
+    "file": "src/ui/professions/profPages.js",
     "old": "The classic potion maker still works",
     "new": "Daggerfall\\'s own potion maker still works",
     "tests": [

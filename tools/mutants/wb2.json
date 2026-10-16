@@ -217,7 +217,7 @@
   },
   {
     "name": "WB2-the-banner-rewritten-every-frame",
-    "file": "src/ui/gateBanner.js",
+    "file": "src/ui/gate/gateBanner.js",
     "old": "  if (want === shown) return;\n",
     "new": "",
     "tests": [

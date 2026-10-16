@@ -14,7 +14,7 @@ import { WA_RAID_QUESTS, WA_SEA_REGION, LeaveShip } from '../src/systems/warmAsh
 import { SPARE_S } from '../src/systems/naval/navalAI.js';
 import { crownOf, classById } from '../src/systems/naval/navalShips.js';
 import { RAIDER_SHEER_M, STRUCK_GRACE_S, DECK_SPOTS, SWIMMER } from '../src/scenes/navalHost.js';
-import { navalHudText, drawNavalHud, destroyNavalHud } from '../src/ui/navalHud.js';
+import { navalHudText, drawNavalHud, destroyNavalHud } from '../src/ui/naval/navalHud.js';
 import { choiceOffer, choiceEffect, CHOICES, PAPERS_NOTORIETY, PIRATE_PAPERS_TITLE } from '../src/systems/naval/navalPlunder.js';
 import { SHIP_STATES, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
 import { navalHitData, NAVAL_HIT_MAX } from '../src/systems/naval/navalWire.js';

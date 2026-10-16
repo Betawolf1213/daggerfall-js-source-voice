@@ -9,7 +9,7 @@
 // craft, a trade, the market and a card all `addItem` straight into the pack - and a take from the wagon or the
 // Materials Bag tells the listeners as if it were new. A popup hung on any one door misses the rest or lies.
 //
-// SO THE PACK IS WATCHED, NOT THE DOORS. Once a frame (ui/hud.js drawHud - the one call every host makes, with the
+// SO THE PACK IS WATCHED, NOT THE DOORS. Once a frame (ui/hud/hud.js drawHud - the one call every host makes, with the
 // player entity it already passes) the watcher reads the player's three own lists - the pack, the wagon, the Materials
 // Bag - and answers what is NEW there:
 //   - A piece that could ever announce (`markable`: a weapon, a piece of armour or clothing, jewellery, an artifact, a

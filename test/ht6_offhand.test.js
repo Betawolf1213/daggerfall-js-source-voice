@@ -32,7 +32,7 @@ import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { equipItem, unequipSlot, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPONS } from '../src/characters/weapons.js';
-import { itemLine } from '../src/ui/enhancedInventory.js';
+import { itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { quickslotView, clearQuickslots } from '../src/systems/quickslots.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

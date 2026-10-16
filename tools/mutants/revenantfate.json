@@ -109,7 +109,7 @@
   },
   {
     "name": "REVENANT-FATE-one-click-decides",
-    "file": "src/ui/revenantFateView.js",
+    "file": "src/ui/revenant/revenantFateView.js",
     "old": "    row.onclick = () => { if (o.disabled) return; if (picked === o.id) onChoose(o.id); else onPick(o.id); };",
     "new": "    row.onclick = () => { if (o.disabled) return; onChoose(o.id); };",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "REVENANT-FATE-back-closes-over-a-pick",
-    "file": "src/ui/revenantFateView.js",
+    "file": "src/ui/revenant/revenantFateView.js",
     "old": "  if (k === 'escape' && picked) { onPick(null); return true; }\n",
     "new": "",
     "tests": [

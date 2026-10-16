@@ -32,7 +32,7 @@ const MOD = {
   'world.js': 'src/scenes/world.js',
   'mountRig.js': 'src/player/mountRig.js',
   'inventorySession.js': 'src/systems/inventorySession.js',
-  'nativeInventory.js': 'src/ui/nativeInventory.js',
+  'nativeInventory.js': 'src/ui/native/nativeInventory.js',
   'dotnetResources.js': 'src/formats/dotnetResources.js',
   'horseNameTooltip.js': 'src/ui/horseNameTooltip.js',   // AUDIT HCC U6
 };
@@ -406,7 +406,7 @@ const IL = {
   'TrailingWagonRuntime::DestroyWagonSourceMesh': { port: null, why: 'no twin here: Unity object lifetimes (Destroy on the generated meshes, the source mesh, the cargo roots); the pool\'s GPU meshes live for the session as every host mesh does' },
   'TrailingWagonRuntime::OnDestroy': { port: null, why: 'no twin here: Unity object lifetimes (Destroy on the generated meshes, the source mesh, the cargo roots); the pool\'s GPU meshes live for the session as every host mesh does' },
   // ── TrailingWagonInventoryWindow (8)
-  'TrailingWagonInventoryWindow::SetupActionButtons': { port: null, why: 'no twin here: DFU\'s action-button panel; the port\'s inventory window is ui/nativeInventory.js\'s own, with one wagon button whose click is planWagonToggle' },
+  'TrailingWagonInventoryWindow::SetupActionButtons': { port: null, why: 'no twin here: DFU\'s action-button panel; the port\'s inventory window is ui/native/nativeInventory.js\'s own, with one wagon button whose click is planWagonToggle' },
   'TrailingWagonInventoryWindow::OnPush': { port: 'openState', mod: 'inventorySession.js' },
   'TrailingWagonInventoryWindow::Update': { port: 'openState', mod: 'inventorySession.js' },
   'TrailingWagonInventoryWindow::OnPop': { port: null, why: 'no twin here: the window\'s pending flags are derived at each open (inventorySession openState) rather than held, so there is nothing to clear on pop' },
@@ -415,10 +415,10 @@ const IL = {
   'TrailingWagonInventoryWindow::SetWagonSelection': { port: '_showWagon', mod: 'nativeInventory.js' },
   'TrailingWagonInventoryWindow::DisableOriginalButton': { port: null, why: 'no twin here: DFU\'s Button / DaggerfallShortcut; the port\'s windows have one button each and no hotkey sequence to unbind' },
   // ── TrailingWagonTradeWindow (4)
-  'TrailingWagonTradeWindow::SetupActionButtons': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
-  'TrailingWagonTradeWindow::OnPush': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
-  'TrailingWagonTradeWindow::WagonButton_OnMouseClick': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
-  'TrailingWagonTradeWindow::DisableOriginalButton': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
+  'TrailingWagonTradeWindow::SetupActionButtons': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/native/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
+  'TrailingWagonTradeWindow::OnPush': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/native/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
+  'TrailingWagonTradeWindow::WagonButton_OnMouseClick': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/native/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
+  'TrailingWagonTradeWindow::DisableOriginalButton': { port: null, why: 'no twin here: the port\'s trade window has no wagon toggle of its own yet (ui/native/nativeTrade.js: the action panel\'s wagon button is a consumed no-op awaiting its slice); when it lands it gates through canAccessWagonStorage(Trade) as the inventory\'s does' },
   // ── TrailingWagonTransportWindow (11)
   'TrailingWagonTransportWindow::Setup': { port: 'open', mod: 'mountRig.js' },
   'TrailingWagonTransportWindow::CreatePhysicalButton': { port: 'open', mod: 'mountRig.js' },

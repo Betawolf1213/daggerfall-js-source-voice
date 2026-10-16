@@ -14,7 +14,7 @@
 // classic skin the window lays its OWN sheet (`brokerSkinCss`): its layout, the tiers' colours scoped to it, the
 // sigil's and the set's blocks, and the stone-and-brass kit's rules cut to its own selectors (`scopeRules`).
 //
-// THE HOUSE'S SHAPE, as the tavern's (ui/enhancedTavern.js): a lazy chunk the door (ui/brokerDoor.js) mounts in its own
+// THE HOUSE'S SHAPE, as the tavern's (ui/enhanced/enhancedTavern.js): a lazy chunk the door (ui/brokerDoor.js) mounts in its own
 // host - `mountBrokerWindow(host, deps)` answers `{ repaint, unmount }` - the back key (overlayAction's 'back': Escape,
 // or a pad's) and a tap on the scrim leave through the door's own close (`deps.onExit`), never around it. Everything the
 // window needs from the world is handed in: the stock and the day, the purse and the record, the sale (the host takes
@@ -27,11 +27,11 @@ import { sigilCard } from './sigilCard.js';
 import { setCard, markSetFrame } from './setCard.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { SLOT_BOX, screenDpr } from './iconFit.js';   // UI1: the offer's picture box
-import { closeOnOutsideTap } from './enhancedOverlays.js';
+import { closeOnOutsideTap } from './enhanced/enhancedOverlays.js';
 import { overlayAction } from './input.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
-import { rarityVarsCss, SIGIL_VARS_CSS, SIGIL_KEYFRAMES_CSS, SIGIL_BLOCK_CSS, SET_BLOCK_CSS, BROKER_CSS } from './enhancedPlusStyle.js';
-import { frameCss, scopeRules } from './enhancedFrame.js';
+import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedStyle.js';
+import { rarityVarsCss, SIGIL_VARS_CSS, SIGIL_KEYFRAMES_CSS, SIGIL_BLOCK_CSS, SET_BLOCK_CSS, BROKER_CSS } from './enhanced/enhancedPlusStyle.js';
+import { frameCss, scopeRules } from './enhanced/enhancedFrame.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 import { isBound, BOUND_LINE } from '../systems/item/itemBound.js';   // SS4: the wares are bound, and the card says so
 import { paintTitle, titleBadge } from './playerBadge.js';   // WB9g: the Gatebreaker's word, in its own fire

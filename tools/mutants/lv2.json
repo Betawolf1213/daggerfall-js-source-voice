@@ -1,7 +1,7 @@
 [
  {
   "name": "the-window-opens-itself-again",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (!levelNotices.fanfareOwed(level)) return true;\n  levelNotices.announceLevel(level, now);\n  audio.playOneShot(SOUND.LevelUp, 1);   // UpdatePlayerValues (:373) - moved to the MOMENT, which is what a notification is\n  return true;",
   "new": "  say?.('You have gained a level!');\n  open?.();\n  return false;",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "the-classic-skin-loses-its-sheet",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    say?.('You have gained a level!');\n    open?.();\n    return false;",
   "new": "    say?.('You have gained a level!');\n    return false;",
   "tests": [
@@ -21,7 +21,7 @@
  },
  {
   "name": "the-reminder-is-remembered-instead-of-read",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "        if (!owed) continue;                         // spent, by any road - the reminder is state, not memory",
   "new": "        if (false) continue;",
   "tests": [
@@ -31,7 +31,7 @@
  },
  {
   "name": "a-level-owed-but-never-announced-says-nothing",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    if (owed && !out.some((r) => r.kind === NOTICE_LEVEL)) {",
   "new": "    if (false) {",
   "tests": [
@@ -41,7 +41,7 @@
  },
  {
   "name": "the-standing-reminder-still-calls-itself-news",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "        out.push({ ...r, standing, title: standing ? AWAITS_TITLE : r.title });",
   "new": "        out.push({ ...r, standing });",
   "tests": [
@@ -50,7 +50,7 @@
  },
  {
   "name": "the-level-row-moves-under-the-player",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    return out.sort((a, b) => (Number(a.kind === NOTICE_LEVEL) - Number(b.kind === NOTICE_LEVEL)) || (b.seq - a.seq));",
   "new": "    return out.sort((a, b) => b.seq - a.seq);",
   "tests": [
@@ -60,7 +60,7 @@
  },
  {
   "name": "the-cap-eats-the-level",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "      const drop = this.rows.findIndex((r) => r.kind !== NOTICE_LEVEL);",
   "new": "      const drop = 0;",
   "tests": [
@@ -70,7 +70,7 @@
  },
  {
   "name": "a-second-raise-stacks-a-second-row",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    const at = this.rows.findIndex((r) => r.key === key);",
   "new": "    const at = -1;",
   "tests": [
@@ -79,7 +79,7 @@
  },
  {
   "name": "the-window-replays-the-fanfare-the-strip-played",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    return this.announcedLevel == null || this.announcedLevel !== level;",
   "new": "    return true;",
   "tests": [
@@ -89,7 +89,7 @@
  },
  {
   "name": "the-fanfare-latch-outlives-the-level",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "    if (!owed) this.announcedLevel = null;",
   "new": "    if (false) this.announcedLevel = null;",
   "tests": [
@@ -98,7 +98,7 @@
  },
  {
   "name": "the-hidden-HUD-keeps-its-strip",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  const rows = hidden ? [] : levelNotices.frame(now, { owed });",
   "new": "  const rows = levelNotices.frame(now, { owed });",
   "tests": [
@@ -108,7 +108,7 @@
  },
  {
   "name": "the-strip-names-a-key-nobody-bound",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "export const sheetKeyText = () => buttonText(codeForAction(bindings(), 'CharacterSheet'), true);",
   "new": "export const sheetKeyText = () => 'F5';",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "the-key-chip-rides-every-row",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (r.kind === NOTICE_LEVEL && codeForAction(bindings(), 'CharacterSheet') != null) {\n    const k = doc.createElement('span');",
   "new": "  if (true) {\n    const k = doc.createElement('span');",
   "tests": [
@@ -167,7 +167,7 @@
  },
  {
   "name": "the-HUD-stops-driving-the-strip",
-  "file": "src/ui/hud.js",
+  "file": "src/ui/hud/hud.js",
   "old": "    drawLevelNotices({ hidden: cursorActive || !hudRenderEnabled() });",
   "new": "    /* no strip */",
   "tests": [
@@ -177,7 +177,7 @@
  },
  {
   "name": "the-unspent-level-shouts-once-per-rest",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (!levelNotices.fanfareOwed(level)) return true;",
   "new": "  if (false) return true;",
   "tests": [
@@ -187,7 +187,7 @@
  },
  {
   "name": "a-genuinely-new-level-goes-unannounced",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (!levelNotices.fanfareOwed(level)) return true;",
   "new": "  if (levelNotices.announcedLevel != null) return true;",
   "tests": [
@@ -198,7 +198,7 @@
  },
  {
   "name": "the-strip-goes-back-on-the-body",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  const home = doc.querySelector?.('.hud-bottom') ?? doc.body;",
   "new": "  const home = doc.body;",
   "tests": [
@@ -208,7 +208,7 @@
  },
  {
   "name": "the-strip-hangs-under-the-vitals-instead-of-over-them",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (home === doc.body) home.append(node); else home.prepend(node);",
   "new": "  home.append(node);",
   "tests": [
@@ -218,7 +218,7 @@
  },
  {
   "name": "the-strip-is-taken-home-only-once",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (host) rehome(doc, host);",
   "new": "  if (false) rehome(doc, host);",
   "tests": [
@@ -238,7 +238,7 @@
  },
  {
   "name": "the-row-names-a-key-called-None",
-  "file": "src/ui/levelNotice.js",
+  "file": "src/ui/levelUp/levelNotice.js",
   "old": "  if (r.kind === NOTICE_LEVEL && codeForAction(bindings(), 'CharacterSheet') != null) {",
   "new": "  if (r.kind === NOTICE_LEVEL) {",
   "tests": [

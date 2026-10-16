@@ -5,7 +5,7 @@
 // under the crosshair, and the hiss of the step in at once (the bite is a tick off: a step through is free, standing is
 // not). DFU's red flash stays a blow's alone (ui/damageFlash.js - spell damage never flashed); the court speaks in its own.
 //
-//   the view       ui/gateGroundView.js groundViewModel, drawGateGround
+//   the view       ui/gate/gateGroundView.js groundViewModel, drawGateGround
 //   the court      scenes/gateCourt.js burn/land - the ground's name and colour, the bite's moment and colour, the hiss
 //   the ground     net/gate/gateBrain.js POOLS, SCAR_POOLS; render/gateTelegraph.js poolShapes in the ground's own grain
 //
@@ -23,9 +23,9 @@ import { poolShapes, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_POOL } from '../sr
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import {
   groundViewModel, drawGateGround, destroyGateGround, GROUND_BITE_MS, GROUND_EDGE_IN, GROUND_EDGE_BITE, GROUND_EDGE_STEP, GROUND_VIEW_TEXT, GROUND_VIEW_CSS,
-} from '../src/ui/gateGroundView.js';
-import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
+} from '../src/ui/gate/gateGroundView.js';
+import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });

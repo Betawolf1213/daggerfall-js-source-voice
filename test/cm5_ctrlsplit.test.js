@@ -5,7 +5,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { NativeInventoryWindow, HOW_MANY_ITEMS, SPLIT_INPUT_MAX } from '../src/ui/nativeInventory.js';
+import { NativeInventoryWindow, HOW_MANY_ITEMS, SPLIT_INPUT_MAX } from '../src/ui/native/nativeInventory.js';
 
 const stack = () => ({
   group: 'Weapons', templateIndex: 113, name: 'Dagger', stackCount: 5,

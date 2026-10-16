@@ -391,7 +391,7 @@
   },
   {
     "name": "PL-row-for-guest",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (!p?.on || !flow.account?.handle) return;",
     "new": "    if (!p?.on) return;",
     "tests": [
@@ -401,7 +401,7 @@
   },
   {
     "name": "PL-row-while-off",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    if (!p?.on || !flow.account?.handle) return;",
     "new": "    if (!p || !flow.account?.handle) return;",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "PL-link-not-link",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "    const a = keyedAs(el('a', 'act', p.linked ? t('account.patreon.refresh', 'Refresh') : t('account.patreon.link', 'Link Patreon')), 'patreon:link');",
     "new": "    const a = keyedAs(el('button', 'act', p.linked ? t('account.patreon.refresh', 'Refresh') : t('account.patreon.link', 'Link Patreon')), 'patreon:link');",
     "tests": [
@@ -421,7 +421,7 @@
   },
   {
     "name": "PL-no-read-back",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      if (flow.stage === 'in' && flow.patreon?.on && typeof flow.refresh === 'function') Promise.resolve(flow.refresh()).catch(() => {});",
     "new": "      void 0;",
     "tests": [
@@ -431,7 +431,7 @@
   },
   {
     "name": "PL-listener-outlives",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      if (!root.isConnected) { win.removeEventListener('focus', onFocus); return; }",
     "new": "      if (!root.isConnected) return;",
     "tests": [

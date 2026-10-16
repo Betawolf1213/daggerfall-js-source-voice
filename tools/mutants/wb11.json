@@ -298,7 +298,7 @@
   },
   {
     "name": "WB11-the-bearers-uncounted",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "&& bearers > 0 && now < s.shieldUntil && !callout) callout =",
     "new": "&& bearers > 99 && now < s.shieldUntil && !callout) callout =",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "WB11-the-column-for-every-court",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "  const hosted = dm.some((r) => r.a !== undefined);",
     "new": "  const hosted = true;",
     "tests": [

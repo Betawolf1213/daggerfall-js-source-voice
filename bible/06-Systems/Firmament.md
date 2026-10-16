@@ -90,7 +90,7 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
   hex of the sky's own key list, so a code made before stars were added is refused, never read as another build.
 - **A Renown level is said as an Ascend is** (the lead dev, 2026-10-13: "when leveling up a renown give the player the
   same message as he would ascend"): the level's fanfare, and on the enhanced skin the HUD strip's gold row - "You have
-  risen", the Renown and its new Stars (`ui/levelNotice.js announceRenownRise`); the classic skin says it in a line. It
+  risen", the Renown and its new Stars (`ui/levelUp/levelNotice.js announceRenownRise`); the classic skin says it in a line. It
   owes nothing, so the row goes as news goes. Every road a rise is heard by (a report's answer, a writ's) says it through
   `scenes/world.js renownRose`, once.
 - **The respec** (the lead dev, 2026-10-13: "let the player respec for 10k gold add an respec button to this in the upper

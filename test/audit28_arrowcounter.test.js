@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { arrowCountLabel, BOW_TEMPLATES, REAL_ARROWS_COLOR, CONJURED_ARROWS_COLOR } from '../src/ui/hud.js';
+import { arrowCountLabel, BOW_TEMPLATES, REAL_ARROWS_COLOR, CONJURED_ARROWS_COLOR } from '../src/ui/hud/hud.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
@@ -69,7 +69,7 @@ test('AUDIT 28 W2a: the count is GetItem(Arrow, allowQuestItem false, priorityTo
 });
 
 test('AUDIT 28 W2a: drawn left of the compass, centred on its height, under the large-HUD gate; every host hands the drawn state, and the interior frame a font', () => {
-  const hud = read('src/ui/hud.js');
+  const hud = read('src/ui/hud/hud.js');
   // :281-284 - x = width - compass.w - label.w - 8; y = height - compass.h/2 - label.h/2.
   // F-A3: the 8 is raw screen pixels (:282 adds it after the scaled
   // sizes), so it must NOT carry `* s`.
@@ -98,6 +98,6 @@ test('AUDIT 28 W2a: drawn left of the compass, centred on its height, under the 
   const bagAt = interiorBag.indexOf('drawHud(renderer, canvas, hudArt');
   assert.match(interiorBag.slice(bagAt, interiorBag.indexOf('});', bagAt)),
     /font: townTalk\?\.font \?\? null,/, 'the interior frame draws no text without a font');
-  assert.equal(LIVE['GUI/EnableArrowCounter'], 'src/ui/hud.js');
-  assert.equal(LIVE['Enhancements/BowLeftHandWithSwitching'], 'src/ui/hud.js');
+  assert.equal(LIVE['GUI/EnableArrowCounter'], 'src/ui/hud/hud.js');
+  assert.equal(LIVE['Enhancements/BowLeftHandWithSwitching'], 'src/ui/hud/hud.js');
 });

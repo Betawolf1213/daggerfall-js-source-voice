@@ -129,7 +129,7 @@ test('AUDIT OW5 G2: the Overworld\'s own lines are held the time asked at the sc
   scale = 1;
   tvSay('The mountains cannot be crossed on foot.');
   assert.deepEqual(said, [['You have found Castle Dread.', 50], ['There is no way there by land.', 10], ['The mountains cannot be crossed on foot.', 1]]);
-  assert.match(WORLD, /import \{ HUD_TEXT_POP_DELAY \} from '\.\.\/ui\/hudText\.js';/);
+  assert.match(WORLD, /import \{ HUD_TEXT_POP_DELAY \} from '\.\.\/ui\/hud\/hudText\.js';/);
   assert.equal((WORLD.match(/townTalk\.say\(TRAVEL_VIEW_TEXT\./g) ?? []).length, 0, 'every one of the view\'s own lines through it');
 });
 

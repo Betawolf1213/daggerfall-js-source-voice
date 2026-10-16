@@ -215,13 +215,13 @@ test('PARTY-REST2b (2026-09-20, per-request: "it\'s only asking the first time..
 // bigger and also more centralized... the windows in general are too big") ──
 
 test('enhancedRest.js: the rest panel is a small, centered dialog, NOT the generic .px-win default (min(920px,94vw) x min(620px,74dvh) - most of the screen, pinned top-left with no .rest-shell rule over it, the SAME missing-shell bug the tavern and merchant panels shipped with and already carry their own fix for) - and the hours field is a large, centered number, not the tavern\'s small left-aligned goldfield (mutants: .rest-shell missing the centering flex rule; .px-win left at its generic size under .rest-shell; the hours field sharing the goldfield\'s small font instead of its own bigger one)', () => {
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.rest-shell \{ display: flex; align-items: center; justify-content: center; \}/);
   assert.match(css, /\.rest-shell \.px-win \{ width: min\(420px, 92vw\); height: auto; max-height: min\(420px, 80dvh\); \}/,
     'a compact dialog sized for four buttons or one number field, not a content-heavy panel\'s default');
   assert.match(css, /\.rest-shell \.hours-field \{ display: block; width: 140px; margin: 4px auto 22px; font-family: inherit;\s*\n\s*font-size: 34px; text-align: center;/,
     'bigger and centered, not the goldfield\'s small left-aligned field meant for a gold amount beside a button');
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   assert.match(js, /const input = el\('input', 'hours-field'\);/, 'the hours picker actually wears the class the CSS above targets');
   assert.match(js, /const acts = el\('div', 'acts selection-acts'\);/, 'the four Rest-screen buttons stack vertically in the compact dialog, not wrap in a row meant for a wide panel');
 });
@@ -230,7 +230,7 @@ test('enhancedRest.js: the rest panel is a small, centered dialog, NOT the gener
 // up message he cant press ok till the leader pressed it") ──────────────
 
 test('enhancedRest.js now matches ui/restWindow.js\'s own three deps calls exactly - deps.setResting(true) raised on OPEN (restWindow.js\'s own doc comment: "on OPEN, not on the first rested hour"), deps.setLoitering(true) only when Loiter is the chosen mode, and BOTH cleared on every exit through close() before deps.onClose() runs - and deps.onRestFinished() fires on the ended screen\'s OK button, not only on the died/no-lines path (mutants: setResting never called, or called only for a fresh rest and not a party mirror; setLoitering raised for every mode instead of loiter alone; close() clearing the flags AFTER onClose instead of before; the OK button calling close() alone, silently dropping the skill-raise moment restWindow.js\'s own input() names verbatim: "closing the finished popup is THE advancement moment")', () => {
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   const ctor = js.slice(js.indexOf('const overlay = {'), js.indexOf('const startFixed = '));
   assert.match(ctor, /deps\.setResting\?\.\(true\);/, 'raised once, right after the overlay object itself is built - before any mode is even picked, same as restWindow.js\'s own constructor');
   const start = js.slice(js.indexOf('const startFixed = '), js.indexOf('overlay._start = '));
@@ -271,7 +271,7 @@ test('STRANGER-REST1 (2026-09-20, per-request: "other players that are not in a 
 // ── PARTY-REST1d: the pointer-lock bug ───────────────────────────────────
 
 test('PARTY-REST1d (2026-09-20, per-request: "only the one who initiated the rest is prob able to press ok and then the others are [not]" - the bug this closed): enhancedRest.js releases pointer lock the SAME way every other enhanced DOM window already does (enhancedInventory.js, enhancedMenu.js, enhancedChargen.js, ui/heldMap.js) - once on mount, and again on every pointerlockchange event for as long as the window stays open, cleaned up on close (mutants: releaseLock never called on mount, so a follower\'s mirror - opened with zero clicks of its own - keeps the mouse captured for camera-look the whole time and every click on OK lands on the 3D view instead; the pointerlockchange listener never registered, so a relock mid-rest is never caught; the listener never removed on close, leaking one per rest)', () => {
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   assert.match(js, /function releaseLock\(\) \{\s*try \{\s*if \(typeof document !== 'undefined' && document\.pointerLockElement\) document\.exitPointerLock\(\);\s*\} catch \{/,
     'the exact guarded pattern enhancedInventory.js/enhancedMenu.js/enhancedChargen.js/ui/heldMap.js already use');
   assert.match(js, /render\(\);\s*\n\s*releaseLock\(\);\s*\n\s*lockHandler = releaseLock;\s*\n\s*if \(typeof document !== 'undefined'\) document\.addEventListener\('pointerlockchange', lockHandler\);/,
@@ -295,13 +295,13 @@ test('PARTY-REST2f (2026-09-20, per-request: "it also seems it cant initiate a n
 // ── REST-VITALS1: health/fatigue/magicka visible during resting ─────────
 
 test('REST-VITALS1 (2026-09-20, per-request: "while healing fully you dont see your magica and health and fatigue so you dont know when its somewhat full you need to still track it. Make it visible again"): the resting screen shows the SAME Health/Fatigue/Magicka line ui/restWindow.js\'s own resting page already draws (restingLines()/its native counter draw both read deps.vitals()), reading the exact same shared deps.vitals() a mirror inherits unchanged from outdoorRestDeps - so a follower sees their own real numbers advancing too, not just the leader (mutants: the vitals line missing entirely; deps.vitals() never called, or called but not written into the line; a hand-rolled health/fatigue/magicka read instead of the shared deps.vitals() every OTHER skin and the classic window already agree on)', () => {
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   assert.match(js, /const vit = deps\.vitals\?\.\(\);[\s\S]{0,700}?_restingRefs\.vitalsLine\.textContent = vit \? `Health \$\{vit\.health\}\/\$\{vit\.maxHealth\} {2}Fatigue \$\{vit\.fatigue\} {2}Magicka \$\{vit\.magicka\}` : '';/,
     'the exact same line shape restWindow.js\'s own restingLines()/native counter draw already use, read off deps.vitals() - never a separate health/fatigue/magicka read of its own; written by updateRestingDisplay (RESTFIX1), not rebuilt by restingCard on every tick');
   const rw = rd('src/ui/restWindow.js');
   assert.match(rw, /lines\.push\(`Health \$\{v\.health\}\/\$\{v\.maxHealth\} {2}Fatigue \$\{v\.fatigue\} {2}Magicka \$\{v\.magicka\}`\);/,
     'confirms the enhanced line matches classic\'s own wording exactly, not a close approximation');
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.rest-shell \.vitals-line \{/);
 });
 
@@ -311,7 +311,7 @@ test('REST-VITALS1 (2026-09-20, per-request: "while healing fully you dont see y
 // both sides prob loitering too") ──────────────────────────────────────
 
 test('RESTFIX1 (2026-09-21, the bug this closed): overlay.tick() no longer calls render() while resting - a full render() runs host.innerHTML = \'\' and rebuilds every element FRESH, the Stop button included, and tick() used to call it on EVERY FRAME (the countdown has to move with no input at all), tearing the real button out from under a click roughly sixty times a second - a browser click needs mousedown AND mouseup to land on the SAME element, and a human gesture almost always spans more than one animation frame. tick() now calls updateRestingDisplay() instead, which writes into three node references restingCard kept (the hour/time label, the meter fill\'s width, the vitals line) and never touches the button at all - true for every mode (timed, loiter, full) and both roles (a real rest or a follower\'s mirror), since neither ever depended on which one it was (mutants: render() still called from tick(); updateRestingDisplay() rebuilding rather than writing in place; the Stop button recreated by anything that runs every frame)', () => {
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   // CAMP-ROLL (RE-AIMED): the act's camp wait asks the camp a frame between the channel's line and the resting guard -
   // campStep renders only when the wait begins or its roller changes (enhancedRest.js campStep), never a frame
   assert.match(js, /overlay\.tick = \(dt\) => \{\s*\n(?:\s*\/\/[^\n]*\n)*\s*if \(overlay\.state === 'channel'\) \{[^\n]*\n\s*if \(overlay\.state === 'campWait'\) \{[^\n]*\n\s*if \(overlay\.state !== 'resting' \|\| !overlay\.session\) return;\s*\n\s*const r = overlay\.session\.tick\(dt\);\s*\n\s*if \(r\) \{ overlay\._end\(r\); return; \}\s*\n(?:\s*\/\/[^\n]*\n)*\s*updateRestingDisplay\(\);\s*\n\s*\};/,
@@ -379,7 +379,7 @@ test('PARTY-REST4 (2026-09-21, per-request: "15m away from the leader do not cha
 // ── RESTFIX3: the illegal-rest confirm/crime flow ────────────────────────
 
 test('RESTFIX3 (2026-09-21, per-request: "normaly when you start resting it asks you if you really want to rest cause its not allowed and when you press yes the guards come. This message is missing entirely now" - the bug this closed): the enhanced skin\'s Rest-for-a-While and Rest-Until-Healed buttons now route through the EXACT SAME two pure functions ui/restWindow.js\'s own _restButton/_canRest call - illegalRestWarning() (a settings preference) and canRest() (systems/rest/restSession.js) - never a reimplementation of either; a confirm box shows ILLEGAL_REST_WARNING verbatim when camping in the open street of a town and the preference is on; canRest\'s own crime is committed regardless of which arm answers, and an outright refusal shows canRest\'s own text and closes the window rather than raising RaiseSkills (never routed through the \'ended\' state). Loiter is NOT gated by any of this, matching restWindow.js\'s own explicit exclusion (mutants: Loiter also routed through the confirm/canRest check; commitCrime only called on the refusal path, never on an ALLOWED-after-crime one; a refusal routed through the normal ended/onRestFinished path instead of closing without it; canRest\'s own logic duplicated here instead of imported and called)', () => {
-  const js = rd('src/ui/enhancedRest.js');
+  const js = rd('src/ui/enhanced/enhancedRest.js');
   assert.match(js, /import \{ RestSession, MAX_REST_HOURS, PROMPT_INITIAL, canRest, illegalRestWarning, illegalRestWarningText, REST_TEXT, loiterLimitHours, cannotLoiterLines, CANNOT_REST_MORE_THAN_99_HOURS_ID \} from '\.\.\/systems\/rest\/restSession\.js';/,
     'the same pure functions classic imports - never a local reimplementation of the legality/crime law');
   assert.match(js, /btn\('Rest for a While', \(\) => continueRest\('while', false\)\);/);

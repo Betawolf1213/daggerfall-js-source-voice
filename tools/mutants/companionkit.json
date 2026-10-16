@@ -267,7 +267,7 @@
   },
   {
     "name": "CK-bar-no-name",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    set('name', mate ? p.name : '', (v) => { slot.word.textContent = v; });",
     "new": "    set('name', '', (v) => { slot.word.textContent = v; });",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "CK-bar-no-digits",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "? `${Math.max(0, Math.round(p.hp))}/${Math.round(p.hpMax)}` : ''",
     "new": "? '' : ''",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "CK-bar-no-fx",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    const fx = mate && Array.isArray(p.fx) ? p.fx.slice(0, MATE_FX_MAX) : [];",
     "new": "    const fx = [];",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "CK-bar-fx-uncapped",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "p.fx.slice(0, MATE_FX_MAX) : [];",
     "new": "p.fx.slice() : [];",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "CK-bar-every-mate",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "    const mate = typeof p.name === 'string' && p.name.length > 0;",
     "new": "    const mate = true;",
     "tests": [

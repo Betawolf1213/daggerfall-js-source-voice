@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { editBookSpell } from '../src/ui/spellbookWindow.js';
 
-const src = readFileSync(new URL('../src/ui/enhancedSpellbook.js', import.meta.url), 'utf8');
+const src = readFileSync(new URL('../src/ui/enhanced/enhancedSpellbook.js', import.meta.url), 'utf8');
 
 test('enhanced book: Icon button opens a grid of every icon and writes through editBookSpell', () => {
   assert.match(src, /'act sb-iconbtn|`act sb-iconbtn/);
@@ -22,7 +22,7 @@ test('an icon change copies the spell and keeps it custom, leaving the rest alon
 });
 
 test('No icon: flag keeps the picked icon, initials are the first letters of the first two words', async () => {
-  const { spellInitials } = await import('../src/ui/enhancedHotbar.js').catch(() => ({ spellInitials: null }));
+  const { spellInitials } = await import('../src/ui/enhanced/enhancedHotbar.js').catch(() => ({ spellInitials: null }));
   const list = [{ name: 'Frost Bolt', icon: 7 }];
   editBookSpell(list, 0, { noIcon: true });
   assert.equal(list[0].noIcon, true);

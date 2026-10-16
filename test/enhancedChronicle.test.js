@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { chronicleModel, chronicleLines, chronicleEntry, CHRONICLE_SECTIONS } from '../src/ui/enhancedChronicle.js';
+import { chronicleModel, chronicleLines, chronicleEntry, CHRONICLE_SECTIONS } from '../src/ui/enhanced/enhancedChronicle.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = (text) => ({ formatting: 'text', text });
@@ -22,7 +22,7 @@ test('MAC-K2: FOUR sections, and QUESTS leads them - the L key opens what it is 
   assert.equal(CHRONICLE_SECTIONS[0][1], 'Quests', 'and it leads, because it is what the key is for');
 
   // the classic window's four modes all have a page here now
-  const jr = read('src/ui/questJournal.js');
+  const jr = read('src/ui/quest/questJournal.js');
   assert.match(jr, /JOURNAL_MODES = Object\.freeze\(\['activeQuests', 'finishedQuests', 'notebook', 'messages'\]\)/);
   const ids = new Set(CHRONICLE_SECTIONS.map(([id]) => id));
   for (const want of ['quests', 'notes', 'messages']) assert.ok(ids.has(want), want);
@@ -31,9 +31,9 @@ test('MAC-K2: FOUR sections, and QUESTS leads them - the L key opens what it is 
   // Not by leaving quests out of the window named after them, but by
   // one walk and one rail: the chronicle imports them rather than
   // re-deriving, and so does the pause tab.
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   assert.match(cr, /from '\.\/questRail\.js'/, 'the chronicle takes the shared rail');
-  assert.match(read('src/ui/enhancedMenu.js'), /from '\.\/questRail\.js'/, 'and so does the pause tab');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /from '\.\/questRail\.js'/, 'and so does the pause tab');
   assert.doesNotMatch(cr, /getLogMessages|remainingTimeInSeconds/,
     'neither face walks the machine itself - that is scenes/questBridge.js questLog()');
   assert.match(read('src/scenes/questBridge.js'), /questLog\(\) \{/, 'the one walk');
@@ -81,7 +81,7 @@ test('PX24 model: each section from its own source, and the orders differ on pur
   // MESSAGES newest first (the ring is oldest-first and the last thing
   // you were told is what you opened this for); NOTES keep the
   // player's own order, because MoveNote is a law they arranged.
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   assert.match(cr, /const list = section === 'messages'\n\s*\? rows\.map\(\(e, i\) => \(\{ e, i \}\)\)\.reverse\(\)/,
     'and the index rides along, because remove needs the TRUE position');
   assert.match(read('src/systems/notebook.js'), /MoveNote/);
@@ -102,8 +102,8 @@ test('PX24 door: one seam, and the CLASSIC skin keeps its two windows', () => {
 });
 
 test('PX24: the window is the family\'s, not a fourth dialect', () => {
-  const cr = read('src/ui/enhancedChronicle.js');
-  const css = read('src/ui/enhancedStyle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const cls of ['px-journal', 'px-qrail', 'px-qdetail', 'px-qname', 'px-qwing']) {
     assert.ok(cr.includes(cls), `${cls} is the journal's own bones`);
   }
@@ -114,7 +114,7 @@ test('PX24: the window is the family\'s, not a fourth dialect', () => {
   // PX24b: the entries are CARDS with dated heads now, not divider-
   // separated paragraphs, so this window no longer draws a divider.
   assert.doesNotMatch(cr, /px-divword/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.cr-shell \.cr-entry \{ max-width: 66ch;[\s\S]{0,120}border: 2px solid/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.cr-shell \.cr-entry \{ max-width: 66ch;[\s\S]{0,120}border: 2px solid/);
   // The history is ONE page: the classic pages because it draws into a
   // fixed 320x200 panel, and a DOM column scrolls.
   assert.match(cr, /ONE PAGE, NOT PAGINATED/);
@@ -135,7 +135,7 @@ test('PX24b: an entry keeps its DATED HEAD - the notebook wrote one and the firs
   // comes back headless rather than borrowing the previous one.
   assert.deepEqual(chronicleEntry([T('...and the rest of it.')]), { head: null, body: ['...and the rest of it.'] });
   assert.deepEqual(chronicleEntry(null), { head: null, body: [] });
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   // PX24c narrowed this: the continued fallback is the NOTE's alone,
   // because a message never has a head at all - see the PX24c pin.
   assert.match(cr, /: '\\u2014 continued \\u2014'\);/,
@@ -146,7 +146,7 @@ test('PX24b: an entry keeps its DATED HEAD - the notebook wrote one and the firs
 test('PX24b: the player may WRITE - the first draft was read-only, which is a loss', () => {
   // The classic notebook has AddNote and RemoveNote. A prettier window
   // that can do less is not an improvement.
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   // JOURNAL1: through breakableNote - this box takes 200 and the notebook's wrap throws on 71 with no space
   assert.match(cr, /deps\.notebook\(\)\.addNote\(breakableNote\(text\)\);/, 'the notebook\'s own AddNote - it stamps the date itself');
   // JOURNAL1: the note the CARD draws - its index in the notebook, which an empty entry dropped from the list moves
@@ -164,7 +164,7 @@ test('PX24b: the player may WRITE - the first draft was read-only, which is a lo
   assert.match(cr, /^let draft = '';/m);
   assert.match(cr, /input\.oninput = \(\) => \{ draft = input\.value; \};/);
   // A thumb can reach the remove.
-  assert.match(read('src/ui/enhancedStyle.js'), /@media \(pointer: coarse\) \{ \.cr-shell \.cr-rm \{ min-width: 44px; min-height: 44px; \} \}/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /@media \(pointer: coarse\) \{ \.cr-shell \.cr-rm \{ min-width: 44px; min-height: 44px; \} \}/);
 });
 
 // ── PX24c: MESSAGES AND HISTORY GET THE SAME LOOK ─────────────────
@@ -176,11 +176,11 @@ test('PX24c: a message has NO head, and PX24b printed a lie on every one', () =>
   // simply has no header to begin with.
   const nb = read('src/systems/notebook.js');
   assert.match(nb, /const message = \[\{ formatting: 'center', text: '' \}, \{ formatting: 'text', text: str \}\];/);
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   assert.match(cr, /const head = e\.head \?\? \(section === 'messages'\n\s*\? \(i === rows\.length - 1 \? 'Most recent' : null\)\n\s*: '\\u2014 continued \\u2014'\);/,
     'the continued fallback is the NOTE\'s alone');
   assert.match(cr, /if \(!head\) top\.classList\.add\('cr-headless'\);/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.cr-shell \.cr-head\.cr-headless \{ padding-bottom: 0;/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.cr-shell \.cr-head\.cr-headless \{ padding-bottom: 0;/);
   // THE RING UNWRAPS ITSELF - checked, not assumed. getMessages walks
   // from nextMessageIndex round to it, so what comes back is already
   // chronological even after the fiftieth overwrites the first; the
@@ -191,7 +191,7 @@ test('PX24c: a message has NO head, and PX24b printed a lie on every one', () =>
 });
 
 test('PX24c: the history says WHO it is about, and the family shares its parts', () => {
-  const cr = read('src/ui/enhancedChronicle.js');
+  const cr = read('src/ui/enhanced/enhancedChronicle.js');
   // The entity carries race, career and level - the same three the
   // pause window's Stats page reads - and a life story with nobody's
   // name on it is a page of prose. Each part only if it is there.
@@ -201,7 +201,7 @@ test('PX24c: the history says WHO it is about, and the family shares its parts',
   // THE THIRD SCOPING FAULT, and the pin that ends it: the framed
   // window's shared parts are shared, not scoped to one member. The
   // head was PX24's, the divider PX23's, the chip this one's.
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const [part, sel] of [
     ['the head', /\.sb-shell \.sb-top, \.cr-shell \.sb-top \{/],
     ['the chip row', /\.sb-shell \.sb-frame, \.cr-shell \.sb-frame \{/],

@@ -9,7 +9,7 @@
 //     Daggerfall's own wind clips, replayed end to end, were a moan every
 //     two seconds). It had its own row and pref (`windSound`) from WIND3
 //     to here; that row IS this row now.
-//   - the enhanced inventory's transfer cues (ui/enhancedInventory.js,
+//   - the enhanced inventory's transfer cues (ui/enhanced/enhancedInventory.js,
 //     MAC-O6): DoTransferItem's own gold clink and button click, which
 //     the classic window always played and the enhanced one never did.
 //   - the climb's sounds (player/climbSounds.js, CLIMB4): hands on stone,

@@ -64,7 +64,7 @@
   },
   {
     "name": "TELL9-yield-seconds",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "export const THREAT_YIELD_S = 2;",
     "new": "export const THREAT_YIELD_S = 1;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "TELL9-yield-gone",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  if (_foe && _foe !== foe && !_foe.dead && (_sinceStruck < THREAT_YIELD_S || _foe.duel)) return;   // AUDIT TELL U7: nor while my duel's opponent holds it (its health comes only as the duel's word does)\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "TELL9-yield-forever",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  if (_foe && _foe !== foe && !_foe.dead && (_sinceStruck < THREAT_YIELD_S || _foe.duel)) return;",
     "new": "  if (_foe && _foe !== foe && !_foe.dead) return;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "TELL9-struck-unstamped",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  _sinceStruck = 0;   // TELL9: a threat yields to it for THREAT_YIELD_S\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "TELL9-since-frozen",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  _sinceStruck += dt;\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "TELL9-threat-no-refresh",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  _foe = foe;\n  _left = FOE_TARGET_SECONDS;\n}\n\n/** Per-frame decay",
     "new": "  if (_foe !== foe) _left = FOE_TARGET_SECONDS;\n  _foe = foe;\n}\n\n/** Per-frame decay",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TELL9-threat-bout",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  const bout = foe.entity.bout;\n  if (bout && !bout.chained) return;\n  if (_foe && _foe !== foe",
     "new": "  if (_foe && _foe !== foe",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "TELL9-threat-dead",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "  if (!foe?.entity || foe.dead) return;\n  const bout",
     "new": "  if (!foe?.entity) return;\n  const bout",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "TELL9-poise-unread",
-    "file": "src/ui/hudFoeTarget.js",
+    "file": "src/ui/hud/hudFoeTarget.js",
     "old": "    poise: _poiseOf ? _poiseOf(_foe) ?? null : null,",
     "new": "    poise: null,",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "TELL9-bleed-tile-gone",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "  if (bleed && bleed.left > 0) out.push({ key: 'bleed', name: 'Bleeding', glyph: 'bleed', foot: String(bleed.left), blink: bleed.left < 2 });",
     "new": "",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "TELL9-bleed-tile-footless",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "glyph: a.glyph, foot: a.foot ?? null, blink: !!a.blink });",
     "new": "glyph: a.glyph });",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "TELL9-bleed-blink",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "glyph: 'bleed', foot: String(bleed.left), blink: bleed.left < 2 });",
     "new": "glyph: 'bleed', foot: String(bleed.left), blink: bleed.left < 1 });",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "TELL9-glyph32-outline",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "      const hex = ch === 'k' ? OUTLINE : g.pal[ch];",
     "new": "      const hex = g.pal[ch] ?? '#000000';",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "TELL9-glyph32-clear",
-    "file": "src/ui/hudStatus.js",
+    "file": "src/ui/hud/hudStatus.js",
     "old": "      if (!ch || ch === '.') continue;\n      const hex",
     "new": "      if (!ch) continue;\n      const hex = ch === '.' ? '#000000' : ch === 'k' ? OUTLINE : g.pal[ch];\n      const _h",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "TELL9-classic-atlas",
-    "file": "src/ui/hudActiveSpells.js",
+    "file": "src/ui/hud/hudActiveSpells.js",
     "old": "    if (icon.glyph) drawGlyphIcon(renderer, m, icon.glyph, icon.rect);   // TELL9: an icon of the port's own\n    else drawSpellIcon",
     "new": "    drawSpellIcon",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "TELL9-classic-glyphless",
-    "file": "src/ui/hudActiveSpells.js",
+    "file": "src/ui/hud/hudActiveSpells.js",
     "old": "{ iconIndex: BLEED_ICON, glyph: BLEED_GLYPH, displayName: 'Bleeding'",
     "new": "{ iconIndex: BLEED_ICON, displayName: 'Bleeding'",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "TELL9-hud-track-undrawn",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "      width(parts.foePoiseFill, 'foePoiseFill', p.fill * 100);\n",
     "new": "",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "TELL9-hud-unpoised",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "      parts.foe.classList.toggle('poised', !!p);\n",
     "new": "",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "POISE-BOX-bare-states",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "` poise-${p.state}`",
     "new": "` ${p.state}`",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "POISE-BOX-bare-flash",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "' poise-flash'",
     "new": "' flash'",
     "tests": [

@@ -427,7 +427,7 @@ Then the **start window** asks where in the Spire:
 - **the Rehearsal** (section 27.7): *Rehearse - Halls 1-5, no key* (once a real day);
 - **the classic skin** asks with DFU's DaggerfallListPickerWindow (`src/ui/listPicker.js`, PICK00I0.IMG; the boat
   variant picker is the precedent), so the native-window rule holds: a list of DFU's own, no free-styled geometry;
-- **the enhanced skin** asks with `src/ui/enhancedPicker.js`;
+- **the enhanced skin** asks with `src/ui/enhanced/enhancedPicker.js`;
 - **a warning line**, when one of the opener's quests falls due before the last word (36 game hours, three real
   hours): *A quest falls due before the breach can close.*
 
@@ -1854,7 +1854,7 @@ as their save. Every Vestige that raises damage on a relay foe does so through t
 | | **Mender's Grace** | heals you cast on allies +15 / 25 / 35% | the receiver's client, from the room's word (ALLY-CAST's law) |
 | | **Lifeline** | a heal you cast on an ally under 30% gives them 3 s of 20 / 30 / 40% less from blows | the receiver's client; the relay's census applies it too |
 
-The Redoubt's card shows the circle's damage chart with the gate's Healed column (`src/ui/gateDamageChart.js`,
+The Redoubt's card shows the circle's damage chart with the gate's Healed column (`src/ui/gate/gateDamageChart.js`,
 GATE-HEAL), so a company of eight sees what its healer did.
 
 **Mastery Vestiges** change what their holder does, not a number. One is offered as a fourth card at Redoubt 3 and at
@@ -2011,9 +2011,9 @@ nobody decides for eight alone.
 - they become a **witness** (below);
 - **THE FALL**, their own screen. Today the world host's online death runs the death screen
   (`src/ui/deathScreen.js`, counting `ONLINE_RESPAWN_SECONDS`, 60 s, to a respawn; the enhanced skin's *YOU DIED*
-  veil is `src/ui/enhancedDeath.js`); in the Spire that respawn never comes. So in
+  veil is `src/ui/enhanced/enhancedDeath.js`); in the Spire that respawn never comes. So in
   an `eg:` room there is no death screen. The camera sinks for 1.2 s as the screen drains to a fifth of its colour;
-  then the gate's title card (`src/ui/gateTitleCard.js`) reads *FALLEN*, with *The next Redoubt can call you back.* (a
+  then the gate's title card (`src/ui/gate/gateTitleCard.js`) reads *FALLEN*, with *The next Redoubt can call you back.* (a
   first fall) or *The Spire will not take you back.* (a final one), and *Reliquaries lost: 4* in red. 2.5 s later the
   witness view dithers in. The company hears a low toll (clip 107, pitch 0.42) and reads *<name> falls.* once.
 
@@ -2801,7 +2801,7 @@ shape the union floor counted for that member.
 
 ### 25.7 Accessibility
 
-The port's Accessibility tab (`src/ui/settingsMap.js`) holds Motion, Readability (swapping the health and fatigue
+The port's Accessibility tab (`src/ui/settings/settingsMap.js`) holds Motion, Readability (swapping the health and fatigue
 colours among it) and the large HUD today, and no danger-colour option. The Spire adds:
 
 - **`port:dangerPalette`**: *Standard*, *High contrast*, *Deutan-Protan*, *Tritan*. High contrast draws the danger
@@ -2871,7 +2871,7 @@ mask the cues that matter. So:
 
 ### 27.1 The HUD, by form factor
 
-Today the gate's row (`src/ui/gateBossBar.js`, `BOSS_BAR_WIDTH` 460) sits at 44 px on a landscape phone and drops
+Today the gate's row (`src/ui/gate/gateBossBar.js`, `BOSS_BAR_WIDTH` 460) sits at 44 px on a landscape phone and drops
 its marks row there (`max-height: 480px`), and no gate UI reads the HUD's scale. The Spire's is laid out per form
 factor, every part reading `--hud-scale`:
 
@@ -2898,7 +2898,7 @@ Pinned at 1280x720, 390x844 and 844x390.
 
 ### 27.3 The arrival card, the objective, the door
 
-- **The arrival card** (`src/ui/gateTitleCard.js`): *Hall 12 - the Broken Galleries*, the objective beneath, the
+- **The arrival card** (`src/ui/gate/gateTitleCard.js`): *Hall 12 - the Broken Galleries*, the objective beneath, the
   twist as a second line, and at a band's first hall its card; *Hall 15 - the Court* and the lord's card at a Court.
 - **The objective**, from `EG_TEXT.objective`, stays as a chip with its progress: *Close the rifts.* (*Rifts 3 of 5*),
   *Fell the standard.*, *Hold the relic.* (*1:12*), *Cross.*, *Break the wards at the portcullis.*, *Turn the Orrery
@@ -2953,7 +2953,7 @@ A run of up to three hours never ends on a receipt alone. On `end`, and for a me
 - the board's line: *The Descent, the Few: 14th*.
 
 The last five runs are kept. At every lord's fall the damage chart shows as the gate's does (FELLED, then the chart,
-`src/ui/gateDamageChart.js`, with its Healed column).
+`src/ui/gate/gateDamageChart.js`, with its Healed column).
 
 ### 27.7 The first breach
 
@@ -2976,7 +2976,7 @@ The last five runs are kept. At every lord's fall the damage chart shows as the 
 
 ### 27.8 Touch and the pad
 
-Today the right half of the screen is look and Jump is a held button in its corner (`src/ui/touch.js`), so a jump
+Today the right half of the screen is look and Jump is a held button in its corner (`src/ui/touch/touch.js`), so a jump
 with a camera correction needs two right thumbs, and the stick sprints only past `RUN_THROW` (0.8). No gamepad rumbles
 anywhere in the port. In the Spire:
 

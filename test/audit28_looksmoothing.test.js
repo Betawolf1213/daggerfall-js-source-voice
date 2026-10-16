@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { LookFilter, frameRateScaledFraction, frameSmoothing, SMOOTHING_MAX, PITCH_LIMIT } from '../src/player/lookFilter.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
-import { NUMBER_LAW } from '../src/ui/settingsLaw.js';
+import { NUMBER_LAW } from '../src/ui/settings/settingsLaw.js';
 
 // AUDIT 28 - W7: MOUSE LOOK SMOOTHING (PlayerMouseLook.cs:100-105,
 // :154-166; StartGameBehaviour :215). The setting ships 0.5 - DFU's

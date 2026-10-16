@@ -22,7 +22,7 @@ import { rarityLines } from '../src/systems/loot/lootRarity.js';
 import { setCard, setStrip, markSetFrame, setShades, setStageText, SET_PLACE_WORDS } from '../src/ui/setCard.js';
 import { sigilCard } from '../src/ui/sigilCard.js';
 import { sigilRuneTileUrl, SIGIL_RUNE_TILE_URL } from '../src/ui/sigilRune.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { mintAetheric, aethericById } from '../src/systems/aetheric.js';
 import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
@@ -124,7 +124,7 @@ test('SET5 the set in words, for a line-printing tooltip: its name, the places w
   const tip = rarityLines(a);
   assert.deepEqual(tip.slice(-4), lines, 'a tooltip\'s list ends with its set');
   assert.ok(!rarityLines(a, { set: false }).includes(lines[0]), 'the card that draws the block asks without');
-  const inv = strip(read('src/ui/enhancedInventory.js'));
+  const inv = strip(read('src/ui/enhanced/enhancedInventory.js'));
   assert.match(inv, /itemPowerLines\(picked, deps, \{ set: false, lore: false, technique: false \}\)/);   // TRADE-INFO: the card reads the one list, and asks it without the set (CARD-FIT: and the lore); PIN MOVED (TECH-CARD): and without a technique's line, its block's
   assert.match(inv, /const lines = rarityLines\(item, \{ sigil: false, set, lore, technique \}\);/, 'the list asks rarityLines as the card asked it');   // PIN MOVED (TECH-CARD): and a technique's line as asked
   // AUDIT SET U5: an unidentified piece - its enchantment hidden, its sigil and its set said
@@ -286,7 +286,7 @@ test('SET5 the doll\'s strip: a line a worn set - its name, pieces of nine, thre
 });
 
 test('SET5 x GOLD-DROP (AUDIT FINAL F1, the merge with main): the doll\'s set line is a pick like any other - its press puts the gold field away, so the card and the field never stand together (AUDIT2 GOLD-DROP 2, main\'s one floater at a time) (mutant: the strip\'s pick keeps the field)', async () => {
-  const { mountEnhancedInventory } = await import('../src/ui/enhancedInventory.js');
+  const { mountEnhancedInventory } = await import('../src/ui/enhanced/enhancedInventory.js');
   const prev = globalThis.location;
   _resetForTests(); globalThis.location = { search: '?skin=enhanced' };
   try {
@@ -337,8 +337,8 @@ test('SET5 the frame\'s mark and the rune\'s colour: a set piece\'s frame wears 
   assert.ok(PLUS_CSS.includes('.dragghost[data-set] .tile::after { background-image: var(--set-rune); }'));
   for (const sel of ['.setbox {', '.set-place.on {', '.set-tier.awake .set-at {', '.setstrip {', '.setline-pips i.on {']) assert.ok(PLUS_CSS.includes(sel), sel);
   // UI3: a set power's tile in the status widget - its frame the set's light and shade, a recovery dashed and dimmed
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hst-cell\.set \{ --hst-hi: var\(--set-hi, #e6dccb\); --hst-lo: var\(--set-lo, #3a352a\); \}/);
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hst-cell\.recovering \.hst-tile \{ border-style: dashed;/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hst-cell\.set \{ --hst-hi: var\(--set-hi, #e6dccb\); --hst-lo: var\(--set-lo, #3a352a\); \}/);
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /\.hst-cell\.recovering \.hst-tile \{ border-style: dashed;/);
 });
 
 test('SET5 the sigil block for a set\'s armour: no "+null%" - its line says it is a set\'s sigil (asleep, or growing its set with its lowest piece), and a fresh one says it grows as I earn Renown wearing it; a weapon\'s block is as it was; AUDIT U11 in a duel a set\'s armour\'s sigil sleeps (no gem lit, named Asleep) and a set weapon\'s keeps its blow; U12 a set sigil on what is no set piece answers no set (mutants: the blow\'s words on armour; a duel\'s armour sigil lit; a set weapon\'s blow put to sleep; a ring called a set\'s)', () => {
@@ -379,15 +379,15 @@ test('SET5 the sigil block for a set\'s armour: no "+null%" - its line says it i
 });
 
 test('SET5 the surfaces\' wiring: the pack\'s card and the Info box append the set block after the sigil\'s, the doll\'s column the strip after the shelf, every frame the pack marks and the hotbar\'s slot and the diamond\'s cell wear the set (their repaint keys read it); the host names the wearer and hands the HUD its chips (mutants: the Info box without the block; the strip never drawn; the hotbar\'s key blind to the set; the HUD\'s chips unwired)', () => {
-  const inv = strip(read('src/ui/enhancedInventory.js'));
+  const inv = strip(read('src/ui/enhanced/enhancedInventory.js'));
   assert.match(inv, /\{ const sb = sigilCard\(picked\); if \(sb\) into\.append\(sb\); \}\s*\{ const set = setCard\(picked, deps\.entity, itemLongName\); if \(set\) into\.append\(set\); \}/, 'the card (CARD-FIT: its short dress, into its body)');
   assert.match(inv, /\{ const sb = sigilCard\(item, \{ full: true \}\); if \(sb\) body\.append\(sb\); \}\s*\{ const set = setCard\(item, deps\.entity, itemLongName, \{ full: true \}\); if \(set\) body\.append\(set\); \}/, 'the Info box (CARD-FIT: whole, into its scrolling body)');
   assert.match(inv, /col2\.append\(accessoryShelf\(\)\);\s*const sets = setStrip\(deps\.entity, \{ onPick: \(it\) => \{ picked = it; goldEntry = null; pickedAt = 'worn'; side = 'local'; notice = null; render\(\); \} \}\);\s*if \(sets\) col2\.append\(sets\);/, 'the doll\'s strip');
   assert.match(inv, /export function markItemFrame\(node, item\) \{[\s\S]*?markSetFrame\(node, item\);[\s\S]*?return node;\s*\}/, 'every frame the pack marks');
-  const hb = strip(read('src/ui/enhancedHotbar.js'));
+  const hb = strip(read('src/ui/enhanced/enhancedHotbar.js'));
   assert.match(hb, /\$\{validSigil\(v\.item\.sigil\) \? '\*' : ''\}\$\{setIdOf\(v\.item\) \?\? ''\}/, 'the hotbar\'s repaint key reads the set');
   assert.match(hb, /if \(it && validSigil\(it\.sigil\)\) n\.dataset\.sigil = ''; else delete n\.dataset\.sigil;\s*markSetFrame\(n, it\);/);
-  const hud = strip(read('src/ui/enhancedHud.js'));
+  const hud = strip(read('src/ui/enhanced/enhancedHud.js'));
   assert.match(hud, /const frameKey = worn \? `\$\{rarityAttr\(worn\) \?\? ''\}\|\$\{validSigil\(worn\.sigil\) \? 1 : 0\}\|\$\{setIdOf\(worn\) \?\? ''\}` : '';/, 'the diamond\'s key');
   assert.match(hud, /markSetFrame\(part\.cell, worn\);/);
   assert.match(hud, /const powers = setPowerChips\(vitals\);/);

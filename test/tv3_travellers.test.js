@@ -22,13 +22,13 @@ import { OnlineSession } from '../src/net/online.js';
 import {
   travellerMarkOf, travellerWorldOf, travellerDue, createTravellerBook, headingByte, yawOfHeading, travelModeIndex, TRAV_FRACTION,
 } from '../src/systems/travellerMarks.js';
-import { edgeHold, TV_EDGE_MARGIN } from '../src/ui/travelViewHud.js';
+import { edgeHold, TV_EDGE_MARGIN } from '../src/ui/travel/travelViewHud.js';
 import { perspective, mirrorProjectionX, lookAt } from '../src/world/mat4.js';   // AUDIT DEEP T1-1: the host's own lens
 import { projectToScreen } from '../src/player/tapRay.js';
 import { forwardOf, TV_TILT_DEFAULT, TV_RISE_S } from '../src/player/travelCamera.js';
 import { createTravelView } from '../src/scenes/travelView.js';   // AUDIT NAMES N2-1: the badge through the view's own drawHud
 import { readTravellerMarks, travellerMarksKey, TRAVELLER_MARK_CSS, TRAVELLER_LEGEND_TEXT } from '../src/ui/partyMapMarks.js';
-import { paintInkOverlay } from '../src/ui/inkMap.js';
+import { paintInkOverlay } from '../src/ui/ink/inkMap.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 
@@ -422,8 +422,8 @@ test('AUDIT DEEP T1-1: through the host\'s REAL lens (mirrored, 52 degrees down)
   // AUDIT DEEP T3-9: the held map rings my party as theirs - a party member is never drawn a second time as a stranger
   assert.match(rd('src/scenes/world.js'), /travellers: \(\) => travellerBook\.live\(Date\.now\(\)\)\.filter\(\(t\) => !social\?\.inMyParty\(social\.accountOfPeer\(t\.id\)\)\)\.map\(/);
   // AUDIT DEEP T3-4/T3-7: the switch says what it shares, and with whom, truly
-  assert.match(rd('src/ui/enhancedMenu.js'), /players in your region see you on the overworld and the map/);
-  assert.match(rd('src/ui/enhancedMenu.js'), /Kept on this device\./);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /players in your region see you on the overworld and the map/);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /Kept on this device\./);
   assert.match(rd('src/scenes/world.js'), /project: \(p\) => \(_lastProj && _lastView \? projectToScreen\(p, canvas\.clientWidth, canvas\.clientHeight, _lastProj, _lastView, worldViewportRect\(canvas\.clientWidth, canvas\.clientHeight\), true\) : null\),/, 'the view\'s own projection asks for the mirror');
   // the default stays the hide: every other caller never draws a mirror
   assert.deepEqual(projectToScreen([0, 0, -2000], W, H, proj, view), { x: 0, y: 0, depth: 0, front: false });
@@ -453,7 +453,7 @@ test('TV3 map: the travellers are marks placed to their 256th (the fraction turn
 test('TV3 switch: "Show me to travellers in my region" - on by default, the player\'s own say online, on the Other players card', () => {
   assert.equal(PREF_DEFAULTS.showToTravellers, true);
   assert.ok(ONLINE_PLAYERS_OWN_PREFS.includes('showToTravellers'), 'the room never forces it');
-  assert.match(rd('src/ui/enhancedMenu.js'), /prefRow\('showToTravellers', t\('menu\.peers\.show', 'Show me to travellers in my region'\),/);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /prefRow\('showToTravellers', t\('menu\.peers\.show', 'Show me to travellers in my region'\),/);
 });
 
 test('TV3 host wiring: the book hoisted above its readers, filled by the Region tab\'s own link; my mark sent when due, on that link, from the open air alone and with the switch on; the view and the map draw the book', () => {
@@ -487,7 +487,7 @@ test('TV3 host wiring: the book hoisted above its readers, filled by the Region 
 test('AUDIT DEEP2 C4/C5 by source: a Region link that moves empties the book (the old room\'s leaves can no longer reach it); the switch says what stays unshared - the region\'s channel, not the party\'s pose', () => {
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   assert.match(w, /if \(link\.room !== travellerSent\.room\) \{ travellerSent\.room = link\.room; travellerSent\.last = null; travellerSent\.at = 0; travellerBook\.clear\(\); \}/);
-  const menu = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const menu = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(menu, /Nothing is shared from indoors except with your party\./);
   assert.doesNotMatch(menu, /'Nothing is shared from indoors\./);
 });

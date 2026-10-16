@@ -361,7 +361,7 @@ test('PROF4 pieces: the woods withdraw as their templates (a log on Twigs\' pict
 // ─── THE PAGES ───────────────────────────────────────────────────────
 
 test('PROF4 pages: the Workbench at a Furniture Store - the saws for the logs held, the families and woods, a bed\'s Linen from the furnisher, a Heartwood for a plank, Craft drawn with the plane (its pass asks the craft clean), Quick craft; a home\'s sells nothing; away, the word; the Forge burns the logs; the Anvil lists the smith\'s alone; Smithing, Logging and Carpentry practised', async () => {
-  const { setProfessionsPages, drawStoresPage, drawProfessionsPage, BENCH_FAMILIES, benchRecipes, anvilRecipes, planeWord } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, drawProfessionsPage, BENCH_FAMILIES, benchRecipes, anvilRecipes, planeWord } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setPref('gentleActs', false);
   const held = new Map([['log:oak', 2], ['plank:oak', 7], ['wood:heartwood', 1]]);

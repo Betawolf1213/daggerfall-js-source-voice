@@ -614,7 +614,7 @@
   },
   {
     "name": "H4-frame-gone",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  if (P.gt && shieldW) {",
     "new": "  if (false) {",
     "tests": [
@@ -624,7 +624,7 @@
   },
   {
     "name": "H4-shield-undrawn",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    drawShield(x, P.arms, px + A.pad,",
     "new": "    void (x, P.arms, px + A.pad,",
     "tests": [
@@ -634,7 +634,7 @@
   },
   {
     "name": "H4-border-colour",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "x.strokeStyle = heraldryColourOf(P.arms.border)?.hex ?? N.guild;",
     "new": "x.strokeStyle = N.guild;",
     "tests": [
@@ -644,7 +644,7 @@
   },
   {
     "name": "H4-key-no-arms",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "|${h ? heraldryKey(h) : ''}`;",
     "new": "`;",
     "tests": [

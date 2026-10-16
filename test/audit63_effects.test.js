@@ -33,7 +33,7 @@ import {
 import {
   primaryPickerList, primaryPick, forcedEnchantments, enchantmentName,
 } from '../src/systems/enchantmentCatalogue.js';
-import { ItemMakerWindow } from '../src/ui/itemMakerWindow.js';
+import { ItemMakerWindow } from '../src/ui/item/itemMakerWindow.js';
 import { isEntityImmuneToDisease, applySpell, BUFF_START_TEXT } from '../src/systems/effects.js';
 import { startDisease, inflictDisease } from '../src/systems/diseases.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
@@ -241,7 +241,7 @@ test('AUDIT 63 F14: the secondary picker lists only souls actually carried, and 
 });
 
 // The window itself, not just the catalogue seam. REVIEW ROUND: the two
-// `souls:` arguments in src/ui/itemMakerWindow.js were F14's ONLY host
+// `souls:` arguments in src/ui/item/itemMakerWindow.js were F14's ONLY host
 // wiring and nothing drove ItemMakerWindow, so deleting both restored
 // the whole defect with the suite unchanged.
 const makerWin = (items) => {

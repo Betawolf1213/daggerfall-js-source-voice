@@ -222,7 +222,7 @@
   },
   {
     "name": "HACKED-GOLD-the-classic-chest-takes-a-letter",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "        if (letterRefusesPut(it, { container: t === REMOTE_TARGET_TYPES.Loot && this.hooks.loot?.storage !== true, own: this.hooks.loot?.playerOwned === true })) {",
     "new": "        if (false) {",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "HACKED-GOLD-the-enhanced-ghost-unasked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (remote && letterRefuses(item)) return { kind: 'stow', label: null, speaks: true };   // HACKED-GOLD: a letter online - released, it says why\n",
     "new": "",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "HACKED-GOLD-the-enhanced-stow-unasked",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (remote && letterRefuses(item)) {\n    notice = letterPutText(itemLongName(item, { getQuest: deps.getQuest ?? null }));\n    return render();\n  }",
     "new": "",
     "tests": [

@@ -1,14 +1,14 @@
 // SHIPYARDS (2026-10-11): THE SHIPMASTER'S WINDOW - its host half (scenes/shipyardHost.js: each page's model and every
 // act over the Fleet's host, the sea fight's, Come Sail Away's runtime and the purse), the window itself
 // (ui/shipyardWindow.js: its tabs, its two-press sale and pay-off, a summons handing the water to the host), and its door
-// (ui/navalPlunderDoor.js's third slot). Design: bible/03-World/Shipyards.md.
+// (ui/naval/navalPlunderDoor.js's third slot). Design: bible/03-World/Shipyards.md.
 import { byClass, keydown, Node_ } from './chargenDom.mjs';   // the suite's minimal DOM (its side effect: the globals)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createShipyardHost, SHIPYARD_PAGES, AT_HAND } from '../src/scenes/shipyardHost.js';
 import { mountShipyardWindow, shipCardText, fleetRowText, recruitText, SHIPYARD_TABS, SHIPYARD_TAB_ICONS } from '../src/ui/shipyardWindow.js';
-import { createShipyardOverlay, shipyardOpen, closeShipyard } from '../src/ui/navalPlunderDoor.js';
-import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
+import { createShipyardOverlay, shipyardOpen, closeShipyard } from '../src/ui/naval/navalPlunderDoor.js';
+import { WARM_CHUNKS } from '../src/ui/enhanced/enhancedChunk.js';
 import { fleetShip, fleetBook, titleDeed, knowShip, _resetFleetForTests, shipLabel } from '../src/systems/fleet.js';
 import { shipBuyPrice, shipSalePrice, shipWorth, shipSpec, SHIPYARD_HULLS, SHIPYARD_TEXT, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from '../src/systems/shipyards.js';
 import { recruitsOf, recruitFee, CREW_HALL_TEXT } from '../src/systems/crewHall.js';

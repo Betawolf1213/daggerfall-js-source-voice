@@ -11,7 +11,7 @@
 //     the product's own logo and not a frame of the game;
 //   - it has NO PALETTE OF ITS OWN. Every colour in its stylesheet is a
 //     var() the enhanced skin declares, and the block that declares them
-//     is injected from src/ui/enhancedStyle.js at serve and build - one
+//     is injected from src/ui/enhanced/enhancedStyle.js at serve and build - one
 //     source, as the skin's own header demands;
 //   - the game page kept everything the mobile build put in index.html
 //     (the viewport meta, the touch-action canvas) when it moved;
@@ -26,7 +26,7 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { Writable } from 'node:stream';
 import { execFileSync } from 'node:child_process';
-import { ENHANCED_TOKENS, ENHANCED_FONTS_URL, ENHANCED_CSS, FONT_DATA, FONT_DISPLAY, FONT_PIXEL_BRAND, FONT_PIXEL_DATA, fontsUrl } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_TOKENS, ENHANCED_FONTS_URL, ENHANCED_CSS, FONT_DATA, FONT_DISPLAY, FONT_PIXEL_BRAND, FONT_PIXEL_DATA, fontsUrl } from '../src/ui/enhanced/enhancedStyle.js';
 import { transformLanding, LANDING_PATH, LANDING_FONTS_URL, countTests, countSrcLines, figure } from '../scripts/landingHtml.mjs';
 import { SUPPORT_ASKS, SUPPORT_MARKS_CSS, MARK_PX } from '../src/ui/supportAsks.js';
 
@@ -98,7 +98,7 @@ test('U63: the landing page owns no colour - every one is the SKIN\'s, token or 
   // not have is the drift the injection exists to stop.
   const css = landing.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
   assert.ok(css.length > 1000, 'the page carries its layout inline');
-  const skin = read('src/ui/enhancedStyle.js');
+  const skin = read('src/ui/enhanced/enhancedStyle.js');
   const norm = (c) => c.toLowerCase().replace(/\s+/g, '');
   const skinColours = new Set([
     ...[...skin.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => norm(m[0])),
@@ -144,7 +144,7 @@ test('U60: the injected block IS the skin\'s token block, and the skin still wea
   // and the landing page cannot hold two different values of --brass.
   assert.ok(ENHANCED_CSS.includes(ENHANCED_TOKENS), 'ENHANCED_CSS must be composed from ENHANCED_TOKENS');
   assert.match(ENHANCED_TOKENS, /^:root \{[\s\S]*--brass: #c08a3e;[\s\S]*\}$/);
-  assert.match(read('src/ui/enhancedStyle.js'), /link\.href = ENHANCED_FONTS_URL;/,
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /link\.href = ENHANCED_FONTS_URL;/,
     'injectEnhancedFonts must use the exported URL, not a second literal');
 
   const out = transformLanding(landing, { sha: 'abc1234' });
@@ -374,7 +374,7 @@ test('U63: the night is the MENU\'s night - pixelGround\'s ramp, seed and star l
 
 test('U63: the page is the pixel face\'s own idioms, not the shell it replaced', () => {
   const css = landing.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
-  const skin = read('src/ui/enhancedStyle.js');
+  const skin = read('src/ui/enhanced/enhancedStyle.js');
   // The shell is GONE: no rail, no two-column grid, no .act buttons.
   for (const dead of ['.shell', '.railbtn', '.side {', '.pane {', '.act.primary', '.thumb']) {
     assert.ok(!css.includes(dead), `${dead} belongs to the shell the menu replaced`);
@@ -385,9 +385,9 @@ test('U63: the page is the pixel face\'s own idioms, not the shell it replaced',
   assert.match(css, /0 -4px 0 var\(--brass\), 0 4px 0 var\(--brass\)/, 'the gem, drawn as a box-shadow cross');
   assert.match(skin, /0 -4px 0 var\(--brass\), 0 4px 0 var\(--brass\)/, '...which is the menu\'s gem');
   // AUDIT BR5: the wordmark is the product's logo again (BR3 had made it type), at the width the game's front door
-  // gives it (src/ui/enhancedStyle.js .px-wordmark:has(.brand-logo)), centred over the rule.
+  // gives it (src/ui/enhanced/enhancedStyle.js .px-wordmark:has(.brand-logo)), centred over the rule.
   assert.match(css, /\.wordmark img \{ display: block; width: min\(321px, 64vw\); height: auto; margin: 0 auto; \}/, 'the logo, sized as the door\'s');
-  assert.ok(read('src/ui/enhancedStyle.js').includes('.px-wordmark:has(.brand-logo) { width: min(321px, 50vw);'), '...whose 321px it shares');
+  assert.ok(read('src/ui/enhanced/enhancedStyle.js').includes('.px-wordmark:has(.brand-logo) { width: min(321px, 50vw);'), '...whose 321px it shares');
   assert.doesNotMatch(css, /\.wordmark small/, 'the type wordmark\'s sub-line went with it');
   assert.match(css, /rgb\(243,239,44\)/, 'the classic shadowed-label pair, for what is live');
   assert.match(css, /text-shadow: 2px 2px 0 rgb\(93,77,12\)/);
@@ -446,7 +446,7 @@ test('U63: the fi ligature is off - "files" is not "Ales", on the site AND in th
   // face, so the fix is at the root of both.
   const css = landing.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
   assert.match(css, /font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'clig' 0;/);
-  const skin = read('src/ui/enhancedStyle.js');
+  const skin = read('src/ui/enhanced/enhancedStyle.js');
   const shell = skin.slice(skin.indexOf('.shell { font-family:'), skin.indexOf('.shell { font-family:') + 600);
   assert.match(shell, /font-variant-ligatures: none/, 'the enhanced shell');
   const home = skin.slice(skin.indexOf('.px-home {'), skin.indexOf('.px-home {') + 400);
@@ -600,7 +600,7 @@ test('FIX-D: the digit five is Silkscreen\u2019s - one glyph, a data URI, first 
   // the game: the face is the first rule of the skin, and no rule sets Pixelify without the five ahead of it
   assert.ok(ENHANCED_CSS.trimStart().startsWith('/* ── FIX-D'), 'the face is declared before any rule that could use it');
   assert.ok(ENHANCED_CSS.includes(PIXELIFY_FIVE_FACE));
-  assert.doesNotMatch(read('src/ui/enhancedStyle.js'), /'Pixelify Sans', monospace/, 'no bare Pixelify stack survives in the skin - every one is PIXEL_STACK');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedStyle.js'), /'Pixelify Sans', monospace/, 'no bare Pixelify stack survives in the skin - every one is PIXEL_STACK');
   assert.ok((ENHANCED_CSS.match(/'Pixelify Five', 'Pixelify Sans', monospace/g) || []).length >= 9, 'the nine Pixelify roots all carry the five');
   // the site: the same bytes, inline (index.html cannot import the module)
   const m = landing.match(/@font-face \{ font-family: 'Pixelify Five'; unicode-range: U\+0035; font-display: swap; src: url\(data:font\/woff2;base64,([A-Za-z0-9+/=]+)\) format\('woff2'\); \}/);

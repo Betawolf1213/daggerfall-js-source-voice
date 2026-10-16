@@ -24,8 +24,8 @@ no ARENA2, so every claim is the suites' and the mounted host slices'.
 
 ## PAD-BINDS (1)
 
-`ui/plusPadBinds.js` (PLUS_BIND_ROWS: `quickdial` on QuickDial, `overworld` on TravelView - both start unbound, the
-row's own Bind and Unbind as every other's), `ui/plusPad.js` (DPAD_CHOICES: Quick dial and Overworld for any
+`ui/plus/plusPadBinds.js` (PLUS_BIND_ROWS: `quickdial` on QuickDial, `overworld` on TravelView - both start unbound, the
+row's own Bind and Unbind as every other's), `ui/plus/plusPad.js` (DPAD_CHOICES: Quick dial and Overworld for any
 direction's tap or hold), `ui/gamepadInput.js` (plusFrame's `fireDpad`: an action on no key at all is the host's own
 door, `hooks.padAction` - TravelView ships unbound, TV1's own pin, so a synthetic press of nothing reached nothing),
 `scenes/world.js` (`travelViewKey`, the one TravelView toggle the key's arm and the pad's `padAction` both call - the
@@ -41,9 +41,9 @@ cleared row said; the d-pad's tap and hold - the dial's Tab, the Overworld's doo
 
 ## PAD-ARRANGE (1)
 
-`ui/enhancedHotbar.js` (`hand`, `arranging`, raiseSync, takeHotbarHand, placeHotbarHand, toggleHotbarArrange,
+`ui/enhanced/enhancedHotbar.js` (`hand`, `arranging`, raiseSync, takeHotbarHand, placeHotbarHand, toggleHotbarArrange,
 PAD_ARRANGE_TEXT; the crossbar API's canArrange, arranging, arrange, holding, crossbar and place), `ui/gamepadInput.js`
-(plusFrame's window branch; `hotbarPrompt`), `ui/plusPad.js` (HOTBAR_ARRANGE_CODE, windowPrompts' `hotbar`). With the
+(plusFrame's window branch; `hotbarPrompt`), `ui/plus/plusPad.js` (HOTBAR_ARRANGE_CODE, windowPrompts' `hotbar`). With the
 pad the live device and a window up:
 - **LT raises the bar** to be arranged, and again lowers it. LT is the world's (Interact) and stood down under a window,
   so in one it was nothing. The prompt bar names it ("Arrange hotbar" / "Hotbar done").
@@ -131,7 +131,7 @@ the caster's partner too - the two-against-one bouts (Knight + Healer, Warrior +
 `combat/friendlyFire.js` boutTeammates (one bout, one side) and the blast passes a teammate by; the dungeon's foe
 missiles (the floor's instance is a dungeon level) carry their foe as hostMagic's own already did (`scenes/dungeonContext.js`
 wCaster, fCaster, mCaster), so the blast can ask whose it is. **The Grand Melee's look**: every fighter its own side by
-design ("Every fighter for themselves!"), but the HUD stood the rest in one column under "vs". `ui/arenaHud.js` calls a
+design ("Every fighter for themselves!"), but the HUD stood the rest in one column under "vs". `ui/arena/arenaHud.js` calls a
 bout where every fighter is a side of its own "each alone" (`ARENA_TEXT.hud.eachAlone`); a team bout keeps "vs". Not
 changed: the melee stays a melee - giving its fighters one side against the player is a design call, recorded for the
 owner. THE FOUR HOSTS: every blast is hostMagic.js's explodeAt - world.js's, exterior.js's and dungeonContext.js's own
@@ -165,7 +165,7 @@ TV_KIN_LEGEND; markShown reads it), kept on the device under its own key beside 
   Renown reaches the floor. My party is never filtered.
 - **The names' colours** - a friend's in the friends' blue (net/social.js FRIEND_CSS, the chat's own), a guild-mate's
   (their tag my guild's) in violet; my party's green stays the party's.
-On the Overworld (`ui/travelViewHud.js`): a "Players" block under the switches (on a touch screen the switches scroll
+On the Overworld (`ui/travel/travelViewHud.js`): a "Players" block under the switches (on a touch screen the switches scroll
 within their section - the block stands from the top there, and a phone held landscape ran it off the foot); the
 badge's name and a bare label in the kin's colour (the sprite keyed by it). On the travel map (`ui/heldMap.js`,
 `ui/partyMapMarks.js`): the region's travellers carry their kin and Renown (`scenes/world.js`'s `travellers` dep), are
@@ -182,7 +182,7 @@ own law - a Beautiful Cities composite on one too), `ui/carriageWheel.js` (new: 
 (`carriageTown`: by map id, while the mod is loaded - online always - kept per id until the location index moves).
 The Overworld draws a carriage town's dot as a brass wheel and edges its plate in brass; the travel map draws the wheel
 LEFT of the town's mark (the anchor stands right), clear of all its ink - the glyph, a hub's circle and a seat's ring
-(markReach) - at every band, in the anchor's pens (`ui/inkMap.js` carriageWheelAt, paintCarriageWheel). The names keep
+(markReach) - at every band, in the anchor's pens (`ui/ink/inkMap.js` carriageWheelAt, paintCarriageWheel). The names keep
 off it (placeNames seeds its ground with the glyphs', and a carriage town's own name set to the left goes past it).
 Pins: `test/fb1004e_overworld.test.js`.
 
@@ -191,7 +191,7 @@ Pins: `test/fb1004e_overworld.test.js`.
 `net/townSeatLaw.js` seatTipOf - a dressed seat's card (`{ title, lines }`, the EVENT-TIP card): the town; its Charter
 and who holds it; how long and how firmly (seatHolderLine); the holder's rule (seatRuleLine); this week's battle and a
 called siege. The travel map's hover over a seat answers with it (`ui/heldMap.js` `_hoverLabel`'s place branch); the
-Overworld's plate under the pointer shows the same card (`ui/travelViewHud.js` showMarkTip, the held map's `.hmtip`
+Overworld's plate under the pointer shows the same card (`ui/travel/travelViewHud.js` showMarkTip, the held map's `.hmtip`
 look) - a seat town's mark carries a function that makes it while the seats are open (`scenes/world.js` seatTipAt, one
 kept a town), asked only of the plate under the pointer; the card is measured once (a layout read each frame forced
 one) and moved only when it moves; over the block's own controls no plate is lit and no card shown. A seat's lines are

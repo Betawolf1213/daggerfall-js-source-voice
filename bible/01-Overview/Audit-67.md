@@ -34,7 +34,7 @@ test; the inter-ray loop is gone, the header says why, and AUDIT 58's
 "exactly 0.01 reveals nothing" pin - which enshrined the misreading - is
 re-pinned to the law.
 
-**W1 - the right drag spun the map (`ui/automapCamera.js`,
+**W1 - the right drag spun the map (`ui/automap/automapCamera.js`,
 DaggerfallAutomapWindow.cs:909-913).** The three rotate verbs the drag
 hands its bias to all multiply by `Time.unscaledDeltaTime`; `dragRotate`
 passed a literal 1, so a ten-pixel drag at 60 fps turned the camera 200
@@ -67,7 +67,7 @@ the save wire wrote it as null, and the guard then refused the dungeon's
 own layout on every load - wiping reveals, notes and teleporters for
 ever; the list is dense now and a hole and a null compare equal.
 
-**The window (`ui/automapWindow.js`, `ui/automapChrome.js`).** W2: the
+**The window (`ui/automap/automapWindow.js`, `ui/automap/automapChrome.js`).** W2: the
 micro-map's 28x28 rect swallowed every drag and double-click under it;
 BaseScreenComponent tests rects without occlusion and the overlay panel
 has no handler. W3: the panel mouse "stuck" outside the map, so hover

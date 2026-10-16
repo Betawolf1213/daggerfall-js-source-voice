@@ -339,7 +339,7 @@
   },
   {
     "name": "BAL4-the-plate-says-end-the-journey",
-    "file": "src/ui/enhancedDeath.js",
+    "file": "src/ui/enhanced/enhancedDeath.js",
     "old": "word: rises ? t('death.key.riseLegacy', 'Rise') : t('death.key.end', 'End the journey')",
     "new": "word: t('death.key.end', 'End the journey')",
     "tests": [
@@ -348,7 +348,7 @@
   },
   {
     "name": "BAL4-the-line-says-the-tale-ends",
-    "file": "src/ui/enhancedDeath.js",
+    "file": "src/ui/enhanced/enhancedDeath.js",
     "old": "lossLine || (online || screen.rises",
     "new": "lossLine || (online",
     "tests": [
@@ -559,7 +559,7 @@
   },
   {
     "name": "AUDIT-BAL-the-enhanced-face-hears-no-rise",
-    "file": "src/ui/enhancedDeath.js",
+    "file": "src/ui/enhanced/enhancedDeath.js",
     "old": "for (const k of deathKeys(screen.hint, online, !!screen.rises)) {",
     "new": "for (const k of deathKeys(screen.hint, online)) {",
     "tests": [

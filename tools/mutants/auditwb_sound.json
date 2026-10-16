@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDWB-D5-the-veil-counts-its-ticks",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "    frameDrawn() { hostCounts = true; drawnN++; },",
     "new": "    frameDrawn() { drawnN++; },",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDWB-D5-the-old-places-frames-counted",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "      if (phase === 'shut') { wait = VEIL_OPEN_WAIT_TICKS; drawnAt = drawnN; kick(); }",
     "new": "      if (phase === 'shut') { wait = VEIL_OPEN_WAIT_TICKS; kick(); }",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "AUDWB-D6-the-flash-a-frame-late",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "      draw(t);   // AUDIT WB D6",
     "new": "      // AUDIT WB D6",
     "tests": [

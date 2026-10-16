@@ -141,7 +141,7 @@
   },
   {
     "name": "SURV3-the-classic-pack-keeps-the-window-open",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "      if (this.hooks.placeCamp) { this._closeSilently(); this.hooks.placeCamp(r.item, collection); }",
     "new": "      if (this.hooks.placeCamp) { this.hooks.placeCamp(r.item, collection); }",
     "tests": [

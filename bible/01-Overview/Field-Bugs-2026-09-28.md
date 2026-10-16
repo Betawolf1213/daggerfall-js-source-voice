@@ -26,7 +26,7 @@ The list, as the screenshots carried it:
 ## DISC28-A: the pause key closes what it opened (4)
 
 The host opens the enhanced pause screen on the PAUSE ACTION (inputActions' `Escape`), but the screen's own key handler
-(`ui/enhancedMenu.js` onKey) knew back only as the shared table's literal Escape (`overlayAction`). A pause rebound to P
+(`ui/enhanced/enhancedMenu.js` onKey) knew back only as the shared table's literal Escape (`overlayAction`). A pause rebound to P
 opened the screen, and P there was an ordinary letter that nothing took. DFU's pause window closes on the action's own
 binding (DaggerfallPauseOptionsWindow.cs:159 `toggleClosedBinding = GetBinding(Actions.Escape)`, :186 on key-up) as well
 as the back button, and the classic window already did (`ui/pauseWindow.js`).
@@ -67,9 +67,9 @@ records re-aimed (6 dead); `test/courtrescue.test.js`'s anchor re-aimed.
 
 ## DISC28-C: the shop's confirm box stands above the rows' markers (7)
 
-The counter's Yes/No scrim (`ui/enhancedTrade.js` boxScrim, appended inside the window after the lists) stood at
+The counter's Yes/No scrim (`ui/enhanced/enhancedTrade.js` boxScrim, appended inside the window after the lists) stood at
 z-index auto. The shelf rows' furniture climbs out of auto - the wear bar at 1 (WEAR-UI), the sigil rune and the padlock
-at 2 (`ui/enhancedPlusStyle.js`) - and nothing between the lists and the scrim makes a stacking context, so every
+at 2 (`ui/enhanced/enhancedPlusStyle.js`) - and nothing between the lists and the scrim makes a stacking context, so every
 positive layer painted over the modal whatever the DOM order: the column of dashes in the screenshot is one wear bar per
 row. The three shells that raise an `.sb-ask` box (trade, spellbook, tavern) stand it at layer 10.
 

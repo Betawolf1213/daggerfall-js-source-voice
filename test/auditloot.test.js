@@ -33,9 +33,9 @@ import { equipItem, equipTableOf } from '../src/systems/equip.js';
 import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import { withDom } from './invdrag.mjs';
 import { mountReforgeWindow, REFORGE_SKIN_STYLE_ID } from '../src/ui/reforgeWindow.js';
-import { REFORGE_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { REFORGE_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { BROKER_SKIN_STYLE_ID } from '../src/ui/brokerWindow.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { reforgeDoorOpen, closeReforgeDoor } from '../src/ui/reforgeDoor.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -139,7 +139,7 @@ test('AUDIT LOOT F6: the Reforge\'s window laid - its tabs, the Codex\'s rows, t
     /\.reforge-card \.reforge-line, \.imprint-card \.imprint-choice \{ display: flex;/,
     /\.reforge-card \.reforge-press, \.imprint-card \.imprint-press \{ width: auto;/,
   ]) assert.match(REFORGE_CSS, rule);
-  assert.match(read('src/ui/enhancedPlusStyle.js'), /\$\{BROKER_CSS\}\n\$\{REFORGE_CSS\}\n/, 'the Plus sheet carries it');
+  assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /\$\{BROKER_CSS\}\n\$\{REFORGE_CSS\}\n/, 'the Plus sheet carries it');
   on();
   const prev = globalThis.location;
   globalThis.location = { search: '?skin=classic' };

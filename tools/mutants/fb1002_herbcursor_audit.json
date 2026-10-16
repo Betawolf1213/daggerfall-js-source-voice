@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-HERB-CURSOR-C3-gentle-hint",
-    "file": "src/ui/profReticle.js",
+    "file": "src/ui/professions/profReticle.js",
     "old": "hint: (st, label) => (st.gentle ? t('prof.reticle.basket.searching', 'searching...') : label || t('prof.reticle.basket.glint', 'click the glint')),",
     "new": "hint: (st, label) => label || t('prof.reticle.basket.glint', 'click the glint'),",
     "tests": [

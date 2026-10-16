@@ -20,7 +20,7 @@
   },
   {
     "name": "AUDITRETRO1-A7-the-bar-height-uncast",
-    "file": "src/ui/hudLarge.js",
+    "file": "src/ui/hud/hudLarge.js",
     "old": "  return Math.trunc(bar.h);   // AUDIT RETRO1 A7",
     "new": "  return bar.h;   // AUDIT RETRO1 A7",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "AUDITRETRO1-C7-the-black-shift-steppable",
-    "file": "src/ui/settingsLaw.js",
+    "file": "src/ui/settings/settingsLaw.js",
     "old": "'Video/PalettizationLUTShift': { min: 0, max: 7,",
     "new": "'Video/PalettizationLUTShift': { min: 0, max: 8,",
     "tests": [
@@ -233,7 +233,7 @@
   },
   {
     "name": "AUDITRETRO1-C7-no-tip",
-    "file": "src/ui/settingsCopy.js",
+    "file": "src/ui/settings/settingsCopy.js",
     "old": "  return SETTINGS_INFO[dfuTextKey(key)] ?? PAGE_TIPS[key] ?? '';",
     "new": "  return SETTINGS_INFO[dfuTextKey(key)] ?? '';",
     "tests": [

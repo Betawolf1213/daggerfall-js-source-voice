@@ -8,7 +8,7 @@
 // map's own refresh rather than snapshot at open, because a party
 // changes while a map is up. The drawings are a green ring with a name
 // under it on the enhanced map (ui/heldMap.js since MAP1; the relief map before it) and a green
-// dot on the classic region page (ui/travelMapWindow.js).
+// dot on the classic region page (ui/travel/travelMapWindow.js).
 //
 // WHAT IS WORTH PINNING, AND WHAT IS NOT. The relief and the region
 // art are pictures; what can be WRONG here is: the party read once and
@@ -36,11 +36,11 @@ import {
 } from '../src/ui/partyMapMarks.js';
 import { PARTY_GREEN, PARTY_GREEN_CSS, SocialState } from '../src/net/social.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
-import { toPaper, PEN, PARTY_LABEL_STACK } from '../src/ui/inkMap.js';
-import { createTravelMapWindow } from '../src/ui/travelMapDoor.js';
+import { toPaper, PEN, PARTY_LABEL_STACK } from '../src/ui/ink/inkMap.js';
+import { createTravelMapWindow } from '../src/ui/travel/travelMapDoor.js';
 import {
   TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests, PARTY_POLL_S,
-} from '../src/ui/travelMapWindow.js';
+} from '../src/ui/travel/travelMapWindow.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
@@ -54,7 +54,7 @@ const skin = (v) => { _resetForTests(); globalThis.location = { search: `?skin=$
 // ── THE ENHANCED HARNESS (test/heldmap.test.js's own) ────────────
 //
 // MAP1 (2026-09-18): the enhanced map is the HELD PARCHMENT
-// (ui/heldMap.js + ui/inkMap.js); the 3D relief and its DOM labels are
+// (ui/heldMap.js + ui/ink/inkMap.js); the 3D relief and its DOM labels are
 // RETIRED. The party is INK now - a ring and a name on the sheet, drawn
 // by paintInk through the same view transform as every other mark - so
 // the pins below drive the window's party state and a recording 2D
@@ -590,8 +590,8 @@ test('SOC6: the door carries the party to whichever skin the host wears (mutants
   });
   // both windows name the dep in their own contract, so a host reading
   // either door's doc finds it
-  assert.match(read('src/ui/travelMapDoor.js'), /party: \(\) => \[\{acct, name, px, py, in, loc, online, leader\}\]/);
-  assert.match(read('src/ui/travelMapWindow.js'), /SOC6, an optional/);
+  assert.match(read('src/ui/travel/travelMapDoor.js'), /party: \(\) => \[\{acct, name, px, py, in, loc, online, leader\}\]/);
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /SOC6, an optional/);
   assert.match(read('src/ui/heldMap.js'), /SOC6: and an optional `party:/);
 });
 
@@ -637,14 +637,14 @@ test('AUDIT SOC C16/C17 (MAP1): the party is INK - no label node, no title, no c
   const src = read('src/ui/heldMap.js');
   assert.doesNotMatch(src, /lab\.title = |_partyLabels|_positionPartyLabels/, 'no label nodes at all');
   assert.match(src, /partyHoverText/, 'the sentence lives on in the hover line');
-  const ink = read('src/ui/inkMap.js');
+  const ink = read('src/ui/ink/inkMap.js');
   assert.match(ink, /const \[x, y\] = toPaper\(view, m\.x, m\.y\);\s*\n\s*ctx\.strokeStyle = m\.color;[\s\S]{0,400}ctx\.fillText\(m\.name, x, y \+ 9 \+ \(m\.stack \?\? 0\) \* PARTY_LABEL_STACK\);/,
     'ring and name from ONE toPaper read');
-  assert.doesNotMatch(read('src/ui/enhancedStyle.js'), /\.ovparty|\.hmparty/, 'and no layer in the stylesheet either');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedStyle.js'), /\.ovparty|\.hmparty/, 'and no layer in the stylesheet either');
 });
 
 test('AUDIT SOC C10/D5 (MAP1): the legend is a flex child of the FOOT row, beside the hint and the band, so it wraps with them instead of landing on them (mutants: the legend floated at a guessed height again; the legend appended to the root)', () => {
-  const style = read('src/ui/enhancedStyle.js');
+  const style = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(style, /\.hmlegend \{\s*position: static; flex: none; display: none;/, 'a chip, not a floating box');
   assert.doesNotMatch(style, /\.hmlegend \{[^}]*bottom: 70px/, 'no guess about how tall the row happens to be');
   assert.match(style, /\.hmfoot \{\s*position: absolute; left: 18px; bottom: 18px; display: flex; gap: 12px;/, 'the row it lives in');

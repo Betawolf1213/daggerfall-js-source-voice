@@ -9,7 +9,7 @@ import { rollRaidSpoils } from '../src/systems/raidSpoils.js';
 import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { ItemMakerWindow, itemMakerFilter, TAB_PAGES } from '../src/ui/itemMakerWindow.js';
+import { ItemMakerWindow, itemMakerFilter, TAB_PAGES } from '../src/ui/item/itemMakerWindow.js';
 import { enchantDecision, AETHERIC_TAKES_NO_ENCHANTMENT } from '../src/systems/enchanting.js';
 import { enchantmentSettings } from '../src/systems/enchantmentCatalogue.js';
 

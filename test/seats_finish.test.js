@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
 import { validTravellerFrame } from '../src/net/wire.js';
-import { TRAVEL_VIEW_RIBBON } from '../src/ui/travelViewHud.js';
+import { TRAVEL_VIEW_RIBBON } from '../src/ui/travel/travelViewHud.js';
 import { byClass } from './chargenDom.mjs';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { HALL_OF_RECORDS_SHUT } from '../src/systems/online/onlineHomes.js';
@@ -128,7 +128,7 @@ test('AUDIT-SEATS THE RIBBON ON THE TRAVEL VIEW: a traveller frame keeps the rib
   assert.deepEqual(f.rb, [0, 2]);
   assert.equal(validTravellerFrame({ t: 'trav', id: 'peer-0002', name: 'Bran', p: null, rb: [2, 2] }).rb, null);
   assert.deepEqual({ ...TRAVEL_VIEW_RIBBON }, { band: 2, edge: 1, gap: 1 });
-  const hud = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
+  const hud = readFileSync(new URL('../src/ui/travel/travelViewHud.js', import.meta.url), 'utf8');
   assert.match(hud, /const ribbonH = P\.rb \? TRAVEL_VIEW_RIBBON\.gap \+ TRAVEL_VIEW_RIBBON\.band \+ TRAVEL_VIEW_RIBBON\.edge : 0;/, 'the sprite grown to hold it');
   assert.match(hud, /h = Math\.ceil\(titleH \+ rowH \+ 2 \+ ribbonH\)/);
   assert.match(hud, /glyphs: glyphBadges\(b\), rb: ribbonColours\(b\?\.rb\), arms: badgeArms\(b\) \};/);   // AUDIT HERALDRY H4: and the tag's arms

@@ -138,7 +138,7 @@ rotation-sign inversion and the injected-vs-default water tint).
 - **C2 the automap pair**, ten judged stages in two flights. Flight 1
   cut the shared halves (`systems/automap/automapModel.js` + the AABB-shape
   fix that had left the dungeon reveal probe dead, the renderer's
-  panel bracket, `ui/automapCamera.js` pure, `ui/automapChrome.js`).
+  panel bracket, `ui/automap/automapCamera.js` pure, `ui/automap/automapChrome.js`).
   Flight 2 built the windows: S5 the native dungeon window (UNLIT
   geometry pass, DFU's controls and hotkey table, the OnPush/OnPop
   handshake), S6 the shader's above-slice half with the water tint
@@ -154,7 +154,7 @@ rotation-sign inversion and the injected-vs-default water tint).
   ROAD-E E3** - that header narrates both closures
   (`ui/exteriorAutomapWindow.js:"ROAD-D D5 CLOSED"` and `ui/exteriorAutomapWindow.js:"ROAD-E E3 CLOSED"`). CORRECTED with the
   strike: the shipped tooltip table is TEN rects
-  (`ui/automapText.js:"export const EXTERIOR_AUTOMAP_TOOLTIPS"`) - nine buttons and the compass PANEL - not
+  (`ui/automap/automapText.js:"export const EXTERIOR_AUTOMAP_TOOLTIPS"`) - nine buttons and the compass PANEL - not
   eight; the header says TEN too.
 
 The whole of Waves B5, C and D - plus the bow salvage and the incident
@@ -225,7 +225,7 @@ frame (`combat/fpsSpellCasting.js:"animation - and its"`) and the clear-path ter
 (`characters/enemyCasting.js:"BEFORE the 1/40 roll"`), closing section C's `playSound` row
 with them; E4 took gold-as-a-bag-stack (`systems/inventory.js:"E4 (2026-09-02) RETIRED"`);
 E7 took `GetValue`'s empty-string arm (`systems/talk/talkMacros.js:"ordering: the scan"`);
-E5 took the docked bar's occlusion (`ui/hudLarge.js:"THE DOCKED BAR SHRINKS"`); and E1
+E5 took the docked bar's occlusion (`ui/hud/hudLarge.js:"THE DOCKED BAR SHRINKS"`); and E1
 narrowed while E3 closed the two console verbs
 (`ui/exteriorAutomapWindow.js:"rect and was being"` - the site id the flag list was
 measured on; the closure narrates at `:100` today) by building the
@@ -444,7 +444,7 @@ squashed one commit per lane.
   the balanced braces now. `LightningFlash`'s `timeScale` option existed
   at five sites and had never been built off 1; pinned against the mod's
   own `LightningFlash.cs:52-79` at both the divide and the multiply.
-- **H8 the touch code-lift guard** (`ui/touch.js`, a TI1 departure) -
+- **H8 the touch code-lift guard** (`ui/touch/touch.js`, a TI1 departure) -
   the held/held case AUDIT 62 named was already closed by F8's review
   (`liveNeeds()` covers both directions, a direct shared code included;
   pinned both ways now). The case still OPEN was the MOMENTARY one: the

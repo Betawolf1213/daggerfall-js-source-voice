@@ -538,7 +538,7 @@ export function replacePromptRows(u, { action, code, holders }) {
  * torch/summon horse/summon cart)"): THE KEYS THE CONTROLS PAGE CANNOT MOVE, NAMED ON IT ANYWAY.
  *
  * Two kinds reach a player in play and stood on no screen at all. The HUD's own three - DaggerfallHUD.Update's
- * LargeHUDToggle and HUDToggle arms and RetroRenderer's post-processing toggle (ui/hudShortcuts.js), which DFU reads
+ * LargeHUDToggle and HUDToggle arms and RetroRenderer's post-processing toggle (ui/hud/hudShortcuts.js), which DFU reads
  * off its DaggerfallShortcut table and gives no rebinding screen either. And the Transport window's letters: in the
  * game itself (no mod) a horse or a cart is not summoned by a key of its own, it is chosen in that window - Transport,
  * then H or C. Both are read OFF the shortcut table (systems/dialogShortcuts.js shortcutBinding), so the page names

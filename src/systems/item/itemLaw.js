@@ -405,7 +405,7 @@ function sigilFindings(/** @type {any} */ item) {
 /** A row the item maker laid: the catalogue's settings row, its type made the classic number (enchanting.js
  *  applyEnchantments) - it carries the settings' `enchantCost`. */
 const isMakerRow = (/** @type {any} */ e) => e != null && typeof e === 'object' && e.enchantCost !== undefined;
-/** The groups the item maker takes (ui/itemMakerWindow.js itemMakerFilter). */
+/** The groups the item maker takes (ui/item/itemMakerWindow.js itemMakerFilter). */
 const MAKER_GROUPS = Object.freeze(['Weapons', 'Armor', 'Gems', 'Jewellery', ...CLOTHING_GROUPS]);
 /** A classic save's ten slots, kept whole by its importer (classicSave.js classicItemFromRecord) - `None` among them. */
 const classicSlots = (/** @type {any[]} */ rows) => rows.length === 10 && rows.some((e) => e?.type === T.None);

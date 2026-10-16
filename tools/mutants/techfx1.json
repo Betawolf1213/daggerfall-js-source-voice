@@ -422,7 +422,7 @@
   },
   {
     "name": "TECHFX1-the-row-unbuilt",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "return [row, techniqueMotionRow()];",
     "new": "return [row];",
     "tests": [
@@ -431,7 +431,7 @@
   },
   {
     "name": "TECHFX1-unmapped",
-    "file": "src/ui/settingsMap.js",
+    "file": "src/ui/settings/settingsMap.js",
     "old": "\"port:techniqueMotion\", ",
     "new": "",
     "tests": [

@@ -1709,7 +1709,7 @@ block came out of its draw function into an `_ensureXProgram()` method
 byte for byte, guard included - so the draw path is EXACTLY what it was
 for anyone who never warms, and warming twice costs one property read.
 `renderer.warmSteps()` names the five; `render/warmPrograms.js` walks
-them one per `requestIdleCallback`, the shape `ui/enhancedChunk.js`
+them one per `requestIdleCallback`, the shape `ui/enhanced/enhancedChunk.js`
 settled on for MENU1 and for the same reason (five compiles back to back
 in one callback is the stall this exists to remove, moved somewhere less
 visible).
@@ -1924,7 +1924,7 @@ bundle's boot set 28 chunks / 492 KB gzipped - `travel` (257 KB) and
 `spellcast` (55 KB) the largest of them. The menu's own direct imports were
 not the cause (no single one costs more than 88 KB exclusively); the cause
 was a hub edge further down. Cutting edges one at a time on the entry's
-graph and measuring each: **`ui/cursor.js -> ui/hud.js` carries 216 files
+graph and measuring each: **`ui/cursor.js -> ui/hud/hud.js` carries 216 files
 and 4,141 KB on its own** - `main.js` imports the cursor to install the
 document pointer, the cursor imports ONE pure function from the HUD
 (`bitmapToColor32`, an indexed bitmap through a palette), and the HUD
@@ -1952,7 +1952,7 @@ which door it is going through. The bundle's boot set: 28 chunks / 492 KB ->
 MENU is interactive - the entry's set plus the menu chunk's own static
 closure plus the intro - are ~656 KB gzipped, the same as before this slice.
 The menu chunk reaches the world tick directly AND through
-`ui/enhancedHud.js`, and reaches `travel` through `systems/save/saveSlots.js ->
+`ui/enhanced/enhancedHud.js`, and reaches `travel` through `systems/save/saveSlots.js ->
 save.js -> weatherSim.js`; with several roots, no single cut helps, which is
 exactly what the exclusive-cost table said at the start. That is the next
 lever and a different shape of work: the clock (`worldMinutes`,
@@ -1975,7 +1975,7 @@ imported all four scene hosts - `bootExterior`, `bootInterior`,
 host's whole graph at module-evaluation time. **623 files and 13.4 MB of
 source were reached from the entry before `boot()` ran a line** - every
 scene, every system, every window - while the menu a player actually sees
-first (`ui/enhancedMenu.js`, `ui/introScreen.js`) was the thing loaded
+first (`ui/enhanced/enhancedMenu.js`, `ui/intro/introScreen.js`) was the thing loaded
 dynamically. The boot graph was inverted. Over the built bundle: 54 chunks,
 1,349 KB gzipped, had to arrive before the entry finished evaluating, and
 `main` alone was 517 KB of it.
@@ -2021,7 +2021,7 @@ entry reads as the regression it is.
 
 **What is still on the boot path, and why.** `travel` (257 KB gzipped, the
 largest chunk left) and `spellcast` (55 KB) are reached statically from the
-menu floor - `ui/enhancedMenu.js`'s own static graph is 315 files and 6.2 MB
+menu floor - `ui/enhanced/enhancedMenu.js`'s own static graph is 315 files and 6.2 MB
 of source, and it pulls `world/windmillMesh.js` (250 KB) and 2.4 MB of
 `systems/` for things a menu does not draw. That is the next lever, and it
 is the menu's own import list, not the entry's.
@@ -3296,7 +3296,7 @@ Every callback of one browser frame is handed the same stamp, and the gate
 decides once per stamp - so the counter asks the same question and counts
 only the frames the game drew.
 
-**THE ROW.** `ui/settingsLaw.js` gave NUMBER_LAW `stops` and `offBelow`: the
+**THE ROW.** `ui/settings/settingsLaw.js` gave NUMBER_LAW `stops` and `offBelow`: the
 row walks Off, 30, 45, 60, 75, 90, 120, 144, 165, 240 and 300 (shift steps
 three), reads "Off" for any value under 30 and "60 fps" otherwise, and never
 offers 1-29, a cap DFU ignores. It is LIVE, so the pause menu's condensed

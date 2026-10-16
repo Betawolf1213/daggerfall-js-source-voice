@@ -14,9 +14,9 @@ import { createRequire } from 'node:module';
 
 import { setValue, saveSettings, _resetForTests, tierOf, SHELL_AT_LAUNCH } from '../src/systems/settings/settings.js';
 import { createFramePacer, installFramePacer, capStep, capTake, frameCapSkip, _resetFrameCap, PACER_LEAD_MS } from '../src/systems/frameCap.js';
-import { widgetFor, formatValue } from '../src/ui/settingsLaw.js';
-import { TIER_TEXT } from '../src/ui/settingsCopy.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { widgetFor, formatValue } from '../src/ui/settings/settingsLaw.js';
+import { TIER_TEXT } from '../src/ui/settings/settingsCopy.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { codeHasOnce } from './codeOnly.mjs';
 
 const require = createRequire(import.meta.url);
@@ -100,7 +100,7 @@ test('FPS-VSYNC by source: the shell asks before the app is ready, over the page
   codeHasOnce(main.slice(from, to), /\nfor \(const s of FRAME_SWITCHES\) app\.commandLine\.appendSwitch\(s\);/,
     'after the storage root is pinned and before the app is ready - Chromium reads its switches at launch');
   assert.match(read('src/systems/settings/settings.js'), new RegExp(`\\nconst STORAGE_KEY = '${SETTINGS_PREF.replace(/\./g, '\\.')}';`), 'the key the page saves under');
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   const lineOf = (head) => { const at = menu.indexOf(head); assert.ok(at >= 0, head); return menu.slice(at, menu.indexOf('\n', at)); };
   const fnOf = (head) => { const at = menu.indexOf(head); assert.ok(at >= 0, head); return menu.slice(at, menu.indexOf('\n}\n', at) + 3); };
   codeHasOnce(lineOf('function drawsFlat(key) {'), /function drawsFlat\(key\) \{ const t = tierOf\(key\); return t === 'live' \|\| t === 'restart'; \}/);

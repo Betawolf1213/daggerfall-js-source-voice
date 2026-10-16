@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { SKY_SEGMENTS, skyClassicMinutes } from '../src/net/skyLaw.js';
-import { skyDayWords } from '../src/ui/enhancedMenu.js';
+import { skyDayWords } from '../src/ui/enhanced/enhancedMenu.js';
 import { PLAYED_STEP_MAX_SECONDS } from '../src/systems/quest/clock.js';
 import { REST_WAIT_PER_HOUR, MINUTES_PER_TICK } from '../src/systems/rest/restSession.js';
 import { DAWN_HOUR, DUSK_HOUR } from '../src/systems/gameDate.js';
@@ -37,7 +37,7 @@ test('TIME4 the Online pane says the sky\'s day as it is when the pane opens: tw
   // before the switch the sky is the event clock's: a day every two real hours
   const ev = skyClassicMinutes(SWITCH.fromMs - 3_600_000 * 4) - skyClassicMinutes(SWITCH.fromMs - 3_600_000 * 6);
   assert.ok(Math.abs(ev - 1440) < 1e-6, 'two real hours, a day, before it');
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /can hurt you too\. \{skyDay\} The world\\u2019s clock and sky run on real time[^\n]*\{ skyDay: skyDayWords\(\) \}/, 'the paragraph opens its clock with the sentence');
   assert.match(menu, /a full moon holds a lycanthrope for its night alone\./, 'TIME2, said at the door');
   assert.match(menu, /loans and repairs run on it\. Quest timers run on the world\\u2019s clock while you play: resting, waiting and travelling don\\u2019t spend a quest\\u2019s days, and time logged off never counts\./, 'QCLOCK-WORLD, said at the door (TIME3 had the quest timers on it, a rest spending their days)');

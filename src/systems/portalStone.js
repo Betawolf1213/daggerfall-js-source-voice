@@ -7,7 +7,7 @@
 //
 //   - THE STONE (systems/gate/gateSpoils.js, template 572 beside the Welkynd Shard's 571): bound, stacking with its own kind.
 //   - THE COUNTER: every shop's keeper (shopStock.js isShop - the nine kinds) sells one for PORTAL_STONE_SHARDS Welkynd
-//     Shards, from a row on the keeper's own popup (ui/merchantServiceWindow.js, ui/merchantRepairWindow.js, and the
+//     Shards, from a row on the keeper's own popup (ui/merchant/merchantServiceWindow.js, ui/merchant/merchantRepairWindow.js, and the
 //     Enhanced Plus panel) - never from a shelf: a shelf is the gold trade's, and nothing here is gold. ALWAYS IN STOCK:
 //     nothing is kept, so every sale mints a fresh stone.
 //   - THE USE: the pack's Use (or a hotbar press) hands the stone to the host's `openPortal` door - the open world's

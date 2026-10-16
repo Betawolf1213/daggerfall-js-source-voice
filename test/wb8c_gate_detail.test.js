@@ -19,8 +19,8 @@ import {
   attackColor, poolColor, emberColor, bossGlow, bossCue, ASPECT_COLORS, ATTACK_COLORS, POOL_COLOR, EMBER_COLOR, BOSS_CUES, ASPECT_CUE_IDS, THUNDER_ROLL,
 } from '../src/world/gate/gateBoss.js';
 import { telegraphShape, markShape, BOSS_MARK_R } from '../src/render/gateTelegraph.js';
-import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gateBossBar.js';
-import { aspectCss } from '../src/ui/gateMarksView.js';   // WB13c: his epithet's colour on the bar
+import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
+import { aspectCss } from '../src/ui/gate/gateMarksView.js';   // WB13c: his epithet's colour on the bar
 import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
@@ -281,6 +281,6 @@ test('WB8c the seams, by source: the relay births each fight on the day\'s marks
   assert.match(gc, /shape = s\.fell \? null : telegraphShape\(s\.atk, s\.phase, t, P\);/);
   assert.match(gc, /poolDraw = pools\.length \? poolShapes\(pools, t, poolColor\(P\), TELEGRAPH_STYLE\[P\.el\] \?\? TELEGRAPH_STYLE\.fire\) : NONE;/);   // WB9e: in his ground's own grain
   assert.match(gc, /const w = sz\.w \* body\.scale \* P\.size, h = sz\.h \* body\.scale \* P\.size;/);
-  assert.match(read('src/ui/enhancedPlusStyle.js'), /body \.wb-boss-marks \{/);   // WB9a: the marks' row under his health, dressed where the trials' line was
+  assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /body \.wb-boss-marks \{/);   // WB9a: the marks' row under his health, dressed where the trials' line was
   assert.ok(windupOf(ATTACKS.meteor, 2) > 0 && COURT_CENTRE.length === 3);
 });

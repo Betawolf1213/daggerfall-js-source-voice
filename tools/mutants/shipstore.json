@@ -1,21 +1,21 @@
 [
   {
     "name": "SHIPSTORE-storage-opens-alone",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  packOpen = !d.loot || d.loot.storage === true;",
     "new": "  packOpen = !d.loot;",
     "tests": ["test/shipstore.test.js"]
   },
   {
     "name": "SHIPSTORE-every-loot-opens-the-pack",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  packOpen = !d.loot || d.loot.storage === true;",
     "new": "  packOpen = true;",
     "tests": ["test/shipstore.test.js"]
   },
   {
     "name": "SHIPSTORE-storage-is-just-loot",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": ": deps.loot ? (deps.loot.storage === true ? 'storage' : 'container') : 'ground';",
     "new": ": deps.loot ? 'container' : 'ground';",
     "tests": ["test/shipstore.test.js"]

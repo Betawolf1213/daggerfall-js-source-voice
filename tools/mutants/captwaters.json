@@ -199,7 +199,7 @@
   },
   {
     "name": "CW-plate",
-    "file": "src/ui/navalHud.js",
+    "file": "src/ui/naval/navalHud.js",
     "old": "${model.waters === 'deep' ? ', deep' : ''}",
     "new": "${''}",
     "tests": [

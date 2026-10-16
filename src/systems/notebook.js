@@ -297,7 +297,7 @@ export class PlayerNotebook {
 /**
  * JOURNAL1: THE WORDS THE NOTEBOOK CAN TAKE. DFU's WrapLinesIntoNote (below, verbatim) throws when the first 71
  * characters left to wrap carry no SPACE - and in DFU that is unreachable, because the note box stops at 70 (the
- * classic journal's own cap, ui/questJournal.js). The port reached it the moment a surface let a longer note through:
+ * classic journal's own cap, ui/quest/questJournal.js). The port reached it the moment a surface let a longer note through:
  * the enhanced chronicle's composer takes 200, so a pasted address or one long word threw out of its submit handler
  * and the note was lost; and a page another player shows you, or a letter you keep, can carry anything.
  *

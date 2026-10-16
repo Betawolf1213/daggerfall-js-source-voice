@@ -19,7 +19,7 @@ import { xpForRank } from '../src/net/professionLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { CLIMATES as C } from '../src/formats/mapsTables.js';
 import { SEASONS } from '../src/systems/gameDate.js';
-import { MINING_GROUND_LINE } from '../src/ui/profPages.js';
+import { MINING_GROUND_LINE } from '../src/ui/professions/profPages.js';
 
 const DAY = 20_300;
 /** Every material a climate's veins stand over many days and pixels, by the witnesses' word. */
@@ -87,6 +87,6 @@ test('UNWITNESSED-ORE service: an unconfirmed Mountain pixel\'s Silver vein is m
 
 test('UNWITNESSED-ORE page: the Mining page says what the ground holds on anyone\'s word and what waits on three players', () => {
   assert.match(MINING_GROUND_LINE, /fewer than three players have gathered on holds Silver at most\. Gold, Platinum, Mithril and a region's own ore appear there once three different players/);
-  const src = readFileSync(new URL('../src/ui/profPages.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/professions/profPages.js', import.meta.url), 'utf8');
   assert.match(src, /if \(GATHER_HOW\[_sel\]\) pane\.append\(el\('p', 'px-note', gatherHow\(_sel\)\)\);[^\n]*\n\s+if \(_sel === 'mining'\) pane\.append\(el\('p', 'px-note', miningGroundLine\(\)\)\);/);
 });

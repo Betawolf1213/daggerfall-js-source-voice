@@ -7,14 +7,14 @@ import assert from 'node:assert/strict';
 
 import { byClass } from './chargenDom.mjs';
 import { createBountyHost } from '../src/scenes/bountyHost.js';
-import { mountBountyBoard, nextOpenNotice, LANDED_LINE } from '../src/ui/bountyWindow.js';
-import { BOUNTY_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountBountyBoard, nextOpenNotice, LANDED_LINE } from '../src/ui/bounty/bountyWindow.js';
+import { BOUNTY_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { BOUNTY_ACTIVE_MAX } from '../src/systems/bounty/bountyBoard.js';
 
 const TOWN = { px: 300, py: 200, name: 'Daggerfall' };
 
 /** The host on day 900 at level 5, its board opened, and the window mounted on the deps it handed over - and handed
- *  back to the host as ui/bountyDoor.js does (`attach`), so the host's own repaint runs inside a press (AUDIT FB1010 A2:
+ *  back to the host as ui/bounty/bountyDoor.js does (`attach`), so the host's own repaint runs inside a press (AUDIT FB1010 A2:
  *  without it the focus pin passed on a path the game never runs). */
 function boardOf({ inParty = false } = {}) {
   let deps = null;

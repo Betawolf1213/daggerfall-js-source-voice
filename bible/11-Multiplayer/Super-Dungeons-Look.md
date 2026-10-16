@@ -147,7 +147,7 @@ Only L3 and L4 may bloom. Nothing on L1 or L2 exceeds 0.5.
 3. **The stage cull.** Every realm draw is tagged `threshold`, `orrery`, `steps` or `arena`. The static realm mesh is split per stage. Once a frame, each stage's bounding sphere is tested against `render/frustum.js` `frustumPlanes`. The sphere is the stage's radius plus 12 m (a lamp's range) plus 6 m. The stage holding the eye is never culled. A culled stage sets `d.culled` on its draws. Today the arm issues about 110 realm mesh draws wherever you stand; inside one stage that drops to 30-60.
 4. **`renderer.setSceneGrade({ adaptKey, adaptMax, bloom, vignette, contrast })`.** It writes `AirPass.adaptParams[1..3]` and `AirPass.grade` for the frame, and every frame that does not call it gets the defaults back (`AIR_ADAPT_KEY` 0.18 and `AIR_ADAPT_MAX` 1.8; `AIR_BLOOM_STRENGTH` 0.6, `AIR_VIGNETTE` 0.28, `AIR_CONTRAST` 1.04). **The Hour uses key 0.12, max 1.15, bloom 0.8, vignette 0.34, contrast 1.08.** It does nothing on classic. The Hollow keeps the defaults: it is a Daggerfall dungeon.
 5. **`render/sdHalo.js`** (new foreign pass). Up to 64 camera-facing additive quads in one dynamic VBO (8 KB a frame), with the falloff posterized to 4 steps, depth-tested, no depth write, fogged by `FOG_FACTOR_GLSL`. It is the classic set's bloom for lantern cores, the Rift's core, the way-out lights, the Remnant's eyes, heart and blade tip. Gain is 1.0 on classic and 0.5 on the lane, so bloom does not double it.
-6. **The lite tier.** One flag, `ui/touchDevice.js` `isTouchDevice` (or a low GPU tier), read by every piece's phone column.
+6. **The lite tier.** One flag, `ui/touch/touchDevice.js` `isTouchDevice` (or a low GPU tier), read by every piece's phone column.
 7. **The lab** (`src/tools/abyssLab.js`). It gains state knobs for every read:
    - `?rift=open|notyet|collapse|closed|refused`, `&left=`, `?riftSize=`
    - `?fight=wake|stomp|hand|volley|pulse|break|reset|stun|end|fell|held`, `&wt=` (wind-up share), `&pt=`, `&rt=`, `&st=`, `&age=`
@@ -423,8 +423,8 @@ One cloud sheet; skyline without windows.
   4. Opening shards: the crack's cells, offset outward by `open · 0.4`, fading.
   5. Forced shatter: Voronoi over 40 seeded screen points. Each cell takes a drop delay and spin from a hash and goes to alpha 0 once it falls off the screen.
   6. Posterize to 6 levels with `bayer4`, into the Hour palette.
-- **Pixel scale.** `ui/gateVeil.js` sizes the hour themes' canvas at **one veil pixel per 3 device pixels, 360-540 lines** (640x360 at 1080p), with CSS `image-rendering: pixelated`.
-- **`ui/gateVeil.js`:**
+- **Pixel scale.** `ui/gate/gateVeil.js` sizes the hour themes' canvas at **one veil pixel per 3 device pixels, 360-540 lines** (640x360 at 1080p), with CSS `image-rendering: pixelated`.
+- **`ui/gate/gateVeil.js`:**
   - `VEIL_THEMES` gains `hourIn`, `hourBack`, `hourHome` and `hourCast`.
   - `cover(look, { centre })` and `flash(look)`.
   - `VEIL_HOUR_CUES`: the ratchet x3 on the close, the Rift's bell at shut, the four quarters on the hand (pitches exported from `systems/superDungeon/sdScore.js`'s motif; fallback DAGGER.SND bell 107 pitched to them), and the chime (364) on the open.
@@ -433,7 +433,7 @@ One cloud sheet; skyline without windows.
 ### Files and new modules
 
 - **New:** `render/sdVeil.js`
-- **Changed:** `src/render/gateVeil.js` (theme dispatch), `src/ui/gateVeil.js` (themes, canvas, cues, centre), `src/systems/superDungeon/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/sdFx.js` (the rewind burst)
+- **Changed:** `src/render/gateVeil.js` (theme dispatch), `src/ui/gate/gateVeil.js` (themes, canvas, cues, centre), `src/systems/superDungeon/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/sdFx.js` (the rewind burst)
 - **Tests:** the veil's new theme pins; the fire's left as they are
 
 ### Cost

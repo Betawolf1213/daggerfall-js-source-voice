@@ -69,7 +69,7 @@ test('CC-REP the flow: the builder opens the window, steps move the ledger, the 
 });
 
 test('CC-REP/GRID/STEP by source: the view draws the window and presses the flow\u2019s doors alone; the builder is a two-column grid from 900px; the steppers carry a minus and a plus at the button\u2019s size (mutant: a door dropped, the view writing the ledger, the glyphs shrunk back)', () => {
-  const view = rd('src/ui/enhancedChargen.js');
+  const view = rd('src/ui/enhanced/enhancedChargen.js');
   assert.match(view, /if \(c\.sub === 'rep'\) return customRepPane\(c\);/, 'the window over the builder');
   const pane = view.slice(view.indexOf('function customRepPane(c)'), view.indexOf('function customClassStage()'));
   assert.match(pane, /flow\.applyHit\(\{ repStep: \{ group, dir \} \}\)/, 'a step presses the flow');
@@ -86,7 +86,7 @@ test('CC-REP/GRID/STEP by source: the view draws the window and presses the flow
     'three columns: the skills, the attributes, the class');
   assert.match(builder, /box\.classList\.add\('span'\);/, 'the name spans both');
   assert.match(builder, /el\('div', 'acts span b-acts'\)/, 'and so do the acts');
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /@media \(min-width: 900px\) \{\n\s+\.skillpane\.builder \{ max-width: 1180px; display: grid; grid-template-columns: 1fr 1fr;/, 'two columns from 900px up');
   assert.match(css, /\.skillpane\.builder > \.span \{ grid-column: 1 \/ -1; \}/);
   assert.match(view, /for \(const \[dir, glyph\] of \[\[-1, '\\u2212'\], \[1, '\+'\]\]\)/, 'CC-STEP: a minus sign and a plus');

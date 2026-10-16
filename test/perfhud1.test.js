@@ -1,12 +1,12 @@
 // PERF-HUD1 (2026-10-09, Mac: "I want to continue working to increase performance across the board, especially for
 // online"; PERF-NEXT item 5, bible/07-Rendering/Performance-Online.md): THE MOVABLE HUD SWEEPS ON ONE CLOCK. Its sweep
-// (ui/hudLayout.js sweepHudLayout - 34 querySelectorAll over the page) ran on a 250 ms interval AND from the
+// (ui/hud/hudLayout.js sweepHudLayout - 34 querySelectorAll over the page) ran on a 250 ms interval AND from the
 // HUD's frame tick, each on its own clock: about eight sweeps a second where four were meant. The interval is the clock
 // where it runs; the tick starts it, sweeps once at the start, and sweeps on its own clock only where no interval runs (a
 // page without events). Driven over a fake page and a captured interval - never on a clock.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sweepHudLayout, tickHudLayout, _resetHudLayoutForTests } from '../src/ui/hudLayout.js';
+import { sweepHudLayout, tickHudLayout, _resetHudLayoutForTests } from '../src/ui/hud/hudLayout.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 
 /** A page that answers every selector with nothing and counts the asks; `events` gives it a window with listeners. */

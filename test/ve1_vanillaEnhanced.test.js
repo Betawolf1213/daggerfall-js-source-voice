@@ -335,7 +335,7 @@ test('VE3/VE4 the Texture Overhaul card: Classic and Vanilla Enhanced - the pack
 });
 
 test('VE3/VE4 the menu: the card\'s button wears the look at once - nothing to attach; its add-ons are switches while it is worn; the packs card switches a mod on and off, says the load order, and never offers to remove a shipped mod', () => {
-  const menu = src('ui/enhancedMenu.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const use = el\('button', 'act primary look-use', o === cur \? t\('menu\.ovh\.inUse', 'In use'\) : t\('menu\.ovh\.use', 'Use \{look\}', \{ look: o\.name \}\)\);/);
   assert.doesNotMatch(menu, /needsFiles|pickDfmodFiles\(o\.attach\)/, 'VE3\'s pick went with the attach');
   assert.match(menu, /const addons = o === cur \? o\.addons\?\.\(\) \?\? \[\] : \[\];/, 'the add-ons only while the look is worn');

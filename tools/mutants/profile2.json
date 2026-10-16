@@ -1,7 +1,7 @@
 [
   {
     "name": "P2-live-portrait-is-the-newest-save",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  return mode === 'pause' ? liveCharacter(playerEntity) : newestPortraitSave();",
     "new": "  return newestPortraitSave();",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "P2-no-mark-at-pause",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "    home.append(profileMark());\n    // TIMERS1",
     "new": "    // TIMERS1",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "P2-window-left-open-across-visits",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  // open on the door (or on the last pause) must not be standing over the next one before the player asks for it\n  accountOpen = false;\n",
     "new": "  // open on the door (or on the last pause) must not be standing over the next one before the player asks for it\n",
     "tests": [

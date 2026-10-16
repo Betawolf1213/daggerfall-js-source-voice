@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDIT-TV-B8-readout-press-leaks",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "  r.addEventListener?.('mousedown', own);\n",
     "new": "",
     "tests": [
@@ -351,7 +351,7 @@
   },
   {
     "name": "AUDIT-DEEP-T1-12-the-hint-says-wasd",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "travelViewMouseHint(f.keys ?? {})",
     "new": "TRAVEL_VIEW_HINTS.mouse",
     "tests": [
@@ -441,7 +441,7 @@
   },
   {
     "name": "AUDIT-DEEP-T1-9-the-hud-ignores-it",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  const aim = !opts.reticleHidden;",
     "new": "  const aim = true;",
     "tests": [
@@ -701,7 +701,7 @@
   },
   {
     "name": "AUDIT-DEEP2-A1-panel-press-is-mouse0",
-    "file": "src/ui/enhancedTravelControl.js",
+    "file": "src/ui/enhanced/enhancedTravelControl.js",
     "old": "  bar.addEventListener('mousedown', (e) => { if (e.target?.closest?.('[data-act]')) e.stopPropagation(); });\n",
     "new": "",
     "tests": [

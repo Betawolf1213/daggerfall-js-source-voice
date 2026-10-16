@@ -425,7 +425,7 @@ test('player: P18 the Argonian swim-fatigue exemption - the race gate short-circ
 
 test('player: P12 breath - MaxBreath law, the short threshold, WaterBreathing key, the save field', async () => {
   const { maxBreath } = await import('../src/systems/statMods.js');
-  const { breathShortThreshold, BREATH_COLOR_NORMAL, BREATH_COLOR_SHORT, BREATH_BAR_WIDTH } = await import('../src/ui/hud.js');
+  const { breathShortThreshold, BREATH_COLOR_NORMAL, BREATH_COLOR_SHORT, BREATH_BAR_WIDTH } = await import('../src/ui/hud/hud.js');
   const { buffKind } = await import('../src/systems/effects.js');
   const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   // MaxBreath = LiveEndurance / 2 (int division), fortify-aware

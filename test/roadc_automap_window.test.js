@@ -28,19 +28,19 @@ import {
   RENDER_MODES, signalAutomapReset, resetAutomapWindowState,
   automapCameraState, automapBackground, automapRenderMode, _setAutomapArt,
   BEACON_KEY_DIR, BEACON_FILL_DIR, BEACON_BACK_DIR, BEACON_LIGHT_INTENSITY,
-} from '../src/ui/automapWindow.js';
+} from '../src/ui/automap/automapWindow.js';
 import {
   AUTOMAP_STRINGS, automapText, automapTooltipFor, shortcutOrFallback,
   AUTOMAP_FALLBACK_KEY, AUTOMAP_TOOLTIPS,
-} from '../src/ui/automapText.js';
+} from '../src/ui/automap/automapText.js';
 import {
   CHROME_RECTS, HOVER_LABEL, HOLD_BUTTONS, CLICK_BUTTONS, DUNGEON_ACTIONS,
-} from '../src/ui/automapChrome.js';
+} from '../src/ui/automap/automapChrome.js';
 import {
   VIEW_2D, VIEW_3D, cameraYawDeg, CAMERA_HEIGHT_VIEW_FROM_TOP,
   SCROLL_FORWARD_BACKWARD_SPEED, MOVE_PIVOT_FORWARD_BACKWARD_SPEED,
   DEFAULT_SLICING_BIAS_Y, DEFAULT_FIELD_OF_VIEW_3D, MOVE_UP_DOWN_SPEED,
-} from '../src/ui/automapCamera.js';
+} from '../src/ui/automap/automapCamera.js';
 import { AUTOMAP_PANEL_NATIVE_RECT } from '../src/render/renderer.js';
 import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
@@ -515,7 +515,7 @@ test('c2/S5 the compass reads the MAP camera, never the player - including at th
     // the PLAYER never moved, so a compass on the player's heading
     // would have stayed put
     assert.equal(w.deps.player().yaw, 0);
-    assert.match(src('src/ui/automapWindow.js'), /compassHeading01\(cameraYawDeg\(_cam\)\)/);
+    assert.match(src('src/ui/automap/automapWindow.js'), /compassHeading01\(cameraYawDeg\(_cam\)\)/);
   } finally { _resetForTests(); resetAutomapWindowState(); }
 });
 
@@ -700,16 +700,16 @@ test('c2/S5 SOURCE PINS: the host preloads the art, raises the reset signal, and
   assert.match(ctx, /insideBuilding: false,/, 'and the dungeon host is never inside a building');
   // the window really is the chrome's consumer - flight 1's staging
   // exemption in test/enhancedPause.test.js is deleted with this stage
-  const w = src('src/ui/automapWindow.js');
+  const w = src('src/ui/automap/automapWindow.js');
   assert.match(w, /from '\.\/automapChrome\.js'/);
   assert.match(w, /from '\.\/automapCamera\.js'/);
   assert.match(w, /from '\.\/automapText\.js'/);
-  assert.equal(/staged = \['src\/ui\/automapChrome\.js'\]/.test(src('test/enhancedPause.test.js')), false,
+  assert.equal(/staged = \['src\/ui\/automap\/automapChrome\.js'\]/.test(src('test/enhancedPause.test.js')), false,
     'the staging exemption is gone, so the orphan sweep is unconditional again');
   // ONE HOME: the compass strip is drawn by hud.js's own drawer in both
   // windows, not re-implemented here
   assert.match(w, /drawCompassStrip\(renderer, _art,/);
-  assert.match(src('src/ui/hud.js'), /export function drawCompassStrip\(/);
+  assert.match(src('src/ui/hud/hud.js'), /export function drawCompassStrip\(/);
   assert.equal(/COMPASS_BOX_OUTLINE/.test(w), false, 'the strip law lives in ONE file');
 });
 

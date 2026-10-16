@@ -381,7 +381,7 @@
   },
   {
     "name": "QUEST-TOWN-the-lens-not-following",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  const moved = place ? null : movedSiteOf(message);",
     "new": "  const moved = null;",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "QUEST-TOWN-the-town-not-named",
-    "file": "src/ui/questLens.js",
+    "file": "src/ui/quest/questLens.js",
     "old": "  const named = onMap === true || here || !!moved || said.has(",
     "new": "  const named = onMap === true || here || said.has(",
     "tests": [

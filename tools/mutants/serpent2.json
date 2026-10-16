@@ -425,7 +425,7 @@
   },
   {
     "name": "SERPENT2-timers-kind-missing",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "['gate', 'serpent', 'super', 'raid', 'battle', 'seat', 'reset']",
     "new": "['gate', 'super', 'raid', 'battle', 'seat', 'reset']",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "SERPENT2-timers-colour-missing",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".px-timerswin .tm-serpent { --tm-kind: ${SERPENT_RING_MAP_CSS}; } ",
     "new": "",
     "tests": [

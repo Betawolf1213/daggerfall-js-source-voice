@@ -95,7 +95,7 @@
   },
   {
     "name": "LW-FIX3-sections",
-    "file": "src/ui/enhancedChronicle.js",
+    "file": "src/ui/enhanced/enhancedChronicle.js",
     "old": "    const list = chronicleSections(deps);",
     "new": "    const list = CHRONICLE_SECTIONS;",
     "tests": [

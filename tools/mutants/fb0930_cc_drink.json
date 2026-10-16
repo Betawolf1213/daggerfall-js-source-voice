@@ -64,7 +64,7 @@
   },
   {
     "name": "TAVERN-DRINK-the-enhanced-pick-passes-no-minute",
-    "file": "src/ui/enhancedTavern.js",
+    "file": "src/ui/enhanced/enhancedTavern.js",
     "old": "  h.advanceMinutes?.(r.minutes);\n  h.entity.lastTimePlayerAteOrDrankAtTavern = now;",
     "new": "  h.entity.lastTimePlayerAteOrDrankAtTavern = now;",
     "tests": [

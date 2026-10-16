@@ -5291,7 +5291,7 @@ complete-at-push, and the door's source law). Campaign: 5 mutants,
 
 AddFace/DropFace parsed since Q2b and their machine hooks rode the
 bridge since Q4 - into a world ctx that mounted neither, so every
-escort quest ran faceless. The panel is `ui/hudEscortFaces.js`, a
+escort quest ran faceless. The panel is `ui/hud/hudEscortFaces.js`, a
 port of HUDEscortingNPCFaces.cs (EscortingNPCFacePanel) whole:
 
 - **One panel, module-level** - DFU has one HUD and one
@@ -6583,7 +6583,7 @@ as it was. A DEPARTURE (Port-Ledger A), the port's own.
   people, things and foes the next time it is built (or at once, where its things were only put out of sight). It does
   not rejoin the party's step: Share it again.
 - **The journal** (`scenes/questBridge.js`): the one walk files a quest set aside in `shelved` (its clock as it stopped),
-  the rail under ABANDONED (`ui/questRail.js`), and the pause window's Quests tab draws Abandon quest (twice, BOUNTY1's
+  the rail under ABANDONED (`ui/quest/questRail.js`), and the pause window's Quests tab draws Abandon quest (twice, BOUNTY1's
   arming) where the bridge allows it (`journalClean.canAbandon`) and Reclaim quest (once) on an abandoned one, saying
   what happened (`shelfRefusalText`). The doors ride `journalClean`, so all four hosts' pause windows carry them -
   `scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js` (through world.js's host) and `scenes/dungeonContext.js`.
@@ -6605,7 +6605,7 @@ Dudey: *"Now i need an Abandon button for all quests except main quest"*, then *
 QUEST-SHELF's Abandon stood in the pause window's Quests tab alone; the chronicle - the window the L key opens - carried
 an Abandon only for a bounty and a revenant's hunt.
 
-- **The chronicle's Abandon** (`ui/enhancedChronicle.js`): every running quest that is not the main story's (the rail's
+- **The chronicle's Abandon** (`ui/enhanced/enhancedChronicle.js`): every running quest that is not the main story's (the rail's
   `main`, `questLists.js isMainQuestName` - the `S0000` lines, Brisienna's), a bounty or a hunt (each of those keeps its
   own) draws Abandon in its header where the bridge's door allows it (`canAbandon`) - pressed twice, BOUNTY1's arming
   (`bountyArmed`, the quest's as `q:<uid>`), through QUEST-SHELF's own `journalClean.abandon`; what it said stands over

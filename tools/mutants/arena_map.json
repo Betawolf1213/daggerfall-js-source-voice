@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENAMAP-SHEET-UNNAMED",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "    for (const bl of deps.blocks ?? []) {",
     "new": "    for (const bl of []) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENAMAP-SHEET-NAME-UNFLIPPED",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "y: sheetY(ensureField().h, ay), key: null,",
     "new": "y: ay, key: null,",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENAMAP-SHEET-INK-LOST",
-    "file": "src/ui/townSheet.js",
+    "file": "src/ui/town/townSheet.js",
     "old": "key: null, quarter: quarterOfType(lm.buildingType) });",
     "new": "key: null, quarter: null });",
     "tests": [

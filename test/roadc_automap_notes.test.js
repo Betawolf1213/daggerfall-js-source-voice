@@ -26,7 +26,7 @@
 // BEFORE this stage restores with empty collections and is not wiped.
 
 import { test } from 'node:test';
-import { ZOOM_SPEED_MOUSE_WHEEL } from '../src/ui/automapCamera.js';   // AUDIT-AMAP T2
+import { ZOOM_SPEED_MOUSE_WHEEL } from '../src/ui/automap/automapCamera.js';   // AUDIT-AMAP T2
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -49,14 +49,14 @@ import {
   buildDiamondModel, markerModels, automapMarkerSet,
   teleporterMarkerRows, teleporterConnectionTransform, userNoteMarkerRows,
   fromToRotationUp,
-} from '../src/ui/automapMarkers.js';
+} from '../src/ui/automap/automapMarkers.js';
 import { MARKER_NAMES, hoverKeyForHit } from '../src/systems/automap/automapPick.js';
 import {
   AutomapWindow, resetAutomapWindowState, signalAutomapReset, _setAutomapArt,
   automapCameraState, automapBackground, easeInOutSine, TELEPORT_JUMP_DURATION,
-} from '../src/ui/automapWindow.js';
-import { AUTOMAP_STRINGS } from '../src/ui/automapText.js';
-import { CHROME_RECTS } from '../src/ui/automapChrome.js';
+} from '../src/ui/automap/automapWindow.js';
+import { AUTOMAP_STRINGS } from '../src/ui/automap/automapText.js';
+import { CHROME_RECTS } from '../src/ui/automap/automapChrome.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS } from '../src/world/rdbLayout.js';
 import { _resetForTests, setValue } from '../src/systems/settings/settings.js';

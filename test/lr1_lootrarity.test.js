@@ -60,7 +60,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { entityMaxEncumbrance, maxEncumbrance } from '../src/combat/formulas.js';
 import { savingThrow, EFFECT_FLAGS } from '../src/systems/spellcast.js';
-import { itemBackgroundColour, scrollerToolTipText } from '../src/ui/itemScroller.js';
+import { itemBackgroundColour, scrollerToolTipText } from '../src/ui/item/itemScroller.js';
 import { hoverLines } from '../src/systems/worldHover.js';   // WORLD-HOVER
 import { playRareDrop, takeCorpseLoot } from '../src/scenes/corpseMarker.js';   // AUDIT-LR: the peer's take is the one take law
 import { TEST_LOOT, testEntryById, seedTestLoot, TEST_LOOT_BASES } from '../src/systems/testRoom.js';
@@ -466,11 +466,11 @@ test('LR1: the skins - the native cell tints and the tooltip lists, the enhanced
   assert.equal(scrollerToolTipText(r), itemLongName(r), 'off: no lines');
   assert.equal(hoverLines([r]).shown[0].rarity, null);
   assert.equal(LR.rarityColour(r), null);
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   for (const t of LR.RARITY_ORDER.filter((x) => x !== 'common')) {   // SET6: every tier the table holds - the Aetheric's too
     assert.match(css, new RegExp(`\\.itemrow\\[data-rarity="${t}"\\] \\.itemname > span:first-child, \\.packdetail \\.card\\[data-rarity="${t}"\\] h3, \\.wplaque-row\\[data-rarity="${t}"\\] > span:first-child \\{ color: ${LR.RARITIES[t].colour}; \\}`), `${t}'s rule carries the table's colour`);
   }
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /name: parts\.name \|\| t\?\.name \|\| 'Unknown',/, 'the enhanced pack names through ResolveItemLongName\'s name part now (RF6; LR1: ResolveItemName inside it)');
   // RARITY-UI (2026-09-26): the row's tier goes through the pack's one frame marker (the icon's frame wears it too), and
   // the card's list leaves the sigil to its own block under it (SIGIL-UI)
@@ -479,8 +479,8 @@ test('LR1: the skins - the native cell tints and the tooltip lists, the enhanced
   assert.match(inv, /const lines = itemPowerLines\(picked, deps, \{ set: false, lore: false, technique: false \}\); if \(lines\.length\)/, 'the card lists the lines (SET5: the sigil and the set draw their own blocks; CARD-FIT: the lore is the Info box\'s)');   // TRADE-INFO: rarityLines, and a DFU magic item's powers   // PIN MOVED (TECH-CARD): the card leaves a technique's line to its block (technique: false)
   assert.match(inv, /export function itemPowerLines\(item, d = deps, \{ set = true, lore = true, technique = true \} = \{\}\) \{\n  const lines = rarityLines\(item, \{ sigil: false, set, lore, technique \}\);/, 'the tier\'s lines first');   // PIN MOVED (TECH-CARD): a technique's line kept unless a card draws its block
   assert.match(read('src/ui/worldPlaque.js'), /if \(r\.rarity\) row\.dataset\.rarity = r\.rarity;/);
-  assert.match(read('src/ui/nativeInventory.js'), /armorLabelValue\(av\[i\] \?\? 100, entityArmorDisplayMod\(this\.hooks\.entity, i\)\)/, 'the doll\'s numbers, per part (RF1)');
-  assert.match(read('src/ui/enhancedInventory.js'), /material: parts\.material \|\| null,/, 'LR4: the enhanced row names no material until identified - RF6: the long name\'s own prefix, which an unidentified item has none of');
+  assert.match(read('src/ui/native/nativeInventory.js'), /armorLabelValue\(av\[i\] \?\? 100, entityArmorDisplayMod\(this\.hooks\.entity, i\)\)/, 'the doll\'s numbers, per part (RF1)');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /material: parts\.material \|\| null,/, 'LR4: the enhanced row names no material until identified - RF6: the long name\'s own prefix, which an unidentified item has none of');
 });
 
 test('LR3: the drop chime rings at the body for a Rare or better, never for Magic, never off; the three corpse sites ring it', () => {
@@ -520,7 +520,7 @@ test('LR3: the Test Room\'s loot ladder - one door, thirty items (a Magic and a 
   assert.deepEqual(legs.map((i) => i.legendary).sort(), [...LR.LEGENDARIES, ...LR.WARDROBE_LEGENDARIES, ...LR.ARCANE_LEGENDARIES].map((l) => l.id).sort(), 'every record once - LOOT15: the wardrobe\'s six too; BAL9c: and the arcane three');   // PIN MOVED (BAL9c)
   for (const it of legs) { const rec = LR.legendaryById(it.legendary); assert.ok(!rec.templates || rec.templates.includes(it.templateIndex), `${rec.id} on a fitting base`); }
   assert.equal(e.items.length, added.length);
-  assert.match(read('src/ui/enhancedMenu.js'), /TEST_LOOT\.label[\s\S]*?onAction\(`test:\$\{TEST_LOOT\.id\}`\)/, 'the pane\'s card');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /TEST_LOOT\.label[\s\S]*?onAction\(`test:\$\{TEST_LOOT\.id\}`\)/, 'the pane\'s card');
   assert.match(read('src/scenes/world.js'), /if \(testEntry\.loot\) console\.log\(`\[testroom\] loot ladder: \$\{seedTestLoot\(playerEntity\)\.length\} rolled items in the pack`\);/, 'the boot seeds it');
   _resetForTests();
 });

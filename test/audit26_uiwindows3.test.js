@@ -12,9 +12,9 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { VideoPlayer } from '../src/ui/videoPlayer.js';
-import { JOURNAL_COLORS } from '../src/ui/questJournal.js';
+import { JOURNAL_COLORS } from '../src/ui/quest/questJournal.js';
 import { STAT_DRAINED_COLOR, STAT_INCREASED_COLOR } from '../src/ui/charsheet.js';
-import { MAX_ITEM_NAME } from '../src/ui/itemMakerWindow.js';
+import { MAX_ITEM_NAME } from '../src/ui/item/itemMakerWindow.js';
 import { spellPointCost, rawSpellPointCost } from '../src/ui/spellbookWindow.js';
 import { LYCANTHROPY_SPELL_TAG } from '../src/systems/lycanthropy.js';
 import { layoutBookLines } from '../src/ui/bookReader.js';
@@ -127,7 +127,7 @@ test('audit26 F164: the stat colours are DFU\'s three, drained below and increas
 // question label Right and the answer Left (:1259, :1270).
 // ---------------------------------------------------------------
 test('audit26 F165: the question hugs the right margin, the answer the left', () => {
-  const s = src('src/ui/nativeTalk.js');
+  const s = src('src/ui/native/nativeTalk.js');
   assert.match(s, /const x = e\.kind === 'question'\s*\n\s*\? R\.conversation\[0\] \+ R\.conversation\[2\] - tw\s*\n\s*: R\.conversation\[0\];/);
   // each ROW is offset by its own width, not the entry's widest - DFU
   // sets HorizontalTextAlignment Left on both labels, so only the
@@ -142,7 +142,7 @@ test('audit26 F165: the question hugs the right margin, the answer the left', ()
 // ---------------------------------------------------------------
 test('audit26 F171: the rename field takes 31 characters, not 26', () => {
   assert.equal(MAX_ITEM_NAME, 31);
-  const s = src('src/ui/itemMakerWindow.js');
+  const s = src('src/ui/item/itemMakerWindow.js');
   assert.match(s, /new InputMessageBoxWindow\(\{/);
   assert.match(s, /maxCharacters: MAX_ITEM_NAME/);
   assert.equal(/this\.itemName\.length < 26/.test(s), false,

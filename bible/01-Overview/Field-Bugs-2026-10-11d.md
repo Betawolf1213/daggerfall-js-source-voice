@@ -34,7 +34,7 @@ always lay. The world boss's court pass (`render/gateTelegraph.js`) is not touch
 where no snow falls.
 
 THE SWITCH THE PLAYER LOOKED FOR is there, and was: Settings > Graphics > "Sky, water & weather" > "Snowfall by
-demifiend000" (FT9's row; `ui/settingsMap.js`), and the settings' search finds it under "deep snow" - the row's note
+demifiend000" (FT9's row; `ui/settings/settingsMap.js`), and the settings' search finds it under "deep snow" - the row's note
 begins "Deep snow on the winter ground". The patch notes say where it is. A second "Snowfall" on the Overhauls card is
 the winter ground's TEXTURE pack (SNOWFALL1's sibling, ENVIRONMENT_PACK_MODS) and changes no depth - the likelier source
 of "nobody could tell me". Renaming either is the owner's call (Mac named the mods' rows by their authors, FT9).
@@ -49,9 +49,9 @@ snowy hosts' order and the other two hosts' absence of snow); `tools/mutants/fb1
 TRADE-LOC (`10-UI/Overhauls.md`, 2026-10-10) put a letter's worth in the trade window's detail strip and in its row's
 hover title. The report's screenshot is a build before it (its detail strip reads "0.10 kg" alone) - but its case
 stands on the build after: two letters in one list are told apart only by clicking each, and on a phone there is no
-hover. The row says it now: `ui/enhancedPlayerTrade.js` row's sub-line leads with `letterWorthLine` ("Worth 12,500
+hover. The row says it now: `ui/enhanced/enhancedPlayerTrade.js` row's sub-line leads with `letterWorthLine` ("Worth 12,500
 gold"), on the pack's list, my offer and theirs - the one row builder all three draw through. And the pack's own card
-(`ui/enhancedInventory.js` infoCard - the pack's, every shop's and the trade's hover card) says it as its headline pair,
+(`ui/enhanced/enhancedInventory.js` infoCard - the pack's, every shop's and the trade's hover card) says it as its headline pair,
 Worth, under the damage and the armour a letter never has: `systems/walletItem.js` letterWorthGold, the figure
 letterWorthLine now says after its word (one law, one home). DFU's classic Info box already said it (TEXT.RSC 1007's
 `%wth`). The wire was never the fault: the letter's `value` survives the trade's clamp, pinned by TRADE-LOC.

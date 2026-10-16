@@ -1252,7 +1252,7 @@
   },
   {
     "name": "AC5-C-M34",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const binderItem = items.find(isCardBinder) ?? null;",
     "new": "const binderItem = null;",
     "tests": [
@@ -1271,7 +1271,7 @@
   },
   {
     "name": "AC5-C-M36",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    for (const it of b.held) rows.append(itemRow(it));\n",
     "new": "",
     "tests": [
@@ -1290,7 +1290,7 @@
   },
   {
     "name": "AC5-C-M37",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "b.onclick = () => { picked = binder; side = 'local'; notice = null; render(); };",
     "new": "b.onclick = () => { render(); };",
     "tests": [
@@ -1309,7 +1309,7 @@
   },
   {
     "name": "AC5-C-M38",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    row.append(el('span', 'wallet-k', d.name), el('span', 'wallet-v', `${d.cards.length} cards`));\n",
     "new": "",
     "tests": [
@@ -1328,7 +1328,7 @@
   },
   {
     "name": "AC5-C-M39",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "return deckValid(cards) ?? deckHeldRefusal(cards, items);",
     "new": "return deckValid(cards);",
     "tests": [
@@ -1546,7 +1546,7 @@
   },
   {
     "name": "AC5-D-B01-shown-always",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "!!binderOf(player?.items);",
     "new": "true;",
     "tests": [
@@ -1558,7 +1558,7 @@
   },
   {
     "name": "AC5-D-B03-refusal-no-held",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "return deckValid(cards) ?? deckHeldRefusal(cards, items);",
     "new": "return deckValid(cards);",
     "tests": [
@@ -1570,7 +1570,7 @@
   },
   {
     "name": "AC5-D-B06-no-unheld-dim",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "${n ? '' : ' unheld'}",
     "new": "",
     "tests": [
@@ -1582,7 +1582,7 @@
   },
   {
     "name": "AC5-D-B07-no-filter",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "_filter === 'all' || x.kind === _filter",
     "new": "true",
     "tests": [
@@ -1594,7 +1594,7 @@
   },
   {
     "name": "AC5-D-B09-no-count-badge",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "if (n) tile.append(el('span', 'binder-count', `×${n}`));",
     "new": "",
     "tests": [
@@ -1606,7 +1606,7 @@
   },
   {
     "name": "AC5-D-B16-armed-outlives-drop",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "dropBinderDeck(binder, i); _dropArmed = null;",
     "new": "dropBinderDeck(binder, i);",
     "tests": [
@@ -1618,7 +1618,7 @@
   },
   {
     "name": "AC5-D-B19-new-deck-overwrites",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "_editing = { i: decks.length,",
     "new": "_editing = { i: 0,",
     "tests": [
@@ -1630,7 +1630,7 @@
   },
   {
     "name": "AC5-D-B20-no-maxlength",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "name.maxLength = DECK_NAME_MAX;",
     "new": "",
     "tests": [
@@ -1642,7 +1642,7 @@
   },
   {
     "name": "AC5-D-B24-keep-enabled",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "keep.disabled = !!why;",
     "new": "keep.disabled = false;",
     "tests": [
@@ -1654,7 +1654,7 @@
   },
   {
     "name": "AC5-D-B26-cancel-dead",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "cancel.onclick = () => { _editing = null; _said = null; rerender();",
     "new": "cancel.onclick = () => { _said = null; rerender();",
     "tests": [
@@ -1666,7 +1666,7 @@
   },
   {
     "name": "AC5-D-B30-kept-stays-open",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "kept in your binder.`; _editing = null; }",
     "new": "kept in your binder.`; }",
     "tests": [
@@ -1678,7 +1678,7 @@
   },
   {
     "name": "AC5-D-B32-no-picked",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "  _picked = id;\n",
     "new": "\n",
     "tests": [
@@ -1690,7 +1690,7 @@
   },
   {
     "name": "AC5-D-B33-words-not-held",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "'not held': 'Your binder does not hold every card this deck names.'",
     "new": "'not held': ''",
     "tests": [
@@ -1702,7 +1702,7 @@
   },
   {
     "name": "AC5-D-E01-no-player",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "collections: (d) => drawCollectionsPage(d, render, { ...kit, player: playerEntity }),",
     "new": "collections: (d) => drawCollectionsPage(d, render, { ...kit }),",
     "tests": [
@@ -1715,7 +1715,7 @@
   },
   {
     "name": "AC5-D-E02-no-visit-reset",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "resetHoldingsPages(); resetFleetPage(); resetCollectionsPage();",
     "new": "resetHoldingsPages(); resetFleetPage();",
     "tests": [
@@ -1728,7 +1728,7 @@
   },
   {
     "name": "AC5-D-E03-no-rerender",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "collections: (d) => drawCollectionsPage(d, render,",
     "new": "collections: (d) => drawCollectionsPage(d, () => {},",
     "tests": [
@@ -1741,7 +1741,7 @@
   },
   {
     "name": "AC5-D-E04-rail-first",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "...(profPagesShown() ? PROF_HOLD_SECTIONS : []), ...(collectionsPageShown(playerEntity) ? COLLECTION_PAGE_SECTIONS : [])];",
     "new": "...(collectionsPageShown(playerEntity) ? COLLECTION_PAGE_SECTIONS : []), ...(profPagesShown() ? PROF_HOLD_SECTIONS : [])];",
     "tests": [
@@ -3760,7 +3760,7 @@
   },
   {
     "name": "AC5-C-M35",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const n = b.held.reduce((s, it) => s + Math.max(1, it.stackCount ?? 1), 0);",
     "new": "const n = b.held.length;",
     "tests": [
@@ -3851,7 +3851,7 @@
   },
   {
     "name": "AC5-D-B02-dpr-one",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "Math.min(2, Number(globalThis.devicePixelRatio) || 1)",
     "new": "1",
     "tests": [
@@ -3863,7 +3863,7 @@
   },
   {
     "name": "AC5-D-B04-reset-keeps-editing",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "_picked = null; _editing = null; _dropArmed = null; _said = null; }",
     "new": "_picked = null; _dropArmed = null; _said = null; }",
     "tests": [
@@ -3875,7 +3875,7 @@
   },
   {
     "name": "AC5-D-B05-reset-keeps-armed",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "_picked = null; _editing = null; _dropArmed = null; _said = null; }",
     "new": "_picked = null; _editing = null; _said = null; }",
     "tests": [
@@ -3887,7 +3887,7 @@
   },
   {
     "name": "AC5-D-B10-past-held-by-one",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "else if (inDeck >= held)",
     "new": "else if (inDeck > held)",
     "tests": [
@@ -3899,7 +3899,7 @@
   },
   {
     "name": "AC5-D-B11-unheld-goes-in",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "if (!held) _said = `Your binder holds no ${c.name}.`;\n    else if",
     "new": "if",
     "tests": [
@@ -3911,7 +3911,7 @@
   },
   {
     "name": "AC5-D-B14-decks-head",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "`Decks - ${decks.length} of ${BINDER_DECKS_MAX}`",
     "new": "`Decks - ${decks.length}`",
     "tests": [
@@ -3923,7 +3923,7 @@
   },
   {
     "name": "AC5-D-B17-no-deck-cap",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "if (decks.length < BINDER_DECKS_MAX) {",
     "new": "if (true) {",
     "tests": [
@@ -3935,7 +3935,7 @@
   },
   {
     "name": "AC5-D-B18-new-deck-noname",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "name: `Deck ${decks.length + 1}`, cards: [] }",
     "new": "name: '', cards: [] }",
     "tests": [
@@ -3947,7 +3947,7 @@
   },
   {
     "name": "AC5-D-B21-name-uncut",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "e.name = String(name.value ?? '').slice(0, DECK_NAME_MAX);",
     "new": "e.name = String(name.value ?? '');",
     "tests": [
@@ -3959,7 +3959,7 @@
   },
   {
     "name": "AC5-D-B29-ready-no-count",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "`${d.cards.length} cards - ready`",
     "new": "'ready'",
     "tests": [
@@ -3971,7 +3971,7 @@
   },
   {
     "name": "AC5-D-B34-chip-unsorted",
-    "file": "src/ui/cardBinderPage.js",
+    "file": "src/ui/card/cardBinderPage.js",
     "old": "[...counts].sort((a, b) => (cardById(a[0])?.cost ?? 0) - (cardById(b[0])?.cost ?? 0))",
     "new": "[...counts]",
     "tests": [

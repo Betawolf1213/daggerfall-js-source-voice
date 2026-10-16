@@ -136,7 +136,7 @@ test('NAME-ADOPT bug 1: and the button reads the store, so the store is the thin
   // Held off the source: `profileMark` draws `who.name` from
   // storedSession. If a later slice moves that read somewhere the adopt
   // door does not reach, this is where it is noticed.
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   const mark = menu.slice(menu.indexOf('function profileMark()'), menu.indexOf('function profileMark()') + 700);
   assert.match(mark, /const who = storedSession\(appStorage\(\)\);/);
   assert.match(mark, /session: who,/, 'PROFILE1: the portrait is handed the store\'s session');

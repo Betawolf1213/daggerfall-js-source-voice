@@ -24,7 +24,7 @@ A vein on unconfirmed ground is held to `UNCONFIRMED_VEIN_TIER` (3) now - the du
 (`net/nodeLaw.js` vein, dungeonVein, and the Court's writ table, which asks what the ground stands). Silver stands
 beside the Mountain's Iron and the Mountain Woods' three - no other climate's table holds a tier-3 metal, so no other
 ground moves; Gold, Platinum, Mithril and a region's own ore still wait on the witnesses, and the herbs and the trees
-keep tier 2. The Mining page says so in a line (`ui/profPages.js` `MINING_GROUND_LINE`). The service's law moved with
+keep tier 2. The Mining page says so in a line (`ui/professions/profPages.js` `MINING_GROUND_LINE`). The service's law moved with
 it: acct102. THE OWNER'S CALL: this widens what an unvouched pixel yields by one tier, for veins alone; the witnessed
 world's threat (a lie about a pixel nobody walks) now buys Silver. Reverting is the constant and the service's version.
 Pinned by `test/fb1009e_unwitnessedore.test.js` (4, a Silver vein mined through the service at tier 3's XP);
@@ -62,12 +62,12 @@ QA2A-pinned-curation and `qa2_summoners.json`'s QA2-summoner-door-unasked re-aim
 
 `10-UI/Held-Map-Arc.md` MAP-SCALE. The held map fits its paper to the screen and inked its names, glyphs and marks in
 fixed paper pixels, its chrome (the foot, the key, the cards, the find box, the tip) in fixed CSS pixels: at 1440p the
-paper grew by a third and nothing on it did. `ui/mapScale.js` mapUiScale is the map's scale - Auto is the screen's
+paper grew by a third and nothing on it did. `ui/map/mapScale.js` mapUiScale is the map's scale - Auto is the screen's
 height over 1080 to the twentieth, held to 1-2 (1 at 1080p and under, so a phone and a laptop are as they were; 1.35 at
 the report's 2560 x 1440; 2 at 4K), or the player's own choice (0.75-2) on the Interface tab's Maps row, "Map text and
 icons" (prefs `mapScale`). The window (`ui/heldMap.js` `_layout`) inks on the fitted paper over the scale at full device
 resolution - the same drawing, larger, never blurred - and the pointer, the hover card and the hands lane come back over
-it; the chrome is zoomed by it (`--hm-ui`, `ui/enhancedStyle.js`), each of its viewport-relative bounds divided by it so
+it; the chrome is zoomed by it (`--hm-ui`, `ui/enhanced/enhancedStyle.js`), each of its viewport-relative bounds divided by it so
 a zoomed card never runs off the screen. Read at every layout, so a change takes the next frame.
 
 NOT PROVEN ON THE REPORTER'S MONITOR: rendered here at 2560 x 1440 and 1920 x 1080 in Chromium (the 1440p frame the

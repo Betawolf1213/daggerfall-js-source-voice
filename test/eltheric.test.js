@@ -13,7 +13,7 @@ import { ETHER_REGION_NAME } from '../src/world/etherPlaces.js';
 import { SEAS } from '../src/world/tamriel/tamrielGeography.js';
 import { crossingRows, crossingWords } from '../src/systems/naval/etherCrossing.js';
 import { logLines, newLog, TRADE_WORD, TRADE_WORDS } from '../src/systems/naval/captainLedger.js';
-import { etherOfficeText } from '../src/ui/navalYardWindow.js';
+import { etherOfficeText } from '../src/ui/naval/navalYardWindow.js';
 import { ETHER_CHART_CSS } from '../src/ui/etherChartWindow.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;

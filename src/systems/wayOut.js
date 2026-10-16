@@ -26,7 +26,7 @@ import { TRAIL_CELL } from './automap/automap.js';   // AUDIT DELVE C8: the trai
 /** The prefs key (the `dungeon-way-out` Features row). */
 export const WAY_PREF = 'dungeonWayOut';
 /** The compass mark's colour: the parchment's own light, an arrow pointing up and out - clear of the quest's gold, the
- *  party's green, the boats' teal, the Detect red and the professions' five (ui/enhancedHud.js drawWayOutMark). */
+ *  party's green, the boats' teal, the Detect red and the professions' five (ui/enhanced/enhancedHud.js drawWayOutMark). */
 export const WAY_MARK_CSS = '#efe6cf';
 /** AUDIT DELVE D9: the arrow's body - the ink the parchment's light rims (the pale alone was lost among the letters). */
 export const WAY_BODY_CSS = '#2b2418';

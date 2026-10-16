@@ -6,7 +6,7 @@ import {
   compassScroll, barFill, hudScale,
   compassMarkerLerp, changeRange, DETECT_MARKER_W, DETECT_MARKER_H, DETECT_MARKER_RGB, DETECT_MARKER_ROWS,
   COMPASS_NON_WRAPPED, COMPASS_BOX_INTERIOR,
-} from '../src/ui/hud.js';
+} from '../src/ui/hud/hud.js';
 import { bitmapToColor32 } from '../src/formats/color32Order.js';   // BOOT2: the door lives in the formats leaf now
 
 test('hud: compass scroll verbatim (trunc, wrap, window fits the strip)', () => {

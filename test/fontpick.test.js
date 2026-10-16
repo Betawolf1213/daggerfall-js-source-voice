@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fontMatches } from '../src/ui/textFont.js';
 
-const menu = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
-const css = readFileSync(new URL('../src/ui/enhancedPlusStyle.js', import.meta.url), 'utf8');
+const menu = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../src/ui/enhanced/enhancedPlusStyle.js', import.meta.url), 'utf8');
 const row = menu.slice(menu.indexOf('function systemFontRow(redraw) {'), menu.indexOf('function overhaulPanel(p) {'));
 
 test('FONT-PICK the filter: nothing typed (or the name worn) shows every font; a typed piece shows the names holding it, those beginning with it first, case aside (mutants: the order, the case, the worn name)', () => {

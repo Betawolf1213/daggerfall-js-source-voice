@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 import {
   TOUCH_BUTTON_ACTIONS, TOUCH_BUTTON_SLOTS, TOUCH_BUTTON_DEFAULTS, touchButtonSlots, nextTouchButton, attackStroke,
   ATTACK_STROKE_PX, layoutTouchCorner, TOUCH_CORNER_MAX, touchButtonChoices,
-} from '../src/ui/touchButtons.js';
-import { attachTouch } from '../src/ui/touch.js';
+} from '../src/ui/touch/touchButtons.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { setBindings } from '../src/ui/input.js';
 import { createBindings, setBinding } from '../src/systems/inputActions.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -166,10 +166,10 @@ test('TOUCH-BUTTONS: the Touch card re-lays the corner while the layer is up - b
 }));
 
 test('TOUCH-BUTTONS: the Touch card carries the three slots, walked by the steppers', () => {
-  const menu = readFileSync(new URL('../src/ui/enhancedMenu.js', import.meta.url), 'utf8');
+  const menu = readFileSync(new URL('../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(menu, /TOUCH_BUTTON_SLOTS\.forEach\(\(slot, i\) => \{\s*\n\s*out\.push\(slotChoiceRow\(slot, slotNames\[i\],/);
   assert.match(menu, /b\.onclick = \(\) => \{ cur = nextTouchButton\(cur, dir\); setPref\(key, cur\); val\.textContent = labelOf\(cur\); \};/);
-  const touch = readFileSync(new URL('../src/ui/touch.js', import.meta.url), 'utf8');
+  const touch = readFileSync(new URL('../src/ui/touch/touch.js', import.meta.url), 'utf8');
   assert.match(touch, /if \(!slotHeld\.size && !attacking\) layoutCorner\(\);/, 'the poll re-lays the corner, never under a finger');
 });
 

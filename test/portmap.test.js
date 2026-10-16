@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildInkModel, buildInkMarks, paintInk, toPaper, HARBOUR_PEN, HARBOUR_HALO, PEN, BAND_MARKS } from '../src/ui/inkMap.js';
+import { buildInkModel, buildInkMarks, paintInk, toPaper, HARBOUR_PEN, HARBOUR_HALO, PEN, BAND_MARKS } from '../src/ui/ink/inkMap.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 function recordingCtx() {

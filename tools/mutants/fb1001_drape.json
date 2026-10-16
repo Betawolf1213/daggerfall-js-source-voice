@@ -36,35 +36,35 @@
   },
   {
     "name": "CLOAK-DRAPE-no-drape-button",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (hooded && drapeCount(picked) > 1) {",
     "new": "  if (false) {",
     "tests": ["test/fb1001_drape.test.js"]
   },
   {
     "name": "CLOAK-DRAPE-the-button-on-a-one-drape-garment",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (hooded && drapeCount(picked) > 1) {",
     "new": "  if (hooded) {",
     "tests": ["test/fb1001_drape.test.js"]
   },
   {
     "name": "CLOAK-DRAPE-nothing-said",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = DRAPE_TEXT;",
     "new": "  notice = null;",
     "tests": ["test/fb1001_drape.test.js"]
   },
   {
     "name": "CLOAK-DRAPE-the-doll-not-redrawn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = DRAPE_TEXT;\n  refresh();\n  refreshFigure();\n  render();",
     "new": "  notice = DRAPE_TEXT;\n  refresh();\n  render();",
     "tests": ["test/fb1001_drape.test.js"]
   },
   {
     "name": "CLOAK-DRAPE-the-card-closed",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  notice = DRAPE_TEXT;\n  refresh();\n  refreshFigure();\n  render();",
     "new": "  notice = DRAPE_TEXT;\n  refresh();\n  refreshFigure();\n  picked = null;\n  render();",
     "tests": ["test/fb1001_drape.test.js"]

@@ -289,7 +289,7 @@
   },
   {
     "name": "AUDITLWII2-C10-classic",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "    if (refused) return;\n",
     "new": "",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "AUDITLWII2-C10-enhanced",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "  if (refused) { render(); return; }\n",
     "new": "",
     "tests": [

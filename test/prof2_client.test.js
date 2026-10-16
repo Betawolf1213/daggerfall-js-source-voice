@@ -25,7 +25,7 @@ import { mintMaterialItem, materialLabel, materialCountLabel, withdrawIntoPack }
 import { templateByIndex, inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { MINING_TEMPLATE_ROWS, PROF_ITEM_GROUP } from '../src/systems/professions/profTemplates.js';
 import { DYE_COLORS, DYE_TARGETS } from '../src/characters/dyes.js';
-import { smeltable } from '../src/ui/profPages.js';
+import { smeltable } from '../src/ui/professions/profPages.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { groundAt } from '../src/world/terrain/terrainNature.js';
@@ -430,8 +430,8 @@ test('PROF2 hosts: the streaming world stands every kind through the one host, i
   assert.match(d, /actTool: \(\) => opts\.actTool\?\.\(\) \?\? null,/);
   assert.match(d, /if \(held && opts\.profActing\?\.\(\)\) return;/, 'AUDIT 29 D2: the press alone');
   assert.match(d, /if \(dfLocation\?\.spawned \|\| isGateArena\(dfLocation\) \|\| isArenaFloor\(dfLocation\) \|\| !Number\.isSafeInteger\(dfLocation\?\.mapTableData\?\.mapId\)\) return null;/, 'a spawned dungeon grows none, nor the Burning Court (AUDIT 29 D5), nor the arena\'s floor (ARENA2)');
-  assert.match(src('src/ui/hud.js'), /drawNodeCompassMarks\(renderer, nodes, playerXZ, heading01, \{ bx, by, bw, s \}\);/);   // NODE-MARKS: in each profession's colour
-  assert.match(src('src/ui/enhancedHud.js'), /drawNodeMarks\(opts\.nodes \?\? null, opts\.playerXZ \?\? null, heading01\);/);
+  assert.match(src('src/ui/hud/hud.js'), /drawNodeCompassMarks\(renderer, nodes, playerXZ, heading01, \{ bx, by, bw, s \}\);/);   // NODE-MARKS: in each profession's colour
+  assert.match(src('src/ui/enhanced/enhancedHud.js'), /drawNodeMarks\(opts\.nodes \?\? null, opts\.playerXZ \?\? null, heading01\);/);
   assert.match(src('src/systems/save/save.js'), /import '\.\/profTemplates\.js';/, 'every scene a save loads in knows the new templates');
   assert.doesNotMatch(src('src/scenes/exterior.js'), /gatherHost|createProfBook/, 'the fixed city: no wilderness, no nodes (PROF0 17.1, FLAGGED)');
 });

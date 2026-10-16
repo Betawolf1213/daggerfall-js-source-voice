@@ -25,7 +25,7 @@ import {
 import { drawShotsPane, releaseShotsPane, shotKeyName, addPictures, loadingWordsKey, LOADING_WORDS } from '../src/ui/shotsPane.js';
 import { setPref, getPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
-import { SYSTEM_PANES } from '../src/ui/enhancedMenu.js';
+import { SYSTEM_PANES } from '../src/ui/enhanced/enhancedMenu.js';
 import { holdFrame, claimFrame } from '../src/scenes/shared.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -462,7 +462,7 @@ test('LOAD1 the words: the first hold of a load sets the place and step afresh, 
 });
 
 test('LOAD1 the layers: over the death screen and under the crash banner, read off their own sheets; the HUD pieces that stand higher go while the screen is SEEN, each a selector its own module draws (mutants: the CSS off the constant; the veil never lifted; a renamed piece)', () => {
-  const death = /\.dth \{[^}]*z-index: (\d+);/.exec(read('src/ui/enhancedDeath.js'));
+  const death = /\.dth \{[^}]*z-index: (\d+);/.exec(read('src/ui/enhanced/enhancedDeath.js'));
   const crash = /el\.id = 'crash';\s*el\.style\.cssText = '[^']*z-index:(\d+)/.exec(read('src/main.js'));
   assert.ok(death && crash);
   assert.ok(Number(death[1]) < LOADING_Z && LOADING_Z < Number(crash[1]), `death ${death[1]} < loading ${LOADING_Z} < crash ${crash[1]}`);
@@ -562,7 +562,7 @@ test('LOAD1 the gallery as it ships: the real encode keeps a FULL_EDGE copy and 
 });
 
 test('LOAD1 the menu: Screenshots is on every rail, the System page and both dispatch tables; the door\'s foot carries it beside About; the unmount lets its pictures go (mutants: a rail without it; a dead dispatch; no release)', () => {
-  const menu = read('src/ui/enhancedMenu.js');
+  const menu = read('src/ui/enhanced/enhancedMenu.js');
   for (const rail of ['SECTIONS_BOOT', 'SECTIONS_CLASSIC', 'SECTIONS_PAUSE']) {
     const list = new RegExp(`const ${rail} = \\[([^\\]]*)\\]`).exec(menu)[1];
     assert.match(list, /'Screenshots', 'About'/, `${rail} carries it, before About`);

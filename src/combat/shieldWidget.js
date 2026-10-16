@@ -62,9 +62,9 @@ import { shieldProtectedBodyParts } from './enemyEquipment.js';
 import { NATIVE_W, NATIVE_H } from './fpsWeapon.js';
 // SW1: the large HUD's height, the sprite's floor. Read HERE and not in
 // the rig: weaponWidget.js reads it the same way, and importing
-// ui/hudLarge.js into weaponRig.js directly reorders that module graph
+// ui/hud/hudLarge.js into weaponRig.js directly reorders that module graph
 // enough to break the rig's own boot (the unsheathe went silent).
-import { weaponOffsetHeight } from '../ui/hudLarge.js';
+import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';
 
 export const SHIELD_WIDGET_VENDOR = 'shield-widget';
 

@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { fakeDoc, all, text } from './decorFakes.mjs';
 import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';
-import * as hudm from '../src/ui/cardTableHud.js';
+import * as hudm from '../src/ui/card/cardTableHud.js';
 import { holdCursor, cursorHeld } from '../src/player/pointerLock.js';
 import { nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
 import { HAND_NAMES } from '../src/net/card/cardLaw.js';
@@ -361,7 +361,7 @@ test('AUDIT CARDS-2 the panel in play and between hands: the buttons the law all
   assert.equal(sdm.street, 'showdown');
   assert.equal(sdm.message, 'Ana takes the pot with three of a kind.');
   // the phone: the panel never wider than the screen less its gutters
-  const css = read('src/ui/cardTableHud.js');
+  const css = read('src/ui/card/cardTableHud.js');
   assert.match(css, /box-sizing:border-box;min-width:min\(520px,calc\(100vw - 32px\)\);max-width:min\(760px,calc\(100vw - 32px\)\)/);
   assert.match(css, /import \{ BUY_IN_MIN_BB, BUY_IN_START_BB \} from '\.\.\/systems\/card\/cardTableSession\.js';/);
 });

@@ -41,9 +41,9 @@ import { FEATURES } from '../src/systems/features.js';
 import { tacticsSwitchOn } from '../src/ai/tactics.js';
 import { coverSwitchOn } from '../src/ai/cover.js';
 import { DeathScreen, riseHint } from '../src/ui/deathScreen.js';
-import { deathKeys } from '../src/ui/enhancedDeath.js';
+import { deathKeys } from '../src/ui/enhanced/enhancedDeath.js';
 import { stateDeathLoss, statedDeathLoss, applyDeathPenalty } from '../src/systems/deathPenalty.js';
-import { drawEnhancedDeath, removeEnhancedDeath } from '../src/ui/enhancedDeath.js';
+import { drawEnhancedDeath, removeEnhancedDeath } from '../src/ui/enhanced/enhancedDeath.js';
 import { pickDungeonElites, ELITE_FOE_MIN_LEVEL } from '../src/systems/eliteFoes.js';
 import { rollSearchElite } from '../src/systems/searchables.js';
 import { combatStanding, foeShare } from '../src/systems/skillSoftcap.js';
@@ -381,7 +381,7 @@ test('BAL4 a real cost for dying offline: a death Project Legacy will raise stat
   assert.deepEqual(deathKeys('ENTER end   F11 load', false, false).map((k) => k.word), ['End the journey', 'Load last save']);
   assert.deepEqual(deathKeys('ENTER end', false, true).map((k) => k.word), ['Rise'], 'no F11 where there is no quickload');
   assert.deepEqual(deathKeys('ENTER end   F11 load', true, true).map((k) => k.word), ['Rise now']);
-  assert.match(rd('src/ui/enhancedDeath.js'), /lossLine \|\| \(online \|\| screen\.rises\n\s*\? t\('death\.lineOnline', 'Your body falls\. The Bay is not done with you yet\.'\)/, 'and the line is the rise\'s, not "your tale ends here"');
+  assert.match(rd('src/ui/enhanced/enhancedDeath.js'), /lossLine \|\| \(online \|\| screen\.rises\n\s*\? t\('death\.lineOnline', 'Your body falls\. The Bay is not done with you yet\.'\)/, 'and the line is the rise\'s, not "your tale ends here"');
   // the street's rise takes it: the offline arm keeps only the revenant's theft online's
   const w = rd('src/scenes/world.js');
   const reset = w.slice(w.indexOf('function legacyDeathReset() {'), w.indexOf('function openLegacySuccession('));

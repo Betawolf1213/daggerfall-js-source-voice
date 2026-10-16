@@ -20,16 +20,16 @@ import { equipItem } from '../src/systems/equip.js';
 import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES } from '../src/systems/races.js';
-import { statusTiles, STATUS_GLYPHS } from '../src/ui/hudStatus.js';
-import { HUD_PIECES, HUD_LAYOUT_CSS, HUD_LAYOUT_PREF, sweepHudLayout, _resetHudLayoutForTests } from '../src/ui/hudLayout.js';
+import { statusTiles, STATUS_GLYPHS } from '../src/ui/hud/hudStatus.js';
+import { HUD_PIECES, HUD_LAYOUT_CSS, HUD_LAYOUT_PREF, sweepHudLayout, _resetHudLayoutForTests } from '../src/ui/hud/hudLayout.js';
 import { packTemperature, temperaturePlaque, temperatureWear, boonStatRows } from '../src/ui/temperatureCard.js';
 import { asKnown, wearComparison } from '../src/ui/armourCard.js';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { HOTBAR_PREF } from '../src/ui/enhancedHotbar.js';
-import { PACE_BOX_ID } from '../src/ui/travelPaceControls.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
+import { HOTBAR_PREF } from '../src/ui/enhanced/enhancedHotbar.js';
+import { PACE_BOX_ID } from '../src/ui/travel/travelPaceControls.js';
 import { buildStatsPage } from '../src/ui/statsCard.js';
-import { ARMOUR_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ARMOUR_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { GRIMOIRE_KIT_CSS, GRIM_TONES, TEMP_INK } from '../src/ui/grimoireDress.js';
 import { statusReadoutRows } from '../src/ui/statusBox.js';
 import { CREDITS } from '../src/ui/credits.js';
@@ -156,7 +156,7 @@ function hudDoc() {
 async function withHud(doc, fn, w = 1440) {
   const prev = { doc: globalThis.document, w: globalThis.innerWidth, h: globalThis.innerHeight };
   globalThis.document = doc; globalThis.innerWidth = w; globalThis.innerHeight = 900;
-  const hud = await import('../src/ui/enhancedHud.js');
+  const hud = await import('../src/ui/enhanced/enhancedHud.js');
   try { return await fn(hud); } finally {
     hud.destroyEnhancedHud();
     globalThis.document = prev.doc; globalThis.innerWidth = prev.w; globalThis.innerHeight = prev.h;
@@ -495,10 +495,10 @@ test('AUDIT C&C D6, R11: THE COMFORTABLE THERMOMETER IS NEUTRAL - its column the
     const [r, g, b] = [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
     assert.ok(Math.max(r, g, b) - Math.min(r, g, b) <= 52, `${c}: no hue to speak of`);
   }
-  for (const f of ['src/systems/survival/status.js', 'src/ui/hudStatus.js']) assert.doesNotMatch(read(f), /the campfire for the hearth/, f);
+  for (const f of ['src/systems/survival/status.js', 'src/ui/hud/hudStatus.js']) assert.doesNotMatch(read(f), /the campfire for the hearth/, f);
   // PIN MOVED (AUDIT C&C, lens S): REST1's tile is Next night now
   assert.match(read('src/systems/survival/status.js'), /a flame for the hearth \(its own - REST1's Next night is the campfire\)/);
-  assert.match(read('src/ui/hudStatus.js'), /a flame of its own for the hearth \(REST1's\n\/\/ {5}Next night is the campfire\)/);
+  assert.match(read('src/ui/hud/hudStatus.js'), /a flame of its own for the hearth \(REST1's\n\/\/ {5}Next night is the campfire\)/);
 });
 
 // ═══ R5, R6, R7 - THE PINS THAT DID NOT FAIL ════════════════════════════
@@ -549,7 +549,7 @@ test('AUDIT C&C R6 (C13): THE STATS SIDE\'S BOONS SECTION, DRIVEN - a Boons body
 
 test('AUDIT C&C R5 (B11): THE ENHANCED MENU\'S ATTRIBUTES PAGE, DRIVEN - the pause window\'s Stats page, its Attributes section pressed, for a Boons body: the eight meters, then the Boons divider and every boon\'s row (a source-text pin let the rows go undrawn, one boon drawn, or the Character page stand in)', async () => {
   await import('./chargenDom.mjs');   // the pause window's document (its globals stand for the rest of this file: this test is the last)
-  const { mountEnhancedMenu } = await import('../src/ui/enhancedMenu.js');
+  const { mountEnhancedMenu } = await import('../src/ui/enhanced/enhancedMenu.js');
   const { playerEntity } = await import('../src/characters/playerEntity.js');
   const kept = { ...playerEntity };
   try {

@@ -547,7 +547,7 @@ prevent.
 **F1 - it read five doors of eight, in silence.** Its block finder
 matched `return {` alone. `ui/pauseDoor.js` and `ui/inventoryDoor.js`
 name the object (`const overlay = { ... }`) before handing it over, and
-`ui/travelMapDoor.js` returns classes - so all three were skipped and the
+`ui/travel/travelMapDoor.js` returns classes - so all three were skipped and the
 suite went green over a claim that covered five of eight doors. One of
 the two skipped doors is the pause menu, which is half of what the player
 reported. **A gate that skips in silence is worse than no gate**: it

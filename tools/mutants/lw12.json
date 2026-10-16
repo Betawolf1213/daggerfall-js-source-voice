@@ -604,7 +604,7 @@
   },
   {
     "name": "LW12-hud-ring",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "    } else if (look === 'wayfarer' && /\\bhideout\\b/.test(m.kind ?? '')) {",
     "new": "    } else if (false) {",
     "tests": [

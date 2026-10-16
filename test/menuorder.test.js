@@ -8,7 +8,7 @@ import './chargenDom.mjs';   // a document for the tabs that draw after an await
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { DFICON_ROWS, DFICON_CSS, dficonSvg } from '../src/ui/menuGlyphs.js';
+import { DFICON_ROWS, DFICON_CSS, dficonSvg } from '../src/ui/menu/menuGlyphs.js';
 import { DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
 import { createDecorBar, decorBarKeys, decorFiltersText, DECOR_LAYOUT_WORDS, DECOR_KEYS_WORD, DECOR_CSS } from '../src/ui/decorPanel.js';
 import { all, one, text, chipNamed, rows, panelRig } from './decorFakes.mjs';
@@ -18,30 +18,30 @@ import { createShipPortraits, shipPortraitCamera, SHIP_PORTRAIT_W, SHIP_PORTRAIT
 import { canvasBoxUnder, PANEL_PICTURE_CLEAR, panelPicture, panelPictureStudio } from '../src/scenes/panelPicture.js';
 import { Renderer } from '../src/render/renderer.js';
 import { markRemapLaw, remapLawOf } from '../src/world/texRemap.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
-import { DFICON_CSS as GLYPHS } from '../src/ui/menuGlyphs.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
+import { DFICON_CSS as GLYPHS } from '../src/ui/menu/menuGlyphs.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { fileURLToPath } from 'node:url';
 import { decorThumbCamera, DECOR_THUMB_PX, DECOR_THUMBS_A_FRAME, DECOR_THUMB_WAIT_MS } from '../src/scenes/decorTool.js';
 import { withDom } from './invdrag.mjs';
-import { mountEnhancedTrade, TRADE_TITLE, TRADE_OWN_HEAD, TRADE_COST_WORD, TRADE_GOLD_WORD, TRADE_VIEW_WORDS, tradeGoldText } from '../src/ui/enhancedTrade.js';
+import { mountEnhancedTrade, TRADE_TITLE, TRADE_OWN_HEAD, TRADE_COST_WORD, TRADE_GOLD_WORD, TRADE_VIEW_WORDS, tradeGoldText } from '../src/ui/enhanced/enhancedTrade.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { setProfessionsPages, drawStoresPage, stationWorkable, STATION_TILES, STATION_TILE_WORDS } from '../src/ui/profPages.js';
+import { setProfessionsPages, drawStoresPage, stationWorkable, STATION_TILES, STATION_TILE_WORDS } from '../src/ui/professions/profPages.js';
 import { xpForRank, trackOf } from '../src/net/professionLaw.js';
 import { createMarketTab, MARKET_VIEW_ICONS, MARKET_VIEW_GROUPS } from '../src/ui/marketTab.js';
-import { createVendorTab } from '../src/ui/vendorTab.js';
-import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { pictureNode } from '../src/ui/menuGlyphs.js';
-import { setVendorPage, drawVendorPage, resetVendorPage } from '../src/ui/vendorPage.js';
+import { createVendorTab } from '../src/ui/vendor/vendorTab.js';
+import { PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { pictureNode } from '../src/ui/menu/menuGlyphs.js';
+import { setVendorPage, drawVendorPage, resetVendorPage } from '../src/ui/vendor/vendorPage.js';
 import { mountReforgeWindow, REFORGE_PAGES, REFORGE_PAGE_ICONS } from '../src/ui/reforgeWindow.js';
 import { SHIPYARD_CSS, SHIPYARD_TAB_ICONS } from '../src/ui/shipyardWindow.js';
 import { SHIPYARD_HULLS } from '../src/systems/shipyards.js';
-import { mountNavalYardWindow } from '../src/ui/navalYardWindow.js';
-import { mountEnhancedMerchantPanel, MERCHANT_ICONS } from '../src/ui/enhancedMerchantPanel.js';
-import { REFORGE_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { BROKER_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { mountNavalYardWindow } from '../src/ui/naval/navalYardWindow.js';
+import { mountEnhancedMerchantPanel, MERCHANT_ICONS } from '../src/ui/enhanced/enhancedMerchantPanel.js';
+import { REFORGE_CSS, PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { BROKER_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { refusePress, brokerSkinCss } from '../src/ui/brokerWindow.js';
 
 const lit = (rows) => rows.join('').split('').filter((c) => c === '#').length;
@@ -701,7 +701,7 @@ test('AUDIT MENU-ORDER the screens: a station the provider has here reads Here, 
     setProfessionsPages(null);
   });
   // C5: the vendor board asks every row's picture with one wake
-  const vsrc = readFileSync('src/ui/vendorTab.js', 'utf8');
+  const vsrc = readFileSync('src/ui/vendor/vendorTab.js', 'utf8');
   assert.match(vsrc, /const wake = \(\) => ui\.rerender\(\);/);
   assert.match(vsrc, /v\.picture\?\.\(row\.item, wake\)/, 'one wake, never a closure a row');
   // U1 + U11: the decorator on a short screen and a narrow one

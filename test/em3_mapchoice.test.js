@@ -6,8 +6,8 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { _resetForTests, setPref, getPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { dungeonMap3dOn } from '../src/ui/mapSkin.js';
-import { createAutomapWindow } from '../src/ui/automapDoor.js';
+import { dungeonMap3dOn } from '../src/ui/map/mapSkin.js';
+import { createAutomapWindow } from '../src/ui/automap/automapDoor.js';
 import { FEATURES } from '../src/systems/features.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

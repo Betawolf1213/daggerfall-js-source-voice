@@ -46,7 +46,7 @@
   },
   {
     "name": "COMPASS-PARTY-classic-never-drawn",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "  drawPartyCompassMarks(renderer, party, playerXZ, heading01, { bx, by, bw, s });\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "COMPASS-PARTY-classic-unclamped",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "    const lerp = Math.min(1, Math.max(0, compassMarkerLerp(t, playerXZ, heading01)));",
     "new": "    const lerp = compassMarkerLerp(t, playerXZ, heading01);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "COMPASS-PARTY-classic-in-the-detect-red",
-    "file": "src/ui/hud.js",
+    "file": "src/ui/hud/hud.js",
     "old": "      renderer.drawScreenQuad(null, { x: mx + (mw - fill) / 2, y: my + r * rowH, w: fill, h: rowH }, undefined, colour);",
     "new": "      renderer.drawScreenQuad(null, { x: mx + (mw - fill) / 2, y: my + r * rowH, w: fill, h: rowH }, undefined, [0.6, 0.09, 0.03, 1]);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "COMPASS-PARTY-enhanced-never-placed",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  drawPartyMarks(opts.party ?? null, opts.playerXZ ?? null, heading01);   // COMPASS-PARTY\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "COMPASS-PARTY-enhanced-gone-mate-stays",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  for (let i = 0; i < parts.partyMarks.length; i++) {",
     "new": "  for (let i = 0; i < list.length; i++) {",
     "tests": [

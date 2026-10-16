@@ -20,7 +20,7 @@ audited build.
 
 ## 1. The tab (HOLDINGS)
 
-The enhanced pause window's tabs are **Quests, Stats, Holdings, System** (`ui/enhancedMenu.js` `PAUSE_TABS`; a landing
+The enhanced pause window's tabs are **Quests, Stats, Holdings, System** (`ui/enhanced/enhancedMenu.js` `PAUSE_TABS`; a landing
 names any of them - `PAUSE_TAB_IDS`, the strip's own list). The Stats rail is the character sheet again - Character,
 Attributes, Skills, Advantages, Standing, Effects, and online the Professions page. The Holdings rail (`pauseHoldings`,
 PX6's rail-and-detail bones a fourth time) holds what the player owns and who follows them, each page while it has a
@@ -32,12 +32,12 @@ thing to show:
 | Fleet | `ui/fleetPage.js` | while Come Sail Away runs in the world host |
 | Captain | `ui/captainPage.js` (CAPT-LOG, `03-World/Captains-Sea.md`) | once a captain has a standing, a log, a contract or a chart - each crown's regard and rank, the letter, the contracts held, the treasure charts marked, the log (the Eltheric Ocean's lines among it: the isles charted, the deepest waters, the legends ended - `03-World/Eltheric-Ocean.md`) |
 | Companions | `ui/companionRoster.js` (moved off the Stats rail) | anyone sworn or at the player's side |
-| Revenants | `ui/revenantPage.js` (moved) | revenants made, or any remembered |
-| Stores | `ui/profPages.js` (moved; the Professions page stays on Stats) | online, the professions this account's |
+| Revenants | `ui/revenant/revenantPage.js` (moved) | revenants made, or any remembered |
+| Stores | `ui/professions/profPages.js` (moved; the Professions page stays on Stats) | online, the professions this account's |
 
 A home station's press that opened the Stores page lands on the Holdings tab there; the Professions key on the Stats tab.
 Every visit opens the rail on its first page and forgets the pages' words (an act's answer, an open name field, a panel).
-The pages' cards are the Companions page's: the stone-and-brass kit's roles (`ui/enhancedFrame.js` FRAME_ROLES - a card a
+The pages' cards are the Companions page's: the stone-and-brass kit's roles (`ui/enhanced/enhancedFrame.js` FRAME_ROLES - a card a
 panel, a picture a well, a state a chip), the sheet writing geometry and its words' colours alone.
 
 **THE PROVIDER.** The pages touch no runtime: the host hands them `setHoldingsProvider({ stable, stableAct, fleet })`.
@@ -388,7 +388,7 @@ and her orders' answers; with none aboard, her first hand aboard as before.
 `world/quayModel.js`, `scenes/quayPool.js`, `systems/naval/harbourBook.js`; seams in `systems/horse/horseCart.js`,
 `systems/comeSailAway/comeSailAway.js` (SummonBoat, LayUpBoat, laidUpHold, the book's seams, the refits' reads),
 `systems/comeSailAway/comeSailAwayWire.js`, `scenes/navalHost.js` (fleetStatus, repairAway, refitBoat, freeBerth, the refits' reads),
-`scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js`, `ui/enhancedMenu.js`, `ui/enhancedFrame.js`; the quays'
+`scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js`, `ui/enhanced/enhancedMenu.js`, `ui/enhanced/enhancedFrame.js`; the quays'
 in `systems/naval/shipLife.js` (`alongside`), `systems/comeSailAway/comeSailAway.js` (`warp`), `world/deepWater/deepWaterFloor.js`
 (`SHORE_TERRAIN_FIT_METERS`, exported for JETTY_MAX) and `scenes/navalHost.js` (the book read, the docking, the
 gangways).

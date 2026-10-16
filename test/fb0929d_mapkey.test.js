@@ -1,8 +1,8 @@
 // FIELD BUGS 2026-09-29d - MAP-KEY (Jigglehimmer on Discord, #suggestions: "Enhanced map needs filterable key like
 // the default Daggerfall world map" - "cemeteries were red dots, and dungeons were orange dots"). The held map's KEY:
 // the classic window's four filters as toggles on the SAME live store, through the classic window's own flip
-// (ui/travelMapWindow.js flipTravelMapFilter, DFU's FilterButtonClickHandler); every glyph inked in its classic dot's
-// hue walked toward the pen (ui/inkMap.js markInks over the colours the classic loader reads off FMAP_PAL.COL); and the
+// (ui/travel/travelMapWindow.js flipTravelMapFilter, DFU's FilterButtonClickHandler); every glyph inked in its classic dot's
+// hue walked toward the pen (ui/ink/inkMap.js markInks over the colours the classic loader reads off FMAP_PAL.COL); and the
 // key saying which glyph is which, in the ink the sheet lays it in. bible/10-UI/Held-Map-Arc.md MAP-KEY.
 //
 // The window is driven whole on a fake document whose canvases RECORD, so the pins read what the sheet really inks
@@ -18,11 +18,11 @@ import {
   mapKeyGroups, markInks, markInk, markKind, quarterInk, paintGlyph, KIND_WORD, KEY_CHIP_PX,
   MARK_INK_MIX, QUARTER_INK_MIX, QUARTER_INK_A, QUARTER_INK_DE, QUARTER_INK_PAPER_DE, INK_RGB, PARCHMENT_RGB,
   PEN, toPaper, mixRgb, rgba,
-} from '../src/ui/inkMap.js';
+} from '../src/ui/ink/inkMap.js';
 import {
   TravelMapWindow, flipTravelMapFilter, travelMapDotColors, preloadTravelMapArt, _setTravelMapArtForTests,
   LOCATION_PIXEL_COLOR_INDICES, FILTER_SRC,
-} from '../src/ui/travelMapWindow.js';
+} from '../src/ui/travel/travelMapWindow.js';
 import { travelMapFilters, travelMapSaveData, resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
@@ -172,7 +172,7 @@ test('MAP-KEY: the key is the classic window\'s four filters, each with the kind
   assert.deepEqual(Object.keys(KIND_WORD).sort(), [...new Set([...Array(14).keys()].map(markKind))].sort());
   assert.equal(KIND_WORD.graveyard, 'Graveyard');
   // no range table was typed into the ink module: the groups are ASKED
-  assert.match(code('src/ui/inkMap.js'), /getPixelColorIndex\(t, \{ \[filter\]: true \}\) < 0/);
+  assert.match(code('src/ui/ink/inkMap.js'), /getPixelColorIndex\(t, \{ \[filter\]: true \}\) < 0/);
 });
 
 test('MAP-KEY: a press flips the LIVE store through the classic window\'s own flip - the sheet re-inks without the kinds, the save carries it, the classic window agrees both ways (mutants: FB0929D-MAPKEY-the-flip-only-hides, FB0929D-MAPKEY-the-flip-takes-any-name, FB0929D-MAPKEY-the-press-leaves-the-marks, FB0929D-MAPKEY-the-press-flips-a-copy, FB0929D-MAPKEY-the-classic-flips-its-own-copy)', () => {
@@ -211,7 +211,7 @@ test('MAP-KEY: a press flips the LIVE store through the classic window\'s own fl
     next.dispose();
   });
   // ONE flip, both skins: the classic handler presses it, and the held map writes no flag of its own
-  assert.match(read('src/ui/travelMapWindow.js'), /_filterButtonClick\(which\) \{\s*\n\s*if \(!flipTravelMapFilter\(this\.filters, which\)\) return;/);
+  assert.match(read('src/ui/travel/travelMapWindow.js'), /_filterButtonClick\(which\) \{\s*\n\s*if \(!flipTravelMapFilter\(this\.filters, which\)\) return;/);
   assert.doesNotMatch(code('src/ui/heldMap.js'), /filters\[[^\]]+\]\s*=[^=]/, 'no second copy of the flip');
 });
 
@@ -270,7 +270,7 @@ test('MAP-KEY: the key holds none of the sheet\'s keys or presses - M and Escape
     win.dispose();
   });
   // it stands ON the foot (the row's own top edge), never at a guessed height, and it is a solid panel
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.hmkey \{ position: absolute; left: 0; bottom: calc\(100% \+ 4px\);/);
   assert.match(css, /\.hmkey \{[^}]*pointer-events: auto; \}/);
   assert.match(css, /\.hmkeyflt \{ pointer-events: auto;/);

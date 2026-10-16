@@ -28,10 +28,10 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { withDom } from './invdrag.mjs';
-import { mountEnhancedInventory, wearPct, DOUBLE_CLICK_MS } from '../src/ui/enhancedInventory.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
-import { mountHotbarDock, drawEnhancedHotbar } from '../src/ui/enhancedHotbar.js';
+import { mountEnhancedInventory, wearPct, DOUBLE_CLICK_MS } from '../src/ui/enhanced/enhancedInventory.js';
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
+import { mountHotbarDock, drawEnhancedHotbar } from '../src/ui/enhanced/enhancedHotbar.js';
 import { setHotbarSlot, hotbarEntryForItem, clearHotbar } from '../src/systems/quickslots.js';
 import { stacksWith, addItem, splitStack, isEnchanted } from '../src/systems/inventory.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';

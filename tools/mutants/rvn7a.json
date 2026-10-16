@@ -199,7 +199,7 @@
   },
   {
     "name": "RVN7a-page-unknown-named",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  return r.lairKnown ? `Lair: ${r.lair.name} - on your map.` : 'Lair: unknown - the towns about it may have heard.';",
     "new": "  return `Lair: ${r.lair.name} - on your map.`;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "RVN7a-page-unwired",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (!fallen) text.append(el('span', 'rvn-will', lairWords(r)));   // RVN7\n",
     "new": "",
     "tests": [

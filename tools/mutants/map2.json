@@ -37,7 +37,7 @@
   },
   {
     "name": "harbour-at-far",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (opts.ports && m.port) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "new": "    if (opts.ports && m.port && band !== 'far') harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "harbour-always",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (opts.ports && m.port) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "new": "    if (m.port) harbours.push([ink, ...toPaper(view, m.x, m.y)]);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "mark-ring-hidden-at-far",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      if (m.mapId !== opts.markedMapId || !visible(m.x, m.y)) continue;",
     "new": "      if (m.mapId !== opts.markedMapId || !visible(m.x, m.y) || !shown.has(m.colorIndex)) continue;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "mark-colour-ignored",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "      ctx.strokeStyle = opts.markColor; ctx.lineWidth = 2;",
     "new": "      ctx.strokeStyle = PEN.select; ctx.lineWidth = 2;",
     "tests": [
@@ -269,7 +269,7 @@
   },
   {
     "name": "coords-cross-dropped",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "    if (opts.selected.coords) {",
     "new": "    if (false) {",
     "tests": [

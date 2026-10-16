@@ -592,7 +592,7 @@
   },
   {
     "name": "TECH1-the-hud-chip-unread",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  powers.push(...techniqueChips(vitals));",
     "new": "",
     "tests": [
@@ -954,7 +954,7 @@
   },
   {
     "name": "TECH1-AUDIT-the-detail-posted",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  const said = told ? parts.filter((p) => p !== told) : parts;",
     "new": "  const said = parts;",
     "tests": [

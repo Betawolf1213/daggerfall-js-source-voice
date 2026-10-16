@@ -10,7 +10,7 @@
 //       matched `return {` only, so `ui/pauseDoor.js` and
 //       `ui/inventoryDoor.js` - which NAME the object (`const overlay =
 //       {...}`) before handing it over - were never inspected, and
-//       `ui/travelMapDoor.js` returns classes. The gate reported green
+//       `ui/travel/travelMapDoor.js` returns classes. The gate reported green
 //       over doors it had not read. The pause menu was one of the two,
 //       and the pause menu is half of what the player reported.
 //

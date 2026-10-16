@@ -218,7 +218,7 @@
   },
   {
     "name": "RAID4-card-row-unsaid",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "      if (raids) row(t('account.card.raids', 'Towns defended'), raids);\n",
     "new": "",
     "tests": [

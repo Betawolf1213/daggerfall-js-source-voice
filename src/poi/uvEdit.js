@@ -3,7 +3,7 @@
 // POI-5 (2026-10-14) - THE UV EDITOR'S HANDS: WHAT IS SELECTED, WHAT A PRESS DOES, AND EVERY STEP BACK.
 //
 // Mac: "Full UV editor" (bible/06-Systems/POI-Editor-Arc.md POI-5). Over one part's mesh as poi/uvMesh.js holds it, one
-// material's faces at a time (the submesh its picture is drawn on), pure - the panel (ui/poiUvPanel.js) draws it and
+// material's faces at a time (the submesh its picture is drawn on), pure - the panel (ui/poi/poiUvPanel.js) draws it and
 // hands it the presses, a test drives it alone:
 //
 //   - FOUR WAYS TO SELECT: a UV VERTEX (every corner at that point of its island), an EDGE (a face's side, as the picture

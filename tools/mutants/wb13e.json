@@ -75,7 +75,7 @@
   },
   {
     "name": "WB13e-the-card-never-fading",
-    "file": "src/ui/gateTitleCard.js",
+    "file": "src/ui/gate/gateTitleCard.js",
     "old": "const alpha = Math.max(0, Math.min(1, (now - beat.at) / TITLE_IN_MS, (beat.until - now) / TITLE_OUT_MS));",
     "new": "const alpha = 1;",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "WB13e-the-bar-never-pulsing",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "low: !s.fell && frac > 0 && frac < LOW_HEALTH,",
     "new": "low: false,",
     "tests": [

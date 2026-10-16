@@ -471,7 +471,7 @@
   },
   {
     "name": "RVN3-the-page-hint-named",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "  if (k === 1) return `Weakness: ${WEAK_HINTS[weaknessKind(r.weak)] ?? 'Something'}.`;",
     "new": "  if (k === 1) return `Weakness: ${WEAK_NAMES[r.weak]}.`;",
     "tests": [
@@ -480,7 +480,7 @@
   },
   {
     "name": "RVN3-the-page-rule-at-rank-2",
-    "file": "src/ui/revenantPage.js",
+    "file": "src/ui/revenant/revenantPage.js",
     "old": "export const willWords = (r) => (willMatters(r?.rank) ?",
     "new": "export const willWords = (r) => (true ?",
     "tests": [

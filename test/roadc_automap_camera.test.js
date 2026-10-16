@@ -33,7 +33,7 @@ import {
   CAMERA_HEIGHT_VIEW_FROM_TOP, CAMERA_HEIGHT_VIEW_3D, CAMERA_BACKWARD_DISTANCE,
   CAMERA_NEAR, CAMERA_FAR, EXT_MAX_ZOOM, EXT_MIN_ZOOM, EXT_DRAG_SPEED, EXT_ROTATE_SPEED,
   EXT_NUM_MAX_BLOCKS, EXT_LAYOUT_MULTIPLIER,
-} from '../src/ui/automapCamera.js';
+} from '../src/ui/automap/automapCamera.js';
 
 const near = (a, b, eps = 1e-6, msg = '') => assert.ok(Math.abs(a - b) <= eps, `${msg} (${a} vs ${b})`);
 const nearV = (a, b, eps = 1e-6, msg = '') => {

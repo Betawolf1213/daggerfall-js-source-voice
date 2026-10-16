@@ -169,9 +169,9 @@ test('AUDIT 26 F191: the 38-day tick arm runs the conditions half; the 7-day arm
 // had GetMessageResources translated with no caller and the journal's log
 // rect swallowing every click, so the classic navigation aid was gone.
 
-import { QuestJournalWindow, JOURNAL_RECTS, FIND_PLACE_TEXT } from '../src/ui/questJournal.js';
+import { QuestJournalWindow, JOURNAL_RECTS, FIND_PLACE_TEXT } from '../src/ui/quest/questJournal.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
-import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
+import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
 import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID, patchRegionIndex } from '../src/formats/mapsFile.js';

@@ -281,7 +281,7 @@ export const RENOWN_REPORT_MS = 60_000;
 /** SCALE4h (2026-10-11, the plan's "10k writes"; bible/11-Multiplayer/Scale-Arc.md SCALE4h): HOW OFTEN IT GOES
  *  OTHERWISE. A fighter's report every minute was half the statements and half the rows a fighting player-hour wrote to
  *  the one primary (tools/hotWritesBench.mjs), and most of its answers said nothing the page did not know: the bar draws
- *  what is earned and not yet answered (ui/hudRenown.js, the ghost), so the answer only moves the ghost into the fill. */
+ *  what is earned and not yet answered (ui/hud/hudRenown.js, the ghost), so the answer only moves the ghost into the fill. */
 export const RENOWN_COALESCE_MS = 5 * 60_000;
 /** AUDIT RENOWN1 DATA-4/GAME-9: A REPORT'S OWN NAME - sixteen hex digits the client draws once per report and sends
  *  again, unchanged, with every retry of that same report, so a report the service took whose answer was lost is
@@ -299,7 +299,7 @@ export function renownText(level) {
   return String(level);
 }
 
-/** A count with its thousands marked ("12,500") - the profile's row and the HUD's bar (ui/hudRenown.js) alike. */
+/** A count with its thousands marked ("12,500") - the profile's row and the HUD's bar (ui/hud/hudRenown.js) alike. */
 export const groupedXp = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 /** A track's progress in words: "1,234 / 5,510 XP to Renown 10", or "the highest there is" at the cap (AUDIT RENOWN1

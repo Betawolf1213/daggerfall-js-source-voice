@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { NativeTalkWindow, TALK_RECTS, BUTTON_ORDER, npcPortraitPixels } from '../src/ui/nativeTalk.js';
-import { talkPanelModel, talkKey, TONE_LABELS, CATEGORY_BUTTONS } from '../src/ui/enhancedTalk.js';
+import { NativeTalkWindow, TALK_RECTS, BUTTON_ORDER, npcPortraitPixels } from '../src/ui/native/nativeTalk.js';
+import { talkPanelModel, talkKey, TONE_LABELS, CATEGORY_BUTTONS } from '../src/ui/enhanced/enhancedTalk.js';
 import { createTalkWindow, talkDoorReady } from '../src/ui/talkDoor.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -205,7 +205,7 @@ test('ET1 keys: Enter asks and the arrows move (ours); the classic accelerators 
   talkKey('KeyG', g);
   assert.equal(g.done, true, 'and so is DFU\'s G, TalkExit');
   // the classic face reads the same row: the map is the window's own
-  const talk = read('src/ui/nativeTalk.js');
+  const talk = read('src/ui/native/nativeTalk.js');
   assert.match(talk, /const hit = firstHotkey\(TALK_HOTKEY_BUTTONS, code, e\);\s*\n\s*if \(hit\) \{ this\.press\(TALK_HOTKEYS\[hit\]\); return; \}/, 'DFU\'s row first, as a press');
   assert.doesNotMatch(talk, /code === 'KeyT'|code === 'KeyP'/, 'the port\'s T and P are gone - DFU binds both');
   const door = read('src/ui/talkDoor.js');
@@ -214,7 +214,7 @@ test('ET1 keys: Enter asks and the arrows move (ours); the classic accelerators 
 });
 
 test('ET1 panel: a bottom rectangle over the world, the pixel frame, no art, and the phone stacks it', () => {
-  const src = read('src/ui/enhancedTalk.js');
+  const src = read('src/ui/enhanced/enhancedTalk.js');
   // paint and bones: the imports are the style and the portrait pixels, nothing that reads ARENA2
   const imports = [...src.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]).sort();
   assert.deepEqual(imports, ['./enhancedOverlays.js', './enhancedStyle.js', './nativeTalk.js'], 'the style, the portrait pixels, and OT1\'s outside-tap helper');
@@ -226,10 +226,10 @@ test('ET1 panel: a bottom rectangle over the world, the pixel frame, no art, and
   assert.match(src, /t\.selected \? model\.useTopic\(t\.i\) : model\.selectTopic\(t\.i\)/, 'a press selects, a press on the lit row uses - no double-tap on a phone');
   assert.match(src, /if \(model\?\.done\) \{ relock\(\); onExit\(\); return; \}/, 'goodbye relocks INSIDE the gesture (MAC1)');
   assert.match(src, /ctx\.putImageData\(new ImageData\(px\.rgba, px\.w, px\.h\), 0, 0\);/, 'the portrait is the classic\'s own pixels');
-  const talk = read('src/ui/nativeTalk.js');
+  const talk = read('src/ui/native/nativeTalk.js');
   assert.match(talk, /rgba: new Uint8ClampedArray\(c32\.colors\.buffer\)/, 'kept beside the texture: one decode, two faces');
   assert.equal(npcPortraitPixels(), null, 'none set, none painted');
-  const css = read('src/ui/enhancedStyle.js');
+  const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.talk-shell \.talk-panel \{ position: absolute; left: 50%; bottom: max\(16px, 3dvh\);/, 'a rectangle along the bottom, not a screen');
   assert.match(src, /el\('section', 'talk-panel px-win'\)/, 'the pause window\'s frame');
   assert.doesNotMatch(src, /px-over|px-home/, 'no scrim: the world reads through');

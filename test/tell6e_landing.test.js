@@ -23,7 +23,7 @@ import { liveBlows, resetBlows, BLOW_VERDICT_LIFE } from '../src/ai/foeBlows.js'
 import { BLOW_EFFECT, blowEffectOf, queueBlowEffect, drainBlowEffects, knockedDown, startBleed, tickBleed, _resetBlowEffectsForTests } from '../src/systems/blowEffects.js';
 import { landBlowEffect, playerBlowFrame } from '../src/scenes/hostCombat.js';
 import { playerHarmMark, _resetHarmMarkForTests } from '../src/systems/harmMark.js';
-import { activeSpellIcons, BLEED_ICON } from '../src/ui/hudActiveSpells.js';
+import { activeSpellIcons, BLEED_ICON } from '../src/ui/hud/hudActiveSpells.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;

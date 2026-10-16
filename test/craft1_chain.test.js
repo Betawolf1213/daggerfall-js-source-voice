@@ -315,7 +315,7 @@ test('AUDIT CRAFT1 book: a refused work\'s answer carries the material the servi
 // ─── THE PAGE AND THE HOST ───────────────────────────────────────────
 
 test('CRAFT1 anvil page: a recipe whose inputs are made from raw says so, its box says what is refined first and from what, and Craft is offered; a chain short at the bottom says what is short and offers none', async () => {
-  const { setProfessionsPages, drawStoresPage } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setPref('gentleActs', true);
   const held = new Map(Object.entries(RAW));
@@ -370,7 +370,7 @@ test('CRAFT1 anvil page: a recipe whose inputs are made from raw says so, its bo
 });
 
 test('AUDIT CRAFT1 the other four benches drawn: the workbench\'s staff from Pine Logs (saw), the loom\'s cuirass from Rat Pelts (cure), the Sculptor\'s column from Rough Stone (cut, mix), the jeweller\'s bracer (cure) - each "can make from raw", unlocked, its note, its Craft offered and asked; a Timberwright\'s saw said three planks, a Quartermaster\'s ingots two', async () => {
-  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/profPages.js');
+  const { setProfessionsPages, drawStoresPage, resetProfPages } = await import('../src/ui/professions/profPages.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   setPref('gentleActs', true);
   const T = (p, rank, s50 = null, s100 = null) => ({ profession: p, xp: xpForRank(rank), rank, specs: { 50: s50, 100: s100 }, respec: null });
@@ -444,7 +444,7 @@ test('CRAFT1 host: the world\'s craft says what its chain refined first - made o
   // PIN MOVED (CRAFT-FIRST-SHOWN, FIELD BUGS 2026-10-15f): the craft's XP is said by craftXpText (ui/craftXpWords.js), its first with it
   assert.match(world, /return \{ ok: true, text: `\$\{chain \? `\$\{chain\} ` : ''\}\$\{made\} \$\{craftXpText\(rec, r\.data, st\.xp\)\}/);
   assert.match(world, /movedFirstText\(r\)\}\$\{chain \? ` \$\{chain\}` : ''\}` \};/);
-  const pages = src('src/ui/profPages.js');
+  const pages = src('src/ui/professions/profPages.js');
   for (const st of ['_anvil', '_bench', '_loom', '_mason', '_jewel']) assert.match(pages, new RegExp(`\\(craftable\\(r, held(, spends)?\\) \\|\\| chain\\?\\.ok === true\\) && !${st}\\.`), `${st} offers the chain`);
   assert.equal((pages.match(/const chain = chainNote\(box, el, p, book, /g) ?? []).length, 5, 'five boxes say it');
   const book = src('src/net/profBook.js');

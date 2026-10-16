@@ -44,8 +44,8 @@ test('ONE-BAG: the trade windows\' Buy basket - pack and basket together - takes
   const basket = [shelfBag()];
   assert.equal(planTake(shelfBag(), { bag: [...e.items, ...basket], entity: e }).refusal, REFUSAL.secondBag, 'a second staged in the same purchase');
   // both windows hand planTake the pack and the basket (the DECOR2b pins hold their furniture filter; this holds the shape)
-  assert.match(src('src/ui/enhancedTrade.js'), /return planTake\(item, \{ bag: \[\.\.\.deps\.packItems\(\), \.\.\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\], entity: deps\.entity \?\? null \}\);/);
-  assert.match(src('src/ui/nativeTrade.js'), /planTake\(item, \{\n\s+bag: \[\.\.\.this\.hooks\.packItems\(\), \.\.\.this\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\],/);
+  assert.match(src('src/ui/enhanced/enhancedTrade.js'), /return planTake\(item, \{ bag: \[\.\.\.deps\.packItems\(\), \.\.\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\], entity: deps\.entity \?\? null \}\);/);
+  assert.match(src('src/ui/native/nativeTrade.js'), /planTake\(item, \{\n\s+bag: \[\.\.\.this\.hooks\.packItems\(\), \.\.\.this\.basket\.filter\(\(x\) => !isFurnishing\(x\)\)\],/);
 });
 
 test('ONE-BAG: the bag being taken is not "another" - the wagon\'s own bag comes back into an empty pack, and nothing but a bag is ever refused for one (mutants: the bag counted against itself; every take refused)', () => {

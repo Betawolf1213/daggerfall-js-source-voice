@@ -31,7 +31,7 @@ book is the report, refused. `11-Multiplayer/Tavern-Cards.md` section 36. Pinned
 
 ## CARDS-PANEL: the card table's panel (5)
 
-`ui/cardTableHud.js`, the port's own panel (no DFU window behind it). The model decides each new thing and the painter
+`ui/card/cardTableHud.js`, the port's own panel (no DFU window behind it). The model decides each new thing and the painter
 draws it: the line's TONE (a refusal or a purse too thin to sit is a warning, a stake being asked a wait, your turn the
 line to look at); the buy-in's quick stakes (its floor and its ceiling) and the raise's (half the pot and the pot, as a
 raise TO on the slider's step, strictly inside the law's range - the floor is where the slider starts, the ceiling is
@@ -75,7 +75,7 @@ Confirm and drops what was staged on every walk away (FIX-F; the head says so) -
 - the head that carries Confirm is sticky (TORCH-BIND), and ORG2's Settings toolbar is sticky at the top of the same
   scroll, above it: measured in Chromium at 1366 x 768 the head was 312 px, its top 131 px behind the bar; at 390 x 844
   it was 462 px and covered the Overworld row itself. The head sticks UNDER the toolbar now, at its measured height
-  (`ui/enhancedMenu.js` `stickUnderToolbar`, `--opt-tools-h`), and is the law's line and its buttons alone - the how-to
+  (`ui/enhanced/enhancedMenu.js` `stickUnderToolbar`, `--opt-tools-h`), and is the law's line and its buttons alone - the how-to
   is the page's first card (`ctl-intro`), read once: 138 px on the desktop, and on a phone (where the law's line is the
   intro's to say) one row of buttons and the owed line, 90 px.
 

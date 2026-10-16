@@ -93,7 +93,7 @@
 // connections and the click verbs that mint them. c2/S9 the
 // interior-BUILDING arm (the visit-scoped record below); c2/S10 the
 // exterior window's own native chrome (AMAP00I0 + TOWN00I0 through the
-// shared ui/automapChrome.js tables). This file carries no open flag
+// shared ui/automap/automapChrome.js tables). This file carries no open flag
 // of its own any more - the exterior residue is stated, and only
 // stated, at ui/exteriorAutomapWindow.js's header.
 //
@@ -355,7 +355,7 @@ export function resetAutomapStore() {
 //      skips `meshRenderer.enabled = false`, so the injection leaves a
 //      building's geometry nominally DISCOVERED - which the restore
 //      below immediately takes back. The window's own always-colour
-//      law is the port's half of this (ui/automapWindow.js).
+//      law is the port's half of this (ui/automap/automapWindow.js).
 //
 //  (2) THE ENTRANCE BEACON IS LIT AND THEN PUT OUT, in that order.
 //      CreateIndoorGeometryForAutomap ends in SetupBeacons(door)

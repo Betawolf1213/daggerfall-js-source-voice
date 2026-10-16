@@ -2,11 +2,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { STAR_HOWTO } from '../src/ui/enhancedLevelUp.js';
-import { LV2_CSS } from '../src/ui/levelUpStyle.js';
-import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
+import { STAR_HOWTO } from '../src/ui/enhanced/enhancedLevelUp.js';
+import { LV2_CSS } from '../src/ui/levelUp/levelUpStyle.js';
+import { PLUS_CSS as ENHANCED_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';   // PLUS1: the refresh's dress is the Enhanced Plus sheet
 
-const src = readFileSync(new URL('../src/ui/enhancedLevelUp.js', import.meta.url), 'utf8');
+const src = readFileSync(new URL('../src/ui/enhanced/enhancedLevelUp.js', import.meta.url), 'utf8');
 const press = src.slice(src.indexOf('function starPress'), src.indexOf('function starFx'));
 
 test('LV2: a first click only chooses a star; a second spends; a right click takes back', () => {

@@ -112,8 +112,8 @@ export const LIVE = Object.freeze({
   // default-ON feature the port never drew. The setting is the FIRST
   // of its three gates; BowLeftHandWithSwitching picks the hand the
   // bow is looked for in (:275). Both read in hud.arrowCountLabel.
-  'GUI/EnableArrowCounter': 'src/ui/hud.js',
-  'Enhancements/BowLeftHandWithSwitching': 'src/ui/hud.js',
+  'GUI/EnableArrowCounter': 'src/ui/hud/hud.js',
+  'Enhancements/BowLeftHandWithSwitching': 'src/ui/hud/hud.js',
   // AUDIT 28 W2b: MeleeDamage's friendly protection (WeaponManager
   // :930-944): the box pass skips allies and the pacified; the vanilla
   // arm strikes one only when it is alone. Read in friendlyProtected.
@@ -123,7 +123,7 @@ export const LIVE = Object.freeze({
   'GUI/DungeonExitWagonPrompt': 'src/scenes/worldModes.js',
   // AUDIT 28 W2d: HUDFlickerController.NextCycle's first gate (:45) -
   // the fast flicker under 40% health, the slow throb under 20%.
-  'Enhancements/NearDeathWarning': 'src/ui/hud.js',
+  'Enhancements/NearDeathWarning': 'src/ui/hud/hud.js',
   // AUDIT 28 W3: ArmorShouldShowMaterial (ItemHelper :822-848) - the
   // four-way helm/shield material display, read at the point of use.
   'GUI/HelmAndShieldMaterialDisplay': 'src/systems/item/itemInfo.js',
@@ -169,10 +169,10 @@ export const LIVE = Object.freeze({
   'GUI/EnableGeographicBackgrounds': 'src/ui/paperDoll.js',
   // UI4: the item info panel is only ADDED when this is on
   // (DaggerfallInventoryWindow :303-307).
-  'GUI/EnableInventoryInfoPanel': 'src/ui/nativeInventory.js',
+  'GUI/EnableInventoryInfoPanel': 'src/ui/native/nativeInventory.js',
   // UI6: DaggerfallTalkWindow's modern conversation style - the
   // greeting, questions and answers smaller, narrower and blocked.
-  'GUI/EnableModernConversationStyleInTalkWindow': 'src/ui/nativeTalk.js',
+  'GUI/EnableModernConversationStyleInTalkWindow': 'src/ui/native/nativeTalk.js',
   'Controls/SoundVolume': 'src/systems/audio.js',
   'Controls/InstantRepairs': 'src/scenes/worldModes.js',      // R1: the repair flow's instant branch
   'Controls/AllowMagicRepairs': 'src/scenes/worldModes.js',   // R1: the repair entry gate + world.js's enchantCtx seam
@@ -211,12 +211,12 @@ export const LIVE = Object.freeze({
   // rows. (The four Automap*Color keys stay stored - they colour the
   // EXTERIOR automap, which pends A2.)
   'Map/AutomapNumberOfDungeons': 'src/systems/automap/automap.js',
-  'Map/AutomapAlwaysMaxOutSliceLevel': 'src/ui/automapWindow.js',
-  'Map/AutomapRememberSliceLevel': 'src/ui/automapWindow.js',
-  'Map/AutomapDisableMicroMap': 'src/ui/automapWindow.js',
-  'Map/DungeonMicMapQoL': 'src/ui/automapWindow.js',
-  'Map/DunMicMapInnerColor': 'src/ui/automapWindow.js',
-  'Map/DunMicMapBorderColor': 'src/ui/automapWindow.js',
+  'Map/AutomapAlwaysMaxOutSliceLevel': 'src/ui/automap/automapWindow.js',
+  'Map/AutomapRememberSliceLevel': 'src/ui/automap/automapWindow.js',
+  'Map/AutomapDisableMicroMap': 'src/ui/automap/automapWindow.js',
+  'Map/DungeonMicMapQoL': 'src/ui/automap/automapWindow.js',
+  'Map/DunMicMapInnerColor': 'src/ui/automap/automapWindow.js',
+  'Map/DunMicMapBorderColor': 'src/ui/automap/automapWindow.js',
   // D1: the streamed-grid radius (StreamingWorld.TerrainDistance,
   // 1..4). The launcher row said "saved, but nothing reads it" while
   // the world host ran the hardcoded default - the exact live-tier
@@ -244,34 +244,34 @@ export const LIVE = Object.freeze({
   // U45: the large HUD. `LargeHUD` itself had been WRITTEN by the pause
   // window since I3 and read by nothing at all, which the settings
   // screen was quietly reporting as a working toggle.
-  'GUI/LargeHUD': 'src/ui/hudLarge.js',
-  'GUI/LargeHUDDocked': 'src/ui/hudLarge.js',
-  'GUI/LargeHUDUndockedScale': 'src/ui/hudLarge.js',
-  'GUI/LargeHUDUndockedAlignment': 'src/ui/hudLarge.js',
+  'GUI/LargeHUD': 'src/ui/hud/hudLarge.js',
+  'GUI/LargeHUDDocked': 'src/ui/hud/hudLarge.js',
+  'GUI/LargeHUDUndockedScale': 'src/ui/hud/hudLarge.js',
+  'GUI/LargeHUDUndockedAlignment': 'src/ui/hud/hudLarge.js',
   // ROAD-D D10: the two OFFSETS, live at last - the horse sprite's
   // (TransportManager.cs:304-309) and the viewmodel's
   // (FPSWeapon.cs:146-155), both computed in hudLarge.js and read by
   // scenes/world.js and combat/fpsWeapon.js.
-  'GUI/LargeHUDOffsetHorse': 'src/ui/hudLarge.js',
-  'GUI/LargeHUDUndockedOffsetWeapon': 'src/ui/hudLarge.js',
+  'GUI/LargeHUDOffsetHorse': 'src/ui/hud/hudLarge.js',
+  'GUI/LargeHUDUndockedOffsetWeapon': 'src/ui/hud/hudLarge.js',
   // U46: the eight buff/debuff icon layouts. Another key the settings
   // screen offered with nothing on the other end.
-  'GUI/IconsPositioningScheme': 'src/ui/hudActiveSpells.js',
-  'GUI/Crosshair': 'src/ui/hudCrosshair.js',
+  'GUI/IconsPositioningScheme': 'src/ui/hud/hudActiveSpells.js',
+  'GUI/Crosshair': 'src/ui/hud/hudCrosshair.js',
   'Enhancements/AssetInjection': 'src/systems/musicReplacement.js',   // M-EXT: DFU's own gate on SoundReplacement, now real for MUSIC
   'Audio/AlternateMusic': 'src/scenes/shared.js',   // M-FM: read once in createMusicDirector, for all three hosts
-  'GUI/InteractionModeIcon': 'src/ui/hudCrosshair.js',
+  'GUI/InteractionModeIcon': 'src/ui/hud/hudCrosshair.js',
   // VB1: the vitals indicators (F148) and the health/fatigue swap
   // (F149). Both were surfaced on the settings screen and read by
   // nothing - DFU ships EnableVitalsIndicators TRUE, so the port's
   // three plain bars had been the setting-FALSE path all along.
-  'GUI/EnableVitalsIndicators': 'src/ui/hudVitals.js',
-  'GUI/SwapHealthAndFatigueColors': 'src/ui/hudVitals.js',
+  'GUI/EnableVitalsIndicators': 'src/ui/hud/hudVitals.js',
+  'GUI/SwapHealthAndFatigueColors': 'src/ui/hud/hudVitals.js',
   'GUI/SDFFontRendering': 'src/ui/text.js',   // OVH2: a classic font draws its UI pack's SDF face (DaggerfallFont.IsSDFCapable) only with this on
   // U41: the classic travel map. Stored-tier since the settings
   // screen shipped - the outline it offers is drawn by a window the
   // port did not have until the region pages landed.
-  'GUI/TravelMapLocationsOutline': 'src/ui/travelMapWindow.js',
+  'GUI/TravelMapLocationsOutline': 'src/ui/travel/travelMapWindow.js',
   // TransferItem's quest arm (DaggerfallInventoryWindow.cs:1487) - the
   // gate on moving a quest item out of the pack, read by the one law
   // both the inventory window and the shop's Sell staging call.
@@ -285,7 +285,7 @@ export const LIVE = Object.freeze({
   // settings screen shipped, offered and read by nothing; systems/
   // retroMode.js reads them for the renderer every world frame (the
   // world's texture, its effect, the mip chains) and for the hosts'
-  // lens and world rect (ui/hudLarge.js), so a change lands on the next
+  // lens and world rect (ui/hud/hudLarge.js), so a change lands on the next
   // frame, as DFU's DeployCoreGameEffectSettings does.
   'Video/RetroRenderingMode': 'src/systems/retroMode.js',
   'Video/PostProcessingInRetroMode': 'src/systems/retroMode.js',

@@ -23,7 +23,7 @@
 // A door that declines in silence is indistinguishable from a press
 // that was not received, which is exactly how it was reported.
 //
-// `ui/enhancedChunk.js` is the one home: retry once, then SPEAK in the
+// `ui/enhanced/enhancedChunk.js` is the one home: retry once, then SPEAK in the
 // door's own host element, and STAY OPEN behind the notice so the game
 // does not hand the keys back to a player who thinks they missed.
 import { test } from 'node:test';
@@ -33,7 +33,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   mountEnhancedChunk, paintChunkNotice, isChunkLoadError, RELOAD_TEXT, BROKEN_TEXT,
-} from '../src/ui/enhancedChunk.js';
+} from '../src/ui/enhanced/enhancedChunk.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (rel) => readFileSync(join(root, rel), 'utf8');
@@ -193,7 +193,7 @@ test('MENU1: no ui/*Door.js mounts a lazy chunk on its own', () => {
   }
   assert.ok(lazy.length >= 7, `every enhanced door is a lazy chunk: ${lazy.join(', ')}`);
   assert.deepEqual(rogue, [],
-    'these lines fetch a lazy chunk outside ui/enhancedChunk.js, so a deploy that moves the chunk\n'
+    'these lines fetch a lazy chunk outside ui/enhanced/enhancedChunk.js, so a deploy that moves the chunk\n'
     + 'fails them silently again - which is the whole of MENU1:\n' + rogue.join('\n'));
 });
 
@@ -214,7 +214,7 @@ test('MENU1: and no door is left catching a mount failure by hand', () => {
 // and compiled while the game holds still. Warmed idly instead, the
 // module map already has it and the door's await costs nothing.
 test('MENU1-WARM: every chunk is warmed, one at a time, each behind its own idle wait', async () => {
-  const { warmEnhancedChunks, _resetChunkWarmForTests, WARM_CHUNKS } = await import('../src/ui/enhancedChunk.js');
+  const { warmEnhancedChunks, _resetChunkWarmForTests, WARM_CHUNKS } = await import('../src/ui/enhanced/enhancedChunk.js');
   _resetChunkWarmForTests();
   const order = [];
   let inFlight = 0, maxInFlight = 0;
@@ -234,7 +234,7 @@ test('MENU1-WARM: every chunk is warmed, one at a time, each behind its own idle
 });
 
 test('MENU1-WARM: a warm that fails is silent, does not stop the rest, and never speaks over MENU1’s notice', async () => {
-  const { warmEnhancedChunks, _resetChunkWarmForTests } = await import('../src/ui/enhancedChunk.js');
+  const { warmEnhancedChunks, _resetChunkWarmForTests } = await import('../src/ui/enhanced/enhancedChunk.js');
   _resetChunkWarmForTests();
   const seen = [];
   const chunks = [
@@ -247,13 +247,13 @@ test('MENU1-WARM: a warm that fails is silent, does not stop the rest, and never
   // The door is what speaks. A warm that logged would put a line on the
   // console for a fetch the player never asked for, and MENU1's whole
   // point is that the PLAYER is told, in the overlay, by the door.
-  const chunkSrc = src('src/ui/enhancedChunk.js');
+  const chunkSrc = src('src/ui/enhanced/enhancedChunk.js');
   const fn = chunkSrc.split('export async function warmEnhancedChunks(')[1].split('\n}')[0];
   assert.doesNotMatch(fn, /console\./, 'a warm must leave no trace when it fails');
 });
 
 test('MENU1-WARM: it runs ONCE a session, and stands down when the session is gone', async () => {
-  const { warmEnhancedChunks, _resetChunkWarmForTests } = await import('../src/ui/enhancedChunk.js');
+  const { warmEnhancedChunks, _resetChunkWarmForTests } = await import('../src/ui/enhanced/enhancedChunk.js');
   _resetChunkWarmForTests();
   let loads = 0;
   const chunks = [() => { loads++; return Promise.resolve({}); }];
@@ -267,7 +267,7 @@ test('MENU1-WARM: it runs ONCE a session, and stands down when the session is go
 
 test('MENU1-WARM: the world host asks for it, and never awaits it', () => {
   const w = src('src/scenes/world.js');
-  assert.match(w, /void import\('\.\.\/ui\/enhancedChunk\.js'\)\.then\(\(m\) => m\.warmEnhancedChunks\(\)\)\.catch\(\(\) => \{\}\);/,
+  assert.match(w, /void import\('\.\.\/ui\/enhanced\/enhancedChunk\.js'\)\.then\(\(m\) => m\.warmEnhancedChunks\(\)\)\.catch\(\(\) => \{\}\);/,
     'the boot fires the warm and forgets it - an awaited warm would be the stall itself');
   const boot = w.split('export async function bootWorld(')[1].slice(0, 1200);
   assert.ok(boot.includes('warmEnhancedChunks'), 'and it is asked for at the boot, not on a door');

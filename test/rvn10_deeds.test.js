@@ -28,7 +28,7 @@ const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { hurtPlayer, setAvoidDeathHook } = await import('../src/characters/playerEntity.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
-const { historyWords } = await import('../src/ui/revenantPage.js');
+const { historyWords } = await import('../src/ui/revenant/revenantPage.js');
 const { createCrewAshore } = await import('../src/scenes/crewAshore.js');
 const { createCompanions } = await import('../src/systems/naval/crewCompanions.js');
 

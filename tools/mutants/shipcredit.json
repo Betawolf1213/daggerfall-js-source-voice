@@ -1,7 +1,7 @@
 [
   {
     "name": "SCW-native-offer-back",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "this.box = { rows: d.textIds.flatMap((id) => this._rows(id, price)), buttons: null };",
     "new": "this.box = this.hooks.credit?.([...this.stagedForCost], price)?.kind === 'credit' ? { rows: [], buttons: 'YesNo', price, cost, onYes: () => this._confirm(price) } : { rows: d.textIds.flatMap((id) => this._rows(id, price)), buttons: null };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SCW-native-credit-as-proceeds",
-    "file": "src/ui/nativeTrade.js",
+    "file": "src/ui/native/nativeTrade.js",
     "old": "? sellProceeds(price, this.hooks.weight?.() ?? {})\n      : null;",
     "new": "? sellProceeds(price, this.hooks.weight?.() ?? {})\n      : this.hooks.credit?.([...this.stagedForCost], price) ?? null;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SCW-enhanced-offer-back",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "box = { rows: d.textIds.flatMap((id) => rowsFor(id, price)), buttons: null };",
     "new": "box = deps.credit ? { rows: [], buttons: 'YesNo', onYes: () => confirmTrade(price) } : { rows: d.textIds.flatMap((id) => rowsFor(id, price)), buttons: null };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SCW-enhanced-credit-as-proceeds",
-    "file": "src/ui/enhancedTrade.js",
+    "file": "src/ui/enhanced/enhancedTrade.js",
     "old": "const proceeds = isSelling ? sellProceeds(price, deps.weight?.() ?? {}) : null;",
     "new": "const proceeds = isSelling ? sellProceeds(price, deps.weight?.() ?? {}) : deps.credit?.([...stagedForCost()], price) ?? null;",
     "tests": [

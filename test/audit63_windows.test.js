@@ -18,14 +18,14 @@ import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/ba
 import { TRANSACTION_TYPE, createBankAccounts } from '../src/systems/banking.js';
 import {
   NativeTradeWindow, TRADE_RECTS, STEAL_SUCCESS_TEXT, STEAL_FAILURE_TEXT,
-} from '../src/ui/nativeTrade.js';
+} from '../src/ui/native/nativeTrade.js';
 import { shopliftAttempt, shopliftingLoad } from '../src/systems/theft.js';
 import { totalWeight } from '../src/systems/inventory.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { calculateShopliftingChance } from '../src/combat/formulas.js';
 import { CharSheet, SKILL_DIALOG_HIGHLIGHT_COLOR } from '../src/ui/charsheet.js';
-import { sheetModel } from '../src/ui/enhancedCharSheet.js';
+import { sheetModel } from '../src/ui/enhanced/enhancedCharSheet.js';
 import { SKILLS, SKILL_NAMES } from '../src/systems/skills.js';
 import { handToHandMinDamage, handToHandMaxDamage } from '../src/combat/formulas.js';
 
@@ -668,7 +668,7 @@ test('AUDIT 63 F34: the hand-to-hand damage line, on the group that holds the sk
     min: handToHandMinDamage(sheetEntity().skills[SKILLS.HandToHand]),
     max: handToHandMaxDamage(sheetEntity().skills[SKILLS.HandToHand]),
   });
-  assert.match(readFileSync(join(root, 'src/ui/enhancedMenu.js'), 'utf8'),
+  assert.match(readFileSync(join(root, 'src/ui/enhanced/enhancedMenu.js'), 'utf8'),
     /group\.ids\.includes\(SKILLS\.HandToHand\)/, 'gated per GROUP there too');
 });
 

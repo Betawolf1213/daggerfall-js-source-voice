@@ -218,7 +218,7 @@ line's own law now, Bloodline open at the founder's chargen.
 **LEGACY-CHOICE - the popup online, and who is founded** (2026-10-06, Mac: "I want to add a enhanced plus UI popup for
 online when creating a character. Perma Death, the regular option, or the option that skips the liniage system
 entirely. Current characters already created start without this system and requires a new game"; built:
-`ui/legacyModelChoice.js`, `ui/levelingChoice.js`, `scenes/legacyHost.js found`, `systems/chargenSession.js
+`ui/legacy/legacyModelChoice.js`, `ui/levelingChoice.js`, `scenes/legacyHost.js found`, `systems/chargenSession.js
 finishChargen`, `test/legacychoice.test.js`, `tools/mutants/legacychoice.json`):
 - ONLINE THE QUESTION HAS THREE ANSWERS - Enduring (the regular one, first: Enter without reading never costs a
   character), Bloodline (permadeath), and NO LINEAGE (`family.js NO_LINEAGE`): no house and no heirs, the realm's own
@@ -519,9 +519,9 @@ than standing still.
   the Breton, the beast folk the Redguard), the same one every day. **Departure (recorded):** the look keeps no Eye Of
   The Beholder set (`eo`) - that is how a player chose to be seen online, not how the house remembers its own. In the
   talk window they wear THEIR OWN FACE: the chargen head they were made with (`raceArt(race, sex).heads`, record
-  `face`; `ui/nativeTalk.js` takes a FACE*.CIF as the portrait's archive).
+  `face`; `ui/native/nativeTalk.js` takes a FACE*.CIF as the portrait's archive).
 - **Talking to them.** The talk door meets them first (`townTalk.js` `livingTalk.kin`, after the refusals and the
-  household's moment): the Succession's window with one card (`ui/legacyDoor.js` `createKinOverlay`) - what they are to
+  household's moment): the Succession's window with one card (`ui/legacy/legacyDoor.js` `createKinOverlay`) - what they are to
   the one played ("Your sister.", `kinLine`), their greeting by kinship ("Mother! You're home.", `kinGreeting`) and how
   the house fares, then **Play as <name>**, **Talk** (the town's own conversation, their head in the window) and
   **Goodbye** (Escape). Play as is the Family tab's switch - saved where they stand first (in a house of the line, the
@@ -652,7 +652,7 @@ world, locked to its own family.
     `01-Overview/Audit-FB1007b.md`.)
   - **The Hall of Ancestors**: every house founded on this machine, living and ended, with its generations and counts.
 - **The Succession** (at a final death, a passing of the mantle, or a save of the past loaded): its own window
-  (`ui/legacySuccession.js`, `ui/legacyDoor.js`), the death's own screen while it stands - the fallen's line, then the
+  (`ui/legacy/legacySuccession.js`, `ui/legacy/legacyDoor.js`), the death's own screen while it stands - the fallen's line, then the
   living who may carry it, then "A child of <name>" - one press; the keyboard and the pad walk it; Escape answers
   nothing (a death must be answered).
 - **The model's question** at the founder's chargen, after the leveling system's, on its screen (both skins): Enduring
@@ -662,7 +662,7 @@ world, locked to its own family.
   remains found, carried and laid to rest.
 - **The character sheet** (LEGACY-SHEET - the arc's first plan, "the age and the elder's word on the character sheet",
   which AUDIT LEGACY F2 found never built): the pause window's Stats page, its Character section, draws the one played's
-  house off their own card (`ui/familyPages.js sheetHouse`, `ui/enhancedMenu.js statsCharacter`) - the model and the
+  house off their own card (`ui/familyPages.js sheetHouse`, `ui/enhanced/enhancedMenu.js statsCharacter`) - the model and the
   generation, and in an Enduring house the age against the span, Arkay's toll and the elder's word ("An elder of the
   house: the mantle may pass from you on the Family tab."; "Your span is spent: your next death is your last."). One line
   of age (`ageWord`) is the card's and the sheet's, so they never disagree. The classic skin's F5 sheet is DFU's own art

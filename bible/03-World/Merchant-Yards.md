@@ -171,7 +171,7 @@ mutant. The yards' findings:
 - **Y1 (major) - the window's Steal.** Only the press refused a steal; the Buy window a yard opens is the shop counter's,
   and its Steal ran - a Caravan (25000) stolen at 11% risk for a master pickpocket, the press again minting another,
   each sold back at any Wagon Yard: gold without end, online too. `yardCounter`'s `noSteal`, through
-  `openTradeWindow`'s `stealRefusal` to both windows (`ui/nativeTrade.js` `_doSteal`, `ui/enhancedTrade.js`).
+  `openTradeWindow`'s `stealRefusal` to both windows (`ui/native/nativeTrade.js` `_doSteal`, `ui/enhanced/enhancedTrade.js`).
 - **Y2 (major) - the regions' prices.** A yard was priced at its region's walk, both ways; with endless, weightless
   stock, a Caravan bought where the index stood low sold where it stood high paid without end (ENDLESS-STOCK's loop).
   `YARD_PRICE_INDEX`, read by `shopAdjustment` off the counter.
@@ -217,21 +217,21 @@ place in YARD_KIND_ORDER - past every building's key (under 1 << 19 in the large
   directory (`systems/talk/talk.js` buildingCompassDirection), and "Let me just mark %loc here on your map" discovers it by
   its key (`systems/answerPipeline.js` markKeySubjectLocationOnMap).
 
-**The town map** (`world/merchantYards/merchantYardMap.js` yardTownBlocks, laid once at `ui/townMapDoor.js` createTownMapWindow for
+**The town map** (`world/merchantYards/merchantYardMap.js` yardTownBlocks, laid once at `ui/town/townMapDoor.js` createTownMapWindow for
 whichever map the skin wears). The Arena's own law (ARENA-MAP), taken for the yards:
 
 - every cell of a yard's ground is drawn in YARD_MAP_BYTE - the General Store's byte, the counter that sold the horse
   and the cart before the yards took them - so both maps wash it in the shop quarter's colour. The data rows run
   against +z as the navgrid's do, so the cells drawn are the ones the people's navgrid closes;
 - its name is a `places` entry of the block its middle stands in, beside the block's `landmark`. Both the classic
-  window (`ui/exteriorAutomapWindow.js` buildPlates) and the held map's sheet (`ui/townSheet.js` named) letter it
+  window (`ui/exteriorAutomapWindow.js` buildPlates) and the held map's sheet (`ui/town/townSheet.js` named) letter it
   always, in a shop's ink, and no record renames it;
 - the rows are copies: a block a yard touches has its bytes copied, never written in place. The block's own bytes are
   the navgrid's and the next build's.
 
 **The Overworld** (`scenes/merchantYardsHost.js` overworldMarks, pushed in `scenes/travelViewMarks.js` travelViewMarks - HOST-SPLIT 1 moved it out of world.js). Each yard
 standing is a mark: its name over its ground (YARD_MARK_LIFT, 4 m), and its kind is the look's (`yard stable`,
-`yard transport`). The HUD draws its signboard's emblem (`ui/travelViewHud.js` yardGlyph): the Wagon Yard's wheel and
+`yard transport`). The HUD draws its signboard's emblem (`ui/travel/travelViewHud.js` yardGlyph): the Wagon Yard's wheel and
 the Stable's horseshoe, opening up. The marks go with the Towns switch and are never counted as a town
 (`systems/travel/travelViewFilters.js` markGroup, countGroups). Only the yards of the towns built about the player stand;
 a town beyond that build shows its plate, not its yards.
@@ -306,10 +306,10 @@ says the bench is bare (`WORKBENCH_COLD_LINE`, a home workbench's word). While t
 question answers `YARD_BENCH`: a shop's bench at the furnisher's own fee (`WORKBENCH_FEE` - no bench is a cheaper
 one), the carpenter the one paid. That question is `scenes/world.js` workbenchHere, asked by the craft, the Stores page
 and the saw alike; indoors it is still the mode machine's. The Stores page names the joinery's carpenter
-(`ui/profPages.js`). The furnisher's Linen counter stays a Furniture Store's alone (`!bench.yard`).
+(`ui/professions/profPages.js`). The furnisher's Linen counter stays a Furniture Store's alone (`!bench.yard`).
 
 **Found as a yard is.** Its row of the talk directory, the town maps' shop-coloured ground and its lettered name come
-through YARDS-FOUND's own doors unchanged. The Overworld marks it with the board's saw (`ui/travelViewHud.js`
+through YARDS-FOUND's own doors unchanged. The Overworld marks it with the board's saw (`ui/travel/travelViewHud.js`
 yardGlyph, `yardMarkKind`), under the Towns switch.
 
 THE FOUR HOSTS (CARP-YARD): `scenes/world.js` - WIRED (the placing, the pool's bench, the street's workbench).

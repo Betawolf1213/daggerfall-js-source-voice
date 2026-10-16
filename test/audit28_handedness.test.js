@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { drawFpsWeapon, FLIP_STATES, ALIGN, getWeaponAnims, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
-import { ENUM_LAW } from '../src/ui/settingsLaw.js';
+import { ENUM_LAW } from '../src/ui/settings/settingsLaw.js';
 
 // AUDIT 28 - W13: HANDEDNESS (StartGameBehaviour :269 -> FPSWeapon
 // .FlipHorizontal, :378-388 and :459-464). Setting 1 mirrors the weapon

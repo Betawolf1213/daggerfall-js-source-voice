@@ -109,7 +109,7 @@ town beneath), and a bank discovered before shows the name now on its door and i
 name a building was discovered by, so it is read live for a bank). The Empire lends a tenth of what the region's bank
 lent: a tenth of DFU's level x 50,000, or of Roleplay & Realism's per-level loan (on by default, and kept on online),
 rounded down. Interest (10%) and the year to repay are unchanged; offline, the bank is Daggerfall's.
-`world/buildingNames.js`, `systems/banking.js`, `systems/discovery.js`, `ui/enhancedPorts.js`.
+`world/buildingNames.js`, `systems/banking.js`, `systems/discovery.js`, `ui/enhanced/enhancedPorts.js`.
 `test/empirebank.test.js` (4). Port-Ledger section A.
 
 ## HOME-MAGIC: a visitor casts nothing in another's home (8)

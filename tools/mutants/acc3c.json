@@ -61,7 +61,7 @@
   },
   {
     "name": "ACC3c-7-the-card-paints-its-own-colour",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "        const b = keyedAs(el('button', `acttitle ${badgeClass('tl', key)}${worn ? ' worn' : ''}`), `title:${key}`);",
     "new": "        const b = keyedAs(el('button', `acttitle${worn ? ' worn' : ''}`), `title:${key}`);\n        b.style.color = key === 'founder' ? '#ffc84a' : '#e2453a';",
     "tests": [
@@ -72,7 +72,7 @@
   },
   {
     "name": "ACC3c-9-the-skin-loses-the-walked-rules",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "${badgeCss()}",
     "new": "",
     "tests": [

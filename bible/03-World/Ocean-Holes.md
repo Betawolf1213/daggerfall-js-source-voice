@@ -17,7 +17,7 @@ its ceiling, stripped of its lights and filled with the deep's own foes.
 
 | slice | what | the port's modules | state |
 |---|---|---|---|
-| OH-A | THE REGISTRATION: the vendored assembly, manifest and settings; the seven sliders; Features, credits, the registry; the online lane | `vendor/ocean-holes/`, `systems/modSettings.js`, `systems/features.js`, `systems/online/onlineLane.js`, `ui/credits.js`, `ui/enhancedMenu.js` | landed |
+| OH-A | THE REGISTRATION: the vendored assembly, manifest and settings; the seven sliders; Features, credits, the registry; the online lane | `vendor/ocean-holes/`, `systems/modSettings.js`, `systems/features.js`, `systems/online/onlineLane.js`, `ui/credits.js`, `ui/enhanced/enhancedMenu.js` | landed |
 | OH-B | THE PIT'S PLACE AND THE CUT: the hash, the pixels it picks, the placement, the tile queue and its gates, the bake's verification, the depth, the seafloor's cut through Iliac Puddle No More's API | `world/oceanHoles.js`, `scenes/oceanHolesHost.js`, `scenes/deepWatersHost.js` (the API), `scenes/world.js` | landed |
 | OH-C | THE PIT'S LOOK AND ITS DOOR: the three discs, the miasma, the entrance a swimmer touches | `render/oceanHolesRender.js`, `world/oceanHolesMiasma.js`, `render/deepWatersRender.js` (`updateFloor`), `scenes/world.js` | landed |
 | OH-D | THE ABYSS: the template, the clone, the entry, the flood, the exit to the pit, the recall, the save | `scenes/oceanHolesAbyss.js`, `scenes/worldModes.js` (`enterAbyss`, the four DFU events, the layout's dungeon, the build's own location, the dungeon save's mod records), `scenes/world.js` | landed |

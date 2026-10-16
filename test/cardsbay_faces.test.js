@@ -100,12 +100,12 @@ test('CARDS-BAY the art is ours: no ARENA2 read, and the panel and the cloth sha
   const src = read('src/render/cardFaces.js');
   assert.doesNotMatch(src, /^import .*(textureFile|imgFile|cifRci|arena2|loadTexture)/im, 'the deck reads no game file');
   assert.match(read('src/render/cardTableDraw.js'), /import \{ paintFace, paintBack, STOCK \} from '\.\/cardFaces\.js';/);
-  assert.match(read('src/ui/cardTableHud.js'), /import \{ SUIT_CROWNS, rankLabel, cardTitle, paintFace, paintBack \} from '\.\.\/render\/cardFaces\.js';/);
-  assert.doesNotMatch(read('src/ui/cardTableHud.js') + read('src/render/cardTableDraw.js'), /[♣♦♥♠]/, 'the old suits are gone');
+  assert.match(read('src/ui/card/cardTableHud.js'), /import \{ SUIT_CROWNS, rankLabel, cardTitle, paintFace, paintBack \} from '\.\.\/render\/cardFaces\.js';/);
+  assert.doesNotMatch(read('src/ui/card/cardTableHud.js') + read('src/render/cardTableDraw.js'), /[♣♦♥♠]/, 'the old suits are gone');
 });
 
 test('CARDS-BAY the panel paints each card with the cloth\'s own painter, at its little size; a page with no canvas writes the words', async () => {
-  const { createCardTableHud, PANEL_CARD_W, PANEL_CARD_H } = await import('../src/ui/cardTableHud.js');
+  const { createCardTableHud, PANEL_CARD_W, PANEL_CARD_H } = await import('../src/ui/card/cardTableHud.js');
   const { fakeDoc } = await import('./decorFakes.mjs');
   const doc = fakeDoc();
   const painted = [];

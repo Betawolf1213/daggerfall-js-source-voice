@@ -1,7 +1,7 @@
 [
   {
     "name": "BOOK-RISE-the-close-not-kept",
-    "file": "src/ui/enhancedBook.js",
+    "file": "src/ui/enhanced/enhancedBook.js",
     "old": "      if (closing) closeBook(book, now());\n",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "BOOK-RISE-kept-only-once-the-book-stands-open",
-    "file": "src/ui/enhancedBook.js",
+    "file": "src/ui/enhanced/enhancedBook.js",
     "old": "      if (closing) closeBook(book, now());",
     "new": "      if (closing && book.phase === 'idle') closeBook(book, now());",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "BOOK-RISE-E-not-the-face's-exit",
-    "file": "src/ui/enhancedBook.js",
+    "file": "src/ui/enhanced/enhancedBook.js",
     "old": "  if (code === 'Escape' || code === 'Enter' || code === 'KeyE') { exit(); return true; }",
     "new": "  if (code === 'Escape' || code === 'Enter') { exit(); return true; }",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "BOOK-RISE-the-tap-beside-the-book-not-an-exit",
-    "file": "src/ui/enhancedBook.js",
+    "file": "src/ui/enhanced/enhancedBook.js",
     "old": "  if (hit === 'outside') { exit(); return; }",
     "new": "  if (hit === 'outside') { return; }",
     "tests": [

@@ -25,7 +25,7 @@ import { createBankAccounts, borrowLoan } from '../src/systems/banking.js';
 import { GUILDS, activeMemberships, joinGuild, membershipOf } from '../src/systems/guild/guilds.js';
 import { showsJoinButton } from '../src/systems/guild/guildServiceFlow.js';
 import { BankWindow } from '../src/ui/bankWindow.js';
-import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
+import { PORT_SPECS } from '../src/ui/enhanced/enhancedPorts.js';
 
 const DAGGERFALL = 17, BLUFFS = 3, WAYREST = 23, FG = GUILDS.FightersGuild, DAY = 1440;
 setSpellRecordsByIndex(new Map([[92, { index: 92, name: '!Lycanthropy', effects: [] }],

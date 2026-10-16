@@ -20,7 +20,7 @@ import { heaveToDecel, HEAVE_TO_DECEL, HEAVE_TO_M, HEAVE_TO_S } from '../src/sce
 import { BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { quatRotate } from '../src/world/quat.js';
-import { helmButtons } from '../src/ui/enhancedHelm.js';
+import { helmButtons } from '../src/ui/enhanced/enhancedHelm.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { createComeSailAwayPeers, CSA_PEER_SNAP_M, CSA_PEER_SNAP_S, peerSnapM } from '../src/scenes/comeSailAwayPeers.js';
 

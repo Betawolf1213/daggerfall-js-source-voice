@@ -788,7 +788,7 @@ test('DS1 settings: the mod’s own keys as modsettings ships them, the integer 
     const all = modSettingsOf('dynamic-skies');
     assert.equal(all.MinParticleSize, 250); assert.equal(all.Enabled, true);   // VC1 made the mod a choice; MO1: on by default
     assert.equal(modSetting('roads-hazelnut', 'SmoothRoads'), true, 'the toggles read as before');
-    assert.match(read('src/ui/enhancedMenu.js'), /if \(isIntKey\(def\)\) \{/, 'the pane steps the integer keys');
+    assert.match(read('src/ui/enhanced/enhancedMenu.js'), /if \(isIntKey\(def\)\) \{/, 'the pane steps the integer keys');
   } finally { _resetModSettings(); }
 });
 

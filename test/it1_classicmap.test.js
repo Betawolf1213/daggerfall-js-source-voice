@@ -1,12 +1,12 @@
-// IT1 (2026-10-04): IMMERSIVE TRAVEL ON THE CLASSIC WINDOW (ui/travelMapWindow.js) - the mod's CarriageMap: the
+// IT1 (2026-10-04): IMMERSIVE TRAVEL ON THE CLASSIC WINDOW (ui/travel/travelMapWindow.js) - the mod's CarriageMap: the
 // five-texel page (Travel Options' routine as the mod copied it) with its own road switches and dot sizes, a driver's
 // refusals as the mod's OK box over the map, its popups never the remembered one, and the player's own map turned into
 // a CarriageMap while Travel Options is off (Init IL_03bf-03d2).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
-import { DOT_SCALE } from '../src/ui/travelPathsOverlay.js';
+import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
+import { DOT_SCALE } from '../src/ui/travel/travelPathsOverlay.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';

@@ -44,7 +44,7 @@ import {
   dialCentre, beforeStone, stonePoint, SD_LIT_RECORD, SD_PLAQUE, SD_FRAY_RING, SD_BRIDGE_PLATES, SD_BANNER, SD_BANNER_VERTS, SD_DIAL, SD_BEZEL, SD_STONE_SIZE,
 } from '../world/superDungeon/sdHall.js';
 import { buildOrbitRing, buildOrreryHub, ringHang, ringPoseInto, ringMatrix, hubMatrix, ringTicks, gemCentre, SD_RING_SNAP_S, SD_ORRERY_RINGS } from '../world/superDungeon/sdOrreryModel.js';
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 import { SD_LIGHT } from '../world/superDungeon/sdLook.js';
 import { identity } from '../world/mat4.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
@@ -128,7 +128,7 @@ const way = (from, to) => ((((to - from) % 12) + 18) % 12) - 6;
 /**
  * The Orrery's hall for slot `s`. `onTurn(i, a)` sends a turn (true when it left); `say(text)` puts a line up; `clock()`
  * the realm's anchored seconds (SD-LOOK S10: the rings' decor ticks on it - every screen's together).
- * SD-LOOK S10: `lite` the phones' tier (ui/touchDevice.js): the rings in SD_RING_LITE_SEGS, the banners' wind in SD_BANNER_LITE_KEYS keyframes.
+ * SD-LOOK S10: `lite` the phones' tier (ui/touch/touchDevice.js): the rings in SD_RING_LITE_SEGS, the banners' wind in SD_BANNER_LITE_KEYS keyframes.
  * @param {{ renderer?: any, audio?: any, s: number, now?: () => number, clock?: () => number, onTurn?: (i: number, a: number) => boolean, say?: (t: string) => void, lite?: boolean }} deps
  */
 export function createSdHall({ renderer = null, audio = null, s, now = () => performance.now(), clock = null, onTurn = () => false, say = () => {}, lite = isTouchDevice() }) {

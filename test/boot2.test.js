@@ -3,7 +3,7 @@
 // behind doors (BOOT1), the entry's static graph was still 259 files and
 // 4.9 MB of source, and ONE edge carried 216 files / 4.1 MB of it:
 // ui/cursor.js imported `bitmapToColor32` - a pure palette lookup - from
-// ui/hud.js, and the HUD imports the enhanced HUD, which imports the world
+// ui/hud/hud.js, and the HUD imports the enhanced HUD, which imports the world
 // tick, which imports the game. The helper is a formats concern and lives
 // in formats/color32Order.js now, with every importer repointed and hud.js
 // importing it back like everyone else.
@@ -14,7 +14,7 @@
 //      the hub edge back for whoever took the shortcut).
 //   2. The cursor is a LEAF - it imports formats and nothing under ui/.
 //   3. The entry's static reach neither touches the two hubs this slice
-//      found (ui/hud.js, systems/worldTick.js) nor exceeds a ceiling that
+//      found (ui/hud/hud.js, systems/worldTick.js) nor exceeds a ceiling that
 //      the measurement set: 43 files after the cut, held under 60.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -36,7 +36,7 @@ function staticReach(entry) {
 test('BOOT2: bitmapToColor32 has ONE home, the formats leaf - nobody takes it from the HUD and the HUD hands it to nobody', () => {
   const defs = walk(join(root, 'src')).filter((f) => /^export (?:function|const) bitmapToColor32\b/m.test(readFileSync(f, 'utf8'))).map((f) => relative(root, f));
   assert.deepEqual(defs, ['src/formats/color32Order.js'], 'the definition is in exactly one place, and it is the leaf');
-  const hud = rd('src/ui/hud.js');
+  const hud = rd('src/ui/hud/hud.js');
   assert.doesNotMatch(hud, /export\s*\{[^}]*\bbitmapToColor32\b/, 'hud.js re-exports it - the hub edge is back for whoever takes the shortcut');
   assert.match(hud, /import \{ bitmapToColor32 \} from '\.\.\/formats\/color32Order\.js';/, 'hud.js imports it from the leaf like every other caller');
   const fromHud = [];
@@ -57,7 +57,7 @@ test('BOOT2: the cursor is a leaf - formats in, nothing from ui/', () => {
 
 test('BOOT2: the entry\'s static reach touches neither hub and stays under the ceiling the cut measured', () => {
   const reach = new Set([...staticReach('src/main.js')].map((f) => relative(root, f)));
-  for (const hub of ['src/ui/hud.js', 'src/systems/worldTick.js', 'src/ui/enhancedHud.js']) {
+  for (const hub of ['src/ui/hud/hud.js', 'src/systems/worldTick.js', 'src/ui/enhanced/enhancedHud.js']) {
     assert.ok(!reach.has(hub), `${hub} is on the entry's static graph again (${reach.size} files reached)`);
   }
   // 259 before the cut, 43 after; the ceiling leaves room for a real need and none for a hub.

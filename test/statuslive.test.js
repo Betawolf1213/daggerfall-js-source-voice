@@ -14,7 +14,7 @@
 //
 // The reasoning for each lives beside the code: ui/statusBox.js and
 // systems/statusReadout.js for the pause, the `.notice` rule's own
-// note in ui/enhancedStyle.js for the width. These are the pins.
+// note in ui/enhanced/enhancedStyle.js for the width. These are the pins.
 //
 // WHAT A PIN HERE MUST NOT BE. "The box declares pauseWhileOpen false"
 // agrees with the wiring whatever the wiring does, so every pin below
@@ -37,7 +37,7 @@ import {
   STATUS_YIELD_ACTIONS, _resetStatusReadout,
 } from '../src/systems/statusReadout.js';
 import { pauseWhileOpen, makeWindowStack } from '../src/ui/windowStack.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { loadOrCreateBindings, setBinding } from '../src/systems/inputActions.js';
 import { bindings, setBindings } from '../src/ui/input.js';   // the LIVE store's two doors - the only ones that can push it down
 
@@ -223,7 +223,7 @@ test('STATUS-LIVE by source: every host gate that consumed on the SLOT now asks 
 });
 
 test('STATUS-LIVE: the enhanced panel carries the box\'s OWN caption, and a replaced box takes its panel with it', () => {
-  assert.match(src('src/ui/enhancedNotice.js'), /drawEnhancedNotice\(\{ rows, hint: box\.noticeHint \}, undefined, box\._noticeKey\)/,
+  assert.match(src('src/ui/enhanced/enhancedNotice.js'), /drawEnhancedNotice\(\{ rows, hint: box\.noticeHint \}, undefined, box\._noticeKey\)/,
     'noticeDraw hands the box\'s hint down; undefined is NOTICE_HINT\'s own spelling, so no other box moves');
   // the release on dispose: showOverlay disposes the OUTGOING window,
   // and without this the panel left only when the watchdog noticed

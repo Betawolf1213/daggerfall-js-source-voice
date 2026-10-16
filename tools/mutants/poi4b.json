@@ -148,7 +148,7 @@
   },
   {
     "name": "POI4B-change-offered-on-anothers",
-    "file": "src/ui/poiLibraryPanel.js",
+    "file": "src/ui/poi/poiLibraryPanel.js",
     "old": "  const mayChange = (item) => mine(item) || me.approver;",
     "new": "  const mayChange = () => true;",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "POI4B-mine-by-case",
-    "file": "src/ui/poiLibraryPanel.js",
+    "file": "src/ui/poi/poiLibraryPanel.js",
     "old": "String(item.by ?? '').toLowerCase() === me.handle.toLowerCase()",
     "new": "String(item.by ?? '') === me.handle",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "POI4B-the-search-any-word",
-    "file": "src/ui/poiLibraryPanel.js",
+    "file": "src/ui/poi/poiLibraryPanel.js",
     "old": "  return words.every((w) => hay.includes(w));",
     "new": "  return words.some((w) => hay.includes(w));",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "POI4B-taken-off-at-the-first-press",
-    "file": "src/ui/poiLibraryPanel.js",
+    "file": "src/ui/poi/poiLibraryPanel.js",
     "old": "    if (dropping !== it.id) { dropping = it.id; draw(); return; }\n",
     "new": "\n",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "POI4B-the-lights-left-behind",
-    "file": "src/ui/poiEditorPanel.js",
+    "file": "src/ui/poi/poiEditorPanel.js",
     "old": "lights: structuredClone(d.lights ?? []) }); }));",
     "new": "lights: [] }); }));",
     "tests": [

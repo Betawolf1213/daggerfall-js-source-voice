@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { CharSheet, CHARSHEET_RECTS, levelProgressPercent } from '../src/ui/charsheet.js';
-import { levelProgress, viewOnlyScreen, levelUpFrame, LANE_OGHMA } from '../src/ui/levelUpView.js';
+import { levelProgress, viewOnlyScreen, levelUpFrame, LANE_OGHMA } from '../src/ui/levelUp/levelUpView.js';
 import { createCharSheetWindow } from '../src/ui/charSheetDoor.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';
 import { initVirtueLeveling, LEVELING_VIRTUE, LEVELING_CLASSIC, LEVELUP_TOTAL } from '../src/systems/oblivionLeveling.js';

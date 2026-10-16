@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { riseLine, wrathLine, marksLine } from '../src/net/gate/gateLaw.js';
 import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
-import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../src/ui/gateMarksView.js';
+import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../src/ui/gate/gateMarksView.js';
 import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT } from '../src/scenes/gateCourt.js';
 import { COURT_HOST_TEXT } from '../src/scenes/gateHost.js';
 import { COURT_TEXT } from '../src/world/gate/gateArena.js';

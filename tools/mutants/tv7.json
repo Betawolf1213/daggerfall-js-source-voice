@@ -181,7 +181,7 @@
   },
   {
     "name": "TV7-band-a-traveller",
-    "file": "src/ui/travelViewHud.js",
+    "file": "src/ui/travel/travelViewHud.js",
     "old": "k === 'party' || k === 'lair' || k === 'band' || k === 'raider' || k === 'camp' ? k : 'traveller';",
     "new": "k === 'party' || k === 'lair' || k === 'raider' || k === 'camp' ? k : 'traveller';",
     "tests": [

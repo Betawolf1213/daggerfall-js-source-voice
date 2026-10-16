@@ -117,7 +117,7 @@
   },
   {
     "name": "D5-TORCH-BIND-foot-continue-dead",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  cont2.onclick = act(applyAndSave);",
     "new": "  cont2.onclick = act(() => {});",
     "tests": [
@@ -126,7 +126,7 @@
   },
   {
     "name": "D5-TORCH-BIND-foot-continue-missing",
-    "file": "src/ui/enhancedControls.js",
+    "file": "src/ui/enhanced/enhancedControls.js",
     "old": "  foot.append(cont2);\n  body.append(foot);",
     "new": "  body.append(foot);",
     "tests": [
@@ -144,7 +144,7 @@
   },
   {
     "name": "D5-HOTSLOT-book-button-never-clears",
-    "file": "src/ui/enhancedSpellbook.js",
+    "file": "src/ui/enhanced/enhancedSpellbook.js",
     "old": "    if (inSlot) clearSpellQuickslot(); else setSpellQuickslot(sel.spell);",
     "new": "    setSpellQuickslot(sel.spell);",
     "tests": [
@@ -153,7 +153,7 @@
   },
   {
     "name": "D5-HOTSLOT-book-button-does-not-rerender",
-    "file": "src/ui/enhancedSpellbook.js",
+    "file": "src/ui/enhanced/enhancedSpellbook.js",
     "old": "      notice = inSlot ? 'Taken out of the quickslot.' : 'In the quickslot - press its key to ready it, hold to cycle the book.';\n      render();",
     "new": "      notice = inSlot ? 'Taken out of the quickslot.' : 'In the quickslot - press its key to ready it, hold to cycle the book.';",
     "tests": [
@@ -162,7 +162,7 @@
   },
   {
     "name": "D5-HOTSLOT-empty-chip-hidden",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "  chip.chip.classList.toggle('qspell-empty', !sp);",
     "new": "  chip.chip.classList.toggle('qspell-empty', false);",
     "tests": [

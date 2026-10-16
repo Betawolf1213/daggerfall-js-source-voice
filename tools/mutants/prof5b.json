@@ -360,7 +360,7 @@
   },
   {
     "name": "PROF5b-tab-auction-row-undressed",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".market-auction .market-where { grid-column: 1 / -1; }",
     "new": ".market-auction .market-where { }",
     "tests": [

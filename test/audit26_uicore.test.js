@@ -8,12 +8,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   drawHud, hudScale, BREATH_BAR_WIDTH, BREATH_BAR_LEFT, BREATH_BAR_BOTTOM,
-} from '../src/ui/hud.js';
-import { NativeInventoryWindow, questTransferRefused, SMALL_CART_TEMPLATE } from '../src/ui/nativeInventory.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+} from '../src/ui/hud/hud.js';
+import { NativeInventoryWindow, questTransferRefused, SMALL_CART_TEMPLATE } from '../src/ui/native/nativeInventory.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { localClickDecision } from '../src/systems/tradeModes.js';
 import { CANNOT_REMOVE_ITEM_TEXT } from '../src/systems/createItem.js';
-import { CELL_X } from '../src/ui/itemScroller.js';
+import { CELL_X } from '../src/ui/item/itemScroller.js';
 import { effectiveSettings, setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const recorder = () => ({

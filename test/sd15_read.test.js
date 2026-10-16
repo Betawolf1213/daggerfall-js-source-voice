@@ -1,5 +1,5 @@
 // SD15 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD15;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE ARENA READ (scenes/sdArenaRead.js, ui/sdTitleCard.js)
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE ARENA READ (scenes/sdArenaRead.js, ui/superDungeon/sdTitleCard.js)
 // - "in it", as the gate's WB13a: a blow of the Remnant's or an Echo's still to land on my feet (the Stomp's disc, the
 // Hand's sweep unshaded by a pillar, a Volley's mark), the soonest, with the nearest way out as the screen turns it; the
 // Stomp's ring rolling out at me, "jump!"; the Hour's own blows over the whole floor none; the burning brass felt on the
@@ -12,13 +12,13 @@ import { readFileSync } from 'node:fs';
 import {
   sdPerilAt, sdWayOut, sdGroundModel, createSdBeats, SD_JUMP_CALL_M, SD_BEAT_TEXT, SD_BEAT_LATE_MS, SD_BEAT_LAST_MS, SD_BURNING_GROUND, SD_PERIL_RIM_M,
 } from '../src/scenes/sdArenaRead.js';
-import { drawSdTitleCard, destroySdTitleCard, SD_TITLE_CSS, SD_TITLE_BRASS } from '../src/ui/sdTitleCard.js';
-import { titleCardModel, TITLE_CARD_CSS, TITLE_IN_MS, TITLE_HOLD_MS, TITLE_OUT_MS } from '../src/ui/gateTitleCard.js';
+import { drawSdTitleCard, destroySdTitleCard, SD_TITLE_CSS, SD_TITLE_BRASS } from '../src/ui/superDungeon/sdTitleCard.js';
+import { titleCardModel, TITLE_CARD_CSS, TITLE_IN_MS, TITLE_HOLD_MS, TITLE_OUT_MS } from '../src/ui/gate/gateTitleCard.js';
 import { SD_BLOWS, SD_PILLARS, windupFor, SD_BODY, stompFrontAt } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOW_COLOR, createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
 import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
-import { GROUND_VIEW_TEXT } from '../src/ui/gateGroundView.js';
+import { GROUND_VIEW_TEXT } from '../src/ui/gate/gateGroundView.js';
 import { TELEGRAPH_NOW_MS } from '../src/render/gateTelegraph.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

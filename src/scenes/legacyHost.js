@@ -3,7 +3,7 @@
 //
 // The law is systems/legacy/ (family.js the record and its inheritance, age.js the span and the toll, store.js where a
 // family lives and the birth's handoff, places.js the town an heir is born in, heirloom.js the heirloom, the remains
-// and the blessing); the windows are ui/familyPages.js (the pause window's Family tab) and ui/legacyDoor.js (the
+// and the blessing); the windows are ui/familyPages.js (the pause window's Family tab) and ui/legacy/legacyDoor.js (the
 // Succession). This file reaches the world only through the deps the world host (scenes/world.js) hands it, so a test
 // drives it headless.
 //

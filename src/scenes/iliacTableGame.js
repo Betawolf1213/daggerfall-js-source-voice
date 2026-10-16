@@ -6,7 +6,7 @@
 //
 // THE GAME'S ROADS. Sitting at a card table opens Hold'em (CARDS4); its panel offers "Play Iliac Hand" (and a pack - the
 // house sells them: CARDS9). This game's panel (ui/iliacTableHud.js) asks for a deck (the binder's lawful decks the pack
-// holds - ui/cardBinderPage.js deckRefusal) and a regular (the table's free chairs, each with his temper and his deck:
+// holds - ui/card/cardBinderPage.js deckRefusal) and a regular (the table's free chairs, each with his temper and his deck:
 // systems/iliac/iliacPatrons.js, by his seed - the same deck every evening), and whether to play for a card; then it plays
 // the offline game (systems/iliac/iliacTableSession.js), the cloth showing it (world/iliacCloth.js, render/iliacTableDraw.js).
 // Every road off the seat closes it: a game under way is conceded (for keeps, the player's card is the regular's).
@@ -27,7 +27,7 @@ import { IliacTableSession, forfeitsFor, forfeitsAfter } from '../systems/iliac/
 import { patronDeck, ILIAC_TEMPER_NAMES } from '../systems/iliac/iliacPatrons.js';
 import { binderOf, binderDecks, mintIliacCard, isIliacCard } from '../systems/iliac/iliacItems.js';
 import { addItem } from '../systems/inventory.js';
-import { deckRefusal, DECK_REFUSAL_WORDS } from '../ui/cardBinderPage.js';
+import { deckRefusal, DECK_REFUSAL_WORDS } from '../ui/card/cardBinderPage.js';
 import { iliacHudModel, createIliacTableHud, stagedRefusal, ILIAC_REFUSAL_WORDS } from '../ui/iliacTableHud.js';
 import { iliacPlaces, iliacPoses, iliacLanded } from '../world/iliacCloth.js';
 import { RemoteIliacTable } from '../systems/iliac/iliacRemoteTable.js';

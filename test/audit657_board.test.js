@@ -10,13 +10,13 @@ import { byClass } from './chargenDom.mjs';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { MARKET_WORDS } from '../src/ui/marketTab.js';
 import { seatGuide } from '../src/ui/seatTab.js';
-import { createVendorTab } from '../src/ui/vendorTab.js';
+import { createVendorTab } from '../src/ui/vendor/vendorTab.js';
 import { createMarketBook } from '../src/net/marketBook.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { siegeFieldOf } from '../src/systems/siegeField.js';
 import { noticeBoardIndex } from '../src/systems/bounty/bountyBoard.js';
 import { SEAT_MEMBER_WAIT_S, CLAIM_THRESHOLD, CLAIM_FEE } from '../src/net/townSeatLaw.js';
-import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
+import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = 1_800_000_000;

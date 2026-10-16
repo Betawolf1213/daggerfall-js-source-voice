@@ -1,7 +1,7 @@
 [
   {
     "name": "SD18B-the-ending-last",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "    aspect: Object.freeze({ id: E.id, kind: 'aspect', name: E.sig,",
     "new": "    aspect: Object.freeze({ id: E.id, kind: 'trial', name: E.sig,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD18B-shock-said-lightning-to-resist",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "tip: `Resist ${el === 'Lightning' ? 'shock' : el.toLowerCase()} to blunt",
     "new": "tip: `Resist ${el.toLowerCase()} to blunt",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD18B-the-view-made-every-frame",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  if (had) return had;\n  const E = sdEndingOf(mk), el",
     "new": "  const E = sdEndingOf(mk), el",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD18B-no-sign",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "color: sdEndingCss(E.id), path: I.d, fill: I.fill }),",
     "new": "color: sdEndingCss(E.id) }),",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD18B-the-card-never-goes",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  if (!(age >= 0) || age >= SD_MARKS_ARRIVE_MS) return null;",
     "new": "  if (!(age >= 0)) return null;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD18B-the-card-never-fades",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "alpha = Math.min(1, age / 250, (SD_MARKS_ARRIVE_MS - age) / SD_MARKS_FADE_MS);",
     "new": "alpha = Math.min(1, age / 250);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD18B-the-stone-the-first",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "k: E0 ? SD_STONES.findIndex((st) => st.key === E0.id) : -1 };",
     "new": "k: E0 ? 0 : -1 };",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD18B-the-stone-still",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "SD_STONE_LIGHT.breathe * Math.sin(t * Math.PI * 2 * SD_STONE_LIGHT.hz));",
     "new": "SD_STONE_LIGHT.breathe * Math.sin(0));",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD18B-the-card-the-tables'-signs",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "  r.icon.innerHTML = markIconHtml(m, 20);",
     "new": "  r.icon.innerHTML = markIconSvg(m.id, 20);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD18B-own-signs-unfilled",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "  const paint = m.fill ? 'fill=\"currentColor\"' : 'fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"';\n  return `<svg viewBox=\"0 0 24 24\" width=\"${size}\" height=\"${size}\" aria-hidden=\"true\"><path ${paint} d=\"${m.path}\"/></svg>`;",
     "new": "  const paint = 'fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"';\n  return `<svg viewBox=\"0 0 24 24\" width=\"${size}\" height=\"${size}\" aria-hidden=\"true\"><path ${paint} d=\"${m.path}\"/></svg>`;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD18B-no-row",
-    "file": "src/ui/sdRemnantBar.js",
+    "file": "src/ui/superDungeon/sdRemnantBar.js",
     "old": "epithetColor: null, marksView: sdMarksViewOf(s.mk),",
     "new": "epithetColor: null, marksView: null,",
     "tests": [

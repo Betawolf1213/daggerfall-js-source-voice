@@ -15,7 +15,7 @@ top" and "Currently there are no texture packs, it should be empty."
 System pane. Three cards, one look each; the arrows (and Left/Right on a
 focused card) BROWSE, the button WEARS - a look that reloads the game is never
 worn by a stray arrow. `systems/overhauls.js` is the registry and the only
-writer; `ui/enhancedMenu.js paneOverhauls` draws it (`.look-*` rules).
+writer; `ui/enhanced/enhancedMenu.js paneOverhauls` draws it (`.look-*` rules).
 
 - **Texture** - the texture packs: a pack's door, not a second face on the
   Features switches (OVH1b - it stood empty, "No texture packs yet.", until
@@ -468,7 +468,7 @@ and the files named below.
 - **NO-LINES** (a player: "those weird lines everywhere, those are not needed"): a page of the pack is not ruled - the
   talk window's two pages part by the scroll's own shading, a profession is a line on its page and not a box, a career
   group of Master Skills its name in red over the pack's dotted rule.
-- **THE BARS** (`ui/grimoireArt.js`, `ui/hudLayout.js`). FOE-PLATE / VIAL-LONG: no drain on any bar, the foe's and the
+- **THE BARS** (`ui/grimoireArt.js`, `ui/hud/hudLayout.js`). FOE-PLATE / VIAL-LONG: no drain on any bar, the foe's and the
   boss's glass drawn out at any length with nothing behind it, the upright vials lengthened as height. BAR-SCREEN: the
   two bars are the screen's size, not a pixel count (the foe's glass 1.75% of the view's height, never under 13; the
   boss's 1.4 times it). HUD-LEN: the HUD editor's (Alt+U) length handle follows the pointer by a measured step, never
@@ -481,9 +481,9 @@ and the files named below.
   picture, which painted over the kit's inset line.
 - **THE HELD MAP** (`ui/heldMap.js` FINDME-SHEET): its root says which sheet is up (`data-hm-sheet`), so the dress takes
   Find me off the dungeon's sheet alone and the world's and the town's keep it beside Close.
-- **NOT THE DRESS'S, ON THE SAME THREAD**: HOTBAR-LAG (`ui/enhancedHotbar.js`, `test/ui1_slots.test.js`) - a press plays
+- **NOT THE DRESS'S, ON THE SAME THREAD**: HOTBAR-LAG (`ui/enhanced/enhancedHotbar.js`, `test/ui1_slots.test.js`) - a press plays
   the caption's fade through the browser's animation instead of a class off, a forced layout and the class back (two
-  restyles a press, ~10 ms under the dress's wood); NOTE-KEYS (`ui/questJournal.js`, `test/audit26_uiwindows2.test.js`)
+  restyles a press, ~10 ms under the dress's wood); NOTE-KEYS (`ui/quest/questJournal.js`, `test/audit26_uiwindows2.test.js`)
   - the journal's note field takes its letters by the native route, as a native window is handed raw codes, and the
   move/remove box its Y and N.
 

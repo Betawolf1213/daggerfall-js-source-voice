@@ -497,7 +497,7 @@
   },
   {
     "name": "PORTAL1-row-key-without-a-row",
-    "file": "src/ui/merchantServiceWindow.js",
+    "file": "src/ui/merchant/merchantServiceWindow.js",
     "old": "    if (code === PORTAL_ROW_KEY && this.hooks.portal) this._portal();",
     "new": "    if (code === PORTAL_ROW_KEY) this._portal();",
     "tests": [
@@ -506,7 +506,7 @@
   },
   {
     "name": "PORTAL1-row-buys-before-it-closes",
-    "file": "src/ui/merchantServiceWindow.js",
+    "file": "src/ui/merchant/merchantServiceWindow.js",
     "old": "  _portal() { this._click(); this._close(); this.hooks.portal?.onBuy?.(); }",
     "new": "  _portal() { this._click(); this.hooks.portal?.onBuy?.(); this._close(); }",
     "tests": [
@@ -515,7 +515,7 @@
   },
   {
     "name": "PORTAL1-row-never-drawn",
-    "file": "src/ui/merchantServiceWindow.js",
+    "file": "src/ui/merchant/merchantServiceWindow.js",
     "old": "    if (this.hooks.portal) drawPortalRow(renderer, m, font, MERCHANT_PANEL_X, MERCHANT_PANEL_Y, MERCHANT_PANEL_H, this.hooks.portal.label);",
     "new": "",
     "tests": [
@@ -524,7 +524,7 @@
   },
   {
     "name": "PORTAL1-repair-row-on-the-art",
-    "file": "src/ui/merchantRepairWindow.js",
+    "file": "src/ui/merchant/merchantRepairWindow.js",
     "old": "inRect(portalRowRect(REPAIR_PANEL_H), vx, vy)",
     "new": "inRect(portalRowRect(REPAIR_PANEL_H - 9), vx, vy)",
     "tests": [
@@ -551,7 +551,7 @@
   },
   {
     "name": "PORTAL1-enhanced-reader-says-pending",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    return openPortal\n      ? { kind: 'openPortal', item: r.item, closeFirst: true }",
     "new": "    return false\n      ? { kind: 'openPortal', item: r.item, closeFirst: true }",
     "tests": [
@@ -569,7 +569,7 @@
   },
   {
     "name": "PORTAL1-enhanced-card-silent",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    ...(isPortalStone(item) ? { survival: survivalInfoTokens(item).slice(2).map((r) => r.text) } : {}),",
     "new": "",
     "tests": [

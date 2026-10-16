@@ -163,7 +163,7 @@
   },
   {
     "name": "SD26-T4-the-line-under-the-card",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "body:has(.wb-marks-card:not([style*=\"display: none\"])) .hudmid { z-index: 32; }\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD26-T4-the-line-under-the-chart",
-    "file": "src/ui/gateDamageChart.js",
+    "file": "src/ui/gate/gateDamageChart.js",
     "old": "body:has(.wb-dmg-chart:not([style*=\"display: none\"])) .hudmid { z-index: 32; }\n",
     "new": "",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD26-T4-the-line-between",
-    "file": "src/ui/gateMarksView.js",
+    "file": "src/ui/gate/gateMarksView.js",
     "old": "body:has(.wb-marks-card:not([style*=\"display: none\"])) .hudmid { z-index: 32; }",
     "new": "body:has(.wb-marks-card:not([style*=\"display: none\"])) .hudmid { z-index: 30; }",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD26-T5-the-half-screen-squeeze",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  width: max-content; max-width: calc(min(680px, 86vw) / var(--hud-scale, 1)); font-size: 15px;",
     "new": "  max-width: calc(min(680px, 86vw) / var(--hud-scale, 1)); font-size: 15px;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD26-T5-the-cap-unscaled",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": "  width: max-content; max-width: calc(min(680px, 86vw) / var(--hud-scale, 1)); font-size: 15px;",
     "new": "  width: max-content; max-width: min(680px, 86vw); font-size: 15px;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD26-T5-the-prisons-cap-scaled",
-    "file": "src/ui/enhancedStyle.js",
+    "file": "src/ui/enhanced/enhancedStyle.js",
     "old": ".hudmid.hudprison { transform: translateX(-50%); max-width: min(680px, 86vw); font-size:",
     "new": ".hudmid.hudprison { transform: translateX(-50%); font-size:",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD26-T6-the-hour-on-dagons-plate",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "background: rgba(60,42,8,0.9); animation-name: wb-brass-plate; }",
     "new": "background: rgba(60,42,8,0.9); }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD26-T6-the-call-in-the-gates-cream",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": ".wb-boss-bar.brass .wb-boss-callout.dagon .wb-boss-callout-text { color: inherit; ",
     "new": ".wb-boss-bar.brass .wb-boss-callout.dagon .wb-boss-callout-text { ",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD26-T6-the-omens-the-gates-orange",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "m.color : theme === 'brass' ? '#e8c060' : '#ffb27a';",
     "new": "m.color : '#ffb27a';",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD26-T6-the-look-unread-by-the-row",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": "if (marksKey !== shown.marks || theme !== shown.marksTheme) {",
     "new": "if (marksKey !== shown.marks) {",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD26-T6-the-last-minute-the-gates-red",
-    "file": "src/ui/gateBossBar.js",
+    "file": "src/ui/gate/gateBossBar.js",
     "old": ".wb-boss-bar.brass .wb-boss-wrath.near { color: #fff6dc; background: rgba(130,96,20,0.85); animation-name: wb-brass-near; }\n",
     "new": "",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "SD26-T9-the-lion-tip-dashed",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  daggerfall: 'Its Stomp\\'s ring reaches the rim. Jump it.',",
     "new": "  daggerfall: 'Jump its Stomp\\'s ring - it reaches the rim.',",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "SD26-T9-the-ship-tip-dashed",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  wayrest: 'Its Hand reaches three quarters round. Keep a pillar near.',",
     "new": "  wayrest: 'Its Hand reaches three quarters round - keep a pillar near.',",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "SD26-T9-the-quickened-tip-x-not-y",
-    "file": "src/ui/sdMarksView.js",
+    "file": "src/ui/superDungeon/sdMarksView.js",
     "old": "  quickened: 'Move at the word, before the fill.',",
     "new": "  quickened: 'Move at the word, not the fill.',",
     "tests": [

@@ -78,14 +78,14 @@
   },
   {
     "name": "FB1005C-ramp-old-lean",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "export const FLOOR_FACE_NY = FLOOR_NY;",
     "new": "export const FLOOR_FACE_NY = 0.6;",
     "tests": ["test/em3_3d_dungeon.test.js"]
   },
   {
     "name": "FB1005C-ramp-shader-literal",
-    "file": "src/ui/inkDungeonGL.js",
+    "file": "src/ui/ink/inkDungeonGL.js",
     "old": "  if (n.y > ${FNY}) {\n    // floor (Mac",
     "new": "  if (n.y > 0.6) {\n    // floor (Mac",
     "tests": ["test/em3_3d_dungeon.test.js"]

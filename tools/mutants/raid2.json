@@ -274,7 +274,7 @@
   },
   {
     "name": "RAID2-lock-the-hosts-words",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "ONLINE_WORLD_EVENT_VENDORS.includes(vendor) ? ONLINE_WORLD_EVENT_NOTE : ONLINE_TRAVEL_VENDORS",
     "new": "ONLINE_TRAVEL_VENDORS",
     "tests": ["test/raid2_raidsOnline.test.js", "test/modsonline.test.js"]

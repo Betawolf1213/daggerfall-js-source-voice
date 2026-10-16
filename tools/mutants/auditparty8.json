@@ -43,42 +43,42 @@
   },
   {
     "name": "AP-bed-unmoved",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "  const moveToBed = () => { if (overlay._allocatedBed != null && !ignoreAllocatedBed) deps.moveToBed?.(overlay._allocatedBed); };",
     "new": "  const moveToBed = () => {};",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-bed-zero-skipped",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "if (overlay._allocatedBed != null && !ignoreAllocatedBed)",
     "new": "if (overlay._allocatedBed && !ignoreAllocatedBed)",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-loiter-uncapped",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "    if (mode === 'loiter' && hours > loiterLimitHours()) { refuseHours(cannotLoiterLines()); return; }\n",
     "new": "",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-rent-expiry-unremoved",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "    if (result.rentExpired) deps.onRentExpired?.();\n",
     "new": "",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-back-ignored",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "    if (action === 'back') { stopOrClose(); return; }",
     "new": "    if (action === 'back') { return; }",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-stack-close-disposes",
-    "file": "src/ui/enhancedRest.js",
+    "file": "src/ui/enhanced/enhancedRest.js",
     "old": "    if (overlay.state === 'resting') { deps.onManualStop?.(); if (overlay.session) overlay._end(overlay.session.endEarly()); return true; }",
     "new": "    if (overlay.state === 'resting') { close(); return true; }",
     "tests": ["test/auditparty8.test.js"]

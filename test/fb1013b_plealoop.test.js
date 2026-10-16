@@ -18,8 +18,8 @@ import { CRIMES } from '../src/systems/court.js';
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
 import { PrisonScreenWindow, CourtScreenWindow, PRISON_UPDATE_INTERVAL } from '../src/ui/prisonScreen.js';
 import { makeWindowStack, windowCovered } from '../src/ui/windowStack.js';
-import { COVERED_CLASS, closeEnhancedChoice } from '../src/ui/enhancedDialog.js';
-import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';   // the sheet the enhanced skin injects (the dialog's rules ride it)
+import { COVERED_CLASS, closeEnhancedChoice } from '../src/ui/enhanced/enhancedDialog.js';
+import { PLUS_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';   // the sheet the enhanced skin injects (the dialog's rules ride it)
 import { _setTutorialDepsForTests, SHOW_DELAY_MS, INPUT_GRACE_MS } from '../src/ui/tutorialPopup.js';
 import { forgetTutorialsSeen, isTutorialSeen } from '../src/systems/tutorials.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';

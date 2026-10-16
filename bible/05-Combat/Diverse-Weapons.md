@@ -209,8 +209,8 @@ doors carried one. DW3:
   `armorDyeColor` verbatim), clothing's `dye`, an artifact's `Unchanged`
   (SetArtifact :611, the last writer), else `Unchanged` (SetItem :559).
   `inventoryItemImage` carries it as `dye`.
-- The three doors ask by it: the GL lists (`ui/itemScroller.js`,
-  `ui/nativeInventory.js` -> `dataPipeline.uploadRecord(..., { dye })`,
+- The three doors ask by it: the GL lists (`ui/item/itemScroller.js`,
+  `ui/native/nativeInventory.js` -> `dataPipeline.uploadRecord(..., { dye })`,
   which uploads a dyed swap under its own `#ui_<Dye>` variant and answers
   which; the size stays the classic record's, ItemListScroller.cs:440),
   the DOM screens (`ui/textureCanvas.js requestIcon(..., { dye })`, the

@@ -16,7 +16,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
+import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 import { setBindings } from '../src/ui/input.js';
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
@@ -50,7 +50,7 @@ test('JAN1 (1): the pack\'s CharacterSheet key closes the pack and opens the she
     assert.doesNotThrow(() => dom.win.fire('keydown', { code: 'F5', key: 'F5', target: null, preventDefault() {}, stopPropagation() {} }), 'F5 on the pack: close, then the sheet - no throw');
     assert.equal(exits, 1, 'the pack closed first'); assert.equal(opened, 1, 'and the sheet opened after');
   });
-  const s = rd('src/ui/enhancedInventory.js');
+  const s = rd('src/ui/enhanced/enhancedInventory.js');
   assert.ok(s.includes("    const openCharSheet = deps.openCharSheet;\n    onExit();                 // the pack's own close law runs FIRST...\n    openCharSheet();"), 'by source: the hook is captured before onExit');
   assert.ok(s.includes("if (acts.includes('CharacterSheet') && typeof deps?.openCharSheet === 'function') {"), 'and the arm asks for a function, not a truthy bag entry');
 });

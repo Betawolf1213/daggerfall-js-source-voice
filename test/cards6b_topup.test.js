@@ -15,7 +15,7 @@ import { mintStakeOrder } from '../src/net/identityToken.js';
 import { readCardReceipt, mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_FIRST_MS, HOLDEM_TOPUP_MIN_BB, validHoldemIn } from '../src/net/holdemTable.js';
 import { createCardStakes } from '../src/net/card/cardStakes.js';
-import { cardHudModel, eventLine, HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
+import { cardHudModel, eventLine, HOLDEM_REFUSALS } from '../src/ui/card/cardTableHud.js';
 
 const { subtle } = webcrypto;
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -85,8 +85,8 @@ word, a duplicate or a cost. A finding two lenses made is listed once, under the
 ## The open items, closed
 
 - **GUIDE8's Town tier.** `quest-guidance` is Journal / Town / Exact. In the town of the building a quest's latest entry
-  NAMES (its `_p_` - `ui/questLens.js entryTarget`'s `building`), the held town map rings it found or not
-  (`townQuestBuildings`, `ui/townSheet.js`) and the compass points at it (`scenes/world.js townQuestCompassMark`: the
+  NAMES (its `_p_` - `ui/quest/questLens.js entryTarget`'s `building`), the held town map rings it found or not
+  (`townQuestBuildings`, `ui/town/townSheet.js`) and the compass points at it (`scenes/world.js townQuestCompassMark`: the
   building's place in the town map's own frame, turned back by the translation and the origin the map opens with).
   Exact holds it.
 - **The Exact tier inside buildings.** `scenes/worldModes.js interiorQuestMarksHere`: the interior's stands, its pool's

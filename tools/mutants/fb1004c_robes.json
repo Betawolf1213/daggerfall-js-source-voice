@@ -20,7 +20,7 @@
   },
   {
     "name": "ROBES-menu-no-click",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  if (from === 'remote') sendQuestItemClick(item, deps.getQuest ?? null);\n  const acts",
     "new": "  const acts",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "ROBES-quickact-no-click",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "{ sendQuestItemClick(item, deps.getQuest ?? null); take(item); return true; }",
     "new": "{ take(item); return true; }",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "ROBES-row-no-click",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (from === 'remote') sendQuestItemClick(item, deps.getQuest ?? null);\n    // IG7",
     "new": "    // IG7",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "ROBES-row-clicks-local-too",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "    if (from === 'remote') sendQuestItemClick(item, deps.getQuest ?? null);\n    // IG7",
     "new": "    sendQuestItemClick(item, deps.getQuest ?? null);\n    // IG7",
     "tests": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "ROBES-native-no-click",
-    "file": "src/ui/nativeInventory.js",
+    "file": "src/ui/native/nativeInventory.js",
     "old": "    sendQuestItemClick(it, this.hooks.getQuest ?? null);   // WHERE-ROBES",
     "new": "    //",
     "tests": [

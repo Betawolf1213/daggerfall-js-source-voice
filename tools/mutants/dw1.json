@@ -276,7 +276,7 @@
   },
   {
     "name": "DW3-6-the-list-drawer-forgets-the-dye-in-its-key",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "old": "    const key = `${img.archive}_${img.record}${token ? `_${token}` : ''}${img.dyeTarget != null ? `_t${img.dyeTarget}d${img.dye}` : ''}`;",
     "new": "    const key = `${img.archive}_${img.record}`;",
     "tests": [
@@ -304,7 +304,7 @@
   },
   {
     "name": "AUDITDW-F1-the-list-drawer-uploads-before-the-record-is-decoded",
-    "file": "src/ui/itemScroller.js",
+    "file": "src/ui/item/itemScroller.js",
     "old": "          await preloadIconRecord(icons, img);   // AUDIT-DW F1: this record's replacement, decoded when it is drawn - not the archive's 280 before the first classic icon",
     "new": "",
     "tests": [

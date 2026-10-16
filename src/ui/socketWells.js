@@ -8,7 +8,7 @@
 // grade's colour; and on every tile of a socketed piece, one pip a socket in the top edge (the corners are the key's,
 // the tier's, the count's and the rune's), filled where a gem is set. A graded gem's own tile wears its grade's ring.
 //
-// The wells are the pack's to press (ui/enhancedInventory.js hands `onWell` on its own piece's detail card): an empty
+// The wells are the pack's to press (ui/enhanced/enhancedInventory.js hands `onWell` on its own piece's detail card): an empty
 // one opens the gems the pack holds, a set one asks first and shatters its gem. The facts and the presses are
 // systems/loot/lootRarity.js's and systems/reforge.js's; this file draws them, and owns its sheet (one style tag, both
 // skins), so no other dress has to know a socket exists.

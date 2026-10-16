@@ -11,20 +11,20 @@ import {
   TAVERN_BUTTONS,
 } from '../src/ui/tavernWindow.js';
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';
-import { NATIVE_W, NATIVE_H } from '../src/ui/nativePanel.js';
+import { NATIVE_W, NATIVE_H } from '../src/ui/native/nativePanel.js';
 import {
   TAVERN_MENU, HOW_MANY_DAYS_ID, HOW_MANY_ADDITIONAL_DAYS_ID,
   TOO_MANY_DAYS_ID, OFFER_PRICE_ID, NOT_ENOUGH_GOLD_ID,
   ROOM_FREE_FOR_KNIGHT, YOU_ARE_NOT_HUNGRY, roomRemainingHours,
 } from '../src/systems/tavern.js';
 import { MINUTES_PER_DAY, dayOfYearFromMinutes } from '../src/systems/gameDate.js';
-// ENH-NOTICE3: the ENHANCED twin of this window (ui/enhancedTavern.js,
+// ENH-NOTICE3: the ENHANCED twin of this window (ui/enhanced/enhancedTavern.js,
 // mounted by ui/tavernDoor.js on the enhanced skin) raises the same
 // boxes; the click-anywhere ones ride the notice panel now.
-import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
+import { mountEnhancedTavern } from '../src/ui/enhanced/enhancedTavern.js';
 import {
   enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID,
-} from '../src/ui/enhancedNotice.js';
+} from '../src/ui/enhanced/enhancedNotice.js';
 import { withDom } from './invdrag.mjs';   // a document just real enough to mount a DOM window
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -495,7 +495,7 @@ test('ENH-NOTICE3 (AUDIT): the tavern\'s notice owner is ONE object for the modu
   // `render()` runs on every state change and again from `unmount`,
   // and the owner is what carries `_noticeKey`: mint it per render and
   // each raise is a NEW panel with nobody to release the last.
-  const src = readFileSync(new URL('../src/ui/enhancedTavern.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/enhanced/enhancedTavern.js', import.meta.url), 'utf8');
   assert.match(src, /^const noticeOwner = \{\};$/m,
     'mutant: the owner minted per render (a panel per box, released by nothing)');
   assert.equal((src.match(/noticeOwner = /g) ?? []).length, 1, 'and written once - nothing re-mints it');

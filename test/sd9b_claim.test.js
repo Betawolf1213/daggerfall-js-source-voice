@@ -280,7 +280,7 @@ test('SD9b THE WORDS AND THE CARDS: the account card\'s row says the count or "N
   assert.equal(profileSdLine({}), null);
   assert.equal(TITLE_TEXT.hourbreaker, 'Hourbreaker');
   assert.ok(Array.isArray(TITLE_RGBA.hourbreaker) && TITLE_RGBA.hourbreaker.length === 4);
-  assert.match(src('src/ui/enhancedAccount.js'), /const hours = sdRecordText\(flow\.account\.sds\);\n\s+if \(hours\) row\(t\('account\.card\.hours', 'Hours broken'\), hours\);/);
+  assert.match(src('src/ui/enhanced/enhancedAccount.js'), /const hours = sdRecordText\(flow\.account\.sds\);\n\s+if \(hours\) row\(t\('account\.card\.hours', 'Hours broken'\), hours\);/);
 });
 
 test('SD9b the hosts and the service by source: the world host keeps a book online on the account service\'s call, hands it every receipt the relay hands it and offers it again each frame; the service\'s route, its count on the cards, the grant on the row, the toml and the deploy\'s paths', () => {

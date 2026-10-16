@@ -18,8 +18,8 @@ import { generateBuildingName, BUILDING_TYPES } from '../src/world/buildingNames
 import { Place } from '../src/systems/quest/place.js';
 import { Person } from '../src/systems/quest/person.js';
 import { getContextValue, setIdRegion } from '../src/systems/quest/questMacros.js';
-import { QuestJournalWindow } from '../src/ui/questJournal.js';
-import { TravelMapWindow, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
+import { QuestJournalWindow } from '../src/ui/quest/questJournal.js';
+import { TravelMapWindow, _setTravelMapArtForTests } from '../src/ui/travel/travelMapWindow.js';
 import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { restoreDiscovery } from '../src/systems/discovery.js';

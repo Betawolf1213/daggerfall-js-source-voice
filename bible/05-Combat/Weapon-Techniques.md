@@ -138,8 +138,8 @@ the free keys by the movement hand are worse than none - Caps Lock toggles on a 
 there) and a held Left Ctrl makes W the browser's close-tab. Mouse4 is TogglePerspective's. The browser's Back on both
 side buttons is stopped by every host that reads them (`world.js`, `exterior.js`, `dungeon.js`: `preventDefault` on
 `mousedown` and `mouseup` for buttons 3 and 4). A keyboard player rebinds it in the Controls pane (F2 and F4 ship
-unbound). The phone has a **Tech** hold button among the touch corner's choices (`ui/touchButtons.js`); a pad has it among
-the d-pad's choices (`ui/plusPad.js`) and Enhanced Plus's bind rows (`ui/plusPadBinds.js`).
+unbound). The phone has a **Tech** hold button among the touch corner's choices (`ui/touch/touchButtons.js`); a pad has it among
+the d-pad's choices (`ui/plus/plusPad.js`) and Enhanced Plus's bind rows (`ui/plus/plusPadBinds.js`).
 
 **A press, a hold, a release.** A technique that aims (Volley, Piercing Shot, Leap Strike, Shadowstep, Lunge, Flying
 Kick) shows its mark while the key is held and goes on the release; a tap goes at once at what the look holds. One that

@@ -39,7 +39,7 @@ import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { equipItem, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { assignQuickslot, clearQuickslots, swapQuickslot, quickslotOf } from '../src/systems/quickslots.js';
 import { USE_PENDING as USE_PENDING_SYS } from '../src/systems/useItem.js';
-import { USE_PENDING as USE_PENDING_UI } from '../src/ui/nativeInventory.js';
+import { USE_PENDING as USE_PENDING_UI } from '../src/ui/native/nativeInventory.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 // HB-LYCFREE (2026-09-30): the hotbar is the quick slots' default now. This suite is the DIAMOND's, written while the
 // diamond was the default, so it chooses the diamond (PIN MOVED: the environment it always ran in, now said).
@@ -179,7 +179,7 @@ test('QS2 (re-aimed by KB1): the enhanced pane draws the quickslots under their 
   const all = ACTION_GROUPS.flatMap((x) => x.rows.map((r) => r.action));
   assert.equal(new Set(all).size, all.length, 'none twice');
   assert.deepEqual([...all, ...HIDDEN_ACTIONS].sort(), [...ACTIONS].sort(), 'and none missing');
-  assert.match(rd('src/ui/enhancedControls.js'),
+  assert.match(rd('src/ui/enhanced/enhancedControls.js'),
     /for \(const grp of shownGroups\(\)\) group\(body, grp\.title, grp\.rows\.map\(\(r\) => \[r\.action, r\.label\]\)\);/,
     'the groups are RENDERED, not merely declared');
 });
@@ -361,9 +361,9 @@ test('QS2 + QS7: the two self-routing hosts answer the dispatchable quickslots i
 
 // ── THE MODEL'S OWN IMPORTS ──────────────────────────────────────────
 
-test('QS2: the quickslot model imports no UI window - the cycle that killed five test files the moment anything imported it (mutant: USE_PENDING taken from ui/nativeInventory.js again)', () => {
+test('QS2: the quickslot model imports no UI window - the cycle that killed five test files the moment anything imported it (mutant: USE_PENDING taken from ui/native/nativeInventory.js again)', () => {
   // QS1 read the classic window's USE_PENDING table straight out of
-  // ui/nativeInventory.js. Nothing imported the quickslots yet, so the edge
+  // ui/native/nativeInventory.js. Nothing imported the quickslots yet, so the edge
   // was invisible; this slice imports them from the enhanced pack and from
   // four hosts, and that closed a cycle through ui/targetIconPanel.js -
   // droppedloot, interiordrop, targeticonpanel, audit26_questitem and x11b all
@@ -377,7 +377,7 @@ test('QS2: the quickslot model imports no UI window - the cycle that killed five
   for (const i of imports) assert.ok(!i.includes('/ui/'), `systems/quickslots.js must not import a UI module (${i})`);
   assert.ok(imports.includes('./useItem.js'), 'the use ladder, which is where the stand-in words now live');
   assert.match(rd('src/systems/useItem.js'), /export const USE_PENDING = Object\.freeze\(\{/);
-  assert.match(rd('src/ui/nativeInventory.js'), /export \{ USE_PENDING \};/, 'and the window re-exports it, so its own readers are untouched');
+  assert.match(rd('src/ui/native/nativeInventory.js'), /export \{ USE_PENDING \};/, 'and the window re-exports it, so its own readers are untouched');
   // The words themselves are one table, read three ways.
   assert.equal(USE_PENDING_UI, USE_PENDING_SYS, 'the window and the ladder hand out the same frozen object');
 });

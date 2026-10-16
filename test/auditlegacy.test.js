@@ -13,7 +13,7 @@ import {
 import { loadFamily, listFamilies, leaveBirth, readBirth } from '../src/systems/legacy/store.js';
 import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';
 import { hurtPlayer, setDeathListener, presentPlayerDeath } from '../src/characters/playerEntity.js';
-import { walkButtons } from '../src/ui/legacyDoor.js';
+import { walkButtons } from '../src/ui/legacy/legacyDoor.js';
 import { personChips, disarmFamilyPages } from '../src/ui/familyPages.js';
 import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
@@ -294,15 +294,15 @@ test('AUDIT LEGACY U3: the Succession walks by keyboard - arrows and Tab move, E
   assert.deepEqual(pressed, ['lgs-go-b', 'lgs-go-a']);
   // PIN MOVED (LEGACY-HOME): a refused card's button is passed over, and the meeting's own acts (Talk) come before the end;
   // PIN MOVED (AUDIT LEGACY II U14): a refused one is `aria-disabled` - in the walk, never lit first
-  assert.match(rd('src/ui/legacySuccession.js'), /\|\| win\.querySelector\?\.\('\.lgs-go:not\(\[disabled\]\):not\(\[aria-disabled="true"\]\)'\) \|\| win\.querySelector\?\.\('\.lgs-act'\) \|\| win\.querySelector\?\.\('\.lgs-end'\)\)\?\.focus\?\.\(\)/);
-  assert.match(rd('src/ui/legacyDoor.js'), /input\(code, e = null\) \{ walkButtons\(host, code, e\); \},/);
+  assert.match(rd('src/ui/legacy/legacySuccession.js'), /\|\| win\.querySelector\?\.\('\.lgs-go:not\(\[disabled\]\):not\(\[aria-disabled="true"\]\)'\) \|\| win\.querySelector\?\.\('\.lgs-act'\) \|\| win\.querySelector\?\.\('\.lgs-end'\)\)\?\.focus\?\.\(\)/);
+  assert.match(rd('src/ui/legacy/legacyDoor.js'), /input\(code, e = null\) \{ walkButtons\(host, code, e\); \},/);
   void keydown;
 });
 
 test('AUDIT LEGACY U4/U8/H9: the mantle\'s refusal on the card; an armed act never waits for the way back; the tree says whose remains are at peace', () => {
   const src = rd('src/ui/familyPages.js');
   assert.match(src, /const why = _provider\?\.mantleRefusal\?\.\(\) \?\? null;/);
-  assert.match(rd('src/ui/enhancedMenu.js'), /b\.onclick = \(\) => \{ famSec = id; disarmFamilyPages\(\); render\(\); \};/);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /b\.onclick = \(\) => \{ famSec = id; disarmFamilyPages\(\); render\(\); \};/);
   assert.doesNotThrow(() => disarmFamilyPages());
   const f = foundFamily(person('c-a'), { id: 'fam-c' });
   const k = addChild(f, 1, { rng: familyRng(5) }).person;
@@ -314,5 +314,5 @@ test('AUDIT LEGACY U4/U8/H9: the mantle\'s refusal on the card; an armed act nev
 });
 
 test('AUDIT LEGACY U5: five tabs on one row - the tab spacing a step tighter', () => {
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.px-tabs button \{ font: inherit; font-size: 20px; letter-spacing: 0\.12em; text-indent: 0\.12em;\n[^\n]*\n\s+min-height: 44px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;/);
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.px-tabs button \{ font: inherit; font-size: 20px; letter-spacing: 0\.12em; text-indent: 0\.12em;\n[^\n]*\n\s+min-height: 44px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;/);
 });

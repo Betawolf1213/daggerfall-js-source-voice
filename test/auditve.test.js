@@ -318,7 +318,7 @@ test('AUDIT VE R2 (Major): the texture store is registered before a menu reads i
   const shared = src('scenes/shared.js');
   assert.match(shared, /const textures = registerTextureStore\(\)/, 'the boot seam\'s registration is the store\'s own');
   assert.doesNotMatch(shared, /setDfmodSources\(|setTextureReplacements\(/, 'no second copy of it');
-  const menu = src('ui/enhancedMenu.js');
+  const menu = src('ui/enhanced/enhancedMenu.js');
   assert.match(menu, /function paneOverhauls\(body\) \{\n\s+waitForTextureStore\(\);/);
   assert.match(menu, /function packsCard\(\) \{\n\s+waitForTextureStore\(\);/);
   assert.match(menu, /const reading = p\.id === 'texture' && !textureStoreSettled\(\);/);
@@ -386,7 +386,7 @@ test('AUDIT VE R5: a copy shadows the shipped mod only once it is registered - o
   assert.equal(typeof DM.unregisteredDfmods, 'function');
   assert.deepEqual(DM.unregisteredDfmods().map((u) => [u.key, u.state]), [[BASE, 'error']]);
   assert.match(DM.unregisteredDfmods()[0].error, /could not read the stored file - remove it and add it again/);
-  assert.match(src('ui/enhancedMenu.js'), /for \(const u of unregisteredDfmods\(\)\) \{/, 'the packs card lists them');
+  assert.match(src('ui/enhanced/enhancedMenu.js'), /for \(const u of unregisteredDfmods\(\)\) \{/, 'the packs card lists them');
 });
 
 test('AUDIT VE R6: an index of the version before registers at once - its mod draws from the first boot after the update and is rebuilt in the background; one that cannot be rebuilt stays registered (mutants: a v2 index refused)', async () => {
@@ -438,7 +438,7 @@ test('AUDIT VE R10: with a loose texture pack attached, Classic cannot be worn b
   TR.clearTextureReplacements();
   assert.equal(classic.blocked(), null, 'nothing loose, nothing in the way');
   assert.equal(OVH.currentOption(panel), classic);
-  assert.match(src('ui/enhancedMenu.js'), /const blocked = o\.blocked\?\.\(\) \?\? null;/);
+  assert.match(src('ui/enhanced/enhancedMenu.js'), /const blocked = o\.blocked\?\.\(\) \?\? null;/);
 });
 
 test('AUDIT VE R11: ?nomods is the door\'s one rule - no attached mod registers on that page, from the boot, a menu or a pick, and it is listed to be removed; the shipped pack is the port\'s and registers either way (mutants: the rule kept at the boot alone)', async () => {

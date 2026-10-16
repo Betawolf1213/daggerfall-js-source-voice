@@ -25,8 +25,8 @@ globalThis.localStorage = {
 
 const N = await import('../src/systems/revenant/revenant.js');
 const V = await import('../src/systems/revenant/revenantVoice.js');
-const C = await import('../src/ui/revenantCard.js');
-const P = await import('../src/ui/revenantPage.js');
+const C = await import('../src/ui/revenant/revenantCard.js');
+const P = await import('../src/ui/revenant/revenantPage.js');
 const H = await import('../src/systems/harmMark.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { hurtPlayer, setAvoidDeathHook } = await import('../src/characters/playerEntity.js');
@@ -35,8 +35,8 @@ const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
 const { ENEMY_BASICS, enemyDisplayName } = await import('../src/characters/enemyBasics.js');
 const { validFoeRecord, REVENANT_NAME_MAX } = await import('../src/net/wire.js');
-const { FRAME_ROLES } = await import('../src/ui/enhancedFrame.js');
-const { HUD_PIECES } = await import('../src/ui/hudLayout.js');
+const { FRAME_ROLES } = await import('../src/ui/enhanced/enhancedFrame.js');
+const { HUD_PIECES } = await import('../src/ui/hud/hudLayout.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
@@ -207,11 +207,11 @@ test('REVENANT-CARD ENHANCED PLUS: the kit dresses it by role - a panel with an 
   assert.ok(FRAME_ROLES.headerRule.includes('body .rvncard-name'));
   assert.ok(FRAME_ROLES.panel.includes('.px-sys .rvn-row') && !FRAME_ROLES.tile.includes('.px-sys .rvn-row'), 'a row is a card, never a press');
   assert.doesNotMatch(C.REVENANT_CARD_CSS.replace(/border-left-color: #[0-9a-f]+/g, ''), /background(-color)?:\s*#/i, 'no ground of its own - the theme\'s');
-  const h = read('src/ui/hud.js');
+  const h = read('src/ui/hud/hud.js');
   assert.match(h, /drawRevenantCards\(\{ hidden: cursorActive \|\| !hudRenderEnabled\(\), dt \}\);/);
   assert.match(h, /drawQuestTracker\(\{ hidden: true \}\);\s*\n\s*drawRevenantCards\(\{ hidden: true \}\);/, 'the hide door');
   assert.ok(HUD_PIECES.some((p) => p.id === 'revenant' && p.sel === '.rvncard-stack' && p.ghost === 'revenant'), 'movable, with a preview');
-  assert.match(read('src/ui/hudLayout.js'), /} else if \(kind === 'revenant'\) \{\s*\n\s*try \{ g = ghostDeps\.buildRevenantPreview\?\.\(doc\) \?\? null; \}/);
+  assert.match(read('src/ui/hud/hudLayout.js'), /} else if \(kind === 'revenant'\) \{\s*\n\s*try \{ g = ghostDeps\.buildRevenantPreview\?\.\(doc\) \?\? null; \}/);
 });
 
 test('REVENANT-PAGE: the living strongest first - name, rank, kind and trait, what it has done, when it will come, its deeds - then the fallen struck through; none, and the words say how one is made; off, that it is off (mutants: the fallen among the living; the order; the empty words)', () => {
@@ -256,7 +256,7 @@ test('REVENANT-PAGE: the living strongest first - name, rank, kind and trait, wh
     assert.match(off.textContent, /come with Loot rarity, which is off/);
     assert.equal(P.revenantPageShown(player('char-none')), false, 'off and none: no page on the rail');
   } finally { P._setRevenantPageIconForTests(null); delete globalThis.document; }
-  const m = read('src/ui/enhancedMenu.js');
+  const m = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(m, /\.\.\.\(revenantPageShown\(playerEntity\) \? REVENANT_PAGE_SECTIONS : \[\]\)/, 'on the Holdings rail');   // PIN MOVED (HOLDINGS): off the Stats rail onto the Holdings tab's (test/holdings.test.js)
   assert.match(m, /revenants: \(d\) => drawRevenantsPage\(d, render, \{ \.\.\.kit, player: playerEntity, kindName: enemyDisplayName \}\)/);   // PIN MOVED (HOLDINGS): the Holdings page's kit
 });

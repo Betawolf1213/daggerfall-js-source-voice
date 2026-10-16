@@ -623,7 +623,7 @@
   },
   {
     "name": "AUDIT-SERPENT-D4-account-row",
-    "file": "src/ui/enhancedAccount.js",
+    "file": "src/ui/enhanced/enhancedAccount.js",
     "old": "if (serpents) row(t('account.card.serpents', 'Serpents slain'), serpents);",
     "new": "",
     "tests": [

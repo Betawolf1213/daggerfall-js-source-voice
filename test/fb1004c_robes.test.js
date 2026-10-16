@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { sendQuestItemClick } from '../src/systems/item/itemTransfer.js';
 import { foldQuickLoot, quickLootTake, quickLootArm } from '../src/systems/quickLoot.js';
-import { inventoryQuickAct } from '../src/ui/enhancedInventory.js';
+import { inventoryQuickAct } from '../src/ui/enhanced/enhancedInventory.js';
 import { ROOT, examination, noteCame, withQuickLoot, frameOf, thief, overPile, bedRoom } from './robesHarness.mjs';   // the harness the audit's file shares
 
 
@@ -104,12 +104,12 @@ test('WHERE-ROBES: the enhanced skin\'s pad X on a loot row is a click on it - t
 
 test('WHERE-ROBES: every door onto a loot row clicks through the ONE home - no inline copy of the send survives in either skin or quick loot', () => {
   const src = (f) => readFileSync(join(ROOT, f), 'utf8');
-  for (const f of ['src/ui/nativeInventory.js', 'src/ui/enhancedInventory.js', 'src/systems/quickLoot.js']) {
+  for (const f of ['src/ui/native/nativeInventory.js', 'src/ui/enhanced/enhancedInventory.js', 'src/systems/quickLoot.js']) {
     assert.doesNotMatch(src(f), /setPlayerClicked\(/, `${f}: the send is itemTransfer.js sendQuestItemClick's`);
   }
   // the native skin's one remote handler, the enhanced row, menu and quick act, and quick loot's take
-  assert.equal((src('src/ui/nativeInventory.js').match(/sendQuestItemClick\(it, this\.hooks\.getQuest \?\? null\);/g) ?? []).length, 1);
-  assert.equal((src('src/ui/enhancedInventory.js').match(/sendQuestItemClick\(item, deps\.getQuest \?\? null\)/g) ?? []).length, 3);
+  assert.equal((src('src/ui/native/nativeInventory.js').match(/sendQuestItemClick\(it, this\.hooks\.getQuest \?\? null\);/g) ?? []).length, 1);
+  assert.equal((src('src/ui/enhanced/enhancedInventory.js').match(/sendQuestItemClick\(item, deps\.getQuest \?\? null\)/g) ?? []).length, 3);
   assert.equal((src('src/systems/quickLoot.js').match(/sendQuestItemClick\(item, getQuest\);/g) ?? []).length, 1);
 });
 

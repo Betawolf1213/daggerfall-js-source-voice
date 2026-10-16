@@ -266,7 +266,7 @@
   },
   {
     "name": "TAMRIEL1-clamp-origin-dropped",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "return Math.min(lo + map - visible, Math.max(lo, o));",
     "new": "return Math.min(lo + map - visible, Math.max(0, o));",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "TAMRIEL1-clamp-rest-off-the-frame",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "if (visible >= map) return lo + (map - visible) / 2;",
     "new": "if (visible >= map) return (map - visible) / 2;",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "TAMRIEL1-region-names-on-the-continent",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "if (band !== 'near' && !opts.continent && opts.regionNames) {",
     "new": "if (band !== 'near' && opts.regionNames) {",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "TAMRIEL1-carets-not-thinned-on-the-continent",
-    "file": "src/ui/inkMap.js",
+    "file": "src/ui/ink/inkMap.js",
     "old": "const caretBand = opts.continent ? CONTINENT_BAND : band;",
     "new": "const caretBand = band;",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "TAMRIEL1-switch-off-by-default",
-    "file": "src/ui/mapSkin.js",
+    "file": "src/ui/map/mapSkin.js",
     "old": "export const tamrielMapOn = () => getPref('tamrielMap') !== false && !tamrielUrlOff();",
     "new": "export const tamrielMapOn = () => getPref('tamrielMap') === true && !tamrielUrlOff();",
     "tests": [

@@ -5,23 +5,23 @@
 //   - PROFILE-MENU: the account card the corner portrait opens is a PROFILE signed in - a plate (the portrait, the name
 //     with its Renown, the title and glyphs worn, the character), then the Record (a tile a deed, the duels' share won
 //     drawn), the Characters (each Renown with the way to its next level drawn), the Wardrobe and the Account - each a
-//     section under its own head, none drawn empty, none saying a fact twice (ui/enhancedAccount.js).
+//     section under its own head, none drawn empty, none saying a fact twice (ui/enhanced/enhancedAccount.js).
 //   - PLUS-MENU: the front door's doors and the System tab's list play the kit's BUTTON role - stone slabs, brass under
-//     the pointer, every Plus colour's ground - at the box they were (ui/enhancedPlusStyle.js MENU_CSS).
+//     the pointer, every Plus colour's ground - at the box they were (ui/enhanced/enhancedPlusStyle.js MENU_CSS).
 //   - PLUS-SITE: the website wears the kit's roles in the kit's tones, cut without a picture and injected at serve and
-//     build (ui/enhancedFrame.js siteKitCss, scripts/landingHtml.mjs).
+//     build (ui/enhanced/enhancedFrame.js siteKitCss, scripts/landingHtml.mjs).
 //
 // The record: bible/10-UI/UI-Arc.md PROFILE-MENU / PLUS-MENU / PLUS-SITE, and its AUDIT (the pins it added say so).
 // Mutants: tools/mutants/plus_menu_site.json.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { renownXpFor } from '../src/net/renown.js';
-import { FRAME_ROLES, FRAME_TONES, SITE_ROLES, SITE_KIT_CSS, SITE_FITTING } from '../src/ui/enhancedFrame.js';
-import { PLUS_CSS, MENU_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
+import { FRAME_ROLES, FRAME_TONES, SITE_ROLES, SITE_KIT_CSS, SITE_FITTING } from '../src/ui/enhanced/enhancedFrame.js';
+import { PLUS_CSS, MENU_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
+import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { transformLanding } from '../scripts/landingHtml.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -147,7 +147,7 @@ test('PROFILE-MENU: the plate wears the corner mark\'s portrait - a face handed 
 });
 
 test('PROFILE-MENU: every class the profile wears is the skin\'s, the title worn has its colour rule per title, the window widens for it and keeps clear of the foot, and a phone gives it the screen (mutants: the plate\'s title colourless; the window\'s width; the short screen\'s height; Close out of reach)', async () => {
-  const css = src('src/ui/enhancedStyle.js');
+  const css = src('src/ui/enhanced/enhancedStyle.js');
   const worn = new Set();
   // every class, the gradient title's word among them (Shadow Fang's is a gradient), an SVG's too (its class is an
   // attribute) - each matched WHOLE against the composed sheet's rules (AUDIT P6: a prefix passed for its longer name,
@@ -179,10 +179,10 @@ test('PROFILE-MENU: every class the profile wears is the skin\'s, the title worn
   assert.match(css, /:root\[data-plus-theme="stone"\] \.px-acctwin \{ --dim: #e2dccd; --brass: #ffd98a;/);
   assert.ok(FRAME_ROLES.panel.includes('.px-win .card.acctin ul.acctfacts.acctrecord li'), 'under Plus a deed\'s tile is a panel');
   // the card still brings no design language of its own (ACC1e)
-  const js = src('src/ui/enhancedAccount.js').replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[ \t])\/\/[^\n]*/gm, '$1');
+  const js = src('src/ui/enhanced/enhancedAccount.js').replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[ \t])\/\/[^\n]*/gm, '$1');
   assert.doesNotMatch(js, /\.style\.|cssText|#[0-9a-fA-F]{6}/);
   // the door hands the card the mark's own character and face
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const save = profileCharacter\(\);\n  const card = accountCard\(document, acctFlow, \{/);   // PIN MOVED: AUDIT RECOVERY-SET B1 - the window's flow
   assert.match(menu, /face: save \? loadFace\(save, \{ scale: 2, copy: true \}\) : null,\n    character: save \? `Playing \$\{characterLine\(save\)\}` : null,/);
 });
@@ -209,7 +209,7 @@ test('PLUS-MENU: the doors are the kit\'s buttons, given the edge the role paint
   assert.match(MENU_CSS, /@media \(max-width: 480px\) \{\n  \.px-home \.px-menu \{ gap: 6px; \}\n  \.px-menu \.doorbtn \{ padding: 2px 16px; min-height: 44px; font-size: 22px; \}/);
   assert.match(MENU_CSS, /\.px-home \.px-rule::before \{ background: linear-gradient\(90deg, transparent, #7a5424 45%, #f3cf86\); \}/, 'the rule under the wordmark gilt');
   // AUDIT M2: standing at rest, the diamonds would be every door's name - "◆ Continue ◆" - so each is hidden from a reader
-  const menu = src('src/ui/enhancedMenu.js');
+  const menu = src('src/ui/enhanced/enhancedMenu.js');
   // UI-CALM: every door is built by the one maker (doorBtn) - the drawn diamonds either side of its words
   const doorMaker = menu.slice(menu.indexOf('function doorBtn('), menu.indexOf('return b;', menu.indexOf('function doorBtn(')));
   assert.match(doorMaker, /const dia = \(\) => \{ const d = el\('span', 'px-c', '\\u25c6'\); d\.setAttribute\('aria-hidden', 'true'\); return d; \};\n[^]*b\.append\(dia\(\), word, dia\(\)\);/);

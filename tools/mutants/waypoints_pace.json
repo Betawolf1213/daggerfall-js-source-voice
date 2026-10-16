@@ -75,7 +75,7 @@
   },
   {
     "name": "PACE-panel-plus-never-refused",
-    "file": "src/ui/travelPaceControls.js",
+    "file": "src/ui/travel/travelPaceControls.js",
     "old": "      r.up.disabled = !rise;",
     "new": "      r.up.disabled = false;",
     "tests": [

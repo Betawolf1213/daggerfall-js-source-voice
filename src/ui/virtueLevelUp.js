@@ -40,7 +40,7 @@ import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';
 import { drawText, measureText } from './text.js';
-import { nativeMetrics, NATIVE_W } from './nativePanel.js';
+import { nativeMetrics, NATIVE_W } from './native/nativePanel.js';
 import {
   levelingSettings, virtuePurse, canRaiseAttribute, canLowerAttribute,
   attributeOffset, commitVirtueLevelUp, virtueSpendPlan, LEVELUP_TOTAL, levelBarProgress,

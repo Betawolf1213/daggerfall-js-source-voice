@@ -3,7 +3,7 @@
 //
 // TV5: the discovered settlements past the streamed grid, the nearest within reach, held at the view's edge with their
 // distance - a click a journey there by the roads (systems/travel/travelFarPlaces.js, scenes/world.js). PERF-TV: the readout's
-// marks are DRAWN on one canvas (ui/travelViewHud.js), a click on a plate found by where it landed, the screen's size
+// marks are DRAWN on one canvas (ui/travel/travelViewHud.js), a click on a plate found by where it landed, the screen's size
 // read once a frame, and a picture that did not change never drawn again; the world host keeps the marks' scene
 // points, the route's far legs and the cap's count between the ground's changes. The browser's own measure is
 // tools/travelViewPerf.mjs.
@@ -129,7 +129,7 @@ function fakeDoc({ rects = null, w = 1280, h = 720 } = {}) {
 }
 
 test('PERF-TV readout: every mark on the one canvas; the screen read ONCE a frame however many marks are held at its edge; a picture that did not change is not drawn again; a moved one is', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, calls, reads } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   try {
@@ -154,7 +154,7 @@ test('PERF-TV readout: every mark on the one canvas; the screen read ONCE a fram
 });
 
 test('PERF-TV readout: a click on a drawn plate is found where it landed (the one on top); beside it, and on a mark that takes none, nothing; hidden, nothing', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   try {
@@ -189,7 +189,7 @@ test('PERF-TV by source: the view asks the readout before it picks; the host kee
   assert.match(w, /if \(k\[0\] !== built\.size \|\| k\[1\] !== state\.mapOrigin\.x \|\| k\[2\] !== state\.mapOrigin\.y \|\| k\[3\] !== c\[0\] \|\| k\[4\] !== c\[1\] \|\| k\[5\] !== c\[2\] \|\| t - k\[6\] > 500\) \{/, 'the ground moves on a build, a drop, a re-anchor - and every half second besides');
   assert.match(w, /if \(holder\._tvGen !== gen \|\| holder\._tvNx !== nx \|\| holder\._tvNz !== nz( \|\| holder\._tvSea !== onSea)?\) \{/);   // OWS1: and the sea's top asked
   for (const re of [/at: tvSceneKept\(p, p\.x, p\.z, TV_PLACE_LIFT\)/, /at: tvSceneKept\(e, e\.x, e\.z, place \? TV_PLACE_LIFT : 0\)/, /at: tvSceneKept\(t, w\.x, w\.z, 2(, ship)?\)/]) assert.match(rd('src/scenes/travelViewMarks.js'), re);   // PIN MOVED (HOST-SPLIT 1): the marks left world.js;   // OWS1: a traveller at sea's on the sea's top
-  const h = rd('src/ui/travelViewHud.js');
+  const h = rd('src/ui/travel/travelViewHud.js');
   assert.match(h, /const vw = win\?\.innerWidth \?\? 0, vh = win\?\.innerHeight \?\? 0, dpr = win\?\.devicePixelRatio \|\| 1;   \/\/ read ONCE, before any write/);
   assert.match(h, /if \(sig\.length === canvasSig\.length && sig\.every\(\(v, i\) => v === canvasSig\[i\]\)\) return;/);
   assert.match(h, /doc\.fonts\?\.addEventListener\?\.\('loadingdone', \(\) => \{ dropSprites\(\); canvasSig = \[\]; \}\);/, 'a label drawn before the plates\' face arrived is drawn again');
@@ -221,7 +221,7 @@ test('PERF-TV curtains: the lowest land asked only under the veils kept (CURTAIN
 });
 
 test('EDGE-DECLUTTER: marks held at one edge in much the same direction slide apart - down a side, along the top - in their own order, each still taking its own click; a rider parts a town\'s plate too; an edge too crowded spaces them evenly on the screen', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc } = fakeDoc();   // 1280 x 720
   hud.showTravelViewHud({}, doc);
   const far = (key, x, y, extra = {}) => ({ key, x, y, front: true, label: key, sub: '12 km', kind: 'far', pick: true, edge: true, ...extra });
@@ -258,7 +258,7 @@ test('EDGE-DECLUTTER: marks held at one edge in much the same direction slide ap
 });
 
 test('EDGE-FURNITURE law: a point under the top\'s or the foot\'s furniture is held at its edge, as one off the screen is; straight behind lands on the foot\'s edge, not under the bar', async () => {
-  const { edgeHold } = await import('../src/ui/travelViewHud.js');
+  const { edgeHold } = await import('../src/ui/travel/travelViewHud.js');
   const W = 1280, H = 720, M = 28;
   const under = edgeHold({ x: 640, y: 700, front: true }, W, H, M, M, 100);
   assert.ok(under && Math.abs(under.y - 620) < 1e-9 && Math.abs(under.angle - 180) < 1e-9, `under the bar: held on its edge, pointing down (${JSON.stringify(under)})`);
@@ -269,7 +269,7 @@ test('EDGE-FURNITURE law: a point under the top\'s or the foot\'s furniture is h
 });
 
 test('EDGE-FURNITURE readout: marks behind the camera stand ABOVE the bar with their names over their arrows; ahead, below the compass and a journey\'s panel; a side\'s mark keeps its label off the bar; the furniture measured twice a second, not every frame', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const bar = { left: 336, right: 944, top: 638, bottom: 702, width: 608, height: 64 };
   const compass = { left: 490, right: 790, top: 18, bottom: 48, width: 300, height: 30 };
   const panel = { left: 276, right: 1004, top: 60, bottom: 124, width: 728, height: 64 };
@@ -307,12 +307,12 @@ test('EDGE-FURNITURE readout: marks behind the camera stand ABOVE the bar with t
     assert.equal(rectReads.n - before, 5, 'shown again: measured again at once - the bar, its Return, the two pieces and the filters\' block');
   } finally { hud.disposeTravelViewHud(); }
   // the pieces it measures are the HUD's own - a class renamed in the style sheet would leave a mark under it unseen
-  const h = rd('src/ui/travelViewHud.js'), css = rd('src/ui/enhancedStyle.js');
+  const h = rd('src/ui/travel/travelViewHud.js'), css = rd('src/ui/enhanced/enhancedStyle.js');
   const sel = h.match(/const FURNITURE = '([^']+)';/);
   assert.ok(sel, 'the furniture named in one place');
   assert.deepEqual(sel[1].split(', '), ['.hud-top', '.hud-bottom', '.hud-quick', '.travelpanel-bar', '.travelpanel-junction', '.dftouch-btn', '.qtrack'],
     'the compass, the vitals and hotbar, the quick-slot block, a journey\'s panel and its junction disc, a phone\'s buttons, the quest card (AUDIT GUIDE T1/D1)');
-  const touch = rd('src/ui/touch.js');
+  const touch = rd('src/ui/touch/touch.js');
   for (const c of sel[1].split(', ')) {
     const styled = new RegExp(`^\\${c} \\{`, 'm').test(css), named = touch.includes(`className = '${c.slice(1)}'`);
     assert.ok(styled || named, `${c} is a class the style sheet stands up, or the touch layer names`);
@@ -320,7 +320,7 @@ test('EDGE-FURNITURE readout: marks behind the camera stand ABOVE the bar with t
 });
 
 test('AUDIT DEEP2 E1/E2 readout: the Overworld bar LIFTS clear of what stands under it - the HUD\'s vitals, a phone\'s buttons - and the marks behind the camera stand over the lifted bar', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const bar = { left: 336, right: 944, top: 638, bottom: 702, width: 608, height: 64 };
   const vitals = { left: 339, right: 941, top: 678, bottom: 698, width: 602, height: 20 };
   const back = { left: 860, right: 930, top: 655, bottom: 685, width: 70, height: 30 };
@@ -340,7 +340,7 @@ test('AUDIT DEEP2 E1/E2 readout: the Overworld bar LIFTS clear of what stands un
 });
 
 test('AUDIT DEEP2 E3/E4/E8 readout: two marks low on a side part inside its stretch; marks either side of a corner part; the end marks along the foot keep their boxes on the screen apart', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, moves } = fakeDoc();   // 1280 x 720, no furniture
   hud.showTravelViewHud({}, doc);
   const far = (key, x, y, front = true) => ({ key, x, y, front, label: key, sub: '12 km', kind: 'far', pick: true, edge: true });
@@ -365,7 +365,7 @@ test('AUDIT DEEP2 E3/E4/E8 readout: two marks low on a side part inside its stre
 });
 
 test('AUDIT DEEP2 E6/E7 readout: a corner piece stops the marks along its edge short of it and keeps its side\'s marks over it; a phone\'s tall bands shrink together, never past a quarter of the screen clear', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const bar = { left: 336, right: 944, top: 638, bottom: 702, width: 608, height: 64 };
   const quick = { left: 24, right: 250, top: 420, bottom: 666, width: 226, height: 246 };   // the quick-slot block, bottom-left
   const { doc } = fakeDoc({ rects: { bar, others: [quick] } });
@@ -393,7 +393,7 @@ test('AUDIT DEEP2 E6/E7 readout: a corner piece stops the marks along its edge s
 });
 
 test('AUDIT OW5 R3: the places are said again at once when the SET changes, a distance alone at most every TV_SAID_DISTANCE_MS - a journey\'s ticking tenths rebuilt the hidden list on a third of the frames at speed', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   const at = (sub, extra = []) => hud.updateTravelViewHud({ feet: null, heading: null, yaw: 0, where: '', marks: [
@@ -411,7 +411,7 @@ test('AUDIT OW5 R3: the places are said again at once when the SET changes, a di
 });
 
 test('AUDIT DEEP2 E5/E9/E11/E15 readout: the held arrow is notched; a far place in the picture wears its distance above its dot; the labels wear the enhanced face; the places are said in words; a NaN mark spoils nothing', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, calls, draws, ctx } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   try {
@@ -427,9 +427,9 @@ test('AUDIT DEEP2 E5/E9/E11/E15 readout: the held arrow is notched; a far place 
     assert.deepEqual(hud.travelViewHudState().hits.map((h) => h.key), ['far:in'], 'the NaN mark placed nowhere');
     assert.equal(hud.travelViewHudState().said, 'Ripwych, 6.4 km\n', 'the places in words');
   } finally { hud.disposeTravelViewHud(); }
-  const css = rd('src/ui/enhancedStyle.js');
+  const css = rd('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.tview-bar \{[^}]*pointer-events: auto;/, 'E13: the bar takes its own clicks');
-  const h = rd('src/ui/travelViewHud.js');
+  const h = rd('src/ui/travel/travelViewHud.js');
   assert.match(h, /if \(sp\) \{ sprites\.delete\(key\); sprites\.set\(key, sp\); return sp; \}/, 'E12: the sprites kept newest-last');
   assert.match(h, /while \(sprites\.size && \(sprites\.size >= SPRITES_MAX \|\| spritePixels \+ px > SPRITE_PIXELS_MAX\)\) \{\n\s*const k = sprites\.keys\(\)\.next\(\)\.value, old = sprites\.get\(k\);\n\s*sprites\.delete\(k\);/, 'and the oldest one goes (AUDIT NAMES N1-8: past the count or the pixels)');
   assert.match(h, /const onPointerUpHud = \(e\) => \{ if \(e\.pointerType === 'touch'\) pointer = null; \};/, 'E10: a lifted finger leaves no hover');
@@ -458,7 +458,7 @@ test('AUDIT DEEP2 B-3 law: the discovered set\'s generation moves on a discovery
 });
 
 test('OVERWORLD NAMES readout: a player\'s marker is their name as it reads in play - the title its own line above in its colour, the Renown boxed left, the name in my party\'s green, the guild\'s tag in steel; a stranger\'s name the bone; the box grows with the title', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { TITLE_RGBA, cssRgba } = await import('../src/ui/playerBadge.js');
   const { doc, texts, calls } = fakeDoc();
   hud.showTravelViewHud({}, doc);
@@ -490,7 +490,7 @@ test('OVERWORLD NAMES readout: a player\'s marker is their name as it reads in p
 });
 
 test('AUDIT NAMES N2-4/N1-7 readout: a party side by side (their heads a few pixels apart from the view\'s height) wears names that never print one over another - each stands clear, above the one before; a player\'s name stands over their head, never across the body it names', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, draws } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   const boxes = () => draws.map(([, x, y, w, h]) => ({ x0: x, x1: x + w, y0: y, y1: y + h }));
@@ -511,7 +511,7 @@ test('AUDIT NAMES N2-4/N1-7 readout: a party side by side (their heads a few pix
 });
 
 test('AUDIT NAMES N1-1/N1-5 readout: a busy first frame makes BADGE_BUILDS_PER_FRAME badges and no more (the rest their bare name, the picture drawn again till all are made); a held player\'s box is the badge drawn - a titled one ahead on a phone stays ahead', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, texts, calls } = fakeDoc();
   hud.showTravelViewHud({}, doc);
   const N = hud.TRAVEL_VIEW_NAME_COLORS, B = hud.BADGE_BUILDS_PER_FRAME;
@@ -550,7 +550,7 @@ test('AUDIT NAMES N1-1/N1-5 readout: a busy first frame makes BADGE_BUILDS_PER_F
 });
 
 test('AUDIT NAMES N1-8 readout: the kept images are capped by their pixels as well as their count - at a phone\'s dpr 3 the oldest badge goes long before 512 are kept', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, win, texts } = fakeDoc();
   win.devicePixelRatio = 3;
   hud.showTravelViewHud({}, doc);
@@ -573,7 +573,7 @@ test('AUDIT NAMES N1-8 readout: the kept images are capped by their pixels as we
 });
 
 test('AUDIT NAMES N1-6 readout: a titled player held at the top near a corner and one held on that side never cross - the side\'s run starts under the top\'s labels', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { doc, draws } = fakeDoc({ w: 1366, h: 768 });
   hud.showTravelViewHud({}, doc);
   try {
@@ -589,7 +589,7 @@ test('AUDIT NAMES N1-6 readout: a titled player held at the top near a corner an
 });
 
 test('AUDIT NAMES N1-2/N1-3/N1-4/N1-9 readout: the badge painted as the in-play face paints it - the gradient title over an edge of its own colour and black with no blurred shadow, each glyph in its colour at the name face\'s stroke, the wolf\'s red eye, the Renown under the row\'s shadow, the name in the pixel face; a badge redrawn for my party and for a new dpr', async () => {
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const { TITLE_RGBA, GLYPH_RGBA, GLYPH_PATH, GLYPH_DETAIL, GLYPH_EDGE_W, cssRgba } = await import('../src/ui/playerBadge.js');
   const { PIXEL_STACK } = await import('../src/ui/pixelifyFive.js');
   const had = globalThis.Path2D;
@@ -628,11 +628,11 @@ test('AUDIT NAMES N1-2/N1-3/N1-4/N1-9 readout: the badge painted as the in-play 
 
 
 test('OW-THEME (Mac: "The overworld ui needs to follow enhanced ui theme"): the bar, its Return and its compass wear the Enhanced Plus theme\'s roles, and the plates the theme\'s own stone (its --slate), read at each open', async () => {
-  const { FRAME_ROLES, PLUS_THEMES } = await import('../src/ui/enhancedFrame.js');
+  const { FRAME_ROLES, PLUS_THEMES } = await import('../src/ui/enhanced/enhancedFrame.js');
   assert.ok(FRAME_ROLES.window.includes('.tview-bar'), 'the bar: the journey bar\'s carved stone');
   assert.ok(FRAME_ROLES.button.includes('.tview-back'), 'Return: a stone button');
   assert.ok(FRAME_ROLES.well.includes('.tview-compass'), 'the compass: sunk in a socket');
-  const hud = await import('../src/ui/travelViewHud.js');
+  const hud = await import('../src/ui/travel/travelViewHud.js');
   const docWith = (slate) => ({ documentElement: {}, defaultView: { getComputedStyle: () => ({ getPropertyValue: (k) => (k === '--slate' ? slate : '') }) } });
   const ember = PLUS_THEMES.ember.slate;
   const n = parseInt(ember.slice(1), 16);
@@ -647,7 +647,7 @@ test('OW-THEME (Mac: "The overworld ui needs to follow enhanced ui theme"): the 
   try {
     hud.updateTravelViewHud({ feet: null, heading: null, yaw: 0, where: '', marks: [{ key: 'place:t', x: 400, y: 300, front: true, label: 'Themeton', kind: 'place', pick: true }] });
     assert.ok(P.calls.includes('fillRect'), 'a plate drawn');
-    const src = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
+    const src = readFileSync(new URL('../src/ui/travel/travelViewHud.js', import.meta.url), 'utf8');
     assert.match(src, /x\.fillStyle = plateFill; x\.fillRect\(0\.5, 0\.5, w - 1, h - 1\);/);
     assert.match(src, /if \(pf !== plateFill\) \{ plateFill = pf; dropSprites\(\); canvasSig = \[\]; \}/);
   } finally { hud.disposeTravelViewHud(); }

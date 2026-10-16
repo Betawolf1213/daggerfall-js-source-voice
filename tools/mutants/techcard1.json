@@ -173,7 +173,7 @@
   },
   {
     "name": "TECHCARD-the-block-sheet-never-laid",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "${SET_BLOCK_CSS}\n${TECH_BLOCK_CSS}\n.setstrip {",
     "new": "${SET_BLOCK_CSS}\n.setstrip {",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "TECHCARD-the-lines-left-on-the-card",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "itemPowerLines(picked, deps, { set: false, lore: false, technique: false })",
     "new": "itemPowerLines(picked, deps, { set: false, lore: false, technique: true })",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "TECHCARD-the-block-never-drawn",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const tb = techniqueCard(picked, { keyWord: techniqueKeyWord() }); if (tb) into.append(tb); }",
     "new": "  { const tb = techniqueCard(picked, { keyWord: techniqueKeyWord() }); void tb; }",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "TECHCARD-the-info-box-without-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const tb = techniqueCard(item, { full: true, keyWord: techniqueKeyWord() }); if (tb) body.append(tb); }",
     "new": "  { const tb = techniqueCard(item, { full: true, keyWord: techniqueKeyWord() }); void tb; }",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "TECHCARD-the-info-box-said-twice",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "rarityLines(item, { sigil: false, set: false, technique: false })",
     "new": "rarityLines(item, { sigil: false, set: false, technique: true })",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "TECHCARD-the-key-never-read",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "const techniqueKeyWord = () => actionKeyWord(TECHNIQUE_ACTION);",
     "new": "const techniqueKeyWord = () => '';",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "TECHCARD-the-chip-in-the-sigil-rune",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "t.set === 'technique' ? techniqueGlyphTileSrc(shade) : sigilRuneTileSrc(shade)",
     "new": "sigilRuneTileSrc(shade)",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "TECHCARD-the-info-box-keyless",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "techniqueCard(item, { full: true, keyWord: techniqueKeyWord() })",
     "new": "techniqueCard(item, { full: true })",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "TECHCARD-the-card-block-after-the-set",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const tb = techniqueCard(picked, { keyWord: techniqueKeyWord() }); if (tb) into.append(tb); }   // TECH-CARD: a technique's own block - the piece's own line, so first of the blocks\n  // SIGIL-UI: the sigil as its own block - the rune, the stage it wakes to in my hand, its five stages and the bar of\n  // what it has drunk toward the next (ui/sigilCard.js); the tier list above no longer carries it as three more lines\n  { const sb = sigilCard(picked); if (sb) into.append(sb); }\n  { const set = setCard(picked, deps.entity, itemLongName); if (set) into.append(set); }   // SET5: its set - the places worn, the stage, its tiers (ui/setCard.js)",
     "new": "  // SIGIL-UI: the sigil as its own block - the rune, the stage it wakes to in my hand, its five stages and the bar of\n  // what it has drunk toward the next (ui/sigilCard.js); the tier list above no longer carries it as three more lines\n  { const sb = sigilCard(picked); if (sb) into.append(sb); }\n  { const set = setCard(picked, deps.entity, itemLongName); if (set) into.append(set); }   // SET5: its set - the places worn, the stage, its tiers (ui/setCard.js)\n  { const tb = techniqueCard(picked, { keyWord: techniqueKeyWord() }); if (tb) into.append(tb); }   // TECH-CARD: a technique's own block - the piece's own line, so first of the blocks",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "TECHCARD-the-info-block-after-the-set",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "  { const tb = techniqueCard(item, { full: true, keyWord: techniqueKeyWord() }); if (tb) body.append(tb); }   // TECH-CARD: a technique's block, whole\n  { const sb = sigilCard(item, { full: true }); if (sb) body.append(sb); }   // SIGIL-UI: the Info box's last word on a sigil weapon is its sigil (CARD-FIT: whole)\n  { const set = setCard(item, deps.entity, itemLongName, { full: true }); if (set) body.append(set); }   // SET5: ...and a set piece's, its set (CARD-FIT: whole)",
     "new": "  { const sb = sigilCard(item, { full: true }); if (sb) body.append(sb); }   // SIGIL-UI: the Info box's last word on a sigil weapon is its sigil (CARD-FIT: whole)\n  { const set = setCard(item, deps.entity, itemLongName, { full: true }); if (set) body.append(set); }   // SET5: ...and a set piece's, its set (CARD-FIT: whole)\n  { const tb = techniqueCard(item, { full: true, keyWord: techniqueKeyWord() }); if (tb) body.append(tb); }   // TECH-CARD: a technique's block, whole",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "TECHCARD-the-hover-card-without-it",
-    "file": "src/ui/enhancedInventory.js",
+    "file": "src/ui/enhanced/enhancedInventory.js",
     "old": "{ keyWord: techniqueKeyWord() }); if (tb) into.append(tb); }",
     "new": "{ keyWord: techniqueKeyWord() }); if (tb && body) into.append(tb); }",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "TECHCARD-the-hud-frame-off-blue",
-    "file": "src/ui/enhancedHud.js",
+    "file": "src/ui/enhanced/enhancedHud.js",
     "old": "for (const [k, v] of Object.entries(setShades(shade))) cell.style.setProperty(k, v);",
     "new": "for (const [k, v] of Object.entries(setShades(colour))) cell.style.setProperty(k, v);",
     "tests": [
@@ -416,7 +416,7 @@
   },
   {
     "name": "FINALAUDIT-two-rows-back-on-the-card",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".techbox.compact .tech-head { display: flex; align-items: center;",
     "new": ".techbox.compact .tech-head { align-items: center;",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "FINALAUDIT-the-gap-on-both-axes",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "flex-wrap: wrap; column-gap: 7px; row-gap: 1px; margin-bottom: 3px; }",
     "new": "flex-wrap: wrap; gap: 7px; margin-bottom: 3px; }",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "FINALAUDIT-the-glyph-at-20-on-the-card",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".techbox.compact .tech-glyph { width: 16px; height: 16px; }\n",
     "new": "",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "FINALAUDIT-the-price-wraps-apart",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": "gap: 8px; white-space: nowrap; }\n.tech-cost",
     "new": "gap: 8px; }\n.tech-cost",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "FINALAUDIT-a-step-sheds-nothing",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".inv-tip.tip-tight .techbox .tech-foot, .pack-shell .packtip.packdetail .card.card-tight .techbox .tech-foot { display: none; }\n",
     "new": "",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "FINALAUDIT-the-lines-left-to-the-card-rule",
-    "file": "src/ui/enhancedPlusStyle.js",
+    "file": "src/ui/enhanced/enhancedPlusStyle.js",
     "old": ".pack-shell .card .techbox.compact p.tech-effect, .techbox.compact p.tech-effect {",
     "new": ".techbox.compact p.tech-effect {",
     "tests": [

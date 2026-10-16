@@ -53,7 +53,7 @@ import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { measureText } from '../src/ui/text.js';
 import { createNameLayer } from '../src/ui/nameLayer.js';
 import { profileView, profileRenown } from '../src/ui/profileWindow.js';
-import { accountCard } from '../src/ui/enhancedAccount.js';
+import { accountCard } from '../src/ui/enhanced/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
@@ -501,7 +501,7 @@ test('AUDIT RENOWN1 GAME-5: the magery\'s third is of Daggerfall\'s own maximum,
 // ── THE DISPLAYS ────────────────────────────────────────────────────
 
 test('AUDIT RENOWN1 UI-1/UI-6/UI-8/UI-10: the account card\'s values shrink and wrap in the window (the Renown rows ran off a phone\'s window both ways); a capped row names the level once; the chip names whose Renown it is and is drawn only signed in; an empty box is never drawn (mutants: the value unshrinking; "Renown 50, Renown 50"; the chip on the password stage; a bordered empty box)', () => {
-  const css = src('src/ui/enhancedStyle.js');
+  const css = src('src/ui/enhanced/enhancedStyle.js');
   assert.match(css, /\.px-win\.px-acctwin \.card\.acct ul\.acctfacts \.acctkey \{ flex: 0 0 auto; \}\n\.px-win\.px-acctwin \.card\.acct ul\.acctfacts \.acctval \{ flex: 0 1 auto; min-width: 0; overflow-wrap: anywhere; \}/);
   assert.match(css, /\.card ul\.acctfacts \.acctval \{ flex: 1 1 auto; min-width: 0; color: var\(--bone\); font-size: 15px; overflow-wrap: anywhere; \}/);
   assert.match(css, /\.card h3 \.acctrenown:empty \{ display: none; \}/);

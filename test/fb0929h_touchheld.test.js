@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { attachTouch } from '../src/ui/touch.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { routeKey } from '../src/ui/input.js';
 import { ActionInputBox } from '../src/ui/actionText.js';
 import { TYPE_12_ANSWERS } from '../src/world/actionSystem.js';

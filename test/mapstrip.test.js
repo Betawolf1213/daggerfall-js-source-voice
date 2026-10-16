@@ -18,9 +18,9 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   STRIP, sheetTitle, stripScale, stripFont, stripLayout, stripHit, paintStrip, createSheetSlot,
-} from '../src/ui/mapStrip.js';
+} from '../src/ui/map/mapStrip.js';
 import { MAP_CONTEXTS, MAP_SHEETS, sheetsFor } from '../src/systems/map/mapTabs.js';
-import { PEN, HALO_PEN, NAME_FACE } from '../src/ui/inkMap.js';
+import { PEN, HALO_PEN, NAME_FACE } from '../src/ui/ink/inkMap.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(root, p), 'utf8');
@@ -156,7 +156,7 @@ test('EM1: the strip does not pan or zoom with the map under it', () => {
   // context, the live sheet and the paper; stripHit takes a layout and
   // a paper point; paintStrip takes a context and a layout.
   const body = (name) => {
-    const text = src('src/ui/mapStrip.js');
+    const text = src('src/ui/map/mapStrip.js');
     const at = text.indexOf(`export function ${name}(`);
     assert.ok(at >= 0, `mapStrip.js lost ${name}`);
     let i = text.indexOf('{', at), depth = 0, end = i;
@@ -187,7 +187,7 @@ test('EM1: the strip does not pan or zoom with the map under it', () => {
   // with the prose stripped first - this file's own header says the
   // word "window" often enough to fool a bare regex, and a pin that
   // reads comments is a pin that fails on a rewrite.
-  const code = src('src/ui/mapStrip.js')
+  const code = src('src/ui/map/mapStrip.js')
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
   assert.doesNotMatch(code, /\bdocument\b|\bglobalThis\b|\bwindow\s*\./);

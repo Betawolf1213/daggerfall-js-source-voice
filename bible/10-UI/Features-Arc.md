@@ -915,7 +915,7 @@ Audio and back and lands on a Continue the player never meant.
 Mac, on the loot-cue patch (MAC-O6): "lump this in as a new enhanced
 toggle. Enhanced Sounds, add the wind noise to it."
 
-**MAC-O6** (Mac's patch, `src/ui/enhancedInventory.js`): "looting
+**MAC-O6** (Mac's patch, `src/ui/enhanced/enhancedInventory.js`): "looting
 gold/items makes no sound." DoTransferItem plays a cue - the gold
 clink at :1569, the button click at :1583 - and the classic window
 plays it (`nativeInventory.js`); the enhanced window took the same
@@ -1084,7 +1084,7 @@ descriptions and menus, reduce bloat and overall make it less AI".
 **Mac's words are used as he wrote them** (`systems/overhauls.js`), with one
 typo mended ("Daggefall Online"). The controller window's "Activate ·
 Select" and "Inventory · Back", and the d-pad legend's tap-and-hold join,
-take a slash (`ui/plusPadBinds.js`).
+take a slash (`ui/plus/plusPadBinds.js`).
 
 **Every Features note was rewritten.** What went: the engine's vocabulary
 (navmesh, tonemap, linear colour, SKY*.DAT, mipmaps, "the crowd slice
@@ -1126,7 +1126,7 @@ clicking 'restore' just puts it back to the post-modified feature settings ... A
 values would be nice." FT18's pair is a round trip by design - Restore returns what All off moved, the player's own -
 so nothing on the home ever reached the game's own values again.
 
-**Defaults**, the third button beside All off and Restore (`ui/enhancedMenu.js` `featuresDefaults`, asked first with
+**Defaults**, the third button beside All off and Restore (`ui/enhanced/enhancedMenu.js` `featuresDefaults`, asked first with
 `DEFAULTS_ASK` - there is no keep to undo it):
 
 - every tile to the segment it ships at (`defaultSegment`): a prefs row's `default` (a lane's, in its tiers'
@@ -1190,7 +1190,7 @@ under Combat. `10-UI/Settings-Screen-Spec.md` section 11 is the screen's record;
 - **Graphics' quality preset** sets five of these rows at once (`systems/graphicsPresets.js`); High is their defaults.
 - **The files and packs** are the Mods & files tab's, with Every mod - each mod, where its options live, its switch.
 - `GROUPS`/`GROUP_ORDER` stay the registry's fields (the search reads a row's group); ORG1's `FEATURE_SECTIONS`,
-  `featureSections` and `sectionOfFeature` are gone - `ui/settingsMap.js` places every row.
+  `featureSections` and `sectionOfFeature` are gone - `ui/settings/settingsMap.js` places every row.
 
 In Chromium (`tools/featuresProbe.mjs`, rewritten for the screen, 33 checks): all 96 rows drawn once across the nine
 tabs, each wearing a label, each tab's rail count the rows it drew; Low writes the five rows and DFU's TerrainDistance;

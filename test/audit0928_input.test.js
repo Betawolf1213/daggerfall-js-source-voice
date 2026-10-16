@@ -23,7 +23,7 @@ import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_PARTS_TEMPLATE } from '
 import { keyEdges, noteKeyDown, noteKeyUp, beginInputFrame, released, held, setBindings } from '../src/ui/input.js';
 import { createBindings, resetDefaults, ACTION_GROUPS, DEFAULT_BINDINGS, DEFAULT_SECONDARY_BINDINGS, DEFAULT_SHARES, HIDDEN_ACTIONS } from '../src/systems/inputActions.js';
 import { buttonText } from '../src/systems/controlsConfig.js';
-import { attachTouch } from '../src/ui/touch.js';
+import { attachTouch } from '../src/ui/touch/touch.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { hidesHud } from '../src/ui/windowStack.js';
 
@@ -118,7 +118,7 @@ function mapSeam({ latch, keys, townTalk }) {
     grab(MODES, /\n(  function closeSpellWindow\(win\) \{[\s\S]*?\n  \})\n/, 'closeSpellWindow'),
   ].join('\n');
   const modes = new Function('townTalk', 'mode', 'dungeonCtx', 'interiorOverlay', `${doors}\nreturn { mountWindow: (win) => mountSpellWindow(win), closeWindow: (win) => closeSpellWindow(win) };`)(townTalk, 'exterior', null, null);
-  // FONT3: the window's dispose takes its words' DOM layer down (ui/enhancedTextLayer.js) - the seam's one new free name
+  // FONT3: the window's dispose takes its words' DOM layer down (ui/enhanced/enhancedTextLayer.js) - the seam's one new free name
   return new Function('latch', 'keys', 'modes', 'csaDrawMap', 'hideEnhancedTextLayer', `${src}\nreturn { csaInputFrame, csaInput, csaMapOpen, csaMapClose, mapWindow: () => _csaMapWindow };`)(latch, keys, modes, () => {}, () => {});
 }
 

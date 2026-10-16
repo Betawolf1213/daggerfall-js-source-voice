@@ -2,8 +2,8 @@
 // PORT'S PLACES FOUND AS THE YARDS ARE - rows of the town's talk directory (systems/portPlaces.js portDirectoryRows),
 // their groups on the Where-is page after the yards' (systems/topicTree.js over FOUND_KIND_ORDER), answered as a building
 // is (the compass, the map's mark); the shipyard and the lighthouse on both town maps (world/merchantYards/merchantYardMap.js
-// yardTownBlocks, ui/townMapDoor.js); the shipyard, the lighthouse and the docks on the Overworld (scenes/portHost.js,
-// scenes/quayPool.js overworldMarks, ui/travelViewHud.js portGlyph); and the four hosts' wiring. Design:
+// yardTownBlocks, ui/town/townMapDoor.js); the shipyard, the lighthouse and the docks on the Overworld (scenes/portHost.js,
+// scenes/quayPool.js overworldMarks, ui/travel/travelViewHud.js portGlyph); and the four hosts' wiring. Design:
 // bible/03-World/Shipyards.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,16 +19,16 @@ import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { TopicTree, LIST_ITEM_TYPE, QUESTION_TYPE, EN } from '../src/systems/topicTree.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
 import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk/talk.js';
-import { quarterOf } from '../src/ui/townQuarters.js';
-import { createTownSheet } from '../src/ui/townSheet.js';
+import { quarterOf } from '../src/ui/town/townQuarters.js';
+import { createTownSheet } from '../src/ui/town/townSheet.js';
 import { createQuayPool, DOCKS_MARK_LIFT } from '../src/scenes/quayPool.js';
 import { QUAY_DECK_UP } from '../src/systems/naval/quays.js';
 import { findHarbour } from '../src/systems/naval/shipLife.js';
 import { markGroup, markShown, countGroups, isYardMark } from '../src/systems/travel/travelViewFilters.js';
 import { setTutorialHandler, _resetTutorialTriggerForTests, tutorialById } from '../src/systems/tutorials.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { createShipyardOverlay, createNavalYardOverlay, createNavalPlunderOverlay, createEtherChartOverlay } from '../src/ui/navalPlunderDoor.js';
-import { yardGlyph, portGlyph, yardMarkKind } from '../src/ui/travelViewHud.js';
+import { createShipyardOverlay, createNavalYardOverlay, createNavalPlunderOverlay, createEtherChartOverlay } from '../src/ui/naval/navalPlunderDoor.js';
+import { yardGlyph, portGlyph, yardMarkKind } from '../src/ui/travel/travelViewHud.js';
 import { exteriorFrame, streetColor, same } from './yardLightRig.mjs';
 import { LAMP_RANGE } from '../src/scenes/portHost.js';
 
@@ -228,7 +228,7 @@ test('SHIPYARDS THE HOSTS: world.js places the port\'s places in each port town\
   assert.match(tvm, /for \(const m of host\.portHost\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);\n\s*for \(const m of host\.quays\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
   assert.ok(tvm.indexOf('portHost?.overworldMarks()') > tvm.indexOf('function travelViewMarks()'));
   assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get portHost\(\) \{ return portHost; \},[^]*?\n\s+get quays\(\) \{ return quays; \},[^]*?\n\s+\}\);/, 'handed over live');
-  const door = read('src/ui/townMapDoor.js');
+  const door = read('src/ui/town/townMapDoor.js');
   assert.match(door, /if \(deps\.ports\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.ports\) \};/, 'laid at the door both maps share');
   const tt = read('src/scenes/townTalk.js');
   assert.match(tt, /directory\.push\(\.\.\.portDirectoryRows\(topics\.ports\)\);/, 'joined to the directory');

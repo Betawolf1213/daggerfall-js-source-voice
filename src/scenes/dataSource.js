@@ -13,10 +13,10 @@
 // it 404s and the picker is the source. Names are normalized to
 // UPPERCASE basenames - real ARENA2 ships uppercase, user folders vary.
 
-import { isTouchDevice } from '../ui/touchDevice.js';   // TI3
+import { isTouchDevice } from '../ui/touch/touchDevice.js';   // TI3
 import { isEnhanced } from '../systems/uiSkin.js';   // FONT3: the asset picker's face follows the skin
 import { PIXEL_FONT_CSS } from '../ui/pixelifyFive.js';   // FONT3
-import { optionPath } from '../ui/settingsMap.js';   // ORG2
+import { optionPath } from '../ui/settings/settingsMap.js';   // ORG2
 
 const DB_NAME = 'project-dagger';
 const STORE = 'arena2';
@@ -121,7 +121,7 @@ const mem = new Map(); // NAME -> Uint8Array
 // fell back to the in-page picker used to ingest the sky-less lean
 // set with no way out of it from the app. The shell's presence
 // (daggerShell, the preload bridge) outranks the touch sniff.
-// TI3: ...and the touch sniff is ui/touchDevice.js's law - a finger as
+// TI3: ...and the touch sniff is ui/touch/touchDevice.js's law - a finger as
 // the PRIMARY pointer - so a touchscreen laptop in a browser is not lean
 // either.
 const LEAN = typeof window !== 'undefined' && !window.daggerShell && isTouchDevice();
@@ -1014,7 +1014,7 @@ export const ASSET_PICKER_Z = 40;
 /** MWFIX: is the asset picker on screen? A modal opened FROM another
  *  overlay has to be able to say so, because the opener may own the
  *  keyboard - the enhanced shell takes Escape on `globalThis` in
- *  CAPTURE and stops it (ui/enhancedMenu.js:"globalThis.addEventListener('keydown', keyHandler, { capture: true })"), which is right for a
+ *  CAPTURE and stops it (ui/enhanced/enhancedMenu.js:"globalThis.addEventListener('keydown', keyHandler, { capture: true })"), which is right for a
  *  screen with nothing above it and wrong the moment something is.
  *  Its own stated law is that a modal overlay owns its input; this is
  *  how the one above it says "that's me". */

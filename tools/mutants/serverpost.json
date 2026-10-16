@@ -112,7 +112,7 @@
   },
   {
     "name": "SERVERPOST-throw-away-beside-a-waiting-gift",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "    if (!head.item || head.claimed) foot.append(keyed(button('pm-throw',",
     "new": "    foot.append(keyed(button('pm-throw',",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "SERVERPOST-the-count-never-written",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "  if (badge && badge.textContent !== text) badge.textContent = text;",
     "new": "",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "SERVERPOST-the-second-press-sent",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "    if (!b || b.busy) return;",
     "new": "    if (!b) return;",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "SERVERPOST-the-place-forgotten",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "  let openId = typeof keep.openId === 'string' ? keep.openId : null;",
     "new": "  let openId = null;",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "SERVERPOST-the-line-wiped-on-reopen",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "    if (!again) tell('');",
     "new": "    tell('');",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "SERVERPOST-the-focus-dropped",
-    "file": "src/ui/enhancedPost.js",
+    "file": "src/ui/enhanced/enhancedPost.js",
     "old": "    setOpen(id); opened = null;\n    if (!again) tell('');   // reopened by a rebuild, the line it said stays said\n    focusTo = 'back';",
     "new": "    setOpen(id); opened = null;\n    if (!again) tell('');   // reopened by a rebuild, the line it said stays said",
     "tests": [

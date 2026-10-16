@@ -14,22 +14,22 @@ import { measureText, drawText, spaceGlyphWidth, makeFont } from '../src/ui/text
 import {
   drawHud, hudScale, HUD_BORDER, HUD_NATIVE_BAR_WIDTH, HUD_BAR_STRIDE,
   BREATH_BAR_LEFT, BREATH_BAR_BOTTOM, BREATH_BAR_WIDTH,
-} from '../src/ui/hud.js';
-import { HudText, HUD_TEXT_MAX_ROWS, HUD_TEXT_TOP, HUD_TEXT_SPACING, HUD_TEXT_POP_DELAY } from '../src/ui/hudText.js';
+} from '../src/ui/hud/hud.js';
+import { HudText, HUD_TEXT_MAX_ROWS, HUD_TEXT_TOP, HUD_TEXT_SPACING, HUD_TEXT_POP_DELAY } from '../src/ui/hud/hudText.js';
 import {
   NativeTalkWindow, TALK_RECTS, TALK_TOGGLE_COLOR, TOPIC_ARROW_SCROLL, TOPIC_ROW_H,
   ROW_H, ROW_SPACING, layoutPixelRows, conversationScroll, clampScrollPixels,
   preloadTalkArt, talkArtLoaded,
-} from '../src/ui/nativeTalk.js';
-import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
+} from '../src/ui/native/nativeTalk.js';
+import { NativeTradeWindow } from '../src/ui/native/nativeTrade.js';
 import { CharSheet, CHARSHEET_RECTS, STATS_ROLLOUT_SELECT, statDescriptionTextId } from '../src/ui/charsheet.js';
-import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';   // U26: the keyed window is deleted
+import { NativeInventoryWindow } from '../src/ui/native/nativeInventory.js';   // U26: the keyed window is deleted
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };
 import { actionOf, setBindings } from '../src/ui/input.js';
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
 import { equipItem, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { wrapText } from '../src/ui/talkWindow.js';
-import { nativeMetrics } from '../src/ui/nativePanel.js';
+import { nativeMetrics } from '../src/ui/native/nativePanel.js';
 import { preloadPaperDollArt, paperDollArtLoaded, refreshPaperDoll, slotAtPaperDoll, _debugPaperDoll } from '../src/ui/paperDoll.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 

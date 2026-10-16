@@ -29,7 +29,7 @@ import { getPref, setPref } from '../uiPrefs.js';
 import { getString, setValue, saveSettings } from '../settings/settings.js';
 import { modSetting, setModSetting, MOD_SETTINGS } from '../modSettings.js';
 import { appStorage } from '../appStorage.js';
-import { labelOf } from '../../ui/settingsCopy.js';
+import { labelOf } from '../../ui/settings/settingsCopy.js';
 
 export const ONLINE_SYNC_STORE_KEY = 'dagger.onlineSync.v1';
 

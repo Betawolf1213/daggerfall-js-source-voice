@@ -18,7 +18,7 @@ import { nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';
-import * as hudm from '../src/ui/cardTableHud.js';
+import * as hudm from '../src/ui/card/cardTableHud.js';
 import * as hand from '../src/world/card/cardHand.js';
 import { CARD_W, CARD_L, chipDiscs } from '../src/world/card/cardMotion.js';
 import { cardMatrix } from '../src/render/cardTableDraw.js';
@@ -143,7 +143,7 @@ test('AUDIT KG II C3 + C9 A FINGER THE CLOTH TOOK IS HELD TILL IT LIFTS - the to
 
 test('AUDIT KG II C4 THE D-PAD AT THE BOARD UNDER THE PLUS CROSSBAR: its own codes, the board\'s cursor - never the map, the log, Rest or the hands (mutants: boardUp)', async () => {
   globalThis.window ??= { addEventListener() {}, removeEventListener() {}, dispatchEvent() {} };
-  const { applyPlusPadLayout, registerCrossbar, DPAD_CODES } = await import('../src/ui/plusPad.js');
+  const { applyPlusPadLayout, registerCrossbar, DPAD_CODES } = await import('../src/ui/plus/plusPad.js');
   const { attachGamepad } = await import('../src/ui/gamepadInput.js');
   const { _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
   resetSettings(); setPref('plusPadLayout', 0);

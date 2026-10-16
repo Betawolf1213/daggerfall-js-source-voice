@@ -380,7 +380,7 @@ the house's regulars until you stand, go broke or empty the table.
   hand waits `HAND_GAP_MS` after a showdown, a broke patron leaves (his chair shows empty), the evening is over
   `broke`, `empty` or `left`. Standing mid-hand folds you OUT OF TURN - `foldSeat` in the cards' law, the primitive
   CARDS5's leaver needs too (section 13) - your pot chips stay, the rest comes home.
-- **The panel** (`src/ui/cardTableHud.js`). The port's own panel, not a pausing window - the patrons play on - holding
+- **The panel** (`src/ui/card/cardTableHud.js`). The port's own panel, not a pausing window - the patrons play on - holding
   the cursor while it stands: the seats, the cards each may see, the pot, the buttons the law allows, a raise slider,
   the log. It swallows its own presses and keys (a slider's arrow is never a step that stands you up).
 - **The host** (`worldModes.js` - THE FOUR HOSTS, AUDIT CARDS-2 L13: the interior mode machine both `world.js` and
@@ -588,7 +588,7 @@ Iliac Bay's kingdoms as the suits, and their royals for the courts with the crow
   hand's names (a pair of kings, a flush) are the game's.
 - **THE ART IS OURS** (section 6.2): every face is painted from canvas paths in code - no ARENA2 pixel, no font glyph for
   a charge. ONE HOME: the cloth's atlas (`render/cardTableDraw.js`, its cells now 128 x 180 for the royals) and the
-  panel's little cards (`ui/cardTableHud.js`, each card its own painted face; a page with no canvas writes "K Daggerfall")
+  panel's little cards (`ui/card/cardTableHud.js`, each card its own painted face; a page with no canvas writes "K Daggerfall")
   are one painter. The panel's hover names the card ("Gothryd, King of Daggerfall", "The Seal of Wayrest").
 - **Pins:** `test/cardsbay_faces.test.js` 7 (the crowns, the royals against the game's roll, the pips, every face inked
   and drawn not written, the back, the panel painting with the same painter, no ARENA2 read). Mutants in
@@ -760,7 +760,7 @@ CARDS8"**.
   sheet while it is carried - and holds the DECKS (`decks`, declared item fields, replaced whole when they change). Every
   character is given a binder and the starter deck's thirty cards once (`binderGift`: at chargen, and on an older save's
   load), the starter deck laid in it.
-- **THE DECK BUILDER** (`ui/cardBinderPage.js`, the Collections page's Cards): the collection in a grid of the painted
+- **THE DECK BUILDER** (`ui/card/cardBinderPage.js`, the Collections page's Cards): the collection in a grid of the painted
   faces - a held card at its count, an unheld one dim (what is still to find) - narrowed by kind; the decks with the
   rules' word on each and the pack's (a deck needs the cards it names); a deck built a press at a time (a card in the
   grid goes in, never more than the binder holds; one in the deck comes out) and kept once lawful; a deck taken apart on a
@@ -989,14 +989,14 @@ him up** - folded out of turn, cashed out.
 
 - **THE CAUSE.** The cards take a finger on the hand, the chips and the cloth at the capture phase
   (`scenes/worldModes.js` `cardPointerListen`, AUDIT CARDS-3 C5: pointer events, so a touch is a pointer too) - but
-  the touch layer (`ui/touch.js`) reads the raw TOUCH events, and read the same finger again: a still, short touch on
+  the touch layer (`ui/touch/touch.js`) reads the raw TOUCH events, and read the same finger again: a still, short touch on
   the right half is its TAP, the activate press along the finger's ray (`world.js` `inputHooks.tap` -> `_tapArmed` ->
   the activate gate -> `tryExit`), and seated the press stands him up (CARDS2: "the press stands you up and does
   nothing else"). A chip carried up the cloth was the layer's LOOK, turning the seated head under the chips; a held
   drag its swing. Driven in Chromium on main's own `touch.js` under the cards' listeners (390 x 844, touch): the tap
   on the held hand and the tap on the cloth each reached the host as a TAP, the chip drag as eight looks. The mouse
   never had it - the panel holds the cursor, and a press the cards take is cancelled before the seat sees it.
-- **THE FIX** (`ui/touch.js` `cardTable`, the hosts' `cardTable: () => !!modes?.cardSeated?.()` in `scenes/world.js`
+- **THE FIX** (`ui/touch/touch.js` `cardTable`, the hosts' `cardTable: () => !!modes?.cardSeated?.()` in `scenes/world.js`
   and `scenes/exterior.js` - both enter buildings through worldModes - over worldModes' `cardSeated`, true in an
   interior while a seat is held). While he sits, the layer's look, swing and tap stand down (a swing held into the
   seat let go once), and so do the gyro's turn and the stick's half tap (the lock pick). The stick still walks him off
@@ -1156,7 +1156,7 @@ The same ask: section 8's last open lines.
   view's height, `CLICK_MS`) checks when the law has a check, and a push UP the screen (`PUSH_FOLD`, more up than
   across) folds on the player's turn. The act is the panel's own press; the law still judges it. A press is ONE
   pointer's - a second finger, a cancel or a lost capture lets it go unread (E2) - and a finger the cards took is never
-  the touch layer's stick (`ui/touch.js` `cardHeld`, E1). Seen in the lab
+  the touch layer's stick (`ui/touch/touch.js` `cardHeld`, E1). Seen in the lab
   (`cards.html?...&squeeze=1`, the probe's `squeeze-seat` shot).
 - **THE FRAME COST, MEASURED** (`tools/cardsPhoneProbe.mjs`, the lab's `bench` and `&split`; re-measured by AUDIT
   CARDS-6 E15). On the probe's software GL (SwiftShader, every pixel the CPU's - a ceiling, not a phone's own number),
@@ -1235,7 +1235,7 @@ to be settled - visit the tables they were staked at first", at the first gold t
   to name). THE FOUR HOSTS: the stakes book is `world.js`'s alone (the realm session is the streaming host's);
   `worldModes.js` reads it through `host.cardStakes`; `exterior.js` hands its modes no stakes book (its taverns' tables
   play offline, section 14) and `dungeonContext.js` has no tavern.
-- **CARDS-PANEL** (`ui/cardTableHud.js`). The model: the line's `tone` (`warn` - a refusal, a purse too thin to sit,
+- **CARDS-PANEL** (`ui/card/cardTableHud.js`). The model: the line's `tone` (`warn` - a refusal, a purse too thin to sit,
   the relay's refusal; `wait` - a stake being asked; `turn` - your turn), the buy-in's `picks` (`buyInPicks`: Min and
   Max) and the raise's (`raisePicks`: half the pot and the pot as a raise TO - the bet faced, then the pot once called or
   its half - on the slider's step, strictly inside the law's range; the floor is the slider's start, the ceiling All in),
@@ -1264,7 +1264,7 @@ Currently it doesnt"**.
 - **WHAT WAS WRONG, MEASURED.** CARDS4 and CARDS10 each laid a sheet of its own - "the enhanced skin's dark plate and
   gold" - in Georgia, serif, set on the panel's root and again on every button: under the Plus sheet, in Chromium, both
   roots and their buttons computed `Georgia, serif`, so FONT3's face on the body reached no word of either. The kit
-  (`ui/enhancedFrame.js` FRAME_ROLES) named none of their surfaces, where PLUS-ONLY's law is that a new enhanced surface
+  (`ui/enhanced/enhancedFrame.js` FRAME_ROLES) named none of their surfaces, where PLUS-ONLY's law is that a new enhanced surface
   is dressed by it. Their generic words were the enhanced sheet's own bare components and took them: an Iliac holding's
   row (`.row`) a menu row's 11px 18px padding and its underline, Hold'em's little card (`.card`) a settings card's
   border and its 16px foot, the note (`.note`) a 10px top margin. The Collections page said it was "dressed by the
@@ -1273,7 +1273,7 @@ Currently it doesnt"**.
   their CSS size, past the painter's tile bound (`ILIAC_TILE_MAX_H`), so the hand wore the full face's rules box at 4px
   (AUDIT CARDS-5 made the tile face for exactly that size), beside a face cache of its own; and its log ran its sentences
   together under a hidden overflow, the newest cut off - the defect CARDS-PANEL fixed on the Hold'em panel alone.
-- **THE DRESS** (`ui/cardPanelKit.js`, the naval readout's way - a panel over the world, outside the window stack):
+- **THE DRESS** (`ui/card/cardPanelKit.js`, the naval readout's way - a panel over the world, outside the window stack):
   each panel's own sheet (`CARD_TABLE_CSS`, `ILIAC_TABLE_CSS`, exported so the sheets' reader evaluates them) writes
   geometry and words - the face's trio and its five on the root, every press, slider and field taking it (AUDIT
   CARDS-PLUS B11: a slider took it only then), an edge a width and a style and never a colour, the kit's (C3) - and the
@@ -1308,7 +1308,7 @@ Currently it doesnt"**.
   what the painter draws (`holdingLead` - the rules' own law over the power the view shows, a tie nobody's, the
   result's word once decided; `iliacOutcome`; each holding's `open` places - a staged unit takes one, a staged spell
   none; the line's `tone`; `spectator`; the presses' `kind`; `dealt` - A3). Every card is the binder's own painting at its CSS
-  size and the screen's ratio, 2 at most as the binder paints (`ui/cardBinderPage.js` cardCanvas), a fresh copy for each place it stands
+  size and the screen's ratio, 2 at most as the binder paints (`ui/card/cardBinderPage.js` cardCanvas), a fresh copy for each place it stands
   (`cardCanvasCopy`) - the tile face, one cache.
 - **THE COLLECTIONS PAGE**: the Codex | Cards switch, the binder's kind filters and a deck's chips are the kit's tiles,
   a codex row its list line, a deck its panel, a deck's name its field; the page's sheets give them the 2px edge the
@@ -1331,7 +1331,7 @@ Currently it doesnt"**.
   every word the new look added goes through the text core, read when it is shown - the verdict, the fold, the setup's
   heads and boxes, the track (the magicka by DFU's own key), the other player's line and state, the empty tray: 17 port
   keys - 15 under `cards.iliac.`, the fold's 2 under `cards.table.fold.` (both panels' fold since AUDIT CARDS-PLUS
-  B10/D5, `ui/cardPanelKit.js` foldWords - Hold'em's had stayed English) - drafted in the thirteen whole languages,
+  B10/D5, `ui/card/cardPanelKit.js` foldWords - Hold'em's had stayed English) - drafted in the thirteen whole languages,
   each one's glossary given the terms they settled (D6). The panel's older words are the
   routing batches' (L10N4's ratchet holds `iliacTableHud.js` at 63, six under its 69, and `cardTableHud.js` at 80, its
   fold's four words routed). The ratchet's scan read the
@@ -1370,14 +1370,14 @@ finding reproduced again on the live tree after the merge of main and fixed or r
   panels the dress's small windows (B4); a target a ring outside its plate (B5); an edge in the panels' sheets a width and
   a style, the kit's colour - the pot's outweighed the kit's chip - and the board wrapping its pot, which ran 31 px off
   a phone's panel at a full table's showdown (B6, C3); the winner's brass ground re-said by each colour after its panel
-  ground (B7, `ui/enhancedFrame.js` themeCss); a choice that cannot be made taking no pointer (B8); the keyboard on a
+  ground (B7, `ui/enhanced/enhancedFrame.js` themeCss); a choice that cannot be made taking no pointer (B8); the keyboard on a
   staged card shown (B9); every field and slider in the face (B11). The probe proves what it says (C5): every part a
   check reads counted there - 100 of its 314 checks had run over nothing - a gold table's note, a friendly game's, a
   full table at its river and its showdown, a 360 phone, a short window and a landscape phone under a finger, each
   state's mark read against its rest in every look, the fold by what is drawn, no card over another. C6 is section 38's
   words and the Ledger's F6 row.
 - **The words** (lane D): the scan's selector rule asks for a class and lets no digit open a name (D1); the fold says
-  what the player sees - "Collapse the panel", "Expand the panel" - on both panels, routed once (`ui/cardPanelKit.js`
+  what the player sees - "Collapse the panel", "Expand the panel" - on both panels, routed once (`ui/card/cardPanelKit.js`
   foldWords), its name to a screen reader too (D5, B10); the Norwegian ranked box and the Romanian "against" (D3, D4);
   each glossary given the terms the drafts settled (D6); the key count said truly (D2).
 - **The pins** (lane E): each panel's classic dressing read alone (E1); the duel's holder at an end where each side

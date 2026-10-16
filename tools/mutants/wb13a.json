@@ -183,7 +183,7 @@
   },
   {
     "name": "WB13a-the-grounds-warning-over-a-blow",
-    "file": "src/ui/gateGroundView.js",
+    "file": "src/ui/gate/gateGroundView.js",
     "old": "warn: peril ? GROUND_VIEW_TEXT.peril(peril.name) : inside ? GROUND_VIEW_TEXT.warn(ground) : null",
     "new": "warn: inside ? GROUND_VIEW_TEXT.warn(ground) : peril ? GROUND_VIEW_TEXT.peril(peril.name) : null",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "WB13a-the-rim-flat-through-the-wind-up",
-    "file": "src/ui/gateGroundView.js",
+    "file": "src/ui/gate/gateGroundView.js",
     "old": "PERIL_EDGE[0] + (PERIL_EDGE[1] - PERIL_EDGE[0]) * t * t",
     "new": "PERIL_EDGE[0]",
     "tests": [

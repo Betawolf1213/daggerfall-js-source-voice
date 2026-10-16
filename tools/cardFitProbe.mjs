@@ -52,7 +52,7 @@ import { ARMOR_MATERIAL } from '/src/systems/armorMaterials.js';
 import { setLocked } from '/src/systems/item/itemLock.js';
 import { setPref } from '/src/systems/uiPrefs.js';
 import { createInventoryWindow } from '/src/ui/inventoryDoor.js';
-import { mountEnhancedPlayerTrade } from '/src/ui/enhancedPlayerTrade.js';
+import { mountEnhancedPlayerTrade } from '/src/ui/enhanced/enhancedPlayerTrade.js';
 
 setPref('lootRarity', true);
 const armour = (templateIndex, set, xp, rarity = 'rare') => {

@@ -137,7 +137,7 @@
   },
   {
     "name": "HOMEVENDOR-an-off-map-pixel-taken",
-    "file": "src/ui/vendorMapMark.js",
+    "file": "src/ui/vendor/vendorMapMark.js",
     "old": " || px >= size.width || py >= size.height) return null;",
     "new": ") return null;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "HOMEVENDOR-a-throw-passed-on",
-    "file": "src/ui/vendorMapMark.js",
+    "file": "src/ui/vendor/vendorMapMark.js",
     "old": "  try { m = typeof fn === 'function' ? fn() : null; } catch { return null; }",
     "new": "  m = typeof fn === 'function' ? fn() : null;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "HOMEVENDOR-no-ring",
-    "file": "src/ui/vendorMapMark.js",
+    "file": "src/ui/vendor/vendorMapMark.js",
     "old": "  return m ? gateRingTexels(m, originX, originY, width, height) : [];",
     "new": "  return [];",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "HOMEVENDOR-the-search-unread",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "      const found = vendorSearch(rows, st.query, { nameOf, townOf });",
     "new": "      const found = rows;",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "HOMEVENDOR-a-buy-on-the-board",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "rowNodes(r, { where: true })",
     "new": "rowNodes(r, { where: true, buy: true })",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "HOMEVENDOR-buy-for-the-owner",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "rowNodes(r, { buy: !own && !r.mine,",
     "new": "rowNodes(r, { buy: true,",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "HOMEVENDOR-the-put-unwired",
-    "file": "src/ui/vendorTab.js",
+    "file": "src/ui/vendor/vendorTab.js",
     "old": "() => act(() => v.put(chosen, st.price))",
     "new": "() => act(async () => ({ ok: true }))",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "HOMEVENDOR-the-page-always-shown",
-    "file": "src/ui/vendorPage.js",
+    "file": "src/ui/vendor/vendorPage.js",
     "old": "export const vendorPageShown = () => { try { return !!_provider && _provider.shown() === true; } catch { return false; } };",
     "new": "export const vendorPageShown = () => true;",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "HOMEVENDOR-the-sales-unread",
-    "file": "src/ui/vendorPage.js",
+    "file": "src/ui/vendor/vendorPage.js",
     "old": "    const sold = [...(mine.sold ?? []), ...(mine.patronSold ?? [])]",
     "new": "    const sold = [...(mine.patronSold ?? [])]",
     "tests": [

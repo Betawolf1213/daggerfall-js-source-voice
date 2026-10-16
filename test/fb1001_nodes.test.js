@@ -27,7 +27,7 @@ import { trees, veins, herbPatches, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { createForagingItem, setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
-import { createProfHud } from '../src/ui/profHud.js';
+import { createProfHud } from '../src/ui/professions/profHud.js';
 import { insideRocks, natureStandsAt } from '../src/world/terrain/terrainNature.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { WORLD_MAP_TILE_DIM } from '../src/world/terrain/terrainTiles.js';

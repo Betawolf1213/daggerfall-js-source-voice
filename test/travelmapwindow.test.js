@@ -15,7 +15,7 @@ import {
   IDENTIFY_FLASH_COUNT, IDENTIFY_FLASH_COUNT_SELECTED, IDENTIFY_FLASH_INTERVAL,
   getRegionMapNames, getRegionMapScale, getPixelColorIndex, hasRegionPage,
   _setTravelMapArtForTests, setRevealUndiscoveredLocations,
-} from '../src/ui/travelMapWindow.js';
+} from '../src/ui/travel/travelMapWindow.js';
 import { resetTravelMapState, travelMapSaveData, setTravelMapPopUpState } from '../src/systems/travel/travelMapState.js';
 import { composeSessionState, restoreSessionState } from '../src/systems/save/save.js';
 import { buildMapDict, locationSummaryAt, hasLocation } from '../src/systems/map/mapDirectory.js';
@@ -805,7 +805,7 @@ test('U41: a window that finishes in its own tick is cleared by the host', () =>
 });
 
 test('U41: the preload asks for exactly the classic files, and a missing one closes the door', async () => {
-  const { preloadTravelMapArt, travelMapArtLoaded } = await import('../src/ui/travelMapWindow.js');
+  const { preloadTravelMapArt, travelMapArtLoaded } = await import('../src/ui/travel/travelMapWindow.js');
   _setTravelMapArtForTests(null);
   try {
     const asked = [];
@@ -938,7 +938,7 @@ test('U41: a right-click on the map is the map\'s, never a swing', () => {
 });
 
 test('U41: the source carries the laws it claims', () => {
-  const src = readFileSync(new URL('../src/ui/travelMapWindow.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/ui/travel/travelMapWindow.js', import.meta.url), 'utf8');
   assert.ok(src.includes('hasDiscoveredLocationId(summary.id) || !!summary.discovered || _revealUndiscoveredLocations'),
     'checkLocationDiscovered is the ONE test: store OR baked flag OR the cheat');
   assert.ok(src.includes('Math.trunc((((height - y - 1) * width) + x) * this.scale)'),

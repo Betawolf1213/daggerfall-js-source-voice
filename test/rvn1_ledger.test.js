@@ -45,7 +45,7 @@ const { Collider } = await import('../src/player/collider.js');
 const { EnemyAI } = await import('../src/characters/enemyMotor.js');
 const { EnemyAttack } = await import('../src/characters/enemyAttack.js');
 const { MobileUnit, PRIMARY_ATTACK_ANIM_SPEED } = await import('../src/characters/mobileUnit.js');
-const { drawRevenantsPage, scarWords } = await import('../src/ui/revenantPage.js');
+const { drawRevenantsPage, scarWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });
@@ -560,7 +560,7 @@ test('RVN1 the page: a living revenant\'s scars in words, newest first and each 
   assert.equal(scarWords({ scars: [{ k: 'fire', at: 1 }, { k: 'slew', at: 1 }, { k: 'night', at: 1 }, { k: 'fire', at: 2 }, { k: 'staggered', at: 2 }] }), 'Scarred by staggered, fire, fought by night.');
   assert.equal(scarWords({ scars: [{ k: 'fled', at: 1 }] }), '', 'a deed alone: nothing to say');
   assert.equal(scarWords({}), '');
-  const page = read('src/ui/revenantPage.js');
+  const page = read('src/ui/revenant/revenantPage.js');
   for (const [d, w] of [['felled', 'felled your companion'], ['routed', 'routed you'], ['festered', 'grew bolder'], ['deserted', 'deserted you'], ['betrayed', 'betrayed you'], ['laststand', 'made its last stand']]) {
     assert.ok(page.includes(`${d}: '${w}'`), d);
   }

@@ -26,7 +26,7 @@ import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainS
 
 installForaging({ fetchBytes: async () => new Uint8Array(0) });
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const RETICLE = readFileSync(new URL('../src/ui/profReticle.js', import.meta.url), 'utf8');
+const RETICLE = readFileSync(new URL('../src/ui/professions/profReticle.js', import.meta.url), 'utf8');
 
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;
 const WILD = Object.freeze({ inside: false, insideDungeon: false, insideCastle: false, locationType: LOCATION_TYPES.None, inLocationRect: false,

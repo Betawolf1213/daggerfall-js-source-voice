@@ -13,7 +13,7 @@ import { SHADOW_CASCADES, SHADOW_FAR_CASCADE_EVERY, SHADOW_EMPTY_HOLD } from '..
 import { SHADOW_TUNING } from '../src/render/shadowPass.js';
 SHADOW_TUNING.override = false;   // these tests pin EL8's schedule
 import { EL_LANE } from '../src/render/enhancedLighting.js';
-import { TravelJunctionMap } from '../src/ui/travelJunctionMap.js';
+import { TravelJunctionMap } from '../src/ui/travel/travelJunctionMap.js';
 import { WISP_VS, WISP_LOOK, SAND_LOOK, WindWispsRenderer } from '../src/render/windWisps.js';
 import { VolumetricClouds, QUALITY, MARCH_FS, MARCH_UNIFORMS, SHAPE_METRES, EVOLVE_M_PER_MINUTE } from '../src/render/volumetricClouds.js';
 import { skyState, WEATHER_SKY } from '../src/render/enhancedSky.js';

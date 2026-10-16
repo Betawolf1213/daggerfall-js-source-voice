@@ -27,8 +27,8 @@ const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 const { validFoeRecord } = await import('../src/net/wire.js');
-const { fateColumn, fateKey } = await import('../src/ui/revenantFateView.js');
-const { remoteModel, REMOTE_TITLE } = await import('../src/ui/enhancedInventory.js');
+const { fateColumn, fateKey } = await import('../src/ui/revenant/revenantFateView.js');
+const { remoteModel, REMOTE_TITLE } = await import('../src/ui/enhanced/enhancedInventory.js');
 const { WEAPONS_ENUM: W } = await import('../src/combat/enemyEquipment.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -354,7 +354,7 @@ test('REVENANT-FATE the loot window\'s FATE side: the loot frame\'s own head (it
   assert.deepEqual(keys, [['pick', 'spare'], ['choose', 'spare'], ['choose', 'kill'], ['pick', null]]);
   assert.equal(REMOTE_TITLE.fate, 'Fate');
   assert.deepEqual(remoteModel({ fate: model, loot: { items: () => [{ name: 'x' }] } }, {}), { kind: 'fate', title: 'Grushnak the Butcher', items: [], count: 0, weight: 0, capacity: null, pile: null }, 'the remote side is the fate, never the body\'s list');
-  const inv = read('src/ui/enhancedInventory.js');
+  const inv = read('src/ui/enhanced/enhancedInventory.js');
   assert.match(inv, /if \(remote\.kind === 'fate'\) return fateCol\(\);/);
   assert.match(inv, /loot-win\$\{remote\.count > LOOT_ONE_COLUMN \? ' wide' : ''\}\$\{remote\.kind === 'fate' \? ' fate' : ''\}/, 'the loot window\'s own frame');
   const door = read('src/ui/inventoryDoor.js');

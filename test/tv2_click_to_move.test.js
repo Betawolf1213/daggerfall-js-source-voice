@@ -19,13 +19,13 @@ import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/t
 import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin, MID_LO, P_SIZE } from '../src/systems/travel/travelPaths.js';
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';
-import { TravelControlUI } from '../src/ui/travelControlUI.js';
+import { TravelControlUI } from '../src/ui/travel/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
 import { DIR, DIR_DELTA } from '../src/world/road/roadNetwork.js';
 import { createTravelView, TRAVEL_VIEW_TEXT, travelTripLine } from '../src/scenes/travelView.js';
-import { routePath } from '../src/ui/travelViewHud.js';
+import { routePath } from '../src/ui/travel/travelViewHud.js';
 import { forwardOf, TV_RISE_S } from '../src/player/travelCamera.js';
-import { TRAVEL_HELD_TEXT } from '../src/ui/enhancedTravelControl.js';   // AUDIT DEEP X-6
+import { TRAVEL_HELD_TEXT } from '../src/ui/enhanced/enhancedTravelControl.js';   // AUDIT DEEP X-6
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -498,7 +498,7 @@ test('TV2 readout: the route line moves to its first point, lines through the re
   // PIN MOVED (AUDIT OW5 G1): the words say WHY - the load, or AUDIT OW4 J5's walk on the ground until the view rises
   assert.equal(TRAVEL_HELD_TEXT(20, 40), 'Held to ×20 of ×40 while the land loads');
   assert.equal(TRAVEL_HELD_TEXT(1, 20, 'ground'), 'Held to ×1 of ×20 until the Overworld rises');
-  assert.match(rd('src/ui/enhancedTravelControl.js'), /const why = held != null \? TRAVEL_HELD_TEXT\(held, accel, state\.heldWhy\) : '';\n\s*if \(parts\.accel && last\.accelTitle !== why\) \{ last\.accelTitle = why; parts\.accel\.title = why; \}/);   // RATE-LAW: every hold said, the enemies' too (ENEMY-PACE's stepper is gone)
+  assert.match(rd('src/ui/enhanced/enhancedTravelControl.js'), /const why = held != null \? TRAVEL_HELD_TEXT\(held, accel, state\.heldWhy\) : '';\n\s*if \(parts\.accel && last\.accelTitle !== why\) \{ last\.accelTitle = why; parts\.accel\.title = why; \}/);   // RATE-LAW: every hold said, the enemies' too (ENEMY-PACE's stepper is gone)
 });
 
 // ── THE WORLD HOST'S WIRING ─────────────────────────────────────────────────────────────────────────────────────────
@@ -558,10 +558,10 @@ test('TV2 host wiring: THE CAP - governed before the frame reads the travel scal
   // build threw and that it let go
   assert.match(w, /if \(uc\.gen !== gen \|\| uc\.x !== px\.x \|\| uc\.y !== px\.y \|\| uc\.r !== radius\) \{\n(?:\s*\/\/[^\n]*\n)*\s*uc\.n = unbuiltAround\(px, radius, \(x, y\) => built\.has\(`\$\{x\},\$\{y\}`\) \|\| !state\.loaded\.has\(`\$\{x\},\$\{y\}`\)\);/);
   assert.match(w, /held: tvHeld,/, 'the travel panel says the clock is held');
-  const panel = rd('src/ui/enhancedTravelControl.js');
+  const panel = rd('src/ui/enhanced/enhancedTravelControl.js');
   assert.match(panel, /put\(parts\.accel, 'accel', held != null \? `×\$\{held\} \/ ×\$\{accel\}` : `×\$\{accel\}`\);/);   // RATE-LAW: every hold shown, the enemies' too
-  assert.match(rd('src/ui/enhancedPlusStyle.js'), /\.travelpanel-accel\.held \{/);
-  assert.match(rd('src/ui/enhancedStyle.js'), /\.travelpanel-accel\.held \{/);
+  assert.match(rd('src/ui/enhanced/enhancedPlusStyle.js'), /\.travelpanel-accel\.held \{/);
+  assert.match(rd('src/ui/enhanced/enhancedStyle.js'), /\.travelpanel-accel\.held \{/);
 });
 
 test('OW-MOUNTAINS (Mac: "You shouldnt be able to navigate mountains"), then MOUNTAINS WALKABLE (the owner, the Wrothgarian zone\'s merge): NO open step is refused on foot any more - into the Mountain climate, up or down a steep rise: walked (openStepBlocked), and the route goes straight over the peaks; the PLANNER still honours a ground that refuses (OW-MOUNTAINS\' old law, a stand-in): the route goes round, a road over the pass is walked, only the traveller\'s OWN peaks are left freely (AUDIT OW4 J1: the start\'s connected range, `peakAt`), and the step onto the goal is exempt only for a place (AUDIT OW3 J5)', () => {
