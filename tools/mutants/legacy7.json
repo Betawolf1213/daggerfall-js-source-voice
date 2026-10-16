@@ -149,8 +149,9 @@
   {
     "name": "LEGACY7-fall-untombed",
     "file": "src/scenes/legacyHost.js",
-    "old": "    store();\n    entomb();\n    outcome = fallOutcome();",
+    "old": "    store();\n    entomb({ keepalive });\n    outcome = fallOutcome();",
     "new": "    store();\n    outcome = fallOutcome();",
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)",
     "tests": [
       "test/legacy7_online.test.js"
     ]

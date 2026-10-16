@@ -19164,7 +19164,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // DOORS, below the duel's). AUDIT REALM2 C2: the lease given up as the page GOES (pagehide, the unload guard answered) - the leave alone, with
     // keepalive (the browser finishes it; a save that large it cannot, so the two-minute checkpoints bound what a close
     // costs) - and taken again when a page the back-forward cache kept is shown
-    whenPageGoes(globalThis, () => { realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });
+    whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });   // REZ-BLOODLINE: a death held for a Resurrect decided first - its tombstone takes the lease, the leave then sends nothing
   }
   /** REALM P1.3: A CHARACTER BORN ONLINE - made at the service once chargen is done, its first save the service's
    *  checkpoint at sequence 1, and then the one online boot there is, from the service. Any refusal goes to the door. */
@@ -26994,7 +26994,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // unconditionally, like restEnemyAt/restCancelAt above.
       restStartedAt: Number.isFinite(_partyRestJustStartedAt) ? _partyRestJustStartedAt : null,
       ...(_rezOut && performance.now() < _rezOut.until ? { rz: { to: _rezOut.to, at: _rezOut.at } } : {}),
-      ...(_deadMark ? { dd: _deadMark } : {}),   // PCORPSE3: my body, for a party member who missed the death   // RESURRECT1: my Resurrect's call, held a few sends
+      ...(_deadMark ? { dd: _deadMark } : {}), ...(legacyHost?.raisable() === false ? { fg: 1 } : {}),   // PCORPSE3: my body, for a party member who missed the death   // RESURRECT1: my Resurrect's call, held a few sends   // REZ-BLOODLINE: fallen for good - no Resurrect raises me (net/wire.js validPartyPose `fg`)
       // PARTY-TRAVEL (2026-09-25, Mac: "...the option for party members to ready up and travel together"): the party's
       // journey (net/wire.js validPartyPose, systems/partyTravelLaw.js), each field omitted when there is none - my
       // proposal while I lead one (`tv`, the round's stamp and, once we set out, `go`), my answer to the leader's round
@@ -28405,7 +28405,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     killerOf: (cid, ownAt) => revenantKillerOf(cid, ownAt), inheritFoe: (rec) => inheritRevenant(playerEntity, rec),
     // LEGACY7: online, the realm's copy of the line follows each write, and a fall is the realm's tombstone
     stored: (f) => { legacyRealmLine?.push(f); },
-    tombstone: (why) => (realmSession ? realmSession.die(why) : false),   // LEGACY7 part three: 'retired' keeps a union with another player's character
+    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false),   // LEGACY7 part three: 'retired' keeps a union with another player's character; REZ-BLOODLINE: `o.keepalive` as the page goes
     realmId: () => realmSession?.id ?? null,   // LEGACY7 part three: the realm character this tab plays (two players wed)
     look: () => composeLook(playerEntity),   // LEGACY7 part four: what the one played wears - how the world draws them while another is played
     houseHere: () => { const b = (modes?.mode ?? 'exterior') === 'interior' ? modes?.interiorBuilding : null; return b?.buildingKey > 0 && b.townMapId ? { mapId: b.townMapId >>> 0, buildingKey: b.buildingKey } : null; },
@@ -29350,10 +29350,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const out = [];
     for (const c of remotePlayers.corpseMarks(onlineToScene)) {
       const cAcct = c.acct ?? (c.id ? social.accountOfPeer(c.id) : null);   // PCORPSE3: a party-told body carries its account
-      if (!cAcct || !social.others().some((m) => m.acct === cAcct)) continue;
+      const mate = cAcct ? social.others().find((m) => m.acct === cAcct) : null; if (!mate) continue;
       if (Math.hypot(c.feet[0] - at[0], c.feet[1] - at[1], c.feet[2] - at[2]) > reach + 1) continue;
       const acct = cAcct;
-      out.push({ id: c.id, acct, feet: c.feet, name: (c.id && peerName(c.id)) || social.party.members.find((m) => m.acct === acct)?.name || null });
+      out.push({ id: c.id, acct, feet: c.feet, name: (c.id && peerName(c.id)) || social.party.members.find((m) => m.acct === acct)?.name || null, gone: mate.p?.fg === 1 });   // REZ-BLOODLINE: fallen for good, their own pose says (composePartyPose `fg`) - the cast refuses before a point is spent
     }
     return out;
   };
@@ -29811,7 +29811,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
         const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`)
-        if (rez) { resurrectInPlace(rez); return; }
+        if (rez && legacyHost?.raise() !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise)
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen

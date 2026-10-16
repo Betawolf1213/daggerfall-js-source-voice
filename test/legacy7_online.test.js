@@ -232,7 +232,8 @@ test('LEGACY7 wiring: the boot reads the lines before any save; the realm\'s cop
   assert.match(w, /const legacyRealmRead = legacyRealmLine \? Promise\.all\(\[\n\s+legacyRealmLine\.pull\(\)/, 'the lines asked at the join');
   const read = w.indexOf('    await legacyRealmRead;\n  }\n  legacyHost = createLegacyHost({');
   assert.ok(read > w.indexOf('const legacyRealmRead = ') && read < w.indexOf('await worldQuickLoad({ ...bootLoadPick, snap });') && read < w.indexOf('await classicLoadBoot();'), 'read before any save is restored');
-  assert.match(w, /stored: \(f\) => \{ legacyRealmLine\?\.push\(f\); \},\n\s+tombstone: \(why\) => \(realmSession \? realmSession\.die\(why\) : false\),/);
+  // PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): the tombstone carries its options - `keepalive` as the page goes
+  assert.match(w, /stored: \(f\) => \{ legacyRealmLine\?\.push\(f\); \},\n\s+tombstone: \(why, o\) => \(realmSession \? realmSession\.die\(why, o\) : false\),/);
   assert.match(w, /if \(realmNew\) \{ legacyRealmBirth\(host\)\.catch\(/);
   assert.match(w, /saveNow: \(\) => \(legacyFirstSave \? legacyFirstSave\(\) : /);
   assert.match(w, /if \(legacyRealmLine\) \{\n\s+if \(legacyRealmRoster && !legacyRealmRoster\.has\(String\(cid\)\)\) return false;\n\s+legacyBoot\(realmBootSearch\(location\.search, String\(cid\), BOOT_DOOR_KEYS\)\);/);

@@ -27,7 +27,11 @@ before the save that held them). The fix is a law, stated once in `scenes/legacy
 - **The store answers the world's facts** - who lived, who died, Arkay's toll, who is played, which remains exist. A
   death is decided AT THE DOOR (`characters/playerEntity.js setDeathListener`, DFU's `PlayerEntity.OnDeath`, which the
   mod itself subscribed to), before any screen, mode exit or reload; a fall leaves its Succession waiting ON THE RECORD
-  (`family.pending`).
+  (`family.pending`). DEPARTED FROM ONLINE (REZ-BLOODLINE, FIELD BUGS 2026-10-16, `06-Systems/Legacy-Arc.md`): the door
+  READS the death there and HOLDS it while a party's Resurrect can still raise the fallen (a Bloodline character raised
+  by a friend "disappears and remains dead" - the line ended over a living body); it is WRITTEN at the first of the
+  death screen's reset, the hold's window, a load and the page going - so an F11 or a closed tab still undoes nothing.
+  Offline the door decides, as here.
 - **A save answers what its character was given** - the estate and bequest paid, the remains opened, taken or laid to
   rest (`mergeFamily`). A reload rewinds them with the bag they went into.
 - **The past is played back as the past** - a dead or retired member's save, under either model, is refused for as long

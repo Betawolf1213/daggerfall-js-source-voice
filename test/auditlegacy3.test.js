@@ -1333,6 +1333,10 @@ test('AUDIT LEGACY III P8: ONLINE, A DEVICE THAT REFUSES THE LINE\'S WRITE STILL
   shared.storage.setItem = () => { throw new Error('QuotaExceededError'); };
   pushed.length = 0;
   X.host.onDeath();
+  // PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): online the door HOLDS the fall for a party's Resurrect - nothing is
+  // written until the player goes on (the reset's ask), which writes it
+  assert.deepEqual(pushed, [], 'held: nothing written yet');
+  X.host.deathOutcome();
   assert.ok(X.said.includes(LEGACY_TEXT.notStored), 'the device said so');
   assert.ok(pushed.length > 0, 'the fall went to the realm all the same');
   // offline the store stays the only authority: nothing to push

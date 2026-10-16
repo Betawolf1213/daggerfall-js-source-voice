@@ -135,8 +135,8 @@ export const realmLineagePut = (/** @type {any} */ io, /** @type {string} */ id,
   realmAsk(io, '/v1/realm/lineage', { method: 'POST', json: base == null ? { id, record } : { id, record, base } });
 /** LEGACY7: THE TOMBSTONE - the playing tab's character fallen for good, under its lease. Part three: `why` 'retired' -
  *  an elder's mantle passed, which keeps a union with another player's character (a death ends it). */
-export const realmDie = (/** @type {any} */ io, /** @type {string} */ id, /** @type {string} */ lease, /** @type {'fell'|'retired'} */ why = 'fell') =>
-  realmAsk(io, '/v1/realm/die', { method: 'POST', json: why === 'retired' ? { id, lease, why } : { id, lease } });
+export const realmDie = (/** @type {any} */ io, /** @type {string} */ id, /** @type {string} */ lease, /** @type {'fell'|'retired'} */ why = 'fell', { keepalive = false } = {}) =>
+  realmAsk(io, '/v1/realm/die', { method: 'POST', json: why === 'retired' ? { id, lease, why } : { id, lease }, keepalive });   // REZ-BLOODLINE: `keepalive` for the page's going, as a leave
 /** LEGACY7 part three: MY HALF OF ONE WEDDING - my character under its lease, the handshake `sid`, the other's account
  *  and realm character as the relay stamped them (AUDIT LEGACY III O1): `{ ok, data: { wed: false } }` (mine waits for
  *  theirs), `{ ok, data: { wed: true, union } }`, or a refusal (server-account/src/legacy.js realmWed). AUDIT LEGACY III
@@ -620,10 +620,15 @@ export function createRealmSession({
     /** LEGACY7: THE CHARACTER FELL FOR GOOD (Project Legacy) - its tombstone under this session's lease
      *  (server-account/src/legacy.js realmDie). The session ends with it, quietly - nothing of the dead is written
      *  again, and the page stays for the Succession. Answers whether the realm took it (a refusal - unheard, offline -
-     *  leaves the session as it was, to be asked again). Part three: `why` 'retired' for an elder's mantle passed. */
-    async die(/** @type {'fell'|'retired'} */ why = 'fell') {
+     *  leaves the session as it was, to be asked again). Part three: `why` 'retired' for an elder's mantle passed.
+     *  REZ-BLOODLINE (FIELD BUGS 2026-10-16): `keepalive` - THE PAGE IS GOING over a death Project Legacy held for a
+     *  Resurrect (scenes/legacyHost.js pageGone): the tombstone alone, at once - no put waited for, the page will not
+     *  wait - by keepalive, so the browser finishes it after the page; the lease goes with it, so the session is the
+     *  dead's from here and the realm's leave behind it sends nothing. */
+    async die(/** @type {'fell'|'retired'} */ why = 'fell', { keepalive = false } = {}) {
       if (lost && lost !== 'dead') return false;
       if (lost === 'dead') return true;
+      if (keepalive) { lost = 'dead'; pending = null; dropUnsent(storage, id); return realmDie(io, id, lease, why, { keepalive: true }).then((r) => !!r.ok, () => false); }
       if (running) { try { await running; } catch { /* the last put's answer does not matter now */ } }
       const r = await realmDie(io, id, lease, why);
       if (!r.ok) return false;

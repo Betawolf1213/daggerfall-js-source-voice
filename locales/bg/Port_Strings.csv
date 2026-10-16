@@ -3586,6 +3586,8 @@ prof.work.yours.silverToCome,"{state} - среброто ще бъде върн�
 prof.work.yours.where,"{where} · {said}"
 prof.work.yours.writ,"{guild}: още {n, number} {material}, {pay} за брой"
 rest.exhausted.fighting,"Твърде изтощени сте, за да се биете - отдалечете се и си починете!"
+resurrect.companion,"Вашият спътник"
+resurrect.forGood,"{name} падна завинаги. Вече никое заклинание не може да го възкреси."
 saddle.hello.key,"{key}: панел на седлото"
 saddle.hello.none,"Панел на седлото: дай му клавиш в Управление"
 saddle.note.breath,"Диша тежко - намалете"

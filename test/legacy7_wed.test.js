@@ -590,7 +590,8 @@ test('LEGACY7 part three the inspect card: the Propose button beside the Challen
   assert.match(w, /onWed: \(union\) => \{ legacyHost\?\.wedPlayer\(union\); \},/);
   assert.match(w, /peerCan: \(id\) => !!online\?\.peers\.get\(id\)\?\.house,/);
   assert.match(w, /wedFrame\(\);/);
-  assert.match(w, /tombstone: \(why\) => \(realmSession \? realmSession\.die\(why\) : false\),/);
+  // PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): the tombstone carries its options - `keepalive` as the page goes
+  assert.match(w, /tombstone: \(why, o\) => \(realmSession \? realmSession\.die\(why, o\) : false\),/);
   assert.match(w, /realmId: \(\) => realmSession\?\.id \?\? null,/);
   assert.match(w, /realmUnions\(realmIoNow\(\)\)\.then\(\(r\) => \{ if \(r\.ok\) legacyHost\?\.unionsHeard\(r\.unions\); \}\)/);
   assert.match(rd('server/src/index.js'), /this\._send\(tws, JSON\.stringify\(\{ t: 'wed', id: a\.id, \.\.\.\(typeof a\.sub === 'string' && a\.sub \? \{ sub: a\.sub \} : \{\}\), \.\.\.\(typeof a\.ci === 'string' && a\.ci \? \{ sc: a\.ci \} : \{\}\), data: m\.data \}\)\);/);

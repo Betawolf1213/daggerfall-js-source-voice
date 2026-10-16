@@ -1028,8 +1028,8 @@ export function createPlayerMagic({
       tallyCastSkills(sp);
       surfacePlayer();
       let sent = false;
-      try { sent = !!(f && raiseFallen?.(f)); } catch { sent = false; }
-      say(sent ? RESURRECT_TEXT.cast(f.name) : RESURRECT_TEXT.noBody);
+      try { sent = !!(f && !f.gone && raiseFallen?.(f)); } catch { sent = false; }   // REZ-BLOODLINE: never a call at a body fallen for good
+      say(sent ? RESURRECT_TEXT.cast(f.name) : f?.gone ? RESURRECT_TEXT.forGood(f.name) : RESURRECT_TEXT.noBody);
       return done(true);
     }
     const allyReach = allyReachFor(sp.rangeType);
@@ -1172,7 +1172,11 @@ export function createPlayerMagic({
     const cost = readiedFree ? 0 : readiedCost;   // S10: the per-effect skill-scaled cost; free readies spend nothing
     // RESURRECT1: nothing is spent on a Resurrect with no fallen party member under the crosshair
     const raising = hasResurrect(sp) && !readiedFree;
-    if (raising && !fallenInReach(eye, dir)) { say(RESURRECT_TEXT.noBody); return false; }
+    const fallen = raising ? fallenInReach(eye, dir) : null;
+    if (raising && !fallen) { say(RESURRECT_TEXT.noBody); return false; }
+    // REZ-BLOODLINE (FIELD BUGS 2026-10-16): ...nor on a body fallen for good - their house's death is decided (their party
+    // pose's `fg`, scenes/legacyHost.js raisable), and their own client would refuse the call: said, and the spell kept
+    if (fallen?.gone) { say(RESURRECT_TEXT.forGood(fallen.name)); return false; }
     // AUDIT CONTRIB A1: a Resurrect's touch IS the body - the gate above found one in reach, and the probe below sees
     // only foes and standing mates, so a Resurrect at a body with no foe beside it was eaten silently here
     if (sp.rangeType === 1 && !raising) {
@@ -1261,7 +1265,7 @@ export function createPlayerMagic({
       // gives it to the mate under the crosshair, or, aimed anywhere else, to the caster, as CasterOnly always does.
       if (!free && allyCastable(sp) && allyNear(lastAim?.eye ?? null, sp)) { sayArm('mate-near', prevArm, pressButtonToFireSpellText(), ALLY_ARMED_LINE); return true; }
       if (companionNear(lastAim?.eye ?? null, sp)) { sayArm('mine-near', prevArm, pressButtonToFireSpellText(), COMPANION_ARMED_LINE); return true; }
-      if (!free && hasResurrect(sp)) { say(fallenInReach(lastAim?.eye ?? null, lastAim?.dir ?? null) ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim); return true; }   // RESURRECT1: a caster-only Resurrect waits for the click, aimed at the body
+      if (!free && hasResurrect(sp)) { const f = fallenInReach(lastAim?.eye ?? null, lastAim?.dir ?? null); say(f?.gone ? RESURRECT_TEXT.forGood(f.name) : f ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim); return true; }   // RESURRECT1: a caster-only Resurrect waits for the click, aimed at the body; REZ-BLOODLINE: one fallen for good is said so
       return castInput(null, null) !== false;
     }
     // AUDIT 24 scenes: SetReadySpell's own line, verbatim -

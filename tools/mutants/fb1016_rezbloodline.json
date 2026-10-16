@@ -1,0 +1,253 @@
+[
+  {
+    "name": "REZ-BLOODLINE-decided-at-the-door-online",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (!deps.online()) return decideDeath();",
+    "new": "    return decideDeath();",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "the reporter's bug: the door writes the death online too - the Resurrect raises a body the house already buried"
+  },
+  {
+    "name": "REZ-BLOODLINE-held-offline",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (!deps.online()) return decideDeath();",
+    "new": "    if (false) return decideDeath();",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "offline no party can raise them - the door decides, as AUDIT LEGACY A1/B3 has it"
+  },
+  {
+    "name": "REZ-BLOODLINE-the-resurrect-lets-nothing-go",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held && !heldOver()) { held = null; deathSeen = false; outcome = null; return true; }\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-a-late-call-decides-nothing",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held) decideDeath();\n    return raisable();",
+    "new": "    return raisable();",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-decided-and-raised-anyway",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    return !(fallen?.died && playedHere(fallen));",
+    "new": "    return true;",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-hold-never-ends",
+    "file": "src/scenes/legacyHost.js",
+    "old": "  const heldOver = () => !!held && wallNow() >= held.until;",
+    "new": "  const heldOver = () => false;",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-window-the-body-minute-alone",
+    "file": "src/scenes/legacyHost.js",
+    "old": "export const REZ_HOLD_MS = (Math.max(ONLINE_RESPAWN_SECONDS, WILD_DEATH_HOLD_S) + 30) * 1000;",
+    "new": "export const REZ_HOLD_MS = (ONLINE_RESPAWN_SECONDS + 30) * 1000;",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "the open zone's death screen stands two minutes - a Resurrect late in it is a Resurrect inside the hold"
+  },
+  {
+    "name": "REZ-BLOODLINE-the-slow-step-never-decides",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
+    "new": "    if (held && (deps.entity?.health ?? 0) > 0) decideDeath();",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-a-respawn-undoes-it",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
+    "new": "    if (held && heldOver()) decideDeath();",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "a body brought up by no Resurrect (a respawn that never asked the reset) is the death as it was"
+  },
+  {
+    "name": "REZ-BLOODLINE-the-living-step-over-the-dead",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held) return null;   // REZ-BLOODLINE: the dead wait on the hold - nothing of the living one's runs over them\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-a-load-undoes-it",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    // load: the mod's restore, systems/modSaveData.js) - so no load undoes a death a Resurrect never answered (A1/B3)\n    if (held) decideDeath();\n",
+    "new": "    // load: the mod's restore, systems/modSaveData.js) - so no load undoes a death a Resurrect never answered (A1/B3)\n",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-a-new-game-undoes-it",
+    "file": "src/scenes/legacyHost.js",
+    "old": "      if (held) decideDeath();   // REZ-BLOODLINE: a death held for a Resurrect is decided before the page plays anyone else\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-page-goes-unheard",
+    "file": "src/scenes/legacyHost.js",
+    "old": "  function pageGone() { if (held) decideDeath({ keepalive: true }); }",
+    "new": "  function pageGone() { }",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-page-goes-without-keepalive",
+    "file": "src/scenes/legacyHost.js",
+    "old": "  function pageGone() { if (held) decideDeath({ keepalive: true }); }",
+    "new": "  function pageGone() { if (held) decideDeath({ keepalive: false }); }",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-host-deaf-to-the-page",
+    "file": "src/scenes/legacyHost.js",
+    "old": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('pagehide', fn)))(pageGone);\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-host-hears-the-wrong-page-event",
+    "file": "src/scenes/legacyHost.js",
+    "old": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('pagehide', fn)))(pageGone);",
+    "new": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('pageshow', fn)))(pageGone);",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-reset-decides-nothing",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    if (held) decideDeath();\n    deathSeen = false;\n    const out = outcome",
+    "new": "    deathSeen = false;\n    const out = outcome",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-toll-taken-at-the-door",
+    "file": "src/scenes/legacyHost.js",
+    "old": "      const paid = payToll({ ...p }, toll.share, toll.lived, toll);",
+    "new": "      const paid = payToll(p, toll.share, toll.lived, toll);",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-toll-never-taken",
+    "file": "src/scenes/legacyHost.js",
+    "old": "      payToll(p, h.toll.share, h.toll.lived, h.toll);   // the years the door counted\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-remains-unlaid",
+    "file": "src/scenes/legacyHost.js",
+    "old": "    (family.remains ??= []).push(h.remains);\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-tombstone-without-its-options",
+    "file": "src/scenes/legacyHost.js",
+    "old": "deps.tombstone(why, { keepalive })",
+    "new": "deps.tombstone(why)",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-world-the-rise-asks-nobody",
+    "file": "src/scenes/world.js",
+    "old": "        if (rez && legacyHost?.raise() !== false) { resurrectInPlace(rez); return; }",
+    "new": "        if (rez) { resurrectInPlace(rez); return; }",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "the reporter's own frame: the body rises whatever the house decided, and the line ends over it a second later"
+  },
+  {
+    "name": "REZ-BLOODLINE-world-the-page-leaves-first",
+    "file": "src/scenes/world.js",
+    "old": "    whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }",
+    "new": "    whenPageGoes(globalThis, () => { realmSession.leave({ keepalive: true }); legacyHost?.pageGone(); }",
+    "tests": ["test/fb1016_rezbloodline.test.js"],
+    "note": "the leave gives the lease up before the tombstone asks under it"
+  },
+  {
+    "name": "REZ-BLOODLINE-world-the-tombstone-drops-its-options",
+    "file": "src/scenes/world.js",
+    "old": "    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false),",
+    "new": "    tombstone: (why, o) => (realmSession ? realmSession.die(why) : false),",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-world-the-pose-says-nothing",
+    "file": "src/scenes/world.js",
+    "old": "...(legacyHost?.raisable() === false ? { fg: 1 } : {}),",
+    "new": "...(false ? { fg: 1 } : {}),",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-world-the-pick-blind",
+    "file": "src/scenes/world.js",
+    "old": ", gone: mate.p?.fg === 1 });",
+    "new": ", gone: false });",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-wire-drops-fg",
+    "file": "src/net/wire.js",
+    "old": "  if (p.fg === 1) out.fg = 1;\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-session-waits-on-the-page",
+    "file": "src/systems/realmSaves.js",
+    "old": "      if (keepalive) { lost = 'dead'; pending = null; dropUnsent(storage, id); return realmDie(io, id, lease, why, { keepalive: true }).then((r) => !!r.ok, () => false); }\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-leave-goes-too",
+    "file": "src/systems/realmSaves.js",
+    "old": "      if (keepalive) { lost = 'dead'; pending = null;",
+    "new": "      if (keepalive) { pending = null;",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-tombstone-cut-off-with-the-page",
+    "file": "src/systems/realmSaves.js",
+    "old": "json: why === 'retired' ? { id, lease, why } : { id, lease }, keepalive });",
+    "new": "json: why === 'retired' ? { id, lease, why } : { id, lease }, keepalive: false });",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-cast-spends-on-the-dead",
+    "file": "src/scenes/hostMagic.js",
+    "old": "    if (fallen?.gone) { say(RESURRECT_TEXT.forGood(fallen.name)); return false; }\n",
+    "new": "",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-release-calls-the-dead",
+    "file": "src/scenes/hostMagic.js",
+    "old": "sent = !!(f && !f.gone && raiseFallen?.(f));",
+    "new": "sent = !!(f && raiseFallen?.(f));",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-release-says-no-body",
+    "file": "src/scenes/hostMagic.js",
+    "old": "say(sent ? RESURRECT_TEXT.cast(f.name) : f?.gone ? RESURRECT_TEXT.forGood(f.name) : RESURRECT_TEXT.noBody);",
+    "new": "say(sent ? RESURRECT_TEXT.cast(f.name) : RESURRECT_TEXT.noBody);",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-ready-says-press",
+    "file": "src/scenes/hostMagic.js",
+    "old": "say(f?.gone ? RESURRECT_TEXT.forGood(f.name) : f ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim);",
+    "new": "say(f ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim);",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  },
+  {
+    "name": "REZ-BLOODLINE-the-refusal-nameless",
+    "file": "src/systems/resurrect.js",
+    "old": "{ name: name || t('resurrect.companion', 'Your companion') }",
+    "new": "{ name: t('resurrect.companion', 'Your companion') }",
+    "tests": ["test/fb1016_rezbloodline.test.js"]
+  }
+]

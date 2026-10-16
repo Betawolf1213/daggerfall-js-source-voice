@@ -1063,7 +1063,7 @@ function runHomes(run, seedsOf, S, minted) {
       for (let g = 0; g < 3; g++) { HEIRLOOM.attuneHeirloom(h); one(h); }
       one(HEIRLOOM.mintRemainsItem({ line: `line${s % 9}`, of: s % 50, name: 'Ysolde Hlaalu' }));
     }
-    // the remains' piece as legacyHost.js layDeathRemains takes it: pickHeirloom over what the fallen wore - found pieces
+    // the remains' piece as legacyHost.js remainsOf takes it: pickHeirloom over what the fallen wore - found pieces
     const wearable = spread(minted.filter((it) => (it.group === 'Weapons' || it.group === 'Armor') && EQUIP.wearableItem(it) && !TPL.isAmmunition(it)), 300);
     for (let i = 0; i < wearable.length; i += 6) {
       const e = newPlayer();
