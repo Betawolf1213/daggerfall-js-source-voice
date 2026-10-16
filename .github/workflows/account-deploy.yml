@@ -1050,11 +1050,16 @@ jobs:
           # above had read 500 and then 400 on its second try - the platform's first moments after a migration, not
           # the route. A 5xx comes from a batch that failed whole and wrote nothing, so the call is safe to send again.
           # One that still fails after half a minute is a route that is broken.
+          # SMOKE-HANG (2026-10-16, the owner's screenshot of PR #947's run): NO ANSWER (000) IS ASKED AGAIN TOO, as the
+          # guest mint's loops above already ask it. #950's run read homes/town and #947's homes/decor as 15 s with 0 bytes
+          # (curl 28) - the busiest reads on a database that sheds load (Scale-Arc PRIMARY-TRIPS) - and failed deploys
+          # whose Worker had taken and whose every other call answered. A hang that wrote is no false pass: a second
+          # first beat answers playedS above 0 and fails; a route that hangs every time still fails after seven asks.
           post() {
             local out=$1 url=$2 data=$3 got=404
             for i in $(seq 1 7); do
-              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' -X POST "$url" -H 'content-type: application/json' -d "$data")
-              if [ "$got" != "404" ] && [ "${got#5}" = "$got" ]; then break; fi
+              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' -X POST "$url" -H 'content-type: application/json' -d "$data") || got=000
+              if [ "$got" != "404" ] && [ "$got" != "000" ] && [ "${got#5}" = "$got" ]; then break; fi
               echo "  $url -> $got (attempt $i, an old instance or the platform's first moments?)" >&2
               sleep 5
             done

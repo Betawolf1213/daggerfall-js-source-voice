@@ -38,7 +38,7 @@
   {
     "name": "MWHAND-h-to-an-empty-hand",
     "file": "src/combat/weaponRig.js",
-    "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon && playerWeapon.currentLeftHandWeapon)) return false;\n",
+    "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon && playerWeapon.currentLeftHandWeapon) && playerWeapon.handsMode !== HANDS_MODE.Fists) return false;\n",
     "new": "",
     "tests": [
       "test/mwhand.test.js"

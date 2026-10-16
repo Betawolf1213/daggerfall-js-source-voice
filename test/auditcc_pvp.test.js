@@ -165,10 +165,10 @@ test('AUDIT C&C H5 THE HOSTS BY SOURCE - ONE CONSTRUCTION SEAM: every blow a hos
   // each by its own function: the duel's, the siege work's, the siege's and the zone's roll; the four counts
   const w = read('src/scenes/world.js');
   const body = (decl) => { const i = w.indexOf(decl); assert.ok(i >= 0, decl); return w.slice(i, w.indexOf('\n  };\n', i)); };
-  assert.ok(body('const duelStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());'));
-  assert.ok(body('const siegeWorkHit = (').includes("const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}) }, duelStandIn());"));
-  assert.ok(body('const siegeStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}) }, duelStandIn());'));
-  assert.ok(body('const wildStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());'));
+  assert.ok(body('const duelStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at, ...(off ? { off } : {}) }, duelStandIn());'));   // PIN MOVED (TWO-HANDS AUDIT): and the off hand's terms
+  assert.ok(body('const siegeWorkHit = (').includes("const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(weaponRig.playerWeapon.offStrike ? { off: true } : {}) }, duelStandIn());"));   // PIN MOVED (TWO-HANDS AUDIT)
+  assert.ok(body('const siegeStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}), ...(off ? { off } : {}) }, duelStandIn());'));   // PIN MOVED (TWO-HANDS AUDIT)
+  assert.ok(body('const wildStrikeOut = (').includes('const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at, ...(off ? { off } : {}) }, duelStandIn());'));   // PIN MOVED (TWO-HANDS AUDIT)
   for (const decl of ['const duelSpellOut = (', 'const siegeSpellOut = (', 'const wildSpellOut = (']) {
     assert.ok(body(decl).includes('const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));'), decl);   // FIRM1: with the sky off
   }

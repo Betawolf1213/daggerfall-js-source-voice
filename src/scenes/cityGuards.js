@@ -1597,7 +1597,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
     // guard was ALIVE: 22 fatigue a swing near the watch, 11
     // everywhere else. The dungeon never had it, which is what the
     // shape should have been all along.
-    if (any) tallySwingSkills(playerEntity, playerWeapon.weapon);
+    if (any) tallySwingSkills(playerEntity, playerWeapon.weapon, playerWeapon.blowWeight);
     return any;
   }
 

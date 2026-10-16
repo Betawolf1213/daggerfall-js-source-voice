@@ -77,6 +77,7 @@ import { customWeaponImage } from './diverseWeaponsAssets.js';   // DW1: both bu
 import { widgetMetalName } from './weaponWidgetAssets.js';
 import { getItemHands } from '../systems/equip.js';
 import { ITEM_HANDS } from '../characters/equipTable.js';
+import { mirrorRect } from './handsLaw.js';   // TWO-HANDS: a hand of a pair on the left of the screen, drawn whole in the mirror
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const inverseLerp = (a, b, v) => (a === b ? 0 : clamp((v - a) / (b - a), 0, 1));
@@ -131,6 +132,7 @@ const STATE_NAMES = Object.keys(STATE_INDEX);
 export function createWeaponWidget({
   settings = readWidgetSettings, audio = null, rolls = Math.random, missEffect = null, envHit = null,
   handedness = () => getInt('Controls', 'Handedness', 0, 3) === 1, bowDrawback = () => getBool('Controls', 'BowDrawback'),
+  hidden = false,
 } = {}) {
   // .ctor (IL 0x361c): the fields' resting values
   const w = {
@@ -143,7 +145,11 @@ export function createWeaponWidget({
     lastSheathed: null, lastDoubleScale: false, lastEnchanted: false,
     curCustomTexture: null, curCustomSize: null,
     animating: null, animatingCancel: false, hasCurrentAttackHit: false,
-    offsetCurrent: [0, 0], offsetTarget: [0, 0],
+    // TWO-HANDS (AUDIT 2, L4): `hidden` - a clone born at the Offset slide's hidden place, settled (a pair's left hand:
+    // single-hand play never steps it, never loads its art; it slides in from there when the hands become a pair)
+    offsetCurrent: hidden ? [2, 2] : [0, 0], offsetTarget: hidden ? [2, 2] : [0, 0],
+    swayDx: { bob: 0, inertia: 0 },   // TWO-HANDS (AUDIT 2): this frame's Bob and Inertia across the screen, apart (pairRect)
+    born: hidden,   // ...and not yet stepped: shown on its very first frame (a game loaded with a pair up) it stands at its place
     moveSmooth: 0, bobSmooth: [0, 0], inertiaCurrent: [0, 0], inertiaTarget: [0, 0], inertiaSpeedMod: 1,
     armsPosition: [0, 0], armsMoveSmooth: 0, armsBobSmooth: [0, 0],   // DISC14-C: the Morrowind arms' own Position, on the plain bob (armsTransform)
     inertiaForwardCurrent: [0, 0], inertiaForwardTarget: [0, 0],
@@ -156,7 +162,10 @@ export function createWeaponWidget({
   const machineFrame = () => ctx?.machine?.frame ?? 0;
   const hitFrame = () => (ctx?.machine?.isBow ? HIT_FRAME_BOW : HIT_FRAME_MELEE);
   const liveSpeed = () => (ctx?.entity ? liveStat(ctx.entity, 'speed') : 50);
-  const animCtx = () => ({ entity: ctx?.entity ?? null, weaponType: w.currentWeaponType, usingRightHand: usingRightHand() });   // RRI2: what GetMeleeWeaponAnimTime's C# signature carries
+  // RRI2: what GetMeleeWeaponAnimTime's C# signature carries. TWO-HANDS: the rig's own ctx when it hands one (the striking
+  // hand - PlayerWeapon.swingCtx), so the clone's swing runs on the clock the machine does (an off-hand blow's held ticks
+  // are the machine's own, at its end: the clone holds its last frame while the machine attacks)
+  const animCtx = () => ctx?.animCtx?.() ?? ({ entity: ctx?.entity ?? null, weaponType: w.currentWeaponType, usingRightHand: usingRightHand() });
   const anims = () => w.art?.anims ?? null;
   const usingRightHand = () => ctx?.usingRightHand !== false;
   const sheathed = () => !!ctx?.sheathed;
@@ -331,6 +340,15 @@ export function createWeaponWidget({
     });
   }
   const getWeaponRect = () => transformRect(w.weaponPosition);
+  /** Nothing left to step while hidden (settledHidden). */
+  const lastSettledHidden = () => !w.animating && (!w.s.offset || (w.offsetCurrent[0] >= 2 && w.offsetCurrent[1] >= 2));
+  /** TWO-HANDS (AUDIT): a hand of a pair's rect, BEFORE the mirror that puts it on the left - its sway laid as the mod
+   *  lays it on its own mirrored sprite (widgetTransformRect's flip, inertiaStep's sign), so after the mirror (AUDIT 2,
+   *  two rules where the first audit had one): BOB GOES OUTWARD, the mirror of the right hand's - the mod's flipped
+   *  sprite takes Bob's x away (`r.x -= position[0]`), and Bob's x is one-sided, so the mirrored hand sent with it drew
+   *  its cut outer side into the view on every step - and INERTIA KEEPS THE SCREEN'S DIRECTION, both hands lagging the
+   *  look as one body (the mod pre-signs it for a flipped sprite). The Offset slide is the hand's own, mirrored with it. */
+  const pairRect = (mirror) => (mirror ? transformRect(w.weaponPosition, { position: [w.swayDx.bob - w.swayDx.inertia, w.position[1]] }) : getWeaponRect());
 
   // ---- Recoil: OnAttackDamageCalculated (IL 0xc5c) and CheckForEnvDamage (0x1730) ----
   /** The host's word on one struck target: `damage` is the calc's
@@ -390,7 +408,7 @@ export function createWeaponWidget({
     if (w.s.swingWindup === WINDUP.FirstFrame) changeWeaponState(state); else changeWeaponState(S.Idle);
     if (w.s.swingRecoveryOverride && recoveryOverride()) tickTime *= 0.5;
     // the wind-up: the pose the setting names, held until the ORIGINAL reaches its hit frame
-    while (machineFrame() < hitFrame()) {
+    while (machineIsAttacking() && machineFrame() < hitFrame()) {
       if (w.s.swingWindup === WINDUP.FirstFrame) w.currentFrame = 0;
       else if (w.s.swingWindup === WINDUP.Idle) {
         if (offsetOverride()) w.offsetTarget = leanFor(state, w.flipHorizontal);
@@ -398,6 +416,10 @@ export function createWeaponWidget({
       } else w.currentFrame = -1;
       yield FRAME;
     }
+    // TWO-HANDS (AUDIT): the strike this wind-up shadows ENDED before its hit frame - a hand of a pair whose blow stopped
+    // being its own (the pair dissolved mid-blow: a light lit, a weapon swapped, the beast). DFU's one machine always
+    // reaches the hit frame first, so the one hand never comes here; a pair's clone must not wind up forever.
+    if (!machineIsAttacking()) { finishSwing(state); return; }
     changeWeaponState(state);
     playSwingSound();
     if (w.s.recoil && w.s.recoilEnvironment && checkForEnvDamage()) w.hasCurrentAttackHit = true;
@@ -599,12 +621,21 @@ export function createWeaponWidget({
     ctx = c;
     c.dt = dt;
     w.s = settings();
-    w.time += dt;
+    // TWO-HANDS (AUDIT 2): `clockOf` - the clone whose clock this one keeps (a pair's left hand keeps the right's): the
+    // Bob's phase is the clone's own time, and a left clone left resting through single-hand play woke on a clock seconds
+    // behind, the hands swinging apart and together on the walk. Its smoothing is taken too while it rests out of sight.
+    if (c.clockOf) {
+      const k = c.clockOf.clock;
+      if (lastSettledHidden()) { w.moveSmooth = k.moveSmooth; w.bobSmooth = [...k.bobSmooth]; }
+      w.time = k.time;
+    } else w.time += dt;
+    if (w.born) { w.born = false; if (c.shown) { w.offsetCurrent = [0, 0]; w.offsetTarget = [0, 0]; } }
     stepSecondsWaits(dt);
     w.screenRect = { x: 0, y: 0, width: c.canvas?.width ?? NATIVE_W, height: c.canvas?.height ?? NATIVE_H };
     w.leftHanded = !!handedness();
     w.art = c.art ?? null;
     w.position = [0, 0]; w.scale = [1, 1]; w.offset = [0, 0]; w.armsPosition = [0, 0];
+    w.swayDx = { bob: 0, inertia: 0 };
     // the weapon in hand changed (SpecificWeapon)
     if (c.weapon !== w.specificWeapon) {
       if (c.weapon) {
@@ -625,8 +656,13 @@ export function createWeaponWidget({
     // (the mod's field starts false, so DFU hears the clip once at every load - a boot artefact, not carried)
     if (w.lastSheathed === null) w.lastSheathed = c.sheathed;
     if (c.sheathed !== w.lastSheathed) { if (c.sheathed) playSheatheSound(); w.lastSheathed = c.sheathed; }
+    // TWO-HANDS (bible/05-Combat/Two-Hands.md): A HAND OF A PAIR is drawn as DFU draws any right hand - never flipped
+    // here: the rig mirrors the one on the left of the screen whole (draw's `mirror`), every state, so a left hand is a
+    // right hand in the mirror rather than DFU's three-state flip of one sprite. Ambidexterity's law is the one used hand's.
+    if (c.pairHand) {
+      if (w.flipHorizontal) { w.flipHorizontal = false; changeWeaponState(S.Idle); }
+    } else if (w.s.ambidexterity && !c.sheathed) {
     // Ambidexterity (0x19c2-0x1b97): the sprite's hand
-    if (w.s.ambidexterity && !c.sheathed) {
       let want;
       if (c.weaponType === T.Bow) want = w.s.mirrorBows ? !w.leftHanded : w.leftHanded;
       else if (!usingRightHand()) want = !w.leftHanded;
@@ -644,6 +680,9 @@ export function createWeaponWidget({
         if (w.flipHorizontal) { if (st === S.StrikeLeft) play = S.StrikeRight; else if (st === S.StrikeDownLeft) play = S.StrikeDownRight; }
         else if (st === S.StrikeRight) play = S.StrikeLeft; else if (st === S.StrikeDownRight) play = S.StrikeDownLeft;
       }
+      // TWO-HANDS (AUDIT 2): a punch thrown off the running ARM winds up from below the view, where the arm went - its
+      // Idle wind-up drew the fists' rest at its place in sight (where no fist stood) and sank it
+      if (c.fromBelow && w.s.offset) w.offsetCurrent = [0, 1];
       playAttackAnimation(play);
     }
     const m = c.motion ?? {};
@@ -675,6 +714,7 @@ export function createWeaponWidget({
       }, w.s, { ...m, speedRatio }, dt);
       w.moveSmooth = b.moveSmooth; w.bobSmooth = b.bobSmooth;
       w.position = [w.position[0] + b.delta[0], w.position[1] + b.delta[1]];
+      w.swayDx.bob += b.delta[0];
       const ba = bobStep({
         moveSmooth: w.armsMoveSmooth, bobSmooth: w.armsBobSmooth, time: w.time, screenRect: w.screenRect, doubleScaleIdle: false,
       }, w.s, { ...m, speedRatio }, dt);
@@ -693,6 +733,7 @@ export function createWeaponWidget({
       w.inertiaForwardTarget = i.inertiaForwardTarget; w.inertiaForwardCurrent = i.inertiaForwardCurrent;
       w.scale = [w.scale[0] + i.scale[0], w.scale[1] + i.scale[1]];
       w.position = [w.position[0] + i.delta[0], w.position[1] + i.delta[1]];
+      w.swayDx.inertia += i.delta[0];
       w.armsPosition = [w.armsPosition[0] + i.delta[0], w.armsPosition[1] + i.delta[1]];   // DISC14-C: the arms lag the look as the sprite does
     }
     // DoubleScaleTextures (0x2248-0x22b1): the doubled idle sits half its size in, so its corner stays where the classic one was.
@@ -712,7 +753,7 @@ export function createWeaponWidget({
   /** OnGUI's repaint (IL 0x1424-0x1582): with the Offset module the
    *  sprite draws whatever the show clocks say (the slide takes it off
    *  screen); without it, only while the rig would show it. */
-  function draw(renderer, canvas, tint = null) {   // MAC-I: the room's light, as the sprite this clone stands in for takes it
+  function draw(renderer, canvas, tint = null, { transform = null, mirror = false } = {}) {   // MAC-I: the room's light, as the sprite this clone stands in for takes it; TWO-HANDS: a pair's hand - its guard (`transform`, on the rect) and the mirror
     if (!ctx || !w.art || !renderer || !canvas) return false;
     if (ctx.weaponType === T.None) return false;
     // WW4 (Mac's curated fix, 2026-09-16): an applicable clone that
@@ -737,9 +778,27 @@ export function createWeaponWidget({
     if (!rec) return false;
     const tex = w.curCustomTexture?.tex ?? rec.frames[Math.min(Math.max(0, w.currentFrame), rec.frames.length - 1)];
     if (!tex) return false;
-    renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
-    if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, getWeaponRect(), w.curAnimRect, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: the element's outline, as the sprite it stands in for draws it (the rig's ctx says it each frame), in the record's own pixels
+    if (!transform && !mirror) {
+      renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
+      if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, getWeaponRect(), w.curAnimRect, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: the element's outline, as the sprite it stands in for draws it (the rig's ctx says it each frame), in the record's own pixels
+      return true;
+    }
+    // TWO-HANDS: a hand of a pair - its guard on the rect, then the mirror about the screen's middle, its source read
+    // right to left (the one hand above is the mod's own line, untouched)
+    let rect = pairRect(mirror);
+    if (transform) rect = transform(rect);
+    if (mirror) rect = mirrorRect(rect, w.screenRect.width, w.screenRect.x);
+    const uv = mirror ? { u0: w.curAnimRect.u1, v0: w.curAnimRect.v0, u1: w.curAnimRect.u0, v1: w.curAnimRect.v1 } : w.curAnimRect;
+    renderer.drawScreenQuad(tex, rect, uv, tint ?? undefined);
+    if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, rect, uv, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: this hand's own element, on its own rect and source
     return true;
+  }
+  /** TWO-HANDS: would draw() put a picture on the screen this frame - the clone applicable and not choosing silence
+   *  (frame -1, hidden, third person, not shown with no slide). The pair's running hands take over from a hand that is. */
+  function drawing() {
+    if (!ctx || !w.art || ctx.weaponType === T.None) return false;
+    if (w.currentFrame === -1 || !w.showWeapon || ctx.thirdPerson) return false;
+    return !!(w.s.offset || ctx.shown);
   }
 
   /** The channels for the Morrowind arms: the frame's Position and
@@ -751,7 +810,7 @@ export function createWeaponWidget({
   }
 
   return {
-    lateUpdate, draw, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect,
+    lateUpdate, draw, drawing, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect, pairRect,
     /** The mod's `showWeapon` / `hideWeapon` messages. */
     setShowWeapon(v) { w.showWeapon = !!v; },
     setThirdPerson(v) { w.isInThirdPerson = !!v; },
@@ -759,6 +818,12 @@ export function createWeaponWidget({
     get position() { return [w.position[0], w.position[1]]; },
     get scale() { return [w.scale[0], w.scale[1]]; },
     get offset() { return [w.offset[0], w.offset[1]]; },
+    /** TWO-HANDS (AUDIT): nothing left to step while hidden - no swing playing, and the Offset slide (when on) at its
+     *  hidden place. A pair's left clone rests here between pairs: stepped again when a pair returns, it slides in. */
+    get settledHidden() { return lastSettledHidden(); },
+    /** TWO-HANDS (AUDIT 2): the Bob's clock - the time and the smoothing a pair's other clone keeps (lateUpdate's
+     *  `clockOf`). */
+    get clock() { return { time: w.time, moveSmooth: w.moveSmooth, bobSmooth: [w.bobSmooth[0], w.bobSmooth[1]] }; },
     get state() { return w.weaponState; },
     get frame() { return w.currentFrame; },
     get flipHorizontal() { return w.flipHorizontal; },

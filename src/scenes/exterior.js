@@ -3071,7 +3071,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     horseCart: hccRuntimeOn,   // HCC: the wagon's storage access is the runtime's word
     entity: playerEntity,
     icons: { getTexture, uploadRecord, textures: renderer.textures },
-    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand,   // DISC12: the pack's figure holds the hand in USE
+    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand, handArm: () => (modes?.liveArm?.()?.rig ?? weaponRig).handArm?.(),   // DISC12: the pack's figure holds the hand in USE; TWO-HANDS (AUDIT 2): both of a pair, through its door
     openCharSheet: () => { if (charSheetDoorReady()) townTalk.showOverlay(makeCharSheetWindow()); },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
     ...useHooks,   // U53: the one bag
     // U8e: OnPop mints the world pile. G5: with the drop icon the
@@ -5133,7 +5133,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       const bob = headBobber.update(dt, cam, {
         health: playerEntity.health, paused: gamePaused(), climbing: !!player.climb?.isClimbing, grounded: !!player.grounded,
         swimming: !!player.isPlayerSwimming, running: !!player.isRunning, crouching: !!player.crouching, riding: !!player.riding, levitating: !!player.levitating,   // TR1: the Horse bob style   // XL-1: HeadBobber.cs:101 and :215 both read playerEnterExit.IsPlayerSwimming, never the motor's flag
-        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe),
+        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe), out: player,   // TWO-HANDS (AUDIT): the bob's timer for the running hands' stride (player/motor.js motionBagOf)
       });
       const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);   // HANDEDNESS (mat4's law): right = (cos, 0, -sin)
       player.bobOffset = [cy * bob[0], bob[1], -sy * bob[0]];
@@ -6307,12 +6307,12 @@ export async function bootExterior(canvas, renderer, params, status) {
           // matters because a watchman standing over a quest foe must
           // still be the one the swing finds.
           if (exteriorFoes.resolvePlayerHit(weaponRig.playerWeapon, eye, fwd, player.pos, makeInView(proj, view, multiply), guardHitSound, { swing })) {
-            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             surfacePlayer();
           } else
           cityGuards.resolveCivilianHit(weaponRig.playerWeapon, eye, fwd, player.pos, _guardPool(),
             { onMurder: () => _crimeResponse(), onHitSound: guardHitSound, swing }).then((r) => {
-            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             if (r?.crime) surfacePlayer();
             // ROAD-B: WeaponEnvDamage's static-door arm (:474-477),
             // world.js's twin - THE FOUR HOSTS RULE.
@@ -6410,7 +6410,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           largeHud: largeHudOptions({ renderer, fetchBytes, palette }, playerEntity),
           // AUDIT 39: the enhanced HUD's two hand plaques - see world.js.
           readied: magic?.readied?.() ?? null,
-          weapon: weaponRig.playerWeapon.weapon ?? null,
+          weapon: weaponRig.playerWeapon.restingWeapon ?? null,   // TWO-HANDS (AUDIT): the lead's, never the off hand's mid-blow
           // QS4: THE PHONE'S OWN DOORS. The diamond's cells take a finger
           // on a touch-first device (ui/enhancedHud.js's second departure),
           // and a door the host never handed over is a control that

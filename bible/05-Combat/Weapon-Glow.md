@@ -161,6 +161,15 @@ it was; the larger of it and a foe's tells' room - MW-3: the window grew by a sh
 body's few rows was no texel at all). Both glow programs are warmed at idle (`lazyWarmSteps` - MW-6, SPR-6). Every
 state is handed back as `drawCharacter` keeps it.
 
+**A pair** (TWO-HANDS, merged after this slice - `05-Combat/Two-Hands.md` "Weapon glow on two hands"): each hand wears
+its OWN weapon's element. The classic pair draws each hand's outline over that hand's own picture (`twoHands.js`
+`drawClassicHand` - its rect and its mirror), each Weapon Widget clone is handed its own item's (`weaponRig.js`
+`cloneFrame`), and the Morrowind arm lights its left blade's `offweapon` ranges with the left item's glow
+(`mesh.offWeaponGlow`, `Renderer._drawWeaponGlows`: each slot its own pass) under the held glow's NET-1 law for the
+second hand (`offGlowShown`: the blade bound, the pair drawn). The arm's held glow is the item the arm HOLDS (in a pair
+the right hand's, whichever hand strikes - the weapon in use changes mid-blow, and the key guard would drop it for every
+left blow). A third-person picture is padded for the larger of the two outlines.
+
 ## Online
 
 The affixes that decide a glow never travel, so the look says it: a weapon in a hand carries `glow`, one of ten words -

@@ -3701,8 +3701,9 @@ export class Renderer {
     // picture read back - the inventory's figure, an icon - is a still, and no moment of a glow is baked into it), while
     // this body's palette is on its unit: the outline's rings BEFORE the body (at the back of the pass, so everything
     // drawn after covers them) and its charge after; each hands charProgram back for the lines that follow
-    const glow = !!mesh.weaponGlow && this._spriteDepth > 0 && this._studioDepth === 0 && this._glowVpH > 0 && !!mesh.ranges;
-    if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, false);
+    // TWO-HANDS: and a pair's LEFT blade its own (`mesh.offWeaponGlow` on the 'offweapon' ranges) - each hand its weapon's
+    const glow = !!(mesh.weaponGlow || mesh.offWeaponGlow) && this._spriteDepth > 0 && this._studioDepth === 0 && this._glowVpH > 0 && !!mesh.ranges;
+    if (glow) this._drawWeaponGlows(mesh, modelMatrix, skin, false);
     if (mesh.ranges && mesh.ranges.length) {
       for (const r of mesh.ranges) {
         // MW-D12: a HIDDEN range still owns its vertices and its texture
@@ -3726,7 +3727,7 @@ export class Renderer {
       gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
       this.stats.texBinds++; this.stats.draws++;
     }
-    if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, true);
+    if (glow) this._drawWeaponGlows(mesh, modelMatrix, skin, true);
     gl.bindTexture(gl.TEXTURE_2D, null);
     this._tex0Bound = null;   // PERF-TEX3: this path owns unit 0 - the shadow may not speak for it
     gl.uniform1f(c.useTex, 0);
@@ -3756,13 +3757,14 @@ export class Renderer {
    * copies is the silhouette dilated to its band and the body drawn after covers them. THE CHARGE (`charge` true, after
    * the body): the ranges once more, additive with alpha masked (the composite's cut stays the body's), at the body's
    * own depth. Owns its program binding and hands back charProgram, and every state it touches back as drawCharacter
-   * keeps it: blend off, depth LESS and written, every colour channel.
+   * keeps it: blend off, depth LESS and written, every colour channel. TWO-HANDS: `slot` and `g` - the ranges it lights
+   * and their glow - are the held weapon's by default; a pair's left blade ('offweapon') is lit with its own.
    */
-  _drawWeaponGlow(mesh, modelMatrix, skin, charge) {
+  _drawWeaponGlow(mesh, modelMatrix, skin, charge, slot = 'weapon', g = mesh.weaponGlow) {
     this._close2D();   // PERF-2D: drawCharacter's own baseline - closed already, said where the draw is
-    const g = mesh.weaponGlow;
+    if (!g) return;
     let any = false;
-    for (const r of mesh.ranges) if (r.slot === 'weapon' && !r.hidden) { any = true; break; }
+    for (const r of mesh.ranges) if (r.slot === slot && !r.hidden) { any = true; break; }
     if (!any || !g.ramp || !(g.code > 0)) return;
     const gl = this.gl;
     this._ensureWeaponGlowMeshProgram();
@@ -3809,7 +3811,7 @@ export class Renderer {
       gl.depthFunc(gl.LEQUAL);
     }
     for (const r of mesh.ranges) {
-      if (r.slot !== 'weapon' || r.hidden) continue;
+      if (r.slot !== slot || r.hidden) continue;
       gl.uniform1f(u.useTex, r.tex ? 1 : 0);
       gl.uniform1f(u.alphaCut, r.alphaCut || 0);
       gl.bindTexture(gl.TEXTURE_2D, r.tex || this._blackTex);
@@ -3825,6 +3827,13 @@ export class Renderer {
       gl.disable(gl.BLEND);
     }
     this._use(this.charProgram);
+  }
+
+  /** WEAPON-GLOW1 / TWO-HANDS: every weapon's glow on this mesh - the held weapon's, and a pair's left blade's with its
+   *  own element - each its own pass over its own ranges (an outline before the body, a charge after). */
+  _drawWeaponGlows(mesh, modelMatrix, skin, charge) {
+    if (mesh.weaponGlow) this._drawWeaponGlow(mesh, modelMatrix, skin, charge, 'weapon', mesh.weaponGlow);
+    if (mesh.offWeaponGlow) this._drawWeaponGlow(mesh, modelMatrix, skin, charge, 'offweapon', mesh.offWeaponGlow);
   }
 
   /** WEAPON-GLOW1: the Morrowind glow's program - the character program's skinned vertex shader with the glow's shift
