@@ -124,7 +124,7 @@ const HARDCODED = {
   'src/net/motherlodeBook.js': 5,
   'src/net/nameFilter.js': 4,
   'src/net/noticeBook.js': 18,
-  'src/net/npcChapterLaw.js': 82,
+  'src/net/npcChapterLaw.js': 80,
   'src/net/npcHallBook.js': 2,
   'src/net/oneSeat.js': 3,
   'src/net/peerBodies.js': 5,
@@ -229,6 +229,7 @@ const HARDCODED = {
   'src/render/volumetricClouds.js': 2,
   'src/render/waterBedGlsl.js': 1,
   'src/render/waterSurface.js': 1,
+  'src/render/weaponGlowGlsl.js': 1,   // AUDIT WEAPON-GLOW SPR-1: GLOW_FIELD_VS, the field bake's vertex shader - GLSL the scan reads as prose (`in vec2`), gateVeil.js's same line
   'src/render/windWisps.js': 2,
   'src/render/windfallParticles.js': 2,
   'src/scenes/arenaOnline.js': 1,
@@ -369,7 +370,7 @@ const HARDCODED = {
   'src/systems/gateOmen.js': 10,
   'src/systems/gateSpoils.js': 3,
   'src/systems/gateTier.js': 4,
-  'src/systems/gilded.js': 5,
+  'src/systems/gilded.js': 15,   // GILDED2: the Dragonfire Oath's and the Sunken Sovereign's names, powers, lore and hints - written as the Hourlock's are
   'src/systems/gravestoneLore.js': 16,
   'src/systems/guilds.js': 3,
   'src/systems/handheldTorches.js': 12,
@@ -523,7 +524,7 @@ const HARDCODED = {
   'src/systems/travelPace.js': 5,
   'src/systems/travelPathMode.js': 3,
   'src/systems/travelViewFilters.js': 6,
-  'src/systems/tutorialCatalogue.js': 219,
+  'src/systems/tutorialCatalogue.js': 216,
   'src/systems/uiSkin.js': 1,
   'src/systems/upkeepItemRows.js': 2,
   'src/systems/upkeepRuntime.js': 8,
@@ -680,7 +681,7 @@ const HARDCODED = {
   'src/ui/pickupFeed.js': 1,
   'src/ui/pixelDial.js': 3,
   'src/ui/pixelifyFive.js': 2,
-  'src/ui/playerBadge.js': 33,
+  'src/ui/playerBadge.js': 34,   // SERPENT5: The Maelstrom's word, beside the other auras'; EG-E2: the Spire's thirteen titles and three auras in words
   'src/ui/playerHistory.js': 1,
   'src/ui/plusPad.js': 19,
   'src/ui/plusPadBinds.js': 30,

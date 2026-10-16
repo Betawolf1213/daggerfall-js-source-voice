@@ -32,8 +32,8 @@
   {
     "name": "HOURSFIRST-another-paint",
     "file": "src/ui/playerBadge.js",
-    "old": "firsthour: 'hoursfirst', beaconlight:",
-    "new": "firsthour: 'hourbreaker', beaconlight:",
+    "old": "firsthour: 'hoursfirst', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
+    "new": "firsthour: 'hourbreaker', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
     "tests": [
       "test/hoursfirst.test.js"
     ],

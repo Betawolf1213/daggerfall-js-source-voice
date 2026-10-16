@@ -49,7 +49,7 @@ import {
 } from '../../src/net/townSeatLaw.js';
 import { utcDay, MARKS_MAX } from '../../src/net/marksLaw.js';   // AUDIT-SEATS S4: a struck Charter's fee refunded
 import { fortsLapsedStatements } from './seatForts.js';   // AUDIT SEATS-2 S5: a struck Charter's building projects fall with it
-import { DB_ROOT, replicaDb, d1Overloaded } from './service.js';   // STORM-SHED: the binding a request's counted Proxy wraps; SEAT-REPLICA: the kept read's session
+import { DB_ROOT, replicaDb, d1Overloaded, bookmarkOf } from './service.js';   // STORM-SHED: the binding a request's counted Proxy wraps; SEAT-REPLICA: the kept read's session
 
 /** Whether the seats are open to this account: the switch, and at `dev` the developers alone. */
 export function seatsOpenFor(player, env) {
@@ -125,8 +125,6 @@ export const SEAT_ROWS_FROM = 'first-unconstrained';
 const seatRowsKept = new WeakMap(), seatRowsAsking = new WeakMap(), seatRowWrites = new WeakMap();
 const seatRowsMark = new WeakMap(), seatRowsWritten = new WeakSet();
 const seatRowsRoot = (/** @type {any} */ db) => db?.[DB_ROOT] ?? db;
-/** SEAT-REPLICA: a session's newest bookmark, or null (the binding, an older runtime or a harness, keeps none). */
-const bookmarkOf = (/** @type {any} */ session) => { try { const m = session?.getBookmark?.(); return typeof m === 'string' && m ? m : null; } catch { return null; } };
 
 /** STORM-SHED: the seats' witness rows as this isolate keeps them - read at most once in SEAT_ROWS_KEPT_S, every ask of
  *  one moment answered by one read, and a read begun before a write here never kept. SEAT-REPLICA: each read on a

@@ -92,6 +92,7 @@ import { TITLES, GLYPHS, AURAS, SEAT_TITLES, CHAPTER_TITLES } from '../../src/ne
 import { insigniaHeld, insigniaKeys } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - a title and an aura bought
 import { patreonTitlesOf } from './patreon.js';   // PATREON-LINK: a Patreon tier's title, held by the pledge
 import { SD_HONOUR_TITLE, SD_HONOUR_AURA } from './sds.js';   // SD9b: the Hour's grants on the row
+import { SERPENT_HONOUR_TITLE, SERPENT_HONOUR_AURA } from './serpents.js';   // SERPENT5: the Old Coil's grants on the row
 import { EG_HONOUR, EG_HONOUR_TITLES, EG_HONOUR_AURA, EG_CHAMPION_TITLE, EG_FIRST_TITLE, EG_FIRST_AURA } from './egHonours.js';   // EG-E2: the Spire's honours on the row
 import { LAMP_TITLE } from './lamp.js';   // LAMP-KEEPER II: I Love Lamp on the row
 
@@ -345,6 +346,9 @@ export function titlesHeld(player, env) {
   // LAMP-KEEPER II: I LOVE LAMP - laid on the row by the account's first word with a lamp keeper (lamp.js claimLamp), held
   // for good; a guest's word writes nothing, so a guest row holds none
   if (typeof player?.handle === 'string' && player.handle && Number(player?.lamp_title) === 1) held.push(LAMP_TITLE);
+  // SERPENT5: COILBREAKER - rolled on a dealing ship's serpent kill's first write and laid on the row (serpents.js
+  // claimSerpent, `serpent_honours`), held for good; a guest's kill is never written, so a guest row holds none
+  if (typeof player?.handle === 'string' && player.handle && (Number(player?.serpent_honours) & SERPENT_HONOUR_TITLE)) held.push('coilbreaker');
   // EG-E2: THE SPIRE'S - the honours a recorded Redoubt wrote on the row (egHonours.js, `eg_honours`), held for good; a
   // guest's claim is never written. Spire Champion while the row says a Descent bracket's top ten held it last season
   // (`eg`, egHonours.js withEgHonours); First of the Spire by name
@@ -375,6 +379,8 @@ export function aurasHeld(player, env) {
   if (typeof player?.handle === 'string' && player.handle) for (const [t, a] of Object.entries(EG_HONOUR_AURA)) if ((Number(player?.eg_honours) & EG_HONOUR[t]) && !held.includes(a)) held.push(a);
   if (isSpireFirst(player, env) && !held.includes(EG_FIRST_AURA)) held.push(EG_FIRST_AURA);
   for (const a of insigniaKeys(player?.insignia, 'aura')) if (!held.includes(a)) held.push(a);
+  // SERPENT5: THE MAELSTROM - the Old Coil's second grant, laid on the row as Coilbreaker is, held for good
+  if (typeof player?.handle === 'string' && player.handle && (Number(player?.serpent_honours) & SERPENT_HONOUR_AURA)) held.push('maelstrom');
   return held;
 }
 /** WB9g: the aura this player WEARS - the stored one, while they hold it (titleWorn's law). AEGIS: held by a list too. */

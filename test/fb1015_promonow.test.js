@@ -77,23 +77,25 @@ test('PROMO-NOW: the hall\'s line names what the next rank asks - the reputation
   const g = GUILDS.FightersGuild;
   const memberships = {};
   joinGuild(memberships, g, day(1)).rank = 1;
-  // rank 2 asks 20 reputation, one guild skill at 31 and a second at 9
+  // rank 2 asks 20 reputation, one guild skill at 31 and a second at 9 - PIN MOVED (AUDIT GUILD-WORDS II A-7): the rest
+  // at 5, rank 1's own second bar, where 3 was short of rank 0's 4 and the line now warns of the probation that brings
   const skills = 'Archery, Axe, Blunt Weapon, Giantish, Hand-to-Hand, Long Blade, Orcish, Short Blade';
-  assert.deepEqual(rankNeedsLines(withSkills(g, 3, { [SKILLS.LongBlade]: 40 }), g, memberships, storeWith(g, 14)),
+  assert.deepEqual(rankNeedsLines(withSkills(g, 5, { [SKILLS.LongBlade]: 40 }), g, memberships, storeWith(g, 14)),
     ['Next rank: Swordsman', 'Reputation 14 of 20', 'A second guild skill at 9', `Guild skills: ${skills}`]);
-  assert.deepEqual(rankNeedsLines(withSkills(g, 3, { [SKILLS.Axe]: 25 }), g, memberships, storeWith(g, 20)),
+  assert.deepEqual(rankNeedsLines(withSkills(g, 5, { [SKILLS.Axe]: 25 }), g, memberships, storeWith(g, 20)),
     ['Next rank: Swordsman', 'A guild skill at 31 - your best, Axe, is 25', 'A second guild skill at 9', `Guild skills: ${skills}`]);
   assert.deepEqual(rankNeedsLines(withSkills(g, 12, { [SKILLS.Axe]: 25 }), g, memberships, storeWith(g, 30)),
     ['Next rank: Swordsman', 'A guild skill at 31 - your best, Axe, is 25', `Guild skills: ${skills}`], 'two at the low bar: the high one alone');
   assert.equal(rankNeedsLines(withSkills(g, 40), g, memberships, storeWith(g, 20)), null, 'nothing short: no line');
 });
 
-test('PROMO-NOW: no line past the highest rank a review gives, nor for a stranger (mutant: the ceiling ignored)', () => {
+test('PROMO-NOW: no review\'s line past the highest rank a review gives, nor for a stranger (mutant: the ceiling ignored)', () => {
   const g = GUILDS.MagesGuild;
   const memberships = {};
   const m = joinGuild(memberships, g, day(1));
   m.rank = 7;
-  assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0), { rankCeiling: 7 }), null, 'ranks 8 and 9 are seats online');
+  // PIN MOVED (SEAT-LINE, Field-Bugs-2026-10-15g.md): at the ceiling the next rank is a seat, and the line says so
+  assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0), { rankCeiling: 7 }).seat, true, 'ranks 8 and 9 are seats online');
   assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0)).rank, 8, 'offline the review gives 8');
   m.rank = 9;
   assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0)), null);
@@ -104,13 +106,14 @@ test('PROMO-NOW: the enhanced popup shows a member the line above its buttons; a
   const hooks = (member) => ({ member: () => member, service: () => 'Training', rows: () => [], steps: () => [],
     rankNeeds: () => ['Next rank: Swordsman', 'Reputation 14 of 20'] });
   const view = PORT_SPECS.guild.view(new GuildServiceWindow(hooks(true)));
-  assert.deepEqual(view.blocks[0], { type: 'text', rows: ['Next rank: Swordsman', 'Reputation 14 of 20'] });
+  assert.deepEqual(view.blocks[0], { type: 'text', rows: ['Next rank: Swordsman', 'Reputation 14 of 20'], scroll: true });   // PIN MOVED (AUDIT GUILD-WORDS II F-1): in its own scrolling well
   assert.equal(PORT_SPECS.guild.view(new GuildServiceWindow(hooks(false))).blocks.some((b) => b.type === 'text'), false);
 });
 
 test('PROMO-NOW: the interior host hands the online flag to the review and the line to the popup - both on the shared clock (mutant: the host offline)', () => {
   const wm = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
-  assert.ok(/steps: \(\) => onPushEffects\([\s\S]{0,700}?\n\s+promoteWhenEarned: sharedClockOn\(\),/.test(wm), 'the review: online, no wait');
-  assert.ok(wm.includes('rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, memberships, store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),'),
+  // PIN MOVED (ROLL-PACE, FIELD BUGS 2026-10-15f): online AND while the Roll paces it; the line under the book's ceiling, with the pace
+  assert.ok(/steps: \(\) => onPushEffects\([\s\S]{0,800}?\n\s+promoteWhenEarned: sharedClockOn\(\) && !!host\.rollPace\?\.\(guild\.factionId\),/.test(wm), 'the review: online, no wait');
+  assert.ok(wm.includes('rankNeeds: () => { const pace = sharedClockOn() ? host.rollPace?.(guild.factionId) ?? null : null; return sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships }) : null; },'),   // PIN MOVED (SEAT-LINE): read seated, the review's date and book with it
     'the line: online, under the Roll\'s ceiling');
 });

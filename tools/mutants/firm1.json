@@ -152,7 +152,7 @@
   {
     "name": "FIRM1-small-star-raw-points",
     "file": "src/net/firmamentTree.js",
-    "old": "    if (ATTRS.includes(k)) put(`pct.${k}`, v * 2);",
+    "old": "    if (ATTRS.includes(k)) put(`pct.${k}`, v);",
     "new": "    if (ATTRS.includes(k)) put(k, v);",
     "tests": [
       "test/firm1_powers.test.js"
@@ -183,6 +183,24 @@
     "new": "  const raw = m[2].replace(/\\.(.)/g, '');",
     "tests": [
       "test/firm1_law.test.js"
+    ]
+  },
+  {
+    "name": "FIRM-MAX-no-lift",
+    "file": "src/systems/firmamentPowers.js",
+    "old": "    if (v > 0) mods.statMax[a] = v;",
+    "new": "",
+    "tests": [
+      "test/firm1_powers.test.js"
+    ]
+  },
+  {
+    "name": "FIRM-MAX-ceiling-unread",
+    "file": "src/systems/statMods.js",
+    "old": "  maxMod += entity._mods?.statMax?.[statName] ?? 0;",
+    "new": "",
+    "tests": [
+      "test/firm1_powers.test.js"
     ]
   }
 ]

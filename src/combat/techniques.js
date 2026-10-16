@@ -494,7 +494,9 @@ export function refusal(hand, ctx) {
   if (t.mech === 'leap' || t.mech === 'dash') {
     const m = ctx.door?.motor?.();
     if (!m) return NOT_HERE_TEXT;
-    if (m.climb?.isClimbing || m._wall || m._pkMove || m.swimming || m.onExteriorWater || m.isPlayerSwimming || m.levitating || m.slowFalling || m.riding || m.isDown?.() || !m.grounded) return CANNOT_LEAP_TEXT;   // AUDIT TECH1: the open water too - DFU refuses a jump there
+    // KICK-AIR (Mac, 2026-10-15): the air refuses a leap or a dash - but not one the roster marks `airborne` (the Flying
+    // Kick), which goes from a jump, a fall, a step off a ledge; every other refusal here is its too
+    if (m.climb?.isClimbing || m._wall || m._pkMove || m.swimming || m.onExteriorWater || m.isPlayerSwimming || m.levitating || m.slowFalling || m.riding || m.isDown?.() || (!m.grounded && !t.airborne)) return CANNOT_LEAP_TEXT;   // AUDIT TECH1: the open water too - DFU refuses a jump there
     // EG-H2 (Elite-Gates.md section 10.7): on a fight floor a leap is a technique; on the Spire's traversal ground it
     // would be a bridge - refused there, said in the Spire's words (the made level's law: systems/madeLevel.js)
     if (madeRuleHere('techFlight') === 'refused' && madeOnTraverse()) return madeSaysHere('techFlight');

@@ -29,7 +29,7 @@ import { fakeDoc, fakeWin, fakeBlocks, rmb, TOWN, settle, ACTIONS } from './deco
 import { townPixel, houseAt, HOUSE_BOX, BENCH_MODEL, CHAIR_MODEL } from './fb1001Town.mjs';
 
 // read off the namespaces, so the code before the fix fails each pin on its own assertion rather than at the import
-const { createHomeYards, yardLot, yardWhyNot, yardLotEdges, yardLotQuads, YARD_IN_HOUSE, YARD_ON_ROAD, YARD_TOWN_TTL_MS, YARD_MARK_HIGH } = homeYards;
+const { createHomeYards, yardLot, yardWhyNot, yardLotEdges, yardLotQuads, YARD_IN_HOUSE, YARD_ON_ROAD, YARD_TOWN_TTL_MS, YARD_WRITE_HOLD_MS, YARD_MARK_HIGH } = homeYards;
 const { DECOR_LOT_MARKS } = decorTool;
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const box = (x0, y0, z0, x1, y1, z1) => ({
@@ -315,6 +315,51 @@ test('FB1001 YARD-STALE: the town\'s yards read before the owner\'s writes and a
   clock.t = 2 * YARD_TOWN_TTL_MS + 10;
   await r.frames(12);
   assert.deepEqual(zs(), [-6], 'the next answer is believed');
+});
+
+test('PRIMARY-TRIPS audit (FB1001 YARD-STALE): the owner\'s write stands over an answer ASKED AFTER it for YARD_WRITE_HOLD_MS - the service keeps a town\'s answer YARDS_KEPT_S an isolate and reads it off a replica, so one asked after the write can still be from before it - and the answer past the hold is believed, and one asked before a write never stands it back however late it lands (mutants: the hold dropped; the answer\'s turn)', async (t) => {
+  t.mock.method(Date, 'now', () => T0 * 1000);
+  const town = theTown();
+  const [A] = town.keys;
+  const { svc, who, charId, rows } = await seated(A);
+  const clock = { t: 0 };
+  const r = yardRig(svc, town, { who, charId, key: A, now: () => clock.t });
+  await r.frames(8);
+  clock.t = YARD_TOWN_TTL_MS / 2;
+  await r.ghostAt(CHAIR_MODEL, 0, 5);
+  assert.equal(await r.tool.commit(), true, 'the piece');
+  r.tool.close();
+  await r.frames(2);
+  const zs = () => r.yards.here().yard.pool.list().map((p) => p.pos[2]);
+  assert.deepEqual(rows().map((p) => p.pos[2]), [5]);
+  assert.deepEqual(zs(), [5]);
+  // the next ask, after the write, answered with a yard other than the write's (as a replica behind it holds the town)
+  svc.env.DB._raw.prepare("UPDATE home_decor SET place = json_set(place, '$.pos[2]', -6)").run();
+  const asks = r.wire.filter((w) => w === 'yards').length;
+  clock.t = YARD_TOWN_TTL_MS + 1;
+  await r.frames(12);
+  assert.equal(r.wire.filter((w) => w === 'yards').length, asks + 1, 'asked after the write');
+  assert.deepEqual(zs(), [5], 'the write stands over an answer from before it');
+  assert.ok(YARD_WRITE_HOLD_MS >= 2 * 30_000, 'the service\'s kept answer (YARDS_KEPT_S) and a replica\'s lag inside the hold');
+  // past the hold, the service's word again
+  clock.t = YARD_TOWN_TTL_MS / 2 + YARD_WRITE_HOLD_MS + YARD_TOWN_TTL_MS + 10;
+  await r.frames(12);
+  assert.equal(r.wire.filter((w) => w === 'yards').length, asks + 2, 'asked again');
+  assert.deepEqual(zs(), [-6], 'believed past the hold');
+  // and an answer asked BEFORE a write never stands it back, however long past the hold it lands (YARD-STALE's own turn)
+  r.gate.hold = true;
+  clock.t += YARD_TOWN_TTL_MS + 1;
+  await r.frames(6);
+  assert.ok(r.gate.release, 'a read in flight');
+  await r.ghostAt(CHAIR_MODEL, 0, -5);
+  assert.equal(await r.tool.commit(), true, 'a piece placed while it is out');
+  r.tool.close();
+  await r.frames(2);
+  clock.t += YARD_WRITE_HOLD_MS + 1;
+  r.gate.hold = false;
+  r.gate.release();
+  await r.frames(12);
+  assert.deepEqual(zs().sort((x, y) => x - y), [-6, -5], 'the piece placed stands over the answer asked before it');
 });
 
 test('FB1001 YARD-RECENTRE: the host\'s recentre stands every yard where the shift put it, in place, before that frame\'s draw - drawn and solid there the very frame - and the world host calls it in its recentre (mutants: the rebase dropped; put again for in place; the matrix kept; the host\'s call)', async (t) => {

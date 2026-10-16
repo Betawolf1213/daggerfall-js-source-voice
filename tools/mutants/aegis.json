@@ -82,8 +82,8 @@
   {
     "name": "AEGIS-the-wards-button-in-the-fire",
     "file": "src/ui/playerBadge.js",
-    "old": "oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
-    "new": "oblivionward: 'gatebreaker', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
+    "old": "oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
+    "new": "oblivionward: 'gatebreaker', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
     "tests": [
       "test/aegis.test.js"
     ],
@@ -162,8 +162,8 @@
   {
     "name": "AEGIS-the-vocabulary-without-the-ward",
     "file": "src/net/identityToken.js",
-    "old": "export const AURAS = Object.freeze(['dagonfire', 'oblivionward', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'beaconlight', 'burningstair', 'firstlight']);",
-    "new": "export const AURAS = Object.freeze(['dagonfire', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'beaconlight', 'burningstair', 'firstlight']);",
+    "old": "export const AURAS = Object.freeze(['dagonfire', 'oblivionward', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'maelstrom', 'beaconlight', 'burningstair', 'firstlight']);",
+    "new": "export const AURAS = Object.freeze(['dagonfire', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'maelstrom', 'beaconlight', 'burningstair', 'firstlight']);",
     "tests": [
       "test/aegis.test.js"
     ],

@@ -50,7 +50,7 @@ test('AUDIT PLAIN-UI W1 How chapters work says the whole of Strength - the week\
   assert.match(s, new RegExp(`The week's mark is ${STRENGTH_TARGET} Merit for every hundred players active \\(at least ${STRENGTH_TARGET}\\)\\.`));
   assert.match(s, new RegExp(`A week short of the mark brings a chapter above 50 back ${STRENGTH_SHORT} toward it; a week with no Merit at all costs ${STRENGTH_IDLE}; a Failing chapter loses ${CHAPTER_FAILING_FALL} more unless its Merit reaches twice the mark\\.`));
   assert.match(s, new RegExp(`A Rivalry's winner takes ${CHAPTER_EVENT_EFFECTS.rivalrySwing} from the loser, and a Season's end brings every chapter halfway back to 50\\.$`));
-  assert.match(said('The chairs'), new RegExp(`on accounts ${SEAT_ACCOUNT_AGE_S / 86400} days old\\.`));
+  assert.match(said('The chairs'), new RegExp(`on accounts ${SEAT_ACCOUNT_AGE_S / 86400} real days old\\.`));   // PIN MOVED (AUDIT GUILD-WORDS II C-8): real days, as the hall's line says them
   assert.match(said('Patron'), /pay Thriving prices for training and spells in its halls, or the chapter's own where better\.$/, 'W9: an Ascendant chapter\'s own is better');
 });
 
@@ -107,7 +107,8 @@ test('AUDIT PLAIN-UI W6 the badge\'s number toward nought, as the standing reads
   assert.deepEqual([b.label, b.value], ['Known', '+39']);
   assert.deepEqual([regardBadge({ regard: -40.5, standing: 'enemy' }).value, regardBadge({ regard: -39.5, standing: 'neutral' }).value], ['-40', '-39']);
   assert.equal(regardBadge({ regard: -0.4, standing: 'neutral' }).value, '0');
-  assert.match(b.words, /a blunt word, a crime they see, a blow and - worst - one of their own struck down lower it\./);
+  // PIN MOVED: TONE-TASTE (bible/06-Systems/Living-World.md) - the tone as they take it, townsfolk's named
+  assert.match(b.words, /a tone they dislike, a crime they see, a blow and - worst - one of their own struck down lower it\. Townsfolk like a Blunt word, not a Polite one\./);
 });
 
 test('AUDIT PLAIN-UI C1 a board fold records the reader\'s PRESS on its line, never a toggle - a browser fires toggle for the open a draw sets too, so the drawn default was kept as a choice and a redraw\'s echo could undo a fold; the words\' fold and the chapters\' fold kept across redraws as the guide\'s is (mutants: the words\' fold forgotten; the chapters\' fold forgotten)', async () => {

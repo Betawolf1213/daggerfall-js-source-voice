@@ -240,3 +240,24 @@ block as a clean cut - 0 host `let`s written, 30 names read - so it is a module,
 - `buildDungeonContext` 5,650 -> 5,263 code lines; its ceiling stays 5,446 (the block was never in the measure the
   ceiling was set from). `tools/mutate.mjs` over `partyloot.json`: 30 dead; over `hostmove.json`: 11 dead. As every
   slice: CI has no ARENA2, so the room's loot is Mac's to play before it merges.
+
+## FB1015's merge - a raise, by the overflow alone (2026-10-15)
+
+Not a slice: a ceiling a pull request found already broken. Merging main into FB1015 (`01-Overview/Field-Bugs-2026-10-15b.md`)
+measured main's own `bootWorld` at 21,750 code lines against its 21,695 - ten field-bug merges between 1242f035 and
+4f3fb37a added 251 lines and took 56 out of `world.js`, each inside the ceiling on its own, together 55 over it (the
+gate's header names the case: it gates a change, never a deploy). FB1015 adds no line to `bootWorld`, and no one block of
+the growth is a cut of its own, so the ceiling was raised by exactly the overflow - 21,695 -> 21,750, with the reason
+beside it in `test/hostceiling.test.js` - and no room: the next pull request that lengthens `bootWorld` moves code out
+first (`buildPixelNow` is next in the order above).
+
+## FIELD BUGS 2026-10-15c - the overflow taken back out (2026-10-15)
+
+PVP-ESCROW's two sides - my pieces held in the service's escrow, asked back once my killer can no longer collect them,
+and my collects carried to the service (`11-Multiplayer/Wild-Zone.md` section 4) - leave `bootWorld` whole for
+`src/scenes/wildEscrowHost.js` (`createWildEscrowHost`). `node tools/hostScope.mjs` measured the group: eight members,
+63 lines, reads five host names (`modes`, `onlineCheckpoint`, `realmSession`, `townTalk`, `wildAccount`), writes
+none, used by three (the drop's receipt, the zone's frame, the room's collect) - handed in, the three calls go through
+the module's `held`, `frame` and `collectHeard`. `bootWorld` 21,750 -> 21,688 code lines, and its ceiling back to
+21,695, where it stood before FB1015's raise. The pins that read the block by source (`test/fb1014_pvpescrow.test.js`)
+read the module, and the bible's anchors name it (`01-Overview/Field-Bugs-2026-10-15c.md`).

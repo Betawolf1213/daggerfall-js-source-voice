@@ -3408,11 +3408,11 @@ own draw and its Wager's decrees (`eg_runs.nonce`, `wgs`) and the Reliquaries a 
 **Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`src/net/wire.js`) with its `LAW` row, and a
 game that does not know it is told to reload. Each that moves the service bumps `ACCOUNT_VERSION`
 (`server-account/src/service.js`). The arc ships under one of each, EG-PLAY's, re-hashed in place by every later slice
-while unshipped: `world206` (`world195` on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
-ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5 and PVP-LOOT + QUEST-HOME at the merges) and `acct137` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127`, `acct133`, `acct134`, `acct135` and `acct136` after
-earlier merges, renumbered past main's slices to SUMMON-REPAIR + PVP-ESCROW + QUEST-HOME's `acct136` at the merges). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
-A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 206, `src/net/wire.js` - AUDIT EG
-V: it read 197, its branch's first, and main's world197 to world204 carry no breach).
+while unshipped: `world211` (`world195` on its branch, then `world206`, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
+ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, SERPENT5, ONE-BODY, INSTANCES, WEAPON-GLOW1 and HUB-PULL + DO-ASK at the merges) and `acct141` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127`, `acct133`, `acct134`, `acct135`, `acct136` and `acct137` after
+earlier merges, renumbered past main's slices to AUDIT GUILD-WORDS' `acct140` at the merges), its migration `0120_elite_breach.sql` (0119 until main's SERPENT5 took it). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
+A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 211, `src/net/wire.js` - AUDIT EG
+V: it read 197, its branch's first, and main's world197 to world210 carry no breach).
 
 ## 24. The made level's rules
 
@@ -3978,8 +3978,8 @@ of main past the host split). **A record
 names another record's departure by its number when it closed**: a list renumbered later keeps the pointer to the
 departure as it then stood, so read such a pointer against the record's own date. **Versions** are
 named as they stood too: the arc ships under one relay version, one account version and one migration (section 23's
-Versions), so a record's `world195`-`world205`, `acct116`-`acct136` and migrations 0111 to 0117 are `world206`, `acct137` and
-0119 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
+Versions), so a record's `world195`-`world205`, `acct116`-`acct136` and migrations 0111 to 0119 are `world211`, `acct141` and
+0120 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
 built.
 
 **EG-L10N, owed**: the arc's own words reach a player in English, whatever language they chose - its record, below the

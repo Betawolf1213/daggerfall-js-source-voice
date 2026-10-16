@@ -75,10 +75,23 @@ import { LIGHTS_ARCHIVE, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLO
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { transformedAabb } from '../render/frustum.js';   // FB1009 HOME-FOOT: a model's ground where its placement stands it
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a row named by its lamp
+import { createBankAccounts, BANK_REGION_COUNT, goldRegion } from '../systems/banking.js';   // the yard's wallet (homeYardWallet)
+import { totalGoldAmount, payUndoable, addGold } from '../systems/court.js';
 
 /** YARD-LIGHT: the light a yard's lamp gives - the town's lantern's (DaggerfallLight [City]: range 18, intensity 1,
  *  white). The world host lights it as it lights theirs: the town lanterns' colour (CITY_LIGHT_COLOR_F32) and their
  *  flicker, at the lamp's own reach (yardLampRows). */
+/** HOME-YARD: what a yard's decorator spends - the player's purse and the region's bank account (EMPIRE-ACCOUNT: online,
+ *  the Empire's). Moved out of world.js's bootWorld whole (INSTANCES' HOST-SPLIT, 2026-10-15): it reads only `entity`. */
+export const homeYardWallet = (entity, region) => {
+  entity.bankAccounts ??= createBankAccounts(BANK_REGION_COUNT);
+  const a = entity.bankAccounts[goldRegion(entity.bankAccounts, region)] ?? null;   // EMPIRE-ACCOUNT: the Empire's account
+  return {
+    gold: totalGoldAmount(entity) + (a?.accountGold ?? 0),
+    pay: (n) => payUndoable(entity, n, a),   // MARKET-AUDIT: answering the undo of exactly what it took
+    credit: (n) => { addGold(entity, n); },
+  };
+};
 export const YARD_LAMP = Object.freeze({ range: CITY_LIGHT_RANGE, intensity: CITY_LIGHT_INTENSITY, color: CITY_LIGHT_COLOR });
 /** AUDIT YARD-LIGHT (L1): HOW MANY OF A YARD'S LAMPS LIGHT - the most TEXTURE.210 flats any Daggerfall town block stands
  *  (eight, in GRVEAL01, GRVEAS01, GRVEAM01, CUSTAA02 and CUSTAA04 of the 920 RMB blocks; most stand three to five).
@@ -152,6 +165,11 @@ export const YARD_MARK_HIGH = 1;
 /** A town's yards, believed this long; an unanswered ask waits this long before the next. */
 export const YARD_TOWN_TTL_MS = 60_000;
 export const YARD_RETRY_MS = 10_000;
+/** PRIMARY-TRIPS audit (2026-10-16): how long the owner's own write stands over ANY answer of its town, asked after it
+ *  too - the service keeps a town's answer YARDS_KEPT_S (30 s) an isolate and reads it off a replica (YARDS-REPLICA,
+ *  server-account/src/decor.js), so an answer asked after the write can still be one from before it, kept, or a replica
+ *  behind. FB1001 YARD-STALE held a write over an answer asked before it alone. */
+export const YARD_WRITE_HOLD_MS = 60_000;
 /**
  * YARD-SHED (2026-10-06, the account service down - "D1 DB is overloaded. Requests queued for too long."): A TOWN'S
  * YARDS ARE ASKED ONLY WITHIN REACH, AND A FAILED ASK BACKS OFF. Every built pixel's town was asked every minute - the
@@ -480,7 +498,7 @@ export function createHomeYards(deps) {
   // answer READ BEFORE a write and landing after it never stands the yard as it was (the piece placed gone, the piece
   // moved back, the piece removed standing again, for the minute until the next read)
   let wrote = 0;
-  /** @type {Map<number, Map<number, {n: number, list: any[]}>>} */
+  /** @type {Map<number, Map<number, {n: number, at: number, list: any[]}>>} */
   const writes = new Map();
 
   function ensure(mapId) {
@@ -498,7 +516,7 @@ export function createHomeYards(deps) {
         if (!Number.isSafeInteger(y?.buildingKey) || !Array.isArray(y.pieces)) continue;
         byKey.set(y.buildingKey, y.pieces.map(decorYardPieceOf).filter((p) => p && decorYardHighOk(p)));   // YARD-SWEEP: nor a tower's piece from before YARD-HEIGHT
       }
-      for (const [bk, w] of writes.get(mapId) ?? []) if (w.n > asked) byKey.set(bk, w.list);   // YARD-STALE: written since it was asked
+      for (const [bk, w] of writes.get(mapId) ?? []) if (w.n > asked || now() - w.at < YARD_WRITE_HOLD_MS) byKey.set(bk, w.list);   // YARD-STALE: written since it was asked - or (PRIMARY-TRIPS audit) within YARD_WRITE_HOLD_MS of it
       towns.set(mapId, { at: now(), byKey });
       failed.delete(mapId);
     }, () => { failed.set(mapId, { at: now(), n: (failed.get(mapId)?.n ?? 0) + 1 }); }).finally(() => { asking.delete(mapId); });
@@ -671,7 +689,7 @@ export function createHomeYards(deps) {
     if (town) town.byKey.set(y.bk, list);
     y.sig = JSON.stringify(list);
     if (!writes.has(y.mapId)) writes.set(y.mapId, new Map());
-    writes.get(y.mapId).set(y.bk, { n: ++wrote, list });   // FB1001 YARD-STALE
+    writes.get(y.mapId).set(y.bk, { n: ++wrote, at: now(), list });   // FB1001 YARD-STALE
   }
   const homeDecor = deps.api ? {
     place: (a) => deps.api.place({ ...a, yard: true }),

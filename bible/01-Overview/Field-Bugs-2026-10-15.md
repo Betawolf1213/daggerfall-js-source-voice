@@ -38,13 +38,19 @@ CHANGED (Mac, asked of four shapes - no wait, a review anywhere, both, or DFU's 
   read. The Roll's ceiling holds inside the wait: a member at 7 is not announced 8 or 9 (CHAP4b). Offline every review
   is DFU's whole. DFU's gate is kept as DFU tests it - `!(today < lastRankChange + 28)` - so a stamp that does not read
   as a number opens it as before (`guilds.test.js`'s AUDIT 21 F1 hands the review a bare number).
+  ROLL-PACE (`01-Overview/Field-Bugs-2026-10-15f.md`, the same day) found the premise short: the Roll paces the
+  REPUTATION, and a stranger's quests bank it before the membership begins, so the first review turned a week's
+  standing into seven ranks. Online a review now promotes no further than the Roll's pace since the membership began,
+  and the no-wait stands only while the Roll paces it.
 - **The hall's line.** Online, the guild popup tells a member what the next rank asks that they do not have
   (`rankNeedsLines` over `rankNeeds`, which reads the next row exactly as `baseCalculateNewRank` reads it): "Next rank:
   Swordsman", "Reputation 14 of 20", "A guild skill at 31 - your best, Axe, is 25", "A second guild skill at 9", and,
-  when a skill is short, the guild's own skills by name. No line when nothing is short, at the highest rank a review
-  gives (DFU's nine, or 7 while the Roll holds), or for a stranger. It stands above the popup's buttons on the enhanced
+  when a skill is short, the guild's own skills by name. No line for a stranger, at DFU's nine, or when nothing is
+  short and no review warns; at the Roll's 7 the seat's lines, and a probation's stakes or a coming demotion always
+  first (SEAT-LINE and STANDING-WORDS, `Field-Bugs-2026-10-15g.md`; AUDIT GUILD-WORDS L3-12). It stands above the popup's buttons on the enhanced
   skin, the default; the classic window is DFU's own and draws nothing new (THE NATIVE-WINDOW RULE). Its words are the
-  port's own strings (`guild.rankNeeds.*`, six keys), drafted in-session in the thirteen whole languages.
+  port's own strings (`guild.rankNeeds.*` - six keys at first; twelve now, with six `guild.probation.*` beside them,
+  AUDIT GUILD-WORDS II C-13), drafted in-session in the thirteen whole languages.
 
 THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService, every interior, online and offline) - WIRED;
 world.js opens no popup of its own (its exteriors enter their halls through worldModes); exterior.js, the offline fixed

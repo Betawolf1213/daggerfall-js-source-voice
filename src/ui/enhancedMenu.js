@@ -146,7 +146,7 @@ import { dateFromClassicMinutes, dateString } from '../systems/gameDate.js';
 // PX5: the pause clock reads THE ONE CLOCK directly (AUDIT 23 C2's
 // law - every host already reads this same module), so no host seam
 // is needed and no host can drift.
-import { worldMinutes, skyMinutes, trustedWorldMinutes, worldSpanRealWords } from '../systems/worldTick.js';
+import { worldMinutes, skyMinutes, trustedWorldMinutes, worldSpanRealWords, ownMinutes } from '../systems/worldTick.js';
 import { BUILD_TAG, UPDATE } from '../buildTag.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { repaintKeepingScroll } from './domRepaint.js';
@@ -169,6 +169,7 @@ import { COLLECTION_PAGE_SECTIONS, collectionsPageShown, drawCollectionsPage, re
 import { swornBodyOf } from '../systems/revenantCompanions.js';   // COMPANION-ROSTER: a sworn one's live health
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // REVENANT-PAGE: a revenant's kind   // REVENANT-PAGE: the foes that have earned your name
 import { affiliations } from '../systems/affiliations.js';
+import { ROLL_GAIN_DAY_MAX } from '../net/npcChapterLaw.js';   // STANDING-WORDS: the day's pace, said beside the owed
 import { legalRepOf } from '../systems/court.js';   // REP5: the law, region by region
 import { banishmentLeft, banishmentDaysLeft, KNOWN_CRIMINAL_BELOW, pardonPrice, challengeFine } from '../systems/standing.js';
 import { legalStandingWord } from '../systems/legalBands.js';
@@ -5267,7 +5268,9 @@ export function lawRows(entity, worldNow) {
  *  19 says rather than drawing an empty section. */
 export function statsGuilds(detail, entity) {
   detail.append(pxDivider(t('pause.guilds.title', 'Guilds')));
-  const book = affiliations(entity);
+  // STANDING-WORDS: a probation's days on the character's own clock, as the review reads it; AUDIT GUILD-WORDS II C-7:
+  // online a promotion does not wait (PROMO-NOW), so a probation may end sooner
+  const book = affiliations(entity, { now: dateFromClassicMinutes(Math.floor(ownMinutes())), online: isOnlinePage() });
   if (!book.length) {
     detail.append(el('p', 'px-note', t('pause.guilds.none', 'You have no affiliations.')));
     return;
@@ -5276,6 +5279,9 @@ export function statsGuilds(detail, entity) {
     const r = el('div', 'px-stat px-guild');
     r.append(el('span', 'k', a.affiliation), el('span', 'v px-rank', a.probation ? t('pause.guilds.probation', '{title} - on probation', { title: a.title }) : a.title), signedRep(a.rep));   // REP6
     detail.append(r);
+    // STANDING-WORDS (Field-Bugs-2026-10-15g): a probation's stakes, and what the Roll still owes online
+    for (const w of a.warnings) detail.append(el('p', 'px-note', w));   // AUDIT GUILD-WORDS L1-2: a probation's stakes, a demotion before it lands
+    if (a.owed > 0) detail.append(el('p', 'px-note', t('pause.guilds.owed', '{owed} more standing on the way, at most {max} a real day (days turn at midnight UTC).', { owed: a.owed, max: ROLL_GAIN_DAY_MAX })));   // AUDIT GUILD-WORDS L1-6: the owed's pace, not the standing's; II C-8: the UTC day
   }
 }
 

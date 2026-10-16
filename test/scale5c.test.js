@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
-import { OnlineSession } from '../src/net/online.js';
+import { OnlineSession, HUB_FIND_ASK_MS, HUB_FIND_FRESH_MS } from '../src/net/online.js';
 import { SOCIAL_ROOM, CHAT_ROOMS, isSocialRoom, isChatRoom, isRegionRoom, parseClient, RELAY_VERSION, CLOSE_REPLACED } from '../src/net/wire.js';
 import * as H from '../src/net/hubShards.js';
 
@@ -39,6 +39,7 @@ async function world(fn) {
         for (let i = 0; i < 6; i++) {
           for (const [k, r] of W.made) if (H.isChannelShard(k)) await r.room._hubUpFlush();
           for (const [k, r] of [...W.made]) if (H.isChannelBus(k)) await r.room._downFlush();
+          for (const [k, r] of [...W.made]) if (H.isChannelShard(k)) await r.room._hubPoll();   // HUB-PULL: each shard asks for what it is owed
         }
       };
       /** A hub link for `n` (account `acct-<n>`), said hello to `key` - its own shard unless named. */
@@ -123,7 +124,7 @@ test('SCALE5c a shard holds its own roster and says the hub\'s count: its welcom
     assert.equal(old.sent[0].n, 5, 'the bus counts every shard');
     const shard = W.room(k0);
     assert.ok(bus.room._countT, 'the count\'s tell owed - a hello on the bus');
-    await bus.room._busCountTell();   // what its timer runs, HUB_COUNT_MS on
+    await bus.room._busCountTell(); await shard.room._hubPoll();   // what its timer runs, HUB_COUNT_MS on - and (HUB-PULL) the shard asking for it
     assert.equal(shard.room._hubTotal, 5, 'told the bus\'s count - a hello on the bus moved it');
     assert.equal(bus.room._toldN.get(k0), 5, 'and what it was told kept');
     assert.ok(shard.room._hubCountT, 'and owes its sockets the count');
@@ -136,21 +137,21 @@ test('SCALE5c a shard holds its own roster and says the hub\'s count: its welcom
     clearTimeout(bus.room._countT); bus.room._countT = null;
     const wl = await link(late);
     assert.ok(bus.room._countT, 'a hello on a shard owes the tell too');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 6, 'a hello on another shard');
     assert.equal(bus.room._namedCount(), 6);
     clearTimeout(bus.room._countT); bus.room._countT = null;
     await drop(old, SOCIAL_ROOM);
     assert.ok(bus.room._countT, 'a leave on the bus owes the tell');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 5, 'a leave on the bus');
     const held = bus.room._vsocks.size;
     await drop(wl, H.hubOfSubject(`acct-${late}`));
     assert.equal(bus.room._vsocks.size, held - 1, 'a leave on a shard handed up at once, not at its sync');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 4);
     const told = bus.room._toldN.get(k0);
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(bus.room._toldN.get(k0), told, 'nothing said to a shard told the count already');
     assert.deepEqual(w0.sent[0].peers, [], 'its roster its own shard\'s (it was first there)');
   });
@@ -301,6 +302,52 @@ test('SCALE5c the session: a hub link offers the shards in its hello, goes where
   // PIN MOVED, AUDIT SCALE II C-2: the flag kept under the relay's own key (hubShardsSeenKey), and a relay without the
   // shards takes the links off them (test/auditscale2_client.test.js runs the host's own closures)
   assert.match(world, /const onRelayVersion = \(v\) => \{ const keeps = hubShardsSupported\(v\); try \{ appStorage\(\)\?\.setItem\?\.\(hubShardsSeenKey\(\), keeps \? '1' : '0'\); \}/);
+});
+
+test('CHAT-FIND-HUB the session: the search box asks the hub while this link knows fewer than are online - once a query moves, never closer than HUB_FIND_ASK_MS, never a tag, never twice in flight, again when its answer is stale - keeps the answer as `hubFound` and never says it as a line; a busy hub is asked again; /find of the same query is still a line; the box cleared lets the answer go (mutants: the box never asks; asked though everyone is known; no floor; the answer said as a line; a busy answer kept; the answer outliving the box)', async () => {
+  await quiet(() => {
+    const { FakeWS, sockets } = fakeSocketClass();
+    let t = 1_000_000;
+    const s = new OnlineSession({ url: 'wss://relay.test', name: 'Mac', id: 'mac-0001', secret: 'secret-of-mac-0001', WebSocketImpl: FakeWS, now: () => t, rand: () => 0, presence: false });
+    s.join('chat:world.7');
+    sockets[0].open();
+    const ws = sockets[0];
+    const finds = () => ws.sent.map((x) => JSON.parse(x)).filter((f) => f.t === 'find' && f.q !== undefined);
+    assert.equal(s.askFind('ald'), false, 'not before the welcome');
+    ws.receive({ t: 'welcome', id: 'mac-0001', peers: [{ id: 'peer-0003', name: 'Borgrim' }], n: 2, v: 'world192', now: t });
+    assert.equal(s.askFind('ald'), false, 'everyone online is known here: the box filters them');
+    ws.receive({ t: 'n', n: 600 });
+    let lines = 0;
+    s.onFound = () => { lines++; };
+    assert.equal(s.askFind('#ab'), false, 'a tag is not the hub\'s to search');
+    assert.equal(s.askFind('  Ald '), true);
+    assert.deepEqual(finds().at(-1), { t: 'find', q: 'ald' });
+    t += 100;
+    assert.equal(s.askFind('aldr'), false, 'the floor');
+    t += HUB_FIND_ASK_MS;
+    assert.equal(s.askFind('ald'), false, 'asked, the answer on its way');
+    ws.receive({ t: 'found', q: 'ald', l: [{ id: 'peer-0002', name: 'Aldric', sub: 'acct-x' }] });
+    assert.equal(lines, 0, 'the box\'s answer is never a line');
+    assert.deepEqual(s.hubFound.l.map((p) => [p.id, p.name]), [['peer-0002', 'Aldric']]);
+    assert.equal(s.hubFound.q, 'ald');
+    assert.equal(s.askFind('ald'), false, 'answered, and fresh');
+    assert.equal(s.askFind('aldr'), true, 'a query moved');
+    ws.receive({ t: 'found', q: 'aldr', l: [], busy: 1 });
+    assert.equal(s.hubFound.q, 'ald', 'a busy hub answered nothing');
+    t += HUB_FIND_ASK_MS;
+    assert.equal(s.askFind('aldr'), true, 'and is asked again');
+    ws.receive({ t: 'found', q: 'aldr', l: [{ id: 'peer-0002', name: 'Aldric' }] });
+    t += HUB_FIND_FRESH_MS;
+    assert.equal(s.askFind('aldr'), true, 'a stale answer is asked again');
+    assert.equal(s.sendFind('aldr'), true);
+    ws.receive({ t: 'found', q: 'aldr', l: [] });
+    assert.equal(lines, 1, '/find of the box\'s own query is still said as a line');
+    assert.equal(s.askFind(''), false);
+    assert.equal(s.hubFound, null, 'the box cleared lets the answer go');
+    const n = finds().length;
+    for (let i = 0; i < 50; i++) { t += 16; s.askFind(`q${i}`); }
+    assert.ok(finds().length - n <= Math.ceil((50 * 16) / HUB_FIND_ASK_MS) + 1, 'a typist at sixty frames a second stays under the relay\'s bucket');
+  });
 });
 
 test('SCALE5c the bus\'s fans: a world line is one entry a shard, never one a socket, in its batch\'s order; a guild\'s line reaches a guildmate on another shard and nobody else (off the guild\'s own sockets); my guild online from every shard, never me; a search past the hub\'s budget is answered busy (mutants: the line a socket each; the broadcast out of order; the guild a walk of nothing; the guild index unkept; the guild ask unanswered; the asker listed; the hub\'s budget unasked)', async () => {
