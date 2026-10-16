@@ -112,9 +112,11 @@ export const HUB_INTERNAL_POLL = '/internal/hub/poll';
 export const HUB_POLL_MS = 20_000;
 /** HUB-PULL: the most deliveries the bus keeps for one shard unacknowledged, and their bytes - past either the oldest is
  *  let go (a shard that stopped asking), and the shard's next sync heals what it missed: every socket it holds said, a
- *  close it never heard said again. */
-export const HUB_OUTBOX_MAX = 256;
-export const HUB_OUTBOX_BYTES = 4 * 1024 * 1024;
+ *  close it never heard said again. HUB-PULL audit: the count holds a delivery every HUB_BATCH_MS for as long as a poll
+ *  may be out (HUB_POLL_MS + ROOM_CALL_MS, its shard's deadline) - 256 let a busy shard's go after 6.4 s; the bytes keep
+ *  the bus's worst, every shard of its stalled at once, a quarter of an object's 128 MB (HUB_SHARDS x 2 MiB). */
+export const HUB_OUTBOX_MAX = 1024;
+export const HUB_OUTBOX_BYTES = 2 * 1024 * 1024;
 /** How long a shard gathers what it hands the bus, and the bus what it owes a shard, before the batch goes - a world
  *  line crosses two of them. */
 export const HUB_BATCH_MS = 25;

@@ -130,9 +130,10 @@ export function gambitHonoursPlan(/** @type {any} */ ctx, /** @type {any} */ pla
   if (!player?.handle) return { reads: [], from: async () => ({ champion: false }) };
   const season = arenaSeasonOf(nowS);
   const cached = _champ.season === season && nowS - _champ.at < GAMBIT_CHAMPION_CACHE_S;
+  const keptId = cached ? _champ.id : null;   // PRIMARY-TRIPS audit: the #1 kept when the plan was made - read after the batch, another request's count of a new season could stand in its place
   return {
     reads: cached ? [] : [championKeptRead(ctx.db, season), playedRead(ctx.db, season)],
-    from: async (/** @type {any[]} */ res) => ({ champion: (cached ? _champ.id : await championFrom(ctx, nowS, season, res[0]?.results?.[0] ?? null, !!res[1]?.results?.[0])) === player.id }),
+    from: async (/** @type {any[]} */ res) => ({ champion: (cached ? keptId : await championFrom(ctx, nowS, season, res[0]?.results?.[0] ?? null, !!res[1]?.results?.[0])) === player.id }),
   };
 }
 /**

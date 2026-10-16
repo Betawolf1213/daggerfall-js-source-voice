@@ -132,8 +132,8 @@
   {
     "name": "AUDIT-SCALE2-R2-6-shards-unasked",
     "file": "server/src/index.js",
-    "old": "const rs = !this._pollers.has(hub);",
-    "new": "const rs = false;",
+    "old": "    const rs = b.rb !== this._boot;",
+    "new": "    const rs = false;",
     "tests": [
       "test/auditscale2_bus.test.js"
     ],
@@ -142,8 +142,8 @@
   {
     "name": "AUDIT-SCALE2-R2-6-resync-unsynced",
     "file": "server/src/index.js",
-    "old": "if (ans.rs) { this._hubSyncAt = 0; this._upHoldUntil = 0; await this._hubUpFlush(); }",
-    "new": "if (ans.rs) { this._upHoldUntil = 0; await this._hubUpFlush(); }",
+    "old": "      this._hubSyncAt = 0; this._upHoldUntil = 0;\n      // HUB-PULL audit: the held loop",
+    "new": "      this._upHoldUntil = 0;\n      // HUB-PULL audit: the held loop",
     "tests": [
       "test/auditscale2_bus.test.js"
     ],
@@ -464,8 +464,8 @@
   {
     "name": "HUB-PULL-outbox-max",
     "file": "src/net/hubShards.js",
-    "old": "export const HUB_OUTBOX_MAX = 256;",
-    "new": "export const HUB_OUTBOX_MAX = 2048;",
+    "old": "export const HUB_OUTBOX_MAX = 1024;",
+    "new": "export const HUB_OUTBOX_MAX = 256;",
     "tests": [
       "test/auditscale2_bus.test.js"
     ],
@@ -474,8 +474,8 @@
   {
     "name": "HUB-PULL-outbox-bytes",
     "file": "src/net/hubShards.js",
-    "old": "export const HUB_OUTBOX_BYTES = 4 * 1024 * 1024;",
-    "new": "export const HUB_OUTBOX_BYTES = 40 * 1024 * 1024;",
+    "old": "export const HUB_OUTBOX_BYTES = 2 * 1024 * 1024;",
+    "new": "export const HUB_OUTBOX_BYTES = 4 * 1024 * 1024;",
     "tests": [
       "test/auditscale2_bus.test.js"
     ],

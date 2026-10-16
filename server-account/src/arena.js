@@ -242,11 +242,12 @@ export function arenaHonoursPlan(/** @type {any} */ ctx, /** @type {any} */ play
   if (!player?.handle) return { reads: [], from: async () => ({ grand: false, champion: false }) };
   const season = arenaSeasonOf(nowS);
   const cached = _champ.season === season && nowS - _champ.at < ARENA_CHAMPION_CACHE_S;
+  const keptId = cached ? _champ.id : null;   // PRIMARY-TRIPS audit: the #1 kept when the plan was made - read after the batch, another request's count of a new season could stand in its place
   return {
     reads: [grandRead(ctx.db, player.id), ...(cached ? [] : [championKeptRead(ctx.db, season)])],
     from: async (/** @type {any[]} */ res) => ({
       grand: !!res[0]?.results?.[0],
-      champion: (cached ? _champ.id : await championFrom(ctx, nowS, season, res[1]?.results?.[0] ?? null)) === player.id,
+      champion: (cached ? keptId : await championFrom(ctx, nowS, season, res[1]?.results?.[0] ?? null)) === player.id,
     }),
   };
 }

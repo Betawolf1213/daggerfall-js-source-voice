@@ -281,7 +281,9 @@ export const YARDS_KEPT_MAX = 4096;
  *  time: the read after this isolate's own decor write there starts at the primary ('first-primary', so it sees the
  *  write), every read after a kept one from the bookmark that one ended at (a replica behind what this isolate already
  *  answered never answers it), and the first, with neither, any instance's. Another isolate's write reached a kept answer
- *  YARDS_KEPT_S late before; now that and a replica's lag, which is less. */
+ *  YARDS_KEPT_S late before; now YARDS_KEPT_S and a replica's lag past it (PRIMARY-TRIPS audit) - the owner's page holds
+ *  its own writes over any answer that long (scenes/homeYards.js YARD_WRITE_HOLD_MS), and a town's other callers see a
+ *  piece a moment later, as they did. */
 export const YARDS_FROM = 'first-unconstrained';
 /** @type {Map<number, { at: number, answer: any }>} */
 const keptYards = new Map();
@@ -294,6 +296,10 @@ const yardWrites = new Map();
 const yardsMark = new Map();
 /** @type {Set<number>} */
 const yardsWritten = new Set();
+/** PRIMARY-TRIPS audit: the newest of the bookmarks let go with the kept towns (YARDS_KEPT_MAX) - a town read after them
+ *  starts there, never older than this isolate already answered or wrote (D1's bookmarks sort oldest to newest:
+ *  d1/reference/time-travel). Cleared with them, every town's next read could be a replica's from before them. */
+let yardsFloor = /** @type {string | null} */ (null);
 /** A town's yards as yardsOf answers them, from this isolate's kept answer while it is YARDS_KEPT_S old or younger. */
 export async function yardsKept(ctx, mapId, nowS) {
   if (!homeMapIdOk(mapId)) return { error: 'bad-home' };
@@ -305,20 +311,23 @@ export async function yardsKept(ctx, mapId, nowS) {
   // YARDS-REPLICA: the read on a session of its own - the primary's after this isolate's own write here, else from the
   // last kept read's bookmark, else any instance's; a session D1 will not open is the request's database
   const wrote = yardsWritten.has(mapId);
-  const from = wrote ? 'first-primary' : (yardsMark.get(mapId) ?? YARDS_FROM);
+  const from = wrote ? 'first-primary' : (yardsMark.get(mapId) ?? yardsFloor ?? YARDS_FROM);
   const root = ctx.db?.[DB_ROOT] ?? ctx.db;
   let db = ctx.db;
   try { db = replicaDb(typeof ctx.db?.withSession === 'function' ? ctx.db : root, from); } catch { /* a bookmark D1 refuses: the request's database */ }
   const ask = yardsOf({ ...ctx, db }, null, { mapId }).then((answer) => {
     if (!('error' in answer) && (yardWrites.get(mapId) ?? 0) === gen) {
-      if (keptYards.size >= YARDS_KEPT_MAX && !keptYards.has(mapId)) { keptYards.clear(); yardsMark.clear(); }
+      if (keptYards.size >= YARDS_KEPT_MAX && !keptYards.has(mapId)) {
+        for (const m of yardsMark.values()) if (yardsFloor == null || m > yardsFloor) yardsFloor = m;   // PRIMARY-TRIPS audit
+        keptYards.clear(); yardsMark.clear();
+      }
       keptYards.set(mapId, { at: nowS, answer });
       const mark = bookmarkOf(db);
       if (mark) yardsMark.set(mapId, mark);
       if (wrote) yardsWritten.delete(mapId);
     }
     return answer;
-  }, (e) => { if (yardsMark.get(mapId) === from) yardsMark.delete(mapId); throw e; })   // a read that failed from a bookmark: the next starts from none
+  }, (e) => { if (yardsMark.get(mapId) === from) yardsMark.delete(mapId); if (yardsFloor === from) yardsFloor = null; throw e; })   // a read that failed from a bookmark: the next starts from none
     .finally(() => { if (askingYards.get(mapId) === ask) askingYards.delete(mapId); });
   askingYards.set(mapId, ask);
   return ask;
@@ -332,7 +341,7 @@ export function forgetYards(mapId) {
   yardsWritten.add(mapId);   // YARDS-REPLICA: and its next read the primary's, which has the write
 }
 /** Tests: every kept town forgotten. */
-export function _resetYardsKept() { keptYards.clear(); askingYards.clear(); yardWrites.clear(); yardsMark.clear(); yardsWritten.clear(); }
+export function _resetYardsKept() { keptYards.clear(); askingYards.clear(); yardWrites.clear(); yardsMark.clear(); yardsWritten.clear(); yardsFloor = null; }
 
 /** BASE-HIDE: what the home's owner took out of the room (migration 0015) - projected on the way out, so a list the law
  *  would refuse is handed out as none. */

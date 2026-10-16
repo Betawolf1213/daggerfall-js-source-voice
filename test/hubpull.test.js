@@ -25,6 +25,7 @@ function namesOnShards(count) {
 }
 const ofT = (ws, t, k) => ws.sent.filter((f) => f.t === t && (k === undefined || f.k === k));
 const lines = (ws) => ofT(ws, 'chat').map((f) => f.text);
+const HUB_RETRY_MS_HERE = 1000;   // server/src/index.js HUB_RETRY_MS
 const pollReq = (body) => new Request(`https://relay.internal${H.HUB_INTERNAL_POLL}`, { method: 'POST', body: JSON.stringify(body) });
 
 /** Until `fn()` holds, on the real clock (the held poll's loop and the batches' timers run on it here), or fail. */
@@ -110,7 +111,7 @@ test('HUB-PULL a poll that misses is asked again HUB_RETRY_MS later and its deli
   });
 });
 
-test('HUB-PULL the poll\'s door: a poll with `w` and nothing owed is held (HUB_POLL_MS at most), a newer one answers the older with nothing, a delivery sealed answers the held one, the shard\'s `ack` lets go what it ran, and a shard\'s first poll is told to say every socket again (mutants: the older poll left hanging; an ack never letting go; the hold\'s timer never set)', async () => {
+test('HUB-PULL the poll\'s door: a poll with `w` and nothing owed is held (HUB_POLL_MS at most), a newer one answers the older with nothing, a delivery sealed answers the held one, the shard\'s `ack` lets go what it ran, and a shard\'s first poll is told to say every socket again - told again until a poll says it heard (HUB-PULL audit: an \`rs\` answer lost never spends it) (mutants: the older poll left hanging; an ack never letting go; the hold\'s timer never set; rs spent at the first poll; the shard never saying it heard)', async () => {
   await quiet(async () => {
     const W = fakeRooms();
     const bus = W.room(SOCIAL_ROOM);
@@ -123,15 +124,31 @@ test('HUB-PULL the poll\'s door: a poll with `w` and nothing owed is held (HUB_P
     await bus.room._downFlush();
     const first = await (await bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack: null, gone: [] }))).json();
     assert.equal(first.rs, 1, 'a shard\'s first poll is told to say every socket again');
+    assert.equal(first.rb, bus.room._boot, 'naming the bus instance that says it');
     assert.ok(first.d.length >= 1, 'with every delivery it is owed - its greeting');
+    // HUB-PULL audit: that answer lost (or a poll its shard gave up on) - the next poll, saying no `rb`, is told again
+    const again = await (await bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack: null, gone: [] }))).json();
+    assert.equal(again.rs, 1, 'rs said until the shard says it heard it');
     const ack = { b: bus.room._boot, q: bus.room._downSeq.get(ka) };
-    const p1 = bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack, gone: [], w: 1 }));
+    const rb = first.rb;
+    assert.equal((await (await bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack, gone: [], rb }))).json()).rs, undefined, 'heard: never said again');
+    // and the shard's own poll says what it heard
+    let said = null;
+    const get0 = W.ROOMS.get;
+    W.ROOMS.get = (id) => ({ fetch: async (req) => { if (new URL(req.url).pathname === H.HUB_INTERNAL_POLL) said = (await req.clone().json()).rb ?? null; return get0(id).fetch(req); } });
+    R.room._rsBoot = null;
+    await R.room._hubPoll();
+    assert.equal(said, null, 'a shard that heard none says none');
+    await R.room._hubPoll();
+    assert.equal(said, bus.room._boot, 'and once told, every poll says the bus instance it heard');
+    W.ROOMS.get = get0;
+    const p1 = bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack: { b: bus.room._boot, q: bus.room._downSeq.get(ka) }, gone: [], w: 1, rb }));
     await until(() => bus.room._polls.has(ka), 'held, owed nothing');
     assert.equal(bus.room._outbox.get(ka).l.length, 0, 'what it ran let go');
     assert.ok(bus.room._polls.get(ka).t, 'held on a timer (HUB_POLL_MS)');
     let older = false;
     void p1.then(() => { older = true; });
-    const p2 = bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack, gone: [], w: 1 }));
+    const p2 = bus.room._hubPollInternal(pollReq({ hub: ka, b: R.room._boot, ack: { b: bus.room._boot, q: bus.room._downSeq.get(ka) }, gone: [], w: 1, rb }));
     await until(() => older, 'the older answered at the newer, never left to its timer', 1000);
     assert.deepEqual(await (await p1).json(), { ok: 1, d: [] }, 'the older answered nothing - its shard gave up on it');
     await until(() => bus.room._polls.has(ka), 'the newer held');
@@ -177,6 +194,7 @@ test('HUB-PULL `gone`: a delivery naming a socket its shard no longer holds (an 
       S.sockets.splice(S.sockets.indexOf(wa), 1);   // a's socket gone with its object's reset - no close said to anyone
       S.wake();
       S.room._hubSyncAt = clock;   // and its sync not yet due - only a delivery's `gone` can tell the bus
+      S.room._rsBoot = bus.room._boot;   // HUB-PULL audit: nor `rs` - a woken shard says none heard and is told it (its sockets said again); this pins the delivery's own word
       watcher.sent.length = 0;
       await W.room(kb).raw(wb, JSON.stringify({ t: 'social', k: 'friend.request', peer: `peer-${a}` }));
       await settle();
@@ -185,4 +203,91 @@ test('HUB-PULL `gone`: a delivery naming a socket its shard no longer holds (an 
       for (const [, r] of W.made) { clearTimeout(r.room._upT); clearTimeout(r.room._downT); clearTimeout(r.room._hubCountT); clearTimeout(r.room._countT); clearTimeout(r.room._owedSoon); clearTimeout(r.room._owedLate); }
     });
   } finally { Date.now = realNow; }
+});
+
+test('HUB-PULL audit: an `rs` answer never holds the shard\'s poll on the hand-up it asks; a sync it makes due while a hand-up is on the wire is handed after that one; and a hand-up that missed is tried again HUB_RETRY_MS on with nothing new owed (mutants: the rs hand-up awaited by the held poll; the sync made due on the wire left for the alarm; the miss never tried again)', async () => {
+  await quiet(async () => {
+    const W = fakeRooms();
+    const [a] = namesOnShards(1);
+    const S = W.room(H.hubOfSubject(`acct-${a}`));
+    const B = () => W.room(SOCIAL_ROOM).room;
+    const settle = async () => { for (let i = 0; i < 3; i++) { await S.room._hubUpFlush(); await B()._downFlush(); await S.room._hubPoll(); } };
+    const ws = S.connect();
+    await S.hello(ws, `peer-${a}`, null, { name: a, acct: `acct-${a}`, asecret: `secret-of-acct-${a}` });
+    await settle();
+    assert.equal(B()._vsocks.size, 1);
+    const get = W.ROOMS.get;
+    let release = () => {}, gate = Promise.resolve();
+    const hold = () => { gate = new Promise((r) => { release = r; }); };
+    let throwUp = 0;
+    W.ROOMS.get = (id) => ({ fetch: async (req) => {
+      if (new URL(req.url).pathname === H.HUB_INTERNAL_UP) { if (throwUp) { throwUp--; throw new Error('timeout'); } await gate; }
+      return get(id).fetch(req);
+    } });
+    // (1) a woken bus: the shard's held poll told `rs` answers while the hand-up it asked is still on the wire
+    W.room(SOCIAL_ROOM).wake();
+    hold();
+    S.room._hubSyncAt = Date.now();
+    assert.equal(await S.room._hubPoll(true), 1, 'the held poll answered - rs, nothing else new');
+    assert.ok(S.room._upBusy, 'while the hand-up it asked is still on the wire');
+    release();
+    await until(() => B()._vsocks.size === 1, 'the hand-up landed: the woken bus holds the socket again');
+    await S.room._hubPoll();
+    // (2) woken again, a hand-up already on the wire when `rs` comes: the sync is handed after it, not at the alarm
+    W.room(SOCIAL_ROOM).wake();
+    hold();
+    S.room._hubSyncAt = Date.now();
+    S.room._hubUpOwe('someone-else', 'x', 0);
+    clearTimeout(S.room._upT); S.room._upT = null;
+    const inflight = S.room._hubUpFlush();
+    await S.room._hubPoll(true);
+    release();
+    await inflight;
+    await until(() => B()._vsocks.size === 1 && !S.room._upBusy, 'the sync rs made due handed after the hand-up on the wire');
+    await S.room._hubPoll();
+    // (3) woken again and the resync's hand-up misses: tried again HUB_RETRY_MS on, with nothing new owed to start it
+    W.room(SOCIAL_ROOM).wake();
+    throwUp = 1;
+    await S.room._hubPoll();
+    assert.equal(throwUp, 0, 'the hand-up missed');
+    assert.equal(B()._vsocks.size, 0);
+    await until(() => B()._vsocks.size === 1, 'the miss tried again on its own', 3000);
+    W.ROOMS.get = get;
+    for (const [, r] of W.made) { clearTimeout(r.room._upT); clearTimeout(r.room._downT); clearTimeout(r.room._hubCountT); clearTimeout(r.room._countT); clearTimeout(r.room._owedSoon); clearTimeout(r.room._owedLate); }
+  });
+});
+
+test('HUB-PULL audit: a poll backing off after a miss is asked again the moment a hand-up of its shard is answered - the bus is back - and a poll that throws is a miss, never the loop\'s end (mutants: the backoff never woken; the loop ended by one throw)', async () => {
+  await heldWorld(async ({ W, bus, link, get }) => {
+    const [a] = namesOnShards(1);
+    const ka = H.hubOfSubject(`acct-${a}`);
+    const S = W.room(ka);
+    const wa = await link(a);
+    await until(() => bus.room._polls.has(ka), 'the poll held');
+    // the next poll misses; a moment later the shard hands something up, and the bus answers it
+    let missAt = 0;
+    const polls = [];
+    W.ROOMS.get = (id) => ({ fetch: async (req) => {
+      if (new URL(req.url).pathname === H.HUB_INTERNAL_POLL) { polls.push(Date.now()); if (!missAt) { missAt = Date.now(); throw new Error('timeout'); } }
+      return get(id).fetch(req);
+    } });
+    bus.room._pollAnswer(ka, /** @type {any} */ (bus.room._polls.get(ka)), false);
+    await until(() => missAt, 'the miss');
+    await new Promise((r) => setTimeout(r, 50));
+    await S.raw(wa, JSON.stringify({ t: 'chat', text: 'the bus is back' }));
+    await until(() => polls.length >= 2, 'asked again');
+    assert.ok(polls[1] - missAt < HUB_RETRY_MS_HERE / 2, `asked again once the hand-up was answered (${polls[1] - missAt} ms after the miss), not HUB_RETRY_MS on`);
+    await until(() => bus.room._polls.has(ka), 'held again');
+    // a delivery whose run throws: a miss - the loop asks again and the delivery, never acknowledged, runs then
+    const real = S.room._hubDownApply.bind(S.room);
+    let threw = 0;
+    S.room._hubDownApply = async (d) => { if (!threw) { threw++; throw new Error('a delivery threw'); } return real(d); };
+    wa.sent.length = 0;
+    bus.room._vsendAll(JSON.stringify({ t: 'chat', text: 'past a throw' }));
+    await bus.room._downFlush();
+    await until(() => threw === 1, 'the throw');
+    assert.equal(S.room._pollOn, true, 'the loop still runs');
+    await until(() => lines(wa).includes('past a throw'), 'the delivery run on the next poll', 4000);
+    S.room._hubDownApply = real;
+  });
 });

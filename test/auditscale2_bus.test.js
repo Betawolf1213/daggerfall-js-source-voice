@@ -16,6 +16,7 @@ import { SOCIAL_ROOM, GATE_BRAIN_V } from '../src/net/wire.js';
 import { mintOrder, mintGuildOutOrder } from '../src/net/identityToken.js';
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
 import { COURT_CENTRE, BRAIN_TICK_MS } from '../src/net/gateBrain.js';
+import { ROOM_CALL_MS } from '../server/src/relayScale.js';
 
 const quiet = async (fn) => { const keep = { info: console.info, warn: console.warn, log: console.log }; console.info = console.warn = console.log = () => {}; try { return await fn(); } finally { Object.assign(console, keep); } };
 
@@ -450,8 +451,10 @@ test('AUDIT SCALE II D-7 D-8: the bus greets a ShardSocket once (a hello said ag
   assert.equal(H.HUB_WHO_MS, 15_000);
   assert.equal(H.HUB_FRAME_MAX, 64 * 1024);
   assert.equal(H.HUB_POLL_MS, 20_000);   // HUB-PULL
-  assert.equal(H.HUB_OUTBOX_MAX, 256);
-  assert.equal(H.HUB_OUTBOX_BYTES, 4 * 1024 * 1024);
+  assert.equal(H.HUB_OUTBOX_MAX, 1024);   // HUB-PULL audit: PIN MOVED from 256 - a poll's whole deadline of deliveries
+  assert.equal(H.HUB_OUTBOX_BYTES, 2 * 1024 * 1024);   // HUB-PULL audit: PIN MOVED from 4 MiB - every shard's at once a quarter of an object's memory
+  assert.ok(H.HUB_OUTBOX_MAX * H.HUB_BATCH_MS >= H.HUB_POLL_MS + ROOM_CALL_MS, 'a delivery every batch, kept as long as a poll may be out');
+  assert.ok(H.HUB_SHARDS * H.HUB_OUTBOX_BYTES <= 32 * 1024 * 1024, 'the bus\'s outboxes, every shard stalled, a quarter of 128 MB at most');
   await world(async ({ bus, link, settle }) => {
     const [v] = namesOnShards(1);
     const wv = await link(v);

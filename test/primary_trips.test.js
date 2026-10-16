@@ -14,11 +14,13 @@ import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
-import { yardsKept, forgetYards, YARDS_FROM } from '../server-account/src/decor.js';
-import { forgetBudgetConfig } from '../server-account/src/budget.js';
-import { _resetArenaCache } from '../server-account/src/arena.js';
-import { _resetIliacCache } from '../server-account/src/iliac.js';
-import { _resetGambitCache } from '../server-account/src/gambit.js';
+import { yardsKept, forgetYards, YARDS_FROM, YARDS_KEPT_MAX, _resetYardsKept } from '../server-account/src/decor.js';
+import { forgetBudgetConfig, budgetKept } from '../server-account/src/budget.js';
+import { _resetArenaCache, arenaHonoursOf } from '../server-account/src/arena.js';
+import { withHonours } from '../server-account/src/honours.js';
+import { ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arenaLaw.js';
+import { _resetIliacCache, iliacHonoursOf } from '../server-account/src/iliac.js';
+import { _resetGambitCache, gambitHonoursOf } from '../server-account/src/gambit.js';
 
 const quiet = async (fn) => { const keep = { warn: console.warn }; console.warn = () => {}; try { return await fn(); } finally { Object.assign(console, keep); } };
 
@@ -141,4 +143,90 @@ test('PRIMARY-TRIPS HALL-PLAN: a hall witness\'s version bump reads the key\'s o
     ON CONFLICT (region) DO UPDATE SET ver = npc_hall_regions.ver + 1`).all().map((r) => r.detail).join('\n');
   assert.match(plan, /USING INDEX sqlite_autoindex_world_witness_1 \(kind=\? AND key=\?\)/, plan);
   assert.doesNotMatch(plan, /idx_world_witness_region/);
+});
+
+/** A D1 binding over two node:sqlite copies of the schema - a primary and a replica that lags it until `catchUp` - its
+ *  sessions served as D1 serves them: 'first-primary' the primary, 'first-unconstrained' the replica, a bookmark the
+ *  replica once it has caught up to it, else the primary. `refuse` names a bookmark whose session fails at its read. */
+function laggingD1() {
+  const mig = readdirSync(new URL('../server-account/migrations/', import.meta.url)).filter((f) => f.endsWith('.sql')).sort();
+  const mk = () => { const d = new DatabaseSync(':memory:', { enableForeignKeyConstraints: false }); for (const f of mig) d.exec(readFileSync(new URL(`../server-account/migrations/${f}`, import.meta.url), 'utf8')); return d; };
+  const primary = { db: mk(), pos: 0 }, replica = { db: mk(), pos: 0 };
+  const mark = (n) => `${n.toString(16).padStart(8, '0')}-00000000-00000000-${'0'.repeat(32)}`;
+  const posOf = (m) => parseInt(m.slice(0, 8), 16);
+  const L = { refuse: /** @type {string | null} */ (null), sessions: /** @type {{ c: string, on: string }[]} */ ([]) };
+  const stmtOn = (node, sql, refused) => { const st = node.db.prepare(sql); let a = []; const api = { bind(...x) { a = x; return api; }, async all() { if (refused) throw new Error('D1_ERROR: bookmark refused'); return { results: st.all(...a) }; }, async first() { return st.get(...a) ?? null; }, async run() { return { meta: { changes: st.run(...a).changes } }; } }; return api; };
+  const binding = {
+    prepare: (sql) => stmtOn(primary, sql, false),
+    withSession(c) {
+      const node = c === 'first-primary' ? primary : c === 'first-unconstrained' ? replica : replica.pos >= posOf(c) ? replica : primary;
+      L.sessions.push({ c, on: node === primary ? 'primary' : 'replica' });
+      return { prepare: (sql) => stmtOn(node, sql, c === L.refuse), getBookmark: () => mark(node.pos) };
+    },
+  };
+  const ROW = JSON.stringify({ pos: [8, 0, 2], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 0 });
+  const write = (mapId, id) => { primary.db.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, 300, ?, 41000, ?, 1, 0, 1)').run(mapId, id, ROW); primary.pos++; };
+  return { L, binding, write };
+}
+const pieceIds = (a) => a.yards.flatMap((y) => y.pieces.map((p) => p.id));
+
+test('PRIMARY-TRIPS audit: a town\'s yards never read older than this isolate already answered or wrote once YARDS_KEPT_MAX towns let the kept ones go - the newest bookmark let go is where the next read starts - and a floor whose read fails is let go (mutants: the floor never kept; the floor never read; a failed floor kept)', async () => {
+  _resetYardsKept();
+  const { L, binding, write } = laggingD1();
+  const ctx = { db: binding, nowS: T0 };
+  const T = 7;
+  write(T, 'mine');   // this isolate's own decor write; the replica not caught up
+  forgetYards(T);
+  assert.deepEqual(pieceIds(await yardsKept(ctx, T, T0)), ['mine'], 'the read after the write is the primary\'s');
+  for (let i = 1; i <= YARDS_KEPT_MAX; i++) await yardsKept(ctx, 100_000 + i, T0);   // the last of them lets every kept town go
+  const again = await yardsKept(ctx, T, T0 + 31);
+  assert.notEqual(L.sessions.at(-1)?.c, YARDS_FROM, 'from the floor, never any instance\'s');
+  assert.deepEqual(pieceIds(again), ['mine'], 'the write still stands - a replica behind it never answers it');
+  // the floor's session refused at its read: that read fails, and the next starts from any instance's
+  L.refuse = L.sessions.at(-1)?.c ?? null;
+  await assert.rejects(() => yardsKept(ctx, 9, T0 + 100));
+  await yardsKept(ctx, 10, T0 + 100);
+  assert.equal(L.sessions.at(-1)?.c, YARDS_FROM, 'the refused floor let go');
+  _resetYardsKept();
+});
+
+test('PRIMARY-TRIPS audit: a checkpoint keeps the budget\'s config the moment its batch reads it - a staff change forgotten while the save is opened and the baseline read is never undone by the older row (mutant: the config kept after the baseline\'s read)', async () => {
+  const S = await standService();
+  const who = await S.registered('Alda');
+  const R = await seatRealm(S.env, who.secret, 'Alda', freshSave({ name: 'Alda' }));
+  const raw = S.env.DB._raw;
+  const OLD = { enforce: false, bands: [{ upTo: 99, rate: 1, cap: 1 }] };
+  const NEW = { enforce: true, bands: [{ upTo: 99, rate: 2, cap: 2 }] };
+  const setCfg = (c) => raw.prepare("INSERT INTO realm_config (key, value, at, by) VALUES ('budget', ?, 1, NULL) ON CONFLICT (key) DO UPDATE SET value = excluded.value").run(JSON.stringify(c));
+  setCfg(OLD);
+  forgetBudgetConfig(S.env.DB);
+  raw.prepare('UPDATE realm_characters SET wealth_v = -1 WHERE id = ?').run(R.id);   // the measure moved: the baseline reads the stored record (R2)
+  const get = S.env.SAVES.get.bind(S.env.SAVES);
+  let changed = false;
+  S.env.SAVES.get = async (k) => { if (!changed) { changed = true; setCfg(NEW); forgetBudgetConfig(S.env.DB); } return get(k); };   // staff's change, mid-checkpoint
+  const at = R.at();
+  const res = await worker.fetch(new Request(`https://accounts.invalid/v1/realm/${R.id}/data`, { method: 'PUT', headers: { authorization: `Bearer ${who.secret}`, 'x-realm-lease': at.lease, 'x-realm-seq': String(at.seq + 1) }, body: JSON.stringify(freshSave({ name: 'Alda' })) }), S.env);
+  assert.equal(res.status, 200);
+  assert.ok(changed, 'the change landed between the batch and the baseline');
+  assert.equal(budgetKept(S.env.DB), null, 'the older config is not kept over the forgetting - the next checkpoint reads staff\'s');
+  S.env.SAVES.get = get;
+});
+
+test('PRIMARY-TRIPS audit: a badge\'s kept #1 is the one the plan saw - another request counting a new season while the batch is out never stands in its place (mutant: the kept #1 read after the batch)', async () => {
+  _resetArenaCache(); _resetIliacCache(); _resetGambitCache();
+  const boundary = ARENA_SEASON_EPOCH_S + 3 * ARENA_SEASON_S;
+  const dbFor = (champ, nowS, hold = null) => {
+    const st = (sql) => ({ sql, bind() { return this; }, async first() { return /_champions/.test(sql) ? { player: champ, at: nowS } : null; }, async all() { return { results: [] }; }, async run() { return {}; } });
+    return { prepare: st, async batch(list) { await hold; return list.map((x) => ({ results: /_champions/.test(x.sql) ? [{ player: champ, at: nowS }] : [] })); } };
+  };
+  const A = { id: 'A', handle: 'a' };
+  for (const of of [arenaHonoursOf, iliacHonoursOf, gambitHonoursOf]) assert.equal((await of({ db: dbFor('A', boundary - 1) }, A, boundary - 1)).champion, true, 'each game\'s #1, kept');
+  let release = () => {};
+  const hold = new Promise((r) => { release = r; });
+  const signing = withHonours({ db: dbFor('A', boundary - 1, hold) }, A, boundary - 1);
+  for (const of of [arenaHonoursOf, iliacHonoursOf, gambitHonoursOf]) await of({ db: dbFor(null, boundary) }, { id: 'X', handle: 'x' }, boundary);   // a second on: each game's next season counted
+  release();
+  const signed = await signing;
+  assert.deepEqual([signed.arena.champion, signed.iliac.champion, signed.gambit.champion], [true, true, true], 'the #1 each plan saw');
+  _resetArenaCache(); _resetIliacCache(); _resetGambitCache();
 });

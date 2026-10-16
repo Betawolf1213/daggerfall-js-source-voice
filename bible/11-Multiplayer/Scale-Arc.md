@@ -2280,14 +2280,23 @@ Observability (the relay's own logs), with the account's token.
 - **A woken bus's resync is its first answer.** AUDIT SCALE II R2-6's resync called every shard the bus had heard from
   (kept in storage, `vhubs`). Now a shard's first poll to a bus instance is answered `rs`, and the shard hands up every
   socket it holds at once. A bus that woke holds no poll, so every shard holding a socket asks it within a retry, and
-  the bus writes nothing to remember them.
+  the bus writes nothing to remember them. The answer names the bus instance (`rb`) and every poll after it says the
+  one it heard; until a poll does, `rs` is said again (the audit, below: a lost answer never spends it) - so a woken
+  shard, which says none, is told it too.
 - **Kept until it ran, and bounded.** A delivery stays in its outbox until its shard's `ack` says it ran: a poll whose
   answer was lost is answered with it again, and a delivery handed twice runs once (`_downSeen`, as before). An outbox
-  holds HUB_OUTBOX_MAX (256) deliveries and HUB_OUTBOX_BYTES (4 MiB) at most - past either the oldest is let go and the
+  holds HUB_OUTBOX_MAX (1024) deliveries and HUB_OUTBOX_BYTES (2 MiB) at most - past either the oldest is let go and the
   shard's next sync heals it (a close it never heard said again) - and the silent sweep (R2-9) lets a silent shard's go.
-- **The loop never spins.** A miss is asked again HUB_RETRY_MS later, doubling to HUB_SYNC_MS / 2; an answer with
-  nothing new - empty, or only deliveries the shard ran already - HUB_BATCH_MS later. A mutant that asked again at once
-  hung the pins' process (a loop of promises starves the clock), which is the hazard the pacing answers.
+  The count is a delivery every HUB_BATCH_MS for as long as a poll may be out (HUB_POLL_MS + ROOM_CALL_MS); the bytes keep
+  a bus's worst, every one of its HUB_SHARDS stalled at once, to a quarter of an object's 128 MB.
+- **The loop never spins.** A miss is asked again HUB_RETRY_MS later, doubling to HUB_SYNC_MS / 2 - or at once when a
+  hand-up of the shard's is answered meanwhile (the bus is back); an answer with nothing new - empty, or only deliveries
+  the shard ran already - HUB_BATCH_MS later. A mutant that asked again at once hung the pins' process (a loop of
+  promises starves the clock), which is the hazard the pacing answers. A poll that throws is a miss, never the loop's end.
+- **Within the runtime's count.** A shard's polls are charged to its newest incoming event (a socket's frame, a call,
+  its sync's alarm every HUB_SYNC_MS). A shard whose sockets say nothing while the hub is busy polls at most once a
+  batch - some 2,400 polls to one alarm - under the 10,000 subrequests an invocation of the paid plan
+  (workers/platform/limits).
 - **DO-ASK - THE WORKER'S ASK OF A ROOM** (`server/src/relayScale.js` askRoom; the Worker's door and `layerWalk`). A
   Durable Object's error says `retryable` where the object was reset or its connection lost before it ran anything,
   and `overloaded` where its queue ran too long. Every ask the Worker makes is a socket's upgrade, so a retryable one
@@ -2299,10 +2308,11 @@ Observability (the relay's own logs), with the account's token.
 
 ### Pins
 
-- `test/hubpull.test.js` (4): the held loop (one poll a shard at the bus, a delivery answering it, a line crossing
+- `test/hubpull.test.js` (6): the held loop (one poll a shard at the bus, a delivery answering it, a line crossing
   shards with no hand driving it, every call between the objects TO the bus); a miss asked again later with its
   deliveries still owed, an empty or stale answer paced; the poll's door (held, the older answered at the newer, a
-  delivery answering the held one, the `ack` letting go, the first poll's `rs`); `gone`. `tools/mutants/hubpull.json`.
+  delivery answering the held one, the `ack` letting go, the first poll's `rs` and `rs` said until heard); `gone`; and
+  the audit's two (A1-A5, below). `tools/mutants/hubpull.json`: 20.
 - `test/doask.test.js` (2): the Worker's door and the walk - a retryable error asked again once, an overloaded one
   never, what is left a 503. `tools/mutants/doask.json`.
 - PIN MOVED: `test/auditscale2_bus.test.js` R2-6 (a woken bus's resync now the first poll's `rs`), R2-7 (a delivery's
@@ -2318,6 +2328,27 @@ Observability (the relay's own logs), with the account's token.
   purge added; `tools/hubShardBench.mjs` reads the bus's outbox where it read its pushes.
 - RELAY_VERSION world209, its hash in `test/relayversion.test.js` and every pin on world208 moved. It was world208 on
   this branch until the merge of main, whose INSTANCES (`11-Multiplayer/Instances.md`) took world208 first.
+
+### The audit (2026-10-16, Mac: "Audit this and ensure perfection")
+
+Two read-only lenses over the branch - the relay's HUB-PULL and DO-ASK, the account's PRIMARY-TRIPS (below) - each
+finding reproduced against the branch and, where it was there, the merge base. The relay's:
+
+| # | Found | Fixed | Pin |
+|---|---|---|---|
+| A1 | An `rs` answer awaited the hand-up it asked, and `_hubUpFlush` resolves only once the shard owes the bus nothing - a busy shard (a reconnect's storm, the rehellos `rs` itself asks) polled nothing meanwhile, and past HUB_OUTBOX_MAX (then 256, 6.4 s of batches) the bus let its oldest deliveries go: 63 of 320 lines lost in the repro | the held poll never waits on it (a single poll the harness drives still does) | hubpull audit (1), mutant rs-awaited |
+| A2 | A sync `rs` made due while a hand-up was on the wire was never handed - the woken bus held none of the shard's quiet sockets until the alarm | the hand-up's tail hands a due sync too | hubpull audit (2), mutant due-sync-left |
+| A3 | On main already: a hand-up's miss set its retry after a `return`, so it was never armed - a miss waited for the shard's next event or its alarm, a minute on | armed in the miss | hubpull audit (3), mutant miss-unretried |
+| A4 | A poll backing off (to HUB_SYNC_MS / 2) was never cut short by a bus come back, while it sealed what the shard was owed | a hand-up the bus answers wakes it (`_pollRest`) | hubpull audit, the backoff; mutant backoff-unwoken |
+| A5 | One throw (a delivery's run) ended the loop until the next owed event or the alarm | a throw is a miss | hubpull audit, the throw; mutant throw-ends-loop |
+| A6 | `rs` was spent at the bus before it reached the shard - a lost answer, or a poll its shard gave up on, left the resync to the shard's sync | said until a poll names the instance it heard (`rb`) | the poll's door; mutants rb-unsaid, rb-unkept, rb-unnamed, rs-once |
+| A7 | 256 deliveries were 6.4 s of a busy hub's batches, and 4 MiB a shard was half an object's memory for sixteen | 1024 (a poll's whole deadline) and 2 MiB | D-8's numbers and their relations |
+
+Read and left: a shard reset with deliveries answered but not yet acknowledged has them handed again to its new instance
+(its sockets, where they outlived it, hear them twice - the window is one poll); a held poll keeps a live shard resident
+(the shards were active 21-23 hours a day already, above). DO-ASK was sound: only a socket's upgrade reaches askRoom
+(the 426 comes first), so a second ask sends no body twice. `world209`'s hash moved with the fixes, before any deploy
+(`test/relayversion.test.js` notes the first).
 
 ### The deploy
 
@@ -2373,7 +2404,10 @@ and D1's own analytics and query insights.
   a time: any instance's first, then from the last kept read's bookmark, and the primary's right after this isolate's
   own decor write there. The isolate's kept answer still answers YARDS_KEPT_S. `bookmarkOf` moved to `service.js`, one
   reader for both. Some 500,000 primary reads a day of some 1,100 rows each, the most statement time of any read but the
-  session's lookup, off the primary.
+  session's lookup, off the primary. Past YARDS_KEPT_MAX towns the newest bookmark let go is the floor every unmarked
+  town reads from (the audit, below). Another isolate's write reaches this isolate's answer YARDS_KEPT_S and a replica's
+  lag late, where it was YARDS_KEPT_S - so the owner's page holds its own writes over ANY answer YARD_WRITE_HOLD_MS
+  (`scenes/homeYards.js`), not only one asked before them.
 - **SAVE-BATCH.** A checkpoint reads its record's row, the ledger's two reads of the character's own rows (`ledger.js`
   ledgerReads) and - where the isolate kept none - the budget's config (`budget.js` budgetKept, budgetRead, budgetFrom)
   in ONE batch, one snapshot, before anything is judged; the verdict takes them as `known` (`verdict.js` verdictOn,
@@ -2392,6 +2426,22 @@ and D1's own analytics and query insights.
 - Estimated at the evening's peak, from the counts above: the seats' list -6 primary trips a second, the yards -8, a
   checkpoint -15, a mint -10 to -14, the heartbeat -10 - some -50 of 200, a quarter of the primary.
 
+### The audit (2026-10-16, Mac: "Audit this and ensure perfection")
+
+Each finding reproduced over the service on node:sqlite, against the branch and the merge base:
+
+| # | Found | Fixed | Pin |
+|---|---|---|---|
+| B1 | YARDS-REPLICA moved an answer: an isolate's first read of a town was the primary's and saw every write; now it is a replica's, and another isolate's write - the owner's own, their next ask landing elsewhere - can miss it, kept YARDS_KEPT_S. Its comment said the lag was "less"; it is added | the owner's page holds its writes over any answer YARD_WRITE_HOLD_MS (a minute: the kept answer and a lag inside it), not only one asked before them - and FB1001 YARD-STALE's 30 s gap of another isolate's kept answer closes with it; the comment corrected | `test/fb1001_yard.test.js` PRIMARY-TRIPS audit, mutants hold-dropped and YARD-STALE's re-aimed |
+| B2 | Past YARDS_KEPT_MAX towns (anyone can ask 4,096) every bookmark went with the kept answers, so a town's next read could be a replica's from before this isolate's own write or its last answer | the newest bookmark let go is a floor (D1's bookmarks sort oldest to newest - d1/reference/time-travel); a floor whose read fails is let go | primary_trips audit (yards), mutants floor-unkept, floor-oldest, floor-unread, floor-refused-kept |
+| B3 | SAVE-BATCH read the budget's config in its batch but kept it after the save's opening and the baseline's R2 read: a staff change forgotten meanwhile was undone by the older row, kept a minute | kept the moment the batch lands | primary_trips audit (config), mutant config-kept-late |
+| B4 | SIGN-BATCH decided a #1 was kept when it planned and read it after the batch: another request counting a new season meanwhile stood in its place (the last second of a season) | each plan keeps the id it saw | primary_trips audit (#1), mutants arena-, iliac-, gambit-kept-late |
+| B5 | Two pins of a race between a checkpoint's reads and its write (`test/int2_judge.test.js` a staff hold, `test/int5_budget.test.js` a win's spoils) hooked the checkpoint's FIRST batch - SAVE-BATCH made the reads that batch, so the race landed before them and the guards they pin (the write's `judge_rev`, the grant's arithmetic) went unchecked: int_audit's INTA-the-rev-unguarded and INTA-the-grant-lost survived on the branch, dead on main | hooked at the object's put, which runs between the reads and the write, and the hook's firing asserted | both mutants dead again |
+
+Read and left: a yards read that fails from a bookmark fails that one request (the bookmark is D1's own; the next starts
+from none); a checkpoint refused early (a lease, a sequence) reads the ledger's and the config's rows in its batch for
+nothing - a read, never an answer. SEAT-BATCH, BEAT-LAST, HALL-PLAN and the ledger's half of SAVE-BATCH: clean.
+
 ### Left, each with its reason
 
 - **The session's lookup** is the first statement of every route not a replica's, some 3.3 million a day on the
@@ -2409,7 +2459,7 @@ and D1's own analytics and query insights.
 - `test/primary_trips.test.js` (6): each slice counted over the service - the list's one batch of six, the yards'
   sessions (any instance's, the bookmark's, the primary's after a write), a checkpoint's three trips and its batch with
   and without the kept config, the mint's one honours batch on the binding and the kept #1s left out, the beat after
-  every read, the bump's plan. `tools/mutants/primary_trips.json`: 12 mutants, all dead.
+  every read, the bump's plan; and the audit's three (B2-B4). `tools/mutants/primary_trips.json`: 21 mutants, all dead.
 - PIN MOVED: `test/seat1c_client.test.js` and `test/crown2_client.test.js` (the list's line is seatsBoard's);
   `test/scale4d.test.js` (the yards ride one session of their own); thirteen account pins' own D1 fakes gain D1's `batch`
   (acc3titles, acc4played, accountworker, audit68_backend, audit_recoveryset, cloudsaves, founder3, founder4, mod1,

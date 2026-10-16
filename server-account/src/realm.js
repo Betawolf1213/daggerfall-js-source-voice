@@ -554,6 +554,9 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
     ...ledgerReads(db, id),
     ...(keptConfig ? [] : [budgetRead(db)]),
   ]);
+  // PRIMARY-TRIPS audit: the config read is kept the moment it lands - kept after the save's opening and the baseline's
+  // R2 read, a staff edit's forgetting in between was undone by the older row, kept a minute more
+  const config = keptConfig ?? budgetFrom(db, configRes?.results?.[0] ?? null);
   const row = rowRes?.results?.[0] ?? null;
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // LEGACY7: the tombstone - nothing of the dead is written again
@@ -580,7 +583,7 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // ...over the baseline the first judgement reads - or, the wealth measure moved since the last (judge.js WEALTH_VERSION),
   // the stored record measured again under the new one
   const baseline = row.wealth == null || row.wealth_v !== WEALTH_VERSION ? await baselineOf(bucket, row, save) : null;
-  const known = { mine: mineRes, dupes: dupesRes, config: keptConfig ?? budgetFrom(db, configRes?.results?.[0] ?? null) };
+  const known = { mine: mineRes, dupes: dupesRes, config };
   const v = await verdictOn({ db, nowS }, { player: playerId, char: id, seq: /** @type {number} */ (seq), key }, row, save, summaryNow, baseline, known);
   await bucket.put(key, body);
   /** @type {any} the judge's columns as they stand after the batch - the verdict's, or (its rev moved) the row's */

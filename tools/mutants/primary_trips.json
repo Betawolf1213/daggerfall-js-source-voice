@@ -118,5 +118,95 @@
       "test/primary_trips.test.js"
     ],
     "note": "the bump's DISTINCT off the (kind, region) index - every hall report walked"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-floor-unkept",
+    "file": "server-account/src/decor.js",
+    "old": "        for (const m of yardsMark.values()) if (yardsFloor == null || m > yardsFloor) yardsFloor = m;   // PRIMARY-TRIPS audit\n",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the bookmarks let go with the kept towns leave no floor"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-floor-oldest",
+    "file": "server-account/src/decor.js",
+    "old": "if (yardsFloor == null || m > yardsFloor) yardsFloor = m;",
+    "new": "if (yardsFloor == null || m < yardsFloor) yardsFloor = m;",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the floor the oldest bookmark let go, not the newest"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-floor-unread",
+    "file": "server-account/src/decor.js",
+    "old": "(yardsMark.get(mapId) ?? yardsFloor ?? YARDS_FROM)",
+    "new": "(yardsMark.get(mapId) ?? YARDS_FROM)",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "a town with no mark of its own reads from any instance, the floor never read"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-floor-refused-kept",
+    "file": "server-account/src/decor.js",
+    "old": " if (yardsFloor === from) yardsFloor = null;",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "a floor whose read failed kept - every unmarked town's read fails with it"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-config-kept-late",
+    "file": "server-account/src/realm.js",
+    "old": "  const known = { mine: mineRes, dupes: dupesRes, config };",
+    "new": "  const known = { mine: mineRes, dupes: dupesRes, config: keptConfig ?? budgetFrom(db, configRes?.results?.[0] ?? null) };",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the config kept again after the baseline's read - a staff change forgotten meanwhile undone"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-arena-kept-late",
+    "file": "server-account/src/arena.js",
+    "old": "(cached ? keptId : await championFrom(",
+    "new": "(cached ? _champ.id : await championFrom(",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the arena #1 read after the batch - another request's new season in its place"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-iliac-kept-late",
+    "file": "server-account/src/iliac.js",
+    "old": "(cached ? keptId : await championFrom(",
+    "new": "(cached ? _champ.id : await championFrom(",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the iliac #1 read after the batch - another request's new season in its place"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-gambit-kept-late",
+    "file": "server-account/src/gambit.js",
+    "old": "(cached ? keptId : await championFrom(",
+    "new": "(cached ? _champ.id : await championFrom(",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the gambit #1 read after the batch - another request's new season in its place"
+  },
+  {
+    "name": "PRIMARY-TRIPS-AUDIT-hold-dropped",
+    "file": "src/scenes/homeYards.js",
+    "old": "if (w.n > asked || now() - w.at < YARD_WRITE_HOLD_MS) byKey.set(bk, w.list);",
+    "new": "if (w.n > asked) byKey.set(bk, w.list);",
+    "tests": [
+      "test/fb1001_yard.test.js"
+    ],
+    "note": "the owner's write held over an answer asked before it alone"
   }
 ]
