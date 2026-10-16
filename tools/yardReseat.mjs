@@ -22,7 +22,8 @@
 // turned by the piece's own turn and times its scale - the origin moved so the box's middle over the ground and its foot
 // stand where they stood, and the scale divided by what the stand-in grew (`k`), so the piece is the size its owner saw.
 // No piece is made smaller than the law's least scale (DECOR_SCALE_MIN, a boulder of 8 placed under 2 stands at it,
-// bigger than it was), none moves past its yard's bound (DECOR_YARD_POS_MAX) or up past its height (DECOR_YARD_HIGH),
+// bigger than it was), none moves past its yard's bound (DECOR_YARD_POS_MAX, down as well - decorPlaceOf drops a place
+// past it on any axis) or up past its height (DECOR_YARD_HIGH),
 // and a piece re-seated carries `reseat` in its place (decorPlaceOf reads past it), which this statement never moves
 // twice. A piece placed before the deploy (`placed_at`, the service's own clock) was placed by WD3's stand-ins; one placed
 // since, by TEMPLE-STEPS' - its rocks are STALL-SHAPE's, and only the second stall moved. No record says a piece was moved
@@ -119,8 +120,30 @@ export function reseatMove({ was, now, k }, scale, yaw) {
 export function reseatPlace(place, reseat) {
   const { scale, d } = reseatMove(reseat, place.scale, place.rot[0]);
   const B = DECOR_YARD_POS_MAX;
-  const pos = [round(clamp(place.pos[0] + d[0], -B, B), 3), round(Math.min(DECOR_YARD_HIGH, place.pos[1] + d[1]), 3), round(clamp(place.pos[2] + d[2], -B, B), 3)];
+  const pos = [round(clamp(place.pos[0] + d[0], -B, B), 3), round(clamp(place.pos[1] + d[1], -B, DECOR_YARD_HIGH), 3), round(clamp(place.pos[2] + d[2], -B, B), 3)];
   return { ...place, pos, scale, reseat: YARD_RESEAT_MARK };
+}
+
+/**
+ * STALL-SHAPE's audit: A YARD PIECE BROUGHT BACK FROM A SNAPSHOT (tools/realmRestore.mjs, a `home_decor` row as the dump
+ * holds it) stands as this migration would have left it. One placed by WD3's stand-ins (before YARD_RESEAT_AT) with no
+ * mark was never re-seated - by this law it is now. One placed since by TEMPLE-STEPS' open stall may have been placed by
+ * STALL-SHAPE's instead (no record says which stand-in a piece was placed against, nor a snapshot whether 0120 had run):
+ * it is written as the snapshot holds it, and `unsure` says so to the operator. Never moved twice: a marked place is kept.
+ * @param {Record<string, any>} row
+ * @returns {{ row: Record<string, any>, reseated: boolean, unsure: boolean }}
+ */
+export function reseatRestored(row) {
+  const kept = { row, reseated: false, unsure: false };
+  if (row.yard !== 1) return kept;
+  let place;
+  try { place = JSON.parse(row.place); } catch { return kept; }
+  if (!place || typeof place !== 'object' || place.reseat != null || !Array.isArray(place.pos) || !Array.isArray(place.rot)) return kept;
+  const before = row.placed_at < YARD_RESEAT_AT;
+  const reseat = YARD_RESEATS.find((m) => m.model === row.model && m.before === before);
+  if (!reseat) return kept;
+  if (!before) return { row, reseated: false, unsure: true };
+  return { row: { ...row, place: JSON.stringify(reseatPlace(place, reseat)) }, reseated: true, unsure: false };
 }
 
 const num = (v) => String(round(v, 6));
@@ -150,10 +173,11 @@ export function reseatSql() {
 -- rebuilt the second stall (53113 on) 0.26 m further back again. Each piece is put back: its model's box as it was (\`was\`)
 -- and as it is (\`now\`), turned by its own turn and times its scale - its origin moved so the box's middle and its foot
 -- stand where they stood, and its scale divided by what the model grew (\`k\`), never under ${DECOR_SCALE_MIN} or over ${DECOR_SCALE_MAX}
--- (net/decorLaw.js), never past its yard's +-${B} m nor up past ${DECOR_YARD_HIGH} m. A piece placed before the deploy was placed by
--- WD3's stand-ins (\`before\` 1); one since, by TEMPLE-STEPS' (only the second stall has moved since). A re-seated place
--- carries "reseat": "${YARD_RESEAT_MARK}", and no place that carries it is moved again. Rooms (\`yard\` 0) hold neither. A
--- place that is not JSON is passed over, whatever order the terms are read in (0109's care: json_extract would throw).
+-- (net/decorLaw.js), never past its yard's +-${B} m on any axis (decorPlaceOf drops a place past it) nor up past
+-- ${DECOR_YARD_HIGH} m. A piece placed before the deploy was placed by WD3's stand-ins (\`before\` 1); one since, by TEMPLE-STEPS'
+-- (only the second stall has moved since). A re-seated place carries "reseat": "${YARD_RESEAT_MARK}", and no place that
+-- carries it is moved again. Rooms (\`yard\` 0) hold neither. A place that is not JSON is passed over, whatever order
+-- the terms are read in (0109's care: json_extract would throw).
 -- The turn's cosine and sine are their series (|turn| <= 180 degrees): arithmetic alone, no extension asked. The scale is
 -- divided as a REAL - a scale of 1 over a rock's 6 is a sixth, never SQLite's integer 0.
 WITH f(model, before, wx, wz, wy, nx, nz, ny, k) AS (VALUES
@@ -162,7 +186,7 @@ ${rows.join(',\n')}
 UPDATE home_decor SET place = (
   SELECT json_set(home_decor.place,
     '$.pos[0]', ROUND(MIN(${B}, MAX(-${B}, x + c * dx + sn * dz)), 3),
-    '$.pos[1]', ROUND(MIN(${DECOR_YARD_HIGH}, y + dy), 3),
+    '$.pos[1]', ROUND(MIN(${DECOR_YARD_HIGH}, MAX(-${B}, y + dy)), 3),
     '$.pos[2]', ROUND(MIN(${B}, MAX(-${B}, z - sn * dx + c * dz)), 3),
     '$.scale', s2,
     '$.reseat', '${YARD_RESEAT_MARK}')

@@ -238,5 +238,59 @@
       "test/fb1016b_stallshape.test.js"
     ],
     "note": "every piece read as WD3's: TEMPLE-STEPS' own open stall moved 2.35 m"
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-sunk-past-the-bound",
+    "file": "tools/yardReseat.mjs",
+    "old": "round(clamp(place.pos[1] + d[1], -B, DECOR_YARD_HIGH), 3)",
+    "new": "round(Math.min(DECOR_YARD_HIGH, place.pos[1] + d[1]), 3)",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-sql-sunk-past-the-bound",
+    "file": "server-account/migrations/0120_yard_reseat.sql",
+    "old": "'$.pos[1]', ROUND(MIN(4, MAX(-48, y + dy)), 3),",
+    "new": "'$.pos[1]', ROUND(MIN(4, y + dy), 3),",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-restore-writes-the-snapshot",
+    "file": "tools/realmRestore.mjs",
+    "old": "          sql.push(insert('home_decor', back.row));",
+    "new": "          sql.push(insert('home_decor', p));",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-restore-marked-twice",
+    "file": "tools/yardReseat.mjs",
+    "old": "place.reseat != null || !Array.isArray(place.pos)",
+    "new": "!Array.isArray(place.pos)",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-restore-rooms-too",
+    "file": "tools/yardReseat.mjs",
+    "old": "  if (row.yard !== 1) return kept;\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
+  },
+  {
+    "name": "YARD-RESEAT-AUDIT-restore-since-moved",
+    "file": "tools/yardReseat.mjs",
+    "old": "  if (!before) return { row, reseated: false, unsure: true };\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_stallshape.test.js"
+    ]
   }
 ]

@@ -67,3 +67,10 @@ test('YARD-ROWS: the mounted fleet page - every ship\'s row a fleet row, her pre
     assert.ok(rows.every((r) => !r.className.split(' ').includes('dfyard-fleetrow')), 'a hand\'s row keeps three tracks');
   } finally { crew?.close?.(); host2.remove(); }
 });
+
+test('YARD-ROWS AUDIT: the swap picker among a recruit\'s presses is capped (min-width 0, a max-width in em, never 100%: a select\'s own width is its longest option\'s, so a percentage cannot hold it) - a long hand\'s name ("in place of Charlotte Montclair, First Mate") never widens the presses\' fit-content track past its 40%; a hand\'s own post keeps its track\'s width', () => {
+  const capped = ruleOf(SHIPYARD_CSS, '.dfyard-acts .dfyard-post');
+  assert.match(capped ?? '', /min-width:\s*0;/);
+  assert.match(capped ?? '', /max-width:\s*\d+(\.\d+)?em;/, 'an em cap');
+  assert.ok(!/(max|min)-width/.test(ruleOf(SHIPYARD_CSS, '.dfyard-post') ?? ''), 'the hand\'s post: no cap of its own');
+});

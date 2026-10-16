@@ -1,7 +1,7 @@
 # FIELD BUGS 2026-10-16b - the Discord's bug reports of 2026-10-15, each fixed at its root
 
 The bug-report threads of 2026-10-15 from the Discord, handed over as screenshots. Read on the code as it stands at
-main's `7e0424e0` (main took `Field-Bugs-2026-10-16b.md` for HORSE-LIT meanwhile, so this record is `-16b` and its pins
+main's `7e0424e0` (main took `Field-Bugs-2026-10-16.md` for HORSE-LIT meanwhile, so this record is `-16b` and its pins
 `fb1016b_*`).
 
 | | Report | What it was | Done |
@@ -155,10 +155,17 @@ her presses a line of their own under her name and words, the Holdings card's sh
 it was. Measured again on the real window: the words 439 px at 1440 and 800, 321 at 600, the rows 104-172 px; the
 Refits and Crew pages' words 146-385 px; nothing sideways.
 
-THE FOUR HOSTS: none - the shipyard is a window every host opens alike. Pinned by `test/fb1016b_yardrows.test.js` (2: the
-CSS's law and the mounted fleet page); `tools/mutants/fb1016b_yardrows.json` (4, all dead). PROBE (no suite row - it needs
-a browser): `node tools/shipyardWindowProbe.mjs` measures every row's words on the Fleet, Refits and Crew pages at four
-widths.
+THE FOUR HOSTS: none - the shipyard is a window every host opens alike. Pinned by `test/fb1016b_yardrows.test.js` (3: the
+CSS's law, the mounted fleet page, the audit's picker); `tools/mutants/fb1016b_yardrows.json` (5, all dead). PROBE (no
+suite row - it needs a browser): `node tools/shipyardWindowProbe.mjs` measures every row's words on the Fleet, Refits and
+Crew pages at five widths.
+
+AUDIT (2026-10-16, the branch read cold): THE SWAP PICKER. A fit-content track never stands under its content's least
+width, and a `<select>`'s least is its longest option: a recruit's swap picker naming a long hand ("in place of Charlotte
+Montclair, First Mate") held the presses' track past its 40% at 561-640 px. The picker among the presses is capped at
+12em (min-width 0, its option cut with an ellipsis); a hand's own post keeps its track's width (a cap there would have
+narrowed it from 259 px to 144 for nothing). The probe now names that hand and measures 561 px as well: a recruit's
+words 166-255 px, nothing sideways. Pinned by the third test; YARD-ROWS-AUDIT-the-picker-uncapped dead.
 
 What the reporter is owed: the shipyard's fleet page reads as a page again.
 
@@ -265,8 +272,10 @@ CHANGED (the owner: "Stop trying to match DFU"; the reporter: "It probably shoul
   stat's tick - is a killing blow like any other: at rank 3 and up the last stand; once stood with its will unbroken it
   tears away; else it kneels. No `slain` goes back, the record stays open, the kill-or-spare is the owner's. The owner's
   own Disintegrate and Razor still kill outright. `_whole` still keeps a kill undivided by the party's toughness.
-- Named in Revenants.md (15, notes in 11, 19, 20) and Feud-Arc.md (1.2, 14.2, 15.1). Offline, a stat drained to zero now
-  kneels the player's own revenant too (its tick names nobody); Kill closes it.
+- Named in Revenants.md (15, notes in 11, 19, 20) and Feud-Arc.md (1.2, 14.2, 15.1). A stat drained to zero names nobody,
+  so it now beats the player's own revenant the way any killing blow does - at rank 1 and 2 it kneels and Kill closes it;
+  at rank 3 and up the drain's next tick (every 0.2 s) makes the last stand and then tears it away, its will unbroken -
+  it escapes, to come again; the owner's own Disintegrate or a broken will closes that fight (corrected by the audit).
 
 THE FOUR HOSTS: world.js and worldModes.js - WIRED through exteriorFoes' one door (no host line); dungeonContext.js -
 WIRED, its own door's two gates edited in place (no code line added); exterior.js - the same door, still FLAGGED as in
@@ -325,8 +334,8 @@ CHANGED:
 
 THE FOUR HOSTS: none wired - the stand-in is the pipeline's (`customModelFor`) for every host that draws a town block:
 world.js and exterior.js, and worldModes.js's view out of a window; dungeonContext.js draws no town; yards stand in
-world.js alone, and only their data moved. Pinned by `test/fb1016b_stallshape.test.js` (4); `tools/mutants/
-fb1016b_stallshape.json` (24, all dead). PINS MOVED: `fb1015f_templesteps.test.js`'s stall test and `wd3_standins.test.js`'s
+world.js alone, and only their data moved. Pinned by `test/fb1016b_stallshape.test.js` (5); `tools/mutants/
+fb1016b_stallshape.json` (30, all dead). PINS MOVED: `fb1015f_templesteps.test.js`'s stall test and `wd3_standins.test.js`'s
 "every built piece is sound" (the second mesh its own frame); mutant TEMPLESTEPS-9-stall-off-origin re-aimed by content.
 
 FLAGGED: a piece placed before the deploy and moved during TEMPLE-STEPS' day was moved against the new box - no record
@@ -334,6 +343,21 @@ says so, so it is put back as if unmoved and its owner moves it once more; stall
 still on the old build stay as TEMPLE-STEPS drew them; a boulder whose old scale over its growth falls under 0.25 (a
 scale-8 rock placed at 1) stands at 0.25, up to twice its old size; every other town-mod piece the decorator offers (beds,
 paintings, DET pieces) stands by its stand-in's box the same way, with no guard if a stand-in's box moves again.
+
+AUDIT (2026-10-16, the branch read cold): three. THE YARD'S FLOOR - the re-seat held a piece under the yard's top and
+inside its bound across, not going down, and `decorPlaceOf` drops a place past +-48 m on any axis: a piece set deep
+enough would have been re-seated out of its yard. The tool's law and the statement hold it at -48 (0120 regenerated; it
+is not deployed). THE TURN - the statement turns by `rot[0]` alone: the placer mints a model's place `[yaw, 0, 0]`
+(`decorPlacer.js`), so no saved stall or boulder carries a pitch or roll it passes over (one sent by hand is re-seated
+about its yaw). A RESTORE - the realm-restore workflow writes `home_decor` rows back from a D1 snapshot
+(`tools/realmRestore.mjs`), and one taken before 0120 ran would have put a yard's WD3 stalls and boulders back as they
+were placed, with 0120 never to run again. The restore now re-seats them by the same law (`tools/yardReseat.mjs`
+reseatRestored: never a marked place, a room's or another model's); an open stall placed after TEMPLE-STEPS' deploy may
+be either stand-in's, so it is written as the snapshot holds it and the plan's notes name it. Running 0120 again by hand
+is no remedy: it would move every open stall placed since STALL-SHAPE's deploy 0.26 m forward. Pinned by the third test
+(a piece at -47.5 m) and the fifth (a snapshot through `planRestore` lands as 0120 leaves the same rows); the six
+YARD-RESEAT-AUDIT mutants dead. FLAGGED besides: a stall placed in the minutes between the account deploy's run of 0120
+and the web's deploy of STALL-SHAPE is placed against the stand-in then drawn, as in TEMPLE-STEPS' first hour.
 
 What the reporter is owed: the market stalls stand as the pack draws them - the keeper behind the counter under the
 awning, the goods on the counter, the open stalls' goods on the ground. A stall or boulder you put in your own yard is

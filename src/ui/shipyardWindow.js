@@ -86,6 +86,7 @@ export const SHIPYARD_CSS = `
 .dfyard-name input { flex: 1 1 auto; min-width: 0; font: inherit; font-size: 13px; padding: 4px 6px; color: #efe8d6; background: rgba(4,5,7,0.6); border: 2px solid; }
 .dfyard-quote { font-style: italic; }
 .dfyard-post { font: inherit; font-size: 12px; color: #efe8d6; background: rgba(4,5,7,0.6); border: 2px solid; }
+.dfyard-acts .dfyard-post { min-width: 0; max-width: 12em; text-overflow: ellipsis; }   /* YARD-ROWS' audit: a long hand's name in the swap picker never holds the presses' track past its fit-content cap */
 @media (max-width: 560px) {
   .dfyard-cards { grid-template-columns: 1fr; }
   .dfyard-row { grid-template-columns: 1fr; gap: 4px; }

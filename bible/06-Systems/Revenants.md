@@ -344,7 +344,10 @@ the record (`systems/revenantFate.js ownersWholeKill`; both damage doors, `exter
 DOORS-1) and lands at my door as a PEER's blow: it is a killing blow like any - rank 3 and up its last stand, its will
 unbroken it tears away, else it kneels - and the kill-or-spare is mine; no `slain` goes back, its record stays open. So
 is a foe's whole blow, a companion's, and a stat drained to zero, whose tick names nobody (AUDIT 68's provenance): the
-choice is offered, not taken. My own Disintegrate and my own Razor still kill outright, as sections 19 and 20 say.
+choice is offered, not taken. (The drain's tick returns every 0.2 s while the stat stays at zero, so at rank 3 and up the
+first tick makes the last stand and the next tears it away unless its will is broken - it escapes, to come again; the
+owner's own Disintegrate or a broken will still closes that fight. The audit of the branch, 2026-10-16.) My own
+Disintegrate and my own Razor still kill outright, as sections 19 and 20 say.
 DEPARTURE from sections 11, 19 and 20 as written ("a Disintegrate kills it outright" - whosever it was): the rule they
 recorded is the owner's alone now. Pinned by `test/fb1016b_rvnownerschoice.test.js`.
 

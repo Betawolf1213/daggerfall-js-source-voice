@@ -13,10 +13,11 @@
 -- rebuilt the second stall (53113 on) 0.26 m further back again. Each piece is put back: its model's box as it was (`was`)
 -- and as it is (`now`), turned by its own turn and times its scale - its origin moved so the box's middle and its foot
 -- stand where they stood, and its scale divided by what the model grew (`k`), never under 0.25 or over 4
--- (net/decorLaw.js), never past its yard's +-48 m nor up past 4 m. A piece placed before the deploy was placed by
--- WD3's stand-ins (`before` 1); one since, by TEMPLE-STEPS' (only the second stall has moved since). A re-seated place
--- carries "reseat": "STALL-SHAPE", and no place that carries it is moved again. Rooms (`yard` 0) hold neither. A
--- place that is not JSON is passed over, whatever order the terms are read in (0109's care: json_extract would throw).
+-- (net/decorLaw.js), never past its yard's +-48 m on any axis (decorPlaceOf drops a place past it) nor up past
+-- 4 m. A piece placed before the deploy was placed by WD3's stand-ins (`before` 1); one since, by TEMPLE-STEPS'
+-- (only the second stall has moved since). A re-seated place carries "reseat": "STALL-SHAPE", and no place that
+-- carries it is moved again. Rooms (`yard` 0) hold neither. A place that is not JSON is passed over, whatever order
+-- the terms are read in (0109's care: json_extract would throw).
 -- The turn's cosine and sine are their series (|turn| <= 180 degrees): arithmetic alone, no extension asked. The scale is
 -- divided as a REAL - a scale of 1 over a rock's 6 is a sixth, never SQLite's integer 0.
 WITH f(model, before, wx, wz, wy, nx, nz, ny, k) AS (VALUES
@@ -72,7 +73,7 @@ WITH f(model, before, wx, wz, wy, nx, nz, ny, k) AS (VALUES
 UPDATE home_decor SET place = (
   SELECT json_set(home_decor.place,
     '$.pos[0]', ROUND(MIN(48, MAX(-48, x + c * dx + sn * dz)), 3),
-    '$.pos[1]', ROUND(MIN(4, y + dy), 3),
+    '$.pos[1]', ROUND(MIN(4, MAX(-48, y + dy)), 3),
     '$.pos[2]', ROUND(MIN(48, MAX(-48, z - sn * dx + c * dz)), 3),
     '$.scale', s2,
     '$.reseat', 'STALL-SHAPE')

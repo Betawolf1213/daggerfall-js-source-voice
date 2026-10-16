@@ -7,7 +7,7 @@
     "tests": [
       "test/hostceiling.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): world.js's ceiling lowered 21,679 -> 21,641 (activateGrave out)."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out)."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",
