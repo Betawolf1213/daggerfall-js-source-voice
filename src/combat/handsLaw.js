@@ -116,6 +116,38 @@ export function mirrorRect(r, width, x0 = 0) {
  *  second hand would cross the first. */
 export const handOnLeft = (hand, leftHanded) => (hand === 'L') !== !!leftHanded;
 
+/**
+ * THE PAINTED ARM. Which arm Daggerfall painted in each record of the bare hand's art, WEAPON10.CIF, as the screen shows
+ * it unflipped: 'R' the arm that comes in from the right of the view, 'L' from the left. Classic Daggerfall threw its
+ * hand-to-hand with BOTH fists, by direction - its idle (record 0) and its StrikeDownLeft, StrikeRight and StrikeDownRight
+ * records paint the right arm (the light glove, the grey sleeve); its StrikeDown, StrikeLeft and StrikeUp records the left
+ * (the dark glove, the brown sleeve with the stitched cuff). Read off the shipped file's frames, record by record (bible/
+ * 05-Combat/Two-Hands.md, "The painted arm"); WeaponBasics carries nothing of it (every melee strike aligns Center).
+ * Every weapon file paints the right arm alone. Indexed by record.
+ */
+export const MELEE_PAINTED_ARM = Object.freeze(['R', 'L', 'R', 'L', 'R', 'R', 'L']);
+
+/**
+ * THE STRIKE'S PICTURE for one hand of the two: which state's record to draw, and whether in the mirror, so the arm on
+ * the screen is the hand that throws the blow, on that hand's own side - and goes the way across the screen the strike
+ * asked, wherever the art has it. `painted(state)` answers the side the art paints that state's record from ('R'|'L').
+ *   1. the state's own record as painted, when it paints this hand's side - DFU's own picture;
+ *   2. else the mirror state's record in the mirror, when that paints the other side: its mirror is this hand, this way;
+ *   3. else the art has this hand only the other way across: the mirror state's record as painted (it paints this side).
+ * A weapon paints the right arm in every record, so a right hand is always 1 and a left hand always 2 (the mirror of the
+ * mirrored strike); the bare hand's two arms take all three.
+ * @param {'R'|'L'} hand
+ * @param {string} state
+ * @param {{ leftHanded?: boolean, painted?: (state: string) => string }} [o]
+ * @returns {{ state: string, mirror: boolean }}
+ */
+export function strikePicture(hand, state, { leftHanded = false, painted = () => 'R' } = {}) {
+  const side = handOnLeft(hand, leftHanded) ? 'L' : 'R';
+  if (painted(state) === side) return { state, mirror: false };
+  const ms = mirrorStrike(state);
+  return painted(ms) === side ? { state: ms, mirror: false } : { state: ms, mirror: true };
+}
+
 // ---- THE BALANCE (dual wielding) ------------------------------------------------------------------------------------
 
 /**

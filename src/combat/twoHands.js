@@ -11,6 +11,11 @@
 // whole about the screen's middle - every state, its strike mapped to its mirror (handsLaw.js mirrorStrike), so a left
 // hand's sweep to the right is the right hand's forehand seen in the glass.
 //
+// THE PAINTED ARM (handsLaw.js MELEE_PAINTED_ARM, strikePicture). A weapon file paints the right arm alone; the bare
+// hand's WEAPON10.CIF paints BOTH - classic Daggerfall threw its StrikeDown, StrikeLeft and StrikeUp with the left fist.
+// So each hand's picture is chosen, not assumed: the record as painted when it paints that hand, else the mirror of the
+// mirrored strike - and the arm on the screen is always the hand that throws the blow (never two right fists).
+//
 // THE MACHINE IS ONE. The rig's PlayerWeapon runs DFU's machine and the law gives each strike a hand; each hand here sees
 // a VIEW of the machine (`view(hand)`): the strike while it is that hand's, the idle otherwise. A widget clone shadows a
 // machine (it plays a strike the machine starts, LateUpdate 0x1b97); handed its hand's view, each clone plays its own
@@ -26,9 +31,9 @@
 // the run ends; a punch thrown on the run takes the fist at once. The climbing hands' wall run pumps the same way.
 
 import { createWeaponWidget } from './weaponWidget.js';
-import { fpsWeaponQuad, NATIVE_W, NATIVE_H } from './fpsWeapon.js';
+import { fpsWeaponQuad, getWeaponAnims, STATE_INDEX, WEAPON_TYPES, NATIVE_W, NATIVE_H } from './fpsWeapon.js';
 import {
-  HANDS_MODE, twoHanded, otherHand, mirrorStrike, mirrorRect, MIRROR_UV, handOnLeft,
+  HANDS_MODE, twoHanded, otherHand, mirrorRect, MIRROR_UV, handOnLeft, MELEE_PAINTED_ARM, strikePicture,
   guardStep, guardOffset, easeTo, runPhaseStep, pumpOf, runWeightStep,
 } from './handsLaw.js';
 
@@ -37,6 +42,8 @@ const BOUNCE_TAU = 0.3;
 /** Below the view: a hand that comes up for the run from nothing starts this far under the screen's bottom edge, in
  *  its own heights (CLIMB-HANDS' BOTTOM_SLACK - no sleeve shows as it rises). */
 const BELOW = 0.15;
+/** The bare hand's records by state - WeaponBasics' melee anims (the art the fists are drawn in). */
+const MELEE_ANIMS = getWeaponAnims(WEAPON_TYPES.Melee);
 
 /**
  * The component. `deps` are the left hand's clone's (createWeaponWidget's): the audio its swing voices, its miss
@@ -51,16 +58,27 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     run: { w: 0, phase: 0, wanted: false },
   };
 
-  /** A hand's view of the machine: the strike while it is this hand's in a pair - mapped to its mirror when the hand is
-   *  on the left of the screen - and the idle otherwise. */
+  /** The side the hands' art paints a state's record from (handsLaw.js MELEE_PAINTED_ARM) - by DFU's state index (a
+   *  widget clone's own state) or by name: the bare hand's two arms with both fists up, the right arm for every weapon. */
+  const paintedAt = (i) => (st.mode === HANDS_MODE.Fists ? MELEE_PAINTED_ARM[MELEE_ANIMS[i]?.Record ?? 0] ?? 'R' : 'R');
+  const painted = (state) => paintedAt(STATE_INDEX[state] ?? 0);
+  /** The side of the screen a hand is drawn on (a left-handed player's are crossed - FlipHorizontal's whole picture). */
+  const sideOf = (hand) => (handOnLeft(hand, st.leftHanded) ? 'L' : 'R');
+  /** ONE RULE FOR EVERY DRAW: a record is drawn in the mirror exactly when the arm it paints is not the hand's side - so
+   *  whatever record is on the screen (the picture strikePicture chose, or a clone's a frame behind it, or the idle) the
+   *  arm drawn is that hand's. strikePicture's three cases are this rule over the state it picks. */
+  const mirrorOf = (hand, paintedSide) => paintedSide !== sideOf(hand);
+  /** A hand's picture this frame (handsLaw.js strikePicture): the strike while it is this hand's in a pair, the idle
+   *  otherwise - the state whose record it draws, and whether in the mirror. */
+  const mine = (hand) => !!st.machine && twoHanded(st.mode) && st.strikeHand === hand && st.machine.state !== 'Idle';
+  const picture = (hand) => strikePicture(hand, mine(hand) ? st.machine.state : 'Idle', { leftHanded: st.leftHanded, painted });
+
+  /** A hand's view of the machine: its picture's state (the strike's own, or its mirror's) while the strike is this
+   *  hand's in a pair, and the idle otherwise. */
   function view(hand) {
-    const mine = () => !!st.machine && twoHanded(st.mode) && st.strikeHand === hand && st.machine.state !== 'Idle';
     return {
-      get state() {
-        if (!mine()) return 'Idle';
-        return handOnLeft(hand, st.leftHanded) ? mirrorStrike(st.machine.state) : st.machine.state;
-      },
-      get frame() { return mine() ? st.machine.frame : 0; },
+      get state() { return mine(hand) ? picture(hand).state : 'Idle'; },
+      get frame() { return mine(hand) ? st.machine.frame : 0; },
       get isBow() { return !!st.machine?.isBow; },
       get isUnarmed() { return !!st.machine?.isUnarmed; },
       get now() { return st.machine?.now ?? 0; },
@@ -89,30 +107,31 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     if (!st.run.wanted && st.run.w < 1e-3) st.run.w = 0;
   }
 
-  /** The guard's offset for a hand in canvas pixels - toward the middle and down, and the fists' bounce - laid on the
-   *  hand's picture BEFORE its mirror: every hand is placed as a right hand (on the right of the screen), so its middle
-   *  is to its left, and the mirror carries the offset across with the rest of it. */
+  /** The guard's offset for a hand in canvas pixels, ON THE SCREEN - toward the middle from the hand's own side, and
+   *  down, and the fists' bounce. Laid on the picture after its mirror (a hand's picture may be its own arm as painted
+   *  or the other's in the mirror - the painted arm, strikePicture - so the side is the hand's, never the picture's). */
   function nudge(hand, canvas) {
-    const [gx, gy] = guardOffset(st.guard[hand], 'right', { time: st.time, bounce: st.bounce, hand });
+    const [gx, gy] = guardOffset(st.guard[hand], handOnLeft(hand, st.leftHanded) ? 'left' : 'right', { time: st.time, bounce: st.bounce, hand });
     return [gx * canvas.width / NATIVE_W, gy * canvas.height / NATIVE_H];
   }
+  /** The same offset laid BEFORE a mirror (a widget clone's transform runs ahead of its mirror): x turned about. */
+  const nudgeBefore = (hand, canvas, mirror) => { const [dx, dy] = nudge(hand, canvas); return [mirror ? -dx : dx, dy]; };
   const moved = (r, [dx, dy]) => ({ ...r, x: r.x + dx, y: r.y + dy });
 
   /** The two hands in the order they are drawn: the one striking last, over the other. */
   const drawOrder = () => (st.strikeHand === 'L' ? ['R', 'L'] : ['L', 'R']);
 
   /**
-   * One hand of a pair through the CLASSIC sprite - FPSWeapon's own placement of its view's frame, as a right hand, the
-   * guard on it and the mirror over it. Returns the rect it drew, or null.
+   * One hand of a pair through the CLASSIC sprite - FPSWeapon's own placement of its picture's frame, unflipped, the
+   * mirror over it when the picture asks one and the guard on the screen. Returns the rect it drew, or null.
    */
   function drawClassicHand(renderer, canvas, hand, art, { tint = null, offsetHeight = 0 } = {}) {
     const v = views[hand];
     const q = fpsWeaponQuad(canvas, art, v.state, v.frame, { flipHorizontal: false, offsetHeight });
     if (!q) return null;
-    const left = handOnLeft(hand, st.leftHanded);
-    let rect = moved(q.rect, nudge(hand, canvas));
-    if (left) rect = mirrorRect(rect, canvas.width);
-    renderer.drawScreenQuad(q.tex, rect, left ? MIRROR_UV : q.uv, tint ?? undefined);
+    const mirror = mirrorOf(hand, painted(v.state));
+    const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas));
+    renderer.drawScreenQuad(q.tex, rect, mirror ? MIRROR_UV : q.uv, tint ?? undefined);
     return rect;
   }
 
@@ -127,8 +146,8 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     if (st.run.w > 0) return true;   // the running hands own the fists (drawRun, after this)
     for (const hand of drawOrder()) {
       const clone = hand === 'R' ? widget : offWidget;
-      const left = handOnLeft(hand, st.leftHanded);
-      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudge(hand, canvas)), mirror: left })) continue;
+      const mirror = mirrorOf(hand, paintedAt(clone?.state ?? 0));   // the record the clone draws - it plays its strike a frame behind the machine
+      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror)), mirror })) continue;
       if (shown) drawClassicHand(renderer, canvas, hand, artFor(hand), { tint, offsetHeight });
     }
     return true;
@@ -138,14 +157,13 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    *  guard and the mirror on it - null when nothing of it shows (the run then rises from below). */
   function restRect(hand, canvas, { widget = null, widgetOn = false, art = null, shown = true, offsetHeight = 0 } = {}) {
     if (!twoHanded(st.mode) || st.mode !== HANDS_MODE.Fists) return null;
-    const left = handOnLeft(hand, st.leftHanded);
+    const mirror = mirrorOf(hand, painted('Idle'));
     const clone = hand === 'R' ? widget : offWidget;
     let rect = null;
     if (widgetOn && clone?.drawing()) rect = clone.rect;
     else if (shown && art) rect = fpsWeaponQuad(canvas, art, 'Idle', 0, { flipHorizontal: false, offsetHeight })?.rect ?? null;
     if (!rect) return null;
-    rect = moved(rect, nudge(hand, canvas));
-    return left ? mirrorRect(rect, canvas.width) : rect;
+    return moved(mirror ? mirrorRect(rect, canvas.width) : rect, nudge(hand, canvas));
   }
 
   /**
@@ -160,7 +178,8 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     if (!q) return false;
     const hands = ['R', 'L'].map((hand) => {
       const left = handOnLeft(hand, st.leftHanded);
-      const base = left ? mirrorRect(q.rect, canvas.width) : q.rect;
+      const mirror = mirrorOf(hand, painted('Idle'));
+      const base = mirror ? mirrorRect(q.rect, canvas.width) : q.rect;
       const p = pumpOf(st.run.phase, hand);
       const toMid = left ? 1 : -1;
       const pw = base.w * p.scale, ph = base.h * p.scale;
@@ -175,10 +194,10 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
         x: rest.x + (pump.x - rest.x) * w, y: rest.y + (pump.y - rest.y) * w,
         w: rest.w + (pump.w - rest.w) * w, h: rest.h + (pump.h - rest.h) * w,
       };
-      return { hand, left, rect, s: p.s };
+      return { hand, mirror, rect, s: p.s };
     });
     hands.sort((a, b) => a.s - b.s);
-    for (const h of hands) renderer.drawScreenQuad(q.tex, h.rect, h.left ? MIRROR_UV : q.uv, tint ?? undefined);
+    for (const h of hands) renderer.drawScreenQuad(q.tex, h.rect, h.mirror ? MIRROR_UV : q.uv, tint ?? undefined);
     return true;
   }
 

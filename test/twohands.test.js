@@ -10,7 +10,7 @@ import {
   HANDS_MODE, DUAL_TYPES, dualEligible, handsModeOf, twoHanded, otherHand, strikeHandOf, FLURRY_WINDOW,
   mirrorStrike, mirrorRect, MIRROR_UV, handOnLeft, DUAL, offHandToHit, offHandBurden, strikeTempo, offHandDamage,
   GUARD, guardStep, guardOffset, RUN_STEP_M, RUN_PUMP, runPhaseStep, runHandsWanted, pumpOf, runWeightStep, easeTo,
-  RUN_3D, pumpTarget3D,
+  RUN_3D, pumpTarget3D, MELEE_PAINTED_ARM, strikePicture,
 } from '../src/combat/handsLaw.js';
 import { PlayerWeapon, handDesc } from '../src/combat/playerWeapon.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
@@ -85,6 +85,36 @@ test('TWO-HANDS law: the mirror - a left hand is a right hand in the glass: its 
   assert.deepEqual(MIRROR_UV, { u0: 1, v0: 0, u1: 0, v1: 1 });
   assert.equal(handOnLeft('L', false), true); assert.equal(handOnLeft('R', false), false);
   assert.equal(handOnLeft('L', true), false); assert.equal(handOnLeft('R', true), true);
+});
+
+test('TWO-HANDS law: THE PAINTED ARM - the bare hand\'s art paints both arms (its idle, StrikeDownLeft, StrikeRight and StrikeDownRight the right; StrikeDown, StrikeLeft and StrikeUp the left), a weapon\'s the right alone; a hand\'s picture is its own arm on its own side, the asked way across wherever the art has it, and its mirror is exactly "the painted arm is not this side"', () => {
+  assert.deepEqual([...MELEE_PAINTED_ARM], ['R', 'L', 'R', 'L', 'R', 'R', 'L']);
+  const STATES = ['Idle', 'StrikeDown', 'StrikeDownLeft', 'StrikeLeft', 'StrikeRight', 'StrikeDownRight', 'StrikeUp'];
+  const melee = (st) => MELEE_PAINTED_ARM[STATES.indexOf(st)];
+  // a weapon: DFU's own picture for the right hand, the mirror of the mirrored strike for the left - as it always was
+  for (const st of STATES) {
+    assert.deepEqual(strikePicture('R', st), { state: st, mirror: false });
+    assert.deepEqual(strikePicture('L', st), { state: mirrorStrike(st), mirror: true });
+    assert.deepEqual(strikePicture('R', st, { leftHanded: true }), { state: mirrorStrike(st), mirror: true }, 'a left-handed player\'s right hand is on the left');
+  }
+  // the fists, every hand and strike: the expected picture, case by case
+  const want = {
+    R: { Idle: ['Idle', false], StrikeDown: ['StrikeDown', true], StrikeDownLeft: ['StrikeDownLeft', false], StrikeLeft: ['StrikeRight', false],
+      StrikeRight: ['StrikeRight', false], StrikeDownRight: ['StrikeDownRight', false], StrikeUp: ['StrikeUp', true] },
+    L: { Idle: ['Idle', true], StrikeDown: ['StrikeDown', false], StrikeDownLeft: ['StrikeDownRight', true], StrikeLeft: ['StrikeLeft', false],
+      StrikeRight: ['StrikeLeft', false], StrikeDownRight: ['StrikeDownLeft', true], StrikeUp: ['StrikeUp', false] },
+  };
+  for (const hand of /** @type {const} */ (['R', 'L'])) {
+    for (const st of STATES) {
+      const p = strikePicture(hand, st, { painted: melee });
+      assert.deepEqual([p.state, p.mirror], want[hand][st], `${hand} ${st}`);
+      const shown = p.mirror ? otherHand(melee(p.state)) : melee(p.state);
+      assert.equal(shown, hand, `${hand} ${st}: the arm on the screen is the hand's`);
+      assert.equal(p.mirror, melee(p.state) !== hand, 'the one rule: mirrored exactly when the painted arm is not this side');
+      // the way across the screen: the asked one, or - where the art has this hand only the other way - its mirror
+      assert.ok(p.state === st || p.state === mirrorStrike(st));
+    }
+  }
 });
 
 test('TWO-HANDS law: THE BALANCE - the pair is tempo, not twice the damage: the flurry\'s quickness, the off hand\'s surety by Agility and its share of the damage, its burden by weight; the lead\'s blow is DFU\'s; and the measured edge over one weapon is single digits, bought with the shield and a third more fatigue a second', () => {
@@ -307,7 +337,13 @@ async function rigWith({ right = null, left = null, widget = false, run = false,
   return { r, frame, said, entity };
 }
 
-test('TWO-HANDS rig, classic sprite: both fists up - the right as DFU draws it, the left the same idle mirrored on the left; the hands take turns, the striking one plays its record (the left the mirror\'s), the other draws in to its guard', async () => {
+/** The arm a drawn quad shows on the screen: the record's painted arm (handsLaw.js MELEE_PAINTED_ARM), turned about by a
+ *  mirror. */
+const shownArm = (x) => { const p = MELEE_PAINTED_ARM[Number(x.rec)]; return x.mirrored ? otherHand(p) : p; };
+const STATE_REC = { Idle: '0', StrikeDown: '1', StrikeDownLeft: '2', StrikeLeft: '3', StrikeRight: '4', StrikeDownRight: '5', StrikeUp: '6' };
+const meleePainted = (state) => MELEE_PAINTED_ARM[Number(STATE_REC[state])];
+
+test('TWO-HANDS rig, classic sprite: both fists up - the right as DFU draws it, the left the same idle mirrored on the left; the hands take turns, and EVERY strike frame shows the striking hand\'s own arm on its own side - the bare hand\'s art paints both arms (StrikeDown, StrikeLeft and StrikeUp the left), so the picture is chosen (strikePicture), never assumed - and the other hand stays up', async () => {
   const { r, frame } = await rigWith({});
   assert.equal(r.playerWeapon.handsMode, HANDS_MODE.Fists);
   for (let i = 0; i < 90; i++) await frame();
@@ -317,54 +353,71 @@ test('TWO-HANDS rig, classic sprite: both fists up - the right as DFU draws it, 
   const [left, right] = [...q].sort((a, b) => a.rect.x - b.rect.x);
   assert.equal(left.mirrored, true); assert.equal(right.mirrored, false);
   assert.ok(Math.abs(left.rect.x - (320 - right.rect.x - right.rect.w)) < 1.5, 'the left is the right\'s mirror image (the bounce aside)');
-  // a held button: the exchange
+  // a held button: the exchange - many blows, in the directions the machine picks
   const blows = [];
-  for (let i = 0; i < 260; i++) {
-    q = await frame({ held: i < 240 });
+  const painted = new Set();
+  for (let i = 0; i < 1400; i++) {
+    q = await frame({ held: i < 1360 });
     const s = r.playerWeapon.strikeInFlight;
     if (!s) continue;
     const striking = q.find((x) => x.rec !== '0');
-    if (striking) assert.equal(q.at(-1), striking, 'the striking hand is drawn over the other');
-    if (striking && (!blows.length || blows.at(-1).hand !== s.hand)) blows.push({ hand: s.hand, mirrored: striking.mirrored, state: r.playerWeapon.machine.state, rec: striking.rec, guard: q.find((x) => x !== striking) });
+    if (!striking) continue;
+    const state = r.playerWeapon.machine.state;
+    assert.equal(q.at(-1), striking, 'the striking hand is drawn over the other');
+    assert.equal(shownArm(striking), s.hand, `${s.hand} ${state}: the arm on the screen is the hand that throws it (record ${striking.rec}${striking.mirrored ? ', mirrored' : ''})`);
+    const pic = strikePicture(s.hand, state, { painted: meleePainted });
+    assert.equal(striking.rec, STATE_REC[pic.state], `${s.hand} ${state}: the picture the law chose`);
+    const other = q.find((x) => x !== striking);
+    assert.ok(other && other.rec === '0' && shownArm(other) === otherHand(s.hand), 'and the other hand stays up, its own arm on its own side');
+    painted.add(MELEE_PAINTED_ARM[Number(STATE_REC[state])]);
+    if (!blows.length || blows.at(-1).hand !== s.hand) blows.push({ hand: s.hand, state });
   }
-  assert.ok(blows.length >= 3, `blows ${blows.length}`);
+  assert.ok(blows.length >= 6, `blows ${blows.length}`);
   assert.deepEqual(blows.slice(0, 3).map((b) => b.hand), ['R', 'L', 'R'], 'the hands take turns');
-  for (const b of blows) {
-    assert.equal(b.mirrored, b.hand === 'L', 'the left hand\'s strike is drawn in the mirror');
-    const STATE = { StrikeDown: '1', StrikeDownLeft: '2', StrikeLeft: '3', StrikeRight: '4', StrikeDownRight: '5', StrikeUp: '6' };
-    const want = b.hand === 'L' ? STATE[mirrorStrike(b.state)] : STATE[b.state];
-    assert.equal(b.rec, want, `${b.hand} ${b.state}: its own record, or its mirror's`);
-    assert.ok(b.guard && b.guard.mirrored === (b.hand === 'R'), 'and the other hand stays up');
-  }
+  assert.deepEqual([...painted].sort(), ['L', 'R'], 'measured over strikes Daggerfall paints with each arm');
 });
 
-test('TWO-HANDS rig, the guard: the hand that is not striking draws toward the middle and down while the other strikes, and back after', async () => {
+test('TWO-HANDS rig, the guard: the hand that is not striking draws toward the middle and down while the other strikes - each from its own side - and back after', async () => {
   const { r, frame } = await rigWith({});
-  const restR = (await frame()).find((x) => !x.mirrored).rect;
-  let tucked = null;
-  for (let i = 0; i < 200 && !tucked; i++) {
-    const q = await frame({ held: true });
-    if (r.playerWeapon.strikeInFlight?.hand === 'L') tucked = q.find((x) => !x.mirrored && x.rec === '0')?.rect ?? null;
+  const rest = await frame();
+  const restOf = { R: rest.find((x) => shownArm(x) === 'R').rect, L: rest.find((x) => shownArm(x) === 'L').rect };
+  for (const [hand, striker] of /** @type {const} */ ([['R', 'L'], ['L', 'R']])) {
+    let tucked = null;
+    for (let i = 0; i < 400 && !tucked; i++) {
+      const q = await frame({ held: true });
+      if (r.playerWeapon.strikeInFlight?.hand !== striker) continue;
+      // deep in the other's blow - the guard's follower has had its time
+      for (let k = 0; k < 6 && r.playerWeapon.strikeInFlight?.hand === striker; k++) tucked = (await frame({ held: true })).find((x) => x.rec === '0' && shownArm(x) === hand)?.rect ?? tucked;
+      void q;
+    }
+    assert.ok(tucked, `the ${hand} fist seen while the ${striker} strikes`);
+    const inward = hand === 'R' ? restOf.R.x - tucked.x : tucked.x - restOf.L.x;
+    assert.ok(inward > GUARD.IN * 0.6 && tucked.y > restOf[hand].y + GUARD.DOWN * 0.6, `${hand}: in toward the middle and down: ${JSON.stringify(tucked)} from ${JSON.stringify(restOf[hand])}`);
+    for (let i = 0; i < 140; i++) await frame();
   }
-  assert.ok(tucked, 'the right fist seen while the left strikes');
-  for (let i = 0; i < 20 && r.playerWeapon.strikeInFlight?.hand === 'L'; i++) tucked = (await frame({ held: true })).find((x) => !x.mirrored && x.rec === '0')?.rect ?? tucked;
-  assert.ok(tucked.x < restR.x - GUARD.IN * 0.6 && tucked.y > restR.y + GUARD.DOWN * 0.6, `in and down: ${JSON.stringify(tucked)} from ${JSON.stringify(restR)}`);
-  for (let i = 0; i < 120; i++) await frame();
-  const back = (await frame()).find((x) => !x.mirrored).rect;
-  assert.ok(Math.abs(back.x - restR.x) < 1 && Math.abs(back.y - restR.y) < 2.5, 'and back to its rest');
+  const back = await frame();
+  for (const hand of ['R', 'L']) {
+    const b = back.find((x) => shownArm(x) === hand).rect;
+    assert.ok(Math.abs(b.x - restOf[hand].x) < 1 && Math.abs(b.y - restOf[hand].y) < 2.5, `${hand} back to its rest`);
+  }
 });
 
-test('TWO-HANDS rig, the Weapon Widget: the right hand\'s clone and the left\'s each play their own hand\'s blows (the left\'s drawn in the mirror) and hold their idle through the other\'s; the left\'s coroutines resume at the end of the frame', async () => {
+test('TWO-HANDS rig, the Weapon Widget: the right hand\'s clone and the left\'s each play their own hand\'s blows - the arm on the screen the striking hand\'s, its picture the law\'s (strikePicture over the painted arm) - and hold their idle through the other\'s; the left\'s coroutines resume at the end of the frame', async () => {
   const { r, frame } = await rigWith({ widget: true });
-  const seen = { R: new Set(), L: new Set() };
-  for (let i = 0; i < 400; i++) {
-    const q = await frame({ held: i < 380 });
+  let strikes = 0;
+  for (let i = 0; i < 900; i++) {
+    const q = await frame({ held: i < 860 });
     const s = r.playerWeapon.strikeInFlight;
     if (!s) continue;
-    for (const x of q) if (x.rec !== '0') seen[x.mirrored ? 'L' : 'R'].add(s.hand);
+    const arms = q.map(shownArm);
+    assert.equal(new Set(arms).size, arms.length, `never two of one arm on the screen: ${arms}`);
+    for (const x of q) {
+      if (x.rec === '0') continue;   // a clone's idle - the other hand's, or the striker's own the frame before its clone takes the blow up
+      strikes++;
+      assert.equal(shownArm(x), s.hand, `the strike frame is the striking hand's arm (${s.hand}, record ${x.rec}${x.mirrored ? ', mirrored' : ''})`);
+    }
   }
-  assert.deepEqual([...seen.R], ['R'], 'the unmirrored strike frames are the right hand\'s blows alone');
-  assert.deepEqual([...seen.L], ['L'], 'the mirrored ones the left\'s');
+  assert.ok(strikes > 40, `strike frames seen: ${strikes}`);
   assert.ok(r.twoHands.offWidget, 'the left hand\'s clone');
 });
 
@@ -466,7 +519,8 @@ test('TWO-HANDS rig: a left-handed player\'s picture is mirrored whole - the rig
     const qq = await frame({ held: true });
     if (r.playerWeapon.strikeInFlight?.hand === 'R') seen = qq.find((x) => x.rec !== '0') ?? null;
   }
-  assert.ok(seen && seen.mirrored, 'the right hand\'s blow is drawn in the mirror');
+  assert.ok(seen, 'the right hand struck');
+  assert.equal(shownArm(seen), 'L', 'the right hand\'s blow is on the left of the screen: its arm the left of the picture, as painted or in the mirror');
   resetToDefaults();
 });
 
