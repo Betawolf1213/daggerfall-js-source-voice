@@ -19,7 +19,7 @@
 
 import { FACTION_TYPES } from '../../formats/factionFile.js';
 import { getReputation } from './factionRep.js';
-import { DIVINES, ORDERS } from '../guild/guildVariants.js';
+import { DIVINES, ORDERS, templeOf, orderOf } from '../guild/guildVariants.js';
 import { GUILDS } from '../guild/guilds.js';
 import { affiliations } from '../affiliations.js';
 import { RANDOM_RULER } from '../npcSession.js';   // FACTION.TXT's placeholder ruler a random noble quest stands in for - no kingdom
@@ -36,6 +36,16 @@ export const ORG_STANDING_GROUPS = Object.freeze([
   Object.freeze({ id: 'clans', title: 'Vampire clans', type: FACTION_TYPES.VampireClan }),
   Object.freeze({ id: 'daedra', title: 'Daedric Princes', type: FACTION_TYPES.Daedra }),
 ]);
+
+/** WAY-BACK (FIELD BUGS 2026-10-16b): the guild a faction on the page IS - a guild's own row (GUILDS), a temple's by
+ *  its god (templeOf), an order's (orderOf) - so the page says the way in under a standing the join refuses
+ *  (guildServiceFlow.js wayBackLines). Null for every other faction. */
+/** @type {Map<number, any>} */
+const GUILD_OF_FACTION = new Map();
+for (const g of Object.values(GUILDS)) GUILD_OF_FACTION.set(g.factionId, g);
+for (const d of Object.keys(DIVINES)) GUILD_OF_FACTION.set(DIVINES[d], templeOf(d));
+for (const o of Object.keys(ORDERS)) GUILD_OF_FACTION.set(ORDERS[o], orderOf(o));
+export const guildOfFaction = (/** @type {number} */ factionId) => GUILD_OF_FACTION.get(factionId) ?? null;
 
 /**
  * Every organization's standing, by group: [{ id, title, rows: [{ factionId, name, rep }] }] - a group's fixed ids in

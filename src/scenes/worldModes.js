@@ -212,7 +212,7 @@ import { applyDeathPenalty, deathPenaltyText } from '../systems/deathPenalty.js'
 import { revenantTakes } from '../systems/revenant/revenant.js';   // AUDIT FEUD (RVN8): the in-place respawn's theft, as the world host's
 import { endPlayerFights } from '../systems/harmMark.js';   // AUDIT FEUD (RVN10): ...and its fights ended
 import { tokenRows } from '../ui/messageBox.js';
-import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guild/guildServiceFlow.js';
+import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, wayBackLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guild/guildServiceFlow.js';
 import { isIngredient } from '../systems/potions.js';   // F201: MakePotionService's scan
 import { isPotionRecipe, USE_TEXT, expandItemMacro } from '../systems/useItem.js';   // AUDIT 63 F42: IsPotionRecipe (DaggerfallUnityItem.cs:344-347); RR1: the light's own "You douse the %it."
 import { canAccessService , hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel } from '../systems/guild/guildServices.js';   // G4: does THIS guild also sell soul gems?
@@ -6100,6 +6100,7 @@ export function createWorldModes(host) {
     // next one, and the port's overlay slot is single. The identity
     // guard is what keeps the second window alive; without it the join
     // welcome and every service flow vanished the moment they opened.
+    const wayBack = () => wayBackLines(guild, memberships, store, { paced: !!host.rollPace?.(guild.factionId) });   // WAY-BACK: the Roll's pace while it holds
     let win = null;
     win = new GuildServiceWindow({
       member: () => !showsJoinButton(memberships, route.guildGroup),
@@ -6117,6 +6118,7 @@ export function createWorldModes(host) {
       }),
       // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
       rankNeeds: () => { const pace = sharedClockOn() ? host.rollPace?.(guild.factionId) ?? null : null; return sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships }) : null; },   // ROLL-PACE: and when the pace holds it; SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: the review's date and its book
+      wayBack,   // WAY-BACK (FIELD BUGS 2026-10-16b): a stranger the guild will not take is told the way in, both lanes
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by
@@ -6128,7 +6130,7 @@ export function createWorldModes(host) {
         if (!store) return null;
         const decision = joinDecision(playerEntity, guild, store);
         if (!decision) return null;
-        if (!decision.eligible) return { rows: rows(decision.textId) };
+        if (!decision.eligible) return { rows: [...rows(decision.textId), ...(wayBack() ?? [])] };   // WAY-BACK: DFU's refusal, then the way in
         return {
           rows: rows(decision.textId),
           buttons: 'YesNo',

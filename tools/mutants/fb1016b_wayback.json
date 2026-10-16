@@ -1,0 +1,93 @@
+[
+  {
+    "name": "WAY-BACK-the-invitation-gate-dropped",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "  if (!guild || !store || !isJoinableByApplication(guild) || isMember(joinedGuildOfGroup(memberships, membershipKey(guild)))) return null;",
+    "new": "  if (!guild || !store || isMember(joinedGuildOfGroup(memberships, membershipKey(guild)))) return null;",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-slot-read-as-this-guild-alone",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "  if (!guild || !store || !isJoinableByApplication(guild) || isMember(joinedGuildOfGroup(memberships, membershipKey(guild)))) return null;",
+    "new": "  if (!guild || !store || !isJoinableByApplication(guild) || isMember(membershipOf(memberships, guild))) return null;",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-line-at-0",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "  if (rep >= need) return null;\n  const owed = ctx?.paced",
+    "new": "  if (rep > need) return null;\n  const owed = ctx?.paced",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-owed-read-offline",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "  const owed = ctx?.paced ? standingOwedOf(guild.factionId) : 0;",
+    "new": "  const owed = standingOwedOf(guild.factionId);",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-owed-not-counted",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "Math.max(0, need - rep - owed) / QUEST_SUCCESS_REP",
+    "new": "Math.max(0, need - rep) / QUEST_SUCCESS_REP",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-count-floored",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "  const quests = Math.ceil(Math.max(0, need - rep - owed) / QUEST_SUCCESS_REP);",
+    "new": "  const quests = Math.floor(Math.max(0, need - rep - owed) / QUEST_SUCCESS_REP);",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-pace-said-offline",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "    ...(ctx?.paced ? [t('guild.wayBack.paced',",
+    "new": "    ...(true ? [t('guild.wayBack.paced',",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-week-not-the-law's",
+    "file": "src/systems/guild/guildServiceFlow.js",
+    "old": "{ days: RECOVERY_INTERVAL_MINUTES / MINUTES_PER_DAY }",
+    "new": "{ days: 112 }",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-stranger's-line-not-drawn",
+    "file": "src/ui/enhanced/enhancedPorts.js",
+    "old": "    const needs = member ? (w.hooks.rankNeeds?.() ?? null) : (w.hooks.wayBack?.() ?? null);",
+    "new": "    const needs = member ? (w.hooks.rankNeeds?.() ?? null) : null;",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-hook-dropped",
+    "file": "src/scenes/worldModes.js",
+    "old": "      wayBack,   // WAY-BACK (FIELD BUGS 2026-10-16b): a stranger the guild will not take is told the way in, both lanes\n",
+    "new": "",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-refusal-bare",
+    "file": "src/scenes/worldModes.js",
+    "old": "        if (!decision.eligible) return { rows: [...rows(decision.textId), ...(wayBack() ?? [])] };",
+    "new": "        if (!decision.eligible) return { rows: rows(decision.textId) };",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-standing-note-dropped",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "      if (way) detail.append(el('p', 'px-note', way[1]));",
+    "new": "      void way;",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  },
+  {
+    "name": "WAY-BACK-the-temples-unmapped",
+    "file": "src/systems/faction/factionStanding.js",
+    "old": "for (const d of Object.keys(DIVINES)) GUILD_OF_FACTION.set(DIVINES[d], templeOf(d));\n",
+    "new": "",
+    "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
+  }
+]

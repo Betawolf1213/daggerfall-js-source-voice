@@ -176,7 +176,9 @@ import { REGION_NAMES } from '../../formats/mapsTables.js';   // GUILD-REP: the 
 import { hudLocked, setHudLocked, resetHudLayout, hudBarsSplit, setHudBarsSplit } from '../hud/hudLayout.js';   // HUD-MOVE: Lock UI and Reset UI
 import { enhancedHudScale as hudScaleNow, HUD_SCALE_MIN, HUD_SCALE_MAX } from './enhancedHud.js';   // PX30c
 import { mapScaleLabel, nextMapScale } from '../map/mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the Maps row
-import { standingGroups } from '../../systems/faction/factionStanding.js';   // FIELD BUGS 2026-10-09e EVERY-STANDING: every organization's reputation
+import { standingGroups, guildOfFaction } from '../../systems/faction/factionStanding.js';   // FIELD BUGS 2026-10-09e EVERY-STANDING: every organization's reputation
+import { wayBackLines } from '../../systems/guild/guildServiceFlow.js';   // WAY-BACK: the way into a guild, under its row
+import { activeMemberships } from '../../systems/guild/guilds.js';   // WAY-BACK: the book the join reads
 import { playerEntity } from '../../characters/playerEntity.js';
 // PX6: the Stats page's skill labels - the one home (systems/skills.js).
 import { SKILLS, SKILL_NAMES } from '../../systems/skills.js';
@@ -5182,6 +5184,10 @@ export function statsEveryStanding(detail, entity) {
       const row = el('div', 'px-stat px-org');
       row.append(el('span', 'k', r.name), signedRep(r.rep));
       detail.append(row);
+      // WAY-BACK (FIELD BUGS 2026-10-16b): under a guild that will not take this standing, its quests' way in - the hall's
+      // own line (the drift and the pace are said there, and on the join's refusal)
+      const way = wayBackLines(guildOfFaction(r.factionId), activeMemberships(entity), entity.factionRep, { paced: isOnlinePage() });
+      if (way) detail.append(el('p', 'px-note', way[1]));
     }
   }
 }

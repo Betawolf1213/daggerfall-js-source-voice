@@ -24,13 +24,17 @@
 import { GUILD_GROUPS, SOCIAL_GROUPS, FACTION_TYPES } from '../../formats/factionFile.js';
 import { hasGuildService, npcServiceKind, canAccessService } from './guildServices.js';
 import { isMember, joinedGuildOfGroup, updateRank, rankNeeds, getTitle, membershipOf, reviewDaysLeft, reviewedRank, numHighLowSkills, underworldRuleOf,
+  isJoinableByApplication, membershipKey,   // WAY-BACK: a stranger is told the way in where one walks in
   GUILD_EXPEL_BELOW, DAYS_BETWEEN_RANK_CHANGES, RANK_REQ_REPUTATION, RANK_REQ_SKILL_HIGH, RANK_REQ_SKILL_LOW } from './guilds.js';
+import { QUEST_SUCCESS_REP } from '../quest/questRepute.js';   // WAY-BACK: what a stranger's quest done pays the guild (the leaf - AUDIT GUIDE O6)
+import { RECOVERY_INTERVAL_MINUTES } from '../court.js';   // WAY-BACK: REP4's week, a bad name's point back
+import { MINUTES_PER_DAY } from '../gameDate.js';
 import { getReputation } from '../faction/factionRep.js';   // AUDIT GUILD-WORDS L1-2: the review's warnings read the standing
 import { standingOwedOf } from '../standingOwed.js';   // STANDING-WORDS: what the Roll still owes, online
 import { SKILL_NAMES } from '../skills.js';   // PROMO-NOW: the hall's line names the guild's skills
 import { isDivine } from './guildVariants.js';
 import { localizedText, localizedTable, t } from '../textManager.js';   // L10N3d: the labels and the refusal; PROMO-NOW: the hall's line
-import { SEAT_RANK, SEAT_MERIT_WEEKS, SEAT_TENURE_S, SEAT_ACCOUNT_AGE_S } from '../../net/npcChapterLaw.js';   // SEAT-LINE: what a seat asks, the law's own numbers
+import { SEAT_RANK, SEAT_MERIT_WEEKS, SEAT_TENURE_S, SEAT_ACCOUNT_AGE_S, ROLL_GAIN_DAY_MAX } from '../../net/npcChapterLaw.js';   // SEAT-LINE: what a seat asks, the law's own numbers; WAY-BACK: the Roll's day
 
 /** The four ids the window quotes by name (:29-32), plus the two
  *  OnPush records and the spymaster greeting (:455). */
@@ -372,6 +376,33 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   if (wait > 0) lines.push(t('guild.rankNeeds.paced', '{days, plural, =1 {Earliest promotion: tomorrow} other {Earliest promotion: in # days}}', { days: wait }));
   if (!lines.length) return warnings.length ? warnings : null;
   return [...warnings, next, ...lines];
+}
+
+/** WAY-BACK (FIELD BUGS 2026-10-16b; Glade on Discord: "they kicked me out so I can't do any quests to recover. It's
+ *  unclear to me whether I'll have to remake my character or wait IRL weeks just to get back to 0"): what the way back
+ *  in costs, said to a stranger the guild will not take on their standing - an expelled member, or one who never joined.
+ *  Both roads were always open and nothing said either. A stranger may ask the hall's quest-giver for work
+ *  (NonMemberGuild.CanAccessService's Quests, guildServices.js baseCanAccessService; QuestList-Classic's `N` rows), and
+ *  each one done pays the guild DFU's QUEST_SUCCESS_REP (Quest.cs EndQuest - the guild's faction, a member or not); and a
+ *  standing below 0 mends a point every RECOVERY_INTERVAL_MINUTES of the character's own time (REP4; rests and journeys
+ *  count, LIVED1). Online, while the Roll paces the guild (`ctx.paced`, the host's rollPace), a rise is paid at most
+ *  ROLL_GAIN_DAY_MAX a UTC day, and what it still owes counts toward the line. Null where the join is not offered (a
+ *  member of the slot - this guild, or another temple or order in it, as showsJoinButton reads it - or a guild joined only
+ *  by invitation), with no faction store, or at a standing the join already accepts. */
+export function wayBackLines(guild, memberships, store, ctx = null) {
+  if (!guild || !store || !isJoinableByApplication(guild) || isMember(joinedGuildOfGroup(memberships, membershipKey(guild)))) return null;
+  const rep = getReputation(store, guild.factionId), need = RANK_REQ_REPUTATION[0];
+  if (rep >= need) return null;
+  const owed = ctx?.paced ? standingOwedOf(guild.factionId) : 0;
+  const quests = Math.ceil(Math.max(0, need - rep - owed) / QUEST_SUCCESS_REP);
+  return [
+    t('guild.wayBack.standing', 'Your standing with this guild is {rep}. It takes members at {need} or more.', { rep, need }),
+    t('guild.wayBack.quests', 'A stranger may still ask its quest-giver for work: each quest done raises your standing {per}{n, plural, =0 {} one { - # more quest reaches {need}} other { - # more quests reach {need}}}.',
+      { per: QUEST_SUCCESS_REP, n: quests, need }),
+    t('guild.wayBack.drift', 'Below 0 it also mends a point every {days} days of your own time - rests and journeys count.', { days: RECOVERY_INTERVAL_MINUTES / MINUTES_PER_DAY }),
+    ...(ctx?.paced ? [t('guild.wayBack.paced', 'Online it rises at most {max} a real day (days turn at midnight UTC){owed, plural, =0 {} other { - # more is on the way}}.',
+      { max: ROLL_GAIN_DAY_MAX, owed })] : []),
+  ];
 }
 
 /** The service the popup's middle button runs. DoGuildService's switch
