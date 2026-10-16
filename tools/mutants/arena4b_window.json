@@ -110,8 +110,8 @@
   {
     "name": "ARENA4B-CLIMB-WAIT-CARD",
     "file": "src/systems/arenaBoard.js",
-    "old": "      for (const c of m.bouts.cards) if (c.kind === 'ladder') c.acts",
-    "new": "      for (const c of []) if (c.kind === 'ladder') c.acts",
+    "old": "      m.bouts.cards = m.bouts.cards.map((c) => (c.kind === 'ladder' ? ladderCardWaiting(away ?? O().climbWait) : c));",
+    "new": "      m.bouts.cards = m.bouts.cards.map((c) => c);",
     "tests": [
       "test/arena4b_window.test.js"
     ]
@@ -128,7 +128,7 @@
   {
     "name": "ARENA4B-RECORDS-SAVE-BEFORE-BOARD",
     "file": "src/systems/arenaBoard.js",
-    "old": "      m.records = { ...recordsPageOnline(null, o), stats: [] };\n",
+    "old": "      m.records = { ...recordsPageOnline(null, o), stats: [], ...(away ? { empty: away } : {}) };\n",
     "new": "",
     "tests": [
       "test/arena4b_window.test.js"

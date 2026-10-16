@@ -20,8 +20,8 @@
   {
     "name": "DOOR-TOKEN-ahead-the-spent-room-unasked",
     "file": "src/net/accountClient.js",
-    "old": " && now() - held.at < TOKEN_REUSE_MS - TOKEN_AHEAD_MS && !(room != null && held.rooms.has(room));",
-    "new": " && now() - held.at < TOKEN_REUSE_MS - TOKEN_AHEAD_MS;",
+    "old": " && by - held.at < TOKEN_REUSE_MS && !(room != null && held.rooms.has(room));",
+    "new": " && by - held.at < TOKEN_REUSE_MS;",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "DOOR-TOKEN-ahead-no-margin",
     "file": "src/net/accountClient.js",
-    "old": " && now() - held.at < TOKEN_REUSE_MS - TOKEN_AHEAD_MS && !(room",
-    "new": " && now() - held.at < TOKEN_REUSE_MS && !(room",
+    "old": "      const by = now() + Math.max(0, Number(withinMs) || 0);",
+    "new": "      const by = now();",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -38,8 +38,8 @@
   {
     "name": "DOOR-TOKEN-ahead-a-second-in-flight",
     "file": "src/net/accountClient.js",
-    "old": "      if (!session || minting) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const opens",
-    "new": "      if (!session) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const opens",
+    "old": "      if (!session || minting) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const by",
+    "new": "      if (!session) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const by",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -47,8 +47,8 @@
   {
     "name": "DOOR-TOKEN-ahead-through-the-hold",
     "file": "src/net/accountClient.js",
-    "old": "      if (!session || minting) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const opens",
-    "new": "      if (!session || minting) return false;\n      const named = namedNow();\n      const opens",
+    "old": "      if (!session || minting) return false;\n      if (cool.secret === session.secret && now() < cool.until) return false;\n      const named = namedNow();\n      const by",
+    "new": "      if (!session || minting) return false;\n      const named = namedNow();\n      const by",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "DOOR-TOKEN-armed-without-the-walk-away",
     "file": "src/scenes/doorTokenHost.js",
-    "old": "      if (d > EXIT_ARM_M) { armed = true; return false; }",
-    "new": "      if (d > EXIT_NEAR_M) { armed = true; return false; }",
+    "old": "      if (d > EXIT_ARM_M) { armed = !walked; return false; }",
+    "new": "      if (d > EXIT_NEAR_M) { armed = !walked; return false; }",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -128,8 +128,8 @@
   {
     "name": "DOOR-TOKEN-twice-an-approach",
     "file": "src/scenes/doorTokenHost.js",
-    "old": "      armed = false;\n      return ahead(back);\n    },\n    /** The way back out",
-    "new": "      return ahead(back);\n    },\n    /** The way back out",
+    "old": "      armed = false;\n      walked = ahead(back, EXIT_WALK_MS);",
+    "new": "      walked = ahead(back, EXIT_WALK_MS);",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -146,8 +146,8 @@
   {
     "name": "DOOR-TOKEN-leaving-asks-no-room",
     "file": "src/scenes/doorTokenHost.js",
-    "old": "    leaving() {\n      armed = false;\n      return ahead(back);",
-    "new": "    leaving() {\n      armed = false;\n      return ahead(null);",
+    "old": "    leaving() {\n      armed = false;\n      return change(back);",
+    "new": "    leaving() {\n      armed = false;\n      return change(null);",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]
@@ -220,6 +220,105 @@
     "file": "src/scenes/world.js",
     "old": "    hccParkTick(now); doorToken.frame();",
     "new": "    hccParkTick(now);",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-one-margin-for-every-door",
+    "file": "src/net/accountClient.js",
+    "old": "      const by = now() + Math.max(0, Number(withinMs) || 0);",
+    "new": "      const by = now() + 20_000;",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-door-s-margin-the-old-20s",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "    return ahead(room, DOOR_SOON_MS);\n  };",
+    "new": "    return ahead(room, 20_000);\n  };",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-door-s-margin-the-walk-s",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "    return ahead(room, DOOR_SOON_MS);\n  };",
+    "new": "    return ahead(room, EXIT_WALK_MS);\n  };",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-no-ask-during-the-build",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "        else return ahead(pending.room, DOOR_SOON_MS);",
+    "new": "        else return false;",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-build-s-ask-the-old-20s",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "        else return ahead(pending.room, DOOR_SOON_MS);",
+    "new": "        else return ahead(pending.room, 20_000);",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-ask-outliving-its-room",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "if (now() > pending.until || (s?.room && s.room !== pending.from)) pending = null;",
+    "new": "if (now() > pending.until) pending = null;",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-pending-never-let-go",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "if (now() > pending.until || (s?.room && s.room !== pending.from)) pending = null;",
+    "new": "if (s?.room && s.room !== pending.from) pending = null;",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-walk-out-re-armed",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "      if (d > EXIT_ARM_M) { armed = !walked; return false; }",
+    "new": "      if (d > EXIT_ARM_M) { armed = true; return false; }",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-an-approach-that-minted-nothing-spent",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "      walked = ahead(back, EXIT_WALK_MS);\n      return walked;",
+    "new": "      ahead(back, EXIT_WALK_MS);\n      walked = true;\n      return walked;",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-the-walk-s-margin-the-door-s",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "      walked = ahead(back, EXIT_WALK_MS);",
+    "new": "      walked = ahead(back, DOOR_SOON_MS);",
+    "tests": [
+      "test/fb1016b_doortoken.test.js"
+    ]
+  },
+  {
+    "name": "DOOR-TOKEN-A2-a-new-visit-unarmed",
+    "file": "src/scenes/doorTokenHost.js",
+    "old": "      armed = false; walked = false;\n      return change(null);\n    },\n    /** A door is taking me out",
+    "new": "      armed = false;\n      return change(null);\n    },\n    /** A door is taking me out",
     "tests": [
       "test/fb1016b_doortoken.test.js"
     ]

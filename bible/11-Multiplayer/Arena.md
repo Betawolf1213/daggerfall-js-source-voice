@@ -1078,3 +1078,13 @@ its purse this screen's, the window the save's "Season of 3E 406" header and see
 (`scenes/arenaOnline.js` waiting; `scenes/arenaGate.js` takes its online arm): no Fight, the window the realm's season by
 the clock and its boards on their way, no wager settled by the house, the hour's bout the relay's. The account's climb
 was never touched. The record: `01-Overview/Field-Bugs-2026-10-16b.md`.
+
+AUDIT (2026-10-16) - ON THE ONLINE LANE THE OFFLINE ARENA NEVER RUNS (A4, the owner's decision), but for one word: a
+relay that said it opens no arena room (`arenaHeard` with `arenaOk` false - an older relay), the session neither
+superseded nor terminal. This departs from AUDIT PRE-MERGE 1003 O9, which read a seat given up as offline: that tab ran
+the save's ladder, paid its purses into the realm's save and settled an open online wager by the house's seeded record.
+A seat given up now shuts the doors and says, in ONE-SEAT's words (`net/oneSeat.js` SEAT_NOTICE), that the seat is
+elsewhere; a session no welcome can answer (terminal) shuts them with "The server cannot be reached" (A3), never "Still
+loading" for ever (`scenes/arenaOnline.js` `shut`, `shutText`). And the window before the board shows nothing of the
+save's on its Ladder page or its ladder card either (A1): the ten tiers as the law has them, nobody's climb on them
+("Not loaded"), the card no bout and no purse.

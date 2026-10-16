@@ -47,9 +47,11 @@ What the reporter is owed: with a change on its way at 50, the perks at 100 can 
 
 ## ARENA-WAIT: on the online lane, before the relay's word, the arena waits (2)
 
-`src/net/online.js` the session's `arenaHeard`; `src/scenes/arenaOnline.js` waiting, model, act, fightLadder,
-watchExhibition, team; `src/scenes/arenaGate.js` online, settle; `src/systems/arenaBoard.js` arenaBoard's no-board arm,
-pendingBoard; `src/scenes/world.js` the arena online's `lane` and `nowS`, arenaHeraldAct's Fight and Watch, arenaFrame.
+`src/net/online.js` the session's `arenaHeard`; `src/scenes/arenaOnline.js` waiting (the audit: `shut`, `shutText`),
+model, act, fightLadder, watchExhibition, team; `src/scenes/arenaGate.js` online, settle (the audit: heraldChoice's line,
+windowAct's Fight, the recruiter's and the Keeper's words); `src/systems/arenaBoard.js` arenaBoard's no-board arm,
+pendingBoard (the audit: ladderPageWaiting, ladderCardWaiting); `src/ui/arenaWindow.js` renderLadder (the audit);
+`src/scenes/world.js` the arena online's `lane` and `nowS`, arenaHeraldAct's Fight and Watch, arenaFrame.
 
 THE REPORT. A character who had fought all forty of the season's bouts reloaded beside the gate. The Herald offered
 Fight; the bout reset the rank, and the window's season "doesn't have a number" (the screenshot: "Season of 3E 406",
@@ -79,19 +81,24 @@ CHANGED:
   until the relay's verdicts can be asked (O4's law, now for the first word too). world.js's Fight, the city's sand and
   the Herald's Watch take the online arm; the sand stands nothing of this screen's own.
 - **The window before the board.** The no-board arm (online, waiting or the board still asked) draws the realm's season
-  by the clock (`arenaSeasonOf` over the host's relay clock), no title, record, banner or purse of the save's; the
-  banners' and every board's names "not in yet" (`rollWait`); the ladder page's next bout withheld and its line the
-  climb's wait.
-- **Not waiting:** a relay that said no (an older one - offline, as ever) and a seat given up (O9). An offline
-  character's arena is unchanged.
+  by the clock (`arenaSeasonOf` over the host's relay clock), no title, record, banner or purse of the save's in the
+  header; the banners' and every board's names "not in yet" (`rollWait`); the Ladder page and the Bouts page's ladder
+  card nobody's (AUDIT A1, below: they were the save's).
+- **Not waiting:** a relay that said no (an older one - offline, as ever). An offline character's arena is unchanged.
+  (A seat given up was "not waiting" here - offline, the save's arena; AUDIT A4 below shuts it.)
 
 THE FOUR HOSTS: world.js - WIRED (the arena online is its alone: the lane, the clock, Fight, Watch and the city's
 sand, on lines it already had - bootWorld stands at its ceiling); exterior.js's gate has no arena online (the fixed
 city plays offline) - unchanged; worldModes.js and dungeonContext.js read the gate's `hall` and `plaques`, which wait
-with it. Pinned by `test/fb1016b_arenawait.test.js` (2, over the real OnlineSession's welcome, the arena online and the
-gate); `tools/mutants/fb1016b_arenawait.json` (18, all dead). PINS MOVED: `arena4b_mirror.test.js` and
-`audit1003_online.test.js` read world.js's arenaFrame and Watch branches with the wait's arm; mutants
-ARENA4b-MIR-GATE-HOUSE-ONLINE, -WORLD-CITY, -WORLD-WATCH and ARENA4B-PURSES-BEFORE-BOARD re-aimed by content, all dead.
+with it. Pinned by `test/fb1016b_arenawait.test.js` (4, over the real OnlineSession's welcome and close, the arena
+online, the gate and the window; the audit's two the last); `tools/mutants/fb1016b_arenawait.json` (41, all dead - 16
+of the 18 re-aimed by content at the audit, two retired with the laws they pinned - the seat given up offline, the next
+bout withheld - which A4's and A1's own hold now; 25 the audit's). PINS MOVED: `arena4b_mirror.test.js` and `audit1003_online.test.js`
+read world.js's arenaFrame and Watch branches with the wait's arm; mutants ARENA4b-MIR-GATE-HOUSE-ONLINE, -WORLD-CITY,
+-WORLD-WATCH and ARENA4B-PURSES-BEFORE-BOARD re-aimed by content, all dead. At the audit: `audit1003_online.test.js`
+O9 (a seat given up is shut on the lane, in the seat's words - it was offline) and O4 (`live()` false for a seat lost,
+read as "not the arena online", no longer "offline"); mutants ARENA4B-WINDOW-FIGHT-UNKNOWN, ARENA4B-CLIMB-WAIT-CARD and
+ARENA4B-RECORDS-SAVE-BEFORE-BOARD re-aimed by content, dead.
 
 FLAGGED, not taken: the save's own ladder is not healed - it still holds whatever an offline climb last left, which the
 character sheet's arena line reads (`enhancedCharSheet.js` arenaSheetLine). Whether the save should mirror the account's
@@ -100,6 +107,38 @@ climb is a design call; no arena door reads it online any more.
 What the reporter is owed: your Grand Champion title and your forty wins were never lost - the rank and the season you
 saw were the offline arena's, shown for the seconds before the server answered. The arena now waits for the server
 instead.
+
+AUDIT (2026-10-16). Read cold over the real modules (the auditor's `ladder_card.mjs`, `terminal.mjs`); every finding
+fixed:
+
+- **A1 (major): half the screenshot survived.** The record said the no-board arm drew "no title, record, banner or purse
+  of the save's" - false: the Ladder page was still `ladderPage(o)`, the SAVE's ladder (its tiers cleared and current,
+  their win pips, the champions beaten, its titles - "Tier 2, Bloodied", "Pit Fighter"), and the Bouts page's ladder
+  card the save's next bout and its purse, Fight merely shut. Now, in that arm (waiting, or live with the board still
+  asked) the Ladder page is the law's ten tiers with nobody's climb on them (`arenaBoard.js` ladderPageWaiting: every tier
+  `waiting` - "Not loaded" - no pip, no champion beaten, no next bout, no title, `current` null, the line the climb's
+  wait), and the card a wait card (ladderCardWaiting: no bout named, no opponents, no purse, Fight shut with the line).
+  `ui/arenaWindow.js` renderLadder draws that shape: with no current tier the first is shown (the climb's own taken up
+  once it comes, a pick kept a pick), and no "Your titles" block - "No titles yet." is a claim about a climb not in.
+- **A3 (minor): "Still loading" for ever.** A session that can never be welcomed (terminal: a hello refused for good
+  with CLOSE_POLICY, no relay address) kept `waiting()` true and said "Still loading. Try again in a moment." until a door
+  joined again. Its doors stay shut and say what it is (`arenaText.js` online.noServer: "The server cannot be reached.
+  The arena opens again once you are back online."); a door that joins again clears `terminal`, and the wait's words
+  come back.
+- **A4 (design, the owner's decision): on the online lane the offline arena NEVER runs** - but for one word: a relay that
+  said it opens no arena room (`arenaHeard`, `arenaOk` false), the session neither superseded nor terminal. A seat given
+  up (O9's superseded tab) was offline - the save's ladder with its local purses (up to 47,950 gold over 40 bouts, paid
+  into the realm's save) and the bookmaker settling an open online wager by the house's seeded result. Its doors are shut
+  now and say the seat is elsewhere in ONE-SEAT's own words (`net/oneSeat.js` SEAT_NOTICE, with "Play online here").
+  `arenaOnline.js` `shut()` names why ('seat', 'gone', 'wait') and `shutText(line)` says it - Fight, the challenge,
+  Watch, a banner, the Herald, the window's Fight, the recruiter, the Keeper, and every page of the window (`model`'s
+  `away` and `shutWhy`: the Ladder page's line, the Team page, the boards, the Records page, the hour's Watch on its
+  card); the book settles nothing until the relay's verdicts can be asked. `11-Multiplayer/Arena.md` ARENA-WAIT names
+  the change.
+
+FLAGGED, not taken: a session that was LIVE (its relay said `arenaOk`) and then went terminal stays the arena online
+(O4's sticky word) - its board and climb are the account service's, so the window and the Herald read true, and the
+next door's join (net/online.js `join`) clears `terminal`.
 
 ## FINE-PEOPLE: a fine and a penance give the People's half back too (3)
 
@@ -427,7 +466,8 @@ thing you carry and say how many. Win your case, or have the Thieves Guild get y
 
 ## DOOR-TOKEN: the next room's token is minted at the door (10)
 
-`src/net/accountClient.js` TOKEN_AHEAD_MS, the minter's `ahead` and `holds`; `src/scenes/doorTokenHost.js` (new);
+`src/net/accountClient.js` the minter's `ahead(room, withinMs)` and `holds`; `src/scenes/doorTokenHost.js` (new;
+the audit: DOOR_SOON_MS, EXIT_WALK_MS, DOOR_PENDING_MS);
 `src/net/online.js` `tick`'s token retry, the close paths' `_tokenRetry`; `src/scenes/world.js` the door module's
 construction and its five calls.
 
@@ -449,25 +489,29 @@ them a mint plus the backoff (4.4-5.2 s at a 2.5 s mint); a relay restart with a
 after the token had arrived (3.1 s past it).
 
 CHANGED:
-- **The token goes at the door.** The minter's `ahead(room)` mints now, only when the held token could not open the next
-  room by the time its socket asks (none held, spent in that room, or under TOKEN_AHEAD_MS (20 s) of its minute left);
-  never with a mint in flight, through STORM-SHED's hold, or signed out. The next room's own mint simply goes early; a
-  token minted ahead and never used is at most one a page per 40 s.
+- **The token goes at the door.** The minter's `ahead(room, withinMs)` mints now, only when the held token could not
+  open the next room by the time its socket asks - none held, spent in that room, or its minute out within the door's
+  own margin `withinMs` (AUDIT A2, below: it was one 20 s, TOKEN_AHEAD_MS, at every door); never with a mint in flight,
+  through STORM-SHED's hold, or signed out.
 - **The host module** `scenes/doorTokenHost.js` calls it at a door in (`onPreTransition`, while the place builds - the
   cell left remembered as the way back), a door out (`onDungeonLeave`, `onInteriorLeave`), every jump
-  (`_teleportToPixel`: fast travel, teleport, recall), and the walk back to an exit door (within EXIT_NEAR_M 16 m after
-  standing EXIT_ARM_M 32 m from every exit; the spawn beside the door does not count). Online only.
+  (`_teleportToPixel`: fast travel, teleport, recall) - each with DOOR_SOON_MS (2 s: a frame, the join's hold, a socket's
+  open), asked again every frame until its room is joined (DOOR_PENDING_MS at most) - and the walk back to an exit door
+  (within EXIT_NEAR_M 16 m after standing EXIT_ARM_M 32 m from every exit; the spawn beside the door does not count) with
+  EXIT_WALK_MS (8 s), once a visit. Online only.
 - **The retry.** A hello refused for want of a token (the primary's and each halo's) retries the frame the minter `holds`
   a token for its room; the hard backoff stands for every other wait.
-- Measured again (two real sessions, the real Room, a 3 s mint): into the crypt 3.1 s -> 0.7 s (the build covers the
-  rest), back out 3.1 s -> 0.1 s; five mints on the same walk either way. `11-Multiplayer/Scale-Arc.md` DOOR-TOKEN.
+- Measured again (two real sessions, the real Room, a 3 s mint): into the crypt 3.1 s -> 0.5 s (the build covers the
+  rest; 0.7 s before the audit's re-ask through the build), back out 3.1 s -> 0.1 s; five mints on the same walk either
+  way. `11-Multiplayer/Scale-Arc.md` DOOR-TOKEN.
 
 THE FOUR HOSTS: world.js - WIRED on existing lines (bootWorld 21,679 code lines, its ceiling); worldModes.js and
 dungeonContext.js - reached through world.js's host hooks (onPreTransition, onInteriorLeave, onDungeonLeave), the module
 reading their exit doors through `modes.dungeonCtx.exitDoors` and `modes.interiorCtx.doors`, neither file changed;
-exterior.js - no online session. Pinned by `test/fb1016b_doortoken.test.js` (5, the first the crypt both ways over the real
-session, Room and minter); `tools/mutants/fb1016b_doortoken.json` (25, all dead). PINS MOVED: `stormshed.json`'s
-STORM-SHED-primary-unheld re-aimed by content.
+exterior.js - no online session. Pinned by `test/fb1016b_doortoken.test.js` (6, the first the crypt both ways over the
+real session, Room and minter; the last the audit's rate over the real host and minter);
+`tools/mutants/fb1016b_doortoken.json` (36, all dead - 7 re-aimed by content at the audit, 11 its own). PINS MOVED:
+`stormshed.json`'s STORM-SHED-primary-unheld re-aimed by content.
 
 FLAGGED, not taken: in an overflowing place a party can split across layers (a member asks its party's layer only at its
 join; a reconnect reuses that hint; a halo opens at layer 0) - unreachable at today's counts; a lone player's blip that
@@ -480,6 +524,26 @@ What the reporter is owed: your party mates were never gone. Every door into a t
 connection that waited a few seconds for the account server to vouch for you, and for those seconds neither side could
 see the other. The game now asks for that pass while the tomb loads and while you walk back to its door, so you appear to
 each other as you step through.
+
+AUDIT (2026-10-16). Read cold over the real minter and host (the auditor's `mintrate.mjs`, `mintrate2.mjs`,
+`linger.mjs`); the finding fixed:
+
+- **A2 (minor/major - the account service's load): the margin was the walk's at every door.** The record said "the next
+  room's own mint simply goes early" and "a token minted ahead and never used is at most one a page per 40 s" - both
+  understated. TOKEN_AHEAD_MS (20 s) at every door minted whenever the held token was 40-60 s old, though the next socket
+  asks within a frame (leaving) or a build (entering) and that token would still have opened it: x2.00 the mints at a
+  40-55 s door gap, x1.48 at 30-60 s; and the walk out re-armed on every approach - a fight pacing 10-35 m from a
+  dungeon's exit minted 13 times in ten minutes, none before. Now `ahead(room, withinMs)` takes each door's own margin
+  (`doorTokenHost.js`): a door in, a door out and a jump DOOR_SOON_MS (2 s), asked again every frame of the place change
+  until its room is joined (DOOR_PENDING_MS, 30 s, at most) - so a long build needs no guessed bound and its token is
+  minted as its minute runs out, not 20 s early; the walk out EXIT_WALK_MS (8 s: 16 m at the slowest walk, the click,
+  DOOR_SOON_MS), ONE mint a visit (it arms no more until a door takes the player in, or a jump lands them). Re-measured
+  over the real host and minter, its margins and its frames (the auditor's walk drove the minter alone with one margin,
+  so the walk is driven through the host now - a 3 s mint, frames every 100 ms): building hops (a 1.5 s build, walking
+  back to the door) x1.00-1.06 at every gap from 10-30 s to 45-58 s, the sockets' wait on a mint down to a third; the
+  pacing fight 1 mint in ten minutes (the auditor's `linger.mjs`); the crypt 0.5 s in and 0.1 s out. What is left is the latency win's own price: a token minted at a
+  door is older, by the build, at the next door - a 6 s dungeon build with every gap at 45-58 s mints x1.22 (x1.03 over a
+  10-120 s spread), a 12 s one x1.58, its sockets never waiting. Pinned by THE RATE (`fb1016b_doortoken.test.js`).
 
 ## INDOOR-WATCH: the watch called into a building walks round to the player, and a wall never keeps it out (11)
 

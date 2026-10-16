@@ -1181,16 +1181,6 @@ export function forgetSession(storage) {
  *  than that in any room it opens; the token itself lives MAX_TTL_S (five minutes). */
 export const TOKEN_REUSE_MS = 60_000;
 
-/** DOOR-TOKEN (FIELD BUGS 2026-10-16, the Discord: "Partied players popping in and out randomly after leaving tombs at
- *  graveyard ... also partied players inside tombs are invisible for a time"): A TOKEN MINTED AHEAD OF THE DOOR. A place
- *  change opens a new room, and its socket asked for its token only as it opened - a mint on the wire (seconds, for a
- *  player: TOKEN-WAIT) between the door and the hello, the player invisible to the party on both sides of it. The host
- *  says a place change is coming (`minter.ahead`) and the mint goes then, while the place is built, so the room's socket
- *  finds the token held. A held token is minted ahead only when it could not open the next room: none held, spent there,
- *  or with under this much of TOKEN_REUSE_MS left - so the next room's own mint is the one that went early, and a token
- *  minted ahead and never used is at most one a page per TOKEN_REUSE_MS - TOKEN_AHEAD_MS. */
-export const TOKEN_AHEAD_MS = 20_000;
-
 /** STORM-SHED (2026-10-06 evening, the account service overloaded a second time - "D1 DB is overloaded"; decorations
  *  missing): A FAILED MINT HOLDS THE PAGE'S NEXT ONE OFF. A room whose hello the relay refused for want of a token asks
  *  again within BACKOFF_MAX_MS (net/online.js) - right for a busy room, ruinous for a busy service: every room of every
@@ -1299,11 +1289,18 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * handed the token again within TOKEN_REUSE_MS - the retry mints nothing. A relay deploy's reconnect wave was a mint a
  * player and another a busy refusal; it is a mint a player.
  *
- * DOOR-TOKEN: the host says a place change is coming (`minter.ahead(room)`), and a mint goes then when the token held
- * could not open the next room by the time its socket asks (TOKEN_AHEAD_MS); `minter.holds(room)` says whether a room
- * would be handed one now, nothing on the wire.
+ * DOOR-TOKEN (FIELD BUGS 2026-10-16, the Discord: "Partied players popping in and out randomly after leaving tombs at
+ * graveyard ... also partied players inside tombs are invisible for a time"): A TOKEN MINTED AHEAD OF THE DOOR. A place
+ * change opens a new room, and its socket asked for its token only as it opened - a mint on the wire (seconds, for a
+ * player: TOKEN-WAIT) between the door and the hello, the player invisible to the party on both sides of it. The host
+ * says a place change is coming and when the next room's socket will ask (`minter.ahead(room, withinMs)` -
+ * scenes/doorTokenHost.js, each door its own margin), and a mint goes then only when the token held could not open that
+ * room by then: none held, spent there, or its reuse minute out within `withinMs`. AUDIT (2026-10-16, A2): the margin was
+ * one 20 s (TOKEN_AHEAD_MS) at every door, though the next socket asks within a frame or a build: a door with the held
+ * token 40-60 s old minted though that token would still have opened the room - twice the mints at a 40-55 s door gap.
+ * `minter.holds(room)` says whether a room would be handed one now, nothing on the wire.
  *
- * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void, ahead: (room?: string|null) => boolean, holds: (room: string|null) => boolean }}
+ * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void, ahead: (room?: string|null, withinMs?: number) => boolean, holds: (room: string|null) => boolean }}
  */
 export function accountTokenMinter({ fetch, storage, onIssued = null, character = null, now = () => Date.now(), rand = Math.random }) {
   /** @type {{ token: string, secret: string, character: string|null, at: number, rooms: Set<string> } | null} */
@@ -1379,16 +1376,17 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
       const session = storedSession(storage);
       return session && cool.secret === session.secret ? Math.max(0, cool.until - now()) : 0;
     },
-    /** DOOR-TOKEN: a place change is coming, into `room` when the host knows it (null: a room no token has opened yet) -
-     *  a mint goes NOW when the token held could not open it by the time its socket asks (TOKEN_AHEAD_MS), so the socket
+    /** DOOR-TOKEN: a place change is coming, into `room` when the host knows it (null: a room no token has opened yet),
+     *  its socket asking within `withinMs` - a mint goes NOW when the token held could not open it by then, so the socket
      *  finds one held. Never a second mint while one flies, never through a failure's hold (STORM-SHED), never without a
      *  sign-in. True when a mint went. */
-    ahead: (/** @type {string|null} */ room = null) => {
+    ahead: (/** @type {string|null} */ room = null, withinMs = 0) => {
       const session = storedSession(storage);
       if (!session || minting) return false;
       if (cool.secret === session.secret && now() < cool.until) return false;
       const named = namedNow();
-      const opens = !!held && held.secret === session.secret && held.character === named && now() - held.at < TOKEN_REUSE_MS - TOKEN_AHEAD_MS && !(room != null && held.rooms.has(room));
+      const by = now() + Math.max(0, Number(withinMs) || 0);   // AUDIT A2: when its socket asks - the door's own margin
+      const opens = !!held && held.secret === session.secret && held.character === named && by - held.at < TOKEN_REUSE_MS && !(room != null && held.rooms.has(room));
       if (opens) return false;
       start(session, named);
       return true;

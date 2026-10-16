@@ -22,7 +22,9 @@
 // Nothing here decides a bout: the relay referees, the account service keeps. Offline (no session, a relay before the
 // arena's rooms; AUDIT PRE-MERGE 1003 O9: a seat given up) `live()` is false and every host keeps ARENA3's offline arena.
 // FIELD BUGS 2026-10-16 ARENA-WAIT: but on the online lane before the relay has said either (`waiting()` - no session
-// yet, or none welcomed), the arena is neither: every door waits, as it does for the board.
+// yet, or none welcomed), the arena is neither: every door waits, as it does for the board. AUDIT (2026-10-16): and on
+// that lane the offline arena runs for ONE word alone - a relay that said it opens no arena room; a seat given up (O9)
+// and a session no welcome can answer (terminal) shut the doors too, each saying why (`shutText`).
 //
 // ARENA4b: THE ACCOUNT IS THE LAW ONLINE. The climb Fight offers is the account's and waits for it (`climb()` null
 // until the board is in - asked then - and while a ladder win of mine is still with the service, CLIMB_WAIT_MS at most);
@@ -44,6 +46,7 @@ import { nextLadderBout } from '../systems/arenaLadder.js';
 import { accountRefusalText } from '../net/accountClient.js';
 import { readArenaReceipt } from '../net/arenaReceipt.js';   // ARENA4b: whose bout a claim's answer was, for its held purse
 import { BOUT_PHASES } from '../systems/arenaBout.js';   // AUDIT PRE-MERGE 1003 O3: an exhibition heard fought
+import { SEAT_NOTICE } from '../net/oneSeat.js';   // ARENA-WAIT (AUDIT A4): a seat given up shuts the doors in ONE-SEAT's own words
 
 /** The board is asked again when the window is up and it is this old, ms. */
 export const BOARD_STALE_MS = 20_000;
@@ -139,13 +142,26 @@ export function createArenaOnline(deps) {
    *  primary welcome has answered (`arenaHeard`). O4 kept the last welcome's word across a reconnect; the FIRST word after a
    *  load had none to keep, so for those seconds every door read `live()` false as offline - the Herald offered Fight off
    *  the save's ladder (the online climb never writes it), the local bout paid its purse, and the window drew the save's
-   *  season and record over a Grand Champion's. Waiting, a door waits as it does for the board. Not waiting: a relay that
-   *  said no (an older one - offline, as ever) and a seat given up (O9). */
-  const waiting = () => {
-    if (live() || !deps.lane?.()) return false;
+   *  season and record over a Grand Champion's. Waiting, a door waits as it does for the board.
+   *  AUDIT (2026-10-16, A3/A4): ON THE ONLINE LANE THE OFFLINE ARENA NEVER RUNS, but for one word: a relay that SAID it
+   *  opens no arena room (`arenaHeard`, `arenaOk` false - an older relay), the session neither superseded nor terminal.
+   *  Every other state on the lane shuts the doors, each with its own why (`shut`): 'seat' - this tab's seat is another's
+   *  (O9: a seat given up ran the save's ladder, its purses paid into the realm's save - 47,950 gold over 40 bouts - and the
+   *  book settled an online wager by the house's record); 'gone' - a session no welcome can answer until a door joins again
+   *  (terminal: a refused hello, no relay address - "Still loading" was said for ever); 'wait' - no session yet, or none
+   *  welcomed. Null: live (the account's arena), off the lane, or the relay's no (the save's). */
+  const shut = () => {
+    if (live() || !deps.lane?.()) return null;
     const s = deps.session?.();
-    return !s || (!s.arenaHeard && !s.superseded);
+    if (!s) return 'wait';
+    if (s.superseded) return 'seat';
+    if (s.terminal) return 'gone';
+    return s.arenaHeard ? null : 'wait';
   };
+  const waiting = () => shut() != null;
+  /** ARENA-WAIT (AUDIT): what a shut door says - the seat's ONE-SEAT words, the server's, or `line`, the wait's own (a
+   *  climb's `climbWait`, a press's `hallWait`, a roll's `rollWait`). A door not shut says `line`. */
+  const shutText = (/** @type {string} */ line) => { const k = shut(); return k === 'seat' ? SEAT_NOTICE : k === 'gone' ? O.noServer : line; };
 
   // ── THE HALL ──
   function wantHall() {
@@ -426,7 +442,7 @@ export function createArenaOnline(deps) {
   }
   /** THE HERALD'S WATCH ONLINE: the floor's instance as the hour's exhibition's room, the relay's bout from its stands. */
   function watchExhibition(ex) {
-    if (!live()) { if (waiting()) say(O.hallWait); return false; }   // ARENA-WAIT: the relay's bout, waited for - never this screen's own
+    if (!live()) { if (waiting()) say(shutText(O.hallWait)); return false; }   // ARENA-WAIT: the relay's bout, waited for - never this screen's own
     if (!ex || bout || deps.inBout?.()) return false;
     void goTo(exhibitionBout(ex));
     return true;
@@ -702,15 +718,16 @@ export function createArenaOnline(deps) {
   // ── THE WINDOW ──
   /** The window's online half (systems/arenaBoard.js arenaBoard's `online`), or null offline. */
   function model() {
-    // ARENA-WAIT: the window's online half with no board and the hall shut - its pages wait (systems/arenaBoard.js)
-    if (!live()) return waiting() ? { board: null, hall: { ...HALL_EMPTY, status: 'off' }, guest: !!deps.guest?.(), busy: false, inSession: false, now: now(), nowS: nowS(), session: null } : null;
+    // ARENA-WAIT: the window's online half with no board and the hall shut - its pages wait (systems/arenaBoard.js);
+    // AUDIT A1/A4: `shutWhy` what its presses say while shut, `away` the seat's words or the server's, said on every page
+    if (!live()) return waiting() ? { board: null, hall: { ...HALL_EMPTY, status: 'off' }, guest: !!deps.guest?.(), busy: false, inSession: false, now: now(), nowS: nowS(), session: null, shutWhy: shutText(O.hallWait), away: shut() === 'wait' ? null : shutText('') } : null;
     wantHall();
     askBoard();
     return { board, hall: { ...hall, status: hallLink?.status === 'open' ? 'open' : 'off' }, guest: !!deps.guest?.(), busy: !!bout || !!deps.inBout?.() || !!sess, inSession: !!sess, now: now(), nowS: nowS(), session: sessionView() };   // ARENA6: in a session the challenge waits (AUDIT PRE-MERGE 1003b U7: and says why)
   }
   /** A press in the window that is the arena online's. */
   function act(kind, data = {}) {
-    if (!live()) return { ok: false, text: waiting() ? O.hallWait : O.whyOffline };   // ARENA-WAIT
+    if (!live()) return { ok: false, text: waiting() ? shutText(O.hallWait) : O.whyOffline };   // ARENA-WAIT
     if (typeof kind === 'string' && kind.startsWith('priv')) return sessionAct(kind, data);   // ARENA6: a private session's presses
     if (kind === 'queue' || kind === 'casual') {
       if (sess) return { ok: false, text: O.privIn };   // ARENA6: one place at a time - the session's room is this screen's
@@ -748,7 +765,7 @@ export function createArenaOnline(deps) {
   /** THE LADDER ONLINE: the account's climb (the board's `me`), its next bout fought on the relay. Answers `{ ok, text }`.
    *  ARENA4b: refused with a line until the account's climb is known (`climb`) - never an empty climb's Pit. */
   function fightLadder() {
-    if (!live()) return { ok: false, text: waiting() ? O.climbWait : O.whyOffline };   // ARENA-WAIT: never the save's climb
+    if (!live()) return { ok: false, text: waiting() ? shutText(O.climbWait) : O.whyOffline };   // ARENA-WAIT: never the save's climb
     if (bout || deps.inBout?.()) return { ok: false, text: O.whyBusy };
     const L = climb();
     if (!L) return { ok: false, text: O.climbWait };
@@ -789,7 +806,7 @@ export function createArenaOnline(deps) {
    *  a guest is told here (a banner takes a registered fighter); a join or quit the service took is the board's at once
    *  (the window opened on its Team page shows it), the board asked again for the rest. */
   async function team(banner) {
-    if (!live()) { if (waiting()) say(O.climbWait); return null; }   // ARENA-WAIT: said, never a silent press
+    if (!live()) { if (waiting()) say(shutText(O.climbWait)); return null; }   // ARENA-WAIT: said, never a silent press
     if (deps.guest?.()) { say(O.guestBanner); return { ok: false, error: 'guest' }; }
     const r = await deps.account.team(banner).catch(() => null);
     if (r && !r.ok && r.error && r.error !== 'no-session') say(accountRefusalText(r.error));
@@ -804,6 +821,7 @@ export function createArenaOnline(deps) {
   return {
     live, model, act, fightLadder, team, word, hit, tick, claims,
     waiting,   // FIELD BUGS 2026-10-16 ARENA-WAIT: the online lane before the relay's word - every door waits
+    shutText,   // ARENA-WAIT (AUDIT A3/A4): what a shut door says - the seat elsewhere, the server gone, or the wait's own line
     climb, fetchBoard, realm,   // ARENA4b: the account's climb as Fight reads it, the board waited for, the realm's banners
     /** ARENA4b: the board asked when it is stale (a door that reads it without a press - the pause window's). */
     refresh: () => { if (live()) askBoard(); },
