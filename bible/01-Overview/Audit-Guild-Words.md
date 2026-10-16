@@ -184,7 +184,7 @@ the real offer flow at 0, 9, 10, 19 and 20, the filter, the bridge's door); `too
 `test/chap2_halls.test.js` (19: the service's `paid`, E-10). `tools/mutants/fb1015g_guildwords.json` (138: QSCRIPT-FREE's
 seven and the four kept-record mutants retired, 61 kept and re-aimed, 42 added, and lane E's 35 that still apply taken
 in - 5 equivalent as recorded, with why), `fb1015g_seatline.json` (8), `fb1015g_reputegate.json` (8): 154, 149 dead and 5 equivalent as recorded, none survived. Main's
-mutants on every file this round changed, and every one whose tests this round touched: MUT_MAIN. PINS MOVED:
+mutants on every file this round changed, and every one whose tests this round touched: 475, 467 dead and 8 equivalent as recorded, none survived (T-LAW-ISFAC-TYPE read dead once under the campaign's load and equivalent again alone; AUDIT-PLAINUI's guide records judged after their pin moved). PINS MOVED:
 `fb1015_promonow` (the hall's fixture holds rank 1's skills, where the review now warns of a probation; the well's
 `scroll`), `guildrep` (the hero holds its rank's skills; the menu's `online`), `audit_chap1` (the kept record main's
 again; the pace's words moved to rollNoticeHost), `fb1015g_seatline` ("gives the chairs to"), `l10n3e_names`
