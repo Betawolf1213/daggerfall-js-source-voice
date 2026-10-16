@@ -19369,9 +19369,19 @@
   "tr": "d253e401504c",
   "by": "claude-in-session"
  },
+ "town.econ.area.crownHeld": {
+  "en": "d931fe766a2a",
+  "tr": "b710323174f7",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.crownUnheld": {
+  "en": "c4a235bfa4e3",
+  "tr": "ba8bb1137302",
+  "by": "claude-in-session"
+ },
  "town.econ.area.held": {
-  "en": "ff07824592e1",
-  "tr": "6551dff32b45",
+  "en": "db534dbfa9db",
+  "tr": "545e14f12450",
   "by": "claude-in-session"
  },
  "town.econ.area.none": {
@@ -19380,8 +19390,8 @@
   "by": "claude-in-session"
  },
  "town.econ.area.unheld": {
-  "en": "4bbeb39191d8",
-  "tr": "8375be47eaad",
+  "en": "0fb6bdb0b3f0",
+  "tr": "93805a596aa1",
   "by": "claude-in-session"
  },
  "town.econ.band.booming": {
@@ -19401,7 +19411,7 @@
  },
  "town.econ.band.struggling": {
   "en": "8c342034e722",
-  "tr": "14b189759166",
+  "tr": "02d11de67d92",
   "by": "claude-in-session"
  },
  "town.econ.band.thriving": {
@@ -19410,28 +19420,33 @@
   "by": "claude-in-session"
  },
  "town.econ.line": {
-  "en": "7a47fa84f7b5",
-  "tr": "a2a3b09289f0",
+  "en": "2ceac3e8e2a7",
+  "tr": "7ebc1f9e88c9",
   "by": "claude-in-session"
  },
- "town.econ.price.less": {
-  "en": "c4a1bb034dfc",
-  "tr": "4d24700ae638",
+ "town.econ.price.askLess": {
+  "en": "b2bc89d82fc9",
+  "tr": "6cb54f8bba16",
   "by": "claude-in-session"
  },
- "town.econ.price.more": {
-  "en": "6d0999be33a5",
-  "tr": "5a2ce8d8c566",
+ "town.econ.price.lessLess": {
+  "en": "07ba7d886be5",
+  "tr": "6831988a62cb",
   "by": "claude-in-session"
  },
  "town.econ.price.moreLess": {
-  "en": "60544a2c7088",
-  "tr": "cf131ad0511d",
+  "en": "90cdcdb29e26",
+  "tr": "ef57961e4dd5",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.payLess": {
+  "en": "b8e2ac03f441",
+  "tr": "10f4870475e1",
   "by": "claude-in-session"
  },
  "town.econ.price.same": {
-  "en": "8a0bbdbe77d0",
-  "tr": "ebff74001399",
+  "en": "9b5208a5366b",
+  "tr": "96c42f44c256",
   "by": "claude-in-session"
  },
  "town.econ.reason.curfew": {
@@ -19470,18 +19485,18 @@
   "by": "claude-in-session"
  },
  "town.econ.trend.falling": {
-  "en": "444d4678962b",
-  "tr": "774e58a134be",
+  "en": "cc55e4b714a9",
+  "tr": "00fe69e84636",
   "by": "claude-in-session"
  },
- "town.econ.trend.holding": {
-  "en": "329bb6c3b553",
-  "tr": "d892873ea62d",
+ "town.econ.trend.flat": {
+  "en": "666a6f702c24",
+  "tr": "bcea69f78ca4",
   "by": "claude-in-session"
  },
  "town.econ.trend.rising": {
-  "en": "5040372d2656",
-  "tr": "faa3bd107afc",
+  "en": "26b01983c6f4",
+  "tr": "cd8668d70ea0",
   "by": "claude-in-session"
  },
  "trade.counter.cost.get": {

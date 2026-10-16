@@ -35,9 +35,10 @@ export const TIP_TEXT_MAX = 80;
 /** SEAT-TIP (FIELD BUGS 2026-10-04e): a seat's card says whole sentences - its holder's and its battle's each name two
  *  guilds and run past 80 - so its lines are bounded here instead (the card wraps them in its 320 px). */
 export const SEAT_TIP_TEXT_MAX = 160;
-/** TOWN-ECON (bible/06-Systems/Town-Economy-Arc.md 3): a town's card holds its economy's lines above a seat's own five
- *  (net/townEconLaw.js townTipOf: the economy, the prices, one reason, then the guild's lines), so it is bounded here. */
-export const TOWN_TIP_LINES_MAX = 8;
+/** TOWN-ECON (bible/06-Systems/Town-Economy-Arc.md 3): a town's card holds its economy's lines above a held seat's own
+ *  four (net/townEconLaw.js townTipOf: the economy, the prices, one reason, then the guild's lines - AUDIT TOWN-ECON UI-1:
+ *  a held seat's Charter line left out, its holder line naming the guild), so it is bounded here. */
+export const TOWN_TIP_LINES_MAX = 7;
 /** How near the pointer a raided town answers, paper pixels - the location marks' own 16 (_markerAt): the raid's ring
  *  stands on the town's mark, so pointing at either is pointing at the raid. */
 export const RAID_HIT_PX = 16;

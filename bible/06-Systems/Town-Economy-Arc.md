@@ -13,9 +13,10 @@ Asked four things, Mac answered:
 | What is "guild control" for a town that is not a seat? | "Show who holds the area" - the holder of the seat whose bailiwick the town is in |
 | Which maps get the card? | "Held Map + Overworld" - the classic travel map keeps DFU's layout |
 
-**Status: TE1 BUILT 2026-10-16** (the baseline, the card, the price). TE2 (the players' share, the account service) and
-TE3 (the living world reads it) are designed below and not built. Every constant marked "proposed" is a starting
-number and Mac's to set (section 7).
+**Status: TE1 BUILT 2026-10-16** (the baseline, the card, the price), **AUDITED 2026-10-16** (Mac: "Lets audit
+everything we have so far" - `01-Overview/Audit-Town-Econ.md`: every finding, and below each fix marked AUDIT TOWN-ECON
+and its id). TE2 (the players' share, the account service) and TE3 (the living world reads it) are designed below and
+not built. Every constant marked "proposed" is a starting number and Mac's to set (section 7).
 
 ## 0. What stands, read against the code (2026-10-16)
 
@@ -36,8 +37,10 @@ number and Mac's to set (section 7).
   +5% while Standing is loved) and Market Day's 10% off what a counter asks, on the buyer's own client and never through
   `regionPriceAdjustment` (Seats-Arc 7.2: that index also sets quest gold). The deepest a seat goes is 0.70.
 - **Online, a counter pays at most half what it asks** for the same piece (REALM P0.4, `shopStock.js
-  ONLINE_SALE_SHARE`). Across regions the walk already spreads prices: measured over 4,000 world days, one day's
-  dearest region asked up to 2.4 times its cheapest (521 against 1,505).
+  ONLINE_SALE_SHARE`); an essential costs half (ESSENTIALS-HALF), so buying one to sell it back breaks even, no better.
+  Across regions the walk already spreads prices: over 4,000 world days from day 3,000 (the walk untilted - FACTION.TXT
+  is the player's), one day's dearest region asked up to 2.4 times its cheapest; the span's extremes, on different
+  days, were 521 and 1,505 (AUDIT TOWN-ECON LAW-7).
 
 ## 1. The decisions (TE0)
 
@@ -46,21 +49,31 @@ Taken at the design. Each is Mac's to overrule.
 1. **EVERY TOWN, ONE PROSPERITY.** A town is a MAPS location of type TownCity, TownHamlet or TownVillage (`mapsFile.js
    LOCATION_TYPES` 0, 1 and 2, the set `travelFarPlaces.js TV_FAR_TYPES` and `gateSite.js GATE_TOWN_TYPES` already
    use). Each has one Prosperity, a whole number 0 to 100, 50 the middle, read as one of five bands: Destitute,
-   Struggling, Steady, Thriving, Booming.
-2. **THE BASELINE IS PURE; THE PLAYERS' SHARE IS THE SERVICE'S.** What the world does to a town - its size, its market
-   cycle, its seat's rule, a raid at its gates - is a pure function every client computes alike (LW0 decision 2). What
-   players do to it is counted by the account service and read by every client (TE2), as LW15's patrons are. TE1 and
-   TE2 move no resident; when TE3 lets the living world read the band, that narrows LW0 decision 2 by one input, as
-   CHAP5b's chapter sheet did, and TE3 writes it there.
+   Struggling, Steady, Thriving, Booming. Its cycle is phased by its map pixel (`townKeyOf`, `py * 1000 + px`). An
+   Ether isle's place is no row of the Bay's dictionary (`world/etherPlaces.js`), so it has no economy and no card.
+2. **THE BASELINE IS THE WORLD'S; THE PLAYERS' SHARE IS THE SERVICE'S.** What the world does to a town - its size, its
+   market cycle, a raid at its gates - is a pure function every client computes alike (LW0 decision 2), on the relay's
+   clock (AUDIT TOWN-ECON LAW-2). Its seat's rule is the seat list each client last read from the service - one list
+   for everyone, read every five to fifteen minutes (`townSeatBook.js` SEAT_LIST_CACHE_MS, SEAT_RED_READ_MS) and only
+   where the seats are open to the account - so two players can read a Standing or an Edict a few minutes apart, as
+   SEAT1d's own Market Day already is (AUDIT TOWN-ECON CLI-4, DOC-12). What players do to a town is counted by the
+   account service and read by every client (TE2), as LW15's patrons are. TE1 and TE2 move no resident; when TE3 lets
+   the living world read the band, that narrows LW0 decision 2 by one input, as CHAP5b's chapter sheet did, and TE3
+   writes it there.
 3. **WITNESSED ACTS ONLY** (Mac). A player raises a town by what the service saw happen there - their footsteps in it
-   (the relay's signed Watch ticks) and trade at its players' traders (the market's sales and LW15's patron sales).
-   Never by gold: "Assume infinite wealth" (`06-Systems/Economy-Arc.md`) would let one fortune hold every town at the
-   top. Each act is capped per account, per town, per day, and the players' share saturates (section 2).
+   (the relay's signed Watch ticks), trade at its players' traders (the market's sales and LW15's patron sales), and a
+   raid driven from its gates. Never by gold: "Assume infinite wealth" (`06-Systems/Economy-Arc.md`) would let one
+   fortune hold every town at the top. Each act is capped per account, per town, per day, and the players' share
+   saturates (section 2).
 4. **THE PRICE MOVES - AN EXCEPTION TO ECONOMY LAW 5, BOUNDED** (Mac: "Wider swings, ±25%+"). Online, a town's
    Prosperity moves what its counters ask, by up to TOWN_PRICE_SWING (0.25) each way: a Booming town asks a quarter
    less, a Destitute one a quarter more. Three bounds keep "the system will fail" contained:
-   - **A counter never pays more.** What a counter pays for a sale moves only DOWN with the town (a Struggling town has
-     less coin), never up, so the town economy adds no gold to any sale.
+   - **A counter never pays more, nor more than it asks.** What a counter pays for a sale (and the Mages Guild for a
+     magic piece - AUDIT TOWN-ECON LAW-5) falls by the same share either side of the middle: a Struggling town has less
+     coin, a Booming one is stocked. Its factor never rises above 1, and never above the town's asking factor - AUDIT
+     TOWN-ECON LAW-1: as built, a Booming counter's ask fell while its pay stood, and the essentials' half turned a
+     round trip of firewood into gold at 134 of 140 counters at Prosperity 51. (The factor, not every sale: MERC-SLOPE's
+     own rounding can pay a gold more on a smaller cost - LAW-4 - never a loop.)
    - **The deepest price stays the seats'.** A town's discount and a seat's (members, Market Day) multiply, and the
      product never goes below 0.70, the deepest a seat already gives (TOWN_FACTOR_FLOOR).
    - **Never through `regionPriceAdjustment`.** The factor multiplies the counter's own adjustment
@@ -68,9 +81,9 @@ Taken at the design. Each is Mac's to overrule.
      are untouched (Seats-Arc 7.2).
 
    Offline the town economy does not run: the one player's world prices as DFU's does.
-5. **GUILD CONTROL IS SHOWN, NOT NEW** (Mac: "Show who holds the area"). A seat town's card says its Charter and holder
-   as SEAT-TIP does. Every other town's card names the seat whose bailiwick it is in and the guild that holds it, or
-   that the area is unheld. No town gains a Charter, an influence count or any power it lacks today.
+5. **GUILD CONTROL IS SHOWN, NOT NEW** (Mac: "Show who holds the area"). A seat town's card carries its own SEAT-TIP
+   lines. Every other town's card names the seat whose bailiwick it is in and the guild that holds it, or that the
+   area is unheld. No town gains a Charter, an influence count or any power it lacks today.
 6. **THE CARD: HELD MAP AND OVERWORLD** (Mac). One card per town: its economy, then its guild control, then (a seat)
    its Charter's own lines. The classic travel map (TRAV0I00) keeps DFU's label and no card (the native-window rule;
    EVENT-TIP's own reason).
@@ -85,8 +98,8 @@ Taken at the design. Each is Mac's to overrule.
 |---|---|---|
 | BASE | the middle | 50 |
 | SIZE | the town's type | city +6, town +2, village -2 |
-| CYCLE | the town's own market cycle: two waves over real (UTC) days, phased by the town's pixel, so every town rises and falls on its own and each player sees the same day | 12 x sin(day / 11 days) + 6 x sin(day / 29 days) |
-| SEAT | a seat town only, online: its holder's Standing, and the Edict in force | (Standing - 50) / 5; Market Day +6, Festival +8, Open Gates +3, Levy -6, Curfew -4 |
+| CYCLE | the town's own market cycle: two waves over real (UTC) days on the relay's clock, each phased by the town's key, so every town rises and falls on its own and each player sees the same day | 12 x sin(2π(day / 11 + φ1)) + 6 x sin(2π(day / 29 + φ2)) |
+| SEAT | a seat town only, online: its holder's Standing, and the Edict in force (one of the table's own names - AUDIT TOWN-ECON LAW-6) | (Standing - 50) / 5; Market Day +6, Festival +8, Open Gates +3, Levy -6, Curfew -4 |
 | RAID | a raid running at the town now (`raidingParties.js raidActive`) | -15 |
 | PLAYERS | TE2: the players' share, from the service | 0 to +30 (below) |
 
@@ -95,52 +108,85 @@ reads, as ECON1 does. The day is the real UTC day, not the sky's (TIME1 turns an
 move a town's prices within a sitting).
 
 **The players' share (TE2).** Each day's witnessed acts at a town are summed by source, and the last 14 days are
-weighed by DECAY (0.8) a day. The activity A = FOOT_W x footsteps + TRADE_W x sales. The share is
-PLAYERS_MAX x A / (A + A_HALF): half the most at A_HALF, and a town crowded by one zerg comes no nearer the top than
-PLAYERS_MAX. Proposed: FOOT_W 1, TRADE_W 4, PLAYERS_MAX 30, A_HALF 150; caps an account a town a day: 30 Watch ticks
-(an hour's walking), 10 sales.
+weighed by DECAY (0.8) a day. The activity A = FOOT_W x footsteps + TRADE_W x sales + RAID_W x raids driven off. The
+share is PLAYERS_MAX x A / (A + A_HALF): half the most at A_HALF, and a town crowded by one zerg comes no nearer the top
+than PLAYERS_MAX. Proposed: FOOT_W 1, TRADE_W 4, RAID_W 20, PLAYERS_MAX 30, A_HALF 150; caps an account a town a day:
+30 Watch ticks (an hour's walking), 10 sales, 1 raid.
 
 **The bands.** Destitute 0-14, Struggling 15-34, Steady 35-64, Thriving 65-84, Booming 85-100.
 
 **The price.** For a Prosperity P:
 - what a counter ASKS (Buy, Repair): x (1 - TOWN_PRICE_SWING x (P - 50) / 50), 0.75 to 1.25;
-- what a counter PAYS (Sell): x (1 - TOWN_PRICE_SWING x (50 - P) / 50) below 50, else x 1 - never above 1;
-- with a seat's factor: their product, never below TOWN_FACTOR_FLOOR (0.70).
+- what a counter PAYS (Sell, SellMagic): x (1 - TOWN_PRICE_SWING x |P - 50| / 50), 0.75 to 1 - never above 1, never
+  above what it asks (AUDIT TOWN-ECON LAW-1);
+- with a seat's factor on what it asks: their product, never below TOWN_FACTOR_FLOOR (0.70).
 
 ## 3. TE1 - the baseline, the card and the price (BUILT 2026-10-16)
 
 - **The law** (`net/townEconLaw.js`): pure, imported by the client today and by the service in TE2. The terms of
-  section 2, the band, the two factors and the floor, and the card's lines (`townTipOf`). The players' share is an
-  argument (0 until TE2 reads it).
+  section 2, the band, the two factors and the floor, and the card's lines (`townTipOf`), every word through the text
+  core (`t()`, the `town.econ.*` keys, drafted in-session for every machine language - L10N4). The players' share is
+  an argument (0 until TE2 reads it).
 - **The town's word** (`systems/townEcon.js`, wired by the world host): the Prosperity of a town by its map id, the
   factor a counter applies, and the card. It reads the town's location from the world's own index, the seat from the
-  seat book the world already polls, and the raids from the raid state. Online only: offline it answers 1 and no card.
-- **The price.** `worldModes.js shopAdjustment` asks the host's `townShopFactor` first: a Buy's or a Repair's factor
-  is the town's asking factor times the seat's (`townShopFactor`, never below the floor), a Sell's the town's paying
-  factor alone. Without it (a host that wires none) the seat's factor stands as SEAT1d left it.
+  seat book the world already polls, the raids from the raid state, and the day from the relay's clock (`battleNowMs`,
+  AUDIT TOWN-ECON LAW-2: it read this machine's own, so a clock set by hand chose the town's day and its prices).
+  Online only: offline it answers the seat's factor (1) and no card. A seat whose place has no economy keeps
+  SEAT-TIP's own card on both maps, and its factor only on what a counter asks (AUDIT TOWN-ECON CLI-3).
+- **The price.** `worldModes.js shopAdjustment` asks the host's `townShopFactor` first; the host hands in the seat's
+  factor and the law applies it to what the counter asks alone: a Buy's or a Repair's factor is the town's asking
+  factor times the seat's (never below the floor), a Sell's or a SellMagic's the town's paying factor alone. Without
+  it (a host that wires none) the seat's factor stands as SEAT1d left it.
 - **The card.** The Held Map's place marks (`heldMap.js _hoverLabel`, the world sheet's `townTipAt`) and the
-  Overworld's plates (`travelViewMarks.js`, `tip`) show `townTipOf`'s card for every town; a seat's lines follow the
-  town's. A town card holds up to TOWN_TIP_LINES_MAX (8) lines; every other card keeps EVENT-TIP's five.
+  Overworld's plates (`travelViewMarks.js`, `tip`) show `townTipOf`'s card for every town: the economy out of 100 and
+  the market's trend (AUDIT TOWN-ECON UI-3: yesterday is read on today's seat and raid, so the trend is the market
+  cycle's, and the card says "Market rising."), the prices as shares of the region's usual prices - what everyone is
+  asked, Market Day in it (UI-4), one rounding for both numbers (UI-7) - the strongest reason, then the guild's lines.
+  A held seat's card leaves out its Charter line, its holder line naming the guild again (UI-1), so a town card holds
+  up to TOWN_TIP_LINES_MAX (7) lines, and `.hmtip` is bounded in height as CARD-FIT bounded it in width (UI-1: the
+  eight-line card ran 36 px past a 640x360 landscape phone). The area's line is worded in the player's language round
+  the town's (or the crown's kingdom's) name and the guild's own (UI-2); a seat's own SEAT-TIP lines stay the seats'
+  English. The Held Map asks a showing card again at its poll, so a still pointer follows a new Standing or Edict
+  (UI-6). Every other card keeps EVENT-TIP's five lines. On the Held Map a raided town answers with the raid's card
+  (EVENT-TIP stands first under the pointer); its own card, naming the raid, is the Overworld's (UI-5, decided).
 
-- **Pinned** in `test/townecon.test.js` (9 tests), and `node tools/mutate.mjs tools/mutants/townecon.json`: 35
-  mutants, 35 dead. SEAT-TIP's seat-only card maker left `world.js` (the town's card carries a seat's lines), and its
-  pins moved with it (`fb1004e_overworld`, `tv5_far_places`, `seat1d_client`; the two SEATTIP mutants re-aimed and
-  dead).
+- **Pinned** in `test/townecon.test.js` (10 tests), and `node tools/mutate.mjs tools/mutants/townecon.json`: 54
+  mutants, 54 dead (each audit fix's `TOWNECON-AUDIT-<id>`). SEAT-TIP's seat-only card maker left `world.js` (the
+  town's card carries a seat's lines), and its pins moved with it (`fb1004e_overworld`, `tv5_far_places`; the two
+  SEATTIP mutants re-aimed and dead); SEAT1d's own pin on `shopAdjustment`'s factor line moved with that line
+  (`seat1d_client`).
 
 The four hosts (THE FOUR HOSTS RULE): the counter's price is `worldModes.js`'s (interiors), where every shop stands -
-wired. `world.js` wires the town's word and the Overworld's card. `exterior.js` and `dungeonContext.js` sell nothing at
-a counter of a town - FLAGGED, not changed: a counter that opens outside an interior (LW11's caravan door, the merchant
-yards) prices as it did, the yards at their own neutral index on purpose (`merchantYards.js YARD_PRICE_INDEX`).
+wired. `world.js` wires the town's word and the Overworld's card. `dungeonContext.js` opens no counter of a town (the
+Identify spell's window alone) - FLAGGED, not changed. `exterior.js` builds the interiors' modes too, as the
+`?exterior` development host the online door never opens, and wires neither the seat's factor nor the town's - FLAGGED,
+not changed (AUDIT TOWN-ECON DOC-7). A counter that opens outside an interior (LW11's caravan door, the merchant yards,
+the shipyards) prices as it did, the yards at their own neutral index on purpose (`merchantYards.js
+YARD_PRICE_INDEX`).
 
 ## 4. TE2 - the players' share (designed)
 
-- **The tally** (migration `town_econ`): `town_econ_days (px, day, src, n)` - a town's acts a day by source, `px` its
-  map pixel (`py * 1000 + px`, the key the relay's receipts and the market's boards already carry: the service bundles
-  no ARENA2 and cannot name a town otherwise) - and `town_econ_marks (account, px, day, src, n)`, each account's count,
-  so the cap is asked in the write. Rows older than 14 days go in the hourly sweep.
-- **The sources.** The Watch claim (`seatInfluence.js`) counts each verified tick at its pixel, whatever the seat; a
-  trader's sale (`market.js`) counts at its board's pixel; a patron's sale (`reckonPatrons`) counts at its town.
-- **The read.** `GET /v1/towns/econ` answers `{ towns: [[px, share], ...] }`, each town with a share of 1 or more,
+AUDIT TOWN-ECON DOC-1 and DOC-2: as first written, the tally was keyed by pixel and counted every Watch tick and every
+trader's sale "at its board's pixel" - but the client keeps a Watch receipt only at a seat's pixel (`townSeatBook.js`
+`keepWatch`, `isSeatPixel`), a trader's stall row names its town by map id (`market_listings.vendor_map`) and no pixel,
+and a patron's sale names its map id. Rewritten:
+
+- **The key is the town's unsigned map id** - the seats', the homes', the stalls' and the patrons' own.
+- **The town registry.** The service learns which town stands at a pixel, and which map id a raid's
+  `region:location` names, from the clients' word, agreed: three accounts' agreeing reports confirm a row, as the seats
+  are confirmed (`world_witness`, a kind of its own beside `seat`, Seats-Arc 3.2). An act at a pixel or a raid key the registry has not confirmed counts
+  nothing.
+- **The tally** (migration `town_econ`): `town_econ_days (map, day, src, n)` - a town's acts a day by source - and
+  `town_econ_marks (account, map, day, src, n)`, each account's count, so the cap is asked in the write. Rows older
+  than 14 days go in the hourly sweep.
+- **The sources.**
+  - Footsteps: the client keeps the Watch's receipts at EVERY town's pixel, not a seat's alone (the `keepWatch` change,
+    named here), and claims them as it does; the service counts each verified tick at the registry's town for its
+    pixel, whatever the seat, beside the seat's own count.
+  - Trade: a trader's sale counts at its stall's `vendor_map`; a patron's sale at its `map`.
+  - A raid driven off: the relay's cleanse receipt (`raidReceipt.js`, `w1`) counts at the registry's town for its
+    `region:location`.
+- **The read.** `GET /v1/towns/econ` answers `{ towns: [[map, share], ...] }`, each town with a share of 1 or more,
   computed by the law and kept TOWN_ECON_KEPT_S (proposed 300 s). The client holds it as the chapter sheet is held
   (`net/chapterSheet.js`: read once a while, synchronous to its readers, stopped by an account's refusal).
 
@@ -154,8 +200,11 @@ the card's guild lines (`net/chapterSheet.js chapterOf`).
 
 - The classic travel map, and the classic skin's counters offline.
 - What a counter pays never rises, and nothing a player pays in gold moves a town.
-- Raid defence as a source (a raid's receipt names its region and location, not a pixel; TE2 would need the client's
-  word for the pixel) - left for after TE2.
+- SEAT-TIP's own lines (`townSeatLaw.js seatTipOf`), worded in English for every language, as they were.
+- The Overworld shows no card on a tap without movement (`travelViewHud.js` reads the pointer on a move alone) - as
+  before TE1, for every card on it; the Held Map's tap shows the town's (AUDIT TOWN-ECON UI-10, not this slice's).
+- **Mac's calls, below:** the carry between regions TE1 widens (AUDIT TOWN-ECON LAW-3), and the essentials' round
+  trip a seat's own discount already opened (found by the audit, SEAT1d's).
 
 ## 7. Mac's calls (open)
 
@@ -163,3 +212,16 @@ the card's guild lines (`net/chapterSheet.js chapterOf`).
    the sizes, the cycle's waves, the seat and raid terms, and TE2's weights, caps and saturation.
 2. Whether a Booming town's counters should also widen their shelves (stock), not only ask less.
 3. TE2 and TE3: build them, in that order.
+4. **THE CARRY BETWEEN REGIONS** (AUDIT TOWN-ECON LAW-3). REALM P0.4 closed the gold a carrier made from the regions'
+   walk; a town's discount widens it again. Measured (the best haggler, a value-1,000 blade, quality 10): a carry from
+   the cheapest region's town to the dearest's paid on 136 of 4,000 world days before TE1 and on 1,752 after, its
+   average gain from 16 gold to 28; it pays once the dearest region asks 2.0 times the cheapest before TE1, 1.8 times
+   from a city at its ceiling, 1.5 from a town at 100. Keep it - a merchant's trade the dynamic economy invites, bounded
+   by a pack, a journey and the walk - or narrow the asking swing, or cap what a piece a counter sold online fetches
+   (its `counterBought` mark carrying its price).
+5. **THE ESSENTIALS' ROUND TRIP AT A SEAT TOWN** (found by the audit; SEAT1d's, live before TE1). A seat's discount
+   lowers what its counters ask its holder's members, and Market Day what they ask everyone, while what they pay stands -
+   so an essential (half price online) bought and sold back pays: five firewood at a quality-10 counter at the region's
+   index, 13 to buy and 15 to sell on Market Day. TE1 neither opens nor widens it. Close it - what a counter pays
+   bounded by what it asks this player (members' and Market Day sales falling with their asks), or the essentials'
+   sale bounded by their own half at the asking factor - or keep it.

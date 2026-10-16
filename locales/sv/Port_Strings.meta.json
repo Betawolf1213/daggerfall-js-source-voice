@@ -8274,9 +8274,19 @@
   "tr": "1dbbbc559e61",
   "by": "claude-in-session"
  },
+ "town.econ.area.crownHeld": {
+  "en": "d931fe766a2a",
+  "tr": "75e1512d5524",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.crownUnheld": {
+  "en": "c4a235bfa4e3",
+  "tr": "1f150f58d1e5",
+  "by": "claude-in-session"
+ },
  "town.econ.area.held": {
-  "en": "ff07824592e1",
-  "tr": "7f6c29139e0e",
+  "en": "db534dbfa9db",
+  "tr": "344d776457ff",
   "by": "claude-in-session"
  },
  "town.econ.area.none": {
@@ -8285,8 +8295,8 @@
   "by": "claude-in-session"
  },
  "town.econ.area.unheld": {
-  "en": "4bbeb39191d8",
-  "tr": "4887a93b217c",
+  "en": "0fb6bdb0b3f0",
+  "tr": "acf44dd8fcf8",
   "by": "claude-in-session"
  },
  "town.econ.band.booming": {
@@ -8306,7 +8316,7 @@
  },
  "town.econ.band.struggling": {
   "en": "8c342034e722",
-  "tr": "2d928ef72579",
+  "tr": "ca9214cc19e5",
   "by": "claude-in-session"
  },
  "town.econ.band.thriving": {
@@ -8315,28 +8325,33 @@
   "by": "claude-in-session"
  },
  "town.econ.line": {
-  "en": "7a47fa84f7b5",
-  "tr": "1fdd49b24b67",
+  "en": "2ceac3e8e2a7",
+  "tr": "841c2ac9905f",
   "by": "claude-in-session"
  },
- "town.econ.price.less": {
-  "en": "c4a1bb034dfc",
-  "tr": "ca428a0fafeb",
+ "town.econ.price.askLess": {
+  "en": "b2bc89d82fc9",
+  "tr": "20036ee46770",
   "by": "claude-in-session"
  },
- "town.econ.price.more": {
-  "en": "6d0999be33a5",
-  "tr": "e2865a213613",
+ "town.econ.price.lessLess": {
+  "en": "07ba7d886be5",
+  "tr": "9db676501cf1",
   "by": "claude-in-session"
  },
  "town.econ.price.moreLess": {
-  "en": "60544a2c7088",
-  "tr": "41fc961140ac",
+  "en": "90cdcdb29e26",
+  "tr": "24f5d9a41be0",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.payLess": {
+  "en": "b8e2ac03f441",
+  "tr": "3567020cbdcb",
   "by": "claude-in-session"
  },
  "town.econ.price.same": {
-  "en": "8a0bbdbe77d0",
-  "tr": "e080a727d8f5",
+  "en": "9b5208a5366b",
+  "tr": "94c853c5478a",
   "by": "claude-in-session"
  },
  "town.econ.reason.curfew": {
@@ -8375,18 +8390,18 @@
   "by": "claude-in-session"
  },
  "town.econ.trend.falling": {
-  "en": "444d4678962b",
-  "tr": "d84f9dc80ae6",
+  "en": "cc55e4b714a9",
+  "tr": "c709ffea4922",
   "by": "claude-in-session"
  },
- "town.econ.trend.holding": {
-  "en": "329bb6c3b553",
-  "tr": "4ed497893985",
+ "town.econ.trend.flat": {
+  "en": "666a6f702c24",
+  "tr": "8110e1461237",
   "by": "claude-in-session"
  },
  "town.econ.trend.rising": {
-  "en": "5040372d2656",
-  "tr": "042fedb9d7c0",
+  "en": "26b01983c6f4",
+  "tr": "cba45095709a",
   "by": "claude-in-session"
  },
  "wagon.upkeep.boons.failing": {

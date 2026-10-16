@@ -2044,6 +2044,10 @@ export class HeldMapWindow {
     const travKey = travellerMarksKey(trav);
     if (travKey !== this._travKey) { this._travKey = travKey; this._trav = trav; gateMoved = true; this._dirty = true; }
     if (gateMoved) this._refreshTip();
+    // AUDIT TOWN-ECON UI-6: a town's card under a still pointer follows its town too - the seats' list read anew, an
+    // Edict proclaimed, a day turned move no mark - asked at the poll's cadence while a card shows, rewritten only when
+    // its words change (_showTip)
+    if (!gateMoved && this._tipKey && this._hoverAt) this._refreshTip();
     const marks = readPartyMarks(this.deps.party, this._size);
     const key = partyMarksKey(marks);
     if (key === this._partyKey) { if (gateMoved) this._renderLegend(); return gateMoved; }

@@ -1917,7 +1917,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   });
   // TOWN-ECON TE1 (bible/06-Systems/Town-Economy-Arc.md 3): every town's economy online - its counters' factor, the seat's
   // folded in, and its card on the Held Map and the Overworld (SEAT-TIP's seat card is its guild lines now)
-  const townEcon = createTownEcon({ online: isOnlinePage, townOf: (mapId) => _townOfMapId.get(mapId), seatAt: seatHere,
+  const townEcon = createTownEcon({ online: isOnlinePage, townOf: (mapId) => _townOfMapId.get(mapId), seatAt: seatHere, nowMs: battleNowMs,   // AUDIT TOWN-ECON LAW-2: the relay's clock, as every shared day is
     seats: () => (seatBook?.open === true ? seatBook.data?.seats ?? null : null),   // unread: nothing said of the area, never "no guild"
     raidedAt: (px, py) => raidingPartiesOn() && raidState().raids.some((r) => r.px === px && r.py === py && raidActive(r, worldMinutes())) });
   const townTipAt = (mapId) => townEcon.tipFnAt(mapId);
@@ -30759,7 +30759,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // again, without waiting, when the guild book's look is old), the hall bought and opened through the book, and the
     // hall's chest: the guild Stores on the Guild tab
     seatShopFactor: (b) => seatEdicts.shopFactor(b),   // SEAT1d (Seats-Arc 7.2, 7.6): a seat town's shops - its holder's members, Market Day
-    townShopFactor: (b, mode) => townEcon.shopFactor(b, mode, mode === 'Sell' ? 1 : seatEdicts.shopFactor(b)),   // TOWN-ECON TE1: the town's own, the seat's folded in
+    townShopFactor: (b, mode) => townEcon.shopFactor(b, mode, seatEdicts.shopFactor(b)),   // TOWN-ECON TE1: the town's own, the seat's folded in (the law reads it for what a counter asks alone - AUDIT TOWN-ECON CLI-3)
     // CHAP7b (Chapters-Arc 8): the playing account's player guild - a chapter's patron's members pay the Thriving prices.
     // AUDIT CHAP5 C1: asked again, without waiting, when the book's look is old (the seats' own guildId's way) - the book
     // looks first at the Guild tab, so a fresh page's member paid the band's price until it was opened

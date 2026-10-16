@@ -19369,9 +19369,19 @@
   "tr": "f2f53accc98d",
   "by": "claude-in-session"
  },
+ "town.econ.area.crownHeld": {
+  "en": "d931fe766a2a",
+  "tr": "366007104843",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.crownUnheld": {
+  "en": "c4a235bfa4e3",
+  "tr": "11bc3036c3ab",
+  "by": "claude-in-session"
+ },
  "town.econ.area.held": {
-  "en": "ff07824592e1",
-  "tr": "4a46b13a35c3",
+  "en": "db534dbfa9db",
+  "tr": "def330e0cc85",
   "by": "claude-in-session"
  },
  "town.econ.area.none": {
@@ -19380,8 +19390,8 @@
   "by": "claude-in-session"
  },
  "town.econ.area.unheld": {
-  "en": "4bbeb39191d8",
-  "tr": "3f0106653601",
+  "en": "0fb6bdb0b3f0",
+  "tr": "e12263434fe4",
   "by": "claude-in-session"
  },
  "town.econ.band.booming": {
@@ -19410,28 +19420,33 @@
   "by": "claude-in-session"
  },
  "town.econ.line": {
-  "en": "7a47fa84f7b5",
-  "tr": "673c70bed2e1",
+  "en": "2ceac3e8e2a7",
+  "tr": "3a112c749314",
   "by": "claude-in-session"
  },
- "town.econ.price.less": {
-  "en": "c4a1bb034dfc",
-  "tr": "dd6934e397fc",
+ "town.econ.price.askLess": {
+  "en": "b2bc89d82fc9",
+  "tr": "ac1245e2c50b",
   "by": "claude-in-session"
  },
- "town.econ.price.more": {
-  "en": "6d0999be33a5",
-  "tr": "65d42a9da1f0",
+ "town.econ.price.lessLess": {
+  "en": "07ba7d886be5",
+  "tr": "61a67fa711ab",
   "by": "claude-in-session"
  },
  "town.econ.price.moreLess": {
-  "en": "60544a2c7088",
-  "tr": "b683803d8428",
+  "en": "90cdcdb29e26",
+  "tr": "faf788f9bbe0",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.payLess": {
+  "en": "b8e2ac03f441",
+  "tr": "7f8bc621733b",
   "by": "claude-in-session"
  },
  "town.econ.price.same": {
-  "en": "8a0bbdbe77d0",
-  "tr": "edea6126f9c2",
+  "en": "9b5208a5366b",
+  "tr": "0ce9c2a5c264",
   "by": "claude-in-session"
  },
  "town.econ.reason.curfew": {
@@ -19470,18 +19485,18 @@
   "by": "claude-in-session"
  },
  "town.econ.trend.falling": {
-  "en": "444d4678962b",
-  "tr": "e9b8b2250b06",
+  "en": "cc55e4b714a9",
+  "tr": "ecf96d1f5d87",
   "by": "claude-in-session"
  },
- "town.econ.trend.holding": {
-  "en": "329bb6c3b553",
-  "tr": "5cb7956ba8bb",
+ "town.econ.trend.flat": {
+  "en": "666a6f702c24",
+  "tr": "fe2500d46751",
   "by": "claude-in-session"
  },
  "town.econ.trend.rising": {
-  "en": "5040372d2656",
-  "tr": "26031d54f61e",
+  "en": "26b01983c6f4",
+  "tr": "091c54c069d4",
   "by": "claude-in-session"
  },
  "trade.counter.cost.get": {

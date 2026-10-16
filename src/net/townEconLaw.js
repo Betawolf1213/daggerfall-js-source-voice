@@ -12,16 +12,17 @@
 //    raid at its gates. THE PLAYERS' SHARE (TE2, the account service's count of witnessed acts) is an argument, bounded
 //    here to TOWN_PLAYERS_MAX.
 //  - THE PRICE (TE0 decision 4 - Mac: "Wider swings, ±25%+", an exception to the Economy arc's law 5, bounded): what a
-//    counter ASKS moves by up to TOWN_PRICE_SWING each way; what it PAYS only ever falls (a Struggling town has less
-//    coin), so the town economy adds no gold to a sale; with a seat's factor the product never goes below
-//    TOWN_FACTOR_FLOOR, the deepest a seat alone already gives (townSeatLaw.js seatShopFactor). Never through
-//    regionPriceAdjustment (Seats-Arc 7.2: quest gold reads that index).
+//    counter ASKS moves by up to TOWN_PRICE_SWING each way; what it PAYS falls by the same share away from the middle,
+//    either way, and never rises - AUDIT TOWN-ECON LAW-1: a Booming town's counter never pays more than it asks, so the
+//    essentials' half (shopStock.js ESSENTIALS-HALF) breaks even there as it does at the region's price; with a seat's
+//    factor the asking factor never goes below TOWN_FACTOR_FLOOR, the deepest a seat alone already gives
+//    (townSeatLaw.js seatShopFactor). Never through regionPriceAdjustment (Seats-Arc 7.2: quest gold reads that index).
 //
 // Not a DFU member: DFU prices by region alone (RegionData.PriceAdjustment, FormulaHelper.CalculateCost). Ledger A
 // (THE TOWN ECONOMY's row). Pure: no clock, no network, no DOM.
 // ═══════════════════════════════════════════════════════════════════
 
-import { charterName, guildWords, seatTipOf } from './townSeatLaw.js';   // TE0 decision 5: a seat town's Charter, its area's holder
+import { seatTipOf, seatShopFactor, kingdomName, CROWN_SEAT_REGIONS } from './townSeatLaw.js';   // TE0 decision 5: a seat town's card, its area's holder; AUDIT TOWN-ECON UI-4: Market Day on the card's price
 import { t } from '../systems/textManager.js';   // L10N4: the card's words in the player's language, each read when it is said
 
 /** The location types that are towns (mapsFile.js LOCATION_TYPES TownCity, TownHamlet, TownVillage). */
@@ -80,13 +81,17 @@ export function townCycle(key, day) {
   }
   return s;
 }
-/** A seat town's term: its holder's Standing and the Edict in force - 0 for an unheld seat, or none.
+/** A seat town's term: its holder's Standing and the Edict in force - 0 for an unheld seat, or none. AUDIT TOWN-ECON
+ *  LAW-6: an Edict is looked for among the table's OWN names - `toString` read the object's own function, and the sum
+ *  became a string that took the whole reading to the middle.
  *  @param {any} seat a dressed seat (net/townSeatBook.js dressed), or null */
 export function townSeatTerm(seat) {
   const h = seat?.holder;
   if (!h) return 0;
   const standing = Number.isFinite(h.standing) ? (h.standing - 50) / TOWN_STANDING_DIV : 0;
-  return standing + (TOWN_EDICT_TERMS[/** @type {keyof typeof TOWN_EDICT_TERMS} */ (h.edict)] ?? 0);
+  const edict = typeof h.edict === 'string' && Object.prototype.hasOwnProperty.call(TOWN_EDICT_TERMS, h.edict)
+    ? TOWN_EDICT_TERMS[/** @type {keyof typeof TOWN_EDICT_TERMS} */ (h.edict)] : 0;
+  return standing + edict;
 }
 /** A Prosperity held to the scale, a whole number. @param {number} p */
 const held = (p) => Math.max(0, Math.min(TOWN_PROSPERITY_MAX, Math.round(Number.isFinite(p) ? p : TOWN_BASE)));
@@ -96,30 +101,37 @@ const held = (p) => Math.max(0, Math.min(TOWN_PROSPERITY_MAX, Math.round(Number.
  *   `seat` the town's own seat, dressed (null for none); `raided` a raid running at its gates; `players` TE2's share
  */
 export function townProsperity({ key, type, day, seat = null, raided = false, players = 0 }) {
-  const share = Math.max(0, Math.min(TOWN_PLAYERS_MAX, Number.isFinite(players) ? players : 0));
+  const n = Number(players);
+  const share = Number.isNaN(n) ? 0 : Math.max(0, Math.min(TOWN_PLAYERS_MAX, n));   // AUDIT TOWN-ECON LAW-6: an infinite share is the most, never nothing
   return held(TOWN_BASE + (TOWN_SIZE[/** @type {0|1|2} */ (type)] ?? 0) + townCycle(key, day) + townSeatTerm(seat) + (raided ? TOWN_RAID_TERM : 0) + share);
 }
 /** A Prosperity's band. @param {number} p */
 export const townBandOf = (p) => (TOWN_BANDS.find(([, least]) => held(p) >= least) ?? TOWN_BANDS[TOWN_BANDS.length - 1])[0];
 /** What the town's counters ASK, as a factor of their price - 0.75 Booming at 100 to 1.25 at 0. @param {number} p */
 export const townBuyFactor = (p) => 1 - (TOWN_PRICE_SWING * (held(p) - TOWN_BASE)) / TOWN_BASE;
-/** What they PAY for a sale - below the middle less, never more than 1. @param {number} p */
-export const townSaleFactor = (p) => Math.min(1, 1 - (TOWN_PRICE_SWING * (TOWN_BASE - held(p))) / TOWN_BASE);
+/** What they PAY for a sale - the same share less either side of the middle, 0.75 at 0 and at 100, never more than 1:
+ *  a Struggling town has less coin, and a Booming one is stocked and pays no more than it asks (AUDIT TOWN-ECON LAW-1).
+ *  @param {number} p */
+export const townSaleFactor = (p) => 1 - (TOWN_PRICE_SWING * Math.abs(held(p) - TOWN_BASE)) / TOWN_BASE;
+/** The trade window's modes a counter PAYS in - a sale, and the Mages Guild's sale of a magic piece (AUDIT TOWN-ECON
+ *  LAW-5: it read 1, so a Destitute town's guild paid the region's price its shops would not). */
+export const TOWN_SALE_MODES = Object.freeze(['Sell', 'SellMagic']);
 /**
- * A COUNTER'S FACTOR in the town, for `mode` (the trade window's: Buy, Repair, Sell) - the town's asking factor times
- * the seat's (`seatFactor`, townSeatLaw.js seatShopFactor, 1 for none), never below TOWN_FACTOR_FLOOR; a sale's, the
- * town's paying factor alone (a seat moves no sale).
+ * A COUNTER'S FACTOR in the town, for `mode` (the trade window's: Buy, Repair, Sell, SellMagic) - what it asks, the
+ * town's asking factor times the seat's (`seatFactor`, townSeatLaw.js seatShopFactor, 1 for none), never below
+ * TOWN_FACTOR_FLOOR; what it pays, the town's paying factor alone (a seat moves no sale); any other mode 1.
  * @param {number} p @param {string} mode @param {number} [seatFactor]
  */
 export function townShopFactor(p, mode, seatFactor = 1) {
-  if (mode === 'Sell') return townSaleFactor(p);
+  if (TOWN_SALE_MODES.includes(mode)) return townSaleFactor(p);
   if (mode !== 'Buy' && mode !== 'Repair') return 1;
   return Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);
 }
 
 /** What a town card's trend is, yesterday to today - its id; the card says it in the player's language (TREND_WORDS).
- *  @param {number} p @param {number} prev */
-export const townTrendWord = (p, prev) => (p > prev ? 'rising' : p < prev ? 'falling' : 'holding');
+ *  AUDIT TOWN-ECON UI-3: yesterday is read on today's seat, raid and players, so it is the MARKET's trend - its cycle -
+ *  and the card says so ("Market rising."). @param {number} p @param {number} prev */
+export const townTrendWord = (p, prev) => (p > prev ? 'rising' : p < prev ? 'falling' : 'flat');
 /** L10N4: the card's words in the player's language, each read when it is said (systems/textManager.js t). */
 const BAND_WORDS = Object.freeze({
   Booming: () => t('town.econ.band.booming', 'Booming'),
@@ -128,26 +140,32 @@ const BAND_WORDS = Object.freeze({
   Struggling: () => t('town.econ.band.struggling', 'Struggling'),
   Destitute: () => t('town.econ.band.destitute', 'Destitute'),
 });
-const TREND_WORDS = Object.freeze({
-  rising: () => t('town.econ.trend.rising', 'rising'),
-  falling: () => t('town.econ.trend.falling', 'falling'),
-  holding: () => t('town.econ.trend.holding', 'holding'),
+const TREND_LINES = Object.freeze({
+  rising: () => t('town.econ.trend.rising', 'Market rising.'),
+  falling: () => t('town.econ.trend.falling', 'Market falling.'),
+  flat: () => t('town.econ.trend.flat', 'Market flat.'),
 });
 /** A band in the player's language (its id is townBandOf's). @param {string} band */
 export const townBandWord = (band) => BAND_WORDS[/** @type {keyof typeof BAND_WORDS} */ (band)]?.() ?? band;
-/** The card's first line: the band, the Prosperity and its trend. @param {number} p @param {number} prev */
-export const townEconomyLine = (p, prev) => t('town.econ.line', 'Economy: {band} ({p}), {trend}',
-  { band: townBandWord(townBandOf(p)), p: held(p), trend: TREND_WORDS[townTrendWord(held(p), held(prev))]() });
-/** The card's price line - the town's own factors, as a share of the region's prices. @param {number} p */
-export function townPriceLine(p) {
-  const ask = Math.round((townBuyFactor(p) - 1) * 100);
-  const pay = Math.round((1 - townSaleFactor(p)) * 100);
-  if (ask < 0) return t('town.econ.price.less', 'Shops ask {pct}% less than the region\'s.', { pct: 0 - ask });
+/** The card's first line: the band, the Prosperity out of 100, and the market's trend. @param {number} p @param {number} prev */
+export const townEconomyLine = (p, prev) => t('town.econ.line', 'Economy: {band} ({p}/100). {trend}',
+  { band: townBandWord(townBandOf(p)), p: held(p), trend: TREND_LINES[townTrendWord(held(p), held(prev))]() });
+/** A factor's distance from 1 in whole percents - one rounding for both sides (AUDIT TOWN-ECON UI-7: 1.015 and 0.985
+ *  printed 1 and 2). @param {number} f */
+const pctOf = (f) => Math.round(Math.abs(1 - f) * 100 + 1e-9);
+/** The card's price line - what the town's counters ask EVERYONE (the town's factor with Market Day's, never a member's
+ *  own discount - AUDIT TOWN-ECON UI-4) and what they pay, as shares of the region's usual prices.
+ *  @param {number} p @param {number} [seatFactor] the seat's factor for a buyer of no guild (townSeatLaw.js seatShopFactor) */
+export function townPriceLine(p, seatFactor = 1) {
+  const askF = townShopFactor(p, 'Buy', seatFactor);
+  const ask = pctOf(askF), pay = pctOf(townSaleFactor(p));
+  if (ask > 0 && askF > 1) return t('town.econ.price.moreLess', 'Shops here ask {ask}% more and pay {pay}% less than the region\'s usual prices.', { ask, pay });
   if (ask > 0) {
-    return pay > 0 ? t('town.econ.price.moreLess', 'Shops ask {ask}% more and pay {pay}% less than the region\'s.', { ask, pay })
-      : t('town.econ.price.more', 'Shops ask {pct}% more than the region\'s.', { pct: ask });
+    return pay > 0 ? t('town.econ.price.lessLess', 'Shops here ask {ask}% less and pay {pay}% less than the region\'s usual prices.', { ask, pay })
+      : t('town.econ.price.askLess', 'Shops here ask {ask}% less than the region\'s usual prices.', { ask });
   }
-  return t('town.econ.price.same', 'Shops ask the region\'s prices.');
+  return pay > 0 ? t('town.econ.price.payLess', 'Shops here ask the region\'s usual prices and pay {pay}% less.', { pay })
+    : t('town.econ.price.same', 'Shops here ask and pay the region\'s usual prices.');
 }
 /** Why a town stands where it does, in one line - the strongest reason first (townReasonLine), each read when said. */
 export const TOWN_REASONS = Object.freeze({
@@ -166,28 +184,38 @@ export function townReasonLine({ raided = false, edict = null, players = 0 }) {
   return players >= 1 ? TOWN_REASONS.players : null;
 }
 /** The area's line for a town that is not a seat: the seat whose bailiwick it is in and its holder; no seat, nobody's.
+ *  AUDIT TOWN-ECON UI-2: the Charter worded in the player's language around the town's (or the crown's kingdom's) name
+ *  and the guild's own - charterName and guildWords are the seats' English, and sat inside every language's grammar.
  *  @param {any} area a dressed seat, or null for a region with none */
 export function townAreaLine(area) {
   if (!area) return t('town.econ.area.none', 'No guild holds this area.');
-  const charter = charterName(area);
-  return area.holder?.guild ? t('town.econ.area.held', 'Under {charter}: held by {guild}', { charter, guild: guildWords(area.holder.guild) })
-    : t('town.econ.area.unheld', 'Under {charter}: unheld', { charter });
+  const g = area.holder?.guild;
+  const guild = g ? `${g.name} <${g.tag}>` : null;
+  if (area.tier === 'crown') {
+    const kingdom = kingdomName(CROWN_SEAT_REGIONS[/** @type {17|20|23} */ (area.region)]) ?? area.name;
+    return guild ? t('town.econ.area.crownHeld', 'Under the Crown Charter of {kingdom}: held by {guild}', { kingdom, guild })
+      : t('town.econ.area.crownUnheld', 'Under the Crown Charter of {kingdom}: unheld', { kingdom });
+  }
+  return guild ? t('town.econ.area.held', 'Under the Charter of {town}: held by {guild}', { town: area.name, guild })
+    : t('town.econ.area.unheld', 'Under the Charter of {town}: unheld', { town: area.name });
 }
 
 /**
  * A TOWN'S CARD for a map's hover (`{ title, lines }`, the EVENT-TIP card - ui/eventMapMarks.js readTip): its economy
- * and trend, its prices, the strongest reason, then its guild control - a seat town's own SEAT-TIP lines, or the area's
- * holder (`area` undefined where the seats are not known here: the line is left out).
+ * and its market, its prices, the strongest reason, then its guild control - a seat town's own SEAT-TIP lines, or the
+ * area's holder (`area` undefined where the seats are not known here: the line is left out). AUDIT TOWN-ECON UI-1: a
+ * held seat's card leaves out its first line ("The Charter of X: held by G") - its holder line names the guild again,
+ * and the card ran past a landscape phone's height by that much.
  * @param {{ name: string, p: number, prev: number, raided?: boolean, players?: number, seat?: any, area?: any }} t
  * @param {number} [nowMs] the seat card's clock (a called siege)
  */
 export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined }, nowMs = Date.now()) {
   if (!name) return null;
-  const lines = [townEconomyLine(p, prev), townPriceLine(p)];
+  const lines = [townEconomyLine(p, prev), townPriceLine(p, seatShopFactor(seat, null))];
   const reason = townReasonLine({ raided, edict: seat?.holder?.edict ?? null, players });
   if (reason) lines.push(reason);
   const card = seat ? seatTipOf(seat, nowMs) : null;
-  if (card) lines.push(...card.lines);
+  if (card) lines.push(...card.lines.slice(seat.holder?.guild ? 1 : 0));
   else if (area !== undefined) lines.push(townAreaLine(area));
   return { title: name, lines };
 }
