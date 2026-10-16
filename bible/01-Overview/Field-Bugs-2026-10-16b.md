@@ -513,9 +513,14 @@ cupboard, a stolen bag at a verdict, a peer's shelf word, the theft arms); six f
   so her hold is marked as it is drawn (`navalHost.js` winBoarding) and carries the mark out by every door - Take all, Open
   her hold, the crew's stow when the sea goes. The naval record calls the plunder "won", never clean, and the rule "a piece
   taken from someone else's keeping" reads her owner's cargo as such. Not marked, the mark agreeing with the charge: a
-  pirate's hold (a lawful prize - her end is rewarded), a hold past the Veil (no crown's writ runs - chargeEther charges
-  nothing), and the casks a sinking floats free (the sea's, salvage - FLAGGED to Mac: a lawful ship sunk by Piracy floats
-  half her lots unmarked, where boarding her marks them all).
+  pirate's hold (a lawful prize - her end is rewarded) and a hold past the Veil (no crown's writ runs - chargeEther
+  charges nothing). DECIDED at the merge (the owner: "Stop trying to match DFU" - the call is ours): THE CASKS OF A LAWFUL
+  SHIP I SANK ARE HER HOLD TOO. She went down after the Piracy her first strike charged, so her lots afloat carry the mark
+  however they come aboard - hauled in where they float, broken open swimming, the crew's stow when the sea goes
+  (`navalHost.js` lawfulGoods, stolenCasks: pickFlotsam and stowPlunder). The casks of a lawful ship another sank (or
+  one whose owner gave me it, AUDIT NAV1's claim) are salvage, a pirate's fair prize, and her wreckage's stores (SALVAGE)
+  her fittings - none marked. Pinned by the S4 flotsam test over the real naval host (a cask hauled, the crew's stow, a
+  pirate's, another's sinking); STOLEN-AUDIT-S4-flotsam-* (5) dead.
 - S5 is FINE-PEOPLE's (above).
 - S6 - A HOME VENDOR WAS A FENCE. A town's patron (`patronLaw.js` patronTakes, read by the account service's patron
   reckoning) bought a stolen piece off a hired trader at three fifths of its worth in the service's gold; it takes none

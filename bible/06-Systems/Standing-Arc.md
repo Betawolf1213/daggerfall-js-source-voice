@@ -165,7 +165,8 @@ its court (DaggerfallCourtWindow) takes nothing:
   (`loot.stolenFrom`): a shut shop's shelf and a stranger's cupboard (`worldModes.js` openShelf and the `container:` arm),
   a robbed caravan's goods (`world.js` caravanHost's openLoot); `inventorySession.js` theftTarget, `itemTransfer.js`
   applyTransfer, `stolenGoods.js` takenFromKeeping; and a lawful ship's hold, taken by Piracy (`navalHost.js` winBoarding,
-  as her hold is drawn - a pirate's hold, one past the Veil and the casks a sinking floats free are not). Marked BEFORE the
+  as her hold is drawn), and the casks of a lawful ship I sank (`navalHost.js` stolenCasks - hauled or stowed); a
+  pirate's hold, one past the Veil, the casks of a ship another sank and a wreck's stores are not. Marked BEFORE the
   piece lands, because a landing is where a stack merges; a stolen piece stacks only with stolen kin and a split keeps the
   mark (`inventory.js` stacksWith, splitStack). The owner's piece put back is theirs again; the player's own piece through
   a target stays theirs, and a piece stolen elsewhere is not laundered by one (STOLEN-GOODS AUDIT S1). The theft's own law

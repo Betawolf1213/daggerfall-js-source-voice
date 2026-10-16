@@ -49,6 +49,10 @@ import { mintCarried, heldOf } from '../src/systems/materialsBag.js';
 import { generateItems } from '../src/systems/loot.js';
 import { sea } from './navalSea.mjs';
 import { GRAPPLE_S } from '../src/systems/naval/navalBoarding.js';
+import { isSalvage } from '../src/systems/naval/navalPlunder.js';
+import { STRUCK_GRACE_S } from '../src/scenes/navalHost.js';
+import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
+import { navalHitData, NAVAL_HIT_MAX } from '../src/systems/naval/navalWire.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };
@@ -573,6 +577,57 @@ test('STOLEN-GOODS AUDIT S4: the two theft arms that marked nothing - a lawful s
   const w = src('src/scenes/world.js');
   const caravan = w.slice(w.indexOf('const caravanHostOf = () => (_caravanHost ??= createCaravanHost({'), w.indexOf('choose: (lines, options) => townTalk.showOverlay(new ChoiceWindow({ lines, options })),'));
   assert.match(caravan, /openLoot: \(\{ items \}\) => \{[\s\S]*makeInventoryWindow\(\{ loot: \{ items: \(\) => items, containerImage: \(\) => CONTAINER_IMAGES\.Chest, playerOwned: false, stolenFrom: new Set\(items\) \} \}\);/);
+});
+
+/** A ship sunk by `by` ('local': me) through peers' blows, as keepplunder.test.js sinks one: struck, then her hull broken
+ *  past it a grace later (a blow is a hit's most at a time). */
+function sunk(h, classId, pos, by) {
+  const id = h.host.spawnShip(classId, { range: Math.hypot(pos[0], pos[2]), bearing: Math.atan2(pos[0], pos[2]), yaw: 0 });
+  const e = h.host._sea.get(id);
+  e.ship.pos = [...pos];
+  h.host.frame(0.1);
+  const blow = (hull) => { for (let left = hull; left > 0; left -= NAVAL_HIT_MAX) h.host.applyPeerHit(by, navalHitData('local', { n: e.n, hull: Math.min(left, NAVAL_HIT_MAX) })); };
+  blow(Math.floor(e.ship.damage.hull - 1));
+  h.run(STRUCK_GRACE_S + 1);
+  blow(Math.ceil(e.ship.damage.hull + 1));
+  h.run(0.5);
+  assert.equal(e.ship.damage.state, SHIP_STATES.sinking, `${classId} by ${by}: going down`);
+  return e;
+}
+
+test('STOLEN-GOODS AUDIT S4 (the flotsam, decided): a lawful ship I sank floats her owner\'s goods - her casks\' lots are stolen however they come aboard (hauled in, the crew\'s stow), as boarding her marks her hold; a pirate\'s casks are fair prize and a lawful ship another sank floats salvage (mutants: the casks clean, every cask stolen, another\'s sinking mine)', async () => {
+  const h = await sea({ hull: 2 });
+  h.deps.hold = (key) => generateItems(key, { level: 5, gender: 'male' }, () => 0.5);
+  const given = [];
+  h.deps.board.giveItems = (items) => { given.push(...items); return { left: [] }; };
+  const casksOf = (e) => h.host._shots.floaters().filter((f) => f.kind === 'flotsam' && f.from === e.ship.cls.id && !isSalvage(f.lot) && Math.hypot(f.pos[0] - e.ship.pos[0], f.pos[2] - e.ship.pos[2]) < 40);
+  const merchant = sunk(h, 'merchantGalleon', [300, 0, 0], 'local');
+  const hauled = casksOf(merchant);
+  assert.ok(hauled.length >= 2, 'her lots afloat');
+  // one hauled aboard where it floats: my boat sails through it
+  const f = h.host._shots.floater(hauled[0].id);
+  f.pos[0] = 0; f.pos[2] = 0;
+  h.run(0.3);
+  assert.ok(given.length > 0 && given.every(isStolen), `hauled: ${given.length} things, every one her owner's`);
+  // the rest by the crew's stow
+  given.length = 0;
+  h.host.stowPlunder();
+  const cargo = given.filter((x) => x.name !== "Carpenter's Stores");
+  assert.ok(cargo.length > 0 && cargo.every(isStolen), 'stowed: still stolen');
+  assert.ok(given.length > cargo.length && !given.some((x) => !cargo.includes(x) && isStolen(x)), 'her wreckage\'s stores her fittings, no one\'s goods');
+  // a pirate I sank, and a merchantman another sank: no theft of mine
+  const pirate = sunk(h, 'pirateSloop', [0, 0, 300], 'local');
+  given.length = 0;
+  h.host.stowPlunder();
+  assert.ok(given.some((x) => x.name !== "Carpenter's Stores") && !given.some(isStolen), 'a pirate\'s casks: fair prize');
+  const theirs = sunk(h, 'merchantGalleon', [-300, 0, 0], 'peer-x');
+  const drift = casksOf(theirs)[0];
+  given.length = 0;
+  const g = h.host._shots.floater(drift.id);
+  g.pos[0] = 0; g.pos[2] = 0;
+  h.run(0.3);
+  assert.ok(given.length > 0 && !given.some(isStolen), 'another\'s sinking: salvage');
+  assert.ok(pirate && theirs);
 });
 
 test('STOLEN-GOODS AUDIT S6: a town\'s patron takes no stolen piece off a hired trader - the record as the market\'s listing moves it (a realm trade\'s own take), the mark riding; the item law still stands behind it, so a player may buy it (mutants: the patron a fence)', () => {

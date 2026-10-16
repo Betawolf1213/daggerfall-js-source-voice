@@ -449,29 +449,32 @@
   {
     "name": "FB1016B-SG-AUDIT-S4-the-merchantman-clean",
     "file": "src/scenes/navalHost.js",
-    "old": "    if (!entry.ether && NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful) markStolen(entry.prize.hold);\n",
+    "old": "    if (lawfulGoods(entry)) markStolen(entry.prize.hold);\n",
     "new": "",
     "tests": [
       "test/fb1016b_stolengoods.test.js"
-    ]
+    ],
+    "note": "RE-AIMED BY CONTENT (S4's flotsam, decided at the merge): the boarding's test now navalHost.js lawfulGoods, shared with the casks of a ship I sank."
   },
   {
     "name": "FB1016B-SG-AUDIT-S4-every-prize-stolen",
     "file": "src/scenes/navalHost.js",
-    "old": "    if (!entry.ether && NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful) markStolen(entry.prize.hold);",
-    "new": "    if (!entry.ether) markStolen(entry.prize.hold);",
+    "old": "  const lawfulGoods = (entry) => !entry.ether && !!NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful;",
+    "new": "  const lawfulGoods = (entry) => !entry.ether;",
     "tests": [
       "test/fb1016b_stolengoods.test.js"
-    ]
+    ],
+    "note": "RE-AIMED BY CONTENT (S4's flotsam, decided at the merge): the boarding's test now navalHost.js lawfulGoods, shared with the casks of a ship I sank."
   },
   {
     "name": "FB1016B-SG-AUDIT-S4-the-veils-stolen",
     "file": "src/scenes/navalHost.js",
-    "old": "    if (!entry.ether && NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful) markStolen(entry.prize.hold);",
-    "new": "    if (NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful) markStolen(entry.prize.hold);",
+    "old": "  const lawfulGoods = (entry) => !entry.ether && !!NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful;",
+    "new": "  const lawfulGoods = (entry) => !!NAVAL_FACTIONS[entry.ship.cls.faction]?.lawful;",
     "tests": [
       "test/fb1016b_stolengoods.test.js"
-    ]
+    ],
+    "note": "RE-AIMED BY CONTENT (S4's flotsam, decided at the merge): the boarding's test now navalHost.js lawfulGoods, shared with the casks of a ship I sank."
   },
   {
     "name": "FB1016B-SG-AUDIT-S4-the-caravan-unmarked",
@@ -487,6 +490,51 @@
     "file": "src/net/patronLaw.js",
     "old": "  && item[PATRON_COUNTER_MARK] !== true && item.stolen !== true;",
     "new": "  && item[PATRON_COUNTER_MARK] !== true;",
+    "tests": [
+      "test/fb1016b_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "STOLEN-AUDIT-S4-flotsam-the-casks-clean",
+    "file": "src/scenes/navalHost.js",
+    "old": "      if (by === myId() && lawfulGoods(entry)) stolenCasks.add(id);   // STOLEN-GOODS AUDIT: her lots her owner's, as boarded",
+    "new": "",
+    "tests": [
+      "test/fb1016b_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "STOLEN-AUDIT-S4-flotsam-every-cask-stolen",
+    "file": "src/scenes/navalHost.js",
+    "old": "      if (by === myId() && lawfulGoods(entry)) stolenCasks.add(id);   // STOLEN-GOODS AUDIT: her lots her owner's, as boarded",
+    "new": "      if (by === myId()) stolenCasks.add(id);   // STOLEN-GOODS AUDIT: her lots her owner's, as boarded",
+    "tests": [
+      "test/fb1016b_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "STOLEN-AUDIT-S4-flotsam-another-s-sinking-mine",
+    "file": "src/scenes/navalHost.js",
+    "old": "      if (by === myId() && lawfulGoods(entry)) stolenCasks.add(id);   // STOLEN-GOODS AUDIT: her lots her owner's, as boarded",
+    "new": "      if (lawfulGoods(entry)) stolenCasks.add(id);   // STOLEN-GOODS AUDIT: her lots her owner's, as boarded",
+    "tests": [
+      "test/fb1016b_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "STOLEN-AUDIT-S4-flotsam-hauled-clean",
+    "file": "src/scenes/navalHost.js",
+    "old": "    if (e.id != null && stolenCasks.delete(e.id)) markStolen(items);",
+    "new": "    if (e.id != null) stolenCasks.delete(e.id);",
+    "tests": [
+      "test/fb1016b_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "STOLEN-AUDIT-S4-flotsam-stowed-clean",
+    "file": "src/scenes/navalHost.js",
+    "old": "      if (stolenCasks.delete(f.id)) markStolen(got);",
+    "new": "      stolenCasks.delete(f.id);",
     "tests": [
       "test/fb1016b_stolengoods.test.js"
     ]
