@@ -161,7 +161,8 @@ test('MW-CAST1: THE CASTING HANDS ARE EMPTY - a readied spell and a cast in flig
   const fp = src('src/combat/fpArm.js');
   assert.match(fp, /if \(r\.slot === 'weapon'\) r\.hidden = !weaponInHand\(\) \|\| climbHands;/, 'the third person\'s range');
   assert.match(fp, /if \(r\.slot === 'weapon'\) r\.hidden = !weaponInHand\(\);/, 'the first person\'s');
-  assert.match(fp, /if \(eff\.slot === 'weapon'\) return !weaponInHand\(\);/, 'and a weapon\'s own effects');
+  // PIN MOVED (TWO-HANDS AUDIT 2): a blade's effect also hides where the blade does under a sheet or on the stone (`bladeAway`)
+  assert.match(fp, /if \(eff\.slot === 'weapon'\) return !weaponInHand\(\) \|\| bladeAway;/, 'and a weapon\'s own effects');
 });
 
 test('MW-CAST1: a cast whose group carries no release key still lets the spell go when it ends', async () => {

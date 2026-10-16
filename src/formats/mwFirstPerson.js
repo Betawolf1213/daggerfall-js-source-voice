@@ -2142,9 +2142,10 @@ export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources
     return { ok: false, error: `readers unavailable: ${err.message}` };
   }
 
-  let skeleton;
+  let skeleton, skeletonFile;
   try {
-    skeleton = mod.buildSkeleton(mod.parseNif(skeletonBytes));
+    skeletonFile = mod.parseNif(skeletonBytes);
+    skeleton = mod.buildSkeleton(skeletonFile);
   } catch (err) {
     return { ok: false, stage: 'skeleton', error: err.message };
   }
@@ -2168,9 +2169,10 @@ export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources
   // (`offWeaponBone`). A skeleton without a "Weapon Bone Left" - every retail one - takes one made by the mirror from
   // its own Weapon Bone (combat/mirrorRig.js offWeaponBoneAddon), through the addons' own door and after them (an
   // addon that brings one is the skeleton's), before any part binds and before the mirror's plan is first read. A bow
-  // never hangs on it: rule 17 asks the actor's own bytes (resolveWeaponParts), where retail has none.
+  // never hangs on it: rule 17 asks the actor's own bytes (resolveWeaponParts), where retail has none. TWO-HANDS AUDIT 2:
+  // the skeleton file itself rides along - its own skin (retail's Tri Shadow) is the frame the hands are mirrored in.
   if (offWeaponBone) {
-    const addon = offWeaponBoneAddon(skeleton, GRAPH_ROOT, mod.skelMats);
+    const addon = offWeaponBoneAddon(skeleton, GRAPH_ROOT, mod.skelMats, skeletonFile);
     if (addon) {
       const r = mod.injectSkeletonNodes(skeleton, addon);
       injected.push({ name: WEAPON_BONE_LEFT_SOURCE, added: r.added, skipped: r.skipped });

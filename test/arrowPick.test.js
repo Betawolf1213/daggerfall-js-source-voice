@@ -114,5 +114,7 @@ test('MW-D50: a bow that resolves without its arrow says why on the console, onc
   // stand where that directory carries them (facePools), the match, its
   // skip and its key read them (the rows read the body build's own `exists`).
   // PIN MOVED (TWO-HANDS): + the left hand's weapon's three - setOffWeapon's preload and its resolve for each rig.
-  assert.equal((src.match(/has: archiveHas\(archives\)/g) || []).length, 21, 'every preload and every resolve - two builds, the tp body, the swap\'s two, the torch\'s six, the hip lantern\'s four, the face\'s pools, the left hand\'s weapon\'s three - pass the one directory');
+  // PIN MOVED (TWO-HANDS AUDIT 2): + the left hand's weapon's two in the build (its preload, and its resolve for each rig) -
+  // a pair's left blade bound in the build the rig's own rebuild asks for.
+  assert.equal((src.match(/has: archiveHas\(archives\)/g) || []).length, 23, 'every preload and every resolve - two builds, the tp body, the swap\'s two, the torch\'s six, the hip lantern\'s four, the face\'s pools, the left hand\'s weapon\'s five - pass the one directory');
 });

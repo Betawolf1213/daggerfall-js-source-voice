@@ -363,7 +363,9 @@ test('MW-LOAD: every synchronous archive read in fpArm.js is covered, in its own
   // left hand - synchronous, its `find` the caller's - so its one call inside is discharged at ITS call sites: the
   // left hand's swap, its two rigs under the one load
   assert.equal(callsCovered('resolveWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\(', ['resolveOffWeaponParts']), 4);
-  assert.equal(callsCovered('resolveOffWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\('), 2);
+  // PIN MOVED (TWO-HANDS AUDIT 2): and buildFpArm's - a pair's left blade bound in the build the rig's own rebuild asks
+  // for, its mesh in the build's one load (2 -> 3)
+  assert.equal(callsCovered('resolveOffWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\('), 3);
   // MW-D51 resolveTorchPart: buildTpBody, buildFpArm, and setTorch's
   // slow path (one load, one resolve per rig inside it).
   assert.equal(callsCovered('resolveTorchPart({', 'loadFromArchives\\([\\s\\S]*torchPartPaths\\(|torchPartPaths\\('), 3);

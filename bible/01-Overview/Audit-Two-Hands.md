@@ -119,6 +119,12 @@ mutants of the record's claims). What it changed is written into Two-Hands.md, e
 | L2 F6 | MAJOR | With the Weapon Widget a punch thrown on the run turned the running arm into the fists' rest in sight, which sank; the punch frames 0.4 s later | FIXED: its clone winds up from below the view (`fromBelow`) |
 | L2 F7 | MINOR | A jump on the run swapped arms, fists, fists, arms in under a second | FIXED: the run kept through a hop of up to 0.6 s (`runHandsKept`), both lanes |
 | L2 F8 | MINOR | With nothing taking the hands' place (a spell readied with its hands off, a swap's pause) the arms vanished in a frame - the first round's "a hand taken ends the run at once" | FIXED: the run eases out, and yields at once only to a picture that takes the hands (`runDrawn`) |
+| L3 M1 | MINOR | The made Weapon Bone Left mirrored the Weapon Bone at the skeleton's REST, which retail stands asymmetric (the hands 1.09 units off each other's mirror): the left grip sat 1.4 units off and 2.8 degrees turned in the left fist | FIXED: mirrored hand to hand in the frame the skeleton file's own skin binds them (`skinHandMirror`, the never-drawn Tri Shadow), the rest's rotation where none does; the right's mirror to about 1e-9 |
+| L3 M2 | MINOR | The guard kept turning down a hand that held the map sheet (112 frames under a sheet raised mid-blow), a spell's hands or the stone | FIXED: no guard while something else has the hands (`handsTaken`), the dip eased off the arm |
+| L3 M4 | MINOR | The 3D pair's dip was sized by the fists' 9 px, which the sprite lane had given up on a weapon | FIXED: `GUARD.LOWER` of the blade's own height on the picture (0.0519 -> 0.0898 rad on the fixture) |
+| L3 M5 | MINOR | Every NPC and peer build paid ~1.3 ms for a mirror plan and a guard it never used | FIXED: two bone names read (0.73 -> 0.05 ms); the guard measured at a pair's first guard, once per blade |
+| L3 M6 | MINOR | An armour-change rebuild dropped the left blade until the archives reopened (23 frames at a 600 ms reopen); the rig's record of it was dead | FIXED: the build binds the recorded left weapon on both rigs; 0 frames |
+| L3 suspected | MINOR | A blade's particle effect showed under a sheet or on the stone; a blade's glow on the stone | FIXED, both confirmed - the right blade's too |
 | L4 m1 | MINOR | The enhanced pack handed the Morrowind figure its own one-hand read: a left-led pair held the left weapon in both hands while the window was up, a pair made in it showed on close | FIXED: one door for the arm's hands (`handArm`), asked by the frame and the pack |
 | L4 m2 | MINOR | A transformed lycanthrope's H re-applied without the claws: the fists' mode and the pair's lead line, where main says DFU's | FIXED: H re-applies the racial arm first (ApplyWeapon's order) |
 | L4 m4 | MINOR | The Fighting tutorial's new point dropped what H does with one weapon | FIXED: "H swaps hands, or picks the lead when both hands fight" |
@@ -140,7 +146,13 @@ mutants of the record's claims). What it changed is written into Two-Hands.md, e
 rates through the real machine; the formula's weight, PCAAO at its shipped defaults; the relay's own source; the real
 rig and Weapon Widget for the sprite lane), with the loot and set suites' per-blow charges (`loot5_powers`,
 `gilded2_world`, `audit625_serpent`). Mutants: `tools/mutants/twohands.json` (172: 33 `TWOHANDS-AUDIT2-*` and 19
-`TWOHANDS-SPRITE2-*`), every one dead. PIN MOVED (AUDIT 2): `audit18_hosts_dungeon`, `interiorfoes`, `duel_combat` (the
+`TWOHANDS-SPRITE2-*`, and 13 of L3's for the shared run law and RUN_PUMP), every one dead; `test/twohands_mw.test.js`
+(29) - L3's six and its two suspected gaps, with `tools/mutants/twohands_mw.json` (70, every one dead). Three records
+retired with the code they guarded (`TWOHANDS-tempo-unbounded` and `-ctx-no-tempo`: the tick carries no factor;
+`TWOHANDS-AUDIT-run-not-taken`: the run yields rather than snaps), each law's successor pinned. Records of other features
+the change moved, re-aimed by content and re-run: `loot5.json` (two), `rvn1.json`, `serpentset.json`, `set2.json`,
+`set3.json`, `wearvanilla.json` (three). PIN MOVED (AUDIT 2): `twohands_mw` (the made bone, the guard, the run's phase,
+the lens), `mwcast1` (a weapon's effects), `mwload_fparm` and `arrowPick` (the build's blade bind), `audit18_hosts_dungeon`, `interiorfoes`, `duel_combat` (the
 tally's weight), `set2_seams` (the core handed the share), `auditrr` (the swing's ctx carries no factor),
 `wear_vanilla` (PCAAO's wear through the share), `mwattach`, `mwtorch`, `werewolf1` (the arm's hands through `handArm`).
 

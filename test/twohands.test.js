@@ -876,12 +876,18 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   for (let i = 0; i < 90; i++) { const p0 = b.r.twoHands.state.run.phase; await b.frame({ move: 7 }); stutter.push(bobStepOf(p0, b.r.twoHands.state.run.phase)); }
   assert.ok(stutter.every((d) => d >= bobWalk * (1 - RUN_PUMP.CATCH) - 1e-9 && d <= bobWalk * (1 + RUN_PUMP.CATCH) + 1e-9), `the stutter-step: every frame within the stride's tempo +-CATCH (${stutter.slice(0, 4).map((d) => d.toFixed(3))}; a stride's step ${bobWalk.toFixed(3)})`);
   assert.ok(Math.abs(b.r.twoHands.state.run.phase - runPhaseOfBob(bobber.timer)) < 1e-12, 'and back ON the bob\'s phase');
-  // ...a run's first frame takes the bob's phase at once: nothing of the pump is drawn yet, nothing to carry
+  // ...a run's first frame takes the bob's phase at once: nothing of the pump is drawn yet, nothing to carry - a run
+  // begun again after the last has gone (its stride left wherever it stopped, the bob's timer settled at PI)
   const freshBob = new HeadBobber();
   const cr = await rigWith({ run: true, sheathed: true, bobber: freshBob });
+  for (let i = 0; i < 50; i++) await cr.frame({ move: 7 });
+  for (let i = 0; i < 150 && cr.r.twoHands.running; i++) await cr.frame({ move: 0 });
+  assert.equal(cr.r.twoHands.running, false, 'the run over, its hands gone');
+  const left = cr.r.twoHands.state.run.phase;
   let firstPhase = null;
   for (let i = 0; i < 12 && firstPhase == null; i++) { await cr.frame({ move: 7 }); if (cr.r.twoHands.state.run.w > 0) firstPhase = cr.r.twoHands.state.run.phase; }
   assert.equal(firstPhase, runPhaseOfBob(freshBob.timer), 'the run\'s first frame: on the bob at once');
+  assert.ok(Math.abs(Math.sin((firstPhase - left) / 2)) > 0.3, `...however far from where the last run left the stride (${left.toFixed(2)} -> ${firstPhase.toFixed(2)})`);
   // TWO-HANDS AUDIT 2 (L5): HEAD BOBBING OFF, THE PUMP KEEPS ITS OWN STRIDE - the bob hands no clock (headBobber.js `out`:
   // null), so the stride walks at the speed, one step a frame - never held to a bob that is not walking
   const bobOff = await rigWith({ run: true, sheathed: true, bobber: new HeadBobber() });

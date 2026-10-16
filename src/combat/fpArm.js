@@ -41,8 +41,8 @@
 
 import { lookAt, multiply, ortho, perspective, transformPoint, trs, wrapAngle } from '../world/mat4.js';
 import { ClimbPose, POSE } from '../player/climbPose.js';   // CLIMB6: the climb's limbs, in the world; TWO-HANDS: its limb law (LIMB_TAU) eases the mirror's compositions
-import { runWeightStep, runPhaseStep, pumpTarget3D, RUN_3D, mirrorStrike, guardStep, GUARD } from './handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body; a mirrored blow's way across the screen; the guard's weight
-import { strikingSide, mirrorPlan } from './mirrorRig.js';   // TWO-HANDS: which fist a hand-to-hand clip throws; the wrists, for the pins
+import { runWeightStep, runPhaseFollow, pumpTarget3D, RUN_3D, mirrorStrike, guardStep, GUARD } from './handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body; a mirrored blow's way across the screen; the guard's weight
+import { strikingSide, mirrorPlan, counterpartName } from './mirrorRig.js';   // TWO-HANDS: which fist a hand-to-hand clip throws; the wrists, for the pins; a blade's own bone across
 import { climbRequestToRig, climbRequestToFirstPerson } from './climbRig.js';   // CLIMB6: ...and in each rig's space
 import { seatRequestFor, seatedCamera, saddleRequestFor } from '../player/seatPose.js';   // CARDS2b: the seat in the rig's space; WAGONS3: and the body still on it; COATS3D: and astride
 import { fieldOfView } from '../ui/viewSettings.js';   // CLIMB6: the world lens the arm's hands are matched to
@@ -73,6 +73,7 @@ import {
   magicEffectRecords, vfxStaticRecords,   // MW-SPELLFX1: the magic effects and the statics their visuals are
   assembleCreature, creatureAnimSources, creatureRecords, CREA_FLAG,   // MWNPC9: a creature's body
   posePartClocks, WEAPON_CLASS, MW_WEAPON_CLASS,   // MW-BOW1: the weapon's own clock
+  placeAtBone,   // TWO-HANDS AUDIT 2: a blade placed at rest, for the pair's guard (bladePictureHeight)
 } from '../formats/mwFirstPerson.js';
 import { PART_BONES, dfRaceKeyOf } from '../formats/mwNpc.js';
 import { portraitFeatures, headFeatures, hairFeatures, matchFace, FACE_MATCH_VERSION } from '../formats/mwFaceMatch.js';
@@ -1719,27 +1720,66 @@ function sayNoArrow(notes) {
  *  here is the right hand's sword in the mirror, which is what a second hand holds. */
 export const OFF_WEAPON_BONE = weaponAttachBone(MW_WEAPON_TYPE.MarksmanBow);
 /**
- * TWO-HANDS AUDIT: THE PAIR'S GUARD ON THE BODY, sized by the sprite lane's: its hand drops GUARD.DOWN design pixels of
- * DFU's 200-high surface (combat/climbHands.js NATIVE_H), so the arm here drops that share of the arms' own picture - the
- * angle at the eye below (FP_FIELD_OF_VIEW's height), carried to the shoulder by the first-person arm's own proportions
- * at rest (pairGuardDip). No number about any skeleton: each rig's angle is read off its arm.
+ * TWO-HANDS AUDIT: THE PAIR'S GUARD ON THE BODY, sized as the sprite lane sizes it (handsLaw.js GUARD) - a share of the
+ * arms' own picture, taken as the angle at the eye (FP_FIELD_OF_VIEW's height) and carried to the shoulder by the arm's
+ * own proportions at rest (pairGuardDip). A hand that holds a blade drops GUARD.LOWER of THAT BLADE'S OWN height on the
+ * picture (TWO-HANDS AUDIT 2: the sprite lane lowers a pair's weapon by LOWER of its drawn height - Mac: "the other weapon
+ * in hand should lower slightly" - and the fists' nine pixels, which the first cut gave the 3D pair, "did not read" on a
+ * weapon; guardLensDrop, measured once per bound blade); a hand that holds none, the fists' GUARD.DOWN design pixels of
+ * DFU's 200-high surface (combat/climbHands.js NATIVE_H) - GUARD_LENS_DROP. No number about any skeleton or weapon: each
+ * angle is read off the rig and the blade it holds.
  */
 const GUARD_SURFACE_H = 200;
 export const GUARD_LENS_DROP = Math.atan((GUARD.DOWN / GUARD_SURFACE_H) * 2 * Math.tan(FP_FIELD_OF_VIEW / 2));
 /**
- * The angle each arm turns down at its shoulder at full guard (combat/mirrorRig.js `dip`): GUARD_LENS_DROP times the eye's
- * distance to the wrist over the shoulder's - a small turn at the shoulder moves the wrist that many times farther than
- * the same turn at the eye would, so on the picture the hand drops GUARD_LENS_DROP. Read at the build's rest pose (the
- * idle's first frame), per side; the body takes the same angles (one body, one guard). Zeros where a bone is missing.
+ * TWO-HANDS AUDIT 2: a blade's height ON the arms' picture, in the lens's tangent units (the whole picture is
+ * 2 tan(FP_FIELD_OF_VIEW / 2) high, as the sprite's surface is its 200 design pixels): rigid piece `p`'s vertices placed
+ * on the RIGHT hand's bone at the pose `mats` (the left blade on the Weapon Bone, its own bone's counterpart, unmirrored -
+ * a pair at rest holds the left arm as the right's mirror, which stands its blade exactly as tall), seen from the eye
+ * (`cameraRef`: the arms' lens looks down the rig's +Y, +Z up), and only as far as the picture shows it - the sprite
+ * lane's `h`, the drawn weapon's height, on the 3D body. 0 where none of it is on the picture.
  */
-export function pairGuardDip(arm, cameraRef) {
-  const plan = arm?.skeleton && arm.mats && arm.fns ? mirrorPlan(arm.skeleton, GRAPH_ROOT, arm.fns.skelMats) : null;
-  const eye = arm?.mats?.get(cameraRef)?.t;
+export function bladePictureHeight(arm, mats, cameraRef, p) {
+  const eye = mats?.get(cameraRef)?.t;
+  if (!eye || !p?.source || p.attachRef == null || !arm?.skeleton) return 0;
+  const sk = arm.skeleton;
+  const bone = p.slot === 'offweapon' ? sk.byName.get(counterpartName(sk.nodes.get(p.attachRef)?.name)) : p.attachRef;
+  const at = bone != null ? mats.get(bone) : null;
+  if (!at) return 0;
+  const v = placeAtBone(p.source, at, false, undefined, p.boneOffset);
+  let lo = Infinity, hi = -Infinity;
+  for (let i = 0; i < v.length; i += 3) {
+    const ahead = v[i + 1] - eye[1];
+    if (!(ahead > 1e-6)) continue;
+    const up = (v[i + 2] - eye[2]) / ahead;
+    if (up < lo) lo = up;
+    if (up > hi) hi = up;
+  }
+  const edge = Math.tan(FP_FIELD_OF_VIEW / 2);
+  const shown = Math.min(hi, edge) - Math.max(lo, -edge);
+  return shown > 0 ? shown : 0;
+}
+/** TWO-HANDS AUDIT 2: the drop on the picture, in radians at the eye, of a hand holding piece `p` at full guard - LOWER of
+ *  the blade's own height (bladePictureHeight), or the fists' GUARD_LENS_DROP for a hand that holds none. */
+export function guardLensDrop(arm, mats, cameraRef, p) {
+  const h = p ? bladePictureHeight(arm, mats, cameraRef, p) : 0;
+  return h > 0 ? Math.atan(GUARD.LOWER * h) : GUARD_LENS_DROP;
+}
+/**
+ * The angle each arm turns down at its shoulder at full guard (combat/mirrorRig.js `dip`): its drop on the picture
+ * (`drop`, per side - guardLensDrop) times the eye's distance to the wrist over the shoulder's - a small turn at the
+ * shoulder moves the wrist that many times farther than the same turn at the eye would, so on the picture the hand drops
+ * `drop`. Read at the build's rest pose (`mats`, the idle's first frame), per side; the body takes the same angles (one
+ * body, one guard). Zeros where a bone is missing.
+ */
+export function pairGuardDip(arm, cameraRef, mats = arm?.mats, drop = { L: GUARD_LENS_DROP, R: GUARD_LENS_DROP }) {
+  const plan = arm?.skeleton && mats && arm.fns ? mirrorPlan(arm.skeleton, GRAPH_ROOT, arm.fns.skelMats) : null;
+  const eye = mats?.get(cameraRef)?.t;
   const side = (s) => {
-    const sh = plan?.uppers?.[s] != null ? arm.mats.get(plan.uppers[s])?.t : null, wr = plan?.hands?.[s] != null ? arm.mats.get(plan.hands[s])?.t : null;
+    const sh = plan?.uppers?.[s] != null ? mats.get(plan.uppers[s])?.t : null, wr = plan?.hands?.[s] != null ? mats.get(plan.hands[s])?.t : null;
     if (!eye || !sh || !wr) return 0;
     const reach = Math.hypot(wr[0] - sh[0], wr[1] - sh[1], wr[2] - sh[2]);
-    return reach > 1e-6 ? GUARD_LENS_DROP * Math.hypot(wr[0] - eye[0], wr[1] - eye[1], wr[2] - eye[2]) / reach : 0;
+    return reach > 1e-6 ? drop[s] * Math.hypot(wr[0] - eye[0], wr[1] - eye[1], wr[2] - eye[2]) / reach : 0;
   };
   return { L: side('L'), R: side('R') };
 }
@@ -2510,6 +2550,7 @@ export async function buildFpArm({
   flies = false,   // AUDIT MW-NPC II K5: a creature body that must fly (its CREA record's Flies flag)
   npcFace = null,   // MWNPC17: an NPC's head and hair, each walked off its seed ({ head, hair } - characters/wardrobe.js npcFaceOf): no portrait to match
   ownHeads = false,   // MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): a player's body - the local player's (weaponRig.js armBuildOptsOf) and a peer's (net/peerBodies.js playerBuildOpts) - wears the port's own heads; every other the data's
+  offWeapon = null,   // TWO-HANDS AUDIT 2: a pair's left-hand weapon, bound in the build on both rigs - the rig's own rebuilds hand the one it holds (setOffWeapon records it)
 } = {}) {
   if (creature) return buildCreatureBody({ creature, flies, deps });   // MWNPC9
   const d = deps || await import('../scenes/dataSource.js');
@@ -2517,6 +2558,7 @@ export async function buildFpArm({
   // (mechanicsmanagerimp.cpp:1896-1901), and the player's items are refused while transformed - so no weapon, no
   // arrow, no torch, no lantern at the hip and no holster, whatever the build was asked for.
   if (werewolf) { weapon = null; hasAmmo = false; ammoCount = null; torch = false; hipLight = false; sheathing = false; }
+  if (werewolf) offWeapon = null;   // TWO-HANDS: nor a second weapon
   let settingsSkeleton = null;
   let skeletonPath = null;
   // MW-LOAD: THE STAGE CLOCK. Mac's question was "where does the time
@@ -2772,6 +2814,7 @@ export async function buildFpArm({
       ...fpRows.map((w) => w.path),
       ...fpAdds.map((add) => `meshes/${add.model}`),
       ...weaponPartPaths({ weapon, hasAmmo, allWeapons, has: archiveHas(archives) }),   // MW-D50
+      ...(offWeapon ? weaponPartPaths({ weapon: offWeapon, allWeapons, has: archiveHas(archives) }) : []),   // TWO-HANDS AUDIT 2: the left hand's, bound below on both rigs
       ...torchPartPaths({ torch, allLights, has: archiveHas(archives) }),   // MW-D51
       ...sourcePaths,
     ]);
@@ -2858,6 +2901,28 @@ export async function buildFpArm({
       without.notes.push(...lost.map((a) => `outfit ${a.recordId}: ${t('body.outfit.unbound', 'none of it bound - drawn without it')}`));   // the label outside the language, as the composer's notes
       const again = await tpBody(without);
       if (again.ok) { third = again; wornBuilt = without; }
+    }
+    // TWO-HANDS AUDIT 2: A PAIR'S LEFT BLADE IS BOUND IN THE BUILD the rig's own rebuilds ask for (setWorn's equip follow,
+    // the curse's face): the left hand's weapon the rig held (`offWeapon`, recorded by setOffWeapon), hung on each rig's
+    // Weapon Bone Left AS ASSEMBLED (the made one where the bytes have none) through the part loop's own door - the swap's
+    // way, the archives still open. Left to the next frame's swap, a rebuild cleared it and the pair stood one-bladed
+    // until the archives reopened (23 frames at a 600 ms reopen).
+    const offBound = { first: null, third: null };
+    if (offWeapon && arm.ok) {
+      for (const [key, r] of /** @type {const} */ ([['first', { arm, textures, skeletonBytes }], ['third', third?.ok ? third : null]])) {
+        if (!r) continue;
+        const res = resolveOffWeaponParts({ weapon: offWeapon, allWeapons, find, skeletonBytes: r.skeletonBytes, has: archiveHas(archives), hasBone: (n) => r.arm.skeleton.byName.has(String(n).toLowerCase()) });
+        bindPartsInto(r.arm, res.parts);
+        const fresh = r.arm.pieces.filter((p) => p.slot === 'offweapon');
+        await preloadArmTextures(fresh, archives, gen);
+        for (const [file, tex] of collectArmTextures(fresh, archives, gen)) if (!r.textures.has(file)) r.textures.set(file, tex);
+        offBound[key] = res;
+      }
+      if (third?.ok && offBound.third) {
+        third.offWeapon = offBound.third.info;
+        third.notes = [...(third.notes || []), ...offBound.third.notes];
+        third.pieces = armPieceRows(third.arm.pieces).length;
+      }
     }
     stage('meshes');
     // IG2: the mapped archives are NO LONGER truncated here - they are
@@ -3066,14 +3131,16 @@ export async function buildFpArm({
       leftArm: blendMaskBones(arm.skeleton),
       skeletonBytes,
       esm: esmDiagnosis(esmNames, parts, race),
-      notes: [...missing, ...weaponNotes, ...(arm.notes || [])],
+      notes: [...missing, ...weaponNotes, ...(offBound.first?.notes ?? []), ...(arm.notes || [])],
+      offWeapon: offBound.first?.info ?? null,   // TWO-HANDS AUDIT 2: the left hand's, bound in the build (setOffWeapon's `offWeapon`)
       binding: idlePick.source.binding,
       pieces: armPieceRows(arm.pieces).length,
       // MW-D34: adjustScale's factors for the drawn body and the
       // camera's focal height.
       raceScale,
-      // TWO-HANDS AUDIT: the pair's guard, each arm's angle at the shoulder - read at this rest pose (pairGuardDip)
-      guardDip: pairGuardDip(arm, cameraRef),
+      // TWO-HANDS AUDIT 2: this rest pose's matrices (the idle's first frame), which the pair's guard is measured on - once
+      // per bound blade, the first time a pair guards (the rig's guardDipNow), never per build: an NPC's never holds a pair
+      restMats: arm.mats,
       // MW-D24: the third-person body, or its named refusal.
       third,
       werewolf: !!werewolf,   // WEREWOLF1: this rig is the wolf
@@ -3483,12 +3550,13 @@ export function createFpArm() {
   // last weapon must not wear the next one's glow; NET-2: and only while the weapon is in hand (a sheathed blade's
   // glow drew nothing, but it still grew a third-person picture's window).
   let weaponGlowSpec = null, glowItem = null, glowKey = null, wornWeaponKey = null;
-  const glowShown = () => (weaponGlowSpec && glowKey === wornWeaponKey && weaponInHand() ? weaponGlowSpec : null);
+  // TWO-HANDS AUDIT 2: and never on the stone, where both rigs hide the blade (the body's picture was padded for it)
+  const glowShown = () => (climbHands ? null : weaponGlowSpec && glowKey === wornWeaponKey && weaponInHand() ? weaponGlowSpec : null);
   // TWO-HANDS: A PAIR'S LEFT BLADE GLOWS WITH ITS OWN ELEMENT - the same law for the second hand: the spec is the left
   // item's it was asked of (`offGlowKey`), laid on the 'offweapon' ranges only while that blade is the one bound
   // (`offKey`, setOffWeapon's) and the pair is drawn (the renderer lights each slot with its own - _drawWeaponGlows)
   let offGlowSpec = null, offGlowItem = null, offGlowKey = null;
-  const offGlowShown = () => (offGlowSpec && offGlowKey != null && offGlowKey === offKey && handsMode === 'dual' && weaponInHand() ? offGlowSpec : null);
+  const offGlowShown = () => (offGlowSpec && offGlowKey != null && offGlowKey === offKey && !climbHands && handsMode === 'dual' && weaponInHand() ? offGlowSpec : null);
   let torchState = null;
   let torchSource = null;
   let torchGroup = null;
@@ -3534,6 +3602,7 @@ export function createFpArm() {
   const strikeSides = new Map();
   const runPump = { wanted: false, speed: 0, w: 0, phase: 0, given: null, targets: null };
   const pairGuard = { L: 0, R: 0 };   // TWO-HANDS AUDIT: each hand's guard weight - the arm lowered while the other strikes
+  let guardDipMemo = null;   // TWO-HANDS AUDIT 2: the guard's angles, per rig and bound blades (guardDipNow)
   let heldMemo = null;           // { base, spec, inner, tracks, sampler }
   let lastFrame = null;          // { model, view, proj, rect } - what draw() last composed with
   /** MW-GUN-FEEL: the gun's kick and reload this frame - `{ pitch, back, down }` (combat/gunFeel.js armGunPose), set by
@@ -4199,13 +4268,21 @@ export function createFpArm() {
    *  one on its Weapon Bone Left. The blade's alone - the arm's composition is pairHeld's. */
   const offShown = (r) => handsMode === 'dual' && weaponInHand() && !!(r && r.offWeapon);
   /**
-   * TWO-HANDS AUDIT: THE PAIR IS IN THE HANDS - both weapons drawn, no spell in them - from the first frame of the right
+   * TWO-HANDS AUDIT: THE PAIR IS IN THE HANDS - both weapons drawn, nothing else in them (handsTaken - AUDIT 2: a sheet,
+   * the stone and death as well as a spell) - from the first frame of the right
    * hand's draw to the last of its sheathe (Equipping and Unequipping whole: the hands go to the hilts before the attach
    * key and leave them after the detach). The second arm is composed exactly then, on every rig, whether or not the rig
    * could hang the left blade (offShown, the blade's own, keeps the weapon's attach and detach keys). The draw was
    * composed only from its attach key, the sheathe to its end: the left arm drew unmirrored and was carried up mid-draw.
    */
-  const pairHeld = () => handsMode === 'dual' && !spellStance() && (weaponShown || upper === UPPER_BODY.Equipping || upper === UPPER_BODY.Unequipping);
+  const pairHeld = () => handsMode === 'dual' && !handsTaken(built) && (weaponShown || upper === UPPER_BODY.Equipping || upper === UPPER_BODY.Unequipping);
+  /**
+   * TWO-HANDS AUDIT 2: SOMETHING ELSE HAS THE HANDS on rig `r` - a sheet held, the stone, a spell readied or cast, death,
+   * a body with no arms to compose (a creature that is no biped, the beast) or no rig: no composition, and no pair in the
+   * hands for the guard to lower (pairHeld). The guard read only the spell of these: a sheet raised mid-blow kept the
+   * sheet's own hand lowered for the blow's whole length (112 frames), and the stone the climbing hand.
+   */
+  const handsTaken = (r) => !r || !r.ok || dead || nonBiped() || !!held || climbHands || spellStance() || !!r.werewolf;
   /** The idle clip as it stands - the hand at rest under the other's blow. Null with no idle playing. */
   const idleClip = () => (idleState && idleSource ? { tracks: idleSource.trackMap, sampleTrack, time: poseTime(idleState) } : null);
   /**
@@ -4241,8 +4318,13 @@ export function createFpArm() {
    * for a sheet held, the stone, a spell, the dead, a beast.
    */
   function mirrorFor(rigKey, r, dt) {
-    const req = { carry: { key: 'none', dt, tau: POSE.LIMB_TAU, state: mirrorCarry[rigKey] }, dip: pairDip() };   // TWO-HANDS AUDIT: the guard, under every gate below (it eases away on its own)
-    if (!r || !r.ok || dead || nonBiped() || held || climbHands || spellStance() || r.werewolf) return req;
+    const req = { carry: { key: 'none', dt, tau: POSE.LIMB_TAU, state: mirrorCarry[rigKey] }, dip: null };
+    // TWO-HANDS AUDIT 2: hands something else has take neither a composition nor the guard - under a key of their own,
+    // so whatever the pair had laid on the arms (its composition, its guard's dip) is CARRIED off them by the mirror's
+    // carry, never dropped in a frame. The first cut kept the dip under every gate (to ease it away): the sheet's hand,
+    // the stone's and the spell's were turned down at the shoulder by the pair's guard
+    if (handsTaken(r)) { req.carry.key = 'taken'; return req; }
+    req.dip = pairDip();   // TWO-HANDS AUDIT: the guard, over every composition below
     const idle = idleClip();
     if (pairHeld()) {   // TWO-HANDS AUDIT: the pair in the hands, not the left blade bound - a rig that cannot hang it still holds two
       if (attackingNow() && attackHand === 'L') {
@@ -4281,20 +4363,43 @@ export function createFpArm() {
     }
   }
   /** TWO-HANDS AUDIT: the angle each arm is lowered at its shoulder this frame (mirrorRig.js's `dip`), or null. */
-  const pairDip = () => (pairGuard.L > 0 || pairGuard.R > 0 ? { L: pairGuard.L * (built?.guardDip?.L ?? 0), R: pairGuard.R * (built?.guardDip?.R ?? 0) } : null);
+  const pairDip = () => {
+    if (!(pairGuard.L > 0 || pairGuard.R > 0)) return null;
+    const d = guardDipNow();
+    return { L: pairGuard.L * (d?.L ?? 0), R: pairGuard.R * (d?.R ?? 0) };
+  };
+  /**
+   * TWO-HANDS AUDIT 2: THE GUARD'S ANGLES, MEASURED ONCE PER BOUND BLADE - each arm's at full guard (pairGuardDip), its
+   * drop the blade it holds (guardLensDrop: the right hand's 'weapon' piece, the left's 'offweapon', the fists' tuck for a
+   * hand with none), on the build's rest pose. Asked the first time a pair guards and again only when a blade is bound
+   * anew (the pieces are the memo's key): every build used to measure it, an NPC's and a peer's too, which never hold a
+   * pair (the mirror's whole plan read for two numbers).
+   */
+  function guardDipNow() {
+    const b = built;
+    if (!b || !b.ok || !b.arm) return null;
+    const right = b.arm.pieces.find((p) => p.slot === 'weapon') ?? null, left = b.arm.pieces.find((p) => p.slot === 'offweapon') ?? null;
+    if (guardDipMemo && guardDipMemo.of === b && guardDipMemo.right === right && guardDipMemo.left === left) return guardDipMemo.dip;
+    const mats = b.restMats ?? b.arm.mats;
+    const drop = { R: guardLensDrop(b.arm, mats, b.cameraRef, right), L: guardLensDrop(b.arm, mats, b.cameraRef, left) };
+    guardDipMemo = { of: b, right, left, drop, dip: pairGuardDip(b.arm, b.cameraRef, mats, drop) };
+    return guardDipMemo.dip;
+  }
   /** TWO-HANDS AUDIT: THE PORTRAIT'S PAIR (figure()) - a pair carried is a pair shown: the left arm the drawn stance's
    *  right in the mirror, as the world holds a pair at rest (mirrorFor's 'dual'); still - no carry, a portrait has no last
    *  frame. Null with one hand. The portrait posed without it showed one arm up and the left blade by whatever the last
    *  world frame of the body had flagged. */
   const portraitMirror = () => (handsMode === 'dual' ? { limbs: { L: { pose: null, side: 'R', mirror: true } } } : null);
   /** The run's pump, stepped once a frame: its weight (up as a run starts, away as it ends, at once for a punch - the
-   *  sprite lane's law) and its stride's phase - the rig's own when it hands one (setRunHands' `phase`: the head bob's
-   *  clock, so the hands stroke with the steps the camera bobs on), else walked by the speed. First person alone: the
-   *  body's own run group swings its arms. */
+   *  sprite lane's law) and its stride's phase - FOLLOWING the rig's own when it hands one (setRunHands' `phase`: the head
+   *  bob's clock, so the hands stroke with the steps the camera bobs on; TWO-HANDS AUDIT 2: never jumping when the bob's
+   *  clock does - handsLaw.js runPhaseFollow, the sprite lane's law too), else walked by the speed. First person alone:
+   *  the body's own run group swings its arms. */
   function stepRunPump(dt) {
+    const fresh = !(runPump.w > 0);   // nothing of the pump drawn: the bob's phase at once
     runPump.w = runWeightStep(runPump.w, runPump.wanted && viewMode === 'first', attackingNow(), dt);
     if (!runPump.wanted && runPump.w < 1e-3) runPump.w = 0;
-    if (runPump.wanted || runPump.w > 0) runPump.phase = Number.isFinite(runPump.given) ? runPump.given : runPhaseStep(runPump.phase, runPump.speed, dt);
+    if (runPump.wanted || runPump.w > 0) runPump.phase = runPhaseFollow(runPump.phase, runPump.given, runPump.speed, dt, fresh);
   }
   /**
    * THE RUNNING HANDS, the first-person arms' (handsLaw.js RUN_3D): each hand at its stroke's place on the arms' own
@@ -4384,9 +4489,12 @@ export function createFpArm() {
    *  the weapon. Anything else is always drawn. */
   function effectHidden(eff) {
     if (eff.slot === 'torch') return !torchVisible();
-    if (eff.slot === 'offweapon') return !offShown(rig());   // TWO-HANDS
+    // TWO-HANDS AUDIT 2: a blade's effect hides where its blade does (the ranges' rule, update()): the stone takes the hands
+    // in either view, a sheet the first person's - its effect drew on in the air where the hidden blade would hang
+    const bladeAway = climbHands || (viewMode === 'first' && !!held);
+    if (eff.slot === 'offweapon') return !offShown(rig()) || bladeAway;   // TWO-HANDS
     if (eff.slot === HIP_LIGHT_SLOT) return !hipVisible();   // HT-WAIST
-    if (eff.slot === 'weapon') return !weaponInHand();
+    if (eff.slot === 'weapon') return !weaponInHand() || bladeAway;
     return false;
   }
   /** MW-CAST1: THE HANDS CAST EMPTY. OpenMW shows no weapon for the Spell stance - showWeapons is false while the
@@ -4935,7 +5043,10 @@ export function createFpArm() {
         thirdBuilt = res && res.ok ? (res.third || null) : null;
         viewMode = res && res.ok && res.creature && thirdBuilt ? 'third' : 'first';   // MWNPC9: a creature is its body, from the first frame
         wornKey = fpWeaponKey(opts && opts.weapon, !!(opts && opts.hasAmmo));
-        offKey = null; strikeSides.clear(); mirrorCarry.first = {}; mirrorCarry.third = {};   // TWO-HANDS: a new rig binds the left hand's weapon at the next frame's door, and measures its clips afresh
+        // TWO-HANDS: a new rig measures its clips afresh, and holds the left hand's weapon the build bound (AUDIT 2: the one
+        // the rig's own rebuild carried over - `offWeapon`), or binds it at the next frame's door
+        offKey = res && res.ok && !res.werewolf && opts && opts.offWeapon ? fpWeaponKey(opts.offWeapon, false) : null;
+        strikeSides.clear(); mirrorCarry.first = {}; mirrorCarry.third = {};
         wornWeaponKey = fpWeaponKey(opts && opts.weapon, false);   // WEAPON-GLOW1 (AUDIT NET-1): the hand the mesh holds
         wornEquipKey = wornEquipKeyOf(opts && opts.armor);
         lastBuildOpts = opts ? { ...opts } : null;
@@ -5583,6 +5694,7 @@ export function createFpArm() {
         pair: pairHeld(),   // TWO-HANDS AUDIT: the pair in the hands - what the second arm's composition stands on
         composed: mirrorCarry[viewMode]?.key ?? null,   // TWO-HANDS AUDIT: the composition the view's rig was last posed with ('none', 'dual', 'dual:L', ...)
         guard: { ...pairGuard },   // TWO-HANDS AUDIT: each arm's guard weight (lowered while the other strikes)
+        guardDrop: guardDipMemo && guardDipMemo.of === built ? { ...guardDipMemo.drop } : null,   // TWO-HANDS AUDIT 2: each hand's drop on the picture at full guard, once measured (guardDipNow)
         offPieces: arm ? arm.pieces.filter((p) => p.slot === 'offweapon').length : 0,
         offHidden: mesh && mesh.ranges ? mesh.ranges.filter((r) => r.slot === 'offweapon').map((r) => !!r.hidden) : [],
         mirrored: arm ? arm.mirrored ?? null : null,

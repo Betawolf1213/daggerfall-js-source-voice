@@ -231,9 +231,14 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
   two arms pump - kept through a hop (AUDIT 2, L2: a jump on the run swapped arms, fists, fists, arms in under a
   second; `runHandsKept` keeps the run aloft for `AIR_GRACE` 0.6 s, one answer for both lanes) - ON THE HEAD BOB'S OWN
   CLOCK (AUDIT): `HeadBobber` hands its timer out every frame
-  (`player/headBobber.js`'s `out`, `player/motor.js` `motionBagOf`'s `bobTimer`) and the pump's phase is that timer a
-  quarter turn behind (`runPhaseOfBob`) - the right arm most forward as the left foot is planted, every step, with no
-  drift; with head bobbing off the pump keeps its own stride (`RUN_STEP_M` 2.5 m a step).
+  (`player/headBobber.js`'s `out`, `player/motor.js` `motionBagOf`'s `bobTimer`) and the pump's phase FOLLOWS that timer
+  a quarter turn behind (`runPhaseOfBob`) - the right arm most forward as the left foot is planted, on the bob's phase
+  every step while it keeps step; with head bobbing off the pump keeps its own stride (`RUN_STEP_M` 2.5 m a step).
+  **Followed, never jumped with** (AUDIT 2, L2 F5 / L3 M3 - `handsLaw.js` `runPhaseFollow`, one law for both lanes):
+  the head bob resets its timer to PI when a run resumes within half a second, and the first cut took the reset whole -
+  a stop of a frame swapped the arms in one frame (227 px of 600). The stride now catches a jump up at its own tempo
+  held within `CATCH` (0.5: half again as fast, or half as fast, the short way round, never backward); a run's first
+  frame, with nothing of the pump drawn, takes the bob's phase at once. Worst one-frame jump at a stutter-step: 37 px.
   - **THE RUNNING ARM IS THE ART'S OWN** (Mac, of the first cut: "theres no arm portion of the sprite, so it looks like
     floating hands"). The first cut lifted the bare hand's idle - `WEAPON10.CIF` record 0, a 63x53 fist cut at the
     wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. The one record of
@@ -304,13 +309,19 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   - the fists - as the clip has them, but a blow thrown by the hand its clip does not throw with is the whole body in
     the mirror, the other fist held where the idle holds it. Which fist a clip throws is MEASURED, not assumed: the
     wrist that travels the farther from the attack's "start" to its "hit" (`strikingSide`), once per clip.
-  Nothing for a sheet held, the stone, a spell, the dead, a beast. The inventory portrait shows the pair, both arms up
-  (AUDIT, L3 8).
+  Nothing for a sheet held, the stone, a spell, the dead, a beast - the guard included (AUDIT 2, L3 M2: `handsTaken`;
+  the gated case is a carry key of its own, `'taken'`, and a hand that took the sheet mid-blow was turned down below it
+  for 112 frames). The inventory portrait shows the pair, both arms up (AUDIT, L3 8).
 - **The guard on the body** (Mac: "the other weapon in hand should lower slightly"): while one hand of a pair strikes,
   the other arm turns DOWN at its shoulder - never translated, so it stays on the body and every bone keeps its length -
-  eased by the sprite lane's weight (`guardStep`). Its size is the sprite guard's share of the picture (9 of 200 design
-  px, `GUARD_LENS_DROP` 0.0519 rad at the eye), carried to the shoulder by each rig's own arm (`pairGuardDip`):
-  measured on the fixture, the held wrist drops 0.0513 rad on the picture at the other hand's hit frame.
+  eased by the sprite lane's weight (`guardStep`). Its size is the sprite lane's PAIR guard (AUDIT 2, L3 M4 - the first
+  cut sized it from the fists' 9 of 200 design px, which the sprite lane gave up on a weapon because it did not read):
+  `GUARD.LOWER` of the blade's own height on the arms' picture (`bladePictureHeight`, the blade placed in the right
+  hand at the build's rest; `guardLensDrop` - on the fixture 0.0898 rad at the eye), the fists' `GUARD_LENS_DROP`
+  (0.0519) for a hand with no blade, carried to the shoulder by each rig's own arm (`pairGuardDip`) and measured once
+  per bound blade at the pair's first guard, never on a build (L3 M5: every NPC's and peer's build had paid for it). No
+  guard is asked while something else has the hands, and the dip is laid into the pose ahead of the carry, so it eases
+  off the arm rather than snapping (L3 M2).
 - **No pop** (the carry, AUDIT, L3 3 and 6): every change of composition carries every bone, IN ITS OWN FRAME, from the
   local it was drawn with last frame onto its new one over `POSE.LIMB_TAU` (ClimbPose's limb law) - its turn, its
   joint's move and its scale eased away, children riding their carried parents, so no joint leaves its bone (worst bone
@@ -320,18 +331,27 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   (`offweapon`) - rule 13 already draws a "Left" bone's part mirrored (the bow's law). **A skeleton without one is
   given one by the mirror** (AUDIT, L3 1 - the blocker: Morrowind's retail skeletons carry no Weapon Bone Left, OpenMW's
   optional node a modded skeleton has, so the pair drew one weapon and the left hand never swung): `offWeaponBoneAddon`
-  hangs it under the left hand at `S . Rest(Weapon Bone) . X` (X turns its x back, rule 13 negating it), through the
-  addons' own door on both of `buildFpArm`'s assemblies - the player's, a peer's and an NPC's body alike - recorded in
-  the assembly's `injected` as `mirrorRig.offWeaponBoneAddon`. On the fixture, which carries one, the made bone equals
-  the authored exactly. A bow never hangs on it (it reads the actor's own bytes). Shown while a pair is drawn, hidden
+  hangs it under the left hand MIRRORED HAND TO HAND (AUDIT 2, L3 M1): its local in the left hand is
+  `F^-1 . local(Weapon Bone) . X` (X turns its x back, rule 13 negating it), F the hands' mirror in the frame the
+  skeleton file's own skin binds them (`skinHandMirror`: retail's never-drawn "Tri Shadow" binds the whole Bip01 chain
+  in the T-pose, exactly symmetric), or the rest's own rotation where no skin binds both. The first cut mirrored the
+  Weapon Bone in graph space at the REST, which retail stands with its hands 1.09 units off each other's mirror: the
+  left grip sat 1.4 units off and 2.8 degrees turned in the left fist; now the right's mirror to about 1e-9. It reads
+  one rest pass and two names (0.73 ms a body -> 0.05). Through the addons' own door on both of `buildFpArm`'s
+  assemblies - the player's, a peer's and an NPC's body alike - recorded in the assembly's `injected` as
+  `mirrorRig.offWeaponBoneAddon`. On the fixture, which carries one, the made bone equals the authored exactly. A bow never hangs on it (it reads the actor's own bytes). Shown while a pair is drawn, hidden
   sheathed, under a sheet, on the stone or in a spell. `setOffWeapon` queues behind a build like `setWeapon`, and a
-  failed left swap is tried again the next time (AUDIT, L3 9). The arm's hands go through ONE door (AUDIT 2, L4:
+  failed left swap is tried again the next time (AUDIT, L3 9). A rebuild keeps it (AUDIT 2, L3 M6): `buildFpArm` takes
+  the left weapon the rig recorded (`offWeapon`) and binds it on both rigs after assembly (`resolveOffWeaponParts`) -
+  an armour change had dropped the left blade until the archives reopened (23 frames at a 600 ms reopen; 0 now). The
+  arm's hands go through ONE door (AUDIT 2, L4:
   `weaponRig.js` `handArm` - the right hand's item, the left's, the mode and the lead), asked by the frame and by the
   enhanced pack (`ui/enhancedInventory.js`, handed `handArm` by each host on the line that hands it `usingRightHand`),
   whose window blocks the frame while the table changes under it: the pack had kept its own one-hand read, so a
   left-led pair held the left weapon in both hands while the window was up and a pair made in it showed only on close.
-- **The running hands** (`RUN_3D`): the same stride, snap and weight as the sprite lane's, the stride the rig's own
-  head-bob phase when handed one (`setRunHands`' `phase`), each hand at its stroke's place on the arms' own picture - a
+- **The running hands** (`RUN_3D`): the same stride, snap and weight as the sprite lane's, the stride FOLLOWING the
+  rig's own head-bob phase when handed one (`setRunHands`' `phase`, by the sprite lane's `runPhaseFollow` - AUDIT 2, L3
+  M3: a stutter-step's reset had swung the wrists 8.9 units in a frame on the retail scale, now 4.4, its own stride's), each hand at its stroke's place on the arms' own picture - a
   line from the rig's eye through a share of the frame, laid in the arm LENS's pitched frame (AUDIT, L3 11: with
   follow-camera off a look half a radian down lifted the hands 0.4 rad up the picture), a point `d` metres out -
   reached by the climb's solver (`climbRig.js`) with the fist clenched, the palm in, the elbow out and back; first
@@ -358,7 +378,9 @@ one, never one hand's glow on both:
   and while the pair is drawn (`offGlowShown` - the held glow's NET-1 law for the second hand). The renderer lights each
   slot with its own glow, each its own pass (`Renderer._drawWeaponGlows`: 'weapon', then 'offweapon'); a third-person
   picture is padded for the larger of the two outlines (`characterSprite.js` `drawRigSpriteBox`'s `glowLook`, one look
-  or two).
+  or two). Neither blade wears its glow on the stone, and a blade's particle effect hides wherever its mesh does - under a
+  sheet, on the stone (AUDIT 2, L3's two suspected gaps, both confirmed: `glowShown`/`offGlowShown`, `effectHidden`; the
+  right blade had the same gap and takes the same rule).
 - PIN MOVED, each with its note: `weaponglow1` (the clone's set and outline per item, the arm's held item and left
   blade, the pad's looks), `coats3d_horse3d`, `invislook` and `prbow1_bow` (the third-person draw's `glowLook: padLooks`),
   `mwtorch` (the left item named once).
@@ -392,8 +414,6 @@ one, never one hand's glow on both:
 - **Werecreature claws**: the beast stays single (DFU's racial override, one claw sprite).
 - **A skeleton with no Weapon Bone at all**: no left weapon is made for it (there is nothing to mirror); the pair still
   composes and swings.
-- **A rebuild drops the left blade for a frame**: an equip-follow rebuild (`setWorn`) leaves it hidden until the next
-  frame binds it.
 - **The 3D run on the fixture's scale**: the fixture arm's run targets stand ~28 units out from a ~1.5-unit arm, so its
   pins measure the targets asked (identical at every look) rather than a reach.
 - **The test suite holds no ARENA2**: the sprite lane is pinned through a real rig on a synthetic WEAPON CIF (its
@@ -402,17 +422,17 @@ one, never one hand's glow on both:
 
 ## Pins
 
-- `test/twohands.test.js` (21): the law and the painted arm, the balance MEASURED through the machine at two frame
+- `test/twohands.test.js` (23 - AUDIT 2's two: the off hand's blow as 0.8 of a blow in all it counts, and the sprite lane audited again): the law and the painted arm, the balance MEASURED through the machine at two frame
   rates, PlayerWeapon through the real formula and the override seam (the flurry's frame, the schedule's ticks, H's
   exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
   synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
   clock, what takes a hand, the mods), the branch by source, a left-handed player.
-- `test/twohands_mw.test.js` (23): the mirror rig on the retail biped (counterparts, the plan, the law in each bone's
+- `test/twohands_mw.test.js` (29 - AUDIT 2's six for L3): the mirror rig on the retail biped (counterparts, the plan, the law in each bone's
   frame - every joint on its parent, a twisted chest, the carry per bone, the made Weapon Bone Left, which fist a clip
   throws) and the arm over the fixture arm (the left weapon on a skeleton without one, the pair from draw to sheathe,
   the mirrored blow's way, the guard's dip, the fists, the running hands under the climb and on the pitched lens, the
-  portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 40 mutants, all dead.
-- `tools/mutants/twohands.json`: 122 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+  portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 70 mutants, all dead.
+- `tools/mutants/twohands.json`: 182 mutants, all dead (65 of them AUDIT 2's, `TWOHANDS-AUDIT2-*` and `TWOHANDS-SPRITE2-*`; 39 the first audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
   each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
   `TWOHANDS-LOWER-*`; 12 the pair's glow, `TWOHANDS-GLOW-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a

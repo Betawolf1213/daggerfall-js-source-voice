@@ -9,6 +9,12 @@
 // its bone (the law in each bone's frame), the carry in each bone's frame, the run and the climb blended, a mirrored
 // blow's way across the screen, a carry kept across a view switch, the pair's draw composed, the portrait's pair, a
 // failed left-hand swap remembered forever, the mirror's cost, the run's lens - and the rig's own stride phase.
+//
+// TWO-HANDS AUDIT 2 (2026-10-16, lane 3): the made Weapon Bone Left mirrored hand to hand in the skin's frame (M1), the
+// guard dropped where something else has the hands and carried off the arm (M2), the stride following the head bob
+// without jumping (M3, the sprite lane's law too), the guard sized by the blade's own height (M4), the made bone and the
+// guard paid for only where used (M5), a rebuild keeping the left blade (M6), the blades' effects and glows going with
+// the blades; and two of L5's - the lantern under the Morrowind arm, H between the fists.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -17,10 +23,12 @@ import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, injectSkeletonNodes
 import { mat33Mul } from '../src/formats/mwNifMesh.js';
 import { applyMirrorRig, mirrorPlan, counterpartName, strikingSide, limbSkeleton, offWeaponBoneAddon, WEAPON_BONE_LEFT_SOURCE } from '../src/combat/mirrorRig.js';
 import { rotAxisAngle } from '../src/combat/climbRig.js';
-import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, resolveOffWeaponParts, resolveWeaponParts, OFF_WEAPON_BONE, fpWeaponKey, GUARD_LENS_DROP } from '../src/combat/fpArm.js';
-import { GUARD } from '../src/combat/handsLaw.js';
+import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, resolveOffWeaponParts, resolveWeaponParts, OFF_WEAPON_BONE, fpWeaponKey, GUARD_LENS_DROP, bladePictureHeight } from '../src/combat/fpArm.js';
+import { GUARD, RUN_PUMP, RUN_STEP_M, runPhaseOfBob, runPhaseFollow, runPhaseStep } from '../src/combat/handsLaw.js';
+import { HeadBobber } from '../src/player/headBobber.js';
 import { MW_WEAPON_TYPE, assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';
+import { SHADOW_INVERSE_BINDS } from './fixtures/mw/retailRig.mjs';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
@@ -288,9 +296,11 @@ const noLeftBone = () => patchName(f('armfp.nif'), 'Weapon Bone Left', 'Weapon B
 const noWeaponBone = () => patchName(noLeftBone(), 'Weapon Bone', 'Weapon Bonx');
 const injectAddon = (sk) => { const a = offWeaponBoneAddon(sk, GRAPH_ROOT, skeletonSpaceMatrices); return a ? injectSkeletonNodes(sk, a) : null; };
 
-test('TWO-HANDS AUDIT the left hand\'s weapon bone (finding 1): a skeleton without a Weapon Bone Left - every retail one - is given one made by the mirror from its own Weapon Bone, under the left hand, at S . Rest(Weapon Bone) . X - on the fixture arm (which carries both) exactly the authored one; on the retail biped the plan then pairs the two weapon bones; a skeleton that has one, or no Weapon Bone, is given none', () => {
+test('TWO-HANDS AUDIT the left hand\'s weapon bone (finding 1; AUDIT 2, L3 M1): a skeleton without a Weapon Bone Left - every retail one - is given one made by the mirror from its own Weapon Bone, under the left hand, MIRRORED HAND TO HAND - local(WBL) = F^-1 . local(Weapon Bone) . X, F the hands\' mirror in the frame the skeleton file\'s own skin binds them (retail\'s Tri Shadow: the grip in the left fist as the right\'s in the right), the rest\'s own where no skin binds both, a turned skin never read; on the fixture arm (which carries both) exactly the authored one; on the retail biped the plan then pairs the two weapon bones; a skeleton that has one, or no Weapon Bone, is given none; read off two names, never the whole plan', async () => {
   assert.equal(counterpartName('Weapon Bone'), OFF_WEAPON_BONE.toLowerCase(), 'the node the left hand\'s weapon hangs on, the Weapon Bone\'s counterpart');
   const X = { a: Float32Array.from([-1, 0, 0, 0, 1, 0, 0, 0, 1]), t: [0, 0, 0] };
+  const lin = (m) => ({ a: m.a, t: [0, 0, 0] });
+  const localOf = (node) => ({ a: Array.from(node.rest.rotation, (v) => v * (node.rest.scale ?? 1)), t: node.rest.translation });
   // the fixture: the authored node, and the one made with it renamed away
   const authored = buildSkeleton(parseNif(f('armfp.nif')));
   assert.equal(offWeaponBoneAddon(authored, GRAPH_ROOT, skeletonSpaceMatrices), null, 'it has one');
@@ -301,21 +311,53 @@ test('TWO-HANDS AUDIT the left hand\'s weapon bone (finding 1): a skeleton witho
   assert.ok(made.nodes.get(wbl).injected);
   assert.equal(made.nodes.get(made.nodes.get(wbl).parent).name, 'Left Hand', 'under the left hand');
   assert.ok(diff(M(made, new Map()).get(wbl), M(authored, new Map()).get(authored.byName.get('weapon bone left'))) < 1e-6, 'the authored node, exactly');
-  // retail: the made node at the mirror of the Weapon Bone, its own x turned back - its "Left" is rule 13's
+  // retail, no skin handed: the rest's own mirror of the hands, K = the 3x3 of Rest(R hand)^-1 . S . Rest(L hand) - the
+  // 3x3 alone (PIN MOVED, TWO-HANDS AUDIT 2: the first cut hung it at S . Rest(Weapon Bone) . X in the graph's space,
+  // which carried the rest's own asymmetry - its hands 1.09 units off each other's mirror - into the grip)
   const sk = retail();
   injectAddon(sk);
   const rest = M(sk, new Map());
-  const want = mul(mul(SofRest(sk), rest.get(sk.byName.get('weapon bone'))), X);
-  const node = sk.nodes.get(sk.byName.get('weapon bone left'));
+  const ref = (n) => sk.byName.get(n);
+  const K = lin(mul(mul(inv(rest.get(ref('bip01 r hand'))), SofRest(sk)), rest.get(ref('bip01 l hand'))));
+  const node = sk.nodes.get(ref('weapon bone left'));
   assert.equal(node.name, 'Weapon Bone Left');
   assert.equal(sk.nodes.get(node.parent).name, 'Bip01 L Hand');
-  assert.ok(diff(rest.get(sk.byName.get('weapon bone left')), want) < 1e-4, 'S . Rest(Weapon Bone) . X, the plane the skeleton\'s own middle');
+  assert.ok(diff(localOf(node), mul(mul(inv(K), localOf(sk.nodes.get(ref('weapon bone')))), X)) < 1e-4, 'K^-1 . local(Weapon Bone) . X - the rest\'s mirror, hand to hand');
   const plan = mirrorPlan(sk, GRAPH_ROOT, skeletonSpaceMatrices);
-  assert.equal(plan.counterpart.get(sk.byName.get('weapon bone')), sk.byName.get('weapon bone left'), 'the weapon bones pair');
+  assert.equal(plan.counterpart.get(ref('weapon bone')), ref('weapon bone left'), 'the weapon bones pair');
   assert.deepEqual([...plan.counterpart].filter(([, c]) => c == null).map(([q]) => sk.nodes.get(q).name), ['Shield Bone'], 'the Shield Bone alone rides');
-  // the pair at rest: the left weapon's frame (x turned back, as rule 13 draws it) is the right weapon's in the mirror
+  // the pair at rest on the rest's mirror: the left weapon's frame (x turned back, as rule 13 draws it) is the right's in the mirror
   const p = new Map(); applyMirrorRig(sk, p, GRAPH_ROOT, skeletonSpaceMatrices, { limbs: { L: { pose: null, side: 'R', mirror: true } } });
-  assert.ok(diffRot(mul(M(sk, p).get(sk.byName.get('weapon bone left')), X), mul(SofRest(sk), rest.get(sk.byName.get('weapon bone')))) < 1e-4);
+  assert.ok(diffRot(mul(M(sk, p).get(ref('weapon bone left')), X), mul(SofRest(sk), rest.get(ref('weapon bone')))) < 1e-4);
+  // retail WITH its own skin (the skeleton file's Tri Shadow, bound in the T-pose, symmetric to the last digit where the
+  // rest is not): F the 3x3 of Bind(R hand)^-1 . S . Bind(L hand), read here by hand off the shadow's records
+  const bytes = retailBytes();
+  const nif = parseNif(bytes);
+  const skin = buildSkeleton(nif);
+  injectSkeletonNodes(skin, offWeaponBoneAddon(skin, GRAPH_ROOT, skeletonSpaceMatrices, nif));
+  const IB = (n) => ({ a: SHADOW_INVERSE_BINDS.get(n).a, t: [0, 0, 0] });
+  const F = lin(mul(mul(IB('Bip01 R Hand'), { a: [-1, 0, 0, 0, 1, 0, 0, 0, 1], t: [0, 0, 0] }), inv(IB('Bip01 L Hand'))));
+  const want = mul(mul(inv(F), localOf(skin.nodes.get(skin.byName.get('weapon bone')))), X);
+  const got = localOf(skin.nodes.get(skin.byName.get('weapon bone left')));
+  assert.ok(diff(got, want) < 1e-4, `F^-1 . local(Weapon Bone) . X - the right's grip mirrored into the left fist: ${got.t.map((v) => v.toFixed(2))} / ${want.t.map((v) => v.toFixed(2))}`);
+  const firstCut = mul(inv(rest.get(ref('bip01 l hand'))), mul(mul(SofRest(sk), rest.get(ref('weapon bone'))), X));
+  assert.ok(dist(firstCut.t, want.t) > 1.3, `the first cut's grip stood ${dist(firstCut.t, want.t).toFixed(3)} units off in the left fist`);
+  // ...a skin bound in a turned frame binds in another frame - not read: the rest's mirror stands
+  const turned = { ...nif, records: nif.records.map((x) => (x?.type === 'NiSkinData' ? { ...x, transform: { ...x.transform, rotation: Float32Array.from([0, -1, 0, 1, 0, 0, 0, 0, 1]) } } : x)) };
+  const tsk = buildSkeleton(nif);
+  injectSkeletonNodes(tsk, offWeaponBoneAddon(tsk, GRAPH_ROOT, skeletonSpaceMatrices, turned));
+  assert.ok(diff(localOf(tsk.nodes.get(tsk.byName.get('weapon bone left'))), localOf(node)) < 1e-6, 'a turned skin: the rest\'s mirror, as with none');
+  // the player's assembly hands the skeleton file along: its made bone is the skin's
+  const asm = await assembleFirstPersonArm({ skeletonBytes: bytes, parts: [], offWeaponBone: true });
+  assert.ok(diff(localOf(asm.skeleton.nodes.get(asm.skeleton.byName.get('weapon bone left'))), want) < 1e-4, 'through the assembly: the skin\'s mirror');
+  // TWO-HANDS AUDIT 2 (L3 M5): two names and the hands' rests - never the whole plan (every NPC and peer body made one,
+  // ~0.7 ms, to read two bones): a skeleton's names counted as the addon asks them
+  const counted = buildSkeleton(nif);
+  let asked = 0;
+  const names = counted.byName;
+  counted.byName = { get: (k) => { asked++; return names.get(k); }, has: (k) => { asked++; return names.has(k); }, set: (k, v) => names.set(k, v) };
+  assert.ok(offWeaponBoneAddon(counted, GRAPH_ROOT, skeletonSpaceMatrices, nif));
+  assert.ok(asked <= 4, `the addon asked ${asked} names (the plan asks one a bone, ${counted.nodes.size})`);
   const none = buildSkeleton(parseNif(noWeaponBone()));
   assert.equal(offWeaponBoneAddon(none, GRAPH_ROOT, skeletonSpaceMatrices), null, 'no Weapon Bone, nothing to make one from');
 });
@@ -445,11 +487,24 @@ test('TWO-HANDS the arm, the pair: the left hand\'s weapon binds on both rigs an
   assert.equal(arm.handsState().offPieces, 0, 'and a hand emptied lets it go');
 }));
 
-test('TWO-HANDS AUDIT the arm, THE PAIR\'S GUARD (Mac: "When attacking with a weapon, the other weapon in hand should lower slightly"): while one hand of a pair strikes the other arm is lowered at its shoulder - at the blow\'s hit its wrist stands the sprite guard\'s share of the arms\' picture lower (GUARD.DOWN of 200, GUARD_LENS_DROP) - eased in fast and out slower (guardStep), the striking arm never, every bone on its parent', () => seeded(async () => {
+test('TWO-HANDS AUDIT the arm, THE PAIR\'S GUARD (Mac: "When attacking with a weapon, the other weapon in hand should lower slightly"): while one hand of a pair strikes the other arm is lowered at its shoulder - at the blow\'s hit its wrist stands GUARD.LOWER of ITS OWN BLADE\'S height on the arms\' picture lower (TWO-HANDS AUDIT 2, L3 M4: the sprite lane\'s weapon law, not the fists\' 9 of 200 px), measured the first time a pair guards and never at the build - eased in fast and out slower (guardStep), the striking arm never, every bone on its parent', () => seeded(async () => {
   const arm = await drawnArm();
+  assert.equal(arm.handsState().guardDrop, null, 'TWO-HANDS AUDIT 2 (L3 M5): the build measures no guard - a body that never holds a pair never pays for one');
+  assert.equal('guardDip' in arm.built(), false);
   arm.setHands({ mode: 'dual', lead: 'R' });
   await arm.setOffWeapon(LONGSWORD);
   for (let i = 0; i < 40; i++) arm.update(1 / 60);
+  assert.equal(arm.handsState().guardDrop, null, 'a pair at rest: still unmeasured');
+  // the oracle: the left blade AS DRAWN in the pair at rest, seen from the eye - the part of it on the picture (the lens
+  // 60 degrees high, the arms looking down +Y), in the lens's tangents; the guard lowers it LOWER of that
+  const shownHeight = () => {
+    const b = arm.built(), eye = b.arm.mats.get(b.cameraRef).t, v = b.arm.pieces.find((q) => q.slot === 'offweapon').positions, edge = Math.tan(Math.PI / 6);
+    let lo = Infinity, hi = -Infinity;
+    for (let i = 0; i < v.length; i += 3) { const a = v[i + 1] - eye[1]; if (a > 1e-6) { lo = Math.min(lo, (v[i + 2] - eye[2]) / a); hi = Math.max(hi, (v[i + 2] - eye[2]) / a); } }
+    return Math.min(hi, edge) - Math.max(lo, -edge);
+  };
+  const wantDrop = Math.atan(GUARD.LOWER * shownHeight());
+  assert.ok(Math.abs(wantDrop - GUARD_LENS_DROP) > 0.3 * GUARD_LENS_DROP, `the blade's own share (${wantDrop.toFixed(4)}) is not the fists' (${GUARD_LENS_DROP.toFixed(4)}) - the pin tells them apart`);
   const sk = arm.built().arm.skeleton;
   const elev = (hand) => { const b = arm.built(); const eye = b.arm.mats.get(b.cameraRef).t; const w = arm.handsState().wrists[hand]; return Math.atan2(w[2] - eye[2], w[1] - eye[1]); };
   const bones = () => { const m = arm.built().arm.mats; let w = 0; for (const n of ['Left Upper Arm', 'Left Forearm', 'Left Hand']) { const r = sk.byName.get(n.toLowerCase()), node = sk.nodes.get(r); w = Math.max(w, Math.abs(dist(m.get(node.parent).t, m.get(r).t) - Math.hypot(...node.rest.translation))); } return w; };
@@ -468,7 +523,15 @@ test('TWO-HANDS AUDIT the arm, THE PAIR\'S GUARD (Mac: "When attacking with a we
   const rel = g.map((r, i) => (r.u === 'AttackRelease' ? i : -1)).filter((i) => i >= 0);
   const at = rel[rel.length - 1];   // the release's last frame: the blow's hit
   const drop = rest - g[at].e;
-  assert.ok(Math.abs(drop - GUARD_LENS_DROP) < 0.15 * GUARD_LENS_DROP, `at the hit the held wrist is ${drop.toFixed(4)} rad lower on the picture (the sprite guard's ${GUARD.DOWN} of 200 px: ${GUARD_LENS_DROP.toFixed(4)})`);
+  // PIN MOVED (TWO-HANDS AUDIT 2, L3 M4): the drop was the fists' GUARD.DOWN of 200 px (GUARD_LENS_DROP, 0.0519 rad)
+  assert.ok(Math.abs(drop - wantDrop) < 0.15 * wantDrop, `at the hit the held wrist is ${drop.toFixed(4)} rad lower on the picture (LOWER ${GUARD.LOWER} of its blade's ${shownHeight().toFixed(3)} on the picture: ${wantDrop.toFixed(4)}; the fists' ${GUARD_LENS_DROP.toFixed(4)})`);
+  assert.ok(Math.abs(arm.handsState().guardDrop.L - wantDrop) < 0.1 * wantDrop, `measured once, on the build's rest: ${arm.handsState().guardDrop.L.toFixed(4)} (as drawn at rest ${wantDrop.toFixed(4)})`);
+  // the left blade is measured in the RIGHT hand (its bone's counterpart, unmirrored): a pair at rest holds the left arm as
+  // the right's mirror, which stands its blade as tall - wherever the left hand stands when the guard is first asked
+  const built = arm.built(), turned = new Map(built.restMats), wblRef = built.arm.skeleton.byName.get('weapon bone left');
+  turned.set(wblRef, { a: Float32Array.from([1, 0, 0, 0, 0, -1, 0, 1, 0]), t: turned.get(wblRef).t });
+  const piece = (slot) => built.arm.pieces.find((q) => q.slot === slot);
+  assert.equal(bladePictureHeight(built.arm, turned, built.cameraRef, piece('offweapon')), bladePictureHeight(built.arm, built.restMats, built.cameraRef, piece('weapon')), 'the left blade measured in the right hand');
   assert.ok(g[2].w > 0.6, `in fast (three frames: ${g[2].w.toFixed(3)}, GUARD.IN_TAU ${GUARD.IN_TAU} s)`);
   const end = g.findIndex((r) => r.u === 'WeaponEquipped');
   assert.ok(end > at && g[end + 2].w > 0.6 && g[end + 2].w < 0.95, `out slower (three frames after the blow: ${g[end + 2].w.toFixed(3)}, GUARD.OUT_TAU ${GUARD.OUT_TAU} s)`);
@@ -493,6 +556,12 @@ test('TWO-HANDS AUDIT the arm on a skeleton WITHOUT a Weapon Bone Left (finding 
   assert.equal(h.pair, true);
   assert.ok(h.mirrored && h.composed === 'dual', 'the pair held: the left arm is the right\'s mirror before any blade binds');
   assert.ok(Math.abs(h.wrists.L[0] + h.wrists.R[0]) < 0.05, `${h.wrists.L} / ${h.wrists.R}`);
+  // TWO-HANDS AUDIT 2 (L3 M4): the guard of a hand that holds no blade is the fists' tuck (GUARD.DOWN of 200 px); the hand
+  // with one, LOWER of that blade's own height - each measured once per blade bound
+  blow(arm, 'R');
+  assert.equal(arm.handsState().guardDrop.L, GUARD_LENS_DROP, 'the bladeless left hand: the fists\' tuck');
+  assert.ok(arm.handsState().guardDrop.R > 1.3 * GUARD_LENS_DROP, `the right, its blade's share: ${arm.handsState().guardDrop.R.toFixed(4)}`);
+  for (let i = 0; i < 20; i++) arm.update(0.05);
   await arm.setOffWeapon(LONGSWORD);
   for (let i = 0; i < 4; i++) arm.update(0.05);
   h = arm.handsState();
@@ -500,6 +569,7 @@ test('TWO-HANDS AUDIT the arm on a skeleton WITHOUT a Weapon Bone Left (finding 
   assert.equal(arm.status().third.offWeapon?.bone, 'Weapon Bone Left', 'and the body');
   const left = blow(arm, 'L');
   assert.ok(left.mirrored > 10 && left.L > 2 * left.R, `the left blow is the left arm's (${left.L.toFixed(3)} / ${left.R.toFixed(3)})`);
+  assert.ok(Math.abs(arm.handsState().guardDrop.L - arm.handsState().guardDrop.R) < 1e-9, 'the left blade bound: measured again, its own share (the same longsword)');
   arm.setViewMode('third');
   for (let i = 0; i < 10; i++) arm.update(0.05);
   assert.deepEqual(arm.thirdMesh().ranges.filter((r) => r.slot === 'offweapon').map((r) => r.hidden), [false], 'the body draws it');
@@ -560,7 +630,7 @@ test('TWO-HANDS AUDIT the arm, A MIRRORED BLOW KEEPS THE WAY ASKED (finding 5): 
   assert.equal(arm.status().attackReversed, false);
 }, 0.5));
 
-test('TWO-HANDS the arm, the running hands: running with nothing in hand the pump takes the hands (up as the run starts, posed past half), the two wrists out of step with the stride; a punch takes them at once; the run\'s end lets them go; third person never; the rig\'s own stride phase (the head bob\'s clock) is taken as it stands, the speed\'s walk where it hands none', () => seeded(async () => {
+test('TWO-HANDS the arm, the running hands: running with nothing in hand the pump takes the hands (up as the run starts, posed past half), the two wrists out of step with the stride; a punch takes them at once; the run\'s end lets them go; third person never; the rig\'s own stride phase (the head bob\'s clock) is FOLLOWED - stood on while it keeps the stride\'s step, caught up within CATCH of the stride\'s tempo when it jumps (TWO-HANDS AUDIT 2, L3 M3) - the speed\'s walk where it hands none', () => seeded(async () => {
   const arm = await drawnArm();
   arm.setHands({ mode: 'fists', lead: 'R' });
   arm.setSheathed(true);
@@ -578,20 +648,41 @@ test('TWO-HANDS the arm, the running hands: running with nothing in hand the pum
   let opposite = 0, n = 0;
   for (let i = 21; i < 60; i++) { const a = zs.L[i] - zs.L[i - 1], b = zs.R[i] - zs.R[i - 1]; if (Math.abs(a) > 1e-3 && Math.abs(b) > 1e-3) { n++; if (Math.sign(a) !== Math.sign(b)) opposite++; } }
   assert.ok(opposite / n > 0.8, `out of step (${opposite}/${n})`);
-  // the rig's phase: held exactly, the hands still on it; another phase, another stroke; none handed, the walk again
-  arm.setRunHands(true, { speed: 7, phase: 2.5 });
-  for (let i = 0; i < 30; i++) arm.update(1 / 30);
-  assert.equal(arm.handsState().run.phase, 2.5, 'the phase the rig hands is the stroke\'s');
-  const still = arm.handsState().wrists;
-  arm.setRunHands(true, { speed: 7, phase: 2.5 }); arm.update(1 / 30);
-  assert.ok(travel(still.R, arm.handsState().wrists.R) < 1e-3, 'a phase that stands, hands that stand');
-  arm.setRunHands(true, { speed: 7, phase: 2.5 + Math.PI / 2 });
-  for (let i = 0; i < 30; i++) arm.update(1 / 30);
-  assert.ok(travel(still.R, arm.handsState().wrists.R) > 0.05, 'another phase, the hand elsewhere in its stroke');
-  arm.setRunHands(true, { speed: 7 });
+  // PIN MOVED (TWO-HANDS AUDIT 2, L3 M3): the rig's phase was taken AS IT STANDS (`run.phase === 2.5` for a phase handed
+  // still) - and HeadBobber's clock jumps: a run resumed inside its 0.5 s stop sets the timer to PI, so a stutter-step
+  // swapped the fists in a frame. Now the phase FOLLOWS the bob: on it while the bob keeps the stride's step, caught up
+  // within RUN_PUMP.CATCH of the stride's own tempo when it jumps, never backward. A real HeadBobber drives it here.
+  const bobber = new HeadBobber(), bag = {}, look = { pitch: 0, yaw: 0 };
+  const DT = 1 / 60, V = 7, walk = V * DT * Math.PI / RUN_STEP_M;
+  const runFrame = (moving) => {
+    bobber.update(DT, look, { enabled: true, running: true, grounded: true, velocity: moving ? V : 0, moving, out: bag });
+    const before = arm.handsState().run.phase;
+    arm.setRunHands(true, { speed: moving ? V : 0, phase: runPhaseOfBob(bag.bobTimer) });
+    arm.update(DT);
+    const after = arm.handsState().run.phase;
+    return { step: after - before - 2 * Math.PI * Math.round((after - before) / (2 * Math.PI)), on: after === runPhaseOfBob(bag.bobTimer), wrists: arm.handsState().wrists };
+  };
+  for (let i = 0; i < 90; i++) runFrame(true);
+  assert.ok(runFrame(true).on, 'a steady run: the stroke stands ON the bob\'s phase, to the last digit');
+  // the stutter-step: one frame stopped mid-run, and the bob's timer jumps back to PI as the run resumes - from a stride
+  // half a turn away from it, the arms' swap the first cut drew
+  for (let i = 0; i < 120 && Math.abs(bobber.timer - 1.5 * Math.PI) > 0.2 && bobber.timer > 0.2; i++) runFrame(true);
+  const jump = Math.abs(bobber.timer - Math.PI);
+  assert.ok(jump > 1, `the stop lands far from PI (${bobber.timer.toFixed(2)})`);
+  const steady = runFrame(true);
+  const stride = travel(arm.handsState().wrists.R, runFrame(true).wrists.R);
+  runFrame(false);
+  const resumed = [];
+  for (let i = 0; i < 60; i++) resumed.push(runFrame(true));
+  assert.ok(resumed.every((r) => r.step >= walk * (1 - RUN_PUMP.CATCH) - 1e-9 && r.step <= walk * (1 + RUN_PUMP.CATCH) + 1e-9), `no frame steps outside the stride's tempo, +-CATCH: ${resumed.slice(0, 4).map((r) => r.step.toFixed(3))} (a stride's step ${walk.toFixed(3)})`);
+  const swing = Math.max(...resumed.slice(0, 3).map((r, i) => travel((i ? resumed[i - 1] : steady).wrists.R, r.wrists.R)));
+  assert.ok(swing < 3 * stride + 0.02, `the fists never swap in a frame: ${swing.toFixed(3)} (a running frame's ${stride.toFixed(3)})`);
+  assert.ok(resumed.slice(-5).every((r) => r.on), `caught up within a second: back ON the bob's phase (it jumped ${jump.toFixed(2)})`);
+  // none handed (head bobbing off): the speed's own stride, exactly
+  arm.setRunHands(true, { speed: V });
   const p0 = arm.handsState().run.phase;
-  arm.update(1 / 30);
-  assert.ok(arm.handsState().run.phase !== p0, 'no phase handed: the speed walks it');
+  arm.update(DT);
+  assert.ok(Math.abs(arm.handsState().run.phase - (p0 + walk) % (2 * Math.PI)) < 1e-9, 'no phase handed: the speed walks it, a stride\'s step a frame');
   arm.setRunHands(false);
   for (let i = 0; i < 60; i++) arm.update(1 / 30);
   assert.equal(arm.runPosed(), false);
@@ -642,8 +733,12 @@ test('TWO-HANDS AUDIT the arm, THE RUN ON THE LENS (finding 11): with the arms o
     arm.setHands({ mode: 'fists', lead: 'R' });
     arm.setSheathed(true);
     for (let i = 0; i < 40; i++) arm.update(1 / 60);
-    // a phase that stands, so each look reads the same stroke
-    arm.setRunHands(true, { speed: 7, phase: 1 });
+    // a phase that stands, so each look reads the same stroke - PIN MOVED (TWO-HANDS AUDIT 2): and a stride that stands
+    // with it (speed 0): the phase now FOLLOWS the bob within the stride's tempo (handsLaw.js runPhaseFollow), and a bob
+    // standing still under a body running 7 m/s is no clock it stands on
+    arm.setRunHands(true, { speed: 0, phase: 1 });
+    arm.update(1 / 60);
+    assert.equal(arm.handsState().run.phase, 1, 'the run\'s first frame takes the rig\'s phase at once - nothing of the pump drawn yet (runPhaseFollow\'s `fresh`)');
     const onLens = (eye, p) => { const d = [p[0] - eye[0], p[1] - eye[1], p[2] - eye[2]]; const fwd = [0, Math.cos(pitch), Math.sin(pitch)], up = [0, -Math.sin(pitch), Math.cos(pitch)]; return Math.atan2(d[0] * up[0] + d[1] * up[1] + d[2] * up[2], d[0] * fwd[0] + d[1] * fwd[1] + d[2] * fwd[2]); };
     const read = {};
     for (const p of [0, -0.5, 0.5]) {
@@ -759,6 +854,207 @@ test('TWO-HANDS AUDIT the arm, A FAILED LEFT-HAND SWAP IS ASKED AGAIN (finding 9
   assert.equal(arm.handsState().offKey, fpWeaponKey(LONGSWORD, false));
   assert.equal(arm.handsState().offPieces, 1);
 }));
+
+// ---- TWO-HANDS AUDIT 2 (lane 3, the Morrowind lane) ------------------------------------------------------------------
+
+test('TWO-HANDS AUDIT 2 the law, THE STRIDE FOLLOWS THE BOB AND NEVER JUMPS (L3 M3, L2 F5 - handsLaw.js runPhaseFollow, both lanes\' one law): a frame\'s step is the bob\'s own while it keeps the stride\'s tempo within CATCH - the phase stands ON the bob, across the wrap too; a jump ahead is caught up at (1 + CATCH) of the stride, one behind at (1 - CATCH), the shorter way round and never backward; nothing of the pump drawn, the bob\'s phase at once; no bob, the speed\'s own walk; a still stride, a still phase', () => {
+  const dt = 1 / 60, v = 7, walk = v * dt * Math.PI / RUN_STEP_M, lo = walk * (1 - RUN_PUMP.CATCH), hi = walk * (1 + RUN_PUMP.CATCH);
+  const near = (a, b) => Math.abs(a - b) < 1e-12;
+  assert.equal(runPhaseFollow(1, 1 + 0.99 * walk, v, dt), 1 + 0.99 * walk, 'keeping step: the bob\'s own phase, to the last digit');
+  assert.equal(runPhaseFollow(2 * Math.PI - 0.01, 0.99 * walk - 0.01, v, dt), 0.99 * walk - 0.01, 'across the wrap: the bob\'s own');
+  assert.ok(near(runPhaseFollow(1, 3, v, dt), 1 + hi), 'a jump ahead: the stride\'s tempo and CATCH more, no faster');
+  assert.ok(near(runPhaseFollow(1, 1 - 1.5, v, dt), 1 + lo), 'a jump behind: slowed by CATCH - never backward');
+  assert.ok(near(runPhaseFollow(1, 1 + 3.3, v, dt), 1 + lo), 'the shorter way round: 3.3 ahead is 2.98 behind');
+  assert.ok(near(runPhaseFollow(1, 1 + 3.0, v, dt), 1 + hi), '...and 3.0 ahead is ahead');
+  assert.equal(runPhaseFollow(1, 4, v, dt, true), 4, 'nothing drawn: the bob\'s phase at once');
+  assert.equal(runPhaseFollow(1, null, v, dt), runPhaseStep(1, v, dt), 'no bob (head bobbing off): the speed\'s own walk');
+  assert.equal(runPhaseFollow(1, 3, 0, dt), 1, 'a still stride: a still phase');
+  assert.equal(runPhaseFollow(1, 3, v, 0), 1, 'no time: no step');
+  // the real HeadBobber's stutter at three frame rates: one frame stopped mid-run, the timer reset to PI on the resume
+  for (const fps of [30, 60, 144]) {
+    const d = 1 / fps, bobber = new HeadBobber(), bag = {}, look = { pitch: 0, yaw: 0 }, w = v * d * Math.PI / RUN_STEP_M;
+    let phase = null, worst = 0, off = 0;
+    for (let f = 0; f < 5 * fps; f++) {
+      const moving = f !== Math.round(2.3 * fps);
+      bobber.update(d, look, { enabled: true, running: true, grounded: true, velocity: moving ? v : 0, moving, out: bag });
+      const next = runPhaseFollow(phase, runPhaseOfBob(bag.bobTimer), moving ? v : 0, d, phase == null);
+      if (phase != null && moving) worst = Math.max(worst, Math.abs(next - phase - 2 * Math.PI * Math.round((next - phase) / (2 * Math.PI))) / w);
+      phase = next;
+      off = phase - runPhaseOfBob(bag.bobTimer);
+    }
+    assert.ok(worst <= 1 + RUN_PUMP.CATCH + 1e-9, `${fps} fps: no frame steps more than (1 + CATCH) strides (${worst.toFixed(3)})`);
+    assert.equal(off, 0, `${fps} fps: back ON the bob within the run`);
+  }
+});
+
+test('TWO-HANDS AUDIT 2 mirror, THE GUARD IS CARRIED OFF THE ARM: the dip is laid INTO the composition, so the carry starts from the arm as drawn - a request that stops asking it under a new key eases the arm up from where it was drawn, never in a frame; and a change of key with nothing of the mirror\'s on the arms reads no plan', () => {
+  const sk = retail();
+  const plan = mirrorPlan(sk, GRAPH_ROOT, skeletonSpaceMatrices);
+  const up = plan.uppers.L;
+  const st = {};
+  const frame = (key, dip) => { const p = new Map(); applyMirrorRig(sk, p, GRAPH_ROOT, skeletonSpaceMatrices, { carry: { key, dt: 1 / 60, tau: 0.06, state: st }, dip }); return p.get(up) ?? sk.nodes.get(up).rest; };
+  const turn = (a, b) => { const r = mat33Mul(a.rotation, Float32Array.from([b.rotation[0], b.rotation[3], b.rotation[6], b.rotation[1], b.rotation[4], b.rotation[7], b.rotation[2], b.rotation[5], b.rotation[8]])); return Math.acos(Math.min(1, (r[0] + r[4] + r[8] - 1) / 2)); };
+  const rest = sk.nodes.get(up).rest;
+  frame('dual', { L: 0.3, R: 0 });
+  const dipped = frame('dual', { L: 0.3, R: 0 });
+  assert.ok(Math.abs(turn(dipped, rest) - 0.3) < 1e-4, 'the dip turns the upper arm 0.3');
+  const taken = [];
+  for (let i = 0; i < 30; i++) taken.push(turn(frame('taken', null), rest));
+  assert.ok(taken[0] > 0.29, `the first frame under the new key still stands where it was drawn (${taken[0].toFixed(4)})`);
+  for (let i = 1; i < 10; i++) assert.ok(taken[i] < taken[i - 1], `and eases up (${i}: ${taken[i].toFixed(4)})`);
+  assert.ok(taken[29] < 1e-3, 'up');
+  // nothing drawn, nothing asked: a new key reads no plan (a creature's death, a single hand's sheet - no bone walked)
+  const fresh = retail();
+  let reads = 0;
+  const counted = (s2, pose, root) => { reads++; return skeletonSpaceMatrices(s2, pose, root); };
+  const st2 = {};
+  for (const key of ['none', 'taken', 'none']) applyMirrorRig(fresh, new Map(), GRAPH_ROOT, counted, { carry: { key, dt: 1 / 60, tau: 0.06, state: st2 }, dip: null });
+  assert.equal(reads, 0, 'no rest pass, no plan');
+});
+
+test('TWO-HANDS AUDIT 2 the arm, THE HANDS TAKEN DROP THE GUARD (L3 M2): a sheet raised mid-blow takes the hands from the pair - no pair in them, no composition (`taken`), the guard\'s weight eased away and laid on no arm under it (it lowered the sheet\'s own hand for the blow\'s whole length), the dip carried off the arm; the stone and a spell alike; and a pair dissolved mid-guard then a sheet: carried off, never dropped in a frame', () => seeded(async () => {
+  const climb = { feet: [0, 0, 0], yaw: 0, track: null, floorGap: Infinity, mode: 'hang', classic: false, normal: [0, 0, -1], lipY: 1.9, move: null, grip: 1, flight: null };
+  let onWall = false;
+  const pairArm = async () => {
+    const arm = await drawnArm({ camera: () => ({ pitch: 0, pos: [0, 1.6, 0], yaw: 0, climb: onWall ? climb : null }) });
+    arm.setHands({ mode: 'dual', lead: 'R' });
+    await arm.setOffWeapon(LONGSWORD);
+    for (let i = 0; i < 40; i++) arm.update(1 / 60);
+    assert.ok(arm.attack('StrikeDown', { hand: 'R' }));
+    for (let i = 0; i < 8; i++) arm.update(1 / 60);
+    assert.ok(arm.handsState().guard.L > 0.8, 'the left lowered under the right\'s blow');
+    return arm;
+  };
+  const elev = (arm) => { const b = arm.built(); const eye = b.arm.mats.get(b.cameraRef).t; const w = arm.handsState().wrists.L; return Math.atan2(w[2] - eye[2], w[1] - eye[1]); };
+  for (const [what, take] of [['a sheet', (arm) => assert.ok(arm.holdPaper())], ['a spell', (arm) => arm.readySpell(true)], ['the stone', () => { onWall = true; }]]) {
+    onWall = false;
+    const arm = await pairArm();
+    take(arm);
+    const g = [];
+    for (let i = 0; i < 40; i++) { arm.update(1 / 60); g.push({ ...arm.handsState(), wrote: arm.built().arm.mirrored }); }
+    const at = g[29];
+    if (what !== 'the stone') {   // the stone takes the hands from the climb's weight past half, a few frames in
+      assert.equal(g[0].pair, false, `${what}: no pair in the hands`);
+      assert.equal(g[0].composed, 'taken', `${what}: no composition`);
+    }
+    assert.ok(at.guard.L > 0 && at.guard.L < 0.1, `${what}: the guard eases away (${at.guard.L.toFixed(4)}; it held 1 for the blow under a sheet)`);
+    assert.equal(at.wrote, null, `${what}: and is laid on no arm while it does - the mirror writes nothing once its carry is done`);
+  }
+  // a pair dissolved mid-guard (a quickslot to one hand) - its guard still easing - and then a sheet: carried, not dropped
+  onWall = false;
+  const arm = await pairArm();
+  arm.setHands({ mode: 'single' });
+  for (let i = 0; i < 2; i++) arm.update(1 / 60);
+  assert.ok(arm.handsState().guard.L > 0.5, 'the guard still eases away on the single hand');
+  const before = elev(arm);
+  assert.ok(arm.holdPaper());
+  arm.update(1 / 60);
+  const first = elev(arm) - before;
+  arm.update(1 / 60);
+  assert.ok(Math.abs(first) < 0.005, `the sheet's first frame: the left hand where it was drawn (${first.toFixed(4)} rad; dropped whole it jumped by the guard)`);
+}));
+
+test('TWO-HANDS AUDIT 2 the arm, A REBUILD KEEPS THE LEFT BLADE (L3 M6): the rig records the left hand\'s weapon it binds, and its own rebuild (an equip\'s follow, setWorn) binds it in the build on both rigs - drawn the first frame the pair is, the next frame\'s swap the fast path, however long the archives take to reopen', () => seeded(async () => {
+  const d = bodyDeps();
+  const real = d.loadMorrowindArchives;
+  let slow = false;
+  d.loadMorrowindArchives = async () => { if (slow) await new Promise((r) => setTimeout(r, 300)); return real(); };
+  const renderer = { gl: null, createCharacterMesh: () => ({ vao: 1, buffers: [], ranges: [] }), updateCharacterMesh: () => {}, createCharacterTexture: () => 1, renderCharacterSprite: () => ({ tex: {} }), drawCharacterSpriteQuad: () => {}, drawScreenOverlayQuad: () => {}, renderCharacterSpriteImage: () => ({ img: 1 }), createParticleEffect: () => ({}) };
+  const arm = createFpArm();
+  arm.attach(renderer, () => ({ pitch: 0, pos: [0, 1.6, 0], yaw: 0 }));
+  assert.ok((await arm.build({ race: 'fprace', weapon: LONGSWORD, deps: d })).ok);
+  arm.setSheathed(false);
+  for (let i = 0; i < 80; i++) arm.update(0.05);
+  arm.setHands({ mode: 'dual', lead: 'R' });
+  await arm.setOffWeapon(LONGSWORD);
+  for (let i = 0; i < 10; i++) arm.update(1 / 60);
+  assert.equal(arm.handsState().offPieces, 1);
+  slow = true;
+  const res = await arm.setWorn([{ kind: 'armor', templateIndex: 102, material: 0 }]);
+  assert.ok(res?.ok, 'rebuilt');
+  const h = arm.handsState();
+  assert.equal(h.offPieces, 1, 'the left blade bound in the build - not left to the next frame\'s swap');
+  assert.equal(h.offKey, fpWeaponKey(LONGSWORD, false));
+  assert.equal(h.offWeapon?.bone, 'Weapon Bone Left');
+  assert.equal(arm.status().third.offWeapon?.bone, 'Weapon Bone Left', 'and on the body');
+  assert.equal(arm.setOffWeapon(LONGSWORD), false, 'the next frame\'s swap: the fast path, no archive reopened');
+  arm.setSheathed(false);
+  let gone = 0, drawn = 0;
+  for (let i = 0; i < 120 && drawn < 5; i++) { arm.update(1 / 60); if (arm.status().weaponShown) { if (arm.handsState().offHidden[0] === false) drawn++; else gone++; } }
+  assert.equal(gone, 0, 'the right blade never drawn alone');
+  assert.ok(drawn > 0);
+}));
+
+test('TWO-HANDS AUDIT 2 the arm, A BLADE\'S EFFECT AND GLOW GO WITH THE BLADE: a sheet in the hands hides both blades - and the particle effects they carry with them; on the stone the blades are away in both views, and neither wears a glow (the body\'s picture was padded for an outline it never drew)', () => seeded(async () => {
+  const climb = { feet: [0, 0, 0], yaw: 0, track: null, floorGap: Infinity, mode: 'hang', classic: false, normal: [0, 0, -1], lipY: 1.9, move: null, grip: 1, flight: null };
+  let onWall = false, mesh = null;
+  const gpus = [];
+  const renderer = { gl: null, createCharacterMesh: () => (mesh = { vao: 1, buffers: [], ranges: [] }), updateCharacterMesh: () => {}, createCharacterTexture: () => 1, renderCharacterSprite: () => ({ tex: {} }), drawCharacterSpriteQuad: () => {}, drawScreenOverlayQuad: () => {}, renderCharacterSpriteImage: () => ({ img: 1 }),
+    createParticleEffect: () => { const g = {}; gpus.push(g); return g; }, updateParticleEffect: () => {} };
+  const arm = createFpArm();
+  arm.attach(renderer, () => ({ pitch: 0, pos: [0, 1.6, 0], yaw: 0, climb: onWall ? climb : null }));
+  assert.ok((await arm.build({ race: 'fprace', weapon: LONGSWORD, deps: bodyDeps() })).ok);
+  arm.setSheathed(false);
+  for (let i = 0; i < 80; i++) arm.update(0.05);
+  arm.setHands({ mode: 'dual', lead: 'R' });
+  await arm.setOffWeapon(LONGSWORD);
+  // an effect on each blade, as a weapon's NIF carries one (MAC-Q: placed and hidden with its part)
+  const a = arm.built().arm, sk = a.skeleton;
+  const fx = (slot, bone) => ({ slot, attachRef: sk.byName.get(bone), mirrored: slot === 'offweapon', boneOffset: null, pre: null, hang: null, material: null,
+    desc: { localSpace: false, world: { rotation: Float32Array.from([1, 0, 0, 0, 1, 0, 0, 0, 1]), translation: [0, 0, 0], scale: 1 } }, sim: { quota: 1, update() {}, quads: () => [] } });
+  a.effects = [...(a.effects ?? []), fx('weapon', 'weapon bone'), fx('offweapon', 'weapon bone left')];
+  const n = a.effects.length;
+  for (let i = 0; i < 4; i++) arm.update(1 / 60);
+  const hidden = () => mesh.effects.slice(n - 2, n).map((g) => g.hidden);
+  assert.deepEqual(hidden(), [false, false], 'the pair drawn: both blades\' effects drawn');
+  assert.ok(arm.holdPaper());
+  arm.update(1 / 60);
+  assert.deepEqual(mesh.ranges.filter((r) => r.slot === 'weapon' || r.slot === 'offweapon').map((r) => r.hidden), [true, true], 'a sheet in the hands: both blades away');
+  assert.deepEqual(hidden(), [true, true], '...and their effects with them');
+  arm.releasePaper();
+  // the stone: the glows asked of both blades, then onto the wall
+  const frost = { look: 'frost', code: 2, level: 1, ramp: [0.4, 0.7, 1] };
+  arm.setWeaponGlow(frost, LONGSWORD);
+  arm.setOffWeaponGlow(frost, LONGSWORD);
+  for (let i = 0; i < 20; i++) arm.update(1 / 60);
+  assert.ok(arm.weaponGlow() && arm.offWeaponGlow(), 'drawn, both glow');
+  onWall = true;
+  for (let i = 0; i < 60; i++) arm.update(1 / 60);
+  assert.equal(arm.offWeaponGlow(), null, 'on the stone the left blade wears no glow');
+  assert.equal(arm.weaponGlow(), null, 'nor the right');
+  arm.setViewMode('third');
+  for (let i = 0; i < 4; i++) arm.update(1 / 60);
+  assert.deepEqual(arm.thirdMesh().ranges.filter((r) => r.slot === 'weapon' || r.slot === 'offweapon').map((r) => r.hidden), [true, true], 'the body\'s blades away on the stone - the glow the picture is padded for is theirs');
+  assert.equal(arm.offWeaponGlow(), null);
+}));
+
+test('TWO-HANDS AUDIT 2 the rig under a READY Morrowind arm (L5): a light that is not a lit torch takes no hand - the arm holds a torch alone, never a lantern ("a torch alone: the arm holds no lantern") - so both fists stand beside it, a torch takes one; and H with both fists up moves the lead and says so ("it now moves between the fists too")', async () => {
+  const { createWeaponRig } = await import('../src/combat/weaponRig.js');
+  const { fpArm } = await import('../src/combat/fpArm.js');
+  const { EQUIP_SLOTS } = await import('../src/systems/equip.js');
+  const { HANDS_MODE } = await import('../src/combat/handsLaw.js');
+  const { setModSetting, _resetModSettings } = await import('../src/systems/modSettings.js');
+  const saved = fpArm.ready;
+  fpArm.ready = () => true;
+  try {
+    setModSetting('handheld-torches', 'Handling.LanternsAtWaist', false);   // a lantern held in the hand, not hung
+    const rig = (light) => {
+      const entity = { items: [], lightSource: light, stats: { speed: 50, strength: 50, agility: 50 }, equip: { slots: { [EQUIP_SLOTS.RightHand]: null, [EQUIP_SLOTS.LeftHand]: null } } };
+      const said = [];
+      const r = createWeaponRig({ renderer: null, canvas: null, entity, audio: { playOneShot() {} }, say: (s) => said.push(s) });
+      r.refreshWorn();
+      return { r, said };
+    };
+    assert.equal(rig({ templateIndex: 248 }).r.playerWeapon.handsMode, HANDS_MODE.Fists, 'a lantern in hand: the arm draws none - both fists');
+    assert.equal(rig({ templateIndex: 247 }).r.playerWeapon.handsMode, HANDS_MODE.Single, 'a lit torch: the arm holds it - one fist beside it');
+    const { r, said } = rig(null);
+    assert.equal(r.playerWeapon.handsMode, HANDS_MODE.Fists);
+    const lead = r.playerWeapon.leadHand;
+    assert.equal(r.switchHand(), true, 'H with both fists up: the lead moves');
+    assert.notEqual(r.playerWeapon.leadHand, lead);
+    assert.deepEqual(said, [r.playerWeapon.leadHand === 'L' ? 'Leading with the left hand.' : 'Leading with the right hand.'], 'and says so');
+  } finally { fpArm.ready = saved; _resetModSettings(); }
+});
 
 test('TWO-HANDS the arm, by source: the mirror is posed over the clip ahead of the neck and the climb (the assembly\'s own hook), both rigs ask it, the run is solved under the climb\'s request in the same slot (TWO-HANDS AUDIT: blended, never chosen), and the rig hands the arm the hands\' mode, the left hand\'s weapon and the blow\'s hand every frame', () => {
   const fp = rd('src/formats/mwFirstPerson.js');
