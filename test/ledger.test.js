@@ -308,7 +308,7 @@ test('AUDIT 58 F5 ledger: the RE-INTEGRATED road system has its own section A ro
   for (const f of ['roadData.bytes', 'trackData.bytes', 'riverData.bytes', 'streamData.bytes']) {
     assert.equal(readFileSync(join(ROOT, 'vendor/roads-hazelnut', f)).length, 500000, `${f} is his 500,000-byte array`);
   }
-  for (const m of ['roadNetwork.js', 'roadPainter.js', 'roadsProducer.js', 'roadsCache.js']) {
+  for (const m of ['road/roadNetwork.js', 'road/roadPainter.js', 'roadsProducer.js', 'roadsCache.js']) {   // TIDY2: the road's own two in its folder
     assert.ok(rootFile(`src/world/${m}`).length > 0, `src/world/${m} ships`);
   }
   const host = rootFile('src/scenes/world.js');

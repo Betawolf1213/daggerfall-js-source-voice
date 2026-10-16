@@ -79,15 +79,15 @@
   {
     "name": "DA12-12-the-module-is-never-packed",
     "file": "app/package.json",
-    "old": "        \"from\": \"../src/ui\",\n        \"to\": \"launcher\",\n",
-    "new": "        \"from\": \"../src/ui\",\n        \"to\": \"pad\",\n",
+    "old": "        \"from\": \"../src/ui/menu\",\n        \"to\": \"launcher\",\n",
+    "new": "        \"from\": \"../src/ui/menu\",\n        \"to\": \"pad\",\n",
     "tests": ["test/da12_directplay.test.js"],
     "note": "AUDIT BR5 (re-aimed by content): the logo is packed beside the launcher too, so the record names the pad module's own entry."
   },
   {
     "name": "DA12-13-unpacked-serves-a-file-that-is-not-there",
     "file": "app/main.cjs",
-    "old": "const MENU_PAD = app.isPackaged ? path.join(LAUNCHER_DIR, 'menuPad.js') : path.join(__dirname, '..', 'src', 'ui', 'menuPad.js');\n",
+    "old": "const MENU_PAD = app.isPackaged ? path.join(LAUNCHER_DIR, 'menuPad.js') : path.join(__dirname, '..', 'src', 'ui', 'menu', 'menuPad.js');\n",
     "new": "const MENU_PAD = path.join(LAUNCHER_DIR, 'menuPad.js');\n",
     "tests": ["test/da12_directplay.test.js"]
   },
