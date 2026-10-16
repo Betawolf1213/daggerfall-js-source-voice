@@ -7719,6 +7719,16 @@
   "tr": "97aa7a9881b5",
   "by": "claude-in-session"
  },
+ "features.weaponGlow.note": {
+  "en": "80be2112719a",
+  "tr": "630d3f685134",
+  "by": "claude-in-session"
+ },
+ "features.weaponGlow.title": {
+  "en": "964f52fd55ec",
+  "tr": "97014acce663",
+  "by": "claude-in-session"
+ },
  "features.weatherEvents.note": {
   "en": "cc04c428968c",
   "tr": "9a258815a113",
@@ -7842,6 +7852,51 @@
  "holdings.wagon.boons.sound": {
   "en": "25b3b3fa348b",
   "tr": "daa57edf5e2f",
+  "by": "claude-in-session"
+ },
+ "instance.door.holdLine": {
+  "en": "7666de864a78",
+  "tr": "4dfddc367644",
+  "by": "claude-in-session"
+ },
+ "instance.door.join": {
+  "en": "25f00e04e4fe",
+  "tr": "259f567ab6b7",
+  "by": "claude-in-session"
+ },
+ "instance.door.leave": {
+  "en": "7e3520a97331",
+  "tr": "88067c8b8b31",
+  "by": "claude-in-session"
+ },
+ "instance.door.line": {
+  "en": "36245c4f368f",
+  "tr": "0c891f2e5371",
+  "by": "claude-in-session"
+ },
+ "instance.door.mine": {
+  "en": "da27c54266cb",
+  "tr": "29b21a8bd543",
+  "by": "claude-in-session"
+ },
+ "instance.door.public": {
+  "en": "dc5eb704bbca",
+  "tr": "ea42e30e5ea6",
+  "by": "claude-in-session"
+ },
+ "instance.door.questHere": {
+  "en": "15a2dad9b670",
+  "tr": "dac1d09ee778",
+  "by": "claude-in-session"
+ },
+ "instance.door.refused": {
+  "en": "b9f2dc1beb4c",
+  "tr": "71ce490b3fd5",
+  "by": "claude-in-session"
+ },
+ "instance.door.unavailable": {
+  "en": "7ef00096d28e",
+  "tr": "8d0109584a7f",
   "by": "claude-in-session"
  },
  "lamp.granted": {
