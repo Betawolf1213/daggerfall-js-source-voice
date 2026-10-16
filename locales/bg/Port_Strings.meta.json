@@ -7934,6 +7934,11 @@
   "tr": "8d2fab2d123f",
   "by": "claude-in-session"
  },
+ "legacy.court.cooled": {
+  "en": "01ad0d23411e",
+  "tr": "c90bdc50783d",
+  "by": "claude-in-session"
+ },
  "level.renown.risen": {
   "en": "4d843172a323",
   "tr": "f9b8af0caf70",
@@ -18587,6 +18592,16 @@
  "sea.chart.zoomOut": {
   "en": "a4ae4b24a1f5",
   "tr": "60a04895e781",
+  "by": "claude-in-session"
+ },
+ "serpent.honour.aura": {
+  "en": "55dc3cb1ee75",
+  "tr": "cc7a256c17fa",
+  "by": "claude-in-session"
+ },
+ "serpent.honour.title": {
+  "en": "429ff6532051",
+  "tr": "f7b3ff4144ce",
   "by": "claude-in-session"
  },
  "settings.language.machine": {
