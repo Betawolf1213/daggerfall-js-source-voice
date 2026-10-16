@@ -80,12 +80,19 @@ test('TITLE-N grants: the Dungeon Master is SquidKamer\'s alone and Disciple is 
   assert.equal(v('APOSTLE_HANDLES'), '', 'SirMcMobdon is no longer an Apostle');
   assert.deepEqual(titlesHeld({ handle: 'sirmcmobdon', created_at: 1_800_000_000, registered_at: 1_900_000_000 }, { APOSTLE_HANDLES: v('APOSTLE_HANDLES') }), [], 'SirMcMobdon holds no Apostle title');
   assert.deepEqual(glyphsOf({ handle: 'SirMcMobdon', created_at: 0 }, { APOSTLE_HANDLES: v('APOSTLE_HANDLES') }, 10 ** 10), [], 'and no Apostle glyph');
-  assert.equal(v('DEVELOPER_HANDLES'), 'Lattymoy,LostMyLeg,Tabby,RookieG', 'DEV2, Mac: "Give trashBattery, LostMyLeg the developer title/glyph"; DEV3: "grant Tabby the developer title/glyph"; DEV4, the owner: "Also add RookieG(Dev) as developer", then "Change RookieG(Dev) to RookieG"; DEV5, Mac: "Remove trashBattery ingame as a dev"');
-  for (const h of ['LOSTMYLEG', 'tabby', 'RookieG', 'rookieg', 'ROOKIEG']) {
+  assert.equal(v('DEVELOPER_HANDLES'), 'Lattymoy,LostMyLeg,Tabby,RookieG,Roderic', 'DEV2, Mac: "Give trashBattery, LostMyLeg the developer title/glyph"; DEV3: "grant Tabby the developer title/glyph"; DEV4, the owner: "Also add RookieG(Dev) as developer", then "Change RookieG(Dev) to RookieG"; DEV5, Mac: "Remove trashBattery ingame as a dev"; DEV6, Mac: "Give roderic the developer access ingame (title/glyph)"');
+  // DEV6 (2026-10-16): Roderic in every case - the title, the glyph, the wings and the moderating, as every developer's
+  for (const h of ['LOSTMYLEG', 'tabby', 'RookieG', 'rookieg', 'ROOKIEG', 'roderic', 'Roderic', 'RODERIC']) {
     const dev = { handle: h, created_at: 1_800_000_000, registered_at: 1_900_000_000 };   // FOUNDER3: first played after the cutoff too, so no Founder
     const denv = { DEVELOPER_HANDLES: v('DEVELOPER_HANDLES') };
     assert.deepEqual(titlesHeld(dev, denv), ['developer'], `${h}: the Developer title, case-folded`);
     assert.deepEqual(glyphsOf(dev, denv, 1_900_000_000), ['dev'], `${h}: the dev glyph`);
+    assert.ok(aurasHeld(dev, denv).includes('seraphwings'), `${h}: the Seraph Wings`);
+    assert.equal(canModerate(dev, denv), true, `${h}: /mute`);
+  }
+  // DEV6: a near name of Roderic's is no developer either
+  for (const h of ['Roderick', 'Roderi', 'Roderic_', 'Rod']) {
+    assert.deepEqual(titlesHeld({ handle: h, created_at: 1_800_000_000, registered_at: 1_900_000_000 }, { DEVELOPER_HANDLES: v('DEVELOPER_HANDLES') }), [], `${h}: not a developer`);
   }
   // DEV5 (2026-10-16, Mac: "Remove trashBattery ingame as a dev"): off the list in any case, and the whole set with it -
   // the title, the glyph, the wings, the moderating; and the title and wings a row still stores are no longer worn
