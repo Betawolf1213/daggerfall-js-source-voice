@@ -407,7 +407,7 @@ function blow(arm, hand, strike = 'StrikeDown') {
   return { L, R, mirrored };
 }
 
-test('TWO-HANDS the arm, the pair: the left hand\'s weapon binds on both rigs and shows while the pair is drawn (hidden sheathed); at rest both arms up, the left the right\'s mirror; a left blow swings the LEFT arm with the right held, a right blow the right with the left held; the blow carries the hand the law gave it', () => seeded(async () => {
+test('TWO-HANDS the arm, the pair: the left hand\'s weapon binds on both rigs and shows while the pair is drawn (hidden sheathed), glowing with its own element (WEAPON-GLOW1); at rest both arms up, the left the right\'s mirror; a left blow swings the LEFT arm with the right held, a right blow the right with the left held; the blow carries the hand the law gave it', () => seeded(async () => {
   const arm = await drawnArm();
   let h = arm.handsState();
   assert.equal(h.offPieces, 0, 'one hand: no second weapon');
@@ -421,6 +421,15 @@ test('TWO-HANDS the arm, the pair: the left hand\'s weapon binds on both rigs an
   assert.deepEqual(h.offHidden, [false], 'shown while drawn');
   assert.ok(Math.abs(h.wrists.L[0] + h.wrists.R[0]) < 0.05 && Math.abs(h.wrists.L[2] - h.wrists.R[2]) < 0.05, `the left the right's mirror at rest: ${h.wrists.L} / ${h.wrists.R}`);
   assert.equal(await arm.setOffWeapon(LONGSWORD), false, 'the same weapon: the fast path');
+  // WEAPON-GLOW1 x TWO-HANDS: the left blade glows with ITS OWN element, laid only on the blade it was asked of while
+  // the pair is drawn (the held weapon's NET-1 law, for the second hand); the held weapon's glow is its own
+  const frost = { look: 'frost', code: 2, level: 1, ramp: [0.4, 0.7, 1] };
+  arm.setOffWeaponGlow(frost, LONGSWORD);
+  assert.equal(arm.offWeaponGlow(), frost, 'the bound left blade wears its element');
+  assert.equal(arm.weaponGlow(), null, 'and the right hand\'s glow is the right hand\'s (none asked)');
+  arm.setOffWeaponGlow(frost, { templateIndex: 113 });
+  assert.equal(arm.offWeaponGlow(), null, 'never another weapon\'s glow on the blade the arm holds');
+  arm.setOffWeaponGlow(frost, LONGSWORD);
   const left = blow(arm, 'L');
   assert.equal(arm.handsState().attackHand, null, 'the blow ends with its hand');
   for (let i = 0; i < 20; i++) arm.update(0.05);
@@ -431,6 +440,7 @@ test('TWO-HANDS the arm, the pair: the left hand\'s weapon binds on both rigs an
   arm.setSheathed(true);
   for (let i = 0; i < 60; i++) arm.update(0.05);
   assert.deepEqual(arm.handsState().offHidden, [true], 'sheathed, the left hand\'s weapon is away with the right\'s');
+  assert.equal(arm.offWeaponGlow(), null, 'and its glow with it');
   await arm.setOffWeapon(null);
   assert.equal(arm.handsState().offPieces, 0, 'and a hand emptied lets it go');
 }));
@@ -766,7 +776,7 @@ test('TWO-HANDS the arm, by source: the mirror is posed over the clip ahead of t
   const rig = rd('src/combat/weaponRig.js');
   assert.match(rig, /const armItem = pairUp\(\) \? playerWeapon\.handItem\('R'\) : playerWeapon\.weapon;/);
   assert.match(rig, /fpArm\.setHands\(\{ mode: pairUp\(\) \? playerWeapon\.handsMode : HANDS_MODE\.Single, lead: playerWeapon\.leadHand \}\);/);
-  assert.match(rig, /fpArm\.setOffWeapon\(pairUp\(\) && playerWeapon\.handsMode === HANDS_MODE\.Dual \? playerWeapon\.handItem\('L'\) : null\);/);
+  assert.match(rig, /const offItem = pairUp\(\) && playerWeapon\.handsMode === HANDS_MODE\.Dual \? playerWeapon\.handItem\('L'\) : null;\n\s*fpArm\.setOffWeapon\(offItem\);/);   // the left item named once - its blade and its glow (WEAPON-GLOW1)
   assert.match(rig, /hand: pairUp\(\) \? playerWeapon\.strike\?\.hand \?\? null : null \}\);/);
   assert.match(rig, /fpArm\.setRunHands\?\.\(wanted, \{ speed, phase: Number\.isFinite\(mv\.bobTimer\) \? runPhaseOfBob\(mv\.bobTimer\) : null \}\);/);   // PIN MOVED (TWO-HANDS AUDIT): the arms on the head bob's clock
   assert.match(rig, /const armsRun = fpArm\.active\(\) && !!fpArm\.runPosed\?\.\(\);/);

@@ -242,7 +242,7 @@ export function createWeaponWidget({
     // (FPSWeapon.cs:637-644 - the clone reads the same static), and
     // under DoubleScaleTextures the `w_` ask falls through to the plain
     // one (combat/diverseWeapons.js customTextureNames says why).
-    const file = atlasFileName(w.specificWeapon, classic);
+    const file = atlasFileName(w.specificWeapon, classic, undefined, ctx?.glow ? false : undefined);   // WEAPON-GLOW1: an element shown asks the plain set
     const metal = widgetMetalName(w.currentMetalType);   // AUDIT 68 S09-texname-dup: the one metal rule
     const cache = (w.customCache ??= new Map());
     const misses = (w.customMisses ??= new Set());
@@ -756,6 +756,7 @@ export function createWeaponWidget({
     if (!tex) return false;
     if (!transform && !mirror) {
       renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
+      if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, getWeaponRect(), w.curAnimRect, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: the element's outline, as the sprite it stands in for draws it (the rig's ctx says it each frame), in the record's own pixels
       return true;
     }
     // TWO-HANDS: a hand of a pair - its guard on the rect, then the mirror about the screen's middle, its source read
@@ -765,6 +766,7 @@ export function createWeaponWidget({
     if (mirror) rect = mirrorRect(rect, w.screenRect.width, w.screenRect.x);
     const uv = mirror ? { u0: w.curAnimRect.u1, v0: w.curAnimRect.v0, u1: w.curAnimRect.u0, v1: w.curAnimRect.v1 } : w.curAnimRect;
     renderer.drawScreenQuad(tex, rect, uv, tint ?? undefined);
+    if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, rect, uv, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: this hand's own element, on its own rect and source
     return true;
   }
   /** TWO-HANDS: would draw() put a picture on the screen this frame - the clone applicable and not choosing silence

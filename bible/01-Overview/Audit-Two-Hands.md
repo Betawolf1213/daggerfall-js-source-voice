@@ -80,7 +80,7 @@ Severity: **Blocker** breaks the feature or its balance for everyone; **Major** 
 `test/twohands.test.js` (20) - every FIXED finding of L1, L2, L4 and L5 above, by execution through the real machine,
 formula, rig and Weapon Widget; `test/twohands_mw.test.js` (23) - L3's, on the retail biped and the fixture arm, with
 `tools/mutants/twohands_mw.json` (40, dead) and the twelve `twohands.json` records aimed into the Morrowind lane
-re-run on its fixed code. Mutants: `tools/mutants/twohands.json` (110, 39 of them the audit's `TWOHANDS-AUDIT-*`: each
+re-run on its fixed code. Mutants: `tools/mutants/twohands.json` (122, 39 of them the audit's `TWOHANDS-AUDIT-*`: each
 fix reverted, and L5's 16 scratch mutants of the record's claims, three of which still lived after the first fixes -
 the sheathed run from below, the pair on the climb, one hand's H line - until pinned), every one dead. PIN MOVED
 (AUDIT): `a12_lefthand` (the bow-switch arm on a bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and

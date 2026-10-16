@@ -281,6 +281,26 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   first frame onto the wall moved the wrists 1.19 units, now 0.52 (the climb's own ease), the frame a sheet comes up
   1.05, now 0.005.
 
+## Weapon glow on two hands (WEAPON-GLOW1, merged from main)
+
+WEAPON-GLOW1 (`05-Combat/Weapon-Glow.md`) landed on main beside this slice: a weapon's element drawn in the hand. On two
+hands **each hand wears its own weapon's element** - a frost dagger beside a fire sword is a frost outline and a fire
+one, never one hand's glow on both:
+- **The classic pair** (`twoHands.js` `drawClassicHand`): each hand's outline over its own picture - the same frame, rect
+  and source (the left's mirror), measured in the record's own pixels as `drawFpsWeapon`'s; the rig hands each hand its
+  own item's (`glowFor`: `glowOf(playerWeapon.handItem(hand))`), and each hand's art is its item's plain sheet while an
+  element shows (`artFor`).
+- **The Weapon Widget clones** (`weaponRig.js` `cloneFrame`): every clone - the one hand's, and each of a pair's - is
+  handed its own item's set and outline (`heldType(item)`, `glowOf(item)`); a clone of a pair draws its outline on its
+  own rect and source (`weaponWidget.js` `draw`), the one hand's two lines WEAPON-GLOW1's own.
+- **The Morrowind arm** (`fpArm.js`): the held glow is the item the arm HOLDS (`armItem` - in a pair the right hand's
+  whichever hand strikes; main's line handed the weapon in use, which changes mid-blow, and the arm's key guard would
+  have dropped the glow for every left blow); the left blade its own (`setOffWeaponGlow`), laid only on the blade bound
+  and while the pair is drawn (`offGlowShown` - the held glow's NET-1 law for the second hand). The renderer lights each
+  slot with its own glow, each its own pass (`Renderer._drawWeaponGlows`: 'weapon', then 'offweapon'); a third-person
+  picture is padded for the larger of the two outlines (`characterSprite.js` `drawRigSpriteBox`'s `glowLook`, one look
+  or two).
+
 ## Departures from DFU (Port-Ledger A, TWO-HANDS)
 
 1. ToggleHand/ApplyWeapon: with both hands up both are in use; H picks the lead, ends the exchange and bills no switch
@@ -314,7 +334,7 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 
 ## Pins
 
-- `test/twohands.test.js` (20): the law and the painted arm, the balance MEASURED through the machine at two frame
+- `test/twohands.test.js` (21): the law and the painted arm, the balance MEASURED through the machine at two frame
   rates, PlayerWeapon through the real formula and the override seam (the flurry's frame, the schedule's ticks, H's
   exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
   synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
@@ -324,9 +344,9 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   throws) and the arm over the fixture arm (the left weapon on a skeleton without one, the pair from draw to sheathe,
   the mirrored blow's way, the guard's dip, the fists, the running hands under the climb and on the pitched lens, the
   portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 40 mutants, all dead.
-- `tools/mutants/twohands.json`: 110 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+- `tools/mutants/twohands.json`: 122 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
   each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
-  `TWOHANDS-LOWER-*`).
+  `TWOHANDS-LOWER-*`; 12 the pair's glow, `TWOHANDS-GLOW-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
   bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and `duel_combat` DUEL1 (the off hand's blow between
   players), `enhancedHud` AUDIT 39 (the plaque reads the resting weapon), `ww2_idlebob` WW2 (the motion bag's

@@ -29,6 +29,12 @@ import { registerMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
 import { HeadBobber } from '../src/player/headBobber.js';
 import { motionBagOf } from '../src/player/motor.js';
 import { techniqueItem } from '../src/combat/techniques.js';
+import { createTwoHands } from '../src/combat/twoHands.js';
+import { Renderer } from '../src/render/renderer.js';
+import { glowRingDraws, glowPad } from '../src/render/weaponGlowGlsl.js';
+import { drawRigSpriteBox } from '../src/render/characterSprite.js';
+import { perspective, lookAt } from '../src/world/mat4.js';
+import { glowSpec } from '../src/systems/weaponGlow.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const weapon = (templateIndex, name) => ({ name, group: 'Weapons', templateIndex, material: 0 });
@@ -804,6 +810,79 @@ test('TWO-HANDS rig, AUDITED: a fist and a shield is DFU\'s one hand (the shield
   assert.ok(bl && br && Math.abs(bl.rect.y - br.rect.y) < 6, `both fists home again, the left not pushed off the screen: ${JSON.stringify(back.map((x) => x.rect))}`);
 });
 
+/** A WebGL2 stub that RECORDS every call (weaponglow1.test.js's): an enum read as its own name. */
+function loggingRenderer() {
+  const log = [];
+  let id = 0;
+  const stub = new Proxy({}, {
+    get: (o, k) => {
+      if (k === 'getProgramParameter' || k === 'getShaderParameter') return () => true;
+      if (k === 'getUniformLocation') return (p, name) => ({ uniform: name });
+      if (k === 'getAttribLocation') return () => 0;
+      if (typeof k === 'string' && k.startsWith('create')) return () => ({ id: ++id, kind: k });
+      if (k === 'drawingBufferWidth') return 800;
+      if (k === 'drawingBufferHeight') return 600;
+      if (typeof k === 'string' && k.toUpperCase() === k) return k;
+      return (...args) => { log.push([k, ...args]); };
+    },
+  });
+  return { r: new Renderer({ getContext: () => stub, clientWidth: 800, clientHeight: 600, width: 800, height: 600 }), log };
+}
+const I4 = () => new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+test('TWO-HANDS x WEAPON-GLOW1: each hand of a pair wears ITS OWN weapon\'s element - the classic pair draws each hand\'s outline over its own picture (the left\'s rect and mirror); the renderer lights a pair\'s left blade with its own glow on its own ranges; the rig hands each hand, each clone and the Morrowind arm its own item\'s (by source)', () => {
+  const fire = glowSpec('fire', 2), frost = glowSpec('frost', 1);
+  // the classic pair: a hand's quad, then its outline - the same frame, rect and source (the left's mirrored)
+  const th = createTwoHands({});
+  const machine = { state: 'Idle', frame: 0, isBow: false, isUnarmed: false, now: 0 };
+  th.step(DT, { mode: HANDS_MODE.Dual, machine });
+  const art = { weaponType: WEAPON_TYPES.LongBlade, anims: getWeaponAnims(WEAPON_TYPES.LongBlade), records: Array.from({ length: 7 }, (_, r) => ({ width: 100, height: 80, frames: [`r${r}f0`, `r${r}f1`, `r${r}f2`, `r${r}f3`, `r${r}f4`] })) };
+  const calls = [];
+  const renderer = { drawScreenQuad: (tex, rect, uv) => calls.push(['quad', tex, rect, uv]), drawScreenQuadGlow: (tex, rect, uv, glow, frame) => calls.push(['glow', tex, rect, uv, glow, frame]) };
+  th.drawPair(renderer, { width: 640, height: 400 }, { artFor: () => art, glowFor: (hand) => (hand === 'R' ? fire : frost), shown: true });
+  assert.deepEqual(calls.map((c) => c[0]), ['quad', 'glow', 'quad', 'glow']);
+  const [qL, gL, qR, gR] = calls;
+  assert.ok(qL[2].x < 320 && qR[2].x > 320, 'the left hand first, on the left');
+  assert.deepEqual([gL[1], gL[2], gL[3], gL[4]], [qL[1], qL[2], MIRROR_UV, frost], 'the left\'s outline: its frame, its rect, its mirror, ITS element');
+  assert.deepEqual([gR[1], gR[2], gR[3], gR[4]], [qR[1], qR[2], qR[3], fire], 'the right\'s its own');
+  assert.deepEqual(gL[5], { art: [100, 80], view: [640, 400] }, 'measured in the record\'s own pixels (drawFpsWeapon\'s line)');
+  calls.length = 0;
+  th.drawPair(renderer, { width: 640, height: 400 }, { artFor: () => art, shown: true });
+  assert.deepEqual(calls.map((c) => c[0]), ['quad', 'quad'], 'no element, no outline');
+  // the Morrowind pass: each blade lit with its own glow, on its own ranges, rings before the body
+  const { r, log } = loggingRenderer();
+  r.beginFrame(I4(), I4(), new Float32Array([0, 1, 0]));
+  const ranges = [
+    { first: 0, count: 30, slot: 'body', tex: null },
+    { first: 30, count: 12, slot: 'weapon', tex: null },
+    { first: 50, count: 8, slot: 'offweapon', tex: null },
+  ];
+  const instanced = () => log.filter((c) => c[0] === 'drawArraysInstanced').map((c) => [c[2], c[3], c[4]]);
+  const looks = () => log.filter((c) => c[0] === 'uniform1i' && c[1]?.uniform === 'uLook').map((c) => c[2]);
+  r.renderCharacterSprite({ vao: { id: 'arm' }, ranges, weaponGlow: fire, offWeaponGlow: frost }, I4(), I4(), I4(), 800, 600);
+  assert.deepEqual(instanced(), [[30, 12, glowRingDraws('fire').length], [50, 8, glowRingDraws('frost').length]], 'the right blade\'s rings, then the left blade\'s');
+  assert.deepEqual(looks(), [fire.code, frost.code, fire.code, frost.code], 'each its own element, rings and charge');
+  log.length = 0;
+  r.renderCharacterSprite({ vao: { id: 'arm' }, ranges, weaponGlow: null, offWeaponGlow: frost }, I4(), I4(), I4(), 800, 600);
+  assert.deepEqual(instanced(), [[50, 8, glowRingDraws('frost').length]], 'a plain right blade and a frost left: the left alone');
+  log.length = 0;
+  r.renderCharacterSprite({ vao: { id: 'arm' }, ranges: ranges.map((x) => (x.slot === 'offweapon' ? { ...x, hidden: true } : x)), weaponGlow: null, offWeaponGlow: frost }, I4(), I4(), I4(), 800, 600);
+  assert.deepEqual(instanced(), [], 'a hidden blade wears nothing');
+  // the third-person picture's pad: room for the larger of the two blades' outlines
+  const box = (opts) => drawRigSpriteBox({ characterSpriteBatchOpen: true, queueCharacterSprite: () => {} }, { clientHeight: 480 }, {}, I4(), { center: [0, 1, -4], halfW: 0.4, halfH: 0.9, ...opts }, perspective(1.1, 640 / 480, 0.1, 500), lookAt([0, 1.6, 6], [0, 1, 0], [0, 1, 0]), [0, 1, 0]);
+  const plain = box({});
+  assert.ok(glowPad('fire', plain.ph) > glowPad('frost', plain.ph));
+  assert.equal(box({ glowLook: ['frost', 'fire'] }).ph, plain.ph + 2 * glowPad('fire', plain.ph), 'a frost blade and a fire one: the fire\'s room');
+  assert.equal(box({ glowLook: 'frost' }).ph, plain.ph + 2 * glowPad('frost', plain.ph), 'one look as before');
+  assert.match(rd('src/combat/fpArm.js'), /const padLooks = offGlow \? \[glowLook, offGlow\.look\]\.filter\(Boolean\) : glowLook;/);
+  // the rig: each hand its own item's - the classic pair, each widget clone, the Morrowind arm's two blades
+  const rig = rd('src/combat/weaponRig.js');
+  assert.match(rig, /glowFor: \(hand\) => glowOf\(playerWeapon\.handItem\(hand\)\)/, 'the classic pair');
+  assert.match(rig, /function cloneFrame\(item, hand, f\) \{[^]{0,400}glow: glowOf\(item\)/, 'each clone - the one hand\'s and each of a pair\'s');
+  assert.match(rig, /fpArm\.setWeaponGlow\?\.\(meshGlow\(armItem\), armItem\);\s*fpArm\.setOffWeaponGlow\?\.\(offItem \? meshGlow\(offItem\) : null, offItem\);/, 'the arm: the blade it holds, and the left its own');
+  assert.match(rd('src/combat/weaponWidget.js'), /renderer\.drawScreenQuad\(tex, rect, uv, tint \?\? undefined\);\s*if \(ctx\.glow\) renderer\.drawScreenQuadGlow\?\.\(tex, rect, uv, ctx\.glow,/, 'a clone of a pair: its outline on its own rect and source');
+});
+
 const ARENA2 = process.env.ARENA2_PATH;
 const NO_ARENA2 = (!ARENA2 || !existsSync(ARENA2)) && 'ARENA2_PATH not set or missing - real-data validation skipped';
 
@@ -856,9 +935,10 @@ test('TWO-HANDS rig, by source: the two-hands branch is the classic body\'s own 
   assert.match(rd('src/scenes/dungeonContext.js'), /opts\.wildStrike\(best, playerWeapon\.strikingWeapon, playerWeapon\.machine\?\.state, \{ off: playerWeapon\.offStrike \}\)/, 'the dungeon\'s own rig too');
   // the classic sprite's placement is FPSWeapon's, shared by the second hand
   const fps = rd('src/combat/fpsWeapon.js');
-  assert.match(fps, /const q = fpsWeaponQuad\(canvas, art, state, frame, \{ flipHorizontal, offsetHeight \}\);\n\s*if \(!q\) return;\n\s*const \{ tex, rect: \{ x, y, w, h \}, uv: src \} = q;\n\s*renderer\.drawScreenQuad\(tex, \{ x, y, w, h \}, src, tint \?\? undefined\);/);
+  // the record rides the quad (WEAPON-GLOW1's outline is measured in its own pixels), the draw's two lines main's own
+  assert.match(fps, /const q = fpsWeaponQuad\(canvas, art, state, frame, \{ flipHorizontal, offsetHeight \}\);\n\s*if \(!q\) return;\n\s*const \{ tex, rect: \{ x, y, w, h \}, uv: src, rec \} = q;\n\s*renderer\.drawScreenQuad\(tex, \{ x, y, w, h \}, src, tint \?\? undefined\);[^\n]*\n\s*if \(glow\) renderer\.drawScreenQuadGlow\?\.\(tex, \{ x, y, w, h \}, src, glow, \{ art: \[rec\.width, rec\.height\]/);
   // and the one hand's clone draws the mod's own line; only a hand of a pair takes the guard and the mirror
-  assert.match(rd('src/combat/weaponWidget.js'), /if \(!transform && !mirror\) \{\n\s*renderer\.drawScreenQuad\(tex, getWeaponRect\(\), w\.curAnimRect, tint \?\? undefined\);\n\s*return true;\n\s*\}/);
+  assert.match(rd('src/combat/weaponWidget.js'), /if \(!transform && !mirror\) \{\n\s*renderer\.drawScreenQuad\(tex, getWeaponRect\(\), w\.curAnimRect, tint \?\? undefined\);\n\s*if \(ctx\.glow\) renderer\.drawScreenQuadGlow\?\.\(tex, getWeaponRect\(\), w\.curAnimRect, ctx\.glow,[^\n]*\n\s*return true;\n\s*\}/);
 });
 
 test('TWO-HANDS rig: a left-handed player\'s picture is mirrored whole - the right hand on the left, mirrored; the left hand on the right, as DFU draws a right hand', async () => {

@@ -133,13 +133,17 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    * One hand of a pair through the CLASSIC sprite - FPSWeapon's own placement of its picture's frame, unflipped, the
    * mirror over it when the picture asks one and the guard on the screen. Returns the rect it drew, or null.
    */
-  function drawClassicHand(renderer, canvas, hand, art, { tint = null, offsetHeight = 0 } = {}) {
+  function drawClassicHand(renderer, canvas, hand, art, { tint = null, offsetHeight = 0, glow = null } = {}) {
     const v = views[hand];
     const q = fpsWeaponQuad(canvas, art, v.state, v.frame, { flipHorizontal: false, offsetHeight });
     if (!q) return null;
     const mirror = mirrorOf(hand, painted(v.state));
     const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas, q.rect.h));
-    renderer.drawScreenQuad(q.tex, rect, mirror ? MIRROR_UV : q.uv, tint ?? undefined);
+    const uv = mirror ? MIRROR_UV : q.uv;
+    renderer.drawScreenQuad(q.tex, rect, uv, tint ?? undefined);
+    // WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): this hand's own weapon's element, its outline over its own picture -
+    // the mirror's rect and source, measured in the record's own pixels (drawFpsWeapon's line)
+    if (glow) renderer.drawScreenQuadGlow?.(q.tex, rect, uv, glow, { art: [q.rec.width, q.rec.height], view: [canvas.width, canvas.height] });
     return rect;
   }
 
@@ -147,9 +151,10 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    * THE PAIR, DRAWN - both hands, the striking one over the other, unless the running hands hold them (drawRun). `widget`
    * is the right hand's clone (the rig's), used with the left's own while the Weapon Widget is on; a clone with nothing to
    * draw (its art still loading) falls through to the classic sprite for that hand, as the one hand's seam does (WW4).
-   * `artFor(hand)` answers a hand's classic art. True when it owned the seam.
+   * `artFor(hand)` answers a hand's classic art, `glowFor(hand)` its weapon's element (WEAPON-GLOW1 - a widget clone is
+   * handed its own in its frame). True when it owned the seam.
    */
-  function drawPair(renderer, canvas, { widget = null, widgetOn = false, artFor, shown = true, tint = null, offsetHeight = 0 } = {}) {
+  function drawPair(renderer, canvas, { widget = null, widgetOn = false, artFor, glowFor = () => null, shown = true, tint = null, offsetHeight = 0 } = {}) {
     if (!renderer || !canvas || !twoHanded(st.mode)) return false;
     // the running hands own the fists (drawRun, before this) - all but a punch thrown on the run, drawn here over them
     const running = st.run.w > 0;
@@ -158,7 +163,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
       const clone = hand === 'R' ? widget : offWidget;
       const mirror = mirrorOf(hand, paintedAt(clone?.state ?? 0));   // the record the clone draws - it plays its strike a frame behind the machine
       if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror, r.h)), mirror })) continue;
-      if (shown) drawClassicHand(renderer, canvas, hand, artFor(hand), { tint, offsetHeight });
+      if (shown) drawClassicHand(renderer, canvas, hand, artFor(hand), { tint, offsetHeight, glow: glowFor(hand) });
     }
     return true;
   }
