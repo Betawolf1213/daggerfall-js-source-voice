@@ -53,6 +53,7 @@ import {
   mintRecoverySet, hashRecoverySet, joinRecoverySet, matchRecoveryCode, recoveryLeft,   // RECOVERY-SET: eight codes, each spent alone
 } from './password.js';
 import { seatRegionOk } from '../../src/net/townSeatLaw.js';   // SEAT1b: a gate claim's region
+import { DB_ANY, DB_ROOT } from './service.js';   // BOOKMARK-SPIRAL: a session started at any instance, and the binding behind it
 
 /** A session's raw secret, in bytes. 32 bytes of CSPRNG is the whole
  *  of the credential; nothing about the player is encoded in it. */
@@ -279,7 +280,10 @@ const WHO_SQL = `SELECT ${SESSION_COLUMNS.map((c) => `s.${c} AS "s.${c}"`).join(
 export async function resolveSession({ db, subtle, nowS }, secret) {
   if (typeof secret !== 'string' || secret.length < 16 || secret.length > 128) return null;
   const hash = await hashSecret(secret, { subtle });
-  const row = await db.prepare(WHO_SQL).bind(hash).first();
+  let row = await db.prepare(WHO_SQL).bind(hash).first();
+  // BOOKMARK-SPIRAL (service.js ANY_REPLICA_ROUTES): a session started at any instance may stand on a replica that has
+  // not yet heard of a session minted a moment ago - its miss asks the primary before it is a refusal
+  if (!row && db?.[DB_ANY] === true) row = await (db[DB_ROOT] ?? db).prepare(WHO_SQL).bind(hash).first();
   if (!row) return null;
   /** @type {any} */ const session = {};
   /** @type {any} */ const found = {};
