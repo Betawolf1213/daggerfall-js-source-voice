@@ -75,6 +75,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | HOMES-SHED | The account database overloaded from 14:11 UTC (2026-10-13): the busiest route one D1 request where it was two (a town's homes and its Open Gates edict in one batch); the siege blackout's question answering a throw as every route does; a town unanswered backing off on the client, YARD-SHED's law | No | **Built** (2026-10-13, this branch - acct127, no migration, no drop) |
 | BUSY-GATE | After HOMES-SHED, the class: the reads a tab keeps asking stand back while the database is overloaded - the client holds them for a doubling wait, an isolate that meets an overload sheds them a moment without a statement, every overload answer says its Retry-After; one law at both ends (`src/net/busyLaw.js`) | No | **Built** (2026-10-13, this branch - acct128, no migration, no drop) |
 | HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world208) |
+| PRIMARY-TRIPS | The account database's primary, capped by its round trips, overloaded at 00:00 UTC (2026-10-16): the seats' list, a checkpoint and a badge's honours each one batch, a town's yards off a replica, a heartbeat's reads before its beat, a hall bump off its key's rows - some a quarter of the primary's trips at peak | No | **Built** (2026-10-16, this branch; acct139) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2328,20 +2329,90 @@ account-service change, no migration. The old storage key `vhubs` stays in the b
   them: an object that is called all day must not call back the objects calling it.
 - **The runtime's overloads and resets** are its own; DO-ASK answers them, and the crowded cell that overloaded is
   SCALE5d's layers' to spread (it overloaded for ten minutes, once).
-- **THE ACCOUNT DATABASE, OVERLOADED AGAIN - the next slice, the account service's own.** Read the same night off its
-  metrics (Analytics Engine `daggerfall_accounts`) and D1's query insights. At 00:00 UTC on 2026-10-16 the requests' mean
-  D1 wait went from some 0.5 s to 7.5 s in one five-minute bucket and stayed between 1 and 12 s for the next hour and
-  more (p50 wall up to 10 s, 31,045 refusals of 503 in the 00:00 hour), with the requests (37-41 thousand every five minutes)
-  and their statements (150-160 thousand) flat. The primary's statement time went from 10-13 s a minute to bursts of
-  24-34 s. Its earlier hours of the same (10-14 at 14:00 and 18:00, 10-15 at 17:00-18:00) are HOMES-SHED's and
-  BUSY-GATE's kind. What rose at midnight was reads that scan: the chapters' region read (`npcHalls.js` regionRows, some
-  10,000 rows a call - 4,180 calls and 41 million rows in 75 minutes against 1,414 and 10 million the hour before; it runs
-  on EVERY hall witness, even one whose account's report already stands, and on every isolate's recompute of a region
-  whose version moved), the market's listings (`market.js`, three times the calls), the arena's season boards
-  (`arena.js`, 17-22 million rows a board's aggregate, new in the top list at midnight), `home_decor`'s yard read
-  (`decor.js`, some 1,100 rows a call, 27,000 calls an hour) and `/v1/seats/list` (calls up 70%). Whether midnight's
-  rise is a day's rollover in the client or the readers' own retries against a slowing database is the slice's first
-  question; each of those reads wants a kept answer or an index before the next overload.
+- **The account database, overloaded the same night** - PRIMARY-TRIPS, below.
+
+## PRIMARY-TRIPS: built (2026-10-16, this branch - acct139, no migration, no drop)
+
+The account database overloaded at 00:00 UTC on 2026-10-16, found while HUB-PULL read the relay (Mac: "Is the server
+okay?"); Mac: "Keep this all in one PR. Start #2". Read off the service's metrics (Analytics Engine `daggerfall_accounts`)
+and D1's own analytics and query insights.
+
+### Measured
+
+- **At 00:00 the requests' D1 wait went from some 0.5 s to 7.5 s in one five-minute bucket**, and stayed between 1 and 12
+  s for the next hour and more (p50 wall up to 10 s; 31,045 refusals of 503 in the 00:00 hour), with the requests (37-41
+  thousand every five minutes) and their statements (150-160 thousand) flat.
+- **The primary is capped by its round trips, not its rows.** Its batches a second were 180-187 from 18:00 to 23:00 and
+  224 at 00:00, every one of them 0.4 ms at p50 and 6-9 ms at p99 - DISPLAY-REPLICA's ceiling again. Each earlier hour of
+  the same (10-14 at 14:00, 201 a second; 10-15 at 18:00, 180) tipped near the same count. Statements run some 1.2 to a
+  batch, so nearly every statement is a trip of its own.
+- **What moved at midnight was the replica's share.** The replica's batches fell from 215-227 a second to 168 and its p99
+  went from 4 ms to 7-12 ms, while the primary's rose by the same: `/v1/homes/town` asked less (117,087 an hour to
+  104,475) and sent the primary three times the statements (25,030 to 76,586), `/v1/prof/pixels` the same (14,024 to
+  32,937). A session sends a read to the primary when no replica has caught up with its bookmark. What slowed the
+  replica is D1's own; what the service can do is leave the primary room.
+- **Where the primary's trips went** at the evening's peak (22:00, statements a second): a realm checkpoint 68.6 (8.96 a
+  checkpoint), the heartbeat 18.2 (2.64 a heartbeat, a replica route), the token's mint 18.1 (5.14 a mint, a replica
+  route), a harvest 11.7, Renown 11.1, a chapter's claim 10.9, the seats' list 9.7 (8.02 a list), a town's yards 7.8 (one
+  read a request: the isolate's kept answer almost never there), a town's homes 7.5, the chapters' list 7.2 - some 200.
+  Counted over the service on node:sqlite (the pins below count it so), a checkpoint was five trips (the lookup, its
+  record's row, the ledger's two reads of the character's rows, the write's batch), a list ten, a mint twelve.
+- **And the reads that scan.** A hall witness's version bump (`npcHalls.js` bumpRegions) read some 19,000 rows to touch a
+  town's own handful: SQLite answered its `DISTINCT region` off the `(kind, region)` index, walking every hall report.
+
+### Built
+
+- **SEAT-BATCH.** The seats' list asks its holders, the week's battles and revolts, the Edicts, the works and the red
+  lines in ONE batch (`server-account/src/seatTurning.js:"export async function seatsBoard("`) - where each was a trip -
+  and answers them as before: `{ seats, red }`. Each reader's statement and its answer are apart (`holdsRead`/`holdsFrom`,
+  `battlesRead`/`battlesFrom`, `edictsRead`/`edictsFrom`, `redRead`/`redFrom`) and the old readers keep their callers.
+  Ten trips to five a list (four once the clock's facts row is fresh), three of them the primary's.
+- **YARDS-REPLICA.** A town's yards read on a session of their own (`decor.js` YARDS_FROM) - SEAT-REPLICA's law a town at
+  a time: any instance's first, then from the last kept read's bookmark, and the primary's right after this isolate's
+  own decor write there. The isolate's kept answer still answers YARDS_KEPT_S. `bookmarkOf` moved to `service.js`, one
+  reader for both. Some 500,000 primary reads a day of some 1,100 rows each, the most statement time of any read but the
+  session's lookup, off the primary.
+- **SAVE-BATCH.** A checkpoint reads its record's row, the ledger's two reads of the character's own rows (`ledger.js`
+  ledgerReads) and - where the isolate kept none - the budget's config (`budget.js` budgetKept, budgetRead, budgetFrom)
+  in ONE batch, one snapshot, before anything is judged; the verdict takes them as `known` (`verdict.js` verdictOn,
+  `ledger.js` ledgerStep). Five trips to three.
+- **SIGN-BATCH.** The doors that read a badge (`arena.js` ARENA_HONOUR_PATHS, the mint first) ask the arena's, Iliac
+  Hand's and The King's Gambit's honours in ONE batch on the binding (`server-account/src/honours.js`
+  withHonours over `arenaHonoursPlan`, `iliacHonoursPlan`, `gambitHonoursPlan`) - the Grand Champion's row, and each
+  game's kept #1 and (Iliac's, the Gambit's) whether its season was played, where this Worker kept none - and each game's
+  answer is read from its own, a stale #1 counted and stored after it as before (AUDIT SCALE4d A1: never off a replica).
+  Six trips to one.
+- **BEAT-LAST.** A heartbeat asks the box, the board and the post before its beat (`heartbeat.js`): a D1 session sends
+  every statement after a write to the primary, and the beat, asked first, sent them there. None of them reads what the
+  beat writes.
+- **HALL-PLAN.** The bump's `SELECT DISTINCT +region` - the unary plus leaves the `(kind, key)` index the planner's, the
+  answer the same.
+- Estimated at the evening's peak, from the counts above: the seats' list -6 primary trips a second, the yards -8, a
+  checkpoint -15, a mint -10 to -14, the heartbeat -10 - some -50 of 200, a quarter of the primary.
+
+### Left, each with its reason
+
+- **The session's lookup** is the first statement of every route not a replica's, some 3.3 million a day on the
+  primary - each request's own; folding it into a route's first batch changes how every route authenticates.
+- **The token's mint and the heartbeat start at the primary** where a tab carries no bookmark (SCALE4g's design, AUDIT
+  SCALE II A-1's for the mint), and a lagging replica sends a session's reads back there: D1's to answer.
+- **A harvest (25 statements), Renown (8) and a chapter's claim (9)** are writes, each a batch already in part; the next
+  trips to take, one route at a time.
+- **The chapters' list** (6.5 a list, 1.1 a second) and a hall witness's region read (some 9,400 rows a witness, every
+  report of the region's towns, never trimmed) - small in trips; the read's rows are the witnesses' own.
+- **What slowed the replica at midnight.** Not visible from here: D1's.
+
+### Pins
+
+- `test/primary_trips.test.js` (6): each slice counted over the service - the list's one batch of six, the yards'
+  sessions (any instance's, the bookmark's, the primary's after a write), a checkpoint's three trips and its batch with
+  and without the kept config, the mint's one honours batch on the binding and the kept #1s left out, the beat after
+  every read, the bump's plan. `tools/mutants/primary_trips.json`: 12 mutants, all dead.
+- PIN MOVED: `test/seat1c_client.test.js` and `test/crown2_client.test.js` (the list's line is seatsBoard's);
+  `test/scale4d.test.js` (the yards ride one session of their own); thirteen account pins' own D1 fakes gain D1's `batch`
+  (acc3titles, acc4played, accountworker, audit68_backend, audit_recoveryset, cloudsaves, founder3, founder4, mod1,
+  recoverop, recoveryset, terms1, wb5b_gate_claim - a fake without it was a database D1 never is); ACCOUNT_VERSION acct139
+  and every pin and mutant record on acct138.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 

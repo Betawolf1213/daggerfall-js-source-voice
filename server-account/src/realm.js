@@ -58,7 +58,8 @@ import { linkFirstPlay } from './founderLink.js';   // FOUNDER5: a character bro
 import { saveTextOf, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save read packed or plain
 import { lineageBirthRefusal, houseOn, endUnionsOf } from './legacy.js';   // LEGACY7: a realm character born as a person of the account's own line
 import { wealthOf, ledgerPieces, classicCount, WEALTH_VERSION } from './judge.js';   // INT5: what the service's own writes move, witnessed; INT4: the pieces it moves
-import { piecesRefusal, ledgerMoves, releaseSteps } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it
+import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
+import { budgetKept, budgetRead, budgetFrom } from './budget.js';   // SAVE-BATCH: and the budget's config, where the isolate kept none
 import { verdictOn } from './verdict.js';   // INT2-INT5: the verdict on every checkpoint, in the checkpoint's own batch
 
 /** Realm characters an ACCOUNT may hold. A new one past it is refused; nothing is ever deleted to make room. */
@@ -542,8 +543,18 @@ export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ p
 export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id, lease, seq, summary = null }, body, bytes) {
   if (!bucket) return { error: 'no-storage' };
   if (!REALM_ID_RE.test(id) || typeof lease !== 'string' || !LEASE_RE.test(lease) || !Number.isSafeInteger(seq) || /** @type {number} */ (seq) < 1) return { error: 'body' };
-  const row = await db.prepare(`SELECT seq, lease, obj, prev, origin_id, summary, dead_at, ${JUDGE_COLUMNS},
-    (SELECT played_s FROM players p WHERE p.id = realm_characters.player) AS played_now FROM realm_characters WHERE id = ? AND player = ?`).bind(id, playerId).first();
+  // SAVE-BATCH (2026-10-16, the account database's primary at its ceiling of round trips - bible/11-Multiplayer/
+  // Scale-Arc.md SAVE-BATCH): the record's row, the ledger's two reads of the character's own rows and (where this isolate
+  // kept none) the budget's config, in ONE batch - each was a round trip of its own, and checkpoints were a third of the
+  // primary's statements. One snapshot, read before anything is judged, as the reads were
+  const keptConfig = budgetKept(db);
+  const [rowRes, mineRes, dupesRes, configRes] = await db.batch([
+    db.prepare(`SELECT seq, lease, obj, prev, origin_id, summary, dead_at, ${JUDGE_COLUMNS},
+    (SELECT played_s FROM players p WHERE p.id = realm_characters.player) AS played_now FROM realm_characters WHERE id = ? AND player = ?`).bind(id, playerId),
+    ...ledgerReads(db, id),
+    ...(keptConfig ? [] : [budgetRead(db)]),
+  ]);
+  const row = rowRes?.results?.[0] ?? null;
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // LEGACY7: the tombstone - nothing of the dead is written again
   if (row.lease !== lease) return { error: 'lease' };
@@ -569,7 +580,8 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // ...over the baseline the first judgement reads - or, the wealth measure moved since the last (judge.js WEALTH_VERSION),
   // the stored record measured again under the new one
   const baseline = row.wealth == null || row.wealth_v !== WEALTH_VERSION ? await baselineOf(bucket, row, save) : null;
-  const v = await verdictOn({ db, nowS }, { player: playerId, char: id, seq: /** @type {number} */ (seq), key }, row, save, summaryNow, baseline);
+  const known = { mine: mineRes, dupes: dupesRes, config: keptConfig ?? budgetFrom(db, configRes?.results?.[0] ?? null) };
+  const v = await verdictOn({ db, nowS }, { player: playerId, char: id, seq: /** @type {number} */ (seq), key }, row, save, summaryNow, baseline, known);
   await bucket.put(key, body);
   /** @type {any} the judge's columns as they stand after the batch - the verdict's, or (its rev moved) the row's */
   let stood = null;

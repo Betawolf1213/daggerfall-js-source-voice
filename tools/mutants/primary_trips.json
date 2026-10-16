@@ -1,0 +1,122 @@
+[
+  {
+    "name": "SEAT-BATCH-red-apart",
+    "file": "server-account/src/seatTurning.js",
+    "old": "return { red: redFrom(redRes?.results), seats:",
+    "new": "return { red: redFrom((await redRead(db, nowS).all()).results), seats:",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the red lines asked in a trip of their own"
+  },
+  {
+    "name": "SEAT-BATCH-forts-apart",
+    "file": "server-account/src/seatTurning.js",
+    "old": "for (const r of fortsRes?.results ?? [])",
+    "new": "for (const r of (await fortsRead.all()).results ?? [])",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the works asked in a trip of their own"
+  },
+  {
+    "name": "YARDS-REPLICA-binding",
+    "file": "server-account/src/decor.js",
+    "old": "try { db = replicaDb(typeof ctx.db?.withSession === 'function' ? ctx.db : root, from); } catch",
+    "new": "try { db = ctx.db; } catch",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "a town's yards read on the binding - the primary's queue"
+  },
+  {
+    "name": "YARDS-REPLICA-write-unmarked",
+    "file": "server-account/src/decor.js",
+    "old": "  yardsWritten.add(mapId);   // YARDS-REPLICA: and its next read the primary's, which has the write\n",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the read after a decor write here off a replica that may not have it"
+  },
+  {
+    "name": "YARDS-REPLICA-bookmark-unkept",
+    "file": "server-account/src/decor.js",
+    "old": "      if (mark) yardsMark.set(mapId, mark);\n",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "a read after a kept one from any instance - a replica behind it may answer"
+  },
+  {
+    "name": "SAVE-BATCH-ledger-apart",
+    "file": "server-account/src/realm.js",
+    "old": "    ...ledgerReads(db, id),\n",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the ledger's reads out of the checkpoint's first batch"
+  },
+  {
+    "name": "SAVE-BATCH-config-apart",
+    "file": "server-account/src/realm.js",
+    "old": "    ...(keptConfig ? [] : [budgetRead(db)]),\n",
+    "new": "",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the budget's config out of the checkpoint's first batch"
+  },
+  {
+    "name": "SAVE-BATCH-config-though-kept",
+    "file": "server-account/src/realm.js",
+    "old": "  const keptConfig = budgetKept(db);",
+    "new": "  const keptConfig = null;",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the config asked though this isolate kept it"
+  },
+  {
+    "name": "SIGN-BATCH-apart",
+    "file": "server-account/src/honours.js",
+    "old": "  const res = reads.length ? await ctx.db.batch(reads) : [];",
+    "new": "  const res = await Promise.all(reads.map((r) => r.all()));",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "each game's honours a trip of their own"
+  },
+  {
+    "name": "SIGN-BATCH-kept-asked",
+    "file": "server-account/src/arena.js",
+    "old": "  const cached = _champ.season === season && nowS - _champ.at < ARENA_CHAMPION_CACHE_S;",
+    "new": "  const cached = false;",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the arena's #1 this Worker kept asked again"
+  },
+  {
+    "name": "BEAT-LAST-beat-first",
+    "file": "server-account/src/heartbeat.js",
+    "old": "  if (body?.mail === true) await part('mail',",
+    "new": "  if (body?.beat === true) await part('beat', () => creditPlay(ctx, player.id));\n  if (body?.mail === true) await part('mail',",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the beat written before the reads - a session sends them to the primary"
+  },
+  {
+    "name": "HALL-PLAN-bare-region",
+    "file": "server-account/src/npcHalls.js",
+    "old": "SELECT DISTINCT +region, 1, 0, ?2 FROM world_witness",
+    "new": "SELECT DISTINCT region, 1, 0, ?2 FROM world_witness",
+    "tests": [
+      "test/primary_trips.test.js"
+    ],
+    "note": "the bump's DISTINCT off the (kind, region) index - every hall report walked"
+  }
+]

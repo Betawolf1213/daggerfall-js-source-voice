@@ -104,16 +104,36 @@ export async function storeGambitChampion(ctx, season, nowS) {
   return id;
 }
 /** Whether the season has a rated game - a season nobody played counts no board and writes nothing. */
-const seasonPlayed = async ({ db }, season) => !!(await db.prepare('SELECT 1 AS one FROM gambit_games WHERE season = ?1 AND rated = 1 LIMIT 1').bind(season).first());
+const seasonPlayed = async ({ db }, season) => !!(await playedRead(db, season).first());
 /** The season's #1 as the service last counted it - counted afresh only where it never was this season or is old, and
  *  only when the season has a rated game at all. */
 async function championNow(ctx, nowS) {
   const season = arenaSeasonOf(nowS);
   if (_champ.season === season && nowS - _champ.at < GAMBIT_CHAMPION_CACHE_S) return _champ.id;
-  const kept = await ctx.db.prepare('SELECT player, at FROM gambit_champions WHERE season = ?1').bind(season).first();
-  const id = kept && nowS - Number(kept.at) < GAMBIT_CHAMPION_STORED_S ? kept.player ?? null : (await seasonPlayed(ctx, season)) ? await storeGambitChampion(ctx, season, nowS) : null;
+  const kept = await championKeptRead(ctx.db, season).first();
+  const stale = !(kept && nowS - Number(kept.at) < GAMBIT_CHAMPION_STORED_S);
+  return championFrom(ctx, nowS, season, kept, stale && await seasonPlayed(ctx, season));
+}
+/** SIGN-BATCH: the kept #1's row, as a statement; and whether the season has a rated game, as one. */
+const championKeptRead = (/** @type {any} */ db, /** @type {number} */ season) => db.prepare('SELECT player, at FROM gambit_champions WHERE season = ?1').bind(season);
+const playedRead = (/** @type {any} */ db, /** @type {number} */ season) => db.prepare('SELECT 1 AS one FROM gambit_games WHERE season = ?1 AND rated = 1 LIMIT 1').bind(season);
+/** The season's #1 from its kept row - counted again and stored where it is none or stale and the season was played -
+ *  and kept by this Worker. */
+async function championFrom(/** @type {any} */ ctx, /** @type {number} */ nowS, /** @type {number} */ season, /** @type {any} */ kept, /** @type {boolean} */ played) {
+  const id = kept && nowS - Number(kept.at) < GAMBIT_CHAMPION_STORED_S ? kept.player ?? null : played ? await storeGambitChampion(ctx, season, nowS) : null;
   _champ = { season, at: nowS, id };
   return id;
+}
+/** SIGN-BATCH (2026-10-16; arena.js arenaHonoursPlan says why): the season's #1's reads - its kept row and whether the
+ *  season was played, where this Worker kept none - and its honours from theirs, as gambitHonoursOf answers them. */
+export function gambitHonoursPlan(/** @type {any} */ ctx, /** @type {any} */ player, /** @type {number} */ nowS) {
+  if (!player?.handle) return { reads: [], from: async () => ({ champion: false }) };
+  const season = arenaSeasonOf(nowS);
+  const cached = _champ.season === season && nowS - _champ.at < GAMBIT_CHAMPION_CACHE_S;
+  return {
+    reads: cached ? [] : [championKeptRead(ctx.db, season), playedRead(ctx.db, season)],
+    from: async (/** @type {any[]} */ res) => ({ champion: (cached ? _champ.id : await championFrom(ctx, nowS, season, res[0]?.results?.[0] ?? null, !!res[1]?.results?.[0])) === player.id }),
+  };
 }
 /**
  * THE CLOCK'S COUNT (cron.js, every minute): the season's #1 counted before a reader would count it - only once the kept
