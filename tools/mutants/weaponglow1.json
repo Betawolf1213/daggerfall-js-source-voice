@@ -1,0 +1,182 @@
+[
+  {
+    "name": "WEAPON-GLOW1-tie-goes-to-the-later-element",
+    "file": "src/systems/weaponGlow.js",
+    "old": "(!best || sum[el] > best.total)",
+    "new": "(!best || sum[el] >= best.total)",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-magic-band-reads-rare",
+    "file": "src/systems/weaponGlow.js",
+    "old": "(total <= GLOW_LEVEL_EDGES[0] ? 1",
+    "new": "(total < GLOW_LEVEL_EDGES[0] ? 1",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-outline-tells-the-unidentified",
+    "file": "src/systems/weaponGlow.js",
+    "old": "!Array.isArray(item.affixes) || !rarityKnown(item)) return null;",
+    "new": "!Array.isArray(item.affixes)) return null;",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-arcane-on-the-classic-hand",
+    "file": "src/systems/weaponGlow.js",
+    "old": "if (arcane && isEnchanted(item))",
+    "new": "if (isEnchanted(item))",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-no-kill-door",
+    "file": "src/systems/weaponGlow.js",
+    "old": "if (pageParam('weaponglow', search) === 'off') return false;",
+    "new": "",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-no-rings",
+    "file": "src/render/renderer.js",
+    "old": "if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, false);",
+    "new": "",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-sheathed-weapon-glows",
+    "file": "src/render/renderer.js",
+    "old": "if (r.slot !== 'weapon' || r.hidden) continue;",
+    "new": "if (r.slot !== 'weapon') continue;",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-charge-writes-alpha",
+    "file": "src/render/renderer.js",
+    "old": "gl.colorMask(true, true, true, false);",
+    "new": "gl.colorMask(true, true, true, true);",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-pad-upside-down",
+    "file": "src/render/renderer.js",
+    "old": "gl.uniform4f(u.pad, wx, down, wx, up);",
+    "new": "gl.uniform4f(u.pad, wx, up, wx, down);",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-scroll-not-whole",
+    "file": "src/render/weaponGlowGlsl.js",
+    "old": "c.y * 0.3 - t * 2.0), 480.0)",
+    "new": "c.y * 0.3 - t * 2.5), 480.0)",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-pulse-not-whole",
+    "file": "src/render/weaponGlowGlsl.js",
+    "old": "float breath = 0.5 + 0.5 * sin(t * 2.0943951);",
+    "new": "float breath = 0.5 + 0.5 * sin(t * 2.1);",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-innermost-first",
+    "file": "src/render/weaponGlowGlsl.js",
+    "old": "export const GLOW_RINGS = Object.freeze([4.75, 3.25, 2, 1]);",
+    "new": "export const GLOW_RINGS = Object.freeze([1, 2, 3.25, 4.75]);",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-fire-does-not-rise",
+    "file": "src/render/weaponGlowGlsl.js",
+    "old": "if (look === 'fire') y *= y > 0 ? GLOW_FIRE_UP : GLOW_FIRE_DOWN;",
+    "new": "",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-armour-glows-on-the-wire",
+    "file": "src/net/wire.js",
+    "old": "if (it.group === 'Weapons' && typeof it.glow === 'string' && LOOK_GLOW_RE.test(it.glow)) out.glow = it.glow;",
+    "new": "if (typeof it.glow === 'string' && LOOK_GLOW_RE.test(it.glow)) out.glow = it.glow;",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-owners-switch-gates-the-word",
+    "file": "src/net/remotePlayers.js",
+    "old": "glowWord(meshGlow(it, { on: true }))",
+    "new": "glowWord(meshGlow(it))",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-magic-axe-keeps-its-sheet",
+    "file": "src/combat/fpsWeapon.js",
+    "old": "    case T.Battleaxe_Magic: return T.Battleaxe;\n",
+    "new": "",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-outline-loses-the-mirror",
+    "file": "src/combat/fpsWeapon.js",
+    "old": "if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, src, glow);",
+    "new": "if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, undefined, glow);",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-diverse-weapons-asks-the-magic-set",
+    "file": "src/combat/diverseWeapons.js",
+    "old": "return moddedWeaponFilename(item, enchanted) || classic;",
+    "new": "return moddedWeaponFilename(item) || classic;",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-foe-glows-on-one-screen",
+    "file": "src/net/remotePlayers.js",
+    "old": "if (it.group === 'Weapons' && entity?.isPlayer === true) {",
+    "new": "if (it.group === 'Weapons') {",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-a-still-bakes-the-glow",
+    "file": "src/render/renderer.js",
+    "old": "this._glowVpH > 0 && !this._glowOff && !!mesh.ranges;",
+    "new": "this._glowVpH > 0 && !!mesh.ranges;",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  }
+]

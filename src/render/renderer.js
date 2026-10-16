@@ -1547,7 +1547,15 @@ import { SKIN_PAL_ROW, SKIN_PALETTE_UNIT } from './skinPalette.js';   // MWNPC1:
 import { lightIdsOf, lightList, packLight } from './lightId.js';   // LIGHT-ID: each light's identity, lifted off its list for the shadow pass (and the flash packed through the seam)
 import { ecotoneGlsl, ECO_UNITS } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours - the chunk, and the units their tile sets bind on
 import { SNOW_VS, snowTerrainFs, SNOW_UNITS, SNOW_LAYER, snowSurfaceRise } from './snowfallGlsl.js';   // SNOWFALL1: the mod's snow surface, lit as the ground is
+import { GLOW_SPRITE_VS, GLOW_SPRITE_FS, GLOW_MESH_FS, GLOW_CLOCK_PERIOD, GLOW_UNIT_ROWS, GLOW_CHARGE_PULL, glowMeshVs, glowRingDraws } from './weaponGlowGlsl.js';   // WEAPON-GLOW1: a weapon's element, drawn
 const SNOW_UNIT_LIST = Object.entries(SNOW_UNITS);   // AUDIT ENVIRONS P1: the five pictures' units, listed once
+
+/** WEAPON-GLOW1: the glow's seconds, wrapped where every rate in it is whole (render/weaponGlowGlsl.js). A wall clock,
+ *  as the elite foes' glow is: a look, and the same look in every pass that draws one. */
+export const glowSeconds = (now = globalThis.performance?.now?.() ?? Date.now()) => (now / 1000) % GLOW_CLOCK_PERIOD;
+/** WEAPON-GLOW1: the Morrowind outline's draws per look, built once. */
+const _glowDraws = new Map();
+const glowDrawsFor = (look) => { let d = _glowDraws.get(look); if (!d) { d = glowRingDraws(look); _glowDraws.set(look, d); } return d; };
 
 /** The automap render panel, DFU's own rect on the 320x200 native
  *  screen (DaggerfallAutomapWindow's dummyPanelRenderAutomap /
@@ -3685,6 +3693,11 @@ export class Renderer {
     // warning and a program that links clean.
     this._activeTexture(gl.TEXTURE0);
     gl.uniform1i(c.tex, 0);
+    // WEAPON-GLOW1: the held weapon's element, in a sprite pass alone (the arm's and a third-person body's picture),
+    // while this body's palette is on its unit: the outline's rings BEFORE the body (at the back of the pass, so
+    // everything drawn after covers them) and its charge after; each hands charProgram back for the lines that follow
+    const glow = !!mesh.weaponGlow && this._glowVpH > 0 && !this._glowOff && !!mesh.ranges;
+    if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, false);
     if (mesh.ranges && mesh.ranges.length) {
       for (const r of mesh.ranges) {
         // MW-D12: a HIDDEN range still owns its vertices and its texture
@@ -3708,6 +3721,7 @@ export class Renderer {
       gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
       this.stats.texBinds++; this.stats.draws++;
     }
+    if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, true);
     gl.bindTexture(gl.TEXTURE_2D, null);
     this._tex0Bound = null;   // PERF-TEX3: this path owns unit 0 - the shadow may not speak for it
     gl.uniform1f(c.useTex, 0);
@@ -3726,6 +3740,99 @@ export class Renderer {
     // either: osgParticle draws in the transparent bin)
     if (mesh.effects && mesh.effects.length) this._drawParticleEffects(mesh, modelMatrix);
     gl.enable(gl.CULL_FACE);
+  }
+
+  /**
+   * WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): A MORROWIND WEAPON'S ELEMENT, inside drawCharacter's sprite pass -
+   * `mesh.weaponGlow` is `{ look, code, level, ramp }` (systems/weaponGlow.js, set by combat/fpArm.js), and the ranges
+   * it lights are the weapon's (`slot` 'weapon', shown). THE OUTLINE (`charge` false, before the body): every range
+   * again per draw of glowRingDraws - shifted in screen space by glow units (a Daggerfall pixel at this pass's
+   * height), opaque and depth-written at the back of the pass, outermost first and farthest, so the union of a ring's
+   * copies is the silhouette dilated to its band and the body drawn after covers them. THE CHARGE (`charge` true, after
+   * the body): the ranges once more, additive with alpha masked (the composite's cut stays the body's), at the body's
+   * own depth. Owns its program binding and hands back charProgram, and every state it touches back as drawCharacter
+   * keeps it: blend off, depth LESS and written, every colour channel.
+   */
+  _drawWeaponGlow(mesh, modelMatrix, skin, charge) {
+    this._close2D();   // PERF-2D: drawCharacter's own baseline - closed already, said where the draw is
+    const g = mesh.weaponGlow;
+    let any = false;
+    for (const r of mesh.ranges) if (r.slot === 'weapon' && !r.hidden) { any = true; break; }
+    if (!any || !g.ramp || !(g.code > 0)) return;
+    const gl = this.gl;
+    this._ensureWeaponGlowMeshProgram();
+    this._use(this.weaponGlowMeshProgram);
+    const u = this._wgm;
+    gl.uniformMatrix4fv(u.proj, false, this._proj);
+    gl.uniformMatrix4fv(u.view, false, this._view);
+    gl.uniformMatrix4fv(u.model, false, modelMatrix);
+    gl.uniform1f(u.skin, skin ? skin.pairs : 0);
+    gl.uniform1i(u.look, g.code);
+    gl.uniform1f(u.level, g.level);
+    gl.uniform1f(u.time, glowSeconds());
+    gl.uniform3fv(u.ramp, g.ramp);
+    const unit = Math.min(8, Math.max(1, this._glowVpH / GLOW_UNIT_ROWS));
+    gl.uniform1f(u.unit, unit);
+    const ranges = () => {
+      for (const r of mesh.ranges) {
+        if (r.slot !== 'weapon' || r.hidden) continue;
+        gl.uniform1f(u.useTex, r.tex ? 1 : 0);
+        gl.uniform1f(u.alphaCut, r.alphaCut || 0);
+        gl.bindTexture(gl.TEXTURE_2D, r.tex || this._blackTex);
+        this._tex0Bound = null;   // PERF-TEX3: this path owns unit 0 - the shadow may not speak for it
+        gl.drawArrays(gl.TRIANGLES, r.first, r.count);
+        this.stats.draws++;
+      }
+    };
+    if (!charge) {
+      const sx = (2 * unit) / this._glowVpW, sy = (2 * unit) / this._glowVpH;
+      gl.uniform1f(u.pull, 0);
+      gl.uniform1f(u.mode, 0);
+      let mode = 0;
+      for (const d of glowDrawsFor(g.look)) {
+        if (d.ring < 0 && mode !== 2) { gl.uniform1f(u.mode, 2); mode = 2; }
+        else if (d.ring >= 0) gl.uniform1f(u.ringD, d.ring);
+        gl.uniform2f(u.shift, d.shift[0] * sx, d.shift[1] * sy);
+        gl.uniform1f(u.far, d.far);
+        ranges();
+      }
+    } else {
+      gl.uniform1f(u.mode, 1);
+      gl.uniform2f(u.shift, 0, 0);
+      gl.uniform1f(u.far, 0);
+      gl.uniform1f(u.pull, GLOW_CHARGE_PULL);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.colorMask(true, true, true, false);
+      gl.depthMask(false);
+      gl.depthFunc(gl.LEQUAL);
+      ranges();
+      gl.depthFunc(gl.LESS);
+      gl.depthMask(true);
+      gl.colorMask(true, true, true, true);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.disable(gl.BLEND);
+    }
+    this._use(this.charProgram);
+  }
+
+  /** WEAPON-GLOW1: the Morrowind glow's program - the character program's skinned vertex shader with the glow's shift
+   *  (render/weaponGlowGlsl.js glowMeshVs), built on the first glowing weapon. Its samplers are constants: the range's
+   *  texture on unit 0, the skin's palette on its own. */
+  _ensureWeaponGlowMeshProgram() {
+    if (this.weaponGlowMeshProgram) return;
+    const gl = this.gl;
+    const p = this._buildProgram(glowMeshVs(CHAR_SKIN_VS), GLOW_MESH_FS);
+    const at = (n) => gl.getUniformLocation(p, n);
+    this._wgm = {
+      proj: at('uProj'), view: at('uView'), model: at('uModel'), skin: at('uSkin'), shift: at('uGlowShift'), far: at('uGlowFar'), pull: at('uGlowPull'),
+      useTex: at('uUseTex'), alphaCut: at('uAlphaCut'), look: at('uLook'), level: at('uLevel'), time: at('uTime'),
+      ramp: at('uRamp'), mode: at('uMode'), ringD: at('uRingD'), unit: at('uUnit'),
+    };
+    this._use(p);
+    gl.uniform1i(at('uTex'), 0);
+    gl.uniform1i(at('uSkinPalette'), SKIN_PALETTE_UNIT);
+    this.weaponGlowMeshProgram = p;
   }
 
   /**
@@ -3901,11 +4008,13 @@ export class Renderer {
     // setClearColor (:1953) is idempotent against the `_clearColor`
     // shadow this path no longer matches - AUDIT 26 F034's bug back,
     // permanently, off one caught exception.
+    this._glowVpW = pw; this._glowVpH = ph;   // WEAPON-GLOW1: the pass's pixels, the glow's unit
     try {
       this.drawCharacter(mesh, modelMatrix);
       if (also) for (const o of also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
     }
     finally {
+      this._glowVpW = 0; this._glowVpH = 0;
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);   // EL4: the frame, or the canvas
       // ROAD-E E5: the viewport is BORROWED here too. This pass runs in
       // the middle of the world pass (every voxel character composites
@@ -4019,10 +4128,12 @@ export class Renderer {
         gl.clear(gl.DEPTH_BUFFER_BIT);
         this._proj = it.proj; this._view = it.view;
         this._cFrameStamp = -1;   // LA-COST1: its own camera's block, as the lone pass sends it
+        this._glowVpW = it.pw; this._glowVpH = it.ph;   // WEAPON-GLOW1: the tile's pixels, the glow's unit
         this.drawCharacter(it.mesh, it.model);
         if (it.also) for (const o of it.also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
       }
     } finally {
+      this._glowVpW = 0; this._glowVpH = 0;
       gl.disable(gl.SCISSOR_TEST);
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);
       this._restoreWorldViewport();
@@ -4064,9 +4175,11 @@ export class Renderer {
       this._moonScale = 0;
     }
     if (studio) this._studioDepth++;   // AUDIT-EL F1: a UI picture takes no eye
+    this._glowOff = (this._glowOff ?? 0) + 1;   // WEAPON-GLOW1: a picture read back is a still - no moment of a glow is baked into it
     try {
       this.renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph);
     } finally {
+      this._glowOff--;
       if (saved) {
         this._lightDir = saved.lightDir; this._ambient = saved.ambient; this._sunScale = saved.sunScale;
         this._sunColor = saved.sunColor; this._pointLights = saved.pointLights; this._indirect = saved.indirect;
@@ -4680,6 +4793,61 @@ void main() {
     if (blend) gl.disable(gl.BLEND);
     // PERF-2D: the run stays open - _close2D hands the baseline back at
     // the head of whatever needs it next.
+  }
+
+  /**
+   * WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): THE FOURTH 2D PRIMITIVE - a classic weapon sprite's element outline,
+   * drawn over the frame drawScreenQuad just drew, on the same rect (`dst`, before the screen offset, as drawScreenQuad
+   * takes it) and source (`src`, its mirror). `glow` is `{ code, level, ramp, win }` (systems/weaponGlow.js for the
+   * look, render/weaponGlowGlsl.js GLOW_SPRITE_WINDOW for the window): the quad grows by the window a side - left and
+   * right by its half-width, its top by the rows a texel looks DOWN (a texel over the frame finds the frame below it),
+   * its bottom by the rows it looks up - and the fragment reads the frame's own texels. Premultiplied, blended
+   * ONE, ONE_MINUS_SRC_ALPHA; the run stays open, as drawScreenQuad's does.
+   */
+  drawScreenQuadGlow(tex, dst, src = { u0: 0, v0: 0, u1: 1, v1: 1 }, glow = null) {
+    if (!tex || !glow?.ramp || !(glow.code > 0)) return;
+    const gl = this.gl;
+    if (this._worldViewportPx) this.endWorldPass();
+    this._compositeAir();
+    this._ensureScreenQuadProgram();   // its VAO is the quad this draws
+    this._ensureWeaponGlowQuadProgram();
+    this._use(this.weaponGlowQuadProgram);
+    this._open2D(this._screenQuadVao);
+    const u = this._wgq;
+    const ox = this._screenOffset?.[0] ?? 0, oy = this._screenOffset?.[1] ?? 0;
+    const [wx, up, down] = glow.win;
+    gl.uniform4f(u.dst, dst.x + ox, dst.y + oy, dst.w, dst.h);
+    gl.uniform2f(u.canvas, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.uniform4f(u.src, src.u0, src.v0, src.u1, src.v1);
+    gl.uniform4f(u.pad, wx, down, wx, up);
+    gl.uniform3i(u.win, wx, up, down);
+    gl.uniform1i(u.look, glow.code);
+    gl.uniform1f(u.level, glow.level);
+    gl.uniform1f(u.time, glowSeconds());
+    gl.uniform3fv(u.ramp, glow.ramp);
+    this._bindTex0(tex);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    this.stats.draws++;
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.disable(gl.BLEND);
+  }
+
+  /** WEAPON-GLOW1: the sprite outline's program (render/weaponGlowGlsl.js), built on the first glowing frame; its
+   *  sampler is unit 0 for good, as the screen quad's is. */
+  _ensureWeaponGlowQuadProgram() {
+    if (this.weaponGlowQuadProgram) return;
+    const gl = this.gl;
+    const p = this._buildProgram(GLOW_SPRITE_VS, GLOW_SPRITE_FS);
+    const at = (n) => gl.getUniformLocation(p, n);
+    this._wgq = {
+      dst: at('uDst'), canvas: at('uCanvas'), src: at('uSrc'), pad: at('uPad'), win: at('uWin'),
+      look: at('uLook'), level: at('uLevel'), time: at('uTime'), ramp: at('uRamp'),
+    };
+    this._use(p);
+    gl.uniform1i(at('uTex'), 0);
+    this.weaponGlowQuadProgram = p;
   }
 
   /** PERF-WARM: build the screen-quad program, its sampler binding and

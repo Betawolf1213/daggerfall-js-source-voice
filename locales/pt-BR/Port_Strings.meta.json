@@ -7719,6 +7719,16 @@
   "tr": "f082b4ee727c",
   "by": "claude-in-session"
  },
+ "features.weaponGlow.note": {
+  "en": "8eb08e29ad7d",
+  "tr": "9e8827c5020e",
+  "by": "claude-in-session"
+ },
+ "features.weaponGlow.title": {
+  "en": "964f52fd55ec",
+  "tr": "69485585d32c",
+  "by": "claude-in-session"
+ },
  "features.weatherEvents.note": {
   "en": "cc04c428968c",
   "tr": "df428098cd77",

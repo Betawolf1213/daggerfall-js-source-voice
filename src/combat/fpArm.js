@@ -1701,6 +1701,7 @@ export const archiveHas = (archives) => (p) => (archives ?? []).some((a) => a.ha
  *  card's note is the same sentence, but the card is a menu away. */
 import { ammoCountFor } from '../systems/inventory.js';   // AUDIT 68 S27-ammoCount-dup: the ammunition count's one home, beside the spend law
 import { ownWeaponModelFor } from '../characters/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have - a leaf too
+import { GLOW_BOX_GROW } from '../render/weaponGlowGlsl.js';   // WEAPON-GLOW1: the third-person window's room for the outline - a leaf
 
 const saidArrow = new Set();
 function sayNoArrow(notes) {
@@ -3413,6 +3414,10 @@ export function createFpArm() {
   let posedGroup = null;        // MWNPC4: the frame's winner, by name - on the card
   let dead = false;              // MWNPC4: died - the reference stops refreshing a dead actor's states (character.cpp:"For dead actors, refreshCurrentAnims is no longer called")
   let torchLit = false;
+  // WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): the held weapon's glow - `{ look, code, level, ramp }`
+  // (systems/weaponGlow.js meshGlow, or glowFromWord for a peer's body) - laid on the mesh each draw; the renderer lights
+  // the weapon's own ranges with it (renderer.js _drawWeaponGlow). Null draws none.
+  let weaponGlowSpec = null;
   let torchState = null;
   let torchSource = null;
   let torchGroup = null;
@@ -5312,6 +5317,12 @@ export function createFpArm() {
       return projectPaperCorners(held.piece.positions, lastFrame, lastFrame.rect);
     },
 
+    /** WEAPON-GLOW1: the held weapon's glow (systems/weaponGlow.js meshGlow / glowFromWord), or null - a value read at
+     *  the next draw, so its fast path is the assignment. */
+    setWeaponGlow(spec) { weaponGlowSpec = spec ?? null; },
+    /** WEAPON-GLOW1: the glow the next draw lays on the weapon, for a pin. */
+    weaponGlow() { return weaponGlowSpec; },
+
     setTorch(lit) {
       const want = !!lit;
       if (!built || !built.ok) return false;
@@ -5998,6 +6009,7 @@ export function createFpArm() {
       // the frame's own window, into the rect the composite lays it on.
       lastFrame = { model: NIF_TO_PASS, view, proj, rect: win ? win.dst : { x: 0, y: 0, w: W, h: H } };
       drewLast = true;
+      mesh.weaponGlow = weaponGlowSpec;   // WEAPON-GLOW1
       const tex = renderer.renderCharacterSprite(mesh, NIF_TO_PASS, proj, view, fw, fh, { lensLocal: true, viewmodelLight: vmLight });   // VC5 review: lens-local - no cloud deck on the arm   // DISC13-C: fw x fh - the grid the screen shows
       // WW1: Weapon Widget's channels move the composite as they move the
       // classic sprite - a screen-space rect in place of the fullscreen
@@ -6177,8 +6189,13 @@ export function createFpArm() {
       const box = thirdBox();   // AUDIT 68: poseAssembly's own fold, over the pieces, when nothing drawn has a box
       if (!box) return false;
       const { minX, minY, minZ, maxX, maxY, maxZ } = box;
-      const halfH = ((maxZ - minZ) * u * rs.height) / 2;
-      const halfW = (Math.hypot(maxX - minX, maxY - minY) * u * rs.weight) / 2;
+      // WEAPON-GLOW1: a glowing weapon's outline stands off its edge, and the drawn weapon is often the box's edge - the
+      // window grows by the outline's reach (GLOW_BOX_GROW of its height a side), the picture's size unmoved
+      thirdMesh.weaponGlow = weaponGlowSpec;
+      const glowGrow = weaponGlowSpec ? GLOW_BOX_GROW : 0;
+      const halfH0 = ((maxZ - minZ) * u * rs.height) / 2;
+      const halfH = halfH0 * (1 + glowGrow);
+      const halfW = (Math.hypot(maxX - minX, maxY - minY) * u * rs.weight) / 2 + halfH0 * glowGrow;
       const center = transformPoint(model, (minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
       // MWNPC16: the shape it casts, where it is asked (an NPC's lane - net/peerBodies.js `casts`, which never asks it of a
       // body the travel view grows: OW-BIG's law, no giant's shadow), at its size (MWNPC10's boss stands larger, and casts
