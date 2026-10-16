@@ -29,6 +29,9 @@
 // since, by TEMPLE-STEPS' - its rocks are STALL-SHAPE's, and only the second stall moved. No record says a piece was moved
 // since it was placed: one placed before and moved since is put back as if it had not been (the owner moves it once more).
 //
+// The turn is the place's yaw alone (`rot[0]`): the placer mints a model's place [yaw, 0, 0] (systems/decorPlacer.js), so
+// no saved stall or boulder carries a pitch or a roll; one sent by hand is re-seated about its yaw.
+//
 // Arithmetic alone: the turn's cosine and sine are their Taylor series to the 18th and 19th powers (|turn| <= 180
 // degrees - within 1e-8), so no statement leans on SQLite's math extension, which a D1 database is not promised to carry.
 // The WAS boxes are the stand-ins' own, evaluated from their builders at f3ed9e2097 (WD3, unchanged to c2b52fdff1^) and
