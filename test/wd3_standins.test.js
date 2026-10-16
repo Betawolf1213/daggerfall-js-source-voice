@@ -17,7 +17,7 @@
 // Cliffworms' shared with Detailed Ships by either switch); the pipeline's hole (a record no picture is for draws
 // nothing, said once). With ARENA2_PATH: every model and flat the two packs place is Daggerfall's own, stood in, or one
 // of a named few; every built-in flat a town's interior lays can be taken out of a house (BASE-HIDE's name); the solids
-// the port stands in a town against the author's own models and every exterior door's approach (FIELD BUGS 2026-10-15e
+// the port stands in a town against the author's own models and every exterior door's approach (FIELD BUGS 2026-10-15f
 // TEMPLE-STEPS, tools/townSolidsSweep.mjs); the alias beds built by the pipeline from the player's own ARCH3D.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -206,8 +206,8 @@ test('WD3 stand-ins, every built piece is sound - Rosy\'s hangings and rugs, the
   assert.equal(Object.keys(DET_TOWN_MODELS).length, 52);
   const box = {};
   for (const [id, build] of Object.entries(all)) box[id] = soundMesh(id, build());
-  // rocks: the mesh's box [x0, x1, depth below, height above, z0, z1] at the prefab's scale (FIELD BUGS 2026-10-15e
-  // TEMPLE-STEPS) - the boulder inside it, its rim pulled in by at most a quarter (test/fb1015e_templesteps.test.js)
+  // rocks: the mesh's box [x0, x1, depth below, height above, z0, z1] at the prefab's scale (FIELD BUGS 2026-10-15f
+  // TEMPLE-STEPS) - the boulder inside it, its rim pulled in by at most a quarter (test/fb1015f_templesteps.test.js)
   for (const [id, b] of Object.entries(RMBRP_ROCKS)) {
     const { lo, hi, tex } = box[id], [x0, x1, down, up, z0, z1] = b.map((v) => v * RMBRP_ROCK_SCALE[id]);
     assert.deepEqual([...tex], ['302_3'], `${id}: the climate's rock`);
@@ -244,7 +244,7 @@ test('WD3 stand-ins, every built piece is sound - Rosy\'s hangings and rugs, the
   assert.deepEqual([ramp.lo, ramp.hi].map((v) => v.map((x) => +x.toFixed(3))), [[0, -1.4, -4], [4, 0, 0]], 'the ramp: four metres square, falling one metre on its top, mirrored onto +x');
   assert.deepEqual([steps.lo, steps.hi].map((v) => v.map((x) => +x.toFixed(3))), [[0, -1.2, -4], [3, 0, 0]], 'the steps: five treads of 0.6 m, falling 0.2 m each');
   // the platform, the foundation, the domes
-  // FIELD BUGS 2026-10-15e TEMPLE-STEPS: the pack's own box (+-160 x +-80 x +-160 cm) at each prefab's scale, centred - the
+  // FIELD BUGS 2026-10-15f TEMPLE-STEPS: the pack's own box (+-160 x +-80 x +-160 cm) at each prefab's scale, centred - the
   // FBX node's Lcl Scaling (125, 250) never instanced; the foundation's top is the temples' floor without a sink
   assert.deepEqual([box[53160].lo, box[53160].hi].map((v) => v.map((x) => +x.toFixed(3))), [[-1.6, -0.8, -1.6], [1.6, 0.8, 1.6]]);
   assert.deepEqual([box[53170].lo, box[53170].hi].map((v) => v.map((x) => +x.toFixed(3))), [[-3.2, -1.6, -3.2], [3.2, 1.6, 3.2]], 'the temples\' floor its top, centred as the pack\'s mesh is');
@@ -497,13 +497,13 @@ test('WD3 with ARENA2: HOUSING - every built-in piece a town\'s interior lays ca
   assert.deepEqual([...bad], [], 'a piece no name can name would be refused whole online and come back at the next load offline');
 });
 
-// FIELD BUGS 2026-10-15e TEMPLE-STEPS (Discord: "The entrance to The School of Julianos in Makehda is blocked"): this
+// FIELD BUGS 2026-10-15f TEMPLE-STEPS (Discord: "The entrance to The School of Julianos in Makehda is blocked"): this
 // sweep read each door's point and one metre out, and held the stand-ins as boxes to them - so the foundation drawn
 // 16 m square, sunk until its top cleared that point (AUDIT WD3 T1), passed while it buried TEMPASF1's and TEMPASH4's
 // temple stairs and landings, the approach the author built to the door. Now tools/townSolidsSweep.mjs's three laws,
 // over each pack's own blocks as the door serves them (curated - HILL-HOUSE's house stands where the door stands it),
 // the pipeline's meshes and the host's hills and pads.
-test('WD3 with ARENA2: THE SOLIDS THE PORT STANDS IN A TOWN (FIELD BUGS 2026-10-15e TEMPLE-STEPS) - no structure it stands in for the RMB Resource Pack holds another model the author placed past a touch, but what the pack\'s own meshes hold; no HILL-SEAT pad stands over anything the author left in the open; and every exterior door\'s step and the four metres before it are clear of every solid the port generates, but the author\'s own named', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set', timeout: 600000 }, async () => {
+test('WD3 with ARENA2: THE SOLIDS THE PORT STANDS IN A TOWN (FIELD BUGS 2026-10-15f TEMPLE-STEPS) - no structure it stands in for the RMB Resource Pack holds another model the author placed past a touch, but what the pack\'s own meshes hold; no HILL-SEAT pad stands over anything the author left in the open; and every exterior door\'s step and the four metres before it are clear of every solid the port generates, but the author\'s own named', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set', timeout: 600000 }, async () => {
   resetAll();
   const WDR = await import('../src/formats/worldDataReplacement.js');
   const { openTownData } = await import('../tools/townQuestMarkers.mjs');

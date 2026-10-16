@@ -226,7 +226,7 @@ export class EnemyAttack {
         continue;
       }
       if (!meleePass) continue;
-      // INVIS-SWING (FIELD BUGS 2026-10-15e, "inside dungeons, monsters still spot and attack me immediately while the
+      // INVIS-SWING (FIELD BUGS 2026-10-15f, "inside dungeons, monsters still spot and attack me immediately while the
       // spell is active"): MeleeAnimation faces senses.LastKnownTargetPos (EnemyAttack.cs:155), not the target's live
       // feet. The position is written only when the foe DETECTS its target (EnemySenses.cs:451-470) and holds
       // ResetPlayerPos until then (:28 - float.MaxValue, which no yaw test passes), so a foe its target's Invisibility

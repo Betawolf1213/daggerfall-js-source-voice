@@ -309,7 +309,7 @@ rig is the authoring bench for monster morphologies. Slices:
   reversed comparison; so do we), MeleeAnimation gates (in sight,
   22.5deg yaw toward the LAST-KNOWN target position - INVIS-SWING,
   2026-10-15: the port faced the live feet, so an undetected invisible
-  player was struck, `01-Overview/Field-Bugs-2026-10-15e.md` -
+  player was struck, `01-Overview/Field-Bugs-2026-10-15f.md` -
   distance <= MeleeDistance + rate-of-approach),
   ResetMeleeTimer arithmetic exact (Range(1500,3001), -50/level over
   10, +450/reflex step, 0-floor, /980). Unity-Random slots stay

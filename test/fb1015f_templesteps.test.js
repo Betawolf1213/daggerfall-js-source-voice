@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15e TEMPLE-STEPS (Discord, 2026-10-11: "The entrance to The School of Julianos in Makehda is blocked.
+// FIELD BUGS 2026-10-15f TEMPLE-STEPS (Discord, 2026-10-11: "The entrance to The School of Julianos in Makehda is blocked.
 // Seen this same problem before with another temple but forgot where." - a night screenshot of a temple behind a great
 // dark stone wall, a pale stair crossing in front of it; 2026-10-13: "The Akatosh Chantry in Merdale also has some small
 // issues").

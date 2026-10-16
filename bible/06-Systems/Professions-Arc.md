@@ -4106,7 +4106,7 @@ A4, `prof12_client` R2-C2, `prof3_client` wiring. Re-aimed by content, each stil
   `prof3_law` (a kit's record its quality), `prof3_service` (a kit's craft answered a quality), `repair_rate` (the
   anvil's kit line), and the account version's pins (acct93).
 
-### 41.9 CRAFT-FIRST-SHOWN - the first-make 500 said where it is earned (BUILT 2026-10-15, FIELD BUGS 2026-10-15e)
+### 41.9 CRAFT-FIRST-SHOWN - the first-make 500 said where it is earned (BUILT 2026-10-15, FIELD BUGS 2026-10-15f)
 
 The Discord, 2026-10-13: "Outfitting xp (first-time craft bonus): The first time craft bonus is not applying to the
 outfitting. I got somehow it once from...Fishing net? Then never after."
@@ -4152,10 +4152,10 @@ outfitting. I got somehow it once from...Fishing net? Then never after."
   the three of them that held the jeweller's row (Finnish, Japanese, Polish) had it cut the same, or it named arguments
   the English no longer has (`test/l10n1b.test.js`); the craft's word around them is still the host's English, as it was.
 - **As built**: `src/ui/craftXpWords.js` (new), `src/ui/profPages.js`, `src/scenes/world.js`,
-  `locales/*/Port_Strings.csv` and their records, the thirteen glossaries. Pinned: `test/fb1015e_firstcraft.test.js`
+  `locales/*/Port_Strings.csv` and their records, the thirteen glossaries. Pinned: `test/fb1015f_firstcraft.test.js`
   (3) - the law the words say (the 152, all the Weavers' cloth; both works and every dish pay), the craft's word from
   the real Worker's answer through the book (a Linen Straps' first, a Linen Boots' first, a second of each; in French),
-  the host's one call, and every station's box read off the real book. `tools/mutants/fb1015e_firstcraft.json` (20, all
+  the host's one call, and every station's box read off the real book. `tools/mutants/fb1015f_firstcraft.json` (20, all
   dead). PIN MOVED: `craft1_chain` (the host's craft word, its chain still first) and `prof10_client` (the jeweller's
   XP its own line).
 

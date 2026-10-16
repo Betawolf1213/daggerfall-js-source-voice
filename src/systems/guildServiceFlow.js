@@ -263,7 +263,7 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   }
   if (n.high + n.low < 2) lines.push(t('guild.rankNeeds.second', 'A second guild skill at {bar}', { bar: n.skillLow }));
   if (n.high < 1 || n.high + n.low < 2) lines.push(t('guild.rankNeeds.skills', 'Guild skills: {skills}', { skills: guild.skills.map((s) => SKILL_NAMES[s]).join(', ') }));
-  // ROLL-PACE (FIELD BUGS 2026-10-15e): online the Roll pays a rank at its pace since the membership began - when that is
+  // ROLL-PACE (FIELD BUGS 2026-10-15f): online the Roll pays a rank at its pace since the membership began - when that is
   // what holds the next one, the hall says how long (`ctx.pace`, npcRollTracker.js rollPaceOf)
   const wait = n.rank > (ctx?.pace?.ceiling ?? Infinity) ? ctx.pace.wait(n.rank) : null;
   if (wait > 0) lines.push(t('guild.rankNeeds.paced', '{days, plural, =1 {Earliest promotion: tomorrow} other {Earliest promotion: in # days}}', { days: wait }));

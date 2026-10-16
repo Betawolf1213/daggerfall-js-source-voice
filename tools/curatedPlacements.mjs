@@ -25,7 +25,7 @@ import { DOOR_APPROACH_M } from '../src/world/curatedPlacements.js';
 /** A footprint's clearance all round, metres. */
 export const PLACE_CLEAR_M = 1.5;
 /** The door's approach: the door and every metre before it to this, metres (its one home is the module's, FIELD BUGS
- *  2026-10-15e TEMPLE-STEPS: the town sweep and the HILL-SEAT pads hold every door to it). */
+ *  2026-10-15f TEMPLE-STEPS: the town sweep and the HILL-SEAT pads hold every door to it). */
 export const DOOR_CLEAR_M = DOOR_APPROACH_M;
 /** A footprint's distance from the block's edge, metres (the block is 4096 units, 102.4 m). */
 export const EDGE_M = 2;

@@ -326,7 +326,7 @@ import { heldOf as bagHeldOf, heldKeysOf as bagHeldKeysOf, roomFor as bagRoomFor
 import { BAG_KG_LIMIT, madeWhere, movedFirstText } from '../net/bagLaw.js';   // AUDIT BAG1 B9: where a station's work went; AUDIT2 K8: what went in before a refusal
 import { smeltRecipe, stockOf, WEAVERS_STOCK, APOTHECARY_STOCK, professionName } from '../net/professionLaw.js';   // PROF2: a smelt's product, for its word; PROF4: a counter's; PROF5: the Weavers'
 import { refinedText, chainStopText } from '../net/chainLaw.js';   // CRAFT1: what a craft's chain refined first, said with it; AUDIT CRAFT1 F4: where it stopped
-import { craftXpText } from '../ui/craftXpWords.js';   // CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15e): a craft's XP said with its first - and, for the Weavers' cloth, why its first paid none
+import { craftXpText } from '../ui/craftXpWords.js';   // CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15f): a craft's XP said with its first - and, for the Weavers' cloth, why its first paid none
 import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market's book
 import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
 import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
@@ -3669,7 +3669,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     refuses: (p) => livingIndoors?.town()?.refuses(p) ?? null,
     talked: (p) => livingIndoors?.town()?.talked(p) ?? null,
     caught: (p) => livingIndoors?.caught(p) ?? null,
-    toned: (p, tone) => livingIndoors?.town()?.toned(p, tone) ?? null,
+    toned: (p, taste) => livingIndoors?.town()?.toned(p, taste) ?? null,
     moment: (p) => livingIndoors?.town()?.moment?.(p) ?? null,   // LW6c: a household at home handed a keepsake
     regardCard: (p) => livingIndoors?.town()?.regardCard?.(p) ?? null,   // AUDIT PLAIN-UI C2: the talk panel's regard, indoors too
   };
@@ -3728,7 +3728,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   // the person's town on the road: the roads' layer answers a refusal and notes a word (townTalk's `livingTalk` door)
   const _livingRoadsDoor = { refuses: (p) => livingRoads?.refuses(p) ?? null, talked: (p) => livingRoads?.talked(p) ?? null, caught: (p) => livingRoadCaught(p), roadside: true };
-  _livingRoadsDoor.toned = (p, tone) => livingRoads?.toned(p, tone) ?? null;   // LW7: a word's tone on the road too
+  _livingRoadsDoor.toned = (p, taste) => livingRoads?.toned(p, taste) ?? null;   // LW7: a word's tone on the road too (TONE-TASTE: as taken)
   _livingRoadsDoor.regardCard = (p) => livingRoads?.regardCard(p) ?? null;   // AUDIT PLAIN-UI C2: the talk panel's regard on the road and below (a diver's door)
   /** @type {ReturnType<typeof createLivingRoads> | null} */
   let livingRoads = null;
@@ -7908,7 +7908,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       kin: (person, talk) => legacyMeetKin(person, talk),   // LEGACY-HOME: one of the player's line, met
       offers: (person, talk) => (livingWorldOn() ? caravanHostOf().offers(person, talk) || (_mode() === 'dungeon' && !!livingDivers?.offers(person, talk)) : false) },   // LW11: a caravan's merchant, a pedlar, a carter asks first; LW14: a company below - AUDIT LW-II-2 D4: below alone (one met there and left holding never answers the street's talk)
     legacyTopics: (person) => legacyTopicRows(person),   // LEGACY5: courting, the proposal, the wedding, the family
-    livingTone: (person, tone) => person?.living?.town?.toned?.(person, tone),   // LW7: a question's tone, in a resident's regard
+    livingTone: (person, taste) => person?.living?.town?.toned?.(person, taste),   // LW7: a question's tone, in a resident's regard - TONE-TASTE: as they took it
     // RP1: a GETTER, not startLoc's number - see the note above. It is
     // declared below this call, so the arrow defers the read to call
     // time, which is what makes it live in the first place.
