@@ -62,7 +62,7 @@ line - `Renderer` 4,173 code lines, `HeldMapWindow` 2,291, `OnlineSession`
 knot is the doctrine's call.) On the
 relay the new code goes into a Room method of its own, as the SCALE5 arms did.
 
-`test/hostceiling.test.js` holds it: each host function - the four hosts, the
+`test/scenes/hostceiling.test.js` holds it: each host function - the four hosts, the
 two modules grown into knots of their own (`createNavalHost`,
 `createComeSailAwayRuntime`) and the relay's `_message` - has a ceiling in CODE lines, its length when measured
 plus 250 - a fix's room, not a feature's. Comments and blank lines do not count
@@ -212,7 +212,7 @@ by-value name written nowhere in bootWorld, the construction reading exactly the
 - THE SEAM WAS UNPINNED. `host` is `any` to lint and types, so a live name
   handed over as a copy (`get social()` -> `social,` - null at construction,
   the party's marks gone for good) or a name dropped passed the whole suite.
-  `test/hostseam.test.js` now holds every module the tool moved, found by the
+  `test/tooling/hostseam.test.js` now holds every module the tool moved, found by the
   header it writes, to its construction: each settled name handed over, each
   live read a getter, each write a setter, nothing handed over unread.
 - THE TOOL had holes the pilot did not fall into and a bigger move would: a
@@ -222,7 +222,7 @@ by-value name written nowhere in bootWorld, the construction reading exactly the
   shorthand with a default and `new.target` rewritten into syntax errors, an
   import dropped with its neighbour on one line, a mutant record found by
   position and an anchor matched inside a longer file name. Each is fixed and
-  is a fixture of `test/hostmove.test.js`: the fixture moved for real and both
+  is a fixture of `test/tooling/hostmove.test.js`: the fixture moved for real and both
   versions run, the same answer. After the fixes the tool reproduces the
   pilot's module and world.js byte for byte from the pre-move tree.
 
@@ -282,7 +282,7 @@ own law:
 - the censuses that walk `src/` name `pixelBuild.js`, and check its wiring
   against its host whole; the import pins read the module's import lines
   (the tool sorts them, and keeps only the names each file reads);
-- BOOT-TDZ2 (`test/bootorder.test.js`), the gate that walks the boot to its
+- BOOT-TDZ2 (`test/scenes/bootorder.test.js`), the gate that walks the boot to its
   first build and follows every call, now follows a call into a moved
   module's functions too, reading `host.<name>` there as `<name>` - a read at
   the use, as the getter makes it. Without that it stopped at
@@ -302,7 +302,7 @@ writes and made before the construction, the 22 live names each a getter with
 a setter exactly where the module writes - and found the move sound, and the
 seam's pin short of its own law:
 
-- A COPY THE HOST LATER WRITES WENT UNSEEN. `test/hostseam.test.js` checked that
+- A COPY THE HOST LATER WRITES WENT UNSEEN. `test/tooling/hostseam.test.js` checked that
   each name the module copies at construction is handed over, never that the
   host's binding is one that cannot change: a `const` turned `let` and
   reassigned after the construction leaves the module reading the value it
@@ -325,7 +325,7 @@ moved modules, and the rewritten pins. The move is verbatim against main's build
 (the 1,237 lines equal but for the `host.` rewrites), and main has not touched
 the build since. Found:
 
-- A DESTRUCTURED BINDING HAS A DEAD ZONE TOO. BOOT-TDZ2 (`test/bootorder.test.js`)
+- A DESTRUCTURED BINDING HAS A DEAD ZONE TOO. BOOT-TDZ2 (`test/scenes/bootorder.test.js`)
   indexed only the declarators that are a bare name, and the slice made the
   build one that is not: `const { buildPixelNow } = createPixelBuild(...)`. A
   build reached above its construction read a binding the gate did not know was
@@ -335,34 +335,34 @@ the build since. Found:
   function into such a binding, so the walk now indexes every name a
   declaration binds. It finds nothing new on the tree. One mutant, dead.
 - A PIN THAT READ ONE SPELLING. PERF-COL2's census of a pixel's bucket
-  providers (`test/perfcol2.test.js`) was rewritten to the module's spelling,
+  providers (`test/scenes/perfcol2.test.js`) was rewritten to the module's spelling,
   `host.state.pixelTranslation`, alone - so it counted only the build's seven, and
   a provider the host lays itself, reading `state`, went uncounted, marked or not.
   It counts both spellings now. One mutant, dead (it lived on the rewritten pin).
 - FOUR MORE THE JOIN OR THE SPELLING HID, each proved by a mutant that passed the
   rewritten pin and failed main's:
-  - LANDFORM4 (`test/landform45.test.js`) ordered the landform tables before
+  - LANDFORM4 (`test/world/terrain/landform45.test.js`) ordered the landform tables before
     `await terrainGen.generate({`, which now stands only in the module the join
     appends after all of world.js - so any place in world.js passed, below the
     first build too. It orders them before the build's construction now.
-  - BLOOD1's per-call negative (`test/blood1_decals.test.js`) still spelled the
+  - BLOOD1's per-call negative (`test/combat/blood1_decals.test.js`) still spelled the
     bare `state`, which the build no longer does; it reads both spellings.
-  - TERRAIN-WORKER's "publish follows the collider" (`test/terrainworker.test.js`)
+  - TERRAIN-WORKER's "publish follows the collider" (`test/world/terrain/terrainworker.test.js`)
     appended the module after the door's slice, so both of its `lastIndexOf`
     landed in the module and a mesh laid after the publish in world.js
     (`standPixelNpcs`) went unread. The module is spliced in where the host
     constructs it, as the build stood.
-  - WATER-NEXT m8 (`test/audit_waternext.test.js`) was never rewritten: a NEGATIVE
+  - WATER-NEXT m8 (`test/world/terrain/audit_waternext.test.js`) was never rewritten: a NEGATIVE
     pin cannot fail when code leaves the text it reads, so it kept reading
     world.js alone and stopped covering the build that lays the pixel's ground.
     It reads the host whole.
   Three mutants in `tools/mutants/hostseam.json`, dead; LANDFORM4's is a move of
   two sites, which a record cannot hold, and was run by hand.
 - AND FOUR MORE OF THE SAME TWO KINDS. LANDFORMS II H1's census of raw height
-  writers (`test/auditlandforms.test.js`) read `- state.compensation[1]` alone,
-  blind to the build's `host.state`; GRASS-LIT2's slice (`test/grasslit2.test.js`)
+  writers (`test/world/terrain/auditlandforms.test.js`) read `- state.compensation[1]` alone,
+  blind to the build's `host.state`; GRASS-LIT2's slice (`test/render/grasslit2.test.js`)
   ended at a line now in the module, so it ran to the end of world.js; GATE-CLEAR
-  (`test/gateclear.test.js`) and AUDIT 46 A10 (`test/roads.test.js`) ordered a
+  (`test/world/gate/gateclear.test.js`) and AUDIT 46 A10 (`test/world/road/roads.test.js`) ordered a
   declaration before text the join appends, which held nothing. Each reads both
   spellings, ends inside world.js, or orders against the build's construction.
   The first three proved by a mutant that passed the rewritten pin and failed
@@ -410,12 +410,12 @@ block as a clean cut - 0 host `let`s written, 30 names read - so it is a module,
   the host's restore, so it stays the host's and the module reads it live. Then the tool found no member used above it.
 - THE TOOL had a hole the move fell into: a comment ending a code line above a group was read as the group's doc, so
   that line - a host `let` - went into the module and out of the host, and the host's own write of it would have thrown.
-  `tools/hostMove.mjs` stops at a comment that does not begin its own line; `test/hostmove.test.js` holds the fixture
+  `tools/hostMove.mjs` stops at a comment that does not begin its own line; `test/tooling/hostmove.test.js` holds the fixture
   (`trailing-comment-above`, the original and the moved host run alike) and `tools/mutants/hostmove.json` its mutant.
-- THE PINS, by hand: `test/partyloot.test.js` mounted the block's own lines out of the host; it mounts the host's
+- THE PINS, by hand: `test/systems/partyloot.test.js` mounted the block's own lines out of the host; it mounts the host's
   counters and construction (from `dungeonContext.js`) over the module's `createRoomLoot` (from `roomLootHost.js`) now,
   the module's imports - the player, the mid-screen line - still each peer's own, and reads the base's two pins in the
-  module. `test/audit18_hosts_dungeon.test.js`'s count of the one enemy-loot seam reads two in the host and the room
+  module. `test/scenes/audit18_hosts_dungeon.test.js`'s count of the one enemy-loot seam reads two in the host and the room
   body's one in the module, and that the host constructs it. The harnesses that spread `test/roomLootOff.mjs` into
   their host mounts were untouched: the host's names are the same names.
 - `buildDungeonContext` 5,650 -> 5,263 code lines; its ceiling stays 5,446 (the block was never in the measure the
@@ -424,12 +424,12 @@ block as a clean cut - 0 host `let`s written, 30 names read - so it is a module,
 
 ## FB1015's merge - a raise, by the overflow alone (2026-10-15)
 
-Not a slice: a ceiling a pull request found already broken. Merging main into FB1015 (`01-Overview/Field-Bugs-2026-10-15b.md`)
+Not a slice: a ceiling a pull request found already broken. Merging main into FB1015 (`01-Overview/bugs/Field-Bugs-2026-10-15b.md`)
 measured main's own `bootWorld` at 21,750 code lines against its 21,695 - ten field-bug merges between 1242f035 and
 4f3fb37a added 251 lines and took 56 out of `world.js`, each inside the ceiling on its own, together 55 over it (the
 gate's header names the case: it gates a change, never a deploy). FB1015 adds no line to `bootWorld`, and no one block of
 the growth is a cut of its own, so the ceiling was raised by exactly the overflow - 21,695 -> 21,750, with the reason
-beside it in `test/hostceiling.test.js` - and no room: the next pull request that lengthens `bootWorld` moves code out
+beside it in `test/scenes/hostceiling.test.js` - and no room: the next pull request that lengthens `bootWorld` moves code out
 first (`buildPixelNow` is next in the order above).
 
 ## FIELD BUGS 2026-10-15c - the overflow taken back out (2026-10-15)
@@ -440,5 +440,5 @@ and my collects carried to the service (`11-Multiplayer/Wild-Zone.md` section 4)
 63 lines, reads five host names (`modes`, `onlineCheckpoint`, `realmSession`, `townTalk`, `wildAccount`), writes
 none, used by three (the drop's receipt, the zone's frame, the room's collect) - handed in, the three calls go through
 the module's `held`, `frame` and `collectHeard`. `bootWorld` 21,750 -> 21,688 code lines, and its ceiling back to
-21,695, where it stood before FB1015's raise. The pins that read the block by source (`test/fb1014_pvpescrow.test.js`)
-read the module, and the bible's anchors name it (`01-Overview/Field-Bugs-2026-10-15c.md`).
+21,695, where it stood before FB1015's raise. The pins that read the block by source (`test/systems/fb1014_pvpescrow.test.js`)
+read the module, and the bible's anchors name it (`01-Overview/bugs/Field-Bugs-2026-10-15c.md`).

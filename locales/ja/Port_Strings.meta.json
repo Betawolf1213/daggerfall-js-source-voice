@@ -2949,6 +2949,16 @@
   "tr": "8b37d2efe339",
   "by": "claude-in-session"
  },
+ "combat.leadLeftHand": {
+  "en": "9a84e174d1b8",
+  "tr": "c52d10e3582d",
+  "by": "claude-in-session"
+ },
+ "combat.leadRightHand": {
+  "en": "40a5921dea29",
+  "tr": "45b530d847ae",
+  "by": "claude-in-session"
+ },
  "credits.ambientText.terms": {
   "en": "c62316ae06a4",
   "tr": "cb6633a78c48",
@@ -4337,6 +4347,16 @@
  "features.waterQuality.title": {
   "en": "0a474887b300",
   "tr": "c83072ccd236",
+  "by": "claude-in-session"
+ },
+ "features.weaponGlow.note": {
+  "en": "80be2112719a",
+  "tr": "5eedd36d8fe9",
+  "by": "claude-in-session"
+ },
+ "features.weaponGlow.title": {
+  "en": "964f52fd55ec",
+  "tr": "65861608a59c",
   "by": "claude-in-session"
  },
  "features.weatherEvents.note": {

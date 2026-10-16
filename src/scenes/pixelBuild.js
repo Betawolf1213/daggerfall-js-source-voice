@@ -4,22 +4,22 @@
 // use as `host.<name>` - as the code read them where it was.
 import { ANIMAL_SOUND_BY_RECORD, ANIMALS_ARCHIVE } from '../systems/soundClips.js';
 import { applyClimate, getNatureArchive, getTerrainGroundArchive, INTERIOR_SEASON, SEASON } from '../world/climateSwaps.js';
-import { ARENA_BLOCK } from '../world/arenaCity.js';
+import { ARENA_BLOCK } from '../world/arena/arenaCity.js';
 import { armFlatAnim, FlatAnimator } from '../render/flatAnimation.js';
 import { billboardSize, centredBase, collectBlockFlats, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js';
 import { blockHillPatch, blockHillSeat, seatNatureFlat } from '../world/townStandIns.js';
 import { blockSolids } from '../world/flatFields.js';
 import { BODY } from '../world/windmillMesh.js';
-import { boxNearGate, gateSiteTest, pointNearGate, WOD_FLAT_GATE_CLEAR_M } from '../world/gateClearance.js';
-import { boxNearPath, pointNearPath, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR, wodPiecewise, wodSiteClear, wodSiteFootprint } from '../world/roadClearance.js';
+import { boxNearGate, gateSiteTest, pointNearGate, WOD_FLAT_GATE_CLEAR_M } from '../world/gate/gateClearance.js';
+import { boxNearPath, pointNearPath, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR, wodPiecewise, wodSiteClear, wodSiteFootprint } from '../world/road/roadClearance.js';
 import { buildingKeysOfType, castleEntranceOf, siegeFieldOf } from '../systems/siegeField.js';
 import { buildingSummaries } from '../world/buildingSummaries.js';
 import { buildWaterIndices, waterSwitchOn } from '../render/waterSurface.js';
 import { BULLETIN_BOARD_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID, CITY_GATE_OPEN_MODEL_ID, isBulletinBoard, isCityGate } from '../world/rmbLayout.js';
 import { carveLefay, isLefayTown, lefayExitOf, lefaySpotOf } from '../world/lefayMonument.js';
-import { carveYards } from '../world/merchantYardSites.js';
-import { CityNavigation, NAV_CELL } from '../world/cityNavigation.js';
-import { collectCityLights, LIGHTS_ARCHIVE } from '../world/cityLights.js';
+import { carveYards } from '../world/merchantYards/merchantYardSites.js';
+import { CityNavigation, NAV_CELL } from '../world/city/cityNavigation.js';
+import { collectCityLights, LIGHTS_ARCHIVE } from '../world/city/cityLights.js';
 import { collectExteriorNpcs, exteriorNpcRecord } from '../characters/exteriorNpcs.js';
 import { coverProxies, coverProxy, isCoverFlat } from '../ai/cover.js';
 import { DOOR_TYPE } from '../world/meshReader.js';
@@ -29,21 +29,21 @@ import { dungeonEntranceLanding } from '../player/enterExit.js';
 import { ecoOrigin } from '../world/ecotone.js';
 import { festivalBannerAnchors, festivalLanternsOf } from './seatFestival.js';
 import { flatBatchAabb, localAabb, transformedAabb } from '../render/frustum.js';
-import { floraSwayOf } from '../systems/windDrive.js';
+import { floraSwayOf } from '../systems/wind/windDrive.js';
 import { footRectsAt } from './homeYards.js';
 import { FOREST_HIDDEN_LOCATION_TYPES, populatesWanderingNpcs } from './shared.js';
-import { getLocationTerrainTileOrigin, setLocationTiles } from '../world/terrainTiles.js';
+import { getLocationTerrainTileOrigin, setLocationTiles } from '../world/terrain/terrainTiles.js';
 import { getNameBankOfRegion } from '../characters/nameHelper.js';
 import { getStaticDoors } from '../world/staticDoors.js';
 import { getWorldClimateSettings, LOCATION_TYPES } from '../formats/mapsFile.js';
 import { gothwayNorthSpots, isGothwayGarden } from '../systems/gothwayBoards.js';
-import { groundOffPlane, lowestGroundUnder, surfaceHeightAt, TERRAIN_SKIRT_DEPTH, TERRAIN_TILE_DIM } from '../world/terrainSurface.js';
-import { hasPort, maskMapId } from '../systems/travelPorts.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../world/terrainSampler.js';
-import { HOLD_FLATS, HOLD_MODELS, holdFireLights, holdModelMatrix, PRIVATEERS_HOLD_BLOCK } from '../world/wodPrivateersHold.js';
+import { groundOffPlane, lowestGroundUnder, surfaceHeightAt, TERRAIN_SKIRT_DEPTH, TERRAIN_TILE_DIM } from '../world/terrain/terrainSurface.js';
+import { hasPort, maskMapId } from '../systems/travel/travelPorts.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../world/terrain/terrainSampler.js';
+import { HOLD_FLATS, HOLD_MODELS, holdFireLights, holdModelMatrix, PRIVATEERS_HOLD_BLOCK } from '../world/worldOfDaggerfall/wodPrivateersHold.js';
 import { HOME_LOOK_BUILD_WAIT_MS, homeLookRemap } from '../world/homeLook.js';
 import { homeLookSig } from '../net/homeLaw.js';
-import { insideRocks, rockFootprint } from '../world/terrainNature.js';
+import { insideRocks, rockFootprint } from '../world/terrain/terrainNature.js';
 import { isClimateFreeModel, NO_CLIMATE_REMAP } from '../world/customModels.js';
 import { isDrySourceFlat, isWaterSourceFlat, WATER_SOURCE_MODELS } from '../systems/survival/items.js';
 import { isEnhanced } from '../systems/uiSkin.js';
@@ -53,8 +53,8 @@ import { isStandFlat, standFlatId, standFlatRecord } from '../world/standFlats.j
 import { isStandingHorseFlat } from '../world/standingHorses.js';
 import { isTombstoneModel } from '../systems/searchables.js';
 import { isTreeRecord } from './treeHost.js';
-import { isWardenTown } from '../systems/wagonWarden.js';
-import { isWodShrub, rockSeatDrop, WOD_ROCK_SITES, wodLightPosition, wodLightProperties } from '../world/wodLocationObjects.js';
+import { isWardenTown } from '../systems/wagon/wagonWarden.js';
+import { isWodShrub, rockSeatDrop, WOD_ROCK_SITES, wodLightPosition, wodLightProperties } from '../world/worldOfDaggerfall/wodLocationObjects.js';
 import { isYardTown } from '../systems/merchantYards.js';
 import { keyResolver, StaticBatchBuilder } from '../render/staticBatch.js';
 import { knownCriminal } from '../systems/standing.js';
@@ -64,15 +64,15 @@ import { LivingTown } from '../systems/livingWorld/livingTown.js';
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { LPT_CROWNS } from '../world/lptCrowns.js';
 import { LPT_SCALE_MAX, lptVariety } from '../world/lowPolyTrees.js';
-import { lptFitCap, natureReach, pathTileMask, vergeClear } from '../world/roadVerge.js';
-import { makeBuildingKey } from '../systems/talkTopics.js';
-import { makeCityGate } from '../world/cityGate.js';
+import { lptFitCap, natureReach, pathTileMask, vergeClear } from '../world/road/roadVerge.js';
+import { makeBuildingKey } from '../systems/talk/talkTopics.js';
+import { makeCityGate } from '../world/city/cityGate.js';
 import { markRemapLaw, remapSubMeshes } from '../world/texRemap.js';
-import { MobilePerson, PERSON_MOVE_SPEED, walkerRace } from '../characters/mobilePerson.js';
+import { MobilePerson, PERSON_MOVE_SPEED, walkerRace } from '../characters/mobile/mobilePerson.js';
 import { multiply, trs } from '../world/mat4.js';
 import { naturePicture } from '../world/naturePicture.js';
 import { onFloatingFrame } from '../player/collider.js';
-import { inBay as onTheBay } from '../world/tamrielFrame.js';
+import { inBay as onTheBay } from '../world/tamriel/tamrielFrame.js';
 import { ownMinutes, skyMinutes, trustedWorldMinutes } from '../systems/worldTick.js';
 import { palaceKeysOf, seatBannerAnchors, townCentreOf } from './seatBanners.js';
 import { playerEntity } from '../characters/playerEntity.js';
@@ -80,14 +80,14 @@ import { racialSuppressPopulationSpawns } from '../systems/lycanthropy.js';
 import { ResidentWalker } from '../characters/residentWalker.js';
 import { rotorPhase, windmillsOn } from '../world/windmills.js';
 import { archivePrefix as seasonPrefixOf } from '../systems/seasonsIliacBay.js';
-import { seatAtMapId } from '../systems/townSeats.js';
+import { seatAtMapId } from '../systems/town/townSeats.js';
 import { setLastLocationKeyTo } from '../systems/worldDataVariants.js';
 import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuildings.js';
 import { BUILDING_TYPES as TALK_BUILDING_TYPES } from '../world/buildingNames.js';
-import { TownPopulation } from '../systems/townPopulation.js';
+import { TownPopulation } from '../systems/town/townPopulation.js';
 import { windfallResponse } from '../systems/windfall.js';
-import { wodRockUvs } from '../world/wodRockUv.js';
-import { WodSpawner } from '../world/wodSpawner.js';
+import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';
+import { WodSpawner } from '../world/worldOfDaggerfall/wodSpawner.js';
 
 /** @param {any} host */
 export function createPixelBuild(host) {
@@ -99,10 +99,10 @@ export function createPixelBuild(host) {
     halfWidthsOf, heightAt, heightCell, holdPixel, hostBed, labGrass, landform, livingArmOf, livingAshore,
     livingBaseRate, livingCarriedOf, livingChapterOf, livingCrews, livingCycleOf, livingDeadAt, livingFlatOf,
     livingKilled, livingPlaceOf, livingRate, livingSlay, livingTownsIndex, livingTripsOf, loadGroundSet, lookOfHome,
-    lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer,
-    restrideTerrain, seasons, siegeFieldsByTown, snowfall, standPixelNpcs, standWodPile, strideFor, terrainGen,
-    tileSide, townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened,
-    wodPathsPoint, worldHeight
+    lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer, restrideTerrain,
+    seasons, siegeFieldsByTown, snowfall, standPixelNpcs, standWodPile, strideFor, terrainGen, tileSide,
+    townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened, wodPathsPoint,
+    worldHeight
   } = host;
   async function buildPixelNow(px, py, { roadsRetry = false } = {}) {
     breather.reset();   // PERF7
@@ -132,7 +132,7 @@ export function createPixelBuild(host) {
     // GATE-CLEAR: the gate's clearing this build keeps its rock off - read ONCE, here, and held to by its placements
     // below (the gate's day can turn while it builds; the sweep asks a pixel that published on a stale one again)
     const gateClear = host._gateClearNow();
-    const gateLedger = { refused: false, reach: [] };   // what the clearing cost this pixel, and what it stood (world/gateClearance.js)
+    const gateLedger = { refused: false, reach: [] };   // what the clearing cost this pixel, and what it stood (world/gate/gateClearance.js)
     const gateSite = gateSiteTest(gateClear, px, py, gateLedger);
     if (wod && onTheBay(px, py) && await wodOpened) {   // AUDIT CAPTAIN'S SEA G8: the mod's sites are the Bay's - its pick never run off it (off the map its pixel walk is a whole-list scan, 1.3 ms a pixel, thrown away)
       // AUDIT BRANCH (WoD) M2: the mod's decision can cost this pixel its site, never the pixel - a throw out of the
@@ -147,7 +147,7 @@ export function createPixelBuild(host) {
           // location alone: -1 on a pixel without one.
           mapRegionIndex: dfLocation ? dfLocation.regionIndex : -1,
           worldHeight: host.woods.getHeightMapValue(px, py),
-        }, wodPathsPoint, (name, prefab, rect) => wodSiteClear(terrainGen.roads(), px, py, name, prefab, rect) && gateSite(name, prefab, rect));   // ROADS-CLEAR: a camp, fort, shrine or ruin whose pieces reach a road is not stood (world/roadClearance.js); GATE-CLEAR: nor one reaching the Oblivion Gate's clearing
+        }, wodPathsPoint, (name, prefab, rect) => wodSiteClear(terrainGen.roads(), px, py, name, prefab, rect) && gateSite(name, prefab, rect));   // ROADS-CLEAR: a camp, fort, shrine or ruin whose pieces reach a road is not stood (world/road/roadClearance.js); GATE-CLEAR: nor one reaching the Oblivion Gate's clearing
         if (picks.length && onTheBay(px, py)) wodPicks = picks;   // TAMRIEL2: the mod's sites are the Bay's
       } catch (e) {
         console.warn(`[wod] pixel ${key}: the loader failed here, and the pixel stands without its site: ${e?.message ?? e}`);
@@ -181,7 +181,7 @@ export function createPixelBuild(host) {
     // deferred to the pump, nearest first - and built there, the port's own
     // whole-stream carve (Port-Ledger (9): the mod's pump builds only a near
     // pixel, and a far one's surface).
-    const dwNear = deepWaters ? deepWaters.promoteNear({ px, py, samples, tilemap, tilemapBytes }) : null;   // TAMRIEL2: the mod's bathymetry is the Bay's - ETHER-DEEP: and the Eltheric's own; the host's promote is the one gate, for every arm (scenes/deepWatersHost.js), and answers nothing past the map
+    const dwNear = deepWaters ? deepWaters.promoteNear({ px, py, samples, tilemap, tilemapBytes }) : null;   // TAMRIEL2: the mod's bathymetry is the Bay's - ETHER-DEEP: and the Eltheric's own; the host's promote is the one gate, for every arm (scenes/deepWater/deepWatersHost.js), and answers nothing past the map
     // WM3: this pixel's climate law, bound once - the one argument the
     // shared remap seam takes that differs between the climate hosts
     // and the dungeon.
@@ -221,7 +221,7 @@ export function createPixelBuild(host) {
         origin: Int32Array.of(ox, oz, 1),
       };
     }
-    // WATER-NEXT 2 (world/waterBed.js): the ground the eye sees carved into a bed under the water - the game's ground
+    // WATER-NEXT 2 (world/water/waterBed.js): the ground the eye sees carved into a bed under the water - the game's ground
     // (heightAt, the samples) never moves - and the water's own sheet, the grid as it stood with the bed's depth.
     // AUDIT WATER-NEXT P1: carved by the kernel on the worker (terrainGen.js restrideGrid), not on this thread
     const bed = hostBed({ positions, normals }, carved);
@@ -763,7 +763,7 @@ export function createPixelBuild(host) {
     }
 
     // WOD2: AddLocation's OBJECT loop (LocationLoader.cs:232-252) through
-    // LoadObject (world/wodLocationObjects.js): the models with their
+    // LoadObject (world/worldOfDaggerfall/wodLocationObjects.js): the models with their
     // colliders, the visible flats base-anchored where AlignToBase leaves
     // them, the mod's own lights, the animals' calls - pixel-local like
     // everything here, so destroyPixel takes them with the pixel (the C#
@@ -784,7 +784,7 @@ export function createPixelBuild(host) {
       for (const m of place.models) {
         const gpu = await getGpuMesh(m.modelId);
         if (!gpu) continue;   // a model ARCH3D does not carry stands empty in DFU (no mesh, no collider)
-        const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix, m.modelId);   // FB1001-WODROCK (Mac: "Retexture them to be as detailed as possible"): a piece stretched 4x or more draws its planes unfolded at its pebble's own texel density (world/wodRockUv.js) - new UVs only, its positions and indices the model's own arrays; a camp or a house is the same object
+        const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix, m.modelId);   // FB1001-WODROCK (Mac: "Retexture them to be as detailed as possible"): a piece stretched 4x or more draws its planes unfolded at its pebble's own texel density (world/worldOfDaggerfall/wodRockUv.js) - new UVs only, its positions and indices the model's own arrays; a camp or a house is the same object
         const box = transformedAabb(archAabb(m.modelId, cpu.positions), m.matrix);
         // WOD-BUSH (2026-10-01, Mac: "World of daggerfall bush props float above the ground in bandit camps"): the
         // layouts' shrub stands on the DRAWN ground. The mod stands every object on the site's average plus the
@@ -792,11 +792,11 @@ export function createPixelBuild(host) {
         // it is eased toward it (flattenForLocation), and the shrubs ring the site in that band, at heights the
         // author read off the ground of the one place they were laid out. They hung over ground falling away (DFU's
         // too). Its mesh's foot goes to the lowest ground under the middle of its footprint, collider and all.
-        if (isWodShrub(m.modelId, wodPicks[m.pick]?.name)) {   // ROCK-SUNK (2026-10-02, the field: "Insane glitched geometry over at Hadus"): the rock fields build their outcrops of the same model - boulders scaled 5.6 to 95, set into the piles on purpose - and standing those on their lowest corner raised shards hundreds of metres into the sky round Hadus; a Rocks or Mountains site keeps the mod's height (world/wodLocationObjects.js isWodShrub)
+        if (isWodShrub(m.modelId, wodPicks[m.pick]?.name)) {   // ROCK-SUNK (2026-10-02, the field: "Insane glitched geometry over at Hadus"): the rock fields build their outcrops of the same model - boulders scaled 5.6 to 95, set into the piles on purpose - and standing those on their lowest corner raised shards hundreds of metres into the sky round Hadus; a Rocks or Mountains site keeps the mod's height (world/worldOfDaggerfall/wodLocationObjects.js isWodShrub)
           const dy = lowestGroundUnder(samples, box) - box[1];
           m.matrix[13] += dy; box[1] += dy; box[4] += dy;
         }
-        // ROCK-SEAT (world/wodLocationObjects.js rockSeatDrop): a rock field's piece hanging over ground that falls away
+        // ROCK-SEAT (world/worldOfDaggerfall/wodLocationObjects.js rockSeatDrop): a rock field's piece hanging over ground that falls away
         // under it is lowered into the ground - its open underside never stands in the air; one in the ground stays put
         // - and only a piece SET into it (its foot under the ground at its middle): one the mod rests on another's crown keeps its height
         if (rockPick(m.pick) && box[1] < surfaceHeightAt(samples, Math.max(0, Math.min(TERRAIN_SIZE, (box[0] + box[3]) / 2)), Math.max(0, Math.min(TERRAIN_SIZE, (box[2] + box[5]) / 2)))) { const dy = rockSeatDrop(lowestGroundUnder(samples, box), box[1]); if (dy < 0) { m.matrix[13] += dy; box[1] += dy; box[4] += dy; } }
@@ -805,7 +805,7 @@ export function createPixelBuild(host) {
         // fields and mountains lose the pieces over the road and keep the rest; a whole site was asked at its pick.
         if (boxNearPath(_roadsNow, px, py, box[0] * UNITS_PER_METRE, box[2] * UNITS_PER_METRE, box[3] * UNITS_PER_METRE, box[5] * UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR)) { _wodOffRoad++; continue; }
         // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"): nor one
-        // whose box reaches the Oblivion Gate's clearing (world/gateClearance.js) - a gate risen inside a boulder is out
+        // whose box reaches the Oblivion Gate's clearing (world/gate/gateClearance.js) - a gate risen inside a boulder is out
         // of reach of the press and the step. What stands goes in the reach, for the next gate's sweep to ask.
         if (boxNearGate(gateClear, px, py, box[0], box[2], box[3], box[5])) { gateLedger.refused = true; _wodOffGate++; continue; }
         gateLedger.reach.push(box[0], box[2], box[3], box[5], 0);
@@ -882,14 +882,14 @@ export function createPixelBuild(host) {
       if (forests && insideRocks(pixelRocks, f.x, f.z)) continue;
       // ECOTONE1: a border's flat is its own climate's - the summer archive the kernel names, worn in the season's set
       const base = f.archive ?? climate.natureArchive, archive = f.archive == null ? natureArchive : getNatureArchive(f.archive, host.season);
-      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/roadVerge.js)
+      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js)
       if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
       if (archive !== natureArchive) borderNature.set(archive, base);
       const i = addFlat(archive, f.record, f.x, f.y, f.z);
       if (lowPolyTrees) wildFlats.add(`${archive}_${f.record}#${i}`);   // LPT1
       if (isTreeRecord(base, f.record)) pixelTrees.push({ id: pixelTrees.length, group: `${archive}_${f.record}`, i, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 0, base, archive });   // FOREST1: how wooded its tile is - Logging's trees stand in the woods; ECOTONE1: and whose climate it is (its stump)
     }
-    // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/wodPrivateersHold.js).
+    // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/worldOfDaggerfall/wodPrivateersHold.js).
     // DungeonExterior finds the block by name and PrivateersHold.Start
     // builds the camp in the block's frame: the models with their
     // colliders, the flats CENTRED where Start sets them, a FireLight over
@@ -973,7 +973,7 @@ export function createPixelBuild(host) {
         const scales = new Float32Array(centers.length), wild = new Uint8Array(centers.length);
         // LPT-FIT (Mac: "roads still show on roads and pathways. You're not taking the entire model into account"):
         // under clear roadsides every tree here - a location's as well as the wild's - is drawn no wider than the room
-        // its root has from the pixel's roads, tracks and streets (world/roadVerge.js lptFitCap): its crown, turned
+        // its root has from the pixel's roads, tracks and streets (world/road/roadVerge.js lptFitCap): its crown, turned
         const crown = verges ? (LPT_CROWNS[lpt.key] ?? 0) : 0;
         if (crown > 0 && !lptPathMask) lptPathMask = pathTileMask(tilemap, paths);
         const fit = crown > 0 ? new Float32Array(centers.length) : null;
