@@ -58,7 +58,7 @@ import { linkFirstPlay } from './founderLink.js';   // FOUNDER5: a character bro
 import { saveTextOf, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save read packed or plain
 import { lineageBirthRefusal, houseOn, endUnionsOf } from './legacy.js';   // LEGACY7: a realm character born as a person of the account's own line
 import { wealthOf, ledgerPieces, classicCount, WEALTH_VERSION } from './judge.js';   // INT5: what the service's own writes move, witnessed; INT4: the pieces it moves
-import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
+import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads, leavingKeys } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
 import { budgetKept, budgetRead, budgetFrom } from './budget.js';   // SAVE-BATCH: and the budget's config, where the isolate kept none
 import { verdictOn } from './verdict.js';   // INT2-INT5: the verdict on every checkpoint, in the checkpoint's own batch
 
@@ -483,9 +483,9 @@ export function firstSaveRefusal(text, row) {
   return cardWorthOf(save) <= customsCardAllowance(level) ? null : { error: 'customs-cards' };
 }
 
-/** INT2-INT6: the judge's columns on a character's row (migration 0096), as verdict.js reads them. */
+/** INT2-INT6: the judge's columns on a character's row (migration 0096; AUTO-HOLD's timed hold, 0120), as verdict.js reads them. */
 export const JUDGE_COLUMNS = 'judged_seq, held, held_at, strikes, review, wealth, witnessed, allowance, played_at, clean_obj, clean_seq,'
-  + ' dupes, judge_rev, svc_seq, level_seen, level_at, law_sig, law_excused, wealth_v';
+  + ' dupes, judge_rev, svc_seq, level_seen, level_at, law_sig, law_excused, wealth_v, held_until, law_holds, law_at';
 
 /**
  * INT3: THE HOLD, AS A ROUTE ASKS IT - before any act that hands a realm character's value to another player (a market
@@ -510,6 +510,14 @@ export async function realmHoldOf(/** @type {any} */ db, /** @type {string} */ p
   return holdRefusal(await db.prepare('SELECT held, judged_seq FROM realm_characters WHERE id = ?1 AND player = ?2').bind(character, playerId).first());
 }
 
+/** AUDIT AUTO-HOLD: A HOLD STANDING on the character row aliased `a`, as a reader that cannot wait for that character's
+ *  next checkpoint asks it, `now` the SQL of the time. A checkpoint is what lifts a hold - a timed one past its end with
+ *  it - and the dead are refused one (LEGACY7), so a maker that died inside its week held every craft of its make for
+ *  good. A law hold whose time is out, on a character that can checkpoint no more and whose last judgement found nothing
+ *  that holds (`law_sig`), stands no more. */
+export const holdStandsSql = (/** @type {string} */ a, /** @type {string} */ now) => `(${a}.held IS NOT NULL AND NOT (${a}.dead_at IS NOT NULL
+  AND ${a}.held = 'law' AND ${a}.held_until IS NOT NULL AND ${a}.held_until <= ${now} AND ${a}.law_sig IS NULL))`;
+
 /** CRAFT-HOLD (2026-10-11, the exploit audit): INT3's hold on a crafted piece follows THE PIECE - the hold of the
  *  account's realm character its maker's record names (`products.char_id` - or, for a piece made before customs, the
  *  offline character it brought in: `origin_id`), whatever character the act names. realmHoldOf asks the acting character
@@ -521,7 +529,7 @@ export async function realmHoldOf(/** @type {any} */ db, /** @type {string} */ p
 export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {unknown} */ provenance) {
   if (typeof provenance !== 'string') return null;
   const row = await db.prepare(`SELECT r.held FROM products p JOIN realm_characters r ON (r.id = p.char_id OR r.origin_id = p.char_id) AND r.player = ?2
-    WHERE p.provenance = ?1 AND r.held IS NOT NULL`).bind(provenance, playerId).first();
+    WHERE p.provenance = ?1 AND ${holdStandsSql('r', '?3')}`).bind(provenance, playerId, Math.floor(Date.now() / 1000)).first();
   return row?.held ? { error: 'trade-held', held: row.held } : null;
 }
 
@@ -533,7 +541,9 @@ export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ p
  * INT2: AND EVERY CHECKPOINT IS READ - the judge's verdict (verdict.js verdictOn: the character law, the item law, the
  * id ledger, the budget, the hold) lands in the batch that moves the row. A verdict never refuses the save: it holds the
  * character's trade (Mac: "Freeze trading"). Answers `{ ok, seq, tradeHeld }` - the hold standing (null for none), said
- * so the tab can tell its player - or `{ error }`:
+ * so the tab can tell its player, and (AUTO-HOLD) `locked`, the keys of the copies the record shows, locked piece by
+ * piece (ledger.js), for the tab to name - `[]` for none, every answer (AUDIT AUTO-HOLD: a tab hearing none from a service
+ * mid-deploy keeps the ones it has, never unbinds them) - or `{ error }`:
  * 'lease' - another tab or device has the character now; 'seq' - not the next one, with the service's `seq` beside it,
  * so a tab whose last checkpoint landed but whose answer was lost can resync; the first save's own words
  * (firstSaveRefusal).
@@ -610,7 +620,7 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // two back now: the one before the last stays - and INT6's clean one, kept for staff, whichever it is
   const keep = new Set([key, row.obj, stood.clean_obj].filter(Boolean));
   await dropObjects(bucket, [...new Set([row.prev, row.clean_obj])].filter((k) => k && !keep.has(k)));
-  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}) };
+  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), locked: v.locked };
 }
 
 /**
@@ -707,9 +717,9 @@ export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, a
   // INT4: a piece leaves a record only as its own - held by it, unclaimed, no copy (ledger.js piecesRefusal). A Set, never
   // a list walked once a piece (AUDIT INT: a thousand pieces' record walked a million times - seconds of CPU)
   const piecesAfter = ledgerPieces(save);
-  const after = new Set(piecesAfter.map((p) => p.key));
-  const leaving = [...new Set(piecesBefore.map((p) => p.key))].filter((k) => !after.has(k));
-  const why = leaving.length ? await piecesRefusal(db, at.id, leaving) : null;
+  // AUDIT AUTO-HOLD: a key whose count fell is leaving - one of two the record held is a copy, never handed on
+  const { leaving, twice } = leavingKeys(piecesBefore, piecesAfter);
+  const why = twice.length ? 'piece-dupe' : leaving.length ? await piecesRefusal(db, at.id, leaving) : null;
   if (why) return { error: why };
   const text = JSON.stringify(save);
   const bytes = new TextEncoder().encode(text).byteLength;
@@ -834,10 +844,11 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // AUDIT LEGACY III O7
   // AUDIT CRAFT-HOLD (the exploit audit): A HELD CHARACTER WITH CRAFTS IS NOT DELETED - its row is where its hold lives,
-  // and the hold on the pieces it made (craftHoldOf) went with it: held for copies, deleted, and its pieces listed under
-  // any other name the next minute. Its Stores go with the row (below), so a held character with no piece of its make at
-  // the account goes as any other - a finding can be the law's mistake, and the slot is the player's. Staff lift a hold
-  // (review.js realm-clear); then it goes.
+  // and the hold on the pieces it made (craftHoldOf) went with it: held, deleted, and its pieces listed under any other
+  // name the next minute. Its Stores go with the row (below), so a held character with no piece of its make at the
+  // account goes as any other - a finding can be the law's mistake, and the slot is the player's. The hold lifts (the
+  // law's at a clean checkpoint, a timed one at the first past its end - AUTO-HOLD; staff's by review.js realm-clear);
+  // then it goes.
   if (row.held && await db.prepare('SELECT 1 FROM products WHERE owner = ?1 AND (char_id = ?2 OR char_id = ?3) LIMIT 1')
     .bind(playerId, id, row.origin_id ?? id).first()) return { error: 'trade-held', held: row.held };
   if (row.origin_id && !(row.bytes > 0)) return undoCustoms({ db, bucket }, playerId, id, row.origin_id);

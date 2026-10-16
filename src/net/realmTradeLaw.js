@@ -42,6 +42,7 @@
 import { canon } from './canon.js';
 import { TRADE_ITEMS_MAX, TRADE_GOLD_MAX } from './wire.js';
 import { isBagItem } from './bagLaw.js';   // BAG1
+import { intlLocale, t } from '../systems/textManager.js';   // AUDIT AUTO-HOLD: a timed hold's end, written the game's language's way, in its words
 import { activeWagonItem } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the loaded wagon stays (already in the account service's graph, by itemLaw.js)
 
 /** A trade's id: the peers' own sid (wire.js validTradeData's TRADE_SID_RE, which the wire keeps to itself). */
@@ -235,17 +236,29 @@ export function settleRealmTrade(saveA, saveB, halfA, halfB) {
  *  tradeHeldNotice says it when a checkpoint moves it, and a trade it refused says it again (FIELD BUGS 2026-10-11g
  *  HELD-SIDE). Here, a leaf both read: systems/itemIds.js re-exports it. */
 /** RING-WARN: a law hold's notice says the strikes are counting. Each hold counts (INT3: a strike a hold, never a
- *  checkpoint), and the third stands for staff even once the piece is gone - so dropping it and taking it up again is
+ *  checkpoint), and the third holds for a time even once the piece is gone - so dropping it and taking it up again is
  *  no way out, and the player who did exactly that (the Ring report) was told only "until it is gone". The rule is
- *  kept: a piece parked on the ground while its carrier trades, then taken up again, is what the strikes are for. */
-export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen until staff have looked.';
+ *  kept: a piece parked on the ground while its carrier trades, then taken up again, is what the strikes are for.
+ *  AUTO-HOLD (2026-10-16): that third hold is a week (a month each time after) even once the piece is gone - no staff's
+ *  look - and the piece still carried past it holds as any law hold does. */
+export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen for a week even once it is gone (a month if it comes to that again).';
 export const TRADE_HELD_NOTICES = Object.freeze({
   law: `The realm is reviewing this character: something it carries is not as the game makes it. Trading is frozen until it is gone.${TRADE_HELD_STRIKES}`,
-  review: 'The realm is reviewing this character: the law has held it three times, and its trading stays frozen until staff have looked.',
-  dupe: 'The realm is reviewing this character: copies of an item were found. Trading is frozen until staff have looked.',
   budget: 'The realm is reviewing this character: its wealth rose faster than play could earn it. Trading is frozen until play catches up.',
   staff: 'The realm\'s staff have frozen this character\'s trading.',
 });
+/** AUTO-HOLD: when a timed hold ends, on the player's clock and written the game's language's way (textManager.js
+ *  intlLocale - AUDIT AUTO-HOLD: the browser's, in an English sentence). */
+export const heldUntilText = (/** @type {number} */ until) => new Date(until * 1000).toLocaleString(intlLocale(), { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+/** AUTO-HOLD: the law's timed hold (server-account/src/verdict.js lawCountOf), said with its end - and, while the law
+ *  still finds a piece (`name`, its template's), that the hold stands past that end until the piece is gone (AUDIT
+ *  AUTO-HOLD: it said "then opens on its own" with the Ring still carried, and the hold stood on, unsaid). */
+export const tradeHeldUntilNotice = (/** @type {number} */ until, /** @type {string | null} */ name = null) => (name
+  ? t('realm.held.untilPiece', 'The realm\'s law has held this character three times, the last over a {name} it carries. Its trading is frozen until {date}, and after that until the {name} is gone.', { name, date: heldUntilText(until) })
+  : t('realm.held.until', 'The realm\'s law has held this character three times. Its trading is frozen until {date}, then opens on its own.', { date: heldUntilText(until) }));
+/** AUTO-HOLD: the most locked pieces one checkpoint's answer names (server-account/src/ledger.js) and the realm session
+ *  hears (systems/realmSaves.js) - one number, in the leaf both read. */
+export const LOCKED_SAID_MAX = 200;
 
 /** A refusal's words, for the side whose trade did not happen. Nothing moved, on the service or here. FIELD BUGS
  *  2026-10-11g HELD-SIDE ("Cant trade after yesterdays character lockout" - "It will just say something along the lines
@@ -254,8 +267,8 @@ export const TRADE_HELD_NOTICES = Object.freeze({
  *  TRADE_HELD_NOTICES' key; null when that checkpoint held nothing). */
 export function realmTradeRefusalText(/** @type {string} */ why, /** @type {string | null} */ held = null, /** @type {string | null | undefined} */ reason = undefined, /** @type {string | null} */ said = null) {
   if (why === 'trade-held' && held === 'mine') {
-    // `said`: the hold's notice as the session last said it (systems/itemIds.js tradeHeldNotice - the piece named, or
-    // staff's review) - the reason's generic words only without one
+    // `said`: the hold's notice as the session last said it (systems/itemIds.js tradeHeldNotice - the piece named, or a
+    // timed hold's end) - the reason's generic words only without one
     const notice = typeof said === 'string' && said ? said : typeof reason === 'string' ? /** @type {Record<string, string>} */ (TRADE_HELD_NOTICES)[reason] : undefined;
     return `${notice ?? 'The realm is reviewing your character, and its trading is frozen.'} Nothing was traded.`;
   }
@@ -269,7 +282,7 @@ export function realmTradeRefusalText(/** @type {string} */ why, /** @type {stri
     case 'moved': return 'A character moved on before the trade was settled - nothing was traded.';
     case 'offline': return 'The realm could not be reached - nothing was traded.';
     case 'trade-held': return 'The realm is reviewing a character in this trade, and its trading is frozen - nothing was traded.';   // INT3
-    case 'piece-dupe': return 'Copies of a piece in this trade were found in the realm - nothing was traded.';   // INT4
+    case 'piece-dupe': return 'A piece in this trade is locked: a copy of it was found in the realm - nothing was traded.';   // INT4; AUTO-HOLD: the piece is locked, never its holder
     case 'piece-claimed': return 'Another character shows a piece in this trade too, and the realm is still settling whose it is - nothing was traded.';   // INT4 (its audit)
     case 'piece-legacy': return 'A piece in this trade came into the realm from a classic save, and the realm does not trade it - nothing was traded.';   // INT1 (its audit)
     case 'record-unjudged': return 'The realm has not read a character\'s latest save yet - nothing was traded. Try again in a moment.';   // INT3 (its audit)

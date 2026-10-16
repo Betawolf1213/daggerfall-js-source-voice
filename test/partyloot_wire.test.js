@@ -18,7 +18,7 @@
 //     frames are; the sessions, the Room and the doors share one clock (Date.now is that clock here).
 // What is not here: a browser (tools/partyLootProbe.mjs plays the report in two), and buildDungeonContext itself, which
 // nothing in the tree can stand up outside one. Mutants: tools/mutants/partyloot_wire.json.
-import { test, after } from 'node:test';
+import { test, after, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
@@ -29,7 +29,7 @@ import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';
 import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../src/systems/loot.js';
 import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
-import { peerHanded, neverPeerHanded } from '../src/systems/peerWord.js';
+import { peerHanded, neverPeerHanded, notCarried } from '../src/systems/peerWord.js';
 import { addItem, stacksWith, isGoldPieces, addGoldPieces } from '../src/systems/inventory.js';
 import { isEquipped, unequipItem } from '../src/systems/equip.js';
 import { planTake, applyTransfer } from '../src/systems/itemTransfer.js';
@@ -132,6 +132,11 @@ after(() => { Date.now = realNow; });
 const realSetTimeout = globalThis.setTimeout;
 globalThis.setTimeout = (fn, ms, ...args) => { const h = realSetTimeout(fn, ms, ...args); if (ms >= 1000) h.unref?.(); return h; };
 after(() => { globalThis.setTimeout = realSetTimeout; });
+// THE SESSION SWALLOWS A HANDLER'S THROW (online.js _deliver - one bad frame never takes the socket down), so a door
+// that throws here - a name the mount lacks, a stand-in grown stale - would look like a word that never landed. Every
+// throw under onAct and onFoes is kept, and a test that leaves one fails by it.
+const handlerErrors = [];
+afterEach(() => { const e = handlerErrors.splice(0); assert.deepEqual(e, [], 'no handler the wire called threw'); });
 
 /** ONE PLAYER'S DUNGEON: a character (its level, Luck, Renown, dice and mod switch) and the real dungeon's loot doors,
  *  PARTY-LOOT block, death and stream over `foes` layout foes - built as the build builds them, on this player's own
@@ -157,7 +162,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     SUPER_LOOT_DROP_MULT: 1.5, ELITE_LOOT_DROP_MULT: 1.2, SUPER_LOOT_QUALITY_MULT: 1.5, ELITE_LOOT_QUALITY_MULT: 1.2,
     opts: { selfId: () => id, onActions: (data) => { told.push(JSON.parse(JSON.stringify(data))); return send(data); }, onLootClaimed: () => {}, partyLevels: () => partners, roomHost: () => seat(), onFoeHit: () => assert.fail('the host applies its own blows') },
     _sharedStamp: `st${seed}`, clearSurplus: () => {},
-    addItem, stacksWith, isGoldPieces, addGoldPieces, isEquipped, unequipItem, neverPeerHanded,
+    addItem, stacksWith, isGoldPieces, addGoldPieces, isEquipped, unequipItem, neverPeerHanded, notCarried,   // AUDIT AUTO-HOLD: the give asks it (no realm session here: no filter)
     _wallNow: () => clock.t, performance: { now: () => clock.t }, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT, ENEMY_BASICS,
     generateLootItems: generateItems, addPileLootExtras, rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons,
     spawnEnemyLoot, wildLootAfter, grantEliteLoot, rollCorpseKit, raiseEnemyDeath, capFoeLoot, rollRoomBonus,
@@ -305,7 +310,10 @@ function player(id, net, o) {
   `, { online, _onlineKey: ROOM, modes, isWorldRoom, isCellRoom, actFrameFits, quietFoesGate, FOES_MS, FOES_FULL_MS, console,
     performance: { now: () => clock.t }, exteriorFoes: null, csaPeers: null, csaAboard: null, campToScene: null });
   // what the wire hands this player lands on its own dice, Renown and switches, as on its own machine
-  for (const k of ['onAct', 'onFoes']) { const door = online[k]; online[k] = (...a) => d.as(() => door(...a)); }
+  for (const k of ['onAct', 'onFoes']) {
+    const door = online[k];
+    online[k] = (...a) => d.as(() => { try { return door(...a); } catch (e) { handlerErrors.push(`${id} ${k}: ${e?.message ?? e}`); throw e; } });
+  }
   const frame = (dt = FOES_MS / 1000) => d.as(() => { doors.foesStream(clock.t); doors.actFlush(); d.h.tick(dt); });
   return { ...d, online, doors, frame };
 }

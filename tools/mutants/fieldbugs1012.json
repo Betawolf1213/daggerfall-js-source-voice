@@ -1,9 +1,10 @@
 [
   {
-    "name": "RING-HOLD-the-review-unsaid",
+    "name": "RING-HOLD-the-end-unsaid",
     "file": "server-account/src/verdict.js",
-    "old": "  const why = held !== 'law' ? null : lawHolds ? (({ code, t }) => ({ code, t: t ?? null }))(lawFindings[0]) : { code: 'review', t: null };",
-    "new": "  const why = held !== 'law' ? null : lawHolds ? (({ code, t }) => ({ code, t: t ?? null }))(lawFindings[0]) : null;",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content and renamed (it was -the-review-unsaid) - the third hold says its end, `until`, where it said staff's review",
+    "old": "  const why = held !== 'law' ? null : count.until != null ? { code: 'until', t: found?.t ?? null, until: count.until } : found;",
+    "new": "  const why = held !== 'law' ? null : found;",
     "tests": [
       "test/ringhold.test.js"
     ]
@@ -18,9 +19,10 @@
     ]
   },
   {
-    "name": "RING-HOLD-the-review-unnoticed",
+    "name": "RING-HOLD-the-end-unnoticed",
     "file": "src/systems/itemIds.js",
-    "old": "  if (now === 'law' && why?.code === 'review') return TRADE_HELD_NOTICES.review;",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content and renamed (it was -the-review-unnoticed) - the timed hold's notice, its piece named (AUDIT AUTO-HOLD)",
+    "old": "  if (now === 'law' && why?.code === 'until' && Number.isSafeInteger(why.until)) return tradeHeldUntilNotice(/** @type {number} */ (why.until), typeof name === 'string' && name ? name : null);",
     "new": "",
     "tests": [
       "test/ringhold.test.js"
@@ -29,7 +31,8 @@
   {
     "name": "RING-WARN-the-strikes-unsaid",
     "file": "src/net/realmTradeLaw.js",
-    "old": "export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen until staff have looked.';",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - the warning names a week where it named staff (AUDIT: \"then opens on its own\" was false with the piece carried)",
+    "old": "export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen for a week even once it is gone (a month if it comes to that again).';",
     "new": "export const TRADE_HELD_STRIKES = '';",
     "tests": [
       "test/ringhold.test.js"

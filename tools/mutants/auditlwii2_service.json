@@ -137,7 +137,8 @@
   {
     "name": "AUDITLWII2-S2-charge",
     "file": "server-account/src/ledger.js",
-    "old": "    ...chargeSteps(db, claim, [key], nowS),\n",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - the claimant is found contested, no strike; the finding is what the pin reads",
+    "old": "    ...chargeSteps(db, claim, [key], nowS, { strike: false }),\n",
     "new": "",
     "tests": [
       "test/auditlwii2_service.test.js"

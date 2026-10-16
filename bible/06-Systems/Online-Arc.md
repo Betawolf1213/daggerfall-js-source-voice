@@ -15880,8 +15880,10 @@ lands for everyone, migrated. Not seen with two real players from this container
   the host's word through `placeActionRecords` (`lootRecords` -> `roomRecordOf`); a party member's take from the
   window - its close telling one claim and never the room's state, the piece out of the taker's pack until the host's
   grant comes back over the Room, then one piece off both lists and in the taker's pack. A body's list is compared only
-  once its plaque NAMES one (an unborn body's null is never read as an empty base), and what the dungeon tells its act
-  door is counted before world.js or the session see it. `tools/mutants/partyloot_wire.json` (14, all killed); eight
+  once its plaque NAMES one (an unborn body's null is never read as an empty base), what the dungeon tells its act door
+  is counted before world.js or the session see it, and a throw under the session's handlers - which the session
+  swallows, so one bad frame never takes the socket down - fails the test instead of reading as a word that never
+  landed (AUTO-HOLD's `notCarried`, new in the give, was such a name). `tools/mutants/partyloot_wire.json` (14, all killed); eight
   of them `test/partyloot.test.js` cannot fail - the early birth dropped, the heal re-reading nothing, world.js keeping
   no refused key, and the five that cut the wire's own doors (world.js's onAct and actFlush's read, worldModes.js's
   three dungeon arms).
@@ -15891,7 +15893,7 @@ lands for everyone, migrated. Not seen with two real players from this container
   (`lootContents`: the room's base, the player's own bonus apart by roomLoot.js's own mark), then three windows through
   the press's loot door and the enhanced pack's row click. The personal mark is checked loaded wherever the tree has
   roomLoot.js (no run has rolled a bonus yet, so a mark that failed to load would read one as the room's). On this
-  tree, three runs: PASS - every body already named on both copies when the kills were done, 6 of 6 one base each time,
+  tree, four runs (the last with main's AUTO-HOLD merged in): PASS - every body already named on both copies when the kills were done, 6 of 6 one base each time,
   the joiner's untouched window leaving the host's base, the host's take staying taken on both under the joiner's open
   window, the joiner's take coming off both bases as one piece (from multi-piece bodies too: the rest left alike on
   both). On main before #923 (`ea09d8547b`), two runs: FAIL - the report as it was: 4 and 5 of 6 bodies differed (other

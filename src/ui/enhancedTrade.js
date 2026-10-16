@@ -270,7 +270,7 @@ function refuseTransfer(item) {
   }
   // SS4: a BOUND piece is not put up for sale either (systems/itemBound.js) - a repair or an identify still takes it
   if (selling() && isBound(item)) {
-    box = { rows: [{ text: boundText(itemLine(item, deps.entity).name), center: true }], buttons: null };
+    box = { rows: [{ text: boundText(itemLine(item, deps.entity).name, item), center: true }], buttons: null };   // AUDIT AUTO-HOLD: a piece the realm locked says so
     render();
     return true;
   }
