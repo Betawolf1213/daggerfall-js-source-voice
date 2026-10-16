@@ -2,6 +2,7 @@
   {
     "name": "INTA-the-holder-charged",
     "file": "server-account/src/ledger.js",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - a contested claim locks the claimant with no strike, `{ strike: false }`",
     "old": "    steps.push(...copyRows(db, keys, claimant, nowS), ...chargeSteps(db, claimant, keys, nowS, { strike: false }));",
     "new": "    steps.push(...copyRows(db, keys, claimant, nowS), ...chargeSteps(db, char, keys, nowS, { strike: false }));",
     "tests": [
@@ -183,6 +184,7 @@
   {
     "name": "INTA-the-why-unsaid",
     "file": "server-account/src/realm.js",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - the answer carries `locked` beside it",
     "old": "  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), ...(v.locked.length ? { locked: v.locked } : {}) };",
     "new": "  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(v.locked.length ? { locked: v.locked } : {}) };",
     "tests": [
@@ -372,6 +374,7 @@
   {
     "name": "INTA-the-excuse-unwritten",
     "file": "server-account/src/review.js",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - staff's clear forgets the timed hold beside it",
     "old": "held = NULL, held_at = NULL, held_until = NULL, strikes = 0, law_holds = 0, law_at = NULL, review = NULL, law_excused = law_sig, allowance = NULL",
     "new": "held = NULL, held_at = NULL, held_until = NULL, strikes = 0, law_holds = 0, law_at = NULL, review = NULL, allowance = NULL",
     "tests": [

@@ -117,12 +117,15 @@ export function interiorLootRecords(ctx, keys, tooBig = new Set()) {
 }
 
 /** AUTO-HOLD (2026-10-16, bible/06-Systems/Integrity-Arc.md): `items` without a piece the ledger follows whose key is
- *  among `carried.keys` (the reader's own - systems/itemIds.js carriedPieces) or repeats an earlier one's. The key rule
- *  comes in with them (`carried.keyOf`, itemIds.js ledgerKeyOf): this half never imports the item law, whose
- *  registration (systems/loot.js setItemLaw) changes what every reader of the wire lands. No `carried`: as it came. */
-export function withoutCarried(items, carried = null) {
+ *  among `carried.keys` (the reader's own lists - systems/itemIds.js carriedPieces) - and, `stowed` (a shop's shelf:
+ *  AUDIT AUTO-HOLD, a piece put in a ship's hold came back off a stale one), among `carried.stowed` too - or repeats an
+ *  earlier one's. Never the stowed keys on a container that may BE the stowage (a rented room's chest): its own pieces
+ *  land there. The key rule comes in with them (`carried.keyOf`, itemIds.js ledgerKeyOf): this half never imports the
+ *  item law, whose registration (systems/loot.js setItemLaw) changes what every reader of the wire lands. No
+ *  `carried`: as it came. */
+export function withoutCarried(items, carried = null, { stowed = false } = {}) {
   if (typeof carried?.keyOf !== 'function') return items;
-  const keys = new Set(carried.keys ?? []);
+  const keys = new Set([...(carried.keys ?? []), ...(stowed ? carried.stowed ?? [] : [])]);
   return items.filter((it) => {
     const k = carried.keyOf(it);
     if (!k) return true;
@@ -164,7 +167,7 @@ export function applyInteriorLoot(ctx, list, { seen = new Set(), openKey = null,
     seen.add(canon);
     unreadable?.delete(canon);
     if (canon === openKey) { n++; continue; }
-    const lands = withoutCarried(items, carried);
+    const lands = withoutCarried(items, carried, { stowed: canon.startsWith('shelf:') });
     if (Array.isArray(t.items)) { t.items.length = 0; for (const it of lands) t.items.push(it); } else t.items = lands;
     t.stockedDate = Math.max(Number.isFinite(t.stockedDate) ? t.stockedDate : 0, Math.floor(rec.d));
     n++;

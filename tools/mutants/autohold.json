@@ -147,8 +147,8 @@
   {
     "name": "AUTOHOLD-migration-review-kept",
     "file": "server-account/migrations/0120_auto_hold.sql",
-    "old": "UPDATE realm_characters SET held_until = CAST(strftime('%s', 'now') AS INTEGER) + 604800, law_holds = 1, strikes = 0,",
-    "new": "UPDATE realm_characters SET held_until = NULL, law_holds = 1, strikes = 0,",
+    "old": "  held_until = CAST(strftime('%s', 'now') AS INTEGER) + 604800, law_holds = 1, strikes = 0,",
+    "new": "  held_until = NULL, law_holds = 1, strikes = 0,",
     "tests": [
       "test/autohold.test.js"
     ]
@@ -156,8 +156,8 @@
   {
     "name": "AUTOHOLD-the-session-tells-again",
     "file": "src/systems/realmSaves.js",
-    "old": "LEDGER_KEY_RE.test(k) && !toldLocked.has(k)).slice(0, LOCKED_TOLD_MAX);",
-    "new": "LEDGER_KEY_RE.test(k)).slice(0, LOCKED_TOLD_MAX);",
+    "old": "    const fresh = keys.filter((k) => !lockedKeys.includes(k));",
+    "new": "    const fresh = keys;",
     "tests": [
       "test/autohold.test.js"
     ]
@@ -183,8 +183,8 @@
   {
     "name": "AUTOHOLD-the-piece-unnamed",
     "file": "src/scenes/realmHoldHost.js",
-    "old": "    const text = piecesLockedNotice(piecesByKey(entity, keys).map((it) => itemLongName(it)), keys.length);",
-    "new": "    const text = piecesLockedNotice([], keys.length);",
+    "old": "    const text = piecesLockedNotice(pieces.map((it) => itemLongName(it)), pieces.length + unfound);",
+    "new": "    const text = piecesLockedNotice([], pieces.length + unfound);",
     "tests": [
       "test/autohold.test.js"
     ]
@@ -201,8 +201,8 @@
   {
     "name": "AUTOHOLD-the-shelf-lands-mine",
     "file": "src/world/interiorShared.js",
-    "old": "  const keys = new Set(carried.keys ?? []);",
-    "new": "  const keys = new Set();",
+    "old": "  const keys = new Set([...(carried.keys ?? []), ...(stowed ? carried.stowed ?? [] : [])]);",
+    "new": "  const keys = new Set([...(stowed ? carried.stowed ?? [] : [])]);",
     "tests": [
       "test/autohold.test.js"
     ]
@@ -219,7 +219,7 @@
   {
     "name": "AUTOHOLD-the-shelf-unfiltered",
     "file": "src/world/interiorShared.js",
-    "old": "    const lands = withoutCarried(items, carried);",
+    "old": "    const lands = withoutCarried(items, carried, { stowed: canon.startsWith('shelf:') });",
     "new": "    const lands = items;",
     "tests": [
       "test/autohold.test.js"
@@ -256,6 +256,249 @@
     "name": "AUTOHOLD-the-carried-unread",
     "file": "src/systems/itemIds.js",
     "old": "  for (const list of ownLists(entity)) for (const it of list) { const k = ledgerKeyOf(it); if (k) out.add(k); }",
+    "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-strike-inside-the-hold",
+    "file": "server-account/src/verdict.js",
+    "old": "  const struck = (faded ? 0 : row.strikes ?? 0) + (rising && standing == null ? 1 : 0);",
+    "new": "  const struck = (faded ? 0 : row.strikes ?? 0) + (rising ? 1 : 0);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-copies-hold-converted-last",
+    "file": "server-account/migrations/0120_auto_hold.sql",
+    "old": "\n  WHERE held IN ('law', 'dupe') AND strikes >= 3;",
+    "new": "\n  WHERE held = 'law' AND strikes >= 3;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-old-strikes-never-fade",
+    "file": "server-account/migrations/0120_auto_hold.sql",
+    "old": "  WHERE strikes > 0 AND law_at IS NULL;",
+    "new": "  WHERE 0;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-fade-from-now",
+    "file": "server-account/migrations/0120_auto_hold.sql",
+    "old": "COALESCE((SELECT MAX(f.at) FROM realm_findings f WHERE f.char_id = realm_characters.id AND f.kind = 'law'),",
+    "new": "COALESCE(NULL,",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-patron-claim-struck",
+    "file": "server-account/src/ledger.js",
+    "old": "    ...chargeSteps(db, claim, [key], nowS, { strike: false }),\n",
+    "new": "    ...chargeSteps(db, claim, [key], nowS),\n",
+    "tests": [
+      "test/auditlwii2_service.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-dead-carrying-freed",
+    "file": "server-account/src/realm.js",
+    "old": "AND ${a}.held_until <= ${now} AND ${a}.law_sig IS NULL))`;",
+    "new": "AND ${a}.held_until <= ${now}))`;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-living-freed",
+    "file": "server-account/src/realm.js",
+    "old": "NOT (${a}.dead_at IS NOT NULL\n",
+    "new": "NOT (1\n",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-craft-hold-blind",
+    "file": "server-account/src/realm.js",
+    "old": "WHERE p.provenance = ?1 AND ${holdStandsSql('r', '?3')}`)",
+    "new": "WHERE p.provenance = ?1 AND r.held IS NOT NULL`)",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-realm-lock-binds-nothing",
+    "file": "src/systems/itemBound.js",
+    "old": "export const isBound = (/** @type {any} */ item) => isBoundByNature(item) || isRealmLocked(item);",
+    "new": "export const isBound = (/** @type {any} */ item) => isBoundByNature(item);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-realm-lock-unsaid",
+    "file": "src/systems/itemBound.js",
+    "old": "const realmLockedOnly = (/** @type {any} */ item) => !!item && isRealmLocked(item) && !isBoundByNature(item);",
+    "new": "const realmLockedOnly = () => false;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-kept-set-unbound",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  setRealmLocked(session?.lockedKeys ?? []);",
+    "new": "  setRealmLocked([]);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-set-unheard",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  session.onLockedKeys = (/** @type {string[]} */ keys) => setRealmLocked(keys);\n",
+    "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-stowed-unread",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  setStowedKeys(session ? stowedReader(session) : () => null);",
+    "new": "  setStowedKeys(() => null);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-pack-stowed",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  const away = { ...save, items: [], wagonItems: [], bagItems: [], furnishings: [], otherItems: [] };",
+    "new": "  const away = save;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-stowed-everywhere",
+    "file": "src/world/interiorShared.js",
+    "old": "{ stowed: canon.startsWith('shelf:') }",
+    "new": "{ stowed: true }",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-told-forgotten",
+    "file": "src/systems/realmSaves.js",
+    "old": "  let lockedKeys = lockedTold(storage, id);",
+    "new": "  let lockedKeys = /** @type {string[]} */ ([]);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-told-unkept",
+    "file": "src/systems/realmSaves.js",
+    "old": "    keepLockedTold(storage, id, keys);\n",
+    "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-run-out-unsaid",
+    "file": "src/systems/realmSaves.js",
+    "old": "    const ranOut = prev === 'law' && now === 'law' && wasTimed && until == null;",
+    "new": "    const ranOut = false;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-new-end-unheard",
+    "file": "src/systems/realmSaves.js",
+    "old": "    const moved = now !== tradeHeld || (what?.until ?? null) !== (tradeHeldWhy?.until ?? null);",
+    "new": "    const moved = now !== tradeHeld;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-timed-piece-unnamed",
+    "file": "src/systems/itemIds.js",
+    "old": "tradeHeldUntilNotice(/** @type {number} */ (why.until), typeof name === 'string' && name ? name : null)",
+    "new": "tradeHeldUntilNotice(/** @type {number} */ (why.until))",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-end-in-tenths",
+    "file": "src/net/realmTradeLaw.js",
+    "old": "new Date(until * 1000)",
+    "new": "new Date(until * 100)",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-cap-at-four",
+    "file": "src/net/realmTradeLaw.js",
+    "old": "export const LOCKED_SAID_MAX = 40;",
+    "new": "export const LOCKED_SAID_MAX = 4;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-dungeon-unfiltered",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      for (const it of withoutCarried(items, carriedPieces(playerEntity))) held.push(it);",
+    "new": "      for (const it of items) held.push(it);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-key-twice-one-piece",
+    "file": "src/systems/itemIds.js",
+    "old": "if (k && want.has(k)) { pieces.push(it); found.add(k); }",
+    "new": "if (k && want.has(k) && !found.has(k)) { pieces.push(it); found.add(k); }",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-key-not-the-ledgers",
+    "file": "src/systems/realmSaves.js",
+    "old": "export const LEDGER_KEY_RE = /^[0-9a-f]{16}$/;",
+    "new": "export const LEDGER_KEY_RE = /^[0-9a-f]{15}$/;",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-review-promised",
+    "file": "src/net/accountClient.js",
+    "old": "'This character\\'s trading is frozen. The notice shown when it froze says why, and until when.'",
+    "new": "'The realm is reviewing this character, and its trading is frozen until the review ends.'",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-lists-moved-alone",
+    "file": "src/systems/possessedItems.js",
+    "old": "  for (const boat of arrayOf(csa?.placedBoats)) out.push(...lists(/** @type {any} */ (boat)?.Items));",
     "new": "",
     "tests": [
       "test/autohold.test.js"

@@ -22,13 +22,19 @@ import { seatRealm, freshSave } from './realmSeat.mjs';
 import { DUPE_GRACE_S } from '../server-account/src/ledger.js';
 import { holdOf, lawCountOf, LAW_HOLD_S, LAW_HOLD_REPEAT_S, LAW_FADE_S } from '../server-account/src/verdict.js';
 import { STRIKES_FOR_TIMED } from '../server-account/src/judge.js';
-import { tradeHeldNotice, ledgerKeyOf, carriedLedgerKeys, carriedPieces, piecesByKey } from '../src/systems/itemIds.js';
-import { tradeHeldUntilNotice, heldUntilText } from '../src/net/realmTradeLaw.js';
-import { piecesLockedNotice, wireRealmHolds } from '../src/scenes/realmHoldHost.js';
+import { tradeHeldNotice, tradeHeldLawNotice, ledgerKeyOf, carriedLedgerKeys, carriedPieces, lockedPiecesOf, TRADE_HELD_NOTICES } from '../src/systems/itemIds.js';
+import { tradeHeldUntilNotice, heldUntilText, LOCKED_SAID_MAX, TRADE_HELD_STRIKES } from '../src/net/realmTradeLaw.js';
+import { piecesLockedNotice, wireRealmHolds, stowedKeysOf } from '../src/scenes/realmHoldHost.js';
+import { isBound, isBoundByNature, isRealmLocked, setRealmLocked, boundText, boundLine, boundTradeText, boundRefusesPut, BOUND_LINE, BOUND_TRADE_TEXT } from '../src/systems/itemBound.js';
+import { tradeRefusal } from '../src/systems/tradePack.js';
+import { peerHanded } from '../src/systems/peerWord.js';
+import { ITEM_UID_RE, PROVENANCE_RE, lawTemplate } from '../src/systems/itemLaw.js';
+import { holdStandsSql } from '../server-account/src/realm.js';
+import { accountRefusalText } from '../src/net/accountClient.js';
 import { itemLongName } from '../src/systems/itemInfo.js';
 import { applyInteriorLoot, applyInteriorShared, withoutCarried } from '../src/world/interiorShared.js';
 import { SESSION_KEY } from '../src/net/accountClient.js';
-import { realmIo, createRealmSession } from '../src/systems/realmSaves.js';
+import { realmIo, createRealmSession, LEDGER_KEY_RE, REALM_LOCKED_PREFIX } from '../src/systems/realmSaves.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { applyRarity } from '../src/systems/lootRarity.js';
 import { seeded } from './honestItems.mjs';
@@ -91,6 +97,11 @@ test('AUTO-HOLD lawCountOf, pure: the third strike a week\'s hold and none count
   assert.deepEqual(lawCountOf(timed, { rising: false, holding: false, nowS: n + LAW_HOLD_S + LAW_FADE_S - 1 }).served, 1, 'a second short: remembered');
   assert.deepEqual(lawCountOf(timed, { rising: false, holding: false, nowS: n + LAW_HOLD_S + LAW_FADE_S }), { strikes: 0, served: 0, until: null, at: null }, 'faded');
   assert.deepEqual(lawCountOf({ strikes: 2, served: 0, until: null, at: n }, { rising: true, holding: true, nowS: n + LAW_FADE_S }), { strikes: 1, served: 0, until: null, at: n + LAW_FADE_S }, 'two strikes a month old forgotten: this one the first');
+  // AUDIT AUTO-HOLD: a piece dropped and taken up inside a timed hold is no new hold - no strike (three were a month)
+  assert.deepEqual(lawCountOf(timed, { rising: true, holding: true, nowS: n + DAY }), { strikes: 0, served: 1, until: n + LAW_HOLD_S, at: n + LAW_HOLD_S });
+  assert.deepEqual(lawCountOf({ ...timed, until: n + DAY }, { rising: true, holding: true, nowS: n + DAY }).strikes, 1, 'its end come: a new hold strikes again');
+  // the owner's numbers, by value (AUDIT AUTO-HOLD: every pin above reads the constants themselves)
+  assert.deepEqual([STRIKES_FOR_TIMED, LAW_HOLD_S, LAW_HOLD_REPEAT_S, LAW_FADE_S], [3, 7 * 86_400, 30 * 86_400, 30 * 86_400]);
 });
 
 test('AUTO-HOLD service: the law\'s third hold is TIMED - a clean checkpoint inside it holds still, the first past it lifts it, the next three a month - and the count fades a month after', async () => {
@@ -155,49 +166,167 @@ test('AUTO-HOLD service: three copied pieces in one record are one incident - ea
   } finally { s.done(); }
 });
 
-test('AUTO-HOLD service: a row still held \'dupe\' lifts at its next checkpoint; staff\'s clear and rollback forget the timed hold and its count', async () => {
+test('AUTO-HOLD service: a row still held \'dupe\' lifts at its next checkpoint; staff\'s clear and rollback forget the timed hold and its count; staff\'s reads show it', async () => {
   const s = await stand({ DEVELOPER_HANDLES: 'mac' });
   try {
     const A = await s.seat('old');
     s.raw.prepare("UPDATE realm_characters SET held = 'dupe', held_at = 1 WHERE id = ?").run(A.R.id);
     assert.equal((await s.put(A, [])).tradeHeld, null);
     const mac = await s.registered('mac');
-    s.raw.prepare("UPDATE realm_characters SET held = 'law', held_until = ?, law_holds = 2, law_at = ?, strikes = 1 WHERE id = ?").run(s.now() + DAY, s.now() + DAY, A.R.id);
+    const timed = () => s.raw.prepare("UPDATE realm_characters SET held = 'law', held_until = ?, law_holds = 2, law_at = ?, strikes = 1 WHERE id = ?").run(s.now() + DAY, s.now() + DAY, A.R.id);
+    timed();
+    const holds = await s.call('/v1/mod/realm-holds', {}, mac.secret);
+    const listed = holds.body.characters.find((c) => c.id === A.R.id);
+    assert.deepEqual([listed.held, listed.held_until, listed.law_holds, listed.strikes], ['law', s.now() + DAY, 2, 1], 'the holds list says the end and the count');
+    const read = await s.call('/v1/mod/realm-findings', { id: A.R.id }, mac.secret);
+    assert.deepEqual([read.body.character.heldUntil, read.body.character.lawHolds, read.body.character.dupes], [s.now() + DAY, 2, 0]);
     assert.equal((await s.call('/v1/mod/realm-clear', { id: A.R.id }, mac.secret)).status, 200);
     assert.deepEqual(s.row(A.R.id), { ...s.row(A.R.id), held: null, held_until: null, strikes: 0, law_holds: 0, law_at: null });
-    const review = s.raw.prepare('SELECT held_until, law_holds FROM realm_characters WHERE id = ?').get(A.R.id);
-    assert.deepEqual({ ...review }, { held_until: null, law_holds: 0 });
-    const src = readFileSync(new URL('../server-account/src/review.js', import.meta.url), 'utf8');
-    assert.match(src, / held_until = NULL, strikes = 0, law_holds = 0, law_at = NULL, law_sig = NULL,/, 'the rollback forgets it too');
+    timed();
+    const back = await s.call('/v1/mod/realm-rollback', { id: A.R.id }, mac.secret);
+    assert.equal(back.status, 200, JSON.stringify(back.body));
+    assert.deepEqual(s.row(A.R.id), { ...s.row(A.R.id), held: null, held_until: null, strikes: 0, law_holds: 0, law_at: null }, 'the rollback forgets it too');
   } finally { s.done(); }
 });
 
-test('AUTO-HOLD migration 0120: every \'dupe\' hold lifted and written as a staff act; a law hold waiting for staff the first timed hold, a week on; nothing else moved', async () => {
+test('AUTO-HOLD service (AUDIT): a hold a reader cannot wait out - a dead maker\'s law hold whose time is out, its last judgement finding nothing - stands no more for its crafts and its listings; any other stands', async () => {
   const s = await stand();
   try {
-    const D = await s.seat('dup'), L = await s.seat('law'), K = await s.seat('kep'), F = await s.seat('few');
-    const set = (c, held, strikes) => s.raw.prepare('UPDATE realm_characters SET held = ?, strikes = ?, held_until = NULL, law_holds = 0, law_at = NULL WHERE id = ?').run(held, strikes, c.R.id);
-    set(D, 'dupe', 0); set(L, 'law', 3); set(K, 'staff', 3); set(F, 'law', 1);
-    const revs = [D, L, K, F].map((c) => s.row(c.R.id).judge_rev);
+    const A = await s.seat('mak');
+    const now = 1_000_000;
+    const stands = (row) => {
+      s.raw.prepare('UPDATE realm_characters SET held = ?, held_until = ?, dead_at = ?, law_sig = ? WHERE id = ?').run(row.held, row.until ?? null, row.dead ?? null, row.sig ?? null, A.R.id);
+      return s.raw.prepare(`SELECT ${holdStandsSql('r', '?1')} AS v FROM realm_characters r WHERE r.id = ?2`).get(now, A.R.id).v;
+    };
+    assert.equal(stands({ held: 'law', until: now - 1, dead: 5 }), 0, 'dead, its week out, nothing carried: none');
+    assert.equal(stands({ held: 'law', until: now, dead: 5 }), 0, 'out at its very end');
+    assert.equal(stands({ held: 'law', until: now + 1, dead: 5 }), 1, 'its week still running');
+    assert.equal(stands({ held: 'law', until: now - 1 }), 1, 'alive: its next checkpoint is the lift');
+    assert.equal(stands({ held: 'law', until: now - 1, dead: 5, sig: 'crafted:135' }), 1, 'dead carrying what the law found');
+    assert.equal(stands({ held: 'law', dead: 5 }), 1, 'an untimed law hold');
+    assert.equal(stands({ held: 'staff', until: now - 1, dead: 5 }), 1, 'staff\'s');
+    assert.equal(stands({ held: null }), 0);
+    const realm = readFileSync(new URL('../server-account/src/realm.js', import.meta.url), 'utf8');
+    const market = readFileSync(new URL('../server-account/src/market.js', import.meta.url), 'utf8');
+    assert.match(realm, /WHERE p\.provenance = \?1 AND \$\{holdStandsSql\('r', '\?3'\)\}`\)\.bind\(provenance, playerId, Math\.floor\(Date\.now\(\) \/ 1000\)\)/, 'the craft\'s hold asks it');
+    assert.match(market, /const PATRON_HELD_SQL = `EXISTS \(SELECT 1 FROM realm_characters c WHERE c\.id = l\.char_id AND c\.player = l\.seller AND \(\$\{holdStandsSql\('c', /, 'the patrons\' too');
+  } finally { s.done(); }
+});
+
+test('AUTO-HOLD service (AUDIT): an answer names at most LOCKED_SAID_MAX locked pieces', async () => {
+  const s = await stand();
+  try {
+    const A = await s.seat('mny');
+    const keys = Array.from({ length: LOCKED_SAID_MAX + 2 }, (_, i) => i.toString(16).padStart(16, 'a'));
+    const r = await s.put(A, keys.flatMap((k) => [withId(k), withId(k)]));
+    assert.equal(r.locked.length, LOCKED_SAID_MAX);
+    assert.equal(LOCKED_SAID_MAX, 40);
+  } finally { s.done(); }
+});
+
+test('AUTO-HOLD migration 0120: a hold waiting for staff on three strikes - law\'s or, AUDIT, a copies\' one over them - the first timed hold a week on, written with what it was; every other \'dupe\' hold lifted, written; every strike standing given its fade from its last finding (AUDIT: they stood for good); nothing else moved', async () => {
+  const s = await stand();
+  try {
+    const D = await s.seat('dup'), D2 = await s.seat('dlw'), L = await s.seat('law'), K = await s.seat('kep'), F = await s.seat('few'), N = await s.seat('non');
+    const set = (c, held, strikes) => s.raw.prepare('UPDATE realm_characters SET held = ?, held_at = ?, strikes = ?, held_until = NULL, law_holds = 0, law_at = NULL WHERE id = ?').run(held, held ? 777 : null, strikes, c.R.id);
+    set(D, 'dupe', 0); set(D2, 'dupe', STRIKES_FOR_TIMED); set(L, 'law', STRIKES_FOR_TIMED); set(K, 'staff', STRIKES_FOR_TIMED); set(F, 'law', STRIKES_FOR_TIMED - 1); set(N, null, 0);
+    const lawAt = s.now() - 40 * DAY;   // F's last law finding: the fade counts from it
+    s.raw.prepare("INSERT INTO realm_findings (player, char_id, seq, at, law, kind, detail) VALUES (?, ?, 1, ?, 0, 'law', '{}')").run(F.who.id, F.R.id, lawAt);
+    const revs = Object.fromEntries([D, D2, L, K, F, N].map((c) => [c.who.handle, s.row(c.R.id).judge_rev]));
     const sql = readFileSync(new URL('../server-account/migrations/0120_auto_hold.sql', import.meta.url), 'utf8');
     const dml = sql.split('\n').filter((l) => !l.startsWith('--') && !l.startsWith('ALTER TABLE')).join('\n');
     const before = Math.floor(realNowS());
     s.raw.exec(dml);
-    assert.deepEqual([s.row(D.R.id).held, s.row(D.R.id).judge_rev], [null, revs[0] + 1]);
+    const after = Math.ceil(realNowS());
+    const week = (r) => r.held_until >= before + LAW_HOLD_S && r.held_until <= after + LAW_HOLD_S;
+    assert.deepEqual([s.row(D.R.id).held, s.row(D.R.id).held_at, s.row(D.R.id).judge_rev], [null, null, revs.dup + 1]);
     assert.deepEqual(s.findings(D.R.id, 'staff'), [{ act: 'clear', by: 'auto-hold', was: 'dupe' }]);
-    const l = s.row(L.R.id);
-    assert.deepEqual([l.held, l.strikes, l.law_holds, l.judge_rev], ['law', 0, 1, revs[1] + 1]);
-    assert.ok(l.held_until >= before + LAW_HOLD_S && l.held_until <= Math.ceil(realNowS()) + LAW_HOLD_S, 'a week from the migration');
-    assert.equal(l.law_at, l.held_until);
-    assert.deepEqual(s.findings(L.R.id, 'staff').map((f) => f.act), ['timed']);
-    assert.deepEqual([s.row(K.R.id).held, s.row(K.R.id).held_until, s.row(K.R.id).judge_rev], ['staff', null, revs[2]], 'staff\'s own untouched');
-    assert.deepEqual([s.row(F.R.id).held, s.row(F.R.id).held_until, s.row(F.R.id).judge_rev], ['law', null, revs[3]], 'a law hold under three: untouched');
+    for (const [c, was] of [[L, 'law'], [D2, 'dupe']]) {
+      const r = s.row(c.R.id);
+      assert.deepEqual([r.held, r.strikes, r.law_holds, r.law_at, r.judge_rev, week(r)], ['law', 0, 1, r.held_until, revs[c.who.handle] + 1, true], `${was}: a week's hold from the migration`);
+      assert.deepEqual(s.findings(c.R.id, 'staff'), [{ act: 'timed', by: 'auto-hold', was, until: r.held_until }], `${was}: written with what it was`);
+    }
+    assert.equal(s.row(L.R.id).held_at, 777, 'a law hold keeps the time it began');
+    assert.ok(s.row(D2.R.id).held_at >= before && s.row(D2.R.id).held_at <= after, 'a copies\' hold turned the law\'s begins now');
+    const k = s.row(K.R.id);
+    assert.deepEqual([k.held, k.held_until, k.strikes], ['staff', null, STRIKES_FOR_TIMED], 'staff\'s own: never timed by the migration');
+    assert.ok(k.law_at >= before && k.law_at <= after, 'its strikes fade from now - no finding to count from');
+    const f = s.row(F.R.id);
+    assert.deepEqual([f.held, f.held_until, f.strikes, f.law_at, f.judge_rev], ['law', null, STRIKES_FOR_TIMED - 1, lawAt, revs.few + 1], 'a law hold under three: its fade from its last finding');
+    assert.deepEqual([s.row(N.R.id).law_at, s.row(N.R.id).judge_rev], [null, revs.non], 'no strike: untouched');
+    // and that fade is the law's: a clean checkpoint a month past the finding forgets the two strikes
+    assert.equal((await s.put(F, [])).tradeHeld, null);
+    assert.deepEqual([s.row(F.R.id).strikes, s.row(F.R.id).law_at], [0, null]);
   } finally { s.done(); }
 });
 /** The wall clock the migration's SQL reads (`new Date()` is the engine's own - the stand replaces only Date.now). */
 const realNowS = () => new Date().getTime() / 1000;
 
-test('AUTO-HOLD client: the realm session tells each locked piece ONCE, and a timed hold with its end; the notices name the piece', async () => {
+/** A device's storage, in memory. */
+const memoryStorage = () => {
+  const kept = new Map();
+  return { kept, get length() { return kept.size; }, key: (i) => [...kept.keys()][i] ?? null, getItem: (k) => (kept.has(k) ? kept.get(k) : null), setItem: (k, v) => { kept.set(k, String(v)); }, removeItem: (k) => { kept.delete(k); } };
+};
+/** A realm session over a scripted service: each checkpoint answered `{ ok, seq, ...answers.shift() }`. */
+const scriptedSession = (answers, storage = memoryStorage()) => {
+  let seq = 1;
+  const io = {
+    base: 'https://accounts.invalid', secret: 'x', storage, player: 'p',
+    fetch: async () => { seq += 1; return new Response(JSON.stringify({ ok: true, seq, ...(answers.shift() ?? {}) }), { status: 200, headers: { 'content-type': 'application/json' } }); },
+  };
+  return createRealmSession({ io, id: 'rtestrtestrtestrtest', lease: 'l'.repeat(32), seq: 1 });
+};
+
+test('AUTO-HOLD client: the realm session - a timed hold heard with its end and its piece, again when its end moves, and (AUDIT) the law\'s hold it leaves behind said as one; the locked pieces told ONCE on this device across joins, the whole set kept and handed on, an answer naming none clearing it', async () => {
+  const U1 = 1_800_000_000, U2 = U1 + 30 * DAY, k1 = 'c3c3c3c3c3c3c3c3', k2 = 'd4d4d4d4d4d4d4d4';
+  const storage = memoryStorage();
+  const session = scriptedSession([
+    { tradeHeld: 'law', tradeHeldWhy: { code: 'until', t: 135, until: U1 }, locked: [k1, 'not-a-key', k1] },
+    { tradeHeld: 'law', tradeHeldWhy: { code: 'until', t: null, until: U1 }, locked: [k1] },
+    { tradeHeld: 'law', tradeHeldWhy: { code: 'until', t: null, until: U2 }, locked: [k1, k2] },
+    { tradeHeld: 'law', tradeHeldWhy: { code: 'crafted', t: 135 }, locked: [k1, k2] },
+    { tradeHeld: null },
+  ], storage);
+  const held = [], told = [], sets = [];
+  session.onTradeHeld = (prev, now, why) => held.push([prev, now, why]);
+  session.onPiecesLocked = (keys) => told.push(keys);
+  session.onLockedKeys = (keys) => sets.push(keys);
+  for (let i = 0; i < 4; i++) await session.checkpoint(JSON.stringify({ n: i }));
+  assert.equal(storage.getItem(`${REALM_LOCKED_PREFIX}rtestrtestrtestrtest`), JSON.stringify([k1, k2]), 'what it told, kept on the device');
+  await session.checkpoint(JSON.stringify({ n: 4 }));
+  assert.deepEqual(held, [
+    [null, 'law', { code: 'until', t: 135, until: U1 }],
+    ['law', 'law', { code: 'until', t: null, until: U2 }],
+    [null, 'law', { code: 'crafted', t: 135 }],   // AUDIT: the week out, the Ring still carried - a law hold, said as one
+    ['law', null, null],
+  ], 'the same end twice said once');
+  assert.deepEqual(told, [[k1], [k2]], 'each once');
+  assert.deepEqual(sets, [[k1], [k1], [k1, k2], [k1, k2], []], 'the whole set each landing, none at the last');
+  assert.deepEqual([session.lockedKeys, storage.kept.has(`${REALM_LOCKED_PREFIX}rtestrtestrtestrtest`)], [[], false], 'an answer naming none: none locked, nothing kept');
+  assert.equal(session.landedText, JSON.stringify({ n: 4 }), 'the last save the realm took');
+  // what the player hears of those moves
+  assert.equal(tradeHeldNotice(null, 'law', held[0][2]), tradeHeldUntilNotice(U1, 'Ring'));
+  assert.match(tradeHeldNotice(null, 'law', held[0][2]), /the last over a Ring it carries\. Its trading is frozen until .*, and after that until the Ring is gone\.$/);
+  assert.equal(tradeHeldNotice('law', 'law', held[1][2]), tradeHeldUntilNotice(U2), 'a timed hold re-said with its new end');
+  assert.match(tradeHeldUntilNotice(U2), /^The realm's law has held this character three times\. Its trading is frozen until .*, then opens on its own\.$/);
+  assert.equal(tradeHeldNotice(null, 'law', held[2][2]), tradeHeldLawNotice('Ring'));
+  assert.equal(tradeHeldNotice(null, 'law', { code: 'until', t: null, until: 'soon' }), TRADE_HELD_NOTICES.law, 'an end that is no time is no timed hold');
+  // a second join on this device: what it told is told no more
+  const again = scriptedSession([{ tradeHeld: null, locked: [k1, k2] }, { tradeHeld: null, locked: [k1, k2, 'e5e5e5e5e5e5e5e5'] }], (() => { const st = memoryStorage(); st.setItem(`${REALM_LOCKED_PREFIX}rtestrtestrtestrtest`, JSON.stringify([k1, k2])); return st; })());
+  assert.deepEqual(again.lockedKeys, [k1, k2], 'kept from the last join, before any answer');
+  const told2 = [];
+  again.onPiecesLocked = (keys) => told2.push(keys);
+  await again.checkpoint('{}');
+  await again.checkpoint('{}');
+  assert.deepEqual(told2, [['e5e5e5e5e5e5e5e5']]);
+  // and never more than an answer names
+  const many = scriptedSession([{ tradeHeld: null, locked: Array.from({ length: LOCKED_SAID_MAX + 5 }, (_, i) => i.toString(16).padStart(16, 'b')) }]);
+  await many.checkpoint('{}');
+  assert.equal(many.lockedKeys.length, LOCKED_SAID_MAX);
+  assert.deepEqual([LEDGER_KEY_RE.source, LEDGER_KEY_RE.source], [ITEM_UID_RE.source, PROVENANCE_RE.source], 'a key as the ledger keys a piece');
+});
+
+test('AUTO-HOLD client: over the real Worker, the third strike heard timed with its piece; the notices name every locked piece, accuse no one, and count what they cannot name; the wiring binds the locked and reads the stowed', async () => {
   let now = T0;
   const realNow = Date.now;
   Date.now = () => now * 1000;
@@ -209,14 +338,6 @@ test('AUTO-HOLD client: the realm session tells each locked piece ONCE, and a ti
     const storage = { get length() { return kept.size; }, key: (i) => [...kept.keys()][i] ?? null, getItem: (k) => (kept.has(k) ? kept.get(k) : null), setItem: (k, v) => { kept.set(k, String(v)); }, removeItem: (k) => { kept.delete(k); } };
     const at = R.at();
     const session = createRealmSession({ io: realmIo({ fetch: (u, i) => worker.fetch(new Request(u, i), s.env), storage }), id: at.id, lease: at.lease, seq: at.seq });
-    const told = [];
-    session.onPiecesLocked = (keys) => told.push(keys);
-    const k1 = 'c3c3c3c3c3c3c3c3', k2 = 'd4d4d4d4d4d4d4d4';
-    await session.checkpoint(JSON.stringify(freshSave({ name: 'told', items: [withId(k1), withId(k1)] })));
-    await session.checkpoint(JSON.stringify(freshSave({ name: 'told', items: [withId(k1), withId(k1)] })));
-    await session.checkpoint(JSON.stringify(freshSave({ name: 'told', items: [withId(k1), withId(k1), withId(k2), withId(k2)] })));
-    assert.deepEqual(told, [[k1], [k2]], 'each once');
-    // and a timed hold heard: told with its end, and told again when the end moves
     const held = [];
     session.onTradeHeld = (prev, now2, why) => held.push([prev, now2, why]);
     for (let i = 0; i < STRIKES_FOR_TIMED; i++) {
@@ -227,55 +348,121 @@ test('AUTO-HOLD client: the realm session tells each locked piece ONCE, and a ti
     assert.deepEqual(held.at(-1), [null, 'law', { code: 'until', t: 135, until }], 'the third: timed, said with its end and the piece');
     assert.deepEqual(session.tradeHeldWhy, { code: 'until', t: null, until }, 'the piece gone: the same hold, its end kept for a refusal to say - and not said again');
   } finally { Date.now = realNow; }
-  // the notice: named from the pack, counted past three, a piece outside the pack locked all the same
-  const a = withId('e5e5e5e5e5e5e5e5'), b = withId('f6f6f6f6f6f6f6f6', 12);
-  const entity = { items: [a], wagonItems: [b] };
-  assert.deepEqual(piecesByKey(entity, ['f6f6f6f6f6f6f6f6', 'e5e5e5e5e5e5e5e5', '0000000000000009']), [a, b]);
-  assert.equal(piecesLockedNotice([itemLongName(a)], 1), `A copy of your ${itemLongName(a)} was found in the realm, so that piece is locked: it cannot be traded, sold to other players or stored for others. Your other pieces and your trading are not affected.`);
-  assert.match(piecesLockedNotice([], 1), /^A copy of one of your pieces was found/);
-  assert.match(piecesLockedNotice(['A', 'B', 'C', 'D'], 6), /^Copies of 6 of your pieces \(A, B, C, and 3 more\) were found in the realm, so those pieces are locked: they cannot be traded/);
+  // the notice: each locked piece named from the pack - a key it shows twice, twice - and those it cannot name counted
+  const a = withId('e5e5e5e5e5e5e5e5'), a2 = { ...withId('e5e5e5e5e5e5e5e5') }, b = withId('f6f6f6f6f6f6f6f6', 12);
+  const entity = { items: [a, a2], wagonItems: [b] };
+  assert.deepEqual(lockedPiecesOf(entity, ['f6f6f6f6f6f6f6f6', 'e5e5e5e5e5e5e5e5', '0000000000000009']), { pieces: [a, a2, b], unfound: 1 });
+  assert.deepEqual(lockedPiecesOf(entity, ['f6f6f6f6f6f6f6f6']), { pieces: [b], unfound: 0 });
+  const tail = 'Your other pieces and your trading are not affected.';
+  assert.equal(piecesLockedNotice([itemLongName(b)], 1), `The realm has locked your ${itemLongName(b)}: it found the same piece somewhere else too. A locked piece stays with you - it cannot be traded, sold, dropped or stored where others can take it. ${tail}`);
+  assert.match(piecesLockedNotice([], 1), /^The realm has locked one of your pieces: it found the same piece somewhere else too\. A locked piece stays with you/);
+  assert.match(piecesLockedNotice([], 6), /^The realm has locked 6 of your pieces: it found the same pieces somewhere else too\. Locked pieces stay with you - they cannot be traded/);
+  assert.match(piecesLockedNotice(['A', 'B', 'C', 'D'], 6), /^The realm has locked 6 of your pieces \(A, B, C and 3 more\): it found the same pieces somewhere else too\./);
+  assert.match(piecesLockedNotice(['A', 'B'], 2), /^The realm has locked 2 of your pieces \(A, B\): /);
   assert.equal(piecesLockedNotice([], 0), null);
+  for (const text of [piecesLockedNotice(['A'], 1), piecesLockedNotice(['A', 'B'], 3)]) assert.doesNotMatch(text, /copy of your|copies of|was found|were found/i, 'it says what happened, and accuses no one');
+  // the wiring: the notices, the locked pieces bound while they are, the stowed read off the last save the realm took
   const said = [];
-  const session = {};
+  const rented = withId('7b7b7b7b7b7b7b7b', 13);
+  const save = { items: [withId('8a8a8a8a8a8a8a8a')], rentedRooms: [{ mapId: 1, buildingKey: 2 }], sceneCache: { scenes: [{ sceneName: 'DaggerfallInterior [MapID=1, BuildingKey=2]', lootContainers: [{ items: [rented] }] }] } };
+  const session = { lockedKeys: ['e5e5e5e5e5e5e5e5'], landedText: JSON.stringify(save) };
   wireRealmHolds(session, { say: (t) => said.push(t), entity });
-  session.onPiecesLocked(['e5e5e5e5e5e5e5e5']);
-  session.onTradeHeld('law', 'law', { code: 'until', t: null, until: 1_800_000_000 });
-  session.onTradeHeld('law', null, null);
-  assert.deepEqual(said, [piecesLockedNotice([itemLongName(a)], 1), tradeHeldUntilNotice(1_800_000_000), 'This character\'s trading is open again.']);
-  assert.equal(tradeHeldNotice(null, 'law', { code: 'until', until: 1_800_000_000 }), `The realm's law has held this character three times. Its trading is frozen until ${heldUntilText(1_800_000_000)}, then opens on its own.`);
+  try {
+    assert.equal(isRealmLocked(a), true, 'the set kept from the last join, bound at once');
+    session.onPiecesLocked(['e5e5e5e5e5e5e5e5']);
+    session.onTradeHeld('law', 'law', { code: 'until', t: null, until: 1_800_000_000 });
+    session.onTradeHeld('law', null, null);
+    assert.deepEqual(said, [piecesLockedNotice([itemLongName(a), itemLongName(a2)], 2), tradeHeldUntilNotice(1_800_000_000), 'This character\'s trading is open again.']);
+    session.onLockedKeys(['f6f6f6f6f6f6f6f6']);
+    assert.deepEqual([isRealmLocked(a), isRealmLocked(b)], [false, true], 'the set as the last answer named it');
+    assert.deepEqual([...carriedPieces(entity).stowed], ['7b7b7b7b7b7b7b7b'], 'a rented room\'s chest - never the pack\'s, which the live pack says');
+    session.landedText = 'not json';
+    assert.deepEqual([...carriedPieces(entity).stowed], [], 'a save that does not read: nothing stowed');
+  } finally { wireRealmHolds(null, { say: () => {}, entity: null }); }
+  assert.deepEqual([isRealmLocked(b), [...carriedPieces(entity).stowed]], [false, []], 'offline: nothing locked, nothing stowed');
+  // its end, written the game's language's way (the tests' English) - its own clock, never the wire's milliseconds
+  assert.equal(heldUntilText(1_800_000_000), new Date(1_800_000_000_000).toLocaleString('en', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }));
+  // AUDIT: no refusal says a review will come
+  const refusal = accountRefusalText('trade-held');
+  assert.equal(typeof refusal === 'function' ? refusal() : refusal, 'This character\'s trading is frozen. The notice shown when it froze says why, and until when.');
+  assert.match(TRADE_HELD_STRIKES, /^ Each time the law holds it counts: the third time, trading stays frozen for a week even once it is gone \(a month if it comes to that again\)\.$/);
   // the host wires it at one line (HOST-SPLIT)
   const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   assert.match(world, /^  wireRealmHolds\(realmSession, \{ say: \(t\) => townTalk\.say\(t\), entity: playerEntity \}\);$/m);
 });
 
-test('AUTO-HOLD shelf: the room\'s word never lands back a piece its reader carries, nor one piece twice; a piece the ledger does not follow lands as it always did; both landings in the interior host hand it the pack\'s keys', () => {
-  const k = '7a7a7a7a7a7a7a7a';
+test('AUTO-HOLD client (AUDIT): A PIECE THE REALM LOCKED STAYS WITH ITS HOLDER - bound while it is, every door a binding closes closed to it (a counter, a trade, the ground, a room\'s container, a peer\'s word), in its own words; the wagon and the player\'s own storage still take it', () => {
+  const piece = withId('9d9d9d9d9d9d9d9d'), craft = { ...rare(14), provenance: 'abababababababab' }, free = withId('1e1e1e1e1e1e1e1e');
+  const stone = { templateIndex: lawTemplateIndexBound(), bound: true };
+  try {
+    setRealmLocked(['9d9d9d9d9d9d9d9d', 'abababababababab']);
+    assert.deepEqual([isRealmLocked(piece), isRealmLocked(craft), isRealmLocked(free)], [true, true, false], 'by its key - an id, or a craft\'s provenance');
+    assert.deepEqual([isBound(piece), isBoundByNature(piece), isBound(free)], [true, false, false]);
+    assert.equal(boundText('Dagger', piece), 'Dagger is locked by the realm: it found the same piece somewhere else too. It stays with you - it cannot be dropped, traded, sold or stored where others can take it.');
+    assert.equal(boundText('Stone', stone), 'Stone is bound to you - it cannot be dropped, traded or sold.', 'a binding of its nature says so');
+    assert.equal(boundLine(piece), 'Locked by the realm - it stays with you: it cannot be dropped, traded, sold or stored where others can take it.');
+    assert.deepEqual([boundLine(stone), boundLine(free)], [BOUND_LINE, null]);
+    assert.deepEqual([boundTradeText(piece), boundTradeText(stone)], ['A piece the realm locked cannot be traded.', BOUND_TRADE_TEXT]);
+    assert.equal(tradeRefusal(piece), 'A piece the realm locked cannot be traded.');
+    assert.deepEqual(['loot', 'dropped', 'corpse', 'wagon', 'storage'].map((kind) => boundRefusesPut(piece, kind)), [true, true, true, false, false]);
+    assert.deepEqual(peerHanded([piece, free]), [free], 'a peer\'s word never hands a reader a piece it holds locked');
+    setRealmLocked([]);
+    assert.deepEqual([isBound(piece), boundLine(piece), tradeRefusal(piece) === null || typeof tradeRefusal(piece) === 'string'], [false, null, true], 'unlocked: as any piece');
+  } finally { setRealmLocked([]); }
+  // every door passes the piece, so the refusal can say which law refused it
+  const rd = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf8');
+  assert.match(rd('ui/nativeTrade.js'), /boundText\(itemLongName\(item, \{ getQuest: this\.hooks\.getQuest \?\? null \}\), item\)/);
+  assert.match(rd('ui/enhancedTrade.js'), /boundText\(itemLine\(item, deps\.entity\)\.name, item\)/);
+  assert.match(rd('ui/enhancedInventory.js'), /notice = boundText\(itemLongName\(item, \{ getQuest: deps\.getQuest \?\? null \}\), item\);/);
+  assert.match(rd('ui/enhancedInventory.js'), /const bline = boundLine\(picked\);/);
+  assert.match(rd('ui/nativeInventory.js'), /this\._refuse\(\{ text: boundText\(itemLongName\(it, \{ getQuest: this\.hooks\.getQuest \?\? null \}\), it\) \}\);/);
+  assert.match(rd('systems/physicalItems.js'), /boundText\(name\(\), item\)/);
+  assert.match(rd('systems/tradePack.js'), /if \(isBound\(item\)\) return boundTradeText\(item\);/);
+});
+/** A template the game binds by its nature (the Sigil Stone's - systems/itemBound.js SS1). */
+const lawTemplateIndexBound = () => { for (let i = 0; i < 4096; i++) if (lawTemplate(i)?.bound === true) return i; return -1; };
+
+test('AUTO-HOLD shelf: the room\'s word never lands back a piece its reader carries, nor one piece twice - and (AUDIT) a SHOP\'S SHELF never one it stowed, while a container (a rented room\'s chest, its stowage) still lands its own; a shelf never opened here too; a piece the ledger does not follow lands as it always did; every landing hands it the pack\'s keys', () => {
+  const k = '7a7a7a7a7a7a7a7a', away = '6c6c6c6c6c6c6c6c';
   const wire = (it) => JSON.parse(JSON.stringify(it));
   const plain = createWeapon(113, 1, seeded(7));   // no tier: a piece the ledger does not follow
   const shelf = { items: [] };
-  const ctx = { shelves: [shelf], containers: [] };
-  const word = [{ k: 'shelf:0', r: [wire(withId(k)), wire(plain), wire(withId('8b8b8b8b8b8b8b8b', 12)), wire(withId('8b8b8b8b8b8b8b8b', 12))], d: 1 }];
-  const carried = carriedPieces({ items: [withId(k)] });
+  const ctx = { shelves: [shelf, { items: null }], containers: [{ items: [] }] };
+  const word = [{ k: 'shelf:0', r: [wire(withId(k)), wire(plain), wire(withId('8b8b8b8b8b8b8b8b', 12)), wire(withId('8b8b8b8b8b8b8b8b', 12)), wire(withId(away, 13))], d: 1 }];
+  const carried = { ...carriedPieces({ items: [withId(k)] }), stowed: new Set([away]) };
   assert.deepEqual([[...carried.keys], carried.keyOf], [[k], ledgerKeyOf]);
   assert.deepEqual([...carriedLedgerKeys({ items: [withId(k)], wagonItems: [withId('9c9c9c9c9c9c9c9c', 12)] })], [k, '9c9c9c9c9c9c9c9c']);
   assert.equal(applyInteriorLoot(ctx, word, { carried }), 1);
-  assert.deepEqual(shelf.items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b'], 'mine not back; the twice-named once; the plain piece as it was');
+  assert.deepEqual(shelf.items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b'], 'mine not back, nor what I stowed; the twice-named once; the plain piece as it was');
   assert.equal(shelf.items[0].templateIndex, 113);
+  // a shelf never opened here takes the word whole - filtered the same (AUDIT: its branch unpinned)
+  applyInteriorLoot(ctx, [{ ...word[0], k: 'shelf:1' }], { carried });
+  assert.deepEqual(ctx.shelves[1].items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b']);
+  // a container may be the reader's own stowage: what it stowed lands there - what it carries never
+  applyInteriorLoot(ctx, [{ ...word[0], k: 'container:0' }], { carried });
+  assert.deepEqual(ctx.containers[0].items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b', away]);
   // nothing carried: the word lands whole, twice-named once; no rule handed in, as it came
   applyInteriorLoot(ctx, word, { carried: carriedPieces({}) });
-  assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b']);
+  assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b', away]);
   applyInteriorLoot(ctx, word);
-  assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b', '8b8b8b8b8b8b8b8b']);
+  assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b', '8b8b8b8b8b8b8b8b', away]);
   // the memory's landing hands it on
   const shelf2 = { items: [] };
   assert.equal(applyInteriorShared({ shelves: [shelf2], containers: [], actions: null }, { locationKey: 'L', stamp: 'x', world: { loot: word, actions: [] } }, { locationKey: 'L', stamp: 'y', carried }), true);
   assert.deepEqual(shelf2.items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b']);
   assert.equal(withoutCarried([withId(k), withId(k)], carriedPieces(null)).length, 1);
   assert.equal(withoutCarried([withId(k), withId(k)], null).length, 2);
+  assert.deepEqual(withoutCarried([withId(away)], carried).map(ledgerKeyOf), [away], 'stowed keys only where asked');
+  // the stowed: what a save holds beyond its own five lists, as the judge reads it
+  const boat = withId('5d5d5d5d5d5d5d5d', 14);
+  assert.deepEqual([...stowedKeysOf({ items: [withId(k)], modData: { 'come-sail-away': { placedBoats: [{ Items: [boat] }] } } })], ['5d5d5d5d5d5d5d5d']);
+  assert.deepEqual([...stowedKeysOf(null)], []);
   const modes = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
   assert.equal(modes.match(/carried: carriedPieces\(playerEntity\)/g)?.length, 2, 'both landings');
   assert.match(modes, /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\), carried: carriedPieces\(playerEntity\) \}\)/);
   assert.match(modes, /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable, carried: carriedPieces\(playerEntity\) \}\)/);
+  // AUDIT: and a dungeon's - a search's find, a pile - with what I carry (never the stowed: a dungeon holds none of mine)
+  assert.match(readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8'), /for \(const it of withoutCarried\(items, carriedPieces\(playerEntity\)\)\) held\.push\(it\);/);
   // the pure half never loads the item law: its registration changes what every reader of the wire lands
   assert.doesNotMatch(readFileSync(new URL('../src/world/interiorShared.js', import.meta.url), 'utf8'), /from '\.\.\/systems\/(itemIds|itemLaw)\.js'/);
 });

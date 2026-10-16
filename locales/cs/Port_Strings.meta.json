@@ -2985,8 +2985,8 @@
   "by": "claude-in-session"
  },
  "account.refusal.tradeHeld": {
-  "en": "aa4ae969e0a6",
-  "tr": "6e110017aaaf",
+  "en": "f10818e3de8b",
+  "tr": "71dfd3825ee5",
   "by": "claude-in-session"
  },
  "account.refusal.tradeSpent": {
@@ -18229,29 +18229,54 @@
   "tr": "ca097541a7d0",
   "by": "claude-in-session"
  },
+ "realm.held.until": {
+  "en": "7de9a91094c4",
+  "tr": "f7edfa2aa975",
+  "by": "claude-in-session"
+ },
+ "realm.held.untilPiece": {
+  "en": "0ddb0ed0c157",
+  "tr": "2536f508b6e7",
+  "by": "claude-in-session"
+ },
+ "realm.locked.line": {
+  "en": "12851dccf62b",
+  "tr": "c06a4cc22f0f",
+  "by": "claude-in-session"
+ },
  "realm.locked.listMore": {
-  "en": "a41682d6025c",
-  "tr": "96310873d10c",
+  "en": "a8b7592d37fb",
+  "tr": "dfcf4210250b",
   "by": "claude-in-session"
  },
  "realm.locked.many": {
-  "en": "e46073bcc552",
-  "tr": "a4731b05d645",
+  "en": "407400411890",
+  "tr": "7607ea500bf7",
   "by": "claude-in-session"
  },
  "realm.locked.manyNamed": {
-  "en": "8b5beec48170",
-  "tr": "6b79d3dff6ca",
+  "en": "959cd92da992",
+  "tr": "c789ebaf3be2",
   "by": "claude-in-session"
  },
  "realm.locked.named": {
-  "en": "77ff36082a76",
-  "tr": "dcb4c8068c0c",
+  "en": "833b74529a1f",
+  "tr": "e3d5477498ed",
   "by": "claude-in-session"
  },
  "realm.locked.one": {
-  "en": "faa64d578f44",
-  "tr": "d5f23945a55b",
+  "en": "1582072525b2",
+  "tr": "c13fc8190405",
+  "by": "claude-in-session"
+ },
+ "realm.locked.refusal": {
+  "en": "36cb70edd084",
+  "tr": "923a56c618e7",
+  "by": "claude-in-session"
+ },
+ "realm.locked.trade": {
+  "en": "96456d744023",
+  "tr": "aecd9071c106",
   "by": "claude-in-session"
  },
  "rest.exhausted.fighting": {

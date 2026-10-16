@@ -146,7 +146,7 @@ import { setCard, setStrip, markSetFrame } from './setCard.js';   // SET5: a set
 import { setIdOf, setById, setLines, setSigilLines } from '../systems/sigilSets.js';   // CARD-FIT U4/U10: a set piece and its sigil in a line each
 import { isLocked, toggleLocked, lockRefuses, lockedText, LOCKED_LINE } from '../systems/itemLock.js';   // LOCK1
 import { isJunk, junkable, toggleJunk, lockLiftsJunk, JUNK_LINE } from '../systems/itemJunk.js';   // LOOT18
-import { isBound, BOUND_LINE, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
+import { isBound, boundLine, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
 import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
@@ -1632,7 +1632,7 @@ function stow(item) {
     return render();
   }
   if (remote && boundRefusesPut(item, remote.kind)) {
-    notice = boundText(itemLongName(item, { getQuest: deps.getQuest ?? null }));
+    notice = boundText(itemLongName(item, { getQuest: deps.getQuest ?? null }), item);   // AUDIT AUTO-HOLD: a piece the realm locked says so
     return render();
   }
   // HACKED-GOLD: online a LETTER OF CREDIT goes into no container but the player's own - it is gold, and a chest's record
@@ -3224,7 +3224,8 @@ function infoCard(picked, side, ready = render, { body = false } = {}) {
   { const set = setCard(picked, deps.entity, itemLongName); if (set) into.append(set); }   // SET5: its set - the places worn, the stage, its tiers (ui/setCard.js)
   if (isLocked(picked)) into.append(el('p', 'lockline', LOCKED_LINE));   // LOCK1
   if (isJunk(picked)) into.append(el('p', 'boundline junkline', JUNK_LINE));   // LOOT18: the lock's line style, without its padlock
-  if (isBound(picked)) into.append(el('p', 'boundline', BOUND_LINE));   // SS1: the lock's line style, without its padlock
+  const bline = boundLine(picked);   // AUDIT AUTO-HOLD: a piece the realm locked says so in its own words
+  if (bline) into.append(el('p', 'boundline', bline));   // SS1: the lock's line style, without its padlock
   const dl = el('dl', 'stats');
   // CARD-FIT: each pair in its own group, so a narrow card flows them two a line and never breaks a pair across two
   const pair = (k, v) => { if (v != null) { const g = el('div', 'pair'); g.append(el('dt', null, k), el('dd', null, String(v))); dl.append(g); } };

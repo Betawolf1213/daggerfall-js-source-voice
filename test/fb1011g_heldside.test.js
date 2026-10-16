@@ -62,7 +62,7 @@ test('HELD-SIDE: the held side FIRST - the side that settles is told the hold is
 
 test('HELD-SIDE: the words - mine says my hold\'s reason, the same sentence the hold\'s notice said; the other\'s says it is the other\'s, and that mine is open when my last checkpoint held nothing; a service before it says what it always said (mutants: mine unsaid; the reason unread; theirs unsaid)', () => {
   assert.equal(NOTICES_OF_IDS, TRADE_HELD_NOTICES, 'one home: itemIds re-exports the trade law\'s');
-  for (const why of ['law', 'budget', 'staff']) {
+  for (const why of ['law', 'budget', 'staff']) {   // PIN MOVED (AUTO-HOLD, 2026-10-16): 'dupe' retired - no verdict writes it, no notice says it
     assert.equal(realmTradeRefusalText('trade-held', 'mine', why), `${TRADE_HELD_NOTICES[why]} Nothing was traded.`);
     assert.equal(tradeHeldNotice(null, why), TRADE_HELD_NOTICES[why], 'the notice that said the hold began, word for word');
   }

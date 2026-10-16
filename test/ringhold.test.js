@@ -1,7 +1,8 @@
 // RING-HOLD (2026-10-11, a player on Discord: "I was with a trade lock because of a Ring, I got rid of the ring and now
 // it says only 'something'"): a law hold that stands past STRIKES_FOR_TIMED after the piece is gone says so, and a trade's
 // refusal over my own hold names the piece the session heard - never "something". AUTO-HOLD (2026-10-16): that hold is
-// timed and says its end - it was staff's, said as a review.
+// timed and says its end - it was staff's, said as a review. PIN MOVED (AUTO-HOLD): the review's words retired for the
+// timed hold's (tradeHeldWhy `until`), and the strikes' warning names a week where it named staff.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../server-account/src/index.js';
@@ -59,7 +60,7 @@ test('RING-WARN: a law hold\'s notice says each hold counts and the third is tim
   const named = tradeHeldNotice(null, 'law', { code: 'crafted', t: 135 });
   assert.equal(named, tradeHeldLawNotice('Ring'));
   for (const text of [named, TRADE_HELD_NOTICES.law]) {
-    assert.match(text, /until it is gone\. Each time the law holds it counts: the third time, trading stays frozen for a week \(a month if it comes to that again\), then opens on its own\.$/);
+    assert.match(text, /until it is gone\. Each time the law holds it counts: the third time, trading stays frozen for a week even once it is gone \(a month if it comes to that again\)\.$/);   // PIN MOVED (AUDIT AUTO-HOLD): "then opens on its own" was false with the piece still carried
   }
   assert.match(tradeHeldUntilNotice(1_800_000_000), /three times/);
   assert.deepEqual(Object.keys(TRADE_HELD_NOTICES).sort(), ['budget', 'law', 'staff'], 'AUTO-HOLD: no notice says a copy holds the character, or a review');

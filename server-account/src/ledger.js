@@ -47,6 +47,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { JUDGE_VERSION } from './judge.js';
+import { LOCKED_SAID_MAX } from '../../src/net/realmTradeLaw.js';   // AUTO-HOLD: the locked pieces an answer names - one number with the session's
 
 /** How long a claim waits for its holder's checkpoint before the holder's still having the piece proves it a copy - a
  *  checkpoint every two minutes, and one in flight when the claim was made. */
@@ -59,8 +60,6 @@ export const UPSERT_ROWS = 48;
 export const LEDGER_NEW_MAX = 960;
 /** The most keys one checkpoint reads the ledger for (67 reads at most); a save holding more has the rest unfollowed. */
 export const LEDGER_KEYS_MAX = 6000;
-/** AUTO-HOLD: the most locked pieces one checkpoint's answer names. */
-export const LOCKED_SAID_MAX = 40;
 
 const marks = (/** @type {number} */ n, /** @type {number} */ from) => Array.from({ length: n }, (_, i) => `?${from + i}`).join(', ');
 /** `[...list]` in slices of `n`. */
@@ -213,8 +212,10 @@ export const knownCopySteps = (/** @type {any} */ db, /** @type {string} */ char
  * AUDIT LW-II-2 S2: A PIECE IN ESCROW THE SERVICE DESTROYED - a patron's purchase (market.js reckonPatrons): no record
  * holds it again, and the ledger was never told (the row stood in escrow, a claim on it waiting for ever, the copy kept
  * and the seller never charged). A claim on it is a record showing a piece the service held - a copy: written down and
- * charged to its claimant as a buyer's checkpoint charges one (copyRows, chargeSteps), the row kept `gone` so the copy
- * never takes it up; no claim, the row goes. `claim` the claimant the row named as the sale read it (null: none) - the
+ * locked on its claimant as a buyer's checkpoint locks one, and found CONTESTED, no strike (AUTO-HOLD, AUDIT: it struck
+ * here while a player's purchase of the same piece did not - and a receiver whose giver listed the piece its record had
+ * not yet seen given is this claimant, as innocent as one a holder's checkpoint outlasts); the row kept `gone` so the
+ * copy never takes it up; no claim, the row goes. `claim` the claimant the row named as the sale read it (null: none) - the
  * row's own step asks that it still does.
  * @param {any} db @param {string} key @param {string | null} claim @param {number} nowS
  */
@@ -222,7 +223,7 @@ export function escrowSpentSteps(db, key, claim, nowS) {
   if (!claim) return [db.prepare("DELETE FROM item_uids WHERE uid = ?1 AND state = 'escrow' AND claim_char IS NULL").bind(key)];
   return [
     ...copyRows(db, [key], claim, nowS),
-    ...chargeSteps(db, claim, [key], nowS),
+    ...chargeSteps(db, claim, [key], nowS, { strike: false }),
     db.prepare("UPDATE item_uids SET state = 'gone', claim_char = NULL, claim_at = NULL, at = ?3 WHERE uid = ?1 AND state = 'escrow' AND claim_char = ?2").bind(key, claim, nowS),
   ];
 }

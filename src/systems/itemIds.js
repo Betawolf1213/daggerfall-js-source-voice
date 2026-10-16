@@ -57,15 +57,25 @@ export function carriedLedgerKeys(/** @type {any} */ entity) {
   return out;
 }
 
-/** AUTO-HOLD: what a room's word needs to keep the reader's own pieces off a shelf (world/interiorShared.js
- *  withoutCarried) - the keys it carries, and the rule that keys a piece. */
-export const carriedPieces = (/** @type {any} */ entity) => ({ keys: carriedLedgerKeys(entity), keyOf: ledgerKeyOf });
+/** AUDIT AUTO-HOLD: the keys of the pieces the character holds BEYOND its own five lists - a room's chest, a ship's
+ *  hold, a companion's pack (systems/possessedItems.js, as the judge reads them) - from the last save the realm took; a
+ *  piece stowed there came back off a stale shelf as a second of itself, and the ledger locked the two. Registered by the
+ *  realm session's wiring (scenes/realmHoldHost.js); none offline. */
+let _stowedKeys = () => /** @type {Iterable<string> | null} */ (null);
+export function setStowedKeys(/** @type {() => Iterable<string> | null} */ fn) { _stowedKeys = typeof fn === 'function' ? fn : () => null; }
 
-/** AUTO-HOLD: the pieces in the character's own lists that `keys` name, each once - for the locked pieces' notice. */
-export function piecesByKey(/** @type {any} */ entity, /** @type {string[]} */ keys) {
-  const want = new Set(keys), out = [];
-  for (const list of ownLists(entity)) for (const it of list) { const k = ledgerKeyOf(it); if (k && want.delete(k)) out.push(it); }
-  return out;
+/** AUTO-HOLD: what a room's word needs to keep the reader's own pieces off a shelf (world/interiorShared.js
+ *  withoutCarried) - the keys it carries, the ones it stowed (setStowedKeys - a shop's shelf's alone to ask: a room's
+ *  chest the reader rents IS its stowage, and its own pieces must land there), and the rule that keys a piece. */
+export const carriedPieces = (/** @type {any} */ entity) => ({ keys: carriedLedgerKeys(entity), stowed: new Set(_stowedKeys() ?? []), keyOf: ledgerKeyOf });
+
+/** AUTO-HOLD: the pieces in the character's own lists that `keys` name - EVERY one (AUDIT AUTO-HOLD: a key the pack
+ *  shows twice is two pieces locked, and the notice said "that piece") - and how many keys named none there (a piece in a
+ *  room's chest, a ship's hold: locked as well, counted, unnamed). */
+export function lockedPiecesOf(/** @type {any} */ entity, /** @type {string[]} */ keys) {
+  const want = new Set(keys), found = new Set(), pieces = [];
+  for (const list of ownLists(entity)) for (const it of list) { const k = ledgerKeyOf(it); if (k && want.has(k)) { pieces.push(it); found.add(k); } }
+  return { pieces, unfound: want.size - found.size };
 }
 
 /** A fresh id: 16 hex from 8 random bytes - the platform's CSPRNG unless a test hands its own. */
@@ -107,8 +117,8 @@ export const tradeHeldLawNotice = (/** @type {string} */ name) => `The realm is 
 export function tradeHeldNotice(/** @type {string | null | undefined} */ prev, /** @type {string | null | undefined} */ now, /** @type {{ code?: string, t?: number | null, until?: number } | null} */ why = null) {
   if (now === undefined || (now === prev && why?.code !== 'until')) return null;
   if (now == null) return prev ? TRADE_OPEN_NOTICE : null;
-  if (now === 'law' && why?.code === 'until' && Number.isSafeInteger(why.until)) return tradeHeldUntilNotice(/** @type {number} */ (why.until));
   const name = now === 'law' && why ? lawTemplate(why.t)?.name : null;
+  if (now === 'law' && why?.code === 'until' && Number.isSafeInteger(why.until)) return tradeHeldUntilNotice(/** @type {number} */ (why.until), typeof name === 'string' && name ? name : null);
   if (typeof name === 'string' && name) return tradeHeldLawNotice(name);
   return /** @type {any} */ (TRADE_HELD_NOTICES)[now] ?? TRADE_HELD_NOTICES.law;
 }

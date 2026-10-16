@@ -75,7 +75,8 @@ export function holdOf({ prev, law, until, nowS, over, enforce }) {
 
 /**
  * AUTO-HOLD: THE LAW'S COUNT after this checkpoint, from the row's - pure. `rising`: this checkpoint's finding is a new
- * hold (a strike); `holding`: it found something that holds. The strikes and the timed holds served fade LAW_FADE_S
+ * hold (a strike) - none inside a timed hold standing, where no new hold comes (a strike a hold; AUDIT AUTO-HOLD: a piece
+ * dropped and taken up three times inside the week was a month's hold); `holding`: it found something that holds. The strikes and the timed holds served fade LAW_FADE_S
  * after `at` (the last finding that held, or the last timed hold's end); the STRIKES_FOR_TIMED-th strike starts a timed
  * hold - LAW_HOLD_S the first, LAW_HOLD_REPEAT_S each after it - and the strikes count again from none. Answers
  * `{ strikes, served, until, at }` - `until` the timed hold's end standing (null for none, or one run out).
@@ -85,7 +86,7 @@ export function holdOf({ prev, law, until, nowS, over, enforce }) {
 export function lawCountOf(row, { rising, holding, nowS }) {
   const standing = row.until != null && row.until > nowS ? row.until : null;
   const faded = row.at != null && nowS - row.at >= LAW_FADE_S;
-  const struck = (faded ? 0 : row.strikes ?? 0) + (rising ? 1 : 0);
+  const struck = (faded ? 0 : row.strikes ?? 0) + (rising && standing == null ? 1 : 0);
   const served = faded ? 0 : row.served ?? 0;
   // the fade counts from the last finding that held - never from inside a timed hold, whose end is the later
   const at = holding ? Math.max(nowS, standing ?? 0) : faded ? null : row.at;

@@ -510,6 +510,14 @@ export async function realmHoldOf(/** @type {any} */ db, /** @type {string} */ p
   return holdRefusal(await db.prepare('SELECT held, judged_seq FROM realm_characters WHERE id = ?1 AND player = ?2').bind(character, playerId).first());
 }
 
+/** AUDIT AUTO-HOLD: A HOLD STANDING on the character row aliased `a`, as a reader that cannot wait for that character's
+ *  next checkpoint asks it, `now` the SQL of the time. A checkpoint is what lifts a hold - a timed one past its end with
+ *  it - and the dead are refused one (LEGACY7), so a maker that died inside its week held every craft of its make for
+ *  good. A law hold whose time is out, on a character that can checkpoint no more and whose last judgement found nothing
+ *  that holds (`law_sig`), stands no more. */
+export const holdStandsSql = (/** @type {string} */ a, /** @type {string} */ now) => `(${a}.held IS NOT NULL AND NOT (${a}.dead_at IS NOT NULL
+  AND ${a}.held = 'law' AND ${a}.held_until IS NOT NULL AND ${a}.held_until <= ${now} AND ${a}.law_sig IS NULL))`;
+
 /** CRAFT-HOLD (2026-10-11, the exploit audit): INT3's hold on a crafted piece follows THE PIECE - the hold of the
  *  account's realm character its maker's record names (`products.char_id` - or, for a piece made before customs, the
  *  offline character it brought in: `origin_id`), whatever character the act names. realmHoldOf asks the acting character
@@ -521,7 +529,7 @@ export async function realmHoldOf(/** @type {any} */ db, /** @type {string} */ p
 export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {unknown} */ provenance) {
   if (typeof provenance !== 'string') return null;
   const row = await db.prepare(`SELECT r.held FROM products p JOIN realm_characters r ON (r.id = p.char_id OR r.origin_id = p.char_id) AND r.player = ?2
-    WHERE p.provenance = ?1 AND r.held IS NOT NULL`).bind(provenance, playerId).first();
+    WHERE p.provenance = ?1 AND ${holdStandsSql('r', '?3')}`).bind(provenance, playerId, Math.floor(Date.now() / 1000)).first();
   return row?.held ? { error: 'trade-held', held: row.held } : null;
 }
 
@@ -835,10 +843,11 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // AUDIT LEGACY III O7
   // AUDIT CRAFT-HOLD (the exploit audit): A HELD CHARACTER WITH CRAFTS IS NOT DELETED - its row is where its hold lives,
-  // and the hold on the pieces it made (craftHoldOf) went with it: held for copies, deleted, and its pieces listed under
-  // any other name the next minute. Its Stores go with the row (below), so a held character with no piece of its make at
-  // the account goes as any other - a finding can be the law's mistake, and the slot is the player's. Staff lift a hold
-  // (review.js realm-clear); then it goes.
+  // and the hold on the pieces it made (craftHoldOf) went with it: held, deleted, and its pieces listed under any other
+  // name the next minute. Its Stores go with the row (below), so a held character with no piece of its make at the
+  // account goes as any other - a finding can be the law's mistake, and the slot is the player's. The hold lifts (the
+  // law's at a clean checkpoint, a timed one at the first past its end - AUTO-HOLD; staff's by review.js realm-clear);
+  // then it goes.
   if (row.held && await db.prepare('SELECT 1 FROM products WHERE owner = ?1 AND (char_id = ?2 OR char_id = ?3) LIMIT 1')
     .bind(playerId, id, row.origin_id ?? id).first()) return { error: 'trade-held', held: row.held };
   if (row.origin_id && !(row.bytes > 0)) return undoCustoms({ db, bucket }, playerId, id, row.origin_id);

@@ -1,10 +1,10 @@
 // CRAFT-HOLD (2026-10-11, the exploit audit the owner asked for: "Can we look deep for duping"). INT3 holds a realm
-// character's trade (copies found, a breach) - and its crafted pieces were listed, auctioned, handed to a commission's
+// character's trade (a breach of the law, or staff's hand) - and its crafted pieces were listed, auctioned, handed to a commission's
 // poster and disenchanted under ANY other character id: realmHoldOf asks the acting character alone and answers null for
 // an id that is no realm id, while a crafted piece is the account's (`products.owner`). And a commission filled asked
 // no hold at all. The hold now follows the piece (realm.js craftHoldOf: the realm character its maker's record names).
-// PIN MOVED (AUTO-HOLD, 2026-10-16): the hold the cases set is staff's - a copy holds no character now, so 'dupe' is
-// no hold any verdict writes.
+// PIN MOVED (AUTO-HOLD, 2026-10-16): the hold the cases set is staff's, where it was the copies' - no verdict writes that
+// one now.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';

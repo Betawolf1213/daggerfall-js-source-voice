@@ -5,7 +5,8 @@
 //     each finding lies, the wealth of what the character OWNS (never the world's untaken loot; loans owed; a bound or a
 //     quest's piece worth nothing);
 //   - every checkpoint judged: a lawless one STORED and its character held, said in the answer, a finding kept; a route
-//     handing its value to another player refused; a clean checkpoint lifting it until three strikes, then staff alone;
+//     handing its value to another player refused; a clean checkpoint lifting it until three strikes, then a timed hold
+//     (AUTO-HOLD: a week, then a month - it was staff's alone);
 //   - every route that hands a realm character's value on says so (a source sweep: no prepareRealmRecord that takes goods
 //     or gold out without `outbound`, the named sinks aside);
 //   - the service's own writes WITNESSED; the last clean checkpoint KEPT past the rotation, and the rollback to it;
