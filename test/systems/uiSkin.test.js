@@ -91,7 +91,7 @@ test('FD1: the CLASSIC skin opens on the same door, whose Overhauls page is its 
   const src = readFileSync(new URL('../../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   assert.match(src, /const SECTIONS_CLASSIC = \['Begin', 'Online', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'\]/);   // TUT1   // LOAD1   // OVH1   // FT16   // ORG2: Features is Settings' tabs
   assert.match(src, /sections = mode === 'pause' \? SECTIONS_PAUSE : isEnhanced\(\) \? SECTIONS_BOOT : SECTIONS_CLASSIC;/);
-  assert.ok(!existsSync(new URL('../src/ui/settingsWindow.js', import.meta.url)), 'the keyed screen is gone');
+  assert.ok(!existsSync(new URL('../../src/ui/settingsWindow.js', import.meta.url)), 'the keyed screen is gone');
 });
 
 test('MENU-TOGGLE: the menu\'s Enhanced/Classic toggle is retired - the door\'s pair, the Settings row and its help are gone, and the interface is chosen on the Overhauls page alone, which every rail carries (mutants: the pair back on the door, the row back in Interface)', () => {

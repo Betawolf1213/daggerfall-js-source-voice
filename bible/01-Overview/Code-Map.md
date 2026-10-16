@@ -443,7 +443,9 @@ records quote, the workflows' `paths:`. `--dry-run` says what it would change. T
   fix it by hand. A file that moves to another depth keeps its roots - its own folder (`dirname(fileURLToPath(import.meta.url))`,
   `import.meta.dirname`) raised, a folder URL (`'../'`), a `require`, a root concatenated into a URL
   (`new URL('../' + p, import.meta.url)`) re-based - but a URL built from a variable (`new URL(p, import.meta.url)`
-  behind a `read('../src/x.js')`) is named, not followed: the paths its callers hand it are re-spelled by hand. The
+  behind a `read('../src/x.js')`) is named, not followed: the paths its callers hand it are re-spelled by hand. So is
+  a path that named nothing where the file stood, in a folder that stands: a gone file a negative pin names
+  (`!existsSync(new URL('../src/ui/gone.js', ...))`) is re-based by hand, a fixture's text is left. The
   tool cannot see a sweep whose directory is a variable (`test/bible/audit18_bible_docs.test.js`'s U42
   is one), so grep for `readdirSync` over the old directory too.
 - **A move does not touch the relay on its own.** The relay's version is the bytes of its bundle

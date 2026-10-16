@@ -98,7 +98,7 @@ test('ENH-NOTICE3: the seam is imported where the hosts build their deps, and no
   // A mod names the KIND (DaggerfallUI.MessageBox / AddHUDText) and
   // never the window: the port's mod modules take `messageBox` /
   // `say` deps from their host and construct nothing themselves.
-  const dirs = ['src/systems', ...(existsSync(new URL('../src/mods', import.meta.url)) ? ['src/mods'] : [])];
+  const dirs = ['src/systems', ...(existsSync(new URL('../../src/mods', import.meta.url)) ? ['src/mods'] : [])];
   const offenders = [];
   for (const d of dirs) {
     for (const f of readdirSync(new URL(`../../${d}/`, import.meta.url)).filter((f) => f.endsWith('.js'))) {

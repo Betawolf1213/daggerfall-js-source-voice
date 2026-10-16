@@ -181,7 +181,7 @@ test('L4-1/R2-D1: every look at the disks runs in a process of its own, killed a
   // the probe: one question per process, answered by the detector's own function
   const probe = fs.readFileSync(new URL('../../app/lib/arena2Probe.cjs', import.meta.url), 'utf8');
   assert.match(probe, /process\.parentPort\.once\('message', \(\{ data \}\) => \{[\s\S]*?answer = answerArena2\(data, \(found\) => process\.parentPort\.postMessage\(\{ found \}\)\);[\s\S]*?process\.parentPort\.postMessage\(\{ answer \}\);/);
-  assert.ok(!fs.existsSync(new URL('../app/lib/arena2DetectWorker.cjs', import.meta.url)), 'a worker THREAD stuck in the kernel cannot be terminated, and the app could not quit while it was');
+  assert.ok(!fs.existsSync(new URL('../../app/lib/arena2DetectWorker.cjs', import.meta.url)), 'a worker THREAD stuck in the kernel cannot be terminated, and the app could not quit while it was');
   const main = fs.readFileSync(new URL('../../app/main.cjs', import.meta.url), 'utf8');
   const ask = main.slice(main.indexOf('function askArena2('), main.indexOf('/** A probe\'s answer about one folder'));
   assert.match(ask, /child = utilityProcess\.fork\(PROBE, \[\], \{ serviceName: 'Daggerfall files', stdio: 'ignore' \}\);/, 'a utility process (it loads from inside app.asar like any shell file)');

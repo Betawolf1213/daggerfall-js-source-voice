@@ -277,5 +277,14 @@
     "tests": [
       "test/tooling/tidy1_codemap.test.js"
     ]
+  },
+  {
+    "name": "TIDY5-a-gone-file-unnamed",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (home !== file && exists && CODE_EXT.test(file)) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
   }
 ]

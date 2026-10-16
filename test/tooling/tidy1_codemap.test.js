@@ -219,6 +219,11 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
   // and without the existence check: a test that names another is not re-based twice through it
   const pair = new Map([['test/x.test.js', "import { a } from '../src/a.js';   // test/y.test.js"], ['test/y.test.js', "import { a } from '../src/a.js';\n"]]);
   assert.equal(planMove(moves, pair).writes.get('test/net/x.test.js'), "import { a } from '../../src/a.js';   // test/net/y.test.js");
+  // a gone file a negative pin names, from where the test stood: left by the existence check - a fixture's text reads the
+  // same - and named for a reader to decide; a `node -e` child's root-relative import, whose folder is none, is not
+  const gone = planMove([moves[0]], new Map([['test/x.test.js', "assert.ok(!existsSync(new URL('../src/ui/gone.js', import.meta.url)));"]]), (p) => ['src', 'src/ui'].includes(p));
+  assert.equal(gone.blind.filter((b) => /a negative pin names/.test(b)).length, 1);
+  assert.equal(plan.blind.filter((b) => /a negative pin names/.test(b)).length, 0);
   // a file that stays has no root to re-base, however its URL is built
   const stay = "const rd = (p) => readFileSync(new URL('../' + p, import.meta.url));";
   assert.equal(rewriteSpecifiers(stay, 'test/z.test.js', 'test/z.test.js', new Map(moves)).text, stay);

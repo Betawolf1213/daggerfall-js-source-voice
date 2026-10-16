@@ -175,7 +175,7 @@ test('DISC17-C: the held map carries no weather - a host that still hands it one
 });
 
 test('DISC17-C: the weather layer is gone from the tree - no module, no import, no host wiring, no sheet member; the sim keeps its own laws (mutants: the host hands the map its weather again)', () => {
-  assert.equal(existsSync(new URL('../src/ui/weatherLayer.js', import.meta.url)), false);
+  assert.equal(existsSync(new URL('../../src/ui/weatherLayer.js', import.meta.url)), false);
   const map = rd('src/ui/heldMap.js');
   assert.doesNotMatch(map, /weatherLayer|weatherMap\.js|weatherSim\.js|forecast|deps\.weather/i);
   const world = rd('src/scenes/world.js');

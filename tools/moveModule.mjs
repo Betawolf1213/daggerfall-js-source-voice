@@ -330,6 +330,18 @@ export function planMove(moves, texts, exists = null) {
       t = q.text; n += q.n; blind.push(...q.blind);
     }
     if (CODE_EXT.test(file)) { const r = rewriteSpecifiers(t, file, home, moved, exists); t = r.text; n += r.n; }
+    // what the existence check left that names a folder that stands: a gone file a negative pin names
+    // (`!existsSync(new URL('../src/ui/gone.js', ...))`, re-base it) or a fixture's text (leave it) - named, not guessed
+    if (home !== file && exists && CODE_EXT.test(file)) {
+      for (const spec of specifierList(text)) {
+        const s = splitSpec(spec);
+        if (!s) continue;
+        const target = posix.normalize(posix.join(posix.dirname(file), s.path)).replace(/\/$/, '');
+        if (!moved.has(target) && !exists(target) && !target.startsWith('..') && exists(posix.dirname(target))) {
+          blind.push(`${home}: names ${spec}, nothing where it stood, in a folder that stands - a gone file a negative pin names (re-base it) or a fixture's text (leave it)?`);
+        }
+      }
+    }
     if (home !== file && /\.(m?js|cjs)$/.test(file)) {
       const o = rebaseOwnDir(t, depth(home) - depth(file), home);
       t = o.text; n += o.n; blind.push(...o.blind);
