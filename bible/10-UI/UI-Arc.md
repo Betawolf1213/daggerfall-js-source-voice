@@ -16860,6 +16860,12 @@ flat in a black room goes black and the player reads that as the room,
 but a HAND that goes black is a hole in the middle of the screen, and
 you cannot tell a drawn weapon from a sheathed one.
 
+HORSE-LIT (2026-10-16, Mac: "Horses in first person should be affected
+by lighting"): the mount's sprite is drawn by `player/mountRig.js`, not
+this seam, and stayed white. It reads the same tint the same way now -
+the sprite and RR2's neck band - under the same switch
+(`01-Overview/Field-Bugs-2026-10-16.md`).
+
 ### MAC-P - and the Morrowind arms, which were worse
 
 *"morrowind's first person view also doesn't receive lighting and is
