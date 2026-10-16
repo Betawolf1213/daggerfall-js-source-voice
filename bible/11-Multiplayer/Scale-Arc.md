@@ -76,6 +76,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | BUSY-GATE | After HOMES-SHED, the class: the reads a tab keeps asking stand back while the database is overloaded - the client holds them for a doubling wait, an isolate that meets an overload sheds them a moment without a statement, every overload answer says its Retry-After; one law at both ends (`src/net/busyLaw.js`) | No | **Built** (2026-10-13, this branch - acct128, no migration, no drop) |
 | HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world210) |
 | PRIMARY-TRIPS | The account database's primary, capped by its round trips, overloaded at 00:00 UTC (2026-10-16): the seats' list, a checkpoint and a badge's honours each one batch, a town's yards off a replica, a heartbeat's reads before its beat, a hall bump off its key's rows - some a quarter of the primary's trips at peak | No | **Built** (2026-10-16, this branch; acct139) |
+| DECOR-BATCH | The account database overloaded again through the evening of 2026-10-16: every account deploy since #952 failed its smoke on `/v1/homes/decor` (seven asks of 15 s, no byte back) while `homes/town` answered its one batch in 11 s - a home's room one request where it was three trips in a row, a shunned home's shop one more | No | **Built** (2026-10-16; acct142) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2466,6 +2467,36 @@ nothing - a read, never an answer. SEAT-BATCH, BEAT-LAST, HALL-PLAN and the ledg
   (acc3titles, acc4played, accountworker, audit68_backend, audit_recoveryset, cloudsaves, founder3, founder4, mod1,
   recoverop, recoveryset, terms1, wb5b_gate_claim - a fake without it was a database D1 never is); ACCOUNT_VERSION acct139
   and every pin and mutant record on acct138.
+
+## DECOR-BATCH - a home's room in one request (2026-10-16, acct142)
+
+The owner's screenshots of every account deploy after #952 (AUTO-HOLD) merged: `/v1/homes/decor did not answer a
+home's pieces (000)` - seven asks, 15 s each, no byte back, one `503 server` among them. The Worker had deployed and
+every other smoke call answered, slowly: `played` and `renown/xp` 503 then 200, `homes/town` 11 s. The database was
+overloaded again (BUSY-GATE's 503s, read off the live service the same hour: a one-row read 1.1-2.0 s, five 503s in a
+row), and decor was the route that crossed 15 s first, because its read was the most trips IN A ROW: the room's pieces,
+then whether the caller is shown them (homeVotes.js `homeShownTo`, HOME-VOTE A3), then what its owner took out
+(BASE-HIDE) - three waits in the primary's queue, behind the session's own lookup, for a read every visitor at a door
+makes. `homes/town` had been made one batch for the same reason (HOMES-SHED).
+
+- **The room is one request** (`decor.js` `decorOf`): the three reads are one `db.batch` - the statements are the ones
+  they were (`homeShownRead`/`homeShownOf`, `hiddenRead`/`hiddenListOf`, `vendorStockedRead`/`stockedOf` split each
+  read from its answer so a batch can carry it), and every answer is the one it was. A palace's Charter Room (SEAT-HALL)
+  is one read and stays one.
+- **A shunned home's shop is one more** (`shopOf`): its hired traders' stock, one batch for all of them - it had been a
+  trip a trader.
+- What this does not do: the overload itself. The route read most often still asks the same rows; which reads fill the
+  primary is the `Account database load` workflow's to say (`d1-load.yml`, the operator's - this session's GitHub App
+  is refused its dispatch).
+
+### Pins
+
+- `test/homevote.test.js` (13: DECOR-BATCH's one): every round trip the service asks of its database counted where the
+  Worker asks it (PRIMARY-TRIPS' count) - a visitor's room `batch 3`, the shunned room `batch 3` then `batch 2` (its two
+  traders), the owner's `batch 3`; every answer as it was. `tools/mutants/homevote.json`: DECOR-BATCH's three (the three
+  trips back, the shop a trip a trader, the hidden list dropped from the batch), all dead; HOME-VOTE's room-handed-out
+  and II A1 licence-kept and `basehide.json`'s list-unread re-aimed onto the batch, all dead.
+- ACCOUNT_VERSION acct142, and every pin and mutant record on acct141 (each pin's PIN MOVED history kept).
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
