@@ -126,7 +126,7 @@ The relay was split out of SCALE2 on reading: every piece of the reconnect storm
 
 **A missing-token refusal is asked again** (`net/online.js` `tokenRetryable`)
 - The minter now says why it answered null (`lastWhy`), and a session remembers why each hello went without a token.
-- The relay refuses such a hello (`CLOSE_POLICY`). If the device is signed in (the service was slow, rate-limited or down), the primary retries backed off hard, as for a busy room, and a halo is retried rather than remembered terminal.
+- The relay refuses such a hello (`CLOSE_POLICY`). If the device is signed in (the service was slow, rate-limited or down), the primary retries backed off hard, as for a busy room, and a halo is retried rather than remembered terminal. (DOOR-TOKEN, below, departs from this: either asks again the moment the minter holds a token for its room.)
 - Only no sign-in (`no-session`) or a sign-in the service refused (`auth`) stays final. Signing in is the way back from those.
 
 **The channels' rejoin is jittered** (`OnlineSession.rejoin`)
@@ -137,6 +137,40 @@ The relay was split out of SCALE2 on reading: every piece of the reconnect storm
 - ACC1d-8 / 9 / 10 / 12
 - the three TOKEN-WAIT mutants
 - RENOWN1's character mutant
+
+## DOOR-TOKEN: shipped (client only, no relay deploy)
+
+FIELD BUGS 2026-10-16, the Discord: "Friend invivible and randomly popping up"; "Partied players popping in and out
+randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time". The record is
+`01-Overview/Field-Bugs-2026-10-16.md` DOOR-TOKEN.
+
+SCALE2's minter answers a room's socket as it opens, and every place change is a new room, so the hello waited on a
+mint whenever the token held could not open the room: past its minute, or already spent there (the cell a crypt's door
+leads back out to was opened by the token held when the player went in). A mint is seconds for a player (TOKEN-WAIT),
+and for those seconds neither side of the door could see the other.
+
+- **The next room's token is minted at the door** (`accountClient.js:"export const TOKEN_AHEAD_MS = 20_000;"`,
+  `scenes/doorTokenHost.js`). The host says a place change is coming, and the minter's `ahead` mints then:
+  - a door in (worldModes' `onPreTransition`), while the place builds;
+  - a door out (`onDungeonLeave`, `onInteriorLeave`);
+  - any jump (world.js `_teleportToPixel`: a fast travel, a teleport, a recall, a respawn), while the destination streams;
+  - the walk back to an exit door: within `EXIT_NEAR_M` (16 m) after standing `EXIT_ARM_M` (32 m) from every one. An
+    exit is a click with nothing to build behind it, so the walk is the mint's only time.
+- **It mints only when the held token could not open the next room by the time its socket asks**: none held, spent
+  there, or under `TOKEN_AHEAD_MS` of its minute left. The next room's own mint goes early. A token minted ahead and
+  never used is at most one a page per `TOKEN_REUSE_MS - TOKEN_AHEAD_MS` (40 s). Never through a failure's hold
+  (STORM-SHED), never while a mint is on the wire, never offline.
+- **A missing-token refusal is asked again the moment a token is held**
+  (`online.js:"if (this._tokenRetry && this._retryAt != null && now < this._retryAt"`). This departs from SCALE2's "the
+  primary retries backed off hard": a token that came past TOKEN_WAIT_MS had arrived and the session still waited out a
+  1-4 s backoff and the mint's hold. The primary and each halo now ask again the frame the minter `holds` one for their
+  room. The hard backoff stands for every other wait.
+
+Measured over two real sessions and the real Room, with a mint taking 3 s: a party member walking into a crypt past the
+reuse minute was seen 3.1 s after the room changed, now 0.7 s (the build covers the rest); walking back out, 3.1 s, now
+0.1 s. The pages minted five tokens on the same walk either way.
+
+**Pins.** `test/fb1016_doortoken.test.js` (5). `tools/mutants/fb1016_doortoken.json`: 25 mutants, 25 dead.
 
 ## NET-SMOOTH: shipped (client only, no relay deploy)
 

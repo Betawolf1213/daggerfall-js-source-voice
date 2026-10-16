@@ -1181,6 +1181,16 @@ export function forgetSession(storage) {
  *  than that in any room it opens; the token itself lives MAX_TTL_S (five minutes). */
 export const TOKEN_REUSE_MS = 60_000;
 
+/** DOOR-TOKEN (FIELD BUGS 2026-10-16, the Discord: "Partied players popping in and out randomly after leaving tombs at
+ *  graveyard ... also partied players inside tombs are invisible for a time"): A TOKEN MINTED AHEAD OF THE DOOR. A place
+ *  change opens a new room, and its socket asked for its token only as it opened - a mint on the wire (seconds, for a
+ *  player: TOKEN-WAIT) between the door and the hello, the player invisible to the party on both sides of it. The host
+ *  says a place change is coming (`minter.ahead`) and the mint goes then, while the place is built, so the room's socket
+ *  finds the token held. A held token is minted ahead only when it could not open the next room: none held, spent there,
+ *  or with under this much of TOKEN_REUSE_MS left - so the next room's own mint is the one that went early, and a token
+ *  minted ahead and never used is at most one a page per TOKEN_REUSE_MS - TOKEN_AHEAD_MS. */
+export const TOKEN_AHEAD_MS = 20_000;
+
 /** STORM-SHED (2026-10-06 evening, the account service overloaded a second time - "D1 DB is overloaded"; decorations
  *  missing): A FAILED MINT HOLDS THE PAGE'S NEXT ONE OFF. A room whose hello the relay refused for want of a token asks
  *  again within BACKOFF_MAX_MS (net/online.js) - right for a busy room, ruinous for a busy service: every room of every
@@ -1289,7 +1299,11 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * handed the token again within TOKEN_REUSE_MS - the retry mints nothing. A relay deploy's reconnect wave was a mint a
  * player and another a busy refusal; it is a mint a player.
  *
- * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void }}
+ * DOOR-TOKEN: the host says a place change is coming (`minter.ahead(room)`), and a mint goes then when the token held
+ * could not open the next room by the time its socket asks (TOKEN_AHEAD_MS); `minter.holds(room)` says whether a room
+ * would be handed one now, nothing on the wire.
+ *
+ * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void, ahead: (room?: string|null) => boolean, holds: (room: string|null) => boolean }}
  */
 export function accountTokenMinter({ fetch, storage, onIssued = null, character = null, now = () => Date.now(), rand = Math.random }) {
   /** @type {{ token: string, secret: string, character: string|null, at: number, rooms: Set<string> } | null} */
@@ -1304,22 +1318,15 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
     if (!(now() - held.at < TOKEN_REUSE_MS)) return null;
     return held.token;
   };
-  const minter = Object.assign(async (/** @type {string|null} */ room = null) => {
-    const session = storedSession(storage);
-    if (!session) { minter.lastWhy = 'no-session'; console.warn('[account] no identity token: no sign-in stored on this device'); return null; }   // TOKEN-WAIT
+  /** The character the next mint names (RENOWN1) - read at each ask; a seam that throws costs the level, never the hello. */
+  const namedNow = () => {
     let named = null;
-    try { named = character?.() ?? null; } catch { named = null; }   // a seam that throws costs the level, never the hello
-    named = typeof named === 'string' && named ? named : null;
-    const again = reuse(room, session.secret, named);
-    if (again) { minter.lastWhy = null; return again; }
-    // a mint already on the wire (the sockets of one connect open together): its token, if this room has not had it
-    if (minting) {
-      await minting.catch(() => null);
-      const shared = reuse(room, session.secret, named);
-      if (shared) { minter.lastWhy = null; return shared; }
-    }
-    // STORM-SHED: a failure's hold, while it runs, answers every room at once with its word - nothing on the wire
-    if (cool.secret === session.secret && now() < cool.until) { minter.lastWhy = cool.why; return null; }
+    try { named = character?.() ?? null; } catch { named = null; }
+    return typeof named === 'string' && named ? named : null;
+  };
+  /** One mint on the wire for this sign-in, shared by every room asking while it flies (`minting`), its answer held or
+   *  its failure's hold set (STORM-SHED) - the one door the minter and DOOR-TOKEN's `ahead` both mint through. */
+  const start = (/** @type {any} */ session, /** @type {string|null} */ named) => {
     const p = mintFresh(session, named).then((token) => {
       if (token) {
         held = { token, secret: session.secret, character: named, at: now(), rooms: new Set() };   // STORM-SHED: opened by a hello (`opened`), never by the mint
@@ -1334,7 +1341,25 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
       return token;
     });
     minting = p;
-    try { return await p; } finally { if (minting === p) minting = null; }
+    const done = () => { if (minting === p) minting = null; };
+    p.then(done, done);
+    return p;
+  };
+  const minter = Object.assign(async (/** @type {string|null} */ room = null) => {
+    const session = storedSession(storage);
+    if (!session) { minter.lastWhy = 'no-session'; console.warn('[account] no identity token: no sign-in stored on this device'); return null; }   // TOKEN-WAIT
+    const named = namedNow();
+    const again = reuse(room, session.secret, named);
+    if (again) { minter.lastWhy = null; return again; }
+    // a mint already on the wire (the sockets of one connect open together): its token, if this room has not had it
+    if (minting) {
+      await minting.catch(() => null);
+      const shared = reuse(room, session.secret, named);
+      if (shared) { minter.lastWhy = null; return shared; }
+    }
+    // STORM-SHED: a failure's hold, while it runs, answers every room at once with its word - nothing on the wire
+    if (cool.secret === session.secret && now() < cool.until) { minter.lastWhy = cool.why; return null; }
+    return start(session, named);
   }, {
     lastWhy: /** @type {string|null} */ (null),
     /** STORM-SHED: a hello carried `token` into `room` (net/online.js) - the relay spends it there, so that room is minted
@@ -1353,6 +1378,26 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
     coolMs: () => {
       const session = storedSession(storage);
       return session && cool.secret === session.secret ? Math.max(0, cool.until - now()) : 0;
+    },
+    /** DOOR-TOKEN: a place change is coming, into `room` when the host knows it (null: a room no token has opened yet) -
+     *  a mint goes NOW when the token held could not open it by the time its socket asks (TOKEN_AHEAD_MS), so the socket
+     *  finds one held. Never a second mint while one flies, never through a failure's hold (STORM-SHED), never without a
+     *  sign-in. True when a mint went. */
+    ahead: (/** @type {string|null} */ room = null) => {
+      const session = storedSession(storage);
+      if (!session || minting) return false;
+      if (cool.secret === session.secret && now() < cool.until) return false;
+      const named = namedNow();
+      const opens = !!held && held.secret === session.secret && held.character === named && now() - held.at < TOKEN_REUSE_MS - TOKEN_AHEAD_MS && !(room != null && held.rooms.has(room));
+      if (opens) return false;
+      start(session, named);
+      return true;
+    },
+    /** DOOR-TOKEN: does this minter hold a token `room` would be handed now, nothing on the wire (the reuse law) - a
+     *  session whose hello went without one asks again the moment it does (net/online.js). */
+    holds: (/** @type {string|null} */ room) => {
+      const session = storedSession(storage);
+      return !!session && reuse(room, session.secret, namedNow()) != null;
     },
   });
 

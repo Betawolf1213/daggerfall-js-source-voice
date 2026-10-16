@@ -1025,6 +1025,7 @@ import { LookFilter, swingSuppressesLook } from '../player/lookFilter.js';   // 
 import { controllerLook } from '../player/lookFilter.js';   // AUDIT NAV1 (the presentation): a pad in hand - the sea fight's readout names its buttons (MAC-O2's seam line above kept as it is pinned)
 import { MoveAxes } from '../player/moveAxes.js';   // AUDIT 28 W8: MovementAcceleration
 import { CameraRecoiler } from '../player/cameraRecoiler.js';   // AUDIT 28 W9: CameraRecoilStrength
+import { createDoorToken } from './doorTokenHost.js';   // DOOR-TOKEN (FIELD BUGS 2026-10-16): the next room's identity token, minted at the door
 import { HeadBobber } from '../player/headBobber.js';   // AUDIT 28 W10: HeadBobbing
 import { createClimbFeelHost } from '../player/climbFeel.js';   // CLIMB4: the climb's camera
 import { lastHealthLost, lastHealthLostPercent } from '../ui/hudVitals.js';   // AUDIT 28 W9: the detector's loss
@@ -7489,7 +7490,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const cam = { pos: [TERRAIN_SIZE / 2, playerPixel.centerHeight + 40, TERRAIN_SIZE / 2], yaw: Math.PI, pitch: -0.1 };
   const lookFilter = new LookFilter();   // AUDIT 28 W7: one filter per camera
   const moveAxes = new MoveAxes();   // AUDIT 28 W8: MovementAcceleration
-  const cameraRecoiler = new CameraRecoiler();   // AUDIT 28 W9: CameraRecoilStrength
+  const cameraRecoiler = new CameraRecoiler(); const doorToken = createDoorToken({ minter: () => identityMinter, session: () => online, modes: () => modes, player: () => player });   // AUDIT 28 W9: CameraRecoilStrength   // DOOR-TOKEN: declared beside the recoiler `_teleportToPixel` resets, so no jump reads it before it stands (its seams are read lazily, any not yet standing answering none)
   const headBobber = new HeadBobber();   // AUDIT 28 W10: HeadBobbing
   // CLIMB4: THE FEEL - the climb's camera, one per body as the bobber is: framed after the motor moved (its turn owed to
   // the look filter), its view half laid on the view in first person, its kick and pitch on every lens of the frame
@@ -14849,7 +14850,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT CAPTAIN'S SEA G2/P7: a pixel this game does not stream lands where the world stands - before the helm's word
     const unstreamed = _streamedLanding(px, py);
     if (unstreamed) { px = unstreamed.px; py = unstreamed.py; localPos = null; resolveArrival = null; }
-    dwTeleported(performance.now() / 1000);   // DW-D: OnTeleportToCoordinates' grace
+    dwTeleported(performance.now() / 1000); doorToken.jumping();   // DW-D: OnTeleportToCoordinates' grace   // DOOR-TOKEN: a jump - the next room's token minted while the destination streams
     if (modEvent !== 'load') navalStow();   // KEEP-PLUNDER: a jump's sea stowed first - never a load's
     // HELM-JUMP (FIELD BUGS 2026-10-11): the helm let go before the jump, so the landing below is the last word on where
     // the player stands. A load's start (OnStartLoad) and a fast travel (OnPreFastTravel) let it go themselves, and a
@@ -29984,7 +29985,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     actFlush();        // AUDIT WORLD3 A3: an act the wire refused, re-read and re-sent
     hitFlush(now);     // AUDIT FOES FOE2: and a BLOW the wire refused - a joiner applies none locally, so a lost frame is a lost blow
     modes?.setDungeonAuthority?.(dungeonAuthority(now));   // AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
-    hccParkTick(now);   // HCC-PARK: my parked team's word to the cell it stands in, when it changed
+    hccParkTick(now); doorToken.frame();   // HCC-PARK: my parked team's word to the cell it stands in, when it changed   // DOOR-TOKEN: the way out approached - its token minted on the walk to the door
     overworldLedgerFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them
     caravanDecorTick(now);   // WAGONS2-VISIT: what I placed in my caravan, to its room, when it changed
     caravanVisitLink.tick(key ? online : null, modes?.caravanVisit ?? null);   // WAGONS2-VISIT: the visited caravan's cell, heard from inside it (after my primary's own join and tick)
@@ -30504,7 +30505,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     wildHallEpoch: () => { const h = wildHallHere(); return h ? (_wdunEpoch.get(h.key) ?? 0) : 0; },   // PVPDUNGEONS: its reset's epoch
     wildNoBank: () => { if (!wildHere()) return false; townTalk.say('There are no banks in the mountains.'); return true; },
     wildNoHouse: () => { if (!wildHere()) return false; townTalk.say('No house is for sale in the Wrothgarian Mountains.'); return true; },   // PVPDUNGEONS   // PVPDUNGEONS: no banks, so no houses either
-    onDungeonLeave: () => { if (_wdunInside) wdunLeft(false); const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} quest foe(s) at the dungeon's door`); gatherHost?.leaveDungeon(); worldPublish(performance.now(), true); },   // WORLD1: the room's memory goes out while the dungeon still stands; QUEST-PARTY phase 3c: my shared quest's foes to the party who stay
+    onDungeonLeave: () => { if (_wdunInside) wdunLeft(false); const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} quest foe(s) at the dungeon's door`); doorToken.leaving(); gatherHost?.leaveDungeon(); worldPublish(performance.now(), true); },   // WORLD1: the room's memory goes out while the dungeon still stands; QUEST-PARTY phase 3c: my shared quest's foes to the party who stay   // DOOR-TOKEN: the cell outside's token, if the walk to the door did not mint it
     // OH-D: the four DFU events There's a Hole in the Bottom of the Ocean subscribes to (its Install), raised by the doors
     onSetDungeon: (ctx) => ohAbyss?.onDungeonSet(ohDungeonOf(ctx)),   // DaggerfallDungeon.OnSetDungeon
     onTransitionDungeonInterior: (ctx) => { navalStow(); ohAbyss?.onDungeonEntered(ohDungeonOf(ctx)); csaOnTransition(); dungeonTierSay(); navalTransition(); },   // PlayerEnterExit.OnTransitionDungeonInterior (CSA-C: Come Sail Away's OnTransition after OceanHoles' - the mods' load order); TIER1: the tier said, online
@@ -30519,7 +30520,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const p = ohAbyss.presentation({ fogColor: [...fog.color].slice(0, 3).concat(1), dungeonAmbient: [...DUNGEON_AMBIENT, 1] }, getFloat('Enhancements', 'DungeonAmbientLightScale', 0, 1));
       return p ? { ...p, fogColor: p.fogColor.slice(0, 3) } : null;
     },
-    onInteriorLeave: () => { const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the building's door`); worldPublish(performance.now(), true); },   // WORLD6a: and a building's while the building still stands; QUEST-PARTY phase 3b: my foes there to the players who stay
+    onInteriorLeave: () => { const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the building's door`); doorToken.leaving(); worldPublish(performance.now(), true); },   // WORLD6a: and a building's while the building still stands; QUEST-PARTY phase 3b: my foes there to the players who stay   // DOOR-TOKEN: and the street's token
     // QUEST-PARTY phase 3b: the building pool's net - the room's own lane (OWN1): my foes out, a peer's in as puppets, a
     // blow on a peer's foe to its owner (marked `own`); the frame is the room's, as a pose's is (the interior rides the
     // exterior's frame, P8 - its height sheds the origin's vertical shift, AUDIT ONLINE D7). Null offline.
@@ -30922,7 +30923,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // owns the motor, the animator and the mount's art together.
     setTransportMode: (mode) => setTransportModeHere(mode),
     horseCart: hccRuntimeOn,   // HCC: the runtime's transition handlers and storage-access word, when the mod is on
-    onPreTransition: () => { const n = handOverFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the door`); },   // AUDIT PSCALE1 NET-3: a door out of the open country hands my foes to the players outside
+    onPreTransition: () => { const n = handOverFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the door`); doorToken.entering(); },   // AUDIT PSCALE1 NET-3: a door out of the open country hands my foes to the players outside   // DOOR-TOKEN: and the room behind it has its token minted while the place builds
     horseCartSave: () => hccRuntime.getSaveData(),   // AUDIT HCC H3: the record a dungeon save carries (DFU's per-mod slot, whatever the switch says)
     deepCleared: (loc, stops, entry) => livingDeepCleared(loc, stops, entry),   // LW14: the stops a company left, at a dungeon's build
     openLivingDiver: (rec) => (livingWorldOn() && rec?.living ? !!livingDivers?.offers(rec, () => modes?.dungeonCtx?.hudSay?.(`${firstNameOf(rec.living.res?.name ?? '')}: "Keep your blade up down here."`)) : false),   // LW14: a company below, pressed

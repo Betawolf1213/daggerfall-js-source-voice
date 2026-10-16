@@ -593,6 +593,9 @@ export class OnlineSession {
     /** SCALE2: sockets whose hello went without a token, and why (`_mint`'s word) - read by their close. */
     this._tokenless = new WeakMap();
     this._tokenWhy = null;
+    /** DOOR-TOKEN: my room's retry waits on a token - its hello went without one - so it goes the moment the minter holds
+     *  one this room can be handed (`tick`), never the backoff and the mint's hold after. A halo's is its entry's. */
+    this._tokenRetry = false;
     /** SCALE5a: the token each socket's hello carried - handed back to the minter when the relay refused that hello before
      *  reading it (`_tokenUnread`). */
     this._helloTok = new WeakMap();
@@ -852,7 +855,7 @@ export class OnlineSession {
       this._halo.delete(room);
       this._halo.set(this.room, old);
       old.ly = this.layer; this.layer = h.ly ?? 0; this._layerRoom = room;   // SCALE5d: each socket's layer goes with it
-      this._ws = h.ws; this.status = h.status; this.error = null; this._retryAt = h.retryAt; this._backoff = h.backoff; this._dropAt = h.dropAt ?? null;
+      this._ws = h.ws; this.status = h.status; this.error = null; this._retryAt = h.retryAt; this._backoff = h.backoff; this._dropAt = h.dropAt ?? null; this._tokenRetry = !!h.tokenRetry;   // DOOR-TOKEN: its wait on a token too
       this.raidOk = !!h.raidOk; this.riteOk = !!h.riteOk; this.serpentOk = !!h.serpentOk; this.sdOk = !!h.sdOk;   // SD3: and the find's
       this.foeInventoryOk = !!h.foeInventoryOk;
       this.wildOk = !!h.wildOk;   // INT9 (AUDIT): the zone's word went with neither socket
@@ -911,7 +914,7 @@ export class OnlineSession {
     this._swap.clear(); this._retired.clear(); this._rehelloWant = false;
     this._endHalo();
     this._rooms.clear();
-    this._retryAt = null;
+    this._retryAt = null; this._tokenRetry = false;   // DOOR-TOKEN: nothing waits on a token for a room left
     this.room = null;
     this.peers.clear();
     this._fallen.clear();
@@ -1826,6 +1829,7 @@ export class OnlineSession {
     try { ws = new this._WS(`${this.url}/room/${this.room}${isLayered(this.room) && ly > 0 ? `?ly=${ly}` : ''}`); } catch (e) { this.status = 'error'; this.error = String(e?.message ?? e); this._scheduleRetry(); return; }   // SCALE5d: my party's layer asked first
     this._ws = ws;
     this.status = 'connecting';
+    this._tokenRetry = false;   // DOOR-TOKEN: this socket's own hello says whether it waits on one again
     // AUDIT (the pre-merge audit, OWN1 O2): a new socket has no relay's word yet - the own lane waits for ITS welcome.
     // `ownOk` stood from the last socket's, and `status` reads 'open' at the socket's open, before the welcome: a
     // reconnect to a relay rolled back behind the lane sent its own stream (every ~200 ms, unasked) into a relay that
@@ -1952,6 +1956,7 @@ export class OnlineSession {
         if (code === CLOSE_BUSY || noToken) h.backoff = Math.max(h.backoff, BACKOFF_MAX_MS / 2);
         h.retryAt = this._now() + BACKOFF_MIN_MS + this._rand() * Math.max(BACKOFF_MIN_MS, h.backoff - BACKOFF_MIN_MS); h.backoff = Math.min(BACKOFF_MAX_MS, h.backoff * 2);   // SLAM2: jittered
         if (noToken) h.retryAt = this._afterMintHold(h.retryAt);   // STORM-SHED: not before the page's next mint may be asked
+        h.tokenRetry = noToken;   // DOOR-TOKEN: or the moment a token is held (`tick`)
         return;
       }
       // SCALE5c: A SHARD THAT NEVER OPENED, twice in a row, is a relay before the shards (it refuses the key) - the hub link
@@ -1972,7 +1977,7 @@ export class OnlineSession {
       // was slow (a relay deploy reconnects every player at once, and every socket asks it for a token) or had a bad
       // minute: the relay refused the tokenless hello and this close was terminal - the player offline until they
       // changed room. Only a missing sign-in ('no-session') or one the service stopped honouring ('auth') is final.
-      if (code === CLOSE_POLICY && tokenRetryable(this._tokenless.get(ws))) { this.status = 'closed'; this.error = t('net.online.waitingAccount', 'waiting for the account service'); this._backoff = Math.max(this._backoff, BACKOFF_MAX_MS / 2); this._scheduleRetry(); this._retryAt = this._afterMintHold(this._retryAt); return; }   // STORM-SHED: not before the page's next mint may be asked
+      if (code === CLOSE_POLICY && tokenRetryable(this._tokenless.get(ws))) { this.status = 'closed'; this.error = t('net.online.waitingAccount', 'waiting for the account service'); this._backoff = Math.max(this._backoff, BACKOFF_MAX_MS / 2); this._scheduleRetry(); this._retryAt = this._afterMintHold(this._retryAt); this._tokenRetry = true; return; }   // STORM-SHED: not before the page's next mint may be asked - DOOR-TOKEN: or the moment a token is held (`tick`)
       if (code === CLOSE_POLICY) { this.terminal = true; this.terminalAt = this._now(); this.status = 'error'; this.error = this.error ?? t('net.online.refused', 'the relay refused a frame'); this._endHalo(); this._forgetRoom(this.room); return; }
       if (code === CLOSE_BUSY) { this._tokenUnread(ws, room, ev); this.status = 'closed'; this.error = t('net.online.busy', 'the room is busy'); this._backoff = Math.max(this._backoff, BACKOFF_MAX_MS / 2); this._scheduleRetry(); return; }   // full or gated: back off hard, then try again   // SCALE5a: its token handed back when the relay never read it
       // SCALE2c: an open socket's drop, weighed by the page as a wave. AUDIT SCALE II C-2 (found on the way, the same
@@ -3637,6 +3642,10 @@ export class OnlineSession {
    *  of every peer toward its last pose over one send interval. */
   tick() {
     const now = this._now();
+    // DOOR-TOKEN: a hello refused for want of a token asks again the moment the minter holds one for its room - a mint
+    // that came after TOKEN_WAIT_MS, the next room's mint gone ahead at its door (the minter's `ahead`), any link's -
+    // rather than out the backoff and the mint's hold: the token is the thing it waited for, and costs nothing to carry
+    if (this._tokenRetry && this._retryAt != null && now < this._retryAt && this.mintToken?.holds?.(this.room)) this._retryAt = now;
     if (this._retryAt != null && now >= this._retryAt && !this._ws && !this._closedByUs && !this.terminal && this.room) {
       // SCALE2c: a drop inside a relay deploy's wave waits, once, for the page's slot in it (net/reconnectWave.js)
       const hold = this._dropAt != null ? this._wave.holdUntil(this._dropAt, now) : null;
@@ -3644,6 +3653,7 @@ export class OnlineSession {
       if (hold != null) this._retryAt = hold; else { this._retryAt = null; this.stats.reconnects++; this._open(); }
     }
     for (const [room, h] of [...this._halo]) {   // WORLD6b-iii(b): the halo's retries
+      if (h.tokenRetry && !h.ws && h.retryAt != null && now < h.retryAt && this.mintToken?.holds?.(room)) h.retryAt = now;   // DOOR-TOKEN: as the primary's
       if (!h.ws && h.retryAt != null && now >= h.retryAt && !this._closedByUs && !this.terminal) {
         const hold = h.dropAt != null ? this._wave.holdUntil(h.dropAt, now) : null;   // SCALE2c: the halo waits for the same slot, so the page mints once
         h.dropAt = null;
