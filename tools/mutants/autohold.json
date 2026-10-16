@@ -39,7 +39,7 @@
   {
     "name": "AUTOHOLD-the-locked-unanswered",
     "file": "server-account/src/realm.js",
-    "old": ", ...(v.locked.length ? { locked: v.locked } : {}) };",
+    "old": ", locked: v.locked };",
     "new": " };",
     "tests": [
       "test/autohold.test.js"
@@ -453,7 +453,7 @@
   {
     "name": "AUTOHOLD-AUDIT-the-cap-at-four",
     "file": "src/net/realmTradeLaw.js",
-    "old": "export const LOCKED_SAID_MAX = 40;",
+    "old": "export const LOCKED_SAID_MAX = 200;",
     "new": "export const LOCKED_SAID_MAX = 4;",
     "tests": [
       "test/autohold.test.js"
@@ -500,6 +500,163 @@
     "file": "src/systems/possessedItems.js",
     "old": "  for (const boat of arrayOf(csa?.placedBoats)) out.push(...lists(/** @type {any} */ (boat)?.Items));",
     "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-one-of-two-leaves-unasked",
+    "file": "server-account/src/ledger.js",
+    "old": "  for (const [k, n] of was) if ((now.get(k) ?? 0) < n) { leaving.push(k); if (n > 1) twice.push(k); }",
+    "new": "  for (const [k, n] of was) if (!now.has(k)) { leaving.push(k); if (n > 1) twice.push(k); }",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-twice-is-any-leaving",
+    "file": "server-account/src/ledger.js",
+    "old": "{ leaving.push(k); if (n > 1) twice.push(k); }",
+    "new": "{ leaving.push(k); twice.push(k); }",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-twice-unasked-by-a-route",
+    "file": "server-account/src/realm.js",
+    "old": "  const why = twice.length ? 'piece-dupe' : leaving.length ?",
+    "new": "  const why = leaving.length ?",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-twice-unasked-by-a-trade",
+    "file": "server-account/src/realmTrade.js",
+    "old": "    ?? (leftA.twice.length || leftB.twice.length ? 'piece-dupe' : null)\n",
+    "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-twice-unasked-of-the-first-half",
+    "file": "server-account/src/realmTrade.js",
+    "old": "(leftA.twice.length || leftB.twice.length ?",
+    "new": "(leftB.twice.length ?",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-twice-unasked-of-the-second-half",
+    "file": "server-account/src/realmTrade.js",
+    "old": "(leftA.twice.length || leftB.twice.length ?",
+    "new": "(leftA.twice.length ?",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-planted-key-strikes",
+    "file": "server-account/src/verdict.js",
+    "old": "  const rising = lawHolds > 0 && lawFindings.some((f) => f.code !== 'uid') && (",
+    "new": "  const rising = lawHolds > 0 && (",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-finding-beside-it-unstruck",
+    "file": "server-account/src/verdict.js",
+    "old": "lawFindings.some((f) => f.code !== 'uid')",
+    "new": "lawFindings.every((f) => f.code !== 'uid')",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-planted-piece-unnamed",
+    "file": "server-account/src/verdict.js",
+    "old": "({ code: 'uid', at: k, t: templateOfKey(k) })",
+    "new": "({ code: 'uid', at: k })",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-locked-said-only-when-some",
+    "file": "server-account/src/realm.js",
+    "old": ", locked: v.locked };",
+    "new": ", ...(v.locked.length ? { locked: v.locked } : {}) };",
+    "tests": [
+      "test/autohold.test.js",
+      "test/realm1.test.js",
+      "test/int2_judge.test.js",
+      "test/ringhold.test.js",
+      "test/auditrealm2_service.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-an-unsaid-locked-clears",
+    "file": "src/systems/realmSaves.js",
+    "old": "    if (v === undefined) return;   // AUDIT AUTO-HOLD: an answer saying nothing of them",
+    "new": "    // AUDIT AUTO-HOLD: an answer saying nothing of them",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-grant-lands-a-carried-piece",
+    "file": "src/scenes/exteriorFoes.js",
+    "old": "      const grant = notCarried(peerHanded(validLootList(data.grant)));",
+    "new": "      const grant = peerHanded(validLootList(data.grant));",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-room-gives-a-carried-piece",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    if (!notCarried([item])?.length) return;",
+    "new": "",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-a-body-restored-with-a-carried-piece",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "const li = notCarried(peerHanded(validLootList(sf.items)));",
+    "new": "const li = peerHanded(validLootList(sf.items));",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-carried-filter-unwired",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  setCarriedFilter(session ? (list) => withoutCarried(list, carriedPieces(entity)) : null);",
+    "new": "  setCarriedFilter(null);",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-the-carried-filter-offline",
+    "file": "src/scenes/realmHoldHost.js",
+    "old": "  setCarriedFilter(session ? (list) => withoutCarried(list, carriedPieces(entity)) : null);",
+    "new": "  setCarriedFilter((list) => withoutCarried(list, carriedPieces(entity)));",
+    "tests": [
+      "test/autohold.test.js"
+    ]
+  },
+  {
+    "name": "AUTOHOLD-AUDIT-notCarried-a-no-op",
+    "file": "src/systems/peerWord.js",
+    "old": "export const notCarried = (/** @type {any[] | null} */ list) => (Array.isArray(list) && _carriedFilter ? _carriedFilter(list) : list);",
+    "new": "export const notCarried = (/** @type {any[] | null} */ list) => list;",
     "tests": [
       "test/autohold.test.js"
     ]

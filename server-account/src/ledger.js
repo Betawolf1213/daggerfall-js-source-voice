@@ -286,6 +286,22 @@ export function ledgerMoves(db, at, before, after, { escrow = false } = {}) {
 }
 
 /**
+ * AUDIT AUTO-HOLD: THE KEYS A MOVE TAKES OUT OF A RECORD, from the pieces it held `before` to those `after` (each judge.js
+ * ledgerPieces, repeats kept) - every key whose COUNT fell, not only one gone (AUDIT: a record showing a locked copy's key
+ * twice handed one of the two on by every route - the key still "in after", so nothing asked - and its receiver's row
+ * took it unlocked; AUTO-HOLD had lifted the copies' hold that capped it). `twice`: those the record held more than once
+ * - a copy of its own, never one of the two handed on (piece-dupe), whatever the ledger has written down yet.
+ * @param {{ key: string }[]} before @param {{ key: string }[]} after
+ */
+export function leavingKeys(before, after) {
+  const count = (/** @type {{ key: string }[]} */ ps) => { const m = new Map(); for (const p of ps) m.set(p.key, (m.get(p.key) ?? 0) + 1); return m; };
+  const was = count(before), now = count(after);
+  /** @type {string[]} */ const leaving = [], twice = [];
+  for (const [k, n] of was) if ((now.get(k) ?? 0) < n) { leaving.push(k); if (n > 1) twice.push(k); }
+  return { leaving, twice };
+}
+
+/**
  * BEFORE A ROUTE HANDS PIECES OUT of `char`'s record: each must be the record's to give - held by it, no claim on it,
  * and no copy of it written down against it. Answers null, 'piece-dupe' (another's, the service's or a known copy - it
  * moves by no route) or 'piece-claimed' (two records show it, and the holder's next checkpoint settles whose it is).

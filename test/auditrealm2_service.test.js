@@ -142,7 +142,7 @@ test('AUDIT REALM2 S1: a character born online starts where chargen starts one -
   // chargen's own - level 1, the purse to the bound - lands; the NEXT checkpoint is no birth (the first is what the
   // realm's later checks measure from)
   // INT2 (PIN MOVED): a checkpoint's answer says the judge's hold - none for chargen's own
-  assert.deepEqual(Object.values(await first(freshSave({ goldPieces: REALM_BIRTH_WEALTH_MAX }))), [200, { ok: true, seq: 1, tradeHeld: null }]);
+  assert.deepEqual(Object.values(await first(freshSave({ goldPieces: REALM_BIRTH_WEALTH_MAX }))), [200, { ok: true, seq: 1, tradeHeld: null, locked: [] }]);   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   assert.equal((await s.put(made.id, JSON.stringify({ level: 2, goldPieces: REALM_BIRTH_WEALTH_MAX * 2 }), P.secret, { lease: made.lease, seq: 2 })).status, 200);
 });
 
@@ -163,7 +163,7 @@ test('AUDIT REALM2 S1: a customs character\'s first save carries no more than th
     ['no JSON', 'not a save'],
   ]) assert.deepEqual(Object.values(typeof save === 'string' ? await s.put(c.id, save, P.secret, { lease: c.lease, seq: 1 }) : await first(save)), [403, { error: 'customs-allowance' }], why);
   assert.equal(s.env.SAVES._map.size, 0);
-  assert.deepEqual(Object.values(await first({ name: 'Legacy', level: 3, goldPieces: allowance })), [200, { ok: true, seq: 1, tradeHeld: null }], 'the copy customs capped');   // INT2 (PIN MOVED): the hold said
+  assert.deepEqual(Object.values(await first({ name: 'Legacy', level: 3, goldPieces: allowance })), [200, { ok: true, seq: 1, tradeHeld: null, locked: [] }], 'the copy customs capped');   // INT2 (PIN MOVED): the hold said; PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   // a customs asked with no level is held to a first level's allowance
   const origin2 = 'offline-legacy-04';
   s.exec('INSERT INTO realm_census (player, char_id) VALUES (?, ?)', P.id, origin2);
@@ -373,7 +373,7 @@ test('AUDIT REALM2 S7: two checkpoints under one lease race to one sequence - th
     s.put(c.id, JSON.stringify(freshSave({ name: 'Racer', v: 'first' })), P.secret, { lease: c.lease, seq: 2 }),
     s.put(c.id, JSON.stringify(freshSave({ name: 'Racer', v: 'retry' })), P.secret, { lease: c.lease, seq: 2 }),
   ]);
-  assert.deepEqual([x, y].map((r) => [r.status, r.body]).sort((m, n) => m[0] - n[0]), [[200, { ok: true, seq: 2, tradeHeld: null }], [409, { error: 'seq', seq: 2 }]]);
+  assert.deepEqual([x, y].map((r) => [r.status, r.body]).sort((m, n) => m[0] - n[0]), [[200, { ok: true, seq: 2, tradeHeld: null, locked: [] }], [409, { error: 'seq', seq: 2 }]]);   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   assert.equal(s.rows('SELECT lease FROM realm_characters')[0].lease, c.lease, 'the lease stands');
   // a join while the checkpoint's object is on its way
   let joined = null;

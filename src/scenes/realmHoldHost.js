@@ -7,10 +7,12 @@
 // AUTO-HOLD, what the client does with them: the locked pieces bound while they are (systems/itemBound.js
 // setRealmLocked), and the pieces the character stowed read off the last save the realm took for the shop's shelf
 // (systems/itemIds.js setStowedKeys).
-import { tradeHeldNotice, lockedPiecesOf, ledgerKeyOf, setStowedKeys } from '../systems/itemIds.js';
+import { tradeHeldNotice, lockedPiecesOf, ledgerKeyOf, setStowedKeys, carriedPieces } from '../systems/itemIds.js';
 import { itemLongName } from '../systems/itemInfo.js';
 import { setRealmLocked } from '../systems/itemBound.js';
 import { possessedItemLists } from '../systems/possessedItems.js';
+import { setCarriedFilter } from '../systems/peerWord.js';   // AUDIT AUTO-HOLD: a peer's word never hands the reader a piece it carries
+import { withoutCarried } from '../world/interiorShared.js';
 import { t } from '../systems/textManager.js';   // L10N4: the notice in the player's language
 
 /** How many locked pieces one notice names; the rest are counted. */
@@ -68,6 +70,7 @@ function stowedReader(/** @type {any} */ session) {
 export function wireRealmHolds(session, { say, entity }) {
   setRealmLocked(session?.lockedKeys ?? []);
   setStowedKeys(session ? stowedReader(session) : () => null);
+  setCarriedFilter(session ? (list) => withoutCarried(list, carriedPieces(entity)) : null);
   if (!session) return;
   session.onTradeHeld = (/** @type {string | null} */ prev, /** @type {string | null} */ now, /** @type {any} */ why) => { const text = tradeHeldNotice(prev, now, why); if (text) say(text); };
   session.onLockedKeys = (/** @type {string[]} */ keys) => setRealmLocked(keys);

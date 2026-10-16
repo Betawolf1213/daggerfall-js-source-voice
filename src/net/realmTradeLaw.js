@@ -258,7 +258,7 @@ export const tradeHeldUntilNotice = (/** @type {number} */ until, /** @type {str
   : t('realm.held.until', 'The realm\'s law has held this character three times. Its trading is frozen until {date}, then opens on its own.', { date: heldUntilText(until) }));
 /** AUTO-HOLD: the most locked pieces one checkpoint's answer names (server-account/src/ledger.js) and the realm session
  *  hears (systems/realmSaves.js) - one number, in the leaf both read. */
-export const LOCKED_SAID_MAX = 40;
+export const LOCKED_SAID_MAX = 200;
 
 /** A refusal's words, for the side whose trade did not happen. Nothing moved, on the service or here. FIELD BUGS
  *  2026-10-11g HELD-SIDE ("Cant trade after yesterdays character lockout" - "It will just say something along the lines

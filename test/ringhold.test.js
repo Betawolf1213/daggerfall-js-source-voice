@@ -29,12 +29,12 @@ test('RING-HOLD: the third hold stands once the ring is gone - and the answer sa
   const carry = freshSave({ name: 'ann', items: [ring()] });
   const dropped = freshSave({ name: 'ann', world: { piles: [{ items: [ring()] }] } });
   for (let i = 0; i < STRIKES_FOR_TIMED - 1; i++) {
-    assert.deepEqual(await put(carry), { ok: true, seq: 2 + 2 * i, tradeHeld: 'law', tradeHeldWhy: { code: 'crafted', t: 135 } });
+    assert.deepEqual(await put(carry), { ok: true, seq: 2 + 2 * i, tradeHeld: 'law', tradeHeldWhy: { code: 'crafted', t: 135 }, locked: [] });   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
     assert.equal((await put(dropped)).tradeHeld, null, 'dropped: lifted');
   }
   const third = await put(carry);
   const until = third.tradeHeldWhy?.until;
-  assert.deepEqual(third, { ok: true, seq: 2 * STRIKES_FOR_TIMED, tradeHeld: 'law', tradeHeldWhy: { code: 'until', t: 135, until } }, 'the third: timed, the piece still named');
+  assert.deepEqual(third, { ok: true, seq: 2 * STRIKES_FOR_TIMED, tradeHeld: 'law', tradeHeldWhy: { code: 'until', t: 135, until }, locked: [] }, 'the third: timed, the piece still named');   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   assert.ok(Math.abs(until - (Math.floor(Date.now() / 1000) + LAW_HOLD_S)) < 60, 'a week from now');
   const gone = await put(dropped);
   assert.deepEqual([gone.tradeHeld, gone.tradeHeldWhy], ['law', { code: 'until', t: null, until }], 'held still - and said when it lifts');

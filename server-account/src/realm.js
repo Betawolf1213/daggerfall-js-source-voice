@@ -58,7 +58,7 @@ import { linkFirstPlay } from './founderLink.js';   // FOUNDER5: a character bro
 import { saveTextOf, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save read packed or plain
 import { lineageBirthRefusal, houseOn, endUnionsOf } from './legacy.js';   // LEGACY7: a realm character born as a person of the account's own line
 import { wealthOf, ledgerPieces, classicCount, WEALTH_VERSION } from './judge.js';   // INT5: what the service's own writes move, witnessed; INT4: the pieces it moves
-import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
+import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads, leavingKeys } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
 import { budgetKept, budgetRead, budgetFrom } from './budget.js';   // SAVE-BATCH: and the budget's config, where the isolate kept none
 import { verdictOn } from './verdict.js';   // INT2-INT5: the verdict on every checkpoint, in the checkpoint's own batch
 
@@ -542,7 +542,8 @@ export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ p
  * id ledger, the budget, the hold) lands in the batch that moves the row. A verdict never refuses the save: it holds the
  * character's trade (Mac: "Freeze trading"). Answers `{ ok, seq, tradeHeld }` - the hold standing (null for none), said
  * so the tab can tell its player, and (AUTO-HOLD) `locked`, the keys of the copies the record shows, locked piece by
- * piece (ledger.js), for the tab to name - or `{ error }`:
+ * piece (ledger.js), for the tab to name - `[]` for none, every answer (AUDIT AUTO-HOLD: a tab hearing none from a service
+ * mid-deploy keeps the ones it has, never unbinds them) - or `{ error }`:
  * 'lease' - another tab or device has the character now; 'seq' - not the next one, with the service's `seq` beside it,
  * so a tab whose last checkpoint landed but whose answer was lost can resync; the first save's own words
  * (firstSaveRefusal).
@@ -619,7 +620,7 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // two back now: the one before the last stays - and INT6's clean one, kept for staff, whichever it is
   const keep = new Set([key, row.obj, stood.clean_obj].filter(Boolean));
   await dropObjects(bucket, [...new Set([row.prev, row.clean_obj])].filter((k) => k && !keep.has(k)));
-  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), ...(v.locked.length ? { locked: v.locked } : {}) };
+  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), locked: v.locked };
 }
 
 /**
@@ -716,9 +717,9 @@ export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, a
   // INT4: a piece leaves a record only as its own - held by it, unclaimed, no copy (ledger.js piecesRefusal). A Set, never
   // a list walked once a piece (AUDIT INT: a thousand pieces' record walked a million times - seconds of CPU)
   const piecesAfter = ledgerPieces(save);
-  const after = new Set(piecesAfter.map((p) => p.key));
-  const leaving = [...new Set(piecesBefore.map((p) => p.key))].filter((k) => !after.has(k));
-  const why = leaving.length ? await piecesRefusal(db, at.id, leaving) : null;
+  // AUDIT AUTO-HOLD: a key whose count fell is leaving - one of two the record held is a copy, never handed on
+  const { leaving, twice } = leavingKeys(piecesBefore, piecesAfter);
+  const why = twice.length ? 'piece-dupe' : leaving.length ? await piecesRefusal(db, at.id, leaving) : null;
   if (why) return { error: why };
   const text = JSON.stringify(save);
   const bytes = new TextEncoder().encode(text).byteLength;

@@ -249,8 +249,8 @@
   {
     "name": "SS3-a-body-on-the-wire-lands-a-bound-piece",
     "file": "src/scenes/dungeonContext.js",
-    "old": "const li = peerHanded(validLootList(sf.items));",
-    "new": "const li = validLootList(sf.items);",
+    "old": "const li = notCarried(peerHanded(validLootList(sf.items)));",
+    "new": "const li = notCarried(validLootList(sf.items));",
     "tests": [
       "test/ss1_stones.test.js"
     ]
@@ -258,8 +258,8 @@
   {
     "name": "SS3-a-peers-grant-lands-a-bound-piece",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "      const grant = peerHanded(validLootList(data.grant));",
-    "new": "      const grant = validLootList(data.grant);",
+    "old": "      const grant = notCarried(peerHanded(validLootList(data.grant)));",
+    "new": "      const grant = notCarried(validLootList(data.grant));",
     "tests": [
       "test/ss1_stones.test.js"
     ]

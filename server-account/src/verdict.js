@@ -142,7 +142,11 @@ export async function verdictOn({ db, nowS }, { player, char, seq, key }, row, s
   const crafts = judged.provenances.length ? await judgeProducts(db, judged.provenances, player) : { findings: [], arrived: [] };
   const products = crafts.findings;
   const ledger = await ledgerStep(db, { player, char, seq, nowS }, judged.pieces, known);   // SAVE-BATCH: its two reads answered in the checkpoint's first batch
-  const lawFindings = [...judged.findings, ...products, ...ledger.forged.map((k) => ({ code: 'uid', at: k }))];
+  // AUDIT AUTO-HOLD: a key on another piece names the piece it is on (its template, off its print) - "something it carries"
+  // was all its holder heard, and a griefer's planted one was a piece nobody could find
+  const printOf = new Map(judged.pieces.map((p) => [p.key, p.fp]));
+  const templateOfKey = (/** @type {string} */ k) => { const t = Number(String(printOf.get(k) ?? '').split(':')[0]); return Number.isSafeInteger(t) ? t : null; };
+  const lawFindings = [...judged.findings, ...products, ...ledger.forged.map((k) => ({ code: 'uid', at: k, t: templateOfKey(k) }))];
   const law = judged.count + products.length + ledger.forged.length;
   const sig = law > 0 ? lawSigOf(lawFindings) : null;
   const lawHolds = law > 0 && sig !== row.law_excused ? law : 0;
@@ -161,7 +165,10 @@ export async function verdictOn({ db, nowS }, { player, char, seq, key }, row, s
   // the copies this checkpoint found this record holding - found and counted on the row by chargeSteps, after the
   // verdict's write; they hold nothing (AUTO-HOLD: the pieces are locked, ledger.js)
   const fresh = ledger.copies.length;
-  const rising = lawHolds > 0 && (row.law_sig == null || row.law_sig === row.law_excused);
+  // AUDIT AUTO-HOLD: a key on another piece holds while it is carried, and is NO STRIKE - it is no claim to the piece it was
+  // minted for (ledger.js), and a peer can hand one over a body or a chest: three planted were a week's hold for the one
+  // who took them up, as a contested claim would have been
+  const rising = lawHolds > 0 && lawFindings.some((f) => f.code !== 'uid') && (row.law_sig == null || row.law_sig === row.law_excused);
   const count = lawCountOf({ strikes: row.strikes ?? null, served: row.law_holds ?? null, until: row.held_until ?? null, at: row.law_at ?? null }, { rising, holding: lawHolds > 0, nowS });
   const held = holdOf({ prev: row.held ?? null, law: lawHolds, until: count.until, nowS, over: budget.over, enforce: config.enforce });
   // the cutover's outlier: a first judgement far past its level's line is flagged for staff, and holds nothing

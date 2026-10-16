@@ -315,8 +315,9 @@ served forgotten a month after the last finding that held or the last timed hold
 `held_until`, `law_holds`, `law_at` on the row); **every copies' hold standing is lifted** - migration 0120, each
 written among the character's findings as a staff act `by: 'auto-hold'`.
 
-What the player hears: a checkpoint answers `locked`, the keys of the copies its record shows (`LOCKED_SAID_MAX`, 40,
-`net/realmTradeLaw.js` - the one number the service and the session read); the session hands the whole set on as each
+What the player hears: a checkpoint answers `locked`, the keys of the copies its record shows (`LOCKED_SAID_MAX`, 200,
+`net/realmTradeLaw.js` - the one number the service and the session read), `[]` for none - every answer, so a session
+hearing no `locked` at all (an older Worker, a deploy's window) keeps the set it has; the session hands the whole set on as each
 answer lands and tells each piece once ON THIS DEVICE (`systems/realmSaves.js`, `dagger.realm.locked.<id>`), and the
 notice names every locked piece in the character's own lists and counts the rest (`scenes/realmHoldHost.js`, wired at
 bootWorld's one line that wired the hold's notice), in the player's language: "The realm has locked your ...: it found
@@ -329,12 +330,14 @@ said again as the law's hold, the piece named. A route's refusal over a hold no 
 The client's laws for a locked piece (AUDIT AUTO-HOLD): it is BOUND while it is (`systems/itemBound.js` isBound -
 setRealmLocked from the session's set): it stays in the pack, the wagon and the player's own storage, and goes over no
 counter, onto no ground, into no room's container and through no salvage, its refusals and its card's line in its own
-words; a peer's word never lands one on its reader. `dupes` stays, counting incidents, for staff to read; it holds
+words; a peer's word never lands one on its reader, nor any piece its reader carries (AUDIT AUTO-HOLD: a second of
+one is a copy, the reader's own locked with it - `systems/peerWord.js` notCarried, the rule the session's wiring
+registers: a body's grant, a room's give, a body restored off the wire). `dupes` stays, counting incidents, for staff to read; it holds
 nothing. Staff's acts stand as overrides: `realm-clear` lifts a timed hold and forgets its count (the rollback too),
 `realm-hold` holds by hand; `realm-holds` and `realm-findings` show a timed hold's end and the holds served.
 `ACCOUNT_VERSION` acct141 (acct139 on its branch, renumbered past main's PRIMARY-TRIPS and AUDIT GUILD-WORDS at the
-merge). Pinned by `test/autohold.test.js` (13) over the real Worker, the real session, a scripted service and the
-migration's own statements; `tools/mutants/autohold.json` (56, all dead). The records it moved re-aimed by content, each
+merge). Pinned by `test/autohold.test.js` (16) over the real Worker, the real session, a scripted service and the
+migration's own statements; `tools/mutants/autohold.json` (73, all dead). The records it moved re-aimed by content, each
 saying so, and two retired with the law they held (`INT4-dupes-never-hold`, `INTA-law-over-copies`: a copies' hold, and
 its order beside the law's).
 
@@ -374,11 +377,29 @@ shelf's fix - each finding reproduced over the real code before it counted. What
   wrongly, re-aimed mutant records that named the old law, and pins that a one-character mutant of their law survived
   (the owner's numbers by value, the migration's `strikes >= 3`, the date's unit, a key counted once, an end that moved,
   the staff reads' fields, the rollback through its route).
+- **A key held twice, handed on.** Every route and the realm trade asked only of a key GONE from the record: one of two
+  handed on left the key still there, nothing was asked, and the receiver's row took it unlocked - the copies' hold
+  had capped that, and AUTO-HOLD lifted it. A key whose count falls is leaving now, and one the record held more than
+  once is a copy, never handed on, whatever the ledger has written down yet (`ledger.js` leavingKeys, read by
+  `realm.js` prepareRealmRecord and `realmTrade.js`).
+- **Pieces planted on a reader.** A peer's body grant of a key it read on the wire, a room's give, a body restored off
+  the wire each handed the reader a second of a piece it carries - a copy, and the reader's own locked with it. A
+  peer's word never hands its reader a piece it carries (above).
+- **A planted key, struck.** A key minted for another piece holds while it is carried (INT4: it is no claim) - and
+  struck: three planted were a week's hold for whoever took them up, as a contested claim would have been, and the
+  hold named nothing. It names the piece it is on now and is no strike; a finding of the save's own beside it strikes as
+  ever.
+- **The locked list's edges.** Forty named at most left a record's forty-first copy free on the client (the service
+  refused it still); two hundred now. An answer naming none left the field out, so an older Worker's answer in a
+  deploy's window unbound every locked piece: every answer names them now, and a session hearing nothing keeps its set.
 
 Not changed, and why: a deploy runs the migration a moment before the new Worker serves, and an old Worker's
 checkpoint in that window can lift a migrated hold early - the new one's first checkpoint holds it again from
 `held_until`; a locked copy is locked for good (no route clears `item_dupes` - the owner's call is the piece, not a
-term); the dungeon's legacy piles and bodies were not re-traced past the find.
+term); the dungeon's legacy piles and bodies were not re-traced past the find; a claim costs its maker nothing now (a contested
+claim is no strike - the owner's call), so a player who reads a piece's key off the wire and shows the same piece with
+it stops that piece moving for the grace (`DUPE_GRACE_S`, five minutes) each time, and takes nothing - its own copy
+locked.
 
 ### 4b. The audit (2026-10-09, Mac: "Lets do a comprehensive audit on this")
 
@@ -842,10 +863,15 @@ the clock, and the legacy record held to its own law.
   copy locks its piece and never the character, a contested claim is no strike, and a locked piece is bound on the
   client while it is; the law's third hold is timed (a week, then a month) and lifts on its own; a checkpoint names the
   locked pieces, told once a device; the shop's shelf never lands back a piece its reader carries or stowed, nor a
-  dungeon's find one it carries. Migration `0120_auto_hold` (the timed hold's columns; a hold waiting for staff on three
-  strikes the first timed hold; every other copies' hold lifted; every strike standing given its fade), `ACCOUNT_VERSION`
-  acct141 (acct139 on its branch, renumbered at the merge). `test/autohold.test.js` (13); `tools/mutants/autohold.json`
-  (56, all dead). Pins moved (each marked PIN MOVED where it stands): `int2_judge`, `int4_itemids`, `ringhold`,
+  dungeon's find one it carries; a key a record holds twice never leaves it, a peer's word never hands its reader a
+  piece it carries, and a key on another piece is no strike. Migration `0120_auto_hold` (the timed hold's columns; a
+  hold waiting for staff on three strikes the first timed hold; every other copies' hold lifted; every strike standing
+  given its fade), `ACCOUNT_VERSION`
+  acct141 (acct139 on its branch, renumbered at the merge). `test/autohold.test.js` (16); `tools/mutants/autohold.json`
+  (73, all dead). Pins moved (each marked PIN MOVED where it stands): `int2_judge`, `int4_itemids`, `ringhold`,
+  `realm1`, `auditrealm2_service`, `auditrealm2_client` (every answer naming the locked pieces, `[]` for none),
+  `auditworld4`, `hackedgold`, `ss1_stones` (a body restored and a peer's grant asking notCarried; `partyloot`'s lifted
+  scope given it),
   `fb1011g_heldside`, `crafthold` (a staff hold where it set a copies' one), `auditlwii2_service` (a patron's claimant
   contested), `auditsetsonline` and `auditworld6a` (the interior landings hand on what the reader carries), L10N4's map
   (`net/realmTradeLaw.js` 23 -> 21: two retired notices and the timed hold's through `t()`), and the version pins at

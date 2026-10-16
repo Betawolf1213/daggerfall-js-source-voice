@@ -137,7 +137,7 @@ test('REALM P1: a checkpoint lands only under the current lease at the next sequ
   // INT2 (PIN MOVED): every checkpoint is judged now, and its answer says the hold (null: none) - and the tile's level is
   // the save's own, as the honest client's always is (the judge holds a summary claiming another - judge.js 'level-claim')
   const one = await put(id, save(FIRST), g.secret, { lease, seq: 1, summary: { level: 1, className: 'Spellsword' } });
-  assert.deepEqual([one.status, one.body], [200, { ok: true, seq: 1, tradeHeld: null }]);
+  assert.deepEqual([one.status, one.body], [200, { ok: true, seq: 1, tradeHeld: null, locked: [] }]);   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   const read = await get(id, g.secret);
   assert.deepEqual([read.status, read.seq, new TextDecoder().decode(read.bytes)], [200, '1', FIRST]);
   assert.equal(read.expose, 'x-realm-seq', 'the browser may read the sequence');

@@ -523,6 +523,7 @@ export function createRealmSession({
    *  never told its player (AUDIT AUTO-HOLD: every join told them all again). */
   let lockedKeys = lockedTold(storage, id);
   const heardLocked = (/** @type {unknown} */ v) => {
+    if (v === undefined) return;   // AUDIT AUTO-HOLD: an answer saying nothing of them (a service mid-deploy) leaves them as they stand - every answer names them, `[]` for none
     const keys = Array.isArray(v) ? [...new Set(v)].filter((k) => typeof k === 'string' && LEDGER_KEY_RE.test(k)).slice(0, LOCKED_SAID_MAX) : [];
     const fresh = keys.filter((k) => !lockedKeys.includes(k));
     lockedKeys = keys;

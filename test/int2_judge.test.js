@@ -108,7 +108,7 @@ test('INT2/INT3: a lawless checkpoint is STORED and its character held - said in
   assert.equal(s.row(R.id).judged_seq, 1, 'the first save judged');
   const forged = freshSave({ name: 'ann', items: [{ ...dagger(), affixes: [{ id: 'damage', value: 40 }] }] });
   const r = await s.put(who, R, forged, { summary: { level: 1 } });
-  assert.deepEqual([r.status, r.body], [200, { ok: true, seq: 2, tradeHeld: 'law', tradeHeldWhy: { code: 'rarity', t: 113 } }], 'stored, held, and the piece named');
+  assert.deepEqual([r.status, r.body], [200, { ok: true, seq: 2, tradeHeld: 'law', tradeHeldWhy: { code: 'rarity', t: 113 }, locked: [] }], 'stored, held, and the piece named');   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   assert.deepEqual([s.row(R.id).seq, s.row(R.id).held, s.row(R.id).strikes], [2, 'law', 1]);
   for (let i = 0; i < 4; i++) await s.put(who, R, forged);
   assert.equal(s.row(R.id).strikes, 1, 'the same piece carried on: one strike');

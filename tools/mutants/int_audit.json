@@ -112,8 +112,8 @@
   {
     "name": "INTA-strike-a-checkpoint",
     "file": "server-account/src/verdict.js",
-    "old": "  const rising = lawHolds > 0 && (row.law_sig == null || row.law_sig === row.law_excused);",
-    "new": "  const rising = lawHolds > 0;",
+    "old": "  const rising = lawHolds > 0 && lawFindings.some((f) => f.code !== 'uid') && (row.law_sig == null || row.law_sig === row.law_excused);",
+    "new": "  const rising = lawHolds > 0 && lawFindings.some((f) => f.code !== 'uid');",
     "tests": [
       "test/int2_judge.test.js"
     ]
@@ -185,8 +185,8 @@
     "name": "INTA-the-why-unsaid",
     "file": "server-account/src/realm.js",
     "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - the answer carries `locked` beside it",
-    "old": "  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), ...(v.locked.length ? { locked: v.locked } : {}) };",
-    "new": "  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(v.locked.length ? { locked: v.locked } : {}) };",
+    "old": "  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), locked: v.locked };",
+    "new": "  return { ok: true, seq, tradeHeld: stood.held ?? null, locked: v.locked };",
     "tests": [
       "test/int2_judge.test.js"
     ]
