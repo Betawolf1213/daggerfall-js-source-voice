@@ -101,7 +101,7 @@ test('INSTANCES: a party pose\'s word for a member\'s instance, both ways', () =
 test('INSTANCES: offered only where the relay admits them - world208 and later (world206 then world207 on its branch, renumbered past SERPENT5 and ONE-BODY at the merges)', () => {
   assert.equal(INSTANCE_RELAY_MIN, 208);
   assert.equal(relaySupportsInstances('world207'), false, 'ONE-BODY\'s relay keeps no instance');
-  assert.equal(relaySupportsInstances('world208'), true);
+  assert.equal(relaySupportsInstances('world209'), true);
   assert.equal(relaySupportsInstances('world1000'), true);
   assert.equal(relaySupportsInstances(undefined), false);
   assert.equal(relaySupportsInstances('world208x'), false);

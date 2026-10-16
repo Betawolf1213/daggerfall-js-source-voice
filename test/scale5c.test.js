@@ -39,6 +39,7 @@ async function world(fn) {
         for (let i = 0; i < 6; i++) {
           for (const [k, r] of W.made) if (H.isChannelShard(k)) await r.room._hubUpFlush();
           for (const [k, r] of [...W.made]) if (H.isChannelBus(k)) await r.room._downFlush();
+          for (const [k, r] of [...W.made]) if (H.isChannelShard(k)) await r.room._hubPoll();   // HUB-PULL: each shard asks for what it is owed
         }
       };
       /** A hub link for `n` (account `acct-<n>`), said hello to `key` - its own shard unless named. */
@@ -123,7 +124,7 @@ test('SCALE5c a shard holds its own roster and says the hub\'s count: its welcom
     assert.equal(old.sent[0].n, 5, 'the bus counts every shard');
     const shard = W.room(k0);
     assert.ok(bus.room._countT, 'the count\'s tell owed - a hello on the bus');
-    await bus.room._busCountTell();   // what its timer runs, HUB_COUNT_MS on
+    await bus.room._busCountTell(); await shard.room._hubPoll();   // what its timer runs, HUB_COUNT_MS on - and (HUB-PULL) the shard asking for it
     assert.equal(shard.room._hubTotal, 5, 'told the bus\'s count - a hello on the bus moved it');
     assert.equal(bus.room._toldN.get(k0), 5, 'and what it was told kept');
     assert.ok(shard.room._hubCountT, 'and owes its sockets the count');
@@ -136,21 +137,21 @@ test('SCALE5c a shard holds its own roster and says the hub\'s count: its welcom
     clearTimeout(bus.room._countT); bus.room._countT = null;
     const wl = await link(late);
     assert.ok(bus.room._countT, 'a hello on a shard owes the tell too');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 6, 'a hello on another shard');
     assert.equal(bus.room._namedCount(), 6);
     clearTimeout(bus.room._countT); bus.room._countT = null;
     await drop(old, SOCIAL_ROOM);
     assert.ok(bus.room._countT, 'a leave on the bus owes the tell');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 5, 'a leave on the bus');
     const held = bus.room._vsocks.size;
     await drop(wl, H.hubOfSubject(`acct-${late}`));
     assert.equal(bus.room._vsocks.size, held - 1, 'a leave on a shard handed up at once, not at its sync');
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(shard.room._hubTotal, 4);
     const told = bus.room._toldN.get(k0);
-    await bus.room._busCountTell();
+    await bus.room._busCountTell(); await shard.room._hubPoll();
     assert.equal(bus.room._toldN.get(k0), told, 'nothing said to a shard told the count already');
     assert.deepEqual(w0.sent[0].peers, [], 'its roster its own shard\'s (it was first there)');
   });
