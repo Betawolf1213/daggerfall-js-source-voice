@@ -36,8 +36,21 @@
 // COURSE AS DATA: courseOf lays a course record (`{ steps, checkpoints, end }`, the Steps' uniform step) from a spec -
 // the Hour's is world/sdSteps.js courseOf(SD_COURSE_SPEC), byte for byte the course it froze at import.
 //
+// THE ASCENT (LAW 9, 2026-10-16, Mac: "Something that isnt just a straight line from point A to point B";
+// bible/11-Multiplayer/Elite-Gates-Ascent.md section 6): THE PROOFS OVER THE ROUTE. A hall of THE ASCENT's law is a way
+// (`spec.route` - net/egRoute.js) whose courses stand along it, each along +z where it stands: a road's crossing is its
+// links' times along its path (net/egRouteProof.js - a walk at the run, a stair at the motor's pace on a slope, a climb at the
+// climbing motor's pace and its mantle within the grip, a Drop its fall) and each `span` link's by THE TIMED SOLVER on its own
+// course, waited for from the moment the way brings a body to it (egRouteCross). THE MEDIAN holds over the route on every
+// proven road (0, and 1 where the route lays it; a side way never), the windows and the waits as before; THE FAST BUILD's
+// bound (egFastCross, egCrossMin - the fair trail's measure) runs the route too; egCourseOf's end is the route's. Two pieces
+// meet only on one course's line (egSpanPairs). Every hall of the laws before is proven by z, byte for byte as it was.
+//
 // The motor's numbers are pinned here, not imported (this module is in the relay's bundle; test/egfull_span.test.js
 // holds them equal to player/motor.js). Pure. Not a DFU member. Ledger A (ELITE-GATES).
+import { egRouteAlong, egRouteLen } from './egRoute.js';
+import { egRouted, egRouteLegs, egRouteRoads, egLegSeconds, egLegRefusal, egLegGripOwed, egMantleS, EG_CLIMB_MPS, EG_CLIMB_HANG_M, EG_CLIMB_START_S, EG_FAST_CLIMB_X,
+  EG_STAIR_DOWN_X, EG_ROUTE_COURSE_SIDE_M, EG_ROUTE_PROOF_LAW } from './egRouteProof.js';   // THE ASCENT: the links' law
 
 /** THE SPAN BUILD's run (Speed 10, Running 0): player/motor.js runSpeed(10, 0). */
 export const EG_SPAN_RUN_MPS = ((10 + 150) / 39.5) * 1.35;
@@ -382,7 +395,8 @@ export function egSpanOf(seed, hall, band, { r, sizes, start, checkR }) {
  * the hall's slot, `x0`). Its steps are the spec's own steps of that road in order (courseOf's records, said in metres);
  * its checkpoints where the road begins (the arrival plate, or the Low Road's island) and then its islands; its end where it
  * meets its goal (the end plate's edge - a Court's ground's end - or the Low Road's last step's). Null for a road the hall
- * does not lay. Pure.
+ * does not lay. THE ASCENT (spec law 9): a routed hall's end is along THE ROUTE - the end plate's near edge along the road's
+ * way (net/egRoute.js egRouteAlong), never a z. Pure.
  * @param {any} spec @param {number} [road]
  */
 export function egCourseOf(spec, road = 0) {
@@ -390,7 +404,10 @@ export function egCourseOf(spec, road = 0) {
   const start = road === 0 ? spec?.arrive : isles.shift();
   if (!start || (road !== 0 && !steps.length)) return null;
   const at = (q) => ({ x: q.x, y: q.y ?? 0, z: q.z, r: q.r }), last = steps[steps.length - 1];
-  const end = road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z - spec.end.r : spec.len;
+  // THE ASCENT (LAW 9, section 6): a routed hall's road meets its goal along THE ROUTE - the end plate's near edge along the
+  // road's own way (or the road's whole length where it ends on no plate), never a z
+  const end = egRouted(spec) ? (spec.end ? egRouteAlong(spec, spec.end, road) - spec.end.r : egRouteLen(spec, road))
+    : road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z - spec.end.r : spec.len;
   return { road, steps, checkpoints: [at(start), ...isles.map(at)], end };
 }
 /** Out and back at one speed: -amp to amp and home over `period` (s) - a drum's roll, a moonbeam's walk. */
@@ -488,8 +505,10 @@ export const egSpanBuildOf = (v) => buildsOf(v)[0];
  */
 export function egSpanPairs(spec) {
   const steps = spec.steps ?? [], out = [];
-  // one road's steps follow one another (THE FORK: each road its own course - section 11.4)
-  const meets = (a, b) => !!a && !!b && (a.road ?? 0) === (b.road ?? 0) && Math.abs(a.z + a.d / 2 - (b.z - b.d / 2 - (b.gap ?? 0))) < 1e-6;
+  // one road's steps follow one another (THE FORK: each road its own course - section 11.4). THE ASCENT (spec law 9): a hall's
+  // courses stand along its way, each on its own line - two pieces meet only on one line (a run's pieces stand within 2 m)
+  const one = (spec.law ?? spec.v ?? 0) >= EG_ROUTE_PROOF_LAW;
+  const meets = (a, b) => !!a && !!b && (a.road ?? 0) === (b.road ?? 0) && Math.abs(a.z + a.d / 2 - (b.z - b.d / 2 - (b.gap ?? 0))) < 1e-6 && (!one || Math.abs(a.x - b.x) <= EG_ROUTE_COURSE_SIDE_M);
   for (let k = 0; k < steps.length; k++) {
     const s = steps[k], prev = steps[k - 1], next = steps[k + 1];
     if (s.road === 2) continue;   // an alcove's side way is optional - never proven, never asked of anyone
@@ -595,18 +614,11 @@ function fastPath(spec, road) {
   const len = Math.max(0, (spec.end?.z ?? spec.len ?? 0) - (spec.arrive?.z ?? 0));
   return { path, zn, roadOf, len, across: fork ? (2 * Math.abs(spec.fork.lowX - spec.fork.x)) / FAST_BUILD.run : 0, B: buildsOf(spec?.v)[1] };
 }
-/**
- * EG6a - A ROAD CROSSED AT THE FAST BUILD FROM SHARED SECOND `t0` (section 10.5), seconds: from the arrival plate to the end
- * plate on `road` - the Low Road the trunk to its fork, the bridges across and back, then its own - its course crossed as
- * THE FAST BUILD crosses it: every launch the first that lands (the timed pieces' windows at its own run and reach), and any
- * piece of its road within its jump leapt past (a jump from what it stands on onto any later piece, or the ground after
- * one, EG_FAST_LEAP_M at most). The earliest arrival over the road's chain - every wait allowed, since a later launch never
- * lands sooner - the still ground run at its run. Infinity when no landing comes within the solver's horizon.
- * @param {any} spec @param {number} [road] @param {number} [t0]
- */
-export function egFastCrossAt(spec, road = 0, t0 = 0, P = fastPath(spec, road)) {
-  const { path, zn, roadOf, len, across, B } = P, m = path.length, run = FAST_BUILD.run;
-  if (!m) return len / run + across;
+/** THE FAST BUILD over a chain of pairs `path` (each launching at `zn`, the last landing at its last) from its first launch at
+ *  shared second `t0`: the earliest it lands from the last, every launch the first that lands and any piece of its road within
+ *  its jump leapt past (EG_FAST_LEAP_M) - or Infinity. egFastCrossAt's own search, and a routed hall's span legs'. */
+function fastChain(path, zn, roadOf, B, t0) {
+  const m = path.length, run = FAST_BUILD.run;
   const yOf = (p) => (p.a ? p.a.y : (p.b ? p.b.y : 0)), yTo = (p) => (p.b ? p.b.y : p.by ?? (p.a ? p.a.y : 0));
   const E = new Float64Array(m + 1).fill(Infinity);
   E[0] = t0;
@@ -623,18 +635,47 @@ export function egFastCrossAt(spec, road = 0, t0 = 0, P = fastPath(spec, road)) 
       if (at < E[j + 1]) E[j + 1] = at;
     }
   }
-  return E[m] === Infinity ? Infinity : E[m] - t0 + Math.max(0, len - (zn[m] - zn[0])) / run + across;
+  return E[m];
+}
+/**
+ * EG6a - A ROAD CROSSED AT THE FAST BUILD FROM SHARED SECOND `t0` (section 10.5), seconds: from the arrival plate to the end
+ * plate on `road` - the Low Road the trunk to its fork, the bridges across and back, then its own - its course crossed as
+ * THE FAST BUILD crosses it: every launch the first that lands (the timed pieces' windows at its own run and reach), and any
+ * piece of its road within its jump leapt past (a jump from what it stands on onto any later piece, or the ground after
+ * one, EG_FAST_LEAP_M at most). The earliest arrival over the road's chain - every wait allowed, since a later launch never
+ * lands sooner - the still ground run at its run. Infinity when no landing comes within the solver's horizon. THE ASCENT
+ * (spec law 9): a routed hall's road along THE ROUTE - each leg at the fast build by its kind's law (net/egRouteProof.js), a
+ * span leg's course crossed so from the moment the way brings the body to it.
+ * @param {any} spec @param {number} [road] @param {number} [t0] @param {any} [P] the road's chain (fastPath), when held
+ */
+export function egFastCrossAt(spec, road = 0, t0 = 0, P = null) {
+  if (egRouted(spec)) return routeFastAt(solvedLegs(spec, road), t0, buildsOf(spec.v ?? spec.law)[1]);   // THE ASCENT: along THE ROUTE's legs
+  const { path, zn, roadOf, len, across, B } = P ?? fastPath(spec, road), m = path.length, run = FAST_BUILD.run;
+  if (!m) return len / run + across;
+  const Em = fastChain(path, zn, roadOf, B, t0);
+  return Em === Infinity ? Infinity : Em - t0 + Math.max(0, len - (zn[m] - zn[0])) / run + across;
 }
 /**
  * EG6a - A ROAD'S FASTEST CROSSING AT THE FAST BUILD (section 10.5), seconds: egFastCrossAt's least over start phases every
  * EG_SOLVE_HORIZON_S / 72 - and none can be less than the road's length at its run, so the sweep ends on reaching it. A
- * road the fast build finds no landing on is its length alone. Kept per spec.
+ * road the fast build finds no landing on is its length alone. Kept per spec. THE ASCENT (spec law 9): a routed hall's road
+ * along THE ROUTE (egFastCrossAt's), none quicker than its legs unwaited at the fast build - its length the route's.
  * @param {any} spec @param {number} [road]
  */
 export function egFastCross(spec, road = 0) {
   let kept = _fastCross.get(spec);
   if (!kept) { kept = new Map(); _fastCross.set(spec, kept); }
   if (kept.has(road)) return kept.get(road);
+  if (egRouted(spec)) {
+    // THE ASCENT (LAW 9, section 6): the road's legs at THE FAST BUILD - none quicker than each at its kind's pace unwaited
+    const legs = solvedLegs(spec, road), B = buildsOf(spec.v ?? spec.law)[1];
+    let floor = 0, best = Infinity;
+    for (const L of legs) floor += L.fast;
+    for (let q = 0; q < CROSS_SAMPLES && best > floor + 1e-9; q++) best = Math.min(best, routeFastAt(legs, (q * EG_SOLVE_HORIZON_S) / CROSS_SAMPLES, B));
+    if (best === Infinity) best = floor;
+    kept.set(road, best);
+    return best;
+  }
   const P = fastPath(spec, road), floor = P.len / FAST_BUILD.run + P.across;
   let best = Infinity;
   for (let q = 0; q < CROSS_SAMPLES && best > floor + 1e-9; q++) best = Math.min(best, egFastCrossAt(spec, road, (q * EG_SOLVE_HORIZON_S) / CROSS_SAMPLES, P));
@@ -646,9 +687,100 @@ export function egFastCross(spec, road = 0) {
  *  EG_CROSS_SLACK (ms) - a measure in the receipt's `m`, never a door's gate, until EG21. */
 export const egCrossMin = (spec, road = 0) => Math.round(egFastCross(spec, road) * (1 - EG_CROSS_SLACK) * 1000);
 
+// ── THE ASCENT (LAW 9, 2026-10-16; Elite-Gates-Ascent.md section 6): THE ROUTE'S CROSSING ────────────────────────────────
+/** THE SPAN BUILD on THE ROUTE's links (net/egRouteProof.js egLegSeconds): its run, its free climb (the walk's, Climbing 0),
+ *  the free climb's start, a rest on each ledge until the grip is back, the run down a stair, the motor's fall and the mantle
+ *  at Climbing 0 from the hang's reach. */
+const ROUTE_SPAN = Object.freeze({ run: EG_SPAN_RUN_MPS, climb: EG_CLIMB_MPS, start: EG_CLIMB_START_S, rest: true, down: 1, g: EG_JUMP_G, mantle: (H) => egMantleS(Math.min(H, EG_CLIMB_HANG_M), 0) });
+/** THE FAST BUILD on them - never slower than a body can be: its run, the fastest free climb (EG_FAST_CLIMB_X), no start, no
+ *  rest (a grip of 30 s), EG_STAIR_DOWN_X down a stair and the quickest mantle (Climbing 100, from no height). */
+const ROUTE_FAST = Object.freeze({ run: EG_FAST_RUN_MPS, climb: EG_FAST_RUN_MPS * EG_FAST_CLIMB_X, start: 0, rest: false, down: EG_STAIR_DOWN_X, g: EG_JUMP_G, mantle: () => egMantleS(0, 100) });
+const launchZ = (p) => (p.a ? p.a.z + p.a.d / 2 : p.edge);
+const roadOfPair = (p) => (p.b ?? p.a)?.road ?? 0;
+/** @type {WeakMap<object, any[]>} */
+const _solved = new WeakMap();
+/** A ROUTED ROAD AS THE SOLVER CROSSES IT: its legs (net/egRouteProof.js egRouteLegs), a span leg with its own course's chain
+ *  (egSpanPairs over its pieces - one course, one road), where each pair launches and where the last lands; every leg's
+ *  seconds unwaited at THE SPAN BUILD and THE FAST BUILD; the grip a climb leaves spent. Kept per spec. */
+function solvedLegs(spec, road) {
+  let kept = _solved.get(spec);
+  if (!kept) { kept = [null, null]; _solved.set(spec, kept); }
+  const r = road === 1 ? 1 : 0;
+  kept[r] ??= egRouteLegs(spec, r).map((g) => {
+    const pairs = g.kind === 'span' && g.steps.length ? egSpanPairs({ steps: g.steps }) : [], last = pairs[pairs.length - 1];
+    const zn = last ? [...pairs.map(launchZ), last.b ? last.b.z + last.b.d / 2 : last.edge] : [];
+    return { g, pairs, zn, span: egLegSeconds(g, ROUTE_SPAN), fast: egLegSeconds(g, ROUTE_FAST), owed: egLegGripOwed(g) };
+  });
+  return kept[r];
+}
+/** A span leg crossed at THE SPAN BUILD, entered at shared second `t` (s): its walked length at the run, and each pair waited
+ *  for in turn from the moment the run brings the body to its launch - egRoadCross's own chain. */
+function spanLegAt(L, t, B) {
+  let waited = 0;
+  for (const p of L.pairs) {
+    const at = t + (launchZ(p) - L.g.z0) / EG_SPAN_RUN_MPS + waited;
+    let w = 0;
+    while (w < EG_SOLVE_HORIZON_S && !jumpLands(p, at + w, B)) w += EG_SOLVE_STEP_S;
+    waited += w;
+  }
+  return L.span + waited;
+}
+/** A routed road crossed at THE SPAN BUILD from shared second `t0` (s): its legs in turn, a span leg by the solver - and before
+ *  each climb, whatever of the grip the last climb spent has not come back since (the feet on the floor between). */
+function routeCrossAt(legs, t0, B) {
+  let t = t0, owed = 0, since = t0;
+  for (const L of legs) {
+    if (L.g.kind === 'climb' && owed - (t - since) > 0) t += owed - (t - since);
+    t += L.pairs.length ? spanLegAt(L, t, B) : L.span;
+    if (L.g.kind === 'climb') { owed = L.owed; since = t; }
+  }
+  return t - t0;
+}
+/** A span leg crossed at THE FAST BUILD, entered at shared second `t` (s; Infinity where no landing comes): its chain from its
+ *  first launch (fastChain), then the rest of its walked length at the run - egFastCrossAt's own arithmetic. */
+function fastLegAt(L, t, B) {
+  if (!L.pairs.length) return L.fast;
+  const run = EG_FAST_RUN_MPS, m = L.pairs.length, E = fastChain(L.pairs, L.zn, roadOfPair, B, t + Math.max(0, L.zn[0] - L.g.z0) / run);
+  return E === Infinity ? Infinity : E - t + Math.max(0, L.g.len - (L.zn[m] - L.g.z0)) / run;
+}
+/** A routed road crossed at THE FAST BUILD from shared second `t0` (s; Infinity where a span leg has no landing). */
+function routeFastAt(legs, t0, B) {
+  let t = t0;
+  for (const L of legs) {
+    const s = fastLegAt(L, t, B);
+    if (s === Infinity) return Infinity;
+    t += s;
+  }
+  return t - t0;
+}
+/**
+ * THE ASCENT - A ROAD'S CROSSING OVER THE ROUTE (section 6): THE SPAN BUILD from the arrival plate to the door along road `road`'s
+ * links (net/egRouteProof.js - each by its kind's law, a span link's course by THE TIMED SOLVER, every pair waited for from the
+ * moment the way brings the body to it), from start phases every EG_SOLVE_HORIZON_S / 72 - `{ fast, median, n }` (s; `n` the
+ * timed pairs on the way). A hall of the laws before: its course's crossing (egRoadCross), exactly. Pure.
+ * @param {any} spec @param {number} [road]
+ */
+export function egRouteCross(spec, road = 0) {
+  if (!egRouted(spec)) return egRoadCross(spec, road);
+  const legs = solvedLegs(spec, road), [B] = buildsOf(spec.v ?? spec.law), times = [];
+  let n = 0;
+  for (const L of legs) n += L.pairs.length;
+  for (let k = 0; k < CROSS_SAMPLES; k++) times.push(routeCrossAt(legs, (k * EG_SOLVE_HORIZON_S) / CROSS_SAMPLES, B));
+  times.sort((a, b) => a - b);
+  return { fast: times[0], median: times[CROSS_SAMPLES >> 1], n };
+}
+/** THE ASCENT: a routed road crossed at THE SPAN BUILD from shared second `t0` (s) - one start phase of egRouteCross (for a
+ *  tool and the sweep's report). */
+export const egRouteCrossAt = (/** @type {any} */ spec, road = 0, t0 = 0) => routeCrossAt(solvedLegs(spec, road), t0, buildsOf(spec.v ?? spec.law)[0]);
+/** THE ASCENT: a routed road's legs as the solver crosses them - each `{ g, pairs, zn, span, fast, owed }` (the sweep's pilot
+ *  crosses each span leg's `pairs`). Kept per spec. */
+export const egRouteSolved = (/** @type {any} */ spec, road = 0) => solvedLegs(spec, road);
+
 /**
  * THE TIMED SOLVER on a hall's course: `{ ok, why }` - every pair's windows, every Crumble left in time, every Vent's
  * platform wide enough, every Drop's landing deep enough. `why` names each failure (the step's number and what failed).
+ * THE ASCENT (spec law 9, section 6): a routed hall's courses as they stand along its way, every link of its proven roads by
+ * its kind's law (net/egRouteProof.js), and THE MEDIAN over THE ROUTE (egRouteCross).
  */
 export function egSpanProof(spec) {
   const why = [], [B] = buildsOf(spec.v), law8 = (spec.v ?? 0) >= EG_SOLVE_LAW;   // AUDIT EG V: a law-8 hall on THE LAW'S CLOCK
@@ -685,15 +817,22 @@ export function egSpanProof(spec) {
     if (spec.tube && EG_SPAN_RUN_MPS < EG_SET_MARGIN * spec.tube.mps) why.push(`the Collapsing Tube falls at ${spec.tube.mps} m/s, past the span build's run over its margin`);
     for (const f of spec.frags ?? []) if (f.play === 'forgeline' && !egForgeLineClear(spec, f, B)) why.push(`the Forge Line at ${f.z0} m: no crossing clear of its hammers from some start`);
   }
-  // THE MEDIAN, road by road: no road whose ordinary crossing runs far past its best
-  if (!why.length) for (const road of [0, 1]) {
-    const c = egRoadCross(spec, road);
+  // THE ASCENT (LAW 9, section 6): a routed hall's proven roads (the main way, and THE FORK's other where the route lays one - a
+  // side way never), every link of them a way by its kind's law (net/egRouteProof.js egLegRefusal: a stair the motor walks, a
+  // Drop down and unbilled, a climb up, on a face, each pitch within the grip at Climbing 0 with fatigue spent)
+  const routed = egRouted(spec), roads = routed ? egRouteRoads(spec) : [0, 1];
+  if (routed) for (const road of roads) for (const g of egRouteLegs(spec, road)) { const w = egLegRefusal(g); if (w) why.push(`road ${road}, link ${g.i}: ${w}`); }
+  // THE MEDIAN, road by road: no road whose ordinary crossing runs far past its best. THE ASCENT: over THE ROUTE - the road's
+  // links from the arrival plate to the door, its courses' pairs waited for where the way brings a body to them
+  if (!why.length) for (const road of roads) {
+    const c = routed ? egRouteCross(spec, road) : egRoadCross(spec, road);
     if (c.n && c.fast > 0 && c.median > EG_MEDIAN_X * c.fast) why.push(`road ${road}: a median crossing of ${c.median.toFixed(1)} s past ${EG_MEDIAN_X} x its fastest ${c.fast.toFixed(1)} s`);
   }
-  // EG-ZC - THE SHAFTS (section 10.5): each shaft's own steps crossed, at their median, inside EG_SHAFT_MAX_S
+  // EG-ZC - THE SHAFTS (section 10.5): each shaft's own steps crossed, at their median, inside EG_SHAFT_MAX_S (THE ASCENT: its
+  // own line's - a routed hall's other courses may stand at its z)
   if (!why.length) for (const f of spec.frags ?? []) {
     if (f.cls !== 'shaft') continue;
-    const c = egRoadCross({ v: spec.v, steps: (spec.steps ?? []).filter((s) => (s.road ?? 0) === (f.road ?? 0) && s.z > f.z0 && s.z < f.z1) }, f.road ?? 0);
+    const c = egRoadCross({ v: spec.v, steps: (spec.steps ?? []).filter((s) => (s.road ?? 0) === (f.road ?? 0) && s.z > f.z0 && s.z < f.z1 && (!routed || Math.abs(s.x - f.x) <= EG_ROUTE_COURSE_SIDE_M)) }, f.road ?? 0);
     if (c.n && c.median > EG_SHAFT_MAX_S) why.push(`a shaft crossed in ${c.median.toFixed(1)} s, past ${EG_SHAFT_MAX_S} s`);
   }
   return { ok: why.length === 0, why };

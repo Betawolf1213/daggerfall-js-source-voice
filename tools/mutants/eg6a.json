@@ -209,8 +209,8 @@
   {
     "name": "EG6A-the-bridges-unrun",
     "file": "src/net/egSpanLaw.js",
-    "old": "  return E[m] === Infinity ? Infinity : E[m] - t0 + Math.max(0, len - (zn[m] - zn[0])) / run + across;",
-    "new": "  return E[m] === Infinity ? Infinity : E[m] - t0 + Math.max(0, len - (zn[m] - zn[0])) / run;",
+    "old": "  return Em === Infinity ? Infinity : Em - t0 + Math.max(0, len - (zn[m] - zn[0])) / run + across;",
+    "new": "  return Em === Infinity ? Infinity : Em - t0 + Math.max(0, len - (zn[m] - zn[0])) / run;",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -254,8 +254,8 @@
   {
     "name": "EG6A-the-end-plate-s-middle",
     "file": "src/net/egSpanLaw.js",
-    "old": "const end = road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z - spec.end.r : spec.len;",
-    "new": "const end = road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z : spec.len;",
+    "old": ": road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z - spec.end.r : spec.len;",
+    "new": ": road !== 0 ? last.z + last.d / 2 : spec.end ? spec.end.z : spec.len;",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -263,8 +263,8 @@
   {
     "name": "EG6A-the-low-road-s-end-its-middle",
     "file": "src/net/egSpanLaw.js",
-    "old": "const end = road !== 0 ? last.z + last.d / 2 : spec.end",
-    "new": "const end = road !== 0 ? last.z : spec.end",
+    "old": ": road !== 0 ? last.z + last.d / 2 : spec.end",
+    "new": ": road !== 0 ? last.z : spec.end",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -398,8 +398,8 @@
   {
     "name": "EG6A-a-riser-jumped",
     "file": "tools/egSpanSolve.mjs",
-    "old": "      climbing = true;\n      let up = false;",
-    "new": "      climbing = false;\n      let up = false;",
+    "old": "        climbing = true;\n        let up = false;",
+    "new": "        climbing = false;\n        let up = false;",
     "tests": [
       "test/eg6a_sweep.test.js"
     ]
