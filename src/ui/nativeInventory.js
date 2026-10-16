@@ -1025,7 +1025,7 @@ export class NativeInventoryWindow {
       const perform = (amount) => {
         audio.playOneShot(SOUND.ButtonClick, 1);   // DoTransferItem (:1583)
         applyTransfer(it, { ...plan, amount }, this.hooks.items(), to, { entity: this.hooks.entity, fromLocal: true,   // F157: a lit torch leaving the pack goes out
-          putBack: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });   // STOLEN-GOODS: put back, it is its owner's again
+          returnTo: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });   // STOLEN-GOODS: the owner's piece put back is theirs again
       };
       if (!whole && this._splitRequired(it, plan)) { this._openSplit(it, plan.amount, perform); return; }
       perform(plan.amount);
@@ -1141,7 +1141,7 @@ export class NativeInventoryWindow {
         // GoldPieces and the member RETURNS. The null IS that return: no
         // equip (:1580), no choose-one close (:1585-1591).
         const taken = applyTransfer(it, { ...plan, amount }, remote, bag, { entity: this.hooks.entity, toPlayer: true,
-          stolen: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });   // STOLEN-GOODS: a shut shop's shelf, a stranger's cupboard - marked as it lands
+          stolenFrom: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });   // STOLEN-GOODS: the owner's piece off a shut shop's shelf, a stranger's cupboard, a robbed caravan - marked as it lands
         if (taken === null) return;
         if (plan.equip && this.hooks.entity) {
           // S23: the taken item still has to pass the career gate

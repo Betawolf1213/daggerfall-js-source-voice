@@ -35,6 +35,20 @@ import { equipItem, equipTableOf, isEquipped } from '../src/systems/equip.js';
 import { isLightSource } from '../src/systems/useItem.js';
 import { setLightSource } from '../src/systems/lightSource.js';
 import { setSeed, getSeed, rand } from '../src/formats/dfRandom.js';
+// STOLEN-GOODS AUDIT (2026-10-16): the owner's keeping, the bag at a verdict, the room's word and the counter, the two
+// theft arms that marked nothing, the patron
+import { theftBasket, shopShelfTheft } from '../src/systems/theft.js';
+import { confiscateStolen } from '../src/systems/court.js';
+import { goldStack } from '../src/systems/inventory.js';
+import { applyInteriorLoot, interiorLootRecords } from '../src/world/interiorShared.js';
+import { markCounterBought } from '../src/systems/tradeModes.js';
+import { patronTakes } from '../src/net/patronLaw.js';
+import { lawfulItem } from '../src/systems/itemLaw.js';
+import { isBagItem, hasBag } from '../src/net/bagLaw.js';
+import { mintCarried, heldOf } from '../src/systems/materialsBag.js';
+import { generateItems } from '../src/systems/loot.js';
+import { sea } from './navalSea.mjs';
+import { GRAPPLE_S } from '../src/systems/naval/navalBoarding.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };
@@ -154,7 +168,7 @@ test('STOLEN-GOODS a shut shop\'s shelf: a take through the inventory window (bo
   const arrows = shelf.find((it) => it.templateIndex === ARROW_TEMPLATE);
   const mine = ownArrows();
   const player = thief({ items: [mine] });
-  const w = new NativeInventoryWindow({ items: () => player.items, icons: ICONS, entity: player, loot: { items: () => shelf, stolen: true } });
+  const w = new NativeInventoryWindow({ items: () => player.items, icons: ICONS, entity: player, loot: { items: () => shelf, stolenFrom: new Set(shelf) } });   // PIN MOVED (AUDIT S1): the shop's keeping, as the host takes it
   w._pickRemote(shelf.indexOf(arrows), 'remove');
   assert.equal(shelf.includes(arrows), false, 'taken off the shelf');
   assert.deepEqual(player.items.map((it) => [it.stackCount, isStolen(it)]), [[mine.stackCount, false], [85, true]],
@@ -172,7 +186,8 @@ test('STOLEN-GOODS a shut shop\'s shelf: a take through the inventory window (bo
   // the wagon, shown while the shelf is the loot target, is the player's own
   const wagonItems = [ownArrows()];
   const p2 = thief();
-  const wagonWin = new NativeInventoryWindow({ items: () => p2.items, wagonItems: () => wagonItems, icons: ICONS, entity: p2, loot: { items: () => smithShelf(), stolen: true } });
+  const wagonShelf = smithShelf();
+  const wagonWin = new NativeInventoryWindow({ items: () => p2.items, wagonItems: () => wagonItems, icons: ICONS, entity: p2, loot: { items: () => wagonShelf, stolenFrom: new Set([...wagonShelf, ...wagonItems]) } });   // the wagon's own in the Set too: only the target's showing makes a theft
   wagonWin.usingWagon = true;
   const fromWagon = wagonItems[0];
   wagonWin._pickRemote(0, 'remove');
@@ -185,7 +200,7 @@ test('STOLEN-GOODS a shut shop\'s shelf: a take through the inventory window (bo
     const m2 = ownArrows();
     const e = thief({ items: [m2] });
     let view = null;
-    view = mountEnhancedInventory(host, { entity: e, items: () => e.items, loot: { items: () => s2, stolen: true }, onExit: () => view.unmount() });
+    view = mountEnhancedInventory(host, { entity: e, items: () => e.items, loot: { items: () => s2, stolenFrom: new Set(s2) }, onExit: () => view.unmount() });
     const named = (r) => r.querySelector('.itemname')?.children?.[0]?.textContent ?? '';
     host.querySelectorAll('.itemrow').find((r) => r.closest('.loot-win') && named(r).startsWith('Arrow')).onclick();   // a container's row: a press takes it
     assert.deepEqual(e.items.map((it) => [it.stackCount, isStolen(it)]), [[m2.stackCount, false], [85, true]], 'marked as it landed, its own stack');
@@ -344,11 +359,13 @@ test('STOLEN-GOODS wired (worldModes.js, by source): both sale arms land a piece
   for (const [name, body] of [['the counter', sellArm], ['the keyed list', doSell]]) assert.doesNotMatch(body, /shelf\.items\.push\(/, `${name} pushes nothing onto the shelf`);
   assert.match(wm, /import \{ landSold \} from '\.\.\/systems\/stolenGoods\.js';/);
   const shelfArm = wm.slice(wm.indexOf('function openShelf'), wm.indexOf('function openMerchantSell'));
-  assert.match(shelfArm, /if \(b\.insideOpenShop === false\) \{[\s\S]*loot: \{ items: \(\) => shelf\.items, stolen: true \},/, 'a shut shop\'s shelf');
-  assert.match(wm, /const openLoot = \(privateProperty = false\) => \{[\s\S]{0,200}loot: \{ items: \(\) => c\.items, storage: !privateProperty, stolen: privateProperty \},/, 'a stranger\'s cupboard - the theft arm alone');
+  // PIN MOVED (AUDIT S1): each target hands over the owner's keeping, taken as the window opens - the one Set the mark and
+  // the theft's own law (the shelf's tally, the cupboard's basket) read
+  assert.match(shelfArm, /if \(b\.insideOpenShop === false\) \{[\s\S]*const shelfBefore = new Set\(shelf\.items\);[^\n]*\n\s*const win = interiorInventory\(\{\n\s*loot: \{ items: \(\) => shelf\.items, stolenFrom: shelfBefore \},[\s\S]{0,300}if \(shopShelfTheft\(shelfBefore, shelf\.items\)\)/, 'a shut shop\'s shelf');
+  assert.match(wm, /const openLoot = \(privateProperty = false\) => \{\n\s*const before = privateProperty \? new Set\(c\.items \?\? \[\]\) : null;[^\n]*\n\s*const win = interiorInventory\(\{\n\s*loot: \{ items: \(\) => c\.items, storage: !privateProperty, stolenFrom: before \},[\s\S]{0,400}basket: theftBasket\(before, c\.items \?\? \[\]\),/, 'a stranger\'s cupboard - the theft arm alone, its basket the same Set');
   // the enhanced pack's put-back: it shows a container alone (a body's frame - shipstore.test.js), so no row of the pack
   // can reach a shelf today; its stow still asks the same question the classic window's does, should a layout ever offer it
-  assert.match(src('src/ui/enhancedInventory.js'), /applyTransfer\(item, \{ \.\.\.plan, amount \}, deps\.items\?\.\(\) \?\? \[\], to, \{ entity: deps\.entity, fromLocal: true, putBack: theftTarget\(deps, sessionState\(\)\) \}\);/);
+  assert.match(src('src/ui/enhancedInventory.js'), /applyTransfer\(item, \{ \.\.\.plan, amount \}, deps\.items\?\.\(\) \?\? \[\], to, \{ entity: deps\.entity, fromLocal: true, returnTo: theftTarget\(deps, sessionState\(\)\) \}\);/);
   withDom((dom) => {
     const host = dom.mk('div'); dom.body.append(host);
     const shelf = smithShelf();
@@ -362,4 +379,211 @@ test('STOLEN-GOODS wired (worldModes.js, by source): both sale arms land a piece
     assert.equal(isStolen(dagger), true);
     view.unmount();
   });
+});
+
+// ─── AUDIT (2026-10-16) ──────────────────────────────────────────────────────────────────────────────────────────────
+
+test('STOLEN-GOODS AUDIT S1: A THEFT IS OF THE OWNER\'S PIECES - an honest Longsword misclicked into a stranger\'s cupboard and taken straight back comes out clean (the theft basket 0, shelved at a sale, kept at a verdict); a piece stolen elsewhere is not laundered by the cupboard; a handful off the owner\'s stack is marked AND in the basket, and put back is theirs and out of it; a handful of their coin is counted, never marked (mutants: every take marked, every put cleared, a split\'s source unasked, the split outside the keeping, a merge left in it, the coin uncounted, a stack\'s basket by the list)', () => {
+  const sword = createWeapon(120, 0, () => 0.5);   // a Longsword found, never stolen
+  const dagger = createWeapon(DAGGER, 0, () => 0.5);   // the stranger's
+  const arrows = createWeapon(ARROW_TEMPLATE, 0, () => 0.5);   // and their quiver
+  const coin = goldStack(50);   // and their purse
+  const cupboard = [dagger, arrows, coin];
+  const keeping = new Set(cupboard);   // the host's `before` (worldModes.js openLoot): the owner's keeping as the window opens
+  const player = thief({ items: [sword] });
+  const w = new NativeInventoryWindow({ items: () => player.items, icons: ICONS, entity: player, loot: { items: () => cupboard, stolenFrom: keeping } });
+  // the report's own case (s1_ownitem): a misclick into the cupboard and straight back
+  w._pick(w._filtered().indexOf(sword), 'remove');
+  assert.equal(cupboard.at(-1), sword, 'into the cupboard');
+  assert.equal(isStolen(sword), false);
+  w._pickRemote(cupboard.indexOf(sword), 'remove');
+  assert.deepEqual([player.items.includes(sword), isStolen(sword)], [true, false], 'back in the pack - the player\'s own, clean');
+  assert.deepEqual(theftBasket(keeping, cupboard), [], 'and the theft law counts nothing: the mark and the crime agree');
+  const shelf = [];
+  assert.equal(landSold(shelf, sword), true, 'sold, it lands on the shelf as an honest piece');
+  player.items.push(shelf.pop());
+  assert.equal(confiscateStolen(player).includes(sword), false, 'a verdict leaves it');
+  // the owner's dagger taken is a theft - marked, and in the basket
+  w._pickRemote(cupboard.indexOf(dagger), 'remove');
+  assert.deepEqual([isStolen(dagger), theftBasket(keeping, cupboard)], [true, [dagger]]);
+  // put back, theirs again and out of the basket; taken again, stolen again
+  w._pick(w._filtered().indexOf(dagger), 'remove');
+  assert.deepEqual([cupboard.includes(dagger), isStolen(dagger), theftBasket(keeping, cupboard)], [true, false, []]);
+  w._pickRemote(cupboard.indexOf(dagger), 'remove');
+  assert.equal(isStolen(dagger), true, 'taken again: stolen again');
+  // a piece stolen elsewhere (the real Steal off a smith's shelf) is not laundered by a stranger's cupboard
+  const smith = smithShelf();
+  const [loot] = steal(smith, player, [smith.find((it) => it.templateIndex === DAGGER)]);
+  w._pick(w._filtered().indexOf(loot), 'remove');
+  assert.deepEqual([cupboard.includes(loot), isStolen(loot)], [true, true], 'put in, it keeps its theft');
+  w._pickRemote(cupboard.indexOf(loot), 'remove');
+  assert.deepEqual([player.items.includes(loot), isStolen(loot)], [true, true], 'and out again, still stolen');
+  assert.deepEqual(theftBasket(keeping, cupboard), [dagger], 'never this owner\'s theft');
+  // a handful off the owner's stack - the member every window calls (itemTransfer.js applyTransfer)
+  const n = arrows.stackCount;
+  const handful = applyTransfer(arrows, { amount: 4 }, cupboard, player.items, { entity: player, toPlayer: true, stolenFrom: keeping });
+  assert.notEqual(handful, arrows, 'a split: their stack still stands');
+  assert.deepEqual([handful.stackCount, isStolen(handful), arrows.stackCount, isStolen(arrows)], [4, true, n - 4, false]);
+  assert.deepEqual(theftBasket(keeping, cupboard), [dagger, handful], 'the basket counts the handful - a diff of the list saw their stack still standing');
+  applyTransfer(handful, { amount: 2 }, player.items, cupboard, { entity: player, fromLocal: true, returnTo: keeping });
+  assert.deepEqual([arrows.stackCount, handful.stackCount, isStolen(handful)], [n - 2, 2, true], 'two back into their stack; two still carried, still stolen');
+  assert.deepEqual(theftBasket(keeping, cupboard), [dagger, handful]);
+  applyTransfer(handful, { amount: 2 }, player.items, cupboard, { entity: player, fromLocal: true, returnTo: keeping });
+  assert.deepEqual([arrows.stackCount, cupboard.includes(handful), player.items.includes(handful)], [n, false, false], 'the rest back, merged into their stack');
+  assert.deepEqual(theftBasket(keeping, cupboard), [dagger], 'and nothing of the arrows is out');
+  // a handful of their coin: into the purse, unmarked (a number) - and counted
+  const purse = player.goldPieces;
+  applyTransfer(coin, { amount: 10 }, cupboard, player.items, { entity: player, toPlayer: true, stolenFrom: keeping });
+  assert.equal(player.goldPieces, purse + 10);
+  const basket = theftBasket(keeping, cupboard);
+  assert.equal(basket.length, 2);
+  assert.equal(basket[0], dagger);
+  assert.deepEqual([basket[1].group, basket[1].templateIndex, basket[1].stackCount], [coin.group, coin.templateIndex, 10], 'the ten coins in the basket');
+  assert.deepEqual([cupboard.includes(coin), coin.stackCount], [true, 40], 'the rest of their purse where it was');
+});
+
+test('STOLEN-GOODS AUDIT S1: the shut shop\'s shelf reads the same keeping - a piece of the player\'s own put down masks no take (the tally DFU\'s count missed), and a round trip of the player\'s own is no theft; the enhanced pack\'s take marks the owner\'s piece alone (mutants: the shelf by count, the enhanced take unwired)', () => {
+  const shelf = smithShelf();
+  const shopDagger = shelf.find((it) => it.templateIndex === DAGGER);
+  const keeping = new Set(shelf);   // worldModes.js openShelf's `shelfBefore`
+  const sword = createWeapon(120, 0, () => 0.5);
+  const player = thief({ items: [sword] });
+  const w = new NativeInventoryWindow({ items: () => player.items, icons: ICONS, entity: player, loot: { items: () => shelf, stolenFrom: keeping } });
+  w._pick(w._filtered().indexOf(sword), 'remove');
+  w._pickRemote(shelf.indexOf(sword), 'remove');
+  assert.deepEqual([isStolen(sword), shopShelfTheft(keeping, shelf)], [false, false], 'a round trip of one\'s own: no theft, no tally');
+  w._pick(w._filtered().indexOf(sword), 'remove');   // the sword down...
+  w._pickRemote(shelf.indexOf(shopDagger), 'remove');   // ...the shop's dagger up: the shelf as long as it was
+  assert.equal(shelf.length, keeping.size, 'DFU\'s count saw nothing');
+  assert.deepEqual([isStolen(shopDagger), shopShelfTheft(keeping, shelf)], [true, true], 'marked, and the tally the mark agrees with');
+  // the enhanced pack: a press on the container's row takes it - the shop's piece marked, the player's own not
+  withDom((dom) => {
+    const host = dom.mk('div'); dom.body.append(host);
+    const own = createWeapon(120, 0, () => 0.5);
+    const theirs = createWeapon(DAGGER, 0, () => 0.5);
+    const cupboard = [theirs, own];   // `own` put there in this window: not in the keeping
+    const e = thief();
+    let view = null;
+    view = mountEnhancedInventory(host, { entity: e, items: () => e.items, loot: { items: () => cupboard, stolenFrom: new Set([theirs]) }, onExit: () => view.unmount() });
+    const named = (r) => r.querySelector('.itemname')?.children?.[0]?.textContent ?? '';
+    host.querySelectorAll('.itemrow').find((r) => r.closest('.loot-win') && named(r).startsWith('Longsword')).onclick();
+    host.querySelectorAll('.itemrow').find((r) => r.closest('.loot-win') && named(r).startsWith('Dagger')).onclick();
+    assert.deepEqual(e.items.map((it) => [it, isStolen(it)]), [[own, false], [theirs, true]]);
+    view.unmount();
+  });
+});
+
+test('STOLEN-GOODS AUDIT S2: a stolen Materials Bag taken at a verdict leaves its honest goods in the pack - every log, whatever they weigh, never in a list nobody owns; a stolen piece in it goes with it; a bag of one\'s own beside it keeps them (mutants: the goods stranded, a bag of one\'s own emptied)', () => {
+  const where = globalThis.location;
+  try {
+    globalThis.location = { search: '?online' };   // the professions' lane: every General Store shelves one (shopStock.js BAG1)
+    const shelf = stockShopShelf({ buildingType: BUILDING_TYPES.GeneralStore, quality: 10 }, { items: [], level: 1 }, { rolls: () => 0.5, torchesFromItems: false });
+    const p = thief({ stats: { strength: 30 } });
+    const w = new NativeInventoryWindow({ items: () => p.items, icons: ICONS, entity: p, loot: { items: () => shelf, stolenFrom: new Set(shelf) } });
+    w._pickRemote(shelf.findIndex(isBagItem), 'remove');   // a shut store's bag off its shelf
+    const bag = p.items.find(isBagItem);
+    assert.equal(isStolen(bag), true, 'stolen');
+    const bread = steal(shelf, p, [shelf.find((it) => it.name === 'Bread')])[0];
+    applyTransfer(bread, { amount: 1 }, p.items, p.bagItems);   // a stolen piece in the bag too
+    const cut = mintCarried(p, 'log:oak', 200);   // the harvest's own door: into the bag while it holds
+    assert.ok(cut.bag > 100, `honest logs cut into it (${cut.bag})`);
+    const taken = confiscateStolen(p);
+    assert.deepEqual(new Set(taken), new Set([bag, bread]), 'the bag and what in it was stolen');
+    assert.equal(hasBag(p.items), false);
+    assert.deepEqual(p.bagItems, [], 'nothing left in a list nobody owns');
+    assert.equal(heldOf(p, 'log:oak'), cut.bag + cut.pack, 'every log the bag held, in the pack beside the ones she carried - a hundred and more kilograms past what she can');
+    assert.equal(p.items.some(isStolen), false);
+    // a bag of one's own beside the stolen one (a save from before ONE-BAG): its goods stay in it
+    const q = thief();
+    const own = { ...bag };
+    delete own.stolen;   // one bought (the shelf's record, the counter's Buy clears a mark)
+    q.items.push(own, { ...bag, stolen: true });
+    assert.equal(q.items.filter(isBagItem).length, 2);
+    mintCarried(q, 'log:oak', 3);
+    confiscateStolen(q);
+    assert.deepEqual([hasBag(q.items), heldOf(q, 'log:oak'), q.bagItems.length], [true, 3, 1], 'the logs in the bag still held');
+  } finally { globalThis.location = where; }
+});
+
+test('STOLEN-GOODS AUDIT S3: no shelf piece is stolen - the room\'s word for a shelf or a cupboard lands clean (an older build\'s sale, a hostile client) and this build says none, and a piece bought at the counter is the buyer\'s, honestly, on either lane (mutants: the word kept, the word said, the Buy kept)', () => {
+  const word = { ...createWeapon(DAGGER, 0, () => 0.5), stolen: true };
+  const theirs = { ...createWeapon(ARROW_TEMPLATE, 0, () => 0.5), stolen: true };
+  const shelf = { items: [], stockedDate: 5 };
+  const cupboard = { items: [], stockedDate: 5 };
+  const ctx = { shelves: [shelf], containers: [cupboard] };
+  assert.equal(applyInteriorLoot(ctx, [{ k: 'shelf:0', r: [word], d: 5 }, { k: 'container:0', r: [theirs], d: 5 }], { today: 5 }), 2);
+  assert.deepEqual([shelf.items.length, cupboard.items.length], [1, 1]);
+  assert.deepEqual([isStolen(shelf.items[0]), isStolen(cupboard.items[0])], [false, false], 'landed clean');
+  // and this build's own word never carries one: a stash left on a shut shelf keeps its mark here, and goes out clean (an
+  // older build beside this one lands what it is told)
+  const stash = { ...createWeapon(DAGGER, 0, () => 0.5), stolen: true };
+  shelf.items.push(stash);
+  const said = interiorLootRecords(ctx, ['shelf:0']);
+  assert.deepEqual(said.map((r) => [r.k, r.r.length, r.r.some(isStolen)]), [['shelf:0', 2, false]], 'said clean');
+  assert.equal(isStolen(stash), true, 'the stash itself as it was - no cupboard launders it');
+  shelf.items.pop();
+  // a stash: a piece stolen elsewhere left on a shut shelf keeps its mark there (no cupboard launders it) - until it is
+  // bought: the counter's Buy door (worldModes.js commitTrade's Buy arm and doBuy, markCounterBought) makes it the buyer's
+  for (const online of [false, true]) {
+    const smith = smithShelf();
+    const p = thief();
+    const [stash] = steal(smith, p, [smith.find((it) => it.templateIndex === DAGGER)]);
+    assert.equal(isStolen(stash), true);
+    markCounterBought([stash], { online });
+    assert.equal(isStolen(stash), false, `bought, ${online ? 'online' : 'offline'}: honest`);
+    assert.equal(stash.counterBought === true, online, 'and the counter\'s own mark as it was');
+  }
+  const wm = src('src/scenes/worldModes.js');
+  assert.match(wm, /if \(mode === 'Buy'\) \{\n\s+deductGold\(playerEntity, price\);\n\s+markCounterBought\(staged\);/, 'the counter\'s Buy - the door the clear rides');
+  assert.match(wm, /shelf\.items\.splice\(at, 1\);\n\s+markCounterBought\(\[it\]\);/, 'and the keyed list\'s');
+});
+
+/** The real naval host's boarding: a ship struck alongside, boarded from my helm and taken - her hold drawn by the
+ *  world's own producer (world.js's `hold`: the treasure table's draw), not yet emptied (keepplunder.test.js's rig). */
+async function prizeOf(classId, o = {}) {
+  const h = await sea({ hull: 2, ...o });
+  h.deps.hold = (key) => generateItems(key, { level: 5, gender: 'male' }, () => 0.5);
+  const id = h.host.spawnShip(classId, { range: 26.8, bearing: Math.PI / 2, yaw: 0 });
+  const e = h.host._sea.get(id);
+  e.ship.pos = [26.8, 0, 0];
+  h.host.frame(0.1);
+  e.ship.damage.apply({ hull: Math.ceil(e.ship.damage.maxHull * 0.8), sail: 0, crew: 0 });
+  h.host.frame(0.1);
+  assert.equal(h.host.activate(), true, 'the grapples');
+  h.run(GRAPPLE_S + 0.3);
+  for (const f of h.log.foes.filter((x) => x.side === 'enemy')) f.dead = true;
+  h.run(0.3);
+  assert.ok(e.prize?.hold?.length > 0, `${classId}: her hold drawn`);
+  return { h, e };
+}
+
+test('STOLEN-GOODS AUDIT S4: the two theft arms that marked nothing - a lawful ship\'s hold, taken by Piracy, is stolen goods however it leaves her (her crew\'s stow into her captor\'s hold); a pirate\'s is a lawful prize, and past the Veil no crown\'s writ runs; a robbed caravan\'s goods are its people\'s (world.js, by source) (mutants: the merchantman clean, every prize stolen, the Veil\'s stolen, the caravan unmarked)', async () => {
+  const merchant = await prizeOf('merchantGalleon');
+  assert.ok(merchant.e.prize.hold.every(isStolen), 'a merchantman\'s hold: her owner\'s goods');
+  const given = [];
+  merchant.h.deps.board.giveItems = (items) => { given.push(...items); return { left: [] }; };
+  merchant.h.host.stowPlunder();
+  assert.ok(given.length > 0 && given.every(isStolen), 'into her captor\'s hold, still stolen');
+  const pirate = await prizeOf('pirateSloop');
+  assert.equal(pirate.e.prize.hold.some(isStolen), false, 'a pirate\'s hold: fair prize');
+  const ether = await prizeOf('merchantGalleon', { where: { ether: { band: 'shallows', depth: 0.1 } } });
+  assert.ok(ether.e.ether, 'a ship of the Eltheric Ocean');
+  assert.equal(ether.e.prize.hold.some(isStolen), false, 'past the Veil: no crown, no theft');
+  // the robbed caravan (bootWorld cannot be stood up): its loot window hands over the goods as the owner's keeping
+  const w = src('src/scenes/world.js');
+  const caravan = w.slice(w.indexOf('const caravanHostOf = () => (_caravanHost ??= createCaravanHost({'), w.indexOf('choose: (lines, options) => townTalk.showOverlay(new ChoiceWindow({ lines, options })),'));
+  assert.match(caravan, /openLoot: \(\{ items \}\) => \{[\s\S]*makeInventoryWindow\(\{ loot: \{ items: \(\) => items, containerImage: \(\) => CONTAINER_IMAGES\.Chest, playerOwned: false, stolenFrom: new Set\(items\) \} \}\);/);
+});
+
+test('STOLEN-GOODS AUDIT S6: a town\'s patron takes no stolen piece off a hired trader - the record as the market\'s listing moves it (a realm trade\'s own take), the mark riding; the item law still stands behind it, so a player may buy it (mutants: the patron a fence)', () => {
+  const shelf = smithShelf();
+  const p = thief();
+  const [dagger] = steal(shelf, p, [shelf.find((it) => it.templateIndex === DAGGER)]);
+  const save = { items: [JSON.parse(JSON.stringify(dagger))], goldPieces: 0 };
+  const [listed] = takeTradeGoods(save, { items: [JSON.parse(JSON.stringify(dagger))], gold: 0 }, [0]);
+  assert.equal(listed.stolen, true, 'the listing\'s record carries it');
+  assert.equal(lawfulItem(listed), true, 'a lawful record: listed, and a player\'s to buy');
+  assert.equal(patronTakes(listed), false, 'no patron buys it');
+  const found = createWeapon(DAGGER, 0, () => 0.5);
+  assert.equal(patronTakes(found), true, 'an honest one, as ever');
 });

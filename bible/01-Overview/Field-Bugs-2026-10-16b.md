@@ -157,15 +157,29 @@ mended the law's alone. Driven on the real watch: a murder and an assault (the l
 two fines - the law -18, the People and the kingdom still -14. And the fine's price moves in 40-gold steps (eight points
 of standing), so -27 and -22 are both asked 600: two fines of the same sum read as nothing moved.
 
-CHANGED: an answer short of the court gives the People half the points it gave the law (`raisePeopleForAnswer`:
-sentenceRefund's own half, truncated as the charge's was), spread as the charge spread, never past 0 - it mends a
-charge and buys no favour. The fine (`settleChallenge`) and the penance (`doPenance`) both call it; the HUD's law line is
-unchanged. No store (a host that never ran chargen), nothing - the charge's own silence. `06-Systems/Standing-Arc.md` and
-Port-Ledger's REP row say it.
+CHANGED: an answer short of the court gives the People half the points it gave the law (`raisePeopleForAnswer`: the
+People's half of what the law was owed before the answer less its half of what it is owed after - AUDIT below; it was
+`trunc(points / 2)` a step), spread as the charge spread, never past 0 - it mends a charge and buys no favour. The fine
+(`settleChallenge`) and the penance (`doPenance`) both call it; the HUD's law line is unchanged. No store (a host that
+never ran chargen), nothing - the charge's own silence. `06-Systems/Standing-Arc.md` and Port-Ledger's REP row say it.
 
 THE FOUR HOSTS: none - the watch is `standingHost.js`'s (both open-world hosts wire it) and the penance the temple's
-window; the law is one module. Pinned by `test/fb1016b_finepeople.test.js` (3, the first through the real watch's stop);
-`tools/mutants/fb1016b_finepeople.json` (7, all dead).
+window; the law is one module. Pinned by `test/fb1016b_finepeople.test.js` (4, the first through the real watch's stop);
+`tools/mutants/fb1016b_finepeople.json` (11, all dead).
+
+AUDIT (2026-10-16). Read cold, one finding, fixed:
+- S5 - THE HALVES NEVER ADDED UP. Each answer's People half was truncated alone - `trunc(5 / 2)`, two a step - so the
+  steps never summed to the charge's own half: answered by every fine the watch takes and every penance the temple
+  offers, one Theft left the People and the kingdom -1 for good (the law whole, the penance no longer offered), a Breaking
+  and Entering -1, two Thefts -2, the reporter's Murder and Assault -3 - where a sentence served gives them back. The claim
+  above, "truncated as the charge's was", was the bug: the charge truncates once, a run of answers truncated every time.
+  The step is now the People's half of what the law was owed before the answer less its half of what it is owed after
+  (`court.js` peoplesHalfOwed, the charge's own `trunc(loss / 2)` read off the law's standing, which the answer has already
+  written), so the steps telescope to the half of the whole debt - +3 then +2 for the reporter's two fines from -28 -
+  still capped at what the People are owed, and never for law points above 0. Pinned by the four cases through the real
+  fine and penance (each now whole, as a served lesser sentence is), a Curfew town's doubled law, and the clamps; the
+  FINE-PEOPLE-rounded-up mutant re-aimed by content at the new half, with four new ones (each step truncated alone, the
+  half owed above 0, the law's standing misread, another region's) - 11, all dead.
 
 NOT TAKEN (Mac's to decide): the fine's 40-gold steps and the -10 line together make a deep standing a run of same-price
 fines; the stop reads the law's number alone, never the People's.
@@ -429,36 +443,89 @@ never have marked 85 arrows taken into a pack holding 11.
 
 CHANGED (the owner: "Stop trying to match DFU"):
 - **The mark.** A piece taken from someone else's keeping carries `stolen: true` (`systems/stolenGoods.js`), declared in
-  itemFields.js so the save, the wire and a realm trade carry it - a hand-off launders nothing. Written at every theft arm
-  as the piece moves: the open shop's Steal on both skins (the lot marked before TransferAll merges it); every take
-  through either inventory window from a loot target the host marks `stolen` - the shut shop's shelf and a stranger's
-  cupboard (worldModes.js, on lines it already had), marked before the piece lands (`itemTransfer.js` applyTransfer's
-  `stolen`; `inventorySession.js` theftTarget counts the loot target alone, never the wagon, the bag or a reward tray). A
-  piece put back is its owner's again; a stolen piece stacks only with stolen kin and a split keeps the mark; a pickpocket's
-  coin carries none; the enhanced item card says what the mark means.
+  itemFields.js so the save, the wire and a realm trade carry it - a hand-off launders nothing. Written at the theft arms
+  as the piece moves: the open shop's Steal on both skins (the lot marked before TransferAll merges it); every take of
+  the OWNER'S piece through either inventory window from a loot target whose host hands over the owner's keeping - the
+  shut shop's shelf and a stranger's cupboard (worldModes.js, on lines it already had; AUDIT S1 below: it was every take
+  from a target marked `stolen`), marked before the piece lands (`itemTransfer.js` applyTransfer's `stolenFrom`;
+  `inventorySession.js` theftTarget counts the loot target alone, never the wagon, the bag or a reward tray); and since the
+  AUDIT a robbed caravan's goods and a lawful ship's hold (S4). The owner's piece put back is theirs again (`returnTo`);
+  a stolen piece stacks only with stolen kin and a split keeps the mark; a pickpocket's coin carries none; the enhanced
+  item card says what the mark means.
 - **The fence.** `landSold`: an honest sale lands on the open shelf as T2 has it, so a mistaken sale can be bought back; a
   stolen piece is paid for and gone. Both sale arms call it, one line each.
 - **The court.** `court.js` confiscateStolen takes every stolen piece the prisoner carries - the pack's (a worn piece off
-  its slot first, a lit torch put out) and the Materials Bag's - called by `arrestFlow.js` finish, which every guilty exit
+  its slot first, a lit torch put out) and the Materials Bag's, and a stolen bag's honest goods into the pack (AUDIT S2) -
+  called by `arrestFlow.js` finish, which every guilty exit
   runs: a sentence served, a fine paid with no days, banishment, the failed defence's verdict, and so the watch's "come
   quietly". Taken at the verdict; the release says once "The guards take the stolen goods you carried (N items)." An
   acquittal and a guild's rescue take nothing. Both lines through the text core, in every language the tree carries.
 - Named in `06-Systems/Standing-Arc.md` (STOLEN-GOODS) and Port-Ledger T2 (narrowed) and the REP row.
 
-THE FOUR HOSTS: worldModes.js - WIRED (the two theft targets and both sale arms, on lines it already had; createWorldModes
-7,072 code lines before and after); world.js and exterior.js - the arrest flow is theirs and the court's change is inside
-it, their wiring unchanged; dungeonContext.js - its one trade window is the Identify spell's (no steal, sale or shelf).
-Pinned by `test/fb1016b_stolengoods.test.js` (7, every one failing on the old code); `tools/mutants/
-fb1016b_stolengoods.json` (32, all dead). PINS MOVED: `audit26_economy` (the shut shelf's loot target), `audit26_modal`
-(where the Sell arm lands a piece), `auditloot2` (the junk mark beside it), `enhancedInventory` (PX28's take, INV2's stow
-twice), `housecontainers` and `shipstore` (the cupboard's loot target; shipstore the shut shelf's too); mutants
-AC5-C-M26, C8-cards-stack-any, SHIPSTORE-owned-cupboard-not-storage and -stranger-cupboard-is-storage re-aimed by content.
+THE FOUR HOSTS: worldModes.js - WIRED (the two theft targets and both sale arms, on lines it already had;
+createWorldModes 7,072 code lines before and after - 7,091 at the AUDIT, before and after its changes too); world.js and
+exterior.js - the arrest flow is theirs and the court's change is inside it, their wiring unchanged (the AUDIT's caravan
+loot window in world.js on the line it had - bootWorld 21,637 code lines before and after); dungeonContext.js - its one
+trade window is the Identify spell's (no steal, sale or shelf). Pinned by `test/fb1016b_stolengoods.test.js` (13 - 7,
+every one failing on the old code, and the AUDIT's 6); `tools/mutants/fb1016b_stolengoods.json` (53, all dead). PINS
+MOVED: `audit26_economy` (the shut shelf's loot target), `audit26_modal` (where the Sell arm lands a piece),
+`auditloot2` (the junk mark beside it), `enhancedInventory` (PX28's take, INV2's stow twice), `housecontainers` and
+`shipstore` (the cupboard's loot target; shipstore the shut shelf's too); mutants AC5-C-M26, C8-cards-stack-any,
+SHIPSTORE-owned-cupboard-not-storage and -stranger-cupboard-is-storage re-aimed by content.
 
 FLAGGED, not taken: a shut shop's shelf still rolls nothing, so a night's haul is free (bounded now by the day's stock,
 each stolen piece sold once) - a fence's lower price for stolen goods is Mac's call; the court searches what the prisoner
 carries, not the wagon, a home or the bank; the watch's fine paid on the spot ("P" at the stop) is no arrest and takes
 nothing; the enhanced pack's put-back is wired the classic window's way and pinned by source (no enhanced view stands a
 shelf beside the pack today).
+
+AUDIT (2026-10-16). Read cold (the auditor's scratch drives, on the real modules: an honest piece through a stranger's
+cupboard, a stolen bag at a verdict, a peer's shelf word, the theft arms); six findings, each fixed:
+- S1 - THE MARK AND THE CRIME DISAGREED. applyTransfer marked EVERY take from a target marked `stolen` and cleared every
+  put: an honest Longsword misclicked into a stranger's cupboard and taken straight back came out stolen - the theft
+  law's basket for that window 0 pieces - destroyed at its sale and taken at a verdict; and a piece stolen elsewhere, put
+  in a cupboard, came out clean. The claim "a piece put back is its owner's again" above was that bug. Now the host takes
+  THE OWNER'S KEEPING as the window opens - a Set of the target's records (`before`, `shelfBefore`, handed over as
+  `loot.stolenFrom`; `theftTarget` answers it) - and the mark reads it: a take is marked when its SOURCE record is the
+  owner's, and the moved record (or the half a split mints) joins the keeping; the owner's piece put back is cleared and
+  the record it comes to rest in is theirs (a merge leaves the keeping); any other piece keeps what it was
+  (`stolenGoods.js` takenFromKeeping, returnedToKeeping, landedInKeeping). The theft's own law reads the SAME Set:
+  `theft.js` theftBasket (a stranger's cupboard) counts a split now - DFU's basket holds the split item; the list's diff
+  saw the stack still standing, so four arrows of ten were no theft - and a handful of the owner's coin; and the shut
+  shelf's tally reads the keeping, not DFU's count (`shopShelfTheft`, a departure: a piece of one's own put down masked a
+  take). PINS MOVED: `theft.test.js` (PT1's count pin and the arms' source), `decor2b`, `audit26_economy`,
+  `housecontainers`, `shipstore`, `enhancedInventory`; the cupboard's and the shelf's mutants re-aimed by content. What
+  is NOT tracked: a piece left in a target in one window is in its keeping at the next open (the target's records then,
+  as DFU's basket and the old diff read them).
+- S2 - A STOLEN BAG STRANDED ITS HONEST GOODS. confiscateStolen spliced a stolen Materials Bag out of the pack and left
+  its honest `bagItems` in a list nobody owned (BAG1: a loaded bag never leaves the pack). Once the stolen goods are out
+  of both lists, a character left with no bag in the pack has what is left in it - every honest piece - put in the pack,
+  whatever it weighs; a bag of one's own beside it keeps them.
+- S3 - A PEER'S SHELF WORD COULD CARRY THE MARK, and an honest Buy kept it: an older build's sale or a hostile client
+  poisoned another player's purchase. `interiorShared.js` applyInteriorLoot strips `stolen` from every shelf and cupboard
+  record the room lands (and interiorLootRecords from every one this build says - an older build lands what it is told),
+  and the counter's Buy door clears it (`tradeModes.js` markCounterBought - commitTrade's Buy arm and the keyed doBuy
+  already call it first): a piece bought at a counter is the buyer's, honestly, on either lane. A piece stolen elsewhere
+  and left on a shut shelf keeps its mark there (no cupboard launders it) until it is bought.
+- S4 - TWO THEFT ARMS MARKED NOTHING. A robbed caravan's goods (`world.js` caravanHost's openLoot, after a hold-up the
+  caravan reports as a Theft) are its people's: its loot window hands over `stolenFrom: new Set(items)` (line-neutral in
+  bootWorld). And DECIDED: A LAWFUL SHIP'S HOLD IS STOLEN GOODS. Her boarding is Piracy (`navalLaw.js` lawOf's 'board'),
+  so her hold is marked as it is drawn (`navalHost.js` winBoarding) and carries the mark out by every door - Take all, Open
+  her hold, the crew's stow when the sea goes. The naval record calls the plunder "won", never clean, and the rule "a piece
+  taken from someone else's keeping" reads her owner's cargo as such. Not marked, the mark agreeing with the charge: a
+  pirate's hold (a lawful prize - her end is rewarded), a hold past the Veil (no crown's writ runs - chargeEther charges
+  nothing), and the casks a sinking floats free (the sea's, salvage - FLAGGED to Mac: a lawful ship sunk by Piracy floats
+  half her lots unmarked, where boarding her marks them all).
+- S5 is FINE-PEOPLE's (above).
+- S6 - A HOME VENDOR WAS A FENCE. A town's patron (`patronLaw.js` patronTakes, read by the account service's patron
+  reckoning) bought a stolen piece off a hired trader at three fifths of its worth in the service's gold; it takes none
+  now (no refusal text exists - a patron simply never draws it). A player may still buy it off the trader, the mark riding.
+  The account Worker bundles patronLaw.js: acct141.
+Pins: the six new tests over the real windows, the real shelves (online, a General Store's bag), the real arrest court's
+member, the room's landing, the real naval host's boarding (a merchantman, a pirate, a ship of the Eltheric Ocean, her hold
+drawn by the treasure tables) and the listing's own record; 21 new mutants and 12 re-aimed, 53 all dead (and, beyond the
+slice's list, `shipstore`'s two, AUDIT SS's and HACKED-GOLD's outgoing-word record, AUDIT LW-II-2's counter mark and the
+version records re-aimed by content - all dead).
 
 What the reporter is owed: a piece you steal is marked stolen. A merchant still pays for it but gets rid of it - it never
 goes back on the shelf, so the circle is broken. Found guilty - jail, a fine or banishment - the guards take every stolen

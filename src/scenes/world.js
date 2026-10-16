@@ -3772,7 +3772,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     openTrade: (o) => !!modes?.openRoadTrade?.(o, o.mode ?? 'Buy'),
     openLoot: ({ items }) => {
       if (!inventoryDoorReady()) { townTalk.say('Inventory is still loading. Please try again.'); return false; }
-      const w = makeInventoryWindow({ loot: { items: () => items, containerImage: () => CONTAINER_IMAGES.Chest, playerOwned: false } });
+      const w = makeInventoryWindow({ loot: { items: () => items, containerImage: () => CONTAINER_IMAGES.Chest, playerOwned: false, stolenFrom: new Set(items) } });   // STOLEN-GOODS AUDIT S4: a robbed caravan's goods are its people's - the hold-up is a Theft, each of theirs taken marked as it lands
       if (!w) return false;
       townTalk.showOverlay(w);
       return true;

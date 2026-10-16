@@ -52,7 +52,8 @@
 
 import { rand } from '../formats/dfRandom.js';
 import { skillValue, tallySkill, SKILLS } from './skills.js';
-import { goldPiecesOf, addGoldPieces, LETTER_OF_CREDIT_TEMPLATE } from './inventory.js';   // E4: the counter's two members; B1: letters are tender
+import { goldPiecesOf, addGoldPieces, LETTER_OF_CREDIT_TEMPLATE, addItem } from './inventory.js';   // E4: the counter's two members; B1: letters are tender; STOLEN-GOODS AUDIT S2: a bag's honest goods into the pack
+import { hasBag } from '../net/bagLaw.js';   // STOLEN-GOODS AUDIT S2: whether a Materials Bag still rides in the pack
 import { getPeopleOfCurrentRegion } from './talk.js';   // T3a shipped the lookup
 import { changeReputation } from './factionRep.js';     // S25
 import { isEquipped, unequipItem } from './equip.js';   // STOLEN-GOODS: a worn stolen piece is taken off before it is taken
@@ -495,13 +496,23 @@ export function raiseRepForSentence(player, court, { acquitted = false } = {}) {
  *  so the People - who the commoners' reactions read (talk.js getReactionToPlayer) - and the kingdom kept the whole
  *  charge however much was paid. Now `legalPts` of the law mended give the People half of them back (sentenceRefund's
  *  own half, truncated as the charge's was), spread as the charge spread - never past 0: an answer mends a charge, it
- *  buys no favour. Answers the points. */
+ *  buys no favour. Answers the points. Called once the law's own change is written (changeLegalRep), whose standing it
+ *  reads.
+ *  FINE-PEOPLE AUDIT (2026-10-16, S5): THE HALVES ADD UP TO THE CHARGE'S HALF. Each answer's half was truncated alone -
+ *  `trunc(5 / 2)` a step - so the steps never summed to the charge's: one Theft (the law -5, the People -2) answered by
+ *  one penance left the People -1 for good, the penance no longer offered (the law whole); a Breaking and Entering -1,
+ *  two Thefts -2, the reporter's Murder and Assault -3 once every fine and penance was paid - where a served sentence
+ *  gives them back whole. The step is now the People's half of what the law was owed BEFORE the answer less its half
+ *  of what it is owed AFTER (`peoplesHalfOwed`, the charge's own `trunc(loss / 2)` read off the law's standing), so the
+ *  steps telescope to the half of the whole debt - still never past what the People are owed. */
+const peoplesHalfOwed = (/** @type {number} */ rep) => Math.trunc(Math.max(0, -rep) / 2);
 export function raisePeopleForAnswer(player, regionIndex, legalPts) {
   const store = player?.factionRep;
   if (!store || !(legalPts > 0)) return 0;
   const people = getPeopleOfCurrentRegion(store.dict, regionIndex);
   if (!people) return 0;
-  const pts = Math.min(Math.trunc(legalPts / 2), -people.rep);
+  const after = player.legalRep?.[regionIndex] ?? 0;
+  const pts = Math.min(peoplesHalfOwed(after - legalPts) - peoplesHalfOwed(after), -people.rep);
   if (pts <= 0) return 0;
   changeReputation(store, people.id, pts, true);
   return pts;
@@ -601,7 +612,13 @@ export function resolveGuiltyVerdict(court, player) {
  *  torch goes out with it, and the record leaves the list. The wagon and a home's storage are not searched: the court
  *  takes what the prisoner carries. The arrest flow calls it at every guilty exit (scenes/arrestFlow.js finish - a
  *  sentence served, a fine paid, banishment); an acquittal and a guild's rescue never reach it. Answers what was
- *  taken. DFU's court takes nothing (DaggerfallCourtWindow has no item line) - the port's own, Ledger A. */
+ *  taken. DFU's court takes nothing (DaggerfallCourtWindow has no item line) - the port's own, Ledger A.
+ *  STOLEN-GOODS AUDIT (2026-10-16, S2): A STOLEN BAG TAKEN LEAVES ITS HONEST GOODS. The Materials Bag is an item in the
+ *  pack, and owning one is holding one (net/bagLaw.js hasBag) - a bag taken off a shut General Store's shelf is stolen
+ *  like any piece. Taken, it left `bagItems` behind with no bag to hold them: twenty honest ores in a list nobody owns,
+ *  BAG1's own rule broken ("a loaded Materials Bag never leaves the pack" - bagMayLeave). So once the stolen goods are
+ *  out of both lists, a character left with no bag in the pack has what is left in the bag - every honest piece - put
+ *  into the pack, whatever it weighs: the court takes nothing honest. */
 export function confiscateStolen(player) {
   const taken = [];
   for (const list of [player?.items, player?.bagItems]) {
@@ -614,6 +631,10 @@ export function confiscateStolen(player) {
       list.splice(i, 1);
       taken.unshift(it);
     }
+  }
+  if (Array.isArray(player?.bagItems) && player.bagItems.length && !hasBag(player.items)) {
+    if (!Array.isArray(player.items)) player.items = [];
+    for (const it of player.bagItems.splice(0)) addItem(player.items, it, 'back');
   }
   return taken;
 }

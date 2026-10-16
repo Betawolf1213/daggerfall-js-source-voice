@@ -1681,7 +1681,7 @@ function stow(item) {
   // applyTransfer - is a no-op, so a LIT TORCH dropped on the ground
   // went on lighting the player from where it lay. INV2 made that a
   // gesture; it was already the button's.
-  applyTransfer(item, { ...plan, amount }, deps.items?.() ?? [], to, { entity: deps.entity, fromLocal: true, putBack: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: put back, it is its owner's again
+  applyTransfer(item, { ...plan, amount }, deps.items?.() ?? [], to, { entity: deps.entity, fromLocal: true, returnTo: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: the owner's piece put back is theirs again
   if (qty.item === item) qty = { item: null, text: '' };
   // AUDIT INV2 B-F9: `stow` was written for the BUTTON, whose argument
   // is always `picked`; a drag hands it any row. Closing a tooltip the
@@ -1738,7 +1738,7 @@ function take(item) {
   // interception (:1562-1571) fires and answers null - its `return`
   // skips the choose-one close below, and there is no arriving record
   // for the tab to follow.
-  const taken = applyTransfer(item, { ...plan, amount }, from, bag, { entity: deps.entity, toPlayer: true, stolen: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: a shut shop's shelf, a stranger's cupboard - marked as it lands
+  const taken = applyTransfer(item, { ...plan, amount }, from, bag, { entity: deps.entity, toPlayer: true, stolenFrom: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: the owner's piece off a shut shop's shelf, a stranger's cupboard, a robbed caravan - marked as it lands
   if (qty.item === item) qty = { item: null, text: '' };
   if (taken === null) { picked = null; refresh(); render(); return; }
   // G6 (:1585-1591): ONE is the whole gift. The window closes and the

@@ -11,10 +11,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { settleChallenge, doPenance, PENANCE_POINTS } from '../src/systems/standing.js';
+import { settleChallenge, doPenance, penanceHelps, PENANCE_POINTS } from '../src/systems/standing.js';
 import { createStandingWatch, STANDING_LOOK_MS, installLegalNotices } from '../src/scenes/standingHost.js';
 import { createRegionConditions } from '../src/systems/regionConditions.js';
-import { lowerRepForCrime, raiseRepForSentence, raisePeopleForAnswer, CRIMES, REPUTATION_LOSS_PER_CRIME } from '../src/systems/court.js';
+import { lowerRepForCrime, raiseRepForSentence, raisePeopleForAnswer, CRIMES, REPUTATION_LOSS_PER_CRIME, MARKED_CRIMES } from '../src/systems/court.js';
 import { FACTION_TYPES, SOCIAL_GROUPS, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
 
@@ -51,7 +51,11 @@ function watchRig(p) {
   return { t, shown, said, look: () => { t.ms += STANDING_LOOK_MS; return watch.frame(); } };
 }
 
-test('FINE-PEOPLE: the reporter\'s fine - a murder and an assault charged (the law -28, the People and the kingdom -14), the watch\'s fine paid through the real stop: the law +5, the People and the kingdom +2 each, where the fine had left them whole; a second fine the same again', () => {
+// PIN MOVED (FINE-PEOPLE AUDIT S5, 2026-10-16): each answer's half was `trunc(points / 2)` alone - +2 a fine of five, so
+// the steps never summed to the charge's half and every road left the People short (the four cases below). The step is the
+// People's half of what the law was owed before the answer less its half of what it is owed after: from -28, a fine to
+// -23 gives 14 - 11 = 3, the next to -18 gives 11 - 9 = 2.
+test('FINE-PEOPLE: the reporter\'s fine - a murder and an assault charged (the law -28, the People and the kingdom -14), the watch\'s fine paid through the real stop: the law +5, the People and the kingdom their half of what the law is still owed (+3, then +2), where the fine had left them whole', () => {
   const p = charged([CRIMES.Murder, CRIMES.Assault]);
   const law = REPUTATION_LOSS_PER_CRIME[CRIMES.Murder] + REPUTATION_LOSS_PER_CRIME[CRIMES.Assault];
   const half = Math.trunc(REPUTATION_LOSS_PER_CRIME[CRIMES.Murder] / 2) + Math.trunc(REPUTATION_LOSS_PER_CRIME[CRIMES.Assault] / 2);
@@ -62,22 +66,27 @@ test('FINE-PEOPLE: the reporter\'s fine - a murder and an assault charged (the l
     assert.equal(r.look(), true, 'a known face, stopped');
     r.shown[0].input('KeyP');
     assert.match(r.said.join('\n'), /Your standing with the law of Daggerfall rises \(\+5\)\./);
-    assert.deepEqual(names(p), [-law + 5, -half + 2, -half + 2], 'the People\'s half of the five, spread as the charge was');
+    assert.deepEqual(names(p), [-law + 5, -half + 3, -half + 3], 'the People\'s half of the five, spread as the charge was: 14 owed at -28, 11 at -23');
     assert.equal(settleChallenge(p, REGION), PENANCE_POINTS);
-    assert.deepEqual(names(p), [-law + 10, -half + 4, -half + 4]);
+    assert.deepEqual(names(p), [-law + 10, -half + 5, -half + 5], '11 owed at -23, 9 at -18: the two steps the half of the ten');
   } finally { off(); }
 });
 
 test('FINE-PEOPLE: a temple\'s penance gives the People half its points too; never past 0 - an answer mends a charge and buys no favour; a law mended by fewer points gives fewer back; no faction store, nothing thrown', () => {
   const p = charged([CRIMES.Assault]);   // the law -8, the People -4
   assert.equal(doPenance(p, REGION), PENANCE_POINTS);
-  assert.deepEqual(names(p), [-8 + 5, -4 + 2, -4 + 2]);
+  assert.deepEqual(names(p), [-8 + 5, -4 + 3, -4 + 3], 'PIN MOVED (FINE-PEOPLE AUDIT S5): 4 owed at -8, 1 at -3 - three back');
   assert.equal(doPenance(p, REGION), 3, 'the law\'s last three');
-  assert.deepEqual(names(p), [0, -1, -1], 'three points: the People one back (truncated, as the charge)');
-  assert.equal(raisePeopleForAnswer(p, REGION, 5), 1, 'at most what the People are owed');
-  assert.deepEqual(names(p).slice(1), [0, 0]);
+  assert.deepEqual(names(p), [0, 0, 0], 'three points: the People\'s last one back - the charge answered whole (it was -1 for good)');
   assert.equal(raisePeopleForAnswer(p, REGION, 5), 0, 'whole: nothing more');
   assert.deepEqual(names(p).slice(1), [0, 0]);
+  p.factionRep.dict.get(PEOPLE).rep = -1;
+  assert.equal(raisePeopleForAnswer(p, REGION, 5), 1, 'at most what the People are owed (the half of five below 0 is two)');
+  assert.equal(getReputation(p.factionRep, PEOPLE), 0);
+  p.legalRep[REGION] = 3;   // a law already past 0 after the answer: only the two points below 0 were owed
+  p.factionRep.dict.get(PEOPLE).rep = -5;
+  assert.equal(raisePeopleForAnswer(p, REGION, 5), 1, 'the People\'s half of what the law WAS owed - never of points above 0');
+  p.legalRep[REGION] = 0;
   p.factionRep.dict.get(PEOPLE).rep = 3;
   assert.equal(raisePeopleForAnswer(p, REGION, 5), 0, 'liked: neither more nor less');
   assert.equal(getReputation(p.factionRep, PEOPLE), 3);
@@ -95,4 +104,40 @@ test('FINE-PEOPLE: the sentence\'s own refund is the yardstick and is unchanged 
   const p = charged([CRIMES.Pickpocketing]);
   raiseRepForSentence(p, { crime: CRIMES.Pickpocketing, regionIndex: REGION });
   assert.deepEqual(names(p), [0, 0, 0]);
+});
+
+test('FINE-PEOPLE AUDIT S5: THE HALVES ADD UP - every road through the watch\'s fines and the temple\'s penances leaves the People and the kingdom whole, as a served sentence does: one Theft, a Breaking and Entering, two Thefts, the reporter\'s Murder and Assault (each left -1, -1, -2 and -3 for good, the penance no longer offered) (mutants: each step truncated alone, the half rounded up, the law\'s standing misread)', () => {
+  const answered = (crimes) => {
+    const p = charged(crimes);
+    while (settleChallenge(p, REGION)) { /* every fine the watch takes */ }
+    let n = 0;
+    while (penanceHelps(p, REGION) && doPenance(p, REGION)) n++;
+    return { p, n };
+  };
+  for (const [label, crimes, people] of [
+    ['one Theft', [CRIMES.Theft], -4],
+    ['a Breaking and Entering', [CRIMES.Breaking_And_Entering], -5],
+    ['two Thefts', [CRIMES.Theft, CRIMES.Theft], -8],
+    ['a Murder and an Assault', [CRIMES.Murder, CRIMES.Assault], -14],
+  ]) {
+    assert.equal(names(charged(crimes))[1], people, `${label}: the charge's People half`);
+    const { p, n } = answered(crimes);
+    assert.ok(n > 0, `${label}: a penance done`);
+    assert.deepEqual(names(p), [0, 0, 0], `${label}: the law, the People and the kingdom whole`);
+    assert.equal(penanceHelps(p, REGION), false, `${label}: and nothing more to pay`);
+    // the yardstick: a sentence served for the charge (REP2's refund) - whole for a lesser crime; a Murder's and an
+    // Assault's keep half as a mark there, the People the law's own half of it, which the temple answers too
+    const served = charged(crimes);
+    for (const c of crimes) raiseRepForSentence(served, { crime: c, regionIndex: REGION });
+    const [law, folk] = names(served);
+    assert.equal(folk, crimes.some((c) => MARKED_CRIMES.has(c)) ? Math.trunc(law / 2) : 0, `${label}: the sentence's People, the law's half`);
+    if (!crimes.some((c) => MARKED_CRIMES.has(c))) assert.deepEqual(names(served), names(p), `${label}: as a sentence served would`);
+  }
+  // a Curfew town's doubled law (SEAT1d: the legal loss twice, the People's half DFU's) - the half of the law's longer road
+  // is capped at what the People were charged
+  const curfew = charged([CRIMES.Theft]);
+  curfew.legalRep[REGION] *= 2;
+  while (settleChallenge(curfew, REGION)) { /* fines */ }
+  while (penanceHelps(curfew, REGION) && doPenance(curfew, REGION)) { /* penances */ }
+  assert.deepEqual(names(curfew), [0, 0, 0], 'whole, and never past 0');
 });
