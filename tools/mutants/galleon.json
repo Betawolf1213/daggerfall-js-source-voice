@@ -75,7 +75,7 @@
   },
   {
     "name": "GALLEON-loader-no-fallback",
-    "file": "src/systems/comeSailAwayModels.js",
+    "file": "src/systems/comeSailAway/comeSailAwayModels.js",
     "old": "      if (!answer.ok) { log?.warn?.(",
     "new": "      if (!answer.ok) { throw answer.error; log?.warn?.(",
     "tests": [

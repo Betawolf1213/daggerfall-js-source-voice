@@ -28,7 +28,7 @@
   },
   {
     "name": "HELM-HUSH-every-play-counted-again",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "  const audioPlay = (src) => { if (!src.isPlaying) src.plays = (src.plays ?? 0) + 1; src.isPlaying = true; deps.audio?.play?.(src); };",
     "new": "  const audioPlay = (src) => { src.plays = (src.plays ?? 0) + 1; src.isPlaying = true; deps.audio?.play?.(src); };",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HELM-HUSH-the-stopped-fade-left-where-it-stood",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (fading != null) { fading.stopped = true; fading.settle?.(); }   // StopCoroutine(fading)",
     "new": "    if (fading != null) { fading.stopped = true; }   // StopCoroutine(fading)",
     "tests": [

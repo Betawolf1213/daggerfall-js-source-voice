@@ -17,7 +17,7 @@ import assert from 'node:assert/strict';
 
 import { scene } from './csaScene.mjs';
 import { readyPool, sea, modShipsPool } from './navalSea.mjs';
-import { Boat, animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { resolveNodePointer } from '../src/world/prefabNode.js';
 import { quatAngleAxis, mat4FromQuatPos } from '../src/world/quat.js';

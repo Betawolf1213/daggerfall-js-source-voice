@@ -359,7 +359,7 @@
   },
   {
     "name": "SCW-menu-orders-cut",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "    rows.push({ id: BOAT_VERB.orders, label: BOAT_MENU_TEXT.orders });",
     "new": "",
     "tests": [

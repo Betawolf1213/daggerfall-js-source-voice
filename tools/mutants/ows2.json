@@ -253,7 +253,7 @@
   },
   {
     "name": "OWS2-launch-deed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (item?.templateIndex !== BOAT_PARTS_TEMPLATE || partsStanding(item)) return null;   // AUDIT HOLDINGS F1\n    if (state.placing) StopPlacing();",
     "new": "    if (state.placing) StopPlacing();",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "OWS2-launch-item-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    takePlaceItem(boat);\n    StopPlacing();\n    return boat;",
     "new": "    StopPlacing();\n    return boat;",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "OWS2-launch-silent",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    deps.hudText('Boat placed!');\n    const boat = PlaceBoat([...position], [...direction],",
     "new": "    const boat = PlaceBoat([...position], [...direction],",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "OWS2-launch-hull-variant-swapped",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "hullFromMessage(item.message), variantFromMessage(item.message), terrain);",
     "new": "variantFromMessage(item.message), hullFromMessage(item.message), terrain);",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "OWS2-node-law-no-ipnm",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const nodeReadingAt = (point, terrain) => (deps.iliacPuddleNoMore() ?",
     "new": "const nodeReadingAt = (point, terrain) => (false ?",
     "tests": [

@@ -1,4 +1,4 @@
-// CSA-D (2026-09-27) - COME SAIL AWAY'S HELM: systems/comeSailAway.js's sailing half - StartSailing, StopSailing and
+// CSA-D (2026-09-27) - COME SAIL AWAY'S HELM: systems/comeSailAway/comeSailAway.js's sailing half - StartSailing, StopSailing and
 // its delayed coroutine, Update's oar arm and LateUpdate's move, CheckCollision's two sweeps, the cargo's weight, the
 // beaching and the turns, FixedUpdate's enemies riding a hull, the seven activations and the events that end a sail.
 // The runtime runs over the vendored hulls (the real SpawnBoat) and a scripted scene; every expectation is worked out
@@ -7,16 +7,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { Boat, spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAwayBoat.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { Boat, spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import {
   createComeSailAwayRuntime, NO_WATER_LEVEL, ACTIVATION_DISTANCE, ACTIVATIONS, activationModelOf, BOAT_ACTIONS, HANDLING,
   OAR_FATIGUE, CARGO_WEIGHTS, TEMPORARY_SHIP_SCENES, TIME_SCALES, vNormalized, vEquals, vProjectOnPlane, vMoveTowards,
   mathfMoveTowards, mathfClamp, yawOfForward, PASSENGERS_ABOARD_TEXT, NICE_BOAT_TEXT, boardPlaceOf, carriedPoint, yawDelta,
   IRONS_TELL_DEG, IRONS_TELL_WAY, IRONS_TELL_S, IRONS_TEXT, OAR_RUNG_TEXT, OAR_ASTERN_TEXT,
-} from '../src/systems/comeSailAway.js';
+} from '../src/systems/comeSailAway/comeSailAway.js';
 import { helmButtons, helmHint, helmSpeedText, KNOTS_PER_MPS } from '../src/ui/enhancedHelm.js';   // HELM-LADDER: the sails' button is the toggle, the line the ladder - HELM-SPEED: her way
-import { animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { quatRotate, quatAngleAxis } from '../src/world/quat.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);

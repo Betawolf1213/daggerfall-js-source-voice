@@ -18,9 +18,9 @@ import { join } from 'node:path';
 import * as surface from '../src/world/terrainSurface.js';
 import { generateSamples, SCALED_OCEAN_ELEVATION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, WATER_LEVEL, BOAT_ACTIONS } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, WATER_LEVEL, BOAT_ACTIONS } from '../src/systems/comeSailAway/comeSailAway.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** One two-space-indented `const name = (...) => {` of world.js's host, whole. */

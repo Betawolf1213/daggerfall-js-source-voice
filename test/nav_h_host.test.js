@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createNavalHost, hullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_SAVE_VERSION, NEAR_BOOM_M, GUN_KICK, MUZZLE_FLASH_S, SINK_CREDIT_S, OWNER_SWEEP_S } from '../src/scenes/navalHost.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { GRAPPLE_S, MUSTERS, HAND, WA_SMALLRAID } from '../src/systems/naval/navalBoarding.js';
 import { NOTORIETY } from '../src/systems/naval/navalLaw.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';

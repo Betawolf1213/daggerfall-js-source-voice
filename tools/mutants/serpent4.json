@@ -138,7 +138,7 @@
   },
   {
     "name": "SERPENT4-the-point-of-sail-kept-in-a-gale",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "f(state.gale ? 1 : pointOfSail(offRun))",
     "new": "f(pointOfSail(offRun))",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "SERPENT4-the-gale-wind-unraised",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const galeWind = (wind) => (state.gale ? Math.max(wind, WIND_RATED * state.gale.wind) : wind);",
     "new": "const galeWind = (wind) => wind;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "SERPENT4-the-gale-helm-unquickened",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const galeTurn = () => (state.gale ? state.gale.turn : 1);",
     "new": "const galeTurn = () => 1;",
     "tests": [

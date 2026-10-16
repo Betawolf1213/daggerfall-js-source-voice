@@ -251,7 +251,7 @@
   },
   {
     "name": "SHIPS2-L-one-ships-failure-failing-the-rest",
-    "file": "src/systems/comeSailAwayModels.js",
+    "file": "src/systems/comeSailAway/comeSailAwayModels.js",
     "old": "        log?.warn?.(`[come-sail-away] the new ${ship.title} would not build - ${standsAs}`, e);",
     "new": "        throw e;",
     "tests": [
@@ -261,7 +261,7 @@
   },
   {
     "name": "SHIPS2-L-the-warning-dropped",
-    "file": "src/systems/comeSailAwayModels.js",
+    "file": "src/systems/comeSailAway/comeSailAwayModels.js",
     "old": "      if (!answer.ok) { log?.warn?.(`[come-sail-away] the new ${ship.title} did not load - ${standsAs}`, answer.error); return; }",
     "new": "      if (!answer.ok) return;",
     "tests": [

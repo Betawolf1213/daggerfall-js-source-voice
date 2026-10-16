@@ -26,7 +26,7 @@ import { hullTriangles, halfBreadth } from '../tools/galleonLidFit.mjs';
 import { createGalleonGunDeck, RUN_OUT_X, RUN_IN_X, RECOIL, KICK_S, HOLD_S } from '../src/systems/naval/galleonGunDeck.js';
 import { PEER_LAY_S } from '../src/scenes/navalHost.js';
 import { navalWireRecord, validNavalRecord } from '../src/systems/naval/navalWire.js';
-import { Boat, animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { draftOf } from '../src/systems/naval/shipLife.js';   // AUDIT GN2-PF6: the draft table's home
 import { quatRotate } from '../src/world/quat.js';

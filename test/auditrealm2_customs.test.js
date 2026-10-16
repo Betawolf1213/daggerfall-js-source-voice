@@ -12,8 +12,8 @@ import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { SESSION_KEY } from '../src/net/accountClient.js';
 import { tradeableRecord, settleRealmTrade, BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';
-import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, boatItemMessage } from '../src/systems/comeSailAwayItems.js';
-import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway.js';
+import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, boatItemMessage } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway/comeSailAway.js';
 import { realmIo, realmCreate, realmFetch, realmPut, realmTradeCall } from '../src/systems/realmSaves.js';
 import { applyCustoms, liquidWealthOf, stashedItemLists, customsLines } from '../src/systems/realmCustoms.js';
 import { createBankAccounts, createHouses, allocateHouseToPlayer, ownsHouse, ownsShip, sellShip, sellHouse, shipSellPrice, SHIP_TYPES, SHIP_INTERIOR_MAP_IDS, crossedDeedLines, CROSSED_DEED_LINES } from '../src/systems/banking.js';
@@ -101,7 +101,7 @@ function boatItem(templateIndex, hull, uid) {
 // ---- T1: a boat's deed and parts stay with the save that holds the boat -------------------------------------------------
 
 test('AUDIT REALM2 T1: a Come Sail Away boat\'s deed and its parts never change hands - the law the service settles with and the pack the window offers from both refuse them, in words the window can say', () => {
-  assert.deepEqual(BOAT_TEMPLATES, [BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE], 'the law\'s rows are the mod\'s two (systems/comeSailAwayItems.js)');
+  assert.deepEqual(BOAT_TEMPLATES, [BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE], 'the law\'s rows are the mod\'s two (systems/comeSailAway/comeSailAwayItems.js)');
   const deed = boatItem(BOAT_DEED_TEMPLATE, 3, 1790000000000001), parts = boatItem(BOAT_PARTS_TEMPLATE, 1, 1790000000000002);
   for (const [it, may] of [[deed, false], [parts, false], [torch(), true]]) {   // the torch: their group's plain row still trades
     assert.equal(tradeableRecord(plain(it)), may, it.name);

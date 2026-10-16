@@ -35,7 +35,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARROW_TEMPLATE, goldStack, letterOfCredit } from '../src/systems/inventory.js';
 import { sigilStone } from '../src/systems/gateSpoils.js';
 import { brokerStock } from '../src/systems/sigilBroker.js';
-import { mintBoatItem, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
+import { mintBoatItem, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { equipItem } from '../src/systems/equip.js';
 import { setLocked } from '../src/systems/itemLock.js';
 import { mintPiece } from '../src/systems/smithItems.js';

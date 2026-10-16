@@ -1,7 +1,7 @@
 [
   {
     "name": "BOATMENU-no-cargo-gate",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (has('cargo')) rows.push(",
     "new": "  if (true) rows.push(",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "BOATMENU-board-at-helm",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "if (has('board') && !s.aboard && !s.sailingThis)",
     "new": "if (has('board') && !s.aboard)",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "BOATMENU-board-aboard",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "if (has('board') && !s.aboard && !s.sailingThis)",
     "new": "if (has('board') && !s.sailingThis)",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "BOATMENU-leave-unsaid",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "label: s.sailingThis ? BOAT_MENU_TEXT.leave : BOAT_MENU_TEXT.helm",
     "new": "label: BOAT_MENU_TEXT.helm",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BOATMENU-deed-packs",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "const why = !s.packable ? BOAT_MENU_WHY.moored : ",
     "new": "const why = ",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "BOATMENU-passengers-ignored",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": " : (s.passengers ?? 0) > 0 ? BOAT_MENU_WHY.passengers\n      : s.noDeed",
     "new": "\n      : s.noDeed",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "BOATMENU-variants-ungated",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "if (has('variant') && s.variants)",
     "new": "if (has('variant'))",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "BOATMENU-style-at-helm",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "rows.push(s.sailing ? {",
     "new": "rows.push(false ? {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "BOATMENU-status-ungated",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (has('status')) rows.push(",
     "new": "  if (true) rows.push(",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "BOATMENU-steal-ignored",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "(mode === 'steal' ? BOAT_VERB.pack : BOAT_VERB.helm)",
     "new": "BOAT_VERB.helm",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "BOATMENU-walk-shallow",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "    for (const c of n?.children ?? []) stack.push(c);",
     "new": "    if (n === root) for (const c of n?.children ?? []) stack.push(c);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "BOATMENU-reach-unkept",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (!(p.distance <= p.reach)) return 'far';",
     "new": "  if (false) return 'far';",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "BOATMENU-refusal-pressed",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (row.disabled) { const line = boatMenuRefusal(row.why); if (line) p.say(line); return 'refused'; }",
     "new": "  if (row.disabled) { const line = boatMenuRefusal(row.why); if (line) p.say(line); }",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "BOATMENU-refusal-silent",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "if (line) p.say(line); return 'refused'; }",
     "new": "return 'refused'; }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "BOATMENU-pack-in-players-mode",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "how.mode ?? p.mode);",
     "new": "p.mode);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "BOATMENU-farther-ladder",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "    if (d < bestD) { bestD = d; best = n; }",
     "new": "    if (d > -1 && !best) { bestD = d; best = n; }",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "BOATMENU-driving-words",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "(why === BOAT_MENU_WHY.driving ? 'You cannot pack a boat you are driving!'",
     "new": "(why === BOAT_MENU_WHY.driving ? 'No.'",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "BOATMENU-start-top",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (box == null) return 0;\n  if (box === 'door'",
     "new": "  if (true) return 0;\n  if (box === 'door'",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "BOATMENU-door-lit",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  return rows.findIndex((r) => r.id === verb);\n}",
     "new": "  return Math.max(0, rows.findIndex((r) => r.id === verb));\n}",
     "tests": [

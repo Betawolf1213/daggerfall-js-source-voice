@@ -1,18 +1,18 @@
 // CSA-I (2026-09-27) - COME SAIL AWAY'S POSITION READING AND THE WATER WALK: the position box and its coroutine
-// (ComeSailAway.cs 5525-5541, 5589-5780), OnGUI's map and debug values (4089-4182, systems/comeSailAwayMap.js), and
+// (ComeSailAway.cs 5525-5541, 5589-5780), OnGUI's map and debug values (4089-4182, systems/comeSailAway/comeSailAwayMap.js), and
 // LateUpdate's water walk (4963-4982, 5044-5051; StartWaterwalking / EndWaterwalking 5966-6029) - over the real
 // SpawnBoat and the vendored models, every host door scripted.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_EFFECT_BUNDLE, WATER_WALKING_SILENT, boundsContains } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_EFFECT_BUNDLE, WATER_WALKING_SILENT, boundsContains } from '../src/systems/comeSailAway/comeSailAway.js';
 import {
   travelMapPicture, mapRect, guiMouse, mapPixelUnder, guiRectContains, vector2IntDistance, dayOfMonthWithSuffix, markerLabel,
   csFloatString, mapOverlayDraws, MAP_MARKER_MODE_COLORS, MAP_MARKER_MODE_LABELS, MAP_HELP_LINES, DAGGERFALL_DEFAULT_TEXT_COLOR,
   COLOR_BLACK, COLOR_RED, LINE_TEXTURE,
-} from '../src/systems/comeSailAwayMap.js';
+} from '../src/systems/comeSailAway/comeSailAwayMap.js';
 import { REGION_PANEL_OFFSET } from '../src/ui/travelMapWindow.js';
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND, hasActiveEffect, tickActiveEffects } from '../src/systems/effects.js';
 import { liveBundles } from '../src/systems/mysticism.js';
@@ -87,7 +87,7 @@ function scene(opts = {}) {
   return { rt, out, world, place, frame, mouseAtGui, settings };
 }
 
-// ── the picture and the arithmetic (systems/comeSailAwayMap.js) ─────────────────────────────────────────────────
+// ── the picture and the arithmetic (systems/comeSailAway/comeSailAwayMap.js) ─────────────────────────────────────────────────
 
 test('CSA-I: record 3 rebuilt - TRAV0I00.IMG\'s interior from row 12, nearest at each texel\'s centre, 1000x500, opaque and top down; lineTexture is TEXTURE.000\'s solid record 112', () => {
   const bitmap = { width: 320, height: 200, data: new Uint8Array(320 * 200) };

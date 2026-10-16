@@ -5,7 +5,7 @@ import { cabinSceneName } from '../src/systems/sailingCabin.js';
 import { SHIP_INTERIOR_MAP_IDS } from '../src/systems/banking.js';
 import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
 import { createSceneCache, interiorSceneName, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
-import { mintDeed, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
+import { mintDeed, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { privateBoatRoom, privateInteriorPrefix, privateInteriorOf } from '../src/net/privateInterior.js';
 import { validStaffDestination, staffDestinationKey } from '../src/net/staffTeleport.js';
 import { createSailingCabinLink } from '../src/net/sailingCabinLink.js';

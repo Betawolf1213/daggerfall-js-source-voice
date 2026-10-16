@@ -156,7 +156,7 @@
   },
   {
     "name": "FLEET-parts-swap-for-a-pack-deed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        if (deps.items?.retitle?.(boat, state.placeItem)) removeExact(state.placeItemCollection, state.placeItem);",
     "new": "        if (false) removeExact(state.placeItemCollection, state.placeItem);",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "FLEET-summon-never-moves",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const boat = GetPlacedBoatWithUID(uid);\n    if (boat) {\n      if (boat === state.CurrentBoat",
     "new": "    const boat = GetPlacedBoatWithUID(uid);\n    if (false) {\n      if (boat === state.CurrentBoat",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "FLEET-laid-up-hold-lost",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      transferAll(boat.Cargo.Items, kept);   // onto what a pick-up left under her number",
     "new": "      boat.Cargo.Items.length = 0;   // onto what a pick-up left under her number",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "FLEET-laid-up-hold-not-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (!state.PackedCargoes.has(key)) state.PackedCargoes.set(key, []);",
     "new": "    if (!state.PackedCargoes.has(key)) return [];",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "FLEET-rigging-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b));",
     "new": "f(b.modifierMoveSpeedSail)) * hurt));",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "FLEET-hold-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "(Number.isFinite(holdK) && holdK > 0 ? f(holdK) : 1)",
     "new": "1",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "FLEET-wire-n-always",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "...(named ? { n } : {}) };",
     "new": "n };",
     "tests": [
@@ -220,7 +220,7 @@
   },
   {
     "name": "FLEET-wire-name-unread-by-law",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "  const v = shipNameVerdict(raw);\n  return v.ok ? v.name : '';",
     "new": "  return raw;",
     "tests": [

@@ -15,7 +15,7 @@ import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { DISSOLVE_GLSL, BAYER_GLSL } from '../src/render/orderedDither.js';
 import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPool.js';
-import { Boat, setLights } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createNavalFlames } from '../src/scenes/navalFlames.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 import { NAVAL_HUD_CSS } from '../src/ui/navalHud.js';

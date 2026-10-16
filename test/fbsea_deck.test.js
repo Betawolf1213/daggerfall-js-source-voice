@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { raycastColliders } from '../src/world/prefabColliders.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { createComeSailAwayAboard, deckPose, helmWord, localOf, worldOf } from '../src/scenes/comeSailAwayAboard.js';

@@ -38,7 +38,7 @@
   },
   {
     "name": "AFLOAT-off",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        if (ipnm && nodeReadingAt(val2.point, val2.terrain) !== 0) {",
     "new": "        if (false) {",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "AFLOAT-no-word",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "          deps.midScreenText(PLACE_RAISED_TEXT, 3);\n          StopPlacing();\n          return;",
     "new": "          StopPlacing();\n          return;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "AFLOAT-placed-anyway",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "          deps.midScreenText(PLACE_RAISED_TEXT, 3);\n          StopPlacing();\n          return;",
     "new": "          deps.midScreenText(PLACE_RAISED_TEXT, 3);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "AFLOAT-every-water",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        if (ipnm && nodeReadingAt(val2.point, val2.terrain) !== 0) {",
     "new": "        if (ipnm) {",
     "tests": [

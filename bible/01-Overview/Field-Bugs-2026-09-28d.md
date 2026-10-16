@@ -53,7 +53,7 @@ boat was lost, each a C# behaviour CSA-C had kept bug for bug:
   visibility check, so a boat out of sight keeps the old origin's numbers - and the port recentres at every map pixel
   crossed. A player who left it by one pixel and came back by another found it hundreds of metres off, or never.
 
-**The fix** (`systems/comeSailAway.js`, `world/streamingWorld.js`, `scenes/world.js`), four departures, Port-Ledger A
+**The fix** (`systems/comeSailAway/comeSailAway.js`, `world/streamingWorld.js`, `scenes/world.js`), four departures, Port-Ledger A
 (continued): A PLACED BOAT FLOATS, STAYS IN REACH AND KEEPS ITS PLACE.
 
 - A "DeepWaters" hit under the sea's top floats the boat on the water over it: where the look crosses the sea, else

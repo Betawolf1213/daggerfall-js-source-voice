@@ -46,7 +46,7 @@
 // SetBool("Stowed", true) below are asked of it as the C# asks them.
 //
 //   ctx = {
-//     models          systems/comeSailAwayModels.js's
+//     models          systems/comeSailAway/comeSailAwayModels.js's
 //     player() -> { position: [x,y,z], rotation: [x,y,z,w] }   PlayerObject.transform, Unity space
 //     billboardSize(archive, record) -> [w, h] | null          Summary.Size (world/rmbFlats.js billboardSize)
 //     modelBounds(modelId) -> { min, max } | null              the classic model's Mesh.bounds (its vertex box)
@@ -54,10 +54,10 @@
 //     audioClips                                                ComeSailAway.audioClips (Start's five)
 //   }
 
-import { PrefabNode, instantiatePrefab, prefabShapeStamp } from '../world/prefabNode.js';
+import { PrefabNode, instantiatePrefab, prefabShapeStamp } from '../../world/prefabNode.js';
 import { applyRuntimeMaterials, bundleSlots, dfMaterial, gameTextureFromName } from './comeSailAwayModels.js';
-import { createAnimator } from '../world/unityAnimator.js';
-import { instanceParticleSystems } from '../world/unityParticles.js';
+import { createAnimator } from '../../world/unityAnimator.js';
+import { instanceParticleSystems } from '../../world/unityParticles.js';
 import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayHulls.js';   // INT1: the table's leaf - the item law reads it in a Worker
 
 /** ComeSailAway.firstHullModelID - SpawnBoat asks for 112410 + hull. */

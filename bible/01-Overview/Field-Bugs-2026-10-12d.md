@@ -142,7 +142,7 @@ Pinned by `test/fb1012d_salvageclassic.test.js` (4), every fixture the real prod
 
 ## ETHER-STRAND: no lock crosses the Veil; the load's word is said beneath the crossing's (4)
 
-`src/systems/comeSailAway.js` cargoModWords, UpdateBoatCargoMod, cargoLoad; `src/scenes/world.js` the crossing's words;
+`src/systems/comeSailAway/comeSailAway.js` cargoModWords, UpdateBoatCargoMod, cargoLoad; `src/scenes/world.js` the crossing's words;
 `src/scenes/fleetHost.js` the Veil's refusal.
 
 FOUND - NOT REPRODUCED. Nothing ties a ship's side of the Veil to Come Sail Away's motor: `comeSailAway.js` reads no

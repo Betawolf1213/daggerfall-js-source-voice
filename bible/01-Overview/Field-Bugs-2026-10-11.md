@@ -85,7 +85,7 @@ leave) - a reversal of FIX-F's "leaving discards".
 
 ## HELM-JUMP: a jump leaves the helm (4)
 
-Come Sail Away's helm holds the player to the boat's drive position every frame (`systems/comeSailAway.js`
+Come Sail Away's helm holds the player to the boat's drive position every frame (`systems/comeSailAway/comeSailAway.js`
 `updateSailing`) and is let go by the events the mod hears: a load's start, a fast travel, a death. A Recall
 (`scenes/world.js` `recallToAnchor`), a guild's teleport, an unstuck, a quest's respawn and the staff's jumps raise none
 of those - the C# hears OnTeleportToCoordinates, which is its waves. So the jump landed the player, the re-anchor left the

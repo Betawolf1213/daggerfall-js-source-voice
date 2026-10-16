@@ -139,7 +139,7 @@ binds") - THE ARROWS ARE THE HELM (DECLARED, the Port-Ledger's HELM-KEYS row):
 
 - **Up and down, W and S: one ladder** (HELM-LADDER, 2026-10-04, from the field: "WASD and Arrow keys should function
   the same when controlling") - `MoveForwards` or `BoatSailUp` climbs a rung a press, `MoveBackwards` or `BoatSailDown`
-  comes down one (`systems/comeSailAway.js ladderUp, ladderDown`): the oars backing water, at rest, pulling ahead, then
+  comes down one (`systems/comeSailAway/comeSailAway.js ladderUp, ladderDown`): the oars backing water, at rest, pulling ahead, then
   her sails and, where the square sails are the player's own (the assist's AutoStowSquareSails off, a hull with both
   kinds), all her canvas - More sail and Less sail's steps above the oars. The oars keep their rung with no key held. A
   step with nowhere to go says so. End still toggles all her canvas, the brackets still trim - under the mod's own

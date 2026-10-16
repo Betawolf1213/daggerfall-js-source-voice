@@ -12,9 +12,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, LOST_UNDER_M } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, LOST_UNDER_M } from '../src/systems/comeSailAway/comeSailAway.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const json = (f) => JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));

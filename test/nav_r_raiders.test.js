@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { raiderClassOf, raiderPlan, RAIDER_STAND_M, RAIDER_DROP_M, RAIDER_SHIPS_MAX, RAIDER_LEAD_S } from '../src/systems/naval/navalRaiders.js';
 import { createNavalHost, RAIDER_SHEER_M, HOSTILE_NEAR_M, SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { SHIP_CLASSES } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { ENGAGE_RANGE } from '../src/systems/naval/navalAI.js';

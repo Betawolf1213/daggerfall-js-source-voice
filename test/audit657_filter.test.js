@@ -87,7 +87,7 @@ test('AUDIT 657 T4 a ship\'s name is read word by word, as a rank\'s name is: ch
     assert.equal(v.name, '');
     assert.match(v.reason, /^That name reads as ".+"\. Please pick another\.$/);
   }
-  assert.match(src('src/systems/comeSailAwayWire.js'), /const v = shipNameVerdict\(raw\);\n\s*return v\.ok \? v\.name : '';/, 'a peer\'s wire name judged by the same verdict');
+  assert.match(src('src/systems/comeSailAway/comeSailAwayWire.js'), /const v = shipNameVerdict\(raw\);\n\s*return v\.ok \? v\.name : '';/, 'a peer\'s wire name judged by the same verdict');
 });
 
 test('AUDIT 657 T5 a run of one-letter words read once where it can hold no word: every window of it a reading of its own cost a 240-letter chat line 7 ms at the relay - now within a few times an ordinary line of its length; every spelled word still caught (mutant: every window read)', () => {

@@ -20,9 +20,9 @@ import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
   shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE,
 } from '../systems/fleet.js';
-import { HULL_NAMES, HULL_PRICES } from '../systems/comeSailAwayBoat.js';
-import { mintDeed } from '../systems/comeSailAwayItems.js';
-import { TERRAIN_EDGE } from '../systems/comeSailAway.js';
+import { HULL_NAMES, HULL_PRICES } from '../systems/comeSailAway/comeSailAwayBoat.js';
+import { mintDeed } from '../systems/comeSailAway/comeSailAwayItems.js';
+import { TERRAIN_EDGE } from '../systems/comeSailAway/comeSailAway.js';
 import { batteriesOf } from '../systems/naval/navalShips.js';
 import { CREW_ORDERS, CREW_ROLES } from '../systems/naval/shipCrew.js';
 import { MOBILE } from '../systems/naval/navalBoarding.js';

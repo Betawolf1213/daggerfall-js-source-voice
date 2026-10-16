@@ -1,7 +1,7 @@
 [
   {
     "name": "CSAK-wire-turn-only",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (way[0] || way[1] || way[2]) underWay = true;",
     "new": "if (way[0] || way[1]) underWay = true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CSAK-wire-m-always",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}) };",
     "new": "return { b, m, ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}) };",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "CSAK-wire-way-not-converted",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "const at = vel ? toWire([v.position[0] + vel[0], v.position[1] + vel[1], v.position[2] + vel[2]]) : p;",
     "new": "const at = vel ? [v.position[0] + vel[0], v.position[1] + vel[1], v.position[2] + vel[2]] : p;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "CSAK-wire-m-length",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (!Array.isArray(m) || m.length !== raw.b.length) return null;",
     "new": "if (!Array.isArray(m) || m.length > raw.b.length) return null;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "CSAK-wire-way-three",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (!Array.isArray(way) || way.length !== 3 || !way.every(Number.isFinite)) return null;",
     "new": "if (!Array.isArray(way) || way.length < 3 || !way.every(Number.isFinite)) return null;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "CSAK-wire-way-finite",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (!Array.isArray(way) || way.length !== 3 || !way.every(Number.isFinite)) return null;",
     "new": "if (!Array.isArray(way) || way.length !== 3) return null;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "CSAK-wire-speed-one-axis",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (Math.hypot(way[0], way[1]) > CSA_WIRE_SPEED_MAX || Math.abs(way[2]) > CSA_WIRE_TURN_MAX) return null;",
     "new": "if (Math.abs(way[0]) > CSA_WIRE_SPEED_MAX || Math.abs(way[2]) > CSA_WIRE_TURN_MAX) return null;",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "CSAK-wire-turn-one-side",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "if (Math.hypot(way[0], way[1]) > CSA_WIRE_SPEED_MAX || Math.abs(way[2]) > CSA_WIRE_TURN_MAX) return null;",
     "new": "if (Math.hypot(way[0], way[1]) > CSA_WIRE_SPEED_MAX || way[2] > CSA_WIRE_TURN_MAX) return null;",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "CSAK-wire-velocity-axes",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "boat.velocity = [way[0], 0, way[1]];",
     "new": "boat.velocity = [way[0], 0, way[0]];",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "CSAK-wire-key-no-way",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');",
     "new": "export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n ? [rec.b, null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null] : rec.b) : '');",
     "tests": [
@@ -373,7 +373,7 @@
   },
   {
     "name": "CSAK-rt-pack-with-passengers",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "else if ((deps.passengersAboard?.(boat) ?? 0) > 0) deps.midScreenText(PASSENGERS_ABOARD_TEXT, 1.5);",
     "new": "else if ((deps.passengersAboard?.(boat) ?? 0) < 0) deps.midScreenText(PASSENGERS_ABOARD_TEXT, 1.5);",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "CSAK-rt-motion-beached",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "if (!isSailing() || boat == null || IsBeached(boat)) return null;\n      return { boat, velocity",
     "new": "if (!isSailing() || boat == null) return null;\n      return { boat, velocity",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "CSAK-rt-motion-local",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "return { boat, velocity: quatRotate(boat.GameObject.rotation, state.velocityCurrent), turn: state.TurnCurrent };",
     "new": "return { boat, velocity: [...state.velocityCurrent], turn: state.TurnCurrent };",
     "tests": [
@@ -400,7 +400,7 @@
   },
   {
     "name": "CSAK-rt-panel-trim-owner",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "manualTrim: !trimAuto(), squareOnly: !foreAft,",
     "new": "manualTrim: trimAuto(), squareOnly: !foreAft,",
     "tests": [
@@ -409,7 +409,7 @@
   },
   {
     "name": "CSAK-rt-panel-sails",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "hull: boat.hull, hasSails: boat.Sails.length > 0, sailsUp: state.sailPosition !== 0,",
     "new": "hull: boat.hull, hasSails: boat.Sails.length > 0, sailsUp: state.sailPosition === 0,",
     "tests": [
@@ -418,7 +418,7 @@
   },
   {
     "name": "CSAK-rt-door-sounds",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "deps.audio?.dfClipAtPoint?.(bool ? 93 : 94, [...triggerNode.position], 1);",
     "new": "deps.audio?.dfClipAtPoint?.(bool ? 94 : 93, [...triggerNode.position], 1);",
     "tests": [
@@ -427,7 +427,7 @@
   },
   {
     "name": "CSAK-rt-carried-point",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "export const carriedPoint = (before, after, p) => applyMatrix(after, applyInverse(before, p));",
     "new": "export const carriedPoint = (before, after, p) => applyMatrix(after, p);",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "CSAK-rt-board-place",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const child = parent.getChild(parent.children.indexOf(triggerNode) - 1);",
     "new": "const child = parent.getChild(parent.children.indexOf(triggerNode));",
     "tests": [

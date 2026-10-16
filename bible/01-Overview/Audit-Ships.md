@@ -38,7 +38,7 @@ Each is put to Mac with its options. Nothing here was decided for Mac:
 ## Fixed
 
 **A, the sailing** (`src/systems/seaHelm.js`, `src/scenes/world.js`, `src/scenes/navalHost.js`,
-`src/systems/comeSailAway.js`, `src/systems/helmWay.js`, `src/scenes/comeSailAwayPeers.js`; A1 in the serpent's brain)
+`src/systems/comeSailAway/comeSailAway.js`, `src/systems/helmWay.js`, `src/scenes/comeSailAwayPeers.js`; A1 in the serpent's brain)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

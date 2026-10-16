@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const fileFetch = async (url) => {
   const bytes = readFileSync(fileURLToPath(url));

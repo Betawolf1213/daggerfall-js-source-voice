@@ -61,7 +61,7 @@ import { turnOnConditionFlag, turnOffConditionFlag, REGION_FLAGS, REGION_COUNT }
 import { isOnlinePage } from './onlineLane.js';   // REALM P0.4: online, a shop pays at most half what it asks
 import { BAG_TEMPLATE, isBagItem } from '../net/bagLaw.js';   // BAG1: the Materials Bag, at every General Store online
 import { createPellets } from './thunderlock.js';   // SHOP-PELLETS: the gun's shot on the counter - the shot alone, never the gun
-import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from './comeSailAwayItems.js';   // SHIPYARDS: a ship's parts and deed, which no shop buys - a port's shipyard does
+import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from './comeSailAway/comeSailAwayItems.js';   // SHIPYARDS: a ship's parts and deed, which no shop buys - a port's shipyard does
 
 // ItemGroups ids used by the shelf tables (DaggerfallUnityEnums).
 const GROUP_NAMES = Object.freeze({

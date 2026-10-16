@@ -580,7 +580,7 @@
   },
   {
     "name": "QUAY-csa-warp-way-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (w) {\n        state.MoveVectorCurrent = [0, 0, 0];",
     "new": "      if (w) {",
     "tests": [
@@ -589,7 +589,7 @@
   },
   {
     "name": "QUAY-csa-warp-ignored",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        setPositionChecked(t, [f(w.pos[0]), t.position[1], f(w.pos[1])], log);",
     "new": "",
     "tests": [
@@ -598,7 +598,7 @@
   },
   {
     "name": "QUAY-csa-oars-unsaid",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      const w = deps.warp?.(boat, { struck: state.sailPosition === 0, oars: vSqrMagnitude(state.MoveVectorTarget) > 0 || state.TurnTarget !== 0, dt: dt() }) ?? null;",
     "new": "      const w = deps.warp?.(boat, { struck: state.sailPosition === 0, oars: false, dt: dt() }) ?? null;",
     "tests": [

@@ -30,7 +30,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 `navbake.json` 17), `audit0928_oh.json` 10 - all dead. `arena2triage.json` gains the triage's 23 records (4 die here,
 19 against the player's own data, each with its `why`; the list's three older records die here too).
 
-**Online and the wire** (`systems/comeSailAwayWire.js`, `systems/comeSailAwayBoat.js`, `scenes/comeSailAwayPeers.js`, `scenes/comeSailAwayPool.js`, `scenes/world.js`, `scenes/dungeonContext.js`, `scenes/worldModes.js`)
+**Online and the wire** (`systems/comeSailAway/comeSailAwayWire.js`, `systems/comeSailAway/comeSailAwayBoat.js`, `scenes/comeSailAwayPeers.js`, `scenes/comeSailAwayPool.js`, `scenes/world.js`, `scenes/dungeonContext.js`, `scenes/worldModes.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -40,7 +40,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 | O4 | med | An invisible sailor's boat was drawn whole - the helm crew up, the lanterns lit - and showed every peer where the invisible player stood (the pre-merge audit's I-B, never extended to the boats). | The peers take the look HCC's team does: a hidden owner's boat at the helm stands nowhere (no mesh, flats or lanterns), a concealed one's flats wear the look, a moored boat stays. |
 | O6 | low | In a dungeon a joiner's hull carried foes the joiner does not step (the host's room foes, a party member's own), writing their feet while their stream pulled them back. | The hull asks the dungeon frame's own puppet test (`isPuppetFoe`, through worldModes' `insideFoeIsPuppet`) - the one the abyss now asks too (M1). |
 
-**The save and the lifecycle** (`systems/comeSailAway.js`, `systems/comeSailAwayItems.js`, `systems/effects.js`, `systems/save.js`, `systems/modSettings.js`, `systems/inputActions.js`, `scenes/world.js`, `scenes/oceanHolesAbyss.js`)
+**The save and the lifecycle** (`systems/comeSailAway/comeSailAway.js`, `systems/comeSailAway/comeSailAwayItems.js`, `systems/effects.js`, `systems/save.js`, `systems/modSettings.js`, `systems/inputActions.js`, `scenes/world.js`, `scenes/oceanHolesAbyss.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

@@ -12,7 +12,7 @@ import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { navalHitData, NAVAL_HIT_MAX } from '../src/systems/naval/navalWire.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { scene } from './csaScene.mjs';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** A peer's blow - PIN MOVED (TOUGHER-SHIPS): one past a hit's most (navalWire.js NAVAL_HIT_MAX, a broadside's worth) lands

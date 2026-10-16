@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { sailFreeGain, HELM_WAY, HULL_HELM, CARGO_HOLD_MISSING, HANDLINGS, SAIL_FREE, steerage, isResponsive } from '../src/systems/helmWay.js';
-import { HANDLING } from '../src/systems/comeSailAway.js';
+import { HANDLING } from '../src/systems/comeSailAway/comeSailAway.js';
 import { ACCEL, DECEL, OARS_TURN, SWEEP_TURN, WIND_RATED, createSeaShip, maxTurnRate, turnRateAt } from '../src/systems/naval/navalAI.js';
 import { createShipDamage, SHIP_STATES, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
 import { HULL } from '../src/systems/naval/navalShips.js';

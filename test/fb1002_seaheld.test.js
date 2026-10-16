@@ -24,7 +24,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as surface from '../src/world/terrainSurface.js';
 import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
-import { HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { scene } from './csaScene.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

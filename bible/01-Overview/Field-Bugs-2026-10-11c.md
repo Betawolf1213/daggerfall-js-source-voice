@@ -33,7 +33,7 @@ The first three arms differ by timer- and budget-driven work (the song player, t
 blanket - Performance-Arena's own caveat) and by nothing of the sea's: its functions summed to about 0.3 ms in each, the
 draws were the same to a call (1,166-1,167). The crowd arm put eight foes in Come Sail Away's enemy list beside a boat
 owned - FixedUpdate's ray down each foe, the suspect read off the code, did not show in the profile. What did show grew
-with the boats: `boatAnimators` (`systems/comeSailAwayBoat.js`) was `[...walk()].flatMap(...)` over the boat's whole
+with the boats: `boatAnimators` (`systems/comeSailAway/comeSailAwayBoat.js`) was `[...walk()].flatMap(...)` over the boat's whole
 tree, called by the runtime's `animate` for every boat in `AllBoats` - every boat the player has placed, active or put
 away - and by the peers' pose for every other player's boat, every frame. A node bench over the vendored hulls (no GL):
 34 us for the rowboat's 56 nodes, 158-167 us for the three hulls near 600, 421 us for the 1,228 of hull 1, a boat a

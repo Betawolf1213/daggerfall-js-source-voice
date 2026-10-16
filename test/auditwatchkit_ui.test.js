@@ -31,7 +31,7 @@ import { liquidWealthOf, liquidWorthOf, stashedItemLists, customsAllowance } fro
 import { applyCustoms } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { NAVAL_SAVE_VENDOR } from '../src/scenes/navalHost.js';
-import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway.js';
+import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway/comeSailAway.js';
 import { goldStack, letterOfCredit } from '../src/systems/inventory.js';
 import { setItemFields } from '../src/systems/itemTemplates.js';
 import { HULL } from '../src/systems/naval/navalShips.js';

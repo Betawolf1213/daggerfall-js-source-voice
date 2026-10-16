@@ -25,13 +25,13 @@
 // 1310-1334), IsNearPort (1095-1117), the two item classes' UseItem
 // (ItemBoatParts, ItemBoatDeed: `useBoatParts`, `useBoatDeed`) and GiveMeBoat
 // (`giveboat`); the rows, the shelf's AssignVariantsToShopItems and the mint
-// are systems/comeSailAwayItems.js's.
+// are systems/comeSailAway/comeSailAwayItems.js's.
 //
 // CSA-I (2026-09-27): AND THE POSITION READING AND THE WATER WALK - the
 // position box (CheckBoatPosition 5525-5541), StartShowBoatPosition and its
 // coroutine (5589-5680: the two boxes, the weather's and the hour's
 // restrictions, the pause, the keys), the markers (5681-5780) and OnGUI's map
-// and debug values (4089-4182: the arithmetic is systems/comeSailAwayMap.js's),
+// and debug values (4089-4182: the arithmetic is systems/comeSailAway/comeSailAwayMap.js's),
 // and LateUpdate's water walk (4963-4982, 5044-5051) with StartWaterwalking and
 // EndWaterwalking (5966-6029).
 //
@@ -112,7 +112,7 @@
 //   openCargo(cargo)                              InventoryWindow.LootTarget = cargo; "dfuiOpenInventoryWindow"
 //   openListPicker(items, onPick(index))          a DaggerfallListPickerWindow pushed over the top window
 //   popWindow()                                   DaggerfallUI.UIManager.PopWindow
-//   pool.setVariant(boat, variant)                SetBoatVariant (systems/comeSailAwayBoat.js, the pool's context)
+//   pool.setVariant(boat, variant)                SetBoatVariant (systems/comeSailAway/comeSailAwayBoat.js, the pool's context)
 //   audio.uiOneShot(soundIndex)                   DaggerfallUI.Instance.PlayOneShot
 //   CSA-E, the wind: weatherType(), hour()        PlayerWeather.WeatherType, WorldTime.Now.Hour
 //   CSA-I, the position reading and the water walk:
@@ -148,19 +148,19 @@
 // }
 
 import { Boat, setLights, HULL_NAMES, HULL_PRICES, packedHullWeight, CARGO_CONTAINER_IMAGE, TRIGGER_MODEL, goModelName, meshLocalBounds, colliderBounds, animatorOf, boatAnimators, boatParticleSystems, nodeOf, AUDIO_CLIPS, SAIL_ANIMATION_SPEED } from './comeSailAwayBoat.js';
-import { firmStat } from './firmamentLive.js';   // FIRM1: the Firmament's helmsman (sailSpeed)
-import { constantCurve, twoConstantsCurve, SPACE } from '../world/unityParticles.js';
-import { quatEuler } from '../world/unityAnimator.js';
-import { quatLookRotation, quatRotate, quatAngleAxis, quatMultiply, quatSlerp } from '../world/quat.js';
-import { transferAll, canHoldAmount } from './inventory.js';
+import { firmStat } from '../firmamentLive.js';   // FIRM1: the Firmament's helmsman (sailSpeed)
+import { constantCurve, twoConstantsCurve, SPACE } from '../../world/unityParticles.js';
+import { quatEuler } from '../../world/unityAnimator.js';
+import { quatLookRotation, quatRotate, quatAngleAxis, quatMultiply, quatSlerp } from '../../world/quat.js';
+import { transferAll, canHoldAmount } from '../inventory.js';
 import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, boatItemMessage, mintDeed } from './comeSailAwayItems.js';   // CSA-H: the two items; SHIP-PACK: a ship's deed given back
-import { NO_WATER_LEVEL } from '../world/deepWaterSwim.js';
-import { invertAffine } from '../world/prefabColliders.js';
+import { NO_WATER_LEVEL } from '../../world/deepWaterSwim.js';
+import { invertAffine } from '../../world/prefabColliders.js';
 import { buildWaveMesh, stepWaveFrame, waveFrameTimeOf, isDayHour, WAVE_FRAME_COUNT, WAVE_SCALE } from './comeSailAwayWaves.js';
-import { monthNames } from './gameDate.js';   // CSA-I: WorldTime.Now.MonthName, a marker's label (L10N3d: in the player's language, as DFU's GetMonthName reads it)
-import { HELM_WAY, CARGO_HOLD_MISSING, steerage, isResponsive, pointOfSail, seaWind, SAIL_FREE, sailFreeGain, WIND_RATED } from './helmWay.js';   // HELM-WAY: the responsive helm; SAIL-FREE: her way under sail
+import { monthNames } from '../gameDate.js';   // CSA-I: WorldTime.Now.MonthName, a marker's label (L10N3d: in the player's language, as DFU's GetMonthName reads it)
+import { HELM_WAY, CARGO_HOLD_MISSING, steerage, isResponsive, pointOfSail, seaWind, SAIL_FREE, sailFreeGain, WIND_RATED } from '../helmWay.js';   // HELM-WAY: the responsive helm; SAIL-FREE: her way under sail
 import { MAP_MARKER_MODE_COLORS, mapRect, guiMouse, mapPixelUnder, guiRectContains, vector2IntDistance, markerLabel, dayOfMonthWithSuffix, mapOverlayDraws, csFloatString, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_BLACK, DAGGERFALL_DEFAULT_SHADOW_POS } from './comeSailAwayMap.js';   // CSA-I: the position reading
-import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { noteFirstUse } from '../tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { BOAT_ACTIONS } from './comeSailAwayActions.js';   // HUD-HELM: the helm keys' table, a leaf the HUD's helm panel reads
 
 export const COME_SAIL_AWAY_VENDOR = 'come-sail-away';
@@ -189,7 +189,7 @@ export const PLACE_RAY_DISTANCE = 100;
 export const PLACE_CLICK_DELAY = Math.fround(0.2);
 /** PlayerEnterExit.blockWaterLevel with no water (NoWaterSentinel: deepWaterSwim.js's one home). */
 export { NO_WATER_LEVEL };
-/** ItemBoatParts' and ItemBoatDeed's rows (CSA-H: systems/comeSailAwayItems.js is their one home). */
+/** ItemBoatParts' and ItemBoatDeed's rows (CSA-H: systems/comeSailAway/comeSailAwayItems.js is their one home). */
 export { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE };
 /** The console's words (ComeSailAway's nested command classes). */
 export const CONSOLE = Object.freeze({
@@ -2185,7 +2185,7 @@ export function createComeSailAwayRuntime(deps) {
   }
   /** StopShowBoatPosition (5778-5781). */
   function StopShowBoatPosition() { state.mapShowing = false; }
-  /** OnGUI's map (4113-4163) while it is up - systems/comeSailAwayMap.js mapOverlayDraws over this frame's state.
+  /** OnGUI's map (4113-4163) while it is up - systems/comeSailAway/comeSailAwayMap.js mapOverlayDraws over this frame's state.
    *  @param {{ screenRect: { x?: number, y?: number, width: number, height: number }, screen: number[], unscaledTime: number }} o */
   function mapOverlay({ screenRect, screen, unscaledTime }) {
     if (!state.mapShowing) return null;

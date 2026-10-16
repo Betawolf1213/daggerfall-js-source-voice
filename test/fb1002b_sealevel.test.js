@@ -25,8 +25,8 @@ import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world
 import { flattenForLocation, distanceFromRect, SEA_RAMP } from '../src/world/wodLocationLoader.js';
 import { carvedFloorLocalY } from '../src/scenes/deepWatersHost.js';
 import { computeHoleMask, HOLES_RESOLUTION, VERTEX_GRID_SIZE } from '../src/world/deepWaterFloor.js';
-import * as csa from '../src/systems/comeSailAway.js';
-import { HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import * as csa from '../src/systems/comeSailAway/comeSailAway.js';
+import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { scene } from './csaScene.mjs';
 
 const { WATER_LEVEL } = csa;

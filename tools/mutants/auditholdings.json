@@ -1,7 +1,7 @@
 [
   {
     "name": "AH-F1-a-packed-ship-keeps-her-title",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (deed) removeExact(inBook(deed) ? deps.items.titles() : deps.items.player(), deed);",
     "new": "      if (deed && !inBook(deed)) removeExact(deps.items.player(), deed);",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AH-F1-parts-placed-while-she-stands",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (item?.templateIndex !== BOAT_PARTS_TEMPLATE || partsStanding(item)) return null;   // AUDIT HOLDINGS F1",
     "new": "    if (item?.templateIndex !== BOAT_PARTS_TEMPLATE) return null;   // AUDIT HOLDINGS F1",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "AH-F1-a-placing-started-from-standing-parts",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (partsStanding(item)) { deps.midScreenText(PARTS_STANDING_TEXT, 3); return; }",
     "new": "    if (false) { deps.midScreenText(PARTS_STANDING_TEXT, 3); return; }",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "AH-F6-a-summoned-boat-kept-inside",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      boat.inside = false;   // AUDIT HOLDINGS F6",
     "new": "      boat.inside = boat.inside;   // AUDIT HOLDINGS F6",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "AH-T5-the-deed-unread-in-the-book",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    ?? (deps.items?.titles?.() ?? []).find((it) => it?.templateIndex === BOAT_DEED_TEMPLATE && it.UID === uid) ?? null;",
     "new": "    ?? null;",
     "tests": [
@@ -694,7 +694,7 @@
   },
   {
     "name": "AH-T5-a-names-length-uncapped",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "  if (typeof raw !== 'string' || raw.length > SHIP_NAME_MAX * 4) return '';",
     "new": "  if (typeof raw !== 'string') return '';",
     "tests": [

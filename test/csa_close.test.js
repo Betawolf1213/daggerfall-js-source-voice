@@ -6,9 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, colliderBoundsInChildren, colliderBounds, HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, MOD_OBJECT_NAME, WOD_TERRAIN, ANIMATED_WATER, WATER_LEVEL } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, colliderBoundsInChildren, colliderBounds, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, MOD_OBJECT_NAME, WOD_TERRAIN, ANIMATED_WATER, WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { createEotbCamera } from '../src/player/eotbCamera.js';
 import { facingFor, boatForwardOf } from '../src/player/eotbBillboard.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
@@ -423,7 +423,7 @@ test('CSA-J (the audit): a new game keeps Start\'s rolled wind - DFU calls nothi
 
 test('CSA-J (the audit): a SpawnBoat that throws half way leaves its half-built hull standing in the pool, as the C#\'s GameObject stays in the scene', async () => {
   const { createComeSailAwayPool } = await import('../src/scenes/comeSailAwayPool.js');
-  const { Boat } = await import('../src/systems/comeSailAwayBoat.js');
+  const { Boat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { fileURLToPath } = await import('node:url');
   const fileFetch = async (url) => { const bytes = readFileSync(fileURLToPath(url)); return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length) }; };
   const pool = createComeSailAwayPool({ renderer: null, pipeline: null, fetchFn: fileFetch, log: { warn() {} } });

@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { findHarbour, alongside } from '../src/systems/naval/shipLife.js';
 import { quatOfYaw } from '../src/systems/naval/navalAI.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { sea } from './navalSea.mjs';
 
 /** quays.test.js's coast and town: land north of z = 200, a headland x 300-400 reaching south to z = -300. */

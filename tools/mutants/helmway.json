@@ -28,7 +28,7 @@
   },
   {
     "name": "HELM-WAY-rudder-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "(responsive() ? steerage(way / sailFreeGain(boat)) : way)",
     "new": "(way)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HELM-WAY-sail-rate",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "(responsive() ? HELM_WAY.sailAccel : 1)",
     "new": "(1)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "HELM-WAY-coast",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "(responsive() ? HELM_WAY.coast : 1)",
     "new": "(1)",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "HELM-WAY-helm-rate",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "(responsive() ? HELM_WAY.turnAccelSail : 1)",
     "new": "(1)",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "HELM-WAY-classic-moved",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "  const handed = () => !!deps.handling && isResponsive(deps.handling());",
     "new": "  const handed = () => true;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "HELM-WAY-hold-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const hold = !(boat.modifierCargoThreshold > 0) && responsive() ? CARGO_HOLD_MISSING : boat.modifierCargoThreshold;",
     "new": "    const hold = boat.modifierCargoThreshold;",
     "tests": [

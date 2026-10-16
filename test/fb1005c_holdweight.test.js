@@ -3,17 +3,17 @@
 // PackBoat lays her hold's weight on her parts (SHIP-PACK keeps it, as the mod's own did) and a hold has no ceiling but
 // her speed: a ship packed off a plundered hold was ONE item heavier than the bearer could ever carry, AddItem took it
 // unasked, and once it was set down every take of it (CanCarryAmount, systems/itemTransfer.js planTake) refused it for
-// good. Parts no take could ever lift are not made now (systems/comeSailAway.js partsTooHeavy) - the pick-up says why,
+// good. Parts no take could ever lift are not made now (systems/comeSailAway/comeSailAway.js partsTooHeavy) - the pick-up says why,
 // the boat menu says why, a fast travel and a landfall leave her where she lies, her hold aboard; a lost boat is packed
 // whatever she weighs. Come Sail Away's real runtime over test/csaScene.mjs, the world host's seams as world.js gives.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scene, terrain } from './csaScene.mjs';
-import { TRIGGER_MODEL, HULL_PRICES, PACKED_WEIGHT_MAX } from '../src/systems/comeSailAwayBoat.js';
-import { HOLD_TOO_HEAVY_TEXT } from '../src/systems/comeSailAway.js';
-import { mintDeed, BOAT_PARTS_TEMPLATE, mintBoatItem } from '../src/systems/comeSailAwayItems.js';
-import { boatMenuRows, boatMenuRefusal, BOAT_MENU_TEXT, BOAT_MENU_WHY } from '../src/systems/csaBoatMenu.js';
+import { TRIGGER_MODEL, HULL_PRICES, PACKED_WEIGHT_MAX } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { HOLD_TOO_HEAVY_TEXT } from '../src/systems/comeSailAway/comeSailAway.js';
+import { mintDeed, BOAT_PARTS_TEMPLATE, mintBoatItem } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { boatMenuRows, boatMenuRefusal, BOAT_MENU_TEXT, BOAT_MENU_WHY } from '../src/systems/comeSailAway/csaBoatMenu.js';
 import { canHoldAmount } from '../src/systems/inventory.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

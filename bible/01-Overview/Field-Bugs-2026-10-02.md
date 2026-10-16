@@ -258,7 +258,7 @@ counts a new play. The host's `csaAudioFrame` reads a changed `plays` as "from t
 and starts a new one. Slowing under 0.5 m/s does the same to the fast loop. No music, ambience, master gain or
 listener change happens at the helm (the helm lane ruled each out).
 
-**The fix** (`systems/comeSailAway.js`, a Ledger A departure). `audioPlay` counts a play only from silence: a source
+**The fix** (`systems/comeSailAway/comeSailAway.js`, a Ledger A departure). `audioPlay` counts a play only from silence: a source
 already playing goes on where it is (Unity's `AudioSource.Play` restarts it). The one `fading` handle is every boat's
 (kept), but when a new fade stops the running one, the stopped fade now lands where it was going: played at its
 target volume, or stopped if it was fading to nothing. A stopped crossfade lands too: the loop it was bringing up
@@ -420,7 +420,7 @@ is the C#'s still; the ground probe's own zero point at a carved floor (below) i
 **Reproduced first** (the same rig, ROCK-FREE in). Sailing off the shelf's far end, its face astern stood in her backward
 sweep: she crawled at a metre a second for 20 s (310 to 330 m) and ended 90 s at 927 m, where open water ran to 1,350 m.
 
-**Why.** LateUpdate's response (`systems/comeSailAway.js` `lateUpdateSailing`) projects her way off the CollisionVector
+**Why.** LateUpdate's response (`systems/comeSailAway/comeSailAway.js` `lateUpdateSailing`) projects her way off the CollisionVector
 and adds it back at one metre a second - taking her way OFF what she met as well as into it. In a World of Daggerfall rock
 field, with a sweep reaching a hull's length and more fore and aft, any rock astern of a ship under sail held her to a
 crawl (at the oars, whose pace astern is that metre, it set her to it at once).
@@ -507,10 +507,10 @@ cover, CREW_SAY_GAP apart, in whole pixels; the nearest drawn over the rest. A b
 ## Found on the way, not changed
 
 Re-judging every record the change can move (the four moved pins' and every record on `player/collider.js`,
-`systems/comeSailAway.js` and `ui/navalHud.js`: 869 - 863 dead, 4 equivalent as recorded) left two survivors, and each
+`systems/comeSailAway/comeSailAway.js` and `ui/navalHud.js`: 869 - 863 dead, 4 equivalent as recorded) left two survivors, and each
 survives on this tree's base (d96bdc123) alike - older than this work, in code it does not touch, reported for their own
 fix: `auditdisc28_motion.json` AUDIT-DISC28-MO2-rest-kills-PH1 (`player/collider.js` `lowOneWay`, PH1 at rest, against
-`test/disc28_swim.test.js`) and `fb0929h_lostboat.json` LOST-BOAT-a-crewed-hull-packed (`systems/comeSailAway.js`
+`test/disc28_swim.test.js`) and `fb0929h_lostboat.json` LOST-BOAT-a-crewed-hull-packed (`systems/comeSailAway/comeSailAway.js`
 `recoverLostBoats`' crewed-hull exemption, against `test/fb0929h_lostboat.test.js`).
 
 ## The pins and the mutants

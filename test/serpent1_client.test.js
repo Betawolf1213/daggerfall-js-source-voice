@@ -619,6 +619,6 @@ test('SERPENT1 hosts: THE WORLD HOST wires it whole - the naval host\'s seam rea
   assert.ok(naval2.includes('gale: (boat) => (enabled ? deps.serpent?.gale?.(boat) ?? null : null)'), 'SERPENT4: the gale through the naval host');
   assert.ok(world.includes('gale: (boat) => naval?.gale?.(boat) ?? null,'), 'SERPENT4: Come Sail Away\'s gale beside its drift');
   assert.ok(naval2.includes('for (const t of deps.serpent?.targets?.() ?? []) out.push(t);'));
-  const csaSrc = readFileSync(new URL('../src/systems/comeSailAway.js', import.meta.url), 'utf8');
+  const csaSrc = readFileSync(new URL('../src/systems/comeSailAway/comeSailAway.js', import.meta.url), 'utf8');
   assert.ok(csaSrc.includes('drift ? vAdd(state.currentVector, drift) : state.currentVector'));
 });

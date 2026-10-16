@@ -12,7 +12,7 @@ import {
 } from '../src/systems/naval/navalWire.js';
 import { SHIP_CLASSES, classById } from '../src/systems/naval/navalShips.js';
 import { LOT_KEYS } from '../src/systems/naval/navalPlunder.js';
-import { HULL_VARIANT_COUNTS, Boat } from '../src/systems/comeSailAwayBoat.js';
+import { HULL_VARIANT_COUNTS, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { POSE_BOUND, POSE_Y_BOUND } from '../src/net/wire.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';

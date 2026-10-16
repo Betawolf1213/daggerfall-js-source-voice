@@ -170,7 +170,7 @@ too: a sale let them go with her room, L6-2), or one that came into the realm th
 the placed boats and the deeds and parts in its lists, in the Fleet's own save slot (`crossed`), as Daggerfall's deeds
 cross kept and unsold). Sold while Come Sail Away's placing is armed with her, the placing is let go (L1-1: the click
 placed her again from the item and she sold twice, unbounded - and the placing click itself now places nothing whose
-item has left its collection, `systems/comeSailAway.js` `holdsItem`); a summons lets an armed placing go (L1-9). Sold, a
+item has left its collection, `systems/comeSailAway/comeSailAway.js` `holdsItem`); a summons lets an armed placing go (L1-9). Sold, a
 boat standing in the world
 is laid up first by the mod's own law (`LayUpBoat`) - she leaves the water as a ship sent away does; her parts leave the
 pack; her cabin is let go as a sold house's room is (`scenes/worldModes.js` `cabinSold`); her title and record leave the
@@ -330,7 +330,7 @@ piece's body out of the gangway's lane, the lanterns' light where the berth lies
 ## The shelves
 
 The General Store and the Pawn Shop no longer shelve Come Sail Away's two items, and no counter buys them
-(`systems/comeSailAwayItems.js`, `systems/shopStock.js` `shopBuysItem`) - as MERCHANT-YARDS took the horse and the cart
+(`systems/comeSailAway/comeSailAwayItems.js`, `systems/shopStock.js` `shopBuysItem`) - as MERCHANT-YARDS took the horse and the cart
 off the General Store. AssignVariantsToShopItems stands, ported: a shelf a save stocked before is still rewritten
 (`03-World/Come-Sail-Away.md`, the shelves).
 

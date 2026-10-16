@@ -488,7 +488,7 @@
   },
   {
     "name": "INTA-the-boat-in-the-worker",
-    "file": "src/systems/comeSailAwayItems.js",
+    "file": "src/systems/comeSailAway/comeSailAwayItems.js",
     "old": "import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayHulls.js';",
     "new": "import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayBoat.js';",
     "tests": [

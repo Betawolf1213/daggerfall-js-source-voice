@@ -136,7 +136,7 @@ const isLetter = (/** @type {any} */ it) => it?.templateIndex === REALM_LETTER_T
 /** A record's liquid worth: a gold-piece item's count, a letter of credit's value - anything else none. */
 export const liquidWorthOf = (/** @type {any} */ it) => (isCoins(it) ? Math.max(0, it?.stackCount ?? 0) : isLetter(it) ? Math.max(0, it?.value ?? 0) : 0);
 const lists = (/** @type {any[]} */ ...ls) => ls.filter(Array.isArray);
-/** Come Sail Away's record in a save's per-mod slot (systems/comeSailAway.js COME_SAIL_AWAY_VENDOR, pinned equal - that
+/** Come Sail Away's record in a save's per-mod slot (systems/comeSailAway/comeSailAway.js COME_SAIL_AWAY_VENDOR, pinned equal - that
  *  module is the mod's runtime, which neither the Online door nor the Worker loads). */
 const CSA_VENDOR = 'come-sail-away';
 /** The sea fight's record in a save's per-mod slot (scenes/navalHost.js NAVAL_SAVE_VENDOR, pinned equal - the sea's host,

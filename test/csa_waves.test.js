@@ -1,4 +1,4 @@
-// CSA-F (2026-09-27) - COME SAIL AWAY'S WAVES: systems/comeSailAwayWaves.js's buildWaveMesh (UpdateWaveMesh past its
+// CSA-F (2026-09-27) - COME SAIL AWAY'S WAVES: systems/comeSailAway/comeSailAwayWaves.js's buildWaveMesh (UpdateWaveMesh past its
 // gate), its frames and material, render/comeSailAwayRender.js's wave shader, and the runtime's UpdateWaveMesh, its
 // triggers, Update's frame step and FixedUpdate's current - over a scripted heightmap and scripted rays. Every
 // expectation is worked out here from ComeSailAway.cs's own statements.
@@ -9,10 +9,10 @@ import { readFileSync, existsSync } from 'node:fs';
 import {
   buildWaveMesh, waveFrameTimeOf, waveDitherOf, stepWaveFrame, isDayHour, WAVE_MATERIAL, BAYER_8X8, WAVE_FRAME_COUNT,
   WAVE_ARCHIVE, WAVE_RECORD, WAVE_LIFT, WAVE_SCALE,
-} from '../src/systems/comeSailAwayWaves.js';
+} from '../src/systems/comeSailAway/comeSailAwayWaves.js';
 import { WAVE_FS } from '../src/render/comeSailAwayRender.js';
 import { composeTiledPicture } from '../src/formats/derivedTexture.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL } from '../src/systems/comeSailAway.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { NAMED_MATERIALS, openBundle } from '../tools/comeSailAwayExtract.mjs';
 import { userStrings } from '../tools/lib/clrUserStrings.mjs';
 import { decodeTexture2D, CLASS_ID } from '../src/formats/unityBundle.js';

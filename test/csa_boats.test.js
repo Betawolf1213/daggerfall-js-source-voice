@@ -1,7 +1,7 @@
 // CSA-B (2026-09-27) - COME SAIL AWAY'S BOATS BUILT: world/prefabNode.js (a
 // Unity prefab instanced - the Transform rules the C# leans on),
-// systems/comeSailAwayModels.js (the vendored meshes read back, and which
-// Daggerfall texture each renderer's slot wears) and systems/comeSailAwayBoat.js
+// systems/comeSailAway/comeSailAwayModels.js (the vendored meshes read back, and which
+// Daggerfall texture each renderer's slot wears) and systems/comeSailAway/comeSailAwayBoat.js
 // (SpawnBoat, GetBoatTransforms, the variants and the helpers in the C#'s
 // order). The rules are pinned on hand-built trees; the five hulls on the
 // vendored prefabs, each against an expectation this file works out for
@@ -15,12 +15,12 @@ import { PrefabNode, instantiatePrefab, resolveNodePointer } from '../src/world/
 import {
   comeSailAwayModels, decodeMeshGeometry, matrixFromUnityRows, applyRuntimeMaterials, bundleSlots, gameTextureFromName,
   rendererModel, rendererModelKey, isDfMaterial,
-} from '../src/systems/comeSailAwayModels.js';
+} from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import {
   Boat, spawnBoat, setBoatVariant, applyBoatVariant, setLights, boatAssetNeeds, helperField, billboardHelperFields, modelHelperFields,
   importCustomGameobject, worldBounds, colliderBounds, meshLocalBounds, goFlatName, goModelName, applyGameTextures,
   FIRST_HULL_MODEL_ID, TRIGGER_MODEL, LANTERN_LIGHT, NEW_GAME_OBJECT, HULL_NAMES, AUDIO_CLIPS, BED_MODEL_ID,
-} from '../src/systems/comeSailAwayBoat.js';
+} from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const json = (f) => JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));

@@ -286,7 +286,7 @@ old stock (INT3); DFU's magic and classic pieces unproven, a worth of nothing (I
 found, the wire dropping whole lists, the shop's shelf judged, the budget charging a house's own pieces, a street's
 piles, a rented room's chest, a craft and a market purchase (INT1, INT2, INT5); the item law's graph carrying a module
 that makes URLs from `import.meta.url` as it loads into the Worker (`comeSailAwayModels.js`, through the boats' items - a
-start the deploy would refuse: the hull table moved to `systems/comeSailAwayHulls.js`, a leaf, and
+start the deploy would refuse: the hull table moved to `systems/comeSailAway/comeSailAwayHulls.js`, a leaf, and
 `test/accountdeploy.test.js` bundles the Worker with `import.meta.url` undefined and loads it); an O(n^2) walk on every
 route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own records re-aimed.
 

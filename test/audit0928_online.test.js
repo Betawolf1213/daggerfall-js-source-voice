@@ -12,11 +12,11 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import * as poolMod from '../src/scenes/comeSailAwayPool.js';
 import * as peersMod from '../src/scenes/comeSailAwayPeers.js';
-import * as wireMod from '../src/systems/comeSailAwayWire.js';
-import * as boatMod from '../src/systems/comeSailAwayBoat.js';
+import * as wireMod from '../src/systems/comeSailAway/comeSailAwayWire.js';
+import * as boatMod from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { quietFoesGate } from '../src/net/foesQuiet.js';   // SCALE2c
-import { rendererModel, bundleSlots } from '../src/systems/comeSailAwayModels.js';
+import { rendererModel, bundleSlots } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { FOES_MS, FOES_FULL_MS } from '../src/net/online.js';
 import { isCellRoom, isWorldRoom, FOES_HZ_MAX } from '../src/net/wire.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';

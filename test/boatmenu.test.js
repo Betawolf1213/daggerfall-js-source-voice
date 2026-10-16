@@ -1,15 +1,15 @@
 // BOAT-MENU (2026-09-30, Mac: "make the boat interaction like the loot menu. Being able to pick up, view storage,
 // mount, all from a simple menu and button press") - a boat of mine lists its verbs on the plaque under the
-// crosshair (systems/csaBoatMenu.js), the box aimed at lighting its own verb first, and the press goes through the
+// crosshair (systems/comeSailAway/csaBoatMenu.js), the box aimed at lighting its own verb first, and the press goes through the
 // mod's own activation on that verb's box.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scene, ctxFor } from './csaScene.mjs';
-import { spawnBoat, Boat, TRIGGER_MODEL } from '../src/systems/comeSailAwayBoat.js';
-import { activationModelOf, ACTIVATION_DISTANCE, PASSENGERS_ABOARD_TEXT, DEED_NOT_HELD_TEXT } from '../src/systems/comeSailAway.js';
-import { boatTriggers, boatMenuRows, boatMenuStart, boatMenuRefusal, boatVerbNode, pressBoatVerb, BOAT_VERB, BOAT_MENU_TEXT, BOAT_MENU_WHY } from '../src/systems/csaBoatMenu.js';
-import { mintBoatItem } from '../src/systems/comeSailAwayItems.js';
+import { spawnBoat, Boat, TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { activationModelOf, ACTIVATION_DISTANCE, PASSENGERS_ABOARD_TEXT, DEED_NOT_HELD_TEXT } from '../src/systems/comeSailAway/comeSailAway.js';
+import { boatTriggers, boatMenuRows, boatMenuStart, boatMenuRefusal, boatVerbNode, pressBoatVerb, BOAT_VERB, BOAT_MENU_TEXT, BOAT_MENU_WHY } from '../src/systems/comeSailAway/csaBoatMenu.js';
+import { mintBoatItem } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { resolveHover, nextSelection } from '../src/systems/worldHover.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

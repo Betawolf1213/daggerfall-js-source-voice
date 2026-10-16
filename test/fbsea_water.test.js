@@ -17,7 +17,7 @@ import { WATER_LAYER_UNITS } from '../src/render/waterSurface.js';
 import { SNOW_LAYER } from '../src/render/snowfallGlsl.js';
 import { DeepWatersRenderer } from '../src/render/deepWatersRender.js';
 import { ComeSailAwayRenderer, WAVE_FS } from '../src/render/comeSailAwayRender.js';
-import { boxLevels, wavePaintLevels, wavePictureMean } from '../src/systems/comeSailAwayWaves.js';
+import { boxLevels, wavePaintLevels, wavePictureMean } from '../src/systems/comeSailAway/comeSailAwayWaves.js';
 import { composeTiledPicture } from '../src/formats/derivedTexture.js';
 import { readPng } from '../tools/pngIO.mjs';
 

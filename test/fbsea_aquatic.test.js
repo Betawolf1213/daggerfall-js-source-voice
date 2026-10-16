@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { raycastColliders } from '../src/world/prefabColliders.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { readyPool } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

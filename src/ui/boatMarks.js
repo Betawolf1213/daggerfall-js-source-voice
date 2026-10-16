@@ -5,7 +5,7 @@
 // to know where your ships are located at?", then "I want to build a
 // compass icon that tracks your boat"): YOUR BOATS ON THE COMPASS. A
 // Large Boat's deed and a Rowboat's parts are spent on placing
-// (systems/comeSailAway.js takePlaceItem), the boat is kept where she
+// (systems/comeSailAway/comeSailAway.js takePlaceItem), the boat is kept where she
 // was left, and nothing in the game said where that was - the compass
 // marked the sea's ships (scenes/navalHost.js compassShips), never the
 // player's own. Now every boat Come Sail Away keeps for me stands on

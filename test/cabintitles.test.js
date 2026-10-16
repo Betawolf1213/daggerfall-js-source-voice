@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scene, terrain } from './csaScene.mjs';
 import { titleDeed, titleOf, fleetBook, knowShip, retitle, _resetFleetForTests } from '../src/systems/fleet.js';
-import { mintDeed, mintBoatItem } from '../src/systems/comeSailAwayItems.js';
+import { mintDeed, mintBoatItem } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { linkBankCabin, readBankCabinLink } from '../src/systems/boatCabinOwnership.js';
 import { cabinSceneName } from '../src/systems/sailingCabin.js';
 import { SHIP_INTERIOR_MAP_IDS, SHIP_TYPES } from '../src/systems/banking.js';

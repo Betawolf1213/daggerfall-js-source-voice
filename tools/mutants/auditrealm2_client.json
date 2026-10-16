@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-REALM2-C3-carrier-forgets-the-load",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      carried = rec ?? undefined;\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-REALM2-M3-lent-ship-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        deps.ship?.assign?.('None');\n      }",
     "new": "      }",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-REALM2-M3-lent-ship-scenes-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        for (const name of TEMPORARY_SHIP_SCENES) deps.ship?.removePermanentScene?.(name);\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-REALM2-M3-helm-kept-in-the-record",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (carried?.TemporaryShip || carried?.currentBoat >= 0) carried = { ...carried, currentBoat: -1, TemporaryShip: false };\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-REALM2-M3-own-ship-taken",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (carried?.TemporaryShip) {\n",
     "new": "      if (carried) {\n",
     "tests": [

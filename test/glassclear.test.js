@@ -14,8 +14,8 @@ import { KNOW, GLASS_ZOOM, GLASS_STUDY_S, NAKED_EYE_M } from '../src/systems/nav
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { orientedBox, segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
 import { sparsOf, rigBoxesOf, hullBoxOf, GLASS_AIM_LIFT, OWN_SPARS_S } from '../src/scenes/navalHost.js';
-import { meshLocalBounds, animatorOf } from '../src/systems/comeSailAwayBoat.js';
-import { stowSail } from '../src/systems/comeSailAway.js';
+import { meshLocalBounds, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';
 import { EYE_HEIGHT, CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { sea } from './navalSea.mjs';
 

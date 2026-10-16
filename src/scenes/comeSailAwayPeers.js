@@ -1,5 +1,5 @@
 // @ts-check
-// COME SAIL AWAY - ANOTHER PLAYER'S BOAT (CSA-J, 2026-09-28). A peer's word (systems/comeSailAwayWire.js, `sa` on
+// COME SAIL AWAY - ANOTHER PLAYER'S BOAT (CSA-J, 2026-09-28). A peer's word (systems/comeSailAway/comeSailAwayWire.js, `sa` on
 // their foes frame) stood as boats the others can see: each built as SpawnBoat builds one, into the pool's PEER list
 // (scenes/comeSailAwayPool.js) - drawn, baked, lit and collided with as a boat of mine (FIELD BUGS 2026-10-01b), a ray's
 // hit or an activation only as CSA-K makes one (scenes/comeSailAwayAboard.js: its deck stood on, its ladder and boxes pressed)
@@ -28,9 +28,9 @@
 // whoever stands on the deck by the pose's change, never across a jump.
 // SAILING-CABINS: a below-deck owner keeps streaming their fleet. On owner loss,
 // a locally occupied hull is retained stationary until its passenger steps off.
-import { validCsaRecord, CSA_WIRE_BOATS_MAX } from '../systems/comeSailAwayWire.js';
-import { Boat, boatAnimators, animatorOf, setLights } from '../systems/comeSailAwayBoat.js';
-import { stowSail } from '../systems/comeSailAway.js';
+import { validCsaRecord, CSA_WIRE_BOATS_MAX } from '../systems/comeSailAway/comeSailAwayWire.js';
+import { Boat, boatAnimators, animatorOf, setLights } from '../systems/comeSailAway/comeSailAwayBoat.js';
+import { stowSail } from '../systems/comeSailAway/comeSailAway.js';
 import { easeToward } from '../systems/horseCartWire.js';
 import { quatSlerp, quatMultiply, quatAngleAxis } from '../world/quat.js';
 import { FOES_FULL_MS } from '../net/online.js';

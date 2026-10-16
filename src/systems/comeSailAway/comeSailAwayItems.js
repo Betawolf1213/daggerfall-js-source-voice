@@ -9,7 +9,7 @@
 //
 // THE CLASSES. Neither stacks (IsStackable false: the port's rule already answers false for a plain UselessItems2
 // row), each saves under its own class name (GetSaveData: the port's save copies the record whole), and each has a
-// UseItem - the runtime's (systems/comeSailAway.js useBoatParts / useBoatDeed), which the host hands the item-use
+// UseItem - the runtime's (systems/comeSailAway/comeSailAway.js useBoatParts / useBoatDeed), which the host hands the item-use
 // door. RegisterCustomItem's group put both on DFU's shelves (the shelf's second loop stocked them at the rarity's
 // chance, DaggerfallLoot.cs:255-287) until SHIPYARDS (2026-10-11) took them off every shelf: a port town's shipyard
 // sells every hull now (systems/shipyards.js) - a DECLARED departure.
@@ -18,9 +18,9 @@
 // it: the placed boat a deed stands for (GetPlacedBoatWithUID) and the cargo a packed boat carries (PackedCargoes).
 // The port's items carry none, so the mod's two are minted with one (`mintBoatItem`'s `uid`, the host's; the shelf's
 // two by `mintShelfBoatUids`) - DECLARED.
-import { registerCustomTemplates, setItemFields, mintCondition } from './itemTemplates.js';   // CSA-H: the rows' one table; SHIPYARDS: RegisterCustomItem's group no longer stocks them (below)
-import { modSetting, modLatchedOn } from './modSettings.js';
-import { registerModEffectKind, WATER_WALKING_SILENT_KIND } from './effects.js';
+import { registerCustomTemplates, setItemFields, mintCondition } from '../itemTemplates.js';   // CSA-H: the rows' one table; SHIPYARDS: RegisterCustomItem's group no longer stocks them (below)
+import { modSetting, modLatchedOn } from '../modSettings.js';
+import { registerModEffectKind, WATER_WALKING_SILENT_KIND } from '../effects.js';
 import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayHulls.js';   // INT1: the leaf, not the boat's renderer
 
 /** ItemBoatParts.templateIndex and ItemBoatDeed.templateIndex. */

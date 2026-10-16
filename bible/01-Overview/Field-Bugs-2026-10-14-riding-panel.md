@@ -76,9 +76,9 @@ card at its scale stays on the screen) - it had stood at the screen's centre wha
 play keeps its box with its visibility hidden, so the card asks whether the bar is seen (`standing`) and, where it is
 not, stands at the compass's foot as with no helm. The four hosts: `scenes/world.js`, the only host with a sea, draws
 the helm and the card; `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` draw neither. No host
-was edited. The panel reads its keys' names from a leaf, `systems/comeSailAwayActions.js` (the sea's module re-exports
-it), and its hulls' from INT1's, `systems/comeSailAwayHulls.js`: the editor's preview reaches the panel's module, and
-the names read from `systems/comeSailAway.js` carried the sea's whole law onto the HUD's graph, as far as the quest
+was edited. The panel reads its keys' names from a leaf, `systems/comeSailAway/comeSailAwayActions.js` (the sea's module re-exports
+it), and its hulls' from INT1's, `systems/comeSailAway/comeSailAwayHulls.js`: the editor's preview reaches the panel's module, and
+the names read from `systems/comeSailAway/comeSailAway.js` carried the sea's whole law onto the HUD's graph, as far as the quest
 machine's `place.js` that AUDIT GUIDE O6 keeps off it. Pinned by `test/hudhelm.test.js` (5); mutants
 `tools/mutants/hudhelm.json` (10, all dead). The fake page the
 two suites share is `test/hudPage.mjs` (one home: it was this file's own).

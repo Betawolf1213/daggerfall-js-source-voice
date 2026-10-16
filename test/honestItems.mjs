@@ -91,7 +91,7 @@ const AYLEID = await load('../src/systems/ayleidStones.js');
 const WALLET = await load('../src/systems/walletItem.js');
 const KEEPSAKE = await load('../src/systems/livingWorld/keepsake.js');
 const HEIRLOOM = await load('../src/systems/legacy/heirloom.js');
-const CSA = await load('../src/systems/comeSailAwayItems.js');
+const CSA = await load('../src/systems/comeSailAway/comeSailAwayItems.js');
 const NAVAL = await load('../src/systems/naval/navalStores.js');
 const GOODS = await load('../src/systems/naval/tradeGoods.js');   // AUDIT CAPTAIN'S SEA B12: the exchange's goods
 const CHARTS = await load('../src/systems/naval/treasureCharts.js');   // AUDIT CAPTAIN'S SEA B12: the treasure chart
@@ -977,7 +977,7 @@ function runItemMaker(run, seedsOf, S, crafted, minted) {
 // ── 11. every other home ─────────────────────────────────────────────
 
 const FOOD = await load('../src/systems/survival/food.js');
-const BOAT = await load('../src/systems/comeSailAwayBoat.js');
+const BOAT = await load('../src/systems/comeSailAway/comeSailAwayBoat.js');
 const BOOKS_DATA = await load('../src/systems/booksData.js');
 const REVENANT = await load('../src/systems/revenant.js');
 const RR_QUEST = await load('../src/systems/rrQuestLine.js');

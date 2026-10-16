@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { scene } from './csaScene.mjs';
-import { WATER_LEVEL, BOAT_ACTIONS } from '../src/systems/comeSailAway.js';
+import { WATER_LEVEL, BOAT_ACTIONS } from '../src/systems/comeSailAway/comeSailAway.js';
 import { HELM_WAY, SAIL_FREE, SAIL_FREE_GAINS, sailFreeGain } from '../src/systems/helmWay.js';
 import { createSeaHelm, seaHelmStep, seaHelmReach, seaHelmLook, headingOf, squareOnly, SEA_HELM } from '../src/systems/seaHelm.js';
 import { heaveToDecel, HEAVE_TO_DECEL, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/navalHost.js';

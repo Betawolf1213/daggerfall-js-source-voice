@@ -18,8 +18,8 @@ import {
   RECRUITS_A_DAY, HAND_PRICE, RECRUIT_GRADES, RECRUIT_TRADES, recruitFee, recruitsOf, enlistPlan, releasePlan, isRecruitTrade, gradeOf, CREW_HALL_TEXT,
   hireCharge, recruitDay,
 } from '../src/systems/crewHall.js';
-import { HULL_PRICES, HULL_NAMES } from '../src/systems/comeSailAwayHulls.js';
-import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintParts } from '../src/systems/comeSailAwayItems.js';
+import { HULL_PRICES, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayHulls.js';
+import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintParts } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { upgradeCost } from '../src/systems/fleet.js';
 import { calculateCost, calculateTradePrice, shopBuysItem } from '../src/systems/shopStock.js';
 import { getTradePrice } from '../src/systems/tradeModes.js';

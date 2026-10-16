@@ -1,7 +1,7 @@
 [
   {
     "name": "A0928-O1-table-ten",
-    "file": "src/systems/comeSailAwayBoat.js",
+    "file": "src/systems/comeSailAway/comeSailAwayBoat.js",
     "old": "export const HULL_VARIANT_COUNTS = Object.freeze([0, 7, 0, 0, 0]);",
     "new": "export const HULL_VARIANT_COUNTS = Object.freeze([0, 10, 0, 0, 0]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "A0928-O1-door-dropped",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "    if (HULL_VARIANT_COUNTS[w[0]] > 0 && w[1] >= HULL_VARIANT_COUNTS[w[0]]) return null;",
     "new": "    if (HULL_VARIANT_COUNTS[w[0]] < 0) return null;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "A0928-O1-door-off-by-one",
-    "file": "src/systems/comeSailAwayWire.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWire.js",
     "old": "w[1] >= HULL_VARIANT_COUNTS[w[0]]) return null;",
     "new": "w[1] > HULL_VARIANT_COUNTS[w[0]]) return null;",
     "tests": [

@@ -17,7 +17,7 @@ import { readyPool } from './navalSea.mjs';
 import { createNavalHost } from '../src/scenes/navalHost.js';
 import { createFleetHost } from '../src/scenes/fleetHost.js';
 import { knowShip, _resetFleetForTests } from '../src/systems/fleet.js';
-import { BOAT_ACTIONS, cargoModWords } from '../src/systems/comeSailAway.js';
+import { BOAT_ACTIONS, cargoModWords } from '../src/systems/comeSailAway/comeSailAway.js';
 import { inEther, landfall, VEIL_X } from '../src/world/ethericSea.js';
 import { crossingTarget } from '../src/systems/naval/etherCrossing.js';
 import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
@@ -202,6 +202,6 @@ test('ETHER-STRAND the crossing says her load beneath its words - the helm\'s li
   assert.ok(at > 0, 'the crossing\'s words');
   const next = WORLD.slice(at, at + 600);
   assert.match(next, /\n      const heavy = cargoModWords\(csaRuntime\.state\.boatCargoMod\);[^\n]*\n      if \(heavy\) townTalk\.say\(heavy, 7\);/, 'her load said beneath them, on the HUD line, as long');
-  const csa = readFileSync(new URL('../src/systems/comeSailAway.js', import.meta.url), 'utf8');
+  const csa = readFileSync(new URL('../src/systems/comeSailAway/comeSailAway.js', import.meta.url), 'utf8');
   assert.equal((csa.match(/You're going to need a bigger boat/g) ?? []).length, 1, 'one home for the words');
 });

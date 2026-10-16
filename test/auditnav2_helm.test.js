@@ -15,8 +15,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import * as CSA from '../src/systems/comeSailAway.js';
-import { BOAT_ACTIONS } from '../src/systems/comeSailAway.js';
+import * as CSA from '../src/systems/comeSailAway/comeSailAway.js';
+import { BOAT_ACTIONS } from '../src/systems/comeSailAway/comeSailAway.js';
 import { helmHint } from '../src/ui/enhancedHelm.js';
 import { navalHudText } from '../src/ui/navalHud.js';
 import { FEATURES } from '../src/systems/features.js';

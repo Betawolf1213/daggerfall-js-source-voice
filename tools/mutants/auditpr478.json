@@ -112,7 +112,7 @@
   },
   {
     "name": "AKB-D2-dungeon-unasked",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "  const inDungeon = () => deps.isPlayerInsideDungeon?.() ?? true;",
     "new": "  const inDungeon = () => true;",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "ABM-C6-aimed-unread",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "  if (aimed && list.includes(aimed)) return aimed;",
     "new": "",
     "tests": [

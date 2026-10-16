@@ -586,6 +586,6 @@ test('QUAYS THE WORLD\'S WIRING: the pool made beside the farms over the world\'
   assert.match(w, /dockedPort: \(boat, port\) => \{ const r = boat\?\.uid \? fleetShip\(boat\.uid\) : null; if \(r && \(r\.port\?\.name \?\? null\) !== port\) setShipPort\(boat\.uid, port == null \? null : \{ name: port \}\); \},/);
   assert.match(w, /shipName: \(boat\) => fleetHost\?\.nameOf\(boat\) \?\? '',/);
   for (const host of ['src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.ok(!read(host).includes('createQuayPool'), `${host}: no quays`);
-  const csa = read('src/systems/comeSailAway.js');
+  const csa = read('src/systems/comeSailAway/comeSailAway.js');
   assert.match(csa, /const w = deps\.warp\?\.\(boat, \{ struck: state\.sailPosition === 0, oars: vSqrMagnitude\(state\.MoveVectorTarget\) > 0 \|\| state\.TurnTarget !== 0, dt: dt\(\) \}\) \?\? null;/);
 });

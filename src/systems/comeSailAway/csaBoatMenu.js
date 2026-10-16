@@ -2,7 +2,7 @@
 // BOAT-MENU (2026-09-30, Mac: "make the boat interaction like the loot menu. Being able to pick up, view storage,
 // mount, all from a simple menu and button press") - THE LAW of a boat's verbs, pure.
 //
-// Come Sail Away answers a press on one of its seven boxes (systems/comeSailAway.js activate) - the helm's box takes
+// Come Sail Away answers a press on one of its seven boxes (systems/comeSailAway/comeSailAway.js activate) - the helm's box takes
 // the helm, or packs the boat in Steal mode; the ladder's boards; the chest's opens the cargo; the flag's and the
 // compass's read the status and the position; the variant box picks a style - and the hull between them answers
 // nothing. The port's ACT-MENU (systems/worldHover.js) lists a namer's verbs on the plaque under the crosshair, the

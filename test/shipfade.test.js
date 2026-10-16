@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { sea, knowAll } from './navalSea.mjs';
 import { SHIP_FADE_S, HARBOUR_LEAVE } from '../src/scenes/navalHost.js';
 import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { Renderer } from '../src/render/renderer.js';
 import { DISSOLVE_GLSL } from '../src/render/orderedDither.js';
 import { EL_MESH_FS } from '../src/render/enhancedLighting.js';

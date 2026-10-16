@@ -15,7 +15,7 @@ import {
   drawStablePage, stableWords, stableProviderFor, setHoldingsProvider, stablePageShown, resetHoldingsPages, _setHoldingsIconForTests, farWords,
   STABLE_PAGE_SECTIONS, HORSE_ART, WAGON_ART,
 } from '../src/ui/holdingsPages.js';
-import { CSA_ITEM_TEMPLATES } from '../src/systems/comeSailAwayItems.js';
+import { CSA_ITEM_TEMPLATES } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const MENU = read('src/ui/enhancedMenu.js');

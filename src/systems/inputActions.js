@@ -148,7 +148,7 @@ export const ACTIONS = Object.freeze([
   'ActChoice',
   // HELM-KEYS (2026-09-29, the player: "Arrow keys should not only control your ship, but also setting and raising
   // your sails"): Come Sail Away's helm on the arrows - MORE SAIL and LESS SAIL, the port's own two steps through the
-  // mod's sail states (systems/comeSailAway.js MoreSail, LessSail), the down arrow's and the up arrow's (a DEFAULT
+  // mod's sail states (systems/comeSailAway/comeSailAway.js MoreSail, LessSail), the down arrow's and the up arrow's (a DEFAULT
   // SHARE beside ActChoice, below). Appended, like every port action before them.
   'BoatSailUp', 'BoatSailDown',
   // CLASSIC-PAGES (2026-09-30, Mac: "Enhanced pages + key"): THE PROFESSIONS KEY - the Professions and Stores pages on

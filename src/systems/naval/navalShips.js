@@ -35,7 +35,7 @@ import { fullName, getNameBankOfRegion, GENDERS } from '../../characters/nameHel
 import { REGION_NAMES } from '../../formats/mapsFile.js';
 import { mulberry32 } from '../../combat/bloodArt.js';
 
-/** Come Sail Away's hull indices (systems/comeSailAwayBoat.js HULL_NAMES). */
+/** Come Sail Away's hull indices (systems/comeSailAway/comeSailAwayBoat.js HULL_NAMES). */
 export const HULL = Object.freeze({ Rowboat: 0, LargeBoat: 1, SmallShip: 2, LargeGalley: 3, Carrack: 4 });
 
 /**
@@ -245,7 +245,7 @@ export const HULL_BUILDS = Object.freeze([
 ]);
 
 /** SHIPS-2: the mod's own Large Boat's build - swivels on its gunwale, three a side and one in its bow - which hull 1
- *  is again when the new large boat's model will not load or build (systems/comeSailAwayModels.js). */
+ *  is again when the new large boat's model will not load or build (systems/comeSailAway/comeSailAwayModels.js). */
 export const MOD_LARGE_BOAT_BUILD = Object.freeze({
   hull: 1, gun: 'swivel',
   broadside: Object.freeze([[1.8, 1.3, -2.3], [2.05, 1.3, 0.3], [1.8, 1.3, 2.3]].map(Object.freeze)),
@@ -257,7 +257,7 @@ export const MOD_LARGE_BOAT_BUILD = Object.freeze({
 
 /** SHIPS-2: the mod's own Carrack's build - seven long guns a side on its main deck (3.64), chasers under its
  *  forecastle, barrels astern - which hull 4 is again when the new carrack's model will not load or build
- *  (systems/comeSailAwayModels.js falls back to the mod's own prefab, never no ship: AUDIT GN-G4's law). */
+ *  (systems/comeSailAway/comeSailAwayModels.js falls back to the mod's own prefab, never no ship: AUDIT GN-G4's law). */
 export const MOD_CARRACK_BUILD = Object.freeze({
   hull: 4, gun: 'long',
   broadside: Object.freeze([[6.3, 4.5, -16], [7.0, 4.5, -12], [7.7, 4.5, -8], [7.9, 4.5, -4.2], [7.4, 4.5, 0], [7.1, 4.5, 4.2], [5.8, 4.5, 8.4]].map(Object.freeze)),
@@ -268,7 +268,7 @@ export const MOD_CARRACK_BUILD = Object.freeze({
 });
 
 /** AUDIT GN-G4: the mod's own Small Ship's build - the galleon Come Sail Away shipped, six long guns a side at her own
- *  ports - which hull 2 is again when the new galleon's model will not load or build (systems/comeSailAwayModels.js
+ *  ports - which hull 2 is again when the new galleon's model will not load or build (systems/comeSailAway/comeSailAwayModels.js
  *  falls back to the mod's own prefab, never no ship): her guns, box, deck and rig must be that ship's, or she fires
  *  from 0.24-1.29 m inside her own planking and her berths and fires stand 2 m off. */
 export const MOD_SMALL_SHIP_BUILD = Object.freeze({
@@ -280,7 +280,7 @@ export const MOD_SMALL_SHIP_BUILD = Object.freeze({
   rig: rigOf([[-3.5, 10.92, -20.1], [3.5, 34, 26]]),
 });
 /** SHIPS-2: THE MOD'S OWN BUILD OF EACH HULL A SHIP OF THE PORT'S STANDS IN FOR - what that hull is while its own model
- *  does not stand (the galleon's, the carrack's, the large boat's: systems/comeSailAwayModels.js PORT_SHIPS). */
+ *  does not stand (the galleon's, the carrack's, the large boat's: systems/comeSailAway/comeSailAwayModels.js PORT_SHIPS). */
 export const MOD_BUILDS = Object.freeze({ 1: MOD_LARGE_BOAT_BUILD, 2: MOD_SMALL_SHIP_BUILD, 4: MOD_CARRACK_BUILD });
 /** Whether each such hull stands as the port's ship (true until the models say otherwise - the pool sets it as they load). */
 const standing = { 1: true, 2: true, 4: true };

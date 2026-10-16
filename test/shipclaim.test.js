@@ -15,8 +15,8 @@ import { room } from './navalRoom.mjs';
 import { scene, terrain } from './csaScene.mjs';
 import { HARBOUR_LEAVE, SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { PRIZE_DEED_SHARE, prizeDeedValue } from '../src/systems/naval/navalPlunder.js';
-import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
-import { HULL_PRICES } from '../src/systems/comeSailAwayBoat.js';
+import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { HULL_PRICES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { hullBuild, classById, firstBuildOf } from '../src/systems/naval/navalShips.js';
 import { GRAPPLE_S } from '../src/systems/naval/navalBoarding.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
@@ -98,7 +98,7 @@ function taken(h, classId = 'pirateBrig', { hull = 0.8, sail = 0.4, variant = 0,
 /** The boat a deed of mine stands for, and her state as a boat of mine. */
 const claimed = (h, deed = h.pack[0]) => { const b = h.rt.GetPlacedBoatWithUID(deed.UID); return { b, st: b ? h.host._myState(b) : null }; };
 
-// ── her papers (systems/naval/navalPlunder.js, systems/comeSailAwayItems.js) ────────────────────────────────────────
+// ── her papers (systems/naval/navalPlunder.js, systems/comeSailAway/comeSailAwayItems.js) ────────────────────────────────────────
 
 test('SHIP-CLAIM her papers: a claimed prize\'s deed is worth PRIZE_DEED_SHARE - a quarter - of her hull\'s price on the shelf, in whole gold; minted as the shelf mints a deed - the deed row, the UID it is given, her hull and variant in its message and its name, that value (mutants: the full price, another hull\'s price, the message, the name, the value, the UID)', () => {
   assert.equal(PRIZE_DEED_SHARE, 0.25);
@@ -110,7 +110,7 @@ test('SHIP-CLAIM her papers: a claimed prize\'s deed is worth PRIZE_DEED_SHARE -
   assert.throws(() => mintDeed(5, 0, 79, 1), RangeError, 'a hull the C#\'s array would throw on');
 });
 
-// ── Come Sail Away's placing (systems/comeSailAway.js LaunchFromDeed) ─────────────────────────────────────────────
+// ── Come Sail Away's placing (systems/comeSailAway/comeSailAway.js LaunchFromDeed) ─────────────────────────────────────────────
 
 test('SHIP-CLAIM Come Sail Away\'s placing: LaunchFromDeed stands a deed\'s boat at the pose given - her hull and variant the deed\'s, her bow along the direction, the pixel of the terrain under her - linked to the deed by its UID (GetPlacedBoatWithUID); a crewed hull\'s deed kept, a small boat\'s spent from the live pack as the mod spends one on placing; never for parts, never a second boat (nor a move) for a deed whose boat stands - the port\'s rule; what the click was placing let go (mutants: the deed check, the standing boat, the link, the pose, the placing kept)', () => {
   const sc = scene({ terrains: [terrain(10, 20), terrain(11, 20)] });

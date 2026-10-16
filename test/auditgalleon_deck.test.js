@@ -14,7 +14,7 @@ import * as NAVAL_DECK from '../src/systems/naval/navalDeck.js';
 import { buildDeck, deckOf as deckGrid, intoDeck, outOfDeck, mainLevel, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
 import { createCrewLife, crewRoster, deckExtentZ, LOOKOUT_BACK } from '../src/systems/naval/crewLife.js';
 import { peopleFlatsOf } from '../src/scenes/navalCrew.js';
-import { Boat, spawnBoat, HULL_NAMES, HULL_VARIANT_COUNTS } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, spawnBoat, HULL_NAMES, HULL_VARIANT_COUNTS } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { colliderPoses, raycastColliders, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';

@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-the-walk-drops-every-frame",
-    "file": "src/systems/comeSailAwayBoat.js",
+    "file": "src/systems/comeSailAway/comeSailAwayBoat.js",
     "old": "...(cadence?.everyFrame ? { everyFrame: true } : {})",
     "new": "...({})",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-the-mods-timer-moved",
-    "file": "src/systems/comeSailAwayBoat.js",
+    "file": "src/systems/comeSailAway/comeSailAwayBoat.js",
     "old": "timer: cadence?.timer ?? 0,",
     "new": "timer: cadence?.timer ?? 0.05,",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG9-the-phase-dropped-from-the-holder",
-    "file": "src/systems/comeSailAwayBoat.js",
+    "file": "src/systems/comeSailAway/comeSailAwayBoat.js",
     "old": "timer: cadence?.timer ?? 0,",
     "new": "timer: 0,",
     "tests": [

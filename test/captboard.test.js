@@ -21,7 +21,7 @@ import { hashKey as wireHashKey } from '../src/net/wire.js';
 import { createHarbourOffice } from '../src/scenes/harbourOffice.js';
 import { yardOffer, yardAll, YARD_PRICE, YARD_DISCOUNT_MAX } from '../src/systems/naval/navalYard.js';
 import { createNavalDirector } from '../src/systems/naval/navalDirector.js';
-import { HULL_PRICES } from '../src/systems/comeSailAwayHulls.js';
+import { HULL_PRICES } from '../src/systems/comeSailAway/comeSailAwayHulls.js';
 import { officeText, mountNavalYardWindow } from '../src/ui/navalYardWindow.js';
 import { SITE_LOT, SITE_CASK_LIFE } from '../src/scenes/navalHost.js';
 import { classById } from '../src/systems/naval/navalShips.js';

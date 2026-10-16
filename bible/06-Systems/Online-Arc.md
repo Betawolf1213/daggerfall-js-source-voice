@@ -13431,7 +13431,7 @@ Come Sail Away (`03-World/Come-Sail-Away.md`) is single-player: a boat is a poss
 and sailed on their client alone (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_MODS). Online the others in a cell SEE
 it - DECLARED (36) on the mod's Port-Ledger row - under HCC-ONLINE's law and no new one:
 
-- **The record** (`systems/comeSailAwayWire.js`): what the presentation shows, not the save - each active boat's
+- **The record** (`systems/comeSailAway/comeSailAwayWire.js`): what the presentation shows, not the save - each active boat's
   hull, variant, root in the wire frame (to the centimetre) and turn (to four places), its raised sails as bits, the
   helm and the lanterns; at most eight. It rides as `sa` on the owner's own foes frame beside `c`, `hv` and `du`: on
   every full frame, and between them whenever the word moved (`scenes/world.js` csaWord); the mod off, one `null`.

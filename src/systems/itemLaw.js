@@ -83,7 +83,7 @@ import './walletItem.js';
 import './upkeepItemRows.js';   // STEED1/WAGONS4: the Sack of Oats and the Wagon Repair Kit
 import './livingWorld/keepsake.js';
 import './legacy/heirloom.js';
-import './comeSailAwayItems.js';
+import './comeSailAway/comeSailAwayItems.js';
 import './naval/navalStores.js';
 import './naval/tradeGoods.js';   // CAPT-TRADE: the exchange's goods
 import './naval/treasureCharts.js';   // CAPT-CHARTS: the treasure chart

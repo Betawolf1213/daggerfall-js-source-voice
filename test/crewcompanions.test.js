@@ -17,7 +17,7 @@ import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
 import { runTargetMachine, getTargets, PLAYER_TARGET, fightsOurSide, targetPriority, COMPANION_ASSIST_PRIORITY } from '../src/characters/enemyTargets.js';
 import { createCrewLife } from '../src/systems/naval/crewLife.js';
 import { MORALE_EVENT, createShipCrew } from '../src/systems/naval/shipCrew.js';
-import { boatMenuRows, BOAT_VERB } from '../src/systems/csaBoatMenu.js';
+import { boatMenuRows, BOAT_VERB } from '../src/systems/comeSailAway/csaBoatMenu.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const hand = (name, role = 'Bosun', mobile = 144, gender = 'male') => ({ name, role, mobile, gender });

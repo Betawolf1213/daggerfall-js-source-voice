@@ -51,7 +51,7 @@ the shader carries the constant, not a literal.
 
 ## HOLD-WEIGHT (2)
 
-`systems/comeSailAway.js` (`partsTooHeavy`, `HOLD_TOO_HEAVY_TEXT`, `PackBoat`'s `lost`), `systems/csaBoatMenu.js`
+`systems/comeSailAway/comeSailAway.js` (`partsTooHeavy`, `HOLD_TOO_HEAVY_TEXT`, `PackBoat`'s `lost`), `systems/comeSailAway/csaBoatMenu.js`
 (`tooHeavy`), `scenes/world.js` (`entity.maxEncumbrance`, the landfall's guard). "Parts of Small Ship 'I'" is Come Sail
 Away's `ItemBoatParts` (1320), worth her deed's 100,000. SHIP-PACK made her parts weigh no more than the Large Boat's
 (120 kg) and kept her hold's weight on top, as the mod's PackBoat does (`Come-Sail-Away.md` SHIP-PACK) - and a hold has

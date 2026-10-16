@@ -1,4 +1,4 @@
-// CSA-E (2026-09-27) - COME SAIL AWAY'S SAILS AND WIND: systems/comeSailAway.js's UpdateWind and its RotateWind
+// CSA-E (2026-09-27) - COME SAIL AWAY'S SAILS AND WIND: systems/comeSailAway/comeSailAway.js's UpdateWind and its RotateWind
 // coroutine, the three events that roll a wind, GetSailPower, raising and lowering (all of them and the square ones),
 // Update's sail arm (the sails' Wind, the square sails stowed upwind, the trim, the sails' power and the rudder's turn),
 // the manual trim, the wind widget's frame and rect, the rudder's and the door's Animators - over the vendored hulls
@@ -7,11 +7,11 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { TRIGGER_MODEL, animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { TRIGGER_MODEL, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import {
   BOAT_ACTIONS, WEATHER_TYPE, WIND_WIDGET, windWidgetFrameCount,
   vAngle, vSignedAngle, vRotateTowards, mathfLerp, mathfLerpUnclamped, quatAngleUnity, quatRotateTowards,
-} from '../src/systems/comeSailAway.js';
+} from '../src/systems/comeSailAway/comeSailAway.js';
 import { quatRotate, quatAngleAxis } from '../src/world/quat.js';
 import { scene } from './csaScene.mjs';   // the scripted scene, one harness (HELM-WAY's suite drives it too)
 

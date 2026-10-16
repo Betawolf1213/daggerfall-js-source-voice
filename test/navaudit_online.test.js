@@ -17,8 +17,8 @@ import { NAVY_HUNTS, WRECK_SPARE_S } from '../src/systems/naval/navalAI.js';
 import { NAVAL_SFX } from '../src/systems/naval/navalSounds.js';
 import { BARREL_ARM, BALL_STEP_S, createShotField } from '../src/systems/naval/navalShots.js';
 import { shotPosition } from '../src/systems/naval/navalBallistics.js';
-import { stowSail } from '../src/systems/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
-import { animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
+import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const bySeed = (c, seed) => [...c.s.host._sea.values()].find((e) => e.ship.seed === seed) ?? null;
 const flat = (a, b) => Math.hypot(a[0] - b[0], a[2] - b[2]);

@@ -1,6 +1,6 @@
 // CSA-K / CSA-L (2026-09-28) - SAILING TOGETHER, AND THE HELM ON SCREEN (the player's ask: "I want people to be able to
 // sail together, to walk on board as it moves ... instead of an overuse of keybinds, is there a way we can instead
-// develop enhanced plus UI elements?"). The boat under way says its way (systems/comeSailAwayWire.js `m`) and its
+// develop enhanced plus UI elements?"). The boat under way says its way (systems/comeSailAway/comeSailAwayWire.js `m`) and its
 // readers lead it (scenes/comeSailAwayPeers.js); another player's boat is boarded, stood on, carried by and left
 // (scenes/comeSailAwayAboard.js), the deck standing for everyone (FIELD BUGS 2026-10-01b); the others aboard are seen on the deck; the helm's
 // nine keys are a panel (ui/enhancedHelm.js) and a pad's d-pad (ui/gamepadInput.js), pressing the registry's actions
@@ -18,9 +18,9 @@ import {
   createComeSailAwayAboard, validAboardWord, localOf, worldOf, poseMatrix, CSA_ABOARD_BELOW, CSA_ABOARD_STEP, CSA_ABOARD_NEAR, CSA_ABOARD_GRACE, CSA_ABOARD_LOCAL_MAX,
   deckPose,
 } from '../src/scenes/comeSailAwayAboard.js';
-import { csaWireRecord, validCsaRecord, csaRecordKey, CSA_WIRE_SPEED_MAX, CSA_WIRE_TURN_MAX } from '../src/systems/comeSailAwayWire.js';
-import { TRIGGER_MODEL } from '../src/systems/comeSailAwayBoat.js';
-import { activationModelOf, boardPlaceOf, BOAT_ACTIONS, carriedPoint, yawDelta } from '../src/systems/comeSailAway.js';
+import { csaWireRecord, validCsaRecord, csaRecordKey, CSA_WIRE_SPEED_MAX, CSA_WIRE_TURN_MAX } from '../src/systems/comeSailAway/comeSailAwayWire.js';
+import { TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { activationModelOf, boardPlaceOf, BOAT_ACTIONS, carriedPoint, yawDelta } from '../src/systems/comeSailAway/comeSailAway.js';
 import { raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { quatAngleAxis, quatMultiply } from '../src/world/quat.js';
 import { helmButtons, drawEnhancedHelm, hideEnhancedHelm, enhancedHelmMounted, enhancedHelmBar, helmPadGesture, helmPadPrompts, HELM_ACTIONS, HELM_CSS, ENHANCED_HELM_ID } from '../src/ui/enhancedHelm.js';

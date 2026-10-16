@@ -8,7 +8,7 @@
 // matrix's inverse, a baked part's points, and `prefabBench` - the components and meshes a prefab adds to the mod's
 // shared table, its renderers and colliders, and its skinned renderers' bones resolved once the tree's paths are known.
 //
-// A ship's prefab is Come Sail Away's data (systems/comeSailAwayModels.js): a node tree, its components as indices into
+// A ship's prefab is Come Sail Away's data (systems/comeSailAway/comeSailAwayModels.js): a node tree, its components as indices into
 // `[...csaComponents, ...components]`, its meshes by key in the CSA geometry shape (world/galleonMesh.js MeshBench), its
 // clips and overrides beside the mod's. Not a DFU member. Ledger A (GALLEON, SHIPS-2).
 import { pathHash } from './unityAnimator.js';

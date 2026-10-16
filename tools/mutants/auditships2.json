@@ -307,7 +307,7 @@
   },
   {
     "name": "AUDIT2-XD6-booms-untrimmed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "if (trimAuto()) autoTrim(boat, num6);",
     "new": "if (trimAuto() && !responsive()) autoTrim(boat, num6);",
     "tests": [

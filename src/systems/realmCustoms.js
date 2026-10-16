@@ -40,7 +40,7 @@ import { LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling
 import { levelUpSkillSumAnchor } from './advancement.js';   // LEVEL-ONLINE-2: ...from the start of the level it has
 import { isGoldPieces } from './inventory.js';
 import { crossFleetData } from './fleet.js';   // AUDIT SHIPYARDS L1-2: Come Sail Away's ships cross as a DFU deed does - kept, never sold
-import { COME_SAIL_AWAY_VENDOR } from './comeSailAway.js';   // ...her placed boats' record, by its vendor
+import { COME_SAIL_AWAY_VENDOR } from './comeSailAway/comeSailAway.js';   // ...her placed boats' record, by its vendor
 // AUDIT REALM2 S1: the allowance and the measure live in the law the service reads too (net/realmGoldLaw.js), which holds
 // a customs character's first save to them - re-exported here, their home before it; AUDIT REALM2 T2, T3 and T5's
 // counting with them (every container, a boat's hold, a deed at what the realm's bank pays)

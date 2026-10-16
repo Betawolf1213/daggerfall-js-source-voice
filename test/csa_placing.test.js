@@ -1,6 +1,6 @@
 // CSA-C (2026-09-27) - COME SAIL AWAY'S BOATS PLACED, KEPT AND SAVED:
 // world/prefabColliders.js (Physics.Raycast over a prefab's BoxColliders and
-// MeshColliders, the convex ones as their hull) and systems/comeSailAway.js
+// MeshColliders, the convex ones as their hull) and systems/comeSailAway/comeSailAway.js
 // (StartPlacing .. PlaceBoatAtRayHit's five arms, SetBoatPositionAndDirection,
 // the nodes, the visibility, OnPositionUpdate's kept bug, the four console
 // commands, ComeSailAwaySaveData). The runtime runs over the vendored hulls
@@ -10,12 +10,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { Boat, spawnBoat, setLights, HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { Boat, spawnBoat, setLights, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import {
   createComeSailAwayRuntime, convertToInt32, upPlaneRaycast, tileMapIndexAtPosition, hullFromMessage, variantFromMessage,
   WATER_LEVEL, NO_WATER_LEVEL, CONSOLE, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE, PLACE_CLICK_DELAY, TERRAIN_EDGE,
-} from '../src/systems/comeSailAway.js';
+} from '../src/systems/comeSailAway/comeSailAway.js';
 import {
   collidersOf, raycastColliders, rayBoxEntry, rayMeshEntry, convexHullPlanes, rayConvexEntry, invertAffine, BUILTIN_COLLIDER_MESHES,
 } from '../src/world/prefabColliders.js';
@@ -157,7 +157,7 @@ test('CSA-C: a built hull under the ray - its hull, masts and doors, its trigger
   }
 });
 
-// ── systems/comeSailAway.js: the pure reads ───────────────────────────────────
+// ── systems/comeSailAway/comeSailAway.js: the pure reads ───────────────────────────────────
 
 test('CSA-C: the C#\'s small reads - Convert.ToInt32, Plane.Raycast on an up plane, the item message\'s hull and variant, GetTileMapIndexAtPosition in Unity\'s floats', () => {
   assert.equal(convertToInt32(null), 0);

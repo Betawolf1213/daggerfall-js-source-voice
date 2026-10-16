@@ -600,8 +600,8 @@ import { createComeSailAwayPool, CULL_DETAIL_PX, FADE_FLATS as CSA_FADE_FLATS } 
 import { createShipPortraits } from './shipPortraits.js';   // MENU-ORDER: a ship's own picture on the shipmaster's card
 import { createComeSailAwayPeers } from './comeSailAwayPeers.js';   // CSA-J: another player's boats, seen
 import { createComeSailAwayAboard, CSA_ABOARD_GRACE, deckPose as csaDeckPose, helmWord as csaHelmWordOf, localOf as csaLocalOf, worldOf as csaWorldOf } from './comeSailAwayAboard.js';   // CSA-K: another player's boat, boarded; FIELD BUGS 2026-09-29 (the sea) #1: the deck's frame, the helmsman's place
-import { csaWireRecord, csaRecordKey } from '../systems/comeSailAwayWire.js';   // CSA-J: my boats, said
-import { boatTriggers, boatMenuRows, boatMenuStart, pressBoatVerb, BOAT_VERB } from '../systems/csaBoatMenu.js';   // BOAT-MENU: a boat of mine's verbs on the plaque
+import { csaWireRecord, csaRecordKey } from '../systems/comeSailAway/comeSailAwayWire.js';   // CSA-J: my boats, said
+import { boatTriggers, boatMenuRows, boatMenuStart, pressBoatVerb, BOAT_VERB } from '../systems/comeSailAway/csaBoatMenu.js';   // BOAT-MENU: a boat of mine's verbs on the plaque
 import { linkBankCabin, readBankCabinLink, bankCabinCandidates } from '../systems/boatCabinOwnership.js';
 import { hasSailingCabin, savedCabinBoat, cabinSceneName } from '../systems/sailingCabin.js';
 import { createSailingCabinAccess } from './sailingCabin.js';
@@ -611,11 +611,11 @@ import { HCC_WIRE_KIND } from '../systems/horseCartWire.js';   // WAGONS1: which
 import { RIDE_TEXT, RIDE_ASK_TTL_MS } from '../systems/wagonSeats.js';
 import { createSailingCabinLink } from '../net/sailingCabinLink.js';
 import { capsuleFits } from '../player/parkour.js';
-import { TRIGGER_MODEL as CSA_TRIGGER_MODEL, setLights as csaSetLights, HULL_NAMES as CSA_HULL_NAMES, nodeOf as csaNodeOf, AUDIO_CLIPS as CSA_AUDIO_CLIPS, colliderBoundsInChildren as csaColliderBoundsInChildren, animatorOf as csaAnimatorOf, meshLocalBounds as csaMeshLocalBounds } from '../systems/comeSailAwayBoat.js';   // CSA-B: the probe's lanterns; CSA-D: the plaque's word for a boat; CSA-G: the loops' objects and the five clips; CSA-J: Eye of the Beholder's Collider.bounds
-import { travelMapPicture, TRAVEL_MAP_IMG, LINE_TEXTURE as CSA_LINE_TEXTURE } from '../systems/comeSailAwayMap.js';   // CSA-I: the position reading's picture and lines
-import { createComeSailAwayRuntime, cargoModWords, comeSailAwayCarrier, WATER_WALKING_SILENT, COME_SAIL_AWAY_VENDOR, CONSOLE as CSA_CONSOLE, NO_WATER_LEVEL, NICE_BOAT_TEXT as CSA_NICE_BOAT_TEXT, activationModelOf as csaActivationModelOf, customModelOf as csaCustomModelOf, ACTIVATION_DISTANCE as CSA_ACTIVATION_DISTANCE, windWidgetFrameCount as csaWindWidgetFrameCount, BOAT_ACTIONS as CSA_BOAT_ACTIONS, hullFromMessage as csaHullFromMessage, tileMapIndexAtPosition as csaTileMapIndexAtPosition } from '../systems/comeSailAway.js';   // NAV-H: the tile a sea ship floats on
-import { windWidgetFrameUrl as csaWindWidgetFrameUrl, waveDerivedUrl as csaWaveDerivedUrl, wavePaintUrl as csaWavePaintUrl, soundUrl as csaSoundUrl } from '../systems/comeSailAwayModels.js';   // CSA-E: the wind widget's pictures; CSA-F: the waves' recipes and paints
-import { WAVE_FRAME_COUNT as CSA_WAVE_FRAME_COUNT, waveDitherOf as csaWaveDitherOf } from '../systems/comeSailAwayWaves.js';   // CSA-F
+import { TRIGGER_MODEL as CSA_TRIGGER_MODEL, setLights as csaSetLights, HULL_NAMES as CSA_HULL_NAMES, nodeOf as csaNodeOf, AUDIO_CLIPS as CSA_AUDIO_CLIPS, colliderBoundsInChildren as csaColliderBoundsInChildren, animatorOf as csaAnimatorOf, meshLocalBounds as csaMeshLocalBounds } from '../systems/comeSailAway/comeSailAwayBoat.js';   // CSA-B: the probe's lanterns; CSA-D: the plaque's word for a boat; CSA-G: the loops' objects and the five clips; CSA-J: Eye of the Beholder's Collider.bounds
+import { travelMapPicture, TRAVEL_MAP_IMG, LINE_TEXTURE as CSA_LINE_TEXTURE } from '../systems/comeSailAway/comeSailAwayMap.js';   // CSA-I: the position reading's picture and lines
+import { createComeSailAwayRuntime, cargoModWords, comeSailAwayCarrier, WATER_WALKING_SILENT, COME_SAIL_AWAY_VENDOR, CONSOLE as CSA_CONSOLE, NO_WATER_LEVEL, NICE_BOAT_TEXT as CSA_NICE_BOAT_TEXT, activationModelOf as csaActivationModelOf, customModelOf as csaCustomModelOf, ACTIVATION_DISTANCE as CSA_ACTIVATION_DISTANCE, windWidgetFrameCount as csaWindWidgetFrameCount, BOAT_ACTIONS as CSA_BOAT_ACTIONS, hullFromMessage as csaHullFromMessage, tileMapIndexAtPosition as csaTileMapIndexAtPosition } from '../systems/comeSailAway/comeSailAway.js';   // NAV-H: the tile a sea ship floats on
+import { windWidgetFrameUrl as csaWindWidgetFrameUrl, waveDerivedUrl as csaWaveDerivedUrl, wavePaintUrl as csaWavePaintUrl, soundUrl as csaSoundUrl } from '../systems/comeSailAway/comeSailAwayModels.js';   // CSA-E: the wind widget's pictures; CSA-F: the waves' recipes and paints
+import { WAVE_FRAME_COUNT as CSA_WAVE_FRAME_COUNT, waveDitherOf as csaWaveDitherOf } from '../systems/comeSailAway/comeSailAwayWaves.js';   // CSA-F
 import { ComeSailAwayRenderer, softParticleTexture as csaSoftParticleTexture } from '../render/comeSailAwayRender.js';   // CSA-F: the waves' and the particles' passes
 import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_TAG_RANGE } from './navalHost.js';   // NAV-H: the sea fight - the Iliac Bay's ships, the guns, boarding, the law and the word
 import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
@@ -624,7 +624,7 @@ import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Eltheric O
 import { createCrossingGate, crossingWayAt, crossingTarget, crossingRows, crossingWords, CROSS_DAYS, CROSS_CHECK_S, CROSS_REFUSED, CROSS_STALE, CROSS_FAILED } from '../systems/naval/etherCrossing.js';   // ETHER-CROSSING: the voyage across
 import { mulberry32 } from '../combat/bloodArt.js';   // CAPT-BOARD: a site's point off its seed
 import { CHART_TEMPLATE } from '../systems/naval/treasureCharts.js';   // CAPT-CHARTS: a treasure chart read   // CAPT-BOARD: the harbourmaster's board, the contracts, the letters
-import { mintDeed } from '../systems/comeSailAwayItems.js';   // CAPT-BOARD: the Admiralty's carrack's deed, the shelf's own mint   // CAPT-LOG: the captain's ledger - the log, the crowns' regard, the ranks, the letter of marque
+import { mintDeed } from '../systems/comeSailAway/comeSailAwayItems.js';   // CAPT-BOARD: the Admiralty's carrack's deed, the shelf's own mint   // CAPT-LOG: the captain's ledger - the log, the crowns' regard, the ranks, the letter of marque
 import { navalLootWorth } from '../systems/naval/navalTransfer.js';   // CAPT-LOG: what plunder is worth to the log
 import { watersOf } from '../systems/naval/navalDirector.js';   // CAPT-WATERS: the coast's waters, the open and the deep
 import { draftOf as navalDraftOf } from '../systems/naval/shipLife.js';   // AUDIT GN2-PF6: a hull's draft, hull 2's off her keel as she stands
@@ -1078,7 +1078,7 @@ import { enemyLootSpawned } from '../characters/enemyEntity.js';   // OH-E: Enem
 import { customItemClass } from '../systems/rriItems.js';   // OH-E: UpgradeLoot's `GetType() != typeof(DaggerfallUnityItem)`
 import { setItemFields, mintCondition, isAmmunition } from '../systems/itemTemplates.js';   // DW-E5: the item constructor's name, value and condition
 import { registerItemUseHandler } from '../systems/itemTemplates.js';   // CSA-H: the boat items' UseItem on the item-use door
-import { mintBoatItem, mintShelfBoatUids, assignVariantsToShopItems, cargoLootTarget, BOAT_PARTS_TEMPLATE as CSA_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE as CSA_DEED_TEMPLATE } from '../systems/comeSailAwayItems.js';   // CSA-H: the two items, their shelf
+import { mintBoatItem, mintShelfBoatUids, assignVariantsToShopItems, cargoLootTarget, BOAT_PARTS_TEMPLATE as CSA_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE as CSA_DEED_TEMPLATE } from '../systems/comeSailAway/comeSailAwayItems.js';   // CSA-H: the two items, their shelf
 import { ListPickerWindow, listPickerArtLoaded } from '../ui/listPicker.js';   // CSA-H: the boat's variant picker
 import { mustSpawnOnFloor, alignFloorEnemyY, spawnRevealDistance, enemyRoster } from '../world/underwaterEnemies.js';   // DW-E4: where the mod sets a foe's transform; DW-E5: SpawnRevealDistance
 import { markPuddleWater, carryPuddleMask, puddleWetAt, PUDDLE_RECORDS } from '../world/puddleMask.js';   // WATER-PUDDLE: the puddle is the art's
@@ -8859,7 +8859,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   csaPeers.setKeepAboard((boat) => csaOn() && !(playerEntity.health <= 0)
     && (boat === _partyTravelOriginBoat || (!(_teleporting || _traveling || _loading)
       && (modes?.mode ?? 'exterior') === 'exterior' && csaAboard.aboard?.boat === boat)));
-  // CSA-C: THE RUNTIME - the boats placed, kept where they stand and saved (systems/comeSailAway.js). Made as the world
+  // CSA-C: THE RUNTIME - the boats placed, kept where they stand and saved (systems/comeSailAway/comeSailAway.js). Made as the world
   // mounts with the mod on ("Takes effect when the game next loads"); with it off, no runtime, and its record is carried
   // as the load handed it (AUDIT REALM2 C3 - OH-D's "a mod DFU did not load writes none" lost a realm character's boats
   // for good). The pool loads every hull's needs at once, so SpawnBoat runs straight through when the C# calls it.
@@ -9153,7 +9153,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** CSA-K: SetHorizontalFacing - PlayerMouseLook.SetFacing's Init, the owed look dropped (the helm's own seam). */
   const csaSetFacing = (yawDeg, pitchDeg) => { cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; lookFilter.settle(); };
   /**
-   * CSA-K: BOARDBOAT ON ANOTHER PLAYER'S BOAT, statement for statement (systems/comeSailAway.js BoardBoat): stood at the
+   * CSA-K: BOARDBOAT ON ANOTHER PLAYER'S BOAT, statement for statement (systems/comeSailAway/comeSailAway.js BoardBoat): stood at the
    * sibling before the ladder's trigger, facing its forward, set on the ground within 3 m - their deck among what that
    * ray meets - and aboard from here (CSA_ABOARD_GRACE: the motor has not stood there yet), its deck standing at once.
    */
@@ -9285,7 +9285,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!room || !caravanVisitMay(t)) { townTalk.say(CARAVAN_VISIT_TEXT.shut(t?.owner || 'another player')); return false; }
     return caravanRooms.visit(t, room);
   };
-  /** BOAT-MENU: a boat of mine's boxes and its rows (systems/csaBoatMenu.js) - what the plaque lists and the picker. */
+  /** BOAT-MENU: a boat of mine's boxes and its rows (systems/comeSailAway/csaBoatMenu.js) - what the plaque lists and the picker. */
   const _csaBoxes = new WeakMap();   // BOAT-MENU: boat -> { root, variant, boxes } - the walk once per hull and style, not each frame the plaque asks
   // CABIN-TITLES: and the Fleet's book - HOLDINGS took a ship's deed out of the pack into it, so a ship laid up there
   // stopped counting, and a bank cabin auto-linked to the one ship afloat as if she were the only one of her size
@@ -9873,7 +9873,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  `state.init` re-anchors the scene with no recentre offset to ride, and every placed boat kept the old frame's numbers
    *  - the one just placed at sea stood by the temple its owner woke at, under the ground, and nowhere it was left ever
    *  again. The frame's own move (`initOffset`: the old origin as the new frame reads it) carries every boat, which is
-   *  then shown or hidden for the new pixel (systems/comeSailAway.js OnWorldReanchored), the peers' eased places and
+   *  then shown or hidden for the new pixel (systems/comeSailAway/comeSailAway.js OnWorldReanchored), the peers' eased places and
    *  the boats' colliders with it, as a recentre carries them; the camps go through natives for the same reason. */
   function csaReanchor(offset) {
     if (csaRuntime) csaCall(() => csaRuntime.OnWorldReanchored(offset)); else csa.offsetAll(offset);
@@ -10128,7 +10128,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return rec && rec.currentBoat >= 0 ? { ...modData, [COME_SAIL_AWAY_VENDOR]: { ...rec, currentBoat: -1 } } : modData;
   };
   let _csaWordKey = null;   // CSA-J: the word my last foes frame carried ('' none stood; null: none said yet)
-  /** CSA-J: my boats for the others (systems/comeSailAwayWire.js) - every active one, as it stands - on every full
+  /** CSA-J: my boats for the others (systems/comeSailAway/comeSailAwayWire.js) - every active one, as it stands - on every full
    *  foes frame and on a moved word between them; the mod off, one null to take mine away. AUDIT PRE-MERGE 0928 O2:
    *  asked first with no frame - does my word ride this tick? - so a moved word asks for a frame, as the team's does
    *  (foesStream's force): a sailing boat rides every FOES_MS, a still one the full frames alone. */

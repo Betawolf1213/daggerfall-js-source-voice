@@ -229,7 +229,7 @@ test('NUDE-HOSTS by source: every file of src/ that batches a billboard is named
     assert.match(src(f), /from '\.\.\/characters\/nudeFlats\.js'/, `${f} imports the table's door`);
     assert.match(src(f).replace(/^\s*\/\/.*$/gm, ''), /\bdrawnFlat\(/, `${f} draws people: it asks drawnFlat`);
   }
-  // Come Sail Away draws its prefabs' people (systems/comeSailAwayBoat.js setupBillboardHelper: `BillboardHelper-AAA_RRR`)
+  // Come Sail Away draws its prefabs' people (systems/comeSailAway/comeSailAwayBoat.js setupBillboardHelper: `BillboardHelper-AAA_RRR`)
   // exactly as the mod lays them - held here to the table, so a figure of it arriving in the vendored data is caught
   const helpers = [...src('vendor/come-sail-away/Models/prefabs.json').matchAll(/BillboardHelper-(\d{3})_(\d{3})/g)].map((m) => `${Number(m[1])}_${Number(m[2])}`);
   assert.ok(helpers.filter((k) => k.startsWith('182_')).length >= 20, `the prefabs' people are read (${helpers.length} helpers)`);

@@ -19,14 +19,14 @@ import { carrackArt, carrackGlow, carrackCut, CARRACK_NIGHT, registerCarrackArt,
 import { RUDDER_DEG } from '../src/world/galleonModel.js';
 import { createGalleonGunDeck } from '../src/systems/naval/galleonGunDeck.js';
 import { DECK_STEP } from '../src/systems/naval/navalDeck.js';
-import { animatorOf, colliderBounds } from '../src/systems/comeSailAwayBoat.js';
+import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL, HULL_BUILDS, MOD_CARRACK_BUILD, hullBuild, setShipStanding } from '../src/systems/naval/navalShips.js';
 import { gangwaySide, GANGWAY_SIDE, MOD_CARRACK_GANGWAY } from '../src/systems/naval/quays.js';
 import * as LIFE from '../src/systems/naval/shipLife.js';
 import { mat4FromQuatPosScale, quatAngleAxis } from '../src/world/quat.js';
 import { multiply } from '../src/world/mat4.js';
 import { pathHash } from '../src/world/unityAnimator.js';
-import { decodeMeshGeometry } from '../src/systems/comeSailAwayModels.js';
+import { decodeMeshGeometry } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { scene, MODELS } from './csaScene.mjs';
 import { sweepRig } from './shipSweep.mjs';
 

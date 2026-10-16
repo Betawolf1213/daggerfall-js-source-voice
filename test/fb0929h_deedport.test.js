@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway.js';
-import { mintBoatItem } from '../src/systems/comeSailAwayItems.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAway.js';
+import { mintBoatItem } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { hasPort, hasPortFor, PORT_LOCATION_IDS } from '../src/systems/travelPorts.js';
 import { getPixelFromPixelID } from '../src/formats/mapsFile.js';
 

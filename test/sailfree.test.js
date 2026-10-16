@@ -1,6 +1,6 @@
 // SAIL-FREE (2026-10-05, Mac: "Currently its too hard to sail against the wind, ships need more speed"; Mac's calls: "No
 // tacking, Black Flag" and "nothing that breaks immersion") - the responsive helm's way under sail (systems/helmWay.js
-// SAIL-FREE; systems/comeSailAway.js canvasPull and sailDrive), driven on Come Sail Away's real runtime over the vendored
+// SAIL-FREE; systems/comeSailAway/comeSailAway.js canvasPull and sailDrive), driven on Come Sail Away's real runtime over the vendored
 // hulls (test/csaScene.mjs): the point of sail's curve and its no-tack law, the sea's bounded wind, her canvas at its
 // crest kind for kind, her drive up into the wind's eye and never astern, her sails drawing there (none luffing, none
 // stowed by the assist), every hull's polar alike on either tack and bettered by no tack, her way's figures, the
@@ -12,8 +12,8 @@ import { readFileSync } from 'node:fs';
 
 import { SAIL_FREE, POINT_OF_SAIL, WIND_RATED, WIND_SHARE, pointOfSail, seaWind, windShare } from '../src/systems/helmWay.js';
 import * as AI from '../src/systems/naval/navalAI.js';
-import { SAIL_CREST_DEG } from '../src/systems/comeSailAway.js';
-import { animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { SAIL_CREST_DEG } from '../src/systems/comeSailAway/comeSailAway.js';
+import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { seaHelmStep, createSeaHelm, SEA_HELM } from '../src/systems/seaHelm.js';
 import { quatRotate } from '../src/world/quat.js';
 import { scene } from './csaScene.mjs';

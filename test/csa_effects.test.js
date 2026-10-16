@@ -1,4 +1,4 @@
-// CSA-F (2026-09-27) - COME SAIL AWAY'S EFFECTS IN THE RUNTIME: systems/comeSailAway.js's wake arm (Update 4737-4755),
+// CSA-F (2026-09-27) - COME SAIL AWAY'S EFFECTS IN THE RUNTIME: systems/comeSailAway/comeSailAway.js's wake arm (Update 4737-4755),
 // the two loops' play state and their fades (6527-6600), the rudder's drops at the helm, the wake and the oars' splashes
 // carried by a floating-origin shift, LateUpdate's bob and flag, and RotateWind's rain and snow - over the vendored hulls
 // (the real SpawnBoat and its real particle systems) and a scripted scene. Every expectation is worked out here from
@@ -7,9 +7,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, TIME_SCALES } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, TIME_SCALES } from '../src/systems/comeSailAway/comeSailAway.js';
 import { quatRotate, quatLookRotation } from '../src/world/quat.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { evaluateMinMax, SPACE } from '../src/world/unityParticles.js';

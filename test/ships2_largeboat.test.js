@@ -17,8 +17,8 @@ import {
 import { PLANS, VARIANT_COUNT, sailKey, stayLines, LARGE_BOAT_RIG, MAST, FORESTAY_IN } from '../src/world/largeBoatRig.js';
 import { largeBoatArt, registerLargeBoatArt, _resetLargeBoatArt, LARGE_BOAT_ARCHIVE, TEX } from '../src/world/largeBoatArt.js';
 import { RUDDER_DEG } from '../src/world/galleonModel.js';
-import { loadComeSailAwayModels, CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL, decodeMeshGeometry } from '../src/systems/comeSailAwayModels.js';
-import { animatorOf, colliderBounds } from '../src/systems/comeSailAwayBoat.js';
+import { loadComeSailAwayModels, CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL, decodeMeshGeometry } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL, HULL_BUILDS, MOD_LARGE_BOAT_BUILD, hullBuild, setShipStanding } from '../src/systems/naval/navalShips.js';
 import { gangwaySide, gangwayFoot, GANGWAY_SIDE, MOD_LARGE_BOAT_GANGWAY } from '../src/systems/naval/quays.js';
 import { rigBoxesOf } from '../src/scenes/navalHost.js';
@@ -45,7 +45,7 @@ const xf = (m, p) => [m[0] * p[0] + m[4] * p[1] + m[8] * p[2] + m[12], m[1] * p[
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 
-/** Come Sail Away's walk's own tests (systems/comeSailAwayBoat.js getBoatTransforms): a boom, a sail. */
+/** Come Sail Away's walk's own tests (systems/comeSailAway/comeSailAwayBoat.js getBoatTransforms): a boom, a sail. */
 const isBoom = (name) => name.includes('Boom');
 const isSail = (name) => name.includes('Sail') && !name.includes('Skelly') && !name.includes('Mesh') && !name.includes('Bones') && !name.includes('Handling');
 /** A prefab's booms and sails as the walk reads them with plan `v` switched on, in the walk's order. */

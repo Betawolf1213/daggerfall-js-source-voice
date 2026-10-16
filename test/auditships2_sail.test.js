@@ -5,8 +5,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { scene } from './csaScene.mjs';
-import { BOAT_ACTIONS, CSA_BRAKE_MAX } from '../src/systems/comeSailAway.js';
-import { csaWireRecord, validCsaRecord, CSA_WIRE_SPEED_MAX } from '../src/systems/comeSailAwayWire.js';
+import { BOAT_ACTIONS, CSA_BRAKE_MAX } from '../src/systems/comeSailAway/comeSailAway.js';
+import { csaWireRecord, validCsaRecord, CSA_WIRE_SPEED_MAX } from '../src/systems/comeSailAway/comeSailAwayWire.js';
 import { HELM_WAY, sailFreeGain } from '../src/systems/helmWay.js';
 import { heaveToDecel, heaveToRun, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/navalHost.js';
 import { BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';

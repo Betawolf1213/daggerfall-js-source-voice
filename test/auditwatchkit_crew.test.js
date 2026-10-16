@@ -25,7 +25,7 @@ import { buildDeck, mainLevel, DECK_STEP } from '../src/systems/naval/navalDeck.
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';
 import { classById, HULL } from '../src/systems/naval/navalShips.js';
-import { Boat, spawnBoat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { ctxFor } from './csaScene.mjs';
 import { sea, readyPool } from './navalSea.mjs';
 

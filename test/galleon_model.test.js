@@ -21,8 +21,8 @@ import {
 } from '../src/world/galleonArt.js';
 import { newell, norm } from '../src/world/galleonMesh.js';
 import { createGalleonGunDeck, recoilAt, HOLD_S, RUN_IN_X, RUN_OUT_X, RECOIL, KICK_S, HAUL_S } from '../src/systems/naval/galleonGunDeck.js';
-import { loadComeSailAwayModels, CSA_MODEL_URLS, GALLEON_MODEL_URL } from '../src/systems/comeSailAwayModels.js';
-import { animatorOf, colliderBounds } from '../src/systems/comeSailAwayBoat.js';
+import { loadComeSailAwayModels, CSA_MODEL_URLS, GALLEON_MODEL_URL } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL, hullBuild } from '../src/systems/naval/navalShips.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';

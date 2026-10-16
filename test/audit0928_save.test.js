@@ -13,10 +13,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_ACTIONS, BOAT_EFFECT_BUNDLE } from '../src/systems/comeSailAway.js';
-import { BOAT_ITEM_GROUP, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_ACTIONS, BOAT_EFFECT_BUNDLE } from '../src/systems/comeSailAway/comeSailAway.js';
+import { BOAT_ITEM_GROUP, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWatersFishItems.js';
 import { customItemsForGroup } from '../src/systems/itemTemplates.js';
 import * as MS from '../src/systems/modSettings.js';

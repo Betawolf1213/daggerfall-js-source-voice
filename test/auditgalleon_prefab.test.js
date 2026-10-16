@@ -29,8 +29,8 @@ import { Collider } from '../src/player/collider.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { mat4FromQuatPosScale } from '../src/world/quat.js';
 import { multiply } from '../src/world/mat4.js';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, Boat } from '../src/systems/comeSailAwayBoat.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { buildDeck, DECK_FLAT } from '../src/systems/naval/navalDeck.js';
 
 const { MEASURED: M, HELM } = GM;

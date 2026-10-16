@@ -10,8 +10,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { Boat, spawnBoat } from '../src/systems/comeSailAwayBoat.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { resolveNodePointer } from '../src/world/prefabNode.js';
 import { bakeSkinnedMesh, recalculateNormals, fixDeformationsTick, FIX_DEFORMATIONS_INTERVAL } from '../src/world/skinnedBake.js';
 import { multiply } from '../src/world/mat4.js';

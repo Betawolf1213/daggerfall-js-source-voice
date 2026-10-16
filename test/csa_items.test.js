@@ -1,5 +1,5 @@
-// CSA-H (2026-09-27) - COME SAIL AWAY'S ITEMS, SHELVES, CARGO AND PORTS: systems/comeSailAwayItems.js (the two
-// template rows, the mint, the names, AssignVariantsToShopItems) and systems/comeSailAway.js over the real SpawnBoat
+// CSA-H (2026-09-27) - COME SAIL AWAY'S ITEMS, SHELVES, CARGO AND PORTS: systems/comeSailAway/comeSailAwayItems.js (the two
+// template rows, the mint, the names, AssignVariantsToShopItems) and systems/comeSailAway/comeSailAway.js over the real SpawnBoat
 // (IsNearPort's square, PackBoat and the packed cargo, the cargo box, the variant picker, giveboat, the two classes'
 // UseItem), the shelf's custom loop (systems/shopStock.js through itemTemplates.js's one GetCustomItemsForGroup) and the
 // host's seams. Every expectation is worked out here from ComeSailAway.cs, ItemBoatParts.cs, ItemBoatDeed.cs and DFU.
@@ -7,10 +7,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, setBoatVariant, TRIGGER_MODEL, HULL_NAMES, HULL_PRICES, HULL_WEIGHTS } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, CONSOLE } from '../src/systems/comeSailAway.js';
-import { CSA_ITEM_TEMPLATES, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, mintShelfBoatUids, boatItemName, assignVariantsToShopItems, cargoLootTarget } from '../src/systems/comeSailAwayItems.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, setBoatVariant, TRIGGER_MODEL, HULL_NAMES, HULL_PRICES, HULL_WEIGHTS } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, CONSOLE } from '../src/systems/comeSailAway/comeSailAway.js';
+import { CSA_ITEM_TEMPLATES, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, mintShelfBoatUids, boatItemName, assignVariantsToShopItems, cargoLootTarget } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { remoteTarget, remoteTargetType } from '../src/systems/inventorySession.js';
 import { CONTAINER_IMAGES } from '../src/ui/targetIconPanel.js';
 import { customItemsForGroup, registerCustomItemGroup, templateByIndex } from '../src/systems/itemTemplates.js';

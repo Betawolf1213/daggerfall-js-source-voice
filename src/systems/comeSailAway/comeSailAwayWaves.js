@@ -36,7 +36,7 @@
 //   land to it, as it is to the C#;
 // - an empty list returns before the loop, so the last neighbours stay.
 
-import { recalculateNormals } from '../world/skinnedBake.js';
+import { recalculateNormals } from '../../world/skinnedBake.js';
 
 const f = Math.fround;
 

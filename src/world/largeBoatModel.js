@@ -9,7 +9,7 @@
 // the one switched on, the VariantTrigger the player cycles them by. `largeBoatPrefab` makes that tree over Mac's model
 // (src/assets/ships/largeBoat.json, baked by tools/bakeLargeBoat.mjs) and the parts built here - all seven variants,
 // each with the mod's own sails by the mod's own names (world/largeBoatRig.js), so each plan sails as the mod's did -
-// and systems/comeSailAwayModels.js stands it in for prefab 112411.
+// and systems/comeSailAway/comeSailAwayModels.js stands it in for prefab 112411.
 //
 // WHAT IS MAC'S AND WHAT IS BUILT. His: her hull - a double skin, her outer planking and her ceiling, met at her
 // gunwale's cap - her deck, her mast and its collar, her bowsprit and the rail round her stern. Built here: their

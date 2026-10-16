@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { buildDeck, deckOf as deckGrid, intoDeck, outOfDeck, mainLevel, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
-import { Boat, spawnBoat, HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, spawnBoat, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { colliderPoses, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';

@@ -78,7 +78,7 @@ export const BOUND_TEMPLATES = Object.freeze([570, 571, 572, 580, 582]);   // LO
 /** A bound record, as systems/itemBound.js isBound reads a piece: its own mark (SS4), or its row's (SS1) - and no field
  *  on the record unbinds what the row binds. */
 export const boundRecord = (/** @type {any} */ rec) => rec?.bound === true || BOUND_TEMPLATES.includes(rec?.templateIndex);
-/** AUDIT REALM2 T1: COME SAIL AWAY'S BOAT PARTS AND DEED (systems/comeSailAwayItems.js BOAT_PARTS_TEMPLATE and
+/** AUDIT REALM2 T1: COME SAIL AWAY'S BOAT PARTS AND DEED (systems/comeSailAway/comeSailAwayItems.js BOAT_PARTS_TEMPLATE and
  *  BOAT_DEED_TEMPLATE, pinned equal) - records that stand for what the giver's save keeps by the item's UID. A deed names
  *  the boat it placed, and a crewed boat keeps its deed (comeSailAway.js takePlaceItem), while a deed whose boat is not
  *  in its holder's world places one (useBoatDeed) - so a deed handed on was a second boat. Parts leave their cargo in

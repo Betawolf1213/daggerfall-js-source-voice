@@ -40,7 +40,7 @@
 // `_overlayHeld`), which is older than this module and stays as it is.
 // This scale is the travel acceleration, or (CSA-G) Come Sail Away's
 // helm's - its time keys walk the five steps 1, 5, 10, 15, 30
-// (systems/comeSailAway.js SetTimeScale) - and it is 1 whenever neither
+// (systems/comeSailAway/comeSailAway.js SetTimeScale) - and it is 1 whenever neither
 // runs.
 
 import { paceRateOn, ROAD_PACE_MAX, OPEN_PACE_MAX } from './travelPace.js';   // PACE-DIALS: the player's speed dial, under the road rule - and its two ceilings, declared there once

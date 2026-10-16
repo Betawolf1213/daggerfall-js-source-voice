@@ -26,7 +26,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider, sweepSphereTriangle } from '../src/player/collider.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
-import { HULL_NAMES, colliderBounds } from '../src/systems/comeSailAwayBoat.js';
+import { HULL_NAMES, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { hullBuild } from '../src/systems/naval/navalShips.js';
 import { scene } from './csaScene.mjs';
 

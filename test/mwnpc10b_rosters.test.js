@@ -89,7 +89,7 @@ test('MWNPC10b-2 the siege: each shown fighter offered in its body on the siege\
 test('MWNPC10b-3 the crews: each hand on her deck offered his class\'s look off her seed and his place, at his sprite\'s feet and his world facing, concealed with her owner; each swing at his work a blow; the hands below and the gone none; cleared, the lane let go', async () => {
   const { readyPool } = await import('./navalSea.mjs');
   const { ctxFor } = await import('./csaScene.mjs');
-  const { Boat, spawnBoat } = await import('../src/systems/comeSailAwayBoat.js');
+  const { Boat, spawnBoat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { createNavalCrew } = await import('../src/scenes/navalCrew.js');
   const { crewRoster } = await import('../src/systems/naval/crewLife.js');
   const { classById } = await import('../src/systems/naval/navalShips.js');

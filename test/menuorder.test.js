@@ -21,7 +21,7 @@ import { markRemapLaw, remapLawOf } from '../src/world/texRemap.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
 import { DFICON_CSS as GLYPHS } from '../src/ui/menuGlyphs.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { fileURLToPath } from 'node:url';
 import { decorThumbCamera, DECOR_THUMB_PX, DECOR_THUMBS_A_FRAME, DECOR_THUMB_WAIT_MS } from '../src/scenes/decorTool.js';
 import { withDom } from './invdrag.mjs';

@@ -92,7 +92,7 @@ depth, and from a raised eye the top over the beach was a fraction of a step at 
 to decide, and it moved with every bob. WATER1 had met the law first (WATER-AUDIT M3's offset); the top and the
 breakers came later and never took it.
 
-**Fix.** `systems/comeSailAwayWaves.js` `boxLevels` / `wavePaintLevels`: each paint is uploaded as a chain - level 0 the
+**Fix.** `systems/comeSailAway/comeSailAwayWaves.js` `boxLevels` / `wavePaintLevels`: each paint is uploaded as a chain - level 0 the
 paint itself, past it the mean of the frame it composes, premultiplied, the snow record at its mean colour (a level's
 texel spans 2^L of the record's). The wave shader picks the level NEAREST_MIPMAP_NEAREST would (GL ES 3.0 3.8.10): at
 level 0 - a texel a pixel and nearer - the mod's own read and cut, texel for texel; past it one fetch of the chain, its

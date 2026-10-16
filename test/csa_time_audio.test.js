@@ -1,4 +1,4 @@
-// CSA-G (2026-09-27) - COME SAIL AWAY'S TIME AND SOUNDS: systems/comeSailAway.js's time scale (the helm's three keys,
+// CSA-G (2026-09-27) - COME SAIL AWAY'S TIME AND SOUNDS: systems/comeSailAway/comeSailAway.js's time scale (the helm's three keys,
 // IncreaseTimeScale, DecreaseTimeScale, the enemies' gates, Update's unpause reset and Travel Options' isTravelActive),
 // the oars' three animation events through the rudder's listener, the two loops as Unity keeps them, UpdateAudioSource,
 // the sails' and the door's DFU clips - over the vendored hulls - and world/unityAnimator.js's clip events,
@@ -8,9 +8,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { spawnBoat, TRIGGER_MODEL, animatorOf, AUDIO_CLIPS, goModelName } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL, TIME_SCALES, BOAT_ACTIONS, BOAT_TIME_ACTIONS, HELM_TIME_LOCKED_TEXT, customModelOf, activationModelOf } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, TRIGGER_MODEL, animatorOf, AUDIO_CLIPS, goModelName } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL, TIME_SCALES, BOAT_ACTIONS, BOAT_TIME_ACTIONS, HELM_TIME_LOCKED_TEXT, customModelOf, activationModelOf } from '../src/systems/comeSailAway/comeSailAway.js';
 import { helmButtons, helmPadGesture, helmPadPrompts, HELM_ACTIONS } from '../src/ui/enhancedHelm.js';
 import { BED_MODELS } from '../src/systems/rrRealism.js';
 import { createAnimator, pathHash } from '../src/world/unityAnimator.js';

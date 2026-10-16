@@ -8,7 +8,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea, readyPool } from './navalSea.mjs';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { mainLevel, outOfDeck, intoDeck } from '../src/systems/naval/navalDeck.js';
 import { HULL, setGalleonStanding } from '../src/systems/naval/navalShips.js';

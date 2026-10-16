@@ -1,7 +1,7 @@
 // @ts-check
 // HELM-WAY (DECLARED, the Port-Ledger's HELM-WAY row; 2026-09-29, Mac: "Improve the overall mobility and
 // maneuverability of ships") - THE RESPONSIVE HELM: one law for how a hull gathers way, loses it and answers her helm,
-// read by the player's own boat (systems/comeSailAway.js, over Come Sail Away's own handling - the Features row's Ship
+// read by the player's own boat (systems/comeSailAway/comeSailAway.js, over Come Sail Away's own handling - the Features row's Ship
 // handling, 'responsive' by default, 'classic' the mod to the letter) and by the sea's captains
 // (systems/naval/navalAI.js maxTurnRate - they sail at the player's own pace, so they turn at the player's own helm).
 // SAIL-FREE (below) is the player's alone: her way under sail, and her handling scaled with it (SAIL_FREE.gain) - the

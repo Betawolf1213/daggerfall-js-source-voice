@@ -1,7 +1,7 @@
 [
   {
     "name": "TRAVEL-X1-stale-latch",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (state.wasPaused) latchTravelling();\n",
     "new": "",
     "tests": [

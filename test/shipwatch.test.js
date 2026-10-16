@@ -31,7 +31,7 @@ import { findHarbour, createWaterGrid, errandFor, stepErrand, LURK_R, NIGHT_LURK
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { SAIL_HO_RANGE, SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { CREW_ORDERS } from '../src/systems/naval/shipCrew.js';
-import { setLights } from '../src/systems/comeSailAwayBoat.js';
+import { setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { sea } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

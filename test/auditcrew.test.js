@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCompanions, REST_MIN } from '../src/systems/naval/crewCompanions.js';
 import { createCrewAshore, CATCH_UP_M } from '../src/scenes/crewAshore.js';
-import { boatMenuRows, BOAT_VERB } from '../src/systems/csaBoatMenu.js';
+import { boatMenuRows, BOAT_VERB } from '../src/systems/comeSailAway/csaBoatMenu.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const hand = (name, role = 'Bosun', mobile = 144, gender = 'male') => ({ name, role, mobile, gender });
@@ -107,7 +107,7 @@ test('AUDIT CC-A4: a companion stays the player\'s - whatever turned his team, t
 test('AUDIT CC-A5 (major): a hand home again stands on her deck - the last of the party back too (the host answers an empty set, never null), and with his sprite', async () => {
   const { crewRoster } = await import('../src/systems/naval/crewLife.js');
   const { createNavalCrew } = await import('../src/scenes/navalCrew.js');
-  const { Boat, spawnBoat } = await import('../src/systems/comeSailAwayBoat.js');
+  const { Boat, spawnBoat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { ctxFor } = await import('./csaScene.mjs');
   const { readyPool } = await import('./navalSea.mjs');
   const pool = await readyPool();

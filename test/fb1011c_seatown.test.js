@@ -23,9 +23,9 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { Boat, boatAnimators, spawnBoat } from '../src/systems/comeSailAwayBoat.js';
-import { createComeSailAwayRuntime, NO_WATER_LEVEL } from '../src/systems/comeSailAway.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { Boat, boatAnimators, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { createComeSailAwayRuntime, NO_WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

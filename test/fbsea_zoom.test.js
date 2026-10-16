@@ -12,7 +12,7 @@ import { createEotbCamera, MAX_Z } from '../src/player/eotbCamera.js';
 import { SEA_ZOOM_REACH, SEA_ZOOM_RATIO, seaZoomReach, seaZoomStep } from '../src/player/seaZoom.js';
 import { Collider } from '../src/player/collider.js';
 import { colliderPoses } from '../src/world/prefabColliders.js';
-import { meshLocalBounds, Boat } from '../src/systems/comeSailAwayBoat.js';
+import { meshLocalBounds, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { readyPool } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

@@ -39,7 +39,7 @@
 //   ApplyGameTextures, which reads its CHILDREN's names: slot i wears the
 //   archive and record child i spells `AAA_RRR` (ApplyGameTextures.cs;
 //   `Convert.ToInt32`, so the trailing space four of the skiff's sails
-//   carry reads as nothing). GetBoatTransforms adds it (systems/comeSailAway.js);
+//   carry reads as nothing). GetBoatTransforms adds it (systems/comeSailAway/comeSailAway.js);
 // - any other slot keeps the bundle's material: a Standard material named
 //   after a Daggerfall texture but holding none (DFU's FinaliseMaterials
 //   swaps one only for a LOOSE texture file, MeshReplacement.cs:419-420,
@@ -58,25 +58,25 @@
 // and one with more draws its last submesh again with each extra one -
 // Unity's rule.
 
-import { galleonPrefab, GALLEON_PREFAB_ID } from '../world/galleonModel.js';   // GALLEON: Mac's ship stands in for hull 2
-import { carrackPrefab, CARRACK_PREFAB_ID } from '../world/carrackModel.js';   // SHIPS-2: and his carrack for hull 4,
-import { largeBoatPrefab, LARGE_BOAT_PREFAB_ID } from '../world/largeBoatModel.js';   // his Tiny Ship for hull 1
+import { galleonPrefab, GALLEON_PREFAB_ID } from '../../world/galleonModel.js';   // GALLEON: Mac's ship stands in for hull 2
+import { carrackPrefab, CARRACK_PREFAB_ID } from '../../world/carrackModel.js';   // SHIPS-2: and his carrack for hull 4,
+import { largeBoatPrefab, LARGE_BOAT_PREFAB_ID } from '../../world/largeBoatModel.js';   // his Tiny Ship for hull 1
 
 /** Where the extractor's files are served (a pin reads them off the disk). */
 export const CSA_MODEL_URLS = Object.freeze({
-  prefabs: new URL('../../vendor/come-sail-away/Models/prefabs.json', import.meta.url).href,
-  meshes: new URL('../../vendor/come-sail-away/Models/meshes.json', import.meta.url).href,
-  bin: new URL('../../vendor/come-sail-away/Models/meshes.bin', import.meta.url).href,
-  materials: new URL('../../vendor/come-sail-away/Models/materials.json', import.meta.url).href,
-  animation: new URL('../../vendor/come-sail-away/Models/animation.json', import.meta.url).href,
+  prefabs: new URL('../../../vendor/come-sail-away/Models/prefabs.json', import.meta.url).href,
+  meshes: new URL('../../../vendor/come-sail-away/Models/meshes.json', import.meta.url).href,
+  bin: new URL('../../../vendor/come-sail-away/Models/meshes.bin', import.meta.url).href,
+  materials: new URL('../../../vendor/come-sail-away/Models/materials.json', import.meta.url).href,
+  animation: new URL('../../../vendor/come-sail-away/Models/animation.json', import.meta.url).href,
 });
 /** GALLEON (2026-10-01): the new galleon's model, baked from Mac's export (tools/bakeGalleon.mjs) - the port's own, not
  *  the mod's, so never among its files above: hull 2 is built on it (comeSailAwayModels' `galleon`). */
-export const GALLEON_MODEL_URL = new URL('../../src/assets/galleon/galleon.json', import.meta.url).href;
+export const GALLEON_MODEL_URL = new URL('../../assets/galleon/galleon.json', import.meta.url).href;
 /** SHIPS-2 (2026-10-07): the new carrack's model and the new large boat's, baked from Mac's Tiny_Ship.fbx
  *  (tools/bakeCarrack.mjs, tools/bakeLargeBoat.mjs) - the port's own, as the galleon's is. */
-export const CARRACK_MODEL_URL = new URL('../../src/assets/ships/carrack.json', import.meta.url).href;
-export const LARGE_BOAT_MODEL_URL = new URL('../../src/assets/ships/largeBoat.json', import.meta.url).href;
+export const CARRACK_MODEL_URL = new URL('../../assets/ships/carrack.json', import.meta.url).href;
+export const LARGE_BOAT_MODEL_URL = new URL('../../assets/ships/largeBoat.json', import.meta.url).href;
 /**
  * SHIPS-2: THE PORT'S OWN SHIPS, each standing in for one of the mod's hulls - its key in the files (`comeSailAwayModels`'
  * `galleon`, `carrack`, `largeBoat`), the hull and the prefab it stands in for, what it is called when it will not stand,
@@ -91,14 +91,14 @@ export const PORT_SHIPS = Object.freeze([
 const MOD_TITLES = Object.freeze({ galleon: 'galleon', carrack: 'carrack', largeBoat: 'large boat' });
 
 /** CSA-E: the wind widget's pictures as Start imports them - TryImportTexture(112395, 1, i), frame i of the 24. */
-export const windWidgetFrameUrl = (/** @type {number} */ i) => new URL(`../../vendor/come-sail-away/Textures/112395_1-${i}.png`, import.meta.url).href;
+export const windWidgetFrameUrl = (/** @type {number} */ i) => new URL(`../../../vendor/come-sail-away/Textures/112395_1-${i}.png`, import.meta.url).href;
 /** CSA-F: the waves' frames as recipes (Textures/derived.json: each frame's paint, scroll and tile over TEXTURE.303
  *  record 1) and the author's paints they name - the frames are rebuilt from the player's ARENA2, never shipped. */
-export const waveDerivedUrl = new URL('../../vendor/come-sail-away/Textures/derived.json', import.meta.url).href;
-export const wavePaintUrl = (/** @type {string} */ name) => new URL(`../../vendor/come-sail-away/Textures/${name}`, import.meta.url).href;
+export const waveDerivedUrl = new URL('../../../vendor/come-sail-away/Textures/derived.json', import.meta.url).href;
+export const wavePaintUrl = (/** @type {string} */ name) => new URL(`../../../vendor/come-sail-away/Textures/${name}`, import.meta.url).href;
 /** CSA-G: the five clips Start loads (audioClips, 1022-1029) as the tool carried them - each its Ogg of the bundle's
  *  own Vorbis packets (Sounds/sounds.json). */
-export const soundUrl = (/** @type {string} */ name) => new URL(`../../vendor/come-sail-away/Sounds/${name}.ogg`, import.meta.url).href;
+export const soundUrl = (/** @type {string} */ name) => new URL(`../../../vendor/come-sail-away/Sounds/${name}.ogg`, import.meta.url).href;
 
 /**
  * The five files, fetched. NEVER TRAPS: a file that will not load is the

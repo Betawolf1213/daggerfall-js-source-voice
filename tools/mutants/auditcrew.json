@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDIT-CC-A9-no-uid-row",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "if (s.crewed && s.companions !== false) rows.push",
     "new": "if (s.crewed) rows.push",
     "tests": [

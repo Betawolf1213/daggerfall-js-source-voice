@@ -38,7 +38,7 @@ merge lost nothing of main's (every both-sides file re-merged digits-stripped ma
 | B6 | Low | **A door stood a ship that had sailed today at her berth again.** | The day's sailings kept apart from the harbours (`departedByPort`), across the sea's clear. |
 | B7 | Low | **A port sounded before its water was built stayed harbourless.** | A null harbour is sounded again after `HARBOUR_RETRY_S`. |
 
-### The boat menu (`scenes/world.js`, `systems/csaBoatMenu.js`)
+### The boat menu (`scenes/world.js`, `systems/comeSailAway/csaBoatMenu.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

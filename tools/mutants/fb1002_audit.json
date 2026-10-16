@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-HUSH-crossfade-unsettled",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (fading == null) startFading(CrossfadeAudioSourceCoroutine(from, to, duration), () => { audioStop(from); audioPlay(to); to.volume = loopVolume(); });",
     "new": "    if (fading == null) startFading(CrossfadeAudioSourceCoroutine(from, to, duration));",
     "tests": [

@@ -1,6 +1,6 @@
 // COME SAIL AWAY's HELM KEYS - the registry actions the helm reads, a LEAF (HUD-HELM, 2026-10-15). The enhanced helm
 // panel (ui/enhancedHelm.js) presses these by name, and HUD-HELM put the panel among HUD-MOVE's pieces: the editor's
-// preview builds it while nobody is at a helm, so the HUD reaches the panel's module. Read from systems/comeSailAway.js,
+// preview builds it while nobody is at a helm, so the HUD reaches the panel's module. Read from systems/comeSailAway/comeSailAway.js,
 // the names carried the sea's whole law onto the HUD's graph with them - its map, the travel map window and, through
 // the chargen art's biography, the quest machine's place.js, which AUDIT GUIDE O6 keeps off the HUD (the cycle GUIDE3
 // met). The sea's module imports the table from here and re-exports it, so every other reader keeps its import.

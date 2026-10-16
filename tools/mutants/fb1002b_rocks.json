@@ -201,7 +201,7 @@
   },
   {
     "name": "CHECK-reach-twice",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const reach = vMagnitude(val);",
     "new": "    const reach = vMagnitude(val4);",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "CHECK-keel-box",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const opts = { keelY: f(f(f(f(m[1] * local.center[0]) + f(m[5] * footY)) + f(m[9] * local.center[2])) + m[13]), boat };",
     "new": "    const opts = { keelY: world.min[1], boat };",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "CHECK-herself-unhanded",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "+ f(m[9] * local.center[2])) + m[13]), boat };",
     "new": "+ f(m[9] * local.center[2])) + m[13]) };",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "CHECK-start-twice",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        if (!zeroPointOk && (hit.start || vEquals(hit.point, [0, 0, 0]))) continue;",
     "new": "        if (!zeroPointOk && vEquals(hit.point, [0, 0, 0])) continue;",
     "tests": [
@@ -242,7 +242,7 @@
   },
   {
     "name": "CHECK-start-from-root",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "vSub(hit.start ? center : boat.GameObject.position, hit.point)",
     "new": "vSub(boat.GameObject.position, hit.point)",
     "tests": [
@@ -252,7 +252,7 @@
   },
   {
     "name": "CHECK-start-none-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        if (hit.start && vEquals(off, [0, 0, 0])) continue;",
     "new": "        if (false) continue;",
     "tests": [

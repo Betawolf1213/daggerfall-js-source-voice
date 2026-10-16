@@ -4,7 +4,7 @@
 // (world/carrackModel.js says where every measurement comes from).
 //
 // SHE IS RIGGED AS A CARRACK, AND AS COME SAIL AWAY'S CARRACK IS - its five sails, each where the mod's own stands and of
-// its kind and size, so the sail power the mod sums (systems/comeSailAway.js GetSailPower) and every line of its trim,
+// its kind and size, so the sail power the mod sums (systems/comeSailAway/comeSailAway.js GetSailPower) and every line of its trim,
 // stowing and handling read her as they read hull 4:
 //   - a SPRITSAIL under her bowsprit (the mod's CarrackSmallSquareSail: a Small square sail),
 //   - a FORE COURSE on her fore mast (CarrackLargeSquareSail: Large, square),

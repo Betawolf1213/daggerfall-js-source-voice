@@ -1,7 +1,7 @@
 [
   {
     "name": "HELMKEYS-more-sail-lowering",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (state.sailPosition === 0) { RaiseSails(); return; }",
     "new": "    if (state.sailPosition === 0) { LowerSails(); return; }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HELMKEYS-less-sail-raising",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (squareHandled(b) && !squareStowed(b)) { ToggleSquareSails(); return; }\n    LowerSails();",
     "new": "    if (squareHandled(b) && !squareStowed(b)) { ToggleSquareSails(); return; }\n    RaiseSails();",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "HELMKEYS-the-refusal-unsaid",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    deps.hudText('All sail is set.');",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "HELMKEYS-the-square-step-skipped",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (squareHandled(b) && squareStowed(b)) { ToggleSquareSails(); return; }\n    deps.hudText('All sail is set.');",
     "new": "    deps.hudText('All sail is set.');",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HELMKEYS-the-order-reversed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (squareHandled(b) && !squareStowed(b)) { ToggleSquareSails(); return; }\n    LowerSails();",
     "new": "    LowerSails();",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "HELMKEYS-told-every-frame",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "if (state.ironsFor >= IRONS_TELL_S && !state.ironsTold) {",
     "new": "if (state.ironsFor >= IRONS_TELL_S) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "HELMKEYS-told-at-once",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "state.ironsFor = irons ? f(state.ironsFor + dt()) : 0;",
     "new": "state.ironsFor = irons ? IRONS_TELL_S : 0;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "HELMKEYS-the-wind-sense-reversed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "return toWind >= 180 - IRONS_TELL_DEG && ",
     "new": "return toWind <= IRONS_TELL_DEG && ",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "HELMKEYS-the-way-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": " && state.MoveVectorCurrent[2] < IRONS_TELL_WAY;",
     "new": ";",
     "tests": [

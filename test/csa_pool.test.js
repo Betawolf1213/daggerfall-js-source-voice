@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createComeSailAwayPool, activeObjects, lanternLightUpdate, vertexBox, LANTERN_HANDLER_REACH, CSA_LIGHTS_MAX } from '../src/scenes/comeSailAwayPool.js';
-import { Boat, setLights } from '../src/systems/comeSailAwayBoat.js';
-import { CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL } from '../src/systems/comeSailAwayModels.js';
+import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { setShipStanding } from '../src/systems/naval/navalShips.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
 

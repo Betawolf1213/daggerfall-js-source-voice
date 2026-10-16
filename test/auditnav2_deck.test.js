@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { intoDeck, outOfDeck, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
 import * as NAVAL_DECK from '../src/systems/naval/navalDeck.js';   // its AUDIT NAV2 names, read where the tree may not have them yet
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { Boat, spawnBoat, HULL_VARIANT_COUNTS, HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, spawnBoat, HULL_VARIANT_COUNTS, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { colliderPoses, raycastColliders, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
 import { STEP_OFFSET } from '../src/player/motor.js';

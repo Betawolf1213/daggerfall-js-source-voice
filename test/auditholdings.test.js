@@ -10,10 +10,10 @@ import { sea, readyPool } from './navalSea.mjs';
 import {
   titleDeed, titleOf, fleetBook, fleetShip, knowShip, retitle, forgetShip, loanOwed, settleCredit, restoreFleetSaveData, _resetFleetForTests,
 } from '../src/systems/fleet.js';
-import { mintDeed, mintBoatItem, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
-import { PARTS_STANDING_TEXT } from '../src/systems/comeSailAway.js';
+import { mintDeed, mintBoatItem, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { PARTS_STANDING_TEXT } from '../src/systems/comeSailAway/comeSailAway.js';
 import { createFleetHost } from '../src/scenes/fleetHost.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createShipCrew } from '../src/systems/naval/shipCrew.js';
 import { createCrewLife, LOOKOUT_YIELD } from '../src/systems/naval/crewLife.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';

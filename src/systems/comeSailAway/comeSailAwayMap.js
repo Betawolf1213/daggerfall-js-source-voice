@@ -12,11 +12,11 @@
 // solid record 112, palette 112's 220,220,220) tinted each draw: GUI.DrawTexture multiplies the texture by the colour,
 // so every red line, marker and backdrop is its colour times that grey (kept). The host draws the texture itself.
 //
-// Everything here is the arithmetic of the draw; the runtime (systems/comeSailAway.js) owns the state it reads.
+// Everything here is the arithmetic of the draw; the runtime (systems/comeSailAway/comeSailAway.js) owns the state it reads.
 
-import { roundToInt } from './mathf.js';   // Mathf.RoundToInt's one home
-import { MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';   // the world map's 1000x500: one texel a map pixel
-import { REGION_PANEL_OFFSET } from '../ui/travelMapWindow.js';   // DaggerfallTravelMapWindow.regionPanelOffset's one home
+import { roundToInt } from '../mathf.js';   // Mathf.RoundToInt's one home
+import { MAP_WIDTH, MAP_HEIGHT } from '../../formats/woodsFile.js';   // the world map's 1000x500: one texel a map pixel
+import { REGION_PANEL_OFFSET } from '../../ui/travelMapWindow.js';   // DaggerfallTravelMapWindow.regionPanelOffset's one home
 
 const f = Math.fround;
 

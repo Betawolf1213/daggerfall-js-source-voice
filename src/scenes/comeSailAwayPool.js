@@ -1,10 +1,10 @@
 // @ts-check
 // CSA-B (2026-09-27): COME SAIL AWAY'S BOATS, DRAWN - what Unity draws of a
-// built boat (systems/comeSailAwayBoat.js), drawn through the port's renderer:
+// built boat (systems/comeSailAway/comeSailAwayBoat.js), drawn through the port's renderer:
 //
 // - every ACTIVE object's switched-on MeshRenderer over its MeshFilter's mesh,
 //   each submesh in the Daggerfall texture its slot settled on
-//   (systems/comeSailAwayModels.js), the textures out of the player's own
+//   (systems/comeSailAway/comeSailAwayModels.js), the textures out of the player's own
 //   ARENA2 through the host's pipeline, as every model's are;
 // - the classic models the helpers stand (the bed, a model helper's), through
 //   the pipeline's own cache;
@@ -36,8 +36,8 @@
 // deps = { renderer, pipeline: scenes/dataPipeline.js's { getTexture, uploadRecord, getGpuMesh, gpuMeshes, cpuModels,
 //          textureFiles, markClassicArt, isClassicArt }, fetchFn (the vendored files' fetch), log }
 
-import { loadComeSailAwayModels, rendererModel, rendererModelKey, bundleSlots } from '../systems/comeSailAwayModels.js';
-import { spawnBoat, boatAssetNeeds, DUNGEON_LIGHT_HANDLER, HULL_NAMES, setBoatVariant, Boat, FIRST_HULL_MODEL_ID, meshLocalBounds, worldBounds } from '../systems/comeSailAwayBoat.js';
+import { loadComeSailAwayModels, rendererModel, rendererModelKey, bundleSlots } from '../systems/comeSailAway/comeSailAwayModels.js';
+import { spawnBoat, boatAssetNeeds, DUNGEON_LIGHT_HANDLER, HULL_NAMES, setBoatVariant, Boat, FIRST_HULL_MODEL_ID, meshLocalBounds, worldBounds } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { resolveNodePointer, instantiatePrefab, prefabShapeStamp } from '../world/prefabNode.js';
 import { StaticBatchBuilder } from '../render/staticBatch.js';   // AUDIT NAV1 (#13): a boat's still parts merged as a town's statics are
 import { instanceParticleSystems } from '../world/unityParticles.js';
@@ -70,7 +70,7 @@ export const FLAG_DONOR_HULL = 2;
  *  of its records hold glass to see through (DF-LOOK, DF-ART II kept - Mac: "windows should always be see through" -
  *  uploaded cut-outs), each of those records' NIGHT TWIN and the twin's glow (DF-ART III kept - Mac, of the stern
  *  windows: "See-through by day, lit at night" - world/galleonArt.js NIGHT_RECORD_OFFSET; the glow cut while the world
- *  loads), by the models' key for the ship (systems/comeSailAwayModels.js PORT_SHIPS). */
+ *  loads), by the models' key for the ship (systems/comeSailAway/comeSailAwayModels.js PORT_SHIPS). */
 export const PORT_ART = Object.freeze({
   galleon: Object.freeze({ archive: GALLEON_ARCHIVE, register: registerGalleonArt, cut: galleonCut, night: GALLEON_NIGHT, glow: galleonGlow }),
   carrack: Object.freeze({ archive: CARRACK_ARCHIVE, register: registerCarrackArt, cut: carrackCut, night: CARRACK_NIGHT, glow: carrackGlow }),

@@ -1,7 +1,7 @@
 [
   {
     "name": "HELM-TIME-gate-dropped",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (deps.timeLocked?.()) {\n      if (BOAT_TIME_ACTIONS",
     "new": "    if (false) {\n      if (BOAT_TIME_ACTIONS",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HELM-TIME-line-unsaid",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (BOAT_TIME_ACTIONS.some((a) => deps.input.started(a))) deps.midScreenText(HELM_TIME_LOCKED_TEXT, f(1.5));\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "HELM-TIME-reset-key-left-live",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown, BOAT_ACTIONS.timeScaleReset]);",
     "new": "export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown]);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "HELM-TIME-state-always-dial",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        timeDial: !deps.timeLocked?.(),",
     "new": "        timeDial: true,",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "HELM-TIME-said-unasked",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (BOAT_TIME_ACTIONS.some((a) => deps.input.started(a))) deps.midScreenText(",
     "new": "      if (true) deps.midScreenText(",
     "tests": [

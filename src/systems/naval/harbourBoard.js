@@ -34,7 +34,7 @@
 
 import { mulberry32 } from '../../combat/bloodArt.js';
 import { classById, shipNames, SHIP_CLASSES } from './navalShips.js';
-import { HULL_PRICES } from '../comeSailAwayHulls.js';
+import { HULL_PRICES } from '../comeSailAway/comeSailAwayHulls.js';
 import { MINUTES_PER_DAY } from '../gameDate.js';   // a day of the captain's clock (minutes)
 import { hashKey } from '../../net/wire.js';   // FNV-1a over a string: a port's key on the board's stream (SLAM10's one home)
 import { coastalAt } from '../../net/fortLaw.js';   // FIELD BUGS 2026-10-13c PORT-TOWNS: the coast's one law - the sea beside a town

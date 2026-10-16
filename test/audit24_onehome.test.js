@@ -67,7 +67,7 @@ const HOMONYMS = new Map([
   // (largeBoatModel.js, largeBoatRig.js, largeBoatArt.js): three ships, three things each, read as `ship.MEASURED`.
   // None is a DFU member. And the prefab builders' node maker (world/shipKit.js) is not the walk's node finder.
   ...['TEX', 'BANDS', 'MEASURED', 'HELM', 'DRIVE_TRIGGER_AT', 'LID', 'GUN', 'ANCHOR', 'SAILS', 'ropeLadderGeometry', 'stayLines'].map((name) => [name, "each ship of the port's own (world/galleonModel.js, carrackModel.js, largeBoatModel.js and their rigs and art)"]),
-  ['nodeOf', "a prefab builder's new node (world/shipKit.js) vs the walk's node by name under a parent (systems/comeSailAwayBoat.js)"],
+  ['nodeOf', "a prefab builder's new node (world/shipKit.js) vs the walk's node by name under a parent (systems/comeSailAway/comeSailAwayBoat.js)"],
 ]);
 
 test('audit24 wave24: no symbol is DECLARED in two modules without a reason', async () => {

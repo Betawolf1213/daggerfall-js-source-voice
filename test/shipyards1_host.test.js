@@ -12,8 +12,8 @@ import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
 import { fleetShip, fleetBook, titleDeed, knowShip, _resetFleetForTests, shipLabel } from '../src/systems/fleet.js';
 import { shipBuyPrice, shipSalePrice, shipWorth, shipSpec, SHIPYARD_HULLS, SHIPYARD_TEXT, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from '../src/systems/shipyards.js';
 import { recruitsOf, recruitFee, CREW_HALL_TEXT } from '../src/systems/crewHall.js';
-import { mintDeed, mintParts } from '../src/systems/comeSailAwayItems.js';
-import { HULL_PRICES, HULL_NAMES } from '../src/systems/comeSailAwayHulls.js';
+import { mintDeed, mintParts } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { HULL_PRICES, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayHulls.js';
 import { hullBuild } from '../src/systems/naval/navalShips.js';
 import { CREW_PER_HAND } from '../src/systems/naval/navalBoarding.js';
 

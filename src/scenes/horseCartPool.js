@@ -35,7 +35,7 @@
 // `wagonKind`, a peer's by their word's `wk` (systems/horseCartWire.js). The cart is borne level on its axle while a
 // horse is in its shafts and rests tipped on them when none is (`hitchPitch`), and every kind hangs its own length
 // behind its horse (`hitchOf`). A bake that will not load or build falls back to the classic wagon for that kind, as a
-// ship's does (systems/comeSailAwayModels.js).
+// ship's does (systems/comeSailAway/comeSailAwayModels.js).
 //
 // WAGONS2 (2026-10-09, Mac: "Real wheel movement"): EACH WHEEL ROLLS ON ITS OWN, AND THE FOUR-WHEELERS STEER. A wheel is
 // drawn at its own angle (`turn.angles`, systems/horseCart.js rolledAngles - its contact's travel along its heading over

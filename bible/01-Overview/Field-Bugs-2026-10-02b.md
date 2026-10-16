@@ -57,7 +57,7 @@ the segment, its three corners - the earliest), each part's first contact its an
 point to her centre. Nothing wholly under `keelY` is met; a static part holding her centre answers nothing, a mover's
 never holds; the buckets in `skip` are not asked. The host hands on `opts.keelY` and passes her own buckets
 (`scenes/world.js` `csaSphereCastAll`, the "beneath" rule gone), and marks an overlap `start`. CheckCollision
-(`systems/comeSailAway.js`) hands her keel line - her collider's box's foot under its centre, steady through the swell
+(`systems/comeSailAway/comeSailAway.js`) hands her keel line - her collider's box's foot under its centre, steady through the swell
 where the box's lowest corner dips a metre - and herself; refuses `start` in the second sweep as it refuses the zero
 point; and takes an overlap's push from her sweep's centre, so one straight under it, with no side, pushes nothing
 (from her root, 2.2 m ahead of that centre, it pushed her on and refused her helm to starboard). `raycastHit`'s `pass`

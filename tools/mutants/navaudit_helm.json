@@ -615,7 +615,7 @@
   },
   {
     "name": "NAV1H-the-share-unread-oars",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "f(b.modifierMoveSpeedOar)) * hurt);",
     "new": "f(b.modifierMoveSpeedOar)));",
     "tests": [
@@ -624,7 +624,7 @@
   },
   {
     "name": "NAV1H-the-share-unread-sail",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b));",
     "new": "f(b.modifierMoveSpeedSail))) * rigOf(b));",
     "tests": [
@@ -633,7 +633,7 @@
   },
   {
     "name": "NAV1H-the-share-unheld",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const wayHurt = (underSail) => f(Math.max(0, Math.min(1, Number(deps.wayScale?.(underSail) ?? 1))));",
     "new": "const wayHurt = (underSail) => f(Number(deps.wayScale?.(underSail) ?? 1));",
     "tests": [
@@ -642,7 +642,7 @@
   },
   {
     "name": "NAV1H-the-sail-flag-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const hurt = wayHurt(state.sailPosition !== 0);",
     "new": "    const hurt = wayHurt(true);",
     "tests": [
@@ -651,7 +651,7 @@
   },
   {
     "name": "NAV1H-the-refusal-after-the-raise",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const refused = deps.sailRefused?.() ?? null;\n    if (refused) {\n      deps.hudText(refused);\n      return;\n    }\n",
     "new": "",
     "tests": [
@@ -1009,7 +1009,7 @@
   },
   {
     "name": "NAV1H-the-brake-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    return brake > 0 ? f(Math.min(CSA_BRAKE_MAX, brake)) : moveAccelOwn();",
     "new": "    return moveAccelOwn();",
     "tests": [
@@ -1018,7 +1018,7 @@
   },
   {
     "name": "NAV1H-the-brake-unheld",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    return brake > 0 ? f(Math.min(CSA_BRAKE_MAX, brake)) : moveAccelOwn();",
     "new": "    return brake > 0 ? f(brake) : moveAccelOwn();",
     "tests": [

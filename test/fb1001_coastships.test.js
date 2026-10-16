@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildWaveMesh } from '../src/systems/comeSailAwayWaves.js';
+import { buildWaveMesh } from '../src/systems/comeSailAway/comeSailAwayWaves.js';
 import { quatRotate, quatRotateInto } from '../src/world/quat.js';
 import { batchSphere } from '../src/render/bounds.js';
 import { CULL_DETAIL_PX } from '../src/scenes/comeSailAwayPool.js';

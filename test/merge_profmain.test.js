@@ -54,7 +54,7 @@ test('THE MERGE: CSA-H\'s rows are a provider in GetCustomItemsForGroup\'s one h
   // PIN MOVED (SHIPYARDS, 2026-10-11): Come Sail Away's two rows stand on no shelf - a port town's shipyard sells every
   // hull (systems/shipyards.js) - so the fish are the one home's mod rows
   assert.match(rd('src/systems/deepWatersFishItems.js'), /import \{[^}]*registerCustomItemGroup[^}]*\} from '\.\/itemTemplates\.js';/, 'the fish register into the one home');
-  assert.doesNotMatch(rd('src/systems/comeSailAwayItems.js').replace(/^\s*\/\/.*$/gm, ''), /registerCustomItemGroup/, 'the boats register no shelf row');
+  assert.doesNotMatch(rd('src/systems/comeSailAway/comeSailAwayItems.js').replace(/^\s*\/\/.*$/gm, ''), /registerCustomItemGroup/, 'the boats register no shelf row');
 });
 
 test('THE MERGE: Come Sail Away\'s shelf subscriber is one of PlayerActivate.OnLootSpawned\'s, by its mod\'s name, after RRI2\'s - a shop shelf\'s alone; both shelf doors raise the one event', () => {

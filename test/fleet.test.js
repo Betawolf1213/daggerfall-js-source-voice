@@ -6,11 +6,11 @@
 // enhanced plus UI tabs on the pause menu" - bible/03-World/Holdings.md).
 //
 // The ledger (systems/fleet.js: the titles' book, the name's law, the refits' costs and effects, the bank's claim, the
-// save); Come Sail Away over the book (systems/comeSailAway.js: a deed found there, a ship's parts placed spending her
+// save); Come Sail Away over the book (systems/comeSailAway/comeSailAway.js: a deed found there, a ship's parts placed spending her
 // parts and keeping her title, SummonBoat, LayUpBoat - the real runtime over test/csaScene.mjs); the refits where the
 // helm and the sea read them; the sea fight's away repairs, refit and berth (scenes/navalHost.js - test/navalSea.mjs);
 // the host half (scenes/fleetHost.js - where she is, every refusal, every act); the names on the boats' word
-// (systems/comeSailAwayWire.js `n`); the page (ui/fleetPage.js); the purchase and the prize into the book.
+// (systems/comeSailAway/comeSailAwayWire.js `n`); the page (ui/fleetPage.js); the purchase and the prize into the book.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -23,9 +23,9 @@ import {
   settleCredit, forgetShip,
   SHIP_NAME_MAX, UPGRADE_LINES, UPGRADE_TIERS, TIER_GOLD, TIER_MATS, HULL_UPGRADE_SCALE, MATERIALS, FLEET_SAVE_VENDOR, FLEET_MAX, SHIP_VALUE_MAX,
 } from '../src/systems/fleet.js';
-import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
-import { HULL_PRICES } from '../src/systems/comeSailAwayBoat.js';
-import { csaWireRecord, validCsaRecord, csaRecordKey } from '../src/systems/comeSailAwayWire.js';
+import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
+import { HULL_PRICES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { csaWireRecord, validCsaRecord, csaRecordKey } from '../src/systems/comeSailAway/comeSailAwayWire.js';
 import { createFleetHost, CREWED_HULLS, compassWay, hasGuns } from '../src/scenes/fleetHost.js';
 import { hullBuild, firstBuildOf } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';

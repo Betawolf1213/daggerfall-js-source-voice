@@ -43,7 +43,7 @@ import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the rid
 import { mwViewHorseRig } from '../player/mwView.js';   // COATS3D: the 3D horse rig, on the Morrowind lane
 import { SEATED_HIP_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the seated hips' height over the feet, the measured biped's
 
-/** Where each wagon's bake is (fetched at the load, as the ships' are - systems/comeSailAwayModels.js). */
+/** Where each wagon's bake is (fetched at the load, as the ships' are - systems/comeSailAway/comeSailAwayModels.js). */
 export const WAGON_MODEL_URLS = Object.freeze({
   cart: new URL('../assets/wagons/cart.json', import.meta.url).href,
   openWagon: new URL('../assets/wagons/openWagon.json', import.meta.url).href,

@@ -1,56 +1,56 @@
 [
   {
     "name": "FB1005C-hold-gate-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      if (!lost && partsTooHeavy(boat)) return false;",
     "new": "      if (false) return false;",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-unweighed",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, 0) <= 0;",
     "new": "    return canHoldAmount(1, f(packedHullWeight(boat.hull)), most, 0) <= 0;",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-edge",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, 0) <= 0;",
     "new": "    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, 0) <= 1;",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-load-counted",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, 0) <= 0;",
     "new": "    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, deps.entity?.carriedWeight?.() ?? 0) <= 0;",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-no-seam-reads-law",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    if (!Number.isFinite(most)) return false;",
     "new": "    if (!Number.isFinite(most)) return true;",
     "tests": ["test/fb1005c_holdweight.test.js", "test/shippack.test.js"]
   },
   {
     "name": "FB1005C-hold-refusal-unsaid",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "        else if (partsTooHeavy(boat)) deps.midScreenText(HOLD_TOO_HEAVY_TEXT, 1.5);",
     "new": "        else if (partsTooHeavy(boat)) void 0;",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-lost-left",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      PackBoat(boat, true, true);",
     "new": "      PackBoat(boat, true);",
     "tests": ["test/fb1005c_holdweight.test.js"]
   },
   {
     "name": "FB1005C-hold-menu-word",
-    "file": "src/systems/csaBoatMenu.js",
+    "file": "src/systems/comeSailAway/csaBoatMenu.js",
     "old": "        : s.tooHeavy ? BOAT_MENU_WHY.tooHeavy : null;",
     "new": "        : null;",
     "tests": ["test/fb1005c_holdweight.test.js"]

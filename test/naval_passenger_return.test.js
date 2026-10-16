@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from './navalSea.mjs';
 import { scene, terrain } from './csaScene.mjs';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { hullBuild } from '../src/systems/naval/navalShips.js';
 
 async function boarded({ peer = true } = {}) {

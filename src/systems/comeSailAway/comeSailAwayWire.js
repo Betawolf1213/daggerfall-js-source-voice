@@ -28,9 +28,9 @@
 // to the letter. A reader takes each name through the ledger's own law (systems/fleet.js shipNameVerdict: printable,
 // SHIP_NAME_MAX, the name filter every player's name passes); a name it refuses reads as none. A bad `n` never drops the
 // boats - a name is a thing to read, not a thing to stand on - and an older reader ignores the key.
-import { POSE_BOUND, POSE_Y_BOUND } from '../net/wire.js';
+import { POSE_BOUND, POSE_Y_BOUND } from '../../net/wire.js';
 import { HULL_NAMES, HULL_VARIANT_COUNTS } from './comeSailAwayBoat.js';
-import { shipNameVerdict, SHIP_NAME_MAX } from './fleet.js';
+import { shipNameVerdict, SHIP_NAME_MAX } from '../fleet.js';
 
 /** The boats one word carries - a player's shore holds few, and a frame's size is the room's. */
 export const CSA_WIRE_BOATS_MAX = 8;

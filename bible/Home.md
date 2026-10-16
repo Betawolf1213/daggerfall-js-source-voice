@@ -330,6 +330,9 @@ through the fetchBytes seam, signature unchanged.
 
 ## Repo layout
 
+The map is `01-Overview/Code-Map.md` (TIDY1, 2026-10-16): every directory, what lives there, where a new
+file goes, and how a file moves (`tools/moveModule.mjs`).
+
 `src/main.js` is the entry point and scene router - no longer thin: it
 builds the Renderer, holds the ARENA2 data gate, installs the cursor,
 the settings/skin front-door choice and the stale-chunk recovery, then

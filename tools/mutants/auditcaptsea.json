@@ -286,7 +286,7 @@
   },
   {
     "name": "ACS-B11-csa-room",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "      return { load, slows: threshold, stops: 2 * threshold };",
     "new": "      return { load, slows: threshold, stops: threshold };",
     "tests": [

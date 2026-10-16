@@ -1,0 +1,119 @@
+[
+  {
+    "name": "TIDY1-a-moved-file-keeps-its-old-specifiers",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (next === target && home === file) return all;",
+    "new": "      if (next === target) return all;",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-page-url-taken-for-a-module",
+    "file": "tools/moveModule.mjs",
+    "old": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}\\/[^'\"`\\n]*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
+    "new": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}\\/[^'\"`\\n]*)\\2/g,",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-the-src-path-reaches-into-another-tree",
+    "file": "tools/moveModule.mjs",
+    "old": "const src = new RegExp(`(?<![\\\\w\\\\-./])(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(from.slice(4))}(?![\\\\w\\\\-])`, 'g');",
+    "new": "const src = new RegExp(`(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(from.slice(4))}(?![\\\\w\\\\-])`, 'g');",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-recursing-sweep-called-blind",
+    "file": "tools/moveModule.mjs",
+    "old": "if (/readdirSync\\(/.test(l) && named && !/recursive:\\s*true/.test(l))",
+    "new": "if (/readdirSync\\(/.test(l) && named)",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-migration-rewritten",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (FROZEN.some((re) => re.test(file))) continue;\n",
+    "new": "    if (false) continue;\n",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-moved-file-read-at-its-new-path",
+    "file": "tools/moveModule.mjs",
+    "old": "relay.has(back.get(f) ?? f) && t !== texts.get(back.get(f) ?? f)",
+    "new": "relay.has(back.get(f) ?? f) && t !== texts.get(f)",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-broken-specifier-forgiven",
+    "file": "tools/moveModule.mjs",
+    "old": "(a.length !== b.length || resolves(oldFile, a[i], was)) && !resolves(newFile, spec, now)",
+    "new": "(a.length !== b.length || resolves(oldFile, a[i], was)) && false",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-quoted-specifier-left",
+    "file": "tools/moveModule.mjs",
+    "old": "const src = new RegExp(`(?<![\\\\w\\\\-./])(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(from.slice(4))}(?![\\\\w\\\\-])`, 'g');",
+    "new": "const src = new RegExp(`(?<![\\\\w\\\\-./])()?${esc(from.slice(4))}(?![\\\\w\\\\-])`, 'g');",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-record-rewritten-two-ways-guessed",
+    "file": "tools/moveModule.mjs",
+    "old": "if (b === null || keep.has(a) || !text.includes(a))",
+    "new": "if (!text.includes(a))",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-sibling-quote-called-blind",
+    "file": "tools/moveModule.mjs",
+    "old": "...(posix.dirname(t) === posix.dirname(file) ? [] :",
+    "new": "...(false ? [] :",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-template-folder-left",
+    "file": "tools/moveModule.mjs",
+    "old": "        if (!t || home === file) return all;",
+    "new": "        if (!t || true) return all;",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-gone-template-folder-passed",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (t) return exists(posix.normalize(posix.join(posix.dirname(file), t.dir)).replace(/\\/$/, ''));",
+    "new": "    if (t) return true;",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY1-a-url-template-unnamed",
+    "file": "tools/moveModule.mjs",
+    "old": "l.matchAll(/(?:import\\(|new URL\\()\\s*`([^`]*)`/g)",
+    "new": "l.matchAll(/(?:import\\()\\s*`([^`]*)`/g)",
+    "tests": [
+      "test/tidy1_codemap.test.js"
+    ]
+  }
+]

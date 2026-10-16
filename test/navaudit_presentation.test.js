@@ -24,7 +24,7 @@ import { ONLINE_DRESS_CSS, STONE_DIM } from '../src/ui/enhancedPlusStyle.js';
 import { NAVAL_PLUNDER_CSS } from '../src/ui/navalPlunderWindow.js';
 import { byClass } from './chargenDom.mjs';
 import { FLAG_DONOR_HULL } from '../src/scenes/comeSailAwayPool.js';
-import { Boat, meshLocalBounds, worldBounds } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, meshLocalBounds, worldBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createShipDamage, sinkAngles, sinkDepth, SHIP_STATES, SINK_SECONDS, SINK_LIST, SINK_PITCH, SINK_CLEAR } from '../src/systems/naval/navalDamage.js';
 import { hullBuild, NAVAL_FACTIONS } from '../src/systems/naval/navalShips.js';
 import { navalHitData } from '../src/systems/naval/navalWire.js';

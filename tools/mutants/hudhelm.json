@@ -74,8 +74,8 @@
   {
     "name": "HUD-HELM-keys-from-the-sea",
     "file": "src/ui/enhancedHelm.js",
-    "old": "import { BOAT_ACTIONS } from '../systems/comeSailAwayActions.js';",
-    "new": "import { BOAT_ACTIONS } from '../systems/comeSailAway.js';",
+    "old": "import { BOAT_ACTIONS } from '../systems/comeSailAway/comeSailAwayActions.js';",
+    "new": "import { BOAT_ACTIONS } from '../systems/comeSailAway/comeSailAway.js';",
     "tests": [
       "test/hudhelm.test.js",
       "test/audit_guide.test.js"
@@ -84,8 +84,8 @@
   {
     "name": "HUD-HELM-names-from-the-boat",
     "file": "src/ui/enhancedHelm.js",
-    "old": "import { HULL_NAMES } from '../systems/comeSailAwayHulls.js';",
-    "new": "import { HULL_NAMES } from '../systems/comeSailAwayBoat.js';",
+    "old": "import { HULL_NAMES } from '../systems/comeSailAway/comeSailAwayHulls.js';",
+    "new": "import { HULL_NAMES } from '../systems/comeSailAway/comeSailAwayBoat.js';",
     "tests": [
       "test/hudhelm.test.js"
     ]

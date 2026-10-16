@@ -4,7 +4,7 @@
 // says where every measurement comes from).
 //
 // SHE CARRIES THE MOD'S LARGE BOAT'S SEVEN PLANS, EACH AS THE MOD DREW IT: under `Variants`, each plan a node the walk
-// switches on for the boat's own variant (systems/comeSailAwayBoat.js GetBoatTransforms - a save's variant 6 needs a
+// switches on for the boat's own variant (systems/comeSailAway/comeSailAwayBoat.js GetBoatTransforms - a save's variant 6 needs a
 // seventh child, or the walk throws), the player cycling them at her VariantTrigger. Each plan's sails are the mod's own
 // by name - their kind and size what Come Sail Away reads off the name (GetSailPower's sums, the trim's arms) - and in
 // the mod's order (the walk's Booms and Sails, the first square sail ToggleSquareSails reads), so every plan sails as
@@ -287,7 +287,7 @@ export function buildLargeBoatRig(cx) {
 
 /** A sail's key in plan `v` (its meshes', its clips' and its parts' nodes' names): the mod's name without 'Skiff' and
  *  without 'Sail' - Come Sail Away's walk takes EVERY node whose name holds 'Sail' (but its bones, its mesh) for a sail
- *  (systems/comeSailAwayBoat.js getBoatTransforms), so a yard, a spar, a brace or a belay named for its sail's mod
+ *  (systems/comeSailAway/comeSailAwayBoat.js getBoatTransforms), so a yard, a spar, a brace or a belay named for its sail's mod
  *  name would be counted in her Sails, her power and her toggles. */
 export const sailKey = (v, name) => `V${v}${name.replace(/^Skiff/, '').replace(/Sail/g, '').replace(/[^A-Za-z0-9]/g, '')}`;
 /** A mesh registered once by key on the prefab's bench. */

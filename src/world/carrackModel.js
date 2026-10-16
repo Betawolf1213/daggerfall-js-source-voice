@@ -4,11 +4,11 @@
 // THE NEW CARRACK - Mac's three-masted ship, built as Come Sail Away builds a hull, as the galleon is
 // (world/galleonModel.js) for hull 2.
 //
-// Come Sail Away's hull 4 (the Carrack) is a prefab the C# instances and walks BY NAME (systems/comeSailAwayBoat.js
+// Come Sail Away's hull 4 (the Carrack) is a prefab the C# instances and walks BY NAME (systems/comeSailAway/comeSailAwayBoat.js
 // GetBoatTransforms): its first MeshCollider the boat's frame, its DrivePosition the helm, its triggers what the player
 // activates, its Booms and Sails the rig the wind fills, its RudderObject the wheel and the rudder, its anchor, its
 // ladders and its modifiers. `carrackPrefab` makes that tree over Mac's model (src/assets/ships/carrack.json, baked by
-// tools/bakeCarrack.mjs) and the parts built here, and systems/comeSailAwayModels.js stands it in for prefab 112414 -
+// tools/bakeCarrack.mjs) and the parts built here, and systems/comeSailAway/comeSailAwayModels.js stands it in for prefab 112414 -
 // so everything that sails, steers, boards, fights, berths, saves and goes online on hull 4 reads her without a line of
 // it knowing she is new.
 //
@@ -22,7 +22,7 @@
 // in her - the carrack's own anchor, weighed and let go, the galleon's cargo, the lanterns' poles and hooks, the colours,
 // the wake and the carrack's modifiers (her handling: so she sails as the mod's carrack sails).
 //
-// WHAT OPENS AND CLOSES rides the mod's own Door Controller (systems/comeSailAway.js TriggerDoor): the middle house's
+// WHAT OPENS AND CLOSES rides the mod's own Door Controller (systems/comeSailAway/comeSailAway.js TriggerDoor): the middle house's
 // door swings in on its hinge, and it is her cabin's door (SAILING-CABINS: a door's trigger on a ship with a cabin offers
 // Enter cabin - the large bank ship's room, systems/sailingCabin.js); each gunport's shutter swings up on its top, the
 // guns' (systems/naval/galleonGunDeck.js) as a broadside is laid.
@@ -372,7 +372,7 @@ export function carrackClips() {
 /**
  * The new carrack as Come Sail Away's data: her prefab tree (component indices into the shared table - `base` the place
  * hers start: the mod's table's length, and the galleon's components' after it when the new galleon stands, as
- * systems/comeSailAwayModels.js lays them), the components she adds, her meshes by key, and the clips and overrides she
+ * systems/comeSailAway/comeSailAwayModels.js lays them), the components she adds, her meshes by key, and the clips and overrides she
  * adds.
  * @param {any} bake - carrack.json
  * @param {{ prefabs: Record<string, any>, components: any[] }} csa - Come Sail Away's prefabs.json (the mod's carrack's

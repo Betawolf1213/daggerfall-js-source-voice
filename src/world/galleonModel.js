@@ -5,11 +5,11 @@
 // something special"): THE NEW GALLEON - Mac's ship, built as Come Sail Away builds a hull.
 //
 // Come Sail Away's hull 2 (the Small Ship, the mod's `Galleon`) is a prefab the C# instances and walks BY NAME
-// (systems/comeSailAwayBoat.js GetBoatTransforms): its MeshCollider the boat's frame, its DrivePosition the helm, its
+// (systems/comeSailAway/comeSailAwayBoat.js GetBoatTransforms): its MeshCollider the boat's frame, its DrivePosition the helm, its
 // triggers what the player activates, its Booms and Sails the rig the wind fills, its RudderObject the wheel and the
 // rudder, its lanterns, crew and modifiers. So the new galleon is that prefab again - `galleonPrefab` makes the tree,
 // every node the walk reads under the name it reads it by - over Mac's model (src/assets/galleon/galleon.json, baked
-// by tools/bakeGalleon.mjs) and the parts built here, and systems/comeSailAwayModels.js (`comeSailAwayModels({ ...,
+// by tools/bakeGalleon.mjs) and the parts built here, and systems/comeSailAway/comeSailAwayModels.js (`comeSailAwayModels({ ...,
 // galleon })`, AUDIT GN2-PF9: this named a `withGalleon` that never was) stands it in for prefab 112412. Everything
 // that sails, steers, boards, lights, saves, fights and goes online on hull 2 then reads her without a line of it
 // knowing she is new.
@@ -22,7 +22,7 @@
 // the rig (world/galleonRig.js), the rope ladders over the side. Come Sail Away's own small things are hers as they
 // were the old galleon's - the anchor, the stove, the lanterns' hooks, the crate, the flag, the wake - stood in her.
 //
-// WHAT OPENS AND CLOSES rides the mod's own Door Controller (systems/comeSailAway.js TriggerDoor: activate it, its
+// WHAT OPENS AND CLOSES rides the mod's own Door Controller (systems/comeSailAway/comeSailAway.js TriggerDoor: activate it, its
 // Animator's Opened turns over, Daggerfall's door clips play): the castle's door and the bulkhead's swing on their
 // hinges, each hatch cover lifts on its starboard edge, and each gunport's shutter swings up on its top - those ten
 // are not the player's to work, the guns' (systems/naval/galleonGunDeck.js) open them as a broadside is laid.

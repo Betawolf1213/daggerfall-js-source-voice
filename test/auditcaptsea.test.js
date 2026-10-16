@@ -924,7 +924,7 @@ test('AUDIT CAPTAIN\'S SEA C1: a companion back aboard while I sail works his po
 test('AUDIT CAPTAIN\'S SEA C2: the Fleet page says a hand ashore with me so, and names the post\'s holder among those aboard - never the companion at my side with his post\'s worth (mutants: the ashore flag, the page\'s ashore set)', async () => {
   const { createFleetHost } = await import('../src/scenes/fleetHost.js');
   const { titleDeed, _resetFleetForTests } = await import('../src/systems/fleet.js');
-  const { mintDeed } = await import('../src/systems/comeSailAwayItems.js');
+  const { mintDeed } = await import('../src/systems/comeSailAway/comeSailAwayItems.js');
   const { scene, terrain } = await import('./csaScene.mjs');
   const { drawFleetPage, resetFleetPage } = await import('../src/ui/fleetPage.js');
   const { setHoldingsProvider, _setHoldingsIconForTests } = await import('../src/ui/holdingsPages.js');
@@ -1584,7 +1584,7 @@ test('AUDIT CAPTAIN\'S SEA B9/B11/B13: a cache\'s and a chart\'s things kept in 
   // Come Sail Away's own reckoning, read
   const { scene } = await import('./csaScene.mjs');
   const sc = scene({ settings: { 'Cargo.CargoThreshold': 500 } });
-  assert.match(rd('src/systems/comeSailAway.js'), /cargoRoom\(boat\) \{\n\s+if \(!boat\?\.Cargo\) return null;\n\s+const \{ load, threshold \} = cargoLoad\(boat\);\n\s+return \{ load, slows: threshold, stops: 2 \* threshold \};/);
+  assert.match(rd('src/systems/comeSailAway/comeSailAway.js'), /cargoRoom\(boat\) \{\n\s+if \(!boat\?\.Cargo\) return null;\n\s+const \{ load, threshold \} = cargoLoad\(boat\);\n\s+return \{ load, slows: threshold, stops: 2 \* threshold \};/);
   assert.equal(typeof sc.rt.cargoRoom, 'function');
   // her room handed from the yard's model to the exchange's tab
   const s = await sea({ hull: 2 });

@@ -73,7 +73,7 @@
   },
   {
     "name": "AUF-L1L1-classic-unboosted",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    const num17 = f(f(GetSailPower() * vMagnitude(state.windVectorCurrent)) * f(firmSail()));",
     "new": "    const num17 = f(GetSailPower() * vMagnitude(state.windVectorCurrent));",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUF-L1L1-sail-tenfold",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "  const firmSail = () => 1 + firmStat('sailSpeed') / 100;",
     "new": "  const firmSail = () => 1 + firmStat('sailSpeed') / 10;",
     "tests": [

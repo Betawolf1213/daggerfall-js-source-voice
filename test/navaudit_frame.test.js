@@ -17,7 +17,7 @@ import { PrefabNode, prefabShapeStamp } from '../src/world/prefabNode.js';
 import { multiply } from '../src/world/mat4.js';
 import { mat4FromQuatPosScale, quatMultiply } from '../src/world/quat.js';
 import { createComeSailAwayPool, STILL_FRAMES, STILL_MIN } from '../src/scenes/comeSailAwayPool.js';
-import { Boat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { boundsOf } from '../src/render/bounds.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import {

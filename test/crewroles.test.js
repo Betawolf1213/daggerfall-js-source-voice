@@ -126,7 +126,7 @@ test('CREW-ROLES the hand made her First Mate answers for her - her repairs\' wo
 test('CREW-ROLES the Fleet page\'s Crew panel: her hands and their posts, a post given from a list - a Bard\'s calling on his list alone - through the host half (the role act), said under her card', async () => {
   const { createFleetHost } = await import('../src/scenes/fleetHost.js');
   const { titleDeed, _resetFleetForTests } = await import('../src/systems/fleet.js');
-  const { mintDeed } = await import('../src/systems/comeSailAwayItems.js');
+  const { mintDeed } = await import('../src/systems/comeSailAway/comeSailAwayItems.js');
   const { scene, terrain } = await import('./csaScene.mjs');
   const { drawFleetPage, resetFleetPage } = await import('../src/ui/fleetPage.js');
   const { setHoldingsProvider, _setHoldingsIconForTests } = await import('../src/ui/holdingsPages.js');

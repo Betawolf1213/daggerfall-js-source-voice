@@ -12,8 +12,8 @@ import {
   resolveController, createAnimator,
 } from '../src/world/unityAnimator.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
-import { comeSailAwayModels } from '../src/systems/comeSailAwayModels.js';
-import { Boat, spawnBoat } from '../src/systems/comeSailAwayBoat.js';
+import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
+import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const json = (f) => JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));

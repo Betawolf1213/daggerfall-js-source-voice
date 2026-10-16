@@ -12,7 +12,7 @@ import { NIGHT_DARK_SIGHT, NIGHT_LIT_SIGHT } from '../src/systems/naval/shipWatc
 import { createSeaShip, stepCaptain, WIND_RATED, HEAR_S, FLEE_RANGE, RUN_ON_S, ENGAGE_RANGE } from '../src/systems/naval/navalAI.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { HOSTILE_NEAR_M } from '../src/scenes/navalHost.js';
-import { Boat, setLights } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { sea, readyPool, modShipsPool } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
 

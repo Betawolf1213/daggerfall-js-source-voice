@@ -1,6 +1,6 @@
 // SHIP-PACK (2026-10-01, the review before the merge: "Allow larger ships to be picked up, just like smaller vessels")
-// - EVERY HULL PACKS, AND HER PARTS ARE HER (systems/comeSailAway.js PackBoat, takePlaceItem; systems/comeSailAwayBoat.js
-// packedHullWeight; systems/csaBoatMenu.js; bible/03-World/Come-Sail-Away.md SHIP-PACK). The Small Ship, the Large Galley
+// - EVERY HULL PACKS, AND HER PARTS ARE HER (systems/comeSailAway/comeSailAway.js PackBoat, takePlaceItem; systems/comeSailAway/comeSailAwayBoat.js
+// packedHullWeight; systems/comeSailAway/csaBoatMenu.js; bible/03-World/Come-Sail-Away.md SHIP-PACK). The Small Ship, the Large Galley
 // and the Carrack are picked up as the Rowboat and the Large Boat are: a deed ship with her deed in the pack, which goes
 // with her into her parts; placed again, her parts are spent and her deed is given back in their place. Her parts keep
 // her number (her naval state, her crew and her hands ashore are found by it), her worth (what placed her - a claimed
@@ -10,9 +10,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scene, terrain } from './csaScene.mjs';
-import { TRIGGER_MODEL, HULL_PRICES, HULL_WEIGHTS, PACKED_WEIGHT_MAX, packedHullWeight } from '../src/systems/comeSailAwayBoat.js';
-import { DEED_NOT_HELD_TEXT, PASSENGERS_ABOARD_TEXT } from '../src/systems/comeSailAway.js';
-import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAwayItems.js';
+import { TRIGGER_MODEL, HULL_PRICES, HULL_WEIGHTS, PACKED_WEIGHT_MAX, packedHullWeight } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
+import { DEED_NOT_HELD_TEXT, PASSENGERS_ABOARD_TEXT } from '../src/systems/comeSailAway/comeSailAway.js';
+import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const AT = [1000, 34, 50], DIR = [0, 0, 1];

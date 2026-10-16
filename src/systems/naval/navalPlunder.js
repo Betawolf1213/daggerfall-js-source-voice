@@ -28,7 +28,7 @@
 
 import { mulberry32 } from '../../combat/bloodArt.js';
 import { NOTORIETY } from './navalLaw.js';
-import { HULL_PRICES } from '../comeSailAwayBoat.js';   // SHIP-CLAIM: a claimed prize's deed, at a share of her hull's price
+import { HULL_PRICES } from '../comeSailAway/comeSailAwayBoat.js';   // SHIP-CLAIM: a claimed prize's deed, at a share of her hull's price
 import { hullBuild } from './navalShips.js';
 import { STORE_POINTS } from './navalYard.js';
 

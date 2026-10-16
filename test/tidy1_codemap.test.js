@@ -1,0 +1,176 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, blindSpots, brokenBy, relayHits } from '../tools/moveModule.mjs';
+
+// TIDY1 (2026-10-16, bible/01-Overview/Code-Map.md): THE MAP OF WHERE THINGS LIVE, AND THE TOOL THAT MOVES THEM.
+// The map is held to the tree both ways - a directory of code nobody wrote a row for fails, and so does a row for a
+// directory that is gone. The tool's rewrites are pinned form by form, because a form it misses is an address left
+// pointing at nothing.
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const rd = (p) => readFileSync(join(root, p), 'utf8');
+
+/** Every directory under src/ that holds a .js file - src/assets/ is art, and is mapped as one row. */
+function codeDirs(dir = 'src', out = []) {
+  const ents = readdirSync(join(root, dir), { withFileTypes: true });
+  if (ents.some((e) => e.isFile() && e.name.endsWith('.js'))) out.push(dir);
+  for (const e of ents) if (e.isDirectory() && `${dir}/${e.name}` !== 'src/assets') codeDirs(`${dir}/${e.name}`, out);
+  return out;
+}
+
+test('TIDY1: every directory of code is on the map, and the map names none that is gone', () => {
+  const doc = rd('bible/01-Overview/Code-Map.md');
+  const rows = [...doc.matchAll(/^\| `(src\/[^`]*?)\/?` \|/gm)].map((m) => m[1]);
+  const mapped = new Set(rows.map((r) => r.replace(/\/$/, '')));
+  const missing = codeDirs().filter((d) => !mapped.has(d));
+  assert.deepEqual(missing, [], 'a directory of code with no row on the Code Map - add its row (Code-Map.md, "Where a new file goes" 4)');
+  const gone = [...mapped].filter((d) => !existsSync(join(root, d)));
+  assert.deepEqual(gone, [], 'the Code Map has a row for a directory that is gone');
+  assert.ok(mapped.has('src/systems/comeSailAway'), 'the pilot\'s folder has its row');
+  assert.match(rd('bible/Home.md'), /01-Overview\/Code-Map\.md/, 'Home.md\'s Repo layout points at the map');
+});
+
+test('TIDY1: the move tool rewrites every address of a moved file', () => {
+  const moved = new Map([['src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js'], ['src/systems/arenaText.js', 'src/systems/arena/arenaText.js']]);
+  // an importer that stays: the four specifier forms, a query's tail, and a neighbour that did not move
+  const importer = [
+    "import { a } from '../systems/arenaBout.js';",
+    "export * from '../systems/arenaBout.js';",
+    "import '../systems/arenaBout.js';",
+    "const m = await import('../systems/arenaBout.js');",
+    "const u = new URL('../systems/arenaBout.js', import.meta.url);",
+    "import raw from '../systems/arenaBout.js?raw';",
+    "import { b } from '../systems/arenaBook.js';",
+  ].join('\n');
+  assert.equal(rewriteSpecifiers(importer, 'src/net/arenaLink.js', 'src/net/arenaLink.js', moved).text, [
+    "import { a } from '../systems/arena/arenaBout.js';",
+    "export * from '../systems/arena/arenaBout.js';",
+    "import '../systems/arena/arenaBout.js';",
+    "const m = await import('../systems/arena/arenaBout.js');",
+    "const u = new URL('../systems/arena/arenaBout.js', import.meta.url);",
+    "import raw from '../systems/arena/arenaBout.js?raw';",
+    "import { b } from '../systems/arenaBook.js';",
+  ].join('\n'));
+  // the moved file itself: its specifiers re-based, a moved sibling kept beside it, a page's URL left alone
+  const self = [
+    "import { audio } from './audio.js';",
+    "import { T } from './arenaText.js';",
+    "const p = fetch('./sfx/crowd.ogg');",
+    "const i = new URL('./art/x.png', document.baseURI);",
+    "const s = (name) => new URL(`../../vendor/csa/Sounds/${name}.ogg`, import.meta.url).href;",
+  ].join('\n');
+  assert.equal(rewriteSpecifiers(self, 'src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js', moved).text, [
+    "import { audio } from '../audio.js';",
+    "import { T } from './arenaText.js';",
+    "const p = fetch('./sfx/crowd.ogg');",
+    "const i = new URL('./art/x.png', document.baseURI);",
+    "const s = (name) => new URL(`../../../vendor/csa/Sounds/${name}.ogg`, import.meta.url).href;",   // a template's file is chosen at run time, its folder is not
+  ].join('\n'));
+  // the paths: a pin's, a test's URL, a page's root path, the bible's src path and cite - and what only looks like them
+  const prose = [
+    "rd('src/systems/arenaBout.js')",
+    "new URL('../src/systems/arenaBout.js', import.meta.url)",
+    '<script type="module" src="/src/systems/arenaBout.js">',
+    '`systems/arenaBout.js:' + '"export function newBout"`',   // a cite's path form, split so the cite scanner reads no anchor here
+    '"file": "src/systems/arenaText.js"',
+    "assert.ok(!from.includes('../systems/arenaBout.js'))",
+    'server/src/systems/arenaBout.js',
+    'src/systems/arenaBout.json',
+    'xsystems/arenaBout.js',
+  ].join('\n');
+  const out = rewritePaths(prose, moved);
+  assert.equal(out.text, [
+    "rd('src/systems/arena/arenaBout.js')",
+    "new URL('../src/systems/arena/arenaBout.js', import.meta.url)",
+    '<script type="module" src="/src/systems/arena/arenaBout.js">',
+    '`systems/arena/arenaBout.js:' + '"export function newBout"`',
+    '"file": "src/systems/arena/arenaText.js"',
+    "assert.ok(!from.includes('../systems/arena/arenaBout.js'))",
+    'server/src/systems/arenaBout.js',
+    'src/systems/arenaBout.json',
+    'xsystems/arenaBout.js',
+  ].join('\n'));
+  assert.equal(out.n, 6, 'a pin quoting another file\'s import is rewritten too - or its negative pin would pass on nothing');
+  assert.equal(rewritePaths(out.text, moved).n, 0, 'a second pass finds nothing: the rewrite is its own fixed point');
+  // the whole plan: the moved file is written at its new path, a migration is a record and is left as it stands
+  const texts = new Map([
+    ['src/systems/arenaBout.js', "import { audio } from './audio.js';\n"],
+    ['src/net/arenaLink.js', "import { a } from '../systems/arenaBout.js';\n"],
+    ['server-account/migrations/0074_arena.sql', '-- src/systems/arenaBout.js\n'],
+  ]);
+  const plan = planMove([...moved].slice(0, 1), texts);
+  assert.deepEqual([...plan.writes.keys()].sort(), ['src/net/arenaLink.js', 'src/systems/arena/arenaBout.js']);
+  assert.equal(plan.writes.get('src/systems/arena/arenaBout.js'), "import { audio } from '../audio.js';\n");
+  // what the move broke is what named a file before and names none after - not what never named one
+  const was = (p) => ['src/systems/arenaBout.js', 'src/systems/audio.js'].includes(p), now = (p) => ['src/systems/arena/arenaBout.js', 'src/systems/audio.js'].includes(p);
+  assert.deepEqual(brokenBy("import { audio } from './audio.js';", 'src/systems/arenaBout.js', "import { audio } from './audio.js';", 'src/systems/arena/arenaBout.js', was, now),
+    ['src/systems/arena/arenaBout.js: ./audio.js'], 'a moved file\'s import left un-based is broken');
+  assert.deepEqual(brokenBy("await import('./src/systems/arenaBout.js');", 'test/x.test.js', "await import('./src/systems/arena/arenaBout.js');", 'test/x.test.js', was, now),
+    [], 'a root-relative import run through node -e named nothing from test/ before either');
+  const dirs = (p) => ['vendor/csa', 'src/systems/arena'].includes(p);
+  const tpl = (at) => `new URL(\`${at}/csa/\${name}.ogg\`, import.meta.url)`;
+  assert.deepEqual(brokenBy(tpl('../../vendor'), 'src/systems/arenaBout.js', tpl('../../vendor'), 'src/systems/arena/arenaBout.js', dirs, dirs),
+    ['src/systems/arena/arenaBout.js: ../../vendor/csa/${name}.ogg'], 'a template whose folder is gone after the move is broken');
+});
+
+test('TIDY1: the move tool rewrites a mutant record\'s source as if it stood in the record\'s file', () => {
+  const moved = new Map([['src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js']]);
+  const list = JSON.stringify([
+    { name: 'a', file: 'src/ui/arenaHud.js', old: "import { b } from '../systems/arenaBout.js';", new: "import { b } from '../systems/arenaBout.js'; b();", tests: [] },
+    { name: 'b', file: 'src/systems/arenaBout.js', old: "import { audio } from './audio.js';", new: '', tests: [] },
+  ], null, 2);
+  const r = rewriteRecords(list, moved, 'tools/mutants/x.json');
+  assert.deepEqual(JSON.parse(r.text).map((x) => x.old), ["import { b } from '../systems/arena/arenaBout.js';", "import { audio } from '../audio.js';"]);
+  assert.equal(JSON.parse(r.text)[0].new, "import { b } from '../systems/arena/arenaBout.js'; b();");
+  assert.deepEqual(r.blind, []);
+  // one quoted source two records need two ways is named, never guessed
+  const twice = JSON.stringify([
+    { name: 'a', file: 'src/ui/arenaHud.js', old: "from '../systems/arenaBout.js'", new: '', tests: [] },
+    { name: 'b', file: 'src/ui/sub/deeper.js', old: "from '../systems/arenaBout.js'", new: '', tests: [] },
+  ]);
+  const t = rewriteRecords(twice, moved, 'tools/mutants/y.json');
+  assert.equal(t.text, twice);
+  assert.equal(t.blind.length, 1);
+});
+
+test('TIDY1: the move tool names the sweeps it cannot follow', () => {
+  const dirs = ['src/systems'];
+  const at = (line) => blindSpots(line, 'test/x.test.js', dirs);
+  assert.equal(at("readdirSync(join(root, 'src/systems')).filter((f) => f.endsWith('.js'))").length, 1, 'a sweep that does not recurse');
+  assert.equal(at("readdirSync(new URL('../src/systems/', import.meta.url))").length, 1, 'by its URL too');
+  assert.equal(at("readdirSync(join(root, 'src/systems'), { recursive: true })").length, 0, 'a recursing sweep still sees a moved file');
+  assert.equal(at('const m = await import(`../systems/${name}.js`);').length, 1, 'an import built from a template');
+  assert.equal(at('const u = new URL(`../systems/${name}.js`, import.meta.url);').length, 1, 'a URL built from a template');
+  assert.equal(at('const m = await import(`../src/systems/livingWorld/x.js?t=${Date.now()}`);').length, 0, 'a template whose path is whole');
+  // what no rewrite can place: a sibling's quoted ./x.js outside the folder it moved to, and a path escaped for a pattern
+  const moved = new Map([['src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js'], ['src/systems/arenaText.js', 'src/systems/arena/arenaText.js']]);
+  assert.equal(blindSpots("assert.match(src, /from '\\.\\/arenaBout\\.js'/); x.includes('./arenaBout.js')", 'test/x.test.js', dirs, moved).length, 1, 'a quoted ./arenaBout.js');
+  assert.equal(blindSpots("import { T } from './arenaText.js';", 'src/systems/arena/arenaBout.js', dirs, moved).length, 0, 'beside it in the new folder, ./ is right');
+  assert.equal(blindSpots('assert.match(w, /systems\\/arenaBout\\.js/);', 'test/x.test.js', dirs, moved).length, 1, 'a path escaped for a pattern');
+});
+
+test('TIDY1: the move tool names every file of the relay\'s bundle it would change', () => {
+  // a byte of the relay's bundle is its version (test/relayversion.test.js), and a new version is a deploy that drops
+  // every connected player - the tool refuses those moves unless told --relay (bible/01-Overview/Code-Map.md)
+  const relay = new Set(['server/src/index.js', 'src/net/wire.js', 'src/systems/arenaBout.js']);
+  const texts = new Map([['src/net/wire.js', "import { a } from '../systems/arenaBout.js';"], ['src/net/homeLaw.js', '// x'], ['server/src/index.js', '// y'],
+    ['src/systems/arenaBout.js', "import { m } from '../world/mat4.js';"]]);
+  const back = new Map([['src/systems/arena/arenaBout.js', 'src/systems/arenaBout.js']]);
+  const hits = (moved) => relayHits(new Map([['src/net/wire.js', "import { a } from '../systems/arena/arenaBout.js';"], ['src/systems/arena/arenaBout.js', moved],
+    ['src/net/homeLaw.js', '// z'], ['server/src/index.js', '// y']]), texts, back, relay);
+  assert.deepEqual(hits("import { m } from '../../world/mat4.js';"), ['src/net/wire.js', 'src/systems/arena/arenaBout.js'],
+    'the importer\'s specifier and the moved file\'s re-based one both change the relay\'s bytes; a file outside the bundle is not the relay\'s; one written back as it was is no change');
+  assert.deepEqual(hits("import { m } from '../world/mat4.js';"), ['src/net/wire.js'], 'a moved file whose bytes stand changes no hash of its own');
+});
+
+test('TIDY1: Come Sail Away lives in its folder', () => {
+  const loose = readdirSync(join(root, 'src/systems')).filter((f) => /^(comeSailAway\w*|csa[A-Z]\w*)\.js$/.test(f));
+  assert.deepEqual(loose, [], 'a Come Sail Away module back loose in src/systems/ - it goes in src/systems/comeSailAway/ (Code-Map.md, "Where a new file goes" 2)');
+  assert.deepEqual(readdirSync(join(root, 'src/systems/comeSailAway')).sort(), [
+    'comeSailAway.js', 'comeSailAwayActions.js', 'comeSailAwayBoat.js', 'comeSailAwayHulls.js', 'comeSailAwayItems.js',
+    'comeSailAwayMap.js', 'comeSailAwayModels.js', 'comeSailAwayWaves.js', 'comeSailAwayWire.js', 'csaBoatMenu.js',
+  ]);
+});

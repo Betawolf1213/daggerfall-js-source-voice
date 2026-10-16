@@ -280,7 +280,7 @@
   },
   {
     "name": "FBSEA-4-straight-alpha",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "    frame[o] = Math.round((d[o] * a) / 255);",
     "new": "    frame[o] = d[o];",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "FBSEA-4-the-key-left-magenta",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "      frame[o] = snowMean[0]; frame[o + 1] = snowMean[1]; frame[o + 2] = snowMean[2]; frame[o + 3] = 255;",
     "new": "      frame[o] = 255; frame[o + 1] = 0; frame[o + 2] = 255; frame[o + 3] = 255;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "FBSEA-4-level-0-composed",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "  levels[0] = { width: paint.width, height: paint.height, data: d };",
     "new": "  levels[0] = { width: paint.width, height: paint.height, data: levels[0].data };",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "FBSEA-4-a-child-dropped",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "(src[a + c] + src[a + channels + c] + src[b + c] + src[b + channels + c]) * 0.25;",
     "new": "(src[a + c] + src[a + channels + c] + src[b + c] + src[b + c]) * 0.25;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "FBSEA-4-the-tail-unaligned",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "      while (E > 0 && !whole(E)) E--;\n",
     "new": "",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "FBSEA-4-the-means-truncated",
-    "file": "src/systems/comeSailAwayWaves.js",
+    "file": "src/systems/comeSailAway/comeSailAwayWaves.js",
     "old": "for (let i = 0; i < v.length; i++) o[i] = v[i] + 0.5; return o; };",
     "new": "for (let i = 0; i < v.length; i++) o[i] = v[i]; return o; };",
     "tests": [

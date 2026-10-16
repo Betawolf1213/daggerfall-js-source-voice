@@ -20,7 +20,7 @@ import { DESPAWN_BEYOND, encounterClasses } from '../src/systems/naval/navalDire
 import { mulberry32 } from '../src/combat/bloodArt.js';
 import { HOSTILE_NEAR_M, RAM_SPEED, SHIP_FADE_S } from '../src/scenes/navalHost.js';
 import { FIELD_QUIET_S } from '../src/systems/naval/navalYard.js';
-import { HANDLING } from '../src/systems/comeSailAway.js';
+import { HANDLING } from '../src/systems/comeSailAway/comeSailAway.js';
 import { sailFreeGain } from '../src/systems/helmWay.js';
 import { sea } from './navalSea.mjs';
 import { scene } from './csaScene.mjs';

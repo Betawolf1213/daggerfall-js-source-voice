@@ -21,8 +21,8 @@ import { GALLEON_PREFAB_ID } from '../src/world/galleonModel.js';
 import { TEX } from '../src/world/galleonArt.js';
 import { HULL, HULL_BUILDS, hullBuild } from '../src/systems/naval/navalShips.js';
 import { rigBoxesOf } from '../src/scenes/navalHost.js';
-import { stowSail } from '../src/systems/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
-import { animatorOf } from '../src/systems/comeSailAwayBoat.js';
+import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
+import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { rigBand } from '../src/systems/naval/navalAI.js';
 import { toBoxLocal, orientedBox } from '../src/systems/naval/navalBallistics.js';
 import { mat4FromQuatPosScale, quatAngleAxis, quatRotate } from '../src/world/quat.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-NAV2-F14-read-live",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "  const responsive = () => helmHanded ?? handed();",
     "new": "  const responsive = () => handed();",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-NAV2-F14-never-taken-at-the-helm",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    helmHanded = handed();   // AUDIT NAV2 F14: this helm's Ship handling, kept until she stops sailing\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-NAV2-F14-kept-past-the-helm",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    helmHanded = null;   // AUDIT NAV2 F14: the next helm takes the Ship handling as it stands then\n",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-NAV2-F15-the-current-counted",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "state.MoveVectorCurrent[2] < IRONS_TELL_WAY",
     "new": "vMagnitude(state.velocityCurrent) < IRONS_TELL_WAY",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "GALLEON-irons-astern-unread",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "state.MoveVectorCurrent[2] < IRONS_TELL_WAY",
     "new": "vMagnitude(state.MoveVectorCurrent) < IRONS_TELL_WAY",
     "tests": [

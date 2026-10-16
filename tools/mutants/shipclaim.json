@@ -19,7 +19,7 @@
   },
   {
     "name": "SC-deed-no-message",
-    "file": "src/systems/comeSailAwayItems.js",
+    "file": "src/systems/comeSailAway/comeSailAwayItems.js",
     "old": "  deed.message = boatItemMessage(hull, variant);\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SC-deed-no-value",
-    "file": "src/systems/comeSailAwayItems.js",
+    "file": "src/systems/comeSailAway/comeSailAwayItems.js",
     "old": "  deed.value = value;\n",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SC-deed-no-name",
-    "file": "src/systems/comeSailAwayItems.js",
+    "file": "src/systems/comeSailAway/comeSailAwayItems.js",
     "old": "  deed.name = boatItemName(deed.name, hull, variant);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SC-deed-uid-unpassed",
-    "file": "src/systems/comeSailAwayItems.js",
+    "file": "src/systems/comeSailAway/comeSailAwayItems.js",
     "old": "const deed = mintBoatItem(BOAT_DEED_TEMPLATE, uid);",
     "new": "const deed = mintBoatItem(BOAT_DEED_TEMPLATE, 0);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SC-launch-parts-taken",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE || GetPlacedBoatWithUID(deed.UID) != null) return null;",
     "new": "if (GetPlacedBoatWithUID(deed?.UID) != null) return null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SC-launch-standing-boat-again",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE || GetPlacedBoatWithUID(deed.UID) != null) return null;",
     "new": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE) return null;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SC-launch-no-link",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    takePlaceItem(placed);\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SC-launch-heading-ignored",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "const placed = PlaceBoat([...position], [...direction],",
     "new": "const placed = PlaceBoat([...position], [0, 0, 1],",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SC-launch-placing-kept",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    StopPlacing();\n    return placed;",
     "new": "    return placed;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SC-launch-spends-nothing",
-    "file": "src/systems/comeSailAway.js",
+    "file": "src/systems/comeSailAway/comeSailAway.js",
     "old": "    state.placeItemCollection = itemCollection;\n    const placed",
     "new": "    state.placeItemCollection = null;\n    const placed",
     "tests": [

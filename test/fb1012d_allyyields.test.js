@@ -27,7 +27,7 @@ import { corpseLootTargets } from '../src/scenes/corpseMarker.js';
 import { createCrewAshore } from '../src/scenes/crewAshore.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';
 import { rayPersonDistance } from '../src/scenes/townTalk.js';
-import { ACTIVATION_DISTANCE as CSA_ACTIVATION_DISTANCE } from '../src/systems/comeSailAway.js';
+import { ACTIVATION_DISTANCE as CSA_ACTIVATION_DISTANCE } from '../src/systems/comeSailAway/comeSailAway.js';
 import { Collider } from '../src/player/collider.js';
 
 const require = createRequire(import.meta.url);

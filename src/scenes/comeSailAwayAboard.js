@@ -5,7 +5,7 @@
 // on. Here it is one to stand on, and to be carried by while its owner sails:
 //
 // - ABOARD. A player comes aboard another's boat by its own ladder - BoardBoat (112401) answers on it as on one's own:
-//   stood at the board position, facing its forward, set on its deck (systems/comeSailAway.js boardPlaceOf) - or by
+//   stood at the board position, facing its forward, set on its deck (systems/comeSailAway/comeSailAway.js boardPlaceOf) - or by
 //   landing on its deck from above (off a pier, a jump, a fall): the ray down from the body's centre - the riders' own
 //   ray (FixedUpdate casts each rider's height down from its centre), CSA_ABOARD_BELOW longer so a fall is met before
 //   it lands - meeting the boat's colliders no higher than a step over the feet. A swimmer is never taken aboard by the
@@ -31,9 +31,9 @@
 //   the deck I walk is the deck they see me on, never a stride behind it. The owner law is the boats' own: a word
 //   replaces the sender's alone, a sender gone or quiet past the stale time takes theirs, a clear takes everyone's.
 import { raycastColliders, invertAffine } from '../world/prefabColliders.js';
-import { carriedPoint, yawDelta, activationModelOf, boardPlaceOf } from '../systems/comeSailAway.js';
+import { carriedPoint, yawDelta, activationModelOf, boardPlaceOf } from '../systems/comeSailAway/comeSailAway.js';
 import { mat4FromQuatPosScale, quatMultiply, quatRotate } from '../world/quat.js';
-import { CSA_WIRE_BOATS_MAX } from '../systems/comeSailAwayWire.js';
+import { CSA_WIRE_BOATS_MAX } from '../systems/comeSailAway/comeSailAwayWire.js';
 
 /** How far under the feet a deck is met (the ray runs from the centre, half a height more). */
 export const CSA_ABOARD_BELOW = 3;

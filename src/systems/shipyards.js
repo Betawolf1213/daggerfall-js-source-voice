@@ -36,8 +36,8 @@
 // and the cart off DFU's General Store.
 //
 // Pure: no DOM, no renderer, no clock. Not a DFU member. Ledger A (SHIPYARDS).
-import { HULL_NAMES, HULL_PRICES } from './comeSailAwayHulls.js';
-import { mintDeed, mintParts, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from './comeSailAwayItems.js';
+import { HULL_NAMES, HULL_PRICES } from './comeSailAway/comeSailAwayHulls.js';
+import { mintDeed, mintParts, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from './comeSailAway/comeSailAwayItems.js';
 import { YARD_QUALITY, YARD_PRICE_INDEX } from './merchantYards.js';
 import { calculateCost } from './shopStock.js';
 import { getTradePrice } from './tradeModes.js';

@@ -27,7 +27,7 @@ import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MOBILE, GRAPPLE_S, HANDS_MAX } from '../src/systems/naval/navalBoarding.js';
 import { classById, hullBuild } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
-import { Boat, spawnBoat } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { OWNER_SWEEP_S } from '../src/scenes/navalHost.js';
 import { ctxFor } from './csaScene.mjs';
 import { sea, readyPool } from './navalSea.mjs';

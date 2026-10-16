@@ -17,7 +17,7 @@ import { setForagingHost } from '../src/systems/foragingInstall.js';
 import { EYE_HEIGHT, SWIM_EYE_HEIGHT } from '../src/player/motor.js';
 import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
 import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWatersPixel.js';
-import { WATER_LEVEL } from '../src/systems/comeSailAway.js';
+import { WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { MEASURED as CARRACK } from '../src/world/carrackModel.js';
 import { MEASURED as GALLEON } from '../src/world/galleonModel.js';
 import { MEASURED as LARGE_BOAT } from '../src/world/largeBoatModel.js';

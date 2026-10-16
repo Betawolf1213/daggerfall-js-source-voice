@@ -26,7 +26,7 @@ import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { adoptLight } from '../src/render/lightId.js';
-import { Boat, setLights } from '../src/systems/comeSailAwayBoat.js';
+import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);

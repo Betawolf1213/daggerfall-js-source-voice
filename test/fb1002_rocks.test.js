@@ -10,7 +10,7 @@
 // are its colliders (each addMesh one - a World of Daggerfall object's MeshCollider); a part her sphere overlaps where
 // the sweep starts answers once, at its overlap, where it touches (never the zero point); a part that holds her centre
 // answers nothing (Unity's sweep reads no back face); every other part is met by the sweep. And in a rock field a third
-// held her: the response (systems/comeSailAway.js lateUpdateSailing) took her way OFF what she met as well as into it,
+// held her: the response (systems/comeSailAway/comeSailAway.js lateUpdateSailing) took her way OFF what she met as well as into it,
 // so a rock astern of a ship sailing away from it held her to its push, a metre a second. The pins, each red on the
 // code before - every one through the REAL modules: the collider (player/collider.js), world.js's own csaSphereCastAll
 // lifted from its source, and Come Sail Away's runtime over the vendored hulls (test/csaScene.mjs):
@@ -36,7 +36,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
-import { HULL_NAMES } from '../src/systems/comeSailAwayBoat.js';
+import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { hullBuild } from '../src/systems/naval/navalShips.js';
 import { scene } from './csaScene.mjs';
 
