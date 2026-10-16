@@ -14,7 +14,7 @@ import {
   stickMove, decorEditPrice, decorEditText, DECOR_DEFAULT_LIGHT, DECOR_FLY_SPEED, DECOR_EYE_REACH, eyePoint,
 } from '../src/scenes/decorTool.js';
 import { DECOR_CAP, decorPrice, decorRefund, decorSaleBack, decorLightOf } from '../src/net/decorLaw.js';
-import { createOnlineHomes, sellOnlineHome, homeRefund, homeSoldLine, homeSaleLines } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, sellOnlineHome, homeRefund, homeSoldLine, homeSaleLines } from '../src/systems/online/onlineHomes.js';
 import { createSceneCache, cacheScene, takeSceneDecor } from '../src/systems/sceneCache.js';
 import { settle, near, fakeDoc, fakeWin, all, one, text, chipNamed, catalogue, rows, toolRig, placeFrom } from './decorFakes.mjs';
 

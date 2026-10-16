@@ -4,7 +4,7 @@
 // chose: the pair chosen once among the mastered schools, permanent; a signature spell, a passive and every school paying
 // past 100 in its own way; nothing below 100 changed; all of it at once.
 // Pinned by execution through the real producers: the law (systems/arcanePaths.js), the records (systems/
-// signatureSpells.js), the save (systems/save.js), the price (systems/spellcost.js), the one spell door (systems/
+// signatureSpells.js), the save (systems/save/save.js), the price (systems/spellcost.js), the one spell door (systems/
 // effects.js applySpell), the cast engine's landing doors (scenes/hostMagic.js), every power's seam (systems/
 // arcanePowers.js) and the judge (server-account/src/judge.js).
 import './modsOff.js';
@@ -21,18 +21,18 @@ import { SKILLS, MAGIC_SKILLS, skillValue } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { playerEntity, hurtPlayer } from '../src/characters/playerEntity.js';
 import { applySpell } from '../src/systems/effects.js';
-import { PORTED_KEYS } from '../src/systems/spellEffects.js';
+import { PORTED_KEYS } from '../src/systems/spell/spellEffects.js';
 import { calculateCastCost, castSchool, effectSchool, EFFECT_COST_TABLE } from '../src/systems/spellcost.js';
-import { spellPowerMult, spellPierce, schoolPotency, schoolMult } from '../src/systems/spellPower.js';
+import { spellPowerMult, spellPierce, schoolPotency, schoolMult } from '../src/systems/spell/spellPower.js';
 import { castRate } from '../src/systems/castSpeed.js';
 import { tryAbsorption } from '../src/systems/absorption.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
-import { setStruck, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSigilDueling } from '../src/systems/sigil.js';
+import { setStruck, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { computeEntityMods } from '../src/systems/entityMods.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { validCastData } from '../src/net/wire.js';
 import { characterFindings, judgeSave } from '../server-account/src/judge.js';

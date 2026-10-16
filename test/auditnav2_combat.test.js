@@ -28,7 +28,7 @@ import { PICKPOCKET_DISTANCE } from '../src/player/activate.js';
 import { castEnemySpell } from '../src/characters/enemyCasting.js';
 import { PLAYER_TARGET, staticTeamOf } from '../src/characters/enemyTargets.js';
 import { isShipmate, sparedByPlayer } from '../src/combat/friendlyFire.js';
-import { resetToDefaults } from '../src/systems/settings.js';
+import { resetToDefaults } from '../src/systems/settings/settings.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** One line of world.js's from its start (test/deckwalk.test.js's own way). */

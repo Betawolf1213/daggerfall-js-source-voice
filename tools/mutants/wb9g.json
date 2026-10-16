@@ -444,7 +444,7 @@
   },
   {
     "name": "WB9g-a-short-pack-emptied",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (stoneCount(spendable) < price) return false;\n  takeFromPack",
     "new": "  takeFromPack",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "WB9g-a-locked-stack-spent",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const spendable = spendableStonesIn(items);\n  if (stoneCount(spendable) < price) return false;",
     "new": "  const spendable = stonesIn(items);\n  if (stoneCount(spendable) < price) return false;",
     "tests": [

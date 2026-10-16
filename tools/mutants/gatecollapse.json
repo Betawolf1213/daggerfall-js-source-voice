@@ -31,7 +31,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-seal-line-at-the-seal's-time",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "say(sealTimeLine({ ...words, at: at(t.day, GATE_WRATH_MINUTE) }));",
     "new": "say(sealTimeLine({ ...words, at: at(t.day, GATE_SEAL_MINUTE) }));",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-map-forgets-it-sealed",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "`Dagon's Breach - ${cd.to === 'collapse' ? 'sealed, ' : ''}${countdownWords(cd)}`",
     "new": "`Dagon's Breach - ${countdownWords(cd)}`",
     "tests": [

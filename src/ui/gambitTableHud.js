@@ -27,8 +27,8 @@ import {
   KG_COLS, KG_ROWS, KG_POINT_BUDGET, KG_MAX_UNITS, KG_ACTIONS_PER_TURN, KG_POTION_HEAL, KG_ROSTER, KG_TILE, warningsArmAt,
   rosterUnit, armyCost, canRecruit, reachable, foesInRange, pieceById, pieceAt, hazardAt, tileAt, distance, rangeOf, hasLineOfSight,
 } from '../net/kingsGambit.js';
-import { GAMBIT_STAKE_MULTS, GAMBIT_CROWNS, crownIndex, stakeOf } from '../systems/gambitTableSession.js';
-import { FOE_CARDS } from '../systems/cardSources.js';
+import { GAMBIT_STAKE_MULTS, GAMBIT_CROWNS, crownIndex, stakeOf } from '../systems/gambit/gambitTableSession.js';
+import { FOE_CARDS } from '../systems/card/cardSources.js';
 import { cardById } from '../net/iliacCards.js';
 import { ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { paintFace, SUIT_CROWNS, RANK_KING } from '../render/cardFaces.js';
@@ -47,7 +47,7 @@ import {
   boardReading, boardFailed, armyFull, actionsLeftOf, watchGold, armyEmpty, armySpent, stakeWhileReady, stakingWait, boardHide,
 } from './gambitTableWords.js';
 
-/** The card a unit stands as - its creature's or its calling's (systems/cardSources.js FOE_CARDS: every unit of the
+/** The card a unit stands as - its creature's or its calling's (systems/card/cardSources.js FOE_CARDS: every unit of the
  *  roster has one since KG-SET). @param {number} id */
 export const unitCardId = (id) => FOE_CARDS[id] ?? null;
 

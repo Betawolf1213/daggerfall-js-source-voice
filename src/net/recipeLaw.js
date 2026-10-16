@@ -27,7 +27,7 @@ import {
   CURED_LEATHER, HARDENED_LEATHER, SKINNING_KNIFE, COUNTER_ONLY, CUT_STONE, MORTAR, PROF_RANK_MAX,   // PROF11: the mason's stone
   GEMS, PEARL, SIEGE_GEM,   // PROF10: the gems a jeweller sets, and a Lapidary's Siege-cracked one
 } from './professionLaw.js';
-import { GROUP_TEMPLATE_INDICES } from '../systems/itemTemplatesData.js';   // PROF10: DFU's Jewellery enum, one home
+import { GROUP_TEMPLATE_INDICES } from '../systems/item/itemTemplatesData.js';   // PROF10: DFU's Jewellery enum, one home
 import { CLOTHING_DYES } from '../characters/dyes.js';   // DFU's ten clothing dyes (DyeColors 0-9), one home
 import { textCaught } from './nameFilter.js';   // TEXT-F1: a mark's words, read as a name's (nameFilter.js imports nothing)
 
@@ -309,7 +309,7 @@ export const SCULPTOR = 'sculptor';
  * DECIDED, each:
  * - ITS TEMPLATE: 696-699, the last four of the professions' range (4.8 names none of them; the stone's own 673-675 run
  *   into the Siege-cracked Gem's 678) - DFU's Furniture group, as Carpentry's tables are, so a piece is DELIVERED among
- *   the home's things and never carried (DECOR2b's furnishings; systems/decorFurnish.js), its picture in a list the
+ *   the home's things and never carried (DECOR2b's furnishings; systems/decor/decorFurnish.js), its picture in a list the
  *   stone's own lump (Lodestone's, greyed - 4.8's stone row).
  * - ITS SHAPE IN A ROOM: ONE of Daggerfall's own models, named by World of Daggerfall's table of them
  *   (vendor/world-of-daggerfall/Scripts/LocationHelper.cs) - the Column its "Marble Pillar" (62315), the Bench its

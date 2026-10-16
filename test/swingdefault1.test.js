@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PORT_DEFAULTS, getInt, setValue, effectiveSettings, _resetForTests } from '../src/systems/settings.js';
-import { SETTINGS_DEFAULTS } from '../src/systems/settingsDefaults.js';
+import { PORT_DEFAULTS, getInt, setValue, effectiveSettings, _resetForTests } from '../src/systems/settings/settings.js';
+import { SETTINGS_DEFAULTS } from '../src/systems/settings/settingsDefaults.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

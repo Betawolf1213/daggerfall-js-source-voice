@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting } from '../src/systems/online/onlineLane.js';
 import { deepWatersEnemySettings } from '../src/scenes/deepWatersHost.js';
 
 const V = 'iliac-puddle-no-more', K = 'General.MaxLiveEnemies';

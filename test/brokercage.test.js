@@ -2,7 +2,7 @@
 // enemies are cleared"; asked, "The rite's faithful", "Stays caged", "Until midnight"): THE SIGIL BROKER CAGED AT THE
 // FAITHFUL'S CIRCLE. The law (net/gateRite.js riteRosterFell, cageStands), the wire (net/wire.js validRiteIn `c`,
 // validRiteOut `cl`), the rite's host (scenes/riteHost.js - its word's `c`, the hub's cleared word, no faithful stood
-// once it is said, isCleared), the omen's cage site (systems/gateOmen.js cageSite - a Warden fallen early never takes her),
+// once it is said, isCleared), the omen's cage site (systems/gate/gateOmen.js cageSite - a Warden fallen early never takes her),
 // the relay (server/src/index.js - the cell keeps the cleared rite and tells the hub, the hub says it to everyone and at
 // every hello until midnight) and the cage itself (world/cageModel.js). Her place, her door, her box and her press in
 // the world: test/set7_broker_world.test.js.
@@ -14,7 +14,7 @@ import { validRiteIn, validRiteOut, parseClient, RITE_OUT_KINDS, worldRoom, SOCI
 import { createRiteHost } from '../src/scenes/riteHost.js';
 import { riteMemory, riteSeen } from '../src/systems/riteChest.js';
 import { restoreModSaveRecords } from '../src/systems/modSaveData.js';
-import { createGateOmen } from '../src/systems/gateOmen.js';
+import { createGateOmen } from '../src/systems/gate/gateOmen.js';
 import { buildCageModel, buildCageDoor, cageHinge, CAGE_WALLS, CAGE_DOOR_WALL, CAGE_W, CAGE_D, CAGE_H, CAGE_FOOT, CAGE_BAR, CAGE_DOOR_W, CAGE_BEAM, CAGE_CAP, CAGE_LEAF_W, CAGE_SILL, CAGE_SILL_MAX, CAGE_WALL_OUT } from '../src/world/cageModel.js';
 import { GATE_ARCHIVE, GATE_STONE_RECORD, GATE_PLINTH_RECORD } from '../src/world/gateModel.js';
 import { Collider } from '../src/player/collider.js';

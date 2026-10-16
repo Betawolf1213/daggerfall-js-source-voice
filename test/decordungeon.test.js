@@ -11,8 +11,8 @@ import assert from 'node:assert/strict';
 import {
   collectDecor, decorCatalogue, decorRoomEntries, isDungeonFurnishing, DECOR_FREE_STANDING, DECOR_FURNITURE_FIRST,
   DECOR_FURNITURE_LAST, DECOR_KINDS, DECOR_FROM,
-} from '../src/systems/decorCatalogue.js';
-import { createDecorScan, decorScanDeps } from '../src/systems/decorScan.js';
+} from '../src/systems/decor/decorCatalogue.js';
+import { createDecorScan, decorScanDeps } from '../src/systems/decor/decorScan.js';
 import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from '../src/formats/blocksFile.js';
 import { LADDER_MODEL_ID } from '../src/player/enterExit.js';
 import { rdbObjects, rdbModelActs, isActionDoor, EXIT_DOOR_MODEL_ID } from '../src/world/rdbLayout.js';

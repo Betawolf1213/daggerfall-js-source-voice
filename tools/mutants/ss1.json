@@ -1,7 +1,7 @@
 [
   {
     "name": "SS1-the-row-unstacked",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  stackable: true,\n  bound: true,\n}]);",
     "new": "  bound: true,\n}]);",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SS1-the-row-unbound",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  stackable: true,\n  bound: true,\n}]);",
     "new": "  stackable: true,\n}]);",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "SS1-a-record-unbinding-its-row",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "export const isBound = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
     "new": "export const isBound = (/** @type {any} */ item) => item?.bound === true || (item?.bound !== false && templateByIndex(item?.templateIndex)?.bound === true);",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "SS1-the-purse-counted-by-record",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const stoneCount = (items) => stonesIn(items).reduce((n, it) => n + Math.max(1, it.stackCount ?? 1), 0);",
     "new": "export const stoneCount = (items) => stonesIn(items).length;",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "SS1-a-stack-taken-whole",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    const count = Math.min(left, Math.max(1, item.stackCount ?? 1));",
     "new": "    const count = Math.max(1, item.stackCount ?? 1);",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "SS1-the-drawn-stack-left-whole",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    else item.stackCount = have - count;",
     "new": "    else item.stackCount = have;",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "SS1-the-carry-gate-asked-with-the-drawn-stack-whole",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    else if (t.count < Math.max(1, it.stackCount ?? 1)) rest.push({ ...it, stackCount: it.stackCount - t.count });",
     "new": "    else if (t.count < Math.max(1, it.stackCount ?? 1)) rest.push(it);",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "SS1-an-emptied-stack-kept-in-the-load",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    if (!t) rest.push(it);",
     "new": "    if (!t || t.count >= Math.max(1, it.stackCount ?? 1)) rest.push(it);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "SS1-the-fold-never-run",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    const n = restackStones(list);",
     "new": "    const n = 0;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "SS1-the-fold-before-the-relinks",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  rebuildEquipState(entity);\n",
     "new": "  for (const list of [entity.items, entity.wagonItems]) restackStones(list);\n  rebuildEquipState(entity);\n",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "SS1-the-wagon-left-unfolded",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const list of [entity.items, entity.wagonItems]) {\n    const n = restackStones(list);",
     "new": "  for (const list of [entity.items]) {\n    const n = restackStones(list);",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "SS1-the-fold-merging-locked-into-unlocked",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "    const into = list.findIndex((held, j) => j < i && isSigilStone(held) && stacksWith(held, it));",
     "new": "    const into = list.findIndex((held, j) => j < i && isSigilStone(held));",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "SS1-the-fold-losing-a-count",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "    list[into].stackCount = (list[into].stackCount ?? 1) + (it.stackCount ?? 1);",
     "new": "    list[into].stackCount = (list[into].stackCount ?? 1) + 1;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "SS3-the-wagon-closed-to-a-bound-piece",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "export const BOUND_KEEPS = Object.freeze(['wagon', 'storage']);",
     "new": "export const BOUND_KEEPS = Object.freeze(['storage']);",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "SS3-the-owners-storage-closed",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "export const BOUND_KEEPS = Object.freeze(['wagon', 'storage']);",
     "new": "export const BOUND_KEEPS = Object.freeze(['wagon']);",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "SS3-a-peers-list-keeps-a-bound-piece",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "export const unbound = (/** @type {any[] | null} */ list) => (Array.isArray(list) ? list.filter((it) => !isBound(it)) : list);",
     "new": "export const unbound = (/** @type {any[] | null} */ list) => list;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "SS4-the-mark-ignored",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "export const isBound = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
     "new": "export const isBound = (/** @type {any} */ item) => templateByIndex(item?.templateIndex)?.bound === true;",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "SS4-a-ware-unbound",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "const offer = (kind, set, price, item) => { item.bound = true; item.stonesPaid = price; offers.push(",
     "new": "const offer = (kind, set, price, item) => { item.stonesPaid = price; offers.push(",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "SS5-a-ware-unpriced",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "{ item.bound = true; item.stonesPaid = price; offers.push(",
     "new": "{ item.bound = true; offers.push(",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "SS5-the-whole-price-back",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const BROKER_DISMANTLE_SHARE = 0.5;",
     "new": "export const BROKER_DISMANTLE_SHARE = 1;",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "SS5-the-floor-gone",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "? Math.max(1, Math.floor(paid * BROKER_DISMANTLE_SHARE)) : 0;",
     "new": "? Math.floor(paid * BROKER_DISMANTLE_SHARE) : 0;",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "SS5-a-peers-price-pays",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "return item?.bound === true && Number.isSafeInteger(paid) && paid > 0",
     "new": "return Number.isSafeInteger(paid) && paid > 0",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "SS5-a-worn-ware-dismantled",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (isEquipped(item)) return 'worn';\n",
     "new": "",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "SS5-a-locked-ware-dismantled",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (isLocked(item)) return 'locked';\n",
     "new": "",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "SS5-the-ware-kept",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  items.splice(items.indexOf(item), 1);\n  addItem(items, Object.assign(sigilStone(), { stackCount: stones }));",
     "new": "  addItem(items, Object.assign(sigilStone(), { stackCount: stones }));",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "SS5-no-stones-back",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  addItem(items, Object.assign(sigilStone(), { stackCount: stones }));\n",
     "new": "",
     "tests": [

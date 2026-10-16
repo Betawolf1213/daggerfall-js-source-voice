@@ -57,7 +57,7 @@ export const WAGON_YARD = Object.freeze({
   opening: 6.2,
   shed: Object.freeze({ z0: -6.75, z1: -4.35, backH: 3.0, frontH: 2.5 }),
   post: Object.freeze({ x: -7.6, z: 6.15, h: 3.6, armY: 3.3, armTo: -5.4 }),   // its board's foot over a walker's head
-  /** each wagon on show: its kind (systems/wagonKinds.js) and the middle of its ground, [x, z] - the host centres the
+  /** each wagon on show: its kind (systems/wagon/wagonKinds.js) and the middle of its ground, [x, z] - the host centres the
    *  wagon's own box there, its front to the street */
   wagons: Object.freeze([['cart', -5.6, 0.4], ['openWagon', 0, 0.4], ['caravan', 5.6, 0.4]].map((w) => Object.freeze(w))),
   /** the wagonwright: at the opening, beside the signpost */

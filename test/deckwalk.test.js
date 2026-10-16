@@ -26,7 +26,7 @@ import { isShipmate, sparedByPlayer } from '../src/combat/friendlyFire.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { WEAPONS } from '../src/characters/weapons.js';
-import { resetToDefaults } from '../src/systems/settings.js';
+import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { drawCrewBars, destroyNavalHud, tagAlpha, CREW_BAR_RANGE, CREW_FADE_FROM, CREW_GREEN, TAG_FADE_TO } from '../src/ui/navalHud.js';

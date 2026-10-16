@@ -48,7 +48,7 @@ for (const [W, H, width] of [[1280, 800, 'desktop'], [390, 760, 'phone']]) for (
   const timing = await page.evaluate(async () => {
     const { mountNoticeBoard } = await import('/src/ui/noticeWindow.js');
     const NB = await import('/src/net/noticeBook.js');
-    const { materialLabel, materialCountLabel } = await import('/src/systems/profItems.js');
+    const { materialLabel, materialCountLabel } = await import('/src/systems/professions/profItems.js');
     const { WEAVERS_STOCK, APOTHECARY_STOCK } = await import('/src/net/professionLaw.js');
     document.body.innerHTML = '';
     document.body.style.cssText = 'margin:0;background:repeating-linear-gradient(45deg,#2a2721 0 14px,#231f1a 14px 28px);height:100vh';

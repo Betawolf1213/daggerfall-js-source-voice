@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PlayerMotor, FIXED_DT, ODOMETER_MAX_SPEED } from '../src/player/motor.js';
-import { bridgedRoadLeg } from '../src/systems/travelOptions.js';
+import { bridgedRoadLeg } from '../src/systems/travel/travelOptions.js';
 import * as hudMod from '../src/ui/travelViewHud.js';
 import * as tvMod from '../src/scenes/travelView.js';
 
@@ -54,11 +54,11 @@ test('ROAD-BRIDGE: one open pixel between two road legs is the road\'s; a longer
   assert.equal(bridgedRoadLeg([R(1), R(2, 'open')], 1), false, 'the last leg');
   assert.equal(bridgedRoadLeg([R(1), R(2)], 1), false, 'a road leg is no bridge');
   assert.equal(bridgedRoadLeg([R(1), R(2, 'sea'), R(3)], 1), false, 'a crossing is never the road\'s');
-  assert.match(rd('src/systems/travelOptions.js'), /ROAD_LEG_KINDS\.includes\(leg\.kind\) \|\| bridgedRoadLeg\(r\.legs, at\)/, 'journeyOnRoad reads it');
+  assert.match(rd('src/systems/travel/travelOptions.js'), /ROAD_LEG_KINDS\.includes\(leg\.kind\) \|\| bridgedRoadLeg\(r\.legs, at\)/, 'journeyOnRoad reads it');
 });
 
 test('PACE-KEEP: the ground caps the dials, never writes them', () => {
-  const src = rd('src/systems/travelPace.js');
+  const src = rd('src/systems/travel/travelPace.js');
   const fn = /export function setPaceGround\(onRoad\) \{[\s\S]*?\n\}/.exec(src)?.[0] ?? '';
   assert.ok(fn, 'setPaceGround found');
   assert.doesNotMatch(fn, /write\(/, 'no write on the ground\'s word');

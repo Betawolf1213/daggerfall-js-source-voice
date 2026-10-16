@@ -13,7 +13,7 @@ import { fakeRooms } from './fakeRoom.mjs';
 import { ARENA_FLOOR_CENTRE, arenaPrivateRoom, arenaBoutRoom } from '../src/net/arenaLaw.js';
 import { readArenaOut, CLOSE_POLICY } from '../src/net/wire.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
 const C = ARENA_FLOOR_CENTRE;
 const ROOM = arenaPrivateRoom('K7PX2M');

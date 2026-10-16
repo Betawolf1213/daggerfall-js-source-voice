@@ -39,7 +39,7 @@ export function getMeleeWeaponAnimTime(liveSpeed, ctx = null) {
 // bounded to [SWING_FRAME_MIN, SWING_FRAME_MAX]. A frame is never 0 (DFU's line was at 115, and the machine's loop
 // then never ended - Online-Arc "Recorded, not paid"). Roleplay & Realism's weaponSpeed and Items' weaponBalance keep
 // their own weight-and-Strength arithmetic as the Speed they read, and answer through this curve and this handling
-// (systems/rrRealism.js, systems/rriRealism.js). A declared departure: Ledger A (SWING-LAW).
+// (systems/roleplayRealism/rrRealism.js, systems/roleplayRealismItems/rriRealism.js). A declared departure: Ledger A (SWING-LAW).
 /** DFU's frame at Speed 50 - the swing every player had before DISC28-D, and this law's middle. */
 export const SWING_BASE_FRAME = (3 * (115 - 50)) / CLASSIC_FRAME_UPDATE;
 /** The TEMPO at Speed 0 and at 100: a straight line through 1 at 50 - each point of Speed takes the same 0.8% off the

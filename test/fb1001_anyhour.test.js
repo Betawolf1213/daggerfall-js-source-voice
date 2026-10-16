@@ -3,7 +3,7 @@
 // 18:00 to 06:59 a vein, a boulder, an herb patch (the Sickle's or the Basket's), a tree and the net said "You need
 // daylight to mine effectively!" and the like, and the service refused any surface harvest whose act ended in those
 // hours (`prof-night`, on the shared clock). Now a profession's act keeps no hours: the client never asks the daylight
-// (systems/foragingInstall.js foragingActRefusal), the net's prompt names no hour (scenes/fishHost.js NET_WHERE), the
+// (systems/foraging/foragingInstall.js foragingActRefusal), the net's prompt names no hour (scenes/fishHost.js NET_WHERE), the
 // words say none, and the service answers a harvest at any hour (server-account/src/professions.js harvestNode).
 // Foraging's own Use - offline and a guest's lane, the mod's 1:1 - keeps the mod's day (test/forage2_tools.test.js
 // pins its refusal). The real gathering host with its kinds over a stood pixel (test/fb0930b_toolsaid.test.js's), and
@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { setForagingHost, createForagingItem, foragingActRefusal, PROFESSION_TOOL_HOW } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem, foragingActRefusal, PROFESSION_TOOL_HOW } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { herbKind } from '../src/scenes/herbHost.js';

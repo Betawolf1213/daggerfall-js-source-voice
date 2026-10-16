@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LIVE, DEFAULTS } from '../src/systems/settings.js';
+import { LIVE, DEFAULTS } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, 'src', f), 'utf8');
@@ -103,5 +103,5 @@ test('U31: the three start keys are LIVE, naming the file that really reads them
   }
   // the named consumer really does import the store (the tier map has
   // lied twice before - once naming a file that never imported it)
-  assert.match(src('scenes/world.js'), /from '\.\.\/systems\/settings\.js'/);
+  assert.match(src('scenes/world.js'), /from '\.\.\/systems\/settings\/settings\.js'/);
 });

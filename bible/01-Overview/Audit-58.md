@@ -566,8 +566,8 @@ Left, deliberately, each recorded at its site or here:
   now, through one shape all four hosts take, and the chosen icon rides
   the pile through `snapshotWorld`, `restorePiles`, the interior scene
   cache and the save envelope. `DaggerfallLootDataTables` went back to
-  its own module (`systems/lootDataTables.js`) on the way, because
-  reading its table off `systems/loot.js` built an import cycle through
+  its own module (`systems/loot/lootDataTables.js`) on the way, because
+  reading its table off `systems/loot/loot.js` built an import cycle through
   `potions.js`. `DaggerfallBankPurchasePopUp.SetupScrollBar` (:303-314)
   is drawn and hit-tested in `ui/bankPurchaseWindow.js` on ROAD-A7's
   shared `VerticalScrollBar`, beside the arrows this audit's windows

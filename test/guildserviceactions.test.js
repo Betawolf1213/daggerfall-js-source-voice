@@ -10,10 +10,10 @@ import {
   TOO_GENEROUS_ID, DONATION_THANKS_ID, DONATION_DEFAULT, DONATION_MAX_CHARACTERS, donate,
   NO_DISEASE_ID, CURE_BASE_COST_PER_DISEASE, cureDiseaseOffer, cureOfferMessageOffset,
   payForCure, cureForFree, expandGuildMacros,
-} from '../src/systems/guildServiceActions.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { templeOf } from '../src/systems/guildVariants.js';
-import { createFactionRep, getReputation, setReputation } from '../src/systems/factionRep.js';
+} from '../src/systems/guild/guildServiceActions.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
+import { createFactionRep, getReputation, setReputation } from '../src/systems/faction/factionRep.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { SKILL_ADVANCEMENT_MULTIPLIER } from '../src/systems/advancement.js';
 import { FATIGUE_LOSS } from '../src/systems/statMods.js';

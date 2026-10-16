@@ -173,7 +173,7 @@ The three slices landed together (2026-10-09), in one pull request.
 
 ### GEM1 - the socket list, a weapon's size, law 6
 
-`src/systems/lootRarity.js`: `socketMax` (a short blade 1, a one-handed weapon 2, a two-handed one and the Thunderlock
+`src/systems/loot/lootRarity.js`: `socketMax` (a short blade 1, a one-handed weapon 2, a two-handed one and the Thunderlock
 3 - `WEAPON_SOCKETS`, off DFU's `WEAPON_HANDS`; armour and a jewel 1; nothing else) and `socketCap` (a Rare's or a
 Legendary's size, a Magic weapon's 1, none else); `socketsOf` (the list, or LOOT20's string as a list of one) and the
 one writer under it, which drops the string; `hasSocket`, `socketGem(item, at)`, `socketGems`, `emptySockets`;
@@ -184,9 +184,9 @@ rollCorpseKit) after LOOT20's; `setGem(item, gem, at)` and `unsetGem(item, at)` 
 in the sockets' order; `validSocket` reads the list or the string (never both), never past `socketCap`, the lines one a
 set socket in order; `socketLine` says one or many empty. LAW 6: `gemPieceCap` (a kind's Rare top) and `readLines` - a
 piece's lines with each gem's held to what is left of its kind's cap - read by `affixFold`, `affixWeaponDamage`,
-`lineComparison`, `resistSplit` and `systems/lootPowers.js` linesOf; `gemCapLine` says it on the card. The Exalted's own
-line is the last before the gems' (`reforgeableLines`, which assumed one gem line). `src/systems/itemFields.js` declares
-`sockets`; `src/systems/itemLaw.js` and `src/systems/gilded.js` read it as they read the string.
+`lineComparison`, `resistSplit` and `systems/loot/lootPowers.js` linesOf; `gemCapLine` says it on the card. The Exalted's own
+line is the last before the gems' (`reforgeableLines`, which assumed one gem line). `src/systems/item/itemFields.js` declares
+`sockets`; `src/systems/item/itemLaw.js` and `src/systems/gilded.js` read it as they read the string.
 
 `src/systems/reforge.js`: setting is FREE (`SET_GEM_PRICE` and its 'gold' refusal retired) and a worn piece is filled
 where it is worn - `socketWork` no longer refuses 'worn', and the press runs the wearer's folds again
@@ -200,7 +200,7 @@ a hundred and never twice; a Rare 36.6 (1.3 with three, over every size); a Lege
 
 ### GEM2 - the graded gems, the world's find, the bosses' gems
 
-`src/systems/lootRarity.js`: `GEM_GRADES`, `GEM_ROW_GRADES`, `GEM_GRADE_TEMPLATE_BASE` (1900) and
+`src/systems/loot/lootRarity.js`: `GEM_GRADES`, `GEM_ROW_GRADES`, `GEM_GRADE_TEMPLATE_BASE` (1900) and
 `GEM_GRADE_TEMPLATES`, `gemId`, `ALL_GEM_IDS` (DFU's eight, then the thirty-two), `gemKind`, `gemGrade`, `GEM_NAMES` for
 every id, `SOCKET_VALUES` over all of them, `GEM_GRADE_LINES` (the one table - LOOT20's `GEM_LINES` is its plain column,
 derived), `gemKindOf` for the graded rows, `gemTemplateOf`; and `registerGemFind`, the door's last draw. The new
@@ -209,9 +209,9 @@ price `GEM_GRADE_PRICE` and rarity, an ingredient), `mintGem`; `GEM_FIND` (30 + 
 since GEM-RARE, below - the ladder's
 `SOURCE_MULT` and `luckMult`), `GEM_GRADE_BANDS` and `GEM_BOSS_TIERS` (4), `rollGem` (two draws), `rollGemFind`
 (registered at import); `BOSS_GEMS` (the gate 1, the serpent 1 to a dealer, the Abyss 2) at `BOSS_GEM_SOURCE` (tier 21, a
-boss) through `bossGems`. Imported by `systems/worldTick.js`, `scenes/shared.js` and the headless `systems/itemLaw.js`
-(whose `CUSTOM_TEMPLATE_GROUPS` stands the rows in Gems). The three spoils rollers (`systems/gateSpoils.js`,
-`systems/serpentSpoils.js`, `systems/sdSpoils.js`) run LOOT20's and the weapons' socket passes over their pieces and
+boss) through `bossGems`. Imported by `systems/worldTick.js`, `scenes/shared.js` and the headless `systems/item/itemLaw.js`
+(whose `CUSTOM_TEMPLATE_GROUPS` stands the rows in Gems). The three spoils rollers (`systems/gate/gateSpoils.js`,
+`systems/serpent/serpentSpoils.js`, `systems/superDungeon/sdSpoils.js`) run LOOT20's and the weapons' socket passes over their pieces and
 then their gems, after their cards; their floor lists (`scenes/spoilsPool.js` spoilsList, serpentSpoilsList,
 sdSpoilsList) throw the gems after the card, each picture drawn after the card's.
 

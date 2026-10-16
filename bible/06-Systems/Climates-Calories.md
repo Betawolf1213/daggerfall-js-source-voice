@@ -646,13 +646,13 @@ Two complaints, **one bug**, and it is not in this arc's code at all.
 
 **The chain works.** Dehydrated (thirst 100+) taxes 12 fatigue units a
 minute (`DRAIN.dehydrated`). Fatigue reaches nought. That raises
-`onExhausted`, and `exhaustionOutcome` (systems/rest.js) answers `rest`
+`onExhausted`, and `exhaustionOutcome` (systems/rest/rest.js) answers `rest`
 with dry feet and no enemies near - an hour's collapse, health back -
 or **kills** near enemies or in water. So dehydration does kill; it
 kills through the collapse, which is DFU's own route. [In the water no
 longer at once, since SWIM-SPENT (FIELD BUGS 2026-09-30b): each drain to
 nothing there costs a tenth of the health pool, said on the HUD, until
-the swimmer reaches the shore (`systems/rest.js` `exhaustionOutcome`'s
+the swimmer reaches the shore (`systems/rest/rest.js` `exhaustionOutcome`'s
 `drown` - AUDIT C&C N7).] [Near enemies no longer at once either, since
 SPENT-ASHORE (FIELD BUGS 2026-10-13e, 2026-10-13: a player killed at full
 health seconds after a fight): on dry feet with a foe in the classic
@@ -742,7 +742,7 @@ character out in twenty-five game-minutes. So the new harm:
 - takes **no** `HEALTH_FLOOR`, because the bare-skin harms leave the last
   five points precisely *because* they are not meant to kill, and this
   one is;
-- and is refused **asleep or resting**. Nothing in `systems/rest.js`
+- and is refused **asleep or resting**. Nothing in `systems/rest/rest.js`
   refuses a rest for thirst, so a sleeper who cannot wake to drink would
   be killed by a window the game let him open.
 
@@ -973,7 +973,7 @@ Casual is not Hard with the numbers turned down. It is five rules, and
 4. **Borrowed, not taken.** The needs may take stamina down to half the
    pool and no further - so on their own they can never raise DFU's
    exhaustion collapse, which kills a player with a foe near
-   (`systems/rest.js` `exhaustionOutcome`; the port's costs a tenth of the
+   (`systems/rest/rest.js` `exhaustionOutcome`; the port's costs a tenth of the
    health there since SPENT-ASHORE, 2026-10-13), and a neglected player still
    has half a pool to fight and run with - and what a need took it gives
    back the moment it is met: a meal repays the hunger, a drink the
@@ -1588,7 +1588,7 @@ widened for the camps' passage through natives (audit26's F212, travelArrival's
 TL3 - the latter's needle had sat nine characters inside its bound). Suite
 10521 -> 10540 tests over 1057 files. `tools/citeShift.mjs --apply --struck` moved the 175 cites this
 pass's edits shifted; it misread one - `restlodging.test.js`'s `rest.js` is
-`systems/rest.js`, not the survival one - and that one was put back.
+`systems/rest/rest.js`, not the survival one - and that one was put back.
 
 **Mutants.** `tools/mutants/survtiers3.json`, 58 records - each fix undone
 one at a time, the kit's and the rest window's cites rotted back, the

@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { SKY_SEGMENTS, skyClassicMinutes } from '../src/net/skyLaw.js';
 import { skyDayWords } from '../src/ui/enhancedMenu.js';
 import { PLAYED_STEP_MAX_SECONDS } from '../src/systems/quest/clock.js';
-import { REST_WAIT_PER_HOUR, MINUTES_PER_TICK } from '../src/systems/restSession.js';
+import { REST_WAIT_PER_HOUR, MINUTES_PER_TICK } from '../src/systems/rest/restSession.js';
 import { DAWN_HOUR, DUSK_HOUR } from '../src/systems/gameDate.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 
 import { holdCursor, cursorHeld, cursorActive, setCursorActive, requestLook, bindCursorToggle } from '../src/player/pointerLock.js';
 import { createActivateGate, activateFrame } from '../src/systems/activateGate.js';
-import { setForagingHost, createForagingItem, installForaging, _setForagingRandomForTests } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem, installForaging, _setForagingRandomForTests } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';

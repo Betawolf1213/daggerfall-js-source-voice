@@ -14,7 +14,7 @@ import { sanitizeChat, wordsLine, parseClient, validLook, CHAT_MAX } from '../sr
 import { letterWords } from '../src/net/letterLaw.js';
 import { noteWords } from '../src/net/boardLaw.js';
 import { makerMark, makerName } from '../src/net/recipeLaw.js';
-import { resolveItemName, shownItemName } from '../src/systems/itemInfo.js';
+import { resolveItemName, shownItemName } from '../src/systems/item/itemInfo.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { guildWordText } from '../src/ui/socialPanel.js';
 import { standService } from './accountDb.mjs';
@@ -105,7 +105,7 @@ test('TEXT-F1 a piece\'s names: a name a player typed starred wherever it is nam
   assert.equal(shownItemName({}), undefined);
   assert.deepEqual([makerMark('Silverthorn'), makerMark('Shithead'), makerMark('  ')], ['Silverthorn', null, null]);
   assert.equal(makerName('Shithead'), 'Shithead', 'the SHAPE law is unchanged - decorLaw reads it to tell a forged mark');
-  for (const f of ['src/systems/itemInfo.js', 'src/systems/decorItems.js', 'src/systems/smithItems.js', 'src/systems/cookItems.js', 'server-account/src/professions.js']) {
+  for (const f of ['src/systems/item/itemInfo.js', 'src/systems/decor/decorItems.js', 'src/systems/smithItems.js', 'src/systems/cookItems.js', 'server-account/src/professions.js']) {
     assert.match(src(f), /makerMark\(/, `${f} mints or shows the filtered mark`);
     assert.doesNotMatch(src(f), /\bmakerName\(/, `${f} never the bare shape`);
   }

@@ -1,7 +1,7 @@
 [
   {
     "name": "LOOT14-a-garment-never-rolls",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (isGarment(item)) return lootRarityOn();",
     "new": "  if (isGarment(item)) return false;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "LOOT14-one-cut-only",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const CLOTHING_GROUPS = Object.freeze(['MensClothing', 'WomensClothing']);",
     "new": "export const CLOTHING_GROUPS = Object.freeze(['MensClothing']);",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "LOOT14-the-feet-unread",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "SLOT_RULES[item.group]?.[item.templateIndex]?.slot === 'Feet';",
     "new": "SLOT_RULES[item.group]?.[item.templateIndex]?.slot === 'LegsClothes';",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "LOOT14-a-garment-any-attribute",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  return id === 'stat' && isGarment(item) ? GARMENT_STATS : k.params;",
     "new": "  return k.params;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "LOOT14-a-garment-no-street",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (isGarment(item)) return { own: null, kin: garmentOnFeet(item) ? FEET_KIN : STREET_KIN };   // LOOT14",
     "new": "  if (isGarment(item)) return { own: null, kin: STREET_KIN };   // LOOT14",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "LOOT14-the-dress-unleaned",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (lean.length && r < STANDING_OWN_SHARE) return step(lean, 0, STANDING_OWN_SHARE);",
     "new": "  if (lean.length && r < 0) return step(lean, 0, STANDING_OWN_SHARE);",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "LOOT14-the-standing-two-rolls",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (id === 'standing') { const g = pickStanding(item, free, rolls); taken.add(`${id}:${g}`); return { id, param: g, value }; }",
     "new": "    if (id === 'standing') { rolls(); const g = pickStanding(item, free, rolls); taken.add(`${id}:${g}`); return { id, param: g, value }; }",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "LOOT14-no-own-number",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "isGarment(item) ? 'standing' : null;   // LOOT14: a garment's own number is its standing",
     "new": "null;   // LOOT14: a garment's own number is its standing",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "LOOT14-a-jewels-flavour",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  MensClothing: GARMENT_FLAVOURS,\n",
     "new": "\n",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "LOOT14-the-lines-at-full-price",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  * (isGarment(item) ? GARMENT_WORTH_SHARE : 1));",
     "new": "  * 1);",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "LOOT14-the-flavour-at-full-price",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const rareEnchantWorth = (item) => Math.round(RARE_ENCHANT_WORTH * (isGarment(item) ? GARMENT_WORTH_SHARE : 1));",
     "new": "export const rareEnchantWorth = () => RARE_ENCHANT_WORTH;",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "LOOT14-the-exalted-at-full-price",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const exaltedWorth = (item) => Math.round(EXALTED_WORTH * (isGarment(item) ? GARMENT_WORTH_SHARE : 1));",
     "new": "export const exaltedWorth = () => EXALTED_WORTH;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "LOOT14-the-first-pass-takes-garments",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (isGarment(it)) continue;   // LOOT14: a garment rolls in the wardrobe's pass, after every draw below\n",
     "new": "\n",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "LOOT14-no-wardrobe-pass",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const dressed = wardrobePass(items, source, { rolls, luck, find });   // LOOT14: the garments, after all of it",
     "new": "  const dressed = [];",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "LOOT14-the-pass-rolls-a-find-again",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (!isGarment(g) || g.untaken === true || !rarityEligible(g)) continue;",
     "new": "    if (!isGarment(g) || !rarityEligible(g)) continue;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "LOOT14-standing-unfolded",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "        case 'standing': { const g = STANDING_GROUPS.indexOf(a.param); if (g >= 0) mods.standing[g] += v; break; }",
     "new": "        case 'standing': break;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "LOOT14-warmth-unfolded",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "        case 'warmth': mods.warmth += v; break;",
     "new": "        case 'warmth': break;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "LOOT14-dry-unfolded",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "        case 'dry': mods.dry += v; break;",
     "new": "        case 'dry': break;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "LOOT14-the-card-never-says",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "out.push(affixLine(item, i) + asleepNote(a))",
     "new": "out.push(affixLine(item, i))",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "LOOT14-always-asleep",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const asleepNote = (a) => (AFFIX_KINDS[a?.id]?.survival && !survivalOn() ? SURVIVAL_OFF_NOTE : '');",
     "new": "export const asleepNote = (a) => (AFFIX_KINDS[a?.id]?.survival ? SURVIVAL_OFF_NOTE : '');",
     "tests": [

@@ -19,24 +19,24 @@ import { unitWeightInKg, addItem } from '../src/systems/inventory.js';
 import { enemyHeavyPainVoice } from '../src/scenes/hostCombat.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
 import { pitchFloor, setPitchFloorProvider, PITCH_FLOOR } from '../src/player/lookFilter.js';
-import { createRrRidingContacts } from '../src/systems/rrRidingHost.js';
+import { createRrRidingContacts } from '../src/systems/roleplayRealism/rrRidingHost.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { equipDelayFor } from '../src/systems/equip.js';
 import { EQUIP_DELAY_TIMES } from '../src/characters/weaponStates.js';
-import { groupTemplates, templateFor, registerTemplateOverrides, templateByIndex, setItemFields, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
-import { rriStoredWeight, RRI_TEMPLATES, RRI_VENDOR } from '../src/systems/rriItems.js';
+import { groupTemplates, templateFor, registerTemplateOverrides, templateByIndex, setItemFields, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
+import { rriStoredWeight, RRI_TEMPLATES, RRI_VENDOR } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { getLocationVariant, setLocationVariant, setNewLocationVariant, clearWorldDataVariants, NO_VARIANT, makeLocationKey } from '../src/systems/worldDataVariants.js';
-import { getCustomMerchantServiceLabel } from '../src/systems/guildServices.js';
+import { getCustomMerchantServiceLabel } from '../src/systems/guild/guildServices.js';
 import { blockFromJson } from '../src/formats/worldDataReplacement.js';
-import { validItemField } from '../src/systems/itemFields.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 import { setSyntheticTimeIncrease, claimSyntheticTimeIncrease, resetSyntheticTimeIncrease } from '../src/systems/effectBroker.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -167,7 +167,7 @@ test('AUDIT-RR2 G10: the shelf\'s add IS ItemCollection.AddItem (DaggerfallLoot.
 });
 
 test('AUDIT-RR2 G11/G12: the starting kit\'s armor takes CreateArmor\'s default variant (-1 -> RandomizeArmorVariant), and a custom weapon mints with its template\'s name', () => {
-  assert.match(rd('src/systems/rriKits.js'), /function armor\(templateIndex, material, rolls, variant = -1\)/);
+  assert.match(rd('src/systems/roleplayRealismItems/rriKits.js'), /function armor\(templateIndex, material, rolls, variant = -1\)/);
   assert.match(rd('src/combat/enemyEquipment.js'), /const t = templateByIndex\(templateIndex\);\n\s*const name = WEAPON_BY_INDEX\[templateIndex\] \?\? t\?\.name;/);   // OH-E: in weaponOfMaterial, CreateWeapon's material pass (its melee arm hands to it)
 });
 
@@ -221,7 +221,7 @@ test('AUDIT-RR2 G20: the encumbrance round drains nothing inside a synthetic-tim
     assert.deepEqual(none, [], 'a synthetic round takes none');
     assert.equal(travelled.fatigue, 5000);
   } finally { resetSyntheticTimeIncrease(); }
-  assert.match(rd('src/systems/rrInstall.js'), /\|\| syntheticTimeIncrease\(\)\) return null;\s+\/\/ AUDIT-RR2 G20/);
+  assert.match(rd('src/systems/roleplayRealism/rrInstall.js'), /\|\| syntheticTimeIncrease\(\)\) return null;\s+\/\/ AUDIT-RR2 G20/);
   _resetModSettings();
 });
 

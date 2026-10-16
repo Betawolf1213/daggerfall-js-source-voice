@@ -14,12 +14,12 @@ import * as RENDER from '../src/render/renderer.js';
 import { EL_TERRAIN_FS } from '../src/render/enhancedLighting.js';
 import { layoutNature, TREE_RECORDS, isTreeRecord } from '../src/world/terrainNature.js';
 import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
-import { floraSwayOf } from '../src/systems/windDrive.js';
+import { floraSwayOf } from '../src/systems/wind/windDrive.js';
 import { climateBlendOn } from '../src/scenes/shared.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { onlineForcedPref } from '../src/systems/onlineLane.js';
+import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const PX = 240, PY = 180, PIXEL = 819.2;

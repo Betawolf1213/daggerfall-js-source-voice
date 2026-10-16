@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {
   LOOT_MATRICES, ITEM_GROUPS, generateRandomLoot, generateItems,
   createRandomWeapon, createRandomArmor, BOOK_TEMPLATE,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 
 // itemTemplates.json indices, the three this test names by hand.

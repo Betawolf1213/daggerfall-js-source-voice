@@ -11,12 +11,12 @@ import { readFileSync } from 'node:fs';
 import {
   collectDecor, decorCatalogue, decorRoomEntries, addDecorNature, isStreetPiece, DECOR_NATURE_BASES, DECOR_NATURE_RECORDS,
   DECOR_KINDS,
-} from '../src/systems/decorCatalogue.js';
-import { createDecorScan, decorScanDeps } from '../src/systems/decorScan.js';
+} from '../src/systems/decor/decorCatalogue.js';
+import { createDecorScan, decorScanDeps } from '../src/systems/decor/decorScan.js';
 import { yardNatureFlat, isNaturePiece } from '../src/scenes/yardNature.js';
 import { TREE_RECORDS } from '../src/world/terrainNature.js';
 import { applyClimate, SEASON } from '../src/world/climateSwaps.js';
-import { floraSwayOf } from '../src/systems/windDrive.js';
+import { floraSwayOf } from '../src/systems/wind/windDrive.js';
 import { BLOCK_TYPES } from '../src/formats/blocksFile.js';
 import { LADDER_MODEL_ID } from '../src/player/enterExit.js';
 import { YARD_TOWN_TTL_MS } from '../src/scenes/homeYards.js';

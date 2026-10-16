@@ -84,7 +84,7 @@ test('LEVEL-ONLINE: the law sits on every door a character is BORN through, and 
   assert.match(read('src/systems/classicSave.js'), /levelingSystem: newCharacterLevelingSystem\(LEVELING_CLASSIC, \{ online \}\),/, 'the classic import');
   assert.match(read('src/scenes/world.js'), /classicSaveToSnapshot\(saveGames, \{\n\s+spellsByIndex, online: isOnlinePage\(\),/, 'the import is told it is online');
   // a LOAD reads the saved field untouched: a Daggerfall character online keeps Daggerfall's leveling
-  const save = read('src/systems/save.js');
+  const save = read('src/systems/save/save.js');
   assert.doesNotMatch(save, /newCharacterLevelingSystem/, 'no load path re-decides the system');
   assert.equal(usesVirtueLeveling({ levelingSystem: LEVELING_VIRTUE }), true, 'a loaded Oblivion character still levels Oblivion\'s way');
 });

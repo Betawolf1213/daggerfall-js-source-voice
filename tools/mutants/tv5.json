@@ -1,7 +1,7 @@
 [
   {
     "name": "TV5-the-grid's-own-places-marked-twice",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "    if (cheb <= near || Math.hypot(dx, dy) > range) continue;   // beyond the grid's square; within the range's circle",
     "new": "    if (Math.hypot(dx, dy) > range) continue;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "TV5-no-reach",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "    if (cheb <= near || Math.hypot(dx, dy) > range) continue;   // beyond the grid's square; within the range's circle",
     "new": "    if (cheb <= near) continue;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "TV5-undiscovered-named",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "    const summary = summaryOf(s.x, s.y);",
     "new": "    const summary = summaryOf(s.x, s.y) ?? { mapId: s.x * 1000 + s.y, name: s.loc.name };",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "TV5-farthest-first",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "  found.sort((a, b) => a.d - b.d || a.key.localeCompare(b.key));",
     "new": "  found.sort((a, b) => b.d - a.d || a.key.localeCompare(b.key));",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "TV5-no-cap",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "  return found.slice(0, max);",
     "new": "  return found;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "TV5-dungeons-are-destinations",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "    if (!loc?.name || !TV_FAR_TYPES.has(loc.mapTableData?.locationType)) continue;",
     "new": "    if (!loc?.name) continue;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "TV5-tenths-flicker",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "  return km < 10 ?",
     "new": "  return km < 100 ?",
     "tests": [
@@ -602,7 +602,7 @@
   },
   {
     "name": "AUDIT-DEEP2-F8-a-square-range",
-    "file": "src/systems/travelFarPlaces.js",
+    "file": "src/systems/travel/travelFarPlaces.js",
     "old": "    if (cheb <= near || Math.hypot(dx, dy) > range) continue;   // beyond the grid's square; within the range's circle",
     "new": "    if (cheb <= near || cheb > range) continue;",
     "tests": [

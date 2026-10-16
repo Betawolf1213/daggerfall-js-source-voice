@@ -13,7 +13,7 @@ import { applySpell } from '../src/systems/effects.js';
 import {
   SPINNER_RANGES, spinnerRange, clampSetting, stepSetting, setSetting, buildCustomSpell, blankEffectSettings,
   SPELL_ABSORPTION_KEY, SPELL_ABSORPTION_CHANCE_BASE_MAX, _resetCustomIndexForTests,
-} from '../src/systems/spellMaker.js';
+} from '../src/systems/spell/spellMaker.js';
 
 const damageEffect = (mag = 20) => ({
   type: 4, subType: 0,

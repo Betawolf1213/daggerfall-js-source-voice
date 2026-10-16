@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { installRoleplayRealismArt, _resetRoleplayRealismArt, rrShopTavernRecord, RR_NPC_ARCHIVE } from '../src/systems/rrVariants.js';
+import { installRoleplayRealismArt, _resetRoleplayRealismArt, rrShopTavernRecord, RR_NPC_ARCHIVE } from '../src/systems/roleplayRealism/rrVariants.js';
 import { hasTextureReplacement, clearVendorTextures, decodedTexture, preloadTextureRecord } from '../src/systems/textureReplacement.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 

@@ -29,7 +29,7 @@ import { accountGuilds, accountHomes, accountRefusalText, SESSION_KEY } from '..
 import { GuildBook, GUILD_FRESH_MS, guildRefused } from '../src/net/guildBook.js';
 import {
   createOnlineHomes, buyOnlineHome, HOME_BUY_BUSY, HOME_BOUGHT_LINE, homeShortLine, homeSceneName, homeBuyRows, homeOwnerRows,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { createSceneCache, addPermanentScene, containsPermanentScene } from '../src/systems/sceneCache.js';
 import { resolveHover, nextSelection } from '../src/systems/worldHover.js';
 import { foldQuickLoot, quickLootWheel, plaqueActionFor, resetQuickLoot } from '../src/systems/quickLoot.js';

@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-WB9-the-stones-never-given-back",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    addItem(items, Object.assign(sigilStone(), { stackCount: offer.price }));   // the stones back: the service holds no sale\n",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-WB9-a-lost-answer-taken-for-a-refusal",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (insigniaUnheard(r)) {",
     "new": "  if (false) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-WB9-a-5xx-taken-for-a-refusal",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "!(Number.isFinite(r?.status) && r.status < 500)",
     "new": "!Number.isFinite(r?.status)",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-WB9-the-sale-never-saved",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  save();\n  return { ok: true, data: r.data };",
     "new": "  return { ok: true, data: r.data };",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-WB9-the-price-never-held",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!spendStones(items, offer?.price)) return { ok: false, error: 'stones' };\n",
     "new": "  if (stoneCount(spendableStonesIn(items)) < offer?.price) return { ok: false, error: 'stones' };\n",
     "tests": [

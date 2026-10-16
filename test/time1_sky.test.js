@@ -16,10 +16,10 @@ import { sharedClassicMinutes, wallMsForClassicMinutes, ONLINE_MINUTES_PER_MS } 
 import { graph } from './importGraph.mjs';
 import { setSharedClock, sharedClockOn, worldMinutes, skyMinutes, ownMinutes, setWorldMinutes, worldNightfallText, tickPlayerMinutes, resetMagicRoundMarker, setOwnMinutes } from '../src/systems/worldTick.js';
 import { skyCalendarOn, skyMinuteOfEvent, setSkyCalendar } from '../src/systems/skyCalendar.js';
-import { SYSTEM_TYPES, birthsIn } from '../src/systems/weatherMap.js';
+import { SYSTEM_TYPES, birthsIn } from '../src/systems/weather/weatherMap.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { MINUTES_PER_DAY, dateFromClassicMinutes, seasonValue, isFullMoonFromMinutes, isFullMoonNightFromMinutes } from '../src/systems/gameDate.js';
-import { resetWeatherSim, setSharedWeather, rollClimateWeathersForDay, setClimateWeathers, weatherForClimate, ZONE_CLIMATES } from '../src/systems/weatherSim.js';
+import { resetWeatherSim, setSharedWeather, rollClimateWeathersForDay, setClimateWeathers, weatherForClimate, ZONE_CLIMATES } from '../src/systems/weather/weatherSim.js';
 import { createLycanthropyCurse, liveLycanthropy } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { raidMapMarks } from '../src/ui/eventMapMarks.js';

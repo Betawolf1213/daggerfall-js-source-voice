@@ -25,7 +25,7 @@ import { commissionable, commissionTakesQuality } from '../src/net/writLaw.js';
 import { DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES, decorPlaceOf, decorPieceOf, decorWhatOf, DECOR_FURNITURE_GROUP } from '../src/net/decorLaw.js';
 import { createChiselAct } from '../src/systems/chiselAct.js';
 import { PRESS_LEAD_MAX_S } from '../src/systems/stitchAct.js';
-import { MASONRY_TEMPLATE_ROWS, STONE_DECOR_ROWS } from '../src/systems/profTemplates.js';
+import { MASONRY_TEMPLATE_ROWS, STONE_DECOR_ROWS } from '../src/systems/professions/profTemplates.js';
 
 /** A steered die: the throws in turn, then the last again. */
 const dice = (...throws) => { let i = 0; return () => throws[Math.min(i++, throws.length - 1)]; };

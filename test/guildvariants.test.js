@@ -10,12 +10,12 @@ import {
   DIVINES, ORDERS, TEMPLE_DATA, TEMPLE_TEXT, KNIGHTLY_TEXT, TEMPLE_PROMOTION,
   templeOf, orderOf, getDivine, getOrder, templePromotionId,
   TEMPLE_RANK_TITLES, KNIGHTLY_RANK_TITLES,
-} from '../src/systems/guildVariants.js';
+} from '../src/systems/guild/guildVariants.js';
 import {
   GUILDS, INVITATION_ONLY, isJoinableByApplication, joinDecision,
   calculateNewRank, isEligibleToJoin, promotionTextId,
-} from '../src/systems/guilds.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+} from '../src/systems/guild/guilds.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 import { FactionFile, FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { SKILLS } from '../src/systems/skills.js';
 

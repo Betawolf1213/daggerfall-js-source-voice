@@ -11,7 +11,7 @@ import { hoverLines } from '../src/systems/worldHover.js';
 import { resetQuickLoot } from '../src/systems/quickLoot.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import { withDom } from './invdrag.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

@@ -15,7 +15,7 @@
 // ini key, so DFU_TEXT_KEY bridges the two. Most bridge by lowering
 // the first letter (SoundVolume -> soundVolume); the ones that do not
 // are listed explicitly.
-import { SETTINGS_INFO } from '../systems/settingsText.js';
+import { SETTINGS_INFO } from '../systems/settings/settingsText.js';
 import { localizedTable } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 
 export const LABELS = Object.freeze({

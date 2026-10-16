@@ -8,13 +8,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as CX from '../src/systems/lootCodex.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as CX from '../src/systems/loot/lootCodex.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { GILDED_RECORDS, DRAGONFIRE_OATH, mintGilded } from '../src/systems/gilded.js';   // AUDIT WORLD-REWARDS A5: the Gilded rung's rows
 import { drawCollectionsPage, collectionsPageShown, collectionParts, resetCollectionsPage, setCollectionsPart, disarmCollectionsPage } from '../src/ui/collectionsPage.js';
 import { drawCardsPart, resetCardsPart, cardCanvas, _clearCardFacesForTests, copiesAllowed, TILE_H } from '../src/ui/cardBinderPage.js';
-import { giveBinder, binderOf, mintIliacCard } from '../src/systems/iliacItems.js';
+import { giveBinder, binderOf, mintIliacCard } from '../src/systems/iliac/iliacItems.js';
 import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
 import { ILIAC_DECK_SIZE } from '../src/net/iliacHand.js';
 
@@ -273,7 +273,7 @@ test('AUDIT CARDS-5 lane D\'s survivors (second pass): the Collections page - a 
 });
 
 test('AUDIT CARDS-5 lane D\'s survivors (second pass): the Cards part - the decks\' head and count, twelve at most, a new deck named, its name cut, the reset forgets an open builder and an armed Delete, a card not held or every copy in says so, the chips by cost, a face at the screen\'s pixel ratio', async () => {
-  const { BINDER_DECKS_MAX, DECK_NAME_MAX, binderDecks } = await import('../src/systems/iliacItems.js');
+  const { BINDER_DECKS_MAX, DECK_NAME_MAX, binderDecks } = await import('../src/systems/iliac/iliacItems.js');
   globalThis.document = undefined;
   _resetForTests();
   resetCardsPart();

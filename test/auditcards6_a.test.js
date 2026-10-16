@@ -18,10 +18,10 @@ import {
 import {
   CARD_PACK_TEMPLATE, CARD_PACK_LINES, mintIliacCard, mintCardPack, isIliacCard, iliacCardName, giveBinderAtChargen, binderOf,
   binderDecks, setBinderDeck, deckHeldRefusal,
-} from '../src/systems/iliacItems.js';
+} from '../src/systems/iliac/iliacItems.js';
 import {
   CARD_PACK_SIZE, PACK_POOL, PACK_SLOT_TIERS, PACK_TOP_TIERS, buyCardPack, dropFoeCard, guildNameOfFaction, guildCardRoll,
-} from '../src/systems/cardSources.js';
+} from '../src/systems/card/cardSources.js';
 import { STARTER_DECK, cardById } from '../src/net/iliacCards.js';
 import { applyCustoms, cardCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
@@ -29,17 +29,17 @@ import { takeSceneOwn } from '../src/systems/sceneCache.js';
 import { capFoeLoot } from '../src/systems/foeLootCap.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { validFoeRecord } from '../src/net/wire.js';
-import { DIVINES, ORDERS, createGuildForGroup } from '../src/systems/guildVariants.js';
+import { DIVINES, ORDERS, createGuildForGroup } from '../src/systems/guild/guildVariants.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
-import { activeMemberships } from '../src/systems/guilds.js';
+import { activeMemberships } from '../src/systems/guild/guilds.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
-import { itemInfoRows, itemStatRows } from '../src/systems/itemInfo.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { itemInfoRows, itemStatRows } from '../src/systems/item/itemInfo.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createSpoilsPool, spoilsList, SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
-import { sdSpoilsList } from '../src/systems/sdSpoils.js';
-import { seededRng } from '../src/systems/wind.js';
-import { RANDOM_TREASURE_ICONS } from '../src/systems/loot.js';
-import { gemKindOf } from '../src/systems/lootRarity.js';   // GEM2: a boss's gem
+import { sdSpoilsList } from '../src/systems/superDungeon/sdSpoils.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { RANDOM_TREASURE_ICONS } from '../src/systems/loot/loot.js';
+import { gemKindOf } from '../src/systems/loot/lootRarity.js';   // GEM2: a boss's gem
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

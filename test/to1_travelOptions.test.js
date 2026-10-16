@@ -11,7 +11,7 @@
 // by source. The fixtures are the vendored files wherever there is one
 // - the shape the producer mints, not a literal typed twice.
 import { test } from 'node:test';
-import { travelDriveForward, travelLookaheadFor } from '../src/systems/travelAutopilot.js';   // AUDIT-FIELD F8
+import { travelDriveForward, travelLookaheadFor } from '../src/systems/travel/travelAutopilot.js';   // AUDIT-FIELD F8
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -23,21 +23,21 @@ import {
   mapPixelWorldOrigin, normalisedYaw, directionOfYaw, targetPixel, countSetBits,
   playerOnPath, playerOnPathAt, pathsDataPoint, roadsDataPoint, dataPoint, nextPathDirection,
   PATH_ROADS, PATH_TRACKS, PATH_KEYS,
-} from '../src/systems/travelPaths.js';
+} from '../src/systems/travel/travelPaths.js';
 import {
   TravelAutopilot, calculateYaw, rectContains, rectOf, rectCentre,
   ARRIVAL_BUFFER, OVERSHOOT_YAW_DEGREES,
-} from '../src/systems/travelAutopilot.js';
+} from '../src/systems/travel/travelAutopilot.js';
 import {
   readTravelOptionsSettings, createTravelOptions, travelSpeedMultiplier, avoidEncounterChance,
   locationTypeString, locationTypeName, locationRectsOf, locBorderCornerRects, circumnavigateTarget,
   ROAD_LEG_KINDS, IGNORE_ENCOUNTERS_SECONDS, AVOID_ENCOUNTER_OFFSET, CLIMATE_OCEAN,
   TRAVEL_OPTIONS_VENDOR,
-} from '../src/systems/travelOptions.js';
+} from '../src/systems/travel/travelOptions.js';
 import { MOD_ACTIONS } from '../src/systems/inputActions.js';   // KB1: the follow key's six are the carry's now
-import { TRAVEL_OPTIONS_TEXT, format, localize, directionText } from '../src/systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT, format, localize, directionText } from '../src/systems/travel/travelOptionsText.js';
 // AUDIT-TO1: the two classes the port did not carry, pinned at the foot
-import { registerCustomGuild, canAccessService } from '../src/systems/guildServices.js';
+import { registerCustomGuild, canAccessService } from '../src/systems/guild/guildServices.js';
 import { ENCHANTMENT_TYPES, enchantmentMagicRound } from '../src/systems/enchantments.js';
 import { resetSyntheticTimeIncrease } from '../src/systems/effectBroker.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
@@ -53,7 +53,7 @@ const wearer = (items, over = {}) => ({
   name: 'W', health: 200, maxHealth: 300, items, level: 5, isPlayer: true,
   stats: {}, skills: [40, 40, 40, 40], activeEffects: [], ...over,
 });
-import { PORT_LOCATION_IDS, PORT_LOCATION_IDS_MAIN, PORT_LOCATION_IDS_EXTRAS, maskMapId, hasPort } from '../src/systems/travelPorts.js';
+import { PORT_LOCATION_IDS, PORT_LOCATION_IDS_MAIN, PORT_LOCATION_IDS_EXTRAS, maskMapId, hasPort } from '../src/systems/travel/travelPorts.js';
 import {
   drawPath, drawLocation, drawMapSection, isLocationLarge, packColor, packRGBA, DOT_SCALE,
   ROAD_COLOR, TRACK_COLOR, JUNCTION_HERE_PT, JUNCTION_MAP_WIDTH, junctionDirectionIndex,
@@ -70,13 +70,13 @@ import { etaText, distanceText } from '../src/ui/enhancedTravelControl.js';
 import { POPUP_RECTS } from '../src/ui/travelPopUp.js';   // AUDIT-TO1 D3/D4: the camp-out and inns rects the wheel pins hover
 // AUDIT-TO1 part 2: the pins for the sweep's confirmed findings
 import { TravelPopUpWindow, isPlayerControlledTravel, enforceShipRestriction as enforceShipRestrictionPure, shipTravelRefusal as shipTravelRefusalPure } from '../src/ui/travelPopUp.js';
-import { travelMapMarkedMapId, setTravelMapMarkedMapId, resetTravelMapState } from '../src/systems/travelMapState.js';
+import { travelMapMarkedMapId, setTravelMapMarkedMapId, resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE, travelRateOf } from '../src/systems/timeScale.js';
 import { FIXED_DT, MAX_FRAME_DT } from '../src/player/motor.js';
 import { MOD_SETTINGS, colorKeyRgba, colorKeyHex, isColorKey, modSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { mapPixelToWorldCoords } from '../src/world/streamingWorld.js';
-import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };
@@ -1392,7 +1392,7 @@ test('AUDIT-TO1 F1: paid teleportation reaches a member of ANY rank, and only wh
   registerCustomGuild('MagesGuild', null);
 
   // and the install itself is the mod's, on the mod's own setting
-  const t = read('src/systems/travelOptions.js');
+  const t = read('src/systems/travel/travelOptions.js');
   assert.match(t, /registerCustomGuild\('MagesGuild', s0\.teleportCost/,
     'the registration is gated on EnablePaidTeleportation, as :331-336 gates it');
   assert.match(t, /\(_membership, service\) => \(service === 'Teleport' \? true : undefined\)/);

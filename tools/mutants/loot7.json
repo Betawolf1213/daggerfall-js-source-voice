@@ -362,7 +362,7 @@
   },
   {
     "name": "CHAMP-LOOT-door-plain-source",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "rollLootRarity(loot, champ ? championSource(source, qualityMult) : {",
     "new": "rollLootRarity(loot, false ? championSource(source, qualityMult) : {",
     "tests": [
@@ -371,7 +371,7 @@
   },
   {
     "name": "CHAMP-LOOT-magic-and-rare-whole",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  ladder: CHAMPION_SOURCE.ladder,",
     "new": "  ladder: 1,",
     "tests": [
@@ -380,7 +380,7 @@
   },
   {
     "name": "LOOT7-source-no-tiers",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  legendaryTier: source.tier + CHAMPION_SOURCE.tier,",
     "new": "  legendaryTier: source.tier,",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "LOOT7-source-no-quality",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  legendaryQuality: qualityMult * CHAMPION_SOURCE.quality,",
     "new": "  legendaryQuality: qualityMult,",
     "tests": [

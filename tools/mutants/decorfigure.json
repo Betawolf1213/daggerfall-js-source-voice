@@ -41,7 +41,7 @@
   },
   {
     "name": "DECOR-FIGURE-step-taken",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      if (figure) return;\n",
     "new": "",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "DECOR-FIGURE-old-size-kept",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "  if (figure) s.scale = 1;\n",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "DECOR-FIGURE-kind-for-archive",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "export const decorEntrySized = (entry) => !decorIsFigure(entry);",
     "new": "export const decorEntrySized = (entry) => entry?.kind !== 'people';",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "HOME-VOTE-II-placer-figure-by-kind-too",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "export const decorEntrySized = (entry) => !decorIsFigure(entry);",
     "new": "export const decorEntrySized = (entry) => !decorIsFigure(entry) && entry?.kind !== 'people';",
     "tests": [

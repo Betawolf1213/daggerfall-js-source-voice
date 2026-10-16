@@ -109,7 +109,7 @@
   },
   {
     "name": "PERF-SUN-the-sway-door-parses-the-query-string-once-a-frame-again",
-    "file": "src/systems/windDrive.js",
+    "file": "src/systems/wind/windDrive.js",
     "old": "  return pageParam('sway', search) === 'off';",
     "new": "  return new URLSearchParams(search).get('sway') === 'off';",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "PERF-SUN-a-tall-flora-flat-stops-leaning",
-    "file": "src/systems/windDrive.js",
+    "file": "src/systems/wind/windDrive.js",
     "old": "  return height >= TALL_FLAT_HEIGHT ? 1 : 0.6;",
     "new": "  return 0.6;",
     "tests": [

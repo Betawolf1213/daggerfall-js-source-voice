@@ -21,7 +21,7 @@
   },
   {
     "name": "RENT-REST-the-bed-outside-the-permanent-scene",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "permanentScene: permanentScene || homeBed,",
     "new": "permanentScene,",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "RENT-REST-the-bed-no-house",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "houseOwned: houseOwned || homeBed,",
     "new": "houseOwned,",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "HOMES-FORCE-answered-by-the-flight",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return flying;",
     "tests": [

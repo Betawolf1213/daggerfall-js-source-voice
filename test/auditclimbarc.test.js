@@ -223,7 +223,7 @@ test('AUDIT CLIMB-ARC F6: a teleport and a load reset the feel - no climb\'s tur
 test('AUDIT CLIMB-ARC F7: a swing in flight when the hands take the wall lands nothing - WeaponManager\'s climbing return skips the hit frame (mutant: the swing\'s events kept on the wall)', async () => {
   const { createWeaponRig } = await import('../src/combat/weaponRig.js');
   const { setModSetting, _resetModSettings } = await import('../src/systems/modSettings.js');
-  const { resetToDefaults } = await import('../src/systems/settings.js');
+  const { resetToDefaults } = await import('../src/systems/settings/settings.js');
   const { EQUIP_SLOTS } = await import('../src/systems/equip.js');
   const bowCif = () => {
     const W = 100, H = 80, head = 12 + 31 * 2 + 2, runs = Math.ceil((W * H) / 128);

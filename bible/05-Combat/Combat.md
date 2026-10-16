@@ -1453,7 +1453,7 @@ A player's report: "I've lost my boots and legs, both rare (yellow) rarity ... b
 items break, yellow items disappear. is this intended?" It was the mod's own
 module - "Enchanted Weapons and Armor will be destroyed upon breaking from
 physical combat", on by default and forced whole online with the rest of PCAAO -
-meeting the port's rarity ladder (`systems/lootRarity.js`, LR1): a Rare or
+meeting the port's rarity ladder (`systems/loot/lootRarity.js`, LR1): a Rare or
 Legendary carries ONE DFU catalogue enchantment as its flavour, so the module
 read it as an enchanted item and took it from the pack, while a Magic (numeric
 affixes, no enchantment) broke and stayed. Mac: "Rarity loot breaks, not

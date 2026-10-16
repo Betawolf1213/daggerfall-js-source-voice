@@ -1,7 +1,7 @@
 [
   {
     "name": "NUDEDECOR-offer-ungated",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    && !(nude && e.nude)\n",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "NUDEDECOR-offer-setting-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  const nude = !(show ?? showNudity());",
     "new": "  const nude = !(show ?? true);",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "NUDEDECOR-flag-unset",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    nude: !!e.flat && isNudeFlat(e.flat[0], e.flat[1]),",
     "new": "    nude: false,",
     "tests": [

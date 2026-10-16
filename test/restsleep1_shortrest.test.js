@@ -7,7 +7,7 @@
 // pay, the tier's rough floor kept - and still moves no clock.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { sleepShortRest, stampNight, NIGHT_MINUTES, REST_ACT_TEXT } from '../src/systems/restAct.js';
+import { sleepShortRest, stampNight, NIGHT_MINUTES, REST_ACT_TEXT } from '../src/systems/rest/restAct.js';
 import { paySleep, sleepStage, survivalStatMods, NEED } from '../src/systems/survival/needs.js';
 import { REST_KIND } from '../src/systems/survival/rest.js';
 import { SURVIVAL_RULES, SURVIVAL_STORED, HARD_RULES } from '../src/systems/survival/difficulty.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "CORPSE-FIND-the-find-thrown-away",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (loot.length > carried) (entity.items ??= []).push(...loot.slice(carried));",
     "new": "  if (false) (entity.items ??= []).push(...loot.slice(carried));",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CORPSE-FIND-the-carried-pushed-again",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "(entity.items ??= []).push(...loot.slice(carried));",
     "new": "(entity.items ??= []).push(...loot);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CORPSE-FIND-counted-after-the-roll",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const carried = loot.length;",
     "new": "  const carried = 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CORPSE-FIND-a-body-with-no-list-loses-it",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "(entity.items ??= []).push(...loot.slice(carried));",
     "new": "(entity.items ?? []).push(...loot.slice(carried));",
     "tests": [

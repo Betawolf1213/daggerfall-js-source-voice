@@ -129,7 +129,7 @@
   },
   {
     "name": "LIVED1-the-load-restores-the-worlds-minute-as-theirs",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    setOwnMinutes(own);",
     "new": "    setOwnMinutes(at);",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "LIVED1-the-save-forgets-the-worlds-minute",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (sharedClockOn()) snap.worldMinutes = worldMinutesToSave();\n",
     "new": "",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "LIVED1-the-absence-is-measured-on-the-characters-clock",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const left = snap.joinFresh ? null : Number.isFinite(snap.worldMinutes) ? Math.floor(snap.worldMinutes) : own;",
     "new": "const left = snap.joinFresh ? null : own;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "LIVED1-the-load-reads-the-needs-on-the-worlds-clock",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    alignSurvival(entity, own, own);",
     "new": "    alignSurvival(entity, Math.floor(at), Math.floor(at));",
     "tests": [

@@ -316,7 +316,7 @@
   },
   {
     "name": "ENH-NOTICE3-P4-mod-arrival-box-sent-to-the-hud-line",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      messageBox(T.MsgArrived);\n    };\n    st.lastLocation = deps.currentLocation?.() ?? null;\n    initTravelUI();\n  }\n\n  /** :495-519, BeginTravelToCoords",
     "new": "      say(T.MsgArrived);\n    };\n    st.lastLocation = deps.currentLocation?.() ?? null;\n    initTravelUI();\n  }\n\n  /** :495-519, BeginTravelToCoords",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "ENH-NOTICE3-P4-mod-enemies-refusal-sent-to-the-hud-line",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    messageBox(T.MsgEnemies);\n    return false;",
     "new": "    say(T.MsgEnemies);\n    return false;",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "ENH-NOTICE3-P4-mod-no-path-hud-line-sent-to-the-box-door",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "        drawJunctionMap(mp);\n        say(T.MsgNoPath);",
     "new": "        drawJunctionMap(mp);\n        messageBox(T.MsgNoPath);",
     "tests": [

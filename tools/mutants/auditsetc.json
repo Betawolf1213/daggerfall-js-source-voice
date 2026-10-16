@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-SET-the-mark-dropped-by-the-save",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  'testRoom',\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-SET-the-marks-never-asked",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  if (!validSetMarks(out)) return null;   // AUDIT SET D6: and the marks agree with the item - a set's sigil, a blow, the Aetheric\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-SET-a-curly-apostrophe-in-the-lore",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "giant\\'s own heart",
     "new": "giant’s own heart",
     "tests": [

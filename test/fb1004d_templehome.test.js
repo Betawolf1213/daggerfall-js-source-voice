@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 
 import { CURATED_CLASSIC, curatedOut, pinAt, layoutStampAt, stampVendors, pinsFrom, setLayoutPins, configureLayoutPins, _resetLayoutPins, CLASSIC_LAYOUT } from '../src/systems/layoutPins.js';
 import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, latchWorldDataDoor, getDFLocationReplacementData, locationReplacementFilename } from '../src/formats/worldDataReplacement.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { makeLocationKey } from '../src/systems/worldDataVariants.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place, VALID_HOUSE_TYPES } from '../src/systems/quest/place.js';

@@ -19,7 +19,7 @@
   },
   {
     "name": "PERFURL-online-door-parses-again",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "=> pageHas('online', search);",
     "new": "=> new URLSearchParams(search).has('online');",
     "tests": [

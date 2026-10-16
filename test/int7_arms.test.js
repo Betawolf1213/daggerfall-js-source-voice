@@ -15,10 +15,10 @@ import {
 import { arenaBlowCap, arenaArmsOk, ARENA_ARMS_TOP_MAX, ARENA_HIT, ARENA_MOD_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
 import { TOKEN_ARMS_TOP_MAX, armsIssuable, claimsValid, verifyToken } from '../src/net/identityToken.js';
 import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
-import { boutLive } from '../src/systems/arenaBout.js';
+import { boutLive } from '../src/systems/arena/arenaBout.js';
 import { weaponMaxDamage, weaponMaterialModifier } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { realmMintFacts } from '../server-account/src/realm.js';   // PIN MOVED (SCALE4f): realmArmsOf is realmMintFacts' `wa`

@@ -12,7 +12,7 @@ import {
   newTable, publicView, sit, stand, actAt, tick, nextAt, emptyTable, tableLook, chairOf, validHoldemIn, validHoldemOut,
   HOLDEM_CLOCK_MS, HOLDEM_GAP_MS, HOLDEM_FIRST_MS, HOLDEM_CHIPS_BB, HOLDEM_BBS, HOLDEM_TABLES_MAX,
 } from '../src/net/holdemTable.js';
-import { TABLE_STAKES } from '../src/systems/cardTableSession.js';
+import { TABLE_STAKES } from '../src/systems/card/cardTableSession.js';
 import { parseClient, relaySupportsHoldem, HOLDEM_RELAY_MIN, RELAY_VERSION, HOLDEM_FRAME_MAX } from '../src/net/wire.js';
 import { fakeRoom } from './fakeRoom.mjs';
 

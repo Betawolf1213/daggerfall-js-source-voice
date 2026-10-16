@@ -15,7 +15,7 @@
 //     climate-based archive index.
 
 import { srand, randomRangeInclusive } from '../formats/dfRandom.js';
-import { getInt } from '../systems/settings.js';   // AUDIT 28 W3c: RandomDungeonTextures
+import { getInt } from '../systems/settings/settings.js';   // AUDIT 28 W3c: RandomDungeonTextures
 
 export const TABLE_LENGTH = 6;
 

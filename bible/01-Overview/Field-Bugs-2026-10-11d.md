@@ -12,7 +12,7 @@ decisions". All four are done.
 
 ## SNOW-TELL: a foe's telegraph lies over the deep snow (1)
 
-The report's revenant is a rank-2 caster's signature, the pyre (`ai/blowShapes.js` BLOW.pyre, `systems/revenantFeud.js`
+The report's revenant is a rank-2 caster's signature, the pyre (`ai/blowShapes.js` BLOW.pyre, `systems/revenant/revenantFeud.js`
 drawSignature): a 2.2 m disc at the player's feet, telegraphed by the foes' ground pass (`render/foeTelegraph.js`,
 TACT4) - one flat quad 0.06 m (BLOW_LIFT) over the ground its blow was fitted to (`ai/foeBlows.js` fitBlowToGround,
 the collider's ray), depth-tested and never depth-written. The colliders know no snow. Snowfall

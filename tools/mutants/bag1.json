@@ -92,7 +92,7 @@
   },
   {
     "name": "BAG1-a-loaded-bag-dropped",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (bagLoaded && isBagItem(item)) return { ok: false, refusal: REFUSAL.bagLoaded };",
     "new": "  void bagLoaded;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "BAG1-the-list-unsaved",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.bagItems = (entity.bagItems ?? []).map((it) => ({ ...it }));",
     "new": "  snap.bagItems = [];",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "AUDIT2-BAG1-the-stamp-unsaved",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.bagTakes = bagTakesSaved(entity.bagTakes);",
     "new": "  snap.bagTakes = {};",
     "tests": [
@@ -462,7 +462,7 @@
   },
   {
     "name": "AUDIT2-BAG1-the-stamp-dropped-on-load",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.bagTakes = bagTakesSaved(snap.bagTakes);",
     "new": "  entity.bagTakes = {};",
     "tests": [
@@ -751,7 +751,7 @@
   },
   {
     "name": "AUDIT2-BAG1-D4-the-bag-unswept",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  count += removeOrphanedItems(entity, entity.bagItems ?? [], getQuest);   // BAG1: the port's own list, beside DFU's three\n",
     "new": "",
     "tests": [

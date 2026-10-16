@@ -19,11 +19,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseClient, MAX_FRAME_BYTES, ACT_HZ_MAX, PIXEL_UNITS } from '../src/net/wire.js';
-import { validLootItem, validLootList, LOOT_LIST_MAX, LOOT_ITEM_KEYS_MAX, LOOT_STR_MAX, LOOT_DEPTH_MAX } from '../src/systems/loot.js';
+import { validLootItem, validLootList, LOOT_LIST_MAX, LOOT_ITEM_KEYS_MAX, LOOT_STR_MAX, LOOT_DEPTH_MAX } from '../src/systems/loot/loot.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';   // AUDIT WORLD6a B1: the projector floors an item's value at the template's own
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';   // AUDIT WORLD6a B1: the projector floors an item's value at the template's own
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const at = (px, pz) => ({ x: px * PIXEL_UNITS + 10, y: 0, z: pz * PIXEL_UNITS + 10, yaw: 0, pitch: 0, mv: 0 });

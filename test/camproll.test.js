@@ -7,12 +7,12 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createCampWatch, campClear, campPasses, CAMP_WAIT_MS, CAMP_OPEN_FRESH_MS } from '../src/systems/partyRestLaw.js';
+import { createCampWatch, campClear, campPasses, CAMP_WAIT_MS, CAMP_OPEN_FRESH_MS } from '../src/systems/party/partyRestLaw.js';
 import {
   CAMP_MARKS, PARTY_NIGHT_MARKS, campStamp, campMarkOf, nightStamp, nightKindOf, isNightStamp, campNightStep, carriedNightEnd,
   REST_ACT_TEXT, REST_CHANNEL_SECONDS,
-} from '../src/systems/restAct.js';
-import { REST_TEXT } from '../src/systems/restSession.js';
+} from '../src/systems/rest/restAct.js';
+import { REST_TEXT } from '../src/systems/rest/restSession.js';
 import { intermittentEnemySpawn } from '../src/systems/encounters.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { setSharedClock, setOwnMinutes, advanceOwnMinutes, ownMinutes } from '../src/systems/worldTick.js';

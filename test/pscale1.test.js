@@ -1,6 +1,6 @@
 // PSCALE1 (2026-09-25, Mac: "I want enemy difficulty, enemy numbers, etc to scale approriately with party size";
 // asked: "+50% HP, +10% dmg", "One roll per group", "Everyone in it" - and at AUDIT PSCALE1, "Whoever fights it"):
-// A FIGHT WEIGHS WHAT ITS FIGHTERS WEIGH (systems/partyScale.js). The law's numbers; the outdoor pool driven - a
+// A FIGHT WEIGHS WHAT ITS FIGHTERS WEIGH (systems/party/partyScale.js). The law's numbers; the outdoor pool driven - a
 // shared foe's toughness at its owner's damage door by the players striking it, the remainder carried, the foes
 // nobody else can help with left alone, a shared foe's hit on me harder; and the hosts by source. The audit's own
 // pins, mounted and driven, are test/auditpscale1.test.js. `06-Systems/Online-Arc.md` PSCALE1, AUDIT PSCALE1.
@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import {
   PARTY_SCALE_HP_PCT, PARTY_SCALE_DAMAGE_PCT, PARTY_SCALE_EXTRA_EVERY, PARTY_SCALE_EXTRA_MAX, partySizeOf, partyToughness,
   partyDamageFactor, partyExtraFoes, partyGroupMembers, partyFoeLoses, partyFoeHits, _resetPartyScaleForTests,
-} from '../src/systems/partyScale.js';
+} from '../src/systems/party/partyScale.js';
 import { PARTY_MAX, CELL_PUPPETS_MAX } from '../src/net/wire.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
 import { CAMP_SIZE, PACK_SIZE, GROUP_ROLL_RADIUS } from '../src/systems/campEncounters.js';

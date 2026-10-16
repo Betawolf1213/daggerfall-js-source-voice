@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { deductGold, deductGoldPieces } from '../src/systems/court.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { waitForPartyArrival, PartyArrivalUnavailable, PARTY_ARRIVAL_TEXT } from '../src/systems/partyArrival.js';
+import { waitForPartyArrival, PartyArrivalUnavailable, PARTY_ARRIVAL_TEXT } from '../src/systems/party/partyArrival.js';
 import { rig, HULL_NAMES } from './partyBoatTeleportRig.mjs';
 
 const source = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

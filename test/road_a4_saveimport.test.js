@@ -17,7 +17,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   snapshotPlayer, restorePlayer, newSkillsRecentlyRaised,
-} from '../src/systems/save.js';
+} from '../src/systems/save/save.js';
 import {
   raiseSkills, skillRecentlyIncreased, setSkillRecentlyIncreased,
   resetSkillsRecentlyRaised, SKILL_RAISE_CHECK_INTERVAL,
@@ -25,16 +25,16 @@ import {
 import {
   cureDiseaseOffer, payForCure, cureForFree, becomingVampireOrWerebeast,
   CURE_BASE_COST_PER_DISEASE,
-} from '../src/systems/guildServiceActions.js';
-import { GUILDS } from '../src/systems/guilds.js';
+} from '../src/systems/guild/guildServiceActions.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { classicItemFromRecord } from '../src/systems/classicSave.js';
 import {
   legacyGetArtifactSubType, legacyArtifactIndexBitfieldCheck,
   ITEM_ARTIFACT_MASK, ITEM_IDENTIFIED_MASK,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { calculateAttackDamage, MATERIAL_INEFFECTIVE_TEXT } from '../src/combat/formulas.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { itemInfoTextId, INFO_TEXT } from '../src/systems/itemInfo.js';
+import { itemInfoTextId, INFO_TEXT } from '../src/systems/item/itemInfo.js';
 import { isBook } from '../src/systems/useItem.js';
 import { itemIsIdentified } from '../src/systems/tradeModes.js';
 import { hasArtifactSubtype, ARTIFACTS } from '../src/systems/artifactEffects.js';   // ROAD-U: the identity DFU keys on

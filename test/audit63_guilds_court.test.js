@@ -14,15 +14,15 @@ import { raceActivation } from '../src/player/activationRace.js';   // HARD2: th
 
 import { pleaNotGuilty, CRIMES, changeLegalRep } from '../src/systems/court.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { cureDiseaseOffer } from '../src/systems/guildServiceActions.js';
-import { GUILDS, joinGuild } from '../src/systems/guilds.js';
+import { cureDiseaseOffer } from '../src/systems/guild/guildServiceActions.js';
+import { GUILDS, joinGuild } from '../src/systems/guild/guilds.js';
 import { startDisease } from '../src/systems/diseases.js';
 import {
   discoverBuilding, discoveredBuildings, restoreDiscovery, snapshotDiscovery,
   hasDiscoveredBuilding,
 } from '../src/systems/discovery.js';
-import { revealGuildHallsOnMap } from '../src/systems/guildHallReveal.js';
-import { hasSpellbook, SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { revealGuildHallsOnMap } from '../src/systems/guild/guildHallReveal.js';
+import { hasSpellbook, SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { activateMobileEnemy, tryMobileEnemyActivate, youSeeEnemyText } from '../src/player/mobileEnemyActivate.js';
 import { PICKPOCKET_DISTANCE, TOO_FAR_AWAY_TEXT, DEFAULT_ACTIVATION_DISTANCE, pickActivatableHit, doorDistanceOf } from '../src/player/activate.js';
 // AUDIT 65 MC-2: the ray's own reach, and the reaches the handlers gate on
@@ -31,7 +31,7 @@ import {
   CORPSE_ACTIVATION_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE,
 } from '../src/player/activate.js';
 import { corpseLootTargets } from '../src/scenes/corpseMarker.js';   // AUDIT 65 MC-2: the body's own producer
-import { pickpocket } from '../src/systems/talk.js';
+import { pickpocket } from '../src/systems/talk/talk.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
@@ -114,7 +114,7 @@ test('AUDIT 63 F11: every host site that builds the formula\'s skills object rea
     'no host site may pass the PERMANENT stat into CalculateTradePrice');
   assert.equal((wm.match(/liveStat\(playerEntity, 'personality'\)/g) ?? []).length, 7,
     'all seven worldModes sites read LivePersonality');   // PIN MOVED (CARDS9): the card table's pack, priced at the counter's own law
-  const ga = read('../src/systems/guildServiceActions.js');
+  const ga = read('../src/systems/guild/guildServiceActions.js');
   assert.ok(/liveStat\(entity, 'personality'\)/.test(ga), 'and the temple cure with them');
 });
 
@@ -136,7 +136,7 @@ test('AUDIT 63 F12: MakeSpells is refused AT THE DOOR without a spellbook, and t
   assert.ok(/closesWindow: true/.test(gate),
     'DFU CloseWindow()s on BOTH branches (:390), so the refusal stands over a closed popup');
   // and DFU keeps the SECOND gate: the Buy ladder still owns 1703
-  const sm = read('../src/systems/spellMaker.js');
+  const sm = read('../src/systems/spell/spellMaker.js');
   assert.ok(/if \(!hasSpellbook\(entity\)\) return \{ ok: false, textId: NO_SPELLBOOK_ID \}/.test(sm));
 });
 
@@ -384,7 +384,7 @@ test('AUDIT 63 F33: all five activation ladders carry the arm - the four hosts a
   }
   // and the pickpocket law is ONE law with an optional target, as
   // DFU's Pickpocket(target = null) is
-  const talk = read('../src/systems/talk.js');
+  const talk = read('../src/systems/talk/talk.js');
   assert.ok(/export function pickpocket\(player, \{ target = null/.test(talk));
   assert.ok(/if \(!target && !racialSuppressCrime\(player\)\)/.test(talk),
     'the crime write is the townsperson arm alone (:1655)');

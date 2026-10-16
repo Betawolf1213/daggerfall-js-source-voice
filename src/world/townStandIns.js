@@ -148,7 +148,7 @@ export function paintingModel({ hang, picture, mirror }) {
 
 // ---- Rosy's other pieces -------------------------------------------------------------------------------------------
 /** The picture each of Rosy's small hangings and rugs wears (world/townPictures.js), by id - the one table its builder
- *  and its name in the house decorator (systems/decorMods.js decorModNaming) both read (AUDIT 05b A8). */
+ *  and its name in the house decorator (systems/decor/decorMods.js decorModNaming) both read (AUDIT 05b A8). */
 export const ROSYS_PICTURES = Object.freeze({
   69467: PICTURE.smallHanging(0), 69468: PICTURE.smallHanging(1), 69469: PICTURE.smallHanging(2), 69471: PICTURE.rug(2), 69472: PICTURE.rug(3),
 });

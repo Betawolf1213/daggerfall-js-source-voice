@@ -1,7 +1,7 @@
 [
   {
     "name": "ONEBAG-the-refusal-gone",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return { ok: false, refusal: REFUSAL.secondBag };\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ONEBAG-the-wagon-unread",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "holdsOtherBag([bag, entity?.wagonItems], item)",
     "new": "holdsOtherBag([bag], item)",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ONEBAG-every-take-refused",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return",
     "new": "  if (!ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ONEBAG-the-wagons-own-refused",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag(",
     "new": "  if (isBagItem(item) && holdsOtherBag(",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ONEBAG-the-bag-a-piece",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  if (isBagItem(item) || isPackOnly(item)) return null;\n  const flat = decorItemFlat(item);",
     "new": "  if (isPackOnly(item)) return null;\n  const flat = decorItemFlat(item);",
     "tests": [

@@ -8,8 +8,8 @@ import { readFileSync } from 'node:fs';
 
 import { mapPixelToLongitudeLatitude, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
-import { deriveTownSeats, seatAtMapId, seatOfLocation, hasPalace, seatTotals } from '../src/systems/townSeats.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
+import { deriveTownSeats, seatAtMapId, seatOfLocation, hasPalace, seatTotals } from '../src/systems/town/townSeats.js';
 import {
   seatReportOf, seatReportText, parseSeatReport, seatIgnoredAccounts, charterName, seatArrivalLine, seatInfoLine,
   seatMapMark, seatPlainBanner, SEAT_RING_UNHELD, KINGDOM_METALS, FREE_LAND_RING, SEAT_BANNERS_MAX, seatWeekOf,

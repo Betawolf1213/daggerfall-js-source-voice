@@ -21,11 +21,11 @@ import { installSwingLaw, readSwing } from '../src/combat/swingLaw.js';
 import { WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { EQUIP_SLOTS, equipTableOf } from '../src/systems/equip.js';
-import { mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
+import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const DT = 1 / 60;
@@ -163,8 +163,8 @@ test('SWING-LAW: one law, every clock that times the player\'s swing - the leaf 
   assert.match(rd('src/combat/swingLaw.js'), /^installSwingLaw\(\);$/m, 'registered as the module loads - called, not a comment');
   assert.match(rd('src/combat/weaponRig.js'), /^import '\.\/swingLaw\.js';/m, 'the one maker of a swing\'s ctx imports it');
   assert.doesNotMatch(rd('src/scenes/shared.js'), /installSwingLaw/, 'no second home at boot');
-  assert.match(rd('src/systems/rrRealism.js'), /return swingFrameSeconds\(blend, \{ heft: swingHeft\(weight, liveStrength\), handling: swingHandling\(weaponType, hands === 'Both'\) \}\);/, 'AUDIT PRE-MERGE 0929 S3: RR\'s blend has no weight - the heft is the port\'s');
-  assert.match(rd('src/systems/rriRealism.js'), /return swingFrameSeconds\(adjustedSpeed, \{ handling: swingHandling\(weaponType, twoHanded\) \}\);/);
+  assert.match(rd('src/systems/roleplayRealism/rrRealism.js'), /return swingFrameSeconds\(blend, \{ heft: swingHeft\(weight, liveStrength\), handling: swingHandling\(weaponType, hands === 'Both'\) \}\);/, 'AUDIT PRE-MERGE 0929 S3: RR\'s blend has no weight - the heft is the port\'s');
+  assert.match(rd('src/systems/roleplayRealismItems/rriRealism.js'), /return swingFrameSeconds\(adjustedSpeed, \{ handling: swingHandling\(weaponType, twoHanded\) \}\);/);
   for (const [f, re] of [
     ['src/characters/weaponStates.js', /getMeleeWeaponAnimTime\(liveSpeed, animCtx\)/],   // the machine
     ['src/combat/weaponWidget.js', /getMeleeWeaponAnimTime\(liveSpeed, ctx\)/],          // the Weapon Widget's clone

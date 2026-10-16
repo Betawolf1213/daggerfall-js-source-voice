@@ -12,11 +12,11 @@ import { readFileSync } from 'node:fs';
 import {
   resetWeatherSim, setSnowGroundLaw, snowGroundLawOn, overGround, tickWeather, weatherRespawn, applyClimateWeather,
   setClimateWeathers, setWeather, restoreWeather, currentWeather, currentWeatherRaw, currentWeatherEnum, WEATHER_ENUM, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { groundIsSnowy, getTerrainGroundArchive, SEASON } from '../src/world/climateSwaps.js';
 import { CLIMATES, CLIMATE_BASE_TYPES, getWorldClimateSettings } from '../src/formats/mapsFile.js';
 import { seasonValue, dateFromClassicMinutes, SEASONS } from '../src/systems/gameDate.js';
-import { createWindModel, VIOLENCE } from '../src/systems/wind.js';
+import { createWindModel, VIOLENCE } from '../src/systems/wind/wind.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
 
@@ -112,7 +112,7 @@ test('WEATHER2a the switch: the enhanced skin and Enhanced Environments, the tes
     setSnowGroundLaw(false); setUiSkin('enhanced'); assert.equal(snowGroundLawOn(), false);
     setSnowGroundLaw(null); assert.equal(snowGroundLawOn(), true, 'null hands it back to the lane');
   } finally { setUiSkin(skin); setPref('enhancedEnvironments', pref); resetWeatherSim(); }
-  assert.match(rd('src/systems/weatherSim.js'), /get\('snowground'\) !== 'off'/, 'the kill door');
+  assert.match(rd('src/systems/weather/weatherSim.js'), /get\('snowground'\) !== 'off'/, 'the kill door');
 });
 
 test('WEATHER2a the wind blows by the table\'s word: a storm turned to snow builds a thunder front, not a flurry\'s', () => {
@@ -133,9 +133,9 @@ test('WEATHER2a the hosts: the arrival hands the sim its minute, the sky is hand
   assert.equal((w.match(/applyClimateWeather\(maps\.getClimateIndex\(pick\.pixel\.x, pick\.pixel\.y\), Math\.floor\(playerTicker\.classicMinutes\), fieldXZ\(\), climateAt\);/g) || []).length, 2, 'both arrivals (the travel landing and the respawn drain) carry the minute (WEATHER2b: and the field\'s place)');
   for (const [name, s] of [['world', w], ['exterior', e]]) {
     assert.match(s, /violence: weatherOverride \?\? currentWeatherRaw\(\), classicMinutes: playerTicker\.classicMinutes/, `${name}: the sky's bag carries the violence word`);
-    assert.match(s, /currentWeatherRaw[^\n]*from '\.\.\/systems\/weatherSim\.js'/, `${name}: imported`);
+    assert.match(s, /currentWeatherRaw[^\n]*from '\.\.\/systems\/weather\/weatherSim\.js'/, `${name}: imported`);
   }
-  const sim = rd('src/systems/weatherSim.js');
+  const sim = rd('src/systems/weather/weatherSim.js');
   assert.equal((sim.match(/^\s*_current = /gm) || []).length, 3, 'setWeather (a word whole), _set (through the ground), reset - and nothing else writes the worn word');
   assert.match(sim, /function applyFromArray\(climateIndex, nowMinutes\) \{\s*\n\s*return _set\(weatherForClimate\(climateIndex\), climateIndex, nowMinutes\);/);
   assert.match(sim, /if \(!_set\(next, climateIndex, nowMinutes\)\) return false;[^\n]*\n\s*_jumps\+\+;/, 'the respawn roll through the ground, the jump kept');

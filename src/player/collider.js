@@ -880,7 +880,7 @@ export class Collider {
    * the caller's own - which is written and returned in place of a fresh
    * result, the normal into the caller's array ([0, 0, 0] on a miss).
    * The travel steering casts a dozen feelers a frame through here
-   * (systems/travelSteer.js createColliderProbe) and owns one result for
+   * (systems/travel/travelSteer.js createColliderProbe) and owns one result for
    * all of them. Without it the answer is the one it always was.
    */
   raycastHit(origin, dirW, maxDist, filter = null, out = null) {

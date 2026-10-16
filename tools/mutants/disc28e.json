@@ -609,7 +609,7 @@
   },
   {
     "name": "SHIP-SAIL-coins-words-dropped",
-    "file": "src/systems/partyTravelLaw.js",
+    "file": "src/systems/party/partyTravelLaw.js",
     "old": "  if (!afford && coinsShort) return `You cannot afford the journey (${Math.max(0, Math.round(computed?.piecesCost ?? 0))} gold in coin for the inns).`;\n",
     "new": "",
     "tests": [
@@ -672,7 +672,7 @@
   },
   {
     "name": "FPS-VSYNC-browser-offered-it",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  if (key in SHELL_AT_LAUNCH && inDesktopShell()) return 'restart';",
     "new": "  if (key in SHELL_AT_LAUNCH) return 'restart';",
     "tests": [
@@ -681,7 +681,7 @@
   },
   {
     "name": "FPS-VSYNC-app-never-offers-it",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  if (key in SHELL_AT_LAUNCH && inDesktopShell()) return 'restart';",
     "new": "  if (false) return 'restart';",
     "tests": [

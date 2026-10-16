@@ -83,7 +83,7 @@ test('AUDIT REST III A1: the world host\'s one home stands the save\'s camps out
 
 test('AUDIT REST III D1: a held bounty\'s day moves with the lane - brought online, a bounty taken half an hour before keeps its day and its kills (the world months ahead of the offline calendar lapsed it, kills and all, on the first tick); taken offline again, the same; the minute a bounty was paid moves with it (mutants: the rows left on the old clock; the paid minutes left)', async () => {
   const { onlineCopyOf, offlineCopyOf, BOUNTY_RECORD_VENDOR } = await import('../src/systems/offlineCopy.js');
-  const { BOUNTY_VENDOR, lapseBounties, bountyMinutesLeft, BOUNTY_LIFETIME_MINUTES } = await import('../src/systems/bountyBoard.js');
+  const { BOUNTY_VENDOR, lapseBounties, bountyMinutesLeft, BOUNTY_LIFETIME_MINUTES } = await import('../src/systems/bounty/bountyBoard.js');
   assert.equal(BOUNTY_RECORD_VENDOR, BOUNTY_VENDOR, 'the record\'s own name');
   const own = 523530, world = 865550;
   const snap = { classicMinutes: own, modData: { [BOUNTY_VENDOR]: { held: [{ id: 'b1', takenAt: own - 30, killed: 2 }], paid: [], dropped: [], paidAt: { s1: own - 600 }, droppedKilled: {}, v: 2 } } };
@@ -103,7 +103,7 @@ test('AUDIT REST III D1: a held bounty\'s day moves with the lane - brought onli
 });
 
 test('AUDIT REST III C1: a night my own clock owes me is carried inside the party\'s minute - the party just off the road (the journey moved the clock, the next night due at once), a mate who rests 45 s after the first night sleeps me; a short rest still waits the minute out, and the debt is asked only of a move the minute holds back (mutants: the debt never asked; always owed)', async () => {
-  const { createNightWatch, PARTY_NIGHT_GAP_MS } = await import('../src/systems/partyRestLaw.js');
+  const { createNightWatch, PARTY_NIGHT_GAP_MS } = await import('../src/systems/party/partyRestLaw.js');
   const w = createNightWatch();
   const t0 = 1_000_000;
   assert.equal(w.moved('a', true, t0 - 5000, t0, true), false, 'the first sight is a baseline');
@@ -123,7 +123,7 @@ test('AUDIT REST III C1: a night my own clock owes me is carried inside the part
 test('AUDIT REST III B2: "Bring online" keeps a rest supply standing as the owner\'s own decor offline too - the item and the piece it stood as leave the realm\'s copy (online, taking the piece down handed it to the pack); another piece and another own item stay (mutant: the decor unread; the piece left standing)', async () => {
   const { setPref } = await import('../src/systems/uiPrefs.js');
   const { applyCustoms } = await import('../src/systems/realmCustoms.js');
-  const { createRestItem, REST_ITEM, _setRestItemsOnlineForTests } = await import('../src/systems/restItems.js');
+  const { createRestItem, REST_ITEM, _setRestItemsOnlineForTests } = await import('../src/systems/rest/restItems.js');
   setPref('survival', true);
   const vase = { templateIndex: 205, group: 'Miscellaneous', value: 5 };
   const house = () => ({
@@ -148,7 +148,7 @@ test('AUDIT REST III B2: "Bring online" keeps a rest supply standing as the owne
 test('AUDIT REST III B4: the line "Your rest supplies will stay..." is said of the character\'s own - a General Store\'s shelf in the scene cache, a dungeon\'s loot pile and a dead foe\'s pack are stripped from the copy all the same, and counted for nothing; a chest the character filled counts (mutant: every list counted)', async () => {
   const { setPref } = await import('../src/systems/uiPrefs.js');
   const { applyCustoms, customsLines } = await import('../src/systems/realmCustoms.js');
-  const { createRestItem, REST_ITEM, _setRestItemsOnlineForTests } = await import('../src/systems/restItems.js');
+  const { createRestItem, REST_ITEM, _setRestItemsOnlineForTests } = await import('../src/systems/rest/restItems.js');
   const { LOOT_CONTAINER_TYPES } = await import('../src/systems/sceneCache.js');
   setPref('survival', true);
   const shelf = { containerType: LOOT_CONTAINER_TYPES.ShopShelves, items: [createRestItem(REST_ITEM.Tonic), createRestItem(REST_ITEM.Firewood)] };
@@ -180,7 +180,7 @@ test('AUDIT REST III B3: Firewood feeds the emptiest of my Campfires in reach th
   const { createCamps } = await import('../src/scenes/camps.js');
   const { createSurvivalItem } = await import('../src/systems/survival/items.js');
   const { TEMPLATE } = await import('../src/systems/survival/food.js');
-  const { createRestItem, REST_ITEM, REST_ITEM_TEXT } = await import('../src/systems/restItems.js');
+  const { createRestItem, REST_ITEM, REST_ITEM_TEXT } = await import('../src/systems/rest/restItems.js');
   const { fireLit } = await import('../src/systems/survival/camp.js');
   setPref('survival', true); setWorldMinutes(1000);
   const said = [];
@@ -226,7 +226,7 @@ test('AUDIT REST III B5, H12 by behaviour (lens F8): an Ember Jar\'s fire is nam
   const { createCamps } = await import('../src/scenes/camps.js');
   const { createSurvivalItem } = await import('../src/systems/survival/items.js');
   const { TEMPLATE } = await import('../src/systems/survival/food.js');
-  const { createRestItem, REST_ITEM } = await import('../src/systems/restItems.js');
+  const { createRestItem, REST_ITEM } = await import('../src/systems/rest/restItems.js');
   const { CAMP_TEXT, campInfoText, CAMP_KIND } = await import('../src/systems/survival/camp.js');
   assert.equal(campInfoText({ kind: CAMP_KIND.Fire, jar: true, wear: 1, litUntil: 99 }, 10, true), CAMP_TEXT.seeOwnJar);
   assert.equal(campInfoText({ kind: CAMP_KIND.Fire, jar: true, wear: 1, litUntil: 99 }, 10, false), CAMP_TEXT.seeJar);

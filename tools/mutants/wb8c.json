@@ -303,7 +303,7 @@
   },
   {
     "name": "WB8c-the-card-without-marks",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": ": [`${boss.name}, ${boss.title}`, marksLineOf(c.t.day)])] };",
     "new": ": [`${boss.name}, ${boss.title}`])] };",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "WB8c-the-marks-said-every-line",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "&& marksDay !== t.day) { marksDay = t.day;",
     "new": "&& true) { marksDay = t.day;",
     "tests": [

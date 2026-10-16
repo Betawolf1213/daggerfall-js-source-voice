@@ -1,7 +1,7 @@
 [
   {
     "name": "QUEST-FOE-LINE-any-resource",
-    "file": "src/systems/questFoeLine.js",
+    "file": "src/systems/quest/questFoeLine.js",
     "old": "  if (!quest?.getResource?.(behaviour.targetSymbol)?.isFoe) return null;",
     "new": "  if (!quest) return null;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "QUEST-FOE-LINE-before-the-journal",
-    "file": "src/systems/questFoeLine.js",
+    "file": "src/systems/quest/questFoeLine.js",
     "old": "  if (!quest.getLogMessages?.()?.length) return null;   // Quest.GetLogMessages: none once the quest has ended, too\n",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "QUEST-FOE-LINE-nameless-quest",
-    "file": "src/systems/questFoeLine.js",
+    "file": "src/systems/quest/questFoeLine.js",
     "old": "  return title ? `${QUEST_FOE_PREFIX}${title}` : null;",
     "new": "  return `${QUEST_FOE_PREFIX}${title}`;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "QUEST-FOE-LINE-the-kind-label",
-    "file": "src/systems/questFoeLine.js",
+    "file": "src/systems/quest/questFoeLine.js",
     "old": "  const title = questTitleOf(quest.displayName);",
     "new": "  const title = quest.displayName;",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "QUEST-FOE-LINE-no-line",
-    "file": "src/systems/questFoeLine.js",
+    "file": "src/systems/quest/questFoeLine.js",
     "old": "  return line ? [line] : [];",
     "new": "  return [];",
     "tests": [

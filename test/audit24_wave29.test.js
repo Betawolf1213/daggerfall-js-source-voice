@@ -7,7 +7,7 @@ import {
   ITEM_BROKEN_TEXT_ID, FORBIDDEN_EQUIPMENT_TEXT_ID,
 } from '../src/systems/equip.js';
 import { weaponSkillUsed } from '../src/characters/weapons.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const w = (templateIndex, name) => ({ group: 'Weapons', templateIndex, material: 0, name: name ?? templateByIndex(templateIndex)?.name });

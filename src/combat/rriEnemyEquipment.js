@@ -21,8 +21,8 @@ import {
   WEAPONS_ENUM, ARMOR_ENUM, ARROW_TEMPLATE,
 } from './enemyEquipment.js';
 import { dice100 } from './formulas.js';
-import { mintCondition, setItemFields, templateByIndex, itemBaseValue } from '../systems/itemTemplates.js';
-import { rriModule, customItemClass } from '../systems/rriItems.js';
+import { mintCondition, setItemFields, templateByIndex, itemBaseValue } from '../systems/item/itemTemplates.js';
+import { rriModule, customItemClass } from '../systems/roleplayRealismItems/rriItems.js';
 import { MOBILE_TYPES } from '../characters/mobileTypes.js';
 import { DYE_COLORS } from '../characters/dyes.js';
 import { WEAPON_MATERIALS } from '../characters/weapons.js';

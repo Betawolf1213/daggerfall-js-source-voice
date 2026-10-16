@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mintWallet, walletContents, walletLedger, walletLine, walletLines, setWalletSilver, _resetWalletForTests } from '../src/systems/walletItem.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
 import { withDom } from './invdrag.mjs';

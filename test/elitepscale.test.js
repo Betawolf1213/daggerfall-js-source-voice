@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { calculateAttackDamage, registerFormulaOverride } from '../src/combat/formulas.js';
-import { partyFoeHits, partyFoeLoses, partyGroupMembers, partyToughness } from '../src/systems/partyScale.js';
+import { partyFoeHits, partyFoeLoses, partyGroupMembers, partyToughness } from '../src/systems/party/partyScale.js';
 import { ELITE_DAMAGE_SCALE, ELITE_HEALTH_SCALE, ELITE_FOE_MULTIPLIER } from '../src/world/spawnedDungeons.js';
 import { FOES_FRAME_MAX, PARTY_MAX, FOE_HEALTH_MAX } from '../src/net/wire.js';
 

@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { srand, rand } from '../src/formats/dfRandom.js';
 import { randomTextureTableClassic, applyTextureTable, DEFAULT_TEXTURE_TABLE, dungeonTextureTable, randomTextureTableAlternate, isMainStoryDungeon, ALTERNATE_VALID_ARCHIVES } from '../src/world/dungeonTextures.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import { layoutRdbBlock, getModelMatrix, isActionDoor, ACTION_FLAGS, TRIGGER_FLAGS, RDB_SIDE } from '../src/world/rdbLayout.js';
 import { collectDungeonLights } from '../src/world/dungeonLights.js';
 import { layoutDungeon } from '../src/world/dungeonLayout.js';

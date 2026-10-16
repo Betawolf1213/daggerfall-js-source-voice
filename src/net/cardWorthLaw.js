@@ -1,7 +1,7 @@
 // @ts-check
 // CARDS9 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 32; Mac: "Lets build every inch of this"): A CARD'S
 // WORTH AND ITS CUSTOMS - pure, one home for the client and the account service (the Worker bundles net/ and never
-// systems/, so the card's template and its worth live here, and systems/iliacItems.js re-exports them).
+// systems/, so the card's template and its worth live here, and systems/iliac/iliacItems.js re-exports them).
 //
 // THE WORTH. Section 26 left a card "worth a coin" until CARDS9 gave it sources; now it has them, and a card is worth
 // what its tier is worth (CARD_WORTH, MEASURE): a common five gold, an aetheric boss's own twelve hundred. The worth is
@@ -29,7 +29,7 @@
 import { cardById, STARTER_DECK } from './iliacCards.js';
 import { carriedItemLists } from './realmGoldLaw.js';
 
-/** The card's template (systems/iliacItems.js ILIAC_CARD_TEMPLATE, pinned equal: the Worker bundles no systems/). */
+/** The card's template (systems/iliac/iliacItems.js ILIAC_CARD_TEMPLATE, pinned equal: the Worker bundles no systems/). */
 export const ILIAC_CARD_TEMPLATE = 581;
 /** MEASURE (CARDS9): a card's worth in gold by its tier. */
 export const CARD_WORTH = Object.freeze({ common: 5, magic: 20, rare: 75, legendary: 300, aetheric: 1200, artifact: 2500, gilded: 5000 });
@@ -37,13 +37,13 @@ export const CARD_WORTH = Object.freeze({ common: 5, magic: 20, rare: 75, legend
 export const cardWorth = (/** @type {any} */ id) => CARD_WORTH[cardById(id)?.tier] ?? 0;
 /** Whether a save's record is a card (the template and a card it names - the group is the client's to check). */
 export const isCardRecord = (/** @type {any} */ rec) => rec?.templateIndex === ILIAC_CARD_TEMPLATE && typeof rec?.card === 'string';
-/** AUDIT CARDS-6 A1: the sealed pack's template (systems/iliacItems.js CARD_PACK_TEMPLATE, the law's own handed on, as
+/** AUDIT CARDS-6 A1: the sealed pack's template (systems/iliac/iliacItems.js CARD_PACK_TEMPLATE, the law's own handed on, as
  *  the card's is - the account service reads it here). */
 export const CARD_PACK_TEMPLATE = 583;
 /** AUDIT CARDS-6 A1: whether a save's record is a sealed pack (its template - the group is the client's to check). */
 export const isPackRecord = (/** @type {any} */ rec) => rec?.templateIndex === CARD_PACK_TEMPLATE;
 /** AUDIT CARDS-6 A1, MEASURE: A SEALED PACK'S WORTH - what its five cards come to on the average, rounded up to the
- *  gold: four slots of systems/cardSources.js PACK_SLOT_TIERS and a last of PACK_TOP_TIERS, each tier at CARD_WORTH,
+ *  gold: four slots of systems/card/cardSources.js PACK_SLOT_TIERS and a last of PACK_TOP_TIERS, each tier at CARD_WORTH,
  *  is 170.05 (pinned equal to the tables: the Worker bundles no systems/). The mean and not the pack's top (2,580 - an
  *  artifact on top): a pack is counted at what it holds, so a character's allowance brought as packs is the cards it
  *  would bring opened, and a pack at its top would be worth more than a whole level-15 allowance. */
@@ -55,7 +55,7 @@ export const cardRecordWorth = (/** @type {any} */ rec) => (isCardRecord(rec) ? 
 /**
  * AUDIT CARDS-6 A2: THE OWNER'S OWN THINGS STANDING IN A ROOM - each cached scene's DECOR2a `decorOwn` (one item a piece,
  * by the piece's id), as `{ scene, id, rec }`: what the cards' customs reads beside every list (carriedItemLists). Gold's
- * customs never reads them - no coin and no letter of credit stands (systems/decorItems.js DECOR_OWN_KEPT_BACK) - but a
+ * customs never reads them - no coin and no letter of credit stands (systems/decor/decorItems.js DECOR_OWN_KEPT_BACK) - but a
  * card and a pack do, and come back to the pack online.
  * @param {any} snap @returns {{ scene: any, id: string, rec: any }[]}
  */

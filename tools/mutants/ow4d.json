@@ -31,7 +31,7 @@
   },
   {
     "name": "OW4D2-gone-listed",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (spawnGone(s)) continue;   // AUDIT OW4 D2: its time ran out - gone, whatever the index still holds\n",
     "new": "",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW4D2-gone-by-default",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "spawnGone = () => false,",
     "new": "spawnGone = () => true,",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "OW4D4-unfiled-marked",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "!rolls(x, y) || !filed(x, y) || indexed(x, y)) continue;",
     "new": "!rolls(x, y) || indexed(x, y)) continue;",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "OW4D4-unrolled-marked",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "|| !rolls(x, y) || !filed(x, y)",
     "new": "|| !filed(x, y)",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "OW4D4-built-twice",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "|| !filed(x, y) || indexed(x, y)) continue;",
     "new": "|| !filed(x, y)) continue;",
     "tests": [
@@ -141,7 +141,7 @@
   },
   {
     "name": "OW4D4-a-square",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "      if (Math.hypot(x - at.x, y - at.y) > range || !rolls(x, y)",
     "new": "      if (!rolls(x, y)",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "OW4D4-off-the-map-y",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "for (let y = Math.max(0, at.y - r); y <= Math.min(MAX_MAP_PIXEL_Y - 1, at.y + r); y++) {",
     "new": "for (let y = at.y - r; y <= at.y + r; y++) {",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "OW4D4-off-the-map-x",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "for (let x = Math.max(0, at.x - r); x <= Math.min(MAX_MAP_PIXEL_X - 1, at.x + r); x++) {",
     "new": "for (let x = at.x - r; x <= at.x + r; x++) {",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "OW4D4-nothing-stands-kept",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "      if (loc) out.push({ x, y, loc });",
     "new": "      out.push({ x, y, loc });",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "OW4D6-feet-again",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  const prev = legs?.length > 1 ? legs[legs.length - 2] : null;",
     "new": "  const prev = null;",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "OW4D6-join-passed-over",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  if (prev.at) return { x: prev.at.x, z: prev.at.z };\n",
     "new": "",
     "tests": [
@@ -331,7 +331,7 @@
   },
   {
     "name": "OW4D6-the-last-leg-itself",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "legs[legs.length - 2]",
     "new": "legs[legs.length - 1]",
     "tests": [
@@ -351,7 +351,7 @@
   },
   {
     "name": "OW4D7-nearest-twelve",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  rest.sort((a, b) => (b.found ? 1 : 0) - (a.found ? 1 : 0) || nearer(a, b));",
     "new": "  rest.sort(nearer);",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "OW4D7-found-last",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "(b.found ? 1 : 0) - (a.found ? 1 : 0) || nearer(a, b)",
     "new": "(a.found ? 1 : 0) - (b.found ? 1 : 0) || nearer(a, b)",
     "tests": [
@@ -371,7 +371,7 @@
   },
   {
     "name": "OW4D7-kept-found-first",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "...rest.slice(0, max)].sort(nearer);",
     "new": "...rest.slice(0, max)];",
     "tests": [

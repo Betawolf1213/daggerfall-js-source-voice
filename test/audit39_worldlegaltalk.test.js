@@ -15,11 +15,11 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArrestFlow } from '../src/scenes/arrestFlow.js';
 import { CRIMES, REPUTATION_LOSS_PER_CRIME } from '../src/systems/court.js';
-import { buildBuildingDirectory, whereIsAnswer } from '../src/systems/talkTopics.js';
+import { buildBuildingDirectory, whereIsAnswer } from '../src/systems/talk/talkTopics.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';
 import { BUILDING_TYPES, isNamedBuildingType } from '../src/world/buildingNames.js';
 import { WEATHER_TYPES } from '../src/world/weather.js';
-import { currentWeather, setWeather } from '../src/systems/weatherSim.js';
+import { currentWeather, setWeather } from '../src/systems/weather/weatherSim.js';
 import { setSeed } from '../src/formats/dfRandom.js';   // R33: the surrender's classic draw, pinned
 
 const HERE = dirname(fileURLToPath(import.meta.url));

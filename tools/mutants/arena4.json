@@ -942,7 +942,7 @@
   },
   {
     "name": "ARENA4-BOARD-OFFER-PRESSES",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "acts = left > 0 ? [{ act: 'accept', label: O().accept, why: null }, { act: 'decline', label: O().decline, why: null }] : [];",
     "new": "acts = [];",
     "tests": [
@@ -951,7 +951,7 @@
   },
   {
     "name": "ARENA4-BOARD-OFFLINE-PRESS",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const why = st === 'off' ? O().whyOffline :",
     "new": "const why = st === 'off' ? null :",
     "tests": [
@@ -960,7 +960,7 @@
   },
   {
     "name": "ARENA4-BOARD-ACCOUNT-LADDER",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const oo = { ...o, ladder: on.board.me?.ladder ?? o.ladder };",
     "new": "const oo = { ...o };",
     "tests": [
@@ -969,7 +969,7 @@
   },
   {
     "name": "ARENA4-BOARD-OFFER-CLOCK",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "Math.ceil(((hall.offer.until ?? 0) - now) / 1000)",
     "new": "Math.ceil((hall.offer.until ?? 0) / 1000)",
     "tests": [
@@ -978,7 +978,7 @@
   },
   {
     "name": "ARENA4-BOARD-UNQUEUE",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "if (st === 'queued') { acts = [{ act: 'unqueue',",
     "new": "if (st === 'queued') { acts = [{ act: 'queue',",
     "tests": [
@@ -987,7 +987,7 @@
   },
   {
     "name": "ARENA4-BOARD-RATING-CHIP",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "rating: me.pvp ? O().ratingChip(me.pvp.rating) : null,",
     "new": "rating: null,",
     "tests": [
@@ -996,7 +996,7 @@
   },
   {
     "name": "ARENA4-BOARD-LAUREL-YOURS",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "laurelYou: !!me.banner && t.laurel === me.banner,",
     "new": "laurelYou: !!me.banner && t.laurel !== me.banner,",
     "tests": [
@@ -1005,7 +1005,7 @@
   },
   {
     "name": "ARENA4-BOARD-TITLE-PER-TIER",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const tiers = Math.floor(Math.max(0, n | 0) / (BOUTS_PER_TIER + 1));",
     "new": "const tiers = Math.floor(Math.max(0, n | 0) / BOUTS_PER_TIER);",
     "tests": [
@@ -1014,7 +1014,7 @@
   },
   {
     "name": "ARENA4-BOARD-ONLINE-RULES",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  rules.push({ head: O().rules.head, lines: [...O().rules.lines] });\n",
     "new": "",
     "tests": [
@@ -1023,7 +1023,7 @@
   },
   {
     "name": "ARENA4-BOARD-WATCH",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "acts: [{ act: 'spectate', label: W().watch, why: busy ? busyWhy : null }],",
     "new": "acts: [],",
     "tests": [
@@ -1032,7 +1032,7 @@
   },
   {
     "name": "ARENA4-BOARD-CHAMPION-NAMED",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "champion: board.champion ? O().champion(board.champion.name) : O().noChampion },",
     "new": "champion: O().noChampion },",
     "tests": [
@@ -1041,7 +1041,7 @@
   },
   {
     "name": "ARENA4-BOARD-ME-PINNED",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "pinned: b.pinned ? row(b.pinned, cells(b.pinned)) : null, total: b.total });",
     "new": "pinned: null, total: b.total });",
     "tests": [

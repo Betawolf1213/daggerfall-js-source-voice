@@ -1,5 +1,5 @@
 // KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8, 10.7 and 18): THE KING'S GAMBIT ONLINE, ON THE
-// CLIENT - the mirror (systems/gambitRemoteTable.js): the room's table and its clock, the online session (the guest's eye
+// CLIENT - the mirror (systems/gambit/gambitRemoteTable.js): the room's table and its clock, the online session (the guest's eye
 // turned about the board's middle, the law's check before a command goes, one command on its way at a time, the other
 // side's actions shown GAMBIT_REMOTE_GAP_MS apart, the relay's result after its beat); the cloth's turned board, every
 // cell where the host's lies; the client's session (sent only to a relay that runs it, through its gate; a frame heard
@@ -8,13 +8,13 @@
 // and its words; the watcher's board and presses; Play a regular instead standing up from the board.
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { RemoteGambitTable, RemoteGambitSession, overBy, GAMBIT_SENT_MS } from '../src/systems/gambitRemoteTable.js';
+import { RemoteGambitTable, RemoteGambitSession, overBy, GAMBIT_SENT_MS } from '../src/systems/gambit/gambitRemoteTable.js';
 import {
   newGambitTable, gambitSit, gambitReady, gambitTick, gambitCommand, validGambitOut, flipCell,
   GAMBIT_FIRST_MS, GAMBIT_REMOTE_GAP_MS, GAMBIT_TURN_END_MS, GAMBIT_TURN_MS,
 } from '../src/net/gambitTable.js';
 import { autoFill, KG_POINT_BUDGET, KG_COLS, KG_ROWS, reachable, pieceById } from '../src/net/kingsGambit.js';
-import { GAMBIT_RESULT_MS } from '../src/systems/gambitTableSession.js';
+import { GAMBIT_RESULT_MS } from '../src/systems/gambit/gambitTableSession.js';
 import { gambitPlaces } from '../src/world/gambitCloth.js';
 import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
 import { relaySupportsGambit, RELAY_VERSION } from '../src/net/wire.js';

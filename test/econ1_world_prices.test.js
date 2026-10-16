@@ -12,9 +12,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { worldRegionPricesOn, worldRegionPrice, dayRng, DAY_SALT, setSharedClock, sharedClockOn, runDayChange, MINUTES_PER_DAY, setWorldPriceTilt, worldPriceTiltOn, worldPriceCheckpointDays } from '../src/systems/worldTick.js';
 import { regionPriceAdjustment, priceWalkStep, initialRegionPrice, setWorldPriceSource, worldPriceSourceOn, updateRegionalPrices, applyPriceConditionFlags, worldPriceTiltOf, PRICE_ADJUSTMENT_MIN, PRICE_ADJUSTMENT_MAX } from '../src/systems/shopStock.js';
-import { REGION_COUNT, REGION_FLAGS, createRegionConditions, conditionFlag, turnOnConditionFlag } from '../src/systems/regionConditions.js';
+import { REGION_COUNT, REGION_FLAGS, createRegionConditions, conditionFlag, turnOnConditionFlag } from '../src/systems/region/regionConditions.js';
 import { ONLINE_EPOCH_MINUTES } from '../src/net/wire.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -135,7 +135,7 @@ test('ECON1 by source: the shared clock installs and removes the world\'s price 
   assert.ok(sh.includes("const adjusted = priceWalkStep(adj, Math.trunc((merchants.power - regionFaction.power) / 5), rolls());"), 'the player\'s step through the same home, tilted');
   assert.ok(sh.includes("applyPriceConditionFlags(conditions, i, adjusted, rolls);"), 'the flag half, one home');
   assert.equal((sh.match(/Math\.trunc\(51 \* adj \/ 50\)/g) ?? []).length, 1, 'the 51/50 arithmetic has one home');
-  for (const f of ['src/scenes/world.js', 'src/scenes/worldModes.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js', 'src/ui/nativeTrade.js', 'src/systems/tradeModes.js', 'src/systems/guildServiceActions.js', 'src/systems/repairService.js', 'src/systems/quest/machine.js']) {
+  for (const f of ['src/scenes/world.js', 'src/scenes/worldModes.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js', 'src/ui/nativeTrade.js', 'src/systems/tradeModes.js', 'src/systems/guild/guildServiceActions.js', 'src/systems/repairService.js', 'src/systems/quest/machine.js']) {
     assert.equal(/regionPrices\[/.test(rd(f)), false, `${f} reads the region\'s index through the seam, never the player\'s table`);
   }
   assert.match(w, /const dayRolls = powerMinute \|\| \(worldArms && conditionMinute\) \? dayRollsFor\(i, rolls, DAY_SALT\.powers\) : null;\s*if \(powerMinute\) \{/, 'the powers walk as WORLD6b left them: the day\'s rolls, the player\'s state (LIVED1: minted on the minutes an arm reads, the world\'s arms)');

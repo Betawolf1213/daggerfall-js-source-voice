@@ -19,7 +19,7 @@ import { troubleOf, troubledTrip } from '../src/systems/livingWorld/trouble.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { lwRng, textSeed } from '../src/systems/livingWorld/seed.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
-import { applyTransfer } from '../src/systems/itemTransfer.js';
+import { applyTransfer } from '../src/systems/item/itemTransfer.js';
 import { CRIMES } from '../src/systems/crimes.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { audio } from '../src/systems/audio.js';

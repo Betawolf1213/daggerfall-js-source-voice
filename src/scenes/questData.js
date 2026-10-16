@@ -12,7 +12,7 @@
 // tables load from one place.
 
 import { loadQuestTables } from '../systems/quest/tables.js';
-import { applyForageFix } from '../systems/foragingLaw.js';   // FORAGE-FIX: Foraging's quest and list patches, applied as they are read
+import { applyForageFix } from '../systems/foraging/foragingLaw.js';   // FORAGE-FIX: Foraging's quest and list patches, applied as they are read
 
 const tableFiles = import.meta.glob('../../vendor/dfu-quests/Tables/*.txt', { query: '?raw', import: 'default' });
 const questFiles = import.meta.glob('../../vendor/dfu-quests/Quests/*.txt', { query: '?raw', import: 'default' });

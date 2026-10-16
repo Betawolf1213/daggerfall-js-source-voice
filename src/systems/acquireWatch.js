@@ -34,10 +34,10 @@
 // PURE: no DOM, no clock. The face (ui/lootBanner.js) builds its banners from what this answers.
 // ═══════════════════════════════════════════════════════════════════
 
-import { rarityAttr, RARITIES } from './lootRarity.js';
-import { isIliacCard } from './iliacItems.js';
+import { rarityAttr, RARITIES } from './loot/lootRarity.js';
+import { isIliacCard } from './iliac/iliacItems.js';
 import { cardById } from '../net/iliacCards.js';
-import { isAmmunition } from './itemTemplates.js';
+import { isAmmunition } from './item/itemTemplates.js';
 
 /** The item field the watcher writes: true, or absent (itemFields.js declares it). */
 export const ACQUIRED_FIELD = 'acquired';
@@ -81,7 +81,7 @@ export const isAcquired = (item) => item?.[ACQUIRED_FIELD] === true;
 
 // ── THE CODEX'S DOOR ────────────────────────────────────────────────
 // LOOT10's first find of a Legendary, an Aetheric or a Gilded record says "<name> - a Legendary! It joins your codex."
-// and chimes (systems/lootCodex.js noteFind). On Enhanced Plus the banner announces the same piece in the same breath,
+// and chimes (systems/loot/lootCodex.js noteFind). On Enhanced Plus the banner announces the same piece in the same breath,
 // so the codex hands its find to a PRESENTER - the banner's (ui/lootBanner.js) - which says it on the banner, or
 // declines and the codex says its line as it always has. The slot lives here, a leaf both reach, so the HUD's graph
 // never imports the codex and the codex never imports a face (systems/notify.js's law: the model decides, the face draws).

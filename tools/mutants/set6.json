@@ -91,7 +91,7 @@
   },
   {
     "name": "SET6-the-roll-before-the-graded-pieces",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  const pieces = [];\n  const first = rolls() < SPOILS_LEGENDARY ? 'legendary' : 'rare';",
     "new": "  const pieces = [];\n  rollRegalia(rolls);\n  const first = rolls() < SPOILS_LEGENDARY ? 'legendary' : 'rare';",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SET6-the-drop-never-laid",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  if (regalia) pieces.push({ item: regalia, tier: regalia.rarity });\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SET6-the-rung-out-of-its-place",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "aetheric:  Object.freeze({ rank: 4,",
     "new": "aetheric:  Object.freeze({ rank: 6,",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SET6-the-roll-taking-it",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "if (!item || !ROLLED_TIERS.includes(tier)) return item;",
     "new": "if (!item || tier === 'common' || !RARITIES[tier] || tier === 'artifact') return item;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SET6-the-record-field-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  aetheric: str(),   // SET6: an Aetheric piece's record (systems/aetheric.js) - Ruhn's Regalia\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SET6-the-daedric-prefix",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "|| item?.legendary || item?.aetheric || item?.gilded) return { name: base, material: '' };",
     "new": "|| item?.legendary || item?.gilded) return { name: base, material: '' };",
     "tests": [

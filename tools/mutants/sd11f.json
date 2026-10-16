@@ -64,7 +64,7 @@
   },
   {
     "name": "SD11f-the-toll-at-the-rifts-pitch",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "distanceModel: 'linear', pitch: T.pitch })",
     "new": "distanceModel: 'linear', pitch: 1 })",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD11f-the-toll-a-fifth",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "export const SD_HOME_TOLL = Object.freeze({ pitch: 4 / 3,",
     "new": "export const SD_HOME_TOLL = Object.freeze({ pitch: 3 / 2,",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD11f-a-toll-that-throws",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "  } catch { return false; }   // a toll that cannot sound never costs the way home",
     "new": "  } finally { /* a toll that cannot sound never costs the way home */ }",
     "tests": [

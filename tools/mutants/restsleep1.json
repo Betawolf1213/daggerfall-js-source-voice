@@ -28,7 +28,7 @@
   },
   {
     "name": "RESTSLEEP1-a-short-rest-sleeps-a-minute",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  paySleep(s, kind, NIGHT_MINUTES, now, rules);",
     "new": "  paySleep(s, kind, 1, now, rules);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RESTSLEEP1-the-arc-off-still-pays",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  if (!rules || !s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "new": "  if (!s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RESTSLEEP1-a-vampire-sleeps-off-a-frozen-debt",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  if (!rules || !s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "new": "  if (!rules || !s || typeof s !== 'object') return false;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RESTSLEEP1-a-record-minted-for-nobody",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  const s = entity?.survival;",
     "new": "  const s = entity ? (entity.survival ??= { sleepDebt: 0, notes: {} }) : null;",
     "tests": [

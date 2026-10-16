@@ -11,9 +11,9 @@ import { MOD_SETTINGS, isTextKey, modSetting, _resetModSettings, KEY_MIGRATIONS 
 import { DEFAULT_BINDINGS, DEFAULT_SHARES, MOD_ACTIONS } from '../src/systems/inputActions.js';
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';
 import { domCodeForKeyCode } from '../src/systems/keyCodes.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { openState, planWagonToggle } from '../src/systems/inventorySession.js';
-import { STORAGE_CONTEXT } from '../src/systems/horseCartLaw.js';
+import { STORAGE_CONTEXT } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool, KEY_HORSE } from '../src/scenes/horseCartPool.js';
 import { HorseNameTooltip, HORSE_TOOLTIP_Y } from '../src/ui/horseNameTooltip.js';
 import { InputMessageBoxWindow, INPUT_BOX_HINT } from '../src/ui/inputMessageBox.js';
@@ -82,7 +82,7 @@ test('AUDIT HCC H3: DFU\'s per-mod save data rides EVERY save - the envelope nam
   const extras = restorePlayer({}, JSON.parse(JSON.stringify(snap)));
   assert.deepEqual(extras.modData, { [V]: rec }, 'the record comes back from the slot, wherever the save was taken');
   assert.equal(restorePlayer({}, JSON.parse(JSON.stringify(snapshotPlayer(entity, {})))).modData, null, 'a save without it restores null - OnStartLoad\'s fresh start');
-  const save = rd('src/systems/save.js');
+  const save = rd('src/systems/save/save.js');
   assert.match(save, /smallerDungeonsState = 0, modData = null \} = \{\}\) \{/);
   assert.match(save, /modData: snap\.modData \?\? null, terrainScale: snap\.terrainScale \?\? null \};/);   // TERRAIN-SCALE1 rides after it
   assert.match(rd('src/scenes/dungeonContext.js'), /modData: opts\.horseCartSave \|\| opts\.modSaveRecords \? \{ \.\.\.\(opts\.horseCartSave \? \{ 'horse-cart-and-cargo': opts\.horseCartSave\(\) \} : \{\}\), \.\.\.\(opts\.modSaveRecords\?\.\(\) \?\? \{\}\) \} : null,/);   // WA1: every registered mod's record rides beside it
@@ -134,7 +134,7 @@ test('AUDIT HCC H4: the live switch turned off suspends the machine (its transie
   pool.attach({ suspend: () => calls.push('suspend'), view: () => ({ state: { HorseName: '' } }), lateUpdate() {} });
   pool.setEnabled(false); pool.setEnabled(false);
   assert.deepEqual(calls.filter((c) => c === 'suspend'), ['suspend'], 'once, on the edge');
-  assert.match(rd('src/systems/horseCart.js'), /function suspend\(\) \{ clearAllTransientState\(\); \}/);
+  assert.match(rd('src/systems/horse/horseCart.js'), /function suspend\(\) \{ clearAllTransientState\(\); \}/);
 });
 
 test('AUDIT HCC U6: HorseNameTooltipController\'s label - the classic face is DFU\'s line at native y 112, centred; the pool answers my own horse within the mod\'s 3.2 and nothing else (mutants: a peer\'s horse named; the name from past the reach)', async () => {

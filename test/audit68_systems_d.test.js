@@ -12,13 +12,13 @@ import { TEMPLATES } from '../src/systems/useItem.js';
 import { equipItem, equipTableOf, addEquipChangeListener, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { assignQuickslot, swapQuickslot, clearQuickslots } from '../src/systems/quickslots.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields, itemBaseValue } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import { createPellets } from '../src/systems/thunderlock.js';
 import { unitWeightInKg, itemWeight, weightForMaterial as inventoryWeightForMaterial } from '../src/systems/inventory.js';
 import { weightForMaterial } from '../src/characters/weapons.js';
-import { itemLongName, itemInfoTextId, itemDamageLine, itemHandsLine, itemStatRows, expandItemInfo, INFO_TEXT } from '../src/systems/itemInfo.js';
+import { itemLongName, itemInfoTextId, itemDamageLine, itemHandsLine, itemStatRows, expandItemInfo, INFO_TEXT } from '../src/systems/item/itemInfo.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { HORSE_VIEWS, HORSE_WALK_FRAMES, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
+import { HORSE_VIEWS, HORSE_WALK_FRAMES, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horse/horseCartLaw.js';
 import { createImmersiveFootsteps, readFootstepSettings, IMMERSIVE_FOOTSTEPS_VENDOR } from '../src/systems/immersiveFootsteps.js';
 import { makeWorld } from './hccWorld.mjs';
 

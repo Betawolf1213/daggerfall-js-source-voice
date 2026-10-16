@@ -13,10 +13,10 @@ import {
 } from '../src/systems/smithItems.js';
 import { KIT_CEILING, pieceLines } from '../src/net/recipeLaw.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
-import { reducedRepairCost } from '../src/systems/guildServices.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { reducedRepairCost } from '../src/systems/guild/guildServices.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { useItem } from '../src/systems/useItem.js';
-import { conditionPercentage } from '../src/systems/itemTemplates.js';
+import { conditionPercentage } from '../src/systems/item/itemTemplates.js';
 import { setHotbarSlot, hotbarEntryForItem, hotbarPress, useQuickslot } from '../src/systems/quickslots.js';
 import { readFileSync } from 'node:fs';
 

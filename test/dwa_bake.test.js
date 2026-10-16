@@ -489,7 +489,7 @@ test('DW-A: the client falls back to this thread - no Worker, a factory that thr
 
 async function realWorld() {
   const { MapsFile } = await import('../src/formats/mapsFile.js');
-  const { buildMapDict } = await import('../src/systems/mapDirectory.js');
+  const { buildMapDict } = await import('../src/systems/map/mapDirectory.js');
   const { smoothLocationNeighbourhood } = await import('../src/world/terrainHelper.js');
   const woods = new WoodsFile();
   woods.load(new Uint8Array(readFileSync(join(ARENA2, 'WOODS.WLD'))));

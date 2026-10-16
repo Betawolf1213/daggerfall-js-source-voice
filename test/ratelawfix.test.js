@@ -6,10 +6,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
-import { mapPixelWorldOrigin } from '../src/systems/travelPaths.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
+import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
 import { TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../src/systems/timeScale.js';
-import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };

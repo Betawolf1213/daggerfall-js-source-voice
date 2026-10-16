@@ -12,7 +12,7 @@ import {
   WAY_PREF, WAY_MARK_CSS, WAY_STEP_DY, WAY_SNAP_M, WAY_LOOK_CELLS, WAY_HERE_M, WAY_FIELD_S, WAY_REFIELD_S,
   trailCells, nearestCell, wayField, wayPoint, createWayOut, cellColumn, stepKey, stepHitCuts, WAY_STEP_END_M,
 } from '../src/systems/wayOut.js';
-import { automapTrailTick, TRAIL_FILL_M, SCAN_INTERVAL_S, teleporterConnection } from '../src/systems/automap.js';
+import { automapTrailTick, TRAIL_FILL_M, SCAN_INTERVAL_S, teleporterConnection } from '../src/systems/automap/automap.js';
 import { walkSpeed, runSpeed } from '../src/player/motor.js';
 import { QUEST_MARK_CSS } from '../src/ui/questMarks.js';
 import { FEATURES } from '../src/systems/features.js';

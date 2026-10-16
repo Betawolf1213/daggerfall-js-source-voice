@@ -2,7 +2,7 @@
 // loud or overbearing; tree and flora sprite movement with wind") - THE WIND SEEN AND HEARD, off ONE MAPPING.
 // Three consumers arrive at once, so the wind→units mapping the hosts had written out three times (twice for the
 // rain, once for the grass, the rain still on the fixed gust WIND1 had replaced) becomes one home, systems/
-// windDrive.js, read once a frame; the wisps (render/windWisps.js), the loop (systems/windAudio.js) and the flats'
+// windDrive.js, read once a frame; the wisps (render/windWisps.js), the loop (systems/wind/windAudio.js) and the flats'
 // sway (renderer.js BB_VS) take its numbers with the rain and the grass. Each has its row on the Features home, the
 // player's own online, and a kill door.
 import './modsOff.js';
@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   windDrive, legacyGust, floraSwayOf, floraSwayOn, WIND_NONE, WIND_STEP_DT_MAX, LAB_WIND_RATE, WIND_SLIDER_MAX,
-} from '../src/systems/windDrive.js';
+} from '../src/systems/wind/windDrive.js';
 import {
   WindWispsRenderer, wispCount, wispsOn, WISP_MAX, WISP_FLOOR, WISP_BOX, WISP_VS, WISP_FS, WISP_LOOK, WISP_GUST_DIV,
   WISP_CLOCK_PERIOD, WISP_WOBBLE_CYCLES, WISP_RATE_STEPS, wispClock,
@@ -19,7 +19,7 @@ import {
 import { glslFunctions } from './glsl.mjs';
 import {
   createWindAudio, windGain, windPitchFor, windSoundOn, WIND_GAIN_MAX, WIND_SLEW_PER_S, WIND_GAIN_FLOOR, WIND_BED_KEY,
-} from '../src/systems/windAudio.js';
+} from '../src/systems/wind/windAudio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { AMBIENT_SOUNDS } from '../src/systems/ambientEffects.js';
 import { TALL_FLAT_HEIGHT } from '../src/world/flatDistance.js';
@@ -27,7 +27,7 @@ import { labWindSlider } from '../src/render/labGrass.js';
 import { FEATURES } from '../src/systems/features.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { Renderer } from '../src/render/renderer.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -329,7 +329,7 @@ test('WIND3 the hosts: both exterior hosts read the one wind once a frame, feed 
     // a climate border stood there (windDrive.js floraSwayOf takes a Set); the exterior host has one climate
     const flora = host === 'src/scenes/world.js' ? 'natureSet' : 'natureArchive';
     assert.equal((s.match(new RegExp(`batch\\.sway = floraSwayOf\\(archive, ${flora}, (sib\\.)?size\\.h\\);`, 'g')) || []).length, 2, `${host}: the season's batch and the classic one tagged`);
-    for (const imp of ["from '../systems/windDrive.js'", "from '../render/windWisps.js'", "from '../systems/windAudio.js'"]) assert.ok(s.includes(imp), `${host}: imports ${imp}`);
+    for (const imp of ["from '../systems/wind/windDrive.js'", "from '../render/windWisps.js'", "from '../systems/wind/windAudio.js'"]) assert.ok(s.includes(imp), `${host}: imports ${imp}`);
   }
   assert.match(rd('src/scenes/world.js'), /\{ dir: wd\.dir, speed: wd\.slider \* wd\.gust, windV: wd\.windV, sway: floraSwayOn\(\) && wd\.on \}/, 'the grass takes the same answer');   // PIN MOVED (AUDIT MEADOW1): and the flats' own switch
 });

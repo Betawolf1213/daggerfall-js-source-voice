@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS, ONLINE_FORCED_PREFS, onlineForcedPref } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS, ONLINE_FORCED_PREFS, onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import { runCinematicFrontDoor } from '../src/ui/introScreen.js';
 import { MENU_THEME_GAIN } from '../src/systems/introTheme.js';
 

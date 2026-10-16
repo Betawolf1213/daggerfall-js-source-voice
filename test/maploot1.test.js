@@ -6,8 +6,8 @@ import { readFileSync } from 'node:fs';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { mountEnhancedInventory, itemLine } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
-import { randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot.js';
-import { potionRecipeIngredientNames } from '../src/systems/itemInfo.js';
+import { randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot/loot.js';
+import { potionRecipeIngredientNames } from '../src/systems/item/itemInfo.js';
 import { restoreDiscovery, hasDiscoveredLocationId, discoverRandomLocation } from '../src/systems/discovery.js';
 
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };

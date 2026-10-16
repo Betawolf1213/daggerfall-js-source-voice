@@ -126,7 +126,7 @@ swimming. The minute's band charges a swimmer holding still the swim's price: FA
 or 8 a game minute, a game minute every five real seconds. MEASURED through the ticker: 6.34 fatigue a real second at
 Swimming 5 (the bar gone in 16.8 minutes), 4.71 at Swimming 40, 1.59 at Swimming 100 or for an Argonian. At 0 in the
 water DFU's collapse is death, whatever the health: PlayerEntity.OnExhausted `SetHealth(0)`s a swimmer
-(`systems/rest.js` exhaustionOutcome, world.js onExhaustedExterior's `hurtPlayer(entity, entity.health)`), and the only
+(`systems/rest/rest.js` exhaustionOutcome, world.js onExhaustedExterior's `hurtPlayer(entity, entity.health)`), and the only
 line is the one after it. Nothing warns: no fatigue line exists in the port, only the HUD's bar - while each cast holds
 the eye on its meter for 5-85 s. A Lamia's fatigue rider (damage x 128 a hit; two in twenty of the underwater table)
 reaches the same death.
@@ -155,7 +155,7 @@ port kept it 1:1 in the three hosts a swimmer can collapse in (`scenes/world.js`
 `scenes/dungeonContext.js`). FISH-TIRED keeps the net's angler off the last quarter of the bar; the death itself stood
 for every swimmer, and for a Lamia's fatigue rider.
 
-**The fix** (`systems/rest.js` exhaustionOutcome, the three hosts): in the water a drain to nothing is `drown` - a
+**The fix** (`systems/rest/rest.js` exhaustionOutcome, the three hosts): in the water a drain to nothing is `drown` - a
 tenth of the health pool (`EXHAUSTED_SWIM_SHARE`, never nothing), and "You are too exhausted to swim - get out of the
 water!" on the HUD, with no box. The ticker drains to nothing once a game minute while the swimmer stays in the water,
 so MEASURED on the real ticker: from full health a drain at 5, 10 ... 50 real seconds, dead at 50 - where it was dead at
@@ -182,7 +182,7 @@ said "What you gather online is kept here" beside a pack filling with lumber. Sk
 Knife has no Use: a body is its only gesture. The same misreading is 30's CHOP-WAIT ("the woodcutting animation") and
 29h's report 2 (the pack's Pick-Axe beside a vein, For Mac 1).
 
-**The first fix** (TOOL-SAID, `systems/foragingInstall.js`, `ui/profPages.js`, `scenes/world.js` `setForagingHost`),
+**The first fix** (TOOL-SAID, `systems/foraging/foragingInstall.js`, `ui/profPages.js`, `scenes/world.js` `setForagingHost`),
 kept to laws 1 and 4: online, while the professions are the account's, a Use of the Wood-Axe, the Pick-Axe, the Sickle,
 the Basket or the Fishing-Net says after the mod's own words - in the same box, which the hotbar says too - that it earns
 no XP and where the profession is done, naming the node and the bound key ("No Logging XP from this. Logging is done at
@@ -293,7 +293,7 @@ Buy it?".
 **The fix.** RES-RING (`ui/exteriorAutomapWindow.js`, `ui/townSheet.js`): the stamp says `questMarked` on either arm, and
 the sheet's pen and ring read it; the classic plate's ladder is unchanged. RES-MARK (Port-Ledger A,
 `systems/answerPipeline.js`): a quest's own building (its row a quest resource's) is marked by one who knows, outdoors,
-whatever the roll; every other building keeps DFU's roll, and indoors never marks. HOME-PLAQUE (`systems/onlineHomes.js`
+whatever the roll; every other building keeps DFU's roll, and indoors never marks. HOME-PLAQUE (`systems/online/onlineHomes.js`
 `homeDoorName`, `scenes/worldModes.js`): a nameless house whose door has verbs to list is named with DFU's own word,
 "Residence" (Internal_Strings 50): its plaque stands, "Go in" lit, and the click goes in; the quest's residence reads
 apart by its name. `test/fb0930b_questresidence.test.js` (3), red on the code before; `answerpipeline`'s quest-person

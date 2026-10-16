@@ -11,22 +11,22 @@
 //   - THE LADDER PAID A CASTER ONLY IN PRICE AND TEMPO. The potency and wellspring lines, and the arcane three, capped as
 //     every line is (BAL9c).
 // Pinned by execution through the real cast engine's doors (scenes/hostMagic.js), the real applySpell (systems/
-// effects.js), the real mint (systems/lootRarity.js), the item law (systems/itemLaw.js) and the powers' hooks
-// (systems/lootPowers.js).
+// effects.js), the real mint (systems/loot/lootRarity.js), the item law (systems/item/itemLaw.js) and the powers' hooks
+// (systems/loot/lootPowers.js).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import * as SP from '../src/systems/spellPower.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import * as SP from '../src/systems/spell/spellPower.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
 import { applySpell } from '../src/systems/effects.js';
 import { savingChance, EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { SKILLS, skillValue } from '../src/systems/skills.js';
@@ -36,7 +36,7 @@ import { buildCustomCareer } from '../src/systems/customClass.js';
 import { masterSkill } from '../src/systems/masterSkills.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
-import { SPECIAL_ABILITY } from '../src/systems/rest.js';
+import { SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 
 const D = SKILLS.Destruction;
 const on = () => { _resetForTests(); setPref('lootRarity', true); LP._resetLootPowersForTests(); _resetSetPowersForTests(); setPlayerDoor(null); };

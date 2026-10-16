@@ -29,7 +29,7 @@
 //     table holds, both its schools mastered, and no signature spell but its own path's (arcanePaths.js pathFindings).
 //   - EVERY ITEM IT HOLDS (possessedItemLists) - the pack, the wagon, the bag, the furnisher's and the repairer's lists,
 //     what it set out or stored in its own rooms, a rented room's and a deed's chests, a boat's hold, a companion's pack -
-//     through the item law (systems/itemLaw.js), and a crafted piece against the service's own `products` (judgeProducts:
+//     through the item law (systems/item/itemLaw.js), and a crafted piece against the service's own `products` (judgeProducts:
 //     a provenance the service never minted, one minted for another template or material, or one it holds at a lower
 //     quality than the piece claims, is no craft). Never a list the world fills: a shop's shelf, a dungeon's chest, a
 //     body - the scene cache keeps a place's loot from the moment it is entered, and a piece sold to a counter stands on
@@ -39,8 +39,8 @@
 //     piles it dropped - picked up again, a pile is no gain). INT5's budget reads it.
 // ═══════════════════════════════════════════════════════════════════
 
-import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/itemLaw.js';
-import { valuablePiece } from '../../src/systems/itemIds.js';
+import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/item/itemLaw.js';
+import { valuablePiece } from '../../src/systems/item/itemIds.js';
 import { armsOf } from '../../src/net/siegeRef.js';   // INT7: the arms the token signs
 import { liquidWorthOf, deedsOf } from '../../src/net/realmGoldLaw.js';
 import { MAX_STAT_VALUE } from '../../src/systems/statMods.js';
@@ -120,7 +120,7 @@ export function groundItemLists(/** @type {any} */ save) {
 export const realmLoanOwedMax = (/** @type {number} */ level) => Math.trunc(Math.max(1, Math.trunc(level) || 1) * 5_000 * 1.1);
 
 /** Whether a piece is worth nothing to the economy: bound to its owner (the Broker's wares, a Sigil Stone - never sold or
- *  handed over, systems/itemBound.js) or a quest's (never sold). */
+ *  handed over, systems/item/itemBound.js) or a quest's (never sold). */
 const worthless = (/** @type {any} */ it) => it?.bound === true || lawTemplate(it?.templateIndex)?.bound === true || it?.questItem === true;
 
 /**
@@ -219,7 +219,7 @@ export function judgeSave(save, summary = null, o = {}) {
 }
 
 /** INT4: A PIECE'S KEY IN THE LEDGER - a crafted piece's provenance (the service minted it: no client can mint a fresh
- *  one), any other valuable piece's id (systems/itemIds.js valuablePiece - never a stack, nor a bound or quest piece) -
+ *  one), any other valuable piece's id (systems/item/itemIds.js valuablePiece - never a stack, nor a bound or quest piece) -
  *  or null, a piece the ledger does not follow. */
 export function ledgerKeyOf(/** @type {any} */ it) {
   if (!valuablePiece(it)) return null;

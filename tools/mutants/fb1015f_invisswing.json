@@ -29,7 +29,7 @@
   },
   {
     "name": "INVIS-SWING-the-illusion-unread",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "  if (concealment && blockedByIllusionEffect(seesThrough, concealment, rng)) return false;\n",
     "new": "",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "INVIS-SWING-the-seer-blinded",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "  if (concealment && blockedByIllusionEffect(seesThrough, concealment, rng)) return false;",
     "new": "  if (concealment && blockedByIllusionEffect(false, concealment, rng)) return false;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "INVIS-SWING-the-step-unconcealed",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "      if (noticeRoll(distM, reachM, stealth, { seesThrough, concealment, rng })) {",
     "new": "      if (noticeRoll(distM, reachM, stealth, { rng })) {",
     "tests": [

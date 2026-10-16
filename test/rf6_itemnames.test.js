@@ -21,14 +21,14 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { itemNameParts, itemLongName, resolveItemName, materialName, armorShouldShowMaterial, questLetterName } from '../src/systems/itemInfo.js';
-import { LOOT_MATRICES, generateItems, createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
-import { mintCondition, templateByIndex } from '../src/systems/itemTemplates.js';
+import { itemNameParts, itemLongName, resolveItemName, materialName, armorShouldShowMaterial, questLetterName } from '../src/systems/item/itemInfo.js';
+import { LOOT_MATRICES, generateItems, createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
+import { mintCondition, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { SOUL_TRAP_TEMPLATE } from '../src/systems/mysticism.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { itemLine } from '../src/ui/enhancedInventory.js';
 import { hoverLines } from '../src/systems/worldHover.js';   // WORLD-HOVER: the itemising is the MODEL's, not the draw's
 
@@ -122,7 +122,7 @@ test('RF6: the enhanced line and the plaque read the parts - the same name and m
 });
 
 test('RF6: no second derivation - the enhanced modules read the resolver, never materialName, resolveItemName or the raw record name for a label', () => {
-  const info = read('src/systems/itemInfo.js');
+  const info = read('src/systems/item/itemInfo.js');
   assert.match(info, /export function itemLongName\(item, opts\) \{\s*const \{ name, material \} = itemNameParts\(item, opts\);\s*if \(!material\) return name;\s*return formatText\(item\?\.group === 'Armor'\s*\? localizedText\('longArmorNameFormatString', '\{0\} \{1\}'\)\s*: localizedText\('longWeaponNameFormatString', '\{0\} \{1\}'\), material, name\);\s*\}/, 'the long name IS the join');
   const inv = read('src/ui/enhancedInventory.js');
   assert.match(inv, /const parts = itemNameParts\(item, \{ getQuest: deps\.getQuest \?\? null \}\);/, 'the line reads the parts, the quest machine through');

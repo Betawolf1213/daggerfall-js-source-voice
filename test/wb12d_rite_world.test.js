@@ -28,9 +28,9 @@ import { restoreModSaveRecords, modSaveRecords } from '../src/systems/modSaveDat
 import { spoilsList, createSpoilsPool, SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
 import { gateClaimVerdict, GATE_CLAIM_TEXT, createGateClaims } from '../src/net/gateClaims.js';
 import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
-import { createGateOmen, riteOmenLine } from '../src/systems/gateOmen.js';
+import { createGateOmen, riteOmenLine } from '../src/systems/gate/gateOmen.js';
 import { ritePost, omenPost } from '../src/net/gateHerald.js';
-import { isSigilStone } from '../src/systems/gateSpoils.js';
+import { isSigilStone } from '../src/systems/gate/gateSpoils.js';
 import { COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
 import { properName } from '../src/systems/champions.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
@@ -40,8 +40,8 @@ import { groupCamps } from '../src/world/campShared.js';
 import { OnlineSession } from '../src/net/online.js';
 import { RELAY_VERSION, RITE_HZ_MAX } from '../src/net/wire.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
-import { seededRng } from '../src/systems/wind.js';
-import { sigilParty } from '../src/systems/sigil.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { sigilParty } from '../src/systems/sigil/sigil.js';
 import { GLOBAL_SCALE } from '../src/player/activate.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

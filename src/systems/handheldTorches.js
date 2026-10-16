@@ -43,11 +43,11 @@
 // mod draws without that mod).
 
 import { modSettingsOf } from './modSettings.js';
-import { getBool, getInt } from './settings.js';
+import { getBool, getInt } from './settings/settings.js';
 import { liveStat } from './statMods.js';
 import { TEMPLATES, isLightSource } from './useItem.js';
 import { getItem, addItem } from './inventory.js';
-import { conditionWord, itemLongName } from './itemInfo.js';
+import { conditionWord, itemLongName } from './item/itemInfo.js';
 import { getItemHands, EQUIP_SLOTS, ITEM_HANDS, addEquipChangeListener } from './equip.js';   // HT6: the worn set's own door - the hand law runs at the equip moment too
 import { weaponTypeForItem, WEAPON_TYPES, NATIVE_W, NATIVE_H } from '../combat/fpsWeapon.js';
 import { weaponOffsetHeight } from '../ui/hudLarge.js';

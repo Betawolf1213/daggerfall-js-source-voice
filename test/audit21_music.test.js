@@ -14,7 +14,7 @@ import {
   MAGES_GUILD_FACTION, TAVERN_SONGS, MAGES_GUILD_SONGS, CASTLE_SONGS,
   DUNGEON_SONGS, SUNNY_SONGS, TEMPLE_GOOD_SONGS, selectSong, dungeonKey,
   SongManager, LOCATION_TYPES,
-} from '../src/systems/songManager.js';
+} from '../src/systems/song/songManager.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { CLASSIC_GAME_START_MINUTES, MINUTES_PER_DAY, worldMinutes } from '../src/systems/worldTick.js';
 
@@ -322,8 +322,8 @@ test('M-FM: Audio/AlternateMusic reaches the playlists, through ONE read', () =>
 
 test('M-FM: null asks the setting, an explicit flag overrides it', async () => {
   const { createMusicDirector } = await import('../src/scenes/shared.js');
-  const { setValue } = await import('../src/systems/settings.js');
-  const { DUNGEON_SONGS, DUNGEON_SONGS_FM } = await import('../src/systems/songManager.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
+  const { DUNGEON_SONGS, DUNGEON_SONGS_FM } = await import('../src/systems/song/songManager.js');
   // The FM set is a DIFFERENT set, or none of this is observable.
   assert.notDeepEqual([...DUNGEON_SONGS], [...DUNGEON_SONGS_FM]);
 

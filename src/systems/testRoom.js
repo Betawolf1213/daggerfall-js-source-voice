@@ -28,7 +28,7 @@ import { resurrectionSpell } from './resurrect.js';   // RESURRECT1: the sorcere
 import { applyHeadlessChargen } from './chargenSession.js';
 import { addItem } from './inventory.js';
 import { equipItem } from './equip.js';
-import { mintCondition, templateByIndex, itemBaseValue, setItemFields } from './itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
+import { mintCondition, templateByIndex, itemBaseValue, setItemFields } from './item/itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
 import { WEAPONS_ENUM, ARMOR_ENUM, createWeapon, ARROW_TEMPLATE } from '../combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from './armorMaterials.js';
 import { TRANSPORT_HORSE_TEMPLATE, hasHorse } from './inventorySession.js';   // TSR4: the mount is the pack's own question
@@ -36,7 +36,7 @@ import { BOOK_TEMPLATE, createBook } from './books.js';   // EB3: books in the p
 import { BOOK_ID_TITLES } from './booksData.js';
 import { setPref } from './uiPrefs.js';   // LR3: the loot door turns the ladder on for the session
 import { setModSetting } from './modSettings.js';   // FIELD BUGS 2026-09-29 (the sea) #5: the sea door turns Come Sail Away on
-import { applyRarity, LEGENDARIES, ROLLED_TIERS, exaltLegendary, WARDROBE_LEGENDARIES, ARCANE_LEGENDARIES, cursePiece, SOCKET_EMPTY, GEM_IDS, socketMax, addTechniqueLine } from './lootRarity.js';   // LR3: one of everything the ladder can mint; LOOT2: and an Exalted; LOOT15: the wardrobe's; LOOT16: a curse; TECH1: a technique; BAL9c: the arcane three
+import { applyRarity, LEGENDARIES, ROLLED_TIERS, exaltLegendary, WARDROBE_LEGENDARIES, ARCANE_LEGENDARIES, cursePiece, SOCKET_EMPTY, GEM_IDS, socketMax, addTechniqueLine } from './loot/lootRarity.js';   // LR3: one of everything the ladder can mint; LOOT2: and an Exalted; LOOT15: the wardrobe's; LOOT16: a curse; TECH1: a technique; BAL9c: the arcane three
 import { TECHNIQUE_IDS, TECHNIQUES, GAUNTLETS_TEMPLATE } from '../combat/techniqueRoster.js';   // TECH1: one piece a technique, to try them all
 import { AETHERIC_RECORDS, mintAetheric } from './aetheric.js';   // SET6: the Aetheric rung - Ruhn's Regalia, whole (RAID4b: and the raiding parties' three sets)
 import { mintHourlock, mintGilded, GILDED_RECORDS } from './gilded.js';   // GILDED1: the top rung's first record, to be seen and fired (its shot: createPellets, below); GILDED2: and the world's two
@@ -464,7 +464,7 @@ export async function applyTestCharacter(playerEntity, preset, { fetchBytes, spe
  * (any Test Room entry) hands the armory to a character no save ever marked, straight into a live session.
  * `snap()` is the boot's own pick of the save its load door restores (AUDIT FINAL F9: world.js bootSnap, main's MW-EARLY
  * F3 one parse - the check asked the save a second time); without it, `loadSlot(key)` and `mostRecent()`, the save
- * slots' own synchronous readers (systems/saveSlots.js).
+ * slots' own synchronous readers (systems/save/saveSlots.js).
  * @param {URLSearchParams} params
  * @param {{ snap?: () => any, loadSlot?: (key: number) => any, mostRecent?: () => ({ snap: any } | null) }} saves
  */

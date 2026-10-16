@@ -28,7 +28,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { verifySdReceipt } from '../../src/net/sdReceipt.js';
-import { seededRng } from '../../src/systems/wind.js';
+import { seededRng } from '../../src/systems/wind/wind.js';
 
 /** The account's grants on its row (`players.sd_honours`, migration 0088), bit by bit. */
 export const SD_HONOUR_TITLE = 1;
@@ -36,7 +36,7 @@ export const SD_HONOUR_AURA = 2;
 /** How often a kill's first write grants each: Hourbreaker one in four, The Turning Hour one in eight. */
 export const SD_TITLE_CHANCE = 1 / 4;
 export const SD_AURA_CHANCE = 1 / 8;
-/** The honours' own stream ('HOUR') off the claim's seed - never the spoils' (systems/sdSpoils.js draws the receipt's). */
+/** The honours' own stream ('HOUR') off the claim's seed - never the spoils' (systems/superDungeon/sdSpoils.js draws the receipt's). */
 export const SD_HONOURS_SALT = 0x484f5552;
 
 /** What a seed grants on its kill's first write - `{ title, aura }`. Pure. The claim's own draw feeds it (claimSd). */

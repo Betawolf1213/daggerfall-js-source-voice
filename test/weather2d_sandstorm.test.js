@@ -10,14 +10,14 @@ import { readFileSync } from 'node:fs';
 import { WEATHER_TYPES, FOG_SETTINGS, fogForWeather, weatherSunlightScale, precipitationForWeather, skyOffsetForWeather, weatherRng } from '../src/world/weather.js';
 import { WEATHER_SKY, weatherRow } from '../src/render/enhancedSky.js';
 import { VC_PROFILE, CELL_TINT, cellOf, packCells, CLOUD_FIELD_GLSL, MARCH_FS, FIELD_UNIFORMS } from '../src/render/volumetricClouds.js';
-import { VIOLENCE, createWindModel } from '../src/systems/wind.js';
+import { VIOLENCE, createWindModel } from '../src/systems/wind/wind.js';
 import { fieldFns, unit } from './cloudSky.mjs';
 import { LAB_DIM } from '../src/render/labGrass.js';
-import { PRECIP_PEAK, precipKind, soundWeather, createWeatherFront } from '../src/systems/weatherFront.js';
-import { CELL_WORDS, SAND_FROM, sandCountry, cellSeats, cellCandidate, fieldAt, baseWordOf } from '../src/systems/weatherField.js';
+import { PRECIP_PEAK, precipKind, soundWeather, createWeatherFront } from '../src/systems/weather/weatherFront.js';
+import { CELL_WORDS, SAND_FROM, sandCountry, cellSeats, cellCandidate, fieldAt, baseWordOf } from '../src/systems/weather/weatherField.js';
 import {
   resetWeatherSim, setWeatherFieldLaw, setSnowGroundLaw, sampleWeatherField, importClimateWeathers, currentWeather, currentWeatherRaw, WEATHER_ENUM, overGround, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { WindWispsRenderer, wispCount, SAND_LOOK, WISP_LOOK, WISP_MAX, WISP_FLOOR, WISP_FS, WISP_VS, WISP_GUST_DIV } from '../src/render/windWisps.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 

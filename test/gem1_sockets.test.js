@@ -17,22 +17,22 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as G from '../src/systems/gems.js';
 import * as RF from '../src/systems/reforge.js';
-import { linesOf } from '../src/systems/lootPowers.js';
+import { linesOf } from '../src/systems/loot/lootPowers.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields, templateByIndex, itemBaseValue } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, templateByIndex, itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import { computeEntityMods } from '../src/systems/entityMods.js';   // AUDIT GEM: a worn piece's wearer, folded
 import { stacksWith, isStackable } from '../src/systems/inventory.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
 import { rollCorpseKit } from '../src/systems/foeLootCap.js';
 import { equipItem } from '../src/systems/equip.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { rollSpoils } from '../src/systems/gateSpoils.js';
-import { rollSerpentSpoils } from '../src/systems/serpentSpoils.js';
-import { rollSdSpoils } from '../src/systems/sdSpoils.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
+import { rollSerpentSpoils } from '../src/systems/serpent/serpentSpoils.js';
+import { rollSdSpoils } from '../src/systems/superDungeon/sdSpoils.js';
 import { socketWells, socketChooser, markSocketFrame, wellText, GEM_GRADE_COLOURS } from '../src/ui/socketWells.js';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { UNSET_ASK } from '../src/ui/reforgeWindow.js';
@@ -374,11 +374,11 @@ test('GEM2 the world bosses: the Warden one gem, the Old Coil one to a ship that
     const strip = (h) => JSON.parse(JSON.stringify({ gold: h.gold, card: h.card, pieces: h.pieces.filter((p) => p.tier !== 'gilded').map((p) => { const { sockets, ...rest } = noTech(p.item); return { ...p, item: rest }; }) }));   // PIN MOVED (TECH1): and its technique; (GILDED2) and the Dragonfire Oath, the very last draw, set aside
     assert.deepEqual(strip(full), strip(bare), `seed ${k}`);
   }
-  assert.match(read('src/systems/gateSpoils.js'), /const card = bossCardRoll\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*(\/\/[^\n]*\n\s*)*const oath = rollDragonfireOath\(rolls\);\s*if \(oath\) pieces\.push\(\{ item: oath, tier: oath\.rarity \}\);\s*return \{ gold, pieces, sigil: sigilStone\(\), card, gems \};/);   // PIN MOVED (TECH1): and a weapon's technique after the gems; (GILDED2) the Dragonfire Oath after it, the door's last draw
-  assert.match(read('src/systems/serpentSpoils.js'), /const card = dealt \? bossCardRoll\('serpent', rolls\) : null;\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = dealt \? bossGems\('serpent', rolls\) : \[\];/);
-  assert.match(read('src/systems/sdSpoils.js'), /const card = bossCardRoll\('abyss', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('abyss', rolls\);/);
+  assert.match(read('src/systems/gate/gateSpoils.js'), /const card = bossCardRoll\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*(\/\/[^\n]*\n\s*)*const oath = rollDragonfireOath\(rolls\);\s*if \(oath\) pieces\.push\(\{ item: oath, tier: oath\.rarity \}\);\s*return \{ gold, pieces, sigil: sigilStone\(\), card, gems \};/);   // PIN MOVED (TECH1): and a weapon's technique after the gems; (GILDED2) the Dragonfire Oath after it, the door's last draw
+  assert.match(read('src/systems/serpent/serpentSpoils.js'), /const card = dealt \? bossCardRoll\('serpent', rolls\) : null;\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = dealt \? bossGems\('serpent', rolls\) : \[\];/);
+  assert.match(read('src/systems/superDungeon/sdSpoils.js'), /const card = bossCardRoll\('abyss', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('abyss', rolls\);/);
   // the hosts carry the rows: the world tick, every host's shared module and the headless law import them
-  for (const [f, re] of [['src/systems/worldTick.js', /^import '\.\/gems\.js';/m], ['src/scenes/shared.js', /import '\.\.\/systems\/gems\.js';/], ['src/systems/itemLaw.js', /^import '\.\/gems\.js';/m]]) assert.match(read(f), re, f);
+  for (const [f, re] of [['src/systems/worldTick.js', /^import '\.\/gems\.js';/m], ['src/scenes/shared.js', /import '\.\.\/systems\/gems\.js';/], ['src/systems/item/itemLaw.js', /^import '\.\/gems\.js';/m]]) assert.match(read(f), re, f);
   off();
 });
 

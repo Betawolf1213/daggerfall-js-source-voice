@@ -1,6 +1,6 @@
-// WAGONS1 (2026-10-09, Mac's three wagons): the kinds' law (systems/wagonKinds.js), their pictures (world/wagonArt.js),
+// WAGONS1 (2026-10-09, Mac's three wagons): the kinds' law (systems/wagon/wagonKinds.js), their pictures (world/wagonArt.js),
 // their parts (world/wagonModels.js), the cart's pool drawing them by kind (scenes/horseCartPool.js), the online word
-// saying which (systems/horseCartWire.js, net/wire.js's park record) and the capacity each carries (itemTransfer.js).
+// saying which (systems/horse/horseCartWire.js, net/wire.js's park record) and the capacity each carries (itemTransfer.js).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,20 +10,20 @@ import { createHash } from 'node:crypto';
 import {
   WAGON_KINDS, WAGON_KIND_ORDER, SMALL_CART_KG, activeWagonItem, activeWagonKind, wagonKgFor, wagonKgLimitOf, wagonHitchOf,
   newWagonItem, wagonKindOf, isWagonItem, wagonKindCode, wagonKindOfCode, stableWagonName,
-} from '../src/systems/wagonKinds.js';
+} from '../src/systems/wagon/wagonKinds.js';
 import { wagonArt, TEX, WAGON_ARCHIVE, BANDS, SIDE_Y0, SIDE_Y1 } from '../src/world/wagonArt.js';
 import {
   wagonGeometry, buildBakedWagonParts, wagonFaceSkin, MEASURED, LIFT, CART_REST_PITCH_DEG, cargoFor, seatsFor, doorFor, pitchedPoint,
   wagonIconModel, wagonPoolDeps, WAGON_MODEL_URLS,
 } from '../src/world/wagonModels.js';
 import { createHorseCartPool, CARAVAN_ENTER_ROW, KEY_WAGON, peerKey } from '../src/scenes/horseCartPool.js';
-import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import { validParkData } from '../src/net/wire.js';
-import { HITCHED_HORSE_LOCAL_Z, NORMAL_GROUND_OFFSET } from '../src/systems/horseCartLaw.js';
-import { WAGON_KG_LIMIT, planStore } from '../src/systems/itemTransfer.js';
-import { TRANSPORT_SMALL_CART, inventoryItemModel } from '../src/systems/itemTemplates.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
-import { resolveItemName } from '../src/systems/itemInfo.js';
+import { HITCHED_HORSE_LOCAL_Z, NORMAL_GROUND_OFFSET } from '../src/systems/horse/horseCartLaw.js';
+import { WAGON_KG_LIMIT, planStore } from '../src/systems/item/itemTransfer.js';
+import { TRANSPORT_SMALL_CART, inventoryItemModel } from '../src/systems/item/itemTemplates.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
+import { resolveItemName } from '../src/systems/item/itemInfo.js';
 
 const bakeOf = (kind) => JSON.parse(readFileSync(new URL(`../src/assets/wagons/${kind}.json`, import.meta.url), 'utf8'));
 const geo = Object.fromEntries(WAGON_KIND_ORDER.map((k) => [k, wagonGeometry(bakeOf(k))]));

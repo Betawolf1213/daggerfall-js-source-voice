@@ -25,7 +25,7 @@ import {
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings, flattenModPreset } from '../src/systems/modSettings.js';
 import { readWidgetSettings } from '../src/combat/weaponWidgetMotion.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { MATERIAL_NAMES } from '../src/systems/itemInfo.js';
+import { MATERIAL_NAMES } from '../src/systems/item/itemInfo.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { ARTIFACTS } from '../src/systems/artifactEffects.js';
 import { WEAPON_FILE, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';

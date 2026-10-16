@@ -22,10 +22,10 @@ import {
 import {
   homeTownBlocks, homeFootprintM2, homeSaleOffer, homeRefund, createOnlineHomes,
   homeForSaleLine, homeOfferLines, homeShortLine, homeSaleLines, homeSoldLine, homeBuyRows, homeHallBuyRow, hallOfferLabel,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { goldSum, accountWords, EMPIRE_ACCOUNT_WORDS, REGION_ACCOUNT_WORDS } from '../src/systems/homeWords.js';
 import { rentRowLabel, rentPickLines, rentDaysLines, rentConfirmLines, rentShortLine } from '../src/systems/homeRent.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createBankAccounts, createHouses, sellHouse, houseSellPrice, EMPIRE_ACCOUNT_REGION } from '../src/systems/banking.js';
 import { EXT_NUM_MAX_BLOCKS } from '../src/ui/automapCamera.js';
 import { accountRefusalText } from '../src/net/accountClient.js';

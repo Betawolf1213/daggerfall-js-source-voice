@@ -6,7 +6,7 @@
 // Travel Options' autopilot beelines: one bearing, latched a pixel at a
 // time, and a force pushed along it at up to a hundred times walking pace -
 // so a house, a wall or a boulder on the line is walked into and ground
-// against. systems/travelSteer.js is the port's own steering between the
+// against. systems/travel/travelSteer.js is the port's own steering between the
 // autopilot and the motor, and these pins FLY it: a body on a table, a
 // motor that steps the way player/motor.js steps (a fixed step scaled by
 // the clock, an accumulator that can carry one over), obstacles as boxes
@@ -23,12 +23,12 @@ import { readFileSync } from 'node:fs';
 
 import {
   createTravelSteer, steerDrive, travelFrameReach, createColliderProbe, TRAVEL_STEER, FEELER_HEIGHT, WALKABLE_NY,
-} from '../src/systems/travelSteer.js';
-import * as STEER from '../src/systems/travelSteer.js';   // TRAVEL-NAV2: read by name, so a pin on a constant the base lacks fails as an assertion
-import { TravelAutopilot, calculateYaw, rectDistance, ARRIVAL_BUFFER } from '../src/systems/travelAutopilot.js';
-import { readTravelOptionsSettings, createTravelOptions } from '../src/systems/travelOptions.js';
-import { TRAVEL_OPTIONS_TEXT, TRAVEL_NAV_TEXT } from '../src/systems/travelOptionsText.js';
-import { mapPixelWorldOrigin, E, W } from '../src/systems/travelPaths.js';
+} from '../src/systems/travel/travelSteer.js';
+import * as STEER from '../src/systems/travel/travelSteer.js';   // TRAVEL-NAV2: read by name, so a pin on a constant the base lacks fails as an assertion
+import { TravelAutopilot, calculateYaw, rectDistance, ARRIVAL_BUFFER } from '../src/systems/travel/travelAutopilot.js';
+import { readTravelOptionsSettings, createTravelOptions } from '../src/systems/travel/travelOptions.js';
+import { TRAVEL_OPTIONS_TEXT, TRAVEL_NAV_TEXT } from '../src/systems/travel/travelOptionsText.js';
+import { mapPixelWorldOrigin, E, W } from '../src/systems/travel/travelPaths.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { Collider } from '../src/player/collider.js';
 import { FIXED_DT, MAX_FRAME_DT, CAPSULE_RADIUS, STEP_OFFSET, SLOPE_LIMIT_DEG, DIAGONAL_FACTOR } from '../src/player/motor.js';
@@ -1133,7 +1133,7 @@ test('TRAVEL-NAV1 THE SWITCH: the port\'s own key on the mod\'s pane - on by def
 
 test('TRAVEL-NAV1 THE HOST: the steering rides the mod\'s own frame with THIS host\'s collider, the frame\'s dt before the update, and the motor\'s real travel after it', () => {
   const w = read('src/scenes/world.js');
-  assert.match(w, /import \{ createTravelSteer, createColliderProbe, steerDrive \} from '\.\.\/systems\/travelSteer\.js';/);
+  assert.match(w, /import \{ createTravelSteer, createColliderProbe, steerDrive \} from '\.\.\/systems\/travel\/travelSteer\.js';/);
   assert.match(w, /const travelNavProbe = createColliderProbe\(\{ collider, feet: \(\) => \(walkMode && playerSpawned \? player\.pos : cam\.pos\) \}\);/,
     'the feelers are cast through the host\'s own collider, from the feet the motor moves');
   assert.match(w, /const travelNavFrame = \{ speed: 0, dt: 0, scale: 1, asked: 0, ratio: SCENE_MAP_RATIO, strafe: 0 \};/);

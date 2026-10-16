@@ -15,5 +15,5 @@
   {"name": "MERCHANT-YARDS-the-people-walk-through", "file": "src/scenes/world.js", "old": "        if (yardSites?.length) carveYards(nav, yardSites);", "new": "        void carveYards;", "tests": ["test/merchantyards1.test.js"]},
   {"name": "MERCHANT-YARDS-the-counter-in-the-interior-slot", "file": "src/scenes/worldModes.js", "old": "    mountServiceWindow(win);   // the street's slot (townTalk's) - the interior's is never drawn outdoors", "new": "    interiorOverlay = win;", "tests": ["test/merchantyards1.test.js"]},
   {"name": "MERCHANT-YARDS-the-keepers-off-the-climate-alone", "file": "src/scenes/world.js", "old": "race = walkerRace(people, dfLocation.regionIndex);", "new": "race = walkerRace(people, null);", "tests": ["test/merchantyards1.test.js"]},
-  {"name": "MERCHANT-YARDS-the-second-horse-at-the-general-store", "file": "src/systems/wagonKinds.js", "old": "Buy another at a town's Stable.", "new": "Buy another at a General Store.", "tests": ["test/wagons3.test.js"]}
+  {"name": "MERCHANT-YARDS-the-second-horse-at-the-general-store", "file": "src/systems/wagon/wagonKinds.js", "old": "Buy another at a town's Stable.", "new": "Buy another at a General Store.", "tests": ["test/wagons3.test.js"]}
 ]

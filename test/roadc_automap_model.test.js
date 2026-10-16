@@ -22,14 +22,14 @@ import {
   enterDungeonAutomap, resetAutomapStore, buildRevealIndex, bindAutomapLayout,
   automapRevealTick, snapshotAutomap, restoreAutomap, getDungeonAutomap,
   PROTECTION_RAYCAST_OFFSET, HIT_DISTANCE_AGREEMENT, FLOOR_MARCH_STEP,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import {
   buildAutomapModel, normalizeAabb, aabbContains, automapWaterLevel,
   restoreMatchesLayout, AABB_TOLERANCE, ELEMENT_NAMES,
-} from '../src/systems/automapModel.js';
+} from '../src/systems/automap/automapModel.js';
 import { worldAabb } from '../src/player/activate.js';
 import { Collider } from '../src/player/collider.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -460,7 +460,7 @@ test('c2/S1 SOURCE PINS: action doors leave the entry set, the rows carry DFU id
   assert.match(ctx, /collider\.addMesh\('dungeon', cpu\.positions/, 'dungeon geometry is the one shared bucket');
 
   // the reveal law itself must never fall back to a single ray
-  const am = src('src/systems/automap.js');
+  const am = src('src/systems/automap/automap.js');
   assert.match(am, /HIT_DISTANCE_AGREEMENT = 0\.01/);
   assert.match(am, /PROTECTION_RAYCAST_OFFSET = 0\.1/);
   assert.equal(PROTECTION_RAYCAST_OFFSET, 0.1);

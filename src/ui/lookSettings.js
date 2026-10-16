@@ -9,7 +9,7 @@
 // sensitivity BASE, so a setting of 1.0 reproduces it exactly and the
 // shipped default of 2.0 is twice as fast - the same relationship
 // DFU's own default has to its base.
-import { getFloat, getBool } from '../systems/settings.js';
+import { getFloat, getBool } from '../systems/settings/settings.js';
 import { LOOK_SENSITIVITY_FIELD } from '../systems/gamepad.js';   // WIDGET-LOOK: PlayerMouseLook's serialized 2, one export
 
 /** Radians per pixel at MouseLookSensitivity 1.0 - the port's own

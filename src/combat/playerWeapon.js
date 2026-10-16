@@ -35,7 +35,7 @@ import { POSES } from '../characters/poses.js';
 import { calculateAttackDamage } from './formulas.js';
 import { isShieldTemplate } from '../systems/armorMaterials.js';   // a12: UpdateHands' IsShield leg
 import { equipDelayFor } from '../systems/equip.js';               // a12: ToggleHand's EquipDelayTimes[GroupIndex]
-import { getBool, getFloat, getInt } from '../systems/settings.js';   // AUDIT 28 W2b: MeleeAttackFriendlyProtection; W11: WeaponAttackThreshold, WeaponSwingMode
+import { getBool, getFloat, getInt } from '../systems/settings/settings.js';   // AUDIT 28 W2b: MeleeAttackFriendlyProtection; W11: WeaponAttackThreshold, WeaponSwingMode
 import { blowReaches, blowMult, scaleBlowDamage, playerBody } from './techniqueBlow.js';   // TECH1: a technique's blow - its shape and its weight, a leaf
 
 export const DEFAULT_WEAPON_REACH = 2.25;   // WeaponManager.cs:35

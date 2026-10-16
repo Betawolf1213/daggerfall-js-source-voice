@@ -21,7 +21,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare } from '../src/systems/quest/questShare.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/^﻿/, '');

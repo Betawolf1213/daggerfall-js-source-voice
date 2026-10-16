@@ -28,7 +28,7 @@ import { applyCustoms, liquidWealthOf, customsLines, customsAllowance, deedsOf }
 import { realmRefusalText } from '../src/systems/realmSaves.js';
 import { createBankAccounts, createHouses, allocateHouseToPlayer, ownsHouse, ownsShip, SHIP_TYPES, SHIP_INTERIOR_MAP_IDS } from '../src/systems/banking.js';
 import { interiorSceneName, LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
 import { goldStack } from '../src/systems/inventory.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

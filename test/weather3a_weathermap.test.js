@@ -1,6 +1,6 @@
 // WEATHER3 slice A (2026-09-22, Mac: "imagine a map, one location its
 // sunny, one is cloudy, one has a rainstorm, etc"): THE WORLD WEATHER
-// MAP - systems/weatherMap.js. Weather as systems born on the land,
+// MAP - systems/weather/weatherMap.js. Weather as systems born on the land,
 // drifting, growing and dying; the weather at a place a pure function of
 // the place and the minute; the table's odds held by construction.
 import { test } from 'node:test';
@@ -9,12 +9,12 @@ import {
   weatherAt, systemsNear, forecastAt, birthLaw, dayShares, exposure, targetShares, coverMeans,
   birthsIn, systemAt, bandAt, windAt, windPath, envelope, maxRadius, coreVolume, resetWeatherMap,
   SYSTEM_TYPES, PRIORITY, SAND_SHARE_OF_CLOUDY, CELL_OF, cellsOf, insideClip, radialOf, shapeFactor, searchReach,
-} from '../src/systems/weatherMap.js';
-import { WEATHER_TABLE, weatherTableFor, rollWeather, WEATHER_ENUM } from '../src/systems/weatherTable.js';
-import * as sim from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherMap.js';
+import { WEATHER_TABLE, weatherTableFor, rollWeather, WEATHER_ENUM } from '../src/systems/weather/weatherTable.js';
+import * as sim from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASONS } from '../src/systems/gameDate.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const YEAR = 405 * 360 * 1440;   // a classic minute in 3E 405
 const SEASON_DAYS = { [SEASONS.Winter]: [0, 60], [SEASONS.Spring]: [60, 150], [SEASONS.Summer]: [150, 240], [SEASONS.Fall]: [240, 330] };

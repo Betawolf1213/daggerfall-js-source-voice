@@ -182,7 +182,7 @@ owner's eyes, once.
 
 ## Online
 
-The mod is the room's (`systems/onlineLane.js`): its switch for the floor's
+The mod is the room's (`systems/online/onlineLane.js`): its switch for the floor's
 reason (collidable carriages at every gate), and Disable Normal Travel held
 **off** - so the map's trips stay Travel Options' walked journeys (TRAVEL-ONLINE
 whole) and a driver's fare is fast travel over land (a port's ship passage the

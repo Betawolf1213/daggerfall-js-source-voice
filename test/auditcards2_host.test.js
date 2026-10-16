@@ -13,21 +13,21 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDoc, all, text } from './decorFakes.mjs';
 import * as court from '../src/systems/court.js';
-import * as sess from '../src/systems/cardTableSession.js';
+import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor, cursorHeld } from '../src/player/pointerLock.js';
 import { nearestFreeSeat, takenSeats } from '../src/world/cardTables.js';
 import { HAND_NAMES } from '../src/net/cardLaw.js';
 import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars.js';
-import { RemoteCardTable } from '../src/systems/cardRemoteTable.js';
-import { isCardPack } from '../src/systems/iliacItems.js';
-import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';   // CARDS9: the house's packs at the table
+import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
+import { isCardPack } from '../src/systems/iliac/iliacItems.js';
+import { cardPackPrice, buyCardPack } from '../src/systems/card/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
 import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
-import { iliacGrade } from '../src/systems/iliacPatrons.js';
+import { iliacGrade } from '../src/systems/iliac/iliacPatrons.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
 
@@ -363,7 +363,7 @@ test('AUDIT CARDS-2 the panel in play and between hands: the buttons the law all
   // the phone: the panel never wider than the screen less its gutters
   const css = read('src/ui/cardTableHud.js');
   assert.match(css, /box-sizing:border-box;min-width:min\(520px,calc\(100vw - 32px\)\);max-width:min\(760px,calc\(100vw - 32px\)\)/);
-  assert.match(css, /import \{ BUY_IN_MIN_BB, BUY_IN_START_BB \} from '\.\.\/systems\/cardTableSession\.js';/);
+  assert.match(css, /import \{ BUY_IN_MIN_BB, BUY_IN_START_BB \} from '\.\.\/systems\/card\/cardTableSession\.js';/);
 });
 
 test('CARDS9/10 the house at its card table: a pack bought from the purse at the table\'s price, refused when the purse is short; "Play Iliac Hand" closes Hold\'em and opens the other game on the seat, a regular for every free chair; standing up closes it (mutants: the pack press; the iliac press)', () => {

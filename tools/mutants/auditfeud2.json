@@ -10,7 +10,7 @@
   },
   {
     "name": "AF2-R1-restore-bumped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (s?.sworn && s.companion?.items?.length && !r.sworn) { _state.list[i] = { ...s }; continue; }",
     "new": "if (s?.sworn && s.companion?.items?.length && !r.sworn) { _state.list[i] = { ...s, rev: (r.rev | 0) + 1 }; continue; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AF2-R2-history-read",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (s?.sworn && s.companion?.items?.length && !r.sworn) {",
     "new": "if (s?.sworn && s.companion?.items?.length && !r.sworn && (r.gone || r.fate === 'released' || (r.history ?? []).some((h) => h.deed === 'deserted' || h.deed === 'betrayed'))) {",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AF2-R3-tombstone-first",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "!s.defeated && !s.sworn && (r.gone || r.defeated || r.sworn)) {",
     "new": "!s.defeated && !s.sworn && (r.defeated || r.sworn)) {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AF2-R4-p2-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (p2) entity.revenant.p2 = p2;\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AF2-R5-spare-article",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "back.map((it) => takenName(it)).join(' and ')",
     "new": "back.map((it) => `The ${takenName(it)}`).join(' and ')",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AF2-R5-anchor",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ".replace(/^the\\s+/i, '')",
     "new": ".replace(/the\\s+/ig, '')",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AF2-R6-rout-wipes",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "} else if (deedName === 'fled') { r.escapes++; r.notice = null; }",
     "new": "} else if (deedName !== 'felled') { if (deedName === 'fled') r.escapes++; r.notice = null; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AF2-W3-peer-tagged",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!peer) Promise.resolve().then(() => { try { tagHit(entity, HIT_TAGS.weakness);",
     "new": "  if (true) Promise.resolve().then(() => { try { tagHit(entity, HIT_TAGS.weakness);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AF2-W4-word-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (door?.isPuppet?.(f) || !revenantRoutable(f, { now: wall })) continue;",
     "new": "if (!revenantRoutable(f, { now: wall })) continue;",
     "tests": [

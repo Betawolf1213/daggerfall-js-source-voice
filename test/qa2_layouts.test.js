@@ -19,14 +19,14 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { staticNpcData } from '../src/characters/staticNpc.js';
 import { collectInteriorPeople } from '../src/characters/interiorPeople.js';
-import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talkTopics.js';
+import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { configureLayoutPins, _resetLayoutPins, layoutRecordsOf, pinsFrom, setLayoutPins, recordHeldBack, recordStands, admitPinnedPacks } from '../src/systems/layoutPins.js';
 import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, worldOf, typeAtKey, mark, SPAWN } from './fb1004dTowns.mjs';
 import { stringHash } from '../src/formats/netRuntime.js';
-import { seededFirst } from '../src/systems/wind.js';
+import { seededFirst } from '../src/systems/wind/wind.js';
 import { getSeed, setSeed } from '../src/formats/dfRandom.js';
 
 loadTables();

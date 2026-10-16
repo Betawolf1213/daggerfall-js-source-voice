@@ -13,7 +13,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FEATURES, FEATURE_PREF_DEFAULTS, FEATURE_PREF_ONLINE, registerFeatureLane, featureLane, resolveControl, checkFeature } from '../src/systems/features.js';
 import { PREF_DEFAULTS, getPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import { ONLINE_FORCED_PREFS, ONLINE_PLAYERS_OWN_PREFS, declareOnlinePrefs, onlineForcedPref } from '../src/systems/onlineLane.js';
+import { ONLINE_FORCED_PREFS, ONLINE_PLAYERS_OWN_PREFS, declareOnlinePrefs, onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import '../src/world/landView.js';
 import '../src/world/outdoors.js';
 import '../src/systems/featureLanes.js';   // FT18: the wind, the quick slots and the blood lanes register themselves too
@@ -48,7 +48,7 @@ test('RF4: every prefs row declares its switch, and the shelf and the lane deriv
   const shelf = read('src/systems/uiPrefs.js');
   for (const [, c] of declared) assert.doesNotMatch(shelf, new RegExp(`^  ${c.key}:`, 'm'), `${c.key} is declared on its row, not the shelf`);
   assert.match(shelf, /\.\.\.FEATURE_PREF_DEFAULTS,/);
-  const lane = read('src/systems/onlineLane.js');
+  const lane = read('src/systems/online/onlineLane.js');
   for (const [, c] of declared) assert.doesNotMatch(lane, new RegExp(`^  ${c.key}:`, 'm'), `${c.key}'s online answer is the row's, not the lane's list`);
 });
 

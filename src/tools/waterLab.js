@@ -14,7 +14,7 @@ import { buildTerrainGrid, buildTerrainIndices, convertTilemap, TERRAIN_TILE_DIM
 import { waterBedOf } from '../world/waterBed.js';
 import { generateTileData, assignTiles } from '../world/terrainTiles.js';
 import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, TERRAIN_SIZE, STREAMING_TERRAIN_SCALE } from '../world/terrainSampler.js';
-import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../systems/wind.js';
+import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../systems/wind/wind.js';
 import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
 
 const params = new URLSearchParams(location.search);

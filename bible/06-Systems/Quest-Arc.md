@@ -2052,7 +2052,7 @@ One mutant, one kill.
 ### Wave 13 - the one file the mutation campaign could not kill
 
 The campaign over every line range AUDIT 24 touched came back with 44
-files and exactly one at **0 of 8 caught**: `src/systems/loot.js`. Every
+files and exactly one at **0 of 8 caught**: `src/systems/loot/loot.js`. Every
 survivor was a DATA TABLE constant flipped by one - a LootChanceMatrix
 cell, an ingredient template index.
 
@@ -2077,7 +2077,7 @@ SOURCE, NOT A PIN THAT READS THE TABLE.
 
 ### Wave 14 - the save file's own survivors
 
-The campaign left five live mutants in `src/systems/save.js` - the file
+The campaign left five live mutants in `src/systems/save/save.js` - the file
 that decides whether a loaded character is the character who was saved.
 Every one is a law with a comment above it and no test under it:
 
@@ -2746,7 +2746,7 @@ happen to share a name.
 The ninth was `DEFAULT_ACTIVATION_DISTANCE`, and **wave 22 of this
 audit added it**. `player/activate.js` has been the home of
 `PlayerActivate.cs:76-88` since the activation ray landed;
-`systems/talk.js` had a second set written out as bare `256 * 0.025`
+`systems/talk/talk.js` had a second set written out as bare `256 * 0.025`
 literals; and I added a fourth constant to the copy without noticing
 the first three. That is how a duplicate set gets built - one honest
 commit at a time, each of which looks local and correct.
@@ -6647,7 +6647,7 @@ drawn: a plain quest box closes on any press (DFU's ClickAnywhereToClose), and D
 ## QUEST-SHELF-DROP - an abandoned quest's item may be thrown away (2026-10-13)
 
 The lead dev: "when a player abandoned a quest he cant throw away the questitem for it". QUEST-SHELF keeps an abandoned
-quest whole, its items in the pack - and TransferItem's quest arm (`systems/itemTransfer.js questTransferRefused`,
+quest whole, its items in the pack - and TransferItem's quest arm (`systems/item/itemTransfer.js questTransferRefused`,
 DaggerfallInventoryWindow.cs:1486-1494) still refused every one the quest had not marked droppable, so a player who gave
 a quest up carried its letter, its package, its body part until they took it up again.
 

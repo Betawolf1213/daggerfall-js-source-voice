@@ -7,20 +7,20 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { RENOWN_LOOT_QUARTERS, RENOWN_LOOT_OFFLINE_QUARTERS, renownLootQuarters, lootEased } from '../src/systems/renownLoot.js';
-import { setSigilOnline, setSigilRenown, renownSigilStage } from '../src/systems/sigil.js';
+import { setSigilOnline, setSigilRenown, renownSigilStage } from '../src/systems/sigil/sigil.js';
 import { spawnEnemyLoot, plainFoeLootKeep } from '../src/scenes/hostCombat.js';
 import { rollCorpseKit, plainFoeRarityWeights, PLAIN_FOE_RARITY_WEIGHTS, PLAIN_FOE_RARITY_WEIGHTS_BEFORE } from '../src/systems/foeLootCap.js';
 import {
   installHealingSupply, healingSupplyChances, HEALING_RECIPE_KEY, MAGICKA_RECIPE_KEY,
   HEALING_ENEMY_CHANCE, HEALING_PILE_CHANCE, MAGICKA_ENEMY_CHANCE, MAGICKA_PILE_CHANCE,
 } from '../src/systems/healingSupply.js';
-import { installRestItemLoot, restLootChances, REST_FOE_CHANCES, REST_PILE_CHANCES, REST_ITEM } from '../src/systems/restItems.js';
-import { addEnemyLootExtras, addPileLootExtras } from '../src/systems/loot.js';
+import { installRestItemLoot, restLootChances, REST_FOE_CHANCES, REST_PILE_CHANCES, REST_ITEM } from '../src/systems/rest/restItems.js';
+import { addEnemyLootExtras, addPileLootExtras } from '../src/systems/loot/loot.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { enemyLootSpawned } from '../src/characters/enemyEntity.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { rarityOf } from '../src/systems/lootRarity.js';
+import { rarityOf } from '../src/systems/loot/lootRarity.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 
 installHealingSupply();   // the hosts' order (scenes/shared.js)

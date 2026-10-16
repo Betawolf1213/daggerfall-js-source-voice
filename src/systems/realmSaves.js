@@ -875,7 +875,7 @@ export const REALM_TRADE_POLL_MS = 1_500;
  * this call, and the half follows once the goods are reserved (a null half abandons it). Answers `{ ok, seq, items,
  * gold }` (what this side received), `{ ok: false, why, text }` (refused: nothing moved) or `{ ok: false, unknown: true }`
  * (no answer - the session ends).
- * `heldSaid`, the host's: the hold's notice as this session stands (systems/itemIds.js tradeHeldNotice), said again by a
+ * `heldSaid`, the host's: the hold's notice as this session stands (systems/item/itemIds.js tradeHeldNotice), said again by a
  * refusal over my own hold - the piece named, or staff's review (the Ring report: it said "something").
  * @param {{ session: any, half: any, wait?: (ms: number) => Promise<void>, now?: () => number, heldSaid?: (() => string | null) | null }} at
  */

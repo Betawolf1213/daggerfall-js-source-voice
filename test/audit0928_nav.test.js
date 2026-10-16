@@ -308,7 +308,7 @@ test('AUDIT PRE-MERGE 0928 N8: every canvas the port makes to read pixels back a
     assert.deepEqual(log.splice(0), [want, ['2d', null]], '_keyHands: the offscreen it reads, then the hands it writes');
     // the save window's shot
     const { SaveWindow } = await import('../src/ui/saveWindow.js');
-    const { SAVE_SHOT_PREFIX } = await import('../src/systems/saveSlots.js');
+    const { SAVE_SHOT_PREFIX } = await import('../src/systems/save/saveSlots.js');
     globalThis.localStorage = { getItem: (k) => (k === `${SAVE_SHOT_PREFIX}k1` ? 'data:image/jpeg;base64,X' : null), setItem() {}, removeItem() {}, key: () => null, length: 0 };
     globalThis.Image = class { set src(u) { this.width = 2; this.height = 2; this.onload?.(); } };
     const uploads = [];

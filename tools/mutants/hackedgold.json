@@ -118,7 +118,7 @@
   },
   {
     "name": "HACKED-GOLD-the-price-uncapped",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "    it.value = Math.min(it.value, Math.max(_priceCeiling(it), wireFloorOf(it)));",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "HACKED-GOLD-the-list-uncapped",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "    if (!lawRefuses(it)) out.push(lawPriced(it));",
     "new": "    if (!lawRefuses(it)) out.push(it);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "HACKED-GOLD-a-letter-priced",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "if (_priceCeiling && !VALUE_IS_IDENTITY_TEMPLATES.includes(it.templateIndex) && !BOAT_TEMPLATES.includes(it.templateIndex)) {",
     "new": "if (_priceCeiling && !BOAT_TEMPLATES.includes(it.templateIndex)) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "HACKED-GOLD-the-ceiling-unregistered",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "setItemLaw(itemFindings, worthCeiling);",
     "new": "setItemLaw(itemFindings);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "HACKED-GOLD-a-letter-unbounded",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  if (item.templateIndex === LETTER_OF_CREDIT_TEMPLATE && typeof item.value === 'number' && item.value > (classic ? CLASSIC_VALUE_MAX : GOLD_INT_MAX)) out.add('value');",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "HACKED-GOLD-a-classic-letter-at-the-ports-bound",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "item.value > (classic ? CLASSIC_VALUE_MAX : GOLD_INT_MAX)) out.add('value');",
     "new": "item.value > GOLD_INT_MAX) out.add('value');",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "HACKED-GOLD-a-coin-pile-unbounded",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "? GOLD_INT_MAX : LOOT_STACK_MAX);",
     "new": "? Number.MAX_SAFE_INTEGER : LOOT_STACK_MAX);",
     "tests": [
@@ -193,7 +193,7 @@
   },
   {
     "name": "HACKED-GOLD-the-law-version-unmoved",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "export const ITEM_LAW_VERSION = 5;",
     "new": "export const ITEM_LAW_VERSION = 3;",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "HACKED-GOLD-PRICE-CAP-an-honest-price-capped",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "    it.value = Math.min(it.value, Math.max(_priceCeiling(it), wireFloorOf(it)));",
     "new": "    it.value = Math.min(it.value, Math.max(_priceCeiling(it) / 2, wireFloorOf(it)));",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "HACKED-GOLD-PRICE-CAP-a-deed-capped",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "if (_priceCeiling && !VALUE_IS_IDENTITY_TEMPLATES.includes(it.templateIndex) && !BOAT_TEMPLATES.includes(it.templateIndex)) {",
     "new": "if (_priceCeiling && !VALUE_IS_IDENTITY_TEMPLATES.includes(it.templateIndex)) {",
     "tests": [

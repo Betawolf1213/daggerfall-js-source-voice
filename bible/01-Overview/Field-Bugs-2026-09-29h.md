@@ -193,7 +193,7 @@ world.js, and thirty-two days at x40 through the real ticker - the character liv
 **Why.** Come Sail Away's IsNearPort, ported loop for loop by CSA-H (`03-World/Come-Sail-Away.md`, Variants and
 ports): from X - range while below X + range - 1 on each axis - three pixels west and north at the default, one east
 and south, so a flagged port two pixels east or south was never near - asking MAPS.BSA's PortTownAndUnknown byte, which
-343 of 15,251 locations carry. What the map draws as a harbour is Travel Options' list (`systems/travelPorts.js`), and
+343 of 15,251 locations carry. What the map draws as a harbour is Travel Options' list (`systems/travel/travelPorts.js`), and
 35 of its 378 carry no byte. The refusal said nothing of where to go. No water is asked: the reporter's guess (the
 coast pushed back) is not it.
 

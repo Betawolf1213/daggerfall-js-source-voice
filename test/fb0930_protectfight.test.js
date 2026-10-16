@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const townsman = () => ({ level: 1, reflexes: 2, skills: new Array(40).fill(20), skillUses: new Array(40).fill(0), items: [], activeEffects: [],

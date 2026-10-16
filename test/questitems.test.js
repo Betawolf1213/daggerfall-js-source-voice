@@ -482,7 +482,7 @@ test('MUTATION: gold formula odd corners - the odd PriceAdjustment truncates, le
 test('MUTATION: FightersGuild AlterReward at rank 1 - the fixed-point trunc is not a round', async () => {
   // (trunc((11<<8)/10) * 1000) >> 8 = (281 * 1000) >> 8 = 1097; a
   // Math.round mutant reads 282 -> 1101.
-  const { alterReward } = await import('../src/systems/guilds.js');
+  const { alterReward } = await import('../src/systems/guild/guilds.js');
   assert.equal(alterReward(GUILD_GROUPS.FightersGuild, 1, 1000), 1097);
   assert.equal(alterReward(GUILD_GROUPS.MagesGuild, 1, 1000), 1000, 'every other guild is the identity');
 });

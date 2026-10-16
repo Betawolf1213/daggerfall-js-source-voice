@@ -1,7 +1,7 @@
 [
   {
     "name": "camping-costs-the-same-time",
-    "file": "src/systems/travel.js",
+    "file": "src/systems/travel/travel.js",
     "old": "  if (!sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "camping-becomes-the-faster-road",
-    "file": "src/systems/travel.js",
+    "file": "src/systems/travel/travel.js",
     "old": "  if (!sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "new": "  if (sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "tests": [

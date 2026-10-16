@@ -251,7 +251,7 @@
   },
   {
     "name": "ARENAARROWS-conjured-counted",
-    "file": "src/systems/arenaQuiver.js",
+    "file": "src/systems/arena/arenaQuiver.js",
     "old": "const counted = (it, template) => it?.templateIndex === template && !isSummoned(it) && !it.questItem;",
     "new": "const counted = (it, template) => it?.templateIndex === template && !it.questItem;",
     "tests": [
@@ -261,7 +261,7 @@
   },
   {
     "name": "ARENAARROWS-a-refund-past-the-mark",
-    "file": "src/systems/arenaQuiver.js",
+    "file": "src/systems/arena/arenaQuiver.js",
     "old": "    if (!(owed > 0)) continue;",
     "new": "    if (!(owed !== 0)) continue;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "ARENAARROWS-the-empty-stack-lost",
-    "file": "src/systems/arenaQuiver.js",
+    "file": "src/systems/arena/arenaQuiver.js",
     "old": "    addItem(items, { ...m.proto, stackCount: owed });",
     "new": "    if (items.some((it) => counted(it, m.template))) addItem(items, { ...m.proto, stackCount: owed });",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "ARENAARROWS-the-drop-handed-back",
-    "file": "src/systems/arenaQuiver.js",
+    "file": "src/systems/arena/arenaQuiver.js",
     "old": "    const owed = Math.min(m.count - now, loosed?.get(m.template) ?? 0);",
     "new": "    const owed = m.count - now;",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "ARENAARROWS-the-tally-unread",
-    "file": "src/systems/arenaQuiver.js",
+    "file": "src/systems/arena/arenaQuiver.js",
     "old": "loosed?.get(m.template) ?? 0",
     "new": "loosed?.get(m.template) ?? Infinity",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "CURSEOFFSAND-every-quest-kept-off",
-    "file": "src/systems/arenaGround.js",
+    "file": "src/systems/arena/arenaGround.js",
     "old": "  if (questName == null || !questNameIn(ARENA_GROUND_QUESTS, questName)) return false;",
     "new": "  if (questName == null) return false;",
     "tests": [
@@ -471,7 +471,7 @@
   },
   {
     "name": "CURSEOFFSAND-the-reach-inverted",
-    "file": "src/systems/arenaGround.js",
+    "file": "src/systems/arena/arenaGround.js",
     "old": ") < ARENA_GROUND_M;",
     "new": ") > ARENA_GROUND_M;",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "CURSEOFFSAND-the-levels-open",
-    "file": "src/systems/arenaGround.js",
+    "file": "src/systems/arena/arenaGround.js",
     "old": "  if (inArenaLevel) return true;\n",
     "new": "",
     "tests": [
@@ -541,7 +541,7 @@
   },
   {
     "name": "OWKIN-the-guild-never-matched",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (myTag && p?.gt && String(p.gt).toUpperCase() === String(myTag).toUpperCase()) return 'guild';\n",
     "new": "",
     "tests": [
@@ -551,7 +551,7 @@
   },
   {
     "name": "OWKIN-no-guild-of-mine-matched",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (myTag && p?.gt && ",
     "new": "  if (p?.gt && ",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "OWWHO-a-kin-switch-ignored",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (w[g] === false) return false;\n  return !(w.renown",
     "new": "  return !(w.renown",
     "tests": [
@@ -571,7 +571,7 @@
   },
   {
     "name": "OWWHO-the-floor-inverted",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": ">= w.renown;",
     "new": "< w.renown;",
     "tests": [
@@ -581,7 +581,7 @@
   },
   {
     "name": "OWNODEKM-the-reach-ignored",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (g === 'gathering' && w.nodeKm != null && Number.isFinite(m?.dist) && m.dist > w.nodeKm) return false;\n",
     "new": "",
     "tests": [
@@ -591,7 +591,7 @@
   },
   {
     "name": "OWWHO-travellers-never-filtered",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (g === 'travellers' && !playerShown(m, w)) return false;\n",
     "new": "",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "SD19-the-air-never-thins",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "export const sdAirNear = (d) => (Number.isFinite(d) ? 1 - smooth(SD_AIR.fullM, SD_AIR.edgeM, d) : 0);",
     "new": "export const sdAirNear = (d) => (Number.isFinite(d) ? 1 : 0);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD19-the-air-everywhere",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "export const sdAirNear = (d) => (Number.isFinite(d) ? 1 - smooth(SD_AIR.fullM, SD_AIR.edgeM, d) : 0);",
     "new": "export const sdAirNear = (d) => (Number.isFinite(d) ? 1 - smooth(SD_AIR.fullM, SD_AIR.edgeM, d) : 1);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD19-no-dusk",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  return SD_AIR.base + (1 - SD_AIR.base) * k;\n",
     "new": "  return SD_AIR.base;\n",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD19-the-day-unwrapped",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "const m = ((Number(minute) || 0) % 1440 + 1440) % 1440, dm = Math.abs(((m - SD_AIR.duskAt + 720) % 1440 + 1440) % 1440 - 720);",
     "new": "const m = Number(minute) || 0, dm = Math.abs(m - SD_AIR.duskAt);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD19-the-dusk-edge-hard",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "const k = dm >= SD_AIR.duskHalf ? 0 : 0.5 + 0.5 * Math.cos((Math.PI * dm) / SD_AIR.duskHalf);",
     "new": "const k = dm >= SD_AIR.duskHalf ? 0 : 1;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD19-the-weight-unlit",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "SD_AIR.max * clamp01(light) * sdAirNear(d) * sdAirDusk(minute);",
     "new": "SD_AIR.max * sdAirNear(d) * sdAirDusk(minute);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD19-the-weight-unbounded",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "SD_AIR.max * clamp01(light) * sdAirNear(d) * sdAirDusk(minute);",
     "new": "SD_AIR.max * light * sdAirNear(d) * sdAirDusk(minute);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD19-the-light-untinted",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "rgb[i] * (1 + (SD_BRASS_TINT[i] - 1) * clamp01(w || 0))",
     "new": "rgb[i]",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD19-the-banner-nameless",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "`${name || 'An Abyss Dungeon'}${w ? ` - ${w}` : ''}`",
     "new": "`An Abyss Dungeon${w ? ` - ${w}` : ''}`",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD19-the-banner-stateless",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "`${name || 'An Abyss Dungeon'}${w ? ` - ${w}` : ''}`",
     "new": "`${name || 'An Abyss Dungeon'}`",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD19-the-marks-line-one-omen",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "under ${O.map((o) => sdNameIn(o.name)).join(' and ')}.",
     "new": "under ${sdNameIn(O[0].name)}.",
     "tests": [

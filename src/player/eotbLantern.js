@@ -45,7 +45,7 @@
 import { RECORD_OFFSETS, ORIENTATIONS } from './eotbBillboard.js';
 import { createLanternSwing, stepLanternSwing, lanternSwingDown } from '../systems/lanternSwing.js';
 import { LANTERN_TEMPLATE } from '../systems/playerTorch.js';
-import { templateByIndex } from '../systems/itemTemplates.js';
+import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the one angle wrap
 
 /** The record of EOTB's wheel that shows the sprite's back, straight on (+4; +3 is the back three-quarter). */

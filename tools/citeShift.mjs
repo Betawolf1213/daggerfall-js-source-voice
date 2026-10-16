@@ -307,7 +307,7 @@ function main(argv) {
   const targets = (only.length ? only : changed).filter((f) => /\.(js|mjs|md)$/.test(f));
   const docs = git('ls-files', 'bible', 'test', 'src', 'tools').split('\n').filter((f) => /\.(js|mjs|md|sh)$/.test(f) && !SELF_DOCS.includes(f));   // RF3: the tools' own fixtures are not docs
   let moved = 0, applied = 0, held = 0;
-  // AUDIT 68: two targets with one basename (src/systems/loot.js and
+  // AUDIT 68: two targets with one basename (src/systems/loot/loot.js and
   // survival/loot.js) - a bare `loot.js:N` is neither's to move, where it was
   // moved once by each, the second time off the first one's rewrite.
   const sharedBase = new Set(targets.map((t) => basename(t)).filter((b, i, all) => all.indexOf(b) !== i));

@@ -23,8 +23,8 @@ import { WOD_TERRAIN_SIZE_MULTI, LocationSession } from '../src/world/wodLocatio
 import { decodeRegionPack } from '../src/world/wodLocationPack.js';
 import { WodWorld, WOD_MOUNTAIN_PREFAB } from '../src/world/worldOfDaggerfall.js';
 import { boxNearPath } from '../src/world/roadClearance.js';
-import { planRoute, routeLegs, routeGround } from '../src/systems/travelRoute.js';
-import { ringPassPoints, ringSideOf, locationRectsOf, RING_ORDER } from '../src/systems/travelOptions.js';
+import { planRoute, routeLegs, routeGround } from '../src/systems/travel/travelRoute.js';
+import { ringPassPoints, ringSideOf, locationRectsOf, RING_ORDER } from '../src/systems/travel/travelOptions.js';
 import { DIR_DELTA } from '../src/world/roadNetwork.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -281,7 +281,7 @@ test('OW-TOWN-RING: the host rings every location on the way (the build\'s own t
   assert.match(w, /const legs = routeLegs\(plan\.pixels, plan\.kinds, \{ ringAt: tvRingAt \}\);/);
   assert.match(w, /const r = built\.get\(key\)\?\.locationRect \?\? setLocationTiles\(loc, maps, blocks, new Uint8Array\(128 \* 128\)\);/, 'the build\'s rect, or the same law over the location\'s blocks');
   assert.match(w, /rects = locationRectsOf\(o\.x, o\.z, \{ x: r\.xMin, y: r\.yMin, width: r\.xMax - r\.xMin, height: r\.yMax - r\.yMin \}, loc\.mapTableData\.locationType === LOCATION_TYPES\.TownCity, hasCustomLocationPosition\(loc\)\);/, 'Travel Options\' own rects');
-  const t = rd('src/systems/travelOptions.js');
+  const t = rd('src/systems/travel/travelOptions.js');
   assert.match(t, /\.\.\.\(l\.ring \? \{ ring: true \} : \{\}\)/, 'the journey keeps the mark');
   assert.match(t, /if \(cur && !cur\.ring && cur\.x === mp\.x && cur\.y === mp\.y\) best = r\.i \+ 1;/, 'standing in the town\'s pixel skips no ring point');
   assert.match(t, /if \(r\.legs\[best\]\?\.at && !r\.legs\[best\]\.ring && best \+ 1 < r\.legs\.length\) best\+\+;/, 'a ring point is no join');
@@ -308,7 +308,7 @@ test('WOD-PEAKS: with the Mountains switch off (the default) a Mountains instanc
   }
   assert.deepEqual(asked, [[false, false, true], [true, true, true]], 'off: the spires are no prefab, the rock fields stand; on: both');
   assert.match(src, /export function openWodWorld\(\{ online = false, sources = browserWodSources, mountains = wodMountainsOn\(\) \} = \{\}\) \{\n\s*if \(!_world \|\| _world\.online !== online \|\| _world\.mountains !== !!mountains\)/, 'the world is built for the switch it was opened with');
-  const lane = readFileSync(new URL('../src/systems/onlineLane.js', import.meta.url), 'utf8');
+  const lane = readFileSync(new URL('../src/systems/online/onlineLane.js', import.meta.url), 'utf8');
   assert.match(lane, /'world-of-daggerfall': Object\.freeze\(\{ Enabled: true, Mountains: false \}\)/, 'online the room\'s - off');
 });
 

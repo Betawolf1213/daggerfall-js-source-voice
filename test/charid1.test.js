@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mintCharacterId, characterIdOf, adoptLegacyCards, SAVE_INFO_PREFIX, SAVE_DATA_PREFIX } from '../src/systems/characterId.js';
-import { saveSlot, findSave, quickSaveSlot, quickLoadSlot, hasQuickSave, enumerateSaves, saveInfoOf } from '../src/systems/saveSlots.js';
-import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save.js';
+import { saveSlot, findSave, quickSaveSlot, quickLoadSlot, hasQuickSave, enumerateSaves, saveInfoOf } from '../src/systems/save/saveSlots.js';
+import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save/save.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const memStore = () => { const m = new Map(); return { get length() { return m.size; }, key: (i) => [...m.keys()][i] ?? null, getItem: (k) => m.get(k) ?? null, setItem: (k, v) => { m.set(k, String(v)); }, removeItem: (k) => { m.delete(k); } }; };
@@ -84,7 +84,7 @@ test('CHARID1: a legacy card (no id) is never a new character’s to overwrite, 
 });
 
 test('CHARID1: the envelope carries the id - snapshotPlayer mints one onto a character born before this, restorePlayer adopts a legacy envelope’s cards', () => {
-  const src = read('src/systems/save.js');
+  const src = read('src/systems/save/save.js');
   assert.match(src, /'characterId',\s+\/\/ CHARID1/, 'the id is an entity field of the envelope');
   assert.ok(src.indexOf('characterIdOf(entity);   // CHARID1') < src.indexOf('for (const k of ENTITY_FIELDS) snap[k] = entity[k];'), 'minted before the copy, so the envelope never leaves without one');
   const restore = src.slice(src.indexOf('export function restorePlayer('));

@@ -19,7 +19,7 @@ import { ClimbFeel, applyClimbView, FEEL, bump, tremble, createClimbFeelHost } f
 import { ClimbSounds, CLIMB_SFX, CLIMB_SFX_FILES, CLIMB_SOUND, installClimbSounds, _resetClimbSounds, moveCues } from '../src/player/climbSounds.js';
 import { enhancedSoundsOn } from '../src/systems/enhancedSounds.js';
 import { playerClimbStrain, playerAttackGrunt } from '../src/scenes/hostCombat.js';
-import { getBool, setValue, resetToDefaults } from '../src/systems/settings.js';
+import { getBool, setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { createWeaponRig, climbLowerStep, climbDrop, climbLowerRect, CLIMB_LOWER_TAU, CLIMB_LOWER_GONE } from '../src/combat/weaponRig.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';

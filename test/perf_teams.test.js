@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import {
   createHorseCartPool, peerTeamFar, peerTeamBox, PEER_TEAM_DRAW_M, PEER_TEAM_DRAW_SLACK_M, PEER_TEAM_BOX_HALF_M, PEER_TEAM_BOX_UP_M, PEER_TEAM_BOX_DOWN_M,
 } from '../src/scenes/horseCartPool.js';
-import { HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+import { HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src/scenes/decorRoom.js';
 
 const bakeOf = (kind) => JSON.parse(readFileSync(new URL(`../src/assets/wagons/${kind}.json`, import.meta.url), 'utf8'));

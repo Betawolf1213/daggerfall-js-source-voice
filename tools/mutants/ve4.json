@@ -59,7 +59,7 @@
   },
   {
     "name": "VE4-detail-not-honoured",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js",
       "test/auditve.test.js"
@@ -69,7 +69,7 @@
   },
   {
     "name": "VE4-every-slice-fetched-at-once",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js"
     ],
@@ -88,7 +88,7 @@
   },
   {
     "name": "VE4-slices-served-from-the-wrong-mod",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js"
     ],
@@ -97,7 +97,7 @@
   },
   {
     "name": "VE4-addons-worn-by-default",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js",
       "test/ve1_vanillaEnhanced.test.js"
@@ -107,7 +107,7 @@
   },
   {
     "name": "VE4-base-not-switched-on",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js",
       "test/ve1_vanillaEnhanced.test.js"
@@ -117,7 +117,7 @@
   },
   {
     "name": "VE4-pick-not-kept",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js"
     ],
@@ -126,7 +126,7 @@
   },
   {
     "name": "VE4-classic-forgets-the-addons",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js",
       "test/ve1_vanillaEnhanced.test.js"
@@ -136,7 +136,7 @@
   },
   {
     "name": "VE4-pack-not-in-the-door-before-a-boot",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve4_vanillaEnhancedShipped.test.js",
       "test/ve1_vanillaEnhanced.test.js"

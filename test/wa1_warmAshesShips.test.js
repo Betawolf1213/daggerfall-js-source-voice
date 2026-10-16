@@ -32,7 +32,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { ANY_LOCATION_KEY, clearWorldDataVariants, setBlockVariant, setLastLocationKeyTo, getBlockVariantHere } from '../src/systems/worldDataVariants.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { CREDITS } from '../src/ui/credits.js';
 import { PATCH_FORMAT, rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';

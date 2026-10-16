@@ -11,18 +11,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { setItemFields } from '../src/systems/itemTemplates.js';
-import { applyRarity, rarityName, repairRarityNames } from '../src/systems/lootRarity.js';
-import { rriVariantWord, rriNativeMaterialValue, RRI_VENDOR, RRI_TEXT } from '../src/systems/rriItems.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
+import { applyRarity, rarityName, repairRarityNames } from '../src/systems/loot/lootRarity.js';
+import { rriVariantWord, rriNativeMaterialValue, RRI_VENDOR, RRI_TEXT } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { isForbiddenEquip } from '../src/systems/equip.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { hasArmor } from '../src/systems/betterAmbience.js';
 import { equipTableOf } from '../src/systems/equip.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
-import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
+import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
 
 installRoleplayRealismItems({ fetchBytes: async () => { throw new Error('no art in this pin'); } });   // the boot's install (scenes/shared.js): the fourteen templates
 

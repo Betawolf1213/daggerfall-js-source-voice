@@ -217,7 +217,7 @@
   },
   {
     "name": "A10-hitched-wagon-hitched-again",
-    "file": "src/systems/horseCartLaw.js",
+    "file": "src/systems/horse/horseCartLaw.js",
     "old": "horseMode === HORSE_MODE.HitchedToWagon ? HCC_ACTION_TEXT.drive : HCC_ACTION_TEXT.hitch",
     "new": "HCC_ACTION_TEXT.hitch",
     "tests": [

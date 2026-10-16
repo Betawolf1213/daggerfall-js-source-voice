@@ -6,9 +6,9 @@
 // every road off the seat closes all three).
 //
 // THE EVENING (section 14.5): the setup - a regular from the table's free chairs (each at the tier the regular's seed
-// gives, systems/gambitPatrons.js tierFor), the stake (the tier's least times one of the mod's three, from the purse) and
+// gives, systems/gambit/gambitPatrons.js tierFor), the stake (the tier's least times one of the mod's three, from the purse) and
 // the crown (kept on the character); the army - the mod's roster whole, as the cards' pictures; the battle - the law's
-// game (net/kingsGambit.js) at the session's clock (systems/gambitTableSession.js), the regular playing as the mod's
+// game (net/kingsGambit.js) at the session's clock (systems/gambit/gambitTableSession.js), the regular playing as the mod's
 // innkeeper played; the result after its beat. The panel is ui/gambitTableHud.js, the board on the cloth
 // world/gambitCloth.js and render/gambitTableDraw.js.
 //
@@ -46,7 +46,7 @@
 // KG5 (2026-10-15, sections 5.8, 10.7 and 18): ANOTHER PLAYER ACROSS THE BOARD. With a relay that runs the game (`online`
 // - the friendly table only; the red table's gold is KG6's), the setup offers the board's two seats: sit, build an army,
 // say Ready; once both are, the relay deals and the battle is played as against a regular - the same panel, cloth, log
-// and motion, through the online session (systems/gambitRemoteTable.js RemoteGambitSession: the law's check here, the
+// and motion, through the online session (systems/gambit/gambitRemoteTable.js RemoteGambitSession: the law's check here, the
 // command to the relay, the other side's actions shown GAMBIT_REMOTE_GAP_MS apart, the relay's clock on a chip). The
 // guest reads the board turned about its middle and the cloth lays it where the host's lies (gambitPlaces `flip`), each
 // player's king's row at its own foot. Unseated, a game under way is watched - the host's side as side 0, nothing
@@ -61,15 +61,15 @@
 // card tables' stake book. The season board is read from either table (`online.board`).
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
-import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS, GAMBIT_RESULT_MS } from '../systems/gambitTableSession.js';
-import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
+import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS, GAMBIT_RESULT_MS } from '../systems/gambit/gambitTableSession.js';
+import { tierFor, GAMBIT_TIERS } from '../systems/gambit/gambitPatrons.js';
 import { KG_POINT_BUDGET, KG_COLS, KG_ROWS, KG_KING_CELL, armyRefusal, armyCost, canRecruit, autoFill, rosterUnit, pieceById, pieceAt, reachable, foesInRange } from '../net/kingsGambit.js';
 import { gambitHudModel, createGambitTableHud, boardCursorStep, gambitBoardKey } from '../ui/gambitTableHud.js';
 import {
   pieceName, unitJoined, unitLeft, unitTooDear, armyFull, refusalWords, logLine, resultGold,
   dealLine, barkInvite, barkEnd, onlineRefusal,
 } from '../ui/gambitTableWords.js';
-import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambitRemoteTable.js';
+import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambit/gambitRemoteTable.js';
 import { GAMBIT_ONLINE_STAKES } from '../net/gambitStakes.js';
 import { stakeShort, stakeDiffers, stakeChoose, stakeRefusal } from '../ui/gambitTableWords.js';
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';

@@ -12,7 +12,7 @@ import {
   startFactionAllies, endFactionAllies, startFactionEnemies, endFactionEnemies,
   isEnemyStatePermanentUntilWarOver, isFaction2APotentialWarEnemyOfFaction1,
   setNewRulerData, setRulerType,
-} from '../src/systems/factionRelations.js';
+} from '../src/systems/faction/factionRelations.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { srand } from '../src/formats/dfRandom.js';
 

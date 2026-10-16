@@ -1,7 +1,7 @@
 // SERPENT1 (2026-10-04, Mac: "A new world event that requires players with a ship to meet up and take on a large scale
 // sea serpent in the ocean"; "make this something truly special"): THE CLIENT'S HALF. Where it rises off the packet
-// lanes (systems/serpentSite.js); the cell's words folded (net/serpentLink.js); its blows judged on my own ship
-// (systems/serpentStrike.js); the sighting's lines and ring (systems/serpentOmen.js); the host end to end against the
+// lanes (systems/serpent/serpentSite.js); the cell's words folded (net/serpentLink.js); its blows judged on my own ship
+// (systems/serpent/serpentStrike.js); the sighting's lines and ring (systems/serpent/serpentOmen.js); the host end to end against the
 // relay's own brain (scenes/serpentHost.js - the `in`, the volleys gathered, a blow landed, the coil held and broken,
 // the whirl's pull, the seams Come Sail Away and the naval host read); the renderer's pure builders; the bar; its voice;
 // the hoard; the held map's ring; and the world host's wiring (THE FOUR HOSTS RULE).
@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { findSerpentSite, sitePixelOfNative, openAround, pointAlong, SITE_LANE_MIN_M } from '../src/systems/serpentSite.js';
+import { findSerpentSite, sitePixelOfNative, openAround, pointAlong, SITE_LANE_MIN_M } from '../src/systems/serpent/serpentSite.js';
 import { serpentTimes, isSerpentDay, serpentRing, SERPENT_RING_PIXELS, SERPENT_DIVE_MS, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
 import { foldSerpent, createSerpentLink, SERPENT_STATE_EMPTY, SERPENT_NO_TEXT } from '../src/net/serpentLink.js';
 import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
@@ -18,15 +18,15 @@ import { MODES_KEPT, SEG_N, MODE } from '../src/net/serpentBody.js';
 import {
   newSerpentFight, joinSerpentFight, serpentStateOf, SERPENT_ATTACK_TABLE, CRUSH, GRIP, MAEL_R, MAEL_EYE_R, MAEL_GRIND, SPIT_FLIGHT_MS, RAM_V, ZONES, ADMIT_R,
 } from '../src/net/serpentBrain.js';
-import { shapeMeets, shipHurt, crushHurt, gripHurt, grindHurt, shoveOf, shoveLeft, maelPull, globAt, poolOf, poolBites, ramHead, shipPoints, SHOVE_S, MAEL_GROW_MS, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpentStrike.js';
-import { createSerpentOmen, SERPENT_OMEN_SETTLE_MS, SITE_RETRY_MS, insideSerpentRing } from '../src/systems/serpentOmen.js';
+import { shapeMeets, shipHurt, crushHurt, gripHurt, grindHurt, shoveOf, shoveLeft, maelPull, globAt, poolOf, poolBites, ramHead, shipPoints, SHOVE_S, MAEL_GROW_MS, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
+import { createSerpentOmen, SERPENT_OMEN_SETTLE_MS, SITE_RETRY_MS, insideSerpentRing } from '../src/systems/serpent/serpentOmen.js';
 import { createSerpentHost, segmentOfTarget, IN_RETRY_MS, IN_RESEND_MS, HIT_GATHER_MS, COIL_LOST_MS, COIL_WORD_WAIT_MS, SERPENT_TARGET } from '../src/scenes/serpentHost.js';
 import { bodyMesh, marksMesh, MESH_STRIDE, FLAT_STRIDE, MESH_MAX_VERTS, FLAT_MAX_VERTS } from '../src/render/serpentRender.js';
 import { serpentBarModel, SERPENT_CALL_CSS, STUN_CSS, SOUND_WARN_MS, SERPENT_BAR_TEXT } from '../src/ui/serpentBar.js';
-import { SERPENT_SOUNDS, playSerpentSound, SERPENT_VOICE_ROWS } from '../src/systems/serpentSounds.js';
+import { SERPENT_SOUNDS, playSerpentSound, SERPENT_VOICE_ROWS } from '../src/systems/serpent/serpentSounds.js';
 import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
 import { NAVAL_CLASSIC } from '../src/systems/naval/navalSounds.js';
-import { rollSerpentSpoils, serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_GOLD_PER_LEVEL, STOOD_GOLD, SERPENT_SPOILS_KEYS } from '../src/systems/serpentSpoils.js';
+import { rollSerpentSpoils, serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_GOLD_PER_LEVEL, STOOD_GOLD, SERPENT_SPOILS_KEYS } from '../src/systems/serpent/serpentSpoils.js';
 import { RAID_SPOILS_KEYS } from '../src/systems/raidSpoils.js';
 import { paintGateRing } from '../src/ui/inkMap.js';
 import { GATE_RING_CSS, readGateMark } from '../src/ui/gateMapMark.js';

@@ -25,10 +25,10 @@ import { NOT_ENOUGH_GOLD_ID } from '../src/systems/tavern.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
 import { mountEnhancedTavern } from '../src/ui/enhancedTavern.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { setPref, loadPrefs, _resetForTests } from '../src/systems/uiPrefs.js';
 import { createRestDeps, createPlayerTicker, restVitals } from '../src/scenes/shared.js';
-import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/restSession.js';
+import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/rest/restSession.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
@@ -726,7 +726,7 @@ test('AUDIT SURV-TIERS: null is no rules - survivalRules() answers null for Off,
 test('AUDIT SURV-TIERS: Off\'s minutes are nobody\'s needs - a short Off span is paused whole, a long one is a fresh start (WORLD5\'s rule for an absence); a meal eaten Off is not moved twice; a gap the arc was ON for (WORLD5\'s short absence) still counts', async () => {
   const { pauseSurvival, hungerMinutes, awakeHours, ALIGN_GRACE_MINUTES } = await import('../src/systems/survival/needs.js');
   const { worldMinutes, setSharedClock } = await import('../src/systems/worldTick.js');
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   // the law: both timestamps and the last paid minute carried by the span; no record, no record made
   const s = { ...newSurvival(1000), lastAte: 900, awakeSince: 940, lastMinute: 1000, thirst: 70, wet: 150, drunk: 30, exposure: 200 };
   assert.equal(pauseSurvival({ survival: s }, 1000, 1060), true);

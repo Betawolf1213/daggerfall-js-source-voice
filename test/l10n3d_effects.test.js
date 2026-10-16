@@ -11,7 +11,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as tm from '../src/systems/textManager.js';
 import { routedWords } from '../tools/l10nRouted.mjs';
-import { SPELL_MAKER_EFFECTS, effectByKey, spellMakerGroups, spellMakerSubgroups, dfuEffectKeyOf } from '../src/systems/spellEffects.js';
+import { SPELL_MAKER_EFFECTS, effectByKey, spellMakerGroups, spellMakerSubgroups, dfuEffectKeyOf } from '../src/systems/spell/spellEffects.js';
 import { applySpell, BUFF_START_TEXT, spellReflectedText } from '../src/systems/effects.js';
 import { SPELL_ABSORPTION } from '../src/systems/absorption.js';
 import { silencedText, pressButtonToFireSpellText } from '../src/systems/mysticism.js';
@@ -62,7 +62,7 @@ function routes(keys, read, want, wantFr) {
 // ─── the effect catalogue: GroupName / SubGroupName / DisplayName ─────────────────────────────────────────────────
 
 test('L10N3d effects: each effect class\'s GroupName and SubGroupName read by the key its class names, DisplayName built from them; the port\'s own Resurrect and DFU\'s "true" stay English; the catalogue still matches, sorts and names DFU\'s effect Key in English', () => {
-  const keys = routedWords().filter((w) => w.file === 'src/systems/spellEffects.js').map((w) => w.key);
+  const keys = routedWords().filter((w) => w.file === 'src/systems/spell/spellEffects.js').map((w) => w.key);
   assert.equal(keys.length, 68, 'every GroupName and SubGroupName key the classes name, "true" aside');
   const snap = () => SPELL_MAKER_EFFECTS.map((e) => [e.key, e.group, e.subgroup, e.name, dfuEffectKeyOf(e.type, e.subType)]);
   const english = snap();

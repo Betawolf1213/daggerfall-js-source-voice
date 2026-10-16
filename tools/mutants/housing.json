@@ -1,7 +1,7 @@
 [
   {
     "name": "HOME-DOORS-the-jamb-unhalved",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "        for (let i = 0; i < 4; i++) {   // halved four times",
     "new": "        for (let i = 0; i < 0; i++) {   // halved four times",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HOME-DOORS-the-wall-going-on-unasked",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    if (!goesOn(tr, r, 1) || !goesOn(tl, l, -1)) return rays;",
     "new": "    if (false) return rays;",
     "tests": [
@@ -19,18 +19,18 @@
   },
   {
     "name": "HOME-DOORS-the-depth-bound",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    if (far - near > DOORWAY_DEPTH_MAX || far < near - DOORWAY_STEP) return rays;",
     "new": "    if (far < near - DOORWAY_STEP) return rays;",
     "tests": [
       "test/homedoors.test.js"
     ],
     "equivalent": true,
-    "why": "The room finder (systems/decorRooms.js) makes the inside of any wall deeper than a cell its own room, so a link never spans more than DOORWAY_DEPTH_MAX of wall and the back-cast always meets the far face within it - a 1.5 m and a 2 m wall each gave their two mouths, with or without the bound. Kept as the back-cast's own bound, belt and braces."
+    "why": "The room finder (systems/decor/decorRooms.js) makes the inside of any wall deeper than a cell its own room, so a link never spans more than DOORWAY_DEPTH_MAX of wall and the back-cast always meets the far face within it - a 1.5 m and a 2 m wall each gave their two mouths, with or without the bound. Kept as the back-cast's own bound, belt and braces."
   },
   {
     "name": "HOME-DOORS-the-lintel-unread",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    const height = Number.isFinite(lintel) ? lintel - floor : DOORWAY_HEIGHT_MAX;",
     "new": "    const height = DOORWAY_HEIGHT_MAX;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "HOME-DOORS-a-doorway-twice",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    if (!found.some((d) => same(d, c))) found.push(c);",
     "new": "    found.push(c);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "HOME-DOORS-the-near-door-unasked",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "  return (doorways ?? []).filter((w) => !at.some((d) => Math.hypot(d[0] - w.center[0], d[2] - w.center[2]) < DOORWAY_NEAR_DOOR",
     "new": "  return (doorways ?? []).filter((w) => !at.some((d) => Math.hypot(d[0] - w.center[0], d[2] - w.center[2]) < 0",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "HOME-DOORS-behind-the-eye",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    if (!(t > 0) || t > reach) continue;",
     "new": "    if (t > reach) continue;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "HOME-DOORS-the-flip-unread",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "  if (flip) yaw += Math.PI;",
     "new": "  if (false) yaw += Math.PI;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "HOME-DOORS-the-width-axis",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "  const alongX = wx >= wz;",
     "new": "  const alongX = true;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "HOME-DOORS-the-scale-not-the-tighter",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "  const fit = Math.min(doorway.width / wide, (doorway.height - DOOR_FIT_GAP) / high);",
     "new": "  const fit = doorway.width / wide;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "HOME-DOORS-the-modulo",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "        add({ model: DOOR_MODEL_BASE_ID + (idx % DOOR_MODEL_COUNT), flat: null });",
     "new": "        add({ model: DOOR_MODEL_BASE_ID + idx, flat: null });",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "HOME-RENT-the-character-unsent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      .then(() => api.town(id, as === undefined ? character() : as))",
     "new": "      .then(() => api.town(id, as === undefined ? null : as))",
     "tests": [
@@ -376,7 +376,7 @@
   },
   {
     "name": "HOME-RENT-the-rent-lost-in-the-tab",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "        credit(sold.refund + sold.decorBack + rent);",
     "new": "        credit(sold.refund + sold.decorBack);",
     "tests": [
@@ -477,7 +477,7 @@
   },
   {
     "name": "HOME-RENT-renting-from-oneself",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (!home.rent || home.mine) return null;",
     "new": "  if (!home.rent) return null;",
     "tests": [
@@ -558,7 +558,7 @@
   },
   {
     "name": "HOME-DOORS-the-unseen-aimed-at",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    if (seen && !seen(m, Math.hypot(v[0], v[1], v[2]))) continue;\n",
     "new": "",
     "tests": [
@@ -567,7 +567,7 @@
   },
   {
     "name": "HOME-DOORS-the-corner-unasked",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    const goesOn = (t, j, side) => Math.abs(t - j.t) <= DOORWAY_STEP * 2 || cornered(j, side);",
     "new": "    const goesOn = (t, j, side) => Math.abs(t - j.t) <= DOORWAY_STEP * 2 || (side && false);",
     "tests": [
@@ -576,7 +576,7 @@
   },
   {
     "name": "HOME-DOORS-the-lintel-from-inside-the-step",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "      const sideFloor = Number.isFinite(sd) ? h - sd : floor;",
     "new": "      const sideFloor = floor;",
     "tests": [
@@ -585,7 +585,7 @@
   },
   {
     "name": "HOME-DOORS-the-arch-filled",
-    "file": "src/systems/decorDoorways.js",
+    "file": "src/systems/decor/decorDoorways.js",
     "old": "    fills: doorway.width - wide * scale <= DOOR_FILL_SLACK,",
     "new": "    fills: true,",
     "tests": [

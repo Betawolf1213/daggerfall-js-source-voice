@@ -13,10 +13,10 @@ import { createHash } from 'node:crypto';
 
 import { standService, T0, d1 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
-import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot.js';
+import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { seededRng } from '../src/systems/wind.js';
-import { itemWorth } from '../src/systems/itemLaw.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { itemWorth } from '../src/systems/item/itemLaw.js';
 import { goldSaleOf, MARKET_GOLD_HELD_MAX, MARKET_KEEP_DAYS } from '../src/net/marketLaw.js';
 import {
   patronOdds, patronCap, patronDraw, patronSeed, patronMinute, patronHour, patronCands, patronHours, patronWorth, patronTakes, patronMark, PATRON_PAY_SHARE,

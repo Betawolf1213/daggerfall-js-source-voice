@@ -1,8 +1,8 @@
 // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
-// calories boons.") - HORSE CARE ON CLIMATES & CALORIES' MODEL (bible/06-Systems/Horse-Care.md, systems/upkeepTiers.js):
+// calories boons.") - HORSE CARE ON CLIMATES & CALORIES' MODEL (bible/06-Systems/Horse-Care.md, systems/upkeep/upkeepTiers.js):
 // one key, three tiers - Off (DFU's plain horse), Boons (the default: care earns, neglect costs nothing, never below
 // DFU's horse) and Hard (the system as it stood) - each player's own online, every reader asking the tier through one
-// accessor (systems/upkeepSwitch.js horseCareRules). Driven over the real switch, the real tile, the real shelf, the
+// accessor (systems/upkeep/upkeepSwitch.js horseCareRules). Driven over the real switch, the real tile, the real shelf, the
 // real upkeep and the real motor with the hosts' own walk and gallop installs.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,20 +11,20 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   HORSE_CARE_TIER_IDS, HORSE_CARE_DEFAULT, HORSE_CARE_STORED, HORSE_CARE_RULES, HORSE_CARE_HARD, horseCareTierOfStored, isStoredHorseCare,
-} from '../src/systems/upkeepTiers.js';
-import { horseCareRules, HORSE_CARE_PREF } from '../src/systems/upkeepSwitch.js';
+} from '../src/systems/upkeep/upkeepTiers.js';
+import { horseCareRules, HORSE_CARE_PREF } from '../src/systems/upkeep/upkeepSwitch.js';
 import { getPref, setPref, loadPrefs, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { tileStates } from '../src/ui/enhancedMenu.js';
-import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeepRuntime.js';
+import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeep/upkeepRuntime.js';
 import { steedStats, steedSpeedScale, teamDraftScale, stepBreath, bornStats, bondAt, feedHorse, HUNGER, MINUTES_A_DAY, STARVING_AFTER, OATS_TEMPLATE } from '../src/systems/steedCare.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { TRANSPORT_MODES, setRideWalk, setGallopGate, setCanRunOverride, canRunUnlessRiding, rideWalks } from '../src/systems/transport.js';
 import { saddleMeters } from '../src/ui/enhancedSaddle.js';
 import { hungerLine, hungerTone } from '../src/ui/holdingsPages.js';
-import { itemUseHandler } from '../src/systems/itemTemplates.js';
+import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -273,11 +273,11 @@ test('HORSE-TIERS THE ONE ACCESSOR AND THE FOUR HOSTS: no module but the switch 
   const walk = (dir) => { for (const f of readdirSync(dir)) { const p = join(dir, f); if (statSync(p).isDirectory()) walk(p); else if (f.endsWith('.js')) files.push(p); } };
   walk(SRC);
   const rel = (p) => p.slice(SRC.length);
-  assert.deepEqual(files.filter((p) => /getPref\((HORSE_CARE_PREF|'horseCare')\)/.test(readFileSync(p, 'utf8'))).map(rel), ['systems/upkeepSwitch.js'], 'one reader of the key');
+  assert.deepEqual(files.filter((p) => /getPref\((HORSE_CARE_PREF|'horseCare')\)/.test(readFileSync(p, 'utf8'))).map(rel), ['systems/upkeep/upkeepSwitch.js'], 'one reader of the key');
   assert.deepEqual(files.filter((p) => /\bhorseCareOn\b/.test(readFileSync(p, 'utf8'))).map(rel), [], 'the boolean switch is gone');
   for (const host of ['world.js', 'exterior.js']) {
     const s = rd(`src/scenes/${host}`);
-    assert.match(s, /import \{ horseCareRules, wagonUpkeepRules \} from '\.\.\/systems\/upkeepSwitch\.js';/, host);
+    assert.match(s, /import \{ horseCareRules, wagonUpkeepRules \} from '\.\.\/systems\/upkeep\/upkeepSwitch\.js';/, host);
     assert.match(s, /horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,\n\s*where: /, `${host}: the upkeep`);
     assert.match(s, /reach: \(\) => upkeepReach\(hccRuntimeOn\(\), !!hccRuntimeOn\(\)\), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,/, `${host}: the oats' Use`);
     assert.match(s, /setRideWalk\(\(mode, runAsked\) => [^\n]*upkeep\.rideWalks\(mode, runAsked\)\);/, `${host}: the walk told the run asked`);

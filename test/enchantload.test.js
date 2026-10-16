@@ -13,7 +13,7 @@ import {
   enchantSkillMod, enchantWeightAllowanceMult, entityAbsorbsSpells, EXTRA_SPELL_PTS_MAX_INCREASE,
 } from '../src/systems/enchantments.js';
 import { equipItem, unequipSlot } from '../src/systems/equip.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 
 const ring = (enchantments, over = {}) => ({

@@ -327,7 +327,7 @@
   },
   {
     "name": "DISC28-I-final-makes-a-copy",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (safe.questComplete === true || shareEnvelopeEnding(safe)) return { ok: false, reason: 'finished' };\n",
     "new": "",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "DISC28-I-signature-log-only",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "    for (const action of task.actions ?? []) parts.push(action.isComplete ? 1 : 0);\n",
     "new": "",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "DISC28-I-signature-no-trigger",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "    parts.push(task.triggered ? 1 : 0);\n",
     "new": "",
     "tests": [

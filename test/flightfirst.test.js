@@ -14,8 +14,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const H = await import('../tools/tellDuel.mjs');
 const { EnemyAI } = await import('../src/characters/enemyMotor.js');
 const { Collider } = await import('../src/player/collider.js');

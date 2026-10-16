@@ -82,12 +82,12 @@
 
 import { VAMPIRE_CLANS, LYCANTHROPY_TYPES } from './infection.js';
 import { MINUTES_PER_DAY, isDayFromMinutes } from './gameDate.js';
-import { spellRecordOfIndex } from './loot.js';
+import { spellRecordOfIndex } from './loot/loot.js';
 import { SKILLS } from './skills.js';
 import { WEAPON_MATERIALS } from '../characters/weapons.js';
 import { VAMPIRE_SPELL_TAG, endOldLifeEffects, liveLycanthropy } from './lycanthropy.js';
 import { RACES, RACE_TEMPLATES, raceById } from './races.js';        // V5: the BIRTH race id keys the VAMP00I0 head; DISC10-D V5: and the birth template the compound race clones
-import { raceDisplayName } from './talkSession.js';   // L10N3d: the birth race's shown name
+import { raceDisplayName } from './talk/talkSession.js';   // L10N3d: the birth race's shown name
 import { EFFECT_BITS, SPECIAL_ABILITY_BITS } from './specialAdvantages.js';   // DISC10-D V5: DFCareer.EffectFlags / SpecialAbilityFlags, for CreateCompoundRace
 import { SOUND } from './soundClips.js';   // V5: the gendered attack voices
 import { endVampireQuests } from './racialQuests.js';   // V2d: the cure's P0* tombstone sweep

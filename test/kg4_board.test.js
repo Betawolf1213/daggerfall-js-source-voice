@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { KG_COLS, KG_ROWS, KG_TILE, KG_MOVE_RANGE, reachable, reachPath, isPassable, pieceAt, autoFill, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
-import { GAMBIT_TIERS, dealRegular, regularStep } from '../src/systems/gambitPatrons.js';
+import { GAMBIT_TIERS, dealRegular, regularStep } from '../src/systems/gambit/gambitPatrons.js';
 import { finishTurn } from '../src/net/kingsGambit.js';
 import {
   createGambitMotion, gambitPile, gambitPileStep, GAMBIT_WALK_CELLS_S, GAMBIT_IMPACT_S, GAMBIT_LUNGE_LEAD_S, GAMBIT_LUNGE_S,

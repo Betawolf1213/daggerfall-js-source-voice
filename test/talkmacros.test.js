@@ -12,12 +12,12 @@ import { readFileSync, existsSync } from 'node:fs';
 import {
   talkMacroHandlers, talkMacroSource, expandTalkMacros, expandRandomTextRecord,
   TALK_MACROS, TALK_SOURCE_METHODS, MACRO_SYMBOLS, OATH_BASE_TEXT_ID, MACRO_TERMINATORS,
-} from '../src/systems/talkMacros.js';
+} from '../src/systems/talk/talkMacros.js';
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 import { AnswerPipeline, TALK_STRINGS } from '../src/systems/answerPipeline.js';
 import { NPCSession } from '../src/systems/npcSession.js';
 import { TopicTree, QUESTION_TYPE, newListItem, QUEST_INFO_RESOURCE_TYPE } from '../src/systems/topicTree.js';
-import { OATH_RACE_INDEX, raceDisplayName } from '../src/systems/talkSession.js';
+import { OATH_RACE_INDEX, raceDisplayName } from '../src/systems/talk/talkSession.js';
 
 const h2 = (ctx) => talkMacroHandlers(ctx);
 const t = (text) => ({ text, formatting: 1, x: 0, y: 0 });

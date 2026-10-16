@@ -12,7 +12,7 @@
 // online); the report REPRODUCED first and then fixed on the host's own code - world.js's doors (tvOwnsJourneys,
 // tvRoutesJourneys, beginAcceleratedTravel, travelViewResume, tvJourneyUp, the view's onLower, the map's onTravel and
 // onTravelToCoords) and the Overworld's route (travelViewRouteTo, travelViewWalkTo, tvJoinedLegs, tvSeaNoWay, the view's
-// gate and their small helpers) LIFTED from its source and run over the REAL planner (systems/travelRoute.js), a REAL
+// gate and their small helpers) LIFTED from its source and run over the REAL planner (systems/travel/travelRoute.js), a REAL
 // Travel Options and the real settings store on a small map of our own (a road bent round a square of forest, a
 // mountain, an island); the journey's life (the mod's panel, a foe's stop, Camp, the party's walk, the map's Resume
 // planned again, the arrival's box, the view's own doors, the clock); the route's refusal (said, and done: never the
@@ -23,20 +23,20 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { MOD_CURATED, modDials } from '../src/systems/features.js';
-import { ONLINE_PLAYERS_OWN_MODS, onlineForcedModSetting } from '../src/systems/onlineLane.js';
-import { createTravelOptions, readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travelOptions.js';
-import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travelOptionsText.js';
-import { mapPixelWorldOrigin } from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+import { ONLINE_PLAYERS_OWN_MODS, onlineForcedModSetting } from '../src/systems/online/onlineLane.js';
+import { createTravelOptions, readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travel/travelOptions.js';
+import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
+import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
-import { planRoute, routeLegs, routeGround, joinPoint, routeDrawPoints, roadShare, crossesWater, dryLine, TV_MOUNTAIN_CLIMATE } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, routeGround, joinPoint, routeDrawPoints, roadShare, crossesWater, dryLine, TV_MOUNTAIN_CLIMATE } from '../src/systems/travel/travelRoute.js';
 import { WATER_BYTE } from '../src/world/roadsProducer.js';
 import { DIR_DELTA } from '../src/world/roadNetwork.js';
 import { worldCoordToMapPixel } from '../src/formats/mapsFile.js';
 import { TRAVEL_VIEW_TEXT, travelTripLine, travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
-import { createLoadGovernor, unbuiltAround } from '../src/systems/travelGovernor.js';
-import { foePaced } from '../src/systems/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
-import { travelPathUsesRoads, TRAVEL_PATH_TEXT, setTravelPathMode } from '../src/systems/travelPathMode.js';
+import { createLoadGovernor, unbuiltAround } from '../src/systems/travel/travelGovernor.js';
+import { foePaced } from '../src/systems/travel/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
+import { travelPathUsesRoads, TRAVEL_PATH_TEXT, setTravelPathMode } from '../src/systems/travel/travelPathMode.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE } from '../src/systems/timeScale.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

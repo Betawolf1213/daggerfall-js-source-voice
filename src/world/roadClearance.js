@@ -3,7 +3,7 @@
 //
 // Basic Roads (and the port's own generated network, which carries the same compass) draws every path in a
 // map pixel as a straight band from the pixel's CENTRE out to the edge or corner its compass bit names
-// (systems/travelPaths.js: N is +z, E is +x, the diagonals run corner to corner), P_SIZE wide. So a footprint
+// (systems/travel/travelPaths.js: N is +z, E is +x, the diagonals run corner to corner), P_SIZE wide. So a footprint
 // is on a road exactly when its box comes within half a path width of one of those segments - in its own
 // pixel or in any pixel the box reaches into. That last part is the whole reason this exists: World of
 // Daggerfall's mountain layouts spread their pieces up to ~1.9 km from the site and its large rock fields
@@ -15,7 +15,7 @@
 // travelPaths.js mapPixelWorldOrigin and the scene's per-pixel translation share. A leaf apart from
 // travelPaths.js, so a pin can drive it on a table.
 
-import { pathsDataPoint, MP_WORLD_UNITS, HALF_MP_WORLD_UNITS, P_SIZE, N, NE, E, SE, S, SW, W, NW } from '../systems/travelPaths.js';
+import { pathsDataPoint, MP_WORLD_UNITS, HALF_MP_WORLD_UNITS, P_SIZE, N, NE, E, SE, S, SW, W, NW } from '../systems/travel/travelPaths.js';
 import { MAP_W, MAP_H } from './roadNetwork.js';   // OW-WOD-LAG: the map's own edges - no road lies past them
 
 /** Half a path's painted width - the band either side of a segment's centre line. */

@@ -104,7 +104,7 @@ interval. `tools/mutants/audit637.json` C1a-C3f, all dead.
 
 ## SPELL-COST (2)
 
-IMPACTFX (#627, merged 10-05 20:28 UTC: `render/spellImpactFx.js`, `systems/spellImpactSound.js`, `scenes/hostMagic.js`)
+IMPACTFX (#627, merged 10-05 20:28 UTC: `render/spellImpactFx.js`, `systems/spell/spellImpactSound.js`, `scenes/hostMagic.js`)
 draws a landing spell in light and gives it a sound. **It touches nothing on the wire**: no frame, no pose field, no
 relay arm (the merge changed no file under `src/net/` or `server/`), and a peer's cast is still drawn off the pose's
 cast count in the frame loop (`world.js` `peerCastVisuals`, under its own try/catch - a throw there drops no pose). The

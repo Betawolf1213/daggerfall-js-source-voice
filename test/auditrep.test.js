@@ -8,7 +8,7 @@ import { createArrestFlow } from '../src/scenes/arrestFlow.js';
 import { CRIMES, legalRepOf } from '../src/systems/court.js';
 import { setSharedClock, hearSharedClock, trustedWorldMinutes, worldMinutes } from '../src/systems/worldTick.js';
 import { banish, isBanished, banishmentLeft, BANISHMENT_MINUTES, PARDON_BASE_PRICE } from '../src/systems/standing.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 import { buildDonationFlow } from '../src/ui/guildServiceWindows.js';
 import { lawRows } from '../src/ui/enhancedMenu.js';
 import { createStandingWatch, STANDING_LOOK_MS, installLegalNotices } from '../src/scenes/standingHost.js';

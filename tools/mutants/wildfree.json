@@ -1,7 +1,7 @@
 [
   {
     "name": "WF-deepest-without-free",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "if (ring_.some((p) => p.bd === lv && isFree(p)))",
     "new": "if (ring_.some((p) => p.bd === lv))",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WF-band-unasked",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "const freeFrom = (min) => ring_.filter((p) => p.bd >= min && isFree(p));",
     "new": "const freeFrom = (min) => ring_.filter((p) => p.bd >= min);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WF-ring-for-the-two-pixel-band",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "pool = two.length >= want ? two : all();",
     "new": "pool = all();",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "WF-band-for-the-ring",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "[2, all], [1, all]]",
     "new": "[2, () => pool], [1, () => pool]]",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "WF-asked-again",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "(p.free ??= !!free(p.x, p.y))",
     "new": "(p.free = !!free(p.x, p.y))",
     "tests": [
@@ -50,7 +50,7 @@
   },
   {
     "name": "WF-asked-first",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "free: /** @type {boolean|undefined} */ (undefined) });",
     "new": "free: !!free(x, y) });",
     "tests": [

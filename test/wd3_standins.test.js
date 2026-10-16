@@ -43,7 +43,7 @@ import { addVendorTextures, clearVendorTextures, hasTextureReplacement, setTextu
 import { installDetailedShipsArt, _resetDetailedShipsArt, detailedShipsArtOn, DETAILED_SHIPS_VENDOR } from '../src/systems/detailedShips.js';
 import { billboardXmlScale, unregisterBillboardXml } from '../src/world/billboardXml.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { isBedModel } from '../src/systems/rrRealism.js';
+import { isBedModel } from '../src/systems/roleplayRealism/rrRealism.js';
 import { DECOR_BASE_KEY_RE, decorBaseFlatKey, decorBaseModelKey } from '../src/net/decorLaw.js';
 import { createDataPipeline, LAST_CLASSIC_TEXTURE_ARCHIVE } from '../src/scenes/dataPipeline.js';
 import { color32Bytes } from '../src/render/renderer.js';
@@ -580,7 +580,7 @@ test('WD3 the towns\' scenery is never a person (AUDIT WD3 G1) - a street flat c
 test('WD3 with ARENA2: the port\'s curation (AUDIT WD3 G2) - every one of the 274 roadside taverns laid out on Beautiful Villages\' TVRNAS00/06 stands Daggerfall\'s own block, a tavern in it; the 301 village cells laying them out stand the author\'s', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set' }, async () => {
   const W = await import('../src/formats/worldDataReplacement.js');
   const LP = await import('../src/systems/layoutPins.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const { blocks, maps: _m } = loadArena2();
   W._resetWorldDataReplacement(); LP._resetLayoutPins();
   setValue('Enhancements', 'AssetInjection', 'True');
@@ -634,7 +634,7 @@ test('WD3 a stand-in\'s clear placeholder is never its key\'s for good (AUDIT WD
 
 test('WD3 the town stand-ins YIELD to the player\'s own picture of the record (AUDIT WD3 T2) - a loose file or an attached mod (the real DET or RMB Resource Pack the stand-in only stands in for) answers first, with Replace Game Artwork on; without one, or with it off, the stand-in answers as before; a stand-in that does not yield (another mod\'s own art) keeps its place', async () => {
   const TR = await import('../src/systems/textureReplacement.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   clearVendorTextures(); TR.setTextureReplacements([], null); TR.setBundleTextures([]);
   setValue('Enhancements', 'AssetInjection', 'True');
   setTextureDeriveContext({ classicRgba: async () => null, classicScale: async () => ({ width: 0, height: 0 }) });

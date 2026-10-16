@@ -1,25 +1,25 @@
 // STEED-UI (2026-10-11, the owner: "Proper UI elements for the horse + wagon/cart (Enhanced plus)") - THE SADDLE PANEL
 // (bible/10-UI/Controls.md, THE SADDLE PANEL): the horse ridden and the wagon driven on screen in Enhanced Plus, the
 // helm panel's kind (ui/enhancedHelm.js). The panel's pure reads (ui/enhancedSaddle.js - its gait, its meters, its
-// buttons, its line), the panel on a page, the upkeep's read (systems/upkeepRuntime.js saddle), the hosts' one glue
-// (scenes/saddleHost.js), Horse Cart and Cargo's Cargo door (systems/horseCart.js openWagonCargo), the view's own word
+// buttons, its line), the panel on a page, the upkeep's read (systems/upkeep/upkeepRuntime.js saddle), the hosts' one glue
+// (scenes/saddleHost.js), Horse Cart and Cargo's Cargo door (systems/horse/horseCart.js openWagonCargo), the view's own word
 // (player/mwView.js mwViewCanTogglePerspective), the Plus kit's dress, and the four hosts.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeep/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   saddleGait, saddleSpeedText, saddleTitle, saddleMeters, saddleButtons, saddleHint, fedText, drawEnhancedSaddle, hideEnhancedSaddle,
   enhancedSaddleMounted, enhancedSaddleBar, ENHANCED_SADDLE_ID, SADDLE_ACTIONS, STANDING_MPS, SADDLE_BREATH_LOW, SADDLE_CSS,
 } from '../src/ui/enhancedSaddle.js';
 import { createSaddleHost, SADDLE_SPEED_TAU, SADDLE_MODES } from '../src/scenes/saddleHost.js';
-import { createUpkeep, BREATH_LOW } from '../src/systems/upkeepRuntime.js';
+import { createUpkeep, BREATH_LOW } from '../src/systems/upkeep/upkeepRuntime.js';
 import { OATS_TEMPLATE, APPLE_TEMPLATES, BOND_TIERS, FULL_AHEAD } from '../src/systems/steedCare.js';
-import { UPKEEP_ITEM } from '../src/systems/upkeepItemRows.js';
-import { newWagonItem } from '../src/systems/wagonKinds.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
-import { HCC_MOUNT_ACTION } from '../src/systems/horseCart.js';
+import { UPKEEP_ITEM } from '../src/systems/upkeep/upkeepItemRows.js';
+import { newWagonItem } from '../src/systems/wagon/wagonKinds.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
+import { HCC_MOUNT_ACTION } from '../src/systems/horse/horseCart.js';
 import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
 import { SMALL_WINDOWS } from '../src/ui/grimoireDress.js';
 import { makeWorld } from './hccWorld.mjs';

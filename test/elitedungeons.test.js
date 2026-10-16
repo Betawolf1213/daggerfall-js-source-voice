@@ -94,7 +94,7 @@ test('ELITE by source: the dungeon host expands an elite list and scales every f
 
 test('ELITE: loot - +20% item drop chance and +20% rarity odds, caps unchanged', async () => {
   const { ELITE_LOOT_DROP_MULT, ELITE_LOOT_QUALITY_MULT } = await import('../src/world/spawnedDungeons.js');
-  const { rarityChances } = await import('../src/systems/lootRarity.js');
+  const { rarityChances } = await import('../src/systems/loot/lootRarity.js');
   assert.equal(ELITE_LOOT_DROP_MULT, 1.2);
   assert.equal(ELITE_LOOT_QUALITY_MULT, 1.2);
   const plain = rarityChances({ kind: 'corpse', tier: 5 });

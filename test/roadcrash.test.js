@@ -20,13 +20,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   N, E, S, SE, mapPixelWorldOrigin, nextPathDirection, countSetBits,
-} from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+} from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import {
   readTravelOptionsSettings, createTravelOptions, locationRectsOf, circumnavigateTarget,
-} from '../src/systems/travelOptions.js';
+} from '../src/systems/travel/travelOptions.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
-import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
 import { modSetting } from '../src/systems/modSettings.js';
 
 /** A forty-tile town in the middle of pixel 500,250 - the shape

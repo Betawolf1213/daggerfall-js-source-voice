@@ -11,10 +11,10 @@ import { readFileSync } from 'node:fs';
 import {
   automapTrailTick, automapWaySteps, TRAIL_FALL_M, TRAIL_FILL_M, TRAIL_LAND_FILL_M, TRAIL_DROPS_MAX,
   snapshotAutomap, restoreAutomap, resetAutomapStore, enterDungeonAutomap, bindAutomapLayout, buildRevealIndex, hideAllAutomap,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import { trailCells, nearestCell, wayField, createWayOut, attachCells, WAY_STEP_DY, WAY_FIELD_S, WAY_REFIELD_S, WAY_ASK_MS } from '../src/systems/wayOut.js';
 import { walkSpeed, runSpeed, GRAVITY, EYE_HEIGHT } from '../src/player/motor.js';
-import { dungeonQuestMarks, questCompassPick, questEnded } from '../src/systems/questGuidance.js';
+import { dungeonQuestMarks, questCompassPick, questEnded } from '../src/systems/quest/questGuidance.js';
 import { relayQuestOnline } from '../src/systems/quest/questRepair.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { adoptLinkedDungeonSize, ONLINE_DUNGEONS_STATE, MEDIUM_DUNGEONS_STATE, SMALLER_DUNGEONS_STATE } from '../src/world/smallerDungeons.js';
@@ -233,7 +233,7 @@ test('SD20g A QUEST SHARED ONLINE IS LAID ON THIS PAGE\'S SIZES, AND NO LINK RE-
   assert.deepEqual(place.siteDetails.questSpawnMarkers, markersOnline.questSpawnMarkers);
   assert.equal(quest.smallerDungeonsState, ONLINE_DUNGEONS_STATE, 'stamped the world\'s');
   assert.equal(relayQuestOnline(quest), false, 'the world\'s already: nothing');
-  const share = read('src/systems/questShare.js');
+  const share = read('src/systems/quest/questShare.js');
   // PIN MOVED (MEDIUM-DISTINCT's audit, 2026-10-08): the relay lays the copy on the world's sizes online, and on this page's
   // medium layout where the copy's dungeon moved, online and off
   assert.match(share, /const relay = \(q\) => \{\n\s*const online = ctx\.online \?\? isOnlinePage\(\);\n\s*if \(online\) relayQuestOnline\(q, \{ carriesQuestItem: ctx\.carriesQuestItem \?\? null \}\);\n\s*relayQuestMovedLayout\(q, machine, \{ carriesQuestItem: ctx\.carriesQuestItem \?\? null \}, online\);\n\s*\};/);

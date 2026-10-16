@@ -18,7 +18,7 @@ import { tokensToRows } from '../src/scenes/questBridge.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { questActionsExtensionTemplates } from '../src/systems/quest/questActionsExtension.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -98,7 +98,7 @@ function chop(m, rolls) {
 }
 const find = (what) => ({ box: { rows: ['While chopping and gathering wood,', `you chanced upon a ${what}`, 'that someone must have lost or discarded.'] } });
 const line = (what) => `you chanced upon a ${what}`;
-/** The character through the save and back, as a checkpoint and a login carry it (systems/save.js ENTITY_FIELDS). */
+/** The character through the save and back, as a checkpoint and a login carry it (systems/save/save.js ENTITY_FIELDS). */
 function relog(entity) {
   const snap = JSON.parse(JSON.stringify(snapshotPlayer(entity, { position: [0, 0, 0], classicMinutes: 0, locationKey: 'world' })));
   const loaded = chopper();

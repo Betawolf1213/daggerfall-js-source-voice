@@ -64,7 +64,7 @@ import { padCursorAssist, createPadCursorState, stepPadCursor, linearPadCursorSt
 import { GAUNTLET_POINT, GAUNTLET_PRESS } from './plusCursor.js';
 import { dfuCursorUrl } from './cursor.js';   // CLASSIC-CURSOR: the pad's arrow is DFU's controllerCursorImage, the mouse's own
 import { overlayOpen } from './enhancedOverlays.js';   // PADPLUS2: the enhanced doors' registry - a DOM window is up
-import { getInt, getBool } from '../systems/settings.js';
+import { getInt, getBool } from '../systems/settings/settings.js';
 import { quickLootSelection, quickLootWheel } from '../systems/quickLoot.js';   // PADPLUS6: the loot plaque's list, on the d-pad   // PADPLUS2: the swing mode decides the stroke
 import { lookScale } from './lookSettings.js';
 import { getInteractionMode, nextInteractionMode, MODE_ACTIONS } from '../player/interactionMode.js';   // PADPLUS10: hold up = the next mode

@@ -8,7 +8,7 @@
 // routes the zone's frames holds its fights:
 //
 //   - WHO FIGHTS. The relay cannot see the map (the zone is the POLITIC map's region 16, cut and kept out as
-//     systems/wildZone.js builds it from the files every client holds), so a socket's zone is its own word: each says it
+//     systems/wild/wildZone.js builds it from the files every client holds), so a socket's zone is its own word: each says it
 //     stands in it, and leaves it (`zone`). A blow lands only where BOTH fighters said so - a crafted client can opt out
 //     of the zone's fights, never into another's: an honest player outside the zone is nobody's target. And never on KIN
 //     (wildKin, below): a party member or one under the party's truce (the hub's word), the fighter's own duel opponent
@@ -20,7 +20,7 @@
 //     token signs, the reach from both fighters' last BELIEVED places: a run the referee allows, never a teleport).
 //   - A FALL is the referee's word: the fallen's vitality at none. The striker is its killer. The killer then has
 //     WILD_REF.pickMs to choose one worn piece of the fallen's (`pick` - its place in the offer the fallen's game showed,
-//     systems/wildDropLaw.js wornOffer); then the relay signs the fall (net/wildReceipt.js `f1`) and hands it to both, and
+//     systems/wild/wildDropLaw.js wornOffer); then the relay signs the fall (net/wildReceipt.js `f1`) and hands it to both, and
 //     the account service takes the drop and that piece off the fallen's judged record against it.
 //
 // Pure: no clock (every `now` an argument), no socket, no storage - the relay's room keeps the state in its memory
@@ -30,7 +30,7 @@ import { SIEGE_HIT, newFighter, refereeBlow, refereeCast, refereeStep } from './
 
 /** The zone referee's own numbers: how long a fighter no player has struck - and that has stood in the zone as long - takes
  *  to be whole again; how long a killer has to pick a worn piece before the fall is signed without one; the party's truce
- *  (systems/wildZone.js WILD_PARTY_TRUCE_MS, pinned equal - the hub holds it for the relay); how long a fallen stays down
+ *  (systems/wild/wildZone.js WILD_PARTY_TRUCE_MS, pinned equal - the hub holds it for the relay); how long a fallen stays down
  *  before its word that it stands in the zone raises it (the death screen's WILD_DEATH_HOLD_S, pinned equal - AUDIT INT9:
  *  it rose on its next word, where it fell, whole), and how long one away from the zone that long comes back whole; how
  *  long a fighter whose pose jumped past any run strikes nothing (AUDIT INT9: a jump was never believed, so a gallop, a

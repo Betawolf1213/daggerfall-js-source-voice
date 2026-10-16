@@ -283,7 +283,7 @@ test('AUDIT LV2 (reopened): the bonus pool is the LEVEL\'s, so re-opening the wi
 
   // IT RIDES THE SAVE, or a save and a load would be the same exploit
   // through a slower door.
-  assert.match(src('src/systems/save.js'), /'readyToLevelUp', 'pendingLevel', 'pendingBonusPool', 'chargenDone',/);
+  assert.match(src('src/systems/save/save.js'), /'readyToLevelUp', 'pendingLevel', 'pendingBonusPool', 'chargenDone',/);
   // ...and neither screen rolls one of its own any more.
   assert.doesNotMatch(src('src/ui/charsheet.js'), /LEVELUP_BONUS_POOL_MIN \+ Math\.floor\(rolls\(\)/);
 });

@@ -15,16 +15,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { setItemFields, mintCondition, templateByIndex, itemBaseValue } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition, templateByIndex, itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import {
   applyRarity, rarityEligible, rollLootRarity, legendaryById, legendariesFor, repairRarityBases, RARITY_HOME, rarityName,
-} from '../src/systems/lootRarity.js';
-import { rollSpoils, spoilsBase } from '../src/systems/gateSpoils.js';
+} from '../src/systems/loot/lootRarity.js';
+import { rollSpoils, spoilsBase } from '../src/systems/gate/gateSpoils.js';
 import { rollRaidSpoils } from '../src/systems/raidSpoils.js';
 import { equipItem, wearableItem } from '../src/systems/equip.js';
-import { seededRng } from '../src/systems/wind.js';
-import { ITEM_GROUPS } from '../src/systems/loot.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { ITEM_GROUPS } from '../src/systems/loot/loot.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 
 const WAND = 140, AMULET = 133;

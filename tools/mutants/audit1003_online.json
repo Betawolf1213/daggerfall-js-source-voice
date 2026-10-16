@@ -365,7 +365,7 @@
   },
   {
     "name": "AUDIT1003-O10-READ-ON-THE-HANDOVER",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (checkpointLanded(await hooks.checkpoint?.())) await",
     "new": "if (hooks.checkpoint?.() !== false) await",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "AUDIT1003-O10-READ-ON-A-REFUSAL",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "export const checkpointLanded = (c) => c === undefined || c === true || c?.ok === true;",
     "new": "export const checkpointLanded = (c) => c !== false;",
     "tests": [

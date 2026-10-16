@@ -32,10 +32,10 @@ import { SITE_TYPES, MARKER_TYPES } from '../src/systems/quest/place.js';
 import { blockFromJson, buildingDataFromJson } from '../src/formats/worldDataReplacement.js';
 import { ROW_CODECS } from '../src/formats/worldDataPack.js';
 import { patchJson } from '../src/formats/worldDataJson.js';
-import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { stockHouseContainer } from '../src/systems/shopStock.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import * as worldTooltips from '../src/systems/worldTooltips.js';   // looked up, so a tree without the namer fails its pin, not the file
 

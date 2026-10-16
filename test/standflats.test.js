@@ -13,7 +13,7 @@ import {
   STANDING_HORSES_MAX, STANDING_HORSE_RANGE, STANDING_HORSE_HOLD,
 } from '../src/world/standingHorses.js';
 import { isStandFlat, standFlatId, standFlatRecord } from '../src/world/standFlats.js';
-import { strangerHorseLook } from '../src/systems/horseCoats.js';
+import { strangerHorseLook } from '../src/systems/horse/horseCoats.js';
 import { figureLook } from '../src/characters/peopleBodies.js';
 import { createMerchantYards } from '../src/scenes/merchantYardsHost.js';
 

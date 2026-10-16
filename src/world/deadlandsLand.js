@@ -20,7 +20,7 @@
 // Not a DFU member. Ledger A (WB).
 import { faces, spike, GATE_ARCHIVE, GATE_STONE_RECORD } from './gateModel.js';
 import { courtToDungeon, courtSpireAxes, SPIRE_BASE_W, COURT_ARCHIVE, COURT_FLOOR_RECORD, LAVA_Y } from './gateArena.js';
-import { seededRng } from '../systems/wind.js';
+import { seededRng } from '../systems/wind/wind.js';
 import { SIGIL_TOWER, DEAD_CLOCK_PERIOD } from '../render/deadlands.js';
 import { COURT_R, COURTS, WALKS, WALK_HALF_W } from '../net/gateBrain.js';   // WB9b: the three courts and the walkways the land keeps clear of
 

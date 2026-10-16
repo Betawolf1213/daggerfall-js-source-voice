@@ -8,7 +8,7 @@ import {
   TELEPORT_PANEL_X, TELEPORT_PANEL_Y, DESTINATION_LABEL_OFFSET,
   _setTeleportPopUpArtForTests, teleportPopUpArtLoaded,
 } from '../src/ui/teleportPopUp.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { readFileSync } from 'node:fs';
 
 const DEST = Object.freeze({ pixel: { x: 50, y: 120 }, name: 'Daggerfall' });

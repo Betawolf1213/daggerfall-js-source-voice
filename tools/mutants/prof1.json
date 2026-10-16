@@ -485,7 +485,7 @@
   },
   {
     "name": "PROF1-54-online-the-foods-shelve-too",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  return isOnlinePage() ? [...TOOL_TEMPLATES] : [];",
     "new": "  return isOnlinePage() ? FORAGING_TEMPLATES.map((t) => t.index) : [];",
     "tests": [
@@ -494,7 +494,7 @@
   },
   {
     "name": "PROF1-55-online-nothing-shelves",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  return isOnlinePage() ? [...TOOL_TEMPLATES] : [];",
     "new": "  return [];",
     "tests": [
@@ -521,7 +521,7 @@
   },
   {
     "name": "PROF1-58-the-food-ignores-cc",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "  if (key === 'food:apple') return fruitTemplate('Apple', cc);",
     "new": "  if (key === 'food:apple') return fruitTemplate('Apple', false);",
     "tests": [

@@ -347,7 +347,7 @@ export function countsByName(quest, foe) {
 /** CURSE-SYNC (2026-09-27, the bug-reports channel: "Monsters aren't syncing ... The ghost on daggerfall ... We all had
  *  to kill them ... And everyone had to kill thier ow[n]"). A WORLD QUEST'S FOES ARE THE WORLD'S. S0000977, the Curse of
  *  Daggerfall, is no player's story: the tutorial starts it for every character as it ends (_TUTOR__'s `_no_`: `start
- *  quest 977 977`, finished or declined), a main quest is never shared (systems/questShare.js), and at night in
+ *  quest 977 977`, finished or declined), a main quest is never shared (systems/quest/questShare.js), and at night in
  *  Daggerfall's streets it stands a wraith every 21 minutes and a ghost every 31, one time in two. As a quest's foes they
  *  rode nowhere (Multiplayer.md's first lock), so every player in the streets fought a haunting nobody else could see.
  *  They ride the cell as an encounter's do - their spawner's, everyone else's puppet, anyone's to strike and to be

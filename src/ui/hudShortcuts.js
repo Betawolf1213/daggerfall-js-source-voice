@@ -40,7 +40,7 @@
 // one keydown door two of the four hosts route through - can take it
 // without a cycle (ui/hudLarge.js imports ui/input.js).
 
-import { getBool, setValue } from '../systems/settings.js';
+import { getBool, setValue } from '../systems/settings/settings.js';
 import { hotkeyHit } from '../systems/dialogShortcuts.js';
 import { toggleRetroPostprocessing } from '../systems/retroMode.js';   // RETRO1: a systems leaf, as the rule above asks
 

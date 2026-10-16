@@ -37,7 +37,7 @@
   },
   {
     "name": "DISC11-level-outlives-a-jump",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "export const heardRainGain = () => (_heard != null && _heardAtJump === _jumps ? _heardGain : 1);",
     "new": "export const heardRainGain = () => (_heard != null ? _heardGain : 1);",
     "tests": [

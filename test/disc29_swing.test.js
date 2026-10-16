@@ -16,15 +16,15 @@ import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { machineAttack, getMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
 import { installSwingLaw } from '../src/combat/swingLaw.js';
 import { EQUIP_SLOTS, equipTableOf } from '../src/systems/equip.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { createLycanthropyCurse, lycanthropyMagicRound, morphSelf, LYCANTHROPE_STAT_MOD } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
-import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
+import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 
 const DT = 1 / 60;
 /** A night with no full moon (the lycanthropy suite's QUIET): a forced change would morph the subject. */

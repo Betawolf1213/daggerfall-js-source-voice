@@ -1,17 +1,17 @@
 // OW6 - THE JOURNEY SLOWS AS ENEMIES CLOSE (2026-09-29, the player: "If a player is traveling very fast, they should slow
-// if enemies become close"). The law (systems/travelThreat.js: an enemy's reach along the way, the cap that gives the
+// if enemies become close"). The law (systems/travel/travelThreat.js: an enemy's reach along the way, the cap that gives the
 // traveller THREAT_WARN_S of real time before it, the spinner's ladder); a journey flown frame by frame at x40 straight at
 // a band, with and without it; and the host's governor lifted out of scenes/world.js and RUN on both skins - the lower of
 // the ground's cap and the enemies' holds, the panel told why, a line said once.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { THREAT_WARN_S, metresToReach, threatStep, threatCap, foePaced } from '../src/systems/travelThreat.js';
-import { createLoadGovernor } from '../src/systems/travelGovernor.js';
+import { THREAT_WARN_S, metresToReach, threatStep, threatCap, foePaced } from '../src/systems/travel/travelThreat.js';
+import { createLoadGovernor } from '../src/systems/travel/travelGovernor.js';
 import { TRAVEL_HELD_TEXT, TRAVEL_HELD_WHY } from '../src/ui/enhancedTravelControl.js';
 import { foeHostile, foeAlerted, areEnemiesNearby } from '../src/systems/encounters.js';
 import { TRAVEL_VIEW_TEXT, travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
-import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };

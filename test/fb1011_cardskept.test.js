@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { createCardStakes, CARD_STAKES_KEY } from '../src/net/cardStakes.js';
 import { spoilsStore } from '../src/scenes/spoilsPool.js';
 import { cardHudModel, createCardTableHud, buyInPicks, raisePicks } from '../src/ui/cardTableHud.js';
-import { CardTableSession } from '../src/systems/cardTableSession.js';
+import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 import { fakeDoc, all, text } from './decorFakes.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

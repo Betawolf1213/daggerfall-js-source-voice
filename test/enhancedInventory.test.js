@@ -18,7 +18,7 @@ import {
   mountEnhancedInventory,   // AUDIT INV2: the pane is MOUNTED and the gesture DRIVEN
   itemInfoBoxes,   // PLUS10
 } from '../src/ui/enhancedInventory.js';
-import { WAGON_KG_LIMIT } from '../src/systems/itemTransfer.js';
+import { WAGON_KG_LIMIT } from '../src/systems/item/itemTransfer.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';   // MAC-M2 B: a cart in the bag, so the loot bar's one surviving button draws
 import { USE_PENDING } from '../src/ui/nativeInventory.js';
 import {
@@ -27,7 +27,7 @@ import {
 import { withDom } from './invdrag.mjs';   // AUDIT INV2: a document just real enough to DRIVE the gesture
 import { PACK_PAGES, filterByPage } from '../src/ui/packPages.js';   // PX31: the pack's nine pages
 import { EQUIP_SLOTS, ITEM_TEMPLATES, getTemplate } from '../src/characters/paperdoll.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { equipItem, unequipSlot, isEquipped } from '../src/systems/equip.js';
 import { maxEncumbrance } from '../src/combat/formulas.js';
 import { carriedWeight, totalWeight } from '../src/systems/inventory.js';
@@ -217,7 +217,7 @@ test('U53: an item line is the other modules’ own strings', () => {
   const line = itemLine(e.items[0], e);
   assert.equal(line.name, 'Longsword');
   assert.ok(line.weight > 0);
-  assert.equal(typeof line.word, 'string', 'conditionWord, from systems/itemInfo.js');
+  assert.equal(typeof line.word, 'string', 'conditionWord, from systems/item/itemInfo.js');
   assert.equal(line.condition, 100);
   assert.equal(line.equipped, false);
 });
@@ -1817,7 +1817,7 @@ test('AUDIT INV2: the ghost is the item\'s own tile, and the ladder it rides is 
 //
 // Both were true, and the cause is the shape this port keeps finding:
 // the PRODUCERS existed and had one reader. `weaponDamageString` and
-// `armourModString` have been in `systems/itemInfo.js` since U25, read
+// `armourModString` have been in `systems/item/itemInfo.js` since U25, read
 // only by `expandItemInfo`'s `%wdm` and `%mod` - the macro pass that
 // fills the CLASSIC popup's TEXT.RSC record. The enhanced card builds
 // its rows from `itemLine` and no record at all, so it showed weight,
@@ -1825,7 +1825,7 @@ test('AUDIT INV2: the ghost is the item\'s own tile, and the ladder it rides is 
 
 test('MAC-M1: itemLine carries a weapon’s damage and armour’s rating', async () => {
   const { itemDamageLine, itemArmourLine, weaponDamageString, armourModString } =
-    await import('../src/systems/itemInfo.js');
+    await import('../src/systems/item/itemInfo.js');
 
   // DRIVEN through itemLine, which is what the card reads.
   const W = (templateIndex, material = 0) => ({ group: 'Weapons', templateIndex, material, stackCount: 1 });
@@ -1864,7 +1864,7 @@ test('MAC-M1: itemLine carries a weapon’s damage and armour’s rating', async
 });
 
 test('MAC-M1: an ARROW shows no damage, because its own record never did', async () => {
-  const { itemDamageLine, weaponDamageString } = await import('../src/systems/itemInfo.js');
+  const { itemDamageLine, weaponDamageString } = await import('../src/systems/item/itemInfo.js');
   const { TEMPLATES } = await import('../src/systems/useItem.js');
   const arrow = { group: 'Weapons', templateIndex: TEMPLATES.Arrow, material: 0, stackCount: 20 };
 
@@ -1878,7 +1878,7 @@ test('MAC-M1: an ARROW shows no damage, because its own record never did', async
   assert.notEqual(weaponDamageString(arrow), null,
     'the PRODUCER still answers - it is the presenter that declines, exactly as DFU’s record does');
 
-  const { itemInfoTextId, INFO_TEXT } = await import('../src/systems/itemInfo.js');
+  const { itemInfoTextId, INFO_TEXT } = await import('../src/systems/item/itemInfo.js');
   assert.equal(itemInfoTextId(arrow), INFO_TEXT.arrow, 'and that is the record the classic side picks');
 });
 
@@ -2116,11 +2116,11 @@ test('MAC-M2 B: the NORMAL pack keeps its Gold button - GOLD-DROP: on the pack i
 // verbatim ItemEquipTable.GetItemHands, and it is what the equip table,
 // the paperdoll's record pick, Weapon Widget's mirror rows and Handheld
 // Torches' hand law all ask. The card learnt to ask it too - through
-// ONE new presenter in systems/itemInfo.js, beside MAC-M1's two - so
+// ONE new presenter in systems/item/itemInfo.js, beside MAC-M1's two - so
 // there is still exactly one list of which weapons take both hands.
 
 test('MAC-M2: every weapon template’s hands, against GetItemHands’ own table', async () => {
-  const { itemHandsLine } = await import('../src/systems/itemInfo.js');
+  const { itemHandsLine } = await import('../src/systems/item/itemInfo.js');
   const W = (templateIndex, material = 0) => ({ group: 'Weapons', templateIndex, material, stackCount: 1 });
 
   // DFU's WEAPON_HANDS row by row (equipRules.js, extraction-generated
@@ -2163,9 +2163,9 @@ test('MAC-M2: every weapon template’s hands, against GetItemHands’ own table
 });
 
 test('MAC-M2: the card reads GetItemHands, not a list of its own', async () => {
-  const { itemHandsLine } = await import('../src/systems/itemInfo.js');
+  const { itemHandsLine } = await import('../src/systems/item/itemInfo.js');
   const { getItemHands, ITEM_HANDS } = await import('../src/characters/equipTable.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const W = (templateIndex) => ({ group: 'Weapons', templateIndex, material: 0, stackCount: 1 });
 
   // ONE HOME. The word the card prints IS the verdict the equip table

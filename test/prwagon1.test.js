@@ -17,9 +17,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHorseCartPool, WAGON_BUCKET, KEY_WAGON, KEY_HORSE } from '../src/scenes/horseCartPool.js';
-import { HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
-import { WAGON_MODEL_ID, ACTIVATION_REACH, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
+import { WAGON_MODEL_ID, ACTIVATION_REACH, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horse/horseCartLaw.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { pickActivatableHit, liveFoeTargets, rayAabb, rayObb, RAY_DISTANCE, DOOR_ACTIVATION_DISTANCE, MOBILE_NPC_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
 import { bodyPile, resetBodyStack } from '../src/player/lootStack.js';

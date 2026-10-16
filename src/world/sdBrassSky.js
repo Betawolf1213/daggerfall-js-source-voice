@@ -3,7 +3,7 @@
 // BRASS AIR'S GRADE, for the land's haze AND the sky over it. SD19 graded the fog toward the brass near a standing
 // Hollow and left the sky as it was: at the skyline the fogged land met the sky a step apart - 15/-4/-34 on a clear
 // noon's horizon, 23/-6/-48 under an overcast dusk. The live event's dread is graded on both (world/dreadSky.js
-// DREAD_GLSL, EVENT1), and so is the brass now: one ramp, its JS for the fog and the water's sky (systems/sdOmen.js
+// DREAD_GLSL, EVENT1), and so is the brass now: one ramp, its JS for the fog and the water's sky (systems/superDungeon/sdOmen.js
 // re-exports it, SD19's door) and its GLSL for every pass that draws the sky - generated from the same stops, so the
 // two cannot drift.
 //

@@ -450,7 +450,7 @@
   },
   {
     "name": "AUDITRETRO1-E4-a-warning-a-read",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  if (_warned.has(k)) return;\n",
     "new": "",
     "tests": [

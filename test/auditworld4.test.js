@@ -19,7 +19,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { actFrameFits, MAX_FRAME_BYTES } from '../src/net/wire.js';
-import { validLootItem, validLootList, LOOT_LIST_MAX, LOOT_ARRAY_FIELDS } from '../src/systems/loot.js';
+import { validLootItem, validLootList, LOOT_LIST_MAX, LOOT_ARRAY_FIELDS } from '../src/systems/loot/loot.js';
 import { itemEnchantments } from '../src/systems/enchantments.js';
 import { hasArtifactSubtype, hasArtifactEffect } from '../src/systems/artifactEffects.js';
 import { fakeSocketClass } from './fakeSocket.mjs';

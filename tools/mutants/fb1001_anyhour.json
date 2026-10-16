@@ -1,7 +1,7 @@
 [
   {
     "name": "ANY-HOUR-the-act-asks-the-daylight",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "skip ? [...skip, ...ACT_KEEPS_NO_HOURS] : ACT_KEEPS_NO_HOURS);",
     "new": "skip);",
     "tests": [
@@ -33,7 +33,7 @@
   },
   {
     "name": "ANY-HOUR-the-net-line-by-daylight",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "`Fishing is done in water: stand in it,",
     "new": "`Fishing is done in water by daylight: stand in it,",
     "tests": [

@@ -2,13 +2,13 @@
 // ARENA3 (2026-10-02, Mac: "join a team (red and blue)"; "Joining a team comes with it's own enhanced UI"): THE GATE'S
 // PEOPLE WHO ARE NOT THE HERALD - the Red and Blue Banners' recruiters, and (with the book) the bookmaker - answered in
 // ONE place for both hosts that stand the colosseum (scenes/world.js, the streaming world; scenes/exterior.js, the city
-// alone), so the two never drift; and THE ARENA WINDOW's model and its presses (ui/arenaDoor.js, systems/arenaBoard.js).
+// alone), so the two never drift; and THE ARENA WINDOW's model and its presses (ui/arenaDoor.js, systems/arena/arenaBoard.js).
 // Design: bible/11-Multiplayer/Arena.md "3. The teams", "5. The Arena window".
 //
 // Each person's word is a keyed choice (ui/talkWindow.js ChoiceWindow - the enhanced dialog on the Plus skin, the panel
-// on the classic one) built by the pure law (systems/arenaHerald.js recruiterChoice); this file only does what a choice
+// on the classic one) built by the pure law (systems/arena/arenaHerald.js recruiterChoice); this file only does what a choice
 // asks - joins the banner, quits it (asked twice), opens the Arena window on its Team page - and says what was done.
-// The league rides the player (`playerEntity.arenaLeague`, systems/save.js), rolled to the season on every read.
+// The league rides the player (`playerEntity.arenaLeague`, systems/save/save.js), rolled to the season on every read.
 //
 // ARENA4b: ONLINE THE ACCOUNT IS THE LAW (bible/11-Multiplayer/Arena.md "7. Online"). While the arena online is live
 // (scenes/arenaOnline.js): a recruiter's choice reads and writes the ACCOUNT's banner (the board's `me.banner`, `left`,
@@ -22,21 +22,21 @@
 
 import { ChoiceWindow } from '../ui/talkWindow.js';
 import { ActionTextBox } from '../ui/actionText.js';   // ARENA4b: the Keeper's wall, read online
-import { recruiterChoice, quitAsk, heraldChoice as heraldChoiceOf } from '../systems/arenaHerald.js';
-import { joinBanner, quitBanner, rollLeague } from '../systems/arenaLeague.js';
-import { ARENA_TEXT } from '../systems/arenaText.js';
-import { bookmakerChoice, stakeChoice, placeWager, settleBook, bookVerdict, collectWinnings, oddsText, exhibitionOdds, priceFor } from '../systems/arenaBook.js';
-import { exhibitionFor } from '../systems/arenaLadder.js';
-import { fighterIdentity } from '../systems/arenaFighters.js';
+import { recruiterChoice, quitAsk, heraldChoice as heraldChoiceOf } from '../systems/arena/arenaHerald.js';
+import { joinBanner, quitBanner, rollLeague } from '../systems/arena/arenaLeague.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
+import { bookmakerChoice, stakeChoice, placeWager, settleBook, bookVerdict, collectWinnings, oddsText, exhibitionOdds, priceFor } from '../systems/arena/arenaBook.js';
+import { exhibitionFor } from '../systems/arena/arenaLadder.js';
+import { fighterIdentity } from '../systems/arena/arenaFighters.js';
 import { totalGoldAmount, deductGold, addGold } from '../systems/court.js';
-import { arenaBoard, hallLinesOnline, hallPlaques } from '../systems/arenaBoard.js';
+import { arenaBoard, hallLinesOnline, hallPlaques } from '../systems/arena/arenaBoard.js';
 import { PLAQUE_MAX } from '../world/arenaPlaques.js';   // ARENA5: the wall's cap
-import { arenaReplaysRestore } from '../systems/arenaReplay.js';   // ARENA5: your ladder replay
-import { nextLadderBout, arenaLadderRestore } from '../systems/arenaLadder.js';
-import { FIGHT_HEALTH_MIN } from '../systems/arenaHerald.js';
+import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
+import { nextLadderBout, arenaLadderRestore } from '../systems/arena/arenaLadder.js';
+import { FIGHT_HEALTH_MIN } from '../systems/arena/arenaHerald.js';
 import { createArenaOverlay, closeArenaDoor } from '../ui/arenaDoor.js';
-import { bookRestore, houseOutcome } from '../systems/arenaBook.js';   // ARENA4b: online the relay's verdict settles, the house's only for an hour it never ran
-import { bookSaw } from '../systems/arenaBook.js';   // AUDIT PRE-MERGE 1003 B3: an hour seen here is not fought again
+import { bookRestore, houseOutcome } from '../systems/arena/arenaBook.js';   // ARENA4b: online the relay's verdict settles, the house's only for an hour it never ran
+import { bookSaw } from '../systems/arena/arenaBook.js';   // AUDIT PRE-MERGE 1003 B3: an hour seen here is not fought again
 
 /** How near the Herald the Arena window's Watch, Fight and Wager may be pressed, metres (the gate and its plaza). */
 export const AT_GATE_M = 60;
@@ -47,7 +47,7 @@ export const nearArenaGate = (feet, herald) => !!feet && !!herald && Math.hypot(
 export const RECRUITER_BANNER = Object.freeze({ redRecruiter: 'red', blueRecruiter: 'blue' });
 
 /**
- * ARENA4b: A BANNER'S RECRUITER ONLINE - systems/arenaHerald.js recruiterChoice's shape over the ACCOUNT's membership (the
+ * ARENA4b: A BANNER'S RECRUITER ONLINE - systems/arena/arenaHerald.js recruiterChoice's shape over the ACCOUNT's membership (the
  * board's `me.banner`, `left`, `leftSeason`) and the realm's season and standing: join when the account may (free; the
  * other banner a season after quitting it, the one quit at once - server-account/src/arena.js arenaTeam's own law, said
  * here so the choice never offers what the service will refuse), quit (asked again - `quitAsk`), the window, leave; a
@@ -165,7 +165,7 @@ export function createArenaGate(deps) {
   }
 
   // ── THE HERALD AND THE KEEPER (ARENA4b) ─────────────────────────────────────────────────────────────────
-  /** THE HERALD'S CHOICE (systems/arenaHerald.js) for both hosts' Herald (scenes/world.js, scenes/exterior.js
+  /** THE HERALD'S CHOICE (systems/arena/arenaHerald.js) for both hosts' Herald (scenes/world.js, scenes/exterior.js
    *  arenaHerald): offline the save's ladder and league; online the account's climb (`climb` - Fight offers its next bout,
    *  "the ladder done" is its) and its banner under the realm's laurel - and while the climb is not yet known, no Fight
    *  and his line says the realm's records are on their way. `cityBout` the names on the city's sand now; `healthShare`
@@ -187,9 +187,9 @@ export function createArenaGate(deps) {
     if (me?.banner === 'red' || me?.banner === 'blue') ch.lines.push(on.board().team?.laurel === me.banner ? ARENA_TEXT.teams.laurelYou : ARENA_TEXT.teams.under(ARENA_TEXT.teams.the[me.banner]));
     return ch;
   }
-  /** THE KEEPER OF THE HALL online (scenes/worldModes.js, the undercroft's Keeper): the realm's wall (systems/arenaBoard.js
+  /** THE KEEPER OF THE HALL online (scenes/worldModes.js, the undercroft's Keeper): the realm's wall (systems/arena/arenaBoard.js
    *  hallLinesOnline) - the board the window last fetched, or asked and read when it comes. False offline: the host reads
-   *  this save's wall (systems/arenaLadder.js hallOfChampions). */
+   *  this save's wall (systems/arena/arenaLadder.js hallOfChampions). */
   function hall() {
     const on = online();
     if (!on) return false;
@@ -201,7 +201,7 @@ export function createArenaGate(deps) {
   }
   /** ARENA5: THE HALL'S PLAQUES (world/arenaPlaques.js, both hosts' `arenaHallPlaques` - scenes/worldModes.js hangs the
    *  wall): offline this save's Grand Champions, online the realm's (the board the window last fetched; asked when it is
-   *  not in, and until it comes the wall stands bare - never the save's names as the realm's). systems/arenaBoard.js
+   *  not in, and until it comes the wall stands bare - never the save's names as the realm's). systems/arena/arenaBoard.js
    *  hallPlaques' `[{ name, banner, season }]`. */
   function plaques() {
     const on = online();
@@ -222,7 +222,7 @@ export function createArenaGate(deps) {
 
   // ── THE BOOKMAKER ───────────────────────────────────────────────────────────────────────────────────────
   const B = ARENA_TEXT.book;
-  /** Every wager that can be settled now, settled (systems/arenaBook.js settleBook) - its winnings owed at the stall. */
+  /** Every wager that can be settled now, settled (systems/arena/arenaBook.js settleBook) - its winnings owed at the stall. */
   function settle() {
     const on = online();
     if (!on?.exhibitions?.()) { setBook(settleBook(league().book, gm(), { liveHour: liveHour() }).book); return; }
@@ -297,7 +297,7 @@ export function createArenaGate(deps) {
   }
 
   // ── THE ARENA WINDOW ────────────────────────────────────────────────────────────────────────────────────
-  /** THE WINDOW'S MODEL now (systems/arenaBoard.js): the save's ladder and league (the book settled first), the clock,
+  /** THE WINDOW'S MODEL now (systems/arena/arenaBoard.js): the save's ladder and league (the book settled first), the clock,
    *  the gate's state. */
   function board() {
     settle();

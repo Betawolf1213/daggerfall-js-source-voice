@@ -2,7 +2,7 @@
 // behind renown level and also slighty reduce the spawn rate of revnants"; asked: "Elites 5, revenants 10", offline
 // "Unchanged offline", a shared dungeon "Room's pick stands", the rate "Return chance 50% → 40%").
 //
-// Pinned: the numbers; the one door (systems/sigil.js renownOpens - offline open, online from the Renown, never before
+// Pinned: the numbers; the one door (systems/sigil/sigil.js renownOpens - offline open, online from the Renown, never before
 // the page knows it); the elites a player stands as its own - the open world's roll, through the real spawn pool, and a
 // search's - and the shared dungeon's pick untouched; the revenants held - none made or run, none returned, at home,
 // spoken of, marked, hunted or festering, the sworn's days still running and the held days uncounted; the page that
@@ -20,15 +20,15 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const P = await import('../src/ui/revenantPage.js');
 const E = await import('../src/systems/eliteFoes.js');
 const { rollSearchElite } = await import('../src/systems/searchables.js');
-const { setSigilOnline, setSigilRenown, renownOpens, _resetSigilForTests } = await import('../src/systems/sigil.js');
+const { setSigilOnline, setSigilRenown, renownOpens, _resetSigilForTests } = await import('../src/systems/sigil/sigil.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
-const { LOYALTY } = await import('../src/systems/revenantFeud.js');
+const { LOYALTY } = await import('../src/systems/revenant/revenantFeud.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 

@@ -10,15 +10,15 @@ import { join } from 'node:path';
 import {
   buildingHint, CHANCE_TO_REVEAL_LOCATION_ON_MAP,
   MAP_REVEAL_TEXT_ID, DIRECTION_TEXT_ID,
-} from '../src/systems/talkTopics.js';
+} from '../src/systems/talk/talkTopics.js';
 import {
   discoverBuilding, hasDiscoveredBuilding, discoveredBuildings,
   snapshotDiscovery, restoreDiscovery,
 } from '../src/systems/discovery.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import {
   honorificOf, raceDisplayName, RACE_DISPLAY_NAME, expandAnswerRecord,
-} from '../src/systems/talkSession.js';
+} from '../src/systems/talk/talkSession.js';
 import { TextRsc } from '../src/formats/textRsc.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

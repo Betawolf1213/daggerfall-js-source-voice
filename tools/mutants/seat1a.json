@@ -105,7 +105,7 @@
   },
   {
     "name": "SEAT1a-any-building-a-palace",
-    "file": "src/systems/townSeats.js",
+    "file": "src/systems/town/townSeats.js",
     "old": "(b) => b?.buildingType === BUILDING_TYPES.Palace)",
     "new": "(b) => b?.buildingType != null)",
     "tests": [
@@ -114,7 +114,7 @@
   },
   {
     "name": "SEAT1a-crown-with-a-palace-a-palace",
-    "file": "src/systems/townSeats.js",
+    "file": "src/systems/town/townSeats.js",
     "old": "tier: crown ? 'crown' : 'palace',",
     "new": "tier: hasPalace(loc) ? 'palace' : 'crown',",
     "tests": [
@@ -123,7 +123,7 @@
   },
   {
     "name": "SEAT1a-mod-rows-counted",
-    "file": "src/systems/townSeats.js",
+    "file": "src/systems/town/townSeats.js",
     "old": "    if (!loc || !isBase(loc)) continue;",
     "new": "    if (!loc) continue;",
     "tests": [
@@ -132,7 +132,7 @@
   },
   {
     "name": "SEAT1a-key-signed",
-    "file": "src/systems/townSeats.js",
+    "file": "src/systems/town/townSeats.js",
     "old": "key: loc.mapTableData.mapId >>> 0,",
     "new": "key: loc.mapTableData.mapId | 0,",
     "tests": [

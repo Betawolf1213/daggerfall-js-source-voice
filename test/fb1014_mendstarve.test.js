@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { ENCHANTMENT_TYPES as T, enchantmentMagicRound, repairsObjectsTarget } from '../src/systems/enchantments.js';
 import { equipItem } from '../src/systems/equip.js';
 import { armorOfMaterial } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 
 const CUIRASS = 102, HELM = 107, BOOTS = 108, RING = 135, IRON_PLATE = 0x0200;
 const player = () => ({ isPlayer: true, level: 10, gender: 'male', activeEffects: [], health: 60, maxHealth: 60, items: [], spells: [], stats: {}, skills: {}, career: { primarySkills: [], majorSkills: [], luck: 50 } });

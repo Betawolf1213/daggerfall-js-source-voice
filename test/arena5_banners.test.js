@@ -2,7 +2,7 @@
 // colours on your ladder bouts (your banners on your side of the floor, the crowd's half in your colour)"; the ARENA3
 // record left them "waiting on a tint the billboard pass does not take and on hangings the floor's instance does not
 // stand"). The billboard pass's per-batch wash on both lanes (render/renderer.js BB_FS uBatchTint, render/enhancedLighting.js
-// EL_BB_FS) on a recording GL; the crowd's halves (systems/arenaCrowd.js crowdHalves / crowdWash) and the driver's crowd
+// EL_BB_FS) on a recording GL; the crowd's halves (systems/arena/arenaCrowd.js crowdHalves / crowdWash) and the driver's crowd
 // batched and washed by them (scenes/arenaBouts.js buildCrowd) over a fake stage, for a ladder bout under a banner, one
 // under none, an exhibition and a relay's watched pair; the floor's hangings (world/arenaFloor.js hangingModel /
 // arenaFloorBlock) for the banners the driver says (floorBanners) - offline the save's, online the realm's.
@@ -13,10 +13,10 @@ import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE, EL_BB_FS } from '../src/render/enhancedLighting.js';
 import { classicShadowLane } from '../src/render/classicShadowLane.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
-import { CROWD_WASH, crowdHalves, crowdHalfOf, crowdWash } from '../src/systems/arenaCrowd.js';
+import { CROWD_WASH, crowdHalves, crowdHalfOf, crowdWash } from '../src/systems/arena/arenaCrowd.js';
 import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder, nextLadderBout, exhibitionFor } from '../src/systems/arenaLadder.js';
-import * as LG from '../src/systems/arenaLeague.js';
+import { newArenaLadder, nextLadderBout, exhibitionFor } from '../src/systems/arena/arenaLadder.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
 import { arenaFloorBlock, arenaFloorBlocks, hangingModel, KAMER_BANNERS, ARENA_BANNER_MODEL, HANG_HALF_M, ARENA_FLOOR_BLOCK_INDEX } from '../src/world/arenaFloor.js';
 import { ARENA_MODEL_ID } from '../src/world/arenaModel.js';
 import ARENA_BLOCK_JSON from '../vendor/daggerfall-arena/Arena/ARENADAG.RMB.json' with { type: 'json' };

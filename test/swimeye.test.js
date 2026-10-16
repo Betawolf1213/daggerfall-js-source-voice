@@ -29,7 +29,7 @@ test('SWIM-EYE CLEAR OF THE GROUND THROUGH THE BOUNCE: the real bobber swimming 
   const eyeLow = SWIM_EYE_HEIGHT + low;
   const w = read('src/scenes/world.js');
   const near = Number(/perspective\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), worldAspect, ([\d.]+), 6000\)/.exec(w)?.[1]);
-  const fov = Number(/"FieldOfView": "(\d+)"/.exec(read('src/systems/settingsDefaults.js'))?.[1]) * Math.PI / 180;
+  const fov = Number(/"FieldOfView": "(\d+)"/.exec(read('src/systems/settings/settingsDefaults.js'))?.[1]) * Math.PI / 180;
   assert.ok(near > 0 && fov > 0, 'the lens read');
   const reach = Math.hypot(near, near * Math.tan(fov / 2));   // the near plane's lowest point under the eye, over every pitch (no roll)
   assert.ok(eyeLow - reach > 0.05, `the near plane over the ground at the dip's foot: ${(eyeLow - reach).toFixed(3)} m`);

@@ -1,6 +1,6 @@
 // @ts-check
 // MWNPC7 (2026-10-09, the MW-NPC arc's seventh slice - bible/04-Characters/Morrowind-NPCs.md section 12): A
-// TOWNSPERSON, READ FOR THEIR BODY. The street's walkers (systems/townPopulation.js - characters/mobilePerson.js) carry
+// TOWNSPERSON, READ FOR THEIR BODY. The street's walkers (systems/town/townPopulation.js - characters/mobilePerson.js) carry
 // what Daggerfall rolled for them at each spawn: the climate's race, a gender, one of four outfit variants (the sprite
 // archive, PERSON_TEXTURES), a face record, a name - or the guard's arm (texture 399, a male in the watch's colours).
 // This reads that roll for a Morrowind body: the race and gender as rolled, a face off the face record, and a wardrobe

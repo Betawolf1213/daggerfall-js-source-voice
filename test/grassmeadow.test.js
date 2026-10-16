@@ -28,7 +28,7 @@ import { LAB_GRASS_HEAD, GAME_GRASS_FIELD, LAB_GRASS_VS, LAB_GRASS_FS, GAME_GRAS
 import { SHADOW_POINT_CASTERS } from '../src/render/shadowPass.js';
 import { EL_MAX_LIGHTS, elDecode3, elDecodeN } from '../src/render/enhancedLighting.js';
 import { pixelGrass, PX_RAMP_STEPS } from '../src/render/grassPixelArt.js';
-import { floraSwayOf, gustPhaseAfterShift, gustClock, GUST_RATE, GUST_K, LAB_WIND_RATE, WIND_SLIDER_MAX } from '../src/systems/windDrive.js';
+import { floraSwayOf, gustPhaseAfterShift, gustClock, GUST_RATE, GUST_K, LAB_WIND_RATE, WIND_SLIDER_MAX } from '../src/systems/wind/windDrive.js';
 import { FEATURES } from '../src/systems/features.js';
 import { perspective, mirrorProjectionX, lookAt } from '../src/world/mat4.js';
 import { glslFunctions } from './glsl.mjs';

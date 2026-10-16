@@ -293,7 +293,7 @@
   },
   {
     "name": "SD11E-C4-the-salts-comment-as-it-was",
-    "file": "src/systems/sdSite.js",
+    "file": "src/systems/superDungeon/sdSite.js",
     "old": "a slot's own until the 2047th Hollow after it",
     "new": "a slot's own until the 2048th Hollow after it",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "SD11E-docs-the-largest-cities",
-    "file": "src/systems/sdSite.js",
+    "file": "src/systems/superDungeon/sdSite.js",
     "old": "the Bay's first\n//      SD_GREAT_CITIES cities by that same claim (one named for its region, then the most blocks, then the most\n//      buildings), and the slot's roll picks one.",
     "new": "the Bay's SD_GREAT_CITIES\n//      largest cities, and the slot's roll picks one.",
     "tests": [

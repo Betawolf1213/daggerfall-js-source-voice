@@ -1,28 +1,28 @@
 [
   {
     "name": "WAGONS1-a-rank-flipped",
-    "file": "src/systems/wagonKinds.js",
+    "file": "src/systems/wagon/wagonKinds.js",
     "old": "    if (r > rank) { best = it; rank = r; }",
     "new": "    if (rank < 0 || r < rank) { best = it; rank = r; }",
     "tests": ["test/wagons1.test.js"]
   },
   {
     "name": "WAGONS1-a-capacity-moved",
-    "file": "src/systems/wagonKinds.js",
+    "file": "src/systems/wagon/wagonKinds.js",
     "old": "kg: 1500,",
     "new": "kg: 1600,",
     "tests": ["test/wagons1.test.js"]
   },
   {
     "name": "WAGONS1-the-mark-unread",
-    "file": "src/systems/wagonKinds.js",
+    "file": "src/systems/wagon/wagonKinds.js",
     "old": "export const wagonKindOf = (item) => validWagonKind(item?.wagonKind) ?? 'cart';",
     "new": "export const wagonKindOf = (item) => (void item, 'cart');",
     "tests": ["test/wagons1.test.js"]
   },
   {
     "name": "WAGONS1-the-750-still-read",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "effectiveUnitWeightInKg(item), wagonKg, totalWeight(remote)",
     "new": "effectiveUnitWeightInKg(item), WAGON_KG_LIMIT, totalWeight(remote)",
     "tests": ["test/wagons1.test.js"]
@@ -127,14 +127,14 @@
   },
   {
     "name": "WAGONS1-the-kind-dropped",
-    "file": "src/systems/horseCartWire.js",
+    "file": "src/systems/horse/horseCartWire.js",
     "old": "    if (wk) out.wk = wk;",
     "new": "    void wk;",
     "tests": ["test/wagons1.test.js"]
   },
   {
     "name": "WAGONS1-a-bad-passenger-list-seating-anyone",
-    "file": "src/systems/horseCartWire.js",
+    "file": "src/systems/horse/horseCartWire.js",
     "old": "passengers: validPassengers(raw.ps) ?? [] };",
     "new": "passengers: validPassengers(raw.ps) ?? raw.ps ?? [] };",
     "tests": ["test/wagons1.test.js"]
@@ -204,28 +204,28 @@
   },
   {
     "name": "WAGONS1-a-seat-past-four",
-    "file": "src/systems/wagonSeats.js",
+    "file": "src/systems/wagon/wagonSeats.js",
     "old": "raw.s[1] >= 0 && raw.s[1] < MAX_SEATS",
     "new": "raw.s[1] >= 0 && raw.s[1] <= MAX_SEATS",
     "tests": ["test/wagons1_seats.test.js"]
   },
   {
     "name": "WAGONS1-a-rider-twice",
-    "file": "src/systems/wagonSeats.js",
+    "file": "src/systems/wagon/wagonSeats.js",
     "old": "if (seats.has(e[1]) || riders.has(e[0])) return null;",
     "new": "if (seats.has(e[1])) return null;",
     "tests": ["test/wagons1_seats.test.js"]
   },
   {
     "name": "WAGONS1-a-re-ask-let-straight-back",
-    "file": "src/systems/wagonSeats.js",
+    "file": "src/systems/wagon/wagonSeats.js",
     "old": "declined.set(rider, now + RIDE_REASK_MS);",
     "new": "declined.set(rider, now);",
     "tests": ["test/wagons1_seats.test.js"]
   },
   {
     "name": "WAGONS1-an-ask-never-lapsing",
-    "file": "src/systems/wagonSeats.js",
+    "file": "src/systems/wagon/wagonSeats.js",
     "old": "if (now - at > RIDE_ASK_TTL_MS) { asks.delete(r); out.push(r); }",
     "new": "if (now - at > Infinity) { asks.delete(r); out.push(r); }",
     "tests": ["test/wagons1_seats.test.js"]

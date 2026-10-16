@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatWeekOf } from '../src/net/townSeatLaw.js';
-import { createOnlineHomes, HOME_TOWN_TTL_MS, HOME_RETRY_MS, HOME_RETRY_MAX_MS, homeRetryMs } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, HOME_TOWN_TTL_MS, HOME_RETRY_MS, HOME_RETRY_MAX_MS, homeRetryMs } from '../src/systems/online/onlineHomes.js';
 
 /** The requests the database is asked, as D1 is asked them: a statement run alone is one request (its SQL), a batch is
  *  one request carrying its statements' SQL. */

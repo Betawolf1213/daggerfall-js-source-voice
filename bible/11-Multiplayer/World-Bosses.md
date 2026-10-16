@@ -49,7 +49,7 @@ every player's machine can compute.
 gate keeps it - a gate every two real hours, the same real phases, the relay unchanged. The SKY a player sees runs
 at its own rate (a day every real hour since SKY-SLOW), so the game-time column below is the event clock's and no
 longer a time the player can read off their sky: it RETIRES from the words. The gate's lines say real local times
-alone (`systems/gateOmen.js` `omenTimeLine`, `openTimeLine`, `sealTimeLine`), and the panel always did.
+alone (`systems/gate/gateOmen.js` `omenTimeLine`, `openTimeLine`, `sealTimeLine`), and the panel always did.
 `net/gateLaw.js`'s own word functions stay in the relay's bundle until a relay deploy that happens anyway retires
 them. WB12's merge with main (world151) retired them.]
 
@@ -393,7 +393,7 @@ between his attacks (every 7 to 13 s, never while he strikes); a GRUNT when a sh
 HURT_GAP_MS); the ground's SHOCK under a slam, a charge, a nova and the Wrath; THUNDER over his roar as a phase turns;
 and his body MEETING THE FLOOR a moment and a half into his fall. Daggerfall's own clips, pitched for his size.
 
-**His music** (`systems/gateScore.js`): Daggerfall has no fight music, so the court's is written, as notes, for the
+**His music** (`systems/gate/gateScore.js`): Daggerfall has no fight music, so the court's is written, as notes, for the
 game's own player and FM bank (`08-Audio/Audio.md` WB7), in D minor:
 
 | song | when | what |
@@ -451,7 +451,7 @@ player's roll is its own.
 
 - **The roll**: gold (`250 * level`, varied by the seed) and three pieces - one Rare or better, two Magic or better
   - minted with the game's own makers (`createRandomWeapon`, `createRandomArmor`, jewellery) on
-  `rolls = seededRng(c)` (`systems/wind.js`), then laddered through Loot Rarity's `applyRarity` from a source of the
+  `rolls = seededRng(c)` (`systems/wind/wind.js`), then laddered through Loot Rarity's `applyRarity` from a source of the
   gate's own kind: the boss's own source (`boss: true` - lootRarity.js SOURCE_MULT.boss, 2.5; AUDIT WBX S7: no `gate`
   kind was ever made), a Legendary chance of 10%, the ladder's own caps otherwise.
   And a **Sigil Stone**: the gate's trophy - its own item row, a gem by group but no ingredient, so it never stacks away
@@ -645,8 +645,8 @@ I mean daggerfall, not the inside."*
 
 | # | what | now |
 |---|---|---|
-| WBX8 | **the sky over a gate** - the omen has always said *The sky burns over the wilds near ...*, and the overworld's sky never did: the beacon was the gate's only mark on it | the live event's dread (`world/dreadSky.js` - the crimson grade on the sky, its fog and the land's light, the storm's deck) over the gate's site, by its life (`systems/gateOmen.js gateSkyPhaseWeight`: the omen's line kindles it at once, it deepens to the rise and the opening, burns whole while the gate stands open or sealed, and clears as the gate collapses; never a step) and by the eye's distance (`gateSkyNear`: whole within 4.1 km - the town it is reached from stands under it - thinning to nothing at 12 km); the world host takes the greater of the event's weight and the gate's. And **the red storm gathers over the gate** - the event's strikes' law on a schedule of its own (`GATE_STORM_RING`: a salt, strikes from 120 m to 4.5 km round the site, most of them at the gate itself), each thunder from its distance to the ear, so the lightning shows where the gate stands. The court (the inside) keeps the Deadlands' sky. Seen in the real game online: the sky graded crimson whole and at the omen's depth, and the gate's red strikes firing |
-| WBX9 | **the score, louder and more intense** | louder: every voice's level raised and each song played at its own level over the player's (`systems/songPlayer.js` `song.level` - one gain between the channels and the fader, 1 for every song MIDI.BSA holds; `SCORE_LEVEL` 1.42 / 1.6 / 1.64 / 1.7) - measured through the real player the war now reads -25.6 / -22.1 / -21.5 dBFS and the fanfare -22.9 (they read -34.5 / -29.7 / -28.4 / -30.9; the day songs -28.7, the dungeon's -31.7 to -41), every peak under -6 dBFS so the highest MusicVolume never clips (`tools/gateScoreProbe.mjs`, 15 checks). More intense: nothing waits - the strings, the brass stabs and the whole kit from the first bar, the theme from the ninth; the ostinato driving in sixteenths as the phases turn (a bar's last beat, then every other bar's second half, then every bar whole); the orchestra hit and the timpani on more beats, the kit's fills every fourth bar; the third song's choir chanting on every beat; the fanfare's call and answer doubled by the strings. The key, the tempos, the themes and the law are as they were |
+| WBX8 | **the sky over a gate** - the omen has always said *The sky burns over the wilds near ...*, and the overworld's sky never did: the beacon was the gate's only mark on it | the live event's dread (`world/dreadSky.js` - the crimson grade on the sky, its fog and the land's light, the storm's deck) over the gate's site, by its life (`systems/gate/gateOmen.js gateSkyPhaseWeight`: the omen's line kindles it at once, it deepens to the rise and the opening, burns whole while the gate stands open or sealed, and clears as the gate collapses; never a step) and by the eye's distance (`gateSkyNear`: whole within 4.1 km - the town it is reached from stands under it - thinning to nothing at 12 km); the world host takes the greater of the event's weight and the gate's. And **the red storm gathers over the gate** - the event's strikes' law on a schedule of its own (`GATE_STORM_RING`: a salt, strikes from 120 m to 4.5 km round the site, most of them at the gate itself), each thunder from its distance to the ear, so the lightning shows where the gate stands. The court (the inside) keeps the Deadlands' sky. Seen in the real game online: the sky graded crimson whole and at the omen's depth, and the gate's red strikes firing |
+| WBX9 | **the score, louder and more intense** | louder: every voice's level raised and each song played at its own level over the player's (`systems/song/songPlayer.js` `song.level` - one gain between the channels and the fader, 1 for every song MIDI.BSA holds; `SCORE_LEVEL` 1.42 / 1.6 / 1.64 / 1.7) - measured through the real player the war now reads -25.6 / -22.1 / -21.5 dBFS and the fanfare -22.9 (they read -34.5 / -29.7 / -28.4 / -30.9; the day songs -28.7, the dungeon's -31.7 to -41), every peak under -6 dBFS so the highest MusicVolume never clips (`tools/gateScoreProbe.mjs`, 15 checks). More intense: nothing waits - the strings, the brass stabs and the whole kit from the first bar, the theme from the ninth; the ostinato driving in sixteenths as the phases turn (a bar's last beat, then every other bar's second half, then every bar whole); the orchestra hit and the timpani on more beats, the kit's fills every fourth bar; the third song's choir chanting on every beat; the fanfare's call and answer doubled by the strings. The key, the tempos, the themes and the law are as they were |
 
 ### AUDIT WBX (2026-09-26, Mac: "Do a comprehensive audit on everything so far")
 
@@ -666,7 +666,7 @@ a script. What they found, and what became of it:
 | R8 | the hub kept every account's receipt until that account's own next hello - for ever, for one that never came back | the hub's sweep forgets an expired one |
 | S1 | **a receipt's spoils given again on another device**: the hub handed its kept receipt to every hello for a week, and only the device that spent it knew | a receipt spent is said to the hub (`spent`, `relaySupportsGateSpent` - world116), which forgets its copy; said again whenever a spent one is offered, and said only once the spoils are safe on the device (their record held, or a save holding them) |
 | S2 | the spoils rolled at the receiving character's level - a level-1 alt earned the receipt cheaply, the main collected at 50 | the receipt carries the level the fight admitted its account at (`l`); the spoils roll at `spoilsLevel` - the player's, never past it |
-| S3 | the crash record was cleared by comparing two clocks - one set ahead re-gave the pieces at every boot, one set behind dropped a record no save held | a record of this build (`SPOILS_RECORD_V`, an `id`) clears when a save of its character LANDS after its pieces entered the pack (`systems/saveSlots.js onSlotSaved` → the pool's `saved`); an older build's keeps the old rule |
+| S3 | the crash record was cleared by comparing two clocks - one set ahead re-gave the pieces at every boot, one set behind dropped a record no save held | a record of this build (`SPOILS_RECORD_V`, an `id`) clears when a save of its character LANDS after its pieces entered the pack (`systems/save/saveSlots.js onSlotSaved` → the pool's `saved`); an older build's keeps the old rule |
 | S4 | two tabs of one account: the tab in town gave the spoils before the fighter's own burst on the floor, and two tabs could both give them | the hub hands a receipt to one socket an account (its newest) and not to a fighter in the court at the kill (the court's `here`); the grant outside a court runs under the Web Locks API |
 | S5 | the spent mark was written before the record - a full store kept the mark and lost the record, and a crash lost the spoils | the record first; a record the store will not hold leaves the mark in memory alone, and the hub is told once a save holds the pieces |
 | S6 | the floor drew each item for a Breton man | the pack's picture for its wearer (`itemIconColor32(item, { identity })`) |
@@ -1054,7 +1054,7 @@ Rare-or-better's more and brighter (spoilRest, spoilRestRare).
 
 ### The Broker's insignia (WB9g)
 
-A day's ware (`systems/sigilBroker.js`) is an item on the pack. A piece of the INSIGNIA is worn over the name or at the
+A day's ware (`systems/sigil/sigilBroker.js`) is an item on the pack. A piece of the INSIGNIA is worn over the name or at the
 feet where every other player sees it, and a thing others see must be one no client can assert (ACC3's law) - so it is
 bought ONCE and kept by the ACCOUNT (`net/insignia.js`, the law both ends read): **Gatebreaker**, a title, for 30 Sigil
 Stones, and **Dagon's Fire**, an aura, for 50. A gate opens every two hours and drops one stone to a fighter, so they are
@@ -1071,7 +1071,7 @@ joins the column and the price the spend only where the row does not hold it yet
 sales pressed at once never spend the same stones, and a piece is never bought twice (409 `owned`); a guest row keeps
 none (403 `guest`), and the id is appended in the UPDATE itself (AUDIT WB9 I3). The Broker HOLDS the stones before it
 asks the service and gives them back unless the service holds the sale - a lost answer asked after - and saves a held
-sale at once (AUDIT WB9 I1/I2: `systems/sigilBroker.js insigniaSale`), so a refused sale takes nothing and no sale goes
+sale at once (AUDIT WB9 I1/I2: `systems/sigil/sigilBroker.js insigniaSale`), so a refused sale takes nothing and no sale goes
 unpaid; the account view says the purse beside the wardrobe.
 
 HELD, WORN, SIGNED. A title bought is held as a founder's is (`server-account/src/titles.js titlesHeld` reads it off the
@@ -1192,7 +1192,7 @@ like its too quite, and I feel like the music is too jolly"*.
 **Louder.** WBX9 had raised the score by level alone, and a level cannot go further than the clip: measured through the
 game's own player the war stood a decibel under it at the highest MusicVolume, its drums' peaks 15 to 19 dB over the
 song's body - the headroom was spent on a few milliseconds of every kick. So a song may now carry its own PRESS
-(`systems/songPlayer.js songPress`): the song's level drives a compressor (4:1 over a 12 dB knee from -18 dB, 3 ms in and
+(`systems/song/songPlayer.js songPress`): the song's level drives a compressor (4:1 over a 12 dB knee from -18 dB, 3 ms in and
 250 ms out - a section's swell evened, nothing pumping), then the song's own drive (`out`), then a soft CEILING - the
 hyperbolic tangent, its top at -1 dBFS at the highest MusicVolume (`ceilingAmplitude`, over MUSIC_GAIN), so what the
 compressor lets through of a drum's first milliseconds is rounded off under it. No song can pass its ceiling however hard
@@ -1896,7 +1896,7 @@ pinned red-then-green and its mutant recorded (`tools/mutants/brokercage.json`, 
 The relay's law moves to **world151** (world141 on the branch; main's CLIMB5 and CLIMB6, FRIENDS-SYNC, ELITE FOES and
 the Seats arc took world141-world150 first): the words of `gateHerald.js`, the rite's word and the receipt's `r`, and
 `gateLaw.js` without the three lines that named a time (TIME1 said the next relay deploy retires them; the client says
-them in local time, `systems/gateOmen.js`). The brain's law stays 5. The account service moves to **acct62** (acct46 on
+them in local time, `systems/gate/gateOmen.js`). The brain's law stays 5. The account service moves to **acct62** (acct46 on
 the branch, past main's acct46-acct61): migration 0066's `stones` (0046 on the branch) - the rite's ember in the purse -
 and the claim of `r` and of a rite alone. **The order of the two deploys does not matter**
 (AUDIT WB12d A1): acct62 answers every claim with the row's embers, so a fighter's `r` that acct61 counted at one ember
@@ -2592,7 +2592,7 @@ pin for the next relay slice.
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
-the chat's words), `systems/gateSite.js` (the site over the map files), `systems/gateOmen.js` (each moment's line once,
+the chat's words), `systems/gate/gateSite.js` (the site over the map files), `systems/gate/gateOmen.js` (each moment's line once,
 the map's mark, the compass's), `ui/gateMapMark.js` with the ring on both maps (`ui/inkMap.js paintGateRing`, the held
 map's poll and legend, the classic page's texels on the open province), the compass's diamond (`ui/enhancedHud.js
 drawGateMark`), and `scenes/world.js` (`gateOmen`, `gateFrame` in the online frame before the dead return,
@@ -2688,7 +2688,7 @@ flinch. Pins `test/wb4b_gate_blows.test.js` (5); mutants `tools/mutants/wb4b.jso
 
 **WB5a (2026-09-25) - the spoils.** Half a second into his fall his body bursts, and this player's spoils leave his
 chest toward them one at a time (`scenes/gateCourt.js`): rolled off the seed of the receipt the relay signed for them
-(`systems/gateSpoils.js` - gold by the level, three pieces by the game's own makers laddered by Loot Rarity's own
+(`systems/gate/gateSpoils.js` - gold by the level, three pieces by the game's own makers laddered by Loot Rarity's own
 `applyRarity`: one Rare or better, a tenth of the time Legendary, and two Magic or better by a boss's chances, each
 with SetItem's condition and KNOWN - the name the floor says is the pack's; and the Sigil Stone, the gate's trophy, worth
 five thousand), flying the thrown torch's own flight (`world/gateSpew.js` -
@@ -2771,15 +2771,15 @@ checks). Seen headless over the court's own frame and over a plain one; not yet 
 
 **WB7 (2026-09-25) - his voice and his music.** The fight is heard now (see "His voice and his music" in section 5): his
 steps, his growls between attacks, a grunt when he is hurt, the ground's shock under his heavy landings, thunder over
-his roar, his body meeting the floor; and the court's own music, written as notes (`systems/gateScore.js` - three war
+his roar, his body meeting the floor; and the court's own music, written as notes (`systems/gate/gateScore.js` - three war
 songs that grow with his phases and a fanfare at his fall, then quiet), played by the game's own player through a new
 door of the music service (`registerSong`), holding the music while the court stands. Pins
 `test/wb7_boss_audio.test.js` (7); mutants `tools/mutants/wb7.json` (19 dead); `tools/gateScoreProbe.mjs` plays the four
 songs through the real song player and measures them (11 checks: every second sounding, peaks near -12 dBFS, the war
 from -36 to -29 dBFS as the phases turn, the fall silent by 12 s). Heard only as offline renders; not yet in a fight.
 
-**AUDIT WB - the world's half (2026-09-25).** C1-C7 above: `systems/gateSite.js` (the height bytes, the sea coast, the
-town's province, `gateScanner`'s slices), `systems/gateOmen.js` (ready, the settle, each line once past the last),
+**AUDIT WB - the world's half (2026-09-25).** C1-C7 above: `systems/gate/gateSite.js` (the height bytes, the sea coast, the
+town's province, `gateScanner`'s slices), `systems/gate/gateOmen.js` (ready, the settle, each line once past the last),
 `render/gatePass.js` (the fog colour, the spin), `scenes/gatePool.js` (the spin accumulated, the matrix and box
 cached, one empty list, `stands()`), `scenes/world.js` (the scan warmed in idle slices, the omen's readiness, the
 banner under the veil and the held frame, the pass built only while a gate stands). Pins `test/auditwb_world.test.js`
@@ -2813,8 +2813,8 @@ device keeps the old verdict), `scenes/gateCourt.js` (the burst's account), `sce
 (the signed-in account), verdict, worker and seam pins, ten WB5/WB5b mutant records; mutants
 `tools/mutants/auditwb_spoils.json` (26 dead).
 
-**AUDIT WB - the look and the sound (2026-09-25).** D2-D10 above: `systems/gateScore.js` (`createCourtScore`, the war
-songs `seamless`), `systems/music.js` (`fadeOut`), `systems/songPlayer.js` (the seamless loop), `scenes/gateCourt.js`
+**AUDIT WB - the look and the sound (2026-09-25).** D2-D10 above: `systems/gate/gateScore.js` (`createCourtScore`, the war
+songs `seamless`), `systems/music.js` (`fadeOut`), `systems/song/songPlayer.js` (the seamless loop), `scenes/gateCourt.js`
 (the grunt's count, the lists refilled), `ui/gateVeil.js` (`frameDrawn`, `warm`, the flash drawn at once),
 `render/deadlands.js` (`anchoredClock`, the falls' two layers, `RIDGES_TOP`), `scenes/spoilsPool.js` and
 `world/gateArena.js` (nothing made for an empty floor, the braziers' lights once), `scenes/worldModes.js` (the court's
@@ -2850,16 +2850,16 @@ where he fell, and the walk through it home (SS3 made it a press - the record be
 
 **WBX8-WBX9 and AUDIT WBX (2026-09-26) - the overworld's sky, a louder score, the audit.** Section 12's second and
 third tables, whole. WBX8: `world/dreadSky.js` (the storm's ring - a salt and a centre, the event's own storm
-untouched), `systems/gateOmen.js` (`gateSkyPhaseWeight`, `gateSkyNear`, `GATE_STORM_RING`, the omen's `sky`) and
+untouched), `systems/gate/gateOmen.js` (`gateSkyPhaseWeight`, `gateSkyNear`, `GATE_STORM_RING`, the omen's `sky`) and
 `scenes/world.js` (the greater of the event's weight and the gate's through the sky, its fog and the land's light; the
-gate's storm about its site). WBX9: `systems/songPlayer.js` (`songLevel`, the level between the channels and the
-fader) and `systems/gateScore.js` (the new mix, `SCORE_LEVEL`, the four songs rewritten on their old key, tempos and
+gate's storm about its site). WBX9: `systems/song/songPlayer.js` (`songLevel`, the level between the channels and the
+fader) and `systems/gate/gateScore.js` (the new mix, `SCORE_LEVEL`, the four songs rewritten on their old key, tempos and
 themes), measured by `tools/gateScoreProbe.mjs` (15 checks). AUDIT WBX: `net/gateBrain.js` (`retireShare`,
 `restoreShare`, the seat's keep, `liveMs`, `settleAt`, the cleave's 7, the wind-up's health), `net/wire.js` (`spent`,
 `bv`, `GATE_BRAIN_V`/`GATE_BRAIN_MIN`, `relaySupportsGateSpent`), `server/src/index.js` (the brain's door, the beat
 armed by a blow, `_gateSpent`, one socket an account, the court's `here`, the receipt's `l`, the sweep),
 `net/gateReceipt.js` (`l`), `net/online.js sendGateSpent`, `scenes/spoilsPool.js` (the record first, `adopt`, `saved`,
-`spoilsLevel`, `SPOILS_RECORD_V`), `systems/saveSlots.js onSlotSaved`, `net/gateLink.js` (the fall's place, a walk ends
+`spoilsLevel`, `SPOILS_RECORD_V`), `systems/save/saveSlots.js onSlotSaved`, `net/gateLink.js` (the fall's place, a walk ends
 the attack), `scenes/gateCourt.js` (the trap's day and incumbent, no step in the air, the fire's count),
 `systems/artifactEffects.js` and `systems/enchantments.js` with `scenes/hostEnchant.js` (the Razor, Strikes),
 `scenes/hostMagic.js` (the trap's missile), `render/gateTelegraph.js` and `net/gateStrike.js` (the charge's width),
@@ -2925,13 +2925,13 @@ refusal's words, his aspect's colours and voice), `systems/effects.js`, `scenes/
 unflashed in their casts), `net/gateMods.js` (the marks' tables), `net/gateLaw.js` (the cycle, the marks' line),
 `net/gateBrain.js` (the fight's profile and each trial's law), `net/wire.js` (`md`, `fed`, the brain's law 3,
 world128 - world126 on its branch), `server/src/index.js`, `net/gateStrike.js`, `net/gateLink.js`, `scenes/gateCourt.js`,
-`render/gateTelegraph.js`, `ui/gateBossBar.js`, `systems/gateOmen.js`, `net/gateHerald.js`, `scenes/world.js`.
+`render/gateTelegraph.js`, `ui/gateBossBar.js`, `systems/gate/gateOmen.js`, `net/gateHerald.js`, `scenes/world.js`.
 Not seen in a browser or on the deployed relay: the colours and the cues are the tables' until a court under each
 aspect has been looked at and heard.
 
-**WB10a (2026-09-30) - the score pressed and darkened.** Section 15 above: `systems/songPlayer.js` (`songPress`, the
+**WB10a (2026-09-30) - the score pressed and darkened.** Section 15 above: `systems/song/songPlayer.js` (`songPress`, the
 press's graph - the compressor, its drive, the ceiling's soft clip - built once and rewired only as a song with or
-without one starts), `systems/gateScore.js` (`SCORE_PRESS`; the war songs rewritten on their old key, tempos, lengths,
+without one starts), `systems/gate/gateScore.js` (`SCORE_PRESS`; the war songs rewritten on their old key, tempos, lengths,
 voices and law - the villain's harmony, the brass pedal, open fifths, the low bell, the kit without its hat). Measured
 through the real player by `tools/gateScoreProbe.mjs`; not heard by a person before it shipped.
 
@@ -2987,7 +2987,7 @@ players once.
 
 **WB12a (2026-10-01) - Dagon's Breach and the Deadlands Ember.** Section 19 A above:
 - The chat's lines, Discord's posts and every name on screen say Dagon's Breach.
-- The Sigil Stone is the Deadlands Ember. A load repair (`systems/gateSpoils.js` nameEmbers) renames every old record.
+- The Sigil Stone is the Deadlands Ember. A load repair (`systems/gate/gateSpoils.js` nameEmbers) renames every old record.
 - A guard test scans every shipped string for the old names.
 - Relay world141 (not deployed).
 - Pins `test/wb12a_breach_words.test.js` (9); mutants `tools/mutants/wb12a.json` (10), with the campaigns it re-aimed
@@ -3079,7 +3079,7 @@ world141-world150 and acct46-acct61 first, so WB12's and WB13's relay law is wor
 migration 0066 (0046 on the branch): the law row over the merged bundle (main's ten rows kept), every version pin
 re-chained ("WB12 moved it on last (world151 ...); before it SEAT2b part two (b) moved it on (world150 ..."), RITE_RELAY_MIN
 151, disc7's list, soc1.json's S38, gatekeys.json's pin and BOUNTY1 B4. Main's TIME1 says the gate's times in local time
-alone: the omen, the opening and the seal (`systems/gateOmen.js` omenTimeLine, openTimeLine, sealTimeLine) say WB12's
+alone: the omen, the opening and the seal (`systems/gate/gateOmen.js` omenTimeLine, openTimeLine, sealTimeLine) say WB12's
 words in it, and this relay deploy retires `gateLaw.js`'s three, as TIME1 said it would. Main's SILVER: the breach's
 line of the counting-houses says silver ("No silver for this breach. The counting-houses strike it for two breaches a
 day."). Main's SEAT1b: a gate claim carries its region and is the war-guild's influence; a rite's own row records no

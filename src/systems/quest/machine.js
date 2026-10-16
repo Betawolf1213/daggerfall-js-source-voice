@@ -1116,7 +1116,7 @@ export class QuestMachine {
     }
   }
 
-  // ── OURS, not DFU's: quest sharing (systems/questShare.js is the ──
+  // ── OURS, not DFU's: quest sharing (systems/quest/questShare.js is the ──
   // orchestration; these three are the machine-level moves it needs,
   // kept here because they touch the same private bits restoreSaveData
   // does (the constructor args, the resolvers, siteLinks). Nothing
@@ -1485,7 +1485,7 @@ export class QuestMachine {
   }
 
   /** AUDIT DROPS A1: the receiver's OWN parse of a quest by name - the reference an incoming envelope's shape is
-   *  held against (systems/questShare.js shapeMismatch) and the source of its Item resources' items. Not
+   *  held against (systems/quest/questShare.js shapeMismatch) and the source of its Item resources' items. Not
    *  scheduled, not started; null when this machine has no source for the name or the parse fails.
    *  SHARE-COPY (2026-09-26, "Shared Quest did not match copy"): HEADLESS. This parse ran over the receiver's own
    *  world, so the SCRIPT's shape depended on where the receiver stood: a `local` Place throws in the wilderness

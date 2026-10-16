@@ -8,7 +8,7 @@
   },
   {
     "name": "SEACAP-the-room-forces-128",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "'General.MaxLiveEnemies': 32,",
     "new": "'General.MaxLiveEnemies': 128,",
     "tests": ["test/seacap.test.js", "test/modsonline.test.js"]

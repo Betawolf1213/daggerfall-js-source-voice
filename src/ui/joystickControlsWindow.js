@@ -88,7 +88,7 @@ import {
   sliderThumb, indicatorText, SLIDER_HEIGHT, SLIDER_INDICATOR_OFFSET, TROUGH_COLOR, TINT,
 } from './horizontalSlider.js';
 import { ToolTip } from './toolTip.js';
-import { getBool, getFloat, setValue, saveSettings } from '../systems/settings.js';
+import { getBool, getFloat, setValue, saveSettings } from '../systems/settings/settings.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { MOUSE_PANEL, PANEL_COLOR, KEYBIND_BG, CONTINUE_BG, CONTINUE_RECT, TITLE_Y, ROW_SIZE, ROW_LABEL, ROW_BUTTON, SLIDER_PANEL, CHECK_SIZE, CHECK_TEXT_OFFSET, toNative } from './mouseControlsWindow.js';

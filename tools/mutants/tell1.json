@@ -325,7 +325,7 @@
   },
   {
     "name": "TELL1-revenant-unmarked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  entity.healthMult = (entity.healthMult ?? 1) * (1 + REVENANT_HEALTH_PER_RANK * r.rank);",
     "new": "  entity.healthMult = 1;",
     "tests": [

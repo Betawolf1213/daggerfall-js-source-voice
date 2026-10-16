@@ -73,7 +73,7 @@
   },
   {
     "name": "CURE-ENDS-the-cure-leaves-it",
-    "file": "src/systems/guildServiceFlow.js",
+    "file": "src/systems/guild/guildServiceFlow.js",
     "old": "      if ((a.magnitude ?? 0) > 0) { a.magnitude = 0; n++; }\n      a.ended = true;\n",
     "new": "      if ((a.magnitude ?? 0) > 0) { a.magnitude = 0; n++; }\n",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "CURE-ENDS-the-load-door-keeps-it",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "&& !(a.magnitude > 0)) a.ended = true;",
     "new": "&& false) a.ended = true;",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "CURE-ENDS-it-ends-a-live-drain",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "&& !(a.magnitude > 0)) a.ended = true;",
     "new": ") a.ended = true;",
     "tests": [

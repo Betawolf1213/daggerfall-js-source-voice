@@ -31,7 +31,7 @@
 
 import { t } from './textManager.js';
 import { isShop } from './shopStock.js';
-import { seededRng } from './wind.js';
+import { seededRng } from './wind/wind.js';
 
 /** One day in this many a shop's keeper stands as the lamp. */
 export const LAMP_KEEPER_ODDS = 25;

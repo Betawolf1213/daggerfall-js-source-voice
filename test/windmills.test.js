@@ -7,7 +7,7 @@ import {
   windSpeed, rotorRate, rotorPhase, advanceRotor, rotorMatrix, mountRotor, ROTOR_HUB,
 } from '../src/world/windmills.js';
 import { WEATHER_SKY, easeWeather, weatherRow } from '../src/render/enhancedSky.js';
-import { WIND_ROW_CALM, WIND_ROW_FAIR, WIND_ROW_SPAN, FAIR_STRENGTH, CALM_MIN, DRIFT_MEAN, DRIFT_SWING, createWindModel } from '../src/systems/wind.js';
+import { WIND_ROW_CALM, WIND_ROW_FAIR, WIND_ROW_SPAN, FAIR_STRENGTH, CALM_MIN, DRIFT_MEAN, DRIFT_SWING, createWindModel } from '../src/systems/wind/wind.js';
 import { identity, trs, transformPoint } from '../src/world/mat4.js';
 import { PLACEMENTS } from '../src/world/windmillMesh.js';
 import { readFileSync } from 'node:fs';

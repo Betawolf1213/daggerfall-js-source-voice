@@ -9,7 +9,7 @@ import { byClass } from './chargenDom.mjs';
 import { createBountyHost } from '../src/scenes/bountyHost.js';
 import { mountBountyBoard, nextOpenNotice, LANDED_LINE } from '../src/ui/bountyWindow.js';
 import { BOUNTY_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { BOUNTY_ACTIVE_MAX } from '../src/systems/bountyBoard.js';
+import { BOUNTY_ACTIVE_MAX } from '../src/systems/bounty/bountyBoard.js';
 
 const TOWN = { px: 300, py: 200, name: 'Daggerfall' };
 

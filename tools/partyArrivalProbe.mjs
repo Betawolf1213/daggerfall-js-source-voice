@@ -29,7 +29,7 @@ try {
     await page.goto('http://probe.local/');
     const checks = await page.evaluate(async () => {
       const { HudText } = await import('/src/ui/hudText.js');
-      const { PARTY_ARRIVAL_TEXT } = await import('/src/systems/partyArrival.js');
+      const { PARTY_ARRIVAL_TEXT } = await import('/src/systems/party/partyArrival.js');
       const hud = new HudText('town');
       for (const text of Object.values(PARTY_ARRIVAL_TEXT)) hud.add(text);
       hud.draw(null, null, null);

@@ -2,7 +2,7 @@
 // roads and the nearby enemy timer to set to 60x max ... speed settings should be 5x 10x 20x 30x 40x 60x and 100x should be
 // only setable when on a road and it has to go to 60 instantly again when leaving the road. Same for enemies nearby
 // multiplier and same rules"; bible/01-Overview/Waypoints-And-Pace.md). Two dials on one ladder - the journey's Speed and
-// the Near enemies floor - read by every reader through systems/travelPace.js: RATE-LAW's x100 and x60 are the dial's two
+// the Near enemies floor - read by every reader through systems/travel/travelPace.js: RATE-LAW's x100 and x60 are the dial's two
 // ceilings now, x100 a road's alone, and leaving a road takes a dial at x100 to x60 at once, never climbing back.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,9 +11,9 @@ import {
   PACE_STEPS, ROAD_PACE_MAX, OPEN_PACE_MAX, TRAVEL_PACE_DEFAULT, TRAVEL_PACE_DIALS, TRAVEL_PACE_STORE_KEY, clampPace,
   travelPace, setTravelPace, stepTravelPace, setPaceGround, paceNow, paceRateOn, paceCanRise, paceOnRoad, onTravelPace,
   _resetTravelPace,
-} from '../src/systems/travelPace.js';
+} from '../src/systems/travel/travelPace.js';
 import { MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE, travelRateOf } from '../src/systems/timeScale.js';
-import { foePaced, JOURNEY_FOE_PACE } from '../src/systems/travelThreat.js';
+import { foePaced, JOURNEY_FOE_PACE } from '../src/systems/travel/travelThreat.js';
 import { buildPaceControls } from '../src/ui/travelPaceControls.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -156,6 +156,6 @@ test('PACE-DIALS host: the world tells the rule its ground every frame a journey
   assert.match(w, /if \(travelControlUI\?\.isShowing\) setPaceGround\(!!travelControlUI\.onRoad\);\n\s*else if \(travelView\?\.state === 'up'\) setPaceGround\(travellerOnRoad\(\)\);/, 'the journey\'s own ground, else the feet\'s under the view');
   assert.match(w, /const _stopPace = onTravelPace\(\(\) => \{ if \(!frameAlive\(_frameToken\)\) \{ _stopPace\(\); return; \} travelOptions\?\.reapplyRate\?\.\(\); \}\);/);
   assert.match(w, /if \(travelControlUI\?\.isShowing && typeof document !== 'undefined'\) showPaceBox\(\); else hidePaceBox\(\);/, 'the classic strip and GrimoireUI: the dials\' own box while a journey runs');
-  assert.match(rd('src/systems/travelOptions.js'), /reapplyRate: \(\) => \{ if \(st\.autopilot && ui\?\.isShowing\) applyRate\(true\); \},/);
+  assert.match(rd('src/systems/travel/travelOptions.js'), /reapplyRate: \(\) => \{ if \(st\.autopilot && ui\?\.isShowing\) applyRate\(true\); \},/);
   assert.match(rd('src/systems/timeScale.js'), /export const travelRateOf = \(onRoad\) => paceRateOn\(onRoad\);/);
 });

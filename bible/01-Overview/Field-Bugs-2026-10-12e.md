@@ -12,7 +12,7 @@ feature, and stop the guards popping in and out.
 ## WATCH-LEAVES: the defenders walk off (1)
 
 `src/scenes/cityGuards.js` dismissDefenders, recallDefender, defenderCount, enlistDefender, summonDefenders,
-standDefender, update, DEFENDER_LEAVE_LEG_SECONDS, `viewYaw`; `src/systems/townPopulation.js` popAllowChange;
+standDefender, update, DEFENDER_LEAVE_LEG_SECONDS, `viewYaw`; `src/systems/town/townPopulation.js` popAllowChange;
 `src/systems/livingWorld/livingTown.js` `_hidden`; `src/systems/raidingParties.js` spawn; `src/scenes/world.js` the guard
 pool's `viewYaw`.
 

@@ -53,7 +53,7 @@ import { showWorldPlaque, destroyWorldPlaque, plaqueAnchor } from '/src/ui/world
 import { hoverLines } from '/src/systems/worldHover.js';
 import { foldQuickLoot, resetQuickLoot, quickLootWheel } from '/src/systems/quickLoot.js';
 import { setPref } from '/src/systems/uiPrefs.js';
-import { LOOT_RARITY_KEY } from '/src/systems/lootRarity.js';
+import { LOOT_RARITY_KEY } from '/src/systems/loot/lootRarity.js';
 import { GOLD_TEMPLATE } from '/src/systems/inventory.js';
 import { showPickups, showHaul, destroyPickupFeed, _setPickupFeedForTests } from '/src/ui/pickupFeed.js';
 import { harvestHauls, claimHauls } from '/src/ui/haulCards.js';   // HAUL-CARDS: a gather's, a strike's and a claim's cards

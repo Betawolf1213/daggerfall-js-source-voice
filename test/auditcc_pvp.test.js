@@ -13,7 +13,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { newSurvival, survivalStatMods, applySurvivalMods } from '../src/systems/survival/needs.js';
 import { SURVIVAL_RULES } from '../src/systems/survival/difficulty.js';
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell } from '../src/systems/spellMaker.js';
+import { buildCustomSpell } from '../src/systems/spell/spellMaker.js';
 
 // ═══ AUDIT C&C, PvP (2026-10-12): H5 - THE STAND-IN EVERY BLOW BETWEEN PLAYERS IS ROLLED AGAINST ═══
 //
@@ -123,7 +123,7 @@ test('AUDIT C&C H5 A STRIKER\'S BUFFS HELP ITS BLOW AND NO LUCK HARMS IT: the li
     '52/52/51/51/51/51/51/51', '57/52/51/51/56/51/51/51', '52/52/51/56/51/51/56/51',
     '57/57/56/56/56/51/56/56', '52/52/51/51/51/51/51/56', '52/52/51/51/51/51/51/66',
   ], 'every live buff rides the striker\'s sheet');
-  installPcaao();   // its shipped switches - online, the room's whole (systems/onlineLane.js ONLINE_WHOLE_MODS)
+  installPcaao();   // its shipped switches - online, the room's whole (systems/online/onlineLane.js ONLINE_WHOLE_MODS)
   try {
     for (const [, put] of ARMS) { const e = mintPlayer(); put(e); pcaao.push(swings(e, 4000)); }
   } finally { uninstallPcaao(); }

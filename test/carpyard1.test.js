@@ -23,7 +23,7 @@ import { yardTownBlocks, YARD_MAP_BYTE } from '../src/world/merchantYardMap.js';
 import { quarterOf } from '../src/ui/townQuarters.js';
 import { TopicTree, EN, QUESTION_TYPE } from '../src/systems/topicTree.js';
 import { yardGlyph, yardMarkKind } from '../src/ui/travelViewHud.js';
-import { markGroup, isYardMark } from '../src/systems/travelViewFilters.js';
+import { markGroup, isYardMark } from '../src/systems/travel/travelViewFilters.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { NAV_CELL } from '../src/world/cityNavigation.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';

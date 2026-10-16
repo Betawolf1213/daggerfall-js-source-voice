@@ -349,6 +349,6 @@ test('FORAGE4: the wiring - the streaming host builds the wait on its own slot a
   assert.match(w, /waitOnline: \(seconds, quest\) => \{ foragingWait\.add\(seconds, quest\?\.displayName \?\? null\); \},/);
   assert.match(w, /const showQuestBox = \(box\) => \{\n[^\n]*\n\s*if \(foragingWait\.holds\(\)\) \{ foragingWait\.hold\(\(\) => showQuestBox\(box\), keptBox\(box\)\); return; \}/);
   assert.match(w, /if \(foragingWait\.holds\(\)\) foragingWait\.hold\(\(\) => giveReward\(dfItem\), \{ reward: dfItem \}\);/, 'a reward\'s pile after its box, behind the wait - and kept in the save');
-  assert.match(rd('src/systems/save.js'), /'lastSkillCheckTime',\n\s*'foragingWait',/);   // MERGE 2: main's LIVED1 retired restSimMinutes
+  assert.match(rd('src/systems/save/save.js'), /'lastSkillCheckTime',\n\s*'foragingWait',/);   // MERGE 2: main's LIVED1 retired restSimMinutes
   assert.match(rd('src/systems/quest/questActionsExtension.js'), /if \(hooks\?\.sharedClock\?\.\(\)\) hooks\?\.waitOnline\?\.\(seconds, this\.parentQuest\);\n\s*hooks\?\.raiseTime\?\.\(seconds\);/);   // MERGE 2: the character's time in both lanes
 });

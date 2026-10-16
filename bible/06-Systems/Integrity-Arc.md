@@ -52,11 +52,11 @@ nothing. A copy given a fresh id is a new piece to the ledger, and a new piece i
 
 ## 4. Lane 1 - the economy (INT1-INT6)
 
-### INT1 - the item law (`src/systems/itemLaw.js`)
+### INT1 - the item law (`src/systems/item/itemLaw.js`)
 
 One answer to "could an honest client of this port have minted this item?", asked by both ends: the account service of
 every item a realm checkpoint holds and every piece a listing, a trade or a vault takes, and the client of every item a
-peer hands it (`systems/loot.js` validLootItem, through `setItemLaw` - the law registers itself there, so the loot module
+peer hands it (`systems/loot/loot.js` validLootItem, through `setItemLaw` - the law registers itself there, so the loot module
 owes the law's graph no import). `itemFindings(item)` answers short codes, empty for a lawful item:
 
 - **identity:** a template the port knows (the classic 288 and every custom row - the homes that register at import are
@@ -138,7 +138,7 @@ so a checkpoint that loses its race writes no verdict either:
 
 The answer says the hold (`tradeHeld`) and, when the law holds it, the first piece it found (`tradeHeldWhy`: its code
 and template); the client's session keeps it and tells the player as it moves, naming the piece (`systems/realmSaves.js`
-onTradeHeld, `systems/itemIds.js` tradeHeldNotice) - and a trade refused over its own hold says that notice, the piece
+onTradeHeld, `systems/item/itemIds.js` tradeHeldNotice) - and a trade refused over its own hold says that notice, the piece
 named; a law hold standing past STRIKES_FOR_REVIEW with nothing found answers `tradeHeldWhy: { code: 'review' }`, said as
 staff's (RING-HOLD, `01-Overview/Field-Bugs-2026-10-12.md`: it read "something" once the Ring was gone). The cutover (decision 3): the first judgement's baseline is the
 record the realm ALREADY HELD for the character, read once from R2 - never the save the first judged checkpoint brings,
@@ -173,7 +173,7 @@ vaulted before the law read listings is read as it is bought or taken, and goes 
 `outbound`, the three sinks aside (a home and its decor bought from the realm, a guild founded); `test/int6_review.test.js`
 holds the routes over HTTP, each refusal its 409.
 
-### INT4 - the ids and the ledger (`systems/itemIds.js`, `server-account/src/ledger.js`)
+### INT4 - the ids and the ledger (`systems/item/itemIds.js`, `server-account/src/ledger.js`)
 
 A valuable piece - a tier the ladder rolls or records, a DFU magic item or artifact, a craft, a letter of credit; never a
 stack, a bound piece or a quest's - is given a 16-hex `uid` at the realm checkpoint that first sees it in the character's
@@ -231,7 +231,7 @@ play pays it back. The first numbers (`BUDGET_DEFAULT`) are a guess the measure 
 refusal named "a character in this trade" to both sides, and a player whose partner was held read it as their own. The
 service keeps the held side with the word (`realm_trades.why` `trade-held:a`) and tells each side `held` ('mine' or
 'theirs', the word itself unchanged for an older client); the client says whose, and mine in the words of my own hold's
-notice (`TRADE_HELD_NOTICES`, now in `net/realmTradeLaw.js`, re-exported by `systems/itemIds.js`). No road from
+notice (`TRADE_HELD_NOTICES`, now in `net/realmTradeLaw.js`, re-exported by `systems/item/itemIds.js`). No road from
 shoplifting to a hold was found - the budget is the one measure that sees theft, and it holds only under `enforce`.
 The record and staff's check: `01-Overview/Field-Bugs-2026-10-11g.md` HELD-SIDE.
 
@@ -253,7 +253,7 @@ and the hours past 30.
 SUMMON-REPAIR (2026-10-15, acct136, migration 0117 - acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's at the merge, then acct134 and 0114 on the integration, renumbered past main's KG6 and POI-1 (acct134, acct135) and FIRMAMENT-ON's, KG6's and POI-1's 0114-0116 at the merge of main; Mac, asked how to mend the save FIELD BUGS 2026-10-14 SUMMON-OFFER
 left stuck: "Operator tool") added two. `realm-characters { name }` lists an account's realm characters by its handle -
 the id every act names, the dead said so. `realm-repair { id, ticket, faction, flag, gold, note? }` mends one: one of
-FactionFile's flag bits (`formats/factionFile.js` FACTION_FLAGS, moved there from `systems/factionRep.js`, which hands
+FactionFile's flag bits (`formats/factionFile.js` FACTION_FLAGS, moved there from `systems/faction/factionRep.js`, which hands
 them on, so the Worker can read them) cleared on one faction of its record, and 0 to 1,000,000 gold given back as the
 game's letter of credit (`src/net/repairLaw.js`, the service's and the tool's one law: `repairOf`, `applyRepair`). The
 record says whether it can be done - a faction it does not hold is `repair-no-faction`, a bit its faction does not carry
@@ -366,7 +366,7 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
 ### INT9 - the open zone refereed, a death's drop taken off the record (`net/wildRef.js`, `net/wildReceipt.js`, `server-account/src/wild.js`)
 
 - **Who fights.** The relay cannot see the map (the zone is the POLITIC map's region 16, cut by
-  `systems/wildZone.js` from the files every client holds), so a socket's zone is its own word: `zone` 1 where it stands
+  `systems/wild/wildZone.js` from the files every client holds), so a socket's zone is its own word: `zone` 1 where it stands
   in it, alive and where it fights, 0 elsewhere - said on its OWN CELL'S socket alone (a halo's is none), again at its
   welcome, at each crossing (the cell left hears 0, the one crossed into 1) and every `WILD_ZONE_KEEP_MS` while it stands
   (`net/online.js`). A fighter is a realm character in play: a token with no `ci` makes none, and the identity mint signs
@@ -396,14 +396,14 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   hears it at its next zone word. Unpicked, it is signed without a piece; a building's or a dungeon's fall at once (no
   body is searched there); a fall waiting on its pick is kept in the room's storage (`WILD_FALL_PREFIX`) and signed by a
   room that restarted, and a full room's oldest is signed, never forgotten.
-- **The drop.** `/v1/wild/fall` takes it off the fallen's JUDGED record by ONE law (`systems/wildDropLaw.js`
+- **The drop.** `/v1/wild/fall` takes it off the fallen's JUDGED record by ONE law (`systems/wild/wildDropLaw.js`
   takeWildDeath): the killer's worn piece first (`wildPickOf` - the piece the offer showed, else none), then half the
   purse and the cart's coin, then the bag's and the cart's drop BY WORTH (a bag of junk ahead of them kept the gold and
   the valuables), fitted to one remains, every record within `WILD_RECORD_BYTES_MAX`, the rest put back where it came
   from; the record's lit light follows its piece. CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15: "if its parked
   outside the zone nothing should be lost" - `11-Multiplayer/Wild-Zone.md` section 4): the cart's coin and its drop only
   while the wagon is with the fallen. The zone's mask is the client's, so the fallen's own tab says its wagon is away
-  (`cart` 0 - `systems/wildCart.js` wildCartAway), and the service takes the word only where the record it keeps says
+  (`cart` 0 - `systems/wild/wildCart.js` wildCartAway), and the service takes the word only where the record it keeps says
   the wagon is parked, stabled or none by its mode (`wildDropLaw.js:"export function wildCartMayBeAway"`) - never a
   record that drives it, leads it or stands it beside them; a seizure takes no word, and a tab that says none drops the
   cart as before. The service answers what it took as the game finds it again (`took`,
@@ -568,7 +568,7 @@ world stays the client's (section 2): the blow on this screen, the potion drunk,
 ### What lane 3 found
 
 Each fight's blows were judged on the struck player's machine alone - `net/gateStrike.js` ("The relay never learns who
-was struck; it did not need to"), `net/sdStrike.js`, `systems/serpentStrike.js` ("The relay never learns a ship's
+was struck; it did not need to"), `net/sdStrike.js`, `systems/serpent/serpentStrike.js` ("The relay never learns a ship's
 hurts") - and the relay's one word of a death was the pose's `dd`, the client's own. So the spoils' "stood alive half the
 fight" was the client's word, a client that took no blow stood every fight out, and one that took none could carry a
 fight alone (the serpent: "one ship alone still can't" held only for ships that took its blows).
@@ -737,7 +737,7 @@ the clock, and the legacy record held to its own law.
   of credit at any worth, an item's price from below alone - so a modified client handed out gold it was never charged
   for. LETTER-PEER (`systems/peerWord.js`): a letter never rides a peer's word, SS3's shape widened - every site that
   read `unbound` reads `peerHanded`, the owner's grant keeps a letter on its body, and online the classic pack puts none
-  in a container but the player's own. PRICE-CAP (`systems/loot.js` lawPriced): a peer's price is held under the law's
+  in a container but the player's own. PRICE-CAP (`systems/loot/loot.js` lawPriced): a peer's price is held under the law's
   `worthCeiling` (INT1's own measure; the honest sweep's 46,919 pieces under it but Come Sail Away's deeds, which keep
   their hull's price). WORN-ONLY: a worn offer lands what can be worn. GOLD-INT: a purse, a letter's worth and a coin
   pile's count past one DFU `int` are law findings (`itemLaw.js` GOLD_INT_MAX, `judge.js` purseWord) - the absurd holds
@@ -785,7 +785,7 @@ the clock, and the legacy record held to its own law.
 - **INT11-INT15 (2026-10-10): lane 3, boss fights - built, measuring first (section 6).** Migration `0105_body` (each
   boss kill's row keeps the relay's measure); `ACCOUNT_VERSION` acct105 and `RELAY_VERSION` world188 (world186 on its branch, renumbered past SD-HERALD's world186
   and WAGONS1's world187 at the merge of main; `net/bossBody.js`,
-  `net/bossRef.js`, `net/gateStrike.js` with `world/segment.js`, and `systems/serpentStrike.js` join the relay's bundle;
+  `net/bossRef.js`, `net/gateStrike.js` with `world/segment.js`, and `systems/serpent/serpentStrike.js` join the relay's bundle;
   `net/bossBody.js` the account Worker's, through the receipts). Pins: `test/int11_body.test.js` (the law and the three
   judges), `test/int12_body_relay.test.js` (the relay over the real Room, measured and enforced; the receipts; the
   service and the review; the client's glue). Mutants `tools/mutants/int_lane3.json`: 92, all dead - the run's five

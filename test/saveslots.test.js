@@ -13,8 +13,8 @@ import {
   screenshotOf, deleteSave, renameSave,
   quickSaveSlot, hasQuickSave, quickLoadSlot,
   SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX, QUICK_SAVE_NAME,
-} from '../src/systems/saveSlots.js';
-import { SAVE_VERSION, QUICKSAVE_KEY } from '../src/systems/save.js';
+} from '../src/systems/save/saveSlots.js';
+import { SAVE_VERSION, QUICKSAVE_KEY } from '../src/systems/save/save.js';
 
 // localStorage's shape over a Map (length + key(i) drive the sweep).
 function mockStorage(entries = {}, { failSet = null } = {}) {

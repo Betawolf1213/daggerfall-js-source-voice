@@ -8,7 +8,7 @@ import { CAMPS_PER_OWNER, CAMP_KIND, CAMP_TEXT, placeCampItem, strikeCamp, newCa
 import { createCamps } from '../src/scenes/camps.js';
 import { createSurvivalItem, isCampingEquipment, isCampfireKit, SURVIVAL_USE_TEXT } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
-import { createRestItem, REST_ITEM, REST_ITEM_TEXT } from '../src/systems/restItems.js';
+import { createRestItem, REST_ITEM, REST_ITEM_TEXT } from '../src/systems/rest/restItems.js';
 import { setWorldMinutes, setSharedClock } from '../src/systems/worldTick.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 

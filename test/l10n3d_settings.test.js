@@ -27,7 +27,7 @@ import { createBindings, resetDefaults, setBinding, comboCode, getBinding } from
 import { setBindings } from '../src/ui/input.js';
 import { indicatorText } from '../src/ui/horizontalSlider.js';
 import { measureText } from '../src/ui/text.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 beforeEach(() => { tm._resetTextManagerForTests(); _resetForTests(); });
 

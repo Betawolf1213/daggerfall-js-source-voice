@@ -1,7 +1,7 @@
 [
   {
     "name": "WAGON-TIERS-the-default-the-old-system",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "export const WAGON_UPKEEP_DEFAULT = 'boons';",
     "new": "export const WAGON_UPKEEP_DEFAULT = 'hard';",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WAGON-TIERS-boons-wear-slows",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "    wearSlows: false,    // a Rickety or Failing wagon",
     "new": "    wearSlows: true,    // a Rickety or Failing wagon",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WAGON-TIERS-boons-wear-prices",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "    wearPrices: false,   // a counter prices",
     "new": "    wearPrices: true,   // a counter prices",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WAGON-TIERS-the-paces-rules-dropped",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "if (wcare && w) k *= wagonPace(w, wcare);",
     "new": "if (wcare && w) k *= wagonPace(w);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WAGON-TIERS-the-laws-floor",
-    "file": "src/systems/wagonUpkeep.js",
+    "file": "src/systems/wagon/wagonUpkeep.js",
     "old": "return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound'",
     "new": "return s.pace * (s.key === 'sound'",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WAGON-TIERS-the-sales-law",
-    "file": "src/systems/wagonUpkeep.js",
+    "file": "src/systems/wagon/wagonUpkeep.js",
     "old": "isWagonItem(item) && !rules?.wearPrices;",
     "new": "isWagonItem(item) && !rules;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WAGON-TIERS-off-still-wearing",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "    const wcare = wagonUpkeep();   // WAGON-TIERS: Boons and Hard wear it alike (the same world); Off never\n    if (wcare) {",
     "new": "    const wcare = wagonUpkeep();   // WAGON-TIERS: Boons and Hard wear it alike (the same world); Off never\n    if (true) {",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WAGON-TIERS-the-kit-used-off",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "  }, { usable: () => !!wagonUpkeep() }));",
     "new": "  }, { usable: () => true }));",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WAGON-TIERS-the-step-down-in-hards-words",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "const name = wagonWord(item), slows = !!wcare?.wearSlows;",
     "new": "const name = wagonWord(item), slows = true;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WAGON-TIERS-the-cards-tier-unread",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "      tier: wcare?.id ?? null, wearSlows: !!wcare?.wearSlows,",
     "new": "      tier: null, wearSlows: true,",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "WAGON-TIERS-the-sound-boon-gone",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "export const WAGON_SOUND_BOON = 1.1;",
     "new": "export const WAGON_SOUND_BOON = 1;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "WAGON-TIERS-the-boon-not-boons",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "    soundPace: WAGON_SOUND_BOON,   // a Sound wagon's pace",
     "new": "    soundPace: 1,   // a Sound wagon's pace",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "WAGON-TIERS-hard-earns-the-boon",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "    wearPrices: true,\n    soundPace: 1,\n",
     "new": "    wearPrices: true,\n    soundPace: WAGON_SOUND_BOON,\n",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "WAGON-TIERS-the-boon-unread",
-    "file": "src/systems/wagonUpkeep.js",
+    "file": "src/systems/wagon/wagonUpkeep.js",
     "old": "return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound' ? rules.soundPace : 1);",
     "new": "return (rules.wearSlows ? s.pace : 1);",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "WAGON-TIERS-a-worn-wagon-earns",
-    "file": "src/systems/wagonUpkeep.js",
+    "file": "src/systems/wagon/wagonUpkeep.js",
     "old": "(s.key === 'sound' ? rules.soundPace : 1)",
     "new": "(s.key !== 'failing' ? rules.soundPace : 1)",
     "tests": [

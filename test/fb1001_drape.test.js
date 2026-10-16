@@ -19,7 +19,7 @@ import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '.
 import { nextDrape, drapeCount, DRAPE_TEXT, toggleHood } from '../src/systems/useItem.js';
 import { hoodUp, cloakState, HOODED_CLOAK_VARIANTS } from '../src/systems/survival/temperature.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const garment = (templateIndex, variant = 0) => {
   const it = mintCondition(setItemFields({ group: templateIndex >= 180 ? 'WomensClothing' : 'MensClothing', templateIndex, flags: 0 }));

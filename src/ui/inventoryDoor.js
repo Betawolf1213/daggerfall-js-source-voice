@@ -22,7 +22,7 @@
 //
 // U58 removed it, and could only remove it because U56 and U57 took
 // the law out of the window first: TransferItem's ladder is
-// systems/itemTransfer.js, the remote side's four claims and the
+// systems/item/itemTransfer.js, the remote side's four claims and the
 // wagon's two refusals are systems/inventorySession.js, and the
 // enhanced pane runs both rather than a second reading of either.
 // `CLASSIC_ONLY_MODES` is gone; the fork is now the plain skin

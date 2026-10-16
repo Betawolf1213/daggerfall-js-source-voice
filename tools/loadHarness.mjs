@@ -28,7 +28,7 @@
 //     session's own tick (pings, retries, halos);
 //   - the account calls the client makes on its own clocks, each by the client's own call and at the client's own
 //     constant: the play beat (net/playClock.js PLAY_BEAT_S), the mail (net/mail.js MAIL_POLL_MS), Renown while it is
-//     owed (net/renown.js RENOWN_REPORT_MS - a bot fighting), the realm checkpoint (systems/onlineCheckpoint.js
+//     owed (net/renown.js RENOWN_REPORT_MS - a bot fighting), the realm checkpoint (systems/online/onlineCheckpoint.js
 //     ONLINE_CHECKPOINT_MS, through the realm's own session, packed and idle-keyed), the town's Notice Board
 //     (net/boardLaw.js BOARD_CACHE_MS), the town's yards (scenes/homeYards.js YARD_TOWN_TTL_MS, no session), the towns'
 //     layouts once at the start, the seats' red lines (net/townSeatBook.js SEAT_RED_READ_MS), the Motherlodes
@@ -94,7 +94,7 @@ import { RENOWN_REPORT_MS } from '../src/net/renown.js';
 import { renownRid } from '../src/net/renownTracker.js';
 import { BOARD_CACHE_MS } from '../src/net/boardLaw.js';
 import { YARD_TOWN_TTL_MS } from '../src/scenes/homeYards.js';
-import { ONLINE_CHECKPOINT_MS } from '../src/systems/onlineCheckpoint.js';
+import { ONLINE_CHECKPOINT_MS } from '../src/systems/online/onlineCheckpoint.js';
 import { SEAT_RED_READ_MS } from '../src/net/townSeatBook.js';
 import { MOTHERLODE_READ_MS } from '../src/net/motherlodeBook.js';
 import { PROF_CLOSED_RECHECK_MS } from '../src/net/profBook.js';

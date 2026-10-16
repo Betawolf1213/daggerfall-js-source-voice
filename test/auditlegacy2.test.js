@@ -2,7 +2,7 @@
 // Project Legacy - LEGACY1-LEGACY4, AUDIT LEGACY's fixes and LEGACY-HOME - bible/01-Overview/Audit-Legacy-II.md, every
 // finding pinned here by its id. The law end to end through the real host (scenes/legacyHost.js), the real save
 // records (systems/modSaveData.js), the real store (systems/legacy/store.js), the real Living World town
-// (systems/livingWorld/livingTown.js on the synthetic town) and the real transfer law (systems/itemTransfer.js); the
+// (systems/livingWorld/livingTown.js on the synthetic town) and the real transfer law (systems/item/itemTransfer.js); the
 // windows and the world host's wiring by source (their reproductions were driven in Chromium - the record says how).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,7 +16,7 @@ import { mintRemainsItem, isRemainsItem, REMAINS_LIST } from '../src/systems/leg
 import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { offlineCopyOf, onlineCopyOf } from '../src/systems/offlineCopy.js';
-import { planStore } from '../src/systems/itemTransfer.js';
+import { planStore } from '../src/systems/item/itemTransfer.js';
 import { LivingTown, householdKeyOf } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
@@ -24,7 +24,7 @@ import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { isDomFocusWalk } from '../src/ui/input.js';
 import { walkButtons } from '../src/ui/legacyDoor.js';
 import { windowPrompts } from '../src/ui/plusPad.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { synthTown } from './lwTown.mjs';
 import { mintKeepsake } from '../src/systems/livingWorld/keepsake.js';

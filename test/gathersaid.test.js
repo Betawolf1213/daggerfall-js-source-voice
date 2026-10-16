@@ -24,8 +24,8 @@ import {
   createGatherHost, aimAt, storesLine, storesWhereLine, ACT_STOPPED_LINE, KEPT_LINE, KEPT_SIGNED_OUT_LINE, LAPSED_LINE,
 } from '../src/scenes/gatherHost.js';
 import { createToastQueue, PROF_TOASTS_MAX } from '../src/ui/profHud.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { accountRefusalText } from '../src/net/accountClient.js';

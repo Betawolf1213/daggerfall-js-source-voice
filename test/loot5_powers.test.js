@@ -13,21 +13,21 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { setStruck, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { setStruck, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
-import { BRIEF_MAX } from '../src/systems/sigilSets.js';
+import { BRIEF_MAX } from '../src/systems/sigil/sigilSets.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -79,7 +79,7 @@ test('LOOT5: thirty powers - one a record, named, briefed inside the card\'s 32,
   const lines = LR.rarityLines(w);
   assert.ok(lines.includes('Dragonsbane: +50% vs dragons and giants'), 'the card says it');
   assert.equal(lines.at(-1), LR.legendaryById('wyrmbane').lore, 'the lore still last');
-  const src = strip(read('src/systems/lootPowers.js'));
+  const src = strip(read('src/systems/loot/lootPowers.js'));
   for (const [seam, fn] of [['registerPlayerDamageMod', 'lootDamageMod'], ['registerPlayerDeathSave', 'lootDeathSave'], ['registerPlayerHurtListener', 'lootHurt'],
     ['registerPlayerKillListener', 'lootKill'], ['registerAbsorptionChance', 'lootAbsorbChance'], ['registerMagicRoundHook', 'lootRound'], ['registerLegendaryFind', 'lootFind']]) {
     assert.match(src, new RegExp(`\\n${seam}\\(LOOT_POWERS, ${fn}\\);`), `${seam} -> ${fn}`);

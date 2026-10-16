@@ -18,7 +18,7 @@ corner saying where snow may lie). They ship under `public/art/snowfall/`
 (mip 0 of each texture written losslessly), under Port-Doctrine's SECOND
 EXCEPTION, written and checked by `tools/environmentModsExtract.mjs`. The
 records are a SHIPPED MOD in the texture door, registered beside Vanilla
-Enhanced's by `systems/vanillaEnhancedPack.js` (`ENVIRONMENT_PACK_MODS`), ON BY
+Enhanced's by `systems/vanillaEnhanced/vanillaEnhancedPack.js` (`ENVIRONMENT_PACK_MODS`), ON BY
 DEFAULT and a switch of its own on the Replacement packs card. They carry each
 archive's record 0, so they decide the winter archives' ground as a whole -
 and the index names Vanilla Enhanced's Base as an optional dependency, so the
@@ -118,7 +118,7 @@ the rasterizers, `fa48dcc6...` the statics, `e4c9678b...` Basic Roads,
   retries are real seconds. A load restores the record at the clock's nought
   and completes its session on the next frame - the LOADED game's clock (AUDIT
   ENVIRONS S2: the hosts restore the mods' records before the save's clock).
-  Online the mod is the player's own (`systems/onlineLane.js`).
+  Online the mod is the player's own (`systems/online/onlineLane.js`).
 - **A TELEPORT'S NEW FRAME.** `state.init`'s re-anchor (a load, a fast travel,
   a respawn) carries the tiers, their tracks and the last stamp by its move
   (`initOffset`) as a recentre does, so the old place's tracks stay on the old

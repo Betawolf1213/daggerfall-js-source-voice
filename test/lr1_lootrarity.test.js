@@ -3,7 +3,7 @@
 // rarity ... Make this the most detailed and best that it can be").
 //
 // The port's own item ladder over Daggerfall's loot
-// (src/systems/lootRarity.js): Common, Magic, Rare, Legendary, with
+// (src/systems/loot/lootRarity.js): Common, Magic, Rare, Legendary, with
 // DFU's artifacts as the ceiling. An ENHANCED row, ON by default
 // (LR5, 2026-09-15, Mac: "I want to mod on by default") and forced on
 // online. The laws pinned here:
@@ -37,19 +37,19 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setPref, _resetForTests, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_FORCED_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_FORCED_PREFS } from '../src/systems/online/onlineLane.js';
 import { FEATURES, checkFeatures } from '../src/systems/features.js';
 import '../src/world/landView.js';   // RF4: the condensed rows' lanes register themselves; checkFeatures reads them
 import '../src/world/outdoors.js';
 import '../src/systems/featureLanes.js';   // FT18: the wind, the quick slots and the blood lanes register themselves too
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { AETHERIC_RECORDS } from '../src/systems/aetheric.js';   // SET6: the test room shows the Aetheric rung too (RAID4b: the raids' sets with it)
 import { TECHNIQUE_IDS } from '../src/combat/techniqueRoster.js';   // TECH1: the Test Room lays one Rare a technique
-import { createRandomWeapon, createRandomArmor, LOOT_ARRAY_FIELDS, validLootItem, validLootList } from '../src/systems/loot.js';   // AUDIT-LR: a container's whole list, the shape both online doors send
+import { createRandomWeapon, createRandomArmor, LOOT_ARRAY_FIELDS, validLootItem, validLootList } from '../src/systems/loot/loot.js';   // AUDIT-LR: a container's whole list, the shape both online doors send
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, itemBaseValue } from '../src/systems/itemTemplates.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { itemLongName, resolveItemName } from '../src/systems/itemInfo.js';
+import { mintCondition, itemBaseValue } from '../src/systems/item/itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { itemLongName, resolveItemName } from '../src/systems/item/itemInfo.js';
 import { itemIsIdentified } from '../src/systems/tradeModes.js';
 import { enchantmentCost } from '../src/systems/enchantmentCatalogue.js';
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
@@ -64,9 +64,9 @@ import { itemBackgroundColour, scrollerToolTipText } from '../src/ui/itemScrolle
 import { hoverLines } from '../src/systems/worldHover.js';   // WORLD-HOVER
 import { playRareDrop, takeCorpseLoot } from '../src/scenes/corpseMarker.js';   // AUDIT-LR: the peer's take is the one take law
 import { TEST_LOOT, testEntryById, seedTestLoot, TEST_LOOT_BASES } from '../src/systems/testRoom.js';
-import { itemNameParts } from '../src/systems/itemInfo.js';   // LR6: what the pack ROW actually prints
-import { templateByIndex } from '../src/systems/itemTemplates.js';   // LR6: the bare-template reading an unidentified item falls back to
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { itemNameParts } from '../src/systems/item/itemInfo.js';   // LR6: what the pack ROW actually prints
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';   // LR6: the bare-template reading an unidentified item falls back to
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -416,7 +416,7 @@ test('LR1: four hosts - every list a host mints rolls at its source, and the pil
   // the reads, at DFU's own read sites
   const f = read('src/combat/formulas.js');
   // RF1: the reads are the entity's channels' - test/rf1_entitymods.test.js pins each site; here, that the fold is registered there
-  assert.match(read('src/systems/lootRarity.js'), /registerEntityFold\(LOOT_RARITY_FOLD, affixFold\);\nregisterWeaponDamageMod\(LOOT_RARITY_FOLD, affixWeaponDamage\);/, 'the fold and the weapon modifier, registered with the entity');
+  assert.match(read('src/systems/loot/lootRarity.js'), /registerEntityFold\(LOOT_RARITY_FOLD, affixFold\);\nregisterWeaponDamageMod\(LOOT_RARITY_FOLD, affixWeaponDamage\);/, 'the fold and the weapon modifier, registered with the entity');
   assert.match(read('src/systems/equip.js'), /function fireEquipChange\(entity\) \{\n  _hooks\.onEquipChange\?\.\(entity\);\n  for \(const fn of _equipListeners\) fn\(entity\);\n\}/, 'the listener door beside the enchantment hook');
 });
 

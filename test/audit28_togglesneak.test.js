@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W5: TOGGLE SNEAK (PlayerSpeedChanger.cs:75-78, wired from
 // StartGameBehaviour :277), a default-OFF control the port stored and

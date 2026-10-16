@@ -23,7 +23,7 @@ import { createHouses, allocateHouseToPlayer, housesForSale, isHouseOwned } from
 import { receiveHouseDecision, claimHouse, HOUSE_FLAG_MASK } from '../src/systems/knightlyGifts.js';
 import {
   createOnlineHomes, realmDeedAt, realmDeedsOf, holdRealmDeeds, homeDoorAnswer, homePurchasable, homeDoorPrompt,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { homeDeedOf, HOME_CAP, HOME_ARENA_MAP_ID, HOME_CLAIMS_MAX } from '../src/net/homeLaw.js';
 import { accountHomes, SESSION_KEY } from '../src/net/accountClient.js';
 import { ROUTES } from '../server-account/src/service.js';

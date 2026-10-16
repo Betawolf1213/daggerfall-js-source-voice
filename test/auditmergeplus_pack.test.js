@@ -38,8 +38,8 @@ import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { createSurvivalItem, SURVIVAL_TEMPLATES, isSurvivalItem } from '../src/systems/survival/items.js';
 import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
-import { isLocked, setLocked, lockedText } from '../src/systems/itemLock.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { isLocked, setLocked, lockedText } from '../src/systems/item/itemLock.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 
 const tmpl = (name) => ITEM_TEMPLATES.find((t) => t.name === name);

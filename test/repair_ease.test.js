@@ -5,14 +5,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { calculateItemRepairCost, dfuItemRepairCost, REPAIR_COST_SCALE } from '../src/systems/repairService.js';
-import { PORT_DEFAULTS } from '../src/systems/settings.js';
+import { PORT_DEFAULTS } from '../src/systems/settings/settings.js';
 import {
   mintFieldRepairKit, useRepairKit, repairKitUse, kitMends, FIELD_KIT, maybeAddFieldKit, installSmithing,
   FIELD_KIT_PILE_CHANCE, FIELD_KIT_ENEMY_CHANCE,
 } from '../src/systems/smithItems.js';
 import { FIELD_KIT_REPAIR, KIT_REPAIR, REPAIR_KIT_TEMPLATE, pieceLines } from '../src/net/recipeLaw.js';
-import { addPileLootExtras, addEnemyLootExtras } from '../src/systems/loot.js';
-import { validItemField } from '../src/systems/itemFields.js';
+import { addPileLootExtras, addEnemyLootExtras } from '../src/systems/loot/loot.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
 
 test('REPAIR-EASE, REPAIR-RATE: a repair costs a THIRD of Daggerfall\'s price (REPAIR-EASE\'s two thirds until REPAIR-RATE, repair_rate.test.js), rounded, never under 1 - and nothing at full condition', () => {
   assert.equal(REPAIR_COST_SCALE, 1 / 3);

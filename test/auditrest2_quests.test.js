@@ -24,7 +24,7 @@ import { Symbol as QS } from '../src/systems/quest/symbol.js';
 import * as clockModule from '../src/systems/quest/clock.js';
 import {
   newBountyLedger, readBountyLedger, restampNeverLapsed, BOUNTY_LEDGER_VERSION, BOUNTY_LIFETIME_MINUTES, bountySites, boardPostings,
-} from '../src/systems/bountyBoard.js';
+} from '../src/systems/bounty/bountyBoard.js';
 import { createBountyHost } from '../src/scenes/bountyHost.js';
 import { setSharedClock } from '../src/systems/worldTick.js';
 

@@ -17,7 +17,7 @@ import {
 } from '../src/systems/thunderlock.js';
 import { weaponSkillUsed, weaponMinDamage, weaponMaxDamage } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
+import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { weaponTypeForItem, WEAPON_TYPES, getWeaponAnims, THUNDERLOCK_ANIMS, ALIGN } from '../src/combat/fpsWeapon.js';
 import {
   THUNDERLOCK_NUM_FRAMES, MELEE_NUM_FRAMES, BOW_NUM_FRAMES,
@@ -34,14 +34,14 @@ import { scaledBillboardSize } from '../src/world/rmbFlats.js';   // FIELD-GUN18
 import { playerMuzzleOrigin } from '../src/systems/spellcast.js';   // FIELD-GUN17
 import { muzzleRay } from '../src/combat/weaponRig.js';   // FIELD-GUN17
 import { worldRectPx } from '../src/player/tapRay.js';   // FIELD-GUN19: the world strip, in canvas pixels
-import { uniqueFinds, uniqueFindChance, rollLootRarity, legendariesFor, rarityEligible } from '../src/systems/lootRarity.js';
+import { uniqueFinds, uniqueFindChance, rollLootRarity, legendariesFor, rarityEligible } from '../src/systems/loot/lootRarity.js';
 // FIELD-GUN: the two the audit could not see, because every pin it
 // wrote asked about REGISTRATION and none of them picked the thing up.
 import { equipItem, getEquipSlot, getItemHands, EQUIP_SLOTS, ITEM_HANDS } from '../src/systems/equip.js';
 import { stockShopShelf, SHOP_ITEM_GROUPS } from '../src/systems/shopStock.js';   // SHOP-PELLETS: the shot sold, the gun never
 import { installThunderlockIcons, ICON_FILES } from '../src/systems/thunderlock.js';
 import { isVendorArchive, vendorRecordCount, clearVendorTextures } from '../src/systems/textureReplacement.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { loadThunderlockArt } from '../src/combat/thunderlockArt.js';   // FIELD-GUN3
 import { SHEET_GRID, cellRect } from '../src/combat/gunSheet.js';
 import { vendorTextureStandIn, preloadTextureArchive } from '../src/systems/textureReplacement.js';   // FIELD-GUN4
@@ -62,7 +62,7 @@ import { muzzleLight } from '../src/tools/gunLab.js';
 import { createGunRig, gunRigStep, gunWidgetSettings, gunMotion, gunFrameRect } from '../src/combat/gunViewmodel.js';
 import { drawFpsWeapon } from '../src/combat/fpsWeapon.js';   // FIELD-GUN10
 import { gunPitch } from '../src/combat/gunFeel.js';   // FIELD-GUN8
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplates.js';
 import { FIND_MIN_TIER } from '../src/systems/thunderlock.js';
 
 const GUN = { templateIndex: THUNDERLOCK_TEMPLATE, group: 'Weapons' };
@@ -293,8 +293,8 @@ test('F1: the weapon EXISTS when the game boots, not only when a test imports it
   // systems/thunderlock.js - if the wire is pulled, every assertion
   // here fails and the suite finally notices.
   await import('../src/systems/worldTick.js');
-  const { templateByIndex, isAmmunition } = await import('../src/systems/itemTemplates.js');   // AUDIT 68 S27-ammo-arrow-only: the ammunition registry's home
-  const lr = await import('../src/systems/lootRarity.js');
+  const { templateByIndex, isAmmunition } = await import('../src/systems/item/itemTemplates.js');   // AUDIT 68 S27-ammo-arrow-only: the ammunition registry's home
+  const lr = await import('../src/systems/loot/lootRarity.js');
   assert.equal(templateByIndex(THUNDERLOCK_TEMPLATE)?.name, 'Dwarven Thunderlock', 'the template registered');
   assert.equal(templateByIndex(PELLET_TEMPLATE)?.name, 'Dwemer Pellet');
   assert.ok(lr.uniqueFinds().some((f) => f.id === 'dwarven-thunderlock'), 'the find registered');

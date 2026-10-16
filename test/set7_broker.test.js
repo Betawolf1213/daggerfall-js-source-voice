@@ -1,6 +1,6 @@
 // SET7 (2026-09-26, Sigil Sets - bible/11-Multiplayer/Sigil-Sets.md section 7; Mac: "Sigil stones become a currency to
 // trade for daily reset sigil items at a new NPC vendor that stands outside the oblivion gate"): THE SIGIL BROKER'S LAW
-// (systems/sigilBroker.js) - the day of the shared clock and when it turns; the day's stock, the same for every player
+// (systems/sigil/sigilBroker.js) - the day of the shared clock and when it turns; the day's stock, the same for every player
 // and minted from fixed tables (a piece of each world set, a set weapon, a piece of the Regalia), every piece known,
 // fresh, a valid loot item; the prices in Deadlands Embers; what an offer asks and the sale it plans; and the one-a-day
 // record in the character's save.
@@ -12,22 +12,22 @@ import {
   BROKER_ARMOR_MATERIALS, BROKER_WEAPON_MATERIALS, BROKER_SAVE_VENDOR, BROKER_REFUSALS, brokerDay, brokerTurnsIn, brokerStock,
   stonesIn, brokerOfferState, brokerSale, brokerBought, markBrokerBought, validBrokerRecord, offerSetName, _resetBrokerForTests,
   spendableStonesIn, lockedStonesIn, makeBrokerSale, stoneCount, stonesToTake,
-} from '../src/systems/sigilBroker.js';
+} from '../src/systems/sigil/sigilBroker.js';
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords } from '../src/systems/modSaveData.js';
-import { sigilStone, SIGIL_STONE_TEMPLATE } from '../src/systems/gateSpoils.js';
-import { validSigil, sigilHasBlow, SIGIL_BANDS } from '../src/systems/sigil.js';
-import { WORLD_SET_IDS, setIdOf } from '../src/systems/sigilSets.js';
+import { sigilStone, SIGIL_STONE_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
+import { validSigil, sigilHasBlow, SIGIL_BANDS } from '../src/systems/sigil/sigil.js';
+import { WORLD_SET_IDS, setIdOf } from '../src/systems/sigil/sigilSets.js';
 import { REGALIA } from '../src/systems/aetheric.js';
-import { LEGENDARIES, registerLegendary } from '../src/systems/lootRarity.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { isDeclaredItemField } from '../src/systems/itemFields.js';
-import { isAmmunition, templateByIndex } from '../src/systems/itemTemplates.js';
+import { LEGENDARIES, registerLegendary } from '../src/systems/loot/lootRarity.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { isAmmunition, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { withDom, fakeDom } from './invdrag.mjs';
 import { mountBrokerWindow, brokerTurnText, stonesText, purseText, buyLabel, brokerSkinCss, scopeRules, BROKER_SKIN_STYLE_ID, BROKER_SOLD, BROKER_REPAINT_MS } from '../src/ui/brokerWindow.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 import { createBrokerOverlay, brokerDoorOpen, closeBrokerDoor, repaintBrokerDoor } from '../src/ui/brokerDoor.js';
 import { overlayOpen, clearOverlays } from '../src/ui/enhancedOverlays.js';
-import { setLocked } from '../src/systems/itemLock.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
 
 const DAY = brokerDay(Date.parse('2026-09-27T12:00:00Z'));
 /** SS1: a stack of `n` Deadlands Embers - one record, as addItem makes it. */
@@ -487,7 +487,7 @@ test('SET7 the door: the window a lazy chunk in a host of its own, the overlay\'
 });
 
 test('SET7 x UI1 (AUDIT FINAL F4): an offer\'s picture is drawn for its WEARER, as the pack\'s and the shop\'s rows draw theirs - a cuirass on a female Argonian\'s screen is hers, never a Breton man\'s (mutant: the offer drawn for nobody)', async () => {
-  const { inventoryItemImage } = await import('../src/systems/itemTemplates.js');
+  const { inventoryItemImage } = await import('../src/systems/item/itemTemplates.js');
   const { iconName, _fittedKeys } = await import('../src/ui/textureCanvas.js');
   const DAY = 20000;
   const stock = brokerStock(DAY);

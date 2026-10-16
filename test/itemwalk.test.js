@@ -1,6 +1,6 @@
 // ITEM-WALK (2026-10-07, Mac: "Do them now within this PR"): the two follow-ups AUDIT WEAPON-POOL recorded and left
 // for their own pass, done in its pull request. A - the load's one-time item repairs (DISC21-A, WEAPON-POOL, DISC29-B,
-// WB12a, RARITY-WEAR) run over every list a save holds, by one walk (systems/save.js savedItemLists) and one runner
+// WB12a, RARITY-WEAR) run over every list a save holds, by one walk (systems/save/save.js savedItemLists) and one runner
 // (repairItemLists). B - Project Legacy runs the same repairs on what leaves the line's record by no load: a bequest as
 // it is paid, a fallen member's remains as they open (scenes/legacyHost.js). C - customs counts a sworn revenant's pack
 // (net/realmGoldLaw.js stashedItemLists). bible/05-Combat/Physical-Combat-Overhaul.md, ITEM-WALK.
@@ -18,11 +18,11 @@ import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { modSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';
 import { MODELS, LEGACY_VENDOR } from '../src/systems/legacy/family.js';
 import { createLegacyHost } from '../src/scenes/legacyHost.js';
-import { snapshotPlayer, restorePlayer, savedItemLists } from '../src/systems/save.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
-import { seededRng } from '../src/systems/wind.js';
-import { decorStandOf } from '../src/systems/decorItems.js';
+import { snapshotPlayer, restorePlayer, savedItemLists } from '../src/systems/save/save.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { decorStandOf } from '../src/systems/decor/decorItems.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const _store = new Map();
@@ -30,8 +30,8 @@ globalThis.localStorage = {
   getItem: (k) => (_store.has(k) ? _store.get(k) : null), setItem: (k, v) => { _store.set(k, String(v)); },
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
-const N = await import('../src/systems/revenant.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 
 const at = (v) => () => v;

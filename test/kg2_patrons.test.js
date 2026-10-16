@@ -1,5 +1,5 @@
 // KG2 (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md sections 2.7, 10.5 and 12; the owner: "Do KG2"): THE
-// INNKEEPER'S PLAY (systems/gambitPatrons.js), pinned against TheKingsGambit.dll's own: the Tiers table, TierFor's hash
+// INNKEEPER'S PLAY (systems/gambit/gambitPatrons.js), pinned against TheKingsGambit.dll's own: the Tiers table, TierFor's hash
 // and bands over a regular's seed, the deal (StartBattle's Auto-fill, then BeginMatch), and AiAction rule by rule on
 // boards built for each - the blunder (its chance at float32, its draws), the potion's line, TryEscape, the best blow,
 // the best move - then AiTurnRoutine's step, and a miniature of the record's measure (tools/kgMeasure.mjs).
@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as K from '../src/net/kingsGambit.js';
-import * as G from '../src/systems/gambitPatrons.js';
+import * as G from '../src/systems/gambit/gambitPatrons.js';
 import { measureTier, playRegular, gameSeed, xorshift } from '../tools/kgMeasure.mjs';
 
 const R = (v, n) => v + 1009 * n;

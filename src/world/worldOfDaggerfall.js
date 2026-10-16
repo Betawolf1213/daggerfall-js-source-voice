@@ -317,7 +317,7 @@ export class WodWorld {
    *  layouts stand eight to thirty-six rocks scaled by hundreds and thousands, reaching over a kilometre from the site -
    *  wider than the pixel - and the Overworld's route planner knew nothing of them: its peaks are the MAPS climate's
    *  alone, so a route walked straight into the massif. The planner refuses an open step into one now, as into the
-   *  Mountain climate (systems/travelRoute.js routeGround `rocks`). Every instance the list holds, whether or not its
+   *  Mountain climate (systems/travel/travelRoute.js routeGround `rocks`). Every instance the list holds, whether or not its
    *  pixel's pick stands it (a road's byte refuses it there, and a road is walked wherever it goes anyway). Kept for
    *  the list it was read from, and read again when a region lands. */
   mountainPixels() {

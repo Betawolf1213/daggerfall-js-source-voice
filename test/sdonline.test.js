@@ -24,11 +24,11 @@ import {
 } from '../src/world/smallerDungeons.js';
 import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
 import { UNDERCROFT_LOCATION_ID } from '../src/world/arenaCity.js';
-import { seededFirst } from '../src/systems/wind.js';
+import { seededFirst } from '../src/systems/wind/wind.js';
 import { roomKeyFor, OnlineSession } from '../src/net/online.js';
 import { isWorldRoom, dungeonRoomTag, DUNGEON_ROOM_TAGS, roomOf, PIXEL_UNITS, WORLD_PREFIX } from '../src/net/wire.js';
 import { FEATURES } from '../src/systems/features.js';
-import { ONLINE_FORCED_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_FORCED_PREFS } from '../src/systems/online/onlineLane.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { fakeRoom } from './fakeRoom.mjs';

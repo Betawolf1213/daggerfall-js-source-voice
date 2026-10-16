@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { tickPlayerMinutes } from '../src/systems/worldTick.js';
 import { FATIGUE_LOSS, FATIGUE_DRAIN_SCALE } from '../src/systems/statMods.js';
 const charged = (loss, mult = 1) => Math.trunc(loss * mult * FATIGUE_DRAIN_SCALE);   // BALANCE1: DFU's loss x the multiplier x exertion's scale, truncated once
-import { bootstrapRegionPower } from '../src/systems/regionPower.js';
+import { bootstrapRegionPower } from '../src/systems/region/regionPower.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(root, p), 'utf8');
@@ -72,7 +72,7 @@ test('audit26 F107: the bootstrap walks both arms twelve times each', () => {
   // null dict, so wrap it - the exported bootstrap calls the module's
   // own function, so instead pin the SOURCE loop and the wiring.
   void calls; void store;
-  const s = rd('src/systems/regionPower.js');
+  const s = rd('src/systems/region/regionPower.js');
   assert.match(s, /for \(let i = 0; i < 12; i\+\+\) \{\s*\n\s*regionPowerUpdate\(store, \{ rumorMill, rolls \}\);\s*\n\s*regionPowerUpdate\(store, \{ rumorMill, rolls, updateConditions: true, regionConditions \}\);\s*\n\s*\}/,
     'twelve iterations, both arms each - PlayerEntity.cs:2211-2217 verbatim');
   const c = rd('src/systems/chargenSession.js');

@@ -8,7 +8,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { tradeCost } from '../src/systems/tradeModes.js';
-import { generateItems, createPotion, createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe, setMagicItemTemplates, getMagicItemTemplates } from '../src/systems/loot.js';
+import { generateItems, createPotion, createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe, setMagicItemTemplates, getMagicItemTemplates } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { stockShopShelf, stockGuildMagicItems } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

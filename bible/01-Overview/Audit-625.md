@@ -63,8 +63,8 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 | S7 | nit | A peer's body holding nothing but arrows rolled silver, while the same body of my own did not. | One law (`corpseMarker.js` `arrowsOnly`), read before the take empties the body. |
 | D6 | low | The silver find rolled before the open could be refused (a werebeast's pack, GetSuppressInventory). `corpseMarker` rolled after `openWindow` whether or not the window had mounted. | Every door now rolls only after it OPENED: a window that mounted, or the quick door's take. The body doors answer `true` or `!!w` to say which happened. |
 
-**The serpent** (`src/characters/playerEntity.js`, `src/systems/sigilSetPowers.js`, `src/systems/sigil.js`,
-`src/systems/sigilSets.js`, `src/scenes/world.js`, `server-account/src/serpents.js`, `src/net/accountClient.js`)
+**The serpent** (`src/characters/playerEntity.js`, `src/systems/sigil/sigilSetPowers.js`, `src/systems/sigil/sigil.js`,
+`src/systems/sigil/sigilSets.js`, `src/scenes/world.js`, `server-account/src/serpents.js`, `src/net/accountClient.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -76,7 +76,7 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 | P6 | low (doc) | Sea-Serpent.md section 11's deploy order was stale (acct78, migration 0081). | It now names the account deploy (acct84 since the merge of main past CRYSTAL-FIST's acct83) and migration 0083, with the hoard law's place in that order. |
 | D2 | low | The serpent's silver card (`CLAIM_SOURCE.serpent`, "Serpent slain") and its embers' glow tier were not pinned. | Both are pinned: the serpent's own source, and the gate's tier (`spoilsPool.js` SIGIL_TIER). |
 
-**The wallet** (`src/systems/decorItems.js`, `src/systems/revenant.js`, `src/ui/enhancedInventory.js`,
+**The wallet** (`src/systems/decor/decorItems.js`, `src/systems/revenant/revenant.js`, `src/ui/enhancedInventory.js`,
 `src/ui/enhancedStyle.js`, `src/ui/enhancedPlusStyle.js`, `src/systems/walletItem.js`, `src/systems/quickslots.js`,
 `src/systems/startingGear.js`)
 

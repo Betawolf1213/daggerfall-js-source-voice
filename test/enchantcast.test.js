@@ -20,7 +20,7 @@ import { classicCastingCost } from '../src/systems/spellcost.js';
 import { SPELL_ABSORPTION } from '../src/systems/absorption.js';
 import { equipItem, unequipSlot } from '../src/systems/equip.js';
 import { useItem } from '../src/systems/useItem.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 
 const item = (type, param = -1, over = {}) => ({

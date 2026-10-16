@@ -256,7 +256,7 @@
   },
   {
     "name": "GUILD1d-officer-offered-the-buy",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (!guild || guild.rank !== 0 || guild.hall) return null;",
     "new": "if (!guild || guild.hall) return null;",
     "tests": [
@@ -265,7 +265,7 @@
   },
   {
     "name": "GUILD1d-entry-row-to-a-member",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "...(hallEntryTurnable(home) ? [{ id: HALL_VERB.entry,",
     "new": "...(true ? [{ id: HALL_VERB.entry,",
     "tests": [

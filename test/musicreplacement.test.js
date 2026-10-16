@@ -11,8 +11,8 @@ import {
   replacementFor, hasReplacement, setMusicReplacements, clearMusicReplacements,
   replacementBytes, replacementCount, replacementKeys,
 } from '../src/systems/musicReplacement.js';
-import { setValue } from '../src/systems/settings.js';
-import * as SM from '../src/systems/songManager.js';
+import { setValue } from '../src/systems/settings/settings.js';
+import * as SM from '../src/systems/song/songManager.js';
 import { CONTEXT } from '../tools/musicNames.mjs';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');
@@ -206,7 +206,7 @@ test('music: a replacement OVERRIDES, and a miss falls through to MIDI.BSA', () 
   // on 2026-08-27 (Mac: "fix it also"): the scheduler keeps the FM
   // bank's trim, a replacement - a mastered file - takes the setting
   // alone.
-  const sp = src('systems/songPlayer.js');
+  const sp = src('systems/song/songPlayer.js');
   assert.equal((sp.match(/this\._master\.gain\.value = musicGain\(\)/g) ?? []).length, 1, 'SongPlayer once, trimmed');
   assert.equal((sp.match(/this\._master\.gain\.value = trackGain\(\);/g) ?? []).length, 2,
     'AudioSongPlayer on build AND on every start, untrimmed');
@@ -220,7 +220,7 @@ test('music: AssetInjection is a REAL setting now, and the docs cannot say other
   // screen showing "Nothing to add yet". It has a consumer now, so the
   // sentence goes - this project's own retiring-a-flag rule, and the
   // tier-map guard fails from the other side if it does not.
-  const s = src('systems/settings.js');
+  const s = src('systems/settings/settings.js');
   assert.doesNotMatch(s, /'Enhancements\/AssetInjection': 'no mod system/);
   assert.match(s, /'Enhancements\/AssetInjection': 'src\/systems\/musicReplacement\.js'/);
   const copy = src('ui/settingsCopy.js');

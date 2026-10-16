@@ -6,10 +6,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { mintWallet, walletContents, walletLines, setWalletSilver, _resetWalletForTests } from '../src/systems/walletItem.js';
-import { decorStandOf, decorMountOf, decorOwnEntry } from '../src/systems/decorItems.js';
-import { revenantMayTake, pickTaken } from '../src/systems/revenant.js';
+import { decorStandOf, decorMountOf, decorOwnEntry } from '../src/systems/decor/decorItems.js';
+import { revenantMayTake, pickTaken } from '../src/systems/revenant/revenant.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhancedInventory.js';
@@ -30,7 +30,7 @@ test('AUDIT 625 W1: the decorate panel never sets the wallet out - a piece set d
   assert.equal(decorOwnEntry(wallet, 0), null, 'so the panel lists no row for it (scenes/decorTool.js ownEntries reads this door alone)');
   assert.equal(decorStandOf({ group: 'UselessItems2', templateIndex: BAG_TEMPLATE }), null, 'the Materials Bag, as ever');
   // a pack-only piece is refused by its ROW, whatever its picture: the rule is the row's `packOnly`, read at the stand
-  assert.match(src('src/systems/decorItems.js'), /if \(isBagItem\(item\) \|\| isPackOnly\(item\)\) return null;/);
+  assert.match(src('src/systems/decor/decorItems.js'), /if \(isBagItem\(item\) \|\| isPackOnly\(item\)\) return null;/);
   const ruby = { group: 'Gems', templateIndex: 0, name: 'Ruby', stackCount: 1 };
   assert.ok(decorStandOf(ruby), 'a gem still stands');
 });

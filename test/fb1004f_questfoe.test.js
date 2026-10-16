@@ -16,7 +16,7 @@ import { addQuestResourceObjects } from '../src/systems/quest/sceneMount.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { questFoeLine, questFoeSubs, QUEST_FOE_PREFIX } from '../src/systems/questFoeLine.js';
+import { questFoeLine, questFoeSubs, QUEST_FOE_PREFIX } from '../src/systems/quest/questFoeLine.js';
 import { resolveHover } from '../src/systems/worldHover.js';
 import { drawLootPanel } from '../src/ui/classicLootPanel.js';
 import { loadTables, questScript, mark, rmbBlock, town, worldOf, SPAWN, ITEM } from './fb1004dTowns.mjs';
@@ -154,7 +154,7 @@ test('QUEST-FOE-LINE, the hosts: the interior and the dungeon live-foe arms hand
   const wm = rd('src/scenes/worldModes.js');
   const interior = wm.slice(wm.indexOf("if (key.startsWith('mobileFoe:')) {\n        const f = liveFoeFor(interiorFoePool(), key, 'mobileFoe');"));
   assert.match(interior.slice(0, 600), /return t \? \{ title: t, subs: questFoeSubs\(f\) \} : null;/, 'the interior arm');
-  assert.match(wm, /import \{ questFoeSubs \} from '\.\.\/systems\/questFoeLine\.js';/);
+  assert.match(wm, /import \{ questFoeSubs \} from '\.\.\/systems\/quest\/questFoeLine\.js';/);
   // the dungeon host
   const dc = rd('src/scenes/dungeonContext.js');
   assert.match(dc, /return t \? \{ title: f\.yielded \? `\$\{t\} - beaten` : t, subs: questFoeSubs\(f\) \} : null;/, 'the dungeon arm');

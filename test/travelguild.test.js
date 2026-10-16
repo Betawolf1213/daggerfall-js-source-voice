@@ -26,7 +26,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { guildFastTravel, templeOf, AKATOSH_DIVINE } from '../src/systems/guildVariants.js';
+import { guildFastTravel, templeOf, AKATOSH_DIVINE } from '../src/systems/guild/guildVariants.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 /** The membership book shape activeMemberships answers: keyed by

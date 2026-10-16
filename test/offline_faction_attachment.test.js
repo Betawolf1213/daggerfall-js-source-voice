@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { setSharedClock, setOwnMinutes, hearSharedClock, normalizeAcross } from '../src/systems/worldTick.js';
-import { attachFactionRep } from '../src/systems/factionRep.js';
+import { attachFactionRep } from '../src/systems/faction/factionRep.js';
 const W = 10080;
 const faction = {id: 1, rep: -30, flags: 0, power: 1, parent: 0, type: 0, children: []};
 const dict = new Map([[1, faction]]);

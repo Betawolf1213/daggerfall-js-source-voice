@@ -18,7 +18,7 @@ import { readGltf, bakeGltf, poiMaterialOf } from '../src/poi/gltfImport.js';
 import { writePack, readPack, readPackBytes, packAssetName } from '../src/poi/poiPack.js';
 import { exportModel, exportPack, importPack, fileNameOf, copyIdOf } from '../src/poi/poiTransfer.js';
 import { readZipEntries } from '../src/scenes/dataSource.js';
-import { zipStore } from '../src/systems/saveTransfer.js';
+import { zipStore } from '../src/systems/save/saveTransfer.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL, poiDocProblems } from '../src/poi/poiLaw.js';
 import { mat4FromQuatPosScale, quatAngleAxis } from '../src/world/quat.js';

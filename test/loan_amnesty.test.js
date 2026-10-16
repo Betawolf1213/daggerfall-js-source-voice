@@ -1,7 +1,7 @@
 // LOAN-AMNESTY (2026-09-29, Mac: "Can we reset the loans for everyone online. The bank of the empire has decided to
 // forgive everyone's loans"; bible/06-Systems/Online-Arc.md LOAN-AMNESTY): THE EMPIRE FORGIVES EVERY ONLINE LOAN, ONCE.
 // The law (systems/banking.js forgiveLoans, loanAmnestyLines, LOAN_AMNESTY), the mark the save carries
-// (systems/save.js), customs' mark (systems/realmCustoms.js applyCustoms) and the realm boot that applies it
+// (systems/save/save.js), customs' mark (systems/realmCustoms.js applyCustoms) and the realm boot that applies it
 // (scenes/world.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +11,7 @@ import {
   forgiveLoans, loanAmnestyLines, LOAN_AMNESTY, createBankAccounts, createHouses, empireRefusal, garnishDeposit, TRANSACTION_RESULT,
   SHIP_TYPES,
 } from '../src/systems/banking.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { applyCustoms } from '../src/systems/realmCustoms.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -116,5 +116,5 @@ test('LW-FIX5 the turned watch is followed by the struck body\'s IDENTITY as it 
   watchStep(turned, [old, fresh]);
   assert.deepEqual(slays, ['L1.w1', 'L1.w2']);
   assert.match(rd('src/scenes/cityGuards.js'), /if \(p\.person\?\.living\) g\.livingFrom = p\.person\.living;/);
-  assert.match(rd('src/systems/rrRidingHost.js'), /const from = person\.living \?\? null;[^\n]*\n[^\n]*g\.livingFrom = from;/);
+  assert.match(rd('src/systems/roleplayRealism/rrRidingHost.js'), /const from = person\.living \?\? null;[^\n]*\n[^\n]*g\.livingFrom = from;/);
 });

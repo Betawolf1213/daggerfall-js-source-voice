@@ -22,7 +22,7 @@ import { BOUNTY_CSS, rarityVarsCss } from './enhancedPlusStyle.js';
 import { frameCss } from './enhancedFrame.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 import { scopeRules } from './brokerWindow.js';
-import { bountyTimeText, BOUNTY_ACTIVE_MAX } from '../systems/bountyBoard.js';
+import { bountyTimeText, BOUNTY_ACTIVE_MAX } from '../systems/bounty/bountyBoard.js';
 
 /** @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
 const el = (tag, cls = null, text = null) => {

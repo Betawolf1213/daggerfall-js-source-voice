@@ -35,7 +35,7 @@ import {
 } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { handToHandMinDamage, handToHandMaxDamage } from '../src/combat/formulas.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 

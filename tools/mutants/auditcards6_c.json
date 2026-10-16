@@ -433,7 +433,7 @@
   },
   {
     "name": "AC6-C8-client-commit-unmarked",
-    "file": "src/systems/iliacRemoteTable.js",
+    "file": "src/systems/iliac/iliacRemoteTable.js",
     "old": "      for (const e of f.events) { const pl = e.t === 'commit' ? this.state?.game?.players?.[e.seat] : null; if (pl) pl.committed = true; }",
     "new": "",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "AC6-C9-watcher-forgets-the-last",
-    "file": "src/systems/iliacRemoteTable.js",
+    "file": "src/systems/iliac/iliacRemoteTable.js",
     "old": ": this.state.game ?? this.state.last?.view ?? null;",
     "new": ": this.state.game;",
     "tests": [

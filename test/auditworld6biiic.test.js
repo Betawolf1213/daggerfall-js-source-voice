@@ -15,7 +15,7 @@ import { validFoeRecord, CELL_FRAME_RECORDS_MAX, HIT_ROOM_BYTES_PER_S, PIXEL_UNI
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import { fakeRoom } from './fakeRoom.mjs';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { generateItems, validLootItem, validLootList, LOOT_STACK_MAX, LOOT_LIST_MAX } from '../src/systems/loot.js';
+import { generateItems, validLootItem, validLootList, LOOT_STACK_MAX, LOOT_LIST_MAX } from '../src/systems/loot/loot.js';
 import { CORPSE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

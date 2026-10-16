@@ -24,8 +24,8 @@ import { isWorldRoom, worldFrameMaxFor, WORLD_FRAME_MAX, WORLD_FRAME_MAX_INTERIO
 import * as relay from '../server/src/relay.js';
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import { roomKeyFor, OnlineSession } from '../src/net/online.js';
-import { validLootItem, validLootList } from '../src/systems/loot.js';
-import { itemBaseValue, templateByIndex } from '../src/systems/itemTemplates.js';
+import { validLootItem, validLootList } from '../src/systems/loot/loot.js';
+import { itemBaseValue, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { needsRestock } from '../src/systems/shopStock.js';
 import { mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorLocationKey } from '../src/world/interiorShared.js';
 import { fakeRoom } from './fakeRoom.mjs';

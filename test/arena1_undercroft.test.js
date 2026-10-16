@@ -9,7 +9,7 @@ import { undercroftLocation, isArenaUndercroft, isUndercroftDoor, ARENA_BLOCK, U
 import { DOOR_TYPE } from '../src/world/meshReader.js';
 import { LOCATION_TYPES, DUNGEON_TYPES } from '../src/formats/mapsFile.js';
 import { layoutDungeon } from '../src/world/dungeonLayout.js';
-import { dungeonStartDoorFor } from '../src/systems/save.js';
+import { dungeonStartDoorFor } from '../src/systems/save/save.js';
 import { HAS_ARENA2, bootDoor, classicModels } from './arena1Data.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -43,7 +43,7 @@
 //     Open lets it escape; the READER still throws verbatim, and next()/draw()
 //     are inert until a file has opened.
 
-import { getFloat } from '../systems/settings.js';   // SETT: DaggerfallVideo reads SoundVolume per clip
+import { getFloat } from '../systems/settings/settings.js';   // SETT: DaggerfallVideo reads SoundVolume per clip
 import { UP_Y } from '../world/mat4.js';   // EV2: the shared billboard up axis
 import { VidFile, VID_BLOCK_TYPES } from '../formats/vidFile.js';
 import { NATIVE_W, NATIVE_H, drawImg, nativeMetrics } from './nativePanel.js';

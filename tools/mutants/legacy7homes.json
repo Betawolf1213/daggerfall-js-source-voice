@@ -20,7 +20,7 @@
   },
   {
     "name": "LEGACY7H-registry-silent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    try { onWrote?.(id, buildingKey); } catch { /* a listener's fault is never the registry's */ }\n",
     "new": "",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "LEGACY7H-listener-breaks-claim",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    try { onWrote?.(id, buildingKey); } catch { /* a listener's fault is never the registry's */ }",
     "new": "    onWrote?.(id, buildingKey);",
     "tests": [

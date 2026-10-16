@@ -1823,7 +1823,7 @@ test('AUDIT-WH M2/M3/M4/M9: the mod\'s own asymmetries, ported as the mod has th
   const plant = { group: 'PlantIngredients1', templateIndex: 3, name: 'Yellow Rose', identified: true };
   assert.doesNotMatch(String(questResourceName(plant)), /northern|southern/,
     'the quest stand takes the resolver with the differentiation OFF');
-  const { itemLongName } = await import('../src/systems/itemInfo.js');
+  const { itemLongName } = await import('../src/systems/item/itemInfo.js');
   assert.match(itemLongName(plant), /\(northern\)/,
     '...while the resolver\'s own default still differentiates, as DFU\'s does');
 
@@ -2121,7 +2121,7 @@ test('AUDIT-WH R7/R8/P7/P9: the list has a cap, a readout is the player\'s onlin
   // label stands nothing, rolls nothing, writes nothing and is not on
   // the wire - the same category as `chatHidden`, which the lane has
   // always left alone.
-  const ol = read('src/systems/onlineLane.js');
+  const ol = read('src/systems/online/onlineLane.js');
   // MODS-ONLINE (2026-09-22) re-aimed this line. It matched the list
   // LITERALLY - `= ['world-tooltips'];` - which froze it at one entry
   // and so asserted "exactly one readout is the player's" when R8's

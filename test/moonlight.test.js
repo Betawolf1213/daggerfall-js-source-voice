@@ -14,7 +14,7 @@ import {
   skyState, moonlightTerm, withMoonAmbient, phaseLitFraction, MOONLIGHT,
 } from '../src/render/enhancedSky.js';
 import { dynamicMoonState, dynamicMoonlight } from '../src/render/dynamicSkiesBridge.js';   // AUDIT 65 MC-3: the mod's arm of moonlight(), and the state its own producer mints
-import { MATERIAL_DEFAULTS } from '../src/systems/dynamicSkies.js';
+import { MATERIAL_DEFAULTS } from '../src/systems/dynamicSkies/dynamicSkies.js';
 import { LUNAR_PHASES } from '../src/systems/gameDate.js';
 
 const midnight = (phases, weather = 'sunny') =>

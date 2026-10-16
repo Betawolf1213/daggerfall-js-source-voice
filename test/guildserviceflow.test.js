@@ -7,12 +7,12 @@ import {
   NO_POTION_INGREDIENTS, SPYMASTER_GREETING_ID, TG_SPYMASTER_FACTION_ID,
   staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects,
   hasDamagedAttributes, cureAllAttributes, serviceDestination,
-} from '../src/systems/guildServiceFlow.js';
-import { GUILD_SERVICES } from '../src/systems/guildServices.js';
-import { GUILDS, joinGuild, daySinceZero } from '../src/systems/guilds.js';
-import { templeOf, createGuildForGroup } from '../src/systems/guildVariants.js';
+} from '../src/systems/guild/guildServiceFlow.js';
+import { GUILD_SERVICES } from '../src/systems/guild/guildServices.js';
+import { GUILDS, joinGuild, daySinceZero } from '../src/systems/guild/guilds.js';
+import { templeOf, createGuildForGroup } from '../src/systems/guild/guildVariants.js';
 import { GUILD_GROUPS, SOCIAL_GROUPS, FACTION_TYPES } from '../src/formats/factionFile.js';
-import { createFactionRep } from '../src/systems/factionRep.js';
+import { createFactionRep } from '../src/systems/faction/factionRep.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 const BUILDING = { Bank: 3, GuildHall: 11, Temple: 14, Tavern: 15, WeaponSmith: 13, GeneralStore: 9, House1: 17 };

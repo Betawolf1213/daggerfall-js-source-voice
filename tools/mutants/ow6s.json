@@ -1,7 +1,7 @@
 [
   {
     "name": "OW6-S-warn-short",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "export const THREAT_WARN_S = 0.6;",
     "new": "export const THREAT_WARN_S = 1.2;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "OW6-S-inside-always-held",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "  if (d <= reach) return along >= 0 ? 0 : Infinity;",
     "new": "  if (d <= reach) return 0;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "OW6-S-passing-counted",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "  if (disc < 0) return Infinity;   // the way passes it by",
     "new": "  if (disc < 0) return Math.max(0, d - reach);",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "OW6-S-root-sign",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "  const enter = along - Math.sqrt(disc);",
     "new": "  const enter = along + Math.sqrt(disc);",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW6-S-behind-counted",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "  return enter >= 0 ? enter : Infinity;   // both crossings behind: it is behind the traveller",
     "new": "  return Math.abs(enter);",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "OW6-S-no-way-full-distance",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "  if (!heading) return Math.max(0, d - reach);",
     "new": "  if (!heading) return d;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "OW6-S-no-fives",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "export const threatStep = (n) => (n >= 5 ? Math.floor(n / 5) * 5 : Math.max(1, Math.floor(n)));",
     "new": "export const threatStep = (n) => Math.max(1, Math.floor(n));",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "OW6-S-under-walking",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "export const threatStep = (n) => (n >= 5 ? Math.floor(n / 5) * 5 : Math.max(1, Math.floor(n)));",
     "new": "export const threatStep = (n) => (n >= 5 ? Math.floor(n / 5) * 5 : Math.floor(n));",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "OW6-S-chaser-pace-dropped",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "    const closing = speedMps + (t.mps > 0 ? t.mps : 0);",
     "new": "    const closing = speedMps;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OW6-S-chaser-behind-never",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "    const m = t.chasing ? Math.max(0, Math.hypot(t.dx, t.dz) - t.reach) : metresToReach(t.dx, t.dz, t.reach, heading);",
     "new": "    const m = metresToReach(t.dx, t.dz, t.reach, heading);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "OW6-S-first-not-worst",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "    if (near === null || r < rate) { rate = r; best = m; near = t; }",
     "new": "    if (near === null) { rate = r; best = m; near = t; }",
     "tests": [

@@ -19,7 +19,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { staticNpcData, staticNpcName } from '../src/characters/staticNpc.js';
 import { collectInteriorPeople } from '../src/characters/interiorPeople.js';
-import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talkTopics.js';
+import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { configureLayoutPins, recordStands, _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 

@@ -2,7 +2,7 @@
 // should live in the house"): THE LINE LIVES IN ITS ONLINE HOMES. The code's last "until LEGACY7": online the realm's
 // homes were the account service's and no house of the line's. The realm keeps the line now, and a realm character's
 // online homes (HOME1) are its houses - learned with the save as a deed is offline, a list not read yet learning nothing
-// and dropping nothing; the registry tells the world when a home of mine changed (systems/onlineHomes.js onWrote); the
+// and dropping nothing; the registry tells the world when a home of mine changed (systems/online/onlineHomes.js onWrote); the
 // world host reads this realm character's homes and hands them to the house (scenes/world.js, by source).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { createLegacyHost } from '../src/scenes/legacyHost.js';
 import { familyRng, MODELS, LEGACY_MOD } from '../src/systems/legacy/family.js';
 import { familyHome } from '../src/systems/legacy/household.js';
-import { createOnlineHomes } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes } from '../src/systems/online/onlineHomes.js';
 import { _resetModSaveData, modSaveRecords } from '../src/systems/modSaveData.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 

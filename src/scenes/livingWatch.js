@@ -4,7 +4,7 @@
 // WATCH - a resident the watch's conversion took (DFU's: the walker's body gone, a guard stood in its place - a swing, the
 // trample, the crime response's arms, the minute's sweep, the town watch's summons) is followed through the guard that
 // stands for them to its end. Every such guard carries the resident it came from (`livingFrom`, put on it where it is
-// stood: scenes/cityGuards.js turnNpc, systems/rrRidingHost.js's trample; a load's by the id alone) - AUDIT-C6: the
+// stood: scenes/cityGuards.js turnNpc, systems/roleplayRealism/rrRidingHost.js's trample; a load's by the id alone) - AUDIT-C6: the
 // struck body's IDENTITY as it was struck (its `living` record, minted afresh each time the town's pool dresses a body),
 // never the body, which is the pool's and dressed again.
 //

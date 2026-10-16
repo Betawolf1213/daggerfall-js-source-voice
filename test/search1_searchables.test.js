@@ -13,7 +13,7 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { DOOR_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { capLootList, capFoeLoot, plainFoeLootRule, PLAIN_FOE_RARITY_WEIGHTS } from '../src/systems/foeLootCap.js';
-import { rarityChances } from '../src/systems/lootRarity.js';
+import { rarityChances } from '../src/systems/loot/lootRarity.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
@@ -137,8 +137,8 @@ test('FOE-CAP: the plain ladder - white the rule, blue rare, yellow very rare, o
 });
 
 test('CAP-SUPPLIES (LOOT-EASE): a full body keeps a Magic-or-better piece first, then a supply - a potion, a rest supply - before a Common piece of gear, however dear (mutants: the supply rank dropped; a supply over a Magic piece; the rest items never registered)', async () => {
-  const { POTION_TEMPLATE_INDEX } = await import('../src/systems/loot.js');
-  const { createRestItem, REST_ITEM } = await import('../src/systems/restItems.js');   // registers the seven as supplies
+  const { POTION_TEMPLATE_INDEX } = await import('../src/systems/loot/loot.js');
+  const { createRestItem, REST_ITEM } = await import('../src/systems/rest/restItems.js');   // registers the seven as supplies
   const { isLootSupply } = await import('../src/systems/foeLootCap.js');
   const potion = { name: 'potion', group: 'UselessItems1', templateIndex: POTION_TEMPLATE_INDEX, potionRecipeKey: 4975678, value: 50 };
   const tonic = { ...createRestItem(REST_ITEM.Tonic), name: 'tonic' };
@@ -157,7 +157,7 @@ test('KIT-ROLL (LOOT-EASE): a foe\'s dropped kit rolls the plain ladder at its d
   const { rollCorpseKit } = await import('../src/systems/foeLootCap.js');
   const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
   const { createWeapon } = await import('../src/combat/enemyEquipment.js');
-  const { rarityOf } = await import('../src/systems/lootRarity.js');
+  const { rarityOf } = await import('../src/systems/loot/lootRarity.js');
   _resetForTests(); setPref('lootRarity', true);
   const body = (mark = {}) => {
     const sword = createWeapon(120, 1);   // a Steel Longsword in its hand
@@ -220,7 +220,7 @@ test('SEARCH1-PARTY: two foes a player, a search is the room\'s container, and a
 });
 
 test('CHAMP-LOOT: no Rare forced onto a champion - Magic and Rare at half a plain foe\'s, its Legendary as it was, every chance under an elite\'s', async () => {
-  const LR = await import('../src/systems/lootRarity.js');
+  const LR = await import('../src/systems/loot/lootRarity.js');
   const { ELITE_FOE_LOOT, eliteRareChance } = await import('../src/systems/eliteFoes.js');
   assert.equal(LR.CHAMPION_RARE_CHANCE, undefined);
   assert.doesNotMatch(readFileSync('src/scenes/hostCombat.js', 'utf8'), /ensureChampionLoot/);
@@ -238,7 +238,7 @@ test('CHAMP-LOOT: no Rare forced onto a champion - Magic and Rare at half a plai
 });
 
 test('ELITE-RARE: an elite\'s extra Rare is half a champion\'s blue at its level', async () => {
-  const LR = await import('../src/systems/lootRarity.js');
+  const LR = await import('../src/systems/loot/lootRarity.js');
   const { eliteRareChance } = await import('../src/systems/eliteFoes.js');
   const want = { 3: 0.07, 8: 0.104, 12: 0.13, 17: 0.162 };
   for (const [lv, w] of Object.entries(want)) {
@@ -256,5 +256,5 @@ test('SLAUGHTER-BOX (FIELD BUGS 2026-10-15c, the Discord: "Random encounter from
   assert.equal(pickRosterFoe([11, 41, 42], 1, () => 0.999), 19, 'a roster of swimmers alone: the grave\'s undead');
   assert.deepEqual([...WATER_SPECIES].sort((a, b) => a - b), [11, 41, 42]);
   assert.deepEqual(Object.keys(ENEMY_BASICS).filter((k) => ENEMY_BASICS[k].behaviour === 'Aquatic').map(Number), [...WATER_SPECIES].sort((a, b) => a - b), 'the swimmers the motor knows are the layout\'s');
-  assert.doesNotMatch(readFileSync(new URL('../src/systems/wildDungeons.js', import.meta.url), 'utf8'), /new Set\(\[11, 41, 42\]\)/, 'the wild halls read the one home');
+  assert.doesNotMatch(readFileSync(new URL('../src/systems/wild/wildDungeons.js', import.meta.url), 'utf8'), /new Set\(\[11, 41, 42\]\)/, 'the wild halls read the one home');
 });

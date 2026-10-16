@@ -365,7 +365,7 @@ database_id = "resolved-by-account-deploy-workflow"
 
 # ── ACC2: THE SAVE BLOBS ───────────────────────────────────────────
 # R2 rather than D1 for one measured reason: a Daggerfall save already
-# hits QuotaExceededError in localStorage (systems/save.js handles it by
+# hits QuotaExceededError in localStorage (systems/save/save.js handles it by
 # name), which puts its size class above D1's practical per-row ceiling
 # and above a Worker's JSON body cap. R2 also has no egress fee, which
 # matters for a game nobody pays for.

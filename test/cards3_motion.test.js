@@ -15,7 +15,7 @@ import { cardMatrix } from '../src/render/cardTableDraw.js';
 import { tablePlaces, CardScene, HOLE_IN, BET_IN } from '../src/world/cardScene.js';
 import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
 import { SEAT_OUT } from '../src/player/seatPose.js';
-import { CardTableSession } from '../src/systems/cardTableSession.js';
+import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 
 const r6 = (v) => Math.round(v * 1e6) / 1e6;
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);

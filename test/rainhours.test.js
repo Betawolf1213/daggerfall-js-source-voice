@@ -1,5 +1,5 @@
 // RAIN-HOURS and RAIN-HEART (Mac, 2026-10-13: "I feel like it rains too much, also sometimes instead of downpours it
-// should just sprinkle"). Measured on the world weather map (systems/weatherMap.js, the enhanced lane's weather, on by
+// should just sprinkle"). Measured on the world weather map (systems/weather/weatherMap.js, the enhanced lane's weather, on by
 // default and always online) before the change: a woodland spring under falling rain or a storm 36% of every hour, a
 // swamp's 41%, a jungle's 54% - the Chronicles' odds of a DAY's word, which DFU wears all day, taken as the share of
 // TIME - and half of that wet time drawn at half the rain's profile or more, because the place's intensity (WEATHER3b,
@@ -12,16 +12,16 @@ import assert from 'node:assert/strict';
 import {
   targetShares, WET_HOURS, STRENGTH, systemStrength, EDGE_INTENSITY, birthsIn, cellsOf, systemAt, bandAt, weatherAt,
   envelope, BIRTH_RADIUS, SYSTEM_TYPES, SAND_SHARE_OF_CLOUDY, PRIORITY,
-} from '../src/systems/weatherMap.js';
-import { WEATHER_TABLE } from '../src/systems/weatherTable.js';
+} from '../src/systems/weather/weatherMap.js';
+import { WEATHER_TABLE } from '../src/systems/weather/weatherTable.js';
 import {
   resetWeatherSim, setWeatherFieldLaw, setWeatherMapLaw, setSnowGroundLaw, sampleWeatherField, currentWeather,
   currentWeatherIntensity,
-} from '../src/systems/weatherSim.js';
-import { createWeatherFront, rollPeak } from '../src/systems/weatherFront.js';
+} from '../src/systems/weather/weatherSim.js';
+import { createWeatherFront, rollPeak } from '../src/systems/weather/weatherFront.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASONS } from '../src/systems/gameDate.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const YEAR = 405 * 360 * 1440;
 const woods = () => CLIMATES.Woodlands;

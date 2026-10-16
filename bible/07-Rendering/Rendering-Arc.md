@@ -1952,7 +1952,7 @@ which door it is going through. The bundle's boot set: 28 chunks / 492 KB ->
 MENU is interactive - the entry's set plus the menu chunk's own static
 closure plus the intro - are ~656 KB gzipped, the same as before this slice.
 The menu chunk reaches the world tick directly AND through
-`ui/enhancedHud.js`, and reaches `travel` through `systems/saveSlots.js ->
+`ui/enhancedHud.js`, and reaches `travel` through `systems/save/saveSlots.js ->
 save.js -> weatherSim.js`; with several roots, no single cut helps, which is
 exactly what the exclusive-cost table said at the start. That is the next
 lever and a different shape of work: the clock (`worldMinutes`,
@@ -3320,7 +3320,7 @@ it, where DFU's does nothing: the departure above stands there, in the app as in
 (`app/lib/frameRate.cjs`, over the page's own settings blob and its GetBool reading) and, with it off, launches with
 `disable-gpu-vsync` and `disable-frame-rate-limit`; this file's gate then does the holding, up to 300. VSync on, the
 default, changes nothing. In the app the VSync row is a switch that takes effect at the next start (the settings
-tier `restart`, `systems/settings.js` SHELL_AT_LAUNCH); in a browser it stays unavailable. Record:
+tier `restart`, `systems/settings/settings.js` SHELL_AT_LAUNCH); in a browser it stays unavailable. Record:
 `01-Overview/Field-Bugs-2026-09-28e.md`; pins `test/disc28e_vsync.test.js` (7).
 
 **THE PACER (AUDIT 28e).** The gate above could not hold frames ABOVE the screen: with the wait lifted a browser frame

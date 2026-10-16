@@ -38,8 +38,8 @@ import {
 } from '../net/professionLaw.js';
 import { enemyDisplayName } from '../characters/enemyBasics.js';
 import { createTraceAct } from '../systems/traceAct.js';
-import { actChecksRefusal, foragingToolIn } from '../systems/foragingInstall.js';
-import { materialLabel } from '../systems/profItems.js';
+import { actChecksRefusal, foragingToolIn } from '../systems/foraging/foragingInstall.js';
+import { materialLabel } from '../systems/professions/profItems.js';
 import { liveStat } from '../systems/statMods.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { CORPSE_ACTIVATION_DISTANCE } from '../player/activate.js';

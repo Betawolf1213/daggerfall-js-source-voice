@@ -1,6 +1,6 @@
 // PROF-SAVE (2026-09-29, Mac, asked whether to switch Marks and the professions on: "Board now, rest after fixes"; MERGE
 // 2's open question 2, bible/06-Systems/Online-Arc.md PROF-SAVE): A PROFESSIONS ACT THAT CHANGES THE SAVE IS SAVED AT
-// ONCE, as a trade is. The law (systems/onlineCheckpoint.js createSaveSoon): every change of one task is ONE checkpoint on
+// ONCE, as a trade is. The law (systems/online/onlineCheckpoint.js createSaveSoon): every change of one task is ONE checkpoint on
 // the next, the checkpoint handed in once the host has built it, a change made before it saved then. The host
 // (scenes/world.js): a withdrawal from the Stores, a craft's pieces and its fee, a smelt's fee, a market piece minted,
 // listed away, put back or settled away each ask it; the Bank's Marks sale asks it through the credit the modes build
@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { createSaveSoon } from '../src/systems/onlineCheckpoint.js';
+import { createSaveSoon } from '../src/systems/online/onlineCheckpoint.js';
 import { marksSaleCredit } from '../src/systems/banking.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -88,5 +88,5 @@ test('PROF-SAVE the host: every professions act that changes the save asks saveS
   const handed = w.indexOf('  saveSoon.ready(() => onlineCheckpoint());');
   // FIELD BUGS 29h (BOOT-HIDE): handed in with the checkpoint's other doors, where what it reads (the duel's last) exists
   assert.ok(built > 0 && handed > w.indexOf('  const duelHeal = () => {') && handed > built, 'handed in once the checkpoint and what it reads are built');
-  assert.match(src('src/systems/onlineCheckpoint.js'), /export function createSaveSoon\(schedule = \(run\) => setTimeout\(run, 0\)\)/, 'the next task by default');
+  assert.match(src('src/systems/online/onlineCheckpoint.js'), /export function createSaveSoon\(schedule = \(run\) => setTimeout\(run, 0\)\)/, 'the next task by default');
 });

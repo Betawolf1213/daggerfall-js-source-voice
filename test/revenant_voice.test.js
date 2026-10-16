@@ -5,7 +5,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PERSONALITIES, PERSONALITY_IDS, VOICE_EVENTS, personalityFor, personalityLabel, voiceLine, voiceLines, beastBody, isPersonality } from '../src/systems/revenantPersonality.js';
+import { PERSONALITIES, PERSONALITY_IDS, VOICE_EVENTS, personalityFor, personalityLabel, voiceLine, voiceLines, beastBody, isPersonality } from '../src/systems/revenant/revenantPersonality.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 
 const _store = new Map();
@@ -13,7 +13,7 @@ globalThis.localStorage = {
   getItem: (k) => (_store.has(k) ? _store.get(k) : null), setItem: (k, v) => { _store.set(k, String(v)); },
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 
 // PIN MOVED (RVN12a, bible/12-Enhanced-AI/Feud-Arc.md 23): FEUD's last stand and betrayal are key moments too (three each)

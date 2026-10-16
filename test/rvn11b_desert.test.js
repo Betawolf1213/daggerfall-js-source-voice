@@ -14,16 +14,16 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
 const { goldStack, goldPiecesOf } = await import('../src/systems/inventory.js');
-const { itemLongName } = await import('../src/systems/itemInfo.js');
+const { itemLongName } = await import('../src/systems/item/itemInfo.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
 const { WEAPONS: W } = await import('../src/characters/weapons.js');
 

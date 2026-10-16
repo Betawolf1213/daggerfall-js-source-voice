@@ -13,15 +13,15 @@ import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { codeOnly } from './codeOnly.mjs';
 import { pageParam, pageHas } from '../src/systems/pageQuery.js';
-import { isOnlinePage, onlineForcedPref } from '../src/systems/onlineLane.js';
+import { isOnlinePage, onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import { skinOverride, uiSkin, isEnhanced } from '../src/systems/uiSkin.js';
 import { airOn, contactOn } from '../src/render/airPass.js';
 import { shadowCacheOn } from '../src/render/shadowPass.js';
 import { exposureFor, EL_EXPOSURE } from '../src/render/enhancedLighting.js';
 import { motionEnabled } from '../src/ui/windowMotion.js';
-import { swayDisabled } from '../src/systems/windDrive.js';
+import { swayDisabled } from '../src/systems/wind/windDrive.js';
 import { cullDisabled } from '../src/render/frustum.js';
-import { BOOT_DOOR_KEYS, ONLINE_REFUSED_FLAGS } from '../src/systems/onlineLane.js';
+import { BOOT_DOOR_KEYS, ONLINE_REFUSED_FLAGS } from '../src/systems/online/onlineLane.js';
 
 // AUDIT PERF-URL A2: a PATH, not a URL's pathname - `.pathname` is percent-encoded (a clone under "My Projects" read
 // My%20Projects and the sweep threw ENOENT), and the repo's other ~490 pins take fileURLToPath
@@ -125,7 +125,7 @@ test('PERF-URL: no door parses the query on its own - src/ reads the query only 
     ['src/systems/realmSaves.js', /const p = new URLSearchParams\(search\);/, 'realmBootSearch BUILDS a search (deletes and sets)'],
     ['src/systems/legacy/places.js', /const p = new URLSearchParams\(search\);/, 'LEGACY1: birthSearch and loadSearch BUILD a search, as realmBootSearch does'],
     ['src/systems/renderScale.js', /if \(_door === undefined\) _door = renderScaleOf\(new URLSearchParams\(globalThis\.location\?\.search \?\? ''\)\.get\('(\w+)'\)\);/, 'a latch, once a page (test/perfscale.test.js: "read once")'],
-    ['src/systems/weatherSim.js', /UrlDoor \?\?= new URLSearchParams\(globalThis\.location\?\.search \?\? ''\)\.get\('(\w+)'\)/, 'four latches, once a page (test/clockArc.test.js: "read once")'],
+    ['src/systems/weather/weatherSim.js', /UrlDoor \?\?= new URLSearchParams\(globalThis\.location\?\.search \?\? ''\)\.get\('(\w+)'\)/, 'four latches, once a page (test/clockArc.test.js: "read once")'],
   ];
   const offenders = [];
   const latched = [];

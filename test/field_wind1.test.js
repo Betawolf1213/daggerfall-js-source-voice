@@ -1,5 +1,5 @@
 // FIELD-WIND1 (2026-09-29, the Discord through Mac: "A repetitive moaning sound in the open world" - a sound that had
-// been there a while). The port's wind (WIND3, systems/windAudio.js) played DAGGER.SND's own wind clips on the riding
+// been there a while). The port's wind (WIND3, systems/wind/windAudio.js) played DAGGER.SND's own wind clips on the riding
 // loop's shape (audio.setLoop: a clip played from its start again each time it ends) - AmbientWindMoan under 0.62 of
 // the wind's strength, AmbientWindBlow1 above. They are DFU's dungeon ONE-SHOTS, short, shaped and pitched: the moan is
 // 1.96 s that swells from nothing and falls back with a voice's pitch in it, and end to end it came back every 1.97 s
@@ -12,9 +12,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import * as wind from '../src/systems/windAudio.js';
+import * as wind from '../src/systems/wind/windAudio.js';
 import { AudioEngine, pcm8ToFloat32 } from '../src/systems/audio.js';
-import { windDrive, WIND_NONE } from '../src/systems/windDrive.js';
+import { windDrive, WIND_NONE } from '../src/systems/wind/windDrive.js';
 import { SndFile, SAMPLE_RATE } from '../src/formats/sndFile.js';
 import { SOUND } from '../src/systems/soundClips.js';
 

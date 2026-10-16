@@ -15,7 +15,7 @@ import {
 import { MARKS_MAX } from '../src/net/marksLaw.js';
 import { createPlaneAct } from '../src/systems/planeAct.js';
 import { asMinted } from '../src/systems/smithItems.js';
-import { RARE_FLAVOURS } from '../src/systems/lootRarity.js';
+import { RARE_FLAVOURS } from '../src/systems/loot/lootRarity.js';
 
 const { subtle } = globalThis.crypto;
 const claims = (over = {}) => ({ p: 'f'.repeat(16), s: 'S'.repeat(40), h: 'H'.repeat(40), r: 'longsword:mithril', q: 2, m: 'Silverthorn', c: 7, ...over });

@@ -1,7 +1,7 @@
 [
   {
     "name": "MOUNTAINS-WALKABLE-peaks-refused",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  return false;   // MOUNTAINS WALKABLE: no peak and no steep rise refuses a step on foot",
     "new": "  return climateAt(bx, by) === TV_MOUNTAIN_CLIMATE;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "MOUNTAINS-WALKABLE-cliffs-refused",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  return false;   // MOUNTAINS WALKABLE: no peak and no steep rise refuses a step on foot",
     "new": "  return Math.abs(heightAt(bx, by) - heightAt(ax, ay)) > TV_STEEP_RISE;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "MOUNTAINS-WALKABLE-cliffs-down-refused",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  return false;   // MOUNTAINS WALKABLE: no peak and no steep rise refuses a step on foot",
     "new": "  return heightAt(ax, ay) - heightAt(bx, by) > TV_STEEP_RISE;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "OW-MOUNTAINS-never-asked",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  if (kind === 2 && goal !== 2 && openBlocked && openBlocked(ax, ay, bx, by, leaving)) return -1;\n",
     "new": "",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW-MOUNTAINS-passes-closed",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  if (kind === 2 && goal !== 2 && openBlocked && openBlocked(",
     "new": "  if (goal !== 2 && openBlocked && openBlocked(",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "OW-ROADSIDE-no-clamp",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "  const t = Math.max(0, Math.min(1, ((me.x - a.x) * dx + (me.z - a.z) * dz) / L));",
     "new": "  const t = ((me.x - a.x) * dx + (me.z - a.z) * dz) / L;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "OW-ROADSIDE-join-ignored",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": ": leg.at ? spotRect(leg.at) : rectOf(o.x + MID_LO, o.z + MID_LO, P_SIZE, P_SIZE);",
     "new": ": rectOf(o.x + MID_LO, o.z + MID_LO, P_SIZE, P_SIZE);",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "OW-ROADSIDE-join-dropped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "'open', ...(l.at ? { at: { x: l.at.x, z: l.at.z } } : {}), ...(l.ring",
     "new": "'open', ...(l.ring",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OW-ROADSIDE-drawn-beside",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "(l) => (l.at ? [l.at.x, l.at.z] : centre(l))",
     "new": "(l) => centre(l)",
     "tests": [

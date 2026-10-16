@@ -64,7 +64,7 @@
   },
   {
     "name": "ACT-MENU-horse-command-it-cannot-take-listed",
-    "file": "src/systems/horseCartLaw.js",
+    "file": "src/systems/horse/horseCartLaw.js",
     "old": "  if (cmdLabel) rows.push({ id: ACTIVATE_MODE.Talk, label: cmdLabel });",
     "new": "  rows.push({ id: ACTIVATE_MODE.Talk, label: cmdLabel ?? HCC_ACTION_TEXT.follow });",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ACT-MENU-drive-called-a-ride",
-    "file": "src/systems/horseCartLaw.js",
+    "file": "src/systems/horse/horseCartLaw.js",
     "old": "label: ride === HORSE_ACTIVATION.MountHitchedTeam ? HCC_ACTION_TEXT.drive : HCC_ACTION_TEXT.ride });",
     "new": "label: HCC_ACTION_TEXT.ride });",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ACT-MENU-wait-called-follow",
-    "file": "src/systems/horseCartLaw.js",
+    "file": "src/systems/horse/horseCartLaw.js",
     "old": "      : cmd === HORSE_ACTIVATION.Wait ? HCC_ACTION_TEXT.wait : null;",
     "new": "      : cmd === HORSE_ACTIVATION.Wait ? HCC_ACTION_TEXT.follow : null;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ACT-MENU-wagon-pack-not-listed",
-    "file": "src/systems/horseCartLaw.js",
+    "file": "src/systems/horse/horseCartLaw.js",
     "old": ", { id: ACTIVATE_MODE.Steal, label: HCC_ACTION_TEXT.openWagon }];\n  if (target === 'followingWagon')",
     "new": "];\n  if (target === 'followingWagon')",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ACT-MENU-horse-verb-ignored",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    const activate = mode ?? deps.activateMode();",
     "new": "    const activate = deps.activateMode();",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ACT-MENU-wagon-verb-ignored",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if ((mode ?? deps.activateMode()) === ACTIVATE_MODE.Steal) { openWagonInventoryFromPhysicalActivation(); return true; }\n    if (!tm().hasHorse())",
     "new": "    if (deps.activateMode() === ACTIVATE_MODE.Steal) { openWagonInventoryFromPhysicalActivation(); return true; }\n    if (!tm().hasHorse())",
     "tests": [

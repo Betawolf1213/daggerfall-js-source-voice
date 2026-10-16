@@ -2,7 +2,7 @@
 // townspeople draws the watch to defend them; bible/06-Systems/Living-World.md WATCH-PROTECTS): THE WATCH PROTECTS THE
 // TOWN'S PEOPLE. Before it no monster could turn on a townsperson - DFU's enemy senses weigh other enemies and the
 // player alone ("Civilian Mobile NPCs are not handled here", EnemySenses.cs:739-741) - and the watch's defenders came
-// only to a monster hunting the player (systems/townWatch.js isTownThreat); a townsperson stood on beside a monster's
+// only to a monster hunting the player (systems/town/townWatch.js isTownThreat); a townsperson stood on beside a monster's
 // fight. Pinned on the target chain's own EnemyAI over a floor, the town watch's decision, and the synthetic town.
 import './modsOff.js';
 import test from 'node:test';
@@ -13,7 +13,7 @@ import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { makeQuarry, QUARRY_BLOW, QUARRY_HEIGHT } from '../src/systems/livingWorld/quarry.js';
 import { applyDamageToNonPlayer } from '../src/scenes/hostCombat.js';
-import { isTownThreat, createTownWatch, runTownWatchFrame } from '../src/systems/townWatch.js';
+import { isTownThreat, createTownWatch, runTownWatchFrame } from '../src/systems/town/townWatch.js';
 import { synthTown, closeTown } from './lwTown.mjs';
 import { LivingTown, PANIC_M, FLEE_SPEED, FLEE_HOLD_S, FLEE_FAR_M, FLEE_WARY_M, SNAP_M } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';

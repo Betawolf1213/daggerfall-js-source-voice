@@ -181,7 +181,7 @@ check('a record past the end of the archive answers null', past === null, String
 const addr = await page.evaluate(async () => {
   const { createInventoryWindow } = await import('/src/ui/inventoryDoor.js');
   const { ITEM_TEMPLATES } = await import('/src/characters/paperdoll.js');
-  const { inventoryItemImage } = await import('/src/systems/itemTemplates.js');
+  const { inventoryItemImage } = await import('/src/systems/item/itemTemplates.js');
   const t = (n) => ITEM_TEMPLATES.find((x) => x.name === n);
   const mk = (n, g = 'Weapons') => {
     const tp = t(n);

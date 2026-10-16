@@ -1,5 +1,5 @@
 // ARENA3 (2026-10-02; bible/11-Multiplayer/Arena.md "1. The gate" - "the bookmaker - wagers on the bout on the floor
-// (gold, house edge, odds from the fighters' records)"): THE BOOKMAKER (systems/arenaBook.js, scenes/arenaGate.js).
+// (gold, house edge, odds from the fighters' records)"): THE BOOKMAKER (systems/arena/arenaBook.js, scenes/arenaGate.js).
 // Pinned here: each exhibition fighter's record and strength from the bout's own seed; the chances from the strengths;
 // the price shaded by the house's tenth and rounded DOWN the bookmaker's ladder; the payout in whole gold; the wager's
 // refusals (no bout, closed, placed, the stake's bounds, the purse); its settlement by the verdict seen, or by the
@@ -8,14 +8,14 @@
 // the book through the save.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as BK from '../src/systems/arenaBook.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { exhibitionFor, newArenaLadder } from '../src/systems/arenaLadder.js';
-import { fighterIdentity } from '../src/systems/arenaFighters.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import * as BK from '../src/systems/arena/arenaBook.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { exhibitionFor, newArenaLadder } from '../src/systems/arena/arenaLadder.js';
+import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaGate } from '../src/scenes/arenaGate.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 

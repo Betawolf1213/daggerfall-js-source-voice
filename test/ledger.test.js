@@ -20,8 +20,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
-import { SERVICE_DESTINATION } from '../src/systems/guildServiceFlow.js';
+import { SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
+import { SERVICE_DESTINATION } from '../src/systems/guild/guildServiceFlow.js';
 import { GENERATOR_VERSION } from '../src/world/roadsCache.js';
 import { resolveAnchor, maskAnchors } from '../tools/citeAnchor.mjs';   // CITE-ANCHOR: a cite names its line by a quote
 
@@ -201,7 +201,7 @@ test('TC1 ledger: the six re-measured section-C rows are struck, and each names 
       file: 'src/systems/useItem.js', built: /resource\.useClicked = true;/ },
     // The talk arc's last routed clause: AddNonQuestRumor's producer.
     { head: /~~THE TALK MANAGER~~/, slice: /TC1 2026-09-02/,
-      file: 'src/systems/regionPower.js', built: /rumorMill\?\.addNonQuestRumor\?\./ },
+      file: 'src/systems/region/regionPower.js', built: /rumorMill\?\.addNonQuestRumor\?\./ },
     // Fast travel: transport ownership, the mint the row said nothing had.
     { head: /~~FAST TRAVEL residue~~/, slice: /TC1 2026-09-02/,
       file: 'src/systems/merchantYards.js', built: /const h = mintCondition\(setItemFields\(\{ group: 'Transportation', templateIndex: TRANSPORT_HORSE \}\)\);/ },   // DISC24-B: the constant's home is itemTemplates.js now; MERCHANT-YARDS: the SELLING the row names is the Stable's now (the General Store's shelf until 2026-10-10); PIN MOVED (STEED1): three horses a day, each minted so (stableHorses)
@@ -296,7 +296,7 @@ test('AUDIT 58 F5 ledger: the RE-INTEGRATED road system has its own section A ro
   assert.match(row, /FALLBACK/, 'and says the port’s own network is what falls back');
   assert.match(row, /ALWAYS ON, IN BOTH LANES/, 'it states which lane ships what');
   assert.match(row, /Roads\.md:194/, 'and cites Mac’s always-on call');
-  assert.match(row, /`systems\/travel\.js` stays the verbatim port/, 'and what stayed removed');
+  assert.match(row, /`systems\/travel\/travel\.js` stays the verbatim port/, 'and what stayed removed');
   // AUDIT 58 R1 (d): the bake's cache version is a DERIVABLE figure like
   // every other in this file - the row states it, roadsCache.js IS it.
   const ver = /GENERATOR_VERSION (\d+)/.exec(row);
@@ -372,7 +372,7 @@ test('AUDIT 58 F5 ledger: the RE-INTEGRATED road system has its own section A ro
   assert.equal(citedLines.at(0), '  (basicRoadsOn ? loadModRoads() : Promise.resolve(null)).then((his) => {', 'the cite does not start at the wiring statement');
   assert.equal(citedLines.at(-1), '  });', 'the cite does not end at the block\u2019s close');
   assert.match(rootFile('src/world/terrainGen.js'), /paintRoads\(tileData, tilemap/, 'the paint is in the shared kernel');
-  const travel = rootFile('src/systems/travel.js');
+  const travel = rootFile('src/systems/travel/travel.js');
   assert.ok(!/roadAt\(|path\.roadAt|byRoad/.test(travel), 'travel.js is still the verbatim port - the road term and its two deps stayed gone');
   assert.doesNotMatch(rootFile('src/ui/heldMap.js'), /byRoad: /, 'AUDIT-MAP2: the permanent false went with the relief map\'s route line - the held map\'s trip carries no road term at all');
 

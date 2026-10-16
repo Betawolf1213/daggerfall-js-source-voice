@@ -15,7 +15,7 @@ import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src
 import { hurtPlayer, setDeathListener, presentPlayerDeath } from '../src/characters/playerEntity.js';
 import { walkButtons } from '../src/ui/legacyDoor.js';
 import { personChips, disarmFamilyPages } from '../src/ui/familyPages.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

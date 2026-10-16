@@ -221,7 +221,7 @@
   },
   {
     "name": "AWD3-ARCHAEOLOGISTS-DRAW",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "    .filter((b) => !(b.buildingType === BUILDING_TYPES.GuildHall && UNCARRIED_GUILD_FACTIONS.has(b.factionId)))",
     "new": "",
     "tests": [

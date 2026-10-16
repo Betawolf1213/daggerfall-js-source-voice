@@ -12,17 +12,17 @@ import { enchantmentCost, PARAM_NONE } from '../src/systems/enchantmentCatalogue
 import {
   stockGuildMagicItems, stockGuildPotions, stockSoulGems, dailyStockRolls, stockDayIndex,
 } from '../src/systems/shopStock.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { buyHolidayHalvesPrice } from '../src/systems/tradeModes.js';
 import { HOLIDAYS } from '../src/systems/holidays.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { readMagicDef } from '../src/formats/magicDef.js';
 import { readSpellsStd, spellsByIndexMap } from '../src/formats/spellsStd.js';
-import { createRandomPotion } from '../src/systems/loot.js';
+import { createRandomPotion } from '../src/systems/loot/loot.js';
 import { classicCastingCost } from '../src/systems/spellcost.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 
 const T = ENCHANTMENT_TYPES;
 const arena2 = process.env.ARENA2_PATH;

@@ -519,7 +519,7 @@
   },
   {
     "name": "D-remote-catchup-no-folds",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      st.hand.seats.forEach((s, k) => { if (s.folded) caught.push(",
     "new": "      st.hand.seats.forEach((s, k) => { if (false) caught.push(",
     "tests": [
@@ -541,7 +541,7 @@
   },
   {
     "name": "D-remote-catchup-no-streets",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      for (const len of [3, 4, 5]) if (st.hand.board.length >= len) caught.push(",
     "new": "      for (const len of []) if (st.hand.board.length >= len) caught.push(",
     "tests": [
@@ -563,7 +563,7 @@
   },
   {
     "name": "D-remote-catchup-again",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      events.unshift(...caught);\n      this.seenHand = st.handNo;\n",
     "new": "      events.unshift(...caught);\n",
     "tests": [
@@ -585,7 +585,7 @@
   },
   {
     "name": "D-remote-clock-negative",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "return this.legal() && this.turn ? Math.max(0, this.turn.clockAt - local) : 0;",
     "new": "return this.legal() && this.turn ? this.turn.clockAt - local : 0;",
     "tests": [
@@ -607,7 +607,7 @@
   },
   {
     "name": "D-remote-no-showdown",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "showdown: st.hand ? null : st.last };",
     "new": "showdown: null };",
     "tests": [
@@ -1599,7 +1599,7 @@
   },
   {
     "name": "B2-chair-not-by-id",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    const mine = this.myId ? st.seats.findIndex((s) => s?.id === this.myId && !s.leaving) : -1;",
     "new": "    const mine = -1;",
     "tests": [
@@ -1621,7 +1621,7 @@
   },
   {
     "name": "B2-refusal-kept-chair",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      if (!this.confirmed && this.chair >= 0 && SIT_REFUSALS.includes(f.error)) this._lose('refused');\n",
     "new": "",
     "tests": [
@@ -1643,7 +1643,7 @@
   },
   {
     "name": "B2-pending-dropped",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "(this.confirmed || st.seats[this.chair])",
     "new": "(true)",
     "tests": [
@@ -1665,7 +1665,7 @@
   },
   {
     "name": "B3-error-forever",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    if (events.length) this.error = null;",
     "new": "    void events;",
     "tests": [
@@ -1687,7 +1687,7 @@
   },
   {
     "name": "B3-refusal-unsaid",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      this.said++;\n",
     "new": "",
     "tests": [
@@ -2694,7 +2694,7 @@
   },
   {
     "name": "TIDY-delta-unchecked",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      if (!validHoldemOut({ table: 0, events: [], state: merged })) { this.needLook = true; return; }",
     "new": "      if (false) { this.needLook = true; return; }",
     "tests": [

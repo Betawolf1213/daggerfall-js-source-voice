@@ -11,7 +11,7 @@ import { registerSwingReader } from '../characters/weaponStates.js';
 import { WEAPON_TYPES } from './fpsWeapon.js';
 import { EQUIP_SLOTS } from '../systems/equip.js';
 import { getItemHands, ITEM_HANDS } from '../characters/equipTable.js';
-import { templateByIndex } from '../systems/itemTemplates.js';
+import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { liveStat } from '../systems/statMods.js';
 
 /**

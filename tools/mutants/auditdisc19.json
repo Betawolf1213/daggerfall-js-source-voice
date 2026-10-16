@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-DISC19-W1-fight-with-defender-is-quiet",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  if (!isPlayerTarget(t) && !(t?.defender === true && !t.dead) && !(t?.companion",
     "new": "  if (!isPlayerTarget(t) && !(t?.companion",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-DISC19-W1-dead-defender-still-a-fight",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "!(t?.defender === true && !t.dead)",
     "new": "!(t?.defender === true)",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-DISC19-W3-no-wave-cap",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "        if (waves >= TOWN_WATCH_MAX_WAVES) return null;   // the town has sent all it will this incident\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-DISC19-W3-waves-never-counted",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "          waves++;\n",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-DISC19-W3-incident-never-ends",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "      else if ((quiet += dt) >= TOWN_WATCH_STAND_DOWN_SECONDS) waves = 0;   // the incident is over",
     "new": "      else quiet += dt;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-DISC19-W3-quiet-cumulative",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "      if (threats > 0) quiet = 0;\n      else if ((quiet += dt) >= TOWN_WATCH_STAND_DOWN_SECONDS) waves = 0;",
     "new": "      if ((quiet += dt) >= TOWN_WATCH_STAND_DOWN_SECONDS) waves = 0;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-DISC19-W3-cap-moved",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "export const TOWN_WATCH_MAX_WAVES = 3;",
     "new": "export const TOWN_WATCH_MAX_WAVES = 4;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-DISC19-span-seven",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "export const TOWN_WATCH_ARRIVAL_SPAN = 6;",
     "new": "export const TOWN_WATCH_ARRIVAL_SPAN = 7;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-DISC19-standing-squad-summoned-again",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "        if (defenders > 0) return null;\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-DISC19-calm-cumulative",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "      if (threats > 0) {\n        calm = 0;\n",
     "new": "      if (threats > 0) {\n",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-DISC19-W6-threats-outside-town",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  const threats = inTown ? foes.filter((f) => isTownThreat(f, { inTownRect })) : [];",
     "new": "  const threats = foes.filter((f) => isTownThreat(f, { inTownRect }));",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-DISC19-W6-defenders-unread",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "threats: threats.length, defenders: guards.defenderCount(), locationKey,",
     "new": "threats: threats.length, defenders: 0, locationKey,",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-DISC19-W6-summon-without-threats",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "pool: pool(), threats })",
     "new": "pool: pool(), threats: [] })",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-DISC19-W6-dismissal-dropped",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  else if (act === 'dismiss') guards.dismissDefenders();\n",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-DISC19-W6-pool-read-every-frame",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  if (act === 'summon') guards.summonDefenders({ playerFeet, playerFwd, pool: pool(), threats })",
     "new": "  const _p = pool();\n  if (act === 'summon') guards.summonDefenders({ playerFeet, playerFwd, pool: _p, threats })",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "AUDIT-DISC19-S2-death-video-stranded",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const a of entity.activeEffects) if (a.infection && !a.deployed) a.deathScheduled = false;\n",
     "new": "",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "AUDIT-DISC19-old-infection-not-repaired",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if ((a.kind === 'racialOverride' || a.infection) && !a.permanent) a.permanent = true;",
     "new": "if ((a.kind === 'racialOverride') && !a.permanent) a.permanent = true;",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "AUDIT-DISC19-S3-namesake-slots",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "(!id || info.characterId === id)",
     "new": "true",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "AUDIT-DISC19-S3-legacy-names-nothing",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "(!id || info.characterId === id)",
     "new": "(info.characterId === id)",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "AUDIT-DISC19-S3-no-quicksave",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "[...new Set([QUICK_SAVE_NAME, ...own.map((info) => info.saveName)])]",
     "new": "[...new Set(own.map((info) => info.saveName))]",
     "tests": [

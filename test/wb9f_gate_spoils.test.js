@@ -12,10 +12,10 @@ import {
   spewLaunches, spewPiece, stepSpew, restOf, floorRayAt, keepLaunch, SPEW_SPREAD, SPEW_SPEED, SPEW_SLOT_MARGIN, SPEW_KEEP_TRIES, SPEW_KEEP_EASE, SPEW_FLIGHT_MAX_S,
 } from '../src/world/gateSpew.js';
 import { PROJECTILE_FIXED_DT } from '../src/scenes/droppedTorches.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { createSpoilsPool, spoilsList, SPOILS_TEXT, SPOIL_KEY, SPOIL_GOLD_KEY, SPOIL_BOX_HALF_M, SPOIL_BOX_MIN_H } from '../src/scenes/spoilsPool.js';
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
-import { RARITIES } from '../src/systems/lootRarity.js';
+import { RARITIES } from '../src/systems/loot/lootRarity.js';
 import { ITEMISED_KEYS, keyItemises, resolveHover } from '../src/systems/worldHover.js';
 import { createGateCourt, spoilsKeep, SPEW_RIM_M, SPOILS_BURST_COLOR, SPEW_AT_MS } from '../src/scenes/gateCourt.js';
 import { FX_KINDS, sparkAt, FX_SPARK_VS } from '../src/render/gateFx.js';

@@ -68,7 +68,7 @@ section (`Audit-25.md:210-273`) still reads ENCHANTING 0%, AUTOMAPS
 ~2% ("the word does not appear in Port-Ledger.md at all"), BANKING 0%,
 PAUSE MENU + KEY REBINDING 0% - while the same page's own slice list
 strikes S-C ("THE RUNTIME SHIPPED, E1+E2") and the tree carries
-`systems/enchantments.js` (767 lines), `systems/automap.js` + both
+`systems/enchantments.js` (767 lines), `systems/automap/automap.js` + both
 automap windows, `systems/banking.js` (650 lines) + both bank windows,
 `ui/pauseWindow.js`, `ui/controlsWindow.js` + `systems/inputActions.js`.
 Only the classic `.SAV` reader is still genuinely at zero. The
@@ -220,7 +220,7 @@ opposite of their own code and deserve a slice's attention:
   comment is wrong).
 - `src/systems/mysticism.js:"OPEN AND LOCK ARE NOT WIRED,"` header "OPEN AND LOCK ARE NOT WIRED" -
   they are (X1, `actionSystem.js:"hands AddAction a"`).
-- `src/systems/regionPower.js` "alliance mutators... which the port
+- `src/systems/region/regionPower.js` "alliance mutators... which the port
   does not have" - `factionRelations.js` ships them (S44).
 - `src/combat/fpsWeapon.js:"- weaponOffsetHeight is"` weaponOffsetHeight 0 - now a real gap
   (see Combat.md above), not a moot one.

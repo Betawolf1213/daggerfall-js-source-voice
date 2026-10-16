@@ -14,15 +14,15 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as D from '../src/systems/lootDrought.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as D from '../src/systems/loot/lootDrought.js';
 import { takeOneInto, registerTakeListener, goldStack } from '../src/systems/inventory.js';
-import { applyTransfer } from '../src/systems/itemTransfer.js';
+import { applyTransfer } from '../src/systems/item/itemTransfer.js';
 import { takeCorpseLoot } from '../src/scenes/corpseMarker.js';
 import { modSaveRecords, restoreModSaveRecords } from '../src/systems/modSaveData.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { isAmmunition } from '../src/systems/itemTemplates.js';
+import { isAmmunition } from '../src/systems/item/itemTemplates.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const on = () => { _resetForTests(); setPref('lootRarity', true); D._setDroughtForTests(0); };
@@ -132,8 +132,8 @@ test('LOOT8: every take seam tells it - the loot window\'s and quick loot\'s (ap
     assert.equal(takeOneInto(me, [t], t), t, 'a listener that throws never stops a take');
     registerTakeListener('loot8-throws', null);
   } finally { registerTakeListener('loot8-test', null); }
-  assert.match(read('src/systems/itemTransfer.js'), /if \(toPlayer && landed\) tellTaken\(landed\);/);
-  assert.match(read('src/scenes/world.js'), /import '\.\.\/systems\/lootDrought\.js';/, 'the game registers it');
+  assert.match(read('src/systems/item/itemTransfer.js'), /if \(toPlayer && landed\) tellTaken\(landed\);/);
+  assert.match(read('src/scenes/world.js'), /import '\.\.\/systems\/loot\/lootDrought\.js';/, 'the game registers it');
 });
 
 test('LOOT8: the record - the character\'s save carries it, a load restores it, a forged one refused, a new game none', () => {

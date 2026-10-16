@@ -7,15 +7,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { skyCells, approachAt, systemsNear, weatherAt, radialOf, shapeFactor, SKY_WEIGHT, APPROACH_M, PRIORITY } from '../src/systems/weatherMap.js';
+import { skyCells, approachAt, systemsNear, weatherAt, radialOf, shapeFactor, SKY_WEIGHT, APPROACH_M, PRIORITY } from '../src/systems/weather/weatherMap.js';
 import { pickCells, cellOf, cellOfField, CELL_EDGE, MAX_CELLS, VC_PROFILE } from '../src/render/volumetricClouds.js';
 import { cloudBaseOf } from '../src/scenes/shared.js';
 import { weatherRow } from '../src/render/enhancedSky.js';
-import { createWindModel, VIOLENCE } from '../src/systems/wind.js';
+import { createWindModel, VIOLENCE } from '../src/systems/wind/wind.js';
 import {
   resetWeatherSim, setWeatherFieldLaw, setWeatherMapLaw, setSnowGroundLaw, sampleWeatherField, currentFieldCells,
   currentCloudBase, currentWindApproach, currentWeather,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

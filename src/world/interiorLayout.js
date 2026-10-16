@@ -62,7 +62,7 @@ export const PROP_MODEL_TYPE = 3;
  *  that convention - a storey high, and at its stair shaft's X/Z - and is left as written: no player can enter them. */
 export const FLOOR_MODEL_TYPE = 5;
 /** DaggerfallInterior's action doors: model 9000 plus the record's door model index, of five (AddActionDoors). HOME-DOORS
- *  reads the same five as the doors an owner may hang in a doorway (systems/decorDoorways.js). */
+ *  reads the same five as the doors an owner may hang in a doorway (systems/decor/decorDoorways.js). */
 export const DOOR_MODEL_BASE_ID = 9000;
 export const DOOR_MODEL_COUNT = 5;
 

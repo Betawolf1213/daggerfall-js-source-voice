@@ -44,7 +44,7 @@ import {
   validDeck, deckYaw, TENT_BEHIND,
 } from '../systems/survival/camp.js';
 import { isCampfireKit, CAMPFIRE_USES } from '../systems/survival/items.js';   // REST2: the Campfire is online's for everyone
-import { isBedroll, isEmberJar, isFirewood, spendCharge, REST_ITEM_TEXT, FIREWOOD_NIGHTS, BEDROLL_CHANNEL_SECONDS } from '../systems/restItems.js';   // REST6: the Bedroll, the Ember Jar, Firewood
+import { isBedroll, isEmberJar, isFirewood, spendCharge, REST_ITEM_TEXT, FIREWOOD_NIGHTS, BEDROLL_CHANNEL_SECONDS } from '../systems/rest/restItems.js';   // REST6: the Bedroll, the Ember Jar, Firewood
 import { REST_KIND } from '../systems/survival/rest.js';   // AUDIT SURV-TIERS (the third pass): a camp's rest tends its tent's fire
 import { hearthNear, hearthAabb } from '../systems/survival/hearth.js';   // HEARTH1: the world's own fires answer the same question this pool does
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a camp's fire named by its camp
@@ -182,7 +182,7 @@ export function createCamps({
    * with the rest of the arc.
    */
   // REST2 (bible/06-Systems/Rest-Arc.md section 3): ONLINE THE FIRES ARE EVERYONE'S. A rest online is an act at a fire
-  // or a bed (systems/restAct.js), so the Campfire, the camps it stands and the world's braziers are the rest's, not the
+  // or a bed (systems/rest/restAct.js), so the Campfire, the camps it stands and the world's braziers are the rest's, not the
   // arc's alone: online every door below opens with the arc Off too. Offline Off is SURV-OFFSIGHT's, unchanged.
   // ENDLESS PROVISIONS (2026-10-04, Mac: the Campfire Kit and Rations for everyone - "i can use and find all those without
   // climates and calories"): A CAMP IS EVERY TIER'S. It is placed, seen, named, rested at, cooked at, stoked and packed with

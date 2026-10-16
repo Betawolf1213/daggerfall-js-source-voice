@@ -722,7 +722,7 @@
   },
   {
     "name": "OH-E-matrix-fallback",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "export const lootMatrix = (key) => rriLootMatrix(key) ?? LOOT_MATRICES[key] ?? LOOT_MATRICES['-'];",
     "new": "export const lootMatrix = (key) => rriLootMatrix(key) ?? LOOT_MATRICES[key] ?? LOOT_MATRICES.A;",
     "tests": [
@@ -794,7 +794,7 @@
   },
   {
     "name": "OH-E-pile-event-only-in-window",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  if (alphabetIndex >= 10 && alphabetIndex <= 15) {   // between keys J and O",
     "new": "  if (alphabetIndex < 10 || alphabetIndex > 15) return items;\n  {",
     "tests": [
@@ -950,7 +950,7 @@
   },
   {
     "name": "OH-F-B3-pile-untagged",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters });",
     "new": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, quarters });",
     "tests": [

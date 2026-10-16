@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { openState, planWagonToggle } from '../src/systems/inventorySession.js';
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
 import { Collider } from '../src/player/collider.js';
-import { STORAGE_CONTEXT, HCC_TEXT } from '../src/systems/horseCartLaw.js';
+import { STORAGE_CONTEXT, HCC_TEXT } from '../src/systems/horse/horseCartLaw.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { createMountRig } from '../src/player/mountRig.js';
 import { boxTriangles, WAGON_BUCKET } from '../src/scenes/horseCartPool.js';

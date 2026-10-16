@@ -19,7 +19,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR } from '../src/systems/restSession.js';
+import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
 import { raisePlayerSkills, createRestDeps, createPlayerTicker } from '../src/scenes/shared.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { createCharacter } from '../src/systems/chargen.js';
@@ -86,9 +86,9 @@ test('MAC-LVL1 (LIVED1): the gate reads the character\'s clock - shut 43 minutes
 });
 
 test('MAC-LVL1 (LIVED1) by source: no credit is banked, spent or saved - the gate reads the character\'s own clock', () => {
-  assert.doesNotMatch(rd('src/systems/save.js'), /'restSimMinutes'/, 'the save carries no credit');
+  assert.doesNotMatch(rd('src/systems/save/save.js'), /'restSimMinutes'/, 'the save carries no credit');
   const sh = rd('src/scenes/shared.js');
   assert.doesNotMatch(sh, /restSimMinutes/, 'nothing banks or spends it');
   assert.match(sh, /const raised = raiseSkills\(entity, Math\.floor\(ownMinutes\(\)\), rolls, levelUpHook,/, 'RaiseSkills\' gate on the character\'s clock');
-  assert.doesNotMatch(rd('src/systems/restSession.js'), /creditSkillMinutes/);
+  assert.doesNotMatch(rd('src/systems/rest/restSession.js'), /creditSkillMinutes/);
 });

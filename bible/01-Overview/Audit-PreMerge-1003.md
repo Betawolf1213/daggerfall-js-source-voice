@@ -39,8 +39,8 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | S7 | low | THE OFFER'S ID WAS THE BOUT'S ROOM. Both of a pair hear the offer's id before either says yes; one stood a ladder bout in `arena:b<offer id>`, the hall's open was refused, both were told `busy` and paired again - for ever. | The bout's room is minted at the go (`arenaId()`), never the offer's id. |
 | S8 | low | THE ARENA'S HONOURS WERE WORN NOWHERE BUT THE CARD. A Grand Champion's letters and notices showed no title, the season's first no laurel (`letters.js`, `board.js` read their badges without ARENA_HONOUR_PATHS). | `withArenaHonoursAll` lays them on the rows the inbox and the board read. |
 
-**The bout engine and the book** (`src/scenes/arenaBouts.js`, `src/systems/arenaBook.js`, `src/scenes/arenaGate.js`,
-`src/systems/arenaHerald.js`, `src/systems/arenaText.js`; the pins in `test/audit1003_bouts.test.js`)
+**The bout engine and the book** (`src/scenes/arenaBouts.js`, `src/systems/arena/arenaBook.js`, `src/scenes/arenaGate.js`,
+`src/systems/arena/arenaHerald.js`, `src/systems/arena/arenaText.js`; the pins in `test/audit1003_bouts.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -52,7 +52,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | B6, W3 | low | A bout dismissed while its crowd's pictures loaded left the batches already made undestroyed (up to ~100 VAOs and 200 buffers a time). | They are destroyed where the loop returns. |
 
 **The online half** (`src/scenes/arenaOnline.js`, `src/net/arenaBrain.js`, `src/scenes/arenaGate.js`,
-`src/scenes/arenaBouts.js`, `src/scenes/world.js`, `src/systems/onlineHomes.js`; the pins in
+`src/scenes/arenaBouts.js`, `src/scenes/world.js`, `src/systems/online/onlineHomes.js`; the pins in
 `test/audit1003_online.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -82,7 +82,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | W8 | low | Two comments said a walk back restarts the city's exhibition; it runs once an hour (`_arenaHourRun`, pinned "once an hour"). | Said as it is. |
 
 **WD3** (`server-account/src/halls.js`, `server-account/src/townLayout.js`, `server-account/src/homes.js`,
-`server-account/src/index.js`, `src/net/accountClient.js`, `src/net/guildBook.js`, `src/systems/onlineHomes.js`,
+`server-account/src/index.js`, `src/net/accountClient.js`, `src/net/guildBook.js`, `src/systems/online/onlineHomes.js`,
 `src/scenes/worldModes.js`, `src/systems/quest/place.js`; the pins in `test/audit1003_wd.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -93,7 +93,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | WD4, D8 | low | Beautiful-Towns and Arena.md named the layout's migration 0046 (guild halls). | Its number (0073, M1). |
 
 **The window and the HUD** (`src/ui/arenaDoor.js`, `src/ui/arenaWindow.js`, `src/ui/arenaHud.js`,
-`src/ui/enhancedPlusStyle.js`, `src/ui/hudFoeTarget.js`, `src/systems/arenaBoard.js`, `src/systems/arenaText.js`,
+`src/ui/enhancedPlusStyle.js`, `src/ui/hudFoeTarget.js`, `src/systems/arena/arenaBoard.js`, `src/systems/arena/arenaText.js`,
 `src/scenes/world.js`, `src/scenes/exterior.js`; the pins in `test/audit1003_ui.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -261,7 +261,7 @@ comment.
 | C8 | low | A HOST WHO STEPPED OUT LOST THE CODE - Host drew a new one while the old session held everyone. | The card offers **Rejoin session <code>**. |
 | S6 | low | THE HERALD CALLED EVERY PLAYERS' BOUT "A RATED BOUT" - a session's and the casual queue's. | A casual bout is called as one. |
 
-**The card** (`src/systems/arenaBoard.js`, `src/ui/arenaWindow.js`, `src/ui/enhancedPlusStyle.js`, `src/systems/arenaText.js`)
+**The card** (`src/systems/arena/arenaBoard.js`, `src/ui/arenaWindow.js`, `src/ui/enhancedPlusStyle.js`, `src/systems/arena/arenaText.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

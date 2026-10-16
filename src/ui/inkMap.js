@@ -595,12 +595,12 @@ export function buildInkModel(deps) {
  *  the chains never do. */
 /**
  * MAP2: `isPort` says which marks carry a harbour (Travel Options'
- * port list, systems/travelPorts.js hasPort, asked through the window
+ * port list, systems/travel/travelPorts.js hasPort, asked through the window
  * so this module never learns the list); `mapId` is MapSummary.MapID,
  * what the mod's mark and ports laws key on.
- * HUB1: `hubAt` answers the region hub a mark IS (systems/regionHubs.js), or null - online alone; the host hands
+ * HUB1: `hubAt` answers the region hub a mark IS (systems/region/regionHubs.js), or null - online alone; the host hands
  * none offline and no mark carries one.
- * SEAT1a: `seatAt` answers the seat a mark IS (systems/townSeats.js), or null - online, while the seats are open; the
+ * SEAT1a: `seatAt` answers the seat a mark IS (systems/town/townSeats.js), or null - online, while the seats are open; the
  * mark carries it and how the map marks it (net/townSeatLaw.js seatMapMark).
  * @param {{ summaries?: Iterable<any>, filters?: any,
  *   isDiscovered?: (summary: any) => boolean, nameOf?: (summary: any) => string,

@@ -6,9 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createCourtScore, courtScoreFor, gateScoreSongs, GATE_SONGS, SCORE_SILENCE, SCORE_STING_MS, SCORE_STING_LEAD_MS } from '../src/systems/gateScore.js';
+import { createCourtScore, courtScoreFor, gateScoreSongs, GATE_SONGS, SCORE_SILENCE, SCORE_STING_MS, SCORE_STING_LEAD_MS } from '../src/systems/gate/gateScore.js';
 import { MusicService, MUSIC_FADE_OUT_S, MUSIC_FADE_IN_S } from '../src/systems/music.js';
-import { SongPlayer } from '../src/systems/songPlayer.js';
+import { SongPlayer } from '../src/systems/song/songPlayer.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { createSpoilsPool } from '../src/scenes/spoilsPool.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';

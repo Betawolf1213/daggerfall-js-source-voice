@@ -1,7 +1,7 @@
 [
   {
     "name": "LEECH-HAND-the-line-says-nothing-of-whose-blows",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "label: (a) => `${a.value}% life leech on this weapon's own blows` }),",
     "new": "label: (a) => `${a.value}% life leech` }),",
     "tests": [

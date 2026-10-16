@@ -18,7 +18,7 @@ import {
 } from '../src/net/gateBrain.js';
 import { inAttack } from '../src/net/gateStrike.js';
 import { GATE_BRAIN_V } from '../src/net/wire.js';
-import { gateTip } from '../src/systems/gateOmen.js';
+import { gateTip } from '../src/systems/gate/gateOmen.js';
 import { bossBarModel } from '../src/ui/gateBossBar.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -108,7 +108,7 @@ test('AUDIT PRE-MERGE 0929 W2-2: the marks are found once an array, not re-read 
   const tip = gateTip({ site: { place: 'Daggerfall' }, phase: 'omen', t: { day: 3 } }, null);
   const words = gateModsWords(gateModsOf(3));
   assert.ok(tip.lines.includes(`${words.charAt(0).toUpperCase()}${words.slice(1)}`));
-  assert.match(read('src/systems/gateOmen.js'), /if \(day !== _marksDay\) \{/, 'the card words its marks once a day');
+  assert.match(read('src/systems/gate/gateOmen.js'), /if \(day !== _marksDay\) \{/, 'the card words its marks once a day');
   assert.doesNotMatch(read('src/ui/gateBossBar.js'), /trials\.map\(/, 'the bar joins no trials a frame');
   assert.equal(GATE_FEEDS_MAX, 5);
 });

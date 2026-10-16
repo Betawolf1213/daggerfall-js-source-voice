@@ -11,7 +11,7 @@ import { DECK_SIZE } from '../src/net/cardLaw.js';
 import { CardScene, tablePlaces } from '../src/world/cardScene.js';
 import { cardTableSeats, tableFrame } from '../src/world/cardTables.js';
 import { newTable, sit, stand, tick, actAt, publicView, stateDelta, STATE_KEYS, validHoldemIn, validHoldemOut, HOLDEM_FIRST_MS, HOLDEM_CASHOUTS_MAX, HOLDEM_STAKE_MAX } from '../src/net/holdemTable.js';
-import { RemoteCardTable } from '../src/systems/cardRemoteTable.js';
+import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import { createCardStakes, CARD_STAKES_KEY } from '../src/net/cardStakes.js';
 import { fakeRoom } from './fakeRoom.mjs';
 

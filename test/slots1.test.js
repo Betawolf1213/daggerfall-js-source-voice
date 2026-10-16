@@ -13,8 +13,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { restorableSaves, mostRecentRestorable, saveSlot, SAVE_INFO_PREFIX } from '../src/systems/saveSlots.js';
-import { SAVE_VERSION } from '../src/systems/save.js';
+import { restorableSaves, mostRecentRestorable, saveSlot, SAVE_INFO_PREFIX } from '../src/systems/save/saveSlots.js';
+import { SAVE_VERSION } from '../src/systems/save/save.js';
 import { takePickedSaveKey, takePickedSaveName } from '../src/ui/enhancedMenu.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

@@ -743,7 +743,7 @@ below is `src/scenes/dungeonDivers.js`.
 ### 7.1 The dive's route (`deepRoute.js`)
 
 - **THE STOPS** (`stopsOf`): the dungeon's random foe markers (editor record 15, STOP_FOE) and random treasure markers
-  (19, STOP_TREASURE - each its one home's: `characters/dungeonEnemies.js RANDOM_RECORD`, `systems/loot.js
+  (19, STOP_TREASURE - each its one home's: `characters/dungeonEnemies.js RANDOM_RECORD`, `systems/loot/loot.js
   RANDOM_TREASURE_MARKER_RECORD`; AUDIT LW-II-2 D11: they were two literals beside them), off the placed blocks'
   layouts - never a fixed foe (16), a quest's marker (11, 18) or fixed treasure (archive 216). Keyed `<block>:<marker position>`, a foe's by its marker's LoadID too. Read at the dungeon's
   build only; the trips need none of it.

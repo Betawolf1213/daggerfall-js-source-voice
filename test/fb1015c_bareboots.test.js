@@ -7,7 +7,7 @@
 // attached, Adamantium boots stopped at adamantium (which has none) and never reached the ebony after it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { applyRarity, allLegendaries } from '../src/systems/lootRarity.js';
+import { applyRarity, allLegendaries } from '../src/systems/loot/lootRarity.js';
 import { armorOfMaterial, ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EQUIP_SLOTS, equipItem, equipTableOf } from '../src/systems/equip.js';

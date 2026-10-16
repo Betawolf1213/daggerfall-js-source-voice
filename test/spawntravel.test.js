@@ -26,5 +26,5 @@ test('SPAWN-TRAVEL: the travel hook files a spawned dungeon by its own id and ne
   // the location it is handed carries the id - the hook above reads the travel deps' own currentLocation
   assert.match(world, /currentLocation: \(\) => \(_musicLoc \? \{ mapId: _musicLoc\.mapTableData\?\.mapId, locationType: _musicLoc\.mapTableData\?\.locationType, name: _musicLoc\.name, regionName: _musicLoc\.regionName \} : null\),/);
   // ...and Travel Options hands that very object on at the nearby pause
-  assert.match(rd('src/systems/travelOptions.js'), /const loc = deps\.currentLocation\?\.\(\) \?\? null;[\s\S]{0,400}deps\.discoverLocation\?\.\(loc\);/);
+  assert.match(rd('src/systems/travel/travelOptions.js'), /const loc = deps\.currentLocation\?\.\(\) \?\? null;[\s\S]{0,400}deps\.discoverLocation\?\.\(loc\);/);
 });

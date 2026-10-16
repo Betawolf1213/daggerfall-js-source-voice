@@ -16,7 +16,7 @@ import { weaponOfMaterial, armorOfMaterial, createWeapon, ARROW_TEMPLATE } from 
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { ListPickerWindow, _setListPickerArtForTests } from '../src/ui/listPicker.js';
 import { mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { withDom } from './invdrag.mjs';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 

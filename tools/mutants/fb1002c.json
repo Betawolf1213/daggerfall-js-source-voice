@@ -109,7 +109,7 @@
   },
   {
     "name": "TOLIVE-boot-bag-whole",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  if (boot) for (const k of TRAVEL_OPTIONS_RESTART_KEYS) bag[k] = boot[k];",
     "new": "  if (boot) return boot;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TOLIVE-restart-half-afresh",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  if (boot) for (const k of TRAVEL_OPTIONS_RESTART_KEYS) bag[k] = boot[k];",
     "new": "  void TRAVEL_OPTIONS_RESTART_KEYS;",
     "tests": [

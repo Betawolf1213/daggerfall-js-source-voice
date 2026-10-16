@@ -12,11 +12,11 @@
 // choose classic for (the travel map and its popups) are not here.
 
 import { isEnhancedPlus } from '../systems/uiSkin.js';   // PLUS1: the ported windows are Enhanced Plus's
-import { isOnlinePage } from '../systems/onlineLane.js';   // EMPIRE-BANK
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // EMPIRE-BANK
 import { EMPIRE_BANK_OF } from '../world/buildingNames.js';
 import { portWindow, centreOf } from './enhancedPort.js';
 import { itemIconUrl, itemName, spellIconUrl, paintFrame } from './enhancedArt.js';
-import { serviceLabel } from '../systems/guildServiceFlow.js';
+import { serviceLabel } from '../systems/guild/guildServiceFlow.js';
 import { GUILD_RECTS, PANEL_X as GUILD_X, PANEL_Y as GUILD_Y, REFORGE_ROW, LIFT_ROW, HEAL_CURSE_ROW } from './guildServiceWindow.js';
 import { COVEN_RECTS, COVEN_PANEL_X, COVEN_PANEL_Y } from './covenWindow.js';
 import { BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y, MARKS_ENTRY } from './bankWindow.js';
@@ -32,7 +32,7 @@ import {
   SPELL_MAKER_RECTS, SPELL_MAKER_TIPS, EFFECT_NAME_PANELS, TARGET_BUTTONS, ELEMENT_BUTTONS,
   EDITOR_RECTS, SPINNER_UP, SPINNER_DOWN, spinnerPart,
 } from './spellMakerWindow.js';
-import { flagOfIndex, spinnerRange } from '../systems/spellMaker.js';   // HOLD-STEP: a typed value's range, said on its field
+import { flagOfIndex, spinnerRange } from '../systems/spell/spellMaker.js';   // HOLD-STEP: a typed value's range, said on its field
 import { SPELLBOOK_RECTS, spellPointCost, spellEffects } from './spellbookWindow.js';   // SHOP-PLUS: the spell shop is the book in buy mode
 import { effectWords, spellFrame } from './enhancedSpellbook.js';        // ...and says a spell in the enhanced book's own words
 import { totalGoldAmount } from '../systems/court.js';

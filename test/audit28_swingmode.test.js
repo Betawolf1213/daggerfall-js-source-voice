@@ -5,7 +5,7 @@ import { PlayerWeapon, CLICK_ATTACK_DIRECTIONS } from '../src/combat/playerWeapo
 import { ATTACK_THRESHOLD } from '../src/characters/weaponStates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { DIRECTION_TO_STRIKE } from '../src/characters/anims.js';
-import { setValue, resetToDefaults, LIVE, getFloat } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE, getFloat } from '../src/systems/settings/settings.js';
 import { NUMBER_LAW, ENUM_LAW, formatValue } from '../src/ui/settingsLaw.js';
 
 // AUDIT 28 - W11: WeaponAttackThreshold + WeaponSwingMode. The gesture

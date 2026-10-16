@@ -15,7 +15,7 @@ import { openBout, liveEntry } from '../src/net/arenaBrain.js';
 import { exhibitionFor, exhibitionBoutId } from '../src/net/arenaExhibition.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
 import { arenaLadderOf } from '../src/net/arenaLaw.js';
-import { fighterIdentity } from '../src/systems/arenaFighters.js';
+import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
 
 const C = ARENA_FLOOR_CENTRE;
 const arena = (ws) => ws.sent.filter((m) => m.t === 'arena');

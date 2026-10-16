@@ -127,8 +127,8 @@ Appendix A names their homes.
 
 ## 1. The laws this arc keeps
 
-1. **ONLINE ONLY; OFFLINE IS DFU 1:1** (DECIDED (Mac)). `systems/guilds.js`, `systems/guildVariants.js`,
-   `systems/factionRep.js`, `systems/court.js` and `systems/standing.js` keep every law they hold, and every parity
+1. **ONLINE ONLY; OFFLINE IS DFU 1:1** (DECIDED (Mac)). `systems/guild/guilds.js`, `systems/guild/guildVariants.js`,
+   `systems/faction/factionRep.js`, `systems/court.js` and `systems/standing.js` keep every law they hold, and every parity
    pin on them (`guilds.test.js`, `factionrep.test.js` and their kin) stays green unchanged. Guilds are on
    `01-Overview/Port-Doctrine.md`'s ported 1:1 list, so the arc is a declared departure: its Port-Ledger section A row
    is added by CHAP1, as SEAT1a added the seats'.
@@ -162,10 +162,10 @@ Appendix A names their homes.
 
 | Foundation | Where | What the arc uses |
 |---|---|---|
-| DFU's guilds | `systems/guilds.js`: `GUILDS`, `RANK_REQ_REPUTATION` (0-90 in tens), `RANK_REQ_SKILL_HIGH`, `RANK_REQ_SKILL_LOW`, `baseCalculateNewRank`, `updateRank` (the 28-day gate), REP6's probation (`PROBATION_LINES`) | Ten ranks recomputed, never stored; the law ranks 0-7 keep online |
-| Temples and orders | `systems/guildVariants.js`: `DIVINES` (8), `ORDERS` (10), `createGuildForGroup` | The other eighteen faction ids |
-| Faction reputation | `systems/factionRep.js` `changeReputation` (-100..100, the ally/enemy spread with DFU's truncating halves) | The client's spread, reported as a claim (3.3) |
-| The save | `systems/save.js`: `snap.factionRep`, `snap.guildMemberships` | The only home of both today - nothing in `src/net/`, `server/src/` or `server-account/src/` reads either (at `9ed5a681`; AUDIT CHAP2 R14: since CHAP1 the Roll is a second home online - `net/npcRollTracker.js` reads both) |
+| DFU's guilds | `systems/guild/guilds.js`: `GUILDS`, `RANK_REQ_REPUTATION` (0-90 in tens), `RANK_REQ_SKILL_HIGH`, `RANK_REQ_SKILL_LOW`, `baseCalculateNewRank`, `updateRank` (the 28-day gate), REP6's probation (`PROBATION_LINES`) | Ten ranks recomputed, never stored; the law ranks 0-7 keep online |
+| Temples and orders | `systems/guild/guildVariants.js`: `DIVINES` (8), `ORDERS` (10), `createGuildForGroup` | The other eighteen faction ids |
+| Faction reputation | `systems/faction/factionRep.js` `changeReputation` (-100..100, the ally/enemy spread with DFU's truncating halves) | The client's spread, reported as a claim (3.3) |
+| The save | `systems/save/save.js`: `snap.factionRep`, `snap.guildMemberships` | The only home of both today - nothing in `src/net/`, `server/src/` or `server-account/src/` reads either (at `9ed5a681`; AUDIT CHAP2 R14: since CHAP1 the Roll is a second home online - `net/npcRollTracker.js` reads both) |
 | The realm | `server-account/src/realm.js` | Holds an online character's save, opaque: it checks the first save's level and wealth (`REALM_BIRTH_WEALTH_MAX`) and nothing after. Realm-Arc phase 3 (validation) is unbuilt |
 | Renown | `net/renown.js`, `server-account/src/renownTracks.js`, `systems/renownLayer.js` | The service-held track and the online layer - the pattern for the Roll |
 | Marks | `net/marksLaw.js`: `MARKS_FAUCETS`, `MARKS_KINDS`, `MARKS_COMBAT` (150 a UTC day across gate, raid and serpent), the guild `deed` | The pay of a hall writ; witnessed faucets, capped |
@@ -1108,7 +1108,7 @@ DECIDED.
   the rivals, CHAP6a; the patrons, CHAP7a); the playing tab's side is `net/npcRollTracker.js` (CHAP1; the first draft named it
   systems/npcChapters.js), `net/npcHallBook.js` (CHAP2a), `net/chapterSheet.js`, the sheet's reader (CHAP3c), and
   `net/chapterEvents.js`, the Season's words and choices (CHAP6c - AUDIT CHAP5 R14); DFU's guild faction ids live in the leaf
-  `systems/guildFactions.js`, which the service can reach and `guilds.js` cannot be.
+  `systems/guild/guildFactions.js`, which the service can reach and `guilds.js` cannot be.
 
 ## 12. The slices, in order
 
@@ -1268,7 +1268,7 @@ is Mac's to overrule.
 The first slice: a realm character's standing with Daggerfall's guilds moves to the account service. Section 3 carries
 the law and every place this slice narrowed it (BUILT, CHAP1).
 
-- **The leaf.** `src/systems/guildFactions.js` - no imports - holds DFU's four guild ids (`GUILD_FACTION_IDS`), the
+- **The leaf.** `src/systems/guild/guildFactions.js` - no imports - holds DFU's four guild ids (`GUILD_FACTION_IDS`), the
   divines (`DIVINES`), the orders (`ORDERS`) and the reputation's bounds (`MIN_REPUTATION`, `MAX_REPUTATION`).
   `guilds.js` builds GUILDS on it; `guildVariants.js` and `factionRep.js` hand its tables on. ONE DFU MEMBER, ONE
   EXPORT: each was written once before and is written once now, in a home the account service can import (its graph
@@ -1459,7 +1459,7 @@ whole: the week's Merit, the Turning's Strength, its band on the writs and the h
 - **The client.** `src/net/chapterSheet.js` (the sheet the playing tab holds); `src/scenes/world.js` (built online over
   the halls' door, asked at a town's entry, handed to the interiors as `chapterStrength`); `src/scenes/worldModes.js`
   (the hall's chapter read off its guild and building, its factor to training, the spellbook and the spellmaker, its
-  quality to the three shelves); `src/systems/guildServiceActions.js` and `src/ui/guildServiceWindows.js` (training's
+  quality to the three shelves); `src/systems/guild/guildServiceActions.js` and `src/ui/guildServiceWindows.js` (training's
   offer and gold check by a factor, DFU's own at 1); `src/ui/spellbookWindow.js` and `src/ui/spellMakerWindow.js` (the
   trade price and the gold cost by a factor). No service change; still `acct95`.
 - **Pins.** `test/chap3c_halls.test.js`, 9 tests: the law against literals (the factor by band and unknown, a price laid
@@ -1525,8 +1525,8 @@ The fourth slice's client half; sections 3.5 and 6 carry the law and what buildi
 - **The law.** `src/net/npcChapterLaw.js`: a Roll answer's seats (`rollSeatsOf`), a seat's rank at a hall
   (`seatRankAt`), the book seated (`seatedBook`) and held (`rollBookCap`), the lines (`seatLineOf`, `seatLinesOf`,
   `bookCappedLine`).
-- **DFU's review.** `src/systems/guilds.js` updateRank takes `ctx.rankCeiling` - promoted to it, never past it, never a
-  demotion for it; `src/systems/guildServiceFlow.js` onPushEffects hands the host's through.
+- **DFU's review.** `src/systems/guild/guilds.js` updateRank takes `ctx.rankCeiling` - promoted to it, never past it, never a
+  demotion for it; `src/systems/guild/guildServiceFlow.js` onPushEffects hands the host's through.
 - **The client.** `src/net/npcRollTracker.js` (the `cap` door, `onCapped`, `onSeats`, `seats`); `src/scenes/worldModes.js`
   (the hall popup's seated services and ceiling); `src/scenes/world.js` (`seatRankHere`, `chapterSeatRank`,
   `rollRankCeiling`, the teleport's fee, the lines). No service change.

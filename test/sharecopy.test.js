@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { TaskType } from '../src/systems/quest/task.js';
-import { receiveSharedQuest, prepareQuestShare, shapeMismatch } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare, shapeMismatch } from '../src/systems/quest/questShare.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');

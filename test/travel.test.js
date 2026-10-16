@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import {
   calculateTravelTime, calculateTripCost, arrivalClampMinutes, travelDays,
   CLIMATE_INDICES, TERRAIN_MOVEMENT_MODIFIERS,
-} from '../src/systems/travel.js';
+} from '../src/systems/travel/travel.js';
 import { CLIMATES, MapsFile } from '../src/formats/mapsFile.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

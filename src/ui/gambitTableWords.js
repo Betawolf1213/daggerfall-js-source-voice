@@ -18,7 +18,7 @@ import {
   KG_POTION_HEAL, KG_MOVE_RANGE, KG_RANGED_RANGE, KG_BLOW_LOW, KG_BLOW_SPREAD, KG_HAZARD_DAMAGE, KG_HAZARD_SPAWN_EVERY,
   KG_KING_LEVEL, KG_KING_HP, KG_KINGS, rosterUnit,
 } from '../net/kingsGambit.js';
-import { GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS, crownIndex } from '../systems/gambitTableSession.js';
+import { GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS, crownIndex } from '../systems/gambit/gambitTableSession.js';
 import { GAMBIT_IDLE_TURNS, GAMBIT_TURN_MS } from '../net/gambitTable.js';   // AUDIT KG II D9/D20: the online clock's numbers, the law's
 import { GAMBIT_ONLINE_STAKES } from '../net/gambitStakes.js';
 import { SUIT_CROWNS } from '../render/cardFaces.js';

@@ -85,7 +85,7 @@ export const TRAVELLER_LEGEND_TEXT = 'Traveller';
  * `travellers` dep), as marks placed within their pixel to the mark's own 256th: `x`/`y` in map pixels (y counts
  * south, the fraction counts north, so it is turned round). OWS1: `ship` - the host's word that the row's traveller
  * is at sea (isShipMark: their mark's way), drawn as a ship. OW-KIN / OW-WHO (FIELD BUGS 2026-10-04e): `kin` - the
- * host's word of who they are to me ('friend' | 'guild', systems/travelViewFilters.js travellerKin) - and `lv` their
+ * host's word of who they are to me ('friend' | 'guild', systems/travel/travelViewFilters.js travellerKin) - and `lv` their
  * Renown, for the name's colour and the players' filters.
  * @returns {Array<{id:string, name:string, x:number, y:number, journey:boolean, ship:boolean, kin:string|null, lv:number|null}>}
  */

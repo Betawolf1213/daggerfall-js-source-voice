@@ -3,8 +3,8 @@
 // to what loads cleanly").
 //
 // Pinned here: the click's ground (player/travelPick.js - the march and its bisection over a table of hills), the
-// road planner (systems/travelRoute.js - A* over Hazelnut's compass bytes, a road only where both ends carry the
-// edge, the sea refused, the legs folded), the load governor (systems/travelGovernor.js - halved while the view shows
+// road planner (systems/travel/travelRoute.js - A* over Hazelnut's compass bytes, a road only where both ends carry the
+// edge, the sea refused, the legs folded), the load governor (systems/travel/travelGovernor.js - halved while the view shows
 // unbuilt ground, back up a step once it is clean, never under walking pace), the port's own two journeys in Travel
 // Options (beginTravelToPoint / beginTravelAlongRoute - the mod's autopilot, legs and stops, and an arrival SAID under
 // the view), the view's marks and route projected through the frame, the readout's route line, and the world host's
@@ -13,12 +13,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { groundHit, canvasPoint, classifyPick, TV_PICK_MAX } from '../src/player/travelPick.js';
-import { planRoute, routeLegs, roadShare, edgeKind, ROUTE_COST, OPPOSITE_BIT, openStepBlocked, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE, routeGround, ROUTE_MARGINS } from '../src/systems/travelRoute.js';
-import { createLoadGovernor, viewReach, unbuiltAround, stepDown, TV_GOV_HOLD_S, TV_GOV_CLEAR_S, TV_GOV_STEP, TV_GOV_SETTLE_S } from '../src/systems/travelGovernor.js';
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
-import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travelOptionsText.js';
-import { mapPixelWorldOrigin, MID_LO, P_SIZE } from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+import { planRoute, routeLegs, roadShare, edgeKind, ROUTE_COST, OPPOSITE_BIT, openStepBlocked, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE, routeGround, ROUTE_MARGINS } from '../src/systems/travel/travelRoute.js';
+import { createLoadGovernor, viewReach, unbuiltAround, stepDown, TV_GOV_HOLD_S, TV_GOV_CLEAR_S, TV_GOV_STEP, TV_GOV_SETTLE_S } from '../src/systems/travel/travelGovernor.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
+import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
+import { mapPixelWorldOrigin, MID_LO, P_SIZE } from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
 import { DIR, DIR_DELTA } from '../src/world/roadNetwork.js';
@@ -618,7 +618,7 @@ test('OW-ROADSIDE (Mac: routes "appear traveling alongside" the road): the join 
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   assert.match(w, /if \(!legs\.length \|\| \(plan\.kinds\[0\] !== 'road' && plan\.kinds\[0\] !== 'track'\)\) return legs;/, 'a route that starts on open ground has no road to join');
   assert.match(w, /return \[\{ x: from\.x, y: from\.y, kind: 'open', at: joinPoint\(\{ x: me\.x, z: me\.z \}, c\(from\), legs\[0\]\.at \?\? c\(legs\[0\]\)\) \}, \.\.\.legs\];/);
-  // the drawn route joins the road where the walk does (AUDIT OW3 J4: systems/travelRoute.js routeDrawPoints, both journeys)
+  // the drawn route joins the road where the walk does (AUDIT OW3 J4: systems/travel/travelRoute.js routeDrawPoints, both journeys)
   assert.deepEqual(routeDrawPoints({ x: 1, z: 2 }, [{ x: 500, y: 250, at: { x: 7, z: 8 } }, { x: 503, y: 250 }, { x: 504, y: 251 }], { x: 90, z: 91 }, (l) => [l.x * 10, l.y * 10]),
     [[1, 2], [7, 8], [5030, 2500], [90, 91]], 'the traveller, the join\'s own point, a pixel\'s middle, the end - never the last leg\'s middle');
 });

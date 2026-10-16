@@ -48,14 +48,14 @@
 // under the flight - the bar's Place places.
 //
 // DECOR2a - THE PLAYER'S OWN THINGS. The panel's "Your things" lists
-// what in the pack can stand (systems/decorItems.js); one is set down
+// what in the pack can stand (systems/decor/decorItems.js); one is set down
 // by the same flight, free, as its own world picture, and the thing
 // itself leaves the pack into the room's keeping (by the piece's id) -
 // online only once the account service has the piece. "Take down" puts
 // it back in the pack, whole. Moved or resized it stays free.
 //
 // DECOR2b - THE FURNISHER'S FURNITURE. What the Furniture Store sold is
-// delivered, never carried (systems/decorFurnish.js), and listed among
+// delivered, never carried (systems/decor/decorFurnish.js), and listed among
 // "Your things". A pillow stands as its own picture; any other piece is
 // set down as whichever of Daggerfall's own pieces of its kind the
 // owner picks in the panel's look view - the look's shape, the
@@ -69,7 +69,7 @@
 // surface in reach, nothing to hang it on.
 //
 // HOME-DOORS (2026-09-30) - A DOOR IN A DOORWAY. A catalogue door
-// (systems/decorDoorways.js) is never set down where the eye meets a
+// (systems/decor/decorDoorways.js) is never set down where the eye meets a
 // surface: the house's doorways are found (the room finder's links,
 // looked across), every free one is MARKED on the decal pass - green,
 // and the one the eye looks at gold - and the door is fitted whole into
@@ -79,20 +79,20 @@
 // found again.
 // ═══════════════════════════════════════════════════════════════════
 
-import { createDecorScan } from '../systems/decorScan.js';
-import { decorModsLive, DECOR_MODS_LIVE_S } from '../systems/decorMods.js';   // AUDIT 05b A3: the mods' pieces offered while they stand
-import { createDecorRooms } from '../systems/decorRooms.js';   // DECOR-ROOMS: a house's rooms, found in its own walls
-import { createDecorDoorways, decorDoorwaysFree, decorDoorwayAimed, decorDoorFit, decorDoorwayQuad, decorIsDoor } from '../systems/decorDoorways.js';   // HOME-DOORS
+import { createDecorScan } from '../systems/decor/decorScan.js';
+import { decorModsLive, DECOR_MODS_LIVE_S } from '../systems/decor/decorMods.js';   // AUDIT 05b A3: the mods' pieces offered while they stand
+import { createDecorRooms } from '../systems/decor/decorRooms.js';   // DECOR-ROOMS: a house's rooms, found in its own walls
+import { createDecorDoorways, decorDoorwaysFree, decorDoorwayAimed, decorDoorFit, decorDoorwayQuad, decorIsDoor } from '../systems/decor/decorDoorways.js';   // HOME-DOORS
 import { writeDecalQuad, clearDecalQuad, DECAL_FLOATS } from '../combat/bloodDecals.js';   // HOME-DOORS: the doorways' marks, on the decal pass
 import { rentRoomsView, rentAnchorOfRoom } from '../systems/homeRent.js';   // HOME-RENT: the owner's rooms, offered to rent
 import { goldSum, EMPIRE_ACCOUNT_WORDS } from '../systems/homeWords.js';   // AUDIT HOME-PRICE E4: the rent's sums and account, as the door says them
-import { createDecorPlacer, decorEntrySized, DECOR_TURN_STEP, DECOR_TURN_FINE, DECOR_RAISE_STEP, DECOR_RAISE_FINE, wrapTurn } from '../systems/decorPlacer.js';   // DECOR-FIGURE: whether a piece takes a size step
+import { createDecorPlacer, decorEntrySized, DECOR_TURN_STEP, DECOR_TURN_FINE, DECOR_RAISE_STEP, DECOR_RAISE_FINE, wrapTurn } from '../systems/decor/decorPlacer.js';   // DECOR-FIGURE: whether a piece takes a size step
 import { createDecorButton, createDecorPanel, createDecorBar, decorWhyNot } from '../ui/decorPanel.js';
 import { DECOR_CAP, DECOR_PRICE_PER_METRE, DECOR_HIDDEN_CAP, decorPrice, decorPieceOf, decorRefund, decorRescale, mintDecorId, DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES } from '../net/decorLaw.js';
-import { decorKey, DECOR_KINDS, decorFlatLight, modelKind, flatKind, decorRoomEntries } from '../systems/decorCatalogue.js';
-import { decorOwnEntry, decorItemName, decorMountDye, decorMountDyeTarget } from '../systems/decorItems.js';
-import { decorFurnishingEntry, isFurnishing } from '../systems/decorFurnish.js';
-import { itemLongName } from '../systems/itemInfo.js';
+import { decorKey, DECOR_KINDS, decorFlatLight, modelKind, flatKind, decorRoomEntries } from '../systems/decor/decorCatalogue.js';
+import { decorOwnEntry, decorItemName, decorMountDye, decorMountDyeTarget } from '../systems/decor/decorItems.js';
+import { decorFurnishingEntry, isFurnishing } from '../systems/decor/decorFurnish.js';
+import { itemLongName } from '../systems/item/itemInfo.js';
 import { decorMatrix, decorKeyOf, loadMountPicture, decorMountQuad, decorMountFloats, DECOR_MODEL_RETRY_MS, MW_STAND_ARCHIVE } from './decorRoom.js';
 import { decorIsMount, decorFlatMirrored, decorIsFigure, decorDrawnScale } from '../net/decorLaw.js';   // AUDIT DECOR-FIGURE C1, C2: a figure's change and its ground
 import { SEAT_HALL_TEXT } from '../net/townSeatLaw.js';   // SEAT-HALL: the Charter Room's rule, in its words
@@ -154,7 +154,7 @@ export const DECOR_MOUNT_NO_SURFACE = 'Look at a wall to hang it on.';
  *  how many are free while none is looked at. */
 export const DECOR_DOOR_FINDING = 'Finding the doorways...';
 /** HOME-DOORS (AUDIT): how far short of a doorway's middle a wall may be met and the doorway still seen - half the
- *  deepest wall a doorway is found in (systems/decorDoorways.js DOORWAY_DEPTH_MAX). */
+ *  deepest wall a doorway is found in (systems/decor/decorDoorways.js DOORWAY_DEPTH_MAX). */
 export const DOOR_SIGHT_SPARE = 0.6;
 export const DECOR_DOOR_NONE = 'This house has no open doorway for a door.';
 /** HOME-DOORS (AUDIT): what the bar says when the free doorways are all wider than the door can close. */
@@ -352,7 +352,7 @@ export const eyePoint = (collider, eye, dir, skip = null) => eyeHit(collider, ey
  *                      (GUILD1d: `hall` - a guild's hall, an online home its keepers furnish),
  *                      or null
  *   base()           - BASE-HIDE: the room's own furniture, piece by piece (scenes/decorBase.js), or null
- *   scanDeps()       - systems/decorScan.js's deps (the blocks, the two measures)
+ *   scanDeps()       - systems/decor/decorScan.js's deps (the blocks, the two measures)
  *   getGpuMesh(id), cpuModels, getTexture(a), uploadRecord(a, r, opts), iconUrl(a, r) - the pipeline's, and the DOM's
  *                      door (DECOR2c: uploadRecord's icon arm and the renderer's decal pass draw the mount's ghost)
  *   collider(), origin() - the room's collider and this visit's building origin; eye() - the camera's eye now
@@ -409,7 +409,7 @@ export function createDecorTool(deps) {
   let named = false;
   let listening = false;
   // DECOR-ROOMS (2026-09-27, Discord: "For a house with multiple connects, add room switching tabs"): the house's rooms,
-  // found in the room's own collider a few rays a frame while the panel is up (systems/decorRooms.js) - found again for
+  // found in the room's own collider a few rays a frame while the panel is up (systems/decor/decorRooms.js) - found again for
   // another interior - and the one the owner chose (null: the one the eye stands in)
   /** @type {any} */ let rooms = null;
   /** @type {any} */ let roomsFor = null;
@@ -509,7 +509,7 @@ export function createDecorTool(deps) {
   }
 
   const ensureScan = () => { scan ??= createDecorScan(deps.scanDeps()); return scan; };
-  // AUDIT 05b A3: THE MODS' PIECES THE PORT STANDS NOW (systems/decorMods.js decorModsLive) - the offer's own
+  // AUDIT 05b A3: THE MODS' PIECES THE PORT STANDS NOW (systems/decor/decorMods.js decorModsLive) - the offer's own
   // (decorCatalogue.js decorRoomEntries), asked as the panel opens, as the catalogue first stands and every
   // DECOR_MODS_LIVE_S it is up; never once a session (a mod turned off left its pieces for sale that stood nowhere, one
   // turned on was never offered). A piece that stands only now is measured then, so priced (decorScan.js remeasure).
@@ -1263,7 +1263,7 @@ export function createDecorTool(deps) {
   /**
    * DECOR-TURN (2026-10-06, Mac: "adding the ability to rotate objects on the ground" - a placed piece turned where it
    * stands, never picked up): A PLACED PIECE TURNED BY `deg` about its upright - a hung one spun on its wall, as its
-   * placing turns it (systems/decorPlacer.js) - free, its place else as it stands. A door is turned by its doorway (its
+   * placing turns it (systems/decor/decorPlacer.js) - free, its place else as it stands. A door is turned by its doorway (its
    * Move), never here. A yard's piece turned onto the house, a road or another's ground - or one standing higher than a
    * yard's may - is refused as its placing would be (whyNotHere). AUDIT Y1: it turns at once, as the press is made, and
    * an online home's piece is written once its presses settle (writeTurn) - each press was a write to the account

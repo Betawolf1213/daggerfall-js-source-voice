@@ -15,7 +15,7 @@
 // kit's rules cut to its selectors - so it wears the stone and brass whichever skin is chosen. Its classes are `aw-`
 // (the bout's HUD's are `arena-`). The tabs are `role="tab"`, so the pad turns them (ui/plusPad.js); 1-6 pick a page.
 //
-// WHAT IT SAYS is systems/arenaBoard.js's (pure, `deps.board()` - the host builds it from the save and the gate), and
+// WHAT IT SAYS is systems/arena/arenaBoard.js's (pure, `deps.board()` - the host builds it from the save and the gate), and
 // what it does is the host's (`deps.act(kind, data)` - watch, fight, wager): this file draws and asks. Every word is
 // set as text, never as markup - a fighter's name is the save's.
 //
@@ -37,8 +37,8 @@ import { ARENA_WINDOW_CSS } from './enhancedPlusStyle.js';
 import { frameCss } from './enhancedFrame.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 import { scopeRules } from './brokerWindow.js';
-import { ARENA_TEXT } from '../systems/arenaText.js';
-import { ARENA_PAGES, ARENA_BOARDS } from '../systems/arenaBoard.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
+import { ARENA_PAGES, ARENA_BOARDS } from '../systems/arena/arenaBoard.js';
 import { repaintKeepingScroll } from './domRepaint.js';   // AUDIT PRE-MERGE 1003 U2: a redraw keeps the scroll and the focus
 
 /** @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
@@ -85,7 +85,7 @@ function injectSkin(doc = document) {
  *   board: () => any,
  *   act?: (kind: 'watch'|'fight'|'wager'|'queue'|'casual'|'unqueue'|'accept'|'decline'|'spectate'|'replay', data?: any) => ({ ok: boolean, text?: string } | void),
  *   page?: string, onExit?: (() => void) | null,
- * }} deps `board` systems/arenaBoard.js arenaBoard's model, built fresh at each render; `act` the host's doors
+ * }} deps `board` systems/arena/arenaBoard.js arenaBoard's model, built fresh at each render; `act` the host's doors
  */
 export function mountArenaWindow(host, deps) {
   injectEnhancedStyle();
@@ -513,7 +513,7 @@ export function mountArenaWindow(host, deps) {
     if (boardPicked === 'fast' && m.hall) body.append(hallCard(m.hall));   // ARENA4b: online, the realm's Hall under its fastest
   }
   /** ARENA4b: THE REALM'S HALL OF CHAMPIONS - every Grand Champion of the realm, the newest first, each with its season
-   *  (systems/arenaBoard.js hallBoardOnline): the banner card's short list, a name and its season a line. */
+   *  (systems/arena/arenaBoard.js hallBoardOnline): the banner card's short list, a name and its season a line. */
   function hallCard(h) {
     const card = el('section', 'aw-card aw-hall');
     card.append(el('h3', null, h.title), el('p', 'aw-boardsub', h.sub));

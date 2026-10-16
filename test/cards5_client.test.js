@@ -1,5 +1,5 @@
 // CARDS5 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 17): THE RELAY'S TABLE ON THE CLIENT. Driven: the
-// relay's frames folded into the evening's own shapes (systems/cardRemoteTable.js) - chairs as seats, mine and the
+// relay's frames folded into the evening's own shapes (systems/card/cardRemoteTable.js) - chairs as seats, mine and the
 // others' and the empty, my hole cards in my seat alone, my turn only while it is mine, the relay's clock on mine, a
 // hand already under way told as the events it took; and the interior host's card block RUN (sliced from
 // worldModes.js, as auditcards2_host does) for three players in one tavern over an in-process copy of the relay's table
@@ -11,19 +11,19 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDoc } from './decorFakes.mjs';
 import * as court from '../src/systems/court.js';
-import * as sess from '../src/systems/cardTableSession.js';
+import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor } from '../src/player/pointerLock.js';
 import { nearestFreeSeat, takenSeats } from '../src/world/cardTables.js';
 import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars.js';
-import { RemoteCardTable, CATCH_UP_MS } from '../src/systems/cardRemoteTable.js';
-import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';   // CARDS9: the house's packs at the table
+import { RemoteCardTable, CATCH_UP_MS } from '../src/systems/card/cardRemoteTable.js';
+import { cardPackPrice, buyCardPack } from '../src/systems/card/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
 import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
-import { iliacGrade } from '../src/systems/iliacPatrons.js';
+import { iliacGrade } from '../src/systems/iliac/iliacPatrons.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { newTable, sit, stand, actAt, tick, tableLook, validHoldemIn, HOLDEM_FIRST_MS, HOLDEM_CLOCK_MS } from '../src/net/holdemTable.js';

@@ -1,6 +1,6 @@
 // PROF1 (2026-09-28, Mac: "Begin!") - THE PROFESSIONS' LAWS, pinned against the record (bible/06-Systems/
 // Professions-Arc.md, PROF0 3, 4.3, 6, 11, 22 and Appendix B) and against DFU's own tables: src/net/professionLaw.js,
-// src/net/nodeLaw.js, and the two pure modules both ends read (src/formats/mapsTables.js, src/systems/foragingCore.js).
+// src/net/nodeLaw.js, and the two pure modules both ends read (src/formats/mapsTables.js, src/systems/foraging/foragingCore.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -18,10 +18,10 @@ import {
 } from '../src/net/nodeLaw.js';
 import * as mapsFile from '../src/formats/mapsFile.js';
 import * as mapsTables from '../src/formats/mapsTables.js';
-import * as foragingLaw from '../src/systems/foragingLaw.js';
-import * as foragingCore from '../src/systems/foragingCore.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import * as foragingLaw from '../src/systems/foraging/foragingLaw.js';
+import * as foragingCore from '../src/systems/foraging/foragingCore.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { SEASONS } from '../src/systems/gameDate.js';
 import { MARKS_FAUCETS, MARKS_KINDS } from '../src/net/marksLaw.js';
 

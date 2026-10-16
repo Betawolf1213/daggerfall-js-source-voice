@@ -39,7 +39,7 @@ test('WORLD8: the dungeon by source - the stamp at the corpse door and in the re
   const d = rd('src/scenes/dungeonContext.js');
   assert.match(d, /import \{ mintSharedStamp, hitPoisonOf, hitSpellOf, hitSpellFields, HIT_ARROWS_MAX, wallMsForClassicMinutes, validFoeRecord, validSharedFoe, FOE_HEALTH_MAX(?:, FOES_FRAME_MAX)?(?:, CELL_FRAME_RECORDS_MAX)? \} from '\.\.\/net\/wire\.js';/);   // REST-SYNC: the frame's one cap, which the shared encounters ride under
   // DUNGEON-RESPAWN (PIN MOVED): the dungeon's respawnDue is its own pace (20 minutes, an elite's 40, the zone's and a Super
-  // dungeon's still the wire's hour - systems/dungeonRespawn.js), in the wire's place - the wire's is no longer imported
+  // dungeon's still the wire's hour - systems/dungeon/dungeonRespawn.js), in the wire's place - the wire's is no longer imported
   // (MAC-L1b: the local binding of the same name shadowed it)
   assert.match(d, /const respawnDue = \(stamp, now\) => dungeonRespawnDue\(stamp, now, _respawnMs\);/);
   assert.match(d, /import \{ worldMinutes, skyMinutes, ownMinutes, setOwnMinutes, advanceOwnMinutes, sharedClockOn \} from '\.\.\/systems\/worldTick\.js';/);   // LIVED1: the dungeon's clock view is the character's own

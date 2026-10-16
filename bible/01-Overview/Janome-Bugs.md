@@ -29,7 +29,7 @@ close arm, THE HOOKS ARE READ BEFORE ANYTHING CLOSES, applied to the one
 arm that broke it: the hook is captured first, asked for as a function,
 and the close runs before it.
 
-## 8 - the empty bank table (`systems/save.js`)
+## 8 - the empty bank table (`systems/save/save.js`)
 
 A save from before the banking slice restored an EMPTY account table.
 An empty array is truthy, so the host's `??= createBankAccounts()` never
@@ -38,7 +38,7 @@ law. No accounts saved IS the full table, as a new game mints it; the
 house registry beside it alike. The classic law - a region past the
 table refuses - is untouched.
 
-## 3 - COST:NaN (`systems/itemTemplates.js`, `systems/tradeModes.js`)
+## 3 - COST:NaN (`systems/item/itemTemplates.js`, `systems/tradeModes.js`)
 
 An item saved before MAC-N1 set every minter has no `value`, or a NaN
 one, and the trade window read `item.value` raw. One value read for

@@ -15,7 +15,7 @@
 // simply had nobody to open them.
 //
 // The one underneath: DaggerfallRestWindow.CanRest (:542-600) was
-// unported ENTIRELY. systems/restSession.js' own header had said so
+// unported ENTIRELY. systems/rest/restSession.js' own header had said so
 // since U7 - "Building trespass/rent rules pend towns" - which is
 // four audits of a line that reads like a footnote and is actually
 // the whole town half of resting: the camping refusal, the Vagrancy
@@ -29,7 +29,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   canRest, remainingHoursRented, REST_TEXT, HAVE_NOT_RENTED_ROOM, BUILDING_TAVERN,
-} from '../src/systems/restSession.js';
+} from '../src/systems/rest/restSession.js';
 import { isPlayerInTown, TOWN_LOCATION_TYPES } from '../src/systems/nearbyObjects.js';
 import { plainLines } from '../src/scenes/shared.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';

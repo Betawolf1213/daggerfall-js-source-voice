@@ -128,7 +128,7 @@ Only L3 and L4 may bloom. Nothing on L1 or L2 exceeds 0.5.
   - Ordered dither between ramp steps; wear scratches.
   - A final `quantize()` that forces every texel into the palette.
   - Emission derived from ramp entries flagged as glowing.
-  - Density: about 32 texels a metre on floors and big surfaces (64 px per 2 m), and 64-128 px atlases for models. Painted at 2x under Vanilla Enhanced (`systems/vanillaEnhanced.js` `veWorn`), so the Hour matches the Hollow the player just left.
+  - Density: about 32 texels a metre on floors and big surfaces (64 px per 2 m), and 64-128 px atlases for models. Painted at 2x under Vanilla Enhanced (`systems/vanillaEnhanced/vanillaEnhanced.js` `veWorn`), so the Hour matches the Hollow the player just left.
   - Sampling is NEAREST. **The renderer caps `TEXTURE_MAX_LEVEL` at 0 outside Retro Mode, so there are no mips.** Contrast at the scale of one texel stays low, and the read lives in features 4-8 texels wide, or the floors shimmer.
 - **Shader surfaces** (the sky map, the membranes, the veil, floor light, ghosts, halos) go through a new `SD_PIXEL_GLSL` beside `BAYER_GLSL` in `render/orderedDither.js`:
   - Bayer offset, then posterize luminance to N steps (10 on the lane, 8 on classic).
@@ -427,13 +427,13 @@ One cloud sheet; skyline without windows.
 - **`ui/gateVeil.js`:**
   - `VEIL_THEMES` gains `hourIn`, `hourBack`, `hourHome` and `hourCast`.
   - `cover(look, { centre })` and `flash(look)`.
-  - `VEIL_HOUR_CUES`: the ratchet x3 on the close, the Rift's bell at shut, the four quarters on the hand (pitches exported from `systems/sdScore.js`'s motif; fallback DAGGER.SND bell 107 pitched to them), and the chime (364) on the open.
+  - `VEIL_HOUR_CUES`: the ratchet x3 on the close, the Rift's bell at shut, the four quarters on the hand (pitches exported from `systems/superDungeon/sdScore.js`'s motif; fallback DAGGER.SND bell 107 pitched to them), and the chime (364) on the open.
 - **Callers.** `scenes/world.js` and `scenes/dungeonContext.js` pass these looks wherever they pass `'brass'` today. The host projects the portal's centre through `proj · view` at `cover()`, clamped, or uses the screen centre if it is behind the eye.
 
 ### Files and new modules
 
 - **New:** `render/sdVeil.js`
-- **Changed:** `src/render/gateVeil.js` (theme dispatch), `src/ui/gateVeil.js` (themes, canvas, cues, centre), `src/systems/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/sdFx.js` (the rewind burst)
+- **Changed:** `src/render/gateVeil.js` (theme dispatch), `src/ui/gateVeil.js` (themes, canvas, cues, centre), `src/systems/superDungeon/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/sdFx.js` (the rewind burst)
 - **Tests:** the veil's new theme pins; the fire's left as they are
 
 ### Cost

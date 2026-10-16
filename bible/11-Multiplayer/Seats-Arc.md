@@ -62,7 +62,7 @@ so balance is an edit to one file, pinned by its own tests, never a hunt.
    - every scheduled moment is **a pure function of the clock**, as the gate's is (`src/net/gateLaw.js`);
    - every seat cost and payment is in **Marks**, the server's currency (PROF0 10.5) - never purse gold.
 4. **DERIVED OVER ENUMERATED** (`server-account/src/titles.js`). Which locations are seats is read off the game's
-   own data as the hubs are (`src/systems/regionHubs.js`); titles from a seat are derived from who holds it; **the
+   own data as the hubs are (`src/systems/region/regionHubs.js`); titles from a seat are derived from who holds it; **the
    week settles itself when first read after its boundary**, never on a cron (AUDIT-ACC F9, restated in
    `titles.js`: "a cron is a thing that can stop running while everything looks fine").
 5. **NOTHING OF ARENA2 IS COMMITTED** ("a render of game data is game data"). Heraldry and devices are the port's own
@@ -75,7 +75,7 @@ so balance is an edit to one file, pinned by its own tests, never a hunt.
 
 | Foundation | Where | What the arc uses |
 |---|---|---|
-| Region hubs, capitals | `src/systems/regionHubs.js` (HUB1), built at boot in `scenes/world.js` over MAPS.BSA's own rows | The boot pass over every location; `HUB_CAPITALS` = Daggerfall, Wayrest, Sentinel; base rows only (a world-data mod's rows never count) |
+| Region hubs, capitals | `src/systems/region/regionHubs.js` (HUB1), built at boot in `scenes/world.js` over MAPS.BSA's own rows | The boot pass over every location; `HUB_CAPITALS` = Daggerfall, Wayrest, Sentinel; base rows only (a world-data mod's rows never count) |
 | Building records | `readBuildingData` (`src/formats/blocksFile.js`), `loc.exterior.buildings[]` | `buildingType` 16 is a Palace (`src/world/buildingNames.js`) - readable for every location without loading a block |
 | Castles | `castleBlockAt` / `insideDungeonCastle` (`scenes/dungeonContext.js`) | Castle Daggerfall, Wayrest and Sentinel are RDB dungeon rooms (`dungeon:m<id>`) |
 | Town furniture | `src/world/rmbLayout.js`: `BULLETIN_BOARD_MODEL_ID`, the city gate models | Banner anchors (3.4) and the Notice Board (PROF0 10.1) |
@@ -104,7 +104,7 @@ table; the Marks currency (PROF0).
   dungeon beside it; the city is fought over, the castle is the holder's hall.
 - **Palace seats** - DECIDED (Mac): **every location with a Palace**, hub or not.
 - **No palace, no seat** - DECIDED (Mac). A hub without a palace is still a hub (HUB1's ring), not a seat.
-- **The derivation** - DECIDED, src/systems/townSeats.js, run in the same boot pass as
+- **The derivation** - DECIDED, src/systems/town/townSeats.js, run in the same boot pass as
   `pickRegionHubs`, over the same rows:
 
 ```
@@ -122,7 +122,7 @@ seat = { key: unsigned mapId, name: l.name, region: r, kingdom: KINGDOM_OF[r], t
   economy is built so the count does not break it: every cost is per seat, and the influence a guild can earn is
   capped per account, not per seat, so twenty seats or two hundred leave the balance where it is.
 
-BUILT (SEAT1a, 2026-09-30; `06-Systems/Online-Arc.md` SEAT1a): src/systems/townSeats.js `deriveTownSeats`, run in the
+BUILT (SEAT1a, 2026-09-30; `06-Systems/Online-Arc.md` SEAT1a): src/systems/town/townSeats.js `deriveTownSeats`, run in the
 boot pass over the rows `pickRegionHubs` reads; tools/seatCount.mjs is SEAT-COUNT (it tallies each seat's boards as
 BOARD-COUNT does).
 
@@ -213,7 +213,7 @@ DECIDED (Mac, the Holdings plan: "the holder's banners and colours in the city")
   1. one beside each city gate model (the gate's two posts, the banner on the town side);
   2. two flanking the palace's door (the building record's position and facing);
   3. one pennant above each Notice Board - a town's rumour boards, every board BOUNTY1 did not take for its bounty
-     board (PROF0 10.1, `systems/bountyBoard.js` questBoardIndices; AUDIT 28: this said "each bulletin board";
+     board (PROF0 10.1, `systems/bounty/bountyBoard.js` questBoardIndices; AUDIT 28: this said "each bulletin board";
      ONE-BOARD made it one a town, reverted - Professions-Arc 10.11);
   4. crown seats: two more at the castle's entrance in the city.
 - **The banner**: the port's own cloth quad, 1 wide by 3 tall (in DFU's scale, a man's height and a half), its
@@ -249,7 +249,7 @@ A region may hold several seats, so a guild's work in a region needs a target.
 | Source | Trust | Influence | Detail |
 |---|---|---|---|
 | **The Watch** | Relay-witnessed socket; the position is the client's own claim, so it is bounded | 1 per 2 minutes, capped **60 an account a day** | A registered member's socket in the seat's cell room whose pose lies in the seat's map pixel (FACT: a pose is an absolute world position inside `POSE_BOUND`; the relay maps it to its map pixel as `cellRoomOfWire` already does - x / `PIXEL_UNITS`, and 499 - z / `PIXEL_UNITS`, the map's y running the other way - with no game data; the registry carries the seat's pixel) and has moved in the last 5 minutes (a pose carries no rest state, and a resting player does not move). A client can lie about where it stands; the daily cap is what bounds the lie (420 a week, a fifth of an account's cap) |
-| **Gate kills** | Relay-signed receipt; its region witnessed | **300** a receipt | An `r1.` receipt claimed with the region the fighter's client derived for that day. FACT, the rhythm: a gate rises every game day (`GATE_EVERY_DAYS` 1), which is every **2 real hours** - twelve a real day, drawn from a shuffle bag of some forty regions - so a region sees a gate about **twice a week**. FACT: the gate's region is NOT a pure function of the day alone - `pickGateRegion(day, regions)` (`src/net/gateLaw.js`) draws from `gateRegions(scan)`, a client-side scan of MAPS.BSA (`src/systems/gateSite.js`) - so the service takes the day's region from the claims themselves: the region at least **3** of that day's receipts agree on. A claim naming another region earns nothing. **Attribution**: a receipt counts for the week holding its game day, only if claimed before that week's Turning (receipts live 7 days, so none is banked for a later week), and for its account's war-guild (a receipt names an account, not a character); at most **900 an account a week** (three receipts) |
+| **Gate kills** | Relay-signed receipt; its region witnessed | **300** a receipt | An `r1.` receipt claimed with the region the fighter's client derived for that day. FACT, the rhythm: a gate rises every game day (`GATE_EVERY_DAYS` 1), which is every **2 real hours** - twelve a real day, drawn from a shuffle bag of some forty regions - so a region sees a gate about **twice a week**. FACT: the gate's region is NOT a pure function of the day alone - `pickGateRegion(day, regions)` (`src/net/gateLaw.js`) draws from `gateRegions(scan)`, a client-side scan of MAPS.BSA (`src/systems/gate/gateSite.js`) - so the service takes the day's region from the claims themselves: the region at least **3** of that day's receipts agree on. A claim naming another region earns nothing. **Attribution**: a receipt counts for the week holding its game day, only if claimed before that week's Turning (receipts live 7 days, so none is banked for a later week), and for its account's war-guild (a receipt names an account, not a character); at most **900 an account a week** (three receipts) |
 | **Writs** | Service-witnessed | **1 per Mark of the materials' value** | Materials delivered from the Stores to the seat's stockpile at its board (PROF0 section 11): to the holder as defence, to a pledged challenger as its Siege Camp. The **value** is the delivered materials' Marks value by PROF0 4.8's table - never the writ's pay, so a guild paying itself mints no influence. **Only** a delivery by a character 7 days in the posting guild, whose account is bound to it for the week, counts, and only its **own** units (PROF0 7: harvested or crafted by that character, Essence from a provenance item it made, a Siege Honour's Spoils, or its own deposit withdrawn from the guild Stores); **bought** units count at Tribute's rate inside Tribute's cap; a counter's goods never count. Anyone else's delivery earns the pay alone and binds nobody's war |
 | **Homes** | Bounded, not witnessed | **25 a home a day**, at most 5 homes a guild a seat | Members' homes in the seat's town (`homes.map_id`). FACT: `homeLaw.js` checks only the ranges of the map id and building key, and a home is bought with save gold, so a modified client could register homes that do not exist; the cap (875 a week) is the defence, and a home counts only for a 7-day member bound to the guild |
 | **Renown in the region** | Client-reported, bounded | **1 per 20 Renown XP**, capped **400 an account a week** | The Renown report grows `region` (0-61); the service keeps a per-account, per-region, per-week sum beside the tracks |
@@ -276,7 +276,7 @@ A region may hold several seats, so a guild's work in a region needs a target.
 ### 4.3 The kingdoms, the Marches and the Free Lands
 
 DECIDED (Mac: "You"). FACT, why drawn and not derived: nothing in the tree maps a region to a kingdom, and DFU's
-`borderRegions` (`BORDER_REGIONS`, `src/systems/factionRelations.js`, transcribed 1:1) is not laid out in region
+`borderRegions` (`BORDER_REGIONS`, `src/systems/faction/factionRelations.js`, transcribed 1:1) is not laid out in region
 order - its row commented "Daggerfall" is its eighth and names Betony, Tulune, Glenpoint, Shalgora and Ilessan Hills
 (Daggerfall's real neighbourhood), while its eighteenth row, Daggerfall's index in `REGION_NAMES`, names Alcaire's.
 So the map is drawn from the Iliac Bay itself - High Rock north of the bay, Hammerfell south - using the labelled
@@ -1145,7 +1145,7 @@ Season with titles at the end; a Chronicle that remembers; and the Professions e
   Throne, the Gatehouse, the Ram.
 - **Law modules, pure, shared by client, relay and service**: src/net/townSeatLaw.js (Appendix B, the week, the
   phases, the windows, the Chronicle's templates, `KINGDOM_OF`), src/net/siegeRef.js (PVP-REF) (6.1's buckets),
-  src/systems/townSeats.js (the client's derivation); SEAT2b: src/net/fortLaw.js (7.5's works, the drops, the Gatehouse,
+  src/systems/town/townSeats.js (the client's derivation); SEAT2b: src/net/fortLaw.js (7.5's works, the drops, the Gatehouse,
   the Ram, the Siege Camp, the revolt).
 - **Versions**: each relay change a new `RELAY_VERSION` with its LAW row; every token vocabulary change relay-first.
 

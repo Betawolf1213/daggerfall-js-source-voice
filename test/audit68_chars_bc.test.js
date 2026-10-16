@@ -22,7 +22,7 @@ import {
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { getTemplate } from '../src/characters/paperdoll.js';
-import { registerTemplateOverrides, templateByIndex } from '../src/systems/itemTemplates.js';
+import { registerTemplateOverrides, templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const RAMP = [[0, 0, 0], [60, 60, 60], [120, 120, 120], [180, 180, 180], [255, 255, 255]];
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];

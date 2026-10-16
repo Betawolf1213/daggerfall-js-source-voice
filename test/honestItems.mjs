@@ -1,6 +1,6 @@
 // INT1 (the INTEGRITY arc - bible/06-Systems/Integrity-Arc.md): THE HONEST PRODUCERS, SWEPT. Not a .test.js on
 // purpose (the manifest counts suites, and this is a fixture): every item home this tree has, called the way the game
-// calls it, on seeded rolls - so the item law (src/systems/itemLaw.js itemFindings) can be pinned against what an
+// calls it, on seeded rolls - so the item law (src/systems/item/itemLaw.js itemFindings) can be pinned against what an
 // honest client really mints, never against hand-written literals.
 //
 //   honestItems({ seeds }) -> [{ source, item }]   each item a deep copy taken the moment its producer handed it over
@@ -30,15 +30,15 @@ async function load(path) {
   try { return await import(new URL(path, import.meta.url)); } catch (e) { IMPORT_FAILS.push({ source: `import ${path}`, error: errText(e) }); return null; }
 }
 
-const LOOT = await load('../src/systems/loot.js');
-const LR = await load('../src/systems/lootRarity.js');
+const LOOT = await load('../src/systems/loot/loot.js');
+const LR = await load('../src/systems/loot/lootRarity.js');
 const TECH_ROSTER = await load('../src/combat/techniqueRoster.js');   // TECH1: a piece's technique family
 const PREFS = await load('../src/systems/uiPrefs.js');
-const SIGIL = await load('../src/systems/sigil.js');
+const SIGIL = await load('../src/systems/sigil/sigil.js');
 const MODS = await load('../src/systems/modSettings.js');
 const INV = await load('../src/systems/inventory.js');
 const EQUIP = await load('../src/systems/equip.js');
-const TPL = await load('../src/systems/itemTemplates.js');
+const TPL = await load('../src/systems/item/itemTemplates.js');
 const ENEMY_EQ = await load('../src/combat/enemyEquipment.js');
 const BASICS = await load('../src/characters/enemyBasics.js');
 const ENEMY = await load('../src/characters/enemyEntity.js');
@@ -46,25 +46,25 @@ const HOST_COMBAT = await load('../src/scenes/hostCombat.js');
 const CORPSE = await load('../src/scenes/corpseMarker.js');
 const CHAMP = await load('../src/systems/champions.js');
 const ELITE = await load('../src/systems/eliteFoes.js');
-const GATE = await load('../src/systems/gateSpoils.js');
+const GATE = await load('../src/systems/gate/gateSpoils.js');
 const SPOILS_POOL = await load('../src/scenes/spoilsPool.js');
 const RAID = await load('../src/systems/raidSpoils.js');
-const SERPENT = await load('../src/systems/serpentSpoils.js');
-const SD = await load('../src/systems/sdSpoils.js');
-const BROKER = await load('../src/systems/sigilBroker.js');
+const SERPENT = await load('../src/systems/serpent/serpentSpoils.js');
+const SD = await load('../src/systems/superDungeon/sdSpoils.js');
+const BROKER = await load('../src/systems/sigil/sigilBroker.js');
 const AETH = await load('../src/systems/aetheric.js');
 const GILD = await load('../src/systems/gilded.js');
 const REFORGE = await load('../src/systems/reforge.js');
-const CODEX = await load('../src/systems/lootCodex.js');
+const CODEX = await load('../src/systems/loot/lootCodex.js');
 const MAGIC_DEF = await load('../src/formats/magicDef.js');
 const { DFU_MAGIC_ITEMS } = await load('./dfuMagicItems.mjs');
 const SHOP = await load('../src/systems/shopStock.js');
 const CONTAINER = await load('../src/systems/containerLoot.js');
 const SCENE_CACHE = await load('../src/systems/sceneCache.js');
 const START = await load('../src/systems/startingGear.js');
-const RRI_KITS = await load('../src/systems/rriKits.js');
-const RRI_INSTALL = await load('../src/systems/rriInstall.js');
-const ILIAC = await load('../src/systems/iliacItems.js');
+const RRI_KITS = await load('../src/systems/roleplayRealismItems/rriKits.js');
+const RRI_INSTALL = await load('../src/systems/roleplayRealismItems/rriInstall.js');
+const ILIAC = await load('../src/systems/iliac/iliacItems.js');
 const CARDS = await load('../src/net/iliacCards.js');
 const RECIPES = await load('../src/net/recipeLaw.js');
 const SMITH = await load('../src/systems/smithItems.js');
@@ -79,13 +79,13 @@ const ENCH = await load('../src/systems/enchanting.js');
 const CAT = await load('../src/systems/enchantmentCatalogue.js');
 const CREATE = await load('../src/systems/createItem.js');
 const CREATE_ROWS = await load('../src/systems/createItemRows.js');
-const REST = await load('../src/systems/restItems.js');
-const REST_ROWS = await load('../src/systems/restItemRows.js');
+const REST = await load('../src/systems/rest/restItems.js');
+const REST_ROWS = await load('../src/systems/rest/restItemRows.js');
 const SURV_ITEMS = await load('../src/systems/survival/items.js');
 const SURV_LOOT = await load('../src/systems/survival/loot.js');
 const SURV_SWITCH = await load('../src/systems/survival/switch.js');
-const FORAGE = await load('../src/systems/foragingInstall.js');
-const FORAGE_LAW = await load('../src/systems/foragingLaw.js');
+const FORAGE = await load('../src/systems/foraging/foragingInstall.js');
+const FORAGE_LAW = await load('../src/systems/foraging/foragingLaw.js');
 const THUNDER = await load('../src/systems/thunderlock.js');
 const AYLEID = await load('../src/systems/ayleidStones.js');
 const WALLET = await load('../src/systems/walletItem.js');
@@ -95,25 +95,25 @@ const CSA = await load('../src/systems/comeSailAway/comeSailAwayItems.js');
 const NAVAL = await load('../src/systems/naval/navalStores.js');
 const GOODS = await load('../src/systems/naval/tradeGoods.js');   // AUDIT CAPTAIN'S SEA B12: the exchange's goods
 const CHARTS = await load('../src/systems/naval/treasureCharts.js');   // AUDIT CAPTAIN'S SEA B12: the treasure chart
-const FISH = await load('../src/systems/deepWatersFishItems.js');
-const FISH_ROWS = await load('../src/systems/deepWatersFishRows.js');
+const FISH = await load('../src/systems/deepWater/deepWatersFishItems.js');
+const FISH_ROWS = await load('../src/systems/deepWater/deepWatersFishRows.js');
 const BOOKS = await load('../src/systems/books.js');
 const HEALING = await load('../src/systems/healingSupply.js');
 const UNLEVELED = await load('../src/systems/unleveledLoot.js');
 const SEARCH = await load('../src/systems/searchables.js');
-const BOUNTY = await load('../src/systems/bountyReward.js');
+const BOUNTY = await load('../src/systems/bounty/bountyReward.js');
 const RITE = await load('../src/systems/riteChest.js');
-const TROPHY = await load('../src/systems/revenantTrophy.js');
+const TROPHY = await load('../src/systems/revenant/revenantTrophy.js');
 const BIOG = await load('../src/systems/biography.js');
 const REPAIR = await load('../src/systems/repairService.js');
 const TRADE = await load('../src/systems/tradeModes.js');
-const LOCK = await load('../src/systems/itemLock.js');
+const LOCK = await load('../src/systems/item/itemLock.js');
 const DFR = await load('../src/formats/dfRandom.js');
-const LOOT_POWERS = await load('../src/systems/lootPowers.js');
-const ITEM_IDS = await load('../src/systems/itemIds.js');
-const TRANSFER = await load('../src/systems/itemTransfer.js');
-const WILD_DEATH = await load('../src/systems/wildDeath.js');
-const TALK = await load('../src/systems/talkTopics.js');
+const LOOT_POWERS = await load('../src/systems/loot/lootPowers.js');
+const ITEM_IDS = await load('../src/systems/item/itemIds.js');
+const TRANSFER = await load('../src/systems/item/itemTransfer.js');
+const WILD_DEATH = await load('../src/systems/wild/wildDeath.js');
+const TALK = await load('../src/systems/talk/talkTopics.js');
 const KNIGHT = await load('../src/systems/knightlyGifts.js');
 const BAG_LAW = await load('../src/net/bagLaw.js');
 const OCEAN = await load('../src/world/oceanHoles.js');
@@ -187,7 +187,7 @@ function withMods(on, fn) {
   try { return fn(); } finally { for (const [vendor, v] of was) MODS.setModSetting(vendor, 'Enabled', v); }
 }
 
-/** The page an online session plays on (systems/onlineLane.js isOnlinePage reads `?online`), for `fn`, put back. */
+/** The page an online session plays on (systems/online/onlineLane.js isOnlinePage reads `?online`), for `fn`, put back. */
 function withOnlinePage(fn) {
   const had = Object.hasOwn(globalThis, 'location');
   const was = globalThis.location;
@@ -979,9 +979,9 @@ function runItemMaker(run, seedsOf, S, crafted, minted) {
 const FOOD = await load('../src/systems/survival/food.js');
 const BOAT = await load('../src/systems/comeSailAway/comeSailAwayBoat.js');
 const BOOKS_DATA = await load('../src/systems/booksData.js');
-const REVENANT = await load('../src/systems/revenant.js');
-const RR_QUEST = await load('../src/systems/rrQuestLine.js');
-const RRI_ITEMS = await load('../src/systems/rriItems.js');
+const REVENANT = await load('../src/systems/revenant/revenant.js');
+const RR_QUEST = await load('../src/systems/roleplayRealism/rrQuestLine.js');
+const RRI_ITEMS = await load('../src/systems/roleplayRealismItems/rriItems.js');
 
 function runHomes(run, seedsOf, S, minted) {
   run('createItem.createTempItem (every row, both genders)', (one) => {

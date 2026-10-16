@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { composeSessionState, restoreSessionState } from '../src/systems/save.js';
+import { composeSessionState, restoreSessionState } from '../src/systems/save/save.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -39,7 +39,7 @@ test('composeSessionState: bridge + trio -> {quest, talk}; absent halves -> null
   // nulls, byte-shape of every pre-B4 save. U41 added a THIRD half:
   // TravelMapSaveData rides the same composer (SaveLoadManager.cs:871)
   // and needs no seam passed in, because the travel map's session
-  // state lives in systems/travelMapState.js.
+  // state lives in systems/travel/travelMapState.js.
   assert.deepEqual(composeSessionState({}), {
     quest: null,
     talk: null,

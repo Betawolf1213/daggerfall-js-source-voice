@@ -24,7 +24,7 @@
 //   - a fast travel, a dungeon, a building, a load: every farm comes down (`destroyAll`, or the mode test in sync).
 //
 // Not a DFU member. Ledger A (BOUNTY-FARM).
-import { bountyHash } from '../systems/bountyBoard.js';
+import { bountyHash } from '../systems/bounty/bountyBoard.js';
 import { trs, multiply } from '../world/mat4.js';
 import { onFloatingFrame } from '../player/collider.js';   // PERF-COL2 (AUDIT): a farm's bucket rides the floating origin
 

@@ -24,10 +24,10 @@ import { setLayoutPins, _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { makeLocationKey, readingLocationKeyOf, setLastLocationKeyTo, getLocationVariant, clearWorldDataVariants } from '../src/systems/worldDataVariants.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { blockToDfuJson, locationToDfuJson } from '../src/formats/worldDataJson.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { WORLD_DATA_PRIORITY } from '../src/scenes/modWorldData.js';
 import { layoutRmbBlock, WINDMILL_MODEL_ID } from '../src/world/rmbLayout.js';
-import { rrMasterArmBuildingKey, rrMasterArmBuildingKeyIn, RR_ARMORER_BLOCK, RR_ARMORER_RECORD } from '../src/systems/rrQuestLine.js';
+import { rrMasterArmBuildingKey, rrMasterArmBuildingKeyIn, RR_ARMORER_BLOCK, RR_ARMORER_RECORD } from '../src/systems/roleplayRealism/rrQuestLine.js';
 import { tinyRmb, fakeBlocks } from './wd3Fakes.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -277,11 +277,11 @@ test('WD3 Roleplay & Realism\'s Master Armorer: the shop\'s key read off the tow
     assert.equal(rrMasterArmBuildingKeyIn({ regionIndex: r }), key, 'no grid to read');
   }
   assert.equal(rrMasterArmBuildingKeyIn({ regionIndex: 17, exterior: { exteriorData: { width: 1, blockNames: [RR_ARMORER_BLOCK] } } }), rrMasterArmBuildingKey(17), 'a region with no master armorer: none');
-  assert.match(src('src/systems/rrQuestLine.js'), /return \{ buildingKey: rrMasterArmBuildingKeyIn\(location\), name: RR_TEXT\.dharjenCustomArmor \};/);
+  assert.match(src('src/systems/roleplayRealism/rrQuestLine.js'), /return \{ buildingKey: rrMasterArmBuildingKeyIn\(location\), name: RR_TEXT\.dharjenCustomArmor \};/);
 });
 
 test('WD3 the decor catalogue stays what DAGGERFALL furnishes - its blocks read past the door, so 1,400 redecorated interiors never join, renumber or leave it with a switch', () => {
-  assert.match(src('src/systems/decorScan.js'), /const b = blocks\.readClassicBlock \? blocks\.readClassicBlock\(next\) : blocks\.getBlock\(next\);/);
+  assert.match(src('src/systems/decor/decorScan.js'), /const b = blocks\.readClassicBlock \? blocks\.readClassicBlock\(next\) : blocks\.getBlock\(next\);/);
 });
 
 test('WD3 the loader: each pack a URL the build emits (never a chunk), fetched only when its mod is loaded for the game - the switch read once and latched, a town never moving under the player; a pack a save\'s pins let in loaded switched off; the stand-ins installed when a pack opens; the rebuild spot-checked in the background', () => {
@@ -303,7 +303,7 @@ test('WD3 the loader: each pack a URL the build emits (never a chunk), fetched o
 });
 
 test('WD3 a guild hall entry naming a guild this game carries none of (AUDIT WD3 G4) - faction 1000, the Archaeologists Guild\'s, on four of Beautiful Villages\' villages - draws for no hall: each hall takes its own guild\'s entry (Tulaedax: the Fighters\' hall 41, the Mages\' 40, where DFU without that mod handed the Fighters\' hall 1000 and the Mages\' 41)', async () => {
-  const { mergeNamedBuildings, UNCARRIED_GUILD_FACTIONS } = await import('../src/systems/talkTopics.js');
+  const { mergeNamedBuildings, UNCARRIED_GUILD_FACTIONS } = await import('../src/systems/talk/talkTopics.js');
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
   assert.deepEqual([...UNCARRIED_GUILD_FACTIONS], [1000]);
   const G = BUILDING_TYPES.GuildHall;

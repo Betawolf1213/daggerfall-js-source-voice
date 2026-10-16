@@ -23,8 +23,8 @@ import {
 import { mintProductRecord, readProductRecord } from '../src/net/productRecord.js';
 import { mintPiece, asMinted, temperItem, reforgeItem, essenceReforgeRefusal } from '../src/systems/smithItems.js';
 import { weaponOfMaterial, armorOfMaterial } from '../src/combat/enemyEquipment.js';
-import { applyRarity, reforgeAffix, reforgeableLines } from '../src/systems/lootRarity.js';
-import { seededRng } from '../src/systems/wind.js';
+import { applyRarity, reforgeAffix, reforgeableLines } from '../src/systems/loot/lootRarity.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { unitWeightInKg } from '../src/systems/inventory.js';
 
 const { subtle } = webcrypto;

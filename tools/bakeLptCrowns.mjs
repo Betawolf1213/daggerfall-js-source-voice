@@ -6,7 +6,7 @@
 // overlap"). A wilderness flat keeps its whole footprint off the roads (world/roadVerge.js), and where Low Poly Trees
 // stands a tree for it the footprint is that tree's crown - 5 to 11 metres about the trunk in the temperate woods,
 // against a classic picture's few. Where the flats stand must not hang on the mod's switch (it is the player's own
-// online: it draws the trees, it never moves them - systems/onlineLane.js), so the crowns are read here, off the
+// online: it draws the trees, it never moves them - systems/online/onlineLane.js), so the crowns are read here, off the
 // vendored files, into a table every client has whether or not it draws the trees.
 //
 // A crown is the farthest any vertex of the prototype's mesh reaches from its root across the ground (x and z, under

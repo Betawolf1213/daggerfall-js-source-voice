@@ -13,7 +13,7 @@ import { isStartDungeon, isStartCell } from '../src/systems/startDungeon.js';
 import * as startDungeon from '../src/systems/startDungeon.js';
 import { builtDungeonSize } from '../src/world/smallerDungeons.js';
 import { mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { roomKeyFor } from '../src/net/online.js';
 import { isWorldRoom } from '../src/net/wire.js';
 import * as chat from '../src/net/chat.js';

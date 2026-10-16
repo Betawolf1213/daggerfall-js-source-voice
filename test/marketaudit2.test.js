@@ -19,16 +19,16 @@ import { walletReserve } from '../src/net/realmGoldLaw.js';
 import { payUndoable } from '../src/systems/court.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 import { rentHomeRoom } from '../src/systems/homeRent.js';
-import { buyOnlineHome } from '../src/systems/onlineHomes.js';
+import { buyOnlineHome } from '../src/systems/online/onlineHomes.js';
 import { call, accountRefusalText } from '../src/net/accountClient.js';
 import { createMarketBook, MARKET_KEPT_TEXT } from '../src/net/marketBook.js';
 import { createMarketTab } from '../src/ui/marketTab.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { VENDOR_STOCK_MAX, VENDOR_REFUSAL_WORDS } from '../src/net/vendorLaw.js';
 import { MARKET_LISTINGS_MAX, marketCatalogue } from '../src/net/marketLaw.js';
-import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot.js';
+import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 let _now = T0;
@@ -98,7 +98,7 @@ test('MARKET-AUDIT: every realm act that pays out of the purse reserves through 
   const decor = src('src/scenes/decorTool.js');
   assert.equal((decor.match(/walletReserve\(wallet, /g) ?? []).length, 2, 'a placement and a change');
   assert.match(src('src/net/marketBook.js'), /reserve: walletReserve\(w, cost\)\.reserve/);
-  for (const f of ['src/net/guildBook.js', 'src/scenes/decorTool.js', 'src/systems/homeRent.js', 'src/systems/onlineHomes.js', 'src/net/marketBook.js']) {
+  for (const f of ['src/net/guildBook.js', 'src/scenes/decorTool.js', 'src/systems/homeRent.js', 'src/systems/online/onlineHomes.js', 'src/net/marketBook.js']) {
     assert.doesNotMatch(src(f), /reserve: (?:pay > 0 \? )?\(\) => \{ [^}]*\bpay\([^)]*\); return \(\) => [^}]*\b(?:credit|refund)\??\.?\(/, `${f}: a reserve that credits the whole`);
   }
   // the hosts' wallets answer the undo

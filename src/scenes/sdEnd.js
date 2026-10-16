@@ -12,7 +12,7 @@
 //    the floor (render/sdRiftPass.js, render/sdHalo.js - the host draws them from `look`, `halos` and `lights`). Its
 //    meshes stand among the dungeon's dynamic draws (`stand({ dynamicDraws })`, as the Remnant's do), each that turns
 //    `noShadow` - nothing that moves rebuilds a shadow's cube (LA-SHADOW3's everyLightCasts). Its sound is a bell heard
-//    under water (systems/sdRiftSound.js), looped where it stands.
+//    under water (systems/superDungeon/sdRiftSound.js), looped where it stands.
 //  - THE RETURN: SD-LOOK - a pale lancet arch banded in silver beside it, its keystone's clock ticking FORWARD (here, time
 //    runs on), its window looking home (the Bay's sky at the world's hour), standing until the boss falls.
 //  - THE STEP: `frame(feet)` hands the host the one the feet stepped INTO this frame - outside, then inside, the Portal
@@ -29,7 +29,7 @@
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
 import { SD_RETURN_SIZE, SD_RIFT_REACH_M, SD_RETURN_REACH_M, SD_END_TEXT, inSdPortal, SD_RIFT_OPEN_LOOK } from '../world/sdDungeon.js';
-import { startRiftBell, tollRiftBell, RIFT_BELL_SECONDS } from '../systems/sdRiftSound.js';
+import { startRiftBell, tollRiftBell, RIFT_BELL_SECONDS } from '../systems/superDungeon/sdRiftSound.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { buildRiftStatic, buildRiftGear, buildHourRing, buildRiftStuds, irisModel, irisPositions, buildRiftShard, buildReturnModel, buildReturnHand, buildReturnParts, buildReturnPlate, returnSpringAt, SD_RETURN_PARTS, returnDialAt, riftCentreY, SD_RIFT_PARTS, SD_RIFT_STUDS, SD_RETURN_ARCH } from '../world/sdRiftModel.js';
 import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_PLATE_RECORD } from '../world/sdRiftArt.js';

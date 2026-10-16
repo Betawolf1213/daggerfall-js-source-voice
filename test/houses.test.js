@@ -31,8 +31,8 @@ import {
   NO_HOUSE_TEXT_ID, HOUSE_TEXT_ID, ALREADY_GIVEN_HOUSE, armorMaskForRank,
 } from '../src/systems/knightlyGifts.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
-import { locationBuildings } from '../src/systems/talkTopics.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
+import { locationBuildings } from '../src/systems/talk/talkTopics.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { layoutLocation } from '../src/world/locationLayout.js';
@@ -217,7 +217,7 @@ test('H1: the four consumers are wired, and each goes through the law', () => {
   // undefined array - createHouses had no caller at all before H1,
   // while the save has round-tripped entity.houses all along.
   assert.match(modes, /playerEntity\.houses \?\?= createHouses\(/);
-  assert.match(readFileSync(join(SRC, 'systems/save.js'), 'utf8'), /snap\.houses/, 'the save round-trips the registry');
+  assert.match(readFileSync(join(SRC, 'systems/save/save.js'), 'utf8'), /snap\.houses/, 'the save round-trips the registry');
   // and ReceiveHouse is a destination now
   assert.equal(serviceDestination('ReceiveHouse'), 'guildServiceReceiveHouse');
 });

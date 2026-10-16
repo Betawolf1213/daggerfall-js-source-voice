@@ -14,7 +14,7 @@
 // (`seats`, the open wagon's), the cart's tilt on its axle (`hitchPitch`) and where its door is (`door`, the caravan's).
 //
 // THE LIFT. The mod's wagon stands NORMAL_GROUND_OFFSET (1 m) up from where its wheels meet the ground - its trailing
-// pose is "settled a metre over the ground along its normal" (systems/horseFollow.js hitchedPoseStep) and its parked
+// pose is "settled a metre over the ground along its normal" (systems/horse/horseFollow.js hitchedPoseStep) and its parked
 // pose stands its wheels' pivots a radius over the ground (solveTwoWheelPose), and the classic model's origin is that
 // metre over its wheels' feet. So every part is lifted DOWN that metre here, its pictures laid first on the bake's own
 // heights (world/wagonArt.js's liveries are read on them): the wheels meet the ground at y -1 either way.
@@ -35,11 +35,11 @@ import { MeshBench, prism, box, planarUv, sub, add, dot } from './galleonMesh.js
 import { benchPart } from './galleonModel.js';
 import { pointsOf, boxOfPoints } from './shipKit.js';
 import { quatAngleAxis, quatRotate, quatMultiply } from './quat.js';
-import { NORMAL_GROUND_OFFSET } from '../systems/horseCartLaw.js';
-import { CARGO_DEFINITIONS } from '../systems/wagon41214.js';
-import { WAGON_KINDS, activeWagonKind, activeWagonItem } from '../systems/wagonKinds.js';
-import { wagonLookOf } from '../systems/wagonLooks.js';   // WAGONS2: the driven wagon's paint
-import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the ridden horse's look
+import { NORMAL_GROUND_OFFSET } from '../systems/horse/horseCartLaw.js';
+import { CARGO_DEFINITIONS } from '../systems/wagon/wagon41214.js';
+import { WAGON_KINDS, activeWagonKind, activeWagonItem } from '../systems/wagon/wagonKinds.js';
+import { wagonLookOf } from '../systems/wagon/wagonLooks.js';   // WAGONS2: the driven wagon's paint
+import { riddenHorseLook } from '../systems/horse/horseCoats.js';   // COATS1: the ridden horse's look
 import { mwViewHorseRig } from '../player/mwView.js';   // COATS3D: the 3D horse rig, on the Morrowind lane
 import { SEATED_HIP_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the seated hips' height over the feet, the measured biped's
 
@@ -352,7 +352,7 @@ function fromLevel(kind, p) {
   return [r[0], r[1] + pivotY, r[2]];
 }
 
-/** The cargo a wagon's fullness shows: WagonCargoVisual's twelve classic pieces (systems/wagon41214.js
+/** The cargo a wagon's fullness shows: WagonCargoVisual's twelve classic pieces (systems/wagon/wagon41214.js
  *  CARGO_DEFINITIONS - their models, tiers, turns and sizes) moved into this wagon's bed - the classic bed's middle
  *  (x 0, z -0.79, its floor y -0.02) onto this one's, the open wagon's spread over the front of its bed (its back is
  *  the passengers'), none in the caravan (its load is inside it). In the wagon's lifted frame. */
@@ -407,7 +407,7 @@ export const rigGrowOf = (g, kind, hitch = null) => (g > 1 ? Math.max(1, g * Mat
 /**
  * The parts the cart's presentation draws, from a wagon's geometry (`wagonGeometry`): `make(geometry, name)` turns
  * a geometry into whatever the caller draws (the pool's `rendererModelOf`; a test's identity). The classic contract
- * (systems/wagon41214.js buildWagonParts: body, the shafts, the wheels and their pivots, the radius, the bounds) with
+ * (systems/wagon/wagon41214.js buildWagonParts: body, the shafts, the wheels and their pivots, the radius, the bounds) with
  * the wagon's own beside it.
  */
 export function buildBakedWagonParts(geo, make = rendererModelOf) {
@@ -465,7 +465,7 @@ export function pitchedPoint(parts, p, pitch) {
 
 /** THE HOSTS' WORDS (THE ONE CONSTRUCTION SEAM - scenes/world.js and scenes/exterior.js build the cart's pool, and
  *  each hands it these, so neither can forget one): `wagonKind` the kind the player drives off what they carry
- *  (systems/wagonKinds.js activeWagonKind - the Small Cart when they own none: the classic transport's), `bakedWagon`
+ *  (systems/wagon/wagonKinds.js activeWagonKind - the Small Cart when they own none: the classic transport's), `bakedWagon`
  *  Mac's wagon of a kind, fetched once (a failed fetch is the pool's to fall back from). */
 export function wagonPoolDeps(items, fetchFn = (u) => globalThis.fetch(u)) {
   const loads = new Map();

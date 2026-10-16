@@ -13,11 +13,11 @@ globalThis.localStorage = {
   getItem: (k) => (_store.has(k) ? _store.get(k) : null), setItem: (k, v) => { _store.set(k, String(v)); },
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
-const N = await import('../src/systems/revenant.js');
-const P = await import('../src/systems/revenantPersonality.js');
-const T = await import('../src/systems/revenantTrophy.js');
-const F = await import('../src/systems/revenantFate.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const P = await import('../src/systems/revenant/revenantPersonality.js');
+const T = await import('../src/systems/revenant/revenantTrophy.js');
+const F = await import('../src/systems/revenant/revenantFate.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const H = await import('../src/systems/harmMark.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
@@ -83,9 +83,9 @@ test('AUDIT A1/A2: the harm mark - a beaten one kneeling clears its own mark, a 
   H.markPlayerHarm(foe);
   restoreModSaveRecords(modSaveRecords());
   assert.equal(H.playerHarmMark(), null, 'a load: the last game\'s harm is nobody\'s');
-  const src = read('src/systems/revenant.js');
+  const src = read('src/systems/revenant/revenant.js');
   assert.match(src, /if \(rec && \(rec\.yielded \|\| rec\.executing \|\| rec\.sparing\)\) return;[^\n]*\n\s*clearPlayerHarm\(\);/, 'a kneeling one claims no kill; an answered death clears the mark');
-  assert.match(read('src/systems/revenantFate.js'), /clearPlayerHarm\(f\.entity\);/, 'the yield clears its own');
+  assert.match(read('src/systems/revenant/revenantFate.js'), /clearPlayerHarm\(f\.entity\);/, 'the yield clears its own');
 });
 
 test('AUDIT A3: one standing as the save is made comes back later, never beside a nameless copy - the street\'s save leaves it out, the slot pushes its due past REVENANT_LOST_MINUTES (mutants: the copy saved; due at once)', () => {
@@ -194,7 +194,7 @@ test('AUDIT C4-C6: the rest never reads longer than a rest (an older save\'s clo
   const m2 = party.party[0];
   RC.forgetSwornMember();
   assert.notEqual(party.party[0], m2, 'a load ends every one');
-  assert.match(read('src/systems/revenantFate.js'), /if \(state === 'with'\) holdSworn\(r\.id, SPARING_MS\);/);
+  assert.match(read('src/systems/revenant/revenantFate.js'), /if \(state === 'with'\) holdSworn\(r\.id, SPARING_MS\);/);
 });
 
 test('AUDIT C3/C7: the world keeps the slots and the words true - past the slots the most lately sworn steps away; opposite acts in one pause cancel; a load forgets the words and the members (mutants: a fourth at the side; a dismiss said for one that never left)', () => {

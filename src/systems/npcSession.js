@@ -61,7 +61,7 @@ import { getLocalizedFactionName } from './textManager.js';   // L10N3e: the gre
 import {
   NO_RESPONSE_TEXT_ID, MIN_NEUTRAL_REACTION, MIN_LIKE_REACTION,
   MIN_VERY_LIKE_REACTION, REFUSE_TALK_REACTION,
-} from './talkSession.js';
+} from './talk/talkSession.js';
 
 /** FactionFile.FactionTypes, the four the parent walks stop on. */
 export const FACTION_TYPE = Object.freeze({

@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 
 import { bossStandIn, bossLookOf, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../src/world/gateBoss.js';
 import { applySpell, spellSways } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 import { tryLanguagePacification } from '../src/scenes/hostCombat.js';
 import { enemyGroupOf, NEARBY } from '../src/systems/nearbyObjects.js';
 

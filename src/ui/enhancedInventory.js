@@ -38,7 +38,7 @@
 // per transition, the armour-value table and the enchantment hooks.
 // Taking something off is `unequipSlot`. The pages are PX31's nine
 // (ui/packPages.js; the classic keeps DFU's four). Weight,
-// condition, material and damage strings are systems/itemInfo.js's,
+// condition, material and damage strings are systems/item/itemInfo.js's,
 // every one of them cited to DFU. This module positions nodes and
 // prints rows.
 //
@@ -56,15 +56,15 @@
 // inventory slice's first job.
 // ═══════════════════════════════════════════════════════════════════
 
-import { isRestItem } from '../systems/restItems.js';   // REST6: the seven's card lines
+import { isRestItem } from '../systems/rest/restItems.js';   // REST6: the seven's card lines
 import { getPref, setPref } from '../systems/uiPrefs.js';   // PLUS7: getPref, the hover card's switch; PACK-PHONE: setPref, the phone's Body
 import { USE_PENDING, powersRows, INFO_TEXT_POWERS } from './nativeInventory.js';   // PLUS10: the Info box's powers record
-import { itemInfoRows, questLetterName } from '../systems/itemInfo.js';   // PLUS10: the classic Info popup's own text
-import { magicPowersLines } from '../systems/itemPowers.js';   // PLUS10: %mpw
+import { itemInfoRows, questLetterName } from '../systems/item/itemInfo.js';   // PLUS10: the classic Info popup's own text
+import { magicPowersLines } from '../systems/item/itemPowers.js';   // PLUS10: %mpw
 import { CHAT_MAX } from '../net/wire.js';   // CHAT-POST: a posted item is one chat line
 import { itemIsIdentified } from '../systems/tradeModes.js';   // PLUS10: MagicPowers' identified arm
 import { PACK_PAGES, PAGE_IDS, pageOf, filterByPage } from './packPages.js';   // PX31: the pack's nine pages (the classic keeps DFU's four)
-import { isCardBinder, isIliacCard, binderDecks } from '../systems/iliacItems.js';   // CARDS8: the binder holds the cards
+import { isCardBinder, isIliacCard, binderDecks } from '../systems/iliac/iliacItems.js';   // CARDS8: the binder holds the cards
 import { isWalletItem, walletContents, walletLedger, refreshWalletSilver, letterWorthGold } from '../systems/walletItem.js';   // WALLET1: the wallet's sheet; WALLET-UI: its ledger
 import { useItem, isLightSource, usableItem, isPotionRecipe, toggleHood, HOOD_TEXT, nextDrape, drapeCount, DRAPE_TEXT } from '../systems/useItem.js';   // PLUS10: isPotionRecipe, a recipe's second Info box   // HT2: the light source's own act; Mac: Use only where the law has an arm   // HOOD-SAID: the hood's button and its lines   // CLOAK-DRAPE: the drape's
 // QS2: the quickslot model (systems/quickslots.js). This screen is the ONE
@@ -81,7 +81,7 @@ import { EQUIP_SLOTS } from '../characters/paperdoll.js';
 import { dfWornEquipment } from '../formats/mwItemMap.js';   // PX25
 import { hasDaggerfallArrows } from '../combat/fpArm.js';   // PX26
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';   // PX25
-import { inventoryItemImage, inventoryItemModel, templateByIndex, isAmmunition } from '../systems/itemTemplates.js';   // WEAR-UI: isAmmunition, spent not worn
+import { inventoryItemImage, inventoryItemModel, templateByIndex, isAmmunition } from '../systems/item/itemTemplates.js';   // WEAR-UI: isAmmunition, spent not worn
 import { requestIcon, paperDollDataUrl, requestFittedPicture, requestFittedIcon, iconName, fittedImg } from './textureCanvas.js';
 import { fateColumn, fateKey, ensureFateStyle, FATE_FACE_BOX } from './revenantFateView.js';   // REVENANT-FATE: a beaten revenant's choice, this window's FATE side
 import { SLOT_BOX, gridBox, wornBox, screenDpr } from './iconFit.js';   // UI1: the fit law's boxes and the screen's ratio
@@ -110,12 +110,12 @@ import { noticeHold, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE
 // U56/U57: DFU's transfer ladder and DFU's remote side, both extracted
 // from the classic window so this pane runs them rather than a second
 // reading of them.
-import { wagonKgFor } from '../systems/wagonKinds.js';   // WAGONS1: the driven wagon's capacity
+import { wagonKgFor } from '../systems/wagon/wagonKinds.js';   // WAGONS1: the driven wagon's capacity
 import {
   planStore, planTake, applyTransfer, planDropGold,
   HOW_MANY_ITEMS, parseSplitAmount,   // DISC25-F: the split popup's law, as the card's field
   sendQuestItemClick,   // WHERE-ROBES: DFU's remote-click quest send, one home for every door onto a loot row
-} from '../systems/itemTransfer.js';
+} from '../systems/item/itemTransfer.js';
 import { howManyField } from './howManyField.js';   // DISC25-F: the card's field, one constructor for both counters
 import {
   openState, remoteTarget, planWagonToggle, hasCart, hasHorse, transportItem,
@@ -129,34 +129,34 @@ import { BAG_KG_LIMIT } from '../net/bagLaw.js';
 import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // AUDIT 26: PlayerEntity.MaxEncumbrance, enchantment allowance and all
 import { liveStat } from '../systems/statMods.js';
-import { conditionWord, conditionPercentage, itemNameParts, itemLongName, itemDamageLine, itemArmourLine, itemHandsLine } from '../systems/itemInfo.js';   // RF6: the long name's two parts, ResolveItemLongName's arms once
-import { survivalInfoTokens, potionMacroName, potionRecipeIngredientNames } from '../systems/itemInfo.js'; import { isPortalStone } from '../systems/gateSpoils.js';   // AUDIT SURV C: the survival items' tokens on this skin's card too
+import { conditionWord, conditionPercentage, itemNameParts, itemLongName, itemDamageLine, itemArmourLine, itemHandsLine } from '../systems/item/itemInfo.js';   // RF6: the long name's two parts, ResolveItemLongName's arms once
+import { survivalInfoTokens, potionMacroName, potionRecipeIngredientNames } from '../systems/item/itemInfo.js'; import { isPortalStone } from '../systems/gate/gateSpoils.js';   // AUDIT SURV C: the survival items' tokens on this skin's card too
 import { isSurvivalItem } from '../systems/survival/items.js';
 import { hoodCapable, hoodUp } from '../systems/survival/temperature.js';   // HOOD-SAID: the one hood law, on the card and the panel
 import { heirloomLine } from '../systems/legacy/heirloom.js';   // LEGACY4: Project Legacy's heirlooms, named on the card
-import { rarityAttr, rarityLines, lootRarityOn, techniqueDetail, techniqueLineOf } from '../systems/lootRarity.js';   // LR1: the row's tier attribute and the card's lines
+import { rarityAttr, rarityLines, lootRarityOn, techniqueDetail, techniqueLineOf } from '../systems/loot/lootRarity.js';   // LR1: the row's tier attribute and the card's lines
 import { pieceLines } from '../net/recipeLaw.js';   // PROF3: a crafted piece's quality and maker, above its powers
 import { craftedJewelPoints } from '../systems/enchanting.js';   // AUDIT PROF-541 R2-C4: a jewel's points as the item maker reads them
 import { sigilCard } from './sigilCard.js';   // SIGIL-UI: the sigil's own block on the card
 import { techniqueCard } from './techniqueCard.js';   // TECH-CARD: a technique's own block on the card
 import { TECHNIQUE_ACTION } from '../combat/techniqueRoster.js';   // TECH-CARD: the key its block names (the leaf, never the runner)
 import { actionKeyWord } from './quickslotTags.js';   // FINAL AUDIT: the word for the key that answers - the HUD chip's too
-import { validSigil } from '../systems/sigil.js';   // SIGIL-UI: the tile's corner rune
+import { validSigil } from '../systems/sigil/sigil.js';   // SIGIL-UI: the tile's corner rune
 import { setCard, setStrip, markSetFrame } from './setCard.js';   // SET5: a set piece's set on its card, the worn sets on the doll's column, a set piece's rune
-import { setIdOf, setById, setLines, setSigilLines } from '../systems/sigilSets.js';   // CARD-FIT U4/U10: a set piece and its sigil in a line each
-import { isLocked, toggleLocked, lockRefuses, lockedText, LOCKED_LINE } from '../systems/itemLock.js';   // LOCK1
-import { isJunk, junkable, toggleJunk, lockLiftsJunk, JUNK_LINE } from '../systems/itemJunk.js';   // LOOT18
-import { isBound, BOUND_LINE, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
+import { setIdOf, setById, setLines, setSigilLines } from '../systems/sigil/sigilSets.js';   // CARD-FIT U4/U10: a set piece and its sigil in a line each
+import { isLocked, toggleLocked, lockRefuses, lockedText, LOCKED_LINE } from '../systems/item/itemLock.js';   // LOCK1
+import { isJunk, junkable, toggleJunk, lockLiftsJunk, JUNK_LINE } from '../systems/item/itemJunk.js';   // LOOT18
+import { isBound, BOUND_LINE, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/item/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
 import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { repaintKeepingScroll } from './domRepaint.js';
 import { overlayAction, eventActions } from './input.js';   // MAC-C: and the REGISTRY's answer for the two window keys
 import { audio } from '../systems/audio.js';   // MAC-O6: the pack's own transfer cue - this window carried none at all
-import { dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLED, DISMANTLE_WORN } from '../systems/sigilBroker.js';   // SS5: a Broker ware back into stones
+import { dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLED, DISMANTLE_WORN } from '../systems/sigil/sigilBroker.js';   // SS5: a Broker ware back into stones
 import { salvageShards, salvageRefusal, salvagePiece, shardsText } from '../systems/reforge.js';   // LOOT9: a laddered piece broken into Welkynd Shards
 import { gemsHeld, setGemPiece, unsetGemPiece } from '../systems/reforge.js';   // GEM1: a gem set in a socket from the pack, and shattered out of one
-import { ALL_GEM_IDS, SOCKET_EMPTY, emptySockets, gemKindOf } from '../systems/lootRarity.js';   // GEM1: the socket list and the gems
+import { ALL_GEM_IDS, SOCKET_EMPTY, emptySockets, gemKindOf } from '../systems/loot/lootRarity.js';   // GEM1: the socket list and the gems
 import { mintGem } from '../systems/gems.js';   // GEM3: a set gem's picture, as its own item draws it
 import { socketWells, socketChooser, markSocketFrame } from './socketWells.js';   // GEM3: the card's wells and the tile's pips
 import { GEM_SET, UNSET_ASK, GEM_SHATTERED, REFORGE_REFUSALS } from './reforgeWindow.js';   // GEM3: the Sockets page's own words
@@ -259,7 +259,7 @@ export function packModel(deps = {}) {
   // and the wallet together are still a partition of what the pack holds unworn.
   const walletItem = items.find(isWalletItem) ?? null;
   const wallet = walletItem ? { item: walletItem, ...walletContents(items, entity) } : null;
-  // CARDS8: and THE CARDS LEAVE THE PAGES for the binder's sheet, while the pack holds one (systems/iliacItems.js) - the
+  // CARDS8: and THE CARDS LEAVE THE PAGES for the binder's sheet, while the pack holds one (systems/iliac/iliacItems.js) - the
   // Wallet's law: every card stays in `items`; the pages, the wallet and the binder are still a partition
   const binderItem = items.find(isCardBinder) ?? null;
   const binder = binderItem ? { item: binderItem, held: items.filter((it) => isIliacCard(it) && !isEquipped(it)) } : null;
@@ -436,7 +436,7 @@ export function itemLine(item, identity = undefined) {
     // it showed weight and condition and never the damage. The
     // NUMBERS come from the same producers the classic popup uses, so
     // the two surfaces cannot drift; only the question of whether to
-    // show a row at all is this skin's (systems/itemInfo.js).
+    // show a row at all is this skin's (systems/item/itemInfo.js).
     damage: itemDamageLine(item),
     armour: itemArmourLine(item),
     // MAC-M2 (Mac: "The Tooltip of weapons should also show if the
@@ -445,7 +445,7 @@ export function itemLine(item, identity = undefined) {
     // the card cannot tell a player a claymore is one-handed while the
     // equip table is emptying both their hands for it.
     hands: itemHandsLine(item),
-    // AUDIT SURV C: a food's worth and stage, a skin's water, the gear's uses - the classic popup's tokens (systems/itemInfo.js
+    // AUDIT SURV C: a food's worth and stage, a skin's water, the gear's uses - the classic popup's tokens (systems/item/itemInfo.js
     // survivalInfoTokens, less the name and the weight this card already carries), so a Waterskin says its water here too
     survival: isSurvivalItem(item) || isRestItem(item) ? survivalInfoTokens(item).slice(2).map((r) => r.text) : null,   // REST6: the seven's lines too
     ...(isPortalStone(item) ? { survival: survivalInfoTokens(item).slice(2).map((r) => r.text) } : {}),   // PORTAL1: and the Portal Stone's
@@ -1584,7 +1584,7 @@ function stow(item) {
     notice = lockedText(itemLongName(item, { getQuest: deps.getQuest ?? null }));
     return render();
   }
-  // SS3: a BOUND piece goes nowhere but the wagon and the player's own storage (systems/itemBound.js BOUND_KEEPS) - the
+  // SS3: a BOUND piece goes nowhere but the wagon and the player's own storage (systems/item/itemBound.js BOUND_KEEPS) - the
   // ground and every container refuse it, a container being the room's once it is opened online. Ahead of the ladder,
   // and it speaks. WALLET1: a pack-only piece goes nowhere at all, and says so in its own words.
   if (remote && isPackOnly(item)) {
@@ -3317,7 +3317,7 @@ function itemActs(picked, side, { qty = true } = {}) {
     acts.append(j);
   }
   // SS5 (Mac: "The ability to dismantle in the inventory and recieve back sigil stones", the Broker's wares alone): a
-  // ware in the pack is DISMANTLED for a share of its price (systems/sigilBroker.js), asked first - it is gone for good.
+  // ware in the pack is DISMANTLED for a share of its price (systems/sigil/sigilBroker.js), asked first - it is gone for good.
   // A worn one is taken off first (its primary act, beside this); a locked one says why when pressed, as its Drop does.
   if (side === 'local' && !line.equipped && dismantleStones(picked) > 0) {
     const d = el('button', 'act', 'Dismantle');

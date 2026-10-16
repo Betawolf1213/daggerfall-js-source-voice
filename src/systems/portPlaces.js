@@ -108,7 +108,7 @@ export function portPlaceName(place, { keeperName = '', townName = '' } = {}) {
 }
 
 /**
- * A PORT TOWN'S PLACES AS ROWS OF ITS TALK DIRECTORY - YARDS-FOUND's shape (systems/talkTopics.js
+ * A PORT TOWN'S PLACES AS ROWS OF ITS TALK DIRECTORY - YARDS-FOUND's shape (systems/talk/talkTopics.js
  * buildBuildingDirectory's: `name`, `buildingType`, `factionId`, `quality`, `position` in the location frame,
  * `buildingKey`), `yard` its place (the Where-is page groups by it, as it does the yards). `places` the host's -
  * `{ kind, x, z, name }` in the location frame (scenes/world.js portPlacesFor: the shipyard, its crew hall, the

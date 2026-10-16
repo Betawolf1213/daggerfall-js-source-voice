@@ -27,7 +27,7 @@ import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { createLivingIndoors } from '../src/scenes/livingIndoors.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { POP_VISIBLE_RANGE } from '../src/systems/townPopulation.js';
+import { POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;

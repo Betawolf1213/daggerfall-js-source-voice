@@ -25,7 +25,7 @@ import { ROAD_GREETINGS, ROAD_TALKS, CAMP_TALKS, pickScript } from '../src/syste
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { markGroup } from '../src/systems/travelViewFilters.js';
+import { markGroup } from '../src/systems/travel/travelViewFilters.js';
 import { TRAVEL_VIEW_MARK_COLORS } from '../src/ui/travelViewHud.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ITEM_TEMPLATES, GROUP_TEMPLATE_INDICES, templateFor, groupTemplates, itemBaseValue,
-} from '../src/systems/itemTemplates.js';
+} from '../src/systems/item/itemTemplates.js';
 import {
   SHOP_ITEM_GROUPS, isShop, isShopShelfModel, stockShopShelf, calculateCost,
   calculateTradePrice, regionPriceAdjustment, TRANSPORT_HORSE, TRANSPORT_SMALL_CART, SHOP_BUYS_GROUPS, shopBuysItem,

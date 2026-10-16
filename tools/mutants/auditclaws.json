@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-CLAWS-A2-the-restore-leaving-the-flag",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.isInBeastForm = !!(entity.racialOverride?.racial === 'lycanthropy' && entity.racialOverride.isTransformed);\n",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-CLAWS-A2-the-flag-ignoring-the-change",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "entity.racialOverride?.racial === 'lycanthropy' && entity.racialOverride.isTransformed);",
     "new": "entity.racialOverride?.racial === 'lycanthropy');",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-CLAWS-B2-the-value-one-metal-up",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "materialValue(t.basePrice, plateMetal(m))",
     "new": "materialValue(t.basePrice, plateMetal(m) + 1)",
     "tests": [

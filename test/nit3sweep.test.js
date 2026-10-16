@@ -13,10 +13,10 @@ import { fileURLToPath } from 'node:url';
 import { BEAST_DESIGNS } from '../src/characters/beasts.js';
 import { UNDEAD_DESIGNS } from '../src/characters/undeadBody.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { inventoryItemImage, templateByIndex } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { resolvePaperdollRecord } from '../src/characters/paperdollArt.js';
 import { openState } from '../src/systems/inventorySession.js';
-import { planStore } from '../src/systems/itemTransfer.js';
+import { planStore } from '../src/systems/item/itemTransfer.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, 'src', p), 'utf8');
@@ -55,7 +55,7 @@ test('NT3 (F006): the inventory image rides resolvePaperdollRecord - the second 
   assert.equal(img.record, t.playerTextureRecord + 1 + 2, 'the cloak skip rides through');
   const plain = templateByIndex(147) ?? t;   // any variant template without the cloak skip
   // and the source carries no private CLOAK_TEMPLATES twin any more
-  const it = src('systems/itemTemplates.js');
+  const it = src('systems/item/itemTemplates.js');
   assert.equal(/const CLOAK_TEMPLATES = new Set/.test(it), false,
     'a correction to the home copy reaches the running path now');
   assert.ok(it.includes('record = resolvePaperdollRecord(t, v);'), 'the delegation is live');

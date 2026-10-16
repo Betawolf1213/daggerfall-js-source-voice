@@ -37,7 +37,7 @@
   },
   {
     "name": "DECOR-SHELL-the-ceiling-stood-on",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "const hang = nl > 0 && normal[1] / nl < -DECOR_HANG_NY;",
     "new": "const hang = false;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DECOR-SHELL-the-hang-at-the-bottom",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "const up = hang ? drop() + s.raise : lift() + s.raise;",
     "new": "const up = lift() + s.raise;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DECOR-SHELL-a-flat-hung",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      if (hang && entry.model == null) return null;\n",
     "new": "",
     "tests": [

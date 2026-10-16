@@ -14,7 +14,7 @@
 //
 // THE HOARD IS THE SERVICE'S WORD (the raids' AUDIT RAID R4): the service writes the (day, account)'s hoard row for the
 // first claim that asks, a guest's too, and answers `spoils: true` to that claim alone - `onSpoils` hears it, and the
-// page rolls the hoard (systems/serpentSpoils.js). A receipt this device SETTLED is remembered (SERPENT_SETTLED_KEY).
+// page rolls the hoard (systems/serpent/serpentSpoils.js). A receipt this device SETTLED is remembered (SERPENT_SETTLED_KEY).
 //
 // Pure - the call, the store and the clocks are handed in. Not a DFU member. Ledger A (SERPENT1).
 import { readSerpentReceipt } from './serpentReceipt.js';

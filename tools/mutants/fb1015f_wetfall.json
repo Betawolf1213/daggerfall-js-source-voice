@@ -46,7 +46,7 @@
   },
   {
     "name": "WET-FALL-the-fallback-the-sim-s-word",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "{ word: _heard, level: _heardGain } : { word: shown, level: 1 });",
     "new": "{ word: _heard, level: _heardGain } : { word: currentWeather(), level: 1 });",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WET-FALL-heard-outlives-a-jump",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "export const fallingWeather = (shown = currentWeather()) => (_heard != null && _heardAtJump === _jumps ?",
     "new": "export const fallingWeather = (shown = currentWeather()) => (_heard != null ?",
     "tests": [

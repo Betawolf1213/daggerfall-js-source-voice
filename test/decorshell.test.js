@@ -23,7 +23,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { flyClip, flyStep, DECOR_FLY_SKIN, DECOR_FLY_SPEED, DECOR_FLY_GIVE } from '../src/scenes/decorTool.js';
-import { createDecorPlacer, DECOR_HANG_NY, DECOR_RAISE_STEP } from '../src/systems/decorPlacer.js';
+import { createDecorPlacer, DECOR_HANG_NY, DECOR_RAISE_STEP } from '../src/systems/decor/decorPlacer.js';
 import { createDecorRoom, askDecorList, DECOR_MODEL_RETRY_MS, DECOR_LIST_RETRY_MS, DECOR_LIST_RETRY_MAX_MS } from '../src/scenes/decorRoom.js';
 import { accountDecor, SESSION_KEY, DECOR_LIST_WAIT_MS } from '../src/net/accountClient.js';
 import { settle, toolRig, placeFrom } from './decorFakes.mjs';

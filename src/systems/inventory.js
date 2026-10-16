@@ -21,10 +21,10 @@ import templates from '../characters/itemTemplates.json' with { type: 'json' };
 import { weightForMaterial, WEAPONS } from '../characters/weapons.js';   // AUDIT 68 S27-weightForMaterial-dup: CalculateWeightForMaterial and Weapons.Arrow, one home each
 // A2: SetItem's two draws-and-writes, one home each (itemTemplates.js
 // is a leaf of this module's import graph - it reads the same JSON).
-import { mintCondition, rollPaintingMessage, templateByIndex, isAmmunition } from './itemTemplates.js';
+import { mintCondition, rollPaintingMessage, templateByIndex, isAmmunition } from './item/itemTemplates.js';
 import { isPlate, plateMetal } from './armorMaterials.js';   // AUDIT CLAWS B2: a plate piece's metal, one decode (a leaf)
 import { ammoTemplateFor } from '../characters/thunderlockIds.js';   // what a ranged weapon spends - a leaf, so no cycle (see the file)
-import { isRriStackable } from './rriRealism.js';   // RRI2: the IsItemStackable override - an added yes (FormulaHelper.cs:2100-2102)
+import { isRriStackable } from './roleplayRealismItems/rriRealism.js';   // RRI2: the IsItemStackable override - an added yes (FormulaHelper.cs:2100-2102)
 import { noteShot } from './shotTally.js';   // ARENA-ARROWS: the shots a bout loosed - a leaf, so no cycle
 import { cardWorth } from '../net/cardWorthLaw.js';   // AUDIT CARDS-6 A6: a card split off is worth its card (the law imports nothing of systems/)
 import { PATRON_COUNTER_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1: a stack keeps the counter's mark (the law imports nothing)
@@ -67,7 +67,7 @@ export function isEnchanted(item) {
  *  PlayerEntity.Items, does `GoldPieces += stackCount`, removes the
  *  item from the source and returns BEFORE the transfer - so a pile
  *  is spent into the counter at the moment it would enter the pack,
- *  and no later code has to exclude it. systems/itemTransfer.js's
+ *  and no later code has to exclude it. systems/item/itemTransfer.js's
  *  applyTransfer carries that arm for every screen that transfers.
  *  D9's other finding stands and is why there is no filter here:
  *  DaggerfallInventoryWindow.AddLocalItem (:914-943) has NO Currency
@@ -387,7 +387,7 @@ export function splitStack(list, stack, numberToPick, { rolls = Math.random } = 
     const w = cardWorth(stack.card);
     if (w > 0) picked.value = w;
   }
-  if (stack.bound === true) picked.bound = true;   // AUDIT SS: and its binding (systems/itemBound.js) - never the Broker's price, which a dismantle pays out of
+  if (stack.bound === true) picked.bound = true;   // AUDIT SS: and its binding (systems/item/itemBound.js) - never the Broker's price, which a dismantle pays out of
   if (stack[PATRON_COUNTER_MARK] === true) picked[PATRON_COUNTER_MARK] = true;   // AUDIT LW-II-2 S1: and the counter's mark (net/patronLaw.js) - a split is no way out of it
   list.push(picked);                              // AddItem(noStack: true)
   stack.stackCount = count - numberToPick;

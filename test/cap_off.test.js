@@ -18,8 +18,8 @@ import { DEEP_UNCONFIRMED_PER_DAY, HIGH_HIDES_PER_DAY, HIGH_HIDE_TIER, STORES_MA
 import { veins, boulders, trees, nodeKey, dveinKey, bodyKey, haulKey, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
-import { setForagingHost, createForagingItem } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';

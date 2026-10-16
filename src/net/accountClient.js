@@ -64,7 +64,7 @@ import { HERALDRY_CHANGE_DRAKES } from './heraldryLaw.js';   // GUILD1d: a chang
 import { t, localizedTable } from '../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 import { VENDOR_REFUSAL_WORDS } from './vendorLaw.js';   // HOME-VENDOR: a trader's refusals
 import { busyRead, busyAnswer, busyWaitMs, retryAfterMs, BUSY_HOLD_MS } from './busyLaw.js';   // BUSY-GATE: the reads that stand back while the service is overloaded
-import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
 import { cardById } from './iliacCards.js';   // AUDIT CARDS-6 D7: the card a short deck lacks, said by its name
 import { jittered } from './backoff.js';   // STORM-SHED: a failed mint's hold, jittered as every book's wait is
 
@@ -630,7 +630,7 @@ const REFUSAL_WORDS = {
   'commission-not-made': () => t('account.refusal.commissionNotMade', 'A commission is filled with a piece of your own make.'),
   'commission-worn': () => t('account.refusal.commissionWorn', 'A commission is new work: that piece is worn.'),
   // HOME-CROSSED (FIELD BUGS 2026-09-30): a home customs carried in - RESTORE's words for a crossed deed
-  // (systems/onlineHomes.js HOME_CROSSED_LINES, pinned equal), and a realm act asked while the last is still out
+  // (systems/online/onlineHomes.js HOME_CROSSED_LINES, pinned equal), and a realm act asked while the last is still out
   'home-crossed': () => t('account.refusal.homeCrossed', 'That came into the realm through customs. The bank of the Empire does not buy it back. It stays your home.'),
   busy: () => t('account.refusal.busy', 'Your last dealing with the realm is still being settled. Try again in a moment.'),
   server: () => t('account.refusal.server', 'The account service had a problem. Try again.'),
@@ -1514,7 +1514,7 @@ export function accountRaids({ fetch, storage }) {
  *  fought it and this device's claim id (the hoard's key) - `{ recorded, slain, renown, spoils, order }` (SERPENT5: and
  *  `title`, `aura`, `titleNew`, `auraNew` - the Old Coil's grants on its first write, acct135), or
  *  `{ recorded: false, why }` (`claimed`, `guest`). */
-// AUDIT 625 P4: and the embers this build's hoard mints (systems/serpentSpoils.js serpentEmbers) - the row counts what the
+// AUDIT 625 P4: and the embers this build's hoard mints (systems/serpent/serpentSpoils.js serpentEmbers) - the row counts what the
 // claim says, so a build from before them, saying none, is counted none
 export const claimSerpentReceipt = (io, receipt, character, name = null, cid = null) => call(io, '/v1/serpent/claim', { receipt, character, name, ...(cid ? { cid } : {}), stones: SERPENT_EMBERS });
 

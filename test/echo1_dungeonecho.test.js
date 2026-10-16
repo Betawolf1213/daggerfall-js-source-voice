@@ -2,7 +2,7 @@
 //
 // THE CHAIN'S ECHO, AND ITS EXAMINE. A lever that works something out of sight says which way (one popup line a press),
 // marks the place on the dungeon map until it is found, and lights it when it is; in Info mode a lever's plaque says
-// which way its work lies (systems/dungeonEcho.js, the action system's `onPlayed`, scenes/dungeonContext.js).
+// which way its work lies (systems/dungeon/dungeonEcho.js, the action system's `onPlayed`, scenes/dungeonContext.js).
 // bible/03-World/Delve-Arc.md, ECHO1.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import {
   ECHO_NEAR_M, ECHO_VERT_M, ECHO_FLAT_M, ECHO_FIND_M, ECHO_MAP_MAX, ECHO_LOOK_S, ECHO_CHAIN_MAX, ECHO_PREF,
   wayWord, isEchoMover, echoVerb, echoLine, chainMovers, boxMiddle, examineLine, createEchoBook, echoState, echoMoved,
-} from '../src/systems/dungeonEcho.js';
+} from '../src/systems/dungeon/dungeonEcho.js';
 import { COMPASS_WORDS, sceneCompassWord } from '../src/systems/compassWords.js';
 import { bearingWord } from '../src/scenes/fishHost.js';
 import { ActionSystem, PLAY_DEPTH_MAX } from '../src/world/actionSystem.js';

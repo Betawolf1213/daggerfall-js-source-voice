@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +10,7 @@ import {
   CONDITION_WORDS, CONDITION_THRESHOLDS, conditionPercentage, conditionWord,
   weightString, weaponDamageString, armourModString, materialName, expandItemInfo, itemInfoRows,
   setBookAuthor, getBookAuthor,
-} from '../src/systems/itemInfo.js';
+} from '../src/systems/item/itemInfo.js';
 import { potionRecipeKey, POTION_RECIPES } from '../src/systems/potions.js';   // IM1
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
@@ -57,7 +57,7 @@ test('U25: armor and weapons each pick between a WITH- and WITHOUT-material reco
   assert.equal(itemInfoTextId(helm), INFO_TEXT.armorNoMaterial);
   // an ARTIFACT never shows a material, whatever it is
   assert.equal(armorShouldShowMaterial({ ...cuirass, artifact: true }), false);
-  assert.equal(LIVE['GUI/HelmAndShieldMaterialDisplay'], 'src/systems/itemInfo.js');
+  assert.equal(LIVE['GUI/HelmAndShieldMaterialDisplay'], 'src/systems/item/itemInfo.js');
   // weapons: an arrow has its own record, an artifact drops the material
   assert.equal(itemInfoTextId({ group: 'Weapons', templateIndex: 118 }), INFO_TEXT.weapon);
   assert.equal(itemInfoTextId({ group: 'Weapons', templateIndex: TEMPLATES.Arrow }), INFO_TEXT.arrow);
@@ -293,7 +293,7 @@ test('ROAD-U (was AUDIT 22 F11): artifact IDENTITY is the enchantment record, no
   // imported Star captured no souls. What createArtifact mints is the
   // FLAGS WORD's own (artifact + identified), the index bitfield, the
   // MAGIC.DEF expansion and the enchantments the identity rides on.
-  const { createArtifact } = await import('../src/systems/loot.js');
+  const { createArtifact } = await import('../src/systems/loot/loot.js');
   const special = (param) => [{ type: 26, param }];   // EnchantmentTypes.SpecialArtifactEffect
   const T = (i, over = {}) => ({ index: i, name: `A${i}`, type: 1, group: 14, groupIndex: 0, enchantments: [], uses: 100, value: 0, material: 0, ...over });
   const templates = Array.from({ length: 12 }, (_, i) => T(i));

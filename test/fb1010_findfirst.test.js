@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { resetTravelMapState } from '../src/systems/travelMapState.js';
+import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { readImmersiveTravelSettings, IT_POPUP, IMMERSIVE_TRAVEL_VENDOR } from '../src/systems/immersiveTravel.js';
 

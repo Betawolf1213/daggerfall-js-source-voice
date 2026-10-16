@@ -170,7 +170,7 @@
   },
   {
     "name": "CHAP3C-OFFER",
-    "file": "src/systems/guildServiceActions.js",
+    "file": "src/systems/guild/guildServiceActions.js",
     "old": "price: factored(trainingPrice(membership, entity.level ?? 1), priceFactor) };",
     "new": "price: trainingPrice(membership, entity.level ?? 1) };",
     "tests": [
@@ -179,7 +179,7 @@
   },
   {
     "name": "CHAP3C-AFFORD",
-    "file": "src/systems/guildServiceActions.js",
+    "file": "src/systems/guild/guildServiceActions.js",
     "old": "return totalGoldAmount(entity) >= factored(trainingPrice(membership, entity.level ?? 1), priceFactor);",
     "new": "return totalGoldAmount(entity) >= trainingPrice(membership, entity.level ?? 1);",
     "tests": [
@@ -188,7 +188,7 @@
   },
   {
     "name": "CHAP3C-FACTORED-ROUND",
-    "file": "src/systems/guildServiceActions.js",
+    "file": "src/systems/guild/guildServiceActions.js",
     "old": "(f === 1 || !(price > 0) ? price : Math.max(1, Math.round(price * f)));",
     "new": "(f === 1 || !(price > 0) ? price : Math.max(1, Math.ceil(price * f)));",
     "tests": [

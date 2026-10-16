@@ -11,7 +11,7 @@ import { equipItem, equipTableOf, armorValuesOf, EQUIP_SLOTS, lowerCondition, _w
 _wearScaleForTests(1);
 _dfuWearMultipleForTests(1);   // WEAR-TWICE: and DFU's amount unmultiplied (wear_vanilla.test.js pins the 2)
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 
 const saber = () => mintCondition({ group: 'Weapons', name: 'Saber', templateIndex: 117, material: 2 });
 const cuirass = () => mintCondition({ group: 'Armor', name: 'Cuirass', templateIndex: 102, material: 0x0200 });

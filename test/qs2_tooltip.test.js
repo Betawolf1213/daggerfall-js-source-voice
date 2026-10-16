@@ -33,7 +33,7 @@ import {
 import { potionRecipeKeys } from '../src/systems/potions.js';
 import { PAGE_IDS } from '../src/ui/packPages.js';
 import { equipItem } from '../src/systems/equip.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 // HB-LYCFREE (2026-09-30): the hotbar is the quick slots' default now. This suite is the DIAMOND's, written while the
 // diamond was the default, so it chooses the diamond (PIN MOVED: the environment it always ran in, now said).

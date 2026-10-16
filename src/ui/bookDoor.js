@@ -43,7 +43,7 @@ import { BookReaderWindow } from './bookReader.js';
 import { BookFile } from '../formats/bookFile.js';
 import { getBookFileName } from '../systems/books.js';
 import { openPortBook } from '../systems/portBooks.js';   // WB12c: the port's own books, read before any file
-import { setBookAuthor } from '../systems/itemInfo.js';   // IM1: the %ba cache
+import { setBookAuthor } from '../systems/item/itemInfo.js';   // IM1: the %ba cache
 import { openLocalizedBookFile } from '../systems/localizedBook.js';   // L10N3f: LocalizedBook.OpenBookFile's first arm
 
 /** Build the reader this skin wears over an opened BookFile - or

@@ -64,7 +64,7 @@
 // so it keeps the head.
 import { ARMOR_MATERIAL, isPlate } from '../systems/armorMaterials.js';
 
-/** Roleplay & Realism Items' Jerkin (systems/rriItems.js RRI_TEMPLATES,
+/** Roleplay & Realism Items' Jerkin (systems/roleplayRealismItems/rriItems.js RRI_TEMPLATES,
  *  ItemJerkin). Restated rather than imported for the leaf's sake;
  *  test/mwbrig2.test.js holds it to the mod's own row. */
 export const RRI_JERKIN_TEMPLATE = 520;

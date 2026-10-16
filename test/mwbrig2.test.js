@@ -18,7 +18,7 @@ import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPers
 import { composeWornArmor, itemMapCoverage } from '../src/formats/mwItemMap.js';
 import { collectArmTextures } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { RRI_TEMPLATES, rriVariantWord } from '../src/systems/rriItems.js';
+import { RRI_TEMPLATES, rriVariantWord } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { OWN_MW_ARMOR, RRI_JERKIN_TEMPLATE, ownArmorModelFor, ownArmorModelPaths } from '../src/characters/ownArmorModels.js';
 import { ownMwDataPath } from '../src/systems/ownMwAssets.js';
 import { writeNif, meshToNif } from '../tools/nifWrite.mjs';

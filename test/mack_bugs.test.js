@@ -629,7 +629,7 @@ test('MAC-L3: exitToTitleMenu releases the guard BEFORE it navigates', () => {
 // lookup, in a window where the lookup table did not exist yet.
 
 test('MAC-L4: a restore HOLDS a spell it cannot resolve - it never drops it', async () => {
-  const { restorePlayer, snapshotPlayer, resolvePendingSpells } = await import('../src/systems/save.js');
+  const { restorePlayer, snapshotPlayer, resolvePendingSpells } = await import('../src/systems/save/save.js');
 
   const stock = (index, name) => ({ index, name, effects: [] });
   const table = new Map([[7, stock(7, 'Fireball')], [12, stock(12, 'Heal')]]);
@@ -705,7 +705,7 @@ test('AUDIT-MACL F1: resolvePendingSpells has a CALLER, and it is the moment the
   // that IS "later". A call anywhere else would run before the table
   // exists and resolve nothing.
   const src = rd('src/scenes/world.js');
-  assert.match(src, /import \{[^}]*resolvePendingSpells[^}]*\} from '\.\.\/systems\/save\.js';/);
+  assert.match(src, /import \{[^}]*resolvePendingSpells[^}]*\} from '\.\.\/systems\/save\/save\.js';/);
   const then = src.slice(src.indexOf('const _magicRegistries = loadMagicRegistries('));
   const body = then.slice(0, then.indexOf('\n  });'));
   assert.match(body, /spellsByIndex = spellsByIndex \?\? r\.spellsByIndex;/, 'the table lands first');

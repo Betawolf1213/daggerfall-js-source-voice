@@ -14,8 +14,8 @@ import {
 import { GATE_ARENA_BLOCK_INDEX, GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
 import { ARENA_BLOCK_INDEX } from '../src/world/arenaCity.js';
 import { getModelMatrix, layoutRdbBlock } from '../src/world/rdbLayout.js';
-import { seededRng } from '../src/systems/arenaLadder.js';
-import { RING_SLACK_M } from '../src/systems/arenaBout.js';
+import { seededRng } from '../src/systems/arena/arenaLadder.js';
+import { RING_SLACK_M } from '../src/systems/arena/arenaBout.js';
 
 const BLOCK = JSON.parse(readFileSync(new URL('../vendor/daggerfall-arena/Arena/ARENADAG.RMB.json', import.meta.url), 'utf8'));
 const S = 0.025;

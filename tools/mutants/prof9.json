@@ -901,7 +901,7 @@
   },
   {
     "name": "PROF9-withdraw-noRot-on-herbs",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "if (noRot === true && key.startsWith('food:')) item.noRot = true;",
     "new": "if (noRot === true) item.noRot = true;",
     "tests": [
@@ -910,7 +910,7 @@
   },
   {
     "name": "PROF9-withdraw-noRot-never",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "if (noRot === true && key.startsWith('food:')) item.noRot = true;",
     "new": "",
     "tests": [
@@ -919,7 +919,7 @@
   },
   {
     "name": "PROF9-rows-stew-on-fish",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "stew: CC.Meat, supper: CC.CookedFish",
     "new": "stew: CC.CookedFish, supper: CC.CookedFish",
     "tests": [
@@ -928,7 +928,7 @@
   },
   {
     "name": "PROF9-rows-price-twice",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "food.basePrice * (feast ? 12 : 3)",
     "new": "food.basePrice * (feast ? 12 : 2)",
     "tests": [
@@ -937,7 +937,7 @@
   },
   {
     "name": "PROF9-rows-feast-light",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "food.baseWeight * (feast ? 4 : 1)",
     "new": "food.baseWeight * (feast ? 2 : 1)",
     "tests": [
@@ -946,7 +946,7 @@
   },
   {
     "name": "PROF9-rows-stacking",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "playerTextureRecord: 0, stackable: false,   // each serving its own piece, its own provenance",
     "new": "playerTextureRecord: 0, stackable: true,   // each serving its own piece, its own provenance",
     "tests": [
@@ -955,7 +955,7 @@
   },
   {
     "name": "PROF9-rows-no-food-law",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "registerFoods(DISH_FOOD_ROWS);",
     "new": "",
     "tests": [
@@ -964,7 +964,7 @@
   },
   {
     "name": "PROF9-rows-food-unnamed",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "{ ...FOOD[DISH_FOODS[d.id]], name: d.name }",
     "new": "{ ...FOOD[DISH_FOODS[d.id]] }",
     "tests": [
@@ -1000,7 +1000,7 @@
   },
   {
     "name": "PROF9-field-noRot-unsaved",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  noRot: bool(),\n  chef: bool(),",
     "new": "  noRot: str(),\n  chef: bool(),",
     "tests": [

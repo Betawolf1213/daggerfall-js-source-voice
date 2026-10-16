@@ -20,7 +20,7 @@ import { writePack, readPack, readPackBytes, packRoot, POI_PACK_LIMITS } from '.
 import { exportModel, exportPack, importPack, copyIdOf } from '../src/poi/poiTransfer.js';
 import { shelfEntryOf, putOnShelf } from '../src/poi/poiShelf.js';
 import { readZipEntries } from '../src/scenes/dataSource.js';
-import { zipStore } from '../src/systems/saveTransfer.js';
+import { zipStore } from '../src/systems/save/saveTransfer.js';
 import { encodePoiMesh, POI_MESH_LIMITS } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL, poiDocProblems, poiShelfProblems } from '../src/poi/poiLaw.js';
 import { quatOfEuler } from '../src/poi/poiEdit.js';

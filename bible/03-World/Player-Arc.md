@@ -1018,7 +1018,7 @@ all four caught, then reverted).
   DOUBLES per the Ledger A FaceUVTool row (Mono widens float math);
   the two disagree inside the fortified-Endurance range and the
   edge is pinned: rank 4 x 45 = 62 where float32 lands 63.
-  deepBreath lives in breath.js rather than systems/guilds.js -
+  deepBreath lives in breath.js rather than systems/guild/guilds.js -
   that file is mid-flight in a parallel session today - and it is
   the member's only export either way.
 - **The Argonian swim-fatigue exemption** (PlayerEntity.cs:412;

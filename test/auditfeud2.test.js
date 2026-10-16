@@ -14,16 +14,16 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const CS = await import('../src/systems/companionSlots.js');
 const L = await import('../src/systems/feudLedger.js');
-const FT = await import('../src/systems/revenantFate.js');
+const FT = await import('../src/systems/revenant/revenantFate.js');
 const H = await import('../src/systems/harmMark.js');
 const TA = await import('../src/ai/tactics.js');
 const FB = await import('../src/ai/foeBlows.js');
-const LR = await import('../src/systems/lootRarity.js');
+const LR = await import('../src/systems/loot/lootRarity.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 const { FOES_STALE_MS } = await import('../src/net/online.js');
@@ -246,7 +246,7 @@ test('AUDIT FEUD 2 W2: AN HEIR\'S FOE WRITES WHAT IT STANDS WITH, through the re
 });
 
 test('AUDIT FEUD 2 W3: A PEER\'S REVEAL RAISES NO WORD OF MINE (its screen says it); its card and its found stand (mutants: the tag for a peer)', () => {
-  const R = read('src/systems/revenant.js');
+  const R = read('src/systems/revenant/revenant.js');
   assert.match(R, /function revealWeakness\(entity, \{ peer = false \} = \{\}\) \{\n[^\n]*\n\s*if \(!peer\) Promise\.resolve\(\)\.then\(\(\) => \{ try \{ tagHit\(entity, HIT_TAGS\.weakness\);/);
   assert.match(read('src/systems/feudLedger.js'), /_onWeak\(entity, \{ peer: true \}\)/);
   const p = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-auditfeud2', level: 8, items: [] };

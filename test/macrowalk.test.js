@@ -14,8 +14,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { expandMacroValues } from '../src/systems/quest/questMacros.js';
-import { expandMacros, expandAnswerRecord } from '../src/systems/talkSession.js';
-import { expandGuildMacros } from '../src/systems/guildServiceActions.js';
+import { expandMacros, expandAnswerRecord } from '../src/systems/talk/talkSession.js';
+import { expandGuildMacros } from '../src/systems/guild/guildServiceActions.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, 'src', p), 'utf8');
@@ -85,7 +85,7 @@ test('MH1: expandGuildMacros rides the walk - supplied values land, absent ones 
 });
 
 test('MH1: the leak sites are GONE - no ad-hoc %-replaceAll chain outside the recorded surfaces', () => {
-  for (const f of ['systems/talkSession.js', 'systems/guildServiceActions.js', 'scenes/arrestFlow.js']) {
+  for (const f of ['systems/talk/talkSession.js', 'systems/guild/guildServiceActions.js', 'scenes/arrestFlow.js']) {
     assert.equal(/replaceAll\('%/.test(src(f)), false, `${f} rides the one walk`);
   }
   assert.match(src('scenes/arrestFlow.js'), /return expandMacroValues\(t, \{/, 'the court records ride it too');

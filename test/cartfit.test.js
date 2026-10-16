@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
-import { ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
+import { ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const DAGGER = () => { const t = ITEM_TEMPLATES.find((x) => x.name === 'Dagger'); return { name: t.name, templateIndex: t.index, group: 'Weapons', stackCount: 1, currentCondition: 50, maxCondition: 50 }; };

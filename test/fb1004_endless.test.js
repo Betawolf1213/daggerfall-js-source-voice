@@ -7,7 +7,7 @@ import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { stockShopShelf, isEndlessStock, restockEndless, shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { BAG_TEMPLATE, isBagItem } from '../src/net/bagLaw.js';

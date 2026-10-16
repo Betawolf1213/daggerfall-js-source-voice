@@ -92,7 +92,7 @@ the physics come from one table now, so they cannot disagree.
   added a fixed unit vector to the wind, which was collinear at one
   heading and the zero vector, a NaN sea, at its opposite) - with
   amplitudes on the wind's strength
-  off a calm floor (the row's own scale, `systems/wind.js`: the same
+  off a calm floor (the row's own scale, `systems/wind/wind.js`: the same
   vector the cloud deck is drawn with and the mills turn on; null is
   calm), and under rain two fine trains that pock the surface with the
   front's intensity. Every train fades with the distance from the eye

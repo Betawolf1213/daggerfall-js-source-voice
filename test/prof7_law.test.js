@@ -26,7 +26,7 @@ import { DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES } from '../src/
 import { CLOTHING_DYES } from '../src/characters/dyes.js';
 import { createTraceAct, traceLine, toLine } from '../src/systems/traceAct.js';
 import { createStitchAct } from '../src/systems/stitchAct.js';
-import { checksRefusal, brokeMessage } from '../src/systems/foragingLaw.js';
+import { checksRefusal, brokeMessage } from '../src/systems/foraging/foragingLaw.js';
 import { rotFoodDay, TEMPLATE as CC } from '../src/systems/survival/food.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 

@@ -19,10 +19,10 @@ globalThis.localStorage = {
   getItem: (k) => (_store.has(k) ? _store.get(k) : null), setItem: (k, v) => { _store.set(k, String(v)); },
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
-const N = await import('../src/systems/revenant.js');
-const T = await import('../src/systems/revenantTrophy.js');
-const F = await import('../src/systems/revenantFate.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const T = await import('../src/systems/revenant/revenantTrophy.js');
+const F = await import('../src/systems/revenant/revenantFate.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');

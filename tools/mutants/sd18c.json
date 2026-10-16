@@ -100,7 +100,7 @@
   },
   {
     "name": "SD18C-the-bell-always",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  return sdRumorLine(hollow.site.cityName || 'the city', sdMarksOf(rec.s)[0]);",
     "new": "  return sdRumorLine(hollow.site.cityName || 'the city');",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD18C-the-card-silent",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "...(E ? [`It keeps the Ending of ${E.stone}`] : []), ",
     "new": "",
     "tests": [

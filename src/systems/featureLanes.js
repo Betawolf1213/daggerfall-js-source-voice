@@ -4,7 +4,7 @@
 // RF4 has a condensed row's lane registered by the module that owns its keys, and the two before these own real
 // logic: world/landView.js caps one radius per lane, world/outdoors.js splits the sky across two stores. The three
 // here own nothing but the composition - one bar over two or four prefs whose consumers go on reading them exactly as
-// they did (combat/bloodSwitch.js, ui/enhancedHud.js, ui/enhancedHotbar.js, systems/windDrive.js,
+// they did (combat/bloodSwitch.js, ui/enhancedHud.js, ui/enhancedHotbar.js, systems/wind/windDrive.js,
 // render/windWisps.js). So they live together, over the shelf alone, and no consumer learns they exist. Nothing a
 // lane writes is a new key: every value it sets is one a row of its own could already set.
 //

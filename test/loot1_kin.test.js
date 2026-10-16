@@ -14,9 +14,9 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { SKILLS, MAGIC_SKILLS } from '../src/systems/skills.js';
 
 const on = () => { _resetForTests(); setPref('lootRarity', true); };

@@ -58,9 +58,9 @@
 // BRIGHTNESS, its default of 1.0 is a no-op, and mapping a brightness
 // slider onto a radius would be a worse lie than leaving it alone.
 
-import { templateByIndex } from './itemTemplates.js';
+import { templateByIndex } from './item/itemTemplates.js';
 import { isLightSource, expandItemMacro } from './useItem.js';
-import { getBool } from './settings.js';   // T1: EnablePlayerTorch reads its own setting, inside Update
+import { getBool } from './settings/settings.js';   // T1: EnablePlayerTorch reads its own setting, inside Update
 import { setLightSource } from './lightSource.js';   // DISC7: the light in hand's one door
 import { modSetting } from './modSettings.js';   // HT-WAIST: the lantern-at-the-waist switch, on Handheld Torches' pane
 import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language

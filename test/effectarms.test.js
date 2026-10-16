@@ -12,8 +12,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 import { applySpell } from '../src/systems/effects.js';
 import { jumpSpeedMultiplier, JUMP_SPELL_MULTIPLIER } from '../src/systems/skills.js';
 import { climbingDeps } from '../src/scenes/shared.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 
 const entity = () => ({
   stats: { luck: 50, willpower: 50 }, skills: [], activeEffects: [],

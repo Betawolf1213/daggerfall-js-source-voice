@@ -4,7 +4,7 @@
 // `01-Overview/Field-Bugs-2026-10-09.md`) - THE LAND PAST THE BAY IS THE WORLD'S. TAMRIEL2 streams the ground beyond
 // the Bay's edge, and two laws still ended at it:
 //
-// - THE PLANNER (systems/travelRoute.js) clamped its search box to the map. Two ends beyond one edge clamped it inside
+// - THE PLANNER (systems/travel/travelRoute.js) clamped its search box to the map. Two ends beyond one edge clamped it inside
 //   out (a negative width: the typed arrays threw - the crash), one beyond it was indexed into the box's far side (a
 //   route from a pixel the traveller never stood on), a road's byte was read a row over across the west edge, and the
 //   ground past the map was the sea (routeGround) - so nothing there could be walked to.
@@ -17,7 +17,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { planRoute, routeGround, BEYOND_CACHE_MAX } from '../src/systems/travelRoute.js';
+import { planRoute, routeGround, BEYOND_CACHE_MAX } from '../src/systems/travel/travelRoute.js';
 import { DIR_DELTA } from '../src/world/roadNetwork.js';
 import {
   WORLD_PIXEL_BOUND, worldPixelOk, POSE_BOUND, PIXEL_UNITS, validPose, parseClient, isCellRoom, worldRoom, cellHaloFor, inRange,

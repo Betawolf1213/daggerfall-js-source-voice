@@ -5,7 +5,7 @@
 // arrays.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { newRope, stepRope, layRope, ROPE } from '../src/systems/wagonRopes.js';
+import { newRope, stepRope, layRope, ROPE } from '../src/systems/wagon/wagonRopes.js';
 import { seeded } from './navalSea.mjs';
 
 /** The old law, as it stood before PERF-ROPE (its pinEnds the module's own). */

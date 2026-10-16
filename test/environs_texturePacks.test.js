@@ -1,7 +1,7 @@
 // ALIKR1 / SNOWFALL1 (2026-10-08, Mac: "We have permission to use and implement everything into the codebase. These
 // should be on by default and integrate into our enhanced environments seamlessly") - THE ENVIRONMENT PACKS IN THE
 // TEXTURE DOOR. Sands of the Alik'r's desert ground (a loose pack in DFU) and the winter ground Snowfall's bundle
-// packages ship through the door Vanilla Enhanced ships through (systems/vanillaEnhancedPack.js), on by default and
+// packages ship through the door Vanilla Enhanced ships through (systems/vanillaEnhanced/vanillaEnhancedPack.js), on by default and
 // built on its Base: the desert's TEXTURE.002 is the pack's records over Daggerfall's own (dfmodTextures.js
 // groundSource's ALIKR1 rule - DFU's own walk would hand it to the Base's array, and the pack would never be seen), and
 // Snowfall's record 0 decides its three winter archives as any mod's does. bible/07-Rendering/Sands-Of-The-Alikr.md and
@@ -16,10 +16,10 @@ import {
   setDfmodSources, attachedDfmods, setDfmodEnabled, DFMOD_SHIPPED_PREF, DFMOD_OFF_PREF, DFMOD_INDEX_VERSION, dfmodStoreKey,
   dfmodGroundLayers, groundSource, _resetDfmodForTests,
 } from '../src/systems/dfmodTextures.js';
-import { ENVIRONMENT_PACK_MODS, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhancedPack.js';
+import { ENVIRONMENT_PACK_MODS, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';
 import { clearTextureReplacements } from '../src/systems/textureReplacement.js';
-import { VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced.js';
-import { setValue } from '../src/systems/settings.js';
+import { VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced/vanillaEnhanced.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { SNOW_MASK_BYTES, SNOWFALL_ARCHIVES } from '../tools/environmentModsExtract.mjs';
 

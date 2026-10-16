@@ -37,7 +37,7 @@
   },
   {
     "name": "PARTY-UI-the-count-never-kept",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "    trip.count = count;",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "PARTY-UI-the-count-never-updated",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (count !== t.count) { t.count = count; waitLabel(t, now); }",
     "new": "if (count !== t.count) { waitLabel(t, now); }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "PARTY-UI-respond-a-toggle",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "answer(round.at, yes == null ? vote !== round.at : !!yes), said: true",
     "new": "answer(round.at, vote !== round.at), said: true",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "PARTY-UI-the-box-left-standing",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "    if (promptFor === round.at) closePrompt();\n    asked = round.at;\n    return { line: answer(round.at, yes",
     "new": "    asked = round.at;\n    return { line: answer(round.at, yes",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "PARTY-UI-gathered-unread",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "gathered: near === open.at",
     "new": "gathered: true",
     "tests": [

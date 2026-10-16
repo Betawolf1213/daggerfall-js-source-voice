@@ -8,15 +8,15 @@ import { readFileSync } from 'node:fs';
 import {
   setBlow, setStrike, setStruck, setPowerStates, setSetPowersVoice, coilStacks, coilStacksAt, coiledFoe,
   _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, setSigilDueling, sigilDueling, sigilBlow, _resetSigilForTests } from '../src/systems/sigil.js';
-import { COIL_STACKS, setsDueling, setSetsDueling, setsSleep, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, setSigilDueling, sigilDueling, sigilBlow, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { COIL_STACKS, setsDueling, setSetsDueling, setsSleep, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { hurtPlayer, registerPlayerDeathSave, registerPlayerHurtListener } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { bossStandIn } from '../src/world/gateBoss.js';
@@ -101,12 +101,12 @@ test('AUDIT 625 P2: the duel\'s word is ONE, kept by SIGIL1\'s door (sigil.js se
   assert.equal(sigilBlow(blade, 100, me, rival), 100, 'the duel\'s word: nothing');
   setSigilDueling(false);
   // the loot's powers read the same word (lootPowers.js wornPowers - LOOT4's own law: asleep in a duel)
-  assert.match(read('src/systems/lootPowers.js'), /if \(!mine\(entity\) \|\| !lootRarityOn\(\) \|\| setsDueling\(\)\) return \[\];/);
+  assert.match(read('src/systems/loot/lootPowers.js'), /if \(!mine\(entity\) \|\| !lootRarityOn\(\) \|\| setsDueling\(\)\) return \[\];/);
   // the host: the duel, or a live bout between players
   const w = read('src/scenes/world.js');
   assert.match(w, /setSetsDueling\(!!duelMgr\.live \|\| arenaPvpLive\(\)\);/);
   assert.match(w, /const arenaPvpLive = \(\) => \{ const b = arenaOnline\?\.bout\(\), r = arenaBouts\.relay\(\); return !!b && b\.kind === 'pvp' && !!r\?\.me; \};/);
-  assert.doesNotMatch(read('src/systems/sigilSets.js'), /let _dueling/, 'the word is kept once');
+  assert.doesNotMatch(read('src/systems/sigil/sigilSets.js'), /let _dueling/, 'the word is kept once');
 });
 
 // ─── P3: A COIL PER FOE ──────────────────────────────────────────────
@@ -145,7 +145,7 @@ test('AUDIT 625 P3 (Mac: "A coil per foe"): every foe holds its own Constrict co
 test('AUDIT 625 P4 (the client\'s half): the serpent\'s claim says the embers this build\'s hoard mints - SERPENT_EMBERS, the very stack serpentEmbers mints - so the row counts what the pack was given (the service\'s half: test/serpentset_service.test.js AUDIT 625 P4) (mutants: the claim silent)', async () => {
   const { claimSerpentReceipt } = await import('../src/net/accountClient.js');
   const { SERPENT_EMBERS } = await import('../src/net/serpentHoardLaw.js');
-  const { serpentEmbers } = await import('../src/systems/serpentSpoils.js');
+  const { serpentEmbers } = await import('../src/systems/serpent/serpentSpoils.js');
   const sent = [];
   const io = { fetch: async (url, init) => { sent.push([url, JSON.parse(init.body)]); return new Response('{"recorded":true}', { status: 200, headers: { 'content-type': 'application/json' } }); }, base: 'https://acct.invalid', secret: 's' };
   await claimSerpentReceipt(io, 'R', 'char-1', 'Ann', 'a'.repeat(16));
@@ -155,7 +155,7 @@ test('AUDIT 625 P4 (the client\'s half): the serpent\'s claim says the embers th
 
 test('AUDIT 625 P5: the Coilscale\'s powers driven by the pieces its PRODUCER mints (aetheric.js mintAetheric - Aetheric Ebony, the set\'s own records), not a hand-made Rare: Sea-Scale, Constrict and Shed Skin wake on the nine, and Constrict bites (mutants: a tier unread on the minted shape)', async () => {
   const { SERPENT_SET_PIECES, mintAetheric } = await import('../src/systems/aetheric.js');
-  const { awakeTiersOf } = await import('../src/systems/sigilSetPowers.js');
+  const { awakeTiersOf } = await import('../src/systems/sigil/sigilSetPowers.js');
   fresh();
   const e = player();
   for (const r of SERPENT_SET_PIECES) { const it = mintAetheric(r); e.items.push(it); equipItem(e, it); }
@@ -177,7 +177,7 @@ test('AUDIT 625 P5: the Coilscale\'s powers driven by the pieces its PRODUCER mi
 
 test('AUDIT 625 D2: a serpent\'s silver is carded under its own source - "Serpent slain", never a breach\'s - and its hoard\'s embers wear the GATE\'s glow tier (scenes/spoilsPool.js SIGIL_TIER), the one the breach\'s ember wears (mutants: the source a breach\'s; the embers another tier)', async () => {
   const { claimHauls, CLAIM_SOURCE } = await import('../src/ui/haulCards.js');
-  const { serpentSpoilsList } = await import('../src/systems/serpentSpoils.js');
+  const { serpentSpoilsList } = await import('../src/systems/serpent/serpentSpoils.js');
   const { SIGIL_TIER } = await import('../src/scenes/spoilsPool.js');
   const { SERPENT_EMBERS } = await import('../src/net/serpentHoardLaw.js');
   assert.equal(CLAIM_SOURCE.serpent, 'Serpent slain');

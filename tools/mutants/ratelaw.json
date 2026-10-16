@@ -1,7 +1,7 @@
 [
   {
     "name": "RATE-open-rate-is-the-road",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "export const OPEN_PACE_MAX = 60;",
     "new": "export const OPEN_PACE_MAX = 100;",
     "tests": [
@@ -13,7 +13,7 @@
   },
   {
     "name": "RATE-rates-swapped",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "  const t = onRoad ? ROAD_PACE_MAX : OPEN_PACE_MAX;",
     "new": "  const t = onRoad ? OPEN_PACE_MAX : ROAD_PACE_MAX;",
     "tests": [
@@ -24,7 +24,7 @@
   },
   {
     "name": "RATE-leg-kind-unread",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      return !!leg && (ROAD_LEG_KINDS.includes(leg.kind) || bridgedRoadLeg(r.legs, at));   // ROAD-BRIDGE",
     "new": "      return !!leg;   // ROAD-BRIDGE",
     "tests": [
@@ -33,7 +33,7 @@
   },
   {
     "name": "RATE-track-off-the-road",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "export const ROAD_LEG_KINDS = Object.freeze(['road', 'track']);",
     "new": "export const ROAD_LEG_KINDS = Object.freeze(['road']);",
     "tests": [
@@ -43,7 +43,7 @@
   },
   {
     "name": "RATE-join-at-road-rate",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (r.join) return false;\n",
     "new": "",
     "tests": [
@@ -52,7 +52,7 @@
   },
   {
     "name": "RATE-path-at-open-rate",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (st.walk === 'path' || st.walk === 'ring') return true;",
     "new": "    if (st.walk === 'ring') return true;",
     "tests": [
@@ -62,7 +62,7 @@
   },
   {
     "name": "RATE-host-never-asked",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    return !!deps.onRoad?.();",
     "new": "    return false;",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "RATE-ring-ceiling-dropped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    const rate = st.walk === 'ring' ? Math.min(MAX_CIRCUMNAVIGATION_ACCEL, travelRateOf(onRoad)) : travelRateOf(onRoad);",
     "new": "    const rate = travelRateOf(onRoad);",
     "tests": [
@@ -80,7 +80,7 @@
   },
   {
     "name": "RATE-asked-every-frame",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (!force && rate === st.rate && onRoad === st.rateOnRoad) return;",
     "new": "    if (!force && false) return;",
     "tests": [
@@ -89,7 +89,7 @@
   },
   {
     "name": "RATE-ground-never-followed",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (st.autopilot && ui?.isShowing) applyRate();\n",
     "new": "",
     "tests": [
@@ -98,7 +98,7 @@
   },
   {
     "name": "RATE-panel-never-told",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    ui?.setRate?.(rate, onRoad);\n",
     "new": "",
     "tests": [
@@ -108,7 +108,7 @@
   },
   {
     "name": "RATE-start-not-asked",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    applyRate(true);\n    disableWeatherAndSound();",
     "new": "    applyRate();\n    disableWeatherAndSound();",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RATE-foe-pace-unfloored",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "export const foePaced = (cap, want) => Math.min(want, Math.max(cap, paceNow('foe') ?? JOURNEY_FOE_PACE));",
     "new": "export const foePaced = (cap, want) => Math.min(want, cap);",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "RATE-foe-pace-moved",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "export const JOURNEY_FOE_PACE = 5;",
     "new": "export const JOURNEY_FOE_PACE = 1;",
     "tests": [

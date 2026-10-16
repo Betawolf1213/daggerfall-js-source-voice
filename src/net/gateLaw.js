@@ -10,7 +10,7 @@
 //
 // PURE, and the relay's too (WB3 imports it to hold a boss room to its day's window): this file imports wire.js
 // and (WB8b) the marks' leaf, net/gateMods.js, which imports nothing - wire.js is already the relay's. Nothing here reads a map file - the site is the CLIENT's to find, over
-// the world's own data (systems/gateSite.js), with the rolls below; the relay never needs to know where a gate is.
+// the world's own data (systems/gate/gateSite.js), with the rolls below; the relay never needs to know where a gate is.
 //
 // Not a DFU member: Daggerfall has no other players and no world events. Ledger A (WB).
 import { sharedClassicMinutes, wallMsForClassicMinutes } from './wire.js';
@@ -320,7 +320,7 @@ export function gateModsOf(day) {
 //
 // The lines the chat says at the gate's moments that name no time - each client says its own, off the clock (bible
 // World-Bosses.md section 2). `near` is the town ("Copperham"); `left` a countdown ("4:07"). TIME1: the three that
-// named a time (the omen, the opening, the seal) are systems/gateOmen.js's, in local time alone; WB12's relay deploy
+// named a time (the omen, the opening, the seal) are systems/gate/gateOmen.js's, in local time alone; WB12's relay deploy
 // (world151) retired them here.
 // WB13b (2026-10-01, Mac: "clean up text to be less explanatory and less AI"): each line the event, where and when -
 // the map's ring, the banner and the countdowns say the rest

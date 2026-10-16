@@ -21,10 +21,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { GUILDS, guildInitiationQuestEnded } from '../src/systems/guilds.js';
+import { GUILDS, guildInitiationQuestEnded } from '../src/systems/guild/guilds.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
-import { canAffordTraining, donate, payForCure } from '../src/systems/guildServiceActions.js';
-import { calculateTripCost, playerTravelPosition } from '../src/systems/travel.js';
+import { canAffordTraining, donate, payForCure } from '../src/systems/guild/guildServiceActions.js';
+import { calculateTripCost, playerTravelPosition } from '../src/systems/travel/travel.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 import { SEVERE_PUNISHMENT_BANISHED, SEVERE_PUNISHMENT_EXECUTED } from '../src/systems/encounters.js';
 import { createArrestFlow } from '../src/scenes/arrestFlow.js';
@@ -69,7 +69,7 @@ test('F96: the two quest names come from the guild records, which now have a rea
   // that these two fields had no consumer.
   assert.equal(GUILDS.ThievesGuild.initiationQuest, 'O0A0AL00');
   assert.equal(GUILDS.DarkBrotherhood.initiationQuest, 'L0A01L00');
-  const g = src('systems/guilds.js');
+  const g = src('systems/guild/guilds.js');
   const fn = g.slice(g.indexOf('export function guildInitiationQuestEnded'));
   const body = fn.slice(0, fn.indexOf('\n}'));
   assert.match(body, /GUILDS\.ThievesGuild, GUILDS\.DarkBrotherhood/,
@@ -231,7 +231,7 @@ test('F100: all three guild-service gates are GetGoldAmount - letters are tender
 });
 
 test('F100: the coins-only reader is gone from the service module', () => {
-  const g = src('systems/guildServiceActions.js');
+  const g = src('systems/guild/guildServiceActions.js');
   assert.equal(/\bgoldAmount\(/.test(g), false,
     'goldAmount is DFU\'s goldPieces alone; every gate here is GetGoldAmount');
   assert.match(g, /import \{ totalGoldAmount, deductGold \} from '\.\/court\.js';/);
@@ -270,7 +270,7 @@ test('F101/F115: both fast-travel callers now supply the perk', () => {
   assert.match(hook.slice(0, 800), /orderRegion: townTalk\.factionDict\?\.get\(order\.factionId\)\?\.region \?\? null/,
     'the home-region half of the perk needs the order\'s own faction region');
   // the comment that licensed the gap is retired
-  assert.equal(src('systems/travel.js').includes('false until the guild perk wires'), false);
+  assert.equal(src('systems/travel/travel.js').includes('false until the guild perk wires'), false);
 });
 
 // ── F114 ──────────────────────────────────────────────────────────

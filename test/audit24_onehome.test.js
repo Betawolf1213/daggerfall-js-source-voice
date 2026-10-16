@@ -54,10 +54,10 @@ const HOMONYMS = new Map([
   // the port's name further from DFU's than the collision costs.
   ['canRest', 'FightersGuild.CanRest (may this member sleep here) vs DaggerfallRestWindow.CanRest (the whole pre-rest gate, which consumes it)'],
   // The arena merge: three pairs ARENA2-ARENA4 brought, each two things. The beasts: the game's SET of beast mobiles
-  // (systems/arenaFighters.js - who never yields) and the relay's beast BODIES keyed by mobile (net/arenaLaw.js -
+  // (systems/arena/arenaFighters.js - who never yields) and the relay's beast BODIES keyed by mobile (net/arenaLaw.js -
   // its fighters' health and blows, in the relay's import graph, where the game's table cannot go); test/arena4_client
   // pins the keys equal. The season: a town seat's numbered season from a week and a zero (net/townSeatLaw.js) and
-  // the arena's eight-week season from a day (systems/arenaLeague.js). The state word: a relay bout's, on the wire
+  // the arena's eight-week season from a day (systems/arena/arenaLeague.js). The state word: a relay bout's, on the wire
   // (net/arenaBrain.js), and a bounty row's, in its window (ui/bountyWindow.js).
   ['ARENA_BEASTS', "the game's set of beast mobiles vs the relay's beast bodies by mobile (their keys pinned equal by arena4_client)"],
   ['seasonOf', "a town seat's season from a week and its zero vs the arena's eight-week season from a day"],
@@ -125,11 +125,11 @@ test('audit24 wave27: the compass law has ONE implementation', async () => {
   // acos(0) = 90 = NORTH where C#'s 0/0 = NaN falls through to
   // '...never mind...', and its else answered 'east' rather than the
   // never-mind.
-  const tt = await import('../src/systems/talkTopics.js');
-  const talk = await import('../src/systems/talk.js');
+  const tt = await import('../src/systems/talk/talkTopics.js');
+  const talk = await import('../src/systems/talk/talk.js');
   assert.equal(tt.compassHint, talk.directionHintString, 'the same function object');
   assert.equal(tt.compassHint(0, 0), '...never mind...', 'not north');
-  const src = readFileSync(new URL('../src/systems/talkTopics.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/systems/talk/talkTopics.js', import.meta.url), 'utf8');
   assert.doesNotMatch(src, /Math\.hypot\(dx, dz\) \|\| 1e-9/, 'the magnitude guard is gone with it');
   assert.doesNotMatch(src, /angle >= 337\.5/, 'and no second band table');
 });

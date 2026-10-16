@@ -9,7 +9,7 @@ import { legalNoticeLine, installLegalNotices } from '../src/scenes/standingHost
 import { legalStandingWord } from '../src/systems/legalBands.js';
 import { lowerRepForCrime, raiseRepForSentence, changeLegalRep, normalizeReputations, CRIMES } from '../src/systems/court.js';
 import { banish } from '../src/systems/standing.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 import { lawRows } from '../src/ui/enhancedMenu.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

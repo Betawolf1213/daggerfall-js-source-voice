@@ -13,7 +13,7 @@ import { tideOf, TIDE_EFFECTS } from '../src/net/tideLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { createTownSeatBook } from '../src/net/townSeatBook.js';
 import { createSeatEdicts, ORC_CAMP_TEXT } from '../src/systems/seatEdicts.js';
-import { calculateTravelTime, travelPixelMinutes, setSeaTide } from '../src/systems/travel.js';
+import { calculateTravelTime, travelPixelMinutes, setSeaTide } from '../src/systems/travel/travel.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
 const ANTICLERE = { key: 3021, name: 'Anticlere', region: 21, tier: 'palace', pixel: [402, 151] };

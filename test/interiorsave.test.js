@@ -20,7 +20,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save/save.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

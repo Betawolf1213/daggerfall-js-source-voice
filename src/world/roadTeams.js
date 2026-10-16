@@ -15,12 +15,12 @@
 // `clear()` destroys every one and takes down every box (the roads' own clear: indoors, a mode's change, the teardown).
 // The meshes are the pool's, held for the session (the pool's own law).
 import { mat4FromQuatPos, quatLookRotation } from './quat.js';
-import { usableBounds } from '../systems/wagon41214.js';
+import { usableBounds } from '../systems/wagon/wagon41214.js';
 import { boxTriangles, HORSE_ARCHIVE, horseStillRecord, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT } from '../scenes/horseCartPool.js';
-import { strangerHorseLook } from '../systems/horseCoats.js';   // COATS1: the road's horses, each its own look
-import { stepHorseWalk, freshHorseWalk, NORMAL_GROUND_OFFSET } from '../systems/horseCartLaw.js';
+import { strangerHorseLook } from '../systems/horse/horseCoats.js';   // COATS1: the road's horses, each its own look
+import { stepHorseWalk, freshHorseWalk, NORMAL_GROUND_OFFSET } from '../systems/horse/horseCartLaw.js';
 import { wheelAngleAt, HITCH_N } from '../systems/livingWorld/wagons.js';
-import { NATIVE_PER_M } from '../systems/travelDungeons.js';
+import { NATIVE_PER_M } from '../systems/travel/travelDungeons.js';
 
 /** WAGONS1 x LW10: THE LIVING WORLD'S WAGON is the Small Cart - the classic transport's kind (Mac's wagon of it where
  *  his are drawn, Daggerfall's 41214 where they are not), whatever the player drives: the pool's draw and parts default

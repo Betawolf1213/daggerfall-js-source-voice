@@ -564,7 +564,7 @@
   },
   {
     "name": "SURVBOONS-the-load-forgets-the-lines",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "{ ...snap.survival, notes: savedNotes(snap.survival) }",
     "new": "{ ...snap.survival, notes: {} }",
     "why": "AUDIT SURV-BOONS C3: every load said every boon again",

@@ -7,10 +7,10 @@ import assert from 'node:assert/strict';
 
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
-import { travelMapPopUpState, resetTravelMapState } from '../src/systems/travelMapState.js';
+import { travelMapPopUpState, resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { readImmersiveTravelSettings, carriageTripCost, IT_POPUP, IT_TEXT, IMMERSIVE_TRAVEL_VENDOR, DOCK_PIXEL_IDS, CAPITAL_MAP_IDS } from '../src/systems/immersiveTravel.js';
-import { calculateTravelTime } from '../src/systems/travel.js';
+import { calculateTravelTime } from '../src/systems/travel/travel.js';
 
 function fakeDocument() {
   const node = () => {

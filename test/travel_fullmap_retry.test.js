@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {planRoute} from '../src/systems/travelRoute.js';
+import {planRoute} from '../src/systems/travel/travelRoute.js';
 test('normal default world-sized bounded search must retry a reachable full-map route without the expansion cap',()=>{
  const W=1000,H=500;
  // 250 dry horizontal corridors joined alternately at each end. All coordinates and defaults are ordinary.

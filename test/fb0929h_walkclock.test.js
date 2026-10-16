@@ -15,7 +15,7 @@ import {
   CLASSIC_MINUTES_PER_SECOND, MINUTES_PER_DAY,
 } from '../src/systems/worldTick.js';
 import { dateFromClassicMinutes } from '../src/systems/gameDate.js';
-import { daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guilds.js';
+import { daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guild/guilds.js';
 import { RACES } from '../src/systems/races.js';
 
 afterEach(() => { setSharedClock(null); });

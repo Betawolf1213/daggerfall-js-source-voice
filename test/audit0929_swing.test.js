@@ -21,7 +21,7 @@ import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from 
 import { equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { WEAPONS } from '../src/characters/weapons.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 
 const DT = 1 / 60;
 const mint = (item) => mintCondition(setItemFields(item));

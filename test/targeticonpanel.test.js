@@ -19,7 +19,7 @@ import { DEFAULT_TOOLTIP_TEXT_FG } from '../src/ui/toolTip.js';
 import { NativeInventoryWindow, INV_RECTS, _setInventoryArtForTests } from '../src/ui/nativeInventory.js';
 import { NativeTradeWindow, TRADE_RECTS, _setTradeArtForTests } from '../src/ui/nativeTrade.js';
 import { nativeMetrics } from '../src/ui/nativePanel.js';
-import { WAGON_KG_LIMIT } from '../src/systems/itemTransfer.js';
+import { WAGON_KG_LIMIT } from '../src/systems/item/itemTransfer.js';
 import { entityMaxEncumbrance } from '../src/combat/formulas.js';
 
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };

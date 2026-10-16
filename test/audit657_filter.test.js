@@ -9,7 +9,7 @@ import * as acorn from 'acorn';
 import { maskText, textCaught, checkName, INNOCENT, CRUDE, SLURS, ANYWHERE, listIsNormalised } from '../src/net/nameFilter.js';
 import { sanitizeChat } from '../src/net/wire.js';
 import { shipNameVerdict } from '../src/systems/fleet.js';
-import { shownItemName } from '../src/systems/itemInfo.js';
+import { shownItemName } from '../src/systems/item/itemInfo.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const LISTED = [...new Set([...ANYWHERE.flatMap((g) => g.words), ...SLURS, ...CRUDE])];

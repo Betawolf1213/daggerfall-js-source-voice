@@ -19,7 +19,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import * as REST from '../src/systems/rest.js';   // a namespace: on the code before, the new names read undefined and the LAW fails, not the import
+import * as REST from '../src/systems/rest/rest.js';   // a namespace: on the code before, the new names read undefined and the LAW fails, not the import
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setSharedClock, setWorldMinutes, resetMagicRoundMarker } from '../src/systems/worldTick.js';
 import { hurtPlayer, setDeathPresenter, registerPlayerDeathSave } from '../src/characters/playerEntity.js';
@@ -250,5 +250,5 @@ test('SPENT-ASHORE: all four hosts take the arm - a line, the share through the 
   assert.ok(dfn.indexOf('if (sandSpare) {') > 0 && dfn.indexOf('if (sandSpare) {') < dfn.search(ARMS['src/scenes/dungeonContext.js'].arm), 'dungeonContext.js: the sand\'s fall first');
   assert.ok(dfn.search(/if \(out\.kind === 'drown'\)/) < dfn.indexOf('const sandSpare'), 'dungeonContext.js: the water first, as SWIM-SPENT left it');
   // and the outcome itself has no death left to answer
-  assert.doesNotMatch(code(rd('src/systems/rest.js')), /kind: 'death'/, 'rest.js: no death outcome');
+  assert.doesNotMatch(code(rd('src/systems/rest/rest.js')), /kind: 'death'/, 'rest.js: no death outcome');
 });

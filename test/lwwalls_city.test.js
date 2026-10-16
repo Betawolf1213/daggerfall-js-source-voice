@@ -20,7 +20,7 @@ import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { maxPopulationFor } from '../src/systems/townPopulation.js';
+import { maxPopulationFor } from '../src/systems/town/townPopulation.js';
 import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 

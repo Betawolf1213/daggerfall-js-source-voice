@@ -1,7 +1,7 @@
 [
   {
     "name": "DISC29-B-rarity-name-bare-template",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "return nameAround(template != null ? rriVariantWord(item) + template : (item.name ?? ''), tier, affixes);",
     "new": "return nameAround(template != null ? template : (item.name ?? ''), tier, affixes);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DISC29-B-light-word-before-fold-only",
-    "file": "src/systems/rriItems.js",
+    "file": "src/systems/roleplayRealismItems/rriItems.js",
     "old": "raw(item) === ARMOR_MATERIAL.Chain || (raw(item) === ARMOR_MATERIAL.Leather && msg(item) === 1)",
     "new": "raw(item) === ARMOR_MATERIAL.Chain",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DISC29-B-light-class-no-word",
-    "file": "src/systems/rriItems.js",
+    "file": "src/systems/roleplayRealismItems/rriItems.js",
     "old": "  variantWord: lightWord,",
     "new": "  variantWord: null,",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DISC29-B-chain-class-no-word",
-    "file": "src/systems/rriItems.js",
+    "file": "src/systems/roleplayRealismItems/rriItems.js",
     "old": "  variantWord: mailWord,",
     "new": "  variantWord: null,",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DISC29-B-repair-any-name",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "if (!word || template == null || it.name !== nameAround(template, it.rarity, it.affixes)) continue;",
     "new": "if (!word || template == null) continue;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DISC29-B-repair-keeps-old-name",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    it.name = nameAround(word + template, it.rarity, it.affixes);",
     "new": "    it.name = nameAround(template, it.rarity, it.affixes);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DISC29-B-repair-unguarded-affix",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const names = (a, slot) => AFFIX_KINDS[a?.id]?.slot === slot && !AFFIX_KINDS[a.id].proc;",
     "new": "  const names = (a, slot) => AFFIX_KINDS[a.id].slot === slot && !AFFIX_KINDS[a.id].proc;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DISC29-B-repair-not-on-load",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    const n = repairRarityNames(list);",
     "new": "    const n = 0;",
     "tests": [

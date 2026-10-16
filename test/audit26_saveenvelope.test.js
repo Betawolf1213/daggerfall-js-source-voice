@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { snapshotPlayer, restorePlayer, copyEffectEntry } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, copyEffectEntry } from '../src/systems/save/save.js';
 import { applyWeaponPose } from '../src/combat/playerWeapon.js';   // HARD2c: the :420-421 inversion, called rather than quoted
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { Collider } from '../src/player/collider.js';

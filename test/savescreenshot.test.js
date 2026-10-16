@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import {
   saveSlot, deleteSave, screenshotOf, requestScreenshot,
   capturePendingScreenshot, SCREENSHOT_W, SCREENSHOT_H, SAVE_SHOT_PREFIX,
-} from '../src/systems/saveSlots.js';
+} from '../src/systems/save/saveSlots.js';
 import { SaveWindow } from '../src/ui/saveWindow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

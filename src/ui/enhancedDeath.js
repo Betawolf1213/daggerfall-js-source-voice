@@ -30,10 +30,10 @@
 // again every frame.
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { PIXEL_STACK } from './pixelifyFive.js';
-import { isOnlinePage } from '../systems/onlineLane.js';
+import { isOnlinePage } from '../systems/online/onlineLane.js';
 import { deathPenaltyLine } from '../systems/deathPenalty.js';   // DEATH-PENALTY: the line about the loss
 import { armDrawWatchdog, disarmDraw } from './drawWatchdog.js';
-import { wildDeathLines } from '../systems/wildZone.js';   // WILD1: a death in the open zone says what it cost
+import { wildDeathLines } from '../systems/wild/wildZone.js';   // WILD1: a death in the open zone says what it cost
 import { t } from '../systems/textManager.js';   // L10N4: the death screen's words in the player's language
 
 export const ENHANCED_DEATH_ID = 'enhanced-death';

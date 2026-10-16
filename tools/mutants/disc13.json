@@ -19,7 +19,7 @@
   },
   {
     "name": "DISC13-B-the-bandage-declares-no-usable",
-    "file": "src/systems/rriKits.js",
+    "file": "src/systems/roleplayRealismItems/rriKits.js",
     "old": "useBandage.usable = () => rriModule('bandaging');\n",
     "new": "",
     "tests": [

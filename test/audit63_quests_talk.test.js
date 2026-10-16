@@ -12,7 +12,7 @@ import { Quest } from '../src/systems/quest/quest.js';
 import { QuestResourceBehaviour } from '../src/systems/quest/resourceBehaviour.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
 import { NPCSession, newNPCData, FACTION_TYPE } from '../src/systems/npcSession.js';
-import { getReactionToPlayer } from '../src/systems/talk.js';
+import { getReactionToPlayer } from '../src/systems/talk/talk.js';
 import { enchantmentMagicRound } from '../src/systems/enchantments.js';
 import { doItemEnchantmentPayloads, PAYLOAD, ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { ARTIFACTS } from '../src/systems/artifactEffects.js';
@@ -22,7 +22,7 @@ import {
   setDiscoveredBuildingCustomName, setLastLockpickAttempt,
   undiscoverBuilding, hasDiscoveredBuilding,
 } from '../src/systems/discovery.js';
-import { expandMessageBoxTokens } from '../src/systems/talkMacros.js';
+import { expandMessageBoxTokens } from '../src/systems/talk/talkMacros.js';
 import { TextRsc, RSC, TOKEN_TEXT } from '../src/formats/textRsc.js';
 import { tokenRows } from '../src/ui/messageBox.js';
 import { NativeTalkWindow, TALK_RECTS, COPIED_SHADOW_COLOR } from '../src/ui/nativeTalk.js';

@@ -7,8 +7,8 @@
 // band, the whole ring), a centre closed (the deepest free level below the deepest), and many days.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildWildMask, WILD_REGION, WILD_RINGS } from '../src/systems/wildZone.js';
-import { wildHallPicks, wildRingBorderDistance, WILD_DUNGEONS_PER_RING, WILD_HALL_SPACING } from '../src/systems/wildDungeons.js';
+import { buildWildMask, WILD_REGION, WILD_RINGS } from '../src/systems/wild/wildZone.js';
+import { wildHallPicks, wildRingBorderDistance, WILD_DUNGEONS_PER_RING, WILD_HALL_SPACING } from '../src/systems/wild/wildDungeons.js';
 
 /** The picks as they stood before WILD-FREE (wildDungeons.js), `free` asked of every ring pixel first. */
 function picksAsTheyWere(mask, free, day) {

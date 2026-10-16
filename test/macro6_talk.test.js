@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { expandAnswerRecord } from '../src/systems/talkSession.js';
+import { expandAnswerRecord } from '../src/systems/talk/talkSession.js';
 import { specialDungeonName } from '../src/systems/answerPipeline.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

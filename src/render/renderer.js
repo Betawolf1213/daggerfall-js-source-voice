@@ -554,7 +554,7 @@ uniform vec3 uRight;
 uniform vec3 uUp;
 uniform vec3 uOrigin;
 uniform vec2 uSize;
-uniform vec4 uFlatWind;   // WIND3: the wind's rate x, z (m/s, the lab's rate from systems/windDrive.js), the clock, the gust
+uniform vec4 uFlatWind;   // WIND3: the wind's rate x, z (m/s, the lab's rate from systems/wind/windDrive.js), the clock, the gust
 uniform float uSway;      // WIND3: this batch's share of the lean (0 = stands still); WINDFALL1: its wind mask while the mod's law stands
 ${WINDFALL_SWAY_GLSL}
 uniform vec3 uTip;        // PROF4: a felled tree's fall - x, z the way it falls, the angle it has leaned (0 = stands)
@@ -1464,7 +1464,7 @@ export const VIEW_OUT_CLEAR = Object.freeze([0, 0, 0, 0]);
  *  (_uploadCloudShadow). It used to be 7, which is also where the
  *  Dynamic Skies pass lands `_MoonTex`: that mod binds its nine
  *  TEXTURE_SLOTS as `TEXTURE0 + i` (dynamicSkiesRenderer.js:"for (let i = 0; i < TEXTURE_SLOTS.length; i++)",
- *  over systems/dynamicSkies.js:"export const TEXTURE_SLOTS"'s nine names),
+ *  over systems/dynamicSkies/dynamicSkies.js:"export const TEXTURE_SLOTS"'s nine names),
  *  so unit 7 was written by a foreign pass while the renderer's
  *  per-program stamp still said the shadow map was there. 15 sits
  *  above the mod's nine and above every other pass in the tree (none
@@ -7069,7 +7069,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   setCloudShadow(d) { d = d ?? null; if (d !== this._cloudShadow) { this._cloudShadow = d; this._csStamp++; } }   // VC4: the stamp moves only when the deck does (the hosts hand the same object per pixel)
 
   /** WIND3: the wind the flats lean with, for this frame - [rate x, rate
-   *  z, seconds, gust] (systems/windDrive.js's windV and gust), or null
+   *  z, seconds, gust] (systems/wind/windDrive.js's windV and gust), or null
    *  for none. Numbers only; uploaded by drawBillboards. A batch leans by
    *  this times its own `sway` (0 for everything but the climate's flora,
    *  floraSwayOf), so an interior or a dungeon that never sets it draws

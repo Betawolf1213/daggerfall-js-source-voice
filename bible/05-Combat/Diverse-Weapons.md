@@ -203,7 +203,7 @@ doors carried one. DW3:
   map, dye)`, and `hasTextureReplacement` / `decodedTexture` /
   `decodedTextureTopDown` ask by it; a vendor entry may carry a `gate`
   read at lookup.
-- `systems/itemDye.js` `itemDyeColor(item)` - `DaggerfallUnityItem
+- `systems/item/itemDye.js` `itemDyeColor(item)` - `DaggerfallUnityItem
   .dyeColor` as the port's items carry it: a weapon's `dyeColor`
   (CreateWeapon :412), an armor's by material (CreateArmor :510,
   `armorDyeColor` verbatim), clothing's `dye`, an artifact's `Unchanged`
@@ -243,7 +243,7 @@ ChangeDye has no Unchanged arm: 18 (Unchanged = Chain = Silver) is the
 leather armour are dyed too; a garment's 18 is its own swatch.
 
 - `characters/dyes.js changeDyeBitmap` - ChangeDye over a picture, into
-  a copy; `systems/itemDye.js itemDyeTarget` - which swatch (:473-476);
+  a copy; `systems/item/itemDye.js itemDyeTarget` - which swatch (:473-476);
   `inventoryItemImage` carries it as `dyeTarget` beside `dye`.
 - The GL door (`dataPipeline.uploadRecord(..., { dye, dyeTarget })`)
   dyes after the mask and uploads under `#ui_dye<dye>_<target>`. This

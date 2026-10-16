@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { itemChatText, itemPowerLines, POSTED_TEXT, NOT_POSTED_TEXT } from '../src/ui/enhancedInventory.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { CHAT_MAX, sanitizeChat } from '../src/net/wire.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

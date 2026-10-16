@@ -1,7 +1,7 @@
 // @ts-check
 // ARENA4b (2026-10-03, the audit of ARENA4 against bible/11-Multiplayer/Arena.md 2 - "Exhibition - online: yes - the
 // relay runs it, every client sees one bout"; the ARENA2 record - "ARENA4's relay runs the schedule on the shared
-// clock"): THE HOUR'S EXHIBITION AS LAW - the one home of the schedule the game runs offline (systems/arenaLadder.js
+// clock"): THE HOUR'S EXHIBITION AS LAW - the one home of the schedule the game runs offline (systems/arena/arenaLadder.js
 // re-exports it, so every reader there reads it as it always did) and the relay runs online (net/arenaBrain.js openBout,
 // server/src/index.js `arena:x<hour>`): the hours, the window, the draw of the hour's pair, the bout's id.
 //
@@ -13,10 +13,10 @@
 //                 fighters are named on every screen by the seed the offline bout names them by.
 //
 // PURE - the clock (game minutes) handed in. It imports the ladder's table (net/arenaLaw.js - the game's own ladder is
-// pinned to it row for row) and the port's one seeded die (systems/wind.js seededRng); both import nothing.
+// pinned to it row for row) and the port's one seeded die (systems/wind/wind.js seededRng); both import nothing.
 //
 // Not a DFU member. Ledger A (ARENA).
-import { seededRng } from '../systems/wind.js';   // the port's one seeded die (mulberry32) - one home
+import { seededRng } from '../systems/wind/wind.js';   // the port's one seeded die (mulberry32) - one home
 import { ARENA_LADDER_SPEC, ARENA_BEAST_TIER, ARENA_TIER_BOUTS } from './arenaLaw.js';
 
 /** The schedule: a bout on each hour of the game's clock, its call at the hour's minute 0, and the last minute of the
@@ -27,7 +27,7 @@ export const EXHIBITION_HOURS = Object.freeze([8, 9, 10, 11, 12, 13, 14, 15, 16,
 /** The schedule's seed - one constant, so the relay's schedule is the client's. */
 export const ARENA_SEED = 0x41524e32;
 
-/** A 32-bit mix (the market's xorshift family, systems/arenaMove.js) of a number and a salt. Pure. */
+/** A 32-bit mix (the market's xorshift family, systems/arena/arenaMove.js) of a number and a salt. Pure. */
 export function arenaHash(n, salt = 0) {
   let s = (Math.imul((n | 0) ^ ARENA_SEED, 0x9e3779b1) + Math.imul((salt | 0) + 1, 0x85ebca6b)) >>> 0 || 1;
   for (let i = 0; i < 4; i++) { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; }
@@ -39,7 +39,7 @@ export const hourIndexOf = (gameMinutes) => Math.floor(Math.max(0, Number(gameMi
 /**
  * THE EXHIBITION of the hour holding `gameMinutes` - `{ hour, seed, tier, opponents, startsAt, open }` - or null for an
  * hour the gates are shut. Two fighters out of one tier's roster (a beast against a beast in the beast tier) -
- * `{ mobile, level }` each, the ladder's table's (ARENA_LADDER_SPEC: systems/arenaLadder.js LADDER_TIERS row for row);
+ * `{ mobile, level }` each, the ladder's table's (ARENA_LADDER_SPEC: systems/arena/arenaLadder.js LADDER_TIERS row for row);
  * `open` whether it may still begin (its minute under EXHIBITION_START_MINUTES).
  */
 export function exhibitionFor(gameMinutes) {

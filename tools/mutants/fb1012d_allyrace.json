@@ -43,42 +43,42 @@
   },
   {
     "name": "FB1012d-born-off-the-id-not-the-body",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "      person: rec ? foeSeed(rec) : revenantPerson({ id }),",
     "new": "      person: revenantPerson({ id }),",
     "tests": ["test/fb1012d_allyrace.test.js"]
   },
   {
     "name": "FB1012d-the-stamp-without-its-person",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "sigBlow: signatureStamp(r), person: revenantPerson(r) });",
     "new": "sigBlow: signatureStamp(r) });",
     "tests": ["test/fb1012d_allyrace.test.js"]
   },
   {
     "name": "FB1012d-the-save-gives-the-ids-person",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    person: revenantPerson(r),   // FB1012d ALLY-RACE: its person kept (an older record's, its id's)",
     "new": "    person: revenantPerson({ id: r.id }),",
     "tests": ["test/fb1012d_allyrace.test.js"]
   },
   {
     "name": "FB1012d-the-kept-person-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const revenantPerson = (r) => (isU32(r?.person) ? r.person : hashStr(`${r?.id}|person`));",
     "new": "export const revenantPerson = (r) => hashStr(`${r?.id}|person`);",
     "tests": ["test/fb1012d_allyrace.test.js"]
   },
   {
     "name": "FB1012d-an-older-record-a-new-person-each-load",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const revenantPerson = (r) => (isU32(r?.person) ? r.person : hashStr(`${r?.id}|person`));",
     "new": "export const revenantPerson = (r) => (isU32(r?.person) ? r.person : (Math.random() * 0xffffffff) >>> 0);",
     "tests": ["test/fb1012d_allyrace.test.js"]
   },
   {
     "name": "FB1012d-the-sworn-member-without-its-person",
-    "file": "src/systems/revenantCompanions.js",
+    "file": "src/systems/revenant/revenantCompanions.js",
     "old": "  m.person = revenantPerson(r);",
     "new": "  m.person = undefined;",
     "tests": ["test/fb1012d_allyrace.test.js"]

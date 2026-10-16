@@ -11,10 +11,10 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder, nextLadderBout } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { markQuiver, refundQuiver, QUIVER_TEMPLATES } from '../src/systems/arenaQuiver.js';
-import { keptOffArenaGround, ARENA_GROUND_M, ARENA_GROUND_QUESTS } from '../src/systems/arenaGround.js';
+import { newArenaLadder, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { markQuiver, refundQuiver, QUIVER_TEMPLATES } from '../src/systems/arena/arenaQuiver.js';
+import { keptOffArenaGround, ARENA_GROUND_M, ARENA_GROUND_QUESTS } from '../src/systems/arena/arenaGround.js';
 import { boutTeammates } from '../src/combat/friendlyFire.js';
 import { boutGate } from '../src/characters/enemyTargets.js';
 import { arenaHudModel } from '../src/ui/arenaHud.js';

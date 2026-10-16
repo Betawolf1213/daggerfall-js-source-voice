@@ -255,7 +255,7 @@
   },
   {
     "name": "AUDIT-1003-U10-one-seconds",
-    "file": "src/systems/arenaText.js",
+    "file": "src/systems/arena/arenaText.js",
     "old": "`Accept within ${s} second${s === 1 ? '' : 's'}.`",
     "new": "`Accept within ${s} seconds.`",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "AUDIT-1003-U10-accept-at-zero",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "acts = left > 0 ? [",
     "new": "acts = left >= 0 ? [",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "AUDIT-1003-U10-lapsed-unsaid",
-    "file": "src/systems/arenaText.js",
+    "file": "src/systems/arena/arenaText.js",
     "old": " : 'The offer expired.'),",
     "new": " : `Accept within ${s} seconds.`),",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "AUDIT-1003-U11-the-banners-board-ranked",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "sub: W().boards.teamSub, heads: [W().season], ",
     "new": "sub: W().boards.teamSub, ",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "AUDIT-1003-U11-online-ranked",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "sub: O().teamSub, heads: [W().season], ",
     "new": "sub: O().teamSub, ",
     "tests": [

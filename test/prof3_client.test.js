@@ -18,11 +18,11 @@ import { mintPiece, mintPieces, useRepairKit, kitMends, repairKitUse, craftedTex
 import { createHeatAct } from '../src/systems/heatAct.js';
 import { weaponOfMaterial, armorOfMaterial } from '../src/combat/enemyEquipment.js';
 import { unitWeightInKg } from '../src/systems/inventory.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
-import { templateByIndex, inventoryItemImage, itemUseHandler } from '../src/systems/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
+import { templateByIndex, inventoryItemImage, itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { DYE_COLORS } from '../src/characters/dyes.js';
-import { ITEM_FIELDS } from '../src/systems/itemFields.js';
-import { lootRarityOn } from '../src/systems/lootRarity.js';
+import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
+import { lootRarityOn } from '../src/systems/loot/lootRarity.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

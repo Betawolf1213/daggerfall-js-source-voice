@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN9-days-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 3,",
     "new": "export const FESTER = Object.freeze({ DAYS: 2, EVERY: 3,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RVN9-every-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 3,",
     "new": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 2,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RVN9-catchup-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 10, HEALTH: 0.10, BLOWS: 0.05 });",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RVN9-health-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 7, HEALTH: 0.15, BLOWS: 0.05 });",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RVN9-blows-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.1 });",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RVN9-law-early",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "return past >= 0 && past % FESTER.EVERY === 0; };",
     "new": "return past >= -3 && past % FESTER.EVERY === 0; };",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RVN9-law-every-day",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "return past >= 0 && past % FESTER.EVERY === 0; };",
     "new": "return past >= 0; };",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "RVN9-switch-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantOn()) return [];\n  const day = Math.floor(now / MINUTES_PER_DAY);",
     "new": "  const day = Math.floor(now / MINUTES_PER_DAY);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "RVN9-first-count-festers",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (_state.lastDay == null) { _state.lastDay = day; persist(); return []; }   // the first count: from here",
     "new": "  if (_state.lastDay == null) _state.lastDay = day - 1;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "RVN9-day-twice",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (day <= _state.lastDay) return [];   // the encounter tick's every ask: nothing new. AUDIT FEUD: nor a clock behind it (a reload of an older save) - the mirror counted those days; none counts twice\n",
     "new": "",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "RVN9-no-cap",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "new": "  for (let d = _state.lastDay + 1; d <= day; d++) {",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "RVN9-day-skipped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "new": "  for (let d = Math.max(_state.lastDay + 2, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "RVN9-out-festers",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "      if (r.out || !festersOn(",
     "new": "      if (!festersOn(",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "RVN9-past-five",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }\n",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "RVN9-five-wrath-unbound",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }",
     "new": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = (r.wrath | 0) + 1; touch(r); continue; }",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "RVN9-rankup-early",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "      if (r.wrath >= WRATH_MAX) {\n        r.rank += 1;",
     "new": "      if (r.wrath >= WRATH_MAX - 1) {\n        r.rank += 1;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "RVN9-wrath-kept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "        r.rank += 1;\n        r.wrath = 0;\n",
     "new": "        r.rank += 1;\n",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "RVN9-epithet-kept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "        r.epithet = revenantEpithet('festered', r.rank, player?.name ?? '', rolls, r.epithet);\n",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "RVN9-no-deed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "        deed(r, 'festered', d * MINUTES_PER_DAY);\n",
     "new": "",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "RVN9-no-notice",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "        r.notice = 'festered';\n        up.push(r);",
     "new": "        up.push(r);",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "RVN9-day-unkept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  _state.lastDay = day;\n  persist();\n  return up;",
     "new": "  persist();\n  return up;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "RVN9-notice-unasked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  revenantFester(player, { now, rolls });   // RVN9",
     "new": "  // RVN9",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "RVN9-card-unsaid",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "r.notice === 'festered' ? revenantFesterEvent(r) : r.notice === 'deserted'",
     "new": "r.notice === 'festered' ? null : r.notice === 'deserted'",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "RVN9-card-words",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const body = `${r.given} grows bolder - it has waited too long.`;",
     "new": "  const body = `${r.given} grows bolder.`;",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "RVN9-kicker-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": " lair: 'Its lair', festered: 'Grows bolder',",
     "new": " lair: 'Its lair',",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "RVN9-stand-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (wrath) {\n    entity.maxHealth",
     "new": "  if (false) {\n    entity.maxHealth",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "RVN9-stand-blows-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n",
     "new": "",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "RVN9-stand-kept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n  }\n  r.wrath = 0;",
     "new": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n  }",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "RVN9-no-signature",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "        if (r.rank >= SIG_RANK && !r.sig) r.sig = drawSignature(r.id, r.mobileType);\n        deed(r, 'festered'",
     "new": "        deed(r, 'festered'",
     "tests": [

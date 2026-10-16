@@ -6,8 +6,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { transportItem, hasCart } from '../src/systems/inventorySession.js';
-import { newWagonItem, activeWagonItem, wagonKindOf, wagonItemName } from '../src/systems/wagonKinds.js';
-import { TRANSPORT_HORSE } from '../src/systems/itemTemplates.js';
+import { newWagonItem, activeWagonItem, wagonKindOf, wagonItemName } from '../src/systems/wagon/wagonKinds.js';
+import { TRANSPORT_HORSE } from '../src/systems/item/itemTemplates.js';
 
 const horse = () => ({ group: 'Transportation', templateIndex: TRANSPORT_HORSE });
 

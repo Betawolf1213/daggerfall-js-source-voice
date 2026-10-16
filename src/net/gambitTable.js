@@ -56,7 +56,7 @@ export const GAMBIT_FIRST_MS = 3000;
 export const GAMBIT_IDLE_TURNS = 3;
 /** The mod's RemoteActionGap: an online opponent's actions shown at least this far apart on the client (10.7). */
 export const GAMBIT_REMOTE_GAP_MS = 550;
-/** The crowns a seat may wear: an index into the Bay deck's four (systems/gambitTableSession.js GAMBIT_CROWNS). */
+/** The crowns a seat may wear: an index into the Bay deck's four (systems/gambit/gambitTableSession.js GAMBIT_CROWNS). */
 export const GAMBIT_CROWN_COUNT = 4;
 /** The most pieces a board holds: both kings and both armies at their most. */
 export const GAMBIT_PIECES_MAX = 2 * (KG_MAX_UNITS + 1);

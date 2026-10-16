@@ -2,17 +2,17 @@
 // pure model (the versus bar's two sides, my own row, the darling and the villain, the clock, the crowd's band, my
 // stamina, the yield hint, the crowd's shout), its DOM (textContent only, written on change, hidden never removed, no
 // colour inline, the touch size, reduced motion), its dress through the kit's roles and the Plus sheet; THE HERALD'S
-// CHOICE (systems/arenaHerald.js - what he says, which choices stand and the sentence for one that does not); and THE
-// WORDS (systems/arenaText.js): frozen, plain player English, no long dash, the house's " - " between clauses.
+// CHOICE (systems/arena/arenaHerald.js - what he says, which choices stand and the sentence for one that does not); and THE
+// WORDS (systems/arena/arenaText.js): frozen, plain player English, no long dash, the house's " - " between clauses.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_STYLE_ID, HUD_ROWS_MAX } from '../src/ui/arenaHud.js';
-import { newBout, boutTick, boutAtMarks, callMs, COUNT_MS, boutHealth, BOUT_LIMIT_MS } from '../src/systems/arenaBout.js';
-import { newCrowd } from '../src/systems/arenaCrowd.js';
-import { heraldChoice, FIGHT_HEALTH_MIN } from '../src/systems/arenaHerald.js';
-import { newArenaLadder, ladderAfter } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT, allArenaLines } from '../src/systems/arenaText.js';
+import { newBout, boutTick, boutAtMarks, callMs, COUNT_MS, boutHealth, BOUT_LIMIT_MS } from '../src/systems/arena/arenaBout.js';
+import { newCrowd } from '../src/systems/arena/arenaCrowd.js';
+import { heraldChoice, FIGHT_HEALTH_MIN } from '../src/systems/arena/arenaHerald.js';
+import { newArenaLadder, ladderAfter } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT, allArenaLines } from '../src/systems/arena/arenaText.js';
 import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
 import { ONLINE_DRESS_CSS } from '../src/ui/enhancedPlusStyle.js';
 

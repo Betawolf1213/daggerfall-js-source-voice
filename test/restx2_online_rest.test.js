@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { RestSession, REST_TEXT, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/restSession.js';
+import { RestSession, REST_TEXT, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
 import { RestWindow, restClockLine } from '../src/ui/restWindow.js';
 import { CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
 
@@ -154,7 +154,7 @@ test('RESTX2: the rest WINDOW\'s counter ticks down online at the offline rate, 
 });
 
 test('RESTX2 by source: the free lane and the shared-clock lane are gone from the session; the four hosts hand the sub-tick\'s end to their encounter roll', () => {
-  const src = read('src/systems/restSession.js');
+  const src = read('src/systems/rest/restSession.js');
   for (const gone of ['_free()', 'FREE_REST_HOUR_CAP', '_sharedAt', '_freeHours', '_holdShared', '_sharedTaken']) {
     assert.ok(!src.includes(gone), `${gone} is retired with the lane it served`);
   }

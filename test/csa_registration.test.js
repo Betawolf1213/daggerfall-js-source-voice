@@ -12,7 +12,7 @@ import { createHash } from 'node:crypto';
 import { MOD_SETTINGS, modSetting } from '../src/systems/modSettings.js';
 import { FEATURES, MOD_CURATED } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { ONLINE_PLAYERS_OWN_MODS, ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_MODS, ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting } from '../src/systems/online/onlineLane.js';
 import { userStrings } from '../tools/lib/clrUserStrings.mjs';
 
 const V = 'come-sail-away';

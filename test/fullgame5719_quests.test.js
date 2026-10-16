@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Symbol as QuestSymbol } from '../src/systems/quest/symbol.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { prepareQuestShare, receiveSharedQuest } from '../src/systems/questShare.js';
+import { prepareQuestShare, receiveSharedQuest } from '../src/systems/quest/questShare.js';
 import { sharedActionMatches, takeLocalActions } from '../src/systems/quest/shareActions.js';
 import { CreateFoe, StartQuest, WorldUpdate, DailyFrom } from '../src/systems/quest/actions.js';
 

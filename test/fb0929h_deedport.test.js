@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAway.js';
 import { mintBoatItem } from '../src/systems/comeSailAway/comeSailAwayItems.js';
-import { hasPort, hasPortFor, PORT_LOCATION_IDS } from '../src/systems/travelPorts.js';
+import { hasPort, hasPortFor, PORT_LOCATION_IDS } from '../src/systems/travel/travelPorts.js';
 import { getPixelFromPixelID } from '../src/formats/mapsFile.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

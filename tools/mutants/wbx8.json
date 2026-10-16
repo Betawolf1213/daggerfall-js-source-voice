@@ -1,7 +1,7 @@
 [
   {
     "name": "WBX8-the-omens-line-not-kindled",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "    return GATE_SKY_KINDLE * smooth01((nowMs - t.omenAt) / GATE_SKY_KINDLE_MS) + (GATE_SKY_OMEN - GATE_SKY_KINDLE)",
     "new": "    return 0 * smooth01((nowMs - t.omenAt) / GATE_SKY_KINDLE_MS) + (GATE_SKY_OMEN - GATE_SKY_KINDLE)",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WBX8-the-opening-a-step",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "  const whole = GATE_SKY_RISEN + (1 - GATE_SKY_RISEN) * smooth01((nowMs - t.openAt) / GATE_SKY_KINDLE_MS);",
     "new": "  const whole = 1;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WBX8-left-burning-after-the-collapse",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "  return whole * (1 - smooth01((nowMs - end) / GATE_COLLAPSE_MS));",
     "new": "  return whole;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WBX8-a-fall-before-the-opening-ending-it",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "  const end = Number.isFinite(fellAt) && /** @type {number} */ (fellAt) >= t.openAt ? Math.min(",
     "new": "  const end = Number.isFinite(fellAt) ? Math.min(",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WBX8-the-reach-inverted",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "  return 1 - smooth01((distM - GATE_SKY_FULL_M) / (GATE_SKY_EDGE_M - GATE_SKY_FULL_M));",
     "new": "  return smooth01((distM - GATE_SKY_FULL_M) / (GATE_SKY_EDGE_M - GATE_SKY_FULL_M));",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WBX8-the-edge-cut-short",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "export const GATE_SKY_EDGE_M = 12_000;",
     "new": "export const GATE_SKY_EDGE_M = 5_000;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WBX8-the-site-spot-left-out",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      const weight = gateSkyWeight(c.t, now(), fellAt(c.t.day), Math.hypot(eye[0] - x, eye[2] - z));\n      return weight > 0 ? { weight, x, z } : null;",
     "new": "      const weight = gateSkyWeight(c.t, now(), fellAt(c.t.day), Math.hypot(eye[0] - x, eye[2] - z));\n      return weight > 0 ? { weight, x: x - c.site.spot[0], z } : null;",
     "tests": [

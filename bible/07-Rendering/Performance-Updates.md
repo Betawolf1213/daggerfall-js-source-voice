@@ -147,7 +147,7 @@ wind audio's, the blood marks', the wisps' and the first-person lighting's kill 
 together - for an answer that cannot change while the page is open.
 
 **Why it kept coming back.** PERF-SUN (2026-09-19) paid this exact cost for ONE door - `swayDisabled` in
-`systems/windDrive.js` keeps its answer until the search string changes (`cullDisabled`'s shape) - and every door
+`systems/wind/windDrive.js` keeps its answer until the search string changes (`cullDisabled`'s shape) - and every door
 written since was written the old way again, because the fix lived in one file. There was no shared parsed view of the
 page's query to reach for.
 

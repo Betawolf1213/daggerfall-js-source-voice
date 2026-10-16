@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { drawFpsWeapon, FLIP_STATES, ALIGN, getWeaponAnims, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import { ENUM_LAW } from '../src/ui/settingsLaw.js';
 
 // AUDIT 28 - W13: HANDEDNESS (StartGameBehaviour :269 -> FPSWeapon

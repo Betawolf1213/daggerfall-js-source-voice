@@ -22,7 +22,7 @@ import { readFileSync } from 'node:fs';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { PotionMakerWindow } from '../src/ui/potionMakerWindow.js';
 import { scrollerToolTipText } from '../src/ui/itemScroller.js';
-import { itemLongName, resolveItemName, itemInfoRows, POTION_RECIPE_FOR_TEXT, POTION_RECIPE_WEIGHT_TEXT } from '../src/systems/itemInfo.js';
+import { itemLongName, resolveItemName, itemInfoRows, POTION_RECIPE_FOR_TEXT, POTION_RECIPE_WEIGHT_TEXT } from '../src/systems/item/itemInfo.js';
 import { repairJobsAt, isBeingRepaired, calculateItemRepairTime, INTERRUPT_REPAIR_TEXT } from '../src/systems/repairService.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';

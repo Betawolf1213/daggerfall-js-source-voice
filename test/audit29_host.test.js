@@ -17,8 +17,8 @@ import { createHerbAct } from '../src/systems/herbAct.js';
 import { standMineNodes, mineKind } from '../src/scenes/mineHost.js';
 import { createGatherHost, aimAt, NODE_AIM_DEG } from '../src/scenes/gatherHost.js';
 import { herbKind } from '../src/scenes/herbHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -38,12 +38,12 @@ const OUT = process.env.SHOT_DIR ?? join(ROOT, 'tools/shots');
 const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SET5 probe</title>
 <style>html,body{margin:0;height:100%;overflow:hidden;background:repeating-linear-gradient(45deg,#3b4a3a 0 14px,#324031 14px 28px)}</style></head><body>
 <script type="module">
-import { setSigilOnline, setSigilRenown } from '/src/systems/sigil.js';
-import { setSetsWearer, SIGIL_SETS } from '/src/systems/sigilSets.js';
-import { setHudChips, setStruck, _resetSetPowersForTests } from '/src/systems/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown } from '/src/systems/sigil/sigil.js';
+import { setSetsWearer, SIGIL_SETS } from '/src/systems/sigil/sigilSets.js';
+import { setHudChips, setStruck, _resetSetPowersForTests } from '/src/systems/sigil/sigilSetPowers.js';
 import { REGALIA, mintAetheric } from '/src/systems/aetheric.js';
 import { equipItem, unequipItem } from '/src/systems/equip.js';
-import { setItemFields, mintCondition } from '/src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '/src/systems/item/itemTemplates.js';
 import { createWeapon } from '/src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '/src/systems/armorMaterials.js';
 import { setPref } from '/src/systems/uiPrefs.js';

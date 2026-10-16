@@ -1,7 +1,7 @@
 [
   {
     "name": "ONE-BOARD-every-board-left",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "    if (bounty.has(i)) continue;\n    const d = Array.isArray(centre)",
     "new": "    const d = Array.isArray(centre)",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ONE-BOARD-the-nearest-ignored",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "const d = Array.isArray(centre) ? Math.hypot((box[0] + box[3]) / 2 - centre[0], (box[2] + box[5]) / 2 - centre[1]) : 0;",
     "new": "const d = 0;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ONE-BOARD-the-tie-to-the-last",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "    if (d < near) { near = d; best = i; }",
     "new": "    if (d <= near) { near = d; best = i; }",
     "tests": [

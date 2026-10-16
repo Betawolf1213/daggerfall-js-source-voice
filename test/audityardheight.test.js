@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { DECOR_TURN_STEP } from '../src/systems/decorPlacer.js';
+import { DECOR_TURN_STEP } from '../src/systems/decor/decorPlacer.js';
 import { DECOR_TURN_SETTLE_MS } from '../src/scenes/decorTool.js';
 import { settle, all, one, rows, toolRig, placeFrom } from './decorFakes.mjs';
 import { standService, T0 } from './accountDb.mjs';

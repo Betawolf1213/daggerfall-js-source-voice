@@ -1,7 +1,7 @@
 [
   {
     "name": "RESTX2-TIME3-the-rest-stands-the-quests-down-online",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "      this.deps.tickQuests?.();",
     "new": "      if (!Number.isFinite(this.deps.sharedMinutes?.())) this.deps.tickQuests?.();",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "RESTX2-the-session-hands-the-host-an-end-again",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "      this.deps.advanceMinutes(MINUTES_PER_TICK);",
     "new": "      this.deps.advanceMinutes(MINUTES_PER_TICK, this.deps.sharedMinutes?.() ?? undefined);",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "RESTX2-online-banks-no-real-time-RESTX1s-skip-back",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "  _accrue(dt) {\n    this._timer += dt;\n  }",
     "new": "  _accrue(dt) {\n    if (!Number.isFinite(this.deps.sharedMinutes?.())) this._timer += dt;\n  }",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "RESTX2-F1s-full-health-guard-put-back",
-    "file": "src/systems/restSession.js",
+    "file": "src/systems/rest/restSession.js",
     "old": "        this.deps.tickVitals();\n        if (--this.hoursRemaining < 1) done = REST_TEXT.wakeUp;",
     "new": "        if (!this.deps.fullyHealed?.()) this.deps.tickVitals();\n        if (--this.hoursRemaining < 1) done = REST_TEXT.wakeUp;",
     "tests": [

@@ -110,7 +110,7 @@ test('DEATHLOOP1: EVERY revival that puts a living player back in the world ends
   const SITES = [
     ['src/scenes/world.js', 'the online respawn'],
     ['src/scenes/worldModes.js', "Privateer's Hold's in-place respawn"],
-    ['src/systems/save.js', 'an online load of a dead save'],
+    ['src/systems/save/save.js', 'an online load of a dead save'],
     // LIVED1 (2026-09-29): the prison release left this list - its days are served online too, on the prisoner's own
     // clock, so it refills in full in both lanes as DFU does (arrestFlow's fillVitalSigns); nobody walks out dead
   ];

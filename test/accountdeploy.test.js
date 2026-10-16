@@ -428,7 +428,7 @@ test('IMPORT-GRAPH1: the walk is what the bundler bundles - each Worker\'s graph
     assert.deepEqual([...graph(entry)].sort(), bundled, `${entry}: the walk and the bundle`);
   }
   const account = graph('server-account/src/index.js');
-  for (const f of ['src/systems/partyScale.js', 'src/systems/books.js', 'src/formats/rscTable.js', 'src/systems/lootThemes.js']) assert.ok(account.includes(f), `${f}: one of the nine the comment hid`);
+  for (const f of ['src/systems/party/partyScale.js', 'src/systems/books.js', 'src/formats/rscTable.js', 'src/systems/loot/lootThemes.js']) assert.ok(account.includes(f), `${f}: one of the nine the comment hid`);
   assert.ok(account.some((f) => f.endsWith('.json')), 'a JSON table the Worker imports is in the graph, a leaf');
   // every shape the walk reads, in one fixture: the stray `/*`, an import, a re-export, a literal dynamic import(), a
   // double-quoted specifier, a JSON leaf, a named re-export and a

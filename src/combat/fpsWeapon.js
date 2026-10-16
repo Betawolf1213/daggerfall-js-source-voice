@@ -23,14 +23,14 @@
 // symmetric states, as FPSWeapon :378-388 and :459-464 have them.
 
 import { CifRciFile } from '../formats/cifRciFile.js';
-import { getInt } from '../systems/settings.js';   // AUDIT 28 W13: Controls/Handedness
+import { getInt } from '../systems/settings/settings.js';   // AUDIT 28 W13: Controls/Handedness
 import { getPref } from '../systems/uiPrefs.js';   // MAC-I: the first-person lighting switch
 import { isEnchanted } from '../systems/inventory.js';   // AUDIT 17e C2
 import { WEAPONS, WEAPON_MATERIALS, weaponDyeColor } from '../characters/weapons.js';
 import { atlasFileName } from './diverseWeapons.js';   // DW1: FPSWeapon.cs:637-644 - the per-template name under Diverse Weapons' flag
 import { customWeaponImage } from './diverseWeaponsAssets.js';   // DW1: TryImportCifRci's answer, off the player's own bundles
-import { MATERIAL_NAMES } from '../systems/itemInfo.js';   // MetalTypes' names, for GetNameCifRci's suffix
-import { customItemClass } from '../systems/rriItems.js';   // RRI1: GetWeaponType is a virtual a custom class answers
+import { MATERIAL_NAMES } from '../systems/item/itemInfo.js';   // MetalTypes' names, for GetNameCifRci's suffix
+import { customItemClass } from '../systems/roleplayRealismItems/rriItems.js';   // RRI1: GetWeaponType is a virtual a custom class answers
 import { THUNDERLOCK_TEMPLATE } from '../characters/thunderlockIds.js';   // the port's own weapon (a leaf - see the file)
 import { applyDyeToIndex, DYE_TARGETS } from '../characters/dyes.js';
 

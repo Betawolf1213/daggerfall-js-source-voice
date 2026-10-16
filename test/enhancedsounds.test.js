@@ -12,10 +12,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { enhancedSoundsOn, ENHANCED_SOUNDS_KEY } from '../src/systems/enhancedSounds.js';
-import { windSoundOn } from '../src/systems/windAudio.js';
+import { windSoundOn } from '../src/systems/wind/windAudio.js';
 import { FEATURES } from '../src/systems/features.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { uiSkin, setUiSkin } from '../src/systems/uiSkin.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -62,7 +62,7 @@ test('MAC-O6 + ES1 + SND1 by source: the enhanced inventory plays DoTransferItem
   assert.doesNotMatch(inv, /enhancedSoundsOn\(\)\) audio\.playOneShot\(plan\.sound/, 'the take cue is no longer behind the Enhanced sounds switch');
   // the classic window's own call is the reference, unchanged
   assert.match(rd('src/ui/nativeInventory.js'), /audio\.playOneShot\(plan\.sound === 'gold' \? SOUND\.GoldPieces : SOUND\.ButtonClick, 1\);/, 'the classic window plays it always, as DFU does');
-  const wind = rd('src/systems/windAudio.js');
+  const wind = rd('src/systems/wind/windAudio.js');
   assert.match(wind, /return enhancedSoundsOn\(\) && pageParam\('windaudio', search\) !== 'off';/, 'the wind reads the one switch (PERF-URL: its door through the page query\'s one parse)');
   assert.doesNotMatch(wind, /getPref\('windSound'\)/, 'no pref of its own any more');
   assert.doesNotMatch(rd('src/systems/features.js'), /key: 'windSound'/, 'and no row declares one');

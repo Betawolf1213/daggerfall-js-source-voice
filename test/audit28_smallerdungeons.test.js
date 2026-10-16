@@ -11,7 +11,7 @@ import {
 import { setSeed, randomRange } from '../src/formats/dfRandom.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { Quest } from '../src/systems/quest/quest.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W4: SMALLER DUNGEONS (MapsFile.cs:766-797, :1366-1444;
 // Quest.cs:284). Experimental/SmallerDungeons ships False and the port

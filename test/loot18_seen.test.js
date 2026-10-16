@@ -4,7 +4,7 @@
 // Four things that let a player see and sort what the ladder hands them, none a new rule of the ladder's:
 //   - THE CARD COMPARES LINES - beside AC-COMPARE's numbers, each line of a picked piece against the same line on what a
 //     wear would replace (up, down, new), their lines it would lose, and a resistance line's count under LOOT12's cap;
-//   - JUNK - a mark beside the lock (systems/itemJunk.js), the lock's twin: a shop's Sell junk lays every junk piece on
+//   - JUNK - a mark beside the lock (systems/item/itemJunk.js), the lock's twin: a shop's Sell junk lays every junk piece on
 //     its counter in one press, at its own price and confirm; quick loot's take-all leaves one where it lies;
 //   - SALVAGE EVERY MAGIC - one press on the Reforge's Salvage page, asked first;
 //   - QUICK LOOT BY TIER - a part of the quick-loot row: the take-all takes all gear, or Magic and up, or Rare and up -
@@ -22,15 +22,15 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import { isJunk, junkable, setJunk, toggleJunk, lockLiftsJunk, JUNK_GROUPS, JUNK_LINE } from '../src/systems/itemJunk.js';
-import { isLocked, setLocked, toggleLocked } from '../src/systems/itemLock.js';
-import { isDeclaredItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import { isJunk, junkable, setJunk, toggleJunk, lockLiftsJunk, JUNK_GROUPS, JUNK_LINE } from '../src/systems/item/itemJunk.js';
+import { isLocked, setLocked, toggleLocked } from '../src/systems/item/itemLock.js';
+import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { equipItem } from '../src/systems/equip.js';
-import { welkyndShards } from '../src/systems/gateSpoils.js';
+import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import * as RF from '../src/systems/reforge.js';
 import { FEATURES } from '../src/systems/features.js';
 import { foldQuickLoot, quickLootArm, quickLootTake, resetQuickLoot, takeAllLeaves, QUICK_LOOT_TIER, QUICK_LOOT_FLOORS, QUICK_LOOT_LEFT } from '../src/systems/quickLoot.js';

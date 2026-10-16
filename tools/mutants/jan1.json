@@ -19,7 +19,7 @@
   },
   {
     "name": "JAN1-an-empty-table-restores-empty",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.bankAccounts = snap.bankAccounts?.length ? snap.bankAccounts.map((a) => ({ ...a })) : createBankAccounts();   // B1",
     "new": "  entity.bankAccounts = (snap.bankAccounts ?? []).map((a) => ({ ...a }));   // B1",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "JAN1-the-houses-restore-empty",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.houses = snap.houses?.length ? snap.houses.map((h) => ({ ...h })) : createHouses(entity.bankAccounts.length);",
     "new": "  entity.houses = (snap.houses ?? []).map((h) => ({ ...h }));",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "JAN1-a-saved-table-is-thrown-away",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.bankAccounts = snap.bankAccounts?.length ? snap.bankAccounts.map((a) => ({ ...a })) : createBankAccounts();   // B1",
     "new": "  entity.bankAccounts = createBankAccounts();   // B1",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "JAN1-NaN-is-a-value",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "export const itemValueOf = (item) => (Number.isFinite(item?.value) ? item.value : itemBaseValue(item ?? {}));",
     "new": "export const itemValueOf = (item) => (item?.value ?? itemBaseValue(item ?? {}));",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "JAN1-the-saves-items-come-in-unset",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.items = snap.items.map((it) => setItemFields(it));",
     "new": "  entity.items = snap.items.map((it) => ({ ...it }));",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "JAN1-the-wagons-items-come-in-unset",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.wagonItems = (snap.wagonItems ?? []).map((it) => setItemFields(it));",
     "new": "  entity.wagonItems = (snap.wagonItems ?? []).map((it) => ({ ...it }));",
     "tests": [

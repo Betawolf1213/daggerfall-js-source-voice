@@ -20,7 +20,7 @@ import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, c
 import { KeptKillLedger, creditKeptKills, KEPT_KILL_HOLD_MS, KEPT_KILL_MEMORY_MS } from '../src/scenes/questFoeHost.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare } from '../src/systems/quest/questShare.js';
 import { getInnerSymbolName } from '../src/systems/quest/symbol.js';
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
 import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)

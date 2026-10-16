@@ -66,7 +66,7 @@ the phase `slain` for `SERPENT_DIVE_MS` (its death throes), then `gone`.
 
 ## 2. The sighting - the chat, the ring, the compass
 
-`systems/serpentOmen.js` (`createSerpentOmen`), one call a frame from the online frame. It says nothing until the
+`systems/serpent/serpentOmen.js` (`createSerpentOmen`), one call a frame from the online frame. It says nothing until the
 relay's clock is read and the hub has welcomed the player (AUDIT WB C4's law), then waits `SERPENT_OMEN_SETTLE_MS`
 more. Each line is said once a day, in order. A player arriving late hears only the line for where it stands now:
 
@@ -98,7 +98,7 @@ page draws no serpent: a province's sheet shows little of the open sea it hunts.
 
 ## 3. Where it rises - the packet lanes
 
-`systems/serpentSite.js` (`findSerpentSite`). The serpent hunts the Bay's packet lanes (`systems/naval/seaLanes.js`):
+`systems/serpent/serpentSite.js` (`findSerpentSite`). The serpent hunts the Bay's packet lanes (`systems/naval/seaLanes.js`):
 the lanes between the map's ports, the same list on every client, made from map files every client holds. The day
 rolls a lane (`serpentLaneOf`) and a place along that lane's way (`serpentAlongOf`, inside `SERPENT_ALONG`, 0.3 to
 0.7 of its length). A place is kept only where the sea is open all round it: every map pixel within `SITE_CLEAR_PX`
@@ -149,7 +149,7 @@ and a client folds its own site's alone (AUDIT SERPENT S1, AUDIT SERPENT 2 F1). 
 ## 5. Its blows - judged on the struck ship
 
 The brain says each attack's shape, its landing time and its target (`atk` words). Every client tests its own ship and
-its own feet against it (`systems/serpentStrike.js`). The relay never learns a ship's hurts: this is co-op's victim's
+its own feet against it (`systems/serpent/serpentStrike.js`). The relay never learns a ship's hurts: this is co-op's victim's
 law, which the naval fight already keeps. INT13 (2026-10-10, `06-Systems/Integrity-Arc.md` section 6): beside it the
 relay now judges each blow on her captain's pose itself and keeps its own count of her hull (`net/bossRef.js`
 judgeSerpent, `net/bossBody.js`), her word of it (`vt`) a patch out of a budget - measured first; once staff enforce
@@ -421,13 +421,13 @@ route `/v1/serpent/claim`):
   build from before the embers, whose pack was given none, put one in the purse), and the answer says the row's, a
   repeat's too, as a gate's does (section 11).
 
-**The hoard** (`systems/serpentSpoils.js`, rolled on the receipt's seed so every crew's is its own):
+**The hoard** (`systems/serpent/serpentSpoils.js`, rolled on the receipt's seed so every crew's is its own):
 - gold: `SERPENT_SPOILS_GOLD_PER_LEVEL` (160) a level, the seed varying it a fifth either way;
 - a ship that **dealt** also gets one piece Rare or better (Legendary 15% of the time) and one Magic or better;
 - a ship that **stood** gets the Magic-or-better piece alone and `STOOD_GOLD` (60%) of the gold;
 - SERPENT-SET (Mac: *"The serpent boss needs to use the currency from oblivion gate and have its own equipment
   rewards"*): every hoard, dealt or stood, carries the gate's currency - `SERPENT_EMBERS` (one) Deadlands Ember, minted
-  as a breach's (`systems/gateSpoils.js` sigilStone) and taken by the ember's own door, so a first ember won at sea
+  as a breach's (`systems/gate/gateSpoils.js` sigilStone) and taken by the ember's own door, so a first ember won at sea
   brings *On the Burning Doors* as a breach's does; and a ship that dealt finds a piece of **Sethrakul's Coilscale** -
   the serpent's own Aetheric set (`Sigil-Sets.md` section 6c) - a quarter of the time, rolled after everything above so
   every earlier hoard is what it was for its seed.
@@ -468,7 +468,7 @@ and the venom's spatter.
 
 After the kill the bar holds a moment and fades.
 
-**Its voice** (`systems/serpentSounds.js`). DAGGER.SND's own records, with no new clip and no game data in the repo
+**Its voice** (`systems/serpent/serpentSounds.js`). DAGGER.SND's own records, with no new clip and no game data in the repo
 (Port-Doctrine):
 - the Dreugh's bark (the Bay's own sea-thing) pitched down an octave and more, for its roar (heard 3.2 km off) and
   its death cry (4.2 km);
@@ -705,7 +705,7 @@ at its word's arrival - a gathering and a wire after the ball struck.
   back as far as a second - a volley's gathering (`HIT_GATHER_MS`) and the wire - at the latest some of it stood above
   the sea within her guns' reach; its stun and its head's rearing read there too. The relay keeps that second more of
   its track.
-- **A pair's share** (`systems/serpentStrike.js` `fleetShare`, `SERPENT_PAIR_SHARE` 2/3): with exactly two ships
+- **A pair's share** (`systems/serpent/serpentStrike.js` `fleetShare`, `SERPENT_PAIR_SHARE` 2/3): with exactly two ships
   fighting it (the state's `n`) every blow, crush, grip, grind and venom bite lands at two thirds on the struck machine -
   each of a pair takes what each of three would - carried blow to blow in whole points (AUDIT SHIPS C3: rounded a blow at
   a time, a one-man spit took its man every time; carried, thirty spits take twenty). A lone ship, and three or more,
@@ -850,7 +850,7 @@ weapon to the serpent + a rare chance of a title/aura drop."* Three rewards, eac
 stood is paid its hoard and its Renown as before, and nothing here.
 
 **The Sunken Sovereign** (GILDED2, `06-Systems/Gilded.md` section 7): a Gilded Ebony Saber, its power Undertow - the
-hoard's very last draw, one dealing ship's hoard in a hundred (`systems/serpentSpoils.js`, after the technique pass), so
+hoard's very last draw, one dealing ship's hoard in a hundred (`systems/serpent/serpentSpoils.js`, after the technique pass), so
 every hoard rolled before it is what it was for its seed.
 
 AUDIT WORLD-REWARDS (`01-Overview/Audit-World-Rewards.md`) read this section's slice cold; what it moved is marked

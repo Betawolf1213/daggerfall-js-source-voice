@@ -26,10 +26,10 @@ import {
 } from '../src/net/arenaLaw.js';
 import { exhibitionFor } from '../src/net/arenaExhibition.js';
 import { wallMsForClassicMinutes, sharedClassicMinutes } from '../src/net/wire.js';
-import { COUNT_MS, callMs } from '../src/systems/arenaBout.js';
+import { COUNT_MS, callMs } from '../src/systems/arena/arenaBout.js';
 import { _resetArenaCache } from '../server-account/src/arena.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
 const { subtle } = globalThis.crypto;
 const C = ARENA_FLOOR_CENTRE;

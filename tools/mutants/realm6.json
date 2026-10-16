@@ -110,7 +110,7 @@
   },
   {
     "name": "REALM6-buy-never-reserves",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "        reserve: paid.reserve,\n",
     "new": "",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "REALM6-sale-guesses",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    const r = await realm.act({\n      needsAnswer: true,\n",
     "new": "    const r = await realm.act({\n",
     "tests": [

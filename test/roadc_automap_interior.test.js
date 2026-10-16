@@ -24,14 +24,14 @@ import {
   setupInteriorEntranceBeacon, hideAllAutomap, automapEntranceTick,
   automapRevealTick, enterDungeonAutomap, getDungeonAutomap, automapDungeonKey,
   snapshotAutomap, resetAutomapStore, buildRevealIndex,
-} from '../src/systems/automap.js';
-import { INTERIOR_ELEMENT_NAMES, ELEMENT_MODELS, ELEMENT_DOORS } from '../src/systems/automapModel.js';
+} from '../src/systems/automap/automap.js';
+import { INTERIOR_ELEMENT_NAMES, ELEMENT_MODELS, ELEMENT_DOORS } from '../src/systems/automap/automapModel.js';
 import {
   AutomapWindow, signalAutomapReset, resetAutomapWindowState,
   automapRenderMode, _setAutomapArt,
 } from '../src/ui/automapWindow.js';
 import { AUTOMAP_MODE } from '../src/render/renderer.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -147,7 +147,7 @@ test('c2/S9 THE ENTRANCE BEACON AS A SEQUENCE: lit by SetupBeacons, put out by H
     // THE ORDER IS UNOBSERVABLE FROM THE END STATE - "lit then put out"
     // and "never lit at all" both finish dark - so it is pinned in the
     // source, statement against statement, with the two DFU call sites.
-    const am = src('src/systems/automap.js');
+    const am = src('src/systems/automap/automap.js');
     const body = am.match(/export function enterInteriorAutomap\([\s\S]*?\n\}/)[0];
     // anchored at the start of a line, so a commented-out call is not
     // mistaken for the statement it replaced
@@ -292,7 +292,7 @@ test('c2/S9 the reset arm-s default render mode is CUTOUT in a building, TRANSPA
 });
 
 test('c2/S9 the DEAD restore is absent from the port, and the file says why', () => {
-  const am = src('src/systems/automap.js');
+  const am = src('src/systems/automap/automap.js');
   // The name appears exactly where it should: in the note explaining
   // that DFU's own function has no caller. Nothing implements it.
   assert.match(am, /NOTHING ANYWHERE CALLS\s*\n\/\/ RestoreStateAutomapInterior/,
@@ -300,7 +300,7 @@ test('c2/S9 the DEAD restore is absent from the port, and the file says why', ()
   assert.equal(/export function restoreInteriorAutomap|restoreStateAutomapInterior/.test(am), false,
     'and no port function restores interior discovery');
   // ...nor is there an interior half of the save envelope anywhere.
-  for (const f of ['src/systems/automap.js', 'src/scenes/interiorContext.js']) {
+  for (const f of ['src/systems/automap/automap.js', 'src/scenes/interiorContext.js']) {
     assert.equal(/snapshotInterior|interiorSnapshot/.test(src(f)), false, `${f} invents no interior save`);
   }
   // The one DFU arm the port declines is recorded as a DEPARTURE with

@@ -12,11 +12,11 @@ import {
   registerWorldDataAsset, installWorldDataReplacement, bindWorldDataBlocks, _resetWorldDataReplacement, getDFBlockReplacementData, setLayoutPinOracle,
 } from '../src/formats/worldDataReplacement.js';
 import { blockToDfuJson } from '../src/formats/worldDataJson.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { clearWorldDataVariants } from '../src/systems/worldDataVariants.js';
 import { _resetLayoutPins, pinAt } from '../src/systems/layoutPins.js';
 import { CURATED_TEMPLE_SUMMONERS, SUMMONER_FACTIONS, TEMPLE_SUMMONER_VENDOR, curateBlockPeople } from '../src/world/curatedPeople.js';
-import { NPC_SERVICE, npcServiceKind } from '../src/systems/guildServices.js';
+import { NPC_SERVICE, npcServiceKind } from '../src/systems/guild/guildServices.js';
 import { collectInteriorPeople } from '../src/characters/interiorPeople.js';
 import { CURATED_QUEST_MARKERS, curatedMarkerSpot } from '../src/systems/quest/markerCuration.js';
 import { tinyRmb, fakeBlocks } from './wd3Fakes.mjs';

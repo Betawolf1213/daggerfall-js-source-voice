@@ -42,7 +42,7 @@ import {
   DEFAULT_SLICING_BIAS_Y, DEFAULT_FIELD_OF_VIEW_3D, MOVE_UP_DOWN_SPEED,
 } from '../src/ui/automapCamera.js';
 import { AUTOMAP_PANEL_NATIVE_RECT } from '../src/render/renderer.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

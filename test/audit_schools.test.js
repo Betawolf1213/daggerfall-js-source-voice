@@ -3,7 +3,7 @@
 // the spell engine's edits, online integrity, the player's surface and its words, and the pins and the record. Every
 // finding the audit fixed is pinned here BY EXECUTION through the producers that mint the shapes in play - the real cast
 // engine (scenes/hostMagic.js createPlayerMagic: its release, its missiles, its doors), real foes (characters/
-// enemyEntity.js makeEnemyEntity over enemyBasics.js), the save (systems/save.js), the round (systems/worldTick.js
+// enemyEntity.js makeEnemyEntity over enemyBasics.js), the save (systems/save/save.js), the round (systems/worldTick.js
 // runMagicRoundsFor), the one ask (scenes/shared.js raisePlayerSkills), the classic sheet (ui/charsheet.js CharSheet)
 // and the enhanced pause window (ui/enhancedMenu.js) - each number on both sides of its line, and each window just
 // before its end and just after.
@@ -24,18 +24,18 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
 import { applySpell } from '../src/systems/effects.js';
 import { calculateCastCost, castSchool } from '../src/systems/spellcost.js';
-import { spellPowerMult, spellPierce, tellSpellLanded, registerSpellLandedListener } from '../src/systems/spellPower.js';
+import { spellPowerMult, spellPierce, tellSpellLanded, registerSpellLandedListener } from '../src/systems/spell/spellPower.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
-import { setStruck, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSigilDueling } from '../src/systems/sigil.js';
+import { setStruck, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor, playerDoor } from '../src/systems/playerDoor.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { seedCustomSpellIndex, mintCustomSpellIndex, _resetCustomIndexForTests, READY_MADE_INDEX_CEILING, isReadyMadeSpellIndex } from '../src/systems/spellMaker.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { seedCustomSpellIndex, mintCustomSpellIndex, _resetCustomIndexForTests, READY_MADE_INDEX_CEILING, isReadyMadeSpellIndex } from '../src/systems/spell/spellMaker.js';
 import { RESURRECTION_SPELL_INDEX } from '../src/systems/resurrect.js';
-import { SHARED_CARTOGRAPHY_SPELL_INDEX } from '../src/systems/partyMap.js';
-import { shownSpellName } from '../src/systems/loot.js';
+import { SHARED_CARTOGRAPHY_SPELL_INDEX } from '../src/systems/party/partyMap.js';
+import { shownSpellName } from '../src/systems/loot/loot.js';
 import * as tm from '../src/systems/textManager.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { refreshMentor } from '../src/systems/mentorMode.js';

@@ -300,7 +300,7 @@ export function iconName(archive, record, dye = null, dyeTarget = null) {
 }
 
 /** A texture record fitted to its slot - requestFittedPicture over requestIcon at scale 1, by the item's dye and the
- *  swatch it changes (DYE-ICON's `dyeTarget`, systems/itemDye.js itemDyeTarget). */
+ *  swatch it changes (DYE-ICON's `dyeTarget`, systems/item/itemDye.js itemDyeTarget). */
 export function requestFittedIcon(archive, record, { box, dpr = 1, cap = ICON_CAP, dye = null, dyeTarget = null, onReady = null } = /** @type {any} */ ({})) {
   if (!Number.isInteger(archive) || !Number.isInteger(record) || record < 0) return null;
   return requestFittedPicture(iconName(archive, record, dye, dyeTarget),

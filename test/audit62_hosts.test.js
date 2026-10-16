@@ -23,7 +23,7 @@ import {
   wouldBeSpawnedInClassic, CLASSIC_SPAWN_XZ, CLASSIC_SPAWN_Y_UPPER,
   CLASSIC_SPAWN_DESPAWN_EXTERIOR,
 } from '../src/characters/enemyMotor.js';
-import { LightningFlash } from '../src/systems/dynamicSkies.js';
+import { LightningFlash } from '../src/systems/dynamicSkies/dynamicSkies.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (rel) => readFileSync(join(root, rel), 'utf8');

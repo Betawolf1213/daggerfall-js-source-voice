@@ -185,7 +185,7 @@
   },
   {
     "name": "AUDITREST3-C1-the-debt-never-asked",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "(now - rec.answered >= gapMs || !!(typeof due === 'function' ? due() : due))",
     "new": "(now - rec.answered >= gapMs)",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDITREST3-C1-always-owed",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "(now - rec.answered >= gapMs || !!(typeof due === 'function' ? due() : due))",
     "new": "(now - rec.answered >= gapMs || true)",
     "tests": [
@@ -204,7 +204,7 @@
   },
   {
     "name": "AUDITREST3-C1-the-debt-asked-first",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "(now - rec.answered >= gapMs || !!(typeof due === 'function' ? due() : due))",
     "new": "(!!(typeof due === 'function' ? due() : due) || now - rec.answered >= gapMs)",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "AUDITREST3-C3-only-a-whole-night-raises",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  const raise = !!r;\n  if (!night)",
     "new": "  const raise = nightWhole(r);\n  if (!night)",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "AUDITREST3-C3-a-rest-that-never-ran-raises",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  const raise = !!r;\n  if (!night)",
     "new": "  const raise = true;\n  if (!night)",
     "tests": [
@@ -428,7 +428,7 @@
   },
   {
     "name": "AUDITREST3-C6-the-point-unasked",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  return !!opened?.point?.where && typeof restActNow === 'function' && !restActNow()?.point;",
     "new": "  return false;",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "AUDITREST3-C6-asked-of-a-bed",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "  return !!opened?.point?.where && typeof restActNow === 'function' && !restActNow()?.point;",
     "new": "  return typeof restActNow === 'function' && !restActNow()?.point;",
     "tests": [

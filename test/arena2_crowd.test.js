@@ -1,9 +1,9 @@
 // ARENA2 (2026-10-02, Mac: "During fights, the crowd is present and can cheer/boo you"): THE CROWD - its mood moved by
-// the bout's events and settling back (systems/arenaCrowd.js), its favour (the darling, the villain, the home crowd, the
+// the bout's events and settling back (systems/arena/arenaCrowd.js), its favour (the darling, the villain, the home crowd, the
 // beast tier's sympathy), the cues it sounds and the barks it shouts (never the same twice running, one every gap), how
 // it moves (the gesturers' rate, the hop, what it throws), how many come, who sits where; THE SOUND built at runtime out
-// of DAGGER.SND's own voices and noise (systems/arenaSound.js - the shapes, the levels, the loop's seam, the driver's
-// cues onto the engine, nothing shipped); and THE MUSIC made in code (systems/arenaScore.js) and its law by phase.
+// of DAGGER.SND's own voices and noise (systems/arena/arenaSound.js - the shapes, the levels, the loop's seam, the driver's
+// cues onto the engine, nothing shipped); and THE MUSIC made in code (systems/arena/arenaScore.js) and its law by phase.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -11,15 +11,15 @@ import {
   newCrowd, crowdHear, crowdTick, crowdBark, moodBand, darlingOf, villainOf, crowdCount, crowdFlipFps, crowdHop, verdictThrows,
   seatPeople, MOOD_PUSH, FAVOUR_PUSH, MOOD_SETTLE_S, HOME_FAVOUR, BEAST_BASE, BARK_GAP_MS, HATED_AT, FLIP_FPS, FLIP_ROAR_X, HOP_M,
   HOP_MS, CROWD_MAX, CROWD_PEOPLE, THROWN_FLOWERS, THROWN_REFUSE, YIELD_EARLY_SHARE,
-} from '../src/systems/arenaCrowd.js';
+} from '../src/systems/arena/arenaCrowd.js';
 import {
   synthBed, synthCheer, synthRoar, synthBoo, synthApplause, synthArenaSounds, createArenaSound, addVoice, noise, lowpass,
   highpass, rms, level, swell, bedGain, PEOPLE_RECORDS, ARENA_CLIPS, ARENA_SOUND_KEYS, ARENA_SOUND_RATE, ARENA_SOUND_SECONDS,
   ARENA_SOUND_RMS, BED_GAIN,
-} from '../src/systems/arenaSound.js';
-import { arenaScoreSongs, arenaScoreFor, ARENA_SONGS, ARENA_SCORE_SILENCE, ARENA_STING_MS } from '../src/systems/arenaScore.js';
-import { seededRng } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+} from '../src/systems/arena/arenaSound.js';
+import { arenaScoreSongs, arenaScoreFor, ARENA_SONGS, ARENA_SCORE_SILENCE, ARENA_STING_MS } from '../src/systems/arena/arenaScore.js';
+import { seededRng } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
 const F = [{ id: 'a', home: 'Wayrest', ai: true }, { id: 'b', home: 'Daggerfall', ai: true }];
 const cues = (list) => list.map((c) => c.s);

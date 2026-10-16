@@ -16,8 +16,8 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const F = await import('../src/systems/revenantFeud.js');
-const N = await import('../src/systems/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const L = await import('../src/systems/feudLedger.js');
 const Wire = await import('../src/net/wire.js');
 const { blowTakenScale } = await import('../src/systems/blowTaken.js');

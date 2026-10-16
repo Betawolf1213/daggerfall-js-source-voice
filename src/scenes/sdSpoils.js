@@ -1,7 +1,7 @@
 // @ts-check
 // SD9e (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11): THE BRASS REMNANT'S SPOILS
 // ON THE ARENA'S FLOOR - the court's burst (scenes/gateCourt.js burst) for the Last Moment. SD_SPEW_AT_MS into its fall
-// (the fight as the page holds it - net/sdFightLink.js), this fighter's spoils (systems/sdSpoils.js, off the receipt the
+// (the fight as the page holds it - net/sdFightLink.js), this fighter's spoils (systems/superDungeon/sdSpoils.js, off the receipt the
 // relay signed for them - net/sdReceipt.js `h1`) leave the cage of its chest toward them and come to rest on the arena's
 // floor, never off its edge into the void (world/gateSpew.js keepLaunch, SD_SPOILS_KEEP); a fighter the realm counted in
 // that has no receipt SD_RECEIPT_WAIT_MS into the fall is told so, once. The pool (scenes/spoilsPool.js, the Hour's own
@@ -16,7 +16,7 @@ import { SD_REM, SD_PILLARS } from '../net/sdRemnant.js';
 import { readSdReceipt } from '../net/sdReceipt.js';
 import { remnantPose } from './sdRemnant.js';
 import { spoilsLevel } from './spoilsPool.js';
-import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../systems/sdSpoils.js';
+import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../systems/superDungeon/sdSpoils.js';
 
 /** Its spoils leave it this long into its fall - its body still sinking, the cage of its chest above the floor
  *  (scenes/sdRemnant.js SD_REM_SINK_MS is the whole sink); a receipt not come this long after it never will. */

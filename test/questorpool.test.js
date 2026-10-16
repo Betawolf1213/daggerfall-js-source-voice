@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talkTopics.js';
+import { questorCandidateBuildings, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { NPCSession } from '../src/systems/npcSession.js';
 import { GENDERS } from '../src/characters/nameHelper.js';

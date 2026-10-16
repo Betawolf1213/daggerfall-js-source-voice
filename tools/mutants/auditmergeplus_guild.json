@@ -1,7 +1,7 @@
 [
   {
     "name": "A1-a-second-press-claims-again",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (out.has(key)) return { ok: false, error: HOME_BUY_BUSY };\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "A1-the-hold-per-town",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  const key = `${mapId}:${buildingKey}`;",
     "new": "  const key = `${mapId}`;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "A1-the-hold-never-let-go",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  } finally {\n    out.delete(key);\n  }",
     "new": "  } finally {\n  }",
     "tests": [

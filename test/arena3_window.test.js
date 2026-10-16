@@ -1,5 +1,5 @@
 // ARENA3 (2026-10-02, Mac: "Joining a team comes with it's own enhanced UI where you can view your ranking and even player
-// leaderboards"; "All UI elements and text must be enhanced UI plus"): THE ARENA WINDOW (systems/arenaBoard.js the model,
+// leaderboards"; "All UI elements and text must be enhanced UI plus"): THE ARENA WINDOW (systems/arena/arenaBoard.js the model,
 // ui/arenaWindow.js the window, ui/arenaDoor.js its door, scenes/arenaGate.js its presses). Pinned here: every page's
 // model - Bouts (the hour's exhibition or the next, the Red's against the Blue's with records and prices, Watch and
 // Wager and why not; the players' bouts said online; the ladder's next with Fight and why not; what the bookmaker owes),
@@ -12,12 +12,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as AB from '../src/systems/arenaBoard.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import * as BK from '../src/systems/arenaBook.js';
-import { newArenaLadder, ladderAfter, exhibitionFor, LADDER_TIERS, BOUT_PURSE, CHAMPION_PURSE } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { heraldChoice } from '../src/systems/arenaHerald.js';
+import * as AB from '../src/systems/arena/arenaBoard.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import * as BK from '../src/systems/arena/arenaBook.js';
+import { newArenaLadder, ladderAfter, exhibitionFor, LADDER_TIERS, BOUT_PURSE, CHAMPION_PURSE } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { heraldChoice } from '../src/systems/arena/arenaHerald.js';
 import { withDom } from './invdrag.mjs';
 import { mountArenaWindow, arenaSkinCss } from '../src/ui/arenaWindow.js';
 import { createArenaOverlay } from '../src/ui/arenaDoor.js';

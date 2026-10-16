@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createArenaBouts, WALK_PACE } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder } from '../src/systems/arenaLadder.js';
+import { newArenaLadder } from '../src/systems/arena/arenaLadder.js';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 

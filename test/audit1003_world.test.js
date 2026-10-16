@@ -26,7 +26,7 @@ import { trs, multiply } from '../src/world/mat4.js';
 import { GROUND_OFFSET } from '../src/world/rmbLayout.js';
 import { getModelMatrix } from '../src/world/rdbLayout.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { exhibitionFor } from '../src/systems/arenaLadder.js';
+import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { applyTextureTable } from '../src/world/dungeonTextures.js';
 import { remapSubMeshes } from '../src/world/texRemap.js';
 import { keyResolver } from '../src/render/staticBatch.js';

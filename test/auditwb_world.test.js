@@ -6,11 +6,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createGateOmen, OMEN_SETTLE_MS, omenTimeLine, openTimeLine, riteOmenLine } from '../src/systems/gateOmen.js';   // TIME1: the lines that name a time say local time alone
+import { createGateOmen, OMEN_SETTLE_MS, omenTimeLine, openTimeLine, riteOmenLine } from '../src/systems/gate/gateOmen.js';   // TIME1: the lines that name a time say local time alone
 import { gateTimes, riseLine, marksLine, gateModsOf, GATE_RISE_MS } from '../src/net/gateLaw.js';
 /** WB8c: tonight's marks, said once a day beside the first moment a player hears - never a moment itself. */
 const marks = (day) => marksLine({ boss: 'Valkynaz Ruhn', md: gateModsOf(day) });
-import { gateScanner, scanGatePixels, findGateSite } from '../src/systems/gateSite.js';
+import { gateScanner, scanGatePixels, findGateSite } from '../src/systems/gate/gateSite.js';
 import {
   GatePassRenderer, MEMBRANE_FS, MEMBRANE_TURN_SEALED_HZ, MEMBRANE_TURN_OPEN_HZ, gateSpinRate, gateSpinAt,
 } from '../src/render/gatePass.js';

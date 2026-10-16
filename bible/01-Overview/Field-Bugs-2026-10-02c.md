@@ -30,7 +30,7 @@ three suites that drew several tags at one point (`shipstance`, `shipfade`, `nav
 
 ## TO-LIVE (2)
 
-`systems/travelOptions.js` `readTravelOptionsSettings(read, boot)`, `TRAVEL_OPTIONS_RESTART_KEYS`; `scenes/world.js`
+`systems/travel/travelOptions.js` `readTravelOptionsSettings(read, boot)`, `TRAVEL_OPTIONS_RESTART_KEYS`; `scenes/world.js`
 `refreshTravelOptionsSettings`; `ui/travelControlUI.js` `setAccelerationLimit`; `systems/features.js`. DFU re-runs
 the mod's LoadSettings on every change of its settings - only the readme's starred keys wait for a restart - and the
 port read the whole bag once, at the world's load. Now on a change of any mod setting (`modSettingsGeneration`) the

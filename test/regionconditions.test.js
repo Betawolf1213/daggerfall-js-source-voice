@@ -11,9 +11,9 @@ import {
   createRegionConditions, turnOnConditionFlag, turnOffConditionFlag,
   conditionFlag, conditionValue, conditionGroupFlag, resetWarDataForRegion,
   snapshotRegionConditions, restoreRegionConditions,
-} from '../src/systems/regionConditions.js';
+} from '../src/systems/region/regionConditions.js';
 import { updateRegionalPrices } from '../src/systems/shopStock.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 
 const dict = ({ merchantsPower = 50, provincePower = 50, regions = [0] } = {}) => {

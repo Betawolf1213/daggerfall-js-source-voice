@@ -39,7 +39,7 @@
 // owner's chest, and then been published back as the room's), and a
 // refused act's records name none. The bag's `home` says so.
 import { sharedRecord, validActionRecord } from './actionSystem.js';
-import { validLootList, LOOT_LIST_MAX } from '../systems/loot.js';
+import { validLootList, LOOT_LIST_MAX } from '../systems/loot/loot.js';
 import { peerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in a room's container never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
 import { mintSharedStamp } from '../net/wire.js';   // AUDIT WORLD6a B7: one stamp mint at the wire, twelve digits always
 

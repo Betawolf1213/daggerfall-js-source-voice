@@ -15,7 +15,7 @@
 import { LevelingChoiceScreen } from './levelingChoice.js';
 import { MODELS, NO_LINEAGE } from '../systems/legacy/family.js';
 import { legacySettings } from '../systems/legacy/settings.js';
-import { isOnlinePage } from '../systems/onlineLane.js';
+import { isOnlinePage } from '../systems/online/onlineLane.js';
 
 export const LEGACY_MODEL_TEXT = Object.freeze({ title: 'HOW WILL YOUR LINE ENDURE?', lines: Object.freeze(['Choose your family’s way with death.', 'It cannot be changed later.']) });
 export const LEGACY_MODEL_FACE = Object.freeze({

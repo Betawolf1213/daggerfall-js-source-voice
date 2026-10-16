@@ -182,7 +182,7 @@
   },
   {
     "name": "AUDITREST2-H7-a-supply-recharged",
-    "file": "src/systems/restItemRows.js",
+    "file": "src/systems/rest/restItemRows.js",
     "old": "  isNotRepairable: !stackable,",
     "new": "  isNotRepairable: false,",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "AUDITREST2-H10-the-pack-unasked",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "  if (entity && !(entity.items ?? []).includes(item)) return { kind: 'text', text: REST_ITEM_TEXT.candleNotCarried };",
     "new": "",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "AUDITREST2-H10-the-entity-dropped",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "offlineUse((item, list, ctx) => useCandle(item, list, ctx?.entity))",
     "new": "offlineUse((item, list) => useCandle(item, list))",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "AUDITREST2-H14-the-offline-bedroll-stocked",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "    if (t === REST_ITEM.Bedroll && !online) continue;",
     "new": "",
     "tests": [

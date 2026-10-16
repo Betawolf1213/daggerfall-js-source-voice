@@ -18,7 +18,7 @@ yet DFU's.
 
 ## The two that a player would hit first
 
-**F1 - the scan refused every oblique wall (`systems/automap.js`,
+**F1 - the scan refused every oblique wall (`systems/automap/automap.js`,
 Automap.cs:1121-1123).** DFU casts three parallel rays and, for EACH,
 compares its hit on the true level geometry with its hit on the automap
 copy; the two disagree only when something the copy lacks (an action
@@ -43,7 +43,7 @@ that enshrined the 1 now names its dt.
 
 ## The rest, by lane
 
-**Discovery (`systems/automap.js`, `systems/automapModel.js`, the hosts).**
+**Discovery (`systems/automap/automap.js`, `systems/automap/automapModel.js`, the hosts).**
 F3: a SPECIAL door (`DaggerfallActionDoorSpecial`) was treated as an
 action door and blocked the scan; RDBLayout filters the copy by
 description (:751-765), so it reveals like any wall. F4/H1-H3: the LOAD

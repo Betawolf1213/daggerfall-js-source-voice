@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA3-POINTS-CHAMPION",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "export const TEAM_POINTS = Object.freeze({ bout: 1, champion: 3, grand: 10 });",
     "new": "export const TEAM_POINTS = Object.freeze({ bout: 1, champion: 1, grand: 10 });",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA3-POINTS-UNWORN",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "const pts = s.team ? boutPoints(o) : 0;",
     "new": "const pts = boutPoints(o);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA3-POINTS-LOSS",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "export const boutPoints = ({ won, champion = false, grand = false, repeat = false }) => (!won || repeat ? 0 :",
     "new": "export const boutPoints = ({ won, champion = false, grand = false, repeat = false }) => (repeat ? 0 :",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENA3-SWITCH-FREE",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "if (s.left && s.left.banner !== banner && s.left.season >= s.season) return 'season';",
     "new": "if (false) return 'season';",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA3-REJOIN-WAITS",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "if (s.left && s.left.banner !== banner && s.left.season >= s.season) return 'season';",
     "new": "if (s.left && s.left.season >= s.season) return 'season';",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA3-JOIN-OVER-OTHER",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  if (s.team) return 'other';\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA3-QUIT-NO-LOCK",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  s.left = { banner: s.team, season: s.season ?? seasonOf(gameMinutes) };\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA3-CLOSE-WITHOUT-MINE",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "    const fin = seasonFinal(s, first ? L.points : { red: 0, blue: 0 });",
     "new": "    const fin = seasonFinal(s, { red: 0, blue: 0 });",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA3-LAUREL-TO-LOSER",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "const winnerOf = (s) => (s.red > s.blue ? 'red' : s.blue > s.red ? 'blue' : null);",
     "new": "const winnerOf = (s) => (s.red > s.blue ? 'blue' : s.blue > s.red ? 'red' : null);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA3-LAUREL-ON-TIE",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "const winnerOf = (s) => (s.red > s.blue ? 'red' : s.blue > s.red ? 'blue' : null);",
     "new": "const winnerOf = (s) => (s.red >= s.blue ? 'red' : 'blue');",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA3-LAUREL-NOT-MINE",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  return !!s.team && !!s.laurel && s.laurel.season === s.season && s.laurel.banner === s.team;",
     "new": "  return !!s.team && !!s.laurel && s.laurel.season === s.season;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA3-POINTS-NOT-RESET",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  L.points = { red: 0, blue: 0 };\n  L.season = now;",
     "new": "  L.season = now;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA3-BOUTS-UNCAPPED",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  s.bouts = s.bouts.slice(0, BOUTS_KEPT);",
     "new": "",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ARENA3-GRAND-RESTAMPED",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "if (o.won && o.grand && s.grandAt == null) s.grandAt = gm;",
     "new": "if (o.won && o.grand) s.grandAt = gm;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "ARENA3-ROSTER-NO-FLOOR",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  return Math.max(0.04, Math.min(0.96, p));",
     "new": "  return p;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "ARENA3-SINCE-UNSTAMPED",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  if (L.since == null) L.since = L.season ?? now;",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "ARENA3-RESTORE-TEAM",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  L.team = isBanner(raw.team) ? raw.team : null;",
     "new": "  L.team = raw.team ?? null;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ARENA3-RECRUITER-JOIN-ANY",
-    "file": "src/systems/arenaHerald.js",
+    "file": "src/systems/arena/arenaHerald.js",
     "old": "  if (!why) options.push({ code: 'KeyJ', label: R.join(me), act: 'join' });",
     "new": "  options.push({ code: 'KeyJ', label: R.join(me), act: 'join' });",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "ARENA3-RECRUITER-WAIT-UNSAID",
-    "file": "src/systems/arenaHerald.js",
+    "file": "src/systems/arena/arenaHerald.js",
     "old": "  else if (why === 'season') lines.push(R.wait(T.the[otherBanner(banner)]));",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "ARENA3-HERALD-NO-WINDOW",
-    "file": "src/systems/arenaHerald.js",
+    "file": "src/systems/arena/arenaHerald.js",
     "old": "  if (window) options.push({ code: 'KeyA', label: H.window, act: 'window' });   // ARENA3: the Arena window's first door",
     "new": "",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "ARENA3-BOOK-NO-EDGE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  const net = fair * (1 - BOOK_EDGE);",
     "new": "  const net = fair;",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "ARENA3-BOOK-ROUND-UP",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  for (const x of ODDS_LADDER) if (x[0] / x[1] <= net + 1e-9) best = x;",
     "new": "  for (const x of ODDS_LADDER) { best = x; if (x[0] / x[1] >= net) break; }",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "ARENA3-BOOK-NO-CLOSE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  if (!ex.open || begun || bookSaw(book, ex.hour)) return 'closed';",
     "new": "  if (!ex.open || bookSaw(book, ex.hour)) return 'closed';",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "ARENA3-BOOK-TWO-WAGERS",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  if (wagerOn(book, ex.hour)) return 'placed';\n",
     "new": "",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "ARENA3-BOOK-NO-PURSE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  if (stake > gold) return 'gold';\n",
     "new": "",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "ARENA3-BOOK-EARLY-SETTLE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "    else if (liveHour !== w.hour && gameMinutes >= (w.hour + 1) * 60) {",
     "new": "    else if (liveHour !== w.hour) {",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "ARENA3-BOOK-LIVE-SETTLE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "    else if (liveHour !== w.hour && gameMinutes >= (w.hour + 1) * 60) {",
     "new": "    else if (gameMinutes >= (w.hour + 1) * 60) {",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "ARENA3-BOOK-DRAW-KEPT",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "    if (side === null) { w.status = 'draw'; w.paid = w.stake; }",
     "new": "    if (side === null) { w.status = 'draw'; w.paid = 0; }",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "ARENA3-BOOK-STAKE-NOT-BACK",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "export const payoutFor = (stake, [num, den]) => Math.max(0, Math.floor(stake)) + Math.floor((Math.max(0, Math.floor(stake)) * num) / den);",
     "new": "export const payoutFor = (stake, [num, den]) => Math.floor((Math.max(0, Math.floor(stake)) * num) / den);",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "ARENA3-BOOK-HOUSE-IGNORES-ODDS",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  return (r - HOUSE_DRAW) / (1 - HOUSE_DRAW) < exhibitionOdds(ex)[0] ? 0 : 1;",
     "new": "  return (r - HOUSE_DRAW) / (1 - HOUSE_DRAW) < 0.5 ? 0 : 1;",
     "tests": [
@@ -339,7 +339,7 @@
   },
   {
     "name": "ARENA3-BOOK-COLLECT-TWICE",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "  b.owed = 0;\n  return { book: b, gold };",
     "new": "  return { book: b, gold };",
     "tests": [
@@ -348,7 +348,7 @@
   },
   {
     "name": "ARENA3-BOOK-SEEN-IGNORED",
-    "file": "src/systems/arenaBook.js",
+    "file": "src/systems/arena/arenaBook.js",
     "old": "    const seen = b.seen.find((s) => s.hour === w.hour);",
     "new": "    const seen = null;",
     "tests": [
@@ -357,7 +357,7 @@
   },
   {
     "name": "ARENA3-BOARD-NO-PIN",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  return { rows: shown, pinned: me && !shown.includes(me) ? me : null, total: rows.length };",
     "new": "  return { rows: shown, pinned: null, total: rows.length };",
     "tests": [
@@ -366,7 +366,7 @@
   },
   {
     "name": "ARENA3-BOARD-WATCH-AWAY",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "    const watchWhy = !now ? W().whyNotYet(at) : !atGate ? W().whyGate : null;",
     "new": "    const watchWhy = !now ? W().whyNotYet(at) : null;",
     "tests": [
@@ -375,7 +375,7 @@
   },
   {
     "name": "ARENA3-BOARD-FIGHT-HURT",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "    const why = !atGate ? W().whyGate : !fit ? W().whyHurt : null;",
     "new": "    const why = !atGate ? W().whyGate : null;",
     "tests": [
@@ -384,7 +384,7 @@
   },
   {
     "name": "ARENA3-BOARD-EXHIBITION-SIDES",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "name: who.name, billing: who.beast ? who.billing : `${who.home}, ${who.epithet}`, banner: i === 0 ? 'red' : 'blue',",
     "new": "name: who.name, billing: who.beast ? who.billing : `${who.home}, ${who.epithet}`, banner: 'red',",
     "tests": [
@@ -393,7 +393,7 @@
   },
   {
     "name": "ARENA3-BOARD-TIER-CURRENT",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "    const current = !L.grand && L.tier === i;",
     "new": "    const current = false;",
     "tests": [
@@ -402,7 +402,7 @@
   },
   {
     "name": "ARENA3-BOARD-ROSTER-ORDER",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "    rows.sort((x, y) => y.points - x.points || y.tier - x.tier || x.losses - y.losses || x.name.localeCompare(y.name));",
     "new": "    rows.sort((x, y) => x.name.localeCompare(y.name));",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "ARENA3-BOARD-FAST-ORDER",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  fastRows.sort((a, b) => a.days - b.days || b.season - a.season || a.name.localeCompare(b.name));",
     "new": "  fastRows.sort((a, b) => b.days - a.days);",
     "tests": [
@@ -420,7 +420,7 @@
   },
   {
     "name": "ARENA3-BOARD-RECORDS-HOW",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  const how = (b) => (b.how === 'draw' ? W().how.draw : W().how[b.how] ?? '');",
     "new": "  const how = () => '';",
     "tests": [
@@ -529,7 +529,7 @@
   },
   {
     "name": "ARENA3-HALL-NO-THEIRS",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "  if (theirs.length) {\n    lines.push('', U.hallTheirs);",
     "new": "  if (false) {\n    lines.push('', U.hallTheirs);",
     "tests": [
@@ -538,7 +538,7 @@
   },
   {
     "name": "ARENA3-HALL-GRANDS-ONE-SEASON",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "  for (let season = s.season; season >= from && season > s.season - 40; season--) {",
     "new": "  for (let season = s.season; season >= s.season && season > s.season - 40; season--) {",
     "tests": [
@@ -556,7 +556,7 @@
   },
   {
     "name": "ARENA3-SAVE-DROPPED",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.arenaLeague = arenaLeagueSnapshot(entity.arenaLeague ?? null);",
     "new": "  snap.arenaLeague = null;",
     "tests": [

@@ -6,9 +6,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   GUILDS, updateRank, joinGuild, hasJoined, GUILD_EXPEL_BELOW, PROBATION_LINES, EXPULSION_TEXT_ID, DAYS_BETWEEN_RANK_CHANGES, daySinceZero,
-} from '../src/systems/guilds.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
-import { onPushEffects } from '../src/systems/guildServiceFlow.js';
+} from '../src/systems/guild/guilds.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
+import { onPushEffects } from '../src/systems/guild/guildServiceFlow.js';
 import { affiliations } from '../src/systems/affiliations.js';
 
 const storeWith = (rep) => {

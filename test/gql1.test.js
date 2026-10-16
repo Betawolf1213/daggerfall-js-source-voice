@@ -24,7 +24,7 @@ import { QUEST_MESSAGES } from '../src/systems/quest/machine.js';
 import { GETTING_QUESTS_1, GETTING_QUESTS_2 } from '../src/systems/quest/offerFlow.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { ServiceFlowWindow } from '../src/ui/guildServiceWindows.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');

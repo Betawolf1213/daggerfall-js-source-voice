@@ -187,7 +187,7 @@ export const DF_ARMOR_ROWS = Object.freeze({
 
 /** MW-ASSIGN (2026-09-27, Discord: "Some sprites not assigned morrowind skin"): THE ARMOUR A MOD ADDS, against the
  *  classic row of its shape - Roleplay & Realism Items' chain set (hauberk, chausses, spaulders, sollerets) and light
- *  set (jerkin, cuisse, helmet, boots, gloves, vambraces), templates 515-526 (systems/rriItems.js RRI_CLASSES). A
+ *  set (jerkin, cuisse, helmet, boots, gloves, vambraces), templates 515-526 (systems/roleplayRealismItems/rriItems.js RRI_CLASSES). A
  *  vambrace is a forearm's guard, so it asks for Morrowind's bracer before its gauntlet, one side each. Their material
  *  is the classic ARMOR_MATERIAL the rows already translate (a fur piece is folded to Leather at its mint). Outside
  *  the classic rows every one of them stood as its classic picture - worn, on the icon and hung on a wall. */

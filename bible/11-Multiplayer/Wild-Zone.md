@@ -62,7 +62,7 @@ of it?", then WILD-KEEPOUT2: "can you move the exact borders to right so wrothga
 found on that ground (`wildZone.js:"you move the exact"`) - never a notch; the east, the top and the south stay as
 cut. Every place on what is left - its streets, its buildings, its dungeons - is the zone's. NEAR it is within
 `WILD_NEAR_PX` (6) map pixels of that edge. ONLINE ALONE: offline the mountains are Daggerfall's own (the death
-penalty's law). The law is `src/systems/wildZone.js` (a leaf: the region test, the mask and its edge, the numbers, the
+penalty's law). The law is `src/systems/wild/wildZone.js` (a leaf: the region test, the mask and its edge, the numbers, the
 live flag the pools read at a spawn, and the death screen's state); the world host sets the flag each frame
 (`wildFrame`, `world.js:"const wildFrame ="`) from the region under the player AND the ring of the pixel under them
 (`world.js:"const here = _onlineWorldSession"` - region 16 outside the cut is not the zone), and says the crossing. A
@@ -137,8 +137,8 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   Materials Bag, a vehicle, a deed, the spellbook). KEEP-WALLET (2026-10-09, the owner: "the wallet shouldnt drop in
   the zone"): the wallet, and the Deadlands Embers and Welkynd Shards it holds, stay with the fallen - the wallet is an
   organizer, its pieces lie in the pack itself, so the rule names each (`isWalletItem`, `walletHolds`;
-  `wildDropLaw.js:"if (isWalletItem(item) || walletHolds(item)) return false;"`). `src/systems/wildDropLaw.js` (INT9:
-  the law's home, a leaf the account Worker bundles; `src/systems/wildDeath.js` re-exports it).
+  `wildDropLaw.js:"if (isWalletItem(item) || walletHolds(item)) return false;"`). `src/systems/wild/wildDropLaw.js` (INT9:
+  the law's home, a leaf the account Worker bundles; `src/systems/wild/wildDeath.js` re-exports it).
 - DROPPED: every other thing in the bag and - while the wagon is with them (CART-AWAY, below) - in the cart, into the
   room's remains (section 5). INT9: TAKEN OFF THE RECORD BY THE ACCOUNT SERVICE (`server-account/src/wild.js`,
   `/v1/wild/fall`), never handed over by the fallen's game:
@@ -166,7 +166,7 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   death takes nothing of the cart, neither a piece nor its gold's share (`takeWildDeath`'s `cart` option, and
   `wildDropCandidates`' and `takeWildGold`'s); the bag, the purse and the killer's piece go as ever. THE TRUST: the
   zone's mask is the map files', which the account service does not hold, so the fallen's own tab SAYS its wagon is away
-  (`cart` 0 on `/v1/wild/fall`, `src/systems/wildCart.js` wildCartAway over the record the save writes and
+  (`cart` 0 on `/v1/wild/fall`, `src/systems/wild/wildCart.js` wildCartAway over the record the save writes and
   `wildMaskOf`; with the mod switched off the wagon is Daggerfall's own, which goes where its owner goes), and the
   service honours the word only where the record it keeps agrees by its mode
   (`wildDropLaw.js:"export function wildCartMayBeAway"`: parked, stabled or none - never driven, following or beside
@@ -252,7 +252,7 @@ with the minutes left.
   whatever the client does; the client's one record of it (`world.js:"let _wildMine = null;"` - where it lies, the room,
   its end, the hall) lived in memory, so a game crashed or closed came back with the world map's pulsing mark gone, the
   pile not known for mine by its record, and a hall's lock refusing the hall my pile is my way back into (section 13).
-  It is kept on the device beside WILD-WAYPOINT's flag now, for the character that fell (`systems/wildRemainsWaypoint.js`
+  It is kept on the device beside WILD-WAYPOINT's flag now, for the character that fell (`systems/wild/wildRemainsWaypoint.js`
   keepMine / keptMine / forgetMine, its own key: a flag removed by hand keeps it), read back once by the zone's frame and
   forgotten at its end or at the room's "gone". CLIENT-ONLY; NOT DONE, and the owner's: a record the account keeps (a
   second device, a cleared storage), a clock that waits for a disconnected owner, and a relay log of a fall's records
@@ -366,7 +366,7 @@ fast door - the travel map's journey and the carriage drivers' and the ships' an
 
 ## 10. The pace (WILD3)
 
-In the zone the travel dials run under a cap (systems/travelPace.js `setPaceZoneCap`, `WILD_PACE_CAP`): at most x20
+In the zone the travel dials run under a cap (systems/travel/travelPace.js `setPaceZoneCap`, `WILD_PACE_CAP`): at most x20
 off the road and x40 on it. A cap, never a write - the player's choice comes back the moment they leave. A stranger
 near holds the journey slower still (STRANGER-PACE, section 11).
 
@@ -416,7 +416,7 @@ Then "as centered as possible not on the border to the other tier... dont overri
   `worldModes.js:"(host.wildDungeonGate && !(await host.wildDungeonGate(hit, fromLoad)))"`), and the wandering spawner
   stands none there (`world.js:"{ const _wm = wildMaskOf"`). A hall is a clone of a real dungeon on an EMPTY pixel -
   never a place's, never beside one, never the sea (`wildHallFree`, `world.js:"const wildHallFree"`) - so a tier
-  always has its count wherever its places are. `src/systems/wildDungeons.js`, pure: the mask, a pixel test and a day
+  always has its count wherever its places are. `src/systems/wild/wildDungeons.js`, pure: the mask, a pixel test and a day
   in, the halls out.
 - WHERE: `WILD_DUNGEONS_PER_RING` (10, 8, 6, 4 - `wildDungeons.js:"export const WILD_DUNGEONS_PER_RING"`). Each
   pixel's distance to another ring's or the outside (`wildRingBorderDistance`,
@@ -524,7 +524,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
 
 - EIGHT, ALWAYS: `WILD_GIANTS_PER_RING` (2) a tier (`wildGiants.js:"export const WILD_GIANTS_PER_RING"`). Each WANDERS
   a pure walk of the relay's clock and the mask (`wildGiantsAt`, `wildGiants.js:"export function wildGiantsAt"`;
-  `src/systems/wildGiants.js`): a day's HOME, a free pixel of its own tier (the second of a tier kept apart from the
+  `src/systems/wild/wildGiants.js`): a day's HOME, a free pixel of its own tier (the second of a tier kept apart from the
   first), and legs of `WILD_GIANT_LEG_MS` (twenty minutes) between waypoints within `WILD_GIANT_ROAM_PX` (5) of it
   (`waypointOf`, `wildGiants.js:"function waypointOf"`), each giant's legs out of step with the others'. So every
   client sees every giant in the same place, walking the same way.
@@ -694,7 +694,7 @@ each is a line here, findable by its tag.
   (`healCurseBox`, `worldModes.js:"function healCurseBox"`). `src/systems/healCurse.js`.
 - REST-WARN (the owner: "Poison/Disease warning on rest, there should be one for when you attempt to rest"): a rest
   begun while a poison or a plain disease works asks first - "You are poisoned." / "Resting will not cure it." / "Rest
-  anyway?" (`restAilmentLines`, `restWarning.js:"export function restAilmentLines"`; `src/systems/restWarning.js`),
+  anyway?" (`restAilmentLines`, `restWarning.js:"export function restAilmentLines"`; `src/systems/rest/restWarning.js`),
   the rest window opening on its Yes once the box has left the slot (`world.js:"const restNow = ()"`). Wired in all
   four hosts' rests - the street's, the interior's, the dungeon's and the fixed city's (world.js, worldModes.js,
   dungeonContext.js, exterior.js; the last left out by the patch and wired after it, 2026-10-08, THE FOUR HOSTS RULE -

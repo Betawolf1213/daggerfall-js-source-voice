@@ -155,7 +155,7 @@ record's tree and takes the stock row.
   its height, linearly, as its far picture's quad - the two crossfade in the
   eye's band and must agree.
 - **ONE WIND, ONE WAY.** The heading the trees lean and the leaves blow is the
-  outdoors' own wind's (`systems/windDrive.js` `dir` - the wisps', the rain's,
+  outdoors' own wind's (`systems/wind/windDrive.js` `dir` - the wisps', the rain's,
   the clouds'), Windfall's slow wander (+-10 degrees) and its gusts' swing turned
   about it. The mod's daily heading (HashUnit x 360 + WindDirectionDegrees)
   stands only where no wind is handed; the setting says so (INERT here).
@@ -185,7 +185,7 @@ The day the mod plans by is the SKY's (`skyMinutes()`, TIME1's census - the
 date and hour the player sees); its frame runs on the game's seconds -
 WindMod.Update's `Time.deltaTime`, held by a pause and scaled with the world
 (AUDIT ENVIRONS W1: `worldTimeScale`, the town's `hccTimeScale`) - and online the mod is the player's own
-(`systems/onlineLane.js` `ONLINE_PLAYERS_OWN_MODS`): nothing it does stands,
+(`systems/online/onlineLane.js` `ONLINE_PLAYERS_OWN_MODS`): nothing it does stands,
 rolls or is written for anyone else.
 
 ## Departures (Port-Ledger A, WINDFALL1)

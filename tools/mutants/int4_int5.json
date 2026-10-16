@@ -1,7 +1,7 @@
 [
   {
     "name": "INT4-a-stack-earns-an-id",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "  if (Number.isInteger(it.stackCount) && it.stackCount > 1) return false;\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "INT4-a-bound-piece-earns-an-id",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "  if (!it || typeof it !== 'object' || it.bound === true || it.questItem === true) return false;",
     "new": "  if (!it || typeof it !== 'object' || it.questItem === true) return false;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "INT4-an-id-stamped-again",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "      if (!valuablePiece(it) || (typeof it.uid === 'string' && ITEM_UID_RE.test(it.uid)) || !Object.isExtensible(it)) continue;",
     "new": "      if (!valuablePiece(it) || !Object.isExtensible(it)) continue;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "INT3-the-lift-unsaid",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "  if (now == null) return prev ? TRADE_OPEN_NOTICE : null;",
     "new": "  if (now == null) return null;",
     "tests": [

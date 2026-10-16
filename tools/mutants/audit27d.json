@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDIT-C2-awake-mate-a-camp",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return !!m?.p?.rs && (restsAlone(m) || !mineTogether);",
     "new": "  return restsAlone(m) || !mineTogether;",
     "tests": [
@@ -256,7 +256,7 @@
   },
   {
     "name": "AUDIT-C2-never-a-camp",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return !!m?.p?.rs && (restsAlone(m) || !mineTogether);",
     "new": "  return false;",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "AUDIT-F4-in-settings",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "Turn on \"Rest with my party\" (${optionPath('card:peerSprites')}) to rest with them.",
     "new": "Turn on \"Rest with my party\" in Settings to rest with them.",
     "tests": [
@@ -359,7 +359,7 @@
   },
   {
     "name": "AUDIT-D3-mend-first",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };\n  const local",
     "new": "  if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };\n  data = fullShareMarkers(data);\n  const local",
     "tests": [
@@ -368,7 +368,7 @@
   },
   {
     "name": "AUDIT-D4-every-failure-gone",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "return { ok: false, reason: still && !still.questComplete && !still.questTombstoned ? 'restore' : 'gone' };",
     "new": "return { ok: false, reason: 'gone' };",
     "tests": [
@@ -377,7 +377,7 @@
   },
   {
     "name": "AUDIT-D4-every-failure-restore",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "return { ok: false, reason: still && !still.questComplete && !still.questTombstoned ? 'restore' : 'gone' };",
     "new": "return { ok: false, reason: 'restore' };",
     "tests": [
@@ -386,7 +386,7 @@
   },
   {
     "name": "AUDIT-D5-deliberate-unrecorded",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  said.add(key);\n  return !sync || fresh;",
     "new": "  if (sync) said.add(key);\n  return !sync || fresh;",
     "tests": [
@@ -395,7 +395,7 @@
   },
   {
     "name": "AUDIT-D5-copy-out-of-key",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "|${result?.guild ?? ''}|${copy}`;",
     "new": "|${result?.guild ?? ''}`;",
     "tests": [
@@ -422,7 +422,7 @@
   },
   {
     "name": "AUDIT-S1-placer-drops-craft",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": ", ...(entry.station ? { station: entry.station } : {})",
     "new": "",
     "tests": [

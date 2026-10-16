@@ -21,13 +21,13 @@ import {
   HOME_TOWN_TTL_MS, HOME_RETRY_MS, HOME_ENTRY_WORDS, HOME_BANK_LINES, homeCandidate, homePurchasable, homeSceneName, homeRefund,
   homeDoorAnswer, homeDoorTitle, homeLockedLine, homeBelongsLine, homeEntryLine, homeForSaleLine, createOnlineHomes,
   buyOnlineHome, sellOnlineHome,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { interiorSceneName } from '../src/systems/sceneCache.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { mintInteriorShared, composeInteriorShared, applyInteriorShared, interiorActionRecords, interiorLocationKey } from '../src/world/interiorShared.js';
 import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/bankWindow.js';
 import { createBankAccounts, housePrice } from '../src/systems/banking.js';
-import { buildingDataForDoor, locationBuildings } from '../src/systems/talkTopics.js';
+import { buildingDataForDoor, locationBuildings } from '../src/systems/talk/talkTopics.js';
 import { r2, seatRealm, realmJoinAt } from './realmSeat.mjs';   // AUDIT REALM2 S2: a house is a realm character's, bought on its record
 import { homeSaleRefund } from '../src/net/homeLaw.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked

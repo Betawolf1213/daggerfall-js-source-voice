@@ -4,7 +4,7 @@
 // a record as "primitives, arrays and plain objects, bounded" and
 // carried the exceptions by hand (the three array fields of AUDIT
 // WORLD4 B1, LR4's affix check, the templateIndex bounds). Now
-// systems/itemFields.js declares every field once - kind and bounds -
+// systems/item/itemFields.js declares every field once - kind and bounds -
 // the validator checks every DECLARED field against it, and the array
 // list is derived. The laws pinned here:
 //   - EVERY MINT WRITES DECLARED FIELDS: the loot factories, the
@@ -26,18 +26,18 @@ import { fileURLToPath } from 'node:url';
 import {
   ITEM_FIELDS, ITEM_FIELD_NAMES, ITEM_STR_MAX, ITEM_EQUIP_SLOTS, itemFieldsOfKind, isDeclaredItemField,
   validItemField, validItemFields, validEnchantment, validRepairData,
-} from '../src/systems/itemFields.js';
+} from '../src/systems/item/itemFields.js';
 import {
   LOOT_MATRICES, generateItems, createRegularMagicItem, createArtifact, createPotion, createRandomPotion, CLASSIC_RECIPE_KEYS,
   validLootItem, LOOT_ARRAY_FIELDS, LOOT_STR_MAX,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { createRandomBook } from '../src/systems/books.js';
 import { goldStack } from '../src/systems/inventory.js';
-import { rollLootRarity, applyRarity, RARITY_ORDER, validAffix } from '../src/systems/lootRarity.js';
+import { rollLootRarity, applyRarity, RARITY_ORDER, validAffix } from '../src/systems/loot/lootRarity.js';
 import { REGALIA, mintAetheric } from '../src/systems/aetheric.js';   // SET6: the Aetheric mint - every field it writes a declared one
 import { equipItem } from '../src/systems/equip.js';
 import { leaveForRepair } from '../src/systems/repairService.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import { LOOK_ITEM_FIELDS } from '../src/net/wire.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import '../src/world/landView.js';
@@ -175,10 +175,10 @@ test('RF5: one declaration - the array list derives from the kinds, the validato
   assert.ok(Object.isFrozen(ITEM_FIELDS) && ITEM_FIELD_NAMES.length >= 40);
   for (const k of ITEM_FIELD_NAMES) assert.ok(['int', 'number', 'bool', 'string', 'enum', 'array', 'object'].includes(ITEM_FIELDS[k].kind), k);
   for (const k of LOOK_ITEM_FIELDS) assert.ok(isDeclaredItemField(k), `the look's '${k}' is declared`);
-  const loot = read('src/systems/loot.js');
+  const loot = read('src/systems/loot/loot.js');
   assert.match(loot, /export const LOOT_ARRAY_FIELDS = Object\.freeze\(itemFieldsOfKind\('array'\)\);/);
   assert.match(loot, /if \(!validItemFields\(out\)\) return null;/, 'the validator checks every declared field');
   assert.doesNotMatch(loot, /\['enchantments', 'customEnchantments', 'affixes'\]/, 'no hand list');
   assert.doesNotMatch(loot, /validAffixList/, 'LR4\'s check rides the schema');
-  assert.doesNotMatch(read('src/systems/itemFields.js'), /from '\.\/loot\.js'|from '\.\/inventory\.js'|from '\.\/equip\.js'/, 'the schema sits under the mints');
+  assert.doesNotMatch(read('src/systems/item/itemFields.js'), /from '\.\/loot\.js'|from '\.\/inventory\.js'|from '\.\/equip\.js'/, 'the schema sits under the mints');
 });

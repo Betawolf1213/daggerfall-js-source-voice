@@ -22,7 +22,7 @@
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
 import { duelClock } from './duelWall.js';
-import { seededRng } from '../systems/wind.js';
+import { seededRng } from '../systems/wind/wind.js';
 import { CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
 
 /** How long a crystal takes to grow out of the floor from the Reckoning's word, and how long its shards fly (ms). */

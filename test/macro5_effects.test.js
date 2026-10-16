@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { classicEffectSettings, effectMacroSource, SPELLBOOK_DESCRIPTION_IDS } from '../src/systems/spellEffects.js';
+import { classicEffectSettings, effectMacroSource, SPELLBOOK_DESCRIPTION_IDS } from '../src/systems/spell/spellEffects.js';
 import { expandRowValues, sourceValues, setMacroWorld } from '../src/systems/quest/questMacros.js';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
 

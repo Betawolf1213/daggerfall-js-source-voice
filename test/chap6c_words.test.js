@@ -13,7 +13,7 @@ import { chapterSeasonOf, chapterDoctrineWords } from '../src/net/npcChapterLaw.
 import { chapterCandidateName, chapterSeasonLines, chapterBackChoices, chapterBackedLine, CHAPTER_CANDIDATE_SALT } from '../src/net/chapterEvents.js';
 import { createChapterSheet } from '../src/net/chapterSheet.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { CHAPTER_EVENT_NEWS, CHAPTER_NEWS, CHAPTER_NEWS_DAYS, newsScript } from '../src/systems/livingWorld/lines.js';
 import { getSeed, setSeed } from '../src/formats/dfRandom.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';

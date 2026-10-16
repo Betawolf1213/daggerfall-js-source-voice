@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { setValue, onSettingChange, _resetForTests } from '../src/systems/settings.js';
-import { musicGain, trackGain, MUSIC_GAIN, SongPlayer, AudioSongPlayer } from '../src/systems/songPlayer.js';
+import { setValue, onSettingChange, _resetForTests } from '../src/systems/settings/settings.js';
+import { musicGain, trackGain, MUSIC_GAIN, SongPlayer, AudioSongPlayer } from '../src/systems/song/songPlayer.js';
 import { MusicService } from '../src/systems/music.js';
 
 const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -88,6 +88,6 @@ test('MusicVolume: every writer already goes through setValue, so the door reach
   for (const f of ['src/ui/enhancedMenu.js', 'src/ui/pauseWindow.js']) {   // FD1: the SettingsWindow is gone
     assert.match(read(f), /setValue\(/, `${f} writes through setValue`);
   }
-  assert.match(read('src/systems/settings.js'), /_publish\(section, key, str\);\n    return;/, 'the default-drop arm publishes too');
+  assert.match(read('src/systems/settings/settings.js'), /_publish\(section, key, str\);\n    return;/, 'the default-drop arm publishes too');
   assert.match(read('src/systems/music.js'), /if \(section === 'Controls' && key === 'MusicVolume'\) this\.resyncGain\(\);/);
 });

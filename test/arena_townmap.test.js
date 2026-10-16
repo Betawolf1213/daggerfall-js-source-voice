@@ -20,7 +20,7 @@ import { boundarySegments, linkSegments } from '../src/ui/inkMap.js';
 import { createTownSheet } from '../src/ui/townSheet.js';
 import { ExteriorAutomapWindow, buildExteriorLayout, toPanelScreen, _resetZoomForTests } from '../src/ui/exteriorAutomapWindow.js';
 import { nameplateAnchor } from '../src/ui/nameplateLayout.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import VENDORED from '../vendor/daggerfall-arena/Arena/ARENADAG.RMB.json' with { type: 'json' };
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

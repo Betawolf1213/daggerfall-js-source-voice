@@ -24,7 +24,7 @@ import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
-import { clampMarkersAheadOf } from '../src/systems/save.js';
+import { clampMarkersAheadOf } from '../src/systems/save/save.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { pcaaoModules, pcaaoAttackDamage, pcaaoHandToHandAttackDamage } from '../src/combat/pcaao.js';
 import { calculateAttackDamage, handToHandAttackDamage } from '../src/combat/formulas.js';

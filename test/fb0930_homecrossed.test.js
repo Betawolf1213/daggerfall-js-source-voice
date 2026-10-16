@@ -14,7 +14,7 @@ import { standService } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { homeSaleRefund } from '../src/net/homeLaw.js';
 import { accountRefusalText, REFUSALS } from '../src/net/accountClient.js';
-import { createOnlineHomes, sellOnlineHome, HOME_CROSSED_LINES, HOME_SALE_OUT } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, sellOnlineHome, HOME_CROSSED_LINES, HOME_SALE_OUT } from '../src/systems/online/onlineHomes.js';
 import { CROSSED_DEED_LINES } from '../src/systems/banking.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

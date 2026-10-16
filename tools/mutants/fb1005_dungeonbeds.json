@@ -33,7 +33,7 @@
   },
   {
     "name": "DUNGEONBEDS-reach-infinite",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "    if (Math.hypot(d[0], d[1], d[2]) <= reach) return true;",
     "new": "    if (Math.hypot(d[0], d[2]) <= Infinity) return true;",
     "tests": [
@@ -43,7 +43,7 @@
   },
   {
     "name": "DUNGEONBEDS-reach-flat",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "    if (Math.hypot(d[0], d[1], d[2]) <= reach) return true;",
     "new": "    if (Math.hypot(d[0], d[2]) <= reach) return true;",
     "tests": [
@@ -53,7 +53,7 @@
   },
   {
     "name": "DUNGEONBEDS-reach-to-centre",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "    const d = [0, 1, 2].map((k) => Math.max(aabb.min[k] - pos[k], 0, pos[k] - aabb.max[k]));",
     "new": "    const d = [0, 1, 2].map((k) => pos[k] - (aabb.min[k] + aabb.max[k]) / 2);",
     "tests": [
@@ -63,7 +63,7 @@
   },
   {
     "name": "DUNGEONBEDS-reach-strict",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "export function bedInReach(beds, pos, reach = BY_FIRE_REACH) {",
     "new": "export function bedInReach(beds, pos, reach = BY_FIRE_REACH - 0.5) {",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "DUNGEONBEDS-any-storey",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "    if (Math.abs(pos[1] - aabb.min[1]) > BED_STOREY_M) continue;",
     "new": "",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "DUNGEONBEDS-storey-loose",
-    "file": "src/systems/restAct.js",
+    "file": "src/systems/rest/restAct.js",
     "old": "export const BED_STOREY_M = 1.5;",
     "new": "export const BED_STOREY_M = 3.5;",
     "tests": [

@@ -14,7 +14,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { INFECTION } from '../src/systems/infection.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
 const P = (level = 5) => ({

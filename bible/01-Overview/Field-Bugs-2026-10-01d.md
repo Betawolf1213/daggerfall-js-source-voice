@@ -56,7 +56,7 @@ draws it (`ui/worldPlaque.js` `reticleAnchor`: the middle under a docked large H
 
 Under the crosshair the count's pips and one line of hint - the act's own words, unchanged - fading once it has stood
 2.5 s unchanged (`HINT_MS`); a number moving in it (the throw's metres) does not bring it back, a new line does. Every
-cue is a shape and a sound (`actCues`, `systems/profSounds.js`, DFU's own clips - GATHER-FEEL, 2026-10-13, moved them
+cue is a shape and a sound (`actCues`, `systems/professions/profSounds.js`, DFU's own clips - GATHER-FEEL, 2026-10-13, moved them
 to the gathering's ear, `06-Systems/Professions-Arc.md` section 44). The node's name is the menu's; the act carries none.
 
 `test/profreticle.test.js` (10); `test/audit32_pages.test.js` P11 (the line's degree the same across as up, now the

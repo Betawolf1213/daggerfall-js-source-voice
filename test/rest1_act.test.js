@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs';
 import {
   NIGHT_HOURS, NIGHT_MINUTES, NIGHT_INTERVAL_MINUTES, REST_CHANNEL_SECONDS, REST_ACT_TEXT,
   nightDue, nightRealMinutesLeft, stampNight, runRestNight, topUpRest, spendRoomNight, restPricedWhole,
-} from '../src/systems/restAct.js';
-import { RestSession, REST_TEXT, MINUTES_PER_TICK } from '../src/systems/restSession.js';
+} from '../src/systems/rest/restAct.js';
+import { RestSession, REST_TEXT, MINUTES_PER_TICK } from '../src/systems/rest/restSession.js';
 import { REST_KIND } from '../src/systems/survival/rest.js';
 import { SURVIVAL_RULES, HARD_RULES } from '../src/systems/survival/difficulty.js';
 const CASUAL_RULES = SURVIVAL_RULES.casual;
@@ -252,7 +252,7 @@ test('REST1 by source: every host that rests online names its rest point - the o
   assert.match(rd('src/scenes/world.js'), /restPoint: \(\) => \(_restFromBed \? \{ kind: 'bed', where: null \} : camps\.restPointAt\(/);
   assert.match(rd('src/scenes/worldModes.js'), /restPoint: \(\) => \{ const p = interiorRestPlaceHere\(\); return \{ kind:/);
   assert.match(rd('src/scenes/dungeonContext.js'), /restPoint: \(\) => \(_restFromBed \|\| bedInReach\(dungeonBeds, _fpFeet\) \? \{ kind: 'bed', where: null \} : _fpFeet \? camps\.restPointAt\(_fpFeet\) : null\)/);   // FIELD BUGS 2026-10-05 DUNGEON-BEDS: and a bed
-  assert.match(rd('src/systems/save.js'), /\n  'restNightAt',\n/);   // in ENTITY_FIELDS (LEGACY4's blessings appended after it)
+  assert.match(rd('src/systems/save/save.js'), /\n  'restNightAt',\n/);   // in ENTITY_FIELDS (LEGACY4's blessings appended after it)
 });
 
 test('REST1 the Next night tile: a buff while the night interval runs, its real minutes at its foot, the campfire glyph; none once a night may pass', async () => {

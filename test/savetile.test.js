@@ -361,7 +361,7 @@ test('TILE1: the face has ONE home, and it is not the one chargenArt already own
   // THE IDENTITY THE PORTRAIT NEEDS WAS ALREADY IN THE SAVE - S3c/U9
   // put race, gender and faceIndex on the envelope. Nothing new is
   // stored; the menu's row simply stopped throwing three fields away.
-  assert.match(rd('src/systems/save.js'), /'name', 'gender', 'race', 'raceId', 'faceIndex'/);
+  assert.match(rd('src/systems/save/save.js'), /'name', 'gender', 'race', 'raceId', 'faceIndex'/);
   const menu = rd('src/ui/enhancedMenu.js');
   assert.match(menu, /race: typeof snap\.race === 'string' \? snap\.race : null,/);
   assert.match(menu, /faceIndex: Number\.isInteger\(snap\.faceIndex\) \? snap\.faceIndex : 0,/);
@@ -390,7 +390,7 @@ test('ACC2c: a cloud card becomes a tile that INVENTS NOTHING - the card is smal
 
   // WHAT IT CARRIES: the two names, and the moment - derived by the
   // same two calls a local tile's date comes from, because `gameTime`
-  // IS classic minutes (systems/saveSlots.js's SaveInfo typedef says
+  // IS classic minutes (systems/save/saveSlots.js's SaveInfo typedef says
   // so of the field `pushSlot` copies up).
   assert.equal(save.name, 'Nystul');
   assert.equal(save.saveName, 'Before the lich');

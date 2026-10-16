@@ -29,7 +29,7 @@
 // are that table, with the asset's dead zone and inversions applied,
 // so everything downstream reads Unity's numbers and DFU's law holds
 // unchanged.
-import { getBool, getFloat } from './settings.js';
+import { getBool, getFloat } from './settings/settings.js';
 
 export const AXIS_ACTIONS = Object.freeze(['MovementHorizontal', 'MovementVertical', 'CameraHorizontal', 'CameraVertical']);
 export const JOYSTICK_UI_ACTIONS = Object.freeze(['LeftClick', 'RightClick', 'MiddleClick', 'Back']);

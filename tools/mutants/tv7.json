@@ -1,7 +1,7 @@
 [
   {
     "name": "TV7-births-unseeded",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  const seed = seedOf(cx, cy, life);\n  const r = seededRng(seed);",
     "new": "  const seed = seedOf(cx, cy, life);\n  const r = Math.random;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "TV7-night-no-busier",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  if (r() >= (night ? BAND_CHANCE_NIGHT : BAND_CHANCE_DAY)) return null;",
     "new": "  if (r() >= BAND_CHANCE_DAY) return null;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "TV7-born-in-the-sea",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  if (!ok(x, z)) return null;   // born in the water or a town: no band this life",
     "new": "  // (the land never asked)",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "TV7-wander-through-walls",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "    if (!go) { heading += Math.PI;",
     "new": "    if (!go && false) { heading += Math.PI;",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "TV7-wander-forever",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  let t = Math.max(0, Math.min(BAND_LIFE_MS, ms - band.bornMs));",
     "new": "  let t = Math.max(0, ms - band.bornMs);",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "TV7-chase-no-scale",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  const step = Math.min(Math.max(0, dist - contact), BAND_CHASE_MPS * dt * Math.max(1, scale));",
     "new": "  const step = Math.min(Math.max(0, dist - contact), BAND_CHASE_MPS * dt);",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "TV7-no-leash",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  if (left > BAND_LEASH_M || now - at > BAND_GIVE_UP_MS) return",
     "new": "  if (now - at > BAND_GIVE_UP_MS) return",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "TV7-never-gives-up",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  if (left > BAND_LEASH_M || now - at > BAND_GIVE_UP_MS) return",
     "new": "  if (left > BAND_LEASH_M) return",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "TV7-night-sight",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "export const bandSight = (night) => (night ? BAND_SIGHT_NIGHT_M : BAND_SIGHT_DAY_M);",
     "new": "export const bandSight = (night) => BAND_SIGHT_DAY_M;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "TV7b-word-uncapped",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  for (const [id, c] of chases ?? []) { if (out.length >= BANDS_WIRE_MAX) break;",
     "new": "  for (const [id, c] of chases ?? []) {",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "TV7b-spent-unsaid",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  for (const id of spent ?? []) { if (out.length >= BANDS_WIRE_MAX) break; out.push([id, 0, 0, 2]); }\n",
     "new": "",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "TV7b-any-id",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "    if (typeof id !== 'string' || !idRe.test(id) || seen.has(id)) continue;",
     "new": "    if (typeof id !== 'string' || seen.has(id)) continue;",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "TV7b-off-the-map",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "    if (flag === 1 && !chaserPlaceOk(x, z)) continue;",
     "new": "    if (flag === 1 && !(Number.isFinite(x) && Number.isFinite(z))) continue;",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "TV7b-twice",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "    if (typeof id !== 'string' || !idRe.test(id) || seen.has(id)) continue;",
     "new": "    if (typeof id !== 'string' || !idRe.test(id)) continue;",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "TV7b-both-keep-it",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "export const chaseYields = (mine, theirs) => String(theirs) < String(mine);",
     "new": "export const chaseYields = (mine, theirs) => false;",
     "tests": [

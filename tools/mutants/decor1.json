@@ -200,7 +200,7 @@
   },
   {
     "name": "DECOR1-a-marker-kept",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "a === EDITOR_FLATS_ARCHIVE || r < 0) continue;\n        add({ model: null, flat: [a, r] });",
     "new": "r < 0) continue;\n        add({ model: null, flat: [a, r] });",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "DECOR1-the-ladder-kept",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "|| id === LADDER_MODEL_ID) continue;",
     "new": ") continue;",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "DECOR1-a-non-prop-kept",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "        if (m?.objectType !== PROP_MODEL_TYPE) continue;\n",
     "new": "",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "DECOR1-the-count-unkept",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    else had.count++;",
     "new": "    else had.count = 1;",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "DECOR1-a-container-not-storage",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "storage: kind === 'storage', light, radius: null",
     "new": "storage: false, light, radius: null",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "DECOR1-a-light-dark-by-default",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  if (!Array.isArray(flat) || flat[0] !== LIGHTS_ARCHIVE) return null;",
     "new": "  if (true) return null;",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "DECOR1-a-shared-name-unnumbered",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "      for (let k = i; k < j; k++) list[k].name = lone ? list[k].base : `${list[k].base} ${taken + k - i + 1}`;",
     "new": "      for (let k = i; k < j; k++) list[k].name = list[k].base;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "DECOR1-the-kinds-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    if (want && !want.has(e.kind)) return false;\n",
     "new": "",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "DECOR1-one-word-enough",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "if (!words.every((w) => hay.includes(w))) return false;",
     "new": "if (!words.some((w) => hay.includes(w))) return false;",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "DECOR1-the-size-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    if (size !== null && decorSize(radiusOf(e)) !== size) return false;\n",
     "new": "",
     "tests": [

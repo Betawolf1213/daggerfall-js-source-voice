@@ -4,15 +4,15 @@
 // party's rest out of all three), it slept a member standing 4-15 m from the rester's fire on the bare ground (rough:
 // "You slept poorly" in Casual, half the night's healing and stiff in Hard - PARTY-REST4's per-request "party member
 // MUST heal their health near the leader"), and it told a dead member they slept. The decision is
-// systems/partyRestLaw.js's now and RUN here on a table; the stamp says where the night was slept (restAct.js); the
+// systems/party/partyRestLaw.js's now and RUN here on a table; the stamp says where the night was slept (restAct.js); the
 // carried night is slept at the better of the rester's spot and mine - driven through a real createRestDeps bag in
 // each tier, the sequence world.js's sleepCarriedNight runs.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { nightMoved, carriedNightAction, carriedRestKind, PARTY_NIGHT_FRESH_MS, stampOf, STAMP_SLACK_MS } from '../src/systems/partyRestLaw.js';
-import { nightStamp, nightKindOf, isNightStamp, setNightListener, REST_ACT_TEXT, PARTY_NIGHT_MARKS, runRestNight, ambushNight } from '../src/systems/restAct.js';
-import { REST_TEXT, MINUTES_PER_TICK } from '../src/systems/restSession.js';
+import { nightMoved, carriedNightAction, carriedRestKind, PARTY_NIGHT_FRESH_MS, stampOf, STAMP_SLACK_MS } from '../src/systems/party/partyRestLaw.js';
+import { nightStamp, nightKindOf, isNightStamp, setNightListener, REST_ACT_TEXT, PARTY_NIGHT_MARKS, runRestNight, ambushNight } from '../src/systems/rest/restAct.js';
+import { REST_TEXT, MINUTES_PER_TICK } from '../src/systems/rest/restSession.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { setSharedClock, setOwnMinutes, advanceOwnMinutes } from '../src/systems/worldTick.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';

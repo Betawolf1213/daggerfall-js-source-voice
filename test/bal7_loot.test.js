@@ -8,23 +8,23 @@
 //   - HIST-SAP regenerated 2% a round (4% under half) - worth more than any guard: halved.
 //   - OPEN HAND landed every bare-handed blow twice, whole: the second now for half.
 //
-// Pinned by execution through the real Rare mint (systems/lootRarity.js applyRarity), the law (itemLaw.js), the strike
-// listener and the magic round (systems/lootPowers.js) and the host's door standing in.
+// Pinned by execution through the real Rare mint (systems/loot/lootRarity.js applyRarity), the law (itemLaw.js), the strike
+// listener and the magic round (systems/loot/lootPowers.js) and the host's door standing in.
 
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
 
 const T = ENCHANTMENT_TYPES;
 const fresh = () => { _resetForTests(); setPref('lootRarity', true); LP._resetLootPowersForTests(); _resetSetPowersForTests(); setPlayerDoor(null); };

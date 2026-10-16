@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { homeDoorPrompt } from '../src/systems/onlineHomes.js';
+import { homeDoorPrompt } from '../src/systems/online/onlineHomes.js';
 import { MODES, getInteractionMode } from '../src/player/interactionMode.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

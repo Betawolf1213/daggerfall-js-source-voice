@@ -24,7 +24,7 @@ import { loadFamily, listFamilies } from '../src/systems/legacy/store.js';
 import { createChargenWindow, finishChargen } from '../src/systems/chargenSession.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { noFamilyLine } from '../src/ui/familyPages.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { _resetModSaveData } from '../src/systems/modSaveData.js';

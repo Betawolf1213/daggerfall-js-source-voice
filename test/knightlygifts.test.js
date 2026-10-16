@@ -11,10 +11,10 @@ import {
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { readFileSync } from 'node:fs';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 /** A stream that walks a fixed list, so a draw order can be chosen. */
 const seq = (...xs) => { let i = 0; return () => xs[i++ % xs.length]; };
@@ -228,8 +228,8 @@ test('D9: the header names the module that really holds the load door', () => {
   // the one-home comment is a NAVIGATION instrument - it sent readers
   // to guilds.js, which has no restore door at all and never had one.
   const gifts = readFileSync(new URL('../src/systems/knightlyGifts.js', import.meta.url), 'utf8');
-  const guilds = readFileSync(new URL('../src/systems/guilds.js', import.meta.url), 'utf8');
-  const save = readFileSync(new URL('../src/systems/save.js', import.meta.url), 'utf8');
+  const guilds = readFileSync(new URL('../src/systems/guild/guilds.js', import.meta.url), 'utf8');
+  const save = readFileSync(new URL('../src/systems/save/save.js', import.meta.url), 'utf8');
   assert.ok(!/restoreMembershipBook/.test(guilds), 'guilds.js holds no restoreMembershipBook');
   assert.match(save, /const restoreMembershipBook = /, 'save.js defines it');
   assert.match(save, /restoreKnightlyOrderFlags\(knightly\)/, 'and it is the caller');

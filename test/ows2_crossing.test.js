@@ -4,7 +4,7 @@
 // within reach), sails its sea legs through Come Sail Away's own keys, and at the landfall leaves the helm, steps ashore
 // and packs a packable boat.
 //
-// Pinned here: the planner's sea layers (systems/travelRoute.js - a launch, sailed steps, a landfall; the boat to hand
+// Pinned here: the planner's sea layers (systems/travel/travelRoute.js - a launch, sailed steps, a landfall; the boat to hand
 // again when it packs, left behind when it does not; a spot on the water reached afloat; never through a corner of
 // the land; the coast's dearer steps), the journey's hand on the helm (systems/seaHelm.js - the course, the beat and the
 // tack, the oars that turn a boat and take it ashore, the calm, the stall, the land ahead, a crew's faster oars), the
@@ -16,13 +16,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_COST, SEA_KINDS } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_COST, SEA_KINDS } from '../src/systems/travel/travelRoute.js';
 import { seaHelmStep, createSeaHelm, SEA_HELM, foldDeg, headingOf, squareOnly } from '../src/systems/seaHelm.js';
 import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { spawnBoat, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_ACTIONS, HANDLING, WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createTravelOptions, SEA_LEG_SIZE, SEA_LEG_LO, SEA_SPOT_SIZE } from '../src/systems/travelOptions.js';
+import { createTravelOptions, SEA_LEG_SIZE, SEA_LEG_LO, SEA_SPOT_SIZE } from '../src/systems/travel/travelOptions.js';
 import { TRAVEL_VIEW_TEXT, travelTripLine } from '../src/scenes/travelView.js';
 import { quatRotate } from '../src/world/quat.js';
 
@@ -102,7 +102,7 @@ test('OWS2 route: the dry line - AUDIT DEEP T2-1\'s law in one home, the resume\
   const sea = (x) => x === 10;
   assert.equal(dryLine({ x: 5, y: 3 }, { x: 15, y: 3 }, sea), false);
   assert.equal(dryLine({ x: 5, y: 3 }, { x: 9, y: 9 }, sea), true);
-  assert.match(rd('src/systems/travelOptions.js'), /return dryLineOf\(a, b, deps\.isWater\);/);
+  assert.match(rd('src/systems/travel/travelOptions.js'), /return dryLineOf\(a, b, deps\.isWater\);/);
 });
 
 // ── THE JOURNEY'S HAND ON THE HELM ──────────────────────────────────────────────────────────────────────────────────
@@ -320,7 +320,7 @@ test('OWS2 Travel Options: afloat, the mod\'s ocean stop and the walk\'s steerin
   assert.equal(spot.xMax - spot.xMin, SEA_SPOT_SIZE, 'a spot reached afloat: the sea\'s square');
   to.beginTravelAlongRoute({ legs: [{ x: 6, y: 492, kind: 'open' }], point: { pixel: { x: 6, y: 492 }, x: 6 * 32768 + 900, z: 7 * 32768 + 900 } });
   assert.equal(to.state.autopilot.destinationWorldRect.xMax - to.state.autopilot.destinationWorldRect.xMin, 512, 'one walked to: a path\'s width');
-  assert.match(rd('src/systems/travelOptions.js'), /spotRect\(r\.point, SEA_LEG_KINDS\.includes\(r\.legs\.at\(-1\)\?\.kind\)\)/, 'a spot reached by sea arrives in the sea\'s square');
+  assert.match(rd('src/systems/travel/travelOptions.js'), /spotRect\(r\.point, SEA_LEG_KINDS\.includes\(r\.legs\.at\(-1\)\?\.kind\)\)/, 'a spot reached by sea arrives in the sea\'s square');
 });
 
 test('OWS2 words: the trip\'s line says a crossing; the refusals say why', () => {

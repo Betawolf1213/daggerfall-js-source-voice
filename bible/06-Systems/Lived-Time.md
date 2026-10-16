@@ -285,18 +285,18 @@ it.
   - words: `ownTimeLeftText`, `ownTimeLeftShort`, `worldNightfallText`.
 - `systems/offlineCopy.js`: the two doors between the lanes (AUDIT LIVED1 E, G), and `saneSaveClock`
   (AUDIT LIVED1b F3).
-- `systems/onlineCheckpoint.js`: `walkWaiting` (AUDIT LIVED1b S1).
+- `systems/online/onlineCheckpoint.js`: `walkWaiting` (AUDIT LIVED1b S1).
 - `scenes/shared.js`:
   - the ticker's `ownMinutes`, and `advance` online;
   - RaiseSkills on the character's clock;
   - the turn's fortnight;
   - the rest deps' composed quest stand-down [retired by TIME3: the rest ticks the quests online too].
-- `systems/restSession.js`: one sub-tick law.
+- `systems/rest/restSession.js`: one sub-tick law.
 - The four hosts:
   - `world.js`, `exterior.js`, `worldModes.js` and `dungeonContext.js`: every personal read on the
     character's clock, every sky read on the world's (the dungeon's clock view is the character's);
   - `world.js` only: the journey's days, the cautious heal, the nightfall words, and the arrival.
-- `scenes/arrestFlow.js` (the sentence), `systems/rest.js` (the collapse), `systems/save.js` (the
+- `scenes/arrestFlow.js` (the sentence), `systems/rest/rest.js` (the collapse), `systems/save/save.js` (the
   envelope and the arrival).
 - The words: `ui/restWindow.js`, `ui/travelPopUp.js`, `ui/heldMap.js`, `ui/tavernWindow.js`,
   `ui/enhancedTavern.js`, `ui/enhancedTrade.js`, `ui/enhancedHud.js`, `ui/enhancedMenu.js`.

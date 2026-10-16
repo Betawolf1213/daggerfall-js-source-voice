@@ -33,11 +33,11 @@ vendored packs show, said so below. Nothing here was seen in a browser.
 by its normal's lean: floors take the pencil and the flagstones, ceilings a flat tone, walls a light wash by the light
 with strokes on the shaded side. The floor test was `n.y > 0.6` - 53.13 degrees - in four places of the shader (the
 climb the All-floors cut spares, the stones, the pencil, a flooded floor's wash) and in the stair-tread mark. The motor
-walks slopes to `SLOPE_LIMIT_DEG` (70) and the flat plan reads exactly that (`systems/automapFloors.js` `FLOOR_NY`), but
+walks slopes to `SLOPE_LIMIT_DEG` (70) and the flat plan reads exactly that (`systems/automap/automapFloors.js` `FLOOR_NY`), but
 the 3D sheet did not: a ramp of 55 degrees (the corpus has 53 and 55, `Field-Bugs-2026-10-02.md`) was inked as a wall,
 a near-bare wash on its lit side - and at 53.13 itself, a 3:4 rise, each triangle fell either way on rounding.
 
-The reveal was never the fault: the classic scans (`systems/automap.js`) reveal the ramp's row as they reveal any other
+The reveal was never the fault: the classic scans (`systems/automap/automap.js`) reveal the ramp's row as they reveal any other
 (measured headless, ramps of 30 to 65 degrees between two flat halls). DFU draws every face alike
 (`DaggerfallAutomap.shader`, its normal tests commented out), so this is the port's own split (EM3-3D, Port-Ledger A).
 
@@ -57,7 +57,7 @@ Away's `ItemBoatParts` (1320), worth her deed's 100,000. SHIP-PACK made her part
 (120 kg) and kept her hold's weight on top, as the mod's PackBoat does (`Come-Sail-Away.md` SHIP-PACK) - and a hold has
 no ceiling but her speed (`UpdateBoatCargoMod`). So 120 kg of hull and 330 of plunder made ONE unsplittable item, added
 to the pack with no gate (DFU's AddItem; a pick-up, a fast travel from her helm, an Overworld landfall). The bearer,
-overloaded, set it down; from there every take - DFU's CanCarryAmount (`systems/itemTransfer.js` planTake) - answered
+overloaded, set it down; from there every take - DFU's CanCarryAmount (`systems/item/itemTransfer.js` planTake) - answered
 0 against 304 kg, for good. The transfer law is DFU's and right; the item should never have been made.
 
 Now parts the bearer could never carry are not made: `partsTooHeavy` asks the take's own arithmetic
@@ -80,7 +80,7 @@ Kamer's mills stand on seven farm blocks (`world/windmillMesh.js` PLACEMENTS: FA
 place and none of his - Beautiful Cities loads after Windmills of Daggerfall, so in DFU the mods' farms are the ones
 read (`world/rmbLayout.js`). Decoded from the vendored packs: only FARMAA04, 05 and 07 (and FARMBA04/05/07/08/09)
 place a mill of their own, so FARMAA00, 01, 02, 06 and 09 stand none in either mod. Online both mods are everyone's
-(`systems/onlineLane.js`), so from 2026-10-03 the mills of those five farms were gone for every player; a home bought
+(`systems/online/onlineLane.js`), so from 2026-10-03 the mills of those five farms were gone for every player; a home bought
 before WD3 keeps its own town classic (`layoutPins.js`), but a farmstead beside it is its own location and follows the
 mods. Asked whether to stand Kamer's mills on those farms (a departure from DFU's load order), the owner gave no
 preference: the law is kept as DFU reads it, and this is the answer to the report. Standing them would need each spot

@@ -16,7 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { GATHER_SFX, GATHER_SFX_FILES, GATHER_SAY, GATHER_SOUND, installGatherSounds, _resetGatherSounds, gatherClip, actBeats, netLanding, createGatherEar } from '../src/systems/gatherSounds.js';
 import { enhancedSoundsOn } from '../src/systems/enhancedSounds.js';
-import { PROF_CUES } from '../src/systems/profSounds.js';
+import { PROF_CUES } from '../src/systems/professions/profSounds.js';
 import { createChopAct } from '../src/systems/chopAct.js';
 import { createMineAct, MINE_POINTS } from '../src/systems/mineAct.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
@@ -28,7 +28,7 @@ import { DEFAULT_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { FALL_S } from '../src/scenes/treeHost.js';
 import { PICK_HAND } from '../src/scenes/mineHost.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FEATURES } from '../src/systems/features.js';
 import { dice, bus, sfxOf, tick, PX, rig, arrive, strikeOut, lands } from './gatherRig.mjs';   // GATHER-FEEL II: the rig, shared
 
@@ -257,7 +257,7 @@ test('GATHER-FEEL G9: the net\'s beats - thrown (on the act\'s first frame where
   assert.ok(haul);
   assert.deepEqual(out.map((b) => b[0]), ['throw', 'netLand', 'tug', 'hauling', 'netOut'], 'a tapped E throws at once');
   assert.ok(FLY_S > 0 && FISH_ACT.waitMinS > 0);
-  // the classic skin: what the HUD said for each beat before the ear (systems/profSounds.js)
+  // the classic skin: what the HUD said for each beat before the ear (systems/professions/profSounds.js)
   const classic = Object.fromEntries(Object.entries(GATHER_SAY).filter(([, s]) => s.classic).map(([n, s]) => [n, s.classic]));
   assert.deepEqual(classic, { chop: 'strike', chopClean: 'glint', pick: 'strike', pickGlint: 'glint', bruise: 'slip', find: 'tick', miss: 'slip', slice: 'tick', tear: 'slip', throw: 'swing', netLand: 'splash', tug: 'tug', hauling: 'tick', clean: 'clean' });
   for (const c of Object.values(classic)) assert.ok(PROF_CUES[c], `${c}: a DFU cue`);

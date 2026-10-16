@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { PNG } from 'pngjs';
-import { recolorHorse, recolorHorseTexels, pictureHide, horseLookCode, texelPlanes, latticeNearest } from '../src/systems/horseCoats.js';
+import { recolorHorse, recolorHorseTexels, pictureHide, horseLookCode, texelPlanes, latticeNearest } from '../src/systems/horse/horseCoats.js';
 import { toColor32 } from '../src/formats/color32Order.js';
 
 /** One of Horse Cart and Cargo's own pictures, as the pool keeps it (world rows, bottom first). */

@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { homeDoorTitle } from '../src/systems/onlineHomes.js';
+import { homeDoorTitle } from '../src/systems/online/onlineHomes.js';
 
 test('QUEST-RESIDENCE: a home a quest still names says the quest\'s name first at its door and in the info click - a home no quest names, its owner\'s alone (mutants: the quest name unsaid; the door unwired; the click unwired)', () => {
   const home = { owner: 'Aldric', own: false };

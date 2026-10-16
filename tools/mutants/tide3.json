@@ -308,7 +308,7 @@
  },
  {
   "name": "TIDE3-tr-ocean",
-  "file": "src/systems/travel.js",
+  "file": "src/systems/travel/travel.js",
   "old": "    minutes += terrain === CLIMATES.Ocean && seaMult !== 1 ? Math.floor(m * seaMult) : m;",
   "new": "    minutes += seaMult !== 1 ? Math.floor(m * seaMult) : m;",
   "tests": [
@@ -317,7 +317,7 @@
  },
  {
   "name": "TIDE3-tr-floor",
-  "file": "src/systems/travel.js",
+  "file": "src/systems/travel/travel.js",
   "old": "    minutes += terrain === CLIMATES.Ocean && seaMult !== 1 ? Math.floor(m * seaMult) : m;",
   "new": "    minutes += terrain === CLIMATES.Ocean && seaMult !== 1 ? Math.ceil(m * seaMult) : m;",
   "tests": [
@@ -326,7 +326,7 @@
  },
  {
   "name": "TIDE3-tr-default",
-  "file": "src/systems/travel.js",
+  "file": "src/systems/travel/travel.js",
   "old": "  hasHorse = false, hasCart = false, seaMult = seaTideAt(end),",
   "new": "  hasHorse = false, hasCart = false, seaMult = 1,",
   "tests": [
@@ -335,7 +335,7 @@
  },
  {
   "name": "TIDE3-tr-host",
-  "file": "src/systems/travel.js",
+  "file": "src/systems/travel/travel.js",
   "old": "const seaTideAt = (end) => (seaTide && end ? seaTide(end) : 1);",
   "new": "const seaTideAt = (end) => (seaTide && end ? seaTide({ ...end, x: end.x - 1 }) : 1);",
   "tests": [
@@ -344,7 +344,7 @@
  },
  {
   "name": "TIDE3-tr-set",
-  "file": "src/systems/travel.js",
+  "file": "src/systems/travel/travel.js",
   "old": "export function setSeaTide(fn) { seaTide = typeof fn === 'function' ? fn : null; }",
   "new": "export function setSeaTide(fn) { seaTide = typeof fn === 'function' ? fn : seaTide; }",
   "tests": [

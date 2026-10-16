@@ -171,7 +171,7 @@ NOT SEEN. Where the reporter's Iron came from; the card names it whichever way i
 ## MACE-MAX: the Mace lifts its wielder past what they hold rested (8)
 
 `src/systems/statMods.js` liveStat; `src/systems/artifactEffects.js` the Mace's strikes, magicRound, unequipped;
-`src/systems/enchantments.js` (type 26's unequipped); `src/systems/save.js` copyEffectEntry.
+`src/systems/enchantments.js` (type 26's unequipped); `src/systems/save/save.js` copyEffectEntry.
 
 FOUND. The Mace is minted right (createArtifact = DFU's SetArtifact: Daedric, 1500 uses, enchantment [26, 2]) and its
 Strikes payload fires in every host (each host's player blow reaches calculateAttackDamage, whose tail runs it); "Spells:
@@ -206,7 +206,7 @@ relay's (`CARD_STAT_MAX`, a relay deploy to move).
 
 ## CRAFT-PROCS: a crafted piece never rolled a line that does something (1)
 
-`src/systems/smithItems.js` mintPiece, mintPieces, temperItem; `src/systems/lootRarity.js` lastPass (its `on`);
+`src/systems/smithItems.js` mintPiece, mintPieces, temperItem; `src/systems/loot/lootRarity.js` lastPass (its `on`);
 `src/net/productRecord.js` (`v`, MINT_VERSION, mintVersionOf); `server-account/src/professions.js` (the craft's stamp,
 the temper's re-sign), `server-account/src/market.js` (pieceOf's `version`).
 
@@ -238,7 +238,7 @@ the account version's pin in 19 suites (acct129).
 
 ## SPENT-ASHORE: the collapse among foes costs a tenth, never a death (10)
 
-`systems/rest.js` exhaustionOutcome (`spent`, EXHAUSTED_SPENT_SHARE, EXHAUSTED_FIGHTING_LINE); the four hosts' collapse.
+`systems/rest/rest.js` exhaustionOutcome (`spent`, EXHAUSTED_SPENT_SHARE, EXHAUSTED_FIGHTING_LINE); the four hosts' collapse.
 
 FOUND. DFU's SetFatigue raises OnExhausted when fatigue reaches 0 (DaggerfallEntity.cs:362-364), and PlayerEntity's
 OnExhausted SetHealth(0)s a dry-footed player when AreEnemiesNearby - any live foe inside the classic spawn band (1094

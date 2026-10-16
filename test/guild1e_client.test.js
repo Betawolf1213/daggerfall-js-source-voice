@@ -13,10 +13,10 @@ import { accountBoard, SESSION_KEY } from '../src/net/accountClient.js';
 import { createNoticeBook, GUILD_BOARD_WORDS } from '../src/net/noticeBook.js';
 import { GUILD_NOTES_LIVE_MAX, BOARD_CACHE_MS } from '../src/net/boardLaw.js';
 import { mountNoticeBoard, recruitPosters, GUILD_BOARD_EMPTY } from '../src/ui/noticeWindow.js';
-import { HALL_BOARD_ENTRY, decorRoomEntries, decorCatalogue } from '../src/systems/decorCatalogue.js';
-import { createDecorScan } from '../src/systems/decorScan.js';
+import { HALL_BOARD_ENTRY, decorRoomEntries, decorCatalogue } from '../src/systems/decor/decorCatalogue.js';
+import { createDecorScan } from '../src/systems/decor/decorScan.js';
 import { BULLETIN_BOARD_MODEL_ID } from '../src/world/rmbLayout.js';
-import { HALL_BOARD_TITLE, hallBoardShutLine, HALL_BOARD_COLD } from '../src/systems/onlineHomes.js';
+import { HALL_BOARD_TITLE, hallBoardShutLine, HALL_BOARD_COLD } from '../src/systems/online/onlineHomes.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = 7;

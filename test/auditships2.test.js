@@ -13,7 +13,7 @@ import {
 import { LEG, MODE, COIL_R, COIL_BLEND_MS, COIL_HEAD_IN, DRIFT_V, bodyAt, headAt, coilAngleAt, coilPoint } from '../src/net/serpentBody.js';
 import { createSerpentLink } from '../src/net/serpentLink.js';
 import { createSerpentHost, WAKE_MS } from '../src/scenes/serpentHost.js';
-import { venomBite, venomHurt, fleetShare } from '../src/systems/serpentStrike.js';
+import { venomBite, venomHurt, fleetShare } from '../src/systems/serpent/serpentStrike.js';
 import { SERPENT_BAR_TEXT } from '../src/ui/serpentBar.js';
 import { validSerpentOut, cellRoomOfWire, serpentFightId, PIXEL_UNITS } from '../src/net/wire.js';
 import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';

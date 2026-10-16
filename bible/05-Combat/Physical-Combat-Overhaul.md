@@ -159,7 +159,7 @@ blows or none: Worm's Tooth (a Dagger or a Tanto) its strike for five,
 Nightwhisper on a Dagger or a Tanto its held Chameleon not past the equip. Every weapon type now mints from the Warhammer's
 1,600, the deepest row, so no type has less than it had
 (`characters/weapons.js` `WEAPON_CONDITION_POOL`, read by
-`systems/itemTemplates.js` `mintCondition` in the row's place), and the
+`systems/item/itemTemplates.js` `mintCondition` in the row's place), and the
 ladder over it as before: 1,600 iron, 2,400 steel and silver, 3,200
 elven, 4,800 dwarven, 6,400 mithril, 8,000 adamantium, 9,600 ebony,
 11,200 orcish, 12,800 Daedric. The rows stay Daggerfall's and every cost
@@ -475,7 +475,7 @@ AUDIT WEAPON-POOL left two gaps it did not cause for their own pass: the load's 
 weapon migration walked, and customs did not count a sworn revenant's pack. Mac asked for both in this pull request.
 `test/itemwalk.test.js` (5), `tools/mutants/itemwalk.json` (25 of 25 dead).
 
-- **A - one walk of every list a save holds** (`systems/save.js` savedItemLists, heldItemLists). The load's one-time
+- **A - one walk of every list a save holds** (`systems/save/save.js` savedItemLists, heldItemLists). The load's one-time
   item repairs (DISC21-A's mint, WEAPON-POOL's move, DISC29-B's names, WB12a's Embers, RARITY-WEAR's bases) ran over
   the pack's lists and customs' walk, and nowhere else. A piece kept anywhere else was repaired only once it was back
   in the pack and the game loaded again: a weapon by P2's door at its first wear, the others never. Now one walk holds
@@ -541,7 +541,7 @@ equip order enumeration". The port ran the 2022 law verbatim, and three things i
 - **The pool.** WEAPON-POOL's pools (1,600 to 12,800) left a weapon one point a tick, a 32nd of a dagger's old share: an
   iron blade 1% about every five real minutes, a Daedric one every 43.
 
-The law now (`systems/enchantments.js` `repairsObjectsTarget`, `POOL_WEAPON_MEND`; `systems/itemTemplates.js`
+The law now (`systems/enchantments.js` `repairsObjectsTarget`, `POOL_WEAPON_MEND`; `systems/item/itemTemplates.js`
 `mendOrder`):
 
 - **Which piece.** What is worn first, the most worn first (the lowest share of its condition left), then the pack's most

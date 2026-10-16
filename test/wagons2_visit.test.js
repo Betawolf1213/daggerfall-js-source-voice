@@ -2,7 +2,7 @@
 // asked who may come into a player's caravan online, "Like an online home" - the owner sets private, party, guild or
 // public, and visitors cannot take from its storage; they come in "to craft, rest, look around"): a visit to another
 // player's caravan, BY EXECUTION over fakes - the law (systems/caravanVisit.js), the room's key (net/privateInterior.js),
-// the word (systems/horseCartWire.js, net/wire.js's park record), the cart's pool's rows and target
+// the word (systems/horse/horseCartWire.js, net/wire.js's park record), the cart's pool's rows and target
 // (scenes/horseCartPool.js), the door (scenes/caravanRoom.js), the cell's listener (net/caravanVisitLink.js), and the
 // hosts' own functions lifted out of their source and run (scenes/world.js, scenes/worldModes.js). The relay's half is
 // test/wagons2_visit_relay.test.js.
@@ -18,19 +18,19 @@ import {
   caravanDecorDoc, readCaravanDecor, readCaravanHidden, CARAVAN_DECOR_BYTES, CARAVAN_DECOR_V, CARAVAN_VISIT_TEXT,
 } from '../src/systems/caravanVisit.js';
 import { HOME_ENTRIES } from '../src/net/homeLaw.js';
-import { HOME_ENTRY_WORDS, homeNextEntry } from '../src/systems/onlineHomes.js';
-import { newWagonItem } from '../src/systems/wagonKinds.js';
+import { HOME_ENTRY_WORDS, homeNextEntry } from '../src/systems/online/onlineHomes.js';
+import { newWagonItem } from '../src/systems/wagon/wagonKinds.js';
 import { caravanRoomOf, caravanKeyOf, privateInteriorOf, privateInteriorPrefix, privateInteriorRoom } from '../src/net/privateInterior.js';
 import { nativePoseRoom, roomKeyFor } from '../src/net/online.js';
 import { parkKeyOf, PARK_KEY_RE, validParkData, PARK_WAGON_ENTRY_MAX, PARK_WAGON_ENTRY_GUILD, MAX_FRAME_BYTES, cellRoomOfWire, PIXEL_UNITS } from '../src/net/wire.js';
-import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import { createHorseCartPool, CARAVAN_VISIT_ROW, CARAVAN_ENTRY_ROW, CARAVAN_ENTER_ROW, KEY_WAGON, peerKey } from '../src/scenes/horseCartPool.js';
-import { WAGON_MODE, HORSE_MODE } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { createCaravanAccess, caravanDescriptorAt, caravanTurnOf } from '../src/scenes/caravanRoom.js';
 import { createCaravanVisitLink, caravanStands, CARAVAN_STANDS_NATIVES } from '../src/net/caravanVisitLink.js';
 import { readCaravanRoom, isCaravanRoom, turnCaravanScene, CARAVAN_TEXT } from '../src/systems/caravanRoom.js';
 import { worldCoordToMapPixel } from '../src/world/streamingWorld.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { RECEIVER_MARKS } from '../src/net/realmTradeLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

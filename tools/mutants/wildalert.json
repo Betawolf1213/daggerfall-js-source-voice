@@ -1,7 +1,7 @@
 [
   {
     "name": "WILD-range-unscaled",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "  const d = Math.max(0, distM) * (STEALTH_MAX_DISTANCE / reachM);",
     "new": "  const d = Math.max(0, distM);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WILD-complement-dropped",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "  return 100 - Math.min(100, stealthChance(d, Math.max(0, stealth | 0)));",
     "new": "  return Math.min(100, stealthChance(d, Math.max(0, stealth | 0)));",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WILD-edge-counted-out",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "  if (!(reachM > 0) || !(distM <= reachM)) return 0;",
     "new": "  if (!(reachM > 0) || !(distM < reachM)) return 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WILD-first-check-delayed",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "      if (!s) { s = { alerted: false, clock: WILD_ROLL_S, at: 0 }; st.set(k, s); }",
     "new": "      if (!s) { s = { alerted: false, clock: 0, at: 0 }; st.set(k, s); }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WILD-clock-not-reset-out-of-reach",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "      if (!(distM <= reachM)) { if (s) s.clock = WILD_ROLL_S; return { alerted: false, noticed: false }; }",
     "new": "      if (!(distM <= reachM)) return { alerted: false, noticed: false };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WILD-alert-forgotten-far",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "      if (s?.alerted) return { alerted: true, noticed: false };\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WILD-alert-other-way-ignored",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "    alert(k, now = 0) { const s = get(k); if (s) { if (!s.alerted) { s.alerted = true; s.at = now; } } else st.set(k, { alerted: true, clock: 0, at: now }); },",
     "new": "    alert(k, now = 0) { void k; void now; },",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "WILD-checked-rolls-at-once",
-    "file": "src/systems/wildAlert.js",
+    "file": "src/systems/wild/wildAlert.js",
     "old": "    checked(k) { if (!get(k)) st.set(k, { alerted: false, clock: 0, at: 0 }); },",
     "new": "    checked(k) { if (!get(k)) st.set(k, { alerted: false, clock: WILD_ROLL_S, at: 0 }); },",
     "tests": [

@@ -4,7 +4,7 @@
 // its yard; a plain member and anyone outside the guild do neither; everyone sees both. The service through the real
 // Worker over node:sqlite (test/accountDb.mjs): the look, the yard's pieces paid off the keeper's record, a piece's half
 // into the guild's treasury, the sale paying its yard's half as its rooms'; the client: whose outside the playing
-// character keeps (systems/onlineHomes.js homeOutsideKept), the yard's decorator on a hall's lot (scenes/homeYards.js),
+// character keeps (systems/online/onlineHomes.js homeOutsideKept), the yard's decorator on a hall's lot (scenes/homeYards.js),
 // the hall drawn out of the merge for its keeper's painter (scenes/world.js). `06-Systems/Online-Arc.md` GUILD-YARD.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import { seatRealm } from './realmSeat.mjs';
 import { homeSaleRefund, homeLookOf } from '../src/net/homeLaw.js';
 import { DECOR_YARD_CAP } from '../src/net/decorLaw.js';
 import { REFUSALS } from '../src/net/accountClient.js';
-import { homeOutsideKept, homeYardWhere, createOnlineHomes, homeHallRows, HOME_VERB, HALL_VERB, hallEntryTurnable } from '../src/systems/onlineHomes.js';
+import { homeOutsideKept, homeYardWhere, createOnlineHomes, homeHallRows, HOME_VERB, HALL_VERB, hallEntryTurnable } from '../src/systems/online/onlineHomes.js';
 import { createHomeYards, YARD_IN_HALL, YARD_HALL_FULL, YARD_IN_HOUSE, YARD_FULL } from '../src/scenes/homeYards.js';
 import { decorWhyNot } from '../src/ui/decorPanel.js';
 import { fakeDoc, fakeWin, fakeBlocks, rmb, TOWN, settle } from './decorFakes.mjs';

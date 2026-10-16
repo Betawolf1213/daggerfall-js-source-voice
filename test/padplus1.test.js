@@ -15,7 +15,7 @@ import {
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings, setValue } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings, setValue } from '../src/systems/settings/settings.js';
 
 const pad1Store = () => { const s = createBindings(); resetDefaults(s); return s; };
 

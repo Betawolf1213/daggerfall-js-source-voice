@@ -9,7 +9,7 @@
 // the act's meter holds the eye. Measured on the real modules: from a full bar at Swimming 5, nine of twenty seeded days
 // died inside the forty (hauls 36-39); from three quarters at haul 30 with full health.
 //
-// SWIM-SPENT (systems/rest.js; Mac: "I dont care about DFU") ends the death: a drain to nothing in the water now costs a
+// SWIM-SPENT (systems/rest/rest.js; Mac: "I dont care about DFU") ends the death: a drain to nothing in the water now costs a
 // tenth of the health a game minute, said on the HUD. The net still keeps its angler off it: no net is cast in
 // the water on the last quarter of the fatigue bar, and an act there ends when the bar falls into it - the prompt, and
 // E, say "too tired to fish in the water - get out and rest", with a quarter of the bar to swim out on (of 6,400, four
@@ -23,10 +23,10 @@ import assert from 'node:assert/strict';
 
 import { createGatherHost, ACT_STOPPED_LINE } from '../src/scenes/gatherHost.js';
 import { fishKind } from '../src/scenes/fishHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setSharedClock, setWorldMinutes, resetMagicRoundMarker } from '../src/systems/worldTick.js';
-import { exhaustionOutcome } from '../src/systems/rest.js';
+import { exhaustionOutcome } from '../src/systems/rest/rest.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { SKILLS } from '../src/systems/skills.js';

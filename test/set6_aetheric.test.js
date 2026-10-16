@@ -12,23 +12,23 @@ import {
 import {
   RARITY_ORDER, RARITIES, ROLLED_TIERS, rarityOf, rarityRank, applyRarity, rarityEligible, bestRarity, rarityLines, rollRarity,
   affixesWorth, validAffix, AFFIX_RANGES, isProcAffix, isTechniqueAffix,   // LOOT4: a line that does something, appended in a door's last pass; TECH1: a technique, its very last
-} from '../src/systems/lootRarity.js';
-import { rollSpoils, spoilsBase, magicOrBetter, SPOILS_GOLD_PER_LEVEL, SPOILS_LEGENDARY } from '../src/systems/gateSpoils.js';
+} from '../src/systems/loot/lootRarity.js';
+import { rollSpoils, spoilsBase, magicOrBetter, SPOILS_GOLD_PER_LEVEL, SPOILS_LEGENDARY } from '../src/systems/gate/gateSpoils.js';
 import { spoilsList } from '../src/scenes/spoilsPool.js';
 import { SPOILS_LINE_H, tierColour } from '../src/render/spoilsGlow.js';
-import { SIGIL_POWER_MAX, validSigil, sigilHasBlow, setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil.js';
-import { SIGIL_SETS, SET_PLACES, setIdOf, setPieceKind, wornSets, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import { SIGIL_POWER_MAX, validSigil, sigilHasBlow, setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { SIGIL_SETS, SET_PLACES, setIdOf, setPieceKind, wornSets, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { equipItem } from '../src/systems/equip.js';
-import { itemBaseValue, templateByIndex } from '../src/systems/itemTemplates.js';
+import { itemBaseValue, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { getItemHands, ITEM_HANDS } from '../src/characters/equipTable.js';
-import { isDeclaredItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
-import { seededRng } from '../src/systems/wind.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const seq = (...v) => { let i = 0; return () => v[i++]; };
 const counted = (fn) => { const c = { n: 0 }; c.rolls = () => { c.n++; return fn(); }; return c; };

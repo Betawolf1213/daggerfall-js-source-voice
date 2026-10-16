@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { createVendorTab } from '../src/ui/vendorTab.js';
 import { setVendorPage, drawVendorPage, vendorPageShown, resetVendorPage, VENDOR_PAGE_SECTIONS } from '../src/ui/vendorPage.js';
 import { setVendorWaypoint, clearVendorWaypoint, vendorWaypointKey, isVendorWaypoint, vendorWaypointLabel } from '../src/systems/vendorWaypoint.js';
-import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travelMapState.js';
+import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travel/travelMapState.js';
 import { readVendorMark, vendorMarkKey, vendorRingTexels, paintVendorMark, VENDOR_RING_R } from '../src/ui/vendorMapMark.js';
 
 const tick = () => new Promise((r) => setTimeout(r, 0));

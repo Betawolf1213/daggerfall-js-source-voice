@@ -10,7 +10,7 @@ import {
   dayOfYear, monthOfYear, dayOfMonth, minuteOfDay,
   dayName, monthName, birthSignName, seasonValue, seasonName, dateString,
 } from '../src/systems/gameDate.js';
-import { daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guilds.js';
+import { daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guild/guilds.js';
 import { CLASSIC_GAME_START_MINUTES } from '../src/systems/worldTick.js';
 
 // S28 - DaggerfallDateTime.cs. Every pin here is against a DFU literal

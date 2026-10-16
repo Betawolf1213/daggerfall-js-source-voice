@@ -5,7 +5,7 @@
 // text). HOLD-SOLO (FIELD BUGS 2026-10-07b) took the shipped cell's dungeon out of the shared world; HOLD-SHARED
 // (2026-10-12) put it back, and nothing here keys a room. HOLD-ONCE (2026-10-12) asks isPrivateersHold, below: the Hold
 // itself by its map id, never the configured cell.
-import { getInt } from './settings.js';
+import { getInt } from './settings/settings.js';
 import { longitudeLatitudeToMapPixel } from '../formats/mapsFile.js';
 import { PRIVATEERS_HOLD_MAP_ID } from '../world/dungeonTextures.js';
 

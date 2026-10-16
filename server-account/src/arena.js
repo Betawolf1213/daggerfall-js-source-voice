@@ -137,7 +137,7 @@ export async function arenaPveOf({ db }, playerId) {
 export async function arenaLadderOfAccount(ctx, playerId) {
   const { won, record } = await arenaPveOf(ctx, playerId);
   const L = arenaLadderOf(won, record);
-  // AUDIT ARENA-LADDER 2: `paid` - the current tier's bouts ever won, broken runs' too (src/systems/arenaLadder.js): a bout
+  // AUDIT ARENA-LADDER 2: `paid` - the current tier's bouts ever won, broken runs' too (src/systems/arena/arenaLadder.js): a bout
   // won again after a lost run is told so before it is fought (no purse, no points, no Renown - claimLadder's `repeat`)
   const p = await ctx.db.prepare(`SELECT COUNT(DISTINCT step) AS n FROM arena_pve WHERE player = ?1 AND tier = ?2 AND won = 1 AND step < ${ARENA_TIER_BOUTS}`).bind(playerId, L.tier).first();
   return { ...L, paid: Math.max(L.won ?? 0, Math.min(ARENA_TIER_BOUTS, Number(p?.n ?? 0) || 0)) };
@@ -475,7 +475,7 @@ async function pvpAnswer(ctx, me, row) {
 // ── THE BANNERS ──────────────────────────────────────────────────────────────────────────────
 /**
  * JOIN OR QUIT A BANNER - `banner` 'red' or 'blue' to join, null to quit. Free; quitting is at once; the OTHER banner
- * is refused until the next season (`season`), the banner quit takes you back at once (systems/arenaLeague.js's law).
+ * is refused until the next season (`season`), the banner quit takes you back at once (systems/arena/arenaLeague.js's law).
  * A guest joins none (`guest`); a second banner while one is worn is `joined`.
  * @param {{ db: any, nowS: number }} ctx
  */

@@ -5,9 +5,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { applyBiographyEffects } from '../src/systems/biography.js';
-import { getReactionToPlayer } from '../src/systems/talk.js';
+import { getReactionToPlayer } from '../src/systems/talk/talk.js';
 import { enchantmentMagicRound } from '../src/systems/enchantments.js';
 import { SOCIAL_GROUP_COUNT } from '../src/formats/factionFile.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
@@ -138,7 +138,7 @@ test('65 SL-4: reactionMods leaves the envelope - a five-wide legacy key never r
   assert.equal(playerEntity.reactionMods.length, SOCIAL_GROUP_COUNT, 'the shared entity is BUILT with the eleven');
 
   // (4) the source: REP_ARRAYS names the reputations ALONE
-  assert.match(read('src/systems/save.js'), /^const REP_ARRAYS = \['sGroupReputations'\];$/m,
+  assert.match(read('src/systems/save/save.js'), /^const REP_ARRAYS = \['sGroupReputations'\];$/m,
     'SerializablePlayer.cs:152-162 is the reputations\' cite and nothing else\'s');
   assert.doesNotMatch(read('src/systems/classicSave.js'), /^\s*reactionMods:/m,
     'and the classic import mints no snapshot key nothing reads');

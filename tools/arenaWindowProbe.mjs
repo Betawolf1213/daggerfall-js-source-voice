@@ -11,7 +11,7 @@
 // `me.recent`): the Records page the account's (its note, its record, its last bouts - a rated bout's rating in its line),
 // no purses chip in the header, and the Leaderboards' fastest Grand Champion with the realm's Hall of Champions under it
 // (test/arena4b_window.test.js holds the law).
-// ARENA5: and YOUR LADDER REPLAY on the Records page - the save keeps three of its bouts (systems/arenaReplay.js), each
+// ARENA5: and YOUR LADDER REPLAY on the Records page - the save keeps three of its bouts (systems/arena/arenaReplay.js), each
 // row the records keep carrying Watch the replay: inside the window at every width, and its press the host's
 // (`act('replay', { i })`); test/arena5_replay.test.js holds the law.
 //
@@ -36,11 +36,11 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
   page.on('pageerror', (e) => errors.push(String(e.message)));
   await page.goto(`http://localhost:5244/play/?skin=${skin}&touch=off`);
   await page.evaluate(async () => {
-    const LG = await import('/src/systems/arenaLeague.js');
-    const BK = await import('/src/systems/arenaBook.js');
-    const AL = await import('/src/systems/arenaLadder.js');
-    const AB = await import('/src/systems/arenaBoard.js');
-    const RP = await import('/src/systems/arenaReplay.js');   // ARENA5
+    const LG = await import('/src/systems/arena/arenaLeague.js');
+    const BK = await import('/src/systems/arena/arenaBook.js');
+    const AL = await import('/src/systems/arena/arenaLadder.js');
+    const AB = await import('/src/systems/arena/arenaBoard.js');
+    const RP = await import('/src/systems/arena/arenaReplay.js');   // ARENA5
     const { mountArenaWindow } = await import('/src/ui/arenaWindow.js');
     document.body.innerHTML = '';
     document.body.style.cssText = 'margin:0;background:repeating-linear-gradient(45deg,#2a2721 0 14px,#231f1a 14px 28px);height:100vh';
@@ -85,7 +85,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
     if (online && !(await page.evaluate(() => !!window.__online))) {
       // ARENA4b: the window remounted over a realm's board - the account's record and last bouts, the realm's Hall
       await page.evaluate(async () => {
-        const AB = await import('/src/systems/arenaBoard.js');
+        const AB = await import('/src/systems/arena/arenaBoard.js');
         const { mountArenaWindow } = await import('/src/ui/arenaWindow.js');
         const L = await import('/src/net/arenaLaw.js');
         window.__arenaView.unmount();

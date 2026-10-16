@@ -17,7 +17,7 @@ over a copy - YARDS-FOUND, below) - and the whole of it is a departure, Ledger A
 ## Where they stand
 
 **Which towns.** Every city and town - MAPS.BSA's `TownCity` and `TownHamlet` (`systems/merchantYards.js`
-`isYardTown`; `systems/travelOptions.js` names them "city" and "town"). No village, farm, manor, temple or dungeon.
+`isYardTown`; `systems/travel/travelOptions.js` names them "city" and "town"). No village, farm, manor, temple or dungeon.
 
 **The ground** (`world/merchantYardSites.js`). The town's own navgrid (`world/cityNavigation.js`, DFU's CityNavigation
 carve: every automap byte a building, a tree or a lamp draws is closed, the water with it), always on the enhanced
@@ -143,7 +143,7 @@ taken REGIONAL-FOLK (`01-Overview/Field-Bugs-2026-10-10.md`). Three seams were s
   Sentinel's street is.
 - **The second horse.** WAGONS3's Open Wagon and Caravan take a pair, and its refusal sent the player to a General
   Store for the other horse; the General Store sells none now, so it says "Buy another at a town's Stable."
-- **The price and the team.** `systems/wagonKinds.js` carries WAGON-PRICE's `value` and `floor` and WAGONS3's
+- **The price and the team.** `systems/wagon/wagonKinds.js` carries WAGON-PRICE's `value` and `floor` and WAGONS3's
   `horses` on each kind.
 
 ## Not seen
@@ -203,7 +203,7 @@ buildings of its list, the Overworld marks places and parties, and the talk wind
 directory's buildings. A yard is none of those, so a Stable stood in the street and no map, mark or person knew it.
 
 **The talk directory** (`systems/merchantYards.js` yardDirectoryRows). Each yard is a row of its town's directory, in
-the shape `systems/talkTopics.js` buildBuildingDirectory mints: its name ("Moorhart's Stables"), its counter's type
+the shape `systems/talk/talkTopics.js` buildBuildingDirectory mints: its name ("Moorhart's Stables"), its counter's type
 (`yard:stable`), YARD_QUALITY, its middle in the location's frame. Its key is YARD_KEY_BASE (1 << 25) and its kind's
 place in YARD_KIND_ORDER - past every building's key (under 1 << 19 in the largest city) and past BUILDING_KEY_0
 (1 << 24). `scenes/townTalk.js` rebuildDirectory joins the rows to the buildings', off the host's `yards`
@@ -214,7 +214,7 @@ place in YARD_KIND_ORDER - past every building's key (under 1 << 19 in the large
   (LocalBuilding, its key). The groups take their own variable, so C#'s shared one flows into the General section and
   the palace arm untouched. Without an engine, townTalk's own fallback (directoryByCategory) groups them the same way;
 - the answer: the knowledge roll takes the yard's key as a building's, "%di of here" reads its middle off the
-  directory (`systems/talk.js` buildingCompassDirection), and "Let me just mark %loc here on your map" discovers it by
+  directory (`systems/talk/talk.js` buildingCompassDirection), and "Let me just mark %loc here on your map" discovers it by
   its key (`systems/answerPipeline.js` markKeySubjectLocationOnMap).
 
 **The town map** (`world/merchantYardMap.js` yardTownBlocks, laid once at `ui/townMapDoor.js` createTownMapWindow for
@@ -233,7 +233,7 @@ whichever map the skin wears). The Arena's own law (ARENA-MAP), taken for the ya
 standing is a mark: its name over its ground (YARD_MARK_LIFT, 4 m), and its kind is the look's (`yard stable`,
 `yard transport`). The HUD draws its signboard's emblem (`ui/travelViewHud.js` yardGlyph): the Wagon Yard's wheel and
 the Stable's horseshoe, opening up. The marks go with the Towns switch and are never counted as a town
-(`systems/travelViewFilters.js` markGroup, countGroups). Only the yards of the towns built about the player stand;
+(`systems/travel/travelViewFilters.js` markGroup, countGroups). Only the yards of the towns built about the player stand;
 a town beyond that build shows its plate, not its yards.
 
 THE FOUR HOSTS (YARDS-FOUND): `scenes/world.js` - WIRED (the town map, the directory, the Overworld).
@@ -259,7 +259,7 @@ stall, so every client sees the same three - priced by what they are while horse
 owns never stood again, and a stack of oats beside them (`06-Systems/Horse-Care.md`). The Wagon Yard sells Wagon Repair
 Kits beside its wagons, and its keeper's third row, Mend, makes the wagon driven whole for gold - a wright sent out to
 a wagon away (`06-Systems/Wagon-Upkeep.md`). Online the oats and the kits waited a release on UPKEEP_ITEMS_ONLINE
-(`systems/upkeepItemRows.js`, REST6's law); UPKEEP-ONLINE (2026-10-12) turned it on. The counter opens on the yard's town (`openYardTrade`'s `mapId`).
+(`systems/upkeep/upkeepItemRows.js`, REST6's law); UPKEEP-ONLINE (2026-10-12) turned it on. The counter opens on the yard's town (`openYardTrade`'s `mapId`).
 
 ## CARP-YARD - the Joinery (2026-10-12, Mac)
 

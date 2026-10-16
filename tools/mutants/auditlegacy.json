@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-LEGACY-H9-house-not-in-the-name",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  if (typeof house !== 'string' || !house || !itemIsIdentified(item)) return parts;",
     "new": "  if (true) return parts;",
     "tests": [

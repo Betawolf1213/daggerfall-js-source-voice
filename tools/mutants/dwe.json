@@ -966,7 +966,7 @@
   },
   {
     "name": "DW-E3-icon-archive-216",
-    "file": "src/systems/deepWatersFishRows.js",
+    "file": "src/systems/deepWater/deepWatersFishRows.js",
     "old": "export const fishIconArchive = (templateIndex) => templateIndex;",
     "new": "export const fishIconArchive = (templateIndex) => 216 + 0 * templateIndex;",
     "tests": [
@@ -975,7 +975,7 @@
   },
   {
     "name": "DW-E3-template-remap-dropped",
-    "file": "src/systems/deepWatersFishRows.js",
+    "file": "src/systems/deepWater/deepWatersFishRows.js",
     "old": "  ...t, worldTextureArchive: fishIconArchive(t.index), worldTextureRecord: 0,",
     "new": "  ...t,",
     "tests": [
@@ -984,7 +984,7 @@
   },
   {
     "name": "DW-E3-group",
-    "file": "src/systems/deepWatersFishRows.js",
+    "file": "src/systems/deepWater/deepWatersFishRows.js",
     "old": "export const FISH_GROUP = 'UselessItems2';",
     "new": "export const FISH_GROUP = 'UselessItems1';",
     "tests": [
@@ -993,7 +993,7 @@
   },
   {
     "name": "DW-E3-icon-aspect",
-    "file": "src/systems/deepWatersFishItems.js",
+    "file": "src/systems/deepWater/deepWatersFishItems.js",
     "old": "build: async () => restoreIconAspect(await decode(await fetchBytes(s.textureName)), s.billboardAspect),",
     "new": "build: async () => await decode(await fetchBytes(s.textureName)),",
     "tests": [
@@ -1002,7 +1002,7 @@
   },
   {
     "name": "DW-E3-normalize-loses-stack",
-    "file": "src/systems/deepWatersFishItems.js",
+    "file": "src/systems/deepWater/deepWatersFishItems.js",
     "old": "    Object.assign(it, fresh, { stackCount, currentCondition, maxCondition });",
     "new": "    Object.assign(it, fresh);",
     "tests": [
@@ -1011,7 +1011,7 @@
   },
   {
     "name": "DW-E3-normalize-misses-stray",
-    "file": "src/systems/deepWatersFishItems.js",
+    "file": "src/systems/deepWater/deepWatersFishItems.js",
     "old": "if (!it || it.group === FISH_GROUP || !isFishTemplateIndex(it.templateIndex)) continue;",
     "new": "if (!it || it.group !== FISH_GROUP || !isFishTemplateIndex(it.templateIndex)) continue;",
     "tests": [
@@ -1047,7 +1047,7 @@
   },
   {
     "name": "DW-E3-normalize-keeps-old-fields",
-    "file": "src/systems/deepWatersFishItems.js",
+    "file": "src/systems/deepWater/deepWatersFishItems.js",
     "old": "    for (const k of SET_ITEM_FIELDS) delete it[k];\n",
     "new": "",
     "tests": [

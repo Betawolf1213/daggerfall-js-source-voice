@@ -20,7 +20,7 @@ import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const MPM = PERSON_MOVE_SPEED / CLASSIC_MINUTES_PER_SECOND;
 const TOWN = Object.freeze({ mapId: 4242, blocks: 36, region: 17, people: 3, port: false });

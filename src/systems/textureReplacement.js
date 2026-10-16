@@ -23,7 +23,7 @@
 // which is the whole point, exactly as the `song_` prefix was for
 // music.
 
-import { getBool } from './settings.js';
+import { getBool } from './settings/settings.js';
 import { toColor32 } from '../formats/color32Order.js';   // ROAD-H H4: the one door a decoded PNG crosses into the port's texel convention
 import { dyeToken } from '../characters/dyes.js';   // DW3: GetName's dye arm - the key carries the dye a caller asks with
 

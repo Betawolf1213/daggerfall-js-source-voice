@@ -1,5 +1,5 @@
 // CARDS8 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 26): THE CARDS AND THE CARD BINDER AS ITEMS
-// (systems/iliacItems.js) and THE CARDS PART of the Holdings rail's Collections page (ui/cardBinderPage.js). A card is
+// (systems/iliac/iliacItems.js) and THE CARDS PART of the Holdings rail's Collections page (ui/cardBinderPage.js). A card is
 // one template named by its `card`: two of one card stack, two cards do not, and a split keeps it; its name is the
 // catalog's. The binder is the Wallet's shape - one a character, bound, pack-only, holding the decks; every character is
 // given it once with the starter deck's thirty cards. The pack shows the cards in the binder's sheet. The Cards part
@@ -10,17 +10,17 @@ import { readFileSync } from 'node:fs';
 import {
   ILIAC_CARD_TEMPLATE, CARD_BINDER_TEMPLATE, mintIliacCard, mintBinder, isIliacCard, isCardBinder, binderOf, collectionOf, deckHeldRefusal,
   setBinderDeck, dropBinderDeck, giveBinder, giveBinderGift, BINDER_GIFT, BINDER_DECKS_MAX, iliacCardName, iliacCardLines,
-} from '../src/systems/iliacItems.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+} from '../src/systems/iliac/iliacItems.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
-import { resolveItemName, survivalInfoTokens } from '../src/systems/itemInfo.js';
-import { isBound, isPackOnly } from '../src/systems/itemBound.js';
+import { resolveItemName, survivalInfoTokens } from '../src/systems/item/itemInfo.js';
+import { isBound, isPackOnly } from '../src/systems/item/itemBound.js';
 import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
-import { ITEM_FIELDS, validBinderDeck } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { ITEM_FIELDS, validBinderDeck } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { pageOf } from '../src/ui/packPages.js';
 import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { cardRules } from '../src/systems/iliacCardWords.js';
+import { cardRules } from '../src/systems/iliac/iliacCardWords.js';
 import { deckValid } from '../src/net/iliacHand.js';
 import { drawCardsPart, cardsPartShown, resetCardsPart, deckCards, deckRefusal, DECK_REFUSAL_WORDS } from '../src/ui/cardBinderPage.js';
 import { collectionsPageShown, collectionParts } from '../src/ui/collectionsPage.js';
@@ -77,7 +77,7 @@ test('CARDS8 the binder: the Wallet\'s shape - bound, pack-only, refused by the 
   assert.equal(deckHeldRefusal(STARTER_DECK, me.items), null, 'and the binder holds every card it names');
   assert.equal(deckHeldRefusal([...STARTER_DECK.slice(1), units.at(-1).id], me.items) === null, have.has(units.at(-1).id));
   // the save keeps the mark; an old save is given it once on load; a new character at chargen
-  const save = read('src/systems/save.js'), chargen = read('src/systems/chargenSession.js');
+  const save = read('src/systems/save/save.js'), chargen = read('src/systems/chargenSession.js');
   assert.match(save, /snap\.binderGift = Number\.isSafeInteger\(entity\.binderGift\) \? entity\.binderGift : BINDER_GIFT;/);
   assert.match(save, /entity\.binderGift = Number\.isSafeInteger\(snap\.binderGift\) \? snap\.binderGift : 0;/);
   assert.match(save, /giveWalletGift\(entity\);[^\n]*\n  cleanBinders\(entity\.items\);[^\n]*\n  giveBinderGift\(entity\);/);   // AUDIT CARDS-5 C1 (PIN MOVED): the decks made sound first

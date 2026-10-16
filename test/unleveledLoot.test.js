@@ -174,7 +174,7 @@ test('UL1: ModifyFoundLootItems is DEAD in DFU 1.1.1 - registered, read by nothi
   installUnleveledLoot({ read: (k) => (k === 'Enabled' ? true : UNLEVELED_MATERIAL_NAMES.indexOf(k)) });
   assert.ok(formulaOverride('modifyFoundLootItems'), 'registered, as Awake does');
   uninstallUnleveledLoot();
-  for (const f of ['src/combat/formulas.js', 'src/systems/loot.js', 'src/scenes/droppedLoot.js', 'src/scenes/dungeonContext.js']) {
+  for (const f of ['src/combat/formulas.js', 'src/systems/loot/loot.js', 'src/scenes/droppedLoot.js', 'src/scenes/dungeonContext.js']) {
     assert.doesNotMatch(rd(f), /modifyFoundLootItems/, `${f}: nothing consults the dead hook`);
   }
 });

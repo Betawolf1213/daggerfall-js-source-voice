@@ -1,7 +1,7 @@
 // DECOR-FIGURE (2026-10-10, the owner: "remove the scaling option for npc sprites with house decoration
 // interior/exterior"). One of Daggerfall's people placed as decor - a flat in a person's archive (RDBLayout.NPCFlatArchives,
 // now in the leaf world/npcFlatArchives.js; the catalogue's Vendors), never one's own item - stands at its own size: the
-// placer takes no size step for it (systems/decorPlacer.js decorEntrySized), the bar hides Smaller and Bigger and says no
+// placer takes no size step for it (systems/decor/decorPlacer.js decorEntrySized), the bar hides Smaller and Bigger and says no
 // Size key (ui/decorPanel.js createDecorBar `sized`), the room and the yard draw one grown before at its own size
 // (net/decorLaw.js decorDrawnScale - scenes/decorRoom.js), and the service refuses a figure written at another
 // (decorScaleOk - server-account/src/decor.js placeDecor, moveDecor), a turn of one grown before kept. Each pin failed on
@@ -13,8 +13,8 @@ import { decorIsFigure, decorDrawnScale, decorScaleOk, decorWhatOf } from '../sr
 import { REFUSALS } from '../src/net/accountClient.js';
 import { NPC_FLAT_ARCHIVES, isNpcFlat } from '../src/world/rdbLayout.js';
 import * as leaf from '../src/world/npcFlatArchives.js';
-import { createDecorPlacer, decorEntrySized } from '../src/systems/decorPlacer.js';
-import { decorCatalogue, collectDecor } from '../src/systems/decorCatalogue.js';
+import { createDecorPlacer, decorEntrySized } from '../src/systems/decor/decorPlacer.js';
+import { decorCatalogue, collectDecor } from '../src/systems/decor/decorCatalogue.js';
 import { decorEditPrice } from '../src/scenes/decorTool.js';
 import { createDecorBar } from '../src/ui/decorPanel.js';
 import { standService, T0 } from './accountDb.mjs';

@@ -15,7 +15,7 @@
 // deps = {
 //   now() -> ms                          the relay's clock (the welcome's offset - WORLD5)
 //   link                                 net/serpentLink.js createSerpentLink - the cell's words folded
-//   omen                                 systems/serpentOmen.js createSerpentOmen - the day's serpent and its site
+//   omen                                 systems/serpent/serpentOmen.js createSerpentOmen - the day's serpent and its site
 //   online: { ready(cell), send(word, cell), acct() }   the session's serpent door (net/online.js sendSerpent)
 //   toScene(sx, sz, x, z) -> [x, z]      a site-frame point (metres about the site's native point sx/sz) in the scene
 //   toSite(sx, sz, x, z) -> [x, z]       a scene point in the site's frame
@@ -34,7 +34,7 @@ import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, ADMIT_R, FAN_R, ENGAGE_R, S
 import { serpentBossById, serpentCountdown, serpentCountdownWords, serpentSwims, SERPENT_BRAIN_V, SERPENT_DIVE_MS } from '../net/serpentLaw.js';
 import { cellRoomOfWire } from '../net/wire.js';
 import { bodySayer } from '../net/bossBody.js';   // INT15: my hull, said to the cell
-import { shapeMeets, shipHurt, crushHurt, gripHurt, grindHurt, venomBite, venomHurt, shoveOf, shoveLeft, maelPull, globAt, poolOf, poolBites, fleetShare, SHOVE_S } from '../systems/serpentStrike.js';
+import { shapeMeets, shipHurt, crushHurt, gripHurt, grindHurt, venomBite, venomHurt, shoveOf, shoveLeft, maelPull, globAt, poolOf, poolBites, fleetShare, SHOVE_S } from '../systems/serpent/serpentStrike.js';
 
 /** INT13: the line as the relay's count wrecks her (`bd`). */
 export const COUNT_WRECK_LINE = 'She is holed past saving - the fight counts her wrecked.';

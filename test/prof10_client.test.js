@@ -19,15 +19,15 @@ import { createProfBook } from '../src/net/profBook.js';
 import { xpForRank, JEWEL_FEE, trackOf } from '../src/net/professionLaw.js';
 import { recipeById, MASTERWORK, facetWindow, FACET_ACT, QUALITY_EFFECTS } from '../src/net/recipeLaw.js';
 import { mintPiece, mintPieces, craftedText, asMinted, JEWEL_KEPT_TEXT, pieceOfRecipe, jewelItem } from '../src/systems/smithItems.js';
-import { materialLabel } from '../src/systems/profItems.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { materialLabel } from '../src/systems/professions/profItems.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { itemEnchantmentPower, craftedJewelPoints, applyEnchantments, craftedJewelRecipe, keptEnchantments, enchantDecision } from '../src/systems/enchanting.js';
 import { enchantmentSettings } from '../src/systems/enchantmentCatalogue.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { ItemMakerWindow, itemMakerFilter, ITEM_RECTS } from '../src/ui/itemMakerWindow.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { rarityEligible, RARE_FLAVOURS } from '../src/systems/lootRarity.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { rarityEligible, RARE_FLAVOURS } from '../src/systems/loot/lootRarity.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';   // AUDIT PROF-541 J3: the Enhanced+ skin's item maker
 import { enchantmentRowCost } from '../src/systems/enchanting.js';   // AUDIT PROF-541 J4
 import { MAX_ENCHANTMENTS } from '../src/systems/enchanting.js';   // AUDIT PROF-541 R2-C5

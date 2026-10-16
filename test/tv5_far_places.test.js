@@ -2,7 +2,7 @@
 // markers") and PERF-TV (Mac: "I also want to ensure performance is golden").
 //
 // TV5: the discovered settlements past the streamed grid, the nearest within reach, held at the view's edge with their
-// distance - a click a journey there by the roads (systems/travelFarPlaces.js, scenes/world.js). PERF-TV: the readout's
+// distance - a click a journey there by the roads (systems/travel/travelFarPlaces.js, scenes/world.js). PERF-TV: the readout's
 // marks are DRAWN on one canvas (ui/travelViewHud.js), a click on a plate found by where it landed, the screen's size
 // read once a frame, and a picture that did not change never drawn again; the world host keeps the marks' scene
 // points, the route's far legs and the cap's count between the ground's changes. The browser's own measure is
@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   TV_FAR_RANGE, TV_FAR_MAX, TV_FAR_TYPES, PIXEL_KM, farDistanceText, settlementPixels, farPlaces,
-} from '../src/systems/travelFarPlaces.js';
+} from '../src/systems/travel/travelFarPlaces.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { curtainsOf, CURTAINS_MAX, CURTAIN_FOOT_SAMPLES, CURTAIN_MEMO_M } from '../src/render/rainCurtains.js';
 import { cellOf } from '../src/render/volumetricClouds.js';

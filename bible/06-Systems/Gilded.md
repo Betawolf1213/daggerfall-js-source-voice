@@ -12,7 +12,7 @@ from a DFU law, because no DFU law reaches it; its Port-Ledger row (section A) n
 
 ## 1. The rung
 
-`systems/lootRarity.js` RARITIES gains a seventh rung, **Gilded** - rank 6, over the Artifact's 5 - in gold leaf
+`systems/loot/lootRarity.js` RARITIES gains a seventh rung, **Gilded** - rank 6, over the Artifact's 5 - in gold leaf
 (`#ffcf4d`), its tint `[1.00, 0.80, 0.26, 0.60]`. "The most rare ... in the entire game" puts it over the Artifact too:
 an artifact is a Daedric Prince's gift for a quest done, there for anyone who asks the right Prince; a Gilded piece is
 one roll in fifty off the hardest fight the port has.
@@ -34,11 +34,11 @@ Every reader of the ladder carries it - each found by grepping the Aetheric's ow
 | `systems/reforge.js` salvageRefusal | `'gilded'` - "A Gilded piece will not break" (ui/reforgeWindow.js) |
 | `systems/enchanting.js` itemMakerRefuses | true - the item maker takes no static roll |
 | `systems/legacy/heirloom.js` NEVER_RARITY | never an heirloom - it is its record's |
-| `systems/itemInfo.js` | named as an artifact is - "The Hourlock", never "Dwarven The Hourlock" |
+| `systems/item/itemInfo.js` | named as an artifact is - "The Hourlock", never "Dwarven The Hourlock" |
 | `systems/quickslots.js` quickslotKey | `|g<record>` - only when set, so every save's keys still resolve |
-| `systems/itemFields.js` | `gilded: str()` - the record's id, a declared field |
-| `systems/loot.js` validLootItem | `validGildedMarks` - below |
-| `systems/lootCodex.js` | its own kind - section 5 |
+| `systems/item/itemFields.js` | `gilded: str()` - the record's id, a declared field |
+| `systems/loot/loot.js` validLootItem | `validGildedMarks` - below |
+| `systems/loot/lootCodex.js` | its own kind - section 5 |
 
 ## 2. The Hourlock
 
@@ -69,7 +69,7 @@ the Aetheric and the Artifact while this one was being built) shuts the rung too
 
 ### The power, as it runs
 
-`systems/lootPowers.js`, kind `'toll'` - one more arm at the seams every Legendary power already uses:
+`systems/loot/lootPowers.js`, kind `'toll'` - one more arm at the seams every Legendary power already uses:
 
 - **The blow** (`lootBlow`): `tollDue` - this weapon's landed-shot count is `every - 1` - adds `pct` (100) to the blow's
   percentage, which `shareOf` lays over the WHOLE blow (the material, the strength, the slayer's - formulas.js
@@ -104,7 +104,7 @@ Legendary bow's ceiling, no more.
 
 ## 4. The drop
 
-The Brass Remnant's spoils (`systems/sdSpoils.js`, `11-Multiplayer/Super-Dungeons.md` section 11) roll ONE MORE THING
+The Brass Remnant's spoils (`systems/superDungeon/sdSpoils.js`, `11-Multiplayer/Super-Dungeons.md` section 11) roll ONE MORE THING
 after everything they rolled before - the gold, the first piece, the two Rare-or-better, the ladder's last pass, the
 Brass of Numidium - so every earlier spoils is exactly what it was for its seed: `rollHourlock` draws once, always, and
 answers the Hourlock under GILDED_CHANCE (1 in 50). Online alone, because the Hour is. sd9e_spoils.test.js's oracle and
@@ -114,7 +114,7 @@ its mutant (the Hourlock before the Brass) hold the order.
 
 - **The card** (`rarityLines`): "Gilded", its four lines (no band - a static roll has none to show), "The Hour Tolls:
   Every 3rd hit x2; kills refund", its lore. Its name in gold, its frame breathing.
-- **The codex** (`systems/lootCodex.js`): a kind of its own, `gilded`. The first find is said and heard as a
+- **The codex** (`systems/loot/lootCodex.js`): a kind of its own, `gilded`. The first find is said and heard as a
   Legendary's is - "The Hourlock - a Gilded piece! It joins your codex." - and the Codex page lists the rung at its
   HEAD, over the Legendaries, as it stands over them (`codexGilded`; unfound, "Said to lie in the brass of the Hour,
   once in a long while"). The save carries `gilded: { id: day }`; a save from before it reads as none found.
@@ -224,7 +224,7 @@ first one's fall healed nothing.
 
 **The drops.** Each is its spoils' very LAST draw - after the technique pass, after everything the gate's and the
 serpent's spoils rolled before - so every spoils and hoard ever rolled is what it was for its seed: `rollDragonfireOath`
-at the end of `systems/gateSpoils.js` `rollSpoils`, `rollSunkenSovereign` at the end of `systems/serpentSpoils.js`
+at the end of `systems/gate/gateSpoils.js` `rollSpoils`, `rollSunkenSovereign` at the end of `systems/serpent/serpentSpoils.js`
 `rollSerpentSpoils` (a ship that DEALT; one that stood draws nothing, as it draws no set piece, card or gem). One in a
 hundred each: a gate opens every two hours and a serpent rises every four, where the Hour - the Hourlock's one in fifty -
 comes a few times a week. Every pin that read "the last draw" moved with them, each saying so: WB5's roll, SET6's drop,
@@ -250,7 +250,7 @@ the ladder's records are routed as one, by the localization arc, never record by
   piece one fight in a hundred. The budget is a measure today (`enforce: false`), its numbers "a guess the measure exists
   to replace", and loosening the grant for every claim to cover the Oath would loosen what it catches for all of them -
   the measure is left to say what the drop is.
-- AUDIT A4: a build from before this one refuses a container or a lot holding either record whole (`systems/loot.js`
+- AUDIT A4: a build from before this one refuses a container or a lot holding either record whole (`systems/loot/loot.js`
   `validLootList` - a Gilded piece's marks are the shape's, as SERPENT-SET's were): the hosts read it as "from a newer
   version" and keep it, nothing is lost, and the relay's world206 brings every client to the new build at once.
 

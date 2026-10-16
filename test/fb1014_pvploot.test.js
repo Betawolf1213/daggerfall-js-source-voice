@@ -26,14 +26,14 @@ import { layRecord, realmAt } from './realmSeat.mjs';
 import { seeded } from './honestItems.mjs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { equipItem, equipTableOf, isEquipped, unequipItem, wearableItem } from '../src/systems/equip.js';
-import { snapshotPlayer } from '../src/systems/save.js';
-import { stampItemIds } from '../src/systems/itemIds.js';
-import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/wildDeath.js';
-import { validLootList } from '../src/systems/loot.js';
-import '../src/systems/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
+import { snapshotPlayer } from '../src/systems/save/save.js';
+import { stampItemIds } from '../src/systems/item/itemIds.js';
+import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/wild/wildDeath.js';
+import { validLootList } from '../src/systems/loot/loot.js';
+import '../src/systems/item/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
 import { addItem, stacksWith } from '../src/systems/inventory.js';
 import { createWildRemains } from '../src/net/wildRemains.js';
 import { remainsNamedFor } from '../src/net/wildLaw.js';

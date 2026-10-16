@@ -7,10 +7,10 @@ import assert from 'node:assert/strict';
 
 import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
 import { DOT_SCALE } from '../src/ui/travelPathsOverlay.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { resetTravelMapState, setTravelMapPopUpState } from '../src/systems/travelMapState.js';
+import { resetTravelMapState, setTravelMapPopUpState } from '../src/systems/travel/travelMapState.js';
 import { restoreDiscovery } from '../src/systems/discovery.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { readImmersiveTravelSettings, IT_POPUP, IT_TEXT, IMMERSIVE_TRAVEL_VENDOR } from '../src/systems/immersiveTravel.js';

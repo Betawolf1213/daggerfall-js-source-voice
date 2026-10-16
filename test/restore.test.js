@@ -19,8 +19,8 @@ import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1 (at the merge wit
 import { reclaimCustomsDeeds, reclaimFromDevice, reclaimLines, applyCustoms } from '../src/systems/realmCustoms.js';
 import { createBankAccounts, createHouses, allocateHouseToPlayer, ownsHouse, ownsShip, sellHouse, sellShip, SHIP_TYPES, SHIP_INTERIOR_MAP_IDS, CROSSED_DEED_LINES, TRANSACTION_RESULT } from '../src/systems/banking.js';
 import { interiorSceneName } from '../src/systems/sceneCache.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/bankWindow.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

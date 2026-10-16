@@ -25,10 +25,10 @@ import { liveBundles, canEndBundle, endBundle } from '../src/systems/mysticism.j
 import { mintPiece, mintPieces, craftedText, asMinted, COOK_KEPT_TEXT } from '../src/systems/smithItems.js';
 import { mintDish, dishUse, feedEffect, dishStaminaFactor, setFeastShare, installCooking, feastSharedLine, DISH_STAMINA_KIND, isDish, isPartyDishSpell, takeFeastGift, renewDish, isFeastRecord, dishStandsLine, shareFeastWith } from '../src/systems/cookItems.js';
 import { hallStepsFor } from '../src/net/fortLaw.js';
-import { DISH_TEMPLATE_ROWS, DISH_FOODS } from '../src/systems/profTemplates.js';
-import { materialLabel, withdrawIntoPack } from '../src/systems/profItems.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { DISH_TEMPLATE_ROWS, DISH_FOODS } from '../src/systems/professions/profTemplates.js';
+import { materialLabel, withdrawIntoPack } from '../src/systems/professions/profItems.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { useItem } from '../src/systems/useItem.js';
 import { isFood, foodOf, FOOD, TEMPLATE, rotFoodDay } from '../src/systems/survival/food.js';
 import { SURVIVAL_TEMPLATES } from '../src/systems/survival/items.js';
@@ -39,8 +39,8 @@ import { setSharedClock } from '../src/systems/worldTick.js';
 import { CAMPFIRE_USES } from '../src/systems/survival/items.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { fatigueLossMultiplierFor } from '../src/scenes/shared.js';
-import { ITEM_FIELDS } from '../src/systems/itemFields.js';
-import { SPECIAL_ABILITY } from '../src/systems/rest.js';
+import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
+import { SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, setDownProfAct, profActUnderWay, _cookForTests, _masonForTests,
   PAN_DOWN_LINE, FIRE_AWAY_LINE,

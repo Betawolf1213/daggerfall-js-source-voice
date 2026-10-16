@@ -106,7 +106,7 @@ console.log('buff at y=%d, debuff at y=%d', p0.find((i) => i.displayName !== 'Cu
 
 console.log('\n== THE LARGE HUD LIFTS THE DEBUFF ROW AND LEAVES THE BUFFS ==');
 await page.evaluate(async () => {
-  (await import('/src/systems/settings.js')).setValue('GUI', 'LargeHUD', 'True');
+  (await import('/src/systems/settings/settings.js')).setValue('GUI', 'LargeHUD', 'True');
 });
 await page.waitForFunction(async () => (await import('/src/ui/hud.js')).largeHudBar() !== null, null, { timeout: 60000 });
 await waitFrames(4);
@@ -132,7 +132,7 @@ if (JSON.parse(tip).hit !== JSON.parse(tip).want) fail('the icon under the point
 if (JSON.parse(tip).miss !== null) fail('empty screen must find nothing');
 
 await page.evaluate(async () => {
-  (await import('/src/systems/settings.js')).setValue('GUI', 'LargeHUD', 'False');
+  (await import('/src/systems/settings/settings.js')).setValue('GUI', 'LargeHUD', 'False');
 });
 if (errors.length) fail(`page errors: ${errors.join(' | ')}`);
 console.log('\nPASS');

@@ -3,10 +3,10 @@ import './modsOff.js';   // RRI1: CreateRandomWeapon/Armor roll over the registe
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { SOCIAL_GROUPS, SOCIAL_GROUP_COUNT } from '../src/formats/factionFile.js';
-import { createRandomWeapon } from '../src/systems/loot.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { createRandomWeapon } from '../src/systems/loot/loot.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { dateString, daySuffix } from '../src/systems/gameDate.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { checkBuildingTypeInSkipList } from '../src/systems/topicTree.js';

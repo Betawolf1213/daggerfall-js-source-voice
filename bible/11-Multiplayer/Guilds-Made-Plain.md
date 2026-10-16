@@ -22,7 +22,7 @@ Three layers, each with its own room to move:
 
 | Layer | Switch | Room |
 |---|---|---|
-| DFU's guilds - the four, the eight temples, the ten orders (`systems/guilds.js`, `guildVariants.js`, `guildServices.js`) | always | None: Port-Doctrine's 1:1 list. Nothing here touches them. |
+| DFU's guilds - the four, the eight temples, the ten orders (`systems/guild/guilds.js`, `guildVariants.js`, `guildServices.js`) | always | None: Port-Doctrine's 1:1 list. Nothing here touches them. |
 | A player's guild and its seats (GUILD1, GUILD2, SEAT1-SEAT2, CROWN1-2, SEASON1) | `SEATS_OPEN = "on"`, `MARKS_OPEN = "on"` | Words and pages freely; a mechanic's change moves live rows and needs a migration. |
 | The Chapters (CHAP1-CHAP7) | `CHAPTERS_OPEN = "dev"`, `CHAPTER_TITLES = "off"` (`server-account/wrangler.toml`) | Free: the developers' rows alone. |
 

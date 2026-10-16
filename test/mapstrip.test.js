@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import {
   STRIP, sheetTitle, stripScale, stripFont, stripLayout, stripHit, paintStrip, createSheetSlot,
 } from '../src/ui/mapStrip.js';
-import { MAP_CONTEXTS, MAP_SHEETS, sheetsFor } from '../src/systems/mapTabs.js';
+import { MAP_CONTEXTS, MAP_SHEETS, sheetsFor } from '../src/systems/map/mapTabs.js';
 import { PEN, HALO_PEN, NAME_FACE } from '../src/ui/inkMap.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

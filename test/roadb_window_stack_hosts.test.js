@@ -22,7 +22,7 @@ import { makeWindowStack } from '../src/ui/windowStack.js';
 import { RestWindow } from '../src/ui/restWindow.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
-import { REST_WAIT_PER_HOUR } from '../src/systems/restSession.js';
+import { REST_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

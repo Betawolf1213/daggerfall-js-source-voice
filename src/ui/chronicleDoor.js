@@ -89,7 +89,7 @@ export const historyDoorReady = () => isEnhanced() || playerHistoryArtLoaded();
  *   shareQuest            QUEST1: (uid, questName, displayName) => void
  *                         - the Share button's own click, wired to
  *                         net/online.js's shareQuest through
- *                         systems/questShare.js's prepareQuestShare.
+ *                         systems/quest/questShare.js's prepareQuestShare.
  *   pageShare             JOURNAL1, OURS not DFU's: () => null | {
  *                         readers, why, show, letter } - a NOTE's Share
  *                         in the enhanced Notes section. `readers` are

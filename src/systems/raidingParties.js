@@ -82,17 +82,17 @@ import { MINUTES_PER_DAY } from './gameDate.js';
 import { LOCATION_TYPES, longitudeLatitudeToMapPixel } from '../formats/mapsFile.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../formats/factionFile.js';
 import { MOBILE_TYPES } from '../characters/mobileTypes.js';
-import { findFactionByTypeAndRegion } from './talk.js';
-import { changeReputation } from './factionRep.js';
+import { findFactionByTypeAndRegion } from './talk/talk.js';
+import { changeReputation } from './faction/factionRep.js';
 import { legalRepOf, changeLegalRep, LEGAL_REP_MIN, LEGAL_REP_MAX } from './court.js';
-import { ORDERS } from './guildVariants.js';
-import { GUILDS } from './guilds.js';
+import { ORDERS } from './guild/guildVariants.js';
+import { GUILDS } from './guild/guilds.js';
 import { renownStruckAt } from '../net/renownTracker.js';
 import { raidRunnerOf, validRaidWords, RAID_WORD_STALE_MS, RAID_WORDS_MAX } from '../world/raidShared.js';   // RAID2: the online arm's law, shared with the foes pool
 import { RAID_WORD_MS, RAID_WORD_KILLS_MAX, raidSig, rollRaidTowns, raidDayRandom, raidsPerDay, raidTownsCanon, raidTownsHash } from '../net/raidLaw.js';   // RAID3: the relay's ledger's law; RAID-ROLL: the day's roll, the relay's too
 import { readRaidReceipt } from '../net/raidReceipt.js';
 import { worldRoom, isCellRoom } from '../net/wire.js';
-import { isWildRegion } from './wildZone.js';   // PVPDUNGEONS: no world event in the open zone
+import { isWildRegion } from './wild/wildZone.js';   // PVPDUNGEONS: no world event in the open zone
 
 export const RAIDING_PARTIES_VENDOR = 'world-events-raiding-parties';
 export const raidingPartiesOn = () => modSetting(RAIDING_PARTIES_VENDOR, 'Enabled') === true;
@@ -176,7 +176,7 @@ export function chooseRaider(type, random = Math.random) {
  * in [0, RegionCount)), in index order, that holds a raidable town - each with its towns in MapTable order: the
  * index, the name (`MapNames`), and the map pixel PlayerIsAtRaidPixel compares [IL_11ff]. The game's own rows only
  * (`baseLocationCount`): a world-data mod appends rows past them on one client and not another - the gate scan's law
- * (systems/gateSite.js), and the one RAID2's shared roll needs. Null without the picker's bytes.
+ * (systems/gate/gateSite.js), and the one RAID2's shared roll needs. Null without the picker's bytes.
  * @param {{regionCount:number, getRegion:(r:number)=>any, baseLocationCount?:(r:number)=>number}|null} maps
  * @param {ArrayLike<number>|null} pickerData
  */

@@ -19,8 +19,8 @@ import { mineKind, minePlan, DUNGEON_SKIP } from '../src/scenes/mineHost.js';
 import { herbKind, patchPlan } from '../src/scenes/herbHost.js';
 import { treePlan } from '../src/scenes/treeHost.js';
 import { createGatherHost, aimAt, needLine } from '../src/scenes/gatherHost.js';
-import { setForagingHost, useForagingTool, createForagingItem } from '../src/systems/foragingInstall.js';
-import { FT, FORAGING_REFUSALS, foragingRefusal } from '../src/systems/foragingLaw.js';
+import { setForagingHost, useForagingTool, createForagingItem } from '../src/systems/foraging/foragingInstall.js';
+import { FT, FORAGING_REFUSALS, foragingRefusal } from '../src/systems/foraging/foragingLaw.js';
 import { registerPresenter } from '../src/systems/notify.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 

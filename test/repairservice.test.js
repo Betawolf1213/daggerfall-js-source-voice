@@ -13,9 +13,9 @@ import {
   collectRepaired, repairJobsAt, repairRefusal, repairStatusLabel, daysUntil,
   CANNOT_BE_REPAIRED_TEXT,
 } from '../src/systems/repairService.js';
-import { reducedRepairCost } from '../src/systems/guildServices.js';
+import { reducedRepairCost } from '../src/systems/guild/guildServices.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { readFileSync } from 'node:fs';
 
 const src = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

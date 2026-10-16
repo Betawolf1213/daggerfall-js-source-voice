@@ -11,15 +11,15 @@ import { BOOK_TEMPLATE, SHELF_BOOK_IDS, bookTitle, bookValue, createBook, create
 import { populateBookshelf } from '../src/systems/bookshelf.js';
 import { stockShopShelf, stockHouseContainer } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { layoutBookLines, bookFontName } from '../src/ui/bookReader.js';
 import { makeOpenBookHook } from '../src/ui/bookDoor.js';
-import { resolveItemName } from '../src/systems/itemInfo.js';
+import { resolveItemName } from '../src/systems/item/itemInfo.js';
 import { getSeed, srand } from '../src/formats/dfRandom.js';
 import { RSC } from '../src/formats/textRsc.js';
 import { breachBookFor, breachBookGiven, BREACH_BOOK_TEXT, BREACH_BOOK_SAVE_VENDOR } from '../src/systems/breachBook.js';
 import { modSaveRecords, restoreModSaveRecords } from '../src/systems/modSaveData.js';
-import { sigilStone, welkyndShards } from '../src/systems/gateSpoils.js';
+import { sigilStone, welkyndShards } from '../src/systems/gate/gateSpoils.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const LAST = () => 0.999999;   // a draw's last id

@@ -165,8 +165,8 @@ test('DISC8-B: a swimmer too heavy to float climbs the pool\'s stairs and swims 
 });
 
 test('DISC9: indoors you hear the rain the street heard - the sim\'s word says rain, the front has not brought a drop to the player yet (a cloudy day to the street\'s ear), and Better Ambience\'s tavern rain stays silent; once it falls outside it falls inside; a load (a jump) lands under the sim\'s sky whole (Mac: "now it\'s not raining outside and you can hear it raining inside"; mutants: the mod reads the sim\'s word; the heard word outlives a jump)', async () => {
-  const W = await import('../src/systems/weatherSim.js');
-  const { createWeatherFront, soundWeather } = await import('../src/systems/weatherFront.js');
+  const W = await import('../src/systems/weather/weatherSim.js');
+  const { createWeatherFront, soundWeather } = await import('../src/systems/weather/weatherFront.js');
   const { createBetterAmbience, readBetterAmbienceSettings, BETTER_AMBIENCE_VENDOR } = await import('../src/systems/betterAmbience.js');
   const { MOD_SETTINGS } = await import('../src/systems/modSettings.js');
   W.resetWeatherSim();

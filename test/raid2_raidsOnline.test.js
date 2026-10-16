@@ -25,7 +25,7 @@ import { setSharedClock } from '../src/systems/worldTick.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { renownFoeStruck, _resetRenownKillsForTests } from '../src/net/renownTracker.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { CELL_PUPPETS_MAX, CELL_WATCH_PUPPETS_MAX, CELL_LOOSE_PUPPETS, CELL_FRAME_RECORDS_MAX } from '../src/net/wire.js';
 import { createExteriorFoes, ENCOUNTER_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
 

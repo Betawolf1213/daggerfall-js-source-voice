@@ -1,5 +1,5 @@
 // FORAGE1-FORAGE2 - FORAGING 1.7 (Harbinger451), THE TOOLS, THE FOODS, THE QUESTS (2026-09-28, Mac: "Your lead").
-// bible/06-Systems/Foraging.md is the record. The pins hold src/systems/foragingInstall.js and
+// bible/06-Systems/Foraging.md is the record. The pins hold src/systems/foraging/foragingInstall.js and
 // src/systems/quest/questActionsExtension.js to the mod: a tool used where its checks pass gives its yield, its box,
 // its quest and its wear; a tool at its last point breaks with DFU's popup and the mod's line and is gone; a check
 // that fails speaks its line and gives nothing; the switch off makes every tool inert; the foods; the console
@@ -15,11 +15,11 @@ import { fileURLToPath } from 'node:url';
 import {
   useForagingTool, eatForagingFood, foragingToolsCommand, setForagingHost, createForagingItem, installForaging,
   _resetForagingInstall, _setForagingRandomForTests, foragingOn,
-} from '../src/systems/foragingInstall.js';
-import { FT, FORAGING_REFUSALS, FORAGING_COMMAND, fishTemplate } from '../src/systems/foragingLaw.js';
+} from '../src/systems/foraging/foragingInstall.js';
+import { FT, FORAGING_REFUSALS, FORAGING_COMMAND, fishTemplate } from '../src/systems/foraging/foragingLaw.js';
 import { RaiseTime, ReducePlayerFatigue, PlayerPossesses, PlayerHandsover, questActionsExtensionTemplates, lengthOrStackCount } from '../src/systems/quest/questActionsExtension.js';
-import { applyForageFix } from '../src/systems/foragingLaw.js';
-import { itemUseHandler, registerItemUseHandler } from '../src/systems/itemTemplates.js';
+import { applyForageFix } from '../src/systems/foraging/foragingLaw.js';
+import { itemUseHandler, registerItemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { fletch } from '../src/systems/fletching.js';   // FLETCH: the Wood Bundle's one Use
 import { registerPresenter } from '../src/systems/notify.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
@@ -300,7 +300,7 @@ test('FORAGE1: the wiring - boot installs it, both exterior hosts register QAE\'
 test('FORAGE1: a General Store and a Pawn Shop shelve the tools by DFU\'s own custom-item loop, and not while the switch is off', async () => {
   const { stockShopShelf } = await import('../src/systems/shopStock.js');
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
-  const { customItemsForGroup } = await import('../src/systems/itemTemplates.js');
+  const { customItemsForGroup } = await import('../src/systems/item/itemTemplates.js');
   _resetModSettings();
   assert.deepEqual(customItemsForGroup('UselessItems2'), [1600, 1601, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 1609, 1610, 1611]);
   const foraging = (shelf) => shelf.map((i) => i.templateIndex).filter((t) => t >= 1600 && t <= 1611).sort((a, b) => a - b);

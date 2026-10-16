@@ -144,7 +144,7 @@ DEATH-PENALTY inside.
 
 ## 2. The tiers of the gate - Regular, Elite, Abyss
 
-The dungeons have three tiers and one law that names them: `dungeonTier` in `src/systems/dungeonTier.js`, with the
+The dungeons have three tiers and one law that names them: `dungeonTier` in `src/systems/dungeon/dungeonTier.js`, with the
 words *Regular Dungeon*, *Elite Dungeon* and *Abyss Dungeon* (ABYSS-NAME). Mac said *"Normal"*; the player reads
 *Regular*, the word the game already shows (`DUNGEON_TIER_TEXT`). The gate gets the same shape: one leaf law,
 `systems/gateTier.js` (EG1), with `gateTier(x)`:
@@ -332,7 +332,7 @@ THE COUNT CHIP, THE RECAP, THE REHEARSAL, RIDDEN POSES, THE SPIRE MIX, ROLE READ
 ## 5. The Weir Key
 
 **The item.** Template **575**, free today (the gate's 570-572 and the Ayleid stones' 573-574 come before it). It is a
-row beside `PORTAL_STONE_TEMPLATES` in `src/systems/gateSpoils.js`:
+row beside `PORTAL_STONE_TEMPLATES` in `src/systems/gate/gateSpoils.js`:
 
 - `{index:575, baseWeight:0.25, hitPoints:1000, basePrice, rarity:20, bound:true, stackable:true}`, in the miscellany
   group (`UselessItems2`), never a gem (PORTAL1's lesson: every Gems piece is a crystal a slot takes);
@@ -1909,13 +1909,13 @@ for the breach:
 - **Arcana, Spellweave**: every fourth damage spell costs nothing;
 - **Fellowship, Rallying Cry**: Rally's heal and every Second Wind in the company refresh when a hall's door opens.
 
-**Death saves.** Divine Grace (`src/systems/lootPowers.js`, `lootDeathSave`, registered with
+**Death saves.** Divine Grace (`src/systems/loot/lootPowers.js`, `lootDeathSave`, registered with
 `registerPlayerDeathSave`), The Hour Turns (the Brass of Numidium's) and Unbroken (Malacath's)
-(`src/systems/sigilSetPowers.js`) are not timers in the Spire. In an `eg:` room each recovers at the next Redoubt
+(`src/systems/sigil/sigilSetPowers.js`) are not timers in the Spire. In an `eg:` room each recovers at the next Redoubt
 taken, and its chip reads *Redoubt*; so do the Ghost-King's Vigil, a low-health heal that never answers a killing
-blow (`lootHurt`), Shed Skin (Sethrakul's Coilscale, `src/systems/sigilSets.js`) and the Panoply's Battlemage's
+blow (`lootHurt`), Shed Skin (Sethrakul's Coilscale, `src/systems/sigil/sigilSets.js`) and the Panoply's Battlemage's
 Reprieve. As timers they would hand out a fresh life every few minutes, and make the Brass of Numidium
-mandatory. **Stendarr's AvoidDeath** (`avoidDeath` in `src/systems/guildServices.js`, a rank-in-fifty roll the hosts
+mandatory. **Stendarr's AvoidDeath** (`avoidDeath` in `src/systems/guild/guildServices.js`, a rank-in-fifty roll the hosts
 consult through `setAvoidDeathHook`) is refused in an `eg:` room: every host's hook answers false there, or a temple
 rank would cancel a fall.
 
@@ -2233,7 +2233,7 @@ Redoubt daily (AUDIT EG0 G6).
 | **a Reliquary** | sealed; opens at the way home | section 16.3 |
 | **Marks** | 20 | a new faucet, `MARKS_FAUCETS.eg` (`eg` joins `MARKS_COMBAT.kinds`), inside `MARKS_COMBAT.perDay` (150), shared with the gate, the raids and the serpent (`src/net/marksLaw.js`) |
 | **a guild's deed** | 25 to the treasury, when three members of one guild, each 7 days in it (`tenureS`), take the same Redoubt | the gate's deed law, at most 4 a guild a day |
-| **Deadlands Embers** | at a Valkynaz's Redoubt, `1 + floor(R/10)`; and 1 for each Redoubt taken for the first time this season | the Broker's currency (`BROKER_PRICES`, `src/systems/sigilBroker.js`). The Spire's embers join `EMBERS_EARNED_SQL` (today gate and serpent embers alone), so the insignia and the sink spend them |
+| **Deadlands Embers** | at a Valkynaz's Redoubt, `1 + floor(R/10)`; and 1 for each Redoubt taken for the first time this season | the Broker's currency (`BROKER_PRICES`, `src/systems/sigil/sigilBroker.js`). The Spire's embers join `EMBERS_EARNED_SQL` (today gate and serpent embers alone), so the insignia and the sink spend them |
 | **a Weir Key** | at a Valkynaz's Redoubt, 1 in 4, at most one a week | section 5 |
 
 Embers are paid where they are earned, not by the hour. A gate pays one or two. The insignia (30 and 50 embers, Mac's
@@ -2831,7 +2831,7 @@ colours among it) and the large HUD today, and no danger-colour option. The Spir
 ## 26. The score and the sound
 
 Written as notes for the game's own player and FM bank, in `systems/egScore.js`. Each score module writes its own
-`makeSong`, as `src/systems/sdScore.js` and `src/systems/gateScore.js` do. The mode is E Phrygian, the Kyn's colour
+`makeSong`, as `src/systems/superDungeon/sdScore.js` and `src/systems/gate/gateScore.js` do. The mode is E Phrygian, the Kyn's colour
 against the Imperial brass: the Battlemages' fanfare, broken, answered by the legion's drums. A pure law,
 `spireScoreFor(place)`, chooses the song. The names are 8-character stems, as every made song's are (GATEWAR1,
 HOURWAR1):

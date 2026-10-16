@@ -90,7 +90,7 @@
   },
   {
     "name": "AUDIT0929-W2-2-the-card-worded-a-frame",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "  if (day !== _marksDay) {",
     "new": "  if (true) {",
     "tests": [

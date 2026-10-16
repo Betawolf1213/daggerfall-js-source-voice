@@ -19,7 +19,7 @@ import { readFileSync } from 'node:fs';
 
 import * as MOTOR from '../src/player/motor.js';   // the namespace: FALL_CARRY_MAX is the fix's, so the file loads without it
 import { Collider } from '../src/player/collider.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createBankAccounts, createHouses, SHIP_TYPES } from '../src/systems/banking.js';
 import { MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
 

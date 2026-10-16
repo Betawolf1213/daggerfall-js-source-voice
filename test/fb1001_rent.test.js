@@ -1,9 +1,9 @@
 // FIELD BUGS 2026-10-01, item 4 ("Room renting is buggy"). The whole flow walked on the real modules, as owner and as
 // tenant: the account service's rooms and rent (server-account/src/rent.js through the real Worker over node:sqlite,
 // every migration applied), the client's door to it (net/accountClient.js accountHomes), the town's registry
-// (systems/onlineHomes.js createOnlineHomes), the rent and the owner's rooms (systems/homeRent.js), a realm act
+// (systems/online/onlineHomes.js createOnlineHomes), the rent and the owner's rooms (systems/homeRent.js), a realm act
 // (systems/realmSaves.js realmGoldAct), the owner's decorator and its panel (scenes/decorTool.js, ui/decorPanel.js) over
-// the room finder's real rooms, and the rest's law (systems/restSession.js canRest over interiorRestPlace). Six faults:
+// the room finder's real rooms, and the rest's law (systems/rest/restSession.js canRest over interiorRestPlace). Six faults:
 //   RENT-REST    a tenant could not rest in the home they rent - "You have not rented a room here."
 //   RENT-RENEW   the renewal window offered days the service always refuses (`rent-long`), paid from the purse first
 //   RENT-FRESH   the owner's rooms were read once a visit - rent a tenant paid while the owner stood inside never showed
@@ -19,13 +19,13 @@ import { RENT_DAY_S, RENT_DAYS } from '../src/net/homeLaw.js';
 import { standService, T0, sessionStorageOf } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { accountHomes, SESSION_KEY } from '../src/net/accountClient.js';
-import { createOnlineHomes, homeDoorAnswer } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, homeDoorAnswer } from '../src/systems/online/onlineHomes.js';
 import * as H from '../src/systems/homeRent.js';
 import { realmGoldAct } from '../src/systems/realmSaves.js';
 import { deductGold } from '../src/systems/court.js';
-import { canRest, interiorRestPlace, HAVE_NOT_RENTED_ROOM } from '../src/systems/restSession.js';
+import { canRest, interiorRestPlace, HAVE_NOT_RENTED_ROOM } from '../src/systems/rest/restSession.js';
 import { createSceneCache, addPermanentScene, containsPermanentScene, interiorSceneName } from '../src/systems/sceneCache.js';
-import { homeSceneName } from '../src/systems/onlineHomes.js';
+import { homeSceneName } from '../src/systems/online/onlineHomes.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import * as DT from '../src/scenes/decorTool.js';
 import { DECOR_RENT_FINDING, DECOR_RENT_ONE_ROOM } from '../src/ui/decorPanel.js';

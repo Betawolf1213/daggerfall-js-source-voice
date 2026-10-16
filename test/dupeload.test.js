@@ -14,7 +14,7 @@ import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
 import { makeWindowStack } from '../src/ui/windowStack.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ICONS = { getTexture: async () => ({ recordCount: 0 }), uploadRecord: () => {}, textures: new Map() };

@@ -19,7 +19,7 @@ Not a DFU member - the port's own (Ledger A, PORTAL1).
 
 | File | What it is |
 |---|---|
-| `src/systems/gateSpoils.js` | the stone's row: template 572 beside the shard's 571 - bound, stacking with its own kind, the Diamond's art (TEXTURE.254 record 3), miscellany (`UselessItems2`) and never a gem: every Gems piece is a crystal a slot takes, so a gem stone was WORN from the hotbar. `PORTAL_STONE_SHARDS` (5) and the price off it; `portalStones(n)` mints a stack; the gift (`givePortalGift`) |
+| `src/systems/gate/gateSpoils.js` | the stone's row: template 572 beside the shard's 571 - bound, stacking with its own kind, the Diamond's art (TEXTURE.254 record 3), miscellany (`UselessItems2`) and never a gem: every Gems piece is a crystal a slot takes, so a gem stone was WORN from the hotbar. `PORTAL_STONE_SHARDS` (5) and the price off it; `portalStones(n)` mints a stack; the gift (`givePortalGift`) |
 | `src/net/realmTradeLaw.js` | `BOUND_TEMPLATES` names 572 - the realm's trade service refuses it as the client does |
 | `src/systems/portalStone.js` | the laws: the sale (`buyPortalStone`, `portalStoneRefusal`, `shardsKept`), the Use's registered arm (`openPortal`), one stone spent, THE HOLDS (`portalHold`), where a portal opens (`portalPlace`), the step in (`portalStepIn`), the wire (`portalWire`, `validPortalRecord`), the words (`PORTAL_TEXT`, `PORTAL_HOLD_TEXT`), the card's lines, every number below |
 | `src/systems/reforge.js` | the purse spends a shard unlocked AND unworn (AUDIT PORTAL1 I1) |
@@ -28,8 +28,8 @@ Not a DFU member - the port's own (Ledger A, PORTAL1).
 | `src/ui/merchantServiceWindow.js`, `src/ui/merchantRepairWindow.js` | the classic popups' port row under the art (`portalRowRect`, key P, `drawPortalRow`) - the Reforge row's law and its one dark (`guildServiceWindow.js` `REFORGE_ROW_BG`) |
 | `src/ui/merchantServiceDoor.js`, `src/ui/merchantRepairDoor.js` | the Enhanced Plus panel's button, above Exit |
 | `src/ui/nativeInventory.js`, `src/ui/enhancedInventory.js`, `src/systems/quickslots.js`, `src/systems/useItem.js` | the `openPortal` result routed on every reader - the pack closes and hands the stone to the host's door; a host with none says `USE_PENDING.openPortal` |
-| `src/systems/itemInfo.js` | the stone's card: what it does and how long it stands, on both skins |
-| `src/systems/save.js` | the gift's mark (`portalGift`), the gift given at the restore, and `restoresSoFar` - the count every load moves |
+| `src/systems/item/itemInfo.js` | the stone's card: what it does and how long it stands, on both skins |
+| `src/systems/save/save.js` | the gift's mark (`portalGift`), the gift given at the restore, and `restoresSoFar` - the count every load moves |
 | `src/scenes/worldModes.js` | THE COUNTER: `portalRow` / `askPortalStone` / `buyPortalStoneNow` |
 | `src/scenes/world.js` | THE USE AND THE PORTALS: `portalHoldNow`, `portalDoorRefusal`, `openPortalStone`, `standPortal`, `portalArrive`, the pool (`portalGates`), its tick and draw, a load's end of it, `portalWord` and the peers' landing, the gift said |
 | `src/scenes/exteriorFoes.js` | the foes frame's `pg` field past the room test (`setOnPortals`); an heir's list lands unbound (AUDIT PORTAL1 I4) |

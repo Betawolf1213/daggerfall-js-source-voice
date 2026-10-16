@@ -17,13 +17,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import { SCRY_PRICE, SCRY_FAMILIES, SCRY_FAMILY_WORDS, familyKinds, familyPlaces, scryRows, nearestHidden, scryRefusal, scryPlace } from '../src/systems/lootScry.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import { SCRY_PRICE, SCRY_FAMILIES, SCRY_FAMILY_WORDS, familyKinds, familyPlaces, scryRows, nearestHidden, scryRefusal, scryPlace } from '../src/systems/loot/lootScry.js';
 import { restoreDiscovery, hasDiscoveredLocationId, discoverLocation } from '../src/systems/discovery.js';
 import { DUNGEON_TYPES, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
-import { welkyndShards } from '../src/systems/gateSpoils.js';
+import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import { shardsHeld } from '../src/systems/reforge.js';
-import { _resetCodexForTests } from '../src/systems/lootCodex.js';
+import { _resetCodexForTests } from '../src/systems/loot/lootCodex.js';
 import { mountReforgeWindow, SCRIED, SCRY_FOR_KIN, REFORGE_REFUSALS } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
 

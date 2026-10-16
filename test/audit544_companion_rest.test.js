@@ -6,8 +6,8 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 const store = new Map();
 globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
 const { setPref } = await import('../src/systems/uiPrefs.js');
-const N = await import('../src/systems/revenant.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
 
 test('audit544: a mirrored companion rest completes after eight hours on an older save and stays corrected after reload', () => {

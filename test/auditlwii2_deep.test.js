@@ -20,7 +20,7 @@ import { createDeepRemains, apartOf, DEEP_APART_M } from '../src/scenes/deepRema
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { divesIn, fallenIn, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { RANDOM_RECORD } from '../src/characters/dungeonEnemies.js';
-import { RANDOM_TREASURE_MARKER_RECORD } from '../src/systems/loot.js';
+import { RANDOM_TREASURE_MARKER_RECORD } from '../src/systems/loot/loot.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';

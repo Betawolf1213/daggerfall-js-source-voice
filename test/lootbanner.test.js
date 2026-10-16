@@ -14,20 +14,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as W from '../src/systems/acquireWatch.js';
 import * as B from '../src/ui/lootBanner.js';
-import * as CX from '../src/systems/lootCodex.js';
+import * as CX from '../src/systems/loot/lootCodex.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintAetheric, AETHERIC_RECORDS } from '../src/systems/aetheric.js';
 import { mintHourlock } from '../src/systems/gilded.js';
-import { mintIliacCard, giveBinderAtChargen } from '../src/systems/iliacItems.js';
+import { mintIliacCard, giveBinderAtChargen } from '../src/systems/iliac/iliacItems.js';
 import { ILIAC_CARDS } from '../src/net/iliacCards.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { wildRecord } from '../src/systems/wildDeath.js';
-import { ITEM_FIELDS } from '../src/systems/itemFields.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { wildRecord } from '../src/systems/wild/wildDeath.js';
+import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { HUD_PIECES } from '../src/ui/hudLayout.js';
 import { registerPresenter } from '../src/systems/notify.js';
 import { setOneShotObserver } from '../src/systems/audio.js';
@@ -342,8 +342,8 @@ test('LOOT-BANNER THE WIRING: drawHud reads the player entity it is handed on ev
   assert.deepEqual(B.bannerLayout({ base: 480, notice: { top: 380, bottom: 520 }, lower: 790, heights: [60, 60] }), { top: 530, shown: 2 }, 'under the notices');
   assert.deepEqual(B.bannerLayout({ base: 480, notice: { top: 100, bottom: 300 }, lower: 790, heights: [60, 60] }), { top: 480, shown: 2 }, 'notices far above: its own place');
   assert.deepEqual(B.bannerLayout({ base: 480, notice: { top: 380, bottom: 700 }, lower: 790, heights: [60, 60, 60] }), { top: 710, shown: 1 }, 'a short band shows the newest');
-  assert.match(read('src/systems/lootCodex.js'), /if \(!quiet && !presentCodexFind\(item, key\.kind\)\) \{/);
-  assert.doesNotMatch(read('src/systems/lootCodex.js'), /from '\.\.\/ui\//, 'the codex imports no face');
+  assert.match(read('src/systems/loot/lootCodex.js'), /if \(!quiet && !presentCodexFind\(item, key\.kind\)\) \{/);
+  assert.doesNotMatch(read('src/systems/loot/lootCodex.js'), /from '\.\.\/ui\//, 'the codex imports no face');
 });
 
 // ── HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the abyss dungeon should also have a loot popup"; the lamp's "ensure

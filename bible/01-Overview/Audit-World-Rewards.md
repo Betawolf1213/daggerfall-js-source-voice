@@ -16,7 +16,7 @@ the fixed tree:
 | Lane | Over | How |
 |---|---|---|
 | A - the items, the law, the drops | `systems/gilded.js`, the spoils, every door a piece passes (the wire, the item law and the judge, saves, trade, the market, the vault, the crash records, every door that alters a piece), the floor's pictures, the budget | both trees imported in one process; 5,999 seeds base against new; the real judge, market and trade checks |
-| B - the powers in the real flow | `systems/lootPowers.js` Dragonfire and Undertow against the real call sites | the real `calculateAttackDamage` and `PlayerWeapon.resolveHit`, the gate court's real stand-ins (`bossStandIn`, `hostStandIn`, `crystalStandIn`) |
+| B - the powers in the real flow | `systems/loot/lootPowers.js` Dragonfire and Undertow against the real call sites | the real `calculateAttackDamage` and `PlayerWeapon.resolveHit`, the gate court's real stand-ins (`bossStandIn`, `hostStandIn`, `crystalStandIn`) |
 | C - the serpent's honours | `server-account/src/serpents.js`, migration 0116 (0119 since the merge of main), `titles.js`, the vocabulary and the relay, `net/serpentClaims.js`, the world host's door | the real Worker on node:sqlite with forced draws; a race of two claims; every statement's binds counted; 402 recorded mutants |
 | D - the Maelstrom drawn | `render/auraRing.js`'s ninth look and every reader of an aura | the real `AuraRingRenderer` in headless Chromium (ANGLE's strict ES 3.00 translator), a float target, clipping measured over lit floors |
 | E - the record, the tests, the mutants | every sentence the slice wrote against the code; every moved pin; every re-aimed record | 39 recorded mutants run; seven new ones written; 87 records over the touched files run again |

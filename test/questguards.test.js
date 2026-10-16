@@ -125,7 +125,7 @@ test('QG1 CastEffectDo: parse, the latch, the fire, and the deaf-after-complete 
 });
 
 test('QG1 dfuEffectKeyOf: DFU\'s per-class key literals, derived - spaces out, subgroup hyphenated', async () => {
-  const { dfuEffectKeyOf } = await import('../src/systems/spellEffects.js');
+  const { dfuEffectKeyOf } = await import('../src/systems/spell/spellEffects.js');
   assert.equal(dfuEffectKeyOf(14, 255), 'Levitate', 'Levitate.cs:23');
   assert.equal(dfuEffectKeyOf(14, -1), 'Levitate', 'the -1/255 byte fold, records vs registry');
   assert.equal(dfuEffectKeyOf(1, 2), 'ContinuousDamage-SpellPoints',

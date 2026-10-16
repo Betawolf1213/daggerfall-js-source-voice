@@ -27,7 +27,7 @@ between stops. It mends by REP4's ways - a point back every seven days, five at 
 
 ## QUEST-FOE-LINE (2)
 
-`src/systems/questFoeLine.js` (`questFoeLine`, `questFoeSubs`, `QUEST_FOE_PREFIX`); the three live-foe namers that
+`src/systems/quest/questFoeLine.js` (`questFoeLine`, `questFoeSubs`, `QUEST_FOE_PREFIX`); the three live-foe namers that
 hand it - `src/scenes/exteriorFoes.js` `liveHoverName` (the street's, for both above-ground hosts, and the pool every
 building's foes stand in), `src/scenes/worldModes.js`'s interior arm and `src/scenes/dungeonContext.js`'s.
 

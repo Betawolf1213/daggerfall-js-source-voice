@@ -628,7 +628,7 @@ this port can meet, or a departure Mac already ruled:
 - The messaging API (`getPathData`, `getRoadPoint`, `getTrackPoint`,
   `getPathsPoint`, `scheduleRoadsJob`; BRM:18-22, 64-110; BRT:142-156)
   for other DFU mods - Travel Options asks it whether a pixel carries a
-  road. No mod bus here and no consumer; `systems/travel.js` keeps
+  road. No mod bus here and no consumer; `systems/travel/travel.js` keeps
   `byRoad` a permanent false by the Ledger row.
 - The fixed-city host (`?exterior`, `scenes/exterior.js`) runs no tile
   pipeline at all - no `generateTileData`, no `paintRoads` - so it

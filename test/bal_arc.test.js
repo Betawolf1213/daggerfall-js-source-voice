@@ -27,13 +27,13 @@ import { computeCombatStats } from '../src/combat/combatStats.js';
 import { makeEnemyEntity, applyProgressionScaling } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { EQUIP_SLOTS, equipTableOf, _wearScaleForTests } from '../src/systems/equip.js';
 import { SKILLS } from '../src/systems/skills.js';
 import {
   PLACE_THREAT, placeVeteran, wildernessThreat, progressionScaling, ENEMY_SCALING, DUNGEON_SHARE,
 } from '../src/systems/skillSoftcap.js';
-import { DUNGEON_RARITY_TIER, dungeonRarityTier } from '../src/systems/lootRarity.js';
+import { DUNGEON_RARITY_TIER, dungeonRarityTier } from '../src/systems/loot/lootRarity.js';
 import { elitesAllowed, isEliteFoe } from '../src/systems/eliteFoes.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { PREF_DEFAULTS, getPref } from '../src/systems/uiPrefs.js';
@@ -47,7 +47,7 @@ import { drawEnhancedDeath, removeEnhancedDeath } from '../src/ui/enhancedDeath.
 import { pickDungeonElites, ELITE_FOE_MIN_LEVEL } from '../src/systems/eliteFoes.js';
 import { rollSearchElite } from '../src/systems/searchables.js';
 import { combatStanding, foeShare } from '../src/systems/skillSoftcap.js';
-import { lootRarityOn } from '../src/systems/lootRarity.js';
+import { lootRarityOn } from '../src/systems/loot/lootRarity.js';
 import { isGateArena, GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
 import { isArenaFloor, ARENA_FLOOR_LOCATION_ID } from '../src/world/arenaFloor.js';
 import { withDom } from './invdrag.mjs';
@@ -299,7 +299,7 @@ test('BAL3 the dungeon\'s seam by source: the dungeon\'s ladder tier read once a
   assert.match(body, /const share = puppet \? 0 : _dungeonShare;\n\s*if \(!\(share > 0\) && !\(place > 0\)\) return;/, 'no share and no place: nothing');
   assert.match(body, /progressionScaling\(puppet \? null : combatStanding\(foeDeps\.playerEntity\), share, foeShare\(basics\?\.level \?\? entity\.level, entity\.isClass\), place\);/);
   assert.match(dc, /import \{ combatStanding, dungeonShare, foeShare, progressionScaling, placeVeteran \} from '\.\.\/systems\/skillSoftcap\.js';/);
-  assert.match(dc, /dungeonRarityTier, dungeonFamily, stampWonWeapons, lootRarityOn \} from '\.\.\/systems\/lootRarity\.js';/);
+  assert.match(dc, /dungeonRarityTier, dungeonFamily, stampWonWeapons, lootRarityOn \} from '\.\.\/systems\/loot\/lootRarity\.js';/);
   // the wilds' seam (executed above) - one call, the ladder's gate in it
   const xf = rd('src/scenes/exteriorFoes.js');
   assert.match(xf, /foeShare\(basics\?\.level \?\? entity\.level, isClass\), lootRarityOn\(\) \? placeVeteran\(wildernessThreat\(night\)\) : 0\)\);/);

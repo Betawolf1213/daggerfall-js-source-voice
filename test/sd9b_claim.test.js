@@ -17,7 +17,7 @@ import { titlesHeld, equipRefusal } from '../server-account/src/titles.js';
 import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
 import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
 import { importPublicKeyB64, TITLES } from '../src/net/identityToken.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { accountSds, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
 import { createSdClaims, sdClaimVerdict, sdRecordText, SD_CLAIMS_KEY, SD_CLAIMS_MAX, SD_CLAIM_RETRY_MS, SD_CLAIM_TEXT } from '../src/net/sdClaims.js';
 import { profileSdLine } from '../src/ui/profileWindow.js';
@@ -295,5 +295,5 @@ test('SD9b the hosts and the service by source: the world host keeps a book onli
   assert.match(src('server-account/migrations/0090_sd_kills.sql'), /PRIMARY KEY \(slot, account\)/);
   assert.match(src('server-account/migrations/0090_sd_kills.sql'), /ALTER TABLE players ADD COLUMN sd_honours INTEGER NOT NULL DEFAULT 0;/);
   const deploy = src('.github/workflows/account-deploy.yml');
-  for (const p of ['src/net/sdReceipt.js', 'src/systems/wind.js']) assert.ok(deploy.includes(`- "${p}"`), `${p} deploys the service`);
+  for (const p of ['src/net/sdReceipt.js', 'src/systems/wind/wind.js']) assert.ok(deploy.includes(`- "${p}"`), `${p} deploys the service`);
 });

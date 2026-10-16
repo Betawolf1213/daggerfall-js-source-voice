@@ -20,9 +20,9 @@ import { landformsOn } from '../src/scenes/shared.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { onlineForcedPref } from '../src/systems/onlineLane.js';
+import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import { onlineModSetting } from '../src/systems/modSettings.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { makeAnchor } from '../src/systems/teleportAnchor.js';
 import { createSceneCache, cacheScene, restoreCachedScene, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 
@@ -333,7 +333,7 @@ test('LANDFORM1: a record\'s height is DFU\'s frame - written with the landforms
 
 test('LANDFORM1: no record carries whose ground it stood on - the save, the scene cache, the anchor, the deck and a dungeon\'s outer camps are DFU\'s frame, so every build reads them as it always read one', () => {
   // AUDIT LANDFORMS C1 MOVED THIS PIN: it pinned the stamp each carried (`landforms: true`) and the reads of it
-  for (const f of ['src/systems/save.js', 'src/systems/sceneCache.js', 'src/systems/teleportAnchor.js', 'src/systems/ship.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {
+  for (const f of ['src/systems/save/save.js', 'src/systems/sceneCache.js', 'src/systems/teleportAnchor.js', 'src/systems/ship.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {
     assert.equal(src(f).includes('landforms'), false, `${f}: no stamp`);
   }
   assert.equal(/landforms: !!landform|landOf\(|wasLand|savedLand/.test(WORLD), false, 'the host writes none and reads none');

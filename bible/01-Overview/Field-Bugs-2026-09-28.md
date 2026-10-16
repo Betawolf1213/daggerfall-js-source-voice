@@ -123,7 +123,7 @@ The online revival handed back a body the next tick killed. Two flaws:
 screen, so nothing of theirs is billed or moved and no pause or shift is needed; the rise walks the world's half
 of the span alone (`06-Systems/Lived-Time.md`).]
 
-Left for Mac (below): an online collapse charges no hour (`systems/rest.js`), so a Hard player whose sleep need is
+Left for Mac (below): an online collapse charges no hour (`systems/rest/rest.js`), so a Hard player whose sleep need is
 exhausted collapses every few game minutes until they rest - a survival-arc design question, not this loop. [SUPERSEDED BY
 LIVED1: online the collapse's RaiseTime moves the character's own clock, so it charges its hour and pays it in full,
 as offline.]

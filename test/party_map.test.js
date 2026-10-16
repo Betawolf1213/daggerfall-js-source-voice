@@ -15,15 +15,15 @@ import { OnlineSession } from '../src/net/online.js';
 import {
   enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, bindAutomapLayout, buildRevealIndex,
   liveDungeonAutomapKey, mergePartyAutomap, automapDungeonKey,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import {
   createPartyMapSender, sharedCartographySpell, hasSharedCartography, SHARED_CARTOGRAPHY_KEY, SHARED_CARTOGRAPHY_KIND,
   SHARED_CARTOGRAPHY_SPELL_INDEX,
-} from '../src/systems/partyMap.js';
+} from '../src/systems/party/partyMap.js';
 import { BUFF_KINDS, BUFF_START_TEXT, MAGIC_ONLY_KEYS, applySpell } from '../src/systems/effects.js';
-import { SPELL_MAKER_EFFECTS, spellMakerGroups, portEffectDescription } from '../src/systems/spellEffects.js';
+import { SPELL_MAKER_EFFECTS, spellMakerGroups, portEffectDescription } from '../src/systems/spell/spellEffects.js';
 import { EFFECT_COST_TABLE, calculateCastCost, effectSchool } from '../src/systems/spellcost.js';
-import { allowedTargetsOf, TARGET_FLAGS_SELF } from '../src/systems/spellMaker.js';
+import { allowedTargetsOf, TARGET_FLAGS_SELF } from '../src/systems/spell/spellMaker.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { fakeRoom } from './fakeRoom.mjs';
@@ -248,7 +248,7 @@ test('PARTY-MAP effect: the ready-made spell lands the buff on its caster for a 
 });
 
 test('AUDIT PARTY-MAP F2: the sender walks its whole map again every AMAP_RESYNC_MS - a mate who arrived late still gets it', async () => {
-  const { AMAP_RESYNC_MS } = await import('../src/systems/partyMap.js');
+  const { AMAP_RESYNC_MS } = await import('../src/systems/party/partyMap.js');
   const tx = createPartyMapSender({ sendMs: 0, max: 128, resyncMs: 1000 });
   const rec = { visitedThisRun: new Set(['1:2', '3:4']) };
   const at = (nowMs) => tx.next({ active: true, inDungeon: true, key: '5/Privateer', rec, nowMs });

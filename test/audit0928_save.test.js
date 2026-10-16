@@ -17,12 +17,12 @@ import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayMode
 import { spawnBoat, TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_ACTIONS, BOAT_EFFECT_BUNDLE } from '../src/systems/comeSailAway/comeSailAway.js';
 import { BOAT_ITEM_GROUP, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
-import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWatersFishItems.js';
-import { customItemsForGroup } from '../src/systems/itemTemplates.js';
+import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWater/deepWatersFishItems.js';
+import { customItemsForGroup } from '../src/systems/item/itemTemplates.js';
 import * as MS from '../src/systems/modSettings.js';
 import * as IA from '../src/systems/inputActions.js';
 import { setBindings, held } from '../src/ui/input.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { assignModBundle, isEntityWaterWalking, WATER_WALKING_SILENT_KIND, effectKindLoaded } from '../src/systems/effects.js';
 import { assignShipToPlayer, ownsShip, sellShip, SHIP_TYPES } from '../src/systems/banking.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';

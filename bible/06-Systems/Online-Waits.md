@@ -258,7 +258,7 @@ Pins and mutants: `test/wavewait_quests.test.js` 8 (`wavewait.json` 19), `test/s
 
 1. **Loiter and the night interval.** LOITER-ANYWHERE (2026-10-04) put DFU's Loiter back online - 1.25 real seconds a
    game hour up to the Loiter limit (3 hours by default, 12 at most) - and a loiter moves the character's own clock.
-   REST's night interval counts that clock (`systems/restAct.js nightDue`), so a three-hour loiter makes the next
+   REST's night interval counts that clock (`systems/rest/restAct.js nightDue`), so a three-hour loiter makes the next
    night due at once: Loiter, night, Loiter, night passes a rank's twenty-eight days in about fifteen minutes of
    presses, and REST's bound of eleven hours of play does not hold. Either it stands - the own clock is the player's to
    spend - or the interval counts lived minutes alone and the rank wait is eleven hours of play again. Recommended:

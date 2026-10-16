@@ -68,7 +68,7 @@
   },
   {
     "name": "BR4-zip-old-name",
-    "file": "src/systems/saveTransfer.js",
+    "file": "src/systems/save/saveTransfer.js",
     "old": "export const TRANSFER_ZIP_NAME = 'DFO-Online-Saves.zip';",
     "new": "export const TRANSFER_ZIP_NAME = 'DaggerfallEnhanced-Saves.zip';",
     "tests": [

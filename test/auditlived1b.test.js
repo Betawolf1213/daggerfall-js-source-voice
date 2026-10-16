@@ -13,9 +13,9 @@ import {
   normalizeAcross, NORMALIZE_ACROSS_MAX,
 } from '../src/systems/worldTick.js';
 import * as WT from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { offlineCopyOf, onlineCopyOf, saneSaveClock, SAVE_CLOCK_MAX, RAID_RECORD_VENDOR } from '../src/systems/offlineCopy.js';
-import { checkpointAllowed } from '../src/systems/onlineCheckpoint.js';
+import { checkpointAllowed } from '../src/systems/online/onlineCheckpoint.js';
 import { createQuestBridge, QUEST_CTX_CONTRACT } from '../src/scenes/questBridge.js';
 import { TrainPc } from '../src/systems/quest/actions.js';
 import { SKILLS } from '../src/systems/skills.js';
@@ -23,19 +23,19 @@ import { dayShelf, createStockedDate, needsRestock } from '../src/systems/shopSt
 import { dateFromClassicMinutes } from '../src/systems/gameDate.js';
 import { NORMALIZE_INTERVAL_MINUTES, CRIMES, legalRepOf, setCrimeCommitted } from '../src/systems/court.js';
 import { startPoison, POISONS } from '../src/systems/poisons.js';
-import { exhaustionOutcome } from '../src/systems/rest.js';
+import { exhaustionOutcome } from '../src/systems/rest/rest.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { intermittentEnemySpawn, passiveGuardSpawns } from '../src/systems/encounters.js';
-import { partyExtraFoes } from '../src/systems/partyScale.js';
+import { partyExtraFoes } from '../src/systems/party/partyScale.js';
 import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
 import { RAIDING_PARTIES_VENDOR, newRaidSaveData } from '../src/systems/raidingParties.js';
 import { ONLINE_TRAVEL_ROWS, ONLINE_TRAVEL_LINE } from '../src/ui/travelPopUp.js';
 import { repairRowText } from '../src/ui/enhancedTrade.js';
 import { OWN_TIME_ROOM_NOTE } from '../src/ui/tavernWindow.js';
 import { RACES } from '../src/systems/races.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 
 afterEach(() => { setSharedClock(null); });
 
@@ -195,7 +195,7 @@ test('AUDIT LIVED1b P3 (A4, K3): the world\'s arms walk what no walk covered - a
 });
 
 test('AUDIT LIVED1b K3: the six zones are the world\'s day\'s - rolled on every midnight the reading crosses, walked or not', async () => {
-  const W = await import('../src/systems/weatherSim.js');
+  const W = await import('../src/systems/weather/weatherSim.js');
   const zones = () => W.ZONE_CLIMATES.map((z) => W.weatherForClimate(z)).join(',');
   W.resetWeatherSim(); W.setWeatherMapLaw(false); W.setSharedWeather(true); W.setWeatherEvolution(false);
   try {
@@ -276,7 +276,7 @@ test('AUDIT LIVED1b F1: an online load re-anchors at the world\'s reading itself
 });
 
 test('AUDIT LIVED1b S5: the online load restores the character\'s clock before the held enchantments recast - their reroll stamp is on the character\'s clock', () => {
-  const src = rd('src/systems/save.js');
+  const src = rd('src/systems/save/save.js');
   const set = src.indexOf('if (sharedClockOn()) setOwnMinutes(Math.floor(snap.classicMinutes));');
   const recast = src.indexOf('restartHeldEnchantments(entity);');
   assert.ok(set > 0 && recast > 0 && set < recast, 'the clock first, then the recast');

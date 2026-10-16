@@ -109,7 +109,7 @@
   },
   {
     "name": "SURV5-a-raw-food-does-not-say-so",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "    if (foodOf(item)?.raw) out.push({ text: 'Raw - cook it at a fire.', center: true });",
     "new": "",
     "tests": [

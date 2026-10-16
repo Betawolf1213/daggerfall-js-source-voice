@@ -25,7 +25,7 @@ import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { armBuildOptsOf } from '../src/combat/weaponRig.js';
 import { RACES } from '../src/systems/races.js';
 import { CLASS_CAREERS } from '../src/systems/chargen.js';
-import { ITEM_TEMPLATES, templateByIndex } from '../src/systems/itemTemplates.js';
+import { ITEM_TEMPLATES, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { WEAPONS_ENUM, ARMOR_ENUM, ARROW_TEMPLATE } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';

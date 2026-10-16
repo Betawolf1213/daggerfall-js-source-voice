@@ -154,7 +154,7 @@
   },
   {
     "name": "MD-relay-the-share-unlaid",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "    relayQuestMovedLayout(q, machine, { carriesQuestItem: ctx.carriesQuestItem ?? null }, online);\n",
     "new": "",
     "tests": [

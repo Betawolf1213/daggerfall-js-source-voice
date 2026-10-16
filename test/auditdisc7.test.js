@@ -19,7 +19,7 @@ import { createActivateGate, activateFrame } from '../src/systems/activateGate.j
 import { resolveHover, nextSelection } from '../src/systems/worldHover.js';
 import { foldQuickLoot, quickLootWheel, plaqueActionSelection, plaqueLightFirst, resetQuickLoot } from '../src/systems/quickLoot.js';
 import { socialPlaqueRows } from '../src/ui/socialMenu.js';
-import { hccActionRows, HCC_ACTION_TEXT, WAGON_MODE, HORSE_MODE } from '../src/systems/horseCartLaw.js';
+import { hccActionRows, HCC_ACTION_TEXT, WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { AmbientEffects, AMBIENT_RAIN_LOOP, INDOOR_RAIN_GAIN } from '../src/systems/ambientEffects.js';
 import { AudioEngine } from '../src/systems/audio.js';
 import { RemotePlayers, ridingLoopName, PEER_RIDE_STALE_MS } from '../src/net/remotePlayers.js';

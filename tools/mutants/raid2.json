@@ -267,7 +267,7 @@
   },
   {
     "name": "RAID2-lane-the-players-own",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'world-events-raiding-parties': Object.freeze({ Enabled: true }),\n",
     "new": "",
     "tests": ["test/raid2_raidsOnline.test.js", "test/modsonline.test.js"]

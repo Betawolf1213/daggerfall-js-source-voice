@@ -76,12 +76,12 @@ test('V4: setCrimeCommitted is the ONE crime write, and a transformed lycanthrop
   // AUDIT 63 F33 generalized Pickpocket to DFU's one method with an
   // optional target, and PlayerActivate.cs:1655 gates the crime write on
   // `target == null` - so the inline suppression gate rides beside it.
-  assert.ok(read('src/systems/talk.js').includes('if (!target && !racialSuppressCrime(player))'),
+  assert.ok(read('src/systems/talk/talk.js').includes('if (!target && !racialSuppressCrime(player))'),
     'talk.js gates inline (court.js imports it - the one setter would cycle)');
 });
 
 test('V4: the population promote arm holds while transformed - the streets empty around the beast', () => {
-  const tp = read('src/systems/townPopulation.js');
+  const tp = read('src/systems/town/townPopulation.js');
   assert.ok(tp.includes('suppressSpawns = () => false'), 'the ctor takes the gate');
   assert.ok(tp.includes('isDay && !this.suppressSpawns())'), 'and it holds the PROMOTE arm alone (walkers already out keep walking)');
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {

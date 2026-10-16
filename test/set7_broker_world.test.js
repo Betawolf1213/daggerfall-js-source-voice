@@ -36,7 +36,7 @@ const BOX_R = Math.hypot(BROKER_BOX_HX, BROKER_BOX_HZ);
 const yawOf = (m) => Math.atan2(-m[2], m[0]);
 const DAY = 812;
 const T = gateTimes(DAY);
-/** The breach the omen names (systems/gateOmen.js cageSite's shape). */
+/** The breach the omen names (systems/gate/gateOmen.js cageSite's shape). */
 const SITE = Object.freeze({ day: DAY, px: 300, py: 200 });
 /** The rite holds (its faithful chant), and after it the breach is open. */
 const HOLDS = T.omenAt + 60_000, OPENED = T.openAt + 60_000;
@@ -624,7 +624,7 @@ test('SET7 the host\'s seams: online alone (with the omen), stood each frame rig
   assert.match(w, /items: \(\) => spendableStonesIn\(playerEntity\.items \?\? \[\]\), locked: \(\) => stoneCount\(lockedStonesIn\(playerEntity\.items \?\? \[\]\)\),/, 'the purse: the stones a sale may spend, and the locked ones beside them - counted over their stacks (SS1)');
   assert.match(w, /if \(win\) townTalk\.showOverlay\(win\);/);
   assert.match(w, /const _brokerNow = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/, 'the shared clock\'s day, never this machine\'s');
-  assert.match(read('src/scenes/shared.js'), /import '\.\.\/systems\/sigilBroker\.js';/, 'the record\'s save slot in every host');
+  assert.match(read('src/scenes/shared.js'), /import '\.\.\/systems\/sigil\/sigilBroker\.js';/, 'the record\'s save slot in every host');
   assert.match(read('src/ui/enhancedChunk.js'), /\(\) => import\('\.\/brokerWindow\.js'\),/, 'warmed with the doors');
   const door = read('src/ui/brokerDoor.js');
   assert.match(door, /load: \(\) => import\('\.\/brokerWindow\.js'\),/, 'the door\'s chunk through the one home');

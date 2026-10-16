@@ -98,7 +98,7 @@ const fallKey = (day, site) => `${day}|${serpentSiteKey(site.sx, site.sz)}`;
 
 /**
  * The link: the state, the falls by day and site and the receipts by day, and the words said. `site` this machine's
- * own site for the day (systems/serpentSite.js, null unknown). AUDIT SERPENT 2 F1: ONLY ITS OWN SITE'S WORDS ARE FOLDED -
+ * own site for the day (systems/serpent/serpentSite.js, null unknown). AUDIT SERPENT 2 F1: ONLY ITS OWN SITE'S WORDS ARE FOLDED -
  * every word of a fight names the site it is of (the relay stamps each, the hub's kill its own), and one naming no
  * site, another site or none this machine knows is not its serpent's: a socket of mine in a neighbouring cell heard a
  * forged site's fight by its pose there, and its kill (which named no site) was filed as mine - my serpent read as

@@ -63,7 +63,7 @@ export {
   readWidgetSettings, moveTowards, moveTowards2, roundHalfEven, snap,
   offsetStep, bobStep, inertiaStep, widgetTransformRect,
 } from './weaponWidgetMotion.js';
-import { getBool, getInt } from '../systems/settings.js';
+import { getBool, getInt } from '../systems/settings/settings.js';
 import { liveStat } from '../systems/statMods.js';
 import {
   getMeleeWeaponAnimTime, getBowCooldownTime, CLASSIC_UPDATE_INTERVAL, HIT_FRAME_MELEE, HIT_FRAME_BOW, MELEE_NUM_FRAMES, BOW_NUM_FRAMES,

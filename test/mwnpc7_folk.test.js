@@ -1,5 +1,5 @@
 // MWNPC7 (2026-10-09, the MW-NPC arc's seventh slice - bible/04-Characters/Morrowind-NPCs.md section 12): THE STREET'S
-// WALKERS IN MORROWIND BODIES. A walker carries what Daggerfall rolled at their spawn (systems/townPopulation.js
+// WALKERS IN MORROWIND BODIES. A walker carries what Daggerfall rolled at their spawn (systems/town/townPopulation.js
 // RandomiseNPC): the climate's race, a gender, one of four outfits (the sprite archive), a face, a name - or the
 // guard's arm. characters/folkBodies.js reads that roll for a body; characters/npcBodies.js createPopulationLane is the
 // foe pools' lane shape for a host that walks its population inline; world.js's streets and exterior.js's location

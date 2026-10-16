@@ -14,7 +14,7 @@ import {
 } from '../src/scenes/fishHost.js';
 import { parseNodeKey, haulKey, utcDayOfMs, SCHOOL_R } from '../src/net/nodeLaw.js';
 import { FISH_ACT, tugWindow, PEARL, fishBand } from '../src/net/professionLaw.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { PASSIVE_FISH_SPECIES } from '../src/world/passiveFish.js';
 import { climateToBiome } from '../src/world/underwaterDecorations.js';
 import { createProfHud } from '../src/ui/profHud.js';

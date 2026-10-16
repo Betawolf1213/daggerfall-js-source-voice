@@ -28,7 +28,7 @@ import { entryTarget, targetWords, WHERE_TEXT } from './questLens.js';   // GUID
 import { followOn, trackButton } from './questTracker.js';   // GUIDE4: the HUD's card - the Track toggle's one home
 import { breakableNote } from '../systems/notebook.js';   // JOURNAL1: a note the notebook's wrap can take, whatever was typed
 import { pageOfNote, pageRefusalText } from '../net/journalPage.js';   // JOURNAL1: a note as the page it would be shown as, or why it cannot be
-import { isBountyQuestId, abandonBountyQuest, shareBountyQuest, bountyQuestShareable } from '../systems/bountyJournal.js';   // BOUNTY1: a bounty's Abandon and Share
+import { isBountyQuestId, abandonBountyQuest, shareBountyQuest, bountyQuestShareable } from '../systems/bounty/bountyJournal.js';   // BOUNTY1: a bounty's Abandon and Share
 import { isHuntQuestId, abandonHuntQuest } from '../systems/huntJournal.js';   // RVN7c: a revenant's hunt - its Abandon
 import { t } from '../systems/textManager.js';   // L10N4: QUEST-SHELF-MAIN's words in the player's language, read when they are drawn
 

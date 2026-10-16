@@ -43,7 +43,7 @@ export const VEIN_HEART = Object.freeze([255, 168, 64]);
 export const VEIN_EDGE = Object.freeze([196, 56, 18]);
 export const RUNE_GLOW = Object.freeze([176, 40, 16]);
 
-/** mulberry32, the port's seeded rng (systems/wind.js seededRng's own), kept here so the art is the world's alone. */
+/** mulberry32, the port's seeded rng (systems/wind/wind.js seededRng's own), kept here so the art is the world's alone. */
 function rng(seed) {
   let a = seed >>> 0;
   return () => {

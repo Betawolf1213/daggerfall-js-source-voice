@@ -15,7 +15,7 @@ import { identity } from '../src/world/mat4.js';
 import { Renderer, CLOUD_SHADOW_UNIT, SKY_CLEAR } from '../src/render/renderer.js';
 import { PrecipitationRenderer } from '../src/render/precipitation.js';
 import { warmPrograms } from '../src/render/warmPrograms.js';
-import { TEXTURE_SLOTS } from '../src/systems/dynamicSkies.js';   // AUDIT 65 RS-3: the nine slots the reserved unit has to clear
+import { TEXTURE_SLOTS } from '../src/systems/dynamicSkies/dynamicSkies.js';   // AUDIT 65 RS-3: the nine slots the reserved unit has to clear
 
 function countingRenderer(counts) {
   const stub = new Proxy({}, {

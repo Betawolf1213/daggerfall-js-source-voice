@@ -1,5 +1,5 @@
 // SD9e (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11): THE BRASS REMNANT'S SPOILS -
-// the roll off the relay's receipt (systems/sdSpoils.js: section 11's table, the Brass of Numidium last), thrown from
+// the roll off the relay's receipt (systems/superDungeon/sdSpoils.js: section 11's table, the Brass of Numidium last), thrown from
 // where it fell by the spoils pool under keys of its own (scenes/sdSpoils.js - the court's burst for the arena: its
 // moment, its place, kept on the arena's floor over the realm's REAL collider), granted straight into the pack outside
 // the realm, said spent to the hub, and the hosts' wiring by source (scenes/world.js, scenes/worldModes.js).
@@ -10,18 +10,18 @@ import { readFileSync } from 'node:fs';
 import {
   rollSdSpoils, sdSpoilsList, rareOrBetter, sdSpoilsDay, sdSpoilsSlot,
   SD_SPOILS_GOLD_PER_LEVEL, SD_SPOILS_LEGENDARY, SD_SPOILS_SOURCE, SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT,
-} from '../src/systems/sdSpoils.js';
+} from '../src/systems/superDungeon/sdSpoils.js';
 import { createSdSpoils, SD_SPEW_AT_MS, SD_RECEIPT_WAIT_MS, SD_SPEW_CHEST, SD_SPEW_LOW_M, SD_SPOILS_KEEP } from '../src/scenes/sdSpoils.js';
 import { createSpoilsPool, spoilsList, SPOILS_KEYS, SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
 import { RAID_SPOILS_KEYS } from '../src/systems/raidSpoils.js';
-import { SERPENT_SPOILS_KEYS } from '../src/systems/serpentSpoils.js';
-import { spoilsBase } from '../src/systems/gateSpoils.js';
-import { applyRarity, rarityChances, lastPass, socketPass, weaponSocketPass, techniquePass } from '../src/systems/lootRarity.js';
+import { SERPENT_SPOILS_KEYS } from '../src/systems/serpent/serpentSpoils.js';
+import { spoilsBase } from '../src/systems/gate/gateSpoils.js';
+import { applyRarity, rarityChances, lastPass, socketPass, weaponSocketPass, techniquePass } from '../src/systems/loot/lootRarity.js';
 import { bossGems } from '../src/systems/gems.js';   // GEM2: the Remnant's gems
 import { rollNumidiumPiece, NUMIDIUM_SET_CHANCE, AETHERIC } from '../src/systems/aetheric.js';
 import { rollHourlock, GILDED_CHANCE, GILDED } from '../src/systems/gilded.js';
-import { seededRng } from '../src/systems/wind.js';
-import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot/loot.js';
 import { mintSdReceipt } from '../src/net/sdReceipt.js';
 import { createSdFightLink } from '../src/net/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';

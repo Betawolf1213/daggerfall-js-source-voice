@@ -14,7 +14,7 @@ import { SURVIVAL_RULES } from '../src/systems/survival/difficulty.js';   // BOO
 import { STIFF_HOURS } from '../src/systems/survival/rest.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE, FOOD_STAGE } from '../src/systems/survival/food.js';
-import { survivalInfoTokens, itemInfoRows } from '../src/systems/itemInfo.js';
+import { survivalInfoTokens, itemInfoRows } from '../src/systems/item/itemInfo.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
 import { NOT_ENOUGH_GOLD_ID } from '../src/systems/tavern.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -218,7 +218,7 @@ test('SURV5: by source - the four hosts chain the third box, the enhanced HUD ca
   assert.match(read('src/scenes/world.js'), /climateIndex: \(\) => maps\.getClimateIndex\(playerTravelPixel\(\)\.x, playerTravelPixel\(\)\.y\),   \/\/ SURV5/);
   assert.match(read('src/scenes/exterior.js'), /climateIndex: \(\) => locClimateIndex,   \/\/ SURV5/);
   assert.match(read('src/ui/tavernWindow.js'), /if \(survivalOn\(\) && typeof h\.climateIndex === 'function'\) \{ this\._survivalFood\(\); return; \}/);
-  assert.match(read('src/systems/itemInfo.js'), /if \(isSurvivalItem\(item\)(?: \|\| isRestItem\(item\))?\) record = survivalInfoTokens\(item\);/);
+  assert.match(read('src/systems/item/itemInfo.js'), /if \(isSurvivalItem\(item\)(?: \|\| isRestItem\(item\))?\) record = survivalInfoTokens\(item\);/);
   assert.match(read('src/systems/survival/needs.js'), /s\.felt = temp\.felt;/);
   for (const f of ['status', 'tavernMenu']) {
     assert.doesNotMatch(read(`src/systems/survival/${f}.js`), /from '\.\.\/\.\.\/scenes\/|from '\.\.\/\.\.\/ui\/|from '\.\.\/\.\.\/combat\/|from '\.\.\/spellcast|from '\.\.\/diseases|from '\.\.\/effects|document\.|window\./, `${f}.js is pure`);

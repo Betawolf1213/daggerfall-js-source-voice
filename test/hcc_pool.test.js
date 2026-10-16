@@ -5,9 +5,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHorseCartPool, raycastAllOver, boxTriangles, HORSE_ARCHIVE, horseStillRecord, horseWalkRecord, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT, HORSE_WALK_BILLBOARD_HEIGHT, HORSE_BOX_SIZE, WAGON_BUCKET, KEY_WAGON, KEY_FOLLOWING_WAGON, KEY_HORSE, peerKey, WAGON_HOVER_TEXT } from '../src/scenes/horseCartPool.js';
-import { hccWireRecord, validHccRecord, hccRecordKey, easeToward, HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
-import { WAGON_MODEL_ID, ACTIVATION_REACH, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_WALK_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { hccWireRecord, validHccRecord, hccRecordKey, easeToward, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
+import { WAGON_MODEL_ID, ACTIVATION_REACH, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_WALK_SPRITE_HEIGHT } from '../src/systems/horse/horseCartLaw.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { RAY_DISTANCE, GLOBAL_SCALE } from '../src/player/activate.js';
 import { syntheticWagon41214 } from './hccModel.mjs';
 

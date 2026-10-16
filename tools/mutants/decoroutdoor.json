@@ -1,7 +1,7 @@
 [
   {
     "name": "DECOROUTDOOR-street-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "      if (isStreetPiece(m?.modelIdNum)) add({ model: m.modelIdNum, flat: null }, 'street');",
     "new": "      if (false) add({ model: m.modelIdNum, flat: null }, 'street');",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DECOROUTDOOR-street-flats-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    for (const f of rmb?.miscFlatObjectRecords ?? []) streetFlat(f);\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DECOROUTDOOR-outside-flats-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    for (const sub of rmb?.subRecords ?? []) for (const f of sub?.exterior?.blockFlatObjectRecords ?? []) streetFlat(f);\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DECOROUTDOOR-exclusions-lost",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  && id !== BULLETIN_BOARD_MODEL_ID && !isCityGate(id);",
     "new": ";",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DECOROUTDOOR-street-nature-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "      if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || isNatureArchive(a)) return;",
     "new": "      if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE) return;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DECOROUTDOOR-nature-unnumbered-by-set",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    const group = e.nature != null ? `${e.base}|${e.nature}` : e.base;",
     "new": "    const group = e.base;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DECOROUTDOOR-tree-unnamed",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": " : kind === 'nature' && isTreeRecord(c.nature, c.flat[1]) ? 'Tree' : null));",
     "new": " : null));",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "DECOROUTDOOR-outside-indoors",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    && (!e.outside || !!room?.yard)\n",
     "new": "",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "DECOROUTDOOR-any-climate",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    && (e.nature == null || e.nature === room?.natureBase)\n",
     "new": "",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "DECOROUTDOOR-scan-natureless",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "    nature: true,   // DECOR-OUTDOOR: a yard's trees and plants, its own climate's",
     "new": "    nature: false,",
     "tests": [

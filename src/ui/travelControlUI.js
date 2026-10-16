@@ -31,7 +31,7 @@
 import { nativeMetrics, drawImg, shadowText, NATIVE_W } from './nativePanel.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
-import { TRAVEL_OPTIONS_TEXT as T } from '../systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT as T } from '../systems/travel/travelOptionsText.js';
 import { firstHotkey } from '../systems/dialogShortcuts.js';
 
 /** TravelControlUI.cs:19-24 - every rect on the strip, virtual pixels

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDWB-D2-the-sting-from-his-fall",
-    "file": "src/systems/gateScore.js",
+    "file": "src/systems/gate/gateScore.js",
     "old": "      if (stingAt !== null && s.fell) return now - stingAt < SCORE_STING_MS ? GATE_SONGS.fell : SCORE_SILENCE;",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDWB-D2-a-late-arrival-hears-the-fanfare",
-    "file": "src/systems/gateScore.js",
+    "file": "src/systems/gate/gateScore.js",
     "old": "      if (law === GATE_SONGS.fell && stingAt === null) stingAt = now + SCORE_STING_LEAD_MS;",
     "new": "      if (s.fell && stingAt === null) stingAt = now + SCORE_STING_LEAD_MS;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDWB-D2-the-next-day-remembers-the-last",
-    "file": "src/systems/gateScore.js",
+    "file": "src/systems/gate/gateScore.js",
     "old": "      if (s.day !== day) { day = s.day; stingAt = null; }",
     "new": "      if (s.day !== day) { day = s.day; }",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDWB-D4-the-war-rings-a-second",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "    const seamless = !!this.song.seamless && this.loop && durationTicks > 0;",
     "new": "    const seamless = false;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDWB-D4-the-seam-a-tick-off",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "      this._originTime += durationTicks * secondsPerTick;",
     "new": "      this._originTime += (durationTicks + 1) * secondsPerTick;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDWB-D4-the-war-songs-classic",
-    "file": "src/systems/gateScore.js",
+    "file": "src/systems/gate/gateScore.js",
     "old": "durationTicks: bars * 4 * SCORE_TPQ, seamless: true, level };",
     "new": "durationTicks: bars * 4 * SCORE_TPQ, level };",
     "tests": [

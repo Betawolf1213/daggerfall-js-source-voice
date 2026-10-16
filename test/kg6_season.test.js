@@ -19,7 +19,7 @@ import { titlesHeld } from '../server-account/src/titles.js';
 import { runCron, CRON_MINUTE, _resetCronForTests } from '../server-account/src/cron.js';
 import { TITLE_TEXT, TITLE_RGBA } from '../src/ui/playerBadge.js';
 import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
-import { crownIndex } from '../src/systems/gambitTableSession.js';
+import { crownIndex } from '../src/systems/gambit/gambitTableSession.js';
 import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { fakeDoc, text } from './decorFakes.mjs';

@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN3-the-metal-unread",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  return weak === cls || (metal != null && weak === metal);",
     "new": "  return weak === cls;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RVN3-daylight-by-night",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  if (weak === 'daylight') return !!day;",
     "new": "  if (weak === 'daylight') return true;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RVN3-the-will-staggers-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "new": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) > WILL_STAGGERS)",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RVN3-the-weakness-breaks-nothing",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "new": "((ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RVN3-the-will-at-rank-2",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const willMatters = (rank) => (rank | 0) >= WILL_RANK;",
     "new": "export const willMatters = (rank) => (rank | 0) >= 2;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RVN3-struck-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const WEAK = Object.freeze({ STRUCK: 1.5,",
     "new": "export const WEAK = Object.freeze({ STRUCK: 1.25,",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RVN3-the-flinch-line-lost",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  daylight: 'It squints and shrinks from the daylight.',\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "RVN3-the-flinch-health-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const FLINCH_HEALTH = 0.5;",
     "new": "export const FLINCH_HEALTH = 0.7;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "RVN3-a-hint-named",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const WEAK_HINTS = Object.freeze({ element: 'An element',",
     "new": "export const WEAK_HINTS = Object.freeze({ element: 'Fire',",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RVN3-the-strike-metal-unpassed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "noteFeudHarm(target, cls, damage, { silver, metal: metalOf(weapon) });",
     "new": "noteFeudHarm(target, cls, damage, { silver });",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RVN3-the-class-unweighed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK;",
     "new": "feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return 1;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN3-daylight-unweighed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (edge.weak === 'daylight') { if (skyIsDay()) return WEAK.DAYLIGHT; }",
     "new": "  if (edge.weak === 'daylight') { if (skyIsDay()) return 1; }",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN3-the-sky-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "const skyIsDay = () => { try { return !isNight(skyMinutes()); } catch { return false; } };",
     "new": "const skyIsDay = () => true;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN3-adaptation-takes-from-the-weakness",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  else if (info?.kind !== 'spell' && feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK;",
     "new": "  else if (info?.kind !== 'spell' && feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK * (edge.taken[adaptBlowClass(attacker, weapon, info?.kind)] ?? 1);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "RVN3-the-fold-weakness-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (weakEl) m.resist[weakEl] = (m.resist[weakEl] ?? 0) + WEAK.RESIST;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "RVN3-the-weak-test-cls-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  return isWeakBlow(weak, c, metal ?? metalOf(weapon), skyIsDay());",
     "new": "  return isWeakBlow(weak, null, metal ?? metalOf(weapon), skyIsDay());",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "RVN3-the-spell-element-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "(kind === 'spell' ? (element != null ? elementFeudClass(element) : null) :",
     "new": "(kind === 'spell' ? null :",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "RVN3-never-known",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.weakKnown = 2;\n  touch(r);\n  persist();\n  sayRevenant(",
     "new": "  touch(r);\n  persist();\n  sayRevenant(",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "RVN3-the-card-every-blow",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (entity._weakTold) return;\n  entity._weakTold = true;\n",
     "new": "  entity._weakTold = true;\n",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "RVN3-no-hiss",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (at) { try { door?.sfx?.(SOUND.Burning, at); } catch { /* a host with no sound */ } }\n",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "RVN3-no-card",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  sayRevenant(revenantWeaknessEvent(r, { found: true }), (l) => door?.say?.(l));\n",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "RVN3-the-flinch-at-any-health",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "|| !(e.health < (e.maxHealth || 1) * FLINCH_HEALTH)) return null;",
     "new": ") return null;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "RVN3-hinted-twice",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  f._flinched = true;\n  const r = revenantById(e.revenant.id);",
     "new": "  const r = revenantById(e.revenant.id);",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "RVN3-a-known-one-flinches",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!r || r.defeated || r.sworn || (r.weakKnown | 0) > 0) return null;",
     "new": "  if (!r || r.defeated || r.sworn) return null;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "RVN3-never-hinted",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.weakKnown = 1;\n",
     "new": "",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "RVN3-the-flinch-a-voice",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const body = found ? `${name} - its weakness, laid bare.` : (FLINCH_LINES[r?.weak] ?? 'It shies from something.');",
     "new": "  const body = found ? `${name} - its weakness, laid bare.` : 'It shies from something.';",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "RVN3-the-unbroken-words",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const body = `${r.given} staggers into the smoke, unbroken.`;",
     "new": "  const body = `${r.given} got away.`;",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "RVN3-the-will-unread",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
     "new": "  return false;",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "RVN3-the-will-ignores-the-fight",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
     "new": "  return !!r && willMatters(r.rank);",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "RVN3-no-ember",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  f.portalFx = { dir: 'out', at: now, delay: TEAR_MS.delay, ms: TEAR_MS.ms, tint: DISSOLVE_EMBER };",
     "new": "  f.portalFx = { dir: 'out', at: now, delay: TEAR_MS.delay, ms: TEAR_MS.ms };",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "RVN3-the-tint-unread",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "    const tint = p.tint ?? DISSOLVE_ARCANE;",
     "new": "    const tint = DISSOLVE_ARCANE;",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "RVN3-not-held",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  if (f.entity) f.entity.health = 1;\n  if (f.ai) { f.ai.target = null; f.ai.fleeLeft = 0; f.ai.velX = 0; f.ai.velZ = 0; }",
     "new": "  if (f.ai) { f.ai.target = null; f.ai.fleeLeft = 0; f.ai.velX = 0; f.ai.velZ = 0; }",
     "tests": [

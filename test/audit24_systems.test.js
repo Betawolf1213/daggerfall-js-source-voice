@@ -1,7 +1,7 @@
 // AUDIT 24 (the full-codebase parity sweep), systems group.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { isForbiddenEquip } from '../src/systems/equip.js';
 import { LEGAL_REP_MIN, LEGAL_REP_MAX } from '../src/systems/court.js';
 

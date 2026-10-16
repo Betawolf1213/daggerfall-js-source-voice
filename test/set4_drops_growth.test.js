@@ -12,26 +12,26 @@ import { readFileSync } from 'node:fs';
 import {
   SIGIL_STAGES, SIGIL_XP_MAX, sigilChance, validSigil, sigilHasBlow, sigilRank, setSigilOnline, setSigilRenown, rollSigil,
   _resetSigilForTests,
-} from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigil.js';
 import {
   WORLD_SET_IDS, SET_WEAPON_JOIN_IN, SIGIL_SETS, rollWorldSet, rollSetSigil, rollSetJoin, setRiseLine, drinkWorn,
   setSetsDueling, wornSets, _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
-import { stampWonWeapons } from '../src/systems/lootRarity.js';
-import '../src/systems/sigilSetPowers.js';   // the powers' fold, registered at import - as world.js imports it
+} from '../src/systems/sigil/sigilSets.js';
+import { stampWonWeapons } from '../src/systems/loot/lootRarity.js';
+import '../src/systems/sigil/sigilSetPowers.js';   // the powers' fold, registered at import - as world.js imports it
 import { computeEntityMods, entityStatMod } from '../src/systems/entityMods.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { validItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { PARTY_MAX } from '../src/net/wire.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { _resetPartyScaleForTests } from '../src/systems/partyScale.js';
+import { _resetPartyScaleForTests } from '../src/systems/party/partyScale.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

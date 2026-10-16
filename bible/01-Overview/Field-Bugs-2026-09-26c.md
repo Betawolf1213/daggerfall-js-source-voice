@@ -91,7 +91,7 @@ performance half of report 2.
 
 Mac, asked what the port should do about Iliac Puddle No More's population: "Yes, cap at 32". The mod's rules stand -
 its pulse, its budgets, its table, its hostile-at-spawn - and the port's default for `General.MaxLiveEnemies` is 32
-where the mod ships 128 (`systems/modSettings.js`); the room forces the same online (`systems/onlineLane.js`), where
+where the mod ships 128 (`systems/modSettings.js`); the room forces the same online (`systems/online/onlineLane.js`), where
 every client stands its own deep. The mod's range stays, so a player offline may still raise it to 256. A deep-water-
 only rule was weighed and not taken: a ship at sea is already over deep water, so it would not have touched the ship's
 case. Ledger A row.

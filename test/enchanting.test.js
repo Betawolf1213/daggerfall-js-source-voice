@@ -14,7 +14,7 @@ import {
 } from '../src/systems/enchanting.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import {
   enchantmentCost, enchantmentParamValues, sideEffectTypes,
 } from '../src/systems/enchantmentCatalogue.js';

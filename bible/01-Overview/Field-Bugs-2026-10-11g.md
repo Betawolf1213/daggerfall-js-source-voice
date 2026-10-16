@@ -18,7 +18,7 @@ The report's stack, mapped through a sourcemap of the same tree: `Object.ND [as 
 frame's `if (cardGame?.scene) cardDrawGame(cardGame, proj, view, mwv.eye);` and the throw is
 `worldModes.js:"const p = g.scene.poses(now / 1000, table?.view() ?? null,"` as it stood before this fix -
 `(g.remote ?? g.session).view()`. At the relay's Hold'em table (CARDS5) a player who goes all in and loses is stood up
-at the hand's end (`net/holdemTable.js` after(): `leave`, broke, the chair emptied). `systems/cardRemoteTable.js` reads
+at the hand's end (`net/holdemTable.js` after(): `leave`, broke, the chair emptied). `systems/card/cardRemoteTable.js` reads
 his id gone from the next state and loses the seat; `worldModes.js` cardRemoteFrame's `lost` branch sets `g.phase =
 'over'` and lets the relay's table go (`g.remote = null`) but keeps the cloth, so the run-out's streets and the
 showdown sent in that same frame can play out. The same frame then drew the cloth through `g.remote ?? g.session` -
@@ -156,7 +156,7 @@ found none:
   (`ui/nativeTrade.js` _doSteal), a closed shop's shelf, a house's containers - then the server's judgeSave and the
   trade's wire: ~67,000 stolen pieces a run, seven variants, no finding and no hold; and end to end through the real
   Worker - steal, checkpoint, trade the goods, drop them, checkpoint twice, steal again, trade gold - never held;
-- the id ledger: stolen commons carry no `uid` (`systems/itemIds.js` valuablePiece), so no copy can be counted against
+- the id ledger: stolen commons carry no `uid` (`systems/item/itemIds.js` valuablePiece), so no copy can be counted against
   them;
 - the budget (INT5): the one measure that sees theft (a gain no service witnessed), and it holds only once staff turn
   `enforce` on - it ships measuring (Mac: "Measure 7 days, then enforce"). Were it on, every symptom fits: a dropped pile
@@ -168,7 +168,7 @@ The refusal says which now. The service keeps the held side with its word (`trad
 'mine' or 'theirs' (`why` stays `trade-held`, so a client from before reads what it always read; the column is free text,
 no migration). The client says it (`net/realmTradeLaw.js` realmTradeRefusalText): the other's - "The realm is reviewing
 the other character in this trade", and "Your own trading is open" when my last checkpoint held nothing - or mine, in
-the words of my own hold's notice (TRADE_HELD_NOTICES, moved into the trade law's leaf, which `systems/itemIds.js`
+the words of my own hold's notice (TRADE_HELD_NOTICES, moved into the trade law's leaf, which `systems/item/itemIds.js`
 re-exports: one home for both). 'record-unjudged' says whose the same way.
 
 **For staff, the check this cannot make:** `node tools/realmReview.mjs holds`, then `findings <id>` for the reporter's

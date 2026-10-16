@@ -10,7 +10,7 @@ first; the fix is pinned.
 
 ## ROSE-SEEN: the second blow raises its own number
 
-`src/systems/lootPowers.js` again; `src/ui/hitNumbers.js` showFollowUp.
+`src/systems/loot/lootPowers.js` again; `src/ui/hitNumbers.js` showFollowUp.
 
 FOUND. Traced through the real formula, the Rose and a door (a Hand-to-Hand 60 player, 200 swings at a 60-armour foe):
 every one of the 195 fists that landed struck again for half, through `again()` and the door's `hurtFoe` - 3798 damage

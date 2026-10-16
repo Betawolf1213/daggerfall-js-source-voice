@@ -1,17 +1,17 @@
 // PORTAL-GIFT (2026-10-04, the owner: "every current player should recieve x10 of these. They should stack";
 // bible/06-Systems/Portal-Stone.md "The gift"): EVERY CHARACTER THAT ALREADY EXISTS IS GIVEN TEN PORTAL STONES, ONCE.
-// The law (systems/gateSpoils.js givePortalGift, PORTAL_GIFT, PORTAL_GIFT_STONES, takePortalGiftNotice), the mark the
-// save carries (systems/save.js), and the host's word once the world stands (scenes/world.js) - LOAN-AMNESTY's shape.
+// The law (systems/gate/gateSpoils.js givePortalGift, PORTAL_GIFT, PORTAL_GIFT_STONES, takePortalGiftNotice), the mark the
+// save carries (systems/save/save.js), and the host's word once the world stands (scenes/world.js) - LOAN-AMNESTY's shape.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { givePortalGift, takePortalGiftNotice, PORTAL_GIFT, PORTAL_GIFT_STONES, portalStones, isPortalStone } from '../src/systems/gateSpoils.js';
+import { givePortalGift, takePortalGiftNotice, PORTAL_GIFT, PORTAL_GIFT_STONES, portalStones, isPortalStone } from '../src/systems/gate/gateSpoils.js';
 import { PORTAL_TEXT } from '../src/systems/portalStone.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createBankAccounts, createHouses, SHIP_TYPES } from '../src/systems/banking.js';
-import { setLocked, isLocked } from '../src/systems/itemLock.js';
+import { setLocked, isLocked } from '../src/systems/item/itemLock.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const stones = (items) => items.filter(isPortalStone).map((it) => [it.stackCount ?? 1, isLocked(it)]);
@@ -75,7 +75,7 @@ test('PORTAL-GIFT the mark rides the save: a new character is born past it, a sa
 });
 
 test('PORTAL-GIFT the hosts: every load restores through the one door, which gives it below the relinks and the fold; the world says it once it stands, in every mode', () => {
-  const save = src('src/systems/save.js');
+  const save = src('src/systems/save/save.js');
   assert.match(save, /snap\.portalGift = Number\.isSafeInteger\(entity\.portalGift\) \? entity\.portalGift : PORTAL_GIFT;/);
   assert.match(save, /entity\.portalGift = Number\.isSafeInteger\(snap\.portalGift\) \? snap\.portalGift : 0;/);
   assert.match(save, /const n = restackStones\(list\);[^\n]*\n[^\n]*\n\s+\}\n\s+givePortalGift\(entity\);/, 'after the fold - an index-keyed relink never slides');

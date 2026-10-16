@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { DFICON_ROWS, DFICON_CSS, dficonSvg } from '../src/ui/menuGlyphs.js';
-import { DECOR_KINDS } from '../src/systems/decorCatalogue.js';
+import { DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
 import { createDecorBar, decorBarKeys, decorFiltersText, DECOR_LAYOUT_WORDS, DECOR_KEYS_WORD, DECOR_CSS } from '../src/ui/decorPanel.js';
 import { all, one, text, chipNamed, rows, panelRig } from './decorFakes.mjs';
 import { fakeDoc, fakeWin, settle, toolRig } from './decorFakes.mjs';

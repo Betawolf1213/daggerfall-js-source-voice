@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN12b-unbroken-unsaved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ", ...(d.deed === 'fled' && d.unbroken === true ? { unbroken: true } : {}) }; };",
     "new": " }; };",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN12b-unbroken-any-deed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "...(d.deed === 'fled' && d.unbroken === true ? { unbroken: true } : {})",
     "new": "...(d.unbroken === true ? { unbroken: true } : {})",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN12b-unbroken-unwritten",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ": deedName === 'fled' && unbroken ? { unbroken: true } : null);",
     "new": ": null);",
     "tests": [

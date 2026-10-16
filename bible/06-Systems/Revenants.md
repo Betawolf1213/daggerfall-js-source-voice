@@ -1,6 +1,6 @@
 # Revenants
 
-**Status:** shipped 2026-10-02 (`src/systems/revenant.js`, `test/revenant.test.js`).
+**Status:** shipped 2026-10-02 (`src/systems/revenant/revenant.js`, `test/revenant.test.js`).
 **Next:** `12-Enhanced-AI/Feud-Arc.md` (FEUD, proposed 2026-10-04) - memory, a weakness, the will, a last stand, a
 signature, a band, a lair, theft, festering, new deeds and loyalty. Nothing below changes until a FEUD slice ships.
 Mac: "the ability for these enemies that kill you, or a very small chance to flee at low health. These enemies can
@@ -26,7 +26,7 @@ Two deeds make one:
 
 | Deed | How | Seam |
 |---|---|---|
-| **Slew** | Its blow takes the player's last health (melee or an arrow) | The struck seam marks the attacker (`combat/formulas.js`), the damage door takes the mark, the hurt tells `registerPlayerBlowLanded` (`systems/sigilSetPowers.js`). Confirmed a microtask later, after `hurtPlayer` is done, so a death Stendarr's mercy (`setAvoidDeathHook`) undoes makes no revenant. |
+| **Slew** | Its blow takes the player's last health (melee or an arrow) | The struck seam marks the attacker (`combat/formulas.js`), the damage door takes the mark, the hurt tells `registerPlayerBlowLanded` (`systems/sigil/sigilSetPowers.js`). Confirmed a microtask later, after `hurtPlayer` is done, so a death Stendarr's mercy (`setAvoidDeathHook`) undoes makes no revenant. |
 | **Fled** | Under 20% of its health for the first time (35% for a revenant of rank 1 or 2), it wins a roll (5%; 80% for a revenant of rank 1 or 2, 15% from rank 3, where its will takes over - FLIGHT-FIRST, section 38) and runs, at twice its walk. Out of reach before its run ends, it has escaped. | `scenes/exteriorFoes.js` update: `revenantFleeHealth` and `rollRevenantFlee`, then `ai.flee(playerFeet, 8 s)` (`characters/enemyMotor.js`). While fleeing it does nothing else. At the end of its run or 45 m off, `escapeFoe` removes it with no corpse and no kill. |
 
 A kill no blow names (a spell's burn, a lingering effect's round, a poison's tick) goes to the foe whose harm last
@@ -118,7 +118,7 @@ revenants are its own.
 **FEUD's fields (RVN1, 2026-10-04).** The record carries `scars`, `learned`, `weak`, `weakKnown`, `sig`, `kin`, `lair`,
 `lairKnown`, `took`, `wrath`, `fights` and a sworn one's `companion.loyalty` - each checked by its validator when read
 back, and an older record's derived (its weakness, signature at rank 2 and up, and kin drawn on its id; its fights
-`kills + escapes + returns`; a loyalty its personality's start). The law is `systems/revenantFeud.js feudFields`
+`kills + escapes + returns`; a loyalty its personality's start). The law is `systems/revenant/revenantFeud.js feudFields`
 (`bible/12-Enhanced-AI/Feud-Arc.md` section 26). The slot and the mirror also keep `lastDay` (RVN9's festering day),
 read back a whole day or none, the later of the two kept.
 
@@ -147,7 +147,7 @@ Everything a revenant says or does is an **event** (`revenantEvent` and the buil
 - what happens in the narrator's voice (a beast never speaks: "Bares its teeth - it remembers you.");
 - the one `line` a text surface says instead.
 
-`systems/revenantVoice.js` (a leaf) hands an event to the registered face, or speaks its line through the host's `say`.
+`systems/revenant/revenantVoice.js` (a leaf) hands an event to the registered face, or speaks its line through the host's `say`.
 
 The face is `ui/revenantCard.js`, on the enhanced skin only:
 
@@ -173,7 +173,7 @@ Then the **Fallen**, struck through, with when each fell. A character with none 
 
 ## 8. The numbers
 
-Every number is a named constant at the top of `systems/revenant.js`:
+Every number is a named constant at the top of `systems/revenant/revenant.js`:
 
 | Constant | Value |
 |---|---|
@@ -210,7 +210,7 @@ and close a slain one. Returns stay in the open world: a dungeon's foes are its 
 ## 10. Who it is (REVENANT-VOICE)
 
 Mac: "They should have their own unique personalities that affect their speach. One could be humorous, or witty, etc."
-`systems/revenantPersonality.js` (a leaf) holds ten personalities and every word they say:
+`systems/revenant/revenantPersonality.js` (a leaf) holds ten personalities and every word they say:
 
 | Personality | In a word | A beast's manner |
 |---|---|---|
@@ -242,7 +242,7 @@ Mac: "They should have their own unique personalities that affect their speach. 
 Mac: "Players should have the option to kill or spare"; "the choice popup should reuse the loot menu".
 
 - **The yield**: the blow that would kill one of the player's revenants (any blow - the revenant is the player's own;
-  never a Disintegrate's kill) leaves it at 1 health on its knees (`systems/revenantFate.js beginYield`): its fight and
+  never a Disintegrate's kill) leaves it at 1 health on its knees (`systems/revenant/revenantFate.js beginYield`): its fight and
   its run over, its hurt's last frame held with a breath now and then (`MobileUnit.heldPose`), no blow reaches it, no foe
   hunts it (`enemyTargets.js`), never in the save. Its plea is said in its voice; its record notes the deed. Its
   TROPHY is rolled now, so the choice shows it.
@@ -268,7 +268,7 @@ roar - and from there the body **burns away from the feet up** in embers (DISSOL
 no body. Where it knelt drops a **pile** (the place's dropped loot, with its line of light): everything it carried and
 its trophy. Its record closes for good, **executed** (the page's Fallen say so).
 
-The trophy (`systems/revenantTrophy.js`):
+The trophy (`systems/revenant/revenantTrophy.js`):
 
 - **Its weapon**: the best blade it carried, else its kind's (an orc's war axe or battle axe, a lich's staff, a vampire's
   saber or katana, a giant's warhammer, a bear's war axe...) or a person's by class (a Barbarian's claymore, an
@@ -287,7 +287,7 @@ enhanced plus UI feature."
   nobody, never returns as a foe, and its record keeps its place (`companion`: with the player, away, or resting).
   It fights as a crew companion does, the foe fighting the player's side first (ASSIST, `01-Overview/Field-Bugs-2026-10-05c.md`).
 - **The crew's own layer** (`scenes/crewAshore.js`) stands the sworn - every place, every door, the heel, the catch-up,
-  health and spells carried - as a second party of the crew's shape (`systems/revenantCompanions.js revenantParty`), never
+  health and spells carried - as a second party of the crew's shape (`systems/revenant/revenantCompanions.js revenantParty`), never
   under the naval arc's gate. Each stands at the player's level with its rank's strength (health once, its blows always),
   called by its own name; activated, it opens its pack (the crew's COMPANION-KIT storage); it has a card on the party
   panel and a green bar overhead.
@@ -388,7 +388,7 @@ fight. The page says them ("Scarred by arrows, fought by night."). What the scar
 ## 18. What it learns: adaptations (FEUD RVN2, 2026-10-04)
 
 At each deed it learns one lesson of the fight - the first of its scars that teaches something it does not hold - and
-keeps its rank's worth (three at most), the oldest forgotten (`systems/revenantFeud.js lessonOf`, `withLesson`). What it
+keeps its rank's worth (three at most), the oldest forgotten (`systems/revenant/revenantFeud.js lessonOf`, `withLesson`). What it
 learned stands with it (`entity.revenant.edge`, `adaptEdge`): **Mailed**, **Hewn-hard**, **Braced**, **Unflinching** and
 **Arrow-wise** take a weapon class less (x0.6 at the least); **Fireproof**, **Rimebound**, **Grounded**, **Venom-blooded**
 and **Spell-scarred** +25 on the saving throw against their element (DFU's own Resistant - never immunity); a
@@ -637,7 +637,7 @@ revnants". Asked, the owner chose elites at Renown 5 and revenants at 10 ("Elite
 offline", a shared dungeon's elites "Room's pick stands", and the rate "Return chance 50% → 40%".
 
 **The door.** Renown is online's own (`Accounts-And-Cloud-Saves-Arc.md` RENOWN1: offline earns none), so the gate is
-too. `systems/sigil.js renownOpens(min)` sits beside the door every Renown-woken power reads (the sigils', the sets',
+too. `systems/sigil/sigil.js renownOpens(min)` sits beside the door every Renown-woken power reads (the sigils', the sets',
 RENOWN-LOOT's): offline it is always open; online it opens once the page's Renown reaches `min`, and never before the
 page knows it (the moments before the first token) - RENOWN-LOOT's first-stage law, nothing ahead of the Renown behind
 it. `scenes/world.js` sets the door; `scenes/exterior.js`, the offline bench, never does.

@@ -9,19 +9,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { MOD_SETTINGS, modSetting, setModSetting, onlineModSetting, _resetModSettings, SWITCH_RESETS } from '../src/systems/modSettings.js';
-import { onlineForcedModSetting } from '../src/systems/onlineLane.js';
+import { onlineForcedModSetting } from '../src/systems/online/onlineLane.js';
 import { pcaaoModules, installPcaao } from '../src/combat/pcaao.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 import { damageEquipment, calculateAttackDamage, registerFormulaOverride, formulaOverride, chooseEnemyWeapon } from '../src/combat/formulas.js';
 import { CONDITION_WEAR_SCALE, DFU_WEAR_MULTIPLE, equipTableOf, EQUIP_SLOTS, slotForBodyPart, equipItem } from '../src/systems/equip.js';
 import { equipEnemy } from '../src/scenes/hostCombat.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
 import { readFileSync } from 'node:fs';
 import { repairRefusal } from '../src/systems/repairService.js';
-import { getBool } from '../src/systems/settings.js';
+import { getBool } from '../src/systems/settings/settings.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
 
 const WEAR_KEYS = [['pcaao', 'equipmentDamageEnhanced'], ['pcaao', 'fadingEnchantedItems'], ['roleplay-realism', 'equipDamage']];

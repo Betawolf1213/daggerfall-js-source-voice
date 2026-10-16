@@ -62,7 +62,7 @@ import { retroScreenRect } from '../systems/retroMode.js';   // RETRO-UI: the pi
 import { stepGhost, chunkFrame, GHOST_HOLD } from './barLoss.js';   // VB2 / FRAME1: a bar's loss (AUDIT NAV1: shared with the sea fight's card)
 import { mountHitNumbers, healNumberFor, showNumber } from './hitNumbers.js';   // HN1; PARTY-BUFFS: the heal a frame shows
 import { maxRoundsRemaining } from './hudActiveSpells.js';
-import { liveBundles, canEndBundle, endBundle, endedSpellText } from '../systems/mysticism.js'; import { shownSpellName } from '../systems/loot.js';   // PX30: the ONE bundle walk the HUD already uses; BUFF-END: and which of them the player may end; L10N3e: a spell's name as the book shows it
+import { liveBundles, canEndBundle, endBundle, endedSpellText } from '../systems/mysticism.js'; import { shownSpellName } from '../systems/loot/loot.js';   // PX30: the ONE bundle walk the HUD already uses; BUFF-END: and which of them the player may end; L10N3e: a spell's name as the book shows it
 import { hudText } from '../systems/notify.js';   // BUFF-END: the ended spell's one line
 import { cursorActive } from '../player/pointerLock.js';   // BUFF-END: the freed mouse ends a spell
 import { overlayOpen } from './enhancedOverlays.js';
@@ -78,7 +78,7 @@ import { temperatureReadout, levelSaid } from '../systems/survival/status.js';  
 import { feltNow } from '../systems/survival/env.js';   // TEMP-UI: live, where the body stands this frame
 
 import { ownMinutes, sharedClockOn } from '../systems/worldTick.js';   // LIVED1: the needs' strip reads the character's own clock   // REST1: and the Next night tile is online's
-import { nightRealMinutesLeft } from '../systems/restAct.js';   // REST1: the night interval's minutes left
+import { nightRealMinutesLeft } from '../systems/rest/restAct.js';   // REST1: the night interval's minutes left
 import { compassScroll, breathShortThreshold, compassMarkerLerp, DETECT_MARKER_RGB } from './hud.js';
 import { PARTY_GREEN_CSS } from '../net/social.js';   // COMPASS-PARTY: the party's one green
 import { maxBreath, maxFatigue, liveStat } from '../systems/statMods.js';   // PX30b/PX30d: DFU's own ceilings
@@ -93,15 +93,15 @@ import { fpArm } from '../combat/fpArm.js';   // the Morrowind ground mesh the i
 import { requestFittedIcon, showFitted } from './textureCanvas.js';
 import { spellIconPicture } from './enhancedArt.js';   // UI2: the spell chip wears its spell's icon
 import { screenDpr, clampDpr } from './iconFit.js';
-import { inventoryItemImage } from '../systems/itemTemplates.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { quickslotTag, quickslotOffTag, quickslotSpellTag, tagKey, CELL_ACTIONS } from './quickslotTags.js';   // QS6: the caption's spell chip names its own action
 import { glyphSvg, padFamily } from './padGlyphs.js';
 import { hdGlyphSvg } from './padGlyphsHD.js';   // PADPLUS1: Plus draws the pad's buttons as vectors
 import { TECH_CHIP_COLOUR } from '../combat/techniqueRoster.js';   // TECH1: a technique's chip wears its marks' blue (the roster is a leaf)
-import { rarityAttr, RARITIES } from '../systems/lootRarity.js';   // RARITY-UI: a quickslot cell's frame wears its item's tier; LOOT5: a power chip the Legendary's colour
-import { validSigil } from '../systems/sigil.js';   // SIGIL-UI: and a sigil weapon's rune
+import { rarityAttr, RARITIES } from '../systems/loot/lootRarity.js';   // RARITY-UI: a quickslot cell's frame wears its item's tier; LOOT5: a power chip the Legendary's colour
+import { validSigil } from '../systems/sigil/sigil.js';   // SIGIL-UI: and a sigil weapon's rune
 import { markSetFrame, setShades } from './setCard.js';   // SET5: a set piece's rune in its set's colour; a set power's chip in it
-import { setIdOf, setById } from '../systems/sigilSets.js';
+import { setIdOf, setById } from '../systems/sigil/sigilSets.js';
 import { controllerLook } from '../player/lookFilter.js';   // GP1's own latch: "the last input was the pad"
 import { bindings } from './input.js';
 // (breathShortThreshold lives in hud.js, imported below with compassScroll)
@@ -1208,7 +1208,7 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
   }
 
   // CLIMB2: THE GRIP - the host's `grip` ({ amount, low } or null). STEED1: else the ridden horse's breath (`steed`, the
-  // same shape - systems/upkeepRuntime.js bar), in the grip's place and under the horse's word.
+  // same shape - systems/upkeep/upkeepRuntime.js bar), in the grip's place and under the horse's word.
   const gr = opts.grip ?? opts.steed ?? null;
   const gripWord = opts.grip ? 'Grip' : 'Horse';
   if (last.gripWord !== gripWord && parts.gripLabel) { last.gripWord = gripWord; parts.gripLabel.textContent = gripWord; }
@@ -1634,12 +1634,12 @@ function drawSpellChip(view, tag) {
 /** One cell's state, art, strip and count. Every write is guarded on
  *  its own key as well as the block's signature, because a condition
  *  that ticked is not a reason to re-request a picture. */
-/** SET5: THE SET POWERS' CHIPS, the host's to give (scenes/world.js hands systems/sigilSetPowers.js setHudChips) - this
+/** SET5: THE SET POWERS' CHIPS, the host's to give (scenes/world.js hands systems/sigil/sigilSetPowers.js setHudChips) - this
  *  file never imports the powers: they register into the magic round's ticker, which imports half the game, and a
  *  surface importing them closed a cycle. `fn(entity) -> [{ key, set, name, text, state }]`. */
 let _setChips = null;
 export function setHudSetChips(fn) { _setChips = typeof fn === 'function' ? fn : null; }
-/** WILD1: the host's word on the open zone - `{ name }` while the player stands in it, else null (systems/wildZone.js). */
+/** WILD1: the host's word on the open zone - `{ name }` while the player stands in it, else null (systems/wild/wildZone.js). */
 let _zone = null;
 export function setHudZone(fn) { _zone = typeof fn === 'function' ? fn : null; }
 const zoneTile = () => { try { return _zone?.() ?? null; } catch { return null; } };

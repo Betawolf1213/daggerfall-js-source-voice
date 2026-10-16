@@ -15,9 +15,9 @@ import zlib from 'node:zlib';
 import {
   DECOR_MOD_ROOMS, DECOR_MOD_STREETS, DECOR_MOD_TWINS, DECOR_MOD_LEFT_OUT, addDecorMods, decorModNaming, decorModLive,
   decorModFlatSource, decorModsLive, DECOR_MODS_LIVE_S,
-} from '../src/systems/decorMods.js';
-import { collectDecor, decorCatalogue, decorRoomEntries, DECOR_KINDS, DECOR_FROM } from '../src/systems/decorCatalogue.js';
-import { createDecorScan, decorScanDeps, standInRadius } from '../src/systems/decorScan.js';
+} from '../src/systems/decor/decorMods.js';
+import { collectDecor, decorCatalogue, decorRoomEntries, DECOR_KINDS, DECOR_FROM } from '../src/systems/decor/decorCatalogue.js';
+import { createDecorScan, decorScanDeps, standInRadius } from '../src/systems/decor/decorScan.js';
 import {
   installTownStandIns, TOWN_BED_FIRST, TOWN_BED_COUNT, TOWN_PAINTINGS, ROSYS_PIECES, RMBRP_PIECES, RMBRP_ROCKS, RMBRP_STALLS,
   TOWN_CLUTTER, TOWN_CLUTTER_ARCHIVE, TOWN_GARDEN, TOWN_GARDEN_ARCHIVE, ROSYS_PICTURES,

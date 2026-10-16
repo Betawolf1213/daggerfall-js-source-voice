@@ -15,8 +15,8 @@ import assert from 'node:assert/strict';
 import { calculateTradePrice, calculateCost, ONLINE_SALE_SHARE, ONLINE_HAGGLE_MAX, essentialPrice } from '../src/systems/shopStock.js';
 import { getTradePrice } from '../src/systems/tradeModes.js';
 import { rentalDecision } from '../src/systems/tavern.js';
-import { cureDiseaseOffer } from '../src/systems/guildServiceActions.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { cureDiseaseOffer } from '../src/systems/guild/guildServiceActions.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { startDisease } from '../src/systems/diseases.js';
 

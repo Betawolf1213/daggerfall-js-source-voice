@@ -10,7 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { segmentHitsRect, boxNearPath, pointNearPath, wodSiteClear, wodPiecewise, PATH_HALF_WIDTH, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR } from '../src/world/roadClearance.js';
-import { playerOnPath, pathsDataPoint, N, E, S, W, NE, MP_WORLD_UNITS, HALF_MP_WORLD_UNITS } from '../src/systems/travelPaths.js';
+import { playerOnPath, pathsDataPoint, N, E, S, W, NE, MP_WORLD_UNITS, HALF_MP_WORLD_UNITS } from '../src/systems/travel/travelPaths.js';
 import { MAP_W, MAP_H } from '../src/world/roadNetwork.js';
 import { LocationSession, pickLocations } from '../src/world/wodLocationLoader.js';
 import { decodeRegionPack } from '../src/world/wodLocationPack.js';

@@ -163,7 +163,7 @@
   },
   {
     "name": "RFOLK-rr-climate",
-    "file": "src/systems/rrVariants.js",
+    "file": "src/systems/roleplayRealism/rrVariants.js",
     "old": "walkerRace(getWorldClimateSettings(worldClimate)?.people, region));   // AUDIT FB1010 C3: the street's own rule",
     "new": "rrClimateRace(worldClimate));",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "DAMNED-never",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (rolls() * DAMNED_IN >= DAMNED_IN - 1 && damnPiece(it)) damned.push(it);",
     "new": "    if (false) damned.push(it);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "DAMNED-half",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "rolls() * DAMNED_IN >= DAMNED_IN - 1 && damnPiece(it)",
     "new": "rolls() * DAMNED_IN >= DAMNED_IN - 2 && damnPiece(it)",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "DAMNED-one-in-three",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const DAMNED_IN = 4;",
     "new": "export const DAMNED_IN = 3;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "DAMNED-not-top",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const line = { ...old, value: AFFIX_RANGES[old.id].legendary[1] };",
     "new": "  const line = { ...old };",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "DAMNED-any-legendary",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "const damnable = (item) => item?.rarity === 'legendary' && item.group === 'Weapons';",
     "new": "const damnable = (item) => item?.rarity === 'legendary';",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "DAMNED-law-unknown",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (isDamned(item)) return damnable(item) && carried;   // TRUE-CURSE: a Legendary weapon's alone\n",
     "new": "",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "DAMNED-law-unbitten",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (isDamned(item)) return damnable(item) && carried;",
     "new": "  if (isDamned(item)) return damnable(item);",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "DAMNED-said-cursed",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "(isDamned(item) ? DAMNED_WORD : CURSED_WORD)",
     "new": "CURSED_WORD",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "DAMNED-liftable",
-    "file": "src/systems/lootCurse.js",
+    "file": "src/systems/loot/lootCurse.js",
     "old": "  if (isDamned(item)) return 'damned';\n",
     "new": "",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "DAMNED-worth-unmoved",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.value = (Number.isFinite(item.value) ? item.value : itemBaseValue(item)) + affixesWorth([line], item) - affixesWorth([old], item);",
     "new": "  item.value = Number.isFinite(item.value) ? item.value : itemBaseValue(item);",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "DAMNED-drawback-added",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.enchantments = list.map((e, i) => (i === at ? { ...DAMNED_DRAWBACK } : e));",
     "new": "  item.enchantments = [...list, { ...DAMNED_DRAWBACK }];",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "DAMNED-curse-damns",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (damned) damnPiece(item);",
     "new": "  if (true) damnPiece(item);",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "DAMNED-door-unpassed",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  damnPass(minted, rolls);   // TRUE-CURSE: a cursed Legendary weapon damned, after every draw the door made, the gem's too (law 9)\n",
     "new": "",
     "tests": [

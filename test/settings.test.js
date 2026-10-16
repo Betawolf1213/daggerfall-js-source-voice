@@ -15,10 +15,10 @@ import {
   DEFAULTS, ALL_KEYS, LIVE, UNAVAILABLE, tierOf,
   getBool, getInt, getFloat, getString, setValue, resetToDefaults,
   effectiveSettings, _resetForTests,
-} from '../src/systems/settings.js';
+} from '../src/systems/settings/settings.js';
 import { parseIni } from '../scripts/bakeSettings.mjs';
 import { combatVoicesEnabled } from '../src/combat/combatVoices.js';
-import { loiterLimitHours, cannotLoiterLines } from '../src/systems/restSession.js';
+import { loiterLimitHours, cannotLoiterLines } from '../src/systems/rest/restSession.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { isWalletItem } from '../src/systems/walletItem.js';   // WALLET1: the port's own tail's wallet, set aside from DFU's bag
 import { lookScale, lookInvert, LOOK_BASE } from '../src/ui/lookSettings.js';

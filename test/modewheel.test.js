@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 
 import { PlayerMotor, crouchSpeed, sneakSpeed, runSpeed } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { resetToDefaults } from '../src/systems/settings.js';
+import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { createModeWheel, spokeOf, MODE_WHEEL_SPOKES, MODE_WHEEL_DEAD_ZONE, MODE_WHEEL_MAX_ARM, MODE_WHEEL_ACTION } from '../src/ui/modeWheel.js';
 import {
   DEFAULT_BINDINGS, ACTIONS, PORT_ACTIONS, KEYBINDS_VERSION, createBindings, resetDefaults, serializeKeyBinds, loadKeyBinds,

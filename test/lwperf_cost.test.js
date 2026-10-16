@@ -20,7 +20,7 @@ import { townTrips, partiesNear, remainsNear, partiesOfTown, remainsOfTown, memo
 import { createLivingRoads, ROADS_TOWNS_PER_FRAME, ROADS_JUMP_PX, ROADS_TICK_S, ROADS_VIEW_PX } from '../src/scenes/livingRoads.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
-import { POP_VISIBLE_RANGE } from '../src/systems/townPopulation.js';
+import { POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { lwRng, lwSeed } from '../src/systems/livingWorld/seed.js';

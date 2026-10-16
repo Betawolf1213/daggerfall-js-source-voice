@@ -9,23 +9,23 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import {
   SIGIL_SETS, SET_PLACES, setPlacesWorn, setCardView, setLines, setsSleep, setSleepText, setSetsWearer, setsWearer,
   setSetsDueling, _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
-import { setHudChips, setStruck, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+} from '../src/systems/sigil/sigilSets.js';
+import { setHudChips, setStruck, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
-import { rarityLines } from '../src/systems/lootRarity.js';
+import { rarityLines } from '../src/systems/loot/lootRarity.js';
 import { setCard, setStrip, markSetFrame, setShades, setStageText, SET_PLACE_WORDS } from '../src/ui/setCard.js';
 import { sigilCard } from '../src/ui/sigilCard.js';
 import { sigilRuneTileUrl, SIGIL_RUNE_TILE_URL } from '../src/ui/sigilRune.js';
 import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { mintAetheric, aethericById } from '../src/systems/aetheric.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -391,7 +391,7 @@ test('SET5 the surfaces\' wiring: the pack\'s card and the Info box append the s
   assert.match(hud, /const frameKey = worn \? `\$\{rarityAttr\(worn\) \?\? ''\}\|\$\{validSigil\(worn\.sigil\) \? 1 : 0\}\|\$\{setIdOf\(worn\) \?\? ''\}` : '';/, 'the diamond\'s key');
   assert.match(hud, /markSetFrame\(part\.cell, worn\);/);
   assert.match(hud, /const powers = setPowerChips\(vitals\);/);
-  assert.doesNotMatch(hud, /from '\.\.\/systems\/sigilSetPowers\.js'/, 'the HUD never imports the powers (a cycle through the round\'s ticker)');
+  assert.doesNotMatch(hud, /from '\.\.\/systems\/sigil\/sigilSetPowers\.js'/, 'the HUD never imports the powers (a cycle through the round\'s ticker)');
   const w = strip(read('src/scenes/world.js'));
   assert.match(w, /setSetsWearer\(\(\) => playerEntity\);\s*setHudSetChips\(\(e\) => \[\.\.\.setHudChips\(e\), \.\.\.lootHudChips\(e\)\]\);/);   // LOOT5: the Legendary powers' chips beside the sets'
 });

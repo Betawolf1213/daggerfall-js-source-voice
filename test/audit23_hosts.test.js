@@ -12,7 +12,7 @@ import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { skyOffsetForWeather } from '../src/world/weather.js';
 import { exteriorAmbient } from '../src/world/worldClock.js';
 import { PlayerMotor, HEIGHT_TIMER_MEDIUM } from '../src/player/motor.js';
-import { TownPopulation } from '../src/systems/townPopulation.js';
+import { TownPopulation } from '../src/systems/town/townPopulation.js';
 import { BANK_TYPES } from '../src/characters/nameHelper.js';
 import { NORMALIZE_INTERVAL_MINUTES } from '../src/systems/court.js';
 import { SKILLS } from '../src/systems/skills.js';

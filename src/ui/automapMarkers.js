@@ -62,9 +62,9 @@
 // for real (:632) - unlike the beacons, whose identical line is
 // commented out - so it draws and is NEVER pickable.
 
-import { MARKER_NAMES } from '../systems/automapPick.js';
+import { MARKER_NAMES } from '../systems/automap/automapPick.js';
 import { trs, multiply, quatToMat4 } from '../world/mat4.js';
-import { USER_NOTE_MARKER_PREFIX } from '../systems/automap.js';
+import { USER_NOTE_MARKER_PREFIX } from '../systems/automap/automap.js';
 
 /** The `amap` texture records these models name. One 1x1 solid each -
  *  the beacon's material colour, as a texture. */

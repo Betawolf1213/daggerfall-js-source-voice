@@ -29,7 +29,7 @@ for (const [W, H, width] of [[1280, 800, 'desktop'], [390, 760, 'phone']]) for (
     const { createInventoryWindow } = await import('/src/ui/inventoryDoor.js');
     const { mintWallet, setWalletSilver } = await import('/src/systems/walletItem.js');
     const { letterOfCredit } = await import('/src/systems/inventory.js');
-    const { sigilStone, welkyndShards, portalStones } = await import('/src/systems/gateSpoils.js');
+    const { sigilStone, welkyndShards, portalStones } = await import('/src/systems/gate/gateSpoils.js');
     document.getElementById('intro')?.remove();
     document.getElementById('enhanced-menu')?.remove();
     document.body.style.cssText = 'margin:0;background:#0b0d10;height:100vh';

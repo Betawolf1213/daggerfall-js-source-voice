@@ -3,7 +3,7 @@
 // TRAV0I04.IMG. The F-slice collected these three choices on single
 // keys over a text panel; this is the classic window itself, laid
 // out rect for rect, with the LAWS still living in
-// systems/travel.js exactly as C# leaves them in
+// systems/travel/travel.js exactly as C# leaves them in
 // TravelTimeCalculator.
 //
 // THE NATIVE-WINDOW RULE, element by element:
@@ -85,18 +85,18 @@ import { loadImg, nativeMetrics, drawImg, drawRect, shadowText, NATIVE_W } from 
 import { hudFade } from './fadeLayer.js';   // D4: FadeBehaviour
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, messageBoxArtLoaded, fitBoxRows } from './messageBox.js';
 import { drawText } from './text.js';
-import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel.js';
-import { guildFastTravel } from '../systems/guildVariants.js';   // TP1: GuildManager.FastTravel
+import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel/travel.js';
+import { guildFastTravel } from '../systems/guild/guildVariants.js';   // TP1: GuildManager.FastTravel
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
 // TO1: Travel Options' own popup - TravelOptionsPopUp.cs. Which of the
 // two journeys a trip takes is decided HERE, by the three toggles
 // against the player's settings, and the fare is scaled here too.
-import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travelOptionsText.js';
-import { hasPortFor as hasPort } from '../systems/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
+import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travel/travelOptionsText.js';
+import { hasPortFor as hasPort } from '../systems/travel/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
 import { calculateTradePrice, essentialPrice } from '../systems/shopStock.js';   // TravelTimeCalculatorTO's FormulaHelper.CalculateTradePrice
-import { isOnlinePage } from '../systems/onlineLane.js';   // ESSENTIALS-HALF: online, a fare costs half
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // ESSENTIALS-HALF: online, a fare costs half
 import { liveStat } from '../systems/statMods.js';
 import { skillValue, SKILLS } from '../systems/skills.js';   // TO-FARE: GetLiveSkillValue(Mercantile)
 import { IT_POPUP, IT_TEXT, itPopUpDefaults, itTogglePress, itTrip, playerPopUpRefusal } from '../systems/immersiveTravel.js';   // IT1: the mod's ImmersiveTravelPopUp and SeafarersPopUp
@@ -781,7 +781,7 @@ export class TravelPopUpWindow {
     // is HOURS AND MINUTES rather than a count of days, because the
     // journey starts now and the days are the ones you will live
     // through. `MsgTimeFormat` is the SDF spelling (the port's text is
-    // neither of DFU's two fonts - systems/travelOptionsText.js).
+    // neither of DFU's two fonts - systems/travel/travelOptionsText.js).
     if (this.walkedTrip) {
       shadowText(renderer, font, TO_TEXT.MsgPlayerControlled, m, LABEL_POS.cost[0], LABEL_POS.cost[1]);
       const hours = Math.trunc(this.travelTimeTotalMins / 60), mins = this.travelTimeTotalMins % 60;

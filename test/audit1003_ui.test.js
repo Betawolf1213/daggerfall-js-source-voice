@@ -1,5 +1,5 @@
 // AUDIT PRE-MERGE 1003 (2026-10-03) - LENS U: THE ARENA'S WINDOW AND ITS HUD, read on real Chromium before #545 merges
-// (src/ui/arenaWindow.js, arenaDoor.js, arenaHud.js, hudFoeTarget.js; src/systems/arenaBoard.js, arenaText.js; the sheets
+// (src/ui/arenaWindow.js, arenaDoor.js, arenaHud.js, hudFoeTarget.js; src/systems/arena/arenaBoard.js, arenaText.js; the sheets
 // in src/ui/enhancedPlusStyle.js, enhancedStyle.js, partyPanel.js; the hosts' arena HUD in src/scenes/world.js and
 // exterior.js). Each pin FAILED on the unfixed tree for its finding's reason; each fix carries an `AUDIT PRE-MERGE 1003
 // <ID>` comment. What a fake page cannot measure (where a rule puts a box) was measured in Chromium and its rule is pinned
@@ -15,18 +15,18 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { fakeDom, withDom } from './invdrag.mjs';
-import * as AB from '../src/systems/arenaBoard.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { newArenaLadder, ladderAfter, nextLadderBout } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import * as AB from '../src/systems/arena/arenaBoard.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { newArenaLadder, ladderAfter, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { arenaLadderOf } from '../src/net/arenaLaw.js';
 import { mountArenaWindow } from '../src/ui/arenaWindow.js';
 import * as Door from '../src/ui/arenaDoor.js';
 import { createArenaOnline, HALL_IDLE_MS } from '../src/scenes/arenaOnline.js';
 import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_WIDTH } from '../src/ui/arenaHud.js';
-import { newBout, boutTick, boutAtMarks, boutHealth, callMs, COUNT_MS } from '../src/systems/arenaBout.js';
-import { newCrowd } from '../src/systems/arenaCrowd.js';
+import { newBout, boutTick, boutAtMarks, boutHealth, callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
+import { newCrowd } from '../src/systems/arena/arenaCrowd.js';
 import { markFoeStruck, foeTarget, tickFoeTarget } from '../src/ui/hudFoeTarget.js';
 import { ARENA_WINDOW_CSS, TRAVEL_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { PARTY_CSS } from '../src/ui/partyPanel.js';

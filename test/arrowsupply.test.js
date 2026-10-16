@@ -21,10 +21,10 @@ import { stockShopShelf, shopArrowStack, shopPelletStack, shopAmmoStack, SHOP_AR
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import { fletchYield, FLETCH_TEMPLATES } from '../src/systems/fletching.js';
-import { registerTemplateOverrides, templateByIndex } from '../src/systems/itemTemplates.js';
-import { RRI_TEMPLATE_PATCHES } from '../src/systems/rriItems.js';
-import { createForagingItem } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { registerTemplateOverrides, templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { RRI_TEMPLATE_PATCHES } from '../src/systems/roleplayRealismItems/rriItems.js';
+import { createForagingItem } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);

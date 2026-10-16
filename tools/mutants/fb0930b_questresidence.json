@@ -50,7 +50,7 @@
   },
   {
     "name": "HOME-PLAQUE-the-word-dropped",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "export const homeDoorName = (name, hasVerbs) => name || (hasVerbs ? 'Residence' : '');",
     "new": "export const homeDoorName = (name, hasVerbs) => name || (hasVerbs ? '' : '');",
     "tests": ["test/fb0930b_questresidence.test.js"]

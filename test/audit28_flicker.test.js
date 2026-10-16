@@ -5,7 +5,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { HudFlicker, HudFlickerController, playerCondition, INJURED_THRESHOLD, WOUNDED_THRESHOLD } from '../src/ui/hudFlicker.js';
-import { LIVE } from '../src/systems/settings.js';
+import { LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W2d: THE NEAR-DEATH WARNING (HUDFlickerController.cs + the
 // three HUDFlicker*.cs), a default-ON DFU feature the port had nothing

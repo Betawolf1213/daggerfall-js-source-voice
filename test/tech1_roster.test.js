@@ -1,23 +1,23 @@
 // TECH1 (bible/05-Combat/Weapon-Techniques.md): THE TECHNIQUES AS LINES - the roster's one table (combat/techniqueRoster.js),
-// the line on the weapon (systems/lootRarity.js AFFIX_KINDS.technique), its draw at a door's END (Loot-II law 9), the
-// Reforge, the hone and the card, and the item law that judges it (systems/itemLaw.js - the account service's too).
+// the line on the weapon (systems/loot/lootRarity.js AFFIX_KINDS.technique), its draw at a door's END (Loot-II law 9), the
+// Reforge, the hone and the card, and the item law that judges it (systems/item/itemLaw.js - the account service's too).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as RO from '../src/combat/techniqueRoster.js';
-import { itemFindings, ITEM_LAW_VERSION } from '../src/systems/itemLaw.js';
+import { itemFindings, ITEM_LAW_VERSION } from '../src/systems/item/itemLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
-import { rollSpoils } from '../src/systems/gateSpoils.js';
-import { rollSdSpoils } from '../src/systems/sdSpoils.js';
-import { rollSerpentSpoils } from '../src/systems/serpentSpoils.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
+import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
+import { rollSdSpoils } from '../src/systems/superDungeon/sdSpoils.js';
+import { rollSerpentSpoils } from '../src/systems/serpent/serpentSpoils.js';
 import { rollRaidSpoils } from '../src/systems/raidSpoils.js';
 import { rollCorpseKit } from '../src/systems/foeLootCap.js';
 import { seedTestLoot, TECHNIQUE_TEST_BASES } from '../src/systems/testRoom.js';
 import { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { ACCOUNT_VERSION } from '../server-account/src/service.js';
 import { ARENA_SPEED_MAX, ARENA_HIT_HZ_MAX } from '../src/net/arenaLaw.js';
 import { SIEGE_SPEED } from '../src/net/siegeRef.js';

@@ -224,7 +224,7 @@
   },
   {
     "name": "RENOWN-LOOT-rest-from-some",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "chances.map(([t, pct]) => [t, lootEased(0, pct, quarters)]);",
     "new": "chances.map(([t, pct]) => [t, lootEased(pct, pct, quarters)]);",
     "why": "the supplies flat online",
@@ -234,7 +234,7 @@
   },
   {
     "name": "RENOWN-LOOT-rest-foe-hook-whole",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "rollRestLoot(items, restLootChances(REST_FOE_CHANCES, quarters), rolls); });",
     "new": "rollRestLoot(items, REST_FOE_CHANCES, rolls); });",
     "why": "the foe's supplies at LOOT-EASE's whole",
@@ -244,7 +244,7 @@
   },
   {
     "name": "RENOWN-LOOT-rest-pile-hook-whole",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "rollRestLoot(items, restLootChances(REST_PILE_CHANCES, quarters), rolls); });",
     "new": "rollRestLoot(items, REST_PILE_CHANCES, rolls); });",
     "why": "the pile's supplies at LOOT-EASE's whole",
@@ -254,7 +254,7 @@
   },
   {
     "name": "RENOWN-LOOT-rest-whole-shortcut",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "  quarters === 4 ? chances : chances.map(",
     "new": "  chances.map(",
     "why": "a fresh table for LOOT-EASE's own (not the very table)",

@@ -15,9 +15,9 @@ import { seatRealm } from './realmSeat.mjs';
 import { prepareRealmRecord } from '../server-account/src/realm.js';
 import { creditSave } from '../src/net/realmGoldLaw.js';
 import { takeTradeGoods } from '../src/net/realmTradeLaw.js';
-import { validLootList } from '../src/systems/loot.js';
+import { validLootList } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
 import { MINED_KEYS } from '../src/net/professionLaw.js';
 

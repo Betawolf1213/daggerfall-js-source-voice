@@ -25,7 +25,7 @@ import {
   floorTriangles, deriveFloors, floorAt, floorPlan, storeyOccupancy, planBounds, surfaceY,
   levelField, storeyLinks, groupSheets, sheetOfStorey, fieldOccupancy,
   STAIR_RISE, SHEET_OVERLAP, LINK_JOIN, FLOOR_MIN_GAP,
-} from '../src/systems/automapFloors.js';
+} from '../src/systems/automap/automapFloors.js';
 import { STEP_OFFSET } from '../src/player/motor.js';
 import { createAutomapSheet, AUTOMAP_HINT, STAIR_MERGE } from '../src/ui/automapSheet.js';
 import {
@@ -34,7 +34,7 @@ import {
 } from '../src/ui/inkAutomap.js';
 import { boundarySegments, linkSegments, toPaper, PEN } from '../src/ui/inkMap.js';
 import { MAP_HINT, thumbBox, HeldMapWindow, THUMB_ZONES, PAPER as SPRITE_PAPER } from '../src/ui/heldMap.js';
-import { NOTE_SPAWN_NORMAL_OFFSET } from '../src/systems/automap.js';
+import { NOTE_SPAWN_NORMAL_OFFSET } from '../src/systems/automap/automap.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -135,7 +135,7 @@ test('DISC25-A A1: a cell is on the storey its OWN surface is nearest - a ramp s
 
 test('DISC25-A A2: the stairs are found - where two storeys\' surfaces meet within a stair\'s rise - from both sides', () => {
   assert.equal(STAIR_RISE, 2 * STEP_OFFSET + 0.2, 'two of the motor\'s strides, and a little slack');
-  assert.match(src('src/systems/automapFloors.js'), /export const STAIR_RISE = 2 \* STEP_OFFSET \+ 0\.2;/, 'derived from the motor, not retyped');
+  assert.match(src('src/systems/automap/automapFloors.js'), /export const STAIR_RISE = 2 \* STEP_OFFSET \+ 0\.2;/, 'derived from the motor, not retyped');
   assert.ok(STAIR_RISE < FLOOR_MIN_GAP, 'a stair\'s rise is well short of a storey\'s headroom');
   const { field } = frame(SPLIT);
   const links = storeyLinks(field);

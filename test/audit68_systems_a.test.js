@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as W from '../src/systems/weatherSim.js';
+import * as W from '../src/systems/weather/weatherSim.js';
 import { createBetterAmbience, readBetterAmbienceSettings, BETTER_AMBIENCE_VENDOR, AMBIENT_RAIN_CLIP } from '../src/systems/betterAmbience.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { createActivateGate, activateFrame } from '../src/systems/activateGate.js';

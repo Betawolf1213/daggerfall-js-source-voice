@@ -1,17 +1,17 @@
 // TV6 - THE DUNGEONS, DISCOVERED ON APPROACH (bible/06-Systems/Travel-View.md, THE OVERHAUL; Mac 2026-09-28:
-// "Discover on approach"). The pure law (systems/travelDungeons.js), the readout's unnamed mark, and the host's wiring.
+// "Discover on approach"). The pure law (systems/travel/travelDungeons.js), the readout's unnamed mark, and the host's wiring.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   TV_DUNGEON_TYPES, TV_DUNGEON_MAX, TV_DUNGEON_FIND_M, NATIVE_PER_M, dungeonFoundText, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach,
   lastLegStart, dungeonToFind,
-} from '../src/systems/travelDungeons.js';
+} from '../src/systems/travel/travelDungeons.js';
 import { LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
-import { TV_FAR_RANGE } from '../src/systems/travelFarPlaces.js';
-import { ARRIVAL_BUFFER } from '../src/systems/travelAutopilot.js';
+import { TV_FAR_RANGE } from '../src/systems/travel/travelFarPlaces.js';
+import { ARRIVAL_BUFFER } from '../src/systems/travel/travelAutopilot.js';
 import { spawnedMapId, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES, REBIRTH_TTL_MINUTES } from '../src/world/spawnedDungeons.js';
-import { planRoute, routeLegs, routeDrawPoints, routeGround, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, routeDrawPoints, routeGround, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE } from '../src/systems/travel/travelRoute.js';
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -23,7 +23,7 @@ const liftDungeonRows = (w) => {
   return `const etherSea = false, inEther = () => false, etherPlaceRows = () => [], tvEtherPlace = () => null, TV_FAR_RANGE = 24, tvKnownGen = () => discoveryGeneration();\n${m[1]}`;   // AUDIT ETHER-OW C2-2: the finds' generation (no charts here)
 };
 const loc = (name, locationType) => ({ name, mapTableData: { locationType } });
-/** A map row as systems/mapDirectory.js buildMapDict makes it (the key is the pixel id; the MapId carries more bits). */
+/** A map row as systems/map/mapDirectory.js buildMapDict makes it (the key is the pixel id; the MapId carries more bits). */
 const mapRow = (x, y, locationType) => ({ id: getMapPixelID(x, y), mapID: (0x100000 | getMapPixelID(x, y)) >>> 0, regionIndex: 17, mapIndex: x, locationType, dungeonType: 0, discovered: false });
 /** A map dict of rows, keyed as buildMapDict keys them. */
 const dictOf = (rows) => new Map(rows.map((r) => [r.id, r]));
@@ -166,8 +166,8 @@ test('TV6 host: the dungeons gathered once, listed on a pixel or a find, marked 
   // PIN MOVED (AUDIT OW5 J4): and the pixel's own box the approach keeps within
   // PIN MOVED (HOST-SPLIT 1, 2026-10-15): TV_DUNGEON_TYPES's one reader in the host, the Overworld's marks, left for
   // scenes/travelViewMarks.js, and the import went with it
-  assert.match(rd('src/scenes/travelViewMarks.js'), /import \{ TV_DUNGEON_TYPES \} from '\.\.\/systems\/travelDungeons\.js';/);
-  assert.match(w, /import \{ dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M \} from '\.\.\/systems\/travelDungeons\.js';/);
+  assert.match(rd('src/scenes/travelViewMarks.js'), /import \{ TV_DUNGEON_TYPES \} from '\.\.\/systems\/travel\/travelDungeons\.js';/);
+  assert.match(w, /import \{ dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M \} from '\.\.\/systems\/travel\/travelDungeons\.js';/);
   assert.match(w, /_tvDungeonRows \?\?= dungeonRows\(mapDict\)/, 'AUDIT OW3 D3: gathered once off the map rows');
   assert.doesNotMatch(w, /\?\?= dungeon\w*\(locationIndex\)/, 'AUDIT OW3 D3: never a one-time snapshot of the live index');
   assert.match(w, /if \(tvDng\.at && tvDng\.at\.x === at\.x && tvDng\.at\.y === at\.y && tvDng\.dg === dg && tvDng\.grid === grid && tvDng\.n === n\) return tvDng\.list;/, 'kept between pixels and finds (and while the grid and the index hold)');

@@ -57,7 +57,7 @@
   },
   {
     "name": "PROFRETICLE-hits-one",
-    "file": "src/systems/profSounds.js",
+    "file": "src/systems/professions/profSounds.js",
     "old": "const HITS = Object.freeze([0, 1, 2, 3, 4].map((i) => SOUND.Hit1 + i));",
     "new": "const HITS = Object.freeze([0].map((i) => SOUND.Hit1 + i));",
     "tests": [

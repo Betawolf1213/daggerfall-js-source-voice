@@ -13,7 +13,7 @@ import {
   penancePrice, penanceHelps, doPenance, rewardContract, PENANCE_POINTS, PENANCE_BASE_PRICE, CONTRACT_LEGAL_GAIN,
 } from '../src/systems/standing.js';
 import { buildDonationFlow } from '../src/ui/guildServiceWindows.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A faction store of the shape changeReputation walks, two plain factions. */

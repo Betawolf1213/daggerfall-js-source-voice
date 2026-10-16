@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-1-the-leader-indoors-read-as-out",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "round: null, outdoors: host.outdoors(), hub:",
     "new": "round: null, outdoors: true, hub:",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-2-an-old-hub-read-as-new",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "hub: host.relayOk(), gathered: company",
     "new": "hub: true, gathered: company",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-2-nobody-gathered-read-as-company",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (s.leads()) company = host.gathered().length > 0;",
     "new": "if (s.leads()) company = true;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-3-the-instant-read-alone",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (near !== round.at && !host.nearLeader(lead)) return",
     "new": "if (!host.nearLeader(lead)) return",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-3-the-kept-read-alone",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (near !== round.at && !host.nearLeader(lead)) return",
     "new": "if (near !== round.at) return",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-4-the-tab-handed-no-line",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "return { line: answer(round.at, yes == null ? vote !== round.at : !!yes), said: true };",
     "new": "return { line: (answer(round.at, yes == null ? vote !== round.at : !!yes), null), said: true };",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-4-travel-said-twice",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "      return r.said ? null : r.line;",
     "new": "      return r.line;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-4-the-answer-unsaid-in-the-chat",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "    host.say(line);\n    host.poseDirty();\n    return line;",
     "new": "    host.poseDirty();\n    return line;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-5-the-pending-offer-kept",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "offerDue = false; leaderSeen = { acct: trip0.acct, px: trip0.x, py: trip0.y };",
     "new": "leaderSeen = { acct: trip0.acct, px: trip0.x, py: trip0.y };",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-5-the-jump-left-to-be-seen",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "offerDue = false; leaderSeen = { acct: trip0.acct, px: trip0.x, py: trip0.y };",
     "new": "offerDue = false;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-5-a-pixel-step-read-as-elsewhere",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "leaderJourneyed({ px: here.x, py: here.y }, p),",
     "new": "(p.px !== here.x || p.py !== here.y),",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-5-elsewhere-while-i-move",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "away: !!p && !host.journeying() && ",
     "new": "away: !!p && ",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-5-the-member-indoors-read-as-out",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "        outdoors: host.outdoors(),\n      };",
     "new": "        outdoors: true,\n      };",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-7c-following-never",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "        following: !!follow,",
     "new": "        following: false,",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-7d-the-travel-map-dead",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "    openMap: () => host.openMap(),",
     "new": "    openMap: () => {},",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-7e-an-offline-leader-elsewhere",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "      const p = lead && memberPresent(lead) ? lead.p : null;\n      const here = host.here();",
     "new": "      const p = lead ? lead.p : null;\n      const here = host.here();",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-7g-elsewhere-on-x-alone",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "leaderJourneyed({ px: here.x, py: here.y }, p)",
     "new": "leaderJourneyed({ px: here.x, py: p.py }, p)",
     "tests": [
@@ -256,7 +256,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-8-the-hint-names-the-tab-under-a-window",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "Type /travel to come along.",
     "new": "Ready up on the Party tab, or type /travel.",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "AUDIT-PARTY-UI-8-setting-out-over-a-leader-already-there",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (t && !t.arrived) return { role: 'leader', round:",
     "new": "if (t) return { role: 'leader', round:",
     "tests": [

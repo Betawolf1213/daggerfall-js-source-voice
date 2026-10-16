@@ -185,9 +185,9 @@ native automap windows (AMAP00I0/TOWN00I0: the 3D view, render modes,
 note markers, teleporter portals)" as "the two largest genuinely-unbuilt
 reference surfaces". Both ship: `ui/saveWindow.js` (782 lines, ROAD-C
 C1) and the automap pair - `ui/automapWindow.js` 1,504,
-`ui/exteriorAutomapWindow.js` 1,072, over `systems/automapModel.js` 282,
+`ui/exteriorAutomapWindow.js` 1,072, over `systems/automap/automapModel.js` 282,
 `ui/automapCamera.js` 606, `ui/automapChrome.js` 349,
-`ui/automapMarkers.js` 530 and `systems/automapPick.js` 399 (ROAD-C C2,
+`ui/automapMarkers.js` 530 and `systems/automap/automapPick.js` 399 (ROAD-C C2,
 ten stages in two flights). 5,524 lines of window that did not exist
 when the superseded page was written.
 
@@ -205,13 +205,13 @@ departure that had no Ledger row is retired rather than given one.
 ## The effect library
 
 `SPELL_MAKER_EFFECTS` is **91 rows across 39 groups, 0 inert**
-(`node -e` over `src/systems/spellEffects.js`; the same two numbers are
+(`node -e` over `src/systems/spell/spellEffects.js`; the same two numbers are
 gated against `Port-Ledger.md`'s derived-figures block by
 `test/ledger.test.js:"if (c === quote)".."i++; continue;"`). The inert count was already 0 at the
 superseded page and stays 0: nothing the spell maker offers cannot fire.
 
 `SERVICE_DESTINATION` is **20 guild services, 0 with a null
-destination** (`systems/guildServiceFlow.js`, gated by
+destination** (`systems/guild/guildServiceFlow.js`, gated by
 `test/ledger.test.js:"The whole line an"`).
 
 The superseded page's two magic gaps are closed and verified here:
@@ -492,7 +492,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   unknowable, so closing it needs an owner-chosen number. The ON arm
   needs none of it - it re-reads range from the item template every
   frame, which is what ships.*
-- ~~**`src/systems/talkMacros.js:314`** - `GetValue`'s
+- ~~**`src/systems/talk/talkMacros.js:314`** - `GetValue`'s
   `symbolStr + "[undefined]"` sentinel.~~ SHIPPED (E-group E7,
   2026-09-02): *the blocker was the table, so the table was finished.
   `questMacros.js`'s HANDLERS carries all 217 `macroHandlers` rows
@@ -687,7 +687,7 @@ could see the others' closures until the squash, which is how "leaving
   `characters/enemyCasting.js:"BEFORE the 1/40 roll"` (the clear-path term) - **E6**, which
   closed section C's `playSound` row with them;
 - `systems/inventory.js:"E4 (2026-09-02) RETIRED"` (gold as a bag stack) - **E4**;
-- `systems/talkMacros.js:"ordering: the scan"` (`GetValue`'s empty-string arm) - **E7**;
+- `systems/talk/talkMacros.js:"ordering: the scan"` (`GetValue`'s empty-string arm) - **E7**;
 - `ui/hudLarge.js:"THE DOCKED BAR SHRINKS"` (the docked bar occludes) - **E5**;
 - `ui/exteriorAutomapWindow.js:"rect and was being"` (the two console verbs) - **E1**
   narrowed the header and **E3** built the console host they needed.
@@ -1117,7 +1117,7 @@ faithful to whatever reference it does have, and none of them is a gap.
 - **Removed, then re-integrated (AUDIT 58 F5 corrects this bullet):** the
   port's own road system was removed whole on 2026-08-29 (~5,200 lines),
   which retired the only departure that ever touched the travel law -
-  `systems/travel.js` is the verbatim port again and `byRoad` is a
+  `systems/travel/travel.js` is the verbatim port again and `byRoad` is a
   permanent false. But on 2026-09-02 Hazelnut gave permission and ROADS
   22-25 brought roads BACK on the ground and on both maps: his four
   vendored arrays with the port's own generated network as the fallback,

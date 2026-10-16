@@ -21,7 +21,7 @@
 //
 // ITS BLOWS ARE RESOLVED ON THE STRUCK PLAYER'S MACHINE (co-op's law, and the sea's victim's law - navalHost.js landHit):
 // every attack's shape and moment is said here, and each client tests its own boat and its own feet against it
-// (systems/serpentStrike.js). The relay never learns a ship's hurts.
+// (systems/serpent/serpentStrike.js). The relay never learns a ship's hurts.
 //
 // PURE. No clock of its own (every function takes `now`), no randomness of its own (an `rng` is handed in), no I/O - the
 // relay owns the sockets, the alarm that steps this, the storage that checkpoints it, and the receipts.
@@ -343,7 +343,7 @@ export const serpentHasPart = (p) => (p.share > 0 && p.dealt >= SERPENT_RECEIPT_
 export const serpentShareWanted = (p, now) => !p.wreck && !p.stale && p.aboard !== false && now - (p.seenAt ?? p.joinedAt) <= SERPENT_ABSENT_RETIRE_MS && !(p.share > 0 && now - (p.hitAt ?? p.joinedAt) > SERPENT_IDLE_RETIRE_MS);
 /** AUDIT SHIPS C1 (2026-10-06): THE SHIPS FIGHTING IT - the fighters whose share stands in its health now: a warship's
  *  (a rowboat brings none and deals none), afloat, at the fight, her guns heard, and her captain aboard her (every other
- *  share is retired - serpentShareWanted, serpentWreck). The pair's share reads it (systems/serpentStrike.js fleetShare).
+ *  share is retired - serpentShareWanted, serpentWreck). The pair's share reads it (systems/serpent/serpentStrike.js fleetShare).
  *  It counted every account at the fight whose hull claim, which only ever grows, was 0 or more: a lone galleon with a
  *  rowboat beside her, or with a friend riding her deck who had sighted it from their own ship, was "a pair" and took two
  *  thirds of every blow - the lone ship eased that Mac's call rules out - while a true pair with a rowboat by was three,
@@ -1313,7 +1313,7 @@ export function stepSerpentBrain(f, now, bodies, rng) {
 
 function endFrames(f, now, out) { hpFrame(f, now, out); coilHpFrame(f, now, out); stateFrame(f, now, out); }
 /** Its health's word, at most every SERPENT_HP_SEND_MS - AUDIT 2 XC1 (2026-10-06): and the count of the ships fighting it
- *  (`n`, the pair's share's - systems/serpentStrike.js fleetShare) whenever that changes: said in the whole state alone,
+ *  (`n`, the pair's share's - systems/serpent/serpentStrike.js fleetShare) whenever that changes: said in the whole state alone,
  *  every SERPENT_STATE_SEND_MS, a pair's survivor was eased and a third ship's joining was not for up to 5 s. */
 function hpFrame(f, now, out) {
   const h = Math.round(f.hp), n = f.ships ?? 0;

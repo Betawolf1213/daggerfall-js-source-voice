@@ -3,15 +3,15 @@
 // A MEMBER MAY REST ALONE. The switch is the player's own ("Rest with my party", uiPrefs `restWithParty`, default on,
 // the player's own online); off, the party pose says `nr` (net/wire.js validPartyPose) and the party's rest goes on
 // without them - no voter, nobody to gather, no rest to mirror - while their own rest is their own, as in a tavern.
-// A leader who turns it off leaves everyone to rest for themselves. The law is systems/partyRestLaw.js's, run here on
+// A leader who turns it off leaves everyone to rest for themselves. The law is systems/party/partyRestLaw.js's, run here on
 // a table; world.js's seams are pinned by source (test/partyrest1.test.js's law for its closure).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validPartyPose } from '../src/net/wire.js';
-import { restsAlone, partyRestsTogether, restAloneText } from '../src/systems/partyRestLaw.js';
+import { restsAlone, partyRestsTogether, restAloneText } from '../src/systems/party/partyRestLaw.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const POSE = Object.freeze({ px: 100, py: 200, loc: 'Daggerfall', in: 0, h: 30, hm: 60, f: 1000, fm: 2000, m: 10, mm: 20, race: 'Nord', gender: 'male', face: 2 });

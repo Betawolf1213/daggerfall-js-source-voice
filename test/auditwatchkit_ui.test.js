@@ -33,7 +33,7 @@ import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { NAVAL_SAVE_VENDOR } from '../src/scenes/navalHost.js';
 import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway/comeSailAway.js';
 import { goldStack, letterOfCredit } from '../src/systems/inventory.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { pickFoe, RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE, TOO_FAR_AWAY_TEXT } from '../src/player/activate.js';
 import { LOCK_PICK_DISTANCE, createLockOn } from '../src/player/lockOn.js';

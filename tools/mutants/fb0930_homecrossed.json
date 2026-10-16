@@ -57,7 +57,7 @@
   },
   {
     "name": "HOME-CROSSED-the-mark-dropped-by-the-client",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "            crossed: h.crossed === true,   // HOME-CROSSED: mine, carried in through customs - no sale\n",
     "new": "",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "HOME-CROSSED-the-sale-guard-gone",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (selling.has(house)) return { ok: false, error: HOME_SALE_OUT };\n",
     "new": "",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "HOME-CROSSED-the-sale-guard-never-let-go",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    return await sellOut(homes, { mapId, buildingKey, credit, realm });\n  } finally {\n    selling.delete(house);\n  }",
     "new": "    return await sellOut(homes, { mapId, buildingKey, credit, realm });\n  } finally {\n    void house;\n  }",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "HOME-CROSSED-the-lines-not-the-banks",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "export const HOME_CROSSED_LINES = Object.freeze([...CROSSED_DEED_LINES, 'It stays your home.']);",
     "new": "export const HOME_CROSSED_LINES = Object.freeze(['You cannot sell it.']);",
     "tests": [

@@ -14,8 +14,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { setForagingHost, createForagingItem } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { herbKind } from '../src/scenes/herbHost.js';

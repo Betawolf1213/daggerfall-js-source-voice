@@ -28,7 +28,7 @@ export const TEX = Object.freeze({
   openSide: 8, tilt: 9, tiltInner: 10,
   caravanSide: 11, caravanFront: 12, caravanRear: 13, caravanRoof: 14,
   roomSide: 15, roomFront: 16, roomRear: 17, roomCeiling: 18, roomFloor: 19,   // WAGONS2: the caravan's room (world/caravanRoomModel.js)
-  harness: 20,   // WAGONS3: the traces and the reins (systems/wagonRopes.js)
+  harness: 20,   // WAGONS3: the traces and the reins (systems/wagon/wagonRopes.js)
 });
 /** How far each tiling picture repeats (metres a tile, u then v - world/galleonMesh.js planarUv's); a livery's u alone
  *  (its v is its height, `BANDS`); 0 where the picture is laid whole on its face (a wheel's, an end's). */
@@ -65,7 +65,7 @@ const column = (img, x, col, y0 = 0, y1 = img.height) => { for (let y = y0; y < 
 /** A livery's row for a height over the wagon's side (`SIDE_Y0` its foot, row 63; `SIDE_Y1` its head, row 0). */
 export const sideRow = (y) => Math.max(0, Math.min(S - 1, Math.round(((SIDE_Y1 - y) / (SIDE_Y1 - SIDE_Y0)) * (S - 1))));
 
-// ── WAGONS2: the paints (systems/wagonLooks.js is their law) ───────────────────────────────────────────
+// ── WAGONS2: the paints (systems/wagon/wagonLooks.js is their law) ───────────────────────────────────────────
 
 /** A painted body's colours, [base, lit, dark] - each paint the law names that is a colour (the built ones - the cart's
  *  oak, the tilt's cream - are null: their pictures as WAGONS1 painted them). */
@@ -456,7 +456,7 @@ export function wagonArt() {
 }
 
 /**
- * WAGONS2: THE PICTURES A PAINT WEARS - `[record, picture]` for a list's `i`th choice (systems/wagonLooks.js): `list`
+ * WAGONS2: THE PICTURES A PAINT WEARS - `[record, picture]` for a list's `i`th choice (systems/wagon/wagonLooks.js): `list`
  * a kind (its outside) or one of the caravan's inside parts ('walls', 'floor', 'ceiling'), `name` the choice's name.
  * The built choice (0) wears the built records (wagonArt) and paints none here.
  */

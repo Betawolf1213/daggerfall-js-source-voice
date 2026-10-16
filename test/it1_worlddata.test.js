@@ -14,7 +14,7 @@ import { canonicalJson } from '../src/formats/worldDataJson.js';
 import { gateAppends, layGateRecords, installImmersiveTravelGates, IT_GATE_FILE } from '../src/world/immersiveTravelGates.js';
 import { appendedEdit, appendedPatch, IT_GATE_BLOCKS } from '../tools/immersiveTravelPatches.mjs';
 import { sha256Canonical } from '../tools/worldDataPatch.mjs';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

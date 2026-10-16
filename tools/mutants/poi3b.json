@@ -91,7 +91,7 @@
   },
   {
     "name": "POI3B-refused-online-no-more",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "'wseed', 'season', 'editor']);",
     "new": "'wseed', 'season']);",
     "tests": [

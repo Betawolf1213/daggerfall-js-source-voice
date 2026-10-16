@@ -158,7 +158,7 @@ six words a day, the player's zone's word applied, the sky that word
 to the horizon. A rain day rains everywhere in the Woodlands at once;
 a storm has no edge. The classic lane keeps that, 1:1.
 
-**The field** (`systems/weatherField.js`, pure). The ENHANCED lane
+**The field** (`systems/weather/weatherField.js`, pure). The ENHANCED lane
 reads the same six words - the sim's array, the shared day's roll
 online - as a field over the map. A precipitating word (rain, thunder,
 snow) becomes CELLS scattered over the zone's land: a jittered lattice
@@ -410,7 +410,7 @@ lifetimes that drifts the climate's weather fails the build.
 
 ### The slices
 
-- **A - The map law** (`systems/weatherMap.js`, pure): the lattice,
+- **A - The map law** (`systems/weather/weatherMap.js`, pure): the lattice,
   types, lifecycles, structure, the wind field, `weatherAt`, `systemsNear`,
   `forecastAt`; the calibration gate.
 - **B - The sim seam**: the lane's word, intensity, crossings and jumps
@@ -436,7 +436,7 @@ superseding CLK2's evolution and WEATHER2b's field on the lane.
 
 ### Slice A shipped - the map law (2026-09-22)
 
-`systems/weatherMap.js`, pure, and `systems/weatherTable.js` (DFU's
+`systems/weather/weatherMap.js`, pure, and `systems/weather/weatherTable.js` (DFU's
 table, dispatch and roll moved whole out of `weatherSim.js`, which
 re-exports every name, so the map and the sim read one table without an
 import cycle). Pinned by `test/weather3a_weathermap.test.js`, with
@@ -1159,7 +1159,7 @@ spring stood under falling rain or a storm 36% of every hour, a swamp's 41%, a j
 Of that wet time 44-56% was drawn at half the rain's profile or more (13,000 drops and up), and 17-22% under 0.15, a
 sprinkle. Two causes, both in the map's law:
 
-- **RAIN-HOURS - a day's odds worn as hours.** The Chronicles' table (`systems/weatherTable.js`, DFU's digit for
+- **RAIN-HOURS - a day's odds worn as hours.** The Chronicles' table (`systems/weather/weatherTable.js`, DFU's digit for
   digit) is the odds of a DAY's weather, and DFU wears the day's word for all of it: a rain day rains twenty-four
   hours. Slice A solved the map's births to those odds as the share of TIME each word is worn, so the enhanced lane
   rained as long as DFU's whole rain days. A wet day is a day it rains, not a day of rain.
@@ -1170,7 +1170,7 @@ sprinkle. Two causes, both in the map's law:
   of its own. And a third or more of the wet time was a thunderstorm, which never sprinkles (WX2's `PRECIP_PEAK.storm`,
   kept).
 
-**The fix** (`systems/weatherMap.js`):
+**The fix** (`systems/weather/weatherMap.js`):
 - **`WET_HOURS`** (rain 0.5, thunder 0.5), in `targetShares` - the one place the table becomes the map's amounts. The
   map wears rain and thunder for half their odds. The hours they give up go to the dry words - clear air, cloud, the
   deck, fog, the desert's sand - each lifted by the one factor, so a climate keeps its character and only rains less.

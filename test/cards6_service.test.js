@@ -12,7 +12,7 @@ import { verifyOrder } from '../src/net/identityToken.js';
 import { mintCardReceipt } from '../src/net/cardReceipt.js';
 import { payableOf } from '../src/net/realmGoldLaw.js';
 import { HOLDEM_STAKE_MIN_BB, HOLDEM_STAKE_MAX_BB } from '../src/net/holdemTable.js';
-import { BUY_IN_MIN_BB, BUY_IN_MAX_BB } from '../src/systems/cardTableSession.js';
+import { BUY_IN_MIN_BB, BUY_IN_MAX_BB } from '../src/systems/card/cardTableSession.js';
 
 const { subtle } = webcrypto;
 let _now = T0;

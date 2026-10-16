@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { PlayerWeapon, friendlyProtected } from '../src/combat/playerWeapon.js';
 import { WEAPONS } from '../src/characters/weapons.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W2b: MELEE FRIENDLY PROTECTION (WeaponManager.cs:930-944 +
 // the :1057-1064 fallback), a default-ON DFU law the port's swing did

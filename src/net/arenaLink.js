@@ -1,7 +1,7 @@
 // @ts-check
 // ARENA4 (2026-10-02): WHAT THE CLIENT HOLDS OF THE ARENA ONLINE - the relay's words (net/arenaLaw.js validArenaOut)
 // folded into two states: THE HALL (my place in the queue and its band, an offer and its clock, the bout I am sent to,
-// the bouts to watch) and THE BOUT (a mirror of the relay's bout, in the bout law's own shape - systems/arenaBout.js - so
+// the bouts to watch) and THE BOUT (a mirror of the relay's bout, in the bout law's own shape - systems/arena/arenaBout.js - so
 // the HUD, the crowd and the Herald read a bout the relay runs as they read one this screen runs). Design:
 // bible/11-Multiplayer/Arena.md "7. Online".
 //
@@ -13,7 +13,7 @@
 // the local now is the offset, give or take the wire) - the timer and the phases read the screen's own clock.
 //
 // Not a DFU member. Ledger A (ARENA).
-import { newBout, BOUT_LIMIT_MS } from '../systems/arenaBout.js';
+import { newBout, BOUT_LIMIT_MS } from '../systems/arena/arenaBout.js';
 import { arenaBoutSeed } from './arenaBrain.js';
 
 /** The hall when nothing has been heard. */
@@ -46,7 +46,7 @@ const OUT_EVENTS = new Set(['yield', 'fall', 'ringout']);
 /**
  * THE MIRROR from a whole `st` word: the bout law's own state (newBout) with the relay's fighters, their health and
  * their outs, its phase, its fight's clock - `names(i, mobile)` naming the relay's own fighters by the bout's seed
- * (systems/arenaFighters.js fighterIdentity - every screen bills them alike). `prev` a mirror of the same bout keeps its
+ * (systems/arena/arenaFighters.js fighterIdentity - every screen bills them alike). `prev` a mirror of the same bout keeps its
  * tallies. `off` the relay's clock less this screen's. Returns `{ b, me, kind, tier, bout, ai: [{ id, i, mobile }] }`.
  */
 /**

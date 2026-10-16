@@ -115,7 +115,7 @@
 // (:651-660) puts one thing in its click-anywhere box - the effect's
 // own SpellBookDescription tokens - and the port had no per-effect
 // text id, so the box carried the group/subgroup pair instead. The
-// ids are systems/spellEffects.js's SPELLBOOK_DESCRIPTION_IDS now
+// ids are systems/spell/spellEffects.js's SPELLBOOK_DESCRIPTION_IDS now
 // (EntityEffect.cs:78/:395, overridden by 85 effect classes and
 // computed from the variant index by the two variant families), read
 // through the TEXT.RSC seam this window already had one method down.
@@ -137,7 +137,7 @@ import {
   preloadSpellIcons, drawSpellIcon, drawTargetIcon, drawElementIcon,
   TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS,
 } from './spellIcons.js';
-import { effectByKey, spellBookDescriptionId, effectMacroSource, portEffectDescription } from '../systems/spellEffects.js';
+import { effectByKey, spellBookDescriptionId, effectMacroSource, portEffectDescription } from '../systems/spell/spellEffects.js';
 import { expandRowValues, sourceValues } from '../systems/quest/questMacros.js';   // MACRO-5: the effect popup's source
 import { calculateTradePrice } from '../systems/shopStock.js';
 import { ROW_SPACING, SELECTED_TEXT_COLOR } from './listPicker.js';   // ListBox.cs:36-37 and DaggerfallUI.cs:62 - one home each
@@ -147,10 +147,10 @@ import { ToolTip } from './toolTip.js';   // U37's shared component - SetupIcons
 import { SpellIconPickerWindow } from './spellIconPickerWindow.js';   // MC1: the window the icon panel's click pushes
 import {
   expandGuildMacros, TRADE_MESSAGE_BASE_ID, NOT_ENOUGH_GOLD_ID, cureOfferMessageOffset,
-} from '../systems/guildServiceActions.js';   // DaggerfallTradeWindow's shared ids (:33-34) and the three haggle BANDS, all already homed
+} from '../systems/guild/guildServiceActions.js';   // DaggerfallTradeWindow's shared ids (:33-34) and the three haggle BANDS, all already homed
 import { getHolidayId, HOLIDAYS } from '../systems/holidays.js';
-import { NO_SPELLBOOK_ID, SPELLBOOK_TEMPLATE_INDEX, MAX_SPELL_NAME, purchaseSpell } from '../systems/spellMaker.js';
-import { shownSpellName } from '../systems/loot.js';   // L10N3e: a stock spell's name in the player's language
+import { NO_SPELLBOOK_ID, SPELLBOOK_TEMPLATE_INDEX, MAX_SPELL_NAME, purchaseSpell } from '../systems/spell/spellMaker.js';
+import { shownSpellName } from '../systems/loot/loot.js';   // L10N3e: a stock spell's name in the player's language
 import { totalGoldAmount } from '../systems/court.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';

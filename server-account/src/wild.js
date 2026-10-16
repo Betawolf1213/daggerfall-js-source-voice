@@ -6,7 +6,7 @@
 // dropped nothing, and one that fell dropped what it chose (a deposit was any records at all, for its friends to take).
 // Now the relay referees the zone (src/net/wildRef.js) and signs a fall (src/net/wildReceipt.js `f1`) naming the fallen,
 // its realm character, its killer and the worn piece the killer picked; and THIS SERVICE TAKES THE DROP OFF THE FALLEN'S
-// JUDGED RECORD against it - the zone's own law (src/systems/wildDropLaw.js takeWildDeath: the bag and the cart but what
+// JUDGED RECORD against it - the zone's own law (src/systems/wild/wildDropLaw.js takeWildDeath: the bag and the cart but what
 // the fallen keep, half the purse, the killer's one worn piece, fitted to one remains), every piece the ledger bars from
 // leaving kept - and signs what it took for the room: a `remains` order (src/net/identityToken.js), the records' digest
 // and the killer's piece theirs alone. The room keeps a deposit only on that order.
@@ -34,16 +34,16 @@
 // CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): THE CART
 // DROPS ONLY WHILE THE WAGON IS WITH ITS FALLEN. Whether a parked wagon stands on the zone's ground is the zone's mask,
 // which only a client holds (the map files); so the fallen's own tab says its wagon is away (`cart` 0 -
-// src/systems/wildCart.js wildCartAway), and the word is honoured only where the record this service keeps agrees by its
-// mode (src/systems/wildDropLaw.js wildCartMayBeAway: parked, stabled or none - never driven, following or beside them
+// src/systems/wild/wildCart.js wildCartAway), and the word is honoured only where the record this service keeps agrees by its
+// mode (src/systems/wild/wildDropLaw.js wildCartMayBeAway: parked, stabled or none - never driven, following or beside them
 // unstabled). A seizure honours none (its carrier holds neither the record nor the mask), and a tab that says nothing
 // (one from before the word) drops the cart as ever. Asked again, a fall answers its first take, whatever is said.
 import { verifyWildReceipt, verifyWildCollect, WILD_FALL_GRACE_S, WILD_COLLECT_TTL_S } from '../../src/net/wildReceipt.js';
 import { mintRemainsOrder, remainsDigest, ORDER_TTL_S } from '../../src/net/identityToken.js';
 import { streamsFoes, WILD_REMAINS_MS } from '../../src/net/wire.js';
 import { GUILD_ID_RE } from '../../src/net/guildLaw.js';
-import { takeWildDeath, wildDropCandidates, wildTookOf, wildCartRecordOf, wildCartMayBeAway } from '../../src/systems/wildDropLaw.js';
-import { mintItemId } from '../../src/systems/itemIds.js';
+import { takeWildDeath, wildDropCandidates, wildTookOf, wildCartRecordOf, wildCartMayBeAway } from '../../src/systems/wild/wildDropLaw.js';
+import { mintItemId } from '../../src/systems/item/itemIds.js';
 import { giveTradeGoods } from '../../src/net/realmTradeLaw.js';
 import { prepareRealmRecord, seizeRealmRecord, realmAtOf, realmActFirst, recordMovedOf, mustChange, dropIfUnnamed, dropObjects, realmSaveTextOf, holdRefusal, REALM_ID_RE } from './realm.js';
 import { ledgerKeyOf } from './judge.js';

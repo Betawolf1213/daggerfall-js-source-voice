@@ -2,16 +2,16 @@
 //
 // F191 - RegionPowerAndConditionsUpdate's CONDITIONS half
 // (PlayerEntity.cs:1697-2118) and the 38-day arm that runs it
-// (:468-472). The relation mutators (systems/factionRelations.js) and
-// the region store (systems/regionConditions.js) had both shipped; the
+// (:468-472). The relation mutators (systems/faction/factionRelations.js) and
+// the region store (systems/region/regionConditions.js) had both shipped; the
 // member that drives them had not, so no alliance ever ended, no war
 // ever started and no region flag ever flipped for the life of a
 // character.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { regionPowerUpdate, ALWAYS_AVAILABLE_RUMORS } from '../src/systems/regionPower.js';
-import { createRegionConditions, REGION_FLAGS } from '../src/systems/regionConditions.js';
+import { regionPowerUpdate, ALWAYS_AVAILABLE_RUMORS } from '../src/systems/region/regionPower.js';
+import { createRegionConditions, REGION_FLAGS } from '../src/systems/region/regionConditions.js';
 import {
   tickPlayerMinutes, CLASSIC_MINUTES_PER_SECOND,
   FACTION_POWER_INTERVAL_MINUTES, REGION_CONDITIONS_INTERVAL_MINUTES,
@@ -172,8 +172,8 @@ test('AUDIT 26 F191: the 38-day tick arm runs the conditions half; the 7-day arm
 import { QuestJournalWindow, JOURNAL_RECTS, FIND_PLACE_TEXT } from '../src/ui/questJournal.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
 import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
-import { resetTravelMapState } from '../src/systems/travelMapState.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID, patchRegionIndex } from '../src/formats/mapsFile.js';
 import { restoreDiscovery } from '../src/systems/discovery.js';
 
@@ -361,7 +361,7 @@ test('AUDIT 26 F195: GotoPlace is pending until the map ticks, then opens its re
 // nothing would have caught them coming apart again.
 
 import { useItem, TEMPLATES } from '../src/systems/useItem.js';
-import { questLetterName } from '../src/systems/itemInfo.js';
+import { questLetterName } from '../src/systems/item/itemInfo.js';
 
 /** A quest Item RESOURCE as the machine keeps it (quest/item.js:"Q2b use-tracking"). */
 const questResource = (item, { usedMessageID = -1, actionWatching = true } = {}) => ({

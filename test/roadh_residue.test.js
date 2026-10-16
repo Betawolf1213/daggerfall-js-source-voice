@@ -25,7 +25,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dfuFile, missingDfu } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
-import { LightningFlash } from '../src/systems/dynamicSkies.js';
+import { LightningFlash } from '../src/systems/dynamicSkies/dynamicSkies.js';
 import { attachTouch } from '../src/ui/touch.js';
 import { setBindings } from '../src/ui/input.js';
 import {

@@ -33,8 +33,8 @@ port's own site for the C# member, the switch read at the call (a pane
 toggle takes effect at the next roll) - except the class enemies'
 appearance, which DFU writes into `EnemyBasics.Enemies` at Awake and
 the port writes at install (the Features row says *when the game next
-loads*). Three modules: `systems/rrRealism.js` (the laws, a leaf),
-`systems/rrInstall.js` (InitMod's registrations, run by the scene boot
+loads*). Three modules: `systems/roleplayRealism/rrRealism.js` (the laws, a leaf),
+`systems/roleplayRealism/rrInstall.js` (InitMod's registrations, run by the scene boot
 after Items'), and the seams they hang on.
 
 | module / mod law | DFU seam | the port's site |
@@ -231,7 +231,7 @@ its arms to `rrInstall.js`.
 
 RoleplayRealism.cs:241-256 registers what the line needs and DFU's
 mod hooks provide; the port had none of the four hooks, so this slice
-is as much DFU as mod. Laws in `systems/rrQuestLine.js`; the install
+is as much DFU as mod. Laws in `systems/roleplayRealism/rrQuestLine.js`; the install
 adds InitMod's four calls to `rrInstall.js`.
 
 - **The quest list** - `QuestListsManager.RegisterQuestList(
@@ -652,7 +652,7 @@ the property: `GetMaxEncumbrance` (`DaggerfallEntity.cs:272`,
 IncreasedWeightAllowanceMultiplier)`. The port's own version of that
 property is `entityMaxEncumbrance` (`combat/formulas.js`) - the pack,
 both character sheets, the carry, trade and bank gates all read it -
-and `encumbranceOf` (`systems/rrInstall.js`) alone read the bare
+and `encumbranceOf` (`systems/roleplayRealism/rrInstall.js`) alone read the bare
 formula off live strength. So a player whose weight allowance (the
 enchantment, and the Loot Rarity weight affixes that ride the same
 multiplier, `06-Systems/Loot-Rarity.md`) lifted the pack to 502 took

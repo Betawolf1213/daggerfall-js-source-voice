@@ -956,7 +956,7 @@ gust's wave reads `dot(root, wdir)` (the lab's): both jumped by the offset
 on the crossing frame, and the meadow's cards turned and flipped by the
 same hash. The tuft's seed is its place in its cell now (`hash(aPA.xy *
 64)`, the packed lane no shift touches), and the world host hands the wave
-a clock that carries the shift's phase (`systems/windDrive.js`
+a clock that carries the shift's phase (`systems/wind/windDrive.js`
 `gustClock`) - the flats' wave with it, so the trees stand still under a
 crossing too (`07-Rendering/Rendering.md`, AUDIT MEADOW1). The vanish, the
 three-second regrow and the reshuffle were gone already.

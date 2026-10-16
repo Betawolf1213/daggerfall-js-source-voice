@@ -13,8 +13,8 @@ import {
 } from '../src/systems/tradeModes.js';
 import { calculateCost, calculateTradePrice } from '../src/systems/shopStock.js';
 import { HOLIDAYS } from '../src/systems/holidays.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { cureOfferMessageOffset } from '../src/systems/guildServiceActions.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { cureOfferMessageOffset } from '../src/systems/guild/guildServiceActions.js';
 
 const skills = { mercantile: 50, personality: 50 };
 const it = (value, over = {}) => ({ value, group: 'Weapons', stackCount: 1, ...over });

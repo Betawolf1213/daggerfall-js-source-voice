@@ -219,7 +219,7 @@
   },
   {
     "name": "AUDITRETRO2-G2-the-page-test-first",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  return Object.hasOwn(ONLINE_FORCED_SETTINGS[section] ?? {}, key) && isOnlinePage(search) ?",
     "new": "  return isOnlinePage(search) && Object.hasOwn(ONLINE_FORCED_SETTINGS[section] ?? {}, key) ?",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "AUDITRETRO2-I7-one-warning-for-every-key",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  const k = `${fn}|${section}|${key}|${raw}`;",
     "new": "  const k = `${fn}|${section}|${raw}`;",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "AUDITRETRO2-I7-a-bad-bool-said-every-read",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  warnOnce('GetBool', section, key, raw, 'False');",
     "new": "  console.warn(`[settings] GetBool() could not read value [${section}]${key}. Returning False.`);",
     "tests": [

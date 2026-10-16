@@ -7,15 +7,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { WEAPONS, WEAPON_MATERIALS, WEAPON_CONDITION_POOL, buildWeapon } from '../src/characters/weapons.js';
-import { templateByIndex, registerCustomTemplates, registerTemplateOverrides, mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
+import { templateByIndex, registerCustomTemplates, registerTemplateOverrides, mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
 import { createWeapon, weaponOfMaterial, armorOfMaterial } from '../src/combat/enemyEquipment.js';
 import { createThunderlock, createPellets, THUNDERLOCK_TEMPLATE } from '../src/systems/thunderlock.js';
-import { RRI_TEMPLATES, RRI_TEMPLATE_PATCHES } from '../src/systems/rriItems.js';
+import { RRI_TEMPLATES, RRI_TEMPLATE_PATCHES } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { repoolWeaponConditions } from '../src/systems/conditionRepair.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { mintPiece } from '../src/systems/smithItems.js';
-import { applyRarity, legendaryById } from '../src/systems/lootRarity.js';
+import { applyRarity, legendaryById } from '../src/systems/loot/lootRarity.js';
 import { applyEnchantments } from '../src/systems/enchanting.js';
 import { doItemEnchantmentPayloads, assignHeldSpell, PAYLOAD, ENCHANTMENT_TYPES as T } from '../src/systems/enchantments.js';
 import { classicCastingCost } from '../src/systems/spellcost.js';
@@ -141,7 +141,7 @@ test('WEAPON-POOL: a save\'s weapons minted on their rows move to the one pool o
   // idempotent: every piece moved is on the pool, and the Warhammer was - a second load moves nothing
   for (const list of [q.items, q.wagonItems, q.bagItems, q.otherItems, snap.world.piles[0].items]) assert.equal(repoolWeaponConditions(list), 0);
   // the load door runs it over every list the save carries, after the never-minted are minted (DISC21-A)
-  assert.match(rd('src/systems/save.js'), /const n = repairUnmintedConditions\(list\);[\s\S]*?for \(const list of repairLists\) \{\s+const n = repoolWeaponConditions\(list\);/);
+  assert.match(rd('src/systems/save/save.js'), /const n = repairUnmintedConditions\(list\);[\s\S]*?for \(const list of repairLists\) \{\s+const n = repoolWeaponConditions\(list\);/);
 });
 
 test('WEAPON-POOL: the fingerprint is the old mint\'s own number - Daggerfall\'s row, a custom row and Roleplay & Realism: Items\' patch, through the ladder and a made piece\'s quality - and nothing else moves: armour, clothing, jewellery, a torch, a frozen record, a piece with no condition, a piece no mint gives; with the mod on, a classic row beside a different one (a Short Bow, a Wakizashi) moves too; the share rounds to the nearest point (mutants: each row source; the ladder\'s default; the quality\'s rounding; the share\'s rounding; each guard; the group test turned on armour alone; a neighbour\'s row read)', () => {

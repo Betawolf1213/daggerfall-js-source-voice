@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { eliteLoot, grantEliteLoot } from '../src/systems/eliteFoes.js';
-import { WILD_GIANT_DAMAGE_MULT } from '../src/systems/wildZone.js';
+import { WILD_GIANT_DAMAGE_MULT } from '../src/systems/wild/wildZone.js';
 
 const src = readFileSync(new URL('../src/scenes/exteriorFoes.js', import.meta.url), 'utf8');
 

@@ -12,7 +12,7 @@ import {
 } from '../src/ui/messageBox.js';
 import { TextRsc, dfRandPick, RSC } from '../src/formats/textRsc.js';
 import { srand, rand } from '../src/formats/dfRandom.js';
-import { itemInfoRows, itemInfoPanelRows, setPaintFile, INFO_TEXT } from '../src/systems/itemInfo.js';
+import { itemInfoRows, itemInfoPanelRows, setPaintFile, INFO_TEXT } from '../src/systems/item/itemInfo.js';
 
 // The producer's own font shape: measureText walks glyphWidth and adds
 // one pixel between glyphs, so an n-char row is 5n - 1 wide at 4px.

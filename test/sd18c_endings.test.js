@@ -12,7 +12,7 @@ import { buildRemnantParts, buildRemnantModel, buildHeartModel, heartRecordOf, e
 import { SD_ENDINGS, sdMarksOf, sdEndingOf } from '../src/net/sdMarks.js';
 import { createSdRemnant } from '../src/scenes/sdRemnant.js';
 import { createSdFx, sdHeartColorOf, SD_FX_COLOR, SD_FX_KINDS } from '../src/scenes/sdFx.js';
-import { sdRumorLine, SD_ENDING_RUMOR } from '../src/systems/sdOmen.js';
+import { sdRumorLine, SD_ENDING_RUMOR } from '../src/systems/superDungeon/sdOmen.js';
 
 const T0 = 1_800_000_000_000;
 const recordsOf = (m) => new Set(m.subMeshes.map((x) => x.textureRecord));
@@ -78,7 +78,7 @@ test('SD18c ITS WORD: the taverns tell the omen its Ending sends - six of them, 
   assert.equal(sdRumorLine('Wayrest', 'wayrest'), 'They say the air goes brass-coloured past the walls of Wayrest at dusk, and the tide comes in where there is no sea.');
   assert.match(sdRumorLine('Wayrest'), /a bell rings where there is no bell\.$/);
   // the slot's own, through the taverns and the map (the map card's line pinned whole by test/sd2c_omen.test.js)
-  const O = readFileSync(new URL('../src/systems/sdOmen.js', import.meta.url), 'utf8');
+  const O = readFileSync(new URL('../src/systems/superDungeon/sdOmen.js', import.meta.url), 'utf8');
   assert.match(O, /return sdRumorLine\(hollow\.site\.cityName \|\| 'the city', sdMarksOf\(rec\.s\)\[0\]\);/);
   assert.match(O, /const E = sdEndingOf\(sdMarksOf\(rec\.s\)\);/);
   assert.match(O, /\.\.\.\(E \? \[`It keeps the Ending of \$\{E\.stone\}`\] : \[\]\)/);

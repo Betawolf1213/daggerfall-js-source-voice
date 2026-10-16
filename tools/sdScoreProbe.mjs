@@ -5,7 +5,7 @@
 // like through the game's own song player and FM bank: whether every voice the score asks for makes a sound, whether
 // the mix clips, whether the war grows as the Remnant's phases do and its last minute over them, whether the places'
 // songs sit under the fight's, and whether the fall rings out inside the time the law gives it. So: the repo's own
-// modules served as they are, each song played by systems/songPlayer.js into an OfflineAudioContext (the player's
+// modules served as they are, each song played by systems/song/songPlayer.js into an OfflineAudioContext (the player's
 // clock carried through the song window by window), the render read back and measured; and one player through the
 // whole Hour - every song and one with no press after them - in one context.
 //
@@ -25,8 +25,8 @@ const out = []; const check = (n, ok, d = '') => { out.push(ok); console.log(`${
 const KEYS = ['hollow', 'hall', 'steps', 'war1', 'war2', 'war3', 'last', 'fell', 'gone'];
 
 const PAGE = `<!doctype html><html><body><script type=module>
-import { SongPlayer } from '/src/systems/songPlayer.js';
-import { sdScoreSongs, HOUR_PRESS, SD_SCORE_STING_MS } from '/src/systems/sdScore.js';
+import { SongPlayer } from '/src/systems/song/songPlayer.js';
+import { sdScoreSongs, HOUR_PRESS, SD_SCORE_STING_MS } from '/src/systems/superDungeon/sdScore.js';
 const RATE = 44100;
 window.stingS = SD_SCORE_STING_MS / 1000;
 window.render = async (key, seconds) => {

@@ -33,7 +33,7 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
   there is an arrival. The mark is a declared item field (`itemFields.js:"acquired: bool(),"`), so it rides the save and
   the house's chests: a piece taken back out of the player's own storage, or picked back up off the ground, is not new.
 - **The receiver's mark.** Like `equipSlot` and `questItem`, the mark is stripped off the wire
-  (`systems/loot.js:"for (const k of RECEIVER_MARKS) delete out[k];"`) and off the zone's death record
+  (`systems/loot/loot.js:"for (const k of RECEIVER_MARKS) delete out[k];"`) and off the zone's death record
   (`wildDropLaw.js:"for (const k of RECEIVER_MARKS) delete copy[k];"`). A piece another player hands over - a trade, the
   zone's remains, the market, a room's chest - is new to its taker.
 - **And the realm's trade law reads the same list (MARK-WIRE, FIELD BUGS 2026-10-09b).** The three receiver's marks are

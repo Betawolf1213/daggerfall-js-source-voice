@@ -20,7 +20,7 @@ import {
 import { LEG, MODE, COIL_R, SWIM_MIN_V, headAt, bodyAt, modeAt, coilAngleAt, coilWeight } from '../src/net/serpentBody.js';
 import { createSerpentLink } from '../src/net/serpentLink.js';
 import { createSerpentHost, WAKE_MS, IN_CHANGE_MS } from '../src/scenes/serpentHost.js';
-import { fleetShare, shipHurt, crushHurt, shapeMeets, ramHead, SERPENT_PAIR_SHARE, SERPENT_CANVAS_X } from '../src/systems/serpentStrike.js';
+import { fleetShare, shipHurt, crushHurt, shapeMeets, ramHead, SERPENT_PAIR_SHARE, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
 import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
 import { validSerpentOut, cellRoomOfWire, serpentFightId, PIXEL_UNITS } from '../src/net/wire.js';
 import { HULL } from '../src/systems/naval/navalShips.js';

@@ -23,7 +23,7 @@ import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { HOTBAR_CSS } from '../src/ui/enhancedHotbar.js';
 import { PAGE_IDS } from '../src/ui/packPages.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { setItemFields, mintCondition, inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition, inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { equipItem } from '../src/systems/equip.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

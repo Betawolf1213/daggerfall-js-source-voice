@@ -4,7 +4,7 @@
 // yardDirectoryRows), their own groups on the Where-is page (systems/topicTree.js), answered as a building is (the
 // compass, the knowledge roll, the map's mark); their ground and their names on both town maps (world/merchantYardMap.js
 // yardTownBlocks, ui/townMapDoor.js, ui/exteriorAutomapWindow.js, ui/townSheet.js); and their marks on the Overworld
-// (scenes/merchantYardsHost.js overworldMarks, ui/travelViewHud.js yardGlyph, systems/travelViewFilters.js). Every site
+// (scenes/merchantYardsHost.js overworldMarks, ui/travelViewHud.js yardGlyph, systems/travel/travelViewFilters.js). Every site
 // here is the producer's own (world/merchantYardSites.js yardSitesOn, the host's keeper beside it).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,17 +17,17 @@ import { yardTownBlocks, YARD_MAP_BYTE, YARD_MAP_TYPE, YARD_MAP_BLOCK_M } from '
 import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
-import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talkTopics.js';
+import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { TopicTree, LIST_ITEM_TYPE, QUESTION_TYPE, EN } from '../src/systems/topicTree.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
-import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk.js';
+import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk/talk.js';
 import { quarterOf } from '../src/ui/townQuarters.js';
 import { nameplateAnchor, WORLD_PER_PX } from '../src/ui/nameplateLayout.js';
 import { ExteriorAutomapWindow, _resetZoomForTests } from '../src/ui/exteriorAutomapWindow.js';
 import { createTownSheet } from '../src/ui/townSheet.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import { createMerchantYards, YARD_MARK_LIFT } from '../src/scenes/merchantYardsHost.js';
-import { markGroup, markShown, countGroups, isYardMark } from '../src/systems/travelViewFilters.js';
+import { markGroup, markShown, countGroups, isYardMark } from '../src/systems/travel/travelViewFilters.js';
 import { yardGlyph, TV_YARD_R } from '../src/ui/travelViewHud.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

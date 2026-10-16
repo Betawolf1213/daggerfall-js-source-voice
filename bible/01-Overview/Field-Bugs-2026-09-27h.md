@@ -107,7 +107,7 @@ was the LOAD - and the players who report this die in dungeons and load:
   passes `fromLoad` through (`startInDungeon` -> `dungeonTransition` -> `automapFromLoad` -> `enterDungeonAutomap`).
 - The save was restored BEFORE the scene being left was torn down, and that teardown's exit stamped the dungeon it left
   - in the SAVE's store - with the clock being left, and at "remember 0 dungeons" cleared the whole store it had just
-  restored. A restored store names no live dungeon now (`systems/automap.js` restoreAutomap), so the teardown writes
+  restored. A restored store names no live dungeon now (`systems/automap/automap.js` restoreAutomap), so the teardown writes
   nothing into it; walking out still forgets, as the vanilla law says.
 
 What this does not answer, and says so: the 3D map's own cut plane. Above the player's height a dungeon's upper storeys
@@ -157,7 +157,7 @@ The Enhanced Plus spell maker's effect editor (the port of DFU's window, `ui/enh
   mid-hold stops.
 - **Type** the value: the number between the buttons is a field (the numeric keypad; one to three digits). Enter or
   leaving it sets it, by the step's own law - clamped to the spinner's range, the magnitude pair rule, the cost
-  (`systems/spellMaker.js` setSetting, the editor's `setValue`, refused where the spinner is off); Escape or anything not
+  (`systems/spell/spellMaker.js` setSetting, the editor's `setValue`, refused where the spinner is off); Escape or anything not
   a number puts the value back. The hosts already step aside for a typed field.
 
 Measured in Chromium over the port (a scratch probe): a 1.2 s hold is nine repeats and its release adds none, a 0.2 s

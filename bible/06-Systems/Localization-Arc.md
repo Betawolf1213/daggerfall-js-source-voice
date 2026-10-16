@@ -956,7 +956,7 @@ met the ratchet: `net/iliacCards.js` held every card's rules and flavor in Engli
 could not be written beside them. No card's words had reached a player in their language.
 
 - **The road:** the relay's catalog keeps a card's rules and its canonical name, and no word; the words are
-  `systems/iliacCardWords.js`'s - every card's and holding's rules and flavor as readers through `t`, under
+  `systems/iliac/iliacCardWords.js`'s - every card's and holding's rules and flavor as readers through `t`, under
   `cards.iliacSet.<card>.rules` and `.flavor` (210 keys), read when shown: the face painter (handed the words beside the
   card), the binder's look and tiles, a card item's lines, the table panel's card titles. The binder's cached faces
   follow `textRevision`, so a language chosen or a table laid paints them again. Each rules line's English is pinned
@@ -972,7 +972,7 @@ could not be written beside them. No card's words had reached a player in their 
 - **The ratchet:** `net/iliacCards.js` 234 -> 52 (its two-word names; the nine's four among them); the words module 0.
 - **Still owed (L10N4's cards batch):** a card's name shown through Daggerfall Unity's own tables where it is one of
   theirs (an enemy's, a spell's, an artifact's, a faction's, a place's), and the Iliac panels' own sentences round it -
-  `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliacItems.js`'s first line - routed with it, so no
+  `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliac/iliacItems.js`'s first line - routed with it, so no
   sentence glues a translated name into English.
 
 ## KG3 (2026-10-13): The King's Gambit's table, in the player's language from the first press

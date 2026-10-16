@@ -30,7 +30,7 @@ import { plateModel } from './cardTableDraw.js';
 import { paintIliacCard, paintIliacBack } from './iliacCardFaces.js';
 import { paintFace, RANK_KING } from './cardFaces.js';
 import { cardById } from '../net/iliacCards.js';
-import { FOE_CARDS } from '../systems/cardSources.js';
+import { FOE_CARDS } from '../systems/card/cardSources.js';
 import { CARD_W, CARD_L, CARD_T, ARC_HEIGHT } from '../world/cardMotion.js';
 import { toColor32 } from '../formats/color32Order.js';
 import {

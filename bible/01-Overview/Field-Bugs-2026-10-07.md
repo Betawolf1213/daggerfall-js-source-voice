@@ -20,7 +20,7 @@ same function had. No reporter's save and no ARENA2 were at hand; nothing here w
 HOME1: what an online home holds is its owner's save's, never the service's. The house's own chests are kept by index
 (`lootContainers`, `container:<i>`), what the storage pieces hold by piece id (`decorItems`), the owner's own things
 standing in the room (`decorOwn`), and the floor (`droppedPiles`). All of it sits under the home's OWN scene
-(`systems/onlineHomes.js homeSceneName`), made permanent at the purchase and again at every entry, so the scene cache's
+(`systems/online/onlineHomes.js homeSceneName`), made permanent at the purchase and again at every entry, so the scene cache's
 clearing at a map-pixel crossing keeps it. The realm keeps a character's save and the one before it, and nothing older
 (`server-account/src/realm.js`, `obj` and `prev`). A record emptied and saved twice is gone.
 
@@ -30,7 +30,7 @@ The writers of that scene, read one by one:
   once at the door and held for the visit. A save made inside writes the live room first (`interiorSaveData`).
 - The sale (`sellHomeAt`): the owner's own things back to the pack, the scene let go.
 - The scene cache's clearing (`systems/sceneCache.js` clearSceneCache): a permanent scene is kept.
-- ARENA4b's move (`systems/arenaMove.js` emptyArenaScene, reached from `systems/onlineHomes.js` moveArenaHomes). The
+- ARENA4b's move (`systems/arena/arenaMove.js` emptyArenaScene, reached from `systems/online/onlineHomes.js` moveArenaHomes). The
   only writer that could empty a home its owner keeps.
 
 ## HOME-WIPE (1)
@@ -55,7 +55,7 @@ database call failed. In STORM-SHED 34,793 requests failed in the 20:00 hour (`0
 reloaded through both. Reproduced headless with the real moveArenaHomes and emptyArenaScene over the real scene cache:
 one replay replaced the new home's record whole, and every replay after did the same.
 
-THE FIX (`systems/arenaMove.js` emptyArenaScene): the owner's record is never written over.
+THE FIX (`systems/arena/arenaMove.js` emptyArenaScene): the owner's record is never written over.
 
 - **A kept home.** A permanent `to` with a record is the owner's. What a move carries joins its first container
   (`container:0`), after what that chest already holds. The chest is marked a crate, so a house with no such chest has

@@ -7,12 +7,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standArenaInLocation, ARENA_BLOCK, ARENA_BLOCK_INDEX, ARENA_CELL, inArenaCell, isArenaCity, installArena, _resetArena } from '../src/world/arenaCity.js';
-import { drawNamedBuildings, mergeNamedBuildings, makeBuildingKey } from '../src/systems/talkTopics.js';
+import { drawNamedBuildings, mergeNamedBuildings, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { registerPortBlock, getNewDFBlockIndex, getNewDFBlockName, getDFBlockReplacementData, editLocation, registerLocationEdit, installWorldDataReplacement, _resetWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldDataReplacement.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
 import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldDataDoor.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { HAS_ARENA2, bootDoor } from './arena1Data.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

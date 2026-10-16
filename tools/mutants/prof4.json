@@ -730,7 +730,7 @@
   },
   {
     "name": "PROF4-name-no-joiner-mark",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "if ((item?.quality === 4 || item?.marked === true) && typeof item.maker === 'string'",
     "new": "if (item?.quality === 4 && typeof item.maker === 'string'",
     "tests": [

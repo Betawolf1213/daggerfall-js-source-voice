@@ -197,7 +197,7 @@ test('CD1: Ledger A row TB1 exists, in section A, STRUCK by the classic-modals c
     [/THE FUZZY FIND COMPUTES IN DOUBLES AND COLLATES ORDINALLY/,
       ['src/systems/editDistance.js']],
     [/TRAVEL WEATHER IS APPLIED ON EVERY ARRIVAL, NOT FROZEN AFTER THE FIRST LOAD/,
-      ['src/systems/weatherSim.js']],
+      ['src/systems/weather/weatherSim.js']],
     [/THE CONVERSATION SAVE STORES `dictQuestInfo` AS PLAIN DATA/,
       ['src/systems/topicTree.js']],
     [/ART LANDS ASYNC, AND A MISSING RECORD COSTS THE PICTURE RATHER THAN THE SESSION/,
@@ -439,7 +439,7 @@ test('CD2: both status pages state the open-flag count Home.md actually holds', 
   // into its file that names a line (CITE-ANCHOR).
   const roadText = read(ROAD);
   for (const site of ['src/combat/fpsSpellCasting.js', 'src/characters/enemyCasting.js',
-    'src/systems/inventory.js', 'src/systems/talkMacros.js', 'src/ui/hudLarge.js',
+    'src/systems/inventory.js', 'src/systems/talk/talkMacros.js', 'src/ui/hudLarge.js',
     'src/ui/exteriorAutomapWindow.js']) {
     assert.ok(citedLines(roadText, site, root).some((c) => c.line), `Road-To-1-1.md does not name the retired flag in ${site}`);
   }
@@ -663,7 +663,7 @@ const SOURCE_CITES = [
     EX, /from '\.\.\/systems\/chargenSession\.js'/],
   ['src/systems/equip.js', /world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?), exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/,
     EX, /if \(playerEntity\.chargenDone\) seedStartingEquipment\(playerEntity\);/],
-  ['src/systems/loot.js', /world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?) and exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?/,
+  ['src/systems/loot/loot.js', /world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?) and exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?/,
     EX, /loadMagicRegistries\(fetchBytes\)\.then/],
   ['src/systems/potions.js', /exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\) and useItem\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)/,
     EX, /drinkPotion: \(key, potent\) => magic\.drinkPotion\(key, potent\)/],

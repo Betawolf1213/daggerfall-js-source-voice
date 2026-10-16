@@ -14,7 +14,7 @@ import { FEEL } from '../src/player/climbFeel.js';
 import { PARKOUR_HAND_SPAN } from '../src/player/parkour.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { resetToDefaults } from '../src/systems/settings.js';
+import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

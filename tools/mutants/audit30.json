@@ -499,7 +499,7 @@
   },
   {
     "name": "AUDIT30-C7-any-mark-a-name",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "item.maker && makerMark(item.maker) === item.maker\n    && typeof item.provenance === 'string' && PROVENANCE_RE.test(item.provenance))",
     "new": "item.maker && typeof item.provenance === 'string')",
     "tests": [

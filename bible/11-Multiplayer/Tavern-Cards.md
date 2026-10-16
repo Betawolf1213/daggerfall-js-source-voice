@@ -146,7 +146,7 @@ Their numbers (deck size, turn count, magicka cap) are MEASURE until CARDS7 play
 - Drawn from Daggerfall itself: the creatures (a rat, a skeletal warrior, an ancient vampire), the guilds and the
   temples, the knightly orders, the provinces, the Daedric Princes, the artifacts. Every card names the thing it
   pictures, and its power and text follow from what that thing is in the game (a Lich outranks an Orc).
-- **DECIDED: rarity is the loot's.** A card carries a tier of `RARITY_ORDER` (`src/systems/lootRarity.js`: common,
+- **DECIDED: rarity is the loot's.** A card carries a tier of `RARITY_ORDER` (`src/systems/loot/lootRarity.js`: common,
   magic, rare, legendary, aetheric, artifact - and GILDED1's gilded, joined at the merge of main, which no card of the first set wears) and draws with that tier's treatment, the way an item does.
 - **DECIDED: the art is ours.** A card's picture can never be an ARENA2 sprite or a render of one (Port-Doctrine, "A
   RENDER OF GAME DATA IS GAME DATA"). ANSWERED (section 9 Q5): painted in code (section 26).
@@ -367,14 +367,14 @@ sweep of every test reading a touched host; the whole record is `01-Overview/Aud
 Mac: **"Do 3 and 4"**. The first playable game: sit at a tavern's card table, buy in, and play no-limit Hold'em against
 the house's regulars until you stand, go broke or empty the table.
 
-- **The patrons' play** (`src/systems/cardPatrons.js`, pure). Before the flop a hand is its Chen score over twenty;
+- **The patrons' play** (`src/systems/card/cardPatrons.js`, pure). Before the flop a hand is its Chen score over twenty;
   after it, its equity - Monte Carlo over `EQUITY_SAMPLES` (200) deals of the unseen cards, a tie its share, cards known
   dead never dealt. Each patron is one of three tempers (`PATRON_TEMPERS`: tight, loose, a bluffer), four numbers each: the
   preflop line he plays from, the strength he raises with, how often he bets air, the edge over the pot's odds a call
   wants. A raise is sized off the pot - a half to the whole, more the stronger - and clamped to what the law allows.
   The bluff is the decision's FIRST draw (a constant source would spin the shuffle's rejection loop forever otherwise -
   found by the pins' first hang). Every decision is one `legalActions` allows, swept over thousands of seeded spots.
-- **The evening** (`src/systems/cardTableSession.js`, pure). The table's clock over the cards' law: the stakes by the
+- **The evening** (`src/systems/card/cardTableSession.js`, pure). The table's clock over the cards' law: the stakes by the
   tavern's quality (`TABLE_STAKES`: 1/2 to quality 7, 5/10 to 13, 25/50 above), the buy-in 20 to 100 big blinds and never past
   the purse, the regulars' purses 30 to 120 big blinds; a patron acts after `THINK_MS` and a seeded spread, the next
   hand waits `HAND_GAP_MS` after a showdown, a broke patron leaves (his chair shows empty), the evening is over
@@ -483,7 +483,7 @@ holds every card.
   found by the first pin, a spread would have written the one over the other).
 - **The relay** (`server/src/index.js`): only an interior's room keeps a table (AUDIT SCALE II R3-3 (c), SCALE5d: its place's object alone - a layer of a crowded interior seats nobody and stakes nothing); the tables checkpointed to storage (a
   hibernated room keeps its hands) and the alarm armed for the soonest clock or deal; a socket's leave stands it up.
-- **The client** (`src/systems/cardRemoteTable.js`): the relay's frames folded into the very shapes the offline evening
+- **The client** (`src/systems/card/cardRemoteTable.js`): the relay's frames folded into the very shapes the offline evening
   offers (`view`, `legal`, `drain`), the relay's clock moved onto this one, a hand already under way told as the events
   it took (`CATCH_UP_MS`) so a newcomer's cloth lies at rest at once (a room come into asks for each of its tables -
   AUDIT CARDS-3 D7; before it, nothing showed till the table's next event). The host (`worldModes.js`): online, sitting joins
@@ -722,7 +722,7 @@ collection"**; asked, **"One 'Collections' tab"**, the collectible cards **"Pain
 CARDS8"**.
 
 - **THE COLLECTIONS PAGE** (`ui/collectionsPage.js`, the Holdings rail's last entry): a Codex | Cards switch. The CODEX
-  part draws LOOT10's own rows (`systems/lootCodex.js`: every Legendary found and not, a row opened whole - its lines,
+  part draws LOOT10's own rows (`systems/loot/lootCodex.js`: every Legendary found and not, a row opened whole - its lines,
   power, lore and the day found - then the Aetheric sets), the rows the Reforge's Codex page draws, so the two never
   disagree; the pack's Codex button still opens that window. The CARDS part is the binder's (below). The page shows while
   Loot rarity makes Legendaries or a binder is carried.
@@ -751,7 +751,7 @@ CARDS8"**.
   unit's square, a spell's rounded, a Prince's arch, a location's landscape); a magicka gem, a power shield; one of 35
   emblems drawn from paths; the name banner and the rules box; the back a compass rose of the Bay. No ARENA2 pixel, no
   raster.
-- **THE CARDS AS ITEMS** (`systems/iliacItems.js`; section 6.3): a card is template 581 named by its `card` - two of one
+- **THE CARDS AS ITEMS** (`systems/iliac/iliacItems.js`; section 6.3): a card is template 581 named by its `card` - two of one
   card stack, two cards never (`inventory.js` stacksWith), a split keeps it (splitStack); its name is the catalog's
   ("Card: Rat"), never stored; weightless, worth a coin, not bound - it moves as any unbound item does (the trades, a listing, a shelf), though no
   shop buys one (AUDIT CARDS-5 C2); CARDS9 sets its worth and its customs. The
@@ -1028,7 +1028,7 @@ Mac: **"Lets build every inch of this. Dont forget about a card needing to come 
   a gilded 5,000), the item's `value`, set at the mint, kept by a card split off a stack, and refreshed on a load in
   every saved list (AUDIT CARDS-6 A6). A sealed pack is worth `CARD_PACK_WORTH` (171, its five cards' mean rounded up -
   A1). Still no shop buys a card (AUDIT CARDS-5 C2): the worth is never gold at a counter.
-- **FOES.** A slain creature drops its own card (`systems/cardSources.js` `FOE_CARDS`, by its mobile type - a rat a
+- **FOES.** A slain creature drops its own card (`systems/card/cardSources.js` `FOE_CARDS`, by its mobile type - a rat a
   rat, a Lich a Lich): one draw at its card's tier's chance (`FOE_CARD_PER_MILLE`, MEASURE: 16, 11, 7 and 3 per mille,
   common to legendary), twice as often for a titled foe; none for a revenant or a world boss (their spoils are their
   own). It goes onto the body through the real death door (`registerEnemyDeathHandler`) - and through the online
@@ -1068,7 +1068,7 @@ The same ask.
   a free chair, stages a turn a card and a holding at a time (`stagedRefusal` - the rules' own `playsRefusal` said over
   the view, pinned equal over four hundred seeded positions) and commits it. Every road off the seat closes it, a game
   under way conceded (`scenes/iliacTableGame.js`; the interior host keeps one slot for it, emptied before it is told).
-- **THE REGULARS** (`systems/iliacPatrons.js`). A regular's temper is his seed's - careful, reckless or sly (`tight`,
+- **THE REGULARS** (`systems/iliac/iliacPatrons.js`). A regular's temper is his seed's - careful, reckless or sly (`tight`,
   `loose`, `bluffer`) - and his deck is his temper's and the tavern's grade's (the Hold'em stakes' own bands of the
   building's quality: a village's, a town's, a city's): the starter deck's curve card for card, his grade's upgrades (a
   town's two - one for a careful regular, whose second is a legendary a town's tiers refuse (AUDIT CARDS-6 B8) - a
@@ -1082,7 +1082,7 @@ The same ask.
   regular's own temper and his grade's deck (lane B's `b05_strength`, not committed), a careful hand won 58.9% against a
   village's regulars, 51.1% against a town's and 44.7% against a city's; a reckless one 61.2/55.8/46.9, a sly one
   58.3/49.5/42.6. The old 39% against a city is a hand that slips as a village regular does (37.7%; the village's 50.5%).
-- **THE EVENING** (`systems/iliacTableSession.js`): the regular thinks before he commits (`ILIAC_THINK_MS` and its
+- **THE EVENING** (`systems/iliac/iliacTableSession.js`): the regular thinks before he commits (`ILIAC_THINK_MS` and its
   spread), the turn turns over a beat after both have (`ILIAC_REVEAL_MS`); after the sixth, the result. FOR KEEPS each
   side stakes a card - the player's drawn at the deal, named, and lifted out of his pack into the table's keeping (AUDIT
   CARDS-6 B1): a win or a draw hands it back, a loss or standing up leaves it with the regular (a poison's or a need's
@@ -1408,10 +1408,10 @@ relay's catalog.
 - **THE NINE:** the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish (commons), the Mummy (magic), the
   Frost and the Fire Daedra (rares), the Archer (common) and the Ranger (magic) - 94 cards and 11 holdings now; 69 units.
   Six emblems of their own (bear, cat, spider, fish, mummy, bow - `render/iliacCardFaces.js`, 57 glyphs). Their foes
-  drop them (`systems/cardSources.js` FOE_CARDS: the seven creatures that dropped none, and the Archer and the Ranger,
+  drop them (`systems/card/cardSources.js` FOE_CARDS: the seven creatures that dropped none, and the Archer and the Ranger,
   who dropped none); the packs, the regulars' decks and a card's worth read them off the catalog. The relay: world201.
 - **THE WORDS:** a card's rules and flavor are said in the player's language through the text core when they are shown
-  (`systems/iliacCardWords.js` - `cardRules`, `cardFlavor`), never written in the relay's catalog again: the catalog
+  (`systems/iliac/iliacCardWords.js` - `cardRules`, `cardFlavor`), never written in the relay's catalog again: the catalog
   (`net/iliacCards.js`) keeps the rules and the names, the face painter takes the words beside the card, the binder,
   a card item's lines and the table panel's titles read them, and the binder's faces are painted again under a new
   language. Every rules line's English is still EXACTLY `fxText`'s (section 26's law, its pin moved). Drafted into the

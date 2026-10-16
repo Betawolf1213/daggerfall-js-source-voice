@@ -15,7 +15,7 @@ window. Port-Ledger section A carries the departure.
 - **The revealed rows' own triangles** (`ui/inkDungeonGL.js`, WebGL2 - ONE ink a page, `dungeonInkFor`, every sheet's rows
   keyed by the sheet; it was a context a map open, never freed: GL-LEAK, FIELD BUGS 2026-10-03), culled as the world pass culls - a face is drawn
   when its wound normal, after placement, faces the eye (proved through `world/mat4.js`'s own functions) - and cut above
-  the player's feet by the classic window's slicing law (`systems/automap.js` `slicingPositionY`). Pass one lays facing,
+  the player's feet by the classic window's slicing law (`systems/automap/automap.js` `slicingPositionY`). Pass one lays facing,
   washes, flagstones (running bond, a level of detail by zoom) and water (`waterLevel` per row: a darkening wash, waves,
   level lines on walls, a waterline); pass two inks creases, cuts and outlines from the depth's curvature, with a wobble.
   A short upright face (`RISER_MAX`) is a riser, inked as part of its slope, so a flight is never a black band.

@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createHorseCartPool, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT, HORSE_WALK_BILLBOARD_HEIGHT } from '../src/scenes/horseCartPool.js';
-import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
+import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horse/horseCartLaw.js';
 import { batchSphere, batchVisible, spherePlanes } from '../src/render/bounds.js';
 import { perspective, lookAt, multiply, mirrorProjectionX } from '../src/world/mat4.js';
 

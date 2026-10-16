@@ -38,7 +38,7 @@
 // and read no dependency at all, so the add-ons lost to their own base.
 //
 // VE4 - MODS THAT SHIP WITH THE PORT. Vanilla Enhanced's Base, Masked Roads and Snowless Swamps and Jungles ship with
-// the port (systems/vanillaEnhancedPack.js, Mac 2026-10-05) and register HERE, beside the attached mods - one load
+// the port (systems/vanillaEnhanced/vanillaEnhancedPack.js, Mac 2026-10-05) and register HERE, beside the attached mods - one load
 // order, one walk, one set of doors; only where a picture comes from differs. An attached .dfmod under the same key
 // shadows the shipped one (the player's copy - a newer version - is the one read).
 //

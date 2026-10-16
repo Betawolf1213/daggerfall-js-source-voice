@@ -3,7 +3,7 @@
 // "One 'Collections' tab"): THE COLLECTIONS PAGE on the Enhanced pause menu's Holdings rail (ui/enhancedMenu.js
 // pauseHoldings) - what a character has gathered, in two parts under one switch:
 //
-//   THE CODEX (LOOT10, systems/lootCodex.js; bible/06-Systems/Loot-Arc.md section 12): every Legendary record and every
+//   THE CODEX (LOOT10, systems/loot/lootCodex.js; bible/06-Systems/Loot-Arc.md section 12): every Legendary record and every
 //     Aetheric set, found and not - a found one's name, its group, the day it was first found and what it is; an unfound
 //     one's group and where it is said to be. The rows, the lines a row opened shows and the sets' counts are the
 //     Reforge's Codex page's (ui/reforgeWindow.js renderCodex - AUDIT CARDS-5 D12 made the lines the same), read from the
@@ -18,10 +18,10 @@
 // the binder's filters, chips and decks, and this sheet's own `background` and border colours painted over any that
 // might; the switch and the binder's presses are the kit's tiles now, a codex row its list line, a deck its panel.
 
-import { codexRows, codexSets, codexCount, codexGilded } from '../systems/lootCodex.js';   // AUDIT WORLD-REWARDS A5: and the Gilded rung's rows
-import { lootRarityOn, powerLine, legendaryById, affixLine, RARITIES } from '../systems/lootRarity.js';
+import { codexRows, codexSets, codexCount, codexGilded } from '../systems/loot/lootCodex.js';   // AUDIT WORLD-REWARDS A5: and the Gilded rung's rows
+import { lootRarityOn, powerLine, legendaryById, affixLine, RARITIES } from '../systems/loot/lootRarity.js';
 import { gildedById } from '../systems/gilded.js';
-import { setById } from '../systems/sigilSets.js';
+import { setById } from '../systems/sigil/sigilSets.js';
 import { cardsPartShown, drawCardsPart, resetCardsPart, disarmCardsPart } from './cardBinderPage.js';
 
 export const COLLECTION_PAGE_SECTIONS = Object.freeze([Object.freeze(['collections', 'Collections'])]);

@@ -40,7 +40,7 @@ import { SOUND } from '../systems/soundClips.js';
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, latchBoxRows } from './messageBox.js';
 import { noticeFrame, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
-import { isServiceBox } from '../systems/guildServiceFlow.js';   // STATION-ROWS: a box is rows that are a list
+import { isServiceBox } from '../systems/guild/guildServiceFlow.js';   // STATION-ROWS: a box is rows that are a list
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** The window's DaggerfallShortcut.Buttons, in ctor ADD order

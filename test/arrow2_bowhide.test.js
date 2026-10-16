@@ -16,7 +16,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 

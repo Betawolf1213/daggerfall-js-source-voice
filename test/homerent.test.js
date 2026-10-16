@@ -3,7 +3,7 @@
 // RENT_*); the service through the real Worker over node:sqlite with every migration applied (server-account/src/
 // rent.js): the owner offers and prices, another player's realm character rents on its record, the rent is held on the
 // home and collected by the owner, a sale and a delete wait for the tenants; the client's half (systems/homeRent.js,
-// systems/onlineHomes.js): the registry's tenancies and vacancies, the door's rows, a rent paid and given back, the
+// systems/online/onlineHomes.js): the registry's tenancies and vacancies, the door's rows, a rent paid and given back, the
 // rent collected by the service's count; the owner's rooms view in the decorator; the host's wiring by source.
 // `06-Systems/Online-Arc.md` HOME-RENT.
 import { test } from 'node:test';
@@ -15,7 +15,7 @@ import {
 } from '../src/net/homeLaw.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
-import { createOnlineHomes, homeDoorAnswer, homeVisitorRows, HOME_VERB, sellOnlineHome, homeSoldLine } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, homeDoorAnswer, homeVisitorRows, HOME_VERB, sellOnlineHome, homeSoldLine } from '../src/systems/online/onlineHomes.js';
 import {
   homeRooms, rentable, rentHomeRoom, collectHomeRent, rentRoomsView, rentRowSub, rentPriceStep, rentAnchorOfRoom, RENT_PRICE_FIRST,
   rentRowLabel, rentTenantLabel, rentConfirmLines,

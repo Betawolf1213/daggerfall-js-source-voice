@@ -19,7 +19,7 @@ import { buildCustomCareer } from '../src/systems/customClass.js';
 import { masterSkill } from '../src/systems/masterSkills.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
 import { effectCost, calculateCastCost, classicCastingCost, skillScaledCost, SPELL_COST_SKILL_REFERENCE, CAST_COST_FLOOR } from '../src/systems/spellcost.js';
-import { spellMakerCost, editedEffectCost } from '../src/systems/spellMaker.js';
+import { spellMakerCost, editedEffectCost } from '../src/systems/spell/spellMaker.js';
 
 const RESTO = SKILLS.Restoration;
 const STATS = { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 };

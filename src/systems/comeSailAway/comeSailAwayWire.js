@@ -1,8 +1,8 @@
 // @ts-check
 // COME SAIL AWAY - THE WIRE (CSA-J, 2026-09-28). The mod is single-player: a boat is a possession in its owner's save,
-// placed and sailed on their client alone (systems/onlineLane.js ONLINE_PLAYERS_OWN_MODS). Online, the others in a
+// placed and sailed on their client alone (systems/online/onlineLane.js ONLINE_PLAYERS_OWN_MODS). Online, the others in a
 // cell should SEE it - the hull a sailor stands on, the boats they left at the shore - as Horse Cart and Cargo's team
-// is seen (systems/horseCartWire.js, whose law this follows): `sa` on the owner's own foes frame, beside the camps'
+// is seen (systems/horse/horseCartWire.js, whose law this follows): `sa` on the owner's own foes frame, beside the camps'
 // `c` and the team's `hv`, under the same owner law (an owner's word replaces that owner's and no one else's; an owner
 // gone quiet takes theirs with them). The relay reads nothing inside a foes frame, so the word needs no relay change.
 //

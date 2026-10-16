@@ -18,7 +18,7 @@ import { drawSeen, castOnly, DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src
 import { createHorseCartPool, peerTeamBox } from '../src/scenes/horseCartPool.js';
 import { createRoadTeams, ROAD_WAGON_KIND } from '../src/world/roadTeams.js';
 import { makeWorld } from './hccWorld.mjs';
-import { TRANSPORT, NORMAL_GROUND_OFFSET } from '../src/systems/horseCartLaw.js';
+import { TRANSPORT, NORMAL_GROUND_OFFSET } from '../src/systems/horse/horseCartLaw.js';
 import { createEotbWagon } from '../src/player/eotbWagon.js';
 import { createCamps } from '../src/scenes/camps.js';
 import { TENT_MODEL } from '../src/systems/survival/camp.js';

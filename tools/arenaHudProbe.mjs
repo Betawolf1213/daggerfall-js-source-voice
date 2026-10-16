@@ -1,5 +1,5 @@
 // ARENA2, MEASURED (2026-10-02, Mac: "All UI elements and text must be enhanced UI plus"): the bout's HUD (ui/arenaHud.js)
-// and the Herald's choice (ui/enhancedDialog.js drawEnhancedChoice, systems/arenaHerald.js) drawn over the real sheets in
+// and the Herald's choice (ui/enhancedDialog.js drawEnhancedChoice, systems/arena/arenaHerald.js) drawn over the real sheets in
 // Chromium - the Enhanced Plus sheet and the classic skin's bare page - at a desktop's width, a narrow window's and a
 // phone's, with the widest names a bout can carry, a two-against-one, a Grand Melee's three and the yield hint up. Each
 // must stand inside the viewport, its words in the pixel face, nothing spilling sideways. test/arena2_hud.test.js holds
@@ -30,8 +30,8 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
   await page.goto('http://localhost:5243/play/?skin=enhanced&touch=off');
   const r = await page.evaluate(async ([sheet, shape, width]) => {
     const { arenaHudModel, drawArenaHud } = await import('/src/ui/arenaHud.js');
-    const B = await import('/src/systems/arenaBout.js');
-    const { newCrowd } = await import('/src/systems/arenaCrowd.js');
+    const B = await import('/src/systems/arena/arenaBout.js');
+    const { newCrowd } = await import('/src/systems/arena/arenaCrowd.js');
     document.body.innerHTML = '';
     document.body.style.cssText = 'margin:0;background:repeating-linear-gradient(45deg,#2a2721 0 14px,#231f1a 14px 28px);height:100vh';
     if (sheet === 'enhanced') (await import('/src/ui/enhancedStyle.js')).injectEnhancedStyle();
@@ -84,7 +84,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
   if (shape === 'duel') {
     const d = await page.evaluate(async () => {
       const { drawEnhancedChoice } = await import('/src/ui/enhancedDialog.js');
-      const { heraldChoice } = await import('/src/systems/arenaHerald.js');
+      const { heraldChoice } = await import('/src/systems/arena/arenaHerald.js');
       const ch = heraldChoice({ gameMinutes: 400 * 1440 + 12 * 60 + 5, cityBout: { a: 'Gorlak gro-Mazgul', b: 'Peristair Kingfield' }, ladder: { tier: 1, won: 3, champs: [true] } });
       const owner = { input: () => {} };
       const draw = () => drawEnhancedChoice(owner, ch.lines, ch.options.filter((o) => o.label).map((o) => ({ code: o.code, label: o.label })));

@@ -8,7 +8,7 @@ import { ENV_DEFAULTS, survivalCtx, survivalFeed, restGateEnv, installSurvivalGa
 import { REST_TEXT_SURVIVAL } from '../src/systems/survival/rest.js';
 import { newSurvival, alignSurvival, ALIGN_GRACE_MINUTES, runSurvivalMinutes, survivalOf } from '../src/systems/survival/needs.js';
 import { raceById, RACES } from '../src/systems/races.js';
-import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/restSession.js';
+import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/rest/restSession.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -123,7 +123,7 @@ test('SURV7: composed - the ticker feeds the minute law from the host\'s env (th
 
 test('SURV7: by source - the four hosts feed their env (the roof, the floor, the fire each owns), the two dev scenes through the mode machine; the gate per ticker; the load arm and the arrival align; the leaf is pure', () => {
   const shared = read('src/scenes/shared.js'), world = read('src/scenes/world.js'), ext = read('src/scenes/exterior.js');
-  const modes = read('src/scenes/worldModes.js'), dc = read('src/scenes/dungeonContext.js'), save = read('src/systems/save.js');
+  const modes = read('src/scenes/worldModes.js'), dc = read('src/scenes/dungeonContext.js'), save = read('src/systems/save/save.js');
   assert.match(shared, /survival: survivalFeed\(entity, survivalEnv\?\.\(\) \?\? null, \{ say \}\),/, 'the ticker\'s feed');
   assert.match(shared, /if \(survivalEnv\) installSurvivalGate\(registerPreventRestCondition, \(\) => entity, survivalEnv\);/, 'the gate per ticker');
   for (const [name, src] of [['world', world], ['exterior', ext]]) {

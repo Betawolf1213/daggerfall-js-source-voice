@@ -28,10 +28,10 @@ import {
   registerPresenter, notifyPresenters, _resetNotifyForTests, mountWindow,
 } from '../src/systems/notify.js';
 
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
-import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travelOptionsText.js';
-import { mapPixelWorldOrigin } from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
+import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
+import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
 

@@ -7,10 +7,10 @@
 import assert from 'node:assert/strict';
 import { createDecorPanel } from '../src/ui/decorPanel.js';
 import { createDecorTool } from '../src/scenes/decorTool.js';
-import { decorCatalogue, collectDecor } from '../src/systems/decorCatalogue.js';
+import { decorCatalogue, collectDecor } from '../src/systems/decor/decorCatalogue.js';
 import { DECOR_CAP, decorPrice } from '../src/net/decorLaw.js';
 import { PROP_MODEL_TYPE } from '../src/world/interiorLayout.js';
-import { isFurnishing } from '../src/systems/decorFurnish.js';
+import { isFurnishing } from '../src/systems/decor/decorFurnish.js';
 import { decorMatrix, decorKeyOf } from '../src/scenes/decorRoom.js';
 import { localAabb } from '../src/render/frustum.js';
 import { createHomeYards } from '../src/scenes/homeYards.js';

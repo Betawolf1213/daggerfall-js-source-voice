@@ -90,7 +90,7 @@ export const homeEntryOk = (v) => typeof v === 'string' && HOME_ENTRIES.includes
 /** REALM P2.2b: the share of what a home cost that selling it pays back - Daggerfall's deed share (systems/banking.js
  *  DEED_SELL_MULT, pinned equal) - so the service credits a realm character's record the sum its client credits. */
 export const HOME_SALE_SHARE = 0.85;
-/** What selling a home bought for `price` pays back (systems/onlineHomes.js homeRefund, pinned equal). */
+/** What selling a home bought for `price` pays back (systems/online/onlineHomes.js homeRefund, pinned equal). */
 export const homeSaleRefund = (price) => Math.trunc((Number.isSafeInteger(price) && price > 0 ? price : 0) * HOME_SALE_SHARE);
 
 /**
@@ -138,7 +138,7 @@ export function homeMayEnter(home, { partyNames = [], nowS = Math.floor(Date.now
 // housing customization)". Beautiful Villages and Beautiful Cities lay
 // Daggerfall's towns out again, and a home is a building KEY - which names
 // a building only in one layout of its town. Online the two mods are the
-// room's (systems/onlineLane.js ONLINE_ROOM_MOD_KEYS), and every home
+// room's (systems/online/onlineLane.js ONLINE_ROOM_MOD_KEYS), and every home
 // bought before them was bought in Daggerfall's own towns. So a home keeps
 // the layout its town was bought in, server-wide: NULL - Daggerfall's,
 // every home from before WD3 - or the stamp its first buyer's client sent
@@ -198,7 +198,7 @@ export function homeLayoutsMatch(a, b) {
 // stands in Daggerfall's cell (4,3) in every layout of the city
 // (world/arenaCity.js), so no building has a key there: an online home
 // keyed there names nothing. The OWNER'S CLIENT picks its new house by
-// the offline move's own rule (systems/arenaMove.js arenaHomeFor - the
+// the offline move's own rule (systems/arena/arenaMove.js arenaHomeFor - the
 // service holds no town's records) and posts it; the service checks the
 // keys by the law below and carries the home's row whole to the new key
 // (server-account/src/homes.js arenaMoveHome). And no build may buy a
@@ -225,7 +225,7 @@ export const RENT_ANCHOR_MOVED = 'null';
 // Asked: "For houses with multiple rooms, the owner can choose to rent out
 // to other players and adjust the price as needed". An owner OFFERS a room
 // of their online home - one of the rooms its own walls part it into
-// (systems/decorRooms.js), named by its number and a point in it (`anchor`,
+// (systems/decor/decorRooms.js), named by its number and a point in it (`anchor`,
 // the building frame's, as a piece of decor stands - net/decorLaw.js), and
 // priced in gold a day, changed whenever the owner likes (a tenancy already
 // paid keeps what it paid). Another player RENTS it at the door, for a few

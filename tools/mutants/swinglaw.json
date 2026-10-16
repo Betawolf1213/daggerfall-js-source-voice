@@ -170,7 +170,7 @@
   },
   {
     "name": "SWING-LAW-RR-blend-blind-to-hands",
-    "file": "src/systems/rrRealism.js",
+    "file": "src/systems/roleplayRealism/rrRealism.js",
     "old": "  return swingFrameSeconds(blend, { heft: swingHeft(weight, liveStrength), handling: swingHandling(weaponType, hands === 'Both') });",
     "new": "  return swingFrameSeconds(blend, { heft: swingHeft(weight, liveStrength), handling: swingHandling(weaponType, false) });",
     "tests": [
@@ -180,7 +180,7 @@
   },
   {
     "name": "SWING-LAW-RR-keeps-its-hyperbola",
-    "file": "src/systems/rrRealism.js",
+    "file": "src/systems/roleplayRealism/rrRealism.js",
     "old": "  return swingFrameSeconds(blend, { heft: swingHeft(weight, liveStrength), handling: swingHandling(weaponType, hands === 'Both') });",
     "new": "  return (3 * (115 - blend)) / 980;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SWING-LAW-RRI-keeps-its-hyperbola",
-    "file": "src/systems/rriRealism.js",
+    "file": "src/systems/roleplayRealismItems/rriRealism.js",
     "old": "  return swingFrameSeconds(adjustedSpeed, { handling: swingHandling(weaponType, twoHanded) });",
     "new": "  return (3 * (115 - adjustedSpeed)) / 980;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "SWING-LAW-RRI-blind-to-the-kind",
-    "file": "src/systems/rriRealism.js",
+    "file": "src/systems/roleplayRealismItems/rriRealism.js",
     "old": "  return swingFrameSeconds(adjustedSpeed, { handling: swingHandling(weaponType, twoHanded) });",
     "new": "  return swingFrameSeconds(adjustedSpeed, { handling: 1 });",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "SWING-LAW-RRI-override-hands-no-hands",
-    "file": "src/systems/rriKits.js",
+    "file": "src/systems/roleplayRealismItems/rriKits.js",
     "old": "    weaponType: ctx.weaponType, twoHanded: !melee && getItemHands(weapon) === ITEM_HANDS.Both,",
     "new": "    weaponType: ctx.weaponType, twoHanded: false,",
     "tests": [

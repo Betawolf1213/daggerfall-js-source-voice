@@ -4,7 +4,7 @@
 //
 // ACQUIRE1 (the loot banner) marks every weapon, piece of armour or clothing, jewellery, artifact and card in the pack
 // `acquired: true` its first frame (systems/acquireWatch.js), and the mark rides the save - so the realm's record of the
-// pack carries it. The wire's clamp (systems/loot.js validLootItem) strips it, as a RECEIVER's mark, so the offer the
+// pack carries it. The wire's clamp (systems/loot/loot.js validLootItem) strips it, as a RECEIVER's mark, so the offer the
 // List form sends does not. The realm's trade law (net/realmTradeLaw.js recordIsOffered) compares every field but the
 // volatile ones, and its volatile list named the two older receiver's marks and not the new one: every marked piece
 // was "not the record's piece", at the market, a stall and a realm trade alike. The three now read ONE list
@@ -12,11 +12,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as law from '../src/net/realmTradeLaw.js';
-import { validLootItem, validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot.js';
-import { wildRecord } from '../src/systems/wildDeath.js';
+import { validLootItem, validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
+import { wildRecord } from '../src/systems/wild/wildDeath.js';
 import { createAcquireWatch, ACQUIRED_FIELD } from '../src/systems/acquireWatch.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 
 // read off the namespace, so the code before the fix fails each pin on its own assertion rather than at the import

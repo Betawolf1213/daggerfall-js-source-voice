@@ -92,7 +92,7 @@
  },
  {
   "name": "MACRO-2-the-guild-map-prints-a-blank-city",
-  "file": "src/systems/guildServiceActions.js",
+  "file": "src/systems/guild/guildServiceActions.js",
   "old": "pcn: known(playerName), cn: known(cityName), oth: '',",
   "new": "pcn: known(playerName), cn: cityName, oth: '',",
   "tests": [
@@ -101,7 +101,7 @@
  },
  {
   "name": "MACRO-2-the-talk-map-prints-a-blank-name",
-  "file": "src/systems/talkSession.js",
+  "file": "src/systems/talk/talkSession.js",
   "old": "    pcf: known(playerName) && firstName(playerName), pcn: known(playerName), cn: known(cityName), oth: oath,\n  });\n}",
   "new": "    pcf: firstName(playerName), pcn: known(playerName), cn: known(cityName), oth: oath,\n  });\n}",
   "tests": [

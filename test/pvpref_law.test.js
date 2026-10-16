@@ -15,7 +15,7 @@ import { WEAPONS, WEAPON_MATERIALS, weaponMaxDamage, weaponMaterialModifier } fr
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { damageModifier, handToHandMaxDamage } from '../src/combat/formulas.js';
 import { pcaaoDamageModifier } from '../src/combat/pcaao.js';
-import { rrDamageModifierClassic } from '../src/systems/rrRealism.js';
+import { rrDamageModifierClassic } from '../src/systems/roleplayRealism/rrRealism.js';
 import { WEAPON_REACH, SWING_MODS } from '../src/combat/playerWeapon.js';
 import { NATIVES_PER_M } from '../src/net/duelSession.js';
 import { validSiegeIn, SIEGE_KINDS, SIEGE_OUT_KINDS, SIEGE_DMG_WIRE_MAX, SIEGE_HZ_MAX, relaySupportsSiege, parseClient } from '../src/net/wire.js';

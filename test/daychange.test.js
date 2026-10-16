@@ -22,13 +22,13 @@ import {
   createBankAccounts, borrowLoan, MINUTES_PER_MONTH, LOAN_REPAY_MINUTES,
   hasDefaulted, loanedTotal, accountTotal,
 } from '../src/systems/banking.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
-import { currentWeather, resetWeatherSim, tickWeather, setWeather, setWeatherMapLaw } from '../src/systems/weatherSim.js';
+import { currentWeather, resetWeatherSim, tickWeather, setWeather, setWeatherMapLaw } from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { createSceneCache, addPermanentScene, containsPermanentScene, interiorSceneName } from '../src/systems/sceneCache.js';
 import { REPUTATION_LOSS_PER_CRIME, CRIMES, legalRepOf, NORMALIZE_INTERVAL_MINUTES } from '../src/systems/court.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { FATIGUE_DRAIN_SCALE } from '../src/systems/statMods.js';   // BALANCE1: exertion's scale on DFU's losses
 
 // A SYNTHETIC faction dictionary. UpdateRegionalPrices reads exactly

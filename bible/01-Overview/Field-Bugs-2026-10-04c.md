@@ -62,7 +62,7 @@ World Tooltips names a quest item stand `ResolveItemLongName(((Item)qrb.TargetRe
 
 ## ROBES-CLICK (3)
 
-`systems/itemTransfer.js` sendQuestItemClick - "Send click to quest system", the FIRST act of
+`systems/item/itemTransfer.js` sendQuestItemClick - "Send click to quest system", the FIRST act of
 RemoteItemListScroller_OnItemClick, ONE home; the right click is the same member (:2070-2073). Its callers: the native
 skin's one remote handler (`ui/nativeInventory.js` _pickRemote, which had it inline), the enhanced skin's loot row
 (inline before), its menu on a loot row (a right click: the click goes first, a menu closed unused included, as a look

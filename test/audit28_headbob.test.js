@@ -8,7 +8,7 @@ import { HeadBobber, bobbingStyle, BOB_STYLE, BOB_SPEED, END_TIMER_MAX, BOUNCE_M
 import { WALK_STEP_INTERVAL } from '../src/systems/footsteps.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W10: HEAD BOBBING (HeadBobber.cs, whole). Controls/HeadBobbing
 // ships True - DFU's camera bobs and nods as you walk - and the port's

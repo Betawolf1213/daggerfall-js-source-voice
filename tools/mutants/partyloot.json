@@ -127,7 +127,7 @@
   },
   {
     "name": "PARTY-LOOT-room-scope-never-raised",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  if (_roomRoll > 0) return true;   // PARTY-LOOT: while a room's base rolls, every mod is the room's whole (asTheRoom, below)\n",
     "new": "",
     "tests": [

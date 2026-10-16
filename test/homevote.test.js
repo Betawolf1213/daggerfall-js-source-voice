@@ -20,7 +20,7 @@ import {
 import { WITNESS } from '../src/net/nodeLaw.js';
 import {
   createOnlineHomes, homeVotable, homeVoteRows, homeVoteOfVerb, homeVoteChoices, homeVoteLines, isHomeVoteVerb, HOME_VERB, HOME_VOTE_VERB, homeVotePressable,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { REFUSALS, accountHomes, SESSION_KEY } from '../src/net/accountClient.js';
 import { standService, sessionStorageOf, T0 } from './accountDb.mjs';
 import { yardWorld, yardPiece, live, settle } from './decorFakes.mjs';

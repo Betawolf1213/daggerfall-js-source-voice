@@ -1,7 +1,7 @@
 [
   {
     "name": "LOOT17-a-plain-legendary-honed",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const takes = item?.rarity === 'magic' || item?.rarity === 'rare' || (item?.rarity === 'legendary' && item.exalted === true);",
     "new": "  const takes = item?.rarity === 'magic' || item?.rarity === 'rare' || item?.rarity === 'legendary';",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "LOOT17-a-magic-never-honed",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const takes = item?.rarity === 'magic' || item?.rarity === 'rare' || (item?.rarity === 'legendary' && item.exalted === true);",
     "new": "  const takes = item?.rarity === 'rare' || (item?.rarity === 'legendary' && item.exalted === true);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "LOOT17-a-top-line-honed",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "return !!b && item.affixes[i].value < b[1]; });",
     "new": "return !!b && item.affixes[i].value <= b[1]; });",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "LOOT17-the-same-again",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const line = { ...old, value: rangeInt(old.value + 1, band[1], rolls) };",
     "new": "  const line = { ...old, value: rangeInt(old.value, band[1], rolls) };",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "LOOT17-the-whole-band-again",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const line = { ...old, value: rangeInt(old.value + 1, band[1], rolls) };",
     "new": "  const line = { ...old, value: rangeInt(band[0], band[1], rolls) };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "LOOT17-the-hone-uncounted",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.honed = (item.honed | 0) + 1;\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "LOOT17-the-price-unmoved",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.value = was + affixesWorth([line], item) - affixesWorth([old], item);\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "LOOT17-honed-past-the-top",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!honeableLines(item).includes(index)) return null;\n  const old = item.affixes[index];\n  const band",
     "new": "  const old = item.affixes[index];\n  const band",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "LOOT17-the-count-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  honed: int({ min: 1, max: 63 }),   // LOOT17 (bible/06-Systems/Loot-II-Arc.md section 9): the hones a piece has taken - what the next costs (reforge.js honePrice), or absent\n",
     "new": "",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "LOOT17-the-count-from-nothing",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  honed: int({ min: 1, max: 63 }),",
     "new": "  honed: int({ min: 0, max: 63 }),",
     "tests": [

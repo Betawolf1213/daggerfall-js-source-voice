@@ -10,7 +10,7 @@ import {
   discoverLocation, hasDiscoveredLocationId, discoverRandomLocation,
   snapshotDiscovery, restoreDiscovery,
 } from '../src/systems/discovery.js';
-import { GUILDS, promotionTextId } from '../src/systems/guilds.js';
+import { GUILDS, promotionTextId } from '../src/systems/guild/guilds.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
 
@@ -73,7 +73,7 @@ test('G8: the DarkBrotherhood reveals on EVERY promotion, whatever the rank', ()
 });
 
 test('G8: the seam threads host-to-law', () => {
-  const flow = readFileSync(new URL('../src/systems/guildServiceFlow.js', import.meta.url), 'utf8');
+  const flow = readFileSync(new URL('../src/systems/guild/guildServiceFlow.js', import.meta.url), 'utf8');
   assert.ok(flow.includes('updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, rankCeiling, promoteWhenEarned })'),
     'onPushEffects hands the reveal seam to updateRank');   // PIN MOVED (CHAP4b: and the host's rank ceiling beside it; PROMO-NOW: and the online no-wait)
   const wm = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');

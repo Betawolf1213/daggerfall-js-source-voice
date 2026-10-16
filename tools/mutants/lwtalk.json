@@ -290,7 +290,7 @@
   },
   {
     "name": "LW-TALK-hidden-no-range",
-    "file": "src/systems/townPopulation.js",
+    "file": "src/systems/town/townPopulation.js",
     "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
     "new": "  return !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "LW-TALK-hidden-no-view",
-    "file": "src/systems/townPopulation.js",
+    "file": "src/systems/town/townPopulation.js",
     "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
     "new": "  return dist > POP_VISIBLE_RANGE;",
     "tests": [

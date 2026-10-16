@@ -34,7 +34,7 @@ const bar = () => page.evaluate(async () => {
   return b ? JSON.stringify(b) : null;
 });
 const setLarge = (on) => page.evaluate(async (v) => {
-  const s = await import('/src/systems/settings.js');
+  const s = await import('/src/systems/settings/settings.js');
   s.setValue('GUI', 'LargeHUD', v ? 'True' : 'False');
 }, on);
 

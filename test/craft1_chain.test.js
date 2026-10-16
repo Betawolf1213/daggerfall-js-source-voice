@@ -13,7 +13,7 @@ import { standService, sessionStorageOf } from './accountDb.mjs';
 import { trackView } from '../server-account/src/professions.js';
 import { heldOf as bagHeld, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf } from '../src/systems/materialsBag.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { accountProf, SESSION_KEY } from '../src/net/accountClient.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { xpForRank, WORK_RECIPES, SMELT_MAX, materialOf } from '../src/net/professionLaw.js';

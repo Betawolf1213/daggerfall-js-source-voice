@@ -350,7 +350,7 @@
   },
   {
     "name": "GATHER-OW-never-filtered",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (k === 'gather') return 'gathering';   // GATHER-OW\n",
     "new": "",
     "tests": [

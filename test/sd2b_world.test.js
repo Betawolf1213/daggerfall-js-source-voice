@@ -3,13 +3,13 @@
 // names found over this client's own map files and stood at its pixel while its phase stands, the find said at its door
 // until the hub's word moves it, and the chat's lines for the moves everyone online hears. bible/11-Multiplayer/
 // Super-Dungeons.md sections 2-4.
-import { sdMarksLine } from '../src/systems/sdOmen.js';   // SD19 (PIN MOVED): its marks said with its find
+import { sdMarksLine } from '../src/systems/superDungeon/sdOmen.js';   // SD19 (PIN MOVED): its marks said with its find
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSdHost, SD_LINE_WAIT_MS } from '../src/scenes/sdHost.js';
-import { sdCities, findSdSite, sdTemplates } from '../src/systems/sdSite.js';
-import { scanGatePixels } from '../src/systems/gateSite.js';
+import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
+import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_FOUND_NEAR_M, SD_FOUND_RESEND_MS, SD_LIFETIME_MS, SD_COLLAPSE_MS, sdFoundLine } from '../src/net/sdLaw.js';
 import { worldRoom } from '../src/net/wire.js';

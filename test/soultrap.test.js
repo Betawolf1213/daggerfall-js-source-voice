@@ -4,12 +4,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import {
   attemptSoulTrap, fillEmptyTrap, soulTrapNameSuffix, SOUL_TRAP_TEXT, SOUL_TRAP_TEMPLATE,
 } from '../src/systems/mysticism.js';
-import { expandItemInfo } from '../src/systems/itemInfo.js';
+import { expandItemInfo } from '../src/systems/item/itemInfo.js';
 
 const foe = (mobileType) => ({
   stats: { luck: 50, willpower: 50 }, skills: [], activeEffects: [],

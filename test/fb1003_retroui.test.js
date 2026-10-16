@@ -13,7 +13,7 @@ import { dockedLargeHudHeight, worldViewportRect } from '../src/ui/hudLarge.js';
 import { drawFpsWeapon, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { muzzleRay } from '../src/combat/weaponRig.js';
 import { setUiSkin } from '../src/systems/uiSkin.js';
-import { setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');

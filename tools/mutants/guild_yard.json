@@ -65,7 +65,7 @@
   },
   {
     "name": "GUILD-YARD-a-member-keeps-the-outside",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "(home.own === true || (!!home.hall && home.keeper === true))",
     "new": "(home.own === true || (!!home.hall && home.member === true))",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "GUILD-YARD-a-keeper-keeps-none",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "(home.own === true || (!!home.hall && home.keeper === true))",
     "new": "(home.own === true)",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "GUILD-YARD-the-yards-name",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "(home?.hall ? \"Your guild's yard\" : 'Your yard')",
     "new": "('Your yard')",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "AUDIT-PROF-541-G2-the-registrys-hallEntry-the-keepers",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "hallEntry: h.hallEntry === true,",
     "new": "hallEntry: h.keeper === true,",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDIT-PROF-541-G2-the-rows-gate-the-keepers",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "...(hallEntryTurnable(home) ? [{ id: HALL_VERB.entry,",
     "new": "...(home.keeper ? [{ id: HALL_VERB.entry,",
     "tests": [
@@ -342,7 +342,7 @@
   },
   {
     "name": "AUDIT-PROF-541-R2-H1-the-gate-the-keepers",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "export const hallEntryTurnable = (home) => !!home?.hall && !!home.hallEntry;",
     "new": "export const hallEntryTurnable = (home) => !!home?.hall && !!home.keeper;",
     "tests": [

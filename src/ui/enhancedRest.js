@@ -1,26 +1,26 @@
 // ENHANCED REST WINDOW (2026-09-20, per-request: "modernize the resting
 // window based on the inventory style... don't touch classic mode") —
 // the SAME card/panel language ui/enhancedInventory.js's own screens use
-// (`.card`, `.acts`, `.meter`), driving the SAME systems/restSession.js
+// (`.card`, `.acts`, `.meter`), driving the SAME systems/rest/restSession.js
 // engine ui/restWindow.js drives: this file owns no game rule at all,
 // only the picture. ui/restDoor.js is the gate - native/classic mode
 // keeps ui/restWindow.js's RestWindow exactly as it was, byte for byte.
 //
 // The countdown, the hourly interrupt, the vitals healed, whether a
 // followed party member spawns a monster - every one of those questions
-// is systems/restSession.js's RestSession, the exact class RestWindow
+// is systems/rest/restSession.js's RestSession, the exact class RestWindow
 // itself constructs. This view makes one too, ticks it once a frame, and
 // draws whatever it reports.
 
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';   // PLUS6
-import { RestSession, MAX_REST_HOURS, PROMPT_INITIAL, canRest, illegalRestWarning, illegalRestWarningText, REST_TEXT, loiterLimitHours, cannotLoiterLines, CANNOT_REST_MORE_THAN_99_HOURS_ID } from '../systems/restSession.js';
+import { RestSession, MAX_REST_HOURS, PROMPT_INITIAL, canRest, illegalRestWarning, illegalRestWarningText, REST_TEXT, loiterLimitHours, cannotLoiterLines, CANNOT_REST_MORE_THAN_99_HOURS_ID } from '../systems/rest/restSession.js';
 import { normalizeCode } from '../systems/dialogShortcuts.js';   // AUDIT PARTY-REST: the Rest key, read as restWindow.js reads it
 import { getBinding } from '../systems/inputActions.js';
 import { bindings } from './input.js';   // B5: the live InputManager registry, as restWindow.js reads it
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { restClockLine } from './restWindow.js';   // AUDIT LIVED1 O (U3): the classic window's clock line, one home for its words
-import { REST_ACT_TEXT, ambushNight, actAtChannelEnd, channelBroken, channelHealTick, campNightStep } from '../systems/restAct.js';   // REST1: the act's words   // AUDIT REST-PARTY A2: and the night it runs
+import { REST_ACT_TEXT, ambushNight, actAtChannelEnd, channelBroken, channelHealTick, campNightStep } from '../systems/rest/restAct.js';   // REST1: the act's words   // AUDIT REST-PARTY A2: and the night it runs
 
 const el = (tag, cls, text) => {
   const n = document.createElement(tag);
@@ -158,7 +158,7 @@ export function mountEnhancedRest(hostEl, deps, ignoreAllocatedBed = false) {
    *  skipping the whole illegal-rest law entirely, going straight from a click to the hours picker or a started
    *  session. Two pieces, same as classic: the CONFIRM box (illegalRestWarning() - a settings preference - and
    *  only when `deps.restPlace()?.inTownOutside`, i.e. camping in the open street of a town, never anywhere
-   *  else), and canRest() itself (systems/restSession.js, the SAME pure function classic calls - never
+   *  else), and canRest() itself (systems/rest/restSession.js, the SAME pure function classic calls - never
    *  reimplemented here), which resolves the bed/rental/guild-hall law, commits the crime if one is owed
    *  (Vagrancy, guards spawned) regardless of which arm answers, and can refuse the rest outright (a room never
    *  rented, still reads "You have not rented a room here."). Deliberately NOT asked of Loiter - classic's own

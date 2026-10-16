@@ -28,7 +28,7 @@
 import { ORIENTATIONS, stateFor, tableArchive, spriteKey, STATE_TABLES, frameCount } from './eotbBillboard.js';
 import { classSkinOf, classRecord, classFrame, classRecordScale } from './classSkins.js';   // SKIN2: Daggerfall's classes, past the mod's sixteen
 import { toColor32, toColor32OrderInPlace } from '../formats/color32Order.js';   // EOTB-FLIP: the ONE row-order door a PNG crosses on its way to a world billboard
-import { horseLookCode, horseLookOfCode, lookSuffix, recolorHorse } from '../systems/horseCoats.js';   // COATS1: the mount's look
+import { horseLookCode, horseLookOfCode, lookSuffix, recolorHorse } from '../systems/horse/horseCoats.js';   // COATS1: the mount's look
 import spriteInfo from '../../vendor/eye-of-the-beholder/spriteInfo.json' with { type: 'json' };
 
 const IN_BROWSER = typeof window !== 'undefined';
@@ -122,7 +122,7 @@ export function spriteFor(table, orientation, frame, look = {}, { flip = false }
     return { archive: skin.archive, record, frame: f, mirror, key: spriteKey(skin.archive, record, f), rec: `${record}-${f}${mirror ? 'm' : ''}` };
   }
   const archive = tableArchive(table, look);
-  // COATS1: a mounted table's horse wears the rider's horse's look (`look.horse`, its code - systems/horseCoats.js) -
+  // COATS1: a mounted table's horse wears the rider's horse's look (`look.horse`, its code - systems/horse/horseCoats.js) -
   // the same picture dyed (lookedPixels), under its own record; the bay as drawn keeps the record it always had
   const horse = table.endsWith('Horse') ? horseLookCode(horseLookOfCode(look.horse ?? 0)) : 0;
   return {
@@ -138,7 +138,7 @@ export function spriteFor(table, orientation, frame, look = {}, { flip = false }
   };
 }
 
-/** COATS1: a sprite's pixels as its state draws them - its horse's look dyed in (systems/horseCoats.js recolorHorse;
+/** COATS1: a sprite's pixels as its state draws them - its horse's look dyed in (systems/horse/horseCoats.js recolorHorse;
  *  none but a mounted table's ever has one), on the world's rows (bottom first, worldOrderColors) - before the mirror,
  *  so a mirrored view is the other flank. */
 export const lookedPixels = (s, image) => (s?.horse ? recolorHorse(image, s.horse) : image);

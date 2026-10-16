@@ -16,10 +16,10 @@ import {
   RR_TEXT, RR_PLACES_TABLE, RR_FACTIONS_TABLE, RR_QUEST_LIST, RR_FACTION_IDS, RR_CUSTOM_FACTIONS, RR_FORT_PIXEL, rrFortProximityLines,
   rrMasterArmBuildingKey, rrMasterArmorerDiscovery, RR_CUSTOM_ARMOR_MATERIALS, rrCustomArmorOffered, rrCustomArmorMaterials, rrCustomArmorVariants,
   rrCustomArmorStock, rrCustomArmorService, RR_ARMORER_BLOCK, RR_ARMORER_RECORD,
-} from '../src/systems/rrQuestLine.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
+} from '../src/systems/roleplayRealism/rrQuestLine.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 import { registerCustomFaction, customFactions, _resetCustomFactions, FactionFile, SOCIAL_GROUPS } from '../src/formats/factionFile.js';
-import { addCustomFactions, createFactionRep } from '../src/systems/factionRep.js';
+import { addCustomFactions, createFactionRep } from '../src/systems/faction/factionRep.js';
 import { loadQuestTables, addIntoQuestTables, placesTable, factionsTable, _resetExtraQuestRows, resetQuestTables } from '../src/systems/quest/tables.js';
 import { getIndividualFactionID } from '../src/systems/quest/person.js';
 import { QuestListsManager, registerQuestList, registeredQuestLists, _resetQuestLists } from '../src/systems/quest/questLists.js';
@@ -31,11 +31,11 @@ import {
   getLocationVariant, getBlockVariantHere, getBuildingVariantHere, getBlockVariant, getBuildingVariant, clearWorldDataVariants, getWorldVariationSaveData,
   restoreWorldVariationData, setNewLocationIndexResolver, setVariantChangedHook, lastLocationKeyOf,
 } from '../src/systems/worldDataVariants.js';
-import { registerMerchantService, hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel, _resetMerchantServices } from '../src/systems/guildServices.js';
-import { staticNpcRoute } from '../src/systems/guildServiceFlow.js';
+import { registerMerchantService, hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel, _resetMerchantServices } from '../src/systems/guild/guildServices.js';
+import { staticNpcRoute } from '../src/systems/guild/guildServiceFlow.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { groupTemplates } from '../src/systems/itemTemplates.js';
-import { DIRECTION_HINTS } from '../src/systems/talk.js';
+import { groupTemplates } from '../src/systems/item/itemTemplates.js';
+import { DIRECTION_HINTS } from '../src/systems/talk/talk.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -364,7 +364,7 @@ test('RR3 the merchant service: the registry, the gate, the route, the popup\'s 
 });
 
 test('RR3 the install: InitMod\'s order and the gates, by source', () => {
-  const inst = rd('src/systems/rrInstall.js');
+  const inst = rd('src/systems/roleplayRealism/rrInstall.js');
   assert.match(inst, /if \(!registerQuestList\(RR_QUEST_LIST, \(\) => rrEnabled\(\)\)\) throw new Error\('Quest list name is already in use, unable to register RoleplayRealism quest list\.'\);/);
   assert.match(inst, /if \(rrEnabled\(\)\) for \(const f of RR_CUSTOM_FACTIONS\) registerCustomFaction\(f\.id, f\);/);
   assert.match(inst, /addIntoQuestTables\(\{ places: \[\.\.\.RR_PLACES_TABLE\], factions: \[\.\.\.RR_FACTIONS_TABLE\] \}\);/);
@@ -372,5 +372,5 @@ test('RR3 the install: InitMod\'s order and the gates, by source', () => {
   const order = ['installRoleplayRealismArt();', 'registerQuestList(', 'registerCustomFaction(', 'addIntoQuestTables(', 'registerMerchantService('].map((s) => inst.indexOf(s));
   assert.ok(order.every((i, k) => i > 0 && (k === 0 || i > order[k - 1])), 'the C#\'s order: the list, the factions, the tables, the service');
   assert.match(rd('src/systems/quest/questLists.js'), /for \(const questList of registeredQuestLists\(\)\) this\._loadQuestList\(questList\);/);
-  assert.match(rd('src/systems/factionRep.js'), /addCustomFactions\(dict\);\s*\/\/ Reset \(:331\)/);
+  assert.match(rd('src/systems/faction/factionRep.js'), /addCustomFactions\(dict\);\s*\/\/ Reset \(:331\)/);
 });

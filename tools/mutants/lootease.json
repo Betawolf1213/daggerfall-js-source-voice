@@ -91,7 +91,7 @@
   },
   {
     "name": "CAP-SUPPLIES-rest-unregistered",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "registerLootSupply('REST', isRestItem);",
     "new": "registerLootSupply('REST', null);",
     "why": "the seven never registered: a Tonic is no supply",
@@ -339,7 +339,7 @@
   },
   {
     "name": "REST-LOOT-pile-ember-back",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "[[REST_ITEM.EmberJar, 6], [REST_ITEM.Tonic, 6],",
     "new": "[[REST_ITEM.EmberJar, 4], [REST_ITEM.Tonic, 6],",
     "why": "a pile's Ember Jar back at 4",
@@ -349,7 +349,7 @@
   },
   {
     "name": "REST-LOOT-pile-firewood",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "[REST_ITEM.Firewood, 4], [REST_ITEM.Candle, 2]",
     "new": "[REST_ITEM.Firewood, 5], [REST_ITEM.Candle, 2]",
     "why": "a pile's Firewood moved",
@@ -359,7 +359,7 @@
   },
   {
     "name": "REST-LOOT-foe-ember-back",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "export const REST_FOE_CHANCES = Object.freeze([[REST_ITEM.EmberJar, 3],",
     "new": "export const REST_FOE_CHANCES = Object.freeze([[REST_ITEM.EmberJar, 2],",
     "why": "a foe's Ember Jar back at 2",
@@ -369,7 +369,7 @@
   },
   {
     "name": "REST-LOOT-foe-draught-dropped",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "[REST_ITEM.Salts, 1], [REST_ITEM.Draught, 1]]);",
     "new": "[REST_ITEM.Salts, 1]]);",
     "why": "a foe never carries the Draught",
@@ -379,7 +379,7 @@
   },
   {
     "name": "REST-LOOT-the-bedroll-found",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "export const REST_FOE_CHANCES = Object.freeze([[REST_ITEM.EmberJar, 3],",
     "new": "export const REST_FOE_CHANCES = Object.freeze([[REST_ITEM.Bedroll, 1], [REST_ITEM.EmberJar, 3],",
     "why": "the Bedroll on a foe",
@@ -389,7 +389,7 @@
   },
   {
     "name": "REST-LOOT-the-switch-unhooked",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "export const restItemsOnline = () => _restItemsOnline;",
     "new": "export const restItemsOnline = () => REST_ITEMS_ONLINE;",
     "why": "the way back unpinnable: shut, the sources still mint",
@@ -400,7 +400,7 @@
   },
   {
     "name": "REST-LOOT-the-use-gate-unhooked",
-    "file": "src/systems/restItems.js",
+    "file": "src/systems/rest/restItems.js",
     "old": "const restItemsShut = () => isOnlinePage() && !restItemsOnline();",
     "new": "const restItemsShut = () => isOnlinePage() && !REST_ITEMS_ONLINE;",
     "why": "shut, a Tonic is still drunk online",

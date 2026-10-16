@@ -17,7 +17,7 @@
 // transformed-into card (`fx.card`) is a unit of ILIAC_CARDS - the token is that card, drawn as it.
 //
 // A CARD'S WORDS ARE THE DISPLAY'S (KG-SET, 2026-10-13): its rules and its flavor are said in the player's language by
-// `systems/iliacCardWords.js` (cardRules, cardFlavor), never written here - the relay shows no word, and L10N4's ratchet
+// `systems/iliac/iliacCardWords.js` (cardRules, cardFlavor), never written here - the relay shows no word, and L10N4's ratchet
 // holds this file's English from growing. A card's rules there are EXACTLY what `fxText(fx, kind)` says of its effects
 // (test/cards8_catalog.test.js), so a card's words are still its rules. Its `name` stays here: Daggerfall's own, the
 // canonical name fxText's summons say.
@@ -27,7 +27,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 
-/** The tiers, lowest first - the loot's (`systems/lootRarity.js` RARITY_ORDER, equal by pin: that module reads the
+/** The tiers, lowest first - the loot's (`systems/loot/lootRarity.js` RARITY_ORDER, equal by pin: that module reads the
  *  player's prefs, and the relay's bundle carries neither). */
 export const ILIAC_TIERS = Object.freeze(['common', 'magic', 'rare', 'legendary', 'aetheric', 'artifact', 'gilded']);   // the loot's ladder whole (lootRarity.js RARITY_ORDER) - GILDED1's rung joined at the merge of main; no card of the first set wears it
 
@@ -88,7 +88,7 @@ export const ILIAC_CARDS = Object.freeze([
   { id: 'giant', name: 'Giant', kind: 'unit', cost: 6, power: 10, tier: 'rare', tags: ['giant'], emblem: 'giant',
     fx: [{ on: 'reveal', do: 'weaken', to: 'here.all', n: 1 }] },
   // KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3): the King's Gambit's roster whole - every
-  // textured creature of the game wears a card, and its foe drops it (systems/cardSources.js FOE_CARDS)
+  // textured creature of the game wears a card, and its foe drops it (systems/card/cardSources.js FOE_CARDS)
   { id: 'grizzly-bear', name: 'Grizzly Bear', kind: 'unit', cost: 3, power: 5, tier: 'common', tags: ['beast'], emblem: 'bear',
     fx: [{ on: 'end', do: 'weaken', to: 'self', n: 1 }] },
   { id: 'sabretooth-tiger', name: 'Sabretooth Tiger', kind: 'unit', cost: 3, power: 4, tier: 'common', tags: ['beast'], emblem: 'cat',
@@ -255,7 +255,7 @@ export const ILIAC_CARDS = Object.freeze([
     fx: [{ on: 'ongoing', do: 'weaken', to: 'all.theirs', tag: 'undead', n: 2 }] },
   // ── the bosses' own (CARDS9, section 32: "the Oblivion Gate's boss and the Sea Serpent can drop their own, at the
   //    aetheric tier" - and the Abyss Dungeon's, Mac: "Dont forget about a card needing to come from the abyss dungeon
-  //    also"). Found only in their spoils (systems/cardSources.js BOSS_CARDS): no pack, no regular, no foe deals them. ──
+  //    also"). Found only in their spoils (systems/card/cardSources.js BOSS_CARDS): no pack, no regular, no foe deals them. ──
   { id: 'valkynaz-ruhn', name: 'Valkynaz Ruhn', kind: 'unit', cost: 6, power: 8, tier: 'aetheric', tags: ['daedra'], emblem: 'gate',
     fx: [{ on: 'reveal', do: 'destroy', to: 'here.theirs', pick: 'weakest' }] },
   { id: 'sethrakul', name: 'Sethrakul', kind: 'unit', cost: 6, power: 9, tier: 'aetheric', tags: ['sea', 'beast'], emblem: 'serpent',

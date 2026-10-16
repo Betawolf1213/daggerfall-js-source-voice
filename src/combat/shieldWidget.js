@@ -52,7 +52,7 @@
 // Meaner Monsters' unleveled-mobs arm does.
 
 import { modSettingsOf } from '../systems/modSettings.js';
-import { getInt } from '../systems/settings.js';
+import { getInt } from '../systems/settings/settings.js';
 import { liveStat } from '../systems/statMods.js';
 import { moveTowards, moveTowards2, snap, STEP_CONDITION } from './weaponWidgetMotion.js';   // AUDIT 68 S09-unused-and-heavy-imports: the leaf built for these, not the component
 export { STEP_CONDITION };   // the same enum, one home (the sibling's)

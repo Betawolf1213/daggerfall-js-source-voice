@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
 import { FS as DS_FS, DynamicSkiesRenderer } from '../src/render/dynamicSkiesRenderer.js';
-import { DynamicSkies } from '../src/systems/dynamicSkiesRuntime.js';
+import { DynamicSkies } from '../src/systems/dynamicSkies/dynamicSkiesRuntime.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { EnhancedSkyRenderer, skyState, fbm, WEATHER_SKY } from '../src/render/enhancedSky.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';

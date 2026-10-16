@@ -14,14 +14,14 @@ import {
   CHAPTER_BANDS, chapterPriceFactor, chapterPriced, chapterShelfQuality, HALL_QUALITY_MIN, HALL_QUALITY_MAX,
 } from '../src/net/npcChapterLaw.js';
 import { createChapterSheet, SHEET_KEPT_MS, SHEET_STOPS } from '../src/net/chapterSheet.js';
-import { trainingOffer, canAffordTraining } from '../src/systems/guildServiceActions.js';
+import { trainingOffer, canAffordTraining } from '../src/systems/guild/guildServiceActions.js';
 import { buildTrainingFlow, buildRefinedTrainingFlow } from '../src/ui/guildServiceWindows.js';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
 import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
-import { SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { calculateTradePrice, stockGuildPotions } from '../src/systems/shopStock.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

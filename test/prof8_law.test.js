@@ -12,7 +12,7 @@ import {
   HAUL_YIELD, SCHOOL_FISH, FISH_CHANCE, FISH_ACT, FISH_KEY, PEARL, SLAUGHTERFISH_SCALES, haulTier, fishBand, tugWindow, waitMult, throwM,
   harvestXp, topTierOf, TIER_RANKS, TIER_VALUES, MINED_KEYS, PROF_RANK_MAX, SPECIALISATIONS, ACT_YIELD_MAX,
 } from '../src/net/professionLaw.js';
-import { SEA_REGION as FORAGING_SEA_REGION, FT } from '../src/systems/foragingLaw.js';
+import { SEA_REGION as FORAGING_SEA_REGION, FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

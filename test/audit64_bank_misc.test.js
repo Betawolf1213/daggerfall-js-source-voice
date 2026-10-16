@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import {
   ExteriorAutomapWindow, VIEW_MODES, _resetZoomForTests,
 } from '../src/ui/exteriorAutomapWindow.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';
 import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/bankWindow.js';
 import {

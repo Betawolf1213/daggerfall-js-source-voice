@@ -7,7 +7,7 @@
 // of the towns this page had ASKED, one at a time at a town's gate or door, and a quest's `remote` residence is picked in
 // a town its player has never walked into: the rule held in the player's own town alone, and the farmstead's only house,
 // a player's home, was the quest's. The layouts read every online boot already makes (WD3) now names every town's homes
-// by building (server-account/src/homes.js homeLayouts' `homes`), the registry keeps it (systems/onlineHomes.js
+// by building (server-account/src/homes.js homeLayouts' `homes`), the registry keeps it (systems/online/onlineHomes.js
 // hearEveryTown / homeStands), and the quest machine's isPlayerHome asks it (scenes/world.js). Every fixture is the
 // producer's: the real Worker over node:sqlite with every migration applied, the client's own door to it, the real
 // registry, and the real quest machine choosing its residence in a region of synthetic blocks (test/fb1004dTowns.mjs).
@@ -25,11 +25,11 @@ import { accountHomes, onHomeOrders, SESSION_KEY } from '../src/net/accountClien
 import { OnlineSession } from '../src/net/online.js';
 import { SOCIAL_ROOM, RELAY_VERSION, parseClient, validHomeWord, validHomeFrame, HOME_RELAY_MIN, HOME_WORDS_KEY, HOME_WORDS_KEEP_MS } from '../src/net/wire.js';
 import { ORDER_KINDS, orderValid, mintHomeOrder, verifyOrder } from '../src/net/identityToken.js';
-import { createOnlineHomes } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes } from '../src/systems/online/onlineHomes.js';
 import { HOME_KEYS_MAX, HOME_LAYOUTS_MAX, HOME_ORDER_KEYS_MAX } from '../src/net/homeLaw.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, worldOf, questScript } from './fb1004dTowns.mjs';
 import { seeded } from './fb1004dArena.mjs';

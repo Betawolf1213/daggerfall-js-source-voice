@@ -50,8 +50,8 @@ import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjec
 import { GUILD_OPS_MAX, GUILD_OPS_WINDOW_S, GUILD_RANK_MASTER, guildMay, GUILD_MEMBER_RE } from '../../src/net/guildLaw.js';
 import { vaultStanding, vaultMayPut, vaultMayTake, vaultGrantOf, guildVaultSlots, GUILD_VAULT_LOG_SHOWN, GUILD_VAULT_SLOTS, GUILD_VAULT_HALL_SLOTS } from '../../src/net/guildVaultLaw.js';
 import { takeTradeGoods, giveTradeGoods, recordCount, REALM_TRADE_RECORD_MAX } from '../../src/net/realmTradeLaw.js';
-import { wagonItemName } from '../../src/systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon named by its kind (already in this graph, by itemLaw.js)
-import { lawfulItem } from '../../src/systems/itemLaw.js';   // INT1 (AUDIT INT): a piece put before the law read the vault, read as it is taken
+import { wagonItemName } from '../../src/systems/wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon named by its kind (already in this graph, by itemLaw.js)
+import { lawfulItem } from '../../src/systems/item/itemLaw.js';   // INT1 (AUDIT INT): a piece put before the law read the vault, read as it is taken
 
 const DAY_S = 86_400;
 const spend = (ctx, player) => overRate(ctx, `guild:${player.id}`, GUILD_OPS_MAX, GUILD_OPS_WINDOW_S);

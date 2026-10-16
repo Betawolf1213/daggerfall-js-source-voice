@@ -12,7 +12,7 @@ import {
   setClimateWeathers, weatherForClimate, tickWeather, weatherRespawn,
   applyClimateWeather, setWeather, currentWeather, restoreWeather, resetWeatherSim,
   rollClimateWeathersForDay, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p2) => readFileSync(join(ROOT, p2), 'utf8');
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASONS, MINUTES_PER_DAY } from '../src/systems/gameDate.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 test('W1 table: every climate/season row sums to 100 - the Chronicles page needs no normalization', () => {
   for (const [climate, seasons] of Object.entries(WEATHER_TABLE)) {

@@ -27,7 +27,7 @@ import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_K
 import { relight } from '../render/lightId.js';   // LIGHT-ID: a burst's slot handed to the next burst - its flash another light
 import { setBatchHitFlash } from '../systems/hitFlash.js';   // WB13d: his body struck flashes, as every foe's does
 import { tierColour } from '../render/spoilsGlow.js';   // WB9f: a piece's landing sparks in its tier's colour
-import { RARITIES } from '../systems/lootRarity.js';
+import { RARITIES } from '../systems/loot/lootRarity.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';   // WBX2: the portal's fire is the gate's own
 import { gateArchProfile } from '../world/gateModel.js';
 import { ONLINE_MINUTES_PER_MS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../net/wire.js';   // WBX7: a soul trap's rounds on the shared world's clock; GATE-HEAL: the heal word's bounds

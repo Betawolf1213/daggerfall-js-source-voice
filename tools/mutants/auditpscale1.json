@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-PSCALE1-fighters-window-off",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "export const PARTY_FIGHT_WINDOW_MS = 30_000;",
     "new": "export const PARTY_FIGHT_WINDOW_MS = 60_000;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-fighters-never-lapse",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "    if (now - at <= PARTY_FIGHT_WINDOW_MS) n++;\n    else m.delete(who);",
     "new": "    n++;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-fighters-count-blows",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "  m.set(who, now);\n}",
     "new": "  m.set(`${String(who)}:${now}`, now);\n}",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-remainder-shared-across-foes",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "  const exact = amount / t + (key ? carry.get(key) ?? 0 : 0);",
     "new": "  const exact = amount / t + (key ? carry.get(_carry) ?? 0 : 0);",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-heal-unweighed",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "  return weighDown(_healCarry, _obj(foe), amount, t);",
     "new": "  return amount;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-hit-carry-lost",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "  _hitCarry.set(key, Math.max(0, exact - whole));",
     "new": "  _hitCarry.set(key, 0);",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDIT-PSCALE1-kill-mark-kept",
-    "file": "src/systems/partyScale.js",
+    "file": "src/systems/party/partyScale.js",
     "old": "  _whole.delete(key);\n  return true;",
     "new": "  return true;",
     "tests": [

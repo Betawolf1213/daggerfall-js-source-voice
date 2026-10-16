@@ -21,7 +21,7 @@ import { loadTables, rmbBlock, rdbBlock, town, dungeon, worldOf, mark, SPAWN, IT
 import { createQuestBridge } from '../src/scenes/questBridge.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { DAEDRA, SHEOGORATH_INDEX, attemptSummoning, noQuestText } from '../src/systems/daedraSummoning.js';
-import { FACTION_FLAGS, ensureFactionRep, getFlag } from '../src/systems/factionRep.js';
+import { FACTION_FLAGS, ensureFactionRep, getFlag } from '../src/systems/faction/factionRep.js';
 
 loadTables();
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

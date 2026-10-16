@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { fpArm } from '../src/combat/fpArm.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { SOUND } from '../src/systems/soundClips.js';

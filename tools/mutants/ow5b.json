@@ -41,7 +41,7 @@
   },
   {
     "name": "OW5b-B5-onto-the-feet",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  const step = Math.min(Math.max(0, dist - contact), BAND_CHASE_MPS * dt * Math.max(1, scale));",
     "new": "  const step = Math.min(dist, BAND_CHASE_MPS * dt * Math.max(1, scale));",
     "tests": [

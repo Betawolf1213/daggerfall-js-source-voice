@@ -27,22 +27,22 @@ import { levelUpSkillSum } from './advancement.js';   // AUDIT 18: SetCurrentLev
 import { overlayAction } from '../ui/input.js';
 import { isEnhanced } from './uiSkin.js';   // THE SKIN: which wizard
 import { assignStartingEquipment } from './startingGear.js';   // S3d; RRI2: AssignStartingEquipment, the delegate
-import { giveBinderAtChargen } from './iliacItems.js';   // CARDS8: the Card Binder and the starter deck, the kit's own tail
+import { giveBinderAtChargen } from './iliac/iliacItems.js';   // CARDS8: the Card Binder and the starter deck, the kit's own tail
 import { NUMBER_BODY_PARTS } from './armorMaterials.js';   // wave 28: CharacterDocument's 7-part table
 import { readSpellsStd, spellsByIndexMap } from '../formats/spellsStd.js';
 import { parseBiog, biogFileName } from '../formats/biogFile.js';   // S3e
 import { applyBiographyEffects } from './biography.js';   // S3e
 import { customSpellSetIndex } from './customClass.js';   // U20a
 import { SOCIAL_GROUP_COUNT, FactionFile } from '../formats/factionFile.js';   // U20a + S25
-import { attachFactionRep } from './factionRep.js';   // S25
-import { createRegionConditions } from './regionConditions.js';
+import { attachFactionRep } from './faction/factionRep.js';   // S25
+import { createRegionConditions } from './region/regionConditions.js';
 import { clearWorldDataVariants } from './worldDataVariants.js';   // AUDIT-RR F39: PlayerEntity.Reset (:818) clears the world variants at every new game
-import { bootstrapRegionPower } from './regionPower.js';   // AUDIT 26 F107   // PlayerEntity.InitializeRegionData (:2189-2218), at every new game
+import { bootstrapRegionPower } from './region/regionPower.js';   // AUDIT 26 F107   // PlayerEntity.InitializeRegionData (:2189-2218), at every new game
 // ORL1: the leveling choice - its screen, and the two names the
 // answer is spelled with.
 import { LevelingChoiceScreen } from '../ui/levelingChoice.js';
 import { oblivionLevelingEnabled, initVirtueLeveling, LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling.js';
-import { isOnlinePage } from './onlineLane.js';   // LEVEL-ONLINE-2: Oblivion's leveling is offline-only for a new character
+import { isOnlinePage } from './online/onlineLane.js';   // LEVEL-ONLINE-2: Oblivion's leveling is offline-only for a new character
 import { legacyOn } from './legacy/settings.js';   // LEGACY2: Project Legacy's question - the family's model
 import { legacyModelScreen } from '../ui/legacyModelChoice.js';
 import { isLegacyChoice } from './legacy/family.js';   // LEGACY-CHOICE: the answer kept on the character

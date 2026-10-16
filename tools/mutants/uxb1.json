@@ -19,7 +19,7 @@
   },
   {
     "name": "UXB1-E-the-full-size-dungeon-is-not-copied",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  for (const table of [ONLINE_FORCED_SETTINGS, ONLINE_LAYOUT_SETTINGS]) {",
     "new": "  for (const table of [ONLINE_FORCED_SETTINGS]) {",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "UXB1-E-the-sync-writes-what-already-agrees",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  const changed = (plan ?? []).filter((r) => !r.same);",
     "new": "  const changed = plan ?? [];",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "UXB1-E-the-synced-settings-are-never-saved",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  if (changed.some((r) => r.store === 'settings')) saveSettings();",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "UXB1-E-an-online-page-reads-the-room-as-the-player",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  if (isOnlinePage(search)) return null;",
     "new": "",
     "tests": [
@@ -364,7 +364,7 @@
   },
   {
     "name": "AUDIT-UXB1-F2-a-second-sync-replaces-the-undo",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  const record = { at: now, rows: [...kept, ...rows] };",
     "new": "  const record = { at: now, rows };",
     "tests": [

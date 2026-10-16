@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { standService, T0, sessionStorageOf } from './accountDb.mjs';
 import { accountProf, SESSION_KEY, accountRefusalText } from '../src/net/accountClient.js';
 import { createProfBook, PROF_QUEUE_MS, PROF_REFRESH_BACKOFF_MS } from '../src/net/profBook.js';
@@ -22,20 +22,20 @@ import {
   hasBag, bagItemsOf, materialKeyOfItem, isMaterialItem, heldOf, unitKgOf, bagWeight, roomFor, mintCarried, takeCarried,
   bagStoreRefusal, bagMayLeave, isBagItem, giveCarried, bagTakesOf, emptyBagIntoPack,
 } from '../src/systems/materialsBag.js';
-import { mintMaterialItem, materialCountLabel } from '../src/systems/profItems.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { mintMaterialItem, materialCountLabel } from '../src/systems/professions/profItems.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { addItem, carriedWeight } from '../src/systems/inventory.js';
 import {
   planBagToggle, hasMaterialsBag, remoteTarget, storeCapacityOf, groundRefusalOf, remoteTargetType, REMOTE_TARGET_TYPES,
 } from '../src/systems/inventorySession.js';
-import { planStore, REFUSAL } from '../src/systems/itemTransfer.js';
+import { planStore, REFUSAL } from '../src/systems/item/itemTransfer.js';
 import { localClickDecision } from '../src/systems/tradeModes.js';
 import { tradeRefusal, BAG_TRADE_TEXT } from '../src/systems/tradePack.js';
 import { tradeableRecord } from '../src/net/realmTradeLaw.js';
 import { carriedItemLists } from '../src/net/realmGoldLaw.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { snapshotPlayer, restorePlayer, bagTakesSaved, removeAllOrphanedItems } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, bagTakesSaved, removeAllOrphanedItems } from '../src/systems/save/save.js';
 import { storesFullIn, fullWordsIn, herbKey, STORES_MAX, WITHDRAW_MAX } from '../src/net/professionLaw.js';
 import { calculateCost } from '../src/systems/shopStock.js';
 import { harvestHauls } from '../src/ui/haulCards.js';
@@ -981,11 +981,11 @@ test('BAG1 wired: the world host hands the book its hands on the bag and the pac
   assert.match(w, /stamped: \(id\) => Object\.hasOwn\(bagTakesOf\(playerEntity\), id\),/);
   assert.match(w, /stamps: \(\) => Object\.entries\(bagTakesOf\(playerEntity\)\)\.map\(\(\[id, t\]\) => \(\{ id, \.\.\.t \}\)\),/);
   assert.match(w, /flush: async \(\) => \{\n\s+try \{ const r = await onlineCheckpointLanded\(\); return r === true \|\| r\?\.ok === true; \} catch \{ return false; \}/);
-  assert.match(src('src/systems/save.js'), /snap\.bagTakes = bagTakesSaved\(entity\.bagTakes\);/);
+  assert.match(src('src/systems/save/save.js'), /snap\.bagTakes = bagTakesSaved\(entity\.bagTakes\);/);
   assert.match(w, /const _storesReached = \(\) => \(modes\?\.mode \?\? 'exterior'\) !== 'dungeon' && _musicInLocationRect\(\)/);
   assert.match(w, /const ready = await profBook\.ensureInStores\(\[\{ key: material, n: Number\(ask\.units\) \|\| 0 \}\]\);/);
   assert.match(src('src/scenes/worldModes.js'), /bagItems/);
-  assert.match(src('src/systems/save.js'), /bagItems/);
+  assert.match(src('src/systems/save/save.js'), /bagItems/);
 });
 
 // ─── DONE WHEN: THROUGH THE REAL WORKER ─────────────────────────────

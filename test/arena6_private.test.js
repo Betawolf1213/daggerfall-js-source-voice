@@ -6,7 +6,7 @@
 // Worker's door, the session opened, joined, picked, its casual bout refereed with equal health and kept in its results,
 // voided, a member removed, the host's absence and the session's ends, the seat cap, the hall's list; the wire both ways;
 // the client over the real modules (scenes/arenaOnline.js driving scenes/arenaBouts.js's relay mirror on a real Room);
-// the window's model (systems/arenaBoard.js sessionCard and arenaBoard - the window itself is mounted in
+// the window's model (systems/arena/arenaBoard.js sessionCard and arenaBoard - the window itself is mounted in
 // test/audit1003b_ui.test.js); and the hosts' seams. Design: bible/11-Multiplayer/Arena.md,
 // the ARENA6 record.
 import { test } from 'node:test';
@@ -21,7 +21,7 @@ import {
   arenaFloorRoomOf, privateCodeTyped, pvpVitality, validArenaIn, validArenaOut, privateSessionOver, ARENA_JOIN_WAIT_MS,
 } from '../src/net/arenaLaw.js';
 import { readArenaOut, parseClient } from '../src/net/wire.js';
-import { callMs, COUNT_MS } from '../src/systems/arenaBout.js';
+import { callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 
 const C = ARENA_FLOOR_CENTRE;
 const CODE = 'K7PX2M';
@@ -369,8 +369,8 @@ test('ARENA6 the wire: a session word in is projected and junk refused - only it
 
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { sessionCard, arenaBoard } from '../src/systems/arenaBoard.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { sessionCard, arenaBoard } from '../src/systems/arena/arenaBoard.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
 const settled = () => new Promise((r) => setTimeout(r, 0));
 /** A client's presence socket in a real Room, as net/online.js's session is to the arena (test/audit1003_online.test.js's

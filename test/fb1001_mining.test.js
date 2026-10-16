@@ -23,8 +23,8 @@ import { trees, veins, boulders, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { groundAt } from '../src/world/terrainNature.js';
 import { keyEdges, noteKeyDown, beginInputFrame, pressed, held } from '../src/ui/input.js';
 import { CHOP_ACT, MINE_ACT } from '../src/net/professionLaw.js';
-import { createForagingItem, setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { createForagingItem, setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 

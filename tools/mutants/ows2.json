@@ -1,7 +1,7 @@
 [
   {
     "name": "OWS2-no-launch",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "        if (layer !== ASHORE) continue;   // no boat to hand: the sea refused",
     "new": "        continue;   // no boat to hand: the sea refused",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "OWS2-left-launches-again",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "nl = sea.again ? ASHORE : LEFT;",
     "new": "nl = ASHORE;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "OWS2-packed-never-again",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "nl = sea.again ? ASHORE : LEFT;",
     "new": "nl = LEFT;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "OWS2-sea-goal-walked",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const wet = sea ? isWater(nx, ny) || (seaGoal && n === goal) : false;",
     "new": "const wet = sea ? isWater(nx, ny) : false;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "OWS2-goal-either-layer",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const goalOk = (layer) => !sea || (seaGoal ? layer === AFLOAT : layer !== AFLOAT);",
     "new": "const goalOk = () => true;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "OWS2-sail-land-corner",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "          if (dx && dy && !isWater(cx + dx, cy) && !isWater(cx, cy + dy)) continue;\n",
     "new": "\n",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "OWS2-coast-cheap",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "kindIx = 3; step = diag * (nearLand(nx, ny) ? SEA_COST.coast : SEA_COST.sea);",
     "new": "kindIx = 3; step = diag * SEA_COST.sea;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "OWS2-free-launch",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "nl = AFLOAT; kindIx = 4; step = diag * SEA_COST.sea + SEA_COST.shore;",
     "new": "nl = AFLOAT; kindIx = 4; step = diag * SEA_COST.sea;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "OWS2-free-landfall",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "kindIx = 5; step = diag * ROUTE_COST.open + SEA_COST.shore;",
     "new": "kindIx = 5; step = diag * ROUTE_COST.open;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "OWS2-start-ashore",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const startLayer = !sea ? 0 : sea.start === 'sea' ? AFLOAT : ASHORE;",
     "new": "const startLayer = !sea ? 0 : ASHORE;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OWS2-road-share-sea",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "kinds.filter((k) => k === 'road' || k === 'track').length",
     "new": "kinds.filter((k) => k !== 'open').length",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "OWS2-crosses-never",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "export const crossesWater = (kinds) => !!kinds?.some((k) => SEA_KINDS.includes(k));",
     "new": "export const crossesWater = () => false;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "OWS2-dry-line-delegate",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "return dryLineOf(a, b, deps.isWater);",
     "new": "return true;",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "OWS2-ocean-stops-sailors",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "=== CLIMATE_OCEAN && !deps.atSea?.()) {",
     "new": "=== CLIMATE_OCEAN) {",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "OWS2-steer-at-sea",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "&& deps.steer && !deps.atSea?.()) {",
     "new": "&& deps.steer) {",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "OWS2-sea-leg-road-square",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "const rect = leg.kind === 'sea' || leg.kind === 'embark' ? rectOf(",
     "new": "const rect = false ? rectOf(",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "OWS2-sea-spot-road-square",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "const w = afloat ? SEA_SPOT_SIZE : P_SIZE;",
     "new": "const w = P_SIZE;",
     "tests": [

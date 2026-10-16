@@ -220,7 +220,7 @@
   },
   {
     "name": "GUILD1e-board-in-a-home",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "(!e.hall || (!!room?.hall && !room?.yard))",
     "new": "(!e.hall || true)",
     "tests": [
@@ -229,7 +229,7 @@
   },
   {
     "name": "GUILD1e-scan-without-the-board",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "[...decorCatalogue(mods ? addDecorMods(read) : read), HALL_BOARD_ENTRY]",
     "new": "[...decorCatalogue(mods ? addDecorMods(read) : read)]",
     "tests": [

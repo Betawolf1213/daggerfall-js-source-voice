@@ -29,7 +29,7 @@ import {
 } from '../src/systems/books.js';
 import { BOOK_ID_TITLES } from '../src/systems/booksData.js';
 import { splitStack, addItem, ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { ITEM_TEMPLATES, templateByIndex } from '../src/systems/itemTemplates.js';
+import { ITEM_TEMPLATES, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';   // SHOP-PELLETS
 import { BookFile } from '../src/formats/bookFile.js';
@@ -163,7 +163,7 @@ test('A2: the book-price warm is wired to the one books boot all three hosts cal
   // WB12c: a shop's shelf mints through createShelfBook - CreateRandomBook itself over the shelf's draw
   assert.match(src('systems/shopStock.js'), /add\(createShelfBook\(rolls\)\)/);
   assert.match(src('systems/books.js'), /export const createShelfBook = \(rolls = Math\.random\) => createRandomBook\(rolls, getShelfBookID\);/);
-  assert.match(src('systems/loot.js'), /halving\(matrix\.BK, \(\) => createRandomBook\(rolls\)\)/);
+  assert.match(src('systems/loot/loot.js'), /halving\(matrix\.BK, \(\) => createRandomBook\(rolls\)\)/);
   assert.match(src('systems/biography.js'), /if \(group === 'Books'\) return createRandomBook\(rolls\);/);
   assert.match(src('systems/quest/item.js'), /: createRandomBook\(rolls\);/);
 });

@@ -42,7 +42,7 @@ import { setBatchGlint } from '../systems/hitFlash.js';
 import { lootCrown } from './lootLines.js';
 import { RAY_DISTANCE } from '../player/activate.js';
 import { itemIconColor32, itemIconKey } from '../ui/itemIconColor32.js';
-import { inventoryItemImage } from '../systems/itemTemplates.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { takeOneItem, quickLootSpend, tookItemText, QUICK_LOOT_REFUSED } from '../systems/quickLoot.js';
 import { isMap, USE_TEXT } from '../systems/useItem.js';

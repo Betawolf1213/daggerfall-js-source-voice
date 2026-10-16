@@ -1,28 +1,28 @@
 [
   {
     "name": "TOOL-SAID-a-guest-hears-the-line",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "if (!how || !isOnlinePage() || _host?.professionsOpen?.() !== true) return null;",
     "new": "if (!how || !isOnlinePage()) return null;",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-SAID-offline-hears-the-line",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "if (!how || !isOnlinePage() || _host?.professionsOpen?.() !== true) return null;",
     "new": "if (!how || _host?.professionsOpen?.() !== true) return null;",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-SAID-the-switch-off-offers-no-use",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  toolUse.usable = (item) => foragingOn() || !!professionToolLine(item?.templateIndex);",
     "new": "  toolUse.usable = () => foragingOn();",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-SAID-the-basket-names-no-choice-key",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "return how(_host.keyLabel?.('Interact') || 'E', _host.keyLabel?.('ActChoice') || 'the act choice key');",
     "new": "return how(_host.keyLabel?.('Interact') || 'E', 'the act choice key');",
     "equivalent": true,
@@ -31,56 +31,56 @@
   },
   {
     "name": "TOOL-USE-foraging-on-keeps-the-use",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  if (how) {\n    // TOOL-USE: at a node of the tool's own kind",
     "new": "  if (how && !foragingOn()) {\n    // TOOL-USE: at a node of the tool's own kind",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-the-node-is-never-asked",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    const took = _host?.professionUse?.(item.templateIndex) ?? false;",
     "new": "    const took = false;",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-an-act-flashes-a-refusal",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    if (took === 'started') return { kind: 'foraging' };",
     "new": "    if (took === 'started') return { kind: 'foraging', refused: true };",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-a-need-and-the-line-too",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    if (took) return { kind: 'foraging', refused: true };",
     "new": "",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-a-need-strikes-gold",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    if (took) return { kind: 'foraging', refused: true };",
     "new": "    if (took) return { kind: 'foraging' };",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-the-way-unsaid-on-the-hud",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    hudText(how);\n    return { kind: 'foraging', refused: true, text: how, said: true };",
     "new": "    return { kind: 'foraging', refused: true, text: how, said: true };",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-the-way-strikes-gold",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "    return { kind: 'foraging', refused: true, text: how, said: true };",
     "new": "    return { kind: 'foraging', text: how, said: true };",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
   {
     "name": "TOOL-USE-the-way-names-no-tool",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "then press ${k} (or use the Wood-Axe).",
     "new": "then press ${k}.",
     "tests": ["test/fb0930b_toolsaid.test.js"]

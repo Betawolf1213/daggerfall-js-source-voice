@@ -659,7 +659,7 @@ test('CSA-L: the pad layer at the helm - the d-pad is the helm\'s (a tap, a hold
   const { createBindings, resetDefaults } = await import('../src/systems/inputActions.js');
   const { setBindings } = await import('../src/ui/input.js');
   const { setPref, _resetForTests: resetPrefs } = await import('../src/systems/uiPrefs.js');
-  const { _resetForTests: resetSettings } = await import('../src/systems/settings.js');
+  const { _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
   const { registerCrossbar } = await import('../src/ui/plusPad.js');
   const prevW = globalThis.window;
   globalThis.window = { addEventListener() {}, removeEventListener() {}, dispatchEvent() {} };

@@ -33,7 +33,7 @@ import {
 } from '../src/world/deepWaterSwim.js';
 import {
   deepWaterPlayer, publishState, clearState, flushStateChange, evaluateSwimmingSuppression, setColumnSource,
-} from '../src/systems/deepWaterPlayer.js';
+} from '../src/systems/deepWater/deepWaterPlayer.js';
 import {
   loadGraceActive, loadStarted, loadFinished, teleported, locationLoadBegan, locationLoadEnded, resetDeepWaterRuntime,
   LOAD_GRACE_SECONDS, LOCATION_LOAD_STUCK_SECONDS,

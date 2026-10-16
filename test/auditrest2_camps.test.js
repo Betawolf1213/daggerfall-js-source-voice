@@ -15,11 +15,11 @@ import { repairRefusal } from '../src/systems/repairService.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { provisionsStock } from '../src/systems/survival/items.js';
-import { createRestItem, REST_ITEM, REST_ITEM_TEXT, litCandle, snuffCandle, _setRestItemsOnlineForTests } from '../src/systems/restItems.js';
-import { itemUseHandler } from '../src/systems/itemTemplates.js';
+import { createRestItem, REST_ITEM, REST_ITEM_TEXT, litCandle, snuffCandle, _setRestItemsOnlineForTests } from '../src/systems/rest/restItems.js';
+import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { applyCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { newSurvival, survivalMinute } from '../src/systems/survival/needs.js';
-import { restItemLines, restItemsStock } from '../src/systems/restItems.js';
+import { restItemLines, restItemsStock } from '../src/systems/rest/restItems.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const flat = () => (o, d, m) => (d[1] < 0 && m >= o[1] ? o[1] : null);

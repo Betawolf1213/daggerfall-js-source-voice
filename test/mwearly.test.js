@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
 import { armsStandFor, armIdentityOf, armBuildOptsOf, saveArmsEntity, prebuildArmsForSave, autoBuildArms } from '../src/combat/weaponRig.js';
 import { EQUIP_SLOTS, equipTableOf, rebuildEquipState, fillEquipTable } from '../src/systems/equip.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

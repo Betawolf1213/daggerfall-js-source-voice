@@ -29,9 +29,9 @@ import { equipTableOf, equipItem, EQUIP_SLOTS, _wearScaleForTests, _dfuWearMulti
 import { getItemHands, ITEM_HANDS, createEquipTable, BOW_HAND_TEMPLATES } from '../src/characters/equipTable.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { playerArrowHitFoe } from '../src/combat/arrowFlight.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 
 // BALANCE1: this file pins DFU's / the mod's own wear verbatim, so it runs the port's wear scale at 1 (test/balance1.test.js pins the scale)
 _wearScaleForTests(1);

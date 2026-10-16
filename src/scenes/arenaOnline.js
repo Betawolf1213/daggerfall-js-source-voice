@@ -37,11 +37,11 @@ import { arenaBoutRoom, ARENA_HALL, ARENA_NO_TEXT, ARENA_HIT, arenaLadderOf, are
 import { exhibitionFor, exhibitionBoutId, EXHIBITION_KEPT_HOURS } from '../net/arenaExhibition.js';   // ARENA4b: the hour's exhibition, the relay's
 import { arenaBoutSeed } from '../net/arenaBrain.js';
 import { createArenaClaims, arenaClaimVerdict } from '../net/arenaClaims.js';
-import { ARENA_TEXT } from '../systems/arenaText.js';
-import { nextLadderBout } from '../systems/arenaLadder.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
+import { nextLadderBout } from '../systems/arena/arenaLadder.js';
 import { accountRefusalText } from '../net/accountClient.js';
 import { readArenaReceipt } from '../net/arenaReceipt.js';   // ARENA4b: whose bout a claim's answer was, for its held purse
-import { BOUT_PHASES } from '../systems/arenaBout.js';   // AUDIT PRE-MERGE 1003 O3: an exhibition heard fought
+import { BOUT_PHASES } from '../systems/arena/arenaBout.js';   // AUDIT PRE-MERGE 1003 O3: an exhibition heard fought
 
 /** The board is asked again when the window is up and it is this old, ms. */
 export const BOARD_STALE_MS = 20_000;
@@ -61,7 +61,7 @@ export const OWED_KEEP_MS = 10 * 60_000;
 export const EX_WAIT_MS = 20_000;
 export const EX_RETRY_MS = 30_000;
 
-/** AUDIT PRE-MERGE 1003 O3: the bout law's phases from the fight on (systems/arenaBout.js BOUT_PHASES) - an exhibition
+/** AUDIT PRE-MERGE 1003 O3: the bout law's phases from the fight on (systems/arena/arenaBout.js BOUT_PHASES) - an exhibition
  *  heard in one of them has begun, and its book is shut. */
 const FOUGHT = new Set(BOUT_PHASES.slice(BOUT_PHASES.indexOf('fight')));
 
@@ -567,7 +567,7 @@ export function createArenaOnline(deps) {
     if (SESSION_SAYS.has(w.m) || (w.m === 'no bout' && !bout)) { say(text); sess.word = text; return true; }
     return false;
   }
-  /** The session as the window draws it (systems/arenaBoard.js sessionCard), or `{ in: false }` (AUDIT PRE-MERGE 1003b
+  /** The session as the window draws it (systems/arena/arenaBoard.js sessionCard), or `{ in: false }` (AUDIT PRE-MERGE 1003b
    *  U3/U8/C8: with the last word said, and a code this screen may rejoin). */
   const sessionView = () => (sess ? { in: true, code: sess.code, host: sess.state ? sess.state.h === 1 : !!sess.host, state: sess.state, word: sess.word ?? '' }
     : { in: false, word: sessLast?.text ?? '', back: sessLast?.back ? sessLast.code : '' });
@@ -682,7 +682,7 @@ export function createArenaOnline(deps) {
   }
 
   // ── THE WINDOW ──
-  /** The window's online half (systems/arenaBoard.js arenaBoard's `online`), or null offline. */
+  /** The window's online half (systems/arena/arenaBoard.js arenaBoard's `online`), or null offline. */
   function model() {
     if (!live()) return null;
     wantHall();

@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN7c-ring-size",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const LAIR_RING_R = 1.5;",
     "new": "export const LAIR_RING_R = 2;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RVN7c-marks-switch",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantOn()) return [];\n  return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => ({ cx:",
     "new": "  return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => ({ cx:",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "RVN7c-marks-unheard",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => ({ cx:",
     "new": "  return livingRevenants().filter((r) => r.lair).map((r) => ({ cx:",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "RVN7c-marks-corner",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "({ cx: r.lair.px + 0.5, cy: r.lair.py + 0.5,",
     "new": "({ cx: r.lair.px, cy: r.lair.py,",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "RVN7c-marks-unnamed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "r: LAIR_RING_R, label: r.given ?? r.name, id: r.id }));",
     "new": "r: LAIR_RING_R, id: r.id }));",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "RVN7c-rows-unheard",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => {\n    const dx",
     "new": "  return livingRevenants().filter((r) => r.lair).map((r) => {\n    const dx",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "RVN7c-rows-switch",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantOn()) return [];\n  const line = (text) =>",
     "new": "  const line = (text) =>",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RVN7c-rows-way-reversed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "const dx = Number.isInteger(here?.px) ? r.lair.px - here.px : 0, dy = Number.isInteger(here?.py) ? r.lair.py - here.py : 0;",
     "new": "const dx = Number.isInteger(here?.px) ? here.px - r.lair.px : 0, dy = Number.isInteger(here?.py) ? here.py - r.lair.py : 0;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RVN7c-rows-clocked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "questName: 'HUNT', hunt: true, clockSeconds: null,",
     "new": "questName: 'HUNT', hunt: true, clockSeconds: 0,",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN7c-rows-id",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "return { id: `${HUNT_QUEST_PREFIX}${r.id}`, name:",
     "new": "return { id: r.id, name:",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN7c-abandon-unwired",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "setHuntJournal({ abandon: (id) => forgetRevenantLair(id) });",
     "new": "setHuntJournal(null);",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN7c-abandon-unsaved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.lairKnown = false;\n  touch(r);\n  persist();\n  return true;",
     "new": "  r.lairKnown = false;\n  touch(r);\n  return true;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "RVN7c-abandon-unforgotten",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!r || !r.lairKnown) return false;\n  r.lairKnown = false;",
     "new": "  if (!r || !r.lairKnown) return false;",
     "tests": [

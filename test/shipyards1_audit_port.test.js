@@ -20,7 +20,7 @@ import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/cityNavigation.js';
 import { portTownByData, lettersOnMap, foundBuildingKey, portPlaceName } from '../src/systems/portPlaces.js';
 import { stairRefusal, stairFeetY, PORT_TEXT } from '../src/scenes/portHost.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
-import { DIRECTION_TEXT_ID, MAP_REVEAL_TEXT_ID } from '../src/systems/talkTopics.js';
+import { DIRECTION_TEXT_ID, MAP_REVEAL_TEXT_ID } from '../src/systems/talk/talkTopics.js';
 import { SALE_FLOOR } from '../src/systems/shipyards.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { planQuay, pierDress, lanternLights, GANGWAY_LANE, DRESS_LANE, FENDER_W, FENDER_STEP, BRACE_SPAN, BRACE_LOW, PILE_STEP, QUAY_DECK_UP, QUAY_DECK_T } from '../src/systems/naval/quays.js';

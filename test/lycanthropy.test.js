@@ -29,7 +29,7 @@ import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { liveInfection } from '../src/systems/infection.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { spellPointCost, LYCANTHROPY_SPELL_TAG as WINDOW_TAG } from '../src/ui/spellbookWindow.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { inflictDisease } from '../src/systems/diseases.js';
 import { EQUIP_SLOTS, equipItem, equipTableOf } from '../src/systems/equip.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
@@ -273,7 +273,7 @@ test('V2a: the cure unmakes everything, one classic minute later', () => {
 });
 
 test('V2a: the curse survives the save whole, marker rebuilt from the entry', async () => {
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   const p = P();
   createLycanthropyCurse(p, LYCANTHROPY_TYPES.Wereboar, { now: QUIET + 100 });
   lycanthropyMagicRound(p, { nowMinutes: QUIET + 200 });

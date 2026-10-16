@@ -20,10 +20,10 @@ import { fakeRooms } from './fakeRoom.mjs';
 import {
   landingsOf, landingOf, strayOf, thrownRecord, thrownTo, wardenWordOf, wardenStamp, horseThrownWith, WARDEN_HORSE_BY_NATIVES,
   WARDEN_SAME_NATIVES, WARDEN_LAND_PAST, WARDEN_LAND_SCATTER,
-} from '../src/systems/wagonWarden.js';
+} from '../src/systems/wagon/wagonWarden.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, WAGON_MODEL_ID } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';
 import { createWardenShows, WARDEN_HEAD } from '../src/scenes/wagonWardenShow.js';
 import { createWagonWarden, wardenTownIn, WARDEN_SHOW_REACH } from '../src/scenes/wagonWardenHost.js';
 import { NAV_CELL } from '../src/world/cityNavigation.js';
@@ -31,10 +31,10 @@ import { PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
 import { caravanRecordOf, caravanStands } from '../src/net/caravanVisitLink.js';
 import { createWagonRiders, RIDE_ROW } from '../src/scenes/wagonRiders.js';
-import { RIDE_TEXT } from '../src/systems/wagonSeats.js';
+import { RIDE_TEXT } from '../src/systems/wagon/wagonSeats.js';
 import { makeWorld } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const AX = 100 * PIXEL_UNITS + 1000, AZ = (499 - 150) * PIXEL_UNITS + 1000;

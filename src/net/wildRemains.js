@@ -30,10 +30,10 @@
 // answer, committed to the killer's record (server-account/src/wild.js wildCollect), never as the room's copy of it.
 //
 // The host hands in everything this touches (the pool, the frame, the pack, the clock, the socket), so the pins drive
-// it with fakes. The pile's `items` are minted through the item law the host hands in (systems/loot.js validLootList).
+// it with fakes. The pile's `items` are minted through the item law the host hands in (systems/loot/loot.js validLootList).
 // ═══════════════════════════════════════════════════════════════════
 import { WILD_REMAINS_ITEMS_MAX } from './wire.js';
-import { WILD_TEXT } from '../systems/wildZone.js';
+import { WILD_TEXT } from '../systems/wild/wildZone.js';
 
 /** The pile's icon: the treasure flat a dropped pile wears (archive 216's sack, randomTreasureIconIndices' first). */
 export const WILD_PILE_ICON = Object.freeze({ archive: 216, record: 0 });

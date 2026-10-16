@@ -1,7 +1,7 @@
 [
   {
     "name": "SET5-a-place-off-by-one",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "if (it && setPieceKind(it) === 'armor' && setIdOf(it) === id) out[i] = true; });",
     "new": "if (it && setPieceKind(it) === 'armor' && setIdOf(it) === id) out[i + 1] = true; });",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SET5-the-shields-place-never-lit",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "  if (left && setPieceKind(left) === 'shield' && setIdOf(left) === id) out[SET_BODY_SLOTS.length] = true;\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SET5-the-weapons-place-never-lit",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "  if ([right, left].some((h) => h && setPieceKind(h) === 'weapon' && setIdOf(h) === id)) out[SET_BODY_SLOTS.length + 1] = true;\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SET5-the-renowns-sleep-said-offline",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "sigilRenown() == null ? 'renown'",
     "new": "sigilRenown() == null ? 'offline'",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SET5-the-lines-never-carried",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (set) out.push(...setLines(item));",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SET5-the-count-of-pieces-more-off",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "` (${t.at - v.count} more)`",
     "new": "` (${t.at} more)`",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SET5-a-recovery-shown-without-its-tier",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  if (t.get('malacath')?.[2]) {",
     "new": "  if (true) {",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SET5-a-window-shown-as-a-recovery",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "if (st.halvedLeft) out.push({ key: 'unbroken', set: 'malacath', name: 'Unbroken', text: time(st.halvedLeft), state: 'active' });",
     "new": "if (st.halvedLeft) out.push({ key: 'unbroken', set: 'malacath', name: 'Unbroken', text: time(st.halvedLeft), state: 'recovering' });",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SET5-the-minutes-misread",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "const time = (n) => (n >= 60 ? `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}` : `${n}s`);",
     "new": "const time = (n) => `${n}s`;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SET5-an-unidentified-pieces-set-unsaid",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "return [...out, ...(sigil ? setSigilLines(item) : []), ...(set ? setLines(item) : [])]; }",
     "new": "return [...out, ...(sigil ? setSigilLines(item) : [])]; }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SET5-a-sleeping-pieces-sigil-called-faint",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "return lines.length && sigilDueling() && setIdOf(item) && !sigilHasBlow(item.sigil) ? ['Sigil (asleep in a duel)'] : lines;",
     "new": "return lines;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SET5-a-set-weapons-blow-unsaid-in-a-duel",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "return lines.length && sigilDueling() && setIdOf(item) && !sigilHasBlow(item.sigil) ? ['Sigil (asleep in a duel)'] : lines;",
     "new": "return lines.length && sigilDueling() && setIdOf(item) ? ['Sigil (asleep in a duel)'] : lines;",
     "tests": [

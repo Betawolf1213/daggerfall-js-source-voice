@@ -2,18 +2,18 @@
 // REVENANT-PAGE (2026-10-02, Mac: "Definitely finish this with love. Any new UI elements need to be enhanced UI plus"):
 // THE REVENANTS PAGE on the Enhanced pause menu's Holdings rail (ui/enhancedMenu.js pauseHoldings; HOLDINGS moved it off
 // the Stats rail, 2026-10-03) - every foe that has earned
-// the character's name (systems/revenant.js), the living first, strongest first: its portrait in a sunk well with its
+// the character's name (systems/revenant/revenant.js), the living first, strongest first: its portrait in a sunk well with its
 // rank on a chip, its name and what it is, what it has done to you, when it will come, and its deeds in order; then
 // the FALLEN, greyed and struck through, with the day each fell. A character with none is told how one is made.
 //
 // Dressed by the stone-and-brass kit's roles (ui/enhancedFrame.js FRAME_ROLES: a row a tile, the portrait a well, the
 // rank a chip) - this sheet writes geometry and the words' colours alone, as the stats card's does.
 
-import { revenantsFor, revenantOn, revenantHeld, revenantPortrait, revenantRankNumeral, REVENANT_MAX, REVENANT_MIN_RENOWN, takenName } from '../systems/revenant.js';   // RENOWN-GATE: a held one says so
+import { revenantsFor, revenantOn, revenantHeld, revenantPortrait, revenantRankNumeral, REVENANT_MAX, REVENANT_MIN_RENOWN, takenName } from '../systems/revenant/revenant.js';   // RENOWN-GATE: a held one says so
 import { ownMinutes } from '../systems/worldTick.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
-import { PERSONALITIES } from '../systems/revenantPersonality.js';   // REVENANT-VOICE: who each is
-import { WEAK_NAMES, WEAK_HINTS, weaknessKind, willMatters, LAST_STAND_RANK, lastStandHealth, signatureStamp, bandMembers, bandName, WRATH_MAX, loyaltyLabel } from '../systems/revenantFeud.js';   // RVN3: its weakness, its will; RVN4: its last stand; RVN5: its signature; RVN6: its band
+import { PERSONALITIES } from '../systems/revenant/revenantPersonality.js';   // REVENANT-VOICE: who each is
+import { WEAK_NAMES, WEAK_HINTS, weaknessKind, willMatters, LAST_STAND_RANK, lastStandHealth, signatureStamp, bandMembers, bandName, WRATH_MAX, loyaltyLabel } from '../systems/revenant/revenantFeud.js';   // RVN3: its weakness, its will; RVN4: its last stand; RVN5: its signature; RVN6: its band
 import { tacticsSwitchOn } from '../ai/tactics.js';   // RVN5: a signature is a telegraph - the Enhanced AI switch's
 
 export const REVENANT_PAGE_SECTIONS = Object.freeze([['revenants', 'Revenants']]);
@@ -81,7 +81,7 @@ export function agoWords(minute, now) {
   return days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
 }
 /** When a living revenant will come, in words: out in the world now, due (any road), or in so long. RENOWN-GATE: or
- *  held under its Renown (systems/revenant.js revenantHeld), when neither "any road" nor a day would be true. */
+ *  held under its Renown (systems/revenant/revenant.js revenantHeld), when neither "any road" nor a day would be true. */
 export function comeWords(r, now, held = revenantHeld()) {
   if (r.out) return { tag: 'Abroad', cls: 'is-out', line: 'Out in the world, looking for you.' };
   if (held) return { tag: 'Held', cls: 'is-waiting', line: `It will not come for you before Renown ${REVENANT_MIN_RENOWN}.` };
@@ -194,7 +194,7 @@ export function bandWords(r, kindName = (t) => String(t)) {
   return `Band: rides with ${list} - ${name}.`;
 }
 /** RVN7 (18.1; RVN12 completes the page): where it goes to ground - its lair as the player knows it. RENOWN-GATE: held,
- *  neither the map's mark nor the towns' word (systems/revenant.js revenantMapMarks, revenantRumor) is promised. */
+ *  neither the map's mark nor the towns' word (systems/revenant/revenant.js revenantMapMarks, revenantRumor) is promised. */
 export function lairWords(r, held = revenantHeld()) {
   if (!r?.lair?.name) return 'Lair: none - it roams.';
   if (held) return r.lairKnown ? `Lair: ${r.lair.name}.` : 'Lair: unknown.';

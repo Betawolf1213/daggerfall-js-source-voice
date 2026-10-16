@@ -1,9 +1,9 @@
 [
   {
     "name": "INFECTION-KEPT-the-temple-ends-every-disease",
-    "file": "src/systems/guildServiceActions.js",
-    "old": "import { cureDiseasesInfectionsLast } from './effects.js';",
-    "new": "import { cureAllDiseases as cureDiseasesInfectionsLast } from './effects.js';",
+    "file": "src/systems/guild/guildServiceActions.js",
+    "old": "import { cureDiseasesInfectionsLast } from '../effects.js';",
+    "new": "import { cureAllDiseases as cureDiseasesInfectionsLast } from '../effects.js';",
     "tests": [
       "test/fb0929h_infectionkept.test.js"
     ]

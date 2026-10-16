@@ -10,7 +10,7 @@
 //
 // WHAT IT HOLDS. A realm character's reputation with the twenty-two guild
 // factions - the four guilds, the eight temples, the ten knightly orders
-// (systems/guildFactions.js, the leaf) - and the guilds it is a member of,
+// (systems/guild/guildFactions.js, the leaf) - and the guilds it is a member of,
 // with its rank (as its client reports it, never past what the Roll's own
 // reputation allows) and the moment the service first saw it a member.
 // Every other faction stays the save's (CALL 1). Offline is DFU,
@@ -60,7 +60,7 @@
 // book's key and bound in npcHallBook.js) live with them.
 // ═══════════════════════════════════════════════════════════════════
 
-import { GUILD_FACTION_IDS, DIVINES, ORDERS, MIN_REPUTATION, MAX_REPUTATION, RANK_REQ_REPUTATION } from '../systems/guildFactions.js';
+import { GUILD_FACTION_IDS, DIVINES, ORDERS, MIN_REPUTATION, MAX_REPUTATION, RANK_REQ_REPUTATION } from '../systems/guild/guildFactions.js';
 import { MARKS_RID_RE, utcDay } from './marksLaw.js';   // ROLL-PACE: the Roll's day, the claims' own
 import { gateHash } from './gateLaw.js';   // CHAP2a: a hall writ's own dice
 import { courtWrits, material, regionOk } from './nodeLaw.js';   // CHAP2a: the Court's writ law, the material families, a region
@@ -70,7 +70,7 @@ import { GUILD_ID_RE, GUILD_NAME_MAX, GUILD_TAG_RE } from './guildLaw.js';   // 
 import { MARKS_MAX } from './marksLaw.js';   // CHAP7a: a bid held under the one cap every treasury keeps
 import { REALM_CHARACTER_RE } from './identityToken.js';   // CHAP3a: a member's own writ is drawn over its realm id
 
-/** The membership books a character holds (systems/guilds.js: the mortal's and the vampire's), each one temple and one
+/** The membership books a character holds (systems/guild/guilds.js: the mortal's and the vampire's), each one temple and one
  *  order at most. */
 export const ROLL_BOOKS = 2;
 const DIVINE_SET = /** @type {Set<number>} */ (new Set(Object.values(DIVINES)));
@@ -891,7 +891,7 @@ export function seatChangesOf(/** @type {Iterable<any>} */ before, /** @type {It
 
 // ─── CHAP4b: THE SEATS ON THE PAGE (Chapters-Arc 3.5, 6) ────────────
 // What the tab does with the Roll's word on ranks 8 and 9, online: the book's own rank held at 7 - at the Roll's adoption
-// (rollBookCap) and at DFU's review (systems/guilds.js updateRank's ceiling, the host's while the Roll holds) - and a
+// (rollBookCap) and at DFU's review (systems/guild/guilds.js updateRank's ceiling, the host's while the Roll holds) - and a
 // seat's rank at its own chapter's halls alone: the hall's service window reads the book seated (seatedBook). Offline,
 // and wherever the Roll does not hold, every rank is DFU's.
 
@@ -906,7 +906,7 @@ export function seatRankAt(/** @type {unknown} */ seats, /** @type {unknown} */ 
   const s = rollSeatsOf(seats).find((x) => x.f === faction && x.region === region);
   return s ? SEAT_RANK[/** @type {'master' | 'officer'} */ (s.seat)] : null;
 }
-/** A BOOK SEATED: a membership book (systems/guilds.js) whose row under `key` reads `rank` where its own is lower -
+/** A BOOK SEATED: a membership book (systems/guild/guilds.js) whose row under `key` reads `rank` where its own is lower -
  *  every other read and every write (a knightly order's gifts, a probation) the row's own. The book itself where it has
  *  no such row or the seat gives no higher rank. AUDIT CHAP5 D1: and only a row DFU's own review holds at 7
  *  (ROLL_BOOK_RANK_MAX) - a seat is Eligible at a reputation of 80 alone, and lifted a rank-2 member past every skill

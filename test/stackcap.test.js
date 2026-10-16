@@ -9,7 +9,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applySpell, renewRounds, tickActiveEffects, BUFF_KINDS } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 

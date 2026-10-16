@@ -46,7 +46,7 @@
   },
   {
     "name": "REVENANT-FATE-the-trophy-left-out",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  const items = [...(Array.isArray(f.entity?.items) ? f.entity.items : []), ...(f.trophy ? [f.trophy] : [])];",
     "new": "  const items = [...(Array.isArray(f.entity?.items) ? f.entity.items : [])];",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "REVENANT-FATE-the-record-open",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  revenantExecuted(player, f.entity);\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "REVENANT-FATE-the-sworn-left-hunting",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.sworn = true; r.fate = 'sworn';",
     "new": "  r.fate = 'sworn';",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "REVENANT-FATE-spare-past-the-retinue",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  if (!retinueHasRoom()) return null;\n  setRetinuePlayer(player);\n  const state = swornPlace();",
     "new": "  setRetinuePlayer(player);\n  const state = swornPlace();",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "REVENANT-FATE-the-wait-on-the-wall-clock",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  f.yielded.held = (f.yielded.held ?? 0) + Math.max(0, Number(dtMs) || 0);",
     "new": "  f.yielded.held = Date.now() - f.yielded.at;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "REVENANT-TROPHY-the-carried-blade-ignored",
-    "file": "src/systems/revenantTrophy.js",
+    "file": "src/systems/revenant/revenantTrophy.js",
     "old": "  if (carried != null) return carried;\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "REVENANT-TROPHY-a-common-trophy",
-    "file": "src/systems/revenantTrophy.js",
+    "file": "src/systems/revenant/revenantTrophy.js",
     "old": "  return x < leg ? 'legendary' : x < leg + rare ? 'rare' : 'magic';",
     "new": "  return x < leg ? 'legendary' : x < leg + rare ? 'rare' : 'common';",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "REVENANT-TROPHY-the-name-without-its-owner",
-    "file": "src/systems/revenantTrophy.js",
+    "file": "src/systems/revenant/revenantTrophy.js",
     "old": "  return `${possessive(given)} ${noun}`;",
     "new": "  return noun;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "REVENANT-TROPHY-the-rank-unread",
-    "file": "src/systems/revenantTrophy.js",
+    "file": "src/systems/revenant/revenantTrophy.js",
     "old": "  const k = Math.max(0, Math.min(4, (rank | 0) - 1));",
     "new": "  const k = 0;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "REVENANT-COMPANION-a-call-past-the-slots",
-    "file": "src/systems/revenantCompanions.js",
+    "file": "src/systems/revenant/revenantCompanions.js",
     "old": "  if (companionsWithYou() >= COMPANION_SLOTS) return `Your companions are full (${COMPANION_SLOTS}).`;\n",
     "new": "",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "REVENANT-COMPANION-the-wake-never-comes",
-    "file": "src/systems/revenantCompanions.js",
+    "file": "src/systems/revenant/revenantCompanions.js",
     "old": "        if (stateOf(r) === 'resting' && now >= restUntil(r, now)) {",
     "new": "        if (false) {",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "REVENANT-COMPANION-health-boosted-at-every-door",
-    "file": "src/systems/revenantCompanions.js",
+    "file": "src/systems/revenant/revenantCompanions.js",
     "old": "  if (fresh) {\n    entity.maxHealth",
     "new": "  if (true) {\n    entity.maxHealth",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "DISSOLVE-arriving-backwards",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "    if (p.dir === 'in') return t >= 1 ? null : [Math.max(0.001, 1 - Math.max(0, t)), ...tint];",
     "new": "    if (p.dir === 'in') return t >= 1 ? null : [Math.max(0.001, Math.max(0, t)), ...tint];",
     "tests": [

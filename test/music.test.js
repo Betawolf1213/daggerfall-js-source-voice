@@ -31,14 +31,14 @@ import {
   SNOW_SONGS, TAVERN_SONGS, NIGHT_SONGS, SNEAKING_SONGS_FM,
   TEMPLE_GOOD_SONGS, TEMPLE_NEUTRAL_SONGS, TEMPLE_BAD_SONGS,
   selectSong, dungeonKey,
-} from '../src/systems/songManager.js';
+} from '../src/systems/song/songManager.js';
 import {
   eventsInWindow, applyChannelEvents, freshChannelState, LOOKAHEAD_SECONDS, TICK_INTERVAL_MS,
-} from '../src/systems/songPlayer.js';
+} from '../src/systems/song/songPlayer.js';
 import { MidiBsaFile } from '../src/formats/hmiFile.js';
 import { srand, rand } from '../src/formats/dfRandom.js';
-import * as songManager from '../src/systems/songManager.js';
-import { SONG_FILES, isSongFileDefined, songFileToRecordName } from '../src/systems/songFiles.js';
+import * as songManager from '../src/systems/song/songManager.js';
+import { SONG_FILES, isSongFileDefined, songFileToRecordName } from '../src/systems/song/songFiles.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2)
@@ -399,7 +399,7 @@ test('A5b: bad program numbers CLAMP into a real FM voice', async () => {
 test('A5b: outdoor playlists are AssignPlaylist\'s arms, verbatim', async () => {
   const { outdoorPlaylist, SUNNY_SONGS, CLOUDY_SONGS, OVERCAST_SONGS, RAIN_SONGS,
     SNOW_SONGS, NIGHT_SONGS, NIGHT_SONGS_FM, SUNNY_SONGS_FM } =
-    await import('../src/systems/songManager.js');
+    await import('../src/systems/song/songManager.js');
 
   // NIGHT overrides the weather entirely (SongManager.cs:608-611).
   assert.equal(outdoorPlaylist({ night: true, weather: 'snow' }), NIGHT_SONGS);
@@ -438,7 +438,7 @@ test('A5b: outdoor playlists are AssignPlaylist\'s arms, verbatim', async () => 
 });
 
 test('A5b: every outdoor and FM playlist entry EXISTS in MIDI.BSA', { skip: skipReal }, async () => {
-  const sm = await import('../src/systems/songManager.js');
+  const sm = await import('../src/systems/song/songManager.js');
   const bsa = new MidiBsaFile();
   bsa.load(new Uint8Array(readFileSync(join(ARENA2, 'MIDI.BSA'))));
   const missing = [];
@@ -684,7 +684,7 @@ test('AUDIT 2026-08-25: articulation beats family, where the two disagree', asyn
 });
 
 test('AUDIT 2026-08-25: the SUSTAIN PEDAL, which was being dropped entirely', async () => {
-  const { sustainIntervals, sustainedDuration } = await import('../src/systems/songPlayer.js');
+  const { sustainIntervals, sustainedDuration } = await import('../src/systems/song/songPlayer.js');
   const cc = (tick, value, channel = 0) => ({ type: 'controller', controller: 64, tick, value, channel });
 
   // MIDI's threshold is 64: below is up, 64 and above is down. Not 63,
@@ -761,7 +761,7 @@ test('AUDIT 2026-08-25: the SUSTAIN PEDAL, which was being dropped entirely', as
 
   // ...and the scheduler must actually USE it, computed ONCE per song
   // rather than per lookahead window.
-  const src = readFileSync(new URL('../src/systems/songPlayer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/systems/song/songPlayer.js', import.meta.url), 'utf8');
   assert.match(src, /sustainedDuration\(e\.tick, e\.duration \|\| 0, this\._sustain\?\.get\(e\.channel\)\)/);
   // AUDIT 39: the pin moved with the law - the pedal map is built with
   // the SONG'S LENGTH, so an unlifted pedal closes there instead of at
@@ -795,13 +795,13 @@ test('AUDIT 2026-08-25: pitched percussion HOLDS its note', () => {
   }
   // and the player must actually READ it - a table nothing consults is
   // the dead-data shape this project keeps finding
-  const src = readFileSync(new URL('../src/systems/songPlayer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/systems/song/songPlayer.js', import.meta.url), 'utf8');
   assert.match(src, /spec\.hz \* spec\.drop/);
   assert.match(src, /if \(spec\.drop !== 1\)/, 'a held pitch schedules no ramp at all');
 });
 
 test('AUDIT 19: MIDI has sixteen channels, and percussion is one of them', async () => {
-  const { freshChannelState } = await import('../src/systems/songPlayer.js');
+  const { freshChannelState } = await import('../src/systems/song/songPlayer.js');
   const { PERCUSSION_CHANNEL } = await import('../src/systems/gmSynth.js');
   const s = freshChannelState();
   assert.deepEqual(Object.keys(s).map(Number).sort((a, b) => a - b),
@@ -818,7 +818,7 @@ test('AUDIT 19 F13: EVERY playlist is pinned WHOLE, not just the sampled ones', 
   // DUNGEON_SONGS_FM and swapped SUNNY_SONGS entirely and the suite stayed
   // green, because only the duplicate COUNTS were checked. A count survives
   // any reordering, and order is what the modulo indexes into.
-  const sm = await import('../src/systems/songManager.js');
+  const sm = await import('../src/systems/song/songManager.js');
   const EXPECT = {
     DUNGEON_SONGS_FM: ['FM_DNGN1.HMI', 'FM_DNGN1.HMI', 'FM_DNGN2.HMI', 'FM_DNGN3.HMI',
       'FM_DNGN4.HMI', 'FM_DNGN5.HMI', 'FDNGN10.HMI', 'FDNGN11.HMI', 'FDUNGN4.HMI',
@@ -871,7 +871,7 @@ test('AUDIT 19 F13: EVERY playlist is pinned WHOLE, not just the sampled ones', 
 });
 
 test('AUDIT 19 F14: the day seed is pinned where it actually DISCRIMINATES', async () => {
-  const { selectSong, DUNGEON_SONGS } = await import('../src/systems/songManager.js');
+  const { selectSong, DUNGEON_SONGS } = await import('../src/systems/song/songManager.js');
   // The old pin used gameDays 93 against a 5-entry list, where
   // srand(93)%5 === srand(94)%5 - so seeding with gameDays+1 passed. Pick a
   // day and list where the neighbours genuinely differ, and assert BOTH
@@ -902,7 +902,7 @@ const fakeCtx = () => ({ currentTime: 0, sampleRate: 44100 });
  *  pump WE drive - play() arms a real setInterval, which would keep the
  *  test process alive and pump against a clock that never moves. */
 async function recordingPlayer(song) {
-  const { SongPlayer } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer } = await import('../src/systems/song/songPlayer.js');
   const ctx = fakeCtx();
   const p = new SongPlayer(ctx);
   p._ensureMaster = () => {};
@@ -976,7 +976,7 @@ test('AUDIT 19 F6: control events do NOT reach back over notes in their window',
   // earlier in the same window - 20,808 notes across the shipped archive
   // were voiced with state from their own future. The window is a
   // scheduling convenience, not a unit of time.
-  const { SongPlayer } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer } = await import('../src/systems/song/songPlayer.js');
   const ctx = { currentTime: 0, sampleRate: 44100 };
   const p = new SongPlayer(ctx);
   p._ensureMaster = () => {};
@@ -1005,7 +1005,7 @@ test('AUDIT 19 F6: control events do NOT reach back over notes in their window',
 });
 
 test('AUDIT 19 F7: the loop lead is non-zero, so the seam is never "now"', async () => {
-  const { LOOP_LEAD_SECONDS, LOOKAHEAD_SECONDS } = await import('../src/systems/songPlayer.js');
+  const { LOOP_LEAD_SECONDS, LOOKAHEAD_SECONDS } = await import('../src/systems/song/songPlayer.js');
   // A start time of exactly `now` is what WebAudio treats as immediate, so
   // the lead has to be strictly positive - and strictly SMALLER than the
   // lookahead, or the re-pumped window is empty and the repeat starts late.
@@ -1015,7 +1015,7 @@ test('AUDIT 19 F7: the loop lead is non-zero, so the seam is never "now"', async
 });
 
 test('AUDIT 19 F2: AssignPlaylist, every arm (SongManager.cs:573-660)', async () => {
-  const sm = await import('../src/systems/songManager.js');
+  const sm = await import('../src/systems/song/songManager.js');
   const { playlistForEnvironment: pick } = sm;
 
   // ARRESTED wins over the environment entirely - the court check is the
@@ -1061,7 +1061,7 @@ test('AUDIT 19 F2: AssignPlaylist, every arm (SongManager.cs:573-660)', async ()
 
 test('AUDIT 19 F2: the building arm folds the way DFU folds it', async () => {
   const { environmentForBuilding, MAGES_GUILD_FACTION, FIGHTERS_GUILD_FACTION } =
-    await import('../src/systems/songManager.js');
+    await import('../src/systems/song/songManager.js');
   const { BUILDING_TYPES: B } = await import('../src/world/buildingNames.js');
 
   // Eleven mercantile types fold to ONE Shop environment (:465-476).
@@ -1131,7 +1131,7 @@ const CTX = {
 };
 
 test('AUDIT 19 1:1: an unchanged context does NOT restart the song', async () => {
-  const { SongManager } = await import('../src/systems/songManager.js');
+  const { SongManager } = await import('../src/systems/song/songManager.js');
   const played = [];
   const sm = new SongManager({ play: (n) => played.push(n) });
   sm.update(CTX);
@@ -1140,7 +1140,7 @@ test('AUDIT 19 1:1: an unchanged context does NOT restart the song', async () =>
 });
 
 test('AUDIT 19 1:1: a NEW DAY re-picks even when the playlist is identical', async () => {
-  const { SongManager, SUNNY_SONGS } = await import('../src/systems/songManager.js');
+  const { SongManager, SUNNY_SONGS } = await import('../src/systems/song/songManager.js');
   const played = [];
   const sm = new SongManager({ play: (n) => played.push(n) });
   sm.update(CTX);
@@ -1154,7 +1154,7 @@ test('AUDIT 19 1:1: a NEW DAY re-picks even when the playlist is identical', asy
 });
 
 test('AUDIT 19 1:1: a NEW LOCATION re-picks; locationIndex is in the context', async () => {
-  const { SongManager, contextEquals } = await import('../src/systems/songManager.js');
+  const { SongManager, contextEquals } = await import('../src/systems/song/songManager.js');
   const played = [];
   const sm = new SongManager({ play: (n) => played.push(n) });
   sm.update(CTX);
@@ -1184,7 +1184,7 @@ test('AUDIT 19 1:1: a NEW LOCATION re-picks; locationIndex is in the context', a
 });
 
 test('AUDIT 19 1:1: a finished song re-evaluates the context first', async () => {
-  const { SongManager } = await import('../src/systems/songManager.js');
+  const { SongManager } = await import('../src/systems/song/songManager.js');
   const played = [];
   const sm = new SongManager({ play: (n) => played.push(n) });
   sm.update(CTX);
@@ -1195,7 +1195,7 @@ test('AUDIT 19 1:1: a finished song re-evaluates the context first', async () =>
 });
 
 test('AUDIT 19 1:1: the playback controls are DFU\'s', async () => {
-  const { SongManager, DUNGEON_SONGS } = await import('../src/systems/songManager.js');
+  const { SongManager, DUNGEON_SONGS } = await import('../src/systems/song/songManager.js');
   const played = [];
   let stops = 0;
   const sm = new SongManager({ play: (n) => played.push(n), stop: () => stops++ });
@@ -1226,7 +1226,7 @@ test('AUDIT 19 1:1: the playback controls are DFU\'s', async () => {
 });
 
 test('AUDIT 19 1:1: the dungeon seed is the header field, over real data', { skip: skipReal }, async () => {
-  const { dungeonKey, selectSong, DUNGEON_SONGS } = await import('../src/systems/songManager.js');
+  const { dungeonKey, selectSong, DUNGEON_SONGS } = await import('../src/systems/song/songManager.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const B = (n) => new Uint8Array(readFileSync(join(ARENA2, n)));
   const maps = new MapsFile();
@@ -1265,7 +1265,7 @@ test('AUDIT 19 1:1: the dungeon seed is the header field, over real data', { ski
 
 test('AUDIT 19 1:1: UpdatePlayerMusicEnvironment, every location type', async () => {
   const { musicEnvironment, LOCATION_TYPES: L, MUSIC_ENV: E } =
-    await import('../src/systems/songManager.js');
+    await import('../src/systems/song/songManager.js');
   const out = (locationType) => musicEnvironment({ inLocationRect: true, locationType });
 
   // SongManager.cs:414-438, the WHOLE switch. Sampling it lets a drifted
@@ -1310,7 +1310,7 @@ test('AUDIT 19 1:1: UpdatePlayerMusicEnvironment, every location type', async ()
 
 test('AUDIT 19 1:1: the temple/god faction tables are DFU\'s, whole', async () => {
   const { TEMPLE_FACTIONS, GOD_FACTIONS, TEMPLE_ALIGNMENTS, getTempleIndex, templeAlignment } =
-    await import('../src/systems/songManager.js');
+    await import('../src/systems/song/songManager.js');
   // SongManager.cs:306-320 - two parallel id lists sharing one alignment
   // table by index, which is why GetTempleIndex searches the second only
   // after the first misses.
@@ -1334,7 +1334,7 @@ test('AUDIT 19 1:1: the temple/god faction tables are DFU\'s, whole', async () =
 });
 
 test('AUDIT 19 1:1: the temple and guild arms resolve on REAL buildings', { skip: skipReal }, async () => {
-  const { musicEnvironment, MUSIC_ENV: E } = await import('../src/systems/songManager.js');
+  const { musicEnvironment, MUSIC_ENV: E } = await import('../src/systems/song/songManager.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
   const B = (n) => new Uint8Array(readFileSync(join(ARENA2, n)));
@@ -1376,7 +1376,7 @@ test('AUDIT 19 1:1: the temple and guild arms resolve on REAL buildings', { skip
 });
 
 test('AUDIT 19: a bend or CC7 during a HELD note reaches it', async () => {
-  const { SongPlayer } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer } = await import('../src/systems/song/songPlayer.js');
   const { bendCents, volumeGain } = await import('../src/systems/gmSynth.js');
 
   // The archive has 15,017 controller events landing inside a sounding
@@ -1459,7 +1459,7 @@ function strictCtx() {
 }
 
 test('AUDIT 39: a pedal left down at the end does not take the pump with it', async () => {
-  const { SongPlayer } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer } = await import('../src/systems/song/songPlayer.js');
   // The pedal map used to close an unlifted CC64 at Infinity, so
   // sustainedDuration returned Infinity for the hanging chord and _voice
   // handed setValueAtTime/stop a non-finite time. That throws out of the
@@ -1492,7 +1492,7 @@ test('AUDIT 39: a pedal left down at the end does not take the pump with it', as
 });
 
 test('AUDIT 39: a song change CANCELS the channel automation it is leaving behind', async () => {
-  const { SongPlayer } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer } = await import('../src/systems/song/songPlayer.js');
   const { volumeGain } = await import('../src/systems/gmSynth.js');
   // _control schedules CC7 at absolute future times up to a full
   // lookahead ahead, and setValueAtTime only INSERTS an event - it does
@@ -1534,7 +1534,7 @@ test('AUDIT 39: a song change CANCELS the channel automation it is leaving behin
 
 test('AUDIT 21: the guild faction ids are FactionFile\'s', async () => {
   const { MAGES_GUILD_FACTION, FIGHTERS_GUILD_FACTION, environmentForBuilding, MUSIC_ENV } =
-    await import('../src/systems/songManager.js');
+    await import('../src/systems/song/songManager.js');
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
   // FactionFile.cs:89-90. These select the Mages Guild and FighterTrainers
   // music arms, so a wrong id silently routes both to the plain interior.
@@ -1550,7 +1550,7 @@ test('AUDIT 21: the guild faction ids are FactionFile\'s', async () => {
 });
 
 test('AUDIT 21: LOCATION_TYPES is DFRegion\'s enum, whole', async () => {
-  const { LOCATION_TYPES } = await import('../src/systems/songManager.js');
+  const { LOCATION_TYPES } = await import('../src/systems/song/songManager.js');
   // DFRegion.cs - the values the environment switch indexes on. Pinned
   // WHOLE: a drifted value silently moves a location into another arm, and
   // the switch is written by name so nothing else would notice.
@@ -1563,7 +1563,7 @@ test('AUDIT 21: LOCATION_TYPES is DFRegion\'s enum, whole', async () => {
 });
 
 test('AUDIT 21: the manager routes the TAVERN arm, and only for taverns', async () => {
-  const { SongManager, TAVERN_SONGS } = await import('../src/systems/songManager.js');
+  const { SongManager, TAVERN_SONGS } = await import('../src/systems/song/songManager.js');
   const played = [];
   const sm = new SongManager({ play: (n) => played.push(n) });
 
@@ -1592,7 +1592,7 @@ test('AUDIT 21: the manager routes the TAVERN arm, and only for taverns', async 
 });
 
 test('AUDIT 21: playPrevious wraps at the boundary, not near it', async () => {
-  const { SongManager, DUNGEON_SONGS } = await import('../src/systems/songManager.js');
+  const { SongManager, DUNGEON_SONGS } = await import('../src/systems/song/songManager.js');
   const sm = new SongManager({ play: () => {} });
   sm.update({ environment: 'dungeonInterior', weather: 'sunny', night: false,
     gameDays: 1, locationIndex: 1, arrested: false, dungeonKey: 7 });
@@ -1614,7 +1614,7 @@ test('AUDIT 21: playPrevious wraps at the boundary, not near it', async () => {
 });
 
 test('AUDIT 21: a manager starts PLAYING, and stop latches', async () => {
-  const { SongManager } = await import('../src/systems/songManager.js');
+  const { SongManager } = await import('../src/systems/song/songManager.js');
   const sm = new SongManager({ play: () => {}, stop: () => {} });
   // DFU's `playSong` initialises TRUE - a manager that started false would
   // be silent until something toggled it, which nothing does on boot.

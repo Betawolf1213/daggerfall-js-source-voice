@@ -91,7 +91,7 @@ test('F077: a filled soul trap says whose soul it holds', () => {
   // an EMPTY trap says nothing - DFU's "(empty)" is commented out
   assert.equal(soulTrapNameSuffix({ ...trap, trappedSoulType: null }, () => 'Wraith'), '');
   // and the naming path finally calls it
-  const ii = src('systems/itemInfo.js');
+  const ii = src('systems/item/itemInfo.js');
   assert.ok(ii.includes('soulTrapNameSuffix(item, shownSoulName)'), 'the long-name path appends it');
   // ...on the IDENTIFIED branch only: DFU's `!IsIdentified || IsArtifact`
   // early return (:302) sits BEFORE the soul arm. IM1 reshaped the

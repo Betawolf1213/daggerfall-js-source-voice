@@ -14,8 +14,8 @@ import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { mintKeepsake, isKeepsake, keepsakeFor, KEEPSAKE_TEMPLATE, KEEPSAKE_KINDS, KEEPSAKE_GROUP } from '../src/systems/livingWorld/keepsake.js';
 import { LIVING_KEEPSAKE, fillLine } from '../src/systems/livingWorld/lines.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = Object.freeze({ mapId: 12345, blocks: 9, region: 17, people: 3, port: false });

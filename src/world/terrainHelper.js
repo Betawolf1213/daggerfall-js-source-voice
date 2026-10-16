@@ -34,7 +34,7 @@
 
 import { MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';
 import { PAK_WIDTH } from '../formats/pakFile.js';
-import { hasLocation } from '../systems/mapDirectory.js';
+import { hasLocation } from '../systems/map/mapDirectory.js';
 
 /** TerrainHelper.TransferLandToOcean's `const int oceanClimate = 223`. */
 export const OCEAN_CLIMATE = 223;

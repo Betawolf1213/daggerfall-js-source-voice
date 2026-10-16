@@ -14,10 +14,10 @@ import { createArenaGate } from '../src/scenes/arenaGate.js';
 import { exhibitionFor, exhibitionBoutId, EXHIBITION_KEPT_HOURS } from '../src/net/arenaExhibition.js';
 import { ARENA_FLOOR_CENTRE, arenaExhibitionRoom } from '../src/net/arenaLaw.js';
 import { verdictOfWord } from '../src/net/arenaLink.js';
-import { fighterIdentity } from '../src/systems/arenaFighters.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import * as BK from '../src/systems/arenaBook.js';
-import { onlineCards } from '../src/systems/arenaBoard.js';
+import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import * as BK from '../src/systems/arena/arenaBook.js';
+import { onlineCards } from '../src/systems/arena/arenaBoard.js';
 
 const NOON = 600 * 1440 + 12 * 60;
 const EX = exhibitionFor(NOON + 2);

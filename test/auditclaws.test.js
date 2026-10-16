@@ -21,10 +21,10 @@ import { duelAttackerOf, duelStub, resolveDuelStrike } from '../src/combat/duelC
 import { equipItem, equipTableOf, rebuildEquipState, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { armorOfMaterial } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
+import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
 
 const QUIET = (() => {
   let m = CLASSIC_GAME_START_TIME;

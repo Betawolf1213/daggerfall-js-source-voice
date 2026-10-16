@@ -34,13 +34,13 @@
 //     while it waits, the tug, the catch fighting, the net in - at the act's place before the body (the net's where it
 //     was thrown), with the peers' own falloff, behind the swings' switch (uiPrefs `peerAttackSounds`) and the ear's:
 //     the port's own clips on the enhanced skin, the DFU cue the HUD said for each beat on the classic one
-//     (systems/profSounds.js), as the ear says the gatherer's own. The knife's strokes are one pitch: the climb along
+//     (systems/professions/profSounds.js), as the ear says the gatherer's own. The knife's strokes are one pitch: the climb along
 //     the line is the gatherer's (the line's length is not on the wire).
 // The node itself is each character's own (section 6): a tree another fells still stands for you, and its fall, its
 // logs, a vein's cracks, chunks and rubble are theirs alone - never seen or heard here.
 // ═══════════════════════════════════════════════════════════════════
 import { actBeats, GATHER_SAY, GATHER_SOUND, gatherClip, installGatherSounds } from '../systems/gatherSounds.js';
-import { PROF_CUES } from '../systems/profSounds.js';
+import { PROF_CUES } from '../systems/professions/profSounds.js';
 import { enhancedSoundsOn } from '../systems/enhancedSounds.js';
 import { MELEE_HIT_SHARE } from '../characters/weaponStates.js';
 import { CHOP_ACT, MINE_ACT } from './professionLaw.js';

@@ -84,7 +84,7 @@
   },
   {
     "name": "DECOR2a-a-worn-item-listed",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "if (!item || item.questItem || item.equipSlot != null || isSummoned(item) || isMap(item)) return null;",
     "new": "if (!item || item.questItem || isSummoned(item) || isMap(item)) return null;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "DECOR2a-a-quest-item-listed",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "if (!item || item.questItem || item.equipSlot != null || isSummoned(item) || isMap(item)) return null;",
     "new": "if (!item || item.equipSlot != null || isSummoned(item) || isMap(item)) return null;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "DECOR2a-a-weapon-stood",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "new Set(['Weapons', 'Armor', 'Transportation'",
     "new": "new Set(['Armor', 'Transportation'",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "DECOR2a-the-templates-archive-over-the-items",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  const archive = own ? item.worldTextureArchive : t.worldTextureArchive;",
     "new": "  const archive = t.worldTextureArchive;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "DECOR2a-the-templates-record-over-the-items",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  const record = own ? item.worldTextureRecord : t.worldTextureRecord;",
     "new": "  const record = t.worldTextureRecord;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "DECOR2a-the-group-dropped",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "t: item.templateIndex, g: g >= 0 ? g : null,",
     "new": "t: item.templateIndex, g: null,",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "DECOR2a-the-artifact-index-misread",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "const a = item.artifact ? ((bits & 1) ? bits >> 1 : DECOR_ARTIFACT_UNKNOWN) : null;",
     "new": "const a = item.artifact ? bits >> 1 : null;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "DECOR2a-a-message-kept-on-a-statue",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "const p = (item.group === 'Paintings' || item.group === 'Books') && Number.isSafeInteger(item.message) ? item.message : null;",
     "new": "const p = Number.isSafeInteger(item.message) ? item.message : null;",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "DECOR2a-the-artifact-name-unread",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "    const m = artifacts[own.a];",
     "new": "    const m = null;",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "DECOR2a-counted-among-all-magic-items",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": ".filter((m) => m.type === 1 || m.type === 2);",
     "new": ".filter(() => true);",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "DECOR2a-the-plant-unplaced",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  const group = own.g != null ? ITEM_GROUP_NAME_BY_CLASS[own.g] ?? null : null;\n  // the list's own naming",
     "new": "  const group = null;\n  // the list's own naming",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "DECOR2a-the-pack-picture-lost",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "icon: pic && (pic.archive > 0 || pic.record > 0) ? pic : {",
     "new": "icon: false ? pic : {",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "DECOR2a-own-light-dark",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "return { flat, light: decorFlatLight(flat), item: descriptor };",
     "new": "return { flat, light: null, item: descriptor };",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "DECOR2a-a-free-piece-priced",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      if (free) return 0;\n",
     "new": "",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "DECOR2a-the-descriptor-left-off",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "id, model: entry.model ?? null, flat: entry.flat ? [entry.flat[0], entry.flat[1]] : null, item: entry.item ?? null,",
     "new": "id, model: entry.model ?? null, flat: entry.flat ? [entry.flat[0], entry.flat[1]] : null, item: null,",
     "tests": [

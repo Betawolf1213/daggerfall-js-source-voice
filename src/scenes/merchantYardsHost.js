@@ -42,7 +42,7 @@
 //
 // Not a DFU member. Ledger A (MERCHANT-YARDS).
 import { YARD_KINDS, YARD_TEXT, YARD_ROWS, YARD_BENCH_ROW, CARPENTER_STEAL_TEXT, yardName, validYardKind, yardRowsFor } from '../systems/merchantYards.js';
-import { WAGON_KINDS } from '../systems/wagonKinds.js';
+import { WAGON_KINDS } from '../systems/wagon/wagonKinds.js';
 import { YARD_FOOT } from '../world/merchantYardSites.js';
 import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYardModels.js';
 import { yardArt, YARD_ARCHIVE } from '../world/merchantYardArt.js';
@@ -56,7 +56,7 @@ import { textSeed } from '../systems/livingWorld/seed.js';
 import { RAY_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE, presentNpcInfoText } from '../player/activate.js';
 import { trs } from '../world/mat4.js';
 import { quatAngleAxis } from '../world/quat.js';
-import { calculateHorseOrientation, horseViewFor, HORSE_BOX_CENTER, HORSE_BOX_SIZE } from '../systems/horseCartLaw.js';
+import { calculateHorseOrientation, horseViewFor, HORSE_BOX_CENTER, HORSE_BOX_SIZE } from '../systems/horse/horseCartLaw.js';
 import { HORSE_ARCHIVE, horseStillRecord, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT, boxTriangles } from './horseCartPool.js';
 import { localAabb, transformedAabb } from '../render/frustum.js';   // PERF-YARD (AUDIT): a yard's box for the street's view test
 import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';   // PERF-WAGON: the cast-only renderer the wagons' pool shares
@@ -451,7 +451,7 @@ export function createMerchantYards({
      * YARDS-FOUND (2026-10-10, from play: "The new stable and transport merchant shops dont show on town
      * maps/overworld"): EACH YARD STANDING, AS AN OVERWORLD MARK - its name over its ground (YARD_MARK_LIFT up), its kind
      * the look's (`yard stable`, `yard transport` - ui/travelViewHud.js yardGlyph: its signboard's emblem) and the
-     * Towns switch's (systems/travelViewFilters.js markGroup). The yards of every town built about the player, as the
+     * Towns switch's (systems/travel/travelViewFilters.js markGroup). The yards of every town built about the player, as the
      * pool stands them - a town out of the build stands none, and is marked by its own plate.
      */
     overworldMarks() {

@@ -10,8 +10,8 @@
 // into a canvas. Both are OPTIONAL in the way requestIcon is: a missing
 // file answers null, the window draws its words, and nothing throws.
 
-import { inventoryItemImage } from '../systems/itemTemplates.js';
-import { itemLongName } from '../systems/itemInfo.js';   // RF6: the one resolver - the name every other enhanced list reads
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
+import { itemLongName } from '../systems/item/itemInfo.js';   // RF6: the one resolver - the name every other enhanced list reads
 import { requestIcon, requestFittedPicture } from './textureCanvas.js';
 import { SPELL_ICON_COUNT, SPELL_ICON_ROW_COUNT } from './spellIcons.js';
 import { screenDpr } from './iconFit.js';   // UI2: a spell's icon fitted to its slot

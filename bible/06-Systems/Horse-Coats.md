@@ -20,7 +20,7 @@ Every horse the port drew was the one bay horse. There are three sets of it:
 
 Not a DFU member: Daggerfall has one horse. Ledger A (COATS1).
 
-## The law (`src/systems/horseCoats.js`)
+## The law (`src/systems/horse/horseCoats.js`)
 
 A horse's LOOK is four things, and it is its own, so it rides the horse ITEM
 (DFU's Transportation Horse, template 94):
@@ -38,7 +38,7 @@ of its coat a touch off any other's (`shadeOf`: up to `SHADE_HUE`, 4 degrees,
 and `SHADE_VALUE`, 7.5 % of its light, either way). Two horses of one coat,
 pattern and legs are still two horses.
 
-`systems/itemFields.js` declares the four; `systems/itemLaw.js` finds `horse`
+`systems/item/itemFields.js` declares the four; `systems/item/itemLaw.js` finds `horse`
 on any other item that carries one. The look worn is the RIDDEN horse's, the
 first horse in the pack (`riddenHorseLook`), as `inventorySession.js`
 hasHorse finds it; a team of two wears it too. A save carries the fields as it
@@ -188,7 +188,7 @@ not.
 A look is one number, `horseLookCode` - `coat + 7 (pattern + 5 (legs + 3
 seed))`, at most `HORSE_LOOK_CODE_MAX` (6,881,279); 0 the bay as drawn.
 
-- **The pool's word** (`systems/horseCartWire.js`, the foes frame's `hv`): `hc`,
+- **The pool's word** (`systems/horse/horseCartWire.js`, the foes frame's `hv`): `hc`,
   the look, at the record's top beside `n`, for the standing horse and the
   team in the shafts alike; absent for the bay. A look past the law's is a bay,
   never a dropped word. The relay forwards it unread.

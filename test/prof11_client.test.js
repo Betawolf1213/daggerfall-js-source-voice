@@ -20,11 +20,11 @@ import { xpForRank, PROF_XP_MAX, MASON_FEE, trackOf } from '../src/net/professio
 import { recipeById, MASTERWORK, CHISEL_ACT } from '../src/net/recipeLaw.js';
 import { decorPieceOf } from '../src/net/decorLaw.js';
 import { mintPiece, mintPieces, craftedText, isCraftedFurniture, MASON_KEPT_TEXT } from '../src/systems/smithItems.js';
-import { mintMaterialItem, materialLabel, materialCountLabel } from '../src/systems/profItems.js';
-import { templateByIndex, inventoryItemImage } from '../src/systems/itemTemplates.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
-import { decorFurnishingEntry, furnishingKinds, furnishingLooks, isFurnishing } from '../src/systems/decorFurnish.js';
-import { decorItemName } from '../src/systems/decorItems.js';
+import { mintMaterialItem, materialLabel, materialCountLabel } from '../src/systems/professions/profItems.js';
+import { templateByIndex, inventoryItemImage } from '../src/systems/item/itemTemplates.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
+import { decorFurnishingEntry, furnishingKinds, furnishingLooks, isFurnishing } from '../src/systems/decor/decorFurnish.js';
+import { decorItemName } from '../src/systems/decor/decorItems.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, setDownProfAct, profActUnderWay, _masonForTests, _loomForTests,
   PROF_STATIONS, stationColdLine, MASON_COLD_LINE, CHISEL_DOWN_LINE, masonVerb,

@@ -14,13 +14,13 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { isShelved } from '../src/systems/quest/quest.js';
 import { QuestResourceBehaviour } from '../src/systems/quest/resourceBehaviour.js';
 import { QUEST_OWN_SECOND_KEYS } from '../src/systems/quest/questStamps.js';
-import { canReceiveSharedQuest, shareRefusalText } from '../src/systems/questShare.js';
+import { canReceiveSharedQuest, shareRefusalText } from '../src/systems/quest/questShare.js';
 import { shelvedRail } from '../src/ui/questRail.js';
 import { QuestLens } from '../src/ui/questLens.js';
 import { RumorMill, RUMOR_TYPE } from '../src/systems/rumorMill.js';
 import { repairActiveQuests } from '../src/systems/quest/questRepair.js';
 import { shelfRefusalText } from '../src/scenes/questBridge.js';
-import { questEnded } from '../src/systems/questGuidance.js';
+import { questEnded } from '../src/systems/quest/questGuidance.js';
 import { mapPixelToWorldCoord, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');
@@ -312,7 +312,7 @@ test('QUEST-SHELF\'s audit: the same quest taken again runs ahead of the copy se
 });
 
 test('QUEST-SHELF-DROP: a quest set aside holds no item - its item may be thrown away (never sold, never one made permanent), and reclaimed, the item it had in the pack comes back once (mutants: the drop refused; the counter let through; nothing handed back; handed back while still carried)', async () => {
-  const { questTransferRefused } = await import('../src/systems/itemTransfer.js');
+  const { questTransferRefused } = await import('../src/systems/item/itemTransfer.js');
   const pack = [];
   const carries = (res) => pack.some((it) => it.questItem && it.questUID === res.parentQuest?.uid && it.questSymbol?.name === res.symbol?.name);
   const m = new QuestMachine({ nowSeconds: () => 100, world: makeWorld(), playerLevel: () => 1, giveItemToPlayer: (it) => pack.push(it), carriesQuestItem: carries, playerHasItem: () => false, forceTopicListsUpdate: () => {} });

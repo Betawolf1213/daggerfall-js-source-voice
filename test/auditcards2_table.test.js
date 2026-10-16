@@ -12,10 +12,10 @@ import { newHand, act, foldSeat, freshDeck, parseCard, legalActions, viewFor } f
 import {
   CardTableSession, seatPatrons, settleMs, STREET_OF, PURSE_MIN_BB, PURSE_MAX_BB, THINK_MS, THINK_SPREAD_MS,
   regularsFor, regularsAfter, regularsBookRestore, REGULARS_BOOK_MAX,
-} from '../src/systems/cardTableSession.js';
-import { chenScore, equity, patronDecision, PATRON_TEMPERS, PRICE_PER_DOUBLING, PRICE_FREE_BB, BETTOR_BEND, DEFEND, DEFEND_ODDS } from '../src/systems/cardPatrons.js';
+} from '../src/systems/card/cardTableSession.js';
+import { chenScore, equity, patronDecision, PATRON_TEMPERS, PRICE_PER_DOUBLING, PRICE_FREE_BB, BETTOR_BEND, DEFEND, DEFEND_ODDS } from '../src/systems/card/cardPatrons.js';
 import { DEAL_STAGGER, THROW_LAND_S, FLIP_S } from '../src/world/cardMotion.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const seeded = (seed = 99) => { let x = seed >>> 0; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; return x >>>= 0; }; };
 const C = (s) => s.split(' ').map(parseCard);

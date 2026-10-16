@@ -436,7 +436,7 @@ independently (`SongPlayer._ensureMaster`, `SongPlayer.resyncGain`, and
 `AudioSongPlayer`'s per-start `trackGain()`), so a one-shot ramp to zero
 would be undone by the next `playSong` - which is exactly what DFU's
 per-Update re-assertion prevents. The flag lives beside the two gain
-accessors in `systems/songPlayer.js` and both read it;
+accessors in `systems/song/songPlayer.js` and both read it;
 `MusicService.setMuted(v)` sets it and resyncs, so a SOUNDING song drops
 at once and a song STARTED under the video is silent too. It is
 deliberately not `music.stop()`: that clears `_current`/`_pending` and
@@ -685,7 +685,7 @@ Pins: `test/disc20.test.js` (B), `tools/mutants/disc20.json`.
 ## WB7 (2026-09-25): a song made in code - the Warden's score
 
 Mac: "Proper boss audio during the boss fight." Daggerfall has no fight music - its dungeon tracks are made to be
-walked through - so the Burning Court's is WRITTEN, as notes, in `systems/gateScore.js`: four songs in the shape an
+walked through - so the Burning Court's is WRITTEN, as notes, in `systems/gate/gateScore.js`: four songs in the shape an
 HMI song decodes to (tick-ordered events, one tempo, notes carrying their own durations), on the FM bank's own
 articulations (pizzicato strings, timpani, orchestra hit, brass, choir, church organ, tubular bells, the kit). The
 music service takes them by a door of its own, `MusicService.registerSong(name, song)`: a made song answers for its
@@ -718,14 +718,14 @@ carries none. The court's four carry `SCORE_PRESS` and read -15.8 / -15.4 / -14.
 which also plays one player through the whole fight and the song after it. See `11-Multiplayer/World-Bosses.md` section
 15; `test/wb10a_gate_score.test.js`.
 
-SD13 (2026-10-07): THE SCORE OF THE HOUR (`systems/sdScore.js`) - the Hollow's and the Shattered Hour's nine songs by
+SD13 (2026-10-07): THE SCORE OF THE HOUR (`systems/superDungeon/sdScore.js`) - the Hollow's and the Shattered Hour's nine songs by
 the same door and the same law's shape: made notes registered by name, seamless, pressed (`HOUR_PRESS`, a ceiling a
 decibel under the clip), held by the world host's `hourScoreFrame` ahead of the court's and the arena's. See
 `11-Multiplayer/Super-Dungeons.md` section 7 and its SD13 record; `tools/sdScoreProbe.mjs`; `test/sd13_score.test.js`.
 
 ## FIELD-WIND1 (2026-09-29): the wind was a moan - a bed the port makes
 
-The Discord through Mac: "A repetitive moaning sound in the open world." The port's wind (WIND3, `systems/windAudio.js`;
+The Discord through Mac: "A repetitive moaning sound in the open world." The port's wind (WIND3, `systems/wind/windAudio.js`;
 its record is `07-Rendering/Rendering.md` WIND3) played DAGGER.SND's AmbientWindMoan and AmbientWindBlow1 on the riding
 loop's shape (`setLoop`: a non-looping source started again each time it ends - TransportManager's `if (!isPlaying)
 Play()`, right for a hoofbeat). They are DFU's dungeon one-shots (A3: AmbientEffectsPlayer plays one every 5 to 28 s):
@@ -749,10 +749,10 @@ pos, opts)` - a NAMED bed, one buffer looping in the engine itself (`src.loop`),
 call; the same call each frame keeps the one source; it rises from nothing as it begins and fades to nothing as it is
 let go (`clip` null) or swapped for another clip, over 0.4 s (the arena's crowd bed's `BED_FADE_S` - a bed cut at its
 level pops). `loop3d`'s handle fades as `loop`'s does (`fadeStop` - the Rift's bell was cut as its dungeon went). The
-riding loop keeps its shape. A made loop is darkened as a loop (`systems/arenaSound.js` `lowpassLoop`: the one-pole run
+riding loop keeps its shape. A made loop is darkened as a loop (`systems/arena/arenaSound.js` `lowpassLoop`: the one-pole run
 on from the state the loop's end leaves - begun from nought, it stepped at its seam each pass; FIELD-WIND1's wind ran its
 filters twice for the same reason). Two song writers merge a note laid where the same voice already strikes it into one
-note, its loudest and longest (`systems/sdScore.js`, `systems/gateScore.js`: thirty-three doubled note-ons in the Hour's
+note, its loudest and longest (`systems/superDungeon/sdScore.js`, `systems/gate/gateScore.js`: thirty-three doubled note-ons in the Hour's
 nine songs, twenty-five in the Warden's war). Every score is let go by a fade (`music.fadeOut`), never a cut: the Hour's,
 the court's and the arena's. See `11-Multiplayer/Super-Dungeons.md` section 16's SD20d; `test/sd20d_audio.test.js`.
 
@@ -835,7 +835,7 @@ Mac: "I want to improve gathering, add gathering sounds and overall make the exp
   view's kick, the chunks and the node's going; the ear's own clock keeps the rest). A node's going is kept by its key
   while it sounds (the bus's `play3dVoice`, a positional shot whose stop fades over VOICE_FADE_S): a refused harvest's
   tree stood again is heard falling no more (AUDIT GATHER-FEEL F7). The floating origin's shift carries the places the
-  ear holds (AUDIT GATHER-FEEL). The classic skin keeps `systems/profSounds.js`'s DFU clips, said by the ear on the same
+  ear holds (AUDIT GATHER-FEEL). The classic skin keeps `systems/professions/profSounds.js`'s DFU clips, said by the ear on the same
   beats.
 - **Levels** are each clip's measured loudness (its loudest 50 ms) set against the others: a blow near -15 dB at the
   bus, the fall near -8, the water's plip near -28 - a first mix, set on numbers; no clip here has been heard by ear.
@@ -855,7 +855,7 @@ Mac: "Do the not done." The record is `06-Systems/Professions-Arc.md` section 45
   clock on the listener's side: a plip every 2.2-5.5 s while the net waits, the catch fighting every 0.5-1.1 s while it
   hauls.
 - **The skins.** The port's clips on the enhanced skin (ES1), each at its `GATHER_SAY` volume, pitch and variety; on the
-  classic skin the DFU cue the gatherer's ear says for that beat (`systems/profSounds.js`), positional too.
+  classic skin the DFU cue the gatherer's ear says for that beat (`systems/professions/profSounds.js`), positional too.
 - **The switch and the floor.** Behind the swings' switch (`peerAttackSounds`, "Attack sounds" - a tool's blow is a
   swing) and the earshot; the law is told every change while silent, so turning it back on replays nothing; one cue a
   peer every 100 ms (one pose at the pose's top rate, POSE_HZ - AUDIT GATHER-FEEL R7: no floor of the climb's); a peer

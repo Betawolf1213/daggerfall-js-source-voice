@@ -583,11 +583,11 @@ test('WX1: the enhanced precipitation shaders are the lab\u2019s own, verbatim, 
   assert.match(p, /gl\.drawArraysInstanced\(gl\.TRIANGLES, 0, 6, count\);/);
   assert.match(p, /const rnd = \(\) => \{ s2 \^= s2 << 13; s2 \^= s2 >>> 17; s2 \^= s2 << 5; s2 >>>= 0; return s2 \/ 4294967296; \};/, 'the lab\u2019s own scatter');
   // both hosts: the lab's gust, rate without the gust, travel with it -
-  // WIND3: from the ONE mapping (systems/windDrive.js): the lab's stack
+  // WIND3: from the ONE mapping (systems/wind/windDrive.js): the lab's stack
   // is its fallback gust (WIND1's envelope answers when the controller
   // has one), the rate is slider * 0.16 without the gust, and the travel
   // is that rate times the gust times the clamped frame
-  const d = read('src/systems/windDrive.js');
+  const d = read('src/systems/wind/windDrive.js');
   assert.match(d, /return 0\.72 \+ 0\.20 \* Math\.sin\(tsec \* 0\.31\) \+ 0\.14 \* Math\.sin\(tsec \* 0\.83 \+ 1\.7\) \+ 0\.10 \* Math\.sin\(tsec \* 2\.10 \+ 0\.4\);/, 'the lab\'s gust');
   assert.match(d, /export const LAB_WIND_RATE = 0\.16;/);
   assert.match(d, /const rate = slider \* LAB_WIND_RATE;\s*\n\s*const windV = \[dir\[0\] \* rate, dir\[1\] \* rate\];/, 'the rate, without the gust');

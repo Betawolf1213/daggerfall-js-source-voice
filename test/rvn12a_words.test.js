@@ -17,14 +17,14 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const P = await import('../src/systems/revenantPersonality.js');
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
+const P = await import('../src/systems/revenant/revenantPersonality.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
 const { WEAPONS: W } = await import('../src/characters/weapons.js');
-const { itemLongName } = await import('../src/systems/itemInfo.js');
+const { itemLongName } = await import('../src/systems/item/itemInfo.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const FEUD = ['learned', 'signature', 'laststand', 'stole', 'festered', 'felled_return', 'routed_return', 'deserted', 'betrayed', 'devoted_warn'];
@@ -115,5 +115,5 @@ test('RVN12a THE HOSTS: the signature\'s card, the betrayer\'s and the deserter\
   assert.match(read('src/scenes/exteriorFoes.js'), /revenantSignatureEvent\(r, sb\.noun, \{ archive: f\.archive, playerName: playerEntity\?\.name \}\)/);
   assert.match(read('src/scenes/dungeonContext.js'), /revenantSignatureEvent\(r, sb\.noun, \{ archive: f\.mobileArchive, playerName: playerEntity\?\.name \}\)/);
   assert.match(read('src/scenes/world.js'), /revenantBetrayEvent\(r, \{ playerName: playerEntity\?\.name \}\)/);
-  assert.match(read('src/systems/revenant.js'), /r\.notice === 'deserted' \? revenantDesertEvent\(r, \{ playerName: player\.name \}\)/);
+  assert.match(read('src/systems/revenant/revenant.js'), /r\.notice === 'deserted' \? revenantDesertEvent\(r, \{ playerName: player\.name \}\)/);
 });

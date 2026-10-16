@@ -13,8 +13,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
-import { resetTravelMapState } from '../src/systems/travelMapState.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { discoverLocation, restoreDiscovery } from '../src/systems/discovery.js';
 
@@ -117,7 +117,7 @@ test('TV: the law has ONE home, and the world still writes on entry', () => {
   assert.ok(gates.length >= 6, `four surfaces plus the two doors ask the one test (found ${gates.length})`);
   assert.equal((tm.match(/hasDiscoveredLocationId\(/g) ?? []).length, 1,
     'the discovery store is read in exactly ONE member');
-  const md = readFileSync(new URL('../src/systems/mapDirectory.js', import.meta.url), 'utf8');
+  const md = readFileSync(new URL('../src/systems/map/mapDirectory.js', import.meta.url), 'utf8');
   assert.ok(md.includes('discovered: !!mapTable.discovered'),
     'the summary carries the BAKED flag off the map TABLE');
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

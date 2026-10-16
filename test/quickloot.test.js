@@ -25,7 +25,7 @@ import {
   quickLootOn, tookItemText, containerEmptied, quickLootWheel, foldQuickLoot,
   quickLootRow, quickLootSelection, resetQuickLoot, quickLootTake, quickLootArm, QUICK_LOOT_REFUSED,
 } from '../src/systems/quickLoot.js';
-import { planTake, CANNOT_CARRY_TEXT } from '../src/systems/itemTransfer.js';   // QL-WEIGHT1: the window's plan, asked the same question
+import { planTake, CANNOT_CARRY_TEXT } from '../src/systems/item/itemTransfer.js';   // QL-WEIGHT1: the window's plan, asked the same question
 import { CANNOT_REMOVE_ITEM_TEXT } from '../src/systems/createItem.js';   // AUDIT QL-WEIGHT1: the quest arm's refusal
 import { isMap } from '../src/systems/useItem.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';

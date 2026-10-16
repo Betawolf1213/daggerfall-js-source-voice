@@ -797,7 +797,7 @@ them did work that gave the same answer for less, and made most of the garbage t
   sounds the water ahead (`navalIsWater`, three points a step of every probe), and each sounding made its pixel's key
   text anew, `${x},${y}`, to ask the built pixels. The text is made once a pixel now, kept by its numbers - the same
   string every time - within PIXEL_KEY_SPAN of nought, PIXEL_KEYS_KEPT of them.
-- **PERF-ROPE - the moving teams' harness** (`systems/wagonRopes.js stepRope`). Every sub-step made two new end
+- **PERF-ROPE - the moving teams' harness** (`systems/wagon/wagonRopes.js stepRope`). Every sub-step made two new end
   arrays, every step two more, and every link of every iteration a `Math.hypot` of three, whose every answer was boxed
   (7% of what the page allocated, walking). A rope steps in place now: its ends in its own arrays, the sub-step's in
   one pair for every rope, a length as a root of its squares - the rope it was to within a float's rounding.
@@ -865,7 +865,7 @@ target, the fights asked last); a far captain come near steps what she owes, the
 seconds."*
 
 **Found.** One frame of 6.7 s on the live client, 94% of it in one question. The map's overlay draws the Wrothgarian
-zone's giants (`wildGiants`), and their walking ground (`systems/wildGiants.js cellsOf`, built once a zone mask)
+zone's giants (`wildGiants`), and their walking ground (`systems/wild/wildGiants.js cellsOf`, built once a zone mask)
 asks every pixel of the zone the wild halls' `free` test - whose dear half is SPAWN-SHORE's
 `createSpawnGround`: is the plateau a ruin would stand on dry? Each answer read the pixel's whole noiseless kernel,
 129 x 129 = 16,641 samples, and averaged them (`spawnPlateauFloor`), for 12,564 pixels. Kept per pixel after, so

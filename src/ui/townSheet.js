@@ -237,7 +237,7 @@ export function createTownSheet(deps = {}) {
   function questMarks() {
     const found = discoveredBy();
     // GUIDE8's Town tier (AUDIT DELVE): the buildings a quest's journal names in this town, ringed found or not - the
-    // host hands them only while the tier is on (systems/questGuidance.js townQuestBuildings)
+    // host hands them only while the tier is on (systems/quest/questGuidance.js townQuestBuildings)
     const named = new Set((deps.questBuildings?.() ?? []).map((q) => q?.buildingKey).filter((k) => k > 0));
     const out = [];
     for (const b of deps.buildings?.() ?? []) {

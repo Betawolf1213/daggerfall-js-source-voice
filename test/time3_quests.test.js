@@ -32,13 +32,13 @@ import {
   QUEST_OWN_SECOND_KEYS, QUEST_WORLD_SECOND_KEYS, raisedSince, shiftQuestStamps, markOwnClock, questBlockOnOwnClock, questDataOnThisClock,
 } from '../src/systems/quest/questStamps.js';
 import { offlineCopyOf, onlineCopyOf } from '../src/systems/offlineCopy.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { RestSession, REST_WAIT_PER_HOUR, MINUTES_PER_TICK } from '../src/systems/restSession.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { RestSession, REST_WAIT_PER_HOUR, MINUTES_PER_TICK } from '../src/systems/rest/restSession.js';
 import { setSkyCalendar, skySecondsOfEvent } from '../src/systems/skyCalendar.js';
 import { SKY_SEGMENTS, skyClassicMinutes } from '../src/net/skyLaw.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { dateFromSeconds, dateString, seasonValue, SEASON_NAMES } from '../src/systems/gameDate.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 import { RACES } from '../src/systems/races.js';
 
 afterEach(() => { setSharedClock(null); setSkyCalendar(false); });
@@ -504,11 +504,11 @@ test('TIME3 by source - THE FOUR HOSTS RULE: world.js and exterior.js hand the m
   assert.match(dungeon, /tickQuests: \(\) => opts\.questBridge\?\.machine\?\.tick\?\.\(\),/, 'and its rest ticks the world host\'s quests');
   assert.equal(/classicMinutesRef\.value \+= /.test(dungeon), false, 'no raise bypasses the count');
   assert.match(rd('src/scenes/worldModes.js'), /tickQuests: \(\) => questBridge\?\.machine\?\.tick\?\.\(\),/, 'worldModes\' rest too');
-  const session = rd('src/systems/restSession.js');
+  const session = rd('src/systems/rest/restSession.js');
   assert.match(session, /\n\s*this\.deps\.tickQuests\?\.\(\);/);
   assert.equal(/sharedMinutes\?\.\(\)\)\) this\.deps\.tickQuests/.test(session), false, 'RESTX2\'s online stand-down is gone');
   const bridge = rd('src/scenes/questBridge.js');
   for (const k of ['skySeconds', 'worldSeconds', 'raisedSeconds']) assert.match(bridge, new RegExp(`${k}: \\(\\) => ctx\\.${k}\\?\\.\\(\\) \\?\\? null,`), `the bridge carries ${k}`);
   assert.match(bridge, /const hour = `\$\{Math\.floor\(\(ctx\.classicSeconds\?\.\(\) \?\? 0\) \/ 3600\)\}\|\$\{Math\.floor\(\(ctx\.skySeconds\?\.\(\) \?\? 0\) \/ 3600\)\}`;/, 'the lens rereads on either clock\'s hour');
-  assert.match(rd('src/systems/save.js'), /quest: questBlockOnOwnClock\(snap\) \?\? null,/, 'the load moves a pre-TIME3 online save\'s countdowns');
+  assert.match(rd('src/systems/save/save.js'), /quest: questBlockOnOwnClock\(snap\) \?\? null,/, 'the load moves a pre-TIME3 online save\'s countdowns');
 });

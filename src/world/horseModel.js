@@ -17,10 +17,10 @@
 //  - THE POSE (writeHorsePalette): the gait's bones composed parent-first and written as the skin's palette - entry 0
 //    the identity (every corner's post), entry 1 + b bone b's skin (its pose times its inverse bind);
 //  - THE TEXEL MAP (horseTexelMap): where each texel of the body's picture lies on the horse, which the 3D dye
-//    (systems/horseCoats.js recolorHorseTexels) lays a look by - the sprites' law, on the horse's own surface.
+//    (systems/horse/horseCoats.js recolorHorseTexels) lays a look by - the sprites' law, on the horse's own surface.
 //
 // Pure: no DOM, no GL, no clock. Not a DFU member: Daggerfall's horse is a sprite. Ledger A (COATS3D).
-import { texelPlanes } from '../systems/horseCoats.js';
+import { texelPlanes } from '../systems/horse/horseCoats.js';
 import { SKIN_STATIC_FLOATS, skinStreamFloats } from '../formats/mwGpuSkin.js';
 import { SKIN_PAL_ROW } from '../render/skinPalette.js';
 
@@ -275,7 +275,7 @@ export const TEXEL_GUTTER = 2;
  * THE TEXEL MAP: where each texel of the body's `width` x `height` picture lies on the horse - the body's triangles
  * laid out on the picture by their UVs (v up, so a texel's row is from the top: 1 - v), each texel inside one taking
  * its bind position and normal between the triangle's corners. Answers `{ width, height, hide, planes, up }` for
- * systems/horseCoats.js recolorHorseTexels: `hide` 1 where the body's hide draws (no triangle's texel is 0, nor one
+ * systems/horse/horseCoats.js recolorHorseTexels: `hide` 1 where the body's hide draws (no triangle's texel is 0, nor one
  * under the hooves' crown - the horn keeps the art's), `planes` the texel's frames (texelPlanes), `up` its height over
  * the crown as a share of the hide's. The texels just past an island's edge take their nearest inside's place, TEXEL_GUTTER
  * deep, so a filtered or mipped sample at an edge is dyed with it.

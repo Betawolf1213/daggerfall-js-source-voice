@@ -57,7 +57,7 @@ fetched fresh:
 - `Guild.UpdateRank` / `CalculateNewRank` (Guild.cs:74-116): on a guild
   visit 28 days or more after the last rank change, a reputation below
   zero is rank -1, and rank -1 is expulsion with the membership removed.
-  `systems/guilds.js` `updateRank` / `baseCalculateNewRank`, verbatim,
+  `systems/guild/guilds.js` `updateRank` / `baseCalculateNewRank`, verbatim,
   called from `guildServiceFlow.onPushEffects` on every service push.
 - `Guild.IsEligibleToJoin` (Guild.cs:319-325): rejoining needs reputation
   at or above zero and the rank-0 skills. `isEligibleToJoin`, verbatim,

@@ -12,7 +12,7 @@ import { applySpell, tickActiveEffects, isInvisible, isBlending, isAShade } from
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { killIfAnyLiveStatZero, REFRESH_MODS_DELAY, STAT_KEYS_ORDER } from '../src/systems/statMods.js';
 import { tickPlayerMinutes, resetMagicRoundMarker } from '../src/systems/worldTick.js';
-import { snapshotPlayer } from '../src/systems/save.js';
+import { snapshotPlayer } from '../src/systems/save/save.js';
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

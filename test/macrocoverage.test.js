@@ -246,7 +246,7 @@ test('M-X: the error shapes hold - call-throughs, null rows, and the news pair',
 // These pins drive the REAL expander over a REAL entity and read numbers and a word out of it. A pin that only
 // asserted "no % survives" would pass on a box full of empty strings.
 test('ATTRMACRO1: the attribute box expands against the player stats - a live number, the rating WORD, the signed modifier and the encumbrance', async () => {
-  const { statDescriptionRows } = await import('../src/systems/talkMacros.js');
+  const { statDescriptionRows } = await import('../src/systems/talk/talkMacros.js');
   // TEXT.RSC record 0, which is not in this container (no ARENA2) - transcribed from the player's own screenshot,
   // which is the same text the reference ships.
   const REC0 = [
@@ -276,7 +276,7 @@ test('ATTRMACRO1: the attribute box expands against the player stats - a live nu
 });
 
 test('ATTRMACRO1: the rating word is the LAST stat macro\'s, which is why %ark has no argument - and every attribute has its own ten words', async () => {
-  const { statDescriptionRows } = await import('../src/systems/talkMacros.js');
+  const { statDescriptionRows } = await import('../src/systems/talk/talkMacros.js');
   const { STAT_RATINGS, statsMacroSource } = await import('../src/systems/quest/questMacros.js');
   const e = { stats: { strength: 62, intelligence: 95, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 5 } };
   // %ark reads whatever stat macro ran before it, in the same expansion, left to right

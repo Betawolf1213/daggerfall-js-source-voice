@@ -1,6 +1,6 @@
 // RAID4b (2026-09-28, Mac on World Events - Raiding Parties online: "3. We can also add renown and it's own atheric +
-// armor sets"): THE RAIDING PARTIES' OWN SETS AND A TOWN'S THANKS. The three sets' law (systems/sigilSets.js), each
-// power driven through the REAL seam SET2 opened (systems/sigilSetPowers.js - the fold, the blow, the damage door, the
+// armor sets"): THE RAIDING PARTIES' OWN SETS AND A TOWN'S THANKS. The three sets' law (systems/sigil/sigilSets.js), each
+// power driven through the REAL seam SET2 opened (systems/sigil/sigilSetPowers.js - the fold, the blow, the damage door, the
 // kill, the round, the HUD's chips) with a stand-in for the running host's door and a clock of the test's own, the
 // twenty-seven Aetheric records and the wire's check of them (systems/aetheric.js), the thanks rolled off a receipt's
 // seed (systems/raidSpoils.js), the spoils pool's own keys for them (scenes/spoilsPool.js), and the host's wiring by
@@ -13,12 +13,12 @@ import { readFileSync } from 'node:fs';
 import {
   awakeTiersOf, setBlow, setStruck, setDamageMod, setRound, setPowerStates, setHudChips, setSetPowersVoice, bloodStacks, markedFoe,
   _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_BANDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_BANDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import {
   setSetsDueling, SIGIL_SETS, WORLD_SET_IDS, SET_PLACES, SET_STAGE_MAX, RIPOSTE_SECONDS, MARK_METRES, MARK_SECONDS, BLOOD_SECONDS,
   BLOOD_STACKS, raidSetOf, rollWorldSet, rollSetSigil, tierValues, wornSetPieces, setState, _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSets.js';
 import {
   AETHERIC_RECORDS, RAID_SET_PIECES, RAID_SET_POWER, RAID_SET_CHANCE, REGALIA, AETHERIC_WORTH, aethericById, aethericMaterial,
   mintAetheric, raidSetPieces, rollRaidSetPiece, validSetMarks,
@@ -32,14 +32,14 @@ import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition, itemBaseValue, isAmmunition } from '../src/systems/itemTemplates.js';
+import { mintCondition, itemBaseValue, isAmmunition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
-import { AFFIX_RANGES, validAffix, affixesWorth, RARITIES } from '../src/systems/lootRarity.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { AFFIX_RANGES, validAffix, affixesWorth, RARITIES } from '../src/systems/loot/lootRarity.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { getItemHands, ITEM_HANDS } from '../src/characters/equipTable.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -113,7 +113,7 @@ test('RAID4b the law: three sets after the gate boss\'s own - the Broken Oath (t
   const seen = new Set();
   for (let i = 0; i < 400; i++) { seen.add(rollWorldSet(() => i / 400)); const s = rollSetSigil('rare', 1, seq(0, i / 400)); if (s) seen.add(s.set); }
   assert.deepEqual([...seen].sort(), [...WORLD_SET_IDS].sort(), 'the world rolls its four, never a raid\'s');
-  assert.match(strip(read('src/systems/sigilBroker.js')), /for \(const set of WORLD_SET_IDS\)[\s\S]*const wset = pick\(WORLD_SET_IDS, rolls\);/, 'the Broker shelves the world\'s sets');
+  assert.match(strip(read('src/systems/sigil/sigilBroker.js')), /for \(const set of WORLD_SET_IDS\)[\s\S]*const wset = pick\(WORLD_SET_IDS, rolls\);/, 'the Broker shelves the world\'s sets');
 });
 
 test('RAID4b the 2-piece stat tiers: one fold over RF1\'s channels - Oath of the Watch\'s armour on all seven parts and its Willpower, Keen-Eyed\'s Agility and Archery, Thick-Skinned\'s Endurance and Blunt Weapon - at the set\'s stage; nothing at one piece (mutants: a part left out; a stat or skill on the wrong name)', () => {

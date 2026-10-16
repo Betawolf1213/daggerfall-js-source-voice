@@ -17,8 +17,8 @@ import {
   MARCH_REGIONS, NODE_TIER_WEIGHTS, UNCONFIRMED_VEIN_TIER,
 } from '../src/net/nodeLaw.js';
 import { CLIMATES, REGION_NAMES } from '../src/formats/mapsTables.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { SEASONS } from '../src/systems/gameDate.js';
 
 const name = (i) => templateByIndex(i).name;

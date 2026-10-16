@@ -56,7 +56,7 @@
   },
   {
     "name": "ARENA1-DRAW-UNUSED",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "      if (drawn?.used) drawnBy.set(b, [...(drawnBy.get(b) ?? []), drawn.data]);",
     "new": "      if (drawn) drawnBy.set(b, [...(drawnBy.get(b) ?? []), drawn.data]);",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "ARENA1-MOVE-ANY-TYPE",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "  let list = free.filter((s) => s.buildingType === oldType);",
     "new": "  let list = free;",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "ARENA1-MOVE-HELD",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "&& !held.has(s.buildingKey)",
     "new": "",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "ARENA1-MOVE-NO-SCENE",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "  const emptied = scenes ? emptyArenaScene(",
     "new": "  const emptied = null ? emptyArenaScene(",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "ARENA1-MOVE-NO-LAYOUTS",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "  const moved = (name) => name === from || name.startsWith(`${from}|`);",
     "new": "  const moved = (name) => name === from;",
     "tests": [

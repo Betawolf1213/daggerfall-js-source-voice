@@ -19,7 +19,7 @@ import { realForestsOn, FOREST_HIDDEN_LOCATION_TYPES } from '../src/scenes/share
 import { FEATURES, checkFeature } from '../src/systems/features.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { onlineForcedPref } from '../src/systems/onlineLane.js';
+import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 const TILE = TERRAIN_SIZE / 128;

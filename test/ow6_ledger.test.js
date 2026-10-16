@@ -23,7 +23,7 @@ import {
   OW_ROOM_HZ_MAX, OW_KINDS, OW_LEDGER_KEY, OW_BAND_ID_RE, OW_RAIDER_ID_RE, owWireRow, cellOfRoom, isCellRoom, RELAY_VERSION,
   worldRoom, WORLD_CELL, PIXEL_UNITS, DROP_STRIKES_MAX, sharedClassicMinutes, wallMsForClassicMinutes, ONLINE_MINUTES_PER_MS,
 } from '../src/net/wire.js';
-import { BAND_LIFE_MS, BAND_CELL_PX, BAND_ID_RE, bandsNear, bandPixelOf, wanderAt, BAND_WANDER_MPS } from '../src/systems/travelBands.js';
+import { BAND_LIFE_MS, BAND_CELL_PX, BAND_ID_RE, bandsNear, bandPixelOf, wanderAt, BAND_WANDER_MPS } from '../src/systems/travel/travelBands.js';
 import { RAIDER_LIFE_MS, RAIDER_CELL_PX, RAIDER_SAIL_MPS, raidersNear, pixelOfNative } from '../src/systems/seaRaiders.js';
 import { WORLD_SALT, ANY_SPAWN_CHANCE, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES, CLEARED_TTL_MINUTES, REBIRTH_TTL_MINUTES, spawnDeath } from '../src/world/spawnedDungeons.js';
 import { RAID_SLACK_MINUTES } from '../src/net/raidLaw.js';
@@ -550,7 +550,7 @@ test('OW6L by source: the relay\'s arm spends its own bucket before it asks for 
 });
 
 // ═══ THE HOST (scenes/world.js) - lifted and RUN ═══════════════════════════════════════════════════════════════════
-import { bandLifeOf } from '../src/systems/travelBands.js';
+import { bandLifeOf } from '../src/systems/travel/travelBands.js';
 import { raiderLifeOf } from '../src/systems/seaRaiders.js';
 
 /** The host's ledger block (world.js OW6L: what is owed, said, heard; the spawn's first-sight door), lifted and mounted. */

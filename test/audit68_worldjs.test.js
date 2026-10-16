@@ -130,7 +130,7 @@ test('AUDIT 68 S22-door-repeated-block-identity: the second instance of a shared
   const { layoutLocation, RMB_SIDE } = await import('../src/world/locationLayout.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { getStaticDoors } = await import('../src/world/staticDoors.js');
-  const talk = await import('../src/systems/talkTopics.js');
+  const talk = await import('../src/systems/talk/talkTopics.js');
   // A world-data-replaced block: every repeat of it is ONE parse (the
   // replacement cache), which is what a streamed town's shared cells are.
   const B = blockFromJson({ Name: 'TWIN.RMB', Type: 'Rmb', RmbBlock: { FldHeader: { BuildingDataList: [{ BuildingType: 'Alchemist' }] }, SubRecords: [{}] } }, 7);
@@ -153,7 +153,7 @@ test('AUDIT 68 S22-door-repeated-block-identity: the second instance of a shared
   const resolve = lift(WORLD, '    buildingDataForDoor: (hit) => {', '\n    },');
   // ARENA1: the door's location and exit group are arenaDoorTarget's (the pixel's town, or the arena's undercroft) - lifted too
   const arenaTarget = lift(WORLD, '  function arenaDoorTarget(e) {', '\n  }');
-  const { homeTownBlocks } = await import('../src/systems/onlineHomes.js');   // HOME-PRICE: the door's building carries its town's size
+  const { homeTownBlocks } = await import('../src/systems/online/onlineHomes.js');   // HOME-PRICE: the door's building carries its town's size
   const host = new Function('buildingDoors', 'state', 'locationIndex', 'built', 'setLastLocationKeyTo', 'buildingDataForDoor', 'townTalk', 'isUndercroftDoor', 'DOOR_TYPE', 'isArenaCity', 'undercroftLocation', '_undercrofts', 'homeTownBlocks',
     `${shifted}\n${arenaTarget}\nreturn ({\n${targets}\n${resolve}\n});`)(
     buildingDoors, { pixelTranslation: () => [500, 0, -300] }, new Map([['4,4', dfLoc]]),

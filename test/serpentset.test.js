@@ -1,8 +1,8 @@
 // SERPENT-SET (2026-10-05, Mac: "The serpent boss needs to use the currency from oblivion gate and have its own equipment
 // rewards"): THE SEA SERPENT PAYS THE GATE'S CURRENCY, AND HAS A SET OF ITS OWN - the hoard's Deadlands Ember
-// (systems/serpentSpoils.js, net/serpentHoardLaw.js), Sethrakul's Coilscale: its law (systems/sigilSets.js), its nine
+// (systems/serpent/serpentSpoils.js, net/serpentHoardLaw.js), Sethrakul's Coilscale: its law (systems/sigil/sigilSets.js), its nine
 // Aetheric records and the wire's check of them (systems/aetheric.js), each power driven through the REAL seams SET2
-// opened (systems/sigilSetPowers.js - the fold, the blow, the strike, the hurt, the kill, the round, the HUD's chips)
+// opened (systems/sigil/sigilSetPowers.js - the fold, the blow, the strike, the hurt, the kill, the round, the HUD's chips)
 // with a stand-in for the running host's door and a clock of the test's own, the hoard's roll off a receipt's seed, the
 // one heal a power gives (systems/playerHeal.js), the Broker's shelf that never carries it, and the host's wiring by
 // source (scenes/world.js, net/serpentClaims.js). Design: bible/11-Multiplayer/Sigil-Sets.md section 6c;
@@ -14,20 +14,20 @@ import { readFileSync } from 'node:fs';
 import {
   setBlow, setStrike, setStruck, setRound, setPowerStates, setHudChips, setSetPowersVoice, coilStacks, coiledFoe, coilStacksAt, awakeTiersOf,
   _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_BANDS, _resetSigilForTests } from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_BANDS, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import {
   SIGIL_SETS, WORLD_SET_IDS, BRIEF_MAX, SET_STAGE_MAX, COIL_STACKS, COIL_SECONDS, SHED_BELOW, setById, raidSetOf, tierValues, setSetsDueling,
   _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSets.js';
 import {
   AETHERIC_RECORDS, REGALIA, RAID_SET_PIECES, RAID_SET_CHANCE, SERPENT_SET_PIECES, SERPENT_SET_POWER, SERPENT_SET_CHANCE,
   aethericById, aethericMaterial, mintAetheric, rollSerpentSetPiece, validSetMarks, AETHERIC,
 } from '../src/systems/aetheric.js';
-import { rollSerpentSpoils, serpentSpoilsList, serpentEmbers } from '../src/systems/serpentSpoils.js';
+import { rollSerpentSpoils, serpentSpoilsList, serpentEmbers } from '../src/systems/serpent/serpentSpoils.js';
 import { SERPENT_EMBERS } from '../src/net/serpentHoardLaw.js';
-import { SIGIL_STONE_TEMPLATE, isSigilStone } from '../src/systems/gateSpoils.js';
-import { brokerStock } from '../src/systems/sigilBroker.js';
+import { SIGIL_STONE_TEMPLATE, isSigilStone } from '../src/systems/gate/gateSpoils.js';
+import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { healMine, _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { createSerpentClaims } from '../src/net/serpentClaims.js';
 import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
@@ -37,15 +37,15 @@ import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { WEAPON_HANDS } from '../src/characters/equipRules.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { AFFIX_RANGES, isTechniqueAffix } from '../src/systems/lootRarity.js';   // TECH1: a technique's line, the door's very last draw
-import { validLootItem } from '../src/systems/loot.js';
-import { isBound } from '../src/systems/itemBound.js';
+import { AFFIX_RANGES, isTechniqueAffix } from '../src/systems/loot/lootRarity.js';   // TECH1: a technique's line, the door's very last draw
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { isBound } from '../src/systems/item/itemBound.js';
 
 const { subtle } = globalThis.crypto;
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -182,7 +182,7 @@ test('SERPENT-SET the drop: a quarter of a hoard (the raids\' own share), the sa
   assert.equal(rollSerpentSetPiece(seq(0.24999, 0.9999)).aetheric, 'coilscale-fang');
   assert.equal(rollSerpentSetPiece(seq(0, 0)).aetheric, 'coilscale-crest');
   for (let d = 0; d < 60; d++) assert.ok(!brokerStock(d).some((o) => o.set === 'coilscale' || o.item?.sigil?.set === 'coilscale'), `day ${d}: the Broker never shelves it`);
-  assert.match(strip(read('src/systems/sigilBroker.js')), /for \(const set of WORLD_SET_IDS\)[\s\S]*const wset = pick\(WORLD_SET_IDS, rolls\);[\s\S]*offer\('regalia', 'ruhn',/, 'the Broker shelves the world\'s sets and the Regalia alone');
+  assert.match(strip(read('src/systems/sigil/sigilBroker.js')), /for \(const set of WORLD_SET_IDS\)[\s\S]*const wset = pick\(WORLD_SET_IDS, rolls\);[\s\S]*offer\('regalia', 'ruhn',/, 'the Broker shelves the world\'s sets and the Regalia alone');
 });
 
 // ─── THE HOARD ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -345,10 +345,10 @@ test('SERPENT-SET the heal: one door for every power - the loot\'s leech and its
   assert.equal(healMine(f, 0.5), 0);
   assert.equal(healMine(f, 0.5), 1, 'the fraction carried to the next heal');
   assert.equal(f.health, 11);
-  assert.doesNotMatch(strip(read('src/systems/lootPowers.js')), /export function healMine/, 'one heal, never two');
-  assert.match(strip(read('src/systems/lootPowers.js')), /import \{ healMine, manaMine, _resetPlayerHealForTests \} from '\.\/playerHeal\.js';/);   // PIN MOVED (SCHOOLS3): and the one magicka gift beside the one heal
-  assert.match(strip(read('src/systems/sigilSetPowers.js')), /import \{ healMine \} from '\.\/playerHeal\.js';/);
-  assert.doesNotMatch(strip(read('src/systems/sigilSetPowers.js')), /from '\.\/lootPowers\.js'/, 'the set powers never import the loot\'s (it imports them)');
+  assert.doesNotMatch(strip(read('src/systems/loot/lootPowers.js')), /export function healMine/, 'one heal, never two');
+  assert.match(strip(read('src/systems/loot/lootPowers.js')), /import \{ healMine, manaMine, _resetPlayerHealForTests \} from '\.\/playerHeal\.js';/);   // PIN MOVED (SCHOOLS3): and the one magicka gift beside the one heal
+  assert.match(strip(read('src/systems/sigil/sigilSetPowers.js')), /import \{ healMine \} from '\.\/playerHeal\.js';/);
+  assert.doesNotMatch(strip(read('src/systems/sigil/sigilSetPowers.js')), /from '\.\/lootPowers\.js'/, 'the set powers never import the loot\'s (it imports them)');
 });
 
 test('SERPENT-SET the sets sleep in a duel: a duel wakes none of the Coilscale\'s tiers (mutants: the duel unread)', () => {

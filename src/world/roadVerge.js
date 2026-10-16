@@ -34,7 +34,7 @@
 // the road on a client that draws none.
 // ═══════════════════════════════════════════════════════════════════
 
-import { pathsDataPoint, MP_WORLD_UNITS, N, NE, E, SE, S, SW, W, NW } from '../systems/travelPaths.js';
+import { pathsDataPoint, MP_WORLD_UNITS, N, NE, E, SE, S, SW, W, NW } from '../systems/travel/travelPaths.js';
 import { MAP_W, MAP_H } from './roadNetwork.js';
 import { PATH_HALF_WIDTH, UNITS_PER_METRE } from './roadClearance.js';
 import { LPT_CROWNS } from './lptCrowns.js';

@@ -1728,7 +1728,7 @@
   },
   {
     "name": "AUDIT-CHAP2-D4-EITHER-BOOK",
-    "file": "src/systems/guildHallReveal.js",
+    "file": "src/systems/guild/guildHallReveal.js",
     "old": "    for (const g of REVEALING_GUILDS) if (!hasJoined(out, g) && hasJoined(book, g)) out[g.guildGroup] = book[g.guildGroup];",
     "new": "    for (const g of REVEALING_GUILDS) if (!hasJoined(out, g) && hasJoined(book, g)) void book;",
     "tests": [

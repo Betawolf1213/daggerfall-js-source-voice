@@ -10,7 +10,7 @@ import { TextureFile } from '../src/formats/textureFile.js';
 import { dfMeshToModel } from '../src/world/meshReader.js';
 import { openWorldDataPack } from '../src/formats/worldDataPack.js';
 import { registerWorldDataPack, installWorldDataReplacement, bindWorldDataBlocks, quietLocationOverrides, _resetWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { installArena, _resetArena } from '../src/world/arenaCity.js';
 import { _resetLayoutPins } from '../src/systems/layoutPins.js';
 

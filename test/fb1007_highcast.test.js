@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { fishKind, castAt, castOverWater, CAST_OVER_WATER_M, CAST_RISE_M } from '../src/scenes/fishHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { EYE_HEIGHT, SWIM_EYE_HEIGHT } from '../src/player/motor.js';
 import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
 import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWatersPixel.js';

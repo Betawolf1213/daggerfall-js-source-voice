@@ -42,7 +42,7 @@ import {
   discoverBuilding, discoveredBuildings, setDiscoveredBuildingCustomName,
   snapshotDiscovery, restoreDiscovery,
 } from '../src/systems/discovery.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

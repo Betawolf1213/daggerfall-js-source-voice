@@ -470,7 +470,7 @@ import {
 } from '../src/systems/cloudSaves.js';
 import { SESSION_KEY, REFUSALS } from '../src/net/accountClient.js';
 import { SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX } from '../src/systems/characterId.js';
-import { saveSlot, enumerateSaves, findSave, saveInfoOf } from '../src/systems/saveSlots.js';
+import { saveSlot, enumerateSaves, findSave, saveInfoOf } from '../src/systems/save/saveSlots.js';
 import { cloudStateOf } from '../src/ui/saveTile.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

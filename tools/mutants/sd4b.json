@@ -200,7 +200,7 @@
   },
   {
     "name": "SD4B-not-under-water",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "distanceModel: 'linear', lowpass: RIFT_BELL_LOWPASS_HZ })",
     "new": "distanceModel: 'linear', lowpass: 0 })",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "SD4B-the-bell-undarkened",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "  lowpassLoop(out, rate, S.darkHz);   // AUDIT SD III (A3): its seam whole\n",
     "new": "",
     "tests": [

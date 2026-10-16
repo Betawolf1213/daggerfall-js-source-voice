@@ -18,7 +18,7 @@ import {
 import { SPELL_ICON_COUNT } from '../src/ui/spellIcons.js';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
 import { SpellMakerWindow, SPELL_MAKER_RECTS } from '../src/ui/spellMakerWindow.js';
-import { DEFAULT_SPELL_ICON } from '../src/systems/spellMaker.js';
+import { DEFAULT_SPELL_ICON } from '../src/systems/spell/spellMaker.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, 'src', p), 'utf8');

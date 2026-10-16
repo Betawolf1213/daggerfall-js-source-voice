@@ -16,13 +16,13 @@ import { createGatherHost, GROUP_M, GROUP_MAX, GROUP_REFRESH_MS, GROUP_LIFT_M, g
 import { herbKind } from '../src/scenes/herbHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { treeKind } from '../src/scenes/treeHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { trees, veins, boulders, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { groundAt } from '../src/world/terrainNature.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { nodeMarkCss } from '../src/ui/nodeMarks.js';
-import { TV_FILTER_GROUPS, TV_FILTER_TEXT, markGroup, markShown, countGroups } from '../src/systems/travelViewFilters.js';
+import { TV_FILTER_GROUPS, TV_FILTER_TEXT, markGroup, markShown, countGroups } from '../src/systems/travel/travelViewFilters.js';
 import * as hud from '../src/ui/travelViewHud.js';
 
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;

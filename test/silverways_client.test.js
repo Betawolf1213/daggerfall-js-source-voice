@@ -18,7 +18,7 @@ import { accountWrits, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js
 import { createWritBook } from '../src/net/writBook.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { GUILD_MARKS_LEDGER_WORDS } from '../src/ui/socialPanel.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { mintRaidReceipt } from '../src/net/raidReceipt.js';
 import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
 import { marksText } from '../src/net/marksLaw.js';

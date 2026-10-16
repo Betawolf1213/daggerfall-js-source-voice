@@ -36,7 +36,7 @@ import { GuildBook } from '../src/net/guildBook.js';
 import { SocialState } from '../src/net/social.js';
 import { REFUSALS, accountRefusalText, accountGuilds } from '../src/net/accountClient.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 

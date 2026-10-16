@@ -18,17 +18,17 @@ import {
 } from '../src/ai/foeBlows.js';
 import { BLOW, BLOW_FAMILY, BLOW_CASTERS, blowShapesOf, inBlow } from '../src/ai/blowShapes.js';
 import { setPlayerBout, playerBoutOf, boutGate, inBout } from '../src/characters/enemyTargets.js';
-import { LADDER_TIERS, ladderAfter, arenaLadderRestore, BOUTS_PER_TIER, nextLadderBout, arenaLadderSnapshot, BOUT_PURSE } from '../src/systems/arenaLadder.js';
-import { boutPoints } from '../src/systems/arenaLeague.js';
-import { revenantCandidate } from '../src/systems/revenant.js';
+import { LADDER_TIERS, ladderAfter, arenaLadderRestore, BOUTS_PER_TIER, nextLadderBout, arenaLadderSnapshot, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
+import { boutPoints } from '../src/systems/arena/arenaLeague.js';
+import { revenantCandidate } from '../src/systems/revenant/revenant.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
 import { createArenaClaims } from '../src/net/arenaClaims.js';
-import { newBout, boutTick, boutHit, boutAtMarks, takeBoutEvents, callMs, COUNT_MS, BOUT_LIMIT_MS } from '../src/systems/arenaBout.js';
-import { SAND_BARRED_EFFECTS, SAND_BARRED_KINDS, SAND_CEILING_M, onTheSand, sandPotionRefusal, sandSpellRefusal, stripSandBarred, restoreSandHeld } from '../src/systems/arenaKit.js';
+import { newBout, boutTick, boutHit, boutAtMarks, takeBoutEvents, callMs, COUNT_MS, BOUT_LIMIT_MS } from '../src/systems/arena/arenaBout.js';
+import { SAND_BARRED_EFFECTS, SAND_BARRED_KINDS, SAND_CEILING_M, onTheSand, sandPotionRefusal, sandSpellRefusal, stripSandBarred, restoreSandHeld } from '../src/systems/arena/arenaKit.js';
 import { PlayerMotor, JUMP_SPEED } from '../src/player/motor.js';
 import { JUMP_SPELL_MULTIPLIER, ATHLETICISM_MULTIPLIER, IMPROVED_ATHLETICISM_MULTIPLIER } from '../src/systems/skills.js';
 import { useItem, TEMPLATES } from '../src/systems/useItem.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { ELITE_FOE_HEALTH_MULT, ELITE_FOE_DAMAGE_MULT } from '../src/systems/eliteFoes.js';
 import {
   arenaFoeStats, arenaLadderBout, ARENA_CLASS_SPEED, ARENA_BEAST_SPEED, ARENA_ELITE_HP_MULT, ARENA_ELITE_DMG_MULT, ARENA_BLOW_TIER_LEVEL,
@@ -334,7 +334,7 @@ test('AUDIT ARENA-LADDER L4: THE LADDER\'S JUDGES\' FLOOR - at the time limit a 
 
 test('AUDIT ARENA-LADDER L5: THE SAND\'S KIT LAW - in a bout of one\'s own no potion is drunk (the bottle kept), no Invisibility, Levitate, Chameleon, Shadow, Charm or Teleport is cast, and those already on the fighter come off; outside a bout, all as before (mutants: a barred type dropped; the bottle eaten; the strip unread)', () => {
   assert.deepEqual([...SAND_BARRED_EFFECTS], [13, 14, 23, 24, 33, 34, 43]);   // AUDIT ARENA-LADDER 2: Pacify (the Calms) too
-  const table = rd('src/systems/spellEffects.js');
+  const table = rd('src/systems/spell/spellEffects.js');
   for (const [type, name] of [[13, 'Invisibility'], [14, 'Levitate'], [23, 'Chameleon'], [24, 'Shadow'], [33, 'Pacify'], [34, 'Charm'], [43, 'Teleport']]) assert.match(table, new RegExp(`\\[${type}, \\d+, '${name}'`), `${type} is ${name}`);
   const potion = { name: 'Potion', group: 'UselessItems1', templateIndex: TEMPLATES.Glass_Bottle, stackCount: 1 };
   const pack = [potion];

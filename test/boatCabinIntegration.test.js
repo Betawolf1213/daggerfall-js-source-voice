@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { bankCabinCandidates, linkBankCabin, readBankCabinLink } from '../src/systems/boatCabinOwnership.js';
 import { cabinSceneName } from '../src/systems/sailingCabin.js';
 import { SHIP_INTERIOR_MAP_IDS } from '../src/systems/banking.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
 import { createSceneCache, interiorSceneName, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 import { mintDeed, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { privateBoatRoom, privateInteriorPrefix, privateInteriorOf } from '../src/net/privateInterior.js';

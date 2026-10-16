@@ -57,7 +57,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A4-a-gem-takes-a-kind",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "const others = item.affixes.filter((a, i) => i !== index && a?.gem == null);",
     "new": "const others = item.affixes.filter((a, i) => i !== index);",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A5-a-row-a-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    const value = sumIn(mine, k);",
     "new": "    const value = a.value;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A6-a-standing-soured",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    && !lines.some((a) => (row.type === T.BadRepWith && a?.id === 'standing' && a.param === STANDING_GROUPS[p])",
     "new": "    && !lines.some((a) => (false && a?.id === 'standing' && a.param === STANDING_GROUPS[p])",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A6-a-slayer-weakened",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "      || (row.type === T.LowDamageVs && a?.id === 'slayer' && a.param === SLAYER_FOES[p])));",
     "new": "      || (false && a?.id === 'slayer' && a.param === SLAYER_FOES[p])));",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A6-the-reward-unseen",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const lined = { ...item, affixes: [...item.affixes, line] };",
     "new": "  const lined = item;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A7-a-curse-line-even",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "param: lineParam(item, id, carried.has(id) ? unclaimed(id) : kindParams(id, item), rolls)",
     "new": "param: pick(carried.has(id) ? unclaimed(id) : kindParams(id, item), rolls)",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A7-an-exalted-garment-even",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "param: isGarment(item) ? lineParam(item, id, free, rolls) : pick(free, rolls)",
     "new": "param: pick(free, rolls)",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A7-armour-leaned-its-seeds-moved",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "param: isGarment(item) ? lineParam(item, id, free, rolls) : pick(free, rolls)",
     "new": "param: lineParam(item, id, free, rolls)",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A8-a-rolled-line-tops-up",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "const rolledCounts = (rolled, own) => Math.min(rolled, Math.max(0, RESIST_CAP - own));",
     "new": "const rolledCounts = (rolled, own) => Math.min(rolled, RESIST_CAP);",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-B5-the-note-reads-a-hidden-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "resistSplit(wornItems(entity).filter(identified), element)",
     "new": "resistSplit(wornItems(entity), element)",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A9-a-garment-eligible-off",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (isGarment(item)) return lootRarityOn();",
     "new": "  if (isGarment(item)) return true;",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "AUDIT-LOOT-II-A10-every-shirt-counts",
-    "file": "src/systems/lootDrought.js",
+    "file": "src/systems/loot/lootDrought.js",
     "old": "  if (isGarment(item) && !legendariesFor(item).length) return false;\n",
     "new": "",
     "tests": [

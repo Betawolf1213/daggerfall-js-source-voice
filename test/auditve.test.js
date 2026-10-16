@@ -3,7 +3,7 @@
 //   D1 - THE DEFAULT: the shipped Base is on until the player chooses otherwise, its add-ons off; a choice either way is
 //        kept, through a boot and under a copy the player attaches.
 //   P1 - THE DECODE OFF THE MAIN THREAD: the shipped pack's fetch, decode and texture-detail fit run in a worker
-//        (systems/vanillaEnhancedDecodeWorker.js); a browser that cannot falls back to this thread, and a worker that
+//        (systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js); a browser that cannot falls back to this thread, and a worker that
 //        dies is never asked again - an ask must not wait for ever.
 //   P2 - THE GROUND CACHE IS BOUNDED: three decoded tile sets, the least recently asked let go.
 //   R1-R14 - THE REVIEW: an independent adversarial reading of the pushed head (d1c38864) against DFU's own C#, each
@@ -16,11 +16,11 @@ import {
   setDfmodSources, attachedDfmods, setDfmodEnabled, dfmodEnabled, DFMOD_SHIPPED_PREF, DFMOD_OFF_PREF, GROUND_CACHE_SETS,
   dfmodGroundLayers, _resetDfmodForTests,
 } from '../src/systems/dfmodTextures.js';
-import { VE_PACK_MODS, ON_BY_DEFAULT, vePackClient, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhancedPack.js';
+import { VE_PACK_MODS, ON_BY_DEFAULT, vePackClient, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';
 import { mipFitSize } from '../src/formats/resample.js';
 import { clearTextureReplacements } from '../src/systems/textureReplacement.js';
-import { wearVanillaEnhanced, wearClassicTextures, veWorn, classicTexturesWorn, VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced.js';
-import { setValue } from '../src/systems/settings.js';
+import { wearVanillaEnhanced, wearClassicTextures, veWorn, classicTexturesWorn, VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced/vanillaEnhanced.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 // R: the review's seams are read through their modules, so a seam the old code lacks fails its own pin, not the file
 import * as TR from '../src/systems/textureReplacement.js';
@@ -106,7 +106,7 @@ test('AUDIT VE P1: the decode worker fetches, decodes, fits the picture to the t
       constructor(w, h) { this.w = w; this.h = h; }
       getContext() { return { drawImage() {}, getImageData: (x, y, w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4).fill(200) }) }; }
     };
-    await import('../src/systems/vanillaEnhancedDecodeWorker.js');
+    await import('../src/systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js');
     const ask = async (data) => { posted.length = 0; await globalThis.onmessage({ data }); return posted[0]; };
     let r = await ask({ id: 1, url: 'x#726x941', maxSize: 256 });
     assert.deepEqual([r.msg.id, r.msg.width, r.msg.height], [1, ...mipFitSize(726, 941, 256)], 'the tree at the texture detail');

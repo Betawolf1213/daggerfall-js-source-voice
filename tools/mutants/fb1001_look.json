@@ -28,7 +28,7 @@
   },
   {
     "name": "LOOK-STALE-the-older-answer-believed",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "        if (writesTo(id) !== gen) return towns.has(id);",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "LOOK-STALE-a-write-never-counted",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    writes.set(id, writesTo(id) + 1);",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "LOOK-STALE-the-forced-ask-dropped-behind-the-flight",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return flying;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "LOOK-STALE-every-forced-ask-chained",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force ? flying : afterFlight(id, flying);",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "LOOK-STALE-the-flight-never-says-when-it-set-out",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    askedAt.set(id, gen);",
     "new": "",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "LOOK-STALE-every-answer-read-as-from-before-any-write",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    const gen = writesTo(id);",
     "new": "    const gen = 0;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "LOOK-STALE-a-landed-flights-count-kept",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });",
     "new": "      .finally(() => { asking.delete(id); forcedFlight.delete(id); });",
     "tests": [
@@ -106,7 +106,7 @@
   },
   {
     "name": "FB1001-FORCED-a-write-under-a-forced-flight-unasked",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force || forcedFlight.has(id) ? flying : afterFlight(id, flying);",
     "tests": [
@@ -116,7 +116,7 @@
   },
   {
     "name": "FB1001-FORCED-a-plain-flight-answers-a-forced-ask",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force || askedAt.get(id) === writesTo(id) ? flying : afterFlight(id, flying);",
     "tests": [
@@ -126,7 +126,7 @@
   },
   {
     "name": "FB1001-FORCED-no-flight-is-marked-forced",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (force) forcedFlight.add(id);\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "FB1001-FORCED-a-landed-flight-stays-forced",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });",
     "new": "      .finally(() => { asking.delete(id); askedAt.delete(id); });",
     "tests": [

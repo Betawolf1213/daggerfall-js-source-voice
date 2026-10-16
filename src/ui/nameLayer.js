@@ -4,7 +4,7 @@
 // BUBBLE1 (2026-09-16, Mac: "I want to introduce chat bubbles above the player when they chat"):
 // THE NAMES OVER THE OTHERS, AND WHAT THEY SAY - the enhanced skin's own DOM layer.
 //
-// WHY DOM AND NOT THE BITMAP PASS. Online forces the enhanced lane (OL1, systems/onlineLane.js), so a name over a
+// WHY DOM AND NOT THE BITMAP PASS. Online forces the enhanced lane (OL1, systems/online/onlineLane.js), so a name over a
 // head is an ENHANCED-SKIN surface, and every other enhanced surface wears Pixelify Sans unsmoothed on bone
 // (ui/enhancedStyle.js, ui/pixelifyFive.js PIXEL_STACK). A name drawn through the CLASSIC FNT atlas was the one
 // thing on that screen still speaking the other skin's face - and the bubbles Mac asked for want a box that wraps

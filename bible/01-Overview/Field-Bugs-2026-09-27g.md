@@ -28,7 +28,7 @@ window that keeps the host's TEXT.RSC reader as `rows`. The station took "has ro
 reader as a list and threw on every press. The guild popup read the same answer the same way and pushed the whole window
 onto itself as a message box.
 
-A service's answer is a box only when its rows are a LIST now (`systems/guildServiceFlow.js` isServiceBox), asked by
+A service's answer is a box only when its rows are a LIST now (`systems/guild/guildServiceFlow.js` isServiceBox), asked by
 the station, the popup's onService, the probe door and both popups' own pushes. `test/stationrows.test.js` (3).
 
 ## DECOR-MODFLATS: "Decoration 49" onward (1)
@@ -91,7 +91,7 @@ roster names to a syllable a line. `ui/socialPanel.js`. `test/guildlive.test.js`
 
 The decorator's free camera starts at the eye, is leashed, and stops at every face (DECOR-SHELL), so a room behind a
 shut door was furnished by shutting the decorator, walking there and opening it again. The house's rooms are found in
-its own collider now, a few hundred rays a frame while the panel is up (`systems/decorRooms.js`): floors a body stands
+its own collider now, a few hundred rays a frame while the panel is up (`systems/decor/decorRooms.js`): floors a body stands
 on, joined where the rise is a step and nothing stands between them at waist height - a wall, or a door as it stands,
 which is what the flight cannot pass. A house of two rooms or more gets a tab a room in the panel: the eye's own room is
 chosen first, the room's placed pieces and own furniture are listed (and "Take all out" means the room's), and the next

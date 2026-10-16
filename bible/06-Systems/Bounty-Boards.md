@@ -41,7 +41,7 @@ Each is quoted where the code keeps it, beside the line it decided.
 
 ## 1. The board
 
-- **Half of a town's boards are its bounty boards** (`systems/bountyBoard.js` questBoardIndices). FACT: a town's blocks
+- **Half of a town's boards are its bounty boards** (`systems/bounty/bountyBoard.js` questBoardIndices). FACT: a town's blocks
   place its bulletin boards (`BULLETIN_BOARD_MODEL_ID`, `world/rmbLayout.js`). The boards are sorted by position (x,
   then z, then y) and every other one is taken, from the first: two give one, four give two, five give two. A town with
   one board keeps it for DFU's rumour. Every client picks the same half, whatever order its blocks were laid.
@@ -72,7 +72,7 @@ Each is quoted where the code keeps it, beside the line it decided.
 - **The purse** (BOUNTY-PURSE): tiers 1-4 pay the full purse times 0.6 + 0.1 a beast past four - a pack of 4 pays six
   tenths. Tier 5 pays 150 + 10 a beast past four + up to 10 for the beast's rank in its list. A dungeon's pack of 2, 3
   or 4 pays as an open pack of 4, 6 or 8 - its halls are close, not easier.
-- **The piece** (`systems/bountyReward.js`): one weapon or armour piece, never ammunition. Levels 1-3 white at half
+- **The piece** (`systems/bounty/bountyReward.js`): one weapon or armour piece, never ammunition. Levels 1-3 white at half
   condition; 4-5 three-quarter condition; 6 and up full condition; from level 4 a coin for Magic (blue) through the
   loot ladder's own applyRarity - never higher, and white when Loot Rarity is off.
 - **The werebeasts are off the board**: a bounty is not a way to catch a curse.
@@ -117,7 +117,7 @@ Each is quoted where the code keeps it, beside the line it decided.
 6. **In the journal** (BOUNTY1's journal ask): a held bounty rides the quest log as a side quest with its clock, in
    the pause window's Quests tab and the Chronicle - the notice, the kills, the place, the purse; **Abandon** (pressed
    twice - an armed Abandon never outlives the window's visit, AUDIT 28 B11) and, in a party, **Share**
-   (`systems/bountyJournal.js`, a leaf the lazy journal chunks reach without a cycle). Given up and taken again the same
+   (`systems/bounty/bountyJournal.js`, a leaf the lazy journal chunks reach without a cycle). Given up and taken again the same
    day, a bounty goes on from its kills and its live beasts are the hunt's again - never a fresh pack (AUDIT 28 B2).
 
 ## 5. The farms (BOUNTY-FARM, `scenes/bountyFarms.js`)

@@ -327,7 +327,7 @@
   },
   {
     "name": "PROF2-37-ingots-undyed",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "  if (Number.isFinite(t.iconDye)) return { archive, record, dye: t.iconDye, dyeTarget: DYE_TARGETS.WeaponsAndArmor };\n",
     "new": "",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "PROF2-38-iron-counted",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "'Lead', 'Iron', 'Copper',",
     "new": "'Lead', 'Copper',",
     "tests": [

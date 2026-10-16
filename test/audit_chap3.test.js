@@ -21,7 +21,7 @@ import { seatWeekStartMs, seasonEndingAt } from '../src/net/townSeatLaw.js';
 import { gameDayAt } from '../src/net/gateLaw.js';
 import { herbPatches, nodeKey } from '../src/net/nodeLaw.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { standService, T0 } from './accountDb.mjs';

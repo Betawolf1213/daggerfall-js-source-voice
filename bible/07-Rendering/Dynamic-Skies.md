@@ -32,8 +32,8 @@ WeatherType), five fog presets, a light curve, and a lightning script.
 
 | the mod's | does | lives here as |
 | --- | --- | --- |
-| `Init` | material base values, vanilla sky off, presets and fog loaded, `SetLightCurve` | `systems/dynamicSkiesRuntime.js` constructor; `scenes/shared.js` createSkyController builds the pass instead of the dome and calls `worldClock.setLightCurve` |
-| `loadAllSkyboxSettings` / `ProcessSkyboxSetting` | JsonUtility over the preset and its five flat sub-structs | `systems/dynamicSkies.js` parseSkyboxSetting (absent fields default, as JsonUtility's structs do) |
+| `Init` | material base values, vanilla sky off, presets and fog loaded, `SetLightCurve` | `systems/dynamicSkies/dynamicSkiesRuntime.js` constructor; `scenes/shared.js` createSkyController builds the pass instead of the dome and calls `worldClock.setLightCurve` |
+| `loadAllSkyboxSettings` / `ProcessSkyboxSetting` | JsonUtility over the preset and its five flat sub-structs | `systems/dynamicSkies/dynamicSkies.js` parseSkyboxSetting (absent fields default, as JsonUtility's structs do) |
 | `ApplySkyboxSettings` | every material property from a preset, x0.0833 on the speeds ("because game runs at timescale 12") | `applySkyboxSettings`, quirks kept (below) |
 | `ProcessFogSetting` / `loadFogSettings` | REPLACES WeatherManager's five fog settings, density / (11 - densitySetting) | `fogSettingsFromPresets`; the hosts read `fogForWeather(w, sky.fogSettings)` - `world/weather.js` grew the table argument and the `exp2` mode (Unity's ExponentialSquared, which three of the five presets use), `render/renderer.js` grew `uFogMode == 3` in every world pass |
 | `SetLightCurve` | replaces SunlightManager.LightCurve with LightCurve.json (flat-tangent keys) | `worldClock.setLightCurve` - the WORLD's daylight curve changes with it, exactly as in DFU (ambient, key light, indirect all read `daylightScale`) |
@@ -374,7 +374,7 @@ later - a second on - it follows the sun down.
 `BLBSkybox.cs:193` "Update fog color every 1.0 seconds".
 
 Eleven mutations were driven on a scratch copy of
-`src/systems/dynamicSkies.js` for these six; eleven dead. No production
+`src/systems/dynamicSkies/dynamicSkies.js` for these six; eleven dead. No production
 line changed - the port already matched the mod on all six laws.
 
 ## ROAD-H H7b - LIGHTNINGFLASH'S UNDRIVEN TIME SCALE (2026-09-07)
@@ -422,7 +422,7 @@ The 0.2 s flash duration is set at `BLBSkybox.cs:183`
 (`lightningFlash.flashDuration = 0.2f;` inside the lightning-effect
 setup), not `:184` - `:184` is the blank line before the setup's
 `Debug.Log`. The lane's new pin cited `:184` twice while the production
-comment beside it (`src/systems/dynamicSkies.js:"this.flashDuration ="`) already read
+comment beside it (`src/systems/dynamicSkies/dynamicSkies.js:"this.flashDuration ="`) already read
 `:183`; the two test cites and the Testing.md row are corrected to `:183`
 and now agree with the port. No behaviour and no other cite moved: the
 five `LightningFlash.cs` lines (`:52`, `:55`, `:61`, `:77`, `:79`)
@@ -491,7 +491,7 @@ it to.
 clamped the mod's real frame at 1 s; Unity's default maximum is 1/3 s,
 and the only consumer is the lightning routine with 0.2 s and 0.1 s
 steps, so a hitch between the two retired a step Unity would have
-carried over. `MAX_DELTA_SECONDS = 1 / 3` (`systems/dynamicSkies.js`),
+carried over. `MAX_DELTA_SECONDS = 1 / 3` (`systems/dynamicSkies/dynamicSkies.js`),
 read by the controller. The one unverified link: DFU's project
 `maximumDeltaTime` was not read (no DFU tree here); the default is
 assumed.

@@ -29,14 +29,14 @@
   },
   {
     "name": "ALIKR1-packs-off-by-default",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "old": "...ENVIRONMENT_PACK_MODS.map((m) => Object.freeze({ key: m.key, index: m.index, open: () => vePackClient(m), on: true })),",
     "new": "...ENVIRONMENT_PACK_MODS.map((m) => Object.freeze({ key: m.key, index: m.index, open: () => vePackClient(m), on: false })),",
     "tests": ["test/environs_texturePacks.test.js"]
   },
   {
     "name": "ALIKR1-pack-served-from-the-base-root",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "old": "  const root = mod.root ?? pack.Root;",
     "new": "  const root = pack.Root;",
     "tests": ["test/environs_texturePacks.test.js"]

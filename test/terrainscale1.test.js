@@ -23,7 +23,7 @@ import { layoutNature } from '../src/world/terrainNature.js';
 import { ringHeight } from '../src/render/farRing.js';
 import { overworldHeight, OVERWORLD_RELIEF } from '../src/ui/overworldModel.js';
 import { WOD_TERRAIN_HEIGHT_MAX } from '../src/world/wodLocationLoader.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createSceneCache, cacheScene, restoreCachedScene, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 import { makeAnchor } from '../src/systems/teleportAnchor.js';
 

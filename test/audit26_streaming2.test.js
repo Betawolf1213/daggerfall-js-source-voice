@@ -9,15 +9,15 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { areEnemiesNearby } from '../src/systems/encounters.js';
-import { exhaustionOutcome, EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest.js';
-import { calculateTripCost } from '../src/systems/travel.js';
+import { exhaustionOutcome, EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest/rest.js';
+import { calculateTripCost } from '../src/systems/travel/travel.js';
 import { ownsShip, SHIP_TYPES } from '../src/systems/banking.js';
-import { freeShipTravel } from '../src/systems/guildServices.js';
-import { orderOf } from '../src/systems/guildVariants.js';
-import { joinedGuildOfGroup, activeMemberships } from '../src/systems/guilds.js';
+import { freeShipTravel } from '../src/systems/guild/guildServices.js';
+import { orderOf } from '../src/systems/guild/guildVariants.js';
+import { joinedGuildOfGroup, activeMemberships } from '../src/systems/guild/guilds.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
-import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk.js';
-import { expandRandomTextRecord } from '../src/systems/talkMacros.js';
+import { buildingCompassDirection, DIRECTION_HINTS } from '../src/systems/talk/talk.js';
+import { expandRandomTextRecord } from '../src/systems/talk/talkMacros.js';
 import { AnswerPipeline, TALK_STRINGS } from '../src/systems/answerPipeline.js';
 import { PlayerMotor, LEVITATE_MOVE_SPEED } from '../src/player/motor.js';
 

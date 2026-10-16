@@ -45,12 +45,12 @@ and the journey runs to the next junction on its own.
 
 | File | What it is |
 |---|---|
-| `src/systems/travelOptions.js` | `TravelOptionsMod.cs` - the settings, the state, the journey machine and the Update loop in its own order |
-| `src/systems/travelAutopilot.js` | `PlayerAutoPilot.cs` (Jedidia) - the steering: a yaw and a forward force per frame, and the arrival test |
-| `src/systems/travelSteer.js` | **the port's own** (TRAVEL-NAV, below) - the walk round what stands in the way: the feelers through the collider, the fan, the stand-off, the stop |
-| `src/systems/travelPaths.js` | the compass, the map-pixel bands and the direction arithmetic - a leaf, no DOM and no world |
-| `src/systems/travelPorts.js` | `portLocationIds`, the 417-entry hand-written table of harbours |
-| `src/systems/travelOptionsText.js` | `TravelOptionsModData.csv`, restated; the vendored file is the record and a pin holds them equal |
+| `src/systems/travel/travelOptions.js` | `TravelOptionsMod.cs` - the settings, the state, the journey machine and the Update loop in its own order |
+| `src/systems/travel/travelAutopilot.js` | `PlayerAutoPilot.cs` (Jedidia) - the steering: a yaw and a forward force per frame, and the arrival test |
+| `src/systems/travel/travelSteer.js` | **the port's own** (TRAVEL-NAV, below) - the walk round what stands in the way: the feelers through the collider, the fan, the stand-off, the stop |
+| `src/systems/travel/travelPaths.js` | the compass, the map-pixel bands and the direction arithmetic - a leaf, no DOM and no world |
+| `src/systems/travel/travelPorts.js` | `portLocationIds`, the 417-entry hand-written table of harbours |
+| `src/systems/travel/travelOptionsText.js` | `TravelOptionsModData.csv`, restated; the vendored file is the record and a pin holds them equal |
 | `src/systems/timeScale.js` | Unity's `Time.timeScale`, which the port did not have |
 | `src/ui/travelControlUI.js` | `TravelControlUI.cs` - the 320x27 strip, rect for rect |
 | `src/ui/travelJunctionMap.js` | the junction mini-map panel |
@@ -375,7 +375,7 @@ must be assigned there, never re-declared. Mutants
    back into the teleport - and the ports rule (AUDIT T1: off, nothing
    knocks the ship toggle, on by default, off a trip from the wilderness
    to an inland place, and a ship is never walked). All four are the
-   ROOM's now (`systems/onlineLane.js` `ONLINE_ROOM_MOD_KEYS`, at the
+   ROOM's now (`systems/online/onlineLane.js` `ONLINE_ROOM_MOD_KEYS`, at the
    shipped defaults: `Enabled`, `CautiousTravel.PlayerControlledCautiousTravel`,
    `StopAtInnsTravel.PlayerControlledInnsTravel`, `ShipTravel.OnlyFromPorts`),
    so online `isPlayerControlledTravel` answers yes for every trip over
@@ -790,7 +790,7 @@ third was a thing the port never said out loud.
   the gate does - a sign flip on the bearing would have probed the ground
   BEHIND the traveller, always built, restoring the bug whole with every
   pin green. `travelDriveForward` and `travelLookaheadFor` live in
-  `systems/travelAutopilot.js` beside the autopilot, for the reason that
+  `systems/travel/travelAutopilot.js` beside the autopilot, for the reason that
   file is pure: the pins drive them on a table. Six mutants ride them.
 
 Pinned in `test/to1_travelOptions.test.js` (TO-FIELD) with three
@@ -875,7 +875,7 @@ ground against it with the clock racing until the player noticed. DFU's
 CharacterController slides along the face, so the mod's own journeys do
 the same, and this port's collider honours that controller's contract.
 
-**What is there now** - `src/systems/travelSteer.js`, the port's own,
+**What is there now** - `src/systems/travel/travelSteer.js`, the port's own,
 between the autopilot and the motor. The mod still decides where the
 journey is going and when it has arrived; the steering decides only how
 the body gets there this frame:
@@ -1052,7 +1052,7 @@ better"*. The review flew the steering over some fifteen hundred fuzzed layouts
 (random buildings and trunks, every pace the mod allows, walking and
 mounted) beside the table flights, and cast its feelers through a real
 `Collider` at shapes the slice had not tried. Three things were wrong, and
-are fixed in `src/systems/travelSteer.js`:
+are fixed in `src/systems/travel/travelSteer.js`:
 
 - **It could walk for ever.** In a tight layout - one building sending the
   detour one way, a second building's corner and two trunks catching it -
@@ -1187,7 +1187,7 @@ did not show them, and AUDIT TRAVEL-STRAFE 2, below, counts them.
 ## AUDIT TRAVEL-STRAFE (2026-09-27) - the slice audited
 
 A read-only audit of TRAVEL-STRAFE found five things. Three are fixed in
-`src/systems/travelSteer.js`, one in the pins, one is said. **The fuzz**
+`src/systems/travel/travelSteer.js`, one in the pins, one is said. **The fuzz**
 below is the audit's: six kinds of layout (a town, a dense town, trees,
 walls with a gap and U shapes, a pocket round the target, a target off to
 the side), 400 seeds each, nine paces (x1, x10, x60 and x100 at 1/60 s
@@ -1446,7 +1446,7 @@ remembered rate.
 **The law** (`systems/timeScale.js` `TRAVEL_ROAD_RATE` 100, `TRAVEL_OPEN_RATE` 60, `travelRateOf`). A fast traveller
 on a road or a track runs at x100; anywhere else - the open ground, the walk back to a road after a stop, the sea -
 at x60. "A road" is a road or a track, as the Overworld's own trip line counts them (`travelRoute.js` `roadShare`,
-"by the road"); `systems/travelOptions.js` `ROAD_LEG_KINDS` says so. Where each journey reads its ground
+"by the road"); `systems/travel/travelOptions.js` `ROAD_LEG_KINDS` says so. Where each journey reads its ground
 (`journeyOnRoad`):
 - a planned route (the Overworld's, TV2, and TO-ROADS' first-person one) by the LEG it walks - its kind from the
   planner; a join (AUDIT OW3 J3) is the open ground's;

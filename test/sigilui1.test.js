@@ -1,6 +1,6 @@
 // SIGIL-UI + RARITY-UI (2026-09-26, Mac: "sigil weapons need a visible indicator within the info section, something
 // that makes it stand out, along with progress as you use it. Rarity needs to be more noticable in the UI with the icon
-// borders being color coded"). The view is pure (systems/sigil.js sigilView) and the block is BUILT here on the fake
+// borders being color coded"). The view is pure (systems/sigil/sigil.js sigilView) and the block is BUILT here on the fake
 // document (test/invdrag.mjs); the frames are the Plus sheet's own rules, read as text, and the four places that mark
 // a frame are driven (the pack's helper) or pinned (the hotbar's and the diamond's writes).
 import { test } from 'node:test';
@@ -9,10 +9,10 @@ import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
 import {
   sigilView, sigilProgressText, setSigilOnline, setSigilRenown, _resetSigilForTests, SIGIL_STAGES,
-} from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigil.js';
 import { sigilCard } from '../src/ui/sigilCard.js';
 import { SIGIL_RUNE_SVG, SIGIL_RUNE_TILE_SVG, SIGIL_RUNE_TILE_URL } from '../src/ui/sigilRune.js';
-import { rarityLines, RARITIES, RARITY_ORDER, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { rarityLines, RARITIES, RARITY_ORDER, LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { markItemFrame } from '../src/ui/enhancedInventory.js';
 import { ITEM_FRAME_CSS, PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';

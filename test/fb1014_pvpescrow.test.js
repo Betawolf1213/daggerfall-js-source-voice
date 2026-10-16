@@ -21,14 +21,14 @@ import { seatRealm, layRecord, realmAt, freshSave } from './realmSeat.mjs';
 import { seeded } from './honestItems.mjs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { equipItem, equipTableOf, isEquipped, unequipItem, wearableItem } from '../src/systems/equip.js';
-import { snapshotPlayer } from '../src/systems/save.js';
-import { stampItemIds } from '../src/systems/itemIds.js';
-import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/wildDeath.js';
-import { validLootList } from '../src/systems/loot.js';
-import '../src/systems/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
+import { snapshotPlayer } from '../src/systems/save/save.js';
+import { stampItemIds } from '../src/systems/item/itemIds.js';
+import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/wild/wildDeath.js';
+import { validLootList } from '../src/systems/loot/loot.js';
+import '../src/systems/item/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
 import { addItem, stacksWith } from '../src/systems/inventory.js';
 import { createWildFight } from '../src/net/wildFight.js';
 import { createWildRemains } from '../src/net/wildRemains.js';
@@ -37,7 +37,7 @@ import { readWildReceipt, readWildCollect, WILD_COLLECT_TTL_S } from '../src/net
 import { validWildData, validWildOut, validWildRefOut, worldRoom, PIXEL_UNITS, WILD_ITEMS_MAX, WILD_DATA_MAX, SOCIAL_ROOM, RELAY_VERSION, relaySupportsWildCollect } from '../src/net/wire.js';
 import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
 import { WILD_ESCROW_HOLD_S, escrowBackAt } from '../server-account/src/wild.js';
-import { WILD_TEXT, wildDeathLines } from '../src/systems/wildZone.js';
+import { WILD_TEXT, wildDeathLines } from '../src/systems/wild/wildZone.js';
 
 const { subtle } = globalThis.crypto;
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

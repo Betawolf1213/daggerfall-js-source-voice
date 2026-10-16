@@ -41,7 +41,7 @@
   },
   {
     "name": "KNIGHT-HOUSE-sleeping-deed-counted",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "return !!slot && deedStands(slot);",
     "new": "return !!slot;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "KNIGHT-HOUSE-own-deed-an-online-home",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (own && row.deed) return null;\n",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "KNIGHT-HOUSE-client-blind-to-deed",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "deed: h.deed === true,",
     "new": "deed: false,",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "KNIGHT-HOUSE-no-deed-listed",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "? [{ region, mapId, buildingKey: slot.buildingKey }] : [];",
     "new": "? [] : [];",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "KNIGHT-HOUSE-hold-repeat-unsaid",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (r?.ok) return { ok: true, repeat: r.data?.repeat === true };",
     "new": "if (r?.ok) return { ok: true, repeat: false };",
     "tests": [

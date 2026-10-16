@@ -115,7 +115,7 @@ each host's own `_enemyArm` and street race cut out of the shipped source and ru
 Salvage button; `bible/06-Systems/Loot-Arc.md` (SALVAGE-CLASSIC, after LOOT9's PORTAL1 note).
 
 FOUND. The "Blazing Holy Dagger of Fireballs" is the MAGIC.DEF row "Blazing %it of Fireballs" (one Cast When Used row,
-spell 14, 1,500 uses) on a Holy Dagger, minted by `systems/loot.js:"export function createRegularMagicItem("`, which writes no
+spell 14, 1,500 uses) on a Holy Dagger, minted by `systems/loot/loot.js:"export function createRegularMagicItem("`, which writes no
 `rarity`; its card reads "Magic" because the ladder's `lootRarity.js:"export function rarityOf(item) {"` calls any
 enchanted piece Magic. Salvage reads the ladder's own grade (`reforge.js:"export function salvageShards(item) {"`), so
 the piece is worth no shards, and the Salvage page's filter (shards over 0) and the card's button dropped it without a
@@ -295,8 +295,8 @@ flag). The front door (`main.js`) boots only the world host.
 ## ALLY-RACE: a companion is one person (6)
 
 `src/characters/foeBodies.js` ownPerson, foeSeed; `src/scenes/crewAshore.js` companionPerson, the stand's
-`rec.person`; `src/systems/revenant.js` revenantPerson, revenantStamp, revenantDeed's new record, sanitize;
-`src/systems/revenantCompanions.js` memberOf.
+`rec.person`; `src/systems/revenant/revenant.js` revenantPerson, revenantStamp, revenantDeed's new record, sanitize;
+`src/systems/revenant/revenantCompanions.js` memberOf.
 
 FOUND. Every body of a person the foe lanes stand - a foe, the watch, a companion - takes its look from
 `foeLook`, whose race and face are `bayPerson(foeSeed(f))` and whose head, hair and under-clothes are walked off the same

@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN10-distance-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const ROUT = Object.freeze({ DISTANCE: 70, LOW: 0.5 });",
     "new": "export const ROUT = Object.freeze({ DISTANCE: 60, LOW: 0.5 });",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RVN10-low-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const ROUT = Object.freeze({ DISTANCE: 70, LOW: 0.5 });",
     "new": "export const ROUT = Object.freeze({ DISTANCE: 70, LOW: 0.6 });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RVN10-lesson-by-order",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  for (const k of kinds.includes('routed') ? ['routed', ...kinds] : kinds) {",
     "new": "  for (const k of kinds) {",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RVN10-felled-bank",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  felled: Object.freeze(['Bane of {a}', 'the Companion-Killer', 'Breaker of Oaths']),",
     "new": "  felled: Object.freeze(['Bane of {a}', 'the Companion-Killer']),",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RVN10-routed-bank",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  routed: Object.freeze(['Who Made {p} Run', 'the Pursuer']),",
     "new": "  routed: Object.freeze(['the Pursuer', 'Who Made {p} Run']),",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN10-ally-unfilled",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ".replace(/\\{n\\}/g, () => n).replace(/\\{a\\}/g, () => a);",
     "new": ".replace(/\\{n\\}/g, () => n);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN10-unnamed-not-passed-over",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ".filter((e) => ally || !e.includes('{a}'));",
     "new": ";",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN10-rankup-ally-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    r.epithet = revenantEpithet(deedName, r.rank, pName, rolls, r.epithet, allyName(ally) ?? '');",
     "new": "    r.epithet = revenantEpithet(deedName, r.rank, pName, rolls, r.epithet);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "RVN10-new-ally-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "epithet: revenantEpithet(deedName, 1, pName, rolls, null, allyName(ally) ?? ''),",
     "new": "epithet: revenantEpithet(deedName, 1, pName, rolls),",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "RVN10-escape-counted",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "else if (deedName === 'fled') { r.escapes++; r.notice = null; }",
     "new": "else { r.escapes++; r.notice = null; }",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "RVN10-felled-not-out",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.out = deedName === 'slew' || deedName === 'felled';",
     "new": "  r.out = deedName === 'slew';",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "RVN10-history-ally-dropped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  deed(r, deedName, now, deedName === 'felled' && allyName(ally) ? { ally: allyName(ally) } : deedName === 'fled'",
     "new": "  deed(r, deedName, now, false ? { ally: allyName(ally) } : deedName === 'fled'",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "RVN10-ally-unsaved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "return { deed: d.deed, at: d.at, ...(ally ? { ally } : {}), ...(d.deed === 'fled'",
     "new": "return { deed: d.deed, at: d.at, ...(d.deed === 'fled'",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "RVN10-ally-untrimmed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "const allyName = (v) => (isStr(v) && v.trim() ? v.trim().slice(0, ALLY_MAX) : null);",
     "new": "const allyName = (v) => (isStr(v) && v.trim() ? v.trim() : null);",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "RVN10-ally-bad-kept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "const allyName = (v) => (isStr(v) && v.trim() ? v.trim().slice(0, ALLY_MAX) : null);",
     "new": "const allyName = (v) => (v ? String(v).trim().slice(0, ALLY_MAX) : null);",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "RVN10-low-unmarked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (after <= 0) endPlayerFights(); else if (after < (entity.maxHealth || 1) * ROUT.LOW) markPlayerLow();",
     "new": "  if (after <= 0) endPlayerFights();",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "RVN10-half-counted",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "else if (after < (entity.maxHealth || 1) * ROUT.LOW) markPlayerLow();",
     "new": "else if (after <= (entity.maxHealth || 1) * ROUT.LOW) markPlayerLow();",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "RVN10-death-ends-nothing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (after <= 0) endPlayerFights(); else if (after < (entity.maxHealth || 1) * ROUT.LOW) markPlayerLow();",
     "new": "  if (after < (entity.maxHealth || 1) * ROUT.LOW) markPlayerLow();",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "RVN10-load-ends-nothing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "clearPlayerHarm(); endPlayerFights(); },   // the last game's harm",
     "new": "clearPlayerHarm(); },   // the last game's harm",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "RVN10-felled-dead-striker",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "RVN10-felled-down-striker",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "RVN10-felled-unnamed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving) return null;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "RVN10-felled-ally-unpassed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "archive: striker.archive ?? striker.mobileArchive ?? null, now, rolls, ally: name,",
     "new": "archive: striker.archive ?? striker.mobileArchive ?? null, now, rolls,",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "RVN10-routable-dead",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "RVN10-routable-twice",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "RVN10-routable-down",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "RVN10-routable-kneeling",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "RVN10-routable-running",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving) return false;",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "RVN10-routable-calm",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f.ai?.isHostile || !f.ai.detected || f.ai.targetIsLocalPlayer === false) return false;",
     "new": "  if (!f.ai || !f.ai.detected || f.ai.targetIsLocalPlayer === false) return false;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "RVN10-routable-unaware",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f.ai?.isHostile || !f.ai.detected || f.ai.targetIsLocalPlayer === false) return false;",
     "new": "  if (!f.ai?.isHostile || f.ai.targetIsLocalPlayer === false) return false;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "RVN10-routable-on-a-peer",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f.ai?.isHostile || !f.ai.detected || f.ai.targetIsLocalPlayer === false) return false;",
     "new": "  if (!f.ai?.isHostile || !f.ai.detected) return false;",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "RVN10-routable-anyone",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantCandidate(f.entity, f)) return false;\n  return playerLowSince(harmFightSince(f.entity, now));",
     "new": "  return playerLowSince(harmFightSince(f.entity, now));",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "RVN10-routable-any-fight",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  return playerLowSince(harmFightSince(f.entity, now));",
     "new": "  return harmFightSince(f.entity, now) != null;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "RVN10-routed-unmarked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  f._routed = true;\n  return revenantDeed(player, f.entity, 'routed',",
     "new": "  return revenantDeed(player, f.entity, 'routed',",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "RVN10-sweep-everyone",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (door?.isPuppet?.(f) || !revenantRoutable(f, { now: wall })) continue;",
     "new": "if (!f) continue;",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "RVN10-kickers-missing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  felled: 'Felled', routed: 'Routed',\n",
     "new": "",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "RVN10-felled-card-rank",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const body = `${r.given} felled ${who}. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.`;",
     "new": "  const body = `${r.given} felled ${who}. It will remember this.`;",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "RVN10-routed-card-rank",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const body = `You ran from ${r.given}. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.`;",
     "new": "  const body = `You ran from ${r.given}. It will remember this.`;",
     "tests": [

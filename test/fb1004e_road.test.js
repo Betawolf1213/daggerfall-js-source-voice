@@ -15,9 +15,9 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
 import { amGroupRollOwner } from '../src/systems/campEncounters.js';
-import { partyExtraFoes } from '../src/systems/partyScale.js';
+import { partyExtraFoes } from '../src/systems/party/partyScale.js';
 import { FEATURES } from '../src/systems/features.js';
-import { WILD_GIANT } from '../src/systems/wildZone.js';
+import { WILD_GIANT } from '../src/systems/wild/wildZone.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

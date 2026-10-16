@@ -23,7 +23,7 @@ import { hallOfRecordsTokens } from '../src/ui/hallOfRecords.js';
 import { RSC } from '../src/formats/textRsc.js';
 import { CHAPTER_NEWS } from '../src/systems/livingWorld/lines.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';

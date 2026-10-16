@@ -43,7 +43,7 @@ import { setPassiveSpecialsHost, SUN_DAMAGE_AMOUNT, SUN_DAMAGE_PER_ROUNDS } from
 import { MINUTES_PER_DAY, isDayFromMinutes } from '../src/systems/gameDate.js';
 import { SPECIAL_ABILITY_BITS } from '../src/systems/specialAdvantages.js';   // VAMP-DAY: V1's burn is the career's now
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { sheetModel } from '../src/ui/enhancedCharSheet.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { _resetNotifyForTests } from '../src/systems/notify.js';

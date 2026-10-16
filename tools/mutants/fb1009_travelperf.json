@@ -1,7 +1,7 @@
 [
   {
     "name": "TVB-law-rising-loads",
-    "file": "src/systems/travelDungeonModels.js",
+    "file": "src/systems/travel/travelDungeonModels.js",
     "old": "  if (!up) return 0;\n  let n = 0;",
     "new": "  let n = 0;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TVB-law-held-asked-again",
-    "file": "src/systems/travelDungeonModels.js",
+    "file": "src/systems/travel/travelDungeonModels.js",
     "old": "    if (held.has(g.key)) continue;\n    start(g);",
     "new": "    start(g);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TVB-law-budget-overrun",
-    "file": "src/systems/travelDungeonModels.js",
+    "file": "src/systems/travel/travelDungeonModels.js",
     "old": "    if (n >= max) break;",
     "new": "    if (n > max) break;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TVB-law-two-a-frame",
-    "file": "src/systems/travelDungeonModels.js",
+    "file": "src/systems/travel/travelDungeonModels.js",
     "old": "export const TV_DUNGEON_LOADS_PER_FRAME = 1;",
     "new": "export const TV_DUNGEON_LOADS_PER_FRAME = 2;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "TVB-law-farthest-first",
-    "file": "src/systems/travelDungeonModels.js",
+    "file": "src/systems/travel/travelDungeonModels.js",
     "old": "  for (const g of list ?? []) {\n    if (n >= max) break;",
     "new": "  for (const g of [...(list ?? [])].reverse()) {\n    if (n >= max) break;",
     "tests": [

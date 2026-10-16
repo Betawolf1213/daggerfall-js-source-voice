@@ -5,7 +5,7 @@
 // showed in the panel as itself. The Arena's tiers (ARENA2) seat two of the table's figures, unasked too. NUDE-FLATS
 // pinned the five hosts of its day by source; the two made after it never learned the rule.
 //
-// Pinned here, each through its real producer: the offer (systems/decorCatalogue.js decorRoomEntries over the real
+// Pinned here, each through its real producer: the offer (systems/decor/decorCatalogue.js decorRoomEntries over the real
 // catalogue), the room (scenes/decorRoom.js), the decorator's ghost and pictures (scenes/decorTool.js over the real
 // panel), the crowd (scenes/arenaBouts.js buildCrowd over a fake stage) - and THE SWEEP: every file of src/ that batches a
 // billboard is named below, a person host asks drawnFlat and any other says why it draws no person, so the next host
@@ -14,14 +14,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { NUDE_FLAT_STAND_INS, isNudeFlat } from '../src/characters/nudeFlats.js';
-import { collectDecor, decorCatalogue, decorRoomEntries } from '../src/systems/decorCatalogue.js';
+import { collectDecor, decorCatalogue, decorRoomEntries } from '../src/systems/decor/decorCatalogue.js';
 import { createDecorRoom } from '../src/scenes/decorRoom.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { CROWD_PEOPLE } from '../src/systems/arenaCrowd.js';
-import { newArenaLadder, nextLadderBout } from '../src/systems/arenaLadder.js';
-import * as LG from '../src/systems/arenaLeague.js';
+import { CROWD_PEOPLE } from '../src/systems/arena/arenaCrowd.js';
+import { newArenaLadder, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { settle, near, rmb, toolRig, placeFrom, all, one, rows } from './decorFakes.mjs';
 

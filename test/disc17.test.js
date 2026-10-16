@@ -185,6 +185,6 @@ test('DISC17-C: the weather layer is gone from the tree - no module, no import, 
   assert.equal(SHEET_MEMBERS.includes('paintUnder'), false);
   for (const f of ['src/ui/townSheet.js', 'src/ui/automapSheet.js', 'src/ui/mapStrip.js']) assert.doesNotMatch(rd(f), /paintUnder/, f);
   // what the map read stays the sim's: the forecast law and the ground law are the weather map's own
-  assert.match(rd('src/systems/weatherMap.js'), /export function forecastAt\(/);
-  assert.match(rd('src/systems/weatherSim.js'), /export function mapGround\(climateAt\)/);
+  assert.match(rd('src/systems/weather/weatherMap.js'), /export function forecastAt\(/);
+  assert.match(rd('src/systems/weather/weatherSim.js'), /export function mapGround\(climateAt\)/);
 });

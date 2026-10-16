@@ -1,29 +1,29 @@
 // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
-// unusable") - WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md): the law (systems/wagonUpkeep.js) - a wagon's soundness
+// unusable") - WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md): the law (systems/wagon/wagonUpkeep.js) - a wagon's soundness
 // off the condition it always carried, what wears it, what mends it and what it costs; the runtime's wear by the metres
-// rolled and the journey's days (systems/upkeepRuntime.js); WAGON-MEND (2026-10-12): no wagon ever broken - worn to
+// rolled and the journey's days (systems/upkeep/upkeepRuntime.js); WAGON-MEND (2026-10-12): no wagon ever broken - worn to
 // Failing at the worst, slow and still driven; the Wagon Yard's Mend (systems/merchantYards.js, scenes/merchantYardsHost.js, scenes/world.js mendAtYard) and its kits; a smith's
 // counter refusing a horse and a wagon (systems/repairService.js); and the hosts wiring it.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeep/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   wagonCondition, wagonConditionMax, wagonSoundness, wagonState, WAGON_STATES, rollWear, journeyWear, wearWagon, WEAR_FLOOR,
   createWearAccount, mendPrice, mendWagon, kitMendWagon, wagonPace, WAGON_UPKEEP_TEXT, WEAR_A_KM, OFFROAD, LOAD_WEAR,
   KIND_WEAR, JOURNEY_WEAR_A_DAY, JOURNEY_WEAR_MAX, THROWN_WEAR, MEND_SHARE, MEND_LEAST, MEND_FETCH, KIT_MEND, WAGON_KIT_CEILING, KIT_MINUTES,
-} from '../src/systems/wagonUpkeep.js';
-import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeepRuntime.js';
-import { newWagonItem, WAGON_KINDS, wagonTeamShort } from '../src/systems/wagonKinds.js';
-import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/itemTemplates.js';
-import { UPKEEP_ITEM } from '../src/systems/upkeepItemRows.js';
+} from '../src/systems/wagon/wagonUpkeep.js';
+import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeep/upkeepRuntime.js';
+import { newWagonItem, WAGON_KINDS, wagonTeamShort } from '../src/systems/wagon/wagonKinds.js';
+import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/item/itemTemplates.js';
+import { UPKEEP_ITEM } from '../src/systems/upkeep/upkeepItemRows.js';
 import { repairRefusal, TRANSPORT_CANNOT_BE_REPAIRED_TEXT } from '../src/systems/repairService.js';
 import { yardRowsFor, YARD_ROWS, YARD_MEND_ROW } from '../src/systems/merchantYards.js';
-import { TRANSPORT, WAGON_MODE, HORSE_MODE } from '../src/systems/horseCartLaw.js';
+import { TRANSPORT, WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { makeWorld } from './hccWorld.mjs';
 import { FEATURES } from '../src/systems/features.js';
-import { itemStatRows } from '../src/systems/itemInfo.js';
+import { itemStatRows } from '../src/systems/item/itemInfo.js';
 import { repairsObjectsTarget } from '../src/systems/enchantments.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

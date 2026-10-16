@@ -6,7 +6,7 @@
 // window INHERITS the member (DaggerfallTradeWindow.cs:31) - buying (:842), selling (:795) and taking back (:803) all
 // run it. The port had it on the classic pack alone (CM5): the classic counter took what fit unasked and moved stacks
 // whole, and neither enhanced window ever asked. Now:
-//   F1 the law has one home (systems/itemTransfer.js) and reads as int.TryParse does;
+//   F1 the law has one home (systems/item/itemTransfer.js) and reads as int.TryParse does;
 //   F2 the classic counter pushes CM5's box - under Control, and when a partial fit forces it;
 //   F3 the enhanced pack's card and the enhanced counter's strip carry the question as a field beside the button that
 //      moves the stack, seeded with the most that would move, so pressing unread is the popup's Return.
@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import {
   HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired,
-} from '../src/systems/itemTransfer.js';
+} from '../src/systems/item/itemTransfer.js';
 import * as nativeInventory from '../src/ui/nativeInventory.js';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';

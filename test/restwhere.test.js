@@ -14,7 +14,7 @@
 // declaring `toggleRest` TWICE in one hudCtx literal: the complete
 // path (createRestDeps + place/commitCrime delegating CanRest, the
 // Vagrancy charge and the IllegalRestWarning two-step to
-// systems/restSession.js and ui/restWindow.js) and, later in the same
+// systems/rest/restSession.js and ui/restWindow.js) and, later in the same
 // object, a crippled inline twin that re-implemented all three. The
 // later key wins, so the twin ran the rest key - and every pin here
 // still matched, because they matched the twin's SOURCE TEXT. A regex
@@ -38,12 +38,12 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   restDecision, canRest, REST_TEXT, RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR,
-} from '../src/systems/restSession.js';
+} from '../src/systems/rest/restSession.js';
 import { startRestGroundedCheck, CAPSULE_HEIGHT, PlayerMotor } from '../src/player/motor.js';
 import { setEnemyAlert, decayEnemyAlert } from '../src/systems/encounters.js';
 import { isPlayerInTown } from '../src/systems/nearbyObjects.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
-import { LIVE } from '../src/systems/settings.js';
+import { LIVE } from '../src/systems/settings/settings.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const src = (rel) => readFileSync(join(SRC, rel), 'utf8');
@@ -357,17 +357,17 @@ test('rest: both above-ground hosts run the DISPATCH, and ONLY its enemies arm r
   // the Vagrancy charge live in exactly one place each, and it is
   // never a host.
   assert.deepEqual(modulesMatching(/(?<![\w.])canRest\(/),
-    ['systems/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js'],
+    ['systems/rest/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js'],
     'CanRest is DECLARED in restSession and CALLED by the two windows (PARTY-REST DROP: the enhanced rest window is the classic one\'s twin over the same session) - by no host');
   assert.deepEqual(modulesMatching(/ILLEGAL_REST_WARNING|illegalRestWarningText/),
-    ['systems/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js']);
+    ['systems/rest/restSession.js', 'ui/enhancedRest.js', 'ui/restWindow.js']);
   assert.deepEqual(modulesMatching(/getBool\('GUI', 'IllegalRestWarning'\)/),
-    ['systems/restSession.js'], 'the setting has one reader');
+    ['systems/rest/restSession.js'], 'the setting has one reader');
   // ...and the settings ledger names that reader. It named
   // scenes/world.js through a DUPLICATE KEY - the same defect class as
   // the twin above, one file over - and the claim went stale the
   // moment the host stopped reading it.
-  assert.equal(LIVE['GUI/IllegalRestWarning'], 'src/systems/restSession.js');
+  assert.equal(LIVE['GUI/IllegalRestWarning'], 'src/systems/rest/restSession.js');
 });
 
 test('rest: the ?town page is the FOURTH host, and it runs the SAME laws as the world host', () => {

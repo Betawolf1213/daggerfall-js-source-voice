@@ -389,7 +389,7 @@
   },
   {
     "name": "INTA-the-chest-lost",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "    if (!lawRefuses(it)) out.push(lawPriced(it));   // HACKED-GOLD: at no price past the law's ceiling\n",
     "new": "    if (lawRefuses(it)) return null;\n    out.push(lawPriced(it));   // HACKED-GOLD: at no price past the law's ceiling\n",
     "tests": [
@@ -398,7 +398,7 @@
   },
   {
     "name": "INTA-magic-anything",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  return live.length === 1 && REGULAR_MAGIC_TYPES.includes(live[0].type) ? [] : ['enchantments'];",
     "new": "  return [];",
     "tests": [
@@ -407,7 +407,7 @@
   },
   {
     "name": "INTA-the-artifact-anywhere",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  if (item.templateIndex !== GROUP_TEMPLATE_INDICES[ITEM_GROUP_NAME_BY_CLASS[rec.group]]?.[rec.index]) return ['artifact'];\n",
     "new": "",
     "tests": [
@@ -416,7 +416,7 @@
   },
   {
     "name": "INTA-the-artifact-any-power",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  return withinKinds(found, rec.types) ? [] : ['artifact'];",
     "new": "  return [];",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "INTA-a-soul-in-any-artifact",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "(item.artifact === true && isInt(item.artifactIndexBitfield) && item.artifactIndexBitfield >> 1 === AZURAS_STAR)",
     "new": "item.artifact === true",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "INTA-no-person-in-a-gem",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "|| (/** @type {number} */ (v) >= HUMAN_SOUL_FIRST && /** @type {number} */ (v) <= HUMAN_SOUL_LAST)",
     "new": "|| false",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "INTA-the-lifted-rare",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "    const extra = tier === 'rare' ? 1 : 0;",
     "new": "    const extra = tier === 'rare' && isCursed(item) ? 1 : 0;",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "INTA-the-lifted-legendary",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "    if (item.exalted !== true && AFFIX_KINDS[a?.id]?.proc) out.push(isCursed(item) ? 'curse' : 'affixes');",
     "new": "    if (item.exalted !== true && !isCursed(item)) out.push('affixes');",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "INTA-worth-unfloored",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  return Math.max(Math.min(value, worthCeiling(item)), floor) * stack;",
     "new": "  return Math.min(value, worthCeiling(item)) * stack;",
     "tests": [
@@ -470,7 +470,7 @@
   },
   {
     "name": "INTA-the-null-row",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "    if (!e || typeof e !== 'object') return [...out, 'enchantments'];   // AUDIT INT: a null row threw, and the checkpoint with it\n",
     "new": "",
     "tests": [
@@ -479,7 +479,7 @@
   },
   {
     "name": "INTA-the-piece-unnamed",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "  if (typeof name === 'string' && name) return tradeHeldLawNotice(name);\n",
     "new": "",
     "tests": [

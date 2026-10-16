@@ -10,7 +10,7 @@
 //
 // WHAT THIS FILE OWNS, AND WHAT IT DELIBERATELY DOES NOT. Flight 1 cut
 // this window into four pieces and this is the assembly point:
-//   - systems/automapModel.js   the reveal index + the draw partition
+//   - systems/automap/automapModel.js   the reveal index + the draw partition
 //   - render/renderer.js        the PANEL BRACKET (panelFrame) - the
 //                               renderer owns GL state (EV6), so the
 //                               scissor/viewport ordering, the DFU
@@ -86,7 +86,7 @@
 // their sub-meshes name 1x1 solids in the `amap` archive, which is the
 // idiom this window already used for its billboards), and the status
 // label under the map answers GetMouseHoverOverText through
-// systems/automapPick.js. Three laws ride here rather than there:
+// systems/automap/automapPick.js. Three laws ride here rather than there:
 //
 //  - THE MARKER GROUP IS NEVER SLICED, DIMMED OR GRAYED. `clipY` is
 //    lifted and the mode dropped to OFF before it, exactly as the
@@ -141,12 +141,12 @@
 
 import { drawText } from './text.js';
 import { mirrorProjectionX, perspective, lookAt, trs, UP_Y } from '../world/mat4.js';
-import { getBool, getString } from '../systems/settings.js';
+import { getBool, getString } from '../systems/settings/settings.js';
 import {
   slicingPositionY, DEFAULT_SLICING_BIAS_Y,
   tryAddOrEditUserNote, tryRemoveUserNote, setUserNote, NOTE_MAX_CHARACTERS, NOTE_WIDTH_OVERRIDE,
   automapDebugTeleportMode,
-} from '../systems/automap.js';
+} from '../systems/automap/automap.js';
 import { RDB_SIDE } from '../world/dungeonLayout.js';
 import { AUTOMAP_PANEL_NATIVE_RECT, AUTOMAP_MODE } from '../render/renderer.js';   // c2/S2: the bracket's rect; c2/S6: the six presentations
 import {
@@ -158,7 +158,7 @@ import {
 } from './automapChrome.js';
 import { automapTooltipFor, shortcutOrFallback, AUTOMAP_STRINGS } from './automapText.js';
 import { automapMarkerSet, markerModels, MARKER_TEXELS, teleporterConnectionTransform } from './automapMarkers.js';   // c2/S7, c2/S8
-import { createAutomapPicker, hoverKeyForHit, MARKER_NAMES } from '../systems/automapPick.js';        // c2/S7
+import { createAutomapPicker, hoverKeyForHit, MARKER_NAMES } from '../systems/automap/automapPick.js';        // c2/S7
 import { InputMessageBoxWindow } from './inputMessageBox.js';   // c2/S8: the note editor; CM9: the ONE DaggerfallInputMessageBox
 import { drawToolTipBox } from './toolTip.js';
 import { drawCompassStrip } from './hud.js';
@@ -1027,7 +1027,7 @@ export class AutomapWindow {
   }
 
   /** TryToAddOrEditUserNoteMarker... (:763-799) with the model half in
-   *  systems/automap.js; what stays here is DFU's EditUserNote
+   *  systems/automap/automap.js; what stays here is DFU's EditUserNote
    *  (Automap.cs:1593-1608) - the box seeded with the marker's existing note. */
   _tryAddOrEditNote(rec, hit, editOnCreation) {
     const r = tryAddOrEditUserNote(rec, hit, { editOnCreation });
@@ -1226,7 +1226,7 @@ export class AutomapWindow {
     // interior material is born with RENDER_IN_GRAYSCALE DISABLED and
     // nothing indoors ever enables it again - there is no
     // prior-run tier in a building, because there is no prior run
-    // (interior discovery is per-visit; systems/automap.js). `null`
+    // (interior discovery is per-visit; systems/automap/automap.js). `null`
     // here means "every revealed row is a visited row".
     const run = this.deps.insideBuilding ? null : rec.visitedThisRun;
     const byKey = this.deps.model?.byKey ?? null;

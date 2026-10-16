@@ -326,7 +326,7 @@ The fixes, one each (verified over the player's data where it decides, and pinne
 
 Quick loot and the enhanced window's take moved a quest item off a body without telling its quest (DFU's remote-list
 click does, DaggerfallInventoryWindow.cs:2027-2037). Main's WHERE-ROBES fixed it first, through the same one door
-(`systems/itemTransfer.js` sendQuestItemClick) - quick loot's take, the enhanced menu at its opening and the pad's quick
+(`systems/item/itemTransfer.js` sendQuestItemClick) - quick loot's take, the enhanced menu at its opening and the pad's quick
 act - with its audit's pins (a menu closed unused has clicked; the local list sends none). This branch's copy - which
 also clicked in the card's Take, and would have clicked twice under main's menu - was withdrawn at the merge for main's,
 with its pins and mutants. The quests it named stand fixed by main's: R0C20Y07, S0000503, N0B00Y06, O0B00Y11 and

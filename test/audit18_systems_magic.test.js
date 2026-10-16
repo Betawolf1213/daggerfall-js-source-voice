@@ -23,7 +23,7 @@ import {
 } from '../src/systems/spellcost.js';
 import { liveStat, maxFatigue, MAX_STAT_VALUE } from '../src/systems/statMods.js';
 import { savingThrow, spellHasFlags, EFFECT_FLAGS, ELEMENTS } from '../src/systems/spellcast.js';
-import { RestSession, REST_TEXT, REST_WAIT_PER_HOUR } from '../src/systems/restSession.js';
+import { RestSession, REST_TEXT, REST_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
 import { applySpell, tickActiveEffects, effectsAlreadyOnTarget, effectActiveIdentity } from '../src/systems/effects.js';
 import { readSpellsStd } from '../src/formats/spellsStd.js';
 

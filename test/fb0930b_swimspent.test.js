@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { exhaustionOutcome, EXHAUSTED_SPENT_SHARE, EXHAUSTED_SWIMMING_LINE, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest.js';
+import { exhaustionOutcome, EXHAUSTED_SPENT_SHARE, EXHAUSTED_SWIMMING_LINE, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest/rest.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setSharedClock, setWorldMinutes, resetMagicRoundMarker } from '../src/systems/worldTick.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';

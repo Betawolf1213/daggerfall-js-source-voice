@@ -216,7 +216,7 @@ test('audit24: the three quest settings are LIVE reads, not hardcoded falses', a
   // journal's clocks never counted down (clock.js:"if (macroType !== 5)"). The settings
   // tier map's own both-ways gate now covers them; this pins the
   // BEHAVIOUR the tier map cannot see.
-  const { setValue, _resetForTests } = await import('../src/systems/settings.js');
+  const { setValue, _resetForTests } = await import('../src/systems/settings/settings.js');
   const bridge = read('src/scenes/questBridge.js');
   assert.match(bridge, /get playerNudity\(\) \{ return getBool\('ChildGuard', 'PlayerNudity'\); \}/,
     'a GETTER, because C# reads the setting at the point of use');

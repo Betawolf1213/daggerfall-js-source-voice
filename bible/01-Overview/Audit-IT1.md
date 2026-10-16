@@ -9,7 +9,7 @@ before reporting them (a node probe or a transliteration of the IL for every cla
   `ldstr`; the three tables once each, byte for byte, in the DLL);
 - **the classic window** - `ui/travelMapWindow.js`, `ui/travelPopUp.js`, against the IL and DFU's two windows;
 - **the enhanced sheet** - `ui/heldMap.js`;
-- **the host and the online lane** - `scenes/world.js`, `scenes/worldModes.js`, `systems/onlineLane.js`, the menu;
+- **the host and the online lane** - `scenes/world.js`, `scenes/worldModes.js`, `systems/online/onlineLane.js`, the menu;
 - **the gate world data** - the four patches, the tool, the layer, against the mod's own files out of the bundle and
   Beautiful Cities' pack (built against a real BSA).
 
@@ -30,7 +30,7 @@ stand.
 | L4 | low (doc) | Departure 3 said the static constructors read "four" settings once a session - they read nine - and that "the fees are read as they bill, as the mod reads them" - the port bills from the read the map takes as it opens. | Departure 3 rewritten. |
 | L5 | low (doc) | The calculator's comment said "a sea leg on the ship toggle" pays the ship. The mod has no ocean guard (IL_1dfb) where DFU has one: any trip on the ship toggle pays a sea day. | Named as CARRIED, in the code and on the page. |
 
-**The classic window** (`src/ui/travelMapWindow.js`, `src/ui/travelPopUp.js`, `src/systems/travelMapState.js`)
+**The classic window** (`src/ui/travelMapWindow.js`, `src/ui/travelPopUp.js`, `src/systems/travel/travelMapState.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -50,7 +50,7 @@ stand.
 | H-L1 | low | A refusal the sheet showed stuck: `_itRefusal` was cleared only by a new pick, so a later press that opened the panel kept the mod's box over a live Begin. | Cleared at every press, before the mod is asked. |
 | H-L2 | low | = C1, on the sheet: the shared filters (and the player's road and track chips, where the mod draws by DrawRoads / DrawTracks), the mark drawn and set. | A driver's sheet takes fresh filters with its roads and tracks the mod's (`itMapPaths`); no mark drawn or set. A chip flipped on it is its own (departure 7). |
 
-**The host and the online lane** (`src/scenes/world.js`, `src/ui/merchantServiceDoor.js`, `src/systems/onlineLane.js`,
+**The host and the online lane** (`src/scenes/world.js`, `src/ui/merchantServiceDoor.js`, `src/systems/online/onlineLane.js`,
 `src/ui/enhancedMenu.js`, `src/systems/features.js`)
 
 | ID | Sev | Finding | Fix |

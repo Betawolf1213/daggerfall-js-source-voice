@@ -38,7 +38,7 @@ import { isHandleShaped } from '../src/net/handleShape.js';
 import { stampRevived, dropRevived, revivedOf } from '../src/systems/legacy/revived.js';
 import { GUILD_RANK_MASTER, GUILD_MEMBERS_MAX, GUILD_ID_RE } from '../src/net/guildLaw.js';
 import { ID_RE, REALM_CHARACTER_RE } from '../src/net/identityToken.js';
-import { ITEM_UID_RE } from '../src/systems/itemLaw.js';
+import { ITEM_UID_RE } from '../src/systems/item/itemLaw.js';
 import { REALM_CHARACTERS_MAX } from '../server-account/src/realm.js';
 import { LINEAGE_ID_RE } from '../server-account/src/legacy.js';
 

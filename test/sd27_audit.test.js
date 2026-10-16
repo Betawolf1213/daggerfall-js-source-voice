@@ -14,7 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
 import { createSdEnd } from '../src/scenes/sdEnd.js';
-import { RIFT_BELL_RECORDS } from '../src/systems/sdRiftSound.js';
+import { RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
 import { sdHourClockOf, sdArenaGlowAt } from '../src/render/sdArenaGlow.js';
 import { SD_SKY_MODE } from '../src/render/sdSky.js';
 import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';

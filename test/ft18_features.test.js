@@ -22,7 +22,7 @@ import '../src/world/outdoors.js';
 import { WIND_PARTS, windRead, windWrite, quickSlotsRead, quickSlotsWrite, BLOOD_PARTS, bloodRead, bloodWrite } from '../src/systems/featureLanes.js';
 import { OUTDOORS_TIERS } from '../src/world/outdoors.js';
 import { getPref, setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { _resetModSettings, MOD_SETTINGS, modSetting, setModSetting } from '../src/systems/modSettings.js';
 import { tileStates, classicSegment, allOffPlan, featuresAllOff, featuresRestore, featureTile, barReading, FEATURES_RESTORE_PREF, ALL_OFF_ASK, defaultSegment, featuresDefaults, RESET_ALL_ASK } from '../src/ui/enhancedMenu.js';
 import { modModules } from '../src/systems/features.js';

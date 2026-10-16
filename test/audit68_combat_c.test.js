@@ -12,10 +12,10 @@ import { fpArm } from '../src/combat/fpArm.js';
 import { eotbBody } from '../src/player/eotbBody.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createThunderlock, createPellets } from '../src/systems/thunderlock.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 setValue('Controls', 'WeaponSwingMode', '2');   // the port's default (click or hold), stated so the file does not lean on it
 

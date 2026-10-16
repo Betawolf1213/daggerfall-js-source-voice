@@ -19,7 +19,7 @@
   },
   {
     "name": "SLAUGHTER-BOX-the-wild-halls-own-copy-back",
-    "file": "src/systems/wildDungeons.js",
+    "file": "src/systems/wild/wildDungeons.js",
     "old": "    const list = WATER_SPECIES.has(e.mobileType) ? WILD_HALL_FOES.water : pool;",
     "new": "    const list = new Set([11, 41, 42]).has(e.mobileType) ? WILD_HALL_FOES.water : pool;",
     "tests": [

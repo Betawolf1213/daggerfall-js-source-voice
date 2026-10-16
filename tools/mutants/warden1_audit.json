@@ -140,7 +140,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-C1-record-every-horse",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "if (Array.isArray(r.h) && horseThrownWith(from, [r.h[0], r.h[2]]))",
     "new": "if (Array.isArray(r.h))",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-C1-reach-one-axis",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": " && Math.abs(horse[1] - wagon[1]) <= WARDEN_HORSE_BY_NATIVES;",
     "new": ";",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-C1-adopt-every-horse",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "const loose = hm === HORSE_MODE.LooseStationary && horseThrownWith([wagonState.WorldX, wagonState.WorldZ], [wagonState.HorseWorldX, wagonState.HorseWorldZ]);",
     "new": "const loose = hm === HORSE_MODE.LooseStationary;",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-C3-reach-kept",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (loose) setHorseLoose(castWorldCoordinate(hx), castWorldCoordinate(hz), hh);\n    clearInteriorAccess();\n",
     "new": "    if (loose) setHorseLoose(castWorldCoordinate(hx), castWorldCoordinate(hz), hh);\n",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-D11-adopt-unpersisted",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (!physicalPersistenceEnabled || wagonState.Mode !== WAGON_MODE.Deployed) return false;\n    const at = thrownTo(",
     "new": "    if (wagonState.Mode !== WAGON_MODE.Deployed) return false;\n    const at = thrownTo(",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-D13-thrownTo-z",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": " || Math.abs(anchor[1] - from[1]) > WARDEN_SAME_NATIVES) return null;",
     "new": ") return null;",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-D13-word-z-reach",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": " || Math.abs(stamp.ly[1] - anchor[1]) > WARDEN_LAND_REACH) return null;",
     "new": ") return null;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "AUDIT-WARDEN1-R6-edges-unsorted",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "return [0, 1, 2, 3].sort((i, j) => d[i] - d[j] || i - j).map((i) => out[i]);",
     "new": "return [0, 1, 2, 3].map((i) => out[i]);",
     "tests": [

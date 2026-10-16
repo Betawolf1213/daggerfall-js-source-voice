@@ -12,12 +12,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
-import { TRANSPORT, WAGON_MODE, HORSE_MODE, HITCHED_HORSE_LOCAL_Z, NORMAL_GROUND_OFFSET, WAGON_MODEL_ID, TELEPORT_DISTANCE } from '../src/systems/horseCartLaw.js';
-import { hitchedPoseStep, hitchAxle, WagonHitch, hitchJumpReach, HITCH_JUMP_SPEED } from '../src/systems/horseFollow.js';
+import { TRANSPORT, WAGON_MODE, HORSE_MODE, HITCHED_HORSE_LOCAL_Z, NORMAL_GROUND_OFFSET, WAGON_MODEL_ID, TELEPORT_DISTANCE } from '../src/systems/horse/horseCartLaw.js';
+import { hitchedPoseStep, hitchAxle, WagonHitch, hitchJumpReach, HITCH_JUMP_SPEED } from '../src/systems/horse/horseFollow.js';
 import { createHorseCartPool, grownHitchedPosition, grownWheelStep } from '../src/scenes/horseCartPool.js';
 import { rigGrowOf } from '../src/world/wagonModels.js';   // WAGONS3: a driven rig's grow under the Overworld
-import { HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { quatForward, quatRotate, quatLookRotation, UNITY_QUAT_IDENTITY } from '../src/world/quat.js';
 
 const L = HITCHED_HORSE_LOCAL_Z;

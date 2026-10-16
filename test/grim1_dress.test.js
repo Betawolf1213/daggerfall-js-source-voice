@@ -341,7 +341,7 @@ test('INK-TONES: a rarity\'s, a set\'s and the sigil\'s words are their own colo
   assert.ok(css.includes(`:is(.sigil-word, .sigil-stage, .sigil-progress, p.sigil-progress) { color: ${SIGIL_INK} !important;`));
   assert.match(css, /\.set-tier:not\(\.awake\) \{ opacity: 1 !important; \}/);
   // the mix the browser makes, by hand: every set's colour at 40% into the ink, against the cream page
-  const sets = [...readFileSync(new URL('../src/systems/sigilSets.js', import.meta.url), 'utf8').matchAll(/colour: '(#[0-9a-fA-F]{6})'/g)].map((m) => m[1]);
+  const sets = [...readFileSync(new URL('../src/systems/sigil/sigilSets.js', import.meta.url), 'utf8').matchAll(/colour: '(#[0-9a-fA-F]{6})'/g)].map((m) => m[1]);
   assert.ok(sets.length >= 5, 'the sets\' colours were read');
   const ch = (h, i) => parseInt(h.slice(i, i + 2), 16);
   const lum = (rgb) => rgb.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);

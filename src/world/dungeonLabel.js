@@ -1,6 +1,6 @@
 // @ts-check
 // TIER1 (2026-10-05; bible/11-Multiplayer/Super-Dungeons.md section 12): WHAT A SURFACE SAYS OF A DUNGEON ONLINE - its
-// tier (systems/dungeonTier.js, the leaf) and its size.
+// tier (systems/dungeon/dungeonTier.js, the leaf) and its size.
 //
 // THE SIZE (SD-ONLINE, Mac: "Large, medium and small should all play into account online"): online every dungeon has
 // the world's own size (world/smallerDungeons.js onlineDungeonSize), and a player choosing which mouth to walk into
@@ -20,7 +20,7 @@ import { isArenaUndercroft } from './arenaCity.js';
 import { isGateArena } from './gateArena.js';
 import { isArenaFloor } from './arenaFloor.js';
 import { isSdRealm } from './sdRealm.js';   // SD5a: the Shattered Hour, a made place
-import { dungeonTier, DUNGEON_TIER_TEXT, DUNGEON_SIZE_TEXT } from '../systems/dungeonTier.js';
+import { dungeonTier, DUNGEON_TIER_TEXT, DUNGEON_SIZE_TEXT } from '../systems/dungeon/dungeonTier.js';
 
 /** Is this a place the port made, standing in the dungeon host - no dungeon to tier? */
 export const madeDungeon = (loc) => isGateArena(loc) || isArenaFloor(loc) || isArenaUndercroft(loc) || isSdRealm(loc);

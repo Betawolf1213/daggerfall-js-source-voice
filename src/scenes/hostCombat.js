@@ -23,16 +23,16 @@ import { RACES } from '../systems/races.js';   // C2-slice: the player grunt's r
 import { assignEnemyStartingEquipment, equipmentVariantFor, equipmentItems } from '../combat/enemyEquipment.js';   // RRI2: EnemyEntity.AssignEnemyEquipment, the delegate
 import { rollEnemyWeaponPoison } from '../systems/poisons.js';
 import { EQUIP_SLOTS, equipTableOf, getEquipSlot } from '../systems/equip.js';
-import { generateItems, addEnemyLootExtras, enemyLootTableKey, createRandomWeapon, createRandomArmor } from '../systems/loot.js';   // RF2: the spawn chain's DFU half, in its one home; RRI2: MobLootKeys; LOOT7: a champion's minted piece
-import { isAmmunition } from '../systems/itemTemplates.js';   // LOOT7: a champion's minted piece is never ammunition
+import { generateItems, addEnemyLootExtras, enemyLootTableKey, createRandomWeapon, createRandomArmor } from '../systems/loot/loot.js';   // RF2: the spawn chain's DFU half, in its one home; RRI2: MobLootKeys; LOOT7: a champion's minted piece
+import { isAmmunition } from '../systems/item/itemTemplates.js';   // LOOT7: a champion's minted piece is never ammunition
 import { enemyLootSpawned } from '../characters/enemyEntity.js';   // OH-E: EnemyEntity.OnLootSpawned
-import { conditionBasedPricesOn, randomConditionLootItems } from '../systems/rriRealism.js';   // RRI2: EnemyEntity.OnLootSpawned's subscriber
+import { conditionBasedPricesOn, randomConditionLootItems } from '../systems/roleplayRealismItems/rriRealism.js';   // RRI2: EnemyEntity.OnLootSpawned's subscriber
 import { isHumanoid } from '../systems/survival/loot.js';   // MOD: the same humanoid test SURV2's corpse food already draws its line with
-import { rollCorpseLoot, lootRarityOn, rarityRank, RARITIES, rarityEligible, applyRarity, lastPass, stampWonWeapons } from '../systems/lootRarity.js';   // RF2: and the port's, after it; LOOT7: a champion's guarantee
+import { rollCorpseLoot, lootRarityOn, rarityRank, RARITIES, rarityEligible, applyRarity, lastPass, stampWonWeapons } from '../systems/loot/lootRarity.js';   // RF2: and the port's, after it; LOOT7: a champion's guarantee
 import { championOf } from '../systems/champions.js';   // LOOT7: the champions' traits register at import
 import { isGoldPieces, ARROW_TEMPLATE } from '../systems/inventory.js';   // PLAIN-LOOT: a plain foe's gold all of it; PARTY-LOOT: a shaft is never counted under the cap
 import { bonusShare, rollBonusSupplies, ROOM_BASE_QUARTERS } from '../systems/roomLoot.js';   // PARTY-LOOT: a player's own layer over a room's shared base
-import { wildFoeLoot } from '../systems/wildZone.js';   // WILD1: the open zone's gold (wildLootAfter)
+import { wildFoeLoot } from '../systems/wild/wildZone.js';   // WILD1: the open zone's gold (wildLootAfter)
 import { liveStat, FATIGUE_DRAIN_SCALE } from '../systems/statMods.js';   // RF2: the player's live luck for the roll   // AUDIT 58: ItemHelper's EquipItem half - a foe's equip table is what DamageEquipment's struck side reads
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { swingSoundFor, hitSoundFor, ENEMY_HIT_VOLUME, SOUND } from '../systems/soundClips.js';
@@ -175,7 +175,7 @@ export function spawnEnemyLoot(entity, mobileType, basics, player, { rolls = Mat
   return entity.items;
 }
 
-/** WILD1 (systems/wildZone.js, the owner's "twice gold" - WILD2: at its ring's multiplier): a foe of the open zone's coin - after its chain
+/** WILD1 (systems/wild/wildZone.js, the owner's "twice gold" - WILD2: at its ring's multiplier): a foe of the open zone's coin - after its chain
  *  (spawnEnemyLoot, given wildLootOpts), so the cap, which folds and keeps the gold whole, has had its word. */
 /** PARTY-LOOT (bible/06-Systems/Online-Arc.md PARTY-LOOT; Mac: "Shared base + personal bonus"): A PLAYER'S OWN LAYER OVER
  *  A ROOM'S SHARED BASE, read at their own RENOWN-LOOT stage and their Luck - the knobs' one home, as the base's are

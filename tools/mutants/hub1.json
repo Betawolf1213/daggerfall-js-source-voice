@@ -1,7 +1,7 @@
 [
   {
     "name": "HUB1-kind-order-reversed",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "[LOCATION_TYPES.TownCity]: 3,",
     "new": "[LOCATION_TYPES.TownCity]: 1,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HUB1-name-unread",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "same(loc.name, regionName) ? 1 : 0,",
     "new": "0,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "HUB1-blocks-unread",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "const blocks = (ext?.width | 0) * (ext?.height | 0);",
     "new": "const blocks = 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "HUB1-buildings-unread",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "const buildings = loc.exterior?.buildingCount | 0;",
     "new": "const buildings = 0;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HUB1-tie-reversed",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "-(loc.locationIndex | 0)];",
     "new": "(loc.locationIndex | 0)];",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "HUB1-mod-row-counted",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "!Number.isInteger(loc.locationIndex) || !isBase(loc)) continue;",
     "new": "!Number.isInteger(loc.locationIndex)) continue;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "HUB1-capital-by-name-alone",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "HUB_CAPITALS.some((c) => same(c, loc.name) && same(c, regionName))",
     "new": "HUB_CAPITALS.some((c) => same(c, loc.name))",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "HUB1-mapid-signed",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "mapId: loc.mapTableData.mapId >>> 0,",
     "new": "mapId: loc.mapTableData.mapId,",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "HUB1-lookup-signed",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "hubs?.byMapId?.get(Number(mapId) >>> 0)",
     "new": "hubs?.byMapId?.get(Number(mapId))",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "HUB1-name-case-kept",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "a.trim().toLowerCase() === b.trim().toLowerCase()",
     "new": "a === b",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "HUB1-title-capital-on-hub",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "(hub.capital ? `Capital of the Kingdom of ${hub.regionName}` : `Hub of ${hub.regionName}`)",
     "new": "`Hub of ${hub.regionName}`",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "HUB1-map-word-flat",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "(hub.capital ? 'Capital' : 'Hub')",
     "new": "'Hub'",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "HUB1-arrival-words-flat",
-    "file": "src/systems/regionHubs.js",
+    "file": "src/systems/region/regionHubs.js",
     "old": "${hub.capital ? 'capital of the Kingdom of' : 'hub of'}",
     "new": "hub of",
     "tests": [

@@ -1,6 +1,6 @@
 // @ts-check
 // WAGONS1 (2026-10-09, Mac: "the ability for players to request to sit in the back of the cart and be transported across
-// daggerfall"; asked, "Players and companions"): THE SEATS IN THE BACK, ON THE WORLD HOST. systems/wagonSeats.js is
+// daggerfall"; asked, "Players and companions"): THE SEATS IN THE BACK, ON THE WORLD HOST. systems/wagon/wagonSeats.js is
 // the law (the seats, the asks, the words); this runs both ends of it for one client:
 //
 //  - AS A RIDER: another player's wagon with seats lists "Ask to ride" on its plaque (scenes/horseCartPool.js `riders.acts`);
@@ -9,7 +9,7 @@
 //    (the pool's peerSeat - its ease, its hitch, its turn) and my motor holds (`seated()` - the host's holdFrame), and I
 //    say `wr: { s: [owner, seat] }`. Jump gets me down, beside the wagon; so does the owner's word no longer naming me,
 //    or the owner gone from the room. When the owner sets out on a fast travel with me aboard (their `go`), I go too -
-//    the party's own journey (systems/partyTravel.js: no fare - the owner paid - landing beside the owner's wagon at
+//    the party's own journey (systems/party/partyTravel.js: no fare - the owner paid - landing beside the owner's wagon at
 //    the far end), and sit down again there.
 //  - AS AN OWNER: a rider's ask is put to me on the duel's strip (ui/duelPrompt.js - "X asks to ride in the back of your
 //    wagon"), Accept seating them in the lowest free seat, Decline turning them away (`pn`, so they hear at once);
@@ -24,8 +24,8 @@
 //          drawAt(feet | null, g) (WAGONS2: where my body is DRAWN while I sit - the seat of a wagon drawn grown, or null;
 //          WAGONS3: `g` its grow, world/wagonModels.js rigGrowOf's - the body drawn at it) }
 // Not a DFU member. Ledger A (WAGONS1).
-import { createRideBook, validRideWord, rideWord, RIDE_TEXT, RIDE_ASK_TTL_MS, RIDE_ASK_REACH, companionSeats } from '../systems/wagonSeats.js';
-import { WAGON_KINDS } from '../systems/wagonKinds.js';
+import { createRideBook, validRideWord, rideWord, RIDE_TEXT, RIDE_ASK_TTL_MS, RIDE_ASK_REACH, companionSeats } from '../systems/wagon/wagonSeats.js';
+import { WAGON_KINDS } from '../systems/wagon/wagonKinds.js';
 
 /** How long a fast travel waits after saying `go`, so the riders' clients hear it before the owner leaves the room. */
 export const GO_LEAD_MS = 1200;
@@ -221,7 +221,7 @@ export function createWagonRiders(deps) {
     passengers: () => book.passengers(),
     go: () => go,
     declined: () => [...declinedUntil.keys()],
-    /** The seats my players hold - the companions take the rest (systems/wagonSeats.js companionSeats). */
+    /** The seats my players hold - the companions take the rest (systems/wagon/wagonSeats.js companionSeats). */
     playerSeats: () => book.passengers().map((e) => e[1]),
     /** Where the `i`th of my companions rides, of `n` seats, while my wagon goes with me - or null. */
     companionSeat(i, riding) {

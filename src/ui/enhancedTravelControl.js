@@ -33,7 +33,7 @@ import {
   JUNCTION_MAP_WIDTH, JUNCTION_MAP_HEIGHT, JUNCTION_MAP_W2, JUNCTION_MAP_H2,
   JUNCTION_HERE_PT, junctionDirectionIndex, drawMapSection, DOT_SCALE, packRGBA,
 } from './travelPathsOverlay.js';
-import { TRAVEL_OPTIONS_TEXT as T } from '../systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT as T } from '../systems/travel/travelOptionsText.js';
 import { buildPaceControls, paceControlsCss } from './travelPaceControls.js';   // PACE-DIALS: the journey's own dials again
 
 export const ENHANCED_TRAVEL_ID = 'enhanced-travel';
@@ -58,7 +58,7 @@ let last = null;
 /** TV2 (AUDIT DEEP X-6): the held clock, in words - the rate the travel view's governor lets run, of the one asked for,
  *  and why. AUDIT OW5 G1: the load (TV2's governor), or the ground (AUDIT OW4 J5: an Overworld journey walks at x1 on the
  *  ground until the view can rise), which the load's words called loading while nothing was; OW6: or an enemy near
- *  (systems/travelThreat.js). */
+ *  (systems/travel/travelThreat.js). */
 export const TRAVEL_HELD_WHY = Object.freeze({ load: 'while the land loads', ground: 'until the Overworld rises', foes: 'with enemies near' });
 export const TRAVEL_HELD_TEXT = (n, of, why = 'load') => `Held to ×${n} of ×${of} ${TRAVEL_HELD_WHY[why] ?? TRAVEL_HELD_WHY.load}`;
 
@@ -111,7 +111,7 @@ function build(doc, hooks) {
   // the bar in itself (ui/travelViewHud.js): a press there must still reach these hooks
   const bar = root.querySelector('.travelpanel-bar');
   // PACE-DIALS (2026-10-06, the player: "Revert back to the overworld timer multiplier"): the two dials beside the
-  // time readout - Speed and Near enemies, 5-60 and x100 on a road alone (systems/travelPace.js)
+  // time readout - Speed and Near enemies, 5-60 and x100 on a road alone (systems/travel/travelPace.js)
   const pace = buildPaceControls(doc, 'travelpanel');
   bar.querySelector('.travelpanel-speed')?.after(pace.root);
   bar.addEventListener('mousedown', (e) => { if (e.target?.closest?.('[data-act]')) e.stopPropagation(); });
@@ -238,9 +238,9 @@ export function drawEnhancedTravelControl(state = {}, hooks = {}) {
   const eta = etaText(state.minutesLeft);
   const dist = distanceText(state.from, state.to);
   put(parts.sub, 'sub', [eta, dist].filter(Boolean).join('  ·  '));
-  // TV2: the clock may be HELD under the ground's rate (systems/travelGovernor.js: the land loading; OW6: an alerted
+  // TV2: the clock may be HELD under the ground's rate (systems/travel/travelGovernor.js: the land loading; OW6: an alerted
   // enemy near) - the rate that runs, then the ground's. RATE-LAW: the ground says which rate; PACE-DIALS: the player's
-  // dials (the steppers beside this readout, systems/travelPace.js) say how fast each runs
+  // dials (the steppers beside this readout, systems/travel/travelPace.js) say how fast each runs
   const accel = state.accel ?? 1;
   const held = state.held != null && state.held < accel ? state.held : null;
   const foesHold = held != null && state.heldWhy === 'foes';

@@ -12,11 +12,11 @@ import { readFileSync } from 'node:fs';
 import {
   activeMemberships, membershipsFor, newMembershipStore, isMembershipStore,
   clearMembershipData, joinGuild, membershipOf, GUILDS,
-} from '../src/systems/guilds.js';
+} from '../src/systems/guild/guilds.js';
 import { createVampirismCurse, cureVampirism } from '../src/systems/vampirism.js';
 import { VAMPIRE_CLANS, deployInfection, randomCemeteryLocationIndex, INFECTION } from '../src/systems/infection.js';
 import { setRacialQuestHost } from '../src/systems/racialQuests.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { DUNGEON_TYPES } from '../src/formats/mapsFile.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

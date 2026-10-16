@@ -31,7 +31,7 @@ import { fileURLToPath } from 'node:url';
 import { Item as QuestItem } from '../src/systems/quest/item.js';
 import { bookTitle, BOOK_TEMPLATE } from '../src/systems/books.js';
 import { BOOK_ID_TITLES } from '../src/systems/booksData.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

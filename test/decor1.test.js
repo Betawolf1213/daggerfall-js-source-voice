@@ -19,7 +19,7 @@ import {
   decorWhatOf, decorLightOf, decorPlaceOf, decorPieceOf, decorPrice, decorRefund, decorRescale, mintDecorId, decorSaleBack,
 } from '../src/net/decorLaw.js';
 import { accountDecor, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
-import { collectDecor, decorCatalogue, filterDecor, decorSize, decorKey, modelKind, flatKind, DECOR_KINDS } from '../src/systems/decorCatalogue.js';
+import { collectDecor, decorCatalogue, filterDecor, decorSize, decorKey, modelKind, flatKind, DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
 import { createDecorRoom, decorMatrix, decorKeyOf, decorIdOfKey, decorLightLift, DECOR_REACH } from '../src/scenes/decorRoom.js';
 import { trs } from '../src/world/mat4.js';
 import { localAabb, transformedAabb } from '../src/render/frustum.js';

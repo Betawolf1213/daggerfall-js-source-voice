@@ -10,9 +10,9 @@ import {
   gateSpotLocal, omenRing, gateBossOf, GATE_BOSSES, PIXEL_M, GATE_DAY_MINUTES, GATE_SPOT_SPREAD_M, OMEN_RING_PIXELS,
   GATE_RISE_MS, GATE_COLLAPSE_MS, GATE_EVERY_DAYS, riseLine, wrathLine, marksLine, gateModsOf,
 } from '../src/net/gateLaw.js';
-import { scanGatePixels, findGateSite, gateRegions, politicClaimed, gateSeaPixel, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX, GATE_TOWN_TYPES } from '../src/systems/gateSite.js';
+import { scanGatePixels, findGateSite, gateRegions, politicClaimed, gateSeaPixel, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX, GATE_TOWN_TYPES } from '../src/systems/gate/gateSite.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
-import { createGateOmen, insideGateRing, gateSceneXZ, omenTimeLine, openTimeLine, sealTimeLine, riteOmenLine } from '../src/systems/gateOmen.js';   // TIME1: the lines that name a time say local time alone
+import { createGateOmen, insideGateRing, gateSceneXZ, omenTimeLine, openTimeLine, sealTimeLine, riteOmenLine } from '../src/systems/gate/gateOmen.js';   // TIME1: the lines that name a time say local time alone
 import { readGateMark, gateMarkKey, gateRingKey, gateRingTexels, GATE_RING_BAND } from '../src/ui/gateMapMark.js';
 import { paintGateRing } from '../src/ui/inkMap.js';
 import { hash32, spawnsDungeon, WORLD_SALT } from '../src/world/spawnedDungeons.js';

@@ -18,7 +18,7 @@ import { riffleAt, RIFFLE_S, RIFFLE_HALF, RIFFLE_PART, CARD_T, GATHER_S, DECK_PL
 import { tablePlaces, CardScene } from '../src/world/cardScene.js';
 import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
 import { lookAt, trs } from '../src/world/mat4.js';
-import { CardTableSession, settleMs } from '../src/systems/cardTableSession.js';
+import { CardTableSession, settleMs } from '../src/systems/card/cardTableSession.js';
 import { createCardTableDraw } from '../src/render/cardTableDraw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

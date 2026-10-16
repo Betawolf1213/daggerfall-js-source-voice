@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-DELVE-B1-the-step-unfilled",
-    "file": "src/systems/automap.js",
+    "file": "src/systems/automap/automap.js",
     "old": "  if (d > TRAIL_CELL && d <= reach) {",
     "new": "  if (false) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-DELVE-B1-a-teleport-filled",
-    "file": "src/systems/automap.js",
+    "file": "src/systems/automap/automap.js",
     "old": "  if (d > TRAIL_CELL && d <= reach) {",
     "new": "  if (d > TRAIL_CELL && d <= reach * 10) {",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-DELVE-B1-the-fill-too-coarse",
-    "file": "src/systems/automap.js",
+    "file": "src/systems/automap/automap.js",
     "old": "Math.ceil(d / (TRAIL_CELL / 2))",
     "new": "Math.ceil(d / (TRAIL_CELL * 2))",
     "tests": [

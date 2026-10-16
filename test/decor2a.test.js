@@ -1,7 +1,7 @@
 // DECOR2a (2026-09-25, Mac: "rare misc artifacts and other items in the world can also be placed"; asked, placing one
 // is "Free and can be picked back up", and a home, house or ship sold with them standing gives them "Back to pack"):
 // YOUR OWN THINGS IN A ROOM. The piece's law (net/decorLaw.js: which item, as the game's own numbers; free; holding
-// nothing), what of the pack can stand and as what (systems/decorItems.js), the room and the scene keeping the thing
+// nothing), what of the pack can stand and as what (systems/decor/decorItems.js), the room and the scene keeping the thing
 // itself (scenes/decorRoom.js, systems/sceneCache.js), the panel's "Your things" (ui/decorPanel.js), the tool setting
 // one down and taking it back, offline and online (scenes/decorTool.js), and the host's wiring by source. The
 // service's half is pinned with the service (decor1.test.js). `06-Systems/Online-Arc.md` DECOR2.
@@ -12,8 +12,8 @@ import { decorItemOf, decorWhatOf, decorPieceOf, DECOR_CAP, DECOR_ARTIFACT_UNKNO
 import { decorEditPrice } from '../src/scenes/decorTool.js';
 import {
   decorStandOf, decorItemFlat, decorDescriptorOf, decorItemName, decorOwnEntry, decorOwnBackLine, DECOR_OWN_NEVER_GROUPS, DECOR_OWN_KEPT_BACK,
-} from '../src/systems/decorItems.js';
-import { setMagicItemTemplates } from '../src/systems/loot.js';
+} from '../src/systems/decor/decorItems.js';
+import { setMagicItemTemplates } from '../src/systems/loot/loot.js';
 import { bookTitle } from '../src/systems/books.js';
 import { createDecorRoom } from '../src/scenes/decorRoom.js';
 import { createSceneCache, cacheScene, restoreCachedScene, takeSceneOwn } from '../src/systems/sceneCache.js';

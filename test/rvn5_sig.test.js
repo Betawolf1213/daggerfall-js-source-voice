@@ -22,13 +22,13 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
-const { setRevenantPresenter } = await import('../src/systems/revenantVoice.js');
+const { setRevenantPresenter } = await import('../src/systems/revenant/revenantVoice.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 const { TELL } = await import('../src/ai/tells.js');
 const { setTacticsClock, resetTactics, noteLocalPlayer, signatureReaches } = await import('../src/ai/tactics.js');

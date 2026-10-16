@@ -16,7 +16,7 @@ every tier: it is the ride's, and Off it shows the gait and its doors alone.
 > Mac: *"Allow turn off. Rework this system to be more in line with how we handle climates and calories boons."*
 
 Climates & Calories' model (`06-Systems/Climates-Calories.md` - SURV-TIERS, SURV-BOONS, BOONS-DEFAULT, AUDIT C&C) laid
-over the horse: **one key, three answers**, the tiers written out as data in `systems/upkeepTiers.js` (an
+over the horse: **one key, three answers**, the tiers written out as data in `systems/upkeep/upkeepTiers.js` (an
 import-free leaf, as `survival/difficulty.js` is - wagon upkeep's tiers stand beside them since WAGON-TIERS,
 `06-Systems/Wagon-Upkeep.md`).
 
@@ -47,13 +47,13 @@ differ on it:
    page says only what Boons charges: "Hungry - it costs nothing yet.", "Starving - no gallop until it eats. Feed it."
 
 **Off's minutes are nobody's needs** (Climates & Calories' Off, SURV-TIERS). Off, a horse is DFU's and needs nothing, so
-the keep carries every horse's food clock with the clock (`systems/upkeepRuntime.js` tick): on again it stands where
+the keep carries every horse's food clock with the clock (`systems/upkeep/upkeepRuntime.js` tick): on again it stands where
 Off found it, neither starved nor faded. AUDIT STEED1's reset of the keep's own span at the switch's Off stands beside
 it and now decides nothing - recorded so (`tools/mutants/steed1.json`, its equivalent record).
 
-**One accessor.** Every reader asks the tier through `systems/upkeepSwitch.js` horseCareRules - the live tier's rules,
+**One accessor.** Every reader asks the tier through `systems/upkeep/upkeepSwitch.js` horseCareRules - the live tier's rules,
 null for Off and on any skin but the enhanced one: the upkeep's keep and breath, the gallop gate, the walk, the ride's
-pace, the HUD's breath bar, the Stable page, the saddle panel and the oats' Use (`systems/upkeepRuntime.js`'s doors and
+pace, the HUD's breath bar, the Stable page, the saddle panel and the oats' Use (`systems/upkeep/upkeepRuntime.js`'s doors and
 registerUpkeepUses, each handed the accessor by the two hosts that ride), and a Stable's prices (`scenes/worldModes.js`,
 a horse priced by what it is in any tier but Off). The laws take the rules as an argument (`systems/steedCare.js`
 steedStats, stepBreath, steedSpeedScale, teamDraftScale, feedHorse, tendHorses), and a law handed none runs Hard, so
@@ -123,7 +123,7 @@ purchase, a horse owned before STEED1) comes fed twelve hours ahead.
 
 | Food | Hours | Love | Where |
 |---|---|---|---|
-| Sack of Oats (1710, STEED1's own - `systems/upkeepItemRows.js`) | 24 | 1 | a Stable sells them; Use one, or the Stable page |
+| Sack of Oats (1710, STEED1's own - `systems/upkeep/upkeepItemRows.js`) | 24 | 1 | a Stable sells them; Use one, or the Stable page |
 | Apple (Climates & Calories' 532, Foraging's 1608) | 4 | 1.5 | by hand, from the Stable page - a treat |
 
 A horse fed more than FULL_AHEAD (30 hours) ahead is full and refuses; it holds FED_AHEAD_MAX (48) at most. A quest's
@@ -131,7 +131,7 @@ piece is never fed.
 
 ### The keep (`tendHorses`, once a game minute)
 
-Where a horse is decides who feeds it (`systems/upkeepRuntime.js` horseWhereOf, off Horse Cart and Cargo's Stable view):
+Where a horse is decides who feeds it (`systems/upkeep/upkeepRuntime.js` horseWhereOf, off Horse Cart and Cargo's Stable view):
 
 - **With its owner** (ridden, pulling, following, in the harness of a wagon that follows, beside its owner on foot
   and never sent away - the mod's WithPlayer, WAGON-STABLED - or the mod off, or without its physical persistence: the
@@ -184,7 +184,7 @@ rider's on foot, so what measures against GetBaseSpeed reads it so: IsMovingLess
 gate, the clop's - is false at a walk and true at a sneak (the walk halved, less a classic unit), exactly as on foot. A
 walking rider is no stealthier than a walking traveller.
 
-`systems/transport.js` setRideWalk / rideWalks is horse care's word, the gallop gate's twin; `systems/upkeepRuntime.js`
+`systems/transport.js` setRideWalk / rideWalks is horse care's word, the gallop gate's twin; `systems/upkeep/upkeepRuntime.js`
 rideWalks gives it wherever horse care rules the gallop - a tier but Off, a horse, the one ridden born (without its stats
 the gate defers to the mod, and the walk to DFU); `player/motor.js` takes it (`_rideBaseNow` - the walk's base, in the
 speed's riding arm and the half-speed base; `rideWalking` - the step's gait; `slowRide` - walked, or under half its
@@ -201,11 +201,11 @@ CanRun said no, so the horse walked with Run held - 5.1 m/s at Speed 50, where i
 where horse care was forced on then, every rider walked every town. The port ships the switch ON (`systems/modSettings.js`,
 the mod's third recorded departure - `06-Systems/Roleplay-Realism.md`), so a town is ridden as the road is: the walk
 unless Run gallops it, on its breath. The room reads it on too (Roleplay & Realism is the room's whole -
-`systems/onlineLane.js` ONLINE_WHOLE_MODS reads the port's default). No tile ever reached the switch (FT14 took the Mods
+`systems/online/onlineLane.js` ONLINE_WHOLE_MODS reads the port's default). No tile ever reached the switch (FT14 took the Mods
 pane before RR2 brought it), so no player holds a saved off, and nothing is reset. The mod's trample rides with the
-gallop into a town, as the mod pairs the two (TrampleCivilians, shipped on; `systems/rrRidingHost.js`): a gallop into a
+gallop into a town, as the mod pairs the two (TrampleCivilians, shipped on; `systems/roleplayRealism/rrRidingHost.js`): a gallop into a
 townsperson tramples them - Assault, and the watch called - and the Horses tutorial says so ("Don't gallop into people
-in town: trampling them is a crime"). Pinned through the mod's own CanRun line, lifted from `systems/rrInstall.js` and
+in town: trampling them is a crime"). Pinned through the mod's own CanRun line, lifted from `systems/roleplayRealism/rrInstall.js` and
 run over the real upkeep and motor (`test/horsewalk.test.js`, IN A TOWN): as the port ships it, Run gallops a horse in a
 town and its release walks it; the room's on whatever a player saved; and the mod's own rule, Galloping In Towns off,
 walks it in a town with Run held and gallops it out of one. A cart is unchanged - the mod never lets it run, in a town
@@ -281,7 +281,7 @@ pace; and its doors - Feed oats, an Apple, the Stable page, Dismount. On a bench
 hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's. It is a HUD-MOVE
 piece (HUD-SADDLE, 2026-10-14): Alt+U moves it, sizes it and turns it off (`10-UI/Controls.md`, THE SADDLE PANEL).
 
-The item: a horse's card says its four born stats and its bond (`systems/itemInfo.js` itemStatRows), so a Stable's
+The item: a horse's card says its four born stats and its bond (`systems/item/itemInfo.js` itemStatRows), so a Stable's
 horses say theirs before they are bought.
 
 ## The Stable's horses (`systems/merchantYards.js` stableHorses)
@@ -294,11 +294,11 @@ YARD_OATS_STACK.
 
 ## Online
 
-The fields ride the wire as every item field does (`systems/itemFields.js` horseBond 1..1000, horseFed 1 up; the item
+The fields ride the wire as every item field does (`systems/item/itemFields.js` horseBond 1..1000, horseFed 1 up; the item
 law holds them to DFU's Horse alone). The new templates followed REST6's law, SHIP BEFORE ANYONE CAN SEE ONE:
 UPKEEP_ITEMS_ONLINE was false for the release that shipped them (#791). UPKEEP-ONLINE (2026-10-12, the owner: "We
 never added oats or repair kits to the new horse/wagon system") turned it on - every release since has carried the
-templates - so online a Stable sells oats as it did offline from the first (`systems/upkeepItemRows.js`).
+templates - so online a Stable sells oats as it did offline from the first (`systems/upkeep/upkeepItemRows.js`).
 
 ## The four hosts
 

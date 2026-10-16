@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld } from './hccWorld.mjs';
-import { TRANSPORT } from '../src/systems/horseCartLaw.js';
+import { TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { SHELL_CLEAR_M, MEASURED, LIFT, wagonGeometry } from '../src/world/wagonModels.js';
 import { SEATED_EYE_HEIGHT } from '../src/player/seatPose.js';

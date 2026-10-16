@@ -26,7 +26,7 @@ import { lootCrown } from './lootLines.js';   // LOOT11: a pile's line of light
 export const WILD_MINE_MARK = Object.freeze({ colour: Object.freeze([0.95, 0.24, 0.16]), h: 9, pulse: true, reach: 80 });
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1 slice 3
 import { billboardSize } from '../world/rmbFlats.js';
-import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS } from '../systems/loot.js';
+import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS } from '../systems/loot/loot.js';
 import { CONTAINER_IMAGES } from '../ui/targetIconPanel.js';   // AUDIT 63 F22: InventoryContainerImages, the picture both makers hand CreateLootContainer
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../player/activate.js';   // AUDIT 65 MC-2: the ray's reach, the handler's own
 import { createPhysicalItems } from './physicalItemsLayer.js';   // PI1: Physical Items - every pool stands its own layer
@@ -34,7 +34,7 @@ import { createPhysicalItems } from './physicalItemsLayer.js';   // PI1: Physica
 // AUDIT 17e F34 / ONE DFU MEMBER, ONE EXPORT: this file re-declared
 // randomTreasureArchive and randomTreasureIconIndices, regressing the
 // single-sourcing the 2026-07-06b audit had already done in
-// systems/loot.js. Re-exported so existing importers keep working.
+// systems/loot/loot.js. Re-exported so existing importers keep working.
 export { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS };
 
 /** ROAD-G G5: what a player-dropped pile IS to the inventory window -

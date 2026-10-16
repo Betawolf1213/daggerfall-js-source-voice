@@ -4,8 +4,8 @@
 //
 // The owner, of the stores and the crafting menus: "I just feel like text lists are too much". A material in the
 // Stores, a row on the Market and a trader's piece show the game's own item picture beside their name: the picture of
-// the item the Stores would hand out (systems/profItems.js mintMaterialItem), or of the piece itself, read off its
-// inventory record (systems/itemTemplates.js inventoryItemImage) and fitted to a row's box (ui/textureCanvas.js
+// the item the Stores would hand out (systems/professions/profItems.js mintMaterialItem), or of the piece itself, read off its
+// inventory record (systems/item/itemTemplates.js inventoryItemImage) and fitted to a row's box (ui/textureCanvas.js
 // requestFittedIcon - the pack's and the shop's own door). It is read from the player's data at runtime and never
 // shipped (Port-Doctrine, A RENDER OF GAME DATA IS GAME DATA); with no data, there is none, and the row is words as
 // before.
@@ -15,8 +15,8 @@
 // - null while the picture is made, `wake` called when it lands; the tab draws it with ui/menuGlyphs.js pictureNode.
 // ═══════════════════════════════════════════════════════════════════
 
-import { inventoryItemImage } from '../systems/itemTemplates.js';
-import { mintMaterialItem } from '../systems/profItems.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
+import { mintMaterialItem } from '../systems/professions/profItems.js';
 import { requestFittedIcon } from './textureCanvas.js';
 import { screenDpr, SLOT_BOX } from './iconFit.js';
 

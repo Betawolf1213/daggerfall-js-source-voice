@@ -23,8 +23,8 @@ import { readFileSync } from 'node:fs';
 
 import {
   setForagingHost, createForagingItem, installForaging, _setForagingRandomForTests, professionToolLine, PROFESSION_TOOL_HOW,
-} from '../src/systems/foragingInstall.js';
-import { FT, FORAGING_REFUSALS } from '../src/systems/foragingLaw.js';
+} from '../src/systems/foraging/foragingInstall.js';
+import { FT, FORAGING_REFUSALS } from '../src/systems/foraging/foragingLaw.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import * as qs from '../src/systems/quickslots.js';
 import { useResultAction } from '../src/ui/enhancedInventory.js';
@@ -40,7 +40,7 @@ import { treeKind, AXE_HAND } from '../src/scenes/treeHost.js';
 import { fishKind } from '../src/scenes/fishHost.js';
 import { trees, veins, dungeonVeins, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { CHOP_ACT, FISH_ACT, HERB_ACT } from '../src/net/professionLaw.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { resolveHover } from '../src/systems/worldHover.js';
 import { foldQuickLoot, plaqueStep, plaqueActionFor } from '../src/systems/quickLoot.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';

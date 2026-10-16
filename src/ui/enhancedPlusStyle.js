@@ -590,7 +590,7 @@ body:has(.hud-foe.on.blade) .travelpanel { --tp-top: calc(18px + 28px * var(--hu
 .travelpanel-accel { min-width: 64px; height: 30px; box-sizing: border-box; display: grid; place-items: center; padding: 0 8px;
   border: 2px solid; background: rgba(0,0,0,0.38); font-family: inherit; font-size: 17px; letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums; color: rgb(243,239,44); text-shadow: 1px 1px 0 rgb(93,77,12); }
-/* TV2: the clock held under the ground's rate while the land loads (systems/travelGovernor.js; OW6: or an alerted enemy
+/* TV2: the clock held under the ground's rate while the land loads (systems/travel/travelGovernor.js; OW6: or an alerted enemy
    near) - the rate that runs first */
 .travelpanel-accel.held { min-width: 92px; color: rgb(236,160,60); }
 /* RATE-LAW: the ground's word under the socket */
@@ -2117,7 +2117,7 @@ ${ARENA_WINDOW_CSS}
 .pack-shell .loot-win .itemrow .tile, .pack-shell .wornrow .tile, .trade-shell .itemrow .tile, .ptrade-shell .itemrow .tile { position: relative; }
 .pack-shell .loot-win .itemrow .wear, .pack-shell .wornrow .wear, .trade-shell .itemrow .wear, .ptrade-shell .itemrow .wear { left: 2px; right: 2px; bottom: 0; }
 .pack-shell .walletpieces .itemrow.hasbar[data-rarity]::before, .pack-shell .pack-dock .itemrow.hasbar[data-rarity]::before { bottom: 6px; }
-/* ── LOCK1: THE PADLOCK ON A LOCKED PIECE (systems/itemLock.js) - bottom-right of a grid tile or a socket (above the
+/* ── LOCK1: THE PADLOCK ON A LOCKED PIECE (systems/item/itemLock.js) - bottom-right of a grid tile or a socket (above the
    wear bar's end when there is one; the key chip has the top-left), the top-left corner of a list's picture (the
    rune has its top-right). The card says it in words. */
 .pack-shell [data-locked] .tile::before, .trade-shell [data-locked] .tile::before, .ptrade-shell [data-locked] .tile::before {
@@ -2133,7 +2133,7 @@ ${ARENA_WINDOW_CSS}
 .card .lockline, .card .boundline, .pack-shell .card p.lockline, .pack-shell .card p.boundline { margin: 6px 0 4px; font-size: 12px; letter-spacing: 0.04em; color: #f3cf86; text-shadow: 1px 1px 0 #050608; }
 .card .lockline::before { content: ''; display: inline-block; width: 11px; height: 11px; margin-right: 6px; vertical-align: -1px;
   background: ${LOCK_GLYPH_URL} center / contain no-repeat; }
-/* ── LOOT18: A JUNK PIECE (systems/itemJunk.js) - its picture dimmed and greyed wherever it is drawn; the card says it in
+/* ── LOOT18: A JUNK PIECE (systems/item/itemJunk.js) - its picture dimmed and greyed wherever it is drawn; the card says it in
    words, in the lock's line style without the padlock, muted. */
 .pack-shell [data-junk] .tile > *, .trade-shell [data-junk] .tile > *, .ptrade-shell [data-junk] .tile > * { opacity: 0.5; filter: grayscale(0.7); }
 .card .junkline, .pack-shell .card p.junkline { color: #a89f88; }

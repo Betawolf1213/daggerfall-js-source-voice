@@ -33,13 +33,13 @@ import { createVampirismCurse, liveVampirism, cureVampirism } from '../src/syste
 import { endDisease } from '../src/systems/diseases.js';
 import { LYCANTHROPY_TYPES, VAMPIRE_CLANS, INFECTION, startInfection, liveInfection } from '../src/systems/infection.js';
 import { runMagicRoundsFor, setSharedClock, alignEntityClocks, resetMagicRoundMarker, setWorldMinutes } from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { startPoison, POISONS } from '../src/systems/poisons.js';
 import { respawnHealth } from '../src/systems/deathRespawn.js';
-import { saveSlot, exitAutosaveNames, QUICK_SAVE_NAME } from '../src/systems/saveSlots.js';
+import { saveSlot, exitAutosaveNames, QUICK_SAVE_NAME } from '../src/systems/save/saveSlots.js';
 import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
-import { createTownWatch, isTownThreat, TOWN_WATCH_STAND_DOWN_SECONDS } from '../src/systems/townWatch.js';
+import { createTownWatch, isTownThreat, TOWN_WATCH_STAND_DOWN_SECONDS } from '../src/systems/town/townWatch.js';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { getTargets, PLAYER_TARGET, staticTeamOf } from '../src/characters/enemyTargets.js';

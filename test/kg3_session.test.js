@@ -1,6 +1,6 @@
 // KG3 (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md sections 5.7, 10.7 and 16): THE KING'S GAMBIT AGAINST A REGULAR,
-// ITS CLOCK AND ITS GOLD. Driven over the law's own states (systems/gambitTableSession.js over net/kingsGambit.js and
-// systems/gambitPatrons.js): the mod's beats - a turn's end 0.9 s after its last action, the regular's 1.2 s pause before
+// ITS CLOCK AND ITS GOLD. Driven over the law's own states (systems/gambit/gambitTableSession.js over net/kingsGambit.js and
+// systems/gambit/gambitPatrons.js): the mod's beats - a turn's end 0.9 s after its last action, the regular's 1.2 s pause before
 // each action, the result 1.3 s after the game is decided; a refused command changing nothing; a broken source voiding
 // the game, never passing a turn in silence; what the gold does at each end (a win's pot, a loss and a forfeit, a game
 // that did not stand, a game for fun); and a regular's night - the book on the save, its days, its bounds, its restore.
@@ -10,8 +10,8 @@ import {
   GambitTableSession, GAMBIT_TURN_END_MS, GAMBIT_REGULAR_PAUSE_MS, GAMBIT_RESULT_MS, GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS,
   GAMBIT_NIGHT_MULT, GAMBIT_PURSES_BOOK_MAX, GAMBIT_PURSES_NAMES_MAX, GAMBIT_LOG_MAX, stakeOf,
   gambitNightPaid, gambitNightLeft, gambitPursesAfter, gambitPursesRestore,
-} from '../src/systems/gambitTableSession.js';
-import { GAMBIT_TIERS, regularAction } from '../src/systems/gambitPatrons.js';
+} from '../src/systems/gambit/gambitTableSession.js';
+import { GAMBIT_TIERS, regularAction } from '../src/systems/gambit/gambitPatrons.js';
 import { KG_POINT_BUDGET, KG_ACTIONS_PER_TURN, autoFill, gambitRefusal } from '../src/net/kingsGambit.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 

@@ -20,7 +20,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { getCourtOfCurrentRegion, getPeopleOfCurrentRegion } from '../src/systems/talk.js';
+import { getCourtOfCurrentRegion, getPeopleOfCurrentRegion } from '../src/systems/talk/talk.js';
 import { FACTION_TYPES, GUILD_GROUPS, SOCIAL_GROUPS } from '../src/formats/factionFile.js';
 import { FactionFile } from '../src/formats/factionFile.js';
 

@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   createWeatherFront, rollPeak, wander, fallTerms, PRECIP_PEAK, PRECIP_SKEW, FALL_LOOK, FALL_FOG_FLOOR,
-} from '../src/systems/weatherFront.js';
-import { EDGE_INTENSITY } from '../src/systems/weatherMap.js';
+} from '../src/systems/weather/weatherFront.js';
+import { EDGE_INTENSITY } from '../src/systems/weather/weatherMap.js';
 import { FOG_SETTINGS, weatherSunlightScale } from '../src/world/weather.js';
 import { LAB_DIM } from '../src/render/labGrass.js';
 

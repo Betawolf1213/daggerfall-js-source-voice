@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   MODERN_TEXT_SCALE, MODERN_BLOCK_SIZE, MODERN_QUESTION_BG, MODERN_ANSWER_BG,
 } from '../src/ui/nativeTalk.js';
-import { LIVE } from '../src/systems/settings.js';
+import { LIVE } from '../src/systems/settings/settings.js';
 
 // UI6 - THE MODERN CONVERSATION STYLE (DaggerfallTalkWindow :53-60,
 // :645-650, :1262-1267, :1273-1278), the last of AUDIT 28's six UI-only
@@ -65,6 +65,6 @@ test('UI6: the classic path is untouched and the key is LIVE', () => {
   // Off, every modern term collapses to the classic one.
   assert.match(talk, /const tw = measureText\(font\.fnt, text\) \* \(modern \? MODERN_TEXT_SCALE : 1\);/);
   assert.match(talk, /scale: modern \? MODERN_TEXT_SCALE : 1/);
-  assert.match(read('src/systems/settingsDefaults.js'), /"EnableModernConversationStyleInTalkWindow": "False"/, 'ships off');
+  assert.match(read('src/systems/settings/settingsDefaults.js'), /"EnableModernConversationStyleInTalkWindow": "False"/, 'ships off');
   assert.equal(LIVE['GUI/EnableModernConversationStyleInTalkWindow'], 'src/ui/nativeTalk.js');
 });

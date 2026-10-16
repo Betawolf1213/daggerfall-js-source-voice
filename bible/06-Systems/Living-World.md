@@ -9,7 +9,7 @@ be recieving and I want this to be absolutely perfect. A masterpiece".
 
 The port's own. Daggerfall's townsfolk are DFU's PopulationManager: a pool of identity-less shells around the player,
 each re-rolled into a stranger at every spawn, wandering the navgrid by tile weights and gone at dusk
-(`systems/townPopulation.js`, verbatim). Nothing in Daggerfall travels, sleeps, works or remembers.
+(`systems/town/townPopulation.js`, verbatim). Nothing in Daggerfall travels, sleeps, works or remembers.
 
 LW9-LW16 (the road's traffic, the wagon train, the caravan's door, the outlaws, the companies, the deep's own, the
 patrons, the word travels) are designed and built on `06-Systems/Living-World-II.md` (2026-10-09; audited 2026-10-10,
@@ -2025,7 +2025,7 @@ A player: "Where's the UI for relationship in the talk window?" The enhanced tal
 ## TONE-TASTE - a tone counts as it was taken (2026-10-15)
 
 Mac, of a stream: "someone who didnt like etiquette still went up". The talk's answer reads DFU's tone tables
-(`src/systems/talkTopics.js` `ETIQUETTE_REACTION_MODS`, `STREETWISE_REACTION_MODS`, TalkManager.cs:663-667): a Commoner
+(`src/systems/talk/talkTopics.js` `ETIQUETTE_REACTION_MODS`, `STREETWISE_REACTION_MODS`, TalkManager.cs:663-667): a Commoner
 takes a Polite question at -10, the Underworld at -15, a Noble a Blunt one at -15. LW7's regard and LEGACY5's courtship
 did not. They went by the tone's name: a Polite word +1 and a Blunt one -6 to everyone, and a courtship +3 Polite and -3
 Blunt. Every resident is a Commoner to the talk (a mobile's group is DFU's own literal, `npcSession.js`

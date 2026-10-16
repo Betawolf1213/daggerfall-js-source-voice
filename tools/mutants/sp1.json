@@ -1,7 +1,7 @@
 [
  {
   "name": "SP1-the-shot-spellings-drift-from-the-apps",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "  ['Screenshot.jpg', 'image/jpeg'],\n  ['Screenshot.png', 'image/png'],\n  ['Screenshot.dataurl', null],\n]);\n/** the download's name */",
   "new": "  ['Screenshot.jpeg', 'image/jpeg'],\n  ['Screenshot.png', 'image/png'],\n  ['Screenshot.dataurl', null],\n]);\n/** the download's name */",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "SP1-an-unknown-shot-is-written-under-the-jpg-spelling",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "  return { name: 'Screenshot.dataurl', data: enc.encode(shot) };",
   "new": "  return { name: 'Screenshot.jpg', data: enc.encode(shot) };",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "SP1-the-crc-is-not-updated-per-byte",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "  for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 255] ^ (c >>> 8);",
   "new": "  for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 255] ^ (c >>> 7);",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "SP1-the-central-directory-forgets-the-offset",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "...u16(0), ...u16(0), ...u32(0), ...u32(offset), ...nameB]));",
   "new": "...u16(0), ...u16(0), ...u32(0), ...u32(0), ...nameB]));",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "SP1-a-hand-spelt-slot-number-imports",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "  if (!m || String(Number(m[1])) !== m[1]) return null;",
   "new": "  if (!m) return null;",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "SP1-data-without-a-card-travels",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "    if (!info || !data) continue;\n    try { JSON.parse(info); } catch { continue; }",
   "new": "",
   "tests": [
@@ -57,7 +57,7 @@
  },
  {
   "name": "SP1-import-overwrites-a-taken-number",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "    const key = taken ? firstFreeKey(storage) : s.n;",
   "new": "    const key = s.n;",
   "tests": [
@@ -66,7 +66,7 @@
  },
  {
   "name": "SP1-a-save-already-held-is-doubled",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "    if (held.some((h) => sameSave(h, info))) { result.skipped++; continue; }",
   "new": "",
   "tests": [
@@ -75,7 +75,7 @@
  },
  {
   "name": "SP1-the-card-is-written-first-so-a-quota-throw-leaves-a-half-slot",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "      storage.setItem(SAVE_DATA_PREFIX + key, s.data);\n      if (s.shot) storage.setItem(SAVE_SHOT_PREFIX + key, s.shot);\n      storage.setItem(SAVE_INFO_PREFIX + key, s.info);",
   "new": "      storage.setItem(SAVE_INFO_PREFIX + key, s.info);\n      storage.setItem(SAVE_DATA_PREFIX + key, s.data);\n      if (s.shot) storage.setItem(SAVE_SHOT_PREFIX + key, s.shot);",
   "tests": [
@@ -84,7 +84,7 @@
  },
  {
   "name": "SP1-a-failed-import-leaves-its-data-behind",
-  "file": "src/systems/saveTransfer.js",
+  "file": "src/systems/save/saveTransfer.js",
   "old": "      try { storage.removeItem(SAVE_DATA_PREFIX + key); storage.removeItem(SAVE_SHOT_PREFIX + key); } catch { /* storage gone */ }",
   "new": "",
   "tests": [

@@ -29,8 +29,8 @@ test('GR3: the sky CONTROLLER exposes the cloud-shadow deck the hosts read', () 
   const world = read('src/scenes/world.js');
   assert.match(world, /renderer\.setCloudShadow\(sky\?\.cloudShadow \?\? null\);/, 'the ground shadows');
   assert.match(world, /precip\.enhanced = !!sky\?\.cloudShadow;/, 'the enhanced rain');
-  // WIND3: the grass wind is read in the one mapping (systems/windDrive.js), and the host takes its answer
-  assert.match(read('src/systems/windDrive.js'), /const w = sky\?\.cloudShadow\?\.wind \?\? \[0, 0\];/, 'the grass wind');
+  // WIND3: the grass wind is read in the one mapping (systems/wind/windDrive.js), and the host takes its answer
+  assert.match(read('src/systems/wind/windDrive.js'), /const w = sky\?\.cloudShadow\?\.wind \?\? \[0, 0\];/, 'the grass wind');
   assert.match(world, /const wd = windDrive\(sky, now \/ 1000, dt\);/, 'read once a frame by the host');
 });
 

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { generateBuildingName, BUILDING_TYPES, isNamedBuildingType, tavernsA, tavernsB, storesA } from '../src/world/buildingNames.js';
-import { mergeNamedBuildings, buildBuildingDirectory, compassHint, reactionTier, reactionTier012, ANSWERS_TO_DIRECTIONS, ANSWERS_TO_NON_DIRECTIONS, whereIsAnswer, KNOWLEDGE_MODIFIERS, makeBuildingKey, npcKnowsAboutItem, BUILDING_KEY_0, QUESTION_TYPE_REACTION_MODS, ETIQUETTE_REACTION_MODS, STREETWISE_REACTION_MODS } from '../src/systems/talkTopics.js';
+import { mergeNamedBuildings, buildBuildingDirectory, compassHint, reactionTier, reactionTier012, ANSWERS_TO_DIRECTIONS, ANSWERS_TO_NON_DIRECTIONS, whereIsAnswer, KNOWLEDGE_MODIFIERS, makeBuildingKey, npcKnowsAboutItem, BUILDING_KEY_0, QUESTION_TYPE_REACTION_MODS, ETIQUETTE_REACTION_MODS, STREETWISE_REACTION_MODS } from '../src/systems/talk/talkTopics.js';
 import { srand, rand, randomRange, randomRangeInclusive } from '../src/formats/dfRandom.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';

@@ -16,7 +16,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { pickActivatableHit, boxContains, rayAabb } from '../src/player/activate.js';
-import { dungeonStartDoorFor } from '../src/systems/save.js';
+import { dungeonStartDoorFor } from '../src/systems/save/save.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

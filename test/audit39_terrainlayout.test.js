@@ -21,7 +21,7 @@ import { skyOffsetForWeather, weatherRng } from '../src/world/weather.js';
 import { TerrainGenClient } from '../src/world/terrainGenClient.js';
 import { StreamingWorldState, TERRAIN_DISTANCE } from '../src/world/streamingWorld.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
-import { blockBuildingCount } from '../src/systems/talkTopics.js';
+import { blockBuildingCount } from '../src/systems/talk/talkTopics.js';
 import { collectDungeonEnemies } from '../src/characters/dungeonEnemies.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

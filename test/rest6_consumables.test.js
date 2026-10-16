@@ -12,8 +12,8 @@ import {
   REST_ITEM, REST_ITEM_ROWS, REST_ITEMS_ONLINE, restItemsAvailable, createRestItem, restItemLines, useTonic, useSalts,
   useDraught, useCandle, litCandle, meditate, snuffCandle, draughtTaken, restItemsStock, rollRestLoot, REST_PILE_CHANCES,
   REST_FOE_CHANCES, isDeepPileKey, REST_ITEM_TEXT, BEDROLL_CHANNEL_SECONDS, spendCharge, restItemsOnline, _setRestItemsOnlineForTests,
-} from '../src/systems/restItems.js';
-import { templateByIndex, itemUseHandler } from '../src/systems/itemTemplates.js';
+} from '../src/systems/rest/restItems.js';
+import { templateByIndex, itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { wakingHeld, landWakingDebt, survivalStatMods, newSurvival, WAKING_DEBT_HOURS } from '../src/systems/survival/needs.js';
 import { placeCampItem, campMenu, campExpired, fireLit, CAMP_KIND, newCamp } from '../src/systems/survival/camp.js';
 import { createSurvivalItem, CAMPFIRE_USES } from '../src/systems/survival/items.js';
@@ -21,9 +21,9 @@ import { TEMPLATE } from '../src/systems/survival/food.js';
 import { createCamps } from '../src/scenes/camps.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setSharedClock, setWorldMinutes, setOwnMinutes } from '../src/systems/worldTick.js';
-import { survivalInfoTokens } from '../src/systems/itemInfo.js';
+import { survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 import { createRestDeps } from '../src/scenes/shared.js';
-import { REST_ACT_TEXT, REST_CHANNEL_SECONDS } from '../src/systems/restAct.js';
+import { REST_ACT_TEXT, REST_CHANNEL_SECONDS } from '../src/systems/rest/restAct.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const flat = () => (o, d, m) => (d[1] < 0 && m >= o[1] ? o[1] : null);
@@ -39,7 +39,7 @@ test('REST6 the seven: 1700-1706 registered with their weights, charges and pric
   const bed = createRestItem(REST_ITEM.Bedroll);
   assert.deepEqual([bed.name, bed.currentCondition, bed.group], ['Bedroll', 10, 'UselessItems2']);
   assert.equal(createRestItem(REST_ITEM.Firewood, { stackCount: 4 }).stackCount, 4);
-  assert.match(rd('src/systems/save.js'), /import '\.\/restItems\.js';/);
+  assert.match(rd('src/systems/save/save.js'), /import '\.\/restItems\.js';/);
   for (const t of Object.values(REST_ITEM)) assert.equal(typeof itemUseHandler(t), 'function', `${t} has its use`);
 });
 
@@ -267,6 +267,6 @@ test('REST6 by source: the windows kneel by the candle, the hosts\' rest points 
   assert.match(shared, /installHealingSupply\(\);[^\n]*\n  installRestItemLoot\(\);/, 'and the healing supply\'s: the last draw on a pile');
   assert.match(shared, /if \(_rules && _place === REST_KIND\.Rough && draughtTaken\(entity\) && \(!sharedClockOn\(\) \|\| nightDue\(entity, ownMinutes\(\)\)\)\) \{ _place = REST_KIND\.Bed; _kind = REST_KIND\.Bed; _draughtFrom = ownMinutes\(\); \}/);
   assert.match(shared, /if \(_draughtFrom != null && ownMinutes\(\) - _draughtFrom >= DRAUGHT_SPENT_MINUTES\) spendDraught\(entity\); _draughtFrom = null;/);
-  assert.match(rd('src/systems/itemInfo.js'), /if \(isSurvivalItem\(item\) \|\| isRestItem\(item\)\) record = survivalInfoTokens\(item\);/);
+  assert.match(rd('src/systems/item/itemInfo.js'), /if \(isSurvivalItem\(item\) \|\| isRestItem\(item\)\) record = survivalInfoTokens\(item\);/);
   assert.match(rd('src/ui/enhancedInventory.js'), /survival: isSurvivalItem\(item\) \|\| isRestItem\(item\) \?/);
 });

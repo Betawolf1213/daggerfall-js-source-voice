@@ -17,13 +17,13 @@ import { newWildRef, wildZone, wildPose, wildBlow, wildPick, wildSigned, wildSte
 import { SIEGE_UNITS_PER_M, SIEGE_HIT, siegeVitality, siegeBlowMax, SIEGE_CASTS } from '../src/net/siegeRef.js';
 import { mintRemainsOrder, verifyOrder, remainsDigest, REMAINS_RECORDS_MAX, mintToken, ORDER_TTL_S } from '../src/net/identityToken.js';
 import { newRemains, foldFall, takeFrom, remainsWords, remainsFit, wildRemainsKey, WILD_REMAINS_BYTES_MAX, WILD_RECORD_BYTES_MAX, remainsSpent, remainsTakeover, remainsEvict, remainsOf, WILD_TOMB_MIN_MS, WILD_STALL_MS } from '../src/net/wildLaw.js';
-import { takeWildDeath, wornOffer, wildRecord, wildPickOf, wildDropCandidates, wildTookOf, wildTakeTook } from '../src/systems/wildDropLaw.js';
-import { WILD_PARTY_TRUCE_MS } from '../src/systems/wildZone.js';
-import { TEMPLATES } from '../src/systems/itemKinds.js';
+import { takeWildDeath, wornOffer, wildRecord, wildPickOf, wildDropCandidates, wildTookOf, wildTakeTook } from '../src/systems/wild/wildDropLaw.js';
+import { WILD_PARTY_TRUCE_MS } from '../src/systems/wild/wildZone.js';
+import { TEMPLATES } from '../src/systems/item/itemKinds.js';
 import { WILD_BODY_MS } from '../src/net/wildFight.js';
 import { validWildData, validWildRefOut, WILD_ITEMS_MAX, WILD_REMAINS_ITEMS_MAX, WILD_REF_RELAY_MIN, relaySupportsWildRef, RELAY_VERSION, WILD_ORDER_MAX, worldRoom, PIXEL_UNITS, WILD_DATA_MAX, SOCIAL_ROOM } from '../src/net/wire.js';
 import { OnlineSession, WILD_ZONE_KEEP_MS } from '../src/net/online.js';
-import { wildChunks } from '../src/systems/wildDeath.js';
+import { wildChunks } from '../src/systems/wild/wildDeath.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { fakeRoom, fakeRooms } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
@@ -235,7 +235,7 @@ function sheet() {
   };
 }
 
-test('INT9 THE DROP\'S LAW (systems/wildDropLaw.js takeWildDeath): the killer\'s worn piece first, then half the purse and the cart\'s coin, then the bag\'s and the cart\'s drop by worth - a piece `keep` names stays where it lies, what does not fit one remains goes back where it came from (AUDIT INT9: the gold came last, so a bag of junk ahead of it kept the gold and the valuables; a coin put back went into the purse, the cart\'s too); the same on a live pack and its JSON (mutants: the killer\'s piece after the drop; a kept piece taken; the fit\'s rest destroyed; the drop in the pack\'s order; the gold last)', () => {
+test('INT9 THE DROP\'S LAW (systems/wild/wildDropLaw.js takeWildDeath): the killer\'s worn piece first, then half the purse and the cart\'s coin, then the bag\'s and the cart\'s drop by worth - a piece `keep` names stays where it lies, what does not fit one remains goes back where it came from (AUDIT INT9: the gold came last, so a bag of junk ahead of it kept the gold and the valuables; a coin put back went into the purse, the cart\'s too); the same on a live pack and its JSON (mutants: the killer\'s piece after the drop; a kept piece taken; the fit\'s rest destroyed; the drop in the pack\'s order; the gold last)', () => {
   const s = sheet();
   const offer = wornOffer(s.items);
   assert.deepEqual(offer.map((i) => i.templateIndex), [113, 121]);

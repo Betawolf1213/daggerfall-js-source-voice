@@ -54,6 +54,6 @@ test('DRAKES no word a player reads says Marks any more - the account card, the 
   assert.match(src('src/ui/bankWindow.js'), /MARKS_COUNTING = 'The Bank counts your silver\.\.\.'/);
   // and the unrelated marks stand: DFU's Mark slots, the King's Mark, the map's middle-click, the blood marks
   assert.match(src('src/ui/enhancedInventory.js'), /\[EQUIP_SLOTS\.Mark0\]: \{ x: 44, y: 296, label: 'Mark', off: true \}/);
-  assert.match(src('src/systems/lootRarity.js'), /name: "King's Mark"/);
-  assert.match(src('src/systems/travelOptionsText.js'), /MiddleClick - Mark a location/);
+  assert.match(src('src/systems/loot/lootRarity.js'), /name: "King's Mark"/);
+  assert.match(src('src/systems/travel/travelOptionsText.js'), /MiddleClick - Mark a location/);
 });

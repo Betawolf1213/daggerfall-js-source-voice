@@ -543,7 +543,7 @@ export function createRiteHost({
       brokenWords.set(k, { by, n: Number.isSafeInteger(w.n) ? Math.max(w.n, by.length) : by.length });
       if (brokenWords.size > BROKEN_KEPT) brokenWords.delete(brokenWords.keys().next().value);
     },
-    /** Whether the hub said the rite at this circle broken (systems/gateOmen.js: its order is not said then). */
+    /** Whether the hub said the rite at this circle broken (systems/gate/gateOmen.js: its order is not said then). */
     isBroken: (day, px, py) => brokenWords.has(circleKey(day, px, py)),
     /** BROKER-CAGE: whether every one of the circle's faithful fell - the hub's word, or (`ownEyes`: a relay before the
      *  one that says it - net/wire.js relaySupportsCage) this character's own eyes, the Summoner's fall the hub's broken

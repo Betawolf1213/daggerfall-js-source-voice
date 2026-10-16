@@ -11,15 +11,15 @@ import {
   ServiceFlowWindow, buildTrainingFlow, buildDonationFlow, buildCureDiseaseFlow,
   DONATE_HOW_MUCH, FREE_HOLIDAY_CURING, CURED_DISEASE, DONATION_FIELD,
 } from '../src/ui/guildServiceWindows.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { templeOf } from '../src/systems/guildVariants.js';
-import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
+import { createFactionRep, getReputation } from '../src/systems/faction/factionRep.js';
 import { SKILLS, SKILL_NAMES } from '../src/systems/skills.js';
 import { goldAmount } from '../src/systems/court.js';
 import { startDisease, diseaseCount } from '../src/systems/diseases.js';
-import { TRAINING_SKILLS } from '../src/systems/guildServices.js';
+import { TRAINING_SKILLS } from '../src/systems/guild/guildServices.js';
 import { TRAINING_TOO_SOON_ID, TRAIN_SKILL_ID, NOT_ENOUGH_GOLD_ID,
-  TRAINING_TOO_SKILLED_ID, DONATION_THANKS_ID, TOO_GENEROUS_ID } from '../src/systems/guildServiceActions.js';
+  TRAINING_TOO_SKILLED_ID, DONATION_THANKS_ID, TOO_GENEROUS_ID } from '../src/systems/guild/guildServiceActions.js';
 
 const rows = (id) => [{ text: `rsc:${id}`, center: true }];
 const idOf = (box) => Number(/rsc:(\d+)/.exec(box?.rows?.[0]?.text ?? '')?.[1] ?? NaN);
@@ -418,7 +418,7 @@ test('MAC-BUG2: the service windows fill %cpn and %cn - a cure offer is a TRADE 
   // sentence covers %cpn (MacroHelper.cs:69, ShopName) and %cn too -
   // and `cureDiseaseOffer` answers TRADE_MESSAGE_BASE_ID + an offset,
   // so the cure offer speaks one of the records that quote them.
-  const { expandGuildMacros } = await import('../src/systems/guildServiceActions.js');
+  const { expandGuildMacros } = await import('../src/systems/guild/guildServiceActions.js');
   const TRADE_LINE = '"%cpn prides itself on having the lowest prices in %cn. I can sell for no less than %a gold pieces."';
   const tradeRows = () => [{ text: TRADE_LINE, center: true }];
 

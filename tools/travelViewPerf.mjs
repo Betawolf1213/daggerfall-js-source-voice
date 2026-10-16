@@ -36,7 +36,7 @@
 import { readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
-import { planRoute, routeLegs, routeDrawPoints } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, routeDrawPoints } from '../src/systems/travel/travelRoute.js';
 import { eyeFor, TV_TILT_DEFAULT, TV_HEIGHT_DEFAULT } from '../src/player/travelCamera.js';
 import { projectToScreen } from '../src/player/tapRay.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';

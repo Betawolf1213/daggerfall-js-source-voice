@@ -198,7 +198,7 @@ stands (`ui/enhancedSaddle.js` - the two are never up together), the helm's kind
 it pauses nothing, and a window over the HUD, the HUD toggled off, a pause or a journey (the travel view, Travel
 Options' bar) hides it. It spends NO key of its own and adds no binding.
 
-- **What it reads** (`systems/upkeepRuntime.js saddle`, never written): its title the rider's - "Riding <name>" or
+- **What it reads** (`systems/upkeep/upkeepRuntime.js saddle`, never written): its title the rider's - "Riding <name>" or
   "Driving the <wagon>" - with the gait (Standing, Walking, Galloping, Trotting, Rolling - HORSE-WALK, 2026-10-12: a
   horse under horse care walks, and gallops on the run; Trotting is DFU's one pace - horse care Off, and on Boons a
   gallop asked and refused, HORSE-TIERS - `06-Systems/Horse-Care.md` THE WALK) and the pace in km/h, smoothed off
@@ -212,7 +212,7 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
   ridden and, while the look holds the mouse, how to free it (`FreeMouse`, Y).
 - **Every button is a door that already stands** (`scenes/saddleHost.js`, one glue for `world.js` and `exterior.js`):
   Feed oats and Apple are the Stable page's acts, to the horse the panel shows hungry; Repair kit is the kit's Use
-  (where a kit would mend); Cargo is a press on the wagon (`systems/horseCart.js openWagonCargo` - the load opened
+  (where a kit would mend); Cargo is a press on the wagon (`systems/horse/horseCart.js openWagonCargo` - the load opened
   with the wagon chosen, where Horse Cart and Cargo's own reach allows); Stable opens the Holdings page; View is the
   view key's toggle (`TogglePerspective`, shown only where it would turn - `player/mwView.js
   mwViewCanTogglePerspective`); Dismount (or Climb down) is `HorseMount`'s own handler, the classic transport's foot

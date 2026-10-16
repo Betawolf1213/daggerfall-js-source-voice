@@ -6,9 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { partyGroupMembers } from '../src/systems/partyScale.js';
+import { partyGroupMembers } from '../src/systems/party/partyScale.js';
 import { PACK_SPACING, PACK_ALERT_RADIUS } from '../src/systems/campEncounters.js';
-import { BOUNTY_MIN_PX, BOUNTY_MAX_PX, bountyItemRule } from '../src/systems/bountyBoard.js';
+import { BOUNTY_MIN_PX, BOUNTY_MAX_PX, bountyItemRule } from '../src/systems/bounty/bountyBoard.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -80,10 +80,10 @@ test('AUDIT BOUNTY1 B2: ONE STAND FOR A GROUP IN THE WILDERNESS - the bounty pac
 test('AUDIT BOUNTY1 B3: the archive\'s words that no longer said the law - the ring and the blue - read as the constants do', () => {
   assert.deepEqual([BOUNTY_MIN_PX, BOUNTY_MAX_PX], [4, 10]);
   assert.equal(bountyItemRule(4).magicChance, 0.5, 'blue from level 4');
-  const board = read('src/systems/bountyBoard.js');
+  const board = read('src/systems/bounty/bountyBoard.js');
   assert.doesNotMatch(board, /one to four|1 to 4 pixels|from level 11/, 'bountyBoard.js: no comment still says 1-4 pixels or blue from 11');
   assert.match(board, /a map pixel four to ten pixels from the town/);
-  assert.doesNotMatch(read('src/systems/bountyReward.js'), /from level 11/, 'bountyReward.js: nor the piece\'s header');
+  assert.doesNotMatch(read('src/systems/bounty/bountyReward.js'), /from level 11/, 'bountyReward.js: nor the piece\'s header');
 });
 
 test('AUDIT BOUNTY1 B4: the relay pins say who moved it - BOUNTY1 + AUDIT 28 (world131 since MERGE 2; world125 at the merge of main; world122 and world123 on the branch), then REALM-DOOR (world130); STRIKE-SHARED moved it on after (world132), SOFTCAP1 after it (world133), PARTY-MAP after SOFTCAP1 (world134), WB9 after PARTY-MAP (world135), GATE-UX after WB9 (world136), KEPT-KILL after GATE-UX (world137), HERALD after KEPT-KILL (world138), LOOT7 after HERALD (world139), WB11 after LOOT7 (world140), CLIMB5 and CLIMB6 after WB11 (world141), FRIENDS-SYNC after CLIMB5 and CLIMB6 (world142), ELITE FOES after FRIENDS-SYNC (world143), SEAT1b after ELITE FOES (world144), SEAT1c after SEAT1b (world145), PVP-REF after SEAT1c (world146), SEAT2a after PVP-REF (world147), CROWN1 part two after SEAT2a (world148), SEASON1 part two, the banner ribbon after CROWN1 part two (world149), SEAT2b part two (b) after the banner ribbon (world150), and WB12 after SEAT2b part two (b) (world151), REVENANT-WIRE after WB12 (world152), and ARENA4 after BROKER-CAGE (world155 - world142 on its branch, renumbered past main\'s FRIENDS-SYNC to BROKER-CAGE at the merge), and HOTFIX 1003f after ARENA4 (world156), and AEGIS after the DFO integration\'s world157-world159 (world160), GUILD2 after AEGIS (world161) and PRIMARCH after GUILD2 (world162), and SUNBABY1 after PRIMARCH (world163)', () => {

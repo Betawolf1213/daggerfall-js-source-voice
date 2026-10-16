@@ -14,7 +14,7 @@ import {
 } from '../src/render/gambitTableDraw.js';
 import { CARD_TABLE_W, CARD_TABLE_D, CARD_TABLE_RAIL } from '../src/world/cardTableProp.js';
 import { KG_COLS, KG_ROWS, KG_ROSTER, KG_TILE, autoFill, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
-import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambitPatrons.js';
+import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambit/gambitPatrons.js';
 import { CARD_W } from '../src/world/cardMotion.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 

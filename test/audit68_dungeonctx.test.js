@@ -21,8 +21,8 @@ import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activa
 import { CORPSE_ACTIVATION_DISTANCE } from '../src/scenes/hostCombat.js';
 import { renownFoeStruck, renownFoeDied } from '../src/net/renownTracker.js';   // RENOWN1: the kill door's stamps, in the harness's scope
 import { reportPlayerKill } from '../src/systems/playerKills.js';   // SET2: the kill door's third word, in the harness's scope
-import { partyFoeLoses, noteFighter, foeFighters, takeWholeBlow, PARTY_ME } from '../src/systems/partyScale.js';
-import { stampWonWeapons } from '../src/systems/lootRarity.js';   // SIGIL1: the kill door's stamp, the real one (offline: nothing marked)
+import { partyFoeLoses, noteFighter, foeFighters, takeWholeBlow, PARTY_ME } from '../src/systems/party/partyScale.js';
+import { stampWonWeapons } from '../src/systems/loot/lootRarity.js';   // SIGIL1: the kill door's stamp, the real one (offline: nothing marked)
 import { rollCorpseKit } from '../src/systems/foeLootCap.js';   // KIT-ROLL: the kill door's kit roll, the real one (no plain foe's stamp here: nothing rolled)
 import { registerFoeDoor } from '../src/systems/artifactEffects.js';   // AUDIT PSCALE1 DOORS-2: `stand` registers the foe's door   // PSCALE1: the kill door's weight - who fights it - in the harness's scope
 import { validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX } from '../src/net/wire.js';   // AUDIT SET P-M3: the stream's door, and the record's bounds

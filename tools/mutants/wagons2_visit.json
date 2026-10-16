@@ -55,7 +55,7 @@
   },
   {
     "name": "WAGONS2-VISIT-the-tag-on-every-entry",
-    "file": "src/systems/horseCartWire.js",
+    "file": "src/systems/horse/horseCartWire.js",
     "old": "const wg = we === CARAVAN_GUILD_CODE ? caravanGuildTag(w.guild) : null;",
     "new": "const wg = caravanGuildTag(w.guild);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WAGONS2-VISIT-the-entry-unread",
-    "file": "src/systems/horseCartWire.js",
+    "file": "src/systems/horse/horseCartWire.js",
     "old": "out.w.entry = caravanEntryOfCode(raw.we);",
     "new": "out.w.entry = 'private';",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WAGONS2-VISIT-a-door-changed-with-no-word",
-    "file": "src/systems/horseCartWire.js",
+    "file": "src/systems/horse/horseCartWire.js",
     "old": "rec.wl ?? 0, rec.we ?? 0, rec.wg ?? '', rec.hc ?? 0]",
     "new": "rec.wl ?? 0, rec.hc ?? 0]",
     "tests": [

@@ -1,5 +1,5 @@
 // ARENA2 (2026-10-02, Mac: "Players can choose to watch AI fights ... and climb esclating tiers of opponents"): THE BOUT
-// LAW, DRIVEN (systems/arenaBout.js) - every phase in order and on its clock, every way a bout ends (a yield by choice
+// LAW, DRIVEN (systems/arena/arenaBout.js) - every phase in order and on its clock, every way a bout ends (a yield by choice
 // and by temper, a fall at the floor, a ring-out past the slack, the time limit and the judges' three counts), every
 // event the crowd and the Herald hear, the refusals (a blow outside the fight, a yield above the line, a teammate's
 // blow), a two-against-one and a Grand Melee, the purse by favour. Pure: the clock and the dice are the test's.
@@ -11,7 +11,7 @@ import {
   standingSides, fighterShare, BOUT_PHASES, CALL_BEAT_MS, WALK_MAX_MS, COUNT_MS, BOUT_LIMIT_MS, END_HOLD_MS, VERDICT_MS,
   HEAL_HOLD_MS, YIELD_SHARE, STALL_MS, RING_SLACK_M, RING_OUT_MS, FLEE_MS, KNOCKDOWN_SHARE, COMEBACK_LOW,
   TEMPER_EVERY_MS, TEMPER_ROLL, PURSE_FAVOUR_MAX, PURSE_FAVOUR_MIN,
-} from '../src/systems/arenaBout.js';
+} from '../src/systems/arena/arenaBout.js';
 import { DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, DUEL_COUNTDOWN_MS } from '../src/net/duelSession.js';
 
 const RING = { centre: [0, 0], radius: 14 };

@@ -56,7 +56,7 @@ import {
 } from '../net/guildLaw.js';   // GUILD1b: the Guild tab's rules are the service's
 import { VAULT_RANK_DEFAULTS, VAULT_LIMIT_CHOICES, GUILD_VAULT_SLOTS, vaultStandingText, vaultMayTake, vaultMayPut } from '../net/guildVaultLaw.js';   // GUILD2b: the vault
 import { tradeRefusal } from '../systems/tradePack.js';   // GUILD2b: what may leave a pack, for the vault as for a trade
-import { isLocked } from '../systems/itemLock.js';   // AUDIT2 GUILD2 U4: a locked piece stays in the pack
+import { isLocked } from '../systems/item/itemLock.js';   // AUDIT2 GUILD2 U4: a locked piece stays in the pack
 import { GUILD_DEPOSIT_UNSURE, guildMemberOnline, guildSeenText } from '../net/guildBook.js';   // GUILD-SEEN: a member's "last online"
 import { LETTER_OF_CREDIT_TEXT } from '../systems/tradeModes.js';   // GUILD-LETTER: the trade window's own line for a letter of credit
 import { writMay, guildMoveOk, writBudgetOk, GUILD_STORES_MAX, WRIT_BUDGET_MAX } from '../net/writLaw.js';   // PROF6: the guild Stores' and the writ budget's ranks and bounds
@@ -70,7 +70,7 @@ import { bannerSvg, shieldSvg } from './heraldryArt.js';   // GUILD1d: the guild
 import { GUILD_HALL_PRICE_MULT, GUILD_HALL_ENTRIES, GUILD_HALL_ENTRY_WORDS, hallMay } from '../net/hallLaw.js';   // GUILD1d: the hall
 import { homeSaleRefund } from '../net/homeLaw.js';   // GUILD1d: what the hall sells back for
 import { REGION_NAMES } from '../formats/mapsTables.js';   // GUILD1d: where the hall stands
-import { wagonItemName } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon by its kind's name
+import { wagonItemName } from '../systems/wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon by its kind's name
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 /** A piece of the pack as the vault's Put in names it - the Open Wagon and the Caravan by their own names (their record's
  *  is the Small Cart's), anything else by its record's (the account service names the vault's row so - guildVault.js). */
@@ -735,7 +735,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
 
   /** PARTY-UI (2026-09-26, Mac: "Instead of party chat commands, we need to add the party travel commands to the UI"):
    *  THE JOURNEY, on the Party tab - the chat's /leader and /travel as buttons over the one door (`journey()`, the
-   *  host's systems/partyTravel.js session: its `command` and `respond`), what they answer written as the panel's
+   *  host's systems/party/partyTravel.js session: its `command` and `respond`), what they answer written as the panel's
    *  note. The leader: the round and its call-off, or the travel map where one is chosen. A member: the leader's round
    *  with Ready and Stay behind (gathered - else why not), a journey under way, and the journey to a leader who stands
    *  in another place. Nothing at all where there is nothing to do. */

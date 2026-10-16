@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { yardTreeSet, yardTreeYaw } from '../src/scenes/yardNature.js';
 import { LPT_SCALE_MAX, LPT_SET_FLOATS, gatherNear } from '../src/world/lowPolyTrees.js';
-import { floraSwayOf } from '../src/systems/windDrive.js';
+import { floraSwayOf } from '../src/systems/wind/windDrive.js';
 import { SEASON } from '../src/world/climateSwaps.js';
 import { yardWorld, yardPiece, live, sized, rows, all, toolRig, placeFrom } from './decorFakes.mjs';
 

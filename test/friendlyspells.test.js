@@ -22,11 +22,11 @@ import { EXPLOSION_RADIUS } from '../src/systems/spellcast.js';
 import { validPose, POSE_CAST_ELEMENTS, RELAY_VERSION, castGate, validCastData, PARTY_MAX } from '../src/net/wire.js';
 import { SOUND_REPLACEMENTS, SOUND_SWITCHES, soundEntry, setSoundReplacements, soundReplacementCount, soundSilenced, fetchReplacement } from '../src/systems/soundReplacer.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { cooldownStamp, latestStamp, voteStands } from '../src/systems/partyRestLaw.js';
+import { cooldownStamp, latestStamp, voteStands } from '../src/systems/party/partyRestLaw.js';
 import { startingSpells, HEALER_CAREER_INDEX, HEAL_OTHER_INDEX, HEAL_OTHER_NAME, healOtherSpell } from '../src/systems/chargen.js';
 import { allyCastable } from '../src/systems/allyCast.js';
 import { testMissileSpells, addTestMissileSpells, TEST_FIREBALL_INDEX, TEST_HEAL_BOLT_INDEX } from '../src/systems/testRoom.js';
-import { spellPointRecoveryRate, SPECIAL_ABILITY, restIgnoresNoRegen } from '../src/systems/rest.js';
+import { spellPointRecoveryRate, SPECIAL_ABILITY, restIgnoresNoRegen } from '../src/systems/rest/rest.js';
 import { AmbientEffects, CRICKET_CHORUS, AMBIENT_CRICKETS_LOOP } from '../src/systems/ambientEffects.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

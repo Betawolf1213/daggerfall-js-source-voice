@@ -2,7 +2,7 @@
 // Worldmap(V) with right mouseclick context menu players should also be able to rename them. They can be small flags with
 // different colors. Add the waypoints you want to mark (to follow) to the filter list on the overworld map with a dropdown
 // menu. Add Waypoints to the filter on the worldmap"; then "i hope the waypoints are removed when leaving party";
-// bible/01-Overview/Waypoints-And-Pace.md). ONE STORE, BOTH MAPS (systems/mapWaypoints.js): a point on the bay in map
+// bible/01-Overview/Waypoints-And-Pace.md). ONE STORE, BOTH MAPS (systems/map/mapWaypoints.js): a point on the bay in map
 // pixels, a name, a colour and a kind; a party's or a guild's said on the hub's own channel as one line the chat never
 // shows, moved only by its author; dropped when its group is left.
 import { test } from 'node:test';
@@ -14,7 +14,7 @@ import {
   listWaypoints, waypointById, setWaypointFollowed, followedWaypointIds, isWaypointFollowed, toggleWaypointKind,
   waypointKindsShown, shownWaypoints, nextWaypointName, setWaypointSender, shareWaypoint, encodeWaypointLine,
   decodeWaypointLine, isWaypointLine, receiveWaypointLine, syncWaypointGroups, onWaypoints, waypointCss, _resetWaypoints,
-} from '../src/systems/mapWaypoints.js';
+} from '../src/systems/map/mapWaypoints.js';
 import { openWaypointMenu, closeWaypointMenu, waypointMenuOpen, WAYPOINT_MENU_ID } from '../src/ui/waypointMenu.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -254,7 +254,7 @@ test('WAYPOINTS host: both maps take the right click as the store\'s - the Overw
 
 test('WILD-WAYPOINT: my remains in the open zone plant one followed red flag, kept with its end on this device - gone at its time, when the room says the remains are gone, at the next death\'s flag, or when removed by hand; and the book hears its room before its word (WILD-SEEN)', async () => {
   fresh();
-  const W = await import('../src/systems/wildRemainsWaypoint.js');
+  const W = await import('../src/systems/wild/wildRemainsWaypoint.js');
   const id = W.markRemains({ mx: 640.5, my: 120.25, until: 10_000, r: 'abc' });
   const wp = waypointById(id);
   assert.equal(wp.name, W.WILD_WP_NAME);

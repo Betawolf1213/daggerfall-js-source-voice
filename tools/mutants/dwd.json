@@ -208,7 +208,7 @@
   },
   {
     "name": "DW-D-flush-announces-without-a-change",
-    "file": "src/systems/deepWaterPlayer.js",
+    "file": "src/systems/deepWater/deepWaterPlayer.js",
     "old": "  if (!pending) return;\n  pending = false;",
     "new": "  pending = false;",
     "tests": [

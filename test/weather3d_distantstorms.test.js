@@ -11,7 +11,7 @@ import {
 } from '../src/systems/distantStorms.js';
 import { boltOf, BOLT_HEIGHT, COMPOSITE_FS, COMPOSITE_UNIFORMS } from '../src/render/volumetricClouds.js';
 import { AMBIENT_SOUNDS } from '../src/systems/ambientEffects.js';
-import { envelope, SYSTEM_TYPES } from '../src/systems/weatherMap.js';
+import { envelope, SYSTEM_TYPES } from '../src/systems/weather/weatherMap.js';
 import { strikeOf, flickerAt } from '../src/systems/lightning.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -136,5 +136,5 @@ test('WEATHER3d: the hosts - the scheduler on the map\'s systems, reset on a jum
     assert.match(h, /for \(const s of ds\.sounds\) \{ const h = [^;]+; audio\.play3d\(s\.clip, thunderSourceAt\([\w.]+, h\[0\], h\[1\]\), s\.volume, \{ refDistance: THUNDER_SOURCE_M, maxDistance: THUNDER_SOURCE_M \* 8, far: true \}\); \}/, `${host}: the distant storms' thunder at its own volume, from its side (DISC17-B: held there from the ear)`);
   }
   assert.match(rd('src/scenes/shared.js'), /distantBolt\(b\) \{ clouds\?\.setBolt\(b\); \},/);
-  assert.match(rd('src/systems/weatherSim.js'), /export const currentMapSystems = \(\) => \(weatherMapOn\(\) \? _mapNear : \[\]\);/, 'nothing off the map\'s lane');
+  assert.match(rd('src/systems/weather/weatherSim.js'), /export const currentMapSystems = \(\) => \(weatherMapOn\(\) \? _mapNear : \[\]\);/, 'nothing off the map\'s lane');
 });

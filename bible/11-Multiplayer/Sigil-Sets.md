@@ -36,7 +36,7 @@ gate **only while it stands**, the same stock for everyone that day, **one of ea
 
 ## 1. What a set piece is - the record (SET1)
 
-A set piece is an item whose **sigil names a set**. The weapon sigil's record (SIGIL1, `systems/sigil.js`:
+A set piece is an item whose **sigil names a set**. The weapon sigil's record (SIGIL1, `systems/sigil/sigil.js`:
 `{ power, party, xp }`) grows one optional field and loses one requirement:
 
 | field   | a weapon sigil (SIGIL1) | a set piece: armour / shield | a set piece: weapon |
@@ -73,8 +73,8 @@ greaves, the boots, the shield and the weapon.
   no tier is awake, no number moves, no piece drinks. The card still shows what the set would do. AUDIT 625 P2: a bout
   between players on an arena's relay sand is a duel too - the opponent stands as a Daedra Lord's stand-in for the
   formulas, no player, so the gates that refuse a blow at a player never saw one, and every set, the loot's powers and
-  the weapon's sigil woke in the ring. The duel's word is ONE now, kept by SIGIL1's door (`systems/sigil.js`
-  setSigilDueling; `systems/sigilSets.js` setSetsDueling and setsDueling its names here), raised by `scenes/world.js
+  the weapon's sigil woke in the ring. The duel's word is ONE now, kept by SIGIL1's door (`systems/sigil/sigil.js`
+  setSigilDueling; `systems/sigil/sigilSets.js` setSetsDueling and setsDueling its names here), raised by `scenes/world.js
   duelFrame` for a duel and for a live bout between players (`arenaPvpLive`), and the weapon's own blow reads it.
 
 ## 3. The four sets of the world (SET3)
@@ -158,7 +158,7 @@ Gatecleaver carries the widest band's top blow as well.
 | 4 | **Cleave** - your melee blows also strike the nearest other foe within 3 m of your target (never a bow's) | 25% -> 60% of the blow |
 | 6 | **Wrath of the Warden** - when a blow takes you from 30% health or more to under it (never a killing blow), a Flame Nova bursts from you, and your weapon blows deal more for 10 s; then it must recover | 10 -> 40 fire to all within 6 m; +10% -> +25%; recovers 180 -> 90 s |
 
-**The drop.** A kill's spoils (WB5, `systems/gateSpoils.js`) roll one more thing AFTER everything they roll today, so
+**The drop.** A kill's spoils (WB5, `systems/gate/gateSpoils.js`) roll one more thing AFTER everything they roll today, so
 every earlier spoils stays what it was: one Regalia piece, a sixth of the time, from the receipt's own seed.
 
 ## 6b. The raiding parties' own sets (RAID4b, 2026-09-28)
@@ -225,7 +225,7 @@ weight 43, damage 30) and the Fang's blow the band's middle too (10): a world bo
 floor) and under the gate's Warden (the top). One resistance of an element at most, and never frost - the 2-piece tier
 carries it - so no two pieces stack an element toward the saving throw's immunity (AUDIT FINAL's lesson on the
 Regalia). Nothing drops it but the serpent: a ship that DEALT Sethrakul its share finds a piece in its hoard a quarter
-of the time (the raids' own share), rolled after everything the hoard rolled before (`systems/serpentSpoils.js`,
+of the time (the raids' own share), rolled after everything the hoard rolled before (`systems/serpent/serpentSpoils.js`,
 `systems/aetheric.js` `SERPENT_SET_PIECES`, `rollSerpentSetPiece`); a ship that stood, never. No world drop, shelf or
 Broker rolls one - a boss's own set earned where it is fought, as the raids' are.
 
@@ -239,7 +239,7 @@ Tide-Walker Boots, The Maelstrom's Eye (Kite Shield), Sethrakul's Fang (Katana).
 | 6 | **Shed Skin** - a foe's blow that takes you under 35% of your health (from at or over it, still standing) sheds your skin: that share of your health returns at once; then it must recover. A killing blow, a fall or a spell sheds nothing - nor a killing blow a death save turned aside (AUDIT 625 P1: Unbroken, Divine Grace) | 10% -> 30%; recovers 240 -> 120 s |
 
 Shed Skin heals through the one heal a power gives (`systems/playerHeal.js` - LOOT4's leech and its heals moved there
-from `systems/lootPowers.js`, which reads the blow's law out of `systems/sigilSetPowers.js` and so may not be imported
+from `systems/loot/lootPowers.js`, which reads the blow's law out of `systems/sigil/sigilSetPowers.js` and so may not be imported
 by it). The HUD's chip shows Shed Skin's recovery; its sound is a large splash, the old skin into the sea. The hoard
 pays the gate's currency too - a Deadlands Ember, every hoard (section 7's Broker and the insignia take it as a
 breach's; `Sea-Serpent.md` section 8).
@@ -374,9 +374,9 @@ gold - a stone's only worth is at its own vendor.
 
 ### SET1 - the law (2026-09-26)
 
-`systems/sigil.js`: the record grows `set` (one of `SIGIL_SET_IDS`) and `power` stops being required - `validSigil`
+`systems/sigil/sigil.js`: the record grows `set` (one of `SIGIL_SET_IDS`) and `power` stops being required - `validSigil`
 takes a power, a set or both, never neither; `sigilSetId`, `sigilHasBlow`; every reader of the power (the per cent,
-the words, the card's model) reads a set's armour as no blow. `systems/sigilSets.js`: the five sets and their numbers
+the words, the card's model) reads a set's armour as no blow. `systems/sigil/sigilSets.js`: the five sets and their numbers
 (section 3, section 6), `stageValue` (the line from Faint to Ascendant), what may be a piece (`setPieceKind`: a body
 piece, a shield, a weapon - never ammunition, jewellery or clothing), the worn pieces per set (`wornSetPieces`: the
 seven body slots, the shield, one weapon a set), the state (`setState`: the count, the lowest piece's stage under the
@@ -410,14 +410,14 @@ Every seam the powers read, each a no-op until registered:
   two gates (a Destruction effect, room in the magicka).
 - **The door** (`systems/playerDoor.js`): the running host's magic engine publishes its live foes (the town's
   defenders passed by), my feet, a hurt as mine through the foe's own sinks, and a spell on me - every frame it runs.
-- **The duel's word**: `scenes/world.js duelFrame` tells `setSetsDueling` (AUDIT 625 P2: kept by `systems/sigil.js`
+- **The duel's word**: `scenes/world.js duelFrame` tells `setSetsDueling` (AUDIT 625 P2: kept by `systems/sigil/sigil.js`
   setSigilDueling, and raised for an arena's bout between players too).
 
 Pinned: `test/set2_seams.test.js` (8); `tools/mutants/set2.json` (20, all dead).
 
 ### SET3 - what the sets do (2026-09-26)
 
-`systems/sigilSetPowers.js`, imported by `scenes/world.js` and registered at import - one name (`sigilSets`) at every
+`systems/sigil/sigilSetPowers.js`, imported by `scenes/world.js` and registered at import - one name (`sigilSets`) at every
 seam SET2 opened. Each power asks one question first (`awakeTiersOf`): is this MY entity, with the sets awake (online,
 my Renown known, no duel)? For anyone else - a peer's entity here, a foe - and whenever the sets sleep, it does nothing.
 
@@ -462,7 +462,7 @@ Pinned: `test/set3_powers.test.js` (16); `tools/mutants/set3.json` (55, all dead
 
 ### SET4 - drops and growth (2026-09-26)
 
-- **The win** (`systems/lootRarity.js stampWonWeapons` - SIGIL1's name, every sigil's door now, so every place a list
+- **The win** (`systems/loot/lootRarity.js stampWonWeapons` - SIGIL1's name, every sigil's door now, so every place a list
   is won online stamps set pieces with no new wiring: a corpse at its foe's death outdoors, in a dungeon, a joiner's
   copy, a body the room's memory hands an arrival, the watch's kill, every pile at its mint). AFTER every weapon's own
   rolls - SIGIL1's draws stay the ones they were, and a seeded list is the same list on every machine - a fresh weapon
@@ -471,7 +471,7 @@ Pinned: `test/set3_powers.test.js` (16); `tools/mutants/set3.json` (55, all dead
   the four sets at even odds, `{ set, party, xp: 0 }` - no blow). Never a Common piece, jewellery, clothing, a quest's
   piece, an artifact or one already marked; offline, or with the loot ladder off, nothing. The Aetheric set is never
   rolled here.
-- **The drink** (`systems/sigilSets.js drinkWorn`, called by `scenes/world.js sigilDrinks` at every kill's and quest's
+- **The drink** (`systems/sigil/sigilSets.js drinkWorn`, called by `scenes/world.js sigilDrinks` at every kill's and quest's
   Renown XP): the weapon in my hand drinks (SIGIL1's `drinkSigil`) and so does every set piece I wear - the counted
   ones, each once, the weapon in hand never twice, a piece in the pack never - each a new record, never past the last
   stage. In a duel the pieces sleep (the weapon in hand, SIGIL1's, still drinks); offline nothing does. Past the
@@ -487,7 +487,7 @@ rise mutant is re-aimed to the law's line.
 
 ### SET6 - Aetheric, and Ruhn's Regalia (2026-09-26)
 
-- **The rung** (`systems/lootRarity.js`): `aetheric` between `legendary` and `artifact` in `RARITY_ORDER` and
+- **The rung** (`systems/loot/lootRarity.js`): `aetheric` between `legendary` and `artifact` in `RARITY_ORDER` and
   `RARITIES` (rank 4 - the Artifact moved to 5), `#bfe8ff` and a tint of its own. The ladder's roll takes the ROLLED
   tiers alone now (`applyRarity`: `ROLLED_TIERS.includes(tier)`), so nothing rolls the rung; a piece that wears it is
   never re-rolled. Every reader of the table is generic (the explorer's map, below), so the rung lands everywhere a
@@ -501,11 +501,11 @@ rise mutant is re-aimed to the law's line.
   `mintAetheric` makes a record an item through the game's own minters (CreateWeapon; SetItem and its condition):
   Daedric, whole, KNOWN, no DFU enchantment (so it breaks and stays under PCAAO's fading module), its affixes a copy,
   a sigil of the Warden's set fresh at Faint, its price its make's, its affixes' and the rung's (`AETHERIC_WORTH`).
-  Its record rides a new declared item field, `aetheric` (`systems/itemFields.js`), as a Legendary's rides
-  `legendary`; its name is its record's, never "Daedric Ruhn's ..." (`systems/itemInfo.js itemNameParts`); its lore is
+  Its record rides a new declared item field, `aetheric` (`systems/item/itemFields.js`), as a Legendary's rides
+  `legendary`; its name is its record's, never "Daedric Ruhn's ..." (`systems/item/itemInfo.js itemNameParts`); its lore is
   the card's last line (a registration, `lootRarity.js registerAethericLore` - the ladder cannot import the Regalia
   without a cycle).
-- **The drop** (`systems/gateSpoils.js rollSpoils`): after every roll the spoils made before - a Regalia piece a sixth
+- **The drop** (`systems/gate/gateSpoils.js rollSpoils`): after every roll the spoils made before - a Regalia piece a sixth
   of the time (`REGALIA_CHANCE`), the same seed choosing which - so for every seed the gold and the three graded pieces
   are exactly what they were. It leaves the boss last of the pieces, before the Sigil Stone and the gold.
 - **The test room** (`systems/testRoom.js`): the loot ladder's showcase carries the Regalia whole.
@@ -516,7 +516,7 @@ armour mints' population, rf5's every-mint coverage); QS1's key mutant is re-aim
 
 ### SET5 - the sets on screen (2026-09-26)
 
-- **One view** (`systems/sigilSets.js setCardView`): for a set piece and a wearer (the player by default - the host
+- **One view** (`systems/sigil/sigilSets.js setCardView`): for a set piece and a wearer (the player by default - the host
   names it, `setSetsWearer`), the set, the nine places its pieces fill and how many, whether this piece is one, the
   stage and what holds it (the piece to grow, the Renown that opens the next), why every set sleeps (`setsSleep`:
   offline, the Renown not yet known, a duel), and its three tiers at the stage. Every surface below reads it.
@@ -533,7 +533,7 @@ armour mints' population, rf5's every-mint coverage); QS1's key mutant is re-aim
 - **The words** (`setLines`), for a surface that prints lines - the classic tooltip, a plaque: the set, the places
   worn, the stage or the sleep, a line a tier with how many pieces more it wants. ASCII, as the classic font draws.
   `rarityLines` carries them; the enhanced card, which draws the block, asks without.
-- **The HUD's chips** (`systems/sigilSetPowers.js setHudChips`, handed to the HUD by the host - `setHudSetChips` -
+- **The HUD's chips** (`systems/sigil/sigilSetPowers.js setHudChips`, handed to the HUD by the host - `setHudSetChips` -
   because the HUD importing the powers closed a cycle through the magic round's ticker): after the effects, a chip a
   running window ("Rampage II 12s", "Unbroken 3s", "Wrath 10s") burning in its set's colour, and a recovery ("Wrath
   2:50", "Eventide 30s") dashed and dimmed - each only while its 6-piece tier is awake on me.
@@ -549,7 +549,7 @@ name the new calls; three MERGE-PLUS C8 mutants and SET3's import mutant are re-
 
 ### SET7 - the Sigil Broker (2026-09-26)
 
-- **The law** (`systems/sigilBroker.js`): the day is the UTC day of the shared clock (the relay's time through the
+- **The law** (`systems/sigil/sigilBroker.js`): the day is the UTC day of the shared clock (the relay's time through the
   welcome's offset, never this machine's), turning at midnight UTC. The stock (`brokerStock`) is minted from the day
   alone on its own seeded stream off FIXED TABLES - the seven body places and the shield's place (one of the four
   shields), the eighteen classic weapons (never the arrow), the six finer makes, the base game's own Legendary records
@@ -699,7 +699,7 @@ SURVTIERS3 cite rots), all dead.
 
 Mac, after the merge: "we need to make sigil stones bound items and stackable, raise the prices on the new boss vendor".
 
-- **Bound** (`systems/itemBound.js`, new). Binding is the template row's own word (`bound`), so every Sigil Stone is
+- **Bound** (`systems/item/itemBound.js`, new). Binding is the template row's own word (`bound`), so every Sigil Stone is
   bound - one minted before the row said so too - and no field on the record binds or unbinds a piece. It closes the one
   way a piece passes between players, the trade (TRADE1): `systems/tradePack.js` `tradeRefusal` never puts a bound piece
   on the table ("Bound items cannot be traded."), and `unwire` refuses a peer's lot carrying one whole - an older build
@@ -709,15 +709,15 @@ Mac, after the merge: "we need to make sigil stones bound items and stackable, r
   SS4 the counter, below). The enhanced card says
   "Bound - it cannot be traded." in the lock's line style, without the padlock; the player's lock (LOCK1) stays its own
   word.
-- **Stacking** (`systems/gateSpoils.js`). The stone's row says `stackable`, the rations' flag, so a stone won joins the
+- **Stacking** (`systems/gate/gateSpoils.js`). The stone's row says `stackable`, the rations' flag, so a stone won joins the
   stack in the pack; a stack merges only with the same template (`inventory.js` stacksWith), so a stone never joins a
   Ruby nor a Ruby a stone - WB5's reason for a row of its own holds - and a locked stack takes only locked stones. A pack
   saved before the row stacked holds a record a stone: `restackStones` folds each into the first record before it that
-  it stacks with, run by the load (`systems/save.js`) below its index-keyed relinks - the gold migration's own place,
+  it stacks with, run by the load (`systems/save/save.js`) below its index-keyed relinks - the gold migration's own place,
   so a light lit after the stones in the saved list is the same light after it - over the pack and the wagon. The
   hotbar keys an item by its kind, so no slot points at a folded record. The spoils' crash record is kept by the burst's
   id, never by a piece, so a stone that joins a stack changes nothing there.
-- **The Broker over the stacks** (`systems/sigilBroker.js`). `stoneCount` counts a stack whole (the purse, "Need N
+- **The Broker over the stacks** (`systems/sigil/sigilBroker.js`). `stoneCount` counts a stack whole (the purse, "Need N
   more", the offer's state); a sale's take is `[{ item, count }]`, first records first - a stack the price empties goes,
   one it draws on keeps the rest - and the carry gate is asked of the pack as the stones leave it, the drawn stack at
   what it keeps. The purse's locked stones are counted the same way.
@@ -738,7 +738,7 @@ with its own kind alone); `tools/mutants/ss1.json` (18, all dead), and SET7's th
 ### SS3 - a bound stone is never dropped (2026-09-27)
 
 Mac: "They shouldnt be able to be dropped". SS1 closed the trade alone; binding now closes the WORLD too
-(`systems/itemBound.js`): a bound piece goes nowhere but the player's pack, wagon and own storage (`BOUND_KEEPS` - a
+(`systems/item/itemBound.js`): a bound piece goes nowhere but the player's pack, wagon and own storage (`BOUND_KEEPS` - a
 storage piece opens for its owner alone, `worldModes.js activateDecor`; an owned house's cupboards and a ship's chest are
 `loot.storage` too). The ground refuses it on both skins - the enhanced pack's Drop and its drag (whose ghost promises no
 drop), the classic pack's Remove - and so does every container: a body, a chest, a shelf, a reward tray. A container is
@@ -763,8 +763,8 @@ ground, a chest, the wagon and the owner's storage, and the lists a peer hands o
 Mac: "Also make the items sold by the oblivion vendor bound also. Can't be traded, dropped or sold. Sigil stones
 shouldnt be able to be sold".
 
-- **The wares** (`systems/sigilBroker.js brokerStock`). Every offer's piece carries the mark `bound: true` - a declared
-  field (`systems/itemFields.js`), kept by a save and by a valid loot record - and a sale mints the piece it hands over
+- **The wares** (`systems/sigil/sigilBroker.js brokerStock`). Every offer's piece carries the mark `bound: true` - a declared
+  field (`systems/item/itemFields.js`), kept by a save and by a valid loot record - and a sale mints the piece it hands over
   off the same list, so the piece bought is bound. `isBound` reads the mark or the row, and no mark unbinds what the
   row binds. What SS1 and SS3 close to a stone they close to a ware: the trade, the ground, every container, a peer's
   list.
@@ -786,7 +786,7 @@ smith and the sage); `tools/mutants/ss1.json` (38, all dead - SS1's binding reco
 Mac: "In addition, I want to implement a new functionality, currently only for broker items. The ability to dismantle in
 the inventory and recieve back sigil stones".
 
-- **The law** (`systems/sigilBroker.js`). Every ware carries its price (`stonesPaid`, a declared field, marked at the
+- **The law** (`systems/sigil/sigilBroker.js`). Every ware carries its price (`stonesPaid`, a declared field, marked at the
   mint beside SS4's binding), and dismantles for half of it, rounded down (`BROKER_DISMANTLE_SHARE`): a Rare piece's 4
   give 2, a Legendary's or a weapon's 6 give 3, the Regalia's 12 give 6 - so a ware is never a free try of the day's
   stock. Both marks are read (`dismantleStones`): a piece is dismantled only if it is BOUND and priced, and no list a
@@ -864,9 +864,9 @@ held to the stock); `tools/mutants/auditss.json` (31, all dead), and ss1.json's 
 
 ### RAID4b - the raiding parties' own sets (2026-09-28)
 
-Section 6b, whole. The law (`systems/sigilSets.js`: `oath`, `thieftaker`, `orcsbane`, each `aetheric` and naming its
+Section 6b, whole. The law (`systems/sigil/sigilSets.js`: `oath`, `thieftaker`, `orcsbane`, each `aetheric` and naming its
 raiding party - `raidSetOf`, a party no set names and anything not a whole number answering none), their nine powers
-through SET2's seams (`systems/sigilSetPowers.js` - the fold; the blow for Riposte, Run Them Down, No Escape and Blood
+through SET2's seams (`systems/sigil/sigilSetPowers.js` - the fold; the blow for Riposte, Run Them Down, No Escape and Blood
 for Blood; the hurt listener arming Riposte and the Blood; the damage modifier for Hold the Line and Iron Hide; the
 kill for No Escape's mark and Iron Hide's ward; the round's "ready again"; the chips), the twenty-seven records
 (`systems/aetheric.js` - every Aetheric record now names its MAKE and a weapon its blow; `AETHERIC_RECORDS` the one list
@@ -917,9 +917,9 @@ mutants all dead; the stream's law in `test/restsync.test.js` and `test/questpar
 
 ### SERPENT-SET - the sea serpent's own set, and the gate's currency at sea (2026-10-05)
 
-Section 6c, whole; the hoard's half is `Sea-Serpent.md` section 8. The law (`systems/sigilSets.js` `coilscale`,
-Aetheric and naming no raiding party; `COIL_STACKS`, `COIL_SECONDS`, `SHED_BELOW`; `systems/sigil.js` names it after the
-raids' three), its three powers through SET2's seams (`systems/sigilSetPowers.js` - the fold for Sea-Scale; the strike
+Section 6c, whole; the hoard's half is `Sea-Serpent.md` section 8. The law (`systems/sigil/sigilSets.js` `coilscale`,
+Aetheric and naming no raiding party; `COIL_STACKS`, `COIL_SECONDS`, `SHED_BELOW`; `systems/sigil/sigil.js` names it after the
+raids' three), its three powers through SET2's seams (`systems/sigil/sigilSetPowers.js` - the fold for Sea-Scale; the strike
 listener tightening Constrict's coil, a bow's blow too, and the blow reading its stacks at the coiled foe alone (AUDIT
 625 P3: every foe its own coil - `coilStacksAt`); the kill ending a coiled foe's coil; the hurt listener for Shed Skin,
 beside the Wrath and never on a killing blow (AUDIT 625 P1: nor a saved one - the damage door's `saved`); the
@@ -945,8 +945,8 @@ Shed Skin carries the same crossing and guard - LOOT4's three heal records, now 
 ### SD9d - the Brass Remnant's own set (2026-10-07)
 
 Section 6d, whole but for the roll that pays it (the Brass Remnant's spoils, SD9e); the record is
-`Super-Dungeons.md`'s SD9d. The law (`systems/sigilSets.js` `numidium`, Aetheric and naming no raiding party;
-`systems/sigil.js` names it after the serpent's), its three powers through SET2's seams (`systems/sigilSetPowers.js` -
+`Super-Dungeons.md`'s SD9d. The law (`systems/sigil/sigilSets.js` `numidium`, Aetheric and naming no raiding party;
+`systems/sigil/sigil.js` names it after the serpent's), its three powers through SET2's seams (`systems/sigil/sigilSetPowers.js` -
 the fold for Dwemer Brass; the damage modifier for Gearward, a foe's blow alone; a death save for The Hour Turns, tried
 when no Bulwark answers, and the hurt listener's heal as the door says it saved; the round's "ready again"; its chip;
 the states), the nine records (`systems/aetheric.js` `NUMIDIUM_SET_PIECES`, `NUMIDIUM_SET_CHANCE`, `rollNumidiumPiece`;

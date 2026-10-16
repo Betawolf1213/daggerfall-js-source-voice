@@ -155,7 +155,7 @@ moderate turn sways about 48 px at 1080p, past the preset's 17 px grid. A pad's 
 
 ## HALL-GOLD (8)
 
-`systems/onlineHomes.js` hallShortLine, hallOldGoldLine; `scenes/worldModes.js` buyHallAt; `ui/socialPanel.js`
+`systems/online/onlineHomes.js` hallShortLine, hallOldGoldLine; `scenes/worldModes.js` buyHallAt; `ui/socialPanel.js`
 guildHallGoldText, the treasury's buttons; `server-account/src/guilds.js` viewOf (`hallGold`). The purchase path is
 whole: the door's "Buy it for <guild>: N gold from the treasury" pays from the guild's gold treasury - only the gold
 realm characters put in (`realm_gold`, halls.js buyHall), never a bank account - at the price and half again

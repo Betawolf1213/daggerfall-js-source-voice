@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-boss-unanswered",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "const gear = d > 0 && (_pending || _pendingBoss) ? tierOf",
     "new": "const gear = d > 0 && _pending ? tierOf",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-mark-lying",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  _pendingBoss = _now() - _bossBlowAt <= BLOW_WINDOW_S;\n  _bossBlowAt = -Infinity;",
     "new": "  _pendingBoss = _now() - _bossBlowAt <= BLOW_WINDOW_S;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-window-unread",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  _pendingBoss = _now() - _bossBlowAt <= BLOW_WINDOW_S;",
     "new": "  _pendingBoss = _bossBlowAt > -Infinity;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "AUDIT-SD-C7-a-reach-power-hears-the-boss",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  _pending = landedBlow();\n  _pendingBoss",
     "new": "  _pending = landedBlow() ?? (_now() - _bossBlowAt <= BLOW_WINDOW_S ? { attacker: null } : null);\n  _pendingBoss",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "AUDIT-SD-C8-nothing-spends-the-gear",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "      if (cut > 0) {",
     "new": "      if (cut >= 0) {",
     "tests": [

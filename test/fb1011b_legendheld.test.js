@@ -13,9 +13,9 @@ import '../src/systems/effects.js';
 import { equipItem, unequipSlot } from '../src/systems/equip.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 import { classicCastingCost } from '../src/systems/spellcost.js';
-import { LEGENDARIES, applyRarity } from '../src/systems/lootRarity.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
-import { seededRng } from '../src/systems/wind.js';
+import { LEGENDARIES, applyRarity } from '../src/systems/loot/lootRarity.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const BUCKLER = 109;
 // a held spell as the CasterOnly Fortify of fb1009f (49 classic points at skill 40), standing at both params

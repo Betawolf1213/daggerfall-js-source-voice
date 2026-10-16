@@ -14,10 +14,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { MOD_CURATED, modDials } from '../src/systems/features.js';
-import { TRAVEL_OPTIONS_VENDOR } from '../src/systems/travelOptions.js';
+import { TRAVEL_OPTIONS_VENDOR } from '../src/systems/travel/travelOptions.js';
 import { travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
-import { createLoadGovernor, unbuiltAround } from '../src/systems/travelGovernor.js';
-import { foePaced } from '../src/systems/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
+import { createLoadGovernor, unbuiltAround } from '../src/systems/travel/travelGovernor.js';
+import { foePaced } from '../src/systems/travel/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE } from '../src/systems/timeScale.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -186,5 +186,5 @@ test('OW-TOGGLE host: a first-person journey under a view brought down runs at t
 
 test('OW-TOGGLE host: one question - tvOwnsJourneys reads the switch from the store itself, never the boot\'s settings bag', () => {
   assert.match(WORLD, /function tvOwnsJourneys\(\) \{ return !!travelOptions && !modSetting\(TRAVEL_OPTIONS_VENDOR, 'GeneralOptions\.FirstPersonTravel'\) && isEnhanced\(\) && !!travelView; \}/);
-  assert.ok(!/firstPersonTravel/.test(read('src/systems/travelOptions.js')), 'the bag carries no copy to go stale');
+  assert.ok(!/firstPersonTravel/.test(read('src/systems/travel/travelOptions.js')), 'the bag carries no copy to go stale');
 });

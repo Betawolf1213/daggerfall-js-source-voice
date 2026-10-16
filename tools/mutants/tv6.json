@@ -1,7 +1,7 @@
 [
   {
     "name": "TV6-a-temple-is-a-dungeon",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  LOCATION_TYPES.DungeonRuin, LOCATION_TYPES.Graveyard, LOCATION_TYPES.Coven]));",
     "new": "  LOCATION_TYPES.DungeonRuin, LOCATION_TYPES.Graveyard, LOCATION_TYPES.Coven, LOCATION_TYPES.ReligionTemple]));",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "TV6-no-cap",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "...rest.slice(0, max)].sort(nearer);",
     "new": "...rest].sort(nearer);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "TV6-a-square",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (d > range) continue;",
     "new": "    if (Math.max(Math.abs(g.x - at.x), Math.abs(g.y - at.y)) > range) continue;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "TV6-found-again",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (g.found || g.spawn) continue;\n    const m = mid(g);",
     "new": "    if (g.spawn) continue;\n    const m = mid(g);",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "TV6-found-from-afar",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  let best = null, bestD = TV_DUNGEON_FIND_M * NATIVE_PER_M;",
     "new": "  let best = null, bestD = TV_DUNGEON_FIND_M * NATIVE_PER_M * 10;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "TV6-the-farthest",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (d <= bestD) { best = g; bestD = d; }",
     "new": "    if (d <= TV_DUNGEON_FIND_M * NATIVE_PER_M) { best = g; }",
     "tests": [

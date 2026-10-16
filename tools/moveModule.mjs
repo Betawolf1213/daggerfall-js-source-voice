@@ -197,7 +197,7 @@ export function blindSpots(text, file, fromDirs, moved = new Map(), names = byNa
   // a moved file named in a way no rewrite can place: its sibling's quoted `./x.js` - relative to which file? Beside it
   // in its new folder, `./x.js` is right: the two moved together
   const unplaced = [...namesIn(text)].flatMap((name) => names.get(name) ?? []).filter(([f, t]) => f !== file && posix.dirname(t) !== posix.dirname(file))
-    .map(([f]) => [new RegExp(`(['"\`])\\./${esc(posix.basename(f))}\\1`), `quotes ./${posix.basename(f)} - relative to which file?`]);
+    .map(([f]) => [new RegExp(`(?<!\\bfrom\\s*|\\bimport\\s*\\(?\\s*|\\bnew URL\\(\\s*)(['"\`])\\./${esc(posix.basename(f))}\\1`), `quotes ./${posix.basename(f)} - relative to which file?`]);   // an import's own `./x.js` is the specifier pass's, and names its own folder's x.js
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
     for (const [re, why] of unplaced) if (re.test(l)) out.push(`${file}:${i + 1}: ${why}`);

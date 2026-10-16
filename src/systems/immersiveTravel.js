@@ -22,7 +22,7 @@
 
 import { modSetting, latchModLoaded, modLatchedOn } from './modSettings.js';
 import { registerCustomFaction } from '../formats/factionFile.js';
-import { registerMerchantService } from './guildServices.js';
+import { registerMerchantService } from './guild/guildServices.js';
 import { LOCATION_TYPES } from '../formats/mapsFile.js';
 import { CAPITAL_MAP_IDS, LARGE_DOCK_MAP_IDS, DOCK_PIXEL_IDS } from './immersiveTravelTables.js';
 import { setFlatFaceOverride } from '../characters/staticNpc.js';   // DRIVER-FACE: FLATS.CFG's dictionary, as Roleplay & Realism writes it
@@ -71,7 +71,7 @@ export const IT_TEXT = Object.freeze({
 
 // ── the settings ───────────────────────────────────────────────────────────────────────────────────────────────────
 /** The mod's eighteen keys (vendor/immersive-travel/modsettings.json), read through the store - the room's value
- *  online where systems/onlineLane.js says so. `get` is injectable for the pins. */
+ *  online where systems/online/onlineLane.js says so. `get` is injectable for the pins. */
 export function readImmersiveTravelSettings(get = modSetting) {
   const v = (k) => get(IMMERSIVE_TRAVEL_VENDOR, k);
   return {
@@ -171,7 +171,7 @@ export const carriageLocationLarge = (locationType, settings) =>
   locationType === T.TownCity || locationType === T.TownHamlet || !settings?.clearerMapDots;
 
 /** ImmersiveTravelCalculator.CalculateTripCost (IL_1d44-1e46) - TravelTimeCalculator.CalculateTripCost
- *  (systems/travel.js calculateTripCost) with the carriage's fee: the inn nights as DFU bills them, then
+ *  (systems/travel/travel.js calculateTripCost) with the carriage's fee: the inn nights as DFU bills them, then
  *  DailyCarriageFee for every whole day of the trip off the ocean, plus one more; the ship toggle pays the ship (unless
  *  the player has one) and her captain for every day at sea plus one. CARRIED (AUDIT IT1 L5): with NO ocean guard
  *  (IL_1dfb tests the toggle alone, where DFU asks `pixelsTraveledOnOcean > 0`), so a trip over land on the ship toggle
@@ -337,7 +337,7 @@ export function itTogglePress(kind, st, settings, press, { ship = false, inn = f
  * the mod's own calculator's fare. NOT Travel Options' scaled fare (TravelTimeCalculatorTO is Travel Options' popup's
  * calculator, and the mod's popup is DFU's with its own) and NOT online's half-price fare (ESSENTIALS-HALF), which is
  * the port's word on DFU's and Travel Options' fares: a driver's price is the mod's, and online the room's.
- * `calc` is { calculateTravelTime, guildFastTravel } off the host (systems/travel.js, systems/guildVariants.js).
+ * `calc` is { calculateTravelTime, guildFastTravel } off the host (systems/travel/travel.js, systems/guild/guildVariants.js).
  */
 export function itTrip(kind, settings, { start, end, opts, hasHorse = false, hasCart = false, hasShip = false, freeTavernRooms = false, getClimateIndex, playerEntity = null, calc }) {
   const t = kind === IT_POPUP.seafarer
@@ -361,7 +361,7 @@ export const immersiveTravelLoaded = () => modLatchedOn(IMMERSIVE_TRAVEL_VENDOR)
 /**
  * The mod's Init, once, at the boot every host shares (scenes/shared.js): the mod latched loaded for the game or not
  * (AUDIT IT1 W4 - the dictionary is built at the load once a page, so a switch reaches the next start), then while it
- * is loaded the two factions and the two services. A service's body is `service(door, entity)` (systems/guildServices.js); the door the hosts hand it answers
+ * is loaded the two factions and the two services. A service's body is `service(door, entity)` (systems/guild/guildServices.js); the door the hosts hand it answers
  * `enemiesNearby()` - GameManager.AreEnemiesNearby(false, false) - `messageBox(text)` and `openImmersiveMap(kind)`,
  * the CarriageMap / SeafarersMap push (CarriageTravelService IL_0574-05b3, ShipTravelService IL_05c0-05fe).
  *

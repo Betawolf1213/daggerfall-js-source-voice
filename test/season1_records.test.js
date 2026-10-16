@@ -14,7 +14,7 @@ import { createBookReaderWindow } from '../src/ui/bookDoor.js';
 import { BookReaderWindow } from '../src/ui/bookReader.js';
 import { RSC, TOKEN_TEXT } from '../src/formats/textRsc.js';
 import { createTownSeatBook, SEAT_RECORDS_CACHE_MS } from '../src/net/townSeatBook.js';
-import { HALL_OF_RECORDS_TEXT, HALL_OF_RECORDS_SHUT } from '../src/systems/onlineHomes.js';
+import { HALL_OF_RECORDS_TEXT, HALL_OF_RECORDS_SHUT } from '../src/systems/online/onlineHomes.js';
 
 const ANTICLERE = { key: 3021, name: 'Anticlere', region: 21, tier: 'palace', pixel: [402, 151] };
 const SH = { name: 'The Silver Hand', tag: 'SH' }, EO = { name: 'Ebon Oath', tag: 'EO' };

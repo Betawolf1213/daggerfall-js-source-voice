@@ -16,11 +16,11 @@ import { COMFORT, discomfort, packTemperature, breakdownLines, temperaturePlaque
 import { wearComparison } from '../src/ui/armourCard.js';
 import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { onlineForcedPref } from '../src/systems/onlineLane.js';
+import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { createEquipTable } from '../src/characters/equipTable.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
 import { monthNames } from '../src/systems/gameDate.js';   // L10N3e: the month names, read in the player's language

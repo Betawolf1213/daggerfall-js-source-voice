@@ -289,7 +289,7 @@
  },
  {
   "name": "KG5-M-flip",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "  view(game) { return this.side === 1 ? flipGambitState(game) : game; }",
   "new": "  view(game) { return game; }",
   "tests": [
@@ -298,7 +298,7 @@
  },
  {
   "name": "KG5-M-check",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "    const no = gambitRefusal(this.state, 0, cmd);\n    if (no) return no;",
   "new": "    const no = null;",
   "tests": [
@@ -307,7 +307,7 @@
  },
  {
   "name": "KG5-M-gap",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "      if (q.theirs && now < this.shownAt + GAMBIT_REMOTE_GAP_MS) break;",
   "new": "      // the gap",
   "tests": [
@@ -316,7 +316,7 @@
  },
  {
   "name": "KG5-M-beat",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "        this.resultAt = now + GAMBIT_RESULT_MS;",
   "new": "        this.resultAt = now;",
   "tests": [
@@ -325,7 +325,7 @@
  },
  {
   "name": "KG5-M-winner",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "const winner = e.winner === null ? null : this.side === 1 ? 1 - e.winner : e.winner;",
   "new": "const winner = e.winner;",
   "tests": [
@@ -334,7 +334,7 @@
  },
  {
   "name": "KG5-M-one-at-a-time",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "    if (this.sentAt !== null || this.queue.length) { if (this.held.length < GAMBIT_HELD_MAX) this.held.push(cmd); return null; }",
   "new": "    // one at a time",
   "tests": [
@@ -343,7 +343,7 @@
  },
  {
   "name": "KG5-M-unflip",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "    if (!this.sendCmd(this.side === 1 ? unflipCommand(cmd) : cmd)) return 'link';",
   "new": "    if (!this.sendCmd(cmd)) return 'link';",
   "tests": [
@@ -352,7 +352,7 @@
  },
  {
   "name": "KG5-M-let-go",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "    if (this.sentAt !== null && now - this.sentAt >= GAMBIT_SENT_MS) this.sentAt = null;",
   "new": "    // let go",
   "tests": [

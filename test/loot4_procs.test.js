@@ -5,7 +5,7 @@
 //     thorns on armour, focus on jewellery - each banded by tier, each a word, never naming a piece.
 //   - THE ROLL: never the ladder's own draw; a door's LAST PASS gives a Magic one in five and a Rare a bit over one in
 //     three, one a piece, its tier's band - the procs before the Exalted, so neither moves the other's roll.
-//   - THE KIT (systems/lootPowers.js), MY entity's alone, offline and online, never at a player: the sear and the
+//   - THE KIT (systems/loot/lootPowers.js), MY entity's alone, offline and online, never at a player: the sear and the
 //     slayer's edge on the blow of the weapon in hand (none on an immune foe, half on one that resists; its own kind of
 //     foe alone), the leech off the blow that landed, the thorns back to a foe whose blow took my health (through the
 //     sets' own law of a blow, under the cap), the focus off my spells (under the cap).
@@ -16,20 +16,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { setStruck, _resetSetPowersForTests, pendingPlayerBlow } from '../src/systems/sigilSetPowers.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { setStruck, _resetSetPowersForTests, pendingPlayerBlow } from '../src/systems/sigil/sigilSetPowers.js';
 import { weaponBlowMods } from '../src/systems/entityMods.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { calculateCastCost } from '../src/systems/spellcost.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { rollSpoils } from '../src/systems/gateSpoils.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
 import { rollRaidSpoils } from '../src/systems/raidSpoils.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -263,7 +263,7 @@ test('LOOT4: the thorns - back to the foe whose blow took my health, through the
   setStruck(orc, me, 5); hurtPlayer(me, 5);
   assert.equal(d.hurts.length, before, 'off: none');
   // the registration, in the sigil sets' own hurt: one law of a landed blow
-  assert.match(strip(read('src/systems/sigilSetPowers.js')), /if \(before - after > 0\) for \(const fn of _landed\.values\(\)\)/);
+  assert.match(strip(read('src/systems/sigil/sigilSetPowers.js')), /if \(before - after > 0\) for \(const fn of _landed\.values\(\)\)/);
 });
 
 test('LOOT4: the focus - my spells cost less, all I wear under the cap; registered at every seam under one name', () => {
@@ -282,11 +282,11 @@ test('LOOT4: the focus - my spells cost less, all I wear under the cap; register
   assert.equal(priced, Math.max(1, Math.round((plain * 90) / 100)), 'the registered modifier takes its ten in a hundred off the real price');
   for (const t of [133, 135, 136, 137, 138, 134]) wear(me, Object.assign(mintCondition({ group: 'Jewellery', templateIndex: t, flags: 0 }), { rarity: 'rare', affixes: [{ id: 'focus', value: 10 }] }));
   assert.equal(LP.lootCastCost(me, 100), 100 - LP.FOCUS_CAP, 'never past the cap');
-  const src = strip(read('src/systems/lootPowers.js'));
+  const src = strip(read('src/systems/loot/lootPowers.js'));
   for (const [seam, fn] of [['registerWeaponBlowMod', 'lootBlow'], ['registerPlayerStrikeListener', 'lootStrike'], ['registerPlayerBlowLanded', 'lootLanded'], ['registerSpellCostMod', 'lootCastCost']]) {
     assert.match(src, new RegExp(`\\n${seam}\\(LOOT_POWERS, ${fn}\\);`), `${seam} -> ${fn}`);
   }
-  assert.match(read('src/scenes/world.js'), /from '\.\.\/systems\/lootPowers\.js'; import \{ setSetPowersVoice/, 'the game imports it beside the sets');
+  assert.match(read('src/scenes/world.js'), /from '\.\.\/systems\/loot\/lootPowers\.js'; import \{ setSetPowersVoice/, 'the game imports it beside the sets');
 });
 
 test('LOOT4: the wire carries a line that does something and refuses a forged one', () => {

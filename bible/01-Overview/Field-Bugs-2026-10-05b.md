@@ -27,12 +27,12 @@ and never the repository) was read for the two measures alone - the dungeons' th
 after and never learned the rule:
 
 - **The decorator** (HOME-VENDOR, 2026-10-03). The catalogue's Vendors are every person Daggerfall stands in a room
-  (`systems/decorCatalogue.js` collectDecor reads the rooms' `blockPeopleRecords`) - the Temple of Kynareth's pair, the
+  (`systems/decor/decorCatalogue.js` collectDecor reads the rooms' `blockPeopleRecords`) - the Temple of Kynareth's pair, the
   houses' and taverns' nude figures among them. The catalogue OFFERED them whatever the setting said, a placed one stood
   in the room as itself (`scenes/decorRoom.js` put), flew as itself when moved (`scenes/decorTool.js` the ghost) and
   showed as itself in the panel's lists (its thumbnails) - in every house, ship, online home, yard and hall, and to
   every visitor of a home whose owner placed one.
-- **The Arena's tiers** (ARENA2). The crowd's own table (`systems/arenaCrowd.js` CROWD_PEOPLE) seats 182.48 ("blond
+- **The Arena's tiers** (ARENA2). The crowd's own table (`systems/arena/arenaCrowd.js` CROWD_PEOPLE) seats 182.48 ("blond
   whore", among the entertainers) and 184.6 ("bare-breasted wench", among the commoners), drawn as themselves.
 
 **The fix.**
@@ -63,7 +63,7 @@ take a room's people and per-record sizes.
 ## DECOR-DUNGEON (1)
 
 **Why.** "Everything Daggerfall furnishes" (DECOR1) was read as the furniture of its houses: the scan read BLOCKS.BSA's
-town blocks (RMB) and their rooms alone (`systems/decorScan.js`, `systems/decorCatalogue.js` collectDecor). Whatever
+town blocks (RMB) and their rooms alone (`systems/decor/decorScan.js`, `systems/decor/decorCatalogue.js` collectDecor). Whatever
 Daggerfall stands only in its 187 dungeon blocks (RDB) was no piece.
 
 **The fix.** The scan reads the dungeon blocks too, where its host says which they are (`isDungeonBlock`). A dungeon
@@ -106,7 +106,7 @@ record renumbered every "Light" above it). Each place's pieces are now numbered 
 places' (a room's first, `DECOR_FROM`): the rooms' names are exactly as they were, the dungeons' continue them.
 
 **One constructor.** The interior host and the yards each built the scan's deps by hand; they now call one
-(`systems/decorScan.js` decorScanDeps), so what the scan grows is never remembered in one host and forgotten in the
+(`systems/decor/decorScan.js` decorScanDeps), so what the scan grows is never remembered in one host and forgotten in the
 other (THE ONE CONSTRUCTION SEAM). THE FOUR HOSTS: `worldModes.js` (rooms) and `world.js` (yards) WIRED, both through the
 constructor; `exterior.js` stands no decorator; `dungeonContext.js` stands no decorator - the dungeons are only read.
 
@@ -126,7 +126,7 @@ dead, AUDIT 05b A10).
 furniture, doors aside. Nothing Daggerfall stands in its streets was a piece: no fence, well, fountain, statue, bench,
 cart or lamp post, and none of the trees, bushes, flowers and rocks of the climate.
 
-**The catalogue** (`systems/decorCatalogue.js`):
+**The catalogue** (`systems/decor/decorCatalogue.js`):
 
 - **The street.** Each town block's own models (`misc3dObjectRecords`) - all but a mill (its sails turn), a city's gate,
   the town's board (GUILD1e: the hall's own piece) and the ladder (`isStreetPiece`) - and its flats, the block's own
@@ -207,12 +207,12 @@ THE FOUR HOSTS: `world.js` WIRED (its Low Poly Trees handed to the yards, their 
 ## DECOR-MODS (1)
 
 **Why.** DECOR1's law was "everything Daggerfall furnishes ... nothing carried over from a mod", and WD3 (2026-10-01) kept
-it when the town mods came: the scan reads BLOCKS.BSA past the world-data door (`systems/decorScan.js`), so the 1,400
+it when the town mods came: the scan reads BLOCKS.BSA past the world-data door (`systems/decor/decorScan.js`), so the 1,400
 interiors Beautiful Villages and Beautiful Cities redecorate would never renumber the catalogue nor leave it when a mod
 went off. The owner asked for the mods' furnishings. WD3's rule also took back what DECOR-MODFLATS (2026-09-27) had made
 placeable - Detailed Ships' own flats, which the scan had read out of its ships through the door.
 
-**The pieces** (`systems/decorMods.js`) are the port's own stand-ins for what the mods place (`world/townStandIns.js`,
+**The pieces** (`systems/decor/decorMods.js`) are the port's own stand-ins for what the mods place (`world/townStandIns.js`,
 `world/detStandIns.js`, `systems/detailedShips.js`), MEASURED over both packs and Detailed Ships' two ships rebuilt from
 the player's BLOCKS.BSA: 297 - 223 a room's (any of it stands inside: offered in every room, and a yard) and 74 a
 street's (all of it stands outside: a yard's alone) - each counted as the mods place it (the panel's "most common

@@ -13,7 +13,7 @@
 //
 // THE READER COULD NOT NAME IT. DaggerfallUnityItemMCP.MagicPowers
 // (:345-363) finds a CastWhen* spell in the WHOLE of SPELLS.STD and prints
-// its name; systems/itemPowers.js looked in the item maker's list for
+// its name; systems/item/itemPowers.js looked in the item maker's list for
 // THAT power - and the maker offers Slowfalling only as Cast When Held -
 // so the lookup missed and the box printed MagicPowers' not-found word.
 import { test } from 'node:test';
@@ -23,10 +23,10 @@ import { join } from 'node:path';
 import { MAGIC_ITEM_RECORD_SIZE, ENCHANTMENT_TYPES as T, readMagicDef } from '../src/formats/magicDef.js';
 import { SPELL_RECORD_SIZE, readSpellsStd, spellsByIndexMap } from '../src/formats/spellsStd.js';
 import { loadMagicRegistries } from '../src/scenes/shared.js';
-import { createRegularMagicItem, setSpellRecordsByIndex } from '../src/systems/loot.js';
-import { magicPowersLines } from '../src/systems/itemPowers.js';
-import { resolveItemName } from '../src/systems/itemInfo.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { createRegularMagicItem, setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
+import { magicPowersLines } from '../src/systems/item/itemPowers.js';
+import { resolveItemName } from '../src/systems/item/itemInfo.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { setDefaultEnchantCtx, DURABILITY_LOSS_ON_USE } from '../src/systems/enchantments.js';
 import { useItem } from '../src/systems/useItem.js';
 import { isEnchanted } from '../src/systems/inventory.js';

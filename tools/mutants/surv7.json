@@ -102,7 +102,7 @@
  },
  {
   "name": "SURV7-the-load-aligns-nothing",
-  "file": "src/systems/save.js",
+  "file": "src/systems/save/save.js",
   "old": "    alignSurvival(entity, own, own);\n",
   "new": "",
   "tests": [

@@ -18,7 +18,7 @@
 // dungeon rest spawn needs. RE1 carries the CALL SITES' arguments as
 // data, because the three encounter arms do not pass the same things:
 // the dungeon one alone clears lineOfSightCheck.
-import { noticeChance, noticeRoll } from '../src/systems/wildAlert.js';   // WILD-ALERT: the wanderer's first check
+import { noticeChance, noticeRoll } from '../src/systems/wild/wildAlert.js';   // WILD-ALERT: the wanderer's first check
 import { SIGHT_RADIUS } from '../src/characters/enemyMotor.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

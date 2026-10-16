@@ -1,7 +1,7 @@
 [
  {
   "name": "REST6-the-switch-shut-again",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "export const REST_ITEMS_ONLINE = true;",
   "new": "export const REST_ITEMS_ONLINE = false;",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "REST6-offline-without-the-arc",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "(online ? restItemsOnline() : survivalOn())",
   "new": "(online ? restItemsOnline() : true)",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "REST6-the-bedroll-stacks",
-  "file": "src/systems/restItemRows.js",
+  "file": "src/systems/rest/restItemRows.js",
   "old": "  row(REST_ITEM.Bedroll, 'Bedroll', 2.5, BEDROLL_NIGHTS, 80, 1, [204, 8], false),",
   "new": "  row(REST_ITEM.Bedroll, 'Bedroll', 2.5, BEDROLL_NIGHTS, 80, 1, [204, 8], true),",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "REST6-the-tonic-half-a-sip",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "Math.round(max * TONIC_FATIGUE)",
   "new": "Math.round(max * TONIC_FATIGUE / 2)",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "REST6-the-tonic-forgets-the-debt",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "    s.sleepDebt = Math.max(0, (s.sleepDebt ?? 0) - TONIC_SLEEP_HOURS);\n",
   "new": "",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "REST6-the-tonic-never-runs-out",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  takeOne(item, list);\n  return { kind: 'text', text: sleep ? REST_ITEM_TEXT.tonicSleep : REST_ITEM_TEXT.tonic };",
   "new": "  return { kind: 'text', text: sleep ? REST_ITEM_TEXT.tonicSleep : REST_ITEM_TEXT.tonic };",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "REST6-the-salts-wasted-on-the-rested",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  if (sleepStage(s.sleepDebt ?? 0) === 'rested') return { kind: 'text', text: REST_ITEM_TEXT.saltsNotTired };",
   "new": "",
   "tests": [
@@ -83,7 +83,7 @@
  },
  {
   "name": "REST6-the-draught-twice-a-night",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  if (s.draught) return { kind: 'text', text: REST_ITEM_TEXT.draughtHeld };\n",
   "new": "",
   "tests": [
@@ -111,7 +111,7 @@
  },
  {
   "name": "REST6-the-candle-restores-all",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "Math.round(max * CANDLE_MAGICKA)",
   "new": "max",
   "tests": [
@@ -120,7 +120,7 @@
  },
  {
   "name": "REST6-the-candle-never-burns-down",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  const gone = spendCharge(c.item, c.list);",
   "new": "  const gone = false;",
   "tests": [
@@ -129,7 +129,7 @@
  },
  {
   "name": "REST6-the-candle-stays-lit",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  _candle = null;\n  if (!c || !entity) return null;",
   "new": "  if (!c || !entity) return null;",
   "tests": [
@@ -242,7 +242,7 @@
  },
  {
   "name": "REST6-no-pile-ever",
-  "file": "src/systems/restItems.js",
+  "file": "src/systems/rest/restItems.js",
   "old": "  for (const [t, pct] of chances) if (rolls() * 100 < pct)",
   "new": "  for (const [t, pct] of chances) if (rolls() * 100 < 0)",
   "tests": [
@@ -251,7 +251,7 @@
  },
  {
   "name": "REST6-the-card-says-nothing",
-  "file": "src/systems/itemInfo.js",
+  "file": "src/systems/item/itemInfo.js",
   "old": "  else if (isRestItem(item)) for (const text of restItemLines(item)) out.push({ text, center: true });   // REST6\n",
   "new": "",
   "tests": [

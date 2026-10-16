@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseCard, newHand, legalActions, viewFor, act, freshDeck, shuffleDeck } from '../src/net/cardLaw.js';
-import { EQUITY_SAMPLES, PATRON_TEMPERS, TEMPER_NAMES, unit, chenScore, equity, patronDecision } from '../src/systems/cardPatrons.js';
+import { EQUITY_SAMPLES, PATRON_TEMPERS, TEMPER_NAMES, unit, chenScore, equity, patronDecision } from '../src/systems/card/cardPatrons.js';
 
 const C = (s) => s.split(' ').map(parseCard);
 const seeded = (seed = 2463534242) => { let x = seed >>> 0; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; return x >>>= 0; }; };

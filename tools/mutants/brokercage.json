@@ -206,7 +206,7 @@
   },
   {
     "name": "BROKER-CAGE-the-cage-site-the-gates-standing",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      const s = c.site ?? siteOf(c.t.day);",
     "new": "      const s = c.site;",
     "tests": [
@@ -215,7 +215,7 @@
   },
   {
     "name": "BROKER-CAGE-the-omens-midnight-kept",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (!c?.t || !cageStands(c.t.day, now())) return null;",
     "new": "      if (!c?.t) return null;",
     "tests": [
@@ -224,7 +224,7 @@
   },
   {
     "name": "BROKER-CAGE-a-cage-site-a-frame",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (cage?.day !== c.t.day || cage.px !== s.px || cage.py !== s.py) cage = ",
     "new": "      cage = ",
     "tests": [

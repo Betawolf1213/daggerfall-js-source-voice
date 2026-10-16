@@ -11,7 +11,7 @@ import { calculateCastCost } from '../src/systems/spellcost.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { MISSILE_SPEED, MISSILE_LIFESPAN_S } from '../src/systems/spellcast.js';
 import { SpellCastAnim, RELEASE_FRAME, CAST_FRAME_PERIOD, CAST_RECOVER_S } from '../src/combat/fpsSpellCasting.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';   // CAST-SPEED: RecastSpell's book
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';   // CAST-SPEED: RecastSpell's book
 
 const damageEffect = (mag = 20) => ({
   type: 4, subType: 0,

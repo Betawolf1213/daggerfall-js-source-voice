@@ -21,7 +21,7 @@
 // reads `On`; `4` reads `Beautiful`; `0.5` reads `50%`. The raw
 // `[Section] Key` appears in exactly one place - the detail dialog -
 // for the player who wants it.
-import { DEFAULTS, tierOf, UNAVAILABLE } from '../systems/settings.js';
+import { DEFAULTS, tierOf, UNAVAILABLE } from '../systems/settings/settings.js';
 import { READOUT } from './settingsCopy.js';
 import { FRAME_CAP_FLOOR, FRAME_CAP_STOPS } from '../systems/frameCap.js';   // FPS-CAP1: the cap's floor and the rates its row walks
 import { localizedText, localizedTextList, TextCollections } from '../systems/textManager.js';   // L10N3d: DFU's words, read in the player's language

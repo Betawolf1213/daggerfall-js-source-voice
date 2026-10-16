@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TopicTree, QUEST_INFO_RESOURCE_TYPE } from '../src/systems/topicTree.js';
 import { AnswerPipeline, TALK_STRINGS } from '../src/systems/answerPipeline.js';
-import { expandRandomTextRecord } from '../src/systems/talkMacros.js';
+import { expandRandomTextRecord } from '../src/systems/talk/talkMacros.js';
 import { discoverBuilding, discoveredBuildings, undiscoverBuilding, restoreDiscovery } from '../src/systems/discovery.js';
 import { stampResidenceQuestNames } from '../src/ui/exteriorAutomapWindow.js';
 import { createTownSheet } from '../src/ui/townSheet.js';
@@ -84,9 +84,9 @@ test('DISC10-B: "Where is <person>" answered on the 7332 map arm puts their ques
 // and Cargo's trailing wagon (41214) - and both ship on. Driven through the REAL HCC pool and runtime and the REAL
 // EOTB cart behind the view seam, in world.js's frame order (mwViewFrame, the pool's frame, then the two draws).
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { createHorseCartRuntime } from '../src/systems/horseCart.js';
-import { TRANSPORT, WAGON_MODEL_ID } from '../src/systems/horseCartLaw.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { createHorseCartRuntime } from '../src/systems/horse/horseCart.js';
+import { TRANSPORT, WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { syntheticWagon41214 } from './hccModel.mjs';
 import * as mw from '../src/player/mwView.js';
 import { eotbWagon, createEotbWagon, WAGON_MODEL, wagonHoverName } from '../src/player/eotbWagon.js';

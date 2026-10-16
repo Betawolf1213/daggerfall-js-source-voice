@@ -15,7 +15,7 @@ import { seatTopByte } from '../src/player/seatPose.js';
 import { validLook } from '../src/net/wire.js';
 import { peerStubEntity } from '../src/net/remotePlayers.js';
 import { familyShown, createFamilyBodies } from '../src/world/familyBodies.js';
-import { CardTableSession } from '../src/systems/cardTableSession.js';
+import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

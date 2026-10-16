@@ -6,7 +6,7 @@ import { srand, randomRangeInclusive } from '../src/formats/dfRandom.js';
 import { ENCOUNTER_TABLES } from '../src/characters/encounterTables.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import {
   chooseRandomEnemyType, collectDungeonEnemies, makeSlotRng, alternateRandomEnemyType, RANDOM_MONSTER_VARIANCE,
 } from '../src/characters/dungeonEnemies.js';

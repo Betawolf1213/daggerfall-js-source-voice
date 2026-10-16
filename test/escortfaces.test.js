@@ -211,7 +211,7 @@ test('FE1 hud: drawn on EVERY branch - the large-HUD force-off never names the f
 });
 
 test('FE1 save: the envelope carries escortingFaces beside quest/talk/travelMap', () => {
-  const save = read('src/systems/save.js');
+  const save = read('src/systems/save/save.js');
   assert.match(save, /escortingFaces: getEscortFacesSaveData\(\),/, 'SaveLoadManager.cs:869');
   assert.match(save, /restoreEscortFacesSaveData\(extras\?\.escortingFaces \?\? null\);/,
     'the restore arm, null clearing');

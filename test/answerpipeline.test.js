@@ -33,7 +33,7 @@ import {
 import {
   ANSWERS_TO_DIRECTIONS, ANSWERS_TO_NON_DIRECTIONS, CHANCE_TO_REVEAL_LOCATION_ON_MAP,
   DIRECTION_TEXT_ID, MAP_REVEAL_TEXT_ID, KNOWLEDGE_MODIFIERS,
-} from '../src/systems/talkTopics.js';
+} from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { srand, randomRangeInclusive } from '../src/formats/dfRandom.js';   // AUDIT-TALK: the knowledge roll's boundary, pinned absolutely
 

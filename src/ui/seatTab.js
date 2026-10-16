@@ -22,7 +22,7 @@
 // levers, its Fealty and Pacts - AUDIT 657 B10); the holder's orders; the Works; and the Chronicle.
 //
 // Every act goes through the window's one-at-a-time door (`ui.run`), and the standings are read again after each.
-import { HALL_OF_RECORDS_SHUT } from '../systems/onlineHomes.js';   // AUDIT-SEATS: the Hall of Records' words where it cannot be read
+import { HALL_OF_RECORDS_SHUT } from '../systems/online/onlineHomes.js';   // AUDIT-SEATS: the Hall of Records' words where it cannot be read
 import { accountRefusalText } from '../net/accountClient.js';
 import {
   seatInfoLine, seatWeekLine, seatSpanWords, seatStandingLine, seatNoStandingsLine, seatMineLines, seatTributeLine, seatMay,

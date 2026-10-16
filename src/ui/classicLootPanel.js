@@ -20,7 +20,7 @@
 import { APP_ROOT } from '../systems/appRoot.js';
 import { NATIVE_W, NATIVE_H, drawImgCrop, drawRect } from './nativePanel.js';
 import { drawText, measureText } from './text.js';
-import { getString } from '../systems/settings.js';
+import { getString } from '../systems/settings/settings.js';
 import { parseHexColor, DEFAULT_TOOLTIP_TEXT_BG, DEFAULT_TOOLTIP_TEXT_FG, TOOLTIP_MARGIN } from './toolTip.js';
 import { activeUiPack } from '../systems/uiPack.js';
 import { PLAQUE_MINE_TAG } from '../systems/roomLoot.js';   // PARTY-LOOT: a row of this player's own bonus says so

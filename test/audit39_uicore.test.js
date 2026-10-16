@@ -23,7 +23,7 @@ import {
   lastHealthLost, lastHealthLostPercent, _resetHudVitals,
 } from '../src/ui/hudVitals.js';
 import { drawHud } from '../src/ui/hud.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { setInteractionMode } from '../src/player/interactionMode.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

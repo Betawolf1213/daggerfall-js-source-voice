@@ -8,12 +8,12 @@
 // that - so it is RETIRED, off the pane, and a saved value is let go once.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { GUILDS, calculateNewRank, isEligibleToJoin, numHighLowSkills } from '../src/systems/guilds.js';
-import { TRAINING_SKILLS, trainingSkills } from '../src/systems/guildServices.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+import { GUILDS, calculateNewRank, isEligibleToJoin, numHighLowSkills } from '../src/systems/guild/guilds.js';
+import { TRAINING_SKILLS, trainingSkills } from '../src/systems/guild/guildServices.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { MOD_SETTINGS, RETIRED_KEYS, modSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import * as rr from '../src/systems/rrRealism.js';
+import * as rr from '../src/systems/roleplayRealism/rrRealism.js';
 
 const FG = GUILDS.FightersGuild;
 const storeWith = (rep) => {

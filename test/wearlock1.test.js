@@ -12,8 +12,8 @@ import {
 } from '../src/ui/enhancedInventory.js';
 import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
-import { isLocked, setLocked, toggleLocked, lockRefuses, lockedText, LOCK_CLOSES, LOCKED_LINE } from '../src/systems/itemLock.js';
-import { ITEM_FIELDS, validItemField } from '../src/systems/itemFields.js';
+import { isLocked, setLocked, toggleLocked, lockRefuses, lockedText, LOCK_CLOSES, LOCKED_LINE } from '../src/systems/item/itemLock.js';
+import { ITEM_FIELDS, validItemField } from '../src/systems/item/itemFields.js';
 import { ITEM_FRAME_CSS, LOCK_GLYPH_SVG } from '../src/ui/enhancedPlusStyle.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 

@@ -18,7 +18,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { readMagicDef, MAGIC_ITEM_RECORD_SIZE } from '../src/formats/magicDef.js';
-import { createArtifact } from '../src/systems/loot.js';
+import { createArtifact } from '../src/systems/loot/loot.js';
 import { DFU_MAGIC_ITEMS } from './dfuMagicItems.mjs';
 import { createCharacter } from '../src/systems/chargen.js';
 import { equipItem, unequipItem } from '../src/systems/equip.js';
@@ -31,7 +31,7 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { setEnemySpells } from '../src/systems/enemySpells.js';
 import { liveStat, MAX_STAT_VALUE } from '../src/systems/statMods.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 // ── DFU's MAGIC.DEF as its bytes (the tree carries no ARENA2): MagicItemTemplates.txt's rows, 62 bytes each ──

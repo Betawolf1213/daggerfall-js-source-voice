@@ -20,7 +20,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { snapshotPlayer, restorePlayer, dungeonPixelFor } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, dungeonPixelFor } from '../src/systems/save/save.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -76,7 +76,7 @@ test('MAC6 #1: the hosts by source - the dungeon host\'s composer names its pixe
   assert.match(m, /restoreDungeonSave\(extras\) \{\s*if \(mode !== 'dungeon' \|\| !dungeonCtx\) return false;\s*(?:\/\/[^\n]*\n\s*)*return dungeonCtx\.restoreSaved\(extras, placeLoadedPlayer, \{ session: false \}\) \?\? true;[^\n]*\s*\},/, 'the mode machine forwards with the key route\'s applier and no second session restore, and hands the rebuilds back');
   assert.match(m, /routeKey\(e, dungeonCtx, placeLoadedPlayer, keys\)/, 'the same applier the key route hands the context (AUDIT 27h S2: a load drops the autorun latch)');
   const w = rd('src/scenes/world.js');
-  assert.match(w, /import \{ [^}]*restoreSessionState, dungeonPixelFor \} from '\.\.\/systems\/save\.js';/);
+  assert.match(w, /import \{ [^}]*restoreSessionState, dungeonPixelFor \} from '\.\.\/systems\/save\/save\.js';/);
   assert.match(w, /\} else if \(String\(extras\.locationKey \?\? ''\)\.startsWith\('dungeon:'\)\) \{/, 'the dungeon arm, before "saved elsewhere"');
   assert.match(w, /const pixel = extras\.dungeon\?\.pixel \?\? dungeonPixelFor\(extras\.locationKey, locationIndex\.values\(\), \(mt\) => longitudeLatitudeToMapPixel\(mt\.longitude, mt\.latitude\)\);/, 'the envelope\'s pixel, or the finder\'s for a save from before it');
   assert.match(w, /await _teleportToPixel\(pixel\.x, pixel\.y, null, \{ modEvent: 'load' \}\);[^\n]*\n\s*const entered = await \(modes\?\.startInDungeon\?\.\(\{ locationKey: extras\.locationKey, fromLoad: true \}\) \?\? false\);[^\n]*\n\s*if \(entered\) \{ playerSpawned = true; await modes\?\.restoreDungeonSave\?\.\(extras\); \}/, 'TeleportToCoordinates, StartDungeonInterior, RestorePosition - DFU\'s order (MAP-KEEP: StartDungeonInterior on the automap\'s load arm; AUDIT OH-F B1: RestoreEnemyData whole before the mod loop)');

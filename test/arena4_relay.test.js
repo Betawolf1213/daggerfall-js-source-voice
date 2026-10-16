@@ -14,7 +14,7 @@ import {
   pairQueue, ARENA_BUCKET_RATE,
 } from '../src/net/arenaLaw.js';
 import { parseClient, relaySupportsArena, RELAY_VERSION } from '../src/net/wire.js';
-import { COUNT_MS, callMs, WALK_MAX_MS, END_HOLD_MS, VERDICT_MS, HEAL_HOLD_MS } from '../src/systems/arenaBout.js';
+import { COUNT_MS, callMs, WALK_MAX_MS, END_HOLD_MS, VERDICT_MS, HEAL_HOLD_MS } from '../src/systems/arena/arenaBout.js';
 
 const { subtle } = globalThis.crypto;
 const C = ARENA_FLOOR_CENTRE;

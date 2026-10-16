@@ -23,7 +23,7 @@ import {
   isSmallerDungeon, smallerDungeonsStamp, needsStartWarp, isMediumDungeon, MEDIUM_DUNGEONS_STATE, onlineDungeonSize, builtDungeonSize,
 } from '../src/world/smallerDungeons.js';
 import { FEATURES, checkFeature, featureForControl } from '../src/systems/features.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

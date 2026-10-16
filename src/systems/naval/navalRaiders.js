@@ -23,7 +23,7 @@
 
 import { SHIP_CLASSES } from './navalShips.js';
 import { seededRng } from '../seaRaiders.js';
-import { chaseYields } from '../travelBands.js';   // TV7b: a chase two players share, kept by the lower id - one law
+import { chaseYields } from '../travel/travelBands.js';   // TV7b: a chase two players share, kept by the lower id - one law
 
 /** A raider within this of the player (m) is stood as a ship; one stood goes past RAIDER_DROP_M unless it fights. */
 export const RAIDER_STAND_M = 1200;

@@ -17,7 +17,7 @@ import { alignBillboardToGround, alignControllerToGround } from '../src/world/gr
 import { enemyControllerHeight } from '../src/characters/enemyAnchor.js';
 import { WOD_SPAWN_TYPE, WOD_ENEMY_ID } from '../src/world/wodLocationObjects.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { DUNGEON_LOOT_KEYS } from '../src/systems/loot.js';
+import { DUNGEON_LOOT_KEYS } from '../src/systems/loot/loot.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

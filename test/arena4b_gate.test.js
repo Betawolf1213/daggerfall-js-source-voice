@@ -11,14 +11,14 @@ import { readFileSync } from 'node:fs';
 import { createArenaGate, recruiterChoiceOnline } from '../src/scenes/arenaGate.js';
 import { createArenaOnline, CLIMB_WAIT_MS } from '../src/scenes/arenaOnline.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { arenaLadderOf, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
 import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
 import { importReceiptKey } from '../src/net/gateReceipt.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { newArenaLadder, LADDER_TIERS } from '../src/systems/arenaLadder.js';
-import { hallLinesOnline } from '../src/systems/arenaBoard.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
+import { hallLinesOnline } from '../src/systems/arena/arenaBoard.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -23,14 +23,14 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const V = await import('../src/systems/revenantVoice.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const V = await import('../src/systems/revenant/revenantVoice.js');
 const C = await import('../src/ui/revenantCard.js');
 const P = await import('../src/ui/revenantPage.js');
 const H = await import('../src/systems/harmMark.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { hurtPlayer, setAvoidDeathHook } = await import('../src/characters/playerEntity.js');
-const { setStruck, _resetSetPowersForTests } = await import('../src/systems/sigilSetPowers.js');
+const { setStruck, _resetSetPowersForTests } = await import('../src/systems/sigil/sigilSetPowers.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
 const { ENEMY_BASICS, enemyDisplayName } = await import('../src/characters/enemyBasics.js');
@@ -289,7 +289,7 @@ test('REVENANT-HARM: a death no blow names goes to the foe whose harm last reach
   // the seams that leave the mark
   assert.match(read('src/scenes/hostMagic.js'), /if \(caster\?\.entity && caster\.entity !== playerEntity && !caster\.entity\.isPlayer\) markPlayerHarm\(caster\.entity\);[^\n]*\n\s*const r = applySpell\(spell, casterLevel, playerEntity, playerSinks, rolls, caster, ctx\);/);
   assert.match(read('src/systems/effects.js'), /if \(n > 0 && target\?\.isPlayer && a\.caster && !a\.caster\.isPlayer\) markPlayerHarm\(a\.caster\);/);
-  assert.match(read('src/systems/revenant.js'), /registerPlayerStruckListener\('revenant', \(attacker, target\) => \{\s*\n\s*if \(target\?\.isPlayer && !target\.peer && attacker && !attacker\.isPlayer\) markPlayerHarm\(attacker, \{ ms: HARM_MARK_STRUCK_MS \}\);/);
+  assert.match(read('src/systems/revenant/revenant.js'), /registerPlayerStruckListener\('revenant', \(attacker, target\) => \{\s*\n\s*if \(target\?\.isPlayer && !target\.peer && attacker && !attacker\.isPlayer\) markPlayerHarm\(attacker, \{ ms: HARM_MARK_STRUCK_MS \}\);/);
   assert.doesNotMatch(read('src/systems/harmMark.js'), /^import /m, 'a leaf');
 });
 

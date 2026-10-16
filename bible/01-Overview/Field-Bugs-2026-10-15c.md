@@ -29,7 +29,7 @@ under the ceiling it had before FB1015's raise (`01-Overview/Host-Split.md`).
 ## SLAUGHTER-BOX: a crate's foe stands on the floor, never a swimmer (1)
 
 `src/systems/searchables.js` pickRosterFoe; `src/characters/dungeonEnemies.js` WATER_SPECIES (exported, the one home);
-`src/systems/wildDungeons.js` (its own `new Set([11, 41, 42])` retired for it).
+`src/systems/wild/wildDungeons.js` (its own `new Set([11, 41, 42])` retired for it).
 
 FOUND. SEARCH1 (our own - DFU has no searchables) wakes two foes a third of the time a chest or a crate is searched, and
 a chest's or a crate's draws from the dungeon's layout roster (`collectDungeonEnemies`). That roster holds RDBLayout's
@@ -140,7 +140,7 @@ CHANGED. The Arrow's weight is the classic Arrow's (`ITEM_TEMPLATES`). The bench
 
 ## QUEST-RESIDENCE: a home a quest names says the quest's name (9)
 
-`src/systems/onlineHomes.js` homeDoorTitle; `src/scenes/worldModes.js` the door's plaque and the info click.
+`src/systems/online/onlineHomes.js` homeDoorTitle; `src/scenes/worldModes.js` the door's plaque and the info click.
 
 FOUND. N0B00Y09 "Research Notes" sets its scholar in `Place _scholar_home_ remote house` - a nearby town's house, named
 "The <surname> Residence". Before QUEST-HOME (main, 2026-10-15) `isPlayerHome` asked `homeAt`, which knew no town the

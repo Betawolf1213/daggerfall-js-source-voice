@@ -280,7 +280,7 @@
   },
   {
     "name": "SD26-T9-the-marks-line-dashed",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "${E.stone}, its ${E.sig.replace(/^The /, '')}, under",
     "new": "${E.stone} - ${sdNameIn(E.sig)} - under",
     "tests": [

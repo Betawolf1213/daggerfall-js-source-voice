@@ -13,7 +13,7 @@
 import { computeCombatStats, signed } from '../combat/combatStats.js';
 import { dollArmour, overallArmour, tenth, PART_NAMES } from './armourCard.js';
 import { SKILL_NAMES, SKILLS } from '../systems/skills.js';
-import { itemLongName } from '../systems/itemInfo.js';
+import { itemLongName } from '../systems/item/itemInfo.js';
 import { PIXEL_STACK } from './pixelifyFive.js';   // the Enhanced Plus face: Pixelify Sans, its 5 from Silkscreen
 import { temperatureStatRows, boonStatRows } from './temperatureCard.js';   // TEMP-UI: the felt temperature's parts; AUDIT SURV-BOONS C13: and the boons
 import { savingChance, elementalResistanceChance, ELEMENTS, EFFECT_FLAGS } from '../systems/spellcast.js';   // STATS-RESIST: the saving throw's own law

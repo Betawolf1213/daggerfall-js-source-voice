@@ -15,7 +15,7 @@ import { TEMPLATE } from '../src/systems/survival/food.js';
 import { CAMP_TEXT } from '../src/systems/survival/camp.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setSharedClock, setWorldMinutes, setOwnMinutes } from '../src/systems/worldTick.js';
-import { createRestItem, REST_ITEM, useCandle, litCandle, meditate, snuffCandle, useSalts, useDraught, draughtTaken, REST_ITEM_TEXT } from '../src/systems/restItems.js';
+import { createRestItem, REST_ITEM, useCandle, litCandle, meditate, snuffCandle, useSalts, useDraught, draughtTaken, REST_ITEM_TEXT } from '../src/systems/rest/restItems.js';
 import { newSurvival } from '../src/systems/survival/needs.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { buyItemPrice } from '../src/systems/tradeModes.js';

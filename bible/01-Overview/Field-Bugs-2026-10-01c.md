@@ -41,7 +41,7 @@ mod's height (`world/wodLocationObjects.js` `isWodShrub`).
 
 ## PARTY-READY: the ready-up stays on screen (2)
 
-The ready-up is PARTY-TRAVEL's round (`systems/partyTravel.js`, `06-Systems/Online-Arc.md` PARTY-TRAVEL and PARTY-READY):
+The ready-up is PARTY-TRAVEL's round (`systems/party/partyTravel.js`, `06-Systems/Online-Arc.md` PARTY-TRAVEL and PARTY-READY):
 the leader chooses a destination on the travel map, the gathered members are asked, and the party sets out when nobody
 gathered is still waiting. It has three things on screen - the leader's HUD label, a member's Yes/No box and the Party
 tab's Journey block (the round's count and Call off; a member's Ready and Stay behind) - and the round took them away

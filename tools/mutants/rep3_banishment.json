@@ -37,7 +37,7 @@
   },
   {
     "name": "REP3-the-term-dropped-on-save",
-    "file": "src/systems/regionConditions.js",
+    "file": "src/systems/region/regionConditions.js",
     "old": "    ...(Number.isFinite(r.banishedUntil) ? { b: r.banishedUntil } : {}),",
     "new": "    ...({}),",
     "tests": [

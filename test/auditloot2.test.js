@@ -15,12 +15,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import '../src/systems/lootPowers.js';   // the kit registers its folds at import - the robes' degrees among them
+import * as LR from '../src/systems/loot/lootRarity.js';
+import '../src/systems/loot/lootPowers.js';   // the kit registers its folds at import - the robes' degrees among them
 import * as RF from '../src/systems/reforge.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { equipItem } from '../src/systems/equip.js';
 import { computeEntityMods, entityResistMod } from '../src/systems/entityMods.js';
@@ -31,9 +31,9 @@ import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE } from '../src/player/motor.js
 import { mintPiece, asMinted } from '../src/systems/smithItems.js';
 import { MASTERWORK } from '../src/net/recipeLaw.js';
 import { capLootList } from '../src/systems/foeLootCap.js';
-import { POTION_TEMPLATE_INDEX } from '../src/systems/loot.js';
+import { POTION_TEMPLATE_INDEX } from '../src/systems/loot/loot.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
-import { noteTaken, droughtOf, _setDroughtForTests } from '../src/systems/lootDrought.js';
+import { noteTaken, droughtOf, _setDroughtForTests } from '../src/systems/loot/lootDrought.js';
 import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
 import { mountReforgeWindow, EVERY_MAGIC_ASK, UNSET_ASK, GEMS_NONE } from '../src/ui/reforgeWindow.js';
 import { REFORGE_CSS } from '../src/ui/enhancedPlusStyle.js';
@@ -427,5 +427,5 @@ test('AUDIT LOOT II C5: a sold piece\'s junk mark ends at the shelf - both of th
   const wm = read('src/scenes/worldModes.js');
   const pushes = [...wm.matchAll(/shelf\.items\.push\(it\);[^\n]*\n\s*setJunk\(it, false\);/g)];
   assert.equal(pushes.length, 2, 'the counter\'s sale and the keyed shelf\'s');
-  assert.match(wm, /import \{ setJunk \} from '\.\.\/systems\/itemJunk\.js';/);
+  assert.match(wm, /import \{ setJunk \} from '\.\.\/systems\/item\/itemJunk\.js';/);
 });

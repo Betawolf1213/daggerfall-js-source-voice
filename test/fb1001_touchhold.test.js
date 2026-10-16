@@ -9,7 +9,7 @@
 //     held); the Controller bindings window has its row; the professions' prompts name the pad's button while it is in
 //     hand (scenes/world.js actKeyWord);
 //   - THE SKINNING KNIFE's Use from the hotbar or a quick slot is E at a body, and holds the knife - the line drawn with
-//     no key held, as the Sickle's Use holds the steady hand (scenes/huntHost.js, systems/foragingInstall.js).
+//     no key held, as the Sickle's Use holds the steady hand (scenes/huntHost.js, systems/foraging/foragingInstall.js).
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -20,11 +20,11 @@ import { attachTouch } from '../src/ui/touch.js';
 import { setBindings, held } from '../src/ui/input.js';
 import { createBindings, setBinding, getBinding, resetDefaults } from '../src/systems/inputActions.js';
 import { setPref, getPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { applyPlusPadLayout, ensurePlusPadLayout, plusDpadMap, PLUS_PAD_LAYOUT, PLUS_PAD_LAYOUT_VERSION } from '../src/ui/plusPad.js';
 import { PLUS_BIND_ROWS } from '../src/ui/plusPadBinds.js';
-import { installForaging, setForagingHost, professionToolLine, PROFESSION_TOOL_HOW } from '../src/systems/foragingInstall.js';
+import { installForaging, setForagingHost, professionToolLine, PROFESSION_TOOL_HOW } from '../src/systems/foraging/foragingInstall.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import * as qs from '../src/systems/quickslots.js';
 import { createBodyStamps, bodiesOf, huntKind, KNIFE_HAND } from '../src/scenes/huntHost.js';

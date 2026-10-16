@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import {
   travellerKin, playerShown, markShown, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, cycleTravelViewNodeKm,
   TV_KIN_COLORS, TV_WHO_GROUPS, TV_RENOWN_STEPS, TV_NODE_KM_STEPS, TV_WHO_TEXT, _resetTravelViewFilters,
-} from '../src/systems/travelViewFilters.js';
+} from '../src/systems/travel/travelViewFilters.js';
 import { FRIEND_CSS } from '../src/net/social.js';
 import { hasCarriageGate } from '../src/world/immersiveTravelGates.js';
 import { wheelPath, WHEEL_SPOKES } from '../src/ui/carriageWheel.js';

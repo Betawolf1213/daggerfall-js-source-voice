@@ -14,7 +14,7 @@ import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { localClickDecision } from '../src/systems/tradeModes.js';
 import { CANNOT_REMOVE_ITEM_TEXT } from '../src/systems/createItem.js';
 import { CELL_X } from '../src/ui/itemScroller.js';
-import { effectiveSettings, setValue, _resetForTests } from '../src/systems/settings.js';
+import { effectiveSettings, setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const recorder = () => ({
   quads: [],

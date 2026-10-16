@@ -23,8 +23,8 @@ import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, V
 import { FIRE_CAST_ID } from '../world/gateBoss.js';
 import { loseGlContext, onPageGone } from '../render/glRelease.js';   // GL-LEAK: its context let go with it, and as the page goes
 import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../render/sdVeil.js';
-import { midiNote } from '../systems/gateScore.js';
-import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../systems/sdScore.js';
+import { midiNote } from '../systems/gate/gateScore.js';
+import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../systems/superDungeon/sdScore.js';
 
 /** Over the world and its HUD (z 4, appended after .hud, which it ties and follows - ui/nameLayer.js AUDIT NAME1 F4
  *  maps the page's layers), under the chat and the party (5): a word said as the fire closes is still read. No pointer. */
@@ -62,7 +62,7 @@ export const VEIL_HOUR_HOLD_S = Object.freeze({ [SD_VEIL_MODE.in]: 0, [SD_VEIL_M
 export const VEIL_HOUR_MEND_S = 1.2;
 /** THE HOUR'S SOUNDS: the blades ratchet in (the Orrery's gear's clunk, struck at each third of the closing, rising),
  *  the bell tolls as they shut, a quarter strikes as the hand passes each quarter of its dial - the broken quarters
- *  (systems/sdScore.js HOUR_CHIME, the fourth on its wrong F sharp) going in, the mended (HOUR_CHIME_MENDED) going
+ *  (systems/superDungeon/sdScore.js HOUR_CHIME, the fourth on its wrong F sharp) going in, the mended (HOUR_CHIME_MENDED) going
  *  home - and the Concord's chime as it opens; forced, the bell and a shattering. */
 const chimePitch = (note) => 0.7 * 2 ** ((midiNote(note) - midiNote('C5')) / 12);
 export const VEIL_HOUR_CUES = Object.freeze({

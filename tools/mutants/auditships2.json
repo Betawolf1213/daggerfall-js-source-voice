@@ -257,7 +257,7 @@
   },
   {
     "name": "AUDIT2-XC4-venom-uncarried",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "export const venomHurt = (whole, k = 1, carry = null) => shared(whole, k, carry, 'venom');",
     "new": "export const venomHurt = (whole, k = 1, carry = null) => shared(whole, k, null, 'venom');",
     "tests": [

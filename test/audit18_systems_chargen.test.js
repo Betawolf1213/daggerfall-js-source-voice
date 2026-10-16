@@ -9,13 +9,13 @@ import { join } from 'node:path';
 import { finishChargen } from '../src/systems/chargenSession.js';
 import { levelUpSkillSum, calculatePlayerLevel, raiseSkills } from '../src/systems/advancement.js';
 import { applyBiographyEffect, generateBackstory } from '../src/systems/biography.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { RACE_TEMPLATES, raceByKey } from '../src/systems/races.js';
 import {
   jumpSpeedMultiplier, SKILLS, SKILL_COUNT,
   ATHLETICISM_MULTIPLIER, IMPROVED_ATHLETICISM_MULTIPLIER,
 } from '../src/systems/skills.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { ClassFile } from '../src/formats/classFile.js';
 import { TextRsc } from '../src/formats/textRsc.js';
 import { parseBiog } from '../src/formats/biogFile.js';
@@ -26,7 +26,7 @@ const skipReal = !ARENA2 || !existsSync(ARENA2)
   : false;
 const arena = (name) => new Uint8Array(readFileSync(join(ARENA2, name)));
 import { applyHeadlessChargen } from '../src/systems/chargenSession.js';
-import { getReputation } from '../src/systems/factionRep.js';
+import { getReputation } from '../src/systems/faction/factionRep.js';
 
 /** DW3: the image carries the item's dye now; these pins are about the archive and record. */
 const archiveRecord = ({ archive, record }) => ({ archive, record });

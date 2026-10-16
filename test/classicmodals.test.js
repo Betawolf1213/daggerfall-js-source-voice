@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
 import { RestWindow } from '../src/ui/restWindow.js';
-import { PROMPT_INITIAL } from '../src/systems/restSession.js';
+import { PROMPT_INITIAL } from '../src/systems/rest/restSession.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(root, p), 'utf8');

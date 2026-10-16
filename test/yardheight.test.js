@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { DECOR_YARD_HIGH, decorYardHighOk } from '../src/net/decorLaw.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { yardWhyNot, YARD_TOO_HIGH, YARD_IN_HOUSE } from '../src/scenes/homeYards.js';
-import { DECOR_TURN_STEP } from '../src/systems/decorPlacer.js';
+import { DECOR_TURN_STEP } from '../src/systems/decor/decorPlacer.js';
 import { createDecorPanel } from '../src/ui/decorPanel.js';
 import { standService, T0 } from './accountDb.mjs';
 import { settle, fakeDoc, fakeWin, all, one, catalogue, rows, toolRig, placeFrom } from './decorFakes.mjs';

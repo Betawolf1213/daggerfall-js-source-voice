@@ -427,7 +427,7 @@ test('AUDIT QUESTS 5: every world hook the engine reads is answered by the shipp
   // listed rather than skipped so that a hook added tomorrow with no
   // answer fails this pin instead of joining them in silence.
   const EXEMPT = {
-    // systems/talkMacros.js `talkMacroHooks` LAYERS these three over the
+    // systems/talk/talkMacros.js `talkMacroHooks` LAYERS these three over the
     // machine's bundle when a talk pipeline exists, which is DFU's own
     // shape: they are TalkManager's rows, not GameManager's. Its note
     // says it outright - "with no pipeline they are simply absent and

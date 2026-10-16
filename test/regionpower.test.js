@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   regionPowerUpdate, factionPowerStep, isFactionValidForRumorMill, RUMOR_MILL_EXCLUDED,
-} from '../src/systems/regionPower.js';
+} from '../src/systems/region/regionPower.js';
 import {
   tickPlayerMinutes, CLASSIC_MINUTES_PER_SECOND,
   FACTION_POWER_INTERVAL_MINUTES, REGION_CONDITIONS_INTERVAL_MINUTES,
@@ -221,9 +221,9 @@ test('S43 wiring: the tick walks the powers every 7 days and again every 38', ()
 // Each test scripts the WHOLE roll stream and asserts it is consumed
 // exactly - a change to the arm walk fails here first, not silently.
 
-const { factionConditionsStep } = await import('../src/systems/regionPower.js');
+const { factionConditionsStep } = await import('../src/systems/region/regionPower.js');
 const { createRegionConditions, turnOnConditionFlag, conditionFlag, REGION_FLAGS } =
-  await import('../src/systems/regionConditions.js');
+  await import('../src/systems/region/regionConditions.js');
 
 const rollQueue = (vals) => {
   const q = [...vals];

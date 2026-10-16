@@ -9,7 +9,7 @@
 // player's own while playing. This is that readout: the box every name
 // wears, then a bar to the next level, under the three vitals
 // (ui/enhancedHud.js draws it; the online lane IS the enhanced lane,
-// systems/onlineLane.js, so the classic HUD never needs one).
+// systems/online/onlineLane.js, so the classic HUD never needs one).
 //
 // WHAT IT READS. The page (scenes/world.js) hands a getter here, read
 // each frame:

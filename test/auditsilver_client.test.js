@@ -140,8 +140,8 @@ test('AUDIT SILVER-WAYS D5: a Motherlode\'s strike asks its receipt again at the
   const lodes = { watchFor: (x, y, ahead) => { calls.push(ahead); return ahead === 0 ? end : old; }, standingOn: () => [], found: () => null };
   const k = mineKind({ book: { taken: () => false, counting: () => false, state: {} }, lodes });
   const n = { what: 'motherlode', key: lode(0).key, tier: 6, lode: lode(0) };
-  const { setForagingHost } = await import('../src/systems/foragingInstall.js');
-  const { FT } = await import('../src/systems/foragingLaw.js');
+  const { setForagingHost } = await import('../src/systems/foraging/foragingInstall.js');
+  const { FT } = await import('../src/systems/foraging/foragingLaw.js');
   setForagingHost({ world: () => ({ inside: false, insideDungeon: false, insideCastle: false, locationType: 0xffff, inLocationRect: false, hour: 12, climate: 226, region: 21, enemiesNear: false, carriedWeight: 0, maxEncumbrance: 100, swimming: false, exteriorWater: 'None' }) });
   try {
     const entity = { items: [{ itemGroup: 'Foraging', groupIndex: FT.PickAxe, templateIndex: FT.PickAxe, currentCondition: 100, maxCondition: 100 }] };

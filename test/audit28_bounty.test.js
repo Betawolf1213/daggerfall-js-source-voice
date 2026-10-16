@@ -1,5 +1,5 @@
 // AUDIT 28 (2026-09-28, Mac: "let's audit everything we have so far before we continue") - BOUNTY1's and DEATH-PENALTY's
-// findings, each pinned on the host driven headless (scenes/bountyHost.js), the law (systems/bountyBoard.js), the wire
+// findings, each pinned on the host driven headless (scenes/bountyHost.js), the law (systems/bounty/bountyBoard.js), the wire
 // (net/wire.js), the farm pool (scenes/bountyFarms.js), the board's window on the minimal DOM, and the death penalty's
 // one statement - each failing on the code before the fix. bible/06-Systems/Bounty-Boards.md (AUDIT 28).
 import { test } from 'node:test';
@@ -10,7 +10,7 @@ import { byClass } from './chargenDom.mjs';
 import {
   bountySites, boardPostings, bountyHuntKey, bountyPackOwner, bountyPoseField, bountyPartyKills, bountyClearPays, bountyIdAtLevel,
   newBountyLedger, takeBounty, dropBounty, payBounty, readBountyLedger, parseBountyId,
-} from '../src/systems/bountyBoard.js';
+} from '../src/systems/bounty/bountyBoard.js';
 import { createBountyHost, BOUNTY_REFUSALS } from '../src/scenes/bountyHost.js';
 import { createBountyFarms } from '../src/scenes/bountyFarms.js';
 import { mountBountyBoard } from '../src/ui/bountyWindow.js';

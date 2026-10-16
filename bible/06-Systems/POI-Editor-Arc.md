@@ -271,7 +271,7 @@ marked as a small star.
 
 **HOW A BUILDER USES IT.** Sign in to the game with an account the store calls a builder (developers, every handle in
 `BUILDER_HANDLES`, and the approvers in `APPROVER_HANDLES` - `server-account/wrangler.toml`), load a game, and open
-`/play/?editor` (offline: the flag is refused online with the other powers, `systems/onlineLane.js`). Outdoors and on
+`/play/?editor` (offline: the flag is refused online with the other powers, `systems/online/onlineLane.js`). Outdoors and on
 foot - not on a horse, a cart's bench or a ship's helm (AUDIT POI E12) - the editor opens over the world; its corner
 button opens it again after an exit.
 
@@ -403,7 +403,7 @@ without its file.
   their words) and an ambient light, a pixel centre on an edge two triangles share drawn by one of them, the top-left
   rule (M12); a cutout's clear texels dropped, a see-through material laid over what is behind. Drawn at twice the size
   and averaged down. Written as a PNG (RGBA, filter None, zlib by `formats/rawDeflate.js` with its Adler-32, each
-  chunk's CRC by `systems/saveTransfer.js` crc32), uploaded as a texture by its name.
+  chunk's CRC by `systems/save/saveTransfer.js` crc32), uploaded as a texture by its name.
 - **KEEPING** (`src/poi/poiShelf.js`): the law asked first (nothing is uploaded for an entry it refuses), the picture
   drawn and uploaded, then the entry put wearing it; a picture that will not draw leaves the entry without one - still
   kept, and shown by its initial. The store's refusal brings the law's problems back to the dialog.

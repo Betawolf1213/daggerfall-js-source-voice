@@ -7,13 +7,13 @@ import {
   WILD_REGION, WILD_RINGS, WILD_RING_LOOT, buildWildMask, wildRingAt, wildRingLoot, wildRingBonus, wildRingChains, wildRingAnchors,
   wildLootOpts, wildFoeLoot, wildPileMore, applyWildFoe, wildJourney, WILD_TRAVEL_FEE, WILD_TRAVEL_FEES, WILD_TRAVEL_COOLDOWN_MS, wildGiantSize,
   WILD_GIANT, WILD_GIANT_SIZE, setWildHere, wildRing, WILD_STRANGER_M, WILD_STRANGER_SLOW_M,
-} from '../src/systems/wildZone.js';
+} from '../src/systems/wild/wildZone.js';
 import { plainFoeLootRule } from '../src/systems/foeLootCap.js';
 import { GOLD_TEMPLATE } from '../src/systems/inventory.js';
 import { wildLootAfter } from '../src/scenes/hostCombat.js';
 import { ringPixels, zoneMapView, zoneMapLimits, smoothChain, RING_INK } from '../src/ui/wildZoneMap.js';
 import { scaleMinOf } from '../src/ui/inkMap.js';
-import { setPaceZoneCap, paceRateOn, paceNow, paceCanRise, WILD_PACE_CAP, _resetTravelPace } from '../src/systems/travelPace.js';
+import { setPaceZoneCap, paceRateOn, paceNow, paceCanRise, WILD_PACE_CAP, _resetTravelPace } from '../src/systems/travel/travelPace.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 
 /** A 60 x 40 map whose zone is the 40 x 30 box at (10..49, 5..34) - the whole region (`cut: null`; ZONE-CUT's pin is

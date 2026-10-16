@@ -12,7 +12,7 @@
 // holds it.
 import { call, forgetSession } from './accountClient.js';
 import { postHead, postWhole, unclaimedOf, POST_POLL_MS, POST_BOX_MAX } from './postLaw.js';
-import { validLootItem } from '../systems/loot.js';
+import { validLootItem } from '../systems/loot/loot.js';
 
 /** The box: `{ post: [head...], unread, unclaimed, max }`, newest first. */
 export const postBoxCall = (io) => call(io, '/v1/post/box');
@@ -195,7 +195,7 @@ export class PostBox {
 
   /**
    * CLAIM ITS ITEM into the online character being played. The service writes it into the record and answers it; the
-   * pack takes it on the answer (checked as every item that arrives over the wire is - systems/loot.js validLootItem).
+   * pack takes it on the answer (checked as every item that arrives over the wire is - systems/loot/loot.js validLootItem).
    * Answers `{ ok, item }` or `{ ok: false, error }`.
    * @param {string} id
    */

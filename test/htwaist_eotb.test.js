@@ -32,7 +32,7 @@ import { readFileSync } from 'node:fs';
 import { createEotbBody, bodyState } from '../src/player/eotbBody.js';
 import { loadLanternArt, LANTERN_ART_KEY, HIP_LANTERN_SPRITE } from '../src/player/eotbLantern.js';   // HT-WAIST-BACK: the one home of the lantern on every EOTB sprite
 import { playerWaistLightOverride, setPlayerWaistLightOverride, LANTERN_TEMPLATE } from '../src/systems/playerTorch.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

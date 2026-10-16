@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { CharSheet, CHARSHEET_RECTS, levelProgressPercent, affiliationRows } from '../src/ui/charsheet.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 
 const mid = ([x, y, w, h]) => [x + w / 2, y + h / 2];
 const hero = (over = {}) => ({

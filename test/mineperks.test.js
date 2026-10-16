@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { standService, T0 } from './accountDb.mjs';
 import { createGatherHost, GROUP_REFRESH_MS, NODE_MARK_M, NODE_MARK_MAX, MARK_WALK_M, OW_ONE_MAX, GROUP_MAX, groupLabel } from '../src/scenes/gatherHost.js';
 import { mineKind, mineNodeName, MINE_MARKS, PROSPECT_M, PROSPECT_DEEP_M, PROSPECT_REACH, DEEP_DELVER_M } from '../src/scenes/mineHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { CLIMATES as C } from '../src/formats/mapsTables.js';
 import { vein, veins, veinSlots, boulders, nodeKey, dveinKey, utcDayOfMs, UNCONFIRMED_VEIN_TIER } from '../src/net/nodeLaw.js';

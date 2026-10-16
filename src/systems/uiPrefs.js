@@ -22,10 +22,10 @@ const SHELF_REV = 2;
 const PREF1_ADOPT_NEW_DEFAULT = Object.freeze(['lootRarity', 'enhancedAI']);   // BAL4: and the Enhanced AI - see loadPrefs
 
 import { appStorage } from './appStorage.js';   // DA1: the storage seam
-import { onlineForcedPref } from './onlineLane.js';   // OL1: the online lane's forcing, read before the shelf
+import { onlineForcedPref } from './online/onlineLane.js';   // OL1: the online lane's forcing, read before the shelf
 import { FEATURE_PREF_DEFAULTS } from './features.js';   // RF4: the port's own switches, declared once on their rows
 import { isStoredTier } from './survival/difficulty.js';   // SURV-TIERS: what the survival key may hold (an import-free leaf)
-import { isStoredHorseCare, HORSE_CARE_OLD_ON, HORSE_CARE_OLD_ON_TIER, isStoredWagonUpkeep, WAGON_UPKEEP_OLD_ON, WAGON_UPKEEP_OLD_ON_TIER } from './upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS: what the two upkeep keys may hold (a leaf too)
+import { isStoredHorseCare, HORSE_CARE_OLD_ON, HORSE_CARE_OLD_ON_TIER, isStoredWagonUpkeep, WAGON_UPKEEP_OLD_ON, WAGON_UPKEEP_OLD_ON_TIER } from './upkeep/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS: what the two upkeep keys may hold (a leaf too)
 
 export const PREF_DEFAULTS = Object.freeze({
   // PX30c: the enhanced HUD's scale. It lives HERE and not in DFU's
@@ -47,7 +47,7 @@ export const PREF_DEFAULTS = Object.freeze({
   mapScale: 'auto',
   // EVERY-STANDING (FIELD BUGS 2026-10-09e, "Could we have a setting to see our reputation with every guild/kingdoms?"):
   // the character sheet's Standing page lists every organization's standing, not only the player's memberships
-  // (systems/factionStanding.js). STANDING-ON (2026-10-11, Mac: "should be on by default"): on - the shelf writes no
+  // (systems/faction/factionStanding.js). STANDING-ON (2026-10-11, Mac: "should be on by default"): on - the shelf writes no
   // default (PREF1), so a player who never pressed the row moves with it, and one who pressed it off keeps their Off.
   standingAll: true,
   // HUD-MOVE (2026-10-01, Mac: "make chat, hp mana stamina bar segment and all the element moveable and add a reset UI

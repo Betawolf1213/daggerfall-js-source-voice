@@ -17,9 +17,9 @@ import { dfMeshToModel } from '../src/world/meshReader.js';
 import { patchSeams } from '../src/world/arch3dSeams.js';
 import { getStaticDoors } from '../src/world/staticDoors.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { trs, multiply } from '../src/world/mat4.js';
-import { hasPort } from '../src/systems/travelPorts.js';
+import { hasPort } from '../src/systems/travel/travelPorts.js';
 
 export const ARENA2 = process.env.ARENA2_PATH;
 export const skipReal = !ARENA2 || !existsSync(ARENA2) ? 'ARENA2_PATH not set or missing - real-data validation skipped' : false;

@@ -20,7 +20,7 @@
 // invite-only), and - SPELL-GIFT, 2026-09-27 - the stranger's list alone from anyone else, while the receiver's
 // "Spells from strangers" switch is on (STRANGER_CAST_TYPES below). A crafted frame carrying Damage Health or Paralyze
 // lands nothing from anyone. So friendly fire is off by construction, and the relay never has to judge a spell.
-import { MAX_EFFECTS_PER_SPELL, SPELL_ICON_COUNT } from './spellMaker.js';
+import { MAX_EFFECTS_PER_SPELL, SPELL_ICON_COUNT } from './spell/spellMaker.js';
 import { TOUCH_RANGE, TOUCH_SPHERE_CAST_RADIUS } from './spellcast.js';
 import { CAST_LEVEL_MAX } from '../net/wire.js';   // PEER-CAST: the frame's level bound, clamped to at the sender
 

@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { capStep, frameCapRate, frameCapFps, frameCapSkip, _resetFrameCap, FRAME_CAP_FLOOR, FRAME_CAP_MAX, FRAME_CAP_STOPS } from '../src/systems/frameCap.js';
-import { setValue, tierOf, LIVE, _resetForTests } from '../src/systems/settings.js';
+import { setValue, tierOf, LIVE, _resetForTests } from '../src/systems/settings/settings.js';
 import { widgetFor, formatValue, stepValue, NUMBER_LAW, blockedReason } from '../src/ui/settingsLaw.js';
 import { READOUT, INSTEAD } from '../src/ui/settingsCopy.js';
 import { mountFpsCounter } from '../src/ui/fpsCounter.js';

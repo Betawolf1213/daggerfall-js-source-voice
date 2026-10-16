@@ -6,13 +6,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setDfmodEnabled, DFMOD_SHIPPED_PREF, DFMOD_OFF_PREF, _resetDfmodForTests, winterGroundSnowless } from '../src/systems/dfmodTextures.js';
-import { installVanillaEnhancedPack } from '../src/systems/vanillaEnhancedPack.js';
+import { installVanillaEnhancedPack } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';
 import { clearTextureReplacements } from '../src/systems/textureReplacement.js';
-import { VE_ADDONS_PREF, setVeAddon } from '../src/systems/vanillaEnhanced.js';
-import { setValue } from '../src/systems/settings.js';
+import { VE_ADDONS_PREF, setVeAddon } from '../src/systems/vanillaEnhanced/vanillaEnhanced.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { groundWearsSnow, groundIsSnowy, getTerrainGroundArchive, SEASON } from '../src/world/climateSwaps.js';
-import { resetWeatherSim, setSnowGroundLaw, overGround, mapGround, WEATHER_ENUM } from '../src/systems/weatherSim.js';
+import { resetWeatherSim, setSnowGroundLaw, overGround, mapGround, WEATHER_ENUM } from '../src/systems/weather/weatherSim.js';
 import { CLIMATES, getWorldClimateSettings } from '../src/formats/mapsFile.js';
 import { createSnowfallHost } from '../src/scenes/snowfallHost.js';
 

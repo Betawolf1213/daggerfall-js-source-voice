@@ -22,9 +22,9 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const L = await import('../src/systems/feudLedger.js');
-const F = await import('../src/systems/revenantFeud.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { calculateAttackDamage } = await import('../src/combat/formulas.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
@@ -372,7 +372,7 @@ test('RVN1 THE FOLD: the deed (revenantDeed - the kill and both escapes) takes t
   assert.equal(N.revenantDeed(p, j, 'slew', { rolls: () => 0.5 }), null, 'a sworn one does no deed');
   assert.equal(j._feud, null, 'its ledger gone with the fight');
   assert.equal(rec.scars.length, 2, 'and nothing written');
-  const fold = read('src/systems/revenant.js');
+  const fold = read('src/systems/revenant/revenant.js');
   assert.ok(fold.indexOf('const ledger = takeFeud(entity);') < fold.indexOf('if (!revenantCandidate(entity, rec) || !Number.isInteger(mobileType)) return null;'), 'taken before any answer');
 });
 
@@ -486,7 +486,7 @@ test('RVN1 THE DRAWS ON ITS ID: one id, one weakness, signature and kin - every 
     const r = N.revenantDeed(p, o, 'fled', { rolls: () => 0.5 });
     assert.ok(F.isWeakness(r.weak) && r.weak !== 'frost', `born against its career (${r.weak})`);
   }
-  assert.equal(read('src/systems/revenantFeud.js').includes('Math.random'), false, 'no draw on Math.random');
+  assert.equal(read('src/systems/revenant/revenantFeud.js').includes('Math.random'), false, 'no draw on Math.random');
 });
 
 test('RVN1 THE POOLS (section 14.1, 16.1, 17): the weakness by kind (the undead fire, silver, blunt, the daylight; a daedra its opposite only where it has one; a beast fire and frost and a cut), the signature by family (a caster\'s the pyre), the kin by faction (a solitary kind none; a beast its own kind; a person its class\'s family) (mutants: a table row moved)', () => {

@@ -23,7 +23,7 @@ import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gat
 import { aspectCss } from '../src/ui/gateMarksView.js';   // WB13c: his epithet's colour on the bar
 import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gateCourt.js';
 import { courtToDungeon } from '../src/world/gateArena.js';
-import { gateTip } from '../src/systems/gateOmen.js';
+import { gateTip } from '../src/systems/gate/gateOmen.js';
 import { omenPost } from '../src/net/gateHerald.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN6-retinue-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const RETINUE = Object.freeze([0, 0, 1, 2, 3, 3]);",
     "new": "export const RETINUE = Object.freeze([0, 0, 1, 1, 3, 3]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RVN6-count-unclamped",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "RETINUE[Math.max(0, Math.min(5, rank | 0))];",
     "new": "RETINUE[Math.max(0, rank | 0)];",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RVN6-scatter-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const BAND_SCATTER_S = 8;",
     "new": "export const BAND_SCATTER_S = 6;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RVN6-ring-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const BAND_SPACING = 6;",
     "new": "export const BAND_SPACING = 3;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RVN6-rally-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const RALLY_KIN = 2;",
     "new": "export const RALLY_KIN = 3;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RVN6-orcs-a-pack",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "Object.freeze({ ORC: 'Warband', BEASTPACK:",
     "new": "Object.freeze({ ORC: 'Pack', BEASTPACK:",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RVN6-werebeasts-a-host",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "BEASTPACK: 'Pack', WEREBEAST: 'Pack',",
     "new": "BEASTPACK: 'Pack', WEREBEAST: 'Host',",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "RVN6-fae-a-brood",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "UNDEAD: 'Host', FAE: 'Host',",
     "new": "UNDEAD: 'Host', FAE: 'Brood',",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "RVN6-fish-a-pack",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "VERMIN: 'Brood', AQUATIC: 'Brood' });",
     "new": "VERMIN: 'Brood', AQUATIC: 'Pack' });",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "RVN6-families-swapped",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "const CLASS_BAND_WORDS = Object.freeze(['Warband', 'Crew', 'Coven', 'Crew']);",
     "new": "const CLASS_BAND_WORDS = Object.freeze(['Warband', 'Coven', 'Crew', 'Crew']);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "RVN6-name-rank-floor",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  if (!r || retinueCount(r.rank) < 1 || !r.kin?.length) return null;",
     "new": "  if (!r || (r.rank | 0) < 1 || !r.kin?.length) return null;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "RVN6-name-no-kin",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  if (!r || retinueCount(r.rank) < 1 || !r.kin?.length) return null;",
     "new": "  if (!r || retinueCount(r.rank) < 1) return null;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RVN6-name-no-possessive",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  return r.given ? `${possessive(r.given)} ${w}` : w;",
     "new": "  return r.given ? `${r.given} ${w}` : w;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RVN6-person-level-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "level: t >= 128 ? Math.max(1, (playerLevel | 0) - 2) : null",
     "new": "level: t >= 128 ? Math.max(1, (playerLevel | 0) - 1) : null",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN6-person-level-unfloored",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "level: t >= 128 ? Math.max(1, (playerLevel | 0) - 2) : null",
     "new": "level: t >= 128 ? (playerLevel | 0) - 2 : null",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN6-monster-at-my-level",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "level: t >= 128 ? Math.max(1, (playerLevel | 0) - 2) : null",
     "new": "level: t >= 128 ? Math.max(1, (playerLevel | 0) - 2) : playerLevel",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN6-members-uncounted",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  return kin.slice(0, Math.max(0, n)).map(",
     "new": "  return kin.map(",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "RVN6-candidate-unrefused",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (entity.retinueOf != null) return false;   // RVN6",
     "new": "  if (false) return false;   // RVN6",
     "tests": [

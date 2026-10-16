@@ -19,7 +19,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PX, WOODS, GLENUMBRA, NOON, rig, arrive, strikeOut, lands, sfxOf, tick, dice } from './gatherRig.mjs';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { MINE_ACT, FISH_ACT } from '../src/net/professionLaw.js';
 import { createGatherEar, GATHER_SOUND } from '../src/systems/gatherSounds.js';
 import { createFishAct } from '../src/systems/fishAct.js';

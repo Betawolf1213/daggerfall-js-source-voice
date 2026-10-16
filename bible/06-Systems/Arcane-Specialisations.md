@@ -217,7 +217,7 @@ BUSY-GATE and CRAFT-PROCS at the merge of main).
   (AUDIT SCHOOLS L2 F8).
 - `scenes/worldModes.js` - the shelf (section 6).
 - `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhancedCharSheet.js` / `ui/enhancedMenu.js` - the choice.
-- `systems/save.js` - `arcanePath` and `pathPrompted`.
+- `systems/save/save.js` - `arcanePath` and `pathPrompted`.
 
 ## 9. Departures, and what is recorded rather than built
 

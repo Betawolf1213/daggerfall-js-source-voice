@@ -1,7 +1,7 @@
 [
   {
     "name": "DECORDUNGEON-architecture-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST) || FREE_STANDING.has(id));",
     "new": "  && true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DECORDUNGEON-free-standing-lost",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST) || FREE_STANDING.has(id));",
     "new": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST));",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DECORDUNGEON-statues-halved",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "  62323, 62324, 62325, 62326, 62327, 62328, 62329, 62330,   // the statues - a figure standing and one seated, small and large, in pale stone and in dark (ST0-ST3 26, 14, 5, 3, 6, 7, 8, 6)",
     "new": "  62324, 62325, 62328, 62330,   // the statues World of Daggerfall's palette names - the defect measured",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DECORDUNGEON-actions-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          if (!isDungeonFurnishing(id) || rdbModelActs(obj) || isActionDoor(rdb, ref)) continue;",
     "new": "          if (!isDungeonFurnishing(id) || isActionDoor(rdb, ref)) continue;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "DECORDUNGEON-doors-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          if (!isDungeonFurnishing(id) || rdbModelActs(obj) || isActionDoor(rdb, ref)) continue;",
     "new": "          if ((!isDungeonFurnishing(id) && !isActionDoor(rdb, ref)) || rdbModelActs(obj)) continue;",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "DECORDUNGEON-markers-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || fr.action > 0 || isNatureArchive(a)) continue;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "DECORDUNGEON-acting-flats-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || isNatureArchive(a)) continue;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "DECORDUNGEON-nature-taken",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0) continue;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "DECORDUNGEON-people-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "          add({ model: null, flat: [a, r], ...(isNpcFlat(a) ? { person: true } : {}) }, 'dungeon');",
     "new": "          add({ model: null, flat: [a, r] }, 'dungeon');",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "DECORDUNGEON-room-reading-lost",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    else if ((DECOR_FROM[from] ?? 0) < (DECOR_FROM[had.from] ?? 0)) out.set(key, { ...what, count: had.count + 1, from });\n",
     "new": "",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "DECORDUNGEON-kind-unset",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    if (c.from === 'dungeon' && (kind === 'furniture' || kind === 'decor')) kind = 'dungeon';\n",
     "new": "",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "DECORDUNGEON-numbered-mixed",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    list.sort((a, b) => fromOrder(a) - fromOrder(b) || idOrder(a) - idOrder(b));",
     "new": "    list.sort((a, b) => idOrder(a) - idOrder(b));",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "DECORDUNGEON-lone-renamed",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "      const lone = taken === 0 && j - i === 1;",
     "new": "      const lone = list.length === 1;",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "DECORDUNGEON-scan-unread",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "    isDungeonBlock: (t) => t === BLOCK_TYPES.Rdb,",
     "new": "    isDungeonBlock: () => false,",
     "tests": [

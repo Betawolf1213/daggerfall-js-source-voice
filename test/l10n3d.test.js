@@ -18,10 +18,10 @@ beforeEach(() => tm._resetTextManagerForTests());
 /** The exported tables, by module and name. */
 const EXPORTED = [
   ['src/systems/answerPipeline.js', 'TALK_STRINGS'],
-  ['src/systems/decorCatalogue.js', 'DECOR_SIZES'],
+  ['src/systems/decor/decorCatalogue.js', 'DECOR_SIZES'],
   ['src/systems/mysticism.js', 'DISPEL_MAGIC_TEXT'], ['src/systems/mysticism.js', 'SOUL_TRAP_TEXT'], ['src/systems/mysticism.js', 'DOOR_SPELL_TEXT'],
   ['src/systems/specialAdvantages.js', 'LABELS'],
-  ['src/systems/talk.js', 'DIRECTION_HINTS'],
+  ['src/systems/talk/talk.js', 'DIRECTION_HINTS'],
   ['src/systems/useItem.js', 'USE_TEXT'],
   ['src/ui/automapText.js', 'AUTOMAP_STRINGS'], ['src/ui/automapText.js', 'EXTERIOR_AUTOMAP_STRINGS'],
   ['src/ui/saveWindow.js', 'SW_TEXT'],

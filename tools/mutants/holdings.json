@@ -1,7 +1,7 @@
 [
   {
     "name": "HOLD-send-away-nothing-out-sent",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (!transportOut()) return { ok: false, text: HCC_TEXT.alreadyAway };",
     "new": "    if (false) return { ok: false, text: HCC_TEXT.alreadyAway };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HOLD-send-away-from-the-saddle",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (tm().get() !== TRANSPORT.Foot) return { ok: false, text: HCC_TEXT.sendAwayDismount };",
     "new": "    if (false) return { ok: false, text: HCC_TEXT.sendAwayDismount };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "HOLD-send-away-the-hitched-record",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    const r = resolvePersistenceEnabledState(TRANSPORT.Foot, hasCart, hasHorse);",
     "new": "    const r = resolvePersistenceEnabledState(TRANSPORT.Cart, hasCart, hasHorse);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "HOLD-send-away-indoors",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (pee().isPlayerInside() || tm().isOnShip()) return { ok: false, text: HCC_TEXT.sendAwayOutdoorsOnly };",
     "new": "    if (tm().isOnShip()) return { ok: false, text: HCC_TEXT.sendAwayOutdoorsOnly };",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HOLD-the-hotkey-says-nothing",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "  function handleSummonTransport() { say(summonTransport().text); }",
     "new": "  function handleSummonTransport() { summonTransport(); }",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "HOLD-rename-keeps-nothing",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    wagonState.HorseName = resolveHorseNameInput(horseName(), input);",
     "new": "    wagonState.HorseName = String(input ?? '');",
     "tests": [

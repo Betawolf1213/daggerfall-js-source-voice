@@ -23,7 +23,7 @@ import { readFileSync } from 'node:fs';
 import {
   floorTriangles, deriveFloors, floorAt, floorOccupancy, planBounds, floorPlan,
   FLOOR_NY, LEVEL_NY, FLOOR_MIN_GAP, PLAN_CELL, MIN_TRI_AREA,
-} from '../src/systems/automapFloors.js';
+} from '../src/systems/automap/automapFloors.js';
 import { boundarySegments, linkSegments } from '../src/ui/inkMap.js';
 import { SLOPE_LIMIT_DEG, CAPSULE_HEIGHT } from '../src/player/motor.js';
 
@@ -67,7 +67,7 @@ test('EM2: the constants are the motor\'s own - a floor is what the player could
   // AGREE today and stop agreeing the day the player's height moves -
   // a mutant that wrote the literal walked straight past a by-value
   // pin, which is precisely the drift this law exists to prevent.
-  const src = readFileSync(new URL('../src/systems/automapFloors.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/systems/automap/automapFloors.js', import.meta.url), 'utf8');
   assert.match(src, /import \{ SLOPE_LIMIT_DEG, CAPSULE_HEIGHT, STEP_OFFSET \} from '\.\.\/player\/motor\.js';/);
   assert.match(src, /export const FLOOR_MIN_GAP = CAPSULE_HEIGHT \+ [\d.]+;/, 'the gap is the capsule plus headroom, written that way');
   assert.match(src, /export const FLOOR_NY = Math\.cos\(\(SLOPE_LIMIT_DEG \* Math\.PI\) \/ 180\);/);

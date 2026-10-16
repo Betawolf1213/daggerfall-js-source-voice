@@ -24,7 +24,7 @@ import { profileView, profileNote, gearRows, GEAR_ROWS, ATTR_SHORT, VITAL_LABELS
 import { socialMenuRows, socialPlaqueRows, plaqueRowFor } from '../src/ui/socialMenu.js';
 import { glyphSvgNode, glyphBadges, GLYPH_STROKE } from '../src/ui/playerBadge.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { HEAL_SPELL } from './placeWidest.mjs';

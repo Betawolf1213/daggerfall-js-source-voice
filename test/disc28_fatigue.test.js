@@ -20,7 +20,7 @@ import { reviveForPlay, respawnHealth } from '../src/systems/deathRespawn.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { SURVIVAL_RULES } from '../src/systems/survival/difficulty.js';
 import { newSurvival } from '../src/systems/survival/needs.js';
-import { exhaustionOutcome } from '../src/systems/rest.js';
+import { exhaustionOutcome } from '../src/systems/rest/rest.js';
 import { NORMALIZE_INTERVAL_MINUTES, RECOVERY_INTERVAL_MINUTES } from '../src/systems/court.js';
 
 afterEach(() => setSharedClock(null));

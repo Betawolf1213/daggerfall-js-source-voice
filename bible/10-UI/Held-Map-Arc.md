@@ -156,7 +156,7 @@ foreign-pass count fell by one (four passes now).
 
 Every addition the mod makes to the classic map lands on the held map
 through the SAME function the classic window calls
-(`src/ui/travelMapOptions.js`, `src/systems/travelPorts.js`), so the two
+(`src/ui/travelMapOptions.js`, `src/systems/travel/travelPorts.js`), so the two
 skins cannot drift:
 
 - **The ports filter.** `portsFilterAllows` over `hasPort`, asked

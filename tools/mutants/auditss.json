@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-SS-a-forged-offer-sold",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!real || real.id !== offer.id || real.price !== offer.price) return { ok: false, reason: 'gone' };",
     "new": "  if (!real) return { ok: false, reason: 'gone' };",
     "tests": [

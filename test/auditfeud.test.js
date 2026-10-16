@@ -13,14 +13,14 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const L = await import('../src/systems/feudLedger.js');
-const P = await import('../src/systems/revenantPersonality.js');
+const P = await import('../src/systems/revenant/revenantPersonality.js');
 const PG = await import('../src/ui/revenantPage.js');
-const LR = await import('../src/systems/lootRarity.js');
+const LR = await import('../src/systems/loot/lootRarity.js');
 const { blowClassOf } = await import('../src/ai/puppetBlows.js');
 const { hitClassField, hitClassOf } = await import('../src/net/wire.js');
 const { blowK } = await import('../src/ai/tells.js');
@@ -31,8 +31,8 @@ const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/m
 const { goldStack } = await import('../src/systems/inventory.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
 const { WEAPONS: W } = await import('../src/characters/weapons.js');
-const { itemLongName } = await import('../src/systems/itemInfo.js');
-const { setLocked } = await import('../src/systems/itemLock.js');
+const { itemLongName } = await import('../src/systems/item/itemInfo.js');
+const { setLocked } = await import('../src/systems/item/itemLock.js');
 const H = await import('../src/systems/harmMark.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -237,7 +237,7 @@ test('AUDIT FEUD R6: A KILLER FORGOTTEN - a load, a new game and a Resurrect lea
   assert.ok(me.items.includes(sword));
   const w = read('src/scenes/world.js');
   assert.match(w, /reviveForPlay\(playerEntity, \{ force: true \}\);\n\s*forgetLastSlew\(\);/, 'the Resurrect forgets it');
-  assert.match(read('src/systems/revenant.js'), /newGame: \(\) => \{ _state\.list = \[\]; _state\.lastDay = null; _state\.mirrorId = null; _lastSlew = null;/);
+  assert.match(read('src/systems/revenant/revenant.js'), /newGame: \(\) => \{ _state\.list = \[\]; _state\.lastDay = null; _state\.mirrorId = null; _lastSlew = null;/);
 });
 
 // ── the deeds and their flows ───────────────────────────────────────
@@ -313,9 +313,9 @@ test('AUDIT FEUD H4: EVERY COMMENT ON ITS OWN LINE - the trailing notes FEUD\'s 
   assert.match(read('src/scenes/dungeonContext.js'), /from '\.\.\/ui\/damageFlash\.js';   \/\/ WB13d:/);
   assert.match(read('src/scenes/exterior.js'), /import \{ flashPlayerDamage \} from '\.\.\/ui\/damageFlash\.js';   \/\/ ROAD-G G2:/);
   assert.match(read('src/scenes/hostMagic.js'), /import \{ markPlayerHarm \} from '\.\.\/systems\/harmMark\.js';   \/\/ REVENANT-HARM:/);
-  assert.match(read('src/ui/enhancedChronicle.js'), /bountyQuestShareable \} from '\.\.\/systems\/bountyJournal\.js';   \/\/ BOUNTY1:/);
-  assert.match(read('src/ui/enhancedMenu.js'), /bountyQuestShareable \} from '\.\.\/systems\/bountyJournal\.js';   \/\/ BOUNTY1:/);
-  assert.match(read('src/systems/revenant.js'), /HUNT_QUEST_PREFIX \} from '\.\/huntJournal\.js';   \/\/ RVN7c:/);
+  assert.match(read('src/ui/enhancedChronicle.js'), /bountyQuestShareable \} from '\.\.\/systems\/bounty\/bountyJournal\.js';   \/\/ BOUNTY1:/);
+  assert.match(read('src/ui/enhancedMenu.js'), /bountyQuestShareable \} from '\.\.\/systems\/bounty\/bountyJournal\.js';   \/\/ BOUNTY1:/);
+  assert.match(read('src/systems/revenant/revenant.js'), /HUNT_QUEST_PREFIX \} from '\.\/huntJournal\.js';   \/\/ RVN7c:/);
   assert.match(read('src/ui/revenantPage.js'), /import \{ tacticsSwitchOn \} from '\.\.\/ai\/tactics\.js';   \/\/ RVN5:/);
   assert.match(read('src/scenes/exteriorFoes.js'), /promoteEliteFoe\(f\.entity, \{ own: false \}\);   \/\/ ELITE FOES: its owner's elite/);
   for (const [f, re] of [['src/scenes/dungeonContext.js', /knockedDown \} from '\.\.\/systems\/blowEffects\.js';   \/\/ TELL6e: knocked down, no swing   \/\//], ['src/scenes/world.js', /routByJump\(\);   \/\/ RVN10 \(Feud-Arc\.md 21\.2\): a jump out of a fight routs me - never a load's\n\s*handOverSiteFoes/]]) assert.doesNotMatch(read(f), re, f);

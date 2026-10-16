@@ -14,14 +14,14 @@ import {
   immersiveTravelService, installImmersiveTravel, _resetImmersiveTravel, CAPITAL_MAP_IDS, LARGE_DOCK_MAP_IDS, DOCK_PIXEL_IDS,
 } from '../src/systems/immersiveTravel.js';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings, onlineModSetting } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_WHOLE_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_WHOLE_MODS } from '../src/systems/online/onlineLane.js';
 import { LOCATION_TYPES as T } from '../src/formats/mapsFile.js';
 import { customFactions, _resetCustomFactions } from '../src/formats/factionFile.js';
-import { getCustomMerchantService, getCustomMerchantServiceLabel, hasCustomMerchantService, _resetMerchantServices } from '../src/systems/guildServices.js';
-import { calculateTripCost, calculateTravelTime } from '../src/systems/travel.js';
-import { guildFastTravel } from '../src/systems/guildVariants.js';
+import { getCustomMerchantService, getCustomMerchantServiceLabel, hasCustomMerchantService, _resetMerchantServices } from '../src/systems/guild/guildServices.js';
+import { calculateTripCost, calculateTravelTime } from '../src/systems/travel/travel.js';
+import { guildFastTravel } from '../src/systems/guild/guildVariants.js';
 import { TravelPopUpWindow } from '../src/ui/travelPopUp.js';
-import { staticNpcRoute } from '../src/systems/guildServiceFlow.js';
+import { staticNpcRoute } from '../src/systems/guild/guildServiceFlow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const VENDOR = 'vendor/immersive-travel';

@@ -1,7 +1,7 @@
 // WB10a (2026-09-30, Mac: "improve the boss music, make it more loud, just feel like its too quite, and I feel like the
 // music is too jolly"): THE WARDEN'S SCORE, PRESSED AND DARKENED. Louder: a song may carry its own PRESS
-// (systems/songPlayer.js songPress - a compressor, its drive, a soft ceiling a decibel under the clip at the highest
-// MusicVolume), and the court's four do (systems/gateScore.js SCORE_PRESS); every song MIDI.BSA holds carries none and
+// (systems/song/songPlayer.js songPress - a compressor, its drive, a soft ceiling a decibel under the clip at the highest
+// MusicVolume), and the court's four do (systems/gate/gateScore.js SCORE_PRESS); every song MIDI.BSA holds carries none and
 // plays through the graph it always did. Less jolly: the pizzicato, the high bell, the hi-hat and the tambourine gone; the
 // villain's harmony (D minor to B-flat MINOR, no C major); a pedal ostinato on low brass, never an arpeggio; stabs and
 // pads in open fifths; the brass never climbing to a fanfare. What it SOUNDS like - the loudness, the peaks under the
@@ -9,10 +9,10 @@
 // Design: bible/11-Multiplayer/World-Bosses.md section 15.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gateScoreSongs, SCORE_PRESS, SCORE_PROGRAMS, SCORE_CHANNELS, SCORE_TPQ, midiNote } from '../src/systems/gateScore.js';
+import { gateScoreSongs, SCORE_PRESS, SCORE_PROGRAMS, SCORE_CHANNELS, SCORE_TPQ, midiNote } from '../src/systems/gate/gateScore.js';
 import {
   SongPlayer, songPress, PRESS_RANGE, PRESS_OUT_MAX, PRESS_CEILING_MIN, CEILING_DRIVE, ceilingCurve, ceilingAmplitude, MUSIC_GAIN,
-} from '../src/systems/songPlayer.js';
+} from '../src/systems/song/songPlayer.js';
 import { fmSpec } from '../src/systems/gmSynth.js';
 
 const BAR = 4 * SCORE_TPQ;

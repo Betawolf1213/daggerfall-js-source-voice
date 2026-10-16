@@ -12,14 +12,14 @@
 // AND WHAT THE 3D MAP HAD THAT THIS DID NOT: notes written with the middle button, teleporter ends joined (or named
 // by the storey they lead to), a way in that breathes, and a key that brings you back to where you stand.
 //
-// Driven through the real floor model (systems/automapFloors.js), the real sheet (ui/automapSheet.js) and the real
-// note law (systems/automap.js); the window's wiring by source.
+// Driven through the real floor model (systems/automap/automapFloors.js), the real sheet (ui/automapSheet.js) and the real
+// note law (systems/automap/automap.js); the window's wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   floorTriangles, deriveFloors, floorAt, floorPlan, splitEdges, storeyOccupancy, planBounds, STOREY_MIN_AREA, FLOOR_MIN_GAP,
-} from '../src/systems/automapFloors.js';
+} from '../src/systems/automap/automapFloors.js';
 import { createAutomapSheet, READABLE_SCALE } from '../src/ui/automapSheet.js';
 import { boundarySegments, linkSegments, scaleMinOf, SCALE_MAX } from '../src/ui/inkMap.js';
 

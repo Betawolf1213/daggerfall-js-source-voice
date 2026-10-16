@@ -1,10 +1,10 @@
-// HCC (2026-09-23): THE RUNTIME, PINNED BY EXECUTION - systems/horseCart.js is TrailingWagonRuntime off the IL,
+// HCC (2026-09-23): THE RUNTIME, PINNED BY EXECUTION - systems/horse/horseCart.js is TrailingWagonRuntime off the IL,
 // driven here over a fake host: a flat world, a player who walks and mounts, the eight settings, the hotkeys, the
 // windows' questions, the transitions and the save. Every scenario is a thing a player does with the mod on.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createHorseCartRuntime, DeployedWagonVisual, StationaryHorseVisual, solveTwoWheelPose, HCC_MOUNT_ACTION, HCC_SUMMON_ACTION } from '../src/systems/horseCart.js';
-import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, LAST_MOUNT, STORAGE_CONTEXT, TRANSPORT, HCC_TEXT, WAGON_FOLLOW_DISTANCE, HORSE_DISMOUNT_REAR_OFFSET, HITCHED_HORSE_LOCAL_Z, WAGON_SAVE_VERSION } from '../src/systems/horseCartLaw.js';
+import { createHorseCartRuntime, DeployedWagonVisual, StationaryHorseVisual, solveTwoWheelPose, HCC_MOUNT_ACTION, HCC_SUMMON_ACTION } from '../src/systems/horse/horseCart.js';
+import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, LAST_MOUNT, STORAGE_CONTEXT, TRANSPORT, HCC_TEXT, WAGON_FOLLOW_DISTANCE, HORSE_DISMOUNT_REAR_OFFSET, HITCHED_HORSE_LOCAL_Z, WAGON_SAVE_VERSION } from '../src/systems/horse/horseCartLaw.js';
 import { quatForward } from '../src/world/quat.js';
 
 import { makeWorld, RATIO, WX0, WZ0, PARTS } from './hccWorld.mjs';   // the fake host, one home

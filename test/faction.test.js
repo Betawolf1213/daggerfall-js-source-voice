@@ -10,7 +10,7 @@ import { CRIMES } from '../src/systems/crimes.js';   // GUARD1: the enum's leaf 
 import {
   findFactions, getPeopleOfCurrentRegion, getReactionToPlayer, ensureReactionState,
   pickpocket, MOBILE_NPC_ACTIVATION_DISTANCE, PICKPOCKET_DISTANCE,
-} from '../src/systems/talk.js';
+} from '../src/systems/talk/talk.js';
 import { calculatePickpocketingChance } from '../src/combat/formulas.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

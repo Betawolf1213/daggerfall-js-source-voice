@@ -1,7 +1,7 @@
 [
   {
     "name": "TV-BEYOND-box-clamped-to-the-map",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const bounds = { x0: Math.min(0, from.x, to.x), x1: Math.max(width - 1, from.x, to.x), y0: Math.min(0, from.y, to.y), y1: Math.max(height - 1, from.y, to.y) };",
     "new": "const bounds = { x0: 0, x1: width - 1, y0: 0, y1: height - 1 };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TV-BEYOND-box-held-west-alone",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "y0: Math.min(0, from.y, to.y), y1: Math.max(height - 1, from.y, to.y) };",
     "new": "y0: 0, y1: height - 1 };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TV-BEYOND-road-byte-read-past-the-table",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const kind = off ? 2 : edgeKindAt(ay * width + ax, by * width + bx, bit, roads, tracks);",
     "new": "const kind = edgeKindAt(ay * width + ax, by * width + bx, bit, roads, tracks);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TV-BEYOND-west-edge-only-unguarded",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const off = ax < 0 || ay < 0 || bx < 0 || by < 0 || ax >= width",
     "new": "const off = ay < 0 || by < 0 || ax >= width",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "TV-BEYOND-beyond-never-asked",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "? !beyondDry(x, y) : heights[y * width + x] <= waterByte);",
     "new": "? true : heights[y * width + x] <= waterByte);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "TV-BEYOND-beyond-asked-every-time",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "if (dry === undefined) {",
     "new": "if (true) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "TV-BEYOND-keep-never-dropped",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "if (dryBeyond.size >= BEYOND_CACHE_MAX) dryBeyond.clear();",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "TV-BEYOND-apart-folds-the-land-past-the-table",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "if (!onTable(from) || !onTable(to)) return false;",
     "new": "",
     "tests": [

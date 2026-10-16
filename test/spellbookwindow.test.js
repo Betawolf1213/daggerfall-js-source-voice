@@ -25,12 +25,12 @@ import {
 import { HOLIDAYS, getHolidayId } from '../src/systems/holidays.js';
 import { DOUBLE_CLICK_DELAY_MS } from '../src/ui/chargenArt.js';   // OT1: the ListBox double-click window
 import { calculateTradePrice } from '../src/systems/shopStock.js';
-import { SPELLBOOK_TEMPLATE_INDEX, MAX_SPELL_NAME } from '../src/systems/spellMaker.js';
+import { SPELLBOOK_TEMPLATE_INDEX, MAX_SPELL_NAME } from '../src/systems/spell/spellMaker.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { cureOfferMessageOffset } from '../src/systems/guildServiceActions.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { cureOfferMessageOffset } from '../src/systems/guild/guildServiceActions.js';
 import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spellIcons.js';
-import { SPELLBOOK_DESCRIPTION_IDS, spellBookDescriptionId, SPELL_MAKER_EFFECTS, portEffectDescription } from '../src/systems/spellEffects.js';
+import { SPELLBOOK_DESCRIPTION_IDS, spellBookDescriptionId, SPELL_MAKER_EFFECTS, portEffectDescription } from '../src/systems/spell/spellEffects.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
@@ -441,7 +441,7 @@ test('U42 rename: an EMPTY answer changes nothing, but spaces are a name (:943-9
 
 test('U42 rename: the field caps at TextBox.maxCharacters', () => {
   // TextBox.cs:26, :425 - 31, the same constant the spell maker's own
-  // name box reads out of systems/spellMaker.js.
+  // name box reads out of systems/spell/spellMaker.js.
   const { w } = book(spell('Fireball', 20));
   w.renameButton();
   w.renameBox.value = '';
@@ -499,7 +499,7 @@ test('U42 icons: the three sheets are cut by enum order, top-down', () => {
     // GetSpellIcon (:151-157) answers NULL outside [0, Count) and the
     // panel shows its black background. The `% count` wrap is
     // SpellMakerWindow.SetIcon's law, applied at MINT time in
-    // systems/spellMaker.js - not the collection's.
+    // systems/spell/spellMaker.js - not the collection's.
     assert.equal(spellIconRect(SPELL_ICON_COUNT), null, 'off the end is null, not a wrap');
     assert.equal(spellIconRect(-1), null, '...and so is below the start');
     assert.deepEqual(spellIconRect(SPELL_ICON_COUNT - 1), [8 * 16, 3 * 16, 16, 16], 'the last real icon');
@@ -1201,7 +1201,7 @@ test('U42: BuySpells and BuySpellsMages are no longer FLAGGED nulls', () => {
   // DaggerfallGuildServicePopupWindow.cs:383-387 - one case falls into
   // the other and BOTH push the spellbook with buyMode true, which is
   // why they share a destination.
-  const flow = readFileSync(new URL('../src/systems/guildServiceFlow.js', import.meta.url), 'utf8');
+  const flow = readFileSync(new URL('../src/systems/guild/guildServiceFlow.js', import.meta.url), 'utf8');
   assert.match(flow, /BuySpells: 'guildServiceSpellbook'/);
   assert.match(flow, /BuySpellsMages: 'guildServiceSpellbook'/);
   const modes = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');

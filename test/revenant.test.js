@@ -1,4 +1,4 @@
-// REVENANT (2026-10-02; systems/revenant.js, Mac: "the ability for these enemies that kill you, or a very small chance
+// REVENANT (2026-10-02; systems/revenant/revenant.js, Mac: "the ability for these enemies that kill you, or a very small chance
 // to flee at low health. These enemies can return at a later time stronger, with a new name, a chance of more loot
 // and taunt the player"). The laws pinned here:
 //   - WHO: a special foe (an elite, a champion, a revenant already) of level 3 or more - never the watch, an ally, a
@@ -23,10 +23,10 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { hurtPlayer, setAvoidDeathHook } = await import('../src/characters/playerEntity.js');
-const { setStruck, _resetSetPowersForTests } = await import('../src/systems/sigilSetPowers.js');
+const { setStruck, _resetSetPowersForTests } = await import('../src/systems/sigil/sigilSetPowers.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { getSeed, setSeed } = await import('../src/formats/dfRandom.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');

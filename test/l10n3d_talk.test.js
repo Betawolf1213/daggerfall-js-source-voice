@@ -18,16 +18,16 @@ import { srand, randomRange } from '../src/formats/dfRandom.js';
 import { RumorMill, RUMOR_TYPE, RESOLVING_ERROR, resolvingErrorText } from '../src/systems/rumorMill.js';
 import { NativeTalkWindow, TALK_RECTS } from '../src/ui/nativeTalk.js';
 import { TopicTree, EN, LIST_ITEM_TYPE, buildingTypeToGroupString, regionalBuildingNames } from '../src/systems/topicTree.js';
-import { TOPIC_CATEGORIES } from '../src/systems/talkTopics.js';
+import { TOPIC_CATEGORIES } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES, generateBuildingName, rulerTitle, RULER_TITLES } from '../src/world/buildingNames.js';
-import { honorificOf, raceDisplayName, RACE_DISPLAY_NAME, expandAnswerRecord } from '../src/systems/talkSession.js';
+import { honorificOf, raceDisplayName, RACE_DISPLAY_NAME, expandAnswerRecord } from '../src/systems/talk/talkSession.js';
 import { getMacroValue, questMacroSource } from '../src/systems/quest/questMacros.js';
 import { biogMacroSource } from '../src/systems/biography.js';
 import {
   potionRecipeTokens, POTION_RECIPE_FOR_TEXT, POTION_RECIPE_WEIGHT_TEXT, conditionWord, CONDITION_WORDS,
   itemLongName, potionMacroName, expandItemInfo, materialName, infoPanelShorten,
-} from '../src/systems/itemInfo.js';
-import { magicPowersLines, itemPowers, POWERS_UNKNOWN_TEXT } from '../src/systems/itemPowers.js';
+} from '../src/systems/item/itemInfo.js';
+import { magicPowersLines, itemPowers, POWERS_UNKNOWN_TEXT } from '../src/systems/item/itemPowers.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import {

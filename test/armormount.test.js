@@ -7,9 +7,9 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { decorIsMount, decorWhatOf, DECOR_ARMOR_GROUP } from '../src/net/decorLaw.js';
-import { decorMountOf, decorStandOf, decorOwnEntry, decorMountDye } from '../src/systems/decorItems.js';
-import { inventoryItemImage, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
-import { itemDyeColor } from '../src/systems/itemDye.js';
+import { decorMountOf, decorStandOf, decorOwnEntry, decorMountDye } from '../src/systems/decor/decorItems.js';
+import { inventoryItemImage, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
+import { itemDyeColor } from '../src/systems/item/itemDye.js';
 import { createDecorRoom } from '../src/scenes/decorRoom.js';
 import { settle } from './decorFakes.mjs';
 

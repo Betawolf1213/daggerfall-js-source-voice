@@ -1,32 +1,32 @@
 // SD9d (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11): THE BRASS OF NUMIDIUM -
-// the Brass Remnant's own Aetheric set (systems/sigilSets.js 'numidium', systems/aetheric.js NUMIDIUM_SET_PIECES): its
+// the Brass Remnant's own Aetheric set (systems/sigil/sigilSets.js 'numidium', systems/aetheric.js NUMIDIUM_SET_PIECES): its
 // law, its nine records of Dwarven brass at the Legendary band's top, the spoils' last roll that carries one a third of
-// the time, and its three tiers through the powers' seams (systems/sigilSetPowers.js) - Dwemer Brass (magic and shock
+// the time, and its three tiers through the powers' seams (systems/sigil/sigilSetPowers.js) - Dwemer Brass (magic and shock
 // resistance), Gearward (a foe's blow lighter while the gear is wound) and The Hour Turns (a death turned back, healed).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { setRound, setPowerStates, setHudChips, setSetPowersVoice, awakeTiersOf, setStruck, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil.js';
-import { WORLD_SET_IDS, BRIEF_MAX, SET_STAGE_MAX, setById, raidSetOf, tierValues, setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import { setRound, setPowerStates, setHudChips, setSetPowersVoice, awakeTiersOf, setStruck, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { WORLD_SET_IDS, BRIEF_MAX, SET_STAGE_MAX, setById, raidSetOf, tierValues, setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import {
   AETHERIC_RECORDS, REGALIA, RAID_SET_PIECES, SERPENT_SET_PIECES, NUMIDIUM_SET_PIECES, NUMIDIUM_SET_CHANCE, aethericById, aethericMaterial,
   mintAetheric, rollNumidiumPiece, validSetMarks, AETHERIC,
 } from '../src/systems/aetheric.js';
-import { brokerStock } from '../src/systems/sigilBroker.js';
+import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { entityStatMod, entityModsOf } from '../src/systems/entityMods.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { WEAPON_HANDS } from '../src/characters/equipRules.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { AFFIX_RANGES } from '../src/systems/lootRarity.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { AFFIX_RANGES } from '../src/systems/loot/lootRarity.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { HOUR_BRASS } from '../src/ui/playerBadge.js';
 import { SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
 

@@ -292,7 +292,7 @@ async function reforgeAnswer(db, player, row, nowS, extra = {}) {
  * (temperLaw REFORGE_RANK; `prof-rank`) spends 2 Arcane Essence for a Magic piece's line or 5 for a Rare's (temperLaw
  * reforgeEssence - Legendary and up, none: law 7, `prof-reforge`), never gold's units, and is answered the seed the line
  * is rolled again with - the service's CSPRNG, as a craft's quality is its roll. The service cannot see the pack: the
- * piece and its line are the client's (systems/lootRarity.js reforgeAffix - the Loot arc's own Reforge: one line, and
+ * piece and its line are the client's (systems/loot/lootRarity.js reforgeAffix - the Loot arc's own Reforge: one line, and
  * once a piece is reforged, that line alone), the save's word as the Mages Guild's reforge is; the Essence is the bound.
  * DECIDED: no XP - the Essence's XP was its disenchanting's. Refused: the Essence short (`stores-short`, `stores-gold`).
  */

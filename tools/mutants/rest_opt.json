@@ -10,7 +10,7 @@
   },
   {
     "name": "REST-OPT-law-leader-ignored",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return !restsAlone(lead);",
     "new": "  return true;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "REST-OPT-law-mine-ignored",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  if (!mineOn) return false;\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "REST-OPT-law-nobody-rests-alone",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return !!m?.p?.nr;",
     "new": "  return false;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "REST-OPT-switch-not-the-players",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'restWithParty',   // REST-OPT: whether I rest with my party or alone - my own say\n",
     "new": "",
     "tests": [

@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { boundsOf } from '../src/render/bounds.js';
 import { createHorseCartPool, harnessStill, HARNESS_REST_S, HARNESS_STILL_M } from '../src/scenes/horseCartPool.js';
 import { makeWorld } from './hccWorld.mjs';
-import { TRANSPORT } from '../src/systems/horseCartLaw.js';
+import { TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const flush = async (n = 8) => { for (let i = 0; i < n; i++) await new Promise((r) => setTimeout(r, 0)); };

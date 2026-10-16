@@ -2,7 +2,7 @@
 // WB1 (2026-09-25, Mac: "a large area would be shown on the map"): THE GATE'S RING ON BOTH MAPS.
 //
 // The host hands the maps a FUNCTION (`gate: () => mark|null`, beside SOC6's `party`) and neither map learns what a
-// gate is: the mark is a ring in map pixels - `{day, cx, cy, r, label, phase}` from systems/gateOmen.js mapMark() -
+// gate is: the mark is a ring in map pixels - `{day, cx, cy, r, label, phase}` from systems/gate/gateOmen.js mapMark() -
 // read on each window's own poll. The held map draws it in ink over the bay (ui/inkMap.js paintGateRing); the classic
 // region page writes its edge into the page's texels, on the open province's own pixels only (SOC6's rule: a mark
 // does not bleed onto a neighbour's sheet).

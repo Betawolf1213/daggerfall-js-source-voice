@@ -14,12 +14,12 @@ import { validTravellerFrame } from '../src/net/wire.js';
 import { TRAVEL_VIEW_RIBBON } from '../src/ui/travelViewHud.js';
 import { byClass } from './chargenDom.mjs';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { HALL_OF_RECORDS_SHUT } from '../src/systems/onlineHomes.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import '../src/systems/profTemplates.js';
+import { HALL_OF_RECORDS_SHUT } from '../src/systems/online/onlineHomes.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { SIEGE_GEM, GEMS } from '../src/net/professionLaw.js';
 import { material } from '../src/net/nodeLaw.js';
-import { mintMaterialItem, materialLabel, materialCountLabel } from '../src/systems/profItems.js';
+import { mintMaterialItem, materialLabel, materialCountLabel } from '../src/systems/professions/profItems.js';
 import { SIEGE_SPOILS } from '../src/net/townSeatLaw.js';
 
 const WAYREST = { key: 5023, name: 'Wayrest', region: 23, tier: 'crown', pixel: [590, 166] };

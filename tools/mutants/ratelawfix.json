@@ -1,7 +1,7 @@
 [
   {
     "name": "RLFIX-spot-host",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (r.point && r.i >= r.legs.length - 1) return !!deps.onRoad?.();\n",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "RLFIX-legless",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (r.point && r.i >= r.legs.length - 1) return !!deps.onRoad?.();",
     "new": "      if (r.point && r.legs.length && r.i >= r.legs.length - 1) return !!deps.onRoad?.();",
     "tests": [

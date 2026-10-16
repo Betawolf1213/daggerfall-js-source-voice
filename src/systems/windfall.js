@@ -26,7 +26,7 @@
 // outdoors' - the hosts tick it under the enhanced sky only (sky.enhanced), as WIND1's wind and every consumer of it
 // are - and it does not stand beside the port's own sway, it IS the sway while it is on (render/renderer.js BB_VS
 // takes one law or the other, never both). ONE WIND, ONE WAY: the heading the trees lean and the leaves blow is the
-// outdoors' own wind's (systems/windDrive.js `dir` - the wisps', the rain's, the clouds'), Windfall's slow wander and
+// outdoors' own wind's (systems/wind/windDrive.js `dir` - the wisps', the rain's, the clouds'), Windfall's slow wander and
 // its gusts' swing turned about it; the mod's daily heading (HashUnit x 360 + WindDirectionDegrees) stands only where
 // the host hands no wind (a test, a frame with none). The port's eighth weather, the sandstorm (WEATHER2d, a gale's
 // wind - WIND1's VIOLENCE 0.95), is a storm here as Thunder is; DFU has no such word.

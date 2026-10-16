@@ -20,7 +20,7 @@ import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { chooseRaider, RAID_SPAWN_MIN_DISTANCE, RAID_SPAWN_MAX_DISTANCE, grantRaidReputation } from '../src/systems/raidingParties.js';
 

@@ -8,26 +8,26 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as T from '../src/combat/techniques.js';
 import { blowReaches, bodyRadius } from '../src/combat/techniqueBlow.js';
 import { TECHNIQUES } from '../src/combat/techniqueRoster.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
-import { setSigilDueling } from '../src/systems/sigil.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
+import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { SWING_FATIGUE_COST } from '../src/scenes/hostCombat.js';
 import { itemChatText, itemBriefLines } from '../src/ui/enhancedInventory.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { techniquePierces, shaftSequence } from '../src/combat/arrowFlight.js';
 import { mountReforgeWindow } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
 import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
 import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
-import { boutLive } from '../src/systems/arenaBout.js';
+import { boutLive } from '../src/systems/arena/arenaBout.js';
 
 const lcg = (seed) => { let s = (seed >>> 0) || 1; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; };
 const stats = () => ({ strength: 60, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });
@@ -245,7 +245,7 @@ test('AUDIT TECH1 THE REFUSALS: the open water refuses a leap, as DFU refuses a 
   assert.deepEqual(said(() => ({ pw: weaponOf(createWeapon(120, 1)) })), [T.NO_TECHNIQUE_TEXT], 'no gauntlets\' line: the plain word');
 });
 
-test('AUDIT TECH1 A LOAD AND THE NAME: a load (systems/save.js restoresSoFar - the player\'s entity is one object, refilled in place) starts the cooldowns, the aim and the act fresh; an unidentified piece\'s technique works and is named no more than its card names it (mutants: the load unread; the name told)', () => {
+test('AUDIT TECH1 A LOAD AND THE NAME: a load (systems/save/save.js restoresSoFar - the player\'s entity is one object, refilled in place) starts the cooldowns, the aim and the act fresh; an unidentified piece\'s technique works and is named no more than its card names it (mutants: the load unread; the name told)', () => {
   reset();
   const pw = weaponOf(piece(() => createWeapon(120, 1), 'whirlwind'));
   const me = player();

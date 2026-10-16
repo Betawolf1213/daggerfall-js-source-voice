@@ -118,7 +118,7 @@ the rise. The grace is unchanged. Recorded in Port-Ledger's REP1 row. Pinned by 
 
 ## LEECH-HAND: the leech line says whose blows it heals on (6)
 
-`src/systems/lootRarity.js` AFFIX_KINDS.leech's label.
+`src/systems/loot/lootRarity.js` AFFIX_KINDS.leech's label.
 
 FOUND. A weapon's power rides the blows of the weapon that struck (`lootPowers.js` lootStrike, the strike listener's
 `weapon`), and the port has DFU's hands, not dual wield: H chooses the hand that swings. An off-hand weapon's leech heals
@@ -131,7 +131,7 @@ on the item card, a gem's line and the Reforge. PIN MOVED: `test/loot4_procs.tes
 
 ## Asked of the players (7, 8, 9)
 
-LOOK AROUND, WITH SECRETS (7). `systems/dungeonSense.js`, `scenes/dungeonContext.js`, `render/nodeGlow.js` - none changed
+LOOK AROUND, WITH SECRETS (7). `systems/dungeon/dungeonSense.js`, `scenes/dungeonContext.js`, `render/nodeGlow.js` - none changed
 since 2026-10-10, `test/sense1_dungeonsense.test.js` green. The tier lights nothing by itself: an Info ask in a dungeon
 (F3 - unbound for a brand-new key file since MODE-WHEEL - or the wheel flicked to Info) lights what is within 8 m and in
 sight for six seconds, a chain-moved secret among them, purple and the faintest form (its shimmer nothing under Reduced
@@ -281,7 +281,7 @@ six (`account.refusal.noEscrow` and the five beside it), drafted in the 25 langu
 
 ## QUEST-HOME: no quest picks a player's home, in any town (12)
 
-`server-account/src/homes.js` homeLayouts; `src/systems/onlineHomes.js` hearEveryTown, homeStands; `src/scenes/world.js`
+`server-account/src/homes.js` homeLayouts; `src/systems/online/onlineHomes.js` hearEveryTown, homeStands; `src/scenes/world.js`
 takeHomeLayouts and the quest machine's `isPlayerHome`. Read on main's `7c291d36`.
 
 THE REPORT. The last step of a quest, "Travel to the second town named by the poisonmaker": Buckinghouse Farmstead,
@@ -318,7 +318,7 @@ page's hub link carries it (`src/net/online.js` sendHomeOrder, once the hub's we
 the one room every online player holds a socket to - checks it with the key it holds and fans `{t:'home', l:[...]}` to
 every hub socket, a shard's by the bus, holding the words of the last ten minutes for a page whose boot read went out
 before them and whose link opened after (`server/src/index.js` the `home` arm, _hubHelloWords; HOME_WORDS_KEY). Every
-page's registry takes the word (`src/systems/onlineHomes.js` hearHome) beside the boot's read, and the quest machine's
+page's registry takes the word (`src/systems/online/onlineHomes.js` hearHome) beside the boot's read, and the quest machine's
 `isPlayerHome` reads both. No poll: a home's move is said once, by the act. THE RE-PICK: whenever a page learns of
 homes (the boot's read, a hub word, a town's answer, a load whose layouts stand), every building site the player has not
 reached whose building is a player's home now is chosen again in its own town by the place's own law (`src/systems/

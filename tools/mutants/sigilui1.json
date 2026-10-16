@@ -1,7 +1,7 @@
 [
   {
     "name": "SIGIL-UI-the-stage-off-the-growth",
-    "file": "src/systems/sigil.js",
+    "file": "src/systems/sigil/sigil.js",
     "old": "  const stage = sigilStageIn(s, _renown);",
     "new": "  const stage = _renown ? sigilRank(s) : -1;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SIGIL-UI-the-bar-from-zero",
-    "file": "src/systems/sigil.js",
+    "file": "src/systems/sigil/sigil.js",
     "old": "(s.xp - from) / (next.xp - from)",
     "new": "s.xp / next.xp",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SIGIL-UI-the-lines-doubled",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (sigil) out.push(...setSigilLines(item));   // SIGIL1",
     "new": "  out.push(...setSigilLines(item));   // SIGIL1",
     "tests": [

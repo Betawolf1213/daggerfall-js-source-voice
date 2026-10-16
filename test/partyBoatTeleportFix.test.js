@@ -2,9 +2,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createPartyTravel } from '../src/systems/partyTravel.js';
-import { BESIDE_LEVEL } from '../src/systems/partyTravelLaw.js';
-import { partyArrivalBeside, waitForPartyArrival, PartyArrivalUnavailable } from '../src/systems/partyArrival.js';
+import { createPartyTravel } from '../src/systems/party/partyTravel.js';
+import { BESIDE_LEVEL } from '../src/systems/party/partyTravelLaw.js';
+import { partyArrivalBeside, waitForPartyArrival, PartyArrivalUnavailable } from '../src/systems/party/partyArrival.js';
 import { validPartyPose, PIXEL_UNITS } from '../src/net/wire.js';
 import { floorLanding, openGroundNear, heldInSolid } from '../src/player/enterExit.js';   // UNSTUCK-OUT (PIN MOVED): the landing's rock check rides the lifted block
 import { StreamingWorldState } from '../src/world/streamingWorld.js';

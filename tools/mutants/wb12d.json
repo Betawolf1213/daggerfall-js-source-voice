@@ -706,7 +706,7 @@
   },
   {
     "name": "WB12d-the-line-unsaid",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "if ((line === 'omen' || line === 'rise') && riteDay !== t.day) { riteDay = t.day; if (riteReady() && !riteBroken(t.day, s)) say(riteOmenLine()); }",
     "new": "",
     "tests": [
@@ -1557,7 +1557,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-order-over-a-broken-rite",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "if (riteReady() && !riteBroken(t.day, s)) say(riteOmenLine());",
     "new": "say(riteOmenLine());",
     "tests": [
@@ -3089,7 +3089,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-chat-s-own-sentence",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "export const riteOmenLine = () => RITE_OMEN_LINE;",
     "new": "export const riteOmenLine = () => 'The faithful work their rite nearby.';",
     "tests": [

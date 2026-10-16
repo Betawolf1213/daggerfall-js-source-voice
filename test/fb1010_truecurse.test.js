@@ -6,13 +6,13 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import { liftRefusal, liftCurse, cursedKnown } from '../src/systems/lootCurse.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import { liftRefusal, liftCurse, cursedKnown } from '../src/systems/loot/lootCurse.js';
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { PAYLOAD, doItemEnchantmentPayloads, LEECH_WEAPON_AMOUNT } from '../src/systems/enchantments.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { LIFT_REFUSALS, reforgeLabel, mountReforgeWindow } from '../src/ui/reforgeWindow.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { withDom } from './invdrag.mjs';
@@ -81,7 +81,7 @@ test('TRUE-CURSE: one cursed Legendary weapon in four, over the pass\'s own draw
 });
 
 test('TRUE-CURSE (AUDIT FB1010 E3): the damning is each door\'s LAST draw (law 9) - after the curse\'s, the socket\'s and the late finds\' - so every other draw a door makes is the one it made before', () => {
-  const lr = read('src/systems/lootRarity.js');
+  const lr = read('src/systems/loot/lootRarity.js');
   const door = lr.slice(lr.indexOf('export function rollLootRarity'), lr.indexOf('\n}\n', lr.indexOf('export function rollLootRarity')));
   assert.match(door, /items\.push\(\.\.\.\(_gemFind\?\.\(\{ \.\.\.source, luck \}, rolls\) \?\? \[\]\)\);[^\n]*\n  damnPass\(minted, rolls\);[^\n]*\n  techniquePass\(minted, rolls\);[^\n]*\n  return items;$/, 'the loot door: last of all, after GEM2\'s gem find');   // PIN MOVED (TECH1, bible/05-Combat/Weapon-Techniques.md): a weapon's technique the one draw after it - every draw the damning shipped with is the one it made
   assert.ok(door.indexOf('rollLateFinds(') < door.indexOf('weaponSocketPass(') && door.indexOf('weaponSocketPass(') < door.indexOf('damnPass('), '...after the late finds and GEM1\'s weapon sockets');

@@ -12,11 +12,11 @@ import {
 import {
   FactionFile, FACTION_TYPES, SOCIAL_GROUPS, GUILD_GROUPS,
 } from '../src/formats/factionFile.js';
-import { createFactionRep, getReputation, setReputation } from '../src/systems/factionRep.js';
-import { getPeopleOfCurrentRegion } from '../src/systems/talk.js';
-import { changeReputation } from '../src/systems/factionRep.js';
-import { snapshotFactionRep, restoreFactionRep } from '../src/systems/save.js';
-import { GUILDS, joinGuild } from '../src/systems/guilds.js';
+import { createFactionRep, getReputation, setReputation } from '../src/systems/faction/factionRep.js';
+import { getPeopleOfCurrentRegion } from '../src/systems/talk/talk.js';
+import { changeReputation } from '../src/systems/faction/factionRep.js';
+import { snapshotFactionRep, restoreFactionRep } from '../src/systems/save/save.js';
+import { GUILDS, joinGuild } from '../src/systems/guild/guilds.js';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 

@@ -42,7 +42,7 @@ import { REGION_NAMES } from '../formats/mapsTables.js';
 export const sdRegionName = (r) => (Number.isSafeInteger(r) && r >= 0 ? REGION_NAMES[r] ?? '' : '');
 
 /** A slot's name as the herald may say it: its name when that needs no city, else null. The city is every client's own
- *  (systems/sdSite.js), so a name with one is asked of sdNameOf with a mark no name holds, and the mark found in it. */
+ *  (systems/superDungeon/sdSite.js), so a name with one is asked of sdNameOf with a mark no name holds, and the mark found in it. */
 export function sdHeraldName(s) {
   const named = sdNameOf(s, '\u0000');
   return named.includes('\u0000') ? null : named;

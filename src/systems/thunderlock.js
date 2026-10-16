@@ -30,15 +30,15 @@
 // registerCustomTemplates takes them and the frozen DFU table stays
 // what it is. Nothing here writes to itemTemplates.json.
 
-import { registerCustomTemplates, templateByIndex, mintCondition, setItemFields, registerAmmunition, registerOwnItemImage } from './itemTemplates.js';
+import { registerCustomTemplates, templateByIndex, mintCondition, setItemFields, registerAmmunition, registerOwnItemImage } from './item/itemTemplates.js';
 import { addVendorTextures, vendorTextureCount } from './textureReplacement.js';
-import { registerUniqueFind, registerLegendary, FOE_FAMILIES } from './lootRarity.js';
+import { registerUniqueFind, registerLegendary, FOE_FAMILIES } from './loot/lootRarity.js';
 import { SKILLS } from './skills.js';
 import { APP_ROOT } from './appRoot.js';   // AUDIT-THUNDERLOCK F7
 import { GUN_FEEL } from '../combat/gunFeel.js';   // FIELD-GUN13: the flash's reach, from the one home the feel lives in (a leaf - no imports of its own)
 // The indices live in a LEAF (characters/thunderlockIds.js) because
 // characters/weapons.js needs them too and importing this file from
-// there would close a cycle through systems/itemTemplates.js. Said out
+// there would close a cycle through systems/item/itemTemplates.js. Said out
 // loud on the leaf itself.
 import {
   THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE, THUNDERLOCK_ARCHIVE, PELLET_ARCHIVE,
@@ -289,7 +289,7 @@ export function installThunderlockIcons({ fetchBytes = null } = {}) {
 // the shelves deliberately; this one simply never appears there.
 // test/thunderlock.test.js pins that as a law rather than an accident.
 //
-// FOUND, THEN, and by the port's own loot ladder (systems/lootRarity.js
+// FOUND, THEN, and by the port's own loot ladder (systems/loot/lootRarity.js
 // LR1-LR5). It registers as a UNIQUE FIND, which is a different
 // question from a rarity tier: a tier decorates an item DFU's loot
 // roll already produced, and no DFU roll can produce this weapon at
@@ -335,7 +335,7 @@ registerLegendary({
   enchantment: { type: 3, param: 20 },   // CastWhenStrikes - the shot carries a spell
   lore: 'The Dwemer left no instructions and no second one.',
   // AUDIT LOOT F8 (the Loot arc, bible/06-Systems/Loot-Arc.md section 7 - "every Legendary a power"): its POWER, the
-  // Dwemer's own quarrel - they knelt to no god and no daedra (systems/lootPowers.js's bane, on its own shots) - and,
+  // Dwemer's own quarrel - they knelt to no god and no daedra (systems/loot/lootPowers.js's bane, on its own shots) - and,
   // a unique find of no family, where its codex row says it is found
   power: Object.freeze({ name: 'Dwemer Defiance', kind: 'bane', foes: FOE_FAMILIES.daedra, pct: 50,
     brief: '+50% vs daedra and atronachs', text: 'Its shots deal +50% damage to the daedra, the atronachs, imps and gargoyles - the Dwemer knelt to none of them' }),

@@ -1,5 +1,5 @@
 // WAGONS1 (2026-10-09, Mac: "the ability for players to request to sit in the back of the cart and be transported
-// across daggerfall"; asked, "Players and companions"): the seats in the back - the law (systems/wagonSeats.js), the
+// across daggerfall"; asked, "Players and companions"): the seats in the back - the law (systems/wagon/wagonSeats.js), the
 // runtime both ends of it run (scenes/wagonRiders.js), the companions' seat (scenes/crewAshore.js, characters/
 // enemyMotor.js) - and the caravan's room (systems/caravanRoom.js, scenes/caravanRoom.js, the interior host's slot).
 import './modsOff.js';
@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 
 import {
   createRideBook, validRideWord, rideWord, validPassengers, freeWagonSeat, companionSeats, RIDE_ASK_TTL_MS, RIDE_REASK_MS, RIDE_TEXT, MAX_SEATS, RIDE_ASK_REACH,
-} from '../src/systems/wagonSeats.js';
+} from '../src/systems/wagon/wagonSeats.js';
 import { createWagonRiders, RIDE_ROW, GO_HOLD_MS, ARRIVE_WAIT_MS } from '../src/scenes/wagonRiders.js';
 import { createCrewAshore } from '../src/scenes/crewAshore.js';
 import { EnemyAI } from '../src/characters/enemyMotor.js';

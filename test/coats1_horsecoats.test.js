@@ -1,4 +1,4 @@
-// COATS1 (2026-10-11): THE HORSE'S LOOK (bible/06-Systems/Horse-Coats.md, systems/horseCoats.js) - the law (coat,
+// COATS1 (2026-10-11): THE HORSE'S LOOK (bible/06-Systems/Horse-Coats.md, systems/horse/horseCoats.js) - the law (coat,
 // pattern, legs and the horse's own seed), its birth, the dye and its markings, the item's fields, the wire's three
 // doors (the pool's word, the parked word, the pose), the pictures that wear it (the riding sprite, the pool's
 // billboards, Eye Of The Beholder's rider - mine and the others', the road's strangers), their letting go, and the Stable.
@@ -11,17 +11,17 @@ import {
   HORSE_LOOK_PARTS, COAT_REGION_SHARE, COAT_SHADOW_VALUE, COAT_SHADOW_REACH, SHADE_HUE, SHADE_VALUE, BIRTH_WEIGHTS, STRANGER_SEEDS,
   readHorseLook, horseLookCode, horseLookOfCode, describeHorseLook, activeHorseItem, horseLookOf, riddenHorseLook, rollHorseLook,
   birthHorses, restyledHorse, restyleRiddenHorse, horseLookRows, strangerHorseLook, lookSuffix, isCoatPixel, recolorHorse, shadeOf,
-} from '../src/systems/horseCoats.js';
-import { TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../src/systems/itemTemplates.js';
-import { validItemField } from '../src/systems/itemFields.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
-import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+} from '../src/systems/horse/horseCoats.js';
+import { TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../src/systems/item/itemTemplates.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
+import { hccWireRecord, validHccRecord, hccRecordKey, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import { validParkData, validPose, poseChanged, HORSE_LOOK_MAX, POSE_RIDE } from '../src/net/wire.js';
 import { spriteFor, lookedPixels } from '../src/player/eotbSprite.js';
 import { ridingLook, loadRidingArt } from '../src/systems/riding.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { createHorseCartPool, horseStillRecord, horseWalkRecord, HORSE_ARCHIVE, HORSE_LOOKS_KEPT, HORSE_DYE_PICTURES } from '../src/scenes/horseCartPool.js';
-import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horseCartLaw.js';
+import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horse/horseCartLaw.js';
 import { createEotbArt, RIDER_LOOKS_KEPT, RIDER_LOOK_IDLE_MS } from '../src/net/peerRiders.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 

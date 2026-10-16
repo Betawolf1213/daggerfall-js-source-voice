@@ -19,7 +19,7 @@ import { readFileSync } from 'node:fs';
 import {
   startDungeonLoads, TV_DUNGEON_LOADS_PER_FRAME, TV_DUNGEON_MODELS_MAX, dungeonEntranceModel, modelFoot, owDungeonGrow,
   owDungeonDrawn, grownModelMatrix,
-} from '../src/systems/travelDungeonModels.js';
+} from '../src/systems/travel/travelDungeonModels.js';
 import { Renderer } from '../src/render/renderer.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
 import { DFPalette } from '../src/formats/dfPalette.js';

@@ -6,14 +6,14 @@
 // patrons play on while it stands, as the table does (a DOM panel outside the window stack, the decor panel's own
 // pattern - ui/decorPanel.js).
 //
-// TWO HALVES. `cardHudModel` is pure: the table's view (systems/cardTableSession.js view(), legal()) as the rows,
+// TWO HALVES. `cardHudModel` is pure: the table's view (systems/card/cardTableSession.js view(), legal()) as the rows,
 // cards and buttons the panel shows - every label and every enabled flag decided here, pinned by
 // test/cards4_hud.test.js. `createCardTableHud` paints that model into the page and hands presses back to the host.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { rankOf, suitOf, isCard } from '../net/cardLaw.js';
 import { SUIT_CROWNS, rankLabel, cardTitle, paintFace, paintBack } from '../render/cardFaces.js';   // CARDS-BAY: the suits' one home
-import { BUY_IN_MIN_BB, BUY_IN_START_BB } from '../systems/cardTableSession.js';   // the buy-in's one home (AUDIT CARDS-2 L10)
+import { BUY_IN_MIN_BB, BUY_IN_START_BB } from '../systems/card/cardTableSession.js';   // the buy-in's one home (AUDIT CARDS-2 L10)
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { cardPanelChromeCss, dressCardPanel, foldWords } from './cardPanelKit.js';   // CARDS-PLUS: the kit and the face, both panels' one home
 import { PIXELIFY_FIVE_FACE } from './pixelifyFive.js';   // FIX-D: the face's five, carried by every sheet that sets it

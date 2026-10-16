@@ -10,7 +10,7 @@
 //     (AUDIT SD III, A3: the one moan looped repeated every 5.8 s), its gain breathing on the Hour's clock;
 //   THE HOUR'S WORKS - a clock's escapement heard everywhere and nowhere: a tick and a tock a second, the gears' grind
 //     faint under them - MADE at runtime out of the player's own DAGGER.SND (the Orrery's clunk, the gears' grind), as
-//     the Rift's bell is (systems/sdRiftSound.js), nothing shipped and nothing of Daggerfall's written into the tree;
+//     the Rift's bell is (systems/superDungeon/sdRiftSound.js), nothing shipped and nothing of Daggerfall's written into the tree;
 //   THE ORRERY'S HUM - a drone where the stones turn, the ship's bell slowed to a hum and its fifth and its octave over
 //     it, made the same way, heard in the hall;
 //   THE ARENA'S GEARS - the grind, low, laid over itself the same way, turning under the arena's floor where the
@@ -27,7 +27,7 @@
 import { audio as defaultAudio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { SAMPLE_RATE as SND_RATE } from '../formats/sndFile.js';
-import { addVoice, lowpassLoop, level, rms } from '../systems/arenaSound.js';
+import { addVoice, lowpassLoop, level, rms } from '../systems/arena/arenaSound.js';
 import { airSourceAt, AIR_BACKLOG_S } from './deadlandsAir.js';
 import { THUNDER_SOURCE_M } from '../systems/distantStorms.js';
 import { SD_SKY_PERIOD } from '../render/sdSky.js';

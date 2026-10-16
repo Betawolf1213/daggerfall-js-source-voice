@@ -91,7 +91,7 @@
   },
   {
     "name": "DISC9-the-ear-reads-the-sim",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "export const heardWeather = () => (_heard != null && _heardAtJump === _jumps ? _heard : currentWeather());",
     "new": "export const heardWeather = () => currentWeather();",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "DISC9-heard-outlives-a-jump",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "export const heardWeather = () => (_heard != null && _heardAtJump === _jumps ? _heard",
     "new": "export const heardWeather = () => (_heard != null ? _heard",
     "tests": [

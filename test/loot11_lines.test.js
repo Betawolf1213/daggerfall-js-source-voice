@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { pickLootLines, createLootLines, lootCrown, LOOT_LINES_MAX, LOOT_LINES_REACH, LOOT_LINE_CROWN } from '../src/scenes/lootLines.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';

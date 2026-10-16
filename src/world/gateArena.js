@@ -555,7 +555,7 @@ export const GATE_LANDING_M = 10;
 /**
  * WHERE THE WAY HOME LANDS: before the gate outside, on the side its fire faces (the gate's own +z - trs's R_y turns it
  * to (sin yaw, cos yaw)), turned away from it - `{ pos, normal }`, a door landing's own shape (player/enterExit.js
- * dungeonEntranceLanding), in the scene's frame NOW: the gate's pixel's translation plus its spot (systems/gateOmen.js
+ * dungeonEntranceLanding), in the scene's frame NOW: the gate's pixel's translation plus its spot (systems/gate/gateOmen.js
  * gateSceneXZ's own sum), so a recentre since the player went in moves it with the world. Null off the built ground.
  * @param {{day: number, px: number, py: number, spot: number[]}} g the gate walked into (scenes/gatePool.js enter)
  * @param {{pixelTranslation: (px: number, py: number) => number[], heightAt: (x: number, z: number) => number}} at

@@ -27,8 +27,8 @@ import { generateBuildingName, shownFactionNames, BUILDING_TYPES } from '../src/
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { NPC_CONTEXT } from '../src/characters/staticNpc.js';
-import { setMagicItemTemplates } from '../src/systems/loot.js';
-import { shownItemName } from '../src/systems/itemInfo.js';
+import { setMagicItemTemplates } from '../src/systems/loot/loot.js';
+import { shownItemName } from '../src/systems/item/itemInfo.js';
 import { lowerCondition } from '../src/systems/equip.js';
 import { useItem, TEMPLATES } from '../src/systems/useItem.js';
 import { tickPlayerTorch, TORCH_TICK_SECONDS } from '../src/systems/playerTorch.js';

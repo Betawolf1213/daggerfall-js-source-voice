@@ -37,17 +37,17 @@ import { renownText } from '../net/renown.js';
 import { guildTagText } from '../net/guildLaw.js';
 import { ribbonColours, heraldryOf, heraldryColourOf, heraldryKey } from '../net/heraldryLaw.js';   // AUDIT-SEATS: a Season's banner ribbon, under the name here too; AUDIT HERALDRY H4: the tag's frame
 import { drawShield } from './heraldryArt.js';   // AUDIT HERALDRY H4: the guild's shield, in its tag's frame, on the canvas
-import { TV_FILTER_GROUPS, TV_FILTER_TEXT, travelViewFilters, toggleTravelViewFilter, onTravelViewFilters, markShown, countGroups } from '../systems/travelViewFilters.js';   // OW-FILTER
-import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, cycleTravelViewNodeKm } from '../systems/travelViewFilters.js';   // OW-WHO / OW-NODE-KM / OW-KIN
+import { TV_FILTER_GROUPS, TV_FILTER_TEXT, travelViewFilters, toggleTravelViewFilter, onTravelViewFilters, markShown, countGroups } from '../systems/travel/travelViewFilters.js';   // OW-FILTER
+import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, cycleTravelViewNodeKm } from '../systems/travel/travelViewFilters.js';   // OW-WHO / OW-NODE-KM / OW-KIN
 import { wheelPath } from './carriageWheel.js';   // OW-HUBS: a carriage town's wheel on its dot
 import { placeTip, readTip, tipKey, SEAT_TIP_TEXT_MAX } from './eventMapMarks.js';   // SEAT-TIP: the held map's card, at the pointer here too
 import { tickHudLayout } from './hudLayout.js';   // HUD-MOVE: the Overworld's block and the travel bar move too
-import { travelPathMode, setTravelPathMode, onTravelPathMode, TRAVEL_PATH_MODES, TRAVEL_PATH_TEXT } from '../systems/travelPathMode.js';   // OW-PATH: the Roads / Free switch
+import { travelPathMode, setTravelPathMode, onTravelPathMode, TRAVEL_PATH_MODES, TRAVEL_PATH_TEXT } from '../systems/travel/travelPathMode.js';   // OW-PATH: the Roads / Free switch
 import { buildPaceControls } from './travelPaceControls.js';   // PACE-DIALS: the travel speed dials, journey or none
 import {
   WAYPOINT_KINDS, WAYPOINT_TEXT, listWaypoints, followedWaypointIds, setWaypointFollowed, waypointKindsShown, toggleWaypointKind,
   onWaypoints, waypointCss,
-} from '../systems/mapWaypoints.js';   // WAYPOINTS: the switches, the followed list and its dropdown
+} from '../systems/map/mapWaypoints.js';   // WAYPOINTS: the switches, the followed list and its dropdown
 import { paintWaypointFlag, flagBox } from './waypointFlags.js';   // WAYPOINTS: the small flags
 import { closeWaypointMenu } from './waypointMenu.js';   // WAYPOINTS: the Overworld's menu goes down with the view
 import { appStorage } from '../systems/appStorage.js';   // WAYPOINTS: the filter block's folded state, kept on the device
@@ -245,7 +245,7 @@ function build(doc, hooks) {
   // AUDIT DEEP2 E15: the places the canvas draws, in words - visually hidden, said when the set changes (never per frame)
   const said = el('ul', 'tview-said');
   said.setAttribute?.('aria-label', 'Places in view');
-  // OW-PATH: THE SWITCH - Roads | Free, the chosen one lit (systems/travelPathMode.js keeps it on the device)
+  // OW-PATH: THE SWITCH - Roads | Free, the chosen one lit (systems/travel/travelPathMode.js keeps it on the device)
   const modes = el('div', 'tview-modes');
   const moderow = el('div', 'tview-moderow');
   moderow.setAttribute?.('role', 'group');
@@ -310,7 +310,7 @@ function build(doc, hooks) {
     filters.append(b);
   }
   // OW-WHO / OW-NODE-KM (FIELD BUGS 2026-10-04e): THE PLAYERS - by who they are to me, the least Renown - and how far off
-  // a gathering group still shows; the held map's key reads the same switches (systems/travelViewFilters.js)
+  // a gathering group still shows; the held map's key reads the same switches (systems/travel/travelViewFilters.js)
   filters.append(el('div', 'tview-label', TV_WHO_TEXT.title));
   const whoBtns = {};
   for (const g of TV_WHO_GROUPS) {

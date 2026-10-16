@@ -84,7 +84,7 @@ test('audit24 wave26: the seam gate resolves world ALIASES', () => {
 // ---- the three seams the alias hole hid ----------------------------
 
 test('audit24 wave26: DirectionVector2DirectionHintString, band for band', async () => {
-  const { directionHintString, DIRECTION_HINTS } = await import('../src/systems/talk.js');
+  const { directionHintString, DIRECTION_HINTS } = await import('../src/systems/talk/talk.js');
   // TalkManager.cs:1163-1187. Eight 45-degree bands off EAST,
   // counter-clockwise, the caller having already inverted y.
   assert.equal(directionHintString(1, 0), 'east');
@@ -119,7 +119,7 @@ test('audit24 wave26: DirectionVector2DirectionHintString, band for band', async
   // to `>` survived them. The bands' inclusivity is pinned on the
   // source instead - C# is `>=` on every lower bound, `<` on every
   // upper, and `<=` only on the 360 that closes the circle.
-  const fn = readFileSync(new URL('../src/systems/talk.js', import.meta.url), 'utf8');
+  const fn = readFileSync(new URL('../src/systems/talk/talk.js', import.meta.url), 'utf8');
   const body = fn.slice(fn.indexOf('export function directionHintString'), fn.indexOf('/** GetLocationCompassDirection'));
   const bounds = [...body.matchAll(/angle (>=|>|<=|<) (\d+(?:\.\d+)?)/g)].map((m) => `${m[1]}${m[2]}`);
   assert.deepEqual(bounds, [
@@ -131,7 +131,7 @@ test('audit24 wave26: DirectionVector2DirectionHintString, band for band', async
 });
 
 test('audit24 wave26: FindFactionByTypeAndRegion - exact first, partial LAST', async () => {
-  const { findFactionByTypeAndRegion } = await import('../src/systems/talk.js');
+  const { findFactionByTypeAndRegion } = await import('../src/systems/talk/talk.js');
   // PersistentFactionData.cs:236-265. An exact type+region match
   // RETURNS immediately, so the first in dictionary order wins.
   const dict = new Map([
@@ -163,7 +163,7 @@ test('audit24 wave26: FindFactionByTypeAndRegion - exact first, partial LAST', a
 });
 
 test('audit24 wave26: locationCompassDirection keeps the last-match and (0,0) shapes', async () => {
-  const { locationCompassDirection } = await import('../src/systems/talk.js');
+  const { locationCompassDirection } = await import('../src/systems/talk/talk.js');
   // A region whose map table puts "Privys" at longitude/latitude that
   // land EAST of the player. longitudeLatitudeToMapPixel is
   // {x: trunc(lon/128), y: 499 - trunc(lat/128)}.

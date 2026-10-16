@@ -16,9 +16,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ONLINE_REFUSED_FLAGS, refuseOnlinePowerFlags, ONLINE_WHOLE_MODS, ONLINE_ROOM_MOD_KEYS, onlineWholeModKey } from '../src/systems/onlineLane.js';
+import { ONLINE_REFUSED_FLAGS, refuseOnlinePowerFlags, ONLINE_WHOLE_MODS, ONLINE_ROOM_MOD_KEYS, onlineWholeModKey } from '../src/systems/online/onlineLane.js';
 import { MOD_SETTINGS, modSetting, setModSetting, onlineModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { onlineSyncPlan } from '../src/systems/onlineSync.js';
+import { onlineSyncPlan } from '../src/systems/online/onlineSync.js';
 import {
   TRANSACTION_RESULT as R, createBankAccounts, borrowDecision, borrowLoan, settleOverdueLoan, depositGold, depositAllLetters,
   empireRefusal, empireRefusalLines, callInEmpireDebt, empireCallInLines, calculateMaxBankLoan, LOAN_MAX_PER_LEVEL,
@@ -29,17 +29,17 @@ import { letterOfCredit, LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/invent
 import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/bankWindow.js';
 import { REGION_NAMES } from '../src/formats/mapsFile.js';
 import { calculateTradePrice, ONLINE_SALE_SHARE } from '../src/systems/shopStock.js';
-import { addPileLootExtras, unlevelPileGold } from '../src/systems/loot.js';
+import { addPileLootExtras, unlevelPileGold } from '../src/systems/loot/loot.js';
 import { goldStack } from '../src/systems/inventory.js';
-import { setLocked } from '../src/systems/itemLock.js';
-import { isBound, boundRefusesPut, BOUND_KEEPS, BOUND_TRADE_TEXT } from '../src/systems/itemBound.js';
-import { validItemField, isDeclaredItemField } from '../src/systems/itemFields.js';
-import { brokerStock, makeBrokerSale, _resetBrokerForTests } from '../src/systems/sigilBroker.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
+import { isBound, boundRefusesPut, BOUND_KEEPS, BOUND_TRADE_TEXT } from '../src/systems/item/itemBound.js';
+import { validItemField, isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { brokerStock, makeBrokerSale, _resetBrokerForTests } from '../src/systems/sigil/sigilBroker.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { shareQuestGold, GivePc } from '../src/systems/quest/actions.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { tradeRefusal, createTradePack } from '../src/systems/tradePack.js';
-import { ONLINE_CHECKPOINT_MS, checkpointAllowed, checkpointDue, checkpointedTradePack } from '../src/systems/onlineCheckpoint.js';
+import { ONLINE_CHECKPOINT_MS, checkpointAllowed, checkpointDue, checkpointedTradePack } from '../src/systems/online/onlineCheckpoint.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** Runs `fn` as if the page were `search`, then restores the page. */

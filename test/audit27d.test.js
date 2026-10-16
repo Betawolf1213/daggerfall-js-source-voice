@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { spellAbsorptionChance } from '../src/systems/absorption.js';
 import { cureAllOfKind } from '../src/systems/effects.js';
 import { REST_OPT_RELAY_MIN, relaySupportsRestOpt, TRADE_REV_MAX } from '../src/net/wire.js';
-import { restsApart, REST_APART_TEXT, restsAlone, restAloneText } from '../src/systems/partyRestLaw.js';
+import { restsApart, REST_APART_TEXT, restsAlone, restAloneText } from '../src/systems/party/partyRestLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = src('src/scenes/world.js');

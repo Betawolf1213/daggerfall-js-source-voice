@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { retroScreenRect, retroAspectViewportRect, RETRO_ASPECT } from '../src/systems/retroMode.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { HeldMapWindow, PAPER, heldStageRect } from '../src/ui/heldMap.js';
 
 /** Just enough document for the window's chrome (heldmap.test.js's own stub, trimmed). */

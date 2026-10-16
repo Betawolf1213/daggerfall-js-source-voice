@@ -23,7 +23,7 @@ import {
   addEnemyLootExtras, addPileLootExtras, createPotion, createRandomPotion,
   CLASSIC_RECIPE_KEYS, PILE_MAP_CHANCES, MAP_TEMPLATE_INDEX,
   POTION_RECIPE_TEMPLATE_INDEX, POTION_TEMPLATE_INDEX, DUNGEON_LOOT_KEYS,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { isMap, isPotion, isPotionRecipe } from '../src/systems/useItem.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 

@@ -21,7 +21,7 @@ water that meet a pixel's centre from the same side share the bit: 32 arms of 30
 road 10, stream and track 13 - and a town's centre is where both run). His painter paints the water before the track,
 so the whole arm painted as water where the dirt track ran, and a river on a road's arm stood its banks either side of
 the road. In DFU those were tiles; here LANDFORM3 cuts painted water into the land, a stream 1 m and a river 2.4 m, and
-since LANDFORM3 the room's rivers are on (`systems/onlineLane.js`) - a straight channel to the town, the track gone
+since LANDFORM3 the room's rivers are on (`systems/online/onlineLane.js`) - a straight channel to the town, the track gone
 (AUDIT LANDFORMS II J1's ford: a track gives way to the water's channel) or the road a causeway in it.
 
 `world/roadsProducer.js` `waterOffPaths` drops the water's bit on each such arm, once, as `loadModRoads` answers -
@@ -75,7 +75,7 @@ pack `acquired`, and the mark rides the save into the realm's record; the wire's
 offer. The realm's trade law (`net/realmTradeLaw.js` recordIsOffered) compares every field but its volatile list, which
 named `equipSlot` and `questItem` and not the new mark - so every marked piece was "not the record's piece", at the
 market, a home vendor's stall and a realm trade alike. The three receiver's marks are `RECEIVER_MARKS` now, read by the
-clamp (`systems/loot.js`), a wild death's record (`systems/wildDeath.js`) and the law. THE WORKER: the law is the
+clamp (`systems/loot/loot.js`), a wild death's record (`systems/wild/wildDeath.js`) and the law. THE WORKER: the law is the
 account service's too (`server-account/src/market.js` imports it) - the service's deploy carries the fix. Pinned by
 `test/fb1009b_markwire.test.js` and `test/fb1001_market_goods.test.js` (the HUD's watcher run before the list);
 `tools/mutants/fb1009b_markwire.json`.

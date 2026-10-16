@@ -22,7 +22,7 @@ export const BOUNTY_LEGEND_TEXT = 'Bounty';
 /** The circle's radius, map pixels: the target pixel inside it with a ring of its neighbours as the band. */
 export const BOUNTY_RING_R = 1.5;
 /** RVN7c (bible/12-Enhanced-AI/Feud-Arc.md 18.3): A REVENANT'S LAIR the player has heard of - the same circle, in blood
- *  red, with its name; `revenants: () => marks[]` beside `bounties` in the host's map deps (systems/revenant.js
+ *  red, with its name; `revenants: () => marks[]` beside `bounties` in the host's map deps (systems/revenant/revenant.js
  *  revenantMapMarks), read by the same reader. */
 export const REVENANT_RING_CSS = '#7a0a0a';
 export const REVENANT_FILL_CSS = 'rgba(122, 10, 10, 0.16)';

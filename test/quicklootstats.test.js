@@ -19,7 +19,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { itemStatRows, weaponDamageString, armourModString, conditionWord, conditionPercentage } from '../src/systems/itemInfo.js';
+import { itemStatRows, weaponDamageString, armourModString, conditionWord, conditionPercentage } from '../src/systems/item/itemInfo.js';
 import { hoverLines, HOVER_MAX } from '../src/systems/worldHover.js';
 import { foldQuickLoot, quickLootStats, quickLootWheel, resetQuickLoot, quickLootOn, quickLootRow } from '../src/systems/quickLoot.js';
 import { statsSide } from '../src/ui/worldPlaque.js';

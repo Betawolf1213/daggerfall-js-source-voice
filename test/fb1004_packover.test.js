@@ -8,14 +8,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { standService, T0, sessionStorageOf } from './accountDb.mjs';
 import { accountProf, SESSION_KEY } from '../src/net/accountClient.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { BAG_TEMPLATE, BAG_KG_LIMIT, BAG_WORDS, goodsWhere } from '../src/net/bagLaw.js';
 import { heldOf, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf, bagWeight } from '../src/systems/materialsBag.js';
-import { mintMaterialItem, materialCountLabel } from '../src/systems/profItems.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { mintMaterialItem, materialCountLabel } from '../src/systems/professions/profItems.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { carriedWeight } from '../src/systems/inventory.js';
 import { entityMaxEncumbrance } from '../src/combat/formulas.js';
 import { harvestHauls } from '../src/ui/haulCards.js';

@@ -7,8 +7,8 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applySpell, DISPEL_GROUP, isDispelCreature } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import { NEARBY, updateNearbyObjects, getNearbyObjects } from '../src/systems/nearbyObjects.js';
 import { dispelNearby } from '../src/systems/mysticism.js';
 

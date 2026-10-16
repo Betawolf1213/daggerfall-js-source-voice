@@ -3,7 +3,7 @@
 // how we did we the world map. The automap should become a 2d map and
 // floor based instead of the current 3D implementation").
 //
-// `systems/automapFloors.js` answers WHAT to draw and its own pins hold
+// `systems/automap/automapFloors.js` answers WHAT to draw and its own pins hold
 // that. These hold HOW: that the dungeon is drawn by the hand that drew
 // the Iliac Bay (inkMap's pen, inkMap's halo, no colour invented here),
 // that the three weights mean what the header says they mean, and that
@@ -23,7 +23,7 @@ import {
 } from '../src/ui/inkAutomap.js';
 import { PEN, HALO_PEN, NAME_FACE, toPaper, boundarySegments, linkSegments } from '../src/ui/inkMap.js';
 import { STRIP, stripScale, grabHit } from '../src/ui/mapStrip.js';
-import { floorPlan } from '../src/systems/automapFloors.js';
+import { floorPlan } from '../src/systems/automap/automapFloors.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

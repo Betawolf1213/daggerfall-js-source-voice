@@ -56,7 +56,7 @@
   },
   {
     "name": "PERF-TOWN1-7-the-pools-list-is-rebuilt-every-frame-again",
-    "file": "src/systems/townPopulation.js",
+    "file": "src/systems/town/townPopulation.js",
     "old": "    const out = this._live ??= [];\n    out.length = 0;",
     "new": "    const out = [];",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "PERF-TOWN1-8-the-pools-list-is-never-emptied-so-it-grows-for-ever",
-    "file": "src/systems/townPopulation.js",
+    "file": "src/systems/town/townPopulation.js",
     "old": "    const out = this._live ??= [];\n    out.length = 0;",
     "new": "    const out = this._live ??= [];",
     "tests": [

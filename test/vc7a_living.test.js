@@ -14,7 +14,7 @@ import {
   convectZone,
 } from '../src/render/volumetricClouds.js';
 import { skyState, WEATHER_SKY, WEATHER_EASE_MINUTES, sunSkyDirection } from '../src/render/enhancedSky.js';
-import { skyCells } from '../src/systems/weatherMap.js';
+import { skyCells } from '../src/systems/weather/weatherMap.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const YEAR = 405 * 360 * 1440;

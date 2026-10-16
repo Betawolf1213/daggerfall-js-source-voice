@@ -1,5 +1,5 @@
 // TV7 - THE ROAMING BANDS (bible/06-Systems/Travel-View.md, THE OVERHAUL; Mac 2026-09-28: "Roaming parties", "Shared
-// per area"). The pure law (systems/travelBands.js): born of the land and the shared clock, a seeded wander, the chase.
+// per area"). The pure law (systems/travel/travelBands.js): born of the land and the shared clock, a seeded wander, the chase.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -7,9 +7,9 @@ import {
   BAND_GIVE_UP_MS, BAND_CONTACT_M, BAND_REACH_PX, bandOf, wanderAt, bandsNear, bandSight, bandChaseStep, bandLabel,
   BAND_SIGHT_DAY_M, BAND_SIGHT_NIGHT_M, bandWordOf, validBandWord, chaseYields, BAND_ID_RE, BANDS_WIRE_MAX, BAND_WORD_MS,
   bandMakeSeed, bandLifeOf, bandNearMe, BAND_STAND_RETRY_MS, BAND_STAND_TRIES, bandPixelOf,
-} from '../src/systems/travelBands.js';
-import { seededRng } from '../src/systems/wind.js';
-import { NATIVE_PER_M } from '../src/systems/travelDungeons.js';
+} from '../src/systems/travel/travelBands.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { NATIVE_PER_M } from '../src/systems/travel/travelDungeons.js';
 
 const land = () => true;
 const PX = 32768;
@@ -187,7 +187,7 @@ test('TV7 host: the bands about the traveller kept a life and a pixel; made once
   // PIN MOVED (PVPDUNGEONS): a pack born in the open zone is WILD_PACK_MULT times as many
   assert.match(w, /const hit = rollGroupComposition\(\{ climateIndex: maps\.getClimateIndex\(px, py\), playerLevel: online \? bandLevelOf\(b\) : playerEntity\.level, inLocationRect: false,\n\s*gameMinutes: b\.night \? 0 : 720, size: bandSizeOf\(b\) \* \(wildBornHere\(px, py\) \? WILD_PACK_MULT : 1\) \}, seededRng\(bandMakeSeed\(b\)\)\);/, 'made from its own stream (AUDIT OW3 T7-4), by its life\'s night');
   assert.match(w, /if \(!up \|\| _bandChase\.size >= 2 \|\| bandPeerChase\(b\.id\)\) continue;/, 'only under the view does a band first see me; two chasers at most; never a band a peer\'s chase holds (TV7b)');
-  assert.match(w, /if \(!wildBands\.step\(b\.id, \{ distM: d, reachM: sight, stealth, scaledDt: sdt, now: now \/ 1000 \}\)\.alerted\) continue;/, 'WILD-ALERT: within its sight, a band chases only once it has noticed me (systems/wildAlert.js)');
+  assert.match(w, /if \(!wildBands\.step\(b\.id, \{ distM: d, reachM: sight, stealth, scaledDt: sdt, now: now \/ 1000 \}\)\.alerted\) continue;/, 'WILD-ALERT: within its sight, a band chases only once it has noticed me (systems/wild/wildAlert.js)');
   assert.match(w, /for \(const \[id, c\] of _bandChase\) \{\n\s*const s = bandChaseStep\(\{ pos: c\.pos, feet, dt, scale: worldTimeScale\(\), contact: up \? BAND_CONTACT_M : BAND_STAND_M, gainAt: c\.gainAt, now: _bandClock, best: c\.best \}\);\n\s*c\.pos = s\.pos; c\.best = s\.best; c\.gainAt = s\.gainAt; c\.dist = s\.dist;/, 'every chase stepped on its own band (AUDIT OW3 T7-2), the journey\'s pace, the view\'s reach or the stand-off, the last gain fed back (T7-3), on the chases\' own clock (AUDIT OW5b B4), where it is kept (B2)');
   assert.match(w, /else if \(s\.what === 'contact' && !\(c\.retryAt > now\)\) \{\n(?:\s*\/\/[^\n]*\n)*\s*const mk = bandMake\(c\.band\);\n\s*const met = bandRoom\(mk\) \? journeyMet\(\) : null;\n\s*if \(met === 'avoided'\) \{ _bandChase\.delete\(id\); bandSpend\(id\); continue; \}\n\s*if \(met === 'ignored'\) \{ c\.retryAt = now \+ BAND_STAND_RETRY_MS; continue; \}\n\s*c\.yaw \?\?= bandYaw\(c\.pos\);[^\n]*\n\s*if \(bandStand\(mk, c\.yaw, c\.dist\) \|\| \+\+c\.tries >= BAND_STAND_TRIES\) \{ _bandChase\.delete\(id\); bandSpend\(id\); \}[^\n]*\n\s*else c\.retryAt = now \+ BAND_STAND_RETRY_MS;/, 'contact asks the journey first (AUDIT OW5b E1), then stands the band, once - spent only once it stood, or its tries are spent (AUDIT OW3 T7-1)');
   assert.match(w, /if \(s\.what === 'lost'\) \{ _bandChase\.delete\(id\); bandSpend\(id\); \}/, 'a lost trail: the band is gone for its life');
@@ -277,7 +277,7 @@ const liftBands = async () => {
 };
 const bandHost = async (over = {}) => {
   const src = await liftBands();
-  const law = await import('../src/systems/travelBands.js');
+  const law = await import('../src/systems/travel/travelBands.js');
   const stood = [], d = {
     _bandChase: new Map(), _bandSpent: new Set(), _bandSpentAt: [], _bandPeer: new Map(),
     worldMoveBusy: () => false, travelView: { active: true }, isEnhanced: () => true, modes: { mode: 'exterior', deathUp: () => false },
@@ -292,7 +292,7 @@ const bandHost = async (over = {}) => {
     standOk: () => true, standCalls: [], online: { id: 'b' }, playerTravelPixel: () => ({ x: 0, y: 499 }),
     met: null, metCalls: 0, journeyMet: () => { d.metCalls++; d.order?.push('met'); return typeof d.met === 'function' ? d.met() : d.met; },   // AUDIT OW5b E1: no journey walks, unless a pin says one does
     owed: [], owSaySpent: (id) => d.owed.push(id),   // OW6L: a spend is owed to the cell's ledger
-    // WILD-ALERT: a band within its sight notices on a stealth check (systems/wildAlert.js) - these runs stand a band that
+    // WILD-ALERT: a band within its sight notices on a stealth check (systems/wild/wildAlert.js) - these runs stand a band that
     // always notices, as every band within sight did before; test/wildalert.test.js runs the check itself
     wildBands: { step: (id, q) => ({ alerted: q.distM <= q.reachM, noticed: q.distM <= q.reachM }), prune: () => {}, forget: () => {} }, wildStealth: () => 50,
     // SEA-HUNT: the host's one afloat predicate (world.js playerAfloat - its text pinned in deckfield.test.js), read off
@@ -507,7 +507,7 @@ test('AUDIT OW5b B5 law: A BAND CLOSES TO THE CONTACT\'S RING AND NO NEARER - a 
 });
 
 test('AUDIT OW5b B2 host run: A BAND STANDS WHERE IT IS - met under the view at the contact\'s ring, it stands there; met with the view down at BAND_STAND_M (Mac\'s CAMP-FAR, never beside the player out of nowhere), it stands at that distance - not brought a hundred metres nearer', async () => {
-  const { BAND_STAND_MIN_M } = await import('../src/systems/travelBands.js');
+  const { BAND_STAND_MIN_M } = await import('../src/systems/travel/travelBands.js');
   for (const [what, up, contact] of [['under the view', true, BAND_CONTACT_M], ['the view down', false, 140]]) {
     const h = await bandHost({ travelView: { active: up }, standAt: [] });
     h.d._bandChase.set('b1.1.5', { band: bandAt('b1.1.5', 0, 400), pos: { x: 0, z: 400 * NATIVE_PER_M }, gainAt: 0, best: 400, dist: 400, tries: 0, retryAt: 0 });

@@ -302,7 +302,7 @@
   },
   {
     "name": "AUDIT28-B1-a-clear-pays-a-bounty-taken-after-it",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "  return r?.c === 1 && Number.isSafeInteger(r.t) && Number.isFinite(takenAt) && r.t >= takenAt;",
     "new": "  return r?.c === 1;",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "AUDIT28-B2-a-retake-starts-from-nothing",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "  const killed = Math.max(0, ledger.droppedKilled?.[b.slotKey] ?? 0);",
     "new": "  const killed = 0;",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "AUDIT28-B3-a-standing-pack-owns-nothing",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "  if (standing.length) return standing[0];\n",
     "new": "",
     "tests": [
@@ -339,7 +339,7 @@
   },
   {
     "name": "AUDIT28-B3-the-gone-and-the-dead-own-it",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "m.p && m.online !== false && !(m.p.h === 0));",
     "new": "m.p);",
     "tests": [
@@ -394,7 +394,7 @@
   },
   {
     "name": "AUDIT28-B7-the-oldest-clears-first",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": ".sort((a, b) => b.t - a.t);",
     "new": ".sort((a, b) => a.t - b.t);",
     "tests": [

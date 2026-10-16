@@ -24,10 +24,10 @@ import {
 import { createEquipTable } from '../characters/equipTable.js';
 import { computeEntityMods, entityArmorDisplayMod } from '../systems/entityMods.js';
 import { struckBodyPartTable } from '../combat/formulas.js';
-import { itemDamageLine, weaponDamageRange } from '../systems/itemInfo.js';
+import { itemDamageLine, weaponDamageRange } from '../systems/item/itemInfo.js';
 import { itemIsIdentified } from '../systems/tradeModes.js';
 import { armorLabelValue } from './nativeInventory.js';
-import { lineComparison, lootRarityOn } from '../systems/lootRarity.js';   // LOOT18: the lines against what a wear replaces
+import { lineComparison, lootRarityOn } from '../systems/loot/lootRarity.js';   // LOOT18: the lines against what a wear replaces
 
 /** The seven parts in DFU's BodyParts order (ItemEnums.cs:140-150), named off the enum's own members ("RightArm" says
  *  "Right arm"), so no second list of them stands anywhere. No lookbehind in the split (SAFARI1: a Safari before 16.4
@@ -78,7 +78,7 @@ function foldedPoints(entity, slots) {
 }
 /** AUDIT C&C S6 (decision D4): A PIECE AS ITS CARD KNOWS IT. An unidentified piece's card says "Unidentified" and names
  *  no line and no power, so the stand-in a comparison wears carries neither: no affixes and no power ids (a Legendary's
- *  record, a Rare's imprint, a Gilded's - systems/lootPowers.js reads them). The copy had dropped the lines and kept the
+ *  record, a Rare's imprint, a Gilded's - systems/loot/lootPowers.js reads them). The copy had dropped the lines and kept the
  *  ids, so the unidentified Wrothgar Pass Mantle's card counted its hidden Mountain-Born and not its hidden lining (a
  *  mountain night read -85 to -53, where the cloak it shows is -85 to -73). An identified piece is itself. */
 export const asKnown = (item) => (itemIsIdentified(item) ? item : { ...item, affixes: [], legendary: null, imprint: null, gilded: null });
@@ -204,7 +204,7 @@ export function armourPlaque(entity) {
  * ring, a shirt): there is no stat to set against another. `nameOf` names a piece (the pack hands itemLongName).
  */
 /** LOOT18 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 10): THE LINES A WEAR WOULD CHANGE, under the
- *  numbers - each of the piece's lines against the same line on what it replaces (systems/lootRarity.js
+ *  numbers - each of the piece's lines against the same line on what it replaces (systems/loot/lootRarity.js
  *  lineComparison): up or down by how much, `new` where they have none, and their lines it would lose; a resistance
  *  line with what of its element the rolled gear counts, now and after (LOOT12's cap). Only a wear that replaces a known
  *  piece, and only a piece whose lines are known. */

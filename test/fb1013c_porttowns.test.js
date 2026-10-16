@@ -18,12 +18,12 @@ import { join } from 'node:path';
 import { boardFor, deliveryPort, advance, takeContract } from '../src/systems/naval/harbourBoard.js';
 import { createCaptainLedger } from '../src/systems/naval/captainLedger.js';
 import { createHarbourOffice } from '../src/scenes/harbourOffice.js';
-import { PORT_LOCATION_IDS, hasPort } from '../src/systems/travelPorts.js';
+import { PORT_LOCATION_IDS, hasPort } from '../src/systems/travel/travelPorts.js';
 import { isPortTownType, isPortTown, PORT_TOWN_TYPES } from '../src/systems/portPlaces.js';
 import { openSeaOf, seaBears, portTownOnSea } from '../src/world/portSites.js';   // FIELD BUGS 2026-10-14 INLAND-PORTS
 import { MapsFile, LOCATION_TYPES, getPixelFromPixelID } from '../src/formats/mapsFile.js';
 import { WoodsFile } from '../src/formats/woodsFile.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { crownOf } from '../src/systems/naval/navalShips.js';
 

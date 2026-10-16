@@ -133,16 +133,16 @@ region at the minimum, `r = -1`.
 The census is taken ONCE per rise, never on a timer (RELAY-H1: objects are billed for awake seconds). It is honest
 about its limit, as the rite is: a region is the one a client says it stands in.
 
-**The city (client, every client the same).** `systems/sdSite.js`, over the game's own MAPS.BSA rows (a mod's addition
+**The city (client, every client the same).** `systems/superDungeon/sdSite.js`, over the game's own MAPS.BSA rows (a mod's addition
 is not on every client - HUB1's rule), each as MAPS.BSA holds it - a town pack's row read again past the world-data door
 (LANDFORMS III B1's `classicRow`; a pack rewrites the very grid and buildings a city ranks by, and a client whose pack
 failed to load stood its Hollow by another city - AUDIT SD IV S2), and the templates read the same way:
 
-1. The candidates are the populated places of region `r`, ranked as its hub is chosen (`systems/regionHubs.js`
+1. The candidates are the populated places of region `r`, ranked as its hub is chosen (`systems/region/regionHubs.js`
    `hubClaim`): a city over a hamlet over a village, then the one named for its region, then its RMB blocks, then its
    buildings. With `r = -1` the candidates are the Bay's first eight cities by that ranking (`SD_GREAT_CITIES`), and the
    slot's hash picks one.
-2. Around the chosen city, the site is a pixel the gate's own scan calls suitable (`systems/gateSite.js`: land, no
+2. Around the chosen city, the site is a pixel the gate's own scan calls suitable (`systems/gate/gateSite.js`: land, no
    location on it or its eight neighbours, not a spawned dungeon's pixel) whose nearest fast-travel town is that city -
    two to four pixels out (`GATE_TOWN_MIN_PX`..`GATE_TOWN_MAX_PX`). The slot's hash picks among the pixels that pass;
    with none, the next city down the ranking is tried. ON DRY GROUND (AUDIT SD IV F37): the scan's one land test is the
@@ -195,7 +195,7 @@ each turner's, each fighter's. Whether a Hollow should need company to collapse 
 
 The Hollow is a spawned dungeon (`synthesizeDungeonLocation`, the Elite's), cloned from a template dungeon the slot's
 hash picks from the Bay's labyrinths and keeps of at least 12 blocks with a spawn's clearance, never the main story's
-(`systems/sdSite.js` `sdTemplates`), laid WHOLE (`world/smallerDungeons.js` `dungeonSizeFor`, by the tier law) - the
+(`systems/superDungeon/sdSite.js` `sdTemplates`), laid WHOLE (`world/smallerDungeons.js` `dungeonSizeFor`, by the tier law) - the
 world's sizes (section 13) are not drawn for it: the feat is the longest walk its template has. It is named from the slot: *The Brass Hollow*, *The Stopped
 Bell*, *The Unwound Halls*, *The Clockless Deep*, *The Hour's Wound*, *The Splintered Keep*, *The Last Bell of
 <city>*, *The Hollow Under <city>*.
@@ -280,7 +280,7 @@ held on both arms since AUDIT SD V, SD27 L1: the dungeon arm, which draws the Ho
 And as the court does (GATE-ALONE), it takes no companion through the Rift: the crew's hands and the sworn wait outside
 the Hour, and come back to the player's side out of it (SD-ALONE, section 16).
 
-**Its music** (SD13, `systems/sdScore.js`): the Hollow and the Hour have a score of their own - C minor and a clock
+**Its music** (SD13, `systems/superDungeon/sdScore.js`): the Hollow and the Hour have a score of their own - C minor and a clock
 where the Warden's is D minor and fire. Its one motif is the Westminster quarters struck in the minor and BROKEN, the
 fourth change ending on F sharp, the tritone, where the hour should strike; MENDED in C major as the Remnant falls. The
 Hollow's walk; the Orrery's riddle; the Steps over the void; the Remnant's three phases, the Dragon Break's two themes
@@ -477,7 +477,7 @@ fighter who EARNED it (dealt 2% of their own share, or stood alive half the figh
 own seed, how it was earned, the admitted level. The hub keeps each as `sdrc:<sub>` for the week a receipt lives.
 
 **The spoils (client, from the receipt's seed).** Thrown from where it fell, clear of a pillar it fell into (the gate's
-spoils pool, its keys its own - SD9e: `systems/sdSpoils.js` rolls them, `scenes/sdSpoils.js` throws them a moment into
+spoils pool, its keys its own - SD9e: `systems/superDungeon/sdSpoils.js` rolls them, `scenes/sdSpoils.js` throws them a moment into
 the fall from the cage of its chest toward the fighter, kept on the arena's floor; a receipt that comes outside the
 realm - the hub's, heard on the hub's own link - is its spoils straight into the pack, and so is my realm's own whose
 throw never came, as I leave the Hour). A fighter who dealt and one who stood are paid alike, as the gate pays them:
@@ -490,7 +490,7 @@ throw never came, as I leave the Hour). A fighter who dealt and one who stood ar
 | THE BRASS OF NUMIDIUM | one piece, one time in three (rolled after the pieces, so their rolls never move) |
 | the Hourlock | one time in fifty - a Gilded Thunderlock (GILDED1, `06-Systems/Gilded.md` section 4): one draw every time, rolled after the Brass, last of all, so it never moves an earlier roll; online alone, as the Hour is |
 
-**THE BRASS OF NUMIDIUM** - a new Aetheric set (`systems/aetheric.js`, `systems/sigilSets.js`): Dwarven pieces, the
+**THE BRASS OF NUMIDIUM** - a new Aetheric set (`systems/aetheric.js`, `systems/sigil/sigilSets.js`): Dwarven pieces, the
 Dwemer's brass, nine records in the places' order - the seven body pieces, a round shield and a ONE-HANDED Longsword,
 so all nine are worn at once (SD9d: the design had named a longsword, a war axe and a staff - three weapons for the one
 place a set counts; `Sigil-Sets.md` section 6d). Its set law (online only, asleep in duels, the Sigil Sets' rules -
@@ -534,7 +534,7 @@ stands, so a step under the veil that lands after it is cast out on landing.)
 
 ## 12. Regular, Elite, Super - the labels
 
-One law, `dungeonTier(loc)` (`systems/dungeonTier.js`, a leaf): `'super'` for a Hollow, `'elite'` for an Elite spawn,
+One law, `dungeonTier(loc)` (`systems/dungeon/dungeonTier.js`, a leaf): `'super'` for a Hollow, `'elite'` for an Elite spawn,
 `'regular'` for every other dungeon - and null for a place that is not a dungeon. Its words, `DUNGEON_TIER_TEXT`:
 **Regular Dungeon**, **Elite Dungeon**, **Abyss Dungeon** (ABYSS-NAME, below) - and, beside them since the world's sizes (section 13), the
 dungeon's SIZE, **Small**, **Medium** or **Large**, by the built dungeon's block count as the room builds it online
@@ -574,7 +574,7 @@ that meant each player's pick or the world's, chose **the world mixing sizes**: 
 small, medium or large, the same for every player, most of them medium. So online the size is no setting at all but
 the room's law:
 
-- **`onlineDungeonSize`**: one draw of the port's seeded die (`systems/wind.js seededFirst`) on the dungeon's map id
+- **`onlineDungeonSize`**: one draw of the port's seeded die (`systems/wind/wind.js seededFirst`) on the dungeon's map id
   and its own salt, weighted small 1, medium 2, large 1 (`ONLINE_DUNGEON_SIZES`) - a quarter of the DRAWS small, half
   medium, a quarter whole - the same on every client, every visit, for good. What is BUILT is not that split (AUDIT SD
   III, SD20g D2: this line said it was): a dungeon of five blocks or fewer is small whatever it draws, one of eight or
@@ -676,7 +676,7 @@ gate's, a battle's, an arena's) write their own socket and never run in `sd:<s>`
 | SD-ONLINE | section 13 |
 | TIER1 | section 12 |
 | SD1 | `net/sdLaw.js`: slots, the record's law, the census pick, the find's check (`sdFindBelieved`), the room key |
-| SD2 | `systems/sdSite.js` and the Hollow at its pixel: the city, the site, the clone, the omen, the sighting, the plaque |
+| SD2 | `systems/superDungeon/sdSite.js` and the Hollow at its pixel: the city, the site, the clone, the omen, the sighting, the plaque |
 | SD3 | the relay: the director, the census, the found word, the realm room, the wire, `RELAY_VERSION` |
 | SD4 | the Super dungeon: its difficulty, its end, the Rift and the Return |
 | SD5 | the Shattered Hour: the made level, its sky, the way in and out |
@@ -712,7 +712,7 @@ relayOnlineDungeons` (it was `relayWholeDungeons`): every running quest stamped 
 included - has its dungeon markers enumerated again on the room's builds, its placements put back, and its stamp set to
 the world's sizes; a quest one of whose dungeons cannot be read keeps its stamp. `systems/features.js`: the new
 `world-dungeon-sizes` row (forced on online), the medium row forced off online, and both size rows' notes say what
-online does; `systems/onlineSync.js` copies the forced rows home. The room: `net/online.js roomKeyFor` takes the
+online does; `systems/online/onlineSync.js` copies the forced rows home. The room: `net/online.js roomKeyFor` takes the
 dungeon's `size`, the mode machine's identity carries `builtDungeonSize(dungeonLoc)` and the world host hands it on;
 `net/wire.js` admits `dungeon:m<id>.m` and `.s` (`WORLD_ROOM`, `DUNGEON_ROOM_TAGS`, `dungeonRoomTag`), so
 RELAY_VERSION is `world172` - the arc's one version, re-hashed in place while it is undeployed (`world171` on its branch,
@@ -740,7 +740,7 @@ version).
 
 ### TIER1 - shipped 2026-10-05
 
-Section 12, whole, with the size beside the tier. `systems/dungeonTier.js` (the leaf: the tiers, their words, the
+Section 12, whole, with the size beside the tier. `systems/dungeon/dungeonTier.js` (the leaf: the tiers, their words, the
 size words, `dungeonTier`, `tierShown`, `tierPhrase`), `world/dungeonLabel.js` (`dungeonSizeClass`,
 `dungeonSizeOnline`, `dungeonTierLabel` kept per location, `madeDungeon`). The surfaces: `systems/worldTooltips.js
 staticDoorName` takes a `tier` and a `size` (its old `elite` flag is the tier now); `scenes/worldModes.js` names them
@@ -779,10 +779,10 @@ check under an early `next`, now pinned). Wired by nothing yet: SD2 places the H
 
 ### SD2a - shipped 2026-10-05 (the site's law)
 
-`systems/sdSite.js`, pure over the map data every client holds: `sdCities` (a region's places ranked by the hubs' own
-claim - `systems/regionHubs.js` exports its `outranks` for it - or the Bay's first eight cities by the hubs' own claim -
+`systems/superDungeon/sdSite.js`, pure over the map data every client holds: `sdCities` (a region's places ranked by the hubs' own
+claim - `systems/region/regionHubs.js` exports its `outranks` for it - or the Bay's first eight cities by the hubs' own claim -
 a city named for its region before a larger one), `findSdSite` (a pixel the GATE's own scan calls suitable -
-`systems/gateSite.js scanGatePixels`, so the Hollow inherits every one of its tests: land, no location on it or its
+`systems/gate/gateSite.js scanGatePixels`, so the Hollow inherits every one of its tests: land, no location on it or its
 neighbours, no spawned dungeon rolled there, a province's - whose nearest fast-travel town is the city, two to four
 pixels out, by the slot's roll; a city with none passes to the next - and, AUDIT SD IV F37, on dry ground, which the
 gate's scan never asks: the spawns' own test, section 3), `sdTemplates`/`pickSdTemplate` (a labyrinth or a
@@ -883,7 +883,7 @@ Next: the omen, the marks and the Timers row (SD2c); a save inside a Hollow and 
 
 ### SD2c - shipped 2026-10-06 (the Hollow seen and heard of)
 
-Section 4, whole but the sighting line (TIER1's, which a Hollow already takes as a spawned dungeon). `systems/sdOmen.js`,
+Section 4, whole but the sighting line (TIER1's, which a Hollow already takes as a spawned dungeon). `systems/superDungeon/sdOmen.js`,
 pure over the hub's record and the Hollow the host stood, the relay's clock handed:
 
 - **The omen.** A column of brass-gold light over the Hollow's pixel from its rise to its end (`sdOmenLight`: kindled over
@@ -1015,7 +1015,7 @@ Section 6, in the dungeon host.
   stood a 7 m ring through a 5 m ceiling; each spot's ring is the swept one. Its look (`scenes/sdEnd.js riftFrame`): a ring of brass light in eight
   teeth, turning an eighth of a turn every sixteen frames, about a near-black membrane with slow gold swirling in it.
   It is made once per renderer, as the companion's portal is, and is self-lit, so it glows the same underground. Its
-  sound (`systems/sdRiftSound.js`) is a bell heard under water: DAGGER.SND's ship's bell slowed and pitched down near a
+  sound (`systems/superDungeon/sdRiftSound.js`) is a bell heard under water: DAGGER.SND's ship's bell slowed and pitched down near a
   sixth, its echo behind it and the bubbles faint beneath, darkened, wavering and looped at the ring's middle through
   the engine's own low-pass - made from the player's archive, as the Arena's crowd is.
 - **The Return** stands beside it (`sdReturnPlace`: 1.2 m past the ring's rim on the first clear bearing, east first;
@@ -1694,7 +1694,7 @@ PINS MOVED: `ACCOUNT_VERSION` acct91 (acct92 since the merge past CAP-OFF, acct9
 `test/duel_record.test.js` (the Inspect card's record carries the Hours); the vocabulary's newest (`test/acc3titles`,
 `test/aegis`, `test/primarch`, `test/crystalfist` - Hourbreaker after the Crystal Fist); `test/relayversion.test.js`
 (`world176` re-hashed: the token's titles); `.github/workflows/account-deploy.yml` (the service now bundles
-`net/sdReceipt.js` and `systems/wind.js` - `test/accountdeploy.test.js` walks the graph); three records from earlier
+`net/sdReceipt.js` and `systems/wind/wind.js` - `test/accountdeploy.test.js` walks the graph); three records from earlier
 slices re-aimed by content (`fb1004d_knight_house.json`'s version and `gatekeys.json`'s empty var - acct91 -, and
 `raid4.json`'s Inspect record, which carries the Hours now). Found by the whole suite: `test/accountworker.test.js`
 (the schema - `sd_kills` among the tables, `sd_honours` among the row's columns) and
@@ -1745,7 +1745,7 @@ Section 11's set, whole but for the roll that pays it: the spoils (SD9e) roll it
 the set came first, so the spoils' last roll is final when it is written. No relay or account change - a set is the
 client's law, and the wire's check of an Aetheric piece reads every record already.
 
-- **The law** (`systems/sigilSets.js` `numidium`; `systems/sigil.js` names it after the serpent's): Aetheric, naming
+- **The law** (`systems/sigil/sigilSets.js` `numidium`; `systems/sigil/sigil.js` names it after the serpent's): Aetheric, naming
   no raiding party; its patron no Daedra but Kagrenac, the Tonal Architect who built the Walking Brass; its colour
   the Hourbreaker's brass (`ui/playerBadge.js` `HOUR_BRASS`). Dwemer Brass, Gearward and The Hour Turns at 2, 4 and 6
   pieces (`Sigil-Sets.md` section 6d). Gearward's winding is its `recover`, as every timed power's is (CARD-FIT: never
@@ -1757,7 +1757,7 @@ client's law, and the wire's check of an Aetheric piece reads every record alrea
   resistance of an element at most, and never magic or shock (the 2-piece tier's). `AETHERIC_RECORDS` ends with them,
   so the Test Room's ladder and the Codex take them with no word of their own. `rollNumidiumPiece` - a third of the
   time, the same seed choosing which; one roll when nothing drops, two when a piece does - waits for the spoils.
-- **The powers** (`systems/sigilSetPowers.js`, through SET2's seams): Dwemer Brass in the fold. Gearward in the damage
+- **The powers** (`systems/sigil/sigilSetPowers.js`, through SET2's seams): Dwemer Brass in the fold. Gearward in the damage
   modifier: while the gear is wound a foe's blow (the door's mark - never a fall, a poison's round or a spell) lands
   its share lighter in whole points, and the gear winds again. The Hour Turns a death save, tried when no Bulwark
   answers (the two are never worn at once: six and six is past nine places) - the door leaves me at 1, and the hurt
@@ -1784,7 +1784,7 @@ SD9e next: the spoils thrown from where the Remnant fell.
 Section 11's spoils, whole. No relay or account change: the receipt (SD9a) carries the seed and the level, and the hub
 already keeps a receipt until a slot's spoils are said spent (`spent {s}`).
 
-- **The roll** (`systems/sdSpoils.js`, the gate's makers on the receipt's own stream): gold 400 a level, a fifth either
+- **The roll** (`systems/superDungeon/sdSpoils.js`, the gate's makers on the receipt's own stream): gold 400 a level, a fifth either
   way; a first piece Legendary a quarter of the time, else Rare; two Rare or better by a boss's chances past the
   ladder's top tier with a lucky hand (`SD_SPOILS_SOURCE` - tier 24, luck 70; `rareOrBetter` cuts the Common and Magic
   shares away); every piece known; the ladder's last pass; and LAST the Brass of Numidium a third of the time (SD9d's
@@ -2049,7 +2049,7 @@ miss's back-off), `test/relayversion.test.js` (`world176` re-hashed in place).
 | L1 F2 | THE RISEN STOOD IN AN ENDED HOLLOW. A player dead inside at the end is the death's - and the host latched "cast out" on the refused word: a Resurrect raising them where they lay left them standing in an ended Hollow or Hour that no frame would ever cast them out of | the world host's `castOut` answers whether it acted (false for the dead, and for a way out the mode machine would not take); the host latches the slot only once it acted, and asks again each frame - once a frame (`scenes/sdHost.js`) |
 | L1 F3 | AN END THAT OVERTOOK A STEP. A step under the veil - into the Hour, or back into its Hollow, a whole dungeon's build - could finish after the end had taken the Hollow down, and land the player in a Hollow or an Hour no frame would ever cast them out of; the Rift's word was asked before the walk to the Hollow's pixel alone | THE END JUDGED WHERE I STAND (`standing`, the Hollow or Hour the dungeon I stand in is): one standing in a Hollow or Hour the hub's record no longer stands is cast out on the frame they land, once - judged once the hub has said its record; the Rift's word asked again after the walk (`sdEnterRealm`) |
 | L1 F4, L5 C2 | "NO SPOILS" AFTER THE HUB'S HAND. A receipt for the Hour I stood in went straight into the pack when the hub's link handed it (my realm's socket blinking at the kill) - and the floor then said *"No spoils"* | kept for the throw whichever link handed it (`sdSpoilsReceipt`); anywhere else into the pack, once |
-| L1 F8 | A MARK IN A HOLLOW GONE ENTERED ITS NEIGHBOUR. A save's or a Mark's dungeon whose pixel holds no dungeon of its own now (a Hollow taken down, its pixel bare) entered the first dungeon door in the stream - the nearest dungeon, at the Hollow's own position | never a neighbour's door: such a pixel enters nothing, and each caller's own "all else fails" arm wakes them (`systems/save.js` `dungeonStartDoorFor` - DFU's StartDungeonInterior builds the player's own location or fails) |
+| L1 F8 | A MARK IN A HOLLOW GONE ENTERED ITS NEIGHBOUR. A save's or a Mark's dungeon whose pixel holds no dungeon of its own now (a Hollow taken down, its pixel bare) entered the first dungeon door in the stream - the nearest dungeon, at the Hollow's own position | never a neighbour's door: such a pixel enters nothing, and each caller's own "all else fails" arm wakes them (`systems/save/save.js` `dungeonStartDoorFor` - DFU's StartDungeonInterior builds the player's own location or fails) |
 | L1 F9, L6 F4 | OUT OF THE HOUR WITH NO VEIL; A DUNGEON'S WAKING. Every way out of the Hour is taken under its veil but the end's cast-out; and a death in the Hour woke with a plain dungeon's words | the cast-out flashes the veil out of the Hour; a death there wakes under it with the Hour's own, *"The Shattered Hour casts you out. You wake before the Hollow's door."* (`SD_REALM_TEXT.died`, a respawn kind of its own - `systems/deathRespawn.js` `hour`; the respawn reads the Hour before it leaves it) |
 | L1 F5, L6 F12 | "SAVE" WHERE NO SAVE IS. An older game refused at the arena was told to save - in the one place that refuses a save | *"Your game is older than this Hour. Leave it, then reload or update the app to fight."* |
 | L1 | A HOLLOW KNOWN WITHOUT ITS SITE. The step through read the Hollow's site unguarded - a memo of another slot carries none (latent: no path builds one today) | no site, no step |
@@ -2145,7 +2145,7 @@ rigs), `test/tier1_dungeontiers.test.js` (the plaque's article), `test/wb6c_gate
 | L4 C1 | THE HAND CHOSEN PAST ITS BEAM. Its range 40 m past its body, its beam 34 m from its chest: a chosen 34-42 m off was swept by a beam that never reached it | its range the beam's length less its body (`SD_HAND_LEN`) |
 | L4 C2 | THE STEPS IN THE ARENA. The gate's POSE_SLACK (3 m) reached the last Crumble step's last 0.6 m (28.4-29 m from the centre): the Pulse, the Reset and the End struck there, the realm counted the body present, and its `in` was taken - SD8d says nobody on the Steps | the arena's own slack (`SD_ARENA_SLACK`, 1.5 m - a pose's age at a run; the arena's edge is the motor's clamp, so no body on it stands past its rim): every point of every Crumble step, and a body hanging its capsule off the last, is off the arena - for the law, the page's blows and the relay's `in` |
 | L4 C4, C5, C6 | `sdSalt`'s comment kept a slot's salt its own "until the 2048th Hollow after it" (the period is 2047); the mirror riddle, *"Read the Blades from twelve backwards and you read Daggerfall."*, reads 13 - h as well as the law's 12 - h; `sdNameOf` would expand a `$&` in a city's name | the comment says 2047th; *"The Blades stands as far before twelve as Daggerfall stands past it."* (`net/sdBrain.js` `sdRiddleText`); a replacer |
-| docs | `sdFell`'s comment said `n` is "how many earned it"; `SD_GREAT_CITIES` the Bay's "largest" cities | `n` is every seat its fight took - the realm's `fell.n`, the gone and the cast-out with the rest (section 2's table says so already); the Bay's first eight cities by the hubs' own claim (`systems/regionHubs.js` `hubClaim` - one named for its region outranks a larger) |
+| docs | `sdFell`'s comment said `n` is "how many earned it"; `SD_GREAT_CITIES` the Bay's "largest" cities | `n` is every seat its fight took - the realm's `fell.n`, the gone and the cast-out with the rest (section 2's table says so already); the Bay's first eight cities by the hubs' own claim (`systems/region/regionHubs.js` `hubClaim` - one named for its region outranks a larger) |
 
 L4 F1 and F1b were SD11a's, and so was C3 (`spanAt`'s comment says near edges). L4 C7 - `orreryStep` on a state with no
 `f` - is unreachable: the relay's `_sdHallOf` holds `f` to a whole 0-48.
@@ -2173,7 +2173,7 @@ bundle).
 | | what was wrong | now |
 |---|---|---|
 | L6 F9 | THE WAY HOME WALKED INTO (the gate's SS3, back again). It stands where the Remnant fell, where its spoils land, and a step after them carried a player out of the Hour mid-loot | pressed alone (`scenes/sdEnd.js` - the Hollow's own Return, at the way in, is walked into as before) |
-| L6 F16 | THE WAY HOME ROSE UNSEEN AND UNSAID. It stood up whole, without a sound or a word, where the gate's portal rises and is said | it rises out of the floor over `SD_HOME_RISE_MS` (the gate's portal's), the Rift's bell tolled once where it rises, a fourth higher and heard across the arena (`systems/sdRiftSound.js` `tollRiftBell`), and the Hour says *"The way home stands open."* - said and tolled as it rises, never to a page that comes later (`scenes/world.js` `sdHomeAge`, handed through the mode machine to the dungeon host's `standReturn`) |
+| L6 F16 | THE WAY HOME ROSE UNSEEN AND UNSAID. It stood up whole, without a sound or a word, where the gate's portal rises and is said | it rises out of the floor over `SD_HOME_RISE_MS` (the gate's portal's), the Rift's bell tolled once where it rises, a fourth higher and heard across the arena (`systems/superDungeon/sdRiftSound.js` `tollRiftBell`), and the Hour says *"The way home stands open."* - said and tolled as it rises, never to a page that comes later (`scenes/world.js` `sdHomeAge`, handed through the mode machine to the dungeon host's `standReturn`) |
 | L6 F5 | THE FADE UNCOUNTED AT THE DOOR. The Rift admitted a newcomer to the last second of a Hollow unbeaten, and its plaque said nothing of the time | its plaque's second row counts its Hour (`world/sdDungeon.js` `sdRiftCount`): *Fades in 46h 12m*, its last hour by the second, *Collapses in 2:31* in its collapse - the minutes and seconds rounded up, never less than is left |
 | SD9c | THE WHEEL STEPPING BACK. The Turning Hour's wheel steps as a clock's escapement does, "never back" - and its angle rose, so through the camera's one mirror it stepped anticlockwise, the dial's own way | its angle falls: forward, clockwise as the eye sees it, against the dial turning back (`render/auraRing.js` `turningWheelAngle` and the shader's `turningWheel`) |
 | L8 D1, G15 | THE HOLLOW'S FOE FRAME CLAIMED, NEVER MEASURED. 151 markers is the largest SPAWN template; a Hollow's (12+-block labyrinths and keeps, up to two-block exteriors) were never counted | said so, and measured: every Hollow template's enemy markers over MAPS.BSA and BLOCKS.BSA, the largest tripled, under `FOES_FRAME_MAX` (`test/sd11f_scenes.test.js`, skipped without the real data - not run in this session) |
@@ -2596,7 +2596,7 @@ its Echoes' and the Reset's Hearts burn with it (`world/sdRemnantModel.js` `hear
 context hands it from the realm's own slot (`sdMarksOf(dfLocation.sdRealm)[0]`); with none, the Mantella's green and the
 brass's gold as they were.
 - **Its sparks** (`scenes/sdFx.js` `sdHeartColorOf`): the Hearts risen and broken and the stun in the Ending's light.
-- **Its word** (`systems/sdOmen.js`): the taverns tell the omen its Ending sends (`SD_ENDING_RUMOR` - a lion roars where
+- **Its word** (`systems/superDungeon/sdOmen.js`): the taverns tell the omen its Ending sends (`SD_ENDING_RUMOR` - a lion roars where
 there is no lion; the sun goes down twice; the tide comes in where there is no sea; something heavy walks just under the
 earth; the dead in their barrows turn their heads toward the walls; a dragon's shadow crosses where no dragon flies - the bell
 where none is kept), and its card on the held map says *It keeps the Ending of <stone>*.
@@ -2614,9 +2614,9 @@ word of one.
 ### SD19 - shipped 2026-10-07 (the Hollow's presence)
 
 A gate's sky burns over its region, a banner counts it down at its fire, and the chat speaks of it eight ways
-(`systems/gateOmen.js`); a Hollow had its column, three lines and a Timers row once found. SD19 gives it a presence:
+(`systems/gate/gateOmen.js`); a Hollow had its column, three lines and a Timers row once found. SD19 gives it a presence:
 
-- **The brass air** (`systems/sdOmen.js` `SD_AIR`, `sdAirNear`, `sdAirDusk`, `sdAirWeight`): the taverns have always
+- **The brass air** (`systems/superDungeon/sdOmen.js` `SD_AIR`, `sdAirNear`, `sdAirDusk`, `sdAirWeight`): the taverns have always
 said *the air goes brass-coloured ... at dusk*; now it does. The weight is the column's own light (`sdOmenLight`) times
 the eye's distance (whole within `SD_AIR.fullM` 1000 m, gone by `SD_AIR.edgeM` 8000 m, a smoothstep between) times the
 hour (`SD_AIR.base` 0.45 of it all day, whole at minute 1170, a cosine window of 150 minutes each side), never past
@@ -2734,14 +2734,14 @@ tell, a realm's door and a claim's roll are the servers' - no host reads them di
 | V5 | A FRAME OF THE FIGHT MADE KILOBYTES. Measured in a child (a 64 MB young space, the least of six windows): the arena read with a blow over my feet 10.7-32 KB a frame (each place of its way out's walk a call through a closure that boxed its numbers, and `Math.hypot`'s builtin its own), a Volley's mark 3 KB more (its walk's metres stepped by adding, a number that boxed itself every step), the beam 3.4 KB, the gears 1.7 KB, the Hour's lines past the cap 1.4 KB, the stone's light 1.1 KB, the blows seen 0.5 KB, the set 0.24 KB | the read walks its own sums - one plain walk a shape, the Hand's ground in plain numbers (`scenes/sdArenaRead.js` `handSweepOf` and `handSweepHas`, pinned equal to the law's `handSwept` and its shade), each walk a whole count of steps; the law's `behindPillar`, `keepInArena` and `inArena` in plain numbers (in the relay's bundle: `world176` re-hashed in place); the beams, the gears and the Hour's lights into lists kept and filled in place (`scenes/sdRemnantRig.js` `sdKeptList`), the stone's light, the bodies' places and each landing's light into kept records. Now nothing a frame for the blows seen, their lights, the Hour's lines, a body's walk, the keep, the pillars and the floor; 16 B the stone's light; 40-370 B the read under a blow; 0.3 KB the gears, 0.5 KB the beam and its pass, 0.14-0.4 KB the set |
 | V6 | THE BODIES SNAPPED. Each body faced each new aim in a frame - up to 120 degrees at once; it dropped its 1.6 m kneel in a frame and stood from it in one; a lost fight's Remnant stood at its start at once | its drawn facing turned toward the law's at `SD_TURN_RATE` (3.5 radians a second, the short way round - a half-turn in 0.9 s, inside the quickest wind-up of a blow that needs its facing, so the drawn facing is the law's by any landing; `scenes/sdRemnant.js` `sdTurnToward`); the kneel eased down and up over `SD_KNEEL_EASE_MS` (400 ms); a lost fight's Remnant sinks where it stood and rises at its start, and an Echo standing as the fight is lost sinks where it stood |
 | V7 | THE MOTES WOUND THE WRONG WAY. The Hour's motes run against the clock and the hall's dust with its stones - and both turned the other way round on every screen: the pin read the raw angle, and the camera's one mirror (`world/mat4.js` `mirrorProjectionX`) turns it | both senses flipped, the JS and the GLSL alike (`render/sdMotes.js`); the pin measures each as the eye sees it, through the game's own camera |
-| V8 | THE BRASS AIR MET THE SKY A STEP APART. SD19 graded the land's haze toward the brass near a standing Hollow and left the sky as it was: at the skyline the fogged land met the sky a step apart - 15/-4/-34 on a clear noon's horizon, 23/-6/-48 under an overcast dusk | `world/sdBrassSky.js`: one ramp - its JS for the haze and the water's sky (`systems/sdOmen.js` re-exports it, SD19's door), its GLSL generated from the same stops for the four passes that draw the sky (the classic, the enhanced, the dynamic skies, the clouds' composite), each grading its final colour by its own `uBrass` after the dread's; `scenes/shared.js` `setBrass` tells each pass its weight |
+| V8 | THE BRASS AIR MET THE SKY A STEP APART. SD19 graded the land's haze toward the brass near a standing Hollow and left the sky as it was: at the skyline the fogged land met the sky a step apart - 15/-4/-34 on a clear noon's horizon, 23/-6/-48 under an overcast dusk | `world/sdBrassSky.js`: one ramp - its JS for the haze and the water's sky (`systems/superDungeon/sdOmen.js` re-exports it, SD19's door), its GLSL generated from the same stops for the four passes that draw the sky (the classic, the enhanced, the dynamic skies, the clouds' composite), each grading its final colour by its own `uBrass` after the dread's; `scenes/shared.js` `setBrass` tells each pass its weight |
 | V9 | A BUSY MOMENT PUT OUT THE LAMPS. Past the frame's sixteen lights the Hour's own - the spoils', every landing's flash, the stone's - went first, and in a busy moment the lamps nearest the player went dark | sorted in with the lamps by how far the eye stands outside each one's reach (`world/sdRealm.js` `SD_LIGHTS_CAP`, `realmLightsWith`) |
 | V10 | THE HEARTS AND THE BRIDGE POPPED. The Hearts the Reset's landing spent left the air with nothing to show for it; the Concord's bridge stood whole in a frame | the spent Hearts burst as they go (`scenes/sdFx.js`); the bridge laid out across the void from the hall's rim over `SD_BRIDGE_LAY_MS` (900 ms), easing in (`scenes/sdHall.js` `bridgeLayMatrix`) - one that held before I came stands whole |
 | V11 | IT POINTED WITH ITS LEFT. The Remnant's right arm and leg were built at -x - the side its own left shows on through the camera's mirror: every screen saw it sweep the Hour-Hand with its left hand | its right at +x (`world/sdRemnantModel.js`; `scenes/sdRemnantRig.js` - its joints, its hands, each arm rolling out to its own side) |
 | V12 | THE GEARS FLEW FLAT. The Volley's gears flew flat to the arena's z whichever way they were thrown | on edge along their flight, rolling forward (`gearMatrix`'s `yaw`, `sdGearsAt`'s bearing) |
 | V13 | THE PASSES COMPILED MID-FIGHT. The beam's, the sparks' and the floor's telegraph's programs were each built on their first use - a stall in the frame its first blow landed in | built as the Hour is first stood in (`scenes/world.js` `_sdPassesWarm`; `warm` on the blows seen and the blows' driver), a pass that will not build tried once |
 | V14 | REVERSED SMOOTHSTEP. GLSL leaves `smoothstep(a, b, x)` undefined for a >= b: the beam's ends, the Hour's shards and its clock - and ten more across the port: the Deadlands' horizon and channels, the enhanced sky's near horizon (and its CPU twin), the gate veil's sparks, the ink dungeon's hatching, the sun baby's skin, shadow and horns | every one rising, its fall written `1 - smoothstep(...)` - the same curve |
-| V15 | THE BRASS LIGHT MADE A LIST. `sdBrassLight` made a new list every outdoor frame, near a Hollow or not | at nought the light handed in is handed back (`systems/sdOmen.js`) |
+| V15 | THE BRASS LIGHT MADE A LIST. `sdBrassLight` made a new list every outdoor frame, near a Hollow or not | at nought the light handed in is handed back (`systems/superDungeon/sdOmen.js`) |
 
 SAID SO, and left: while a blow is in flight the rig's own numbers (a walk, a blow's pose) and the read's answer make a few
 hundred bytes a frame - numbers boxed across the rig's calls, and the answer's own three objects; a young space takes them
@@ -2796,8 +2796,8 @@ weight the controller sets (none there: there is no Hollow offline).
 | A4 | EVERY SCORE CUT. The Hour's, the court's and the arena's scores let the music go with `music.stop()` - a song cut at its level | each fades it (`music.fadeOut`), and the director's song comes up as the fade ends |
 | A5 | THE WAR OVER THE DEAD. One life a Hollow, and as a player lay dead in its arena the war song played on and the Remnant growled, stepped and barked at the body | the score fades to nothing while I am dead; the Remnant's voice is framed for the living alone |
 | A6 | A PAGE BACK HEARD EVERYTHING AT ONCE. A tab put away while the fight turned sounded every turn it missed - the Dragon Break, the Last Moment, the stun - on its first frame back | a fight unheard `SD_VOICE_AWAY_MS` (4 s) is taken again as it stands, in silence - as a blow's landing seen late always was; a hitch shorter than that still hears its turns |
-| A7 | THE RIFT'S BELL ASKED ONCE. Asked for as the Rift stood, and a Rift stood before the archive was read or a context stood (no gesture yet) stood silent for good | asked again each `SD_BELL_ASK_MS` (1 s) while it stands without one (`scenes/sdEnd.js`), its toll built once (`systems/sdRiftSound.js`), faded as the dungeon goes |
-| A8 | TWO NOTES AS ONE. The Last Moment's and the last minute's war kit crashed on the songs' own crashes, and a theme's note fell on its bar's own chord tone - thirty-three doubled note-ons in the Hour's nine songs (twenty-five in the Warden's) | the song writers merge a note laid where the same voice strikes it into one note, its loudest and longest (`systems/sdScore.js`, `systems/gateScore.js`) |
+| A7 | THE RIFT'S BELL ASKED ONCE. Asked for as the Rift stood, and a Rift stood before the archive was read or a context stood (no gesture yet) stood silent for good | asked again each `SD_BELL_ASK_MS` (1 s) while it stands without one (`scenes/sdEnd.js`), its toll built once (`systems/superDungeon/sdRiftSound.js`), faded as the dungeon goes |
+| A8 | TWO NOTES AS ONE. The Last Moment's and the last minute's war kit crashed on the songs' own crashes, and a theme's note fell on its bar's own chord tone - thirty-three doubled note-ons in the Hour's nine songs (twenty-five in the Warden's) | the song writers merge a note laid where the same voice strikes it into one note, its loudest and longest (`systems/superDungeon/sdScore.js`, `systems/gate/gateScore.js`) |
 | A9 | A THIRD CLOCK OVER THE BEAT. The Hour's works ticked the Steps' own clunk at the Beat's own pitch (1.6), a second apart, where the Beat's half beat - the time a jump is taken by - is 1.8 s | the works' tick and tock are their own pitches (`SD_WORKS_TICK`, 0.8 and 0.6 - under the Beat's, apart from the hall's turns), and on the Beat's span the works duck to a quarter, eased in and out |
 | A10 | THE SONGS FLICKERED AT THE ARENA'S REACH, AND THE END WAS THE ARENA'S ALONE. A step back and forth at the bar's reach switched the war and the Steps' song every few strides; and the Steps and the hall played their own songs to the End's last toll | a place's song holds `SD_SCORE_HOLD_M` (4 m) past the edge it began at (`sdScorePlace`'s `was`); the Hour's last minute and its End are the whole Hour's (`hourScoreFor`) |
 | A11 | THE WORKS BUILT EVERY FRAME. With the archive read and no context to make them on, the works and the hum were built anew every frame - 2.2 ms | built once; only the registration is asked again |
@@ -2833,7 +2833,7 @@ court and no arena bout, and its music is the director's alone.
 
 | | what was wrong | now |
 |---|---|---|
-| T1 | THE DOOR'S BANNER RAN OFF A PHONE. *"The Hollow Under Glenpoint Foothills - an Abyss Dungeon - fades in 1d 04h"* on one line (`white-space: nowrap`) ran off both sides of a 390 px screen | the banner says its name and its state (`systems/sdOmen.js` `sdBannerText`) - what it is is the card's, beside it; it wraps inside the screen (`ui/gateBanner.js`, `max-width: calc(100vw - 32px)`) |
+| T1 | THE DOOR'S BANNER RAN OFF A PHONE. *"The Hollow Under Glenpoint Foothills - an Abyss Dungeon - fades in 1d 04h"* on one line (`white-space: nowrap`) ran off both sides of a 390 px screen | the banner says its name and its state (`systems/superDungeon/sdOmen.js` `sdBannerText`) - what it is is the card's, beside it; it wraps inside the screen (`ui/gateBanner.js`, `max-width: calc(100vw - 32px)`) |
 | T2 | THE TITLE CARD ON THE BAR. On a phone held upright the Hour's card stood at 30%, on the Remnant's bar's foot and its chips; held sideways the way out's chevron rode its 72 px ring onto the bar's plate | upright, the card under the bar's foot (`ui/sdTitleCard.js`, 40%); sideways, at 46% with the foot's chips stepping aside while a beat stands, and the chevron on a 36 px ring (`ui/gateGroundView.js` `PERIL_ARROW_R_LOW`) |
 | T3 | AN ABYSS DUNGEON IN DAGON'S RED. Its door's banner and the Hour's marks card - at its door and in the Hour - wore the gate's red, the omens' signs the gate's orange | the Hour's brass: the banner's `look` (`SD_BANNER_BRASS`, outlined on the Plus skin as the gate's is), the card's (`sdMarksCardModel`'s `look`, `ui/gateMarksView.js`'s `sd-brass`), the omens' signs in it |
 | T4 | THE HOUR'S CARD IN THE SERIF. On the Plus skin the gate's title card wore the HUD's face; the Hour's stood in Cormorant, the one readout of the fight's that did | `ui/enhancedPlusStyle.js`'s `.sd-title-*`, the HUD's face in the Hour's brass and light |
@@ -2923,11 +2923,11 @@ its one-step-at-a-time unchanged; `scenes/exterior.js` FLAGGED - the `?exterior`
 
 | | what was wrong | now |
 |---|---|---|
-| D1 | A FALL WAS A STAIR. The trail's fill laid a fall as a column of cells half a metre apart, and the way out (a step either way) walked the player back up drops of two, four and six metres they could not climb - at a walk and at a run; no rule on the cells alone told a fall from a steep stair (both rules tried broke 45-degree stairs) | the motor's own fall reaches the trail (`fallFrom`, its fallStart, through each dungeon host's `motorState`): a sample taken in the air is not stood in, and a landing more than `TRAIL_FALL_M` (the way out's own step) below where its fall began is not filled (`systems/automap.js`); a stair walked on the ground, thirty to fifty-three degrees, is a way both ways. And a DROP IS A WAY DOWN: kept on the record as a one-way step (`drops`, saved with the trail, gone with it on another layout or a hidden map, `TRAIL_DROPS_MAX` at most) and handed to the way out with the walked teleporters (`automapWaySteps`) |
+| D1 | A FALL WAS A STAIR. The trail's fill laid a fall as a column of cells half a metre apart, and the way out (a step either way) walked the player back up drops of two, four and six metres they could not climb - at a walk and at a run; no rule on the cells alone told a fall from a steep stair (both rules tried broke 45-degree stairs) | the motor's own fall reaches the trail (`fallFrom`, its fallStart, through each dungeon host's `motorState`): a sample taken in the air is not stood in, and a landing more than `TRAIL_FALL_M` (the way out's own step) below where its fall began is not filled (`systems/automap/automap.js`); a stair walked on the ground, thirty to fifty-three degrees, is a way both ways. And a DROP IS A WAY DOWN: kept on the record as a one-way step (`drops`, saved with the trail, gone with it on another layout or a hidden map, `TRAIL_DROPS_MAX` at most) and handed to the way out with the walked teleporters (`automapWaySteps`) |
 | D2 | THE SPLIT SAID AS DRAWN. Section 13 said a quarter of the Bay's dungeons small, half medium, a quarter whole; what is built and labelled is about two in five Small, a little under half Medium and one in seven Large (a dungeon of five blocks or fewer is small whatever it draws, one of eight or fewer never more than medium) | the page says what is built; weighting the draw by a dungeon's blocks, to read a quarter Large, is Mac's call - reported, unchanged |
-| D3 | AN ENDED QUEST STILL MARKED. A tombstoned quest stays in the machine a game week, its stands standing and its behaviours bound to it: the Exact tier marked its item, people and foes, and the compass pointed at them | a quest complete or tombstoned marks nothing (`systems/questGuidance.js` `questEnded`) |
+| D3 | AN ENDED QUEST STILL MARKED. A tombstoned quest stays in the machine a game week, its stands standing and its behaviours bound to it: the Exact tier marked its item, people and foes, and the compass pointed at them | a quest complete or tombstoned marks nothing (`systems/quest/questGuidance.js` `questEnded`) |
 | D4 | THE WAY OUT BUILT WHOLE EACH SECOND. Exploring, the player always stood on a fresh cell - off the field - and it was built whole each second (5-14 ms at 8,000 cells); a long trail loaded whole asked its 2,000 wall rays in one build (31 ms) and built again each second until every step was asked | new cells attached as they come (`attachCells`, by the field's own step and the walls' word); off the field it is built at most each `WAY_FIELD_S`, then two, four, eight seconds, up to `WAY_REFIELD_S`; an aim asks at most `WAY_ASK_MS` (2 ms) of rays - the rest taken as clear and asked in the aims that follow, the field built again only when a step it walks proves walled |
-| D5 | A SHARED QUEST UNLAID. An older page lays every dungeon whole, and a quest it shared pointed into blocks this page's world-sized build has not, until this player's next online load | each shared copy laid on this page's sizes as it arrives and as it is kept in step (`systems/questShare.js`, `relayQuestOnline`) - a quest item the player carries never laid again |
+| D5 | A SHARED QUEST UNLAID. An older page lays every dungeon whole, and a quest it shared pointed into blocks this page's world-sized build has not, until this player's next online load | each shared copy laid on this page's sizes as it arrives and as it is kept in step (`systems/quest/questShare.js`, `relayQuestOnline`) - a quest item the player carries never laid again |
 | D6 | A LINK'S STAMP ONLINE. `adoptLinkedDungeonSize` ran online, where a quest's markers are always the world's: a link's older stamp could take the place of its own, and offline the copy built a layout its markers do not know | never online (`world/smallerDungeons.js`) |
 | D7 | THE TIER READ EACH POINTER MOVE. The maps hand a fresh location each ask, so the tier label's own memory never held one, and every pointer move over a dungeon on the held map read its record again (a large one's layout drawn again) | kept by place for the page (`scenes/world.js` `_tierLabels`) |
 | D8 | the Smaller dungeons row said a quest's dungeon keeps its full size | *"a quest keeps the size it was set up at"* - the law (a quest started with the switch on builds small after it is turned off) |
@@ -3266,7 +3266,7 @@ The times are Discord's stamps (`<t:...:R>`), drawn in each reader's own clock.
 - **Where it was found: its region, never its city.** The relay holds no map. The record's own region (`r`, the
   census's) is named from MapsFile's table (`formats/mapsTables.js` `REGION_NAMES` - the name every client's line falls
   back to), in the chat's own sentence with no city (`sdFoundLine`, `sdWhere`: *in the Daggerfall region*, or *near
-  the Iliac Bay* for the Bay's great cities). The city is every client's own (`systems/sdSite.js`); naming it would
+  the Iliac Bay* for the Bay's great cities). The city is every client's own (`systems/superDungeon/sdSite.js`); naming it would
   need the players' vote the gate and the serpent hold (`foldGateSite`), a new word on the wire, and nothing else here
   does.
 - **Its name, where it needs no city.** Six of the eight names stand alone; *The Last Bell of <city>* and *The Hollow

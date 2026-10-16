@@ -16,8 +16,8 @@ import { createSdEnd, ensureSdEndArt, SD_RIFT_KEY, SD_RETURN_KEY, SD_RIFT_PRESS_
 import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_ATLAS, SD_RIFT_PLATE_RECORD } from '../src/world/sdRiftArt.js';   // SD-LOOK: the astrolabe's art (its billboard frames retired)
 import { riftCentreY } from '../src/world/sdRiftModel.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
-import { buildRiftBell, startRiftBell, RIFT_BELL_KEY, RIFT_BELL_RATE, RIFT_BELL_SECONDS, RIFT_BELL_RMS, RIFT_BELL_RECORDS, RIFT_BELL_LOWPASS_HZ, RIFT_BELL_RANGE } from '../src/systems/sdRiftSound.js';
-import { rms } from '../src/systems/arenaSound.js';
+import { buildRiftBell, startRiftBell, RIFT_BELL_KEY, RIFT_BELL_RATE, RIFT_BELL_SECONDS, RIFT_BELL_RMS, RIFT_BELL_RECORDS, RIFT_BELL_LOWPASS_HZ, RIFT_BELL_RANGE } from '../src/systems/superDungeon/sdRiftSound.js';
+import { rms } from '../src/systems/arena/arenaSound.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_NO_RIFT, SD_NO_CLOSED } from '../src/net/sdLaw.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 

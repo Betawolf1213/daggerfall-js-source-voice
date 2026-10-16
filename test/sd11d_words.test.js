@@ -15,7 +15,7 @@ import { SD_BLOWS, SD_BODY, SD_ECHO_PAIR_MS, newRemnantFight, joinRemnant, remna
 import { validSdOut } from '../src/net/wire.js';
 import { SD_ARENA, realmToDungeon, SD_TURN_WAIT_LINE } from '../src/net/sdBrain.js';
 import { SD_ENDINGS, sdEndingOf, sdMarksOf } from '../src/net/sdMarks.js';
-import { sdMarksLine, sdHourLine } from '../src/systems/sdOmen.js';
+import { sdMarksLine, sdHourLine } from '../src/systems/superDungeon/sdOmen.js';
 import { SD_CLAIM_TEXT } from '../src/net/sdClaims.js';
 import { SD_MARK_TIPS } from '../src/ui/sdMarksView.js';
 import { createSdRemnantBlows, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/sdRemnantBlows.js';
@@ -33,10 +33,10 @@ import { SD_HALL_TEXT, SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
 import { SD_STEPS_TEXT } from '../src/scenes/sdSteps.js';
 import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
 import { SD_HOME_TEXT } from '../src/scenes/sdEnd.js';
-import { SD_SPOILS_TEXT } from '../src/systems/sdSpoils.js';
+import { SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { staticDoorName } from '../src/systems/worldTooltips.js';
-import { sdCities, sdTemplates } from '../src/systems/sdSite.js';
-import { scanGatePixels } from '../src/systems/gateSite.js';
+import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
+import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
 

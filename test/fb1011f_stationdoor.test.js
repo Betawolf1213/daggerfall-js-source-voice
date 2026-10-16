@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
-import { SERVICE_LABEL, SERVICE_DESTINATION, isServiceBox } from '../src/systems/guildServiceFlow.js';
+import { SERVICE_LABEL, SERVICE_DESTINATION, isServiceBox } from '../src/systems/guild/guildServiceFlow.js';
 import { DECOR_STATIONS, DECOR_STATION_SERVICES, DECOR_STATION_NAMES } from '../src/net/decorLaw.js';
 import { xpForRank, trackOf } from '../src/net/professionLaw.js';
 import {

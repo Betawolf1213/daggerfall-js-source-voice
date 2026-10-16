@@ -1,7 +1,7 @@
 [
   {
     "name": "OW3D1-spawns-dropped",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  for (const s of spawns ?? []) {\n    const d = Math.hypot(s.x - at.x, s.y - at.y);",
     "new": "  for (const s of []) {\n    const d = Math.hypot(s.x - at.x, s.y - at.y);",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "OW3D1-unsaid-spawns-marked",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (d > range || !s.loc?.name || !spawnKnown(s)) continue;",
     "new": "    if (d > range || !s.loc?.name) continue;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "OW3D1-spawn-circle",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (d > range || !s.loc?.name || !spawnKnown(s)) continue;",
     "new": "    if (!s.loc?.name || !spawnKnown(s)) continue;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "OW3D1-said-is-named",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "found: !!spawnFound(s), spawn: true",
     "new": "found: true, spawn: true",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW3D1-spawn-a-place-key",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "key: `spawn:${s.loc.mapTableData?.mapId}`",
     "new": "key: `dng:${s.loc.mapTableData?.mapId}`",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "OW3D1-spawn-found-on-approach",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (g.found || g.spawn) continue;",
     "new": "    if (g.found) continue;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "OW3D1-spawn-rows-double",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (!loc?.name || loc.spawned) continue;",
     "new": "    if (!loc?.name) continue;",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "OW3D3-rowless-take-slots",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (!loc?.name || loc.spawned) continue;",
     "new": "    if (loc?.spawned) continue;",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "OW3D3-grid-spends-slots",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "    if (found && Math.max(Math.abs(g.x - at.x), Math.abs(g.y - at.y)) <= grid) continue;\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OW3D3-cap-before-filter",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  for (const g of dungeons ?? []) {\n    const d = Math.hypot(g.x - at.x, g.y - at.y);\n    if (d > range) continue;\n    const loc = locAt(g.x, g.y);",
     "new": "  for (const g of (dungeons ?? []).slice(0, max)) {\n    const d = Math.hypot(g.x - at.x, g.y - at.y);\n    if (d > range) continue;\n    const loc = locAt(g.x, g.y);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "OW3D1-approach-the-middle",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "  const x = Math.min(Math.max(feet.x, rect.minX - grow), rect.maxX + grow);",
     "new": "  const x = (rect.minX + rect.maxX) / 2;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "OW3D1-approach-no-buffer",
-    "file": "src/systems/travelDungeons.js",
+    "file": "src/systems/travel/travelDungeons.js",
     "old": "export function dungeonApproach(rect, feet, grow = ARRIVAL_BUFFER, within = null) {",
     "new": "export function dungeonApproach(rect, feet, grow = 0, within = null) {",
     "tests": [

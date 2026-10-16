@@ -6,7 +6,7 @@
 //     f1.<base64url({ f, c, k, r, w, wt?, i, e })>.<base64url(64-byte Ed25519 signature)>
 //         f the fallen's account   c its realm character ('' - none signed)   k the killer's account   r the remains' id
 //         (twelve hex, the relay's)   w the worn piece the killer took (its place in the fallen's worn offer -
-//         systems/wildDropLaw.js wornOffer - or -1, none)   wt that piece's template and material as the offer showed it
+//         systems/wild/wildDropLaw.js wornOffer - or -1, none)   wt that piece's template and material as the offer showed it
 //         (AUDIT INT9: the service matches it against what the fallen really wears - the place alone was an index into a
 //         list the fallen built)   i issued   e expires (i + WILD_RECEIPT_TTL_S)
 //

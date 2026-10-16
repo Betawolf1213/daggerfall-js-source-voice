@@ -1,7 +1,7 @@
 [
   {
     "name": "compass-N-bit",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "export const N = 128;",
     "new": "export const N = 129;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "compass-NW-bit",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "export const NW = 1;",
     "new": "export const NW = 2;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "tile-size",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "export const T_SIZE = MP_WORLD_UNITS / 128;",
     "new": "export const T_SIZE = MP_WORLD_UNITS / 64;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "path-width",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "export const P_SIZE = T_SIZE * 2;",
     "new": "export const P_SIZE = T_SIZE;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ang-unit",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "export const ANG_UNIT = 22.5;",
     "new": "export const ANG_UNIT = 20;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "direction-N-exclusive",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  if ((yaw >= 360 - ANG_UNIT && yaw <= 360) || (yaw >= 0 && yaw <= ANG_UNIT)) return N;",
     "new": "  if ((yaw >= 360 - ANG_UNIT && yaw < 360) || (yaw >= 0 && yaw < ANG_UNIT)) return N;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "direction-diagonals-inclusive",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  if (yaw > 45 - ANG_UNIT && yaw < 45 + ANG_UNIT) return NE;",
     "new": "  if (yaw >= 45 - ANG_UNIT && yaw <= 45 + ANG_UNIT) return NE;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "target-pixel-north-inverted",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "    case N: return { x: mapPixelX, y: mapPixelY - 1 };",
     "new": "    case N: return { x: mapPixelX, y: mapPixelY + 1 };",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "target-pixel-default-moves",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "    default: return { x: mapPixelX, y: mapPixelY };",
     "new": "    default: return { x: mapPixelX + 1, y: mapPixelY };",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "on-path-south-symmetric",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  if ((data & S) !== 0 && posInMpX > MID_LO && posInMpX < MID_HI && posInMpZ < MID_HI) onPath |= S;",
     "new": "  if ((data & S) !== 0 && posInMpX > MID_LO && posInMpX < MID_HI && posInMpZ < MID_LO) onPath |= S;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "on-path-diagonal-side-dropped",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  if ((data & SE) !== 0 && Math.abs(posInMpX - (MP_WORLD_UNITS - posInMpZ)) < P_SIZE && posInMpX > MID_LO) onPath |= SE;",
     "new": "  if ((data & SE) !== 0 && Math.abs(posInMpX - (MP_WORLD_UNITS - posInMpZ)) < P_SIZE) onPath |= SE;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "paths-point-roads-only",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  return (dataPoint(net, PATH_ROADS, mapPixelX, mapPixelY) | dataPoint(net, PATH_TRACKS, mapPixelX, mapPixelY)) & 0xff;",
     "new": "  return dataPoint(net, PATH_ROADS, mapPixelX, mapPixelY) & 0xff;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "data-point-unchecked",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  if (mapPixelX < 0 || mapPixelY < 0 || mapPixelX >= MAP_W || mapPixelY >= MAP_H) return 0;",
     "new": "  if (false) return 0;",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "next-path-no-recovery",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  while (countSetBits(dir) !== 1 && sc < 9) {",
     "new": "  while (false) {",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "next-path-facing-ignored",
-    "file": "src/systems/travelPaths.js",
+    "file": "src/systems/travel/travelPaths.js",
     "old": "  let dir = data & playerDirection;\n  if (dir !== 0) return dir;",
     "new": "  let dir = 0;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "arrival-buffer",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "export const ARRIVAL_BUFFER = 800;",
     "new": "export const ARRIVAL_BUFFER = 0;",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "overshoot-degrees",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "export const OVERSHOOT_YAW_DEGREES = 5;",
     "new": "export const OVERSHOOT_YAW_DEGREES = 180;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "yaw-arguments-swapped",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  const angleRad = Math.atan2(fromX - toX, fromZ - toZ);",
     "new": "  const angleRad = Math.atan2(toX - fromX, toZ - fromZ);",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "rect-contains-inclusive-max",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  return x >= rect.xMin && x < rect.xMax && z >= rect.zMin && z < rect.zMax;",
     "new": "  return x >= rect.xMin && x <= rect.xMax && z >= rect.zMin && z <= rect.zMax;",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "rect-centre-rounded",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "    x: Math.trunc((rect.xMin + rect.xMax) / 2),",
     "new": "    x: Math.round((rect.xMin + rect.xMax) / 2),",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "autopilot-reaims-every-frame",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "    if (mapPixelX !== this.lastPlayerMapPixel.x || mapPixelY !== this.lastPlayerMapPixel.y) {",
     "new": "    if (true) {",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "autopilot-forward-fixed",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "    return { yaw: this.yaw, pitch: this.pitch, forward: this.speedMultiplier, arrived: false };",
     "new": "    return { yaw: this.yaw, pitch: this.pitch, forward: 1, arrived: false };",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "speed-penalty-absolute",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    cautiousTravelMultiplier: 1 - (speedPenalty / 100),",
     "new": "    cautiousTravelMultiplier: speedPenalty / 100,",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "fatigue-floor-no-plus-one",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    cautiousFatigueMin: (get('CautiousTravel.FatigueMinimumValue') | 0) + 1,",
     "new": "    cautiousFatigueMin: get('CautiousTravel.FatigueMinimumValue') | 0,",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "roads-integration-ungated",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  const roadsIntegration = !!get('RoadsIntegration.Enable') && roadsModEnabled;",
     "new": "  const roadsIntegration = !!get('RoadsIntegration.Enable');",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "waterways-ignore-rivers-switch",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  const waterwaysEnabled = roadsIntegration ? (!!get('RoadsIntegration.EnableWaterways') && riversStreams) : false;",
     "new": "  const waterwaysEnabled = roadsIntegration ? !!get('RoadsIntegration.EnableWaterways') : false;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "avoid-offset",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "export const AVOID_ENCOUNTER_OFFSET = 50;",
     "new": "export const AVOID_ENCOUNTER_OFFSET = 20;",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "avoid-uncapped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  return Math.min(luck + stealth - AVOID_ENCOUNTER_OFFSET, maxAvoidChance);",
     "new": "  return luck + stealth - AVOID_ENCOUNTER_OFFSET;",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "city-border-same-as-town",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "export const LOCATION_BORDER_TILES_CITY = 1.5;",
     "new": "export const LOCATION_BORDER_TILES_CITY = 1;",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "circumnavigate-yaw-window",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  if (rectContains(corners.ne, worldX, worldZ)) return (yaw > 45 && yaw < 225) ? 'se' : 'nw';",
     "new": "  if (rectContains(corners.ne, worldX, worldZ)) return (yaw > 135 && yaw < 315) ? 'se' : 'nw';",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "circumnavigate-no-bail",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  return null;\n}\n\n/** The mod, as a host builds it.",
     "new": "  return 'ne';\n}\n\n/** The mod, as a host builds it.",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "follow-keeps-destination",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "        st.road = (roadDataPt & playerDirection) !== 0;\n        st.destinationName = null;\n        beginPathTravel(targetPixel(playerDirection, mp.x, mp.y));",
     "new": "        st.road = (roadDataPt & playerDirection) !== 0;\n        beginPathTravel(targetPixel(playerDirection, mp.x, mp.y));",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "follow-ignores-from-direction",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      const fromDirection = directionOfYaw(yawDeg(true));",
     "new": "      const fromDirection = directionOfYaw(yawDeg());",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "junction-threshold",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (countSetBits(pathsDataPt) === 2) {",
     "new": "      if (countSetBits(pathsDataPt) >= 2) {",
     "tests": [
@@ -318,7 +318,7 @@
   },
   {
     "name": "cautious-watch-always",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (st.destinationCautious) {\n        const e = deps.entity?.() ?? {};",
     "new": "      if (true) {\n        const e = deps.entity?.() ?? {};",
     "tests": [
@@ -327,7 +327,7 @@
   },
   {
     "name": "fatigue-multiplier-dropped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "        if ((e.fatigue ?? 0) < FATIGUE_MULTIPLIER * st.settings.cautiousFatigueMin) {",
     "new": "        if ((e.fatigue ?? 0) < st.settings.cautiousFatigueMin) {",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "paused-does-not-return",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (frame.gamePaused) return { drive, handled: true };",
     "new": "      if (false) return { drive, handled: true };",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "other-window-does-not-stop",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (frame.isPlayerOnHUD || !(frame.topWindowIsTravelUI || frame.topWindowAllowsTravel)) {",
     "new": "      if (false) {",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "interrupt-clears-destination",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "  function interruptTravel() {\n    setTimeScale(1);",
     "new": "  function interruptTravel() {\n    st.destinationName = null;\n    setTimeScale(1);",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "avoid-does-not-resume",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      else if (st.destinationName != null) resumeTravel();\n      else followPath();",
     "new": "      else if (false) resumeTravel();",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "ignore-encounters-seconds",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "export const IGNORE_ENCOUNTERS_SECONDS = 15;",
     "new": "export const IGNORE_ENCOUNTERS_SECONDS = 5;",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "ports-mask",
-    "file": "src/systems/travelPorts.js",
+    "file": "src/systems/travel/travelPorts.js",
     "old": "  return (mapId | 0) & 0x000FFFFF;",
     "new": "  return mapId | 0;",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "ports-null-is-a-port",
-    "file": "src/systems/travelPorts.js",
+    "file": "src/systems/travel/travelPorts.js",
     "old": "  if (mapId == null || !Number.isFinite(mapId)) return false;\n  return PORT_SET.has(maskMapId(mapId));",
     "new": "  if (mapId == null || !Number.isFinite(mapId)) return true;\n  return PORT_SET.has(maskMapId(mapId));",
     "tests": [
@@ -680,7 +680,7 @@
   },
   {
     "name": "a1-interrupt-arm-dropped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (frame.isPlayerOnHUD || !(frame.topWindowIsTravelUI || frame.topWindowAllowsTravel)) {",
     "new": "      if (!(frame.topWindowIsTravelUI || frame.topWindowAllowsTravel)) {",
     "tests": [
@@ -689,7 +689,7 @@
   },
   {
     "name": "m1-detach-latch-never-set",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (st.settings.locationPause === LOC_PAUSE_ENTER) st.enterRectDetached = true;",
     "new": "",
     "tests": [
@@ -698,7 +698,7 @@
   },
   {
     "name": "m1-detach-latch-ignored",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (st.enterRectDetached) return;   // AUDIT-TO1 M1: the mod's `-=` at :994-996",
     "new": "",
     "tests": [
@@ -707,7 +707,7 @@
   },
   {
     "name": "k1-yaw-zeroed-on-reinit",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "    this.pitch = 0;        // :48 - mouseLook.Pitch = 0, and :143 holds it there every frame\n    // ...and NOT the yaw: see the constructor (AUDIT-TO1 K1).",
     "new": "    this.pitch = 0;\n    this.yaw = 0;",
     "tests": [
@@ -716,7 +716,7 @@
   },
   {
     "name": "l5-minutes-left-not-clamped",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    return Math.max(0, st.estimateMinutes - elapsed);",
     "new": "    return st.estimateMinutes - elapsed;",
     "tests": [
@@ -725,7 +725,7 @@
   },
   {
     "name": "l5-estimate-kept-on-clear",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    st.estimateMinutes = null;   // AUDIT-TO1 L5",
     "new": "",
     "tests": [
@@ -790,7 +790,7 @@
   },
   {
     "name": "g4-mark-per-window-again",
-    "file": "src/systems/travelMapState.js",
+    "file": "src/systems/travel/travelMapState.js",
     "old": "export function setTravelMapMarkedMapId(id) { _markedMapId = Number.isFinite(id) ? id : -1; }",
     "new": "export function setTravelMapMarkedMapId(id) { _markedMapId = id; }",
     "tests": [
@@ -1027,7 +1027,7 @@
   },
   {
     "name": "travel-drive-ungated",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  return (!standing && streaming) ? 0 : forward;",
     "new": "  return forward;",
     "tests": [
@@ -1036,7 +1036,7 @@
   },
   {
     "name": "travel-lookahead-behind",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  const ahead = [feet[0] + Math.sin(yaw) * lookahead, feet[2] + Math.cos(yaw) * lookahead];",
     "new": "  const ahead = [feet[0] - Math.sin(yaw) * lookahead, feet[2] - Math.cos(yaw) * lookahead];",
     "tests": [
@@ -1045,7 +1045,7 @@
   },
   {
     "name": "travel-lookahead-underfoot-only",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  const ahead = [feet[0] + Math.sin(yaw) * lookahead, feet[2] + Math.cos(yaw) * lookahead];",
     "new": "  const ahead = [feet[0], feet[2]];",
     "tests": [
@@ -1054,7 +1054,7 @@
   },
   {
     "name": "travel-drive-holds-for-ever",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  return (!standing && streaming) ? 0 : forward;",
     "new": "  return !standing ? 0 : forward;",
     "tests": [
@@ -1063,7 +1063,7 @@
   },
   {
     "name": "travel-lookahead-is-only-the-floor",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  return Math.max(floor, speed * Math.min(dt, maxFrameDt) * Math.max(1, scale) * margin);",
     "new": "  return floor;",
     "tests": [
@@ -1072,7 +1072,7 @@
   },
   {
     "name": "travel-lookahead-uncapped-frame",
-    "file": "src/systems/travelAutopilot.js",
+    "file": "src/systems/travel/travelAutopilot.js",
     "old": "  return Math.max(floor, speed * Math.min(dt, maxFrameDt) * Math.max(1, scale) * margin);",
     "new": "  return Math.max(floor, speed * dt * Math.max(1, scale) * margin);",
     "tests": [

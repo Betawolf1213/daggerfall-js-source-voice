@@ -31,8 +31,8 @@ import { lwRng, lwSeed, rollInt, pickOf } from './seed.js';
 import { hasShopJob, WATCH_COMPANIES } from './census.js';
 import { exitNearest } from './places.js';
 import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
-import { GUILDS } from '../guilds.js';
-import { ORDERS } from '../guildVariants.js';
+import { GUILDS } from '../guild/guilds.js';
+import { ORDERS } from '../guild/guildVariants.js';
 
 /** The living day turns at 04:00 (minutes after midnight). */
 export const DAY_START_MIN = 240;

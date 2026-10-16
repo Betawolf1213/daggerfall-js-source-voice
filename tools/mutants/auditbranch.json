@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-BRANCH-IL1-horse-mode-forced",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "      const hm = (entryMode === TRANSPORT.Cart && wagonState.HorseMode !== HORSE_MODE.None) ? HORSE_MODE.HitchedToWagon : wagonState.HorseMode;",
     "new": "      const hm = (entryMode === TRANSPORT.Cart && wagonState.HorseMode === HORSE_MODE.None) ? HORSE_MODE.None : HORSE_MODE.HitchedToWagon;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-BRANCH-IL2-old-ground-kept",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (wagonVisual) { wagonVisual.pose.active = false; wagonVisual.pose.hasLastValid = false; }",
     "new": "    if (wagonVisual) { wagonVisual.pose.active = false; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-BRANCH-IL3-seed-forgets-wagon",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "      seed = wagonActive() ? [...wagonPosition()] : null;",
     "new": "      seed = null;",
     "tests": [

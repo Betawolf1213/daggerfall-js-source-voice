@@ -10,7 +10,7 @@
 // to a foe of the sharer's of the wave's own Foe standing in its pool; otherwise it stands its own, as CreateFoe always
 // places (CreateFoe.cs:183-212).
 //
-// Driven through the real QuestMachine, the real share path (systems/questShare.js), the real OnlineSession with its
+// Driven through the real QuestMachine, the real share path (systems/quest/questShare.js), the real OnlineSession with its
 // client floor, world.js's own questSyncTick / shareQuestWithParty / onQuestShared / questShareSeam and both
 // tryPlaceFoe partner calls lifted verbatim out of the host, and two real encounter pools streaming to each other.
 import './modsOff.js';
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import * as ACTIONS from '../src/systems/quest/actions.js';   // sharedPickRoll - read off the module, so each pin here stands or falls alone
-import * as QS from '../src/systems/questShare.js';
+import * as QS from '../src/systems/quest/questShare.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { OnlineSession } from '../src/net/online.js';
 import { CHAT_WORLD_ROOM } from '../src/net/wire.js';

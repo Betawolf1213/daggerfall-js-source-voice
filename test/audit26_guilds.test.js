@@ -29,12 +29,12 @@ import {
   daedraForSummoner, attemptSummoning,
 } from '../src/systems/daedraSummoning.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
-import { cureDiseaseOffer } from '../src/systems/guildServiceActions.js';
+import { cureDiseaseOffer } from '../src/systems/guild/guildServiceActions.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { orderOf, templeOf } from '../src/systems/guildVariants.js';
-import { promotionTextId, GUILDS } from '../src/systems/guilds.js';
-import { canAccessService, avoidDeath, AVOID_DEATH_TEXT } from '../src/systems/guildServices.js';
-import { serviceAccess, SERVICE_MEMBERS_ONLY, INSUFFICIENT_RANK_ID } from '../src/systems/guildServiceFlow.js';
+import { orderOf, templeOf } from '../src/systems/guild/guildVariants.js';
+import { promotionTextId, GUILDS } from '../src/systems/guild/guilds.js';
+import { canAccessService, avoidDeath, AVOID_DEATH_TEXT } from '../src/systems/guild/guildServices.js';
+import { serviceAccess, SERVICE_MEMBERS_ONLY, INSUFFICIENT_RANK_ID } from '../src/systems/guild/guildServiceFlow.js';
 import { ALREADY_GIVEN_HOUSE } from '../src/systems/knightlyGifts.js';
 
 // ── F112 ──────────────────────────────────────────────────────────

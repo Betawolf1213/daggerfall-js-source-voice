@@ -29,7 +29,7 @@ import { createLegacyHost, LEGACY_TEXT } from '../src/scenes/legacyHost.js';
 import { personOf, familyRng, MODELS, LEGACY_MOD, fullNameOf } from '../src/systems/legacy/family.js';
 import { loadFamily, readBirth } from '../src/systems/legacy/store.js';
 import { isTownEntry } from '../src/systems/legacy/places.js';
-import { BOOT_DOOR_KEYS, publishBootParams } from '../src/systems/onlineLane.js';
+import { BOOT_DOOR_KEYS, publishBootParams } from '../src/systems/online/onlineLane.js';
 import { testStartsOutdoors } from '../src/systems/testRoom.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';

@@ -16,7 +16,7 @@ import {
 import { createStandingWatch, STANDING_LOOK_MS } from '../src/scenes/standingHost.js';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { CRIMES } from '../src/systems/court.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const player = (legal = -20, gold = 5000) => ({ legalRep: { 3: legal }, goldPieces: gold, items: [], health: 50, regionConditions: createRegionConditions() });

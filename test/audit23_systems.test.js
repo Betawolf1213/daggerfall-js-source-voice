@@ -6,15 +6,15 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { TEMPLATES } from '../src/systems/useItem.js';
-import { mintCondition, inventoryItemImage, templateByIndex } from '../src/systems/itemTemplates.js';
-import { expandItemInfo, weightString } from '../src/systems/itemInfo.js';
+import { mintCondition, inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { expandItemInfo, weightString } from '../src/systems/item/itemInfo.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { TextRsc, RSC } from '../src/formats/textRsc.js';
 import { spellsByIndexMap } from '../src/formats/spellsStd.js';
-import { canAccessService, canAccessLibrary } from '../src/systems/guildServices.js';
-import { TG_SPYMASTER_FACTION_ID } from '../src/systems/guildServiceFlow.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { canAccessService, canAccessLibrary } from '../src/systems/guild/guildServices.js';
+import { TG_SPYMASTER_FACTION_ID } from '../src/systems/guild/guildServiceFlow.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { MobileUnit, MOBILE_RAT } from '../src/characters/mobileUnit.js';
 import { wouldBeSpawnedInClassic } from '../src/characters/enemyMotor.js';   // AUDIT 62 F22: the band law the guard pool's mount picks
 import { ACTION_FLAGS } from '../src/world/rdbLayout.js';
@@ -172,7 +172,7 @@ test('AUDIT 23 characters-7 + items-1: the spawn bands and the pile gender ride 
 });
 
 test('AUDIT 23 audio-4: channel gains resync at play() and the loop seam', () => {
-  const sp = src('src/systems/songPlayer.js');
+  const sp = src('src/systems/song/songPlayer.js');
   assert.ok(/_resyncChannelGains\(\)\s*\{/.test(sp));
   const calls = (sp.match(/this\._resyncChannelGains\(\);/g) ?? []).length;
   assert.equal(calls, 2, 'one at play(), one at the loop rewind');

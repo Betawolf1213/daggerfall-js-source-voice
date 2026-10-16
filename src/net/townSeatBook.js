@@ -7,7 +7,7 @@
 // (bible/11-Multiplayer/Seats-Arc.md 3.2: "A client standing in a seat
 // town online reports {key, name, region, tier, pixel} once a day").
 //
-// A seat is DRAWN off the client's own derivation (systems/townSeats.js):
+// A seat is DRAWN off the client's own derivation (systems/town/townSeats.js):
 // "a client never draws, lists or honours a seat its own derivation
 // lacks" - the service's list says which of them the witnesses confirmed
 // (what a pledge and a claim will need, SEAT1b-c). The service keeps the
@@ -273,7 +273,7 @@ export function createTownSeatBook({ door, storage = null, nowMs = () => Date.no
     /**
      * THE SEAT THIS CLIENT STANDS IN, REPORTED - once a UTC day a seat (this device's), only while the seats are open to
      * this account. Answers whether a report was sent. A refusal is quiet: the town is the same town either way.
-     * @param {any} seat the client's own derivation (systems/townSeats.js)
+     * @param {any} seat the client's own derivation (systems/town/townSeats.js)
      */
     async witness(seat) {
       const s = seatReportOf(seat);

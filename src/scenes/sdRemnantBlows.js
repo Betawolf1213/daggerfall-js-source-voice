@@ -18,7 +18,7 @@
 //     (ui/gateDamageChart.js, the gate's own).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { setBossStruck } from '../systems/sigilSetPowers.js';   // AUDIT SD: a body's blow, marked for Gearward
+import { setBossStruck } from '../systems/sigil/sigilSetPowers.js';   // AUDIT SD: a body's blow, marked for Gearward
 import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_PILLAR_OVER_Y, atkWindup, blowShape, stompRingAt, handAngleAt, arenaOf } from '../net/sdRemnant.js';
 import { POOL_TICK_MS } from '../net/gateBrain.js';
@@ -100,7 +100,7 @@ export const SD_BLOW_CUES = Object.freeze({
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 const NONE = Object.freeze([]);
 /** AUDIT SD: A BODY'S OWN BLOW - the Stomp, the Hand, the Volley, the Remnant's or an Echo's: a foe's blow for the one
- *  power that answers a world boss (systems/sigilSetPowers.js setBossStruck, Gearward); never the Hour's unresisted magic
+ *  power that answers a world boss (systems/sigil/sigilSetPowers.js setBossStruck, Gearward); never the Hour's unresisted magic
  *  over the whole floor (the Pulse, the Reset, the End), nor the burning brass. */
 export const bodysBlow = (A) => !!A && A.shape !== 'all';
 /** A shape in the gate pass's own form, its fields the kind does not read set to nothing. */
@@ -222,7 +222,7 @@ export function createSdRemnantBlows({ gl = null, audio = null, link, feet = () 
   };
   /** A strike on me (the living alone reach here - the frame's own law): its share of my own health and its base, through
    *  the door every blow lands by. AUDIT SD: `blow` a body's own (`bodysBlow`), marked as a world boss's blow for the one
-   *  set power that answers it (systems/sigilSetPowers.js). */
+   *  set power that answers it (systems/sigil/sigilSetPowers.js). */
   function land(name, pct, base, blow = false, el = null) {
     const e = player();
     if (!e) return;

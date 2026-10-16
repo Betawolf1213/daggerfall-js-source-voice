@@ -12,18 +12,18 @@ import { readFileSync } from 'node:fs';
 import {
   CELL_WORDS, CELL_JITTER, DRIFT_M_PER_MIN, FIELD_RANGE_M, NATIVE_TO_METRES, fieldFromNative, nativeFromField, pixelOfField,
   fieldOfPixelLocal, pixelLocalOfField, driftOfDay, cellCandidate, baseWordOf, fieldAt,
-} from '../src/systems/weatherField.js';
+} from '../src/systems/weather/weatherField.js';
 import {
   resetWeatherSim, setWeatherFieldLaw, weatherFieldOn, sampleWeatherField, weatherCrossingStamp, weatherJumpStamp, currentFieldCells, currentFieldCell,
   importClimateWeathers, tickWeather, applyClimateWeather, weatherRespawn, currentWeather, setSnowGroundLaw, WEATHER_ENUM, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
-import { createWindModel, frontFactor, FRONT_LEAD_MIN, CROSS_LEAD_MIN } from '../src/systems/wind.js';
+} from '../src/systems/weather/weatherSim.js';
+import { createWindModel, frontFactor, FRONT_LEAD_MIN, CROSS_LEAD_MIN } from '../src/systems/wind/wind.js';
 import { CLIMATES, MAX_MAP_PIXEL_Y } from '../src/formats/mapsFile.js';
 import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { FEATURES } from '../src/systems/features.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { ONLINE_FORCED_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_FORCED_PREFS } from '../src/systems/online/onlineLane.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url)).toString();
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) < eps;
@@ -174,7 +174,7 @@ test('WEATHER2b the switch: the enhanced skin, Enhanced Environments and the wea
   assert.ok(row); assert.equal(row.control.key, 'weatherEvents'); assert.equal(row.control.initial, true); assert.equal(row.control.online, true);
   assert.equal(PREF_DEFAULTS.weatherEvents, true); assert.equal(ONLINE_FORCED_PREFS.weatherEvents, true, 'one field for every player');
   assert.equal(FEATURES.findIndex((f) => f.id === 'weather-events'), FEATURES.findIndex((f) => f.id === 'enhanced-map') + 4, 'TAMRIEL1/TAMRIEL2 (2026-10-08): the continent\'s two rows stand between the 3D dungeon map and this; FT18: where the sway row stood - the sway is the wind row\'s part now; EM3-3D: the 3D dungeon map row stands between, under the map row it belongs to');
-  assert.match(rd('src/systems/weatherSim.js'), /get\('wxfield'\) !== 'off'/, 'the kill door');
+  assert.match(rd('src/systems/weather/weatherSim.js'), /get\('wxfield'\) !== 'off'/, 'the kill door');
 });
 
 test('WEATHER2b the wind: a crossing builds its front on the short lead, the day roll\'s on three hours; the factor takes the lead; the model says which lead is up', () => {

@@ -20,7 +20,7 @@ import {
   createVitalsRig, synchronizeImmediately, applyVitalsChange, updateAllVitals,
   updateHudVitals, _resetHudVitals, vitalsSkin, drawVitalsBars,
 } from '../src/ui/hudVitals.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { drawHud } from '../src/ui/hud.js';
 import { drawHudLarge } from '../src/ui/hudLarge.js';
 

@@ -10,7 +10,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as tm from '../src/systems/textManager.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { ENEMY_NAMES, ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemyBasics.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
@@ -22,9 +22,9 @@ import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js
 import { classMobileType } from '../src/net/remotePlayers.js';
 import { affiliations } from '../src/systems/affiliations.js';
 import { affiliationRows } from '../src/ui/charsheet.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { NPCSession } from '../src/systems/npcSession.js';
-import { lordNameForFaction } from '../src/systems/talk.js';
+import { lordNameForFaction } from '../src/systems/talk/talk.js';
 import { summonMacroValues, DAEDRA } from '../src/systems/daedraSummoning.js';
 import { staticNpcName, staticNpcShownName } from '../src/characters/staticNpc.js';
 

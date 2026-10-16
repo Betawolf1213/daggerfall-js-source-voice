@@ -4,8 +4,8 @@
 // channel's bar raises health, fatigue and magicka as it fills, toward the rest's own yield, and keeps what it paid.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { openChannelHeal, stepChannelHeal, channelHealTick, REST_ACT_TEXT } from '../src/systems/restAct.js';
-import { REST_TEXT } from '../src/systems/restSession.js';
+import { openChannelHeal, stepChannelHeal, channelHealTick, REST_ACT_TEXT } from '../src/systems/rest/restAct.js';
+import { REST_TEXT } from '../src/systems/rest/restSession.js';
 import { REST_KIND } from '../src/systems/survival/rest.js';
 import { HARD_RULES, SURVIVAL_STORED } from '../src/systems/survival/difficulty.js';
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';

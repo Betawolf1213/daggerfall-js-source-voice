@@ -20,10 +20,10 @@ import {
 import { quickLootTake, tookItemText, foldQuickLoot, resetQuickLoot, quickLootArm, QUICK_LOOT_REFUSED } from '../src/systems/quickLoot.js';
 import { hoverLines } from '../src/systems/worldHover.js';
 import { GOLD_TEMPLATE } from '../src/systems/inventory.js';
-import { CANNOT_CARRY_TEXT } from '../src/systems/itemTransfer.js';
-import { itemNameParts } from '../src/systems/itemInfo.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
-import { LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { CANNOT_CARRY_TEXT } from '../src/systems/item/itemTransfer.js';
+import { itemNameParts } from '../src/systems/item/itemInfo.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
+import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
 import { destroyWorldPlaque, hideWorldPlaque } from '../src/ui/worldPlaque.js';
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../src/ui/drawWatchdog.js';

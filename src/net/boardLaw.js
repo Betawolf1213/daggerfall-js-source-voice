@@ -6,7 +6,7 @@
 // client's window (ui/noticeWindow.js) both read. The record is bible/06-Systems/Professions-Arc.md 10.1 and 10.6
 // (PROF0), and 10.7 as built.
 //
-// A BOARD IS ITS TOWN'S. Every rumour board of a town (BOUNTY1 took the other half, systems/bountyBoard.js
+// A BOARD IS ITS TOWN'S. Every rumour board of a town (BOUNTY1 took the other half, systems/bounty/bountyBoard.js
 // questBoardIndices) shows the same notes: a note is pinned to the TOWN, keyed by its location's map id (MAPS.BSA's
 // MapTableData.MapId, unsigned - regionHubs.js's key), so a board stood later for a seat or a hub is the same board.
 //

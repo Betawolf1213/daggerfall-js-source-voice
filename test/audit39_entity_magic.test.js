@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createCharacter, spellPoints, spellPointMultiplier } from '../src/systems/chargen.js';
 import { finishChargen, applyCreationExtras } from '../src/systems/chargenSession.js';
 import { LevelUpScreen } from '../src/ui/charsheet.js';
@@ -22,11 +22,11 @@ import {
 import { calculateCastCost, CAST_COST_FLOOR } from '../src/systems/spellcost.js';
 import { grantVampireSpells, VAMPIRE_BASE_SPELLS } from '../src/systems/vampirism.js';
 import { grantLycanthropySpell, LYCANTHROPY_SPELL_ID } from '../src/systems/lycanthropy.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { healAttributeDamage } from '../src/systems/effects.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { SKILLS, SKILL_COUNT } from '../src/systems/skills.js';
-import { getReputation } from '../src/systems/factionRep.js';
+import { getReputation } from '../src/systems/faction/factionRep.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

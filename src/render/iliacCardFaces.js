@@ -11,7 +11,7 @@
 //   prince   | pointed arch              | yes      | yes          | Oblivion's purple, the emblem in gold
 //   location | wide landscape, name atop | no       | no           | the Bay's green
 //
-// DECIDED (section 6.2): rarity is the loot's. The frame is RARITIES[tier].colour (systems/lootRarity.js) - imported,
+// DECIDED (section 6.2): rarity is the loot's. The frame is RARITIES[tier].colour (systems/loot/lootRarity.js) - imported,
 // never copied - and the higher the tier the heavier the frame: studs from rare, a double rule from legendary, and an
 // inner glow line for the aetheric and the artifact.
 //
@@ -36,8 +36,8 @@
 // pale rims are 1.1:1 against the stock without one), and the digits sit wholly on the gem's dark facets.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { RARITIES } from '../systems/lootRarity.js';
-import { cardWords } from '../systems/iliacCardWords.js';
+import { RARITIES } from '../systems/loot/lootRarity.js';
+import { cardWords } from '../systems/iliac/iliacCardWords.js';
 import { STOCK } from './cardFaces.js';
 
 /** The card's shape, width over height: the house deck's poker proportion, a little narrower. */
@@ -1168,7 +1168,7 @@ function paintShield(ctx, L, power) {
  * Paint one Iliac Hand card, filling (0, 0)-(w, h) of `ctx`: the frame in the tier's colour, the art window in the
  * kind's shape with the emblem in it, the name's banner, the rules and flavor (not on a tile), the cost gem (not a
  * location's) and the power shield (a unit's and a prince's only). KG-SET: the rules and the flavor are `words` - the
- * card's own in the player's language (systems/iliacCardWords.js) unless a caller hands others (the painter's layout
+ * card's own in the player's language (systems/iliac/iliacCardWords.js) unless a caller hands others (the painter's layout
  * pins, which set long and short words on one face). KG3: a PICTURE (`picture`) is the card's picture alone, in a
  * frame with no tier's colour - The King's Gambit's units, whose numbers and names the table says (iliacLayout).
  * @param {CanvasRenderingContext2D} ctx

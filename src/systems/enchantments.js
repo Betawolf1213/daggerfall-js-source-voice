@@ -63,7 +63,7 @@ import { applyDressStanding } from './clothingStanding.js';   // DRESS1 (2026-09
 import { ENCHANTMENT_TYPES } from '../formats/magicDef.js';
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';   // AUDIT 63 F6: PlayerEntity.cs:128-129 sizes reactionMods at socialGroupCount = 11
 import { regenBarred } from './courtRules.js';   // WBX6: the Burning Court keeps no regeneration
-import { ITEM_TEMPLATES, templateByIndex, mendOrder, mintCondition, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from './itemTemplates.js';   // MEND-WORN: the mend order's one home, and the smith's refusal
+import { ITEM_TEMPLATES, templateByIndex, mendOrder, mintCondition, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from './item/itemTemplates.js';   // MEND-WORN: the mend order's one home, and the smith's refusal
 import { WEAPONS, WEAPON_CONDITION_POOL } from '../characters/weapons.js';   // MEND-WORN: a pool weapon's tick is the classic Dagger's share
 import { repoolWeapon } from './conditionRepair.js';   // MEND-WORN: a weapon on its row's pool moves before a mend on the pool, as before a wear
 export { ENCHANTMENT_TYPES };
@@ -164,7 +164,7 @@ export const isEnchantedItem = (item) => !!itemEnchantments(item);
 // ported" - and M4's catalogue is that sum's missing half, so it
 // closed here and stays closed: legacyEnchantmentValue (:222-238) is
 // the sum, over VALUE_COUNTS_BELOW (:179), spellEnchantPtCost (:214)
-// and the SoulBound/CastWhen arms, and systems/loot.js:"value: legacyEnchantmentValue" prices
+// and the SoulBound/CastWhen arms, and systems/loot/loot.js:"value: legacyEnchantmentValue" prices
 // every minted legacy item through it.
 //
 // THE BOUND IS THE ENUM'S OWN ORDER (:604-605): only

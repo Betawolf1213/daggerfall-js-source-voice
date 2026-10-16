@@ -19,7 +19,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import {
   receiveSharedQuest, prepareQuestShare, slimShareMarkers, fullShareMarkers, shareRefusalText, shareSkewText,
   sayShareRefusal, RECEIVER_REFUSAL_TEXT, SHARE_REFUSAL_TEXT, QUEST_SHARE_MAX_BYTES,
-} from '../src/systems/questShare.js';
+} from '../src/systems/quest/questShare.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { BUILD_TAG } from '../src/buildTag.js';
 

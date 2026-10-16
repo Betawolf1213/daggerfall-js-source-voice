@@ -1,6 +1,6 @@
 // @ts-check
-// HORSE CART AND CARGO - THE PRESENTATION (HCC, 2026-09-23). What the runtime (systems/horseCart.js) says, drawn:
-// the trailing / following wagon and the parked one as the five pieces of classic model 41214 (systems/wagon41214.js
+// HORSE CART AND CARGO - THE PRESENTATION (HCC, 2026-09-23). What the runtime (systems/horse/horseCart.js) says, drawn:
+// the trailing / following wagon and the parked one as the five pieces of classic model 41214 (systems/wagon/wagon41214.js
 // - the body and shafts on the wagon's frame, each wheel turned about its own pivot), the cargo pieces the tier
 // shows (WagonCargoVisual's twelve), and the horse as an eight-orientation billboard off the mod's own 45 PNGs
 // (five drawn views, three mirrored - StationaryHorseBillboard). It also ANSWERS the runtime's physics
@@ -16,7 +16,7 @@
 //          the change key is the WIRE's and a floating-origin rebase of mine is not a word),
 //          peerAnchor(id) -> [x,y,z] | null (WAGON-HITCH: where that player's cart rider is drawn this frame, scene
 //          frame - their trailing wagon hangs from it on its shafts here, as mine does there), log,
-//          wagonKind() -> 'cart' | 'openWagon' | 'caravan' (WAGONS1: which wagon of mine is driven - systems/wagonKinds.js),
+//          wagonKind() -> 'cart' | 'openWagon' | 'caravan' (WAGONS1: which wagon of mine is driven - systems/wagon/wagonKinds.js),
 //          bakedWagon(kind) -> Promise<bake> | null (WAGONS1: Mac's wagon of that kind, src/assets/wagons/*.json - the
 //          hosts' fetch; absent, the classic model 41214 stands for every kind, as before WAGONS1),
 //          enterCaravan() (WAGONS1: my parked caravan's "Step inside" row - scenes/caravanRoom.js; absent, no row),
@@ -32,13 +32,13 @@
 // closed wagon varient"): THE WAGON DRAWN IS MAC'S. With the hosts' `bakedWagon` the parts are his Wagon Cart, Open
 // Wagon or Caravan (world/wagonModels.js - their statics, each wheel on its pivot, the rear pair the parked solve's;
 // painted under world/wagonArt.js's archive, which this pool uploads and owns), by the kind each owner drives: mine by
-// `wagonKind`, a peer's by their word's `wk` (systems/horseCartWire.js). The cart is borne level on its axle while a
+// `wagonKind`, a peer's by their word's `wk` (systems/horse/horseCartWire.js). The cart is borne level on its axle while a
 // horse is in its shafts and rests tipped on them when none is (`hitchPitch`), and every kind hangs its own length
 // behind its horse (`hitchOf`). A bake that will not load or build falls back to the classic wagon for that kind, as a
 // ship's does (systems/comeSailAway/comeSailAwayModels.js).
 //
 // WAGONS2 (2026-10-09, Mac: "Real wheel movement"): EACH WHEEL ROLLS ON ITS OWN, AND THE FOUR-WHEELERS STEER. A wheel is
-// drawn at its own angle (`turn.angles`, systems/horseCart.js rolledAngles - its contact's travel along its heading over
+// drawn at its own angle (`turn.angles`, systems/horse/horseCart.js rolledAngles - its contact's travel along its heading over
 // its radius), the open wagon's and the caravan's front axle, pole and front pair turned on their kingpin by the steer
 // (`turn.steer`, horseFollow.js bogieAxle). Mine are the runtime's; a peer's are turned HERE off the pose this client
 // draws (`turnPeer`, `hitchPeerWagon`'s two bars); a parked wagon's stay as they stood. The wire is unchanged.
@@ -55,7 +55,7 @@
 //  - THE DRIVER (`driverDrawn`, `driverSeat`, `driverGlue`): the bench's seat (wagonModels.js driverSeatFor) as the wagon
 //    is drawn - where the hosts stand my camera and body while I drive, and where another player's driver is drawn
 //    seated (their pose's `rd` 2 at the puller, glued onto their bench as their back seats' riders are - seatGlue).
-//  - THE HARNESS (`_harness`, systems/wagonRopes.js): each hitched horse's two traces from its collar to its singletree
+//  - THE HARNESS (`_harness`, systems/wagon/wagonRopes.js): each hitched horse's two traces from its collar to its singletree
 //    (the Small Cart's to its shafts' roots), and a seated driver's two reins from the hands to the pair's bits - Verlet
 //    ropes stepped each frame on the frame's own clock, drawn as one leather tube mesh an owner (renderer.updateMeshVertices).
 //  - THE OVERWORLD (`drawnFrameOf`): a driven rig is grown by world/wagonModels.js rigGrowOf - every kind read as long as
@@ -71,38 +71,38 @@ import { GLOBAL_SCALE, RAY_DISTANCE, pickActivatableHit } from '../player/activa
 import { localAabb, transformedAabb, sphereAabb } from '../render/frustum.js';
 import { multiply, transformPoint } from '../world/mat4.js';
 import { mat4FromQuatPos, mat4FromQuatPosScale, quatAngleAxis, quatLookRotation, quatSlerp, quatForward, quatRotate, UNITY_QUAT_IDENTITY } from '../world/quat.js';
-import { buildWagonParts, usableBounds, CARGO_DEFINITIONS, cargoPiecesShown } from '../systems/wagon41214.js';
+import { buildWagonParts, usableBounds, CARGO_DEFINITIONS, cargoPiecesShown } from '../systems/wagon/wagon41214.js';
 import {
   WAGON_MODEL_ID, HORSE_VIEWS, HORSE_WALK_FRAMES, HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_WALK_SPRITE_HEIGHT,
   calculateHorseOrientation, horseViewFor, horseTargetLabel, ACTIVATION_REACH, HORSE_BOX_CENTER, HORSE_BOX_SIZE,
   stepHorseWalk, freshHorseWalk, START_WALKING_SPEED, WAGON_MODE, HORSE_MODE,
   pickGround, STATIONARY_PROBE_HEIGHT, STATIONARY_PROBE_DISTANCE, GROUND_RETRY_SECONDS,   // DISC20-C: a peer's standing team, stood on my ground
   HITCHED_HORSE_LOCAL_Z, NORMAL_GROUND_OFFSET, GROUND_RAY_HEIGHT, GROUND_RAY_DISTANCE, TELEPORT_DISTANCE, ROTATION_SMOOTHING_RATE, POSITION_SMOOTHING_RATE,   // WAGON-HITCH
-} from '../systems/horseCartLaw.js';
-import { hitchAxle, bogieAxle, steerToward, yawed } from '../systems/horseFollow.js';   // WAGON-HITCH: the shafts' one law, for a peer's trailing wagon (WAGONS2: and a four-wheeler's two)
-import { DeployedWagonVisual, wheelContacts, rolledAngles } from '../systems/horseCart.js';   // DISC20-C: the mod's own two-wheel solve, for a peer's parked wagon (WAGONS2: and each wheel's roll)
+} from '../systems/horse/horseCartLaw.js';
+import { hitchAxle, bogieAxle, steerToward, yawed } from '../systems/horse/horseFollow.js';   // WAGON-HITCH: the shafts' one law, for a peer's trailing wagon (WAGONS2: and a four-wheeler's two)
+import { DeployedWagonVisual, wheelContacts, rolledAngles } from '../systems/horse/horseCart.js';   // DISC20-C: the mod's own two-wheel solve, for a peer's parked wagon (WAGONS2: and each wheel's roll)
 import { PARK_REACH, PARK_TTL_MS } from '../net/wire.js';   // HCC-PARK: how far a kept team's parts may stand from its anchor, and how long the relay keeps one
-import { thrownRecord } from '../systems/wagonWarden.js';   // WARDEN1: a kept team the town watch threw, where it landed
+import { thrownRecord } from '../systems/wagon/wagonWarden.js';   // WARDEN1: a kept team the town watch threw, where it landed
 import { WAGON_HOVER_TEXT } from '../player/eotbWagon.js';   // the hover word for a wagon - the noun of Eye Of The Beholder's Info line, so both carts read alike
-import { hccWireRecord, validHccRecord, hccRecordKey, easeToward, HCC_WIRE_KIND } from '../systems/horseCartWire.js';
+import { hccWireRecord, validHccRecord, hccRecordKey, easeToward, HCC_WIRE_KIND } from '../systems/horse/horseCartWire.js';
 import { decodePng } from '../systems/textureReplacement.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { wagonGeometry, buildBakedWagonParts, rendererModelOf, pitchedPoint, teamSidesOf, TEAM, rigGrowOf, driverSeatFor, SHELL_CLEAR_M } from '../world/wagonModels.js';   // WAGONS1: Mac's wagons; WAGONS3: the team, the rig's grow, the bench; BENCH-CAM: the pivot's clearance
 import { seatRigInput, seatTopByte } from '../player/seatPose.js';   // WAGONS3: the driver's hands, and a seated peer's `st`
-import { newRope, stepRope, tubeModel, tubeInto, tubeVertexCount, ROPE } from '../systems/wagonRopes.js';   // WAGONS3: the harness
+import { newRope, stepRope, tubeModel, tubeInto, tubeVertexCount, ROPE } from '../systems/wagon/wagonRopes.js';   // WAGONS3: the harness
 import { wagonArt, WAGON_ARCHIVE, wagonLookArt, isGlassRecord, LOOK_RECORDS, LOOK_RECORD_STRIDE, lookRecord, TEX as WAGON_TEX } from '../world/wagonArt.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';   // DF-LOOK: the wagons' pictures in Daggerfall's colours
 import { caravanRoomModel } from '../world/caravanRoomModel.js';   // WAGONS2: the caravan's room, seen through its windows
-import { readWagonLook, wagonLookOfCode, WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS, CARAVAN_INSIDE_PARTS } from '../systems/wagonLooks.js';
-import { validWagonKind, wagonHitchOf, WAGON_KINDS, wagonHorsesOf } from '../systems/wagonKinds.js';
+import { readWagonLook, wagonLookOfCode, WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS, CARAVAN_INSIDE_PARTS } from '../systems/wagon/wagonLooks.js';
+import { validWagonKind, wagonHitchOf, WAGON_KINDS, wagonHorsesOf } from '../systems/wagon/wagonKinds.js';
 import { CARAVAN_TEXT } from '../systems/caravanRoom.js';
-import { recolorHorse, horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horseCoats.js';   // COATS1: the horses' looks, dyed as they upload
+import { recolorHorse, horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horse/horseCoats.js';   // COATS1: the horses' looks, dyed as they upload
 import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';   // PERF-TEAMS: the host's view verdict (world.js yardCull), as the merchant yards' wagons take it; PERF-WAGON: and the one maps-alone renderer
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** The horse art's archive key and record names on the renderer's texture map: `hcc_h<view>` a standing view,
  *  `hcc_w<view>#<frame>` a walk frame (the foes' own `record#frame` folding, scenes/exteriorFoes.js). COATS1: a horse's
- *  look (systems/horseCoats.js, its code) is the same picture dyed, under the record plus `~<code>`. */
+ *  look (systems/horse/horseCoats.js, its code) is the same picture dyed, under the record plus `~<code>`. */
 export const HORSE_ARCHIVE = 'hcc';
 export const horseStillRecord = (view, look = 0) => `h${view}${lookSuffix(look)}`;
 export const horseWalkRecord = (view, frame, look = 0) => `w${view}#${frame}${lookSuffix(look)}`;
@@ -112,7 +112,7 @@ const seedOfKey = (k) => { let h = 7; for (const c of k) h = (Math.imul(h, 31) +
  *  own look, and a session meets many). */
 export const HORSE_LOOKS_KEPT = 16;
 /** PERF-DYE: how many of a look's pictures are dyed a frame - each a CPU pass of about a millisecond on a desktop
- *  (systems/horseCoats.js recolorHorse) and an upload. The budget was a SET a frame, and the walk set is forty pictures:
+ *  (systems/horse/horseCoats.js recolorHorse) and an upload. The budget was a SET a frame, and the walk set is forty pictures:
  *  a look met on a road (a passing team, a parked one come into view) cost one frame some 45 ms, a hitch the eye sees
  *  (2026-10-12, the live client: 29 of the 122 frames over 50 ms in two minutes' travel). Five a frame is the views in
  *  one, the walk frames over eight. */
@@ -294,7 +294,7 @@ export function createHorseCartPool({
   peerAnchor = (/** @type {string} */ _id) => /** @type {number[] | null} */ (null),
   wagonKind = () => 'cart', bakedWagon = /** @type {((kind: string) => Promise<any>) | null} */ (null),
   wagonLook = /** @type {() => any} */ (() => null),
-  horseLook = () => 0,   // COATS1: my horse's look (systems/horseCoats.js - its code)
+  horseLook = () => 0,   // COATS1: my horse's look (systems/horse/horseCoats.js - its code)
   horses3d = /** @type {() => any} */ (() => null),   // COATS3D: the Morrowind lane's 3D horse rig (world/horseRig.js), when it stands in for the billboards; null, the billboards
   enterCaravan = /** @type {(() => any) | null} */ (null),
   riders = /** @type {any} */ (null),
@@ -332,7 +332,7 @@ export function createHorseCartPool({
   const _kept = new Map();   // HCC-PARK: `${room}|${k}` -> a cell's kept word { room, k, id, w, h, n, name, expires, toScene, seq } (the relay's memory; AUDIT HCC-PARK: per ROOM and per owner KEY, so one cell's word never unsays another's)
   let _keptSeq = 0;
   let _lastKey = '';
-  // WARDEN1 (systems/wagonWarden.js): the teams the town watch is carrying - '' mine, a peer's key - drawn by its show
+  // WARDEN1 (systems/wagon/wagonWarden.js): the teams the town watch is carrying - '' mine, a peer's key - drawn by its show
   // (scenes/wagonWardenShow.js) and not here: no wagon, no horse it carries, no harness, no box for the ray or my
   // collider, no seat to ride. AUDIT WARDEN1: counted (two shows over one key - a peer's live word - each set it down
   // only once both have), and `lone` whether a lone horse beside it is carried too (one following its owner, or left
@@ -438,7 +438,7 @@ export function createHorseCartPool({
     return _parts;
   }
   const myKind = () => validWagonKind(wagonKind?.()) ?? 'cart';
-  /** WAGONS2: my driven wagon's paint (systems/wagonLooks.js), checked. */
+  /** WAGONS2: my driven wagon's paint (systems/wagon/wagonLooks.js), checked. */
   const myLook = () => readWagonLook(wagonLook?.());
   /** How far ahead of a wagon's rear axle its horse stands: the kind's own when Mac's wagon is drawn, the mod's 3.1
    *  for the classic one (HITCHED_HORSE_LOCAL_Z). */
@@ -466,7 +466,7 @@ export function createHorseCartPool({
     _walkLoading = Promise.all(jobs).then(() => { _walkReady = true; }).catch((e) => { _walkFailed = true; log?.warn?.(`[TrailingWagon] the horse walk frames would not load; the standing views stay: ${e?.message ?? e}`); }).finally(() => { _walkLoading = null; });
   }
   /** COATS1: a look's pictures up - its standing views once the bay's are, its walk frames once the bay's are - dyed
-   *  off the bay's kept pixels, a CPU pass and an upload a picture (systems/horseCoats.js recolorHorse). PERF-DYE: in
+   *  off the bay's kept pixels, a CPU pass and an upload a picture (systems/horse/horseCoats.js recolorHorse). PERF-DYE: in
    *  order, the views then the walk frames, HORSE_DYE_PICTURES a frame among every look (`_dyeBudget`), never a whole
    *  set at once; `up.views` and `up.walks` count those up. Answers whether every picture the pool draws now is up in
    *  that look - the views, and the walk frames once the bay's are (the bay's until then: the art). */
@@ -586,7 +586,7 @@ export function createHorseCartPool({
    *  wagon's (its parts), `hitched` whether a horse is in its shafts (the cart borne level). WAGONS2: `turn` its wheels
    *  and bogie - `{ angle, angles, steer }`: wheel i at `angles[i]` (the mod's one `angle` where it has none), a
    *  four-wheeler's front axle, pole and front pair turned `steer` on the kingpin; and `look` its paint
-   *  (systems/wagonLooks.js - a look or its wire code), its body, bogie and wheels drawn on the paint's pictures, and a
+   *  (systems/wagon/wagonLooks.js - a look or its wire code), its body, bogie and wheels drawn on the paint's pictures, and a
    *  caravan's room inside its body, seen through its windows (world/caravanRoomModel.js - casting no shadow: the body
    *  casts the caravan's). */
   function drawWagon(r, texRemap, position, rotation, tier, turn, scale = 1, kind = myKind(), hitched = false, look = null) {
@@ -1436,7 +1436,7 @@ export function createHorseCartPool({
       if (t) void visit?.enter?.(t);
       return true;
     }
-    if (pk.what === 'w' && typeof mode === 'string' && mode.startsWith('wagon:') && riders?.press) return !!riders.press(_peers.get(pk.owner)?.ownerId ?? pk.owner, mode, distance);   // WAGONS1: the seats' own reach (systems/wagonSeats.js RIDE_ASK_REACH)
+    if (pk.what === 'w' && typeof mode === 'string' && mode.startsWith('wagon:') && riders?.press) return !!riders.press(_peers.get(pk.owner)?.ownerId ?? pk.owner, mode, distance);   // WAGONS1: the seats' own reach (systems/wagon/wagonSeats.js RIDE_ASK_REACH)
     if (!(distance <= ACTIVATION_REACH)) { tooFar?.(); return true; }
     const n = hoverName(key);
     if (n) say?.(`${pk.what === 'w' ? 'This wagon' : `${n.title}`} - ${n.subs[0].charAt(0).toLowerCase()}${n.subs[0].slice(1)}.`);   // HCC-TIP: the press says what the plaque says
@@ -1704,7 +1704,7 @@ export function createHorseCartPool({
     if (!e || typeof e !== 'object' || typeof e.k !== 'string' || !e.k || typeof e.id !== 'string' || !e.id) return false;
     if (e.id === (selfId?.() ?? null)) return false;
     const slot = `${room}|${e.k}`;
-    // WARDEN1: a team the town watch threw (`y`) stands where it landed (systems/wagonWarden.js thrownRecord)
+    // WARDEN1: a team the town watch threw (`y`) stands where it landed (systems/wagon/wagonWarden.js thrownRecord)
     const thrown = e.r != null && Number.isFinite(e.y);
     const v = e.r == null ? null : validHccRecord(thrown ? thrownRecord(e.r) : e.r);
     if (!v || !(v.w?.kind === HCC_WIRE_KIND.Deployed || v.w == null) || (!v.w && !v.h)) {

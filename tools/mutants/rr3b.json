@@ -163,7 +163,7 @@
   },
   {
     "name": "RR3b-19-the-merge-keeps-the-pool-draw",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "          if (drawn) drawn.used = false;\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "RR3b-20-the-merge-does-not-vary-the-seed",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "          list[i].nameSeed = (replacement.nameSeed + locationIndex) & 0xffff;",
     "new": "          list[i].nameSeed = replacement.nameSeed;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "RR3b-21-the-merge-takes-the-type-only-with-a-faction",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "        list[i].buildingType = replacement.buildingType;\n      }\n      // RMBLayout.cs:677-683",
     "new": "      }\n      // RMBLayout.cs:677-683",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "RR3b-24-the-save-forgets-the-variants",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.worldVariation = getWorldVariationSaveData();\n",
     "new": "",
     "tests": [

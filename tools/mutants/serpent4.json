@@ -30,7 +30,7 @@
   },
   {
     "name": "SERPENT4-the-whole-throw",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "export const SERPENT_THROW_X = 0.5;",
     "new": "export const SERPENT_THROW_X = 1;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "SERPENT4-the-throw-unscaled",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "const d = Math.hypot(dx, dz) || 1, v = A.shove * SERPENT_THROW_X;",
     "new": "const d = Math.hypot(dx, dz) || 1, v = A.shove;",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "SERPENT4-the-whole-canvas",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "sail: shared(A.sail * SERPENT_CANVAS_X * whole.maxSail, k, carry, 'sail')",
     "new": "sail: shared(A.sail * whole.maxSail, k, carry, 'sail')",
     "tests": [

@@ -65,7 +65,7 @@ import { QuestMachine, TICKS_PER_SECOND } from '../systems/quest/machine.js';
 import { clockCounts } from '../systems/quest/clock.js';   // DEAD-CLOCK: a clock whose end changes nothing is no deadline
 import { repairActiveQuests, relayOnlineDungeons, relayMovedLayouts, relayBuiltDungeon } from '../systems/quest/questRepair.js';   // QREPAIR: the Settings' repair (AUDIT DELVE E1: and a frozen size, crossing online)
 import { t } from '../systems/textManager.js';   // QUEST-RESET: the restart's words in the player's language (L10N4)
-import { isOnlinePage } from '../systems/onlineLane.js';   // AUDIT DELVE E1: online, every dungeon is whole
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // AUDIT DELVE E1: online, every dungeon is whole
 import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
 import { WA_RAID_QUESTS } from '../systems/warmAshesShips.js';   // QUEST-SHELF: a raid the world runs is never set aside
 import { QuestListsManager } from '../systems/quest/questLists.js';
@@ -76,10 +76,10 @@ import { GENDERS } from '../characters/nameHelper.js';
 import { ZERO_NPC_DATA, NPC_CONTEXT, raceFromFaction } from '../characters/staticNpc.js';
 import { GUILD_GROUPS } from '../formats/factionFile.js';
 import { expandMacroValues, setMacroWorld } from '../systems/quest/questMacros.js';   // GQL1: the wait box's %pcf
-import { firstName } from '../systems/talkSession.js';
-import { getBool } from '../systems/settings.js';
+import { firstName } from '../systems/talk/talkSession.js';
+import { getBool } from '../systems/settings/settings.js';
 import { noteOfferPending } from '../ui/pendingOffer.js';   // AUDIT 58: DaggerfallUI's GivePc.OnOfferPending subscription
-import { getTitle } from '../systems/guilds.js';
+import { getTitle } from '../systems/guild/guilds.js';
 import { addQuestResourceObjects } from '../systems/quest/sceneMount.js';
 import { SITE_TYPES } from '../systems/quest/place.js';   // QUEST-HOME: a building's mount marks its sites reached
 import { QuestLens } from '../ui/questLens.js';   // GUIDE1: the modern faces' one read-only picture of this machine

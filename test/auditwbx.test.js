@@ -324,11 +324,11 @@ test('AUDIT WBX W1/W6 a player standing in the stone the moment it comes up whol
 
 test('AUDIT WBX W2/W3 the court\'s music: a song made in code plays where MIDI.BSA did not load; the fanfare\'s time is counted from its own first note - SCORE_STING_LEAD_MS after the court asked for it, the war song\'s fade and the player\'s start (mutants: the archive asked of a made song; the fanfare cut under the fade)', async () => {
   const { MUSIC_FADE_OUT_S } = await import('../src/systems/music.js');
-  const { SCORE_STING_LEAD_MS } = await import('../src/systems/gateScore.js');
+  const { SCORE_STING_LEAD_MS } = await import('../src/systems/gate/gateScore.js');
   assert.equal(SCORE_STING_LEAD_MS, Math.round(MUSIC_FADE_OUT_S * 1000 + 60), 'the fade out and the player\'s beat on');
   const m = read('src/systems/music.js');
   assert.match(m, /_ensurePlayer\(made = false\) \{\n[^\n]*\n\s*if \(!this\.enabled && !made\) return null;/);
   assert.match(m, /const player = this\._ensurePlayer\(this\._made\.has\(name\)\);/);
   assert.match(m, /if \(!this\.archive\) return false;/);
-  assert.match(read('src/systems/gateScore.js'), /if \(law === GATE_SONGS\.fell && stingAt === null\) stingAt = now \+ SCORE_STING_LEAD_MS;/);
+  assert.match(read('src/systems/gate/gateScore.js'), /if \(law === GATE_SONGS\.fell && stingAt === null\) stingAt = now \+ SCORE_STING_LEAD_MS;/);
 });

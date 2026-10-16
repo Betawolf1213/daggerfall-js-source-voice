@@ -3,7 +3,7 @@
 // container), ForagingLoot_OnDungeonLootSpawned (a pile, by its index) and
 // ForagingLoot_OnEnemyDeath (a corpse), IL_0520-IL_0b8f; and the two DFU
 // events they hang on, each one home now: PlayerActivate.OnLootSpawned
-// (systems/containerLoot.js) and LootTables.OnLootSpawned (systems/loot.js,
+// (systems/containerLoot.js) and LootTables.OnLootSpawned (systems/loot/loot.js,
 // raised for every key). The tables are the DLL's
 // <PrivateImplementationDetails>, read off it and typed here; every
 // Range(0, 1) that is always 0 (Q2) adds nothing over 10,000 draws.
@@ -16,13 +16,13 @@ import {
   FT, FORAGING_LOOT_TABLES, FORAGING_ITEM_CODES, FORAGING_ITEM_RARITIES, TOOL_TEMPLATES, determineForagingItem,
   foragingItemCount, rollForagingItemUsed, foragingLootItem, containerLootDraw, DUNGEON_LOOT_ARMS, dungeonLootDraw,
   CORPSE_CLASS_CAREERS, CORPSE_MONSTER_CAREERS, CORPSE_COUNTS, corpseLootDraw,
-} from '../src/systems/foragingLaw.js';
+} from '../src/systems/foraging/foragingLaw.js';
 import {
   onForagingContainerLoot, onForagingPileLoot, onForagingEnemyDeath, installForaging, _resetForagingInstall,
   _setForagingRandomForTests,
-} from '../src/systems/foragingInstall.js';
+} from '../src/systems/foraging/foragingInstall.js';
 import { raiseContainerLootSpawned, registerContainerLootHandler } from '../src/systems/containerLoot.js';
-import { addPileLootExtras, registerTabledLootHandler, DUNGEON_LOOT_KEYS } from '../src/systems/loot.js';
+import { addPileLootExtras, registerTabledLootHandler, DUNGEON_LOOT_KEYS } from '../src/systems/loot/loot.js';
 import { raiseEnemyDeath } from '../src/scenes/corpseMarker.js';
 import { seedInteriorTreasure } from '../src/scenes/interiorContext.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
@@ -230,7 +230,7 @@ test('FORAGE3: the corpse hook rides the death event every pool raises', () => {
 });
 
 test('FORAGE3: the wiring - the install subscribes all three; every host raises the container event at its stock and hands each pile its index', () => {
-  const inst = rd('src/systems/foragingInstall.js');
+  const inst = rd('src/systems/foraging/foragingInstall.js');
   assert.match(inst, /registerContainerLootHandler\(FORAGING_VENDOR, onForagingContainerLoot\);\n\s*registerTabledLootHandler\(FORAGING_VENDOR, onForagingPileLoot\);\n\s*registerEnemyDeathHandler\(FORAGING_VENDOR, onForagingEnemyDeath\);/);
   const wm = rd('src/scenes/worldModes.js');
   assert.doesNotMatch(wm, /onShopShelfStocked/, 'no host calls a mod\'s subscriber by name');

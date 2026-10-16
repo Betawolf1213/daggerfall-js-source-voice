@@ -9,7 +9,7 @@
 // a CHAMPION with one TRAIT: twice its health and its blows a quarter
 // harder, its trait on top, its name the trait's and its own. Its loot is
 // its own roll (CHAMP-LOOT: no Rare is forced onto its body - Magic and Rare
-// at half a plain foe's, its Legendary as LOOT7 left it: systems/lootRarity.js
+// at half a plain foe's, its Legendary as LOOT7 left it: systems/loot/lootRarity.js
 // championSource).
 //
 // WHO DECIDES. A dungeon's foes are its LAYOUT's, built on every client
@@ -25,7 +25,7 @@
 // OFF IS DFU EXACTLY: with the loot-rarity row off, no champion stands.
 // ═══════════════════════════════════════════════════════════════════
 
-import { lootRarityOn } from './lootRarity.js';
+import { lootRarityOn } from './loot/lootRarity.js';
 import { foeTitle } from './foeTitle.js';   // FOE-TITLE: the names' one home
 import { registerPlayerStruckListener, registerPlayerStrikeListener } from '../combat/formulas.js';
 import { hurtPlayer } from '../characters/playerEntity.js';

@@ -19,11 +19,11 @@ import { fakeRooms } from './fakeRoom.mjs';
 import {
   WARDEN_TOWN_TYPES, isWardenTown, footprintRoadShare, landingOf, strayOf, wardenStamp, validWardenStamp, stampFits, wardenWordOf,
   offlineDue, thrownRecord, thrownTo, WARDEN_LAND_PAST, WARDEN_LAND_SCATTER, WARDEN_ROAD_SHARE, WARDEN_SAME_NATIVES, WARDEN_TEXT,
-} from '../src/systems/wagonWarden.js';
+} from '../src/systems/wagon/wagonWarden.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { WAGON_MODE, HORSE_MODE } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import {
   createWardenShows, showTimes, arcPoint, flightSeconds, arcPeak, tumbleTurns, lineOf, WARDEN_APPROACH_MAX, WARDEN_GUARD_SPEED,
   WARDEN_LIFT_S, WARDEN_TURN_S, WARDEN_PAUSE_S, WARDEN_LEAVE_MIN, WARDEN_HEAD,
@@ -34,8 +34,8 @@ import { mapPixelOfWire } from '../src/net/wire.js';
 import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';
 import { makeWorld } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
-import { WAGON_MODEL_ID } from '../src/systems/horseCartLaw.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 // a team in map pixel (100, 150): cell world:6,9 (hcc_park.test.js's)
@@ -413,7 +413,7 @@ test('WARDEN1 hosts: the online plumbing carries `y` and the owner\'s word; worl
   assert.equal((w.match(/wardenShows\?\.destroyAll\(\);/g) ?? []).length, 2, 'a re-anchor and a load');
   assert.match(w, /hcc\.setWardenWord\(\(a\) => wagonWarden\?\.word\(a\) \?\? null\);/);
   assert.match(w, /registerModSaveData\(WARDEN_VENDOR, \{/);
-  assert.match(rd('src/systems/horseCart.js'), /adoptYeet,   \/\/ WARDEN1/);
+  assert.match(rd('src/systems/horse/horseCart.js'), /adoptYeet,   \/\/ WARDEN1/);
 });
 
 // ─── the runtime ────────────────────────────────────────────────────────────────────────────────────────────────────

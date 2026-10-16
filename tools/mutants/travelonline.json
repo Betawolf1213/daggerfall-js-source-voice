@@ -1,7 +1,7 @@
 [
   {
     "name": "TRAVEL-ONLINE-1-the-mod-the-player's",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'travel-options': Object.freeze({\n    Enabled: true,\n",
     "new": "  'travel-options': Object.freeze({\n",
     "tests": [
@@ -12,7 +12,7 @@
   },
   {
     "name": "TRAVEL-ONLINE-2-cautiously-the-player's",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    'CautiousTravel.PlayerControlledCautiousTravel': true,\n    'StopAtInnsTravel.PlayerControlledInnsTravel': true,\n    'ShipTravel.OnlyFromPorts': true,",
     "new": "    'StopAtInnsTravel.PlayerControlledInnsTravel': true,\n    'ShipTravel.OnlyFromPorts': true,",
     "tests": [
@@ -23,7 +23,7 @@
   },
   {
     "name": "TRAVEL-ONLINE-3-inns-the-player's",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    'CautiousTravel.PlayerControlledCautiousTravel': true,\n    'StopAtInnsTravel.PlayerControlledInnsTravel': true,\n    'ShipTravel.OnlyFromPorts': true,",
     "new": "    'CautiousTravel.PlayerControlledCautiousTravel': true,\n    'ShipTravel.OnlyFromPorts': true,",
     "tests": [
@@ -45,7 +45,7 @@
   },
   {
     "name": "TRAVEL-ONLINE-5-the-ports-the-player's",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    'StopAtInnsTravel.PlayerControlledInnsTravel': true,\n    'ShipTravel.OnlyFromPorts': true,\n  }),",
     "new": "    'StopAtInnsTravel.PlayerControlledInnsTravel': true,\n  }),",
     "tests": [

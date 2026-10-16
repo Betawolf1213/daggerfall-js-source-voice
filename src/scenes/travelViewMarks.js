@@ -2,27 +2,27 @@
 // The host constructs it where the code stood. What it reads of the host's scope comes through `host`: the
 // settled names by value at construction, every live one (a `let` someone writes, a `const` made below) read at its
 // use as `host.<name>` - as the code read them where it was.
-import { bandLabel } from '../systems/travelBands.js';
+import { bandLabel } from '../systems/travel/travelBands.js';
 import { dungeonTierLabel } from '../world/dungeonLabel.js';
-import { farDistanceText, PIXEL_KM } from '../systems/travelFarPlaces.js';
+import { farDistanceText, PIXEL_KM } from '../systems/travel/travelFarPlaces.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { isShipMark, travellerWorldOf } from '../systems/travellerMarks.js';
-import { isWaypointFollowed, mapPointToNative, shownWaypoints } from '../systems/mapWaypoints.js';
+import { isWaypointFollowed, mapPointToNative, shownWaypoints } from '../systems/map/mapWaypoints.js';
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { LODE_COMPASS_CSS, lodeLabel } from '../ui/lodeMapMark.js';
 import { mapPixelToWorldCoords } from '../world/streamingWorld.js';
-import { markShown, travellerKin } from '../systems/travelViewFilters.js';
+import { markShown, travellerKin } from '../systems/travel/travelViewFilters.js';
 import { NAME_RANGE } from '../net/remotePlayers.js';
 import { pixelOfNative, RAIDER_LABEL } from '../systems/seaRaiders.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { skyMinutes } from '../systems/worldTick.js';
-import { tierPhrase } from '../systems/dungeonTier.js';
+import { tierPhrase } from '../systems/dungeon/dungeonTier.js';
 import { RANGE_PIXELS as TV_BODY_RANGE } from '../net/wire.js';
-import { TV_DUNGEON_TYPES } from '../systems/travelDungeons.js';
+import { TV_DUNGEON_TYPES } from '../systems/travel/travelDungeons.js';
 import { vendorWaypoint } from '../systems/vendorWaypoint.js';
 import { warmAshesOn } from '../systems/warmAshesShips.js';
-import { WILD_MARK } from '../systems/wildAlert.js';
-import { WILD_TEXT } from '../systems/wildZone.js';
+import { WILD_MARK } from '../systems/wild/wildAlert.js';
+import { WILD_TEXT } from '../systems/wild/wildZone.js';
 
 /** @param {any} host */
 export function createTravelViewMarks(host) {

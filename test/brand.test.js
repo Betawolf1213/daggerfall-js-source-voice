@@ -203,7 +203,7 @@ test('BR4: the intro and the doors carry the name too', () => {
   assert.match(intro, new RegExp(`host\\.setAttribute\\('aria-label', t\\('menu\\.intro\\.aria', '${NAME} introduction'\\)\\)`), 'what a screen reader hears as the film opens');
   assert.match(intro, new RegExp(`'intro-title-fallback', '${NAME}'`), 'and the title the film draws if the logo cannot load');
   assert.match(read('src/ui/enhancedMenu.js'), new RegExp(`homeMark\\.setAttribute\\('aria-label', t\\('menu\\.home\\.homeAria', '${NAME} — main menu'\\)\\)`), 'the masthead\'s way home');
-  assert.match(read('src/systems/saveTransfer.js'), new RegExp(`TRANSFER_ZIP_NAME = '${FILE_NAME}-Saves\\.zip'`), 'the saves a player carries away are named for it');
+  assert.match(read('src/systems/save/saveTransfer.js'), new RegExp(`TRANSFER_ZIP_NAME = '${FILE_NAME}-Saves\\.zip'`), 'the saves a player carries away are named for it');
   assert.match(read('src/systems/customClass.js'), new RegExp(`That is not a ${NAME} class file\\.`), 'the class importer\'s refusal');
   assert.match(read('src/ui/enhancedChargen.js'), new RegExp(`Paste it into Import on any ${NAME} character\\.`), 'and its copy note');
   assert.match(read('SUPPORT.md'), new RegExp(`^# Support ${NAME}\\n`), 'the support page\'s first line');

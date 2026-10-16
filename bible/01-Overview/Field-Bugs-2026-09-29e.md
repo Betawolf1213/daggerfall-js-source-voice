@@ -16,7 +16,7 @@ gap never under 1.97 s (the clip's own length at the loop's pitch), every one of
 outdoors (`EXTERIOR_AMBIENT_WAITS`).
 
 **Why.** WIND3 (2026-09-14, Mac: "wind audio without being too loud or overbearing") gave the port's wind a voice:
-one loop whose gain follows the wind's strength and breathes with its gust (`systems/windAudio.js`). It played
+one loop whose gain follows the wind's strength and breathes with its gust (`systems/wind/windAudio.js`). It played
 DAGGER.SND's own wind clips - AmbientWindMoan under 0.62 of the strength, AmbientWindBlow1 above - on the riding
 loop's shape (`audio.setLoop`: a non-looping source started again from its beginning each time it ends;
 TransportManager's `if (!isPlaying) Play()`, which is right for a hoofbeat). Those clips are DFU's dungeon ONE-SHOTS
@@ -34,7 +34,7 @@ under every breeze, since a sunny day's wind (about 0.35) never reaches the blow
 to hear it (its record, `07-Rendering/Rendering.md` WIND3, says so), and its tests pinned which clip played, not what
 it sounded like.
 
-**The fix.** Daggerfall has no continuous wind to loop, so the port makes one. `systems/windAudio.js`
+**The fix.** Daggerfall has no continuous wind to loop, so the port makes one. `systems/wind/windAudio.js`
 `windBedSamples`: eight seconds at 22050 Hz of seeded white noise (mulberry32 - the same bed every boot) under a
 band-pass (500 Hz, Q 0.6) and a low-pass (1.8 kHz) - a soft whoosh with no hiss. The noise runs through the two
 filters twice and the second pass is kept, so the bed is the filters' periodic answer to it and its last sample runs

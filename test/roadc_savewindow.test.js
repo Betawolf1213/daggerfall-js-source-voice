@@ -33,7 +33,7 @@ import {
   SaveWindow, MAIN_PANEL, SW_RECTS, SW_COLORS, SW_TEXT,
   saveLoadPrompt, LOADING_FRAMES,
 } from '../src/ui/saveWindow.js';
-import { saveSlot } from '../src/systems/saveSlots.js';
+import { saveSlot } from '../src/systems/save/saveSlots.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 import { openClassicPauseFlow, PAUSE_RECTS, PAUSE_PANEL_Y } from '../src/ui/pauseWindow.js';
 import { makeWindowStack } from '../src/ui/windowStack.js';

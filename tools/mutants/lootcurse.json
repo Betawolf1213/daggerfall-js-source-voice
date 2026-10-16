@@ -28,7 +28,7 @@
   },
   {
     "name": "CP-old-saves-not-migrated",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "tests": [
       "test/curse_persist.test.js"
     ],
@@ -37,7 +37,7 @@
   },
   {
     "name": "CP-migration-keyed-on-curses-only",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "tests": [
       "test/curse_persist.test.js"
     ],
@@ -46,7 +46,7 @@
   },
   {
     "name": "CR-repair-never-called",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "tests": [
       "test/curse_persist.test.js"
     ],
@@ -82,7 +82,7 @@
   },
   {
     "name": "CR-clock-from-zero",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "tests": [
       "test/curse_persist.test.js"
     ],

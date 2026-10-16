@@ -30,10 +30,10 @@ import { readFileSync } from 'node:fs';
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import { CLASSIC_GAME_START_TIME, MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { worldMinutes, setWorldMinutes, setSharedClock, alignEntityClocks, resetMagicRoundMarker, tickPlayerMinutes, claimMagicRounds, ownMinutes, setOwnMinutes, advanceOwnMinutes } from '../src/systems/worldTick.js';
-import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, tickWeather, currentWeatherEnum, weatherJumpStamp, evolveClimateWeathers, setWeatherEvolution, WEATHER_ENUM, setWeatherMapLaw } from '../src/systems/weatherSim.js';
-import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/restSession.js';
-import { exhaustionOutcome } from '../src/systems/rest.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, tickWeather, currentWeatherEnum, weatherJumpStamp, evolveClimateWeathers, setWeatherEvolution, WEATHER_ENUM, setWeatherMapLaw } from '../src/systems/weather/weatherSim.js';
+import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
+import { exhaustionOutcome } from '../src/systems/rest/rest.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { liveVampirism } from '../src/systems/racialLive.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -152,7 +152,7 @@ test('AUDIT WORLD5 C4 (LIVED1): a LOAD under the shared clock is an arrival thro
     assert.equal(currentWeatherEnum(), weatherForClimate(ZONE_CLIMATES[0]));
     assert.notEqual(currentWeatherEnum(), WEATHER_ENUM.snow);
   } finally { offline(); resetWeatherSim(); setWeatherMapLaw(false); }
-  assert.match(rd('src/systems/save.js'), /resetMagicRoundMarker\(Math\.floor\(snap\.classicMinutes \?\? 0\)\);\s*(?:\/\/[^\n]*\n\s*)*if \(sharedClockOn\(\)\) \{\s*(?:\/\/[^\n]*\n\s*)*const own = Math\.floor\(snap\.classicMinutes \?\? 0\), at = worldMinutes\(\);\s*(?:\/\/[^\n]*\n\s*)*const left = [^\n]*\n\s*setOwnMinutes\(own\);\s*if \(!Number\.isFinite\(snap\.worldMinutes\)\) clampMarkersAheadOf\(entity, own\);[^\n]*\n\s*alignEntityClocks\(entity, at\);\s*rollClimateWeathersForDay\(Math\.floor\(at\)\);/, 'the one door every host loads through (AUDIT LIVED1b F1: at the unfloored reading; P4: its absence paid once the relay\'s clock is heard)');
+  assert.match(rd('src/systems/save/save.js'), /resetMagicRoundMarker\(Math\.floor\(snap\.classicMinutes \?\? 0\)\);\s*(?:\/\/[^\n]*\n\s*)*if \(sharedClockOn\(\)\) \{\s*(?:\/\/[^\n]*\n\s*)*const own = Math\.floor\(snap\.classicMinutes \?\? 0\), at = worldMinutes\(\);\s*(?:\/\/[^\n]*\n\s*)*const left = [^\n]*\n\s*setOwnMinutes\(own\);\s*if \(!Number\.isFinite\(snap\.worldMinutes\)\) clampMarkersAheadOf\(entity, own\);[^\n]*\n\s*alignEntityClocks\(entity, at\);\s*rollClimateWeathersForDay\(Math\.floor\(at\)\);/, 'the one door every host loads through (AUDIT LIVED1b F1: at the unfloored reading; P4: its absence paid once the relay\'s clock is heard)');
 });
 
 test('AUDIT WORLD5 C5: the shared roll is THE DAY\'S - stamped at the day\'s first minute, so a joiner\'s drain at noon is a jump and a midnight roll\'s is a front; and the evolution replays from the day\'s first hour, so a client that joined at noon carries the sky the one that stood under it since midnight does', () => {
@@ -186,8 +186,8 @@ test('AUDIT WORLD5 C5: the shared roll is THE DAY\'S - stamped at the day\'s fir
   evolveClimateWeathers(dayStart + 15 * 60);
   assert.deepEqual(arr(), off, 'offline: no replay');
   resetWeatherSim(); setWeatherMapLaw(false);
-  assert.match(rd('src/systems/weatherSim.js'), /_rolledAtMinutes = stampRoll\(nowMinutes\);/g);
-  assert.equal((rd('src/systems/weatherSim.js').match(/_rolledAtMinutes = stampRoll\(nowMinutes\);/g) ?? []).length, 2, 'the day roll and the boot\'s lazy roll');
+  assert.match(rd('src/systems/weather/weatherSim.js'), /_rolledAtMinutes = stampRoll\(nowMinutes\);/g);
+  assert.equal((rd('src/systems/weather/weatherSim.js').match(/_rolledAtMinutes = stampRoll\(nowMinutes\);/g) ?? []).length, 2, 'the day roll and the boot\'s lazy roll');
 });
 
 test('AUDIT WORLD5 C6 (LIVED1): every collapse costs its hour and pays it in full, online as offline - the host\'s RaiseTime moves the character\'s own clock, so the hour is charged; the fatal arms untouched', () => {
@@ -206,7 +206,7 @@ test('AUDIT WORLD5 C6 (LIVED1): every collapse costs its hour and pays it in ful
   // PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): the foes-about arm is no longer DFU's death but a tenth of the
   // health - still no hour paid there, which is what this line holds
   assert.deepEqual(exhaustionOutcome({ entity: P(), enemiesNearby: true }).kind, 'spent', 'the foes-about arm untouched by the hour');
-  assert.doesNotMatch(rd('src/systems/rest.js'), /lastExhaustionHour/, 'no once-a-world-hour gate');
+  assert.doesNotMatch(rd('src/systems/rest/rest.js'), /lastExhaustionHour/, 'no once-a-world-hour gate');
 });
 test('AUDIT WORLD5 C7 (RESTX2: on the timer, every mode): a session COVERED loses the real time it covers, keeping less than one sub-tick, and a leap of the shared clock (a hidden tab) is NOT a leap of the session - the timer alone paces it, so every hourly check reads a frame of its own by construction', () => {
   // C7 was written on the shared clock (one sub-tick a FRAME across a
@@ -256,7 +256,7 @@ test('AUDIT WORLD5 C8 (LIVED1): the sub-tick\'s minutes ride to the host alone, 
   const so = new RestSession('timed', 2, off);
   so.tick(sub);
   assert.deepEqual([off.minutes, off.ends], [10, [undefined]], 'offline the same');
-  assert.match(rd('src/systems/restSession.js'), /this\.deps\.advanceMinutes\(MINUTES_PER_TICK\);/);
+  assert.match(rd('src/systems/rest/restSession.js'), /this\.deps\.advanceMinutes\(MINUTES_PER_TICK\);/);
   const dc = rd('src/scenes/dungeonContext.js');
   const i = dc.indexOf('const _restAdvance = (n) => {');
   const arm = dc.slice(i, dc.indexOf('\n  };', i));

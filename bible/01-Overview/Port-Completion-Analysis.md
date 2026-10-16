@@ -146,7 +146,7 @@ other ~~21~~ ~~20~~ ~~6~~ FOUR are `PendingTrigger` guards
 and PENDS, exactly as DFU sends an unregistered line, and nothing
 runs: `CastEffectDo`, `ClickedFoe`, `PromptMulti`, `WorldUpdate` -
 each guard now carries its blocker in a comment. **PlaySong SHIPPED 2026-08-25** - a real
-template over `systems/songFiles.js` (SongFiles.cs + EnumToFilename
+template over `systems/song/songFiles.js` (SongFiles.cs + EnumToFilename
 in the archive's spelling); its Ledger row is struck. **FOURTEEN MORE
 SHIPPED 2026-08-27 (Q5)**: ~~`Climate`~~, ~~`Enemies`~~,
 ~~`JournalNote`~~, ~~`KillFoe`~~, ~~`PayMoney`~~, ~~`RunQuest`~~,
@@ -180,14 +180,14 @@ AUDIT 24's regeneration gate rebuilds that set from the source tree.
 
 | Subsystem | DFU loc | Notes |
 |---|---|---|
-| ~~Interior automap~~ SHIPPED (A-slices: systems/automap.js + ui/automapWindow.js) | 5,091 | struck 2026-08-27 |
-| ~~Controls / keybinding + InputManager~~ SHIPPED (SETT: ui/input.js + ui/controlsWindow.js + systems/settings.js; gamepad still absent) | 4,110 | struck 2026-08-27 |
+| ~~Interior automap~~ SHIPPED (A-slices: systems/automap/automap.js + ui/automapWindow.js) | 5,091 | struck 2026-08-27 |
+| ~~Controls / keybinding + InputManager~~ SHIPPED (SETT: ui/input.js + ui/controlsWindow.js + systems/settings/settings.js; gamepad still absent) | 4,110 | struck 2026-08-27 |
 | ~~Exterior automap~~ SHIPPED (ui/exteriorAutomapWindow.js) | 3,582 | struck 2026-08-27 |
 | ~~Enchanting effect tree~~ SHIPPED (E1/E2 2026-08-23 + V3's nine artifacts 2026-08-27) | 3,498 | struck 2026-08-27 |
 | ~~HUD component set~~ MOSTLY SHIPPED (ui/hudLarge.js with compass/vitals/head incl. V5's curse heads; HUDActiveSpells, place marker, escorting faces still absent) | 3,272 | narrowed 2026-08-27 |
 | Classic-save import (`API/Save/*`) | 3,200 | SaveTree, SaveVars, SaveGames, CharacterRecord + 7 typed records |
 | ~~Lycanthropy / vampirism / artifact effects~~ SHIPPED WHOLE (V1-V5 + V3, 2026-08-24..27) | 2,527 | struck 2026-08-27 |
-| ~~Spell maker~~ SHIPPED (systems/spellMaker.js + ui/spellMakerWindow.js) | 2,390 | struck 2026-08-27 |
+| ~~Spell maker~~ SHIPPED (systems/spell/spellMaker.js + ui/spellMakerWindow.js) | 2,390 | struck 2026-08-27 |
 | ~~Banking~~ SHIPPED (systems/banking.js + the H-slices through H4's 3D preview) | 1,707 | struck 2026-08-27 |
 | ~~Item maker / enchanting UI~~ SHIPPED (ui/itemMakerWindow.js) | 1,320 | struck 2026-08-27 |
 | Save/load game windows | 937 | STILL OPEN (re-verified 2026-08-27) - the pause menu rides the quicksave; no slot UI |
@@ -227,7 +227,7 @@ reader that touches a shipping ARENA2 file. What remains:
 
 ### World / terrain / location - ~4,905 loc
 Static assembly is finished and verbatim. The gaps are dynamic:
-- ~~No dynamic weather at all~~ SHIPPED (S41: systems/weatherSim.js -
+- ~~No dynamic weather at all~~ SHIPPED (S41: systems/weather/weatherSim.js -
   the climate arrays, the day roll, the save).
 - ~~The season never advances~~ SHIPPED (S41's day block advances it;
   the sky and the enchant ctx read it live).

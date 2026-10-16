@@ -1,6 +1,6 @@
 // OW6 - THE BANDS VARY AND ROAM MORE, THE SAME FOR EVERY PLAYER (2026-09-29, the player: "Enemies should spawn in varying
 // numbers and roam more often"; "Everything needs that persistence between players in the overworld"). The law
-// (systems/travelBands.js: a band's own number and level, the chance and pace), the themed group taking a caller's size
+// (systems/travel/travelBands.js: a band's own number and level, the chance and pace), the themed group taking a caller's size
 // (systems/campEncounters.js rollGroupComposition: a band of one may be a solitary kind), and the host's make lifted out
 // of scenes/world.js and RUN: online every player reads one band, whatever their own level.
 import { test } from 'node:test';
@@ -9,13 +9,13 @@ import { readFileSync } from 'node:fs';
 import {
   BAND_CHANCE_DAY, BAND_CHANCE_NIGHT, BAND_WANDER_MPS, BAND_LEG_MS, BAND_SIZE_WEIGHTS, BAND_LEVEL_MAX, BAND_LIFE_MS,
   bandOf, bandSizeOf, bandLevelOf, bandLabel, bandMakeSeed, wanderAt,
-} from '../src/systems/travelBands.js';
+} from '../src/systems/travel/travelBands.js';
 import { rollGroupComposition, CAMP_SIZE, PACK_SIZE } from '../src/systems/campEncounters.js';
 import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { enemyDisplayName } from '../src/characters/enemyBasics.js';
-import { seededRng } from '../src/systems/wind.js';
-import { NATIVE_PER_M } from '../src/systems/travelDungeons.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { NATIVE_PER_M } from '../src/systems/travel/travelDungeons.js';
 import { WILD_PACK_MULT } from '../src/scenes/exteriorFoes.js';
 
 const land = () => true;

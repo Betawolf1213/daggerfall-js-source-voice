@@ -6,15 +6,15 @@ import {
   WILD_REGION, WILD_FOE_HEALTH_MULT, WILD_FOE_DAMAGE_MULT, WILD_LOOT_GOLD_MULT, WILD_LOOT_DROP_MULT, WILD_LOOT_RARE_MULT,
   WILD_DEATH_HOLD_S, WILD_CUT, buildWildMask, wildPictureZone, wildInside, wildNear, wildEdgeChains, applyWildFoe, isWildRegion, setWildDeath, wildDeath,
   wildDeathLines, setWildHere, wildHere,
-} from '../src/systems/wildZone.js';
-import { keptOnWildDeath, wildCanLose, takeWildDrop, wornOffer, wildRecord, wildChunks, wildSpawnSpot } from '../src/systems/wildDeath.js';
+} from '../src/systems/wild/wildZone.js';
+import { keptOnWildDeath, wildCanLose, takeWildDrop, wornOffer, wildRecord, wildChunks, wildSpawnSpot } from '../src/systems/wild/wildDeath.js';
 import { fogPixels } from '../src/ui/wildMapInk.js';
 import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { REGION_NAMES } from '../src/formats/mapsTables.js';
 import { letterOfCredit } from '../src/systems/inventory.js';   // LETTERS-DROP / KEEP-WALLET: the pieces as their producers mint them
 import { mintWallet } from '../src/systems/walletItem.js';
-import { sigilStone, welkyndShards } from '../src/systems/gateSpoils.js';
+import { sigilStone, welkyndShards } from '../src/systems/gate/gateSpoils.js';
 
 /** A 40 x 20 map whose zone is the 6 x 4 box at (10..15, 5..8) - the whole region (`cut: null`): the mask's laws over a
  *  plain shape. ZONE-CUT's own pin, the owner's cut over a region, is below. */

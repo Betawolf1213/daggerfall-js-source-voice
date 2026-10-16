@@ -214,7 +214,7 @@ const skipReal = !ARENA2 || !existsSync(join(ARENA2, 'WOODS.WLD')) || !existsSyn
 test('FIELD-CSA2 on the retail data: the open Bay south of Daggerfall (209, 216) - its deed answers "a port is near", the Small Ship put there reads the Bay and raises its sail; the coast\'s first rise is land', { skip: skipReal }, async () => {
   const { WoodsFile } = await import('../src/formats/woodsFile.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
-  const { buildMapDict, locationSummaryAt } = await import('../src/systems/mapDirectory.js');
+  const { buildMapDict, locationSummaryAt } = await import('../src/systems/map/mapDirectory.js');
   const { smoothLocationNeighbourhood } = await import('../src/world/terrainHelper.js');
   const woods = new WoodsFile();
   woods.load(readFileSync(join(ARENA2, 'WOODS.WLD')));
@@ -223,7 +223,7 @@ test('FIELD-CSA2 on the retail data: the open Bay south of Daggerfall (209, 216)
   const mapDict = buildMapDict(maps);
   smoothLocationNeighbourhood(mapDict, woods);   // the boot's own repair (world.js), before any pixel streams
   // world.js's own csaIsPortTown, mounted: Daggerfall (207, 213) is a port by its byte
-  const { hasPortFor } = await import('../src/systems/travelPorts.js');
+  const { hasPortFor } = await import('../src/systems/travel/travelPorts.js');
   // PIN MOVED (THE CAPTAIN'S SEA, ETHER-PORTS - found by AUDIT CAPTAIN'S SEA's touched run with the data): an isle's port
   // is a port past the Veil (`etherSea && inEther(x, y)` first), so the sea, its law and an isle's port stand in scope - the
   // sea on, and an isle's port answering every pixel it is asked of, so a Bay pixel that asked it would read a port

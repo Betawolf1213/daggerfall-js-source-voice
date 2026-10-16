@@ -18,7 +18,7 @@ import {
 import { createTradeManager, REALM_TRADE_REV_BASE, OLDER_BUILD_TRADE_TEXT } from '../src/net/tradeSession.js';
 import { validTradeData, TRADE_REV_MAX, TRADE_ITEMS_MAX } from '../src/net/wire.js';
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';
-import { checkpointedTradePack } from '../src/systems/onlineCheckpoint.js';
+import { checkpointedTradePack } from '../src/systems/online/onlineCheckpoint.js';
 import { GOLD_TEMPLATE } from '../src/systems/inventory.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import {

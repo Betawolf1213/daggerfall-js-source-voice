@@ -1,11 +1,11 @@
 // FIELD BUGS 2026-10-15d CART-AWAY (Mac, 2026-10-15, asked "If parked outside of the pvp zone in the wrothgarian
 // mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost"). A death in the open zone
-// dropped every piece in the cart and half its gold wherever the wagon stood (systems/wildDropLaw.js takeWildDeath,
+// dropped every piece in the cart and half its gold wherever the wagon stood (systems/wild/wildDropLaw.js takeWildDeath,
 // taken by the account service off the record - server-account/src/wild.js). Now the cart's share is taken only while the
 // wagon is WITH the fallen: driven, beside them on foot (the mod's WithPlayer, which its next door parks), following, or
 // parked on the zone's own ground. Parked off the zone, stabled (WAGON-STABLED) or none, it keeps every piece and its
 // coin. The zone's mask is the map files', which the service does not hold: the fallen's own tab SAYS its wagon is away
-// (`cart` 0 - systems/wildCart.js wildCartAway), and the service honours the word only where the record it keeps agrees
+// (`cart` 0 - systems/wild/wildCart.js wildCartAway), and the service honours the word only where the record it keeps agrees
 // by its mode (wildDropLaw.js wildCartMayBeAway). Every record here is the game's own: the wagon's out of the real Horse
 // Cart and Cargo runtime (test/hccWorld.mjs), the pack the starting kit and the producers' pieces, the record as the save
 // writes it; the zone wildMaskOf over the minimal map file the zone's own pins stand (test/pvpdungeons_game.test.js).
@@ -18,17 +18,17 @@ import { seatRealm } from './realmSeat.mjs';
 import { seeded } from './honestItems.mjs';
 import { makeWorld, RATIO, WX0, WZ0 } from './hccWorld.mjs';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
-import { snapshotPlayer } from '../src/systems/save.js';
-import { stampItemIds } from '../src/systems/itemIds.js';
+import { snapshotPlayer } from '../src/systems/save/save.js';
+import { stampItemIds } from '../src/systems/item/itemIds.js';
 import { addItem, goldStack } from '../src/systems/inventory.js';
-import '../src/systems/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
-import { takeWildDeath, wildDropCandidates, takeWildGold, wildTakeTook, wornOffer, wildCartRecordOf, wildCartMayBeAway } from '../src/systems/wildDeath.js';
-import { wildCartAway, wildCartWord } from '../src/systems/wildCart.js';
-import { WAGON_MODE, HCC_VENDOR, TRANSPORT } from '../src/systems/horseCartLaw.js';
-import { WILD_REGION, wildMaskOf, wildInside, wildNear } from '../src/systems/wildZone.js';
+import '../src/systems/item/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
+import { takeWildDeath, wildDropCandidates, takeWildGold, wildTakeTook, wornOffer, wildCartRecordOf, wildCartMayBeAway } from '../src/systems/wild/wildDeath.js';
+import { wildCartAway, wildCartWord } from '../src/systems/wild/wildCart.js';
+import { WAGON_MODE, HCC_VENDOR, TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
+import { WILD_REGION, wildMaskOf, wildInside, wildNear } from '../src/systems/wild/wildZone.js';
 import { worldCoordToMapPixel } from '../src/world/streamingWorld.js';
 import { mintWildReceipt, WILD_FALL_GRACE_S } from '../src/net/wildReceipt.js';
 import { worldRoom } from '../src/net/wire.js';
@@ -60,7 +60,7 @@ const PIXELS = (() => {
 
 // ─── THE WAGON, as Horse Cart and Cargo records it ──────────────────────────────────────────────────────────────
 
-/** The record the save carries (systems/horseCart.js getSaveData - world.js's modData), as JSON. */
+/** The record the save carries (systems/horse/horseCart.js getSaveData - world.js's modData), as JSON. */
 const saved = (h) => JSON.parse(JSON.stringify(h.rt.getSaveData()));
 /** The scene point whose world coordinates stand at the middle of map pixel `px` (hccWorld's own frame). */
 const sceneAt = (px) => [(px.x * 32768 + 16384 - WX0) / RATIO, 0.9, ((499 - px.y) * 32768 + 16384 - WZ0) / RATIO];
@@ -112,7 +112,7 @@ const coinOf = (list) => list.find((i) => i?.group === 'Currency')?.stackCount ?
 const cargo = (list) => list.filter((i) => i.group !== 'Currency').map((i) => i.templateIndex);
 const dropsOf = (e) => e.items.filter((it) => !isEquipped(it)).map((i) => i.templateIndex);
 
-test('CART-AWAY THE LAW (systems/wildDropLaw.js takeWildDeath, wildDropCandidates, takeWildGold): with `cart` false a death in the zone takes nothing of the cart - every piece and the whole gold stack stay - while the bag still drops and the purse still halves; by default the cart drops as it always has; the candidates the ledger is asked of are the same (mutants: the option ignored in takeWildDeath; the gold share still taken; the candidates keeping the cart; takeWildGold\'s option ignored)', () => {
+test('CART-AWAY THE LAW (systems/wild/wildDropLaw.js takeWildDeath, wildDropCandidates, takeWildGold): with `cart` false a death in the zone takes nothing of the cart - every piece and the whole gold stack stay - while the bag still drops and the purse still halves; by default the cart drops as it always has; the candidates the ledger is asked of are the same (mutants: the option ignored in takeWildDeath; the gold share still taken; the candidates keeping the cart; takeWildGold\'s option ignored)', () => {
   const { e, sword } = pack();
   const away = recordOf(e, WAGON.stabled()), wth = recordOf(e, WAGON.driven());
   const kinds = (list) => list.map((i) => i.templateIndex);
@@ -159,7 +159,7 @@ test('CART-AWAY THE SERVICE\'S CHECK (wildDropLaw.js wildCartMayBeAway over the 
   assert.equal(wildCartMayBeAway(null), false, 'no record: never');
 });
 
-test('CART-AWAY THE CLIENT\'S WORD (systems/wildCart.js wildCartAway / wildCartWord) over the runtime\'s records and the zone\'s own mask: away when stabled, none, or parked off the zone - its band included, which is no part of the zone - and with them when driven, following, beside them, or parked on the zone\'s ground, and wherever the mask cannot say; with the mod off the cart is Daggerfall\'s own, with them (mutants: the Deployed-inside case read as away; the band read as the zone; the mask unread; the mod\'s switch unread)', () => {
+test('CART-AWAY THE CLIENT\'S WORD (systems/wild/wildCart.js wildCartAway / wildCartWord) over the runtime\'s records and the zone\'s own mask: away when stabled, none, or parked off the zone - its band included, which is no part of the zone - and with them when driven, following, beside them, or parked on the zone\'s ground, and wherever the mask cannot say; with the mod off the cart is Daggerfall\'s own, with them (mutants: the Deployed-inside case read as away; the band read as the zone; the mask unread; the mod\'s switch unread)', () => {
   assert.ok(wildInside(mask, PIXELS.heart.x, PIXELS.heart.y) && !wildInside(mask, PIXELS.band.x, PIXELS.band.y) && wildNear(mask, PIXELS.band.x, PIXELS.band.y), 'the fixture: the heart is the zone, the band only near it');
   assert.ok(!wildNear(mask, PIXELS.far.x, PIXELS.far.y), 'and the far pixel neither');
   const cases = [
@@ -178,7 +178,7 @@ test('CART-AWAY THE CLIENT\'S WORD (systems/wildCart.js wildCartAway / wildCartW
   // the host: the fallen's own ask carries the word, over the runtime's record and the zone's mask; the seizure none
   const w = rd('src/scenes/world.js');
   assert.ok(w.includes('...(online?.wildCollectAt?.(lay) ? { collect: 1 } : {}), ...wildCartWord(hccOn(), hccRuntime.getSaveData(), wildMaskOf(maps)) }),'), 'my drop says where my wagon is');
-  assert.ok(w.includes("import { wildCartWord } from '../systems/wildCart.js';"));
+  assert.ok(w.includes("import { wildCartWord } from '../systems/wild/wildCart.js';"));
   assert.ok(w.includes('wildAccount.fall({ receipt: s.rc, room: s.room, ...(online?.wildCollectAt?.(s.room) ? { collect: 1 } : {}) }).then('), 'a seizure says nothing of another\'s wagon');
 });
 

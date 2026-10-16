@@ -7,8 +7,8 @@
 // encounter). Offline nothing changes: no act, DFU's selection page.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { REST_CHANNEL_SECONDS, REST_ACT_TEXT } from '../src/systems/restAct.js';
-import { REST_TEXT, loiterLimitHours } from '../src/systems/restSession.js';
+import { REST_CHANNEL_SECONDS, REST_ACT_TEXT } from '../src/systems/rest/restAct.js';
+import { REST_TEXT, loiterLimitHours } from '../src/systems/rest/restSession.js';
 
 /** The classic window over an online bag (an act), every call counted. */
 async function classic(over = {}) {

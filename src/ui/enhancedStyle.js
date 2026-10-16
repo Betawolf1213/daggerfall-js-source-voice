@@ -1002,7 +1002,7 @@ img.fit { image-rendering: pixelated; }   /* AUDIT UI A1: a fitted picture drawn
 .bigicon img { image-rendering: pixelated; max-width: 100%; max-height: 120px; }
 .itemname { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 .itemname small { color: var(--dim); font-size: 11.5px; }
-/* LR1: THE TIER COLOURS (systems/lootRarity.js RARITIES - the five
+/* LR1: THE TIER COLOURS (systems/loot/lootRarity.js RARITIES - the five
    hexes here are pinned against that table; SET6: the Aetheric's). A rolled row wears
    data-rarity; the picked card's heading and the plaque's rows
    wear the same attribute. Common wears nothing. */
@@ -2712,7 +2712,7 @@ ${SUPPORT_MARKS_CSS}
 .px-postwin .pm-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; }
 .px-postwin [data-rarity="magic"] { color: #6f9ee8; } .px-postwin [data-rarity="rare"] { color: #e4c34f; } .px-postwin [data-rarity="legendary"] { color: #e07a2e; }
 .px-postwin [data-rarity="aetheric"] { color: #bfe8ff; } .px-postwin [data-rarity="artifact"] { color: #b57bee; } .px-postwin [data-rarity="gilded"] { color: #ffcf4d; }
-/* AUDIT SERVER-POST: the tiers above are LR1's own hexes (systems/lootRarity.js RARITIES, pinned against it - a stylesheet
+/* AUDIT SERVER-POST: the tiers above are LR1's own hexes (systems/loot/lootRarity.js RARITIES, pinned against it - a stylesheet
    never imports the loot ladder, which reaches the whole combat graph); on Stone's light panel the three darkest read
    3.0-3.3:1 and are lifted past 4.5:1 there alone. */
 :root[data-plus-theme="stone"] .px-postwin [data-rarity="magic"] { color: #b4cdf7; }
@@ -3183,7 +3183,7 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
 .tview-fdot-enemies { background: #e0503c; } .tview-fdot-travellers { background: #4e7f72; } .tview-fdot-gathering { background: linear-gradient(135deg, #e586ec, #d9894a 50%, #d4e157); }
 .tview-fnum { min-width: 2ch; text-align: right; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
 /* OW-WHO / OW-NODE-KM (FIELD BUGS 2026-10-04e): the players by kin - each switch's dot the colour their names wear
-   (systems/travelViewFilters.js TV_KIN_COLORS; a stranger the traveller's verdigris) - and the two steps, pressed round */
+   (systems/travel/travelViewFilters.js TV_KIN_COLORS; a stranger the traveller's verdigris) - and the two steps, pressed round */
 .tview-fdot-kin-friends { background: #8fd0ff; } .tview-fdot-kin-guild { background: #c9a6ff; } .tview-fdot-kin-others { background: #4e7f72; }
 .tview-filter.tview-cycle { grid-template-columns: 1fr; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tview-filter.tview-cycle-wide { grid-column: 1 / -1; }
@@ -3708,7 +3708,7 @@ ${paceControlsCss('tview')}
 /* FONT1: THE ONLINE STATUS LINE - the socket's own word (connecting,
    reconnecting, refused), top-left where the classic drew it and clear
    of the chat panel's corner at 44. The online lane IS the enhanced
-   lane (systems/onlineLane.js), so this line is never seen in any
+   lane (systems/online/onlineLane.js), so this line is never seen in any
    other face. Brass rather than the popup's yellow: it is the machine
    talking, not the game. */
 .hudstatus { position: fixed; left: calc(8px + var(--ui-pillar, 0px) + env(safe-area-inset-left, 0px));   /* RETRO-UI */

@@ -77,7 +77,7 @@ Every part is lowered by Horse Cart and Cargo's one-metre ground offset
 
 ## The kinds
 
-`src/systems/wagonKinds.js` is the law. DFU has one cart: Transportation's
+`src/systems/wagon/wagonKinds.js` is the law. DFU has one cart: Transportation's
 Small Cart, template 93. Every "has a cart" check in the port asks for that
 template, so the new wagons are that same item with a mark: `wagonKind`
 (`openWagon` or `caravan`; absent means the Small Cart). The kinds:
@@ -98,14 +98,14 @@ How the kinds are wired in:
   then.
 - **Names**: a marked row keeps the template's name, as every minted row
   does; what it shows is the kind's name (`wagonItemName`, read first by
-  `src/systems/itemInfo.js` resolveItemName) - and, since the final audit,
+  `src/systems/item/itemInfo.js` resolveItemName) - and, since the final audit,
   the guild vault's Put in, its rows and its log line (the account service
   names the row, `server-account/src/guildVault.js` pieceName) and the keyed
   shelf (`src/scenes/worldModes.js` `_itemLabel`).
 - **Driving**: a player who owns more than one drives the best
   (`activeWagonItem`).
 - **Capacity**: the wagon store, both inventories and both counters read the
-  driven wagon's capacity (`wagonKgFor`; `src/systems/itemTransfer.js`
+  driven wagon's capacity (`wagonKgFor`; `src/systems/item/itemTransfer.js`
   planStore's `wagonKg`).
 - **Stable card and icon**: the Stable card names the kind, and the pack's
   icon is the kind's model.
@@ -119,7 +119,7 @@ drawn for the cart; Mac's Wagon Cart is. Eye of the Beholder's own cart
 **Departure (HITCH LENGTH).** Horse Cart and Cargo hitches its horse 3.1 m
 ahead of the wagon's axle (HITCHED_HORSE_LOCAL_Z, measured for 41214). Each of
 Mac's wagons is longer, so each kind carries its own hitch, measured off its
-model. `src/systems/horseCart.js` `hitchZ()` reads it from the presentation
+model. `src/systems/horse/horseCart.js` `hitchZ()` reads it from the presentation
 (`hitchOf`) at every site that read the constant, and the constant still
 answers when there is no presentation.
 
@@ -131,7 +131,7 @@ is level and its shafts sit at the horse's flank.
 
 ## The seats in the back (the Open Wagon)
 
-`src/systems/wagonSeats.js` is the law and `src/scenes/wagonRiders.js` runs
+`src/systems/wagon/wagonSeats.js` is the law and `src/scenes/wagonRiders.js` runs
 both ends of it on the world host.
 
 **A player rides by asking.**
@@ -159,7 +159,7 @@ them down beside the wagon.
 1. The owner's word says `go` and the travel waits a moment (GO_LEAD_MS) so
    the riders hear it.
 2. Each rider follows on the party's own journey
-   (`src/systems/partyTravel.js`), with no fare, since the owner paid.
+   (`src/systems/party/partyTravel.js`), with no fare, since the owner paid.
 3. They land beside the owner's wagon and sit down again.
 
 **Companions** take the seats the players have not, while the wagon goes with
@@ -172,7 +172,7 @@ bed. The port's people are billboards and DFU has no seated pose to give
 them.
 
 **The word rides the foes frame** (`hv`'s `wk`, `wh`, `ps`, `go`, `pn`;
-`src/systems/horseCartWire.js`), which the relay carries as it is. An older
+`src/systems/horse/horseCartWire.js`), which the relay carries as it is. An older
 client drops what it does not know.
 
 ## The caravan's room
@@ -248,7 +248,7 @@ rest, and the wagon's storage. Visitors: below.
 
 ### The paint
 
-`src/systems/wagonLooks.js` is the law. A wagon's paint rides its item:
+`src/systems/wagon/wagonLooks.js` is the law. A wagon's paint rides its item:
 `wagonLook` is `{ o, w, f, c }` - the outside (every kind), and the
 caravan's walls, floor and ceiling. Each list has six choices, the first the
 wagon as built. A look the law does not know reads as built; the built look
@@ -272,7 +272,7 @@ on the hv word and on a parked team's record. A bad code reads as built.
 
 ### The wheels
 
-Each wheel rolls on its own: `src/systems/horseCart.js` wheelContacts and
+Each wheel rolls on its own: `src/systems/horse/horseCart.js` wheelContacts and
 rolledAngles turn each by its own contact's travel, along its own heading,
 over its own radius. A wheel with no contact last time keeps its angle.
 
@@ -280,7 +280,7 @@ The open wagon's and the caravan's front axle, pole and front pair turn on
 their kingpin (`src/world/wagonModels.js` bogie). The lock is measured off
 the bake (steerLimitOf): **6.85 degrees** either way, since the front wheels
 stand outside the body's side. They trail as two bars
-(`src/systems/horseFollow.js` bogieAxle): the kingpin on the pole from the
+(`src/systems/horse/horseFollow.js` bogieAxle): the kingpin on the pole from the
 hitch, the body on the wheelbase from the kingpin.
 
 A dismount keeps each wheel's angle and the steer (`rest`); a load forgets
@@ -313,7 +313,7 @@ Mac's wagons' hitches are longer than the mod's 3.1 m, so the mod's reaches
 (the player 5 m from the wagon, the horse 3.5 m) could not be met. A team
 parked with its horse in the shafts could not be mounted again. The reaches
 now measure to the wagon's run, from its anchor forward by `hitch - 3.1`
-(`src/systems/horseCart.js` nearestOnWagon). The store's reach is measured
+(`src/systems/horse/horseCart.js` nearestOnWagon). The store's reach is measured
 the same way.
 
 ### Visits (WAGONS2-VISIT)
@@ -439,9 +439,9 @@ Items and economy, motion and drawing, the caravan's room, and online.
   takeTradeGoods). A loaded caravan
   traded away had left 2000 kg on a 750 kg cart.
 - **The item law reads a wagon's mark.** `wagonKind` and `wagonLook` are
-  declared fields (`src/systems/itemFields.js`). A mark on anything but the
+  declared fields (`src/systems/item/itemFields.js`). A mark on anything but the
   Small Cart, or a marked kind below its own floor, is a `wagon` finding
-  (`src/systems/itemLaw.js`). The floor is the price the kind was first
+  (`src/systems/item/itemLaw.js`). The floor is the price the kind was first
   shelved at, so a wagon bought before WAGON-PRICE stays lawful.
 - **A room only onto its caravan.** A room is restored only while the
   caravan stands parked where it was entered (`CARAVAN_STANDS_NATIVES`): the
@@ -626,7 +626,7 @@ sprite stands on the bench's footboard, still.
 
 ### Two horses
 
-`src/systems/wagonKinds.js`: each kind's `horses` (1, 2, 2); horseCountOf
+`src/systems/wagon/wagonKinds.js`: each kind's `horses` (1, 2, 2); horseCountOf
 counts the pack's Horses item by item (a town's Stable sells as many as are
 bought - MERCHANT-YARDS took the horse off the General Store's shelf,
 `bible/03-World/Merchant-Yards.md`); wagonTeamShort says why the wagon driven
@@ -635,7 +635,7 @@ town's Stable." - or nothing. No horse at all is the mod's own refusal, said whe
 A short team's one horse is a horse (AUDIT WAGONS3 T3, horseCart.js `drivableCart`): its press and its plaque's rows
 ride it and the mount hotkey takes it - they answered Drive and Follow, both refused, and it could not be taken.
 
-The runtime (`src/systems/horseCart.js`, its `teamShort` dep) refuses a short
+The runtime (`src/systems/horse/horseCart.js`, its `teamShort` dep) refuses a short
 team wherever a team is hitched: the transport window's row
 (canUseCartTransport), its press and the hotkey (tryUseCartTransport), the
 mode set some other way (observeTransportMode), the plaque's and the horse's
@@ -670,7 +670,7 @@ two.
 
 ### The harness
 
-`src/systems/wagonRopes.js`: each rope a chain of Verlet points - gravity,
+`src/systems/wagon/wagonRopes.js`: each rope a chain of Verlet points - gravity,
 its last step carried on and damped, and every link held at its share of the
 span times the rope's slack, both ends pinned where the scene says. A trace
 hangs a little, a rein more. A rope sags, swings when the wagon turns or
@@ -794,7 +794,7 @@ real caller and fixed with its pin and its mutant
 - **Y4 - the wealth measure.** A Caravan's worth ceiling was DFU's cart's
   (12,200), under its own 25,000: an honest Caravan sold was counted a gain
   from nowhere. A marked wagon's ceiling is its kind's price
-  (`src/systems/itemLaw.js` worthCeiling); `WEALTH_VERSION` 2, so every stored
+  (`src/systems/item/itemLaw.js` worthCeiling); `WEALTH_VERSION` 2, so every stored
   record is measured again and the change is no one's gain. The account
   service deploys with it (itemLaw.js is in its graph, and this branch changes
   it already).

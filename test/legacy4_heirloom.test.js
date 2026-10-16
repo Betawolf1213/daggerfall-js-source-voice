@@ -8,13 +8,13 @@ import {
   blessingOf, legacyFold, heirloomWeaponDamage, heirloomLine, HEIRLOOM_GEN_MAX, HEIRLOOM_DAMAGE_PER_GEN,
   HEIRLOOM_ARMOR_PER_GEN, BLESSING_POINTS, BLESSING_SKILL_MAX, REMAINS_TEMPLATE, REMAINS_GOLD_SHARE, REMAINS_GOLD_MAX, remainsGoldOf,
 } from '../src/systems/legacy/heirloom.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { familyRng, MODELS } from '../src/systems/legacy/family.js';
 import { createLegacyHost, LEGACY_QUEST_PREFIX } from '../src/scenes/legacyHost.js';
 import { _resetModSaveData } from '../src/systems/modSaveData.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { KEEPSAKE_TEMPLATE } from '../src/systems/livingWorld/keepsake.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { computeEntityMods, entityModsOf, weaponDamageMods } from '../src/systems/entityMods.js';
 
 /** A piece as the game mints one (itemTemplates' own fields), worn in `slot`. */

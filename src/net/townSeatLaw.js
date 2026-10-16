@@ -14,7 +14,7 @@
 //
 // Pure: no clock, no DOM, no network. The account service
 // (server-account/src/townSeats.js), the client's derivation
-// (systems/townSeats.js) and its book (net/townSeatBook.js) read it.
+// (systems/town/townSeats.js) and its book (net/townSeatBook.js) read it.
 // ═══════════════════════════════════════════════════════════════════
 import { ONLINE_EPOCH_MS } from './wire.js';
 import { KINGDOMS, MARCHES, kingdomOf, isMarch, isFreeLand } from './kingdomLaw.js';

@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   MAP_SHEETS, MAP_CONTEXTS, mapContextOf, sheetsFor, defaultSheetFor, sheetAvailable, openOn,
-} from '../src/systems/mapTabs.js';
+} from '../src/systems/map/mapTabs.js';
 
 test('EM1: the table by value - inside is inside, a town has streets and a bay, the wilderness has the bay', () => {
   assert.deepEqual([...sheetsFor('dungeon')], ['automap'], 'a crypt offers its own plan and nothing else');

@@ -17,7 +17,7 @@
 
 /** Each glyph, 12 rows of 12: `#` lit, anything else dark. */
 export const DFICON_ROWS = Object.freeze({
-  // ── the catalogue's kinds (systems/decorCatalogue.js DECOR_KINDS) ──
+  // ── the catalogue's kinds (systems/decor/decorCatalogue.js DECOR_KINDS) ──
   bed: [
     '............',
     '............',

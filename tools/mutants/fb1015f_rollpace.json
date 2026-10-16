@@ -91,7 +91,7 @@
   },
   {
     "name": "ROLL-PACE-the-hall-s-line-dropped",
-    "file": "src/systems/guildServiceFlow.js",
+    "file": "src/systems/guild/guildServiceFlow.js",
     "old": "  if (wait > 0) lines.push(t('guild.rankNeeds.paced',",
     "new": "  if (false) lines.push(t('guild.rankNeeds.paced',",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ROLL-PACE-the-held-rank-taken",
-    "file": "src/systems/guilds.js",
+    "file": "src/systems/guild/guilds.js",
     "old": "Math.max(ceiling, Math.min(ruled, m.rank))",
     "new": "ceiling",
     "tests": [

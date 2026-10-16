@@ -5,7 +5,7 @@
 // to be as detailed as possible and take your time. No exceptions"): THE WEAPON TECHNIQUES, AS DATA - the design and
 // its laws are bible/05-Combat/Weapon-Techniques.md.
 //
-// A technique is a LINE ON THE WEAPON (systems/lootRarity.js AFFIX_KINDS.technique): `{ id: 'technique', param: <a
+// A technique is a LINE ON THE WEAPON (systems/loot/lootRarity.js AFFIX_KINDS.technique): `{ id: 'technique', param: <a
 // technique's id>, value: <+% power> }`, rolled at a loot door's end, read by the card, reforged and honed like every
 // line, judged by the item law. The weapon in the hand that swings - or, fighting bare-handed, the gauntlets worn -
 // answers the WeaponTechnique key with it (combat/techniques.js, which every host's weapon rig steps).
@@ -20,7 +20,7 @@
 import { weaponSkillUsed } from '../characters/weapons.js';
 import { THUNDERLOCK_TEMPLATE } from '../characters/thunderlockIds.js';
 import { SKILLS } from '../systems/skills.js';
-import { RRI_CLASSES } from '../systems/rriItems.js';   // AUDIT TECH1: an RRI class answers its family whatever its switch says
+import { RRI_CLASSES } from '../systems/roleplayRealismItems/rriItems.js';   // AUDIT TECH1: an RRI class answers its family whatever its switch says
 
 /** DFU's Gauntlets (ItemEnums.Armor.Gauntlets) - the one piece a bare-handed fighter's technique rides. */
 export const GAUNTLETS_TEMPLATE = 103;

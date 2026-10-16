@@ -210,7 +210,7 @@
   },
   {
     "name": "ARENAFIX-HALL-NO-GRAND",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "  if (s.grand) cut.push(U.hallGrand(name));",
     "new": "",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "ARENAFIX-PRACTICE-PURSE",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "    purse: 0, label: ARENA_TEXT.undercroft.practiceLabel,",
     "new": "    purse: BOUT_PURSE[s.tier], label: ARENA_TEXT.undercroft.practiceLabel,",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "ARENAFIX-TORCH-LEFT",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "    for (const t of d?.droppedTorches ?? []) { const it = droppedLightItem(t); if (it) { out.crate.push(it); out.lights++; } }   // ARENA-FIX 11",
     "new": "",
     "tests": [
@@ -346,7 +346,7 @@
   },
   {
     "name": "ARENAFIX-TORCH-CONDITION",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "currentCondition: Math.max(1, Math.ceil((Number(t.time) || 0) / LIGHT_SECONDS_PER_CONDITION))",
     "new": "currentCondition: Math.max(1, Math.floor((Number(t.time) || 0) / LIGHT_SECONDS_PER_CONDITION))",
     "tests": [

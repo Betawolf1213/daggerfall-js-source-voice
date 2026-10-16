@@ -8,7 +8,7 @@ import { existsSync, readFileSync as readBytes } from 'node:fs';
 import { isOnShip, shipTransition, REPOSITION } from '../src/systems/ship.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { SHIP_TYPES, shipCoords, SHIP_COORDS, SHIP_INTERIOR_MAP_IDS } from '../src/systems/banking.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import {
   locationArrivalLanding, entranceOptionsForLocationType, LOCATION_TYPE_HOME_YOUR_SHIPS,
   EXTRA_DISTANCE,

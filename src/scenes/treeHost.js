@@ -29,9 +29,9 @@ import { trees, nodeKey, WOOD_TABLES } from '../net/nodeLaw.js';
 import { FELLED } from '../ai/cover.js';   // AUDIT TACT B1: a felled tree is no cover
 import { tierOpen, TIER_RANKS, woodAxeBand, chopsFor, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
 import { createChopAct } from '../systems/chopAct.js';
-import { FT } from '../systems/foragingLaw.js';
-import { foragingActRefusal, foragingToolIn, actChecksRefusal } from '../systems/foragingInstall.js';
-import { materialLabel } from '../systems/profItems.js';
+import { FT } from '../systems/foraging/foragingLaw.js';
+import { foragingActRefusal, foragingToolIn, actChecksRefusal } from '../systems/foraging/foragingInstall.js';
+import { materialLabel } from '../systems/professions/profItems.js';
 import { liveStat } from '../systems/statMods.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { TERRAIN_SIZE } from '../world/terrainSampler.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "PORTAL1-stone-unbound",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  bound: true, stackable: true,   // the shard's two laws",
     "new": "  stackable: true,   // the shard's two laws",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PORTAL1-stone-unstacked",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  bound: true, stackable: true,   // the shard's two laws",
     "new": "  bound: true,   // the shard's two laws",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PORTAL1-stone-a-gem",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "group: 'UselessItems2', templateIndex: PORTAL_STONE_TEMPLATE",
     "new": "group: 'Gems', templateIndex: PORTAL_STONE_TEMPLATE",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PORTAL1-stone-unregistered",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "registerCustomTemplates(PORTAL_STONE_TEMPLATES);",
     "new": "void PORTAL_STONE_TEMPLATES;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "PORTAL1-stone-heavier-than-its-shards",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  baseWeight: 0.25,\n  hitPoints: 1000,\n  basePrice: PORTAL_STONE.value,",
     "new": "  baseWeight: 0.6,\n  hitPoints: 1000,\n  basePrice: PORTAL_STONE.value,",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "PORTAL1-price-four",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "export const PORTAL_STONE_SHARDS = 5;",
     "new": "export const PORTAL_STONE_SHARDS = 4;",
     "tests": [
@@ -560,7 +560,7 @@
   },
   {
     "name": "PORTAL1-classic-card-silent",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  else if (isPortalStone(item)) for (const text of portalStoneLines()) out.push({ text, center: true });   // PORTAL1",
     "new": "",
     "tests": [
@@ -749,7 +749,7 @@
   },
   {
     "name": "PORTAL-GIFT-every-load",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  if ((Number.isSafeInteger(entity.portalGift) ? entity.portalGift : 0) >= PORTAL_GIFT) return 0;\n",
     "new": "",
     "tests": [
@@ -758,7 +758,7 @@
   },
   {
     "name": "PORTAL-GIFT-unmarked",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  entity.portalGift = PORTAL_GIFT;\n  if (!Array.isArray(entity.items)) entity.items = [];",
     "new": "  if (!Array.isArray(entity.items)) entity.items = [];",
     "tests": [
@@ -767,7 +767,7 @@
   },
   {
     "name": "PORTAL-GIFT-nine",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "export const PORTAL_GIFT_STONES = 10;",
     "new": "export const PORTAL_GIFT_STONES = 9;",
     "tests": [
@@ -776,7 +776,7 @@
   },
   {
     "name": "PORTAL-GIFT-newborn-gifted",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "snap.portalGift = Number.isSafeInteger(entity.portalGift) ? entity.portalGift : PORTAL_GIFT;",
     "new": "snap.portalGift = Number.isSafeInteger(entity.portalGift) ? entity.portalGift : 0;",
     "tests": [
@@ -785,7 +785,7 @@
   },
   {
     "name": "PORTAL-GIFT-old-save-marked",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "entity.portalGift = Number.isSafeInteger(snap.portalGift) ? snap.portalGift : 0;",
     "new": "entity.portalGift = Number.isSafeInteger(snap.portalGift) ? snap.portalGift : PORTAL_GIFT;",
     "tests": [
@@ -794,7 +794,7 @@
   },
   {
     "name": "PORTAL-GIFT-never-given",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  givePortalGift(entity);   // PORTAL-GIFT",
     "new": "  // givePortalGift(entity);   // PORTAL-GIFT",
     "tests": [
@@ -803,7 +803,7 @@
   },
   {
     "name": "PORTAL-GIFT-said-every-ask",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "export const takePortalGiftNotice = () => { const n = _giftNotice; _giftNotice = 0; return n; };",
     "new": "export const takePortalGiftNotice = () => _giftNotice;",
     "tests": [
@@ -821,7 +821,7 @@
   },
   {
     "name": "PORTAL1-a-load-uncounted",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  _restores++;   // PORTAL1",
     "new": "  // _restores++;   // PORTAL1",
     "tests": [

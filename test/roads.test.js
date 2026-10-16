@@ -519,7 +519,7 @@ test('ROADS 11: the settlement sweep restores the region it found loaded', async
 // shown. A chip flips the RELIEF, not the markers, so the terrain step
 // is re-run and the grid is keyed on the two flags.
 test('ROADS 12: the two chips ride the store, default shown, and the relief is keyed on them', async () => {
-  const { travelMapFilters, travelMapSaveData, restoreTravelMapSaveData, resetTravelMapState } = await import('../src/systems/travelMapState.js');
+  const { travelMapFilters, travelMapSaveData, restoreTravelMapSaveData, resetTravelMapState } = await import('../src/systems/travel/travelMapState.js');
   resetTravelMapState();
   const f = travelMapFilters();
   assert.equal(f.roads, false); assert.equal(f.tracks, false);

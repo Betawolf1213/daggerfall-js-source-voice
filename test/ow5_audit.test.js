@@ -9,10 +9,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { nearDungeons, dungeonToFind, dungeonApproach, pixelBox, NATIVE_PER_M, TV_DUNGEON_MAX } from '../src/systems/travelDungeons.js';
+import { nearDungeons, dungeonToFind, dungeonApproach, pixelBox, NATIVE_PER_M, TV_DUNGEON_MAX } from '../src/systems/travel/travelDungeons.js';
 import { chaseStep as raiderChaseStep, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, NATIVE_PIXEL as RAID_NATIVE_PIXEL } from '../src/systems/seaRaiders.js';
 import { AUTO_TOGGLE } from '../src/player/eotbBillboard.js';
-import { planRoute, routeLegs, crossesWater } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, crossesWater } from '../src/systems/travel/travelRoute.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js

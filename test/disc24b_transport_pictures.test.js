@@ -15,8 +15,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { inventoryItemImage, inventoryItemModel, GROUP_TEMPLATE_INDICES, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../src/systems/itemTemplates.js';
-import { WAGON_KINDS, newWagonItem } from '../src/systems/wagonKinds.js';
+import { inventoryItemImage, inventoryItemModel, GROUP_TEMPLATE_INDICES, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../src/systems/item/itemTemplates.js';
+import { WAGON_KINDS, newWagonItem } from '../src/systems/wagon/wagonKinds.js';
 // PIN MOVED (WAGONS1, 2026-10-09): the cart's picture is Mac's Wagon Cart, the world's wagon since WAGONS1 - drawn off
 // the port's own build under its own id (ui/modelIcon.js's port door), no longer classic model 41214
 const WAGON_MODEL_ID = WAGON_KINDS.cart.icon;

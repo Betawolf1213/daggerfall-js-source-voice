@@ -179,7 +179,7 @@ function band(img, y0, y1, col, seed, amp = 0.06) {
   for (let y = y0; y < y1; y++) for (let x = 0; x < img.width; x++) put(img, x, y, shade(col, 1 - amp + 2 * amp * n(x, y)));
 }
 /** SHIPS-2: the painter's tools for the other ships' painters (world/carrackArt.js, world/largeBoatArt.js), under names
- *  of their own - `noise`, `band` and `sliceOf` are other things elsewhere (systems/arenaSound.js,
+ *  of their own - `noise`, `band` and `sliceOf` are other things elsewhere (systems/arena/arenaSound.js,
  *  render/lightClusters.js). */
 export { noise as paintNoise, band as paintBand, sliceOf as liverySlice };
 

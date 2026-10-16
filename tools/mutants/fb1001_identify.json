@@ -22,14 +22,14 @@
   },
   {
     "name": "TRADE-KNOWN-the-clamp-strips-it",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "for (const k of RECEIVER_MARKS) delete out[k];",
     "new": "for (const k of RECEIVER_MARKS) delete out[k]; delete out.isIdentified;",
     "tests": ["test/fb1001_identify.test.js"]
   },
   {
     "name": "TRADE-KNOWN-the-schema-reads-it-as-no-bool",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  isIdentified: bool(),",
     "new": "  isIdentified: int(),",
     "tests": ["test/fb1001_identify.test.js"]

@@ -2,7 +2,7 @@
 // Regular, Elite or Super"; bible/11-Multiplayer/Super-Dungeons.md section 12): A DUNGEON'S TIER, IN ONE WORD -
 // and, with SD-ONLINE, its size beside it.
 //
-// One law (systems/dungeonTier.js, a leaf): 'super' for a Hollow, 'elite' for an Elite spawn, 'regular' for every
+// One law (systems/dungeon/dungeonTier.js, a leaf): 'super' for a Hollow, 'elite' for an Elite spawn, 'regular' for every
 // other dungeon, null for a place with none. Its words are what every surface draws, online - where the tiers differ -
 // and the size word is the BUILT dungeon's, by its block count, as the room builds it online (world/dungeonLabel.js,
 // which gives no label to a place the port made: the court, the arena's floor, its undercroft). The surfaces: the
@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   DUNGEON_TIERS, DUNGEON_TIER_TEXT, DUNGEON_SIZE_TEXT, dungeonTier, dungeonTierText, tierShown, tierPhrase,
-} from '../src/systems/dungeonTier.js';
+} from '../src/systems/dungeon/dungeonTier.js';
 import { dungeonSizeClass, dungeonSizeOnline, dungeonTierLabel, madeDungeon } from '../src/world/dungeonLabel.js';
 import { GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
 import { ARENA_FLOOR_LOCATION_ID } from '../src/world/arenaFloor.js';

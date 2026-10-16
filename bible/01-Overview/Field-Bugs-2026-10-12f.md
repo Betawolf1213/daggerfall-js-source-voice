@@ -19,7 +19,7 @@ mattered checked again by running the real modules.
 - **A building's cupboard** (`world/interiorShared.js` applyInteriorLoot): one word landed a 9,000,000,000,000 letter
   and 63 coin piles (4,128,705) in place, for whoever opened it next. A dungeon's and a building's word stays in the
   relay's memory thirty days (`WORLD_TTL_MS`), so one seeded container pays every later visitor.
-- **The door** (`systems/loot.js` validLootItem, `systems/itemLaw.js` itemFindings): a letter at any value to
+- **The door** (`systems/loot/loot.js` validLootItem, `systems/item/itemLaw.js` itemFindings): a letter at any value to
   2^53 - 1 passed both; 64 of them pass one container's word.
 - **An item's price** (`systems/tradeModes.js` counterValueOf, `systems/shopStock.js` calculateTradePrice): a counter
   pays a piece by its price - at a quality-10 counter and 50 Mercantile and Personality, half of it offline and a sixth
@@ -46,7 +46,7 @@ settles from the giver's record.
   peer's word on the body, its own - moved behind what may go, since the grant reserves from the pile's front by count
   (a naive filter there would grant one piece and keep another) - and the body's record says it holds only what a
   peer may take (`o`), so no peer is offered a body that answers nothing.
-- **The put** (online, `systems/onlineLane.js` isOnlinePage): a letter goes into no container but the player's own -
+- **The put** (online, `systems/online/onlineLane.js` isOnlinePage): a letter goes into no container but the player's own -
   the classic pack's Remove into a chest or a body refuses it in its own words ("Letter of Credit stays with you
   online - a chest or a body is everyone's. Hand it over in a trade."); the player's own pile on the ground, its storage
   (an owned house's cupboards, a ship's chest), the wagon and the ground take it; offline every place does, as DFU's.
@@ -64,7 +64,7 @@ settles from the giver's record.
 
 ## PRICE-CAP: a peer's price is held under the law's ceiling
 
-`src/systems/loot.js` `lawPriced`, applied by `validLootItem` and `validLootList`; `systems/itemLaw.js` registers its
+`src/systems/loot/loot.js` `lawPriced`, applied by `validLootItem` and `validLootList`; `systems/item/itemLaw.js` registers its
 `worthCeiling` with the law (`setItemLaw(itemFindings, worthCeiling)`). AUDIT WORLD6a B1's "THE PRICE IS NOT THE
 WIRE'S" built the floor; this is its other half: a peer's price is at most the law's own ceiling on an honest price
 (its base four times over, its lines', a tier's, a margin - the wealth measure's ceiling). Swept against the honest
@@ -76,15 +76,15 @@ limit, said plainly"); a dagger priced at millions is not.
 
 ## WORN-ONLY: a fallen player's worn offer lands what can be worn
 
-`scenes/world.js` wildBodyArrived. An honest offer is its fallen's worn pieces alone (`systems/wildDropLaw.js`
+`scenes/world.js` wildBodyArrived. An honest offer is its fallen's worn pieces alone (`systems/wild/wildDropLaw.js`
 wornOffer). A coin pile in a modified one went through the choose-one window's gold arm, which pays the purse and answers
-before the choice (DFU's own `return`, `systems/itemTransfer.js` applyTransfer), so the killer was paid up to sixteen
+before the choice (DFU's own `return`, `systems/item/itemTransfer.js` applyTransfer), so the killer was paid up to sixteen
 piles - a million gold - and the choice never made. Each record is minted alone in its place (AUDIT INT9 - the pick is an
 index) and kept only when it can be worn (`systems/equip.js` wearableItem).
 
 ## GOLD-INT: a purse, a letter's worth and a coin pile's count are each one DFU int
 
-`systems/itemLaw.js` `GOLD_INT_MAX` (2,147,483,647 - PlayerEntity.cs:64 `int goldPieces`, DaggerfallUnityItem.cs:40
+`systems/item/itemLaw.js` `GOLD_INT_MAX` (2,147,483,647 - PlayerEntity.cs:64 `int goldPieces`, DaggerfallUnityItem.cs:40
 `int value`, DaggerfallUnityItem.cs:51 `int stackCount`, read from DFU's own source) and `CLASSIC_VALUE_MAX` (a classic
 save's record, its save tree's unsigned 32 bits - `formats/saveTreeFile.js` getUint32); `server-account/src/judge.js`
 `purseWord`. The port's producers keep under it - the bank's amount field is nine digits

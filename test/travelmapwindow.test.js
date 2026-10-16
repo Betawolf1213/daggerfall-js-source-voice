@@ -16,12 +16,12 @@ import {
   getRegionMapNames, getRegionMapScale, getPixelColorIndex, hasRegionPage,
   _setTravelMapArtForTests, setRevealUndiscoveredLocations,
 } from '../src/ui/travelMapWindow.js';
-import { resetTravelMapState, travelMapSaveData, setTravelMapPopUpState } from '../src/systems/travelMapState.js';
-import { composeSessionState, restoreSessionState } from '../src/systems/save.js';
-import { buildMapDict, locationSummaryAt, hasLocation } from '../src/systems/mapDirectory.js';
+import { resetTravelMapState, travelMapSaveData, setTravelMapPopUpState } from '../src/systems/travel/travelMapState.js';
+import { composeSessionState, restoreSessionState } from '../src/systems/save/save.js';
+import { buildMapDict, locationSummaryAt, hasLocation } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { discoverLocation, restoreDiscovery } from '../src/systems/discovery.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 
 /** PopulateRegionOffsetDict, transcribed from

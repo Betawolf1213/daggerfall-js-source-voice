@@ -15,7 +15,7 @@ import {
   trackLargeHudPointer, activeMouseOverLargeHUD, _resetLargeHud, largeHudRect,
 } from '../src/ui/hudLarge.js';
 import { setCursorActive } from '../src/player/pointerLock.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const host = (rel) => readFileSync(join(root, rel), 'utf8');

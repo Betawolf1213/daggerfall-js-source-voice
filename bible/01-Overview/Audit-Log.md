@@ -451,7 +451,7 @@ the one line that carried no behaviour of its own to test.
 
 FOUND ON THE WAY, at the same seam: `crimeCommitted` had TWO
 representations. Every writer in the port sets the numeric `CRIMES` id
-except `systems/talk.js`'s pickpocket law, which wrote the STRING
+except `systems/talk/talk.js`'s pickpocket law, which wrote the STRING
 `'Pickpocketing'` - because `court.js` imports `talk.js`, so `talk.js`
 could reach neither the one setter nor the enum. `arrestFlow.crimeId()`
 had grown a `typeof c === 'string'` arm to translate it back;
@@ -1837,7 +1837,7 @@ green, build clean, manifest math verified BOTH directions (doc rows
 == real files, doc total == real tests). Fixed at root: (1) the
 verbatim treasure DATA (archive 216, icon table, marker record 19,
 the 19-row dungeon-key table) lived in a SCENE file - moved to
-systems/loot.js, its DFU-shaped home; rdbLayout's 216 now imports the
+systems/loot/loot.js, its DFU-shaped home; rdbLayout's 216 now imports the
 single source (cycle-checked through the full suite). (2)
 dungeonContext double-sourced floorLanding + playerEntity (static
 imports AND the foeDeps dynamic pair) - dynamics dropped; an unused

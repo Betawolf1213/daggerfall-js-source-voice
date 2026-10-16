@@ -19,7 +19,7 @@ salvage are sited in open water off the board's own port, a hunt and a survey in
 
 FOUND. The board's ports - the port a captain lies at (`navalPortHere`, the nearest within a map pixel), a cargo's
 destinations (`boardFor`'s `ports`), a treasure chart's port - were `navalPortList`: every entry of Travel Options'
-`portLocationIds` (`systems/travelPorts.js`), read as "every port of the map". That table is not the map's harbours:
+`portLocationIds` (`systems/travel/travelPorts.js`), read as "every port of the map". That table is not the map's harbours:
 
 - Its main block is exactly MAPS.BSA's 343 locations whose PortTownAndUnknown byte is not nought, and the byte flags any
   place on the coast. Of the table's 378 distinct entries 223 are not towns: 39 labyrinths (Corranoth's Tomb, the

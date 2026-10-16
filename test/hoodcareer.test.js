@@ -20,11 +20,11 @@ import { parseCareerData } from '../src/systems/specialAdvantages.js';
 import {
   careerFastTravelBlock, racialFastTravelBlock, SUNLIGHT_TRAVEL_TEXT, VAMPIRE_HOOD_TEXT,
 } from '../src/systems/vampirism.js';
-import { createRandomClothing, ITEM_GROUPS } from '../src/systems/loot.js';
+import { createRandomClothing, ITEM_GROUPS } from '../src/systems/loot/loot.js';
 import { createTempItem, CREATE_ITEM_ROWS } from '../src/systems/createItem.js';
 import { equipItem } from '../src/systems/equip.js';
 import { nextVariant, toggleHood } from '../src/systems/useItem.js';
-import { arrivalClampMinutes } from '../src/systems/travel.js';
+import { arrivalClampMinutes } from '../src/systems/travel/travel.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

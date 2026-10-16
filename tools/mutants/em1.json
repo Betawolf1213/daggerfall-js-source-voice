@@ -1,7 +1,7 @@
 [
   {
     "name": "EM1-1-a-dungeon-offers-the-world-map",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  dungeon: Object.freeze(['automap']),",
     "new": "  dungeon: Object.freeze(['automap', 'world']),",
     "tests": [
@@ -12,7 +12,7 @@
   },
   {
     "name": "EM1-2-a-town-offers-no-world-map",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  town: Object.freeze(['town', 'world']),",
     "new": "  town: Object.freeze(['town']),",
     "tests": [
@@ -22,7 +22,7 @@
   },
   {
     "name": "EM1-3-the-strip-order-is-the-offer-s-reverse",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "export const MAP_SHEETS = Object.freeze(['automap', 'town', 'world']);",
     "new": "export const MAP_SHEETS = Object.freeze(['world', 'town', 'automap']);",
     "tests": [
@@ -33,7 +33,7 @@
   },
   {
     "name": "EM1-4-a-building-is-read-as-the-town-it-stands-in",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  if (insideBuilding) return 'building';\n",
     "new": "",
     "tests": [
@@ -43,7 +43,7 @@
   },
   {
     "name": "EM1-5-a-room-in-a-castle-is-read-as-a-building",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  if (insideDungeon) return 'dungeon';\n  if (insideBuilding) return 'building';",
     "new": "  if (insideBuilding) return 'building';\n  if (insideDungeon) return 'dungeon';",
     "tests": [
@@ -52,7 +52,7 @@
   },
   {
     "name": "EM1-6-an-unknown-place-opens-blank",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  return AVAILABLE[context] ?? AVAILABLE.wilderness;",
     "new": "  return AVAILABLE[context] ?? [];",
     "tests": [
@@ -63,7 +63,7 @@
   },
   {
     "name": "EM1-7-openOn-obeys-an-ask-the-place-refuses",
-    "file": "src/systems/mapTabs.js",
+    "file": "src/systems/map/mapTabs.js",
     "old": "  return wanted && sheetAvailable(context, wanted) ? wanted : defaultSheetFor(context);",
     "new": "  return wanted || defaultSheetFor(context);",
     "tests": [

@@ -23,7 +23,7 @@ import { createBodyStamps, bodiesHere, huntKind } from '../src/scenes/huntHost.j
 import { createGatherHost, aimAt, ACT_STOPPED_LINE } from '../src/scenes/gatherHost.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { registerPlayerKillListener } from '../src/systems/playerKills.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { Foe } from '../src/systems/quest/foe.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';

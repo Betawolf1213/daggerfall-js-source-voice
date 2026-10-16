@@ -9,7 +9,7 @@
 //   - the NAME the room knows them by;
 //   - their level, race and class, the eight attributes and the three vitals' maxima - THEIR word, the card their own
 //     game hands over when asked (net/profileCard.js composeCard: what their character sheet shows);
-//   - what they WEAR, slot by slot, named as the pack names an item (systems/itemInfo.js itemLongName) - off the card's
+//   - what they WEAR, slot by slot, named as the pack names an item (systems/item/itemInfo.js itemLongName) - off the card's
 //     look when it came, and off the room's copy of their look until it does (or if it never does).
 // So the card is useful the moment it opens: the gear and the badges are the room's already, and the sheet arrives a
 // frame later. A peer whose game cannot answer (the relay is older, or they did not) keeps the room's half, and a line
@@ -24,8 +24,8 @@ import { isTextEntryTarget } from './input.js';
 import { titleBadge, glyphBadges, glyphSvgNode, paintTitle } from './playerBadge.js';
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS } from './pixelifyFive.js';
 import { EQUIP_SLOTS } from '../characters/paperdoll.js';
-import { itemLongName } from '../systems/itemInfo.js';
-import { raceDisplayName } from '../systems/talkSession.js';
+import { itemLongName } from '../systems/item/itemInfo.js';
+import { raceDisplayName } from '../systems/talk/talkSession.js';
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';
 import { duelRecordText } from '../net/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
 import { renownText } from '../net/renown.js';   // RENOWN1: Renown, left of the name

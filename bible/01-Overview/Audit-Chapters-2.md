@@ -45,7 +45,7 @@ shipped, so migration `0089` (today's `0099_npc_halls` - AUDIT CHAP5 R8) grew in
 | S7 (= C U, D2's case) | note | The join's floor read the reputation after the day's pace: an initiation whose own reward the pace cut was not recorded until a later day. | The floor reads what the Roll holds and owes (`rep + owed`). |
 | E8 | low | A claim with no book (`members: null`) skipped AUDIT CHAP S5's rank bound: after a loss a recorded rank 9 stood over 35. | The bound holds on that path too. |
 
-**Daggerfall's law** (`src/net/npcChapterLaw.js`, `src/systems/guildHallReveal.js`)
+**Daggerfall's law** (`src/net/npcChapterLaw.js`, `src/systems/guild/guildHallReveal.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

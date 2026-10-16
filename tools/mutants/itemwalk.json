@@ -55,7 +55,7 @@
   },
   {
     "name": "ITEM-WALK-A-held-lists-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": ", ...heldItemLists(snap)];",
     "new": "];",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ITEM-WALK-A-furnishings-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "own?.bagItems, own?.furnishings, own?.otherItems",
     "new": "own?.bagItems, own?.otherItems",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ITEM-WALK-A-hung-pieces-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    out.push(...listsOf(Object.values(scene?.decorOwn ?? {})));\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ITEM-WALK-A-guild-shelves-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    for (const shelf of Object.values(scene?.guildShelves ?? {})) out.push(...listsOf(shelf?.items));\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ITEM-WALK-A-living-foes-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const foe of arrayOf(snap?.world?.foes)) if (!foe?.dead) out.push(...listsOf(foe?.items));\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ITEM-WALK-A-guards-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const guard of arrayOf(snap?.world?.guards)) out.push(...listsOf(guard?.items));\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ITEM-WALK-A-revenant-takes-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const r of arrayOf(snap?.modData?.[REVENANT_VENDOR]?.list)) out.push(...listsOf(r?.took));\n",
     "new": "",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ITEM-WALK-A-feud-key-misnamed",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const REVENANT_VENDOR = 'Revenant';",
     "new": "const REVENANT_VENDOR = 'Revenants';",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "ITEM-WALK-A-quest-items-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if (res?.resourceSpecific?.item) out.push([res.resourceSpecific.item]);",
     "new": ";",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "ITEM-WALK-A-building-foes-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const foe of arrayOf(snap?.interior?.foes)) out.push(...listsOf(foe?.items));\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "ITEM-WALK-A-building-guards-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const guard of arrayOf(snap?.interior?.guards)) out.push(...listsOf(guard?.items));\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ITEM-WALK-A-quest-foe-queue-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "      out.push(...listsOf(res?.resourceSpecific?.itemQueue));\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "ITEM-WALK-A-member-bequests-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const p of arrayOf(line?.people)) out.push(...listsOf(p?.bequest));\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "ITEM-WALK-A-waiting-bequest-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  out.push(...listsOf(line?.pending?.bequest));\n",
     "new": "",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "ITEM-WALK-A-remains-as-they-lie-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "out.push(...listsOf(r?.items, r?.first));",
     "new": "out.push(...listsOf(r?.first));",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "ITEM-WALK-A-remains-as-laid-dropped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "out.push(...listsOf(r?.items, r?.first));",
     "new": "out.push(...listsOf(r?.items));",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "ITEM-WALK-A-line-key-misnamed",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const LEGACY_VENDOR = 'ProjectLegacy';",
     "new": "const LEGACY_VENDOR = 'Project-Legacy';",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "ITEM-WALK-A-load-walks-the-save-not-the-entity",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const repairLists = savedItemLists(snap, entity);",
     "new": "const repairLists = savedItemLists(snap);",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "ITEM-WALK-A-load-runs-no-repair",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  repairItemLists(repairLists);\n",
     "new": "",
     "tests": [

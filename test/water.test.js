@@ -18,7 +18,7 @@ import { convertTilemap, buildTerrainGrid, buildTerrainIndices } from '../src/wo
 import { STREAM_TILES, RIVER_TILES } from '../src/world/roadPainter.js';
 import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
 import { convertTile, WATER_TILE_INDEX } from '../src/world/terrainSurface.js';
-import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../src/systems/wind.js';
+import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../src/systems/wind/wind.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

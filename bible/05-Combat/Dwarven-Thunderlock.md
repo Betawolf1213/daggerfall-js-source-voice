@@ -77,7 +77,7 @@ door.
 
 `characters/thunderlockIds.js` holds the four numbers and the
 ammunition link, and imports **nothing**. `systems/thunderlock.js` is
-the weapon's home, but it reaches `systems/itemTemplates.js` to
+the weapon's home, but it reaches `systems/item/itemTemplates.js` to
 register its rows, and *that* file imports `characters/weapons.js` for
 the condition ladder — so a `weapons.js` that wanted the indices from
 the home would close a cycle and leave one of the three holding an
@@ -1788,7 +1788,7 @@ dye (`textureReplacementRect`, `hasTextureReplacement`, `textureReplacementBytes
 A classic weapon's icon IS its doll layer - `GetInventoryTextureArchive` hands back the `PlayerTextureArchive` the doll
 draws from, which is why a classic icon carries the fist's notch. The gun's doll layer was made the same way
 (`tools/gunPaperdoll.mjs`), with an ellipse punched out of its grip where the fist closes: right on the doll, wrong in a
-list, where it read as a gun broken in two. `systems/itemTemplates.js` `registerOwnItemImage` / `ownItemImage`: a weapon
+list, where it read as a gun broken in two. `systems/item/itemTemplates.js` `registerOwnItemImage` / `ownItemImage`: a weapon
 of the port's own answers its own picture by job - `forPaperDoll` on the doll (`ui/paperDoll.js`), not in a list
 (`inventoryItemImage`, the one door every list asks) - and DFU's ladder answers everything else as before.
 `systems/thunderlock.js` ART_RECORDS: 0 the doll layer, 1 the whole gun, 2 and 3 the Hourlock's gold pair.

@@ -16,7 +16,7 @@ import {
 } from '../src/net/arenaLaw.js';
 import { _resetArenaCache, laurelWorthy, laurelOfBoard } from '../server-account/src/arena.js';
 import { titlesHeld, glyphsOf, equipRefusal } from '../server-account/src/titles.js';
-import { TEAM_POINTS } from '../src/systems/arenaLeague.js';
+import { TEAM_POINTS } from '../src/systems/arena/arenaLeague.js';
 
 const { subtle } = globalThis.crypto;
 const nowS = () => Math.floor(Date.now() / 1000);

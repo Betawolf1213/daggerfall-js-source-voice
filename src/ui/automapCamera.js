@@ -29,10 +29,10 @@
 //    (:1170-1176) - so the reset camera looks the same way no matter
 //    which way the player is turned.
 
-import { DEFAULT_SLICING_BIAS_Y } from '../systems/automap.js';
+import { DEFAULT_SLICING_BIAS_Y } from '../systems/automap/automap.js';
 
 // ONE HOME (the audit24 ratchet): defaultSlicingBiasY (:51) already
-// lives in systems/automap.js, where the slice plane itself does. It
+// lives in systems/automap/automap.js, where the slice plane itself does. It
 // is re-exported here so a consumer of the control law has the whole
 // constant set in one import, without a second declaration of the
 // value existing anywhere.

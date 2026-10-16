@@ -14,9 +14,9 @@ import {
   RRI_LOOT_MATRICES, RRI_MOB_LOOT_KEYS, rriLootMatrix, rriEnemyLootTableKey, isRriStackable, bandageHeal, shelfBandageStack,
   randomConditionLootItems, conditionCostBase, conditionRepairCostBase, storeQualityLow, storeQualityItemCondition,
   alchemistPotionCount, RRI_WEAPON_MIN_DAMAGE, RRI_WEAPON_MAX_DAMAGE, rriMeleeWeaponAnimTime, SPEED_REDUCTION_FACTOR,
-} from '../src/systems/rriRealism.js';
-import { installRoleplayRealismModules } from '../src/systems/rriInstall.js';
-import { generateItems, LOOT_MATRICES, enemyLootTableKey, createRandomPotion, addPileLootExtras } from '../src/systems/loot.js';
+} from '../src/systems/roleplayRealismItems/rriRealism.js';
+import { installRoleplayRealismModules } from '../src/systems/roleplayRealismItems/rriInstall.js';
+import { generateItems, LOOT_MATRICES, enemyLootTableKey, createRandomPotion, addPileLootExtras } from '../src/systems/loot/loot.js';
 import { isStackable } from '../src/systems/inventory.js';
 import { useItem } from '../src/systems/useItem.js';
 import { calculateCost } from '../src/systems/shopStock.js';
@@ -26,13 +26,13 @@ import { getMeleeWeaponAnimTime, CLASSIC_FRAME_UPDATE, swingFrameSeconds, swingH
 import { installSwingLaw } from '../src/combat/swingLaw.js';
 import { assignEnemyStartingEquipment, equipmentItems } from '../src/combat/enemyEquipment.js';
 import { assignRriEnemyEquipment, convertOrcish, getArmorTemplateIndex, RRI_ITEM } from '../src/combat/rriEnemyEquipment.js';
-import { onShopShelfStocked, assignSkillEquipment, assignSkillSpellbook, RRI_SPELLS, useBandage, KIT } from '../src/systems/rriKits.js';
+import { onShopShelfStocked, assignSkillEquipment, assignSkillSpellbook, RRI_SPELLS, useBandage, KIT } from '../src/systems/roleplayRealismItems/rriKits.js';
 import { assignStartingEquipment, STARTING_GOLD } from '../src/systems/startingGear.js';
 import { assignStartingSpells } from '../src/systems/chargen.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { conditionPercentage, mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
+import { conditionPercentage, mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
@@ -406,14 +406,14 @@ test('RRI2 skillBasedStartingSpells: the spellbook by the six skills (:916-968),
 
 // ---- the wiring --------------------------------------------------------------
 test('RRI2 wiring: the install registers the six delegates; the read-through sites; DFU\'s order at the corpse and the pile; the two shelf doors; the use-handler arm ahead of the ladder; the stackable arm', () => {
-  const inst = rd('src/systems/rriInstall.js');
+  const inst = rd('src/systems/roleplayRealismItems/rriInstall.js');
   assert.match(inst, /installRoleplayRealismModules\(\);/);
   for (const s of ['registerItemUseHandler(BANDAGE_TEMPLATE, useBandage)', 'setEnemyEquipmentAssigner(assignRriEnemyEquipment)', "setStartingEquipmentAssigner((entity, opts) => (rriModule('skillBasedStartingEquipment') ? assignSkillEquipment(entity, opts) : null))", "setStartingSpellsAssigner((career, spellsByIndex) => (rriModule('skillBasedStartingSpells') ? assignSkillSpellbook(career, spellsByIndex) : null))", 'registerWeaponDamageOverride({ min: rriWeaponMinDamage, max: rriWeaponMaxDamage })', 'registerMeleeWeaponAnimTime(rriAnimTimeOverride)']) assert.ok(inst.includes(s), s);
-  assert.match(rd('src/systems/loot.js'), /export const lootMatrix = \(key\) => rriLootMatrix\(key\) \?\? LOOT_MATRICES\[key\] \?\? LOOT_MATRICES\['-'\];/, 'the matrix read-through (GetMatrix, one home since OH-E)');
-  assert.match(rd('src/systems/loot.js'), /return generateRandomLoot\(lootMatrix\(lootTableKey\), who, rolls, opts\);/, '...and GenerateItems reads it');
+  assert.match(rd('src/systems/loot/loot.js'), /export const lootMatrix = \(key\) => rriLootMatrix\(key\) \?\? LOOT_MATRICES\[key\] \?\? LOOT_MATRICES\['-'\];/, 'the matrix read-through (GetMatrix, one home since OH-E)');
+  assert.match(rd('src/systems/loot/loot.js'), /return generateRandomLoot\(lootMatrix\(lootTableKey\), who, rolls, opts\);/, '...and GenerateItems reads it');
   // FORAGE3 + OH-E: the pile's event is one home now - raised after the J..O tail for every key, RRI's subscriber seeded first
-  assert.match(rd('src/systems/loot.js'), /randomlyAddPotionRecipe\(2, items, rolls\);\n  \}\n[\s\S]{0,900}?if \(lootTableKey !== '-'\) raiseTabledLootSpawned\(\{ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters \}\);\n  return items;\n\}/, 'the pile: LootTables.OnLootSpawned after the J..O tail - for every key GenerateLoot finds (AUDIT OH-F B3: the rolling host rides along)');
-  assert.match(rd('src/systems/loot.js'), /const _tabledLootHandlers = new Map\(\[\n  \[RRI_VENDOR, \(\{ items, rolls \}\) => \{ if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(items, rolls\); \}\],\n\]\);/, 'RRI\'s the first subscriber');
+  assert.match(rd('src/systems/loot/loot.js'), /randomlyAddPotionRecipe\(2, items, rolls\);\n  \}\n[\s\S]{0,900}?if \(lootTableKey !== '-'\) raiseTabledLootSpawned\(\{ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters \}\);\n  return items;\n\}/, 'the pile: LootTables.OnLootSpawned after the J..O tail - for every key GenerateLoot finds (AUDIT OH-F B3: the rolling host rides along)');
+  assert.match(rd('src/systems/loot/loot.js'), /const _tabledLootHandlers = new Map\(\[\n  \[RRI_VENDOR, \(\{ items, rolls \}\) => \{ if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(items, rolls\); \}\],\n\]\);/, 'RRI\'s the first subscriber');
   const hc = rd('src/scenes/hostCombat.js');
   assert.match(hc, /addEnemyLootExtras\(entity\.items, basics, rolls, \{ quarters: ease \}\);\n[\s\S]{0,1100}?if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(\[\.\.\.new Set\(\[\.\.\.entity\.items, \.\.\.\(eq\?\.worn \?\? \[\]\)\]\)\], rolls\);\n  enemyLootSpawned\.raise\([^\n]*\n(?:  (?:\/\/|const plain = plainFoeLootRule\(|if \(plain\) entity\.lootCap = )[^\n]*\n)*  rollCorpseLoot/, 'the corpse: EnemyEntity.OnLootSpawned after the trio, before the port\'s arm (RRI\'s own subscriber, then the list - OH-E)');   // PIN MOVED (PARTY-LOOT): the extras take the roll's Renown share, and the keep's line names what it let go
   assert.match(hc, /const worn = eq\.worn \?\? all;\n  eq\.worn = worn;/, 'the assigner\'s worn subset is what the table takes');

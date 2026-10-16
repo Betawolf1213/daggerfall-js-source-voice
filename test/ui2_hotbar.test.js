@@ -14,7 +14,7 @@ import * as HB from '../src/systems/quickslots.js';
 import { equipItem, isEquipped, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { TEMPLATES, USE_PENDING } from '../src/systems/useItem.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE as SURV } from '../src/systems/survival/food.js';
@@ -349,7 +349,7 @@ test('UI2 x DYE-ICON (AUDIT FINAL F2, the merge with main): a garment\'s slot dr
   const { withDom } = await import('./invdrag.mjs');
   const { mountHotbarDock, drawEnhancedHotbar } = await import('../src/ui/enhancedHotbar.js');
   const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
-  const { inventoryItemImage } = await import('../src/systems/itemTemplates.js');
+  const { inventoryItemImage } = await import('../src/systems/item/itemTemplates.js');
   const { iconName } = await import('../src/ui/textureCanvas.js');
   const prev = globalThis.location;
   _resetForTests();

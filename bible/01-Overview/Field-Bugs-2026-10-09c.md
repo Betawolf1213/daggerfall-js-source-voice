@@ -69,7 +69,7 @@ lies, the room, its end, the hall (`world.js` `_wildMine`) - lived in memory alo
 pulsing mark was gone, the pile was known for mine only by the account, and a hall's lock refused the hall my pile is
 my way back into. WILD-WAYPOINT's flag is kept on the device, but the flag is not the record. The record is kept on the
 device now too, for the character that fell, read back once by the zone's frame, forgotten at its end and at the room's
-"gone" (`systems/wildRemainsWaypoint.js` keepMine / keptMine / forgetMine). Pinned by `test/fb1009c_wildkeep.test.js`;
+"gone" (`systems/wild/wildRemainsWaypoint.js` keepMine / keptMine / forgetMine). Pinned by `test/fb1009c_wildkeep.test.js`;
 `tools/mutants/fb1009c_wildkeep.json` (7, all dead).
 
 THE REPORTER'S GEAR: not recoverable from anything this tree keeps. The relay logs no fall's records and deletes the

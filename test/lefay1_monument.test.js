@@ -18,10 +18,10 @@ import { lefayArt, lefayPlaqueArt, LEFAY_GLYPHS, lefayGlyph, lineWidth, PLAQUE_S
 import { createLefayMonument, bodyTrapped, LEFAY_REACH, TOSS_HAND_DROP } from '../src/scenes/lefayMonumentHost.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { CityNavigation, NAV_CELL, HALF_CELL } from '../src/world/cityNavigation.js';
-import { THROWN_FLOWERS } from '../src/systems/arenaCrowd.js';
+import { THROWN_FLOWERS } from '../src/systems/arena/arenaCrowd.js';
 import { REGION_NAMES } from '../src/formats/mapsTables.js';
 import { STATIC_NPC_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../src/player/activate.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS } from '../src/world/wodPrivateersHold.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -510,7 +510,7 @@ test('LEFAY1: THE PRESS - Read (or Info) reads it, Steal takes nothing, anything
 });
 
 test('LEFAY1: THE FOUR HOSTS - world.js and exterior.js stand it, the street press both share reaches it, the save carries it', () => {
-  const world = read('src/scenes/world.js'), ext = read('src/scenes/exterior.js'), modes = read('src/scenes/worldModes.js'), save = read('src/systems/save.js');
+  const world = read('src/scenes/world.js'), ext = read('src/scenes/exterior.js'), modes = read('src/scenes/worldModes.js'), save = read('src/systems/save/save.js');
   const dungeon = read('src/scenes/dungeonContext.js');
   for (const [name, src] of [['world.js', world], ['exterior.js', ext]]) {
     assert.match(src, /lefaySpot = lefaySpotOf\(loc, \{ camp: \{ block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS \}, exit: lefayExitOf\(dungeonEntranceLanding\(/, `${name} finds the spot off the place's own navgrid beside DFU's exit landing, WoD's camp closed on it (HOLD-MONUMENT, AUDIT FIVE-ASKS B1)`);
@@ -546,7 +546,7 @@ test('AUDIT LEFAY1 B1: a flower thrown before a load lands nowhere - never in th
   m.frame();
   m.activate(LEFAY_KEY, 'grab', 'flowers');
   const flight = m.batches().at(-1);
-  st.restores++;   // a load: systems/save.js restorePlayer counts it, whichever host's load it is
+  st.restores++;   // a load: systems/save/save.js restorePlayer counts it, whichever host's load it is
   st.tribute = normalTribute({ count: 4, laid: [[0, 0, 0, 0]] });   // the loaded character's own pile
   const loaded = st.tribute;
   st.t += TOSS_MS; m.frame();

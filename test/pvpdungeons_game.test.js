@@ -3,17 +3,17 @@
 // kept (KEEP-SPELLBOOK).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildWildMask, WILD_REGION } from '../src/systems/wildZone.js';
-import { wildHallPicks, wildRingBorderDistance, wildHallFoes, wildHallKeeps, wildHallTemplateOk, WILD_DUNGEONS_PER_RING, WILD_HALL_FOES } from '../src/systems/wildDungeons.js';
+import { buildWildMask, WILD_REGION } from '../src/systems/wild/wildZone.js';
+import { wildHallPicks, wildRingBorderDistance, wildHallFoes, wildHallKeeps, wildHallTemplateOk, WILD_DUNGEONS_PER_RING, WILD_HALL_FOES } from '../src/systems/wild/wildDungeons.js';
 import { startInfection, INFECTION, liveInfections } from '../src/systems/infection.js';
 import { curseOf, healCurseOffer, healCursePaid, healCursePrice, HEAL_CURSE_BASE } from '../src/systems/healCurse.js';
-import { restAilmentLines } from '../src/systems/restWarning.js';
+import { restAilmentLines } from '../src/systems/rest/restWarning.js';
 import { readFileSync } from 'node:fs';
 import { equipItem, swapHands, canSwapHands, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { gothwayNorthSpots, isGothwayGarden } from '../src/systems/gothwayBoards.js';
-import { planStore, REFUSAL, isKeptSpellbook } from '../src/systems/itemTransfer.js';   // KEEP-SPELLBOOK
+import { planStore, REFUSAL, isKeptSpellbook } from '../src/systems/item/itemTransfer.js';   // KEEP-SPELLBOOK
 import { shiftDrop } from '../src/systems/physicalItems.js';
-import { setLocked } from '../src/systems/itemLock.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
@@ -87,7 +87,7 @@ test('REST-WARN in THE FOUR HOSTS: the street\'s, a building\'s, a dungeon\'s an
   for (const host of ['world.js', 'worldModes.js', 'dungeonContext.js', 'exterior.js']) {
     const src = readFileSync(new URL(`../src/scenes/${host}`, import.meta.url), 'utf8');
     assert.match(src, asks, `${host}: the rest asks first (exterior.js - the fixed city - was the host left out)`);
-    assert.match(src, /import \{ restAilmentLines \} from '\.\.\/systems\/restWarning\.js';/, `${host}: the one law`);
+    assert.match(src, /import \{ restAilmentLines \} from '\.\.\/systems\/rest\/restWarning\.js';/, `${host}: the one law`);
   }
 });
 
@@ -136,10 +136,10 @@ test('GOTHWAY-BOARDS: Gothway Garden alone; two boards at the NORTH entrance, on
   assert.equal(gothwayNorthSpots(() => 0, W, H, cell), null, 'no way in: no boards');
 });
 
-import { wildGiantsAt, WILD_GIANT_COUNT, WILD_GIANT_LEG_MS, wildGiantRing } from '../src/systems/wildGiants.js';
+import { wildGiantsAt, WILD_GIANT_COUNT, WILD_GIANT_LEG_MS, wildGiantRing } from '../src/systems/wild/wildGiants.js';
 import { wdunEmpty, wdunGiantDie, wdunGiants, wdunState, wdunPrune, WDUN_GIANT_DOWN_MS } from '../src/net/wildLaw.js';
 import { validWdunIn, validWdunOut } from '../src/net/wire.js';
-import { wildRingAt } from '../src/systems/wildZone.js';
+import { wildRingAt } from '../src/systems/wild/wildZone.js';
 
 test('ZONE-GIANTS: two giants a tier, always; each walks inside its own tier, the same on every client, a step at a time; the dead left out', () => {
   const free = () => true, t0 = 1.7e12;
@@ -199,7 +199,7 @@ test('CROW-NEWS: the crows\' word names whose death set them, bounded - so the f
   assert.deepEqual(validWdunOut({ t: 'wdun', k: 'cr', crows: [], who: 'x'.repeat(200) }), { k: 'cr', crows: [] });
 });
 
-import { dungeonRespawnMs, dungeonRespawnDue, DUNGEON_RESPAWN_MS, ELITE_DUNGEON_RESPAWN_MS } from '../src/systems/dungeonRespawn.js';
+import { dungeonRespawnMs, dungeonRespawnDue, DUNGEON_RESPAWN_MS, ELITE_DUNGEON_RESPAWN_MS } from '../src/systems/dungeon/dungeonRespawn.js';
 test('DUNGEON-RESPAWN: a normal dungeon 20 minutes, an elite 40, each on its own clock; the zone\'s halls and a Super dungeon keep WORLD8\'s - half an hour since RESPAWN-30', () => {
   assert.equal(dungeonRespawnMs({}), 20 * 60_000);
   assert.equal(dungeonRespawnMs({ elite: true }), 40 * 60_000);
@@ -213,7 +213,7 @@ test('DUNGEON-RESPAWN: a normal dungeon 20 minutes, an elite 40, each on its own
 });
 
 import { foeTitle } from '../src/systems/foeTitle.js';
-import { GREATER_GIANT_NAME, GREATER_GIANT_CALL, GREATER_GIANT_CALL_AT } from '../src/systems/wildZone.js';
+import { GREATER_GIANT_NAME, GREATER_GIANT_CALL, GREATER_GIANT_CALL_AT } from '../src/systems/wild/wildZone.js';
 import { validFoeRecord } from '../src/net/wire.js';
 test('GREATER-GIANT: the zone\'s giants are Greater Giants, calling ten ordinary giants at half health; a puppet known by its health alone', () => {
   assert.equal(foeTitle({ wildGiant: true }, 'Giant'), GREATER_GIANT_NAME);
@@ -224,7 +224,7 @@ test('GREATER-GIANT: the zone\'s giants are Greater Giants, calling ten ordinary
   assert.equal(validFoeRecord({ i: 3 }).gg, undefined, 'any other foe carries none');
 });
 
-import { wildMaskOf, wildInside, WILD_KEEPOUT_PX } from '../src/systems/wildZone.js';
+import { wildMaskOf, wildInside, WILD_KEEPOUT_PX } from '../src/systems/wild/wildZone.js';
 test('WILD-KEEPOUT: Wrothgaria and the ground about it are never the zone - the west border moved east, never a notch', () => {
   let town = null;   // a pixel deep inside the zone without the keep-out
   for (let y = 0; y < 500 && !town; y++) for (let x = 0; x < 1000 && !town; x++) if (mask.depth?.[y * 1000 + x] >= 6) town = { x, y };

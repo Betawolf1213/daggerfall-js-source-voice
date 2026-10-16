@@ -1,6 +1,6 @@
 // @ts-check
 // CARDS3 (2026-10-07, bible/11-Multiplayer/Tavern-Cards.md section 3): THE CARDS ON THE TABLE - pure, DOM-free. The
-// table's evening (systems/cardTableSession.js events) as card and chip bodies at the table's own places, each moving
+// table's evening (systems/card/cardTableSession.js events) as card and chip bodies at the table's own places, each moving
 // by world/cardMotion.js: the hole cards thrown from the dealer's hand to every seat in the deal's order, the player's
 // own turned up to him; a burn before each street and the board thrown face down and turned; a folded hand slid to the
 // muck; at a shown showdown every hand still in turned over. The chips are the view's own numbers laid out: each seat's

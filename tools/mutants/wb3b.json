@@ -280,7 +280,7 @@
   },
   {
     "name": "WB3b-the-fall-line-drops-the-last",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "`${top.slice(0, -1).join(', ')} and ${top[top.length - 1]}`",
     "new": "`${top.slice(0, -1).join(', ')}`",
     "tests": [

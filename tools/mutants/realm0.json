@@ -1,7 +1,7 @@
 [
   {
     "name": "REALM0-flags-kept-online",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  if (!params?.has?.('online')) return [];\n  const dropped = ONLINE_REFUSED_FLAGS",
     "new": "  return [];\n  const dropped = ONLINE_REFUSED_FLAGS",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "REALM0-shot-not-refused",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "export const ONLINE_REFUSED_FLAGS = Object.freeze(['shot', 'fly',",
     "new": "export const ONLINE_REFUSED_FLAGS = Object.freeze(['fly',",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "REALM0-cosmetic-forced",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'roleplay-realism': Object.freeze(['variantNpcs', 'variantResidents']),",
     "new": "  'roleplay-realism': Object.freeze([]),",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "REALM0-leveling-choice-forced",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'oblivion-remaster-leveling': Object.freeze(['Enabled']),",
     "new": "  'oblivion-remaster-leveling': Object.freeze([]),",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "REALM0-sync-skips-whole",
-    "file": "src/systems/onlineSync.js",
+    "file": "src/systems/online/onlineSync.js",
     "old": "  for (const vendor of Object.keys(ONLINE_WHOLE_MODS)) {\n",
     "new": "  for (const vendor of []) {\n",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "REALM0-pile-leveled",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  if (online) unlevelPileGold(items, level);   // REALM P0.4: every pile, whatever its key\n",
     "new": "",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "REALM0-pile-no-floor",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "it.stackCount = Math.max(1, Math.trunc((it.stackCount ?? 0) / by));",
     "new": "it.stackCount = Math.trunc((it.stackCount ?? 0) / by);",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "REALM0-pile-any-item",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  for (const it of items) if (it?.group === 'Currency') it.stackCount",
     "new": "  for (const it of items) if (it) it.stackCount",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "REALM0-bound-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  bound: bool(),\n",
     "new": "",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "REALM0-checkpoint-in-duel",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "  return !!online && !!spawned && !seatOut && !duel && !walkWaiting;",
     "new": "  return !!online && !!spawned && !seatOut && !walkWaiting;",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "REALM0-checkpoint-out-of-seat",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "  return !!online && !!spawned && !seatOut && !duel && !walkWaiting;",
     "new": "  return !!online && !!spawned && !duel && !walkWaiting;",
     "tests": [
@@ -392,7 +392,7 @@
   },
   {
     "name": "REALM0-checkpoint-offline",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "  return !!online && !!spawned && !seatOut && !duel && !walkWaiting;",
     "new": "  return !!spawned && !seatOut && !duel && !walkWaiting;",
     "tests": [
@@ -401,7 +401,7 @@
   },
   {
     "name": "REALM0-checkpoint-ten-minutes",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "export const ONLINE_CHECKPOINT_MS = 120_000;",
     "new": "export const ONLINE_CHECKPOINT_MS = 600_000;",
     "tests": [
@@ -410,7 +410,7 @@
   },
   {
     "name": "REALM0-checkpoint-due-late",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "nowMs - lastMs >= ONLINE_CHECKPOINT_MS",
     "new": "nowMs - lastMs > ONLINE_CHECKPOINT_MS",
     "tests": [
@@ -419,7 +419,7 @@
   },
   {
     "name": "REALM0-take-refused-written",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "      if (handle) checkpoint('trade');",
     "new": "      checkpoint('trade');",
     "tests": [
@@ -428,7 +428,7 @@
   },
   {
     "name": "REALM0-take-unwritten",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "      if (handle) checkpoint('trade');\n",
     "new": "",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "REALM0-restore-unwritten",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "    restore(/** @type {any} */ handle) { pack.restore(handle); checkpoint('trade'); },",
     "new": "    restore(/** @type {any} */ handle) { pack.restore(handle); },",
     "tests": [
@@ -446,7 +446,7 @@
   },
   {
     "name": "REALM0-give-unwritten",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "    give(/** @type {any} */ received, /** @type {number} */ gold) { pack.give(received, gold); checkpoint('trade'); },",
     "new": "    give(/** @type {any} */ received, /** @type {number} */ gold) { pack.give(received, gold); },",
     "tests": [

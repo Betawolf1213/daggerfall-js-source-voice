@@ -227,7 +227,7 @@
   },
   {
     "name": "IT1-23-online-mod-the-players",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'immersive-travel': Object.freeze({\n    Enabled: true,\n",
     "new": "  'immersive-travel': Object.freeze({\n",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "IT1-24-online-map-refuses",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    'General.DisableNormalTravel': false,\n  }),",
     "new": "  }),",
     "tests": [
@@ -249,7 +249,7 @@
   },
   {
     "name": "IT1-25-online-fares-the-players",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'immersive-travel': Object.freeze(['General.ClearerMapDots',",
     "new": "  'immersive-travel-x': Object.freeze(['General.ClearerMapDots',",
     "tests": [

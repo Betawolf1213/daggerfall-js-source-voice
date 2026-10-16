@@ -15,7 +15,7 @@ import {
 } from '../src/ui/hudLarge.js';
 import { crosshairCentreY, drawCrosshairAndModeIcon } from '../src/ui/hudCrosshair.js';   // ROAD-E E5
 import { Renderer } from '../src/render/renderer.js';   // ROAD-E E5: the viewport is the renderer's own frame state
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { ridingRect } from '../src/systems/riding.js';
 import { MODES, nextInteractionMode } from '../src/player/interactionMode.js';
 import { routeAction } from '../src/ui/input.js';

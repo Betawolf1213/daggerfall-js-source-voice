@@ -17,7 +17,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validFoeRecord } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { generateItems, validLootList, LOOT_NEWER_TAKE_TEXT } from '../src/systems/loot.js';
+import { generateItems, validLootList, LOOT_NEWER_TAKE_TEXT } from '../src/systems/loot/loot.js';
 import { makeHitPend } from '../src/net/hitPend.js';   // LOOT-DUP: the REAL hit queue, whose boolean is the defect
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

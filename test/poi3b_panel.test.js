@@ -19,7 +19,7 @@ import { createPoiEdit, newPart } from '../src/poi/poiEdit.js';
 import { prepareImport, uploadImport } from '../src/poi/poiImport.js';
 import { encodePoiMesh, POI_MESH_LIMITS } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL } from '../src/poi/poiLaw.js';
-import { ONLINE_REFUSED_FLAGS } from '../src/systems/onlineLane.js';
+import { ONLINE_REFUSED_FLAGS } from '../src/systems/online/onlineLane.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const sha256 = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((b) => b.toString(16).padStart(2, '0')).join('');

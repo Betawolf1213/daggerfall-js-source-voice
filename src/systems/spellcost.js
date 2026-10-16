@@ -29,7 +29,7 @@
 // keys the shipping SPELLS.STD uses has a class here.
 
 import { skillValue, SKILLS } from './skills.js';
-import { isOnlinePage } from './onlineLane.js';   // SPELL-COST-PAST: online, a skill past 100 never prices a spell under nothing
+import { isOnlinePage } from './online/onlineLane.js';   // SPELL-COST-PAST: online, a skill past 100 never prices a spell under nothing
 import { pathCastSchool } from './arcanePaths.js';   // SCHOOLS3: a signature spell is cast in its path's two schools (a leaf)
 
 export const CAST_COST_FLOOR = 5;

@@ -2,7 +2,7 @@
 // GOLD MOVES ON THE REALM CHARACTER'S RECORD. "Homes, decor, stations and guild founding. The service debits the
 // character's gold at claim time." The law (net/homeLaw.js homeSaleRefund, server-account/src/decor.js decorGoldDelta,
 // pinned to the client's own arithmetic), the service (homes.js, decor.js over realm.js prepareRealmRecord) through the
-// REAL Worker, and the client - systems/onlineHomes.js's buy and sale and scenes/decorTool.js's four changes - over
+// REAL Worker, and the client - systems/online/onlineHomes.js's buy and sale and scenes/decorTool.js's four changes - over
 // systems/realmSaves.js realmGoldAct.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ import { SESSION_KEY, accountHomes, accountDecor } from '../src/net/accountClien
 import { HOME_SALE_SHARE, homeSaleRefund, HOME_PRICE_MIN } from '../src/net/homeLaw.js';
 import { DECOR_STATION_FEES, decorRescale, decorRefund } from '../src/net/decorLaw.js';
 import { DEED_SELL_MULT } from '../src/systems/banking.js';
-import { createOnlineHomes, buyOnlineHome, sellOnlineHome, homeRefund } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, buyOnlineHome, sellOnlineHome, homeRefund } from '../src/systems/online/onlineHomes.js';
 import { realmIo, realmCreate, realmPut, realmFetch, createRealmSession, realmGoldAct } from '../src/systems/realmSaves.js';
 import { freshSave, layRecord } from './realmSeat.mjs';   // AUDIT REALM2 S1: a first save is a new character's
 import { settle, toolRig, placeFrom, all, one, rows } from './decorFakes.mjs';
@@ -404,5 +404,5 @@ test('REALM P2.2b by source: the world host hands the realm act to the homes and
   assert.equal((m.match(/realm: host\.realmAct \? \{ act: host\.realmAct \} : null,/g) ?? []).length, 4, 'the buy and the sale - HOME-RENT: and a room rented, and its rent collected');
   const w = src('src/scenes/world.js');
   assert.match(w, /realmAct: realmSession \? \(o\) => realmGoldAct\(\{ session: realmSession, checkpoint: \(\) => onlineCheckpoint\(\), \.\.\.o \}\) : null,/);
-  assert.match(src('src/systems/onlineHomes.js'), /needsAnswer: true,/);
+  assert.match(src('src/systems/online/onlineHomes.js'), /needsAnswer: true,/);
 });

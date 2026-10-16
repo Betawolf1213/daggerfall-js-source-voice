@@ -16,7 +16,7 @@ import { CHAR_SPRITE_RT_SIZE } from '../src/render/renderer.js';
 import { multiply, transformPoint } from '../src/world/mat4.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { createDecorRoom, loadMountPicture, loadMwMountArt, decorMountQuad, decorMountFloats } from '../src/scenes/decorRoom.js';
-import { decorMountItem, decorMountDye, decorMountDyeTarget } from '../src/systems/decorItems.js';
+import { decorMountItem, decorMountDye, decorMountDyeTarget } from '../src/systems/decor/decorItems.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { settle, all, one, rows, toolRig, fakeDoc, fakeWin, ACTIONS } from './decorFakes.mjs';
 import { createDecorTool } from '../src/scenes/decorTool.js';

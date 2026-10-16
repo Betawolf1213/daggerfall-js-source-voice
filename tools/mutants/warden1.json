@@ -217,7 +217,7 @@
   },
   {
     "name": "WARDEN-road-any-walkable",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "weightAt(gx, gy) === ROAD_WEIGHT) road++;",
     "new": "weightAt(gx, gy) > 0) road++;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "WARDEN-road-footprint-unturned",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "const x = at[0] + u * half[0] * fz + v * half[1] * fx, z = at[1] - u * half[0] * fx + v * half[1] * fz;",
     "new": "const x = at[0] + u * half[0], z = at[1] + v * half[1];",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "WARDEN-farthest-edge",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "return [0, 1, 2, 3].sort((i, j) => d[i] - d[j] || i - j).map((i) => out[i]);",
     "new": "return [0, 1, 2, 3].sort((i, j) => d[j] - d[i] || i - j).map((i) => out[i]);",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "WARDEN-lands-inside",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "const out = [[x0 - WARDEN_LAND_PAST, along(at[1], z0, z1)],",
     "new": "const out = [[x0 + WARDEN_LAND_PAST, along(at[1], z0, z1)],",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "WARDEN-stray-past-the-edge",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "=> Math.max(lo, Math.min(hi, v + s));",
     "new": "=> v + s;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "WARDEN-offline-a-moment-early",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "stamp.rd === true && !!stamp.ly && now - stamp.at >= WARDEN_ROAD_MS;",
     "new": "stamp.rd === true && !!stamp.ly && now - stamp.at >= WARDEN_ROAD_MS - 1;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "WARDEN-offline-off-road",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "  return stampFits(stamp, anchor) && stamp.rd === true && !!stamp.ly",
     "new": "  return stampFits(stamp, anchor) && !!stamp.ly",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "WARDEN-word-past-reach",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "  if (Math.abs(stamp.ly[0] - anchor[0]) > WARDEN_LAND_REACH || Math.abs(stamp.ly[1] - anchor[1]) > WARDEN_LAND_REACH) return null;\n",
     "new": "\n",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "WARDEN-record-half-moved",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "  out.w[1] += dx; out.w[3] += dz;",
     "new": "  out.w[1] += dx;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "WARDEN-horse-left-behind",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "{ out.h = [...r.h]; out.h[0] += dx; out.h[2] += dz; }",
     "new": "{ out.h = [...r.h]; }",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "WARDEN-any-wagon-thrown",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "  if (Math.abs(anchor[0] - from[0]) > WARDEN_SAME_NATIVES || Math.abs(anchor[1] - from[1]) > WARDEN_SAME_NATIVES) return null;",
     "new": "  if (Math.abs(anchor[1] - from[1]) > WARDEN_SAME_NATIVES) return null;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "WARDEN-town-without-landing",
-    "file": "src/systems/wagonWarden.js",
+    "file": "src/systems/wagon/wagonWarden.js",
     "old": "tw >= 0 && tw <= WARDEN_TOWN_MAX && Array.isArray(ly);",
     "new": "tw >= 0 && tw <= WARDEN_TOWN_MAX;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "WARDEN-adopt-lands-at-the-spot",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    const at = thrownTo([wagonState.WorldX, wagonState.WorldZ], from, to);\n    if (!at) return false;",
     "new": "    const at = thrownTo([wagonState.WorldX, wagonState.WorldZ], from, from) && to;\n    if (!at) return false;",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "WARDEN-adopt-loose-horse-left",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (loose) setHorseLoose(castWorldCoordinate(hx), castWorldCoordinate(hz), hh);",
     "new": "    if (false) setHorseLoose(castWorldCoordinate(hx), castWorldCoordinate(hz), hh);",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "WARDEN-adopt-turned",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    commitDeployment(castWorldCoordinate(at[0]), castWorldCoordinate(at[1]), savedHeading(), hm);",
     "new": "    commitDeployment(castWorldCoordinate(at[0]), castWorldCoordinate(at[1]), [0, 0, 1], hm);",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "WARDEN-adopt-unparked",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    if (!physicalPersistenceEnabled || wagonState.Mode !== WAGON_MODE.Deployed) return false;\n    const at = thrownTo(",
     "new": "    if (!physicalPersistenceEnabled) return false;\n    const at = thrownTo(",
     "tests": [

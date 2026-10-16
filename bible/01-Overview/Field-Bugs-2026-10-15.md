@@ -9,7 +9,7 @@ behave online". Read on the code as it stands at main's `545cf70e`.
 
 ## PROMO-NOW: online, a promotion does not wait, and the hall says what the next rank asks (1)
 
-`src/systems/guilds.js` updateRank, rankNeeds; `src/systems/guildServiceFlow.js` onPushEffects, rankNeedsLines;
+`src/systems/guild/guilds.js` updateRank, rankNeeds; `src/systems/guild/guildServiceFlow.js` onPushEffects, rankNeedsLines;
 `src/ui/enhancedPorts.js` the guild port's view; `src/scenes/worldModes.js` openGuildService (the wiring).
 
 THE REPORT. A player who passed 200 days travelling to and from Daggerfall, and who met the rank's requirements as UESP

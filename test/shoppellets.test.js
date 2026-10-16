@@ -13,7 +13,7 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { createPellets, isPellet, isThunderlock, pelletCount } from '../src/systems/thunderlock.js';
 import { addItem } from '../src/systems/inventory.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';
 
 const B = BUILDING_TYPES;
 

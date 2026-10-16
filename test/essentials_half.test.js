@@ -8,13 +8,13 @@ import assert from 'node:assert/strict';
 import { ONLINE_ESSENTIALS_PRICE_SCALE, essentialPrice, calculateCost, calculateTradePrice } from '../src/systems/shopStock.js';
 import { rentalDecision, roomPrice, eatOrDrink, tavernMenuLabels, tavernMenuPrice, TAVERN_MENU, TAVERN_PRICES } from '../src/systems/tavern.js';
 import { tavernMenu } from '../src/systems/survival/tavernMenu.js';
-import { cureDiseaseOffer } from '../src/systems/guildServiceActions.js';
+import { cureDiseaseOffer } from '../src/systems/guild/guildServiceActions.js';
 import { buyItemPrice, tradeCost, getTradePrice } from '../src/systems/tradeModes.js';
 import { scaleTripCost } from '../src/ui/travelPopUp.js';
-import { calculateTripCost } from '../src/systems/travel.js';
+import { calculateTripCost } from '../src/systems/travel/travel.js';
 import { startDisease } from '../src/systems/diseases.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { HOLIDAYS } from '../src/systems/holidays.js';
 

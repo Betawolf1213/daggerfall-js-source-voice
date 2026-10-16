@@ -1,7 +1,7 @@
 [
   {
     "name": "ROSE-SEEN-no-number",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (false) showFollowUp(n, word);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ROSE-SEEN-the-whole-blow",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (!f?.dead) showFollowUp(n * 2, word);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ROSE-SEEN-untagged",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (!f?.dead) showFollowUp(n);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ROSE-SEEN-a-dead-foe-numbered",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  showFollowUp(n, word);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ROSE-SEEN-fists-unnamed",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "again(target, (damage * p.share) / 100, p.name); break;",
     "new": "again(target, (damage * p.share) / 100); break;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ROSE-SEEN-echo-unnamed",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "again(target, damage, p.name); break;",
     "new": "again(target, damage); break;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ROSE-SEEN-a-weapon-numbered",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "case 'fists': if (!weapon) again(",
     "new": "case 'fists': if (true) again(",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SHIELD-FIST-the-whole-blow-again",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "again(target, (damage * p.share) / 100, p.name); break;",
     "new": "again(target, damage, p.name); break;",
     "tests": [

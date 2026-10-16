@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA4B-PICK-FILTER",
-    "file": "src/systems/arenaMove.js",
+    "file": "src/systems/arena/arenaMove.js",
     "old": "return arenaHouseFor(o, (summaries ?? []).filter((s) => homeCandidate(s) && s.hasInterior !== false), opts);",
     "new": "return arenaHouseFor(o, summaries, opts);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA4B-EMPTY-OUTSIDE-ACT",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (d?.to) { m = moveOf(d); empty(m, d.repeat !== true); } },",
     "new": "if (d?.to) { m = moveOf(d); } },",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA4B-REPEAT-CREDIT",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (d?.to) { m = moveOf(d); empty(m, d.repeat !== true); } },",
     "new": "if (d?.to) { m = moveOf(d); empty(m, true); } },",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENA4B-OTHER-CHARACTER",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "((h.mine && h.character === character) || (h.hall && h.keeper))",
     "new": "(h.mine || (h.hall && h.keeper))",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA4B-UNREAD-CREDIT",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    empty(m, false);\n",
     "new": "    empty(m, true);\n",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA4B-HALL-CREDIT",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (credit && !m.hall && m.refund > 0) hooks.credit?.(m.refund);",
     "new": "if (credit && m.refund > 0) hooks.credit?.(m.refund);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA4B-HALL-RESIDENCE",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "hooks.discover?.(m.to, m.hall);",
     "new": "hooks.discover?.(m.to, false);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA4B-TAKEN-UNHELD",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      held.add(to.buildingKey);\n",
     "new": "\n",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA4B-LETTER-UNSAID",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    hooks.notice?.(m.hall ? ARENA_TEXT.homeMove.hallMoved : ARENA_TEXT.deedMoved);\n",
     "new": "\n",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA4B-SEEN-UNASKED",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "checkpointLanded(await hooks.checkpoint?.())) await api.arenaSeen(mapId, m.from);",
     "new": "checkpointLanded(await hooks.checkpoint?.())) void m;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA4B-SEEN-UNSAVED",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (checkpointLanded(await hooks.checkpoint?.())) await api.arenaSeen(mapId, m.from);",
     "new": "await hooks.checkpoint?.(); await api.arenaSeen(mapId, m.from);",
     "tests": [

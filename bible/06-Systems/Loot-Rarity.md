@@ -15,7 +15,7 @@ player meets. The online lane forces it on with every other
 enhancement (OL1), as it always did. Off, not one field is written and
 not one read moves - so the 1:1 lane is one press away, not lost.
 
-One module: `src/systems/lootRarity.js`. One pin file:
+One module: `src/systems/loot/lootRarity.js`. One pin file:
 `test/lr1_lootrarity.test.js` (20). One tuning table: `RARITY_WEIGHTS`
 and `SOURCE_MULT`, per mille.
 
@@ -215,7 +215,7 @@ snapshot copies items as they are); `affixes` joins
 field and reads Common.
 
 The Loot arc II (`Loot-II-Arc.md`) adds four fields, each declared in
-`systems/itemFields.js` and absent on every piece that has none - so
+`systems/item/itemFields.js` and absent on every piece that has none - so
 an older save and an older peer read as before: `cursed` (LOOT16, a
 cursed find's drawback - `validCurse`), `honed` (LOOT17, the hones a
 piece has taken), `junk` (LOOT18, the player's mark - the lock's twin)
@@ -431,7 +431,7 @@ silence, and passing. The helper presses the switch off explicitly now.
 
 Cruor's King's Mark came out a Wand and could not be worn (`01-Overview/Field-Bugs-2026-10-01.md` part four #4). A
 Legendary record names the piece a maker minted and never picks the base; the Gate's spoils and a town's thanks drew a
-jewel over all eight Jewellery templates (`systems/gateSpoils.js` spoilsBase), and the eighth, the Wand, has no slot
+jewel over all eight Jewellery templates (`systems/gate/gateSpoils.js` spoilsBase), and the eighth, the Wand, has no slot
 (GetJewelleryEquipSlot's None). Every affix and a Held enchantment read worn pieces alone, so one jewel in eight was a
 tier read by nothing. Now `systems/equip.js` wearableItem (GetEquipSlot on an empty table) is the one law: the ladder
 grades no piece it refuses (`rarityEligible`), the spoils' base is made again on one, and a save's rolled wands load as

@@ -23,7 +23,7 @@ what main wrote since in nine of them - CITE-ANCHOR's anchors, Project Legacy, t
 **WAYPOINTS** (the player: "Let players add waypoints, partywaypoints and guild waypoints to the overworld map and
 Worldmap(V) with right mouseclick context menu ... They can be small flags with different colors. Add the waypoints you
 want to mark (to follow) to the filter list on the overworld map with a dropdown menu. Add Waypoints to the filter on
-the worldmap"). `systems/mapWaypoints.js` is ONE STORE for both maps: a point on the bay in map pixels, a name, a flag
+the worldmap"). `systems/map/mapWaypoints.js` is ONE STORE for both maps: a point on the bay in map pixels, a name, a flag
 colour (eight) and a kind - personal (this device's), party or guild. A party's or a guild's is said on the hub's own
 party or guild channel (CHAT-CHAN, GUILD1c - no relay change) as one line the chat never shows (`[WP1] add|ren|col|del`),
 kept by every member who heard it, and moved only by its author (a line's sender must be the one that made it; anyone
@@ -40,11 +40,11 @@ removes nothing); leaving one takes its waypoints, mine and theirs.
 **PACE-DIALS** (the player: "Revert back to the overworld timer multiplier for ppl to set to 60x and 100x on roads and
 the nearby enemy timer to set to 60x max ... speed settings should be 5x 10x 20x 30x 40x 60x and 100x should be only
 setable when on a road and it has to go to 60 instantly again when leaving the road. Same for enemies nearby
-multiplier ... should have the same rules in other uis in online mode"). `systems/travelPace.js`: two dials on one
+multiplier ... should have the same rules in other uis in online mode"). `systems/travel/travelPace.js`: two dials on one
 ladder (5, 10, 20, 30, 40, 60, 100) - the journey's Speed and the Near enemies floor (ENEMY-PACE's) - kept on the device.
 RATE-LAW's x100 and x60 are the dial's two ceilings now: x100 is chosen on a road alone, and leaving a road takes a dial
 at x100 to x60 at once, never climbing back. Every reader asks this module (`systems/timeScale.js` travelRateOf,
-`systems/travelThreat.js` foePaced), and the world host tells it the ground every frame a journey or the Overworld runs,
+`systems/travel/travelThreat.js` foePaced), and the world host tells it the ground every frame a journey or the Overworld runs,
 so every skin runs under one law. `ui/travelPaceControls.js` builds the steppers for the Overworld's block, the enhanced
 journey bar and - for the classic strip and GrimoireUI - a pace box of its own while a journey runs. The default is x60:
 RATE-LAW's road ran at x100 by itself; under the dials a road is x100 when the player sets it there.
@@ -96,7 +96,7 @@ Each against a law of this tree the patches did not know:
 - **The type floor and the picker's rank.** Text under 11px lifted to 11 (FONT3; the menu and the pace box joined the
   floor's sheets); the menu stands at the in-game top tier, 39, under the asset picker's 40 (MWFIX 1; it stood at
   2,147,483,000).
-- **One home for the rates** (`systems/travelPace.js`, `systems/timeScale.js`). The dial's two ceilings were a second
+- **One home for the rates** (`systems/travel/travelPace.js`, `systems/timeScale.js`). The dial's two ceilings were a second
   pair of literals beside TRAVEL_ROAD_RATE and TRAVEL_OPEN_RATE; travelPace.js (a leaf) declares them and timeScale.js
   reads them, the road's pinned equal to MAX_TIME_SCALE; the panel's bare 60 is OPEN_PACE_MAX.
 - **Source the pins read.** The pace listener moved above the frame's claim (FB0930-FRAME: the claim, the boot's last

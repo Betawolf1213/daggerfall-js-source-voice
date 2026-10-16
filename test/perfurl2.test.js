@@ -1,5 +1,5 @@
 // PERF-URL2 (2026-10-06, Mac: "I wanna look into how we can continue to improve performance, including for online"):
-// THE FORCED-PREF TABLE IS ASKED BEFORE THE PAGE. getPref asks systems/onlineLane.js onlineForcedPref on every read -
+// THE FORCED-PREF TABLE IS ASKED BEFORE THE PAGE. getPref asks systems/online/onlineLane.js onlineForcedPref on every read -
 // hundreds a frame - and it read `location.search` (a DOM getter, before PERF-URL's memo can answer) to learn whether
 // the page is online, then looked the key up in a table that forces a handful of keys (the mods' switches the features
 // register). Measured in the real game (Knightstale, offline): 0.09 ms a frame of isOnlinePage under onlineForcedPref.
@@ -7,7 +7,7 @@
 // no page read for a key no page forces.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { onlineForcedPref, ONLINE_FORCED_PREFS, isOnlinePage } from '../src/systems/onlineLane.js';
+import { onlineForcedPref, ONLINE_FORCED_PREFS, isOnlinePage } from '../src/systems/online/onlineLane.js';
 import { getPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 
 test('PERF-URL2: onlineForcedPref answers what it answered - every key the shelf knows and a stranger, a key the table forces and one it does not, on pages online and not (mutants: the forced value lost; the page test dropped)', () => {

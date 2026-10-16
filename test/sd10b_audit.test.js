@@ -28,21 +28,21 @@ import { createSdHall } from '../src/scenes/sdHall.js';
 import { handMatrix } from '../src/world/sdHall.js';
 import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
 import { spoilsLevel } from '../src/scenes/spoilsPool.js';
-import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/sdSpoils.js';
+import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook } from '../src/world/sdDungeon.js';
 import { sdFell, sdRoomKey, isSdRoom, SD_NO_CLOSED, SD_NO_FULL, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { dungeonSizeFor, onlineDungeonSize } from '../src/world/smallerDungeons.js';
 import { orreryOf } from '../src/net/sdBrain.js';
 import { isSdRealm } from '../src/world/sdRealm.js';
 // the set powers
-import { setStruck, setBossStruck, setPowerStates, setSetPowersVoice, registerPlayerBlowLanded, BLOW_WINDOW_S, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil.js';
-import { _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import { setStruck, setBossStruck, setPowerStates, setSetPowersVoice, registerPlayerBlowLanded, BLOW_WINDOW_S, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 // the relay
 import { fakeRooms } from './fakeRoom.mjs';

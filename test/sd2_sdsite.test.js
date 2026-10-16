@@ -1,18 +1,18 @@
 // SD2 (2026-10-05, Mac: "Super dungeons are random finds on the world map, and spawn where population is at its most";
 // bible/11-Multiplayer/Super-Dungeons.md sections 3 and 5): WHERE THE HOLLOW STANDS, AND WHAT STANDS THERE
-// (systems/sdSite.js). The relay names a region (the census) and nothing more; every client finds the same city, the
+// (systems/superDungeon/sdSite.js). The relay names a region (the census) and nothing more; every client finds the same city, the
 // same pixel and the same template from the map files it holds, and clones the same Hollow under the slot's own id.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   SD_GREAT_CITIES, SD_TEMPLATE_MIN_BLOCKS, SD_TEMPLATE_TYPES, SD_SALT_BASE, sdSalt, sdCities, findSdSite, sdTemplates,
   pickSdTemplate, sdHollowLocation,
-} from '../src/systems/sdSite.js';
-import { scanGatePixels, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX } from '../src/systems/gateSite.js';
+} from '../src/systems/superDungeon/sdSite.js';
+import { scanGatePixels, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdRoll, sdNameOf, sdRise, sdFirst } from '../src/net/sdLaw.js';
 import { spawnedMapId, SALT_MAX, WORLD_SALT } from '../src/world/spawnedDungeons.js';
-import { dungeonTier } from '../src/systems/dungeonTier.js';
+import { dungeonTier } from '../src/systems/dungeon/dungeonTier.js';
 import { dungeonTierLabel } from '../src/world/dungeonLabel.js';
 import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
 

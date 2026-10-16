@@ -178,7 +178,7 @@ test('AUDIT DUEL1 A2 + B6 + D4 the blow: a result wears my weapon by at most wha
 test('AUDIT DUEL1 B2 + B4 + C1 + D2 + D5 the hosts by source: a swing bashes no door while a duel holds; a duel\'s spells are never saved and never restored; a ring change forces a full foes frame only in a cell room; the heal strips the duel\'s spells and fills health, fatigue and magicka; leaving the page ends the duel and heals before the exit autosave writes (mutants: the bash unrefused; the save keeping the duel\'s; the full frame forced in a dungeon; the heal without its strip; the heal without health; the leave after the save)', () => {
   const wm = rd('src/scenes/worldModes.js');
   assert.match(wm, /function attemptExteriorDoorBash\(eye, dir\) \{\n\s+if \(mode !== 'exterior'\) return false;\n(?:\s+\/\/.*\n)+\s+if \(host\.duelHolds\?\.\(\)\) return false;/, 'B2: the bash is refused before any door is picked');
-  const sv = rd('src/systems/save.js');
+  const sv = rd('src/systems/save/save.js');
   assert.match(sv, /snap\.activeEffects = \(entity\.activeEffects \?\? \[\]\)\.filter\(\(a\) => !a\.heldItem && !a\.bundleDuel\)/, 'B4: not saved');
   assert.match(sv, /entity\.activeEffects = \(snap\.activeEffects \?\? \[\]\)\.filter\(\(a\) => !a\.heldItem && !a\.bundleDuel\)/, 'B4: not restored from an older save');
   const w = rd('src/scenes/world.js');

@@ -81,7 +81,7 @@ import { deductGold, totalGoldAmount } from '../systems/court.js';
 import { splitStack } from '../systems/inventory.js';
 import { enumerateFilledTraps } from '../systems/mysticism.js';   // AUDIT 63 F14: SoulBound.EnumerateFilledTraps (:105-127) - the maker's lists are built from the pack
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
-import { shownItemName } from '../systems/itemInfo.js';   // L10N3e: the shortName the label shows, in the player's language
+import { shownItemName } from '../systems/item/itemInfo.js';   // L10N3e: the shortName the label shows, in the player's language
 
 /** DaggerfallInventoryWindow.TabPages, in the order the four buttons
  *  sit in (:29-32). */

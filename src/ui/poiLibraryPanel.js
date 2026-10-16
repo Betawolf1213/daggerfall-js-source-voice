@@ -24,7 +24,7 @@ import { problemText, problemWhere } from '../poi/poiText.js';
 import { poiShelf, poiShelfEntry, poiShelve, poiUnshelve, poiPutAsset } from '../poi/poiService.js';
 import { decodePoiMesh } from '../poi/poiMesh.js';
 import { shelfEntryOf, putOnShelf } from '../poi/poiShelf.js';
-import { bytesToBase64 } from '../systems/saveTransfer.js';   // the port's one base64 (no atob/btoa in every host)
+import { bytesToBase64 } from '../systems/save/saveTransfer.js';   // the port's one base64 (no atob/btoa in every host)
 
 export const POI_LIBRARY_STYLE_ID = 'dfpoi-library-style';
 export const POI_LIBRARY_CSS = `

@@ -16,9 +16,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import * as CX from '../src/systems/lootCodex.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import * as CX from '../src/systems/loot/lootCodex.js';
 import {
   GILDED, GILDED_WORTH, GILDED_CHANCE, HOUR_TOLLS, HOURLOCK, GILDED_RECORDS, gildedById, isGilded,
   mintGilded, mintHourlock, rollHourlock, validGildedMarks,
@@ -27,21 +27,21 @@ import { createThunderlock, createPellets, pelletCount, ART_RECORDS, thunderlock
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { itemBaseValue, inventoryItemImage, ownItemImage } from '../src/systems/itemTemplates.js';
+import { itemBaseValue, inventoryItemImage, ownItemImage } from '../src/systems/item/itemTemplates.js';
 import { stampedTier } from '../src/systems/rarityTier.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { salvageRefusal, reforgeRefusal, honeRefusal } from '../src/systems/reforge.js';
 import { itemMakerRefuses } from '../src/systems/enchanting.js';
 import { heirloomEligible } from '../src/systems/legacy/heirloom.js';
 import { temperRefusal } from '../src/net/temperLaw.js';   // CRAFT4's temper, law 7
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { quickslotKey } from '../src/systems/quickslots.js';
 import { ownWeaponModelFor } from '../src/characters/ownWeaponModels.js';
 import { SPOILS_LINE_H } from '../src/render/spoilsGlow.js';
 import { PI_RIM } from '../src/systems/physicalItems.js';
-import { BRIEF_MAX } from '../src/systems/sigilSets.js';
-import { setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+import { BRIEF_MAX } from '../src/systems/sigil/sigilSets.js';
+import { setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
@@ -186,7 +186,7 @@ test('GILDED1 THE DROP: ONE draw, always - under GILDED_CHANCE the Hourlock, els
   for (let i = 0; i < 20000; i++) if (rollHourlock(lcg)) n++;
   assert.ok(Math.abs(n / 20000 - GILDED_CHANCE) < 0.004, `${n} of 20000`);
   // the Brass Remnant's spoils are where it falls - its last piece's roll, the Remnant's card after it (sd9e_spoils.test.js pins the order)
-  assert.match(strip(read('src/systems/sdSpoils.js')), /const brass = rollNumidiumPiece\(rolls\);\s*if \(brass\) pieces\.push\(\{ item: brass, tier: brass\.rarity \}\);\s*const hourlock = rollHourlock\(rolls\);\s*if \(hourlock\) pieces\.push\(\{ item: hourlock, tier: hourlock\.rarity \}\);\s*const card = bossCardRoll\('abyss', rolls\);\s*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('abyss', rolls\);\s*techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*return \{ gold, pieces, card, gems \};/);   // PIN MOVED (CARDS9): the Brass Remnant's own card one draw after the Hourlock's; PIN MOVED (GEM1/GEM2, bible/06-Systems/Gem-Sockets.md): then the sockets' passes and its gems; PIN MOVED (TECH1): and a weapon's technique, the door's last draw (Loot-II law 9)
+  assert.match(strip(read('src/systems/superDungeon/sdSpoils.js')), /const brass = rollNumidiumPiece\(rolls\);\s*if \(brass\) pieces\.push\(\{ item: brass, tier: brass\.rarity \}\);\s*const hourlock = rollHourlock\(rolls\);\s*if \(hourlock\) pieces\.push\(\{ item: hourlock, tier: hourlock\.rarity \}\);\s*const card = bossCardRoll\('abyss', rolls\);\s*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('abyss', rolls\);\s*techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*return \{ gold, pieces, card, gems \};/);   // PIN MOVED (CARDS9): the Brass Remnant's own card one draw after the Hourlock's; PIN MOVED (GEM1/GEM2, bible/06-Systems/Gem-Sockets.md): then the sockets' passes and its gems; PIN MOVED (TECH1): and a weapon's technique, the door's last draw (Loot-II law 9)
 });
 
 // ── the power ─────────────────────────────────────────────────────────

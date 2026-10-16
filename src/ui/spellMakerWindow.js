@@ -3,7 +3,7 @@
 // Daggerfall Workshop / Gavin Clayton, on real ARENA2 art.
 //
 // WHAT THIS FILE REPLACED, and why the replacement was owed. S1 built
-// the maker's LAW (systems/spellMaker.js) under a keyed text sheet in
+// the maker's LAW (systems/spell/spellMaker.js) under a keyed text sheet in
 // the travel-map idiom, and recorded the window itself as a departure
 // - a departure that never got a Ledger row, which is how
 // Port-Status-2026-09-02 came to list it as the one window drawn in a
@@ -56,9 +56,9 @@
 //   parchment description panel at (7,19,306,69) and a per-effect
 //   spell-point label at (275,119).
 //
-// WHAT DID NOT MOVE: the law. systems/spellMaker.js is still
+// WHAT DID NOT MOVE: the law. systems/spell/spellMaker.js is still
 // UpdateAllowedButtons, the spinner ranges, the magnitude pair rules,
-// the record builder and the purchase ladder; systems/spellEffects.js
+// the record builder and the purchase ladder; systems/spell/spellEffects.js
 // is still the effect-template registry; ui/spellIconPickerWindow.js
 // is still SelectIconButton's window and ui/listPicker.js still
 // DaggerfallListPickerWindow. This file is the panel, the hit rects
@@ -91,7 +91,7 @@ import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import {
   SPELL_MAKER_EFFECTS, spellMakerGroups, spellMakerSubgroups, spellMakerDescriptionId,
-} from '../systems/spellEffects.js';
+} from '../systems/spell/spellEffects.js';
 import {
   MAX_EFFECTS_PER_SPELL, MAX_SPELL_NAME, DEFAULT_SPELL_ICON,
   blankEffectSettings, stepSetting, setSetting, buildCustomSpell, spellMakerCost,
@@ -101,7 +101,7 @@ import {
   updateAllowedButtons, enforceSelected, flagOfIndex,
   DEFAULT_TARGET_INDEX, DEFAULT_ELEMENT_INDEX,
   TARGET_FLAGS_ALL, ELEMENT_FLAGS_MAGIC_ONLY, SPELL_ICON_COUNT,
-} from '../systems/spellMaker.js';
+} from '../systems/spell/spellMaker.js';
 import { goldAmount } from '../systems/court.js';
 import { firstHotkey, shortcutBinding, sequenceString, normalizeCode } from '../systems/dialogShortcuts.js';
 import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language

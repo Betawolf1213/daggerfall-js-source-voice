@@ -221,7 +221,7 @@ export const raidLedgerState = (led) => ({ k: 'st', key: led.key, n: led.n, tg: 
 export const RAID_DAY_SALT = 5;
 const RAID_DAY_SEED = 0x44415953;   // 'DAYS'
 /**
- * THE DAY'S GENERATOR FOR ITS RAIDS - worldTick.js dayRng(day * 1440, DAY_SALT.raids): mulberry32 (systems/wind.js
+ * THE DAY'S GENERATOR FOR ITS RAIDS - worldTick.js dayRng(day * 1440, DAY_SALT.raids): mulberry32 (systems/wind/wind.js
  * seededRng) off the day, the world's day seed and the raids' salt. ONE copy for the relay and the client alike
  * (systems/raidingParties.js raidsForDay rolls off this one since RAID-ROLL); pinned equal to worldTick's.
  * @param {number} day @returns {() => number}

@@ -28,7 +28,7 @@ import { SOUND } from '../src/systems/soundClips.js';
 import { music, MusicService } from '../src/systems/music.js';
 import {
   musicGain, trackGain, setMusicMuted, SongPlayer, AudioSongPlayer,
-} from '../src/systems/songPlayer.js';
+} from '../src/systems/song/songPlayer.js';
 import {
   AmbientEffects, AMBIENT_RAIN_LOOP, muteAmbientForVideo, unmuteAmbientForVideo,
 } from '../src/systems/ambientEffects.js';

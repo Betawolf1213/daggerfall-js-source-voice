@@ -15,12 +15,12 @@ import { TEMPLATE } from '../src/systems/survival/food.js';
 import { CAMP_TEXT, campMenu, newCamp, packCamp, CAMP_KIND, campWire } from '../src/systems/survival/camp.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setSharedClock, setWorldMinutes, setOwnMinutes, advanceOwnMinutes } from '../src/systems/worldTick.js';
-import { createRestItem, REST_ITEM, REST_ITEM_TEXT, useSalts, _setRestItemsOnlineForTests } from '../src/systems/restItems.js';
-import { itemUseHandler } from '../src/systems/itemTemplates.js';
+import { createRestItem, REST_ITEM, REST_ITEM_TEXT, useSalts, _setRestItemsOnlineForTests } from '../src/systems/rest/restItems.js';
+import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { newSurvival } from '../src/systems/survival/needs.js';
 import { applyCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { createRestDeps } from '../src/scenes/shared.js';
-import { actAtChannelEnd, NIGHT_HOURS } from '../src/systems/restAct.js';
+import { actAtChannelEnd, NIGHT_HOURS } from '../src/systems/rest/restAct.js';
 import { fireLayoutInputs } from '../src/world/dungeonFires.js';
 import { resolveConsumable, clearQuickslots, setHotbarSlot, hotbarEntryForItem, hotbarPress } from '../src/systems/quickslots.js';
 

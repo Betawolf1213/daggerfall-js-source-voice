@@ -25,7 +25,7 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
-import { WAGON_KINDS } from '../src/systems/wagonKinds.js';
+import { WAGON_KINDS } from '../src/systems/wagon/wagonKinds.js';
 import { getSeed, setSeed } from '../src/formats/dfRandom.js';
 import { trs } from '../src/world/mat4.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
@@ -55,7 +55,7 @@ test('MERCHANT-YARDS THE TOWNS: Daggerfall\'s cities and towns (TownCity, TownHa
 test('MERCHANT-YARDS THE STOCK: the Stable sells a Horse, the Wagon Yard the Small Cart, the Open Wagon and the Caravan - each row minted as a shelf mints it, a fresh list every Buy (mutants: a horse at the wagon yard; the list kept)', () => {
   // PIN MOVED (STEED1/WAGONS4): the Stable stands three horses, each its own (stableHorses - test/steed1_horsecare.test.js),
   // and sells a sack of oats; the Wagon Yard a Wagon Repair Kit beside its three - the upkeep's items offline, and online
-  // while their switch is on (UPKEEP-ONLINE: on since 2026-10-12 - systems/upkeepItemRows.js)
+  // while their switch is on (UPKEEP-ONLINE: on since 2026-10-12 - systems/upkeep/upkeepItemRows.js)
   const s = yardStock('stable');
   assert.deepEqual(s.map((it) => [it.group, it.templateIndex, it.name]), [...Array(3).fill(['Transportation', TRANSPORT_HORSE, 'Horse']), ['UselessItems2', 1710, 'Sack of Oats']]);
   assert.ok(s[0].value > 0 && s[0].maxCondition > 0 && s[0].currentCondition === s[0].maxCondition, 'named, valued and whole, as a shelf\'s row');

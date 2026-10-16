@@ -31,7 +31,7 @@ import { Collider } from '../src/player/collider.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
-import { createOnlineHomes } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes } from '../src/systems/online/onlineHomes.js';
 import { RestWindow } from '../src/ui/restWindow.js';
 import { tinyRmb, fakeBlocks } from './wd3Fakes.mjs';
 import { standService } from './accountDb.mjs';

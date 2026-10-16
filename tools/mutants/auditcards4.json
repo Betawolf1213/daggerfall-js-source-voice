@@ -631,7 +631,7 @@
   },
   {
     "name": "AC4-C5-stake-spent-pending",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "'stake spent', ",
     "new": "",
     "tests": [
@@ -2148,7 +2148,7 @@
   },
   {
     "name": "AC4-D4-think-no-gather",
-    "file": "src/systems/cardTableSession.js",
+    "file": "src/systems/card/cardTableSession.js",
     "old": "Math.round((GATHER_S + RIFFLE_S) * 1000)",
     "new": "Math.round(RIFFLE_S * 1000)",
     "tests": [
@@ -2463,7 +2463,7 @@
   },
   {
     "name": "AC4-D4-delta-events-dropped",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "      f = { ...f, state: merged };",
     "new": "      f = { ...f, state: merged, events: [] };",
     "tests": [

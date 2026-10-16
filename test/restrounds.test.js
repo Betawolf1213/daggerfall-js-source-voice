@@ -20,7 +20,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { createPlayerTicker } from '../src/scenes/shared.js';
-import { RestSession, REST_WAIT_PER_HOUR, REST_TEXT } from '../src/systems/restSession.js';
+import { RestSession, REST_WAIT_PER_HOUR, REST_TEXT } from '../src/systems/rest/restSession.js';
 import { setSharedClock, setWorldMinutes, setOwnMinutes, ownMinutes, alignEntityClocks, resetMagicRoundMarker } from '../src/systems/worldTick.js';
 import { applySpell } from '../src/systems/effects.js';
 import { newSurvival } from '../src/systems/survival/needs.js';
@@ -139,7 +139,7 @@ test('REST-ROUNDS by source (LIVED1): every rest the four hosts drive spends its
     assert.doesNotMatch(s, /sharedEnd/, `${f}: no session counter is handed over any more`);
   }
   // the one session call, the same in every lane
-  const rs = src('src/systems/restSession.js');
+  const rs = src('src/systems/rest/restSession.js');
   assert.match(rs, /this\.deps\.advanceMinutes\(MINUTES_PER_TICK\);/);
   assert.doesNotMatch(rs, /this\._onlineSimMinutes\s*[+=]/, 'the session keeps no minute counter of its own');
 });

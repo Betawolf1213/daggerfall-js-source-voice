@@ -407,7 +407,7 @@ test('PX22: a quest is filed under its kind, never TITLED by it', () => {
   // S0000*.txt, so nothing about which quest is which changed.
   assert.match(read('src/ui/questRail.js'), /main: isMainQuest\(q\.questName\)/);
   // AUDIT 68 S31-questshare-mainquest-dup: MOVED, deliberately - the predicate had a second copy in
-  // systems/questShare.js; its one home is systems/quest/questLists.js and the rail imports it.
+  // systems/quest/questShare.js; its one home is systems/quest/questLists.js and the rail imports it.
   assert.match(read('src/ui/questRail.js'), /import \{ isMainQuestName as isMainQuest \} from '\.\.\/systems\/quest\/questLists\.js';/);
   assert.match(read('src/systems/quest/questLists.js'),
     /export const isMainQuestName = \(questName\) => \/\^S0000\/\.test\(questName \?\? ''\) \|\| questName === '_BRISIEN';/);

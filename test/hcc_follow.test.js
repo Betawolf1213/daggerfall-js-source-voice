@@ -1,4 +1,4 @@
-// HCC (2026-09-23): THE FOLLOWING, PINNED BY EXECUTION - systems/horseFollow.js's breadcrumb path, the follow
+// HCC (2026-09-23): THE FOLLOWING, PINNED BY EXECUTION - systems/horse/horseFollow.js's breadcrumb path, the follow
 // controller over a fake flat world, the wagon's trail and the grounded pose, all read off HorseFollowController /
 // HorseFollowPath / TrailingWagonRuntime's trail methods in TrailingWagon.dll's IL.
 import { test } from 'node:test';
@@ -7,8 +7,8 @@ import {
   HorseFollowPath, HorseFollowController, WagonTrail, groundedPoseStep, calculateFollowSpeed, observedPlayerSpeed, acceleratedFollowSpeed,
   shouldEnterCombatEvasion, isQualifyingThreatState, tryFindGround, isStepClear, isDirectPathClear, tryChooseGroundedStep,
   PATH_SAMPLE_DISTANCE, PATH_RETAINED_DISTANCE, PATH_SEED_BEHIND, THREAT_CLEARANCE, GENTLE_SPEED, NORMAL_SPEED, CATCH_UP_SPEED, STRONG_CATCH_UP_SPEED, STOP_TARGET_DISTANCE,
-} from '../src/systems/horseFollow.js';
-import { WAGON_FOLLOW_DISTANCE, TELEPORT_DISTANCE, RETAINED_TRAIL_DISTANCE, NORMAL_GROUND_OFFSET } from '../src/systems/horseCartLaw.js';
+} from '../src/systems/horse/horseFollow.js';
+import { WAGON_FOLLOW_DISTANCE, TELEPORT_DISTANCE, RETAINED_TRAIL_DISTANCE, NORMAL_GROUND_OFFSET } from '../src/systems/horse/horseCartLaw.js';
 import { quatForward } from '../src/world/quat.js';
 
 /** A flat world at y = groundY, with an optional wall the sphere cast refuses to cross, and threats. */

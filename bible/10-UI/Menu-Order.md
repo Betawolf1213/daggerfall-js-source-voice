@@ -66,7 +66,7 @@ where a picture cannot say it (a price, a name).
 - **MENU-ORDER e, the Notice Board's Market and Vendors, and the Stores' materials** (the owner, of the next surfaces:
   "Continue"). A Market material row, a supplier's row (the Weavers', the Apothecaries'), a pack piece listed for gold, a
   trader's piece and a Stores card each wear the game's own item picture before their name: the item the Stores would
-  hand the material out as (systems/profItems.js `mintMaterialItem`), or the piece itself, read off its inventory record
+  hand the material out as (systems/professions/profItems.js `mintMaterialItem`), or the piece itself, read off its inventory record
   and fitted to a row's box (`src/ui/menuPicture.js`, new: `materialPicture`, `itemPicture` - the pack's and the shop's
   own door, `requestFittedIcon`). The tabs read no game law, so the host hands the picture over (`picture`,
   `itemPicture` on the board's market, `picture` on its traders, a stall's and the Stores page's provider) and the tab

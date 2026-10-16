@@ -27,7 +27,7 @@ import { convertTilemap } from '../src/world/terrainSurface.js';
 import { buildDaySkyPanorama, buildNightSkyPanorama, buildFallbackSkyPanorama }
   from '../src/render/skyRenderer.js';
 import { layoutLocation } from '../src/world/locationLayout.js';
-import { mergeNamedBuildings } from '../src/systems/talkTopics.js';
+import { mergeNamedBuildings } from '../src/systems/talk/talkTopics.js';
 import { getNameBankOfRegion, BANK_TYPES } from '../src/characters/nameHelper.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

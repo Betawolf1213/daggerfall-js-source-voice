@@ -61,7 +61,7 @@ if (!target) { console.log(JSON.stringify(out, null, 2)); await browser.close();
 out.steps.target = target;
 
 const trapSpell = () => page.evaluate(async () => {
-  const { buildCustomSpell, blankEffectSettings } = await import('/src/systems/spellMaker.js');
+  const { buildCustomSpell, blankEffectSettings } = await import('/src/systems/spell/spellMaker.js');
   return buildCustomSpell({ slots: [{ type: 12, subType: 255,
     settings: { ...blankEffectSettings(), durationBase: 30, chanceBase: 100, chanceMod: 0 } }], rangeType: 1 });
 });

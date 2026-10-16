@@ -1,7 +1,7 @@
 // @ts-check
 // ARENA4 (2026-10-02, Mac: "Players can choose to watch AI fights, player fights, join a team (red and blue) and climb
 // esclating tiers of opponents, or choose to matchmake for a real opponent to take on in real time"): ONE BOUT ON THE
-// RELAY - the bout law (systems/arenaBout.js, the same law every screen runs) on the relay's clock, its referee (PVP-REF,
+// RELAY - the bout law (systems/arena/arenaBout.js, the same law every screen runs) on the relay's clock, its referee (PVP-REF,
 // Seats-Arc 6.1, built here: the relay holds every fighter's vitality and believes as much of a blow as its reach, its
 // rate, its weapon and its bucket allow) and, on the ladder, its AI fighters - the gate's `gateBrain` pattern on the
 // floor's flat ground, no pathing: each walks straight at its nearest foe, telegraphs its blow and lands it if the foe is
@@ -23,7 +23,7 @@
 // Not a DFU member. Ledger A (ARENA).
 import {
   newBout, boutTick, boutHit, boutMiss, boutFell, boutYield, boutPos, boutAtMarks, takeBoutEvents, boutLive, boutFighter, boutOver,
-} from '../systems/arenaBout.js';
+} from '../systems/arena/arenaBout.js';
 import {
   ARENA_FLOOR_CENTRE, ARENA_RING_R, ARENA_PVP_MARKS, ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_BUCKET_RATE, ARENA_BUCKET_DEPTH, ARENA_MELEE_REACH,
   ARENA_POSE_SLACK, ARENA_BOW_REACH, ARENA_SPELLS_IN, ARENA_SPELL_WINDOW_MS, ARENA_SPEED_MAX, ARENA_SPEED_SLACK, ARENA_JOIN_WAIT_MS,
@@ -37,7 +37,7 @@ import { BLOW, blowShapesOf, inBlow } from '../ai/blowShapes.js';   // AUDIT ARE
 const C = ARENA_FLOOR_CENTRE;
 /** A point of the floor's frame (`[x, z]` from the centre) in the made level's, and back. */
 const toLevel = (xz) => [C[0] + xz[0], C[2] + xz[1]];
-/** THE MARKS: `n` per side on the floor's long axis (x) for two sides, round the ring for more - systems/arenaFighters.js
+/** THE MARKS: `n` per side on the floor's long axis (x) for two sides, round the ring for more - systems/arena/arenaFighters.js
  *  boutMarks' law, pinned equal. */
 export const MARK_APART = 6;
 export function arenaMarks(sides, perSide) {
@@ -52,7 +52,7 @@ export function arenaMarks(sides, perSide) {
   }
   return out;
 }
-/** A bout's seed - the client names the relay's fighters by it (systems/arenaFighters.js fighterIdentity), so every
+/** A bout's seed - the client names the relay's fighters by it (systems/arena/arenaFighters.js fighterIdentity), so every
  *  screen bills them alike. */
 export const arenaBoutSeed = (o) => parseInt(String(o).slice(0, 8), 16) >>> 0;
 /** An AI fighter's temper at the yield line - a class fighter's from the seed, a monster's none (it fights to the floor). */
@@ -286,7 +286,7 @@ export function cheerOf(st, key, c, now) {
 function takeWords(st) {
   const e = st.b ? takeBoutEvents(st.b) : [];
   if (!e.length) return [];
-  // AUDIT PRE-MERGE 1003 O1: THE HEALERS ON THE RELAY'S SAND - the law's 'heal' heals nobody (systems/arenaBout.js: on a
+  // AUDIT PRE-MERGE 1003 O1: THE HEALERS ON THE RELAY'S SAND - the law's 'heal' heals nobody (systems/arena/arenaBout.js: on a
   // screen's own bout the host's door does), and here the relay is the host: every fighter whole at the word, so the
   // `hp` that rides with it says so (it said the bout's end health, and every fighter's screen struck its own healed
   // player back down to it), and so does every `st` after

@@ -1,5 +1,5 @@
 // WBX9 (2026-09-26, Mac: "The music needs to be louder and more intense"): THE WARDEN'S SCORE, LOUDER AND HARDER.
-// Louder: every voice's level raised and each song played at its own level over the player's (systems/songPlayer.js
+// Louder: every voice's level raised and each song played at its own level over the player's (systems/song/songPlayer.js
 // `song.level` - one gain between the channels and the fader; every song MIDI.BSA holds carries none and plays at 1).
 // More intense: nothing waits - the strings, the brass stabs and the whole kit from the first bar, the choir from the
 // ninth, then from the first; the ostinato driving in sixteenths as the phases turn; the third song's choir chanting on
@@ -7,8 +7,8 @@
 // through the real player by tools/gateScoreProbe.mjs. Design: bible/11-Multiplayer/World-Bosses.md section 12.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gateScoreSongs, SCORE_LEVEL, SCORE_TPQ, SCORE_CHANNELS } from '../src/systems/gateScore.js';
-import { SongPlayer, songLevel, SONG_LEVEL_MAX } from '../src/systems/songPlayer.js';
+import { gateScoreSongs, SCORE_LEVEL, SCORE_TPQ, SCORE_CHANNELS } from '../src/systems/gate/gateScore.js';
+import { SongPlayer, songLevel, SONG_LEVEL_MAX } from '../src/systems/song/songPlayer.js';
 
 const BAR = 4 * SCORE_TPQ;
 const notes = (song, ch) => song.events.filter((e) => e.type === 'noteOn' && e.channel === ch);

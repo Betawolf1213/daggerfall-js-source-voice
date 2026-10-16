@@ -1,12 +1,12 @@
 // @ts-check
 // PACE-DIALS (2026-10-06): THE STEPPERS - Speed and Near enemies, each on the ladder 5, 10, 20, 30, 40, 60, 100 (x100 on
-// a road alone; systems/travelPace.js holds the rule). One builder for every place they stand: the Overworld's block,
+// a road alone; systems/travel/travelPace.js holds the rule). One builder for every place they stand: the Overworld's block,
 // journey or none (ui/travelViewHud.js), the enhanced journey bar away from the Overworld (ui/enhancedTravelControl.js),
 // and THE PACE BOX - a small box of its own for every other skin (the classic strip, GrimoireUI) while a journey runs,
 // so the dials and their rule are the same in every UI, online or off.
 import {
   TRAVEL_PACE_DIALS, TRAVEL_PACE_TEXT, PACE_STEPS, OPEN_PACE_MAX, paceNow, paceCanRise, paceOnRoad, stepTravelPace, onTravelPace,
-} from '../systems/travelPace.js';
+} from '../systems/travel/travelPace.js';
 
 /**
  * Build the steppers. `cls` prefixes every class (`tview` gives `tview-pace`, `tview-pace-row`, ...). Returns the root,

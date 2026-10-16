@@ -1,10 +1,10 @@
 // ENEMY-PACE: the slowest pace the clock runs at with enemies holding a journey. RATE-LAW (2026-10-04, Mac: "Remove
 // travel options dials"): the pace is FIXED now - the panel's near-enemies stepper is gone - and the law has one home,
-// systems/travelThreat.js `foePaced`, which both of the host's governed paths call.
+// systems/travel/travelThreat.js `foePaced`, which both of the host's governed paths call.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { JOURNEY_FOE_PACE, foePaced } from '../src/systems/travelThreat.js';
+import { JOURNEY_FOE_PACE, foePaced } from '../src/systems/travel/travelThreat.js';
 
 const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const panel = readFileSync(new URL('../src/ui/enhancedTravelControl.js', import.meta.url), 'utf8');

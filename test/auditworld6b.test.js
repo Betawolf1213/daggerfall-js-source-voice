@@ -16,7 +16,7 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES, ENCOUNTER_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
 import { runDayChange, dayRollsFor, setSharedClock, sharedClockOn, MINUTES_PER_DAY, DAY_SALT, worldRegionPricesOn } from '../src/systems/worldTick.js';
 import { regionPriceAdjustment } from '../src/systems/shopStock.js';   // ECON1: the world's index through the one seam
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

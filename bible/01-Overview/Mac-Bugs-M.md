@@ -10,7 +10,7 @@ times in a week: **the producer existed and had one reader.**
 
 ## What was already there
 
-`systems/itemInfo.js` has had `weaponDamageString` and `armourModString`
+`systems/item/itemInfo.js` has had `weaponDamageString` and `armourModString`
 since **U25**, both faithful to DFU:
 
 | | port | DFU |

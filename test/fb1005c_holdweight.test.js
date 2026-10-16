@@ -2,7 +2,7 @@
 // can never be retrieved from storage" - "Parts of Small Ship 'I'" at 450 kg in a chest, the bearer's most 304).
 // PackBoat lays her hold's weight on her parts (SHIP-PACK keeps it, as the mod's own did) and a hold has no ceiling but
 // her speed: a ship packed off a plundered hold was ONE item heavier than the bearer could ever carry, AddItem took it
-// unasked, and once it was set down every take of it (CanCarryAmount, systems/itemTransfer.js planTake) refused it for
+// unasked, and once it was set down every take of it (CanCarryAmount, systems/item/itemTransfer.js planTake) refused it for
 // good. Parts no take could ever lift are not made now (systems/comeSailAway/comeSailAway.js partsTooHeavy) - the pick-up says why,
 // the boat menu says why, a fast travel and a landfall leave her where she lies, her hold aboard; a lost boat is packed
 // whatever she weighs. Come Sail Away's real runtime over test/csaScene.mjs, the world host's seams as world.js gives.

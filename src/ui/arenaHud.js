@@ -37,9 +37,9 @@
 //
 // Not a DFU member. Ledger A (ARENA).
 
-import { ARENA_TEXT } from '../systems/arenaText.js';
-import { boutTimeLeft, fighterShare, YIELD_SHARE } from '../systems/arenaBout.js';
-import { moodBand, darlingOf, villainOf } from '../systems/arenaCrowd.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
+import { boutTimeLeft, fighterShare, YIELD_SHARE } from '../systems/arena/arenaBout.js';
+import { moodBand, darlingOf, villainOf } from '../systems/arena/arenaCrowd.js';
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS } from './pixelifyFive.js';
 
 /** Where it stands: under the compass strip, centred (the gate bar's place - never both: the court has no arena).
@@ -57,9 +57,9 @@ export const STANDS_KEYS = Object.freeze({ Equal: 1, Minus: -1 });
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
 
 /**
- * WHAT THE HUD SAYS for `bout` (systems/arenaBout.js) and `crowd` (systems/arenaCrowd.js) at `now`, or null (no bout,
+ * WHAT THE HUD SAYS for `bout` (systems/arena/arenaBout.js) and `crowd` (systems/arena/arenaCrowd.js) at `now`, or null (no bout,
  * or one done). `you` my fighter's id when I fight (null when I watch), `stamina` my fatigue's share (0..1).
- * `bark` the crowd's last shout (systems/arenaCrowd.js crowdBark), shown under its meter while it rings.
+ * `bark` the crowd's last shout (systems/arena/arenaCrowd.js crowdBark), shown under its meter while it rings.
  * `{ phase, left: Row[], right: Row[], timer, crowd: { frac, band, word } | null (`quiet`: no crowd), stamina, hint, bark }` - each
  * Row `{ id, name, frac, out, you, tag, banner, team }`. ARENA3: `teams` each fighter's banner by id ('red' | 'blue'). Pure.
  * ARENA4b: `stands` `{ ready }` while I watch a relay's bout from the stands (null otherwise): the model's `stands`

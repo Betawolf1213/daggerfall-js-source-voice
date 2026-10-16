@@ -18,12 +18,12 @@ import {
   SUNLIGHT_TRAVEL_TEXT, VAMPIRE_HOOD_TEXT, VAMPIRE_STATS, VAMPIRE_STAT_MOD,
 } from '../src/systems/vampirism.js';
 import { VAMPIRE_CLANS } from '../src/systems/infection.js';
-import { createRandomClothing, ITEM_GROUPS } from '../src/systems/loot.js';
+import { createRandomClothing, ITEM_GROUPS } from '../src/systems/loot/loot.js';
 import { createTempItem, CREATE_ITEM_ROWS } from '../src/systems/createItem.js';
 import { equipItem } from '../src/systems/equip.js';
 import { nextVariant, toggleHood } from '../src/systems/useItem.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
-import { arrivalClampMinutes } from '../src/systems/travel.js';
+import { arrivalClampMinutes } from '../src/systems/travel/travel.js';
 import { MINUTES_PER_DAY, isDayFromMinutes } from '../src/systems/gameDate.js';
 import { setSharedClock, sharedClockOn, worldMinutes } from '../src/systems/worldTick.js';
 import { sharedClassicMinutes, wallMsForClassicMinutes } from '../src/net/wire.js';

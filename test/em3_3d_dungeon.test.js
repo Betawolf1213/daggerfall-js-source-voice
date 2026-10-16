@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildSolid, orbitFrame, toSheet, fromSheet, easeOrbit, ORBIT, SOLID, ORBIT_BUTTONS } from '../src/ui/inkDungeonSolid.js';
 import { createAutomapSheet } from '../src/ui/automapSheet.js';
-import { levelField, deriveFloors, floorTriangles, planBounds } from '../src/systems/automapFloors.js';
+import { levelField, deriveFloors, floorTriangles, planBounds } from '../src/systems/automap/automapFloors.js';
 
 const row = (key, y, x0, z0, x1, z1) => ({
   key, aabb: { min: [x0, y, z0], max: [x1, y, z1] },
@@ -86,7 +86,7 @@ test('EM3-3D fix: with a walked trail, only floor in sight of it is drawn; the r
 });
 
 test('EM3-3D fix: the trail is kept on the record and is never marked partial by the scan that runs before it', async () => {
-  const { automapTrailTick, automapTrailPoints, enterDungeonAutomap, revealAllAutomap, hideAllAutomap } = await import('../src/systems/automap.js');
+  const { automapTrailTick, automapTrailPoints, enterDungeonAutomap, revealAllAutomap, hideAllAutomap } = await import('../src/systems/automap/automap.js');
   const fresh = { revealed: new Set() };
   assert.equal(automapTrailTick(fresh, [3.2, 1.7, 7.9]), true);
   assert.equal(automapTrailTick(fresh, [3.4, 1.7, 7.1]), false, 'one cell is one point');
@@ -260,7 +260,7 @@ test('EM3-3D fix: a turn re-cuts the kept classification instead of rebuilding w
 test('EM3-3D classic: a face is drawn exactly when the GAME would draw it - its wound normal at the eye', async () => {
   const { rowMesh, createDungeonInk, SLICE_ABOVE } = await import('../src/ui/inkDungeonGL.js');
   const { perspective, lookAt, mirrorProjectionX } = await import('../src/world/mat4.js');
-  const { slicingPositionY, DEFAULT_SLICING_BIAS_Y } = await import('../src/systems/automap.js');
+  const { slicingPositionY, DEFAULT_SLICING_BIAS_Y } = await import('../src/systems/automap/automap.js');
   const { EYE_HEIGHT } = await import('../src/player/motor.js');
   // the world pass's own matrices: mirrored perspective over a right-handed lookAt, culled with frontFace(CW)
   const P = mirrorProjectionX(perspective(1, 1.5, 0.1, 100)), V = lookAt([0, 10, -3], [0, 0, 0], [0, 1, 0]);
@@ -291,7 +291,7 @@ test('EM3-3D classic: a step\'s riser joins its flight, so a stair is never inke
 
 test('FIELD BUGS 2026-10-05c RAMP-INK ("where there is a steep upward incline in a hallway, never gets filled properly"): a ramp the player walks is inked as floor - 55 and 65 degrees, Daggerfall\'s steep hallways - by the plan\'s own law (automapFloors FLOOR_NY, the motor\'s slope limit), and a face steeper than the motor walks stays a wall; the shader reads the one constant, no literal (mutants: the old 0.6, the law not the plan\'s)', async () => {
   const { rowMesh, FLOOR_FACE_NY, faceInkOf } = await import('../src/ui/inkDungeonGL.js');
-  const { FLOOR_NY } = await import('../src/systems/automapFloors.js');
+  const { FLOOR_NY } = await import('../src/systems/automap/automapFloors.js');
   assert.equal(FLOOR_FACE_NY, FLOOR_NY, 'one law for the plan and the 3D sheet');
   // a hallway's climb along +z, wound so its face looks up (as the world pass culls it)
   const ramp = (deg) => {
@@ -444,7 +444,7 @@ test('TURN-FIXED: a right-drag turns about the middle of what is explored, where
 });
 
 test('TP-SEEN: a teleporter shows once its spot is seen, and where it leads stays unknown until walked', async () => {
-  const { teleporterConnection, recordTeleporterConnection } = await import('../src/systems/automap.js');
+  const { teleporterConnection, recordTeleporterConnection } = await import('../src/systems/automap/automap.js');
   const c = teleporterConnection({ pos: [3, 0, 3], yawDeg: 0 }, { pos: [12, 0, 3], yawDeg: 90 });
   const portals = new Map([[c.key, c.conn]]);
   const r = rec(['b']);   // only the corridor seen, not the room the portal stands in

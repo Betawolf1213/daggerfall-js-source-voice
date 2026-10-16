@@ -37,7 +37,7 @@ import { ItemMakerWindow } from '../src/ui/itemMakerWindow.js';
 import { isEntityImmuneToDisease, applySpell, BUFF_START_TEXT } from '../src/systems/effects.js';
 import { startDisease, inflictDisease } from '../src/systems/diseases.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 import { createArrestFlow } from '../src/scenes/arrestFlow.js';

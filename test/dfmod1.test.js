@@ -18,7 +18,7 @@ import { billboardXmlScale } from '../src/world/billboardXml.js';
 import { textureStoreKey } from '../src/scenes/dataSource.js';
 import { textureEntry } from '../src/systems/textureReplacement.js';
 import { seasonsAssetKey } from '../src/systems/seasonsIliacBayAssets.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');
 

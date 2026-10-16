@@ -330,7 +330,7 @@ import {
 // runtime-only cycle shape as climbing.js above - moveScanner.js reads
 // CAPSULE_RADIUS inside its constructor, never at module level.
 import { PlayerMoveScanner } from './moveScanner.js';
-import { getBool } from '../systems/settings.js';   // AUDIT 28 W5: Controls/ToggleSneak (StartGameBehaviour :277)
+import { getBool } from '../systems/settings/settings.js';   // AUDIT 28 W5: Controls/ToggleSneak (StartGameBehaviour :277)
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { TRANSPORT_MODES, isRiding, rideBaseFor, canRunUnlessRiding, rideWalks } from '../systems/transport.js';   // TR1: the mount's speed, run and climb laws; HORSE-WALK: horse care's walk
 import { timeScale } from '../systems/timeScale.js';   // TO1: Unity's Time.fixedDeltaTime rides Time.timeScale (see update())
@@ -558,7 +558,7 @@ export class PlayerMotor {
     this.waterWalking = false;
     this.waterSurfaceY = null;   // the current block's water surface (world y), null when dry
     this.swimSpeedScale = 1;     // DW-D: Iliac Puddle No More's swim speed multiplier (a walk speed modifier while swimming - swimSpeedNow)
-    this.rideSpeedScale = 1;     // STEED1/WAGONS4: the ride's pace - a horse's Speed, a wagon's soundness and its team's Strength (systems/upkeepRuntime.js rideScale; 1 with both off)
+    this.rideSpeedScale = 1;     // STEED1/WAGONS4: the ride's pace - a horse's Speed, a wagon's soundness and its team's Strength (systems/upkeep/upkeepRuntime.js rideScale; 1 with both off)
     this.rideWalking = false;    // HORSE-WALK: the step's ride took the walk (horse care's horse, not galloping) - the gait the clop, the riding sprite's clock, the 3D horse and the saddle panel read
     this.jumped = false;         // set for the frame a jump actually starts (fatigue/tally consumer)
     this.crouching = false;      // P12: toggled via input.crouch (edge); standing needs headroom
@@ -1134,7 +1134,7 @@ export class PlayerMotor {
     const a = this.arena;
     const c = a?.centre;
     if (!c || !(a.radius > 0)) return;
-    // AUDIT ARENA-LADDER: A CEILING OVER THE SAND (the owner's kit law, 'No cheese spells or potions' - systems/arenaKit.js
+    // AUDIT ARENA-LADDER: A CEILING OVER THE SAND (the owner's kit law, 'No cheese spells or potions' - systems/arena/arenaKit.js
     // SAND_CEILING_M): a ring that names one (`ceilAbove`, metres over its centre - the sand) holds the body under it, its
     // rise taken away; the duel's and the gate's rings name none, and their height is never touched
     if (Number.isFinite(a.ceilAbove) && this.pos[1] > c[1] + a.ceilAbove) { this.pos[1] = c[1] + a.ceilAbove; if (this.velY > 0) this.velY = 0; }

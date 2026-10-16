@@ -24,7 +24,7 @@ asked it. They asked the archive law alone (`world/climateSwaps.js` groundIsSnow
 
 - Snowfall's deep snow (`scenes/snowfallHost.js`) laid its snow over the swamp, bare only where its own snowy 403's
   masks leave the roads - the white ground with the green road strip. DFU's two mods clash the same way.
-- The enhanced weather's ground law (WEATHER2a, `systems/weatherSim.js` overGround) turned every winter rain and storm
+- The enhanced weather's ground law (WEATHER2a, `systems/weather/weatherSim.js` overGround) turned every winter rain and storm
   there into snow - about 37% of a jungle's winter days, in a climate DFU's table never snows.
 
 And the desert's half: the weather map's snow systems, born in a snowy climate's winter, drift tens of kilometres and
@@ -76,7 +76,7 @@ streamed world.
 - **TV-BURST (3, the first open).** OW-DUNGEONS (2026-10-08, pull request #690) stands each nearby dungeon's own model
   under the view, and the view's first frame started all twelve loads inside its draw - each one's blocks laid and its
   ARCH3D meshes read on that frame, its model built and its pictures uploaded straight after. They start one a frame
-  now, the nearest first, none until the view is fully up (`systems/travelDungeonModels.js` startDungeonLoads), and the
+  now, the nearest first, none until the view is fully up (`systems/travel/travelDungeonModels.js` startDungeonLoads), and the
   view coming down lets every model go to its shelf (they were held, undrawn, until a load).
 - **TV-PIN (3, "past map pixels don't get unloaded").** Those models' climate pictures went up through the host's
   pinned door, so every climate and season picture of every dungeon the view ever stood stayed on the GPU for the
@@ -116,7 +116,7 @@ off, with its own sign. `ARMRAM01.RMB` record 10 is the same (sign 43746). Beaut
 as a tavern but leaves the same mismatch in its own `TVRNAS04` record 6, `TVRNAS06` record 5 (the block it rebuilt as
 houses, `03-World/Beautiful-Towns.md`) and `TVRNAS07` record 8 - the author's bytes, checked by sha256. The port reads
 a building's type from the block's list and a door's key from its record, as DFU does (`world/rmbLayout.js`,
-`systems/talkTopics.js`), and stands a shop sign as an ordinary scene model tied to no building, as DFU does. Of
+`systems/talk/talkTopics.js`), and stands a shop sign as an ordinary scene model tied to no building, as DFU does. Of
 BLOCKS.BSA's 249 tavern signs, 244 hang at a tavern's door. Making that house a tavern would be a departure from DFU,
 and would get no name: the town's MAPS.BSA list names one tavern per tavern record. Nothing changed.
 
@@ -144,7 +144,7 @@ maya's two screenshots came from the same place: the wilds past the Alik'r, the 
 beyond the edge on purpose, on by default and the player's own online (`03-World/Tamriel.md`). Two laws still ended at
 the edge.
 
-**The crash (9).** A click on the Overworld plans a route (`systems/travelRoute.js` `planRoute`), and its search box was
+**The crash (9).** A click on the Overworld plans a route (`systems/travel/travelRoute.js` `planRoute`), and its search box was
 clamped to the map's 1000 x 500. With the traveller and the spot both past one edge - two pixels apart west of the
 map, as the view's reach makes them - the clamp turned the box inside out, its width negative, and the typed arrays
 threw (`Invalid typed array length: -13` in Node, `invalid array length` in maya's browser; reproduced first). One end

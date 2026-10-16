@@ -18,12 +18,12 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createNightWatch, nightMoved, carriedNightAction, stampOf, memberPresent, PARTY_NIGHT_GAP_MS, PARTY_NIGHT_FRESH_MS } from '../src/systems/partyRestLaw.js';
+import { createNightWatch, nightMoved, carriedNightAction, stampOf, memberPresent, PARTY_NIGHT_GAP_MS, PARTY_NIGHT_FRESH_MS } from '../src/systems/party/partyRestLaw.js';
 import {
   nightStamp, nightKindOf, isNightStamp, runRestNight, ambushNight, spendRoomNight, roomNightsLeft, nightWhole, carriedNightEnd,
   channelBroken, setNightListener, REST_ACT_TEXT, NIGHT_INTERVAL_MINUTES, OWN_MINUTES_PER_REAL_MINUTE, REST_CHANNEL_SECONDS,
-} from '../src/systems/restAct.js';
-import { RestSession, REST_TEXT, canRest, registerPreventRestCondition, unregisterPreventRestCondition } from '../src/systems/restSession.js';
+} from '../src/systems/rest/restAct.js';
+import { RestSession, REST_TEXT, canRest, registerPreventRestCondition, unregisterPreventRestCondition } from '../src/systems/rest/restSession.js';
 import { rentRoom, roomRemainingHours } from '../src/systems/tavern.js';
 import { quietNights } from '../src/systems/encounters.js';
 import { createRestDeps } from '../src/scenes/shared.js';
@@ -197,7 +197,7 @@ test('AUDIT REST II P3 by source: every host\'s encounter-raise route tells the 
   assert.match(w, /\n    abortRestForEnemySpawn: \(\) => \{\n      ambushNight\(\);[^\n]*\n      if \(townTalk\.overlay\?\.isRestWindow\) townTalk\.overlay\.abortForEnemySpawn\?\.\(\);\n    \},\n/, 'world.js');
   const wm = rd('src/scenes/worldModes.js');
   assert.match(wm, /\n    raiseOnEncounterEvent\(\) \{\n      ambushNight\(\);[^\n]*\n      if \(mode === 'dungeon'\) \{ dungeonCtx\?\.abortRestForEnemySpawn\?\.\(\); return; \}\n      if \(interiorOverlay\?\.isRestWindow\) \{ interiorOverlay\.abortForEnemySpawn\?\.\(\); return; \}/, 'worldModes.js');
-  assert.match(wm, /^import \{ ambushNight \} from '\.\.\/systems\/restAct\.js';/m);
+  assert.match(wm, /^import \{ ambushNight \} from '\.\.\/systems\/rest\/restAct\.js';/m);
   const d = rd('src/scenes/dungeonContext.js');
   assert.match(d, /\n    abortRestForEnemySpawn\(\) \{\n      ambushNight\(\);[^\n]*\n      if \(activeOverlay\?\.isRestWindow\) activeOverlay\.abortForEnemySpawn\?\.\(\);\n    \},\n/, 'dungeonContext.js');
   const sleep = w.slice(w.indexOf('const sleepCarriedNight = (name, theirs) => {'), w.indexOf('setNightListener((kind) =>'));

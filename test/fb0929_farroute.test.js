@@ -19,7 +19,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { planRoute, routeLegs, routeDrawPoints } from '../src/systems/travelRoute.js';
+import { planRoute, routeLegs, routeDrawPoints } from '../src/systems/travel/travelRoute.js';
 import { createTravelView, ROUTE_DOT_PX, ROUTE_DOTS_MAX } from '../src/scenes/travelView.js';
 import { forwardOf, TV_RISE_S } from '../src/player/travelCamera.js';
 import { projectToScreen } from '../src/player/tapRay.js';

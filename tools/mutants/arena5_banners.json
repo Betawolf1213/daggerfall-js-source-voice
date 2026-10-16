@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA5-HALVES-SIDE",
-    "file": "src/systems/arenaCrowd.js",
+    "file": "src/systems/arena/arenaCrowd.js",
     "old": "out[f.side] = b;",
     "new": "out[0] = b;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA5-HALF-OF-FLIPPED",
-    "file": "src/systems/arenaCrowd.js",
+    "file": "src/systems/arena/arenaCrowd.js",
     "old": "(x < 0 ? 0 : 1)",
     "new": "(x < 0 ? 1 : 0)",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA5-WASH-ANY-BANNER",
-    "file": "src/systems/arenaCrowd.js",
+    "file": "src/systems/arena/arenaCrowd.js",
     "old": "(banner === 'red' || banner === 'blue' ? CROWD_WASH[banner] : null)",
     "new": "(banner ? CROWD_WASH[banner] ?? CROWD_WASH.red : null)",
     "tests": [

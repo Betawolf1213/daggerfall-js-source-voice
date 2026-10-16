@@ -20,7 +20,7 @@ import { xpForRank, SKINNING_KNIFE, TRACE_ACT, HIGH_HIDES_PER_DAY } from '../src
 import { createBodyStamps, bodiesOf, huntKind, BODY_REACH, BODY_STEEPEST_DEG } from '../src/scenes/huntHost.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { registerPlayerKillListener, reportPlayerKill } from '../src/systems/playerKills.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { CORPSE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 

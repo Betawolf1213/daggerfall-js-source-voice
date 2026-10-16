@@ -1,12 +1,12 @@
-// BOUNTY1 (2026-09-28): the town's bounty boards - the law (systems/bountyBoard.js), the piece (systems/bountyReward.js),
+// BOUNTY1 (2026-09-28): the town's bounty boards - the law (systems/bounty/bountyBoard.js), the piece (systems/bounty/bountyReward.js),
 // the host's hunt from Take to payday (scenes/bountyHost.js) and the party pose's `bq` (net/wire.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   bountyTierFor, bountyGold, bountyItemRule, bountySites, boardPostings, parseBountyId, questBoardIndices,
   newBountyLedger, takeBounty, lapseBounties, bountyPackOwner, bountyDungeons, BOUNTY_LIFETIME_MINUTES, BOUNTY_PACK_MIN, BOUNTY_PACK_MAX,
-} from '../src/systems/bountyBoard.js';
-import { mintBountyItem } from '../src/systems/bountyReward.js';
+} from '../src/systems/bounty/bountyBoard.js';
+import { mintBountyItem } from '../src/systems/bounty/bountyReward.js';
 import { createBountyHost } from '../src/scenes/bountyHost.js';
 import { validPartyPose } from '../src/net/wire.js';
 import { readBountyMarks, bountyRingTexels } from '../src/ui/bountyMapMark.js';
@@ -144,7 +144,7 @@ test('BOUNTY1: the party - a share is taken up, a mate\'s clear pays me, one pac
   assert.equal(lapseBounties(ledger, BOUNTY_LIFETIME_MINUTES - 1).length, 0);
   const at = { px: 301, py: 201 };
   const mates = [{ acct: 'a-1', p: { px: 301, py: 201, in: 0, bq: [{ i: '900.300.200.1.5' }] } }, { acct: 'a-0', p: { px: 1, py: 1, in: 0, bq: [{ i: '900.300.200.1.5' }] } }];
-  const { bountyHuntKey } = await import('../src/systems/bountyBoard.js');
+  const { bountyHuntKey } = await import('../src/systems/bounty/bountyBoard.js');
   const hunt = bountyHuntKey('900.300.200.1.5');
   assert.equal(bountyPackOwner('b-9', mates, hunt, at), 'a-1', 'the lowest account on the pixel');
   assert.equal(bountyPackOwner('a-0x', [], hunt, at), 'a-0x');
@@ -168,7 +168,7 @@ test('BOUNTY1: the party - a share is taken up, a mate\'s clear pays me, one pac
   mateRows = [{ i: '900.300.200.2.4', c: 1, t: 900 * 1440 + 60 }];
   host.tick(1);
   assert.equal(host.held().length, 0);
-  const { postingFromId } = await import('../src/systems/bountyBoard.js');
+  const { postingFromId } = await import('../src/systems/bounty/bountyBoard.js');
   const shared = postingFromId('900.300.200.2.5', { sites: bountySites(300, 200, allLand) });
   assert.equal(entity.goldPieces, shared.gold, 'paid at my level (5) and the hunt\'s pack');
   assert.deepEqual(host.poseField(), { bq: [{ i: '900.300.200.2.5', c: 1, t: 900 * 1440 + 60 }] });
@@ -286,7 +286,7 @@ test('BOUNTY-FARM: only notices about farms raise one, never a dungeon\'s', () =
 });
 
 test('BOUNTY1: a bounty is in the quest log as a side quest with its clock, and the journal can abandon it', async () => {
-  const { abandonBountyQuest, isBountyQuestId, bountyQuestShareable } = await import('../src/systems/bountyJournal.js');
+  const { abandonBountyQuest, isBountyQuestId, bountyQuestShareable } = await import('../src/systems/bounty/bountyJournal.js');
   const { questRail } = await import('../src/ui/questRail.js');
   let board = null;
   const host = createBountyHost({
@@ -363,7 +363,7 @@ test('BOUNTY-TRAIL: a pack of six or more is hunted in two groups, the second fo
 });
 
 test('BOUNTY-TIER: a share is taken up only in its tier; a helper of another tier still sees the farm', async () => {
-  const { bountyTierFits, bountyHuntKey, postingFromId } = await import('../src/systems/bountyBoard.js');
+  const { bountyTierFits, bountyHuntKey, postingFromId } = await import('../src/systems/bounty/bountyBoard.js');
   assert.equal(bountyTierFits('900.300.200.1.4', 5), true, 'levels 4 and 5 are one tier');
   assert.equal(bountyTierFits('900.300.200.1.14', 3), false);
   assert.equal(bountyHuntKey('900.300.200.1.4'), bountyHuntKey('900.300.200.1.5'));
@@ -422,7 +422,7 @@ test('BOUNTY-TIER: the sharer is told which mates are too low or too high level 
 });
 
 test('BOUNTY-TIERLABEL: a notice names its tier and the levels in it', async () => {
-  const { bountyTierLabel } = await import('../src/systems/bountyBoard.js');
+  const { bountyTierLabel } = await import('../src/systems/bounty/bountyBoard.js');
   assert.deepEqual([1, 4, 6, 11, 15, 30].map(bountyTierLabel), [
     'Tier 1 (levels 1\u20133)', 'Tier 2 (levels 4\u20135)', 'Tier 3 (levels 6\u201310)', 'Tier 4 (levels 11\u201314)', 'Tier 5 (levels 15+)', 'Tier 5 (levels 15+)']);
   const p = boardPostings({ day: 900, ...TOWN, level: 5, sites: bountySites(TOWN.px, TOWN.py, allLand) })[0];

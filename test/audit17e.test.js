@@ -7,14 +7,14 @@ import assert from 'node:assert/strict';
 import { clearCrimeOnLocationExit } from '../src/systems/court.js';
 import { equipItem, unequipSlot, rebuildEquipState, armorValuesOf, BODY_PARTS, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { isEnchanted, isStackable } from '../src/systems/inventory.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { calculateCost, calculateTradePrice } from '../src/systems/shopStock.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import { weaponTypeForItem, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { safeScrollIndex } from '../src/ui/itemScroller.js';
-import { inventoryItemImage, usesWorldTexture, templateByIndex } from '../src/systems/itemTemplates.js';
-import { TOPIC_CATEGORIES, isBuildingTypeSkipped } from '../src/systems/talkTopics.js';
+import { inventoryItemImage, usesWorldTexture, templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { TOPIC_CATEGORIES, isBuildingTypeSkipped } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 

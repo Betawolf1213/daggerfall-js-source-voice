@@ -25,8 +25,8 @@ import {
   resetWeatherSim, setWeatherFieldLaw, setWeatherMapLaw, setSnowGroundLaw, sampleWeatherField, currentWeather,
   tickWeather, rollClimateWeathersForDay, weatherForClimate, weatherArrivalStamp, mapGround, WEATHER_ENUM,
   sampleWeatherIndoors, restoreWeather, weatherJumpStamp, weatherCrossingStamp,
-} from '../src/systems/weatherSim.js';
-import { weatherAt, systemsNear, birthsIn, BIRTHS_MEMO, forecastAt } from '../src/systems/weatherMap.js';
+} from '../src/systems/weather/weatherSim.js';
+import { weatherAt, systemsNear, birthsIn, BIRTHS_MEMO, forecastAt } from '../src/systems/weather/weatherMap.js';
 import { createDistantStorms, THUNDER_LATE_SECONDS } from '../src/systems/distantStorms.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 

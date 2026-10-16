@@ -26,11 +26,11 @@ import {
   NoSuchCommandError, makeConsoleCommand, ConsoleInputHistory, HELP_COMMAND,
   onConsoleLog, consoleInputHistory,
 } from '../src/systems/consoleCommands.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import {
   enterDungeonAutomap, exitDungeonAutomap, buildRevealIndex, bindAutomapLayout,
   resetAutomapStore, registerAutomapConsoleCommands, automapDebugTeleportMode,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import { ExteriorAutomapWindow, registerExteriorAutomapConsoleCommands } from '../src/ui/exteriorAutomapWindow.js';
 import { registerTravelMapConsoleCommands, revealUndiscoveredLocations } from '../src/ui/travelMapWindow.js';
 

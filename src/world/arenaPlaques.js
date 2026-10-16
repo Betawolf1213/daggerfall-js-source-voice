@@ -1,7 +1,7 @@
 // @ts-check
 // ARENA5 (2026-10-03): THE HALL OF CHAMPIONS' PLAQUE WALL. Arena.md "1. The building", the undercroft: "it holds ... the
 // Hall of Champions - a plaque wall naming every Grand Champion this save (offline) or this realm (online)". ARENA-FIX 4
-// stood the Keeper of the Hall and her trophies and let her READ the names (systems/arenaLadder.js hallOfChampions; online
+// stood the Keeper of the Hall and her trophies and let her READ the names (systems/arena/arenaLadder.js hallOfChampions; online
 // scenes/arenaGate.js hall); no wall was drawn. This is the wall:
 //
 // - WHERE. Measured, not written down (systems/crownHall.js crownHallPlan's law): about the Keeper's place
@@ -15,7 +15,7 @@
 //   pictures (TEXTURE.048 record 3, the Interior_Paintings set - the likeness the Hall hangs of its champion) set into
 //   it. A plaque with no name cut in it yet is the bare board. Daggerfall has no plaque flat or model of its own; a framed
 //   picture on dark wood is what its castles hang on a wall to honour someone.
-// - WHO. One plaque a Grand Champion, the newest first, up to PLAQUE_MAX (systems/arenaBoard.js hallPlaques - this
+// - WHO. One plaque a Grand Champion, the newest first, up to PLAQUE_MAX (systems/arena/arenaBoard.js hallPlaques - this
 //   save's offline, the realm's online), the rest of the row bare; each plaque's press reads its champion (name, banner,
 //   season, "Grand Champion" - ARENA_TEXT.undercroft.plaqueLine), a bare one the Keeper's "No name is cut here yet".
 //

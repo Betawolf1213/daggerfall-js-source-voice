@@ -6,7 +6,7 @@ with a probe before reporting them:
 
 - **the roster** - PERF-ON3: `net/roster.js`'s memo, its sort and its frozen answer, and the chat panel's short-circuit;
 - **the shadows** - PERF-SHADOW1: `render/shadowPass.js`'s candidate walk, the cube's reach and slack, the quads' ask;
-- **the play-out and the pref door** - RUN-IN-PLACE (`net/online.js` `tick`) and PERF-URL2 (`systems/onlineLane.js`);
+- **the play-out and the pref door** - RUN-IN-PLACE (`net/online.js` `tick`) and PERF-URL2 (`systems/online/onlineLane.js`);
 - **the docs, the pins and the merges** - every page, row and cite the branch wrote, every pin and mutant record it
   moved, and its merge of main.
 
@@ -60,7 +60,7 @@ Nothing here waits on a call to ship; these are yours to make whenever:
 | B7 | nit | `stats.culled`, shown on the perf meter, stopped counting what a lantern face never asked. | Its meaning written where it is declared (below, decided). |
 | B8 = D15h | nit | `SHADOW_TUNING.facePrepass` was read but never declared, so the console's `__DF_SHADOW_TUNING` did not show it. | Declared, `true`. |
 
-**The play-out and the pref door** (`src/net/online.js`, `src/systems/onlineLane.js`)
+**The play-out and the pref door** (`src/net/online.js`, `src/systems/online/onlineLane.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

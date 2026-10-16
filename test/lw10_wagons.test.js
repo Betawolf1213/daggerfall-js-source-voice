@@ -14,7 +14,7 @@ import {
 import { createRoadTeams, WAGONS_DRAWN, wagonBucket, ROAD_WAGON_KIND } from '../src/world/roadTeams.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { wayAt, laneAt, wayOf, NATIVE_PER_M, NATIVE_PIXEL, partyAt, townTrips, membersAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
-import { HITCHED_HORSE_LOCAL_Z, wheelRotationDegrees, wrapWheelAngle, NORMAL_GROUND_OFFSET } from '../src/systems/horseCartLaw.js';
+import { HITCHED_HORSE_LOCAL_Z, wheelRotationDegrees, wrapWheelAngle, NORMAL_GROUND_OFFSET } from '../src/systems/horse/horseCartLaw.js';
 import { createLivingRoads, roadLanes, CAMP_RING_N } from '../src/scenes/livingRoads.js';
 import { synthMap } from './lwRoads.mjs';
 import { createRelations } from '../src/systems/livingWorld/relations.js';

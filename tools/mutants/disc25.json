@@ -1,7 +1,7 @@
 [
   {
     "name": "D25A-centroid-not-surface",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "if (!keep || keep(surfaceY(t, px, pz))) covered[k] = 1;",
     "new": "if (!keep || keep(t.y)) covered[k] = 1;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "D25A-surface-is-the-mean",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  if (t.ay == null || t.by == null || t.cy == null) return t.y;\n",
     "new": "  return t.y;\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "D25A-band-inside-only",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    return top > lo && bottom <= hi;",
     "new": "    return bottom > lo && top <= hi;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "D25A-stairs-any-rise",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "if (s === t || !(Math.abs(y[i] - y[j]) <= rise)) return;",
     "new": "if (s === t) return;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "D25A-stairs-one-side",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    add(s, t, a, b);\n    add(t, s, b, a);\n",
     "new": "    add(s, t, a, b);\n",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "D25A-stairs-no-join",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "export function storeyLinks(field, { rise = STAIR_RISE, join = LINK_JOIN } = {}) {",
     "new": "export function storeyLinks(field, { rise = STAIR_RISE, join = 1 } = {}) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "D25A-stack-counts-stairs",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "if (t === s || !(Math.abs(y[i] - y[j]) > rise)) continue;",
     "new": "if (t === s) continue;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "D25A-sheets-never-merge",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "if (run.every((j) => stack[j * n + i] <= overlap)) run.push(i);",
     "new": "if (!run.length) run.push(i);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "D25A-overlap-off-by-one",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "if (run.every((j) => stack[j * n + i] <= overlap)) run.push(i);",
     "new": "if (run.every((j) => stack[j * n + i] < overlap)) run.push(i);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "D25A-pass-ignored",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    else if (!pass?.(ox, oy)) walls.push(seg);",
     "new": "    else walls.push(seg);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "D25A-pass-as-opening",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (open(ox, oy)) openings.push(seg);",
     "new": "    if (open(ox, oy) || pass?.(ox, oy)) openings.push(seg);",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "D25F-parse-lenient",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (!/^[+-]?\\d+$/.test(t)) return null;\n",
     "new": "",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "D25F-parse-zero-ok",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "return Number.isInteger(count) && count >= 1 && count <= max ? count : null;",
     "new": "return Number.isInteger(count) && count >= 0 && count <= max ? count : null;",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "D25F-gate-no-control",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  return stack > 1 && (amount < stack || !!controlDown);",
     "new": "  return stack > 1 && amount < stack;",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "D25D-refusal-names-no-guild",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "return { ok: false, reason: 'guild', guild: guild.name };",
     "new": "return { ok: false, reason: 'guild' };",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "D25D-text-ignores-guild",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (named) return `are not a member of ${named}, which this quest requires.`;\n",
     "new": "",
     "tests": [

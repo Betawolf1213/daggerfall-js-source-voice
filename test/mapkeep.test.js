@@ -9,8 +9,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, restoreAutomap, resetAutomapStore } from '../src/systems/automap.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, restoreAutomap, resetAutomapStore } from '../src/systems/automap/automap.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const saved = () => ({ 'r/Crypt': { revealed: ['0:1', '0:2', '1:9'], visitedThisRun: ['0:1', '0:2'], entranceDiscovered: true, lastVisited: 5000 } });

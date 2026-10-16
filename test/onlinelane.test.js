@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isOnlinePage, ONLINE_FORCED_PREFS, ONLINE_PLAYERS_OWN_PREFS, onlineForcedPref, onlineForcedModSetting, ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { isOnlinePage, ONLINE_FORCED_PREFS, ONLINE_PLAYERS_OWN_PREFS, onlineForcedPref, onlineForcedModSetting, ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { uiSkin, isEnhanced } from '../src/systems/uiSkin.js';
 import { PREF_DEFAULTS, getPref, setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings, onlineModSetting } from '../src/systems/modSettings.js';
@@ -84,7 +84,7 @@ test('MODS-ONLINE-2: a mod the player turned off is OFF online too - only the ro
 test('OL1 - THE FUTURE HALF: every boolean switch the port declares is either forced by the lane or left to the player BY NAME, and every vendored mod carries the one key the lane forces', () => {
   const booleans = Object.entries(PREF_DEFAULTS).filter(([, v]) => typeof v === 'boolean').map(([k]) => k);
   const unanswered = booleans.filter((k) => !Object.hasOwn(ONLINE_FORCED_PREFS, k) && !ONLINE_PLAYERS_OWN_PREFS.includes(k));
-  assert.deepEqual(unanswered, [], 'a new switch must say whether the online lane forces it (systems/onlineLane.js ONLINE_FORCED_PREFS) or leaves it to the player (ONLINE_PLAYERS_OWN_PREFS)');
+  assert.deepEqual(unanswered, [], 'a new switch must say whether the online lane forces it (systems/online/onlineLane.js ONLINE_FORCED_PREFS) or leaves it to the player (ONLINE_PLAYERS_OWN_PREFS)');
   for (const k of Object.keys(ONLINE_FORCED_PREFS)) assert.ok(Object.hasOwn(PREF_DEFAULTS, k), `${k} is a uiPrefs key`);
   for (const k of ONLINE_PLAYERS_OWN_PREFS) assert.ok(Object.hasOwn(PREF_DEFAULTS, k), `${k} is a uiPrefs key`);
   // OL-LIGHT (2026-09-24, Mac: "Can we let people disable it online"): the one enhancement left to the player online -

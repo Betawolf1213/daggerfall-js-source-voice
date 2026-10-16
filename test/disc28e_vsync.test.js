@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 
-import { setValue, saveSettings, _resetForTests, tierOf, SHELL_AT_LAUNCH } from '../src/systems/settings.js';
+import { setValue, saveSettings, _resetForTests, tierOf, SHELL_AT_LAUNCH } from '../src/systems/settings/settings.js';
 import { createFramePacer, installFramePacer, capStep, capTake, frameCapSkip, _resetFrameCap, PACER_LEAD_MS } from '../src/systems/frameCap.js';
 import { widgetFor, formatValue } from '../src/ui/settingsLaw.js';
 import { TIER_TEXT } from '../src/ui/settingsCopy.js';
@@ -99,7 +99,7 @@ test('FPS-VSYNC by source: the shell asks before the app is ready, over the page
   assert.ok(from > 0 && to > from, 'the storage root is pinned, then the app is readied');
   codeHasOnce(main.slice(from, to), /\nfor \(const s of FRAME_SWITCHES\) app\.commandLine\.appendSwitch\(s\);/,
     'after the storage root is pinned and before the app is ready - Chromium reads its switches at launch');
-  assert.match(read('src/systems/settings.js'), new RegExp(`\\nconst STORAGE_KEY = '${SETTINGS_PREF.replace(/\./g, '\\.')}';`), 'the key the page saves under');
+  assert.match(read('src/systems/settings/settings.js'), new RegExp(`\\nconst STORAGE_KEY = '${SETTINGS_PREF.replace(/\./g, '\\.')}';`), 'the key the page saves under');
   const menu = read('src/ui/enhancedMenu.js');
   const lineOf = (head) => { const at = menu.indexOf(head); assert.ok(at >= 0, head); return menu.slice(at, menu.indexOf('\n', at)); };
   const fnOf = (head) => { const at = menu.indexOf(head); assert.ok(at >= 0, head); return menu.slice(at, menu.indexOf('\n}\n', at) + 3); };

@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA4B-RECORDS-SAVE",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "records: recordsPageOnline(on.board, o), rules,",
     "new": "records: recordsPage(o), rules,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-DRAW-LOST",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const draw = b.won === null, won = b.won === true;",
     "new": "const draw = false, won = b.won === true;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-SEASON-NOW",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "when: Number.isFinite(b.at) && b.at > 0 ? O().boutWhen(arenaSeasonOf(b.at), arenaSeasonDay(b.at)) : '',",
     "new": "when: O().boutWhen(board.season, board.day),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-CHAMP-LABEL",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "label: pve ? (champ ? (tier === LADDER_TIERS.length - 1 ? ARENA_TEXT.grandLabel : ARENA_TEXT.champLabel) : ARENA_TEXT.boutLabel(step + 1))",
     "new": "label: pve ? ARENA_TEXT.boutLabel(step + 1)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-FALLBACK",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const pveW = rec ? n(rec.pveWins) : L.record.wins,",
     "new": "const pveW = rec ? n(rec.pveWins) : 0,",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA4B-PURSES-ZERO",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "purses: purseOf(me), owed: 0,",
     "new": "purses: 0, owed: 0,",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA4B-FAST-SEASON-NOW",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "O().seasonShort(seasonOfRow(r, board))]);",
     "new": "O().seasonShort(board.season)]);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA4B-KEEPER-REALM-DROPPED",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "for (const h of realm) lines.push(O().hallTheirAt(h.name, seasonOfRow(h, board)));",
     "new": "for (const h of realm) void h;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA4B-HALL-YOU-UNMARKED",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "you: grand && !!mine && h.name === mine",
     "new": "you: false",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA4B-CLIMB-WAIT-CARD",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "      for (const c of m.bouts.cards) if (c.kind === 'ladder') c.acts",
     "new": "      for (const c of []) if (c.kind === 'ladder') c.acts",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ARENA4B-KEEPER-NOT-YET",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const lines = realm.length ? mine.map((l) => (l === U.hallNone ? U.hallNotYou : l)) : [...mine];",
     "new": "const lines = [...mine];",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "ARENA4B-RECORDS-SAVE-BEFORE-BOARD",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "      m.records = { ...recordsPageOnline(null, o), stats: [] };\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "ARENA4B-PURSES-BEFORE-BOARD",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "      m.header.purses = null;\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "ARENA4B-HALL-CHARACTER-NAME",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const mine = fast.find((r) => r?.you && typeof r.name === 'string' && r.name)?.name || name;",
     "new": "const mine = name;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ARENA4B-HALL-PINNED-UNREAD",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "(Array.isArray(board.fast.rows) ? board.fast.rows : []), board.fast.pinned]",
     "new": "(Array.isArray(board.fast.rows) ? board.fast.rows : [])]",
     "tests": [

@@ -19,10 +19,10 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const FT = await import('../src/systems/revenantFate.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const FT = await import('../src/systems/revenant/revenantFate.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
@@ -32,9 +32,9 @@ const { WEAPONS: W } = await import('../src/characters/weapons.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
 const { equipItem, equipTableOf, EQUIP_SLOTS } = await import('../src/systems/equip.js');
 const { goldStack } = await import('../src/systems/inventory.js');
-const { setLocked } = await import('../src/systems/itemLock.js');
-const { itemLongName } = await import('../src/systems/itemInfo.js');
-const { itemValueOf } = await import('../src/systems/itemTemplates.js');
+const { setLocked } = await import('../src/systems/item/itemLock.js');
+const { itemLongName } = await import('../src/systems/item/itemInfo.js');
+const { itemValueOf } = await import('../src/systems/item/itemTemplates.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -69,7 +69,7 @@ test('RVN8 THE LAW: at most three held; never a quest item, a summoned piece, th
   assert.equal(N.revenantMayTake({ templateIndex: 'x' }), false);
   assert.equal(N.revenantMayTake(null), false);
   // PIN MOVED (AUDIT 625 W2): and a pack-only piece - the Wallet (test/audit625_wallet.test.js)
-  assert.match(read('src/systems/revenant.js'), /&& !item\.questItem && !isSummoned\(item\) && !isGoldPieces\(item\) && !isBagItem\(item\) && !isPackOnly\(item\) && !isLocked\(item\);/, 'and the Materials Bag');
+  assert.match(read('src/systems/revenant/revenant.js'), /&& !item\.questItem && !isSummoned\(item\) && !isGoldPieces\(item\) && !isBagItem\(item\) && !isPackOnly\(item\) && !isLocked\(item\);/, 'and the Materials Bag');
 });
 
 test('RVN8 THE PICK: drawn on its id and its kill count from my equipped weapon and my pack\'s five most valuable takeable pieces - never a sixth, never a locked one; one id and count one piece; nothing to take, null (mutants: the pool\'s size; the weapon left out; the draw off its id or its count; the least valuable)', () => {
@@ -229,5 +229,5 @@ test('RVN8 THE HOSTS: the online respawn takes it beside the death penalty and t
   // WILD GOLD: a death in the open zone pays its half into the remains instead (wildRise), the theft beside it all the same
   assert.match(w, /const goldLost = wildRise \? 0 : applyDeathPenalty\(playerEntity\);[\s\S]{0,1200}?arrestFlow\.abandon\(\);[^\n]*\n\s*const took = revenantTakes\(playerEntity, \{ online: true \}\);/);
   assert.match(w, /new ActionTextBox\(\[respawnFlavorText\(kind\), deathPenaltyText\(goldLost\), took\?\.line\]\.filter\(Boolean\)\)/);
-  assert.match(read('src/systems/revenantFate.js'), /const back = revenantHandBack\(player, r, f\.entity\);/);
+  assert.match(read('src/systems/revenant/revenantFate.js'), /const back = revenantHandBack\(player, r, f\.entity\);/);
 });

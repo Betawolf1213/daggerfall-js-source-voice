@@ -117,7 +117,7 @@ import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
 import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
 import { applyMotorEffectFlags } from '../src/scenes/shared.js';
 import { exteriorSwimming } from '../src/player/exteriorSurface.js';
-import { flushStateChange } from '../src/systems/deepWaterPlayer.js';
+import { flushStateChange } from '../src/systems/deepWater/deepWaterPlayer.js';
 import { isBoatEffectBundle } from '../src/world/deepWaterSwim.js';
 
 function boardViaWorld(r, ladder) {

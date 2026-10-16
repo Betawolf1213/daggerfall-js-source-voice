@@ -42,7 +42,7 @@ import {
   TELEPORTER_ENTRANCE_OFFSET, TELEPORTER_EXIT_OFFSET,
   revealAllAutomap, hideAllAutomap,
   automapDebugTeleportMode, toggleAutomapDebugTeleportMode,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import {
   BEACON_COLOURS, BEACON_SCALES, MARKER_TEX, MARKER_TEXELS, colour32,
   PORTAL_MARKER_LOCAL_EULER, PORTAL_PARENT_YAW_OFFSET, CONNECTION_RADIUS_SCALE,
@@ -50,7 +50,7 @@ import {
   teleporterMarkerRows, teleporterConnectionTransform, userNoteMarkerRows,
   fromToRotationUp,
 } from '../src/ui/automapMarkers.js';
-import { MARKER_NAMES, hoverKeyForHit } from '../src/systems/automapPick.js';
+import { MARKER_NAMES, hoverKeyForHit } from '../src/systems/automap/automapPick.js';
 import {
   AutomapWindow, resetAutomapWindowState, signalAutomapReset, _setAutomapArt,
   automapCameraState, automapBackground, easeInOutSine, TELEPORT_JUMP_DURATION,
@@ -59,7 +59,7 @@ import { AUTOMAP_STRINGS } from '../src/ui/automapText.js';
 import { CHROME_RECTS } from '../src/ui/automapChrome.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS } from '../src/world/rdbLayout.js';
-import { _resetForTests, setValue } from '../src/systems/settings.js';
+import { _resetForTests, setValue } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -645,7 +645,7 @@ test('c2/S8 the y=192 label follows the note the player just typed - the pick ca
   // with UpdateMouseHoverOverText (window :1014), which re-runs
   // Physics.RaycastAll (Automap.cs:1843-1844) and reads the note LIVE
   // (:565-566). The port caches the pick on a stamp, and the stamp used
-  // to carry only `notes.size` - but setUserNote (systems/automap.js)
+  // to carry only `notes.size` - but setUserNote (systems/automap/automap.js)
   // rewrites the marker IN PLACE, so retyping a note moved nothing the
   // stamp could see: same size, same camera, same pointer. The label
   // kept printing the note the player had just replaced.
@@ -1024,9 +1024,9 @@ test('c2/S8 SOURCE: the host installs the listener, the two dungeon hosts carry 
   assert.match(ctx, /automapCommand\(name\)/, 'and the three console verbs have a home');
   // ROAD-E E3: that home is now the real ConsoleCommandsDatabase -
   // AutoMapConsoleCommands.RegisterCommands lives with the laws in
-  // systems/automap.js, where C# has it, and the host's probe door runs
+  // systems/automap/automap.js, where C# has it, and the host's probe door runs
   // the database rather than repeating the three answers.
-  const am = src('src/systems/automap.js');
+  const am = src('src/systems/automap/automap.js');
   for (const cmd of ['map_revealall', 'map_hideall', 'map_teleportmode']) {
     assert.ok(am.includes(`registerCommand('${cmd}'`), `${cmd} is registered`);
   }

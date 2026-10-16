@@ -157,7 +157,7 @@
   },
   {
     "name": "LW-FIX5-trample-body",
-    "file": "src/systems/rrRidingHost.js",
+    "file": "src/systems/roleplayRealism/rrRidingHost.js",
     "old": "        const from = person.living ?? null;",
     "new": "        const from = person;",
     "tests": [

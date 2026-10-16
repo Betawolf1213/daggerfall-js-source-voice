@@ -28,7 +28,7 @@
   },
   {
     "name": "DISC19-A-old-saves-not-repaired",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if ((a.kind === 'racialOverride' || a.infection) && !a.permanent) a.permanent = true;",
     "new": "if ((a.kind === 'racialOverride' && a.infection) && !a.permanent) a.permanent = true;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DISC19-C-revival-before-the-effects",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  const loadDeadOnline = isOnlinePage() && !((entity.health ?? 0) > 0);\n",
     "new": "  const loadDeadOnline = false; if (isOnlinePage() && !((entity.health ?? 0) > 0)) reviveForPlay(entity);\n",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DISC19-C-no-revival",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (loadDeadOnline) reviveForPlay(entity);\n",
     "new": "\n",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DISC19-C-exit-save-writes-the-dead",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "  if (deathUp || !(entity?.health > 0)) return [];",
     "new": "  if (deathUp) return [];",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "DISC19-C-exit-save-ignores-the-death-screen",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "  if (deathUp || !(entity?.health > 0)) return [];",
     "new": "  if (!(entity?.health > 0)) return [];",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "DISC19-F-watch-comes-for-the-wanted",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "      if (crime) { countdown = 0; calm = 0; return null; }",
     "new": "      if (false) { countdown = 0; calm = 0; return null; }",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "DISC19-F-watch-follows-a-player-who-left",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "          if (locationKey !== countdownKey) return null;\n",
     "new": "",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "DISC19-F-watch-arrives-at-once",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "        countdown = TOWN_WATCH_ARRIVAL_MIN_SECONDS + Math.floor(rand() * TOWN_WATCH_ARRIVAL_SPAN);",
     "new": "        countdown = 0.001;",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "DISC19-F-watch-leaves-while-fighting",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "      if (calm < TOWN_WATCH_STAND_DOWN_SECONDS) return null;",
     "new": "      if (calm < 0) return null;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "DISC19-F-watch-stays-when-switched-off",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "        return defenders > 0 ? 'dismiss' : null;",
     "new": "        return null;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "DISC19-F-threat-need-not-hunt",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  if (!isPlayerTarget(t) && !(t?.defender === true && !t.dead) && !(t?.companion != null && !t.dead)   // AUDIT CC-B6: a monster fighting a companion is still the fight\n    && !(t?.civilian === true && (t.entity?.health ?? 0) > 0)) return false;   // WATCH-PROTECTS: and one hunting a townsperson of the living world\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "DISC19-F-threat-puppets-count",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  if (!f || f.dead || f.puppet || !f.ai || !f.entity) return false;",
     "new": "  if (!f || f.dead || !f.ai || !f.entity) return false;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "DISC19-F-threat-allies-count",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "  if (f.entity.team === 'PlayerAlly') return false;\n",
     "new": "",
     "tests": [

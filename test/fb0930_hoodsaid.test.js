@@ -28,7 +28,7 @@ import {
   hoodCapable, hoodUp, cloakState, HOODED_CLOAK_VARIANTS, CLOAK_WARMTH, CASUAL_CLOAKS, FORMAL_CLOAKS, HOODED_ROBES,
 } from '../src/systems/survival/temperature.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 import {
   createVampirismCurse, racialFastTravelBlock, SUNLIGHT_TRAVEL_TEXT, VAMPIRE_HOOD_TEXT, VAMPIRE_HOOD_TEXT_CLASSIC,

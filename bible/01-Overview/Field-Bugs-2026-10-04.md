@@ -27,7 +27,7 @@ BAG1 had written the law down (Materials-Bag.md 3: "what has no room is left whe
 the opposite for every other door: a withdrawal's and a smelt's units go into the pack past its weight (the audit's B5,
 the second's K4/H5 - `giveCarried`, "a unit the service counted as carried and the save never got was lost to the
 character"). DFU's Foraging mod, which the professions' acts are built on, does the same - its finds are
-`Player.Items.AddItem` with no weight in it (`systems/foragingInstall.js` give), and its one weight rule is the act's
+`Player.Items.AddItem` with no weight in it (`systems/foraging/foragingInstall.js` give), and its one weight rule is the act's
 refusal to START when fully encumbered (foragingLaw.js `encumbered`). So the harvest is the withdrawal's now: the book
 mints through the hands' `give` - the bag, the pack, then the pack past its weight - and its `put` says `over`. The
 node's own refusal stands as it was (`carryFull`: no room for one unit, "No room in your bag or pack"), which is the
@@ -82,7 +82,7 @@ reads `decorDeliver` straight after the purchase's loop, so the restock stands a
 
 ## ONE-BAG (4)
 
-`net/bagLaw.js` holdsOtherBag, BAG_WORDS.second; `systems/itemTransfer.js` planTake, REFUSAL.secondBag;
+`net/bagLaw.js` holdsOtherBag, BAG_WORDS.second; `systems/item/itemTransfer.js` planTake, REFUSAL.secondBag;
 `scenes/worldModes.js` doBuy, buyItem. BAG1 kept a second bag from a character by not shelving one to a stocker who
 held one - which online hid it from everyone (BAG-SHELF), and which never stopped a purchase. One bag to a character is
 the take's rule now: the take ladder (planTake) - a pickup, quick loot, a container, a wagon, a ship's hold, and both

@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { letterWorthGold, letterWorthLine } from '../src/systems/walletItem.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
-import { validLootList } from '../src/systems/loot.js';
+import { validLootList } from '../src/systems/loot/loot.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

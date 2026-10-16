@@ -1,7 +1,7 @@
 [
   {
     "name": "DECORMODS-structure-offered",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "    45170: 14,\n",
     "new": "    45170: 14, 53160: 1,\n",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DECORMODS-twin-offered",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "    45169: 42, 45190: 548, 45191: 363, 45192: 14, 45194: 8,\n",
     "new": "    45169: 42, 45190: 548, 45191: 363, 45192: 14, 45194: 8, 45113: 1,\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DECORMODS-unswitched",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "  for (const e of entries ?? []) if (isDecorModEntry(e) && live(e)) out.add(e.key);",
     "new": "  for (const e of entries ?? []) if (isDecorModEntry(e)) out.add(e.key);",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "DECORMODS-place-overwritten",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "    if (into.has(key)) return;\n    into.set(key, { ...what, count, from, ...decorModNaming(what) });",
     "new": "    into.set(key, { ...what, count, from, ...decorModNaming(what) });",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "DECORMODS-filed-as-itself",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    let kind = c.model != null ? modelKind(c.as ?? c.model) : c.person ? 'people' : flatKind(c.as ?? c.flat[0]);",
     "new": "    let kind = c.model != null ? modelKind(c.model) : c.person ? 'people' : flatKind(c.flat[0]);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "DECORMODS-unnamed",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    const own = c.base ?? (c.model != null",
     "new": "    const own = (c.model != null",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "DECORMODS-numbered-first",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "nature: 3, mod: 4, modstreet: 5 });",
     "new": "nature: 3, mod: -1, modstreet: 5 });",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "DECORMODS-kind-unset",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    if (c.from === 'mod' && (kind === 'furniture' || kind === 'decor')) kind = 'mods';",
     "new": "    if (false) kind = 'mods';",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "DECORMODS-street-indoors",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "const OUTSIDE = new Set(['street', 'nature', 'modstreet']);",
     "new": "const OUTSIDE = new Set(['street', 'nature']);",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "DECORMODS-scan-unjoined",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "[...decorCatalogue(mods ? addDecorMods(read) : read), HALL_BOARD_ENTRY]",
     "new": "[...decorCatalogue(read), HALL_BOARD_ENTRY]",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "DECORMODS-stand-in-unmeasured",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "      return standInRadius(id);",
     "new": "      return null;",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "DECORMODS-alias-unmeasured",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "      const rec = arch?.getRecordIndex?.(classicModelIdOf(id));",
     "new": "      const rec = arch?.getRecordIndex?.(id);",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "DECORMODS-offered-unswitched",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "    && (!MOD_FROM.has(e.from) || !!mods?.has(e.key))) ?? null;",
     "new": "    ) ?? null;",
     "tests": [
@@ -132,7 +132,7 @@
   },
   {
     "name": "DECORMODS-never-remeasured",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "    else if (phase === 'done') measureLate(modelsPerStep);\n",
     "new": "",
     "tests": [
@@ -152,7 +152,7 @@
   },
   {
     "name": "DECORMODS-picture-table-unread",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "    const pic = DET_PICTURES[id] ?? ROSYS_PICTURES[id];",
     "new": "    const pic = null;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "DECORMODS-bed-unfiled",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "as: bed.model };",
     "new": "as: id };",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "DECORMODS-key-own-format",
-    "file": "src/systems/decorMods.js",
+    "file": "src/systems/decor/decorMods.js",
     "old": "    const key = decorKey(what);",
     "new": "    const key = what.model != null ? `m${what.model}` : `f${what.flat[0]}_${what.flat[1]}`;",
     "tests": [

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
-import { partyGroupMembers } from '../src/systems/partyScale.js';
+import { partyGroupMembers } from '../src/systems/party/partyScale.js';
 import { PACK_SPACING, PACK_ALERT_RADIUS } from '../src/systems/campEncounters.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

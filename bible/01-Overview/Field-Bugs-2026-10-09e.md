@@ -84,7 +84,7 @@ membership, so the one number the way back in reads was nowhere on the screen. T
 "since with many temples and knight orders, some people could feel the menu bloated": the Interface tab's Character
 sheet row, "Every faction's standing" (prefs `standingAll`; shipped off, on by default since STANDING-ON - Mac,
 2026-10-11: "should be on by default"; the shelf writes no default, so only a player who pressed it off keeps Off). On, the page lists
-every organization's reputation from the live faction store under its divider (`systems/factionStanding.js`
+every organization's reputation from the live faction store under its divider (`systems/faction/factionStanding.js`
 standingGroups): the four guilds, the eight temples by the god their membership reads, the ten knightly orders, the
 kingdoms (FACTION.TXT's Province type - every region's ruler and the Empire, 45; no Random Ruler), the fourteen covens,
 the nine vampire clans and the sixteen Daedric Princes. A membership is under Guilds already, with its rank, and is not

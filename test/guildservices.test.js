@@ -9,9 +9,9 @@ import {
   canAccessService, canAccessLibrary,
   canRest, hallAccessAnytime, freeHealing, freeMagickaRecharge,
   freeTavernRooms, freeShipTravel, alterReward, reducedRepairCost, reducedCureCost,
-} from '../src/systems/guildServices.js';
-import { GUILDS, MEMBER_TRAINING_COST, NON_MEMBER_TRAINING_COST, DEFAULT_TRAINING_MAX } from '../src/systems/guilds.js';
-import { templeOf, orderOf, TEMPLE_DATA } from '../src/systems/guildVariants.js';
+} from '../src/systems/guild/guildServices.js';
+import { GUILDS, MEMBER_TRAINING_COST, NON_MEMBER_TRAINING_COST, DEFAULT_TRAINING_MAX } from '../src/systems/guild/guilds.js';
+import { templeOf, orderOf, TEMPLE_DATA } from '../src/systems/guild/guildVariants.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 const at = (rank) => ({ guild: 'x', rank, lastRankChange: 0 });

@@ -1,7 +1,7 @@
 [
  {
   "name": "CHARID1-the-identity-is-the-name-again",
-  "file": "src/systems/saveSlots.js",
+  "file": "src/systems/save/saveSlots.js",
   "old": "    if (characterId ? saveInfo.characterId === characterId : saveInfo.characterName === characterName) return key;",
   "new": "    if (saveInfo.characterName === characterName) return key;",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "CHARID1-a-legacy-card-matches-any-id-of-its-name",
-  "file": "src/systems/saveSlots.js",
+  "file": "src/systems/save/saveSlots.js",
   "old": "    if (characterId ? saveInfo.characterId === characterId : saveInfo.characterName === characterName) return key;",
   "new": "    if (characterId ? (saveInfo.characterId === characterId || (!saveInfo.characterId && saveInfo.characterName === characterName)) : saveInfo.characterName === characterName) return key;",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "CHARID1-the-card-forgets-the-id",
-  "file": "src/systems/saveSlots.js",
+  "file": "src/systems/save/saveSlots.js",
   "old": "    characterName,\n    characterId,\n    dateAndTime:",
   "new": "    characterName,\n    dateAndTime:",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "CHARID1-the-envelopes-id-is-ignored-on-write",
-  "file": "src/systems/saveSlots.js",
+  "file": "src/systems/save/saveSlots.js",
   "old": "  let key = findSave(characterName, saveName, storage, characterId);",
   "new": "  let key = findSave(characterName, saveName, storage);",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "CHARID1-quickload-by-name",
-  "file": "src/systems/saveSlots.js",
+  "file": "src/systems/save/saveSlots.js",
   "old": "  const key = findSave(characterName, QUICK_SAVE_NAME, storage, characterId);\n  return key === -1 ? null : loadSlot(key, storage);",
   "new": "  const key = findSave(characterName, QUICK_SAVE_NAME, storage);\n  return key === -1 ? null : loadSlot(key, storage);",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "CHARID1-the-envelope-drops-the-field",
-  "file": "src/systems/save.js",
+  "file": "src/systems/save/save.js",
   "old": "  'characterId',   // CHARID1:",
   "new": "  // CHARID1:",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "CHARID1-restore-adopts-nothing",
-  "file": "src/systems/save.js",
+  "file": "src/systems/save/save.js",
   "old": "    adoptLegacyCards(appStorage(), entity.name, entity.characterId);",
   "new": "",
   "tests": [

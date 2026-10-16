@@ -507,7 +507,7 @@
   },
   {
     "name": "LW3-wayfarer-ungrouped",
-    "file": "src/systems/travelViewFilters.js",
+    "file": "src/systems/travel/travelViewFilters.js",
     "old": "  if (k === 'traveller' || k === 'wayfarer') return 'travellers';   // LW3: the living world's parties beside the players",
     "new": "  if (k === 'traveller') return 'travellers';   // LW3: the living world's parties beside the players",
     "tests": [

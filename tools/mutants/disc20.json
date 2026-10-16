@@ -109,7 +109,7 @@
   },
   {
     "name": "DISC20-B-the-synth-bypasses-the-fader",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "g.connect(this._level ?? this._fader ?? this._master);",
     "new": "g.connect(this._master);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "DISC20-B-the-pack-bypasses-the-fader",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "src.connect(this._fader ?? this._master);   // DISC20-B: through the fader",
     "new": "src.connect(this._master);   // DISC20-B: through the fader",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "DISC20-B-the-ramp-jumps-from-its-old-start",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "  if (typeof g.cancelAndHoldAtTime === 'function') g.cancelAndHoldAtTime(now);\n  else { const v = g.value; g.cancelScheduledValues(now); g.setValueAtTime(v, now); }\n",
     "new": "  g.cancelScheduledValues(now);\n",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "DISC20-B-the-fade-rides-the-volume",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "  fadeTo(level, seconds) { rampFader(this.ctx, this._fader, level, seconds); }\n\n  /** The MusicVolume setting moved",
     "new": "  fadeTo(level, seconds) { rampFader(this.ctx, this._master, level, seconds); }\n\n  /** The MusicVolume setting moved",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "DISC20-C-the-runtime-re-stand-leaves-the-wagon",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "if (deployedVisual?.isAlive && within(deployedVisual.position)) { deployedVisual.grounded = false; deployedVisual.nextGroundRetryTime = 0; }",
     "new": "if (deployedVisual?.isAlive && within(deployedVisual.position)) { deployedVisual.nextGroundRetryTime = 0; }",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "DISC20-C-the-runtime-re-stand-leaves-the-horse",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "stationaryHorseVisual.hasRequestedPose = false;\n  }",
     "new": "stationaryHorseVisual.hasRequestedPose = true;\n  }",
     "tests": [

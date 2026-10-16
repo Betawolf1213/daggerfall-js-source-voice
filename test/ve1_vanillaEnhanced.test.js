@@ -20,13 +20,13 @@ import {
   setDfmodEnabled, dfmodEnabled, forgetDfmodOff, DFMOD_OFF_PREF, DFMOD_SHIPPED_PREF, dfmodGroundLayers, groundSource, hasDfmodGround,
   dfmodImgImage, dfmodGeneration, noteDfmodAttached, _resetDfmodForTests,
 } from '../src/systems/dfmodTextures.js';
-import { installVanillaEnhancedPack } from '../src/systems/vanillaEnhancedPack.js';
+import { installVanillaEnhancedPack } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';
 import { preloadTextureRecord, setTextureReplacements, clearTextureReplacements, looseTextureExists, looseTextureGeneration, PRELOAD_CONCURRENCY } from '../src/systems/textureReplacement.js';
 import { billboardXmlScale } from '../src/world/billboardXml.js';
-import { setValue, getBool } from '../src/systems/settings.js';
+import { setValue, getBool } from '../src/systems/settings/settings.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { OVERHAUL_PANELS, currentOption } from '../src/systems/overhauls.js';
-import { VE_BASE, VE_BASE_GUID, VE_ADDONS_PREF, isVeFamily, veWorn, classicTexturesWorn } from '../src/systems/vanillaEnhanced.js';
+import { VE_BASE, VE_BASE_GUID, VE_ADDONS_PREF, isVeFamily, veWorn, classicTexturesWorn } from '../src/systems/vanillaEnhanced/vanillaEnhanced.js';
 import { IIL_MOD } from '../src/systems/improvedInteriorLighting.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');

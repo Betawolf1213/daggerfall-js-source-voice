@@ -77,7 +77,7 @@
   },
   {
     "name": "AUDITLIVED1B-S1-checkpoint-ignores-the-walk",
-    "file": "src/systems/onlineCheckpoint.js",
+    "file": "src/systems/online/onlineCheckpoint.js",
     "old": "return !!online && !!spawned && !seatOut && !duel && !walkWaiting;",
     "new": "return !!online && !!spawned && !seatOut && !duel;",
     "tests": [
@@ -204,7 +204,7 @@
   },
   {
     "name": "AUDITLIVED1B-P4-paid-on-the-machine-clock",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    alignEntityClocks(entity, at);\n",
     "new": "    alignEntityClocks(entity, at, { worldLeft: left });\n",
     "tests": [
@@ -252,7 +252,7 @@
   },
   {
     "name": "AUDITLIVED1B-P4-no-fresh-start-for-a-long-break",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "        if (now - left > ALIGN_GRACE_MINUTES) alignSurvival(entity, Math.floor(ownMinutes()), null);\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "AUDITLIVED1B-P4-the-composer-stamps-now",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if (sharedClockOn()) snap.worldMinutes = worldMinutesToSave();",
     "new": "if (sharedClockOn()) snap.worldMinutes = Math.floor(worldMinutes());",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AUDITLIVED1B-P2-the-load-pays-the-copy-an-absence",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const left = snap.joinFresh ? null : Number.isFinite(snap.worldMinutes)",
     "new": "const left = Number.isFinite(snap.worldMinutes)",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "AUDITLIVED1B-F1-the-load-floors-the-reading",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const own = Math.floor(snap.classicMinutes ?? 0), at = worldMinutes();",
     "new": "const own = Math.floor(snap.classicMinutes ?? 0), at = Math.floor(worldMinutes());",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "AUDITLIVED1B-S5-the-recast-before-the-clock",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (sharedClockOn()) setOwnMinutes(Math.floor(snap.classicMinutes));\n  // E2:",
     "new": "  // E2:",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "AUDITLIVED1B-F3-the-load-falls-back-to-zero",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "classicMinutes: saneSaveClock(snap.classicMinutes) ?? Math.floor(worldMinutes()),",
     "new": "classicMinutes: saneSaveClock(snap.classicMinutes) ?? 0,",
     "tests": [
@@ -923,7 +923,7 @@
   },
   {
     "name": "AUDITLIVED1B-T7-sv-clamp-feeding-uncapped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "new": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify']) cap(a, k, own);",
     "tests": [
@@ -932,7 +932,7 @@
   },
   {
     "name": "AUDITLIVED1B-T7-sv-clamp-incubation-uncapped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if (a.kind === 'disease') { cap(a, 'lastDay', day); cap(a, 'startingDay', day); }",
     "new": "if (a.kind === 'disease') { cap(a, 'lastDay', day); }",
     "tests": [
@@ -941,7 +941,7 @@
   },
   {
     "name": "AUDITLIVED1B-T7-sv-clamp-kill-uncapped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "new": "for (const k of ['lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "tests": [
@@ -950,7 +950,7 @@
   },
   {
     "name": "AUDITLIVED1B-T7-sv-legacy-save-left-at-the-worlds-now",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    const left = snap.joinFresh ? null : Number.isFinite(snap.worldMinutes) ? Math.floor(snap.worldMinutes) : own;",
     "new": "    const left = snap.joinFresh ? null : Number.isFinite(snap.worldMinutes) ? Math.floor(snap.worldMinutes) : at;",
     "tests": [

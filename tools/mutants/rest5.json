@@ -75,18 +75,18 @@
  },
  {
   "name": "REST5-my-switch-ignored",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "  if (!withParty || resterAlone || exempt || dead) return null;",
   "new": "  if (resterAlone || exempt || dead) return null;",
   "tests": [
    "test/rest5_partynight.test.js",
    "test/auditrestparty.test.js"
   ],
-  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/partyRestLaw.js and run on a table; re-aimed by content."
+  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/party/partyRestLaw.js and run on a table; re-aimed by content."
  },
  {
   "name": "REST5-a-stale-night-carries",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": " && now - at <= freshMs && !!(typeof isNight === 'function' ? isNight(at) : isNight);",
   "new": " && !!(typeof isNight === 'function' ? isNight(at) : isNight);",
   "tests": [
@@ -103,7 +103,7 @@
   "tests": [
    "test/rest5_partynight.test.js"
   ],
-  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/partyRestLaw.js and run on a table; re-aimed by content."
+  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/party/partyRestLaw.js and run on a table; re-aimed by content."
  },
  {
   "name": "REST5-the-follower-sleeps-loud",
@@ -113,7 +113,7 @@
   "tests": [
    "test/rest5_partynight.test.js"
   ],
-  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/partyRestLaw.js and run on a table; re-aimed by content. CAMP-ROLL (PIN MOVED): the carried night's sequence is the bag's one (scenes/shared.js restCampNight); re-aimed by content."
+  "note": "AUDIT REST-PARTY (PIN MOVED): the decision lifted into systems/party/partyRestLaw.js and run on a table; re-aimed by content. CAMP-ROLL (PIN MOVED): the carried night's sequence is the bag's one (scenes/shared.js restCampNight); re-aimed by content."
  },
  {
   "name": "REST5-the-carried-night-passes-on",

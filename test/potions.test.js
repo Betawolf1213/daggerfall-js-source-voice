@@ -10,7 +10,7 @@ import {
   potionRecipeByKey, potionRecipeKeys, mixCauldron, isIngredient, knownRecipes,
   CAULDRON_CAPACITY, cauldronAccepts, consumeCauldron, gatherRecipe,
 } from '../src/systems/potions.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { applySpell, isHealSpellPoints, HEAL_SPELL_POINTS_KEY } from '../src/systems/effects.js';
 
 const byName = (n) => POTION_RECIPES.find((r) => r.name === n);

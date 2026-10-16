@@ -16,7 +16,7 @@ import {
 import { shownBuildingName } from '../src/systems/discovery.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-/** The page as the lane reads it: `?online` on the URL (systems/onlineLane.js isOnlinePage). */
+/** The page as the lane reads it: `?online` on the URL (systems/online/onlineLane.js isOnlinePage). */
 function online(fn) {
   const had = Object.getOwnPropertyDescriptor(globalThis, 'location');
   globalThis.location = { search: '?online=1' };

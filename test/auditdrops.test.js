@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare, shapeMismatch, takeLocalItems, SHARE_REFUSAL_TEXT } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare, shapeMismatch, takeLocalItems, SHARE_REFUSAL_TEXT } from '../src/systems/quest/questShare.js';
 import { createTradeManager, TradeSession } from '../src/net/tradeSession.js';
 import { validTradeData, validPose, parseClient, relaySupportsTrade, questShareGate, questInGate, QUEST_HUB_MIN_MS, QUEST_SEND_MS, QUEST_FRAME_MAX, TRADE_FRAME_MAX, TRADE_ROOM_BYTES_PER_S, TRADE_HZ_MAX, RELAY_VERSION, inRange } from '../src/net/wire.js';
 import { createTradePack } from '../src/systems/tradePack.js';

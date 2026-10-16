@@ -20,7 +20,7 @@ import {
   gatherActCode, createGatherPose, gatherBeatOf, peerKneeling, peerGatherTool, peerGatherSwing, peerActAt, PeerGatherSounds,
 } from '../src/net/peerGather.js';
 import { GATHER_SAY, GATHER_SOUND } from '../src/systems/gatherSounds.js';
-import { PROF_CUES } from '../src/systems/profSounds.js';
+import { PROF_CUES } from '../src/systems/professions/profSounds.js';
 import { createChopAct } from '../src/systems/chopAct.js';
 import { createMineAct, MINE_POINTS } from '../src/systems/mineAct.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
@@ -36,7 +36,7 @@ import { PeerBodies, peerCamera, peerBuildOpts, peerWeaponOf } from '../src/net/
 import { RemotePlayers, PEER_SOUND_PROFILE } from '../src/net/remotePlayers.js';
 import { createPeerWalkers, createEotbArt, WALK_ONE_SHOTS, WALK_GATHER_STROKES, walkerHands } from '../src/net/peerRiders.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { PX, rig, arrive, dice, sfxOf } from './gatherRig.mjs';
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');

@@ -11,7 +11,7 @@
 // the classic one does".
 //
 // WHAT IT DRAWS FROM. Nothing new is read from the level. The storeys,
-// the sheets, the stairs and the reveal are `systems/automapFloors.js`'s
+// the sheets, the stairs and the reveal are `systems/automap/automapFloors.js`'s
 // (the level field the 2D plan is cut from, cell for cell), so the two
 // renderings of one dungeon can never disagree about what has been seen:
 //
@@ -48,7 +48,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { INK_RGB, PARCHMENT_RGB, rgba, PEN, HALO_PEN, NAME_FACE } from './inkMap.js';
-import { STAIR_RISE, STOREY_NEAR } from '../systems/automapFloors.js';
+import { STAIR_RISE, STOREY_NEAR } from '../systems/automap/automapFloors.js';
 
 /** The solid's proportions, in metres (plan units). */
 export const SOLID = Object.freeze({
@@ -103,7 +103,7 @@ const DIRS = Object.freeze([[0, -1], [1, 0], [0, 1], [-1, 0]]);   // N E S W on 
  *          planX0?: number, planY0?: number, rise?: number, storeyY?: ArrayLike<number>|null,
  *          trail?: Array<number[]>|null, cutYaw?: number, classified?: object|null}} [opts]
  *   `storeyY` is each storey's height (deriveFloors' `y`), what the floor is seeded at; `trail` is the world points
- *   the player has stood at (systems/automap.js automapTrailPoints) - with it, only floor near them is drawn.
+ *   the player has stood at (systems/automap/automap.js automapTrailPoints) - with it, only floor near them is drawn.
  *   `revealed` / `walked` are per-row masks; `pass` is field cell indices; `planX0`/`planY0` put the grid's NW
  *   corner into the sheet's plan units (the level's west edge and north edge are 0).
  */

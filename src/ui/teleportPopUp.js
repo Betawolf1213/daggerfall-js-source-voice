@@ -7,7 +7,7 @@
 // teleport service, and guildServiceFlow's `Teleport` was a null
 // pointing back at the travel map. Two finished systems across a gap
 // nobody had closed - G5 closes it from BOTH ends, and neither
-// sentence survives: systems/guildServiceFlow.js's service table now
+// sentence survives: systems/guild/guildServiceFlow.js's service table now
 // reads `Teleport: 'guildServiceTeleport'`, and
 // ui/travelMapWindow.js's activateTeleportationTravel arms the map
 // and raises this window on the destination pick.

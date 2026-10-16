@@ -85,13 +85,13 @@
 //
 // The guild TELEPORT mode (ActivateTeleportationTravel +
 // DaggerfallTeleportPopUp, :1705-1730) idled here for one slice and is
-// LIVE at G5: the service it waited on is systems/guildServiceFlow.js's
+// LIVE at G5: the service it waited on is systems/guild/guildServiceFlow.js's
 // `Teleport: 'guildServiceTeleport'`, and this file carries the map
 // half - ui/teleportPopUp.js imported above, TELE00I0 preloaded, the
 // one-shot `teleportationTravel` flag, activateTeleportationTravel
 // (ActivateTeleportationTravel) and the TeleportPopUpWindow raised on
 // the destination pick. (TravelMapSaveData ships through
-// systems/travelMapState.js and the session envelope.) The journal's
+// systems/travel/travelMapState.js and the session envelope.) The journal's
 // click-through travel (GotoPlace,
 // :214-217 and its Update consumer :443-455) is LIVE - ui/questJournal.js
 // offers the find dialog and the host hands the place here.
@@ -107,9 +107,9 @@ import {
   locationInfoRows, INFO_TABS, resumePrompt, teleportCost, teleportCostPrompt,
 } from './travelMapOptions.js';
 import { DOT_SCALE } from './travelPathsOverlay.js';
-import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travel/travelOptionsText.js';
 import { readPartyMarks, partyMarksKey, PARTY_DOT_RGB, PARTY_OFFLINE_DOT_RGB } from './partyMapMarks.js';   // SOC6: the party's marks, the one reading both maps share
-import { WILD_REGION, WILD_RINGS, wildInside, wildRingAt, wildRingName, wildRingBonus, wildPictureZone } from '../systems/wildZone.js';   // WILD1: the open zone on the classic map too (WILD2: and its rings)
+import { WILD_REGION, WILD_RINGS, wildInside, wildRingAt, wildRingName, wildRingBonus, wildPictureZone } from '../systems/wild/wildZone.js';   // WILD1: the open zone on the classic map too (WILD2: and its rings)
 import { RING_INK, RING_NUMERALS } from './wildZoneMap.js';   // WILD2: the rings' own tones, the zone map's
 import { readGateMark, gateRingKey, gateRingTexels, GATE_DOT_RGB } from './gateMapMark.js';   // WB1: the Oblivion Gate's ring, on the open province's page
 import { readBountyMarks, bountyMarksKey, bountyRingTexels, BOUNTY_DOT_RGB, REVENANT_DOT_RGB, REVENANT_LEGEND_TEXT } from './bountyMapMark.js';   // BOUNTY1: held bounties' black circles on the region page
@@ -130,12 +130,12 @@ import { ImgFile } from '../formats/imgFile.js';
 import { DFPalette } from '../formats/dfPalette.js';
 import { TextRsc } from '../formats/textRsc.js';
 import { REGION_NAMES, LOCATION_TYPES, longitudeLatitudeToMapPixel, getPixelFromPixelID, patchRegionIndex } from '../formats/mapsFile.js';
-import { locationSummaryAt } from '../systems/mapDirectory.js';
+import { locationSummaryAt } from '../systems/map/mapDirectory.js';
 import { getDaggerfallDistance, MatchesCutOff } from '../systems/editDistance.js';
 import { hasDiscoveredLocationId } from '../systems/discovery.js';
-import { getBool } from '../systems/settings.js';
+import { getBool } from '../systems/settings/settings.js';
 import { registerCommand, consoleLog, HELP_COMMAND } from '../systems/consoleCommands.js';   // E3: the console command database
-import { travelMapFilters, freshTravelMapFilters, travelMapPopUpState, setTravelMapPopUpState, travelMapSaveData, restoreTravelMapSaveData, travelMapMarkedMapId, setTravelMapMarkedMapId } from '../systems/travelMapState.js';
+import { travelMapFilters, freshTravelMapFilters, travelMapPopUpState, setTravelMapPopUpState, travelMapSaveData, restoreTravelMapSaveData, travelMapMarkedMapId, setTravelMapMarkedMapId } from '../systems/travel/travelMapState.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { localizedText, formatText, getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: the place names shown
@@ -296,7 +296,7 @@ export function getPixelColorIndex(locationType, filters = {}) {
 }
 
 /** FilterButtonClickHandler's flip (:1024-1045): the pressed filter's flag turned over IN the live store object
- *  (systems/travelMapState.js travelMapFilters - TRUE hides), false for a name that is no filter. The classic window
+ *  (systems/travel/travelMapState.js travelMapFilters - TRUE hides), false for a name that is no filter. The classic window
  *  then redraws its dots (:1064); MAP-KEY's key on the held map (ui/heldMap.js) presses the same law and rebuilds its
  *  marks, so the two skins cannot disagree about what a press does or where it is kept. */
 export function flipTravelMapFilter(filters, which) {
@@ -333,7 +333,7 @@ let _clock = 0;
 // re-PUSHES it (OnPush :353-366 re-identifies and closes the region
 // panel), so the four filters and the popup's three toggles survive
 // every open - and the save envelope carries them. The port mints a
-// window per open, so that state lives in systems/travelMapState.js
+// window per open, so that state lives in systems/travel/travelMapState.js
 // (the A2 zoom-memory shape), where the save layer can reach it
 // without importing a window.
 
@@ -595,7 +595,7 @@ export class TravelMapWindow {
     // persistent window the eight filters ride, so it outlives an
     // open/close as they do - the whole point of a mark is to steer to
     // it on the junction map AFTER closing the map. It lives in
-    // systems/travelMapState.js with the filters; the ports filter
+    // systems/travel/travelMapState.js with the filters; the ports filter
     // remains the one field that does not (departure 6).
     Object.defineProperty(this, 'markedMapId', {
       get: () => travelMapMarkedMapId(),

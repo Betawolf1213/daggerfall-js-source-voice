@@ -26,12 +26,12 @@
 // the gold it cost (half of which comes back when it is removed).
 // ═══════════════════════════════════════════════════════════════════
 import { PROVENANCE_RE, makerName } from './recipeLaw.js';   // PROF4: a crafted piece's id and mark, one home
-import { TEMPLATES } from '../systems/itemKinds.js';   // INT9: the kept-back list's templates - a leaf
+import { TEMPLATES } from '../systems/item/itemKinds.js';   // INT9: the kept-back list's templates - a leaf
 import { isNpcFlat } from '../world/npcFlatArchives.js';   // DECOR-FIGURE: a person's flat (RDBLayout.NPCFlatArchives) - a leaf
 
 /** The items kept back by name: paper worth money or a house (a letter of credit, a deed) and the book of the
  *  player's own spells - set down in a home, it would be out of reach wherever the player went (DECOR2a; INT9: its home
- *  here, since a death in the zone's drop keeps them too, on the account Worker - systems/decorItems.js re-exports it). */
+ *  here, since a death in the zone's drop keeps them too, on the account Worker - systems/decor/decorItems.js re-exports it). */
 export const DECOR_OWN_KEPT_BACK = Object.freeze(new Set([TEMPLATES.Spellbook, TEMPLATES.Letter_of_credit, TEMPLATES.House_Deed, TEMPLATES.Ship_Deed]));
 
 /** How many pieces one home holds - a room full of furniture, not a frame-rate. */
@@ -140,7 +140,7 @@ export function decorFlatMirrored(piece) {
  * DECOR-FIGURE (2026-10-10, the owner: "remove the scaling option for npc sprites with house decoration
  * interior/exterior"): A FIGURE STANDS AT ITS OWN SIZE. A piece that is one of Daggerfall's people - a flat in a person's
  * archive (RDBLayout.NPCFlatArchives; the catalogue's Vendors), never one's own item - is placed, moved and drawn at
- * scale 1: the placer takes no size step for it (systems/decorPlacer.js), the bar offers none (ui/decorPanel.js), the
+ * scale 1: the placer takes no size step for it (systems/decor/decorPlacer.js), the bar offers none (ui/decorPanel.js), the
  * service refuses one written at another (decorScaleOk - server-account/src/decor.js), and one grown or shrunk before
  * this stands at its own size for every visitor (decorDrawnScale - scenes/decorRoom.js), its record kept as it was paid.
  */
@@ -361,7 +361,7 @@ export const DECOR_YARD_POS_MAX = 48;
  * seem out of place"; Mac's call: 4 m): HOW HIGH A YARD'S PIECE MAY STAND - its place (`pos`) at most this far over the
  * ground, metres. A town stands on a flat block, so its ground is the building's own origin's height (the yard's `pos`
  * is from it). A flat's place is its foot and a hung one's where it hangs; AUDIT YARD-HEIGHT Y8: a model's is its own
- * origin, which the placer stands above the surface by as much as the model reaches below it (systems/decorPlacer.js
+ * origin, which the placer stands above the surface by as much as the model reaches below it (systems/decor/decorPlacer.js
  * lift) - so a model scaled up stands its origin higher on the same ground. The service knows no model's shape, so both
  * ends ask the one place they share. A fence with a lantern on it, a cart, a crate on a crate - never a tower: each piece
  * stood on the one below climbed as far as DECOR_YARD_POS_MAX. A piece placed or moved past it is refused at both ends

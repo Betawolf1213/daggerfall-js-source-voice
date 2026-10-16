@@ -37,7 +37,7 @@
  },
  {
   "name": "AKG2-B2-last",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "const told = !state?.game && last && !events.some((e) => e.t === 'result');",
   "new": "const told = false;",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "AKG2-B10-gap",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "(this.watch || e.side === 1 - this.side)",
   "new": "(e.side === 1 - this.side)",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "AKG2-B11-held",
-  "file": "src/systems/gambitRemoteTable.js",
+  "file": "src/systems/gambit/gambitRemoteTable.js",
   "old": "const no = this.over ? null : gambitRefusal(this.state, 0, cmd) ?? this._send(cmd, now);",
   "new": "const no = null;",
   "tests": [

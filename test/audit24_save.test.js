@@ -1,6 +1,6 @@
 // AUDIT 24 (the seven-slice sweep), the SAVE/RESTORE survivors.
 //
-// The mutation campaign left five live mutants in src/systems/save.js -
+// The mutation campaign left five live mutants in src/systems/save/save.js -
 // the file that decides whether a loaded character is the character who
 // was saved. Every one is a law with a comment above it and no test
 // under it: the faction-rep restore's two returns, the pre-S15 fatigue
@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { restoreFactionRep, restorePlayer, snapshotPlayer } from '../src/systems/save.js';
+import { restoreFactionRep, restorePlayer, snapshotPlayer } from '../src/systems/save/save.js';
 
 /** A minimal live entity the snapshotter accepts. */
 function makeEntity(over = {}) {

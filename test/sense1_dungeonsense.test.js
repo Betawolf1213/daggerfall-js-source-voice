@@ -1,7 +1,7 @@
 // SENSE1 (the delve arc, 2026-10-05 - the player, on the dungeon blocks: "a way to detect interactables").
 //
 // THE LOOK ROUND. Asking for Info mode underground lights, for a few seconds, what is within reach and in plain sight
-// that the hover plaque would name - the press's own list through the plaque's own ladder (systems/dungeonSense.js,
+// that the hover plaque would name - the press's own list through the plaque's own ladder (systems/dungeon/dungeonSense.js,
 // read by scenes/dungeonContext.js at the ask). The secrets tier adds the walls and doors only a chain moves. And the
 // plaque itself stops calling those walls "Door": a special door is no DaggerfallActionDoor, and the mod asks the
 // action band first (systems/worldTooltips.js actionObjectName).
@@ -14,7 +14,7 @@ import {
   SENSE_M, SENSE_HOLD_S, SENSE_FADE_S, SENSE_MAX, SENSE_PREF, SENSE_CSS, SENSE_RGB, SENSE_CARD_MIN, SENSE_CARD_W_MAX,
   SENSE_CARD_H_MAX, SENSE_FORM, senseTier, senseKind, boxDistance, senseCard, inPlainSight, senseFinds, isSecretMover,
   senseSecrets, createSensePulse, senseRound, senseMarks, senseFlat, playerTriggers,
-} from '../src/systems/dungeonSense.js';
+} from '../src/systems/dungeon/dungeonSense.js';
 import { PICK_PARDON_M } from '../src/player/activate.js';
 import { actionObjectName, actionName } from '../src/systems/worldTooltips.js';
 import { ActionSystem } from '../src/world/actionSystem.js';

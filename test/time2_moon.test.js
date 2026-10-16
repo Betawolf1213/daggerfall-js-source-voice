@@ -17,7 +17,7 @@ import { EQUIP_SLOTS, equipTableOf } from '../src/systems/equip.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { SKY_SEGMENTS, skyClassicMinutes } from '../src/net/skyLaw.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

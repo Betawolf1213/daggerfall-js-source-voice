@@ -2,7 +2,7 @@
 // right clicking, but notably all the buttons on it's pop-up card are.. off the screen, because it's got a bit much on
 // it!"; Mac: "Address screenshot for current and future weapons/gear. Want to improve this and reduce text bloat").
 // THE ITEM CARD FITS AND SAYS LESS, for every piece the game has and every one it will get:
-//   - a set tier's BRIEF (systems/sigilSets.js) is short enough for one line of the card, at every stage, for every set -
+//   - a set tier's BRIEF (systems/sigil/sigilSets.js) is short enough for one line of the card, at every stage, for every set -
 //     a new set's too - and its recovery is its own number, never in its words;
 //   - the card's WORDS for every Aetheric piece stay under a budget (the set's and the sigil's blocks in their card dress,
 //     the tier's lines without the lore), and the Info box (their whole dress) says more;
@@ -15,10 +15,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
-import { SIGIL_SETS, BRIEF_MAX, SET_STAGE_MAX, tierValues, setState, setLines, setSetsWearer, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
-import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil.js';
+import { SIGIL_SETS, BRIEF_MAX, SET_STAGE_MAX, tierValues, setState, setLines, setSetsWearer, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
+import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import { AETHERIC_RECORDS, mintAetheric } from '../src/systems/aetheric.js';
-import { rarityLines, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { rarityLines, LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { sigilCard } from '../src/ui/sigilCard.js';
 import { setCard } from '../src/ui/setCard.js';

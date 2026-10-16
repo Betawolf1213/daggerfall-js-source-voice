@@ -5,7 +5,7 @@
 // A peer's word - a room's record of a container it has opened (WORLD4, WORLD6a), a body's grant (WORLD6b-iii(c)), a
 // foe handed to its heir with its pack (PORTAL1's `it`), a fallen player's worn offer (WILD1) - is a CLIENT's word: no
 // record anywhere holds what it carries, so the player it reaches takes what nobody gave. The item law answers "could an
-// honest client have minted this?" (systems/itemLaw.js), and for a piece that bounds what it is worth. A LETTER OF
+// honest client have minted this?" (systems/item/itemLaw.js), and for a piece that bounds what it is worth. A LETTER OF
 // CREDIT it cannot bound: a letter is gold drawn on its holder's account (every bank cashes it at its face - banking.js
 // depositAllLetters - and every counter takes it as tender - court.js deductGold), and an honest one is whatever that
 // account held. The report ("apparently theres people handing out hacked gold ingame") was that: a modified client's
@@ -14,7 +14,7 @@
 //
 // A LETTER OF CREDIT NEVER RIDES A PEER'S WORD. No roll mints one (DFU's loot tables never do), so no honest container,
 // body or worn offer holds one but by a player putting it there - and online a room's container and a body are
-// everyone's (SS3's reasoning, systems/itemBound.js). A letter passes between players by the realm's own trade, which
+// everyone's (SS3's reasoning, systems/item/itemBound.js). A letter passes between players by the realm's own trade, which
 // settles from the giver's record (net/realmTradeLaw.js). So:
 //   - online a letter is put nowhere but the player's own places - the pack, the wagon, the player's own storage, the
 //     player's own pile on the ground (a drop is the dropper's, AUDIT WORLD B3) - and the window says why
@@ -22,8 +22,8 @@
 //   - every list a peer hands over lands without one, as it lands without a bound piece (`peerHanded`), and no list
 //     this client says to the room carries one.
 // Not a DFU member: Daggerfall has no other player to hand a piece to. Ledger A.
-import { isBound } from './itemBound.js';
-import { isOnlinePage } from './onlineLane.js';
+import { isBound } from './item/itemBound.js';
+import { isOnlinePage } from './online/onlineLane.js';
 import { REALM_LETTER_TEMPLATE } from '../net/realmGoldLaw.js';   // the letter's template (systems/inventory.js LETTER_OF_CREDIT_TEMPLATE, pinned equal) - a leaf
 
 /** A letter of credit - DFU's MiscItems Letter_of_credit, its worth its `value`. */

@@ -28,7 +28,7 @@
  },
  {
   "name": "MACRO-3-the-powers-list-skips-past-None",
-  "file": "src/systems/itemPowers.js",
+  "file": "src/systems/item/itemPowers.js",
   "old": "if (!e || e.type === T.None || e.type === 65535 || e.type == null) break;",
   "new": "if (!e || e.type === T.None || e.type === 65535 || e.type == null) continue;",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "MACRO-3-unidentified-lists-its-powers-anyway",
-  "file": "src/systems/itemPowers.js",
+  "file": "src/systems/item/itemPowers.js",
   "old": "  if (!identified) return [localizedText('powersUnknown', POWERS_UNKNOWN_TEXT)];\n",
   "new": "",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "MACRO-3-the-box-reads-the-pickers-words",
-  "file": "src/systems/itemPowers.js",
+  "file": "src/systems/item/itemPowers.js",
   "old": "    else if (list) out.push(first + (list[e.param] ?? ''));",
   "new": "    else if (list) out.push(first + enchantmentParamName(typeName(e.type), e.param));",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "MACRO-3-an-artifact-reads-the-wrong-record",
-  "file": "src/systems/itemPowers.js",
+  "file": "src/systems/item/itemPowers.js",
   "old": "lines?.(ARTIFACT_POWERS_TEXT_BASE + (item.artifactIndexBitfield >> 1))",
   "new": "lines?.(ARTIFACT_POWERS_TEXT_BASE + item.artifactIndexBitfield)",
   "tests": [

@@ -284,7 +284,7 @@
   },
   {
     "name": "INT9-LAW-A-KEPT-PIECE-TAKEN",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  const hb = aside(bag), hc = aside(cart);",
     "new": "  const hb = [], hc = aside(cart);",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "INT9-LAW-THE-FITS-REST-DESTROYED",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  for (const [it, from] of took.slice(records.length)) {",
     "new": "  for (const [it, from] of []) {",
     "tests": [
@@ -527,7 +527,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-GOLD-LAST",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  if (coin) took.push([coin, 'gold']);\n",
     "new": "",
     "tests": [
@@ -536,7 +536,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-DROP-IN-THE-PACKS-ORDER",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  drop.sort((a, b) => worth.get(b[0]) - worth.get(a[0]));",
     "new": "",
     "tests": [
@@ -545,7 +545,7 @@
   },
   {
     "name": "INT9-AUDIT-A-HEAVY-RECORD-TAKEN",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "    const held = list.map((it, i) => (keep(it) || (wildCanLose(it) && !recordFits(wildRecord(it))) ? [i, it] : null)).filter((x) => x !== null);",
     "new": "    const held = list.map((it, i) => (keep(it) ? [i, it] : null)).filter((x) => x !== null);",
     "tests": [
@@ -554,7 +554,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-LIGHT-LEFT",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  if (lit !== undefined) entity.lightSourceIndex = bag.indexOf(lit);",
     "new": "",
     "tests": [
@@ -563,7 +563,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-CARTS-COIN-INTO-THE-PURSE",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "      if (cartCoin) cartCoin.stackCount = Math.max(0, Math.floor(cartCoin.stackCount ?? 0)) + gold.cart;\n      gold.purse = 0; gold.cart = 0;",
     "new": "      entity.goldPieces += gold.cart;\n      gold.purse = 0; gold.cart = 0;",
     "equivalent": true,
@@ -574,7 +574,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-PLACE-ALONE-BELIEVED",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  if (!Array.isArray(wt)) return offer[w] ?? null;",
     "new": "  return offer[w] ?? null;",
     "tests": [
@@ -583,7 +583,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-CANDIDATES-UNWORN-ONLY",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  return k ? [k, ...drop] : drop;",
     "new": "  return drop;",
     "tests": [
@@ -592,7 +592,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-TOOK-BY-MARKS-ALONE",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "    const same = (/** @type {any} */ it) => !!it && (s.u ? it.uid === s.u : s.p ? it.provenance === s.p\n      : ",
     "new": "    const same = (/** @type {any} */ it) => !!it && (false ? 0 : false ? 0\n      : ",
     "tests": [

@@ -1,5 +1,5 @@
 // ARENA4b (2026-10-03, Mac: "Move them to a new house"): AN ONLINE HOME THE ARENA DISPLACED, MOVED BY ITS OWNER'S
-// CLIENT - the pick (systems/arenaMove.js arenaHomeFor), the boot's moves (systems/onlineHomes.js moveArenaHomes) driven
+// CLIENT - the pick (systems/arena/arenaMove.js arenaHomeFor), the boot's moves (systems/online/onlineHomes.js moveArenaHomes) driven
 // headless and over the real service (test/accountDb.mjs), the rooms a move carried as the client reads them
 // (systems/homeRent.js), and the host's wiring in scenes/world.js by source.
 import { test } from 'node:test';
@@ -7,12 +7,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService, T0, sessionStorageOf } from './accountDb.mjs';
 import { seatRealm, realmAt } from './realmSeat.mjs';
-import { arenaHomeFor, arenaHouseFor, emptyArenaScene, ARENA_CRATE_KEY } from '../src/systems/arenaMove.js';
-import { moveArenaHomes, createOnlineHomes, homeSceneName, ARENA_MOVE_TRIES } from '../src/systems/onlineHomes.js';
+import { arenaHomeFor, arenaHouseFor, emptyArenaScene, ARENA_CRATE_KEY } from '../src/systems/arena/arenaMove.js';
+import { moveArenaHomes, createOnlineHomes, homeSceneName, ARENA_MOVE_TRIES } from '../src/systems/online/onlineHomes.js';
 import { homeRooms, rentRoomsView, rentNoneLine, homeBedIsMine } from '../src/systems/homeRent.js';
 import { accountHomes, SESSION_KEY } from '../src/net/accountClient.js';
 import { createSceneCache, cacheScene, restoreCachedScene } from '../src/systems/sceneCache.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { HOME_ARENA_MAP_ID } from '../src/net/homeLaw.js';
 

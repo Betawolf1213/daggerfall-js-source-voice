@@ -12,7 +12,7 @@ import { NUDE_FLAT_STAND_INS, drawnFlat, showNudity } from '../src/characters/nu
 import { NPC_FLAT_ARCHIVES } from '../src/world/rdbLayout.js';
 import { FlatsFile, flatCensored, flatGender } from '../src/formats/flatsFile.js';
 import { TextureFile } from '../src/formats/textureFile.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { composeWornModest, MODESTY_SHIRT } from '../src/formats/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "FB-two-again",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const WILL_STAGGERS = 1;",
     "new": "export const WILL_STAGGERS = 2;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "FB-perfect-uncounted",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "(ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS",
     "new": "(ledger.staggers | 0) >= WILL_STAGGERS",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "FB-stand-rank3",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "LAST_STAND_HEALTH = Object.freeze({ 3: 0.3,",
     "new": "LAST_STAND_HEALTH = Object.freeze({ 3: 0.35,",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "FB-stand-rank5",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "4: 0.35, 5: 0.4 });",
     "new": "4: 0.35, 5: 0.55 });",
     "tests": [

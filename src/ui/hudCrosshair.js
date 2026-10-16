@@ -41,7 +41,7 @@
 //   replace it. The port keeps the branch and the scales; only the
 //   pictures differ.
 import { drawText, measureText } from './text.js';
-import { getBool, getString } from '../systems/settings.js';
+import { getBool, getString } from '../systems/settings/settings.js';
 import { getInteractionMode } from '../player/interactionMode.js';
 import { modeIcon } from './modeIcons.js';   // HUD-ICON1: DFU's own pictures
 

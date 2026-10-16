@@ -2,12 +2,12 @@
 // interior frame). A home's Spellmaking station opens the spell maker through the guild dispatcher, and the spell
 // maker's arm hands its WINDOW back - a window that keeps the host's TEXT.RSC reader as `rows`. Every reader of the
 // dispatcher's answer took "has rows" for "is a box": the station mapped the reader as a list and threw on every press,
-// and the guild popup pushed the whole window onto itself as a message. One test now, systems/guildServiceFlow.js
+// and the guild popup pushed the whole window onto itself as a message. One test now, systems/guild/guildServiceFlow.js
 // isServiceBox: rows that are a LIST.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isServiceBox } from '../src/systems/guildServiceFlow.js';
+import { isServiceBox } from '../src/systems/guild/guildServiceFlow.js';
 import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
 import { GuildServiceWindow } from '../src/ui/guildServiceWindow.js';
 

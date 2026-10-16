@@ -6,8 +6,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHorseCartPool, horseStillRecord, horseWalkRecord, HORSE_ARCHIVE, HORSE_LOOKS_KEPT, HORSE_DYE_PICTURES } from '../src/scenes/horseCartPool.js';
-import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horseCartLaw.js';
-import { horseLookCode } from '../src/systems/horseCoats.js';
+import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horse/horseCartLaw.js';
+import { horseLookCode } from '../src/systems/horse/horseCoats.js';
 
 const code = (coat, pattern = 0, legs = 0, seed = 0) => horseLookCode({ coat, pattern, legs, seed });
 const flush = async (n = 8) => { for (let i = 0; i < n; i++) await new Promise((r) => setTimeout(r, 0)); };

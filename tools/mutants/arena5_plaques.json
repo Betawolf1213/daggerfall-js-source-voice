@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA5-PLAQUES-MINE-MISSING",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  if (L.grand) {\n    const year",
     "new": "  if (false) {\n    const year",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA5-PLAQUES-ORDER",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  out.sort((a, b) => b.at - a.at);",
     "new": "  out.sort((a, b) => a.at - b.at);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA5-PLAQUES-ONLINE-SAVE",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  if (board) {\n    for (const h of Array.isArray(board.hall)",
     "new": "  if (false) {\n    for (const h of Array.isArray(board.hall)",
     "tests": [

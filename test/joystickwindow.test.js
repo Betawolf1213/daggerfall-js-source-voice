@@ -15,7 +15,7 @@ import { ControlsWindow, TAB_RECTS } from '../src/ui/controlsWindow.js';
 import { createBindings, resetDefaults, getAxisBinding, getJoystickUIBinding, getAxisInversion, setAxisBinding } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
 import { sliderGetValue } from '../src/ui/horizontalSlider.js';
-import { getBool, getFloat, setValue, _resetForTests } from '../src/systems/settings.js';
+import { getBool, getFloat, setValue, _resetForTests } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const code = (f) => readFileSync(join(root, 'src', f), 'utf8');

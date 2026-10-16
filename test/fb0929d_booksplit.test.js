@@ -16,9 +16,9 @@ import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { itemLine } from '../src/ui/enhancedInventory.js';
 import { createBook, bookTitle, setBookPrice, clearBookPrices } from '../src/systems/books.js';
-import { createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot.js';
+import { createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';
 import { addItem, splitStack, ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { withDom } from './invdrag.mjs';
 
 const KIERAN = 1;   // "A Tale of Kieran"

@@ -22,13 +22,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { dfuFile } from './dfuRoot.mjs';
-import { snapshotPlayer, restorePlayer, restoreSessionState, removeOrphanedItems, removeAllOrphanedItems } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, restoreSessionState, removeOrphanedItems, removeAllOrphanedItems } from '../src/systems/save/save.js';
 import { MobileUnit, MOBILE_DAEDRA_SEDUCER } from '../src/characters/mobileUnit.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { usingRightHandFromSaveVars, weaponPoseOf, applyWeaponPose, mergeWeaponPose } from '../src/combat/playerWeapon.js';   // HARD2c: the port-save half of the pair, beside the classic-save half
 import { equipItem } from '../src/systems/equip.js';
-import { createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot.js';   // AUDIT 63r F28: the three NAMELESS production mints
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot/loot.js';   // AUDIT 63r F28: the three NAMELESS production mints
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WM = rd('src/scenes/worldModes.js');
@@ -538,7 +538,7 @@ test('AUDIT 63 F30 (reference): the flag is saved and restored UNDER TWO GATES, 
 });
 
 test('AUDIT 63 F30: the flag rides the DUNGEON envelope, not ENTITY_FIELDS', () => {
-  const SAVE = rd('src/systems/save.js');
+  const SAVE = rd('src/systems/save/save.js');
   const fields = SAVE.slice(SAVE.indexOf('const ENTITY_FIELDS'), SAVE.indexOf('];', SAVE.indexOf('const ENTITY_FIELDS')));
   assert.ok(!/playerTeleportedIntoDungeon/.test(fields),
     'ENTITY_FIELDS is copied BLIND in both directions - that would drop DFU\'s two gates');

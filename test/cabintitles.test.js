@@ -19,7 +19,7 @@ import { mintDeed, mintBoatItem } from '../src/systems/comeSailAway/comeSailAway
 import { linkBankCabin, readBankCabinLink } from '../src/systems/boatCabinOwnership.js';
 import { cabinSceneName } from '../src/systems/sailingCabin.js';
 import { SHIP_INTERIOR_MAP_IDS, SHIP_TYPES } from '../src/systems/banking.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
 import { createSceneCache, interiorSceneName } from '../src/systems/sceneCache.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

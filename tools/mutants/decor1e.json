@@ -163,7 +163,7 @@
   },
   {
     "name": "DECOR1e-the-placer-from-nothing",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "  const s = { yaw: from ? wrapTurn((mount ? from.rot?.[2] : from.rot?.[0]) ?? 0) : 0, raise: 0, scale: from?.scale ?? 1, snap: false };",
     "new": "  const s = { yaw: 0, raise: 0, scale: 1, snap: false };",
     "tests": [
@@ -364,7 +364,7 @@
   },
   {
     "name": "DECOR1e-the-pieces-half-never-credited",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  credit(refund + decorBack);",
     "new": "  credit(refund);",
     "tests": [
@@ -373,7 +373,7 @@
   },
   {
     "name": "DECOR1e-a-bad-word-believed",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      const n = (v) => (Number.isSafeInteger(v) && v > 0 ? v : 0);",
     "new": "      const n = (v) => v;",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "DECOR1e-the-pieces-half-dropped",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "decorBack: n(r.data?.decorBack), ...(r.data?.refund != null",
     "new": "decorBack: 0, ...(r.data?.refund != null",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "DECOR1e-the-sale-line-the-home-alone",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "`You sold your home. ${gold(refund + piecesBack + rent)} gold",
     "new": "`You sold your home. ${gold(refund + rent)} gold",
     "tests": [

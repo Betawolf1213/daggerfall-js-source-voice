@@ -116,7 +116,7 @@ Pinned in test/qa2_nearsite.test.js over the real quest text (QUEST-TOWN).
 
 ## OPEN-HAND: the Rose's second blow reaches the Gate's Warden (5)
 
-`src/systems/playerDoor.js` oweFoe, takeOwed; `src/systems/lootPowers.js` again; `src/scenes/dungeonContext.js`
+`src/systems/playerDoor.js` oweFoe, takeOwed; `src/systems/loot/lootPowers.js` again; `src/scenes/dungeonContext.js`
 landOnBoss, landOnCrystal, landOnHost, landOnRival.
 
 FOUND. The Gauntlets of the Rose (`gauntlets-of-the-rose`, Open Hand: `share: 50`) strike a bare-handed blow again for

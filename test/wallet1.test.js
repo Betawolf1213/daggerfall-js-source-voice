@@ -13,11 +13,11 @@ import {
   giveWallet, giveWalletGift, setWalletSilver, walletSilver, refreshWalletSilver, walletContents, walletLines, _resetWalletForTests,
 } from '../src/systems/walletItem.js';
 import { assignStartingGear, addSurvivalProvisions } from '../src/systems/startingGear.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { LETTER_OF_CREDIT_TEMPLATE, letterOfCredit, effectiveUnitWeightInKg } from '../src/systems/inventory.js';
-import { sigilStone, welkyndShards, portalStones, SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE } from '../src/systems/gateSpoils.js';
-import { isBound, boundRefusesPut, BOUND_KEEPS, packOnlyText } from '../src/systems/itemBound.js';
+import { sigilStone, welkyndShards, portalStones, SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
+import { isBound, boundRefusesPut, BOUND_KEEPS, packOnlyText } from '../src/systems/item/itemBound.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
 import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
@@ -26,7 +26,7 @@ import { pageOf } from '../src/ui/packPages.js';
 import { packModel, useResultAction, mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhancedInventory.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import * as qs from '../src/systems/quickslots.js';
-import { itemInfoRows } from '../src/systems/itemInfo.js';
+import { itemInfoRows } from '../src/systems/item/itemInfo.js';
 import { withDom, fakeDom } from './invdrag.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

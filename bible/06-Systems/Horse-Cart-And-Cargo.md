@@ -84,25 +84,25 @@ WithPlayer, None, FollowingPlayer):
 
 ## The port's shape
 
-- `src/systems/horseCartLaw.js` - THE LAW: the enums, every constant off
+- `src/systems/horse/horseCartLaw.js` - THE LAW: the enums, every constant off
   the metadata Constant table, the save record and its normalisation, the
   name laws, the persistence resolutions, every predicate the runtime
   branches on, the text table, the ground pick, the billboard's
   orientation / view / walk clock, the wheel and cargo arithmetic, the
   scene <-> world conversions over `StreamingWorld.SceneMapRatio` (40).
-- `src/systems/horseFollow.js` - THE FOLLOWING: `HorseFollowPath`,
+- `src/systems/horse/horseFollow.js` - THE FOLLOWING: `HorseFollowPath`,
   `HorseFollowController` (the speeds, the step, the evasion, the stuck
   recovery), `WagonTrail`, `groundedPoseStep`, over a physics seam
   `{ now, raycastAll, sphereCastClear, threats }`.
-- `src/systems/wagon41214.js` - `Wagon41214VisualBuilder`: the classic
+- `src/systems/wagon/wagon41214.js` - `Wagon41214VisualBuilder`: the classic
   wagon welded into its five pieces (102 vertices, 48 triangles, four
   sub-meshes; a body of 14, two wheels of 10 planar in X, two shafts of
   7), the pivots and the radius, and `WagonCargoVisual`'s twelve pieces.
-- `src/systems/horseCart.js` - THE RUNTIME: `TrailingWagonRuntime`'s
+- `src/systems/horse/horseCart.js` - THE RUNTIME: `TrailingWagonRuntime`'s
   state and order of operations, `DeployedWagonVisual` and
   `StationaryHorseVisual` as pure state, over a `deps` bag the hosts fill
   (its header lists every seam).
-- `src/systems/horseCartWire.js` - HCC-ONLINE's record (below).
+- `src/systems/horse/horseCartWire.js` - HCC-ONLINE's record (below).
 - `src/scenes/horseCartPool.js` - THE PRESENTATION: the part meshes and
   the cargo meshes through the host's pipeline, the horse batches off the
   vendored PNGs (`renderer.uploadTexture('hcc', 'h<view>' | 'w<view>#<frame>')`,

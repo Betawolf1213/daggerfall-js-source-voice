@@ -13,13 +13,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDoc, text } from './decorFakes.mjs';
 import * as court from '../src/systems/court.js';
-import * as sess from '../src/systems/cardTableSession.js';
+import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor } from '../src/player/pointerLock.js';
 import { nearestFreeSeat, takenSeats, cardTableSeats, tableFrame } from '../src/world/cardTables.js';
 import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars.js';
-import { RemoteCardTable } from '../src/systems/cardRemoteTable.js';
-import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';
+import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
+import { cardPackPrice, buyCardPack } from '../src/systems/card/cardSources.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { tickInFlight, setWorldMinutes, worldMinutes, CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
@@ -31,16 +31,16 @@ import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGam
 import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
-import { iliacGrade, patronDeck, patronPlays, seededUnit, ILIAC_TEMPER_NAMES, TEMPER_UPGRADES, ILIAC_THINK_TRIALS } from '../src/systems/iliacPatrons.js';
-import { IliacTableSession, forfeitsAfter, forfeitsFor, FORFEITS_BOOK_MAX } from '../src/systems/iliacTableSession.js';
-import { giveBinderAtChargen, collectionOf, isIliacCard, mintIliacCard } from '../src/systems/iliacItems.js';
+import { iliacGrade, patronDeck, patronPlays, seededUnit, ILIAC_TEMPER_NAMES, TEMPER_UPGRADES, ILIAC_THINK_TRIALS } from '../src/systems/iliac/iliacPatrons.js';
+import { IliacTableSession, forfeitsAfter, forfeitsFor, FORFEITS_BOOK_MAX } from '../src/systems/iliac/iliacTableSession.js';
+import { giveBinderAtChargen, collectionOf, isIliacCard, mintIliacCard } from '../src/systems/iliac/iliacItems.js';
 import { STARTER_DECK, ILIAC_CARDS, ILIAC_LOCATIONS, cardById } from '../src/net/iliacCards.js';
 import { newGame, commit, reveal, iliacView, legalPlays, playsRefusal, ILIAC_TURNS, ILIAC_HAND_MAX, ILIAC_HOLDINGS } from '../src/net/iliacHand.js';
 import { iliacPlaces } from '../src/world/iliacCloth.js';
 import { CARD_W, CARD_L } from '../src/world/cardMotion.js';
 import { CARD_TABLE_BOX } from '../src/world/cardTableProp.js';
 import { createIliacTableHud, iliacHudModel } from '../src/ui/iliacTableHud.js';
-import { seatPatrons } from '../src/systems/cardTableSession.js';
+import { seatPatrons } from '../src/systems/card/cardTableSession.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const src32 = (seed) => { const u = seededUnit(seed); return () => Math.floor(u() * 4294967296); };
@@ -313,14 +313,14 @@ test('AUDIT CARDS-6 B8, B9 (records corrected): a careful town regular carries o
     assert.equal(n, t === 'tight' ? 1 : 2, `${t}, seed ${seed}`);
   }
   assert.equal(cardById('king-gothryd').tier, 'legendary');
-  const P = read('src/systems/iliacPatrons.js');
+  const P = read('src/systems/iliac/iliacPatrons.js');
   assert.ok(!P.includes('carries the first two that are not Princes; a'), 'the claim a careful town regular disproved is gone');
   assert.ok(P.includes('so a careful town regular\n *  carries the Knight of the Flame alone'));
   // B9: one regular, two tempers - Hold'em's is the table's draw, Iliac Hand's the seed's
   const tempers = new Set(Array.from({ length: 24 }, (_, i) => seatPatrons(['Ana'], { bb: 10 }, src32(i + 1))[0].temper));
   assert.ok(tempers.size > 1, 'Hold\'em draws Ana\'s temper off the table\'s source');
   assert.equal(iliacTemperOf(12345), iliacTemperOf(12345));
-  for (const f of ['src/systems/iliacPatrons.js', 'src/scenes/iliacTableGame.js']) assert.ok(!read(f).includes('one temper at both games') && !read(f).includes('one regular, one temper'), `${f}: the false claim gone`);
+  for (const f of ['src/systems/iliac/iliacPatrons.js', 'src/scenes/iliacTableGame.js']) assert.ok(!read(f).includes('one temper at both games') && !read(f).includes('one regular, one temper'), `${f}: the false claim gone`);
 });
 
 test('AUDIT CARDS-6 B10: the panel by the keyboard - every row the mouse presses is in the Tab order and takes Enter or Space, a button\'s keys and Tab are the panel\'s, the keyboard kept across a repaint', () => {

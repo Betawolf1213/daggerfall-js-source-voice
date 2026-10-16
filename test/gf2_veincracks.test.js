@@ -22,7 +22,7 @@ import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 import { mineFlats, mineRecord, mineWash, ORE_DYE, ORE_FLAT_ARCHIVE, standDungeonVeins } from '../src/scenes/mineHost.js';
 import { MINE_ACT } from '../src/net/professionLaw.js';
 import { utcDayOfMs } from '../src/net/nodeLaw.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { PX, WOODS, GLENUMBRA, NOON, rig, arrive, lands, sfxOf, tick, dice } from './gatherRig.mjs';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');

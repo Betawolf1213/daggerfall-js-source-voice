@@ -13,7 +13,7 @@ import { Renderer } from '../src/render/renderer.js';
 import { drawRigSpriteBox } from '../src/render/characterSprite.js';
 import { createHorseRig } from '../src/world/horseRig.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
+import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horse/horseCartLaw.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

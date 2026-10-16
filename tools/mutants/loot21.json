@@ -1,7 +1,7 @@
 [
   {
     "name": "LOOT21-late-finds-rolled-early",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (find.late === true) continue;   // LOOT21: a late find is the door's last roll (rollLateFinds)\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "LOOT21-every-find-rolled-late",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (find.late !== true) continue;\n    const chance = uniqueFindChance(find, source);\n    if (chance > 0 &&",
     "new": "    const chance = uniqueFindChance(find, source);\n    if (chance > 0 &&",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "LOOT21-a-draw-for-nothing",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (chance > 0 && rolls() * 1000 < chance) out.push(...(find.mint(rolls) ?? []));",
     "new": "    if (rolls() * 1000 < chance) out.push(...(find.mint(rolls) ?? []));",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "LOOT21-the-door-never-finds-them",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  items.push(...rollLateFinds({ ...source, luck }, rolls));   // LOOT21: the late finds - the Ayleid stones - after all of it\n",
     "new": "",
     "tests": [

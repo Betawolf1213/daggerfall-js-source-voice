@@ -14,8 +14,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createGuildForGroup } from '../src/systems/guildVariants.js';
-import { guildGroupOfFaction, membershipOf, activeMemberships, joinGuild } from '../src/systems/guilds.js';
+import { createGuildForGroup } from '../src/systems/guild/guildVariants.js';
+import { guildGroupOfFaction, membershipOf, activeMemberships, joinGuild } from '../src/systems/guild/guilds.js';
 import { bookshelfAccess } from '../src/systems/bookshelf.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

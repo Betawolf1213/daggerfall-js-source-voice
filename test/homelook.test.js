@@ -14,7 +14,7 @@ import {
 import { homeLookPart, homeLookTarget, homeLookRemap, homeLookSwatch, HOME_LOOK_WALL_FAMILIES } from '../src/world/homeLook.js';
 import { SEASON, isExteriorWindow } from '../src/world/climateSwaps.js';
 import { standService, T0 } from './accountDb.mjs';
-import { createOnlineHomes } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes } from '../src/systems/online/onlineHomes.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { decorLookText, decorLookStart } from '../src/ui/decorPanel.js';
 import { toolRig, settle, all } from './decorFakes.mjs';

@@ -88,6 +88,6 @@ a recorded departure). The two map skins carry its maps and popups:
 `src/ui/travelMapWindow.js` and `src/ui/travelPopUp.js` (the classic window),
 `src/ui/heldMap.js` (the enhanced sheet). `src/scenes/world.js` opens a driver's map
 (`openImmersiveMap`) and travels it; online it is the one fast travel the room keeps
-(`src/systems/onlineLane.js`).
+(`src/systems/online/onlineLane.js`).
 
 See `bible/06-Systems/Immersive-Travel.md`. Thank you, kkgobkk.

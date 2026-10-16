@@ -8,7 +8,7 @@
   },
   {
     "name": "ATTRMACRO1-the-box-gets-the-mcp-but-no-player-hooks",
-    "file": "src/systems/talkMacros.js",
+    "file": "src/systems/talk/talkMacros.js",
     "old": "  const hooks = { playerEntity: () => entity };",
     "new": "  const hooks = {};",
     "tests": ["test/macrocoverage.test.js"]
@@ -50,7 +50,7 @@
   },
   {
     "name": "ATTRMACRO1-the-row-shape-is-flattened-so-the-title-loses-its-centre",
-    "file": "src/systems/talkMacros.js",
+    "file": "src/systems/talk/talkMacros.js",
     "old": "  return rows.map((r, i) => (typeof r === 'string' ? tokens[i].text : { ...r, text: tokens[i].text }));",
     "new": "  return tokens.map((t) => t.text);",
     "tests": ["test/macrocoverage.test.js"]

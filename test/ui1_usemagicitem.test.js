@@ -8,9 +8,9 @@ import { usableMagicItems, createUseMagicItemWindow } from '../src/ui/useMagicIt
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { MAGIC_ITEM_RECORD_SIZE, readMagicDef } from '../src/formats/magicDef.js';
-import { createPotion, createRegularMagicItem, CLASSIC_RECIPE_KEYS } from '../src/systems/loot.js';
+import { createPotion, createRegularMagicItem, CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';
 import { HEALING_RECIPE_KEY, MAGICKA_RECIPE_KEY, mintHealingPotion } from '../src/systems/healingSupply.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { addItem } from '../src/systems/inventory.js';
 import { brewItems } from '../src/systems/alchemyItems.js';
 import { POTIONS } from '../src/net/alchemyLaw.js';

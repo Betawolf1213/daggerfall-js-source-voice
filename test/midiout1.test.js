@@ -7,10 +7,10 @@ import {
   midiMessage, scaledVolume, stateKey, channelResetMessages, channelQuietMessages, MidiOutSongPlayer,
   setMidiOut, midiOutName, midiOutputs, findMidiOutput, _resetMidiOutForTests, MIDI_GAP_S, nextMidiOut, onMidiOutChange,
 } from '../src/systems/midiOut.js';
-import { setMusicMuted } from '../src/systems/songPlayer.js';
-import { setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { setMusicMuted } from '../src/systems/song/songPlayer.js';
+import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { gateScoreSongs } from '../src/systems/gateScore.js';
+import { gateScoreSongs } from '../src/systems/gate/gateScore.js';
 import { MusicService } from '../src/systems/music.js';
 import { whereIs, CATEGORIES } from '../src/ui/settingsMap.js';
 import { restoreTabDefaults } from '../src/ui/enhancedMenu.js';

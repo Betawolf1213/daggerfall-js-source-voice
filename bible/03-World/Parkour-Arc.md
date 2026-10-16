@@ -136,7 +136,7 @@ is NOT asked: since OVH3 it is the player's own look ("nothing the room agrees o
 rooftop is something the room agrees on. The kill door still works online - it takes the moves away from whoever types
 it and from nobody else. The three motor hosts (world, exterior, dungeon) hand `parkourDeps(playerEntity, say)`.
 
-**Roleplay & Realism** (`systems/rrInstall.js`, `rrRealism.js rrParkourRefusal`): under the mod's `climbingRestriction`
+**Roleplay & Realism** (`systems/roleplayRealism/rrInstall.js`, `rrRealism.js rrParkourRefusal`): under the mod's `climbingRestriction`
 - on by default, and its own row promises "no climbing with a weapon out" - a drawn weapon that is not bare hands
 refuses a mantle and a clamber with the mod's line, said once a press; the press is a plain jump.
 

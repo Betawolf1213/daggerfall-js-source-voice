@@ -15,7 +15,7 @@ on the port's Basic Roads (`vendor/roads-hazelnut/`, also Hazelnut's).
 **Licence.** The mod's CODE is MIT ("Copyright (C) 2020 Hazelnut", the
 header of every script; `PlayerAutoPilot.cs` is "Copyright (C) 2019
 Jedidia" under the same licence). The port's implementation is written
-from that source - `src/systems/travelOptions.js` and the files beside
+from that source - `src/systems/travel/travelOptions.js` and the files beside
 it cite it line by line. The three TEXTURES below are the mod's own
 art and carry no licence text of their own.
 
@@ -86,9 +86,9 @@ roads-hazelnut/README.md`) records a permission from the same author.]**
 
 ## The port
 
-`src/systems/travelOptions.js` is the mod (`TravelOptionsMod.cs`),
-`src/systems/travelAutopilot.js` is Jedidia's `PlayerAutoPilot.cs`,
-`src/systems/travelPaths.js` the path-following geometry,
+`src/systems/travel/travelOptions.js` is the mod (`TravelOptionsMod.cs`),
+`src/systems/travel/travelAutopilot.js` is Jedidia's `PlayerAutoPilot.cs`,
+`src/systems/travel/travelPaths.js` the path-following geometry,
 `src/ui/travelControlUI.js` the control panel (`TravelControlUI.cs`),
 `src/ui/travelJunctionMap.js` the junction mini-map, and
 `src/ui/travelPathsOverlay.js` the map window's path and dot drawing

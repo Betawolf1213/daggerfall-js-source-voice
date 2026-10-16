@@ -5,7 +5,7 @@
 // in a serpent's, kept beside the client's.
 //
 // A boss's blow was judged on the struck player's machine alone (co-op's law - net/gateStrike.js, net/sdStrike.js,
-// systems/serpentStrike.js), so a client that took none stood every fight out, earned the spoils' "stood" share, and
+// systems/serpent/serpentStrike.js), so a client that took none stood every fight out, earned the spoils' "stood" share, and
 // could carry a fight alone. Now the relay runs the same tests on the poses it holds (net/bossRef.js) and takes each
 // blow no saving throw answers off its OWN count (`v`, a share of the whole). The client's admissions never lower it -
 // a blow the client took and said before the relay judged it would be taken twice - so the count is the relay's

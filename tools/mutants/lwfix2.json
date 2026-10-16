@@ -77,7 +77,7 @@
   },
   {
     "name": "LW-FIX2-mark-trample",
-    "file": "src/systems/rrRidingHost.js",
+    "file": "src/systems/roleplayRealism/rrRidingHost.js",
     "old": "if (g) { g.livingFrom = from; chargeFoe(g, fwd); }",
     "new": "if (g) { chargeFoe(g, fwd); }",
     "tests": [

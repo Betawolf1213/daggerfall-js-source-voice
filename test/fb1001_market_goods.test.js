@@ -28,18 +28,18 @@ import { realmIo, createRealmSession, realmGoldAct } from '../src/systems/realmS
 import { createMarketGoods } from '../src/systems/tradePack.js';
 import { createMarketTab } from '../src/ui/marketTab.js';
 import { createAcquireWatch } from '../src/systems/acquireWatch.js';
-import { generateRandomLoot, LOOT_MATRICES, validLootList, createRandomGem } from '../src/systems/loot.js';
-import { mintMaterialItem } from '../src/systems/profItems.js';
+import { generateRandomLoot, LOOT_MATRICES, validLootList, createRandomGem } from '../src/systems/loot/loot.js';
+import { mintMaterialItem } from '../src/systems/professions/profItems.js';
 import { MINED_KEYS, PLANT_GROUP_TEMPLATES } from '../src/net/professionLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARROW_TEMPLATE, goldStack, letterOfCredit } from '../src/systems/inventory.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
-import { brokerStock } from '../src/systems/sigilBroker.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
+import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { mintBoatItem, BOAT_DEED_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { equipItem } from '../src/systems/equip.js';
-import { setLocked } from '../src/systems/itemLock.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
 import { mintPiece } from '../src/systems/smithItems.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { REALM_MARKET_OPEN_SQL } from '../server-account/src/realm.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -54,7 +54,7 @@ const DF = 17, WR = 23;
 const HUBS = { [DF]: [207, 212], [WR]: [590, 166] };
 const ROAD = roadPixels({ x: 207, y: 212 }, { x: 590, y: 166 });
 
-/** The loot a body drops (systems/loot.js generateRandomLoot - LootTables.GenerateRandomLoot), its weapons and armour
+/** The loot a body drops (systems/loot/loot.js generateRandomLoot - LootTables.GenerateRandomLoot), its weapons and armour
  *  certain: a looted weapon, a looted piece of armour and the gold beside them, as the producer mints them. */
 function lootDrop(seed = 11) {
   const items = generateRandomLoot({ ...LOOT_MATRICES['-'], MinGold: 5, MaxGold: 5, WP: 100, AM: 100 }, { level: 10, gender: 'male' }, seededRng(seed));

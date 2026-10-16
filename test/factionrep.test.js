@@ -16,7 +16,7 @@ import {
   propagateReputationChange, zeroAllReputations, getFlag, setFlag, changePower,
   MIN_REPUTATION, MAX_REPUTATION, MIN_POWER, MAX_POWER, FACTION_FLAGS,
   THE_DARK_BROTHERHOOD, GENERIC_TEMPLE, GENERIC_KNIGHTLY_ORDER, QUESTOR_IDS,
-} from '../src/systems/factionRep.js';
+} from '../src/systems/faction/factionRep.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2)

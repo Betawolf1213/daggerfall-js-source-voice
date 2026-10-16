@@ -17,7 +17,7 @@ import {
   RAIDER_CHASE_MPS, RAIDER_LEASH_M, RAIDER_GIVE_UP_MS, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_REACH_PX, RAIDER_LABEL,
   RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderNearMe,   // OW6: the chase, shared
 } from '../src/systems/seaRaiders.js';
-import { chaseYields } from '../src/systems/travelBands.js';
+import { chaseYields } from '../src/systems/travel/travelBands.js';
 import { worldCoordToMapPixel } from '../src/formats/mapsFile.js';
 import { travellerMarkOf, travellerWorldOf } from '../src/systems/travellerMarks.js';
 import {
@@ -404,7 +404,7 @@ test('AUDIT OW5b S4 law: A RAIDER\'S LEG IS CHOSEN BY THE WHOLE LEG - through an
 // under the band word's own law. ─────────────────────────────────────────────────────────────────────────────────────
 
 test('OW6 law: the raider word is the band word\'s law with a raider\'s ids - its chases where they sail, then the spent, newest first, bounded; heard, a band\'s id is no raider\'s (nor a raider\'s a band\'s), a raider named twice once, a place off the map dropped; kept only for a raider that can be about me - this life\'s or the last, within the raiders\' reach (mutants: the ids crossed, the reach off, a life too many)', async () => {
-  const { validBandWord } = await import('../src/systems/travelBands.js');
+  const { validBandWord } = await import('../src/systems/travel/travelBands.js');
   assert.equal(RAIDERS_WIRE_MAX, 8);
   assert.equal(RAIDER_WORD_MS, 3000);
   const chases = new Map([['r1.2.30', { pos: { x: 10.4, z: 20.6 } }]]);

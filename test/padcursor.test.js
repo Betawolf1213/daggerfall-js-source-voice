@@ -15,7 +15,7 @@ import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setControllerLook } from '../src/player/lookFilter.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import { setPref, resetPrefs } from '../src/systems/uiPrefs.js';
 import { padDoorCursorFrame, padDoorFrame, DOOR_CURSOR_DEADZONE } from '../src/ui/menuPad.js';
 import { padDoorCursorLaw } from '../src/systems/padCursor.js';

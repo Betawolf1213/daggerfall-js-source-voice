@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as L from '../src/world/underwaterLoot.js';
 import { createDecorTextureSource } from '../src/scenes/deepWatersDecor.js';
-import { createRandomWeapon } from '../src/systems/loot.js';
+import { createRandomWeapon } from '../src/systems/loot/loot.js';
 import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
 import { surfaceLook, underwaterFogColor, lookSettings } from '../src/world/deepWaterLook.js';
 import { loadStarted, loadFinished, teleported, canRunLightRuntimeWork, canRunHeavyRuntimeWork, resetDeepWaterRuntime } from '../src/world/deepWaterRuntime.js';
@@ -51,7 +51,7 @@ test('AUDIT DW-F E5-3: CreateRandomWeapon draws RandomMaterial for every slot be
   assert.equal(arrows.templateIndex, 131);
   assert.equal(arrows.stackCount, 11, 'the stack reads the third value, not the material\'s');
   assert.equal(arrows.material, 0, 'and the material drawn is thrown away (nativeMaterialValue = 0)');
-  assert.match(rd('src/systems/loot.js'), /const material = randomMaterial\(playerLevel, rolls\);\n\s+if \(groupIndex >= 19\) return \{ group: 'Weapons', \.\.\.createWeapon\(customs\[groupIndex - 19\], material\) \};\n[\s\S]{0,1500}?if \(groupIndex === 18\) return createWeapon\(ARROW_TEMPLATE, 0, rolls\);/);
+  assert.match(rd('src/systems/loot/loot.js'), /const material = randomMaterial\(playerLevel, rolls\);\n\s+if \(groupIndex >= 19\) return \{ group: 'Weapons', \.\.\.createWeapon\(customs\[groupIndex - 19\], material\) \};\n[\s\S]{0,1500}?if \(groupIndex === 18\) return createWeapon\(ARROW_TEMPLATE, 0, rolls\);/);
 });
 
 test('AUDIT DW-F E5-6: the loot\'s unordered compares are the C#\'s own forms - a NaN takes the branch the IL\'s .un takes (mutants: an ordered negation back)', () => {

@@ -12,8 +12,8 @@ import { campMenu, CAMP_TEXT, CAMP_KIND, FIRE_MINUTES, PLACE_AHEAD, TENT_MODEL }
 import { hoodUp, sunlit } from '../src/systems/survival/temperature.js';
 import { createCamps } from '../src/scenes/camps.js';
 import { setWorldMinutes, setSharedClock } from '../src/systems/worldTick.js';
-import { inventoryItemImage, mintCondition } from '../src/systems/itemTemplates.js';
-import { resolveItemName, survivalInfoTokens } from '../src/systems/itemInfo.js';
+import { inventoryItemImage, mintCondition } from '../src/systems/item/itemTemplates.js';
+import { resolveItemName, survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 import { useItem } from '../src/systems/useItem.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { seedStartingEquipment, equipTableOf } from '../src/systems/equip.js';

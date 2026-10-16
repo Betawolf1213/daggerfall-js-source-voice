@@ -51,10 +51,10 @@
 import {
   floorTriangles, deriveFloors, floorAt, planBounds, floorPlan, PLAN_CELL,
   levelField, storeyLinks, groupSheets, sheetOfStorey, fieldOccupancy,
-} from '../systems/automapFloors.js';
+} from '../systems/automap/automapFloors.js';
 import { boundarySegments, linkSegments, fitView, toPaper, toMap, viewCentredOn, scaleMinOf, SCALE_MAX, FIT_MARGIN as INK_FIT_MARGIN } from './inkMap.js';
-import { tryAddOrEditUserNote, setUserNote, automapTrailPoints } from '../systems/automap.js';
-import { aabbContains } from '../systems/automapModel.js';   // TP-SEEN
+import { tryAddOrEditUserNote, setUserNote, automapTrailPoints } from '../systems/automap/automap.js';
+import { aabbContains } from '../systems/automap/automapModel.js';   // TP-SEEN
 import { readPartyBodies, PARTY_MARK_CSS } from './partyMapMarks.js';   // DISC23-A: the party's bodies, in this frame
 import { QUEST_MARK_LIFT, QUEST_FOLLOWED_TEXT, QUEST_LEGEND_TEXT } from './questMarks.js';   // AUDIT DELVE D3/D4: where the diamond stands, and what it says
 import {
@@ -876,7 +876,7 @@ export function createAutomapSheet(deps = {}) {
 
   // ── EM3-3D fix: WHERE THE PLAYER HAS BEEN ──────────────────────
   // Mac: "it should only uncover where i actually was and not show all floors". The walked trail
-  // (systems/automap.js automapTrailTick) is the one record of that. With it, the strip lists the floors the player
+  // (systems/automap/automap.js automapTrailTick) is the one record of that. With it, the strip lists the floors the player
   // has stood on and nothing else, the floor keys step between those, and the solid sheet draws only floor near the
   // trail. A record with no trail point at all (a save older than the trail) or a RevealAll falls back to the reveal.
   let trailMemo = null;   // { rec, size, rows, useTrail, points, visited }
@@ -1485,7 +1485,7 @@ export function createAutomapSheet(deps = {}) {
 
     /**
      * DISC22-G: THE MIDDLE BUTTON WRITES A NOTE, as it does on DFU's 3D map (TryToAddOrEditUserNoteMarker..., the
-     * one law in systems/automap.js): on a note, it edits that note; on revealed floor with no note within a metre,
+     * one law in systems/automap/automap.js): on a note, it edits that note; on revealed floor with no note within a metre,
      * it pins a new one at the storey's height and asks for its words. An empty answer takes the note away (the 3D
      * map's right double-click); a cancelled one leaves an edited note as it was and a new one unmade. The words
      * are asked through the window's own box (`deps.askText`), because a sheet has no DOM.

@@ -14,11 +14,11 @@
 // here at the steps the map drew (0.35 and 0.7, strengthOf below).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bandAt, EDGE_INTENSITY, wornAmong, systemsNear, weatherAt } from '../src/systems/weatherMap.js';
+import { bandAt, EDGE_INTENSITY, wornAmong, systemsNear, weatherAt } from '../src/systems/weather/weatherMap.js';
 import {
   resetWeatherSim, setWeatherFieldLaw, setWeatherMapLaw, setSnowGroundLaw, sampleWeatherField, currentWeather,
   currentWeatherRaw, currentWeatherIntensity, currentFieldCell, mapGround,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
 const YEAR = 405 * 360 * 1440;

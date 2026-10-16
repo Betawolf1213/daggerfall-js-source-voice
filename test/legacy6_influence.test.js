@@ -10,7 +10,7 @@ import {
   STANDING_SHARE, REGARD_SHARE, FACTIONS_KEPT, REGARDS_KEPT, REGARD_FLOOR, HOUSE_NEWS_DAYS, NEWS_MAX,
 } from '../src/systems/legacy/influence.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
-import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
+import { createFactionRep, getReputation } from '../src/systems/faction/factionRep.js';
 import { foundFamily, readFamily, personOf, familyRng, MODELS, LEGACY_MOD } from '../src/systems/legacy/family.js';
 import { mergeFacts, loadFamily } from '../src/systems/legacy/store.js';
 import { createLegacyHost, LEGACY_TEXT } from '../src/scenes/legacyHost.js';
@@ -18,7 +18,7 @@ import { modSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { KIN_NEWS, newsScript, fillLine, TOKEN_FALLBACK } from '../src/systems/livingWorld/lines.js';
 import { circleLine, circleSlots, slotSpoken, exchangeScript } from '../src/systems/livingWorld/meetups.js';
-import { killerOf, inheritRevenant, revenantsFor, REVENANT_STORE_PREFIX, REVENANT_RETURN_MIN_MINUTES, _resetRevenantForTests } from '../src/systems/revenant.js';
+import { killerOf, inheritRevenant, revenantsFor, REVENANT_STORE_PREFIX, REVENANT_RETURN_MIN_MINUTES, _resetRevenantForTests } from '../src/systems/revenant/revenant.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

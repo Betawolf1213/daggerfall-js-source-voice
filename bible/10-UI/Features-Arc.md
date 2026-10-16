@@ -40,7 +40,7 @@ Three stores back these rows and all three stay where they are:
 
 | Store | File | Why it cannot merge |
 |---|---|---|
-| DFU settings | `src/systems/settings.js` | DFU's ini, pinned at exactly 171 keys (`test/settings.test.js`); `SmallerDungeons` is stamped into quest saves through it |
+| DFU settings | `src/systems/settings/settings.js` | DFU's ini, pinned at exactly 171 keys (`test/settings.test.js`); `SmallerDungeons` is stamped into quest saves through it |
 | Port prefs | `src/systems/uiPrefs.js` | the port's own shelf, kept OUT of DFU's file on purpose |
 | Mod settings | `src/systems/modSettings.js` | each mod's own modsettings, keyed by vendor folder |
 
@@ -485,7 +485,7 @@ feature built in house for the home: `loot-rarity`, over the pref
 `lootRarity`, off by default (it changes what drops, and DFU's loot is
 the 1:1 law), forced on online (OL1). The ladder, the roll, the affixes,
 the fold, the identify loop, the skins and the drop chime are one
-module (`src/systems/lootRarity.js`) with its own page,
+module (`src/systems/loot/lootRarity.js`) with its own page,
 `bible/06-Systems/Loot-Rarity.md`; the record here is the row's.
 
 The row's note says the whole law in the player's words: the ladder
@@ -573,7 +573,7 @@ row became `enhanced-sounds` / `soundEnhancements`, the port's own sounds
 under one switch - see below); `flora-sway`
 (`floraSway`, `?sway=off`) - the trees and plants leaning with the
 wind, the crown moving and the root still. The three drive off ONE
-mapping of the wind into working units (`systems/windDrive.js`), which
+mapping of the wind into working units (`systems/wind/windDrive.js`), which
 the rain and the grass now read too - the record is
 `bible/07-Rendering/Rendering.md` WIND3. The home holds 26 rows now: 11
 Enhanced, 7 Mod Authored, 10 DFU Classic. Pins re-aimed: FT0's id list,
@@ -927,7 +927,7 @@ return.
 **ES1**: one row over the port's own sounds. WIND3's `wind-sound` row
 IS this row now - `enhanced-sounds`, pref `soundEnhancements`, on by
 default, the player's own online, in the wind row's place on the home
-- and two things ride it: the wind loop (`systems/windAudio.js`'s
+- and two things ride it: the wind loop (`systems/wind/windAudio.js`'s
 `windSoundOn` composes the switch with its own `?windaudio=off` kill
 door) and the enhanced inventory's two transfer cues. The switch is
 `systems/enhancedSounds.js`'s `enhancedSoundsOn`: the enhanced skin
@@ -1056,7 +1056,7 @@ decide what All off does with it: the row had no `classic`, so All off
 skipped it and a player at 50% stayed there - the one enhancement still
 redrawing every frame after "Every mod and enhancement goes to Off, or to
 Daggerfall's own". Decided: 100% is its `classic` - Daggerfall's own frame
-is the whole window (`systems/settings.js` leaves DFU's resolution to the
+is the whole window (`systems/settings/settings.js` leaves DFU's resolution to the
 browser's canvas), and 100% is today's frame call for call
 (`07-Rendering/Rendering.md` PERF-SCALE). The All off pin drives a 50%
 tile to 100% and back on Restore, the renderer's source reading both
@@ -1131,7 +1131,7 @@ so nothing on the home ever reached the game's own values again.
 
 - every tile to the segment it ships at (`defaultSegment`): a prefs row's `default` (a lane's, in its tiers'
   vocabulary) else its `initial` else the shelf's `PREF_DEFAULTS`; a settings row's `defaultOf` (the port's default
-  over DFU's - `systems/settings.js`, now exported for it); a mod's shipped `Enabled`;
+  over DFU's - `systems/settings/settings.js`, now exported for it); a mod's shipped `Enabled`;
 - its drawer with it: a condensed row's parts to `PREF_DEFAULTS`, a mod's modules and curated dials to their
   declared defaults;
 - online, a tile or key the room decides is not touched - its shelf keeps the player's own for offline;

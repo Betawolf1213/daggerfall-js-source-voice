@@ -82,7 +82,7 @@
   },
   {
     "name": "dead-save-loads-with-its-poison",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (loadDeadOnline) reviveForPlay(entity);",
     "new": "  if (loadDeadOnline) entity.health = respawnHealth(entity.maxHealth);",
     "tests": [

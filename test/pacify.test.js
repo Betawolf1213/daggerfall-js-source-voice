@@ -4,8 +4,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { applySpell, PACIFY_GROUP, isPacifyEffect, isCharmEffect } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import { NEARBY, enemyGroupOf } from '../src/systems/nearbyObjects.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';

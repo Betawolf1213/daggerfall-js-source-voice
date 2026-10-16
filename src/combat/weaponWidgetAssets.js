@@ -23,7 +23,7 @@
 import { readUnityBundle } from '../formats/unityBundle.js';
 import { toScreenOrder } from '../formats/color32Order.js';   // WW3: the ORDER *and* the shape the upload path reads - `{ colors }`, never a decoded PNG's `{ data }`
 import { decodePng } from '../systems/textureReplacement.js';
-import { MATERIAL_NAMES } from '../systems/itemInfo.js';   // MetalTypes' names, Iron..Daedric
+import { MATERIAL_NAMES } from '../systems/item/itemInfo.js';   // MetalTypes' names, Iron..Daedric
 import { WEAPON_MATERIALS } from '../characters/weapons.js';
 import { customTextureNames } from './diverseWeapons.js';   // AUDIT 68 S09-texname-dup: the one spelling
 

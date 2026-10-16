@@ -6,7 +6,7 @@
 // Mac (2026-09-21): "instead of 3 seperate keybinds, adding a tab
 // toggle ON THE MAP ITSELF."
 //
-// `systems/mapTabs.js` says WHICH sheets a place offers. This module is
+// `systems/map/mapTabs.js` says WHICH sheets a place offers. This module is
 // the other half: which one is LIVE, where each one's view is kept
 // while the player is on another, and where the tabs sit on the
 // parchment so a pointer can hit them.
@@ -39,7 +39,7 @@
 // the laws below are exercised with nothing rendered.
 // ═══════════════════════════════════════════════════════════════════
 
-import { MAP_SHEETS, sheetsFor, openOn } from '../systems/mapTabs.js';
+import { MAP_SHEETS, sheetsFor, openOn } from '../systems/map/mapTabs.js';
 import { PEN, HALO_PEN, NAME_FACE } from './inkMap.js';
 
 /** The strip's geometry, in paper pixels at `refPaper` wide, scaled

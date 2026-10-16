@@ -135,7 +135,7 @@ test('encounters: the dungeon host arm - the rest loop, the sight raise, the kil
   assert.ok(src.includes('foeDeps.isLocalPlayerTarget(f.ai.target))'), 'for the LOCAL player (AUDIT WORLD3 C3: a peer is a player too, and its foe is not mine)');
   // EnemyDeath:131-136 carries the same target==player gate (MT-iv).
   assert.ok(src.includes("foeDeps.isLocalPlayerTarget(foe.ai?.target)) && foe.ai?.detected) setEnemyAlert(playerEntity, false)"), 'the targeting kill clears');
-  // S40 moved the rest OPEN GATE to systems/restSession.js - DFU raises
+  // S40 moved the rest OPEN GATE to systems/rest/restSession.js - DFU raises
   // it from one scene-free handler and three more hosts can rest now -
   // so this pin follows it: the gate must still say `alert` on the
   // enemies arm, and this host must still act on it. Pinned in BOTH
@@ -144,7 +144,7 @@ test('encounters: the dungeon host arm - the rest loop, the sight raise, the kil
   // MERGED: the gate is `restDecision` and answers a KIND rather than
   // an `alert` flag - the enemies arm IS the alert arm, which is
   // tighter than a boolean beside it.
-  const rest = readFileSync(join(root, 'src/systems/restSession.js'), 'utf8');
+  const rest = readFileSync(join(root, 'src/systems/rest/restSession.js'), 'utf8');
   assert.ok(rest.includes("if (enemiesNearby) return { kind: 'enemies', textId: REST_TEXT.enemiesNearby };"),
     'the open gate refuses on enemies, and that arm is the alert arm');
   assert.ok(src.includes("if (d.kind === 'enemies') setEnemyAlert(playerEntity, true, classicMinutesRef.value);"),

@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT0929-S3-rr-weightless",
-    "file": "src/systems/rrRealism.js",
+    "file": "src/systems/roleplayRealism/rrRealism.js",
     "old": "  return swingFrameSeconds(blend, { heft: swingHeft(weight, liveStrength), handling",
     "new": "  return swingFrameSeconds(blend, { handling",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "AUDIT0929-S3-rr-weight-unread",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "    const weight = readSwing(ctx)?.weight ?? 0;",
     "new": "    const weight = 0;",
     "tests": [

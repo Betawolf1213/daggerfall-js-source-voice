@@ -217,7 +217,7 @@ payload classes, 0 of the 9 payload contexts, no
 `DoItemEnchantmentPayloads` dispatcher, no CastWhenUsed (36 classic
 spells), CastWhenHeld (25), or CastWhenStrikes (12), no
 `SetEnchantments`, no item maker. `formats/magicDef.js` reads
-MAGIC.DEF and `systems/loot.js` mints magic items carrying raw
+MAGIC.DEF and `systems/loot/loot.js` mints magic items carrying raw
 `{type, param}` pairs that nothing ever fires. A magic item in this
 port is a label. FormulaHelper agrees: `GetItemEnchantmentPower`,
 `GetSpellEnchantPtCost` and both material enchantment multipliers are
@@ -245,7 +245,7 @@ mode on SPBK01I0. Behind all of them sat a shared unbuilt dependency:
 **the effect template registry** (`RegisterEffectTemplate` /
 `GetEffectTemplate` / the crafting-station catalogue), without which
 no window could enumerate what a player may make - that is what
-`systems/spellEffects.js` became at S1. (~4,500 LOC.)
+`systems/spell/spellEffects.js` became at S1. (~4,500 LOC.)
 
 **BANKING - 0% (`DaggerfallBankManager` 690 + `LoanChecker` 73 + two
 windows 1,017).** No accounts, no deposits, no loans, no letters of

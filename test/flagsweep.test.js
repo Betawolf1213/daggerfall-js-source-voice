@@ -91,7 +91,7 @@ test('FS1: the extractor really reads the form, on a fixture', () => {
     [{ line: 1, target: 'restWindow.js' }],
     'the path that lands a line below the words is still resolved');
   // the single-line form, which the wrapped one must not have cost us
-  assert.deepEqual(scan(['// the timer is FLAGGED in systems/guildServiceActions.js']),
+  assert.deepEqual(scan(['// the timer is FLAGGED in systems/guild/guildServiceActions.js']),
     [{ line: 1, target: 'guildServiceActions.js' }]);
   // and a delegation the tree does carry would still be caught: a
   // dangling target fails the sweep above, which is the whole law.

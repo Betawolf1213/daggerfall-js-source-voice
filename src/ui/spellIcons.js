@@ -28,10 +28,10 @@
 
 import { loadImg, drawImgCrop } from './nativePanel.js';
 // ONE HOME: SpellIconCollection.SpellIconCount is already declared in
-// systems/spellMaker.js, where S1's SetIcon wrap reads it. This is
+// systems/spell/spellMaker.js, where S1's SetIcon wrap reads it. This is
 // the same DFU member, so it is imported and re-exported rather than
 // written a second time.
-import { SPELL_ICON_COUNT } from '../systems/spellMaker.js';
+import { SPELL_ICON_COUNT } from '../systems/spell/spellMaker.js';
 import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 
 /** classicSpellIconsRowCount / classicSpellIconsCount (:36-37). */
@@ -78,7 +78,7 @@ export const spellIconDim = () => (_art ? Math.trunc(_art.icons.w / SPELL_ICON_R
  *  The null matters: GetSpellIcon (:151-157) answers null outside
  *  [0, Count) and the panel then shows its black background. The
  *  `index % count` WRAP belongs to SpellMakerWindow.SetIcon, which
- *  clamps at MINT time - systems/spellMaker.js:"for (let i = 0; i < 5; i++)" already does it -
+ *  clamps at MINT time - systems/spell/spellMaker.js:"for (let i = 0; i < 5; i++)" already does it -
  *  not to the collection, so a record carrying a bad icon byte reads
  *  as a black square here rather than as some other spell's icon. */
 export function spellIconRect(index) {

@@ -10,9 +10,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { HOLD_REPEAT, holdRepeatDelay, typedSpinValue } from '../src/ui/enhancedPort.js';
-import { setSetting, blankEffectSettings, SPINNER_RANGES, SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { setSetting, blankEffectSettings, SPINNER_RANGES, SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { SpellMakerWindow, SPELL_MAKER_RECTS } from '../src/ui/spellMakerWindow.js';
-import { spellMakerGroups, spellMakerSubgroups } from '../src/systems/spellEffects.js';
+import { spellMakerGroups, spellMakerSubgroups } from '../src/systems/spell/spellEffects.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

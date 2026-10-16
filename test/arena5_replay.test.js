@@ -1,25 +1,25 @@
 // ARENA5 (2026-10-03): YOUR LADDER REPLAY, DRIVEN (bible/11-Multiplayer/Arena.md 2, the Spectate row - offline: "exhibitions,
-// your ladder replay"). The recording's law (systems/arenaReplay.js - ten ticks a second of each fighter's feet, facing
+// your ladder replay"). The recording's law (systems/arena/arenaReplay.js - ten ticks a second of each fighter's feet, facing
 // and health as closed-loop byte deltas with standing runs folded, the law's events and the strikes; bounded and
-// measured); the record through the save's arena record (systems/save.js - versioned, an older save none, a broken one
+// measured); the record through the save's arena record (systems/save/save.js - versioned, an older save none, a broken one
 // none, the newest three kept); a ladder bout played through headless records itself and keeps its replay at the
 // healers (scenes/arenaBouts.js beginRecording / recordFrame / keepRecording - never the pit's, an exhibition's or a bout
 // left before its verdict); the replay played back through the relay's own mirror (askReplay / replayFrame / replayFeed
 // - puppets on the recorded walks, the Herald's call from the records, the HUD, the crowd, the verdict - paying nothing,
-// counting nothing, holding no gate); offered by the Herald and the Records page (systems/arenaHerald.js,
-// systems/arenaBoard.js recordsPage, scenes/arenaGate.js windowAct) and both hosts' doors.
+// counting nothing, holding no gate); offered by the Herald and the Records page (systems/arena/arenaHerald.js,
+// systems/arena/arenaBoard.js recordsPage, scenes/arenaGate.js windowAct) and both hosts' doors.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as RP from '../src/systems/arenaReplay.js';
+import * as RP from '../src/systems/arena/arenaReplay.js';
 import { createArenaBouts, YOU, ARENA_PUPPET_OWNER } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder, nextLadderBout, exhibitionFor, practiceBout } from '../src/systems/arenaLadder.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { heraldChoice } from '../src/systems/arenaHerald.js';
-import { recordsPage } from '../src/systems/arenaBoard.js';
+import { newArenaLadder, nextLadderBout, exhibitionFor, practiceBout } from '../src/systems/arena/arenaLadder.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { heraldChoice } from '../src/systems/arena/arenaHerald.js';
+import { recordsPage } from '../src/systems/arena/arenaBoard.js';
 import { createArenaGate } from '../src/scenes/arenaGate.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 

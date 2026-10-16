@@ -1,5 +1,5 @@
 // ARENA2 (2026-10-02): THE FIX FROM ARENA1 - a house the arena displaced moves WHAT WAS IN IT, never its places
-// (systems/arenaMove.js emptyArenaScene). ARENA1 renamed the old house's scene onto the new house, and the old room's
+// (systems/arena/arenaMove.js emptyArenaScene). ARENA1 renamed the old house's scene onto the new house, and the old room's
 // placed pieces stood where it had floor, its chest indices named another house's chests and its furniture marks named
 // pieces the new house never had. Now: the owner's own things go back where they live (furniture to the furnishings,
 // the rest to the pack - the host's doors), the catalogue's placed pieces are paid back whole into the bank, the marks
@@ -8,11 +8,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/systems/arenaMove.js';
+import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/systems/arena/arenaMove.js';
 import { arenaRecordDisplaced, ARENA_LOCATION_KEY } from '../src/world/arenaCity.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, layoutSceneName, restoreCachedScene } from '../src/systems/sceneCache.js';
 import { createHouses } from '../src/systems/banking.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -116,5 +116,5 @@ test('ARENA2 move: the hosts\' doors - furniture to the furnishings, the rest to
   const m = rd('src/scenes/worldModes.js');
   // PIN MOVED (FIELD BUGS 2026-10-12g HOLD-KEPT): the crate's arm is every chest record's that no chest stands for
   assert.match(m, /if \(!target && kind === 'container' && c\.items\?\.length\) \{\n\s+const o = buildingOrigin\(\), f = player\.pos;\n\s+data\.droppedPiles = \[\.\.\.\(data\.droppedPiles \?\? \[\]\), \{ pos: \[f\[0\] - o\[0\], f\[1\] - o\[1\], f\[2\] - o\[2\]\], items: c\.items\.map\(\(it\) => \(\{ \.\.\.it \}\)\) \}\];/);
-  assert.ok(!/renameScene\(/.test(rd('src/systems/arenaMove.js')), 'the old places are never renamed onto the new house');
+  assert.ok(!/renameScene\(/.test(rd('src/systems/arena/arenaMove.js')), 'the old places are never renamed onto the new house');
 });

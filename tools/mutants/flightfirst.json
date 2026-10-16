@@ -1,7 +1,7 @@
 [
   {
     "name": "FLIGHT-FIRST-young-roll-the-old-ones",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "youngRevenant(entity) ? REVENANT_FLEE_CHANCE_YOUNG : REVENANT_FLEE_CHANCE_REVENANT",
     "new": "REVENANT_FLEE_CHANCE_REVENANT",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "FLIGHT-FIRST-young-line-the-old-ones",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "(youngRevenant(entity) ? REVENANT_FLEE_HEALTH_YOUNG : REVENANT_FLEE_HEALTH)",
     "new": "REVENANT_FLEE_HEALTH",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-wills-rank-read-as-young",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "!!entity?.revenant && !willMatters(entity.revenant.rank);",
     "new": "!!entity?.revenant;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "FLIGHT-FIRST-young-chance-moved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const REVENANT_FLEE_CHANCE_YOUNG = 0.8;",
     "new": "export const REVENANT_FLEE_CHANCE_YOUNG = 0.6;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "FLIGHT-FIRST-young-line-moved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const REVENANT_FLEE_HEALTH_YOUNG = 0.35;",
     "new": "export const REVENANT_FLEE_HEALTH_YOUNG = 0.3;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "FLIGHT-FIRST-pace-moved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const REVENANT_FLEE_PACE = 2;",
     "new": "export const REVENANT_FLEE_PACE = 1.6;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-pace-unpassed",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "f.ai.flee(feet, REVENANT_FLEE_SECONDS, REVENANT_FLEE_PACE);",
     "new": "f.ai.flee(feet, REVENANT_FLEE_SECONDS);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-line-back-to-20",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export const REVENANT_ESCAPE_NEAR = 12;",
     "new": "export const REVENANT_ESCAPE_NEAR = 20;",
     "tests": [

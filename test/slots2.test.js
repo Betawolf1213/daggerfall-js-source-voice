@@ -15,10 +15,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { saveSlot, mostRecentRestorable, restorableSaves, firstRestorable, SAVE_DATA_PREFIX } from '../src/systems/saveSlots.js';
+import { saveSlot, mostRecentRestorable, restorableSaves, firstRestorable, SAVE_DATA_PREFIX } from '../src/systems/save/saveSlots.js';
 import { newestPortraitSave } from '../src/ui/enhancedMenu.js';
 import { portraitSave } from '../src/ui/profileBadge.js';
-import { SAVE_VERSION } from '../src/systems/save.js';
+import { SAVE_VERSION } from '../src/systems/save/save.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -83,7 +83,7 @@ test('SLOTS2: the pick is still the list\'s head - over a stale version, an enve
 });
 
 test('SLOTS2: the recency order has ONE home, and both walks read it; the doors that ask for one save are the ones this saves (mutant: a copy of the sort)', () => {
-  const src = rd('src/systems/saveSlots.js');
+  const src = rd('src/systems/save/saveSlots.js');
   assert.equal((src.match(/\.sort\(\(a, b\) => \(b\[1\]\.dateAndTime\?\.realTime \?\? 0\) - \(a\[1\]\.dateAndTime\?\.realTime \?\? 0\)\)/g) ?? []).length, 1, 'one recency sort');
   assert.equal((src.match(/for \(const \[key, info\] of slotsByRecency\(storage\)\) \{/g) ?? []).length, 2, 'the list and the cut-short walk read it');
   assert.match(src, /export function firstRestorable\(accept = \(\) => true, storage = store\(\)\) \{\n\s*for \(const \[key, info\] of slotsByRecency\(storage\)\) \{\n\s*const snap = restorableSlot\(key, storage\);\n\s*if \(snap && accept\(\{ key, info, snap \}\)\) return \{ key, info, snap \};\n\s*\}\n\s*return null;\n\}/, 'the walk, cut short at the first it accepts');

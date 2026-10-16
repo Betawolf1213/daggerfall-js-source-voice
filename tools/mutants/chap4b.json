@@ -163,7 +163,7 @@
   },
   {
     "name": "CHAP4B-CEILING",
-    "file": "src/systems/guilds.js",
+    "file": "src/systems/guild/guilds.js",
     "old": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
     "new": "const newRank = ruled;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "CHAP4B-CEILING-DEMOTES",
-    "file": "src/systems/guilds.js",
+    "file": "src/systems/guild/guilds.js",
     "old": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
     "new": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? ceiling : ruled;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "CHAP4B-CEILING-FLOOR",
-    "file": "src/systems/guilds.js",
+    "file": "src/systems/guild/guilds.js",
     "old": "? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
     "new": "? Math.min(ruled, m.rank) : ruled;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "CHAP4B-FLOW-CEILING",
-    "file": "src/systems/guildServiceFlow.js",
+    "file": "src/systems/guild/guildServiceFlow.js",
     "old": "updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, rankCeiling, promoteWhenEarned });",
     "new": "updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, promoteWhenEarned });",
     "tests": [

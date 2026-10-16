@@ -18,7 +18,7 @@ import { drawCrosshairAndModeIcon, modeIconPosition, iconResScale } from '../src
 import { modeIcon, modeIconSet, MODE_ICON_SUFFIX, _setModeIconSeamsForTests } from '../src/ui/modeIcons.js';
 import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud.js';
 import { setInteractionMode } from '../src/player/interactionMode.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { readPng } from '../tools/pngIO.mjs';   // the node-side decoder the shipped-art tests use (the browser's is createImageBitmap)
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

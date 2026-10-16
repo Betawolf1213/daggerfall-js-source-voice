@@ -9,7 +9,7 @@ import { LivingTown, LIVING_RANGE, CATCH_UP, GREET_RANGE, LIVING_REFUSAL, LINE_H
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { MobilePerson, PERSON_IDLE_RECORD, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS, PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { mobileOrientation } from '../src/characters/mobileUnit.js';
-import { POP_VISIBLE_RANGE, maxPopulationFor } from '../src/systems/townPopulation.js';
+import { POP_VISIBLE_RANGE, maxPopulationFor } from '../src/systems/town/townPopulation.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { LIVING_GREETINGS, firstNameOf } from '../src/systems/livingWorld/lines.js';
 import { circleLine, lineMinutes } from '../src/systems/livingWorld/meetups.js';

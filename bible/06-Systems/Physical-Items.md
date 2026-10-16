@@ -113,7 +113,7 @@ returns on `IsGamePaused` `[IL_1eb6]`): each host hands its own pause answer.
   refused with DFU's "cannotRemoveItem" (`[IL_0565]`).
 - **The move** (`QueueInventoryPhysicalDrop [IL_34b8]`): DFU's own TransferItem onto
   a fresh container. The port's is `shiftDrop` - the pack's own ground guards,
-  through the one transfer ladder (systems/itemTransfer.js planStore/applyTransfer):
+  through the one transfer ladder (systems/item/itemTransfer.js planStore/applyTransfer):
   the lock (LOCK1), a pack-only piece (WALLET1), a bound one (SS3: the ground is
   "elsewhere"), a loaded Materials Bag (BAG1), the floor's own word (HOUSE-DROP), the
   quest arm, and a map read rather than dropped (F156). The whole stack moves (a drop
@@ -239,7 +239,7 @@ a peer's puppet.
 
 ## Online
 
-The player's own (`systems/onlineLane.js ONLINE_PLAYERS_OWN_MODS`). A peer's body
+The player's own (`systems/online/onlineLane.js ONLINE_PLAYERS_OWN_MODS`). A peer's body
 shows no items (its list is its owner's - lootFinds' own rule); a shift-drop is a
 pile like any drop. In the dungeon a body is the world room's container: an item
 taken off one is published as the quick door's take is (`publishLoot`, WORLD4 /

@@ -20,7 +20,7 @@
   },
   {
     "name": "TECHCARD-the-unknown-told",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!lootRarityOn() || !item || rarityOf(item) === 'common' || !identified(item)) return null;",
     "new": "  if (!lootRarityOn() || !item || rarityOf(item) === 'common') return null;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "TECHCARD-the-ladder-off-told",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!lootRarityOn() || !item || rarityOf(item) === 'common' || !identified(item)) return null;",
     "new": "  if (!item || rarityOf(item) === 'common' || !identified(item)) return null;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "TECHCARD-a-common-told",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!lootRarityOn() || !item || rarityOf(item) === 'common' || !identified(item)) return null;",
     "new": "  if (!lootRarityOn() || !item || !identified(item)) return null;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "TECHCARD-the-band-off-another-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "band: affixBand(item, item.affixes.indexOf(line)),",
     "new": "band: affixBand(item, 0),",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "TECHCARD-the-tier-list-never-asked",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const blocked = technique ? null : techniqueLineOf(item);",
     "new": "  const blocked = null;",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "TECHCARD-every-affix-dropped",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (blocked && a === blocked) return;",
     "new": "    if (!technique) return;",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "TECHCARD-a-held-line-dropped",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (blocked && a === blocked) return;",
     "new": "    if (a === blocked) return;",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "TECHCARD-the-band-off-the-last-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "band: affixBand(item, item.affixes.indexOf(line)),",
     "new": "band: affixBand(item, item.affixes.length - 1),",
     "tests": [

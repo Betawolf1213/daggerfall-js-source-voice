@@ -4,7 +4,7 @@
 // The later key silently wins and A - a complete, correct code path - is
 // dead. node --check accepts it, vite builds it, headless tests run it.
 // Three live instances shipped this way (scenes/world.js, scenes/exterior.js,
-// systems/settings.js), then two more (characters/paperdollPayload.js,
+// systems/settings/settings.js), then two more (characters/paperdollPayload.js,
 // world/rdbLayout.js). The structural cause: eslint.config.js enabled
 // essentially only no-undef, so `no-dupe-keys` - which flags every one of
 // them - was off.

@@ -4,7 +4,7 @@
 // cell object's storage, so every player in the cell agrees: the ones standing in it now, and the ones who walk in later.
 //
 // WHAT IT HOLDS - the two things the Overworld could not share before:
-//   - THE SPENT. A roaming band (systems/travelBands.js, `b<cx>.<cy>.<life>`) and a Warm Ashes raider
+//   - THE SPENT. A roaming band (systems/travel/travelBands.js, `b<cx>.<cy>.<life>`) and a Warm Ashes raider
 //     (systems/seaRaiders.js, `r<cx>.<cy>.<life>`) are born of the land and the shared clock - every player computes the
 //     same ones with no word said - but one a player fought or escaped was told only peer to peer (a foes frame's `bd`),
 //     to the players within three map pixels at that moment and to nobody after. The ledger keeps each spent id through
@@ -42,7 +42,7 @@ import { RAID_SLACK_MINUTES } from './raidLaw.js';   // ten real seconds of two 
 
 export { OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX };
 
-/** A band's life, real ms on the shared clock (systems/travelBands.js BAND_LIFE_MS - pinned equal). */
+/** A band's life, real ms on the shared clock (systems/travel/travelBands.js BAND_LIFE_MS - pinned equal). */
 export const OW_BAND_LIFE_MS = 12 * 60 * 1000;
 /** A band's cell, map pixels square (travelBands.js BAND_CELL_PX - pinned equal). */
 export const OW_BAND_CELL_PX = 2;

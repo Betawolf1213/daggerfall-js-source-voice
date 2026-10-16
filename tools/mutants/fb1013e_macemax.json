@@ -28,7 +28,7 @@
   },
   {
     "name": "MACE-MAX-the-max-mods-not-copied-into-the-save",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (a.statMaxMods) c.statMaxMods = { ...a.statMaxMods };",
     "new": "",
     "tests": [

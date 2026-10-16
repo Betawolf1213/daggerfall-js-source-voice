@@ -7,12 +7,12 @@ import { concealmentFlags } from '../src/systems/effects.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createWildAlert } from '../src/systems/wildAlert.js';
+import { createWildAlert } from '../src/systems/wild/wildAlert.js';
 import { SIGHT_RADIUS, EnemyAI } from '../src/characters/enemyMotor.js';
 import { foeAlerted, foeHostile } from '../src/systems/encounters.js';
 import { isLocalPlayerTarget, PLAYER_TARGET, getTargets, runTargetMachine } from '../src/characters/enemyTargets.js';
 import { PACK_SPACING, PACK_ALERT_RADIUS } from '../src/systems/campEncounters.js';
-import { BAND_STAND_MIN_M } from '../src/systems/travelBands.js';
+import { BAND_STAND_MIN_M } from '../src/systems/travel/travelBands.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const EF = readFileSync(new URL('../src/scenes/exteriorFoes.js', import.meta.url), 'utf8');

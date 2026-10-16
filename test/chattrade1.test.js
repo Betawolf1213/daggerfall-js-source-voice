@@ -11,7 +11,7 @@ import { parseChatLine, CHANNEL_COMMANDS, HELP_LINES, JOIN_CHANNELS, badJoinText
 import { RP_COLOURS, CHANNEL_COLOURS, CHAT_GROUNDS, PING_GROUNDS, COLOURED_LINE, contrast } from '../src/ui/chatColours.js';
 import { bubbleLineOk } from '../src/ui/nameLayer.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { GRIMOIRE_KIT_CSS } from '../src/ui/grimoireDress.js';
 import { CHAT_CSS, createChatPanel } from '../src/ui/chatPanel.js';
 

@@ -10,7 +10,7 @@
 //      their offsets and their own scales are multiplied by it. A port
 //      that composed them in world space would put two four-unit arrows
 //      beside the axis instead of two three-centimetre ones.
-//   2. THE MATH (systems/automapPick.js) - unprojection round-trips
+//   2. THE MATH (systems/automap/automapPick.js) - unprojection round-trips
 //      through the pass's own MIRRORED projection, the two intersection
 //      tests against fixtures whose answers are arithmetic, and the
 //      ordering law (nearest wins; a tie goes to the marker).
@@ -30,19 +30,19 @@ import { mirrorProjectionX, perspective, lookAt, trs, identity } from '../src/wo
 import {
   MARKER_NAMES, hoverKeyForHit, invertMat4, transformBounds, transformPoint4,
   rayTriangle, panelRay, projectToPanel, pickAutomap, createAutomapPicker,
-} from '../src/systems/automapPick.js';
+} from '../src/systems/automap/automapPick.js';
 import {
   BEACON_COLOURS, BEACON_SCALES, ROTATE_ARROW_LOCAL, MARKER_TEXELS, MARKER_TEX,
   RAY_PLAYER_POS_OFFSET, RAY_ENTRANCE_POS_OFFSET,
   automapMarkerSet, markerModels, buildCylinderModel, buildCubeModel,
 } from '../src/ui/automapMarkers.js';
-import { buildAutomapModel } from '../src/systems/automapModel.js';
+import { buildAutomapModel } from '../src/systems/automap/automapModel.js';
 import { AUTOMAP_STRINGS } from '../src/ui/automapText.js';
 import {
   AutomapWindow, resetAutomapWindowState, signalAutomapReset, _setAutomapArt,
 } from '../src/ui/automapWindow.js';
 import { CHROME_RECTS } from '../src/ui/automapChrome.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -699,7 +699,7 @@ test('c2/S7 SOURCE PINS: the host hands the picker its triangles, and the model 
     'the row builder takes the CPU model and the placement matrix');
   assert.match(ctx, /positions: cpu\?\.positions \?\? null/, 'and passes REFERENCES, not copies');
   assert.match(ctx, /arrowBounds: automapArrowBounds/, 'mesh 99900\'s own bounds are the arrow\'s proxy');
-  const model = src('src/systems/automapModel.js');
+  const model = src('src/systems/automap/automapModel.js');
   assert.match(model, /positions: e\.positions \?\? null/);
   assert.match(model, /matrix: e\.matrix \?\? null/);
   // a row built WITHOUT them still lands - the fixtures and the older

@@ -47,7 +47,7 @@ import { drawEscortFaces, escortFacesBottom } from './hudEscortFaces.js';   // F
 import { drawText, measureText } from './text.js';   // AUDIT 28 W2: the arrow counter's label
 import { HudFlickerController } from './hudFlicker.js';   // AUDIT 28 W2d: the near-death warning
 import { lastHealthLost, lastHealthLostPercent } from './hudVitals.js';   // BLOOD2e: HealthLostPercent, as CameraRecoiler reads it
-import { getBool } from '../systems/settings.js';   // AUDIT 28 W2: EnableArrowCounter, BowLeftHandWithSwitching
+import { getBool } from '../systems/settings/settings.js';   // AUDIT 28 W2: EnableArrowCounter, BowLeftHandWithSwitching
 import { getItem, isSummoned, ARROW_TEMPLATE } from '../systems/inventory.js';   // AUDIT 28 W2: GetItem(Arrow, priorityToConjured)
 import { EQUIP_SLOTS } from '../systems/equip.js';   // AUDIT 28 W2: the bow hand
 import { nativeMetrics } from './nativePanel.js';
@@ -507,7 +507,7 @@ export function hideHudTextSurfaces(hudText = null) {
 export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
   { font = null, cursorActive = false, reticleHidden = false, windowCoversHud = null, hudHidden = false, detected = null, playerXZ = null, gate = null, quest = null, wayOut = null, party = null, ships = null, nodes = null, boats = null, largeHud = null, hover = null,
     grip = null,   // CLIMB2: the enhanced climb's grip, { amount, low } or null
-    steed = null,   // STEED1: the ridden horse's breath, the same shape (systems/upkeepRuntime.js bar) - drawn in the grip's place, a rider holding no wall
+    steed = null,   // STEED1: the ridden horse's breath, the same shape (systems/upkeep/upkeepRuntime.js bar) - drawn in the grip's place, a rider holding no wall
     readied = null, weapon = null, weaponSheathed = true, quickUse = null, quickSwap = null, quickOffHand = null, quickSpell = null, quickSwitchHand = null } = {}) {   // PX30b: for the enhanced HUD's hand plaques; AUDIT 28 W2: the arrow counter's gate; AUDIT 64 F35: the host's previousWindow answer; QS3: the diamond's sheathe state and its two phone taps; QS6: the caption's spell chip press
   // RETRO-UI (FIELD BUGS 2026-10-03): under retro mode's pillarbox the HUD lays out in DFU's CustomScreenRect - the
   // pillarbox's canvas, drawn at its place (ui/uiScreen.js) - not over the black bars. Once: a UI canvas answers itself.

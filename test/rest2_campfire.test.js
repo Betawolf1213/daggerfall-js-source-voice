@@ -13,11 +13,11 @@ import {
 } from '../src/systems/survival/camp.js';
 import { createSurvivalItem, CAMPFIRE_USES, startingProvisions, campfireStock, provisionsStock } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { createCamps } from '../src/scenes/camps.js';
 import { setSharedClock, setWorldMinutes, worldMinutes } from '../src/systems/worldTick.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import { survivalInfoTokens } from '../src/systems/itemInfo.js';
+import { survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const flat = () => (o, d, m) => (d[1] < 0 && m >= o[1] ? o[1] : null);

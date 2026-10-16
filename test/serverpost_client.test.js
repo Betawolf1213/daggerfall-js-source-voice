@@ -13,7 +13,7 @@ import { partAnswer } from '../src/net/heartbeat.js';
 import { POST_SENDER, POST_POLL_MS } from '../src/net/postLaw.js';
 import { MAIL_POLL_MS } from '../src/net/mail.js';
 import { postMark, setPostCount, watchPostMark, postWindow, postRefusalText, postRarity, anchorPost } from '../src/ui/enhancedPost.js';
-import { RARITIES } from '../src/systems/lootRarity.js';
+import { RARITIES } from '../src/systems/loot/lootRarity.js';
 import { HELP_LINES, HOST_COMMANDS } from '../src/net/chatCommands.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
 import { REFUSALS } from '../src/net/accountClient.js';
@@ -221,7 +221,7 @@ test('SERVER-POST the window: the box\'s pieces as it lists them, unread (said, 
   // LR1's own hexes, each pinned against the ladder (AUDIT SERVER-POST: the sheet never imports it - it reaches the combat graph)
   for (const [k, r] of Object.entries(RARITIES)) if (k !== 'common') assert.ok(ENHANCED_CSS.includes(`.px-postwin [data-rarity="${k}"] { color: ${r.colour}; }`), k);
   for (const k of ['magic', 'legendary', 'artifact']) assert.match(ENHANCED_CSS, new RegExp(`:root\\[data-plus-theme="stone"\\] \\.px-postwin \\[data-rarity="${k}"\\] \\{ color: #[0-9a-f]{6}; \\}`), `${k} lifted on Stone`);
-  assert.doesNotMatch(src('src/ui/enhancedStyle.js'), /from '\.\.\/systems\/lootRarity\.js'/, 'the stylesheet imports no loot ladder');
+  assert.doesNotMatch(src('src/ui/enhancedStyle.js'), /from '\.\.\/systems\/loot\/lootRarity\.js'/, 'the stylesheet imports no loot ladder');
 
   // OPENED
   await view.openOne(post[0].id);

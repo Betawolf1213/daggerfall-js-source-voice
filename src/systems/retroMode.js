@@ -68,7 +68,7 @@
 //     Still the whole canvas: the classic native windows (their own
 //     320x200 letterbox, integer-scaled, not DFU's free scale), the video
 //     and the Morrowind arm's lane (C2).
-import { getInt, getBool } from './settings.js';
+import { getInt, getBool } from './settings/settings.js';
 
 /** RetroTarget320x200 / RetroTarget640x400 (.renderTexture sizes). */
 export const RETRO_TARGETS = Object.freeze({ 1: Object.freeze([320, 200]), 2: Object.freeze([640, 400]) });

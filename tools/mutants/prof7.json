@@ -214,7 +214,7 @@
   },
   {
     "name": "PROF7-checks-never-refuse",
-    "file": "src/systems/foragingLaw.js",
+    "file": "src/systems/foraging/foragingLaw.js",
     "old": "  for (const check of order) if (checkFails(check, w)) return lines[check] ?? null;",
     "new": "  for (const check of order) if (false && checkFails(check, w)) return lines[check] ?? null;",
     "tests": [
@@ -224,7 +224,7 @@
   },
   {
     "name": "PROF7-broke-as-a-tool",
-    "file": "src/systems/foragingLaw.js",
+    "file": "src/systems/foraging/foragingLaw.js",
     "old": "?.name ?? name ?? 'tool'} broke.`;",
     "new": "?.name ?? 'tool'} broke.`;",
     "tests": [
@@ -937,7 +937,7 @@
   },
   {
     "name": "PROF7-meat-cooked",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "  if (key === 'food:meat') return CC_TEMPLATE.RawMeat;",
     "new": "  if (key === 'food:meat') return CC_TEMPLATE.Meat;",
     "tests": [
@@ -946,7 +946,7 @@
   },
   {
     "name": "PROF7-fish-always-cc",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "  if (key === 'food:fish') return fishTemplate(cc);",
     "new": "  if (key === 'food:fish') return fishTemplate(true);",
     "tests": [
@@ -955,7 +955,7 @@
   },
   {
     "name": "PROF7-slowrot-unmarked",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "    if (slowRot === true) item.slowRot = true;\n",
     "new": "",
     "tests": [
@@ -964,7 +964,7 @@
   },
   {
     "name": "PROF7-knife-offline",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "(group === PROF_ITEM_GROUP && isOnlinePage() ? [SKINNING_KNIFE.templateIndex] : [])",
     "new": "(group === PROF_ITEM_GROUP ? [SKINNING_KNIFE.templateIndex] : [])",
     "tests": [
@@ -973,7 +973,7 @@
   },
   {
     "name": "PROF7-silk-heavy",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "m.key === 'hide:spider' || m.key === 'hide:harpy' ? 0.25",
     "new": "m.key === 'hide:harpy' ? 0.25",
     "tests": [

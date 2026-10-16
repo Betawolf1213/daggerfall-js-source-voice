@@ -5,13 +5,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { applyBiographyEffect } from '../src/systems/biography.js';
-import { assignSkillEquipment } from '../src/systems/rriKits.js';
+import { assignSkillEquipment } from '../src/systems/roleplayRealismItems/rriKits.js';
 import { repairUnmintedConditions, WEARABLE_GROUPS, isQuestionsDagger } from '../src/systems/conditionRepair.js';
 import { isBrokenItem, equipItem } from '../src/systems/equip.js';
 import { repairRefusal } from '../src/systems/repairService.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { conditionMultipliersByMaterial, WEAPONS, WEAPON_MATERIALS, WEAPON_CONDITION_POOL } from '../src/characters/weapons.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { ServiceFlowWindow } from '../src/ui/guildServiceWindows.js';
 import { useQuickslot, emptySlotLine, QUICKSLOT_TEXT, clearQuickslots } from '../src/systems/quickslots.js';
 import { quickslotHand, quickslotTag, CELL_ACTIONS } from '../src/ui/quickslotTags.js';
@@ -80,7 +80,7 @@ test('DISC21-A: a save made since - the questions\' dagger at 0 with no maxCondi
   // BAG1 (PIN MOVED): the Materials Bag's list is repaired with the rest (bible/06-Systems/Materials-Bag.md)
   // ITEM-WALK (PIN MOVED): the lists are the one walk of everything the save holds (savedItemLists, the entity's own
   // first), and the repairs one runner (repairItemLists) - test/itemwalk.test.js pins the walk's reach
-  const save = rd('src/systems/save.js');
+  const save = rd('src/systems/save/save.js');
   assert.match(save, /const repairLists = savedItemLists\(snap, entity\);[^\n]*\n\s+repairItemLists\(repairLists\);/);
   assert.match(save, /export const savedItemLists = \(snap, own = snap\) => \[\.\.\.listsOf\(own\?\.items, own\?\.wagonItems, own\?\.bagItems, own\?\.furnishings, own\?\.otherItems\), \.\.\.stashedItemLists\(snap\), \.\.\.heldItemLists\(snap\)\];/);
   assert.match(save, /export function repairItemLists\(repairLists\) \{[\s\S]*?for \(const list of repairLists\) \{\s+const n = repairUnmintedConditions\(list\);/);

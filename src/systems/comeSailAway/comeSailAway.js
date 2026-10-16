@@ -510,7 +510,7 @@ const arr3 = (o) => [f(o?.x ?? 0), f(o?.y ?? 0), f(o?.z ?? 0)];
  * AUDIT REALM2 C3: THE MOD OFF, ITS RECORD CARRIED - IHasModSaveData's three members over the record a load handed, so
  * every save writes it back whole: the boats, their holds and the packed cargoes wait for the mod to come on again, as
  * HCC's, Warm Ashes' and Raiding Parties' records ride whatever their switch says. Online the switch is the player's
- * (systems/onlineLane.js) and a realm character has ONE record: an off boot's first checkpoint dropped them for good.
+ * (systems/online/onlineLane.js) and a realm character has ONE record: an off boot's first checkpoint dropped them for good.
  * M3: no helm stands with the mod off - a record taken at one lets it go, and the Small ship a crewed helm lent
  * (TemporaryShip) is taken back as it loads, ReturnTemporaryShip's own steps over the host's `ship`: kept, a bank bought
  * it for 85,000, and the helm lent it again at the next boot with the mod on.

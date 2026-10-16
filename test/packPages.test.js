@@ -12,9 +12,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PACK_PAGES, PAGE_IDS, pageOf, filterByPage } from '../src/ui/packPages.js';
 import { TABS, filterByTab } from '../src/ui/nativeInventory.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplates.js';
-import { createPotion, POTION_TEMPLATE_INDEX } from '../src/systems/loot.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplates.js';
+import { createPotion, POTION_TEMPLATE_INDEX } from '../src/systems/loot/loot.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { letterOfCredit } from '../src/systems/inventory.js';   // WALLET1: the producer's own letter
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

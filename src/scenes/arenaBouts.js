@@ -1,8 +1,8 @@
 // @ts-check
 // ARENA2 (2026-10-02, Mac: "Players can choose to watch AI fights ... and climb esclating tiers of opponents"; "During
 // fights, the crowd is present and can cheer/boo you"; "extremely detailed and authentic"): THE BOUT ON THIS SCREEN -
-// the bout law (systems/arenaBout.js) driven over real bodies, its crowd (systems/arenaCrowd.js) seen and heard, its
-// HUD (ui/arenaHud.js), its music (systems/arenaScore.js), its Herald. Design: bible/11-Multiplayer/Arena.md "2. The
+// the bout law (systems/arena/arenaBout.js) driven over real bodies, its crowd (systems/arena/arenaCrowd.js) seen and heard, its
+// HUD (ui/arenaHud.js), its music (systems/arena/arenaScore.js), its Herald. Design: bible/11-Multiplayer/Arena.md "2. The
 // fights", "4. The crowd".
 //
 // ONE DRIVER, TWO FLOORS. A bout stands on a STAGE the host hands in (`setStage`): the CITY's floor (the colosseum in
@@ -26,26 +26,26 @@ import {
   newBout, boutTick, boutHit, boutMiss, boutFell, boutYield, boutPos, boutHealth, boutAtMarks, takeBoutEvents, boutLive, boutOver, boutFighter,
   fighterShare, boutPurse, sideNames, otherNames, YIELD_SHARE,
   boutBefore,   // AUDIT PRE-MERGE 1003 B3/B5: an exhibition left after its word; my spare from the word
-} from '../systems/arenaBout.js';
-import { BOUT_LEFT } from '../systems/arenaBook.js';   // AUDIT PRE-MERGE 1003 B3: an exhibition walked away from after its word
-import { stripSandBarred, restoreSandHeld, SAND_CEILING_M } from '../systems/arenaKit.js';   // AUDIT ARENA-LADDER: the sand's kit law
+} from '../systems/arena/arenaBout.js';
+import { BOUT_LEFT } from '../systems/arena/arenaBook.js';   // AUDIT PRE-MERGE 1003 B3: an exhibition walked away from after its word
+import { stripSandBarred, restoreSandHeld, SAND_CEILING_M } from '../systems/arena/arenaKit.js';   // AUDIT ARENA-LADDER: the sand's kit law
 import { makeBlow, setLiveBlow, BLOW_COLOR, BLOW } from '../ai/foeBlows.js'; import { tacticsNow } from '../ai/tacticsClock.js';   // AUDIT ARENA-LADDER: a relay's telegraphed blow, drawn
-import { newCrowd, crowdHear, crowdTick, crowdBark, crowdCount, crowdFlipFps, crowdHop, verdictThrows, seatPeople, THROWN_FLOWERS, THROWN_REFUSE } from '../systems/arenaCrowd.js';
-import { fighterIdentity, boutMarks, boutGateOf } from '../systems/arenaFighters.js';
-import { EXHIBITION_PURSE, ladderAfter, arenaLadderRestore, arenaHash, seededRng, ladderTitle } from '../systems/arenaLadder.js';
-import { ARENA_TEXT } from '../systems/arenaText.js';
-import { markQuiver, refundQuiver } from '../systems/arenaQuiver.js';   // ARENA-ARROWS: the quiver comes back full from the sand
+import { newCrowd, crowdHear, crowdTick, crowdBark, crowdCount, crowdFlipFps, crowdHop, verdictThrows, seatPeople, THROWN_FLOWERS, THROWN_REFUSE } from '../systems/arena/arenaCrowd.js';
+import { fighterIdentity, boutMarks, boutGateOf } from '../systems/arena/arenaFighters.js';
+import { EXHIBITION_PURSE, ladderAfter, arenaLadderRestore, arenaHash, seededRng, ladderTitle } from '../systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
+import { markQuiver, refundQuiver } from '../systems/arena/arenaQuiver.js';   // ARENA-ARROWS: the quiver comes back full from the sand
 import { startShotTally, stopShotTally } from '../systems/shotTally.js';   // ARENA-ARROWS: ...with what the bout loosed, no more
-import { arenaScoreFor } from '../systems/arenaScore.js';
+import { arenaScoreFor } from '../systems/arena/arenaScore.js';
 import { crowdSeats, pickSeats, RING_R } from '../world/arenaFloor.js';
 import { arenaHudModel } from '../ui/arenaHud.js';
-import { rollLeague, leagueAfterBout, laurelWorn, laurelBanner, LAUREL_FAVOUR } from '../systems/arenaLeague.js';   // ARENA3: the banners, the laurel, the Records page
+import { rollLeague, leagueAfterBout, laurelWorn, laurelBanner, LAUREL_FAVOUR } from '../systems/arena/arenaLeague.js';   // ARENA3: the banners, the laurel, the Records page
 import { mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../net/arenaLink.js';
 import { ARENA_PUPPET_OWNER, ARENA_CHEER_MS, ARENA_FLOOR_CENTRE } from '../net/arenaLaw.js';   // ARENA4: a bout the relay runs, mirrored here; ARENA4b: the stands' allowance, the relay's frame (the instance's)
-import { crowdShout } from '../systems/arenaCrowd.js';   // ARENA4: the stands' own cheers and boos, heard on every screen
-import { crowdHalves, crowdHalfOf, crowdWash } from '../systems/arenaCrowd.js';   // ARENA5: the crowd's half in a banner's colours
+import { crowdShout } from '../systems/arena/arenaCrowd.js';   // ARENA4: the stands' own cheers and boos, heard on every screen
+import { crowdHalves, crowdHalfOf, crowdWash } from '../systems/arena/arenaCrowd.js';   // ARENA5: the crowd's half in a banner's colours
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-HOSTS: Show Nudity off seats a nude figure's clothed stand-in
-import { newRecording, recordTick, recordStrike, recordEvent, finishRecording, keepReplay, replayOk, replayFeed, replayId, replayBoutId, playerMobileOf } from '../systems/arenaReplay.js';   // ARENA5: your ladder replay
+import { newRecording, recordTick, recordStrike, recordEvent, finishRecording, keepReplay, replayOk, replayFeed, replayId, replayBoutId, playerMobileOf } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 
 /** ARENA-FIX 10: A CRIT is the formula's own critical-strike roll (combat/formulas.js calculateAttackDamage's notes,
  *  told through `observeAttackResolution` and matched to the blow the damage door hears - `attackResolved` below).
@@ -115,7 +115,7 @@ export function createArenaBouts(deps) {
   const clockOf = (C) => (C?.relay ? now() : lawNow());
   const rng = deps.rng ?? Math.random;
   const P = deps.playerEntity;
-  /** ARENA-ARROWS: the quiver as I stepped into bout `C` I fight (systems/arenaQuiver.js) and the shots it loosed (systems/
+  /** ARENA-ARROWS: the quiver as I stepped into bout `C` I fight (systems/arena/arenaQuiver.js) and the shots it loosed (systems/
    *  shotTally.js), until the healers hand back what it loosed. Every bout that sets my bout tag marks it and starts the
    *  tally; that bout's heal pays it. A bout dismissed before its heal stops the tally and keeps its quiver for the one
    *  pay that can still come - a session's let-go, which dismisses the bout and then heals (scenes/arenaOnline.js
@@ -161,7 +161,7 @@ export function createArenaBouts(deps) {
   const yawTo = (from, to) => Math.atan2(to[0] - from[0], to[1] - from[1]);
 
   /**
-   * START: an exhibition (`{ kind: 'exhibition', ex }` - systems/arenaLadder.js exhibitionFor) or a ladder bout
+   * START: an exhibition (`{ kind: 'exhibition', ex }` - systems/arena/arenaLadder.js exhibitionFor) or a ladder bout
    * (`{ kind: 'ladder', next }` - nextLadderBout, the player on side 0). The fighters' names from the bout's seed, their
    * marks on the sand, their tags; the law's bout and the crowd.
    */
@@ -207,7 +207,7 @@ export function createArenaBouts(deps) {
     if (ladder) fighters.unshift({ id: YOU, name: P?.name || 'You', side: 0, maxHealth: Math.max(1, P?.maxHealth | 0), health: Math.max(1, P?.health | 0), temper: 0, ai: false, home: '', epithet: ladderTitle(P?.arenaLadder) ?? '', mark: marks[0][0] });
     cur = {
       kind: p.kind, id, seed, stage, ladder, next: ladder ? p.next : null, ex: ladder ? null : p.ex, fighters: new Map(), tags, marks,
-      roster: fighters, b: null, crowd: null, you: ladder ? YOU : null, playerTag: ladder ? { id, side: 0, out: false, hold: true, kit: true } : null,   // AUDIT ARENA-LADDER 2: `kit` - a ladder bout's law (systems/arenaKit.js)
+      roster: fighters, b: null, crowd: null, you: ladder ? YOU : null, playerTag: ladder ? { id, side: 0, out: false, hold: true, kit: true } : null,   // AUDIT ARENA-LADDER 2: `kit` - a ladder bout's law (systems/arena/arenaKit.js)
       practice, quiet: practice, ring: stage.radius ?? RING_R, lastBlow: new Map(), walking: new Set(),
       lastHealth: P?.health ?? 0, lastSheathed: null, verdictAt: NaN, doneAt: NaN, paid: false, said: false, crowdSeats: null,
       crowdBatches: [], throws: [], spawning: 0, title: false, startedAt: t, bark: '', barkAt: -Infinity, ringed: null,
@@ -215,7 +215,7 @@ export function createArenaBouts(deps) {
     };
     if (ladder) { deps.setPlayerBout?.(cur.playerTag); markMine(cur); }
     // ARENA-FIX 8: THE ENTRANCE - each fighter stands at the mouth of its side's passage under the tiers (the floor's
-    // two gates, systems/arenaFighters.js boutGateOf; a pit has no gates - its fighter stands on the mark) facing in,
+    // two gates, systems/arena/arenaFighters.js boutGateOf; a pit has no gates - its fighter stands on the mark) facing in,
     // and walks to its mark when the Herald cries its name (`hear`, 'crier'); the law starts once every body stands
     const C = cur;
     for (const f of fighters) {
@@ -253,7 +253,7 @@ export function createArenaBouts(deps) {
     if (!C.quiet) buildCrowd(C);
     beginRecording(C, t);   // ARENA5: a ladder bout recorded for its replay
   }
-  // ── ARENA5: YOUR LADDER REPLAY (systems/arenaReplay.js) ─────────────────────────────────────────────────────
+  // ── ARENA5: YOUR LADDER REPLAY (systems/arena/arenaReplay.js) ─────────────────────────────────────────────────────
   /** A LADDER BOUT RECORDED from its first bell (never the pit's, never a relay's): its fighters in the law's order - me
    *  as the class enemy of my own career - the bout it is, the banners its halves wear, the game minute it is fought at
    *  (the Records page's row the replay is offered on). */
@@ -291,7 +291,7 @@ export function createArenaBouts(deps) {
     if (rec && P) P.arenaReplays = keepReplay(P.arenaReplays, rec);
   }
   /**
-   * WATCH A REPLAY (one of the save's - `rec` a record of systems/arenaReplay.js): asked for the floor's instance as a
+   * WATCH A REPLAY (one of the save's - `rec` a record of systems/arena/arenaReplay.js): asked for the floor's instance as a
    * relay's bout watched from the stands - the mirror's own puppets, HUD, crowd, Herald and music, fed the recorded words
    * (`replayFeed`, each frame, below) instead of a relay's. Its banners its record's (`sides`; each fighter its side's on
    * the versus bar); the stands' presses are heard by this screen's crowd alone; nothing of it pays or counts. Answers
@@ -777,7 +777,7 @@ export function createArenaBouts(deps) {
     const n = crowdCount({ kind: nx ? 'ladder' : 'exhibition', tier: nx ? nx.tier : C.ex?.tier ?? 0, champion: !!nx?.champion, grand: !!nx?.grand });
     const sat = seatPeople(pickSeats(seats, n, seededRng(arenaHash(C.seed, 3))), seededRng(arenaHash(C.seed, 4)));
     // ARENA5: THE CROWD'S HALF IN YOUR COLOUR (Arena.md 3) - each half of the tiers whose side fights under a banner
-    // (systems/arenaCrowd.js crowdHalves, over the banners this bout's own law gave its fighters - boutTeams, relayBanners)
+    // (systems/arena/arenaCrowd.js crowdHalves, over the banners this bout's own law gave its fighters - boutTeams, relayBanners)
     // is batched apart and washed in its colours; a bout under no banner keeps one batch a picture and phase, as before
     const halves = crowdHalves(C.b?.fighters ?? C.roster, C.teams);
     const split = !!(halves[0] || halves[1]);
@@ -907,7 +907,7 @@ export function createArenaBouts(deps) {
   }
   /** ARENA4b: MY CHEER (`dir` 1) OR BOO (-1) from the stands of a relay's bout - one each CHEER_GAP_MS - sent through the
    *  bout's session (`send.cheer`, scenes/arenaOnline.js) and heard by my own crowd at once, by the stands' own law
-   *  (systems/arenaCrowd.js crowdShout, one voice), as every screen hears the relay's `cr`; the relay's echo of it is
+   *  (systems/arena/arenaCrowd.js crowdShout, one voice), as every screen hears the relay's `cr`; the relay's echo of it is
    *  then heard only for whoever shouted with me (`relayWord`'s `cr`). Answers whether it went. */
   function cheer(dir) {
     const C = cur;
@@ -1244,7 +1244,7 @@ export function createArenaBouts(deps) {
       r.centre[0] = c[0]; r.centre[1] = c[1]; r.centre[2] = c[2];
       return r;
     },
-    /** What the floor plays now (systems/arenaScore.js), or null (no bout heard here). */
+    /** What the floor plays now (systems/arena/arenaScore.js), or null (no bout heard here). */
     scoreWant: (t = clockOf(cur)) => (cur?.b && !cur.quiet ? arenaScoreFor(cur.b.phase, cur.verdictAt, t) : null),   // the pit has no band
     /** The bout standing (its law's state), its crowd, its kind, its stage's kind. */
     bout: () => cur?.b ?? null,

@@ -2,7 +2,7 @@
 // Siegewright's project a day sooner; what the Watchtowers see and say; whether a town is coastal and a Harbour a port
 // for its holder's members; the Shrine's Standing row; the Ram Kit as the Stores hold it (bible/11-Multiplayer/
 // Seats-Arc.md 7.5; Professions-Arc 3.3, 4.8; net/fortLaw.js, net/townSeatLaw.js, net/professionLaw.js,
-// systems/travelPorts.js). `06-Systems/Online-Arc.md` SEAT2b part two.
+// systems/travel/travelPorts.js). `06-Systems/Online-Arc.md` SEAT2b part two.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -16,7 +16,7 @@ import {
 import { recipeById, recipeOpen, takesQuality } from '../src/net/recipeLaw.js';
 import { material } from '../src/net/nodeLaw.js';
 import { marketCatalogue } from '../src/net/marketLaw.js';
-import { hasPort, hasPortFor, setSeatHarbours } from '../src/systems/travelPorts.js';
+import { hasPort, hasPortFor, setSeatHarbours } from '../src/systems/travel/travelPorts.js';
 
 const DAY = 86400;
 

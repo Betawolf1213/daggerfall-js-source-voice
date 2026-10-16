@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { arrowCountLabel, BOW_TEMPLATES, REAL_ARROWS_COLOR, CONJURED_ARROWS_COLOR } from '../src/ui/hud.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W2a: THE ARROW COUNTER (DaggerfallHUD.cs:270-292), a
 // default-ON DFU feature the port never had. With a bow drawn, the

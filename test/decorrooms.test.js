@@ -1,13 +1,13 @@
 // DECOR-ROOMS (2026-09-27, Discord: "For a house with multiple connects, add room switching tabs").
 //
-// THE ROOMS OF A HOUSE, found in its own collider (systems/decorRooms.js): floors a body stands on - headroom over
+// THE ROOMS OF A HOUSE, found in its own collider (systems/decor/decorRooms.js): floors a body stands on - headroom over
 // them and a ceiling above - joined to their neighbours where the rise is a step and nothing stands between them at
 // waist height. A doorway joins; a shut door, a wall or a storey between parts them. Driven over the real collider
 // (player/collider.js) built of quads.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Collider } from '../src/player/collider.js';
-import { createDecorRooms, DECOR_ROOM_EYE, DECOR_ROOM_MIN_CELLS } from '../src/systems/decorRooms.js';
+import { createDecorRooms, DECOR_ROOM_EYE, DECOR_ROOM_MIN_CELLS } from '../src/systems/decor/decorRooms.js';
 import { toolRig, settle, all } from './decorFakes.mjs';
 
 const IDENTITY = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

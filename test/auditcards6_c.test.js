@@ -23,10 +23,10 @@ import {
   validIliacIn, validIliacOut, ILIAC_FIRST_MS, ILIAC_TURN_MS, ILIAC_GAP_MS, ILIAC_IDLE_TURNS, ILIAC_GONE_MS, ILIAC_LATE_MS,
 } from '../src/net/iliacTable.js';
 import { newTable as newHoldemTable, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand } from '../src/net/holdemTable.js';
-import { RemoteIliacTable } from '../src/systems/iliacRemoteTable.js';
+import { RemoteIliacTable } from '../src/systems/iliac/iliacRemoteTable.js';
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';
 import { iliacHudModel } from '../src/ui/iliacTableHud.js';
-import { giveBinderAtChargen } from '../src/systems/iliacItems.js';
+import { giveBinderAtChargen } from '../src/systems/iliac/iliacItems.js';
 import { STARTER_DECK } from '../src/net/iliacCards.js';
 import { ILIAC_TURNS, playsRefusal } from '../src/net/iliacHand.js';
 import { mintDeckOrder, deckDigest } from '../src/net/identityToken.js';

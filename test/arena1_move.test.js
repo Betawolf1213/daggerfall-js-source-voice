@@ -1,20 +1,20 @@
 // ARENA1 (2026-10-02): WHAT THE ARENA DISPLACES (Mac: "Move them to a new house"). A deed whose house stood in
 // Daggerfall's cell (4,3) moves once to a house of its kind in the city, its scene with it, the bank's letter said
-// (systems/arenaMove.js); every other record keyed there - a rented room, a repair ticket, a quest site, an inside
+// (systems/arena/arenaMove.js); every other record keyed there - a rented room, a repair ticket, a quest site, an inside
 // save - names no building now (layoutPins.recordStands) and each system's own law for that takes it. And the
 // gate's Herald speaks through the one box.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { arenaHouseFor, moveArenaRecords } from '../src/systems/arenaMove.js';
+import { arenaHouseFor, moveArenaRecords } from '../src/systems/arena/arenaMove.js';
 import { arenaRecordDisplaced, arenaGatePersonOf, ARENA_GATE_PEOPLE, ARENA_LOCATION_KEY } from '../src/world/arenaCity.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, layoutSceneName } from '../src/systems/sceneCache.js';
 import { configureLayoutPins, recordStands, _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { findRentedRoom } from '../src/systems/tavern.js';
 import { isBeingRepairedAt } from '../src/systems/repairService.js';
 import { createHouses } from '../src/systems/banking.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
 import { HAS_ARENA2, bootDoor } from './arena1Data.mjs';

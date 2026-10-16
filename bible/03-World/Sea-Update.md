@@ -44,7 +44,7 @@ way in.
 
 Every landed mod is on by default, registered (settings, Features,
 credits, `01-Overview/Mod-Registry.md`) and placed in the online lane
-(`systems/onlineLane.js`).
+(`systems/online/onlineLane.js`).
 
 ## Left
 

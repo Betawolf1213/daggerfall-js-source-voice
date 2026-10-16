@@ -10,7 +10,7 @@
 // hosts swallow for DFU's character sheet). The shelf's own key is E, the book's exit is E, and the book arrives a
 // read of the service later - a second press, or the held key's repeat, lands in the rise.
 //
-// The pins drive the field's book whole and headless: the seat derived as every client derives it (systems/townSeats.js),
+// The pins drive the field's book whole and headless: the seat derived as every client derives it (systems/town/townSeats.js),
 // its Chronicle read through the client's own seat book, the window built by the world host's own expression
 // (scenes/world.js hallOfRecords.read), mounted by the host's first draw through the reader's one door (ui/bookDoor.js),
 // the real face (ui/enhancedBook.js) and the real vendored book (vendor/raum-book/book.js) on a canvas that paints
@@ -23,7 +23,7 @@ import { BOOK } from '../vendor/raum-book/book.js';
 import { hallOfRecordsWindow } from '../src/ui/hallOfRecords.js';
 import { HALL_OF_RECORDS_EMPTY } from '../src/net/townSeatLaw.js';
 import { createTownSeatBook } from '../src/net/townSeatBook.js';
-import { seatOfLocation } from '../src/systems/townSeats.js';
+import { seatOfLocation } from '../src/systems/town/townSeats.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { closeTopOverlay, clearOverlays, overlayOpen } from '../src/ui/enhancedOverlays.js';
 import { audio } from '../src/systems/audio.js';

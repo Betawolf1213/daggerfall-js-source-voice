@@ -64,7 +64,7 @@ Each is put to Mac with its options. Nothing here was decided for Mac:
 | B7 | low | A fight live across the relay's deploy (an older brain's checkpoint read by the new brain) misbehaved once: an old ram's run was never said, an old coil wound 90 m from its head, and an old Maw's pre-said leap was honoured. | The fight is stamped with its law (`bv`). A fight checkpointed by an older law is taken up at once, as one long asleep. |
 | B8 | low | = D5: the closing surge had no margin over the new speeds. | (below) |
 
-**C, the client and the pair's share** (`src/net/serpentBrain.js`, `src/systems/serpentStrike.js`,
+**C, the client and the pair's share** (`src/net/serpentBrain.js`, `src/systems/serpent/serpentStrike.js`,
 `src/scenes/serpentHost.js`, `server/src/index.js`)
 
 | ID | Sev | Finding | Fix |

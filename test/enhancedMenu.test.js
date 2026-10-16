@@ -333,7 +333,7 @@ test('both front doors test the save VERSION, through one predicate', () => {
   // SAV4: the predicate moved with the slots. restorableSlot gates
   // v === SAVE_VERSION and mostRecentRestorable walks recency through
   // it; both menus ask THAT, never the raw envelope.
-  assert.match(read('src/systems/saveSlots.js'),
+  assert.match(read('src/systems/save/saveSlots.js'),
     /export function restorableSlot[\s\S]{0,220}snap\.v === SAVE_VERSION/);
   for (const f of ['src/ui/enhancedMenu.js', 'src/scenes/menu.js']) {
     const src = read(f);
@@ -499,7 +499,7 @@ test('A54: the save card reads the purse off the COUNTER, not the item list', ()
 });
 
 test('A54: and the envelope really does carry it there (E4)', async () => {
-  const { snapshotPlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer } = await import('../src/systems/save/save.js');
   const entity = {
     name: 'Uthar', level: 3, health: 20, maxHealth: 20,
     goldPieces: 1234, items: [{ group: 'Weapons', templateIndex: 113, name: 'Dagger' }],

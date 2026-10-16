@@ -3,7 +3,7 @@
 // best decisions"): THE ROLL - a realm character's standing with Daggerfall's own guilds (the twenty-two guild
 // factions' reputation and its memberships) kept by the account service. bible/11-Multiplayer/Chapters-Arc.md section 3.
 //
-// The law (src/net/npcChapterLaw.js) against literals; the leaf the service reads (src/systems/guildFactions.js) as the
+// The law (src/net/npcChapterLaw.js) against literals; the leaf the service reads (src/systems/guild/guildFactions.js) as the
 // one home of DFU's ids; the service (server-account/src/npcRoll.js) over the real migrations - the switch, the seed
 // and its cap, the day's bound, a loss believed, a repeat, a lost race, the lease, the tenure, the delete; the playing
 // tab's tracker (src/net/npcRollTracker.js) against a fake door; and the host's wiring.
@@ -17,10 +17,10 @@ import {
   rollFactionOfGuild, chaptersSwitchOf, rollRidOf,
 } from '../src/net/npcChapterLaw.js';
 import { createRollTracker, rollValuesOf, rollRid } from '../src/net/npcRollTracker.js';
-import * as leaf from '../src/systems/guildFactions.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { DIVINES, ORDERS } from '../src/systems/guildVariants.js';
-import { MIN_REPUTATION, MAX_REPUTATION } from '../src/systems/factionRep.js';
+import * as leaf from '../src/systems/guild/guildFactions.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { DIVINES, ORDERS } from '../src/systems/guild/guildVariants.js';
+import { MIN_REPUTATION, MAX_REPUTATION } from '../src/systems/faction/factionRep.js';
 import { readRoll, claimRoll, rollViewOf } from '../server-account/src/npcRoll.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
@@ -40,9 +40,9 @@ test('CHAP1 the twenty-two: the Roll keeps exactly DFU\'s four guilds, eight tem
   assert.equal(DIVINES, leaf.DIVINES);
   assert.equal(ORDERS, leaf.ORDERS);
   assert.deepEqual([MIN_REPUTATION, MAX_REPUTATION, leaf.MIN_REPUTATION, leaf.MAX_REPUTATION], [-100, 100, -100, 100]);
-  assert.doesNotMatch(src('src/systems/guildFactions.js'), /^import /m, 'a leaf: the account service\'s graph reaches it and nothing past it');
-  assert.doesNotMatch(src('src/systems/guildVariants.js'), /Akatosh: 26/, 'the divines are written once, in the leaf');
-  assert.doesNotMatch(src('src/systems/guilds.js'), /factionId: 4[012],|factionId: 108,/, 'the four ids are written once, in the leaf');
+  assert.doesNotMatch(src('src/systems/guild/guildFactions.js'), /^import /m, 'a leaf: the account service\'s graph reaches it and nothing past it');
+  assert.doesNotMatch(src('src/systems/guild/guildVariants.js'), /Akatosh: 26/, 'the divines are written once, in the leaf');
+  assert.doesNotMatch(src('src/systems/guild/guilds.js'), /factionId: 4[012],|factionId: 108,/, 'the four ids are written once, in the leaf');
 });
 
 // PIN MOVED (AUDIT CHAP D2/D4): the day's NET rise is paced, and what the pace leaves is owed - a loss gives the day's room back

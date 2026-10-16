@@ -338,7 +338,7 @@ a 1x1 to 5x5 location starts 256 down to 51 units inside it. So a camp at a
 small town's pixel edge is still legal, as it always was, and can follow
 the player in. The town watch is the answer there.
 
-**Enhancement: the watch defends the town** (`systems/townWatch.js`,
+**Enhancement: the watch defends the town** (`systems/town/townWatch.js`,
 `scenes/cityGuards.js` `summonDefenders` / `dismissDefenders`, the Features
 row `town-watch`, on by default). DFU's combat watch exists only for a
 crime, so nothing in DFU ever put a guard between a monster and the player.

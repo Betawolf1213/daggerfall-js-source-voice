@@ -69,7 +69,7 @@ persistence off, the classic transport's **With you**; the wagon's load against 
 keep sending my wagon away, but every time I enter a building or dungeon it appears outside again"). Stabled WAS the
 mod's WithPlayer and nothing more - the state of a pair beside a player on foot - and the mod's HandlePreTransition
 [IL_98f0] parks a WithPlayer wagon at every door such a player goes through and stands a WithPlayer horse behind them
-there: the pair sent away came back at the next door. The save record (`systems/horseCartLaw.js` newSaveData) carries
+there: the pair sent away came back at the next door. The save record (`systems/horse/horseCartLaw.js` newSaveData) carries
 two words of the port's own beside the mod's fifteen fields, `WagonStabled` and `HorseStabled`, set by Send away alone:
 
 - **A stabled pair stays away.** `handlePreTransition` parks no stabled wagon and stands no stabled horse at the door;
@@ -84,7 +84,7 @@ two words of the port's own beside the mod's fifteen fields, `WagonStabled` and 
 - **Saved** with the record and read back only as `true`: a save from before the word loads NOT stabled - the mod's
   WithPlayer, parked at the next door as before, which the card calls With you and offers to send away.
 - **The words follow it**: the card says Stabled only for what was sent away, and the keep feeds only that horse at
-  the stable (`systems/upkeepRuntime.js` horseWhereOf, `06-Systems/Horse-Care.md`); a horse beside its owner unsent
+  the stable (`systems/upkeep/upkeepRuntime.js` horseWhereOf, `06-Systems/Horse-Care.md`); a horse beside its owner unsent
   is with its owner.
 - **Unchanged**: a stabled wagon's load is reached outdoors, and the pair mounted from the Transport window anywhere,
   as the mod's WithPlayer pair's always were. A peer sees nothing of a stabled pair (`scenes/horseCartPool.js`
@@ -385,7 +385,7 @@ and her orders' answers; with none aboard, her first hand aboard as before.
 ## 9. Files, tests
 
 `systems/fleet.js`, `scenes/fleetHost.js`, `ui/holdingsPages.js`, `ui/fleetPage.js`, `systems/naval/quays.js`,
-`world/quayModel.js`, `scenes/quayPool.js`, `systems/naval/harbourBook.js`; seams in `systems/horseCart.js`,
+`world/quayModel.js`, `scenes/quayPool.js`, `systems/naval/harbourBook.js`; seams in `systems/horse/horseCart.js`,
 `systems/comeSailAway/comeSailAway.js` (SummonBoat, LayUpBoat, laidUpHold, the book's seams, the refits' reads),
 `systems/comeSailAway/comeSailAwayWire.js`, `scenes/navalHost.js` (fleetStatus, repairAway, refitBoat, freeBerth, the refits' reads),
 `scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js`, `ui/enhancedMenu.js`, `ui/enhancedFrame.js`; the quays'

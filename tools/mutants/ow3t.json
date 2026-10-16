@@ -1,7 +1,7 @@
 [
   {
     "name": "OW3-T7-3-closing-never-counted",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  const closer = gained ? left : best, at = gained ? now : gainAt;",
     "new": "  const closer = gained ? left : best, at = gainAt;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "OW3-T7-3-a-frame-is-a-gain",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  const gained = left < best - 1;",
     "new": "  const gained = left < best;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "OW3-T7-4-make-shares-the-birth",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "export const bandMakeSeed = (band) => (band.seed ^ 0x4d414b45) >>> 0;",
     "new": "export const bandMakeSeed = (band) => band.seed >>> 0;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "OW3-T7-8-night-unkept",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  return { id: `b${cx}.${cy}.${life}`, cx, cy, life, seed, night, born:",
     "new": "  return { id: `b${cx}.${cy}.${life}`, cx, cy, life, seed, born:",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "OW3-T7-6-part-leg-decides",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "    let go = ok(x + Math.sin(heading) * full, z + Math.cos(heading) * full);",
     "new": "    let go = ok(x + Math.sin(heading) * d, z + Math.cos(heading) * d);",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "OW3-T7-9-any-life",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  if (l !== life && l !== life - 1) return false;",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "OW3-T7-9-any-cell",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "  return Math.abs(Number(m[1]) * BAND_CELL_PX - at.x) <= reach && Math.abs(Number(m[2]) * BAND_CELL_PX - at.y) <= reach;",
     "new": "  return true;",
     "tests": [

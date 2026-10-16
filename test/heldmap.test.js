@@ -18,7 +18,7 @@ import { readFileSync, existsSync } from 'node:fs';
 
 import {
   walkTravelPath, calculateTravelTime, calculateTripCost, travelDays,
-} from '../src/systems/travel.js';
+} from '../src/systems/travel/travel.js';
 import {
   buildOverworldGrid, buildMarkerModel, routePoints, overworldHeight, overworldTint,
   isWaterPixel, OVERWORLD_SEA_LEVEL, OVERWORLD_RELIEF,
@@ -31,12 +31,12 @@ import {
   TRAVEL_VIEW_BUTTON,
 } from '../src/ui/heldMap.js';
 import { simplifyChain, traceChains } from '../src/ui/overworldModel.js';
-import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travelMapState.js';
-import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../src/systems/travelOptionsText.js';
-import { hasPort, PORT_LOCATION_IDS } from '../src/systems/travelPorts.js';
+import { travelMapMarkedMapId, setTravelMapMarkedMapId } from '../src/systems/travel/travelMapState.js';
+import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../src/systems/travel/travelOptionsText.js';
+import { hasPort, PORT_LOCATION_IDS } from '../src/systems/travel/travelPorts.js';
 import { scaleTripCost, ONLINE_TRAVEL_LINE } from '../src/ui/travelPopUp.js';
 import { teleportCost } from '../src/ui/travelMapOptions.js';
-import { guildFastTravel } from '../src/systems/guildVariants.js';
+import { guildFastTravel } from '../src/systems/guild/guildVariants.js';
 import {
   buildInkModel, buildInkMarks, paintInk, placeNames, zoomBand, clampView, scaleMinOf, zoomAt, viewCentredOn,
   toPaper, toMap, boundarySegments, linkSegments, landAt, roadChains, markKind, roundCorners,
@@ -47,14 +47,14 @@ import { PARTY_MARK_CSS } from '../src/ui/partyMapMarks.js';
 import { quadPlacement } from '../src/ui/quadMap.js';   // MAP3
 // EM1: one map, three sheets
 import { createSheetSlot, stripScale, isSheet, stripHit, STRIP } from '../src/ui/mapStrip.js';
-import { MAP_SHEETS } from '../src/systems/mapTabs.js';
+import { MAP_SHEETS } from '../src/systems/map/mapTabs.js';
 import { getPixelColorIndex } from '../src/ui/travelMapWindow.js';
 import { CLIMATES, LOCATION_TYPES, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 import { SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
 import {
   travelMapFilters, travelMapPopUpState, setTravelMapPopUpState,
   travelMapSaveData, resetTravelMapState,
-} from '../src/systems/travelMapState.js';
+} from '../src/systems/travel/travelMapState.js';
 import { _resetForTests, setPref } from '../src/systems/uiPrefs.js';   // TAMRIEL1: the continent's switch, flipped Off
 // ENH-NOTICE3: the window's click-anywhere boxes ride the enhanced
 // notice panel now, so these pins read the stack the way
@@ -1595,7 +1595,7 @@ test('MAP1: the window paints only from tick, guarded on a real 2D context, and 
 //
 // bible/10-UI/Held-Map-Arc.md: "each through the same functions the
 // classic window calls, so the two never drift." The fake mod below is
-// the settings shape systems/travelOptions.js hands the windows.
+// the settings shape systems/travel/travelOptions.js hands the windows.
 
 const fire = (node, type, ev) => { for (const [t, fn] of node.listeners ?? []) if (t === type) fn(ev); };
 /** A port's map id, off the mod's own list, so the harbour laws are asked
@@ -2018,7 +2018,7 @@ test('MAP2 resume: a pending destination asks once on the first tick - Yes resum
 test('MAP2: the additions are the classic window\'s own functions, and the probe reports them', () => {
   const src = read('src/ui/heldMap.js');
   assert.match(src, /import \{ teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt \} from '\.\/travelMapOptions\.js';/);
-  assert.match(src, /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travelPorts\.js';/);   // SEAT2b part two (PIN MOVED): HasPort, or a members' Harbour at a seat
+  assert.match(src, /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travel\/travelPorts\.js';/);   // SEAT2b part two (PIN MOVED): HasPort, or a members' Harbour at a seat
   assert.match(src, /if \(!portsFilterAllows\(this\.portsFilter, summary\?\.mapID \?\? summary\?\.mapId\)\) return false;\s*\n\s*return checkLocationDiscovered\(summary\);/, 'the classic override, verbatim');
   assert.match(src, /get: \(\) => travelMapMarkedMapId\(\),\s*\n\s*set: \(v\) => setTravelMapMarkedMapId\(v\),/, 'the mark in the shared store');
   assert.match(src, /const info = locationInfoRows\(summary\?\.locationType,/);
@@ -2252,7 +2252,7 @@ test('AUDIT-MAP U5/Q2: the walked card still shows the purse, and the junction d
   });
   const w = read('src/scenes/world.js');
   assert.match(w, /markedMapId: \(\) => travelMapMarkedMapId\(\),/, 'the store - a mark set on the guild\'s teleport window was invisible to the disc');
-  assert.match(w, /import \{ travelMapFilters, travelMapMarkedMapId \} from '\.\.\/systems\/travelMapState\.js';/);
+  assert.match(w, /import \{ travelMapFilters, travelMapMarkedMapId \} from '\.\.\/systems\/travel\/travelMapState\.js';/);
 });
 
 test('AUDIT-MAP A5: chains are culled per SEGMENT - a run whose ends are both off the sheet still crosses it, and a chain leaving the view runs to the paper\'s edge (mutants: cull-per-point)', () => {

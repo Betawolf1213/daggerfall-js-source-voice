@@ -245,7 +245,7 @@
   },
   {
     "name": "ARENA4b-MIR-LIST-TITLE",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "title: b.kind === 'ex' ? O().liveExhibition(",
     "new": "title: false ? O().liveExhibition(",
     "tests": [

@@ -186,7 +186,7 @@ test('ARENA4b old builds guarded: no claim and no hall bought in the arena\'s ce
   const h = await S.call('/v1/guilds/hall/buy', { character: gm.character, mapId: DF, buildingKey: key(4, 3, 7), region: 17, price: 20000 }, gm.secret);
   assert.deepEqual([h.status, h.body.error], [409, 'home-arena']);
   const { REFUSALS } = await import('../src/net/accountClient.js');
-  const { ARENA_TEXT } = await import('../src/systems/arenaText.js');
+  const { ARENA_TEXT } = await import('../src/systems/arena/arenaText.js');
   assert.equal(REFUSALS['home-arena'], ARENA_TEXT.homeMove.arena, 'the refusal in the arena\'s own words');
   for (const w of ['home-unmoved', 'home-changed']) assert.ok(REFUSALS[w], `${w} said`);
 });

@@ -10,7 +10,7 @@ import {
 import { newSurvival, survivalOf, survivalStatMods } from '../src/systems/survival/needs.js';
 import { intermittentEnemySpawn } from '../src/systems/encounters.js';
 import { createRestDeps, restVitals } from '../src/scenes/shared.js';
-import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/restSession.js';
+import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRestConditions } from '../src/systems/rest/restSession.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { SKILLS } from '../src/systems/skills.js';

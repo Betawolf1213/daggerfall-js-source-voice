@@ -56,13 +56,13 @@ gilt, plain bronze, and the plaque - bronze, bevelled, with the inscription cut 
 No game data: nothing of the monument's stone comes from ARENA2.
 
 **The flowers.** Daggerfall's own - TEXTURE.254's red and yellow roses, red and yellow flowers and white rose, the arena
-crowd's table (`systems/arenaCrowd.js` `THROWN_FLOWERS`, imported, never copied). A press on the monument throws one
+crowd's table (`systems/arena/arenaCrowd.js` `THROWN_FLOWERS`, imported, never copied). A press on the monument throws one
 from the hand (0.35 m under the eye) on an 850 ms arc, 0.9 m over the line at its middle, to a rest on the thrower's
 side (within 0.7 rad of the bearing to them): on the top step (35% of throws), the middle (30%), the lowest (20%) or the
 ground at its foot (15%) (`tossRest`, `flowerPlace`, `tossPoint`). At most one every 1.2 s. It is laid where it lands.
 
 **The tribute is the character's.** Each character keeps how many it laid and the newest 48 where they lay
-(`normalTribute`, `layFlower`; `systems/save.js` carries `lefayTribute` in the player's snapshot - a save from before
+(`normalTribute`, `layFlower`; `systems/save/save.js` carries `lefayTribute` in the player's snapshot - a save from before
 it laid none). A pile laid stands there again after a load. NOTHING IS SENT: another player sees their own pile, not
 yours, and does not see your throw.
 
@@ -99,7 +99,7 @@ capsule's radius about them (`bodyTrapped`, AUDIT SET W1's law) - until they ste
 carries a body on its steps with it). A vertical recentre (the site's compensation) re-reads its ground at once. Its mesh is made
 once; the laid pile is one billboard batch to a kind of flower, made again when the character's pile changes, riding
 the monument's middle; a flower in flight is a batch of its own, freed when it lands. A transition lays what is in
-flight - but a flower thrown before a save was restored (`systems/save.js` `restoresSoFar`, any load) lands nowhere. `dispose` frees the mesh and every batch. A game folder that will not give TEXTURE.254 leaves the flowers
+flight - but a flower thrown before a save was restored (`systems/save/save.js` `restoresSoFar`, any load) lands nowhere. `dispose` frees the mesh and every batch. A game folder that will not give TEXTURE.254 leaves the flowers
 unseen, and the count still counts.
 
 ## Verification
@@ -138,7 +138,7 @@ and a NaN bearing refused.
 pins, 31 of them surviving, and the record read against the code). B1 (major): a flower still in the air at a quick
 load was laid in the LOADED character's pile - `restorePlayer` ran before the load's `destroyAll`, which lands what is
 in flight - so a quickload within 850 ms of a throw added a flower to the save loaded, or to another character.
-Each throw is stamped with the save's restore count (`systems/save.js` `restoresSoFar`, PORTAL1's), and one that lands
+Each throw is stamped with the save's restore count (`systems/save/save.js` `restoresSoFar`, PORTAL1's), and one that lands
 after the count moved is freed and laid nowhere - every load at once, the quick load's and the classic import's
 (lens C's C4 found the latter). B2-B5: the pins the
 survivors showed missing - the pool's own laws (a flight laid when its town goes, the lit row over the mode, no "0

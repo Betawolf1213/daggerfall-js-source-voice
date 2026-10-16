@@ -21,7 +21,7 @@ import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
 import { importReceiptKey } from '../src/net/gateReceipt.js';
 import { importPublicKeyB64, TITLES, AURAS, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { readAura } from '../src/net/wire.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { createSerpentClaims, SERPENT_CLAIM_TEXT, SERPENT_HONOUR_KEYS } from '../src/net/serpentClaims.js';
 import { TITLE_TEXT, AURA_TEXT, AURA_PAINT, TITLE_RGBA, TITLE_GRADIENT, TITLE_EDGE, COIL_SEA, COIL_TIDE, COIL_FOAM } from '../src/ui/playerBadge.js';
 import {

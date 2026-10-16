@@ -21,7 +21,7 @@ import { fullName, getNameBankOfRegion, GENDERS } from '../../characters/nameHel
 import { srand, getSeed, setSeed } from '../../formats/dfRandom.js';
 import { BUILDING_TYPES } from '../../world/buildingNames.js';
 import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
-import { seededRng } from '../wind.js';
+import { seededRng } from '../wind/wind.js';
 import { lwSeed, rollInt, pickOf, pickWeighted } from './seed.js';
 
 /** The most residents one town keeps - the households trimmed past it, plain hands first (a city's two hundred houses

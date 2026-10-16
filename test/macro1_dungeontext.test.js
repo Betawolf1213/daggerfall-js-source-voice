@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { expandMacros } from '../src/systems/talkSession.js';
+import { expandMacros } from '../src/systems/talk/talkSession.js';
 import { getLocalizedLocationName, getLocalizedRegionName } from '../src/systems/textManager.js';   // L10N3e: %cn as shown
 
 const SRC = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');

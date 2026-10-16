@@ -976,7 +976,7 @@ test('FONT1: the friends + party panel and its toast wear the enhanced face, uns
 // ═══ PARTY-UI: THE JOURNEY ON THE PARTY TAB ══════════════════════════
 //
 // 2026-09-26, Mac: "Instead of party chat commands, we need to add the party travel commands to the UI". The chat's
-// /leader and /travel become buttons on the Party tab, over the one session (systems/partyTravel.js - its status,
+// /leader and /travel become buttons on the Party tab, over the one session (systems/party/partyTravel.js - its status,
 // command and respond, pinned in test/partytravel.test.js); the tab draws the session's status and redraws on the
 // live pass when it moves, since poses move no version.
 
@@ -1058,7 +1058,7 @@ test('PARTY-UI: the host hands the panel the party\'s journey session, read when
   const w = rd('src/scenes/world.js');
   assert.match(w, /journey: \(\) => partyTravel,/);
   assert.ok(w.indexOf('journey: () => partyTravel,') < w.indexOf('partyTravel = createPartyTravel({'), 'the panel is made first - a getter, never the value');
-  const s = rd('src/systems/partyTravel.js');
+  const s = rd('src/systems/party/partyTravel.js');
   // AUDIT PARTY-UI 8: the round's line to a member under a window - the Social panel's canOpen is the pause's own
   // question, and the box asks the moment the window closes - so it names no tab
   assert.match(s, /wants the party to travel to \$\{dest\}\. Type \/travel to come along\./);

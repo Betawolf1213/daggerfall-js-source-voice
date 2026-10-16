@@ -7,7 +7,7 @@ import {
   nextVariant, useItem, USE_TEXT, NO_SPELLS_TEXT_ID, MAP_TEXT_ID, expandItemMacro,
 } from '../src/systems/useItem.js';
 import { POISONS, POISON_START_VALUE, startPoison } from '../src/systems/poisons.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const player = (over = {}) => ({ isPlayer: true, level: 5, career: {}, activeEffects: [], spells: [], ...over });
 

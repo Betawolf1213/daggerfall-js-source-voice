@@ -1,7 +1,7 @@
 [
   {
     "name": "HORSE-TIERS-the-default-the-old-system",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "export const HORSE_CARE_DEFAULT = 'boons';",
     "new": "export const HORSE_CARE_DEFAULT = 'hard';",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HORSE-TIERS-a-tiers-field",
-    "file": "src/systems/upkeepTiers.js",
+    "file": "src/systems/upkeep/upkeepTiers.js",
     "old": "    paceFloor: true,         // the ride's pace is never under DFU's",
     "new": "    paceFloor: false,         // the ride's pace is never under DFU's",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "HORSE-TIERS-the-accessor-read-once",
-    "file": "src/systems/upkeepSwitch.js",
+    "file": "src/systems/upkeep/upkeepSwitch.js",
     "old": "export const horseCareRules = () => (isEnhanced() ? horseCareRulesForTier(horseCareTierOfStored(getPref(HORSE_CARE_PREF))) : null);",
     "new": "const HORSE_CARE_AT_LOAD = horseCareRulesForTier(horseCareTierOfStored(getPref(HORSE_CARE_PREF)));\nexport const horseCareRules = () => (isEnhanced() ? HORSE_CARE_AT_LOAD : null);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "HORSE-TIERS-a-refused-gallop-walked",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "    if (runAsked && !care.refusedRunWalks) return false;\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "HORSE-TIERS-offs-clock-left-running",
-    "file": "src/systems/upkeepRuntime.js",
+    "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "h.horseFed = Math.round(h.horseFed + (t - lastNow));",
     "new": "void h;",
     "tests": [

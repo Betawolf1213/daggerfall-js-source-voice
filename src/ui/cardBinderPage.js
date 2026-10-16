@@ -6,7 +6,7 @@
 //     (render/iliacCardFaces.js - "Painted in code"): one the pack holds at its count, one it does not shown dim, its
 //     name kept (a collection is a list of what is still to find). A kind's switch narrows it. A card pressed is shown
 //     LARGE beside what it is - its rules and its flavor (AUDIT CARDS-5 B2/B3: a tile's own words are too small to read).
-//   THE DECKS: the binder's (systems/iliacItems.js binderDecks), each with its count and the rules' word on it (net/
+//   THE DECKS: the binder's (systems/iliac/iliacItems.js binderDecks), each with its count and the rules' word on it (net/
 //     iliacHand.js deckValid) and the pack's (deckHeldRefusal - a deck needs the cards it names). Edit, delete (a second
 //     press), or start a new one.
 //   THE DECK BUILDER: a deck open for building - a card pressed in the grid goes in, one pressed in the deck comes out;
@@ -22,8 +22,8 @@
 import { ILIAC_CARDS, ILIAC_TIERS, cardById } from '../net/iliacCards.js';
 import { deckValid, ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX } from '../net/iliacHand.js';
 import { paintIliacCard, paintIliacBack, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
-import { binderOf, binderDecks, collectionOf, deckHeldRefusal, setBinderDeck, dropBinderDeck, DECK_NAME_MAX, BINDER_DECKS_MAX } from '../systems/iliacItems.js';
-import { cardRules, cardFlavor } from '../systems/iliacCardWords.js';
+import { binderOf, binderDecks, collectionOf, deckHeldRefusal, setBinderDeck, dropBinderDeck, DECK_NAME_MAX, BINDER_DECKS_MAX } from '../systems/iliac/iliacItems.js';
+import { cardRules, cardFlavor } from '../systems/iliac/iliacCardWords.js';
 import { textRevision } from '../systems/textManager.js';
 
 export const CARD_BINDER_STYLE_ID = 'card-binder-page-css';

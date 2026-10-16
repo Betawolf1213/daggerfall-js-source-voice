@@ -23,7 +23,7 @@ import {
   TravelMapWindow, flipTravelMapFilter, travelMapDotColors, preloadTravelMapArt, _setTravelMapArtForTests,
   LOCATION_PIXEL_COLOR_INDICES, FILTER_SRC,
 } from '../src/ui/travelMapWindow.js';
-import { travelMapFilters, travelMapSaveData, resetTravelMapState } from '../src/systems/travelMapState.js';
+import { travelMapFilters, travelMapSaveData, resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 

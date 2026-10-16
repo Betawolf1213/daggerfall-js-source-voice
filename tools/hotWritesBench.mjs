@@ -10,7 +10,7 @@
 //   - THE HEARTBEAT (SCALE4c) at the Notice Board's pace in a town (net/boardLaw.js BOARD_CACHE_MS), the letterbox and the
 //     server's post riding it at theirs (net/mail.js MAIL_POLL_MS, net/postLaw.js POST_POLL_MS), and the play beat at
 //     its own (net/playClock.js PLAY_BEAT_S);
-//   - THE CHECKPOINT (systems/onlineCheckpoint.js ONLINE_CHECKPOINT_MS) of a realm character whose save moved - a
+//   - THE CHECKPOINT (systems/online/onlineCheckpoint.js ONLINE_CHECKPOINT_MS) of a realm character whose save moved - a
 //     walker's idle one at systems/realmSaves.js REALM_IDLE_CHECKPOINT_MS;
 //   - A FIGHTER'S RENOWN through the client's own tracker (net/renownTracker.js createRenownTracker), earning --xp a
 //     minute (SCALE3's fleet earned 40) at Renown --renown, its answers taken as the host takes them - and, where the
@@ -30,7 +30,7 @@ import { BOARD_CACHE_MS } from '../src/net/boardLaw.js';
 import { MAIL_POLL_MS } from '../src/net/mail.js';
 import { POST_POLL_MS } from '../src/net/postLaw.js';
 import { PLAY_BEAT_S } from '../src/net/playClock.js';
-import { ONLINE_CHECKPOINT_MS } from '../src/systems/onlineCheckpoint.js';
+import { ONLINE_CHECKPOINT_MS } from '../src/systems/online/onlineCheckpoint.js';
 import { REALM_IDLE_CHECKPOINT_MS } from '../src/systems/realmSaves.js';
 import { tableOf } from '../server-account/src/metrics.js';   // the service's own reading of which table a statement writes
 

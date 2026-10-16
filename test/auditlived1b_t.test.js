@@ -15,9 +15,9 @@ import {
   tickPlayerMinutes, playerWeaponHitEntity, playerWeaponKillReported, ownTimeLeftText, ownTimeLeftShort, worldNightfallText, MINUTES_PER_DAY,
   hearSharedClock, worldRegionPricesOn,
 } from '../src/systems/worldTick.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
-import { createRegionConditions, turnOnConditionFlag, conditionFlag, REGION_FLAGS } from '../src/systems/regionConditions.js';
+import { createRegionConditions, turnOnConditionFlag, conditionFlag, REGION_FLAGS } from '../src/systems/region/regionConditions.js';
 import { createBankAccounts } from '../src/systems/banking.js';
 import { NORMALIZE_INTERVAL_MINUTES } from '../src/systems/court.js';
 import { createLycanthropyCurse, liveLycanthropy } from '../src/systems/lycanthropy.js';
@@ -27,8 +27,8 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { TrainPc } from '../src/systems/quest/actions.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { RACES } from '../src/systems/races.js';
-import { snapshotPlayer, restorePlayer, clampMarkersAheadOf } from '../src/systems/save.js';
-import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, setWeatherMapLaw } from '../src/systems/weatherSim.js';
+import { snapshotPlayer, restorePlayer, clampMarkersAheadOf } from '../src/systems/save/save.js';
+import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, setWeatherMapLaw } from '../src/systems/weather/weatherSim.js';
 import { BankWindow } from '../src/ui/bankWindow.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
 import { CharSheet, CHARSHEET_RECTS } from '../src/ui/charsheet.js';

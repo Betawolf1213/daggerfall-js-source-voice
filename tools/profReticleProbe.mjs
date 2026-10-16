@@ -34,7 +34,7 @@ try {
       const { createHerbAct } = await import('/src/systems/herbAct.js');
       const { createTraceAct } = await import('/src/systems/traceAct.js');
       const { createFishAct } = await import('/src/systems/fishAct.js');
-      const { setProfCueSink } = await import('/src/systems/profSounds.js');
+      const { setProfCueSink } = await import('/src/systems/professions/profSounds.js');
       setProfCueSink(() => {});
       window.__hud = createProfHud({ anchor: () => ({ x: window.innerWidth / 2, y: window.innerHeight / 2, focal: window.innerHeight / 2 / Math.tan((65 * Math.PI) / 360) }) });
       const run = (n, f) => { for (let i = 0; i < n; i++) f(i); };

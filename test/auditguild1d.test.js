@@ -14,7 +14,7 @@ import { homeSaleRefund } from '../src/net/homeLaw.js';
 import { HERALDRY_CHANGE_DRAKES } from '../src/net/heraldryLaw.js';
 import { hallBannerAnchors } from '../src/scenes/hallBanners.js';
 import { BannerRenderer, BANNER_TEXTURE_IDLE_S, BANNER_VS, BANNER_FS } from '../src/render/bannerPass.js';
-import { createOnlineHomes, hallOfferLabel, HALL_DROP_TEXT, HALL_VISITOR_MAGIC_TEXT, HALL_CHEST_TITLE } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, hallOfferLabel, HALL_DROP_TEXT, HALL_VISITOR_MAGIC_TEXT, HALL_CHEST_TITLE } from '../src/systems/online/onlineHomes.js';
 import { GuildBook } from '../src/net/guildBook.js';
 import { homeBedIsMine } from '../src/systems/homeRent.js';
 import { createSocialPanel, GUILD_MARKS_LEDGER_WORDS, guildHallSoldText } from '../src/ui/socialPanel.js';

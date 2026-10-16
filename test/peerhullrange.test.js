@@ -52,7 +52,7 @@ test('PEER-HULL-RANGE another\'s ship within PEER_HULL_NEAR_M of the eye stands 
 import { readFileSync } from 'node:fs';
 import { FOG_SETTINGS, scaleFogForDistance } from '../src/world/weather.js';
 import { LAND_VIEW_MAX } from '../src/world/landView.js';
-import { fogSettingsFromPresets } from '../src/systems/dynamicSkies.js';
+import { fogSettingsFromPresets } from '../src/systems/dynamicSkies/dynamicSkies.js';
 
 /** What a fog row lets through of a surface `d` away (1 clear, 0 the fog's colour) - the renderer's three modes. */
 const seenThrough = (f, d) => (f.mode === 'linear' ? Math.max(0, Math.min(1, (f.end - d) / Math.max(1e-6, f.end - f.start)))

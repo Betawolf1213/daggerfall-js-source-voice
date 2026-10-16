@@ -23,8 +23,8 @@ import {
   SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX,
   saveSlot, enumerateSaves, loadSlot, deleteSave, findSave, screenshotOf,
   QUICK_SAVE_NAME,
-} from '../src/systems/saveSlots.js';
-import { QUICKSAVE_KEY } from '../src/systems/save.js';
+} from '../src/systems/save/saveSlots.js';
+import { QUICKSAVE_KEY } from '../src/systems/save/save.js';
 import { appStorage } from '../src/systems/appStorage.js';
 
 const require = createRequire(import.meta.url);

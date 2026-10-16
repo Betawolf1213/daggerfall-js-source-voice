@@ -417,7 +417,7 @@ test('SURV-THIRST1: the harm follows AUDIT SURV E’s shape - the harm TICK, esc
   assert.deepEqual(step(300, NEED.THIRST_MAX), [4], 'at the ceiling, four a tick');
   // and BELOW the threshold, nothing - dehydrated alone is a fatigue tax
   assert.deepEqual(step(400, NEED.DEHYDRATED), [], 'dehydrated is not yet bleeding');
-  // NOT in your sleep, and not sat resting: nothing in systems/rest.js
+  // NOT in your sleep, and not sat resting: nothing in systems/rest/rest.js
   // refuses a rest for thirst, so a sleeper who cannot wake to drink must
   // not be killed by a window he was allowed to open
   survivalOf(e, 500).thirst = NEED.THIRST_MAX;

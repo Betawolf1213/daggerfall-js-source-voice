@@ -32,7 +32,7 @@ import { equipItem, unequipItem, rebuildEquipState } from '../src/systems/equip.
 import { liveStat } from '../src/systems/statMods.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { entityMaxEncumbrance, maxEncumbrance, calculateSuccessfulHit } from '../src/combat/formulas.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

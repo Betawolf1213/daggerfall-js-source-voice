@@ -19,15 +19,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as PS from '../src/systems/portalStone.js';
 import { inEther, veilhaven } from '../src/world/ethericSea.js';   // AUDIT CAPTAIN'S SEA P6: the Veil's refusal, the world's own
-import { PORTAL_STONE_TEMPLATE, PORTAL_STONE_TEMPLATES, PORTAL_STONE, PORTAL_STONE_SHARDS, portalStones, isPortalStone, welkyndShards, WELKYND_SHARD, WELKYND_SHARD_TEMPLATE, isWelkyndShard } from '../src/systems/gateSpoils.js';
+import { PORTAL_STONE_TEMPLATE, PORTAL_STONE_TEMPLATES, PORTAL_STONE, PORTAL_STONE_SHARDS, portalStones, isPortalStone, welkyndShards, WELKYND_SHARD, WELKYND_SHARD_TEMPLATE, isWelkyndShard } from '../src/systems/gate/gateSpoils.js';
 import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
-import { isBound } from '../src/systems/itemBound.js';
-import { setLocked } from '../src/systems/itemLock.js';
+import { isBound } from '../src/systems/item/itemBound.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
 import { addItem } from '../src/systems/inventory.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
 import { useItem, USE_PENDING } from '../src/systems/useItem.js';
-import { survivalInfoTokens, itemStatRows } from '../src/systems/itemInfo.js';
+import { survivalInfoTokens, itemStatRows } from '../src/systems/item/itemInfo.js';
 import { useResultAction, itemLine } from '../src/ui/enhancedInventory.js';
 import * as qs from '../src/systems/quickslots.js';
 import { createPortalGates } from '../src/scenes/portalGates.js';
@@ -537,7 +537,7 @@ test('PORTAL1 the hosts: every shop\'s keeper sells it (a teller and a mod\'s se
   assert.match(w, /if \(_mode\(\) !== _torchesMode\) \{ droppedTorches\.destroyAll\(\);[^\n]* portalGates\.forgetSteps\(\); _torchesMode = _mode\(\); \}/, 'the step forgotten at every change of place');
   assert.match(w, /if \(restoresSoFar\(\) !== _portalRestores\) \{ _portalRestores = restoresSoFar\(\); portalGates\.clear\(\);[^\n]*\n\s+if \(_bootLoaded\)[^\n]*\n\s+if \(_mode\(\) !== _torchesMode\)/, 'AUDIT PORTAL1 U9: a load ends every portal - asked at the one door every load passes, before the frame turns indoors');   // PIN MOVED (AUDIT LW-II-2 D2): the one door lets the deep's layers go too, after the portals
   assert.ok(w.indexOf('if (restoresSoFar() !== _portalRestores)') < w.indexOf('if (modes.frame(dt, now)) {'), '...above the indoor return');
-  const save = read('src/systems/save.js');
+  const save = read('src/systems/save/save.js');
   assert.match(save, /return null;\n\s+\}\n\s+_restores\+\+;/, 'the count moves for a load that lands, never for a refused one');
   const f = read('src/scenes/exteriorFoes.js');
   assert.match(f, /if \(data\.pg !== undefined\) _onPortals\?\.\(from, data\.pg\);[^\n]*\n\s+if \(data\.hv !== undefined\) _onHcc/, 'past the pool\'s room test, beside the camps');

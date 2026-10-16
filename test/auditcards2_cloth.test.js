@@ -10,7 +10,7 @@
 // rest's yaw jittered, the plate's edges on the stock and the chip's caps on its colour.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { CardTableSession, seatPatrons } from '../src/systems/cardTableSession.js';
+import { CardTableSession, seatPatrons } from '../src/systems/card/cardTableSession.js';
 import {
   CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, YAW_JITTER, REST_JITTER, chipDiscs, dealMotion, hashSeed,
 } from '../src/world/cardMotion.js';

@@ -13,8 +13,8 @@ import { readFileSync } from 'node:fs';
 import {
   gateScoreSongs, courtScoreFor, midiNote, GATE_SONGS, SCORE_SILENCE, SCORE_STING_MS, SCORE_WRATH_WARN_MS, SCORE_TPQ,
   SCORE_PROGRAMS, SCORE_CHANNELS,
-} from '../src/systems/gateScore.js';
-import { eventsInWindow } from '../src/systems/songPlayer.js';
+} from '../src/systems/gate/gateScore.js';
+import { eventsInWindow } from '../src/systems/song/songPlayer.js';
 import { MusicService } from '../src/systems/music.js';
 import { ATTACKS } from '../src/net/gateBrain.js';
 import { BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, FALL_MS } from '../src/world/gateBoss.js';

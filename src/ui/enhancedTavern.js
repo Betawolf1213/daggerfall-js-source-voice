@@ -46,7 +46,7 @@ import { survivalOn, survivalRules } from '../systems/survival/switch.js';   // 
 import { tavernMenu, tavernEat, tavernDrink, tavernOrder, tavernWater, tavernRefresh, blackout, blackoutWaking } from '../systems/survival/tavernMenu.js';   // INN-WATER: tavernWater, the fountain's law at the bar; AUDIT C&C I6: tavernRefresh; I4: blackoutWaking
 import { survivalOf } from '../systems/survival/needs.js';
 import { stiffen, REST_KIND } from '../systems/survival/rest.js';
-import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the keeper's packs
+import { cardPackPrice, buyCardPack } from '../systems/card/cardSources.js';   // CARDS9: the keeper's packs
 
 const el = (tag, cls, text) => {
   const n = document.createElement(tag);
@@ -76,7 +76,7 @@ const noticeOwner = {};
 
 const line = (text) => [{ text, center: true }];
 /** DFU's own "Good day, %ra." quotes the player's race back at them
- *  (MacroHelper.cs's %ra, systems/guildServiceActions.js) - a hook
+ *  (MacroHelper.cs's %ra, systems/guild/guildServiceActions.js) - a hook
  *  this window never wires (no greeting anywhere else in this file
  *  names the player), so the token was going out unexpanded rather
  *  than resolved. Rather than wire a fifth hook for one line, this
@@ -90,7 +90,7 @@ const rows = (id, ctx = {}) => macroRows(deps.rows ?? (() => []), id, {
   ? { ...r, text: r.text.replace(/,?\s*%ra\b/, '') }
   : r));
 
-/** CARDS9: a pack's price at this counter - the tavern's quality, the buyer's haggle (systems/cardSources.js). */
+/** CARDS9: a pack's price at this counter - the tavern's quality, the buyer's haggle (systems/card/cardSources.js). */
 const packPrice = () => cardPackPrice(deps.quality?.() ?? 10, deps.skills?.() ?? {});
 /** CARDS9: a pack bought over the counter - the gold from the purse, the pack into it; short, DFU's own "not enough". */
 function buyPack() {

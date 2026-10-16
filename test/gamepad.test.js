@@ -23,7 +23,7 @@ import { setBindings } from '../src/ui/input.js';
 import { attachGamepad, pickPad, SWING_PX_PER_SEC } from '../src/ui/gamepadInput.js';
 import { controllerLook, setControllerLook, LookFilter } from '../src/player/lookFilter.js';
 import { padFamily, setPadFamily } from '../src/ui/padGlyphs.js';   // QS3: the family the poller writes
-import { setValue, _resetForTests, LIVE, UNAVAILABLE } from '../src/systems/settings.js';
+import { setValue, _resetForTests, LIVE, UNAVAILABLE } from '../src/systems/settings/settings.js';
 import { lookScale } from '../src/ui/lookSettings.js';
 import { setPref, resetPrefs } from '../src/systems/uiPrefs.js';   // PAD-CURSOR: the assist's switch
 

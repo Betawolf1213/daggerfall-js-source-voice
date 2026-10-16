@@ -35,7 +35,7 @@ export const ARENA_BOUT_ROOM_RE = /^arena:b[0-9a-f]{16}$/;
 export const isArenaHall = (key) => key === ARENA_HALL;
 export const isArenaBoutRoom = (key) => ARENA_BOUT_ROOM_RE.test(String(key ?? ''));
 /** ARENA4b (Arena.md 2: "Exhibition - online: yes - the relay runs it, every client sees one bout"): THE HOUR'S
- *  EXHIBITION'S ROOM, `arena:x<hour>` - the game hour since the epoch (systems/arenaLadder.js hourIndexOf) on the shared
+ *  EXHIBITION'S ROOM, `arena:x<hour>` - the game hour since the epoch (systems/arena/arenaLadder.js hourIndexOf) on the shared
  *  clock, so every screen near the colosseum names one room and the relay runs one bout in it (net/arenaExhibition.js). */
 export const ARENA_EX_ROOM_RE = /^arena:x(0|[1-9]\d{0,8})$/;
 export const isArenaExhibitionRoom = (key) => ARENA_EX_ROOM_RE.test(String(key ?? ''));
@@ -169,7 +169,7 @@ export const bannerClaim = (b) => (ARENA_BANNERS.includes(b) ? b : null);
 /** ARENA4b: the hour's exhibition's banners by side (Arena.md 3, ARENA3's exhibition): side 0 the Red's fighter, side 1
  *  the Blue's - the relay's two billed so on the list to watch. */
 export const ARENA_EX_BANNERS = Object.freeze(['red', 'blue']);
-/** A season's team points (systems/arenaLeague.js TEAM_POINTS, pinned, and Arena.md 3's refereed PvP win, two). */
+/** A season's team points (systems/arena/arenaLeague.js TEAM_POINTS, pinned, and Arena.md 3's refereed PvP win, two). */
 export const ARENA_TEAM_POINTS = Object.freeze({ bout: 1, champion: 3, grand: 10, pvp: 2 });
 
 // ── THE LADDER ────────────────────────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ export const ARENA_TIERS = 10;
 export const ARENA_TIER_BOUTS = 3;
 /**
  * THE TEN TIERS' OPPONENTS as the relay fights them: each tier's three bouts and its champion, a bout a list of
- * `[mobile, level|null]` (null - a monster at its own). systems/arenaLadder.js LADDER_TIERS row for row - pinned, so the
+ * `[mobile, level|null]` (null - a monster at its own). systems/arena/arenaLadder.js LADDER_TIERS row for row - pinned, so the
  * relay and the game cannot come to fight two ladders. The Grand Melee's bouts are every fighter for themselves
  * (`ARENA_FREE_TIER`); the beast tier is `ARENA_BEAST_TIER`.
  */
@@ -255,7 +255,7 @@ export const ARENA_BLOW_SHAPES = Object.freeze(['lunge', 'sweep', 'slam']);
 
 // ── AUDIT ARENA-LADDER: THE LADDER'S JUDGES ─────────────────────────────────────────────
 /** At the time limit a ladder bout is the player's only when their side took this share of the opponents' whole health
- *  (systems/arenaBout.js newBout `judgesFloor`): one blow and three minutes walked away was a win on the judges' card. */
+ *  (systems/arena/arenaBout.js newBout `judgesFloor`): one blow and three minutes walked away was a win on the judges' card. */
 export const LADDER_JUDGES_SHARE = 0.5;
 
 // ── AUDIT ARENA-LADDER: A LADDER ATTEMPT'S TICKET ─────────────────────────────────────────────
@@ -273,7 +273,7 @@ export const ARENA_ATTEMPT_LIFE_S = 600;
 export const ladderKey = (tier, bout) => tier * (ARENA_TIER_BOUTS + 1) + bout;
 /**
  * THE ACCOUNT'S LADDER from its rows (the bouts it won - `[{ tier, bout }]` - and its record), in the save ladder's own
- * shape (systems/arenaLadder.js newArenaLadder), so the window and the Herald read the online climb as they read the
+ * shape (systems/arena/arenaLadder.js newArenaLadder), so the window and the Herald read the online climb as they read the
  * offline one: the tier it fights in, the bouts won in it, the champions beaten, the Grand Champion. Only the climb in
  * order counts - a row past the first gap is not a step (the service never writes one). Pure.
  */
@@ -424,7 +424,7 @@ export const ARENA_CHAMPION_MIN_FOES = 5;
 export const ARENA_PAIR_SEASON_MAX = 10;
 /** The bouts a hall lists to watch. */
 export const ARENA_LIVE_MAX = 24;
-/** Why a bout ended, on the wire (systems/arenaBout.js's endings, and the relay's own: a forfeit, a void). */
+/** Why a bout ended, on the wire (systems/arena/arenaBout.js's endings, and the relay's own: a forfeit, a void). */
 export const ARENA_HOW = Object.freeze(['yield', 'fall', 'ringout', 'judges', 'forfeit']);
 /** ARENA4b: a bout's kinds on the wire - between players, the ladder, and the hour's exhibition (two of the relay's own). */
 export const ARENA_KINDS = Object.freeze(['pvp', 'pve', 'ex']);
@@ -572,7 +572,7 @@ function stFighterOk(f) {
   if (typeof home !== 'string' || home.length > 40 || typeof ep !== 'string' || ep.length > 40) return null;
   return [id, n, side, hp, max, out, ai, mob, tmp, home, ep];
 }
-/** One law event as the relay says it (systems/arenaBout.js's events - their `k`, `at`, and the fields each carries). */
+/** One law event as the relay says it (systems/arena/arenaBout.js's events - their `k`, `at`, and the fields each carries). */
 const EV_KINDS = Object.freeze(['call', 'crier', 'walk', 'count', 'fight', 'hit', 'crit', 'miss', 'knockdown', 'comeback', 'stall', 'flee', 'yield', 'fall', 'ringout', 'timeout', 'end', 'verdict', 'heal', 'done', 'cheer']);
 function evOk(e) {
   if (!e || typeof e !== 'object' || !EV_KINDS.includes(e.k) || num(e.at, 1e15) == null) return null;

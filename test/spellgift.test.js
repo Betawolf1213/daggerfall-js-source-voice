@@ -21,7 +21,7 @@ import {
 } from '../src/systems/allyCast.js';
 import { activeSpellIcons } from '../src/ui/hudActiveSpells.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { createInfection, INFECTION } from '../src/systems/infection.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

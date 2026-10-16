@@ -151,7 +151,7 @@
   },
   {
     "name": "WATCH-PROTECTS-threat",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "    && !(t?.civilian === true && (t.entity?.health ?? 0) > 0)) return false;",
     "new": "    ) return false;",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "WATCH-PROTECTS-threat-dead",
-    "file": "src/systems/townWatch.js",
+    "file": "src/systems/town/townWatch.js",
     "old": "!(t?.civilian === true && (t.entity?.health ?? 0) > 0)",
     "new": "!(t?.civilian === true)",
     "tests": [

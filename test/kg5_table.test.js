@@ -12,7 +12,7 @@ import {
   GAMBIT_TURN_MS, GAMBIT_TURN_END_MS, GAMBIT_FIRST_MS, GAMBIT_IDLE_TURNS,
 } from '../src/net/gambitTable.js';
 import { KG_COLS, KG_ROWS, KG_TILE, KG_POINT_BUDGET, autoFill, reachable, foesInRange, pieceById } from '../src/net/kingsGambit.js';
-import { GAMBIT_TIERS, regularAction } from '../src/systems/gambitPatrons.js';
+import { GAMBIT_TIERS, regularAction } from '../src/systems/gambit/gambitPatrons.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 
 const army = (seed) => autoFill([], KG_POINT_BUDGET, xorshift(seed));

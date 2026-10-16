@@ -12,7 +12,7 @@ import { LPT_CROWNS } from '../src/world/lptCrowns.js';
 import { bakeLptCrowns, lptCrowns } from '../tools/bakeLptCrowns.mjs';
 import { lptVariety } from '../src/world/lowPolyTrees.js';
 import { MAP_W, MAP_H, DIR } from '../src/world/roadNetwork.js';
-import { N, S, E, NE } from '../src/systems/travelPaths.js';
+import { N, S, E, NE } from '../src/systems/travel/travelPaths.js';
 import { boxNearPath, UNITS_PER_METRE } from '../src/world/roadClearance.js';
 import { paintRoads, TILE } from '../src/world/roadPainter.js';
 import { layoutNature, natureStandsAt } from '../src/world/terrainNature.js';
@@ -25,7 +25,7 @@ import { roadVergesOn } from '../src/scenes/shared.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { onlineForcedPref } from '../src/systems/onlineLane.js';
+import { onlineForcedPref } from '../src/systems/online/onlineLane.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const netWith = (cells) => {

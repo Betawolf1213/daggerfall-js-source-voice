@@ -29,7 +29,7 @@ import { comboCode } from '../src/systems/inputActions.js';   // KB1: the combo 
 import { createBindings, resetDefaults, saveKeyBinds, onSavedKeyBinds } from '../src/systems/inputActions.js';
 import {
   getBool, getFloat, getInt, setValue, effectiveSettings, _resetForTests,
-} from '../src/systems/settings.js';
+} from '../src/systems/settings/settings.js';
 import { NUMBER_LAW } from '../src/ui/settingsLaw.js';
 import { measureText } from '../src/ui/text.js';
 

@@ -36,24 +36,24 @@ import {
   hotbarEntryForItem, hotbarEntryForSpell, setHotbarSlot, clearHotbarSlot, swapHotbarSlots, hotbarEntry,
   hotbarSlotOf, firstFreeHotbarSlot, hotbarKindOf,
 } from '../systems/quickslots.js';
-import { shownSpellName } from '../systems/loot.js';   // L10N3e: a spell's name as the book shows it
+import { shownSpellName } from '../systems/loot/loot.js';   // L10N3e: a spell's name as the book shows it
 import { modelIconUrl } from './itemIconUrl.js';
 import { fpArm } from '../combat/fpArm.js';
 import { requestFittedIcon, showFitted, fittedImg, iconName } from './textureCanvas.js';   // UI2: a slot's picture fitted to it
 import { spellIconPicture } from './enhancedArt.js';   // UI2: a spell's own ICON00I0 icon
 import { clampDpr, screenDpr } from './iconFit.js';
-import { inventoryItemImage } from '../systems/itemTemplates.js';
-import { itemDyeColor } from '../systems/itemDye.js';   // AUDIT FINAL F2: a garment's own dye repaints its slot
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
+import { itemDyeColor } from '../systems/item/itemDye.js';   // AUDIT FINAL F2: a garment's own dye repaints its slot
 import { cursorActive } from '../player/pointerLock.js';   // HB1c: the freed mouse (Enter / FreeMouse)
 import { overlayOpen } from './enhancedOverlays.js';
 import { controllerLook } from '../player/lookFilter.js';   // PADPLUS4: the pad is the live device
 // PADPLUS1: THE CROSSBAR (Enhanced Plus) - the same bar, grown to sixteen and laid out as two sets under LB and RB
 import { HOTBAR_CAPACITY } from '../systems/quickslots.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
-import { rarityAttr } from '../systems/lootRarity.js';   // RARITY-UI: a slot's frame wears its item's tier
-import { validSigil } from '../systems/sigil.js';   // SIGIL-UI: and a sigil weapon's rune
+import { rarityAttr } from '../systems/loot/lootRarity.js';   // RARITY-UI: a slot's frame wears its item's tier
+import { validSigil } from '../systems/sigil/sigil.js';   // SIGIL-UI: and a sigil weapon's rune
 import { markSetFrame } from './setCard.js';   // SET5: a set piece's rune in its set's colour
-import { setIdOf } from '../systems/sigilSets.js';
+import { setIdOf } from '../systems/sigil/sigilSets.js';
 import { padFamily } from './padGlyphs.js';
 import { hdGlyphSvg, hdGlyphName } from './padGlyphsHD.js';
 import { registerCrossbar, plusCrossbarMode, crossbarCodeOf, CROSSBAR_SET, CROSSBAR_HOLD } from './plusPad.js';

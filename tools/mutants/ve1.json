@@ -235,7 +235,7 @@
   },
   {
     "name": "VE3-classic-switches-the-lighting-mod-off",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -244,7 +244,7 @@
   },
   {
     "name": "VE3-classic-spares-a-mod-of-arrays",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -253,7 +253,7 @@
   },
   {
     "name": "VE3-replace-game-artwork-not-worn",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -262,7 +262,7 @@
   },
   {
     "name": "VE3-loose-pack-read-as-classic",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
@@ -271,7 +271,7 @@
   },
   {
     "name": "VE3-worn-without-being-on",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],

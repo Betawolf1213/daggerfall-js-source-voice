@@ -18,8 +18,8 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const HJ = await import('../src/systems/huntJournal.js');
 const BM = await import('../src/ui/bountyMapMark.js');
 const { paintInkOverlay } = await import('../src/ui/inkMap.js');

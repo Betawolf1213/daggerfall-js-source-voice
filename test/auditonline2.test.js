@@ -18,7 +18,7 @@ import { createRaidClaims, RAID_CLAIMS_KEY } from '../src/net/raidClaims.js';
 import { createGateClaims } from '../src/net/gateClaims.js';
 import { createSpoilsPool, recoverSpoils } from '../src/scenes/spoilsPool.js';
 import { RAID_SPOILS_KEYS, RAID_SPOILS_RECORDS_MAX } from '../src/systems/raidSpoils.js';
-import { onSlotLoaded, slotLoaded } from '../src/systems/saveSlots.js';
+import { onSlotLoaded, slotLoaded } from '../src/systems/save/saveSlots.js';
 import { createTradeManager, inTradeRange, tradeRefusedText, tradeUnreadableText, tradeWhyText } from '../src/net/tradeSession.js';
 import { validTradeData } from '../src/net/wire.js';
 

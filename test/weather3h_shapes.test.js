@@ -16,9 +16,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   birthsIn, systemAt, shapeFactor, shapeBound, shapeMax, radialOf, approachAt, SHAPE_AMPS, SYSTEM_TYPES, PRIORITY,
-} from '../src/systems/weatherMap.js';
+} from '../src/systems/weather/weatherMap.js';
 import { createDistantStorms } from '../src/systems/distantStorms.js';
-import { VIOLENCE } from '../src/systems/wind.js';
+import { VIOLENCE } from '../src/systems/wind/wind.js';
 import { packCells, cellOfField, FIELD_UNIFORMS } from '../src/render/volumetricClouds.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
@@ -83,7 +83,7 @@ test('WEATHER3h: THE SKY READS THE SAME SHAPE - the conversion carries it, the p
   const vc = rd('src/render/volumetricClouds.js');
   assert.match(vc, /float c2 = c \* c - s \* s, s2 = 2\.0 \* c \* s, c3 = c \* \(4\.0 \* c \* c - 3\.0\), s3 = s \* \(3\.0 - 4\.0 \* s \* s\), c4 = 2\.0 \* c2 \* c2 - 1\.0, s4 = 2\.0 \* s2 \* c2;/, 'the multiple-angle identities, as shapeFactor');
   assert.match(vc, /return a\.x \* \(1\.0 \+ a\.y \* c2 \+ a\.z \* s2 \+ a\.w \* c3 \+ b\.x \* s3 \+ b\.y \* c4 \+ b\.z \* s4\);/);
-  assert.match(rd('src/systems/weatherMap.js'), /const c2 = c \* c - s \* s, s2 = 2 \* c \* s, c3 = c \* \(4 \* c \* c - 3\), s3 = s \* \(3 - 4 \* s \* s\), c4 = 2 \* c2 \* c2 - 1, s4 = 2 \* s2 \* c2;/);
+  assert.match(rd('src/systems/weather/weatherMap.js'), /const c2 = c \* c - s \* s, s2 = 2 \* c \* s, c3 = c \* \(4 \* c \* c - 3\), s3 = s \* \(3 - 4 \* s \* s\), c4 = 2 \* c2 \* c2 - 1, s4 = 2 \* s2 \* c2;/);
   for (const u of ['uCellS', 'uCellU', 'uCellKS', 'uCellKU']) { assert.ok(FIELD_UNIFORMS.includes(u)); assert.match(vc, new RegExp(`uniform vec4 ${u}\\[8\\];`)); }
 });
 

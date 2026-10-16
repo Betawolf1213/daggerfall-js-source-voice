@@ -17,9 +17,9 @@ import {
   seedCustomSpellIndex, _resetCustomIndexForTests,
   NO_SPELLBOOK_ID, SPELLMAKER_NOT_ENOUGH_GOLD_ID, MUST_CHOOSE_NAME_ID, NO_EFFECTS_TEXT,
   SPELLBOOK_TEMPLATE_INDEX,
-} from '../src/systems/spellMaker.js';
+} from '../src/systems/spell/spellMaker.js';
 import { calculateCastCost } from '../src/systems/spellcost.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -197,5 +197,5 @@ test('S1 wiring pins: the readied MADE spell restores through the player book', 
   assert.match(src('src/scenes/hostMagic.js'),
     /playerEntity\?\.spells \?\? \[\]\)\.find\(\(sp\) => sp\?\.index === index\)/,
     'the player book answers for indexes the file table cannot');
-  assert.match(src('src/systems/save.js'), /\(sp\?\.custom \|\| sp\?\.rri\) \? JSON\.parse\(JSON\.stringify\(sp\)\) : sp\.index/);   // AUDIT-RR F9: a mod's spell rides whole too
+  assert.match(src('src/systems/save/save.js'), /\(sp\?\.custom \|\| sp\?\.rri\) \? JSON\.parse\(JSON\.stringify\(sp\)\) : sp\.index/);   // AUDIT-RR F9: a mod's spell rides whole too
 });

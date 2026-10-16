@@ -1,7 +1,7 @@
 // THE CARD TABLE LAB (CARDS3, bible/11-Multiplayer/Tavern-Cards.md section 3). A tavern table with no tavern: the
 // tavern's own card table (world/cardTableProp.js - AUDIT TAVERN-TABLE L6: the lab drew a box of its own) on a plain
 // floor, its seats stood by world/cardTables.js, a seeded evening of the table
-// (systems/cardTableSession.js - the player checking and calling, the patrons by their tempers) played to a pinned
+// (systems/card/cardTableSession.js - the player checking and calling, the patrons by their tempers) played to a pinned
 // clock, and the cards and chips drawn by render/cardTableDraw.js through the game's own renderer, with the table's
 // panel (ui/cardTableHud.js) over it. No game data: the felt and the floor are flat colours, the cards our own paint.
 //     cards.html?t=<seconds>&cam=seat|over&seed=<n>&patrons=<n>&nohud     (tools/cardsProbe.mjs pins them)
@@ -28,7 +28,7 @@ import { Renderer } from '../render/renderer.js';
 import { perspective, lookAt, mirrorProjectionX } from '../world/mat4.js';
 import { cardTableSeats, tableFrame } from '../world/cardTables.js';
 import { tablePlaces, CardScene } from '../world/cardScene.js';
-import { CardTableSession } from '../systems/cardTableSession.js';
+import { CardTableSession } from '../systems/card/cardTableSession.js';
 import { createCardTableDraw } from '../render/cardTableDraw.js';
 import { createCardTableHud, cardHudModel, eventLine } from '../ui/cardTableHud.js';
 import { INTERIOR_AMBIENT, INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
@@ -38,12 +38,12 @@ import { CARD_W, CARD_L } from '../world/cardMotion.js';
 import { projectToScreen } from '../player/tapRay.js';
 import { newGame, commit as iliacCommit, reveal as iliacReveal, iliacView, ILIAC_TURNS } from '../net/iliacHand.js';   // CARDS10: an Iliac game's cloth, for the frame's cost
 import { STARTER_DECK } from '../net/iliacCards.js';
-import { patronPlays } from '../systems/iliacPatrons.js';
+import { patronPlays } from '../systems/iliac/iliacPatrons.js';
 import { iliacPlaces, iliacPoses } from '../world/iliacCloth.js';
 import { createIliacTableDraw } from '../render/iliacTableDraw.js';
 import { createIliacTableHud, iliacHudModel } from '../ui/iliacTableHud.js';   // CARDS-PLUS: Iliac Hand's panel over its cloth
 import { injectEnhancedStyle } from '../ui/enhancedStyle.js';
-import { dealRegular, regularStep, GAMBIT_TIERS } from '../systems/gambitPatrons.js';   // KG4: The King's Gambit's table
+import { dealRegular, regularStep, GAMBIT_TIERS } from '../systems/gambit/gambitPatrons.js';   // KG4: The King's Gambit's table
 import { finishTurn, autoFill, KG_POINT_BUDGET } from '../net/kingsGambit.js';
 import { gambitPlaces, gambitLean } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';

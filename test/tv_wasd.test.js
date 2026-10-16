@@ -11,12 +11,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { travelWalkRate, TRAVEL_VIEW_TEXT, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
-import { createLoadGovernor, unbuiltAround, TV_GOV_HOLD_S } from '../src/systems/travelGovernor.js';
+import { createLoadGovernor, unbuiltAround, TV_GOV_HOLD_S } from '../src/systems/travel/travelGovernor.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../src/systems/timeScale.js';
-import { foePaced } from '../src/systems/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
-import { travelDriveForward } from '../src/systems/travelAutopilot.js';
+import { foePaced } from '../src/systems/travel/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
+import { travelDriveForward } from '../src/systems/travel/travelAutopilot.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';   // ETHER-OW: the governor's ground is the stream's own law
-import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };

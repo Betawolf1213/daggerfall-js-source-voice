@@ -12,9 +12,9 @@
 // here now and both skins draw it: the classic box as DFU's tab-stopped
 // table, the enhanced page as its own rows.
 
-import { activeMemberships, GUILDS, getTitle } from './guilds.js';
-import { templeOf, orderOf } from './guildVariants.js';
-import { getReputation } from './factionRep.js';
+import { activeMemberships, GUILDS, getTitle } from './guild/guilds.js';
+import { templeOf, orderOf } from './guild/guildVariants.js';
+import { getReputation } from './faction/factionRep.js';
 import { getLocalizedFactionName } from './textManager.js';   // L10N3e: the faction's name in the player's language
 
 /** The membership book stores the port's canonical guild-record name;

@@ -11,14 +11,14 @@ instance mutation campaign with baseline-aware confirmation -> bible
 
 ## What the port already carries (the T3 series, World lane)
 
-- `systems/talk.js` - findFactions / getPeopleOfCurrentRegion /
+- `systems/talk/talk.js` - findFactions / getPeopleOfCurrentRegion /
   GetReactionToPlayer / pickpocket (T3a).
-- `systems/talkTopics.js` - the Where-is BUILDING half: the named-
+- `systems/talk/talkTopics.js` - the Where-is BUILDING half: the named-
   building pool merge, MakeBuildingKey, the knowledge roll
   (KNOWLEDGE_MODIFIERS whole), the skip list, the compass hint, the
   30-record answersToDirections table, GetReactionToPlayer_0_1_2
   (T3c/T3e/T3f + T4's %hnt map-reveal fork).
-- `systems/talkSession.js` - the mobile greeting ladder (7206-7209,
+- `systems/talk/talkSession.js` - the mobile greeting ladder (7206-7209,
   the 7205 refusal at reaction < -20), oaths, %-macro helpers.
 - `scenes/townTalk.js` - the session host: F1-F4 modes, the tone
   cycle with the session reaction cache, the Where-is chain, the
@@ -517,7 +517,7 @@ event rebuilds and the save threading land with TK-v.
 The arc's last slice: the four engine modules live in the running
 hosts, and the one module that was still missing between them.
 
-**`systems/talkMacros.js` is TalkManagerMCP.cs whole** (207 lines, 13
+**`systems/talk/talkMacros.js` is TalkManagerMCP.cs whole** (207 lines, 13
 handlers) plus MacroHelper.ExpandMacros and
 TalkManager.ExpandRandomTextRecord (:3580-3587). This is the module
 the arc had been waiting for without knowing it: TK-iii found two
@@ -1081,7 +1081,7 @@ rumor and news record:
   falls to pcFactionName (recorded - C# would be off in GetGuild's
   catch-land).
 - **GetLordNameForFaction** (MacroHelper.cs:310-331), the one home in
-  systems/talk.js: a first child who is an Individual IS the ruler and
+  systems/talk/talk.js: a first child who is an Individual IS the ruler and
   answers by name; otherwise the ruler is GENERATED - gender from the
   ruler title's parity ("even entries are female"), the name bank from
   the faction's RACE byte (FACTION_RACE_KEYS is FactionFile.cs:609-622;

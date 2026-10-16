@@ -14,8 +14,8 @@ import {
   rrShipAvailable, rrEncumbranceEffect, rrBandageHeal, rrDouseOnDungeonExit, RR_POTION_RECIPES, RR_ENEMY_APPEARANCE, applyEnemyAppearance,
   revertEnemyAppearance, enemyAppearanceApplied, RR_UNDERWORLD, rrUnderworldRule,
   isBedModel, bedSleepingOn,
-} from '../src/systems/rrRealism.js';
-import { installRoleplayRealism, setRrHostSeams, roleplayRealismInstalled } from '../src/systems/rrInstall.js';
+} from '../src/systems/roleplayRealism/rrRealism.js';
+import { installRoleplayRealism, setRrHostSeams, roleplayRealismInstalled } from '../src/systems/roleplayRealism/rrInstall.js';
 import { formulaOverride, adjustWeaponHitChanceMod, adjustWeaponAttackDamage, damageModifier, damageEquipment, maxEncumbrance, entityMaxEncumbrance } from '../src/combat/formulas.js';
 import { ENCHANTMENT_TYPES, computeEnchantmentMods } from '../src/systems/enchantments.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
@@ -30,12 +30,12 @@ import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { potionRecipeByKey, potionRecipeKey, potionBundle } from '../src/systems/potions.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { GUILDS, calculateNewRank, joinGuild, updateRank, underworldRuleOf } from '../src/systems/guilds.js';
-import { trainingSkills, TRAINING_SKILLS } from '../src/systems/guildServices.js';
-import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
+import { GUILDS, calculateNewRank, joinGuild, updateRank, underworldRuleOf } from '../src/systems/guild/guilds.js';
+import { trainingSkills, TRAINING_SKILLS } from '../src/systems/guild/guildServices.js';
+import { createFactionRep, getReputation } from '../src/systems/faction/factionRep.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { equipTableOf, EQUIP_SLOTS, _wearScaleForTests, _dfuWearMultipleForTests } from '../src/systems/equip.js';
 import { liveStat, FATIGUE_DRAIN_SCALE } from '../src/systems/statMods.js';
 import { carriedWeight } from '../src/systems/inventory.js';
@@ -323,8 +323,8 @@ test('ENC-CEIL: the encumbrance penalty reads the pack\'s own ceiling - PlayerEn
   runMagicRoundsFor(bare, 0, 1, { sinks: {} });
   assert.equal(f0 - bare.fatigue, Math.trunc(per), 'the no-sink arm charges the scaled drain too');
   // the seam reads the property, never the bare formula again
-  assert.match(rd('src/systems/rrInstall.js'), /maxEncumbrance: entityMaxEncumbrance\(entity\)/);
-  assert.ok(!/maxEncumbrance\(liveStat\(/.test(rd('src/systems/rrInstall.js')), 'the bare strength formula is back in the penalty');
+  assert.match(rd('src/systems/roleplayRealism/rrInstall.js'), /maxEncumbrance: entityMaxEncumbrance\(entity\)/);
+  assert.ok(!/maxEncumbrance\(liveStat\(/.test(rd('src/systems/roleplayRealism/rrInstall.js')), 'the bare strength formula is back in the penalty');
   reset();
 });
 
@@ -438,8 +438,8 @@ test('RR1 bedSleeping and the wiring: the three bed models, listed by the interi
   assert.match(rd('src/combat/weaponRig.js'), /setWeaponPoseProbe\(poseProbe\);/, 'AUDIT 68 S09-rig-globals-last-built: re-claimed by the stepping rig');
   assert.match(rd('src/player/mountRig.js'), /shipAvailable: isShipAvailable\(\{ canSail: !!onShip, ownsShip: ownsShip\(playerEntity\), \.\.\.\(shipLocation\?\.\(\) \?\? \{\}\) \}\)/);
   assert.match(rd('src/systems/worldTick.js'), /for \(const fn of _roundHooks\.values\(\)\) fn\(entity, \{ nowMinutes: r \+ 1, sinks, say \}\);/);
-  assert.match(rd('src/systems/guilds.js'), /return guild\?\.neverExpels && !underworldRuleOf\(guild\) && newRank < 0 \? 0 : newRank;/);
-  assert.match(rd('src/systems/guildServiceFlow.js'), /const rows = moved\.lines \? moved\.lines\.map\(\(t\) => \(\{ text: t\.replaceAll\('%pcn', entity\?\.name \?\? ''\), center: true \}\)\) : undefined;/);
-  const inst = rd('src/systems/rrInstall.js');
+  assert.match(rd('src/systems/guild/guilds.js'), /return guild\?\.neverExpels && !underworldRuleOf\(guild\) && newRank < 0 \? 0 : newRank;/);
+  assert.match(rd('src/systems/guild/guildServiceFlow.js'), /const rows = moved\.lines \? moved\.lines\.map\(\(t\) => \(\{ text: t\.replaceAll\('%pcn', entity\?\.name \?\? ''\), center: true \}\)\) : undefined;/);
+  const inst = rd('src/systems/roleplayRealism/rrInstall.js');
   for (const s of ["registerFormulaOverride('adjustWeaponHitChanceMod'", "registerMagicRoundHook('roleplay-realism-encumbrance'", "registerEntityFold('roleplay-realism-encumbrance'", 'setShipAvailable((q) => rrShipAvailable(q))', 'setUnderworldRule(', 'setGuildExpelledHook(', 'registerClimbingChanceOverride(', 'registerMeleeWeaponAnimTime(', "registerFormulaOverride('calculateWeaponToHit'", "registerFormulaOverride('applyConditionDamageThroughPhysicalHit'", "if (rrModule('enemyAppearance')) applyEnemyAppearance(ENEMY_BASICS);", "overridePotionRecipes(rrModule('purificationPotion') ? RR_POTION_RECIPES : []);", "registerFormulaOverride('damageModifier'", 'registerMaxBankLoan(']) assert.ok(inst.includes(s), s);
 });

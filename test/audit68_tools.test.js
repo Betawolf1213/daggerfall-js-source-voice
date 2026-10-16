@@ -14,7 +14,7 @@ import { planDoc, applyPlan, lineMap } from '../tools/citeShift.mjs';
 import { mapLine } from '../tools/citeMerge.mjs';
 import { deployVerdict } from '../tools/verify-deploy.mjs';
 import { parseSettingsText } from '../scripts/bakeSettingsText.mjs';
-import { SETTINGS_LABELS } from '../src/systems/settingsText.js';
+import { SETTINGS_LABELS } from '../src/systems/settings/settingsText.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
@@ -34,8 +34,8 @@ const scripts = () => ['tools', 'scripts'].flatMap((d) => readdirSync(join(ROOT,
 test('AUDIT 68 S01-bake-on-import-race: importing a bake for its parser writes nothing; run as the program it bakes the committed module', (t) => {
   for (const [script, input, out] of [
     ['scripts/bakeBooks.mjs', 'vendor/dfu-books/books.txt', 'src/systems/booksData.js'],
-    ['scripts/bakeSettings.mjs', 'vendor/dfu-settings/defaults.ini.txt', 'src/systems/settingsDefaults.js'],
-    ['scripts/bakeSettingsText.mjs', 'vendor/dfu-settings/GameSettings.txt', 'src/systems/settingsText.js'],
+    ['scripts/bakeSettings.mjs', 'vendor/dfu-settings/defaults.ini.txt', 'src/systems/settings/settingsDefaults.js'],
+    ['scripts/bakeSettingsText.mjs', 'vendor/dfu-settings/GameSettings.txt', 'src/systems/settings/settingsText.js'],
   ]) {
     const d = tree(t, [script, 'tools/lib', input]);
     mkdirSync(join(d, 'src/systems'), { recursive: true });

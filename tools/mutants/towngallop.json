@@ -11,7 +11,7 @@
   },
   {
     "name": "TOWNGALLOP-room-walks-in-town",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "'RefinedTraining.intensiveTraining': false,",
     "new": "'RefinedTraining.intensiveTraining': false, 'EnhancedRiding.GallopingInTowns': false,",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "TOWNGALLOP-room-leaves-it-to-the-player",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "'roleplay-realism': Object.freeze(['variantNpcs', 'variantResidents']),",
     "new": "'roleplay-realism': Object.freeze(['variantNpcs', 'variantResidents', 'EnhancedRiding.GallopingInTowns']),",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "TOWNGALLOP-setting-unread",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "gallopingInTowns: rrRidingSetting('GallopingInTowns') === true",
     "new": "gallopingInTowns: false",
     "tests": [

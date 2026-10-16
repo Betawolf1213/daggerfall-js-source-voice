@@ -31,7 +31,7 @@
  },
  {
   "name": "HOMESSHED-law-flat",
-  "file": "src/systems/onlineHomes.js",
+  "file": "src/systems/online/onlineHomes.js",
   "old": "export const homeRetryMs = (n) => Math.min(HOME_RETRY_MAX_MS, HOME_RETRY_MS * 2 ** Math.max(0, n - 1));",
   "new": "export const homeRetryMs = (n) => HOME_RETRY_MS + 0 * n;",
   "tests": [
@@ -41,7 +41,7 @@
  },
  {
   "name": "HOMESSHED-gate-flat",
-  "file": "src/systems/onlineHomes.js",
+  "file": "src/systems/online/onlineHomes.js",
   "old": "if (!force && f && now() - f.at < homeRetryMs(f.n))",
   "new": "if (!force && f && now() - f.at < HOME_RETRY_MS)",
   "tests": [
@@ -51,7 +51,7 @@
  },
  {
   "name": "HOMESSHED-uncapped",
-  "file": "src/systems/onlineHomes.js",
+  "file": "src/systems/online/onlineHomes.js",
   "old": "Math.min(HOME_RETRY_MAX_MS, HOME_RETRY_MS * 2 ** Math.max(0, n - 1))",
   "new": "HOME_RETRY_MS * 2 ** Math.max(0, n - 1)",
   "tests": [
@@ -61,7 +61,7 @@
  },
  {
   "name": "HOMESSHED-count-not-kept",
-  "file": "src/systems/onlineHomes.js",
+  "file": "src/systems/online/onlineHomes.js",
   "old": "n: (failed.get(id)?.n ?? 0) + 1",
   "new": "n: 1",
   "tests": [
@@ -71,7 +71,7 @@
  },
  {
   "name": "HOMESSHED-count-never-reset",
-  "file": "src/systems/onlineHomes.js",
+  "file": "src/systems/online/onlineHomes.js",
   "old": "        failed.delete(id);\n",
   "new": "",
   "tests": [

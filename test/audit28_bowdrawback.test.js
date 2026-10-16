@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { BOW_DRAWN_HOLD_FRAME, MAX_BOW_HELD_DRAWN_SECONDS } from '../src/characters/weaponStates.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W12: BOW DRAWBACK (WeaponManager.cs:341, :353-360). The
 // machine's draw-and-hold half (StrikeUp to frame 3, the 10 s undraw,

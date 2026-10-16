@@ -33,7 +33,7 @@
 //   values and were stored-tier with no consumer until now.
 import { drawRect, NATIVE_W, NATIVE_H } from './nativePanel.js';   // ONE home for the virtual canvas size
 import { drawText, measureText } from './text.js';
-import { getBool, getFloat, getString } from '../systems/settings.js';
+import { getBool, getFloat, getString } from '../systems/settings/settings.js';
 import { processGrammar } from '../systems/textManager.js';   // L10N3g: each row through the grammar as it is drawn (:215)
 
 /** defaultMarginSize (:30). */
@@ -58,7 +58,7 @@ export const toolTipRows = (text) => String(text).replace(/\\r/g, '\r').split('\
  * AUDIT SET U2: THE WIDEST ROW OF THE PORT'S OWN A TOOLTIP DRAWS, in native px. DFU never wraps a tooltip row - the
  * edge shift (:166-177) is its whole answer to a wide one, and its own rows stand as DFU draws them. The port's own
  * lines under an item's name - its tier's, its sigil's, its set's ("4 pieces - Bloodfury: Your weapon blows deal +4%
- * damage, +8% below half health (1 more)", systems/sigilSets.js setLines) - ran past the 320px screen, and the shift
+ * damage, +8% below half health (1 more)", systems/sigil/sigilSets.js setLines) - ran past the 320px screen, and the shift
  * pushed their first words off its left edge. So a tooltip that carries them (the item lists' - itemScroller.js
  * makeSlotToolTip) wraps the rows from `wrapFrom` on: a row wider than this at its spaces, each continuation indented
  * two. A RECORDED departure (the Port-Ledger's Sigil Sets row); every row of DFU's own, the item's name included, is

@@ -73,7 +73,7 @@
   },
   {
     "name": "LOAN-AMNESTY-an-old-save-read-as-marked",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "entity.loanAmnesty = Number.isSafeInteger(snap.loanAmnesty) ? snap.loanAmnesty : 0;",
     "new": "entity.loanAmnesty = Number.isSafeInteger(snap.loanAmnesty) ? snap.loanAmnesty : LOAN_AMNESTY;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "LOAN-AMNESTY-a-new-character-born-unmarked",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "snap.loanAmnesty = Number.isSafeInteger(entity.loanAmnesty) ? entity.loanAmnesty : LOAN_AMNESTY;",
     "new": "snap.loanAmnesty = Number.isSafeInteger(entity.loanAmnesty) ? entity.loanAmnesty : 0;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "LOAN-AMNESTY-the-mark-not-saved",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.loanAmnesty = Number.isSafeInteger(entity.loanAmnesty) ? entity.loanAmnesty : LOAN_AMNESTY;",
     "new": "",
     "tests": [

@@ -1,7 +1,7 @@
 // SS1 (2026-09-27, Mac: "make sigil stones bound items and stackable, raise the prices on the new boss vendor"): the
-// Deadlands Ember BOUND (systems/itemBound.js - never handed to another player: the trade will not hold one out, and a
-// peer's lot carrying one is refused whole) and STACKING with its own kind alone (systems/gateSpoils.js), the stones a
-// save holds from before folded into their stacks on load (systems/save.js, below its index-keyed relinks), and the
+// Deadlands Ember BOUND (systems/item/itemBound.js - never handed to another player: the trade will not hold one out, and a
+// peer's lot carrying one is refused whole) and STACKING with its own kind alone (systems/gate/gateSpoils.js), the stones a
+// save holds from before folded into their stacks on load (systems/save/save.js, below its index-keyed relinks), and the
 // card's line. The Broker's count, sale and prices over the stacks are test/set7_broker.test.js's. SS3 (the world
 // will not take one), SS4 (the Broker's wares bound too, and neither counter sells a bound piece) and SS5 (a ware
 // dismantled in the pack for a share of its stones) below.
@@ -9,31 +9,31 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sigilStone, restackStones, isSigilStone, SIGIL_STONE_TEMPLATE } from '../src/systems/gateSpoils.js';
-import { isBound, BOUND_LINE, BOUND_TRADE_TEXT, BOUND_KEEPS, boundRefusesPut, boundText, unbound } from '../src/systems/itemBound.js';
+import { sigilStone, restackStones, isSigilStone, SIGIL_STONE_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
+import { isBound, BOUND_LINE, BOUND_TRADE_TEXT, BOUND_KEEPS, boundRefusesPut, boundText, unbound } from '../src/systems/item/itemBound.js';
 import { NativeInventoryWindow, tabAccepts } from '../src/ui/nativeInventory.js';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { mountEnhancedTrade } from '../src/ui/enhancedTrade.js';
 import { mountBrokerWindow } from '../src/ui/brokerWindow.js';
-import { brokerStock, brokerSale, brokerDay, BROKER_DAY_MS, BROKER_PRICES, BROKER_DISMANTLE_SHARE, dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLE_INSTEAD, DISMANTLE_WORN, DISMANTLED, stonesText, brokerBought, markBrokerBought, _resetBrokerForTests } from '../src/systems/sigilBroker.js';
+import { brokerStock, brokerSale, brokerDay, BROKER_DAY_MS, BROKER_PRICES, BROKER_DISMANTLE_SHARE, dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLE_INSTEAD, DISMANTLE_WORN, DISMANTLED, stonesText, brokerBought, markBrokerBought, _resetBrokerForTests } from '../src/systems/sigil/sigilBroker.js';
 import { stonesText as windowStonesText } from '../src/ui/brokerWindow.js';
 import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';
 import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
 import { fitBoxRows, BOX_FIT_W, layoutMessageBox } from '../src/ui/messageBox.js';
 import { measureText } from '../src/ui/text.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
-import { isDeclaredItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { applyInteriorLoot, interiorLootRecords } from '../src/world/interiorShared.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
-import { isLocked, setLocked, lockRefuses, lockedText } from '../src/systems/itemLock.js';
+import { isLocked, setLocked, lockRefuses, lockedText } from '../src/systems/item/itemLock.js';
 import { tradeRefusal, createTradePack } from '../src/systems/tradePack.js';
 import { createTradeManager, inTradeRange } from '../src/net/tradeSession.js';
 import { validTradeData } from '../src/net/wire.js';
 import { addItem, stacksWith, splitStack } from '../src/systems/inventory.js';
-import { mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
-import { restorePlayer, snapshotPlayer } from '../src/systems/save.js';
+import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { restorePlayer, snapshotPlayer } from '../src/systems/save/save.js';
 import { withDom, fakeDom } from './invdrag.mjs';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';

@@ -127,7 +127,7 @@
   },
   {
     "name": "FW-per-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "BLOWS_WIRE = Object.freeze({ PER: 1000,",
     "new": "BLOWS_WIRE = Object.freeze({ PER: 100,",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "FW-write-unwritten",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "...(rev.p2 ? { p2: 1 } : {}), ...(rb ? { rb } : {}) };",
     "new": "...(rev.p2 ? { p2: 1 } : {}) };",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "FW-write-at-one",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "Number.isFinite(rev.blows) && rev.blows > 1 ?",
     "new": "Number.isFinite(rev.blows) && rev.blows >= 1 ?",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "FW-write-unclamped",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "Math.max(BLOWS_WIRE.MIN, Math.min(BLOWS_WIRE.MAX, Math.round(rev.blows * BLOWS_WIRE.PER)))",
     "new": "Math.round(rev.blows * BLOWS_WIRE.PER)",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "FW-heir-dropped",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "p2: r?.p2 === 1 ? (rev?.p2 ?? phaseTwo()) : null, blows };",
     "new": "p2: r?.p2 === 1 ? (rev?.p2 ?? phaseTwo()) : null };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "FW-fold-rb-unread",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "const factor = (Number.isInteger(r?.rb) ? r.rb / BLOWS_WIRE.PER : 1) *",
     "new": "const factor = 1 *",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "FW-fold-p2-unread",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "* (r?.p2 === 1 ? PHASE_TWO.BLOWS : 1);\n  const was",
     "new": "* 1;\n  const was",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "FW-fold-doubled",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "const own = (Number.isFinite(entity.damageScale) && entity.damageScale > 0 ? entity.damageScale : 1) / was;",
     "new": "const own = (Number.isFinite(entity.damageScale) && entity.damageScale > 0 ? entity.damageScale : 1);",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "FW-fold-unremembered",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  entity.damageScale = own * factor;\n  entity._revBlows = factor;",
     "new": "  entity.damageScale = own * factor;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "FW-fold-unstood",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "  entity.damageScale = own * factor;\n  entity._revBlows = factor;",
     "new": "  entity._revBlows = factor;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "FW-stand-unrecorded",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  entity.revenant.blows = entity.damageScale / prior;",
     "new": "",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "FW-stand-elite-counted",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  entity.revenant.blows = entity.damageScale / prior;",
     "new": "  entity.revenant.blows = entity.damageScale;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "FW-restamp-drops",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (blows) entity.revenant.blows = blows;",
     "new": "",
     "tests": [

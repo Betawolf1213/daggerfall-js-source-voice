@@ -38,7 +38,7 @@ import { assignQuickslot, clearQuickslots, swapQuickslot, useQuickslot, QUICKSLO
 import { equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import * as chargen from '../src/systems/chargen.js';   // a namespace: each pin fails on its own law, not on an import
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { registerPresenter, _resetNotifyForTests } from '../src/systems/notify.js';
 import { MINUTES_PER_DAY, isFullMoonFromMinutes } from '../src/systems/gameDate.js';
 
@@ -283,7 +283,7 @@ test('DISC10-E L4: MaxHealth reads the limiter, RawMaxHealth does not, a heal st
 
 test('DISC10-E L4: the accessor is installed where MaxMagicka\'s is - chargen and the load path', () => {
   assert.match(rd('src/systems/chargen.js'), /^ {2}defineLiveMaxHealth\(playerEntity\);/m);
-  assert.match(rd('src/systems/save.js'), /^ {2}defineLiveMaxHealth\(entity\);/m);
+  assert.match(rd('src/systems/save/save.js'), /^ {2}defineLiveMaxHealth\(entity\);/m);
 });
 
 // ── V9 / V11: THE CURSE'S CLOCKS ──────────────────────────────────────────────────────────────────────────────────

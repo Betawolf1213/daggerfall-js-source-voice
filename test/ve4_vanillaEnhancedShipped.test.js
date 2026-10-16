@@ -19,13 +19,13 @@ import {
   setDfmodSources, attachedDfmods, setDfmodEnabled, setShippedDfmods, clearDfmodSources, DFMOD_SHIPPED_PREF, DFMOD_OFF_PREF,
   DFMOD_INDEX_VERSION, dfmodStoreKey, dfmodGroundLayers, groundSource, dfmodGeneration, _resetDfmodForTests,
 } from '../src/systems/dfmodTextures.js';
-import { VE_PACK_MODS, VE_PACK_SOURCE, vePackClient, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhancedPack.js';
+import { VE_PACK_MODS, VE_PACK_SOURCE, vePackClient, vePackUrl, installVanillaEnhancedPack, _setVePackIoForTests } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';
 import { mipFitSize } from '../src/formats/resample.js';   // AUDIT VE P1: the mip rule's one home, the decode worker's and the page's
 import { bundleTextureCount, preloadTextureRecord, clearTextureReplacements, textureEntry } from '../src/systems/textureReplacement.js';
 import { VE_COMMIT, BC7_MEAN, BC7_MAX, VE_MODS } from '../tools/vanillaEnhancedVendor.mjs';
-import { wearVanillaEnhanced, wearClassicTextures, setVeAddon, veAddons, veWorn, VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced.js';
+import { wearVanillaEnhanced, wearClassicTextures, setVeAddon, veAddons, veWorn, VE_ADDONS_PREF } from '../src/systems/vanillaEnhanced/vanillaEnhanced.js';
 import { OVERHAUL_PANELS, currentOption } from '../src/systems/overhauls.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 
 const ROOT = new URL('../', import.meta.url);
@@ -286,5 +286,5 @@ test('VE4 wiring: the store\'s one registration puts the pack in before the atta
   assert.match(src('ui/enhancedMenu.js'), /function packsCard\(\) \{\n[^\n]*\n\s+installVanillaEnhancedPack\(\);/);   // PIN MOVED (AUDIT VE R2): after the wait for the store
   // PIN MOVED (AUDIT VE R13): a mod switched on that carries doll art, not any attached mod
   assert.match(src('ui/paperDoll.js'), /const composeScale = \(\) => \(dfmodCarriesDollArt\(\) \? PAPERDOLL_HD_SCALE : 1\);/);
-  assert.match(src('systems/vanillaEnhanced.js'), /const doorMods = \(\) => \{ installVanillaEnhancedPack\(\); return attachedDfmods\(\); \};/);
+  assert.match(src('systems/vanillaEnhanced/vanillaEnhanced.js'), /const doorMods = \(\) => \{ installVanillaEnhancedPack\(\); return attachedDfmods\(\); \};/);
 });

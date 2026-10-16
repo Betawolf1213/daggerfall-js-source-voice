@@ -8,12 +8,12 @@ import { readFileSync } from 'node:fs';
 
 import { TravelMapWindow, OFFSET_LOOKUP, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import {
   resetTravelMapState, setTravelMapPopUpState, travelMapPopUpState, travelMapFilters, travelMapMarkedMapId,
-} from '../src/systems/travelMapState.js';
+} from '../src/systems/travel/travelMapState.js';
 import { restoreDiscovery } from '../src/systems/discovery.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { readImmersiveTravelSettings, itMapPaths, IT_POPUP, IT_TEXT, IMMERSIVE_TRAVEL_VENDOR, DOCK_PIXEL_IDS } from '../src/systems/immersiveTravel.js';
@@ -311,7 +311,7 @@ test('AUDIT IT1 G1/G2: the layer lays only the author\'s records - a patch WD1 d
 import { installImmersiveTravel, immersiveTravelLoaded, _resetImmersiveTravel, IT_FACTIONS, CARRIAGE_DRIVERS_FACTION_ID, SAILORS_FACTION_ID } from '../src/systems/immersiveTravel.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { customFactions, registerCustomFaction, _resetCustomFactions } from '../src/formats/factionFile.js';
-import { hasCustomMerchantService, _resetMerchantServices } from '../src/systems/guildServices.js';
+import { hasCustomMerchantService, _resetMerchantServices } from '../src/systems/guild/guildServices.js';
 
 function init(fn) {
   _resetModSettings(); _resetCustomFactions(); _resetMerchantServices(); _resetImmersiveTravel();

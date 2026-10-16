@@ -12,12 +12,12 @@ import {
   RR_RIDING, rrRidingOn, rrRidingSetting, rrCanRunRiding, rrRidingInputLimits, rrTerrainAngle, rrTerrainFollow, rrRidingYAdj,
   rrRidingNeckBand, rrChargeDamage, rrTrampleOutcome, RR_WEEK_BUTTON, RR_INTENSIVE_DAYS, RR_INTENSIVE_SKILL_POINTS, rrRefinedTrainingOn,
   rrTrainingCost, rrIntensiveCost, rrIntensiveOffered, RR_TRAINING_LINES,
-} from '../src/systems/rrRealism.js';
+} from '../src/systems/roleplayRealism/rrRealism.js';
 import {
   RR_NPC_XML_SCALE, RR_NPC_ARCHIVE, RR_NPC_RECORDS, RR_BUTTON_RECORDS, rrArtUrl, rrRecord182_0, rrShopTavernRecord, rrResidentGender,
   rrClimateRace, rrResidentVariant, rrVariantPerson, installRoleplayRealismArt, _resetRoleplayRealismArt,
-} from '../src/systems/rrVariants.js';
-import { installRoleplayRealism, setRrHostSeams, rrHostSeams } from '../src/systems/rrInstall.js';
+} from '../src/systems/roleplayRealism/rrVariants.js';
+import { installRoleplayRealism, setRrHostSeams, rrHostSeams } from '../src/systems/roleplayRealism/rrInstall.js';
 import { PERSON_TEXTURES, PERSON_FACE_RECORDS, PERSON_IDLE_RECORD, NUM_PERSON_FACE_VARIANTS, MobilePerson } from '../src/characters/mobilePerson.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
@@ -30,14 +30,14 @@ import { MoveAxes, setAxisLimitsProvider } from '../src/player/moveAxes.js';
 import { LookFilter, pitchFloor, PITCH_FLOOR, setPitchFloorProvider } from '../src/player/lookFilter.js';
 import { createMountRig } from '../src/player/mountRig.js';
 import { NATIVE_SCREEN_HEIGHT, SCALE_FACTOR_X } from '../src/systems/riding.js';
-import { TownPopulation } from '../src/systems/townPopulation.js';
+import { TownPopulation } from '../src/systems/town/townPopulation.js';
 import { CityNavigation } from '../src/world/cityNavigation.js';
 import { buildRefinedTrainingFlow, spliceSkillName } from '../src/ui/guildServiceWindows.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS, SKILL_NAMES, permanentSkillValue } from '../src/systems/skills.js';
-import { TRAINING_SKILLS, trainingPrice, trainingMax } from '../src/systems/guildServices.js';
-import { NOT_ENOUGH_GOLD_ID } from '../src/systems/guildServiceActions.js';
+import { TRAINING_SKILLS, trainingPrice, trainingMax } from '../src/systems/guild/guildServices.js';
+import { NOT_ENOUGH_GOLD_ID } from '../src/systems/guild/guildServiceActions.js';
 import { handToHandMinDamage, handToHandMaxDamage } from '../src/combat/formulas.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -288,8 +288,8 @@ test('RR2 riding seams: CanRun through the host reads, the axes clamped, the loo
 test('RR2 the trample and the charge on the hosts: the contacts each frame, the walker retired, the watchman minted where they stood, the installs', () => {
   const w = rd('src/scenes/world.js');
   assert.match(w, /if \(rrRidingOn\(\) && player\.riding && player\.isRunning\) rrRidingContacts\(\);/, 'TrampleCivilians && IsRiding && IsRunning, after the rig\'s frame');
-  // AUDIT-RR F15: the contacts live in systems/rrRidingHost.js now and BOTH outdoor hosts stand one on their own reads
-  const rh = rd('src/systems/rrRidingHost.js');
+  // AUDIT-RR F15: the contacts live in systems/roleplayRealism/rrRidingHost.js now and BOTH outdoor hosts stand one on their own reads
+  const rh = rd('src/systems/roleplayRealism/rrRidingHost.js');
   assert.match(rh, /latch\.pickpocketAttempted = true;/, 'PickpocketByPlayerAttempted, the latch (AUDIT-RR2 G24: the pickpocket\'s own)');
   assert.match(rh, /f\.ai\.knockbackSpeed = RR_RIDING\.chargeKnockback; f\.ai\.knockbackDir = \[\.\.\.direction\];/);
   assert.match(rh, /playerEntity\.fatigue = Math\.max\(0, \(playerEntity\.fatigue \?\? 0\) - Math\.trunc\(FATIGUE_LOSS\.Default \* RR_RIDING\.chargeFatigueMultiplier \* FATIGUE_DRAIN_SCALE\)\);/);   // BALANCE1 (the pre-merge audit 0927b F1): a charge is exertion
@@ -314,7 +314,7 @@ test('RR2 the trample and the charge on the hosts: the contacts each frame, the 
     assert.match(s, /enhancedRiding: \(\) => \(rrRidingOn\(\) \? \{ terrainFollowing: rrRidingSetting\('followTerrainEnabled'\) === true, softenFollow: rrRidingSetting\('followTerrainSoftenFactor'\) \?\? 8 \} : null\),/, h);
   }
   assert.match(rd('src/scenes/cityGuards.js'), /spawnCityGuard: \(pos, yaw, attackerFeet = null\) => spawnGuardAt\(\[\.\.\.pos\], yaw, attackerFeet\),/);
-  const inst = rd('src/systems/rrInstall.js');
+  const inst = rd('src/systems/roleplayRealism/rrInstall.js');
   assert.match(inst, /setCanRunOverride\(\(mode\) => \(rrRidingOn\(\)\s*\? rrCanRunRiding\(\{ mode, riding: !!_host\.riding\?\.\(\), inTown: !!_host\.inTown\?\.\(\), gallopingInTowns: rrRidingSetting\('GallopingInTowns'\) === true \}\)\s*: null\)\);/);
   assert.match(inst, /setAxisLimitsProvider\(\(\) => \(rrRidingOn\(\) && rrRidingSetting\('RealisticMovement'\) === true\s*\? rrRidingInputLimits\(\{ riding: !!_host\.riding\?\.\(\), mode: _host\.transportMode\?\.\(\) \?\? 'Foot' \}\)\s*: null\)\);/);
   assert.match(inst, /installRoleplayRealismArt\(\);/);

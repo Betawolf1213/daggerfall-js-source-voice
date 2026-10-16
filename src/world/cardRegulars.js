@@ -63,7 +63,7 @@ export function regularLook(seed, bank, gender) {
 /**
  * The regulars to stand this frame: one per patron still at the table, in the chair the cloth gives him - `{key, res:
  * {id, name, look}, feet, yaw, st}` (`st` the pose's seated byte, net/wire.js seatOf's - the peer layers pose a body
- * seated by it). `session` the evening (systems/cardTableSession.js), `seats` the table's chairs (world/cardTables.js),
+ * seated by it). `session` the evening (systems/card/cardTableSession.js), `seats` the table's chairs (world/cardTables.js),
  * `seatOf[i]` the chair of the session's seat i, `regulars` the CARDS4 regulars by name: `{name -> {seed, bank, gender}}`,
  * `key` the table's.
  * @param {{session: any, seats: any[], seatOf: number[], regulars: Map<string, {seed: number, bank: number, gender: number}>, key: string}} p

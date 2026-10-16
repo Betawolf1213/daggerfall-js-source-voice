@@ -49,15 +49,15 @@ names the departure (TV1, 2026-09-28).
 
 ## The seams it stands on (measured 2026-09-27, four read-only lanes)
 
-- **The journey exists.** `systems/travelOptions.js` runs Travel Options' Update in its
-  own order: the autopilot (`systems/travelAutopilot.js`) turns and drives the real
-  motor, `systems/travelSteer.js` casts three feelers round obstacles (TRAVEL-NAV),
+- **The journey exists.** `systems/travel/travelOptions.js` runs Travel Options' Update in its
+  own order: the autopilot (`systems/travel/travelAutopilot.js`) turns and drives the real
+  motor, `systems/travel/travelSteer.js` casts three feelers round obstacles (TRAVEL-NAV),
   `systems/timeScale.js` scales the step, and a journey stops for enemies, a window, a
   disease, the ocean, arrival (`interruptTravel` keeps the destination for the resume
   prompt). The held map already starts a walked journey at a bare pixel
   (`beginTravelToCoords`, MAP2).
 - **Roads exist; a route planner does not.** Hazelnut's four 500,000-byte masks, one
-  compass byte per map pixel (`vendor/roads-hazelnut/`, `systems/travelPaths.js`), and
+  compass byte per map pixel (`vendor/roads-hazelnut/`, `systems/travel/travelPaths.js`), and
   the follow key walks junction to junction; a named trip goes straight
   (`Travel-Options.md` TO-FIELD: "The mod does not route along roads to a named
   destination and never did"). The pieces for a planner are in the tree:
@@ -70,7 +70,7 @@ names the departure (TV1, 2026-09-28).
   weather keeps being read where the player is. The tap ray unprojects through the last
   frame's projection and view, so a click works from any camera.
 - **The weather is a field.** WEATHER3's `weatherAt(x, z, minute)`
-  (`systems/weatherMap.js`): 400-700 systems born, drifting, growing and dying over the
+  (`systems/weather/weatherMap.js`): 400-700 systems born, drifting, growing and dying over the
   bay, calibrated to DFU's odds table. A player query is 0.12 ms, the sky's 40 km read
   0.2 ms. Cloud shadows (VC4) are already a world-space map that reads correctly from
   above.
@@ -324,7 +324,7 @@ The known places about the traveller wear PLATES (the grid's own radius, rebuilt
 change), and a plate's click is the same journey as a click on the town. No Travel Options
 (the mod switched off) is said, not silently ignored; foes near refuse it in the mod's words.
 
-**By the roads** (`systems/travelRoute.js`). A* over the 1000x500 grid on Hazelnut's bytes -
+**By the roads** (`systems/travel/travelRoute.js`). A* over the 1000x500 grid on Hazelnut's bytes -
 the very bytes Travel Options' follow key walks - with a step ON the road only where both
 ends carry the edge; a road 1, a track 1.6, the open 3.5 (x sqrt 2 diagonally); the sea
 refused (roadsProducer's WATER_BYTE); a straight run on one kind of ground folded into one
@@ -339,7 +339,7 @@ resumes from the nearest leg ahead) and `beginTravelToPoint` (a path's width abo
 Every stop the mod's Update makes still stops them. Under the view the arrival is SAID on the
 notice line, not boxed: a box is a window, and a window brings the view down.
 
-**The cap, measured live** (`systems/travelGovernor.js`). TV0 planned a probe riding a long
+**The cap, measured live** (`systems/travel/travelGovernor.js`). TV0 planned a probe riding a long
 road for the highest clean rate; the probe needs ARENA2, CI has none, and one machine's
 number is wrong on every slower one. So the measurement runs on the player's machine, every
 journey: while the view is up over a running journey the host counts the pixels inside the
@@ -703,7 +703,7 @@ roads - TV2's own planner and route; the journey's own end wears the flag, not a
 The grid's own places keep TV2's plates on the land; the far places start where the grid
 ends, so no town is marked twice.
 
-**How** (`systems/travelFarPlaces.js`, pure): `settlementPixels` gathers the world's
+**How** (`systems/travel/travelFarPlaces.js`, pure): `settlementPixels` gathers the world's
 settlements once from the host's pixel index; `farPlaces` picks them by Chebyshev distance
 (beyond the grid's radius, within the range), keeps the discovered ones (`tvPlaceSummary`,
 DFU's discovery law: an undiscovered place has no name to go to), nearest first. The host
@@ -1074,14 +1074,14 @@ PARTY-REST5's `restEnemyAt` is; the leader's resume resumes them. A band that ma
 
 **Order of the build:** TV6 (self-contained), TV7 (the bands, no relay change), TV8 (the party's journey, world124).
 
-**TV6 BUILT (2026-09-28).** `systems/travelDungeons.js` (pure: `dungeonPixels`, `nearDungeons`, `dungeonToFind`,
+**TV6 BUILT (2026-09-28).** `systems/travel/travelDungeons.js` (pure: `dungeonPixels`, `nearDungeons`, `dungeonToFind`,
 `TV_DUNGEON_MAX` 12, `TV_DUNGEON_FIND_M` 1000); the host's `travelViewDungeons` (kept between pixels and finds, a load
 forgets it) and `dungeonFindFrame` (four times a second, the enhanced interface outdoors: `discoverLocation`, then
 "You have found <name>." on the screen); a found dungeon past the grid is a far plate (its name, its distance, a
 journey - within the grid TV2's own plate), the rest are the readout's LAIR look - a dull red point and a "?", no
 journey, never held at the edge. Proof: `test/tv6_dungeons.test.js`, `tools/mutants/tv6.json` (14 records, all dead).
 
-**TV7 BUILT (2026-09-28).** `systems/travelBands.js` (pure): a cell of BAND_CELL_PX (2) map pixels holds a band in a
+**TV7 BUILT (2026-09-28).** `systems/travel/travelBands.js` (pure): a cell of BAND_CELL_PX (2) map pixels holds a band in a
 life of BAND_LIFE_MS (12 real minutes on the shared clock) at 0.30 by day and 0.45 by night, born at a seeded point
 the land allows (the host's `bandOk`: no water, no place's pixel); it WANDERS 75 s legs at 1.3 m/s, each bent up to a
 quarter turn, turned back off the land's edge - every client computes the same bands in the same places, nothing sent.
@@ -1105,7 +1105,7 @@ that band, and spends every band a peer spent - one band, one fight, everyone's.
 same breath: the lower id keeps it (`chaseYields`), alike on every client.
 Proof: `test/tv7_bands.test.js`, `tools/mutants/tv7.json` (33 records, all dead).
 
-**TV8 BUILT (2026-09-28) - GROUP TRAVEL, THE LEADER DRIVES.** `systems/partyWalk.js` (pure). A party leader's Overworld
+**TV8 BUILT (2026-09-28) - GROUP TRAVEL, THE LEADER DRIVES.** `systems/party/partyWalk.js` (pure). A party leader's Overworld
 journey (a place, or a spot) with a member gathered within PARTY_WALK_RADIUS_M (60 m) is a WALK on the leader's party
 pose - `tw` `{x, y, sx?, sz?, at, go, h}` (net/wire.js validPartyPose, **world124**, PARTY_WALK_RELAY_MIN 124 - AUDIT OW5: it read world123, the raids' relay: offered
 only through a hub that carries it). A gathered member is asked ("<leader> leads the party to <place>. Travel with
@@ -1231,7 +1231,7 @@ so away from row 250 none comes within sight - recorded here for that branch; th
   passage sails to from here - then the passage is OFFERED ("Sail there by ship?", its fare and days) and, on Yes,
   taken as the map takes it (`01-Overview/Field-Bugs-2026-09-28e.md`). The passage is Daggerfall's, so it is offered
   with this mod off too (AUDIT 28e); the boat's line is this mod's, said only with it on.
-- **The planner's sea** (`systems/travelRoute.js`, `sea`): three layers of the grid - ashore with the boat to hand,
+- **The planner's sea** (`systems/travel/travelRoute.js`, `sea`): three layers of the grid - ashore with the boat to hand,
   afloat, ashore with it left behind. A step from a land pixel into the water is the LAUNCH (`embark`), steps between
   water pixels are SAILED (`sea`: 1.2 a step - a little dearer than a road; 1.5 beside the land, so a route stands off a
   wide sea's shore and still threads a strait), a step out onto land the LANDFALL (`landfall`); each launch and landfall
@@ -1649,7 +1649,7 @@ close. If a camp is spawned, it should show in the overworld."* Five research la
 generation, the camps' life, the online transport, the speed governor, and every rule of Mac's on record - CAMP-FAR,
 CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the design keeps every one of them.
 
-- **The bands vary and roam (systems/travelBands.js).** BAND_CHANCE_DAY 0.3 -> 0.45 and BAND_CHANCE_NIGHT 0.45 -> 0.6
+- **The bands vary and roam (systems/travel/travelBands.js).** BAND_CHANCE_DAY 0.3 -> 0.45 and BAND_CHANCE_NIGHT 0.45 -> 0.6
   (half as many again by day, a third more by night); BAND_WANDER_MPS 1.3 -> 2 on BAND_LEG_MS 75 s -> 50 s legs (a band
   at 1.3 m/s read as standing still from 150-450 m up). A band's NUMBER is its own roll now, `bandSizeOf` off its own
   stream, one to six by BAND_SIZE_WEIGHTS [12, 20, 24, 20, 14, 10] - it was the camp's or the pack's range (2-5); the
@@ -1663,7 +1663,7 @@ CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the d
   BAND's own level now - `bandLevelOf`, 1 + floor(20 u^2) off its own stream: half of all bands level 6 or under, a
   quarter 12 or over, the label saying which is which - and its label its own number (PSCALE1's growth still comes at
   the stand, with the party that meets it). Offline there is one player, and the band reads theirs, as Daggerfall does.
-- **The journey slows as enemies close (systems/travelThreat.js; the third ask).** The clock is held so the traveller
+- **The journey slows as enemies close (systems/travel/travelThreat.js; the third ask).** The clock is held so the traveller
   always has THREAT_WARN_S (0.6 s: 5 at launch, 2 at OW6-LATE, 1.2 at OW6-NEAR, FB 29g, 0.6 at OW6-HALF, FB 2026-10-01c) of real time before the nearest enemy's REACH along their way - a band's sight, a
   raider's lookout (at sea), any hostile foe's sight (a camp's sixty metres, CAMP-SIGHT), or, for a chaser, its contact
   ring from any side at its own pace too (`metresToReach`, `threatCap`); stepped down the spinner's own ladder (1, 2, 3,
@@ -1759,7 +1759,7 @@ the rock scaled by a million 83 km under it (`03-World/World-Of-Daggerfall.md`, 
   raises it again on the query that needs it. And the road-clearance walk (`world/roadClearance.js boxNearPath`) asks
   only the map's own pixels: the giant's box spans thousands of pixels each way, mostly off the map, and the walk took
   46 to 121 ms of main thread a mountain pixel's build.
-- **OW-WOD-PATH, the route through the massif (2).** The Overworld's planner (`systems/travelRoute.js`) knew only the
+- **OW-WOD-PATH, the route through the massif (2).** The Overworld's planner (`systems/travel/travelRoute.js`) knew only the
   MAPS climate's peaks (OW-MOUNTAINS: Mountain, 226, and a steep step), so a route walked straight into a WOD massif and
   the walker ground against its rocks - where the lag was. `WodWorld.mountainPixels` marks the pixels a Mountains
   instance names (2,492 on the shipped list; three more lie off the map), the host drops those a road or a track crosses
@@ -1808,7 +1808,7 @@ Mac: *"allow them to appear in the overworld without being overwhelming, maybe a
 them are"*; asked, "Groups nearby". One mark a profession a stood pixel (`gather <profession>`): a diamond in the
 profession's compass colour (`ui/nodeMarks.js`) at the middle of its nodes not yet worked today, its count beside it,
 the nearest twelve within 3 km, read again twice a second (`scenes/gatherHost.js` overworldGroups); a sixth filter,
-Gathering (`systems/travelViewFilters.js`); drawn by `ui/travelViewHud.js` (look `gather`, `m.color`); fed beside the
+Gathering (`systems/travel/travelViewFilters.js`); drawn by `ui/travelViewHud.js` (look `gather`, `m.color`); fed beside the
 camps in `scenes/travelViewMarks.js` travelViewMarks (HOST-SPLIT 1 moved it out of world.js). Not pickable - a click there falls to the ground and walks to it. See
 `06-Systems/Professions-Arc.md` (MORE-NODES, GATHER-OW). Pins `test/gatherow.test.js`.
 
@@ -1843,7 +1843,7 @@ my party's - every mark keeps its order now, a crowd where its first member stoo
 ## OW-NODE-KM, OW-HUBS, OW-KIN, OW-WHO, SEAT-TIP, HORSE-FACE (FIELD BUGS 2026-10-04e)
 
 The Overworld's block gains a Players section (Friends, Guild, Others, the least Renown) and the node reach (any, 0.5,
-1, 2 km) - one store with the travel map's (`systems/travelViewFilters.js`); a friend's name is drawn in the friends'
+1, 2 km) - one store with the travel map's (`systems/travel/travelViewFilters.js`); a friend's name is drawn in the friends'
 blue and a guild-mate's in violet; a town whose gate stands a carriage driver wears a brass wheel; a seat's plate under
 the pointer shows its card (who holds it, this week's battle) - made only for the hovered plate, measured once, never
 over the block's own controls, and not on a touch screen (no hover there). On a touch screen the filters scroll within
@@ -1860,7 +1860,7 @@ band chased the moment the traveller crossed its sight (TV7: distance alone), ev
 journey's clock for its sight whether it had seen anyone or not (OW6), and DFU's own sweep stopped a journey for any foe
 within the classic band (27 m) unaware or not. Now:
 
-- **The check** (`systems/wildAlert.js`, the port's own). An enemy within its reach of a fast traveller - a band's sight
+- **The check** (`systems/wild/wildAlert.js`, the port's own). An enemy within its reach of a fast traveller - a band's sight
   (320 m by day, 190 by night), a foe's own (a camp's 60 m, a wanderer's 102.4) - is UNAWARE until it NOTICES them, on a
   stealth check a classic game minute apart on the traveller's clock (`WILD_ROLL_S`, five scaled seconds: at x60 a
   twelfth of a real second, so a fast traveller is checked as often per metre as a walker), the first the moment it
@@ -1980,7 +1980,7 @@ TV_DUNGEON_TYPES), the spawned dungeons online the Overworld knows of (AUDIT OW3
 standing Abyss Dungeon (known from its rise - its column of light stands from then). The plates and "?" are TV6's as
 they were. Down in play nothing changes: the world's own entrance is the model.
 
-**The law** (`systems/travelDungeonModels.js`, pure):
+**The law** (`systems/travel/travelDungeonModels.js`, pure):
 - *The set* (`dungeonModelSet`): TV6's own law (`travelDungeons.js nearDungeons`, uncapped) with nothing left to TV2's
   grid - a found dungeon in the grid is a speck from the eye too - the nearest TV_DUNGEON_MODELS_MAX (12), ties by key.
 - *The model* (`dungeonEntranceModel`): of the location's laid blocks (`world/locationLayout.js layoutLocation`, the
@@ -2023,7 +2023,7 @@ so each names TV6's own by the `isFound, spawns:` beside it.
 **TV-BURST and TV-PIN (FIELD BUGS 2026-10-09, Shabalako: "The first time I open the overworld travel the game has a big
 freeze").** The view's first frame started all twelve loads at once, inside its draw - each one's blocks laid and its
 ARCH3D meshes read on that frame, then its model built and its pictures and its climate's uploaded. Now the loads start
-ONE A FRAME, the nearest first, and none until the view is fully up (`systems/travelDungeonModels.js`
+ONE A FRAME, the nearest first, and none until the view is fully up (`systems/travel/travelDungeonModels.js`
 `startDungeonLoads`, `TV_DUNGEON_LOADS_PER_FRAME`; the host hands the view frame's `fullyUp`); what left the set is
 still let go every frame. The view down lets every model go to its place's shelf (`dropTvDungeonModels` - they were
 held, undrawn, until a load), so the next view starts its own. And the climate's pictures went up through the host's
@@ -2036,7 +2036,7 @@ four of its records re-aimed by content, each still dead.
 **TV-BEYOND (FIELD BUGS 2026-10-09 #9, maya: "CRASH (2) RangeError: invalid array length" from a click on the Overworld
 past the Alik'r).** The planner's search box was clamped to the map, and TAMRIEL2 streams the land past it: two ends
 past one edge turned the box inside out and its typed arrays threw; one end past it began the route on the box's far
-side. The box's bounds are the map and the two ends now (`systems/travelRoute.js` `planRoute`); `routeGround` asks the
+side. The box's bounds are the map and the two ends now (`systems/travel/travelRoute.js` `planRoute`); `routeGround` asks the
 host's `beyond` for the ground past its table (kept a pixel at a time, `BEYOND_CACHE_MAX`) where it called it all the
 sea; `apart` leaves an end past the table to the search; a step past the table reads no road's byte. The host hands it
 `tvWater`'s own answer, which is the ground's where TAMRIEL2 composed the reader and the sea off the map where it did

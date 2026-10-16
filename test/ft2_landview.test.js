@@ -21,7 +21,7 @@ import {
 } from '../src/world/landView.js';
 import { FEATURES, KIND_ORDER, checkFeature, resolveControl, featureForControl, featureCounts, filterFeatures } from '../src/systems/features.js';
 import { getPref, setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { getInt, setValue, resetToDefaults } from '../src/systems/settings.js';
+import { getInt, setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

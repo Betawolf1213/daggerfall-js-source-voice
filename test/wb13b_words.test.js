@@ -15,11 +15,11 @@ import { GATE_NO_TEXT } from '../src/net/gateLink.js';
 import { GATE_CLAIM_TEXT } from '../src/net/gateClaims.js';
 import { MARKS_TEXT } from '../src/net/marksBook.js';
 import { omenPost, fellPost, ritePost } from '../src/net/gateHerald.js';
-import { fellLine, riteOmenLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gateOmen.js';   // TIME1, at the merge: the three that name a time
+import { fellLine, riteOmenLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time
 import { RITE_TEXT } from '../src/scenes/riteHost.js';
 import { SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
 import { INSIGNIA_SUB, INSIGNIA_LINE, INSIGNIA_CARD } from '../src/ui/brokerWindow.js';
-import { dismantleAsk } from '../src/systems/sigilBroker.js';
+import { dismantleAsk } from '../src/systems/sigil/sigilBroker.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

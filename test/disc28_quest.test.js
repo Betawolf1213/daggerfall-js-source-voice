@@ -25,7 +25,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare, prepareShareData, shareSignature } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare, prepareShareData, shareSignature } from '../src/systems/quest/questShare.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { buildingIsUnlocked } from '../src/systems/buildingLocks.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

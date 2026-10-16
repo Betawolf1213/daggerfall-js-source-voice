@@ -11,8 +11,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { canReceiveSharedQuest, shareRefusalText, SHARE_REFUSAL_TEXT, SHARE_GUILD_NAMES } from '../src/systems/questShare.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { canReceiveSharedQuest, shareRefusalText, SHARE_REFUSAL_TEXT, SHARE_GUILD_NAMES } from '../src/systems/quest/questShare.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { MEMBERSHIP_STATUS } from '../src/systems/quest/questLists.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

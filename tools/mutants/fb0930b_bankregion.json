@@ -40,7 +40,7 @@
   },
   {
     "name": "BANK-REGION-a-werewolf-reads-the-vampire-book",
-    "file": "src/systems/guilds.js",
+    "file": "src/systems/guild/guilds.js",
     "old": "  const vamp = !!(entity.racialOverride && !entity.racialOverride.ended\n    && entity.racialOverride.racial === 'vampirism');",
     "new": "  const vamp = !!(entity.racialOverride && !entity.racialOverride.ended);",
     "tests": [
@@ -67,7 +67,7 @@
   },
   {
     "name": "BANK-REGION-the-save-drops-the-accounts",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.bankAccounts = (entity.bankAccounts ?? []).map((a) => ({ ...a }));",
     "new": "  snap.bankAccounts = [];",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "BANK-REGION-the-save-drops-the-guild-book",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.guildMemberships = entity.guildMemberships\n    ? (isMembershipStore",
     "new": "  snap.guildMemberships = !entity.guildMemberships\n    ? (isMembershipStore",
     "tests": [

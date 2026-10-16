@@ -139,8 +139,8 @@ test('X4 nearby: the scan rebuilds on the 0.33s timer and resets rather than ban
 
 // ── the bridge: a cast Detect spell -> compass markers ────────────
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import { detectedMarkers, hasLiveDetector, DETECT_KIND_FLAG } from '../src/systems/nearbyObjects.js';
 
 const player = () => ({

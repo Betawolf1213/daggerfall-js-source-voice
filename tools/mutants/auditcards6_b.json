@@ -10,7 +10,7 @@
   },
   {
     "name": "AC6-B1-stake-drawn",
-    "file": "src/systems/iliacTableSession.js",
+    "file": "src/systems/iliac/iliacTableSession.js",
     "old": "    this.stake = this.forKeeps && this.state ? forfeitCard(player.deck, this.unit) : null;",
     "new": "    this.stake = this.forKeeps && this.state ? forfeitCard(patron.deck, this.unit) : null;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "AC6-B2-reveil",
-    "file": "src/systems/iliacPatrons.js",
+    "file": "src/systems/iliac/iliacPatrons.js",
     "old": "  for (const hd of copy.holdings) for (const inst of hd.sides[1 - p]) if (veiled.has(inst.uid)) inst.down = true;",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "AC6-B6-tie",
-    "file": "src/systems/iliacTableSession.js",
+    "file": "src/systems/iliac/iliacTableSession.js",
     "old": " || (b === key ? 1 : 0) - (a === key ? 1 : 0)",
     "new": "",
     "tests": [
@@ -202,7 +202,7 @@
   },
   {
     "name": "AC6-B11-cap",
-    "file": "src/systems/iliacPatrons.js",
+    "file": "src/systems/iliac/iliacPatrons.js",
     "old": "export const ILIAC_THINK_TRIALS = 64;",
     "new": "export const ILIAC_THINK_TRIALS = 400;",
     "tests": [

@@ -5,18 +5,18 @@
 //
 // The Standing page listed the player's memberships alone (systems/affiliations.js). With the Interface tab's Character
 // sheet row on (prefs `standingAll`, on by default - STANDING-ON), it lists every organization's reputation from the live faction
-// store (systems/factionStanding.js). `01-Overview/Field-Bugs-2026-10-09e.md`.
+// store (systems/faction/factionStanding.js). `01-Overview/Field-Bugs-2026-10-09e.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { standingGroups, ORG_STANDING_GROUPS } from '../src/systems/factionStanding.js';
+import { standingGroups, ORG_STANDING_GROUPS } from '../src/systems/faction/factionStanding.js';
 import { RANDOM_RULER } from '../src/systems/npcSession.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 import { FactionFile, FACTION_TYPES as T } from '../src/formats/factionFile.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { DIVINES, ORDERS } from '../src/systems/guildVariants.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { DIVINES, ORDERS } from '../src/systems/guild/guildVariants.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { CATEGORIES } from '../src/ui/settingsMap.js';
 

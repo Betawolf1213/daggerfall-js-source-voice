@@ -8,7 +8,7 @@
 // map. The automap should become a 2d map and floor based instead of
 // the current 3D implementation, streamlining it."
 //
-// `systems/automapFloors.js` answers WHAT to draw - the storeys a
+// `systems/automap/automapFloors.js` answers WHAT to draw - the storeys a
 // Daggerfall dungeon does not record, and one storey's walkable area as
 // a coastline of chains in world units. This module is HOW: the same
 // pen, the same halo, the same parchment as `ui/inkMap.js`, so the two

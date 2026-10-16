@@ -1,5 +1,5 @@
 // SD13 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 16; Mac: "The detail needs to
-// exceed that of the oblivion gates"): THE SCORE OF THE HOUR (systems/sdScore.js) - nine songs written as notes for
+// exceed that of the oblivion gates"): THE SCORE OF THE HOUR (systems/superDungeon/sdScore.js) - nine songs written as notes for
 // the game's own player and FM bank, and the law of which plays where. The songs: their names, tempos and lengths,
 // whole bars looping on their bar line with nothing past the end; every voice's program, level and place at their
 // start; the broken chime (its fourth change on the tritone) and the mended (home); the Dragon Break's canon (silver
@@ -16,8 +16,8 @@ import { readFileSync } from 'node:fs';
 import {
   sdScoreSongs, hourScoreFor, createHourScore, sdScorePlace, HOUR_SONGS, HOUR_PROGRAMS, HOUR_CHANNELS, HOUR_LEVEL, HOUR_PRESS,
   HOUR_CHIME, HOUR_CHIME_MENDED, SD_SCORE_SILENCE, SD_SCORE_ENDS_WARN_MS, SD_SCORE_STING_MS,
-} from '../src/systems/sdScore.js';
-import { gateScoreSongs, midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../src/systems/gateScore.js';
+} from '../src/systems/superDungeon/sdScore.js';
+import { gateScoreSongs, midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../src/systems/gate/gateScore.js';
 import { SD_ARENA, SD_ORRERY, dungeonToRealm, realmToDungeon } from '../src/net/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/sdHall.js';
 import { SD_BAR_NEAR_M } from '../src/ui/sdRemnantBar.js';

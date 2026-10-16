@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import {
   homeCandidate, homeBuyRows, homeOwnerRows, homeNextEntry, HOME_BUY_ARM_MS, HOME_VERB, HOME_OFFER_BUY, HOME_OFFER_PASS,
-} from '../src/systems/onlineHomes.js';
+} from '../src/systems/online/onlineHomes.js';
 import { resolveHover, nextSelection } from '../src/systems/worldHover.js';
 import { foldQuickLoot, quickLootWheel, plaqueActionFor, resetQuickLoot } from '../src/systems/quickLoot.js';
 

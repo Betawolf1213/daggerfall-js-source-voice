@@ -23,17 +23,17 @@
 //     (DaggerfallTalkWindow.cs:360-385) is called from SetTargetNPC,
 //     before the push, so it rides openTalkWindow's `portrait` option
 //     below - CommonFaces (TFAC00I0.RCI) at SetPerson's minted record
-//     for a mobile (TalkManager.cs:817, systems/townPopulation.js's
+//     for a mobile (TalkManager.cs:817, systems/town/townPopulation.js's
 //     _setFaceRecord), and GetPortraitIndexFromStaticNPCBillboard's
 //     archive/record pair for a static NPC (:849, the law in
 //     systems/npcSession.js, wired at scenes/worldModes.js).
 //   - THE PICKPOCKET BOX SWAPPED. Pickpocket (PlayerActivate.cs:
 //     1611-1660) raises a real MessageBox for both success arms and
-//     leaves only the failure on the HUD, which systems/talk.js now
+//     leaves only the failure on the HUD, which systems/talk/talk.js now
 //     reports as `modal` and the steal arm below routes on.
 
 import { FactionFile } from '../formats/factionFile.js';
-import { addCustomFactions } from '../systems/factionRep.js';   // RR3: a mod's registered factions, on this reader too
+import { addCustomFactions } from '../systems/faction/factionRep.js';   // RR3: a mod's registered factions, on this reader too
 import { racialSuppressTalk } from '../systems/lycanthropy.js';   // V4: the transformed talk refusal
 import { TextRsc } from '../formats/textRsc.js';
 import { FntFile } from '../formats/fntFile.js';
@@ -49,7 +49,7 @@ import { hudFade } from '../ui/fadeLayer.js';   // D4: PushWindow's ClearFade
 import {
   getPeopleOfCurrentRegion, getReactionToPlayer, pickpocket, findFactions,
   MOBILE_NPC_ACTIVATION_DISTANCE, RAY_DISTANCE, PICKPOCKET_DISTANCE, FOUND_NOTHING_VALUABLE_TEXT_ID,
-} from '../systems/talk.js';
+} from '../systems/talk/talk.js';
 // AUDIT 58 (talk lane): the reach refusal is ONE localized key -
 // TextManager 'youAreTooFarAway' (Internal_Strings.csv:22), spoken by
 // ActivateMobileNPC at PlayerActivate.cs:780 and :790 - so it is one
@@ -58,18 +58,18 @@ import {
 // key with the table's ellipsis, so one session showed the player two
 // sentences for one string.
 import { tooFarAwayText } from '../player/activate.js';
-import { startMobileTalk, expandMacros, expandAnswerRecord, oathTextId, honorificOf, raceDisplayName } from '../systems/talkSession.js';
+import { startMobileTalk, expandMacros, expandAnswerRecord, oathTextId, honorificOf, raceDisplayName } from '../systems/talk/talkSession.js';
 import { REGION_RACES } from '../formats/mapsFile.js';
 import { getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js'; import { shownFactionNames } from '../world/buildingNames.js';   // L10N3e: the place names shown, and the faction names a guild hall and a temple show
 import { ChoiceWindow } from '../ui/talkWindow.js';
-import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint, toneTaste } from '../systems/talkTopics.js';
+import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint, toneTaste } from '../systems/talk/talkTopics.js';
 import { yardDirectoryRows } from '../systems/merchantYards.js';   // YARDS-FOUND: the town's yards in its directory
 import { portDirectoryRows, FOUND_KIND_ORDER, FOUND_TALK_GROUPS, lettersOnMap } from '../systems/portPlaces.js';   // SHIPYARDS-FOUND: and a port town's shipyard, crew hall, lighthouse and docks - the found places' one order
 import { OPENED_SHOP_TYPES, OPENED_SHOP_GROUPS } from '../world/buildingNames.js';   // PROF-FOUND: the shops the port opened, asked after
 import { LIST_ITEM_TYPE, QUESTION_TYPE } from '../systems/topicTree.js';   // TK-vi: the window's rows are the tree's ListItems; B6: the Work question type
 import { discoverBuilding } from '../systems/discovery.js';   // T4: %loc's mark side effect
 import { getNameBankOfRegion, fullName as nameHelperFullName, GENDERS } from '../characters/nameHelper.js';   // MACRO-6: %fn/%mn in the engine-less answer
-import { talkMacroSource } from '../systems/talkMacros.js';
+import { talkMacroSource } from '../systems/talk/talkMacros.js';
 import { bumpSeed } from '../formats/dfRandom.js';
 import { FACTION_TYPES } from '../formats/factionFile.js';
 import { skillValue, tallySkill, SKILLS } from '../systems/skills.js';

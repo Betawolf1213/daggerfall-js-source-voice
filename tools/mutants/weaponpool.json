@@ -10,7 +10,7 @@
   },
   {
     "name": "WEAPON-POOL-mint-pool-on-armour-not-weapons",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "let max = t && item.group === 'Weapons' && !isAmmunition(item) ? WEAPON_CONDITION_POOL",
     "new": "let max = t && item.group === 'Armor' && !isAmmunition(item) ? WEAPON_CONDITION_POOL",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WEAPON-POOL-mint-ammunition-on-the-pool",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "item.group === 'Weapons' && !isAmmunition(item) ? WEAPON_CONDITION_POOL",
     "new": "item.group === 'Weapons' ? WEAPON_CONDITION_POOL",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WEAPON-POOL-mint-unknown-template-on-the-pool",
-    "file": "src/systems/itemTemplates.js",
+    "file": "src/systems/item/itemTemplates.js",
     "old": "let max = t && item.group === 'Weapons'",
     "new": "let max = item.group === 'Weapons'",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WEAPON-POOL-no-move-on-load",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "const n = repoolWeaponConditions(list);",
     "new": "const n = 0;",
     "tests": [

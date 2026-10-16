@@ -24,7 +24,7 @@ import { mintRaidReceipt } from '../src/net/raidReceipt.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
 import { gameDayAt } from '../src/net/gateLaw.js';   // AUDIT CHAP3 E1: a gate's day is the game's
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { standService, T0 } from './accountDb.mjs';

@@ -1,7 +1,7 @@
 [
   {
     "name": "QUEST-RESIDENCE-the-quest-name-unsaid",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  return questName ? `${questName} (${title})` : title;",
     "new": "  return title;",
     "tests": [

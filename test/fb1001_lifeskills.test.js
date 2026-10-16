@@ -25,8 +25,8 @@ import { fishKind, castAt, CAST_AHEAD_M, CAST_RISE_M } from '../src/scenes/fishH
 import { herbKind } from '../src/scenes/herbHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { treeKind } from '../src/scenes/treeHost.js';
-import { setForagingHost, createForagingItem } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { trees, veins, boulders, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { groundAt } from '../src/world/terrainNature.js';

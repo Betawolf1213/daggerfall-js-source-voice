@@ -281,7 +281,7 @@
   },
   {
     "name": "LANDFORM-rivers-player-online",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    RiversAndStreams: true,   // LANDFORM3:",
     "new": "    // RiversAndStreams: true,   // LANDFORM3:",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "LANDFORM-rivers-room-default-off",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    RiversAndStreams: true,   // LANDFORM3:",
     "new": "    RiversAndStreams: false,   // LANDFORM3:",
     "tests": [

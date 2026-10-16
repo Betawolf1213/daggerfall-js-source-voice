@@ -1,7 +1,7 @@
 [
   {
     "name": "FH-stand-run-left",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  if (f.ai) f.ai.fleeLeft = 0;   // FEUD HARNESS: its run over too",
     "new": "  // FEUD HARNESS: its run over too",
     "tests": [

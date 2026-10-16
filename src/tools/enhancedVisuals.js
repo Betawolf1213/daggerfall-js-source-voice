@@ -14,7 +14,7 @@
 //     for the palette, so a figure renders with NO ARENA2 at all — the
 //     rig is ours, only the authentic colours are Bethesda's.
 //
-//   - systems/itemTemplates.js already carries all 288 templates with
+//   - systems/item/itemTemplates.js already carries all 288 templates with
 //     their texture archive and record, and exports inventoryItemImage.
 //     Classic sprites were never a problem to solve, only a door to
 //     open.
@@ -35,7 +35,7 @@
 // apology. The screen says what it has; it does not pretend, and it does
 // not nag.
 
-import { ITEM_TEMPLATES } from '../systems/itemTemplates.js';
+import { ITEM_TEMPLATES } from '../systems/item/itemTemplates.js';
 import { buildNeutralBody, NECK_PIVOT_Y } from '../characters/neutralBody.js';
 
 /** Our own palette, the same one paperdollPayload falls back to. */

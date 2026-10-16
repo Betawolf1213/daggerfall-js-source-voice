@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITLWII2-S1-field",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  counterBought: bool(),\n",
     "new": "  counterBought: int(),\n",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "AUDITLWII2-S8-own-row",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "const k = Object.hasOwn(AFFIX_KINDS, a.id) ? AFFIX_KINDS[a.id] : null;",
     "new": "const k = AFFIX_KINDS[a.id];",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "AUDITLWII2-S9-book",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  if (item.group === 'Books' && item.templateIndex === BOOK_TEMPLATE) return bookValue(item.message);",
     "new": "  if (item.group === 'Books' && item.templateIndex === BOOK_TEMPLATE) return itemBaseValue(item);",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "AUDITLWII2-S9-recipe",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "&& item.potionRecipeKey != null) return potionValue(item.potionRecipeKey, item);",
     "new": "&& item.potionRecipeKey != null) return itemBaseValue(item);",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "AUDITLWII2-S9-floor",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  out.value = Math.max(Number.isFinite(out.value) ? out.value : 0, wireFloorOf(out));",
     "new": "  out.value = Math.max(Number.isFinite(out.value) ? out.value : 0, itemBaseValue(out));",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "AUDITLWII2-S9-others",
-    "file": "src/systems/loot.js",
+    "file": "src/systems/loot/loot.js",
     "old": "  return itemBaseValue(item);\n};",
     "new": "  return 1;\n};",
     "tests": [

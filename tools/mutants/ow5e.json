@@ -61,7 +61,7 @@
   },
   {
     "name": "OW5b-E1-panel-alone-walks",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (!st.autopilot || !ui?.isShowing) return null;",
     "new": "    if (!ui?.isShowing) return null;",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "OW5b-E1-grace-forgotten",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    if (ignoringEncounters()) return 'ignored';",
     "new": "",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "OW5b-E1-won-roll-said-lost",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      ui?.showMessage(T.MsgAvoidSuccess);\n      return true;",
     "new": "      ui?.showMessage(T.MsgAvoidSuccess);\n      return false;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OW5b-E1-stop-keeps-walking",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "    const route = st.route;   // AUDIT OW4 J2: held before the panel's Camp - a spot's route dies in interruptTravel\n    ui?.closeWindow();",
     "new": "    const route = st.route;   // AUDIT OW4 J2: held before the panel's Camp - a spot's route dies in interruptTravel",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "OW5b-E1-sweep-own-grace",
-    "file": "src/systems/travelOptions.js",
+    "file": "src/systems/travel/travelOptions.js",
     "old": "      if (!ignoringEncounters() && deps.enemiesNearby?.()) {",
     "new": "      if (deps.enemiesNearby?.()) {",
     "tests": [

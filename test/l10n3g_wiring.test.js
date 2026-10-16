@@ -37,7 +37,7 @@ import { PlayerHistoryWindow } from '../src/ui/playerHistory.js';
 import { daysUntilFreedomText, PrisonScreenWindow } from '../src/ui/prisonScreen.js';
 import { CharSheet, preloadCharSheetArt } from '../src/ui/charsheet.js';
 import { sheetModel } from '../src/ui/enhancedCharSheet.js';
-import { GUILDS } from '../src/systems/guilds.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS, SKILL_NAMES, SKILL_COUNT } from '../src/systems/skills.js';
 import { ChargenFlow, handHeroGenderToGrammar } from '../src/ui/chargen.js';
 import { finishChargen, handHeroGenderToGrammar as sessionHeroGender } from '../src/systems/chargenSession.js';

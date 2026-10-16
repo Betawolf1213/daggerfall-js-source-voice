@@ -19,11 +19,11 @@ import { startInfection, INFECTION, liveInfection, VAMPIRE_CLANS } from '../src/
 import { liveLycanthropy, morphSelf } from '../src/systems/lycanthropy.js';
 import { createVampirismCurse, cureVampirism } from '../src/systems/vampirism.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { createBankAccounts, borrowLoan } from '../src/systems/banking.js';
-import { GUILDS, activeMemberships, joinGuild, membershipOf } from '../src/systems/guilds.js';
-import { showsJoinButton } from '../src/systems/guildServiceFlow.js';
+import { GUILDS, activeMemberships, joinGuild, membershipOf } from '../src/systems/guild/guilds.js';
+import { showsJoinButton } from '../src/systems/guild/guildServiceFlow.js';
 import { BankWindow } from '../src/ui/bankWindow.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
 
@@ -31,7 +31,7 @@ const DAGGERFALL = 17, BLUFFS = 3, WAYREST = 23, FG = GUILDS.FightersGuild, DAY 
 setSpellRecordsByIndex(new Map([[92, { index: 92, name: '!Lycanthropy', effects: [] }],
   [4, { index: 4, name: 'Levitate' }], [90, { index: 90, name: 'Charm Mortal' }], [91, { index: 91, name: 'Calm Humanoid' }]]));
 
-/** The page as the lane reads it: `?online` on the URL (systems/onlineLane.js isOnlinePage), or not. */
+/** The page as the lane reads it: `?online` on the URL (systems/online/onlineLane.js isOnlinePage), or not. */
 function lane(online, fn) {
   const had = Object.getOwnPropertyDescriptor(globalThis, 'location');
   globalThis.location = { search: online ? '?online=1' : '' };

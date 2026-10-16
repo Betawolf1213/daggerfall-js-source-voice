@@ -19,7 +19,7 @@
   },
   {
     "name": "RING-HOLD-the-review-unnoticed",
-    "file": "src/systems/itemIds.js",
+    "file": "src/systems/item/itemIds.js",
     "old": "  if (now === 'law' && why?.code === 'review') return TRADE_HELD_NOTICES.review;",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "VOID-ROOM-the-facing-unread",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "      if (below.back && above.back) { y = fy - 0.05; continue; }",
     "new": "",
     "tests": [

@@ -9,8 +9,8 @@ import { fileURLToPath } from 'node:url';
 import { startCourt, CRIMES } from '../src/systems/court.js';
 import { createBankAccounts, purchaseHouse, purchaseShip, repayLoan, borrowLoan, TRANSACTION_RESULT, SHIP_TYPES, shipPrice } from '../src/systems/banking.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
-import { setMagicItemTemplates, getMagicItemTemplates } from '../src/systems/loot.js';
-import { planStore, planTake, applyTransfer, clearLightSourceOnLeave } from '../src/systems/itemTransfer.js';
+import { setMagicItemTemplates, getMagicItemTemplates } from '../src/systems/loot/loot.js';
+import { planStore, planTake, applyTransfer, clearLightSourceOnLeave } from '../src/systems/item/itemTransfer.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(root, p), 'utf8');

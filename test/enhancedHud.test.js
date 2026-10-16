@@ -222,8 +222,8 @@ test('PX30c: the HUD scales from a SETTING, and the percentage lives in the bar'
   // hand-edits it (AUDIT 17e F9), and the tier map's own law is that
   // every key in it "is a real DFU setting". So it lives in the PORT'S
   // OWN PREFS, beside the other things only this port has.
-  assert.doesNotMatch(read('src/systems/settingsDefaults.js'), /hudScale|EnhancedHUDScale/);
-  assert.doesNotMatch(read('src/systems/settings.js'), /EnhancedHUDScale/);
+  assert.doesNotMatch(read('src/systems/settings/settingsDefaults.js'), /hudScale|EnhancedHUDScale/);
+  assert.doesNotMatch(read('src/systems/settings/settings.js'), /EnhancedHUDScale/);
   assert.match(read('src/systems/uiPrefs.js'), /^\s*hudScale: 1,$/m);
   assert.match(src, /getPref\('hudScale'\)/);
   assert.match(read('src/ui/enhancedMenu.js'), /setPref\('hudScale', next\);/);

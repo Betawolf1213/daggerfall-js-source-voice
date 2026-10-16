@@ -1,7 +1,7 @@
 [
   {
     "name": "fullmap-margin-instead-of-bounds",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const cap = key === `${bounds.x0},${bounds.x1},${bounds.y0},${bounds.y1}` ? Infinity : maxExpansions;",
     "new": "const cap = margin >= Math.max(width, height) ? Infinity : maxExpansions;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "partial-box-ignores-budget",
-    "file": "src/systems/travelRoute.js",
+    "file": "src/systems/travel/travelRoute.js",
     "old": "const cap = key === `${bounds.x0},${bounds.x1},${bounds.y0},${bounds.y1}` ? Infinity : maxExpansions;",
     "new": "const cap = Infinity;",
     "tests": [

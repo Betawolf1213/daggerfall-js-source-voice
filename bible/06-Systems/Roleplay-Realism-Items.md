@@ -37,7 +37,7 @@ and `InventoryTextureRecord`, `NativeMaterialValue`, `GroupIndex`,
 `GetEquipSound`, `GetSwingSound`, `GetWeaponType`, `GetItemHands`,
 `GetWeaponSkillUsed`, `GetBaseDamageMin/Max`, and a `CurrentVariant`
 setter that fixes the name at the mint. The port's items are plain rows
-and its laws are pure functions, so `src/systems/rriItems.js` holds
+and its laws are pure functions, so `src/systems/roleplayRealismItems/rriItems.js` holds
 each class as a TABLE of those virtuals (`RRI_CLASSES`, fourteen rows,
 each named for the `.cs` it restates), and each of the port's law sites
 asks `customItemClass(templateIndex)` first - DFU's dispatch, one line
@@ -45,7 +45,7 @@ at a time, the law staying where it lives:
 
 | DFU virtual | the port's site |
 |---|---|
-| `InventoryTextureArchive` / `Record` | `systems/itemTemplates.js inventoryItemImage`, `ui/paperDoll.js paperdollItemImage` (with GetItemImage's right-hand +1, :412-414) |
+| `InventoryTextureArchive` / `Record` | `systems/item/itemTemplates.js inventoryItemImage`, `ui/paperDoll.js paperdollItemImage` (with GetItemImage's right-hand +1, :412-414) |
 | `GetEquipSlot` | `characters/equipTable.js getEquipSlot`; `systems/equip.js armorSlotRule` (the body part the value lands on) |
 | `GetItemHands` | `characters/equipTable.js getItemHands` |
 | `GetMaterialArmorValue` | `systems/armorMaterials.js itemArmorValue` (a leaf: the installer registers the answer) |
@@ -53,12 +53,12 @@ at a time, the law staying where it lives:
 | `GetEquipSound`, `GetWeaponSkillUsed`, `GetBaseDamageMin/Max` | `characters/weapons.js` |
 | `GetSwingSound` | `systems/soundClips.js` (a leaf: registered) |
 | `GetWeaponType` | `combat/fpsWeapon.js weaponTypeForItem` |
-| `CurrentVariant` setter | `systems/itemTemplates.js setItemFields`, once per item (marked `rriVariant`) |
+| `CurrentVariant` setter | `systems/item/itemTemplates.js setItemFields`, once per item (marked `rriVariant`) |
 
 Names cross to the sites, not constants ('ChestArmor', 'Either',
 'Axe', 'EquipAxe', 'Battleaxe'), and each site maps them onto its own
 enum, so the law module imports none of the systems it feeds - no
-cycle, no TDZ (DW3's lesson). `systems/rriInstall.js` is the boot: the
+cycle, no TDZ (DW3's lesson). `systems/roleplayRealismItems/rriInstall.js` is the boot: the
 rows, the patches, the two leaf registrations, the art.
 
 ### The fourteen
@@ -133,7 +133,7 @@ port's `loot.js` makers take the same roll.
 280 textures, extracted by `tools/rriExtract.mjs` into
 `public/art/roleplay-realism-items/` by the name DFU asks for (99 as
 indexed PNG, the rest RGBA, each read back against its texel) with the
-`<rect>` beside 232 of them written into `systems/rriIndex.js`. They
+`<rect>` beside 232 of them written into `systems/roleplayRealismItems/rriIndex.js`. They
 are registered on the texture-replacement door as **stand-in** entries
 (archives 513-526 have no TEXTURE file; SURV-TENT's kind), **lazy**
 (AUDIT-DW F1: fetched when an item wearing one is drawn), **gated** on
@@ -162,7 +162,7 @@ the switches once at Awake; the port reads each at its site every
 time, so a pane toggle takes effect at the next roll - the Features
 row says so. Three modules and their seams:
 
-- `systems/rriRealism.js` - the laws that touch no entity: the loot
+- `systems/roleplayRealismItems/rriRealism.js` - the laws that touch no entity: the loot
   matrix and the mob keys, the bandage's arithmetic, the condition
   price and repair factors, the store-quality table, the potion count,
   the two damage tables, the swing time. A leaf (`rriItems`,
@@ -170,7 +170,7 @@ row says so. Three modules and their seams:
   import it.
 - `combat/rriEnemyEquipment.js` - the mod's
   `AssignEnemyStartingEquipment` and `ConvertOrcish`.
-- `systems/rriKits.js` - what mints and equips: the starting kit by
+- `systems/roleplayRealismItems/rriKits.js` - what mints and equips: the starting kit by
   skill, the spellbook by skill (the nine spells), the three shelf
   hooks, the bandage's use handler, the swing-time adapter.
 
@@ -357,9 +357,9 @@ Julian on Discord: a coloured-tier "iron" helmet his class was refused as leathe
 a light-set piece of a plate material is BRIGANDINE, and `NativeMaterialValue` takes 0x0200 off "so DFU treats this
 item as leather for forbidden checks" - but the list gave him no way to know: the class's CurrentVariant setter
 names the mint "Brigandine Helmet", and the Loot Rarity ladder built its "Sentinel's Helmet of the Bear" again from
-the bare TEMPLATE's name (`systems/lootRarity.js rarityName`), so the long name read "Iron Sentinel's Helmet".
+the bare TEMPLATE's name (`systems/loot/lootRarity.js rarityName`), so the long name read "Iron Sentinel's Helmet".
 
-- **One rule for the word** (`systems/rriItems.js`): each armour class carries `variantWord` - the light set's
+- **One rule for the word** (`systems/roleplayRealismItems/rriItems.js`): each armour class carries `variantWord` - the light set's
   `lightWord` (a plate material is Brigandine; Chain is Fur, read before the fold or after it as Leather with
   `message` 1) and the chain set's `mailWord` (plate is Mail). The setters build their names from it, and
   `rriVariantWord(item)` answers it to anyone else ('' for a classic item, the weapons, leather, the mod off).
@@ -384,5 +384,5 @@ the bare TEMPLATE's name (`systems/lootRarity.js rarityName`), so the long name 
 `vendor/roleplay-realism-items/`. Suites `test/rri1_items.test.js` (9),
 `test/rri2_realism.test.js` (11), `test/auditrr.test.js` (15) and `test/auditrr2.test.js` (17, both shared with the RR page). Campaigns `tools/mutants/rri1.json`
 (11), `tools/mutants/rri2.json` (18). The shipped set:
-`public/art/roleplay-realism-items/` (280 PNGs), `src/systems/rriIndex.js`
+`public/art/roleplay-realism-items/` (280 PNGs), `src/systems/roleplayRealismItems/rriIndex.js`
 (generated), `tools/rriExtract.mjs`.

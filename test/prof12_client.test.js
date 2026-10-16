@@ -22,16 +22,16 @@ import { FORT_EFFECT_WORDS, STATION_PROFESSIONS } from '../src/net/fortLaw.js';
 import { cookXp } from '../src/net/recipeLaw.js';
 import { potionRecipeKey, potionBundle, POTION_RECIPES } from '../src/systems/potions.js';
 import { brewItems, brewedText, BREW_KEPT_TEXT } from '../src/systems/alchemyItems.js';
-import { POTION_TEMPLATE_INDEX } from '../src/systems/loot.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { POTION_TEMPLATE_INDEX } from '../src/systems/loot/loot.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
 import { useItem } from '../src/systems/useItem.js';
 import { enchantDecision } from '../src/systems/enchanting.js';
 import { ItemMakerWindow } from '../src/ui/itemMakerWindow.js';
-import { ITEM_FIELDS, isDeclaredItemField } from '../src/systems/itemFields.js';
-import { materialLabel, materialCountLabel, mintMaterialItem } from '../src/systems/profItems.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import '../src/systems/profTemplates.js';
+import { ITEM_FIELDS, isDeclaredItemField } from '../src/systems/item/itemFields.js';
+import { materialLabel, materialCountLabel, mintMaterialItem } from '../src/systems/professions/profItems.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import {
   setProfessionsPages, drawStoresPage, drawProfessionsPage, resetProfPages, enchantGoldPct, _alchemyForTests, ALCHEMY_AWAY_LINE, ENCHANT_AWAY_LINE,
   ESSENCE_STAYS_LINE,   // AUDIT PROF12 E1

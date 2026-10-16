@@ -1157,7 +1157,7 @@ test('ORL1: the mod\'s window is the door\'s, in BOTH lanes, and the classic she
 });
 
 test('ORL1: the choice and the bar ride the SAVE, not the mod-settings store', () => {
-  const save = rd('src/systems/save.js');
+  const save = rd('src/systems/save/save.js');
   for (const f of ['levelingSystem', 'levelProgress', 'levelRollUp']) {
     assert.match(save, new RegExp(`'${f}'`), `${f} is carried by the save`);
   }

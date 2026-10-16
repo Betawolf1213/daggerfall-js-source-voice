@@ -24,7 +24,7 @@ whole of it is a departure, Ledger A (SHIPYARDS, SHIPYARDS-FOUND, THE PIER'S DRE
 ## Where they stand
 
 **Which towns** (`systems/portPlaces.js` `isPortTown`). A city, a town or a village (`PORT_TOWN_TYPES`) that is a port
-by its own data - Travel Options' hand-written harbours (`systems/travelPorts.js` `hasPort`) or Daggerfall's
+by its own data - Travel Options' hand-written harbours (`systems/travel/travelPorts.js` `hasPort`) or Daggerfall's
 PortTownAndUnknown byte (`portTownByData`) - AND that the open sea bears on (INLAND-PORTS,
 `01-Overview/Field-Bugs-2026-10-14-inland-ports.md`; `portSites.js:"export function portTownOnSea(loc, hasPort, isSea) {"`,
 the host's `portOnSea`): a pixel of the open sea within `SEA_RING` (2) of the town's, the ring the bearing below is read

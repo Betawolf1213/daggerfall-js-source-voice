@@ -23,7 +23,7 @@ import {
   diverseWeaponsImage, setDiverseWeaponsSources, clearDiverseWeaponsSources, _resetDiverseWeaponsImages,
 } from '../src/combat/diverseWeaponsAssets.js';
 import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_ODD, DIVERSE_WEAPONS_METALS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeaponsIndex.js';
-import { MATERIAL_NAMES } from '../src/systems/itemInfo.js';
+import { MATERIAL_NAMES } from '../src/systems/item/itemInfo.js';
 import { manifestSpriteNames, encodeIndex, renderIndex, MANIFEST, INDEX_FILE, METALS, BARE_BIT } from '../tools/diverseWeaponsIndex.mjs';
 import { encodeSprite, sameOnScreen, OUT_DIR } from '../tools/diverseWeaponsExtract.mjs';
 import { readPng, writePng, writeIndexedPng } from '../tools/pngIO.mjs';

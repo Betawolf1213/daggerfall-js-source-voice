@@ -101,7 +101,7 @@ test('PAD-CLASSIC: on the classic skin the pad\'s A over the Stores page presses
   const { setBindings } = await import('../src/ui/input.js');
   const { attachGamepad } = await import('../src/ui/gamepadInput.js');
   const { _resetForTests: resetPrefs } = await import('../src/systems/uiPrefs.js');
-  const { _resetForTests: resetSettings } = await import('../src/systems/settings.js');
+  const { _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
   const hadWindow = 'window' in globalThis, prevWindow = globalThis.window, prevFrom = document.elementFromPoint;
   globalThis.window = { addEventListener() {}, removeEventListener() {}, dispatchEvent() {} };
   const heard = [];

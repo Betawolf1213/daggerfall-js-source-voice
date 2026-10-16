@@ -1,7 +1,7 @@
 [
   {
     "name": "SD2C-lit-at-once",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  return Math.min(clamp01((now - rec.at) / SD_OMEN_KINDLE_MS), clamp01((end - now) / SD_OMEN_FADE_MS));",
     "new": "  return clamp01((end - now) / SD_OMEN_FADE_MS);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD2C-never-out",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  return Math.min(clamp01((now - rec.at) / SD_OMEN_KINDLE_MS), clamp01((end - now) / SD_OMEN_FADE_MS));",
     "new": "  return clamp01((now - rec.at) / SD_OMEN_KINDLE_MS);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD2C-out-at-the-kill",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  const end = rec.fellAt != null ? rec.fellAt + SD_COLLAPSE_MS : rec.until;",
     "new": "  const end = rec.fellAt != null ? rec.fellAt : rec.until;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD2C-the-collapse-forgotten",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  const end = rec.fellAt != null ? rec.fellAt + SD_COLLAPSE_MS : rec.until;",
     "new": "  const end = rec.until;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD2C-a-euclid-ring",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "Math.max(Math.abs(x - site.px), Math.abs(y - site.py)) <= SD_OMEN_PX;",
     "new": "Math.hypot(x - site.px, y - site.py) <= SD_OMEN_PX;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD2C-one-axis-read",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "Math.max(Math.abs(x - site.px), Math.abs(y - site.py)) <= SD_OMEN_PX;",
     "new": "Math.abs(x - site.px) <= SD_OMEN_PX;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD2C-rung-while-risen",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (!rec || !sdMarked(phase) || !hollow?.site || hollow.s !== rec.s) return null;",
     "new": "  if (!rec || !sdStands(phase) || !hollow?.site || hollow.s !== rec.s) return null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD2C-the-ring-slot-unchecked",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (!rec || !sdMarked(phase) || !hollow?.site || hollow.s !== rec.s) return null;",
     "new": "  if (!rec || !sdMarked(phase) || !hollow?.site) return null;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD2C-the-centre-off-the-pixel",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "cx: hollow.site.px + 0.5, cy: hollow.site.py + 0.5,",
     "new": "cx: hollow.site.px, cy: hollow.site.py,",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD2C-the-note-without-its-state",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  return { subject: 'Abyss Dungeon', body: words ? `${where} ${words[0].toUpperCase()}${words.slice(1)}.` : where };",
     "new": "  return { subject: 'Abyss Dungeon', body: where };",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD2C-a-note-without-a-ring",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (!mark) return null;",
     "new": "  if (!mark) return { subject: 'Super Dungeon', body: '' };",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD2C-told-anywhere",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (here.px !== c.px || here.py !== c.py) return null;\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD2C-told-after-the-kill",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "(phase !== 'risen' && phase !== 'found')",
     "new": "!sdStands(phase)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD2C-the-answer-unspent",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  session.numAnswersGivenTellMeAboutOrRumors = (session.numAnswersGivenTellMeAboutOrRumors | 0) + 1;\n  return sdRumorLine",
     "new": "  return sdRumorLine",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD2C-the-cap-unread",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (!((session.numAnswersGivenTellMeAboutOrRumors | 0) < MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS || session.isSpyMaster)) return null;\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD2C-the-chance-unrolled",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "  if (!(rolls() < SD_RUMOR_CHANCE)) return null;\n",
     "new": "",
     "tests": [

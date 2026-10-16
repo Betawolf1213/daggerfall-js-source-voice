@@ -87,7 +87,7 @@ Not done: the static flats' spectral archives (`allBatches`), which a town does 
 
 ## WALL-CLEAR: a piece set on a wall stands in front of it (4)
 
-`src/systems/decorPlacer.js` pieceAt, reach, DECOR_WALL_GAP; `src/scenes/decorTool.js` the flat ghosts' `flat`.
+`src/systems/decor/decorPlacer.js` pieceAt, reach, DECOR_WALL_GAP; `src/scenes/decorTool.js` the flat ghosts' `flat`.
 
 FOUND. The Mounted torch is catalogue flat 210.17, not a mount (DECOR2c's mounts are the owner's own weapons and
 armour). Every non-mount piece read the surface's normal only to find a ceiling, and otherwise stood its origin on the

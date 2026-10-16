@@ -33,10 +33,10 @@ import { createProfBook } from '../src/net/profBook.js';
 import { veins, boulders, dungeonVeins, nodeKey, pixelReport } from '../src/net/nodeLaw.js';
 import { xpForRank, storesFullIn } from '../src/net/professionLaw.js';
 import { mineKind, mineRecord, standMineNodes } from '../src/scenes/mineHost.js';
-import { createForagingItem } from '../src/systems/foragingInstall.js';
+import { createForagingItem } from '../src/systems/foraging/foragingInstall.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 

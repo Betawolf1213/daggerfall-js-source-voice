@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs';
 
 import { createForagingWait, FORAGING_WAIT_MAX_SECONDS, FORAGING_WAIT_HELD_MAX, saneWait } from '../src/scenes/foragingWait.js';
 import { consoleCommands, hasConsoleCommand, executeConsoleCommand } from '../src/systems/consoleCommands.js';
-import { installForaging, _resetForagingInstall } from '../src/systems/foragingInstall.js';
-import { FORAGING_COMMAND } from '../src/systems/foragingLaw.js';
+import { installForaging, _resetForagingInstall } from '../src/systems/foraging/foragingInstall.js';
+import { FORAGING_COMMAND } from '../src/systems/foraging/foragingLaw.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { isDomControlTarget } from '../src/ui/input.js';
 import { createBountyHost } from '../src/scenes/bountyHost.js';

@@ -11,9 +11,9 @@ import {
   enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, resetAutomapStore, snapshotAutomap, restoreAutomap,
   bindAutomapLayout, buildRevealIndex, automapRevealTick, automapEntranceTick, automapInstance,
   enterInteriorAutomap, exitInteriorAutomap, capsuleCentreFromEye, FLOOR_MARCH_STEP, RAYCAST_DISTANCE_DOWN,
-} from '../src/systems/automap.js';
-import { buildAutomapModel, restoreMatchesLayout } from '../src/systems/automapModel.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+} from '../src/systems/automap/automap.js';
+import { buildAutomapModel, restoreMatchesLayout } from '../src/systems/automap/automapModel.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT, EYE_HEIGHT } from '../src/player/motor.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -235,7 +235,7 @@ test('AUDIT-AMAP H5/H6/H8/H9/H12 SOURCE: the bracket saves the trilight, a mover
   const i = rd('src/scenes/interior.js');
   assert.match(i, /const lookGate = makeLookGate\(canvas\);/, 'H8: the probe host has the gate');
   assert.match(i, /lookGate\(!!overlay\);/, 'H8: and runs it every frame');
-  const d = rd('src/systems/settingsDefaults.js');
+  const d = rd('src/systems/settings/settingsDefaults.js');
   for (const k of ['DungeonMicMapQoL', 'DunMicMapInnerColor', 'DunMicMapBorderColor']) assert.match(d, new RegExp(`"${k}": "`), `H12: ${k} has a defaults row`);
 });
 

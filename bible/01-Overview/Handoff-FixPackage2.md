@@ -138,8 +138,8 @@ shipped hours earlier.
 
 | file | vs HEAD | author's own diff | base | behind |
 |---|---|---|---|---|
-| `systems/lootThemes.js` | new | new | — | — |
-| `systems/loot.js` | 33 | 31 | `efaf21c4` | 2 |
+| `systems/loot/lootThemes.js` | new | new | — | — |
+| `systems/loot/loot.js` | 33 | 31 | `efaf21c4` | 2 |
 | `systems/survival/loot.js` | 7 | 7 | `efaf21c4` | 0 |
 | `scenes/hostCombat.js` | 2 | 2 | `efaf21c4` | 0 |
 | `test/audit18_hosts_dungeon.test.js` | 2 | 2 | `efaf21c4` | 0 |

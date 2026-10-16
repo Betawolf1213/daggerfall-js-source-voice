@@ -1,7 +1,7 @@
 // FEUD HARNESS (bible/12-Enhanced-AI/Feud-Arc.md section 28 and the FEUD HARNESS record; Mac, 2026-10-05: "Take care of
 // both gaps"). The duel harness (tools/tellDuel.mjs) fought a revenant alone and never let it run; it now fights the rest
 // of what the pools give it - its band (its kin by rank about it, each its own motor, attack and brain; rank 5's rally at
-// its stand, through a portal when none is left; scattered when it runs) and its flight (systems/revenant.js
+// its stand, through a portal when none is left; scattered when it runs) and its flight (systems/revenant/revenant.js
 // revenantFleeStep: escaped, the fight is over; chased, run down). Modelling it found a fault in the game: a revenant
 // risen in its last stand as it ran ran on - its motor's run (`ai.fleeLeft`) never ended, so it was neither cornered nor
 // escaped, untargeted for the rest of its run. `beginLastStand` ends it now, as a kneel's and a tear-away's do.
@@ -14,9 +14,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const H = await import('../tools/tellDuel.mjs');
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
-const FATE = await import('../src/systems/revenantFate.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const FATE = await import('../src/systems/revenant/revenantFate.js');
 const { EnemyAI } = await import('../src/characters/enemyMotor.js');
 const { Collider } = await import('../src/player/collider.js');
 const { EnemyAttack } = await import('../src/characters/enemyAttack.js');

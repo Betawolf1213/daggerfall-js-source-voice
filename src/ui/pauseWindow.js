@@ -87,7 +87,7 @@ import { loadImg, nativeMetrics, drawImg, drawRect, shadowText } from './nativeP
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS } from './messageBox.js';
 import { drawMenuBackdrop } from './chargenArt.js';
 import { measureText } from './text.js';
-import { getFloat, effectiveSettings, setValue, saveSettings } from '../systems/settings.js';
+import { getFloat, effectiveSettings, setValue, saveSettings } from '../systems/settings/settings.js';
 import { ENUM_LAW } from './settingsLaw.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';

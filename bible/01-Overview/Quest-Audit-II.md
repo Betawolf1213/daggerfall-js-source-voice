@@ -211,7 +211,7 @@ that fails on the code before it, `tools/mutants/qa2_audit.json` (47, all dead).
 | S8 | Online, a client whose pack failed re-seated every other town's quest sites in Daggerfall's layout; a share landing while the pins loaded was chosen again unpinned | the held-back towns were the pins' alone; the arrival gate opened on the service's word | a stamp naming a missing pack holds its record back; the gate opens once the pins stand |
 | S9 | Two ARENA2-gated pins contradicted NEAR-SITE (CI skips them): RESEAT-GAPS' unseated cities, TEMPLE-HOME's failing temples | the law moved, the pins did not | PIN MOVED: 18 of 265 cities take the nearest town's weaponsmith and none unseats; the temples' home and quests take the nearest town's houses and always start |
 | S10 | 17 of the docs pass's 19 mutants survived; SHARED-SEAT's own test passed on the code before it; the pin loop lived in a closure no test runs | thin pins | each now pinned (a second quest's links, a held-back record that stands, numbered markers, the house pre-check, the guild rung's order, the die per Place...); the loop lifted to `admitPinnedPacks` |
-| S11 | `SUMMONER_FACTIONS` was a second literal of NPC_SERVICE's | ONE DFU MEMBER ONE EXPORT | NPC_SERVICE is a leaf (`systems/guildNpcServices.js`) and the factions are read from it |
+| S11 | `SUMMONER_FACTIONS` was a second literal of NPC_SERVICE's | ONE DFU MEMBER ONE EXPORT | NPC_SERVICE is a leaf (`systems/guild/guildNpcServices.js`) and the factions are read from it |
 
 Notes taken too: the tool read TEMPAA00 (laid by no town) for Stendarr's name seed - TEMPAAA0-TEMPAAH0 now; a test title
 promised what its body did not check; a share's die drawn for good once a quest was shared - only a copy kept in step

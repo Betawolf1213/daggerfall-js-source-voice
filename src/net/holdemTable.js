@@ -32,7 +32,7 @@ export const HOLDEM_FIRST_MS = 2500;
 export const HOLDEM_RUNOUT_MS = 1400;
 /** The friendly table's chips: a stake to play with, never gold. */
 export const HOLDEM_CHIPS_BB = 100;
-/** The big blinds a table may be opened at - the taverns' own stakes (systems/cardTableSession.js TABLE_STAKES; a pin
+/** The big blinds a table may be opened at - the taverns' own stakes (systems/card/cardTableSession.js TABLE_STAKES; a pin
  *  holds the two alike - this file is the relay's and imports nothing of the client's). */
 export const HOLDEM_BBS = Object.freeze([2, 10, 50]);
 /** The tables one room keeps, and a seat's name's longest. */
@@ -51,7 +51,7 @@ export const holdemGoldTable = (index) => index === HOLDEM_GOLD_TABLE;
 /** A seat's chips and hand in the room's frame: what anyone at the table may see. */
 const seatView = (s) => (s ? { id: s.id, name: s.name, stack: s.stack, ...(s.leaving ? { leaving: true } : {}) } : null);
 
-/** CARDS6: a gold table's stake, in big blinds - the offline table's own buy-in (systems/cardTableSession.js
+/** CARDS6: a gold table's stake, in big blinds - the offline table's own buy-in (systems/card/cardTableSession.js
  *  BUY_IN_MIN_BB, BUY_IN_MAX_BB; equal by pin, the relay's bundle never carries the session). */
 export const HOLDEM_STAKE_MIN_BB = 20;
 export const HOLDEM_STAKE_MAX_BB = 100;

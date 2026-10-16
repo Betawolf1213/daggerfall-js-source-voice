@@ -23,7 +23,7 @@ import {
   diseaseCount, updateDiseases, startDisease, DISEASES, curableDiseaseCount,
 } from '../src/systems/diseases.js';
 import { runMagicRoundsFor, MINUTES_PER_DAY } from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const P = (level = 5) => ({ isPlayer: true, level, activeEffects: [] });
 const noSinks = { hurt: () => {}, drainFatigue: () => {}, drainMagicka: () => {} };

@@ -12,8 +12,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { holdCursor, cursorHeld, requestLook, bindCursorToggle, setCursorActive } from '../src/player/pointerLock.js';
-import { setForagingHost, createForagingItem, installForaging, _setForagingRandomForTests } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost, createForagingItem, installForaging, _setForagingRandomForTests } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';

@@ -64,7 +64,7 @@
 // ── THE LAW IS BORROWED, NOT REWRITTEN ───────────────────────────
 //
 // The settings pane renders through the SAME modules the shipped
-// settings screen uses - systems/settings.js, ui/settingsMap.js,
+// settings screen uses - systems/settings/settings.js, ui/settingsMap.js,
 // ui/settingsLaw.js, ui/settingsCopy.js. About 850 lines of law, all
 // of it cited to DFU, and none of it is retyped here. Only the ~650
 // lines of WebGL drawing get replaced. That split already existed;
@@ -110,8 +110,8 @@ import { widgetFor, blockedReason, formatValue, stepValue, COLOUR_KEYS, ENUM_LAW
 import { labelOf, helpOf, INSTEAD, TIER_TEXT } from '../ui/settingsCopy.js';
 import {
   effectiveSettings, setValue, saveSettings, resetToDefaults, tierOf, DEFAULTS, defaultOf,
-} from '../systems/settings.js';
-import { mostRecentRestorable, restorableSaves, firstRestorable, deleteSave, QUICK_SAVE_NAME, loadSlot, saveSlot } from '../systems/saveSlots.js';
+} from '../systems/settings/settings.js';
+import { mostRecentRestorable, restorableSaves, firstRestorable, deleteSave, QUICK_SAVE_NAME, loadSlot, saveSlot } from '../systems/save/saveSlots.js';
 import { offlineCopyOf, onlineCopyOf } from '../systems/offlineCopy.js';   // AUDIT LIVED1 E/G: the doors between the lanes
 import { sharedClassicMinutes } from '../net/wire.js';   // AUDIT LIVED1 G: the shared clock's minute a character joins at
 import { SKY_SEGMENTS, skyClassicMinutes, wallMsForSkyMinutes } from '../net/skyLaw.js';   // TIME4: the sky's day, said at the door
@@ -124,7 +124,7 @@ import { createRealmLine } from '../systems/legacy/realmLine.js';   // HOUSE-WAI
 import { loadFamily } from '../systems/legacy/store.js';
 import { waitingHouses, takeUpLine, houseWaitsTitle, houseWaitsLine, heirButtonLabel } from '../systems/legacy/waitingHouses.js';
 import { mintCharacterId } from '../systems/characterId.js';   // REALM P1.4: a copy to offline is a new offline character
-import { exportSavesZip, collectSlots, importSlots, entriesFromFiles, slotPathOf, TRANSFER_ZIP_NAME } from '../systems/saveTransfer.js';   // SP1: saves move between the website and the app
+import { exportSavesZip, collectSlots, importSlots, entriesFromFiles, slotPathOf, TRANSFER_ZIP_NAME } from '../systems/save/saveTransfer.js';   // SP1: saves move between the website and the app
 import { appStorage, tabStorage } from '../systems/appStorage.js';   // SP1: the store under this build - the browser's on the site, the file store in the app   // SAV4: the slot store; SLOTS1: every slot
 import { uiSkin, SKIN_NAMES, isEnhanced } from '../systems/uiSkin.js';   // FD1: which boot rail
 import { getPref, setPref, isOpen, setOpen, PREF_DEFAULTS } from '../systems/uiPrefs.js';
@@ -165,7 +165,7 @@ import { legacyOn } from '../systems/legacy/settings.js';   // LEGACY3: ...drawn
 import { FLEET_PAGE_SECTIONS, fleetPageShown, drawFleetPage, resetFleetPage } from './fleetPage.js';   // HOLDINGS: the ships
 import { CAPTAIN_PAGE_SECTIONS, captainPageShown, drawCaptainPage } from './captainPage.js';   // CAPT-LOG: the captain's standing and log
 import { COLLECTION_PAGE_SECTIONS, collectionsPageShown, drawCollectionsPage, resetCollectionsPage, disarmCollectionsPage, setCollectionsPart } from './collectionsPage.js';   // COLLECTIONS: the codex and the cards
-import { swornBodyOf } from '../systems/revenantCompanions.js';   // COMPANION-ROSTER: a sworn one's live health
+import { swornBodyOf } from '../systems/revenant/revenantCompanions.js';   // COMPANION-ROSTER: a sworn one's live health
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // REVENANT-PAGE: a revenant's kind   // REVENANT-PAGE: the foes that have earned your name
 import { affiliations } from '../systems/affiliations.js';
 import { legalRepOf } from '../systems/court.js';   // REP5: the law, region by region
@@ -175,7 +175,7 @@ import { REGION_NAMES } from '../formats/mapsTables.js';   // GUILD-REP: the she
 import { hudLocked, setHudLocked, resetHudLayout, hudBarsSplit, setHudBarsSplit } from './hudLayout.js';   // HUD-MOVE: Lock UI and Reset UI
 import { enhancedHudScale as hudScaleNow, HUD_SCALE_MIN, HUD_SCALE_MAX } from './enhancedHud.js';   // PX30c
 import { mapScaleLabel, nextMapScale } from './mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the Maps row
-import { standingGroups } from '../systems/factionStanding.js';   // FIELD BUGS 2026-10-09e EVERY-STANDING: every organization's reputation
+import { standingGroups } from '../systems/faction/factionStanding.js';   // FIELD BUGS 2026-10-09e EVERY-STANDING: every organization's reputation
 import { playerEntity } from '../characters/playerEntity.js';
 // PX6: the Stats page's skill labels - the one home (systems/skills.js).
 import { SKILLS, SKILL_NAMES } from '../systems/skills.js';
@@ -190,8 +190,8 @@ import { peerBindBusy } from './peerMenuBindCard.js';   // PEERMENU1   // PADPLU
 import { modKeyRows } from '../systems/controlsConfig.js';   // UXB1-F: a mod's keys, read-only on its tile
 import { MOD_SETTINGS, modSetting, setModSetting, onlineModSetting, isIntKey, isFloatKey, isChoiceKey, isTextKey, isTupleKey } from '../systems/modSettings.js';   // REALM P0.2: onlineModSetting, the room's value for a key it owns (whole mods included)
 import { keyCodeForDomCode, KEYCODE_NONE } from '../systems/keyCodes.js';   // HT1: a TextKey's capture spells the key as Unity would
-import { isOnlinePage, onlineForcedPref, onlineForcedModSetting, onlineForcedSetting, onlineWholeModKey, ONLINE_ROOM_MOD_KEYS } from '../systems/onlineLane.js';   // OL1: online is the enhanced lane, whole - a forced switch is shown locked   // ROADS 24; DS1: the integer keys; UL1: the choice keys
-import { onlineSyncPlan, applyOnlineSync, lastOnlineSync, undoOnlineSync } from '../systems/onlineSync.js';   // UXB1-E: the room's rules, copied home
+import { isOnlinePage, onlineForcedPref, onlineForcedModSetting, onlineForcedSetting, onlineWholeModKey, ONLINE_ROOM_MOD_KEYS } from '../systems/online/onlineLane.js';   // OL1: online is the enhanced lane, whole - a forced switch is shown locked   // ROADS 24; DS1: the integer keys; UL1: the choice keys
+import { onlineSyncPlan, applyOnlineSync, lastOnlineSync, undoOnlineSync } from '../systems/online/onlineSync.js';   // UXB1-E: the room's rules, copied home
 import { CREDITS, translationCredits } from './credits.js';   // CR1: who made what the port carries
 import { SUPPORT_ASKS } from './supportAsks.js';   // SUPPORT1: the project's asks - the website's corner and this door's
 import { t, tIn, currentLocale, localeInfo, localeTable, availableLocales, BASE_LOCALE, localizedText, formatText } from '../systems/textManager.js';   // L10N1b: the port's own strings, the language row and the first-run offer; L10N3d: DFU's Internal_Strings
@@ -205,8 +205,8 @@ import { localeForBrowser, catalogLocale } from '../systems/localeCatalog.js';  
 import { paneControls, discardControlsStaging, captureArmed, controlsPromptOpen, dismissControlsPrompt } from './enhancedControls.js';
 // FT0: the features home - one list over the three stores, filtered by kind
 import { OVERHAUL_PANELS, currentOption } from '../systems/overhauls.js';
-import { setVeAddon } from '../systems/vanillaEnhanced.js';   // VE4: an add-on switched from the Texture Overhaul card
-import { installVanillaEnhancedPack } from '../systems/vanillaEnhancedPack.js';   // VE4: the shipped mods listed before any host boots
+import { setVeAddon } from '../systems/vanillaEnhanced/vanillaEnhanced.js';   // VE4: an add-on switched from the Texture Overhaul card
+import { installVanillaEnhancedPack } from '../systems/vanillaEnhanced/vanillaEnhancedPack.js';   // VE4: the shipped mods listed before any host boots
 import { PLUS_THEMES } from './enhancedFrame.js';   // PLUS2: Enhanced Plus's colours
 import { plusTheme, setPlusTheme } from './enhancedPlusStyle.js';
 import { plusCursorOn, setPlusCursor } from './plusCursor.js';   // OVH1: the three looks
@@ -230,7 +230,7 @@ import { postMark, postWindow, watchPostMark, anchorPost } from './enhancedPost.
 import { profileBadge, portraitSave, liveCharacter, characterLine } from './profileBadge.js';   // PROFILE1: the mark is the last character's portrait   // TILE1: the character's face, the one home chargen also reads
 import { cloudIo, cloudList, pushSlot, pullSlot, removeCloudSlot, cloudOnly, slotKeyOf, cloudRefusalText } from '../systems/cloudSaves.js';   // ACC2: the backup a tile can offer, AUDIT-312 F1's delete, and ACC2c's download of a save that is only up there
 import { serviceBase, storedSession } from '../net/accountClient.js';
-import { isBountyQuestId, abandonBountyQuest, shareBountyQuest, bountyQuestShareable } from '../systems/bountyJournal.js';   // BOUNTY1: a bounty in the journal - its Abandon and its Share
+import { isBountyQuestId, abandonBountyQuest, shareBountyQuest, bountyQuestShareable } from '../systems/bounty/bountyJournal.js';   // BOUNTY1: a bounty in the journal - its Abandon and its Share
 import { isHuntQuestId, abandonHuntQuest } from '../systems/huntJournal.js';   // RVN7c: a revenant's hunt in the journal - its Abandon
 import { liveBundles, canEndBundle, endBundle } from '../systems/mysticism.js';   // BUFF-END: the Stats page's Effects - the ONE bundle walk, and which the player may end
 import { maxRoundsRemaining } from './hudActiveSpells.js';   // BUFF-END: a bundle's rounds, as the HUD reads them
@@ -495,7 +495,7 @@ function saveOf(entry) {
   };
 }
 
-/** SLOTS1: every restorable slot, most recent first (systems/saveSlots.js restorableSaves). */
+/** SLOTS1: every restorable slot, most recent first (systems/save/saveSlots.js restorableSaves). */
 function savedGames() {
   try { return restorableSaves().map(saveOf); } catch { return []; }
 }
@@ -829,7 +829,7 @@ function savedGame() {
     health: snap.health, maxHealth: snap.maxHealth,
     // AUDIT 58: THE PURSE IS A COUNTER, NOT AN ITEM. E4 moved gold onto
     // GoldPieces (`data.playerEntity.goldPieces = entity.GoldPieces`,
-    // SerializablePlayer.cs:133 - systems/save.js's snapshotPlayer
+    // SerializablePlayer.cs:133 - systems/save/save.js's snapshotPlayer
     // writes snap.goldPieces beside the collections), and restorePlayer
     // SPLICES every Currency row out of a pre-E4 envelope's item list.
     // Scanning snap.items for a gold-named row therefore never
@@ -945,7 +945,7 @@ function paneContinue(body) {
 // settings, because they are questions about the game you are about to
 // start and nowhere else. StartInDungeon in particular is the answer
 // to "do I begin in Privateer's Hold" - a new-game question wearing a
-// settings key's clothes (systems/settings.js:"BG1: ShopQualityPresentation.").
+// settings key's clothes (systems/settings/settings.js:"BG1: ShopQualityPresentation.").
 function paneNew(body) {
   const c = el('div', 'card');
   c.append(el('h3', null, t('menu.new.title', 'A new character')));
@@ -1400,7 +1400,7 @@ function copyToOffline(row) {
 
 // UXB1-E (2026-09-25, the UX backlog: "Add a 'sync from server' option so players can ensure their offline play
 // matches the host they prefer to play on if they want."): THE ROOM'S RULES, OFFLINE. The copy and its undo are
-// systems/onlineSync.js's; this is the card - what differs, the one press, and the way back. Every relay plays by
+// systems/online/onlineSync.js's; this is the card - what differs, the one press, and the way back. Every relay plays by
 // the same rules (they are this build's, not the server's), so there is no host to pick: the card says so.
 export const ONLINE_SYNC_TITLE = 'Sync from server';
 export const ONLINE_SYNC_NOTE = 'Play offline by the same rules as online. Some settings are fixed online; this sets yours to match. They are the same on every server, and everything else stays your choice.';
@@ -1518,7 +1518,7 @@ function paneLoad(body) {
 // site opened it to empty slots. Export writes every slot as one zip in
 // the app's own on-disk layout; Import takes that zip, or a picked
 // Saves folder, into whatever store is under this build. Neither
-// overwrites a slot the store already holds (systems/saveTransfer.js).
+// overwrites a slot the store already holds (systems/save/saveTransfer.js).
 let _transferNote = null;
 function transferCard(count) {
   const c = el('div', 'card');
@@ -1575,7 +1575,7 @@ function transferCard(count) {
 // would put its own confirmation underneath itself.
 //
 // THE CARD SHOWS WHAT IS ABOUT TO BE OVERWRITTEN. There is ONE slot
-// (systems/save.js, `dagger.quicksave`), so every save is an
+// (systems/save/save.js, `dagger.quicksave`), so every save is an
 // overwrite. Classic does not confirm one and neither does F9, so
 // neither does this - but a player who can read the name and the date
 // they are writing over has been told, which is the part classic
@@ -1591,7 +1591,7 @@ function paneSave(body) {
     return;
   }
   // SLOTS1 (Mac: "multiple save slots"): a save is (character, slot
-  // name) - SaveLoadManager's own identity (systems/saveSlots.js
+  // name) - SaveLoadManager's own identity (systems/save/saveSlots.js
   // saveSlot). The name field says which slot; a name the character
   // already has OVERWRITES it and the card says so, a new name is a
   // new slot. The pressed name rides the pause door's quickSave
@@ -2318,7 +2318,7 @@ function write(key, next) {
 }
 
 // ── MODS ─────────────────────────────────────────────────────────
-// There is NO mod system (Ledger C, Not planned - and systems/settings.js:"UI4: the item info"
+// There is NO mod system (Ledger C, Not planned - and systems/settings/settings.js:"UI4: the item info"
 // blocks four keys on exactly that ground). The section still exists,
 // because Mac's call was to set the menus up now, and because a rail
 // that quietly omits mods teaches the player they are impossible.
@@ -4886,7 +4886,7 @@ function statsCharacter(detail, m) {
     detail.append(h);
     if (house.word) detail.append(el('p', 'px-note', house.word));
   }
-  // ARENA2: THE ARENA'S NAME FOR YOU (offline - systems/arenaLadder.js): the title of the highest tier whose champion you
+  // ARENA2: THE ARENA'S NAME FOR YOU (offline - systems/arena/arenaLadder.js): the title of the highest tier whose champion you
   // beat, Grand Champion over all, and your record on its sand; said only once you have fought there
   if (m.arena) {
     detail.append(pxDivider('The Arena'));
@@ -5173,7 +5173,7 @@ function statsStanding(detail) {
 /** FIELD BUGS 2026-10-09e EVERY-STANDING ("Could we have a setting to see our reputation with every guild/kingdoms?" -
  *  expelled from the Mages Guild, the way back in had no number on the screen): with the Interface tab's Character
  *  sheet row on, every organization's reputation under its own divider - the guilds and temples the player is not in,
- *  the knightly orders, the kingdoms, the covens, the clans, the Daedra (systems/factionStanding.js). */
+ *  the knightly orders, the kingdoms, the covens, the clans, the Daedra (systems/faction/factionStanding.js). */
 export function statsEveryStanding(detail, entity) {
   for (const g of standingGroups(entity)) {
     detail.append(pxDivider(g.title));
@@ -6103,7 +6103,7 @@ export function runEnhancedMenu(doc = document) {
   return new Promise((resolve) => {
     const menu = mountEnhancedMenu(host, {
       onAction: (action) => {
-        // SAV4 shipped the save manager (systems/saveSlots.js:"export function deleteSave"
+        // SAV4 shipped the save manager (systems/save/saveSlots.js:"export function deleteSave"
         // deleteSave), and this file deletes through it at :387 behind
         // an ask() confirm. Nothing routes 'delete' out here - every
         // onAction call site names its own verb and RAIL_ACTS (:162) is

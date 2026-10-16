@@ -1,7 +1,7 @@
 // HORSE-WALK (2026-10-12, the owner: "when youre riding a horse, it walks by default and to gallop you must shift to
 // sprint, just like when you are walking as a character") - THE WALK (bible/06-Systems/Horse-Care.md THE WALK): horse
 // care's horse walks unless the run gallops it. The law (player/motor.js - the walk on DFU's walk base, its base for
-// IsMovingLessThanHalfSpeed, the gallop on the ride base as ever; systems/transport.js setRideWalk; systems/upkeepRuntime.js
+// IsMovingLessThanHalfSpeed, the gallop on the ride base as ever; systems/transport.js setRideWalk; systems/upkeep/upkeepRuntime.js
 // rideWalks), and everything that reads the gait: the riding sprite and its clop (systems/riding.js, player/mountRig.js),
 // the peers' clop (the pose's `hs`, motor.js slowRide), the 3D horse under its rider (world/horseModel.js gaitFor's
 // `gallops`, world/horseRig.js, player/mwView.js, net/peerBodies.js), the saddle panel (ui/enhancedSaddle.js,
@@ -9,13 +9,13 @@
 // Features row, the Horses tutorial and the four hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD } from '../src/systems/upkeep/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { TRANSPORT_MODES, setRideWalk, rideWalks, setGallopGate, setCanRunOverride } from '../src/systems/transport.js';
-import { createUpkeep } from '../src/systems/upkeepRuntime.js';
+import { createUpkeep } from '../src/systems/upkeep/upkeepRuntime.js';
 import { steedStats, steedSpeedScale, WINDED_UNTIL } from '../src/systems/steedCare.js';
 import { RidingAnimator, RIDING_SOUND, RIDING_VOLUME_SCALE, ANIM_FRAME_TIME, WALK_FRAME_TIME } from '../src/systems/riding.js';
 import { gaitFor, horseGait, stepHorseGait, gaitShare } from '../src/world/horseModel.js';
@@ -28,7 +28,7 @@ import { SOUND } from '../src/systems/soundClips.js';
 import { FEATURES } from '../src/systems/features.js';
 import { TUTORIALS } from '../src/systems/tutorialCatalogue.js';
 import { setModSetting, onlineModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { rrRidingOn, rrCanRunRiding, rrRidingSetting, RR_VENDOR } from '../src/systems/rrRealism.js';
+import { rrRidingOn, rrCanRunRiding, rrRidingSetting, RR_VENDOR } from '../src/systems/roleplayRealism/rrRealism.js';
 import { fakeDoc, one } from './decorFakes.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -331,13 +331,13 @@ test('HORSE-WALK THE HOSTS (world.js, exterior.js): the walk installed beside th
   for (const host of ['src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.equal(/setRideWalk\(|rideWalks\(/.test(rd(host)), false, `${host}: no transport indoors`);
 });
 
-/** systems/rrInstall.js's own line - Roleplay & Realism's CanRun on a mount (CanRunUnlessRidingCart) - lifted from its
+/** systems/roleplayRealism/rrInstall.js's own line - Roleplay & Realism's CanRun on a mount (CanRunUnlessRidingCart) - lifted from its
  *  source and run, as the Overworld's lines are world.js's. */
-const RR_INSTALL = rd('src/systems/rrInstall.js');
+const RR_INSTALL = rd('src/systems/roleplayRealism/rrInstall.js');
 
 test('HORSE-WALK IN A TOWN (TOWN-GALLOP, 2026-10-13, Mac: "Remove forced horse walking in towns"): Roleplay & Realism as the port ships it - Enhanced Riding on, Galloping In Towns ON, where the mod ships it off - lets Run gallop a horse in a town as out of one, and there it walks unless Run gallops it, as everywhere; online the room reads the port\'s on whatever a player saved. The mod\'s own rule, Galloping In Towns off, is the town walk AUDIT HORSE-WALK pinned: Run held walks a horse in a town and gallops it out of one. The mod\'s own CanRun line, lifted from its source and run over the real upkeep and motor (mutants: TOWNGALLOP-town-walks-as-shipped, TOWNGALLOP-room-walks-in-town, TOWNGALLOP-room-leaves-it-to-the-player, TOWNGALLOP-setting-unread)', () => {
   const m0 = /\n {2}(setCanRunOverride\(\(mode\) => \(rrRidingOn\(\)[\s\S]*?: null\)\);)\n/.exec(RR_INSTALL);
-  assert.ok(m0, 'lifted from systems/rrInstall.js: the mod\'s CanRun');
+  assert.ok(m0, 'lifted from systems/roleplayRealism/rrInstall.js: the mod\'s CanRun');
   let town = true;
   const items = [horse(2, { horseFed: T0 + 600 })];
   const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD });

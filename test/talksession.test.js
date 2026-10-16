@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {
   greetingTextId, startMobileTalk, expandMacros, firstName, oathTextId,
   NO_RESPONSE_TEXT_ID,
-} from '../src/systems/talkSession.js';
+} from '../src/systems/talk/talkSession.js';
 import { rayPersonDistance, nextInteractionMode, MODES } from '../src/scenes/townTalk.js';
 import { wrapText } from '../src/ui/talkWindow.js';
 

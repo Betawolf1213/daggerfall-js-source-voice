@@ -15,8 +15,8 @@ import {
   FACET_ACT, facetBand, facetCount, facetWindow, bearingGap, HAND_CHEF,
 } from '../src/net/recipeLaw.js';
 import { SPECIALISATIONS, specOk, specDiscipline, TIER_RANKS, JEWEL_FEE, MASON_FEE, GEMS, PEARL, SIEGE_GEM, ACT_BANDS, minedMaterial } from '../src/net/professionLaw.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { mintProductRecord, readProductRecord, productRecordValid } from '../src/net/productRecord.js';
 import { CRAFTED_FAMILIES, pieceListable, auctionable } from '../src/net/marketLaw.js';
 import { commissionable, commissionTakesQuality } from '../src/net/writLaw.js';

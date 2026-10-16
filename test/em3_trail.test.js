@@ -1,4 +1,4 @@
-// EM3-3D TRAIL (the 3D dungeon map's walked record, systems/automap.js automapTrailTick): the patch pinned the tick
+// EM3-3D TRAIL (the 3D dungeon map's walked record, systems/automap/automap.js automapTrailTick): the patch pinned the tick
 // and the reveal arms but not the SAVE. Added at the merge (2026-09-27): the trail rides the save and comes back with
 // the dungeon's record, and a save from another layout of the same dungeon comes back without it, as its reveal does.
 import { test } from 'node:test';
@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {
   enterDungeonAutomap, bindAutomapLayout, buildRevealIndex, automapTrailTick, automapTrailPoints,
   snapshotAutomap, restoreAutomap, resetAutomapStore,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 
 const BIG = { min: [-100, -100, -100], max: [100, 100, 100] };
 

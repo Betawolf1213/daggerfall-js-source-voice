@@ -40,7 +40,7 @@ test('CARDS-BAY the suits are the Bay\'s four crowns, each its own charge and co
 test('CARDS-BAY the courts are the crowns\' own royals - the game\'s names, never a made-up one', () => {
   const named = SUIT_CROWNS.flatMap((s) => s.courts.filter((c) => c.name).map((c) => [s.crown, c.name]));
   for (const [crown, name] of named) {
-    if (crown === 'Orsinium') assert.match(read('src/systems/lootRarity.js'), new RegExp(`King ${name}`), `${name} is the game's king of Orsinium`);
+    if (crown === 'Orsinium') assert.match(read('src/systems/loot/lootRarity.js'), new RegExp(`King ${name}`), `${name} is the game's king of Orsinium`);
     else assert.ok(CROWN_LORE[crown].royals.includes(name), `${name} is one of ${crown}'s royals on the port's roll`);
   }
   assert.deepEqual(['Kc', 'Qd', 'Jh', 'Ks', 'Qs', 'Js', 'Qc'].map((t) => cardTitle(parseCard(t))), [

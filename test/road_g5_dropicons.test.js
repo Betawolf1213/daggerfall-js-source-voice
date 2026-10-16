@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   DROP_ICON_IDXS, DROP_ICON_ARCHIVES, RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS,
-} from '../src/systems/lootDataTables.js';
+} from '../src/systems/loot/lootDataTables.js';
 import {
   openDropIcon, canChangeDropIcon, cycleDropIcon, dropIconRecord, nextDropArchive,
   remoteTargetType, REMOTE_TARGET_TYPES, closeSession,
@@ -73,7 +73,7 @@ test('G5: dropIconIdxs is DaggerfallLootDataTables.cs:37-45, verbatim and IN ORD
   assert.equal(RANDOM_TREASURE_ARCHIVE, 216);
   // ...and the tables are their own module, importing nothing - the
   // cycle that broke module init when they were read off loot.js.
-  assert.equal(/^import /m.test(src('systems/lootDataTables.js')), false,
+  assert.equal(/^import /m.test(src('systems/loot/lootDataTables.js')), false,
     'lootDataTables.js must stay a leaf');
 });
 

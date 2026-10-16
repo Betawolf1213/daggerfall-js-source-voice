@@ -55,7 +55,7 @@ HOLD-ONCE, `06-Systems/Online-Arc.md`.)
 Each player's quest state, dialogue state, travel map and history are
 their own. You walk together; the story you are in is yours.
 
-Why: the save envelope (`systems/save.js:"so a save from before"`) already splits the world
+Why: the save envelope (`systems/save/save.js:"so a save from before"`) already splits the world
 from the player - `position, pose, classicMinutes, world, locationKey`
 on one side; `quest, talk, travelMap, escortingFaces, interior` on the
 other. That line IS the replication boundary. A shared campaign would
@@ -196,7 +196,7 @@ boss's blow on this screen, the potion, the save - is still the client's.
 
 ### The state model is the save
 
-`systems/save.js` already knows how to snapshot the world and restore
+`systems/save/save.js` already knows how to snapshot the world and restore
 it. **A joining client receives the host's world snapshot through the
 same envelope a save file uses**, restores it the way `restore` does,
 and is then in the host's world at the host's time. The player half of

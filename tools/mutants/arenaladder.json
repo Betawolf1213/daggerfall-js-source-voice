@@ -151,7 +151,7 @@
   },
   {
     "name": "ARENA-LADDER-run-kept",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "    out.runLost = s.won > 0;\n    s.won = 0;",
     "new": "    out.runLost = s.won > 0;",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "ARENA-LADDER-runlost-always",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "    out.runLost = s.won > 0;",
     "new": "    out.runLost = true;",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "ARENA-LADDER-champion-plain",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "champion: [champ(M.Knight, 5)]",
     "new": "champion: [b(M.Knight, 5)]",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "ARENA-LADDER-judges-floor-unread",
-    "file": "src/systems/arenaBout.js",
+    "file": "src/systems/arena/arenaBout.js",
     "old": "    if (dealt < b.judgesFloor * theirs) {",
     "new": "    if (false) {",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "ARENA-LADDER-kit-type-dropped",
-    "file": "src/systems/arenaKit.js",
+    "file": "src/systems/arena/arenaKit.js",
     "old": "export const SAND_BARRED_EFFECTS = Object.freeze([13, 14, 23, 24, 33, 34, 43]);",
     "new": "export const SAND_BARRED_EFFECTS = Object.freeze([13, 23, 24, 33, 34, 43]);",
     "tests": [
@@ -251,7 +251,7 @@
   },
   {
     "name": "ARENA-LADDER-kit-strip-unread",
-    "file": "src/systems/arenaKit.js",
+    "file": "src/systems/arena/arenaKit.js",
     "old": "  for (const k of SAND_BARRED_KINDS) {\n    if (!hasActiveEffect(entity, k)) continue;",
     "new": "  for (const k of SAND_BARRED_KINDS.slice(1)) {\n    if (!hasActiveEffect(entity, k)) continue;",
     "tests": [
@@ -711,7 +711,7 @@
   },
   {
     "name": "ARENA-LADDER-2-revenant-gate",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (entity.bout) return false;   // AUDIT ARENA-LADDER 2",
     "new": "  // AUDIT ARENA-LADDER 2",
     "tests": [
@@ -721,7 +721,7 @@
   },
   {
     "name": "ARENA-LADDER-2-held-unmarked",
-    "file": "src/systems/arenaKit.js",
+    "file": "src/systems/arena/arenaKit.js",
     "old": "    if (entity.activeEffects.some((a) => a.kind === k && a.heldItem)) entity._sandHeld = true;\n",
     "new": "",
     "tests": [
@@ -731,7 +731,7 @@
   },
   {
     "name": "ARENA-LADDER-2-calm-unbarred",
-    "file": "src/systems/arenaKit.js",
+    "file": "src/systems/arena/arenaKit.js",
     "old": "export const SAND_BARRED_EFFECTS = Object.freeze([13, 14, 23, 24, 33, 34, 43]);",
     "new": "export const SAND_BARRED_EFFECTS = Object.freeze([13, 14, 23, 24, 34, 43]);",
     "tests": [
@@ -741,7 +741,7 @@
   },
   {
     "name": "ARENA-LADDER-2-kit-any-bout",
-    "file": "src/systems/arenaKit.js",
+    "file": "src/systems/arena/arenaKit.js",
     "old": "export const onTheSand = () => playerBoutOf()?.kit === true;",
     "new": "export const onTheSand = () => playerBoutOf() != null;",
     "tests": [
@@ -751,7 +751,7 @@
   },
   {
     "name": "ARENA-LADDER-2-paid-unkept",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "  L.paid = Math.max(L.won, int(raw.paid, 0, BOUTS_PER_TIER, L.won));",
     "new": "  L.paid = int(raw.paid, 0, BOUTS_PER_TIER, L.won);",
     "tests": [
@@ -761,7 +761,7 @@
   },
   {
     "name": "ARENA-LADDER-2-repeat-purse",
-    "file": "src/systems/arenaLadder.js",
+    "file": "src/systems/arena/arenaLadder.js",
     "old": "    purse: champion ? CHAMPION_PURSE[s.tier] : repeat ? 0 : BOUT_PURSE[s.tier], repeat,",
     "new": "    purse: champion ? CHAMPION_PURSE[s.tier] : BOUT_PURSE[s.tier], repeat,",
     "tests": [
@@ -771,7 +771,7 @@
   },
   {
     "name": "ARENA-LADDER-2-repeat-points",
-    "file": "src/systems/arenaLeague.js",
+    "file": "src/systems/arena/arenaLeague.js",
     "old": "(!won || repeat ? 0 :",
     "new": "(!won ? 0 :",
     "tests": [
@@ -791,7 +791,7 @@
   },
   {
     "name": "ARENA-LADDER-2-tie-first",
-    "file": "src/systems/arenaBout.js",
+    "file": "src/systems/arena/arenaBout.js",
     "old": "      side = ai.length ? judgeBout(ai) : null;",
     "new": "      side = ai.length ? judgeBout(ai) ?? ai[0].side : null;",
     "tests": [

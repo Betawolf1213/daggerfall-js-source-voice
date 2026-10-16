@@ -3,7 +3,7 @@
 // DUNGEON ROOM, MOUNTED, NOT MATCHED: each peer is the REAL dungeon host's loot doors - lootContents (the plaque),
 // takeLoot (the quick door), publishLoot, applyLoot, applyActions, setFoeDead/spawnCorpse, respawnSweep and
 // rollPileItems - sliced out of src/scenes/dungeonContext.js, the PARTY-LOOT block with them, over the REAL producers
-// (systems/loot.js generateItems and the pile trio, hostCombat.js spawnEnemyLoot, the kit's ladder, the death's
+// (systems/loot/loot.js generateItems and the pile trio, hostCombat.js spawnEnemyLoot, the kit's ladder, the death's
 // subscribers). The two peers stand at different levels, Luck, Renown, dice and mod switches, and are joined by a relay
 // that queues their act frames. The pile loop's two lines are sliced out of the build too; buildFoeAt's spawnEnemyLoot
 // is called as the build calls it - the one stand-in. Run against the dungeon host before PARTY-LOOT, the first three
@@ -14,8 +14,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 import { respawnDue } from '../src/net/wire.js';
-import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../src/systems/loot.js';
-import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../src/systems/loot/loot.js';
+import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { peerHanded, neverPeerHanded } from '../src/systems/peerWord.js';
 import { addItem, stacksWith, isGoldPieces, addGoldPieces } from '../src/systems/inventory.js';
 import { isEquipped, unequipItem } from '../src/systems/equip.js';
@@ -26,23 +26,23 @@ import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';
 import { liveStat } from '../src/systems/statMods.js';
-import { setSigilOnline, setSigilRenown } from '../src/systems/sigil.js';
+import { setSigilOnline, setSigilRenown } from '../src/systems/sigil/sigil.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { setModSetting } from '../src/systems/modSettings.js';
-import { FORAGING_VENDOR } from '../src/systems/foragingLaw.js';
-import { installForaging } from '../src/systems/foragingInstall.js';
+import { FORAGING_VENDOR } from '../src/systems/foraging/foragingLaw.js';
+import { installForaging } from '../src/systems/foraging/foragingInstall.js';
 import { installSmithing } from '../src/systems/smithItems.js';
 import { installHealingSupply } from '../src/systems/healingSupply.js';
-import { installRestItemLoot, isDeepPileKey } from '../src/systems/restItems.js';
+import { installRestItemLoot, isDeepPileKey } from '../src/systems/rest/restItems.js';
 import { installSurvivalLoot } from '../src/systems/survival/loot.js';
 import { grantEliteLoot } from '../src/systems/eliteFoes.js';
-import { wildPileMore } from '../src/systems/wildZone.js';
+import { wildPileMore } from '../src/systems/wild/wildZone.js';
 import { quickLootTake, foldQuickLoot, resetQuickLoot, quickLootWheel } from '../src/systems/quickLoot.js';
 import { hoverLines } from '../src/systems/worldHover.js';
-import { asTheRoom, rollingAsTheRoom } from '../src/systems/onlineLane.js';
+import { asTheRoom, rollingAsTheRoom } from '../src/systems/online/onlineLane.js';
 import { modSaveRecords, restoreModSaveRecords } from '../src/systems/modSaveData.js';
 import * as RL from '../src/systems/roomLoot.js';
-import '../src/systems/cardSources.js';   // CARDS9's death handler registers at import, as the hosts load it
+import '../src/systems/card/cardSources.js';   // CARDS9's death handler registers at import, as the hosts load it
 import '../src/scenes/physicalItemsLayer.js';   // PI1's
 
 installForaging(); installSmithing(); installHealingSupply(); installRestItemLoot(); installSurvivalLoot();   // the hosts' order (scenes/shared.js), and the corpse food the online room mints

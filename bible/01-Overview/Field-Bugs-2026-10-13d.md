@@ -11,7 +11,7 @@ One Discord thread from 2026-10-13, handed over as a screenshot, read on the cod
 THE COLLAPSE IS DFU'S. At no fatigue left, `PlayerEntity_OnExhausted` (PlayerEntity.cs:2380-2441) asks
 `AreEnemiesNearby` (GameManager.cs:684-732): none, and the player drops to the ground for an hour (TEXT.RSC 1071); a
 hostile foe that sees the player or stands inside classic's spawn band, and it is `SetHealth(0)` (1072). The port's is
-`systems/rest.js exhaustionOutcome`, and underground `dungeonContext.js onExhausted` takes the one damage door's
+`systems/rest/rest.js exhaustionOutcome`, and underground `dungeonContext.js onExhausted` takes the one damage door's
 SetHealth(0) arm (`hurtPlayer`, `bypassShield`), which the Legacy host hears as any death (`setDeathListener`). Castle
 Wayrest's guards stand passive - RDBLayout.AddEnemy's Passive reaction for a marker so flagged, `isHostile` false (the
 law; the castle's own markers are not read here: no BLOCKS.BSA in the tree) - and count for nothing until the castle is

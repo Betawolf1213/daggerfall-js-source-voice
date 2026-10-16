@@ -1,7 +1,7 @@
 // WX2 - THE FRONT REACHES THE GROUND (2026-09-03, Mac: rain and snow
 // should fade in and out slowly, as the grass prototype's front does,
 // and not always be a downpour - a sprinkle, a light snow). The pure
-// laws of systems/weatherFront.js, the wind model's arrival, the
+// laws of systems/weather/weatherFront.js, the wind model's arrival, the
 // renderer's count, the hosts' wiring, and the classic path untouched.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,13 +9,13 @@ import { readFileSync } from 'node:fs';
 import {
   createWeatherFront, PRECIP_PEAK, PRECIP_IN, PRECIP_OUT, PRECIP_SMOOTH_SECONDS, WANDER_FLOOR,
   rollPeak, wander, smoothstep, precipKind, blendFog, blendTerms, soundWeather,
-} from '../src/systems/weatherFront.js';
-import { createWindModel, FRONT_LEAD_MIN, FRONT_HOLD_MIN, FRONT_TAIL_MIN } from '../src/systems/wind.js';
+} from '../src/systems/weather/weatherFront.js';
+import { createWindModel, FRONT_LEAD_MIN, FRONT_HOLD_MIN, FRONT_TAIL_MIN } from '../src/systems/wind/wind.js';
 import { FOG_SETTINGS } from '../src/world/weather.js';
 import {
   resetWeatherSim, setWeather, currentWeather, restoreWeather, applyClimateWeather, weatherRespawn, tickWeather,
   rollClimateWeathersForDay, rollWeather, weatherJumpStamp, STALE_DRAIN_MINUTES, WEATHER_TYPES, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { seasonValue, dateFromClassicMinutes } from '../src/systems/gameDate.js';
 import { AmbientEffects } from '../src/systems/ambientEffects.js';

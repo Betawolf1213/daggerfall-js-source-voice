@@ -5,7 +5,7 @@ import {
   SPECIAL_ABILITY, RAPID_HEALING, hasSpecialAbility, healingRateModifier,
   healthRecoveryRate, fatigueRecoveryRate, spellPointRecoveryRate,
   exhaustionOutcome, EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_SPENT_SHARE, EXHAUSTED_SWIMMING_LINE, EXHAUSTED_FIGHTING_LINE,
-} from '../src/systems/rest.js';
+} from '../src/systems/rest/rest.js';
 
 const P = (over = {}) => ({
   isPlayer: true, level: 5, maxHealth: 50, maxMagicka: 40, fatigue: 0,

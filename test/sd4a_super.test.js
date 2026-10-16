@@ -1,6 +1,6 @@
 // SD4a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 5): THE SUPER DUNGEON'S
 // DIFFICULTY (world/sdDungeon.js) - the port's hardest. A Hollow is a Super dungeon by its location's word
-// (systems/dungeonTier.js), read once by the dungeon host: three foes at every enemy marker as an Elite's, each x4
+// (systems/dungeon/dungeonTier.js), read once by the dungeon host: three foes at every enemy marker as an Elite's, each x4
 // health and x2.5 damage, its random foes rolled at the encounter tables' top band and a class foe built at the band's
 // level, six elite foes among them (each the Elite Dungeon's stack read the Super's way), loot +50% drop and quality on
 // bodies and piles, and no fire of its own - the Hour is cold.
@@ -20,7 +20,7 @@ import { chooseRandomEnemyType, alternateRandomEnemyType, collectDungeonEnemies,
 import { ENCOUNTER_TABLES } from '../src/characters/encounterTables.js';
 import { srand } from '../src/formats/dfRandom.js';
 import { dungeonFirePlan } from '../src/world/dungeonFires.js';
-import { dungeonTier } from '../src/systems/dungeonTier.js';
+import { dungeonTier } from '../src/systems/dungeon/dungeonTier.js';
 import { applyChampion } from '../src/systems/champions.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -16,7 +16,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FEATURES, checkFeature, featureForControl } from '../src/systems/features.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { tierOf } from '../src/systems/settings.js';
+import { tierOf } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

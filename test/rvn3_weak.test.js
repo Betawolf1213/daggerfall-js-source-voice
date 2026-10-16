@@ -21,11 +21,11 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const L = await import('../src/systems/feudLedger.js');
-const F = await import('../src/systems/revenantFeud.js');
-const FT = await import('../src/systems/revenantFate.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
+const FT = await import('../src/systems/revenant/revenantFate.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { calculateAttackDamage } = await import('../src/combat/formulas.js');
@@ -38,7 +38,7 @@ const { savingThrow, EFFECT_FLAGS } = await import('../src/systems/spellcast.js'
 const { computeEntityMods, entityResistMod } = await import('../src/systems/entityMods.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
-const { setRevenantPresenter } = await import('../src/systems/revenantVoice.js');
+const { setRevenantPresenter } = await import('../src/systems/revenant/revenantVoice.js');
 const { createPlayerMagic } = await import('../src/scenes/hostMagic.js');
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 const { TELL } = await import('../src/ai/tells.js');
@@ -60,7 +60,7 @@ const foe = ({ mobileType = M.Orc, level = 6, plain = false } = {}) => {
   if (!plain) e.champion = 'mighty';
   return e;
 };
-/** A stand-in revenant of weakness `weak` (its stand's stamp, systems/revenant.js revenantStamp's shape). */
+/** A stand-in revenant of weakness `weak` (its stand's stamp, systems/revenant/revenant.js revenantStamp's shape). */
 const weakTo = (weak, learned = [], o = {}) => { const e = foe(o); e.revenant = { id: null, name: 'X', rank: 3, learned, weak, edge: F.adaptEdge(learned, weak) }; return e; };
 const said = [];
 let shown = [];
@@ -250,7 +250,7 @@ test('RVN3 THE REVEAL: my first blow of its weakness - the real strike - counts 
   for (let i = 0; i < 20 && !(dm > 0); i++) dm = calculateAttackDamage(p, m, { weapon: createWeapon(W.Longsword, 3, () => 0.5), rolls: () => 0.2 });
   assert.ok(dm > 0);
   assert.equal(m._feud.weak, 1, 'an elven blade on an elven-weak one');
-  assert.match(read('src/systems/revenant.js'), /Promise\.resolve\(\)\.then\(\(\) => \{ try \{ tagHit\(entity, HIT_TAGS\.weakness\); \}/, 'the word, after the number its blow raises');
+  assert.match(read('src/systems/revenant/revenant.js'), /Promise\.resolve\(\)\.then\(\(\) => \{ try \{ tagHit\(entity, HIT_TAGS\.weakness\); \}/, 'the word, after the number its blow raises');
 });
 
 test('RVN3 THE FLINCH: under half its health, its weakness unknown - the narrator\'s line, the record hinted, once a stand; above half, nothing; known, nothing (mutants: the line at any health; hinted twice; a known one flinching)', () => {

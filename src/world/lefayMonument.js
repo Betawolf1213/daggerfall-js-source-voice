@@ -24,15 +24,15 @@
 // tipped in gilt - the port's own geometry in the monument's own frame (y up from the ground at its middle, its faces
 // on the axes), cut from the port's own art (world/lefayArt.js, LEFAY_ARCHIVE): no game data at all.
 //
-// THE FLOWERS: Daggerfall's own (TEXTURE.254's roses and flowers - systems/arenaCrowd.js THROWN_FLOWERS, the arena
+// THE FLOWERS: Daggerfall's own (TEXTURE.254's roses and flowers - systems/arena/arenaCrowd.js THROWN_FLOWERS, the arena
 // crowd's), thrown from the hand on a short arc to a rest on one of the steps or the ground at their foot, on the
 // thrower's side. A character keeps the count of what it laid and the newest MONUMENT_FLOWERS_KEPT where they lay
-// (normalTribute - systems/save.js carries it), so a pile laid stands there again after a load.
+// (normalTribute - systems/save/save.js carries it), so a pile laid stands there again after a load.
 //
 // Not a DFU member. Ledger A (LEFAY).
 import { REGION_NAMES } from '../formats/mapsTables.js';
 import { CityNavigation, NAV_CELL, HALF_CELL } from './cityNavigation.js';
-import { THROWN_FLOWERS } from '../systems/arenaCrowd.js';
+import { THROWN_FLOWERS } from '../systems/arena/arenaCrowd.js';
 import { ROAD_WEIGHT } from '../systems/gothwayBoards.js';
 import { locationStartMarkers } from './locationEntrance.js';
 import { collectMiscFlats } from './rmbFlats.js';

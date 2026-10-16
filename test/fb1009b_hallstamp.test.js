@@ -2,7 +2,7 @@
 // highlighted, but i still can enter building (prompt not showing tho, when im aiming at door). Im still in guild and
 // can take quests".
 //
-// RevealGuildHallOnMap names a member's hall "The Dark Brotherhood" as an override (systems/guildHallReveal.js), and
+// RevealGuildHallOnMap names a member's hall "The Dark Brotherhood" as an override (systems/guild/guildHallReveal.js), and
 // that override is the hall's plate on the town map (a House2 is a residence: only isOverrideName plates it) and its
 // name at the door. Every Dark Brotherhood contract's questor stands at the hall, so the contract's questor Place IS
 // the hall - named '' (a House2 has no name of its own, world/buildingNames.js). The port's own re-stamp (DISC28-K: a
@@ -12,8 +12,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as discovery from '../src/systems/discovery.js';
-import { revealGuildHallsOnMap } from '../src/systems/guildHallReveal.js';
-import { GUILDS, joinGuild } from '../src/systems/guilds.js';
+import { revealGuildHallsOnMap } from '../src/systems/guild/guildHallReveal.js';
+import { GUILDS, joinGuild } from '../src/systems/guild/guilds.js';
 import { generateBuildingName, BUILDING_TYPES } from '../src/world/buildingNames.js';
 
 const LOC = '17:Daggerfall', MAP = 111;

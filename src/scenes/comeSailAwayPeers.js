@@ -31,7 +31,7 @@
 import { validCsaRecord, CSA_WIRE_BOATS_MAX } from '../systems/comeSailAway/comeSailAwayWire.js';
 import { Boat, boatAnimators, animatorOf, setLights } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { stowSail } from '../systems/comeSailAway/comeSailAway.js';
-import { easeToward } from '../systems/horseCartWire.js';
+import { easeToward } from '../systems/horse/horseCartWire.js';
 import { quatSlerp, quatMultiply, quatAngleAxis } from '../world/quat.js';
 import { FOES_FULL_MS } from '../net/online.js';
 

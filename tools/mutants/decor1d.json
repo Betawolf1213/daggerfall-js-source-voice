@@ -1,7 +1,7 @@
 [
   {
     "name": "DECOR1d-the-step-unbounded",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "    const end = Math.min(total, next + n);",
     "new": "    const end = total;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DECOR1d-a-dungeon-block-read",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "        if (!isTownBlock(type) && !isDungeonBlock(type)) continue;   // DECOR-DUNGEON: and a dungeon's furnishings",
     "new": "        if (false) continue;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DECOR1d-the-count-per-step",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "        if (b) collectDecor([b], collected);",
     "new": "        if (b) { collected.clear(); collectDecor([b], collected); }",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DECOR1d-the-flats-not-awaited",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "      phase = 'flats';",
     "new": "      phase = 'done';",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DECOR1d-a-zero-radius-kept",
-    "file": "src/systems/decorScan.js",
+    "file": "src/systems/decor/decorScan.js",
     "old": "if (Number.isFinite(r) && r > 0) { radii.set(key, r);",
     "new": "if (Number.isFinite(r)) { radii.set(key, r);",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "DECOR1d-the-lift-unread",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      const up = hang ? drop() + s.raise : lift() + s.raise;",
     "new": "      const up = hang ? drop() + s.raise : 0 + s.raise;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "DECOR1d-the-grid-on-the-height",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "        pos: [x, hit[1] - origin[1] + up, z],",
     "new": "        pos: [x, s.snap ? snapTo(hit[1] - origin[1] + up, DECOR_GRID) : hit[1] - origin[1] + up, z],",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "DECOR1d-the-turn-unwrapped",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "    turn(deg) { s.yaw = wrapTurn(round(s.yaw + deg, 1)); },",
     "new": "    turn(deg) { s.yaw = round(s.yaw + deg, 1); },",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "DECOR1d-the-scale-unbounded",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      s.scale = round(Math.min(DECOR_SCALE_MAX, Math.max(DECOR_SCALE_MIN, next)), 3);",
     "new": "      s.scale = round(next, 3);",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "DECOR1d-the-price-at-one-scale",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      return radius != null && radius > 0 ? decorPrice(radius, s.scale) : null;",
     "new": "      return radius != null && radius > 0 ? decorPrice(radius, 1) : null;",
     "tests": [

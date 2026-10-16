@@ -92,7 +92,7 @@
   },
   {
     "name": "FPSCAP-vsync-left-stored",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "old": "  'Video/VSync': 'the browser always waits for the screen refresh',\n",
     "new": "",
     "tests": [

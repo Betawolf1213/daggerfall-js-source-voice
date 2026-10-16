@@ -141,7 +141,7 @@ test('HEARTH1: a world fire is nobody’s - it opens the cooking list and nothin
   // Info and Talk name it; every other mode cooks. It cannot be rested
   // at as an ACT (the rest window reads byFire and already sees it),
   // stoked, or packed - there is no record to pack.
-  // REST2 (bible/06-Systems/Rest-Arc.md): AND, ONLINE, RESTED AT. A rest online is an act at a fire (systems/restAct.js),
+  // REST2 (bible/06-Systems/Rest-Arc.md): AND, ONLINE, RESTED AT. A rest online is an act at a fire (systems/rest/restAct.js),
   // so a brazier's rows are Rest and Cook - the plaque's lit one, or their list without a plaque; offline it cooks, as
   // HEARTH1 had it. [SUPERSEDES "cannot be rested at as an ACT", for the online lane.]
   // AUDIT C&C (lens I, PIN MOVED): the Rest row asks the place's reach first (`restAtHearth`) - test/auditcc_items.test.js

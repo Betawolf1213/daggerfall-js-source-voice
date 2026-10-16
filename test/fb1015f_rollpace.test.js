@@ -7,9 +7,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GUILDS, updateRank, joinGuild } from '../src/systems/guilds.js';
-import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
-import { rankNeedsLines } from '../src/systems/guildServiceFlow.js';
+import { GUILDS, updateRank, joinGuild } from '../src/systems/guild/guilds.js';
+import { createFactionRep, getReputation } from '../src/systems/faction/factionRep.js';
+import { rankNeedsLines } from '../src/systems/guild/guildServiceFlow.js';
 import { rollPromoteCeiling, rollPaceWait, rollPaceDays, ROLL_GAIN_DAY_MAX, ROLL_BOOK_RANK_MAX } from '../src/net/npcChapterLaw.js';
 import { createRollTracker, rollEntityDoors, rollPaceOf } from '../src/net/npcRollTracker.js';
 import { readRoll, claimRoll } from '../server-account/src/npcRoll.js';

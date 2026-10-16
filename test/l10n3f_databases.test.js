@@ -23,7 +23,7 @@ import { createUnsavedKeybinds, currentDict } from '../src/systems/controlsConfi
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
 import { measureText } from '../src/ui/text.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 beforeEach(() => { tm._resetTextManagerForTests(); _resetForTests(); });
 

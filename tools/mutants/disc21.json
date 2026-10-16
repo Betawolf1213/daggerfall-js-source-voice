@@ -19,7 +19,7 @@
   },
   {
     "name": "DISC21-A-the-kit-s-mint-dropped",
-    "file": "src/systems/rriKits.js",
+    "file": "src/systems/roleplayRealismItems/rriKits.js",
     "old": "      mintCondition(dagger);\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DISC21-A-the-kit-wears-nothing",
-    "file": "src/systems/rriKits.js",
+    "file": "src/systems/roleplayRealismItems/rriKits.js",
     "old": "      dagger.currentCondition = Math.trunc(dagger.maxCondition * QUESTIONS_DAGGER_WEAR);\n",
     "new": "      dagger.currentCondition = Math.trunc((dagger.maxCondition ?? 0) * 0);\n",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DISC21-A-no-repair-on-load",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    const n = repairUnmintedConditions(list);\n",
     "new": "    const n = 0;\n",
     "tests": [

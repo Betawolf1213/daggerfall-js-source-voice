@@ -9,7 +9,7 @@ import { newHand, act, foldSeat, freshDeck, legalActions } from '../src/net/card
 import {
   THINK_MS, THINK_SPREAD_MS, HAND_GAP_MS, TABLE_STAKES, BUY_IN_MIN_BB, BUY_IN_MAX_BB, PURSE_MIN_BB, PURSE_MAX_BB,
   stakesFor, buyInRange, seatPatrons, CardTableSession,
-} from '../src/systems/cardTableSession.js';
+} from '../src/systems/card/cardTableSession.js';
 
 const seeded = (seed = 99) => { let x = seed >>> 0; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; return x >>>= 0; }; };
 const table = (stacks) => ({ seats: stacks.map((stack, i) => ({ id: `p${i}`, stack })), button: 0, sb: 5, bb: 10, deck: freshDeck() });

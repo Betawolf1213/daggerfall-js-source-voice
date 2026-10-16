@@ -1,7 +1,7 @@
 // AUDIT DISC28 (2026-09-28, before the merge) - lane 5, the quests: DISC28-I (a shared quest ends for the whole
 // party), DISC28-J (a partner's quest foe stands for a linked copy) and DISC28-K (a re-picked house shows the live
 // job's name), read against their own field reports. Each pin is DRIVEN: the real QuestMachine and share path
-// (systems/questShare.js) over the vendored quests, the real OnlineSession with its client floor and inbound gates,
+// (systems/quest/questShare.js) over the vendored quests, the real OnlineSession with its client floor and inbound gates,
 // and world.js's own questSyncTick / shareQuestWithParty / onQuestShared / questShareSeam lifted verbatim out of the
 // host and bound to real collaborators - a copy of the law would pass with the host broken.
 //
@@ -24,7 +24,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import * as QS from '../src/systems/questShare.js';
+import * as QS from '../src/systems/quest/questShare.js';
 import * as discovery from '../src/systems/discovery.js';
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

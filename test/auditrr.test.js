@@ -17,18 +17,18 @@ import { fileURLToPath } from 'node:url';
 
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { createWeaponMachine, machineStep, registerMeleeWeaponAnimTime, CLASSIC_FRAME_UPDATE } from '../src/characters/weaponStates.js';
-import { rrEncumbranceEffect, rrTrainingCost, rrRidingNeckBand, RR_RIDING, rrUnderworldRule } from '../src/systems/rrRealism.js';
-import { installRoleplayRealism } from '../src/systems/rrInstall.js';
-import { GUILDS, guildInitiationQuestEnded, membershipOf, underworldRuleOf } from '../src/systems/guilds.js';
-import { createFactionRep, getReputation } from '../src/systems/factionRep.js';
-import { createRrRidingContacts, RR_TRAMPLE_REACH } from '../src/systems/rrRidingHost.js';
+import { rrEncumbranceEffect, rrTrainingCost, rrRidingNeckBand, RR_RIDING, rrUnderworldRule } from '../src/systems/roleplayRealism/rrRealism.js';
+import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
+import { GUILDS, guildInitiationQuestEnded, membershipOf, underworldRuleOf } from '../src/systems/guild/guilds.js';
+import { createFactionRep, getReputation } from '../src/systems/faction/factionRep.js';
+import { createRrRidingContacts, RR_TRAMPLE_REACH } from '../src/systems/roleplayRealism/rrRidingHost.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { CRIMES } from '../src/systems/court.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { enemyHeavyPainVoice } from '../src/scenes/hostCombat.js';
 import { setLastLocationKeyTo, getBlockVariantHere, setBlockVariant, clearWorldDataVariants, NO_VARIANT, lastLocationKeyOf, makeLocationKey } from '../src/systems/worldDataVariants.js';
-import { rriNativeMaterialValue, rriEquipSound, rriCustomItemsForGroup, RRI_VENDOR, RRI_CLASSES } from '../src/systems/rriItems.js';
+import { rriNativeMaterialValue, rriEquipSound, rriCustomItemsForGroup, RRI_VENDOR, RRI_CLASSES } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { unitWeightInKg } from '../src/systems/inventory.js';
 
@@ -73,8 +73,8 @@ test('AUDIT-RR F2: a guild joined through its initiation quest\'s end runs the c
   }
   const noStore = {};
   guildInitiationQuestEnded(noStore, tg.initiationQuest ?? 'O0A0AL00', true, 0);
-  assert.match(rd('src/systems/guilds.js'), /export function guildInitiationQuestEnded\(memberships, questName, questSuccess, now, store = null\)/);
-  assert.match(rd('src/systems/guilds.js'), /joinGuild\(memberships, guild, now, store\);\s+\/\/ AUDIT-RR F2/);
+  assert.match(rd('src/systems/guild/guilds.js'), /export function guildInitiationQuestEnded\(memberships, questName, questSuccess, now, store = null\)/);
+  assert.match(rd('src/systems/guild/guilds.js'), /joinGuild\(memberships, guild, now, store\);\s+\/\/ AUDIT-RR F2/);
   assert.match(rd('src/scenes/world.js'), /guildInitiationQuestEnded\(activeMemberships\(playerEntity\), q\?\.questName \?\? '',[\s\S]{0,200}_questStore\(\)/, 'the host hands the store');
   _resetModSettings();
 });
@@ -83,13 +83,13 @@ test('AUDIT-RR F4: the expulsion squad places with CreateFoeSpawner\'s own argum
   const he = rd('src/scenes/hostEnchant.js');
   assert.match(he, /mobileType, \{ allied = false, lineOfSightCheck = true, minDistance = 4, maxDistance = 20, attempts = LOOSE_FOE_PLACE_ATTEMPTS \} = \{\}\)/);
   assert.match(he, /for \(let i = 0; i < attempts && !spot; i\+\+\) \{\s+spot = placeFoeFreely\(env, \{ minDistance, maxDistance, lineOfSightCheck \}\);/);
-  const ri = rd('src/systems/rrInstall.js');
+  const ri = rd('src/systems/roleplayRealism/rrInstall.js');
   assert.match(ri, /export const RR_SQUAD_PLACE_ATTEMPTS = 600;/);
   assert.match(ri, /_host\.spawnFoe\(wave\.mobileType, \{ minDistance: wave\.minDistance, maxDistance: wave\.maxDistance, lineOfSightCheck: false, attempts: RR_SQUAD_PLACE_ATTEMPTS \}\)/);
 });
 
 test('AUDIT-RR F5/F8: encumbranceEffects reads the PLAYER alone (RoleplayRealism.cs:582) and SetFatigue clamps both ways; F9: the purification potion\'s install-time read is recorded', () => {
-  const ri = rd('src/systems/rrInstall.js');
+  const ri = rd('src/systems/roleplayRealism/rrInstall.js');
   assert.match(ri, /if \(!rrModule\('encumbranceEffects'\) \|\| !entity\?\.isPlayer \|\| !entity\?\.stats/);
   assert.match(ri, /entity\.fatigue = Math\.min\(maxFatigue\(entity\), Math\.max\(0, \(entity\.fatigue \?\? 0\) - cost\)\)/);
   // BALANCE1: the overload's drain is exertion, on the port's scale - and only a DRAIN is scaled (a negative effect is the C#'s own);
@@ -121,7 +121,7 @@ test('AUDIT-RR F26: TrainingSkillPicker_OnItemPicked\'s `(float)skillValue / tra
 });
 
 test('AUDIT-RR F10: an ENEMY_BASICS row the mod cannot write is said, not skipped in silence', () => {
-  assert.match(rd('src/systems/rrRealism.js'), /if \(!target \|\| Object\.isFrozen\(target\)\) \{ if \(target\) console\.warn\(`\[rr\] enemyAppearance: ENEMY_BASICS row \$\{id\} is frozen/);
+  assert.match(rd('src/systems/roleplayRealism/rrRealism.js'), /if \(!target \|\| Object\.isFrozen\(target\)\) \{ if \(target\) console\.warn\(`\[rr\] enemyAppearance: ENEMY_BASICS row \$\{id\} is frozen/);
 });
 
 test('AUDIT-RR F13: the sprite-variant race reads the location\'s climate SETTINGS\' worldClimate (223-232), not the climate type 0-3 that fell to the Breton arm everywhere', () => {
@@ -251,20 +251,20 @@ test('AUDIT-RR (RRI) F3/F5/F6/F7/F8/F9/F10: shops stock the registered custom it
   assert.equal(rriEquipSound({ templateIndex: 520, material: ARMOR_MATERIAL.Steel }), 'EquipLeather');
   assert.equal(rriEquipSound({ templateIndex: 513 }), 'EquipAxe');
   assert.equal(rriEquipSound({ templateIndex: 102 }), null);
-  assert.ok(!/soundClips|itemTemplates|\/equip\.js|equipTable/.test(rd('src/systems/rriItems.js').match(/^import[^\n]*$/gm).join('\n')), 'the law stays a leaf');
+  assert.ok(!/soundClips|itemTemplates|\/equip\.js|equipTable/.test(rd('src/systems/roleplayRealismItems/rriItems.js').match(/^import[^\n]*$/gm).join('\n')), 'the law stays a leaf');
   // F5: an item carrying weightInKg answers it
   assert.equal(unitWeightInKg({ group: 'Armor', templateIndex: 523, material: ARMOR_MATERIAL.Leather, weightInKg: 1.4 }), 1.4);
   assert.equal(unitWeightInKg({ group: 'Armor', templateIndex: 523, material: ARMOR_MATERIAL.Leather, weightInKg: 1.4, water: 0.5 }), 1.9);
   assert.match(rd('src/systems/inventory.js'), /if \(Number\.isFinite\(item\.weightInKg\)\) return item\.weightInKg \+/);
-  assert.match(rd('src/systems/itemTemplates.js'), /AUDIT-RR F5: ApplyArmorMaterial runs BEFORE the class's SetVariant/);
+  assert.match(rd('src/systems/item/itemTemplates.js'), /AUDIT-RR F5: ApplyArmorMaterial runs BEFORE the class's SetVariant/);
   // F3: the shelf's second loop
   const shop = rd('src/systems/shopStock.js');
   assert.match(shop, /const customs = customItemsForGroup\(group\);\s+let customChanceMod = chanceMod;\s+if \(customChanceMod === 0 && group === 'Transportation'\) customChanceMod = 20;/);
   assert.match(shop, /const stockChance = Math\.trunc\(customChanceMod \* 5 \* \(21 - t\.rarity\) \/ 100\);\s+if \(!dice100\(stockChance, rolls\(\)\)\) continue;\s+if \(group === 'Weapons'\) add\(\{ group, templateIndex, material: randomMaterial\(level, rolls\), flags: 0 \}\);\s+else if \(group === 'Armor'\) add\(\{ group, templateIndex, material: randomArmorMaterial\(level, rolls\) \}\);/);
   // F6: random armor minted through setItemFields (named); F9: a mod spell serialised whole; F10: loot items converted too
-  assert.match(rd('src/systems/loot.js'), /AUDIT-RR F6: the class ctor names the item from its template BEFORE SetVariant/);
-  assert.ok(!/rriVariantFields/.test(rd('src/systems/loot.js')), 'the mint runs the variant fold, not the loot');
-  assert.match(rd('src/systems/save.js'), /\(sp\?\.custom \|\| sp\?\.rri\) \? JSON\.parse\(JSON\.stringify\(sp\)\) : sp\.index/);
+  assert.match(rd('src/systems/loot/loot.js'), /AUDIT-RR F6: the class ctor names the item from its template BEFORE SetVariant/);
+  assert.ok(!/rriVariantFields/.test(rd('src/systems/loot/loot.js')), 'the mint runs the variant fold, not the loot');
+  assert.match(rd('src/systems/save/save.js'), /\(sp\?\.custom \|\| sp\?\.rri\) \? JSON\.parse\(JSON\.stringify\(sp\)\) : sp\.index/);
   assert.match(rd('src/systems/equip.js'), /\(1 << \(rriNativeMaterialValue\(item\) >> 8\)\) & forbiddenArmors/);
   assert.match(rd('src/systems/equip.js'), /const own = rriEquipSound\(item\);\s+\/\/ AUDIT-RR F8/);
   assert.match(rd('src/combat/rriEnemyEquipment.js'), /AUDIT-RR F10: `Items\.SearchItems\(Weapons\)` \+ `\(Armor\)` \(:691-692\)/);

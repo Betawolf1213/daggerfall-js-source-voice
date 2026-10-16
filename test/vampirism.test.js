@@ -23,7 +23,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { isEntityImmuneToParalysis } from '../src/systems/effects.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import {
   MINUTES_PER_DAY, CLASSIC_GAME_START_TIME, dateFromClassicMinutes,
@@ -152,7 +152,7 @@ test('V2b: the cure remembers the clan, takes a minute, and burns the spells', (
 });
 
 test('V2b: the curse survives the save, marker rebuilt', async () => {
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   const p = P();
   createVampirismCurse(p, VAMPIRE_CLANS.Garlythi, { now: 777 });
   const snap = JSON.parse(JSON.stringify(snapshotPlayer(p, { classicMinutes: 800 })));

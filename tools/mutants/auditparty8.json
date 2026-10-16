@@ -1,28 +1,28 @@
 [
   {
     "name": "AP-stamp-unbounded",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return Number.isFinite(v) && v <= now + slack ? v : 0;",
     "new": "  return Number.isFinite(v) ? v : 0;",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-ghost-present",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return !!m && !!m.p && m.online !== false;",
     "new": "  return !!m && !!m.p;",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-vote-never-spent",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "  return at > (Number.isFinite(lastStartedAt) ? lastStartedAt : 0);",
     "new": "  return true;",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-cancel-high-water",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "    if (at === null || at === (seen.get(m.acct) ?? null)) continue;",
     "new": "    if (at === null || at <= (seen.get(m.acct) ?? 0)) continue;",
     "tests": ["test/auditparty8.test.js"]

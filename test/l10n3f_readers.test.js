@@ -24,7 +24,7 @@ import {
 import { bookTitle, getRandomBookID, localizedBookMeetsConditions, setBookGlobalVars, createBook, getBookFileName } from '../src/systems/books.js';
 import { BOOK_ID_TITLES } from '../src/systems/booksData.js';
 import { bookshelfTitles, populateBookshelf } from '../src/systems/bookshelf.js';
-import { resolveItemName, expandItemInfo, getBookAuthor } from '../src/systems/itemInfo.js';
+import { resolveItemName, expandItemInfo, getBookAuthor } from '../src/systems/item/itemInfo.js';
 import { scrollerToolTipText } from '../src/ui/itemScroller.js';
 import { BookReaderWindow, layoutLocalizedBookLines, placeBookLabels, preloadBookArt, parseBookColor, parseBookScale } from '../src/ui/bookReader.js';
 import { makeOpenBookHook } from '../src/ui/bookDoor.js';

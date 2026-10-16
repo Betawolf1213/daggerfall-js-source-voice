@@ -24,7 +24,7 @@ import { readRegionFolder, WOD_BUNDLE_ASSETS } from '../tools/worldOfDaggerfallA
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { FEATURES } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const V = join(ROOT, 'vendor/world-of-daggerfall');

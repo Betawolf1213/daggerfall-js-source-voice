@@ -23,7 +23,7 @@ import { createLivingRoads } from '../src/scenes/livingRoads.js';
 import { mountEnhancedTalk } from '../src/ui/enhancedTalk.js';
 import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { FAMILY_CSS } from '../src/ui/familyPages.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = 1_800_000_000;

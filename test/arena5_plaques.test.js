@@ -2,7 +2,7 @@
 // - a plaque wall naming every Grand Champion this save (offline) or this realm (online)"). The row measured about the
 // Keeper in a room's collider (world/arenaPlaques.js hallPlaquePlan - the nearest wall, a plaque where that wall stands and
 // nothing between her and it, left to right as one faces it, capped); the plaque's two boards (plaqueModel - Daggerfall's
-// framed picture on the dark wood of its paintings' backs, the bare board) on the model door; the names (systems/arenaBoard.js
+// framed picture on the dark wood of its paintings' backs, the bare board) on the model door; the names (systems/arena/arenaBoard.js
 // hallPlaques - the save's own Grand Champion among the banners' by season offline, the realm's hall online) through the
 // gate (scenes/arenaGate.js plaques - online never the save's); the host's wiring by source (scenes/worldModes.js - stood at
 // the undercroft's mount, drawn, named, pressed; dungeonContext.js's Hall place; both hosts' door).
@@ -14,10 +14,10 @@ import {
   PLAQUE_OFF_M, PLAQUE_PICTURE, PLAQUE_WOOD,
 } from '../src/world/arenaPlaques.js';
 import { customModelFor, _resetCustomModels } from '../src/world/customModels.js';
-import { hallPlaques } from '../src/systems/arenaBoard.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { newArenaLadder } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { hallPlaques } from '../src/systems/arena/arenaBoard.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { newArenaLadder } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaGate } from '../src/scenes/arenaGate.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 

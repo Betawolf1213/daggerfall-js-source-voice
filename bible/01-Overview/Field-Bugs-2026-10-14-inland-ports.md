@@ -102,7 +102,7 @@ EVERY READER OF THE SEA, read for the same fault (a lake taken for the sea):
 
 - CHANGED: the shipyard law and the harbour board's ports (above); the harbour office's `seaAt` (above).
 - CHECKED, NO LAKE ON THE REAL MAP: a raider's birth (`world.js` tvRaidOpen) and the serpent's site
-  (`systems/serpentSite.js` over the lanes' water) ask a three by three of Ocean-climate water, which no lake holds - none
+  (`systems/serpent/serpentSite.js` over the lanes' water) ask a three by three of Ocean-climate water, which no lake holds - none
   of 174,723 birth pixels and none of 3,650 days' sites lies on one. Left as they stand.
 - LEFT, THE LAKE HARBOURS (Mac, 2026-10-15: kept): the packet lanes' water (`world.js` laneOpen - the Ocean climate at
   the shore's byte) admits the 331 lake pixels that carry the Ocean climate, so the towns on a lake run packets on it (26
@@ -115,7 +115,7 @@ EVERY READER OF THE SEA, read for the same fault (a lake taken for the sea):
   is water to see), the Oblivion gate's land (`gateSite.js` - a lake is no land either), the crossing's distance to land
   (`world.js` crossLandPx - CROSS_LAND_PX, 20, is more than any lake's breadth), the Bay fitted to the picture
   (fitBayToPicture), the ships' own water (`navalIsWater`, the terrain's - a lake harbour's boats sail it), DFU's ship
-  travel time and the professions' sea (`systems/travel.js`, `foragingLaw.js`, `net/nodeLaw.js haulAtSea` - CLIMATE.PAK's
+  travel time and the professions' sea (`systems/travel/travel.js`, `foragingLaw.js`, `net/nodeLaw.js haulAtSea` - CLIMATE.PAK's
   Ocean, the service's law too), and Deep Waters' encounters (already the ocean's: `isOceanConnected`).
 
 DECIDED NO (Mac, 2026-10-15) - each that law's own, and to stay so:

@@ -15,7 +15,7 @@ import { GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { residentLook, residentWalkerActor } from '../src/characters/rosterBodies.js';
 import { CREATURE_MATCH } from '../src/characters/creatureBodies.js';
 import { ELITE_FOE_SIZE } from '../src/systems/eliteFoes.js';
-import { WILD_GIANT_SIZE } from '../src/systems/wildZone.js';   // AUDIT MW-NPC II P4
+import { WILD_GIANT_SIZE } from '../src/systems/wild/wildZone.js';   // AUDIT MW-NPC II P4
 import { createNpcBodies, createPopulationLane, createFrameBudget, NPC_BODY_TIERS, WATCH_BODY_TIERS, NPC_FRAME_TIERS } from '../src/characters/npcBodies.js';
 import { creatureLook } from '../src/characters/creatureBodies.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';

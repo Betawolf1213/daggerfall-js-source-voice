@@ -32,7 +32,7 @@ crafting materials in the inventory itself." And: "This is something I really wa
   back to its material is BUILT BY MINTING every material once (both of a food's skins, Climates & Calories on and
   off), so the bag's rule and the mint can never disagree about what an Oak Log is. A quest's piece, a summoned one, a
   worn one or an enchanted one is never a material.
-- **Its own list**, `entity.bagItems`, beside `wagonItems` - in the save (`systems/save.js`: snapshotted, restored,
+- **Its own list**, `entity.bagItems`, beside `wagonItems` - in the save (`systems/save/save.js`: snapshotted, restored,
   repaired and swept for orphans with the rest), counted by the realm with the pack and the wagon
   (`net/realmGoldLaw.js` carriedItemLists, `systems/realmCustoms.js`). Its food rots as the pack's does
   (`survival/needs.js`), and a food on its way to putrid is no longer the material the mint makes.
@@ -318,7 +318,7 @@ no shop buys a bag or a Campfire back (`shopBuysItem`) - bought cheap and sold d
 sold made any shelf endless. Pinned by `test/fb1004_endless.test.js`; `tools/mutants/fb1004_endless.json`.
 
 **ONE-BAG** (the same day, Mac: "Right, you shouldnt be able to hold multiple gathering bags"). A second Materials Bag is
-refused by the take ladder (`systems/itemTransfer.js` planTake: a pickup, quick loot, a container, the wagon, both trade
+refused by the take ladder (`systems/item/itemTransfer.js` planTake: a pickup, quick loot, a container, the wagon, both trade
 windows' Buy basket) and the keyed shelf (`scenes/worldModes.js` doBuy) while another is held in the pack, a trade's
 basket or the wagon: "You already have a Materials Bag." One out of the character's own wagon is never refused, and the
 bag is no decor piece. Pinned by `test/fb1004_onebag.test.js`; the audit's findings in the field-bug record.

@@ -15,24 +15,24 @@
 // dress it as they dress his (the classic skin lays the Broker's own sheet, `brokerSkinCss`). Everything the window does
 // to the world is handed in: the pack, the payer, the reforge and the salvage (systems/reforge.js, which the host
 // calls) - this file draws and asks, and never touches a pack.
-import { rarityAttr, affixLine, reforgeableLines, RARITIES, tierLabel, imprintLine, powerLine, powerOf, legendaryById, curseLine, honeableLines } from '../systems/lootRarity.js';
-import { cursedKnown, liftPrice, liftRefusal } from '../systems/lootCurse.js';   // LOOT16: the temple's lifting
-import { SCRY_FAMILIES, SCRY_FAMILY_WORDS, SCRY_PRICE, familyPlaces, scryRefusal } from '../systems/lootScry.js';   // LOOT19: scrying
-import { foundAmong, hasSocket, socketsOf, emptySockets, gemLine, affixLabel, ALL_GEM_IDS, GEM_NAMES, SOCKET_EMPTY } from '../systems/lootRarity.js';   // LOOT20: the sockets; GEM1: a list of them, every grade of gem
+import { rarityAttr, affixLine, reforgeableLines, RARITIES, tierLabel, imprintLine, powerLine, powerOf, legendaryById, curseLine, honeableLines } from '../systems/loot/lootRarity.js';
+import { cursedKnown, liftPrice, liftRefusal } from '../systems/loot/lootCurse.js';   // LOOT16: the temple's lifting
+import { SCRY_FAMILIES, SCRY_FAMILY_WORDS, SCRY_PRICE, familyPlaces, scryRefusal } from '../systems/loot/lootScry.js';   // LOOT19: scrying
+import { foundAmong, hasSocket, socketsOf, emptySockets, gemLine, affixLabel, ALL_GEM_IDS, GEM_NAMES, SOCKET_EMPTY } from '../systems/loot/lootRarity.js';   // LOOT20: the sockets; GEM1: a list of them, every grade of gem
 import { gemsHeld, setGemRefusal, unsetGemRefusal, extractGemRefusal, extractPrice } from '../systems/reforge.js';   // GEM1: and the extraction
-import { codexRows, codexSets, codexCount, codexGilded, imprintChoices, imprintRefusal, IMPRINT_PRICE } from '../systems/lootCodex.js';   // LOOT10: the codex's page and the imprint's - GILDED1: and the Gilded rung's rows
+import { codexRows, codexSets, codexCount, codexGilded, imprintChoices, imprintRefusal, IMPRINT_PRICE } from '../systems/loot/lootCodex.js';   // LOOT10: the codex's page and the imprint's - GILDED1: and the Gilded rung's rows
 import { gildedById } from '../systems/gilded.js';
-import { setById } from '../systems/sigilSets.js';
+import { setById } from '../systems/sigil/sigilSets.js';
 import { itemIsIdentified } from '../systems/tradeModes.js';
 import { reforgePrice, reforgeRefusal, salvageShards, salvageRefusal, shardsHeld, shardsText, honePrice, honeRefusal } from '../systems/reforge.js';   // LOOT17: and the hone
-import { inventoryItemImage } from '../systems/itemTemplates.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { SLOT_BOX, screenDpr } from './iconFit.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';
 import { overlayAction } from './input.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { brokerSkinCss, BROKER_SKIN_STYLE_ID, refusePress } from './brokerWindow.js';   // MENU-ORDER: and a refused press that says why
-import { techniqueDetail } from '../systems/lootRarity.js';   // AUDIT TECH1: a technique line's "what a press does", as the card says it
+import { techniqueDetail } from '../systems/loot/lootRarity.js';   // AUDIT TECH1: a technique line's "what a press does", as the card says it
 import { REFORGE_CSS } from './enhancedPlusStyle.js';   // AUDIT LOOT F6: the window's own rules, beside the Broker's sheet
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 
@@ -70,7 +70,7 @@ export const SCRIED = (name, family) => `Scried: ${name} - a haunt of ${String(S
 export const SCRY_FOR_KIN = 'Scry for its kin';
 /** LOOT16 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 8): THE TEMPLE'S PAGE - the window on its one page,
  *  opened by a temple's Cure Disease priest (scenes/worldModes.js openLift): every known cursed piece of the pack, its
- *  drawback named, its price, and a press that lifts it (systems/lootCurse.js liftCurse). */
+ *  drawback named, its price, and a press that lifts it (systems/loot/lootCurse.js liftCurse). */
 export const LIFT_TITLE = 'Lift a Curse';
 export const LIFT_SUB = 'The temple lifts a curse for gold - the drawback gone, the line it came with kept';
 export const LIFT_NONE = 'Nothing cursed in your pack that the temple can see - a curse is known once the piece is identified.';
@@ -173,9 +173,9 @@ function injectSkinStyle(doc = document) {
  *   extractGem?: ((item: any, at?: number|null) => { ok: boolean, reason?: string|null, price?: number }) | null,
  * }} deps
  *   LOOT10: `pages` the pages this window shows (the guild's all four; the pack's Codex its one), `imprint` the host's
- *   imprint (systems/lootCodex.js imprintPiece). LOOT16: the temple's `['lift']`, and its `lift` (systems/lootCurse.js
+ *   imprint (systems/loot/lootCodex.js imprintPiece). LOOT16: the temple's `['lift']`, and its `lift` (systems/loot/lootCurse.js
  *   liftCurse). LOOT17: `hone` the host's hone (systems/reforge.js honePiece). LOOT19: `scry` the host's scrying
- *   (systems/lootScry.js scryPlace) and `scryWhere` its region (scenes/world.js). LOOT20: `setGem` and `unsetGem` the
+ *   (systems/loot/lootScry.js scryPlace) and `scryWhere` its region (scenes/world.js). LOOT20: `setGem` and `unsetGem` the
  *   host's (systems/reforge.js setGemPiece, unsetGemPiece); GEM1: `extractGem` too (extractGemPiece), and each
  *   takes the socket's index.
  * @returns {{ repaint: () => void, unmount: () => void }}

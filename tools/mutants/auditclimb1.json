@@ -204,7 +204,7 @@
   },
   {
     "name": "AUDITCLIMB1-F10-rr-allows",
-    "file": "src/systems/rrRealism.js",
+    "file": "src/systems/roleplayRealism/rrRealism.js",
     "old": "  return weaponDrawn && !weaponMelee ? NO_CLIMB_HOLDING_WEAPON : null;",
     "new": "  return null;",
     "tests": [

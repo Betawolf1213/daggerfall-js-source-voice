@@ -1,6 +1,6 @@
 // OW-DUNGEONS (2026-10-08, Mac: "with dungeons on the overworld it doesnt show a dungeon model"; asked where:
 // "Overworld view"; which: "Check it all"; asked the look: "Its own model, enlarged"): EACH DUNGEON'S OWN MODEL,
-// ENLARGED, UNDER THE OVERWORLD - the law (systems/travelDungeonModels.js: the set, the entrance model by DFU's own door
+// ENLARGED, UNDER THE OVERWORLD - the law (systems/travel/travelDungeonModels.js: the set, the entrance model by DFU's own door
 // law, the grow with the eye's distance, the matrix about its foot), the door law in one home (world/meshReader.js
 // subMeshDoorType, read by dfMeshToModel too), and the world host's list, load and draw (scenes/world.js), lifted and
 // run over stubs. Design: bible/06-Systems/Travel-View.md OW-DUNGEONS.
@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import {
   dungeonModelSet, meshHasDungeonEntrance, dungeonEntranceModel, owDungeonGrow, owDungeonDrawn, grownModelMatrix, modelFoot,
   TV_DUNGEON_MODELS_MAX, TV_DUNGEON_ICON_K, TV_DUNGEON_GROW_MAX, TV_DUNGEON_GROWN_MIN, startDungeonLoads,
-} from '../src/systems/travelDungeonModels.js';
+} from '../src/systems/travel/travelDungeonModels.js';
 import { subMeshDoorType, dfMeshToModel, DOOR_TYPE } from '../src/world/meshReader.js';
 import { trs, multiply } from '../src/world/mat4.js';
 import { TV_OWN_GROW_MAX, TV_OWN_GROW_M } from '../src/player/travelCamera.js';

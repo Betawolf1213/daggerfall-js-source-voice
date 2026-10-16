@@ -49,7 +49,7 @@
   },
   {
     "name": "BALANCE1-overload-unscaled",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "      const owed = cost * FATIGUE_DRAIN_SCALE + (entity._rrFatigueCarry ?? 0);",
     "new": "      const owed = cost + (entity._rrFatigueCarry ?? 0);",
     "tests": [
@@ -141,7 +141,7 @@
   },
   {
     "name": "BALANCE1-rr-wear-unscaled",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "(it, amount) => lowerCondition(it, blowWear(amount, rolls), owner, say)",
     "new": "(it, amount) => lowerCondition(it, amount, owner, say)",
     "tests": [
@@ -159,7 +159,7 @@
   },
   {
     "name": "AUDIT0927B-F1-charge-unscaled",
-    "file": "src/systems/rrRidingHost.js",
+    "file": "src/systems/roleplayRealism/rrRidingHost.js",
     "old": "- Math.trunc(FATIGUE_LOSS.Default * RR_RIDING.chargeFatigueMultiplier * FATIGUE_DRAIN_SCALE));",
     "new": "- FATIGUE_LOSS.Default * RR_RIDING.chargeFatigueMultiplier);",
     "tests": [
@@ -169,7 +169,7 @@
   },
   {
     "name": "AUDIT0927B-F2-fraction-dropped",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "      entity._rrFatigueCarry = Math.max(0, owed - cost);",
     "new": "      entity._rrFatigueCarry = 0;",
     "tests": [
@@ -178,7 +178,7 @@
   },
   {
     "name": "AUDIT0927B-F2-no-sink-unscaled",
-    "file": "src/systems/rrInstall.js",
+    "file": "src/systems/roleplayRealism/rrInstall.js",
     "old": "    else entity.fatigue = Math.min(maxFatigue(entity), Math.max(0, (entity.fatigue ?? 0) - cost));",
     "new": "    else entity.fatigue = Math.min(maxFatigue(entity), Math.max(0, (entity.fatigue ?? 0) - e.fatigueEffect));",
     "tests": [

@@ -8,7 +8,7 @@ import {
   cacheScene, restoreCachedScene, clearSceneCache,
   snapshotSceneCache, restoreSceneCache,
 } from '../src/systems/sceneCache.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const chest = (n) => ({ containerType: LOOT_CONTAINER_TYPES.HouseContainers, id: n, items: [n] });
 const corpse = (n) => ({ containerType: LOOT_CONTAINER_TYPES.CorpseMarker, id: n });

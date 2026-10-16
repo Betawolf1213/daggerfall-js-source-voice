@@ -13,7 +13,7 @@ import { applyMotorEffectFlags } from '../src/scenes/shared.js';
 import { exteriorSwimming } from '../src/player/exteriorSurface.js';
 import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
 import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
-import { flushStateChange } from '../src/systems/deepWaterPlayer.js';
+import { flushStateChange } from '../src/systems/deepWater/deepWaterPlayer.js';
 
 const OCEAN = 34, FLOOR = 10, SHORE = 34.6, COAST = 100, DT = 1 / 60;
 const I4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

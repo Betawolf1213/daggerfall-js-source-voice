@@ -29,7 +29,7 @@ import { SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS } from '../src/render/sdSky.js';
 import { createSdRemnant, remnantPose, echoPose, sdTurnToward, SD_TURN_RATE, SD_REM_SINK_MS, SD_ECHO_SINK_MS } from '../src/scenes/sdRemnant.js';
 import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/sdBrassSky.js';
-import { sdBrassLight, SD_BRASS_TINT } from '../src/systems/sdOmen.js';
+import { sdBrassLight, SD_BRASS_TINT } from '../src/systems/superDungeon/sdOmen.js';
 import { realmLightsWith, SD_LIGHTS_CAP } from '../src/world/sdRealm.js';
 import { wrapYaw } from '../src/net/gateBrain.js';
 

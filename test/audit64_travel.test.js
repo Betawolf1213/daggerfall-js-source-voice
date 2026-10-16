@@ -29,7 +29,7 @@ import {
 } from '../src/world/locationEntrance.js';
 import { REPOSITION } from '../src/systems/ship.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';
-import { arrivalClampMinutes } from '../src/systems/travel.js';
+import { arrivalClampMinutes } from '../src/systems/travel/travel.js';
 import { careerSunDamage, careerSunAverse } from '../src/systems/passiveSpecials.js';
 import { SPECIAL_ABILITY_BITS } from '../src/systems/specialAdvantages.js';
 import { SUNLIGHT_TRAVEL_TEXT, VAMPIRE_HOOD_TEXT, racialFastTravelBlock, careerFastTravelBlock } from '../src/systems/vampirism.js';

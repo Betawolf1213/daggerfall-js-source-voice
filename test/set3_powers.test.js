@@ -1,4 +1,4 @@
-// SET3 (2026-09-26, Sigil Sets - bible/11-Multiplayer/Sigil-Sets.md): WHAT THE SETS DO (systems/sigilSetPowers.js),
+// SET3 (2026-09-26, Sigil Sets - bible/11-Multiplayer/Sigil-Sets.md): WHAT THE SETS DO (systems/sigil/sigilSetPowers.js),
 // each power driven through the REAL seam SET2 opened - the entity fold through computeEntityMods and the formulas'
 // accessors, the blow through weaponBlowMods, Spite through the attack formula's struck tail, Unbroken and the Wrath
 // through hurtPlayer, the kills through reportPlayerKill, Mora through the cast price and the absorption roll, the
@@ -12,12 +12,12 @@ import {
   awakeTiersOf, setFold, rampageStacks, setBlow, setStruck, setStrike, setDamageMod, setDeathSave, setHurt, eventideBundle, setKill,
   setCastCost, setAbsorbChance, setRound, setPowerStates, setSetPowersVoice, SIGIL_SETS_POWER, REACH_RISE_M, BLOW_WINDOW_S,
   _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import {
   setSetsDueling, SIGIL_SETS, RAMPAGE_SECONDS, RAMPAGE_STACKS, ROUND_SECONDS, CLEAVE_METRES, NOVA_METRES, WRATH_SECONDS,
   _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSets.js';
 import {
   computeEntityMods, entityFoldNames, entityModsOf, entityArmorMod, entityStatMod, entitySkillMod, entityResistMod,
   weaponBlowMods, NUMBER_BODY_PARTS,
@@ -31,7 +31,7 @@ import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { applySpell, isBlending } from '../src/systems/effects.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { SKILLS, MAGIC_SKILLS } from '../src/systems/skills.js';
@@ -100,7 +100,7 @@ const FIRE_PROOF = Object.freeze({ immunityFlags: EFFECT_FLAGS.Fire });
 test('SET3 registered at import, under one name, at every seam SET2 opened: the entity fold, the blow, the struck tail (and AUDIT M2 the strike tail), the damage door\'s three says, the kill, the cast price, the absorption roll and the magic round (mutants: any registration dropped)', () => {
   assert.equal(SIGIL_SETS_POWER, 'sigilSets');
   assert.ok(entityFoldNames().includes('sigilSets'), 'the fold');
-  const src = strip(read('src/systems/sigilSetPowers.js'));
+  const src = strip(read('src/systems/sigil/sigilSetPowers.js'));
   for (const [seam, fn] of [
     ['registerEntityFold', 'setFold'], ['registerWeaponBlowMod', 'setBlow'], ['registerPlayerStruckListener', 'setStruck'],
     ['registerPlayerStrikeListener', 'setStrike'],   // AUDIT SET M2: the blow that landed
@@ -704,7 +704,7 @@ test('SET3 the HUD\'s read of the powers: the Rampage\'s stacks and seconds, the
 
 test('SET3 the host: world.js imports the powers (registering them) and gives them its voice - the parry\'s ring for Unbroken, a fire cast for the Wrath, a magic cast for Eventide, through the cast sounds\' ID door; the running host\'s door names my entity (mutants: the powers never imported; a cast sound spent as a raw index; a thrown sound breaking the save)', () => {
   const w = strip(read('src/scenes/world.js'));
-  assert.match(w, /import \{ setSetPowersVoice, setHudChips, heldPlayerBlow, remarkPlayerBlow \} from '\.\.\/systems\/sigilSetPowers\.js';/);   // AUDIT SETS L3: and the held blow's two doors
+  assert.match(w, /import \{ setSetPowersVoice, setHudChips, heldPlayerBlow, remarkPlayerBlow \} from '\.\.\/systems\/sigil\/sigilSetPowers\.js';/);   // AUDIT SETS L3: and the held blow's two doors
   assert.match(w, /setSetPowersVoice\(\{ sound: \(name\) => \{\s*if \(name === 'unbroken'\) audio\.playOneShot\(SOUND\.Parry6, 1\);\s*else if \(name === 'wrath'\) audio\.playOneShotId\(SPELL_CAST_SOUND\[0\], 1\);\s*else if \(name === 'eventide'\) audio\.playOneShotId\(SPELL_CAST_SOUND\[4\], 1\);\s*else if \(name === 'mark'\) audio\.playOneShot\(SOUND\.DrawWeapon, 1\);\s*else if \(name === 'ward'\) audio\.playOneShot\(SOUND\.EquipMaceOrHammer, 1\);\s*else if \(name === 'shed'\) audio\.playOneShot\(SOUND\.SplashLarge, 1\);\s*else if \(name === 'gear'\) audio\.playOneShot\(SD_HALL_SOUNDS\.clunk, 1\);\s*else if \(name === 'hour'\) audio\.playOneShot\(SD_HALL_SOUNDS\.toll, 1\);\s*\} \}\);/);   // SERPENT-SET: Shed Skin's splash; SD9d: Gearward's clunk, The Hour Turns' toll (PIN MOVED); AUDIT SD IV (A3, PIN MOVED): by the records' index door
   assert.match(strip(read('src/scenes/hostMagic.js')), /player: \(\) => playerEntity,/);
   assert.match(strip(read('src/scenes/hostMagic.js')), /player: \(\) => playerEntity,\s*clear: \(a, b\) => burstClear\(collider, a, b\),/, 'AUDIT SET M4: the host\'s door answers the Nova\'s ray with its own collider');

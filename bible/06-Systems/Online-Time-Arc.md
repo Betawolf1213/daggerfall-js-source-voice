@@ -204,7 +204,7 @@ migration.
 | What | Where it reads today |
 |---|---|
 | The frame's sky: sun, moons, stars, light, colour | `world.js` and `exterior.js` `minuteNow` (`worldMinutes() % 1440`) |
-| The drawn sky's hour and moons, through the frame's `classicMinutes` carrier | `shared.js`' sky feed, `render/enhancedSky.js`, `systems/dynamicSkies.js`, `systems/dynamicSkiesRuntime.js`. The same feed's weather ease and cloud drift stay on the event clock (5.5): the feed takes two minutes where it takes one today |
+| The drawn sky's hour and moons, through the frame's `classicMinutes` carrier | `shared.js`' sky feed, `render/enhancedSky.js`, `systems/dynamicSkies/dynamicSkies.js`, `systems/dynamicSkies/dynamicSkiesRuntime.js`. The same feed's weather ease and cloud drift stay on the event clock (5.5): the feed takes two minutes where it takes one today |
 | Interior light and its night ambient | `interior.js`, `worldModes.js` (`isNight(worldMinutes() % 1440)`) |
 | The season's ground, the climate season, the herbs' and the writs' season | `world.js` and `exterior.js` (`refreshSeason`, `climateSeasonFromMinutes`, `seasonValue`); `net/nodeLaw.js dayDate` (with the account service, section 4) |
 | The air's month and hour for survival, the forager's month (the hunter's winter too, until HUNT-OUT removed the hunt, 2026-10-04) | `world.js`, `exterior.js`, `dungeonContext.js` (the air); `monthValue` into `foragingInstall.js` |
@@ -238,10 +238,10 @@ Nothing in this table changes. It is listed so the census has its other half.
 | Dropped torches burning | `scenes/droppedTorches.js` |
 | A respawn's due time, through the event clock's inverse | `dungeonContext.js` (`_wallNow`) |
 | The day a loot find is dated | `lootCodex.js` |
-| Bounty boards: the day's postings, a taken bounty's lapse | `systems/bountyBoard.js`, `scenes/bountyHost.js` |
+| Bounty boards: the day's postings, a taken bounty's lapse | `systems/bounty/bountyBoard.js`, `scenes/bountyHost.js` |
 | Rumours' lifetimes | `systems/rumorMill.js`, swept from `regionPower.js` |
 | Spawned dungeons' lifetimes, the shared interiors' loot day | `world/spawnedDungeons.js`, `world/interiorShared.js` |
-| The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gateLink.js`, `net/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigilBroker.js`, `server-account` |
+| The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gateLink.js`, `net/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigil/sigilBroker.js`, `server-account` |
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
 | The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |
 | The captain's day: a port's board and exchange, the Eltheric strands' regrowth, the legends' rise (CAPT-BOARD, ETHER-SEA, 2026-10-11) | `world.js` (the harbour office's and the Eltheric host's `day`), `scenes/harbourOffice.js`, `scenes/etherHost.js` |
@@ -320,7 +320,7 @@ by `ONLINE_MINUTES_PER_MS` today, which stays the event clock's rate, and would 
   forgiven; a raise is charged whole.
 - **A quest's hour and date reads use the sky:** `DailyFrom`, and any date a script tests. A `daily from`
   window comes round every 30 real minutes instead of every two hours.
-- **A party's shared quest.** QUEST1 copies an accepted quest to each member (`systems/questShare.js`), and
+- **A party's shared quest.** QUEST1 copies an accepted quest to each member (`systems/quest/questShare.js`), and
   that copy is the "cross-player-visible state" for which `restSession.js` still stands quest ticks down
   under an online rest. Recommended: each copy runs on its holder's clock, so a member's rest spends only
   their own copy's days. LIVED1 recommended the owner's clock instead; that needs the owner's deadline

@@ -388,7 +388,7 @@ test('B1: DeductGoldAmount - a LETTER OF CREDIT is legal tender (:1324-1354)', (
 });
 
 test('B1: the accounts and the loan SURVIVE a save (SerializablePlayer)', async () => {
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   const e = {
     name: 'Rin', stats: { strength: 50 }, skills: [], skillUses: [], items: [],
     spells: [], activeEffects: [], level: 5,

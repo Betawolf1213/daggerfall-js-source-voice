@@ -13,7 +13,7 @@
 // ui/enhancedInventory.js states at its own head. Every number this
 // screen shows or spends comes out of systems/tradeModes.js (cost,
 // haggle price, the Yes/No decision, sell proceeds, the local-list and
-// click gates), systems/itemTransfer.js (the capacity-checked Buy
+// click gates), systems/item/itemTransfer.js (the capacity-checked Buy
 // transfer), systems/repairService.js (the repair counter's own
 // clock) and systems/theft.js (the steal roll) - the SAME modules
 // nativeTrade.js reads, so the two skins cannot disagree about a
@@ -56,16 +56,16 @@ import {
   isBeingRepaired as itemIsBeingRepaired, isRepairFinished, collectRepaired,
   updateRepairTimes, repairCountdown, repairCountdownText,   // UXB1-K: when a job is ready
 } from '../systems/repairService.js';
-import { planTake, applyTransfer, clearLightSourceOnLeave, cannotCarryText, HOW_MANY_ITEMS, parseSplitAmount } from '../systems/itemTransfer.js';
-import { isKeptSpellbook, SPELLBOOK_KEPT_TEXT } from '../systems/itemTransfer.js';   // KEEP-SPELLBOOK: never sold
+import { planTake, applyTransfer, clearLightSourceOnLeave, cannotCarryText, HOW_MANY_ITEMS, parseSplitAmount } from '../systems/item/itemTransfer.js';
+import { isKeptSpellbook, SPELLBOOK_KEPT_TEXT } from '../systems/item/itemTransfer.js';   // KEEP-SPELLBOOK: never sold
 import { howManyField } from './howManyField.js';   // DISC25-F: the counter's how-many field, the pack's own
 import { isTextEntryTarget } from './input.js';
 import { isSummoned, carriedWeight, totalWeight, transferAll, addItem } from '../systems/inventory.js';   // AUDIT UXB1 F4: addItem, a returning lot's merge
-import { isFurnishing } from '../systems/decorFurnish.js';   // DECOR2b: furniture is delivered, never carried
-import { lockRefuses, lockedText } from '../systems/itemLock.js';   // LOCK1: a locked piece is not for sale
-import { isJunk } from '../systems/itemJunk.js';   // LOOT18: Sell junk
-import { isBound, boundText } from '../systems/itemBound.js';   // SS4: nor a bound one - a Sigil Stone, the Broker's wares
-import { getBool } from '../systems/settings.js';   // UXB1-K: InstantRepairs - no clock to count down
+import { isFurnishing } from '../systems/decor/decorFurnish.js';   // DECOR2b: furniture is delivered, never carried
+import { lockRefuses, lockedText } from '../systems/item/itemLock.js';   // LOCK1: a locked piece is not for sale
+import { isJunk } from '../systems/item/itemJunk.js';   // LOOT18: Sell junk
+import { isBound, boundText } from '../systems/item/itemBound.js';   // SS4: nor a bound one - a Sigil Stone, the Broker's wares
+import { getBool } from '../systems/settings/settings.js';   // UXB1-K: InstantRepairs - no clock to count down
 import { dateFromClassicMinutes, dateString } from '../systems/gameDate.js';
 import { ownTimeLeftText, ownTimeLeftShort } from '../systems/worldTick.js';   // UXB1-K: online, the ready time in the player's own terms (LIVED1: their own clock)
 import { shopliftAttempt } from '../systems/theft.js';
@@ -73,8 +73,8 @@ import { entityMaxEncumbrance } from '../combat/formulas.js';
 import { cannotRemoveItemText } from '../systems/createItem.js';
 import { questTransferRefused, TABS, tabAccepts } from './nativeInventory.js';
 import { initialTradeTab, stealSuccessText, stealFailureText } from './nativeTrade.js';
-import { expandGuildMacros } from '../systems/guildServiceActions.js';
-import { firstName } from '../systems/talkSession.js';   // MACRO-4: %pct's shop arm
+import { expandGuildMacros } from '../systems/guild/guildServiceActions.js';
+import { firstName } from '../systems/talk/talkSession.js';   // MACRO-4: %pct's shop arm
 import { t } from '../systems/textManager.js';   // L10N4: MENU-ORDER's own words in the player's language
 
 const el = (tag, cls, text) => {
@@ -256,7 +256,7 @@ function refuse(refusal) {
   render();
 }
 
-/** LOCK1, SS4: a piece this counter will not put up for SALE - locked, or bound (systems/itemBound.js), or the
+/** LOCK1, SS4: a piece this counter will not put up for SALE - locked, or bound (systems/item/itemBound.js), or the
  *  character's spellbook (KEEP-SPELLBOOK); a repair or an identify still takes any of them, because it comes back.
  *  AUDIT SS: one reading for the refusal, the quote and the count. */
 const saleRefused = (item) => selling() && (lockRefuses(item, 'sell') || isBound(item) || isKeptSpellbook(item));
@@ -268,13 +268,13 @@ function refuseTransfer(item) {
     render();
     return true;
   }
-  // SS4: a BOUND piece is not put up for sale either (systems/itemBound.js) - a repair or an identify still takes it
+  // SS4: a BOUND piece is not put up for sale either (systems/item/itemBound.js) - a repair or an identify still takes it
   if (selling() && isBound(item)) {
     box = { rows: [{ text: boundText(itemLine(item, deps.entity).name), center: true }], buttons: null };
     render();
     return true;
   }
-  // KEEP-SPELLBOOK: nor the spellbook (systems/itemTransfer.js isKeptSpellbook) - a repair or an identify still takes it
+  // KEEP-SPELLBOOK: nor the spellbook (systems/item/itemTransfer.js isKeptSpellbook) - a repair or an identify still takes it
   if (selling() && isKeptSpellbook(item)) {
     box = { rows: [{ text: SPELLBOOK_KEPT_TEXT, center: true }], buttons: null };
     render();
@@ -645,7 +645,7 @@ function quickSellSelected() {
 }
 
 /** LOOT18 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 10): THE JUNK THIS COUNTER WOULD TAKE NOW - every
- *  junk piece of the pack (systems/itemJunk.js) the Sell list shows on any tab (not worn, a piece this shop's counter
+ *  junk piece of the pack (systems/item/itemJunk.js) the Sell list shows on any tab (not worn, a piece this shop's counter
  *  accepts, not yet on it), whose sale is not refused (locked, bound) and that the counter's own click would stage (a
  *  summoned piece, a quest's, the click's own refusals - AUDIT LOOT II B3: the footer counted what the press then passed
  *  by, and a summoned robe left "Sell junk (1)" a button that did nothing). None outside a Sell. */

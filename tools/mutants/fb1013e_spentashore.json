@@ -1,7 +1,7 @@
 [
   {
     "name": "SPENT-ASHORE-foes-about-kill-again",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "  return { kind: 'spent', damage: spentDamage(entity), line: exhaustedFightingText(), textId: null, inWater: false };",
     "new": "  return { kind: 'death', textId: 1072, inWater: false };",
     "tests": ["test/fb1013e_spentashore.test.js"],
@@ -9,7 +9,7 @@
   },
   {
     "name": "SPENT-ASHORE-the-share-doubled",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "export const EXHAUSTED_SPENT_SHARE = 0.1;",
     "new": "export const EXHAUSTED_SPENT_SHARE = 0.2;",
     "tests": ["test/fb1013e_spentashore.test.js"],
@@ -17,7 +17,7 @@
   },
   {
     "name": "SPENT-ASHORE-the-whole-pool",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "  return { kind: 'spent', damage: spentDamage(entity),",
     "new": "  return { kind: 'spent', damage: Math.max(1, entity?.health ?? 0),",
     "tests": ["test/fb1013e_spentashore.test.js"],
@@ -25,7 +25,7 @@
   },
   {
     "name": "SPENT-ASHORE-the-line-dropped",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "line: exhaustedFightingText(), textId: null, inWater: false };",
     "new": "line: '', textId: null, inWater: false };",
     "tests": ["test/fb1013e_spentashore.test.js"],
@@ -33,7 +33,7 @@
   },
   {
     "name": "SPENT-ASHORE-the-line-in-english-whatever-the-language",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "export const exhaustedFightingText = () => t('rest.exhausted.fighting', EXHAUSTED_FIGHTING_LINE);",
     "new": "export const exhaustedFightingText = () => EXHAUSTED_FIGHTING_LINE;",
     "tests": ["test/fb1013e_spentashore.test.js"],
@@ -41,7 +41,7 @@
   },
   {
     "name": "SPENT-ASHORE-no-rest-hour-left",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "  if (!enemiesNearby && !swimming) {",
     "new": "  if (false) {",
     "tests": ["test/fb1013e_spentashore.test.js"],

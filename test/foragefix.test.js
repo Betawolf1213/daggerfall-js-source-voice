@@ -11,8 +11,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { applyForageFix, FT } from '../src/systems/foragingLaw.js';
-import { createForagingItem } from '../src/systems/foragingInstall.js';
+import { applyForageFix, FT } from '../src/systems/foraging/foragingLaw.js';
+import { createForagingItem } from '../src/systems/foraging/foragingInstall.js';
 import { questActionsExtensionTemplates } from '../src/systems/quest/questActionsExtension.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';

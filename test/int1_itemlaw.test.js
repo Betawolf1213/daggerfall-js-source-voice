@@ -10,15 +10,15 @@ import { honestItems, honestItemsSkipped } from './honestItems.mjs';
 import {
   itemFindings, lawfulItem, itemWorth, worthCeiling, templateGroups, lawTemplate, classicPiece, CUSTOM_TEMPLATE_GROUPS, ITEM_LAW_VERSION,
   REGULAR_MAGIC_TYPES, ARTIFACT_RECORDS,
-} from '../src/systems/itemLaw.js';
-import { validLootItem, validLootList, createArtifact, ITEM_GROUP_NAME_BY_CLASS, setItemLaw } from '../src/systems/loot.js';   // HACKED-GOLD: setItemLaw, to project the sweep without the price ceiling
+} from '../src/systems/item/itemLaw.js';
+import { validLootItem, validLootList, createArtifact, ITEM_GROUP_NAME_BY_CLASS, setItemLaw } from '../src/systems/loot/loot.js';   // HACKED-GOLD: setItemLaw, to project the sweep without the price ceiling
 import { BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';   // HACKED-GOLD: a boat's records, whose value is no price
-import { AFFIX_RANGES, legendaryById, isCursed } from '../src/systems/lootRarity.js';
-import { liftCurse } from '../src/systems/lootCurse.js';
+import { AFFIX_RANGES, legendaryById, isCursed } from '../src/systems/loot/lootRarity.js';
+import { liftCurse } from '../src/systems/loot/lootCurse.js';
 import { ENCHANTMENT_TYPES as T, readMagicDef } from '../src/formats/magicDef.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { seededRng } from '../src/systems/wind.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';
 import { POISON_START_VALUE, POISONS } from '../src/systems/poisons.js';
 import { enchantmentSettings } from '../src/systems/enchantmentCatalogue.js';
 import { DFU_MAGIC_ITEMS } from './dfuMagicItems.mjs';
@@ -241,8 +241,8 @@ function dfuMagicDef() {
 }
 
 test('AUDIT WAGON-PRICE Y4: a marked wagon counts to the wealth measure at its own price - the Open Wagon 9000, the Caravan 25000 (its ceiling stood at 12,200, under it), one bought before the rise at what it cost, a forged price no further than its kind\'s ceiling, DFU\'s cart as it was; the measure\'s version moved with it (mutants: the kind\'s price unread)', async () => {
-  const { newWagonItem, WAGON_KINDS } = await import('../src/systems/wagonKinds.js');
-  const { setItemFields, mintCondition } = await import('../src/systems/itemTemplates.js');
+  const { newWagonItem, WAGON_KINDS } = await import('../src/systems/wagon/wagonKinds.js');
+  const { setItemFields, mintCondition } = await import('../src/systems/item/itemTemplates.js');
   const { WEALTH_VERSION } = await import('../server-account/src/judge.js');
   const mint = (k) => mintCondition(setItemFields(newWagonItem(k)));
   for (const k of ['openWagon', 'caravan']) {
@@ -261,7 +261,7 @@ test('AUDIT WAGON-PRICE Y4: a marked wagon counts to the wealth measure at its o
 });
 
 // HACKED-GOLD PRICE-CAP (bible/01-Overview/Field-Bugs-2026-10-12f.md; the session: "I dont wanna mess with honest
-// players"): THE CAP NEVER TOUCHES AN HONEST PRICE. systems/loot.js lawPriced holds a peer's price under this law's
+// players"): THE CAP NEVER TOUCHES AN HONEST PRICE. systems/loot/loot.js lawPriced holds a peer's price under this law's
 // worthCeiling on every door the wire's projection guards - a room's container, a body, a shop's shelf, a trade, the
 // market's and the post's deliveries - so a ceiling an honest piece passed would take value from an honest player.
 // Every piece the sweep holds is projected twice: with the ceiling registered (as the game registers it) and with the

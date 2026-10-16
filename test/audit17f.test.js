@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import { setPref } from '../src/systems/uiPrefs.js';
 import assert from 'node:assert/strict';
-import { inventoryItemImage, templateByIndex } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { paperdollItemImage } from '../src/ui/paperDoll.js';
 import {
   armorArchive as armorArchiveByMorphology, BODY_MORPHOLOGY, clampArmorVariant, ARMOR_MATERIAL,
@@ -14,7 +14,7 @@ import { assignStartingGear, STARTING_GOLD } from '../src/systems/startingGear.j
 import { isWalletItem } from '../src/systems/walletItem.js';   // WALLET1: the port's own tail's wallet, set aside from DFU's bag
 import { GOLD_TEMPLATE, goldStack, itemWeight } from '../src/systems/inventory.js';
 import { addGold } from '../src/systems/court.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createChargenWindow, finishChargen } from '../src/systems/chargenSession.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { startingSpells, STARTING_SPELL_SETS } from '../src/systems/chargen.js';

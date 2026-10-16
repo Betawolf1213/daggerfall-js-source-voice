@@ -16,9 +16,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import * as CX from '../src/systems/lootCodex.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import * as CX from '../src/systems/loot/lootCodex.js';
 import {
   GILDED, GILDED_WORTH, GILDED_RECORDS, HOURLOCK, DRAGONFIRE_OATH, SUNKEN_SOVEREIGN, DRAGONFIRE, UNDERTOW,
   GATE_GILDED_CHANCE, SERPENT_GILDED_CHANCE, gildedById, mintGilded, mintHourlock, rollDragonfireOath, rollSunkenSovereign,
@@ -27,19 +27,19 @@ import {
 import { createThunderlock } from '../src/systems/thunderlock.js';
 import { WEAPON_MATERIALS, WEAPONS } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { itemBaseValue } from '../src/systems/itemTemplates.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
-import { BRIEF_MAX, setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+import { itemBaseValue } from '../src/systems/item/itemTemplates.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
+import { BRIEF_MAX, setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { equipItem } from '../src/systems/equip.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { rollSpoils } from '../src/systems/gateSpoils.js';
-import { rollSerpentSpoils } from '../src/systems/serpentSpoils.js';
+import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
+import { rollSerpentSpoils } from '../src/systems/serpent/serpentSpoils.js';
 import { spoilsList } from '../src/scenes/spoilsPool.js';   // AUDIT WORLD-REWARDS A1: the floor's pictures
-import { RANDOM_TREASURE_ICONS } from '../src/systems/loot.js';
-import { seededRng } from '../src/systems/wind.js';
+import { RANDOM_TREASURE_ICONS } from '../src/systems/loot/loot.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { SPOILS_GLOW_MAX } from '../src/render/spoilsGlow.js';
 import { salvageRefusal, reforgeRefusal } from '../src/systems/reforge.js';
 import { itemMakerRefuses } from '../src/systems/enchanting.js';
@@ -151,11 +151,11 @@ test('GILDED2 THE GATE\'S AND THE SERPENT\'S: the Oath the Warden\'s spoils\' LA
   assert.ok(oath > 0 && Math.abs(oath / N - GATE_GILDED_CHANCE) < 0.006, `the Oath ${oath} of ${N}`);
   assert.ok(sov > 0 && Math.abs(sov / N - SERPENT_GILDED_CHANCE) < 0.006, `the Sovereign ${sov} of ${N}`);
   // the very last draw of each - after the technique pass, so every spoils before it is what it was for its seed
-  assert.match(strip(read('src/systems/gateSpoils.js')), /techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const oath = rollDragonfireOath\(rolls\);\s*if \(oath\) pieces\.push\(\{ item: oath, tier: oath\.rarity \}\);\s*return \{ gold, pieces, sigil: sigilStone\(\), card, gems \};/);
-  for (const [f, fn] of [['src/systems/gateSpoils.js', 'rollDragonfireOath'], ['src/systems/serpentSpoils.js', 'rollSunkenSovereign']]) {
+  assert.match(strip(read('src/systems/gate/gateSpoils.js')), /techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const oath = rollDragonfireOath\(rolls\);\s*if \(oath\) pieces\.push\(\{ item: oath, tier: oath\.rarity \}\);\s*return \{ gold, pieces, sigil: sigilStone\(\), card, gems \};/);
+  for (const [f, fn] of [['src/systems/gate/gateSpoils.js', 'rollDragonfireOath'], ['src/systems/serpent/serpentSpoils.js', 'rollSunkenSovereign']]) {
     assert.equal(strip(read(f)).split(`${fn}(`).length - 1, 1, `${f}: ONE draw of it, and only there`);
   }
-  assert.match(strip(read('src/systems/serpentSpoils.js')), /techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const sovereign = dealt \? rollSunkenSovereign\(rolls\) : null;\s*if \(sovereign\) pieces\.push\(\{ item: sovereign, tier: sovereign\.rarity \}\);\s*return \{ gold, pieces, embers: serpentEmbers\(\), card, gems \};/);
+  assert.match(strip(read('src/systems/serpent/serpentSpoils.js')), /techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const sovereign = dealt \? rollSunkenSovereign\(rolls\) : null;\s*if \(sovereign\) pieces\.push\(\{ item: sovereign, tier: sovereign\.rarity \}\);\s*return \{ gold, pieces, embers: serpentEmbers\(\), card, gems \};/);
 });
 
 test('GILDED2 THE FLOOR (AUDIT WORLD-REWARDS A1): in a spoils the Oath came in, every other picture is the one the seed gave it - the pieces\', the ember\'s, the gold\'s, the card\'s and the gems\' - and the Oath\'s is drawn LAST; the Oath still leaves among the pieces, inside the glow\'s eight (mutants: the Oath\'s picture in its place)', () => {

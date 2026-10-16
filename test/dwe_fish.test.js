@@ -308,9 +308,9 @@ test('DW-E3: the pulse - a dozen destroys and the queued spawns every frame; the
 
 // ── the fish as items, their pictures, and the host ─────────────────
 import { readFileSync } from 'node:fs';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { preloadTextureRecord, decodedTextureTopDown, setTextureDeriveContext, isVendorArchive } from '../src/systems/textureReplacement.js';
-import { DEEP_WATERS_FISH_TEMPLATES, createFishItem, normalizeFishItems, installDeepWatersFishIcons, fishIconArchive, FISH_GROUP } from '../src/systems/deepWatersFishItems.js';
+import { DEEP_WATERS_FISH_TEMPLATES, createFishItem, normalizeFishItems, installDeepWatersFishIcons, fishIconArchive, FISH_GROUP } from '../src/systems/deepWater/deepWatersFishItems.js';
 import { createDeepWatersFish, createFishPictures, fishBoxDepth, FISH_CUTOFF } from '../src/scenes/deepWatersFish.js';
 import { rayUprightCapsule } from '../src/world/passiveFish.js';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -80,7 +80,7 @@ import { createStitchAct } from '../systems/stitchAct.js';
 import { createChiselAct } from '../systems/chiselAct.js';   // PROF11
 import { createPanAct } from '../systems/panAct.js';   // PROF9
 import { createFacetAct } from '../systems/facetAct.js';   // PROF10
-import { templateByIndex } from '../systems/itemTemplates.js';   // PROF10: a piece's DFU template - its enchantment points
+import { templateByIndex } from '../systems/item/itemTemplates.js';   // PROF10: a piece's DFU template - its enchantment points
 import { DYE_NAMES } from '../characters/dyes.js';
 import { isTextEntryTarget, isDomControlTarget } from './input.js';   // AUDIT 30 A9: a field's keys and a button's are their own
 import { createHeatAct } from '../systems/heatAct.js';
@@ -96,7 +96,7 @@ import { t, localizedText, formatMessage, formatNumber } from '../systems/textMa
 /**
  * @typedef {object} ProfPagesProvider
  * @property {any} book                                   net/profBook.js - the character's professions
- * @property {(key: string) => string} name               a material's name (systems/profItems.js materialLabel)
+ * @property {(key: string) => string} name               a material's name (systems/professions/profItems.js materialLabel)
  * @property {(key: string, wake: () => void) => ({ src: string, w: number, h: number }|null)} [picture]   MENU-ORDER: a material's picture (ui/menuPicture.js), null while made
  * @property {(key: string, qty: number) => Promise<{ ok: boolean, text: string }>} withdraw   out of the Stores, into the pack
  * @property {() => ({ kind: 'shop'|'home', fee: number }|null)} [forge]   PROF2: the forge the player stands at, or null

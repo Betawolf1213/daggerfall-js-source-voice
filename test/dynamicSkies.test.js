@@ -26,8 +26,8 @@ import {
   rotateWorldPosition, orbitPosition, rotateArbitraryAxis, moonDirection,
   worldTimeSeconds, sunLightDirection, sunCurveTime, sunLightColor, mathfSmoothStep, fogColorNow, FOG_COLOR_INTERVAL_SECONDS,
   LightningFlash, pixelSnowSettings,
-} from '../src/systems/dynamicSkies.js';
-import { DynamicSkies } from '../src/systems/dynamicSkiesRuntime.js';
+} from '../src/systems/dynamicSkies/dynamicSkies.js';
+import { DynamicSkies } from '../src/systems/dynamicSkies/dynamicSkiesRuntime.js';
 import { FS, COLOR_PROPERTIES, FLOAT_PROPERTIES, UNIFORM_NAMES } from '../src/render/dynamicSkiesRenderer.js';
 import { BAYER_MEAN } from '../src/render/orderedDither.js';   // PS3: the zero-mean Bayer offset (retroPixel.js until FT3)
 import { LUNAR_PHASES, lunarPhase, dateFromClassicMinutes, MINUTES_PER_DAY } from '../src/systems/gameDate.js';
@@ -100,7 +100,7 @@ test('DS1 vendor: every texture a shipped preset names is vendored, with an impo
     assert.equal(imp.filter, 'point', `${f} keeps the mod's Point - DS3 moved the star fields and nothing else`);
   }
   // and the departure is written down where the table is, not only in the Ledger
-  assert.match(read('src/systems/dynamicSkies.js'), /DS3 \(2026-09-15, Mac: "the nighttime sky has these dark spots/, 'the table says why it departs');
+  assert.match(read('src/systems/dynamicSkies/dynamicSkies.js'), /DS3 \(2026-09-15, Mac: "the nighttime sky has these dark spots/, 'the table says why it departs');
   // the shader sources are beside the port for reading
   assert.match(read(`${V}/Shaders/BLBProceduralSkybox.shader`), /^﻿?Shader "BLB\/SkyBox\/BLBProceduralSkybox"/);
   assert.ok(existsSync(join(root, V, 'Shaders/Includes/MoonFunctions.cginc')));
@@ -847,7 +847,7 @@ test('MODS AUDIT: the mod\u2019s skybox pass takes NO host fog (LateUpdate :320-
 });
 
 test('MODS AUDIT: SunSizeConvergence is an int on the struct; the frame clamp is Time.maximumDeltaTime; Init runs ChangeLunarPhases when it has a clock', async () => {
-  const { MAX_DELTA_SECONDS } = await import('../src/systems/dynamicSkies.js');
+  const { MAX_DELTA_SECONDS } = await import('../src/systems/dynamicSkies/dynamicSkies.js');
   const s = parseSkyboxSetting(JSON.stringify({ SunSizeConvergence: 7.9 }));
   assert.equal(s.SunSizeConvergence, 7, '`public int SunSizeConvergence` - JsonUtility truncates at the parse, not at SetInt');
   assert.equal(MAX_DELTA_SECONDS, 1 / 3, 'Unity\u2019s default maximumDeltaTime');

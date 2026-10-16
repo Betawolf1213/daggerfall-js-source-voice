@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
-import { generateRandomLoot, LOOT_MATRICES, validLootList } from '../src/systems/loot.js';
-import { seededRng } from '../src/systems/wind.js';
+import { generateRandomLoot, LOOT_MATRICES, validLootList } from '../src/systems/loot/loot.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { goodRefusal, goodFamily, GOOD_GROUP_FAMILIES, GOODS_FAMILIES, MARKET_SHOWN } from '../src/net/marketLaw.js';
 test('Goods family filtering precedes bounded selection across 501 valid listings', async () => {
   const realNow = Date.now;

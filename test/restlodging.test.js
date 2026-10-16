@@ -11,7 +11,7 @@ import {
   restDecision, REST_TEXT, RestSession, EXPIRED_RENTED_ROOM, interiorRestPlace,
   cannotLoiterLines, loiterLimitHours, BUILDING_TAVERN, BUILDING_SHIP,
   CANNOT_REST_MORE_THAN_99_HOURS_ID, PROMPT_MAX_CHARS, PROMPT_INITIAL,
-} from '../src/systems/restSession.js';
+} from '../src/systems/rest/restSession.js';
 import {
   RestWindow, preloadRestArt, restArtLoaded, restButtonAt, restStopHit, restPanelX,
   REST_RECTS, REST_COUNTER_RECT, REST_COUNTER_TEXT_RECT, REST_STOP_RECT,
@@ -23,10 +23,10 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { isPlayerInTown, TOWN_LOCATION_TYPES } from '../src/systems/nearbyObjects.js';
 import { interiorSceneName } from '../src/systems/sceneCache.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { maxFatigue } from '../src/systems/statMods.js';
-import { RAPID_HEALING, healthRecoveryRate, fatigueRecoveryRate } from '../src/systems/rest.js';
-import { REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/restSession.js';
+import { RAPID_HEALING, healthRecoveryRate, fatigueRecoveryRate } from '../src/systems/rest/rest.js';
+import { REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR } from '../src/systems/rest/restSession.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { startRestGroundedCheck, CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { areEnemiesNearby } from '../src/systems/encounters.js';
@@ -466,7 +466,7 @@ test('S40 restVitals: one home for the rested hour, and the dungeon host uses it
   // that hardcoded the flags inside restVitals, or dropped them from
   // createRestDeps' tickVitals, passed. RapidHealing InLight is the
   // ONE place they differ: +100 instead of +60, and only by daylight
-  // OUTDOORS. (systems/rest.js:"export function healthRecoveryRate".)
+  // OUTDOORS. (systems/rest/rest.js:"export function healthRecoveryRate".)
   const lit = (over) => ({
     isPlayer: true, level: 5, health: 0, maxHealth: 50, magicka: 40, maxMagicka: 40,
     fatigue: 0, stats: { strength: 50, endurance: 50, willpower: 50 }, skills: 30,
@@ -667,7 +667,7 @@ test('S40: the tavern sells a bed that is now READ', () => {
   assert.doesNotMatch(t, /read by nobody/);
   // The bed the rental mints and the bed CanRest hands back are the
   // same index into the same marker list.
-  assert.match(src('src/systems/restSession.js'), /room\.allocatedBedIndex/);
+  assert.match(src('src/systems/rest/restSession.js'), /room\.allocatedBedIndex/);
 });
 
 

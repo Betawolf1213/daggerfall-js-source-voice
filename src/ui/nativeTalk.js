@@ -59,7 +59,7 @@ import { CifRciFile } from '../formats/cifRciFile.js';
 import { bitmapToColor32, toScreenOrder } from '../formats/color32Order.js';   // DFMOD1: toScreenOrder - a mod picture is top-down, a screen quad's own order
 import { drawScreenDimBackdrop, DOUBLE_CLICK_DELAY_MS } from './chargenArt.js';
 import { wrapText } from './talkWindow.js';
-import { getBool } from '../systems/settings.js';   // UI6: EnableModernConversationStyleInTalkWindow
+import { getBool } from '../systems/settings/settings.js';   // UI6: EnableModernConversationStyleInTalkWindow
 import { measureText } from './text.js';
 import { sliderThumb } from './horizontalSlider.js';   // ROAD-G G6: HorizontalSlider.cs' one home
 import { audio } from '../systems/audio.js';

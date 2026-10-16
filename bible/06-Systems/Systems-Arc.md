@@ -7,7 +7,7 @@ readers/world/entity layers everything here needs are COMPLETE.
 
 ## S1 (items/loot foundation): SHIPPED
 
-src/systems/loot.js ports LootTables.cs + the ItemBuilder
+src/systems/loot/loot.js ports LootTables.cs + the ItemBuilder
 CreateRandom* pick rules verbatim:
 - The 21-key LootChanceMatrix table exact (incl the source's
   Chronicles-vs-FALL.EXE notes: B is plants in the EXE; tables I+ are
@@ -329,7 +329,7 @@ for the floor.
 ## S11 (save/load - the player snapshot): SHIPPED
 
 DFU's own save system is a JSON serialization of live state - the
-faithful port shape. systems/save.js: snapshotPlayer captures the
+faithful port shape. systems/save/save.js: snapshotPlayer captures the
 entity (fields, stats, skills + uses, career data, items, known
 spells BY INDEX re-resolved against SPELLS.STD on load, active
 effects) plus the scene extras (position, the classic clock, the
@@ -768,7 +768,7 @@ The fatigue consumers - the S15/S18/S19 drains now have
 consequences. Verbatim from FormulaHelper's rest rates +
 DaggerfallEntity.SetFatigue + PlayerEntity's OnExhausted handler:
 
-- **The rates** (src/systems/rest.js, per hour of rest): health =
+- **The rates** (src/systems/rest/rest.js, per hour of rest): health =
   max(floor(HealingRateModifier(liveEND) + (liveMedical + add) x
   maxHealth / 1000), 1) with add 60 -> 100 for RapidHealing Always /
   InLight (day AND outside) / InDarkness (otherwise);
@@ -875,7 +875,7 @@ building carries its type/quality/name through the pool merge). This
 slice is the NODE-PURE foundation; the interior shelf mount + the
 buy/sell windows are E2.
 
-- ITEM TEMPLATES (systems/itemTemplates.js over the GENERATED
+- ITEM TEMPLATES (systems/item/itemTemplates.js over the GENERATED
   itemTemplatesData.js): DFU's ItemTemplates.txt baked whole - 288
   rows of [index, name, basePrice, rarity, weight, hitPoints] - plus
   the per-ItemGroup template-index arrays extracted from the C# item
@@ -1143,7 +1143,7 @@ it pushed {id, amount} onto the entity and moved on. `court.js` ran
 the legal half of a crime and left DFU's halved People-faction delta
 as a comment. Both drain here.
 
-**The store** (systems/factionRep.js, PersistentFactionData.cs's
+**The store** (systems/faction/factionRep.js, PersistentFactionData.cs's
 reputation/flag/power half): the player's live clone of FACTION.TXT.
 get/set/change, the flags, power, and ZeroAllReputations.
 
@@ -1538,7 +1538,7 @@ counters, one in `scenes/shared.js`'s ticker and one in
 
 ## U23 (systems half) - StaticNPCClick and the guild popup's law
 
-`src/systems/guildServiceFlow.js`, from
+`src/systems/guild/guildServiceFlow.js`, from
 `DaggerfallGuildServicePopupWindow.cs` and the routing block of
 `PlayerActivate.StaticNPCClick`. `test/guildserviceflow.test.js`, 15
 tests. The window half is recorded in the UI arc.
@@ -1593,7 +1593,7 @@ FACTION.TXT rather than pretending the reputation is zero.
 ## S29 - HOLIDAYS, and U24's law half
 
 `src/systems/holidays.js` from FormulaHelper.GetHolidayId (:1819-1852)
-and DFLocation.Holidays; `src/systems/guildServiceActions.js` from the
+and DFLocation.Holidays; `src/systems/guild/guildServiceActions.js` from the
 three guild-service window classes. `test/holidays.test.js` (6) and
 `test/guildserviceactions.test.js` (16).
 
@@ -1730,7 +1730,7 @@ shows.
 ## S31 - FAST TRAVEL: the Iliac opens up
 
 2026-08-20. The F-slice. The world host could stream the whole bay
-but the only way across it was walking. systems/travel.js now
+but the only way across it was walking. systems/travel/travel.js now
 carries TravelTimeCalculator.cs verbatim: the classic longest-axis
 stepper (the increment compares with >, kept exactly), per-pixel
 climate through CLIMATE_INDICES and the terrain movement modifiers,
@@ -1780,7 +1780,7 @@ history. `ui/travelMap.js` is DELETED and the keyed typeahead with
 it: the classic art window ships in `ui/travelMapWindow.js` +
 `ui/travelPopUp.js` (UI-Arc's U41), so the region-map click surface,
 the location dots, the find box and the popup's own art are all
-real. The LAW half of this slice is untouched - `systems/travel.js`
+real. The LAW half of this slice is untouched - `systems/travel/travel.js`
 still owns the calculator, the cost and the clamps, and world.js's
 arrival is still performFastTravel's order. What moved is who calls
 it: the popup hands the host the same `(pick, opts, computed)` the
@@ -2572,7 +2572,7 @@ is structural rather than written.
 
 ## S40 - A BED YOU CAN SLEEP IN (2026-08-25)
 
-`src/systems/restSession.js` (CanRest, `restOpenGate`,
+`src/systems/rest/restSession.js` (CanRest, `restOpenGate`,
 `interiorRestPlace`, CheckRent, the illegal-rest confirm) +
 `src/ui/restWindow.js` (the gate on the buttons that own it, MoveToBed,
 the IsResting lifecycle) + `src/scenes/shared.js`
@@ -2581,7 +2581,7 @@ home) + `src/formats/mapsFile.js` (`isTownLocationType`) +
 `src/systems/encounters.js` (`areEnemiesNearby`) + `src/player/motor.js`
 (`startRestGroundedCheck`) + `src/systems/worldTick.js` (the
 `!isResting` fatigue gate) + `src/scenes/townTalk.js` (`closeOverlay`)
-+ `src/systems/settings.js` (IllegalRestWarning goes live) +
++ `src/systems/settings/settings.js` (IllegalRestWarning goes live) +
 `src/systems/tavern.js` (a flag retired) + all four hosts.
 `test/restlodging.test.js` (new, 51).
 
@@ -3072,9 +3072,9 @@ minted) has been driven only in node.
 `src/systems/worldTick.js` (`runDayChange`, and the call from
 `tickPlayerMinutes` that gives it to all four hosts) +
 `src/systems/shopStock.js` (`updateRegionalPrices`, `REGION_COUNT`,
-the two clamp bounds, a flag retired) + `src/systems/weatherSim.js`
+the two clamp bounds, a flag retired) + `src/systems/weather/weatherSim.js`
 (`rollClimateWeathersForDay`, `tickWeather` rebuilt as the drain,
-`_lastDay` deleted) + `src/systems/save.js` (the restore stamp moved
+`_lastDay` deleted) + `src/systems/save/save.js` (the restore stamp moved
 into `restoreWeather`, and `lastGameMinutes` re-anchored) +
 `src/scenes/world.js` + `src/scenes/exterior.js` (comments only - the
 mechanism under them changed). `test/daychange.test.js` (new, 19);
@@ -3454,12 +3454,12 @@ it names both consumers rather than one.
 
 ## S42 - THE REGION CONDITION STORE (2026-08-25)
 
-`src/systems/regionConditions.js` (new: the flags enum, the group map,
+`src/systems/region/regionConditions.js` (new: the flags enum, the group map,
 both duration tables, `turnOnConditionFlag` / `turnOffConditionFlag`,
 `resetWarDataForRegion`, the store and its save halves) +
 `src/systems/shopStock.js` (S41's flagged half ships; `REGION_COUNT`
 moves to its one home) + `src/systems/worldTick.js` (the store rides
-the day block) + `src/systems/save.js` (the envelope).
+the day block) + `src/systems/save/save.js` (the envelope).
 `test/regionconditions.test.js` (new, 13).
 
 **A store two shipped writers were already waiting on.** S41 ported
@@ -3535,7 +3535,7 @@ same reason: they call the member this slice does not port.
 
 ## S43 - THE FACTION POWERS START MOVING (2026-08-25)
 
-`src/systems/regionPower.js` (new: `isFactionValidForRumorMill`,
+`src/systems/region/regionPower.js` (new: `isFactionValidForRumorMill`,
 `factionPowerStep`, `regionPowerUpdate`) + `src/systems/worldTick.js`
 (the 7-day and 38-day arms of the entity update's minute loop) +
 `src/scenes/world.js` (the rumour mill parked on the entity).
@@ -3611,7 +3611,7 @@ rides the same two arms and is unported with it, as is
 
 ## S44 - THE FACTION RELATION MUTATORS (2026-08-25)
 
-`src/systems/factionRelations.js` (new: the border table, the four
+`src/systems/faction/factionRelations.js` (new: the border table, the four
 relation questions, the four mutators, the war predicate, the two ruler
 members) + `src/scenes/world.js` (a stub retired).
 `test/factionrelations.test.js` (new, 14).
@@ -4525,7 +4525,7 @@ recorded rather than wired: those windows have no crime path yet.
 Three things the port's own shape forced, each pinned:
 
 - **`?? 0` is load-bearing, not defensive noise.** The port mints
-  player entities lazily - `systems/save.js` reads every persistent
+  player entities lazily - `systems/save/save.js` reads every persistent
   field with its own `?? 0` - so a fresh character reaches the tally
   with these UNDEFINED where PlayerEntity.cs:90-93 declares them zero.
   DFU's gate ported literally as `=== 0` reads false against undefined
@@ -5589,7 +5589,7 @@ seams, each passing every pin around it:
 
 ### RF6 - THE ENHANCED SKIN READS THE ONE NAME RESOLVER (2026-09-14, Mac's refactor pass, the sixth)
 
-`src/systems/itemInfo.js` itemNameParts answers ResolveItemLongName's
+`src/systems/item/itemInfo.js` itemNameParts answers ResolveItemLongName's
 two parts - the material prefix and the rest - in DFU's arm order,
 once; itemLongName is their join. The enhanced inventory's line, the
 loot plaque, the wear notices and the HUD's held-weapon plaque read it
@@ -5601,13 +5601,13 @@ signoff). The record is the UI arc's: `bible/10-UI/UI-Arc.md` RF6.
 ### RF5 - THE ITEM FIELD SCHEMA (2026-09-14, Mac's refactor pass, the fifth)
 
 An item record is an open shape and the knowledge of what each field
-IS lived only in its readers: the wire's validator (`src/systems/loot.js`
+IS lived only in its readers: the wire's validator (`src/systems/loot/loot.js`
 validLootItem) typed a record as "primitives, arrays and plain objects,
 bounded" and carried the exceptions by hand - the three array fields of
 AUDIT WORLD4 B1, LR4's affix check, the templateIndex bounds - so every
 field the port departs from DFU with (LR1's `rarity`, `affixes`,
 `legendary`) was another hand line there, or none and the next frozen
-tab. `src/systems/itemFields.js` now declares every field once - kind
+tab. `src/systems/item/itemFields.js` now declares every field once - kind
 (int with bounds, number, bool, bounded string, enum, array with an
 element check, object with a record check) - for DFU's own fields
 (the factories', the classic importer's, equip's slot, the repair
@@ -6032,7 +6032,7 @@ FightersGuild / Temple(Arkay) / KnightlyOrder(Horn) instance and
 
 The port's slot carries the guild's NAME instead, because the key is the
 GROUP and one HolyOrder slot has to remember WHICH temple
-(`systems/guilds.js` `membershipKey` / `membershipOf`). `joinGuild`
+(`systems/guild/guilds.js` `membershipKey` / `membershipOf`). `joinGuild`
 writes the port's guild-record name; `classicGuildMemberships` wrote the
 FACTION.TXT record name - "The Fighters Guild", "Arkay", "The Host of
 the Horn" - and the two vocabularies are disjoint. Every name-keyed
@@ -6092,7 +6092,7 @@ load-bearing: `ExteriorAutomap.cs:672-680`'s `!IsResidence ||
 isOverrideName` is the only thing that puts a plate on a residence, and
 the port's plate builder already implements it - it had no writer.
 
-Then the reveal itself, `systems/guildHallReveal.js`, over the FULL
+Then the reveal itself, `systems/guild/guildHallReveal.js`, over the FULL
 building set (`world/buildingSummaries.js`, which carries `factionId` and
 `buildingKey` per row - the talk directory is doors, the wrong pool), with
 the guild name READ rather than restated: `GetGuildName -> GetAffiliation`
@@ -6130,7 +6130,7 @@ all four reads are live: `:1993` (selling) and `:1999` (buying) take
 `player.Stats.LivePersonality` beside `GetLiveSkillValue(Mercantile)`.
 The port passed the live Mercantile and the permanent Personality - two
 halves of one formula at two different layers - at all seven call sites:
-the temple's cure quote (`systems/guildServiceActions.js`) and the six in
+the temple's cure quote (`systems/guild/guildServiceActions.js`) and the six in
 `scenes/worldModes.js` (the native trade window, the keyed shelf's buy and
 sell, the static-NPC service, the spellbook's buy mode, and repair).
 `systems/tavern.js` and `systems/tradeModes.js` take the object from their
@@ -6189,7 +6189,7 @@ AUDIT 26 F048 forced on the townsperson arm - before the flag is set
 and `Pickpocket(mobileEnemyBehaviour)` runs.
 
 `Pickpocket` is ONE method in DFU with an optional target (`:1611-1673`),
-so `systems/talk.js`'s `pickpocketTownsperson` became that one law,
+so `systems/talk/talk.js`'s `pickpocketTownsperson` became that one law,
 `pickpocket(player, { target })`. Exactly two things turn on the target:
 the chance takes the enemy's level, and the crime/guard pair is skipped
 (`:1655` gates it on `target == null`). Everything else - the tally
@@ -7159,7 +7159,7 @@ wagon. The port also ports the other orphan source the sweep exists
 for, `machine.js`'s "failed to load quest data - skip" arm.
 
 `removeOrphanedItems` / `removeAllOrphanedItems` live in
-`systems/save.js` and run inside `restoreSessionState`, the ONE
+`systems/save/save.js` and run inside `restoreSessionState`, the ONE
 composer both save hosts call. THE PLACE IS THE POINT. `restorePlayer`
 runs BEFORE that composer at both seams, so a sweep there would ask
 the OUTGOING session's quest machine - or, on a boot load, an empty
@@ -7231,7 +7231,7 @@ template-backed mint in DFU gets a `shortName` at construction -
 item whose TEMPLATE did not resolve.
 
 The port's `name` is not that. It is an OPTIONAL override:
-`resolveItemName` (`systems/itemInfo.js`) reads
+`resolveItemName` (`systems/item/itemInfo.js`) reads
 `templateByIndex(item.templateIndex)?.name` and the item's own `name`
 only refines it, and `loot.js`'s `named()` adds one on the
 `generateItems` path alone. Three ordinary production factories mint

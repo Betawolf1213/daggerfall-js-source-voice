@@ -119,7 +119,7 @@
 // per-pixel during the paint.
 
 import { drawText, measureText } from './text.js';
-import { getBool, getInt, getString } from '../systems/settings.js';
+import { getBool, getInt, getString } from '../systems/settings/settings.js';
 import { hexColor32 } from './automapWindow.js';
 // EM7: the byte groups and DFU's own four colours have ONE HOME, and
 // the enhanced town sheet reads them there too - they sat in this file

@@ -23,8 +23,8 @@
 // RR3b (2026-09-23): ported for Roleplay & Realism's Master Armorer line -
 // Northrock Fort (a new location in the Wrothgarian Mountains), its
 // RRFORT01.RMB, and the armorer's shop as the quest rebuilds it.
-import { getBool } from '../systems/settings.js';
-import { isOnlinePage } from '../systems/onlineLane.js';   // WD3: online the door is the room's
+import { getBool } from '../systems/settings/settings.js';
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // WD3: online the door is the room's
 import { NO_VARIANT, makeLocationKey, getLocationVariant, getBlockVariantHere, getBuildingVariantHere, setNewLocationIndexResolver, readingLocationKeyOf, noteReadingLocation } from '../systems/worldDataVariants.js';
 import { LOCATION_TYPES, DUNGEON_TYPES, getWorldClimateSettings, REGION_NAMES } from './mapsFile.js';
 import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from './blocksFile.js';
@@ -41,7 +41,7 @@ export { makeLocationKey };
 export const assetInjectionOn = () => getBool('Enhancements', 'AssetInjection');
 /**
  * WD3: THE DOOR'S GATE. DFU's is AssetInjection alone, and offline it stays so. ONLINE THE GROUND IS THE ROOM'S: the
- * world-data mods the room owns (systems/onlineLane.js ONLINE_ROOM_MOD_KEYS - Beautiful Villages and Cities, Detailed
+ * world-data mods the room owns (systems/online/onlineLane.js ONLINE_ROOM_MOD_KEYS - Beautiful Villages and Cities, Detailed
  * Ships, Roleplay & Realism's fort) stand buildings, decks and walls every player walks, and a player's Replace Game
  * Artwork switched off stood none of them on that one screen - a departure (Port-Ledger, WD3): online the door is open
  * whatever the switch says, which keeps the textures and the music it gates elsewhere. Each mod's own switch still
@@ -569,7 +569,7 @@ function recordHeaderFromJson(h, name) {
   };
 }
 // WD3 (AUDIT WD3 P1): LocationDungeon.RecordElement is a public field DFU keeps (DFLocation.cs) and every dungeon
-// reader asks its header's LocationId (world/dungeonLayout.js, scenes/dungeonContext.js, systems/save.js) - a town
+// reader asks its header's LocationId (world/dungeonLayout.js, scenes/dungeonContext.js, systems/save/save.js) - a town
 // with a dungeon (Castle Daggerfall, Sentinel, Wayrest under Beautiful Cities) carries it, and it is read here.
 function dungeonFromJson(d, name) {
   return {

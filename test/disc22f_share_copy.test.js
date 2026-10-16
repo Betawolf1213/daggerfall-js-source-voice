@@ -16,7 +16,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare, SHARE_REFUSAL_TEXT } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare, SHARE_REFUSAL_TEXT } from '../src/systems/quest/questShare.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');
 {

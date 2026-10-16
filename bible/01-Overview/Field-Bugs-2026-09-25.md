@@ -181,7 +181,7 @@ short of its planned amount, or any stack under Control, pushes "Pick how
 many items (max N)?" and only its answer moves (:1546-1559); the trade window
 INHERITS it (DaggerfallTradeWindow.cs:31 - buying :842, selling :795, taking
 back :803). The port had it on the classic pack alone (CM5). The law's one
-home is `systems/itemTransfer.js` now (`HOW_MANY_ITEMS`, `SPLIT_INPUT_MAX`,
+home is `systems/item/itemTransfer.js` now (`HOW_MANY_ITEMS`, `SPLIT_INPUT_MAX`,
 `parseSplitAmount` - int.TryParse's reading, so "3x" and "1e1" are no count -
 and `splitRequired`). The classic counter pushes CM5's box, modal, for all
 three arms. The enhanced pack's card and the enhanced counter's strip carry

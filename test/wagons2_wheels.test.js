@@ -1,9 +1,9 @@
 // WAGONS2 (2026-10-09, Mac: "6. Real wheel movement"): EACH WHEEL ROLLS ON ITS OWN, AND THE FOUR-WHEELERS STEER,
 // pinned by execution. Horse Cart and Cargo turns both wheels of its wagon by one angle off the wagon's travel and
 // stands a parked wagon's at 0; Mac's wagons now turn each wheel by its own contact's travel along its own heading over
-// its own radius (systems/horseCart.js wheelContacts / rolledAngles), the open wagon's and the caravan's front axle,
+// its own radius (systems/horse/horseCart.js wheelContacts / rolledAngles), the open wagon's and the caravan's front axle,
 // pole and front pair turn on their kingpin (world/wagonModels.js `bogie`, its lock measured off the bake -
-// steerLimitOf), they trail as two bars - the kingpin on the pole, the body on the wheelbase (systems/horseFollow.js
+// steerLimitOf), they trail as two bars - the kingpin on the pole, the body on the wheelbase (systems/horse/horseFollow.js
 // bogieAxle) - a parked wagon keeps its wheels and its steer, another player's are turned here off the pose drawn
 // here, and the Overworld's grown wheels keep a clock each. Mutants: tools/mutants/wagons2_wheels.json.
 import './modsOff.js';
@@ -12,14 +12,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld, PARTS } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
-import { TRANSPORT, WAGON_MODE, HORSE_MODE, WAGON_MODEL_ID, NORMAL_GROUND_OFFSET, HORSE_BOX_SIZE } from '../src/systems/horseCartLaw.js';
-import { bogieAxle, steerToward, hitchedPoseStep, yawBetween, yawed } from '../src/systems/horseFollow.js';
-import { wheelContacts, rolledAngles } from '../src/systems/horseCart.js';
+import { TRANSPORT, WAGON_MODE, HORSE_MODE, WAGON_MODEL_ID, NORMAL_GROUND_OFFSET, HORSE_BOX_SIZE } from '../src/systems/horse/horseCartLaw.js';
+import { bogieAxle, steerToward, hitchedPoseStep, yawBetween, yawed } from '../src/systems/horse/horseFollow.js';
+import { wheelContacts, rolledAngles } from '../src/systems/horse/horseCart.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
-import { CARGO_DEFINITIONS } from '../src/systems/wagon41214.js';
+import { HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
+import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { wagonGeometry, buildBakedWagonParts, steerLimitOf, wagonIconModel, MEASURED, LIFT, TEAM, rigGrowOf } from '../src/world/wagonModels.js';
-import { WAGON_KINDS } from '../src/systems/wagonKinds.js';
+import { WAGON_KINDS } from '../src/systems/wagon/wagonKinds.js';
 import { quatForward, quatRotate, quatAngleAxis, mat4FromQuatPos, UNITY_QUAT_IDENTITY } from '../src/world/quat.js';
 import { multiply } from '../src/world/mat4.js';
 

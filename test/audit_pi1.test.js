@@ -16,7 +16,7 @@ import { createPhysicalItems, heldTextureCount, PI_ICON_ARCHIVE, PI_KEY_PREFIX, 
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { createRandomArmor, randomlyAddMap } from '../src/systems/loot.js';
+import { createRandomArmor, randomlyAddMap } from '../src/systems/loot/loot.js';
 import { goldStack } from '../src/systems/inventory.js';
 import { Collider } from '../src/player/collider.js';
 import { USE_TEXT } from '../src/systems/useItem.js';

@@ -14,7 +14,7 @@ import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { outOfDeck } from '../src/systems/naval/navalDeck.js';
-import { createRestItem, REST_ITEM } from '../src/systems/restItems.js';
+import { createRestItem, REST_ITEM } from '../src/systems/rest/restItems.js';
 
 const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const close = (a, b, eps = 1e-6) => a.every((v, i) => Math.abs(v - b[i]) <= eps);

@@ -32,7 +32,7 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { renownFoeStruck, _resetRenownKillsForTests } from '../src/net/renownTracker.js';
 import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { FEATURES } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
 import { travelMapPickerData, _setTravelMapArtForTests } from '../src/ui/travelMapWindow.js';

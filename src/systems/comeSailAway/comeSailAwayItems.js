@@ -18,7 +18,7 @@
 // it: the placed boat a deed stands for (GetPlacedBoatWithUID) and the cargo a packed boat carries (PackedCargoes).
 // The port's items carry none, so the mod's two are minted with one (`mintBoatItem`'s `uid`, the host's; the shelf's
 // two by `mintShelfBoatUids`) - DECLARED.
-import { registerCustomTemplates, setItemFields, mintCondition } from '../itemTemplates.js';   // CSA-H: the rows' one table; SHIPYARDS: RegisterCustomItem's group no longer stocks them (below)
+import { registerCustomTemplates, setItemFields, mintCondition } from '../item/itemTemplates.js';   // CSA-H: the rows' one table; SHIPYARDS: RegisterCustomItem's group no longer stocks them (below)
 import { modSetting, modLatchedOn } from '../modSettings.js';
 import { registerModEffectKind, WATER_WALKING_SILENT_KIND } from '../effects.js';
 import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayHulls.js';   // INT1: the leaf, not the boat's renderer
@@ -48,7 +48,7 @@ const csaLoaded = () => {
 // shopBuysItem) - a DECLARED departure from the mod (Ledger A, SHIPYARDS), as MERCHANT-YARDS took DFU's horse and cart
 // off the General Store. AssignVariantsToShopItems stands, ported: a shelf stocked before (a save's) is still rewritten.
 // AUDIT PRE-MERGE 0928 S3: StartWaterwalking's WaterWalkingSilent is this mod's own effect - with the mod not loaded,
-// DFU's broker cannot instantiate it, and a save's restore skips it (systems/save.js restorePlayer)
+// DFU's broker cannot instantiate it, and a save's restore skips it (systems/save/save.js restorePlayer)
 registerModEffectKind(WATER_WALKING_SILENT_KIND, csaLoaded);
 
 /**

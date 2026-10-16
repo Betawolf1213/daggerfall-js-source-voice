@@ -1,7 +1,7 @@
 [
   {
     "name": "LOOT9-shard-unbound",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  bound: true,\n  stackable: true,\n}]);",
     "new": "  stackable: true,\n}]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "LOOT9-shard-unstacked",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  bound: true,\n  stackable: true,\n}]);",
     "new": "  bound: true,\n}]);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "LOOT9-shard-another-index",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "export const WELKYND_SHARD_TEMPLATE = 571;",
     "new": "export const WELKYND_SHARD_TEMPLATE = 572;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "LOOT9-shard-unregistered",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "registerCustomTemplates(WELKYND_SHARD_TEMPLATES);",
     "new": "void WELKYND_SHARD_TEMPLATES;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "LOOT9-shards-below-one",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "{ stackCount: Math.max(1, Math.trunc(Number(n) || 1)) }",
     "new": "{ stackCount: Math.trunc(Number(n) || 1) }",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "LOOT9-exalted-every-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "&& item.exalted === true && list.length) lines = [list.filter((a) => a?.gem == null).length - 1];",
     "new": "&& item.exalted === true && list.length) lines = list.map((_, i) => i);",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "LOOT9-plain-legendary-reforged",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  else if (item?.rarity === 'legendary' && item.exalted === true && list.length)",
     "new": "  else if (item?.rarity === 'legendary' && list.length)",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "LOOT9-reforged-ignored",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  return Number.isInteger(item?.reforged) ? lines.filter((i) => i === item.reforged) : lines;",
     "new": "  return lines;",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "LOOT9-proc-to-number",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (!k.groups.includes(item.group) || !!k.proc !== !!was.proc) return false;",
     "new": "    if (!k.groups.includes(item.group)) return false;",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "LOOT9-rare-loses-its-slot",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (tier === 'rare' && k.slot !== was.slot) return false;\n",
     "new": "\n",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "LOOT9-carried-kind-again",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    return k.params ? freeParams(id).length > 0 : !others.some((a) => a?.id === id);",
     "new": "    return k.params ? freeParams(id).length > 0 : true;",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "LOOT9-exalted-line-any-value",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "rangeInt(tier === 'legendary' ? Math.ceil((lo + hi) / 2) : lo, hi, rolls)",
     "new": "rangeInt(lo, hi, rolls)",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "LOOT9-name-stays",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (tier !== 'legendary') item.name = rarityName(item, tier, item.affixes.filter((a) => a?.gem == null));",
     "new": "",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "LOOT9-price-stays",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.value = (Number.isFinite(item.value) ? item.value : itemBaseValue(item)) - affixesWorth([old], item) + affixesWorth([line], item);\n",
     "new": "\n",
     "tests": [
@@ -373,7 +373,7 @@
   },
   {
     "name": "LOOT9-line-unmarked",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.reforged = index;\n",
     "new": "\n",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "LOOT9-field-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  reforged: int({ min: 0, max: 15 }),",
     "new": "  reforgedX: int({ min: 0, max: 15 }),",
     "tests": [

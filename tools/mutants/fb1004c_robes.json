@@ -1,7 +1,7 @@
 [
   {
     "name": "ROBES-helper-sends-nothing",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  questItem.setPlayerClicked();\n  return true;",
     "new": "  return true;",
     "tests": [

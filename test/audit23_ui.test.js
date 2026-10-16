@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applyLevelUp } from '../src/systems/advancement.js';
-import { RAY_DISTANCE, MOBILE_NPC_ACTIVATION_DISTANCE, PICKPOCKET_DISTANCE } from '../src/systems/talk.js';
+import { RAY_DISTANCE, MOBILE_NPC_ACTIVATION_DISTANCE, PICKPOCKET_DISTANCE } from '../src/systems/talk/talk.js';
 import * as weaponStates from '../src/characters/weaponStates.js';
 import { MISSILE_SPEED } from '../src/systems/spellcast.js';
 

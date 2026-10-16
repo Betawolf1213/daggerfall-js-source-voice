@@ -30,9 +30,9 @@ Offline play keeps every one of these decisions exactly as it stands.
 ### The trust boundary
 
 - **The Online door lists every local slot.** The pieces are `src/main.js` (the Online choice sets `load`, `online`
-  and `loadkey`), `src/systems/saveSlots.js` `restorableSaves`, and `src/ui/enhancedMenu.js`.
-  - `online` is only a URL flag (`src/systems/onlineLane.js` `isOnlinePage`).
-  - The save is plain JSON with no signature or hash. Its only gate is `SAVE_VERSION` (`src/systems/save.js`).
+  and `loadkey`), `src/systems/save/saveSlots.js` `restorableSaves`, and `src/ui/enhancedMenu.js`.
+  - `online` is only a URL flag (`src/systems/online/onlineLane.js` `isOnlinePage`).
+  - The save is plain JSON with no signature or hash. Its only gate is `SAVE_VERSION` (`src/systems/save/save.js`).
 - **Online progress writes into every slot of the character.** Closing an online tab saves them all
   (`world.js` `beforeunload` and `saveSlots.js`). The only thing held back is Renown's health and magicka layer.
 - **Character ids are minted by the client** (`src/systems/characterId.js`). The service checks their shape only
@@ -49,7 +49,7 @@ Offline play keeps every one of these decisions exactly as it stands.
   - Everything else is the save's. In the code's own words: "The gold is the save's, as all of it is" (`server-account/src/decor.js`) and "The GOLD is the client's" (`server-account/src/guilds.js`).
 - **What the client is trusted with:**
   - PvE damage, up to 10,000 a blow (`dungeonContext.js`);
-  - loot grants ("A forged item still lands, at its true price", `src/systems/loot.js`);
+  - loot grants ("A forged item still lands, at its true price", `src/systems/loot/loot.js`);
   - trade goods ("the price of having no server-side inventory", `src/net/tradeSession.js`);
   - Renown XP, within its caps;
   - guild deposits and home prices.

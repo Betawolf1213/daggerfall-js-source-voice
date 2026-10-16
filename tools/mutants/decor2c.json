@@ -74,7 +74,7 @@
   },
   {
     "name": "DECOR2c-a-worn-blade-hung",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  if (!item || item.questItem || item.equipSlot != null || isSummoned(item)) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "new": "  if (!item || item.questItem || isSummoned(item)) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "DECOR2c-a-quest-blade-hung",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  if (!item || item.questItem || item.equipSlot != null || isSummoned(item)) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "new": "  if (!item || item.equipSlot != null || isSummoned(item)) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "DECOR2c-a-summoned-blade-hung",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  if (!item || item.questItem || item.equipSlot != null || isSummoned(item)) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "new": "  if (!item || item.questItem || item.equipSlot != null) return null;\n  const descriptor = decorDescriptorOf(item);\n  if (!descriptor) return null;\n  const pic",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "DECOR2c-the-body-ignored",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  const pic = inventoryItemImage(item, identity);\n  const flat = pic ? [pic.archive, pic.record] : null;",
     "new": "  const pic = inventoryItemImage(item, undefined);\n  const flat = pic ? [pic.archive, pic.record] : null;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "DECOR2c-the-dye-the-templates",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "return itemDyeColor({ templateIndex: own.t, group, material: own.m ?? 0, artifact: own.a != null });",
     "new": "return itemDyeColor({ templateIndex: own.t, group, material: 0, artifact: own.a != null });",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "DECOR2c-an-artifact-dyed",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "return itemDyeColor({ templateIndex: own.t, group, material: own.m ?? 0, artifact: own.a != null });",
     "new": "return itemDyeColor({ templateIndex: own.t, group, material: own.m ?? 0, artifact: false });",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "DECOR2c-the-row-standing",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "light: as.light, item: as.item, storage: false, count: item.stackCount ?? 1, mount: !!hangs,",
     "new": "light: as.light, item: as.item, storage: false, count: item.stackCount ?? 1, mount: false,",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "DECOR2c-the-walls-heading-ignored",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "const heading = level ? Math.atan2(n[0], n[2]) : (Number.isFinite(camYaw) ? camYaw : 0) + Math.PI;",
     "new": "const heading = (Number.isFinite(camYaw) ? camYaw : 0) + Math.PI;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "DECOR2c-a-floor-read-backwards",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "const heading = level ? Math.atan2(n[0], n[2]) : (Number.isFinite(camYaw) ? camYaw : 0) + Math.PI;",
     "new": "const heading = level ? Math.atan2(n[0], n[2]) : (Number.isFinite(camYaw) ? camYaw : 0);",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "DECOR2c-the-surfaces-tilt-ignored",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "round(Math.asin(Math.max(-1, Math.min(1, n[1]))) * DEG, 1), s.yaw];",
     "new": "0, s.yaw];",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "DECOR2c-the-spin-dropped",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "round(Math.asin(Math.max(-1, Math.min(1, n[1]))) * DEG, 1), s.yaw];",
     "new": "round(Math.asin(Math.max(-1, Math.min(1, n[1]))) * DEG, 1), 0];",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "DECOR2c-the-hair-into-the-wall",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "p = [0, 1, 2].map((i) => p[i] + up[i] * s.raise + n[i] * DECOR_MOUNT_LIFT);",
     "new": "p = [0, 1, 2].map((i) => p[i] + up[i] * s.raise - n[i] * DECOR_MOUNT_LIFT);",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "DECOR2c-the-lift-off-the-surface",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "p = [0, 1, 2].map((i) => p[i] + up[i] * s.raise + n[i] * DECOR_MOUNT_LIFT);",
     "new": "p = [0, 1, 2].map((i) => p[i] + n[i] * DECOR_MOUNT_LIFT);",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "DECOR2c-the-grid-off-the-surface",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      p = [0, 1, 2].map((i) => right[i] * a + up[i] * b + n[i] * c);",
     "new": "      p = [0, 1, 2].map((i) => right[i] * a + up[i] * b);",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "DECOR2c-the-normal-unscaled",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "    const n = [normal[0] / len, normal[1] / len, normal[2] / len];",
     "new": "    const n = [normal[0], normal[1], normal[2]];",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "DECOR2c-a-moved-mount-from-its-heading",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "yaw: from ? wrapTurn((mount ? from.rot?.[2] : from.rot?.[0]) ?? 0) : 0,",
     "new": "yaw: from ? wrapTurn((from.rot?.[0]) ?? 0) : 0,",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "DECOR2c-a-mount-set-as-it-stands",
-    "file": "src/systems/decorPlacer.js",
+    "file": "src/systems/decor/decorPlacer.js",
     "old": "      if (mount) return mountAt(hit, origin, id, normal, camYaw, paid);\n",
     "new": "",
     "tests": [

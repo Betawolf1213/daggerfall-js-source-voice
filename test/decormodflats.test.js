@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { decorWhatOf, decorPieceOf, DECOR_ARCHIVE_MAX } from '../src/net/decorLaw.js';
-import { collectDecor, decorCatalogue } from '../src/systems/decorCatalogue.js';
+import { collectDecor, decorCatalogue } from '../src/systems/decor/decorCatalogue.js';
 import { addVendorTextures, clearVendorTextures, setTextureDeriveContext, setTextureReplacements, clearTextureReplacements, preloadTextureRecord } from '../src/systems/textureReplacement.js';
 import { loadIcon, textureArchive } from '../src/ui/textureCanvas.js';
 import { settle, toolRig, placeFrom, rmb } from './decorFakes.mjs';

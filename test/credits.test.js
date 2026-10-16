@@ -8,7 +8,7 @@ import { CREDITS } from '../src/ui/credits.js';
 import { FEATURES, WINDMILLS_KEY } from '../src/systems/features.js';   // WM3: the Features home, and the Windmills switch's declaration
 import { OVERHAUL_PANELS } from '../src/systems/overhauls.js';
 import { UI_PACKS } from '../src/systems/uiPack.js';
-import { ENVIRONMENT_PACK_MODS } from '../src/systems/vanillaEnhancedPack.js';   // ALIKR1 / SNOWFALL1: the shipped environment packs
+import { ENVIRONMENT_PACK_MODS } from '../src/systems/vanillaEnhanced/vanillaEnhancedPack.js';   // ALIKR1 / SNOWFALL1: the shipped environment packs
 
 // CR1 - THE CREDITS (Mac, 2026-08-30: "as we integrate these I really
 // want to give credit to the mod developer who created it").

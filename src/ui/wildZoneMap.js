@@ -9,7 +9,7 @@
 // Two faces of one ink, both over the held map's world sheet (ui/heldMap.js):
 //
 //   ON THE WORLD MAP - the rings are three thin dashed lines inside the zone's red one (where each deeper ring begins,
-//   systems/wildZone.js wildRingChains) and, once zoomed past the far band, each ring's bonus in a small red tag on the
+//   systems/wild/wildZone.js wildRingChains) and, once zoomed past the far band, each ring's bonus in a small red tag on the
 //   column north from the heart (wildRingAnchors). The fog stays the zone's (ui/wildMapInk.js).
 //
 //   THE ZONE MAP - the same sheet, the same paper, the same marks, held to the Wrothgarian Mountains: the rest of the bay
@@ -22,7 +22,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import {
   WILD_RINGS, WILD_NAME, wildRingAt, wildRingChains, wildRingAnchors, wildRingName, wildRingBonus, wildEdgeChains,
-} from '../systems/wildZone.js';
+} from '../systems/wild/wildZone.js';
 
 /** Canvas pixels a map pixel in the rings' own canvas (the fog's own resolution). */
 export const RING_RES = 6;

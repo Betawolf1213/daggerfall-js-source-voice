@@ -192,7 +192,7 @@
   },
   {
     "name": "HOME-PRICE-the-height-for-depth",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const m2 = (size?.x ?? 0) * (size?.z ?? 0) * scale * scale;",
     "new": "const m2 = (size?.x ?? 0) * (size?.y ?? 0) * scale * scale;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "HOME-PRICE-the-scale-once",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const m2 = (size?.x ?? 0) * (size?.z ?? 0) * scale * scale;",
     "new": "const m2 = (size?.x ?? 0) * (size?.z ?? 0) * scale;",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "HOME-PRICE-the-town-width-alone",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const n = (ext?.width ?? 0) * (ext?.height ?? 0);",
     "new": "const n = (ext?.width ?? 0);",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "HOME-PRICE-the-registry-drops-the-refund",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "refund: Number.isSafeInteger(h.refund) && h.refund >= 0 ? h.refund : null,",
     "new": "refund: null,",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-D6-the-registry-drops-nothing",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "refund: Number.isSafeInteger(h.refund) && h.refund >= 0 ? h.refund : null,",
     "new": "refund: Number.isSafeInteger(h.refund) && h.refund > 0 ? h.refund : null,",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-C3-the-registry-drops-the-rent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "rentDue: Number.isSafeInteger(h.rentDue) && h.rentDue > 0 ? h.rentDue : 0,",
     "new": "rentDue: 0,",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-C2-crossed-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      const crossed = r.data?.crossed === true;\n",
     "new": "      const crossed = false;\n",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "HOME-PRICE-the-claims-answer-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const refund = crossed ? null : Number.isSafeInteger(r.data?.refund) && r.data.refund >= 0 ? r.data.refund : homeRefund(price);",
     "new": "const refund = crossed ? null : homeRefund(price);",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "HOME-PRICE-the-offer-off-the-price",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "(Number.isSafeInteger(home?.refund) && home.refund >= 0 ? home.refund : homeRefund(price))",
     "new": "homeRefund(price)",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-D6-the-offer-drops-nothing",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "(Number.isSafeInteger(home?.refund) && home.refund >= 0 ? home.refund : homeRefund(price))",
     "new": "(Number.isSafeInteger(home?.refund) && home.refund > 0 ? home.refund : homeRefund(price))",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-C3-the-sale-box-rent-unsaid",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "rentDue > 0 ? `Sell your home for ${gold(refund)} gold, and the ${gold(rentDue)} gold of rent you have not collected?` : `Sell",
     "new": "false ? `Sell your home for ${gold(refund)} gold, and the ${gold(rentDue)} gold of rent you have not collected?` : `Sell",
     "tests": [
@@ -436,7 +436,7 @@
   },
   {
     "name": "HOME-PRICE-a-bare-number",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "export const homeForSaleLine = (price) => `Can be your home: ${gold(price)} gold`;",
     "new": "export const homeForSaleLine = (price) => `Can be your home: ${price} gold`;",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-D3-the-rent-clause-bare",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "rent > 0 ? `${gold(rent)} of it rent",
     "new": "rent > 0 ? `${rent} of it rent",
     "tests": [
@@ -500,7 +500,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-C4-the-arena-refund-bare",
-    "file": "src/systems/arenaText.js",
+    "file": "src/systems/arena/arenaText.js",
     "old": "refund: (gold) => `${goldSum(gold)} gold for your catalogue pieces",
     "new": "refund: (gold) => `${gold} gold for your catalogue pieces",
     "tests": [

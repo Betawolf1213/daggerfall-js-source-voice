@@ -7,7 +7,7 @@
 //     the hands down at 0.7 s at rate 1, where DFU's animSpeed put them at 0.2 s and 0.28 s.
 //   - THE RIG (combat/weaponRig.js castSpellAnim) reads the caster's rate once a cast and hands it to BOTH lanes.
 //   - THE MORROWIND ARM (combat/fpArm.js castSpell) plays its spellcast group at that rate.
-//   - THE LOOT LINE (systems/lootRarity.js castSpeed, systems/lootPowers.js lootCastSpeed): a line that does something,
+//   - THE LOOT LINE (systems/loot/lootRarity.js castSpeed, systems/loot/lootPowers.js lootCastSpeed): a line that does something,
 //     on jewellery and weapons, banded, worded, summed over what I wear under its cap, mine alone, none with the switch off.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -20,14 +20,14 @@ import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY, fpArm } from '..
 import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
 import { castClip } from './fixtures/mw/castClip.mjs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
 const on = () => { _resetForTests(); setPref('lootRarity', true); LP._resetLootPowersForTests(); _resetSetPowersForTests(); setPlayerDoor(null); };

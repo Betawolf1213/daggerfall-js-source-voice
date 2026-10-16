@@ -23,10 +23,10 @@ const IL_DUMP = 'vendor/horse-cart-and-cargo/il/TrailingWagon.il.txt';
 
 /** The module a row's `mod` names, by path. */
 const MOD = {
-  'horseCartLaw.js': 'src/systems/horseCartLaw.js',
-  'horseFollow.js': 'src/systems/horseFollow.js',
-  'horseCart.js': 'src/systems/horseCart.js',
-  'wagon41214.js': 'src/systems/wagon41214.js',
+  'horseCartLaw.js': 'src/systems/horse/horseCartLaw.js',
+  'horseFollow.js': 'src/systems/horse/horseFollow.js',
+  'horseCart.js': 'src/systems/horse/horseCart.js',
+  'wagon41214.js': 'src/systems/wagon/wagon41214.js',
   'horseCartPool.js': 'src/scenes/horseCartPool.js',
   'quat.js': 'src/world/quat.js',
   'world.js': 'src/scenes/world.js',
@@ -556,7 +556,7 @@ export const RETIRED_BY_WAGON_HITCH = Object.freeze([
 ]);
 test('HCC scope: WAGON-HITCH retired six ported rows from the drawn wagon - still ported in horseFollow.js (the record), called by no runtime module, and the page says so beside the count (mutant: the runtime drawing by the trail again)', () => {
   for (const k of RETIRED_BY_WAGON_HITCH) assert.equal(IL[k]?.mod, 'horseFollow.js', `${k} is a ported row of horseFollow.js`);
-  for (const f of ['src/systems/horseCart.js', 'src/scenes/horseCartPool.js']) {
+  for (const f of ['src/systems/horse/horseCart.js', 'src/scenes/horseCartPool.js']) {
     const code = rd(f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
     assert.doesNotMatch(code, /\bWagonTrail\b|\bgroundedPoseStep\b/, `${f} draws by the IL's trail again - WAGON-HITCH's departure would be silently undone`);
   }

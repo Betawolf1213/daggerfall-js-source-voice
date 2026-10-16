@@ -10,7 +10,7 @@
 // decorator's real sheet is cascaded over the real panel (a small selector matcher below - its classes, attributes,
 // :not, descendants and specificity, which is all DECOR_CSS uses).
 //
-// LOOK-STALE: the client's registry of a town's homes (systems/onlineHomes.js) believed an answer that set out BEFORE a
+// LOOK-STALE: the client's registry of a town's homes (systems/online/onlineHomes.js) believed an answer that set out BEFORE a
 // write of mine landed - a door's re-ask in flight, or the first paint's own read-back when a second look was painted -
 // and the town was then believed for a minute with the old look: the house went back. A forced ask behind such a flight
 // was dropped (ASYNC NEVER DROPS); now it is asked after it, and the older answer never lands over the newer write.
@@ -21,7 +21,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { DECOR_CSS } from '../src/ui/decorPanel.js';
-import { createOnlineHomes } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes } from '../src/systems/online/onlineHomes.js';
 import { createHomeYards } from '../src/scenes/homeYards.js';
 import { accountHomes, SESSION_KEY, REFUSALS } from '../src/net/accountClient.js';
 import { homeLookOf } from '../src/net/homeLaw.js';

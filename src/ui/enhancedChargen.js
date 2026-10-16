@@ -60,7 +60,7 @@ import { repaintKeepingScroll } from './domRepaint.js';
 // enhanced face - drawn by the one module, clocked by this mount.
 import { drawPixelGround } from './pixelGround.js';
 import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
-import { raceDisplayName } from '../systems/talkSession.js';   // L10N3d: RaceTemplate.Name, read in the player's language
+import { raceDisplayName } from '../systems/talk/talkSession.js';   // L10N3d: RaceTemplate.Name, read in the player's language
 
 /** DFU's WizardStages, in the order the flow walks them, with the
  *  words a player reads. The flow's own state names are the keys.

@@ -4,7 +4,7 @@
 // another record showing it CLAIMS it, and a claim the holder's checkpoint outlasts by DUPE_GRACE_S is a COPY charged to
 // the CLAIMANT (the audit: an id stamped on the victim's piece took the VICTIM's trade); a piece let go is no row; the
 // service's own moves move the ledger; a crafted piece's copy is told by its `products` owner; the statements bounded.
-//   - the client: which pieces earn an id (systems/itemIds.js valuablePiece), the id's shape, the stamp over the
+//   - the client: which pieces earn an id (systems/item/itemIds.js valuablePiece), the id's shape, the stamp over the
 //     character's own five lists (never a stack, a bound piece or one stamped already), and what the player is told as
 //     the judge's hold moves - the piece named when the law holds it;
 //   - the service, through real checkpoints: a new key taken; let go (no row) and taken up by another; a claim moved by
@@ -17,14 +17,14 @@ import assert from 'node:assert/strict';
 import worker from '../server-account/src/index.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
-import { valuablePiece, mintItemId, stampItemIds, tradeHeldNotice, tradeHeldLawNotice, TRADE_HELD_NOTICES, TRADE_OPEN_NOTICE } from '../src/systems/itemIds.js';
+import { valuablePiece, mintItemId, stampItemIds, tradeHeldNotice, tradeHeldLawNotice, TRADE_HELD_NOTICES, TRADE_OPEN_NOTICE } from '../src/systems/item/itemIds.js';
 import { DUPES_FOR_HOLD, DUPE_GRACE_S, LEDGER_NEW_MAX, UPSERT_ROWS, UID_CHUNK, ledgerStep, releaseSteps } from '../server-account/src/ledger.js';
 import { prepareRealmRecord } from '../server-account/src/realm.js';
 import { takeTradeGoods, giveTradeGoods } from '../src/net/realmTradeLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { seeded } from './honestItems.mjs';
 import { readFileSync } from 'node:fs';
 import { SESSION_KEY } from '../src/net/accountClient.js';

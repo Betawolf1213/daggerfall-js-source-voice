@@ -296,7 +296,7 @@
   },
   {
     "name": "AUDIT1003b-U3-CARD-NO-WORD",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  if (v.word) lines.push(v.word);   // AUDIT PRE-MERGE 1003b U3",
     "new": "  // gone",
     "tests": [
@@ -305,7 +305,7 @@
   },
   {
     "name": "AUDIT1003b-U4-NO-KEY",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "data: { r: id }, key: `aw-priv-${id}-r` }",
     "new": "data: { r: id } }",
     "tests": [
@@ -324,7 +324,7 @@
   },
   {
     "name": "AUDIT1003b-U4-PICKED-DROPPED",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "why: no ?? (id === w.r ? T.privIsRed : null), data: { r: id }",
     "new": "why: no, data: { r: id }",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "AUDIT1003b-U6-CARD-LAST",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "if (c.code) cards.unshift(c); else cards.push(c);",
     "new": "cards.push(c);",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "AUDIT1003b-U7-SESSION-AS-BOUT",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const busyWhy = inSession ? O().privIn : O().whyBusy;",
     "new": "const busyWhy = O().whyBusy;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "AUDIT1003b-U7-QUEUE-UNSAID",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "const wait = busy ? T.whyBusy : queued ? T.privQueued : null;",
     "new": "const wait = busy ? T.whyBusy : null;",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "AUDIT1003b-U7-FIGHTER-IN-STANDS",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "  if (on && w.f.includes(w.me)) head.state = T.privState.fighter;",
     "new": "  // gone",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "AUDIT1003b-U9-DRAW-NO-RESULT",
-    "file": "src/systems/arenaText.js",
+    "file": "src/systems/arena/arenaText.js",
     "old": ": `${red} (Red) and ${blue} (Blue) drew`;",
     "new": ": `${red} (Red) and ${blue} (Blue) - no result`;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "AUDIT1003b-U10-NO-YOU",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "    if (id === w.me) roles.push(T.privRole.you);",
     "new": "",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "AUDIT1003b-S4-NO-LOCK-PRESS",
-    "file": "src/systems/arenaBoard.js",
+    "file": "src/systems/arena/arenaBoard.js",
     "old": "      { act: 'privLock', label: w.lo ? T.privUnlock : T.privLock, why: null, data: { l: w.lo ? 0 : 1 }, key: 'aw-priv-lock' },\n",
     "new": "",
     "tests": [

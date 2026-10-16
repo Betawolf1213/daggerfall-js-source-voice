@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { settleChallenge, banish, knownCriminal, PENANCE_POINTS, KNOWN_CRIMINAL_BELOW, CHALLENGE_GRACE_MINUTES } from '../src/systems/standing.js';
 import { createStandingWatch, STANDING_LOOK_MS, installLegalNotices } from '../src/scenes/standingHost.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
 
 const player = (legal, gold = 5000) => ({ legalRep: { 3: legal }, goldPieces: gold, items: [], health: 50, regionConditions: createRegionConditions() });
 function watchRig(legal) {

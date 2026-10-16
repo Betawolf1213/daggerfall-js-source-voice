@@ -1,7 +1,7 @@
 [
   {
     "name": "RVN7b-weak-odds-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const RUMOR_WEAK = 0.5;",
     "new": "export const RUMOR_WEAK = 1;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RVN7b-named-odds-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const RUMOR_NAMED = 1 / 3;",
     "new": "export const RUMOR_NAMED = 1;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "RVN7b-hint-moved",
-    "file": "src/systems/revenantFeud.js",
+    "file": "src/systems/revenant/revenantFeud.js",
     "old": "element: 'some element is its bane',",
     "new": "element: 'an element is its bane',",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RVN7b-switch-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantOn() || !here || !session || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;",
     "new": "  if (!here || !session || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "RVN7b-no-pixel-asked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!revenantOn() || !here || !session || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;",
     "new": "  if (!revenantOn() || !here || !session) return null;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RVN7b-answer-ungated",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!((session.numAnswersGivenTellMeAboutOrRumors | 0) < MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS || session.isSpyMaster)) return null;\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "RVN7b-spymaster-gated",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "< MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS || session.isSpyMaster)) return null;",
     "new": "< MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS)) return null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "RVN7b-region-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const inRegion = (r) => Number.isInteger(here.region) && here.region >= 0 && r.lair.region === here.region;",
     "new": "  const inRegion = (r) => false;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "RVN7b-no-region-matches",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const inRegion = (r) => Number.isInteger(here.region) && here.region >= 0 && r.lair.region === here.region;",
     "new": "  const inRegion = (r) => r.lair.region === here.region;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "RVN7b-reach-moved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "Math.hypot(r.lair.px - here.px, r.lair.py - here.py) <= RUMOR_PX));",
     "new": "Math.hypot(r.lair.px - here.px, r.lair.py - here.py) < RUMOR_PX + 2));",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "RVN7b-no-lair-asked",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const near = livingRevenants().filter((r) => r.lair && (",
     "new": "  const near = livingRevenants().filter((r) => (",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "RVN7b-odds-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!near.length || !(rolls() < RUMOR_CHANCE)) return null;",
     "new": "  if (!near.length) return null;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RVN7b-first-always",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const r = near[Math.min(near.length - 1, Math.floor(rolls() * near.length))];\n  const dx = r.lair.px",
     "new": "  const r = near[0]; rolls();\n  const dx = r.lair.px",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RVN7b-north-south",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "const dx = r.lair.px - here.px, dy = r.lair.py - here.py, d = Math.max(Math.abs(dx), Math.abs(dy));",
     "new": "const dx = r.lair.px - here.px, dy = here.py - r.lair.py, d = Math.max(Math.abs(dx), Math.abs(dy));",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RVN7b-distance-euclid",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "d = Math.max(Math.abs(dx), Math.abs(dy));\n  const kind",
     "new": "d = Math.round(Math.hypot(dx, dy));\n  const kind",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "RVN7b-unscarred",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const what = r.scars?.length ? `a scarred ${kind}`",
     "new": "  const what = false ? `a scarred ${kind}`",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "RVN7b-article-a",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "`${/^[aeiou]/.test(kind) ? 'an' : 'a'} ${kind}`",
     "new": "`a ${kind}`",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "RVN7b-close-by-unsaid",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const where = d === 0 ? `in ${r.lair.name}, close by` : ",
     "new": "  const where = ",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "RVN7b-weak-always",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (r.weak && rolls() < RUMOR_WEAK) {",
     "new": "  if (r.weak) { rolls();",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "RVN7b-weak-without-one",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (r.weak && rolls() < RUMOR_WEAK) {",
     "new": "  if (rolls() < RUMOR_WEAK) {",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "RVN7b-known-forgotten",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    r.weakKnown = /** @type {0|1|2} */ (Math.max(r.weakKnown | 0, named ? 2 : 1));",
     "new": "    r.weakKnown = /** @type {0|1|2} */ (named ? 2 : 1);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "RVN7b-named-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    words += named ? ` Folk say it can't abide",
     "new": "    words += true ? ` Folk say it can't abide",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "RVN7b-lair-unknown",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.lairKnown = true;\n  session.numAnswersGivenTellMeAboutOrRumors",
     "new": "  session.numAnswersGivenTellMeAboutOrRumors",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "RVN7b-answer-unspent",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  session.numAnswersGivenTellMeAboutOrRumors = (session.numAnswersGivenTellMeAboutOrRumors | 0) + 1;\n",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "RVN7b-unsaved",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  r.lairKnown = true;\n  session.numAnswersGivenTellMeAboutOrRumors = (session.numAnswersGivenTellMeAboutOrRumors | 0) + 1;\n  touch(r);\n  persist();",
     "new": "  r.lairKnown = true;\n  session.numAnswersGivenTellMeAboutOrRumors = (session.numAnswersGivenTellMeAboutOrRumors | 0) + 1;\n  touch(r);",
     "tests": [

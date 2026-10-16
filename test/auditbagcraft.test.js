@@ -11,7 +11,7 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { xpForRank, STORES_MAX } from '../src/net/professionLaw.js';
@@ -20,7 +20,7 @@ import { createProfBook } from '../src/net/profBook.js';
 import { storesRoom } from '../src/net/chainLaw.js';
 import { storesSplit, storesRows, storesRoomOf, LOOSE_GOODS_LINE } from '../src/ui/profPages.js';
 import { heldOf, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf } from '../src/systems/materialsBag.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { sessionStorageOf } from './accountDb.mjs';
 

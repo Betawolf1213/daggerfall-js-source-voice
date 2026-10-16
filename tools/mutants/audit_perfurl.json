@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-PERFURL-A4-sway-parses-again",
-    "file": "src/systems/windDrive.js",
+    "file": "src/systems/wind/windDrive.js",
     "old": "  return pageParam('sway', search) === 'off';",
     "new": "  return new URLSearchParams(search).get('sway') === 'off';",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "AUDIT-PERFURL-A5-latched-key-published",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "export const BOOT_DOOR_KEYS = Object.freeze(['load', 'online',",
     "new": "export const BOOT_DOOR_KEYS = Object.freeze(['renderscale', 'load', 'online',",
     "tests": [

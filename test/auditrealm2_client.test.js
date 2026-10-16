@@ -40,10 +40,10 @@ import { COME_SAIL_AWAY_VENDOR, TEMPORARY_SHIP_SCENES } from '../src/systems/com
 import * as comeSailAway from '../src/systems/comeSailAway/comeSailAway.js';
 import { assignShipToPlayer, sellShip, ownsShip, SHIP_TYPES } from '../src/systems/banking.js';
 import { createSceneCache, addPermanentScene, removePermanentScene, containsPermanentScene, takeSceneOwn } from '../src/systems/sceneCache.js';
-import { sellOnlineHome, HOME_SALE_OUT } from '../src/systems/onlineHomes.js';
+import { sellOnlineHome, HOME_SALE_OUT } from '../src/systems/online/onlineHomes.js';
 import { armUnloadGuard, releaseUnloadGuard } from '../src/systems/unloadGuard.js';
 import { installConsoleProbe, registerCommand } from '../src/systems/consoleCommands.js';
-import { checkpointAllowed } from '../src/systems/onlineCheckpoint.js';
+import { checkpointAllowed } from '../src/systems/online/onlineCheckpoint.js';
 import { r2, freshSave, layRecord } from './realmSeat.mjs';   // AUDIT REALM2 S1: a realm character's first save is a new one's
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

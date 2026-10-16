@@ -15,9 +15,9 @@ import assert from 'node:assert/strict';
 import { startInfection, infectionStep, markDreamPlayed, INFECTION } from '../src/systems/infection.js';
 import { startDisease, DISEASES, diseaseCount, curableDiseaseCount } from '../src/systems/diseases.js';
 import { applySpell, cureAllDiseases, cureDiseasesInfectionsLast } from '../src/systems/effects.js';
-import { cureDiseaseOffer, payForCure, cureForFree } from '../src/systems/guildServiceActions.js';
+import { cureDiseaseOffer, payForCure, cureForFree } from '../src/systems/guild/guildServiceActions.js';
 import { endOldLifeEffects } from '../src/systems/lycanthropy.js';
-import { templeOf } from '../src/systems/guildVariants.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
 
 const MARA = templeOf('Mara');   // a temple of the eight, its healer's counter
 

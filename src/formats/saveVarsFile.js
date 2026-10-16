@@ -9,7 +9,7 @@
 //     bool, Flags2[14] bool, precipitationOverride, severePunishment-
 //     Flags, legalRep i16, idOfPersecutedTemple u16, priceAdjustment
 //     u16 (the PlayerEntity.RegionDataRecord shape; the CONDITION half
-//     lives in systems/regionConditions.js);
+//     lives in systems/region/regionConditions.js);
 //   - faction records of 92 bytes from 0x17D0 to end of file, COUNTED
 //     from the file length, in the factionFile.js field shape plus the
 //     three classic list-pointer fields FACTION.TXT has no use for.

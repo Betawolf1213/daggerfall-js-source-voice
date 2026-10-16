@@ -727,7 +727,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-line-a-find",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  for (let i = 0; i < list.length; i++) { const a = list[i]; if (isTechniqueAffix(a) && validAffix(a)) return a; }\n  return null;",
     "new": "  return list.find((a) => isTechniqueAffix(a) && validAffix(a)) ?? null;",
     "tests": [

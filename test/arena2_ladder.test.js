@@ -1,21 +1,21 @@
 // ARENA2 (2026-10-02, Mac: "climb esclating tiers of opponents"; "Being a top rank PvE fighter comes with it's own
-// title"): THE LADDER (systems/arenaLadder.js) - the ten tiers exactly as the design table has them, the purses on
+// title"): THE LADDER (systems/arena/arenaLadder.js) - the ten tiers exactly as the design table has them, the purses on
 // Daggerfall's scale, a climb from the Pit to the Grand Champion, a loss that costs only the purse, the save's shape
-// (versioned, every older or broken shape read back to a whole ladder, the round trip through systems/save.js), the
+// (versioned, every older or broken shape read back to a whole ladder, the round trip through systems/save/save.js), the
 // exhibitions on the hour of the game's clock (one hour, one bout, everywhere), and the fighters' names from
-// Daggerfall's own generator (systems/arenaFighters.js) - the seed's, the stream put back as it stood.
+// Daggerfall's own generator (systems/arena/arenaFighters.js) - the seed's, the stream put back as it stood.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   LADDER_TIERS, BOUT_PURSE, CHAMPION_PURSE, EXHIBITION_PURSE, BOUTS_PER_TIER, ARENA_LADDER_VERSION, newArenaLadder,
   arenaLadderRestore, arenaLadderSnapshot, nextLadderBout, ladderAfter, ladderTitle, ladderTitles, exhibitionFor,
   nextExhibitionHour, hourIndexOf, arenaHash, seededRng, EXHIBITION_HOURS, EXHIBITION_START_MINUTES, ARENA_HOMES, BEAST_HOMES,
-} from '../src/systems/arenaLadder.js';
-import { fighterIdentity, boutMarks, boutGateOf, ARENA_BEASTS, MARK_APART_M, GATE_OUT_M } from '../src/systems/arenaFighters.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+} from '../src/systems/arena/arenaLadder.js';
+import { fighterIdentity, boutMarks, boutGateOf, ARENA_BEASTS, MARK_APART_M, GATE_OUT_M } from '../src/systems/arena/arenaFighters.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { getSeed, setSeed, rand } from '../src/formats/dfRandom.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const ids = (list) => list.map((o) => o.mobile);
 const lv = (list) => list.map((o) => o.level);

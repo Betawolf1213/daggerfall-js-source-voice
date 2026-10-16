@@ -1,8 +1,8 @@
 // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers") - WAGON UPKEEP ON HORSE CARE'S MODEL (bible/06-Systems/Wagon-Upkeep.md,
-// systems/upkeepTiers.js): one key, `wagonUpkeep`, three tiers - Off (DFU's plain wagon), Boons (the default: it wears
+// systems/upkeep/upkeepTiers.js): one key, `wagonUpkeep`, three tiers - Off (DFU's plain wagon), Boons (the default: it wears
 // and is mended, and wear costs nothing - never worse than DFU's plain wagon) and Hard (the system as it stood) - each
 // player's own online (MODS-ONLINE-3's reading), every reader asking the tier through one accessor
-// (systems/upkeepSwitch.js wagonUpkeepRules). Driven over the real switch, the real tile, the real shelf, the real
+// (systems/upkeep/upkeepSwitch.js wagonUpkeepRules). Driven over the real switch, the real tile, the real shelf, the real
 // upkeep, the real counter's sale and the real saddle panel and Stable page reads.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,19 +12,19 @@ import { fileURLToPath } from 'node:url';
 import {
   WAGON_UPKEEP_TIER_IDS, WAGON_UPKEEP_DEFAULT, WAGON_UPKEEP_STORED, WAGON_UPKEEP_RULES, WAGON_UPKEEP_HARD, wagonUpkeepTierOfStored, isStoredWagonUpkeep,
   WAGON_SOUND_BOON, HORSE_CARE_HARD,
-} from '../src/systems/upkeepTiers.js';
-import { wagonUpkeepRules, WAGON_UPKEEP_PREF } from '../src/systems/upkeepSwitch.js';
+} from '../src/systems/upkeep/upkeepTiers.js';
+import { wagonUpkeepRules, WAGON_UPKEEP_PREF } from '../src/systems/upkeep/upkeepSwitch.js';
 import { getPref, setPref, loadPrefs, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { tileStates } from '../src/ui/enhancedMenu.js';
-import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeepRuntime.js';
-import { wagonCondition, wagonPace, wagonSoldWhole, WAGON_UPKEEP_TEXT } from '../src/systems/wagonUpkeep.js';
-import { newWagonItem, WAGON_KIND_ORDER } from '../src/systems/wagonKinds.js';
-import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/itemTemplates.js';
-import { UPKEEP_ITEM } from '../src/systems/upkeepItemRows.js';
+import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeep/upkeepRuntime.js';
+import { wagonCondition, wagonPace, wagonSoldWhole, WAGON_UPKEEP_TEXT } from '../src/systems/wagon/wagonUpkeep.js';
+import { newWagonItem, WAGON_KIND_ORDER } from '../src/systems/wagon/wagonKinds.js';
+import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/item/itemTemplates.js';
+import { UPKEEP_ITEM } from '../src/systems/upkeep/upkeepItemRows.js';
 import { tradeCost, saleConditionPercentage } from '../src/systems/tradeModes.js';
-import { conditionBasedPricesOn } from '../src/systems/rriRealism.js';
+import { conditionBasedPricesOn } from '../src/systems/roleplayRealismItems/rriRealism.js';
 import { saddleMeters, saddleHint, saddleAlert } from '../src/ui/enhancedSaddle.js';
 import { wagonMeterTone } from '../src/ui/holdingsPages.js';
 
@@ -234,11 +234,11 @@ test('WAGON-TIERS THE ONE ACCESSOR AND THE FOUR HOSTS: no module but the switch 
   const walk = (dir) => { for (const f of readdirSync(dir)) { const p = join(dir, f); if (statSync(p).isDirectory()) walk(p); else if (f.endsWith('.js')) files.push(p); } };
   walk(SRC);
   const rel = (p) => p.slice(SRC.length);
-  assert.deepEqual(files.filter((p) => /getPref\((WAGON_UPKEEP_PREF|'wagonUpkeep')\)/.test(readFileSync(p, 'utf8'))).map(rel), ['systems/upkeepSwitch.js'], 'one reader of the key');
+  assert.deepEqual(files.filter((p) => /getPref\((WAGON_UPKEEP_PREF|'wagonUpkeep')\)/.test(readFileSync(p, 'utf8'))).map(rel), ['systems/upkeep/upkeepSwitch.js'], 'one reader of the key');
   assert.deepEqual(files.filter((p) => /\bwagonUpkeepOn\b/.test(readFileSync(p, 'utf8'))).map(rel), [], 'the boolean switch is gone');
   for (const host of ['world.js', 'exterior.js']) {
     const s = rd(`src/scenes/${host}`);
-    assert.match(s, /import \{ horseCareRules, wagonUpkeepRules \} from '\.\.\/systems\/upkeepSwitch\.js';/, host);
+    assert.match(s, /import \{ horseCareRules, wagonUpkeepRules \} from '\.\.\/systems\/upkeep\/upkeepSwitch\.js';/, host);
     assert.match(s, /horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,\n\s*where: /, `${host}: the upkeep`);
     assert.match(s, /reach: \(\) => upkeepReach\(hccRuntimeOn\(\), !!hccRuntimeOn\(\)\), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,/, `${host}: the kit's Use`);
   }

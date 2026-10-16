@@ -6,9 +6,9 @@
 // each return too, so the one that knelt and swore rose from its portal another race.
 //
 // Pinned through the real producers: the crew's party (systems/naval/crewCompanions.js) and the sworn's
-// (systems/revenantCompanions.js) stood by the real layer in real foe pools (scenes/exteriorFoes.js - the street's and a
+// (systems/revenant/revenantCompanions.js) stood by the real layer in real foe pools (scenes/exteriorFoes.js - the street's and a
 // building's, one factory), a door a new pool, a load a new party and layer off the save; a revenant born off a real
-// pool's body (systems/revenant.js revenantDeed), its returns stood as the hosts stand them (revenantSpawnOptions), its
+// pool's body (systems/revenant/revenant.js revenantDeed), its returns stood as the hosts stand them (revenantSpawnOptions), its
 // oath and its sworn stands; the wire between two pools. The look read is the lane's own (foeActor's).
 
 import './modsOff.js';
@@ -25,8 +25,8 @@ const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');
 const { createCrewAshore, companionPerson } = await import('../src/scenes/crewAshore.js');
 const { createCompanions } = await import('../src/systems/naval/crewCompanions.js');
 const { foeActor, foeSeed, ownPerson } = await import('../src/characters/foeBodies.js');
-const N = await import('../src/systems/revenant.js');
-const RC = await import('../src/systems/revenantCompanions.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
@@ -180,5 +180,5 @@ test('FB1012d ALLY-RACE THE ONE SEAM AND THE FOUR HOSTS: every companion body is
   const ext = rd('src/scenes/exterior.js');
   assert.ok(!ext.includes('createCrewAshore'), 'exterior.js (the bench) stands no companion');
   assert.match(ext, /\.\.\.\(hit\.revenant \? revenantSpawnOptions\(hit\.revenant, effectiveLevel\(playerEntity\)\) : \{\}\),/, 'exterior.js: a revenant\'s return through its pool (the stamp applyRevenant writes)');
-  assert.match(rd('src/systems/revenant.js'), /const revenantStamp = \(r\) => \(\{[^\n]*person: revenantPerson\(r\) \}\);/, 'the stamp carries its person');
+  assert.match(rd('src/systems/revenant/revenant.js'), /const revenantStamp = \(r\) => \(\{[^\n]*person: revenantPerson\(r\) \}\);/, 'the stamp carries its person');
 });

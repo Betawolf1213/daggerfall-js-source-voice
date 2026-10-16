@@ -52,7 +52,7 @@
 // a flip lands on the next frame. Recorded here, not in the Ledger:
 // the VALUES swapped are verbatim, only the read moment differs.
 
-import { getBool } from '../systems/settings.js';
+import { getBool } from '../systems/settings/settings.js';
 
 // HUDVitals.cs:41-46, Unity Color floats verbatim.
 export const HEALTH_LOSS_COLOR = Object.freeze([0, 0.22, 0]);

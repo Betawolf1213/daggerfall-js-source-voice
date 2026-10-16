@@ -164,7 +164,7 @@
   },
   {
     "name": "FULLGUARD-the-probe-unset",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "setFoeBlowProbe(() => _pending != null);",
     "new": "",
     "tests": [

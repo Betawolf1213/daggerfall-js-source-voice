@@ -57,7 +57,7 @@ import { createBindings, setBinding } from '../src/systems/inputActions.js';
 import { setBindings } from '../src/ui/input.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { shortcutOrFallback } from '../src/ui/automapText.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

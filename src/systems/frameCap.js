@@ -10,7 +10,7 @@
 // targetFrameRate while vSyncCount is set, so DFU's rule turns the cap
 // off whenever VSync is on. A browser has no other mode: every frame
 // waits for the screen, and `Video/VSync` is unavailable here for that
-// reason (systems/settings.js UNAVAILABLE). Read DFU's way, the cap
+// reason (systems/settings/settings.js UNAVAILABLE). Read DFU's way, the cap
 // could never do anything. So it holds frames BACK from the screen's
 // rate, which is the only thing a page can do - it never runs faster.
 // FPS-VSYNC (2026-09-28): EXCEPT IN THE DESKTOP APP WITH VSYNC OFF. The
@@ -29,7 +29,7 @@
 // frame is handed the same stamp - so the FPS counter (ui/fpsCounter.js),
 // which runs on its own rAF, asks the same question and counts the
 // frames the game drew, not the screen's refresh.
-import { getInt } from './settings.js';
+import { getInt } from './settings/settings.js';
 
 /** SettingsManager.cs:414 - GetInt(sectionVideo, "TargetFrameRate", 0, 300). */
 export const FRAME_CAP_MAX = 300;

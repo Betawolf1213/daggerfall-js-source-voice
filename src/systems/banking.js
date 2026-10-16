@@ -39,7 +39,7 @@
 
 import { CRIMES } from './court.js';
 import { BUILDING_TYPES, isResidence } from '../world/buildingNames.js';   // H1: the houses-for-sale filter
-import { isOnlinePage } from './onlineLane.js';   // EMPIRE-BANK: online, the Empire lends a tenth
+import { isOnlinePage } from './online/onlineLane.js';   // EMPIRE-BANK: online, the Empire lends a tenth
 import { stampLayout, layoutStampOfMapId, recordStands } from './layoutPins.js';   // WD3: a deed keeps the layout its town was bought in
 import { GOLD_PIECE_WEIGHT_KG, letterOfCredit } from './inventory.js';
 import {
@@ -303,7 +303,7 @@ export function sellHouse(accounts, houses, regionIndex, { meshRadius = 0, found
  */
 /** shipInteriorSceneNames' two mapIds (:103-106). Both interiors are
  *  keyed with BuildingDirectory.buildingKey0, which already has a home
- *  in systems/talkTopics.js - a ship is not in any building directory,
+ *  in systems/talk/talkTopics.js - a ship is not in any building directory,
  *  so it takes the no-key key. */
 export const SHIP_INTERIOR_MAP_IDS = Object.freeze([1050578, 2102157]);
 

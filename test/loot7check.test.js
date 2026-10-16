@@ -21,7 +21,7 @@ import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as CH from '../src/systems/champions.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { isThunderlock, isPellet } from '../src/systems/thunderlock.js';   // imported, it registers its unique find
 import { spawnEnemyLoot } from '../src/scenes/hostCombat.js';
 import { equipTableOf } from '../src/systems/equip.js';
@@ -37,7 +37,7 @@ import { resolveHover } from '../src/systems/worldHover.js';
 import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hudFoeTarget.js';   // HOVER-PLAIN: the name's one place
 import { MOBILE_NPC_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { validFoeRecord } from '../src/net/wire.js';
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
@@ -92,7 +92,7 @@ test('LOOT7-CHECK CORPSE-FIND: a body keeps its unique find - the Thunderlock an
   const offBody = { items: [createWeapon(113, 1)], level: 21, mobileType: 7 };
   LR.rollCorpseLoot(offBody, { level: 21, affinity: 'Daedra' }, { rolls: () => 0.0001, luck: 100 });
   assert.equal(offBody.items.length, 1, 'off: DFU\'s list, nothing added');
-  const src = strip(read('src/systems/lootRarity.js'));
+  const src = strip(read('src/systems/loot/lootRarity.js'));
   assert.match(src, /if \(loot\.length > carried\) \(entity\.items \?\?= \[\]\)\.push\(\.\.\.loot\.slice\(carried\)\);/, 'what the roll added past the carried pieces goes onto the body');
 });
 

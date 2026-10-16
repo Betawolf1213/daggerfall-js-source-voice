@@ -6,20 +6,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { testRoomOnlineRefused, TEST_ROOM_OFFLINE_TEXT } from '../src/systems/testRoom.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { validLootItem, validLootList } from '../src/systems/loot.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { validLootItem, validLootList } from '../src/systems/loot/loot.js';
 import { REGALIA, mintAetheric, aethericById, validSetMarks } from '../src/systems/aetheric.js';
-import { brokerStock } from '../src/systems/sigilBroker.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { createWeapon, ARROW_TEMPLATE } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { LEGENDARIES } from '../src/systems/lootRarity.js';
+import { LEGENDARIES } from '../src/systems/loot/lootRarity.js';
 import { PLUS_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { fitTip, TIP_FITS } from '../src/ui/enhancedInventory.js';
 import { wrapToolTipRows, TOOLTIP_WRAP_W, ToolTip } from '../src/ui/toolTip.js';
 import { makeSlotToolTip } from '../src/ui/itemScroller.js';
 import { NATIVE_W } from '../src/ui/nativePanel.js';
-import { SIGIL_SETS, tierValues } from '../src/systems/sigilSets.js';
+import { SIGIL_SETS, tierValues } from '../src/systems/sigil/sigilSets.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -122,7 +122,7 @@ test('AUDIT SET D6: the wire\'s item law cross-checks the marks - a set\'s sigil
   // honest stock: a day of the Broker's, whole
   for (let d = 20500; d < 20510; d++) for (const o of brokerStock(d)) assert.ok(wire(o.item), `the Broker's ${o.kind} on day ${d}`);
   assert.equal(validSetMarks(null), null);
-  assert.match(strip(read('src/systems/loot.js')), /if \(!validItemFields\(out\)\) return null;\s*if \(!validSetMarks\(out\)\) return null;/, 'asked after each field is its kind');
+  assert.match(strip(read('src/systems/loot/loot.js')), /if \(!validItemFields\(out\)\) return null;\s*if \(!validSetMarks\(out\)\) return null;/, 'asked after each field is its kind');
 });
 
 test('AUDIT SET U8: every lore line a classic tooltip draws - a Legendary\'s, an Aetheric piece\'s - is ASCII, as the classic font draws (mutants: a curly apostrophe in the lore)', () => {

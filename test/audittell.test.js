@@ -251,7 +251,7 @@ test('AUDIT TELL L2: a load forgets the last game\'s landings - the queue, the k
   queueBlowEffect(blowEffectOf('slam', true), 10, [1, 0], null);
   drainBlowEffects({ motor: mo, entity: ent });
   assert.deepEqual(mo.calls[0], ['down', 0.9, 0.6], 'and the guard: a knockdown at once');
-  assert.match(rd('src/systems/save.js'), /for \(const k of ENTITY_FIELDS\) entity\[k\] = snap\[k\];\n\s*resetBlowEffects\(entity\);/);
+  assert.match(rd('src/systems/save/save.js'), /for \(const k of ENTITY_FIELDS\) entity\[k\] = snap\[k\];\n\s*resetBlowEffects\(entity\);/);
   const m = motorOn();
   m.blowPush(5, 0); m.blowRattle(0.6, 0.6); m.blowKnockDown(0.9, 0.6);
   m.spawn(3, 0, 3);

@@ -34,7 +34,7 @@ import { THIEVES_GUILD_FACTION_ID as COURT_TG } from '../src/systems/court.js';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const NOW = 100000;
 /** A brand-new entity: NO crime-guild fields at all, which is what the
- *  port actually mints (systems/save.js reads every persistent field
+ *  port actually mints (systems/save/save.js reads every persistent field
  *  with its own `?? 0` rather than declaring defaults). */
 const fresh = () => ({});
 
@@ -211,7 +211,7 @@ test('CG2: every live crime site tallies, with DFU\'s own weight', () => {
     'a killed watchman is worth ONE to the Dark Brotherhood (EntityBehaviour:267)');
   assert.match(guards, /tallyCrimeGuildRequirements\(playerEntity, false, 5\)/,
     'a murdered civilian is worth FIVE (WeaponManager:510)');
-  assert.match(read('systems/talk.js'), /tallyCrimeGuildRequirements\(player, true, 1\)/,
+  assert.match(read('systems/talk/talk.js'), /tallyCrimeGuildRequirements\(player, true, 1\)/,
     'a pinched purse counts one theft (PlayerActivate:1641)');
   assert.match(read('scenes/worldModes.js'), /tallyCrimeGuildRequirements\(playerEntity, true, 1\)/,
     'a picked exterior lock counts one break-in (PlayerActivate:552)');

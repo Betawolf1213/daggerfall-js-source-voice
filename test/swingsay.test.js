@@ -24,7 +24,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createBindings, resetDefaults, setBinding, DEFAULT_BINDINGS } from '../src/systems/inputActions.js';
 import { setBindings, swingChainState, swingButton, saySwingChain, _resetSwingSay } from '../src/ui/input.js';
-import { setValue, getInt } from '../src/systems/settings.js';
+import { setValue, getInt } from '../src/systems/settings/settings.js';
 
 const fresh = () => { const s = createBindings(); resetDefaults(s); setBindings(s); return s; };
 const clearSwing = (s) => { for (const d of [s.primary, s.secondary]) for (const [c, a] of [...d]) if (a === 'SwingWeapon') d.delete(c); };

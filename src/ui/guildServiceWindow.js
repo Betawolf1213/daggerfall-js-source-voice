@@ -26,8 +26,8 @@
 //   Services.GetServiceLabelText (guildServiceFlow.SERVICE_LABEL).
 //
 // The window is geometry and hit rects only; every law it obeys is in
-// systems/guildServiceFlow.js (routing, OnPush, the access refusal)
-// and systems/guilds.js (the join decision). The message boxes it
+// systems/guild/guildServiceFlow.js (routing, OnPush, the access refusal)
+// and systems/guild/guilds.js (the join decision). The message boxes it
 // stacks are the U11 parchment.
 //
 // THE HOTKEYS (D1, retiring the flag that stood here): the old note
@@ -56,7 +56,7 @@ import { SOUND } from '../systems/soundClips.js';
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, latchBoxRows } from './messageBox.js';
 import { noticeFrame, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
 import { drawText, measureText } from './text.js';
-import { serviceLabel, serviceShortcutButton, isServiceBox } from '../systems/guildServiceFlow.js';
+import { serviceLabel, serviceShortcutButton, isServiceBox } from '../systems/guild/guildServiceFlow.js';
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
 
 /** mainPanel.Size (:124) - and the size of both IMGs. */

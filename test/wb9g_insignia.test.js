@@ -12,9 +12,9 @@ import { readFileSync } from 'node:fs';
 import { INSIGNIA, INSIGNIA_COLUMN_MAX, insigniaById, insigniaVocabularyOk, insigniaHeld, insigniaWith, insigniaKeys, insigniaRefusal } from '../src/net/insignia.js';
 import { TITLES, GLYPHS, AURAS, claimsValid, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { badged, readAura } from '../src/net/wire.js';
-import { BROKER_PRICES, spendStones, spendableStonesIn, stoneCount, insigniaSale, insigniaUnheard, makeBrokerSale, brokerStock, BROKER_REFUSALS } from '../src/systems/sigilBroker.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
-import { setLocked } from '../src/systems/itemLock.js';
+import { BROKER_PRICES, spendStones, spendableStonesIn, stoneCount, insigniaSale, insigniaUnheard, makeBrokerSale, brokerStock, BROKER_REFUSALS } from '../src/systems/sigil/sigilBroker.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
+import { setLocked } from '../src/systems/item/itemLock.js';
 import { TITLE_TEXT, AURA_TEXT, TITLE_GRADIENT, TITLE_EDGE, badgeCss } from '../src/ui/playerBadge.js';
 import {
   SESSION_KEY, adoptIdentity, keepSession, storedSession, accountRefusalText, equipAura, buyInsignia, readAccount,
@@ -326,7 +326,7 @@ test('WB9g the pack\'s half: the price taken from the spendable stones, first re
   assert.equal(stoneCount(spendableStonesIn(pack)), 5);
   assert.equal(spendStones(pack, 4), true);
   assert.deepEqual(pack.map((x) => x.stackCount ?? 1), [1]);
-  const src = rd('src/systems/sigilBroker.js');
+  const src = rd('src/systems/sigil/sigilBroker.js');
   assert.equal(src.match(/else item\.stackCount = have - count;/g)?.length, 1, 'one hand takes stones from a pack');
   assert.match(src, /takeFromPack\(items, sale\.take\);/);
   assert.match(src, /takeFromPack\(items, stonesToTake\(spendable, price\)\);/);
@@ -665,7 +665,7 @@ test('WB9g the world host, by source: the auras gathered with the peers each fra
   assert.match(w, /peerRiders\.settle\([^\n]*\n    auraFrame\(seen\);   \/\/ WB9g/, 'gathered once the bodies and the riders have stood');
   assert.match(w, /try \{ _auraPass = new AuraRingRenderer\(renderer\.gl\); \} catch \(e\) \{ console\.warn\('\[online\] the aura would not build'/, 'a fire that will not build costs the fire, never the game');
   const buy = w.slice(w.indexOf('async function insigniaBuy(offer) {'), w.indexOf('async function insigniaWear(offer) {'));
-  // AUDIT WB9 (insignia F1, F2): both halves through the sale's one law (systems/sigilBroker.js insigniaSale, driven in
+  // AUDIT WB9 (insignia F1, F2): both halves through the sale's one law (systems/sigil/sigilBroker.js insigniaSale, driven in
   // the audit's pins below) - the pack's price held first, given back unless the service holds the sale, a lost answer
   // asked after, a held sale saved at once
   assert.match(buy, /const r = await insigniaSale\(offer, \{\n        items: playerEntity\.items, buy: \(id\) => buyInsignia\(io, id\), save: \(\) => saveSoon\.changed\(\),/);
@@ -687,7 +687,7 @@ test('WB9g the world host, by source: the auras gathered with the peers each fra
 
 // ── AUDIT WB9 (2026-09-30, before the merge): the insignia's findings ──
 
-test('AUDIT WB9 insignia F1/F2 - the sale\'s two halves (systems/sigilBroker.js insigniaSale): the pack\'s price taken BEFORE the service is asked, so a ware bought meanwhile cannot leave it untaken (35 stones bought the title AND a 12-stone Regalia); a sale the service holds saved at once (a page closed before the next checkpoint kept the stones as well); the service\'s refusal gives the stones back; a lost answer (unreached, a 5xx) asked after - held, it is the sale; not held, or not heard either, the stones back; a short pack asks nothing (mutants: the stones never given back; a lost answer taken for a refusal; a 5xx taken for a refusal; the sale never saved; the price never held)', async () => {
+test('AUDIT WB9 insignia F1/F2 - the sale\'s two halves (systems/sigil/sigilBroker.js insigniaSale): the pack\'s price taken BEFORE the service is asked, so a ware bought meanwhile cannot leave it untaken (35 stones bought the title AND a 12-stone Regalia); a sale the service holds saved at once (a page closed before the next checkpoint kept the stones as well); the service\'s refusal gives the stones back; a lost answer (unreached, a 5xx) asked after - held, it is the sale; not held, or not heard either, the stones back; a short pack asks nothing (mutants: the stones never given back; a lost answer taken for a refusal; a 5xx taken for a refusal; the sale never saved; the price never held)', async () => {
   const OFFER = INSIGNIA[0];
   const count = (pack) => stoneCount(spendableStonesIn(pack));
   let saved = 0;

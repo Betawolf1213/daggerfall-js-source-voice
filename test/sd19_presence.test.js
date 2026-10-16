@@ -11,12 +11,12 @@ import { readFileSync } from 'node:fs';
 import {
   SD_AIR, sdAirNear, sdAirDusk, sdAirWeight, SD_BRASS_RAMP, sdBrassGrade, SD_BRASS_TINT, sdBrassLight,
   SD_BANNER_M, sdBannerText, sdMarksLine, SD_HOUR_LEFT_MS, sdHourLine,
-} from '../src/systems/sdOmen.js';
+} from '../src/systems/superDungeon/sdOmen.js';
 import { sdMarksCardModel, sdMarksViewOf, SD_MARKS_ARRIVE_MS } from '../src/ui/sdMarksView.js';
 import { sdMarksOf, sdEndingOf, sdOmensOf } from '../src/net/sdMarks.js';
 import { createSdHost } from '../src/scenes/sdHost.js';
-import { sdCities, findSdSite, sdTemplates } from '../src/systems/sdSite.js';
-import { scanGatePixels } from '../src/systems/gateSite.js';
+import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
+import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdNameIn, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { eventTimerRows, timerText } from '../src/systems/eventTimers.js';

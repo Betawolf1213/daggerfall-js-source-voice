@@ -1,7 +1,7 @@
 [
   {
     "name": "BOUNTY1-1-a-short-pack-pays-a-full-purse",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "export const purseShare = (n) => 0.6 + 0.1 *",
     "new": "export const purseShare = (n) => 1 + 0 *",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "BOUNTY1-2-a-dungeon-pack-pays-as-its-own-count",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "    ? BOUNTY_PACK_MIN + 2 * (Math.max(BOUNTY_DUNGEON_PACK_MIN",
     "new": "    ? BOUNTY_PACK_MIN + 1 * (Math.max(BOUNTY_DUNGEON_PACK_MIN",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "BOUNTY1-3-blue-below-level-four",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "  if (l <= 3) return { condition: 0.5, magicChance: 0 };",
     "new": "  if (l <= 3) return { condition: 0.5, magicChance: 0.5 };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "BOUNTY1-4-a-share-across-tiers-fits",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "bountyTierIndex(b.level) === bountyTierIndex(level); };",
     "new": "bountyTierIndex(b.level) <= bountyTierIndex(level); };",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BOUNTY1-5-one-dungeon-slot-however-many-dungeons",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "export const dungeonSlotsFor = (n) => (n >= 2 ? [2, 3] :",
     "new": "export const dungeonSlotsFor = (n) => (n >= 2 ? [3] :",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "BOUNTY1-6-the-bounty-boards-are-the-first-half-not-every-other",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "out.size < want; k += 2) out.add(order[k][1]);",
     "new": "out.size < want; k += 1) out.add(order[k][1]);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "BOUNTY1-7-a-bounty-outlives-its-day",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "nowMinutes - h.takenAt >= BOUNTY_LIFETIME_MINUTES);",
     "new": "nowMinutes - h.takenAt > BOUNTY_LIFETIME_MINUTES);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "BOUNTY1-8-the-highest-account-stands-the-pack",
-    "file": "src/systems/bountyBoard.js",
+    "file": "src/systems/bounty/bountyBoard.js",
     "old": "    if (rowOf(p) && String(m.acct) < String(owner)) owner = m.acct;",
     "new": "    if (rowOf(p) && String(m.acct) > String(owner)) owner = m.acct;",
     "tests": [

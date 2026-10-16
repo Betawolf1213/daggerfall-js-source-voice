@@ -216,8 +216,8 @@ test('WD3 every record is stamped where it is made: the deed, the room, the repa
   // ...and the sites whose record lives elsewhere, by source: the quest's building site, the online claim, the inside save, the cached interior
   assert.match(src('src/systems/quest/place.js'), /this\.sitePending = false;\n {4}this\._stampSiteLayout\(\);/);
   assert.match(src('src/systems/quest/place.js'), /if \(sd\?\.siteType === SITE_TYPES\.Building && sd\.buildingKey > 0\) stampLayout\(sd, layoutStampOfMapId\(sd\.mapId\)\);/);
-  assert.match(src('src/systems/onlineHomes.js'), /const stamp = layoutStampOfMapId\(mapId\);\n {2}return stamp && stamp !== CLASSIC_LAYOUT \? stamp : null;/);   // AUDIT PRE-MERGE 1003 WD1: homeClaimLayout, a hall's too
-  assert.match(src('src/systems/onlineHomes.js'), /const layout = homeClaimLayout\(mapId\);/);
+  assert.match(src('src/systems/online/onlineHomes.js'), /const stamp = layoutStampOfMapId\(mapId\);\n {2}return stamp && stamp !== CLASSIC_LAYOUT \? stamp : null;/);   // AUDIT PRE-MERGE 1003 WD1: homeClaimLayout, a hall's too
+  assert.match(src('src/systems/online/onlineHomes.js'), /const layout = homeClaimLayout\(mapId\);/);
   assert.match(src('src/scenes/world.js'), /if \(interior\) \{ const at = playerTravelPixel\(\); stampLayout\(interior, layoutStampOfPixel\(at\.x, at\.y\)\); \}/);
   assert.match(src('src/scenes/worldModes.js'), /if \(_visitLayout !== null\) stampLayout\(state, _visitLayout\);/);
 });

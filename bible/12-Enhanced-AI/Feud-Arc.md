@@ -172,7 +172,7 @@ value, as TACT4's do; TACT2's five-foe seeded pin and C15's knockback pins hold 
   widening it (section 32).
 - **One home per number.** The shapes' numbers in the leaf `ai/blowShapes.js` (the renderer imports it and the brain
   must not ride the boot graph - `test/boot2.test.js`); every other TELL number on one table in a new leaf beside it;
-  every RVN number at the top of `systems/revenant.js` or its new sibling.
+  every RVN number at the top of `systems/revenant/revenant.js` or its new sibling.
 - **Two clocks.** Every TELL timer reads the brain's clock (`ai/tacticsClock.js tacticsNow`); every RVN day reads the
   character's (`worldTick.ownMinutes`, through `revenant.js nowMinutes`).
 - **Draws.** A record's identity draws (its weakness, signature, band, lair bearing) run on its id's side stream
@@ -730,7 +730,7 @@ before the yield in both damage doors (`exteriorFoes.js damageFoe`, `dungeonCont
 ### 18.1 The lair
 
 At a deed in the open world, the lair is a **named dungeon in the 4-10 px ring** about the deed's map pixel - the bounty
-boards' ring (`systems/bountyBoard.js bountyDungeons`, over the world host's named-dungeon index), the one nearest a
+boards' ring (`systems/bounty/bountyBoard.js bountyDungeons`, over the world host's named-dungeon index), the one nearest a
 bearing drawn on its id - kept as `lair: {px, py, name, region}`. With none in the ring there is no lair: it roams. A
 deed underground makes that dungeon its lair.
 
@@ -1905,7 +1905,7 @@ and `dungeonContext.js`.
 - **The fold** - `revenantDeed` takes the ledger first (whatever its answer - a judged one's, a plain foe's) and, for
   the record it writes, adds `feudScars(ledger, deed)` at the deed's minute (`withScars`, the latest six) and counts the
   fight; `applyRevenant` counts a return. A rank-up to 2 or more draws the signature on the id.
-- **The record** - `systems/revenantFeud.js` (every RVN number at its top, section 27's): `feudFields` - section 26's
+- **The record** - `systems/revenant/revenantFeud.js` (every RVN number at its top, section 27's): `feudFields` - section 26's
   table, each field's validator and an older record's value - spread into `sanitize`; `newFeudFields` for a record born
   now (its weakness drawn against its career's tolerance flags, `entity.career`); `sanitizeCompanion(c, personality)`
   adds `loyalty` (`LOYALTY_START`, else 60); the store's `lastDay` (`sanitizeDay`; the mirror's and the save's merged
@@ -1989,7 +1989,7 @@ and `dungeonContext.js`.
 
 ### RVN3 - BUILT 2026-10-04 (the loot-rarity row on; the staggers with the Enhanced AI switch; every host)
 
-- **The law** - `systems/revenantFeud.js`: `WEAK` (x1.5 struck, x1.25 the daylight's, -50 an element's), `isWeakBlow`
+- **The law** - `systems/revenant/revenantFeud.js`: `WEAK` (x1.5 struck, x1.25 the daylight's, -50 an element's), `isWeakBlow`
   (its class, its metal - `metalOf`: silver, elven, dwarven - or, for the daylight, every blow while the sky reads day),
   `willMatters` (rank 3 and up), `willBroken` (the fight's ledger: `weak` struck, or `staggers` 2), `FLINCH_HEALTH` 0.5,
   `FLINCH_LINES` (fourteen, one a weakness, the narrator's), `WEAK_NAMES`, `WEAK_HINTS`.
@@ -2039,7 +2039,7 @@ and `dungeonContext.js`.
 
 ### RVN4 - BUILT 2026-10-04 (the loot-rarity row on; the roar's ring and phase two's brain with the Enhanced AI switch; every host)
 
-- **The law** - `systems/revenantFeud.js`: `LAST_STAND_RANK` 3, `LAST_STAND_HEALTH` (0.35 / 0.45 / 0.55), `LAST_STAND_ROAR`
+- **The law** - `systems/revenant/revenantFeud.js`: `LAST_STAND_RANK` 3, `LAST_STAND_HEALTH` (0.35 / 0.45 / 0.55), `LAST_STAND_ROAR`
   1.2 s, `PHASE_TWO` (blows x1.2, +20 Speed, wind-ups x0.85, cooldowns x0.7, two chained blows - three in all, iron
   one in two, x1.1, its rim's colour); `lastStandHealth`, `phaseTwo()` (the numbers the brain reads, frozen),
   `lastStandGlint`, `lastStandSize`.
@@ -2080,7 +2080,7 @@ and `dungeonContext.js`.
 
 ### RVN5 - BUILT 2026-10-04 (the loot-rarity row on and the Enhanced AI switch; every host)
 
-- **The law** - `systems/revenantFeud.js`: `SIG` (x2.0, its cooldown 12-18 s, iron from rank 3, its ember, its WIND
+- **The law** - `systems/revenant/revenantFeud.js`: `SIG` (x2.0, its cooldown 12-18 s, iron from rank 3, its ember, its WIND
   0.7, the pyre's magnitude 3-6 plus 1 a level), `SIG_NOUNS` and `PYRE_NOUNS` (16.2, whole), `pyreElement` (by kind -
   16.1 as built), `signatureName` (`<given>'s <noun>` - `revenantPersonality.possessive`; the noun drawn on its id's
   side stream, the shared DFRandom unmoved - `signatureNoun`; derived, never stored; no given name, the noun alone),
@@ -2123,7 +2123,7 @@ and `dungeonContext.js`.
 
 ### RVN6 - BUILT 2026-10-04 (the loot-rarity row on; the street pool - both open-world hosts)
 
-- **The law** - `systems/revenantFeud.js`: `RETINUE` (RVN1's), `retinueCount`, `BAND_SCATTER_S` 8, `BAND_SPACING` 6,
+- **The law** - `systems/revenant/revenantFeud.js`: `RETINUE` (RVN1's), `retinueCount`, `BAND_SCATTER_S` 8, `BAND_SPACING` 6,
   `RALLY_KIN` 2; `bandWord` (17 as built), `bandName` ("Grushnak's Warband" - from rank 2 with kin; derived, never
   stored), `bandMembers` (its first `retinueCount` kin: a monster at its kind's level, a person at the player's level - 2,
   never under 1). The kin themselves (`kinPool`, `drawKin`, the record's `kin`) are RVN1's.
@@ -2155,7 +2155,7 @@ and `dungeonContext.js`.
 
 ### RVN7a - BUILT 2026-10-04 (the loot-rarity row on; the world host and the dungeon)
 
-- **The law** - `systems/revenantFeud.js`: `RUMOR_CHANCE` 0.35, `RUMOR_PX` 20, `LAIR_GOLD` x1.25 (their slices' to read);
+- **The law** - `systems/revenant/revenantFeud.js`: `RUMOR_CHANCE` 0.35, `RUMOR_PX` 20, `LAIR_GOLD` x1.25 (their slices' to read);
   `pickLair(id, px, py, dungeons)` - of the named dungeons about the deed (the bounty boards' 4-10 px ring,
   `bountyBoard.bountyDungeons`), the one nearest a bearing drawn on its id's side stream (east 0, north a quarter turn,
   `compassWord`'s; the turn wraps), the nearer of two as near, sanitized `{px, py, name, region}`; none in reach, null
@@ -2179,7 +2179,7 @@ and `dungeonContext.js`.
 
 ### RVN7b - BUILT 2026-10-04 (the loot-rarity row on; the world host's talk)
 
-- **The law** - `systems/revenantFeud.js`: `RUMOR_WEAK` 0.5, `RUMOR_NAMED` 1/3, `RUMOR_HINTS` (18.2 as built);
+- **The law** - `systems/revenant/revenantFeud.js`: `RUMOR_WEAK` 0.5, `RUMOR_NAMED` 1/3, `RUMOR_HINTS` (18.2 as built);
   RVN7a's `RUMOR_CHANCE` 0.35 and `RUMOR_PX` 20.
 - **The rumour** - `revenant.revenantRumor(here, session)`: `here` my map pixel and region; among the living, unsworn
   revenants with a lair within RUMOR_PX or in my region (an unknown region matches none), one time in RUMOR_CHANCE the
@@ -2258,8 +2258,8 @@ and `dungeonContext.js`.
 
 ### RVN8 - BUILT 2026-10-04 (the loot-rarity row on; online alone)
 
-- **The law** - `systems/revenant.js`: `revenantMayTake` (never a quest item, a summoned piece, the Materials Bag -
-  `net/bagLaw.js isBagItem` - gold or a locked piece, `systems/itemLock.js`'s LOCK1 promise); `pickTaken(id, kills,
+- **The law** - `systems/revenant/revenant.js`: `revenantMayTake` (never a quest item, a summoned piece, the Materials Bag -
+  `net/bagLaw.js isBagItem` - gold or a locked piece, `systems/item/itemLock.js`'s LOCK1 promise); `pickTaken(id, kills,
   weapon, items)` (19 as built); `TOOK_MAX` 3 (RVN1's).
 - **The take** - `revenantTakes(player, { online })`: this death's killer (`revenantDeed`'s slew remembers it, taken
   once), online alone; at TOOK_MAX it only gloats (`{ item: null }`); else the piece off the hand that held it
@@ -2283,7 +2283,7 @@ and `dungeonContext.js`.
 
 ### RVN9 - BUILT 2026-10-04 (the loot-rarity row on; every host's encounter tick)
 
-- **The law** - `systems/revenantFeud.js`: `FESTER` (3 days, every 3, seven caught up, +10% health and +5% blows a
+- **The law** - `systems/revenant/revenantFeud.js`: `FESTER` (3 days, every 3, seven caught up, +10% health and +5% blows a
   wrath), `festersOn(dueDay, day)`; RVN1's `WRATH_MAX` 3 and the record's `wrath` and the store's `lastDay`.
 - **The days** - `revenant.revenantFester(player, { now })`: the character's day (`MINUTES_PER_DAY`) against `lastDay`,
   whole days caught up; the living, unsworn, not-out revenants fester on their days; at three a rank (the `festered`
@@ -2304,7 +2304,7 @@ and `dungeonContext.js`.
 
 ### RVN10 - BUILT 2026-10-05 (the loot-rarity row on; every pool, the world host's companions and jumps)
 
-- **The law** - `systems/revenantFeud.js`: `ROUT` (70 m, under half); `lessonOf` asks `routed` before the fight's
+- **The law** - `systems/revenant/revenantFeud.js`: `ROUT` (70 m, under half); `lessonOf` asks `routed` before the fight's
   other scars (the Relentless). `systems/harmMark.js`: `HARM_FIGHT_MS` 30 s, each foe's fight (`markPlayerHarm` opens
   or carries it; `harmFightSince`), the low (`markPlayerLow`, `playerLowSince`), `endPlayerFights` (a death, a load, a
   new game, the online respawn); a judged foe's fight ends with its mark (`clearPlayerHarm(entity)`).
@@ -2339,12 +2339,12 @@ and `dungeonContext.js`.
 
 ### RVN11a - BUILT 2026-10-05 (the loot-rarity row on; the world host's sworn, every pool's cues)
 
-- **The law** - `systems/revenantFeud.js`: `LOYALTY` (+3 won, +2 a day with me, +10 called after a rest; -1 a day
+- **The law** - `systems/revenant/revenantFeud.js`: `LOYALTY` (+3 won, +2 a day with me, +10 called after a rest; -1 a day
   away, -8 knocked out, -10 sent away again in a day, -15 its kind executed in its sight), `DEVOTED` (90, blows x1.1,
   15 s between warnings), `LOYALTY_LABELS` and `loyaltyLabel` (Devoted 90+, Loyal 50, Wavering 20, Restless),
   `movedLoyalty` (0-100), `isDevoted`, `sameKin` (one kind or one faction); RVN1's `LOYALTY_START`.
 - **The moves** - `revenant.revenantFester`'s day walk: each sworn one's day (with me +2, away -1, resting nothing).
-  `systems/revenantCompanions.js`: its wake marks it `rested`, `callRevenant` spends it (+10); `sendRevenantAway(id, {
+  `systems/revenant/revenantCompanions.js`: its wake marks it `rested`, `callRevenant` spends it (+10); `sendRevenantAway(id, {
   now, byYou })` costs -10 on a second sending the same day (`sentDay`; the slots' hold, `byYou: false`, costs and notes
   nothing); the party's `knock` -8; `swornFightStep(rec)` and `swornFightWon(id)` (+3); `swornWitness(mobileType)`
   (-15, `revenantFate.finishExecution`'s). `revenant.js sanitizeCompanion`: `rested` (only while away), `sentDay`.
@@ -2366,7 +2366,7 @@ and `dungeonContext.js`.
 
 ### RVN11b - BUILT 2026-10-05 (the loot-rarity row on; every host's encounter tick)
 
-- **The law** - `systems/revenantFeud.js`: `DESERT` (under 20, 0.15), `deserterSplit(items, { value, isGold, room })`
+- **The law** - `systems/revenant/revenantFeud.js`: `DESERT` (under 20, 0.15), `deserterSplit(items, { value, isGold, room })`
   (the more valuable half, an odd one its way, at most its room, never gold - OPEN 18).
 - **The roll** - `revenant.revenantFester`'s day walk: after the sworn's day, each sworn one under `DESERT.AT` rolls
   once (`rolls() < DESERT.CHANCE`).
@@ -2389,9 +2389,9 @@ and `dungeonContext.js`.
 
 ### RVN11c - BUILT 2026-10-05 (the loot-rarity row on; the world host's sworn, every place's spawn)
 
-- **The law** - `systems/revenantFeud.js`: `BETRAY` (under 10, a quarter of my health, the Unhinged, the Craven, the
+- **The law** - `systems/revenant/revenantFeud.js`: `BETRAY` (under 10, a quarter of my health, the Unhinged, the Craven, the
   Brutal - OPEN 19), `mayBetray(r)`.
-- **The moment** - `systems/revenantCompanions.js betrayalStep(entity, after)`, on the player's hurt
+- **The moment** - `systems/revenant/revenantCompanions.js betrayalStep(entity, after)`, on the player's hurt
   (`registerPlayerHurtListener('sworn-betrayal')`): alive and under a quarter, the first sworn one at my side that may
   and whose body stands here turns - its record (`revenant.revenantBetrays`), then the host told (`'betray'`).
 - **The turn** - `revenantBetrays(player, r)`: not sworn, rank +1 (never past 5; its signature at 2), "the Betrayer"
@@ -2414,14 +2414,14 @@ and `dungeonContext.js`.
 
 ### RVN12a - BUILT 2026-10-05 (the loot-rarity row on; every host's cards)
 
-- **The bank** - `systems/revenantPersonality.js`: `VOICE_EVENTS` gains `learned`, `signature`, `laststand`, `stole`,
+- **The bank** - `systems/revenant/revenantPersonality.js`: `VOICE_EVENTS` gains `learned`, `signature`, `laststand`, `stole`,
   `festered`, `felled_return`, `routed_return`, `deserted`, `betrayed`, `devoted_warn` - 220 lines in ten voices, a
   beast's deed each; `VOICE_PLACEHOLDERS` (`p`, `how`, `item`, `move`, `ally` - exactly); `voiceLine(... { how, item,
   move, ally })` passes over a line it cannot fill.
-- **The moments** - `systems/revenant.js`: `voiceParts(..., vars)`; `tauntMoment(r)` (the return's moment by its
+- **The moments** - `systems/revenant/revenant.js`: `voiceParts(..., vars)`; `tauntMoment(r)` (the return's moment by its
   newest deed) and its card (`stole` - *It took*); `revenantSignatureEvent(r, noun, { playerName })` (its words, its
   line), `revenantLastStandEvent` (`laststand`), `revenantWarnEvent` (`devoted_warn`), `revenantDesertEvent(r, {
-  playerName })` (`deserted`), `revenantBetrayEvent(r, { playerName })` (`betrayed`). `systems/revenantFeud.js
+  playerName })` (`deserted`), `revenantBetrayEvent(r, { playerName })` (`betrayed`). `systems/revenant/revenantFeud.js
   ADAPT_HOW` - a habit's word for each adaptation.
 - **Four hosts** - `scenes/exteriorFoes.js` and `scenes/dungeonContext.js` hand my name to the signature's card;
   `scenes/world.js` to the betrayer's; the deserter's through `takeRevenantNotice` (both hosts' encounter tick);
@@ -2455,7 +2455,7 @@ and `dungeonContext.js`.
 
 ### RVN13 - BUILT 2026-10-05 (the loot-rarity row on; both foe streams; relay world164)
 
-- **The law** - `systems/revenantFeud.js`: `adaptMask`/`maskAdapt` (a bit for each of ADAPTATIONS, read back at most
+- **The law** - `systems/revenant/revenantFeud.js`: `adaptMask`/`maskAdapt` (a bit for each of ADAPTATIONS, read back at most
   ADAPT_MAX), `weakIndex`/`weakAt`, `feudWire(stamp)` (`ad`, `wq`, `p2`), `feudFromWire(stamp, record)` (its learned,
   its weakness, their `adaptEdge`, its phase two), `puppetBandName(masterName, masterType)`.
 - **The wire** - `net/wire.js validFoeRecord`: `ad` (1..FOE_ADAPT_MASK_MAX, at most FOE_ADAPT_MAX set), `wq`
@@ -2678,10 +2678,10 @@ AUDIT FEUD's named gap (section 32): online, a revenant puppet struck a peer wit
 `damageScale` (its rank's x1.1 a rank, its wrath's x1.05 a wrath, a Night-stalker's x1.15 by night, phase two's x1.2)
 rode no wire, and a signature of reach landed at its shape's multiplier (a slam's x1.75, not x2.0).
 
-- **The owner** - `systems/revenant.js applyRevenant` keeps its stand's blows over its kind's on its stamp
+- **The owner** - `systems/revenant/revenant.js applyRevenant` keeps its stand's blows over its kind's on its stamp
   (`entity.revenant.blows` - the scale it stood with over the one before it, so an elite's or a champion's never counts);
   a deed that stamps it again (a killer over my body, a felling) keeps them, as it keeps phase two.
-- **The law** - `systems/revenantFeud.js`: `BLOWS_WIRE` (per mille, x1 to x4); `feudWire` writes `rb` (none at x1;
+- **The law** - `systems/revenant/revenantFeud.js`: `BLOWS_WIRE` (per mille, x1 to x4); `feudWire` writes `rb` (none at x1;
   clamped to the law, so a record is never refused whole for it); `feudFromWire` reads it onto the puppet's stamp as
   `blows`, so an heir writes it back; `puppetRevenantBlows(entity, record)` folds `rb` and phase two's x1.2 (`p2`) onto
   the puppet's own `damageScale` - the factor it stood with last (`entity._revBlows`) taken out first, so a record said
@@ -2722,7 +2722,7 @@ AUDIT FEUD 2's disclosed gap: the duel harness (`tools/tellDuel.mjs`) fought a r
 - **Whom I strike** - its master first (`order` 'master'), or its band first ('band', the nearest standing kin).
 - **The fault it found** - a revenant risen in its last stand as it ran ran on: `beginLastStand` set `f.fleeing` false
   but left the motor's run (`ai.fleeLeft`) going, so it ran untargeted for the rest of its run, and the flee law - asked
-  no more - never cornered it nor let it escape. `systems/revenantFate.js beginLastStand` ends the run, as `beginYield`
+  no more - never cornered it nor let it escape. `systems/revenant/revenantFate.js beginLastStand` ends the run, as `beginYield`
   and `beginTearAway` do. In the measure below about one rank-3 fight in ten rises in its stand as it runs.
 - **Held as it was** - the walk back into reach aims where the foe stood as I stepped (my step before the foes', the
   frame's order), as AUDIT FEUD 2's did: the duel alone and never running reproduces its numbers to the fight.

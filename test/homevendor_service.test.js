@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
-import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot.js';
+import { validLootList, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { goldSaleOf, MARKET_LISTING_S } from '../src/net/marketLaw.js';
 import { VENDOR_LISTING_S, vendorOf, vendorSearch, VENDOR_REFUSAL_WORDS } from '../src/net/vendorLaw.js';
 import { DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES, decorPlaceOf } from '../src/net/decorLaw.js';

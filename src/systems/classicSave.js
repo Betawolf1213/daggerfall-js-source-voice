@@ -10,7 +10,7 @@
 // DaggerfallBankManager.ReadNativeBankData, Guild.ImportLastRankChange
 // and the classic pitch/yaw/weather conversion laws - reshaped into
 // ONE pure producer: classicSaveToSnapshot builds the port's own
-// SAVE_VERSION envelope (systems/save.js) from an opened SaveGames,
+// SAVE_VERSION envelope (systems/save/save.js) from an opened SaveGames,
 // so the EXISTING restore seam (restorePlayer + the hosts' quickload
 // path) is the only consumer a load-classic entry will ever need.
 // DFU mutates live singletons instead; the envelope is the recorded
@@ -45,12 +45,12 @@ import { raceById } from './races.js';
 import { RECORD_TYPES, ENVIRONMENTS, isWagonRecord } from '../formats/saveTreeFile.js';
 import { readMapSaveDiscovery } from '../formats/saveGames.js';
 import { SHIP_TYPES } from './banking.js';
-import { SAVE_VERSION } from './save.js';
+import { SAVE_VERSION } from './save/save.js';
 import { LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling.js';   // ORL1: a classic save is a classic character
 import { STAT_KEYS_ORDER } from './statMods.js';
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';
 import { ITEM_GROUP_BY_ID } from './biography.js';
-import { GROUP_TEMPLATE_INDICES, templateFor } from './itemTemplates.js';
+import { GROUP_TEMPLATE_INDICES, templateFor } from './item/itemTemplates.js';
 import { ENCHANTMENT_TYPES } from '../formats/magicDef.js';   // the None sentinel FromItemRecord tests
 import { isPotion, isPotionRecipe } from './useItem.js';
 import {
@@ -58,10 +58,10 @@ import {
   // A4: the flag masks and the legacy artifact-index recovery, at
   // their one home beside createArtifact.
   ITEM_ARTIFACT_MASK, ITEM_IDENTIFIED_MASK, legacyArtifactIndexBitfieldCheck,
-} from './loot.js';
+} from './loot/loot.js';
 import { equipItem } from './equip.js';
-import { guildGroupOfFaction, membershipKey, daySinceZero } from './guilds.js';
-import { createGuildForGroup } from './guildVariants.js';   // GuildManager.CreateGuildObj (:167-213)
+import { guildGroupOfFaction, membershipKey, daySinceZero } from './guild/guilds.js';
+import { createGuildForGroup } from './guild/guildVariants.js';   // GuildManager.CreateGuildObj (:167-213)
 import { dateFromClassicMinutes } from './gameDate.js';
 import { createVampirismCurse } from './vampirism.js';
 import { createLycanthropyCurse } from './lycanthropy.js';
@@ -530,7 +530,7 @@ export function classicGuildMemberships(saveTree, factionDict, vampire = false) 
       // Temple(Arkay) / KnightlyOrder(Horn) instance and IsMember
       // answers true. The port's slot carries the guild's NAME to say
       // which temple or order fills the shared group slot
-      // (systems/guilds.js:"export function membershipOf"), and that name has to be the
+      // (systems/guild/guilds.js:"export function membershipOf"), and that name has to be the
       // PORT's guild-record name - the one joinGuild writes - not the
       // FACTION.TXT record name ("The Fighters Guild", "Arkay"), which
       // no consumer matches. `createGuildForGroup` is CreateGuildObj,

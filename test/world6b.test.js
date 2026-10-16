@@ -22,8 +22,8 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
 import { runDayChange, dayRollsFor, setSharedClock, sharedClockOn, MINUTES_PER_DAY, worldRegionPricesOn } from '../src/systems/worldTick.js';
 import { regionPriceAdjustment } from '../src/systems/shopStock.js';   // ECON1
-import { seededRng } from '../src/systems/wind.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { foeSeed } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K2-K4: the record's look seed
 

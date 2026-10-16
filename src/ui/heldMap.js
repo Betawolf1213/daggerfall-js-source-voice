@@ -84,22 +84,22 @@
 
 import { MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';
 import { REGION_NAMES, longitudeLatitudeToMapPixel, getPixelFromPixelID, patchRegionIndex } from '../formats/mapsFile.js';
-import { locationSummaryAt } from '../systems/mapDirectory.js';
-import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel.js';
-import { guildFastTravel } from '../systems/guildVariants.js';   // TP1: GuildManager.FastTravel
+import { locationSummaryAt } from '../systems/map/mapDirectory.js';
+import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel/travel.js';
+import { guildFastTravel } from '../systems/guild/guildVariants.js';   // TP1: GuildManager.FastTravel
 import {
   travelMapFilters, freshTravelMapFilters, travelMapPopUpState, freshTravelMapPopUpState, setTravelMapPopUpState, travelMapSaveData,
   travelMapMarkedMapId, setTravelMapMarkedMapId,   // MAP2: the mod's mark outlives the window (AUDIT-TO1 G4)
-} from '../systems/travelMapState.js';
+} from '../systems/travel/travelMapState.js';
 // AUDIT-TO1 C1/C2/C3: the mod's laws on the DEFAULT skin, as the pure
 // functions the popup itself calls, so the two skins cannot drift.
 import { isPlayerControlledTravel, enforceShipRestriction, shipTravelRefusal, scaleTripCost, SHIP_REFUSAL_TEXT, ONLINE_TRAVEL_LINE } from './travelPopUp.js';
 // MAP2: the mod's map additions, through the SAME functions the classic
 // window calls (ui/travelMapOptions.js), so the two skins cannot drift.
 import { teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt } from './travelMapOptions.js';
-import { hasPortFor as hasPort } from '../systems/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
+import { hasPortFor as hasPort } from '../systems/travel/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
 import { noticeHold, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE3: this window's own click-anywhere boxes, as the enhanced panel
-import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travelOptionsText.js';
+import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travel/travelOptionsText.js';
 import { getDaggerfallDistance, MatchesCutOff } from '../systems/editDistance.js';
 import { checkLocationDiscovered, flipTravelMapFilter, travelMapDotColors } from './travelMapWindow.js';   // MAP-KEY: the classic's filter flip and its dots' colours
 import { readGateMark, gateMarkKey, GATE_RING_CSS, GATE_LEGEND_TEXT } from './gateMapMark.js';   // WB1: the Oblivion Gate's ring, read as the party is (SERPENT1: and the serpent's, by the same reader)
@@ -129,7 +129,7 @@ import {
 import {
   createSheetSlot, stripLayout, stripHit, paintStrip, stripFont,
 } from './mapStrip.js';
-import { mapContextOf } from '../systems/mapTabs.js';
+import { mapContextOf } from '../systems/map/mapTabs.js';
 import { createAutomapSheet } from './automapSheet.js';
 import { dungeonMap3dOn, tamrielMapOn } from './mapSkin.js';   // EM3-3D: the solid dungeon map's switch; TAMRIEL1: the continent's
 // TAMRIEL1 (2026-10-08, Mac: "the entirety of tamriel ... connected as a gigantic map ... seen by players ingame"): the
@@ -138,7 +138,7 @@ import { dungeonMap3dOn, tamrielMapOn } from './mapSkin.js';   // EM3-3D: the so
 import { tamrielInkFor, paintTamrielInk, tamrielPlaceAt, onContinent } from './tamrielInk.js';
 import { tamrielFrameInBay } from '../world/tamrielFrame.js';
 import { tamrielLandVersion } from '../world/tamrielLand.js';   // TAMRIEL3: the trace's version, in the static key
-import { NOTE_MAX_CHARACTERS } from '../systems/automap.js';
+import { NOTE_MAX_CHARACTERS } from '../systems/automap/automap.js';
 /** PLUS-MAP: the 3D map's tool glyphs - line drawings in the button's own colour (currentColor). */
 const TOOL_SVG = (d) => `<svg class="hmtoolicon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">${d}</svg>`;
 export const TOOL_ICONS = Object.freeze({
@@ -169,9 +169,9 @@ import { quadPlacement } from './quadMap.js';   // MAP3: the sheet over the held
 import { bindings } from './input.js';
 import { actionsForCode } from '../systems/inputActions.js';   // UXB1-S: every action its key carries, shared or not
 import { smoothstep } from '../systems/mathf.js';   // MAP-FIELD7: the ONE easing, so the sheet travels like everything else in the port
-import { hubMapWord, hubTitle } from '../systems/regionHubs.js';   // HUB1: a region hub's word on the label and its title in the box
-import { tierPhrase } from '../systems/dungeonTier.js';   // TIER1: a dungeon's tier and size on the label and in the box, online
-import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, TV_KIN_LEGEND, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, playerShown } from '../systems/travelViewFilters.js';   // OW-WHO / OW-KIN: the players' filters and colours, the Overworld's own
+import { hubMapWord, hubTitle } from '../systems/region/regionHubs.js';   // HUB1: a region hub's word on the label and its title in the box
+import { tierPhrase } from '../systems/dungeon/dungeonTier.js';   // TIER1: a dungeon's tier and size on the label and in the box, online
+import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, TV_KIN_LEGEND, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, playerShown } from '../systems/travel/travelViewFilters.js';   // OW-WHO / OW-KIN: the players' filters and colours, the Overworld's own
 import { seatInfoLine, seatTipOf } from '../net/townSeatLaw.js';   // SEAT1a: a seat's Charter in the box
 
 // ── THE SPRITE (Mac's, public/art/held-map.png) ──────────────────
@@ -183,10 +183,10 @@ import { APP_ROOT } from '../systems/appRoot.js';
 import { IT_POPUP, IT_TEXT, itMapRefusal, itMapPaths, itPopUpDefaults, itTogglePress, itTrip, playerPopUpRefusal, seafarerDiscovered } from '../systems/immersiveTravel.js';   // IT1: Immersive Travel's maps and popups, on this sheet
 import {
   WAYPOINT_KINDS, WAYPOINT_TEXT, shownWaypoints, onWaypoints, isWaypointFollowed, waypointKindsShown, toggleWaypointKind, listWaypoints,
-} from '../systems/mapWaypoints.js';   // WAYPOINTS: the flags on the sheet, and their key row
+} from '../systems/map/mapWaypoints.js';   // WAYPOINTS: the flags on the sheet, and their key row
 import { openWaypointMenu, closeWaypointMenu } from './waypointMenu.js';   // WAYPOINTS: the right-click menu
 import { wildInk, paintWildZone, paintWildRemains, paintWildKeyChip, paintWildCrows, paintWildFlames, paintWildLocks, paintWildGiants } from './wildMapInk.js';   // WILD1: the open zone's fog, red line and my remains
-import { WILD_TEXT, wildInside, wildRingAt } from '../systems/wildZone.js';   // WILD1: the zone's words on the map
+import { WILD_TEXT, wildInside, wildRingAt } from '../systems/wild/wildZone.js';   // WILD1: the zone's words on the map
 import { zoneMapInk, paintWildRings, paintZoneMapStatic, zoneMapView, zoneMapLimits, buildZoneLegend } from './wildZoneMap.js';   // WILD2: the rings, and the zone's own map
 import { paintWaypointFlag, flagBox } from './waypointFlags.js';   // WAYPOINTS: the small flags
 import { mapUiScale } from './mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the map's interface at the screen's size
@@ -589,7 +589,7 @@ export class HeldMapWindow {
     // the WINDOW; what is inked on the sheet is a TAB. `where` is the
     // host's own flags (isPlayerInsideDungeon, isPlayerInside, whether
     // the pixel carries a location) - DERIVED into a context by
-    // systems/mapTabs.js, never declared by a host.
+    // systems/map/mapTabs.js, never declared by a host.
     //
     // `has` is the sheets THIS window was built with, and the slot's
     // offer is the place's offer narrowed by it. Until EM3 and EM4
@@ -2223,7 +2223,7 @@ export class HeldMapWindow {
     }
     // OW-WHO (FIELD BUGS 2026-10-04e, "More filters for players in general ... both in Overworld map and travel map"):
     // THE PLAYERS' ROW - while the region's travellers are drawn: friends, guild, the rest, and the least Renown, the
-    // Overworld's own switches (systems/travelViewFilters.js - one store, so both maps answer alike)
+    // Overworld's own switches (systems/travel/travelViewFilters.js - one store, so both maps answer alike)
     if (this._trav.length) {
       const row = el('div', 'hmkeyrow');
       row.append(el('span', 'hmkeywho', TV_WHO_TEXT.title));   // never .hmkeyname: a phone hides those, and the grid would shift
@@ -2243,7 +2243,7 @@ export class HeldMapWindow {
       box.append(row);
     }
     // WAYPOINTS (2026-10-06, the player: "Add Waypoints to the filter on the worldmap"): THE WAYPOINTS' ROW - a switch per
-    // kind, the Overworld's own (systems/mapWaypoints.js - one store, so both maps answer alike), each with how many
+    // kind, the Overworld's own (systems/map/mapWaypoints.js - one store, so both maps answer alike), each with how many
     {
       const row = el('div', 'hmkeyrow');
       const head = el('span', 'hmkeywho', WAYPOINT_TEXT.title);

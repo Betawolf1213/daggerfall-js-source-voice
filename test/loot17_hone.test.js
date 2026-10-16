@@ -17,13 +17,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as RF from '../src/systems/reforge.js';
-import { welkyndShards } from '../src/systems/gateSpoils.js';
+import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { equipItem } from '../src/systems/equip.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { withDom } from './invdrag.mjs';
 import { mountReforgeWindow, HONED, HONE_NOTE, REFORGE_REFUSALS, reforgePriceText } from '../src/ui/reforgeWindow.js';
 

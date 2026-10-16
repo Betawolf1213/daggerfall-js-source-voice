@@ -53,7 +53,7 @@ export function createWildFight({ send, now = () => Date.now(), can = () => fals
       return k;
     },
     /** MY FALL, the referee's word, at `killer`'s hand: my worn gear's offer (`records`, the wire's copies, in my pack's
-     *  order - systems/wildDropLaw.js wornOffer) under the fall's remains id `s`. True when it left. */
+     *  order - systems/wild/wildDropLaw.js wornOffer) under the fall's remains id `s`. True when it left. */
     offerWorn(killer, s, records) {
       return once({ k: 'worn', to: killer, s, items: records });
     },

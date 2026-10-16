@@ -27,7 +27,7 @@ import { isWorldRoom, validGateOut } from '../src/net/wire.js';
 import { gateYaw, gateRoomKey } from '../src/net/gateLaw.js';
 import { createGateLink, foldGate, bossAt, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gateLink.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
-import { fellLine } from '../src/systems/gateOmen.js';
+import { fellLine } from '../src/systems/gate/gateOmen.js';
 
 const read = (p) => readFileSync(p, 'utf8');
 const noModel = () => { throw new Error('the court asks for no model'); };

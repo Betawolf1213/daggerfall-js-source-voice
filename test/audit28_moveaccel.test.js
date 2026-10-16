@@ -5,7 +5,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { MoveAxes, MOVE_ACCELERATION_CONST } from '../src/player/moveAxes.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W8: MOVEMENT ACCELERATION (InputManager.cs:1445-1497,
 // wired at :432). The setting ships False; the port's hosts produced

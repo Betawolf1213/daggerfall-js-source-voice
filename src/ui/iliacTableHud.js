@@ -23,7 +23,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { cardById } from '../net/iliacCards.js';
-import { cardRules } from '../systems/iliacCardWords.js';   // KG-SET: a card's rules, in the player's language
+import { cardRules } from '../systems/iliac/iliacCardWords.js';   // KG-SET: a card's rules, in the player's language
 import { ILIAC_HAND_MAX, ILIAC_HOLDINGS, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../net/iliacHand.js';
 import { ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { cardCanvasCopy } from './cardBinderPage.js';   // CARDS-PLUS: the binder's own painting of a face, at its CSS size

@@ -12,11 +12,11 @@ import {
   KG_RANGED_COST_FACTOR, KG_ROSTER, KG_TILE, autoFill, armyRefusal, gambitRefusal, gambitAct, finishTurn, rosterUnit, pieceById,
   reachable, foesInRange, cellIndex, warningsArmAt,
 } from '../src/net/kingsGambit.js';
-import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambitPatrons.js';
-import { GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS, GAMBIT_CROWNS } from '../src/systems/gambitTableSession.js';
+import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambit/gambitPatrons.js';
+import { GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS, GAMBIT_CROWNS } from '../src/systems/gambit/gambitTableSession.js';
 import { SUIT_CROWNS } from '../src/render/cardFaces.js';
 import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
-import { FOE_CARDS } from '../src/systems/cardSources.js';
+import { FOE_CARDS } from '../src/systems/card/cardSources.js';
 import {
   gambitHudModel, createGambitTableHud, gridOrder, stakePicks, rangeCells, infoBox, tierStep, unitCardId, boardCursorStep, GAMBIT_TABLE_CSS,
 } from '../src/ui/gambitTableHud.js';

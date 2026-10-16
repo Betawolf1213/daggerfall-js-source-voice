@@ -1,7 +1,7 @@
 // WAGONS2 (2026-10-09, Mac: "3. People should be able to use the interior just like houses ... 4. ... see inside/outside
 // of house windows + the new wagon. 5. Exterior and interior texture customization of the wagons"; asked, the caravan's
 // room "Caravan-shaped", its paint "Free, any time"): the caravan's own room (world/caravanRoomModel.js, systems/
-// caravanRoom.js, scenes/caravanRoom.js) and the wagons' paint (systems/wagonLooks.js, world/wagonArt.js's paints, the
+// caravanRoom.js, scenes/caravanRoom.js) and the wagons' paint (systems/wagon/wagonLooks.js, world/wagonArt.js's paints, the
 // pool's draw, the word, the park record, the Stable and the decorator), and the Overworld's riders.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 import {
   WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS, CARAVAN_INSIDE_PARTS, LOOK_COUNT, LOOK_NAMES, LOOK_TEXT, readWagonLook, wagonLookOf,
   wagonLookCode, wagonLookOfCode, WAGON_LOOK_CODE_MAX, paintedWagon, paintDrivenWagon, caravanPaintRows, outsidePaintRow,
-} from '../src/systems/wagonLooks.js';
-import { newWagonItem } from '../src/systems/wagonKinds.js';
+} from '../src/systems/wagon/wagonLooks.js';
+import { newWagonItem } from '../src/systems/wagon/wagonKinds.js';
 import {
   wagonArt, wagonLookArt, TEX, WAGON_ARCHIVE, LOOK_RECORDS, LOOK_RECORD_STRIDE, lookRecord, isGlassRecord, CARAVAN_SIDE_WINDOW,
   CARAVAN_FRONT_WINDOW, SIDE_Y0, SIDE_Y1,
@@ -25,20 +25,20 @@ import { buildInteriorContext } from '../src/scenes/interiorContext.js';
 import { interiorLightProperties } from '../src/world/interiorLights.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { createHorseCartPool, PUPPET_SEAT_REACH, PUPPET_SEAT_RISE, SEAT_GLUE_REACH, OUTSIDE_SKIP_REACH } from '../src/scenes/horseCartPool.js';
-import { hccWireRecord, validHccRecord, HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+import { hccWireRecord, validHccRecord, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import { validParkData, PARK_WAGON_LOOK_MAX } from '../src/net/wire.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 import { createDecorPanel } from '../src/ui/decorPanel.js';
 import { toolRig, fakeDoc, fakeWin, all, one } from './decorFakes.mjs';
 import { createWagonRiders, RIDE_LOST_GRACE_MS, GET_DOWN_REACH } from '../src/scenes/wagonRiders.js';
-import { RIDE_TEXT } from '../src/systems/wagonSeats.js';
+import { RIDE_TEXT } from '../src/systems/wagon/wagonSeats.js';
 import { packTradeRefusal, createTradePack, createMarketGoods, WAGON_LOADED_TRADE_TEXT, WAGON_LOADED_MARKET_WORDS } from '../src/systems/tradePack.js';
 import { GuildBook } from '../src/net/guildBook.js';
 import { createCaravanAccess, parkedCaravanAt, CARAVAN_STANDS_NATIVES } from '../src/scenes/caravanRoom.js';
-import { WAGON_MODE } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { createSceneCache, cacheScene, layoutSceneName, addPermanentScene, containsPermanentScene, foldLayoutCopies } from '../src/systems/sceneCache.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
-import { ITEM_FIELDS } from '../src/systems/itemFields.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
+import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
 import { HOME_ENTRIES } from '../src/net/homeLaw.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
@@ -689,7 +689,7 @@ test('WAGONS2 (FINAL AUDIT) A SEATED RIDER SETS OUT ON NO JOURNEY OF THEIR OWN, 
   assert.match(w, /if \(typeof pick\.besideAt !== 'function' && wagonRiders\?\.seated\(\)\) \{ tvSay\(TRAVEL_VIEW_TEXT\.rider\); hudFade\.clearFade\(\); return false; \}\n\s*const wildTrip = wildTravelGate/);
   assert.match(w, /if \(!partyArrival && !hccRuntimeOn\(\)\?\.wagonGoesOnJourney\?\.\(\) && wagonRiders\?\.release\(\)\) _hccDirty = true;\n\s*if \(!partyArrival && wagonRiders\?\.announce\(pick\.pixel\)\)/);
   assert.match(w, /wagonRiders\?\.clear\(\);[^\n]*\n\s*caravanVisitLink\.close\(\);[^\n]*\n\s*seatLock\?\.release\(\);/);
-  const hc = src('systems/horseCart.js');
+  const hc = src('systems/horse/horseCart.js');
   // WAGON-STABLED (PIN MOVED): a wagon with the player goes unless it was sent to the stable (test/fb1015_wagonstabled.test.js)
   assert.match(hc, /function wagonGoesOnJourney\(\) \{\n\s*if \(wagonState\.Mode === WAGON_MODE\.WithPlayer\) return !wagonState\.WagonStabled;[^\n]*\n\s*return physicalPersistenceEnabled && \(followingTransportFastTravels \|\| forceNextJourney\) && isTeamFollowing\(\);\n\s*\}/);
   // the release, by execution

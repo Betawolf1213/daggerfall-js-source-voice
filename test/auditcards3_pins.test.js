@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import {
   newTable, publicView, sit, stand, actAt, tick, tableLook, validHoldemIn, validHoldemOut, HOLDEM_FIRST_MS, HOLDEM_NAME_MAX, stateDelta, STATE_KEYS,
 } from '../src/net/holdemTable.js';
-import { RemoteCardTable } from '../src/systems/cardRemoteTable.js';
+import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import { regularLook } from '../src/world/cardRegulars.js';
 import { onStack, inBetZone, heldMatrices, PEEK_RISE, STACK_GRAB_M } from '../src/world/cardHand.js';
 import { riffleAt, RIFFLE_S, RIFFLE_PART } from '../src/world/cardMotion.js';

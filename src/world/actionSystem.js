@@ -107,7 +107,7 @@ export const DOOR_VERB_FLAGS = new Set([
 export const isActionDoorObject = (o) => !!o && o.kind === 'door' && !o.special;
 /** How far down a chain IsPlaying looks before it answers no (DaggerfallAction.IsPlaying's recursion, bounded here so
  *  a looped chain cannot overflow the stack). AUDIT DELVE A4: one home - the echo's chain walk reads it
- *  (systems/dungeonEcho.js ECHO_CHAIN_MAX). */
+ *  (systems/dungeon/dungeonEcho.js ECHO_CHAIN_MAX). */
 export const PLAY_DEPTH_MAX = 32;
 
 // Delegated relays (P10/U6): Teleport, the text actions and
@@ -478,7 +478,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this.onTeleportPortal = null;
     this.onLockedDoor = null;
     this.onActionSound = null;
-    this.onPlayed = null;   // ECHO1: (o, triggerType) - every Receive that passed the gate, before its Play (systems/dungeonEcho.js)
+    this.onPlayed = null;   // ECHO1: (o, triggerType) - every Receive that passed the gate, before its Play (systems/dungeon/dungeonEcho.js)
     this.onShowText = null;
     this.onShowTextInput = null;
     this.onDoorText = null;
@@ -584,13 +584,13 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
   }
 
   /** ECHO1: the object `o`'s chain link - `_next`, DFU's ActivateNext, for a reader that walks the chain without
-   *  playing it (systems/dungeonEcho.js chainMovers). */
+   *  playing it (systems/dungeon/dungeonEcho.js chainMovers). */
   nextOf(o) {
     return this._next(o);
   }
 
   /** SENSE1 (the delve arc): every object some OTHER object's chain reaches - the keys `_next` resolves to. The look
-   *  round's secrets tier asks it which movers only a chain moves (systems/dungeonSense.js isSecretMover). A read of
+   *  round's secrets tier asks it which movers only a chain moves (systems/dungeon/dungeonSense.js isSecretMover). A read of
    *  the graph DFU only ever walks forward - not a DFU member. */
   chainTargets() {
     const out = new Set();

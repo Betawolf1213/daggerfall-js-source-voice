@@ -9,15 +9,15 @@ import { survivalFeed, feltNow } from '../src/systems/survival/env.js';
 import { HUD_NEED_WORDS, LEVEL_WORDS, needLevel, levelSaid, survivalHudChips, temperatureReadout, survivalStatusLines, STATUS_TEXT, STATUS_LINE_MAX } from '../src/systems/survival/status.js';
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import { LOOT_RARITY_KEY, applyRarity, WARDROBE_LEGENDARIES } from '../src/systems/lootRarity.js';
-import '../src/systems/lootPowers.js';   // the game imports it, and its folds register at import (LOOT15's degrees)
+import { LOOT_RARITY_KEY, applyRarity, WARDROBE_LEGENDARIES } from '../src/systems/loot/lootRarity.js';
+import '../src/systems/loot/lootPowers.js';   // the game imports it, and its folds register at import (LOOT15's degrees)
 import { itemIsIdentified } from '../src/systems/tradeModes.js';
 import { buildCustomCareer } from '../src/systems/customClass.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { equipItem } from '../src/systems/equip.js';
-import { setItemFields, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES } from '../src/systems/races.js';
 import { statusTiles, STATUS_GLYPHS } from '../src/ui/hudStatus.js';

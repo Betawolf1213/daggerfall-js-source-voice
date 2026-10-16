@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseCard } from '../src/net/cardLaw.js';
 import { cardFace, cardHudModel, eventLine, createCardTableHud } from '../src/ui/cardTableHud.js';
-import { CardTableSession } from '../src/systems/cardTableSession.js';
+import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 import { fakeDoc, all, text } from './decorFakes.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

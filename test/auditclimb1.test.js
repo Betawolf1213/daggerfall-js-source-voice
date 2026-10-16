@@ -19,7 +19,7 @@ import { Collider } from '../src/player/collider.js';
 import { parkourSwitchOn } from '../src/scenes/shared.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';
-import { rrParkourRefusal, NO_CLIMB_HOLDING_WEAPON } from '../src/systems/rrRealism.js';
+import { rrParkourRefusal, NO_CLIMB_HOLDING_WEAPON } from '../src/systems/roleplayRealism/rrRealism.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 const BOX_IDX = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 3, 7, 6, 3, 6, 2, 0, 4, 7, 0, 7, 3, 1, 2, 6, 1, 6, 5];
@@ -299,7 +299,7 @@ test('AUDIT CLIMB1 F10: Roleplay & Realism\'s "no climbing with a weapon out" ho
   assert.equal(rrParkourRefusal({ weaponDrawn: true, weaponMelee: false }), NO_CLIMB_HOLDING_WEAPON);
   assert.equal(rrParkourRefusal({ weaponDrawn: true, weaponMelee: true }), null, 'bare hands climb');
   assert.equal(rrParkourRefusal({ weaponDrawn: false, weaponMelee: false }), null, 'a sheathed weapon climbs');
-  assert.match(read('src/systems/rrInstall.js'), /registerParkourGate\(\(\) => \{\n\s*if \(!rrModule\('climbingRestriction'\)\) return null;/, 'the mod registers the gate under its own switch');
+  assert.match(read('src/systems/roleplayRealism/rrInstall.js'), /registerParkourGate\(\(\) => \{\n\s*if \(!rrModule\('climbingRestriction'\)\) return null;/, 'the mod registers the gate under its own switch');
   const said = [];
   registerParkourGate(() => NO_CLIMB_HOLDING_WEAPON);
   try {

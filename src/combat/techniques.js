@@ -31,15 +31,15 @@
 // A host that hands none still swings its techniques; it cannot leap, dash or shoot one (said so).
 
 import { techniqueById, techniqueMult, TECHNIQUE_MAX_SPEED, TECHNIQUES, TECHNIQUE_ACTION } from './techniqueRoster.js';
-import { techniqueLineOf, lootRarityOn, rarityKnown } from '../systems/lootRarity.js';
+import { techniqueLineOf, lootRarityOn, rarityKnown } from '../systems/loot/lootRarity.js';
 import { EQUIP_SLOTS } from '../systems/equip.js';
-import { sigilDueling } from '../systems/sigil.js';
+import { sigilDueling } from '../systems/sigil/sigil.js';
 import { FATIGUE_MULTIPLIER } from '../systems/statMods.js';
 import { spendAmmoFor, ammoCountFor } from '../systems/inventory.js';
 import { tallySwingSkills, SWING_FATIGUE_COST } from '../scenes/hostCombat.js';
 import { playerDoor } from '../systems/playerDoor.js';
 import { GRAVITY } from '../player/motor.js';
-import { restoresSoFar } from '../systems/save.js';   // AUDIT TECH1: every load passes the one door (PORTAL1's count)
+import { restoresSoFar } from '../systems/save/save.js';   // AUDIT TECH1: every load passes the one door (PORTAL1's count)
 import { blowSchedule } from '../characters/weaponStates.js';
 import { MISSILE_SPEED } from '../systems/spellcast.js';   // AUDIT TECH-FX: a shaft's flight - DFU's one constant (ONE DFU MEMBER, ONE EXPORT)
 import { WEAPON_REACH, friendlyProtected } from './playerWeapon.js';
@@ -95,7 +95,7 @@ const fresh = () => ({
   owner: null,
   /** the last say door handed in */
   say: null,
-  /** the loads it has seen (AUDIT TECH1: a load starts it fresh - systems/save.js restoresSoFar, the count every load
+  /** the loads it has seen (AUDIT TECH1: a load starts it fresh - systems/save/save.js restoresSoFar, the count every load
    *  moves; the player's entity is one object for the page's life, refilled in place) */
   restores: null,
 });
@@ -483,7 +483,7 @@ export function refusal(hand, ctx) {
   const left = techniqueWait(hand.id);
   if (left > 0) return notReadyText(techniqueName(hand), Math.ceil(left));
   // AUDIT TECH1: the price AND the blow's own drain after it - a technique never spends the last of a body (exhaustion
-  // with a foe near is death: systems/rest.js)
+  // with a foe near is death: systems/rest/rest.js)
   if ((ctx.entity.fatigue ?? 0) <= techniqueFatigue(hand.tech) + SWING_FATIGUE_COST) return TIRED_TEXT;
   const t = hand.tech;
   if (t.mech === 'rain' || t.mech === 'pierce') {

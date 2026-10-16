@@ -55,7 +55,7 @@
   },
   {
     "name": "AF-V1-article-kept",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": ".replace(/^the\\s+/i, '');",
     "new": ";",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AF-V1-theft-long",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "took your ${takenName(item)}.`",
     "new": "took your ${itemLongName(item)}.`",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AF-V1-taunt-long",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "vars: { item: takenName(r.took[r.took.length - 1]) } };",
     "new": "vars: { item: itemLongName(r.took[r.took.length - 1]) } };",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AF-V1-desert-long",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "kept: kept.map((it) => takenName(it))",
     "new": "kept: kept.map((it) => itemLongName(it))",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AF-V2-line-restored",
-    "file": "src/systems/revenantPersonality.js",
+    "file": "src/systems/revenant/revenantPersonality.js",
     "old": "'I still hold your {item}.'",
     "new": "'Your {item} remains with me.'",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AF-V2-cold-learned-restored",
-    "file": "src/systems/revenantPersonality.js",
+    "file": "src/systems/revenant/revenantPersonality.js",
     "old": "'I have measured your {how}. Nothing remains.'",
     "new": "'Your {how} is known to me now.'",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AF-V3-oath-unread",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const since = oath >= 0 ? hist.slice(0, oath) : hist;",
     "new": "  const since = hist;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AF-V3-leaving-unspoken",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!last && left) return { event: left.deed, vars: {} };",
     "new": "  if (false && left) return { event: left.deed, vars: {} };",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AF-R1-betrayal-no-leaving",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (s?.sworn && s.companion?.items?.length && !r.sworn) {",
     "new": "if (s?.sworn && s.companion?.items?.length && !r.sworn && !(r.history ?? []).some((h) => h.deed === 'betrayed')) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AF-R2-stranded",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "    if (player && s?.took?.length && !s.defeated && !s.sworn && (r.gone || r.defeated || r.sworn)) {",
     "new": "    if (false && player && s?.took?.length && !s.defeated && !s.sworn && (r.gone || r.defeated || r.sworn)) {",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AF-R2-handed-for-the-living",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "!s.defeated && !s.sworn && (r.gone || r.defeated || r.sworn)) {",
     "new": "!s.defeated && !s.sworn) {",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AF-R3-tombstone-first",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "if (s?.sworn && s.companion?.items?.length && !r.sworn) {",
     "new": "if (s?.sworn && s.companion?.items?.length && !r.sworn && !r.gone) {",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AF-R4-clock-behind",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (day <= _state.lastDay) return [];",
     "new": "  if (day === _state.lastDay) return [];",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "AF-R5-split-unfiltered",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "isGold: (it) => isGoldPieces(it) || !revenantMayTake(it),",
     "new": "isGold: isGoldPieces,",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "AF-R6-load-keeps",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "_state.mirrorId = null; _lastSlew = null; clearPlayerHarm(); endPlayerFights(); },   // the last game's harm",
     "new": "_state.mirrorId = null; clearPlayerHarm(); endPlayerFights(); },   // the last game's harm",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "AF-R6-newgame-keeps",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "newGame: () => { _state.list = []; _state.lastDay = null; _state.mirrorId = null; _lastSlew = null;",
     "new": "newGame: () => { _state.list = []; _state.lastDay = null; _state.mirrorId = null;",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "AF-R6-forget-nothing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "export function forgetLastSlew() { _lastSlew = null; }",
     "new": "export function forgetLastSlew() { }",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AF-D1-ledger-taken",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  const ledger = deedName === 'felled' ? null : takeFeud(entity);",
     "new": "  const ledger = takeFeud(entity);",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "AF-D1-notice-wiped",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "else if (deedName === 'fled') { r.escapes++; r.notice = null; }",
     "new": "else { if (deedName === 'fled') r.escapes++; r.notice = null; }",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "AF-D1-felled-kneeling",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "AF-D1-felled-burning",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.sparing || striker.leaving || !name) return null;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "AF-D1-felled-sparing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.leaving || !name) return null;",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "AF-D1-felled-leaving",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || striker.leaving || !name) return null;",
     "new": "  if (!striker?.entity || striker.dead || !(striker.entity.health > 0) || striker.yielded || striker.executing || striker.sparing || !name) return null;",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AF-D2-rout-leaving",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.fleeing) return false;",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "AF-D2-rout-burning",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.sparing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "AF-D2-rout-sparing",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.sparing || f.leaving || f.fleeing) return false;",
     "new": "  if (!f?.entity || f.dead || f._routed || !(f.entity.health > 0) || f.yielded || f.executing || f.leaving || f.fleeing) return false;",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "AF-D2-rout-puppet",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "  if (f.puppet) return false;",
     "new": "  if (false) return false;",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "AF-D3-dead-a-win",
-    "file": "src/systems/revenantCompanions.js",
+    "file": "src/systems/revenant/revenantCompanions.js",
     "old": "  return !(last.entity?.health > 0);",
     "new": "  return !!(last.dead || !(last.entity?.health > 0));",
     "tests": [

@@ -4,12 +4,12 @@
 // exhibition between two AI fighters, the stranger's blow on it warned then a crime; a blow before the word made good;
 // the healers; the fighters off the sand; the stage going takes its bout unsaid; the HUD, the music, the duel's law.
 import { test } from 'node:test';
-import { SAND_CEILING_M } from '../src/systems/arenaKit.js';
+import { SAND_CEILING_M } from '../src/systems/arena/arenaKit.js';
 import assert from 'node:assert/strict';
 import { createArenaBouts, YOU, CRIT_SHARE, LEAVE_AFTER_MS } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder, nextLadderBout, exhibitionFor, BOUT_PURSE } from '../src/systems/arenaLadder.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { ARENA_SONGS, ARENA_SCORE_SILENCE } from '../src/systems/arenaScore.js';
+import { newArenaLadder, nextLadderBout, exhibitionFor, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { ARENA_SONGS, ARENA_SCORE_SILENCE } from '../src/systems/arena/arenaScore.js';
 import { RING_R } from '../src/world/arenaFloor.js';
 
 const settle = () => new Promise((r) => setTimeout(r, 0));

@@ -7,7 +7,7 @@
 // back against its texel. The bundle's XML beside each texture - the
 // `<rect>` TextureReplacement.OverridePaperdollItemRect reads for the
 // paper doll (TextureReplacement.cs:919-926) - is written into the
-// generated index (src/systems/rriIndex.js) as the sprite's offset.
+// generated index (src/systems/roleplayRealismItems/rriIndex.js) as the sprite's offset.
 //
 //   node tools/rriExtract.mjs "<path to roleplayrealism-items.dfmod>"
 //
@@ -24,7 +24,7 @@ import { isMain } from './lib/isMain.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const OUT_DIR = 'public/art/roleplay-realism-items';
-export const INDEX_FILE = 'src/systems/rriIndex.js';
+export const INDEX_FILE = 'src/systems/roleplayRealismItems/rriIndex.js';
 export const MANIFEST = 'vendor/roleplay-realism-items/roleplay-realism-items.dfmod.json';
 
 /** The `<rect>` of one XML text asset, or null. XMLManager.GetRect

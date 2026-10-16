@@ -28,7 +28,7 @@
   },
   {
     "name": "SNOWLESS1-weather-reads-the-archive-law",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "const snowy = groundWearsSnow(getWorldClimateSettings(climateIndex)",
     "new": "const snowy = groundIsSnowy(getWorldClimateSettings(climateIndex)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SNOWLESS1-snow-falls-on-bare-ground",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "if (word === WEATHER_ENUM.snow) return snowy ? word : WEATHER_ENUM.rain;",
     "new": "if (word === WEATHER_ENUM.snow) return word;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SNOWLESS1-snow-never-asked",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "if (!snowGroundLawOn() || (word !== WEATHER_ENUM.rain && word !== WEATHER_ENUM.thunder && word !== WEATHER_ENUM.snow)) return word;",
     "new": "if (!snowGroundLawOn() || (word !== WEATHER_ENUM.rain && word !== WEATHER_ENUM.thunder)) return word;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SNOWLESS1-the-map-lets-snow-pass",
-    "file": "src/systems/weatherSim.js",
+    "file": "src/systems/weather/weatherSim.js",
     "old": "    if (word !== 'rain' && word !== 'thunder' && word !== 'snow') return word;",
     "new": "    if (word !== 'rain' && word !== 'thunder') return word;",
     "tests": [

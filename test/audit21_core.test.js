@@ -313,7 +313,7 @@ test('AUDIT 21 F6: the chargen reflexes pick reaches the entity and the save', a
   // ENTITY_FIELDS row) each left all 1138 tests green, which would return
   // every character to Average reflexes with the suite reporting clean.
   const { finishChargen } = await import('../src/systems/chargenSession.js');
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
 
   // A minimal but REAL chargen result: applyCharacter needs a career and the
   // rolled stats, and nothing else here cares.

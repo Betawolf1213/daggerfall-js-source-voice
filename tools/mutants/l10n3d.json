@@ -18,7 +18,7 @@
   {"name":"L10N3d-DISPEL_MAGIC_TEXT-frozen-english","file":"src/systems/mysticism.js","old":"export const DISPEL_MAGIC_TEXT = localizedStrings({","new":"export const DISPEL_MAGIC_TEXT = Object.freeze({","tests":["test/l10n3d.test.js"]},
   {"name":"L10N3d-SOUL_TRAP_TEXT-frozen-english","file":"src/systems/mysticism.js","old":"export const SOUL_TRAP_TEXT = localizedStrings({","new":"export const SOUL_TRAP_TEXT = Object.freeze({","tests":["test/l10n3d.test.js"]},
   {"name":"L10N3d-DOOR_SPELL_TEXT-frozen-english","file":"src/systems/mysticism.js","old":"export const DOOR_SPELL_TEXT = localizedStrings({","new":"export const DOOR_SPELL_TEXT = Object.freeze({","tests":["test/l10n3d.test.js"]},
-  {"name":"L10N3d-DECOR_SIZES-frozen-english","file":"src/systems/decorCatalogue.js","old":"export const DECOR_SIZES = localizedStrings({","new":"export const DECOR_SIZES = Object.freeze({","tests":["test/l10n3d.test.js"]},
-  {"name":"L10N3d-DIRECTION_HINTS-frozen-english","file":"src/systems/talk.js","old":"export const DIRECTION_HINTS = localizedStrings({","new":"export const DIRECTION_HINTS = Object.freeze({","tests":["test/l10n3d.test.js"]},
+  {"name":"L10N3d-DECOR_SIZES-frozen-english","file":"src/systems/decor/decorCatalogue.js","old":"export const DECOR_SIZES = localizedStrings({","new":"export const DECOR_SIZES = Object.freeze({","tests":["test/l10n3d.test.js"]},
+  {"name":"L10N3d-DIRECTION_HINTS-frozen-english","file":"src/systems/talk/talk.js","old":"export const DIRECTION_HINTS = localizedStrings({","new":"export const DIRECTION_HINTS = Object.freeze({","tests":["test/l10n3d.test.js"]},
   {"name":"L10N3d-peasants-unmapped","file":"src/ui/enhancedChargen.js","old":"repLabel = (g) => REP_LABELS[g === 'peasants' ? 'commoners' : g];","new":"repLabel = (g) => REP_LABELS[g];","tests":["test/l10n3d.test.js"]}
 ]

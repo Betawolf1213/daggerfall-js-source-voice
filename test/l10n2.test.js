@@ -13,7 +13,7 @@ import { createGlyphFace, isControlCode, FACE_POINT_SIZE } from '../src/ui/glyph
 import { measureText, drawText, sdfOf, makeFont, SDF_SHADOW_SCALE } from '../src/ui/text.js';
 import { installLocaleFaces, faceFamilyFor, CLASSIC_FONT_NAMES, _resetLocaleFacesForTests } from '../src/ui/localeFaces.js';
 import { wrapText } from '../src/ui/talkWindow.js';
-import { getBool, setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { getBool, setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import * as data from '../src/scenes/localeData.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 

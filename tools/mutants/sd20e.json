@@ -1,7 +1,7 @@
 [
   {
     "name": "SD20E-T1-what-it-is-back",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "`${name || 'An Abyss Dungeon'}${w ? ` - ${w}` : ''}`",
     "new": "`${name ? `${name} - an Abyss Dungeon` : 'An Abyss Dungeon'}${w ? ` - ${w}` : ''}`",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD20E-T11-the-capitals-back",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": ", under ${O.map((o) => sdNameIn(o.name)).join(' and ')}.",
     "new": ", under ${O.map((o) => o.name).join(' and ')}.",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD20E-T12-toward-it",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "turn their heads toward the walls',",
     "new": "turn their heads toward it',",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SD20E-T19-the-hour-unwhere",
-    "file": "src/systems/sdOmen.js",
+    "file": "src/systems/superDungeon/sdOmen.js",
     "old": "${sdWhere(near, region)} will fade within the hour.",
     "new": "near ${near || 'the Iliac Bay'} will fade within the hour.",
     "tests": [

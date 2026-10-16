@@ -2,7 +2,7 @@
 // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"; the field, on
 // Discord: "gate under the rock didnt go away stayed there") - World of Daggerfall's pieces keep off the Oblivion Gate.
 //
-// The gate's site is the clock's and the map files' (net/gateLaw.js rolls it; systems/gateSite.js keeps it off every
+// The gate's site is the clock's and the map files' (net/gateLaw.js rolls it; systems/gate/gateSite.js keeps it off every
 // location's neighbourhood and every spawned dungeon), and World of Daggerfall stands a site on 114,087 of the pixels left
 // - rock fields ~500 m across, mountains ~1.9 km, every model with its own collider (bible 03-World/World-Of-Daggerfall.md).
 // Nothing kept the two apart, so a day's gate could rise inside a boulder: its fire out of reach of the press and the step
@@ -15,7 +15,7 @@
 // (world/roadClearance.js): a camp, fort, shrine, ruin, cave or nature spot whose objects reach the clearing is refused
 // whole at its pick (a `continue`, so a later instance may take the pixel), and any other piece whose own mesh box
 // reaches it is not stood - no mesh, no collider. The gate is online's alone and online the mod is the room's, forced on
-// (systems/onlineLane.js), so every client that sees a gate stands the same rock and refuses the same pieces.
+// (systems/online/onlineLane.js), so every client that sees a gate stands the same rock and refuses the same pieces.
 //
 // AUDIT WB12d (G12): THE FAITHFUL'S CIRCLE TOO. Each breach's rite stands 90-180 m off its gate in the gate's own pixel
 // (net/gateRite.js riteLocalOf - the day's alone), its braziers, tents and fire inside RITE_CLEAR_M: the same law keeps
@@ -44,7 +44,7 @@ export const WOD_FLAT_GATE_CLEAR_M = 2;
 export const RITE_CLEAR_M = 20;
 
 /**
- * The clearing a gate site keeps (systems/gateSite.js findGateSite's answer): its pixel and its spot in it - null for no
+ * The clearing a gate site keeps (systems/gate/gateSite.js findGateSite's answer): its pixel and its spot in it - null for no
  * site. `key` names it: a built pixel remembers the key it was built against. AUDIT WB12d (G12): and the faithful's
  * circle (`rx`, `rz`, the same pixel's frame) - a function of the day, so the key names it too.
  * @param {{day:number, px:number, py:number, spot:number[]}|null} site

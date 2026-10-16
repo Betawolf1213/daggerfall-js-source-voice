@@ -169,7 +169,7 @@ recorded for its prototype as a pixel's is. The decorator's ghost asks the
 same door (`yardNature.js picture`): the tree placed is the tree that
 stands. The yards stand in `world.js` alone.
 
-**Online.** The player's own (`systems/onlineLane.js
+**Online.** The player's own (`systems/online/onlineLane.js
 ONLINE_PLAYERS_OWN_MODS`): how a tree is drawn, where the same flat
 stands.
 

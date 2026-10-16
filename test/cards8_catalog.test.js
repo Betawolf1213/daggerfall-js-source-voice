@@ -4,15 +4,15 @@
 // the whole board, every effect record one the engine reads and every card's text EXACTLY what its records do, the
 // holdings each with a rule, the set's count by kind and tier (so a card added is a card meant), the order of things
 // the game knows (a Lich outranks an Orc), and the starter deck clean. KG-SET (2026-10-13): a card's rules and flavor
-// are the display's now (systems/iliacCardWords.js, through the text core) - the catalog holds none, and the rules a
+// are the display's now (systems/iliac/iliacCardWords.js, through the text core) - the catalog holds none, and the rules a
 // player reads are still EXACTLY what the card's records do.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, ILIAC_TIERS, ILIAC_TAGS, CARD_EMBLEMS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
 import { deckValid, fxText, fxRefusal, ILIAC_VERBS, ILIAC_TRIGGERS, ILIAC_TARGETS, ILIAC_PICKS, ILIAC_TURNS } from '../src/net/iliacHand.js';
-import { RARITY_ORDER } from '../src/systems/lootRarity.js';
+import { RARITY_ORDER } from '../src/systems/loot/lootRarity.js';
 import { EMBLEM_KEYS } from '../src/render/iliacCardFaces.js';
-import { cardRules, cardFlavor } from '../src/systems/iliacCardWords.js';
+import { cardRules, cardFlavor } from '../src/systems/iliac/iliacCardWords.js';
 
 const ALL = [...ILIAC_CARDS, ...ILIAC_LOCATIONS];
 const KEYS = ['id', 'name', 'kind', 'cost', 'power', 'tier', 'tags', 'emblem', 'fx'].sort();   // PIN MOVED (KG-SET): no `text`, no `flavor` - the words are the display's

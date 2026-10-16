@@ -49,7 +49,7 @@ export function automapDoorReady() {
  * Build the automap this skin wears.
  *
  * `deps` is AutomapWindow's own bag plus two keys the classic arm
- * ignores: `where` (the flags systems/mapTabs.js derives the tab
+ * ignores: `where` (the flags systems/map/mapTabs.js derives the tab
  * context from) and `title` (what the strip calls this place). The
  * enhanced arm takes the reveal record and the reveal index off the
  * same bag, so a host that already opens the 3D map needs to add

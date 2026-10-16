@@ -17,7 +17,7 @@ import {
   FLOOR_MARCH_STEP, automapDungeonKey, enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap,
   snapshotAutomap, restoreAutomap, resetAutomapStore, buildRevealIndex,
   automapRevealTick, automapEntranceTick, slicingPositionY, DEFAULT_SLICING_BIAS_Y,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import {
   AutomapWindow, buildMicroMap, hexColor32, MICRO_SIZE_MIN, MICRO_BLOCK_PX,
   resetAutomapWindowState, signalAutomapReset, automapCameraState,
@@ -26,8 +26,8 @@ import {
 // with the rest of the control law - the window stopped re-exporting them
 // when it stopped owning a camera of its own.
 import { FIELD_OF_VIEW_2D, CAMERA_HEIGHT_VIEW_FROM_TOP, VIEW_2D, VIEW_3D } from '../src/ui/automapCamera.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -309,8 +309,8 @@ test('A1 wiring pins: entry identity at the push sites, the 5 Hz tick in BOTH du
   assert.match(ctx, /enterDungeonAutomap\(automapKey, classicMinutesRef\.value, \{ fromLoad: true \}\)/, 'quickLoad re-enters on the LOAD arm');
   assert.match(src('src/scenes/dungeon.js'), /automapTick\?\.\(dt, cam\.pos, fwd\)/, 'the standalone host ticks');
   assert.match(src('src/scenes/worldModes.js'), /automapTick\?\.\(dt, cam\.pos, fwd\)/, 'the streaming host ticks');
-  assert.match(src('src/systems/save.js'), /snap\.automap = snapshotAutomap\(snap\.classicMinutes\)/, 'the snapshot takes the clock - the save-time stamp law');
-  assert.match(src('src/systems/save.js'), /restoreAutomap\(snap\.automap \?\? null\)/);
+  assert.match(src('src/systems/save/save.js'), /snap\.automap = snapshotAutomap\(snap\.classicMinutes\)/, 'the snapshot takes the clock - the save-time stamp law');
+  assert.match(src('src/systems/save/save.js'), /restoreAutomap\(snap\.automap \?\? null\)/);
 });
 
 test('A1 wiring pins: the M binding and the mesh shader slice seam', () => {

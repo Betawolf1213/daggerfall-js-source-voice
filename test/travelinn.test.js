@@ -43,7 +43,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TravelPopUpWindow, isPlayerControlledTravel, ONLINE_TRAVEL_LINE } from '../src/ui/travelPopUp.js';
-import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/onlineLane.js';   // TRAVEL-ONLINE: the room's Travel Options dials
+import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/online/onlineLane.js';   // TRAVEL-ONLINE: the room's Travel Options dials
 
 const popup = (online) => new TravelPopUpWindow({ x: 60, y: 60 }, {
   getPlayerPixel: () => ({ x: 40, y: 40 }),

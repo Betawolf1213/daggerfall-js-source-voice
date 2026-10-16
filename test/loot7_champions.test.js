@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as CH from '../src/systems/champions.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { spawnEnemyLoot } from '../src/scenes/hostCombat.js';
 import { equipTableOf } from '../src/systems/equip.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
@@ -24,7 +24,7 @@ import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hudFoeTarget.js';
 import { liveEntityName } from '../src/systems/worldTooltips.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { isAmmunition } from '../src/systems/itemTemplates.js';
+import { isAmmunition } from '../src/systems/item/itemTemplates.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -216,7 +216,7 @@ test('LOOT7: its loot - its own roll and no Rare forced (CHAMP-LOOT), never its 
     assert.deepEqual(said(a.items), said(b), `seed ${seed}`);
   }
   assert.deepEqual(LR.CHAMPION_SOURCE, { tier: 2, quality: 1.25, ladder: 0.5 });   // CHAMP-LOOT: half the elite's
-  assert.match(strip(read('src/systems/lootRarity.js')), /rollLootRarity\(loot, champ \? championSource\(source, qualityMult\) : \{ \.\.\.source, qualityMult, \.\.\.\(weights \? \{ weights \} : \{\}\) \}, \{ rolls, luck, find \}\);/, 'the corpse door reads it');   // PIN MOVED (PARTY-LOOT): the caller's finders ride beside the Luck   // FOE-CAP: a plain foe's ladder rides beside it (a champion is never plain)
+  assert.match(strip(read('src/systems/loot/lootRarity.js')), /rollLootRarity\(loot, champ \? championSource\(source, qualityMult\) : \{ \.\.\.source, qualityMult, \.\.\.\(weights \? \{ weights \} : \{\}\) \}, \{ rolls, luck, find \}\);/, 'the corpse door reads it');   // PIN MOVED (PARTY-LOOT): the caller's finders ride beside the Luck   // FOE-CAP: a plain foe's ladder rides beside it (a champion is never plain)
   off();
   const dc = strip(read('src/scenes/dungeonContext.js'));
   assert.match(dc, /markDungeonChampions\(enemies, dfLocation\.dungeon\.recordElement\.header\.locationId\);/, 'the layout marked');

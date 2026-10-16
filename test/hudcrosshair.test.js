@@ -11,7 +11,7 @@ import {
 } from '../src/ui/hudCrosshair.js';
 import { HUD_BORDER, HUD_NATIVE_BAR_WIDTH } from '../src/ui/hud.js';
 import { MODES, setInteractionMode } from '../src/player/interactionMode.js';
-import { setValue, _resetForTests, DEFAULTS } from '../src/systems/settings.js';
+import { setValue, _resetForTests, DEFAULTS } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 

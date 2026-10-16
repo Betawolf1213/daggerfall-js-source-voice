@@ -1,16 +1,16 @@
 // DECOR1d (2026-09-25, Mac: the decorator opens from "A UI element that can be clicked to open the decorate panel.
 // Allows free cam mode for placement and an intuitive scrolling menu with filters"; decor "Gold per placement", priced
 // "By size"; online and offline, "kept in the save"): THE DECORATOR. The catalogue read out of the game's own blocks a
-// few at a time (systems/decorScan.js), where a new piece stands (systems/decorPlacer.js), the three surfaces
+// few at a time (systems/decor/decorScan.js), where a new piece stands (systems/decor/decorPlacer.js), the three surfaces
 // (ui/decorPanel.js) driven headless over a fake document, the tool that joins them (scenes/decorTool.js) over fakes of
 // the host's seams, and the host's wiring by source. `06-Systems/Online-Arc.md` DECOR1.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDecorScan, DECOR_SCAN_BLOCKS_A_STEP, DECOR_SCAN_MODELS_A_STEP } from '../src/systems/decorScan.js';
+import { createDecorScan, DECOR_SCAN_BLOCKS_A_STEP, DECOR_SCAN_MODELS_A_STEP } from '../src/systems/decor/decorScan.js';
 import {
   createDecorPlacer, wrapTurn, DECOR_TURN_STEP, DECOR_TURN_FINE, DECOR_RAISE_STEP, DECOR_RAISE_MAX, DECOR_RAISE_MIN, DECOR_GRID,
-} from '../src/systems/decorPlacer.js';
+} from '../src/systems/decor/decorPlacer.js';
 import { createDecorButton, createDecorPanel, createDecorBar, decorWhyNot, decorRowSub, decorPriceText } from '../src/ui/decorPanel.js';
 import {
   flyStep, eyePoint, lookDir, DECOR_FLY_LEASH, DECOR_FLOAT_AT, DECOR_EYE_REACH, DECOR_FLY_SPEED, DECOR_FLY_FAST,
@@ -545,12 +545,12 @@ test('DECOR1d the host (worldModes.js, world.js) by source: one tool on the room
   assert.match(m, /openSlot: \(o\) => \{ interiorOverlay = o; \}, closeSlot: \(o\) => \{ if \(interiorOverlay === o\) interiorOverlay = null; \},/);
   // GUILD1d (re-aimed by content): the owner's room, or a guild's hall its keeper stands in - a hall's kind is an online home's
   assert.match(m, /if \(mode !== 'interior' \|\| !b \|\| !\(decorOwnerHere\(\) \|\| decorKeeperHere\(\)\)\) return null;\n(?:    \/\/[^\n]*\n)*    if \(\(interiorHome \|\| interiorSeatHall\) && _decorListed !== _decorVisit\) return null;\n    if \(interiorHome\?\.hall\) return \{ kind: 'home', hall: true[^\n]*\n    if \(interiorHome\) return \{ kind: 'home', where: 'Your home', mapId: homeTownOf\(b\), buildingKey: b\.buildingKey \};/);   // PIN MOVED (SEAT-HALL): the palace's hall shares the line
-  // DECOR-DUNGEON (PIN MOVED): the scan's measures are ONE constructor's (systems/decorScan.js decorScanDeps), which both
+  // DECOR-DUNGEON (PIN MOVED): the scan's measures are ONE constructor's (systems/decor/decorScan.js decorScanDeps), which both
   // hosts call - the interior host here, the yards' in world.js
   assert.match(m, /const decorScanDepsHere = \(\) => decorScanDeps\(\{ blocks, arch, getTexture \}\);/);
   assert.match(m, /scanDeps: \(\) => decorScanDepsHere\(\),/);
   assert.match(w, /scanDeps: \(\) => decorScanDeps\(\{ blocks, arch, getTexture \}\),/);
-  const sd = src('src/systems/decorScan.js');
+  const sd = src('src/systems/decor/decorScan.js');
   assert.match(sd, /isTownBlock: \(t\) => t === BLOCK_TYPES\.Rmb,/);
   assert.match(sd, /return r > 0 \? r \* GLOBAL_SCALE : null;/);
   assert.match(sd, /return Math\.hypot\(size\.w, size\.h\) \/ 2;/);

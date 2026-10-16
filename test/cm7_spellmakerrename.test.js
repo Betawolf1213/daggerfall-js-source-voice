@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { SpellMakerWindow } from '../src/ui/spellMakerWindow.js';
 import { ENTER_SPELL_NAME } from '../src/ui/spellbookWindow.js';
 import { InputMessageBoxWindow } from '../src/ui/inputMessageBox.js';
-import { MAX_SPELL_NAME } from '../src/systems/spellMaker.js';
+import { MAX_SPELL_NAME } from '../src/systems/spell/spellMaker.js';
 
 const make = () => new SpellMakerWindow({
   entity: { maxMagicka: 100, gold: 0, goldPieces: 0 },

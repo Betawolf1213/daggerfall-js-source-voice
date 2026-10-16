@@ -59,7 +59,7 @@ export function ensureFateStyle(doc = typeof document === 'undefined' ? null : d
 }
 
 /**
- * THE FATE COLUMN: `fate` the model (systems/revenantFate.js fateModel), `picked` the row picked ('kill'|'spare'|null).
+ * THE FATE COLUMN: `fate` the model (systems/revenant/revenantFate.js fateModel), `picked` the row picked ('kill'|'spare'|null).
  * `kit`: `el(tag, cls, text)` (the window's own maker), `trophyTile(row, item)` (the window's item tile - the trophy
  * drawn exactly as a looted weapon is), `portrait(face, p)` (the revenant's picture into its well), `onPick(id)`,
  * `onChoose(id)`.

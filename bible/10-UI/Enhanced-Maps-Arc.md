@@ -51,7 +51,7 @@ One sentence behind it: **inside is inside**. The context is DERIVED
 from the flags every host already keeps (`isPlayerInsideDungeon`,
 `isPlayerInside`, whether the map pixel carries a location), never
 declared by a host — a host that declares is a host that forgets.
-`systems/mapTabs.js`, pinned in `test/maptabs.test.js`.
+`systems/map/mapTabs.js`, pinned in `test/maptabs.test.js`.
 
 **One key.** `AutoMap` opens the map wherever the player is, on
 whichever tab that place offers, and the tabs do the rest.
@@ -82,7 +82,7 @@ at. DFU answers the question with a cut plane the player slides, which
 is honest and unreadable — the player has to hunt for the height at
 which a room appears.
 
-So the storeys are DERIVED, in `systems/automapFloors.js`, from data
+So the storeys are DERIVED, in `systems/automap/automapFloors.js`, from data
 the reveal index already holds: every revealed row carries its CPU
 triangles and its placement matrix (`ROAD-C c2/S7` put them there for
 the picker).
@@ -195,13 +195,13 @@ that inks nothing.
 ## The slices
 
 - **EM1 — the sheet contract and the tab strip.** SHIPPED: the tab law
-  (`systems/mapTabs.js`, 5 pins), the strip and the slot
+  (`systems/map/mapTabs.js`, 5 pins), the strip and the slot
   (`ui/mapStrip.js`, 11 pins), and the window routed through the
   contract with the bay unchanged (`ui/heldMap.js`, 7 pins in its own
   suite). 31 mutants, 31 dead. The KEY WIRING waits for EM3/EM4: a key
   that opens a blank sheet is a regression, so `AutoMap` keeps its two
   windows until there is something to ink.
-- **EM2 — the floor model.** SHIPPED: `systems/automapFloors.js`, 14
+- **EM2 — the floor model.** SHIPPED: `systems/automap/automapFloors.js`, 14
   pins over hand-built geometry — two stacked rooms, a ramp, a wall, a
   sliver, a partly revealed hall, and the coastline chain landing on
   the room's true edges in world units. 29 mutants, 27 dead and 2

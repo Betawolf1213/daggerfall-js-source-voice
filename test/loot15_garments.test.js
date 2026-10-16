@@ -15,17 +15,17 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import '../src/systems/lootPowers.js';   // the kit registers its folds and seams at import
-import { wardrobeFold, spellOfSchool } from '../src/systems/lootPowers.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import '../src/systems/loot/lootPowers.js';   // the kit registers its folds and seams at import
+import { wardrobeFold, spellOfSchool } from '../src/systems/loot/lootPowers.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { equipItem, equipTableOf } from '../src/systems/equip.js';
 import { computeEntityMods } from '../src/systems/entityMods.js';
 import { enchantmentCost } from '../src/systems/enchantmentCatalogue.js';
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
-import { ARTIFACT_SUB_TYPE_NAMES, validLootItem } from '../src/systems/loot.js';
+import { ARTIFACT_SUB_TYPE_NAMES, validLootItem } from '../src/systems/loot/loot.js';
 import { dressStanding, DRESS_GROUP, GEAR_STANDING_CAP } from '../src/systems/clothingStanding.js';
 import { feltTemperature, wardrobeCtx, hoodUp } from '../src/systems/survival/temperature.js';
 import { survivalMinute, survivalOf } from '../src/systems/survival/needs.js';
@@ -34,7 +34,7 @@ import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { fatigueLossMultiplierFor, applyFallLanding, WARDROBE_FALL_MOST, WARDROBE_FATIGUE_MOST } from '../src/scenes/shared.js';
 import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE } from '../src/player/motor.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { codexRows, imprintChoices, FAMILY_HINT, noteFind, _resetCodexForTests } from '../src/systems/lootCodex.js';
+import { codexRows, imprintChoices, FAMILY_HINT, noteFind, _resetCodexForTests } from '../src/systems/loot/lootCodex.js';
 
 const on = () => { _resetForTests(); setPref('lootRarity', true); };
 const off = () => { _resetForTests(); setPref('lootRarity', false); };

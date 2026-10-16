@@ -91,7 +91,7 @@
   },
   {
     "name": "TEXT-F1-the-typed-name-raw",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "    shown = maskText(name);",
     "new": "    shown = name;",
     "tests": [

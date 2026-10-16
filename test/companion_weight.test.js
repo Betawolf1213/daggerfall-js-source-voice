@@ -12,11 +12,11 @@ import { readFileSync } from 'node:fs';
 
 import { packCapacityKg, PACK_DEFAULT_STRENGTH } from '../src/systems/naval/crewCompanions.js';
 import { storeCapacityOf } from '../src/systems/inventorySession.js';
-import { planStore, planDropGold, packFullText, packFullGoldText, packGoneText } from '../src/systems/itemTransfer.js';
+import { planStore, planDropGold, packFullText, packFullGoldText, packGoneText } from '../src/systems/item/itemTransfer.js';
 import { remoteModel, mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { CELL_X } from '../src/ui/itemScroller.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { weaponOfMaterial, createWeapon, ARROW_TEMPLATE } from '../src/combat/enemyEquipment.js';

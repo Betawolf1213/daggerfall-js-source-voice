@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { realmBootSearch } from '../src/systems/realmSaves.js';
-import { BOOT_DOOR_KEYS, publishBootParams } from '../src/systems/onlineLane.js';
+import { BOOT_DOOR_KEYS, publishBootParams } from '../src/systems/online/onlineLane.js';
 import { testStartsOutdoors } from '../src/systems/testRoom.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

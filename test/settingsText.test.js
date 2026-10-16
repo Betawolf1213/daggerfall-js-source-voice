@@ -1,5 +1,5 @@
 // DFU's OWN settings words (SETT/MENU): vendor/dfu-settings/
-// GameSettings.txt baked into src/systems/settingsText.js.
+// GameSettings.txt baked into src/systems/settings/settingsText.js.
 //
 // This table is why the settings screen can speak plain English
 // without inventing a single word - DFU already wrote the label and
@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SETTINGS_LABELS, SETTINGS_INFO } from '../src/systems/settingsText.js';
+import { SETTINGS_LABELS, SETTINGS_INFO } from '../src/systems/settings/settingsText.js';
 import { parseSettingsText, splitLabels } from '../scripts/bakeSettingsText.mjs';
-import { SETTINGS_DEFAULTS } from '../src/systems/settingsDefaults.js';
+import { SETTINGS_DEFAULTS } from '../src/systems/settings/settingsDefaults.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const vendored = () => readFileSync(join(root, 'vendor/dfu-settings/GameSettings.txt'), 'utf8');

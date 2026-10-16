@@ -12,10 +12,10 @@ import {
   setSharedClock, worldMinutes, ownMinutes, setOwnMinutes, alignEntityClocks, skipDeadMinutes, resetMagicRoundMarker,
   runMagicRoundsFor, claimMagicRounds, advanceOwnMinutes, tickInFlight, ownTimeLeftText, ownTimeLeftShort, playerWeaponHitEntity, MINUTES_PER_DAY,
 } from '../src/systems/worldTick.js';
-import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
+import { MERCHANTS_FACTION_ID } from '../src/systems/guild/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
-import { createRegionConditions } from '../src/systems/regionConditions.js';
-import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, setWeatherMapLaw } from '../src/systems/weatherSim.js';
+import { createRegionConditions } from '../src/systems/region/regionConditions.js';
+import { setSharedWeather, resetWeatherSim, rollClimateWeathersForDay, weatherForClimate, ZONE_CLIMATES, setWeatherMapLaw } from '../src/systems/weather/weatherSim.js';
 import { createLycanthropyCurse, liveLycanthropy } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { createVampirismCurse } from '../src/systems/vampirism.js';
@@ -25,7 +25,7 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { TrainPc } from '../src/systems/quest/actions.js';
 import { Clock } from '../src/systems/quest/clock.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { snapshotPlayer, restorePlayer, clampMarkersAheadOf } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, clampMarkersAheadOf } from '../src/systems/save/save.js';
 import { offlineCopyOf, onlineCopyOf, QUEST_WORLD_SECOND_KEYS, QUEST_OWN_SECOND_KEYS } from '../src/systems/offlineCopy.js';
 import { startDisease, DISEASES } from '../src/systems/diseases.js';
 import { NORMALIZE_INTERVAL_MINUTES } from '../src/systems/court.js';

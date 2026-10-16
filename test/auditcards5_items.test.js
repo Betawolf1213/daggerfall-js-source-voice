@@ -11,16 +11,16 @@ import {
   ILIAC_CARD_TEMPLATE, CARD_BINDER_TEMPLATE, mintIliacCard, mintBinder, isIliacCard, binderOf, binderDecks, cleanBinders, collectionOf,
   deckHeldRefusal, setBinderDeck, dropBinderDeck, giveBinder, giveBinderGift, giveBinderAtChargen, BINDER_GIFT, BINDER_DECKS_MAX, DECK_NAME_MAX,
   iliacCardLines, BINDER_CARD_LINES,
-} from '../src/systems/iliacItems.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+} from '../src/systems/iliac/iliacItems.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { useItem } from '../src/systems/useItem.js';
-import { resolveItemName, survivalInfoTokens } from '../src/systems/itemInfo.js';
-import { validBinderDeck, BINDER_DECK_NAME_MAX } from '../src/systems/itemFields.js';
+import { resolveItemName, survivalInfoTokens } from '../src/systems/item/itemInfo.js';
+import { validBinderDeck, BINDER_DECK_NAME_MAX } from '../src/systems/item/itemFields.js';
 import { quickslotKey } from '../src/systems/quickslots.js';
 import { shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { cardRules, cardFlavor } from '../src/systems/iliacCardWords.js';
+import { cardRules, cardFlavor } from '../src/systems/iliac/iliacCardWords.js';
 import { packModel, mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 
@@ -37,7 +37,7 @@ test('AUDIT CARDS-5 C1: a binder\'s decks from an old, foreign or edited save ma
   assert.equal(b.decks.length, BINDER_DECKS_MAX);
   assert.equal(b.decks[0].name, 'Good');
   assert.equal(DECK_NAME_MAX, BINDER_DECK_NAME_MAX, 'one bound');
-  assert.match(read('src/systems/save.js'), /cleanBinders\(entity\.items\);/);
+  assert.match(read('src/systems/save/save.js'), /cleanBinders\(entity\.items\);/);
   // the pack's sheet reads the sound decks (a malformed one threw there)
   withDom((dom) => {
     const host = dom.mk('div'); dom.body.append(host);
@@ -160,7 +160,7 @@ test('AUDIT CARDS-5 C lane\'s pack survivors, driven: a binder carried takes the
 
 test('AUDIT CARDS-5 C3 (lane C\'s aside): two books are two keys on the bar, and a book slotted under the old bare key is found again by its title', async () => {
   const q = await import('../src/systems/quickslots.js');
-  const { itemLongName } = await import('../src/systems/itemInfo.js');
+  const { itemLongName } = await import('../src/systems/item/itemInfo.js');
   const book = (message) => ({ group: 'Books', templateIndex: 277, name: 'Book', message, stackCount: 1 });
   const other = book(7), doors = book(417);   // 417: a port book, titled without the game's data
   assert.notEqual(q.quickslotKey(other), q.quickslotKey(doors), 'a book is keyed by its text');
@@ -178,10 +178,10 @@ test('AUDIT CARDS-5 C3 (lane C\'s aside): two books are two keys on the bar, and
 });
 
 test('AUDIT CARDS-5 lane C\'s survivors (second pass): the binder is the binder only in its group; a holding costs nothing said; each wears its own picture; twelve decks at most; a card-less stack still stacks; a card\'s and the binder\'s lines on the info card and the stat panel; an array is no deck; the sheet counts copies', async () => {
-  const { isCardBinder, ILIAC_CARD_ROW } = await import('../src/systems/iliacItems.js');
-  const { itemInfoRows, itemStatRows } = await import('../src/systems/itemInfo.js');
+  const { isCardBinder, ILIAC_CARD_ROW } = await import('../src/systems/iliac/iliacItems.js');
+  const { itemInfoRows, itemStatRows } = await import('../src/systems/item/itemInfo.js');
   const { addItem, stacksWith } = await import('../src/systems/inventory.js');
-  const { inventoryItemImage } = await import('../src/systems/itemTemplates.js');
+  const { inventoryItemImage } = await import('../src/systems/item/itemTemplates.js');
   // the binder's group
   assert.equal(isCardBinder({ templateIndex: CARD_BINDER_TEMPLATE, group: 'Books' }), false, 'another group: no binder');
   assert.equal(binderOf([{ templateIndex: CARD_BINDER_TEMPLATE, group: 'Books' }]), null);

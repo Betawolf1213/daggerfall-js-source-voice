@@ -15,7 +15,7 @@ import { CONDITION_WEAR_SCALE, blowWear, _wearScaleForTests } from '../src/syste
 import { damageEquipment } from '../src/combat/formulas.js';
 import { pcaaoApplyConditionDamageThroughWeaponDamage, pcaaoApplyConditionDamageThroughUnarmedDamage } from '../src/combat/pcaao.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { strokeFatigueCost } from '../src/world/deepWaterSwim.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -57,10 +57,10 @@ test('BALANCE1: the fatigue scale is on EXERTION alone - the minute\'s band, a j
     assert.equal((s.match(new RegExp(`${fn}\\(SWING_FATIGUE_COST\\)`, 'g')) ?? []).length, 2, `${f}: the melee arm and the bow arm charge the scaled swing`);
     assert.doesNotMatch(s, /\(SWING_WEAPON_FATIGUE_LOSS\)/, `${f}: nothing charges DFU's raw swing`);
   }
-  assert.match(rd('src/systems/rrInstall.js'), /const owed = cost \* FATIGUE_DRAIN_SCALE \+ \(entity\._rrFatigueCarry \?\? 0\);/, 'the overload, its fraction carried (rr1_realism drives it)');
+  assert.match(rd('src/systems/roleplayRealism/rrInstall.js'), /const owed = cost \* FATIGUE_DRAIN_SCALE \+ \(entity\._rrFatigueCarry \?\? 0\);/, 'the overload, its fraction carried (rr1_realism drives it)');
   // the pre-merge audit (0927b F1): Enhanced Riding's charge is exertion too - 165 was left whole and on neither list
-  assert.match(rd('src/systems/rrRidingHost.js'), /- Math\.trunc\(FATIGUE_LOSS\.Default \* RR_RIDING\.chargeFatigueMultiplier \* FATIGUE_DRAIN_SCALE\)\);/);
-  for (const f of ['src/systems/effects.js', 'src/systems/poisons.js', 'src/systems/diseases.js', 'src/systems/guildServiceActions.js', 'src/systems/quest/actions.js', 'src/systems/survival/needs.js', 'src/world/deepWaterSwim.js']) {
+  assert.match(rd('src/systems/roleplayRealism/rrRidingHost.js'), /- Math\.trunc\(FATIGUE_LOSS\.Default \* RR_RIDING\.chargeFatigueMultiplier \* FATIGUE_DRAIN_SCALE\)\);/);
+  for (const f of ['src/systems/effects.js', 'src/systems/poisons.js', 'src/systems/diseases.js', 'src/systems/guild/guildServiceActions.js', 'src/systems/quest/actions.js', 'src/systems/survival/needs.js', 'src/world/deepWaterSwim.js']) {
     assert.doesNotMatch(rd(f), /FATIGUE_DRAIN_SCALE/, `${f}: not exertion, not scaled`);
   }
   assert.equal(strokeFatigueCost(6400), 160, 'the swim stroke is a burst bought on purpose, at the mod\'s price');
@@ -136,7 +136,7 @@ test('BALANCE1: every blow\'s wear path takes the scale - DFU\'s DamageEquipment
 
     // the other two, where they are charged
     assert.match(rd('src/combat/pcaao.js'), /lowerCondition\(item, blowWear\(amount, rolls\), owner, say, removeFrom, shownItemName\);/, 'the overhaul\'s one wear sink');
-    assert.match(rd('src/systems/rrInstall.js'), /\(it, amount\) => lowerCondition\(it, blowWear\(amount, rolls\), owner, say\)/, 'Roleplay Realism\'s armour x5');
+    assert.match(rd('src/systems/roleplayRealism/rrInstall.js'), /\(it, amount\) => lowerCondition\(it, blowWear\(amount, rolls\), owner, say\)/, 'Roleplay Realism\'s armour x5');
     // PIN MOVED (INT8/INT9, 2026-10-09 - bible/06-Systems/Integrity-Arc.md lane 2): the referee's word that a blow landed
     // wears the weapon of the strike that left - a duel's, and the open zone's the same
     assert.match(rd('src/scenes/world.js'), /if \(amount > 0\) lowerCondition\(_duelLastWeapon, dfuBlowWear\(amount\), playerEntity,/, 'a duel\'s blade (DFU\'s amount at the port\'s multiple - WEAR-ONE\'s 1 - then the scale)');

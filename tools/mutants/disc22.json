@@ -1,7 +1,7 @@
 [
   {
     "name": "D22A-port-default-dropped",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "tests": [
       "test/disc22a_magic_repairs.test.js"
     ],
@@ -10,7 +10,7 @@
   },
   {
     "name": "D22A-getData-ignores-the-room",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "tests": [
       "test/disc22a_magic_repairs.test.js"
     ],
@@ -19,7 +19,7 @@
   },
   {
     "name": "D22A-screen-shows-the-store",
-    "file": "src/systems/settings.js",
+    "file": "src/systems/settings/settings.js",
     "tests": [
       "test/disc22a_magic_repairs.test.js"
     ],
@@ -28,7 +28,7 @@
   },
   {
     "name": "D22A-forced-offline-too",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "tests": [
       "test/disc22a_magic_repairs.test.js"
     ],
@@ -82,7 +82,7 @@
   },
   {
     "name": "D22F-finished-by-name",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "tests": [
       "test/disc22f_share_copy.test.js"
     ],
@@ -91,7 +91,7 @@
   },
   {
     "name": "D22F-envelope-id-not-passed",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "tests": [
       "test/disc22f_share_copy.test.js"
     ],
@@ -154,7 +154,7 @@
   },
   {
     "name": "D22F-third-person",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "tests": [
       "test/disc22f_share_copy.test.js"
     ],

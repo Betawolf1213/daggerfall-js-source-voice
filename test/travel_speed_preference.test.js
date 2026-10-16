@@ -7,8 +7,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
-import { mapPixelWorldOrigin, MAX_CIRCUMNAVIGATION_ACCEL } from '../src/systems/travelPaths.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
+import { mapPixelWorldOrigin, MAX_CIRCUMNAVIGATION_ACCEL } from '../src/systems/travel/travelPaths.js';
 import { TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../src/systems/timeScale.js';
 
 const mid = (x, y) => { const o = mapPixelWorldOrigin(x, y); return { x: o.x + 16384, z: o.z + 16384 }; };
@@ -115,8 +115,8 @@ test('RATE-LAW: a stop asks for walking pace and forgets the rate, so the next j
 
 // ── THE HOST'S OWN QUESTION, RUN ──────────────────────────────────────────────────────────────────────────────────────
 import { readFileSync } from 'node:fs';
-import { playerOnPathAt, pathsDataPoint, E, W } from '../src/systems/travelPaths.js';
-import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { playerOnPathAt, pathsDataPoint, E, W } from '../src/systems/travel/travelPaths.js';
+import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travel/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };

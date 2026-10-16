@@ -235,7 +235,7 @@
   },
   {
     "name": "QS-a-share-taken",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (isShelved(machine.sharedCandidateNamed?.(questName))) return { ok: false, reason: 'shelved' };\n",
     "new": "",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "QS-guidance-marks-it",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": " || q.shelvedAt != null);   // QUEST-SHELF: and one set aside marks nothing while away",
     "new": ");   // QUEST-SHELF: and one set aside marks nothing while away",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "QS-A-a-share-unworded",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  shelved: 'have abandoned it - reclaim it from your journal to take it up again.',",
     "new": "",
     "tests": [
@@ -523,7 +523,7 @@
   },
   {
     "name": "QSD-drop-refused",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (!trade && fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
     "new": "",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "QSD-sold-too",
-    "file": "src/systems/itemTransfer.js",
+    "file": "src/systems/item/itemTransfer.js",
     "old": "  if (!trade && fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
     "new": "  if (fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
     "tests": [

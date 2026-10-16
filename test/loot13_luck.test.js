@@ -12,7 +12,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { PLAIN_FOE_RARITY_WEIGHTS } from '../src/systems/foeLootCap.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 

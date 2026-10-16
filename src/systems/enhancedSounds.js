@@ -3,7 +3,7 @@
 // SOUNDS - the ones Daggerfall never played and the enhanced skin adds.
 //
 // Three things ride it today:
-//   - the wind loop (systems/windAudio.js, WIND3): a soft, steady wind
+//   - the wind loop (systems/wind/windAudio.js, WIND3): a soft, steady wind
 //     under the enhanced outdoors, rising and falling with the wind's
 //     strength, silent indoors - a bed the port makes (FIELD-WIND1:
 //     Daggerfall's own wind clips, replayed end to end, were a moan every

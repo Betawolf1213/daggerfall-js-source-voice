@@ -4,7 +4,7 @@
 //
 // The owner: "the items lay around for 10 minutes and are marked for you to get them back and other players can take
 // em". A player who falls in the open zone drops what their bag and their cart held (never their worn gear, never the
-// consumables the zone lets them keep - systems/wildDeath.js says which); the fallen's own game sends the records here
+// consumables the zone lets them keep - systems/wild/wildDeath.js says which); the fallen's own game sends the records here
 // in `fall` frames (net/wire.js validWildData) and forgets them. From then on THE ROOM'S OBJECT holds them, and it alone
 // decides who gets each one: the first `take` of a record wins it, the record goes to its taker alone, and everyone in
 // the room hears what left. No client's word can hand out a record twice, because no client holds one.
@@ -298,7 +298,7 @@ export function wdunBound(st) {
 }
 
 // ── ZONE-GIANTS (2026-10-08, the owner: "always spawn 2 giants per tier and make em show on the map"): the hub keeps which
-// of the zone's eight giants (systems/wildGiants.js - their walks are every client's own pure pick) is down, and until
+// of the zone's eight giants (systems/wild/wildGiants.js - their walks are every client's own pure pick) is down, and until
 // when, so a giant killed is gone for everyone and walks again for everyone at once.
 export const WDUN_GIANTS = 8;
 export const WDUN_GIANT_DOWN_MS = 30 * 60_000;

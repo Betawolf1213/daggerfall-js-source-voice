@@ -22,8 +22,8 @@ import { DYE_COLORS } from '../src/characters/dyes.js';
 import {
   createThunderlock, createPellets, installThunderlockIcons, ICON_FILES, ART_RECORDS, ART, PAPERDOLL_OFFSET,
 } from '../src/systems/thunderlock.js';
-import { inventoryItemImage, ownItemImage } from '../src/systems/itemTemplates.js';
-import { itemDyeColor } from '../src/systems/itemDye.js';
+import { inventoryItemImage, ownItemImage } from '../src/systems/item/itemTemplates.js';
+import { itemDyeColor } from '../src/systems/item/itemDye.js';
 import { paperdollItemImage } from '../src/ui/paperDoll.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { readPng } from '../tools/pngIO.mjs';

@@ -4,11 +4,11 @@
 // box (4020, "Congratulations, %pcn, You are now a Master of %ski") and
 // the item-powers box (1016, "Item powers: %mpw") all handed TEXT.RSC to
 // the screen raw. And %mpw had no source anywhere in the port -
-// DaggerfallUnityItemMCP.MagicPowers is ported here (systems/itemPowers.js).
+// DaggerfallUnityItemMCP.MagicPowers is ported here (systems/item/itemPowers.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { magicPowersLines, itemPowers, POWERS_UNKNOWN_TEXT, ARTIFACT_POWERS_TEXT_BASE } from '../src/systems/itemPowers.js';
+import { magicPowersLines, itemPowers, POWERS_UNKNOWN_TEXT, ARTIFACT_POWERS_TEXT_BASE } from '../src/systems/item/itemPowers.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
 import { powersRows } from '../src/ui/nativeInventory.js';
 import { expandRowValues, setMacroWorld } from '../src/systems/quest/questMacros.js';

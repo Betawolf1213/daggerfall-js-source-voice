@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { cloudsStateUnderMod, dynamicMoonState } from '../src/render/dynamicSkiesBridge.js';
 import { skyState, WEATHER_SKY } from '../src/render/enhancedSky.js';   // DSH1: the row's greyness
-import { MATERIAL_DEFAULTS } from '../src/systems/dynamicSkies.js';
+import { MATERIAL_DEFAULTS } from '../src/systems/dynamicSkies/dynamicSkies.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

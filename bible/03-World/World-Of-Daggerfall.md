@@ -681,7 +681,7 @@ player has travelled. Two players standing on one pixel can pick
 different instances on the 176 pixels named from two folders, and on
 the border pixels of a region only one of them has entered - and this
 mod levels the ground, which is what a room must agree on. So the mod's
-one switch is ROOM-OWNED (`systems/onlineLane.js`, beside the roads),
+one switch is ROOM-OWNED (`systems/online/onlineLane.js`, beside the roads),
 and an online page loads every folder at once in one order: 17 first,
 then ascending. Offline the list is the reference's, path and all.
 
@@ -796,7 +796,7 @@ places (`riteLocalOf`): the same refusals, so no boulder stands through the alta
 the braziers or the faithful's tents (AUDIT WB12d G12).
 
 Online alone: the gate is online's, and online this mod is the room's, forced
-on (`systems/onlineLane.js`) - so every client that sees a gate stands the same
+on (`systems/online/onlineLane.js`) - so every client that sees a gate stands the same
 rock and refuses the same pieces, and the ground the room shares (the flatten)
 is refused with the site on every one of them. Offline the mod stands 1:1.
 Pinned in `test/gateclear.test.js`, mutants in `tools/mutants/gateclear.json`;

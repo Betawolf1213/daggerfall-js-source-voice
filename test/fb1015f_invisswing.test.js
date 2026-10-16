@@ -13,7 +13,7 @@ import { EnemyAttack } from '../src/characters/enemyAttack.js';
 import { runTargetMachine } from '../src/characters/enemyTargets.js';
 import { sensesContext } from '../src/scenes/shared.js';
 import { applySpell, isInvisible, concealmentFlags } from '../src/systems/effects.js';
-import { noticeRoll, noticeChance, createWildAlert, WILD_ROLL_S } from '../src/systems/wildAlert.js';
+import { noticeRoll, noticeChance, createWildAlert, WILD_ROLL_S } from '../src/systems/wild/wildAlert.js';
 import { setSeed } from '../src/formats/dfRandom.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

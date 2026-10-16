@@ -45,7 +45,7 @@ import { mountFpsCounter } from './ui/fpsCounter.js';   // FPS1: the counter, ov
 import { installFramePacer } from './systems/frameCap.js';   // FPS-VSYNC (AUDIT 28e): the desktop app's lifted wait, paced by the cap
 import { setScreenshotCanvas } from './ui/screenshot.js';   // KB1: the PrintScreen action's canvas - the key itself is routed by the hosts (AUDIT KB1)
 import { getPref } from './systems/uiPrefs.js';   // FPS1: its switch
-import { publishBootParams, BOOT_DOOR_KEYS } from './systems/onlineLane.js';   // MAC-N3: the boot's params are the URL, or the online lane reads nothing
+import { publishBootParams, BOOT_DOOR_KEYS } from './systems/online/onlineLane.js';   // MAC-N3: the boot's params are the URL, or the online lane reads nothing
 // The deployed site is redeployed several times a day and every deploy
 // renames chunks, so a page held open across one is holding a map of a
 // build that is gone. Recoverable, and the law of that is its own file.
@@ -275,7 +275,7 @@ async function boot() {
     if (legacyBirth) params.delete('classic');
     // MAC-N3: THE DECIDED PARAMS ARE THE URL before the world boots.
     // `online` above was set on this in-memory copy alone, and the
-    // online lane (systems/onlineLane.js isOnlinePage - the read under
+    // online lane (systems/online/onlineLane.js isOnlinePage - the read under
     // uiSkin, getPref and modSetting) reads location.search: it never
     // saw a Play Online session, so the skin stayed the player's
     // stored choice and a Classic player had no chat.

@@ -1,22 +1,22 @@
 // TV8 - GROUP TRAVEL, THE LEADER DRIVES (bible/06-Systems/Travel-View.md, THE OVERHAUL; Mac 2026-09-28: "Leader
-// drives"). The law (systems/partyWalk.js), the wire (net/wire.js validPartyPose `tw`/`ts`, world124), the host.
+// drives"). The law (systems/party/partyWalk.js), the wire (net/wire.js validPartyPose `tw`/`ts`, world124), the host.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as PW from '../src/systems/partyWalk.js';
-import { walkOf, memberWalkStep, leaderMustHalt, PARTY_WALK_TS_SKEW_MS, PARTY_WALK_RADIUS_M, PARTY_WALK_ASK_MS, PARTY_WALK_GRACE_MS, PARTY_WALK_HALT_MS, NO_WALK_ANSWER, WALK_BALKS, walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, walkAskStands, sameWalkDest, walkHaltLapsed } from '../src/systems/partyWalk.js';
+import * as PW from '../src/systems/party/partyWalk.js';
+import { walkOf, memberWalkStep, leaderMustHalt, PARTY_WALK_TS_SKEW_MS, PARTY_WALK_RADIUS_M, PARTY_WALK_ASK_MS, PARTY_WALK_GRACE_MS, PARTY_WALK_HALT_MS, NO_WALK_ANSWER, WALK_BALKS, walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, walkAskStands, sameWalkDest, walkHaltLapsed } from '../src/systems/party/partyWalk.js';
 import { validPartyPose, PARTY_WALK_RELAY_MIN, relaySupportsPartyWalk, RELAY_VERSION, WORLD_PIXEL_BOUND } from '../src/net/wire.js';
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
-import { mapPixelWorldOrigin } from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
+import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
-import { memberPresent } from '../src/systems/partyRestLaw.js';
+import { memberPresent } from '../src/systems/party/partyRestLaw.js';
 import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
 import { TRAVEL_VIEW_TEXT } from '../src/scenes/travelView.js';
-import { BAND_GIVE_UP_MS } from '../src/systems/travelBands.js';
-import { WILD_TEXT } from '../src/systems/wildZone.js';   // PARTY-TRUCE
+import { BAND_GIVE_UP_MS } from '../src/systems/travel/travelBands.js';
+import { WILD_TEXT } from '../src/systems/wild/wildZone.js';   // PARTY-TRUCE
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -384,7 +384,7 @@ const HOST_BLOCK = lift(/\n {2}(const walkNow = [\s\S]*?\n {2}function partyWalk
 const POSE_TW = lift(/\n\s*(\.\.\.\(_walkLead && socialLink\(\)\?\.partyWalkOk \? \{ tw: _walkLead \} : \{\}\),)/, 'the pose\'s walk');
 const POSE_TS = lift(/\n\s*(\.\.\.\(_walkTs != null && socialLink\(\)\?\.partyWalkOk \? \{ ts: _walkTs \} : \{\}\),)/, 'the pose\'s stop');
 const STOP_WHY = lift(/\n\s*(if \(report\?\.stopped\) [^\n;]*;)/, 'the travel frame\'s word on why a journey stopped');
-const LAW = lift(/\nimport \{ ([^}]*) \} from '\.\.\/systems\/partyWalk\.js';/, 'the law the host imports').split(',').map((s) => s.trim());
+const LAW = lift(/\nimport \{ ([^}]*) \} from '\.\.\/systems\/party\/partyWalk\.js';/, 'the law the host imports').split(',').map((s) => s.trim());
 const AROUND = ['social', 'socialLink', 'travelOptions', 'modes', 'playerSpawned', 'playerEntity', 'townTalk', 'gamePaused', 'pointerSurfaces',
   'duelEnemyNear', 'areEnemiesNearby', 'exteriorFoePool', 'worldMoveBusy', 'memberPresent', 'distanceToPartyAccount', 'tvPlaceSummary',
   'mapPixelToWorldCoords', 'tvSceneOf', 'travelViewRouteTo', 'travelViewWalkTo', 'YesNoBoxWindow', 'TRAVEL_VIEW_TEXT', 'locationIndex', 'locationWorldRect', 'tvLocationAt',

@@ -1,10 +1,10 @@
 // @ts-check
-// WARDEN1 (systems/wagonWarden.js - the law; net/wire.js - the cell's clock): THE TOWN WATCH'S THROW, PLAYED. A guard of
+// WARDEN1 (systems/wagon/wagonWarden.js - the law; net/wire.js - the cell's clock): THE TOWN WATCH'S THROW, PLAYED. A guard of
 // the town's watch (the city guards' own picture, GUARD_TEXTURE) jogs up to a parked team along the town's streets, lifts
 // the wagon - its horses with it - over its head, turns to the town's edge and throws it out along a high arc, tumbling,
 // to where it lands; then it walks back the way it came and is gone. The team the pool would draw is held
 // (scenes/horseCartPool.js holdTeam) from the show's start to the landing and drawn here; at the landing it is the pool's
-// again, standing where the throw put it (the owner's save moved - systems/horseCart.js adoptYeet; a reader's record
+// again, standing where the throw put it (the owner's save moved - systems/horse/horseCart.js adoptYeet; a reader's record
 // moved - wagonWarden.js thrownRecord).
 //
 // ONE FRAME A SHOW: its points are metres off where the wagon stood when it began (`origin`, the wire frame - turned to
@@ -19,7 +19,7 @@ import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS } fro
 import { mobileOrientation } from '../characters/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { quatAngleAxis, quatMultiply, quatRotate } from '../world/quat.js';
-import { calculateHorseOrientation, horseViewFor, vsub, vadd } from '../systems/horseCartLaw.js';
+import { calculateHorseOrientation, horseViewFor, vsub, vadd } from '../systems/horse/horseCartLaw.js';
 import { HORSE_ARCHIVE, horseStillRecord, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT } from './horseCartPool.js';
 import { pointOnLine } from '../systems/livingWorld/townPaths.js';
 

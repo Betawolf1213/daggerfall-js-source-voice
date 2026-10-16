@@ -12,7 +12,7 @@ import {
 import { TEMPLATE, FOOD_STAGE, waterIn } from '../src/systems/survival/food.js';
 import { corpseFood, humanoidFood, MEAT_BY_TYPE, isAnimal, isHumanoid } from '../src/systems/survival/loot.js';
 import { survivalOf, hungerStage } from '../src/systems/survival/needs.js';
-import { templateByIndex, customTemplateCount, inventoryItemImage, usesWorldTexture } from '../src/systems/itemTemplates.js';
+import { templateByIndex, customTemplateCount, inventoryItemImage, usesWorldTexture } from '../src/systems/item/itemTemplates.js';
 import { unitWeightInKg, isStackable, itemWeight } from '../src/systems/inventory.js';
 import { useItem } from '../src/systems/useItem.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
@@ -22,7 +22,7 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import {
   addVendorTextures, isVendorArchive, hasTextureReplacement, preloadTextureArchive, vendorTextureStandIn, decodedTexture, clearVendorTextures, clearTextureReplacements, vendorTextureCount,
 } from '../src/systems/textureReplacement.js';
-import { getBool, setValue } from '../src/systems/settings.js';
+import { getBool, setValue } from '../src/systems/settings/settings.js';
 
 // ═══ SURV2 (2026-09-18): THE SURVIVAL ITEMS ═════════════════════════
 //

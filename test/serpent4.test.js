@@ -18,7 +18,7 @@ import {
 } from '../src/net/serpentBrain.js';
 import { LEG, MODE, RADII, SERPENT_GIRTH, radiusAt, bodyAt, segmentBox, nearestExposed } from '../src/net/serpentBody.js';
 import { serpentTimes, serpentAdmits, serpentCountdown, serpentPhase, SERPENT_BRAIN_V } from '../src/net/serpentLaw.js';
-import { shoveOf, shipHurt, crushHurt, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpentStrike.js';
+import { shoveOf, shipHurt, crushHurt, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
 import { createSerpentLink } from '../src/net/serpentLink.js';
 import { createSerpentHost, SERPENT_GALE, SERPENT_NEAR_M, GALE_LINE } from '../src/scenes/serpentHost.js';
 import { bumperDrift, flatHull, BUMPER_M, BUMPER_GAIN, BUMPER_V_MAX } from '../src/scenes/navalHost.js';

@@ -239,7 +239,7 @@ challenge and fight-verification stack. None of it has a subject here.
 ## THE SAVES: R2 for the blob, D1 for the card
 
 A Daggerfall save already hits `QuotaExceededError` in `localStorage`
-(`systems/save.js` handles it by name), which places its size class
+(`systems/save/save.js` handles it by name), which places its size class
 above both D1's practical per-row ceiling and a Worker's body cap. R2
 also has no egress fee, which matters for a game nobody pays for.
 
@@ -261,7 +261,7 @@ overwrote a character by reusing a name, another installed the app and
 found empty slots. A design where the cloud is the truth is one where a
 sync bug is catastrophic; a design where the cloud is a copy is one
 where the same bug is an inconvenience. The carrier already exists:
-SP1's `systems/saveTransfer.js` defines a canonical portable layout
+SP1's `systems/save/saveTransfer.js` defines a canonical portable layout
 (`Saves/SAVE<n>/SaveData.txt`, `SaveInfo.txt`, `Screenshot.jpg`) and
 moves slots between the browser's store and the desktop's files. **The
 cloud is a third destination for a carrier that already works**, not a
@@ -1447,7 +1447,7 @@ Mac: *"Go in order. Take your time."* ACC1d is done; this is step 4 of
 The page above already decided the shape (*THE SAVES: R2 for the blob,
 D1 for the card*) and the limit (*THE CLOUD IS A BACKUP AND A TRANSFER.
 THE LOCAL SAVE STAYS AUTHORITATIVE*). What follows is what that shape
-runs into once it meets `systems/saveSlots.js` as it actually exists,
+runs into once it meets `systems/save/saveSlots.js` as it actually exists,
 and the decisions nobody had made yet.
 
 ### D1 — cloud saves are for LINKED accounts, and a guest is refused
@@ -1473,7 +1473,7 @@ translates ("This account has no password yet.").
 This is the decision the existing code forces, and it would have been
 easy to get wrong.
 
-`systems/saveSlots.js` keys a slot in storage by an INTEGER — SAV4's
+`systems/save/saveSlots.js` keys a slot in storage by an INTEGER — SAV4's
 `CreateNewSavePath`, *"a new pair takes the FIRST FREE integer key"*.
 That integer is a fact about ONE store. Two devices that saved in a
 different order hold the same character's "QuickSave" under different
@@ -1529,7 +1529,7 @@ newer. That is the design ACC0 refused — *"a design where the cloud is
 the truth is one where a sync bug is catastrophic"* — and it would also
 be a SECOND answer to a question this repo has already answered.
 
-`systems/saveTransfer.js` (SP1) defines what happens when a slot
+`systems/save/saveTransfer.js` (SP1) defines what happens when a slot
 arrives from elsewhere, and it was written because a player thought
 they had lost their saves:
 
@@ -1576,7 +1576,7 @@ Step 4 says *"Upload on save"*. This slice does not do that, and the
 departure is recorded rather than quietly taken:
 
 - An upload inside the save path puts a NETWORK CALL in the one
-  operation this game must never fail. `systems/save.js` handles
+  operation this game must never fail. `systems/save/save.js` handles
   `QuotaExceededError` by name today; it has no arm for "the account
   service was slow" and should not grow one.
 - A backup that happens invisibly is a backup whose failure is also
@@ -3036,7 +3036,7 @@ the same hole, one level down. It stripped comments with two regexes,
 block comments first, so a line comment carrying a stray `/*` opened a
 "block" that ran to the next `*/` and swallowed every import between.
 The account Worker bundled nine files the walk never saw -
-`systems/partyScale.js`, `books.js`, `booksData.js`, `portBooks.js`,
+`systems/party/partyScale.js`, `books.js`, `booksData.js`, `portBooks.js`,
 `potions.js`, `lootThemes.js`, `formats/bookFile.js`, `textRsc.js`,
 `rscTable.js` - and a change to any of them deployed nothing. The walk
 now parses each file (acorn, a devDependency) and reads its imports,

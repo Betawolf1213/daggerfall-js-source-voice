@@ -5,8 +5,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { applySpell, isDispelMagic, isDispelCreature } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import {
   liveBundles, dispelBundle, dispellableBundles, DISPEL_MAGIC_TEXT, DISPELLABLE_BUNDLE_TYPES,
 } from '../src/systems/mysticism.js';

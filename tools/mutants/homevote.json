@@ -71,7 +71,7 @@
   },
   {
     "name": "HOME-VOTE-owner-votes",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "home.mine !== true && home.deed !== true",
     "new": "home.deed !== true",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "HOME-VOTE-member-votes",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "!(home.hall && (home.member === true || home.insider === true));",
     "new": "!(home.hall && home.insider === true);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "HOME-VOTE-kin-votes",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "!(home.hall && (home.member === true || home.insider === true));",
     "new": "!(home.hall && home.member === true);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "HOME-VOTE-take-back-re-sent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    mine === HOME_VOTE_UP ? { id: HOME_VOTE_VERB.clear, label: 'Take back your vote up' }",
     "new": "    mine === HOME_VOTE_UP ? { id: HOME_VOTE_VERB.up, label: 'Take back your vote up' }",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "HOME-VOTE-clear-a-vote",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "id === HOME_VOTE_VERB.clear ? 0 : null",
     "new": "id === HOME_VOTE_VERB.clear ? 1 : null",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "HOME-VOTE-choices-inverted",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "vote: homeVoteOfVerb(row.id) };",
     "new": "vote: -homeVoteOfVerb(row.id) };",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "HOME-VOTE-zero-vote-unsaid",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  const lines = score !== 0 || homeMyVoteOf(home.myVote) ?",
     "new": "  const lines = score !== 0 ?",
     "tests": [
@@ -141,7 +141,7 @@
   },
   {
     "name": "HOME-VOTE-owner-told-zero",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    return score !== 0 ? [homeVotesLine(score)] : [];",
     "new": "    return [homeVotesLine(score)];",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "HOME-VOTE-score-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "            score: homeScoreOf(h.score), myVote: homeMyVoteOf(h.vote),",
     "new": "            score: 0, myVote: 0,",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "HOME-VOTE-insider-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "            insider: h.insider === true,",
     "new": "            insider: false,",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "HOME-VOTE-vote-unshown",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      if (row) wrote(id, buildingKey, { ...row, score, myVote: mine }, { mine: false });",
     "new": "      if (row) wrote(id, buildingKey, row, { mine: false });",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "HOME-VOTE-listener-told",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "{ ...row, score, myVote: mine }, { mine: false });",
     "new": "{ ...row, score, myVote: mine });",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "HOME-VOTE-unknown-home-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      else ensure(id, { force: true });\n",
     "new": "",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "HOME-VOTE-gone-never-re-asked",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (r?.error === 'no-home' || r?.error === 'vote-own') ensure(id, { force: true });",
     "new": "    if (r?.error === 'vote-own') ensure(id, { force: true });",
     "tests": [
@@ -581,7 +581,7 @@
   },
   {
     "name": "HOME-VOTE-II-A3-take-back-unoffered",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (!homeVotable(home)) return mine ? [{ id: HOME_VOTE_VERB.clear, label: `Take back your vote ${mine === HOME_VOTE_UP ? 'up' : 'down'}` }] : [];",
     "new": "  if (!homeVotable(home)) return [];",
     "tests": [
@@ -591,7 +591,7 @@
   },
   {
     "name": "HOME-VOTE-II-A3-member-casts",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "homeVotable(home) || (vote === 0 && !!homeMyVoteOf(home?.myVote));",
     "new": "homeVotable(home) || !!homeMyVoteOf(home?.myVote);",
     "tests": [
@@ -601,7 +601,7 @@
   },
   {
     "name": "HOME-VOTE-II-A3-down-key-lost",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const down = row.id === HOME_VOTE_VERB.down || (row.id === HOME_VOTE_VERB.clear && homeMyVoteOf(home.myVote) === HOME_VOTE_DOWN);",
     "new": "const down = row.id === HOME_VOTE_VERB.down;",
     "tests": [
@@ -631,7 +631,7 @@
   },
   {
     "name": "HOME-VOTE-II-A4-owner-unsent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "vote: v, ...(owner ? { owner } : {}) });",
     "new": "vote: v });",
     "tests": [
@@ -641,7 +641,7 @@
   },
   {
     "name": "HOME-VOTE-II-A4-unknown-sent",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (v !== 0 && !owner) { ensure(id, { force: true }); return { ok: false, error: 'no-home' }; }\n",
     "new": "",
     "tests": [
@@ -671,7 +671,7 @@
   },
   {
     "name": "HOME-VOTE-II-B5-deed-votable-client",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": " && home.deed !== true && ",
     "new": " && ",
     "tests": [
@@ -801,7 +801,7 @@
   },
   {
     "name": "HOME-VOTE-II-down-take-back-label",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "{ id: HOME_VOTE_VERB.clear, label: 'Take back your vote down' }",
     "new": "{ id: HOME_VOTE_VERB.clear, label: 'Take back your vote up' }",
     "tests": [

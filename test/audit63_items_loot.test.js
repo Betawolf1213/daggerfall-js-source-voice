@@ -15,12 +15,12 @@ import { readFileSync } from 'node:fs';
 
 import { materialArmorValue, itemArmorValue, BODY_PARTS, ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { updateEquippedArmorValues, armorValuesOf, equipItem, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
-import { armourModString } from '../src/systems/itemInfo.js';
-import { inventoryItemImage, templateByIndex, GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplates.js';
+import { armourModString } from '../src/systems/item/itemInfo.js';
+import { inventoryItemImage, templateByIndex, GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplates.js';
 import {
   createPotion, createArtifact, randomlyAddPotionRecipe,
   DUNGEON_LOOT_KEYS, DROP_ICON_ARCHIVES, generateItems, addPileLootExtras,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { POTION_RECIPES, POTION_DEFAULT_TEXTURE_RECORD, potionRecipeKey } from '../src/systems/potions.js';
 import { classicItemFromRecord, classicItemsAndSpells } from '../src/systems/classicSave.js';
 import { createDroppedLoot, droppedLootHooks } from '../src/scenes/droppedLoot.js';
@@ -515,7 +515,7 @@ test('AUDIT 63 F23: a classic save\'s worn 0-condition piece imports EQUIPPED', 
 // ── MAC-D2 (Skibbster on Discord, 2026-09-21, with a screenshot of a
 // TOMATO on the "Small Cart" card) ───────────────────────────────────
 test('MAC-D2: transportation draws NO BORROWED icon - the columns that look like one are another template’s art', async () => {
-  const { inventoryItemImage, GROUP_TEMPLATE_INDICES, templateByIndex } = await import('../src/systems/itemTemplates.js');
+  const { inventoryItemImage, GROUP_TEMPLATE_INDICES, templateByIndex } = await import('../src/systems/item/itemTemplates.js');
   const TRANSPORT = GROUP_TEMPLATE_INDICES.Transportation;
   assert.deepEqual(TRANSPORT, [93, 94, 95, 96, 97, 98], 'a cart, a horse and four boats');
 

@@ -3,7 +3,7 @@
 // REVENANT-CARD (2026-10-02, Mac: "For taunting enemies. I was hoping it would have a portrait popup and enemy dialog
 // (kind of like our notification system)" - and "Any new UI elements need to be enhanced UI plus").
 //
-// WHAT IT IS. A card for each thing a revenant says or does (systems/revenant.js builds the events; systems/revenantVoice.js
+// WHAT IT IS. A card for each thing a revenant says or does (systems/revenant/revenant.js builds the events; systems/revenant/revenantVoice.js
 // hands them here): the foe's PORTRAIT - its own sprite, front-facing, in a sunk well with its rank on a chip - a
 // KICKER that says what this is ("Revenant", "Fleeing", "Escaped", "Revenant slain", "A revenant rises"), its NAME over
 // what it is (its kind, its trait, elite), and its WORDS typed out in its own voice, with what happens in the
@@ -27,7 +27,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { isEnhanced } from '../systems/uiSkin.js';
-import { setRevenantPresenter } from '../systems/revenantVoice.js';
+import { setRevenantPresenter } from '../systems/revenant/revenantVoice.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { PIXEL_STACK, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
@@ -273,7 +273,7 @@ function setPortrait(face, ev) {
   }
 }
 
-/** THE PRESENTER (systems/revenantVoice.js): draw an event - the enhanced skin's card - or decline (the classic skin, no
+/** THE PRESENTER (systems/revenant/revenantVoice.js): draw an event - the enhanced skin's card - or decline (the classic skin, no
  *  document), and the host says the line. */
 export function showRevenantCard(ev) {
   try {

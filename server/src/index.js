@@ -262,11 +262,11 @@ import { heraldWebhook, heraldRole, omenPost, fellPost, ritePost, heraldOmenDue,
 // opponents, or choose to matchmake for a real opponent to take on in real time"): FOUR FILES JOIN THE BUNDLE -
 // net/arenaLaw.js (the rooms, the season, the rating, the queue, the referee's numbers, the words both ways - it imports
 // nothing), net/arenaBrain.js (one bout on the relay: the law, the referee, the ladder's AI fighters), the bout law it
-// runs (systems/arenaBout.js - pure, and it reaches net/duelSession.js, which reaches wire.js) and net/arenaReceipt.js (a
+// runs (systems/arena/arenaBout.js - pure, and it reaches net/duelSession.js, which reaches wire.js) and net/arenaReceipt.js (a
 // bout's receipt, the relay's third signature under the gate's one key). bible/11-Multiplayer/Arena.md "7. Online".
 // ARENA4b (2026-10-03, Arena.md 2: "Exhibition - online: yes - the relay runs it, every client sees one bout"): ONE FILE
 // JOINS THE BUNDLE - net/arenaExhibition.js (the hour's exhibition as law: the schedule, the pair, the bout's id - moved
-// out of systems/arenaLadder.js, which hands it on; it imports arenaLaw.js, here already, and systems/wind.js's seeded
+// out of systems/arena/arenaLadder.js, which hands it on; it imports arenaLaw.js, here already, and systems/wind/wind.js's seeded
 // die, which imports nothing) - and the hour's room `arena:x<hour>` stands beside the bouts'.
 // ARENA6 (2026-10-03, the owner: "a way to simply host private matches"): NO FILE JOINS - a private session's room
 // `arena:p<code>` (net/arenaLaw.js) is a floor room whose bouts its host calls, its session's law in net/arenaBrain.js.
@@ -6462,7 +6462,7 @@ export class Room {
 
   // ───────────────────────────── SERPENT1: THE SEA SERPENT ─────────────────────────────
   // bible/11-Multiplayer/Sea-Serpent.md section 6. A fight lives in the CELL its site stands in (the client finds the
-  // site over the map files - systems/serpentSite.js - and says it with its `in`). AUDIT SERPENT S1: THE SITE IS THE
+  // site over the map files - systems/serpent/serpentSite.js - and says it with its `in`). AUDIT SERPENT S1: THE SITE IS THE
   // CLIENT'S WORD (the relay holds no map), so the cell keeps ONE FIGHT A SITE (net/serpentLaw.js serpentSiteKey), at
   // most SERPENT_SITES_MAX a day: a forged site stands a fight of its own, and its kill is said for its own site alone.
   // AUDIT SERPENT 2 F1: every word a fight says names its site (_serpentFan), and a client folds its own site's alone
@@ -8706,7 +8706,7 @@ export class Room {
   }
   _keepRec(id, rec) { this._recs.set(id, rec); }   // SCALE2b: bounded, the oldest first - never cleared whole
   /** INT9 (PARTY-TRUCE at the relay): a record whose party changed keeps the one it left and when (`partyWas`), so the
-   *  zone's referee holds the truce (WILD_REF.truceMs) - the client's own law (systems/wildZone.js createPartyTruce),
+   *  zone's referee holds the truce (WILD_REF.truceMs) - the client's own law (systems/wild/wildZone.js createPartyTruce),
    *  never a crafted client's choice. Every write of a record passes here. */
   _truced(id, rec) {
     const had = this._recs.get(id);

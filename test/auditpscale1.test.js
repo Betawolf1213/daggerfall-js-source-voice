@@ -11,7 +11,7 @@ import './modsOff.js';
 import {
   PARTY_FIGHT_WINDOW_MS, PARTY_ME, noteFighter, foeFighters, partyFoeLoses, partyFoeHeals, partyFoeHits, partyToughness,
   partyExtraFoes, partyGroupMembers, markWholeBlow, takeWholeBlow, partySizeOf, _resetPartyScaleForTests,
-} from '../src/systems/partyScale.js';
+} from '../src/systems/party/partyScale.js';
 import { RENOWN_ASSIST_MS } from '../src/net/renownTracker.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
 import { validFoeRecord, CELL_PUPPETS_MAX, CELL_LOOSE_PUPPETS, PARTY_MAX } from '../src/net/wire.js';

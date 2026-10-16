@@ -2,15 +2,15 @@
 // arrives at the world's present, with no world time to spend (OL2, LIVED1) - and TO-ONLINE (2026-09-19, Mac: "travel
 // options uses instant travel for the online mod, which shouldn't be the case") had left three switches that reached
 // it: Travel Options off, and either of the two dials that send a Cautious or an Inns trip down the journey (TO-LIVE put
-// both on the tile). All three are the room's now (systems/onlineLane.js ONLINE_ROOM_MOD_KEYS): online a land trip is
+// both on the tile). All three are the room's now (systems/online/onlineLane.js ONLINE_ROOM_MOD_KEYS): online a land trip is
 // travelled whatever the player's own store says; offline every switch is still theirs.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travelOptions.js';
+import { readTravelOptionsSettings, TRAVEL_OPTIONS_VENDOR } from '../src/systems/travel/travelOptions.js';
 import { modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS, ONLINE_LAND_TRAVEL_REFUSAL } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS, ONLINE_LAND_TRAVEL_REFUSAL } from '../src/systems/online/onlineLane.js';
 import { isPlayerControlledTravel, enforceShipRestriction } from '../src/ui/travelPopUp.js';
 
 const CAUTIOUS = 'CautiousTravel.PlayerControlledCautiousTravel', INNS = 'StopAtInnsTravel.PlayerControlledInnsTravel', PORTS = 'ShipTravel.OnlyFromPorts';

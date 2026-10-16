@@ -13,8 +13,8 @@ import './chargenDom.mjs';   // a minimal DOM (globals): the enhanced spellbook 
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as tm from '../src/systems/textManager.js';
-import { resolveItemName, itemLongName, itemNameParts, expandItemInfo, potionRecipeIngredientNames, shownItemName } from '../src/systems/itemInfo.js';
-import { setMagicItemTemplates, setSpellRecordsByIndex, createArtifact, legacyGetArtifactSubType, shownSpellName } from '../src/systems/loot.js';
+import { resolveItemName, itemLongName, itemNameParts, expandItemInfo, potionRecipeIngredientNames, shownItemName } from '../src/systems/item/itemInfo.js';
+import { setMagicItemTemplates, setSpellRecordsByIndex, createArtifact, legacyGetArtifactSubType, shownSpellName } from '../src/systems/loot/loot.js';
 import { SOUL_TRAP_TEMPLATE } from '../src/systems/mysticism.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potions.js';
@@ -22,10 +22,10 @@ import { equipItem } from '../src/systems/equip.js';
 import { NativeInventoryWindow, INV_RECTS } from '../src/ui/nativeInventory.js';
 import { CELL_X } from '../src/ui/itemScroller.js';
 import { enchantmentParams, enchantmentParamName, enchantmentParamValues, enchantmentSettings, primaryPick, PARAM_NONE } from '../src/systems/enchantmentCatalogue.js';
-import { magicPowersLines } from '../src/systems/itemPowers.js';
+import { magicPowersLines } from '../src/systems/item/itemPowers.js';
 import { ItemMakerWindow, itemMakerFilter } from '../src/ui/itemMakerWindow.js';
 import { createUseMagicItemWindow } from '../src/ui/useMagicItemWindow.js';
-import { decorItemName } from '../src/systems/decorItems.js';
+import { decorItemName } from '../src/systems/decor/decorItems.js';
 import { SpellbookWindow, spellRowText, _setSpellbookArtForTests } from '../src/ui/spellbookWindow.js';
 import { _setSpellIconsForTests } from '../src/ui/spellIcons.js';
 import { bookModel, mountEnhancedSpellbook } from '../src/ui/enhancedSpellbook.js';
@@ -34,7 +34,7 @@ import { mountHotbarDock, hotbarDropSpell, toggleHotbarSpell } from '../src/ui/e
 import { withDom } from './invdrag.mjs';
 import { applySpell } from '../src/systems/effects.js';
 import { activeSpellIcons } from '../src/ui/hudActiveSpells.js';
-import { snapshotPlayer } from '../src/systems/save.js';
+import { snapshotPlayer } from '../src/systems/save/save.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
 
 beforeEach(() => {

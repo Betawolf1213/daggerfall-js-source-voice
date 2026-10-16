@@ -14,12 +14,12 @@ import { MW_WEAPON_TYPE, MOD_WEAPON_TO_MW, dfWeaponToMw } from '../src/formats/m
 import { MOD_ARMOR_ROWS, mwArmorRecords, armorRowOf, DF_ARMOR_ROWS, dfWornArmor } from '../src/formats/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { RRI_CLASSES } from '../src/systems/rriItems.js';
+import { RRI_CLASSES } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
 import { createDecorRoom, MW_STAND_ARCHIVE, decorStandsOwn } from '../src/scenes/decorRoom.js';
-import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot.js';
+import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot/loot.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

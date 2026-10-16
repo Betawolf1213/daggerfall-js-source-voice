@@ -44,7 +44,7 @@ kill collapsed it early (a kill collapses the gate at once), and it stood throug
 
 ## GATE-CLEAR: the rock yields to the gate (1a)
 
-`systems/gateSite.js` keeps a gate off every location's neighbourhood and every spawned dungeon, and World of Daggerfall
+`systems/gate/gateSite.js` keeps a gate off every location's neighbourhood and every spawned dungeon, and World of Daggerfall
 stands a site on 114,087 of the pixels left - rock fields ~500 m across, mountains ~1.9 km, every model with its own
 collider. Nothing kept the two apart. Measured over the shipped lists: of 6,000 of the gate's own spots (`gateSpotLocal`)
 laid on the 146,446 pixels the lists name, **198 stood within 24 m of an object the mod stands** (a floor - a boulder's
@@ -97,7 +97,7 @@ Two kinds stand on the held map now, each answering the pointer with a CARD at t
 - **the gate's ring** - it marks an AREA, so anywhere inside it that is not a place's mark answers: *OBLIVION GATE* /
   *Near Copperham, Wrothgarian Mountains* / *Open - seals in 8:41* (or *Opens in*, *Sealed - collapses in*,
   *Collapsing*) / *Valkynaz Ruhn, Warden of the Burning Gate* (or *... has fallen*). The omen builds it
-  (`systems/gateOmen.js gateTip`, beside the label it already built), `readGateMark` carries it.
+  (`systems/gate/gateOmen.js gateTip`, beside the label it already built), `readGateMark` carries it.
 - **a town under attack** - NEW on the map: every raid RUNNING now (`raidActive`: begun, not withdrawn, not cleansed) at
   its town, a crimson ring about the town's mark with two blades crossed above it (`ui/inkMap.js paintRaidMark`; a colour
   the sheet did not speak in), in the legend as *Town under attack*: *RAIDING PARTY* / *Gothway Garden, Daggerfall* /

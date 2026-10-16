@@ -991,7 +991,7 @@ A player on Discord, the afternoon a release went out: *"my saves its
 all gone."* Mac: *"we need parity between browser and the install."*
 
 **Nothing was deleted.** Nothing in either store removes a save but the
-player's own Delete (systems/saveSlots.js: the only three `removeItem`
+player's own Delete (systems/save/saveSlots.js: the only three `removeItem`
 calls on a slot are deleteSave, an overwrite dropping its stale
 picture, and a NEW slot whose write threw). The website keeps a save
 in the browser's storage for its origin; the app keeps the same save as
@@ -1002,7 +1002,7 @@ slots, and a player who cleared a browser profile had done the one
 thing the file store exists to survive. The saves were in the other
 place, or gone with the profile; the app never had them.
 
-**The carrier** is `systems/saveTransfer.js`, pure over a storage-shaped
+**The carrier** is `systems/save/saveTransfer.js`, pure over a storage-shaped
 object. **Export** writes every slot the store holds as ONE zip in the
 app's own on-disk layout - `Saves/SAVE<n>/SaveData.txt`, `SaveInfo.txt`,
 `Screenshot.jpg` (the three shot spellings pinned equal to

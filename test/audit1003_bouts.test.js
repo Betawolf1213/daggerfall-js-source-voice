@@ -16,12 +16,12 @@ import { readFileSync } from 'node:fs';
 
 import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
 import { createArenaGate } from '../src/scenes/arenaGate.js';
-import { newArenaLadder, nextLadderBout, exhibitionFor } from '../src/systems/arenaLadder.js';
-import { boutFighter, STALL_MS, BOUT_LIMIT_MS, END_HOLD_MS } from '../src/systems/arenaBout.js';
-import * as BK from '../src/systems/arenaBook.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import { fighterIdentity } from '../src/systems/arenaFighters.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { newArenaLadder, nextLadderBout, exhibitionFor } from '../src/systems/arena/arenaLadder.js';
+import { boutFighter, STALL_MS, BOUT_LIMIT_MS, END_HOLD_MS } from '../src/systems/arena/arenaBout.js';
+import * as BK from '../src/systems/arena/arenaBook.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 

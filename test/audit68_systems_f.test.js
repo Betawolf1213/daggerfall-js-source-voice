@@ -6,11 +6,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { respawnHealth } from '../src/systems/deathRespawn.js';
 import { startPoison, POISONS } from '../src/systems/poisons.js';
 import { newSurvival } from '../src/systems/survival/needs.js';
-import { assignSkillSpells, RRI_SPELLS } from '../src/systems/rriKits.js';
+import { assignSkillSpells, RRI_SPELLS } from '../src/systems/roleplayRealismItems/rriKits.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { resetQuickslotHolds, tickQuickslotHold, quickslotCycling } from '../src/systems/quickslots.js';
 import { REVERB_PRESET, reverbImpulseSamples } from '../src/systems/reverbPresets.js';

@@ -1,6 +1,6 @@
 // WBX8 (2026-09-26, Mac: "Improve the sky effect to be more like the /event dread command" - "When I say sky effect,
 // I mean daggerfall, not the inside"): THE SKY OVER A GATE BURNS. The omen has always said "The sky burns over the
-// wilds near ..." and the overworld's sky never did; now a gate's life (systems/gateOmen.js gateSkyPhaseWeight) and the
+// wilds near ..." and the overworld's sky never did; now a gate's life (systems/gate/gateOmen.js gateSkyPhaseWeight) and the
 // eye's distance from it (gateSkyNear) give the live event's dread a weight of its own - the crimson grade on the sky,
 // its fog and the land's light (scenes/world.js takes the greater of the event's and the gate's) - and the event's red
 // storm gathers over the gate on a schedule of its own (world/dreadSky.js dreadStrikes' ring, createDreadStorm's
@@ -11,9 +11,9 @@ import { readFileSync } from 'node:fs';
 import {
   gateSkyPhaseWeight, gateSkyNear, gateSkyWeight, createGateOmen, gateSceneXZ,
   GATE_SKY_KINDLE, GATE_SKY_KINDLE_MS, GATE_SKY_OMEN, GATE_SKY_RISEN, GATE_SKY_FULL_M, GATE_SKY_EDGE_M, GATE_STORM_RING,
-} from '../src/systems/gateOmen.js';
+} from '../src/systems/gate/gateOmen.js';
 import { gateTimes, isGateDay, GATE_COLLAPSE_MS, PIXEL_M } from '../src/net/gateLaw.js';
-import { GATE_TOWN_MAX_PX } from '../src/systems/gateSite.js';
+import { GATE_TOWN_MAX_PX } from '../src/systems/gate/gateSite.js';
 import { dreadStrikes, createDreadStorm, DREAD_NEAR_M, DREAD_FAR_M, DREAD_BOLT_COLOR, DREAD_SLOT_MS } from '../src/world/dreadSky.js';
 import { thunderOf } from '../src/systems/distantStorms.js';
 

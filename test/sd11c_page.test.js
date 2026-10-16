@@ -10,14 +10,14 @@
 // the way back from the Hour stood a player on the Return's own foot; a mark or save in a Hollow gone since entered the
 // nearest dungeon. With them, the page's untested arms (the lens on the tests): the whole state folded in the shadow, the
 // world host's fight seams run from their own text, the End in the Dragon Break, and the smaller gaps.
-import { sdMarksLine } from '../src/systems/sdOmen.js';   // SD19 (PIN MOVED): its marks said with its find
+import { sdMarksLine } from '../src/systems/superDungeon/sdOmen.js';   // SD19 (PIN MOVED): its marks said with its find
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSdHost } from '../src/scenes/sdHost.js';
-import { sdCities, sdTemplates } from '../src/systems/sdSite.js';
-import { scanGatePixels } from '../src/systems/gateSite.js';
+import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
+import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdFoundLine, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_CLOSED, isSdRoom, sdRoomKey } from '../src/net/sdLaw.js';
@@ -28,7 +28,7 @@ import { createSdClaims, SD_CLAIMS_MAX, SD_CLAIMS_ALL_MAX } from '../src/net/sdC
 import { createDuelRecords } from '../src/net/duelRecord.js';
 import { profileView, profileRenown, profileDuelLine, profileGateLine, profileRaidLine, profileSerpentLine, profileSdLine } from '../src/ui/profileWindow.js';
 import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
-import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/sdSpoils.js';
+import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { SOCIAL_ROOM, validSdOut } from '../src/net/wire.js';
 import {
   newRemnantFight, joinRemnant, stepRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, heartsOpen, remnantStateOf,
@@ -39,17 +39,17 @@ import { SD_FIGHT_EMPTY, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt
 import { sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { dungeonStartDoorFor } from '../src/systems/save.js';
+import { dungeonStartDoorFor } from '../src/systems/save/save.js';
 import { respawnFlavorText } from '../src/systems/deathRespawn.js';
 import { SD_FIGHT_TEXT as FIGHT_WORDS } from '../src/net/sdFightLink.js';
 
@@ -374,7 +374,7 @@ test('SD11c A MARK IN A HOLLOW GONE ENTERS NOTHING (L1 F8): a save\'s or a Mark\
   assert.equal(dungeonStartDoorFor([NEIGHBOUR], { group: 'g-gone' }, 'dungeon:4040')?.group, 'g-gone', 'a doorless site: the site itself');
   assert.equal(dungeonStartDoorFor([NEIGHBOUR, OWN], null, 'dungeon:4040'), OWN, 'its own door');
   assert.equal(dungeonStartDoorFor([NEIGHBOUR, OWN], { group: 'g-own' }, null), OWN, 'a door on its own pixel');
-  assert.match(read('src/systems/save.js'), /\n  return here \?\? site \?\? null;\n\}/);
+  assert.match(read('src/systems/save/save.js'), /\n  return here \?\? site \?\? null;\n\}/);
 });
 
 // ── L1 F4 / L5 C2: my Hour's receipt waits for its throw ──────────────

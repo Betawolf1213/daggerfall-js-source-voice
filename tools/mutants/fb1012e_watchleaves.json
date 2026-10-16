@@ -172,7 +172,7 @@
  },
  {
   "name": "WATCH-LEAVES-pop-range-inclusive",
-  "file": "src/systems/townPopulation.js",
+  "file": "src/systems/town/townPopulation.js",
   "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
   "new": "  return dist >= POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
   "tests": [
@@ -181,7 +181,7 @@
  },
  {
   "name": "WATCH-LEAVES-pop-square-in-view",
-  "file": "src/systems/townPopulation.js",
+  "file": "src/systems/town/townPopulation.js",
   "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
   "new": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) >= 0);",
   "tests": [
@@ -190,7 +190,7 @@
  },
  {
   "name": "WATCH-LEAVES-pop-dist-ignored",
-  "file": "src/systems/townPopulation.js",
+  "file": "src/systems/town/townPopulation.js",
   "old": "export function popAllowChange(dx, dz, viewYaw, dist = Math.hypot(dx, dz)) {",
   "new": "export function popAllowChange(dx, dz, viewYaw, _d, dist = Math.hypot(dx, dz)) {",
   "tests": [

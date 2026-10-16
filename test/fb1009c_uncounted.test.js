@@ -12,21 +12,21 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { withDom } from './invdrag.mjs';
 import { BAG_PAGE_WORDS, setProfessionsPages, drawStoresPage, resetProfPages, carryRows } from '../src/ui/profPages.js';
 import { heldOf, heldKeysOf, materialKeyOfItem, roomFor, mintCarried, bagWeight } from '../src/systems/materialsBag.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
-import { generateRandomLoot } from '../src/systems/loot.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
+import { generateRandomLoot } from '../src/systems/loot/loot.js';
 
 const noWait = () => Promise.resolve();
 const memStorage = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };
 const body = () => ({ stats: { strength: 50 }, items: [setItemFields({ group: 'UselessItems2', templateIndex: BAG_TEMPLATE })], bagItems: [], wagonItems: [], goldPieces: 0 });
 const TROLL = 'reagent:troll-blood', HERB = 'p1:9';
 
-/** Troll's Blood as a dungeon's corpse gives it - DFU's loot roll (systems/loot.js generateRandomLoot), the C1 arm alone,
+/** Troll's Blood as a dungeon's corpse gives it - DFU's loot roll (systems/loot/loot.js generateRandomLoot), the C1 arm alone,
  *  its pick landing on template 42 (CreatureIngredients1's seventh of fifteen). */
 function lootedTrollsBlood() {
   const matrix = { MinGold: 0, MaxGold: 0, WP: 0, AM: 0, C1: 100, C2: 0, C3: 0, P1: 0, P2: 0, M1: 0, AI: 0, CL: 0, BK: 0, M2: 0, RI: 0, RL: 0 };

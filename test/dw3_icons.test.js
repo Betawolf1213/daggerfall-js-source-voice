@@ -19,15 +19,15 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { DYE_COLORS, DYE_NAMES, dyeToken } from '../src/characters/dyes.js';
-import { itemDyeColor, armorDyeColor } from '../src/systems/itemDye.js';
+import { itemDyeColor, armorDyeColor } from '../src/systems/item/itemDye.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import {
   textureKey, textureEntry, setTextureReplacements, clearTextureReplacements, hasTextureReplacement, decodedTexture, decodedTextureTopDown,
   addVendorTextures, clearVendorTextures, vendorTextureCount, preloadTextureArchive, preloadTextureRecord, PRELOAD_CONCURRENCY,
 } from '../src/systems/textureReplacement.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 import { diverseWeaponsIconEntries, installDiverseWeaponsIcons, _resetDiverseWeaponsIcons, ICON_ARCHIVES } from '../src/combat/diverseWeaponsIcons.js';
 import { hasDiverseWeaponsSprite, DIVERSE_WEAPONS_SPRITE_COUNT } from '../src/combat/diverseWeaponsAssets.js';
 import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeaponsIndex.js';
@@ -264,7 +264,7 @@ test('DW3 wiring: the paper doll asks by item.dyeColor and blits an imported tex
   assert.match(pipe, /const swap = decodedTexture\(archive, record, 0, 'Albedo', dye\);/);
   assert.match(pipe, /const variant = mips === false \? \(swap && token \? `#ui_\$\{token\}` : dyed \? `#ui_dye\$\{dye\}_\$\{dyeTarget\}` : '#ui'\) : undefined;/, 'DYE-ICON: a dyed classic picture keys apart too, by dye and swatch, apart from a replacement\'s');
   assert.match(pipe, /return variant;/);
-  assert.match(rd('src/systems/itemTemplates.js'), /return \{ archive, record, dye: itemDyeColor\(item\), dyeTarget: itemDyeTarget\(item\) \};/);
+  assert.match(rd('src/systems/item/itemTemplates.js'), /return \{ archive, record, dye: itemDyeColor\(item\), dyeTarget: itemDyeTarget\(item\) \};/);
   assert.match(rd('src/systems/textureReplacement.js'), /const lane = async \(\) => \{ while \(next < todo\.length\) await one\(todo\[next\+\+\]\); \};/, 'the preload runs in lanes');
   assert.equal(PRELOAD_CONCURRENCY, 8);
 });

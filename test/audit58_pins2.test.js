@@ -50,7 +50,7 @@ import { MobilePerson, TILE_DOWNGRADE_CHANCE, RANDOM_CHANGE_CHANCE } from '../sr
 import { effectCost } from '../src/systems/spellcost.js';
 import {
   enterDungeonAutomap, resetAutomapStore, buildRevealIndex, automapRevealTick, HIT_DISTANCE_AGREEMENT,
-} from '../src/systems/automap.js';
+} from '../src/systems/automap/automap.js';
 import { savingThrow, EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { ClimbingState, climbingChance } from '../src/player/climbing.js';
 import { scrollBarClick } from '../src/ui/verticalScrollBar.js';

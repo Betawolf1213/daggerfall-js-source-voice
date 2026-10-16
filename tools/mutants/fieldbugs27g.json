@@ -1,7 +1,7 @@
 [
   {
     "name": "STATION-ROWS-truthy-rows",
-    "file": "src/systems/guildServiceFlow.js",
+    "file": "src/systems/guild/guildServiceFlow.js",
     "old": "export const isServiceBox = (answer) => Array.isArray(answer?.rows);",
     "new": "export const isServiceBox = (answer) => !!answer?.rows;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "DECOR-ROOMS-wall-joins",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "if (d >= size - 1e-6) { join(i, j); linked.push([i, j, dx, dz]); }",
     "new": "{ join(i, j); linked.push([i, j, dx, dz]); }",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "DECOR-ROOMS-no-headroom",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "      if (head >= DECOR_ROOM_HEADROOM && Number.isFinite(head)) {",
     "new": "      if (Number.isFinite(head)) {",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "DECOR-ROOMS-roof-a-floor",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "      if (head >= DECOR_ROOM_HEADROOM && Number.isFinite(head)) {",
     "new": "      if (head >= DECOR_ROOM_HEADROOM) {",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "DECOR-ROOMS-nook-a-room",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "filter(([, g]) => g.length >= DECOR_ROOM_MIN_CELLS)",
     "new": "filter(([, g]) => g.length >= 1)",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "DECOR-ROOMS-on-the-wall",
-    "file": "src/systems/decorRooms.js",
+    "file": "src/systems/decor/decorRooms.js",
     "old": "  const x0 = ok ? box.min[0] + (spanX - (nx - 1) * size) / 2 + DECOR_ROOM_OFFSET : 0;",
     "new": "  const x0 = ok ? box.min[0] + (spanX - (nx - 1) * size) / 2 - size / 2 : 0;",
     "tests": [

@@ -11,15 +11,15 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as tm from '../src/systems/textManager.js';
-import { exhaustedInWaterText, EXHAUSTED_IN_WATER } from '../src/systems/rest.js';
+import { exhaustedInWaterText, EXHAUSTED_IN_WATER } from '../src/systems/rest/rest.js';
 import { youFeelSomewhatBadText, YOU_FEEL_SOMEWHAT_BAD } from '../src/systems/diseases.js';
 import { afloatMessageStep, CANNOT_FLOAT_TEXT } from '../src/player/motor.js';
 import { PlayerWeapon, USING_RIGHT_HAND_TEXT, USING_LEFT_HAND_TEXT } from '../src/combat/playerWeapon.js';
-import { pickpocket } from '../src/systems/talk.js';
+import { pickpocket } from '../src/systems/talk/talk.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { FEATURES } from '../src/systems/features.js';
 import { tileStates, barReading, classicSegment } from '../src/ui/enhancedMenu.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 
 beforeEach(() => { tm._resetTextManagerForTests(); resetSettings(); });
 const fr = (rows, table = 'Internal_Strings') => { tm.patchLocaleTable('fr', table, rows); tm.setLocale('fr'); };
@@ -168,7 +168,7 @@ test('L10N3d crossings: the skill names (GetSkillName, a getter per element; Orc
 });
 
 test('L10N3d crossings: the race a screen shows - raceDisplayName by key or by a stored name, liveRaceName the curse\'s own name for the cursed and the birth race\'s shown name for everyone else', async () => {
-  const { raceDisplayName } = await import('../src/systems/talkSession.js');
+  const { raceDisplayName } = await import('../src/systems/talk/talkSession.js');
   const { liveRaceName, createVampirismCurse } = await import('../src/systems/vampirism.js');
   const { VAMPIRE_CLANS } = await import('../src/systems/infection.js');
   const mortal = (race) => ({ isPlayer: true, race, gender: 'male', level: 10, skills: new Array(40).fill(50), skillUses: new Array(40).fill(0),

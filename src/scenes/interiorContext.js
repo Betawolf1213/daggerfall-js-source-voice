@@ -32,7 +32,7 @@ import { isChairModel } from '../world/chairSeat.js';   // SIT1: the seats a pla
 import { Collider } from '../player/collider.js';
 import { isHouseContainerModel } from '../systems/containers.js';
 import { isShopShelfModel } from '../systems/shopStock.js';   // E2
-import { isBedModel } from '../systems/rrRealism.js';   // RR1: the three bed models a click may rest on
+import { isBedModel } from '../systems/roleplayRealism/rrRealism.js';   // RR1: the three bed models a click may rest on
 import { placedTableSpot, TAVERN_CARD_TABLES } from '../world/placedCardTable.js';   // TAVERN-TABLE: where a tavern's card table stands; TAVERN-TABLES: and how many
 import { cardTablePropModel, paintFelt, paintWood, CARD_TABLE_BOX, CARD_TABLE_ARCHIVE, FELT_RECORD, WOOD_RECORD, FELT_RGB, GOLD_FELT_RECORD, GOLD_FELT_RGB } from '../world/cardTableProp.js';   // TAVERN-TABLE: the card table's own prop; TAVERN-TABLES: the gold table's red felt
 import { holdemGoldTable } from '../net/holdemTable.js';   // TAVERN-TABLES: which of them plays for gold - the relay's own index
@@ -54,15 +54,15 @@ import { ActionSystem } from '../world/actionSystem.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { worldAabb } from '../player/activate.js';   // ROAD-C c2/S9: the automap rows' world bounds
-import { enterInteriorAutomap, exitInteriorAutomap, buildRevealIndex, bindAutomapLayout, automapRevealTick, automapEntranceTick, automapTrailTick, SCAN_INTERVAL_S, registerAutomapConsoleCommands, capsuleCentreFromEye } from '../systems/automap.js';   // ROAD-C c2/S9; ROAD-E E3 the console verbs
-import { INTERIOR_ELEMENT_NAMES } from '../systems/automapModel.js';   // ROAD-C c2/S9
+import { enterInteriorAutomap, exitInteriorAutomap, buildRevealIndex, bindAutomapLayout, automapRevealTick, automapEntranceTick, automapTrailTick, SCAN_INTERVAL_S, registerAutomapConsoleCommands, capsuleCentreFromEye } from '../systems/automap/automap.js';   // ROAD-C c2/S9; ROAD-E E3 the console verbs
+import { INTERIOR_ELEMENT_NAMES } from '../systems/automap/automapModel.js';   // ROAD-C c2/S9
 // AUDIT 63 F22: AddFlats' own RandomTreasure arm - the gate, the
 // picture and the table index all live with the walk that finds the
 // markers, which is the member DFU puts them in.
 import { BUILDING_TYPES } from '../world/buildingNames.js';
 import { THIEVES_GUILD_FACTION_ID, DARK_BROTHERHOOD_FACTION_ID } from '../systems/crimeGuilds.js';   // FactionFile.cs:91/:135
-import { rollLootRarity, pileSource, INTERIOR_RARITY_TIER, stampWonWeapons } from '../systems/lootRarity.js';   // LR1: a tavern's pile rolls at the town's tier; SIGIL1: its weapons' sigils
-import { generateItems as generateLootItems, addPileLootExtras, DUNGEON_LOOT_KEYS, DROP_ICON_ARCHIVES } from '../systems/loot.js';
+import { rollLootRarity, pileSource, INTERIOR_RARITY_TIER, stampWonWeapons } from '../systems/loot/lootRarity.js';   // LR1: a tavern's pile rolls at the town's tier; SIGIL1: its weapons' sigils
+import { generateItems as generateLootItems, addPileLootExtras, DUNGEON_LOOT_KEYS, DROP_ICON_ARCHIVES } from '../systems/loot/loot.js';
 import { createCoverIndex, isCoverFlat, coverProxy } from '../ai/cover.js';   // TACT1: billboards are cover
 // TACT1: the Enhanced AI switch is ai/cover.js's to read (createCoverIndex's default), not this host's
 
@@ -857,7 +857,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   // InitWhenInInteriorOrDungeon's BUILDING arm (Automap.cs:2482-2487),
   // in the one place both interior hosts build their room. The record
   // is minted here and dropped in destroy(): it is a session object,
-  // never a save's - see systems/automap.js's interior block for the
+  // never a save's - see systems/automap/automap.js's interior block for the
   // four DFU facts it reproduces and the one arm it declines.
   const automapModel = buildRevealIndex(automapEntries);
   const automapRec = enterInteriorAutomap({

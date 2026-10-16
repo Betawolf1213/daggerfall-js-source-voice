@@ -96,7 +96,7 @@ an artifact's name. The full table, with each record's power and signature, is L
 ## 6. LOOT4 - five affix kinds that do things
 
 The six kinds LR1 shipped are numbers a wearer carries. Five more DO something, through the seams the Sigil Sets
-opened (SET2), in one module (`systems/lootPowers.js`):
+opened (SET2), in one module (`systems/loot/lootPowers.js`):
 
 | kind | on | slot | Magic | Rare | Legendary | does |
 |---|---|---|---|---|---|---|
@@ -125,7 +125,7 @@ turns it only into another of its family's, and a line added after the mint is s
 BAL9c (2026-10-12, the owner: "introduce some new magic/mage perks to the rarity loot pool ... still dont make it
 overpowered"; `05-Combat/Balance-Arc.md` section 15) set two more after `castSpeed` and before `technique`, so the
 numbers' pass draws as it did: `potency`, jewellery and weapons, prefix, 3-6 / 6-10 / 10-15, "+N% spell damage" - a
-damage spell's landing at a foe, all you wear at most 30% (`systems/spellPower.js`); and `wellspring`, jewellery,
+damage spell's landing at a foe, all you wear at most 30% (`systems/spell/spellPower.js`); and `wellspring`, jewellery,
 suffix, 2-4 / 4-7 / 7-10, "N% magicka on a kill" - the caster's leech, all you wear at most 10% a kill. The last pass
 moved as CAST-SPEED's did: a jewel's proc pick lands in four kinds where it landed in two, a blade's in five where four.
 
@@ -262,7 +262,7 @@ zone's remains (WILD1) and the house's fallen (`01-Overview/Field-Bugs-2026-10-1
 
 ### LOOT1 - a skill affix leans to the item's own skills (2026-10-01)
 
-`systems/lootRarity.js`: `skillKin(item)` answers `{ own, kin }` - a weapon's own skill by `weaponSkillUsed` (the
+`systems/loot/lootRarity.js`: `skillKin(item)` answers `{ own, kin }` - a weapon's own skill by `weaponSkillUsed` (the
 skill that swings it, so a mod's weapon class and the Thunderlock answer their own) and the strike's three; the
 body's twelve; the mind's thirteen. `pickSkill` is the one draw `rollAffixes` makes for a skill affix's param, and it
 takes ONE roll, as the `pick(free, rolls)` it replaced did: the roll's place in [0, 1) chooses the step - under
@@ -287,7 +287,7 @@ Pinned: `test/loot1_kin.test.js` (6); `tools/mutants/loot1.json` (11, all dead).
 
 ### LOOT2 - the roll seen, and the Exalted (2026-10-01)
 
-`systems/lootRarity.js`: `affixBand(item, i)` - the band line `i` was rolled in (a Magic's or a Rare's by its tier; an
+`systems/loot/lootRarity.js`: `affixBand(item, i)` - the band line `i` was rolled in (a Magic's or a Rare's by its tier; an
 Exalted Legendary's extra line - past its record's count - by the Legendary band; else null) - and `affixLine`, the
 line as the card and the tooltip read it, `+18% damage [10-25]`; `rarityLines` prints every line through it.
 `isPerfect` (a Rare, every line at its top) and `tierLabel` - the first line's words: "Exalted Legendary" (said while
@@ -317,7 +317,7 @@ Pinned: `test/loot2_exalted.test.js` (6); `tools/mutants/loot2.json` (20, all de
 
 ### LOOT3 - thirty Legendaries (2026-10-01)
 
-`systems/lootRarity.js` `LEGENDARIES`: the first ten stand as LR2 shipped them, and twenty more follow them - twelve
+`systems/loot/lootRarity.js` `LEGENDARIES`: the first ten stand as LR2 shipped them, and twenty more follow them - twelve
 weapons, ten pieces of armour, eight of jewellery in all. Every weapon template but the arrow, every armour place and
 every kind of jewellery but the wand is NAMED by a record (a wand, as before, takes the three that name none:
 Foxglove, King's Mark, the Archmage's Loop); every weapon family - by the skill that swings it - has two or more.
@@ -369,7 +369,7 @@ Pinned: `test/loot3_legendaries.test.js` (4); `tools/mutants/loot3.json` (10, al
 
 ### LOOT4 - five affix kinds that do things (2026-10-01)
 
-`systems/lootRarity.js`: five kinds join the six, marked `proc` - `elemental` (fire, frost, shock) and `slayer` (the
+`systems/loot/lootRarity.js`: five kinds join the six, marked `proc` - `elemental` (fire, frost, shock) and `slayer` (the
 undead, daedra, humanoids, animals) and `leech` on a weapon, `thorns` on armour, `focus` on jewellery - each banded
 Magic / Rare / Legendary as section 6 says, each a word (`Burning`, `of the Leech`, `Barbed`, `Adept's`, `of the
 Gravewatch` ...) and a label (`+5 Fire damage`, `5% life leech`, `4 thorns`, `-6% spell cost`, `+15% damage vs the
@@ -389,7 +389,7 @@ something - a jewel none of its four, the caster's lines. It takes the pass now,
 with `lastPass`'s `on` set: the switch is not asked, because the piece is its record's on every client and the line's
 reader asks it. A record made before mints as it was (`Professions-Arc.md` 9.2, the record's `v`).
 
-**What they do** - `systems/lootPowers.js` (new, the kit), registered at import under one name (`lootPowers`) and
+**What they do** - `systems/loot/lootPowers.js` (new, the kit), registered at import under one name (`lootPowers`) and
 imported by the game beside the sets' own (`scenes/world.js`, folded onto the sets' import line - line-neutral):
 
 - the BLOW modifier: the slayer's per cents of the whole blow at its kind of foe (`foeGroup` - DFU's own four groups,
@@ -414,7 +414,7 @@ numbers and the five after them; SET6's earlier-spoils pin passes the appended l
 
 ### LOOT5 - every Legendary a power (2026-10-01)
 
-`systems/lootRarity.js` `LEGENDARY_POWERS`: one power a record, keyed by its id (the records keep LR2's own shape; a
+`systems/loot/lootRarity.js` `LEGENDARY_POWERS`: one power a record, keyed by its id (the records keep LR2's own shape; a
 mod's record may carry its own `power`, and `powerOf` reads both) - a name, a brief inside CARD-FIT's 32 characters, a
 sentence, a `kind` and its numbers. The card and the tooltip say it after the enchantment (`powerLine`, "Dragonsbane:
 +50% vs dragons and giants"), the lore still last.
@@ -452,7 +452,7 @@ sentence, a `kind` and its numbers. The card and the tooltip say it after the en
 | The Mark of the Hist | Hist-Sap | Each magic round you regenerate 2% of your health, 4% while you are under half |
 | The Reachman's Torc | Hagraven's Pact | A Destruction spell that strikes you is absorbed 15 times in a hundred, as Spell Absorption is |
 
-**Who.** `systems/lootPowers.js` `wornPowers(entity)`: MY entity's worn pieces - a Legendary's record (a piece that is
+**Who.** `systems/loot/lootPowers.js` `wornPowers(entity)`: MY entity's worn pieces - a Legendary's record (a piece that is
 a Legendary; an id on anything else wakes nothing) and, from LOOT10, a Rare's imprint - ONE entry a power, however many
 pieces carry it. A WEAPON's power rides that weapon's own blows (`blowPowers`: the one that struck); the rest of it
 while it is wielded; armour's and jewellery's ride every blow of mine, my fists' too. Asleep in a duel (the sets' own
@@ -485,7 +485,7 @@ Pinned: `test/loot5_powers.test.js` (7); `tools/mutants/loot5.json` (38, all dea
 
 ### LOOT6 - signature drops (2026-10-01)
 
-`systems/lootRarity.js`: `FOE_FAMILIES` groups the foe table in eight - the **undead** (15, 17, 18, 19, 23, the two
+`systems/loot/lootRarity.js`: `FOE_FAMILIES` groups the foe table in eight - the **undead** (15, 17, 18, 19, 23, the two
 vampires 28 and 30, the two liches), the **daedra** (the five Daedra, the four atronachs, the imp and the gargoyle),
 **dragons** (the two dragonlings), **beasts** (the animals, the werecreatures, the spriggan, centaur, nymph and harpy,
 the slaughterfish, dreugh and lamia), **brutes** (the four orcs and the giant), and the class foes by their own teams
@@ -567,7 +567,7 @@ seed by seed; `tools/mutants/loot7.json` (44, all dead - CHAMP-LOOT retired the 
 
 ### LOOT8 - the drought (2026-10-01)
 
-`systems/lootDrought.js` (new): the character's DROUGHT - one more for every piece taken below Legendary, none again
+`systems/loot/lootDrought.js` (new): the character's DROUGHT - one more for every piece taken below Legendary, none again
 when a Legendary or better is taken. `droughtMult` - `1 + 0.2 x floor(drought / 25)`, at most x3 - is a FINDER
 (LOOT5's `registerLegendaryFind`), so at every door that ladders a list (`rollLootRarity`: a body, a dungeon's pile, a
 house's, a camp's) it multiplies the Legendary threshold beside Foxglove's, and `rarityChances` keeps the product under
@@ -602,7 +602,7 @@ doors in play (sixty bodies taken, sixty counted; three times the Legendaries at
 
 ### LOOT9 - salvage, and the Reforge (2026-10-01)
 
-**The Welkynd Shard** (`systems/gateSpoils.js`, template 571 beside the Sigil Stone's 570): `WELKYND_SHARD_TEMPLATES`,
+**The Welkynd Shard** (`systems/gate/gateSpoils.js`, template 571 beside the Sigil Stone's 570): `WELKYND_SHARD_TEMPLATES`,
 a gem's row that stacks with its own kind alone and is BOUND - so itemBound.js's whole law holds it (never sold, traded,
 dropped or listed) and the realm's service refuses it too (`net/realmTradeLaw.js` `BOUND_TEMPLATES` now `[570, 571]`,
 AUDIT REALM F1's pin reading the new row). The Sapphire's art (TEXTURE.254 record 2). `welkyndShards(n)` mints a stack.
@@ -678,7 +678,7 @@ nothing. `test/fb1012d_salvageclassic.test.js` (4), `tools/mutants/fb1012d_salva
 
 ### LOOT10 - the codex, and the imprint (2026-10-01)
 
-**`systems/lootCodex.js`** (new): the character's CODEX - every Legendary record and every Aetheric piece taken, with
+**`systems/loot/lootCodex.js`** (new): the character's CODEX - every Legendary record and every Aetheric piece taken, with
 the world's day it was first found (`worldTick.js` `worldMinutes`, a shared realm's clock online). `codexKey` names
 what a piece is to it (a Legendary's record, an Aetheric piece's - never a Rare, never an id the tables do not hold).
 `noteFind` puts a piece in it once: the first find is said on the HUD's line - *"Wyrmbane - a Legendary! It joins your

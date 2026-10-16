@@ -7,11 +7,11 @@ import {
   tradeCost, localClickDecision,
   DOESNT_NEED_IDENTIFY, NOT_ENOUGH_SPELL_POINTS_TEXT,
 } from '../src/systems/tradeModes.js';
-import { expandItemInfo } from '../src/systems/itemInfo.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { expandItemInfo } from '../src/systems/item/itemInfo.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey } from '../src/systems/spell/spellEffects.js';
 import { HOLIDAYS } from '../src/systems/holidays.js';
 
 const ench = () => [{ type: 0, param: 1 }];

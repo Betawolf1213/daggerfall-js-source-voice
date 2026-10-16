@@ -427,7 +427,7 @@ test('player: P12 breath - MaxBreath law, the short threshold, WaterBreathing ke
   const { maxBreath } = await import('../src/systems/statMods.js');
   const { breathShortThreshold, BREATH_COLOR_NORMAL, BREATH_COLOR_SHORT, BREATH_BAR_WIDTH } = await import('../src/ui/hud.js');
   const { buffKind } = await import('../src/systems/effects.js');
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   // MaxBreath = LiveEndurance / 2 (int division), fortify-aware
   assert.equal(maxBreath({ stats: { endurance: 51 } }), 25);
   assert.equal(maxBreath({ stats: { endurance: 50 }, activeEffects: [{ kind: 'fortifyAttribute', stat: 'endurance', magnitude: 10 }] }), 30);

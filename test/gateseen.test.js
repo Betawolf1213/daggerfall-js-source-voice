@@ -12,7 +12,7 @@ import { createGatePool, gatePlacement } from '../src/scenes/gatePool.js';
 import { GatePassRenderer } from '../src/render/gatePass.js';
 import { gateArchProfile } from '../src/world/gateModel.js';
 import { gateTimes, GATE_RISE_MS } from '../src/net/gateLaw.js';
-import { scanGatePixels } from '../src/systems/gateSite.js';
+import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

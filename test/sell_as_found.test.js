@@ -8,8 +8,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { tradeCost, getTradePrice, saleConditionPercentage } from '../src/systems/tradeModes.js';
-import { ITEM_FIELDS, validItemField } from '../src/systems/itemFields.js';
-import { addPileLootExtras, validLootItem } from '../src/systems/loot.js';
+import { ITEM_FIELDS, validItemField } from '../src/systems/item/itemFields.js';
+import { addPileLootExtras, validLootItem } from '../src/systems/loot/loot.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { raiseContainerLootSpawned } from '../src/systems/containerLoot.js';
 import { LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';

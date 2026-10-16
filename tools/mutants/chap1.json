@@ -256,7 +256,7 @@
   },
   {
     "name": "CHAP1-LEAF-ID",
-    "file": "src/systems/guildFactions.js",
+    "file": "src/systems/guild/guildFactions.js",
     "old": "Akatosh: 26, Arkay: 21,",
     "new": "Akatosh: 26, Arkay: 20,",
     "tests": [

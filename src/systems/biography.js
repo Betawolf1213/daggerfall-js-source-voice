@@ -25,13 +25,13 @@
 // BiogFile.cs:339 does.
 
 import { addItem, addGoldPieces, goldPiecesOf } from './inventory.js';   // E4: the GP command writes the counter
-import { itemBaseValue, templateByIndex, templateFor, mintCondition } from './itemTemplates.js';
+import { itemBaseValue, templateByIndex, templateFor, mintCondition } from './item/itemTemplates.js';
 import { createWeapon } from '../combat/enemyEquipment.js';   // DISC21-A: ItemBuilder.CreateWeapon's one home - the condition mints with it
 import { ARMOR_MATERIAL } from './armorMaterials.js';
 import { SKILL_COUNT } from './skills.js';
-import { ensureReactionState } from './talk.js';
+import { ensureReactionState } from './talk/talk.js';
 import { createRandomBook } from './books.js';   // A2: ItemBuilder.CreateRandomBook, one member
-import { expandTalkMacros, MACRO_SYMBOLS } from './talkMacros.js';   // AUDIT 64 F29: MacroHelper.ExpandMacros' walk, one home
+import { expandTalkMacros, MACRO_SYMBOLS } from './talk/talkMacros.js';   // AUDIT 64 F29: MacroHelper.ExpandMacros' walk, one home
 import { getMacroValue } from './quest/questMacros.js';              // AUDIT 64 F29: MacroHelper.GetValue's ladder
 import { setSeed, rand } from '../formats/dfRandom.js';              // AUDIT 64 F29: DFRandom.Seed / rand() the four name macros ride
 import { GENDERS, getNameBank, fullName } from '../characters/nameHelper.js';

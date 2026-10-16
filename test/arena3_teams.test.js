@@ -1,5 +1,5 @@
 // ARENA3 (2026-10-02, Mac: "join a team (red and blue)"): THE BANNERS AND THEIR SEASON, offline
-// (systems/arenaLeague.js; bible/11-Multiplayer/Arena.md "3. The teams"). Pinned here: the season is the game's year and
+// (systems/arena/arenaLeague.js; bible/11-Multiplayer/Arena.md "3. The teams"). Pinned here: the season is the game's year and
 // its day the day of the year; joining is free and changing costs a season (quit at once, the other banner only next
 // season, the same banner again at once); team points 1 / 3 / 10 to the banner worn and to none unworn; the season
 // closed on the first read past it - its winner, the laurel to the winning banner's fighters, a level season none;
@@ -9,12 +9,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as LG from '../src/systems/arenaLeague.js';
-import { recruiterChoice, quitAsk } from '../src/systems/arenaHerald.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import { recruiterChoice, quitAsk } from '../src/systems/arena/arenaHerald.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
-import { newArenaLadder, nextLadderBout, exhibitionFor, LADDER_TIERS } from '../src/systems/arenaLadder.js';
+import { newArenaLadder, nextLadderBout, exhibitionFor, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { arenaHudModel } from '../src/ui/arenaHud.js';
 import { MINUTES_PER_DAY, DAYS_PER_YEAR } from '../src/systems/gameDate.js';
 import { createArenaGate, RECRUITER_BANNER } from '../src/scenes/arenaGate.js';

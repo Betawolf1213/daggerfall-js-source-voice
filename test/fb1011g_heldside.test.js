@@ -5,14 +5,14 @@
 // own lockout, and a player who was held was never told why at the trade. The service keeps the held side with its word
 // now (server-account/src/realmTrade.js: `trade-held:a`), each side is told whose it was (`held`: 'mine' or 'theirs'),
 // and the client says it - mine with my hold's reason (net/realmTradeLaw.js TRADE_HELD_NOTICES, the one home
-// systems/itemIds.js re-exports). Against the real Worker over the real migrations. bible/01-Overview/Field-Bugs-2026-10-11g.md.
+// systems/item/itemIds.js re-exports). Against the real Worker over the real migrations. bible/01-Overview/Field-Bugs-2026-10-11g.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../server-account/src/index.js';
 import { standService } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
 import { realmTradeRefusalText, TRADE_HELD_NOTICES } from '../src/net/realmTradeLaw.js';
-import { TRADE_HELD_NOTICES as NOTICES_OF_IDS, tradeHeldNotice } from '../src/systems/itemIds.js';
+import { TRADE_HELD_NOTICES as NOTICES_OF_IDS, tradeHeldNotice } from '../src/systems/item/itemIds.js';
 import { settleRealmTradeHalf } from '../src/systems/realmSaves.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { seeded } from './honestItems.mjs';

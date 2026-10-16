@@ -25,7 +25,7 @@ import {
   _resetFirmamentPowersForTests, _setFirmamentPowersRandForTests,
 } from '../src/systems/firmamentPowers.js';
 import { setFirmament, respecFirmament, FIRM_OPS_MAX, FIRM_PACKED_MAX } from '../server-account/src/firmament.js';
-import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil.js';
+import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
 import { renownMpOf } from '../src/systems/renownLayer.js';
 import { drawEnhancedSaddle, hideEnhancedSaddle, toggleSaddlePanel, saddlePanelOpen, saddleNote, SADDLE_PANEL_PREF, SADDLE_HELLO_MS } from '../src/ui/enhancedSaddle.js';
@@ -39,7 +39,7 @@ import { SKILLS, skillValue } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { playerEntity, hurtPlayer } from '../src/characters/playerEntity.js';
 import { computeEntityMods, weaponBlowMods } from '../src/systems/entityMods.js';
-import { setStruck } from '../src/systems/sigilSetPowers.js';
+import { setStruck } from '../src/systems/sigil/sigilSetPowers.js';
 import { setRenownLayer } from '../src/systems/renownLayer.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { haulKey, nodeKey, herbPatches } from '../src/net/nodeLaw.js';

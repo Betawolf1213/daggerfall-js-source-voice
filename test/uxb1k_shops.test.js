@@ -16,13 +16,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { repairCountdown, repairCountdownText, repairStatusLabel } from '../src/systems/repairService.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 // REPAIR-EASE: InstantRepairs is the port's default now - the counters these pins read are a booked repair's, so they run with it off
 setValue('Controls', 'InstantRepairs', 'False');
 import { OIL_TEMPLATE } from '../src/systems/inventory.js';
 import { NativeTradeWindow } from '../src/ui/nativeTrade.js';
 import { HOW_MANY_ITEMS } from '../src/ui/nativeInventory.js';
-import { planTake, splitRequired } from '../src/systems/itemTransfer.js';
+import { planTake, splitRequired } from '../src/systems/item/itemTransfer.js';
 import { mountEnhancedTrade, repairReadyLine } from '../src/ui/enhancedTrade.js';
 import { withDom } from './invdrag.mjs';
 
@@ -128,7 +128,7 @@ test('UXB1-L: a stack only partly carried asks too, seeded with what fits - and 
   assert.equal(splitRequired(oil(12), 12, true), true, 'or Control');
   assert.equal(splitRequired(oil(1), 0, true), false, 'never a single item');
   assert.equal(splitRequired(oil(12), 12, false), false);
-  // one law, both windows (the pack and the counter) - systems/itemTransfer.js's, since DISC25-F gave it one home
+  // one law, both windows (the pack and the counter) - systems/item/itemTransfer.js's, since DISC25-F gave it one home
   assert.match(read('src/ui/nativeInventory.js'), /return splitRequired\(it, plan\.amount, this\._controlDown\);/);
   const trade = read('src/ui/nativeTrade.js');
   assert.match(trade, /this\._split\(item, plan\.amount, \(amount\) => applyTransfer\(item, \{ \.\.\.plan, amount \}, this\.hooks\.shelfItems\(\), this\.basket\)\);/);

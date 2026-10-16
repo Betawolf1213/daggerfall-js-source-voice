@@ -1172,7 +1172,7 @@ async function registerTextureStoreNow({ warm }) {
   const { setWeaponWidgetSources } = await import('../combat/weaponWidgetAssets.js');   // WW1
   const { setDiverseWeaponsSources } = await import('../combat/diverseWeaponsAssets.js');   // DW1
   const { setDfmodSources, setDfmodDetailSource } = await import('../systems/dfmodTextures.js');   // DFMOD1
-  const { installVanillaEnhancedPack } = await import('../systems/vanillaEnhancedPack.js');   // VE4
+  const { installVanillaEnhancedPack } = await import('../systems/vanillaEnhanced/vanillaEnhancedPack.js');   // VE4
   const { getPref } = await import('../systems/uiPrefs.js');
   setDfmodDetailSource(() => getPref('dfmodTextureDetail'));   // DFMOD2: the packs card's detail choice
   installVanillaEnhancedPack();   // VE4: the shipped mods, in one load order with the attached

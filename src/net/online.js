@@ -210,7 +210,7 @@ export const DEFAULT_SERVER = 'wss://daggerfall-online.mackcothran.workers.dev';
 // literal here went quietly wrong the day the heartbeat moved. Four heartbeats, the margin the 20000/5000 pair had.
 export const PEER_TIMEOUT_MS = 4 * HEARTBEAT_MS;
 /** WILD1: how long a fallen player's room still carries a directed wild frame to them - the zone's body lies two
- *  minutes (systems/wildZone.js WILD_DEATH_HOLD_S), with a margin for the clocks. */
+ *  minutes (systems/wild/wildZone.js WILD_DEATH_HOLD_S), with a margin for the clocks. */
 export const WILD_GHOST_MS = 150_000;
 /** INT9 (AUDIT): how often my word that I stand in the zone is said again on my cell's socket while it stands - a relay
  *  object that restarted forgot it (and with it every fight there), and the next word makes the fighter again. */
@@ -1619,7 +1619,7 @@ export class OnlineSession {
     this._bodyBucket = gate.bucket; this.stats.sent++;
     return true;
   }
-  /** SERPENT2: where this game found the serpent the clock is about (systems/serpentSite.js - its day, its native point
+  /** SERPENT2: where this game found the serpent the clock is about (systems/serpent/serpentSite.js - its day, its native point
    *  to the whole unit and the port it lies off), said to the hub, whose Discord herald names the place and posts the
    *  kill at the site the most accounts agree on (net/serpentHerald.js). ONCE A SOCKET AND DAY (the gate's `site` law);
    *  on the hub's socket alone, under the serpent frames' own bucket; true once it went. */
@@ -1778,7 +1778,7 @@ export class OnlineSession {
     return true;
   }
 
-  /** DISCORD-GATES: where this game found the gate the clock is about (systems/gateSite.js - its day, its map pixel and
+  /** DISCORD-GATES: where this game found the gate the clock is about (systems/gate/gateSite.js - its day, its map pixel and
    *  its place), said to the hub, which names the place in its Discord posts once two accounts agree (net/gateHerald.js).
    *  ONCE A SOCKET AND DAY - a reconnect says it again, to a hub a deploy may have given a herald since. On the hub's
    *  socket alone, under the gate frames' own bucket; true once it went. */
@@ -2630,7 +2630,7 @@ export class OnlineSession {
     return this._rooms.get(this.room)?.size ?? 0;
   }
 
-  /** QUEST1: sharing an accepted quest with the party - systems/questShare.js's own envelope
+  /** QUEST1: sharing an accepted quest with the party - systems/quest/questShare.js's own envelope
    *  ({questName, displayName, data}, prepareQuestShare's own shape), sent as-is; the hub resolves "my party" on its
    *  own (the same roster the party pose view already reads), so nothing here names a target. A deliberate,
    *  one-off click, never a stream - QUEST_SEND_MS is the client's own floor beside the hub's own cooldown at half of
@@ -2651,7 +2651,7 @@ export class OnlineSession {
   }
 
   /** PARTY-MAP (2026-09-30, Discord: "share map data between party members"): SHARED CARTOGRAPHY's send - the
-   *  automap rows I revealed in dungeon `k` since my last send (systems/partyMap.js gathers them), to the hub, which
+   *  automap rows I revealed in dungeon `k` since my last send (systems/party/partyMap.js gathers them), to the hub, which
    *  fans them to my party alone. A background batch, never a click: AMAP_SEND_MS is the client's floor beside the
    *  hub's own cooldown at half of it (amapShareGate), and a relay that does not know the frame is never sent one. */
   shareAutomap(k, r) {
@@ -3130,7 +3130,7 @@ export class OnlineSession {
       }
     } else if (m.t === 'parkYeet') {
       // WARDEN1: the town watch threw MY parked team (net/wire.js validParkYeet) - said by the cell it stood in (my own or
-      // a halo's) to the sockets that spoke for it; what it means is the host's (systems/horseCart.js adoptYeet)
+      // a halo's) to the sockets that spoke for it; what it means is the host's (systems/horse/horseCart.js adoptYeet)
       const y = isCellRoom(room) ? validParkYeet(m) : null;
       if (y) this._deliver('parkYeet', () => this.onParkYeet?.(room, y));
     } else if (m.t === 'caravan') {

@@ -15,7 +15,7 @@
 //   town's - has cell (4,3) named ARENADAG.RMB (formats/mapsFile.js getLocation -> the door's editLocation). It is NOT
 //   a layout mod and not a switch: the arena stands in every layout, so no layout pin speaks for it.
 // - THE STRIP. The location's building list loses exactly the entries the old block's named buildings DREW, by the
-//   same draw every reader makes (systems/talkTopics.js drawNamedBuildings, the grid's block order): every other
+//   same draw every reader makes (systems/talk/talkTopics.js drawNamedBuildings, the grid's block order): every other
 //   building keeps its name, its faction and its quality. The city keeps its MapId, LocationId 50026 and its castle
 //   dungeon 50027 - the quest tables' permanent places (DaggerfallCity1/2, DaggerfallCastle/1/2) are untouched.
 // - THE UNDERCROFT. Kamer's dungeon (Arena/undercroft.json) as a location record of its own, kept off the travel
@@ -24,14 +24,14 @@
 //   211207) so a save made in it re-enters it and a quest of the castle's is never satisfied in it.
 // - THE DISPLACED RECORDS. A record keyed to a building of the old cell names no building now (layoutPins.js
 //   recordStands answers false - `arenaRecordDisplaced`): a room is honoured at any inn of the city, a ticket at any
-//   smith, a quest site is chosen again; a house deed is moved once (systems/arenaMove.js).
+//   smith, a quest site is chosen again; a house deed is moved once (systems/arena/arenaMove.js).
 
 import { registerPortBlock, registerLocationEdit, installWorldDataReplacement } from '../formats/worldDataReplacement.js';
-import { drawNamedBuildings } from '../systems/talkTopics.js';
+import { drawNamedBuildings } from '../systems/talk/talkTopics.js';
 import { configureLayoutPins, layoutLocationKeyOfMapId } from '../systems/layoutPins.js';
 import { LOCATION_TYPES, DUNGEON_TYPES } from '../formats/mapsFile.js';
 import { registerCustomModel } from './customModels.js';
-import { ARENA_TEXT } from '../systems/arenaText.js';
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';
 import { ARENA_MODEL_ID, buildArenaModel, withStairRamps, sealArenaSeams, sealArenaSeamsSliced } from './arenaModel.js';
 import { registerArenaPlaques } from './arenaPlaques.js';   // ARENA5: the Hall of Champions' plaque wall
 import { ARENA_GROUND_MODEL, arenaGroundModel, SAND_R } from './arenaFloor.js';   // AUDIT PRE-MERGE 1003 W1: the city's ground under the floor's instance; ARENA-MAP: the sand the town map leaves open
@@ -206,7 +206,7 @@ export function standArenaInLocation(dfLocation, maps, blocksFile) {
   dfLocation.exterior.buildingCount = dfLocation.exterior.buildings.length;
   ed.blockNames = ed.blockNames.slice();
   ed.blockNames[at] = ARENA_BLOCK;
-  ed.arenaTook = old;   // the block the cell stood before - a moved deed's house type is read off it (systems/arenaMove.js)
+  ed.arenaTook = old;   // the block the cell stood before - a moved deed's house type is read off it (systems/arena/arenaMove.js)
   return { block: old, stripped: strip.size };
 }
 

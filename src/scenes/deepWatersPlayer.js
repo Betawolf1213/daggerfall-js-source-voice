@@ -38,7 +38,7 @@
 //
 // The swim's MOVEMENT (the multiplier, the stroke, the floor clamp) is
 // scenes/deepWatersSwimMove.js, which the dungeon's swimmer runs too; the
-// public state is systems/deepWaterPlayer.js. NOT ported: the forge's
+// public state is systems/deepWater/deepWaterPlayer.js. NOT ported: the forge's
 // `isPlayerInsideDungeon` - the mod raises DFU's dungeon flag for the
 // Update window to borrow the dungeon arm's swim; the port hands the swim,
 // the submersion and the water audio state over directly (and the arm's
@@ -57,7 +57,7 @@ import {
 } from '../world/deepWaterSwim.js';
 import { UnderwaterFog } from '../render/underwaterFog.js';
 import { underwaterFogDensityMax, underwaterFogColor } from '../world/deepWaterLook.js';
-import { evaluateSwimmingSuppression, publishState, clearState } from '../systems/deepWaterPlayer.js';
+import { evaluateSwimmingSuppression, publishState, clearState } from '../systems/deepWater/deepWaterPlayer.js';
 import { OVER_ENCUMBERED_LIMIT } from '../player/motor.js';   // OCEAN-STUCK: LevitateMotor's own weight test (:83)
 import { ON_EXTERIOR_WATER } from '../player/exteriorSurface.js';
 

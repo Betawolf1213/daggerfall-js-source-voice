@@ -459,7 +459,7 @@
   },
   {
     "name": "DISC10-D-V11-the-restored-dream-stays-scheduled",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  for (const a of entity.activeEffects) if (a.infection && !a.dreamPlayed) a.dreamScheduled = false;\n",
     "new": "",
     "tests": [
@@ -577,7 +577,7 @@
   },
   {
     "name": "DISC10-E-L4-the-save-keeps-the-limited-ceiling",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if ('rawMaxHealth' in entity) snap.maxHealth = entity.rawMaxHealth;\n",
     "new": "",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "DISC10-E-L4-the-load-leaves-a-plain-field",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  defineLiveMaxHealth(entity);   // DISC10-E L4: the same law for MaxHealth - the setter below writes the RAW value\n",
     "new": "",
     "tests": [

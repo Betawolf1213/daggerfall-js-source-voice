@@ -18,9 +18,9 @@ import { readFileSync } from 'node:fs';
 import { withDom } from './invdrag.mjs';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { getPref, setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS, ONLINE_FORCED_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS, ONLINE_FORCED_PREFS } from '../src/systems/online/onlineLane.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
-import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 
 const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
 const STACKED = '@media (max-width: 999px) {';

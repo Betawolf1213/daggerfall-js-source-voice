@@ -257,7 +257,7 @@
   },
   {
     "name": "M1-court-record-in-the-store",
-    "file": "src/systems/automap.js",
+    "file": "src/systems/automap/automap.js",
     "old": "export const detachedAutomapRecord = () => newAutomapRecord();",
     "new": "export const detachedAutomapRecord = () => enterDungeonAutomap('3/The Burning Court', 0);",
     "tests": [

@@ -33,10 +33,10 @@ import { audio } from '../systems/audio.js';
 import { isEnhanced } from '../systems/uiSkin.js';   // DEATH2: the enhanced skin paints its own
 import { drawEnhancedDeath, removeEnhancedDeath } from './enhancedDeath.js';
 import { EYE_HEIGHT } from '../player/motor.js';   // DEATH3: the standing eye the fall starts from
-import { isOnlinePage } from '../systems/onlineLane.js';   // DEATH4: the online screen counts down, the offline one waits
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // DEATH4: the online screen counts down, the offline one waits
 import { stateDeathLoss, deathGoldLoss, deathPenaltyLine } from '../systems/deathPenalty.js';   // DEATH-PENALTY: the screen says what the respawn is about to take
 import { goldPiecesOf } from '../systems/inventory.js';   // DEATH-PENALTY: the purse the loss is read off
-import { wildDeath, wildDeathLines, WILD_DEATH_HOLD_S } from '../systems/wildZone.js';   // WILD1: a death in the open zone holds two minutes, Enter or not
+import { wildDeath, wildDeathLines, WILD_DEATH_HOLD_S } from '../systems/wild/wildZone.js';   // WILD1: a death in the open zone holds two minutes, Enter or not
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { t } from '../systems/textManager.js';   // L10N4: the classic face's words in the player's language
 
@@ -189,7 +189,7 @@ export class DeathScreen {
     if (this._view) { this._view.cam.pitch = this._view.pitch; this._view = null; }
     removeEnhancedDeath();   // AUDIT CONTRIB A4: the veil goes with the screen, not STALE_MS after it - the risen see at once
   }
-  /** WILD1 (systems/wildZone.js): a death in the open zone - read live, since the world host says so the frame after the
+  /** WILD1 (systems/wild/wildZone.js): a death in the open zone - read live, since the world host says so the frame after the
    *  screen goes up. The owner: "When a player dies by mobs he has to wait 2mins till respawn" - and at a player's hand
    *  "the body ... disappears in 2 minutes and with it the player can only then respawn". */
   get wild() { return this.online ? wildDeath() : null; }

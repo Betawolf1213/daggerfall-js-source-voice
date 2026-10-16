@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import {
   banish, isBanished, banishmentLeft, banishmentDaysLeft, banishmentEnd, BANISHMENT_MINUTES, PARDON_BASE_PRICE,
 } from '../src/systems/standing.js';
-import { createRegionConditions, snapshotRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions, snapshotRegionConditions } from '../src/systems/region/regionConditions.js';
 import { setSharedClock, worldSpanRealWords } from '../src/systems/worldTick.js';
 import { sharedClassicMinutes, wallMsForClassicMinutes } from '../src/net/wire.js';
 import { skyClassicMinutes, wallMsForSkyMinutes, SKY_SEGMENTS } from '../src/net/skyLaw.js';

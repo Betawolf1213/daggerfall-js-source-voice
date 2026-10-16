@@ -20,14 +20,14 @@
 // offline every roll stands as BAL4 has it.
 //
 // PURE but for the item minters - the hosts call in.
-import { createRandomWeapon, createRandomArmor } from './loot.js';
-import { mintCondition, setItemFields } from './itemTemplates.js';
-import { applyRarity, rarityEligible, rarityChances, championSource, corpseSource, lootRarityOn } from './lootRarity.js';   // ELITE-RARE: the champion's blue the elite's Rare is read off; BAL4: the ladder's switch, offline
+import { createRandomWeapon, createRandomArmor } from './loot/loot.js';
+import { mintCondition, setItemFields } from './item/itemTemplates.js';
+import { applyRarity, rarityEligible, rarityChances, championSource, corpseSource, lootRarityOn } from './loot/lootRarity.js';   // ELITE-RARE: the champion's blue the elite's Rare is read off; BAL4: the ladder's switch, offline
 import { goldStack } from './inventory.js';
-import { isAmmunition } from './itemTemplates.js';
+import { isAmmunition } from './item/itemTemplates.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // ELITE-FLOOR: the watch is never an elite
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // ELITE-FLOOR: a kind's own level, the same on every client
-import { renownOpens } from './sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
+import { renownOpens } from './sigil/sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
 
 /** Health and damage, times the foe's own (rolled, before any Elite Dungeon doubling - an elite is 5x, not 10x). */
 export const ELITE_FOE_HEALTH_MULT = 5;
@@ -55,7 +55,7 @@ export const ELITE_FOE_NORMAL_DUNGEON_CHANCE = 0.2;
 export const ELITE_FOE_LOOT = Object.freeze({ magic: 2, common: 1, legendaryChance: 0.06, goldPerLevel: [20, 60] });   // ELITE-RARE: the Rare's chance is eliteRareChance's, by level
 /** ELITE-RARE (2026-10-03, Mac: an elite's Rare "should be half of" a champion's blue): the elite's extra Rare roll, at a
  *  level - half the chance a champion's body of that level carries a Magic or better, with ELITE_RARE_PIECES eligible
- *  pieces on it (systems/lootRarity.js championSource: its Magic at half a plain foe's), at Luck 50. It was a flat 25%. */
+ *  pieces on it (systems/loot/lootRarity.js championSource: its Magic at half a plain foe's), at Luck 50. It was a flat 25%. */
 export const ELITE_RARE_PIECES = 2;
 export const ELITE_RARE_SHARE = 0.5;
 export function eliteRareChance(level = 1) {

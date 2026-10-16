@@ -1,7 +1,7 @@
 [
   {
     "name": "SELL-AS-FOUND-a-pile-or-body-unmarked",
-    "file": "src/systems/rriRealism.js",
+    "file": "src/systems/roleplayRealismItems/rriRealism.js",
     "old": "      item.currentCondition = Math.trunc((item.maxCondition ?? 0) * conditionMod);\n      item.foundCondition = item.currentCondition;   // SELL-AS-FOUND\n    }\n  }\n  return items;\n}\n/** CalculateConditionCost",
     "new": "      item.currentCondition = Math.trunc((item.maxCondition ?? 0) * conditionMod);\n    }\n  }\n  return items;\n}\n/** CalculateConditionCost",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SELL-AS-FOUND-a-shelf-unmarked",
-    "file": "src/systems/rriRealism.js",
+    "file": "src/systems/roleplayRealismItems/rriRealism.js",
     "old": "      item.currentCondition = Math.trunc((item.maxCondition ?? 0) * conditionMod);\n      item.foundCondition = item.currentCondition;   // SELL-AS-FOUND\n    }\n  }\n  return items;\n}\nexport const storeQualityOn",
     "new": "      item.currentCondition = Math.trunc((item.maxCondition ?? 0) * conditionMod);\n    }\n  }\n  return items;\n}\nexport const storeQualityOn",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "SELL-AS-FOUND-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  foundCondition: int({ min: 0 }),\n",
     "new": "",
     "tests": [

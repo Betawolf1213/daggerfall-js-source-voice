@@ -8,7 +8,7 @@ import {
   runMagicRounds, tickPlayerMinutes, resetMagicRoundMarker,
   setWorldMinutes, worldMinutes, MAX_CATCHUP_ROUNDS,
 } from '../src/systems/worldTick.js';
-import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, REST_TEXT } from '../src/systems/restSession.js';
+import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, REST_TEXT } from '../src/systems/rest/restSession.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { onMonsterHit } from '../src/systems/diseases.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';

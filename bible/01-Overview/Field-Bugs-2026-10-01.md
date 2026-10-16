@@ -148,7 +148,7 @@ paint's read-back put the first look back over the second.
 **Why.** `ensure` handed a forced ask the read already in flight, so the read-back a write asks for was dropped (ASYNC
 NEVER DROPS), and that flight's answer - from before the write - overwrote the row the write had set.
 
-**The fix** (`systems/onlineHomes.js`): the registry counts each town's answered writes, and each read keeps the count
+**The fix** (`systems/online/onlineHomes.js`): the registry counts each town's answered writes, and each read keeps the count
 it set out under; an answer from before a write is not believed (a claim, a door's entry and a sale ride the same
 `wrote`). A forced ask is asked after the flight it finds - the one rule HOMES-FORCE (below) shares: the two lanes
 fixed the same root two ways, and the merge kept one - unless that flight was itself forced and set out after the last
@@ -182,7 +182,7 @@ permanent scene from its purchase. The owner's visit stands in the home's own sc
 tenant's in the building's ordinary scene, which no tenant's cache holds - so the host's `houseOwned` for a tenant was
 never read.
 
-**The fix** (`systems/restSession.js` interiorRestPlace `homeBed`; `systems/homeRent.js` `homeBedIsMine`;
+**The fix** (`systems/rest/restSession.js` interiorRestPlace `homeBed`; `systems/homeRent.js` `homeBedIsMine`;
 `scenes/worldModes.js`): an online home's bed - its owner's, or its tenant's until the tenancy ends - stands where a
 bought house stands, in both halves of the test. PIN MOVED: `homerent`, `restlodging` and `houses` re-aimed by content
 at the bag's new host line.
@@ -236,7 +236,7 @@ the town's minute.
 **Why** - LOOK-STALE's root: the forced read `rentHomeRoom` asks after a rent (`homes.ensure(mapId, { force: true })`)
 was handed the plaque's read in flight, answered before the rent landed.
 
-**The fix** (`systems/onlineHomes.js`, the merge's one rule with LOOK-STALE): a forced ask is asked after the flight it
+**The fix** (`systems/online/onlineHomes.js`, the merge's one rule with LOOK-STALE): a forced ask is asked after the flight it
 finds; one such read a town, however many ask - the first to land sets out a forced flight, and `ensure` hands the
 rest that flight. `test/fb1001_rent.test.js` (6), each red on the code before. `tools/mutants/fb1001_rent.json` (28: 27
 dead, 1 equivalent as recorded - `finding` in the panel's signature, which the doorway count beside it changes with);
@@ -253,7 +253,7 @@ Asked how much of the pool a rest should give back online and how Restore Power 
 pool" and "Everywhere, 1 g/point": online every rested hour (the rest window's, the collapse's, a cautious journey's)
 filled magicka up to half the pool, and Restore Power cost what it restored at the buyer's level, a gold a point, shelved
 by every alchemist and sold at the Mages Guild's magic-items counter to anyone. It shipped in PR #498 and was withdrawn
-the same day - Mac: *"Revert all the potion and magic stuff"*. The revert takes all of it out (`systems/rest.js`,
+the same day - Mac: *"Revert all the potion and magic stuff"*. The revert takes all of it out (`systems/rest/rest.js`,
 `scenes/shared.js`, `scenes/world.js`, `systems/shopStock.js`, `systems/tradeModes.js`, `scenes/worldModes.js`;
 `systems/restorePower.js`, `test/fb1001_mana.test.js` and `tools/mutants/fb1001_mana.json` DELETED; the pins and mutant
 records it re-aimed put back; the Ledger's two rows removed). Online rest gives magicka back as REST-MANA1 left it,
@@ -526,7 +526,7 @@ lane's floor was 0.25 x 0.6. And `blendTerms` crossed to the rain row whole once
 (half the land gone at 230 m), the sun at 0.45, the grass at 0.6 - for a sprinkle as for a storm, which is what
 read as a downpour whatever the count.
 
-**The fix** (`systems/weatherFront.js`; both exterior hosts): the ranges are rain 0.05..1.0 and snow 0.05..0.85
+**The fix** (`systems/weather/weatherFront.js`; both exterior hosts): the ranges are rain 0.05..1.0 and snow 0.05..0.85
 (a storm 0.6..1.0 and a sandstorm 0.5..1.0 as they were), the roll placed by u^skew (rain 2, snow 1.5) - on the map's
 lane the place's intensity is the roll, so a system's edge drizzles and its heart pours: over the core, by area,
 nearly half the ground falls under 0.3 of the profile and a quarter under 0.15, and a downpour (0.65 and up) is its
@@ -902,7 +902,7 @@ on the shared clock from the act's end). Dungeon veins and Hunting never kept ho
 the shops stand open - OL5's shift). An act begun at 17:59 and ended at 18:00 was played, wore its tool, and was refused
 (lanes 4 and 5 below both found that edge; it goes with the rule).
 
-**Built**: a profession's act never asks the daylight (`systems/foragingInstall.js` foragingActRefusal skips it - one
+**Built**: a profession's act never asks the daylight (`systems/foraging/foragingInstall.js` foragingActRefusal skips it - one
 home for the five acts' starts); the net's prompt names no hour (`scenes/fishHost.js` NET_WHERE); the words say none
 (the Fishing-Net's line, the Professions page's Fishing how-to: "at any hour"); the service answers a harvest at any hour
 (`server-account/src/professions.js` harvestNode - the check, its hour helper and `prof-night`'s status gone; the client
@@ -930,7 +930,7 @@ ground a client stands on, the counters, the pad, the finger, and part four's ow
 | NODE-SHUT | own; 1, 2, 3 | CLIMB-NODE's hold reads the gathering host's target, and a shut frame (a sign-out, another account, the switch) left it: the free climb's walk-in start stayed held everywhere until the professions opened again | the shut frame clears the target (`scenes/gatherHost.js`) |
 | STICK-TAP | own; 1 | ACT-TOUCH struck on any tap mid-act - TS1's lock-only tap (a thumb re-placed on the move stick) and a tap in the docked bar's strip among them: an unchosen strike off the glint, a Basket's glint spent, a tug taken | the strike asked after the view's own test and never on the stick's tap (`scenes/world.js` inputHooks.tap) |
 | CLICK-LIFT | own; 1, 2, 4 | ACT-CLICK made the click a strike on its PRESS; the activation fires on the RELEASE, and the ladders asked only whether an act still played - the click that finished a vein, a tree or the Basket lifted onto the door, the chest, the body or the lever under the look, street and dungeon | the click an act took is the act's to its release (`gatherHost.js` clickTaken; the street's ladder; `worldModes.js` tryExitDungeon) |
-| CURE-ENDS | 1 | CURE-ALL cures a drain through the stat reset, which zeroed it and left it; a foe's drain is bundled, so the HUD kept a debuff that did nothing - blinking, never ending, on the party cards and the dispel list, through saves (the guild's stat reset did the same) | a cured drain ends (`systems/guildServiceFlow.js` cureAllAttributes), and one a save kept at nothing ends at the load door (`systems/save.js`) - never in the tick, which names no kind (CURSE-PERSIST1's law) |
+| CURE-ENDS | 1 | CURE-ALL cures a drain through the stat reset, which zeroed it and left it; a foe's drain is bundled, so the HUD kept a debuff that did nothing - blinking, never ending, on the party cards and the dispel list, through saves (the guild's stat reset did the same) | a cured drain ends (`systems/guild/guildServiceFlow.js` cureAllAttributes), and one a save kept at nothing ends at the load door (`systems/save/save.js`) - never in the tick, which names no kind (CURSE-PERSIST1's law) |
 | CURE-FILL | 1 | the turn filled the pools before the cures: a drained Endurance, Strength or Intelligence left fatigue and magicka short of the full the record promised | the pools are filled last (`systems/lycanthropy.js` endOldLifeEffects) |
 | GROUND-STALE | 5; 2, 3 | a pixel's (or dungeon's) witnessed state was read once a UTC day, the service's at every harvest: the third witness's own harvest confirmed the ground and its client went on standing the least - "Mine Iron" offered a novice, played, worn, refused `prof-rank`, every try till midnight (a quarter of a Mountain's veins, a Woodlands Oak a Cherry, every dungeon vein) | a harvest's answer, or a refusal, marks its ground stale: it stands as it did, the next ask reads it, a moved state stands its nodes again (`net/profBook.js` staleGround, pixelWanted, dungeonWanted; `gatherHost.js`) |
 | GROUND-MIDNIGHT | 5 | at 00:00 UTC the host stood every pixel again before the day's states were read, and the read stood again only what CHANGED since yesterday: ground confirmed both days stood unconfirmed all day (its signature veins gone), and so did the dungeon underfoot | yesterday's word is no word (`net/profBook.js` askPixels, askDungeon) |
@@ -1018,7 +1018,7 @@ and their hold, and neither had an E.
   Rose", "hold B and keep still" - as the sea's readout names its own (AUDIT NAV1); else the key (`scenes/world.js`
   `actKeyWord`). They said "[E]" to a hand holding no keyboard.
 - **The Skinning Knife's Use.** From the hotbar or a quick slot at a body it is E there (TOOL-USE - `scenes/huntHost.js`
-  `tools`, `systems/foragingInstall.js` the knife's use handler and its line), and it HOLDS the knife, as the Sickle's
+  `tools`, `systems/foraging/foragingInstall.js` the knife's use handler and its line), and it HOLDS the knife, as the Sickle's
   Use holds the steady hand: the line is drawn by the look alone - a swipe, the right stick, the mouse - with no key held
   (`heldByUse`); the meter says "aim the knife at the first point", never a key (`ui/profHud.js` `byUse`). It skins
   whatever the choice key picked, the pick unmoved; away from a body it says where Hunting is done; offline, or with the
@@ -1323,7 +1323,7 @@ court's `feet()` stands (null outside it); GATE-HEAL (#507) adds to a figure owe
 the relay's damage chart and heal bucket are figures, and no frame writes the local player's health (the duel
 opponent's alone); the account service lands a checkpoint only under the tab's lease at the next sequence and restores
 no older copy, and RESCUE-SAVE's device copy loses to any newer record (`test/rescuesave.test.js`); the renown layer
-keeps health's fraction both ways. An EXACT old health returns only through `restorePlayer` (`systems/save.js`) from the
+keeps health's fraction both ways. An EXACT old health returns only through `restorePlayer` (`systems/save/save.js`) from the
 save the login loads, so if the 6% is the gate's, that save never held the heal. What can leave a heal out of it, none
 confirmed as Leafen's: a page closed rather than Exited, then a login elsewhere (the final checkpoint usually lands
 after the lease is let go - `test/rescuesave.test.js` pins that the device keeps it); a tab that lost its seat

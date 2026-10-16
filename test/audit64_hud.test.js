@@ -30,7 +30,7 @@ import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { setCursorActive } from '../src/player/pointerLock.js';
 import { isEnhanced } from '../src/systems/uiSkin.js';
-import { getBool, setValue, _resetForTests } from '../src/systems/settings.js';
+import { getBool, setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { playerDamageFlash } from '../src/ui/damageFlash.js';
 
 const src = (p) => readFileSync(`src/${p}`, 'utf8');

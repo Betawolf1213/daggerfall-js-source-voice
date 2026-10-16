@@ -1,7 +1,7 @@
 // SIGIL1 (2026-09-25, Mac: "weapons obtained through online play recieve a sort of sigil power that is only effective
 // online, which also scales with your renown. Sigil power does not work offline"; asked: "Bonus damage", "Magic and
 // up, found online", "Bigger fights, stronger sigils", "Five named stages", and "Chance at the drop, then grows"):
-// SOME WEAPONS WON ONLINE CARRY A SIGIL, AND IT GROWS (systems/sigil.js). The law's numbers; the blow, online and at
+// SOME WEAPONS WON ONLINE CARRY A SIGIL, AND IT GROWS (systems/sigil/sigil.js). The law's numbers; the blow, online and at
 // a foe alone; the stamp over a won list; the drink and its words; the item field on the wire; the outdoor pool's
 // kill door and its reader, driven; the hosts' other doors mounted from comment-stripped source or matched there.
 // `06-Systems/Online-Arc.md` SIGIL1.
@@ -13,19 +13,19 @@ import {
   SIGIL_BANDS, SIGIL_POWER_MAX, SIGIL_CHANCE_BASE, SIGIL_CHANCE_PER, SIGIL_STAGES, SIGIL_XP_MAX, validSigil, sigilRank,
   renownSigilStage, sigilStageIn, sigilPercent, sigilChance, sigilFloor, rollSigil, setSigilOnline, setSigilRenown,
   sigilOnline, sigilRenown, drinkSigil, sigilRiseLine, sigilBlow, sigilLines, _resetSigilForTests,
-} from '../src/systems/sigil.js';
-import { stampWonWeapons, rarityLines } from '../src/systems/lootRarity.js';
-import { drinkWorn } from '../src/systems/sigilSets.js';   // SET4: the drink, whole - the weapon in hand's part is SIGIL1's
+} from '../src/systems/sigil/sigil.js';
+import { stampWonWeapons, rarityLines } from '../src/systems/loot/lootRarity.js';
+import { drinkWorn } from '../src/systems/sigil/sigilSets.js';   // SET4: the drink, whole - the weapon in hand's part is SIGIL1's
 import { weaponBlowMods } from '../src/systems/entityMods.js';
 import { weaponAttackDamage } from '../src/combat/formulas.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { validItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { PARTY_MAX } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { _resetPartyScaleForTests } from '../src/systems/partyScale.js';
+import { _resetPartyScaleForTests } from '../src/systems/party/partyScale.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

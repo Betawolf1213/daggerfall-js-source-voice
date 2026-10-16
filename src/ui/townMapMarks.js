@@ -6,16 +6,16 @@
 // exterior automap is DFU's own window and draws DFU's marks alone, as DISC23-A left the party's bodies.
 //
 //   A NOTICE BOARD is a town board (model 41739, world/rmbLayout.js isBulletinBoard) that is not one of its bounty
-//   boards (systems/bountyBoard.js questBoardIndices), while the Notice Board is open (NOTICE1: online, BOARD_OPEN) -
+//   boards (systems/bounty/bountyBoard.js questBoardIndices), while the Notice Board is open (NOTICE1: online, BOARD_OPEN) -
 //   the same boards noticeCountPoints floats a town's unread count over. It stands in the street, so its mark stands
 //   where it does: the middle of its box, in the location's own frame (metres, the frame the player's `local` is in).
 //
-//   A PLAYER'S HOUSING is a building a player owns in this town: an online home (HOME1, systems/onlineHomes.js, the
+//   A PLAYER'S HOUSING is a building a player owns in this town: an online home (HOME1, systems/online/onlineHomes.js, the
 //   service's registry - the player's own, and every other player's, named as its door names it: homeDoorTitle), or
 //   the house the character bought at a bank (DFU's one house a region, systems/banking.js - on the character's own
 //   slot for this town's region, and only in THIS town: a building key is a location's own numbering, so the slot's
 //   map id must be this town's too - isHouseOwned asks the region alone because its callers stand at the door).
-import { homeDoorTitle } from '../systems/onlineHomes.js';
+import { homeDoorTitle } from '../systems/online/onlineHomes.js';
 import { unseenText } from '../net/boardLaw.js';
 
 /** The board's name under the pointer. */

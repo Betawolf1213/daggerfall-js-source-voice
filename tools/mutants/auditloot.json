@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITLOOT-F1-chain-anywhere",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (power.kind === 'chain') return shoots;",
     "new": "  if (power.kind === 'chain') return true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITLOOT-F1-quake-anywhere",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (power.kind === 'quake') return item.group === 'Weapons' && !shoots;",
     "new": "  if (power.kind === 'quake') return true;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITLOOT-F1-every-weapon-shoots",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const shoots = item.group === 'Weapons' && weaponSkillUsed(item.templateIndex) === SKILLS.Archery;",
     "new": "  const shoots = item.group === 'Weapons';",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDITLOOT-F1-choices-unfitted",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "&& powerFits(item, powerOf(r.id)))",
     "new": "&& !!powerOf(r.id))",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDITLOOT-F1-wire-unfitted",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "recordFitsGroup(legendaryById(item.imprint), item) && powerFits(item, powerOf(item.imprint)));",
     "new": "recordFitsGroup(legendaryById(item.imprint), item) && !!powerOf(item.imprint));",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "AUDITLOOT-F4-a-legendary-hand-alone",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "(!!weapon && powerIds(weapon).includes(p.id))",
     "new": "(!!weapon && weapon.legendary === p.id)",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AUDITLOOT-F8-the-codex-the-thirty",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "  return allLegendaries().map((r) => {",
     "new": "  return allLegendaries().slice(0, 30).map((r) => {",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "AUDITLOOT-F8-no-hint-of-its-own",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "?? r.hint ?? '',",
     "new": "?? '',",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "AUDITLOOT-F8-count-of-thirty",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "legendaries: allLegendaries().length,",
     "new": "legendaries: 30,",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "AUDITLOOT-F8-imprint-of-the-thirty",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "  ? allLegendaries().filter((r) => recordFitsGroup(r, item)",
     "new": "  ? allLegendaries().slice(0, 30).filter((r) => recordFitsGroup(r, item)",
     "tests": [

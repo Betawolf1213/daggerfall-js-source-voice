@@ -48,7 +48,7 @@
 //      pool and no further - so on their own they can never raise DFU's
 //      exhaustion collapse, which kills a player with a foe near (the
 //      port's costs a tenth of the health there - SPENT-ASHORE,
-//      systems/rest.js exhaustionOutcome) - and what a need took it gives
+//      systems/rest/rest.js exhaustionOutcome) - and what a need took it gives
 //      back the moment the need is met: a meal repays the hunger, a drink
 //      the thirst, a sleep the exhaustion, a warm place or a lit fire the
 //      cold. The floor is the NEEDS' share: DFU's own walking and running

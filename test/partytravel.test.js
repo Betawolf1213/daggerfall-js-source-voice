@@ -1,19 +1,19 @@
 // PARTY-TRAVEL (2026-09-25, Mac: "Implementing a prompt for online to travel to party leader and the option for party
 // members to ready up and travel together") - the party's journey, pinned by EXECUTION: the law on a table
-// (systems/partyTravelLaw.js), the session (systems/partyTravel.js) RUN as a leader and a member whose poses cross
+// (systems/party/partyTravelLaw.js), the session (systems/party/partyTravel.js) RUN as a leader and a member whose poses cross
 // through the wire's own law (net/wire.js validPartyPose) with fakes for everything that draws or moves, and the relay's
 // real Room carrying the journey's fields between two seated accounts. The world.js seams only a browser can run - the
 // headless fare, the beside landing, the map door, the chat's two commands - are pinned by source at the foot.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PARTY_READY_TIMEOUT_MS, STAMP_SLACK_MS, memberPresent } from '../src/systems/partyRestLaw.js';
+import { PARTY_READY_TIMEOUT_MS, STAMP_SLACK_MS, memberPresent } from '../src/systems/party/partyRestLaw.js';
 import {
   TRIP_CAUTIOUS, TRIP_INN, TRIP_SHIP, tripBits, tripOptionsOf, tripRoundOf, tripAnswerOf, tripTally, tripSetsOut, tripCountText,
   TRIP_FOLLOW_MS, PARTY_TRAVEL_TEXT, leaderTripOf, besideTargetOf, besideLandingOf, BESIDE_STEP, BESIDE_LEVEL, BESIDE_OFFSETS,
   leaderJourneyed, fareText, leaderOfferRows, tripAskRows,
-} from '../src/systems/partyTravelLaw.js';
-import { createPartyTravel, PARTY_TRIP_TICK_MS, PARTY_TRIP_GO_MS, LEADER_MAP_QUIET_MS, LEADER_SETTLE_MS, followerSeatOf } from '../src/systems/partyTravel.js';
+} from '../src/systems/party/partyTravelLaw.js';
+import { createPartyTravel, PARTY_TRIP_TICK_MS, PARTY_TRIP_GO_MS, LEADER_MAP_QUIET_MS, LEADER_SETTLE_MS, followerSeatOf } from '../src/systems/party/partyTravel.js';
 import {
   validPartyPose, validPartyFrame, parseClient, RELAY_VERSION, relaySupportsPartyTravel, PARTY_TRAVEL_RELAY_MIN, SOCIAL_ROOM,
   MAP_PIXELS_X, MAP_PIXELS_Y, PIXEL_UNITS, POSE_Y_BOUND, WORLD_PIXEL_BOUND, POSE_BOUND,

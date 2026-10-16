@@ -21,8 +21,8 @@ import { isWorldRoom, PIXEL_UNITS } from '../src/net/wire.js';
 import * as relay from '../server/src/relay.js';
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import { roomKeyFor } from '../src/net/online.js';
-import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talkTopics.js';
-import { LOOT_LIST_MAX } from '../src/systems/loot.js';
+import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
+import { LOOT_LIST_MAX } from '../src/systems/loot/loot.js';
 import { interiorLocationKey, interiorLootKeyOf, interiorLootTarget, interiorLootRecords, applyInteriorLoot, composeInteriorShared, applyInteriorShared, interiorActionRecords } from '../src/world/interiorShared.js';
 import { fakeRoom } from './fakeRoom.mjs';
 

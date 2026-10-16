@@ -26,7 +26,7 @@
 //
 // THE TOWN'S YARDS are read with the town (one answer for every home in it -
 // server-account/src/decor.js yardsOf), believed a minute as the homes are
-// (systems/onlineHomes.js), and each yard stood in its pixel as a room's
+// (systems/online/onlineHomes.js), and each yard stood in its pixel as a room's
 // pieces stand in its room (scenes/decorRoom.js, one pool a yard): its own
 // collider buckets on the world's collider, drawn in the world's passes, and
 // stood again where it stands when the world recentres (the pool places in
@@ -65,7 +65,7 @@ import { homeLookRecords } from '../world/homeLook.js';   // HOME-LOOK (AUDIT): 
 import { onPathTile } from '../player/exteriorSurface.js';   // FB1001 ROAD-LOT: PlayerMotor.OnPathTile - Daggerfall's own road tiles
 import { RMB_TILE_SIDE } from '../world/locationEntrance.js';   // FB1001 ROAD-LOT: RMBLayout.RMBTileSide, a ground tile's side
 import { TERRAIN_TILE_DIM } from '../world/terrainSurface.js';
-import { homeOutsideKept, homeYardWhere, homeCandidate } from '../systems/onlineHomes.js';   // GUILD-YARD: a hall's keepers keep its outside
+import { homeOutsideKept, homeYardWhere, homeCandidate } from '../systems/online/onlineHomes.js';   // GUILD-YARD: a hall's keepers keep its outside
 import { homeDecorShown } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's yard stands for its insiders alone
 import { createYardNature, isNaturePiece, yardNatureFlat, yardTreeSet } from './yardNature.js';   // DECOR-OUTDOOR: a yard's trees and plants, in its town's season; DECOR-LPT: as Low Poly Trees' own
 import { remapSubMeshes } from '../world/texRemap.js';   // DECOR-OUTDOOR: a yard's models in its town's climate
@@ -428,7 +428,7 @@ export function yardLotQuads(lot, origin, high = YARD_MARK_HIGH, roads = []) {
 /**
  * THE TOWN'S YARDS, AND THE OWNER'S DECORATOR OUTSIDE. `deps` (the world host's - scenes/world.js):
  *   api          - net/accountClient.js accountDecor: yards(mapId), place (with `yard`), move, remove
- *   homes        - systems/onlineHomes.js: homeAt(mapId, key) - whose a home is, and whether it is the character's own
+ *   homes        - systems/online/onlineHomes.js: homeAt(mapId, key) - whose a home is, and whether it is the character's own
  *   built()      - the world's built pixels (each `{ px, py, homeTown, homeFrames }` - homeFrames: key -> { at, box,
  *                  rects }, pixel-local; FB1009 HOME-FOOT: `rects` the ground its models' faces cover, footRectsAt's)
  *   translation(px, py) - a pixel's place in the scene now

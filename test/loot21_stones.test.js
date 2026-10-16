@@ -15,17 +15,17 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import {
   WELKYND_STONE_TEMPLATE, VARLA_STONE_TEMPLATE, WELKYND_STONE_TIER, VARLA_STONE_TIER, AYLEID_STONE_TEMPLATES, STONE_TEXT,
   isWelkyndStone, isVarlaStone, welkyndStone, varlaStone, varlaMends,
 } from '../src/systems/ayleidStones.js';
-import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
+import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { useItem, usableItem } from '../src/systems/useItem.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { equipItem } from '../src/systems/equip.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { seedTestLoot } from '../src/systems/testRoom.js';
 import { rollGemFind } from '../src/systems/gems.js';   // GEM2: the gem find, held off and put back
 

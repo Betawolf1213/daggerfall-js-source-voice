@@ -14,10 +14,10 @@ import {
   validGambitOut, GAMBIT_FIRST_MS, GAMBIT_TURN_END_MS, GAMBIT_TURN_MS, GAMBIT_REMOTE_GAP_MS,
 } from '../src/net/gambitTable.js';
 import { createCardStakes, CARD_VOID_AFTER_MS } from '../src/net/cardStakes.js';
-import { RemoteGambitSession, RemoteGambitTable, GAMBIT_HELD_MAX } from '../src/systems/gambitRemoteTable.js';
+import { RemoteGambitSession, RemoteGambitTable, GAMBIT_HELD_MAX } from '../src/systems/gambit/gambitRemoteTable.js';
 import { createGambitMotion } from '../src/world/gambitMotion.js';
 import { autoFill, reachable, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
-import { GAMBIT_RESULT_MS } from '../src/systems/gambitTableSession.js';
+import { GAMBIT_RESULT_MS } from '../src/systems/gambit/gambitTableSession.js';
 import { stakeRefusal } from '../src/ui/gambitTableWords.js';
 import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';

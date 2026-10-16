@@ -9,9 +9,9 @@ import { readFileSync } from 'node:fs';
 import {
   rollSeatsOf, seatRankAt, seatedBook, rollBookCap, seatLineOf, seatLinesOf, bookCappedLine, ROLL_BOOK_RANK_MAX, SEAT_RANK,
 } from '../src/net/npcChapterLaw.js';
-import { GUILDS, updateRank, joinGuild, membershipOf, membershipKey } from '../src/systems/guilds.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
-import { onPushEffects, serviceAccess } from '../src/systems/guildServiceFlow.js';
+import { GUILDS, updateRank, joinGuild, membershipOf, membershipKey } from '../src/systems/guild/guilds.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
+import { onPushEffects, serviceAccess } from '../src/systems/guild/guildServiceFlow.js';
 import { createRollTracker, rollEntityDoors } from '../src/net/npcRollTracker.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

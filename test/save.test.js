@@ -1,7 +1,7 @@
 // S11: snapshot/restore round-trip, version gate, spell re-resolution.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save/save.js';
 import { routeKey } from '../src/ui/input.js';
 import { STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
 

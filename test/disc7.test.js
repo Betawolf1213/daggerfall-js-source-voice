@@ -17,7 +17,7 @@ import { resolveHover, frameSignature } from '../src/systems/worldHover.js';
 import { foldQuickLoot, quickLootWheel, plaqueActionFor, plaqueActionSelection, quickLootArm, quickLootStats, resetQuickLoot, quickLootRow } from '../src/systems/quickLoot.js';
 import { worldHoverFrame } from '../src/ui/worldPlaque.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
-import { hccActionRows, HCC_ACTION_TEXT, ACTIVATE_MODE, WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT } from '../src/systems/horseCartLaw.js';
+import { hccActionRows, HCC_ACTION_TEXT, ACTIVATE_MODE, WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT } from '../src/systems/horse/horseCartLaw.js';
 import { makeWorld } from './hccWorld.mjs';
 import { peerRelationText } from '../src/player/socialPick.js';
 import { socialMenuRows, socialPlaqueRows, plaqueRowFor } from '../src/ui/socialMenu.js';
@@ -173,7 +173,7 @@ test('ACT-MENU by source: the pool hands the runtime\'s rows to the plaque with 
   assert.match(pool, /if \(key === KEY_HORSE\) return withActions\(\{ title: runtime \? runtime\.horseTargetLabel : horseTargetLabel\(''\) \}, 'horse'\);/);
   assert.match(pool, /if \(key === KEY_WAGON\) return runtime\.handleDeployedWagonActivation\(distance, mode\);/);
   assert.match(pool, /if \(key === KEY_HORSE\) return runtime\.handleStationaryHorseActivation\(distance, mode\);/);
-  const rt = rd('src/systems/horseCart.js');
+  const rt = rd('src/systems/horse/horseCart.js');
   assert.equal((rt.match(/if \(\(mode \?\? deps\.activateMode\(\)\) === ACTIVATE_MODE\.Steal\)/g) ?? []).length, 2, 'both wagons');
   assert.match(rt, /const activate = mode \?\? deps\.activateMode\(\);/);
 });
@@ -258,9 +258,9 @@ test('DISC7 torch: the light in hand has one door and it says when it changes - 
   assert.deepEqual(heard, [[torch, null], [null, torch]]);
   off(); offBad();
   for (const [f, re] of [['src/systems/useItem.js', /setLightSource\(entity, null\);/], ['src/systems/useItem.js', /setLightSource\(entity, item\);/],
-    ['src/systems/itemTransfer.js', /setLightSource\(entity, null\);/], ['src/systems/playerTorch.js', /setLightSource\(entity, null\);/],
-    ['src/systems/save.js', /setLightSource\(entity, li >= 0/], ['src/systems/handheldTorches.js', /setLightSource\(ctx\.entity, it\)/]]) assert.match(rd(f), re, f);
-  const writers = ['src/systems/useItem.js', 'src/systems/itemTransfer.js', 'src/systems/playerTorch.js', 'src/systems/save.js', 'src/systems/handheldTorches.js'];
+    ['src/systems/item/itemTransfer.js', /setLightSource\(entity, null\);/], ['src/systems/playerTorch.js', /setLightSource\(entity, null\);/],
+    ['src/systems/save/save.js', /setLightSource\(entity, li >= 0/], ['src/systems/handheldTorches.js', /setLightSource\(ctx\.entity, it\)/]]) assert.match(rd(f), re, f);
+  const writers = ['src/systems/useItem.js', 'src/systems/item/itemTransfer.js', 'src/systems/playerTorch.js', 'src/systems/save/save.js', 'src/systems/handheldTorches.js'];
   for (const f of writers) assert.doesNotMatch(rd(f).replace(/\/\/[^\n]*/g, ''), /\.lightSource = /, `${f}: no bare write past the door`);
 });
 

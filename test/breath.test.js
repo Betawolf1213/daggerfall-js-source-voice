@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 import { deepBreath, breathStep } from '../src/systems/breath.js';
 import { maxBreath } from '../src/systems/statMods.js';
 import { RACES } from '../src/systems/races.js';
-import { templeOf } from '../src/systems/guildVariants.js';
-import { GUILDS, joinGuild } from '../src/systems/guilds.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
+import { GUILDS, joinGuild } from '../src/systems/guild/guilds.js';
 
 const NOW = { year: 405, dayOfYear: 1 };
 

@@ -55,7 +55,7 @@ Beside this README:
   sha256. This listing is the authority `test/doctrine.test.js` reads for what
   may stand in that directory.
 - `vanilla-enhanced.index.json`: the name index each mod registers in the
-  texture-mod door with (`src/systems/vanillaEnhancedPack.js`). It has the
+  texture-mod door with (`src/systems/vanillaEnhanced/vanillaEnhancedPack.js`). It has the
   shape `buildDfmodIndex` writes for an attached bundle, plus where each
   array's slices are served from.
 

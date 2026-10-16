@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { affiliations } from '../src/systems/affiliations.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { DIVINES } from '../src/systems/guildVariants.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { DIVINES } from '../src/systems/guild/guildVariants.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const fighters = GUILDS.FightersGuild;

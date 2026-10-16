@@ -17,11 +17,11 @@ import {
   TARGET_FLAGS_ALL, TARGET_FLAGS_SELF, TARGET_FLAGS_OTHER,
   ELEMENT_FLAGS_ALL, ELEMENT_FLAGS_MAGIC_ONLY,
   DEFAULT_TARGET_INDEX, DEFAULT_ELEMENT_INDEX,
-} from '../src/systems/spellMaker.js';
+} from '../src/systems/spell/spellMaker.js';
 import { MAGIC_ONLY_KEYS } from '../src/systems/effects.js';
-import { SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
+import { SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
 import { SpellMakerWindow, SPELL_MAKER_RECTS, EFFECT_NAME_PANELS } from '../src/ui/spellMakerWindow.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 
 const slot = (type, subType) => ({ type, subType, key: `${type},${subType}`, settings: {} });
 

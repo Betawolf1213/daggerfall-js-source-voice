@@ -15,11 +15,11 @@ import { makeWindowStack } from '../src/ui/windowStack.js';
 import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { createTownTalk } from '../src/scenes/townTalk.js';
-import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travelOptions.js';
+import { createTravelOptions, readTravelOptionsSettings } from '../src/systems/travel/travelOptions.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
-import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travelOptionsText.js';
-import { mapPixelWorldOrigin } from '../src/systems/travelPaths.js';
-import { rectOf } from '../src/systems/travelAutopilot.js';
+import { TRAVEL_OPTIONS_TEXT } from '../src/systems/travel/travelOptionsText.js';
+import { mapPixelWorldOrigin } from '../src/systems/travel/travelPaths.js';
+import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { modSetting } from '../src/systems/modSettings.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

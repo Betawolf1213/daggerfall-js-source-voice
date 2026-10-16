@@ -306,7 +306,7 @@ Pinned in `test/raidroll.test.js` (9 tests; `tools/mutants/raidroll.json`, 25 mu
   account service judges it.
 - **F3 (AUDIT RAID R8d): a load in the session is a stand-up.** A town's thanks given, a save from before them loaded,
   then a save: the pool's `saved` cleared the record with its pieces in no pack. A load now says so
-  (`systems/saveSlots.js slotLoaded`, from the world's load and the dungeon's); the pools let go of what they held in
+  (`systems/save/saveSlots.js slotLoaded`, from the world's load and the dungeon's); the pools let go of what they held in
   the old pack (`scenes/spoilsPool.js loaded`), and the crash's door asks again for the loaded character. (Online, a
   load is refused; this is a session that went on offline, or a later one.)
 - **F4 (AUDIT SETS M2's other half): a body's pile the taker cannot read comes back.** A corpse's grant holding a

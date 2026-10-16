@@ -1,7 +1,7 @@
 [
   {
     "name": "PACE-x100-off-the-road",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "  const top = onRoad ? ROAD_PACE_MAX : OPEN_PACE_MAX;",
     "new": "  const top = ROAD_PACE_MAX;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PACE-road-rule-never-drops",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "  return Math.min(v, topOn(ground));   // WILD3: under the zone's cap too",
     "new": "  return v;   // WILD3: under the zone's cap too",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PACE-road-rule-leaves-the-foe-dial",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "  return Math.min(v, topOn(ground));   // WILD3: under the zone's cap too",
     "new": "  return which === 'foe' ? v : Math.min(v, topOn(ground));   // WILD3: under the zone's cap too",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PACE-boot-reads-x100",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "if (Number.isFinite(v?.[k])) p[k] = clampPace(v[k], false);",
     "new": "if (Number.isFinite(v?.[k])) p[k] = clampPace(v[k], true);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "PACE-default-is-the-road",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "export const TRAVEL_PACE_DEFAULT = Object.freeze({ speed: OPEN_PACE_MAX, foe: 5 });",
     "new": "export const TRAVEL_PACE_DEFAULT = Object.freeze({ speed: ROAD_PACE_MAX, foe: 5 });",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "PACE-rise-past-the-ground",
-    "file": "src/systems/travelPace.js",
+    "file": "src/systems/travel/travelPace.js",
     "old": "  return paceNow(which) < topOn(ground);",
     "new": "  return paceNow(which) < ROAD_PACE_MAX;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "PACE-foe-floor-fixed",
-    "file": "src/systems/travelThreat.js",
+    "file": "src/systems/travel/travelThreat.js",
     "old": "Math.max(cap, paceNow('foe') ?? JOURNEY_FOE_PACE)",
     "new": "Math.max(cap, JOURNEY_FOE_PACE)",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "WP-another-moves-it",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "  if (!have || (have.src && src && have.src !== src)) return true;   // only its author moves a shared waypoint",
     "new": "  if (!have) return true;   // only its author moves a shared waypoint",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "WP-another-adds-over-it",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "      if (have.src && src && have.src !== src) return true;   // another's word on a waypoint they did not make\n",
     "new": "",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "WP-my-echo-stands-again",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "  if (line.mine) return true;\n",
     "new": "",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "WP-followed-hidden-by-its-switch",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "  return st.list.filter((w) => s[w.kind] !== false || st.follow.includes(w.id));",
     "new": "  return st.list.filter((w) => s[w.kind] !== false);",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "WP-group-left-kept",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "      if (w.grp !== g) { st.list.splice(i, 1); st.follow = st.follow.filter((f) => f !== w.id); gone++; }",
     "new": "      if (false) { gone++; }",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "WP-old-never-adopted",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "      if (w.grp == null && g != null) { w.grp = g; moved = true; continue; }   // kept from before: adopted\n",
     "new": "",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "WP-rename-unsaid",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "  if (w.mine && w.kind !== 'personal') say(w.kind, ['ren', w.id, n]);",
     "new": "",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "WP-no-cap",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "  if (own.length >= WAYPOINT_MAX_PER_KIND) removeWaypoint(own[0].id, { quiet: true });",
     "new": "",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "WP-bad-record-kept",
-    "file": "src/systems/mapWaypoints.js",
+    "file": "src/systems/map/mapWaypoints.js",
     "old": "      if (!kind || typeof w.id !== 'string' || !onMap(w.mx, w.my)) continue;",
     "new": "      if (!kind) continue;",
     "tests": [

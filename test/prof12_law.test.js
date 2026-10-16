@@ -22,7 +22,7 @@ import {
   NO_PACK_FORM, withdrawable, topTierOf, TRANSMUTE_IN,   // AUDIT PROF12 E1, E2, E3
 } from '../src/net/professionLaw.js';
 import { recipeById, cookXp, FIRST_CRAFT_XP, firstCraftPays } from '../src/net/recipeLaw.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
 
 const TEMPLATES = JSON.parse(readFileSync(new URL('../src/characters/itemTemplates.json', import.meta.url), 'utf8'));
 const tpl = (i) => TEMPLATES.find((t) => t.index === i);

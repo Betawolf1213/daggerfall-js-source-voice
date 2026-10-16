@@ -13,17 +13,17 @@ import { fileURLToPath } from 'node:url';
 
 import {
   generateItems, generateRandomLoot, createRandomClothing, LOOT_MATRICES, BOOK_TEMPLATE,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { getRandomBookID } from '../src/systems/books.js';   // IM1: the mint's message roll
 import {
   goldStack, GOLD_TEMPLATE, addItem, itemWeight, totalWeight, carriedWeight,
   isStackable, ARROW_TEMPLATE, OIL_TEMPLATE,
 } from '../src/systems/inventory.js';
-import { planTake, applyTransfer } from '../src/systems/itemTransfer.js';   // E4: the transfer door
+import { planTake, applyTransfer } from '../src/systems/item/itemTransfer.js';   // E4: the transfer door
 import { goldAmount } from '../src/systems/court.js';
 import { stockShopShelf, randomizeArmorVariant } from '../src/systems/shopStock.js';
 import { yardStock } from '../src/systems/merchantYards.js';
-import { ITEM_TEMPLATES, inventoryItemImage, templateByIndex } from '../src/systems/itemTemplates.js';
+import { ITEM_TEMPLATES, inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { playerArchiveFor } from '../src/characters/paperdollArt.js';
 import { CLOTHING_DYES, DYE_COLORS } from '../src/characters/dyes.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
@@ -375,7 +375,7 @@ test('audit18 items: the retired flags are gone from source and from Home.md', (
   assert.ok(!inv.includes('FLAGGED - leather/chain/plate'), 'inventory.js still carries the retired weight flag');
   assert.ok(!/Potions\/oil don't exist as items yet/.test(inv), 'inventory.js still claims oil does not exist');
 
-  const loot = readFileSync(join(ROOT, 'src/systems/loot.js'), 'utf8');
+  const loot = readFileSync(join(ROOT, 'src/systems/loot/loot.js'), 'utf8');
   assert.ok(!/CL clothing carries\s*\n?\/\/ group \+ index \+ variant only/.test(loot.replace(/\r/g, '')), 'loot.js still claims CL carries a variant only');
   assert.ok(!loot.includes('variant Range(0, 4)'), 'loot.js still asserts the false Range(0, 4) for books');
 

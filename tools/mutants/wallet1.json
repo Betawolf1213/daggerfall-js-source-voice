@@ -231,7 +231,7 @@
   },
   {
     "name": "WALLET1-bound-put-pack-only",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "isBound(item) && (isPackOnly(item) || !BOUND_KEEPS.includes(kind));",
     "new": "isBound(item) && !BOUND_KEEPS.includes(kind);",
     "why": "the law lets a pack-only piece into the wagon and the storage",
@@ -241,7 +241,7 @@
   },
   {
     "name": "WALLET1-pack-only-unread",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "templateByIndex(item?.templateIndex)?.packOnly === true;",
     "new": "false;",
     "why": "no piece is pack-only",
@@ -251,7 +251,7 @@
   },
   {
     "name": "WALLET1-pack-only-words",
-    "file": "src/systems/itemBound.js",
+    "file": "src/systems/item/itemBound.js",
     "old": "`${name || 'That'} stays in your pack.`",
     "new": "`${name || 'That'} is bound to you.`",
     "why": "the refusal in another piece's words",
@@ -272,7 +272,7 @@
   },
   {
     "name": "WALLET1-save-mark-unwritten",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "snap.walletGift = Number.isSafeInteger(entity.walletGift) ? entity.walletGift : WALLET_GIFT;",
     "new": "snap.walletGift = entity.walletGift;",
     "why": "a character born with its kit's wallet saved as one from before it",
@@ -282,7 +282,7 @@
   },
   {
     "name": "WALLET1-save-mark-unread",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "entity.walletGift = Number.isSafeInteger(snap.walletGift) ? snap.walletGift : 0;",
     "new": "entity.walletGift = 0;",
     "why": "every load reads the save as one from before the wallet",
@@ -292,7 +292,7 @@
   },
   {
     "name": "WALLET1-save-gift-ungiven",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  giveWalletGift(entity);   // WALLET1",
     "new": "  // giveWalletGift(entity);   // WALLET1",
     "why": "a character from before the wallet never given one",
@@ -515,7 +515,7 @@
   },
   {
     "name": "WALLET1-card-blank",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  else if (isWalletItem(item)) for (const text of WALLET_CARD_LINES) out.push({ text, center: true });   // WALLET1",
     "new": "",
     "why": "the wallet's card says nothing of what it is for",

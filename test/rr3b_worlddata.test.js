@@ -21,12 +21,12 @@ import {
 } from '../src/formats/worldDataReplacement.js';
 import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldDataDoor.js';
 import { setBuildingVariant, setBlockVariant, setLastLocationKeyTo, setNewLocationVariant, setNewLocationIndexResolver, clearWorldDataVariants, NO_VARIANT } from '../src/systems/worldDataVariants.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { longitudeLatitudeToMapPixel, LOCATION_TYPES, DUNGEON_TYPES, CLIMATES, FACTION_RACES } from '../src/formats/mapsFile.js';
 import { BLOCK_TYPES } from '../src/formats/blocksFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { mergeNamedBuildings } from '../src/systems/talkTopics.js';
-import { RR_ARMORER_BLOCK, RR_ARMORER_RECORD, rrMasterArmBuildingKey } from '../src/systems/rrQuestLine.js';
+import { mergeNamedBuildings } from '../src/systems/talk/talkTopics.js';
+import { RR_ARMORER_BLOCK, RR_ARMORER_RECORD, rrMasterArmBuildingKey } from '../src/systems/roleplayRealism/rrQuestLine.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -322,9 +322,9 @@ test('RR3b the hosts and the save: the four hosts bind the reader and await the 
   // with the same location index
   assert.equal((w.match(/locationIndex: (dfLoc|loc)\.locationIndex \?\? 0/g) ?? []).length, 5, 'world.js: the five merge sites');
   assert.equal((e.match(/locationIndex: dfLocation\.locationIndex \?\? 0/g) ?? []).length, 4, 'exterior.js: the four merge sites');
-  assert.match(rd('src/systems/talkTopics.js'), /export function mergeNamedBuildings\(exteriorBuildings, blocks, \{ locationIndex = 0 \} = \{\}\) \{/);
+  assert.match(rd('src/systems/talk/talkTopics.js'), /export function mergeNamedBuildings\(exteriorBuildings, blocks, \{ locationIndex = 0 \} = \{\}\) \{/);
   assert.match(rd('src/world/buildingSummaries.js'), /mergeNamedBuildings\(exteriorBuildings \?\? \[\], blocks \?\? \[\], \{ locationIndex: nameOpts\.locationIndex \?\? 0 \}\)/);
-  const sv = rd('src/systems/save.js');
+  const sv = rd('src/systems/save/save.js');
   assert.match(sv, /snap\.worldVariation = getWorldVariationSaveData\(\);/, 'SaveLoadManager.cs:1125');
   assert.match(sv, /clearWorldDataVariants\(\);\s*restoreWorldVariationData\(snap\.worldVariation \?\? null\);/, 'SaveLoadManager.cs:1465-1466');
 });

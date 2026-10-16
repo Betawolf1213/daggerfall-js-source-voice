@@ -20,8 +20,8 @@ by `tools/rmbrpHills.mjs`, nothing of it kept. Nothing here was seen in a browse
 ## CRYPT-SALE (1)
 
 `world/interiorLayout.js` (hasInteriorModels - AssignBlockData's refusal, DaggerfallInterior.cs:388-389, as a law the
-layout and the market both ask), `systems/talkTopics.js` (locationBuildings and buildingDataForDoor stamp
-`hasInterior`), `systems/onlineHomes.js` (homePurchasable). Measured: of Daggerfall's own 11,458 building doors (the packs add no such room), ten rooms cannot be
+layout and the market both ask), `systems/talk/talkTopics.js` (locationBuildings and buildingDataForDoor stamp
+`hasInterior`), `systems/online/onlineHomes.js` (homePurchasable). Measured: of Daggerfall's own 11,458 building doors (the packs add no such room), ten rooms cannot be
 entered - six crypts (`GRVEAS05` #19, `GRVEAS09` #11, `GRVEAL09` #11, `GRVEAM09` #11, `GRVEAM05` #19, `GRVEAL05` #0, the
 only House5 records with a door) and four House2 rooms VOID-ENTRY refuses (placed in no town). The crypts stand in 67
 places with a door and a price online (24,600-67,600): Wayrest's `GRVEAL09` #11 (key 66059), Fontgate Hollow's, the
@@ -149,7 +149,7 @@ throw across a narrow inlet may land on the far bank (stood). `test/fb1005_shore
 
 ## DUNGEON-BEDS (8)
 
-`systems/restAct.js` (bedInReach), `scenes/dungeonContext.js` (dungeonBeds collected in the placement loop; restKind
+`systems/rest/restAct.js` (bedInReach), `scenes/dungeonContext.js` (dungeonBeds collected in the placement loop; restKind
 and restPoint). REST1's rest point online is a fire, a camp, a tent or a bed; the Rest-Arc wrote its beds for the rooms
 DFU rests in, and the dungeon host's point was `camps.restPointAt` - fires alone - so the 108 bed placements of 42 RDB
 blocks (in 2,056 of the 4,232 dungeons) said "Find a fire or a bed to rest." A bed within a fire's reach (BY_FIRE_REACH,

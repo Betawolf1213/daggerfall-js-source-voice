@@ -15,8 +15,8 @@ and the decisions are Mac's (2026-10-15).
 
 ## WAGON-STABLED: a pair sent away stays at the stable (1)
 
-`src/systems/horseCart.js` sendTransportAway, handlePreTransition, leaveStable; `src/systems/horseCartLaw.js`
-newSaveData; `src/ui/holdingsPages.js` stableWords; `src/systems/upkeepRuntime.js` horseWhereOf.
+`src/systems/horse/horseCart.js` sendTransportAway, handlePreTransition, leaveStable; `src/systems/horse/horseCartLaw.js`
+newSaveData; `src/ui/holdingsPages.js` stableWords; `src/systems/upkeep/upkeepRuntime.js` horseWhereOf.
 
 THE REPORT. "I keep sending my wagon away, but every time I enter a building or dungeon it appears outside again ... it
 wasn't happening a few days ago."
@@ -84,8 +84,8 @@ Pinned by `test/fb1015_kickair.test.js` (`tools/mutants/fb1015_kickair.json`, 9,
 
 ## CART-AWAY: a wagon away from a death in the zone keeps its cargo (6)
 
-`src/systems/wildDropLaw.js` takeWildDeath, wildDropCandidates, takeWildGold (`cart`), wildCartMayBeAway;
-`src/systems/wildCart.js`; `server-account/src/wild.js` wildFall; `src/scenes/world.js` wildTakeDrop.
+`src/systems/wild/wildDropLaw.js` takeWildDeath, wildDropCandidates, takeWildGold (`cart`), wildCartMayBeAway;
+`src/systems/wild/wildCart.js`; `server-account/src/wild.js` wildFall; `src/scenes/world.js` wildTakeDrop.
 
 THE ASK. Mac, asked "If parked outside of the pvp zone in the wrothgarian mountains, can it be lost?": "Yeah, if its
 parked outside the zone nothing should be lost."

@@ -42,7 +42,7 @@
 import { canon } from './canon.js';
 import { TRADE_ITEMS_MAX, TRADE_GOLD_MAX } from './wire.js';
 import { isBagItem } from './bagLaw.js';   // BAG1
-import { activeWagonItem } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the loaded wagon stays (already in the account service's graph, by itemLaw.js)
+import { activeWagonItem } from '../systems/wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the loaded wagon stays (already in the account service's graph, by itemLaw.js)
 
 /** A trade's id: the peers' own sid (wire.js validTradeData's TRADE_SID_RE, which the wire keeps to itself). */
 export const REALM_TRADE_SID_RE = /^[A-Za-z0-9]{6,16}$/;
@@ -53,11 +53,11 @@ export const REALM_TRADE_TTL_S = 60;
 export const GOLD_PIECES_TEMPLATE = 276;
 /** AUDIT REALM L1-F1: the rows whose record IS its value - the letter of credit (systems/inventory.js
  *  LETTER_OF_CREDIT_TEMPLATE, pinned equal). Its price is no mere price: two letters differ in nothing else. The wire
- *  keeps it exactly (systems/loot.js validLootItem floors a value at the row's base price, and a letter's is 0). */
+ *  keeps it exactly (systems/loot/loot.js validLootItem floors a value at the row's base price, and a letter's is 0). */
 export const VALUE_IS_IDENTITY_TEMPLATES = Object.freeze([275]);
 /** The marks that are the RECEIVER's - "worn by me", "bound to my quest", "it is mine already" (ACQUIRE1,
  *  systems/acquireWatch.js) - never part of what an item IS, and never carried to its next owner. ONE list: the wire's
- *  clamp (systems/loot.js validLootItem), a wild death's record (systems/wildDeath.js wildRecord) and this law all
+ *  clamp (systems/loot/loot.js validLootItem), a wild death's record (systems/wild/wildDeath.js wildRecord) and this law all
  *  read it. FIELD BUGS 2026-10-09b MARK-WIRE: ACQUIRE1 added `acquired` to the first two and not here, so every
  *  marked piece - a weapon, armour, clothing, jewellery - carried it on its record and not on its offer, and the
  *  market, a stall and a realm trade all refused it ("The realm does not hold that piece where your pack had it"). */
@@ -69,13 +69,13 @@ export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', ...RE
  *  MAX_BODY_BYTES). A piece the port mints is a few hundred; one with every string at the wire's 128 and ten
  *  enchantments, fifteen hundred. A price is volatile, so without it a million-character one rode along unseen. */
 export const REALM_TRADE_RECORD_MAX = 4096;
-/** AUDIT REALM F1: THE ROWS THAT BIND EVERY PIECE OF THEIR KIND - systems/itemBound.js isBound's other half (SS1: "Its
+/** AUDIT REALM F1: THE ROWS THAT BIND EVERY PIECE OF THEIR KIND - systems/item/itemBound.js isBound's other half (SS1: "Its
  *  template row can say `bound`"), which this Worker cannot read, since the template table is the game's. The Sigil
- *  Stone's row (systems/gateSpoils.js SIGIL_STONE_TEMPLATES) is the one; test/auditrealm.test.js holds this list equal to
+ *  Stone's row (systems/gate/gateSpoils.js SIGIL_STONE_TEMPLATES) is the one; test/auditrealm.test.js holds this list equal to
  *  every row the game registers with `bound`. The service read `rec.bound` alone, and a stone's record carries no mark
  *  of its own - so two halves naming a stone moved it between two realm characters. */
-export const BOUND_TEMPLATES = Object.freeze([570, 571, 572, 580, 582]);   // LOOT9: the Welkynd Shard's row beside the Stone's; PORTAL1: the Portal Stone's beside the shard's; WALLET1: the Wallet's (systems/walletItem.js); CARDS8: the Card Binder's (systems/iliacItems.js)
-/** A bound record, as systems/itemBound.js isBound reads a piece: its own mark (SS4), or its row's (SS1) - and no field
+export const BOUND_TEMPLATES = Object.freeze([570, 571, 572, 580, 582]);   // LOOT9: the Welkynd Shard's row beside the Stone's; PORTAL1: the Portal Stone's beside the shard's; WALLET1: the Wallet's (systems/walletItem.js); CARDS8: the Card Binder's (systems/iliac/iliacItems.js)
+/** A bound record, as systems/item/itemBound.js isBound reads a piece: its own mark (SS4), or its row's (SS1) - and no field
  *  on the record unbinds what the row binds. */
 export const boundRecord = (/** @type {any} */ rec) => rec?.bound === true || BOUND_TEMPLATES.includes(rec?.templateIndex);
 /** AUDIT REALM2 T1: COME SAIL AWAY'S BOAT PARTS AND DEED (systems/comeSailAway/comeSailAwayItems.js BOAT_PARTS_TEMPLATE and
@@ -199,7 +199,7 @@ export function takeTradeGoods(save, side, pick) {
     rec.stackCount = left[i];
     return [rec];
   });
-  // AUDIT REALM2 T7: `lightSourceIndex` is an index into this very list (systems/save.js), so it follows its record to
+  // AUDIT REALM2 T7: `lightSourceIndex` is an index into this very list (systems/save/save.js), so it follows its record to
   // where that now stands, or is -1 once the record left whole - a record the tab never saves over lit the wrong item
   if (Number.isSafeInteger(save.lightSourceIndex)) save.lightSourceIndex = save.items.indexOf(lit);
   save.goldPieces = purse - side.gold;
@@ -231,9 +231,9 @@ export function settleRealmTrade(saveA, saveB, halfA, halfB) {
   return { ok: true, a, b, toA: { items: fromB, gold: halfB.give.gold }, toB: { items: fromA, gold: halfA.give.gold } };
 }
 
-/** INT3: the hold, as its player hears it (server-account/src/verdict.js holdOf's reasons) - systems/itemIds.js
+/** INT3: the hold, as its player hears it (server-account/src/verdict.js holdOf's reasons) - systems/item/itemIds.js
  *  tradeHeldNotice says it when a checkpoint moves it, and a trade it refused says it again (FIELD BUGS 2026-10-11g
- *  HELD-SIDE). Here, a leaf both read: systems/itemIds.js re-exports it. */
+ *  HELD-SIDE). Here, a leaf both read: systems/item/itemIds.js re-exports it. */
 /** RING-WARN: a law hold's notice says the strikes are counting. Each hold counts (INT3: a strike a hold, never a
  *  checkpoint), and the third stands for staff even once the piece is gone - so dropping it and taking it up again is
  *  no way out, and the player who did exactly that (the Ring report) was told only "until it is gone". The rule is
@@ -254,7 +254,7 @@ export const TRADE_HELD_NOTICES = Object.freeze({
  *  TRADE_HELD_NOTICES' key; null when that checkpoint held nothing). */
 export function realmTradeRefusalText(/** @type {string} */ why, /** @type {string | null} */ held = null, /** @type {string | null | undefined} */ reason = undefined, /** @type {string | null} */ said = null) {
   if (why === 'trade-held' && held === 'mine') {
-    // `said`: the hold's notice as the session last said it (systems/itemIds.js tradeHeldNotice - the piece named, or
+    // `said`: the hold's notice as the session last said it (systems/item/itemIds.js tradeHeldNotice - the piece named, or
     // staff's review) - the reason's generic words only without one
     const notice = typeof said === 'string' && said ? said : typeof reason === 'string' ? /** @type {Record<string, string>} */ (TRADE_HELD_NOTICES)[reason] : undefined;
     return `${notice ?? 'The realm is reviewing your character, and its trading is frozen.'} Nothing was traded.`;

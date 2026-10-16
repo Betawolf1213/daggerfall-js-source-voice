@@ -20,7 +20,7 @@ import {
 } from '../src/systems/realmSaves.js';
 import { applyCustoms, liquidWealthOf, customsAllowance, customsLines, CUSTOMS_WEALTH_BASE, CUSTOMS_WEALTH_PER_LEVEL } from '../src/systems/realmCustoms.js';
 import { createBankAccounts } from '../src/systems/banking.js';
-import { BOOT_DOOR_KEYS } from '../src/systems/onlineLane.js';
+import { BOOT_DOOR_KEYS } from '../src/systems/online/onlineLane.js';
 import { LETTER_OF_CREDIT_TEMPLATE, goldStack } from '../src/systems/inventory.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

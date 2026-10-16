@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 
@@ -88,5 +88,5 @@ test('LOOT6: the doors - a corpse\'s family its foe\'s, a dungeon pile\'s its ki
   assert.ok(ownUndead / legs > 0.25, `the undead's own lean in (${ownUndead} of ${legs})`);
   const d = read('src/scenes/dungeonContext.js');
   assert.match(d, /family: dungeonFamily\(dfLocation\.mapTableData\.dungeonType\) \}/, 'a dungeon pile names its kind\'s family');
-  assert.match(read('src/systems/lootRarity.js'), /const source = corpseSource\(basics, entity\.level, entity\.mobileType\);/, 'the corpse door its foe\'s type');
+  assert.match(read('src/systems/loot/lootRarity.js'), /const source = corpseSource\(basics, entity\.level, entity\.mobileType\);/, 'the corpse door its foe\'s type');
 });

@@ -39,15 +39,15 @@ import {
 import {
   infoPanelShorten, itemInfoRows, itemInfoPanelRows,
   PANEL_KG_SRC, PANEL_KG_REP, PANEL_DAM_SRC, PANEL_DAM_REP, PANEL_AR_SRC, PANEL_AR_REP,
-} from '../src/systems/itemInfo.js';
+} from '../src/systems/item/itemInfo.js';
 import { addItem } from '../src/systems/inventory.js';
-import { applyTransfer } from '../src/systems/itemTransfer.js';
+import { applyTransfer } from '../src/systems/item/itemTransfer.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potions.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { EQUIP_SLOTS, equipOf } from '../src/systems/equip.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 // REPAIR-EASE: InstantRepairs is the port's default now - F53's tint is a booked repair's, so these pins run with it off
 setValue('Controls', 'InstantRepairs', 'False');
 

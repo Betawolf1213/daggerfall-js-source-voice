@@ -1,6 +1,6 @@
 // AUDIT SETS (2026-09-28, Mac: "1. Audit this properly 2. Ensure online functionality is perfect"): the Sigil Sets'
 // powers and the Aetheric pieces, audited online against RAID4b's tree and each finding pinned here. The powers are
-// driven through the real seams (systems/sigilSetPowers.js) with a stand-in host door and the test's own clock; the
+// driven through the real seams (systems/sigil/sigilSetPowers.js) with a stand-in host door and the test's own clock; the
 // wire's foe record and a building's loot word through their own pure doors; the hosts' wiring by source.
 // bible/11-Multiplayer/Sigil-Sets.md, "AUDIT SETS".
 //   M1 a foe's MAXIMUM health rides its record - "under half" is its owner's word, not this machine's roll;
@@ -16,19 +16,19 @@ import { readFileSync } from 'node:fs';
 import {
   setBlow, setStruck, setRound, setHudChips, setSetPowersVoice, markedFoe, heldPlayerBlow, remarkPlayerBlow, BLOW_WINDOW_S,
   _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil.js';
-import { setRiseLine, MARK_SECONDS, RIPOSTE_SECONDS, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { setRiseLine, MARK_SECONDS, RIPOSTE_SECONDS, _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { AETHERIC_RECORDS, mintAetheric, validSetMarks, REGALIA_SET } from '../src/systems/aetheric.js';
-import { AFFIX_RANGES } from '../src/systems/lootRarity.js';
+import { AFFIX_RANGES } from '../src/systems/loot/lootRarity.js';
 import { validFoeRecord, FOE_HEALTH_MAX } from '../src/net/wire.js';
 import { applyInteriorLoot, mintInteriorShared } from '../src/world/interiorShared.js';
-import { LOOT_NEWER_TEXT } from '../src/systems/loot.js';
+import { LOOT_NEWER_TEXT } from '../src/systems/loot/loot.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem, unequipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 

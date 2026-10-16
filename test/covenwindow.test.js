@@ -14,7 +14,7 @@ import {
   CovenWindow, COVEN_BUTTONS,
 } from '../src/ui/covenWindow.js';
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';
-import { serviceShortcutButton } from '../src/systems/guildServiceFlow.js';
+import { serviceShortcutButton } from '../src/systems/guild/guildServiceFlow.js';
 import { GuildServiceWindow } from '../src/ui/guildServiceWindow.js';
 import { QuestOfferFlow } from '../src/systems/quest/offerFlow.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';

@@ -1,21 +1,21 @@
 [
   {
     "name": "WB12a-the-repair-never-renames",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  for (const it of list) if (isSigilStone(it) && it.name !== SIGIL_STONE.name) { it.name = SIGIL_STONE.name; renamed++; }",
     "new": "  for (const it of list) if (false && isSigilStone(it)) { it.name = SIGIL_STONE.name; renamed++; }",
     "tests": ["test/wb12a_breach_words.test.js"]
   },
   {
     "name": "WB12a-every-item-renamed",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  for (const it of list) if (isSigilStone(it) && it.name !== SIGIL_STONE.name) { it.name = SIGIL_STONE.name; renamed++; }",
     "new": "  for (const it of list) if (it && it.name !== SIGIL_STONE.name) { it.name = SIGIL_STONE.name; renamed++; }",
     "tests": ["test/wb12a_breach_words.test.js"]
   },
   {
     "name": "WB12a-the-load-never-repairs",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    const n = nameEmbers(list);",
     "new": "    const n = 0;",
     "tests": ["test/wb12a_breach_words.test.js"]
@@ -29,7 +29,7 @@
   },
   {
     "name": "WB12a-the-old-name-kept",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "export const SIGIL_STONE = Object.freeze({ name: 'Deadlands Ember', value: 5000 });",
     "new": "export const SIGIL_STONE = Object.freeze({ name: 'Sigil Stone', value: 5000 });",
     "tests": ["test/wb12a_breach_words.test.js"]

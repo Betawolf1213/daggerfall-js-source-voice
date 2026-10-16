@@ -9,7 +9,7 @@ import { webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_KEPT_MAX, CARD_STAKE_KEEP_MS, cardStakeRefused } from '../src/net/cardStakes.js';
 import { mintCardReceipt } from '../src/net/cardReceipt.js';
-import { RemoteCardTable, SIT_REFUSALS } from '../src/systems/cardRemoteTable.js';
+import { RemoteCardTable, SIT_REFUSALS } from '../src/systems/card/cardRemoteTable.js';
 
 const { subtle } = webcrypto;
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

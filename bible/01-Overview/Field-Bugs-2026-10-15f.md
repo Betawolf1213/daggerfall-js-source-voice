@@ -16,7 +16,7 @@ DaggerfallGameFiles, `tools/fetch-data.sh`, outside the tree).
 ## ROLL-PACE: online, a review promotes no further than the Roll's pace since the membership began (1)
 
 `src/net/npcChapterLaw.js` rollPaceDays, rollPromoteCeiling, rollPaceWait; `src/net/npcRollTracker.js` the tracker's
-`standing`, rollPaceOf; `src/systems/guildServiceFlow.js` rankNeedsLines; `src/scenes/worldModes.js` openGuildService;
+`standing`, rollPaceOf; `src/systems/guild/guildServiceFlow.js` rankNeedsLines; `src/scenes/worldModes.js` openGuildService;
 `src/scenes/world.js` the host's `rollPace`.
 
 THE REPORT. Do a guild's easy quests as a stranger, then join it, and the reputation is ranks at once.
@@ -68,7 +68,7 @@ can come.
 
 ## INVIS-SWING: a foe swings only where it last knew its target stood (2)
 
-`src/characters/enemyAttack.js` update's melee start; `src/systems/wildAlert.js` noticeRoll, the step;
+`src/characters/enemyAttack.js` update's melee start; `src/systems/wild/wildAlert.js` noticeRoll, the step;
 `src/scenes/world.js` the wild gate's two checks.
 
 THE REPORT. True Invisibility works outdoors; in dungeons monsters "spot and attack me immediately", with no attack,
@@ -212,7 +212,7 @@ pieces made only of the Weavers' Linen and Wool - the Fishing Net among them - e
 
 ## WET-FALL: the skin reads what falls, and how hard (5)
 
-`src/systems/weatherSim.js` fallingWeather; `src/systems/survival/temperature.js` weatherWetGain, feltTemperature;
+`src/systems/weather/weatherSim.js` fallingWeather; `src/systems/survival/temperature.js` weatherWetGain, feltTemperature;
 `src/systems/survival/env.js` ENV_DEFAULTS; `src/systems/survival/needs.js` the road's fair sky; `src/scenes/world.js`
 and `src/scenes/exterior.js` survivalEnvNow.
 

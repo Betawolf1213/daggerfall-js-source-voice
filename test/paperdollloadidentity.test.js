@@ -5,7 +5,7 @@
 // and kept in ui/paperDoll.js's module state. Every host warms it at
 // boot with the PRE-CHARGEN stand-in (Breton, male, face 0) and the
 // three chargen completions reload it on the wizard's answers; NOTHING
-// reloaded it for a character who arrived through systems/save.js
+// reloaded it for a character who arrived through systems/save/save.js
 // restorePlayer. `?load` is what the front door produces for Continue,
 // Load Game AND Online alike (main.js:"if (choice === 'continue' || choice === 'load' || choice === 'online')"), so every session after the
 // first composed the player's own items onto the stand-in's body and
@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { RACES } from '../src/systems/races.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
 import {
   preloadPaperDollArt, refreshPaperDoll, paperDollPixels, paperDollIdentityDrift,

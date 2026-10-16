@@ -30,7 +30,7 @@ import { createTravelView } from '../src/scenes/travelView.js';   // AUDIT NAMES
 import { readTravellerMarks, travellerMarksKey, TRAVELLER_MARK_CSS, TRAVELLER_LEGEND_TEXT } from '../src/ui/partyMapMarks.js';
 import { paintInkOverlay } from '../src/ui/inkMap.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ofType = (ws, t) => ws.sent.filter((m) => m.t === t);

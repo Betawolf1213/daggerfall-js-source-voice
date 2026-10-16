@@ -36,7 +36,7 @@ import { equipTableOf } from './equip.js';   // AUDIT 58: no lowerCondition - th
 import { ENCHANTMENT_TYPES } from '../formats/magicDef.js';   // the FallExe enum at its V3 home - never through enchantments.js (cycle)
 import { MOBILE_TYPES } from '../characters/mobileTypes.js';
 import { liveStat as liveStatOf, increaseDrainMagnitude } from './statMods.js';
-import { markWholeBlow } from './partyScale.js';   // AUDIT PSCALE1 DOORS-1: the Razor's strike is a kill
+import { markWholeBlow } from './party/partyScale.js';   // AUDIT PSCALE1 DOORS-1: the Razor's strike is a kill
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';   // AUDIT 63 F6: the Masque raises ALL eleven groups (MasqueOfClavicusEffect.cs:39-43 over FactionFile.cs:552-566)
 import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 

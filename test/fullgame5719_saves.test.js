@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { saveSlot, loadSlot, saveInfoOf, screenshotOf, onSlotSaved, SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX } from '../src/systems/saveSlots.js';
+import { saveSlot, loadSlot, saveInfoOf, screenshotOf, onSlotSaved, SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX } from '../src/systems/save/saveSlots.js';
 
 const snap = (time) => ({ v: 1, name: 'Audit', characterId: 'audit', classicMinutes: time });
 for (const prefix of [SAVE_DATA_PREFIX, SAVE_SHOT_PREFIX, SAVE_INFO_PREFIX]) {

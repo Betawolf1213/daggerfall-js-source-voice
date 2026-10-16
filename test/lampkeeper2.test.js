@@ -17,7 +17,7 @@ import { titlesHeld } from '../server-account/src/titles.js';
 import { TITLES } from '../src/net/identityToken.js';
 import { TITLE_TEXT, TITLE_RGBA } from '../src/ui/playerBadge.js';
 import { honourEntry } from '../src/ui/lootBanner.js';
-import { RR_NPC_ARCHIVE, RR_NPC_XML_SCALE } from '../src/systems/rrVariants.js';
+import { RR_NPC_ARCHIVE, RR_NPC_XML_SCALE } from '../src/systems/roleplayRealism/rrVariants.js';
 import { d1 } from './accountDb.mjs';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';

@@ -6,7 +6,7 @@
 // the door into the arena. Design: bible/11-Multiplayer/World-Bosses.md section 3.
 //
 // NOTHING HERE IS SAVED OR SENT. Where and when a gate stands is the clock's (net/gateLaw.js) over the map files
-// (systems/gateSite.js) - the omen hands it over (systems/gateOmen.js standing()), and this pool stands the stone
+// (systems/gate/gateSite.js) - the omen hands it over (systems/gate/gateOmen.js standing()), and this pool stands the stone
 // where that says, every frame, in THIS scene's frame: the pixel's translation plus the spot (the streaming host's
 // own sum), so a floating-origin recentre moves the gate with the world and the collider is stood again when its
 // matrix moves. The ground is the built pixel's (the host's `heightAt`). GATE-SEEN (2026-09-26, Mac: "Somepeople cant
@@ -29,7 +29,7 @@
 import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, ARCH_PROFILE_N } from '../world/gateModel.js';
 import { gateArt } from '../world/gateArt.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';
-import { gateSceneXZ } from '../systems/gateOmen.js';
+import { gateSceneXZ } from '../systems/gate/gateOmen.js';
 import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../net/gateLaw.js';
 import { marksCardModel } from '../ui/gateMarksView.js';   // WB9a: tonight's marks, over the screen before the gate is entered
 import { trs } from '../world/mat4.js';

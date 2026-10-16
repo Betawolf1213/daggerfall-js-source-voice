@@ -18,7 +18,7 @@ import { createChapterSheet } from '../src/net/chapterSheet.js';
 import { createChapterBanners } from '../src/scenes/chapterBanners.js';
 import { bannerKeyOf, BANNER_REFRESH_MS } from '../src/scenes/hallBanners.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ANTICLERE = 21, FIGHTERS = 41, MAGES = 40, THIEVES = 42;

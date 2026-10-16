@@ -14,7 +14,7 @@ import * as acorn from 'acorn';
 import { riseLine, wrathLine, gateBossOf } from '../src/net/gateLaw.js';
 import { omenPost, fellPost } from '../src/net/gateHerald.js';
 import { GATE_NO_WORDS } from '../src/net/wire.js';
-import { fellLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gateOmen.js';   // TIME1, at the merge: the three that name a time, in local time alone
+import { fellLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time, in local time alone
 import { GATE_TEXT } from '../src/scenes/gatePool.js';
 import { GATE_LEGEND_TEXT } from '../src/ui/gateMapMark.js';
 import { MARKS_CARD_TEXT } from '../src/ui/gateMarksView.js';
@@ -24,12 +24,12 @@ import { profileGateLine } from '../src/ui/profileWindow.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { BROKER_TEXT } from '../src/scenes/sigilBrokerPool.js';
 import { INSIGNIA_LINE, INSIGNIA_CARD } from '../src/ui/brokerWindow.js';
-import { SIGIL_STONE, SIGIL_STONE_TEMPLATE, sigilStone, nameEmbers, isSigilStone } from '../src/systems/gateSpoils.js';
-import { stonesText, BROKER_REFUSALS, DISMANTLED } from '../src/systems/sigilBroker.js';
+import { SIGIL_STONE, SIGIL_STONE_TEMPLATE, sigilStone, nameEmbers, isSigilStone } from '../src/systems/gate/gateSpoils.js';
+import { stonesText, BROKER_REFUSALS, DISMANTLED } from '../src/systems/sigil/sigilBroker.js';
 import { recoverSpoils, SPOILS_RECORD_V } from '../src/scenes/spoilsPool.js';
-import { mintCondition, setItemFields, templateByIndex } from '../src/systems/itemTemplates.js';
+import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { addItem } from '../src/systems/inventory.js';
-import { restorePlayer, snapshotPlayer } from '../src/systems/save.js';
+import { restorePlayer, snapshotPlayer } from '../src/systems/save/save.js';
 
 const ROOT = new URL('../', import.meta.url).pathname;
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -99,7 +99,7 @@ test('WB12a the names on screen: the plaque, the banner and the map\'s legend sa
   assert.equal(INSIGNIA_LINE.title, 'A title worn over your name');
   assert.ok(INSIGNIA_CARD.title[1].includes('the breach\'s fire') && /your account's embers/.test(INSIGNIA_CARD.title[2]) && /your account's embers/.test(INSIGNIA_CARD.aura[2]));   // AUDIT WB12d (A4)
   assert.match(read('src/scenes/world.js'), /return \{ subject: 'Dagon\\'s Breach', body: state \? `Near \$\{near\}\. /);
-  assert.match(read('src/systems/sigilSetPowers.js'), /Wrath of the Warden! \$\{struck\} \$\{struck === 1 \? 'foe' : 'foes'\} struck\./);
+  assert.match(read('src/systems/sigil/sigilSetPowers.js'), /Wrath of the Warden! \$\{struck\} \$\{struck === 1 \? 'foe' : 'foes'\} struck\./);
 });
 
 test('WB12a the arch is still the gate: pressed it answers as a gate, the relay\'s refusal words are protocol and keep their bytes, the Gatebreaker title and the Burning Court stay (mutants: the protocol renamed)', () => {

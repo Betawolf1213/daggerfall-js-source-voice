@@ -21,7 +21,7 @@ export const packJson = (v) => JSON.parse(zlib.gunzipSync(readFileSync(join(ROOT
 export async function openTowns({ mods = true } = {}) {
   const W = await import('../src/formats/worldDataReplacement.js');
   const LP = await import('../src/systems/layoutPins.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');

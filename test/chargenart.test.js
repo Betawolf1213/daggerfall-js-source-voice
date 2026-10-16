@@ -7,7 +7,7 @@ import { RECTS, raceAtPickerPoint, chargenHit, ALT_SHADOW_1, SELECTED_TEXT, INPU
 import { SKILL_NAMES, SKILL_KEYS, SKILLS } from '../src/systems/skills.js';
 import { ChargenFlow } from '../src/ui/chargen.js';
 import { damageModifier, maxEncumbrance, magicResist, toHitModifier, hitPointsModifier, healingRateModifier, spellPointsFor } from '../src/combat/formulas.js';
-import { healingRateModifier as restHealing } from '../src/systems/rest.js';
+import { healingRateModifier as restHealing } from '../src/systems/rest/rest.js';
 import { spellPoints } from '../src/systems/chargen.js';
 
 test('U10: the window rects, pinned WHOLE against the DFU literals', () => {

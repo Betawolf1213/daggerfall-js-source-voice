@@ -6,8 +6,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { addPileLootExtras, registerTabledLootHandler, tableLootSpawned } from '../src/systems/loot.js';
-import { customItemsForGroup, registerCustomItemGroup, registerCustomItemsForGroup } from '../src/systems/itemTemplates.js';
+import { addPileLootExtras, registerTabledLootHandler, tableLootSpawned } from '../src/systems/loot/loot.js';
+import { customItemsForGroup, registerCustomItemGroup, registerCustomItemsForGroup } from '../src/systems/item/itemTemplates.js';
 import { raiseContainerLootSpawned, registerContainerLootHandler } from '../src/systems/containerLoot.js';
 import { LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';
 
@@ -50,10 +50,10 @@ test('THE MERGE: CSA-H\'s rows are a provider in GetCustomItemsForGroup\'s one h
   assert.deepEqual(customItemsForGroup(G), [9901, 9902, 9903]);
   on = false;
   assert.deepEqual(customItemsForGroup(G), [9901, 9903], 'a mod switched off has no row');
-  assert.doesNotMatch(rd('src/systems/rriItems.js'), /registerCustomItemGroup|_otherModItems/, 'rriItems.js answers RRI\'s own again');
+  assert.doesNotMatch(rd('src/systems/roleplayRealismItems/rriItems.js'), /registerCustomItemGroup|_otherModItems/, 'rriItems.js answers RRI\'s own again');
   // PIN MOVED (SHIPYARDS, 2026-10-11): Come Sail Away's two rows stand on no shelf - a port town's shipyard sells every
   // hull (systems/shipyards.js) - so the fish are the one home's mod rows
-  assert.match(rd('src/systems/deepWatersFishItems.js'), /import \{[^}]*registerCustomItemGroup[^}]*\} from '\.\/itemTemplates\.js';/, 'the fish register into the one home');
+  assert.match(rd('src/systems/deepWater/deepWatersFishItems.js'), /import \{[^}]*registerCustomItemGroup[^}]*\} from '\.\/itemTemplates\.js';/, 'the fish register into the one home');
   assert.doesNotMatch(rd('src/systems/comeSailAway/comeSailAwayItems.js').replace(/^\s*\/\/.*$/gm, ''), /registerCustomItemGroup/, 'the boats register no shelf row');
 });
 

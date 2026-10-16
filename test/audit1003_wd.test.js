@@ -21,7 +21,7 @@ import { guildHallPrice } from '../src/net/hallLaw.js';
 import { HOME_CLAIMS_MAX } from '../src/net/homeLaw.js';
 import { accountGuilds, accountRefusalText } from '../src/net/accountClient.js';
 import { GuildBook } from '../src/net/guildBook.js';
-import { hallBoughtLine, hallShortLine } from '../src/systems/onlineHomes.js';
+import { hallBoughtLine, hallShortLine } from '../src/systems/online/onlineHomes.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const BV = 'beautiful-villages@1.4.2', BOTH = 'beautiful-cities@0.5.0+beautiful-villages@1.4.2';
@@ -129,7 +129,7 @@ test('AUDIT PRE-MERGE 1003 WD1: the hall\'s ONE write keeps its town in one layo
 });
 
 test('AUDIT PRE-MERGE 1003 WD1 the client: the hall\'s post says its town\'s layout (null for Daggerfall\'s own), and the guild book passes it through; the layout a hall says is a claim\'s own (onlineHomes.js homeClaimLayout - the town\'s stamp, none for the classic town) (mutants: the body\'s layout; the book dropping it; classic sent as a stamp)', async () => {
-  const { homeClaimLayout } = await import('../src/systems/onlineHomes.js');
+  const { homeClaimLayout } = await import('../src/systems/online/onlineHomes.js');
   const { configureLayoutPins, _resetLayoutPins } = await import('../src/systems/layoutPins.js');
   try {
     _resetLayoutPins();
@@ -138,7 +138,7 @@ test('AUDIT PRE-MERGE 1003 WD1 the client: the hall\'s post says its town\'s lay
     configureLayoutPins({ vendorOn: () => false });
     assert.equal(homeClaimLayout(TOWN), null, 'Daggerfall\'s own town: no stamp, never "classic"');
   } finally { _resetLayoutPins(); }
-  assert.match(src('src/systems/onlineHomes.js'), /const layout = homeClaimLayout\(mapId\);/, 'a home\'s claim says it the same way');
+  assert.match(src('src/systems/online/onlineHomes.js'), /const layout = homeClaimLayout\(mapId\);/, 'a home\'s claim says it the same way');
   const seen = [];
   const store = { getItem: () => JSON.stringify({ secret: 's', id: 'p' }) };
   const door = accountGuilds({ fetch: async (url, init) => { seen.push([String(url).replace(/^.*\/v1/, '/v1'), JSON.parse(init.body)]); return new Response('{}', { status: 200 }); }, storage: store });

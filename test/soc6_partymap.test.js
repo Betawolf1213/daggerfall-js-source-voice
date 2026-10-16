@@ -41,10 +41,10 @@ import { createTravelMapWindow } from '../src/ui/travelMapDoor.js';
 import {
   TravelMapWindow, OFFSET_LOOKUP, REGION_W, REGION_H, _setTravelMapArtForTests, PARTY_POLL_S,
 } from '../src/ui/travelMapWindow.js';
-import { buildMapDict } from '../src/systems/mapDirectory.js';
+import { buildMapDict } from '../src/systems/map/mapDirectory.js';
 import { REGION_NAMES, LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { resetTravelMapState } from '../src/systems/travelMapState.js';
+import { resetTravelMapState } from '../src/systems/travel/travelMapState.js';
 import { restoreDiscovery } from '../src/systems/discovery.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 

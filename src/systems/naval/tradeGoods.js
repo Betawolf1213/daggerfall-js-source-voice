@@ -16,7 +16,7 @@
 // hold is a cask of wine, sold at any shop at its base like any item.
 
 import { mulberry32 } from '../../combat/bloodArt.js';
-import { registerCustomTemplates, setItemFields, mintCondition } from '../itemTemplates.js';
+import { registerCustomTemplates, setItemFields, mintCondition } from '../item/itemTemplates.js';
 import { hashKey } from './harbourBoard.js';
 
 /** The goods' first template index - after the carpenter's stores (navalStores.js STORES_TEMPLATE 1330). */

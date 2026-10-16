@@ -5,7 +5,7 @@
 // law, both ends, so a ball that strikes a coil on one screen strikes the coil the relay sees. Design:
 // bible/11-Multiplayer/Sea-Serpent.md section 4.
 //
-// THE FRAME. Metres in the site's frame: the site (systems/serpentSite.js - a point on a packet lane) at the origin,
+// THE FRAME. Metres in the site's frame: the site (systems/serpent/serpentSite.js - a point on a packet lane) at the origin,
 // x east and z north (the native frame's axes, SERPENT_NATIVE_PER_M to the metre), y up from the sea's top. A facing is
 // `atan2(dx, dz)` - 0 looks north.
 //

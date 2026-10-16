@@ -191,7 +191,7 @@ test('AUDIT 18: Ledger C does not list breath/drowning + the crouch motor, which
   assert.match(dungeon, /function breathTick/, 'P12 breathTick is gone from dungeonContext.js');
   assert.match(dungeon, /breathStep/, 'P18: dungeonContext no longer drives the extracted breath clause');
   assert.match(read('src/systems/breath.js'), /currentBreath/, 'the P12/P18 breath clause is gone from systems/breath.js');
-  assert.match(read('src/systems/save.js'), /currentBreath/, 'save.js no longer persists currentBreath');
+  assert.match(read('src/systems/save/save.js'), /currentBreath/, 'save.js no longer persists currentBreath');
   assert.match(read('src/ui/hud.js'), /breathShort|breathNormal/, 'hud.js no longer draws the breath bar');
   assert.match(read('src/player/motor.js'), /CROUCH_HEIGHT/, 'the P12 crouch motor is gone from motor.js');
 
@@ -270,7 +270,7 @@ test('AUDIT 18: the Ledger does not blame a missing subsystem for Athleticism', 
   // fatigue drain. The flag is unread, which is a different defect from
   // "the consuming subsystem does not exist".
   assert.match(read('src/systems/skills.js'), /export function jumpSpeedMultiplier/);
-  assert.match(read('src/systems/rest.js'), /Athleticism/);
+  assert.match(read('src/systems/rest/rest.js'), /Athleticism/);
   const ledger = read('bible/01-Overview/Port-Ledger.md');
   const inertClause = /INERT, because the consuming subsystem does not exist:([^.|]*)/.exec(ledger);
   assert.ok(inertClause, 'the U20b career-flag row lost its INERT list');
@@ -678,7 +678,7 @@ test('WAVE D: two ACTIVE arc pages stop describing work this wave shipped', () =
   const hud = read('src/ui/hudLarge.js');
   assert.match(hud, /export function horseOffsetHeight\(/);
   assert.match(hud, /export function weaponOffsetHeight\(/);
-  const settings = read('src/systems/settings.js');
+  const settings = read('src/systems/settings/settings.js');
   assert.match(settings, /'GUI\/LargeHUDOffsetHorse': 'src\/ui\/hudLarge\.js'/);
   assert.match(settings, /'GUI\/LargeHUDUndockedOffsetWeapon': 'src\/ui\/hudLarge\.js'/);
 

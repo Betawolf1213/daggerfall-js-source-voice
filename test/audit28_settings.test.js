@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings/settings.js';
 import { RumorMill } from '../src/systems/rumorMill.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { dungeonAmbientFor, DUNGEON_AMBIENT, CASTLE_AMBIENT, SPECIAL_AREA_AMBIENT } from '../src/world/dungeonLights.js';

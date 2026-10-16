@@ -1,6 +1,6 @@
 // COATS3D (2026-10-11): THE 3D HORSE (bible/06-Systems/Horse-Coats.md "The 3D horse") - the bake of the owner's Courser
 // (tools/bakeHorse.mjs) against its committed FBX, its frame, flanks, skin and gaits; the runtime's stream, gait and pose
-// (world/horseModel.js); the texel map and the 3D dye against the sprites' dye (systems/horseCoats.js); the GL half
+// (world/horseModel.js); the texel map and the 3D dye against the sprites' dye (systems/horse/horseCoats.js); the GL half
 // (world/horseRig.js) on a recording renderer - its looks dyed on the frame budget and let go; the body astride
 // (player/seatPose.js saddleRigInput) solved on retail's biped; the view's saddle (player/mwView.js - RIDE-POV lifted
 // astride, held elsewhere); and the hosts, the peers, the pool and the road wiring it. tools/horse3dProbe.mjs draws it
@@ -18,7 +18,7 @@ import { createHorseRig, horseRigFor, HORSE3D_LOOKS_KEPT, DYE_ROWS, HORSE_SEAT, 
 import { createRoadTeams } from '../src/world/roadTeams.js';
 import { createPeerRiders } from '../src/net/peerRiders.js';
 import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eotbBody.js';
-import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horseCoats.js';
+import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horse/horseCoats.js';
 import { skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/mwGpuSkin.js';
 import { saddleRigInput, saddleRequestFor, seatedCamera, STIRRUP_SIDE, STIRRUP_DROP, STIRRUP_AHEAD, REIN_AHEAD, REIN_UP, REIN_SIDE, SADDLE_LEAN_GALLOP, SEAT_PELVIS_HEIGHT } from '../src/player/seatPose.js';
 import { parseNif } from '../src/formats/mwNifFile.js';

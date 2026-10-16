@@ -7,12 +7,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { hallOfChampions, newArenaLadder, ladderAfter, nextLadderBout, LADDER_TIERS } from '../src/systems/arenaLadder.js';
-import * as LG from '../src/systems/arenaLeague.js';
-import * as AB from '../src/systems/arenaBoard.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import { hallOfChampions, newArenaLadder, ladderAfter, nextLadderBout, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
+import * as LG from '../src/systems/arena/arenaLeague.js';
+import * as AB from '../src/systems/arena/arenaBoard.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { heraldChoice } from '../src/systems/arenaHerald.js';
+import { heraldChoice } from '../src/systems/arena/arenaHerald.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const START = 523530;

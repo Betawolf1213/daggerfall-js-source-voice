@@ -1,6 +1,6 @@
 // SET1 (2026-09-26, Mac: "sigil armor sets that also come with set builds (think having multiple of one set type grants
 // detailed abilities)"; chose tiers at 2 / 4 / 6, "Grow together", online only and never in duels): THE SET LAW
-// (systems/sigilSets.js, and the record's one new field in systems/sigil.js). The registry and its numbers; the record
+// (systems/sigil/sigilSets.js, and the record's one new field in systems/sigil/sigil.js). The registry and its numbers; the record
 // with a `set` and no `power`, and every reader of the power reading its absence as no blow; what may be a piece; the
 // worn pieces per set - the nine places, one weapon a set; the stage - the lowest piece's, the Renown's cap, what holds
 // it; the tiers awake by the count; the one question the powers ask. bible/11-Multiplayer/Sigil-Sets.md sections 1-2.
@@ -10,17 +10,17 @@ import assert from 'node:assert/strict';
 import {
   SIGIL_SET_IDS, SIGIL_STAGES, SIGIL_XP_MAX, validSigil, sigilSetId, sigilHasBlow, sigilPercent, sigilLines, sigilView,
   setSigilOnline, setSigilRenown, _resetSigilForTests,
-} from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigil.js';
 import {
   SIGIL_SETS, WORLD_SET_IDS, SET_TIERS, SET_STAGE_MAX, SET_PLACES, stageValue, tierValues, setPieceKind, setIdOf, isSetPiece,
   wornSetPieces, setState, wornSets, awakeTier, setSetsDueling, setsDueling, setsAwake, setById, _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSets.js';
 import { equipItem, unequipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { validItemField } from '../src/systems/itemFields.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 
 const player = () => ({ isPlayer: true, items: [], stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(35).fill(30), level: 5, career: {}, health: 20, maxHealth: 30, activeEffects: [] });

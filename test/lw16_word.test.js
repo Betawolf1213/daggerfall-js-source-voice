@@ -26,7 +26,7 @@ import {
 import {
   newsScript, NEWS_SHARE, CARRIED_OPENERS, HEARD_GREETINGS, HELD_NEWS, ROAD_NEWS, LIVING_GREETINGS, fillLine, firstNameOf, TOKEN_FALLBACK,
 } from '../src/systems/livingWorld/lines.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const A = Object.freeze({ mapId: 1, region: 17, name: 'Wayrest' }), C = Object.freeze({ mapId: 3, region: 18, name: 'Farhold' });
 const D = 50 * DAY_MIN;

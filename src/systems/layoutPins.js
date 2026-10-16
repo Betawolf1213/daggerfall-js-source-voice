@@ -4,7 +4,7 @@
 // anything (For example housing customization)". The two mods do not edit Daggerfall's towns, they REPLACE them:
 // 7,727 locations get a new block grid and a new building list, and the blocks themselves are rebuilt (only one
 // house interior in eight keeps nine tenths of its classic furniture). A building is known to the game by WHERE it
-// stands - DFU's building key, (block x << 16) + (block y << 8) + record (systems/talkTopics.js) - so every record a
+// stands - DFU's building key, (block x << 16) + (block y << 8) + record (systems/talk/talkTopics.js) - so every record a
 // save keeps by building key would wake up in another building:
 //   - the house you bought (banking's deed) and everything you did to it: the decor placed in its frame, the built-in
 //     furniture taken out by name, the chests filled by index, its yard (systems/sceneCache.js, scenes/decorTool.js);
@@ -191,7 +191,7 @@ export function recordStands(rec) {
   if (!rec?.mapId || layoutLocationKeyOfMapId(rec.mapId) == null) return true;
   // ARENA1: a building the arena took (Daggerfall's cell 4,3, in every layout) is no building at all - a room rented
   // there is honoured at any inn of the city, a ticket at any smith, a quest site chosen again (place.js
-  // reseatMovedSite); a house deed is moved before it is ever asked (systems/arenaMove.js)
+  // reseatMovedSite); a house deed is moved before it is ever asked (systems/arena/arenaMove.js)
   if (_displaced(rec)) return false;
   return layoutsMatch(rec.layout, layoutStampOfMapId(rec.mapId));
 }

@@ -64,7 +64,7 @@
   },
   {
     "name": "WB5-the-gold-off-the-level",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  const gold = Math.round(SPOILS_GOLD_PER_LEVEL * lv * (0.8 + 0.4 * rolls()));",
     "new": "  const gold = Math.round(SPOILS_GOLD_PER_LEVEL * 10 * (0.8 + 0.4 * rolls()));",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB5-the-first-piece-only-magic",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  const first = rolls() < SPOILS_LEGENDARY ? 'legendary' : 'rare';",
     "new": "  const first = rolls() < SPOILS_LEGENDARY ? 'legendary' : 'magic';",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB5-ammunition-kept",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "    for (let n = 0; n < 32 && isAmmunition(w); n++)",
     "new": "    for (let n = 0; n < 0 && isAmmunition(w); n++)",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "WB5-no-condition",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  return mintCondition(item);\n}",
     "new": "  return item;\n}",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "WB5-unidentified",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  item.isIdentified = true;\n",
     "new": "",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "WB5-the-sigil-a-renamed-gem",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  return mintCondition(setItemFields({ group: 'Gems', templateIndex: SIGIL_STONE_TEMPLATE }));",
     "new": "  return mintCondition(setItemFields({ group: 'Gems', templateIndex: 0, name: SIGIL_STONE.name, value: SIGIL_STONE.value }));",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "WB5-a-piece-without-its-row",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "(!templateByIndex(item?.templateIndex) || !wearableItem(item)); n++)",
     "new": "!wearableItem(item); n++)",
     "tests": [
@@ -211,7 +211,7 @@
   {
     "name": "WB5-the-hosts-import-pulled",
     "file": "src/scenes/shared.js",
-    "old": "import '../systems/gateSpoils.js';",
+    "old": "import '../systems/gate/gateSpoils.js';",
     "new": "// the import pulled",
     "tests": [
       "test/wb5_gate_spoils.test.js"

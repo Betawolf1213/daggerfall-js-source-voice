@@ -35,7 +35,7 @@
 //            wheel of its own to turn - skipped (`minY`).
 //
 // EACH WAGON'S FRAME (`frame`): the port's wagon - metres, +x its right, +y up, +z the way it is pulled (Unity's, as
-// the Small Cart's model 41214 stands: the horse hitched ahead on +z, systems/horseCartLaw.js HITCHED_HORSE_LOCAL_Z) -
+// the Small Cart's model 41214 stands: the horse hitched ahead on +z, systems/horse/horseCartLaw.js HITCHED_HORSE_LOCAL_Z) -
 // with its origin ON THE GROUND UNDER ITS REAR WHEELS' CENTRES: `centre` the body object's own scene X (to the bit, as a
 // ship's centreline is her hull's Y - the cart's wheels stand 3.8 scene cm off it, as drawn), `rear` the rear wheels'
 // own origin Y (their turning centre), `ground` their lowest corner's Z. The caravan and the open wagon are drawn with

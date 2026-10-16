@@ -7,8 +7,8 @@
 // offline only. Driven through the real store and the real repair law.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULTS, getBool, setValue, effectiveSettings, _resetForTests, PORT_DEFAULTS } from '../src/systems/settings.js';
-import { onlineForcedSetting, ONLINE_FORCED_SETTINGS } from '../src/systems/onlineLane.js';
+import { DEFAULTS, getBool, setValue, effectiveSettings, _resetForTests, PORT_DEFAULTS } from '../src/systems/settings/settings.js';
+import { onlineForcedSetting, ONLINE_FORCED_SETTINGS } from '../src/systems/online/onlineLane.js';
 import { repairRefusal } from '../src/systems/repairService.js';
 import { readFileSync } from 'node:fs';
 

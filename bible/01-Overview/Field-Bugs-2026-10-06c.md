@@ -113,7 +113,7 @@ a quest item (its UID and symbol) and fires `_S.02_` on the click when they are 
 carriesQuestItem reads exactly those; quest items never stack (`systems/inventory.js` isStackable,
 DaggerfallUnityItem.IsStackable); the Materials Bag never takes one (`systems/materialsBag.js` materialKeyOfItem); Climates
 & Calories never rots a plant ingredient (`systems/survival/food.js` isFood); the item's quest fields survive a save
-(`systems/itemFields.js`). No port-only way to lose the flowers or the click was found. Wanted: whether the Yellow
+(`systems/item/itemFields.js`). No port-only way to lose the flowers or the click was found. Wanted: whether the Yellow
 Flowers were in the pack when he was clicked.
 
 **The teleporter (5).** The screenshot shows a flooded dungeon room, two bookshelves against the far wall and a red

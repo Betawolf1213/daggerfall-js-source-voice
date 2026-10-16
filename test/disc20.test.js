@@ -119,7 +119,7 @@ test('DISC20-E: Diverse Weapons\' Weapon Widget Preset ships off, and a value sa
 // ── DISC20-D: "Lightning can be seen even when its not storming" ──
 test('DISC20-D: a storm cell strikes only where it is drawn - wholly outside its front\'s core it strikes nothing, half outside it strikes only inside, unclipped it strikes as ever, and never onto snow where it lands; and a sunny afternoon in the swamp that 248 strikes lit is dark (mutants: the clip gate dropped; the strike point\'s ground unread)', async () => {
   const { createDistantStorms } = await import('../src/systems/distantStorms.js');
-  const { insideClip } = await import('../src/systems/weatherMap.js');
+  const { insideClip } = await import('../src/systems/weather/weatherMap.js');
   const CIRCLE = Object.freeze([1, 0, 0, 0, 0, 0, 0]);
   const cell = (clip) => ({ type: 'thunder', id: 'thunder:9:9:9:0', x: 20000, z: 0, r: 5000, reach: 5000, env: 1, bornAt: 300, life: 2000, bands: [[5000, 'thunder']], clip, shape: CIRCLE });
   const run = (s, ground = null) => {
@@ -152,9 +152,9 @@ test('DISC20-D: a storm cell strikes only where it is drawn - wholly outside its
   // RAIN-HOURS (2026-10-13) moved the map's births, and the report's place grew a real storm inside these four game
   // hours (218 strikes, every one where the map paints thunder); the same minute 600 km east is the report's afternoon
   // on the map as it stands - sunny, 11 clipped cells in range, 208 strikes and 6 claps with the clip gate dropped
-  const { systemsNear, weatherAt } = await import('../src/systems/weatherMap.js');
-  const { mapGround } = await import('../src/systems/weatherSim.js');
-  const { FIELD_RANGE_M } = await import('../src/systems/weatherField.js');
+  const { systemsNear, weatherAt } = await import('../src/systems/weather/weatherMap.js');
+  const { mapGround } = await import('../src/systems/weather/weatherSim.js');
+  const { FIELD_RANGE_M } = await import('../src/systems/weather/weatherField.js');
   const { CLIMATES } = await import('../src/formats/mapsFile.js');
   const swamp = () => CLIMATES.Swamp, ground = mapGround(swamp), at = [1114000, 664000], m0 = 210181980;
   assert.equal(weatherAt(at[0], at[1], m0, swamp).word, 'sunny');
@@ -249,7 +249,7 @@ test('DISC20-B: during a fade the latest request is the one that plays, the song
 test('DISC20-B: a music pack\'s track rises in the same way, and a switch fades whichever player sounds (mutant: the pack\'s start without its rise)', async () => {
   const { MUSIC_FADE_IN_S, MUSIC_FADE_OUT_S } = await import('../src/systems/music.js');
   const { setMusicReplacements, clearMusicReplacements } = await import('../src/systems/musicReplacement.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const { audio } = await import('../src/systems/audio.js');
   const { svc, log, timers, flush, player } = await fadingService();
   svc._audio = player('pack');
@@ -278,7 +278,7 @@ test('DISC20-B: a music pack\'s track rises in the same way, and a switch fades 
 });
 
 test('DISC20-B: the fader - the song runs through a gain of its own under the volume, a fade ramps from wherever it stands, and the volume slider and the video mute write the master, never the fader (mutants: the song bypasses the fader; the ramp jumps from its old start)', async () => {
-  const { SongPlayer, AudioSongPlayer, rampFader } = await import('../src/systems/songPlayer.js');
+  const { SongPlayer, AudioSongPlayer, rampFader } = await import('../src/systems/song/songPlayer.js');
   const calls = [];
   const param = (tag) => ({
     value: 0,
@@ -307,7 +307,7 @@ test('DISC20-B: the fader - the song runs through a gain of its own under the vo
     assert.ok(calls.length > 0 && calls.every((c) => c[0] === p._master.tag), `${P.name}: the volume writes the master alone - a fade under way is not cancelled`);
   }
   const sp = new SongPlayer(ctx); sp._ensureMaster(); sp._state = [];
-  // WBX9: through the song's own level first (systems/songPlayer.js songLevel - 1 for every song but the boss score's)
+  // WBX9: through the song's own level first (systems/song/songPlayer.js songLevel - 1 for every song but the boss score's)
   assert.deepEqual(sp._channelGain(0).to, [sp._level], 'every channel of the synth runs through the song\'s level...');
   assert.deepEqual(sp._level.to, [sp._fader], '...and the level through the fader');
   const ap = new AudioSongPlayer(ctx);
@@ -358,8 +358,8 @@ function groundCollider(groundAt) {
 async function hccPool({ groundAt, clock = { t: 0 }, runtime = null } = {}) {
   const { createHorseCartPool } = await import('../src/scenes/horseCartPool.js');
   const { syntheticWagon41214 } = await import('./hccModel.mjs');
-  const { CARGO_DEFINITIONS } = await import('../src/systems/wagon41214.js');
-  const { WAGON_MODEL_ID } = await import('../src/systems/horseCartLaw.js');
+  const { CARGO_DEFINITIONS } = await import('../src/systems/wagon/wagon41214.js');
+  const { WAGON_MODEL_ID } = await import('../src/systems/horse/horseCartLaw.js');
   const gpu = { [WAGON_MODEL_ID]: { id: WAGON_MODEL_ID } };
   for (const d of CARGO_DEFINITIONS) gpu[d.modelId] = { id: d.modelId };
   const renderer = { createMesh: (m) => ({ m }), drawMesh() {}, createBillboardBatch: () => ({ origin: [0, 0, 0] }), destroyBillboardBatch() {}, uploadTexture() {} };
@@ -414,7 +414,7 @@ test('DISC20-C: a team the relay kept from before the ground was lowered - a fif
 
 test('DISC20-C: a word my ground is not under yet stands as said and is tried again a second later, then stands on it; a word the viewer\'s ground agrees with stands where it was said; a moving team is its owner\'s live word and is never probed; the stand rides the floating origin and a re-anchor (mutants: no retry; a moving team grounded)', async () => {
   QUAT ??= await import('../src/world/quat.js');
-  const { GROUND_RETRY_SECONDS } = await import('../src/systems/horseCartLaw.js');
+  const { GROUND_RETRY_SECONDS } = await import('../src/systems/horse/horseCartLaw.js');
   let built = false;
   const clock = { t: 0 };
   const { pool, col } = await hccPool({ groundAt: () => (built ? 50 : null), clock });
@@ -463,7 +463,7 @@ test('DISC20-C: a word my ground is not under yet stands as said and is tried ag
 
 test('DISC20-C: my own parked wagon and waiting horse stand again when the ground under them is built again - the mod grounds them once, and a rebuild left them on the old ground; only the ground that moved asks (mutant: the pool\'s re-stand never reaches the runtime)', async () => {
   const { makeWorld } = await import('./hccWorld.mjs');
-  const { TRANSPORT, WAGON_MODE } = await import('../src/systems/horseCartLaw.js');
+  const { TRANSPORT, WAGON_MODE } = await import('../src/systems/horse/horseCartLaw.js');
   const { rt, w, step, walk, state } = makeWorld();
   step(); rt.tryUseTransport(TRANSPORT.Cart); step(); walk(10); w.mode = TRANSPORT.Foot; step(3);
   assert.equal(state().Mode, WAGON_MODE.Deployed);

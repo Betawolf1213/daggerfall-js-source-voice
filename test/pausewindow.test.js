@@ -9,7 +9,7 @@ import {
   barClickValue, detailBarWidth, detailClickValue, QUALITY_COUNT,
   PauseOptionsWindow,
 } from '../src/ui/pauseWindow.js';
-import { setValue, getFloat, _resetForTests } from '../src/systems/settings.js';
+import { setValue, getFloat, _resetForTests } from '../src/systems/settings/settings.js';
 import { openPauseFlow } from '../src/ui/pauseDoor.js';
 import { isEnhanced } from '../src/systems/uiSkin.js';
 import { _resetForTests as _resetUiPrefs } from '../src/systems/uiPrefs.js';

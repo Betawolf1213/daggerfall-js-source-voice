@@ -26,7 +26,7 @@ The list, as the screenshots carried it:
 
 No screenshot came with it, so every door to the sea was read against the retail MAPS.BSA before anything was
 changed. Four systems sail, and three of them read "a port" three ways: the travel map's passage (Travel Options'
-378 harbours, `systems/travelPorts.js`, the mod's own list verbatim), the bank's ship and Come Sail Away's deeds (the
+378 harbours, `systems/travel/travelPorts.js`, the mod's own list verbatim), the bank's ship and Come Sail Away's deeds (the
 location's `PortTownAndUnknown` byte), and the Overworld's crossing (no port at all - the player's own boat to hand).
 The two lists do not fight: of the 15,251 locations, 343 carry the byte and every one of them is among the 378 (the
 other 35 are the mod's additions). So no harbour where the bank sells a ship refuses the passage.

@@ -1,7 +1,7 @@
 // FEUD WIRE (bible/12-Enhanced-AI/Feud-Arc.md section 25 and the FEUD WIRE record; Mac, 2026-10-05: "Take care of both
 // gaps"). Online, a revenant's blows at a PEER were its kind's plain ones: its owner's `damageScale` - its rank's, its
 // wrath's, a Night-stalker's night, phase two's x1.2 - rode no wire, and a signature landed at its shape's multiplier.
-// Now the foe record carries its stand's blows (`rb`, per mille - systems/revenantFeud.js BLOWS_WIRE) and a wind-up its
+// Now the foe record carries its stand's blows (`rb`, per mille - systems/revenant/revenantFeud.js BLOWS_WIRE) and a wind-up its
 // signature (`wk` +64, ai/puppetBlows.js WIRE_SIG); the puppet stands with them on its own scale (its kind's, its
 // elite's, its champion's - never twice), so a peer is struck as its owner would be. Relay world165.
 // Pinned: the law; the owner's stand and its restamp; the writer and the heir's write-back; the puppet's fold (said
@@ -17,8 +17,8 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
-const F = await import('../src/systems/revenantFeud.js');
+const N = await import('../src/systems/revenant/revenant.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const Wire = await import('../src/net/wire.js');
 const PB = await import('../src/ai/puppetBlows.js');
 const { makeBlow, resetBlows, blowScaled, BLOW, IRON_COLOR } = await import('../src/ai/foeBlows.js');

@@ -150,7 +150,7 @@
   },
   {
     "name": "AUDITLIVED1-F-a-legacy-save-keeps-its-future-day",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    if (!Number.isFinite(snap.worldMinutes)) clampMarkersAheadOf(entity, own);",
     "new": "",
     "tests": [
@@ -159,7 +159,7 @@
   },
   {
     "name": "AUDITLIVED1-F-the-disease-day-uncapped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "if (a.kind === 'disease') { cap(a, 'lastDay', day); cap(a, 'startingDay', day); }",
     "new": "if (a.kind === 'disease') { cap(a, 'startingDay', day); }",
     "tests": [
@@ -168,7 +168,7 @@
   },
   {
     "name": "AUDITLIVED1-F-the-curse-clocks-uncapped",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "    for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "new": "",
     "tests": [

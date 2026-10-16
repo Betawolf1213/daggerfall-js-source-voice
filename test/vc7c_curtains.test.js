@@ -20,7 +20,7 @@ import {
   CURTAIN_FALL, SKIP_ROOM, DECK_COVER_LO, DECK_COVER_HI, VC_PROFILE, MAX_CELLS, MARCH_FS, SHADOW_FS, CLOUD_FIELD_GLSL, MARCH_UNIFORMS,
   cellOf, grownCell, packCells, VolumetricClouds,
 } from '../src/render/volumetricClouds.js';
-import { shapeFactor, shapeBound } from '../src/systems/weatherMap.js';
+import { shapeFactor, shapeBound } from '../src/systems/weather/weatherMap.js';
 import { marchFns, fieldFns, unit } from './cloudSky.mjs';
 
 const lit = (v) => (Number.isInteger(v) ? `${v}.0` : String(v));

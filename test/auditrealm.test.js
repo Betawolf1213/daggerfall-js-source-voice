@@ -2,7 +2,7 @@
 // findings of the audit of REALM P0.1-P2.2b on the tree merged with main (#412, the Sigil Stones), each reproduced
 // before it was fixed and pinned here. The service is driven through the REAL Worker over the REAL migrations
 // (node:sqlite behind a D1-shaped face whose batch is one transaction, and R2's calls), as test/realm4.test.js does.
-import { REST_ITEM_ROWS } from '../src/systems/restItems.js';   // REST6: the tenth registrar
+import { REST_ITEM_ROWS } from '../src/systems/rest/restItems.js';   // REST6: the tenth registrar
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -11,17 +11,17 @@ import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { SESSION_KEY } from '../src/net/accountClient.js';
 import { tradeableRecord, BOUND_TEMPLATES, boundRecord } from '../src/net/realmTradeLaw.js';
-import { ILIAC_CARD_ROW, CARD_BINDER_ROW } from '../src/systems/iliacItems.js';   // CARDS8
-import { isBound } from '../src/systems/itemBound.js';
-import { ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
+import { ILIAC_CARD_ROW, CARD_BINDER_ROW } from '../src/systems/iliac/iliacItems.js';   // CARDS8
+import { isBound } from '../src/systems/item/itemBound.js';
+import { ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { SURVIVAL_TEMPLATES } from '../src/systems/survival/items.js';
-import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWatersFishItems.js';
-import { SIGIL_STONE_TEMPLATES, SIGIL_STONE_TEMPLATE, sigilStone, WELKYND_SHARD_TEMPLATES, PORTAL_STONE_TEMPLATES } from '../src/systems/gateSpoils.js';   // LOOT9: the Welkynd Shard's row, bound beside the Stone's; PORTAL1: and the Portal Stone's
+import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWater/deepWatersFishItems.js';
+import { SIGIL_STONE_TEMPLATES, SIGIL_STONE_TEMPLATE, sigilStone, WELKYND_SHARD_TEMPLATES, PORTAL_STONE_TEMPLATES } from '../src/systems/gate/gateSpoils.js';   // LOOT9: the Welkynd Shard's row, bound beside the Stone's; PORTAL1: and the Portal Stone's
 import { THUNDERLOCK_TEMPLATES } from '../src/systems/thunderlock.js';
 import { CSA_ITEM_TEMPLATES } from '../src/systems/comeSailAway/comeSailAwayItems.js';   // THE MERGE: main's Come Sail Away registers the sixth
-import { RRI_TEMPLATES, RRI_TEMPLATE_PATCHES } from '../src/systems/rriItems.js';
-import { FORAGING_TEMPLATES } from '../src/systems/foragingLaw.js';   // MERGE 2: the professions branch's two registrars (FORAGE1, PROF2-PROF4)
-import { MINING_TEMPLATE_ROWS, WOOD_TEMPLATE_ROWS, REPAIR_KIT_ROW } from '../src/systems/profTemplates.js';
+import { RRI_TEMPLATES, RRI_TEMPLATE_PATCHES } from '../src/systems/roleplayRealismItems/rriItems.js';
+import { FORAGING_TEMPLATES } from '../src/systems/foraging/foragingLaw.js';   // MERGE 2: the professions branch's two registrars (FORAGE1, PROF2-PROF4)
+import { MINING_TEMPLATE_ROWS, WOOD_TEMPLATE_ROWS, REPAIR_KIT_ROW } from '../src/systems/professions/profTemplates.js';
 import { STORES_ROW } from '../src/systems/naval/navalStores.js';   // SEA-REPAIR: the carpenter's stores' row
 import { KEEPSAKE_ROW } from '../src/systems/livingWorld/keepsake.js';   // LW6c: the eleventh registrar
 import { REMAINS_ROW } from '../src/systems/legacy/heirloom.js';   // LEGACY4: the thirteenth (WALLET1's the twelfth, at the merge of main)
@@ -30,7 +30,7 @@ import { AYLEID_STONE_TEMPLATES } from '../src/systems/ayleidStones.js';   // LO
 import { GEM_GRADE_ROWS } from '../src/systems/gems.js';   // GEM2: the sixteenth registrar
 import { GOODS_ROWS } from '../src/systems/naval/tradeGoods.js';   // CAPT-TRADE: the seventeenth registrar
 import { CHART_ROW } from '../src/systems/naval/treasureCharts.js';   // CAPT-CHARTS: the eighteenth
-import { UPKEEP_ITEM_ROWS } from '../src/systems/upkeepItemRows.js';   // STEED1/WAGONS4: the nineteenth registrar
+import { UPKEEP_ITEM_ROWS } from '../src/systems/upkeep/upkeepItemRows.js';   // STEED1/WAGONS4: the nineteenth registrar
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { realmIo, realmCreate, realmFetch, realmPut, realmTradeCall, realmJoin, realmDelete, createRealmSession, realmGoldAct, realmTradeEscrow } from '../src/systems/realmSaves.js';
@@ -41,7 +41,7 @@ import { renownXpFor } from '../src/net/renown.js';
 import { homeSaleRefund, HOME_PRICE_MIN, HOME_PRICE_MAX } from '../src/net/homeLaw.js';
 import { decorRefund } from '../src/net/decorLaw.js';
 import { empireJoin } from '../src/systems/worldTick.js';
-import { createOnlineHomes, buyOnlineHome, sellOnlineHome, homeRefund } from '../src/systems/onlineHomes.js';
+import { createOnlineHomes, buyOnlineHome, sellOnlineHome, homeRefund } from '../src/systems/online/onlineHomes.js';
 import { TradeSession } from '../src/net/tradeSession.js';
 import { applyCustoms, liquidWealthOf, stashedItemLists } from '../src/systems/realmCustoms.js';
 import { LETTER_OF_CREDIT_TEMPLATE, goldStack } from '../src/systems/inventory.js';
@@ -173,18 +173,18 @@ test('AUDIT REALM F1: BOUND_TEMPLATES is every row the game registers with `boun
   assert.ok(BOUND_TEMPLATES.includes(SIGIL_STONE_TEMPLATE));
   // PIN MOVED (SEA-REPAIR): the carpenter's stores the ninth registrar - a tenth must join the list above, or its bound rows would pass the service unseen
   // PIN MOVED (LOOT21): the Ayleid stones the fourteenth (systems/ayleidStones.js), their rows joined above
-  // PIN MOVED (CARDS8): the cards and the Card Binder the fifteenth (systems/iliacItems.js), their rows joined above
+  // PIN MOVED (CARDS8): the cards and the Card Binder the fifteenth (systems/iliac/iliacItems.js), their rows joined above
   // PIN MOVED (GEM2): the graded gems the sixteenth (systems/gems.js), their rows joined above
   const registrars = [];
   const walk = (dir) => {
     for (const e of readdirSync(new URL(`../${dir}`, import.meta.url), { withFileTypes: true })) {
       const p = `${dir}/${e.name}`;
       if (e.isDirectory()) walk(p);
-      else if (p.endsWith('.js') && /registerCustomTemplates\(|registerTemplateOverrides\(/.test(src(p)) && p !== 'src/systems/itemTemplates.js') registrars.push(p);
+      else if (p.endsWith('.js') && /registerCustomTemplates\(|registerTemplateOverrides\(/.test(src(p)) && p !== 'src/systems/item/itemTemplates.js') registrars.push(p);
     }
   };
   walk('src');
-  assert.deepEqual(registrars.sort(), ['src/systems/ayleidStones.js', 'src/systems/comeSailAway/comeSailAwayItems.js', 'src/systems/deepWatersFishItems.js', 'src/systems/foragingInstall.js', 'src/systems/gateSpoils.js', 'src/systems/gems.js', 'src/systems/iliacItems.js', 'src/systems/legacy/heirloom.js', 'src/systems/livingWorld/keepsake.js', 'src/systems/naval/navalStores.js', 'src/systems/naval/tradeGoods.js', 'src/systems/naval/treasureCharts.js', 'src/systems/profTemplates.js', 'src/systems/restItems.js', 'src/systems/rriInstall.js', 'src/systems/survival/items.js', 'src/systems/thunderlock.js', 'src/systems/upkeepItemRows.js', 'src/systems/walletItem.js']);   // SEA-REPAIR: the ninth, the carpenter's stores; REST6: the tenth, the rest supplies; LW6c: the eleventh, the keepsake; LEGACY4: the twelfth, an ancestor's remains; LOOT21: the fourteenth, the Ayleid stones
+  assert.deepEqual(registrars.sort(), ['src/systems/ayleidStones.js', 'src/systems/comeSailAway/comeSailAwayItems.js', 'src/systems/deepWater/deepWatersFishItems.js', 'src/systems/foraging/foragingInstall.js', 'src/systems/gate/gateSpoils.js', 'src/systems/gems.js', 'src/systems/iliac/iliacItems.js', 'src/systems/legacy/heirloom.js', 'src/systems/livingWorld/keepsake.js', 'src/systems/naval/navalStores.js', 'src/systems/naval/tradeGoods.js', 'src/systems/naval/treasureCharts.js', 'src/systems/professions/profTemplates.js', 'src/systems/rest/restItems.js', 'src/systems/roleplayRealismItems/rriInstall.js', 'src/systems/survival/items.js', 'src/systems/thunderlock.js', 'src/systems/upkeep/upkeepItemRows.js', 'src/systems/walletItem.js']);   // SEA-REPAIR: the ninth, the carpenter's stores; REST6: the tenth, the rest supplies; LW6c: the eleventh, the keepsake; LEGACY4: the twelfth, an ancestor's remains; LOOT21: the fourteenth, the Ayleid stones
   // and the honest client never offers one: the window's pack refuses it before a half is ever written
   const holder = { items: [{ ...sigilStone(), stackCount: 2 }], goldPieces: 0 };
   assert.equal(createTradePack(holder).offerable(holder.items[0]), tradeRefusal(holder.items[0]));

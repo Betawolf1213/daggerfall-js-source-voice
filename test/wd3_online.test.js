@@ -1,6 +1,6 @@
 // WD3 (2026-10-01, Mac: "ensure this doesn't conflict or regress anything (For example housing customization)") -
 // ONLINE, THE TOWNS ARE THE ROOM'S. Beautiful Villages and Beautiful Cities are the room's switches
-// (systems/onlineLane.js), and a home is a building KEY, which names a building only in one layout of its town: the
+// (systems/online/onlineLane.js), and a home is a building KEY, which names a building only in one layout of its town: the
 // account service keeps the layout each home's town was bought in (migration 0073 - 0046 on its branch, 0069 at the first merge onto main, 0071 past PROF9's and PROF12's 0069_cooking and 0070_alchemy at the second, 0073 past SILVER-WAYS' 0071_silver_ways and PROF2b's 0072_motherlodes at the third - homes.js), a town's later homes
 // take its first home's, and every client reads the towns holding homes at its online boot and keeps each in its layout
 // (scenes/world.js, systems/layoutPins.js).
@@ -18,7 +18,7 @@ import { standService, d1, T0 } from './accountDb.mjs';
 import { realmJoinAt, seatRealm } from './realmSeat.mjs';
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { HOME_LAYOUT_MAX, HOME_LAYOUTS_MAX, HOME_LAYOUT_MODS, HOME_CLAIMS_MAX } from '../src/net/homeLaw.js';
-import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/online/onlineLane.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { LAYOUT_MODS } from '../src/systems/layoutPins.js';
 
@@ -154,8 +154,8 @@ test('WD3 online, the client: the homes\' towns asked at the boot, before the fi
   assert.match(src('server-account/src/index.js'), /if \(r\.error === 'home-layout'\) return json\(\{ error: 'home-layout', layout: r\.layout \?\? null \}, 409, origin\);/);
   assert.match(W, /_serverLayoutRecords = towns\.filter\(\(t\) => Array\.isArray\(t\)\)\.map\(\(\[mapId, layout\]\) => \(\{\n {6}locationKey: _layoutKeyOfMapId\.get\(Number\(mapId\) >>> 0\) \?\? null, stamp: typeof layout === 'string' \? layout : undefined, kind: 'house',/);
   assert.match(W, /const records = homeLayoutsOnline \? \(_serverLayoutRecords \?\? \[\]\) : layoutRecordsOf\(/);
-  assert.match(src('src/systems/onlineHomes.js'), /call: \(\/\*\* @type \{any\} \*\/ at\) => homes\.claim\(\{ mapId, buildingKey, region, price, realm: at, layout \}\),/);
-  assert.match(src('src/systems/onlineHomes.js'), /layout: layout \|\| null \}\);   \/\/ WD3 \(AUDIT WD3 B2\)/, 'always said, null for Daggerfall\'s own');
+  assert.match(src('src/systems/online/onlineHomes.js'), /call: \(\/\*\* @type \{any\} \*\/ at\) => homes\.claim\(\{ mapId, buildingKey, region, price, realm: at, layout \}\),/);
+  assert.match(src('src/systems/online/onlineHomes.js'), /layout: layout \|\| null \}\);   \/\/ WD3 \(AUDIT WD3 B2\)/, 'always said, null for Daggerfall\'s own');
 });
 
 test('WD3 online, the room: both switches are the room\'s (forced on - two players who disagreed would walk two towns, one through the other\'s houses), each a mod\'s one Enabled, on by default', () => {

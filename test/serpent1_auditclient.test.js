@@ -17,13 +17,13 @@ import { importReceiptKey } from '../src/net/gateReceipt.js';
 import { validSerpentOut, cellRoomOfWire, PIXEL_UNITS, SERPENT_NO_WORDS } from '../src/net/wire.js';
 import { bodyAt, segExposed, LEG, MODE } from '../src/net/serpentBody.js';
 import { newSerpentFight, joinSerpentFight, serpentStateOf, SERPENT_ATTACK_TABLE, ZONES, MAEL_R, ramLen, RAM_V } from '../src/net/serpentBrain.js';
-import { shapeMeets } from '../src/systems/serpentStrike.js';
-import { createSerpentOmen } from '../src/systems/serpentOmen.js';
+import { shapeMeets } from '../src/systems/serpent/serpentStrike.js';
+import { createSerpentOmen } from '../src/systems/serpent/serpentOmen.js';
 import { createSerpentHost, HIT_GATHER_MS, SERPENT_HEARD_MS, LEAD_DT_MS } from '../src/scenes/serpentHost.js';
 import { bodyMesh, spineRings, MESH_STRIDE, MESH_MAX_VERTS, RING_SIDES, SECTION_H } from '../src/render/serpentRender.js';
 import { createSerpentClaims, SERPENT_CLAIMS_MAX, SERPENT_CLAIM_TEXT } from '../src/net/serpentClaims.js';
 import { SPOILS_SPENT_MAX } from '../src/scenes/spoilsPool.js';
-import { SERPENT_SPOILS_TEXT } from '../src/systems/serpentSpoils.js';
+import { SERPENT_SPOILS_TEXT } from '../src/systems/serpent/serpentSpoils.js';
 import { profileSerpentLine, profileView } from '../src/ui/profileWindow.js';
 import { serpentBarModel } from '../src/ui/serpentBar.js';
 

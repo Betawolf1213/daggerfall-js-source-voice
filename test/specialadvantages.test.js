@@ -10,7 +10,7 @@ import {
   parseCareerData, labelFor, DIFFICULTY, DEFAULT_MAGERY_BITS,
 } from '../src/systems/specialAdvantages.js';
 import { spellPointMultiplier } from '../src/systems/chargen.js';
-import { hasSpecialAbility, SPECIAL_ABILITY } from '../src/systems/rest.js';
+import { hasSpecialAbility, SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 import { careerAttackModifier, ENEMY_GROUPS } from '../src/combat/formulas.js';
 import { buildCustomCareer, difficultyPoints, advancementMultiplier, HP_DEFAULT } from '../src/systems/customClass.js';
 import { ChargenFlow } from '../src/ui/chargen.js';

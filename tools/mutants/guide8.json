@@ -1,7 +1,7 @@
 [
   {
     "name": "GUIDE8-exact-on-the-classic-skin",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "  const v = isEnhanced() ? getPref(GUIDANCE_PREF) : null;",
     "new": "  const v = getPref(GUIDANCE_PREF);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GUIDE8-the-taken-marked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    if (!res || !s.active || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "new": "    if (!res || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GUIDE8-the-hidden-marked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    if (!res || !s.active || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "new": "    if (!res || !s.active || s.dead || questEnded(s.behaviour)) continue;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GUIDE8-the-dead-foe-marked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    if (!b || f.dead || !feet || b.targetResource?.isHidden === true || questEnded(b)) continue;",
     "new": "    if (!b || !feet || b.targetResource?.isHidden === true || questEnded(b)) continue;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GUIDE8-the-mark-at-the-crown",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    const at = [(box.min[0] + box.max[0]) / 2, box.min[1], (box.min[2] + box.max[2]) / 2];",
     "new": "    const at = [(box.min[0] + box.max[0]) / 2, box.max[1], (box.min[2] + box.max[2]) / 2];",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GUIDE8-every-quest-followed",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "  const followed = (uid) => followedId != null && uid != null && String(uid) === String(followedId);",
     "new": "  const followed = (uid) => uid != null;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GUIDE8-a-person-named-as-an-item",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    const name = res.isPerson === true ? (res.displayName || 'Someone') : (itemName(s, res) || 'Quest item');",
     "new": "    const name = itemName(s, res) || 'Quest item';",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GUIDE8-the-foes-unmarked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    out.push({ at: [feet[0], feet[1], feet[2]], name: b.targetResource?.displayName || foeName(f) || 'Quest foe', followed: followed(b.questUID) });\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-DELVE-TOWN-the-tier-unread",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "  return v === 'exact' || v === 'town' ? v : 'journal';",
     "new": "  return v === 'exact' ? v : 'journal';",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-DELVE-TOWN-any-town",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": " || (Number(b.mapId) >>> 0) !== here) continue;",
     "new": ") continue;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-DELVE-TOWN-the-follow-lost",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "followed: followed || !!had?.followed",
     "new": "followed",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "AUDIT-DELVE-E6-the-puppet-dropped",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    const b = f ? behaviourOf(f) : null;",
     "new": "    const b = f?.questBehaviour ?? null;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDIT-DELVE-E6-the-people-unmarked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    out.push({ at: [p.x, p.y, p.z], name: res.displayName || 'Someone', followed: followed(b.questUID) });\n",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDIT-DELVE-E6-the-away-marked",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    if (!res || p.active === false || res.isHidden === true || res.isDestroyed === true || questEnded(b)) continue;",
     "new": "    if (!res) continue;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-DELVE-C6-the-nearest-over-the-followed",
-    "file": "src/systems/questGuidance.js",
+    "file": "src/systems/quest/questGuidance.js",
     "old": "    if (best) break;",
     "new": "",
     "tests": [

@@ -319,7 +319,7 @@ With the sea fight on, a raider IS a pirate of the sea (`systems/naval/navalRaid
 **THE MERGE with main's OW6 (2026-09-29).** Main shared the Overworld's raider chase on the cell's foes frames (OW6,
 `bible/06-Systems/Travel-View.md`: a chase said where it sails, a spent raider said and kept by the cell's ledger, never
 a sail a peer's chase holds, the lower id keeping one two players chase) and made a fast journey slow as enemies close
-(`systems/travelThreat.js`) - both on the Overworld's own chase, which a sea fight does not run. So the ships join them:
+(`systems/travel/travelThreat.js`) - both on the Overworld's own chase, which a sea fight does not run. So the ships join them:
 
 - **Spent through the Overworld's own spend.** A raider ship spent here goes through `seaRaidSpend` (`raiderSpent`):
   spent for its life, said on my word to the cell's others and owed to the cell's ledger (OW6L) - a late joiner never

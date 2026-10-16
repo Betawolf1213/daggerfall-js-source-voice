@@ -120,9 +120,9 @@ test('SEAT2b part two THE HOST\'S SEAMS: a members\' Harbour is the travel map\'
   assert.match(W, /portTown: \(loc\.ether \? loc\.etherKind === 'port' : modSetting\('travel-options', 'Enabled'\) === true \? hasPortFor\(loc\.mapTableData\?\.mapId\) :/);
   assert.match(W, /if \(hasPortFor\(summary\.id\)\) return true;/);
   for (const f of ['travelPopUp.js', 'travelMapOptions.js', 'heldMap.js']) {
-    assert.match(readFileSync(new URL(`../src/ui/${f}`, import.meta.url), 'utf8'), /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travelPorts\.js';/, f);
+    assert.match(readFileSync(new URL(`../src/ui/${f}`, import.meta.url), 'utf8'), /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travel\/travelPorts\.js';/, f);
   }
-  assert.match(readFileSync(new URL('../src/systems/travelOptions.js', import.meta.url), 'utf8'), /hasPort: \(mapId\) => hasPortFor\(mapId\),/);
+  assert.match(readFileSync(new URL('../src/systems/travel/travelOptions.js', import.meta.url), 'utf8'), /hasPort: \(mapId\) => hasPortFor\(mapId\),/);
   assert.match(W, /const seaPixel = \(x, y\) => isWaterPixel\(maps\.getClimateIndex\(x, y\), woods\.getHeightMapValue\(x, y\)\);/);
   assert.match(W, /port: coastalAt\(town\.px, town\.py, seaPixel, csaIsPortTown\(town\.px, town\.py\)\),/);
   assert.match(W, /const \{ seat \} = myHall\(recipeById\(recipe\)\?\.profession\);/);   // PIN MOVED (AUDIT PROF-541 R2-H1): fortLaw.js hallStepsFor (prof9_client.test.js drives it)

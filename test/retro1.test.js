@@ -26,7 +26,7 @@ import {
 import { frameTarget, setFrameTarget } from '../src/render/renderTarget.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE } from '../src/render/enhancedLighting.js';
-import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings/settings.js';
 import { ENUM_LAW, NUMBER_LAW, formatValue, stepValue } from '../src/ui/settingsLaw.js';
 import { largeHudWorldAspect, worldViewportRect, largeHudViewportRect } from '../src/ui/hudLarge.js';
 import { hudShortcutKey } from '../src/ui/hudShortcuts.js';

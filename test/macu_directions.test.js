@@ -14,11 +14,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TextRsc, RSC, encodeRscRecord, rscTableBytes } from '../src/formats/textRsc.js';
 import { INTERNAL_RSC, parseRscMarkup, parseRscCsv } from '../src/formats/rscTable.js';
-import { expandRandomTextRecord } from '../src/systems/talkMacros.js';
+import { expandRandomTextRecord } from '../src/systems/talk/talkMacros.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';
 import { QUESTION_TYPE } from '../src/systems/topicTree.js';
-import { expandAnswerRecord } from '../src/systems/talkSession.js';
-import { DIRECTION_TEXT_ID } from '../src/systems/talkTopics.js';
+import { expandAnswerRecord } from '../src/systems/talk/talkSession.js';
+import { DIRECTION_TEXT_ID } from '../src/systems/talk/talkTopics.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 

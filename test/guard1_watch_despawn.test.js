@@ -32,7 +32,7 @@ import { fileURLToPath } from 'node:url';
 import { createCityGuards, GUARD_MOBILE_TYPE, MAX_ACTIVE_GUARD_SPAWNS } from '../src/scenes/cityGuards.js';
 import { setCrimeCommitted, CRIMES } from '../src/systems/court.js';
 import { CRIMES as LEAF_CRIMES } from '../src/systems/crimes.js';
-import { pickpocket } from '../src/systems/talk.js';
+import { pickpocket } from '../src/systems/talk/talk.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (rel) => readFileSync(join(root, rel), 'utf8');
@@ -178,9 +178,9 @@ test('GUARD1: the CRIMES enum has ONE home, and court.js re-exports the leaf', (
   assert.equal(CRIMES, LEAF_CRIMES, 'court.js re-exports systems/crimes.js - not a second copy');
   // ...and nothing declares a rival table. The enum is a leaf so that
   // the court/talk cycle cannot force a second representation again.
-  const declarers = ['src/systems/court.js', 'src/systems/talk.js', 'src/systems/crimes.js']
+  const declarers = ['src/systems/court.js', 'src/systems/talk/talk.js', 'src/systems/crimes.js']
     .filter((f) => /export const CRIMES = /.test(src(f)));
   assert.deepEqual(declarers, ['src/systems/crimes.js'], 'exactly one module declares CRIMES');
-  assert.equal(/from '\.\/court\.js'/.test(src('src/systems/talk.js')), false,
+  assert.equal(/from '\.\/court\.js'/.test(src('src/systems/talk/talk.js')), false,
     'talk.js still cannot import court.js - the cycle is real, which is why the enum moved');
 });

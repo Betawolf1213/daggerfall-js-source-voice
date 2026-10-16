@@ -13,14 +13,14 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnEnemyLoot } from '../src/scenes/hostCombat.js';
-import { lootMatrix } from '../src/systems/loot.js';
+import { lootMatrix } from '../src/systems/loot/loot.js';
 import { isGoldPieces } from '../src/systems/inventory.js';
 import { equipTableOf } from '../src/systems/equip.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import { rarityOf } from '../src/systems/lootRarity.js';
+import { rarityOf } from '../src/systems/loot/lootRarity.js';
 import { isMap } from '../src/systems/useItem.js';
-import { isAmmunition } from '../src/systems/itemTemplates.js';
+import { isAmmunition } from '../src/systems/item/itemTemplates.js';
 import { ELITE_DUNGEON_FOE_LOOT_CAP } from '../src/systems/foeLootCap.js';   // the Rest arc's merge of main's #576 (FOE-CAP)
 import { enemyLootSpawned } from '../src/characters/enemyEntity.js';
 

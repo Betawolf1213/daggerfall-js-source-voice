@@ -13,9 +13,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { bedInReach, BED_STOREY_M } from '../src/systems/restAct.js';
+import { bedInReach, BED_STOREY_M } from '../src/systems/rest/restAct.js';
 import { BY_FIRE_REACH } from '../src/systems/survival/camp.js';
-import { isBedModel } from '../src/systems/rrRealism.js';
+import { isBedModel } from '../src/systems/roleplayRealism/rrRealism.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = (x0, x1, y0, y1, z0, z1) => ({ aabb: { min: [x0, y0, z0], max: [x1, y1, z1] } });

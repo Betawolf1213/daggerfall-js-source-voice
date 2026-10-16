@@ -27,7 +27,7 @@ import {
   RestSession, REST_TEXT, REST_WAIT_PER_HOUR,
   registerPreventRestCondition, unregisterPreventRestCondition,
   getPreventedRestMessage, clearPreventRestConditions, restDecision,
-} from '../src/systems/restSession.js';
+} from '../src/systems/rest/restSession.js';
 import { RestWindow } from '../src/ui/restWindow.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { makeWindowStack } from '../src/ui/windowStack.js';

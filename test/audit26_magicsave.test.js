@@ -17,7 +17,7 @@ import { ITEM_GROUPS } from '../src/characters/equipRules.js';
 import { entityMaxEncumbrance, maxEncumbrance } from '../src/combat/formulas.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { applySpell } from '../src/systems/effects.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
@@ -189,8 +189,8 @@ test('audit26 magic-save: GetMaxEncumbrance adds the IncreasedWeightAllowance mu
   // the enhanced sheet mirror the two windows above and read the same
   // ceiling; they were written against the pre-audit formula and are
   // swept here so they cannot drift back to it.
-  assert.match(rd('src/systems/itemTransfer.js'), /entityMaxEncumbrance\(entity\)/);
-  assert.ok(!/maxEncumbrance\(liveStat\(/.test(rd('src/systems/itemTransfer.js')),
+  assert.match(rd('src/systems/item/itemTransfer.js'), /entityMaxEncumbrance\(entity\)/);
+  assert.ok(!/maxEncumbrance\(liveStat\(/.test(rd('src/systems/item/itemTransfer.js')),
     'the bare strength formula is back in the carry gate');
   for (const f of ['src/ui/enhancedInventory.js', 'src/ui/enhancedCharSheet.js']) {
     assert.match(rd(f), /entityMaxEncumbrance\(/, `${f} reads the bare formula`);

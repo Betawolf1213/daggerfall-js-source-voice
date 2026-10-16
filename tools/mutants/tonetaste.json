@@ -1,7 +1,7 @@
 [
   {
     "name": "TONE-TASTE-sign-flipped",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "  return Math.sign(mod ?? 0);",
     "new": "  return -Math.sign(mod ?? 0);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TONE-TASTE-tables-swapped",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "  const mod = toneIndex === 0 ? ETIQUETTE_REACTION_MODS[group] : toneIndex === 2 ? STREETWISE_REACTION_MODS[group] : 0;",
     "new": "  const mod = toneIndex === 0 ? STREETWISE_REACTION_MODS[group] : toneIndex === 2 ? ETIQUETTE_REACTION_MODS[group] : 0;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TONE-TASTE-no-fold",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": "  const group = socialGroup >= 5 ? 1 : socialGroup;",
     "new": "  const group = socialGroup;",
     "tests": [

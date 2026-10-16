@@ -68,7 +68,7 @@ import {
   ROLL_FACTIONS, ROLL_CLAIM_MS, ROLL_RETRY_MS, ROLL_RETRY_MAX_MS, rollDeltasOf, rollAdopt, rollMembersKey, rollMembersOf, rollRep, rollKeptOf,
   rollBookCap, rollSeatsOf, ROLL_SEATS_MS, ROLL_BOOK_RANK_MAX, rollPromoteCeiling, rollPaceWait,   // ROLL-PACE
 } from './npcChapterLaw.js';
-import { setReputation } from '../systems/factionRep.js';
+import { setReputation } from '../systems/faction/factionRep.js';
 
 /** The refusals that end the tracker for this page - the Roll shut, the character no longer this tab's, the account
  *  gone, or a shape the service will not take (a build to update). Every other is asked again. */

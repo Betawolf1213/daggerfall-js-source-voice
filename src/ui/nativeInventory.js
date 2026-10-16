@@ -37,7 +37,7 @@
 // TransferItem equip:true - shipped in U8g). Closing with
 // session-dropped items hands them to hooks.onDrop - the host mints
 // the ground pile flat. Info mode pops the item panel on the REAL
-// 1016 record (systems/itemInfo.js, shipped at U25).
+// 1016 record (systems/item/itemInfo.js, shipped at U25).
 // AUDIT 17e F39 / RETIRING A FLAG DELETES THE SENTENCE: every clause
 // this header once carried as open has shipped. Equip and
 // equip-after-transfer went at U8g; the WAGON at the W-slice (ShowWagon
@@ -50,23 +50,23 @@
 // .cs:108-118), spent letters-before-coins with the shortfall returned
 // by deductGold at court.js:"training, the tavern's" (DeductGoldAmount, PlayerEntity.cs
 // :1324-1354), banked at systems/banking.js:"export function depositAllLetters"/systems/banking.js:"export function withdrawLetter", and described by
-// the 1007 text at systems/itemInfo.js:"if (setting === 3)".."return false;". Nothing was ever owed at
+// the 1007 text at systems/item/itemInfo.js:"if (setting === 3)".."return false;". Nothing was ever owed at
 // THIS surface anyway - DaggerfallInventoryWindow.cs has no
 // letter-of-credit arm at all.
 
 import { loadImg, nativeMetrics, drawImg, drawImgSub, drawImgCrop, shadowText, DEFAULT_TEXT_COLOR } from './nativePanel.js';
-import { getBool } from '../systems/settings.js';   // UI4: EnableInventoryInfoPanel
+import { getBool } from '../systems/settings/settings.js';   // UI4: EnableInventoryInfoPanel
 import { bindings } from './input.js';   // KB1: the live registry
 import { getBinding } from '../systems/inputActions.js';   // KB1: the toggle-close binding, GetBinding(Actions.Inventory)
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, fitBoxRows } from './messageBox.js';   // U25   // SS5: fitBoxRows, a long row wrapped on the screen
 import { useItem, isLightSource, isPotionRecipe, nextVariant, USE_PENDING } from '../systems/useItem.js';   // U25; AUDIT 64 F49/F50
-import { itemInfoRows, itemInfoPanelRows, infoPanelShorten, questLetterName, INFO_TEXT, itemLongName, potionRecipeIngredientNames } from '../systems/itemInfo.js';   // U25; AUDIT 64 F51; AUDIT MERGE-PLUS C3: the refusal's name; AUDIT 64 F49 / L10N3e: PotionRecipeIngredients, one list for both skins
-import { lockRefuses, lockedText } from '../systems/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds on this skin too
-import { boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS3: a bound piece stays the player's on this skin too; WALLET1: and a pack-only one in the pack
+import { itemInfoRows, itemInfoPanelRows, infoPanelShorten, questLetterName, INFO_TEXT, itemLongName, potionRecipeIngredientNames } from '../systems/item/itemInfo.js';   // U25; AUDIT 64 F51; AUDIT MERGE-PLUS C3: the refusal's name; AUDIT 64 F49 / L10N3e: PotionRecipeIngredients, one list for both skins
+import { lockRefuses, lockedText } from '../systems/item/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds on this skin too
+import { boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/item/itemBound.js';   // SS3: a bound piece stays the player's on this skin too; WALLET1: and a pack-only one in the pack
 import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { walletContents, walletLines, refreshWalletSilver } from '../systems/walletItem.js';   // WALLET1: the wallet's box
-import { BINDER_CARD_LINES } from '../systems/iliacItems.js';   // CARDS8 (AUDIT CARDS-5 C5): the binder's box
-import { dismantleStones, dismantleRefusal, dismantleWare, DISMANTLE_INSTEAD, DISMANTLED } from '../systems/sigilBroker.js';   // SS5: a Broker ware back into stones
+import { BINDER_CARD_LINES } from '../systems/iliac/iliacItems.js';   // CARDS8 (AUDIT CARDS-5 C5): the binder's box
+import { dismantleStones, dismantleRefusal, dismantleWare, DISMANTLE_INSTEAD, DISMANTLED } from '../systems/sigil/sigilBroker.js';   // SS5: a Broker ware back into stones
 import { YesNoBoxWindow } from './yesNoBox.js';   // SS5: the dismantle's question, DFU's own Yes/No box
 import { ListPickerWindow, listPickerArtLoaded } from './listPicker.js';   // MEND-AIM: the piece a repair kit mends, chosen
 import { paintingImage, setPaintingArtDeps } from './paintingImage.js';   // ROAD-A7: the painting's picture
@@ -86,8 +86,8 @@ import {
 // AUDIT 26's quest arm is a rung of it and travelled with it, so the
 // window no longer carries the settings or quest-resource imports it
 // needed to run that rung itself.
-import { wagonKgFor } from '../systems/wagonKinds.js';   // WAGONS1: the driven wagon's capacity
-import { planStore, planTake, applyTransfer, planDropGold, HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired, sendQuestItemClick } from '../systems/itemTransfer.js';
+import { wagonKgFor } from '../systems/wagon/wagonKinds.js';   // WAGONS1: the driven wagon's capacity
+import { planStore, planTake, applyTransfer, planDropGold, HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired, sendQuestItemClick } from '../systems/item/itemTransfer.js';
 import { shiftDrop } from '../systems/physicalItems.js';   // PI1: Physical Items' shift-drop, one law for both packs
 // U57: which list is the remote one, and what opening and closing
 // this window decide.
@@ -105,7 +105,7 @@ import { drawPaperDoll, refreshPaperDoll, slotAtPaperDoll, ARMOR_LABEL_POS } fro
 import { LIST_SLOTS, scrollerHit, applyScroll, makeIconDrawer, preloadIconRecord, drawStackLabel, safeScrollIndex, beginScrollerDrag, dragScrollerIndex,   // MAC-N2: the thumb drag
   preloadScrollerArrowArt, drawScrollerArrows, drawScrollerThumb, playScrollerArrowClick,
   makeSlotToolTip, itemBackgroundColour, drawCellBackground } from './itemScroller.js';
-import { templateByIndex, itemBaseValue, inventoryItemImage } from '../systems/itemTemplates.js';
+import { templateByIndex, itemBaseValue, inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { dyeToken } from '../characters/dyes.js';   // DW3: the per-dye icon key
 import { FntFile } from '../formats/fntFile.js';
 import { audio } from '../systems/audio.js';
@@ -115,7 +115,7 @@ import { makeFont, drawText } from './text.js';
 import { InputMessageBoxWindow } from './inputMessageBox.js';   // CM5: TransferItem's split popup
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
 import { expandRowValues } from '../systems/quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
-import { magicPowersLines } from '../systems/itemPowers.js';   // MACRO-3: %mpw
+import { magicPowersLines } from '../systems/item/itemPowers.js';   // MACRO-3: %mpw
 import { itemIsIdentified } from '../systems/tradeModes.js';   // MACRO-3: MagicPowers' identified arm
 import { localizedText, formatText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { getLocalizedItemName } from '../systems/textManager.js';   // L10N3e: the equipping cue's template name, by its index
@@ -214,7 +214,7 @@ export { USE_PENDING };
 /** TEXT.RSC 25 - the drop-gold prompt (:1272). */
 export const GOLD_TO_DROP_TEXT_ID = 25;
 // W-slice: the wagon goes live. U56: the strings the TRANSFER LADDER
-// owns live with it now (systems/itemTransfer.js) and are re-exported
+// owns live with it now (systems/item/itemTransfer.js) and are re-exported
 // here, because a caller reaching for the wagon's limit is usually
 // already holding this window. AUDIT 26's `questTransferRefused` rides
 // the same road: DaggerfallTradeWindow INHERITS TransferItem and
@@ -222,7 +222,7 @@ export const GOLD_TO_DROP_TEXT_ID = 25;
 export {
   WAGON_KG_LIMIT, CANNOT_HOLD_TEXT, CANNOT_CARRY_TEXT, wagonFullGoldText,
   questTransferRefused,
-} from '../systems/itemTransfer.js';
+} from '../systems/item/itemTransfer.js';
 // U57: and the remote side's, for the same reason.
 export {
   SMALL_CART_TEMPLATE, NO_WAGON_TEXT, EXIT_TOO_FAR_TEXT, WAGON_ACCESS_DISTANCE,
@@ -256,7 +256,7 @@ export const isIngredientTemplate = (i) => i >= 0 && i <= 77;
 // ── CM5: TransferItem's SPLIT popup (:1515-1539) ──
 //
 // U56 moved TransferItem's guards and its amount into
-// systems/itemTransfer.js; what the ladder answers is HOW MANY fit
+// systems/item/itemTransfer.js; what the ladder answers is HOW MANY fit
 // (plan.amount). DFU does not move that many at once: when the amount
 // is short of the stack - or either Control is held (Input.GetKey, a
 // STATE, polled at the click) - it pushes a DaggerfallInputMessageBox
@@ -265,9 +265,9 @@ export const isIngredientTemplate = (i) => i >= 0 && i <= 77;
 // (:1546-1560) performs the transfer, with the count the player typed.
 // An unparseable or over-large answer moves nothing (:1551-1552).
 
-// DISC25-F: the popup's words, its cap, its parse and its gate have ONE HOME now, systems/itemTransfer.js - the
+// DISC25-F: the popup's words, its cap, its parse and its gate have ONE HOME now, systems/item/itemTransfer.js - the
 // enhanced inventory and both trade windows split stacks too, and a law typed twice is two laws (17e).
-export { HOW_MANY_ITEMS, SPLIT_INPUT_MAX } from '../systems/itemTransfer.js';
+export { HOW_MANY_ITEMS, SPLIT_INPUT_MAX } from '../systems/item/itemTransfer.js';
 
 const isControlCode = (code, e = null) =>
   code === 'ControlLeft' || code === 'ControlRight'
@@ -876,7 +876,7 @@ export class NativeInventoryWindow {
         // what DFU does with a purse of zero.
         const player = this.hooks.entity ?? {};
         // U57: the range refusal and the wagon clamp are
-        // systems/itemTransfer.js; the BOX is this window's.
+        // systems/item/itemTransfer.js; the BOX is this window's.
         const plan = planDropGold(text, {
           carried: goldAmount(player),
           usingWagon: this.usingWagon,
@@ -964,21 +964,21 @@ export class NativeInventoryWindow {
       // LocalItemListScroller_OnItemClick Remove's
       // `TransferItem(item, localItems, remoteItems, canHold, true)`
       // (DaggerfallInventoryWindow.cs:1999). U56: the guards, their
-      // ORDER, and the split are systems/itemTransfer.js now - one
+      // ORDER, and the split are systems/item/itemTransfer.js now - one
       // reading of TransferItem for every screen that transfers, and
       // AUDIT 26's QUEST ARM is one of those guards, sitting where DFU
       // puts it (:1480-1505, below the summoned one and above every
       // capacity gate). What is still this window's is what a CLASSIC
       // window does with the answer: a parchment box, or the click.
       const to = this._remote();
-      // AUDIT MERGE-PLUS C3: A LOCKED PIECE IS NOT DROPPED ON THIS SKIN EITHER (LOCK1 - systems/itemLock.js; the port's
+      // AUDIT MERGE-PLUS C3: A LOCKED PIECE IS NOT DROPPED ON THIS SKIN EITHER (LOCK1 - systems/item/itemLock.js; the port's
       // own, Ledger A). The lock is the item's, and a skin switched in the Overhauls panel took every guard away; the
       // ground alone is refused, as the enhanced pack refuses it - a chest, the wagon and a reward pile still take it.
       if (lockRefuses(it, 'drop') && remoteTargetType(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) === REMOTE_TARGET_TYPES.Dropped) {
         this._refuse({ text: lockedText(itemLongName(it, { getQuest: this.hooks.getQuest ?? null })) });
         return;
       }
-      // SS3: A BOUND PIECE GOES NOWHERE BUT THE WAGON AND THE PLAYER'S OWN STORAGE (systems/itemBound.js), on this skin
+      // SS3: A BOUND PIECE GOES NOWHERE BUT THE WAGON AND THE PLAYER'S OWN STORAGE (systems/item/itemBound.js), on this skin
       // as on the enhanced pack - the ground, a corpse and a chest refuse it, and it says why. The target in the
       // enhanced pack's own words (remoteModel's kinds): the wagon, the owner's storage, or elsewhere. AUDIT SS: a
       // reward tray is not asked - DFU refuses every piece put there in silence (planStore's chooseOne arm, below)
@@ -1081,7 +1081,7 @@ export class NativeInventoryWindow {
   /** SS5 (Mac: "The ability to dismantle in the inventory and recieve back sigil stones"): THE DISMANTLE, ON THIS SKIN.
    *  Its six buttons are DFU's art, so the question comes where the player tries to be rid of a ware - Remove over the
    *  ground, which its binding refuses: the refusal and the offer in DFU's own Yes/No box (ui/yesNoBox.js, pressed or
-   *  keyed). Yes dismantles it (systems/sigilBroker.js dismantleWare) and says so; No leaves it in the pack. */
+   *  keyed). Yes dismantles it (systems/sigil/sigilBroker.js dismantleWare) and says so; No leaves it in the pack. */
   _askDismantle(it, n) {
     const name = itemLongName(it, { getQuest: this.hooks.getQuest ?? null });
     this._tip.hide();   // AUDIT SS: the piece's tooltip drew over the question until the mouse moved

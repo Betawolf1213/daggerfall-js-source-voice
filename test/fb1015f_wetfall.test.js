@@ -6,8 +6,8 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as W from '../src/systems/weatherSim.js';
-import { createWeatherFront, soundWeather } from '../src/systems/weatherFront.js';
+import * as W from '../src/systems/weather/weatherSim.js';
+import { createWeatherFront, soundWeather } from '../src/systems/weather/weatherFront.js';
 import { weatherWetGain, feltTemperature } from '../src/systems/survival/temperature.js';
 import { newSurvival, survivalMinute, runSurvivalMinutes, ROAD_MINUTES } from '../src/systems/survival/needs.js';
 import { ENV_DEFAULTS } from '../src/systems/survival/env.js';

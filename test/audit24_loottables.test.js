@@ -1,7 +1,7 @@
 // AUDIT 24 (the seven-slice sweep), THE TABLE GATE.
 //
 // The mutation campaign over the AUDIT 24 line ranges came back with
-// exactly one file at 0 of 8 caught: src/systems/loot.js. Every
+// exactly one file at 0 of 8 caught: src/systems/loot/loot.js. Every
 // survivor was a DATA TABLE constant - a LootChanceMatrix cell, an
 // ingredient template index - flipped by one and noticed by nothing.
 // That is the shape a transcription typo takes, and no amount of
@@ -17,7 +17,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { LOOT_MATRICES, ITEM_GROUPS } from '../src/systems/loot.js';
+import { LOOT_MATRICES, ITEM_GROUPS } from '../src/systems/loot/loot.js';
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 
 const LOOT_TABLES = dfuFile('Assets/Scripts/Game/Items/LootTables.cs');   // PY1: the ONE checkout home

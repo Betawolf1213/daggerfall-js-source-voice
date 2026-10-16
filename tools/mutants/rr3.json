@@ -1,7 +1,7 @@
 [
   {
     "name": "RR3-1-the-fort-pixel-answers-near-not-verynear",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "  if (mapPixelX === 938 && mapPixelY === 51) return [RR_TEXT.fortVerynear1, RR_TEXT.fortVerynear2];\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "RR3-2-the-tracks-reach-a-fourth-column",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "  if (!(mapPixelX >= 937 && mapPixelX <= 939 && mapPixelY >= 50 && mapPixelY <= 52)) return [];",
     "new": "  if (!(mapPixelX >= 936 && mapPixelX <= 939 && mapPixelY >= 50 && mapPixelY <= 52)) return [];",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "RR3-3-west-and-east-swapped",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "'939,51': 'west'",
     "new": "'939,51': 'east'",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "RR3-4-penmore-gets-pjigas-key",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "    case 18: return 197134;",
     "new": "    case 18: return 131342;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "RR3-5-the-discovery-ignores-the-variant",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "  if (variantOf(location.regionIndex, location.locationIndex, RR_ARMORER_BLOCK, RR_ARMORER_RECORD) == null) return null;\n",
     "new": "",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "RR3-6-the-armor-is-offered-at-8",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "export const rrCustomArmorOffered = (level) => level >= 9;",
     "new": "export const rrCustomArmorOffered = (level) => level >= 8;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "RR3-7-daedric-at-15",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "      || (level < 18 && material >= ARMOR_MATERIAL.Daedric)) break;",
     "new": "      ) break;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "RR3-8-the-ladder-continues-instead-of-breaking",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "      || (level < 18 && material >= ARMOR_MATERIAL.Daedric)) break;\n    out.push(material);",
     "new": "      || (level < 18 && material >= ARMOR_MATERIAL.Daedric)) continue;\n    out.push(material);",
     "tests": [
@@ -77,7 +77,7 @@
   },
   {
     "name": "RR3-9-greaves-start-at-1",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "    case 104: return [2, 5];                        // Greaves",
     "new": "    case 104: return [1, 5];                        // Greaves",
     "tests": [
@@ -86,7 +86,7 @@
   },
   {
     "name": "RR3-10-the-helm-includes-its-last-variant",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "    case 108: case 107: return [1, templateVariants - 1];   // Boots, Helm",
     "new": "    case 108: case 107: return [1, templateVariants];   // Boots, Helm",
     "tests": [
@@ -95,7 +95,7 @@
   },
   {
     "name": "RR3-11-shields-are-sold",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "    default: return null;\n  }\n}\n/** The shelf",
     "new": "    default: return [1, 1];\n  }\n}\n/** The shelf",
     "tests": [
@@ -104,7 +104,7 @@
   },
   {
     "name": "RR3-12-the-custom-classes-are-not-stocked",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "    for (const templateIndex of customTemplates) items.push(mint({ group: 'Armor', templateIndex, material }));\n",
     "new": "",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "RR3-13-the-service-opens-the-shelf-under-9",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "  if (!rrCustomArmorOffered(level)) { window.messageBox?.(RR_TEXT.notEnoughMaterials); return false; }\n",
     "new": "",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "RR3-14-the-captain-is-orphaned",
-    "file": "src/systems/rrQuestLine.js",
+    "file": "src/systems/roleplayRealism/rrQuestLine.js",
     "old": "  Object.freeze({ id: 1021, parent: 1020,",
     "new": "  Object.freeze({ id: 1021, parent: 0,",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "RR3-16-addcustomfactions-skips-the-relink",
-    "file": "src/systems/factionRep.js",
+    "file": "src/systems/faction/factionRep.js",
     "old": "  if (relink) relinkChildren(dict);\n  return relink;",
     "new": "  return relink;",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "RR3-17-the-fresh-dictionary-lacks-them",
-    "file": "src/systems/factionRep.js",
+    "file": "src/systems/faction/factionRep.js",
     "old": "  addCustomFactions(dict);   // Reset (:331): the custom factions ride every fresh dictionary\n",
     "new": "",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "RR3-23-the-service-gate-is-ignored",
-    "file": "src/systems/guildServices.js",
+    "file": "src/systems/guild/guildServices.js",
     "old": "const serviceOn = (id) => _customMerchantServices.has(id) && (_customMerchantServiceGates.get(id)?.() ?? true);",
     "new": "const serviceOn = (id) => _customMerchantServices.has(id);",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "RR3-24-a-second-service-replaces-the-first",
-    "file": "src/systems/guildServices.js",
+    "file": "src/systems/guild/guildServices.js",
     "old": "  if (_customMerchantServices.has(npcFactionId)) return false;\n  _customMerchantServices.set(npcFactionId, service);",
     "new": "  _customMerchantServices.set(npcFactionId, service);",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "RR3-33-the-route-ignores-the-custom-service",
-    "file": "src/systems/guildServiceFlow.js",
+    "file": "src/systems/guild/guildServiceFlow.js",
     "old": "    if (hasCustomMerchantService(npcFactionId)) return { kind: 'merchant', service: 'sell' };\n",
     "new": "",
     "tests": [

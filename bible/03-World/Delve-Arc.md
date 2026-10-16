@@ -24,7 +24,7 @@ whole outside the repository; not yet seen in the game.
 
 ## SENSE1 - THE LOOK ROUND (SHIPPED 2026-10-05)
 
-`systems/dungeonSense.js`, read by `scenes/dungeonContext.js` (`senseLookRound`, `senseFrame`).
+`systems/dungeon/dungeonSense.js`, read by `scenes/dungeonContext.js` (`senseLookRound`, `senseFrame`).
 
 - **THE CUE IS INFO MODE.** Every letter key is spent (KB1), and Info is Daggerfall's examining stance, so an ASK for
   it underground - its key (F3 by default), the HUD's cycle, the pad's - is a look round. ChangeInteractionMode is a
@@ -62,7 +62,7 @@ whole outside the repository; not yet seen in the game.
 
 ## ECHO1 - THE CHAIN'S ECHO, AND ITS EXAMINE (SHIPPED 2026-10-05)
 
-`systems/dungeonEcho.js`, read by `scenes/dungeonContext.js` (`echoFrame`, the `act:`/`door:` arm of `_dungeonHoverName`).
+`systems/dungeon/dungeonEcho.js`, read by `scenes/dungeonContext.js` (`echoFrame`, the `act:`/`door:` arm of `_dungeonHoverName`).
 
 - **WHAT WAS SET GOING.** `ActionSystem.onPlayed(o, triggerType)` - an observer called in `receive` after the gate
   passes, before Play; nothing reads back. The context keeps the ActionObject plays (the cascade - what a press, a plate
@@ -93,7 +93,7 @@ whole outside the repository; not yet seen in the game.
 `systems/wayOut.js`, read by `scenes/dungeonContext.js wayOutMark`, drawn by `ui/enhancedHud.js drawWayOutMark`
 (through `ui/hud.js drawHud`'s `wayOut`).
 
-- **THE TRAIL WALKED BACK.** The held map keeps where the player has STOOD (`systems/automap.js automapTrailTick`, a
+- **THE TRAIL WALKED BACK.** The held map keeps where the player has STOOD (`systems/automap/automap.js automapTrailTick`, a
   one-metre grid at the scan's 5 Hz, saved) - and every cell between two samples up to `TRAIL_FILL_M` (3 m) apart, since
   a run's sample skips a cell (AUDIT DELVE B1; past it the player was carried). A breadth-first field from the way in
   (the start marker - the map's own beacon) over those cells: two side by side (or one over the other) within
@@ -115,7 +115,7 @@ whole outside the repository; not yet seen in the game.
 
 ## GUIDE8 - THE GUIDANCE TIERS (SHIPPED 2026-10-05; the Town tier and the Exact tier indoors at AUDIT DELVE)
 
-`systems/questGuidance.js` (`GUIDANCE_TIERS`: Journal / Town / Exact). Underground, `scenes/worldModes.js
+`systems/quest/questGuidance.js` (`GUIDANCE_TIERS`: Journal / Town / Exact). Underground, `scenes/worldModes.js
 dungeonQuestMarksHere` (the host owns the stands and the quest foes) hands `questMarks` to `scenes/dungeonContext.js`,
 which draws them on the held map (`quests`) and the compass (`questCompassMark`, `questCompassPick`); indoors,
 `interiorQuestMarksHere` hands them to the interior's map and its compass; on the street, `scenes/world.js`.

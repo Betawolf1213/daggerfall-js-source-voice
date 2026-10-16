@@ -36,7 +36,7 @@ import { billboardSize } from '../src/world/rmbFlats.js';
 import { createDataPipeline, LAST_CLASSIC_TEXTURE_ARCHIVE } from '../src/scenes/dataPipeline.js';
 import { color32Bytes } from '../src/render/renderer.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { CREDITS } from '../src/ui/credits.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';

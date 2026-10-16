@@ -28,8 +28,8 @@ import { SD_BLOWS, SD_BODY, SD_REM } from '../src/net/sdRemnant.js';
 import { buildRealmModel, realmLampFeet, SD_LAMP_H, SD_LAMP_HEAD, SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
 import { buildHallModel, stoneFrame, SD_STONE_SIZE } from '../src/world/sdHall.js';
 import { SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
-import { sdCities, sdTemplates } from '../src/systems/sdSite.js';
-import { hubClaim } from '../src/systems/regionHubs.js';
+import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
+import { hubClaim } from '../src/systems/region/regionHubs.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const read = (p) => readFileSync(p, 'utf8');

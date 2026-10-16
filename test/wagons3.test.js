@@ -2,27 +2,27 @@
 // overworld 2. Spawning the wagon can trap you under the wagon 3. ... sit on the wagon itself, the ledge its built for
 // and requiring 2 horses to use. 4. Proper animated rope mechanics that connect the horses to the wagon 5. Using a wagon
 // doesnt allow you to zoom out into 3rd person when mounted"; asked: "Open Wagon + Caravan", "Buy a second Horse",
-// "Traces and reins"). The law (systems/wagonKinds.js, world/wagonModels.js, systems/wagonRopes.js), the pool
+// "Traces and reins"). The law (systems/wagon/wagonKinds.js, world/wagonModels.js, systems/wagon/wagonRopes.js), the pool
 // (scenes/horseCartPool.js - the team, the driver, the harness, the parked box, the Overworld's rig), the runtime's gate
-// (systems/horseCart.js) and the hosts' seat (scenes/world.js, scenes/exterior.js, player/mwView.js).
+// (systems/horse/horseCart.js) and the hosts' seat (scenes/world.js, scenes/exterior.js, player/mwView.js).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld } from './hccWorld.mjs';
-import { TRANSPORT, WAGON_MODE, HORSE_MODE, HITCHED_HORSE_LOCAL_Z, DEPLOY_CLEARANCE, HORSE_BOX_SIZE, HCC_ACTION_TEXT } from '../src/systems/horseCartLaw.js';
+import { TRANSPORT, WAGON_MODE, HORSE_MODE, HITCHED_HORSE_LOCAL_Z, DEPLOY_CLEARANCE, HORSE_BOX_SIZE, HCC_ACTION_TEXT } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool, CAPSULE_BOX_SKIN, TEAM_MAX, WAGON_BUCKET } from '../src/scenes/horseCartPool.js';
-import { HCC_WIRE_KIND } from '../src/systems/horseCartWire.js';
+import { HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';
 import {
   WAGON_KINDS, wagonHorsesOf, horseCountOf, wagonTeamShort, WAGON_TEAM_TEXT, newWagonItem,
-} from '../src/systems/wagonKinds.js';
-import { TRANSPORT_HORSE } from '../src/systems/itemTemplates.js';
+} from '../src/systems/wagon/wagonKinds.js';
+import { TRANSPORT_HORSE } from '../src/systems/item/itemTemplates.js';
 import {
   MEASURED, LIFT, TEAM, driverSeatFor, teamSidesOf, traceRootsOf, DRIVER_HANDS_TOP, RIG_READ_M, rigLengthOf, rigGrowOf,
   wagonGeometry, buildBakedWagonParts,
 } from '../src/world/wagonModels.js';
 import { SEATED_HIP_HEIGHT, SEAT_HIP_DROP, SEAT_PELVIS_HEIGHT, seatedMotion, seatedCamera, seatRigInput, seatTopByte } from '../src/player/seatPose.js';
-import { ROPE, newRope, layRope, stepRope, restSag, tubeModel, tubeInto, tubeVertexCount } from '../src/systems/wagonRopes.js';
+import { ROPE, newRope, layRope, stepRope, restSag, tubeModel, tubeInto, tubeVertexCount } from '../src/systems/wagon/wagonRopes.js';
 import { TEX, WAGON_ARCHIVE, wagonArt } from '../src/world/wagonArt.js';
 import { quatAngleAxis, UNITY_QUAT_IDENTITY, quatRotate as quatRotateT, quatForward } from '../src/world/quat.js';
 import { FOCAL_HEIGHT } from '../src/player/mwCamera.js';   // AUDIT WAGONS3 B1: the camera's own focal over the seat
@@ -441,7 +441,7 @@ test('WAGONS3 THE PARKED BOX NEVER HOLDS ME (Mac: "Spawning the wagon can trap y
     assert.equal(pool.capsuleInBox(m, pool.partsOf(kind)), true, 'past the skin: in it');
   }
   // the classic wagon keeps the mod's own 2.5 m
-  const src = rd('src/systems/horseCart.js');
+  const src = rd('src/systems/horse/horseCart.js');
   assert.match(src, /function deploySetback\(\) \{ const z = hitchZ\(\); return z > HITCHED_HORSE_LOCAL_Z \? z \+ DEPLOY_CLEARANCE : WAGON_FOLLOW_DISTANCE; \}/);
   assert.match(src, /const \[wx, wz\] = toWorld\(vsub\(playerPosition\(\), vscale\(fwd, deploySetback\(\)\)\)\);   \/\/ WAGONS3: clear of the player/);
   assert.match(src, /const \[wx, wz\] = toWorld\(vsub\(playerPosition\(\), vscale\(heading, deploySetback\(\)\)\)\);/);
@@ -551,7 +551,7 @@ test('WAGONS3 TWO HORSES TO PULL A PAIR\'S WAGON: short of its pair the wagon is
   rt.handleQuickMountOrDismount(); step(2);
   assert.equal(w.said.includes(w.short), false, `the hotkey never asks for the wagon (${w.said})`);
   assert.equal(w.mode, TRANSPORT.Horse, 'it takes the horse');
-  const src = rd('src/systems/horseCart.js');
+  const src = rd('src/systems/horse/horseCart.js');
   assert.match(src, /function hitchDeployedWagon\(\) \{\n\s+if \(refuseShortTeam\(\)\) return;/, 'the plaque\'s and the horse\'s hitch refuse it too');
   assert.match(src, /function startFollowingHitchedTeam\(\) \{\n\s+if \(refuseShortTeam\(\)\) return;/);
   assert.match(src, /entryMode === TRANSPORT\.Cart && tm\(\)\.hasCart\(\) && tm\(\)\.hasHorse\(\) && !teamShort\(\)/, 'a failed door\'s rollback never hitches a short team');

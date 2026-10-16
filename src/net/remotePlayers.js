@@ -1169,7 +1169,7 @@ export class RemotePlayers {
     const viewer = eye && eye.length === 3 ? eye : f;
     const stepped = bundle.mobileUnit.update(dt, { moving, striking }, yaw, f, viewer);
     // PEER-ACTS: kneeling at an act - a herb, the Basket's search, the knife at a body - the sprite kneels as a yielding foe
-    // kneels (REVENANT-FATE's held hurt frame, systems/revenantFate.js), its own clock untouched; a one-shot plays through
+    // kneels (REVENANT-FATE's held hurt frame, systems/revenant/revenantFate.js), its own clock untouched; a one-shot plays through
     const out = peerKneeling(shown) && !moving && !bundle.mobileUnit.isPlayingOneShot() ? bundle.mobileUnit.heldPose('hurt', -1, yaw, f, viewer) : stepped;
     const rkey = `${out.record}#${out.frame}`;
     if (!this.renderer.textures?.has?.(`${bundle.archive}_${rkey}`)) this.deps.uploadRecordFrame(bundle.archive, out.record, out.frame);

@@ -10,7 +10,7 @@
   },
   {
     "name": "QUEST-HOME-the-boots-word-not-kept",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    everyTown = next;\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "QUEST-HOME-homeStands-asks-the-asked-towns-alone",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey) || !!everyTown.get(idOf(mapId))?.has(buildingKey);",
     "new": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "QUEST-HOME-the-towns-asked-unheard",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey) || !!everyTown.get(idOf(mapId))?.has(buildingKey);",
     "new": "  const homeStands = (mapId, buildingKey) => !!everyTown.get(idOf(mapId))?.has(buildingKey);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "QUEST-HOME-the-word-not-taken",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (homeBuildingKeyOk(k) && !keys.has(k)) { keys.add(k); became = true; }",
     "new": "if (homeBuildingKeyOk(k) && !keys.has(k)) { became = true; }",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "QUEST-HOME-the-re-pick-never-asked",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (became) told();",
     "new": "",
     "tests": [

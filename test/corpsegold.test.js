@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 import { validSharedFoe, respawnDue } from '../src/net/wire.js';
 import { validActionRecord } from '../src/world/actionSystem.js';
-import { validLootList } from '../src/systems/loot.js';
+import { validLootList } from '../src/systems/loot/loot.js';
 import { peerHanded } from '../src/systems/peerWord.js';   // SS3 (the Sigil Stones merge): the lifted loot seams drop a bound piece from a peer's list; PIN MOVED (HACKED-GOLD): and a letter of credit - the seams read systems/peerWord.js peerHanded
 import { keepRebuiltSpawn } from '../src/characters/enemyAnchor.js';
 import { renownFoeCarry, renownFoeRevived } from '../src/net/renownTracker.js';

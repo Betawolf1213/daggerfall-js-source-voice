@@ -18,7 +18,7 @@ import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { Renderer } from '../src/render/renderer.js';
 import { useItem } from '../src/systems/useItem.js';
 import { tickPlayerMinutes } from '../src/systems/worldTick.js';
-import { LIVE, setValue, getBool } from '../src/systems/settings.js';
+import { LIVE, setValue, getBool } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

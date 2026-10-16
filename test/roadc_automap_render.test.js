@@ -40,7 +40,7 @@ import {
   signalAutomapReset, resetAutomapWindowState, _setAutomapArt,
 } from '../src/ui/automapWindow.js';
 import { automapTooltipFor } from '../src/ui/automapText.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

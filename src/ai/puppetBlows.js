@@ -88,7 +88,7 @@ export const blowWireKey = (r) => `${r.wk ?? ''}/${r.wn ?? ''}/${r.wy ?? ''}/${r
  * the same serial again after it landed here (my clock ahead) is nothing new. A record without `wk` before the landing:
  * an overreach lands it (it follows a landing only), a feint's cut dashes its mark, anything else is a break (its held
  * arm cancelled); at or past the landing it lands on its own clock. FEUD WIRE: `sig` the host's signature numbers
- * (systems/revenantFeud.js SIG - the brain brings no revenant system): a blow its owner flags one strikes at its
+ * (systems/revenant/revenantFeud.js SIG - the brain brings no revenant system): a blow its owner flags one strikes at its
  * multiplier, in its ember, its WIND deeper. Answers the synthetic state.
  */
 export function applyBlowRecord(ai, r, { origin = null, me = false, entity = null, collider = null, now = tacticsNow(), sig = null } = {}) {

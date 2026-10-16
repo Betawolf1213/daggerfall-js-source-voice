@@ -26,7 +26,7 @@ import { FRIEND_AT, ENEMY_AT, HOSTILE_AT } from '../src/systems/livingWorld/rela
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { talkPanelModel } from '../src/ui/enhancedTalk.js';
 import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = 1_800_000_000;

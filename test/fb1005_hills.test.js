@@ -92,7 +92,7 @@ test('HILL-SHAPES with ARENA2: Ipsham itself - Beautiful Villages\' grid stands 
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const WDR = await import('../src/formats/worldDataReplacement.js');
   const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const maps = new MapsFile(); maps.load(rd('MAPS.BSA'), rd('CLIMATE.PAK'), rd('POLITIC.PAK'));
   const blocks = new BlocksFile(); blocks.load(rd('BLOCKS.BSA'));
   const arch = new Arch3dFile(); arch.load(rd('ARCH3D.BSA')); arch.autoDiscard = false;
@@ -135,7 +135,7 @@ test('HILL-SHAPES with ARENA2: over every block of both packs that stands a hill
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const WDR = await import('../src/formats/worldDataReplacement.js');
   const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
-  const { setValue } = await import('../src/systems/settings.js');
+  const { setValue } = await import('../src/systems/settings/settings.js');
   const maps = new MapsFile(); maps.load(rd('MAPS.BSA'), rd('CLIMATE.PAK'), rd('POLITIC.PAK'));
   const blocks = new BlocksFile(); blocks.load(rd('BLOCKS.BSA'));
   const arch = new Arch3dFile(); arch.load(rd('ARCH3D.BSA')); arch.autoDiscard = false;

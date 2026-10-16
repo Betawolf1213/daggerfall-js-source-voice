@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { LookFilter, takeFrameLook } from '../src/player/lookFilter.js';
 import { dfuLookAxes, lookScale } from '../src/ui/lookSettings.js';
-import { setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { inertiaStep, readWidgetSettings } from '../src/combat/weaponWidgetMotion.js';
 import { calculateAttackDamage, setAttackOnPlayerHook } from '../src/combat/formulas.js';
 import { installPcaao, uninstallPcaao } from '../src/combat/pcaao.js';

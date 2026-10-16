@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as L from '../src/world/underwaterLoot.js';
 import { createUnderwaterLoot } from '../src/scenes/deepWatersLoot.js';
-import { createRandomReligiousItem, createRandomGem, createRandomJewellery, createRandomOfGroup, ITEM_GROUPS, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot.js';
+import { createRandomReligiousItem, createRandomGem, createRandomJewellery, createRandomOfGroup, ITEM_GROUPS, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 
 const f32 = Math.fround;
@@ -163,11 +163,11 @@ test('DW-E5: ItemBuilder\'s group draws - CreateRandomReligiousItem, CreateRando
   // the RL row of matrix K (100): its first religious item is the draw's
   const items = generateRandomLoot(LOOT_MATRICES.K, { level: 1, gender: 'male' }, () => 0);
   assert.ok(items.some((it) => it.group === 'ReligiousItems' && it.templateIndex === ITEM_GROUPS.ReligiousItems[0]));
-  const src = rd('src/systems/loot.js');
+  const src = rd('src/systems/loot/loot.js');
   assert.doesNotMatch(src, /group: '(ReligiousItems|Gems|Jewellery)', templateIndex: pick\(/, 'no inline copy of the three draws');
   assert.match(src, /halving\(matrix\.RL, \(\) => createRandomReligiousItem\(rolls\)\);/);
   assert.match(src, /else if \(groupId === 10\) base = createRandomReligiousItem\(rolls\);\n\s+else if \(groupId === 14\) base = createRandomGem\(rolls\);\n\s+else base = createRandomJewellery\(rolls\);/);
-  assert.match(rd('src/systems/rriKits.js'), /const randomOf = \(group, rolls\) => mint\(createRandomOfGroup\(group, rolls\)\);/);
+  assert.match(rd('src/systems/roleplayRealismItems/rriKits.js'), /const randomOf = \(group, rolls\) => mint\(createRandomOfGroup\(group, rolls\)\);/);
 });
 
 test('DW-E5: droppedLoot - a container drawn by another pass has no batch of its own and is every other thing a pile is; removePile frees it; an emptied one is deactivated and leaves the other pass\'s list (mutants: drawn, remove, the list)', async () => {

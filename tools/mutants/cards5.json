@@ -181,7 +181,7 @@
   },
   {
     "name": "C5-remote-no-shift",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    const shift = (t) => (Number.isFinite(t) && Number.isFinite(f.now) ? t - f.now + local : local);",
     "new": "    const shift = (t) => t;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "C5-remote-turn-always",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    return h.toAct >= 0 && st.handSeats[h.toAct] === this.chair ? this.turn.legal : null;",
     "new": "    return this.turn.legal;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "C5-remote-no-catchup",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    else if (st.hand && st.handNo !== this.seenHand) {",
     "new": "    else if (false) {",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "C5-remote-holes-all",
-    "file": "src/systems/cardRemoteTable.js",
+    "file": "src/systems/card/cardRemoteTable.js",
     "old": "    if (chair !== this.chair || !this.hole || this.hole.handNo !== this.state?.handNo) return -1;",
     "new": "    if (!this.hole) return -1;",
     "tests": [

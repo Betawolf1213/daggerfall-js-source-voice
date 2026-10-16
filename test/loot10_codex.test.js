@@ -13,19 +13,19 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as CX from '../src/systems/lootCodex.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as CX from '../src/systems/loot/lootCodex.js';
 import { AETHERIC_RECORDS, mintAetheric } from '../src/systems/aetheric.js';
 import { GILDED_RECORDS } from '../src/systems/gilded.js';   // GILDED2: the rung's records, counted
-import { welkyndShards } from '../src/systems/gateSpoils.js';
+import { welkyndShards } from '../src/systems/gate/gateSpoils.js';
 import { shardsHeld } from '../src/systems/reforge.js';
 import { takeOneInto } from '../src/systems/inventory.js';
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords } from '../src/systems/modSaveData.js';
 import { registerPresenter } from '../src/systems/notify.js';
 import { setOneShotObserver } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { wornPowers } from '../src/systems/lootPowers.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { wornPowers } from '../src/systems/loot/lootPowers.js';
 import { equipItem } from '../src/systems/equip.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { withDom } from './invdrag.mjs';
@@ -82,15 +82,15 @@ test('LOOT10: how a find is seen - at the take, at the round\'s sweep (the pack 
   equipItem(e, worn);   // worn, and on the table alone - the sweep reads what it wears too
   const s = heard(() => assert.equal(CX.sweepCodex(e), 2));
   assert.equal(s.lines.length, 2, 'each said');
-  assert.match(read('src/systems/lootCodex.js'), /registerMagicRoundHook\(CODEX, \(entity\) => \{ if \(entity\?\.isPlayer\) sweepCodex\(entity\); \}\);/, 'the round sweeps the player\'s own');
-  assert.match(read('src/systems/lootCodex.js'), /registerTakeListener\(CODEX, \(item\) => \{ noteFind\(item\); \}\);/);
+  assert.match(read('src/systems/loot/lootCodex.js'), /registerMagicRoundHook\(CODEX, \(entity\) => \{ if \(entity\?\.isPlayer\) sweepCodex\(entity\); \}\);/, 'the round sweeps the player\'s own');
+  assert.match(read('src/systems/loot/lootCodex.js'), /registerTakeListener\(CODEX, \(item\) => \{ noteFind\(item\); \}\);/);
   // a save from before the codex: what was carried is the codex's, and nothing is announced
   restoreModSaveRecords({});
   const q = heard(() => assert.equal(CX.sweepCodex({ isPlayer: true, items: [legend('worms-tooth')] }), 1));
   assert.deepEqual(q.lines, [], 'silently');
   const next = heard(() => CX.sweepCodex({ isPlayer: true, items: [legend('gortwogs-cleaver')] }));
   assert.equal(next.lines.length, 1, 'and the next find is said');
-  assert.match(read('src/scenes/world.js'), /import '\.\.\/systems\/lootCodex\.js';/, 'the game registers it');
+  assert.match(read('src/scenes/world.js'), /import '\.\.\/systems\/loot\/lootCodex\.js';/, 'the game registers it');
 });
 
 test('LOOT10: the record - saved, restored, a forged one cleaned, a new game none', () => {

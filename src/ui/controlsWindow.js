@@ -93,7 +93,7 @@ import { gameSettingsText } from '../systems/textDatabases.js';   // L10N3f: DFU
  *  grows a row without moving a pixel of anyone's art. Nothing is broken by the
  *  absence: the action ships bound to KeyF by default
  *  (systems/inputActions.js DEFAULT_BINDINGS), and online forces the enhanced
- *  lane whole (systems/onlineLane.js), so the one player who can use the action
+ *  lane whole (systems/online/onlineLane.js), so the one player who can use the action
  *  is the one player already looking at the window that offers it.
  *  test/soc5_interact.test.js pins both halves: this table still ends at 40, and
  *  the enhanced pane still lists the action.

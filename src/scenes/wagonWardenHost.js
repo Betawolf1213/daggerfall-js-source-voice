@@ -1,5 +1,5 @@
 // @ts-check
-// WARDEN1 (systems/wagonWarden.js - the law; scenes/wagonWardenShow.js - the throw played; net/wire.js WARDEN1 - the
+// WARDEN1 (systems/wagon/wagonWarden.js - the law; scenes/wagonWardenShow.js - the throw played; net/wire.js WARDEN1 - the
 // cell's clock): THE TOWN WATCH IN THE STREETS' HOST.
 //
 // MY WAGON'S STAMP: every frame the save's parked wagon is read (the HCC runtime's view - its anchor, natives); a wagon
@@ -11,7 +11,7 @@
 // THE THROWS:
 //   - The cell's word to me (`parkYeet`, online.js onParkYeet - of MY character's team, `k`): kept until the next street
 //     frame (AUDIT WARDEN1 C4 - one that came in a door's load wiped the horse left at the door, and one in my caravan's
-//     room let me out onto empty ground), then my save moves to the landing (systems/horseCart.js adoptYeet) and I am
+//     room let me out onto empty ground), then my save moves to the landing (systems/horse/horseCart.js adoptYeet) and I am
 //     told; the throw is played where my wagon was drawn, within WARDEN_SHOW_REACH of the eye.
 //   - The cell's word about another's team (a park word with a `y` it did not have - keptWord, called before the pool
 //     moves the record): the throw is played from where their team was drawn - live where their live wagon stands on the
@@ -32,10 +32,10 @@
 // The streaming host is where towns are played and parked in, online and off.
 //
 // Not a DFU member. Ledger A (WARDEN1).
-import { wardenStamp, validWardenStamp, stampFits, wardenWordOf, offlineDue, footprintRoadShare, landingsOf, strayOf, horseThrownWith, WARDEN_ROAD_SHARE, WARDEN_SAME_NATIVES, WARDEN_TEXT } from '../systems/wagonWarden.js';
+import { wardenStamp, validWardenStamp, stampFits, wardenWordOf, offlineDue, footprintRoadShare, landingsOf, strayOf, horseThrownWith, WARDEN_ROAD_SHARE, WARDEN_SAME_NATIVES, WARDEN_TEXT } from '../systems/wagon/wagonWarden.js';
 import { findTownPath, pathLine } from '../systems/livingWorld/townPaths.js';
 import { NAV_CELL } from '../world/cityNavigation.js';
-import { WAGON_MODE, HORSE_MODE } from '../systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE } from '../systems/horse/horseCartLaw.js';
 import { mapPixelOfWire, cellRoomOfWire, parkSpotOf } from '../net/wire.js';
 
 /** How far from the eye a throw is played, metres (past it the team is simply where it landed). */
@@ -85,7 +85,7 @@ export function wardenTownIn(built, translate, size, x, z) {
 export function createWagonWarden({
   hcc, runtime, shows, online, toWire, toScene, townAt, townName = () => '', wallNow = () => Date.now(),
   eye = () => null, street = () => true, notify = () => {}, myKey = () => null,
-  thrown = () => {},   // WAGONS4: my wagon was thrown - the host's upkeep wears it (systems/wagonUpkeep.js THROWN_WEAR)
+  thrown = () => {},   // WAGONS4: my wagon was thrown - the host's upkeep wears it (systems/wagon/wagonUpkeep.js THROWN_WEAR)
 }) {
   /** @type {any} */
   let stamp = null;
@@ -126,7 +126,7 @@ export function createWagonWarden({
     const nav = t.nav;
     const share = footprintRoadShare((gx, gy) => nav.weightAt(gx, gy), nav.width, nav.height, NAV_CELL, mid, [fx, fz], [(box[3] - box[0]) / 2, (box[5] - box[2]) / 2]);
     // AUDIT WARDEN1 R6: out through the nearest edge whose landing keeps the team in its own map pixel (a parked wagon
-    // is drawn in its owner's pixel alone - systems/horseCart.js), else in its own cell (a word from another cell's
+    // is drawn in its owner's pixel alone - systems/horse/horseCart.js), else in its own cell (a word from another cell's
     // ground drops the cell's record: the readers' team went as it landed), else the nearest
     const lands = landingsOf([0, 0, nav.width * NAV_CELL, nav.height * NAV_CELL], mid, strayOf(a)).map((l) => {
       const sc = t.toScene(l[0], l[1]), w = toWire([sc[0], 0, sc[1]]);

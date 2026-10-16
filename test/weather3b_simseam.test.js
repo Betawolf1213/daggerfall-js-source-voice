@@ -1,5 +1,5 @@
 // WEATHER3 slice B (2026-09-22): THE WORLD WEATHER MAP IS THE SKY - the
-// sim's seam (systems/weatherSim.js WEATHER3b). On the map's lane the
+// sim's seam (systems/weather/weatherSim.js WEATHER3b). On the map's lane the
 // player's word is the map at the player: every exterior frame, every
 // arrival as a jump, and indoors at the door they went in by. The day
 // roll's drain and CLK2's evolution stand down there; the front's peak is
@@ -13,10 +13,10 @@ import {
   tickWeather, rollClimateWeathersForDay, evolveClimateWeathers, setWeatherEvolution, applyClimateWeather,
   weatherRespawn, restoreWeather, currentFieldCells, currentFieldCell, setSharedWeather, setSnowGroundLaw,
   weatherForClimate, WEATHER_ENUM, MAP_JUMP_M, STALE_DRAIN_MINUTES,
-} from '../src/systems/weatherSim.js';
-import { weatherAt, systemsNear, wornAmong, bandAt, radialOf } from '../src/systems/weatherMap.js';
-import { FIELD_RANGE_M } from '../src/systems/weatherField.js';
-import { createWeatherFront, PRECIP_PEAK } from '../src/systems/weatherFront.js';
+} from '../src/systems/weather/weatherSim.js';
+import { weatherAt, systemsNear, wornAmong, bandAt, radialOf } from '../src/systems/weather/weatherMap.js';
+import { FIELD_RANGE_M } from '../src/systems/weather/weatherField.js';
+import { createWeatherFront, PRECIP_PEAK } from '../src/systems/weather/weatherFront.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

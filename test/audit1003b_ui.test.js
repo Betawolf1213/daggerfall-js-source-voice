@@ -1,13 +1,13 @@
 // AUDIT PRE-MERGE 1003b (2026-10-03, the owner: "We're going to do one last deep audit on everything before we push this.
 // It needs to be perfection"): THE PRIVATE SESSION'S CARD IN THE ARENA WINDOW (ARENA6; src/ui/arenaWindow.js over
-// src/systems/arenaBoard.js sessionCard, src/ui/enhancedPlusStyle.js) - lens U's findings, each red first, on chargenDom's
+// src/systems/arena/arenaBoard.js sessionCard, src/ui/enhancedPlusStyle.js) - lens U's findings, each red first, on chargenDom's
 // page as test/audit1003_ui.test.js mounts the window. The layout's measure is Chromium's (the lens's probe); the rules
 // that make it are pinned here. The record: bible/01-Overview/Audit-PreMerge-1003.md, its second pass.
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as AB from '../src/systems/arenaBoard.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
+import * as AB from '../src/systems/arena/arenaBoard.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { mountArenaWindow } from '../src/ui/arenaWindow.js';
 import { ARENA_WINDOW_CSS } from '../src/ui/enhancedPlusStyle.js';
 

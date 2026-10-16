@@ -22,7 +22,7 @@
   },
   {
     "name": "WODPEAKS-room-leaves-it",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'world-of-daggerfall': Object.freeze({ Enabled: true, Mountains: false }),",
     "new": "  'world-of-daggerfall': Object.freeze({ Enabled: true }),",
     "tests": ["test/wod1_vendor.test.js", "test/modsonline.test.js", "test/ow_wod.test.js"]

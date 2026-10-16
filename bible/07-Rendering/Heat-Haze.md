@@ -73,7 +73,7 @@ shader's `_Time.y`, held by a pause and scaled with the world (W4) - and the
 mod's keys are read when one is written (`hazeFrameSettings`, W7). `scenes/worldModes.js` and
 `scenes/dungeonContext.js` are FLAGGED, not wired: no desert sky stands
 indoors or underground, and their frames run inside the hosts' indoor branch.
-Online the haze is the player's own (`systems/onlineLane.js`
+Online the haze is the player's own (`systems/online/onlineLane.js`
 `ONLINE_PLAYERS_OWN_MODS`), drawn over a weather and an hour the room shares.
 
 ## Departures (Port-Ledger A, HAZE1)

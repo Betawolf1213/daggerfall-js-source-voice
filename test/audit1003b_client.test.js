@@ -11,9 +11,9 @@ import { ARENA_FLOOR_CENTRE, ARENA_TICK_MS, ARENA_JOIN_WAIT_MS, ARENA_PRIVATE_KE
 import { readArenaOut } from '../src/net/wire.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { callMs, COUNT_MS } from '../src/systems/arenaBout.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { sessionCard, onlineCards, arenaBoard } from '../src/systems/arenaBoard.js';
+import { callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { sessionCard, onlineCards, arenaBoard } from '../src/systems/arena/arenaBoard.js';
 
 const C = ARENA_FLOOR_CENTRE;
 const O = ARENA_TEXT.online;

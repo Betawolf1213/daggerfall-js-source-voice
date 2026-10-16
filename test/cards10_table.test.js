@@ -12,15 +12,15 @@ import { newGame, commit, reveal, deckValid, playsRefusal, legalPlays, iliacView
 import {
   iliacGrade, ILIAC_GRADE_BANDS, GRADE_TIERS, GRADE_SLIP, ILIAC_TEMPERS, ILIAC_TEMPER_NAMES, TEMPERS_AGREE, GRADE_SWAPS, TEMPER_UPGRADES,
   patronDeck, patronDeckSound, patronPlays, boardScore, forfeitCard, seededUnit, ILIAC_THINK_TRIALS,
-} from '../src/systems/iliacPatrons.js';
-import { IliacTableSession, ILIAC_THINK_MS, ILIAC_THINK_SPREAD_MS, ILIAC_REVEAL_MS, forfeitsFor, forfeitsAfter, forfeitsBookRestore, FORFEITS_BOOK_MAX } from '../src/systems/iliacTableSession.js';
+} from '../src/systems/iliac/iliacPatrons.js';
+import { IliacTableSession, ILIAC_THINK_MS, ILIAC_THINK_SPREAD_MS, ILIAC_REVEAL_MS, forfeitsFor, forfeitsAfter, forfeitsBookRestore, FORFEITS_BOOK_MAX } from '../src/systems/iliac/iliacTableSession.js';
 import { iliacHudModel, stagedRefusal, stagedSpend, viewCostOf, resultLine, prizeLine, createIliacTableHud, TEMPER_WORDS } from '../src/ui/iliacTableHud.js';
 import { iliacPlaces, iliacPoses, iliacLanded, ILIAC_THROW_S, ILIAC_HOLD_GAP } from '../src/world/iliacCloth.js';
 import { iliacAtlasCell, iliacCellUv, ILIAC_CLOTH_CARDS, ILIAC_CELL_BACK, ILIAC_ATLAS_COLS, ILIAC_ATLAS_ROWS, createIliacTableDraw, iliacCardModel } from '../src/render/iliacTableDraw.js';
 import { openIliacTableGame, iliacTemperOf, iliacEventLine } from '../src/scenes/iliacTableGame.js';
-import { giveBinderAtChargen, mintIliacCard, collectionOf } from '../src/systems/iliacItems.js';
+import { giveBinderAtChargen, mintIliacCard, collectionOf } from '../src/systems/iliac/iliacItems.js';
 import { BOSS_CARD_IDS } from '../src/systems/bossCards.js';
-import { TEMPER_NAMES } from '../src/systems/cardPatrons.js';
+import { TEMPER_NAMES } from '../src/systems/card/cardPatrons.js';
 import { fakeDoc, text } from './decorFakes.mjs';
 /** Every node under `n`. */
 const every = (n, out = []) => { out.push(n); for (const c of n.children ?? []) every(c, out); return out; };
@@ -99,7 +99,7 @@ test('CARDS10 a regular\'s play: a commit the rules take, built a play at a time
   assert.ok(patronPlays(rich, 0, 'loose', 2, seededUnit(1)).length >= 2, 'the setup: several plays worth laying');
   assert.equal(patronPlays(rich, 0, 'bluffer', 2, seededUnit(1)).length, 1, 'the bluffer holds his hand to one');
   assert.equal(forfeitCard([], () => 0), null);
-  assert.ok(read('src/systems/iliacPatrons.js').includes('const v = iliacView(copy, p);'), 'judged through his own seat\'s view');
+  assert.ok(read('src/systems/iliac/iliacPatrons.js').includes('const v = iliacView(copy, p);'), 'judged through his own seat\'s view');
 });
 
 test('CARDS10 the evening: the regular thinks, then commits; the turn turns over a beat after both have; six turns, then the result; for keeps the loser pays a card of his deck, a draw nobody, standing up concedes (mutants: the think; the beat; the prize\'s payer; the concession)', () => {
@@ -160,7 +160,7 @@ test('CARDS10 the forfeits\' book: a regular pays one card a game day at his tav
   assert.ok(!('t1' in b), 'the oldest day went first');
   assert.deepEqual(forfeitsBookRestore({ a: { day: 3, paid: ['Ana', 7] }, b: { day: 'x' }, c: null }), { a: { day: 3, paid: ['Ana'] } });
   assert.deepEqual(forfeitsBookRestore([1]), {});
-  const save = read('src/systems/save.js');
+  const save = read('src/systems/save/save.js');
   assert.match(save, /snap\.iliacForfeits = forfeitsBookRestore\(entity\.iliacForfeits\);/);
   assert.match(save, /entity\.iliacForfeits = forfeitsBookRestore\(snap\.iliacForfeits\);/);
 });

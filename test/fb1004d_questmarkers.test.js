@@ -34,7 +34,7 @@ import { ROW_CODECS } from '../src/formats/worldDataPack.js';
 import { patchJson } from '../src/formats/worldDataJson.js';
 import { _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { Collider } from '../src/player/collider.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, worldOf, mark, SPAWN, ITEM, ENTER } from './fb1004dTowns.mjs';
 import { ARENA2, HAVE_ARENA2, SKIP, BV, BC, packJson, openTowns, everyLocation } from './fb1004dArena.mjs';

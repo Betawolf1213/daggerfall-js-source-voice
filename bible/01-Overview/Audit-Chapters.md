@@ -21,7 +21,7 @@ and differs only where something is owed).
 
 ## Fixed
 
-**Daggerfall's law** (`src/net/npcChapterLaw.js`, `src/systems/guildFactions.js`)
+**Daggerfall's law** (`src/net/npcChapterLaw.js`, `src/systems/guild/guildFactions.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

@@ -151,7 +151,7 @@
   },
   {
     "name": "AUDIT625-W1-the-wallet-stands",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "  if (isBagItem(item) || isPackOnly(item)) return null;",
     "new": "  if (isBagItem(item)) return null;",
     "why": "the decorate panel sets the wallet out of the pack",
@@ -161,7 +161,7 @@
   },
   {
     "name": "AUDIT625-W2-the-wallet-taken",
-    "file": "src/systems/revenant.js",
+    "file": "src/systems/revenant/revenant.js",
     "old": "!isPackOnly(item) && !isLocked(item);",
     "new": "!isLocked(item);",
     "why": "a revenant takes the wallet",
@@ -521,7 +521,7 @@
   },
   {
     "name": "AUDIT625-P1-shed-deaf",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  if (!v || !(max > 0) || !(after > 0) || saved) return;",
     "new": "  if (!v || !(max > 0) || !(after > 0)) return;",
     "why": "Shed Skin heals on top of a death save",
@@ -551,7 +551,7 @@
   },
   {
     "name": "AUDIT625-P2-the-sigil-deaf",
-    "file": "src/systems/sigil.js",
+    "file": "src/systems/sigil/sigil.js",
     "old": "|| target.isPlayer || _dueling) return damage;",
     "new": "|| target.isPlayer) return damage;",
     "why": "the weapon's sigil bites a player's stand-in",
@@ -561,7 +561,7 @@
   },
   {
     "name": "AUDIT625-P2-the-word-twice",
-    "file": "src/systems/sigilSets.js",
+    "file": "src/systems/sigil/sigilSets.js",
     "old": "export function setSetsDueling(on) { setSigilDueling(on); }",
     "new": "export function setSetsDueling(on) { void on; }",
     "why": "the sets' word kept apart from the sigil's",
@@ -571,7 +571,7 @@
   },
   {
     "name": "AUDIT625-P3-one-coil-again",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  _s.coils.set(target, { n: Math.min(COIL_STACKS, coilStacksAt(target, now) + 1), until: now + COIL_SECONDS });",
     "new": "  _s.coils = new WeakMap(); _s.coils.set(target, { n: Math.min(COIL_STACKS, coilStacksAt(target, now) + 1), until: now + COIL_SECONDS });",
     "why": "one coil, moved to the foe struck last",
@@ -581,7 +581,7 @@
   },
   {
     "name": "AUDIT625-P3-a-death-ends-every-coil",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  if (entity) _s.coils.delete(entity);",
     "new": "  if (entity) _s.coils = new WeakMap();",
     "why": "a foe's death unwinds every coil",
@@ -591,7 +591,7 @@
   },
   {
     "name": "AUDIT625-P3-a-body-coiled",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  const c = foe && !(foe.health <= 0) ? _s.coils.get(foe) : null;",
     "new": "  const c = foe ? _s.coils.get(foe) : null;",
     "why": "a body a peer killed keeps its coil",
@@ -691,7 +691,7 @@
   },
   {
     "name": "AUDIT625-D2-the-embers-another-tier",
-    "file": "src/systems/serpentSpoils.js",
+    "file": "src/systems/serpent/serpentSpoils.js",
     "old": "{ kind: 'item', item: s.embers, tier: 'artifact' }",
     "new": "{ kind: 'item', item: s.embers, tier: 'legendary' }",
     "why": "the serpent's embers another glow than the gate's",

@@ -295,7 +295,7 @@ finishChargen`, `test/legacychoice.test.js`, `tools/mutants/legacychoice.json`):
   wagon, the bag - and into no chest, pile or ground (H4).
 - **The load's repairs reach what the line hands down (ITEM-WALK B, 2026-10-07).** A bequest reaches its heir at birth
   with no load, and the remains open where they lie, from the line's record, which may be the device's copy rather than
-  a save's (`mergeFamily`). The load's one-time item repairs (`systems/save.js` repairItemLists: DISC21-A, WEAPON-POOL,
+  a save's (`mergeFamily`). The load's one-time item repairs (`systems/save/save.js` repairItemLists: DISC21-A, WEAPON-POOL,
   DISC29-B, WB12a, RARITY-WEAR) run on each bequest piece as it is paid (`payEstateOf`), and on a remains list as it
   opens, before its claim's mark is taken, so opening it still claims nothing. A save's copy of the record is walked
   at every load besides (`heldItemLists`). `05-Combat/Physical-Combat-Overhaul.md` ITEM-WALK.
@@ -539,7 +539,7 @@ than standing still.
   and the record, alive still, stood them again with the next day's people). A townsperson killed so ends their
   courtship, as one struck down does. Neither death lays remains or a quest: those are the one played's (section 4).
 - **Online** (LEGACY7 part five, `test/legacy7_homes.test.js`, `tools/mutants/legacy7homes.json`): the realm keeps the
-  line, so a realm character's ONLINE HOMES (HOME1, `systems/onlineHomes.js` - a home is a realm character's) are its
+  line, so a realm character's ONLINE HOMES (HOME1, `systems/online/onlineHomes.js` - a home is a realm character's) are its
   houses, learned with the save as a deed is offline: the world reads this realm character's rows of the account's
   homes (`/v1/homes/mine`, each named by its town) at the boot and after each home of mine is bought, sold or changed
   (the registry's `onWrote`), and hands them to the house; a list not read yet learns nothing and drops nothing. So the

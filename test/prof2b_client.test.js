@@ -17,8 +17,8 @@ import { motherlodeKey, MOTHERLODE_RANK, MOTHERLODE_WATCH_S } from '../src/net/m
 import {
   standMotherlodes, motherlodePlan, mineKind, mineFlats, MOTHERLODE_FLATS, MOTHERLODE_SCALE, MOTHERLODE_MARK, NODE_SPACING_M, ROCK_OFFSET,
 } from '../src/scenes/mineHost.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { createMarksBook } from '../src/net/marksBook.js';

@@ -56,7 +56,7 @@
   },
   {
     "name": "TECH1-a-technique-in-the-pools",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const AFFIX_IDS = Object.freeze(Object.keys(AFFIX_KINDS).filter((id) => !AFFIX_KINDS[id].technique));",
     "new": "export const AFFIX_IDS = Object.freeze(Object.keys(AFFIX_KINDS));",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "TECH1-a-draw-at-no-chance",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!(perMille > 0)) return null;   // a tier with no chance",
     "new": "  if (false) return null;   // a tier with no chance",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "TECH1-the-pass-dropped",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  techniquePass(minted, rolls);   // TECH1: a weapon's technique - the door's LAST draw",
     "new": "  void minted;   // TECH1: a weapon's technique - the door's LAST draw",
     "tests": [
@@ -85,7 +85,7 @@
   },
   {
     "name": "TECH1-the-pass-before-the-damning",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  damnPass(minted, rolls);   // TRUE-CURSE: a cursed Legendary weapon damned, after every draw the door made, the gem's too (law 9)\n  techniquePass(minted, rolls);",
     "new": "  techniquePass(minted, rolls);\n  damnPass(minted, rolls);   // TRUE-CURSE: a cursed Legendary weapon damned, after every draw the door made, the gem's too (law 9)",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "TECH1-a-line-after-the-technique",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const at = affixes.findIndex((a) => a?.gem != null || !!AFFIX_KINDS[a?.id]?.technique);",
     "new": "  const at = affixes.findIndex((a) => a?.gem != null);",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "TECH1-the-technique-after-the-gem",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const gem = item.affixes.findIndex((a) => a?.gem != null);\n  item.affixes = gem < 0 ? [...item.affixes, line]",
     "new": "  const gem = -1;\n  item.affixes = gem < 0 ? [...item.affixes, line]",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "TECH1-a-second-technique",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "&& techniquesFor(item).length > 0 && !item.affixes.some(isTechniqueAffix);",
     "new": "&& techniquesFor(item).length > 0;",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "TECH1-the-reforge-out-of-the-family",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const pool = (was.technique ? ['technique'] : AFFIX_IDS).filter((id) => {",
     "new": "  const pool = AFFIX_IDS.filter((id) => {",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "TECH1-the-exalted-index",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (lines.length === 1 && item?.rarity === 'legendary' && isTechniqueAffix(list[lines[0]])) lines = [lines[0] - 1];",
     "new": "",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "TECH1-a-legendary-technique-its-record-band",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (item.rarity === 'legendary' && isTechniqueAffix(a)) return AFFIX_RANGES.technique.legendary;",
     "new": "",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "TECH1-the-card-detail-dropped",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    const d = techniqueDetail(a);",
     "new": "    const d = '';",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "TECH1-the-worth-moved",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  technique: 30 });",
     "new": "  technique: 31 });",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "TECH1-another-family-params",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (id === 'technique') return techniquesFor(item);",
     "new": "",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "TECH1-the-technique-names-the-piece",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "technique: Object.freeze({ slot: null,",
     "new": "technique: Object.freeze({ slot: 'suffix',",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "TECH1-law-the-place",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  if (techs.length > 1 || (techs.length === 1 && own[own.length - 1] !== techs[0])) out.push('affixes');",
     "new": "  if (techs.length > 1) out.push('affixes');",
     "tests": [
@@ -193,7 +193,7 @@
   },
   {
     "name": "TECH1-law-the-count",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  if (techs.length > 1 || (techs.length === 1 && own[own.length - 1] !== techs[0])) out.push('affixes');",
     "new": "  if (techs.length === 1 && own[own.length - 1] !== techs[0]) out.push('affixes');",
     "tests": [
@@ -202,7 +202,7 @@
   },
   {
     "name": "TECH1-law-the-technique-counted",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "  const body = own.filter((a) => !AFFIX_KINDS[a?.id]?.technique);",
     "new": "  const body = own;",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "TECH1-law-the-version",
-    "file": "src/systems/itemLaw.js",
+    "file": "src/systems/item/itemLaw.js",
     "old": "export const ITEM_LAW_VERSION = 5;",
     "new": "export const ITEM_LAW_VERSION = 1;",
     "tests": [

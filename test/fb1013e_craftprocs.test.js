@@ -20,10 +20,10 @@ import { courierFee, courierSeconds, roadPixels } from '../src/net/marketLaw.js'
 import { RECIPES, recipeById, QUALITY_EFFECTS } from '../src/net/recipeLaw.js';
 import { mintProductRecord, readProductRecord, productRecordValid, mintVersionOf, MINT_VERSION, MINT_V_LAST_PASS } from '../src/net/productRecord.js';
 import { mintPiece, mintPieces, temperItem, reforgeItem, asMinted } from '../src/systems/smithItems.js';
-import { AFFIX_IDS, AFFIX_KINDS, AFFIX_RANGES, PROC_PER_MILLE, LOOT_RARITY_KEY, affixesWorth, applyRarity, lastPass, reforgeableLines } from '../src/systems/lootRarity.js';
+import { AFFIX_IDS, AFFIX_KINDS, AFFIX_RANGES, PROC_PER_MILLE, LOOT_RARITY_KEY, affixesWorth, applyRarity, lastPass, reforgeableLines } from '../src/systems/loot/lootRarity.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
-import { seededRng } from '../src/systems/wind.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
+import { seededRng } from '../src/systems/wind/wind.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
 import { setPref, getPref } from '../src/systems/uiPrefs.js';
 
 const PROV = '0123456789abcdef';
@@ -119,7 +119,7 @@ test('CRAFT-PROCS: a crafted weapon takes a weapon\'s kinds and armour thorns - 
     for (const q of [3, 4]) assert.deepEqual(mint(r, q, seedOf(i), MINT_VERSION), mint(r, q, seedOf(i), 0), `${r.id} q${q}`);
   }
   // THE SWITCH: the piece is its record's on every client - Loot Rarity off mints it the same (the line sleeps in its
-  // reader, systems/lootPowers.js), as the quality's roll always was
+  // reader, systems/loot/lootPowers.js), as the quality's roll always was
   const had = getPref(LOOT_RARITY_KEY);
   const ring = recipeById('ring:silver:ruby');
   const ones = [];

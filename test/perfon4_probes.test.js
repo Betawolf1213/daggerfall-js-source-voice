@@ -8,7 +8,7 @@
 // plugins each probe's server is built with: the online lane no longer refuses `?shot` (and refuses all else it did),
 // the account base takes the local service and nothing else new, the hook reads the session and the way book where they
 // stand. The files are named here so `npm run test:changed` picks this file for a change to any of them:
-// src/systems/buildBreather.js, src/render/labGrass.js, src/net/accountClient.js, src/systems/onlineLane.js,
+// src/systems/buildBreather.js, src/render/labGrass.js, src/net/accountClient.js, src/systems/online/onlineLane.js,
 // src/scenes/world.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +17,7 @@ import { FRAME_PROBE_EDITS, editsPlugin, probeTransforms } from '../tools/frameP
 import { ONLINE_PROBE_EDITS, probePlugins, crowdsOf } from '../tools/onlineFrameProbe.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const NEEDLE_FILES = ['src/systems/buildBreather.js', 'src/render/labGrass.js', 'src/net/accountClient.js', 'src/systems/onlineLane.js', 'src/scenes/world.js'];
+const NEEDLE_FILES = ['src/systems/buildBreather.js', 'src/render/labGrass.js', 'src/net/accountClient.js', 'src/systems/online/onlineLane.js', 'src/scenes/world.js'];
 /** A file as the online probe's page server serves it: every transform its server is built with, in order. */
 const served = (file) => probePlugins().reduce((code, pl) => pl.transform(code, `/repo/${file}?v=1`) ?? code, src(file));
 
@@ -51,7 +51,7 @@ test('PERF-ON4 (AUDIT PERF-ON4 F4): EACH EDIT DOES WHAT IT IS FOR, as the probes
   }
   // the online lane: `shot` unrefused, every other refusal as it stands
   const flags = (code) => Function(`return ${/export const ONLINE_REFUSED_FLAGS = (Object\.freeze\(\[[^\]]*\]\));/.exec(code)[1]}`)();
-  const was = flags(src('src/systems/onlineLane.js')), now = flags(served('src/systems/onlineLane.js'));
+  const was = flags(src('src/systems/online/onlineLane.js')), now = flags(served('src/systems/online/onlineLane.js'));
   assert.ok(was.includes('shot'), 'the tree refuses `?shot` online');
   assert.deepEqual(now, was.filter((f) => f !== 'shot'), 'the probe\'s page refuses all else, and not `?shot`');
   // the account base

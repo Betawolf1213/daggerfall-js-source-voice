@@ -14,7 +14,7 @@ import {
   WAYPOINT_KINDS, WAYPOINT_COLORS, WAYPOINT_TEXT, WAYPOINT_NAME_MAX, waypointById, nextWaypointName, addWaypoint,
   renameWaypoint, recolorWaypoint, removeWaypoint, setWaypointFollowed, isWaypointFollowed, shareWaypoint,
   waypointSharingLive, cleanWaypointName,
-} from '../systems/mapWaypoints.js';
+} from '../systems/map/mapWaypoints.js';
 
 export const WAYPOINT_MENU_ID = 'wp-menu';
 const STYLE_ID = 'wp-menu-style';

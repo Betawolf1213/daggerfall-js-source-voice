@@ -9,8 +9,8 @@
   {
     "name": "BOOT-HIDE-exit-save-handed-to-the-page-where-it-is-named",
     "file": "src/scenes/world.js",
-    "old": "  /** REALM P0.5 (systems/onlineCheckpoint.js): THE CHARACTER SAVED AS IT PLAYS ONLINE",
-    "new": "  addEventListener('beforeunload', exitAutosave);\n  /** REALM P0.5 (systems/onlineCheckpoint.js): THE CHARACTER SAVED AS IT PLAYS ONLINE",
+    "old": "  /** REALM P0.5 (systems/online/onlineCheckpoint.js): THE CHARACTER SAVED AS IT PLAYS ONLINE",
+    "new": "  addEventListener('beforeunload', exitAutosave);\n  /** REALM P0.5 (systems/online/onlineCheckpoint.js): THE CHARACTER SAVED AS IT PLAYS ONLINE",
     "tests": ["test/fb0929h_boothide.test.js"]
   },
   {

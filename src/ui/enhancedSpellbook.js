@@ -36,9 +36,9 @@ import {
   cannotDeleteVampText, cannotDeleteWereText, deleteSpellPrompt,
   VAMPIRE_SPELL_TAG, LYCANTHROPY_SPELL_TAG, editBookSpell,
 } from './spellbookWindow.js';
-import { effectByKey, classicEffectSettings } from '../systems/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"computed from the"); SB-FX: and the settings its effect popup reads
+import { effectByKey, classicEffectSettings } from '../systems/spell/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"computed from the"); SB-FX: and the settings its effect popup reads
 import { t } from '../systems/textManager.js';   // SB-FX: an effect's numbers in the player's language
-import { shownSpellName } from '../systems/loot.js';   // L10N3e: a stock spell's name in the player's language
+import { shownSpellName } from '../systems/loot/loot.js';   // L10N3e: a stock spell's name in the player's language
 import { spellQuickslot, setSpellQuickslot, clearSpellQuickslot } from '../systems/quickslots.js';   // HOTSLOT: the book is where a spell is slotted
 import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS, SPELL_ICON_COUNT } from './spellIcons.js';
 import { spellIconPicture, spellIconUrl } from './enhancedArt.js';   // UI2: the spell's own icon, carried onto the hotbar
@@ -81,7 +81,7 @@ let deleting = null;   // AUDIT 39: DeleteButton's deleteSpellIndex - the row th
  * instead of what the spell actually does"): AND IT READ THEM WRONG.
  * It decided a component was there when its field was not zero, and
  * no producer writes a zero there: the Spell Maker inscribes a greyed
- * spinner at its floor of 1 (systems/spellMaker.js blankEffectSettings,
+ * spinner at its floor of 1 (systems/spell/spellMaker.js blankEffectSettings,
  * DefaultEffectSettings' "1 + 1 per level"), and every stock SPELLS.STD
  * effect holds the same 1s - so a Damage Health read "1 +1/level
  * rounds" and "1% +1/level", a duration and a chance it does not have.
@@ -91,7 +91,7 @@ let deleting = null;   // AUDIT 39: DeleteButton's deleteSpellIndex - the row th
  *
  * So the book reads the effect the way DFU instantiates it: the
  * settings are ClassicEffectRecordToEffectSettings' (the one port,
- * systems/spellEffects.js classicEffectSettings), a component is shown
+ * systems/spell/spellEffects.js classicEffectSettings), a component is shown
  * only when the effect class SUPPORTS it (SupportDuration,
  * SupportChance, SupportMagnitude - the template's three flags, the
  * gates DaggerfallEffectSettingsEditorWindow.InitControlState greys the

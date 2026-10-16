@@ -39,11 +39,11 @@
 // a card stands, so a plaque that grows or shrinks as the player looks along a pile carries the feed with it rather
 // than covering it. tools/pickupFeedProbe.mjs photographed the first cut's fourth card under the hotbar at 1280x800.
 import { isEnhanced } from '../systems/uiSkin.js';
-import { itemNameParts } from '../systems/itemInfo.js';   // RF6: the long name's name part - the word the plaque's row and the take's line both wear
-import { rarityAttr } from '../systems/lootRarity.js';   // LR1: the tier the plaque's row wears
+import { itemNameParts } from '../systems/item/itemInfo.js';   // RF6: the long name's name part - the word the plaque's row and the take's line both wear
+import { rarityAttr } from '../systems/loot/lootRarity.js';   // LR1: the tier the plaque's row wears
 import { announces, isAcquired } from '../systems/acquireWatch.js';   // LOOT-BANNER: a new rare-or-better piece is the banner's
 import { isGoldPieces } from '../systems/inventory.js';
-import { inventoryItemImage } from '../systems/itemTemplates.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';   // UI1: the pack's own fitted, cached icon door - decoded once, never per frame
 import { screenDpr } from './iconFit.js';
 import { PIXEL_STACK, PIXEL_FONT_CSS, PIXELIFY_FIVE_FACE, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';

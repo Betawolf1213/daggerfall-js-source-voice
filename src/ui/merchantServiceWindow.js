@@ -29,7 +29,7 @@
 //
 // The custom-merchant-service arms (:112-115, :149-151) are Hazelnut's mod
 // hook - `Guilds.Services.HasCustomMerchantService`, a registry only a
-// mod writes to. RR3 ported the registry (systems/guildServices.js) for
+// mod writes to. RR3 ported the registry (systems/guild/guildServices.js) for
 // Roleplay & Realism's master armorer: the host hands the label in as
 // `hooks.label` and runs the service from its own `onService`.
 

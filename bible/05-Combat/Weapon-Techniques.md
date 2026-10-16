@@ -1,7 +1,7 @@
 # Weapon Techniques - the key a weapon answers (TECH1)
 
 `src/combat/techniqueRoster.js` (the roster, a leaf) + `src/combat/techniques.js` (the runner) +
-`src/combat/techniqueBlow.js` (the blow, a leaf) + the line in `src/systems/lootRarity.js` (`AFFIX_KINDS.technique`) +
+`src/combat/techniqueBlow.js` (the blow, a leaf) + the line in `src/systems/loot/lootRarity.js` (`AFFIX_KINDS.technique`) +
 `src/combat/techniqueFx.js` (THE FEEL) + `src/ui/techniqueCard.js` and `src/ui/techniqueGlyph.js` (The card's block)
 (the owner, 2026-10-10)
 
@@ -85,11 +85,11 @@ fists are already dressed in. A werebeast's claws answer "The beast knows no tec
 **Fatigue** is in the sheet's points, FATIGUE_MULTIPLIER (64) of the entity's own units each (a plain swing's drain is
 eight units, an eighth of a point - `SWING_FATIGUE_COST`); `techniqueFatigue` never scales it (a technique's price is the
 price), and a technique never spends the last of a body: the key refuses while the price and the blow's own drain after
-it would leave nothing (exhaustion with a foe near is death - `systems/rest.js`).
+it would leave nothing (exhaustion with a foe near is death - `systems/rest/rest.js`).
 
 ## The line
 
-`systems/lootRarity.js` `AFFIX_KINDS.technique`, **appended last** (after `castSpeed`), on **Weapons** and **Armor**
+`systems/loot/lootRarity.js` `AFFIX_KINDS.technique`, **appended last** (after `castSpeed`), on **Weapons** and **Armor**
 (the Gauntlets alone, by `kindParams`): `{ id: 'technique', param: <technique id>, value: <+N%> }`. It has **no slot**
 (it never names a piece) and it is **not among `AFFIX_IDS`**, the kinds the ladder's pools draw from - so the numbers'
 pass, the proc line, the Exalted's line, a curse's line and the Reforge's pool are each the pool it was, and every
@@ -122,7 +122,7 @@ existing seed draws what it drew. It comes from its own pass alone.
   own line stays the Reforge's (`reforgeableLines` steps back over a gem's line, then a technique's). On a Legendary that
   is not Exalted the technique's line is the find's alone - neither honed nor reforged, as the item law has it (`honed`
   is an Exalted Legendary's) - though its card shows the Legendary band it was rolled in.
-- **The item law** (`systems/itemLaw.js`, `ITEM_LAW_VERSION` 2 - the account service's judge reads the same file, so
+- **The item law** (`systems/item/itemLaw.js`, `ITEM_LAW_VERSION` 2 - the account service's judge reads the same file, so
   `JUDGE_VERSION` moves with it): at most one technique line, of a technique the piece's family knows, the last of its
   own lines, its value in its tier's band. A Legendary's signature and extra-line counts are taken without it, as the
   proc and numbers counts are.
@@ -270,7 +270,7 @@ The card's tier list carried a technique as two more lines, in the affixes' own 
 key read like one more `+17 Dodging`, and its second line broke mid-clause wherever the card's width fell
 (`... 172%. 5` / `fatigue, 12s`). On the Enhanced card it is now a **block of its own**, under the tier list and before
 the sigil's and the set's - the piece's own line, so the first of the blocks - drawn by `ui/techniqueCard.js` from
-`systems/lootRarity.js` `techniqueCardView`:
+`systems/loot/lootRarity.js` `techniqueCardView`:
 
 | Part | What it says |
 |---|---|
@@ -499,7 +499,7 @@ the real collider. What they found, and what was done:
 | A Morrowind arm's held plain hit could be claimed as a technique's loose | minor | `!_heldHit` in the gate |
 | A Volley's shafts took the weapon in hand when they fell, and could be born inside a wall or over a beam | minor | the loosing bow carried; each shaft pulled into the open |
 | A big body's radius read from the wrong field (`ai.radius`) | minor | `bodyRadius` |
-| The open water let a leap launch; a technique could spend the last of a body; a load kept the moment before it - the cooldowns, a held aim, a flight or a volley in the air (the player's entity is one object, refilled in place, so a new character is a load too) | minor | refused; price plus the blow's drain; the state starts fresh at each load (`systems/save.js` `restoresSoFar`, the count every load passes) |
+| The open water let a leap launch; a technique could spend the last of a body; a load kept the moment before it - the cooldowns, a held aim, a flight or a volley in the air (the player's entity is one object, refilled in place, so a new character is a load too) | minor | refused; price plus the blow's drain; the state starts fresh at each load (`systems/save/save.js` `restoresSoFar`, the count every load passes) |
 | An area technique outdoors met the watch's pool only (a struck watchman kept it from the bandits in the ring) | minor | every pool is offered a technique's blow, one token |
 | A Roleplay & Realism weapon lost its family with its mod's switch off - its line a forgery to the law, its Reforge refused | minor (offline) | the family from the class table |
 | An unidentified piece's technique was named by the chip and the lines its card hides; "One sure blow" contradicted law 1; the Gauntlets' line said nothing of bare hands; a chat post spent its length on the detail line | minor | "Your technique"; "One heavy blow, +30 to hit"; "Bare-handed"; the detail stays on the card |

@@ -106,7 +106,7 @@
   },
   {
     "name": "RESTORE-A-the-ship-mark-unsaved",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (entity.shipCrossed === true) snap.shipCrossed = true;",
     "new": "",
     "tests": [
@@ -115,7 +115,7 @@
   },
   {
     "name": "RESTORE-A-the-ship-mark-unrestored",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  if (snap.shipCrossed === true) entity.shipCrossed = true; else delete entity.shipCrossed;",
     "new": "  delete entity.shipCrossed;",
     "tests": [
@@ -124,7 +124,7 @@
   },
   {
     "name": "RESTORE-A-a-stale-mark-kept",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "entity.shipCrossed = true; else delete entity.shipCrossed;",
     "new": "entity.shipCrossed = true;",
     "tests": [

@@ -37,13 +37,13 @@ import {
   createSceneCache, addPermanentScene, containsPermanentScene, worldSceneName, interiorSceneName,
   cacheScene, restoreCachedScene, clearSceneCache,
 } from '../src/systems/sceneCache.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { SKILLS } from '../src/systems/skills.js';
 // AUDIT 63 F8: the import's membership rows are read back through the
 // consumers, not just compared as strings.
-import { GUILDS, hasJoined } from '../src/systems/guilds.js';
-import { templeOf } from '../src/systems/guildVariants.js';
+import { GUILDS, hasJoined } from '../src/systems/guild/guilds.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
 import { VAMPIRE_CLANS, LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 
 // ---------------------------------------------------------------- helpers
@@ -904,10 +904,10 @@ import {
   classicGuildMemberships, classicFactionRep, classicRegionData,
   restoreOldClassSpecials, classicSaveToSnapshot,
 } from '../src/systems/classicSave.js';
-import { SAVE_VERSION } from '../src/systems/save.js';
+import { SAVE_VERSION } from '../src/systems/save/save.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { GUILD_GROUPS, FACTION_TYPES } from '../src/formats/factionFile.js';
-import { CLASSIC_RECIPE_KEYS } from '../src/systems/loot.js';   // AUDIT 39: PotionRecipe.classicRecipeKeys
+import { CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';   // AUDIT 39: PotionRecipe.classicRecipeKeys
 
 // A parameterized 107-byte item record data block.
 function itemData({ name = 'Thing', group = 3, index = 4, value = 100, flags = 0,
@@ -1500,7 +1500,7 @@ import {
 } from '../src/ui/loadClassicWindow.js';
 import {
   importClimateWeathers, resetWeatherSim, tickWeather, currentWeatherEnum, WEATHER_ENUM, setSnowGroundLaw, currentWeatherRaw, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { bitmapToColor32 } from '../src/formats/color32Order.js';
 import {
   setPendingClassicSave, takePendingClassicSave, peekPendingClassicSave,

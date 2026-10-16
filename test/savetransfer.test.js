@@ -9,9 +9,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { slotsOf, exportEntries, exportSavesZip, zipStore, crc32, base64ToBytes, bytesToBase64, shotToFile, fileToShot, slotPathOf, collectSlots, importSlots,
-  TRANSFER_SHOT_FILES, TRANSFER_DATA_FILE, TRANSFER_INFO_FILE, TRANSFER_DIR, TRANSFER_ZIP_NAME } from '../src/systems/saveTransfer.js';
+  TRANSFER_SHOT_FILES, TRANSFER_DATA_FILE, TRANSFER_INFO_FILE, TRANSFER_DIR, TRANSFER_ZIP_NAME } from '../src/systems/save/saveTransfer.js';
 import { readZipEntries } from '../src/scenes/dataSource.js';
-import { SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX, enumerateSaves } from '../src/systems/saveSlots.js';
+import { SAVE_DATA_PREFIX, SAVE_INFO_PREFIX, SAVE_SHOT_PREFIX, enumerateSaves } from '../src/systems/save/saveSlots.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** localStorage's shape over a Map */

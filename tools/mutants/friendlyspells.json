@@ -127,7 +127,7 @@
   },
   {
     "name": "PR29-supersede-dropped",
-    "file": "src/systems/partyRestLaw.js",
+    "file": "src/systems/party/partyRestLaw.js",
     "old": "    if (stampOf(m?.p?.voteAt, now) > t) continue;\n",
     "new": "",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "REST-MANA1-online-arm-dropped",
-    "file": "src/systems/rest.js",
+    "file": "src/systems/rest/rest.js",
     "old": "  if (hasSpecialAbility(entity.career, SPECIAL_ABILITY.NoRegenSpellPoints) && !restIgnoresNoRegen()) return 0;",
     "new": "  if (hasSpecialAbility(entity.career, SPECIAL_ABILITY.NoRegenSpellPoints)) return 0;",
     "tests": [

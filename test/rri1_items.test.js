@@ -16,9 +16,9 @@ import { fileURLToPath } from 'node:url';
 import {
   RRI_MOD, RRI_VENDOR, RRI_TEMPLATES, RRI_TEMPLATE_PATCHES, RRI_CLASSES, RRI_TEXT, FIRST_FEMALE_ARCHIVE,
   leatherMaterialArmorValue, chainmailMaterialArmorValue, customItemClass, rriCustomItemsForGroup, rriVariantFields, rriSpriteEntries, rriEnabled, rriModule,
-} from '../src/systems/rriItems.js';
-import { installRoleplayRealismItems, _resetRoleplayRealismItems, rriSpriteUrl } from '../src/systems/rriInstall.js';
-import { templateByIndex, templateOverrideCount, registerTemplateOverrides, inventoryItemImage, setItemFields, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
+} from '../src/systems/roleplayRealismItems/rriItems.js';
+import { installRoleplayRealismItems, _resetRoleplayRealismItems, rriSpriteUrl } from '../src/systems/roleplayRealismItems/rriInstall.js';
+import { templateByIndex, templateOverrideCount, registerTemplateOverrides, inventoryItemImage, setItemFields, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { paperdollItemImage } from '../src/ui/paperDoll.js';
 import { ARMOR_MATERIAL, armorArchive, itemArmorValue, registerCustomArmorValue } from '../src/systems/armorMaterials.js';
 import { weaponMinDamage, weaponMaxDamage, weaponSkillUsed, equipSoundFor, WEAPON_MATERIALS } from '../src/characters/weapons.js';
@@ -28,7 +28,7 @@ import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 import { weaponTypeForItem, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { swingSoundFor, SOUND, registerSwingSound } from '../src/systems/soundClips.js';
 import { itemEnchantmentPower, armorEnchantmentMultiplier } from '../src/systems/enchanting.js';
-import { createRandomWeapon, createRandomArmor } from '../src/systems/loot.js';
+import { createRandomWeapon, createRandomArmor } from '../src/systems/loot/loot.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { DYE_COLORS, DYE_TARGETS } from '../src/characters/dyes.js';
 import { raceByKey } from '../src/systems/races.js';
@@ -38,7 +38,7 @@ import {
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { FEATURES } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { RRI_SPRITES } from '../src/systems/rriIndex.js';
+import { RRI_SPRITES } from '../src/systems/roleplayRealismItems/rriIndex.js';
 import { rectOf, renderIndex } from '../tools/rriExtract.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -320,7 +320,7 @@ test('RRI1 wiring: the install at the scene boot, the Features row and its curat
   }
   assert.match(rd('vendor/roleplay-realism-items/Scripts/ItemJerkin.cs'), /License:\s+MIT License/);
   // the dispatch, one line at each law site
-  assert.match(rd('src/systems/itemTemplates.js'), /const cls = customItemClass\(item\.templateIndex\);\n\s+if \(cls\) \{\n\s+const bodyArchive = playerArchiveFor\(item, t, identity\);/);
+  assert.match(rd('src/systems/item/itemTemplates.js'), /const cls = customItemClass\(item\.templateIndex\);\n\s+if \(cls\) \{\n\s+const bodyArchive = playerArchiveFor\(item, t, identity\);/);
   assert.match(rd('src/ui/paperDoll.js'), /if \(item\.group === 'Weapons' && item\.equipSlot === EQUIP_SLOTS\.RightHand && getItemHands\(item\) === ITEM_HANDS\.Either\) record \+= 1;\n\s+const m = item\.material \?\? 0;/);
   assert.match(rd('src/characters/equipTable.js'), /if \(cls\?\.equipSlot\) return EQUIP_SLOTS\[cls\.equipSlot\];/);
   assert.match(rd('src/characters/equipTable.js'), /if \(cls\?\.itemHands\) return ITEM_HANDS\[cls\.itemHands\];/);
@@ -330,6 +330,6 @@ test('RRI1 wiring: the install at the scene boot, the Features row and its curat
   assert.match(rd('src/combat/fpsWeapon.js'), /if \(cls\?\.weaponType\) return T\[cls\.weaponType\(isEnchanted\(item\)\)\];/);
   assert.match(rd('src/systems/enchanting.js'), /if \(cls\?\.enchantmentPower\) return cls\.enchantmentPower\(item, \{ enchantmentPoints: basePower, armorEnchantmentMultiplier \}\);/);
   assert.match(rd('src/systems/armorMaterials.js'), /const custom = _customArmorValue\?\.\(item\);\n\s+if \(custom != null\) return custom;/);
-  assert.match(rd('src/systems/rriItems.js'), /^import /m);
-  assert.ok(!/from '\.\/itemTemplates\.js'|from '\.\/equip\.js'|from '\.\.\/characters\/equipTable\.js'|from '\.\/soundClips\.js'/.test(rd('src/systems/rriItems.js')), 'the law is a leaf of the systems it feeds');
+  assert.match(rd('src/systems/roleplayRealismItems/rriItems.js'), /^import /m);
+  assert.ok(!/from '\.\/itemTemplates\.js'|from '\.\/equip\.js'|from '\.\.\/characters\/equipTable\.js'|from '\.\/soundClips\.js'/.test(rd('src/systems/roleplayRealismItems/rriItems.js')), 'the law is a leaf of the systems it feeds');
 });

@@ -44,7 +44,7 @@ export const SAND_Y_MODEL = -4.68;
 /** The sand's disc: its radius, metres (measured: the floor holds at 19 m from the centre every way round). */
 export const SAND_R = 19.2;
 /** THE RING on the sand: the motor's clamp (the player never leaves it) and the bout's line - past it is fleeing,
- *  past it by the slack (systems/arenaBout.js RING_SLACK_M) is out. */
+ *  past it by the slack (systems/arena/arenaBout.js RING_SLACK_M) is out. */
 export const RING_R = 14;
 /** The lower terrace (the colosseum's podium walk round the sand), above the sand, metres - where a watcher arrives. */
 export const TERRACE_UP = 6.9;
@@ -70,7 +70,7 @@ const FLAT_LIGHT_R = Object.freeze({ '210:15': 160, '210:17': 150, '210:19': 260
  * vendor/world-of-daggerfall/Scripts/LocationHelper.cs; the bundle survey's "seating tiers" misread them) and one over
  * the south box (42548). So the banners of a bout hang at HIS hang points: every one of his ring on a bannered side's half
  * of the floor (past HANG_HALF_M of the middle line, either way along the floor's long axis - side 0 west, side 1 east,
- * systems/arenaFighters.js boutMarks) is taken down and that banner's own cloth hung in its place, turned as his was; the
+ * systems/arena/arenaFighters.js boutMarks) is taken down and that banner's own cloth hung in its place, turned as his was; the
  * banners over the middle line and the box stay his.
  *
  * WHICH CLOTH. The Blue's is 42558, the one classic banner a peer's catalogue names by its colour ("Banner_Blue_Large",

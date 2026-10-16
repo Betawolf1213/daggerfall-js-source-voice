@@ -16,7 +16,7 @@ import { OnlineSession, SEAT_TEXT, BACKOFF_MAX_MS, CLAIM_TTL_MS } from '../src/n
 import { createSeatLock, SEAT_CHANNEL, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../src/net/oneSeat.js';
 import { createChatPanel, CHAT_CSS } from '../src/ui/chatPanel.js';
 import { ChatLog } from '../src/net/chat.js';
-import { setSigilOnline, setSigilRenown, drinkSigil, sigilOnline, sigilRenown, _resetSigilForTests } from '../src/systems/sigil.js';
+import { setSigilOnline, setSigilRenown, drinkSigil, sigilOnline, sigilRenown, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const look = { race: 'Nord', gender: 'male', faceIndex: 0, items: [] };

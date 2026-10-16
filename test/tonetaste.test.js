@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { toneTaste, ETIQUETTE_REACTION_MODS, STREETWISE_REACTION_MODS } from '../src/systems/talkTopics.js';
+import { toneTaste, ETIQUETTE_REACTION_MODS, STREETWISE_REACTION_MODS } from '../src/systems/talk/talkTopics.js';
 import { SOCIAL_GROUP } from '../src/systems/npcSession.js';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';

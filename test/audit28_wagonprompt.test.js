@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { openState, hasCart, SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { ServiceFlowWindow } from '../src/ui/guildServiceWindows.js';
-import { LIVE } from '../src/systems/settings.js';
+import { LIVE } from '../src/systems/settings/settings.js';
 
 // AUDIT 28 - W2c: THE EXIT-DOOR WAGON PROMPT (PlayerActivate.cs:649-664
 // + DungeonWagonAccess_OnButtonClick :1133-1145), a default-ON DFU flow

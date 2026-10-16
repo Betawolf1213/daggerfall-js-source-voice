@@ -22,16 +22,16 @@
 //   baseCollider() - the collider to restore on exit.
 
 import { DecisionBoxWindow } from '../ui/decisionBox.js';   // REST-WARN2: the Plus decision box
-import { restAilmentLines } from '../systems/restWarning.js';   // REST-WARN
+import { restAilmentLines } from '../systems/rest/restWarning.js';   // REST-WARN
 import { healCurseOffer, healCursePaid, healCurseText } from '../systems/healCurse.js';   // HEAL-CURSE: the temple's second row
 import { walkModeOn } from '../player/walkMode.js';   // PADWALK
 import { privateInteriorOf, privateInteriorMatches } from '../net/privateInterior.js';
 import { iilActive, iilInteriorLights, iilDungeonLights, iilTorch, iilSyncLane } from '../systems/improvedInteriorLighting.js';   // IIL1: Improved Interior Lighting on the classic lane
 import { resurrectionSpell } from '../systems/resurrect.js';   // RESURRECT1
-import { sharedCartographySpell } from '../systems/partyMap.js';   // PARTY-MAP
+import { sharedCartographySpell } from '../systems/party/partyMap.js';   // PARTY-MAP
 import { signatureOffers } from '../systems/signatureSpells.js';   // SCHOOLS3: a path's signature spell on the Buy Spells shelf
-import { isOnlinePage } from '../systems/onlineLane.js';   // RESURRECT1: the shelf's online arm
-import { horseCareRules } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for (HORSE-TIERS: any tier but Off, through the one accessor)
+import { isOnlinePage } from '../systems/online/onlineLane.js';   // RESURRECT1: the shelf's online arm
+import { horseCareRules } from '../systems/upkeep/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for (HORSE-TIERS: any tier but Off, through the one accessor)
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
 import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a
 import { doorWorldAabb, doorWorldPosition, doorWorldNormal, interiorLanding, exteriorLanding, dungeonEntranceLanding, climbLadder, floorLanding, repositionFeetY, standsOnFloor, interiorVoidRescue, standFromVoid, NOTHING_OF_VALUE_TEXT, INTERIOR_VOID_TEXT } from '../player/enterExit.js';   // FIELD BUGS 2026-10-04d VOID-ENTRY: the floor a landing stands on, the failsafe, and their two lines
@@ -45,7 +45,7 @@ import { tacticsNow } from '../ai/tactics.js';   // TACT4: the brain's clock
 import { startRestGroundedCheck, TELEPORT_FREEZE_S, motionBagOf, afloatMessageStep, CANNOT_FLOAT_HUD_SECONDS, CAPSULE_HEIGHT } from '../player/motor.js';   // S40: the rest gate's grounded input; A6: DaggerfallAction.Teleport's physics settle; WW2: the one motion bag; DW-D: the dungeon arm's afloat line
 import { signalAutomapReset } from '../ui/automapWindow.js';   // ROAD-C c2/S9: the M window inside a building
 import { createAutomapWindow, preloadAutomapArt, automapDoorReady } from '../ui/automapDoor.js';   // EM3: the skin fork
-import { automapDungeonKey, getDungeonAutomap } from '../systems/automap.js';   // ROAD-C c2/S9: Automap.cs:2362-2379's read of the dungeon dictionary
+import { automapDungeonKey, getDungeonAutomap } from '../systems/automap/automap.js';   // ROAD-C c2/S9: Automap.cs:2362-2379's read of the dungeon dictionary
 import { INTERIOR_MARKER } from '../world/interiorLayout.js';
 import { frameMark } from '../systems/frameClock.js';   // AUDIT-WH P1: the frame in flight, so one answer serves every reader in it
 import { pickActivatable, pickActivatableHit, worldAabb, activationTargets, liveFoeTargets, liveFoeFor, peacefulFoePass, doorDistanceOf, pickQuestFoe, pickFoe, rayAabb, presentNpcInfoText, tooFarAwayText, DOOR_ACTIVATION_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../player/activate.js';   // QG1: the foe-click door; AUDIT 58: PresentNPCInfo's one line; AUDIT 62 F16/F28: TI1's lock pick
@@ -53,7 +53,7 @@ import { pickActivatable, pickActivatableHit, worldAabb, activationTargets, live
 // living-enemy arm of the activation ladder, in the two hosts this
 // file owns as well as the three outside it.
 import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
-import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';
+import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk/talk.js';
 import { SEARCH_REACH } from '../systems/searchables.js';   // SEARCH1: a headstone's reach, half a door's   // GetRandomText(8999)
 import { LOCK_PICK_DISTANCE } from '../player/lockOn.js';   // AUDIT 62 F16/F28: the tap-to-lock reach, the same the exterior and standalone-dungeon arms use
 import { removeOne, addItem, isEnchanted, carriedWeight, letterOfCredit, LETTER_OF_CREDIT_TEMPLATE, spendAmmoFor, takeOneInto, isSummoned } from '../systems/inventory.js';   // U40: the sell filter, the encumbrance gate and the letter
@@ -69,15 +69,15 @@ import { sailingCabinEntry } from './sailingCabin.js';
 import { cabinSceneName, readSailingCabin } from '../systems/sailingCabin.js';
 import { caravanRoomEntry, serveRoomModels, paintCaravanRoom } from './caravanRoom.js';   // WAGONS1: the caravan's room, on the cabin's door - WAGONS2: its own model
 import { CARAVAN_SCENE_NAME, CARAVAN_TEXT, readCaravanRoom, isCaravanRoom, turnCaravanScene } from '../systems/caravanRoom.js';
-import { wagonItemName } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon's name on the keyed shelf
+import { wagonItemName } from '../systems/wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon's name on the keyed shelf
 import { wagonLoadedHeld } from '../systems/tradePack.js';   // WAGONS2 (AUDIT): the wagon a loaded store hangs on - FINAL AUDIT: the pack's one law
-import { caravanPaintRows } from '../systems/wagonLooks.js';   // WAGONS2: the caravan's inside, painted from the decorator
+import { caravanPaintRows } from '../systems/wagon/wagonLooks.js';   // WAGONS2: the caravan's inside, painted from the decorator
 import { caravanDecorDoc, readCaravanDecor, readCaravanHidden } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
 import { caravanKeyOf } from '../net/privateInterior.js';   // WAGONS2-VISIT: a caravan's own room
 import { INTERIOR_SHELL_BUCKET } from './decorBase.js';   // HOME-DOORS: a doorway is an opening in the shell's walls   // AUDIT 63 F22: AddFlats' RandomTreasure arm lives with the walk that finds its markers
 import { advanceMachinery, mountMachineryChild, machineryChildPos, MILL_SOUND } from '../world/windmills.js';   // WM4b: the machinery's moving parts; WM4c: its hum
 import { buildDungeonContext } from './dungeonContext.js';
-import { ambushNight } from '../systems/restAct.js';   // AUDIT REST II P3: a quest's CreateFoe reaches the act's night, window or none
+import { ambushNight } from '../systems/rest/restAct.js';   // AUDIT REST II P3: a quest's CreateFoe reaches the act's night, window or none
 import { createTransitionGate } from './transitionGate.js';   // AUDIT 68 X3-transition-build-race: the door builds, serial and cancellable
 import { bowDamageArrow } from '../combat/enemyEquipment.js';   // MAC-N1: the recovered shaft is CreateWeapon's arrow, value and all
 import { DOOR_TYPE } from '../world/meshReader.js';
@@ -90,7 +90,7 @@ import { lanternColor, dungeonAmbient, dungeonTrilight, dungeonFog, interiorLigh
 import { INTERIOR_AMBIENT, INTERIOR_NIGHT_AMBIENT, INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
 import { isNight } from '../world/worldClock.js';   // AUDIT 23 (C12)
 import { worldMinutes, skyMinutes, setWorldMinutes, ownMinutes, ownTimeLeftText, ownTimeLeftShort, sharedClockOn, trustedWorldMinutes, worldSpanRealWords, tickInFlight } from '../systems/worldTick.js';   // AUDIT 23 (C12): the one clock; G4's probe moves it; LIVED1: the character's own clock, and its deadlines said in their time; AUDIT LIVED1b K1: the collapse box's guard is online's; AUDIT CARDS-6 B4: a round of damage over time stands nobody up from the cards
-import { exhaustionOutcome, exhaustedInWaterText } from '../systems/rest.js';   // AUDIT 23 (C5)
+import { exhaustionOutcome, exhaustedInWaterText } from '../systems/rest/rest.js';   // AUDIT 23 (C5)
 import { ActionTextBox } from '../ui/actionText.js';   // AUDIT 23 (C5)
 import { registerPresenter, hudText } from '../systems/notify.js';   // ENH-NOTICE3: the modal modes' slot, offered to the one door every message goes through
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
@@ -124,8 +124,8 @@ import { SD_HOUR_GRADE } from '../world/sdLook.js';   // SD-LOOK: the Hour's gra
  *  loop makes nothing. */
 const DRAW_NO_SHADOW = Object.freeze({ noShadow: true }), DRAW_SHADOW = Object.freeze({ noShadow: false });
 import { sdRoomKey } from '../net/sdLaw.js';   // SD5a: its room, the relay's realm
-import { isBound } from '../systems/itemBound.js';   // AUDIT SS: the keyed shelf sells no bound piece
-import { lockRefuses } from '../systems/itemLock.js';   // AUDIT SS: nor a locked one
+import { isBound } from '../systems/item/itemBound.js';   // AUDIT SS: the keyed shelf sells no bound piece
+import { lockRefuses } from '../systems/item/itemLock.js';   // AUDIT SS: nor a locked one
 import { courtLighting, deadlandsFlash } from '../render/deadlands.js';   // WB6a: the court's own light - the Deadlands' red from above, the fire's from below, the vortex's from behind the boss   // WB6b: and a strike's, flaring over it
 import { buildDeadlandsLand, buildShardModel, deadlandsShards, shardMatrix } from '../world/deadlandsLand.js';   // WB6b: the land out in the fire round the court, and the floor's broken shards over it
 import { gateArt, courtArt, GATE_ARCHIVE } from '../world/gateArt.js';   // WB3b: the court's own art, and the gate's stone it is cut from   // ROAD-B (b3): UnderwaterFog + WeatherManager.DungeonFogSettings
@@ -176,7 +176,7 @@ import { FntFile } from '../formats/fntFile.js';
 import { makeFont } from '../ui/text.js';
 import { hudScale } from '../ui/hud.js';
 import { containerTextureRecord } from '../systems/containers.js';
-import { dungeonStartDoorFor } from '../systems/save.js';   // CASTLE1: the load's door is the saved dungeon's own
+import { dungeonStartDoorFor } from '../systems/save/save.js';   // CASTLE1: the load's door is the saved dungeon's own
 import { composeNamer, composeContents } from '../systems/worldHover.js';   // INTERIOR-BODIES: the interior stands itemised bodies now, so its contents reader is a LADDER like the other three hosts' rather than one prefix
 import { raceWinner } from '../player/activationRace.js';   // WORLD-HOVER: the race's WINNER, so the plaque names what the press would open
 import { worldHoverFrame, hideWorldPlaque, destroyWorldPlaque, worldPlaqueOn } from '../ui/worldPlaque.js';   // WORLD-HOVER: the one seam each host calls, and the hide door for the branches that return above it
@@ -186,7 +186,7 @@ import { lootPile } from '../player/lootStack.js';   // LOOT-STACK: the pile und
 import { silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS (AUDIT 625 S2): an interior's treasure pile rolls its find too
 import { staticDoorName, npcHoverName, questResourceName, questStandItem, worldTooltipsOn, hideInteractTooltip,
   houseContainerName, houseContainerHover, actionObjectName, lootPileName,
-  BOOKSHELF_TEXT, SHOP_SHELF_TEXT, LADDER_TEXT, BULLETIN_BOARD_TEXT, mobileEntityName, liveEntityName } from '../systems/worldTooltips.js'; import { questFoeSubs } from '../systems/questFoeLine.js';   // WORLD-HOVER: the mod's ladder for the families THIS host stands; QUEST-FOE-LINE: a quest's foe says whose it is   // WORLD-HOVER: the mod's ladder for the families THIS host stands
+  BOOKSHELF_TEXT, SHOP_SHELF_TEXT, LADDER_TEXT, BULLETIN_BOARD_TEXT, mobileEntityName, liveEntityName } from '../systems/worldTooltips.js'; import { questFoeSubs } from '../systems/quest/questFoeLine.js';   // WORLD-HOVER: the mod's ladder for the families THIS host stands; QUEST-FOE-LINE: a quest's foe says whose it is   // WORLD-HOVER: the mod's ladder for the families THIS host stands
 import { LOCATION_TYPES, REGION_NAMES, REGION_RACES } from '../formats/mapsFile.js';   // WORLD-HOVER: .cs:777-782 - a dungeon exit names its town, or the region   // WORLD-HOVER: the texture record is DERIVED at its one reader, off the stored model id
 import { isShop, isRepairShop, stockShopShelf, stockHouseContainer, PRIVATE_PROPERTY_TEXT_ID, privatePropertyRows, calculateCost, calculateTradePrice, regionPriceAdjustment, SHOP_BUYS_GROUPS, shopBuysItem, stockSoulGems, stockGuildMagicItems, stockGuildPotions, dayShelf, createStockedDate, needsRestock, stockSearched, restockEndless } from '../systems/shopStock.js';   // X6: the soul-gem shelf; G4: the two guild shelves; A2: the daily restock; ENDLESS-STOCK: the bag and the Campfire never sell out
 import { BAG_WORDS, isBagItem, holdsOtherBag } from '../net/bagLaw.js';   // ONE-BAG: one Materials Bag to a character, on the keyed shelf too
@@ -200,53 +200,53 @@ import { createCharSheetWindow } from '../ui/charSheetDoor.js';   // AUDIT 21 ho
 import { NativeTradeWindow, preloadTradeArt, TRADE_RECTS } from '../ui/nativeTrade.js';   // U8c
 import { createTradeWindow, tradeDoorReady } from '../ui/tradeDoor.js';   // the enhanced/native fork, same law as ui/inventoryDoor.js
 import { isEnhanced } from '../systems/uiSkin.js';
-import { guidanceTier, dungeonQuestMarks, questCompassPick } from '../systems/questGuidance.js';   // GUIDE8 (the delve arc): the Exact tier, underground (AUDIT DELVE: and indoors)
+import { guidanceTier, dungeonQuestMarks, questCompassPick } from '../systems/quest/questGuidance.js';   // GUIDE8 (the delve arc): the Exact tier, underground (AUDIT DELVE: and indoors)
 import { questTracker } from '../ui/questTracker.js';   // GUIDE8: the quest the player follows - its marks filled
 // U23: the static-NPC seam and the guild service popup.
-import { STATIC_NPC_ACTIVATION_DISTANCE, DEFAULT_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../systems/talk.js';
+import { STATIC_NPC_ACTIVATION_DISTANCE, DEFAULT_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../systems/talk/talk.js';
 // PlayerActivate.ActivateBulletinBoard (:706-739) - the town sign's arm
 import { BULLETIN_BOARD_ACTIVATION_DISTANCE, bulletinBoardRows } from '../systems/bulletinBoard.js';
 import { applyDeathPenalty, deathPenaltyText } from '../systems/deathPenalty.js';   // DEATH-PENALTY: the in-place respawn is an online death too
-import { revenantTakes } from '../systems/revenant.js';   // AUDIT FEUD (RVN8): the in-place respawn's theft, as the world host's
+import { revenantTakes } from '../systems/revenant/revenant.js';   // AUDIT FEUD (RVN8): the in-place respawn's theft, as the world host's
 import { endPlayerFights } from '../systems/harmMark.js';   // AUDIT FEUD (RVN10): ...and its fights ended
 import { tokenRows } from '../ui/messageBox.js';
-import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guildServiceFlow.js';
+import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guild/guildServiceFlow.js';
 import { isIngredient } from '../systems/potions.js';   // F201: MakePotionService's scan
 import { isPotionRecipe, USE_TEXT, expandItemMacro } from '../systems/useItem.js';   // AUDIT 63 F42: IsPotionRecipe (DaggerfallUnityItem.cs:344-347); RR1: the light's own "You douse the %it."
-import { canAccessService , hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel } from '../systems/guildServices.js';   // G4: does THIS guild also sell soul gems?
+import { canAccessService , hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel } from '../systems/guild/guildServices.js';   // G4: does THIS guild also sell soul gems?
 import {
   receiveArmorDecision, claimArmor, SPYMASTER_GREETING_TEXT_ID,
   receiveHouseDecision, claimHouse, alreadyGivenHouseText,   // H1
   HOUSE_FLAG_MASK,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the order's gift given back when the service will not hold it
 } from '../systems/knightlyGifts.js';   // G6
-import { mintCondition, setItemFields, itemValueOf } from '../systems/itemTemplates.js';   // G6: the gift's pieces mint like any other item; MAC-N1: with SetItem's name and value
-import { npcServiceKind, freeHealing, freeMagickaRecharge, avoidDeath, avoidDeathText, DEITY_DESCRIPTIONS } from '../systems/guildServices.js';   // MACRO-4: %gdd
-import { createGuildForGroup, ORDERS } from '../systems/guildVariants.js';
-import { membershipOf, joinGuild, joinDecision, activeMemberships, membershipKey } from '../systems/guilds.js';   // V2e: GuildManager.Memberships, the per-read vampire book pick; CHAP4b: a row's key, for the seated book
-import { ensureFactionRep } from '../systems/factionRep.js';
+import { mintCondition, setItemFields, itemValueOf } from '../systems/item/itemTemplates.js';   // G6: the gift's pieces mint like any other item; MAC-N1: with SetItem's name and value
+import { npcServiceKind, freeHealing, freeMagickaRecharge, avoidDeath, avoidDeathText, DEITY_DESCRIPTIONS } from '../systems/guild/guildServices.js';   // MACRO-4: %gdd
+import { createGuildForGroup, ORDERS } from '../systems/guild/guildVariants.js';
+import { membershipOf, joinGuild, joinDecision, activeMemberships, membershipKey } from '../systems/guild/guilds.js';   // V2e: GuildManager.Memberships, the per-read vampire book pick; CHAP4b: a row's key, for the seated book
+import { ensureFactionRep } from '../systems/faction/factionRep.js';
 import { dateFromClassicMinutes, dateString, dayOfYearFromMinutes, MINUTES_PER_DAY, DAYS_PER_MONTH, isDayFromMinutes } from '../systems/gameDate.js';   // RR1: WorldTime.Now.IsDay   // B2: the loan due date   // H1: the month the houses-for-sale list turns over on
-import { serviceDestination } from '../systems/guildServiceFlow.js';
+import { serviceDestination } from '../systems/guild/guildServiceFlow.js';
 import { buildTrainingFlow, buildRefinedTrainingFlow, buildDonationFlow, buildCureDiseaseFlow } from '../ui/guildServiceWindows.js';
 import { preloadListPickerArt } from '../ui/listPicker.js';
-import { getTitle } from '../systems/guilds.js';
-import { getDivine, DIVINES } from '../systems/guildVariants.js';
+import { getTitle } from '../systems/guild/guilds.js';
+import { getDivine, DIVINES } from '../systems/guild/guildVariants.js';
 import { cardTableSeats, nearestFreeSeat, takenSeats, seatFloorOk, leavesSeat, SEAT_FLOOR_PROBE, tableFrame } from '../world/cardTables.js';   // CARDS2: the tavern's card table and its seats
 import { seatTopByte } from '../player/seatPose.js';   // CARDS2b: the seat on the pose
-import { CardTableSession, stakesFor, buyInRange, seatPatrons, regularsFor, regularsAfter } from '../systems/cardTableSession.js';   // CARDS4: the table's evening
-import { RemoteCardTable } from '../systems/cardRemoteTable.js';   // CARDS5: the relay's table as this client sees it
+import { CardTableSession, stakesFor, buyInRange, seatPatrons, regularsFor, regularsAfter } from '../systems/card/cardTableSession.js';   // CARDS4: the table's evening
+import { RemoteCardTable } from '../systems/card/cardRemoteTable.js';   // CARDS5: the relay's table as this client sees it
 import { HOLDEM_STAKE_MAX_BB, HOLDEM_TOPUP_MIN_BB, holdemGoldTable } from '../net/holdemTable.js';   // CARDS6 follow-up: a gold seat's top-up
 import { regularsToStand, regularBark, regularLook, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
 import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Hand on the seat
 import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
 import { gambitBoardKey } from '../ui/gambitTableHud.js';   // KG3: the board's own keys (14.3)
-import { RemoteGambitTable } from '../systems/gambitRemoteTable.js';   // KG5: a watched King's Gambit table, as the relay tells it
+import { RemoteGambitTable } from '../systems/gambit/gambitRemoteTable.js';   // KG5: a watched King's Gambit table, as the relay tells it
 import { readGambitReceipt } from '../net/gambitReceipt.js';   // KG6: a rated game's result, acked by its id
 import { GAMBIT_STAKE_BB } from '../net/gambitStakes.js';   // KG6: a King's Gambit stake's mark in the escrow
 import { gambitPlaces } from '../world/gambitCloth.js';   // KG5: a watched board on its cloth
 import { createGambitTableDraw } from '../render/gambitTableDraw.js';   // KG5: and drawn there
 import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
-import { iliacGrade } from '../systems/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
-import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the house sells packs at its card table
+import { iliacGrade } from '../systems/iliac/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
+import { cardPackPrice, buyCardPack } from '../systems/card/cardSources.js';   // CARDS9: the house sells packs at its card table
 import { heldMatrices, heldLift, heldFit, blendMatrix, HELD_EASE_S, tablePoint, onStack, onTable, inBetZone, dragBet, PEEK_RATE, DRAG_LIFT, handGesture, squeezeOf, squeezeMatrix } from '../world/cardHand.js';   // CARDS3b: the hand held, the chips dragged; CARDS3c: the squeeze, the click, the push
 import { rayDirFromScreen, projectToScreen } from '../player/tapRay.js';   // CARDS3b: the cursor's ray, and the hand on the screen
 import { createCardTableHud, cardHudModel, eventLine, showdownWinners, HOLDEM_REFUSALS } from '../ui/cardTableHud.js';   // CARDS4: its panel
@@ -265,25 +265,25 @@ import { theftBasket, privatePropertyTheft, shopShelfTheft } from '../systems/th
 import { buildingGreeting, shopQualityPresentation } from '../systems/buildingGreeting.js';
 import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExteriorTransition } from '../systems/unleveledLoot.js';   // UL1: PlayerEnterExit's world and its transition events   // BG1: the shop quality + the householder's greeting
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
-import { BUILDING_KEY_0 } from '../systems/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
+import { BUILDING_KEY_0 } from '../systems/talk/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
 import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootKeyOf, interiorLootRecords } from '../world/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
 import { getHolidayId } from '../systems/holidays.js';
-import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guilds.js';
+import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guild/guilds.js';
 // V5: rest above ground. The window and the session have been finished
 // since U7; what was missing was a host outside the dungeon that opens
 // one, and CanRest's whole town half.
 import { preloadRestArt } from '../ui/restWindow.js';   // D3: REST00I0/01I0/02I0
 import { createRestWindow } from '../ui/restDoor.js';   // the enhanced/native fork, same law as ui/tradeDoor.js
-import { canRest } from '../systems/restSession.js';
+import { canRest } from '../systems/rest/restSession.js';
 import { giveOffer } from '../ui/pendingOffer.js';   // AUDIT 58: DaggerfallUI.GiveOffer, the rung in front of the rest press
 import { plainLines } from './shared.js';   // V5b: TEXT.RSC answers ROWS, and these windows iterate strings
-import { expandGuildRows } from '../systems/guildServiceActions.js';   // MACROS1: a guild window's records through the guild's context (MH1's one walk)
-import { hallAccessAnytime } from '../systems/guildServices.js';
-import { resolveVariantGuild } from '../systems/guildVariants.js';
-import { getBool, getInt } from '../systems/settings.js';   // R1: InstantRepairs / AllowMagicRepairs go LIVE
+import { expandGuildRows } from '../systems/guild/guildServiceActions.js';   // MACROS1: a guild window's records through the guild's context (MH1's one walk)
+import { hallAccessAnytime } from '../systems/guild/guildServices.js';
+import { resolveVariantGuild } from '../systems/guild/guildVariants.js';
+import { getBool, getInt } from '../systems/settings/settings.js';   // R1: InstantRepairs / AllowMagicRepairs go LIVE
 import { isStartDungeon, isPrivateersHold, HOLD_ONCE_TEXT } from '../systems/startDungeon.js';   // PH1: Privateer's Hold - the classic start's own cell; HOLD-ONCE: the Hold itself, by its map id
 import { reviveForPlay } from '../systems/deathRespawn.js';   // PH1: the in-place respawn's own heal, the SAME fraction world.js's own online respawn uses
-import { reducedRepairCost } from '../systems/guildServices.js';   // R1: FightersGuild.ReducedRepairCost finds its caller
+import { reducedRepairCost } from '../systems/guild/guildServices.js';   // R1: FightersGuild.ReducedRepairCost finds its caller
 import {
   updateRepairTimes, repairJobsAt, repairRefusal, repairStatusLabel,
   isBeingRepaired, isRepairFinished, collectRepaired, calculateItemRepairTime, leaveForRepair,
@@ -300,27 +300,27 @@ import { openPauseFlow, preloadPauseFlowArt, pauseDoorReady, pauseOpts } from '.
 import { openPixelDial } from '../ui/pixelDial.js';   // PX15b: the Tab compass rose
 import { preloadMessageBoxArt } from '../ui/messageBox.js';
 import { nativeMetrics, pointToNative } from '../ui/nativePanel.js';
-import { templateByIndex, itemBaseValue } from '../systems/itemTemplates.js';
-import { questLetterName, itemLongName, shownItemName } from '../systems/itemInfo.js';   // ResolveItemLongName's quest-letter arm; DECOR2a: an own item's name; L10N3e: an item's name as shown
-import { applyTransfer } from '../systems/itemTransfer.js';   // DECOR2a: one's own item leaves the pack as a drop does
-import { decorItemName, decorOwnBackLine } from '../systems/decorItems.js';   // DECOR2a: an own item's piece named from its numbers
-import { isFurnishing, furnishingDeliveredLine, ownBackLines } from '../systems/decorFurnish.js';   // DECOR2b: furniture delivered, never carried
+import { templateByIndex, itemBaseValue } from '../systems/item/itemTemplates.js';
+import { questLetterName, itemLongName, shownItemName } from '../systems/item/itemInfo.js';   // ResolveItemLongName's quest-letter arm; DECOR2a: an own item's name; L10N3e: an item's name as shown
+import { applyTransfer } from '../systems/item/itemTransfer.js';   // DECOR2a: one's own item leaves the pack as a drop does
+import { decorItemName, decorOwnBackLine } from '../systems/decor/decorItems.js';   // DECOR2a: an own item's piece named from its numbers
+import { isFurnishing, furnishingDeliveredLine, ownBackLines } from '../systems/decor/decorFurnish.js';   // DECOR2b: furniture delivered, never carried
 import { goldAmount, totalGoldAmount, deductGold, addGold, payUndoable, setCrimeCommitted, CRIMES } from '../systems/court.js';   // PT1: the ONE crime write (V4's SuppressCrime gate rides it)
 // Q4-v: the quest layer's host wiring. The BRIDGE (scenes/questBridge.js)
 // is created by the outer host (world.js) and rides in; this machine owns
 // the interior half - the click stamp, the Quests service arm, the scene
 // mount adapter and the modal tick.
-import { getReputation, getFlag, setFlag, FACTION_FLAGS } from '../systems/factionRep.js';
+import { getReputation, getFlag, setFlag, FACTION_FLAGS } from '../systems/faction/factionRep.js';
 // G7: the last unbuilt guild service - the summoning calendar, the
 // cost, Sheogorath's hijack and the roll.
 import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows, noQuestText } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source; SUMMON-OFFER: the word when no quest can be made
 import { expandRowValues } from '../systems/quest/questMacros.js';   // DAEDRA1: MH1's one walk, with the shared context riding it
-import { currentWeather } from '../systems/weatherSim.js';   // AUDIT AT F3: the WORD; its flags come from weather.js's one derivation
+import { currentWeather } from '../systems/weather/weatherSim.js';   // AUDIT AT F3: the WORD; its flags come from weather.js's one derivation
 import { weatherFlags } from '../world/weather.js';   // AUDIT AT F3: WeatherManager's four public flags, derived once from SetWeather's switch
 import { ServiceFlowWindow } from '../ui/guildServiceWindows.js';
 import { hasCart } from '../systems/inventorySession.js';   // AUDIT 28 W2c: the exit-door wagon prompt's cart test
 import { dungeonLocationFor, builtDungeonSize } from '../world/smallerDungeons.js';   // AUDIT 28 W4: the size the dungeon is built at (SD-ONLINE: and its room's, read off the build)
-import { tierShown } from '../systems/dungeonTier.js';   // TIER1: a dungeon's tier, said online...
+import { tierShown } from '../systems/dungeon/dungeonTier.js';   // TIER1: a dungeon's tier, said online...
 import { dungeonTierLabel } from '../world/dungeonLabel.js';   // ...with its size, never over a place the port made
 import { dismountOnTransition } from '../systems/transport.js';   // TR5: the interior dismount
 import { cannotChangeIndoorsText } from '../ui/transportWindow.js';   // TR5: the indoors refusal
@@ -333,7 +333,7 @@ import {
   TAVERN_RECTS, TAVERN_PANEL_X, TAVERN_PANEL_Y,
 } from '../ui/tavernWindow.js';
 import { createTavernWindow, tavernDoorReady } from '../ui/tavernDoor.js';   // the enhanced/native fork, same law as ui/tradeDoor.js
-import { freeTavernRooms } from '../systems/guildServices.js';
+import { freeTavernRooms } from '../systems/guild/guildServices.js';
 // B2: the bank - the window, the per-region accounts and the purse seam.
 import { BankWindow, preloadBankArt, bankArtLoaded, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../ui/bankWindow.js';
 import { BankPurchaseWindow, preloadPurchaseArt, purchaseArtLoaded } from '../ui/bankPurchaseWindow.js';   // H2
@@ -356,7 +356,7 @@ import {
   realmDeedAt,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the house the realm gave a knight is theirs, never for sale to them
   homeFootprintM2,   // HOME-PRICE: the ground a house stands on
   homeVoteRows, homeVotePressable, homeVoteOfVerb, homeVoteChoices, homeVoteLines, isHomeVoteVerb,   // HOME-VOTE: the town's word on it, at its door
-} from '../systems/onlineHomes.js';
+} from '../systems/online/onlineHomes.js';
 import { homeDecorShown, homeVotedLine, homeVotesLine, homeVoteRefusalLine, decorStaysShunned, HOME_VOTE_GONE_LINE } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's decor stands for its insiders alone
 import { goldSum, accountWords } from '../systems/homeWords.js';   // AUDIT HOME-PRICE E4: a home's sums and the account they moved in
 import { guildHallPrice, GUILD_HALL_ENTRY_WORDS } from '../net/hallLaw.js';   // GUILD1d: what a hall costs, in its refusal's words; who may walk in
@@ -382,12 +382,12 @@ const DECOR_STATION_REFUSED = 'You cannot use the station right now.';
 import { createDecorRoom, decorIdOfKey, askDecorList, offerDecorFigures } from './decorRoom.js';   // MWNPC18: a placed figure in its body
 // DECOR1d: the decorator itself - the button, the panel, the free camera - and what its catalogue scan reads
 import { createDecorTool } from './decorTool.js';
-import { decorScanDeps } from '../systems/decorScan.js';   // DECOR-DUNGEON: the scan's deps, one constructor for both hosts
+import { decorScanDeps } from '../systems/decor/decorScan.js';   // DECOR-DUNGEON: the scan's deps, one constructor for both hosts
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { loadIcon } from '../ui/textureCanvas.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
 import { setCursorActive, holdCursor, cursorKeyClaimed } from '../player/pointerLock.js';
-import { decorKey } from '../systems/decorCatalogue.js';
+import { decorKey } from '../systems/decor/decorCatalogue.js';
 import { BULLETIN_BOARD_MODEL_ID } from '../world/rmbLayout.js';   // GUILD1e: Daggerfall's own board, placed in a guild's hall
 import { accountRefusalText } from '../net/accountClient.js';
 // P1: the scene cache - what an interior remembers across a visit.
@@ -400,36 +400,36 @@ import {
   layoutSceneName,  // WD3 (AUDIT WD3 R1): a permanent scene's visit in another layout, kept beside it
   foldLayoutCopies, // WAGONS2 (AUDIT): and a travelling room's, folded back into it
 } from '../systems/sceneCache.js';
-import { keptOffArenaGround } from '../systems/arenaGround.js';   // CURSE-OFF-SAND: the curse's dead keep off the arena's own levels
+import { keptOffArenaGround } from '../systems/arena/arenaGround.js';   // CURSE-OFF-SAND: the curse's dead keep off the arena's own levels
 import { arenaGatePersonOf, arenaGatePersonName, arenaRecordDisplaced, isUndercroftDoor, isArenaUndercroft } from '../world/arenaCity.js';   // ARENA1: the gate's people; a save made in a building the arena took; ARENA2: the Herald's way down to the fighters' hall
 import { PIT_RING_R } from '../world/arenaUndercroft.js';   // ARENA-FIX 4: the training pit's ring
-import { hallOfChampions } from '../systems/arenaLadder.js';   // ARENA-FIX 4: the Hall of Champions' roll
-import { rosterGrandChampions } from '../systems/arenaLeague.js';   // ARENA3: the banners' Grand Champions on the Hall's wall
+import { hallOfChampions } from '../systems/arena/arenaLadder.js';   // ARENA-FIX 4: the Hall of Champions' roll
+import { rosterGrandChampions } from '../systems/arena/arenaLeague.js';   // ARENA3: the banners' Grand Champions on the Hall's wall
 import { arenaFloorLocation, arenaFloorBlocks, isArenaFloor, arenaExitDoors, floorCentre as arenaFloorCentre, ARRIVE as ARENA_ARRIVE, floorPoint as arenaFloorPoint } from '../world/arenaFloor.js';   // ARENA2: the floor's instance - a made level on this host's dungeon arm
-import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA1: the Herald's word
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // ARENA1: the Herald's word
 import { isNpcFlat } from '../world/rdbLayout.js';   // WD3 (AUDIT WD3 G1): a street flat is a person's only in a person archive
 import { WORLD_CONTEXT } from '../systems/teleportAnchor.js';   // A10: SetAnchor's world context, one enum for the three hosts
 import { stampLayout, layoutStampAt, layoutLocationKeyOfMapId, layoutsMatch } from '../systems/layoutPins.js';   // WD3: an interior's scene keeps its town's layout
 // S40: resting where the player has a claim - the rented-room finder
 // the tavern rents through, and FightersGuild.CanRest.
 import { findRentedRoom, removeExpiredRooms } from '../systems/tavern.js';
-import { canRest as guildCanRest } from '../systems/guildServices.js';
-import { interiorRestPlace, restDecision, getPreventedRestMessage } from '../systems/restSession.js';   // CanRest's inside-a-building bag + the scene-free open gate above it   // ROAD-B B5: GetPreventedRestMessage
+import { canRest as guildCanRest } from '../systems/guild/guildServices.js';
+import { interiorRestPlace, restDecision, getPreventedRestMessage } from '../systems/rest/restSession.js';   // CanRest's inside-a-building bag + the scene-free open gate above it   // ROAD-B B5: GetPreventedRestMessage
 import { racialRestBlock } from '../systems/vampirism.js';   // V2b: the vampire's rest gate
 import { setPassiveSpecialsHost, FIGHTER_TRAINERS_FACTION } from '../systems/passiveSpecials.js';   // V2c: the sunlight/holy-place seam
 import { DaedraSummonedWindow, REFUSAL_FOE_COUNT, COVEN_FAIL_FOE_COUNT } from '../ui/daedraSummonedWindow.js';   // G7b: the summoning's own film window
-import { orderOf } from '../systems/guildVariants.js';
-import { joinedGuildOfGroup } from '../systems/guilds.js';
-import { GUILD_GROUPS } from '../formats/factionFile.js'; import { lootRarityOn } from '../systems/lootRarity.js'; import { reforgePiece, salvagePiece, shardsHeld, honePiece, setGemPiece, unsetGemPiece, extractGemPiece } from '../systems/reforge.js'; import { buyPortalStone, portalStoneRefusal, shardsKept, PORTAL_TEXT } from '../systems/portalStone.js'; import { createReforgeOverlay } from '../ui/reforgeDoor.js'; import { imprintPiece } from '../systems/lootCodex.js';   // LOOT9: the Mages Guild's Reforge; LOOT10: its imprint
-import { liftCurse } from '../systems/lootCurse.js';   // LOOT16: the temple's lifting
-import { setJunk } from '../systems/itemJunk.js';   // AUDIT LOOT II C5: a sold piece's mark ends at the shelf
-import { scryPlace } from '../systems/lootScry.js';   // LOOT19: the guild's scryers
+import { orderOf } from '../systems/guild/guildVariants.js';
+import { joinedGuildOfGroup } from '../systems/guild/guilds.js';
+import { GUILD_GROUPS } from '../formats/factionFile.js'; import { lootRarityOn } from '../systems/loot/lootRarity.js'; import { reforgePiece, salvagePiece, shardsHeld, honePiece, setGemPiece, unsetGemPiece, extractGemPiece } from '../systems/reforge.js'; import { buyPortalStone, portalStoneRefusal, shardsKept, PORTAL_TEXT } from '../systems/portalStone.js'; import { createReforgeOverlay } from '../ui/reforgeDoor.js'; import { imprintPiece } from '../systems/loot/lootCodex.js';   // LOOT9: the Mages Guild's Reforge; LOOT10: its imprint
+import { liftCurse } from '../systems/loot/lootCurse.js';   // LOOT16: the temple's lifting
+import { setJunk } from '../systems/item/itemJunk.js';   // AUDIT LOOT II C5: a sold piece's mark ends at the shelf
+import { scryPlace } from '../systems/loot/lootScry.js';   // LOOT19: the guild's scryers
 import { SpellMakerWindow, preloadSpellMakerArt, spellMakerArtLoaded } from '../ui/spellMakerWindow.js';   // S1: the Mages Guild / Kynareth spell maker; E8: on INFO01I0 art
-import { hasSpellbook } from '../systems/spellMaker.js';   // AUDIT 63 F12: MakeSpells' door gate (DaggerfallGuildServicePopupWindow.cs:391)
+import { hasSpellbook } from '../systems/spell/spellMaker.js';   // AUDIT 63 F12: MakeSpells' door gate (DaggerfallGuildServicePopupWindow.cs:391)
 // M2: the potion maker - the other half of the guild's magic economy.
 import { PotionMakerWindow, preloadPotionArt, potionArtLoaded } from '../ui/potionMakerWindow.js';
 import { ItemMakerWindow, preloadItemMakerArt, itemMakerArtLoaded, ITEM_RECTS, rowLayout as itemMakerRowLayout } from '../ui/itemMakerWindow.js';
-import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } from '../systems/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
+import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
@@ -446,12 +446,12 @@ import { fieldOfView } from '../ui/viewSettings.js';   // MENU: Video/FieldOfVie
 import { windowEmissionRGB } from '../render/windowEmission.js';   // AUDIT 26 F001/F002: WindowStyle per host (DaggerfallInterior.cs:473/:517/:1270 vs GetMaterial's Day default)
 import { realWindowsMode, createViewOut, viewOutFrame } from '../render/realWindows.js';   // RW1: the view out through a building's glass
 import { raiseContainerLootSpawned } from '../systems/containerLoot.js';   // FORAGE3: PlayerActivate.OnLootSpawned, one home - RRI2's shelf subscribers first (bandage stacks, store-quality wear, the alchemist's potions), then Foraging's
-import { bedSleepingOn, rrDouseOnDungeonExit, rrRefinedTrainingOn, rrSetting } from '../systems/rrRealism.js';   // RR1: the bed's activation gate, the douse on leaving a dungeon; RR2: the refined training window's switches
-import { rrVariantPerson } from '../systems/rrVariants.js';   // RR2: the variant keepers and residents
+import { bedSleepingOn, rrDouseOnDungeonExit, rrRefinedTrainingOn, rrSetting } from '../systems/roleplayRealism/rrRealism.js';   // RR1: the bed's activation gate, the douse on leaving a dungeon; RR2: the refined training window's switches
+import { rrVariantPerson } from '../systems/roleplayRealism/rrVariants.js';   // RR2: the variant keepers and residents
 import { chairSeatOf, chairProbeOver, CHAIR_KIND, CHAIR_FLOOR_STEP } from '../world/chairSeat.js';   // SIT1: where on a chair the sitter's body goes
 import { isLampKeeper, lampLines, LAMP_TEXT, createLampTitle } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a shop's keeper standing as the lamp, its words and its title
 import { announceHonour } from '../ui/lootBanner.js';   // LAMP-KEEPER II: I Love Lamp, as a loot banner
-import { setRrHostSeams } from '../systems/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
+import { setRrHostSeams } from '../systems/roleplayRealism/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
 import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
 import { deepWatersOn, deepWatersSwimSettings } from './deepWatersHost.js';
 import { loadGraceActive as dwLoadGraceActive } from '../world/deepWaterRuntime.js';
@@ -620,7 +620,7 @@ export function createWorldModes(host) {
   // CARDS4 (bible/11-Multiplayer/Tavern-Cards.md section 14; Mac: "Hold'em first", "Real gold", "Yes, patrons play"):
   // THE TABLE'S EVENING ON THE SEAT. Sitting down opens the table's panel (ui/cardTableHud.js - the port's own, not a
   // pausing window: the patrons play on); dealing in takes the buy-in from the purse and seats the tavern's regulars
-  // (systems/cardTableSession.js over the cards' law, systems/cardPatrons.js for their play); the frame runs their
+  // (systems/card/cardTableSession.js over the cards' law, systems/card/cardPatrons.js for their play); the frame runs their
   // thought and the deal; every road off the seat (standFromCardTable) folds the hand out of turn and turns the chips
   // back into gold. ONLINE IT IS A FRIENDLY GAME: a patron's gold paid on the client is a faucet the realm service never
   // sees (Tavern-Cards section 5: a table the service does not keep plays for no gold), so a realm character - or any
@@ -1763,7 +1763,7 @@ export function createWorldModes(host) {
   // mountPicture) - the room and the decorator's ghost ask the same door - and the room asks again when the build does.
   const decorMwPicture = (item) => fpArm.mountPicture(item);
   let _decorMwStamp = null;
-  // HOME-DOORS: A DOOR THE OWNER HUNG (systems/decorDoorways.js) - one of the room's own action doors, keyed
+  // HOME-DOORS: A DOOR THE OWNER HUNG (systems/decor/decorDoorways.js) - one of the room's own action doors, keyed
   // `act:decor:<id>` (world/actionSystem.js addDoor's positionKey: the same key on every client and every visit, so its
   // swing is saved and shared as the room's own doors' are), drawn and ticked with them and named as one on the hover.
   const decorDoorHooks = {
@@ -2967,7 +2967,7 @@ export function createWorldModes(host) {
     standQuestFlatIn(questFlats, () => interiorCtx, (ctx, p) => ctx.parentPt(p.x, p.y, p.z), false, ...args);
   const standDungeonQuestFlat = (...args) =>
     standQuestFlatIn(dungeonQuestFlats, () => dungeonCtx, (_ctx, p) => [p.x, p.y, p.z], true, ...args);
-  /** GUIDE8 (the delve arc, systems/questGuidance.js): THE EXACT TIER'S MARKS, underground - the stands and the quest
+  /** GUIDE8 (the delve arc, systems/quest/questGuidance.js): THE EXACT TIER'S MARKS, underground - the stands and the quest
    *  foes this dungeon holds, named as the plaque names an item, and which of them the tracker's quest owns. Null under
    *  any other tier, so the context draws none. */
   const dungeonQuestMarksHere = () => (guidanceTier() !== 'exact' ? null : dungeonQuestMarks({
@@ -4079,7 +4079,7 @@ export function createWorldModes(host) {
    *  (systems/tradeModes.js "Are we trying to sell the non empty wagon?"); the keyed list neither lists nor sells it. */
   const loadedWagonHeld = (it) => wagonLoadedHeld(it, playerEntity);   // WAGONS2 (FINAL AUDIT): the pack's own law (systems/tradePack.js)
   function doSell(shelf, it) {
-    if (isBound(it) || lockRefuses(it, 'sell')) return 0;   // AUDIT SS: the keyed shelf sells no bound piece (systems/itemBound.js) and no locked one (LOCK1), as neither counter stages one
+    if (isBound(it) || lockRefuses(it, 'sell')) return 0;   // AUDIT SS: the keyed shelf sells no bound piece (systems/item/itemBound.js) and no locked one (LOCK1), as neither counter stages one
     if (isSummoned(it)) return 0;   // CRAFT-WORTH (the exploit audit): nor a conjured piece (Create Item) - the trade windows refuse one (TransferItem's summoned guard)
     if (loadedWagonHeld(it)) return 0;   // WAGONS2 (AUDIT): nor the loaded wagon
     const price = sellPrice(it);
@@ -4254,7 +4254,7 @@ export function createWorldModes(host) {
   // service over the same repairService.js laws with `b?.quality ?? 0`,
   // which is that same zero, said honestly.
   //
-  // The routing law is systems/guildServiceFlow.js; this end owns only
+  // The routing law is systems/guild/guildServiceFlow.js; this end owns only
   // the geometry, the faction lookups and the window.
   const personAabb = (pn) => ({
     min: [pn.x - pn.width / 2, pn.y, pn.z - pn.width / 2],
@@ -4307,7 +4307,7 @@ export function createWorldModes(host) {
     // DaggerfallUI.MessageBox(tokens) (:738) - the composition, the
     // token->row law and the starter-label drop all live in
     // systems/bulletinBoard.js; this end owns only the window.
-    // BOUNTY1 (Mac, 2026-09-28): half of a town's boards are its BOUNTY boards (systems/bountyBoard.js
+    // BOUNTY1 (Mac, 2026-09-28): half of a town's boards are its BOUNTY boards (systems/bounty/bountyBoard.js
     // questBoardIndices) - the box carries its town's pixel, and the host's bounty window stands instead of the notice
     if (aabb.bounty && openBountyBoard?.(aabb.bounty)) return;
     const rows = bulletinBoardRows(locationName, bulletinBoardNews?.() ?? null, tokenRows);
@@ -4346,7 +4346,7 @@ export function createWorldModes(host) {
     // ARENA1: the Herald of the Arena at the colosseum's gate (world/arenaCity.js ARENA_GATE_PEOPLE) - until the bouts
     // are fought (ARENA2) and the Arena window opens (ARENA3), his word through the one box: the enhanced skin's notice
     // panel, the classic skin's parchment. The recruiters, the bookmaker and the wardens talk as the city's people do.
-    // ARENA2: his CHOICE now (systems/arenaHerald.js - watch, fight, the fighters' hall, leave), the host's; a host with no
+    // ARENA2: his CHOICE now (systems/arena/arenaHerald.js - watch, fight, the fighters' hall, leave), the host's; a host with no
     // arena driver (the standalone city - scenes/exterior.js) keeps ARENA1's notice
     if (!info && arenaGatePersonOf(pn)?.role === 'herald') { if (!host.arenaHerald?.()) townTalk?.showOverlay?.(new ActionTextBox([...ARENA_TEXT.heraldNotice])); return; }
     // ARENA3: THE BANNERS' RECRUITERS - each his banner's choice (scenes/arenaGate.js: join, quit, the Arena window); a host
@@ -4781,7 +4781,7 @@ export function createWorldModes(host) {
     const key = interiorBuilding?.buildingKey;
     if (!key) return null;
     // HOME1: my online home keeps its things under its OWN scene - offline the same building is a stranger's, whose
-    // cupboards restock on the first open (systems/onlineHomes.js's header).
+    // cupboards restock on the first open (systems/online/onlineHomes.js's header).
     if (interiorHome?.own) return homeSceneName(homeTownOf(interiorBuilding), key);
     return interiorSceneName(questSceneCtx?.()?.mapId ?? 0, key);
   }
@@ -4937,7 +4937,7 @@ export function createWorldModes(host) {
       const [kind, i] = c.key.split(':');
       const target = kind === 'shelf' ? interiorCtx.shelves?.[+i] : chestOf.get(c);
       // ARENA2: A HOUSE THE ARENA MOVED brought its chests', its storage pieces' and its floor's things in its first
-      // container (systems/arenaMove.js emptyArenaScene, `crate`): a house with none has them set down as a crate where
+      // container (systems/arena/arenaMove.js emptyArenaScene, `crate`): a house with none has them set down as a crate where
       // its owner first walks in - a pile of their own, in the building's frame, cached with the floor from here on.
       // HOLD-KEPT: and so is what any chest held that no chest of this visit stands for - never dropped
       if (!target && kind === 'container' && c.items?.length) {
@@ -5118,7 +5118,7 @@ export function createWorldModes(host) {
    *  workbench and the loom too), its beds and its magic are the member's. */
   const hallMemberHere = () => !!(interiorHome?.hall && interiorHome.member) || !!interiorSeatHall?.member;   // SEAT-HALL: the holder's members
   /** GUILD1e (Seats-Arc 8.2: "a private guild board"): a placed piece that is Daggerfall's own board, in a guild's hall -
-   *  the hall's board (systems/decorCatalogue.js HALL_BOARD_ENTRY). Anywhere else the same model is furniture. */
+   *  the hall's board (systems/decor/decorCatalogue.js HALL_BOARD_ENTRY). Anywhere else the same model is furniture. */
   const isHallBoard = (piece) => (!!interiorHome?.hall || !!interiorSeatHall) && piece?.model === BULLETIN_BOARD_MODEL_ID && !piece.item;   // SEAT-HALL: the roster board in the Charter Room
   /** SEAT-HALL: the guild whose hall this is - a hall's own, or the palace's holder. */
   const hallNameHere = () => interiorHome?.hall?.name ?? interiorSeatHall?.name ?? '';
@@ -6201,7 +6201,7 @@ export function createWorldModes(host) {
     return o ? mountServiceWindow(o) : null;
   }
   /** LOOT16: THE TEMPLE'S LIFTING - the Reforge's window on its one page over the player's own pack, the law's
-   *  (systems/lootCurse.js liftCurse), paid from the player's purse. Answers the window, or null with no page. */
+   *  (systems/loot/lootCurse.js liftCurse), paid from the player's purse. Answers the window, or null with no page. */
   function openLift() {
     const o = createReforgeOverlay({
       items: () => playerEntity.items ?? [], payer: () => playerEntity, gold: () => totalGoldAmount(playerEntity),
@@ -7512,7 +7512,7 @@ export function createWorldModes(host) {
       const entry = entries[key];
       if (entry?.door?.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) {
         // ELITE: 'Elite Dungeon' over its mouth; TIER1: online every mouth says its tier and the size the room builds it
-        // at (systems/dungeonTier.js), offline the mod's own "To <name>"
+        // at (systems/dungeon/dungeonTier.js), offline the mod's own "To <name>"
         const label = tierShown(host.dungeonOnline?.() ?? false) ? dungeonTierLabel(entry.dfLocation) : null;
         return staticDoorName('dungeonEntrance', { locationName: currentLocationName(), tier: label?.tier ?? null, size: label?.size ?? null });
       }
@@ -7638,7 +7638,7 @@ export function createWorldModes(host) {
     return null;
   }
 
-  // ═══ HOME1 — THE ONLINE HOMES (systems/onlineHomes.js) ═══════════════════════════════════════════════════════════
+  // ═══ HOME1 — THE ONLINE HOMES (systems/online/onlineHomes.js) ═══════════════════════════════════════════════════════════
   // Mac: "allowing online players to purchase housing in any location", "Housing is exclusive", bought "At its front
   // door", entry "Owner chooses". The registry is the host's (`host.onlineHomes`, built online only); these read it.
   /** The town a building record is keyed by: the door's own location (buildingDataForDoor's `townMapId` - a streamed
@@ -7685,7 +7685,7 @@ export function createWorldModes(host) {
     const price = homeOfferPrice(bd);
     return price ? homeForSaleLine(price) : null;
   }
-  // ═══ HOME2 — THE DOOR'S VERBS (systems/onlineHomes.js HOME_VERB) ════════════════════════════════════════════════════
+  // ═══ HOME2 — THE DOOR'S VERBS (systems/online/onlineHomes.js HOME_VERB) ════════════════════════════════════════════════════
   // Mac: "We need to ensure any house can be bought"; offered the offer on any click but Steal, "should use our
   // tooltip implementation". Online, in every mode but Steal (which picks the lock), a house I could buy lists "Go
   // in" and "Buy it" on the door's plaque, and my own home "Go in", "Who may enter" and "Sell it".
@@ -8206,7 +8206,7 @@ export function createWorldModes(host) {
       .then((r) => { townTalk?.say?.(r.ok ? homeEntryLine(next) : accountRefusalText(r.error)); })
       .catch((e) => console.error(e));
   }
-  /** Buy it (systems/onlineHomes.js buyOnlineHome: the service's claim first, the gold once it lands), paid as
+  /** Buy it (systems/online/onlineHomes.js buyOnlineHome: the service's claim first, the gold once it lands), paid as
    *  Daggerfall's PurchaseHouse pays - DeductGoldAmount off the purse, its shortfall off the region's account - and
    *  the home's own scene made permanent, where what I keep in it will live. */
   async function buyHomeAt(bd, price) {
@@ -8708,7 +8708,7 @@ export function createWorldModes(host) {
           // dungeon beneath it share - and the beacon takes that
           // record's entranceDiscovered before the locationName
           // mismatch ends the restore. A READ; nothing about a
-          // building ever enters that dictionary (systems/automap.js).
+          // building ever enters that dictionary (systems/automap/automap.js).
           dungeonEntranceDiscovered: !!getDungeonAutomap(
             automapDungeonKey(hit.dfLocation?.regionIndex ?? -1, hit.dfLocation?.name ?? ''))?.entranceDiscovered,
         }).catch((e) => { buildingHold.release(); if (live()) say(NOTHING_OF_VALUE_TEXT); throw e; });   // PLACE-LRU: a build that throws hands no context back to release it; FIELD BUGS 2026-10-04d VOID-ENTRY: TransitionInterior's catch (PlayerEnterExit.cs:719-730) - a room that will not lay out says DFU's old chestnut; the player stays in the street (the hosts log the throw)
@@ -10140,7 +10140,7 @@ export function createWorldModes(host) {
     // dungeon at all, which is what it was always for.
     // CASTLE1: and WHICH door - the save's own dungeon, then this
     // pixel's, never a neighbour's because it built first
-    // (systems/save.js dungeonStartDoorFor has the law and the report).
+    // (systems/save/save.js dungeonStartDoorFor has the law and the report).
     const hit = dungeonStartDoorFor(entries.filter((e) => e.door.doorType === DOOR_TYPE.DUNGEON_ENTRANCE), host.dungeonStartSite?.() ?? null, locationKey);
     if (!hit) return false;
     // DE1: this is StartDungeonInterior, not the door transition - the
@@ -12239,7 +12239,7 @@ export function createWorldModes(host) {
     const memberships = activeMemberships(playerEntity);   // V2e: the vampire-aware book
     const dict = townTalk?.factionDict ?? null;
     const guild = b?.factionId ? guildOfFaction(b.factionId, resolveVariantGuild(dict), dict) : null;
-    // The SHAPE is systems/restSession.js' (a review round showed a bag
+    // The SHAPE is systems/rest/restSession.js' (a review round showed a bag
     // built in a closure can only be pinned by a regex over its own
     // source, and proved that hollow); this reads the live values.
     const scene = currentInteriorScene();
@@ -12697,7 +12697,7 @@ export function createWorldModes(host) {
       // PARTY-REST28: shared with world.js's own outdoor toggleRest and dungeonContext.js's - see
       // world.js's markPartyRestSpent doc comment for the bug this closes (a rest granted indoors used to
       // leave the granting player's own ready flag stuck true forever, since nothing here ever reset it).
-      // REST-WARN: poisoned or diseased, the rest asks first (systems/restWarning.js)
+      // REST-WARN: poisoned or diseased, the rest asks first (systems/rest/restWarning.js)
       const restNow = () => {
         if (interiorOverlay?.done) { interiorOverlay = null; interiorWindows.reconcile(null); }
         host.markPartyRestSpent?.();
@@ -13527,7 +13527,7 @@ export function createWorldModes(host) {
       return interiorFoes.spawnFoe(mobileType, feet, { replacing: true });
     },
     /** CURSE-OFF-SAND (FIELD BUGS 2026-10-04e): a quest's wave kept off the level I stand on - the curse's dead off the
-     *  arena's floor and its undercroft (systems/arenaGround.js); the hosts' foeKeptOff asks it inside. */
+     *  arena's floor and its undercroft (systems/arena/arenaGround.js); the hosts' foeKeptOff asks it inside. */
     questFoeKeptOff(foe) {
       return mode === 'dungeon' && keptOffArenaGround({ questName: foe?.parentQuest?.questName, inArenaLevel: isArenaFloor(dungeonLoc) || isArenaUndercroft(dungeonLoc) });
     },

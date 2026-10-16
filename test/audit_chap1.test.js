@@ -11,7 +11,7 @@ import {
   rollCredit, rollDrain, rollSeedOf, rollSeedOk, rollRankCapOf, rollDeltasOf, rollAdopt, rollKeptOf, rollMembersKey, rollCeilingLine, rollFactionName,
 } from '../src/net/npcChapterLaw.js';
 import { createRollTracker, rollEntityDoors, rollRid, ROLL_STOPS } from '../src/net/npcRollTracker.js';
-import { createFactionRep } from '../src/systems/factionRep.js';
+import { createFactionRep } from '../src/systems/faction/factionRep.js';
 import { createRealmSession } from '../src/systems/realmSaves.js';
 import { accountRoll, SESSION_KEY, accountRefusalText, REFUSALS } from '../src/net/accountClient.js';
 import { readRoll, claimRoll } from '../server-account/src/npcRoll.js';

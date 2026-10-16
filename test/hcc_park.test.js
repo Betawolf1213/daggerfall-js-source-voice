@@ -19,7 +19,7 @@ import {
 import { lerpPose } from '../src/net/online.js';
 import { fakeRooms, fakeRoom } from './fakeRoom.mjs';
 import { createHorseCartPool, ownedLine } from '../src/scenes/horseCartPool.js';
-import { WAGON_MODE, HORSE_MODE } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { createPeerRiders, rideTable, RIDER_RETRY_MS } from '../src/net/peerRiders.js';
 import { ARCHIVE_HORSE } from '../src/player/eotbBillboard.js';
 

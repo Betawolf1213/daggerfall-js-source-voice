@@ -17,7 +17,7 @@ import { bindPlusRow, PLUS_BIND_ROWS, rowCode } from '../src/ui/plusPadBinds.js'
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { setControllerLook } from '../src/player/lookFilter.js';
 import { hotbarEntry, clearHotbar, setHotbarSlot, hotbarEntryForItem } from '../src/systems/quickslots.js';
 import { fakeDom } from './invdrag.mjs';

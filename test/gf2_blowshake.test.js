@@ -16,7 +16,7 @@ import { TECH_FX, kickFx, techniqueCue, stepTechniqueFx, techniqueView, techniqu
 import { createChopAct } from '../src/systems/chopAct.js';
 import { createMineAct, MINE_POINTS } from '../src/systems/mineAct.js';
 import { CHOP_ACT, MINE_ACT } from '../src/net/professionLaw.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { PX, rig, arrive, strikeOut, lands, sfxOf, tick, dice } from './gatherRig.mjs';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');

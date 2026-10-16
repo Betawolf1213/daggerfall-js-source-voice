@@ -124,7 +124,7 @@ records (YARD-CORNER's and HOME-YARD's) now name this file too.
 
 ## FULL-GUARD: no foe's one blow from full health (6)
 
-`characters/playerEntity.js` hurtPlayer, `setFoeBlowProbe`; `systems/sigilSetPowers.js`. The Balance arc (BAL1-BAL4,
+`characters/playerEntity.js` hurtPlayer, `setFoeBlowProbe`; `systems/sigil/sigilSetPowers.js`. The Balance arc (BAL1-BAL4,
 2026-10-10) raised the threat on purpose. BAL2 gave every striker the player's crit (`crit / (4 - luck)`, up to x2.0),
 and BAL4 put the elites (x3) and the Enhanced AI's telegraphed blows (a lunge x1.5, a slam x1.75) in the offline game by
 default. Nothing capped the stack. Simulated through the real `calculateAttackDamage` under PCAAO, against a level-12

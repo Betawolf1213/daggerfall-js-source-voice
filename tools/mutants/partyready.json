@@ -37,7 +37,7 @@
   },
   {
     "name": "PARTYREADY-wait-host-default",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "host.mid(`Waiting for the party to ready up (${t.count}).`, Math.max(1, (PARTY_READY_TIMEOUT_MS - (now - t.at)) / 1000));",
     "new": "host.mid(`Waiting for the party to ready up (${t.count}).`);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "PARTYREADY-wait-every-tick",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (count !== t.count) { t.count = count; waitLabel(t, now); }",
     "new": "{ t.count = count; waitLabel(t, now); }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "PARTYREADY-wait-never-moved",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "if (count !== t.count) { t.count = count; waitLabel(t, now); }",
     "new": "if (count !== t.count) { t.count = count; }",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "PARTYREADY-set-out-not-on-hud",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "      host.mid(line);   // PARTY-READY: the wait ends on the HUD too\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "PARTYREADY-lapse-not-on-hud",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "    if (open && text) host.mid(text);",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "PARTYREADY-call-off-not-on-hud",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "host.mid('You call off the journey.'); return 'You call off the journey.';",
     "new": "return 'You call off the journey.';",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "PARTYREADY-box-over-tab",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "      if (host.tabOpen?.()) return;\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "PARTYREADY-asked-under-tab",
-    "file": "src/systems/partyTravel.js",
+    "file": "src/systems/party/partyTravel.js",
     "old": "      if (host.tabOpen?.()) return;",
     "new": "      if (host.tabOpen?.()) { asked = round.at; return; }",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "SET7-the-day-off-the-local-hours",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const brokerDay = (nowMs) => Math.floor(Number(nowMs) / BROKER_DAY_MS);",
     "new": "export const brokerDay = (nowMs) => Math.floor((Number(nowMs) - new Date(Number(nowMs)).getTimezoneOffset() * 60000 + 3600000) / BROKER_DAY_MS);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SET7-the-turn-off-by-one",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const brokerTurnsIn = (nowMs) => BROKER_DAY_MS - (((Number(nowMs) % BROKER_DAY_MS) + BROKER_DAY_MS) % BROKER_DAY_MS);",
     "new": "export const brokerTurnsIn = (nowMs) => BROKER_DAY_MS - (((Number(nowMs) % BROKER_DAY_MS) + BROKER_DAY_MS) % BROKER_DAY_MS) - 1;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SET7-a-days-stock-unlike-itself",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const rolls = seededRng(gateHash(d >>> 0, BROKER_SALT));",
     "new": "  const rolls = Math.random;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SET7-a-set-left-out",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  for (const set of WORLD_SET_IDS) {\n    const item = setArmour(set, rolls);",
     "new": "  for (const set of WORLD_SET_IDS.slice(1)) {\n    const item = setArmour(set, rolls);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SET7-a-price-off",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const BROKER_PRICES = Object.freeze({ rare: 4, legendary: 6, weapon: 6, regalia: 12 });",
     "new": "export const BROKER_PRICES = Object.freeze({ rare: 3, legendary: 6, weapon: 6, regalia: 12 });",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SET7-an-unknown-piece",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  applyRarity(item, legendary ? 'legendary' : 'rare', rolls, legendary ? baseLegendaries(item) : null);\n  item.isIdentified = true;\n",
     "new": "  applyRarity(item, legendary ? 'legendary' : 'rare', rolls, legendary ? baseLegendaries(item) : null);\n",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SET7-the-regalia-at-a-world-price",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  offer('regalia', 'ruhn', BROKER_PRICES.regalia, mintAetheric(pick(REGALIA, rolls)));",
     "new": "  offer('regalia', 'ruhn', BROKER_PRICES.rare, mintAetheric(pick(REGALIA, rolls)));",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SET7-shields-by-template",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const place = pick(BROKER_ARMOR_PLACES, rolls);\n  const templateIndex = place === 'shield' ? pick(BROKER_SHIELDS, rolls) : place;",
     "new": "  const templateIndex = pick([102, 103, 104, 105, 106, 107, 108, ...BROKER_SHIELDS], rolls);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SET7-a-legendary-off-a-registered-record",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "applyRarity(item, legendary ? 'legendary' : 'rare', rolls, legendary ? baseLegendaries(item) : null);",
     "new": "applyRarity(item, legendary ? 'legendary' : 'rare', rolls, null);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SET7-the-weapons-blow-off-its-band",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const [lo, hi] = SIGIL_BANDS.rare;",
     "new": "  const [lo, hi] = SIGIL_BANDS.legendary;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SET7-a-bought-offer-sold-again",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (new Set(bought).has(offer.id)) return { ok: false, reason: 'bought', price, have };\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SET7-a-short-purse-served",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (have < price) return { ok: false, reason: 'stones', price, have };",
     "new": "  if (have < price - 1) return { ok: false, reason: 'stones', price, have };",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SET7-the-record-never-saved",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  getSaveData: () => ({ day: _bought.day, ids: [..._bought.ids] }),",
     "new": "  getSaveData: () => ({ day: -1, ids: [] }),",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SET7-yesterdays-marks-kept",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (_bought.day !== offer.day) _bought = { day: offer.day, ids: [] };",
     "new": "  if (_bought.day !== offer.day) _bought = { day: offer.day, ids: [..._bought.ids] };",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SET7-a-forged-record-trusted",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!r.ids.every((x) => typeof x === 'string' && /^-?\\d+:\\d+$/.test(x))) return NO_RECORD();\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SET7-the-sale-taking-one-stone-too-many",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  return { ok: true, take: stonesToTake(state.items, offer.price), give };",
     "new": "  return { ok: true, take: stonesToTake(state.items, offer.price + 1), give };",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SET7-the-sale-handing-over-the-shown-piece",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const give = real.item;",
     "new": "  const give = offer.item;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SET7-a-locked-stone-spent",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "export const spendableStonesIn = (items) => stonesIn(items).filter((it) => !isLocked(it));",
     "new": "export const spendableStonesIn = (items) => stonesIn(items);",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SET7-a-heavy-sale-half-made",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!canCarry(sale.give, rest)) return { ok: false, reason: 'heavy' };\n  takeFromPack(items, sale.take);",
     "new": "  takeFromPack(items, sale.take);\n  if (!canCarry(sale.give, rest)) return { ok: false, reason: 'heavy' };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SET7-a-sale-left-unmarked",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  addItem(items, sale.give);\n  markBrokerBought(offer);",
     "new": "  addItem(items, sale.give);",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SET7-the-carry-gate-asked-with-the-stones-in",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!canCarry(sale.give, rest))",
     "new": "  if (!canCarry(sale.give, items))",
     "tests": [

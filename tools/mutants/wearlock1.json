@@ -91,7 +91,7 @@
   },
   {
     "name": "LOCK1-unlocked-written-as-false",
-    "file": "src/systems/itemLock.js",
+    "file": "src/systems/item/itemLock.js",
     "old": "  else delete item.locked;",
     "new": "  else item.locked = false;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "LOCK1-the-wagon-closed",
-    "file": "src/systems/itemLock.js",
+    "file": "src/systems/item/itemLock.js",
     "old": "Object.freeze(['drop', 'sell', 'trade'])",
     "new": "Object.freeze(['drop', 'sell', 'trade', 'stow'])",
     "tests": [

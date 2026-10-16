@@ -399,7 +399,7 @@
   },
   {
     "name": "OPEN-HAND-the-follow-up-dropped",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  oweFoe(target, n);   // FIELD BUGS 2026-10-12g OPEN-HAND",
     "new": "  // dropped",
     "tests": [

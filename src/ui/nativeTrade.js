@@ -32,12 +32,12 @@ import { drawScreenDimBackdrop } from './chargenArt.js';
 import { LIST_SLOTS, CELL_X, CELL_W, SLOT_H, CELL_MARGIN, ARROW_H, DOWN_ARROW_Y, scrollerHit, applyScroll, makeIconDrawer, drawStackLabel,
   preloadScrollerArrowArt, drawScrollerArrows, drawScrollerThumb, playScrollerArrowClick, makeSlotToolTip,
   itemBackgroundColour, drawCellBackground, beginScrollerDrag, dragScrollerIndex } from './itemScroller.js';   // MAC-N2: the thumb drag
-import { getBool } from '../systems/settings.js';   // AUDIT 64 F53: InstantRepairs, the repair tint's first arm
+import { getBool } from '../systems/settings/settings.js';   // AUDIT 64 F53: InstantRepairs, the repair tint's first arm
 import { FntFile } from '../formats/fntFile.js';
 import { makeFont } from './text.js';
-import { planTake, applyTransfer, clearLightSourceOnLeave, cannotCarryText } from '../systems/itemTransfer.js';   // AUDIT 26 F157/F158
-import { isKeptSpellbook, SPELLBOOK_KEPT_TEXT } from '../systems/itemTransfer.js';   // KEEP-SPELLBOOK: never sold
-import { HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired } from '../systems/itemTransfer.js';   // DISC25-F: TransferItem's split popup, inherited
+import { planTake, applyTransfer, clearLightSourceOnLeave, cannotCarryText } from '../systems/item/itemTransfer.js';   // AUDIT 26 F157/F158
+import { isKeptSpellbook, SPELLBOOK_KEPT_TEXT } from '../systems/item/itemTransfer.js';   // KEEP-SPELLBOOK: never sold
+import { HOW_MANY_ITEMS, SPLIT_INPUT_MAX, parseSplitAmount, splitRequired } from '../systems/item/itemTransfer.js';   // DISC25-F: TransferItem's split popup, inherited
 import { InputMessageBoxWindow } from './inputMessageBox.js';   // DISC25-F: ...pushed as CM5 pushes it for the pack
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
@@ -51,7 +51,7 @@ import {
 import { cannotBeRepairedText, TRANSPORT_CANNOT_BE_REPAIRED_TEXT, interruptRepairText, isBeingRepaired as itemIsBeingRepaired,
   isRepairFinished, collectRepaired, updateRepairTimes, repairStatusLabel } from '../systems/repairService.js';   // D7: the Repair mode's remote arm; UXB1-K: its misc label
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DoSteal's two lines
-import { isFurnishing } from '../systems/decorFurnish.js';   // DECOR2b: furniture is delivered, never carried
+import { isFurnishing } from '../systems/decor/decorFurnish.js';   // DECOR2b: furniture is delivered, never carried
 import { isSummoned, carriedWeight, totalWeight, transferAll, addItem } from '../systems/inventory.js';   // TransferItem's summoned guard; AUDIT 63 F48: transferAll is ItemCollection.TransferAll (:452), DoSteal's move
 import { shopliftAttempt } from '../systems/theft.js';   // AUDIT 63 F48: DoSteal's decision (:909-916)
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // PlayerEntity.MaxEncumbrance
@@ -61,15 +61,15 @@ import {
   CONTAINER_IMAGES, LOCAL_TARGET_ICON_RECT, REMOTE_TARGET_ICON_RECT,
   drawTargetIconPanel, targetIconWeightText,
 } from './targetIconPanel.js';
-import { wagonKgFor } from '../systems/wagonKinds.js';   // ItemHelper.WagonKgLimit (:56) - WAGONS1: the driven wagon's
+import { wagonKgFor } from '../systems/wagon/wagonKinds.js';   // ItemHelper.WagonKgLimit (:56) - WAGONS1: the driven wagon's
 import { cannotRemoveItemText } from '../systems/createItem.js';   // both TransferItem refusals speak it
 import { questTransferRefused, INV_RECTS, TABS, tabAccepts } from './nativeInventory.js';   // DaggerfallTradeWindow EXTENDS the inventory window; MAC-N2: and INHERITS its four tab pages
-import { expandGuildMacros } from '../systems/guildServiceActions.js';
-import { firstName } from '../systems/talkSession.js';   // MACRO-4: %pct's shop arm
+import { expandGuildMacros } from '../systems/guild/guildServiceActions.js';
+import { firstName } from '../systems/talk/talkSession.js';   // MACRO-4: %pct's shop arm
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
-import { lockRefuses, lockedText } from '../systems/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds at this counter too
-import { isBound, boundText } from '../systems/itemBound.js';   // SS4: and so does a binding
-import { itemLongName } from '../systems/itemInfo.js';   // AUDIT MERGE-PLUS C3: the refusal names the piece
+import { lockRefuses, lockedText } from '../systems/item/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds at this counter too
+import { isBound, boundText } from '../systems/item/itemBound.js';   // SS4: and so does a binding
+import { itemLongName } from '../systems/item/itemInfo.js';   // AUDIT MERGE-PLUS C3: the refusal names the piece
 
 /** A8: the mode action button's Hotkey is chosen by the WINDOW MODE
  *  (:325-344) - one button, four letters. Inventory mode assigns none
@@ -550,19 +550,19 @@ export class NativeTradeWindow {
    *  `from` is localItems at every one of those calls and the remote
    *  side is the staged lot, never the wagon. */
   _refuseTransfer(item) {
-    // AUDIT MERGE-PLUS C3: a LOCKED piece is not put up for sale on this skin either (LOCK1 - systems/itemLock.js, the
+    // AUDIT MERGE-PLUS C3: a LOCKED piece is not put up for sale on this skin either (LOCK1 - systems/item/itemLock.js, the
     // port's own); a repair or an identify still takes it, because it comes back
     if ((this.mode === 'Sell' || this.mode === 'SellMagic') && lockRefuses(item, 'sell')) {
       this.box = { rows: [{ text: lockedText(itemLongName(item, { getQuest: this.hooks.getQuest ?? null })), center: true }], buttons: null };
       return true;
     }
-    // SS4: a BOUND piece is not put up for sale on this skin either (systems/itemBound.js); a repair or an identify still
+    // SS4: a BOUND piece is not put up for sale on this skin either (systems/item/itemBound.js); a repair or an identify still
     // takes it, because it comes back
     if ((this.mode === 'Sell' || this.mode === 'SellMagic') && isBound(item)) {
       this.box = { rows: [{ text: boundText(itemLongName(item, { getQuest: this.hooks.getQuest ?? null })), center: true }], buttons: null };
       return true;
     }
-    // KEEP-SPELLBOOK: the spellbook is never put up for sale (systems/itemTransfer.js isKeptSpellbook); a repair or an
+    // KEEP-SPELLBOOK: the spellbook is never put up for sale (systems/item/itemTransfer.js isKeptSpellbook); a repair or an
     // identify still takes it, because it comes back
     if ((this.mode === 'Sell' || this.mode === 'SellMagic') && isKeptSpellbook(item)) {
       this.box = { rows: [{ text: SPELLBOOK_KEPT_TEXT, center: true }], buttons: null };

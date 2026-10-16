@@ -68,8 +68,8 @@ test('MACRO-ONE: the bridge registers its machine as the world, in every host th
 });
 
 test('MACRO-2: a NULL in a caller’s map is "I do not know" - the world answers it; an EMPTY name or city is unknown, not a blank', async () => {
-  const { expandGuildMacros } = await import('../src/systems/guildServiceActions.js');
-  const { expandMacros } = await import('../src/systems/talkSession.js');
+  const { expandGuildMacros } = await import('../src/systems/guild/guildServiceActions.js');
+  const { expandMacros } = await import('../src/systems/talk/talkSession.js');
   setMacroWorld(world);
   try {
     // the guild map lists %ra, %pct, %hnr and fills none of them here

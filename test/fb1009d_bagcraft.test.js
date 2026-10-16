@@ -11,13 +11,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { standService, sessionStorageOf } from './accountDb.mjs';
 import { accountProf, SESSION_KEY } from '../src/net/accountClient.js';
 import { createProfBook, mintProfRid } from '../src/net/profBook.js';
 import { DEPOSIT_ORDERS, LOOSE_ORIGIN, STATION_ORIGINS, WRIT_ORIGINS, looseOrder, depositOrderOk, carriedWorkable, carriedUsable, BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { heldOf, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf } from '../src/systems/materialsBag.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { xpForRank, STORES_MAX } from '../src/net/professionLaw.js';
 import { mintPieces } from '../src/systems/smithItems.js';
 

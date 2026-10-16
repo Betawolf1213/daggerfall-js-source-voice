@@ -187,7 +187,7 @@
   },
   {
     "name": "HOME1-a-faction-house-for-sale",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (t === BUILDING_TYPES.House2 && (bd.factionId ?? 0) !== 0) return false;\n",
     "new": "",
     "tests": [
@@ -196,7 +196,7 @@
   },
   {
     "name": "HOME1-quest-building-for-sale",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "bd.hasInterior !== false && !(isActiveQuestBuilding?.(bd) ?? false);",
     "new": "bd.hasInterior !== false;",
     "tests": [
@@ -205,7 +205,7 @@
   },
   {
     "name": "HOME1-one-scene-for-both",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "`OnlineHome [MapID=${Number(mapId) >>> 0}, BuildingKey=${buildingKey}]`",
     "new": "`DaggerfallInterior [MapID=${Number(mapId) >>> 0}, BuildingKey=${buildingKey}]`",
     "tests": [
@@ -214,7 +214,7 @@
   },
   {
     "name": "HOME1-refund-whole",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "* DEED_SELL_MULT);",
     "new": "* 1);",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "HOME1-public-shut",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (homeMayEnter(home, { partyNames }) || questSite) return 'enter';",
     "new": "if (questSite) return 'enter';",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "HOME1-quest-rung-lost",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (homeMayEnter(home, { partyNames }) || questSite) return 'enter';",
     "new": "if (homeMayEnter(home, { partyNames })) return 'enter';",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "HOME1-two-asks-in-flight",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    const flying = asking.get(id);\n    // FB1001 (LOOK-STALE, HOMES-FORCE): a forced ask is asked AFTER the flight it finds - never answered by it (ASYNC\n    // NEVER DROPS): that flight set out before whatever forced this one (a look painted, a room rented), and its answer\n    // does not hold it. The one exception is a forced flight that set out after my last write: its answer is the one asked\n    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);\n",
     "new": "",
     "tests": [
@@ -250,7 +250,7 @@
   },
   {
     "name": "HOME1-the-time-unread",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (!force && had && now() - had.at < ttlMs) return Promise.resolve(true);",
     "new": "if (!force && had) return Promise.resolve(true);",
     "tests": [
@@ -259,7 +259,7 @@
   },
   {
     "name": "HOME1-a-failure-forgets-the-town",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "if (!Array.isArray(list)) return fail(id);",
     "new": "if (!Array.isArray(list)) { fail(id); towns.delete(id); return false; }",
     "tests": [
@@ -269,7 +269,7 @@
   },
   {
     "name": "HOME1-no-wait-after-a-failure",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (!force && f && now() - f.at < homeRetryMs(f.n)) return Promise.resolve(!!had);\n",
     "new": "",
     "tests": [
@@ -279,7 +279,7 @@
   },
   {
     "name": "HOME1-own-by-account",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const own = row.mine && typeof me === 'string' && row.character === me;",
     "new": "const own = row.mine;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "HOME1-the-claims-character",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "const r = await api.claim({ mapId: id, buildingKey, region, character: me, price, ...(realm ? { realm } : {}), layout: layout || null });",
     "new": "const r = await api.claim({ mapId: id, buildingKey, region, character: null, price, ...(realm ? { realm } : {}), layout: layout || null });",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "HOME1-no-read-back",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "      version++;\n    }\n    ensure(id, { force: true });\n",
     "new": "      version++;\n    }\n",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "HOME1-a-door-waits-on-a-slow-town",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "return Promise.race([ensure(id), late]).finally(() => clearTimeout(timer));",
     "new": "return ensure(id).finally(() => clearTimeout(timer));",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "HOME1-the-service-asked-short-of-gold",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (!afford(price)) return { ok: false, error: 'gold' };\n    const layout = homeClaimLayout(mapId);",
     "new": "    const layout = homeClaimLayout(mapId);",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "HOME1-the-second-ask-gone",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    if (!afford(price)) {\n      await homes.release(mapId, buildingKey);\n      return { ok: false, error: 'gold' };\n    }\n",
     "new": "",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "HOME1-a-refusal-paid-for",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "    const r = await homes.claim({ mapId, buildingKey, region, price, layout });\n    if (!r.ok) return r;\n",
     "new": "    const r = await homes.claim({ mapId, buildingKey, region, price, layout });\n",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "HOME1-credited-before-the-service-agrees",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "  if (!r.ok) return r;\n  const refund = homeRefund(r.price);\n  const decorBack = r.decorBack ?? 0;   // DECOR1e: its placed pieces' half, as the service summed it\n  credit(refund + decorBack);\n",
     "new": "  const refund = homeRefund(r.price);\n  const decorBack = r.decorBack ?? 0;   // DECOR1e: its placed pieces' half, as the service summed it\n  credit(refund + decorBack);\n  if (!r.ok) return r;\n",
     "tests": [
@@ -519,7 +519,7 @@
   },
   {
     "name": "HOME1-the-model-unread-at-the-door",
-    "file": "src/systems/talkTopics.js",
+    "file": "src/systems/talk/talkTopics.js",
     "old": ", modelIdNum: model?.modelIdNum ?? null, hasInterior",
     "new": ", hasInterior",
     "tests": [

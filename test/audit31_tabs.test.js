@@ -15,7 +15,7 @@ import { byClass, keydown } from './chargenDom.mjs';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { createWorkTab, paidText, WORK_ARM_MS } from '../src/ui/workTab.js';
 import { createMarketTab } from '../src/ui/marketTab.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { AUCTION_BID_MAX } from '../src/net/marketLaw.js';
 
 const tick = () => new Promise((r) => setTimeout(r, 0));

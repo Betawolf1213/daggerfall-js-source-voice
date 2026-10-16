@@ -12,19 +12,19 @@
 // ceiling fell back, which is why cancelling and starting again was the players' way out.
 //
 // Run here on the real producers: the stream (world/streamingWorld.js), the host's pump, its view governor and its count
-// (lifted whole out of scenes/world.js), the governor (systems/travelGovernor.js) and the clock (systems/timeScale.js) -
+// (lifted whole out of scenes/world.js), the governor (systems/travel/travelGovernor.js) and the clock (systems/timeScale.js) -
 // a journey on foot under the view at x100, one pixel of the counted grid in flight, its build thrown.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { StreamingWorldState, worldCoordToMapPixel } from '../src/world/streamingWorld.js';
 import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
-import { createLoadGovernor, unbuiltAround, TV_GOV_CLEAR_S } from '../src/systems/travelGovernor.js';
-import { threatCap, foePaced } from '../src/systems/travelThreat.js';
+import { createLoadGovernor, unbuiltAround, TV_GOV_CLEAR_S } from '../src/systems/travel/travelGovernor.js';
+import { threatCap, foePaced } from '../src/systems/travel/travelThreat.js';
 import { foeHostile, foeAlerted } from '../src/systems/encounters.js';
 import { TRAVEL_VIEW_TEXT, travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE } from '../src/systems/timeScale.js';
-import { _resetTravelPace } from '../src/systems/travelPace.js';
+import { _resetTravelPace } from '../src/systems/travel/travelPace.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** A function of world.js lifted whole: its head at the host's own indent, to the brace that closes it there. */

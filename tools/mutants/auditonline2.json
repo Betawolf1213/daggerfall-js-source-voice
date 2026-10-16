@@ -64,7 +64,7 @@
   },
   {
     "name": "F3-listener-throw-spreads",
-    "file": "src/systems/saveSlots.js",
+    "file": "src/systems/save/saveSlots.js",
     "old": "for (const fn of _slotLoaded) { try { fn(characterId ?? null); } catch (e) { console.warn('[saveSlots] a load listener failed', e?.message ?? e); } }",
     "new": "for (const fn of _slotLoaded) fn(characterId ?? null);",
     "tests": ["test/auditonline2.test.js"]

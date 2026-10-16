@@ -12,9 +12,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mintPiece, temperItem } from '../src/systems/smithItems.js';
 import { tradeCost, getTradePrice, counterValueOf } from '../src/systems/tradeModes.js';
-import { craftedRarityWorth, applyRarity, rareEnchantWorth } from '../src/systems/lootRarity.js';
-import { itemValueOf } from '../src/systems/itemTemplates.js';
-import { itemWorth, itemFindings } from '../src/systems/itemLaw.js';
+import { craftedRarityWorth, applyRarity, rareEnchantWorth } from '../src/systems/loot/lootRarity.js';
+import { itemValueOf } from '../src/systems/item/itemTemplates.js';
+import { itemWorth, itemFindings } from '../src/systems/item/itemLaw.js';
 import { patronWorth } from '../src/net/patronLaw.js';
 
 const PROV = '0123456789abcdef';

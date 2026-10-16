@@ -16,7 +16,7 @@ import { decodeTextureImage } from '../src/formats/mwTexture.js';
 import { composeWornArmor } from '../src/formats/mwItemMap.js';
 import { collectArmTextures } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { rriVariantWord } from '../src/systems/rriItems.js';
+import { rriVariantWord } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { BRIGANDINE_METALS, OWN_MW_ARMOR, RRI_JERKIN_TEMPLATE, ownArmorModelFor, ownArmorModelPaths } from '../src/characters/ownArmorModels.js';
 import { readPng } from '../tools/pngIO.mjs';
 import { SOURCE_FBX, PAINTING, outFor, textureNameFor, bakeBrigandineMetals } from '../tools/bakeBrigandine.mjs';

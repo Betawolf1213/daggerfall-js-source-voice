@@ -222,7 +222,7 @@
   },
   {
     "name": "AUDITSURV-the-save-forgets-the-record",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.survival = entity.survival ? { ...entity.survival, notes: undefined } : null;",
     "new": "  snap.survival = null;",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "AUDITSURV-a-restored-save-drops-the-record",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  entity.survival = snap.survival && typeof snap.survival === 'object' ? { ...snap.survival, notes: savedNotes(snap.survival) } : null;",
     "new": "  entity.survival = null;",
     "tests": [

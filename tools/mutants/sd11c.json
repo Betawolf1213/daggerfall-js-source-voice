@@ -178,7 +178,7 @@
   },
   {
     "name": "SD11c-L1F8-the-first-door-kept",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  return here ?? site ?? null;\n}",
     "new": "  return here ?? site ?? list[0] ?? null;\n}",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "SD11c-L5F7-saved-unread",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!v || !(max > 0) || !(after > 0) || saved) return;",
     "new": "  if (!v || !(max > 0) || !(after > 0)) return;",
     "tests": [

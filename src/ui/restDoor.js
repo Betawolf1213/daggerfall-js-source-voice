@@ -1,7 +1,7 @@
 // @ts-check
 // THE REST DOOR (2026-09-22, the party-rest drop's own seam, which shipped in neither of the two drops that
 // imported it): the enhanced/native fork for the rest window - the SAME law ui/tradeDoor.js keeps for the shop
-// counter. The enhanced skin gets ui/enhancedRest.js's DOM card over the SAME systems/restSession.js engine;
+// counter. The enhanced skin gets ui/enhancedRest.js's DOM card over the SAME systems/rest/restSession.js engine;
 // the classic skin keeps ui/restWindow.js's RestWindow exactly as it was, byte for byte ("modernize the resting
 // window based on the inventory style... don't touch classic mode").
 //

@@ -116,8 +116,8 @@ test('MODS-ON, executed: the two switches a lit torch was invisible without are 
   // sources still ship - because a departure nobody can see the far
   // side of is just a port that got it wrong.
   const { MOD_SETTINGS } = await import('../src/systems/modSettings.js');
-  const { SETTINGS_DEFAULTS } = await import('../src/systems/settingsDefaults.js');
-  const { PORT_DEFAULTS, getBool, effectiveSettings } = await import('../src/systems/settings.js');
+  const { SETTINGS_DEFAULTS } = await import('../src/systems/settings/settingsDefaults.js');
+  const { PORT_DEFAULTS, getBool, effectiveSettings } = await import('../src/systems/settings/settings.js');
   // the port's answer
   assert.equal(MOD_SETTINGS['handheld-torches'].keys['Modules.Sprite'].default, true, 'the hand is on');
   assert.equal(getBool('Enhancements', 'PlayerTorchFromItems'), true, 'and the torch lights the room');

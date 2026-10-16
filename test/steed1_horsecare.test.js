@@ -1,13 +1,13 @@
 // STEED1 (2026-10-11, the owner: "Horse should have stamina, feeding them grows your bond and improves their stats. Every
 // horse should have different stats") - HORSE CARE (bible/06-Systems/Horse-Care.md): the law (systems/steedCare.js) -
 // each horse's born stats off its seed, the bond and what grows it, hunger and what it costs, the keep (the stable's,
-// grazing, the packs' oats through a span skipped), the breath under a gallop; the runtime (systems/upkeepRuntime.js) -
+// grazing, the packs' oats through a span skipped), the breath under a gallop; the runtime (systems/upkeep/upkeepRuntime.js) -
 // the gallop's gate, the ride's pace, the HUD's bar, the Stable's model and acts, an inventory's Use; the transport's
 // gate (systems/transport.js), the motor's pace (player/motor.js), the yard's horses (systems/merchantYards.js), the
 // item's law, fields and card; the Stable page; and the hosts wiring it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeep/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   bornStats, horseBornStats, STEED_STATS, STEED_BORN_MIN, STEED_BORN_MAX, bondTier, bondBonus, BOND_TIERS, BOND_STEP, BOND_TENTHS_MAX,
@@ -16,19 +16,19 @@ import {
   GALLOP_SPEND, BREATH_BACK, RIDDEN_BACK, WINDED_UNTIL, STAMINA_BASE, STAMINA_PER_POINT, chooseRiddenHorse, horsesIn, bondAt,
   OATS_TEMPLATE, APPLE_TEMPLATES, STEED_FOODS, steedValue, STEED_PRICE, SKIP_MINUTES, STABLE_FED, STEED_TEXT,
 } from '../src/systems/steedCare.js';
-import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses, BREATH_LOW } from '../src/systems/upkeepRuntime.js';
-import { UPKEEP_ITEM, UPKEEP_ITEM_ROWS, UPKEEP_ITEMS_ONLINE, upkeepItemsAvailable } from '../src/systems/upkeepItemRows.js';
+import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses, BREATH_LOW } from '../src/systems/upkeep/upkeepRuntime.js';
+import { UPKEEP_ITEM, UPKEEP_ITEM_ROWS, UPKEEP_ITEMS_ONLINE, upkeepItemsAvailable } from '../src/systems/upkeep/upkeepItemRows.js';
 import { setGallopGate, setCanRunOverride, canRunUnlessRiding, TRANSPORT_MODES, DF_RIDE_BASE, DF_CART_BASE } from '../src/systems/transport.js';
 import { PlayerMotor, rideSpeed, runSpeed } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { activeHorseItem, birthHorses } from '../src/systems/horseCoats.js';
+import { activeHorseItem, birthHorses } from '../src/systems/horse/horseCoats.js';
 import { stableHorses, yardStock, STABLE_HORSES_OFFERED } from '../src/systems/merchantYards.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
-import { validItemField } from '../src/systems/itemFields.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
+import { validItemField } from '../src/systems/item/itemFields.js';
 import { RECEIVER_MARKS, TRADE_VOLATILE_FIELDS } from '../src/net/realmTradeLaw.js';
-import { itemStatRows } from '../src/systems/itemInfo.js';
-import { itemUseHandler } from '../src/systems/itemTemplates.js';
-import { HORSE_MODE, WAGON_MODE, TRANSPORT } from '../src/systems/horseCartLaw.js';
+import { itemStatRows } from '../src/systems/item/itemInfo.js';
+import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
+import { HORSE_MODE, WAGON_MODE, TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
 import { FEATURES } from '../src/systems/features.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -431,7 +431,7 @@ test('STEED1 THE ITEM: `horseBond` (tenths, 1..1000) and `horseFed` (a minute, 1
 test('STEED1 THE SWITCH: a Features row of the World tab\'s Travel; the enhanced lane\'s alone. HORSE-TIERS (PIN MOVED): tiers on the one key, Boons the default, the player\'s online, read through the one accessor (test/horsetiers.test.js holds the rest)', () => {
   const f = FEATURES.find((x) => x.id === 'horse-care');
   assert.deepEqual([f.group, f.kinds, f.control.store, f.control.key, f.control.initial, f.control.online], ['world', ['enhanced'], 'prefs', 'horseCare', 'boons', 'player']);
-  assert.match(rd('src/systems/upkeepSwitch.js'), /export const horseCareRules = \(\) => \(isEnhanced\(\) \? horseCareRulesForTier\(horseCareTierOfStored\(getPref\(HORSE_CARE_PREF\)\)\) : null\);/);
+  assert.match(rd('src/systems/upkeep/upkeepSwitch.js'), /export const horseCareRules = \(\) => \(isEnhanced\(\) \? horseCareRulesForTier\(horseCareTierOfStored\(getPref\(HORSE_CARE_PREF\)\)\) : null\);/);
   assert.match(rd('src/ui/settingsMap.js'), /"feat:mod-horse-cart-and-cargo", "feat:horse-care", "feat:wagon-upkeep"\]/);
 });
 

@@ -12,15 +12,15 @@
 // makeSlotToolTip is the per-window ToolTip every item button shares.
 
 import { dyeToken } from '../characters/dyes.js';   // DW3
-import { inventoryItemImage, inventoryItemModel } from '../systems/itemTemplates.js';
+import { inventoryItemImage, inventoryItemModel } from '../systems/item/itemTemplates.js';
 import { requestModelIcon } from './modelIcon.js';   // DISC24-B: the Small Cart's picture is its wagon
 import { drawText, measureText } from './text.js';
 import { loadImg, drawImgCrop, drawRect } from './nativePanel.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { thumbSpan, drawScrollThumb, VerticalScrollBar, dragScrollIndex } from './verticalScrollBar.js';   // MAC-N2: and Update's drag arm, for the thumb
-import { itemLongName } from '../systems/itemInfo.js';
-import { rarityTint, rarityLines } from '../systems/lootRarity.js';   // LR1: the cell's tier tint and the tooltip's tier lines   // D7: ResolveItemLongName, the tooltip's text
+import { itemLongName } from '../systems/item/itemInfo.js';
+import { rarityTint, rarityLines } from '../systems/loot/lootRarity.js';   // LR1: the cell's tier tint and the tooltip's tier lines   // D7: ResolveItemLongName, the tooltip's text
 import { pieceLines } from '../net/recipeLaw.js';   // PROF3: a crafted piece's quality and maker, above its powers
 import { craftedJewelPoints } from '../systems/enchanting.js';   // AUDIT PROF-541 R2-C4: a jewel's points as the item maker reads them
 import { bookTitle } from '../systems/books.js';         // D7: GetBookTitle, the Books arm

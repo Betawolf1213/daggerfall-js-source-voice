@@ -73,7 +73,7 @@ vendored now.
   + `worldDataDoor.js`), MapsFile and BlocksFile asking it, RMBLayout's
   replacement arm in the building merge, the variants on the save.
 - **RR3a** (2026-09-23): the Master Armorer quest line's registrations -
-  `src/systems/rrQuestLine.js` (the tables, the factions, the fort's
+  `src/systems/roleplayRealism/rrQuestLine.js` (the tables, the factions, the fort's
   tracks, the shop's discovery, the custom armor service) over four DFU
   mod hooks ported for it: `registerCustomFaction`, `registerQuestList`,
   `registerMerchantService`, `systems/worldDataVariants.js` + the
@@ -83,7 +83,7 @@ vendored now.
   `rrRealism.js`; the mount rig, the look filter, the move axes, the
   guild training flow and the world host carry the seams).
 - **RR1** (2026-09-23): the formula overrides and the rule modules -
-  `src/systems/rrRealism.js` (the laws), `src/systems/rrInstall.js`
+  `src/systems/roleplayRealism/rrRealism.js` (the laws), `src/systems/roleplayRealism/rrInstall.js`
   (InitMod's registrations at the scene boot), the seams they hang on
   in formulas, climbing, the weapon rig, banking, the ship, the magic
   round, potions, the guilds, the interior context and the world host.

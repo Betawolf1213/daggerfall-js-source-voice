@@ -100,7 +100,7 @@
   },
   {
     "name": "TOUCH-HOLD-no-knife-use",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  registerItemUseHandler(SKINNING_KNIFE.templateIndex, knifeUse);\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "TOUCH-HOLD-the-knife-usable-offline",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "knifeUse.usable = (item) => !!professionToolLine(item?.templateIndex);",
     "new": "knifeUse.usable = () => true;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TOUCH-HOLD-the-knife-line-unsaid",
-    "file": "src/systems/foragingInstall.js",
+    "file": "src/systems/foraging/foragingInstall.js",
     "old": "  [SKINNING_KNIFE.templateIndex]: (k) => `Hunting is done at a body",
     "new": "  [-1]: (k) => `Hunting is done at a body",
     "tests": [

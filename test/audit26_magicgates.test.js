@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 import { runInfections, liveInfections, startInfection, INFECTION } from '../src/systems/infection.js';
 
 const mkTarget = (over = {}) => ({

@@ -78,12 +78,12 @@ down, Y on the slot in hand, the crossbar API's place, the hand let go with the 
 
 ## ARENA-ARROWS (2)
 
-`systems/arenaQuiver.js` (new: QUIVER_TEMPLATES, markQuiver, refundQuiver), `systems/shotTally.js` (new, a leaf: the
+`systems/arena/arenaQuiver.js` (new: QUIVER_TEMPLATES, markQuiver, refundQuiver), `systems/shotTally.js` (new, a leaf: the
 shots a bout loosed), `systems/inventory.js` (spendAmmoFor notes a real round's shot), `combat/arrowFlight.js`
 (playerArrowHitFoe notes a shaft lodged where it can be looted), `scenes/arenaBouts.js` (`markMine` where a bout sets
 my bout tag - a ladder or practice bout and a relay's; `refundMine` with that bout's healers; `refundQuiver` on the
 driver's face), `scenes/world.js` (a private session's bout let go before its healers - `letGoPriv`'s heal - pays
-too), `systems/arenaText.js` (`ammoBack`). The quiver is counted as I step into a bout: every ammunition inventory.js
+too), `systems/arena/arenaText.js` (`ammoBack`). The quiver is counted as I step into a bout: every ammunition inventory.js
 spendAmmoFor spends (an Arrow, a Dwemer Pellet), real stacks only - a conjured arrow is spent first and vanishes
 anyway, a quest's is never loosed - and the bout's shot tally starts. The healers hand back THE FEWER of what is
 missing and what the bout LOOSED: the tally counts each real round spent from my pack, less each shaft lodged in a foe
@@ -105,7 +105,7 @@ after).
 
 ## CURSE-OFF-SAND (2)
 
-`systems/arenaGround.js` (new: ARENA_GROUND_QUESTS, ARENA_GROUND_M, keptOffArenaGround), asked at CreateFoe's spawn
+`systems/arena/arenaGround.js` (new: ARENA_GROUND_QUESTS, ARENA_GROUND_M, keptOffArenaGround), asked at CreateFoe's spawn
 event (`systems/quest/actions.js`: `world.foeKeptOff`, beside the hidden Foe's own return) - `scenes/world.js`'s and
 `scenes/exterior.js`'s quest world answer it (outdoors: the colosseum's sand within ARENA_GROUND_M - the hosts' own
 ARENA_NEAR_M, 150 m; inside, the mode machine's answer) and `scenes/worldModes.js` questFoeKeptOff answers for the
@@ -155,7 +155,7 @@ stands nothing), `test/arena_fix.test.js` (PIN MOVED: the population line and th
 
 ## OW-NODE-KM, OW-WHO, OW-KIN (3)
 
-`systems/travelViewFilters.js` (the WHO: TV_WHO_GROUPS, TV_RENOWN_STEPS, TV_NODE_KM_STEPS, travelViewWho,
+`systems/travel/travelViewFilters.js` (the WHO: TV_WHO_GROUPS, TV_RENOWN_STEPS, TV_NODE_KM_STEPS, travelViewWho,
 toggleTravelViewWho, cycleTravelViewRenown, cycleTravelViewNodeKm, travellerKin, playerShown, TV_KIN_COLORS,
 TV_KIN_LEGEND; markShown reads it), kept on the device under its own key beside the switches and read by both maps.
 - **The node reach** - "Nodes: any / 0.5 / 1 / 2 km", a press for the next: a gathering group farther than it is not

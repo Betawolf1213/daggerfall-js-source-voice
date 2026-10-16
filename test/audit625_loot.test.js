@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 import { rollCorpseKit, plainFoeRarityWeights } from '../src/systems/foeLootCap.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { rarityOf, rarityChances, corpseSource } from '../src/systems/lootRarity.js';
+import { rarityOf, rarityChances, corpseSource } from '../src/systems/loot/lootRarity.js';
 import { goldStack } from '../src/systems/inventory.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
@@ -93,7 +93,7 @@ test('AUDIT 625 L5: a joiner\'s copy of a body and an arrival\'s are capped as t
 // ─── THE KIT'S ROLL, WHOLE ───────────────────────────────────────────
 
 test('AUDIT 625 L6: the kit rolls what its record says - the player\'s luck (LOOT13: 1% of each threshold a point), the finders on its Legendary threshold, the door\'s last pass (a Magic piece\'s chance at a line that does something) and the foe\'s family steering its Legendary\'s pick (mutants: luck dropped; the finders dropped; the last pass dropped; the family dropped)', async () => {
-  const { registerLegendaryFind, isProcAffix, foundAmong } = await import('../src/systems/lootRarity.js');
+  const { registerLegendaryFind, isProcAffix, foundAmong } = await import('../src/systems/loot/lootRarity.js');
   _resetPrefsForTests(); setPref('lootRarity', true);
   try {
     // luck: tier 8's plain Magic is 90 per mille at luck 50, 135 at luck 100 (LOOT13: half again) - a roll of 0.12 between them

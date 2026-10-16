@@ -6,9 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GUILDS, updateRank, joinGuild, rankNeeds, daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guilds.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
-import { onPushEffects, rankNeedsLines } from '../src/systems/guildServiceFlow.js';
+import { GUILDS, updateRank, joinGuild, rankNeeds, daySinceZero, DAYS_BETWEEN_RANK_CHANGES } from '../src/systems/guild/guilds.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
+import { onPushEffects, rankNeedsLines } from '../src/systems/guild/guildServiceFlow.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
 import { GuildServiceWindow } from '../src/ui/guildServiceWindow.js';
 import { SKILLS } from '../src/systems/skills.js';

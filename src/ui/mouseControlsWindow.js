@@ -124,7 +124,7 @@ import {
   sliderThumb, indicatorText, SLIDER_HEIGHT, SLIDER_INDICATOR_OFFSET, TROUGH_COLOR, TINT,
 } from './horizontalSlider.js';
 import { ToolTip } from './toolTip.js';
-import { getBool, getFloat, getInt, setValue, saveSettings, effectiveSettings } from '../systems/settings.js';
+import { getBool, getFloat, getInt, setValue, saveSettings, effectiveSettings } from '../systems/settings/settings.js';
 import { localizedText, localizedTextList, localizedStrings, TextCollections } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Settings, read in the player's language
 import { hotkeyHit } from '../systems/dialogShortcuts.js';   // L10N3f: the prompts' Yes/No are DaggerfallShortcut's
 

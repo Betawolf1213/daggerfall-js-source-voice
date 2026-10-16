@@ -1,7 +1,7 @@
 // BOARD-UI (2026-10-06, Mac: "Some towns have double notice boards"; "overhaul the notice boards to enhance readability,
 // Including each of the tabs"; "Enhance the speed at which the notice board and market loads"; "Enhance organization of
 // the market"; "Reduce overusage of bloated text. Less AI like text"; "Enhance the guild war tab of the board for better
-// organization, instruction and readability"): ONE NOTICE BOARD A TOWN (systems/bountyBoard.js noticeBoardIndex, read by
+// organization, instruction and readability"): ONE NOTICE BOARD A TOWN (systems/bounty/bountyBoard.js noticeBoardIndex, read by
 // every seam of the hosts - REVERTED 2026-10-07: every board BOUNTY1 did not take a Notice Board again, the helper the
 // siege field's alone), the board's tabs laid out to be read (ui/noticeWindow.js, ui/marketTab.js, ui/seatTab.js),
 // the reads set out early and side by side, the words cut. The record: bible/06-Systems/Professions-Arc.md 10.11.
@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
-import { questBoardIndices, noticeBoardIndex } from '../src/systems/bountyBoard.js';
+import { questBoardIndices, noticeBoardIndex } from '../src/systems/bounty/bountyBoard.js';
 import { mountNoticeBoard, BOARD_WORDS, GUILD_BOARD_EMPTY } from '../src/ui/noticeWindow.js';
 import { createMarketTab, MARKET_VIEW_GROUPS, MARKET_WORDS } from '../src/ui/marketTab.js';
 import { seatGuide, SEAT_PANELS, SEAT_TAB_WORDS } from '../src/ui/seatTab.js';

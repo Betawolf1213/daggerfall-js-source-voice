@@ -51,16 +51,16 @@ import { SKILL_ADVANCEMENT_MULTIPLIER, skillUsesForAdvancement, raiseSkills } fr
 import { SKILLS } from '../src/systems/skills.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import { CLASSIC_GAME_START_TIME as T0 } from '../src/systems/gameDate.js';
-import { LOOT_MATRICES, generateRandomLoot } from '../src/systems/loot.js';
+import { LOOT_MATRICES, generateRandomLoot } from '../src/systems/loot/loot.js';
 import { savingThrow, EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { damageEquipment, handToHandAttackDamage } from '../src/combat/formulas.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
-import { buildAutomapModel } from '../src/systems/automapModel.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
+import { buildAutomapModel } from '../src/systems/automap/automapModel.js';
 import { calculateCost, calculateTradePrice } from '../src/systems/shopStock.js';
 import { dfuItemRepairCost as calculateItemRepairCost } from '../src/systems/repairService.js';   // REPAIR-EASE: DFU's formula, unscaled
 import { normalizeReputations } from '../src/systems/court.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 import { _wearScaleForTests, _dfuWearMultipleForTests } from '../src/systems/equip.js';   // BALANCE1: DFU's wear, read unscaled; WEAR-TWICE: and unmultiplied
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 

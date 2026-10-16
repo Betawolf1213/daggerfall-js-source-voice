@@ -26,7 +26,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { setItemFields, itemBaseValue, templateByIndex, mintCondition } from '../src/systems/itemTemplates.js';
+import { setItemFields, itemBaseValue, templateByIndex, mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon, bowDamageArrow, assignEnemyEquipment, equipmentItems, ARMOR_ENUM, WEAPONS_ENUM } from '../src/combat/enemyEquipment.js';
 import { stacksWith, isEnchanted } from '../src/systems/inventory.js';
 import { tradeCost } from '../src/systems/tradeModes.js';
@@ -36,7 +36,7 @@ import { scrollerHit, scrollThumbSpan, beginScrollerDrag, dragScrollerIndex, LIS
 import { dragScrollIndex } from '../src/ui/verticalScrollBar.js';
 import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { publishBootParams, BOOT_DOOR_KEYS, isOnlinePage } from '../src/systems/onlineLane.js';
+import { publishBootParams, BOOT_DOOR_KEYS, isOnlinePage } from '../src/systems/online/onlineLane.js';
 import { uiSkin } from '../src/systems/uiSkin.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';
@@ -147,12 +147,12 @@ test('MAC-N1: every Armor mint in the tree goes through SetItem\'s writes, and t
   const bareArmor = SRC.filter(([, s]) => /mintCondition\(\{\s*group: 'Armor'/.test(s)).map(([p]) => p);
   assert.deepEqual(bareArmor, [], 'an Armor record minted with a condition and no value');
   const through = SRC.filter(([, s]) => /mintCondition\(setItemFields\(\{\s*group: 'Armor'/.test(s)).map(([p]) => p).sort();
-  assert.deepEqual(through, ['src/combat/enemyEquipment.js', 'src/combat/rriEnemyEquipment.js', 'src/scenes/worldModes.js', 'src/systems/aetheric.js', 'src/systems/createItem.js', 'src/systems/sigilBroker.js', 'src/systems/testRoom.js'],
+  assert.deepEqual(through, ['src/combat/enemyEquipment.js', 'src/combat/rriEnemyEquipment.js', 'src/scenes/worldModes.js', 'src/systems/aetheric.js', 'src/systems/createItem.js', 'src/systems/sigil/sigilBroker.js', 'src/systems/testRoom.js'],
     'the corpse, the knightly gift, the Create Item spell and the test room - the four sites that minted armor bare or by hand (RRI2: and the mod\'s enemy kit, through the same export; SET6: and the Aetheric mint, Ruhn\'s Regalia; SET7: and the Sigil Broker\'s day\'s stock)');
   // ONE home for `value ?? itemBaseValue` as a MINT (readers - itemInfo's %wth, the keyed shelf's itemValue - may fall back)
-  const copies = SRC.filter(([p, s]) => p !== 'src/systems/itemTemplates.js' && /value: item\.value \?\? itemBaseValue\(item\)/.test(s)).map(([p]) => p);
+  const copies = SRC.filter(([p, s]) => p !== 'src/systems/item/itemTemplates.js' && /value: item\.value \?\? itemBaseValue\(item\)/.test(s)).map(([p]) => p);
   assert.deepEqual(copies, [], 'the five private copies of SetItem\'s value write are gone');
-  assert.match(rd('src/systems/itemTemplates.js'), /export function setItemFields\(item\) \{\s*const named = \{ \.\.\.item, name: item\.name \?\? templateByIndex\(item\.templateIndex\)\?\.name \};[\s\S]{0,700}?return \{\s*\.\.\.named,\s*\.\.\.\(variant \? \{ \.\.\.variant, rriVariant: true \} : \{\}\),\s*(?:[^\n]*\n){1,3}\s*value: itemValueOf\(named\),\s*\};\s*\}/, 'JAN1: the value write reads through itemValueOf - a non-finite saved value is an absent one (AUDIT-RR F5: priced BEFORE the class\'s variant fold, as ApplyArmorMaterial runs before SetVariant)');
+  assert.match(rd('src/systems/item/itemTemplates.js'), /export function setItemFields\(item\) \{\s*const named = \{ \.\.\.item, name: item\.name \?\? templateByIndex\(item\.templateIndex\)\?\.name \};[\s\S]{0,700}?return \{\s*\.\.\.named,\s*\.\.\.\(variant \? \{ \.\.\.variant, rriVariant: true \} : \{\}\),\s*(?:[^\n]*\n){1,3}\s*value: itemValueOf\(named\),\s*\};\s*\}/, 'JAN1: the value write reads through itemValueOf - a non-finite saved value is an absent one (AUDIT-RR F5: priced BEFORE the class\'s variant fold, as ApplyArmorMaterial runs before SetVariant)');
 });
 
 test('MAC-N1: the recovered arrow is CreateWeapon\'s arrow with stackCount 1 (EnemyAttack.cs:145-147), minted by ONE export at every host', () => {
@@ -445,6 +445,6 @@ test('MAC-N3 + OVH3: the chat mounts on either skin (the online panels keep thei
   const world = rd('src/scenes/world.js');
   assert.match(world, /if \(typeof document !== 'undefined'\) chatStart\(\);/);
   assert.match(rd('src/systems/uiSkin.js'), /return skinOverride\(search\) \?\? clean\(getPref\('skin'\)\)/, 'the skin reads no lane');
-  assert.match(rd('src/systems/onlineLane.js'), /export const isOnlinePage = \(search = globalThis\.location\?\.search \?\? ''\) => pageHas\('online', search\);/,   // PERF-URL: parsed once a search
+  assert.match(rd('src/systems/online/onlineLane.js'), /export const isOnlinePage = \(search = globalThis\.location\?\.search \?\? ''\) => pageHas\('online', search\);/,   // PERF-URL: parsed once a search
     'the one read, off location.search - the copy main.js edits is not it');
 });

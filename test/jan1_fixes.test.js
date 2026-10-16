@@ -20,10 +20,10 @@ import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 import { setBindings } from '../src/ui/input.js';
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createBankAccounts, validateRegion, BANK_REGION_COUNT } from '../src/systems/banking.js';
 import { tradeCost, buyItemPrice } from '../src/systems/tradeModes.js';
-import { itemValueOf, setItemFields, itemBaseValue, templateByIndex } from '../src/systems/itemTemplates.js';
+import { itemValueOf, setItemFields, itemBaseValue, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { calculateCost } from '../src/systems/shopStock.js';
 import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
 

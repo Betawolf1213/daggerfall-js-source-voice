@@ -34,7 +34,7 @@
 // art follows - feathered by SHORE_SOFTNESS.
 import { WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';
 import { PUDDLE_RECORDS } from '../world/puddleMask.js';   // WATER-PUDDLE: the records whose water is their art's   // MAC2: the corner table is a leaf the player's feet share; WATER-DRAW1: the DRAW's half of it - the feet's is the law's own table, and the two are not the same question
-import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../systems/wind.js';
+import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../systems/wind/wind.js';
 import { getPref } from '../systems/uiPrefs.js';   // FT6: the switch, read here alone
 import { isEnhanced } from '../systems/uiSkin.js';
 import { FOG_GLSL } from './fogGlsl.js';   // AUDIT 68 S17-fog-glsl-dup: the fog every world pass takes, one home
@@ -157,7 +157,7 @@ export function buildWaterIndices(bytes, stride = 1, table = WATER_DRAW_MASK_TAB
 
 
 /** 0..1: the eased wind row's strength on the sky's own scale
- *  (systems/wind.js: a row's vector runs WIND_ROW_CALM to
+ *  (systems/wind/wind.js: a row's vector runs WIND_ROW_CALM to
  *  WIND_ROW_CALM + WIND_ROW_SPAN). null = no wind is known = calm. */
 export function windStrength01(wind) {
   if (!wind) return 0;

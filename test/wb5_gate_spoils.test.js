@@ -3,29 +3,29 @@
 // piece's launch out of his chest toward the player's side, one at a time, and the thrown torch's own flight: gravity
 // by its drag, the bounce off the struck face at its bounciness, rest under a fifth of the throw); the glow
 // (render/spoilsGlow.js - Loot Rarity's own colours, a beam by tier over a halo, the pass on the duel wall's law); the
-// roll and the Deadlands Ember's own row (systems/gateSpoils.js); the floor, once a day, and the crash's door
+// roll and the Deadlands Ember's own row (systems/gate/gateSpoils.js); the floor, once a day, and the crash's door
 // (scenes/spoilsPool.js); the court's burst and the world host's seams.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { spewLaunches, spewPiece, stepSpew, flySpew, SPEW_GAP_MS, SPEW_SPREAD, SPEW_SPEED, SPEW_BOUNCE, SPEW_GRAVITY_DRAG, SPEW_FLIGHT_MAX_S } from '../src/world/gateSpew.js';
 import { PROJECTILE, PROJECTILE_FIXED_DT } from '../src/scenes/droppedTorches.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import {
   tierColour, spoilsLineVertices, SpoilsGlowRenderer, SPOILS_LINE_H, SPOILS_LINE_W, SPOILS_LINE_MIN_RAD, SPOILS_GLOW_MAX, SPOILS_GLOW_FS, SPOILS_GLOW_VS, lineHeight,
 } from '../src/render/spoilsGlow.js';
-import { RARITIES, RARITY_ORDER, rarityChances, gemKindOf } from '../src/systems/lootRarity.js';   // GEM2: the Warden's gem
+import { RARITIES, RARITY_ORDER, rarityChances, gemKindOf } from '../src/systems/loot/lootRarity.js';   // GEM2: the Warden's gem
 import {
   rollSpoils, spoilsBase, magicOrBetter, sigilStone, isSigilStone, SPOILS_GOLD_PER_LEVEL, SPOILS_LEGENDARY, SPOILS_SOURCE, SIGIL_STONE, SIGIL_STONE_TEMPLATE,
-} from '../src/systems/gateSpoils.js';
+} from '../src/systems/gate/gateSpoils.js';
 import { createSpoilsPool, spoilsList, spoilsStore, recoverSpoils, savedSince, SPOIL_KEY, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_TEXT, SIGIL_TIER, SPOILS_RECORD_V } from '../src/scenes/spoilsPool.js';
-import { isAmmunition, templateByIndex, setItemFields, mintCondition, inventoryItemImage, registerCustomTemplates, ITEM_TEMPLATES } from '../src/systems/itemTemplates.js';
-import { RRI_TEMPLATES } from '../src/systems/rriItems.js';
+import { isAmmunition, templateByIndex, setItemFields, mintCondition, inventoryItemImage, registerCustomTemplates, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
+import { RRI_TEMPLATES } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { isStackable, stacksWith, addItem } from '../src/systems/inventory.js';
-import { isDeclaredItemField } from '../src/systems/itemFields.js';
+import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
 import { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { execFileSync } from 'node:child_process';
-import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot.js';
+import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot/loot.js';
 import { createGateCourt, SPEW_AT_MS, RECEIPT_WAIT_MS, COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
@@ -199,10 +199,10 @@ test('WB5 the Deadlands Ember is its own row, not a renamed gem: template 570 (p
   assert.equal(validLootItem(JSON.parse(JSON.stringify(stone))).stackCount, 2, 'a stack too');
   // THE WAY THE GAME ASKS: a process that imports the hosts' shared module and nothing else has the row
   const root = new URL('..', import.meta.url);
-  const out = execFileSync(process.execPath, ['--input-type=module', '-e', "await import('./src/scenes/shared.js'); const { templateByIndex } = await import('./src/systems/itemTemplates.js'); process.stdout.write(String(templateByIndex(570)?.name ?? null));"], { cwd: root, encoding: 'utf8' });
+  const out = execFileSync(process.execPath, ['--input-type=module', '-e', "await import('./src/scenes/shared.js'); const { templateByIndex } = await import('./src/systems/item/itemTemplates.js'); process.stdout.write(String(templateByIndex(570)?.name ?? null));"], { cwd: root, encoding: 'utf8' });
   assert.equal(out, 'Deadlands Ember', 'the hosts carry the row');
   const shared = readFileSync(new URL('../src/scenes/shared.js', import.meta.url), 'utf8');
-  assert.match(shared, /^import '\.\.\/systems\/gateSpoils\.js';/m, 'and the import is said out loud');
+  assert.match(shared, /^import '\.\.\/systems\/gate\/gateSpoils\.js';/m, 'and the import is said out loud');
 });
 
 const WALL = 1_700_000_000_000;

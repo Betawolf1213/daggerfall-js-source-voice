@@ -42,7 +42,7 @@ import { createUnsavedKeybinds, applyUnsavedKeybinds } from '../src/systems/cont
 import { PAD_GLYPHS, GLYPH_AXIS_KEYS, PAD_FAMILIES, GLYPH_SIZE, unityButtonGlyph } from '../src/ui/padGlyphs.js';
 import { quickslotTag } from '../src/ui/quickslotTags.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
-import { _resetForTests } from '../src/systems/settings.js';
+import { _resetForTests } from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

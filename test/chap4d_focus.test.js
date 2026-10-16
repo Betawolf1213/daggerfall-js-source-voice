@@ -14,7 +14,7 @@ import { CHAPTER_CHRONICLE_ROWS, setChapterFocus } from '../server-account/src/n
 import { readRoll } from '../server-account/src/npcRoll.js';
 import { hallOfRecordsTokens, hallOfRecordsChapterLines, hallOfRecordsChaptersTitle, hallOfRecordsBook } from '../src/ui/hallOfRecords.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { standService, T0 } from './accountDb.mjs';

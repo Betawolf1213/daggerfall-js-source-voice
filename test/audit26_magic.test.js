@@ -13,7 +13,7 @@ import {
 } from '../src/systems/enchantments.js';
 import { armorLabelValue } from '../src/ui/nativeInventory.js';
 import { fatigueLossMultiplierFor } from '../src/scenes/shared.js';
-import { SPECIAL_ABILITY } from '../src/systems/rest.js';
+import { SPECIAL_ABILITY } from '../src/systems/rest/rest.js';
 import { applySpell, REGENERATING_TEXT, FEEL_DRAINED_TEXT } from '../src/systems/effects.js';
 import { NOT_ENOUGH_SPELL_POINTS_TEXT, identifySpellPass } from '../src/systems/tradeModes.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
@@ -148,7 +148,7 @@ test('audit26 F122: the paperdoll armorMod is Decreased MINUS Increased, the com
 // nothing read it.
 // ---------------------------------------------------------------
 test('audit26 F044: the fatigue multiplier is 1.0 / 0.9 / 0.8, and the enchantment arm needs the career', () => {
-  // hasSpecialAbility masks the bitfield's low byte (systems/rest.js:"export const hasSpecialAbility")
+  // hasSpecialAbility masks the bitfield's low byte (systems/rest/rest.js:"export const hasSpecialAbility")
   const athlete = () => ({ abilityFlagsAndSpellPointsBitfield: SPECIAL_ABILITY.Athleticism });
   const enchanted = (over) => ({ ...over, _enchantMods: { improvedAthleticism: true } });
 

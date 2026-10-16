@@ -24,9 +24,9 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { macroTableCoverage } from '../src/systems/quest/questMacros.js';
-import { spellMakerDescriptionId, SPELLBOOK_DESCRIPTION_IDS } from '../src/systems/spellEffects.js';
-import { REST_TEXT } from '../src/systems/restSession.js';
-import { EXHAUSTED_SAFE_TEXT_ID } from '../src/systems/rest.js';
+import { spellMakerDescriptionId, SPELLBOOK_DESCRIPTION_IDS } from '../src/systems/spell/spellEffects.js';
+import { REST_TEXT } from '../src/systems/rest/restSession.js';
+import { EXHAUSTED_SAFE_TEXT_ID } from '../src/systems/rest/rest.js';
 import { NOT_SATED_TEXT_ID } from '../src/systems/vampirism.js';
 import { dfuFile, missingDfu } from './dfuRoot.mjs';
 
@@ -106,7 +106,7 @@ const SITES = [
   ['src/scenes/shared.js', 'endLines: (id) => plainLines(rest.endLines?.(id)),', 'plain', { ids: REST_BOXES }],
   // ── townTalk.js ──
   ['src/scenes/townTalk.js', 'const v = id ? textRsc?.plainText(id) : null;', 'plain', { ids: [475, 476, 477] }],
-  ['src/scenes/townTalk.js', "const textVariants = (id) => textRsc?.plainText(id) ?? [''];", 'seam', 'src/systems/talkSession.js'],
+  ['src/scenes/townTalk.js', "const textVariants = (id) => textRsc?.plainText(id) ?? [''];", 'seam', 'src/systems/talk/talkSession.js'],
   ['src/scenes/townTalk.js', 'const v = textRsc?.plainText(id);', 'seam', 'src/scenes/townTalk.js'],
   ['src/scenes/townTalk.js', 'const t = textRsc?.randomTextById(id, rolls);', 'plain', { ids: range(201, 208) }],
   ['src/scenes/townTalk.js', 'lines: (id, pick = rolls) => textRsc?.variantLinesById(id, pick)', 'seam', 'src/scenes/townTalk.js'],
@@ -117,7 +117,7 @@ const SITES = [
   ['src/scenes/world.js', 'rows: (id, pick) => townTalk.lines(id, pick),\n', 'seam', 'src/ui/spellbookWindow.js'],
   ['src/scenes/world.js', 'swapQuickslot({', 'seam', 'src/systems/quickslots.js'],
   ['src/scenes/world.js', '// U25: the real item info', 'seam', 'src/ui/nativeInventory.js'],
-  ['src/scenes/world.js', 'rows: (id, pick) => townTalk.lines(id, pick) });   // AUDIT TRADE-INFO D2', 'plain', { ids: range(8700, 8724) }],   // the trade window's reader reaches the artifact powers alone (systems/itemPowers.js magicPowersLines)
+  ['src/scenes/world.js', 'rows: (id, pick) => townTalk.lines(id, pick) });   // AUDIT TRADE-INFO D2', 'plain', { ids: range(8700, 8724) }],   // the trade window's reader reaches the artifact powers alone (systems/item/itemPowers.js magicPowersLines)
   ['src/scenes/world.js', "the eight attribute popups'", 'seam', 'src/ui/charsheet.js'],
   ['src/scenes/world.js', 'endLines: (id) => townTalk.lines(id),', 'seam', 'src/scenes/shared.js'],
   ['src/scenes/world.js', 'plainLines(townTalk.lines(rb.textId))', 'plain', { ids: REST_BOXES }],
@@ -126,7 +126,7 @@ const SITES = [
   ['src/scenes/world.js', 'textLines: (id) => townTalk.lines(id),', 'plain', { ids: [1069] }],
   ['src/scenes/world.js', 'getRandomTokens: (textId) => townTalk.variantTokens(textId),', 'seam', 'src/systems/quest/questMacros.js'],
   ['src/scenes/world.js', 'expandRandomTextRecord: (id) => townTalk.lines(id)', 'plain', { ids: [1457] }],
-  ['src/scenes/world.js', 'randomTokens: (id) => townTalk.variantTokens(id),', 'seam', 'src/systems/talkMacros.js'],
+  ['src/scenes/world.js', 'randomTokens: (id) => townTalk.variantTokens(id),', 'seam', 'src/systems/talk/talkMacros.js'],
   ['src/scenes/world.js', 'expandMessageBoxTokens(tokens, talkMcp())', 'walk'],
   ['src/scenes/world.js', 'const r = townTalk.lines(id)?.[0];', 'plain', { ids: [475, 476, 477] }],
   ['src/scenes/world.js', 'expandMessageBoxTokens(townTalk.recordTokens(id), talkMcp())', 'walk'],
@@ -154,7 +154,7 @@ const SITES = [
   ['src/systems/biography.js', "const firstLine = (id) => textRsc.linesById(id)?.[0]?.text ?? '';", 'seam', 'src/systems/biography.js'],
   ['src/systems/biography.js', 'const rows = textRsc.linesById(backstoryId)', 'walk'],
   ['src/systems/classQuestions.js', 'textRsc.plainText(CLASS_QUESTIONS_TEXT_ID)', 'plain', { ids: [9000] }],
-  ['src/systems/itemPowers.js', 'lines?.(ARTIFACT_POWERS_TEXT_BASE', 'plain', { ids: range(8700, 8724) }],
+  ['src/systems/item/itemPowers.js', 'lines?.(ARTIFACT_POWERS_TEXT_BASE', 'plain', { ids: range(8700, 8724) }],
   // ── ui ──
   ['src/ui/bankWindow.js', '(this.hooks.rows?.(result) ?? [])', 'walk'],
   ['src/ui/chargenArt.js', 'linesById(CLASS_DESCRIPTION_TEXT_ID + classIndex)', 'plain', { ids: CLASSES }],

@@ -280,7 +280,7 @@
   },
   {
     "name": "LEFAY-SAVE-DROPPED",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  snap.lefayTribute = normalTribute(entity.lefayTribute);",
     "new": "  snap.lefayTribute = null;",
     "tests": [

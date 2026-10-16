@@ -1,7 +1,7 @@
 [
   {
     "name": "LETTERS-DROP-the-letter-kept",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  if (item.group === 'MiscItems' && item.templateIndex === TEMPLATES.Letter_of_credit && !item.questItem) return tradeableRecord({ ...item, equipSlot: undefined });\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "KEEP-WALLET-the-wallets-guard-gone",
-    "file": "src/systems/wildDropLaw.js",
+    "file": "src/systems/wild/wildDropLaw.js",
     "old": "  if (isWalletItem(item) || walletHolds(item)) return false;\n",
     "new": "",
     "tests": [

@@ -3,7 +3,7 @@
 // (net/serpentHerald.js: the bells' post and the kill's, when each is owed, the site the accounts agree on and the kill
 // AT it), the wire's `site` word (net/wire.js), the hub over the real Room with Discord stubbed (server/src/index.js: the
 // alarm at the bells, the posts, a forged site's kill never posted, a refusal posted again, nothing without a webhook),
-// the client's word (net/online.js sendSerpentSite, systems/serpentOmen.js ahead, scenes/world.js), and the Timers
+// the client's word (net/online.js sendSerpentSite, systems/serpent/serpentOmen.js ahead, scenes/world.js), and the Timers
 // window's rows (systems/eventTimers.js, ui/enhancedTimers.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +17,7 @@ import { serpentTimes, serpentAt, serpentPhase, SERPENT_DIVE_MS, SERPENT_EVERY_D
 import {
   validSerpentIn, parseClient, relaySupportsSerpentSite, SERPENT_SITE_RELAY_MIN, SERPENT_KINDS, SERPENT_INTERNAL_FELL, SOCIAL_ROOM, RELAY_VERSION, POSE_BOUND, ACCOUNT_SWEEP_MS, SD_KEY,
 } from '../src/net/wire.js';
-import { createSerpentOmen } from '../src/systems/serpentOmen.js';
+import { createSerpentOmen } from '../src/systems/serpent/serpentOmen.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
 import { TIMER_KINDS } from '../src/ui/enhancedTimers.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';

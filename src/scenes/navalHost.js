@@ -40,7 +40,7 @@
 //            AddItem, no weight's gate - and the pack's live list the placing spends from), terrainAt(pos) -> terrain |
 //            null (the placing's nodes and pixel), redeck(from, to) (the bodies on one hull's deck stood on another's),
 //            forgetDeed(item) (AUDIT HOLDINGS F8: a claim that failed - the ledger's record of her forgotten) }
-//   hold(key, tier) -> items                   DFU's loot roll at the player's level (systems/loot.js generateItems), its
+//   hold(key, tier) -> items                   DFU's loot roll at the player's level (systems/loot/loot.js generateItems), its
 //                                              rarity at the lot's tier (navalPlunder.js holdTier)
 //   online: { id() -> string|null, peers() -> [{ id, feet }] } | null
 //   sendHit(data) -> bool                     a blow or a claim to another player - AUDIT NAV1 (online #9): through the
@@ -460,7 +460,7 @@ export const YARD_SPEED = 2.5;
 export const RAM_MEMORY_S = 0.6;
 export const BOW_RECOIL = 2;
 /** Another player's ship eases toward its word at this rate (per second) and snaps past this far (m) - the team's law
- *  (systems/horseCartWire.js easeToward), a ship's scale. */
+ *  (systems/horse/horseCartWire.js easeToward), a ship's scale. */
 export const PUPPET_EASE = 6;
 export const PUPPET_SNAP_M = 25;
 /** PUPPET-GLIDE (FIELD BUGS 2026-10-02d, Discord: "Ai ships move very janky and quick"): another player's ship UNDER WAY
@@ -2699,7 +2699,7 @@ export function createNavalHost(deps) {
     for (const e of sea.values()) if (dist2d(e.ship.pos, p) <= HOSTILE_NEAR_M && hostileToMe(e, me)) return true;
     return false;
   }
-  /** THE MERGE with main's OW6 (a fast journey slows as enemies close, systems/travelThreat.js): the hostile ships
+  /** THE MERGE with main's OW6 (a fast journey slows as enemies close, systems/travel/travelThreat.js): the hostile ships
    *  afloat - mine and a peer's copies, raiders among them - each where she sails with the ring a journey must not
    *  cross unwarned: HOSTILE_NEAR_M, where she is an enemy nearby and the journey stops (NAV-H), or her lookout past
    *  it while she has not yet sighted me; closing at her pace once she comes for me. `[{ pos, reach, chasing, mps }]`,

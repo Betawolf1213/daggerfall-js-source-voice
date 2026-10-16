@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld, WX0 } from './hccWorld.mjs';
-import { WAGON_MODE, HORSE_MODE, TRANSPORT, HITCHED_HORSE_LOCAL_Z } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE, TRANSPORT, HITCHED_HORSE_LOCAL_Z } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

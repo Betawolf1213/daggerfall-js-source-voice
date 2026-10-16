@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService } from './accountDb.mjs';
-import { hallShortLine, hallOldGoldLine } from '../src/systems/onlineHomes.js';
+import { hallShortLine, hallOldGoldLine } from '../src/systems/online/onlineHomes.js';
 import { guildHallGoldText } from '../src/ui/socialPanel.js';
 import { GUILD_MOVE_MAX } from '../src/net/guildLaw.js';
 

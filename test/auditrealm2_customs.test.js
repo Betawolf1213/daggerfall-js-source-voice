@@ -18,10 +18,10 @@ import { realmIo, realmCreate, realmFetch, realmPut, realmTradeCall } from '../s
 import { applyCustoms, liquidWealthOf, stashedItemLists, customsLines } from '../src/systems/realmCustoms.js';
 import { createBankAccounts, createHouses, allocateHouseToPlayer, ownsHouse, ownsShip, sellShip, sellHouse, shipSellPrice, SHIP_TYPES, SHIP_INTERIOR_MAP_IDS, crossedDeedLines, CROSSED_DEED_LINES } from '../src/systems/banking.js';
 import { interiorSceneName, LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';
-import { BUILDING_KEY_0 } from '../src/systems/talkTopics.js';
+import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
 import { decorSaleBack } from '../src/net/decorLaw.js';
 import { LETTER_OF_CREDIT_TEMPLATE, goldStack, letterOfCredit } from '../src/systems/inventory.js';
-import { planStore, applyTransfer } from '../src/systems/itemTransfer.js';
+import { planStore, applyTransfer } from '../src/systems/item/itemTransfer.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { r2, freshSave, layRecord } from './realmSeat.mjs';   // AUDIT REALM2 S1: a realm character's first save is a new one's
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked

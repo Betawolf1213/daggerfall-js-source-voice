@@ -1132,7 +1132,7 @@
   },
   {
     "name": "PROF12-item-name-potent",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "${Number.isInteger(item.potent) && item.potent > 0 ? 'Potent ' : ''}",
     "new": "${''}",
     "tests": [
@@ -1159,7 +1159,7 @@
   },
   {
     "name": "PROF12-item-field",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  potent: int({ min: 25, max: 40 }),\n",
     "new": "",
     "tests": [
@@ -1196,7 +1196,7 @@
   },
   {
     "name": "PROF12-essence-row-picture",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "  isOneHanded: false, isIngredient: false, worldTextureArchive: m.icon[0], worldTextureRecord: m.icon[1],\n  playerTextureArchive: 0, playerTextureRecord: 0, stackable: true,\n})));\nregisterCustomTemplates(ESSENCE_TEMPLATE_ROWS);",
     "new": "  isOneHanded: false, isIngredient: false, worldTextureArchive: m.icon[0], worldTextureRecord: 0,\n  playerTextureArchive: 0, playerTextureRecord: 0, stackable: true,\n})));\nregisterCustomTemplates(ESSENCE_TEMPLATE_ROWS);",
     "tests": [
@@ -1205,7 +1205,7 @@
   },
   {
     "name": "PROF12-plural-small-teeth",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": ", 'Small Tooth': 'Small Teeth' });",
     "new": " });",
     "tests": [

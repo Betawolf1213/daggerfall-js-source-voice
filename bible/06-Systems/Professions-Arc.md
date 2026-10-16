@@ -25,13 +25,13 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
 ## 1. The laws this arc keeps
 
 1. **ONLINE ONLY; DAGGERFALL'S MAKERS UNTOUCHED.** FACT: Daggerfall has no crafting skill; its three makers - the
-   potion maker (`src/systems/potions.js`, 20 recipes), the spellmaker (`src/systems/spellMaker.js`) and the item
+   potion maker (`src/systems/potions.js`, 20 recipes), the spellmaker (`src/systems/spell/spellMaker.js`) and the item
    maker (`src/systems/enchanting.js`) - are ported 1:1 and use no skill. Offline they stay that. A profession is a
    Ledger A departure, online's alone, and offline play earns nothing toward one (DECIDED; Renown's law).
 2. **DAGGERFALL'S ITEMS FIRST.** A material is one of DFU's own items wherever DFU has one (the 8 gems, 25 plants, 23
    creature parts and 11 metals, section 4); a product is one of DFU's own templates at one of DFU's own materials. A
    crafted Dwarven longsword IS Daggerfall's Dwarven longsword. New templates only for what Daggerfall lacks, in the
-   **reserved range 600-699** (4.8), registered through `registerCustomTemplates` (`src/systems/itemTemplates.js`)
+   **reserved range 600-699** (4.8), registered through `registerCustomTemplates` (`src/systems/item/itemTemplates.js`)
    as RRI (513-526), Climates & Calories (530-541), the Thunderlock (560-561) and the Sigil Stone (570) already are.
    **The tools are Foraging's own** (Wood-Axe 1600, Pick-Axe 1601, Sickle 1602, Fishing-Net 1603, Basket 1607 -
    Harbinger451's mod, ported 1:1, `06-Systems/Foraging.md`, FORAGE0); the range adds only the Skinning Knife (603).
@@ -69,7 +69,7 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
    author's own art, vendored with Mac's word of permission - a mod's work carried, not art the port made (FORAGE0
    law 5).
 7. **CRAFTING DOES NOT RETIRE LOOT.** FACT: Loot Rarity's tiers are Common, Magic, Rare, Legendary, Aetheric, Artifact
-   (`src/systems/lootRarity.js`); Sigil Sets are online set gear (`11-Multiplayer/Sigil-Sets.md`). DECIDED: a craft
+   (`src/systems/loot/lootRarity.js`); Sigil Sets are online set gear (`11-Multiplayer/Sigil-Sets.md`). DECIDED: a craft
    reaches **Rare** at most (a Masterwork); Legendary, Aetheric, Artifact and Sigil pieces are never craftable.
 8. **MARKS, NOT GOLD** - DECIDED (Mac: "New currency"). Everything this arc prices between players is in Marks
    (10.5), which only the server holds and only server-witnessed acts mint - SILVER-FINDS (10.5, Mac: "Silver should be
@@ -83,7 +83,7 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
 | Foundation | Where | Use here |
 |---|---|---|
 | DFU's makers | `potions.js` (+ `potionMakerWindow.js`), `spellMaker.js`, `enchanting.js` (+ `itemMakerWindow.js`) | Alchemy and Enchanting are layers over them |
-| DFU's items | `src/characters/itemTemplates.json`; `GROUP_TEMPLATE_INDICES` (`src/systems/itemTemplatesData.js`) | Every material and product named in section 4 |
+| DFU's items | `src/characters/itemTemplates.json`; `GROUP_TEMPLATE_INDICES` (`src/systems/item/itemTemplatesData.js`) | Every material and product named in section 4 |
 | Home stations | `DECOR_STATIONS`, `DECOR_STATION_FEES` (`src/net/decorLaw.js`); the account service's decor | Alchemy/spells/enchant stations placed for a licence; new station kinds join the list |
 | Repair | `src/systems/repairService.js` | Repair kits (Smithing) |
 | Climates & Calories | `src/systems/survival/` - camps, the Skillet, cooking at fires and hearths, foraging, corpse meat; templates 530-541 (Camping Equipment, Rations, Apple, Orange, Bread, Raw Fish, Cooked Fish, Meat, Raw Meat, Waterskin, Skillet, Campfire Kit) | Cooking's ground; Hunting's butchery |
@@ -91,15 +91,15 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
 | World of Daggerfall | 209,436 rock-field prefabs among 227,938 (`03-World/World-Of-Daggerfall.md`); WOD7's shared camps (`src/world/wodShared.js`) | Mining's anchors; bounties |
 | Terrain nature | `src/world/terrainNature.js` | Logging's and Herbalism's anchors |
 | Climates | `mapsFile.js`: Ocean, Desert, Desert2, Mountain, Rainforest, Swamp, Subtropical, MountainWoods, Woodlands, HauntedWoodlands | Every native table (section 4) |
-| Dyes | `src/systems/itemDye.js` | Outfitting |
+| Dyes | `src/systems/item/itemDye.js` | Outfitting |
 | Bulletin boards | `BULLETIN_BOARD_MODEL_ID` (`src/world/rmbLayout.js`), `src/systems/bulletinBoard.js` (ROAD A9) | The Notice Board (10.1) |
 | Player trade | TRADE1 (`src/net/tradeSession.js`, `src/ui/enhancedPlayerTrade.js`) | Stays how loot changes hands |
 | Held objects | `src/combat/heldPose.js` (MAP3) - the Morrowind arms' held-sheet pose only; the classic lane's held map is a bottom-anchored sprite that hides the weapon from its place in the draw ladder (MAP-WEAPON, `10-UI/Held-Map-Arc.md`) | The net and the basket in the hand (5.1) |
-| Sigil Stones | template 570 (`src/systems/gateSpoils.js`) | Daedric smithing |
+| Sigil Stones | template 570 (`src/systems/gate/gateSpoils.js`) | Daedric smithing |
 | Gold | the save's; the guild treasury is the only gold a server holds | Why Marks exist (10.5) |
 
-**Standing since FORAGE1-FORAGE3 (2026-09-28)**: Foraging (`06-Systems/Foraging.md`, `src/systems/foragingLaw.js`,
-`src/systems/foragingInstall.js`): the tools and their shelves, their checks (daylight, no foe near, not encumbered),
+**Standing since FORAGE1-FORAGE3 (2026-09-28)**: Foraging (`06-Systems/Foraging.md`, `src/systems/foraging/foragingLaw.js`,
+`src/systems/foraging/foragingInstall.js`): the tools and their shelves, their checks (daylight, no foe near, not encumbered),
 the Basket's foods, the attribute pairs, and the tools in loot (a shelf's and a house's hook, every pile at its index,
 the corpses - FORAGE3), and online the quests' time as a wait (FORAGE4). Foraging stands whole in both lanes.
 
@@ -415,7 +415,7 @@ else Foraging's Fish (1605). A **trophy** is the species' own Deep Waters templa
   patch once both its harvests are taken (its herbs, and the Basket's food).
 - The sounds are ~~DFU's own from the player's data (the wood and stone hits, the splash)~~ the port's own on the
   enhanced skin - the axe in the wood, the pick on the stone, the leaves, the knife, the net, the tree's groan and fall,
-  each heard as its blow lands (GATHER-FEEL, section 44) - and DFU's own on the classic skin (`systems/profSounds.js`),
+  each heard as its blow lands (GATHER-FEEL, section 44) - and DFU's own on the classic skin (`systems/professions/profSounds.js`),
   and Immersive Footsteps' and Better Ambience's where they are on.
 - Weather and the hour matter: the net fills fastest in the first and last daylight hours (07:00-07:59 and 17:00-17:59 -
   a bonus; ANY-HOUR: the wilderness no longer closes at night); rain wets the herbs (the steady window -20%); a storm
@@ -462,7 +462,7 @@ MORE-NODES (2026-10-02, Mac: "increase all profession nodes", asked: "Double"; t
 
 UNWITNESSED-ORE (FIELD BUGS 2026-10-09e, the Discord's "Mining veins": "I mined about 200-300 veins of iron, but there were not a single vein of silver, gold, platinum or mithril in the mountains ... maybe Mountain area and MountainWoods area are bugged"; the service's acct102): not a bug - the law. A vein on a pixel nobody else had vouched for was held to tier 2, and the Mountain's table holds Iron at 1 and nothing again until Silver at 3: every mountain pixel a lone miner worked stood Iron alone, the Mountain Woods never its Silver, and a lone miner's word confirms nothing (three accounts a week old, the witnessed world above), so the far mountains never came to the rest. A vein on such ground is held where a dungeon's deep vein already is on anyone's word - `UNCONFIRMED_VEIN_TIER`, 3 (`net/nodeLaw.js`, the one cap the wilderness vein, the deep vein and the Court's vein metals read) - so the Mountain stands Silver beside its Iron (73 : 27 by the weights) and the Mountain Woods its Silver beside its three; no other climate's table holds a tier 3, so no other ground moves. Gold, Platinum, Mithril and a region's signature still wait on the witnesses, and a lie about a pixel buys Silver at most - what a dungeon's vein already gives it. The herbs and the trees keep 2. The Mining page says so in the player's words (`ui/profPages.js` MINING_GROUND_LINE). PIN MOVED: PROF2's "an unconfirmed Mountain pixel yields Iron alone" (`test/prof2_law.test.js`). Pinned by `test/fb1009e_unwitnessedore.test.js`; `tools/mutants/fb1009e_unwitnessedore.json` (4, all dead). ORE-MAP (`01-Overview/Field-Bugs-2026-10-11d.md`): the held map's bare ground says it for a place - its veins, its dungeons', its kingdom's own ore and whether its ground is witnessed (`ui/oreMapTip.js`).
 
-GATHER-OW (2026-10-02, Mac: "allow them to appear in the overworld without being overwhelming, maybe a glyph marker showing where a group of them are"; asked: "Groups nearby"): on the Overworld each profession's group on a stood pixel - its nodes not yet worked today, as NODE-MARKS would mark them - is one diamond in its compass colour at their middle, its count beside it ("Mining ×6"), the nearest twelve within 3 km (the land streams three pixels out), read again twice a second; the view's filters have a Gathering switch. Not a click of its own: a click there walks to the ground under it. None with the professions shut, nor underground; Hunting's bodies are no group. `scenes/gatherHost.js` overworldGroups, `systems/travelViewFilters.js`, `ui/travelViewHud.js`, `scenes/travelViewMarks.js` travelViewMarks (out of world.js since HOST-SPLIT 1).
+GATHER-OW (2026-10-02, Mac: "allow them to appear in the overworld without being overwhelming, maybe a glyph marker showing where a group of them are"; asked: "Groups nearby"): on the Overworld each profession's group on a stood pixel - its nodes not yet worked today, as NODE-MARKS would mark them - is one diamond in its compass colour at their middle, its count beside it ("Mining ×6"), the nearest twelve within 3 km (the land streams three pixels out), read again twice a second; the view's filters have a Gathering switch. Not a click of its own: a click there walks to the ground under it. None with the professions shut, nor underground; Hunting's bodies are no group. `scenes/gatherHost.js` overworldGroups, `systems/travel/travelViewFilters.js`, `ui/travelViewHud.js`, `scenes/travelViewMarks.js` travelViewMarks (out of world.js since HOST-SPLIT 1).
 
 - **A node's tier** rolls on the climate's table, higher tiers rarer (tier 1: 40%, 2: 25%, 3: 15%, 4: 10%, 5: 6%,
   6: 4%); a region's signature (4.7) replaces one vein a pixel with its signature ore.
@@ -706,7 +706,7 @@ CRAFT-PROCS (FIELD BUGS 2026-10-13e; a player: "Added potency and cast speed, ca
 crafted jewelry"): the roll is the loot door's whole roll now. The mint took the tier's `applyRarity` and never the
 door's last pass, and every line that does something is drawn in that pass alone (LOOT4), so no crafted piece carried
 one. A Superior and a Masterwork take the pass after the roll, on the same stream off the
-record's seed (`systems/smithItems.js` mintPiece, `systems/lootRarity.js` lastPass): one such line, 20 times in 100 on a
+record's seed (`systems/smithItems.js` mintPiece, `systems/loot/lootRarity.js` lastPass): one such line, 20 times in 100 on a
 Superior and 35 on a Masterwork, as a loot door's Magic and Rare take it. A jewel's is focus, castSpeed, potency or
 wellspring, a weapon's one of five, armour's thorns, and the Loot Rarity switch is not asked (the piece is its record's
 on every client; the line's reader asks it). THE RECORD SAYS WHICH LAW MINTS IT: the service stamps `v` 1 at the craft
@@ -1172,7 +1172,7 @@ of the board for better organization, instruction and readability"**.
 
 - **ONE-BOARD - the double boards** (REVERTED 2026-10-07, below; this is the record of what it did).
   FACT: BOUNTY1 takes every other board of a town by position (two give one, five give two), and NOTICE1 made every board left a Notice Board - so a town of three boards or more stood two or three,
-  each with its "3 new", its mark on the town map and, at a seat, its pennant. Now one (`systems/bountyBoard.js`
+  each with its "3 new", its mark on the town map and, at a seat, its pennant. Now one (`systems/bounty/bountyBoard.js`
   noticeBoardIndex): of the boards BOUNTY1 left, the one nearest the town's middle (`townCentreOf`, the mean of its
   buildings' places), the first by position on a tie. The rest stay Daggerfall's rumour boards, as every board is
   offline; BOUNTY1's split is untouched. Every seam reads the one law with the same inputs: the press, the count over
@@ -1189,7 +1189,7 @@ of the board for better organization, instruction and readability"**.
   the press, the count over each board, the town underfoot, a mark on the town map for each (`ui/townMapMarks.js`
   townBoardRows takes BOUNTY1's split again) and a seat's pennant over each (`scenes/seatBanners.js` seatBannerAnchors'
   `bounty` again); `scenes/world.js` noticeBoardOf is gone. Kept: the hover's "Notice Board" (now every Notice Board's,
-  while the board is open) and `systems/bountyBoard.js` noticeBoardIndex, the siege field's Market alone (AUDIT 657 B7's
+  while the board is open) and `systems/bounty/bountyBoard.js` noticeBoardIndex, the siege field's Market alone (AUDIT 657 B7's
   tie law). The rest of BOARD-UI stands. Pins: `test/board_ui.test.js`'s host test pins every board, and the pins
   ONE-BOARD moved in `notice1`, `seat1a_client` and `town_marks` moved back (each PIN MOVED); mutants: three
   `board_ui.json` records re-aimed at the restored seams, and `seat1a.json`, `town_marks.json` and
@@ -1552,7 +1552,7 @@ Every PROF slice's record names all four (Home.md, THE FOUR HOSTS RULE, 17e), ea
   listing at a time** - so a crafted sword can be bought and resold forever, and a duplicated copy in a save can never
   be sold as well, because its id's owner has moved on.
 - **A crafted item goes offline.** It is DFU's own item, and its extra fields ride the save - FACT, the save snapshots
-  every item whole (`snap.items = (entity.items ?? []).map((it) => ({ ...it }))`, `src/systems/save.js`), as Loot Rarity's
+  every item whole (`snap.items = (entity.items ?? []).map((it) => ({ ...it }))`, `src/systems/save/save.js`), as Loot Rarity's
   `rarity` already rides. Offline it is simply the item it is. A classic-save export (`src/systems/classicSave.js`)
   carries DFU's fields alone, so there it becomes the plain DFU item it always was.
 - **A Masterwork's maker renames**: the mark keeps the name at the moment of making - it is history.
@@ -1695,7 +1695,7 @@ what was found (FACT):
   node table, 4.3's herb tables, the seasons, a pixel's day of patches, the yields, the witnessed pixel). Both ends
   read them; recipeLaw.js comes with the first craft (PROF3).
 - **An herb is DFU's own item, north or south.** FACT: DFU keeps two groups of plants - PlantIngredients1, named
-  "(northern)" below template 18, and PlantIngredients2, "(southern)" (`src/systems/itemInfo.js` itemNameParts) - and
+  "(northern)" below template 18, and PlantIngredients2, "(southern)" (`src/systems/item/itemInfo.js` itemNameParts) - and
   nine plants are in both (Twigs, Green Leaves, Red and Yellow Flowers, Root Tendrils, Root Bulb, Green, Red and Yellow
   Berries). DECIDED: an herb's group is its pixel's region's by FALL.EXE's own table (`REGION_RACES`: a Breton region
   northern, a Redguard one southern); a plant only one group holds is that group's wherever it grows. So the Stores keep
@@ -1763,7 +1763,7 @@ what was found (FACT):
   statsSections, `ui/profPages.js`), shown online while the professions are the account's; a page gone (the switch,
   offline) is never drawn. The specialisation cards sit on the Professions page, a change armed and confirmed in place.
 - **Gentle acts** is a setting on the Professions page (`uiPrefs` `gentleActs`, off): the player's own, never the
-  online lane's (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_PREFS).
+  online lane's (`systems/online/onlineLane.js` ONLINE_PLAYERS_OWN_PREFS).
 - **The hover** (8's World Tooltips line) is **not built**: the prompt says what a patch holds and what it needs
   (the herbs or the Basket, taken, the rank, the Sickle, the Basket, the Stores' room, the day's count).
 - **The pad and touch** (AUDIT 29, corrected: this line said they reach an act through Interact): the pad's A is the
@@ -1806,7 +1806,7 @@ instruction), and what was found (FACT):
   Adamantium (the only open-world surface Adamantium). On a pixel not confirmed the slot is an ordinary vein - a
   signature is tier 4 to 6 and such a pixel's veins are worth tiers 1-3 (UNWITNESSED-ORE). The Marches keep their +25%.
 - **Where a node stands** (section 6: "the nearest suitable anchor"). FACT: World of Daggerfall is forced on for the
-  online lane (`src/systems/onlineLane.js`) and 209,436 of its 227,938 instances are `Rocks` layouts, 2,502
+  online lane (`src/systems/online/onlineLane.js`) and 209,436 of its 227,938 instances are `Rocks` layouts, 2,502
   `Mountains` (`03-World/World-Of-Daggerfall.md`), so every client of a room stands the same rock pieces. DECIDED: a
   **vein** stands at the foot of the rock-field piece nearest its law point (the piece's own box, on the side facing
   that point) where the pixel has one; else on the terrain's stone tile (tile 3, `terrainNature.js`) nearest its point
@@ -1856,7 +1856,7 @@ instruction), and what was found (FACT):
   the new ores (610-615), ingots (620-630) and stone (673 Rough, 674 Cut) are registered custom templates (as the Sigil
   Stone 570 is, `gateSpoils.js`), their pictures DFU's own (an ore Lodestone's, 254/66; an ingot Iron's, 254/63; stone
   Lodestone's) recoloured by DFU's own law - FACT, GetItemImage's ChangeDye with the metal's DyeColor over the
-  WeaponsAndArmor swatch (`systems/itemDye.js`, ItemHelper.cs:473-476) is how DFU colours an Ebony blade apart from an
+  WeaponsAndArmor swatch (`systems/item/itemDye.js`, ItemHelper.cs:473-476) is how DFU colours an Ebony blade apart from an
   Iron one - an ingot its metal's dye, an ore its metal's; stone is Lodestone's lump as it is. Brass (DFU 67) is
   smelted, tier 2.
 - **Smelting** (4.1): at a forge, no act - 2 of a raw metal make 1 ingot (Iron, Silver, and the six ores); Brass is 1
@@ -1995,7 +1995,7 @@ Mac: **"Lets keep moving"** (PROF3 after the merge of main). What the design abo
   `recipeLaw.js` makerName's (controls and lone surrogates dropped, 32 characters, no pair split), and a record longer
   than its reader's 512 is never minted (AUDIT 30). The service keeps it in `products` (section 14: provenance,
   owner, template, material, quality, maker, made at) and the piece carries only its id - a signature is longer than the
-  trade wire's string bound (FACT, `systems/loot.js` validLootItem: 128).
+  trade wire's string bound (FACT, `systems/loot/loot.js` validLootItem: 128).
 - **The heat** (9.4): at the anvil, the ingot's glow rises and falls; strike three times while it is in the band. The
   band's width is Smithing's attribute pair, (STR + AGI) / 2, on Foraging's four bands (5.1). Space, Enter or a click
   strikes; Esc lets the act go with nothing spent. Three strikes in the band are a clean act (one step); fewer are a
@@ -2043,7 +2043,7 @@ As built:
   smith's fee the purse cannot meet is not offered: "The smith asks 50 gold a craft; you carry N." The piece's picture
   of DFU's anvil (INVE's) is not drawn - FACT: the Stores page is the Enhanced menu's DOM, and DFU's container images
   are classic-window art (`ui/targetIconPanel.js`), so the section is named, not pictured.
-- **The Repair Kit** (692) is registered with the ores and ingots (`systems/profTemplates.js`), DFU's Warhammer's world
+- **The Repair Kit** (692) is registered with the ores and ingots (`systems/professions/profTemplates.js`), DFU's Warhammer's world
   picture dyed by its metal. DECIDED: **used from the pack, it mends the most-worn weapon or armour of its metal** (the
   lowest share of its condition left, an equipped piece first on a tie) by a quarter of its condition, never past three
   quarters (KIT-CEILING, 2026-10-01 - whole until then; `06-Systems/Economy-Arc.md`), and is spent; with nothing of its
@@ -2171,7 +2171,7 @@ Mac's instruction - "make the decisions ... This is your baby"), and what was fo
   planes plain.
 - **The furniture goes to DECOR.** FACT: DECOR2b keeps a player's furniture in the save's `furnishings` (`scenes/
   worldModes.js` decorHome), its "Your things" rows, set down free as any model of its kind the owner chooses
-  (`systems/decorFurnish.js`); a piece of furniture in the pack is never offered. DECIDED: a crafted table, chair or bed
+  (`systems/decor/decorFurnish.js`); a piece of furniture in the pack is never offered. DECIDED: a crafted table, chair or bed
   is minted into the furnishings, as the furnisher's delivery is, and DECOR places it - the done-when. **Its mark goes
   with it**: a set-down piece's descriptor (`net/decorLaw.js` decorItemOf) carries its provenance id, and the account
   service writes the maker's mark into the placed row only from its own `products` row - the owner's, the template's -
@@ -2220,7 +2220,7 @@ As built:
   arrows twenty in one stack with no provenance, furniture DFU's template worth its quality's condition multiplier and
   marked by its record; a marked piece's name is its maker's (`itemInfo.js`, `itemFields.js` `marked`). Furniture is
   minted into `playerEntity.furnishings`, never the pack (`scenes/world.js` profMintCraft), and DECOR's descriptor
-  carries its provenance and mark (`systems/decorItems.js`).
+  carries its provenance and mark (`systems/decor/decorItems.js`).
 - **Pinned**: `test/prof4_law.test.js` (8), `test/prof4_service.test.js` (6), `test/prof4_client.test.js` (8);
   `tools/mutants/prof4.json`, 87 mutants, 86 dead and one recorded equivalent (the chops' floor of three, which no
   tree's count reaches today). The done-when is `prof4_client`'s DONE WHEN: an Oak felled, its logs sawn at the
@@ -2254,7 +2254,7 @@ Mac's instruction - "make the decisions ... This is your baby"), and what was fo
   fast travel's worth - the Stores are the character's in every town, so an honest player who travels buys "here" too
   - and the courier is the price of not going.
 - **The courier's road is witnessed** (SEAT0 3.2, "every fact the servers need that only ARENA2 knows"). FOUND: the
-  hubs are the client's alone (`systems/regionHubs.js`, HUB1) and the service holds no map pixel. DECIDED: a new kind
+  hubs are the client's alone (`systems/region/regionHubs.js`, HUB1) and the service holds no map pixel. DECIDED: a new kind
   in `world_witness`, **`hub`** - keyed by the region, its report the hub town's map pixel (`x,y`) - written from a
   week-old registered account, as a harvest writes its pixel: a listing, an order and a fill write the board's
   region's hub alone, a purchase both ends' (each client derives every region's hub from its own MAPS.BSA, so it can
@@ -2754,7 +2754,7 @@ Mac: **"Do it"** (2026-09-29, PROF7 after the VEIN-NEED fix: "What was next on t
   **Trophy Hunter** ("a trophy decor piece from a tier 5+ kill"), **Couturier** ("two-colour dyes") and **Saddler**
   ("a wagon upgrade of +100 kg") are named and never chosen (`later`, as the Motherlode Sense is and the Siegewright was until SEAT2b part two) -
   FACT: DFU gives each nothing to stand as - no trophy piece exists among its templates; a DFU garment takes ONE dye (its
-  `dye` field, `systems/itemDye.js`); DFU's wagon has one limit, the Horse Cart's. Each waits on Mac's word for what it
+  `dye` field, `systems/item/itemDye.js`); DFU's wagon has one limit, the Horse Cart's. Each waits on Mac's word for what it
   should be.
 - **The switches**: none of its own - the professions', live for everyone since SWITCH-ON (`PROFESSIONS_OPEN = "on"`).
 - **"A body your own blow felled"** (5.2). FACT: no body records its killer - the loot handlers hear a death with no
@@ -2827,7 +2827,7 @@ Mac: **"Do it"** (2026-09-29, PROF7 after the VEIN-NEED fix: "What was next on t
   fully encumbered!"); never inside and never the daylight - AUDIT 32 H6: underground, the dungeon's own foes are the
   foe near (the host answered none there, for the knife and PROF2's dungeon Pick-Axe alike). Foraging's check law is one home (`foragingLaw.js`
   checksRefusal): the knife names its order and its lines (`professionLaw.js` KNIFE_CHECKS, KNIFE_REFUSALS).
-- **The Skinning Knife** (603, 4.8; FORAGE0 14.2): registered with the professions' rows (`systems/profTemplates.js`) -
+- **The Skinning Knife** (603, 4.8; FORAGE0 14.2): registered with the professions' rows (`systems/professions/profTemplates.js`) -
   UselessItems2, rarity 10, one to a slot, **0.5 kg, 50 uses, 100 gold**, DFU's Dagger's picture (TEXTURE.207 record
   5); **shelved online only** by DFU's own custom-item loop - General Stores and Pawn Shops, as Foraging's six are
   (law 6's exception, for 603); **made at the anvil** (9.3: 1 Iron Ingot, 1 Pine Plank, rank 0), its quality its life;
@@ -2918,7 +2918,7 @@ As built:
   `scenes/gatherHost.js` (loose nodes: a kind's own places, the act following its body, the harvest's `ask`, the chip's
   tally); the trace's meter on the HUD (`ui/profHud.js`); the Loom on the Stores page and Hunting and Outfitting
   practised on the Professions page, Hunting's day the account's (`ui/profPages.js`); the knife's row, shelves and mint
-  (`systems/profTemplates.js`, `systems/smithItems.js`); the hides, parts and butchery withdrawn (`systems/profItems.js`);
+  (`systems/professions/profTemplates.js`, `systems/smithItems.js`); the hides, parts and butchery withdrawn (`systems/professions/profItems.js`);
   the wiring in `scenes/world.js` (the kill listener, the street's and the dungeon's bodies, the loom's provider, a
   craft's station by its profession, the Weavers' counter by name, a Butcher's meat, the Tracker's marks) and
   `scenes/worldModes.js` (`loomHere`).
@@ -3186,7 +3186,7 @@ unmoved.
   the mine's points and the knife's line where they stand on the node, the glint's double reach and the trace's
   tolerance at their true size; the chop's ring, the hold's arc, the Basket's glint, the float and the haul's bar about
   the crosshair; the count's pips and one hint under it that fades after 2.5 s unchanged. Still forms under reduced
-  motion; every cue a sound (`systems/profSounds.js` - GATHER-FEEL, section 44: the gathering's ear says them now,
+  motion; every cue a sound (`systems/professions/profSounds.js` - GATHER-FEEL, section 44: the gathering's ear says them now,
   `systems/gatherSounds.js`, the HUD none).
 - **The stations (PROF-STATIONS).** The heat, the stitch's beat and the plane keep their bars and rules, dressed in the
   plaque's frame and the kit's tones (`ui/profStationStyle.js`); no pictures.
@@ -3283,7 +3283,7 @@ three). What sections 3.2, 3.3, 4.8, 9.3 and 9.4 left open for PROF9, DECIDED he
   Foraging's four bands. The bar runs dough to crust to char, its window an edged band (a shape as well as a colour);
   under reduced motion the bar is still. **Quick cook**, **Gentle acts**, **one act a page**, **Escape sets the pan aside**
   (nothing spent) and the page shut under it as every station's act (AUDIT 30-32's laws).
-- **The dishes as items** (4.8: "pack (food) | C&C's Meat / Cooked Fish / Bread"; `systems/profTemplates.js`). Each stands
+- **The dishes as items** (4.8: "pack (food) | C&C's Meat / Cooked Fish / Bread"; `systems/professions/profTemplates.js`). Each stands
   on a C&C food's own row, **imported, never typed again**: the Stew and the Feast the Meat's picture, the Supper the Cooked
   Fish's, the Tart the Bread's; the food's weight (a feast four times it) and three times its price (a feast twelve);
   one a piece, never stacked, never shelved. NOT LAID ON, for Mac: 4.8's "tinted" - DFU's dye swatch reaches no food's
@@ -3386,7 +3386,7 @@ Mac: **"2 and 4"** (2026-10-02: the Apothecary waits on Alchemy, Cooking and Jew
   its licence the workbench's 50,000), a hall member's as the others'. `scenes/worldModes.js` jewellerHere. The service
   cannot see the bench (as it cannot see the forge, 23). The Stores page's **The Jeweller's Bench**.
 - **The eight pieces** (9.3; `recipeLaw.js` JEWEL_PIECES). DFU's own Jewellery templates, **imported, never re-typed**: each
-  read by its place in DFU's Jewellery enum (`systems/itemTemplatesData.js` GROUP_TEMPLATE_INDICES - Amulet 133, Bracer 134,
+  read by its place in DFU's Jewellery enum (`systems/item/itemTemplatesData.js` GROUP_TEMPLATE_INDICES - Amulet 133, Bracer 134,
   Ring 135, Bracelet 136, Mark 137, Torc 138, Cloth Amulet 139, Wand 140), its word 9.3's and DFU's template name, pinned
   equal (the service's bundle carries the enum and no item table - FOUND: the account deploy's path filter now lists
   `itemTemplatesData.js`, which the Worker bundles since). Inputs as 9.3 writes them: Ring 1 metal (and a gem, if wanted),
@@ -3670,7 +3670,7 @@ warning - and left four things open. DECIDED here (the record's, at Mac's instru
 - **When.** Each in its own third of the UTC day, rising within its third's first six hours on a whole minute, standing
   two hours or until its twenty have struck it - so every part of the world's day sees one.
 - **The warning - every client's own.** FACT: the hub pushes nothing on a clock today; the gate's omen is each client's
-  own off the shared clock (`systems/gateOmen.js`). DECIDED: the same - `net/motherlodeBook.js` reads the day's three
+  own off the shared clock (`systems/gate/gateOmen.js`). DECIDED: the same - `net/motherlodeBook.js` reads the day's three
   (`/v1/prof/motherlodes`: their pixels, ores, hours, strikers and this account's find) on arrival, every five minutes,
   at the UTC day's turn and for another character, says the warning in the chat ten minutes ahead (a Motherlode Sense's
   thirty) and the rising once, each once a session. No relay change, no relay deploy.
@@ -4170,7 +4170,7 @@ station an Alchemist's, the enchanting station a Mages Guild hall (Cooking asks 
 types were already on the Where-is page under DFU's own groups and drawn as shops (or, the guild hall, in the temple's
 colour) on both town maps. The ninth was not: the **Furniture Store** - a shop classic never opened, opened by the port
 as the furnisher's counter (DECOR2b) and Carpentry's workbench (PROF4, section 25). DFU keeps its type off the Where-is
-page (TalkManager CheckBuildingTypeInSkipList, `systems/topicTree.js` and `systems/talkTopics.js`, both verbatim) and
+page (TalkManager CheckBuildingTypeInSkipList, `systems/topicTree.js` and `systems/talk/talkTopics.js`, both verbatim) and
 groups its automap byte (8, its type plus one) with the houses (ExteriorAutomap.cs:1482-1541), so a player hunting a
 workbench saw a house and could ask nobody.
 
@@ -4351,7 +4351,7 @@ Mac: "I want to improve gathering, add gathering sounds and overall make the exp
 
 **What stood (MEASURED).**
 
-- **The acts said DAGGER.SND's combat and window clips** (PROF-SCENES' table, `systems/profSounds.js`): a chop and a
+- **The acts said DAGGER.SND's combat and window clips** (PROF-SCENES' table, `systems/professions/profSounds.js`): a chop and a
   plain strike a blow's Hit1-5, a Clean Cut and a strike on the glint the parry's ring (Parry6), a clean finish the
   lock's click (ActivateLockUnlock), the Basket's find and the knife's every point the window button's click, a bruise and
   a slip the high swing. The HUD said them as it drew the reticle (`ui/profHud.js` setMeter, PROF-RETICLE's `actCues`),

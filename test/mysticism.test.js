@@ -17,7 +17,7 @@ import {
 import {
   artifactTextureIndices, ARTIFACT_TEXTURE_INDEX_MAPPINGS,
   ARTIFACT_MALE_TEXTURE_ARCHIVE, ARTIFACT_FEMALE_TEXTURE_ARCHIVE,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 import { applySpell } from '../src/systems/effects.js';
 import { doorSpellFor } from '../src/scenes/shared.js';
 

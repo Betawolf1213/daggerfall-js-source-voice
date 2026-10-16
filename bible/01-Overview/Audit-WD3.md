@@ -55,7 +55,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 | B9 | - | The two switches' Features row said "Takes effect when the game next loads". But the switch is latched for the game, so an in-game Load keeps the towns the game started with, and offline the towns also need Replace Game Artwork. | Round 4: the row says "Takes effect when the game is next started (an in-game Load keeps the towns it started with). Offline it also needs Replace Game Artwork." |
 
 **Online homes and rooms** (`server-account/src/homes.js`, `server-account/src/index.js`, `src/net/accountClient.js`,
-`src/net/online.js`, `src/world/interiorShared.js`, `src/systems/onlineHomes.js`, `src/scenes/world.js`,
+`src/net/online.js`, `src/world/interiorShared.js`, `src/systems/online/onlineHomes.js`, `src/scenes/world.js`,
 `src/scenes/worldModes.js`, `src/scenes/homeYards.js`; the pins in `test/wd3_online.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -92,7 +92,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 | G3 | - | An inside save (and a Recall anchor set indoors) found its building's door by the block's index. A block a world-data mod ADDS is numbered past BLOCKS.BSA in the order a session first reads it, so another session, or a town pinned in again, numbers it anew, and the saved index named nothing or another added block. | Round 3: the door is found by the building's key, with the index only preferred. |
 
 **Daggerfall's own laws the mods meet** (`src/scenes/worldModes.js`, `src/systems/layoutPins.js`, `src/scenes/world.js`,
-`src/systems/talkTopics.js`; the pins in `test/wd3_standins.test.js`, `test/wd3_layoutPins.test.js`,
+`src/systems/talk/talkTopics.js`; the pins in `test/wd3_standins.test.js`, `test/wd3_layoutPins.test.js`,
 `test/wd3_door.test.js`, and the climate's source pins in `test/windmillwiring.test.js`, `test/seasoncalendar.test.js`,
 `test/wod4_privateershold.test.js`)
 

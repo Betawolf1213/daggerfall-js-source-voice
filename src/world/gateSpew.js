@@ -42,7 +42,7 @@ export const SPEW_FLIGHT_MAX_S = 6;
 /**
  * Each piece's launch: when it leaves (ms after the fall), its direction (a unit vector - out toward the player's side
  * of him, spread by the seed, and up) and its speed. `bearing` is the angle from him to the player (atan2(dx, dz)).
- * @param {() => number} rolls a seeded [0,1) source (systems/wind.js seededRng) @param {number} n @param {number} bearing
+ * @param {() => number} rolls a seeded [0,1) source (systems/wind/wind.js seededRng) @param {number} n @param {number} bearing
  */
 export function spewLaunches(rolls, n, bearing) {
   const out = [];

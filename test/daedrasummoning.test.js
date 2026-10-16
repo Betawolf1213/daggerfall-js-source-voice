@@ -25,8 +25,8 @@ import {
   summonMacroValues,
 } from '../src/systems/daedraSummoning.js';
 import { expandRowValues } from '../src/systems/quest/questMacros.js';   // DAEDRA1: the walk the boxes go through
-import { FACTION_FLAGS } from '../src/systems/factionRep.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { FACTION_FLAGS } from '../src/systems/faction/factionRep.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { goldAmount, totalGoldAmount, deductGold } from '../src/systems/court.js';   // DAEDRA2: the two quantities and the payment that knows the difference
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';   // ...and what paper is, from its own home
 

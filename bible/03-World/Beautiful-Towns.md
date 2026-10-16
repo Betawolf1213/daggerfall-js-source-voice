@@ -116,7 +116,7 @@ Two stores that are not records get the same law:
 
 ## Online
 
-The two switches are the ROOM's (`systems/onlineLane.js`
+The two switches are the ROOM's (`systems/online/onlineLane.js`
 `ONLINE_ROOM_MOD_KEYS`, forced on): two players who disagreed would walk two
 towns, one through the other's houses, and a building key - an online home's,
 a shared quest's - would name two buildings.
@@ -315,7 +315,7 @@ elsewhere.
   cell in the three classic towns; Beautiful Villages moves `ARMRAM03` in two
   of them (Penmore's to (2,2), Pjiga's to (0,1)), and in DFU the two mods
   together name a neighbour's house "Dharjen Custom Armor". The key is read off
-  the town's grid (`systems/rrQuestLine.js` `rrMasterArmBuildingKeyIn`) - a
+  the town's grid (`systems/roleplayRealism/rrQuestLine.js` `rrMasterArmBuildingKeyIn`) - a
   recorded departure.
 - **The decor catalogue** reads `BLOCKS.BSA` past the door (`decorScan.js`),
   so 1,400 redecorated interiors never renumber it. DECOR-MODS (FIELD BUGS
@@ -324,7 +324,7 @@ elsewhere.
   Daggerfall's - every one whatever is on, so none renumbers it, and offered
   while the port stands it (asked as the offer is made, AUDIT 05b A3) -
   measured over both packs and Detailed Ships' ships, never the town's own
-  structure (`systems/decorMods.js`; `01-Overview/Field-Bugs-2026-10-05b.md`).
+  structure (`systems/decor/decorMods.js`; `01-Overview/Field-Bugs-2026-10-05b.md`).
 - **Houses for sale.** Every building the bank or a door can sell in either
   mod stands on a classic model (measured: 1,658 village houses and 3,358 city
   houses), so every price reads the ARCH3D record: the bank's DFU's own `GetHousePrice` over its radius, a door's

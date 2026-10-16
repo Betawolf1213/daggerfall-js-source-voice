@@ -1,7 +1,7 @@
 // HOME-DOORS (2026-09-30, asked: "For houses with multiple rooms attached, I want to add a door item that can attach to
 // the wall that leads to another room. This needs to have an easy element where it tells you where you can place it").
 //
-// A DOOR HUNG IN A DOORWAY. The doorway finder over the real collider built of boxes (systems/decorDoorways.js): an
+// A DOOR HUNG IN A DOORWAY. The doorway finder over the real collider built of boxes (systems/decor/decorDoorways.js): an
 // opening in a wall is a doorway - its middle between the jambs, in the wall's thickness, its floor, its lintel, the way
 // through; a passage is none, nor a gap between two pieces of furniture, nor an opening a shut door stands in. The door
 // fitted into it (turned into the wall, sized to the opening, stood on its floor, swung the other way). The catalogue's
@@ -12,12 +12,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
-import { createDecorRooms } from '../src/systems/decorRooms.js';
+import { createDecorRooms } from '../src/systems/decor/decorRooms.js';
 import {
   createDecorDoorways, decorDoorFit, decorDoorwaysFree, decorDoorwayAimed, decorDoorwayQuad, isDoorModel, decorIsDoor,
   DOORWAY_WIDTH_MAX, DOORWAY_NEAR_DOOR, DOORWAY_MARK_HIGH,
-} from '../src/systems/decorDoorways.js';
-import { collectDecor, decorCatalogue, modelKind, DECOR_KINDS } from '../src/systems/decorCatalogue.js';
+} from '../src/systems/decor/decorDoorways.js';
+import { collectDecor, decorCatalogue, modelKind, DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
 import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../src/world/interiorLayout.js';
 import { createDecorRoom, decorKeyOf } from '../src/scenes/decorRoom.js';
 import { ActionSystem } from '../src/world/actionSystem.js';

@@ -82,7 +82,7 @@
   },
   {
     "name": "GATESEEN-the-scan-reads-every-row",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "      for (let i = 0; i < base; i++) {",
     "new": "      for (let i = 0; i < table.length; i++) {",
     "tests": [

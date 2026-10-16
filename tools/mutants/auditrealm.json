@@ -304,7 +304,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-sale-client-share",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "        sold = { refund: Math.max(0, Number(res.refund) || 0),",
     "new": "        sold = { refund: homeRefund(res.price),",
     "tests": [
@@ -313,7 +313,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-sale-refund-dropped",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "...(r.data?.refund != null ? { refund: n(r.data.refund) } : {}), ",
     "new": "",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "AUDIT-REALM-a-repeated-claim-paid-twice",
-    "file": "src/systems/onlineHomes.js",
+    "file": "src/systems/online/onlineHomes.js",
     "old": "        apply: (/** @type {any} */ res) => { if (res?.repeat) paid.back(); },\n",
     "new": "",
     "tests": [

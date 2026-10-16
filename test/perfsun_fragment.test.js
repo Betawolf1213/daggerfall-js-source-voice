@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { SHADOW_GLSL, SHADOW_CASCADES, SHADOW_PCF_CASCADES, SHADOW_SUN_SIZE, ShadowPass } from '../src/render/shadowPass.js';
 import { EL_MESH_FS, EL_TERRAIN_FS, EL_CHAR_FS, EL_BB_FS, EL_LANE } from '../src/render/enhancedLighting.js';
 import { waterSurfaceFs } from '../src/render/waterSurface.js';
-import { floraSwayOn, floraSwayOf, swayDisabled } from '../src/systems/windDrive.js';
+import { floraSwayOn, floraSwayOf, swayDisabled } from '../src/systems/wind/windDrive.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -167,7 +167,7 @@ test('PERF-SUN: the tree sway is CLEARED as a suspect - the lean is baked at bui
   // ...but the DOOR beside it was parsing the query string once a frame
   // AUDIT PERF-URL A4: read through the page's one parse (systems/pageQuery.js) - held BY COUNT in
   // test/perfurl_doors.test.js, where a hundred reads of one search mint one URLSearchParams across nine doors
-  assert.match(read('src/systems/windDrive.js'), /return pageParam\('sway', search\) === 'off';/, 'the ?sway=off door is read once a search');
+  assert.match(read('src/systems/wind/windDrive.js'), /return pageParam\('sway', search\) === 'off';/, 'the ?sway=off door is read once a search');
   assert.equal(swayDisabled('?sway=off'), true);
   assert.equal(swayDisabled('?sway=on'), false, 'and it re-reads when the search really changes');
   assert.equal(typeof floraSwayOn(''), 'boolean');
@@ -242,7 +242,7 @@ test('AUDIT F1: the sway door\u2019s state is declared ABOVE its reader', () => 
   // and the fix for that class is to not write the shape at all.
   // AUDIT PERF-URL A4: the door keeps no state now - the memo is the page's one parse - so the law moves with the
   // state: pageQuery.js declares its two `let`s above the function that reads them
-  const w = read('src/systems/windDrive.js');
+  const w = read('src/systems/wind/windDrive.js');
   assert.doesNotMatch(w, /let _sway(?:Off|Search)\b/, 'no private copy of the memo');
   const q = read('src/systems/pageQuery.js');
   const reader = q.indexOf('function parsed(search)');

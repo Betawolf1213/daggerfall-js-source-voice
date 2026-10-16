@@ -38,7 +38,7 @@
   },
   {
     "name": "KGSET-item-flavor",
-    "file": "src/systems/iliacItems.js",
+    "file": "src/systems/iliac/iliacItems.js",
     "old": "  const flavor = cardFlavor(c);",
     "new": "  const flavor = c.flavor;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "KGSET-words-index",
-    "file": "src/systems/iliacCardWords.js",
+    "file": "src/systems/iliac/iliacCardWords.js",
     "old": "export const cardRules = (card) => wordsOf(card)?.[0]() ?? '';",
     "new": "export const cardRules = (card) => wordsOf(card)?.[1]() ?? '';",
     "tests": [
@@ -67,7 +67,7 @@
   },
   {
     "name": "KGSET-words-own-ids",
-    "file": "src/systems/iliacCardWords.js",
+    "file": "src/systems/iliac/iliacCardWords.js",
     "old": "const wordsOf = (/** @type {any} */ card) => (typeof card?.id === 'string' && Object.hasOwn(WORDS, card.id) ? WORDS[card.id] : null);",
     "new": "const wordsOf = (/** @type {any} */ card) => WORDS[card?.id] ?? null;",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "KGSET-foe-spider",
-    "file": "src/systems/cardSources.js",
+    "file": "src/systems/card/cardSources.js",
     "old": "[M.Spider]: 'spider', ",
     "new": "",
     "tests": [

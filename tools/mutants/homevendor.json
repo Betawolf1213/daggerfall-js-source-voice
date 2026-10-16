@@ -218,7 +218,7 @@
   },
   {
     "name": "HOMEVENDOR-the-people-unread",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "      for (const f of interior?.blockPeopleRecords ?? []) {",
     "new": "      for (const f of []) {",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "HOMEVENDOR-people-read-as-decorations",
-    "file": "src/systems/decorCatalogue.js",
+    "file": "src/systems/decor/decorCatalogue.js",
     "old": "c.person ? 'people' : flatKind(c.as ?? c.flat[0])",
     "new": "flatKind(c.as ?? c.flat[0])",
     "tests": [

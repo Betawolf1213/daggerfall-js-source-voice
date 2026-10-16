@@ -86,7 +86,7 @@ import {
   resetWeatherSim, setWeatherEvolution, weatherEvolutionOn, evolveClimateWeathers, rollClimateWeathersForDay, tickWeather,
   weatherForClimate, restoreWeather, weatherJumpStamp, EVOLVE_CHANCE_PER_HOUR, ZONE_CLIMATES, STALE_DRAIN_MINUTES, WEATHER_ENUM,
   currentWeather, WEATHER_TYPES, setWeather, setWeatherMapLaw,
-} from '../src/systems/weatherSim.js';
+} from '../src/systems/weather/weatherSim.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
@@ -183,7 +183,7 @@ test('CLK2: the change lands through DFU\'s own drain - live under the sky it is
   // the wiring: the tick calls it after the day roll; the lane's door
   const tick = read('src/systems/worldTick.js');
   assert.match(tick, /else runDayChange\(\{ entity, lastMinutes, nowMinutes, rolls, say \}\);\s*\n(\s*\/\/[^\n]*\n)*\s*evolveClimateWeathers\(_sharedClock \? Math\.floor\(worldTo\) : nowMinutes\);/, 'after the day roll, wherever the player is (LIVED1: online on the world\'s hours)');
-  const sim = read('src/systems/weatherSim.js');
+  const sim = read('src/systems/weather/weatherSim.js');
   assert.match(sim, /_evolveUrlDoor \?\?= new URLSearchParams\(globalThis\.location\?\.search \?\? ''\)\.get\('evolve'\) !== 'off';\s*\n\s*return _evolveUrlDoor && isEnhanced\(\) && !!getPref\('enhancedEnvironments'\);/, 'Enhanced Environments read LIVE (the pane flips it without a reload), ?evolve=off the kill switch read once');
   assert.match(sim, /const r = seededRng\(\(h \* 6 \+ zone\) \^ EVOLVE_SEED\);/, 'its own generator');
   assert.match(sim, /_zoneChangedAtMinutes\[zone\] = h \* 60;/, 'stale by the change\'s own hour, for THAT zone');
@@ -247,7 +247,7 @@ test('CLK3: the moon\'s phase is continuous on the clock for the dome - no 45-de
   assert.doesNotMatch(dome, /lunarPhasesFromMinutes/, 'the ladder is not the dome\'s to read any more');
   // the systems keep the step - the readers the page names (the enchant ctx's moon arms, the lycanthrope's full
   // moon, the Dynamic Skies mod's own), unconditionally: a file that stops reading DFU's step goes red, not quiet
-  for (const f of ['src/scenes/hostEnchant.js', 'src/systems/lycanthropy.js', 'src/systems/dynamicSkies.js']) {
+  for (const f of ['src/scenes/hostEnchant.js', 'src/systems/lycanthropy.js', 'src/systems/dynamicSkies/dynamicSkies.js']) {
     const s = read(f);
     assert.match(s, /lunarPhasesFromMinutes|isFullMoonFromMinutes|lunarPhase\(/, `${f}: reads DFU's step`);
     assert.doesNotMatch(s, /lunarPhaseFraction/, `${f}: a system reads DFU's step, never the dome's fraction`);
@@ -312,7 +312,7 @@ test('CLK4: the review - a distant zone never moves the player\'s stale clock, a
   assert.equal(moved, true, 'and after the day roll the evolution runs again');
   resetWeatherSim(); setWeatherMapLaw(false);
   // (3) THE DOOR IS LIVE: the source reads the skin and the pref every call, and caches only the URL
-  const sim = read('src/systems/weatherSim.js');
+  const sim = read('src/systems/weather/weatherSim.js');
   assert.doesNotMatch(sim, /_evolveDoor\b/, 'no cached lane answer');
   assert.match(sim, /let _evolveUrlDoor = null;/);
   // (4) THE MOONLIGHT RAMPS on the daylight curve - no step at 18:00, none at 06:00

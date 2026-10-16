@@ -132,7 +132,7 @@ test('wagon: the 750kg gates - the refusal, the split-take, the gold clamp', () 
 });
 
 test('wagon: the collection rides the save envelope', () => {
-  const s = readFileSync(new URL('../src/systems/save.js', import.meta.url), 'utf8');
+  const s = readFileSync(new URL('../src/systems/save/save.js', import.meta.url), 'utf8');
   assert.ok(s.includes('snap.wagonItems = (entity.wagonItems ?? []).map((it) => ({ ...it }));'), 'the snapshot half');
   assert.ok(s.includes('entity.wagonItems = (snap.wagonItems ?? []).map((it) => setItemFields(it));'), 'the restore half (pre-W saves restore empty; JAN1: set on the way in)');
   // every inventory construction hands the wagon hook

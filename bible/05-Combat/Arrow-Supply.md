@@ -94,7 +94,7 @@ FOUND. Online, arrows are Carpentry's: twenty at a workbench (`net/recipeLaw.js`
 9.3, 25 and 29), decided by the account service. Offline nothing made one.
 
 THE LAW (`systems/fletching.js`). In the inventory's Use mode, a piece of wood becomes ITS OWN WEIGHT IN ARROWS. DFU's
-UseItem asks a registered handler first (ItemHelper.RegisterItemUseHandler, `systems/itemTemplates.js`), and
+UseItem asks a registered handler first (ItemHelper.RegisterItemUseHandler, `systems/item/itemTemplates.js`), and
 `useItem.js` loads this module:
 
 | Wood | Weight | Arrows |

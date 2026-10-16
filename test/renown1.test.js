@@ -35,7 +35,7 @@ import { accountTokenMinter, accountRenown, SESSION_KEY, REFUSALS } from '../src
 import { createRenownTracker, renownFoeStruck, renownFoeDied, renownFoeLevel, setRenownKillHandler, RENOWN_ASSIST_MS, _resetRenownKillsForTests } from '../src/net/renownTracker.js';
 import { setRenownLayer, offlineVitals, keepFraction, renownHpOf, renownMpOf } from '../src/systems/renownLayer.js';
 import { defineLiveMaxHealth, defineLiveMaxMagicka } from '../src/systems/chargen.js';
-import { snapshotPlayer } from '../src/systems/save.js';
+import { snapshotPlayer } from '../src/systems/save/save.js';
 import { createNameLayer } from '../src/ui/nameLayer.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { profileView, createProfileWindow } from '../src/ui/profileWindow.js';

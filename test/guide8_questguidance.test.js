@@ -3,14 +3,14 @@
 //
 // THE GUIDANCE TIERS, and the Exact tier underground: every quest resource standing in the dungeon on the held map's
 // dungeon sheet (its floor on the strip, listed before it is walked) and the followed quest's nearest on the compass -
-// off by default, its own row (systems/questGuidance.js, scenes/worldModes.js dungeonQuestMarksHere,
+// off by default, its own row (systems/quest/questGuidance.js, scenes/worldModes.js dungeonQuestMarksHere,
 // scenes/dungeonContext.js, ui/automapSheet.js, ui/inkAutomap.js). And ECHO1's mark on the same sheet.
 // bible/03-World/Delve-Arc.md, GUIDE8.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { GUIDANCE_PREF, GUIDANCE_TIERS, guidanceTier, townTierOn, dungeonQuestMarks, questCompassPick, townQuestBuildings, townBuildingLocal } from '../src/systems/questGuidance.js';
+import { GUIDANCE_PREF, GUIDANCE_TIERS, guidanceTier, townTierOn, dungeonQuestMarks, questCompassPick, townQuestBuildings, townBuildingLocal } from '../src/systems/quest/questGuidance.js';
 import { createTownSheet } from '../src/ui/townSheet.js';
 import { nameplateAnchor, WORLD_PER_PX } from '../src/ui/nameplateLayout.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';

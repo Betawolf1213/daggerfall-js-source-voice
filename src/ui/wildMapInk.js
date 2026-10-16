@@ -10,7 +10,7 @@
 //   FOG_RES canvas pixels a map pixel (the map's whole span of the zone, never more): the zone's mask feathered by a
 //   distance-to-edge falloff, times three octaves of value noise, in the parchment's own ash and dried-blood tones. The
 //   sheet draws it as one image under the view's transform, smoothed - nothing is computed per frame.
-//   THE RED LINE - the zone's edge (systems/wildZone.js wildEdgeChains), a dark halo under a red stroke, and over it a
+//   THE RED LINE - the zone's edge (systems/wild/wildZone.js wildEdgeChains), a dark halo under a red stroke, and over it a
 //   brighter dashed line once the sheet is zoomed past its far band - the map's own pen, a warning's colour.
 //
 // And one mark the overlay breathes: MY REMAINS (net/wildRemains.js) - a ring and its name where my things lie, while
@@ -18,7 +18,7 @@
 //
 // Pure canvas 2D over the view's own transform (ui/inkMap.js toPaper); no game import beyond the zone's leaf.
 // ═══════════════════════════════════════════════════════════════════
-import { wildEdgeChains } from '../systems/wildZone.js';
+import { wildEdgeChains } from '../systems/wild/wildZone.js';
 import { smoothContour } from './wildZoneMap.js';   // SMOOTHZONE: the red line is a contour, not a pixel's staircase
 
 /** Canvas pixels a map pixel in the fog's own canvas - smooth at any zoom the sheet allows, ~1 MB for the zone. */

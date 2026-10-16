@@ -48,7 +48,7 @@ import { GLOBAL_SCALE, RAY_DISTANCE } from '../src/player/activate.js';
 import { NATIVE_W, NATIVE_H } from '../src/combat/fpsWeapon.js';
 import { playerTorchOffsetOverride, setPlayerTorchOffsetOverride, playerTorchLight, TORCH_OFFSET } from '../src/systems/playerTorch.js';
 import { isTransformedLycanthrope } from '../src/systems/lycanthropy.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 /** KB1: action -> its default code, so the fixture's key taps (KeyO/KeyG/KeyX) reach the registry's torch actions. */
 const DEFAULT_CODE = Object.fromEntries(DEFAULT_BINDINGS.map(([code, action]) => [action, code]));

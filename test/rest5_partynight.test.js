@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { intermittentEnemySpawn, quietNights } from '../src/systems/encounters.js';
-import { setNightListener, heardNight, REST_ACT_TEXT, nightStamp, isNightStamp, nightKindOf, PARTY_NIGHT_MARKS } from '../src/systems/restAct.js';
+import { setNightListener, heardNight, REST_ACT_TEXT, nightStamp, isNightStamp, nightKindOf, PARTY_NIGHT_MARKS } from '../src/systems/rest/restAct.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { setSharedClock, setOwnMinutes, advanceOwnMinutes } from '../src/systems/worldTick.js';
 

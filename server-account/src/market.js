@@ -61,7 +61,7 @@ import { tideNow } from './tides.js';   // SEASON1 part two: a Bandit Summer's c
 import { tideCourier } from '../../src/net/tideLaw.js';
 import { profOpenFor, spendStatements, spendOrigins, spendableSql, storeOf } from './professions.js';
 import { REALM_ID_RE, realmActFirst, prepareRealmRecord, mustChange, dropIfUnnamed, recordMovedOf, dropObjects, realmHoldOf, craftHoldOf } from './realm.js';   // GOLD-MARKET
-import { lawfulItem, itemWorth } from '../../src/systems/itemLaw.js';   // INT1: no piece the law cannot stand behind is listed; LW15: a patron's judge
+import { lawfulItem, itemWorth } from '../../src/systems/item/itemLaw.js';   // INT1: no piece the law cannot stand behind is listed; LW15: a patron's judge
 import {
   patronHour, patronCands, patronHours, patronWorth, patronTakes, PATRON_HOUR_S, PATRON_TOWN_HOUR, PATRON_SELLER_HOUR, PATRON_SELLER_DAY_GOLD,
 } from '../../src/net/patronLaw.js';   // LW15: the patrons

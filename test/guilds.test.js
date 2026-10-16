@@ -15,14 +15,14 @@ import {
   guildGroupOfFaction, MERCHANTS_FACTION_ID, INVITATION_ONLY,
   getTitle, questRankFor, guildFactionIdOfGroup, NON_MEMBER_TITLE,
   newMembershipStore, membershipsFor, clearMembershipData,
-} from '../src/systems/guilds.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+} from '../src/systems/guild/guilds.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 import { FactionFile, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { SKILLS } from '../src/systems/skills.js';
 import {
   templeOf, orderOf, resolveVariantGuild, DIVINES, ORDERS,
   TEMPLE_RANK_TITLES, KNIGHTLY_RANK_TITLES,
-} from '../src/systems/guildVariants.js';
+} from '../src/systems/guild/guildVariants.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2)

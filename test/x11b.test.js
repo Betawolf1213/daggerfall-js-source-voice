@@ -22,13 +22,13 @@ import {
 import { equipItem, armorValuesOf, equipTableOf } from '../src/systems/equip.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 import { applySpell } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey, PORTED_KEYS, SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey, PORTED_KEYS, SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
 import { ListPickerWindow, ROWS_DISPLAYED } from '../src/ui/listPicker.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { createRandomWeapon } from '../src/systems/loot.js';
+import { createRandomWeapon } from '../src/systems/loot/loot.js';
 import { tickPlayerMinutes } from '../src/systems/worldTick.js';
-import { REFUSAL } from '../src/systems/itemTransfer.js';   // U56
+import { REFUSAL } from '../src/systems/item/itemTransfer.js';   // U56
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -551,11 +551,11 @@ test('X11b hosts: a spell window lands in the slot the CURRENT mode draws', () =
 test('X11b transfer: a summoned item cannot leave the pack, and it says so', () => {
   assert.equal(CANNOT_REMOVE_ITEM_TEXT, 'You cannot remove this item.');
   // U56 moved TransferItem's ladder OUT of the classic window and
-  // into systems/itemTransfer.js so a second screen could run it.
+  // into systems/item/itemTransfer.js so a second screen could run it.
   // The law this pin holds did not move with it: ONE guard, BOTH
   // callers, sitting where DFU puts it.
   assert.equal(REFUSAL.summoned.text, CANNOT_REMOVE_ITEM_TEXT, 'the refusal lost its words');
-  const tx = src('src/systems/itemTransfer.js');
+  const tx = src('src/systems/item/itemTransfer.js');
   // DFU's TransferItem is ONE function with two callers, so both the
   // local Remove click and the remote one go through it
   assert.equal((tx.match(/refusal: REFUSAL\.summoned/g) || []).length, 2,
@@ -588,7 +588,7 @@ test('X11b: ItemBuilder.CreateWeapon has ONE home again, both arms', () => {
   assert.equal(sword.stackCount, undefined, 'and does not stack');
   // loot's random weapon reaches the SAME function - the inline copy of
   // the arrow arm that used to live there is gone
-  const lootSrc = src('src/systems/loot.js');
+  const lootSrc = src('src/systems/loot/loot.js');
   assert.ok(lootSrc.includes('createWeapon(ARROW_TEMPLATE, 0, rolls)'), 'loot re-implements the arrow arm');
   assert.ok(!/name: 'Arrow', templateIndex: 131/.test(lootSrc), 'a second copy of the arrow mint survives');
   // and it still produces arrows when the roll lands on slot 18

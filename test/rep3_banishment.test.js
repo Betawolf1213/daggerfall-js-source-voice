@@ -13,7 +13,7 @@ import {
   banish, isBanished, liftBanishment, banishmentLeft, pardonPrice, grantPardon, BANISHMENT_MINUTES, PARDON_BASE_PRICE,
   challengeDue,
 } from '../src/systems/standing.js';
-import { createRegionConditions, snapshotRegionConditions, restoreRegionConditions } from '../src/systems/regionConditions.js';
+import { createRegionConditions, snapshotRegionConditions, restoreRegionConditions } from '../src/systems/region/regionConditions.js';
 import { buildDonationFlow } from '../src/ui/guildServiceWindows.js';
 import { SEVERE_PUNISHMENT_BANISHED } from '../src/systems/encounters.js';
 

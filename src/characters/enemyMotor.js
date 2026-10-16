@@ -588,7 +588,7 @@ export class EnemyAI {
    *  READ, not a field, so nothing can freeze it back. */
   get speed() { return enemyMoveSpeed(this._liveSpeed() + this._edgeSpeed()); }
   /** RVN2 (bible/12-Enhanced-AI/Feud-Arc.md 13.2): an Arrow-wise revenant's Speed while its target is far (its stand's
-   *  `revenant.edge`, systems/revenantFeud.js ADAPT) - none for any other body. */
+   *  `revenant.edge`, systems/revenant/revenantFeud.js ADAPT) - none for any other body. */
   _edgeSpeed() {
     const e = this.vitals?.()?.revenant?.edge;
     return e?.farSpeed > 0 && this._dist > e.farAt ? e.farSpeed : 0;
@@ -1687,7 +1687,7 @@ export class EnemyAI {
    * `fleeLeft` is spent. A blow does not end the run: it shoves the foe as it shoves any (KnockbackMovement, the hurt
    * anim with it), and a frightened man keeps running once the shove is spent.
    * FLIGHT-FIRST: `pace` - its run at this share of its walk (1, the walk, for every run but the revenants' flee law's:
-   * a special foe running for its life outruns a running player, systems/revenant.js REVENANT_FLEE_PACE).
+   * a special foe running for its life outruns a running player, systems/revenant/revenant.js REVENANT_FLEE_PACE).
    */
   flee(fromFeet, seconds, pace = 1) {
     breakWindup(this);   // AUDIT TELL B1: a routed foe's wind-up goes with its fight

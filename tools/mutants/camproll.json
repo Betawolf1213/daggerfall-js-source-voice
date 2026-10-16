@@ -28,7 +28,7 @@
  },
  {
   "name": "CAMP-ROLL-the-highest-rolls",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "now - cur.at <= freshMs && m.acct < me && (!leader || m.acct < leader.acct)) leader = m;",
   "new": "now - cur.at <= freshMs && m.acct > me && (!leader || m.acct < leader.acct)) leader = m;",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "CAMP-ROLL-any-lower-not-the-lowest",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "m.acct < me && (!leader || m.acct < leader.acct)) leader = m;",
   "new": "m.acct < me) leader = m;",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "CAMP-ROLL-a-stale-open-mark-is-waited-on",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "campOf(cur.at) === 'open' && now - cur.at <= freshMs && m.acct < me",
   "new": "campOf(cur.at) === 'open' && m.acct < me",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "CAMP-ROLL-a-done-mark-is-waited-on",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "if (m.p?.rs && campOf(cur.at) === 'open' && now",
   "new": "if (m.p?.rs && campOf(cur.at) !== null && now",
   "tests": [
@@ -64,7 +64,7 @@
  },
  {
   "name": "CAMP-ROLL-a-mate-not-resting-is-waited-on",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "if (m.p?.rs && campOf(cur.at) === 'open'",
   "new": "if (campOf(cur.at) === 'open'",
   "tests": [
@@ -73,7 +73,7 @@
  },
  {
   "name": "CAMP-ROLL-resting-alone-joins-the-camp",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "        if (!m?.acct || restsAlone(m) || !inCamp(m)) continue;",
   "new": "        if (!m?.acct || !inCamp(m)) continue;",
   "tests": [
@@ -82,7 +82,7 @@
  },
  {
   "name": "CAMP-ROLL-their-ambush-is-not-mine",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "        if (cur.enemy !== null && cur.enemy !== was.enemy) return { act: 'enemy', acct: m.acct, name: m.name };\n",
   "new": "",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "CAMP-ROLL-an-old-night-is-a-move",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "const kind = cur.at > was.at && now - cur.at <= freshMs ? kindOf(cur.at) : null;",
   "new": "const kind = now - cur.at <= freshMs ? kindOf(cur.at) : null;",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "CAMP-ROLL-a-newcomer-is-a-move",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "        if (!was) { base.set(m.acct, cur); continue; }",
   "new": "        if (!was) { base.set(m.acct, { at: 0, enemy: null }); continue; }",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "CAMP-ROLL-the-wait-never-ends",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "      if (now - firstAsk >= waitMs || !leader) return { act: 'roll' };",
   "new": "      if (!leader) return { act: 'roll' };",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "CAMP-ROLL-the-band-from-me-alone",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "    if (dx * dx + dz * dz < m2) return false;",
   "new": "    if (dx * dx + dz * dz < m2 && f === feet[0]) return false;",
   "tests": [
@@ -127,7 +127,7 @@
  },
  {
   "name": "CAMP-ROLL-the-open-mark-is-a-night",
-  "file": "src/systems/restAct.js",
+  "file": "src/systems/rest/restAct.js",
   "old": "export const CAMP_MARKS = Object.freeze({ open: 774, done: 773 });",
   "new": "export const CAMP_MARKS = Object.freeze({ open: 776, done: 773 });",
   "tests": [
@@ -136,7 +136,7 @@
  },
  {
   "name": "CAMP-ROLL-a-short-rest-waits-on-the-camp",
-  "file": "src/systems/restAct.js",
+  "file": "src/systems/rest/restAct.js",
   "old": "  const v = act?.night && !act.meditate ? deps.camp?.verdict?.() ?? null : null;",
   "new": "  const v = !act?.meditate ? deps.camp?.verdict?.() ?? null : null;",
   "tests": [
@@ -145,7 +145,7 @@
  },
  {
   "name": "CAMP-ROLL-their-ambush-breaks-me-silently",
-  "file": "src/systems/restAct.js",
+  "file": "src/systems/rest/restAct.js",
   "old": "  if (v?.act === 'enemy') { deps.onEnemyBreak?.(); return",
   "new": "  if (v?.act === 'enemy') { return",
   "tests": [
@@ -154,7 +154,7 @@
  },
  {
   "name": "CAMP-ROLL-their-night-is-my-roll",
-  "file": "src/systems/restAct.js",
+  "file": "src/systems/rest/restAct.js",
   "old": "    const r = deps.restCampNight?.(v.kind, true) ?? null;",
   "new": "    const r = deps.restNight?.({ rentedHours }) ?? null;",
   "tests": [
@@ -262,7 +262,7 @@
  },
  {
   "name": "CAMP-ROLL-no-dfu-fallback",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "  return [{ ...env, overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }, env];",
   "new": "  return [{ ...env, overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }];",
   "tests": [
@@ -271,7 +271,7 @@
  },
  {
   "name": "CAMP-ROLL-the-camp-pass-forgets-dfu-s-test",
-  "file": "src/systems/partyRestLaw.js",
+  "file": "src/systems/party/partyRestLaw.js",
   "old": "overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }",
   "new": "overlapSphere: (p) => !campClear(p, feet, min) }",
   "tests": [

@@ -93,7 +93,7 @@ real panel, the preview mounted as the live one, the preview never a finger's, t
 
 ## HORSE-CARE-SWITCH: the toggle traced, and Mac's word on it (2)
 
-`src/systems/features.js` 'horse-care'; `src/systems/upkeepSwitch.js` horseCareRules; `src/systems/upkeepTiers.js`.
+`src/systems/features.js` 'horse-care'; `src/systems/upkeep/upkeepSwitch.js` horseCareRules; `src/systems/upkeep/upkeepTiers.js`.
 
 THE REPORT. "(also the horse care toggle in the settings menu doesn't seem to work)" - no more is said, and the
 screenshot shows horse care on (Breath, Hunger, Bond and Feed oats are its).

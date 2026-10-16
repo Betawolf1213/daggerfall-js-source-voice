@@ -38,7 +38,7 @@ import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { frameTarget, setFrameTarget } from '../src/render/renderTarget.js';
 import { E, stateGl, presents, retroCfg } from './retroGl.mjs';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
-import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { getPref, setPref, loadPrefs, PREF_DEFAULTS, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import * as CounterModule from '../src/ui/fpsCounter.js';
 import { featureTile } from '../src/ui/enhancedMenu.js';

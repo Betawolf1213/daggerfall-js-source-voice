@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITVE-base-off-by-default",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js",
       "test/ve4_vanillaEnhancedShipped.test.js",
@@ -56,7 +56,7 @@
   },
   {
     "name": "AUDITVE-worker-never-asked",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -65,7 +65,7 @@
   },
   {
     "name": "AUDITVE-unsupported-not-falling-back",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -74,7 +74,7 @@
   },
   {
     "name": "AUDITVE-dead-worker-asked",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDITVE-fallback-not-fitted",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js",
       "test/ve4_vanillaEnhancedShipped.test.js"
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDITVE-worker-no-fit",
-    "file": "src/systems/vanillaEnhancedDecodeWorker.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDITVE-worker-copies-the-pixels",
-    "file": "src/systems/vanillaEnhancedDecodeWorker.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDITVE-worker-unsupported-unsaid",
-    "file": "src/systems/vanillaEnhancedDecodeWorker.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -360,7 +360,7 @@
   },
   {
     "name": "AUDITVE-R10-classic-offered",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/auditve.test.js"
     ],
@@ -369,7 +369,7 @@
   },
   {
     "name": "AUDITVE-R10-note-says-mods",
-    "file": "src/systems/vanillaEnhanced.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhanced.js",
     "tests": [
       "test/auditve.test.js",
       "test/ve1_vanillaEnhanced.test.js"
@@ -388,7 +388,7 @@
   },
   {
     "name": "AUDITVE-R12-array-all-or-nothing",
-    "file": "src/systems/vanillaEnhancedPack.js",
+    "file": "src/systems/vanillaEnhanced/vanillaEnhancedPack.js",
     "tests": [
       "test/auditve.test.js"
     ],

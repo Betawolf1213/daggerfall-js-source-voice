@@ -23,12 +23,12 @@ const { loadQuestTables } = await import('../src/systems/quest/tables.js');
 const { QuestMachine } = await import('../src/systems/quest/machine.js');
 const { TopicTree, QUEST_INFO_RESOURCE_TYPE, LIST_ITEM_TYPE, BUILDING_HINT_TYPE } = await import('../src/systems/topicTree.js');
 const { AnswerPipeline, TALK_STRINGS } = await import('../src/systems/answerPipeline.js');
-const { expandRandomTextRecord } = await import('../src/systems/talkMacros.js');
+const { expandRandomTextRecord } = await import('../src/systems/talk/talkMacros.js');
 const { discoverBuilding, discoveredBuildings, undiscoverBuilding, restoreDiscovery } = await import('../src/systems/discovery.js');
 const { stampResidenceQuestNames } = await import('../src/ui/exteriorAutomapWindow.js');
 const { createTownSheet } = await import('../src/ui/townSheet.js');
 const { BUILDING_TYPES: T, isResidence } = await import('../src/world/buildingNames.js');
-const { makeBuildingKey } = await import('../src/systems/talkTopics.js');
+const { makeBuildingKey } = await import('../src/systems/talk/talkTopics.js');
 
 const TABLES = fileURLToPath(new URL('../vendor/dfu-quests/Tables', import.meta.url));
 loadQuestTables(Object.fromEntries(readdirSync(TABLES).filter((f) => f.endsWith('.txt'))
@@ -122,7 +122,7 @@ test('RES-MARK: a townsperson who knows where a quest\'s residence is marks it o
 });
 
 test('HOME-PLAQUE: a nameless house whose door has verbs is a "Residence" - its plaque stands and lists them; a named building keeps its name; no verbs, no name (mutants: the word dropped; the verbs read after the name)', async () => {
-  const { homeDoorName, homeBuyRows } = await import('../src/systems/onlineHomes.js');
+  const { homeDoorName, homeBuyRows } = await import('../src/systems/online/onlineHomes.js');
   const { staticDoorName } = await import('../src/systems/worldTooltips.js');
   assert.equal(homeDoorName('', true), 'Residence');
   assert.equal(homeDoorName('The Mosrey Residence', true), 'The Mosrey Residence', 'the quest\'s own name stands');

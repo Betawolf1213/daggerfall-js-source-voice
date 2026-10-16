@@ -157,7 +157,7 @@ import { playerEntity } from '../characters/playerEntity.js';
 import { drawVitalsBars } from './hudVitals.js';   // VB1: the nine-bar law - no cycle, hudVitals reads only the settings store
 import { raceArt } from '../systems/races.js';
 import { racialOverrideHeadArt } from '../systems/vampirism.js';   // V5: the curse heads, DFU's override-first order
-import { getBool, getFloat, getInt } from '../systems/settings.js';
+import { getBool, getFloat, getInt } from '../systems/settings/settings.js';
 import { retroRenderingMode, retroAspectCorrection, retroWorldAspect, retroAspectViewportRect } from '../systems/retroMode.js';   // RETRO1: the retro texture's aspect and the pillarbox
 import { getInteractionMode } from '../player/interactionMode.js';
 import { cursorActive } from '../player/pointerLock.js';

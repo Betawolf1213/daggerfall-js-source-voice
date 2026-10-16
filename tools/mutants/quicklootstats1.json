@@ -1,7 +1,7 @@
 [
   {
     "name": "the-damage-row-goes",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  push('Damage', itemDamageLine(item));",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "the-armour-row-goes",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  push('Armour', itemArmourLine(item));",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "every-group-gets-a-material-row",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  push('Material', itemNameParts(item).material);",
     "new": "  push('Material', materialName(item));",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "a-survival-item-gets-a-condition-row-too",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  if (survival) for (const t of survivalInfoTokens(item).slice(2)) push('', t.text);\n  else if ((item.maxCondition ?? 0) > 0)",
     "new": "  if (survival) for (const t of survivalInfoTokens(item).slice(2)) push('', t.text);\n  if ((item.maxCondition ?? 0) > 0)",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "the-weight-is-one-rather-than-the-stacks",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  push('Weight', `${weightString(item)} kg`);",
     "new": "  push('Weight', `${weightString({ ...item, stackCount: 1 })} kg`);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "an-item-with-nothing-to-say-draws-an-empty-panel",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  if (!item) return [];\n  const rows = [];",
     "new": "  const rows = [];\n  if (!item) item = {};",
     "tests": [

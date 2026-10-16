@@ -13,8 +13,8 @@ import {
   iliacLayout, COST_GEM, POWER_SHIELD, ILIAC_INKS, ILIAC_TILE_MAX_H,
 } from '../src/render/iliacCardFaces.js';
 import { paintBack, STOCK } from '../src/render/cardFaces.js';
-import { RARITIES, RARITY_ORDER } from '../src/systems/lootRarity.js';
-import { cardWords } from '../src/systems/iliacCardWords.js';
+import { RARITIES, RARITY_ORDER } from '../src/systems/loot/lootRarity.js';
+import { cardWords } from '../src/systems/iliac/iliacCardWords.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -141,7 +141,7 @@ const inRoundRect = ([x, y], rx, ry, rw, rh, r, m = 0) => {
 const role = (t) => (/^bold /.test(t.font) ? (/^\d+$/.test(t.t) ? 'digit' : 'name') : /^italic /.test(t.font) ? 'flavor' : 'rules');
 
 /** KG-SET: a fabricated card is the producer's shape (net/iliacCards.js - no words on it); the words a test sets on
- *  its face go to the painter beside it, as a catalog card's own (systems/iliacCardWords.js) do. */
+ *  its face go to the painter beside it, as a catalog card's own (systems/iliac/iliacCardWords.js) do. */
 const SAMPLED = new WeakMap();
 const sample = (kind, tier, { rules = 'When played, add one power to every other unit you hold here.', flavor = 'The bones remember.', ...extra } = {}) => {
   const card = {
@@ -590,7 +590,7 @@ test('CARDS8 the back is the Bay\'s compass rose - not the house deck\'s medalli
 test('CARDS8 the art is ours: the painter reads no game file', () => {
   const src = read('src/render/iliacCardFaces.js');
   const imports = [...src.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]);
-  assert.deepEqual(imports, ['../systems/lootRarity.js', '../systems/iliacCardWords.js', './cardFaces.js'], 'the loot\'s tier colours, the card\'s words and the house stock - nothing else');   // PIN MOVED (KG-SET): the words a face writes, in the player's language
+  assert.deepEqual(imports, ['../systems/loot/lootRarity.js', '../systems/iliac/iliacCardWords.js', './cardFaces.js'], 'the loot\'s tier colours, the card\'s words and the house stock - nothing else');   // PIN MOVED (KG-SET): the words a face writes, in the player's language
   for (const spec of imports) assert.doesNotMatch(spec, /formats\/|texture|bsa|arena2|imgFile|cifRci|loader/i, `${spec} is no ARENA2 reader`);
   assert.doesNotMatch(src, /\b(drawImage|putImageData|createPattern|new Image)\b/, 'no raster is drawn - every face is paths');
   assert.doesNotMatch(src, /#[0-9a-f]{6}['"]?\s*,?\s*\/\/\s*(common|magic|rare|legendary|aetheric|artifact)\b/i, 'the tier colours are imported, never copied');

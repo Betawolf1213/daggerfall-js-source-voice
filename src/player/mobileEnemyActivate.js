@@ -51,7 +51,7 @@ import { setMidScreenText } from '../ui/midScreenText.js';   // AUDIT 64 F34: :8
 import { PLAYER_TARGET, resetAllyTeamOnPlayerAttack } from '../characters/enemyTargets.js';   // AUDIT NAV2 F54: MakeEnemyHostileToAttacker's entity-side half
 import { enemyDisplayName } from '../characters/enemyBasics.js';
 import { properName } from '../systems/champions.js';   // AUDIT WB12d (D2): a foe with a name of its own
-import { pickpocket } from '../systems/talk.js';
+import { pickpocket } from '../systems/talk/talk.js';
 import { localizedText, getLocalizedEnemyName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the enemy's name
 import { sparedByPlayer } from '../combat/friendlyFire.js';   // AUDIT NAV2 F54: the player's own hands - and a town's defenders - are no mark
 

@@ -11,7 +11,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { receiveSharedQuest, prepareQuestShare } from '../src/systems/questShare.js';
+import { receiveSharedQuest, prepareQuestShare } from '../src/systems/quest/questShare.js';
 import { QuestResourceBehaviour } from '../src/systems/quest/resourceBehaviour.js';
 import { PayMoney, KillFoeAction, UnrestrainFoe, RunQuest } from '../src/systems/quest/actions.js';
 import { Symbol as QuestSymbol } from '../src/systems/quest/symbol.js';
@@ -19,7 +19,7 @@ import { expandQuestString, expandLetterSignoff, getContextValue } from '../src/
 import { QuestListsManager, MEMBERSHIP_STATUS } from '../src/systems/quest/questLists.js';
 import { customParseInt } from '../src/systems/quest/place.js';
 import { TopicTree } from '../src/systems/topicTree.js';
-import { removeOrphanedItems } from '../src/systems/save.js';
+import { removeOrphanedItems } from '../src/systems/save/save.js';
 import { addItem } from '../src/systems/inventory.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { SKILL_ADVANCEMENT_MULTIPLIER } from '../src/systems/advancement.js';

@@ -28,7 +28,7 @@ import { eotbBody } from '../player/eotbBody.js';   // EOTB5: the sprite body, f
 import { eotbCamera } from '../player/eotbCamera.js';
 import { racialFpsWeapon } from '../systems/lycanthropy.js';   // V4: the transformed rig's claws
 import { EQUIP_SLOTS, equipTableOf, fillEquipTable } from '../systems/equip.js';   // AUDIT 17e F17; MW-D32 the worn read; MW-EARLY: a save's worn set
-import { setItemFields } from '../systems/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
+import { setItemFields } from '../systems/item/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
 import { dfWornEquipment } from '../formats/mwItemMap.js';   // MW-D32
 import { ownWerewolfSkin } from '../systems/ownGlyphs.js';   // SHADOW-FANG: the skin my own werewolf wears
 import { ARMOR_ENUM } from './enemyEquipment.js';   // MW-D32
@@ -71,16 +71,16 @@ import { atlasFileName } from './diverseWeapons.js';   // DW1: the art cache's t
 import { createShieldWidget } from './shieldWidget.js';
 import { shieldWidgetTextures, shieldWidgetImage } from './shieldWidgetAssets.js';
 import { setAttackOnPlayerHook } from './formulas.js';   // SW1: PCAAO's onAttackDamageCalculated, for the Recoil module
-import { conditionPercentage } from '../systems/itemInfo.js';   // SW1: the condition tier
+import { conditionPercentage } from '../systems/item/itemInfo.js';   // SW1: the condition tier
 import { isShieldTemplate } from '../systems/armorMaterials.js';   // SW1: GetShieldProtectedBodyParts' own test
-import { rriNativeMaterialValue } from '../systems/rriItems.js';
-import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
+import { rriNativeMaterialValue } from '../systems/roleplayRealismItems/rriItems.js';
+import { riddenHorseLook } from '../systems/horse/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
 import { createHandheldTorches, isHeldLight } from '../systems/handheldTorches.js';   // HT1: Handheld Torches' component, one per rig beside the widget; TORCH-VIS: and its own light test
 import { lanternAtWaist } from '../systems/playerTorch.js';   // HT-WAIST: a lantern hung at the waist is in no hand - the ladder, the Morrowind body and the sprite ask the one question
 import { liveVampirism } from '../systems/racialLive.js';   // PORTRAIT3D: a vampire's body wears the race's vampire head
 import { isTransformedLycanthrope, liveLycanthropy } from '../systems/lycanthropy.js';   // WW1: Weapon Widget's FPSWeaponClone, beside the machine; AUDIT-EOTB2: the sprite's form
 import { concealmentFlags } from '../systems/effects.js';   // EOTB-IL: PlayerBillboard.UpdateMaterial reads the player's own IsInvisible / IsAShade / IsBlending
-import { getBool, getInt } from '../systems/settings.js';   // EOTB-IL: PlayerBillboard.LateUpdate reads DaggerfallUnity.Settings.BowDrawback
+import { getBool, getInt } from '../systems/settings/settings.js';   // EOTB-IL: PlayerBillboard.LateUpdate reads DaggerfallUnity.Settings.BowDrawback
 import { modSetting } from '../systems/modSettings.js';   // WW1: its Enabled
 import { takeFrameLook } from '../player/lookFilter.js';   // WW1: the frame's look for the widget's inertia
 import { uiCanvas, onUiScreen, fromUiPoint } from '../ui/uiScreen.js';   // RETRO-UI: the viewmodel in DFU's CustomScreenRect

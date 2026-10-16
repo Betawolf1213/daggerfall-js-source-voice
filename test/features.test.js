@@ -22,7 +22,7 @@ import '../src/world/landView.js';   // RF4: the lanes register themselves; the 
 import '../src/world/outdoors.js';
 import '../src/systems/featureLanes.js';   // FT18: the wind, the quick slots and the blood
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ALL_KEYS } from '../src/systems/settings.js';
+import { ALL_KEYS } from '../src/systems/settings/settings.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

@@ -12,10 +12,10 @@ import { readFileSync } from 'node:fs';
 const store = new Map();
 globalThis.localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
 
-const { onlineSyncPlan, applyOnlineSync, undoOnlineSync, lastOnlineSync, ONLINE_SYNC_STORE_KEY, ONLINE_LAYOUT_SETTINGS } = await import('../src/systems/onlineSync.js');
-const { ONLINE_FORCED_PREFS, ONLINE_FORCED_SETTINGS, ONLINE_ROOM_MOD_KEYS, ONLINE_WHOLE_MODS } = await import('../src/systems/onlineLane.js');
+const { onlineSyncPlan, applyOnlineSync, undoOnlineSync, lastOnlineSync, ONLINE_SYNC_STORE_KEY, ONLINE_LAYOUT_SETTINGS } = await import('../src/systems/online/onlineSync.js');
+const { ONLINE_FORCED_PREFS, ONLINE_FORCED_SETTINGS, ONLINE_ROOM_MOD_KEYS, ONLINE_WHOLE_MODS } = await import('../src/systems/online/onlineLane.js');
 const { getPref, setPref, _resetForTests: resetPrefs } = await import('../src/systems/uiPrefs.js');
-const { getString, getBool, setValue, saveSettings, _resetForTests: resetSettings } = await import('../src/systems/settings.js');
+const { getString, getBool, setValue, saveSettings, _resetForTests: resetSettings } = await import('../src/systems/settings/settings.js');
 const { modSetting, setModSetting, _resetModSettings, MOD_SETTINGS } = await import('../src/systems/modSettings.js');
 const { onlineSyncCard, ONLINE_SYNC_TITLE, ONLINE_SYNC_SAME } = await import('../src/ui/enhancedMenu.js');
 

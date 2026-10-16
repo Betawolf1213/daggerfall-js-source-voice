@@ -21,7 +21,7 @@ DFU does.
 > Climates & Calories' (`06-Systems/Climates-Calories.md` SURV-TIERS, SURV-BOONS, BOONS-DEFAULT).
 
 **One key, three answers**, on wagon upkeep's own key, the tiers written out as data beside horse care's in
-`systems/upkeepTiers.js` (the import-free leaf both switches' tiers live in):
+`systems/upkeep/upkeepTiers.js` (the import-free leaf both switches' tiers live in):
 
 | Tier | Stored (the `wagonUpkeep` pref) | What the wagon pays |
 |---|---|---|
@@ -54,9 +54,9 @@ Boons' rules, each a field of `WAGON_UPKEEP_RULES` because the tiers differ on i
    still rolls at its pace.", and a step down is said without the slowness: "Your Small Cart is rickety. A Wagon Yard
    can mend it.", "Your Small Cart is falling apart. A Wagon Yard or a Wagon Repair Kit will mend it."
 
-**One accessor.** Every reader asks the tier through `systems/upkeepSwitch.js` wagonUpkeepRules - the live tier's rules,
+**One accessor.** Every reader asks the tier through `systems/upkeep/upkeepSwitch.js` wagonUpkeepRules - the live tier's rules,
 null for Off and on any skin but the enhanced one: the upkeep's wear by the road, a journey and the watch's throw, the
-ride's pace, the Stable page, the saddle panel and the kit's Use (`systems/upkeepRuntime.js`'s doors and
+ride's pace, the Stable page, the saddle panel and the kit's Use (`systems/upkeep/upkeepRuntime.js`'s doors and
 registerUpkeepUses, each handed the accessor by the two hosts that ride), the Wagon Yard's wright (`scenes/world.js`
 mendAtYard - Off, "The wright has no work for you."), and a counter's sale (`systems/tradeModes.js`). The laws that
 charge take the rules as an argument (`wagonUpkeep.js` wagonPace, wagonSoldWhole), and one handed none runs Hard. The
@@ -79,7 +79,7 @@ shelf, no red and each tier's words, the one accessor, a Sound wagon's boon); mu
 written before the tiers pin Hard, PIN MOVED where their vocabulary did: the upkeep is handed Hard's rules where it was
 handed `true`.
 
-## The durability is the condition it always carried (`systems/wagonUpkeep.js`)
+## The durability is the condition it always carried (`systems/wagon/wagonUpkeep.js`)
 
 Every wagon is DFU's Small Cart item (template 93) and has carried a condition since its mint - 1400 of 1400
 (`itemTemplates.js` mintCondition) - which nothing lowered. WAGONS4 lowers it. A wagon minted before its condition
@@ -125,7 +125,7 @@ followed and taken on a journey like any other on every tier. On Hard the Stable
   by what it lacks - a Caravan at nought 3000, a worn one half that - asked in a Yes/No box, then paid
   (`scenes/world.js` mendAtYard). A wagon not drawn up at the yard (Horse Cart and Cargo's wagon out of the counter's
   reach - the reach its load is taken at) costs half again: a wright goes out to it.
-- **A Wagon Repair Kit** (1711, WAGONS4's own - `systems/upkeepItemRows.js`): a quarter of whole back, to 60% at most,
+- **A Wagon Repair Kit** (1711, WAGONS4's own - `systems/upkeep/upkeepItemRows.js`): a quarter of whole back, to 60% at most,
   an hour's work. Used from the pack or the wagon's own load, or from the
   Stable page's button, where the wagon's load can be reached. A Wagon Yard sells them in a stack of YARD_KITS_STACK.
 - **Never a smith**: a wagon left at a smith's counter left the pack for days, and Horse Cart and Cargo's wagon in the
@@ -148,7 +148,7 @@ and **Use a repair kit** while a kit would mend it (`ui/holdingsPages.js` wagonL
 On Enhanced Plus, on the bench, the wagon is on screen under the compass (`ui/enhancedSaddle.js`): its state and share
 of whole, its load against its limit, and its doors - **Repair kit** (where a kit would mend it, dark without a kit or
 the wagon's reach), **Cargo** (its load opened with the wagon chosen, where Horse Cart and Cargo's own reach allows -
-`systems/horseCart.js` openWagonCargo), **Climb down**. On Hard a failing wagon's line says to mend it to get its pace
+`systems/horse/horseCart.js` openWagonCargo), **Climb down**. On Hard a failing wagon's line says to mend it to get its pace
 back, and its chip is red; on Boons it is amber and the line says nothing of a pace it has.
 
 ## Online
@@ -156,7 +156,7 @@ back, and its chip is red; on Boons it is amber and the line says nothing of a p
 The wagon's condition rides the wire as it always did. The kit followed REST6's law, SHIP BEFORE ANYONE CAN SEE ONE:
 UPKEEP_ITEMS_ONLINE was false for the release that shipped it (#791). UPKEEP-ONLINE (2026-10-12, the owner: "We never
 added oats or repair kits to the new horse/wagon system") turned it on - every release since has carried the template -
-so online a Wagon Yard sells its kits as it did offline from the first (`systems/upkeepItemRows.js`).
+so online a Wagon Yard sells its kits as it did offline from the first (`systems/upkeep/upkeepItemRows.js`).
 
 ## The four hosts
 

@@ -1,5 +1,5 @@
 // HCC (2026-09-23, Mac: "Next mod I want to implement 1 to 1 and also enhance its online integration functionality"):
-// THE LAW, PINNED BY EXECUTION - systems/horseCartLaw.js is TrailingWagonRuntime's pure arithmetic read off
+// THE LAW, PINNED BY EXECUTION - systems/horse/horseCartLaw.js is TrailingWagonRuntime's pure arithmetic read off
 // TrailingWagon.dll's IL (vendor/horse-cart-and-cargo/il/). Every pin here drives a function with the values the
 // IL compares and expects what the IL branches to; a pin that reads the same number twice is a mutant's meal.
 import { test } from 'node:test';
@@ -18,7 +18,7 @@ import {
   formatHorseSubject, formatHorseAndWagonSubject, horseTargetLabel, isPreferredGround, pickGround, calculateHorseOrientation, horseViewFor,
   walkFramesPerSecond, idleFrame, stepHorseWalk, freshHorseWalk, signedLongitudinalTravel, wheelRotationDegrees, wrapWheelAngle, wheelRadiusOf,
   cargoTier, CARGO_TIERS, horizontalForward, horizontalRight, normalizeHeading, angleBetween, HCC_TEXT,
-} from '../src/systems/horseCartLaw.js';
+} from '../src/systems/horse/horseCartLaw.js';
 
 test('HCC law: the enums are the assembly\'s numbers, and the strings DFU\'s TransportModes', () => {
   assert.deepEqual(WAGON_MODE, { None: 0, WithPlayer: 1, Deployed: 2, FollowingPlayer: 3 });

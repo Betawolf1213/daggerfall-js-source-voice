@@ -64,7 +64,7 @@
   },
   {
     "name": "CRAFT-PROCS-the-pass-hands-the-proc-roll-no-switch",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "rollProcLine(it, rolls, on);",
     "new": "rollProcLine(it, rolls);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "CRAFT-PROCS-the-proc-roll-asks-the-switch-itself",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!on || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;",
     "new": "  if (!lootRarityOn() || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;",
     "tests": [

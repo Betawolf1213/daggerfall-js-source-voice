@@ -16,7 +16,7 @@ import {
 } from '../src/systems/quickslots.js';
 import { equipItem, equipTableOf, EQUIP_SLOTS, isEquipped, getItemHands, ITEM_HANDS, unequipSlot } from '../src/systems/equip.js';
 import { potionRecipeKeys, potionRecipeByKey } from '../src/systems/potions.js';
-import { composeSessionState, restoreSessionState } from '../src/systems/save.js';
+import { composeSessionState, restoreSessionState } from '../src/systems/save/save.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -389,7 +389,7 @@ test('QS1 save: the slots ride the one session composer, and a save without the 
   assert.deepEqual(quickslotEntry('c2'), { key: 'k', name: 'Potion' });
   assert.equal(quickslotEntry('swap'), null);
   // The source: the composer and the restorer both name the module.
-  const save = read('src/systems/save.js');
+  const save = read('src/systems/save/save.js');
   assert.match(save, /quickslots: quickslotSaveData\(\)/);
   assert.match(save, /restoreQuickslotSaveData\(extras\?\.quickslots \?\? null\)/);
 });

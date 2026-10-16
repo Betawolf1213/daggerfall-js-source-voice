@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { standsTheDeep, deepWatersEnemySettingsNear, DEEP_SHARE_RADIUS, DEEP_WATERS_VENDOR, DEEP_SHARE_HYSTERESIS } from '../src/scenes/deepWatersHost.js';
 import { POPULATE_RADIUS, createEnemySpawner } from '../src/scenes/deepWatersEncounters.js';
 import { CELL_PUPPETS_MAX, CELL_LOOSE_PUPPETS, CELL_WATCH_PUPPETS_MAX, CELL_FRAME_RECORDS_MAX } from '../src/net/wire.js';
-import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/onlineLane.js';
+import { ONLINE_ROOM_MOD_KEYS } from '../src/systems/online/onlineLane.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES, DEEP_PUPPETS_MAX, ENCOUNTER_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
 

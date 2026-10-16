@@ -49,7 +49,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MOD_SETTINGS, modSetting, setModSetting, modSettingIfDeclared } from '../src/systems/modSettings.js';
-import { ONLINE_PLAYERS_OWN_MODS, ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting, onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_MODS, ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting, onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { runSurvivalMinutes } from '../src/systems/survival/needs.js';   // MODS-ONLINE-3: the needs run, measured
 import { FEATURES } from '../src/systems/features.js';   // MODS-ONLINE-3: the rows a player sees as mods, whichever store carries them
 import { smoothRoadHeights, SMOOTHED_TILES, ROAD_TILES, RIVER_TILES, STREAM_TILES, TRACK_TILES } from '../src/world/roadPainter.js';
@@ -224,7 +224,7 @@ test('MODS-ONLINE-2: a mod the player owns reaches no wire, no save and no roll'
   // save record or drawing from a shared roll fails here before a
   // player finds it as two worlds.
   const OWN_MODULES = {
-    'dynamic-skies': ['src/systems/dynamicSkies.js'],
+    'dynamic-skies': ['src/systems/dynamicSkies/dynamicSkies.js'],
     'seasons-iliac-bay': ['src/systems/seasonsIliacBay.js'],
     'weapon-widget': ['src/combat/weaponWidgetMotion.js'],
     'eye-of-the-beholder': ['src/player/eotbBody.js', 'src/player/eotbCamera.js'],
@@ -315,5 +315,5 @@ test('MODS-ONLINE-5: one ruleset per room - the reason PCAAO is forced whole for
   for (const k of ['bandaging', 'climbingRestriction', 'loanAmountPerLevel', 'shipPorts', 'bedSleeping', 'underworldExpulsion', 'EnhancedRiding.TrampleCivilians', 'RefinedTraining.variableTrainingPrice']) assert.equal(onlineForcedModSetting('roleplay-realism', k, '?online=1'), undefined, `${k} stays the player's - it reaches nobody`);
   assert.equal(Object.keys(rr).length, 9);
   assert.equal(Object.keys(ONLINE_ROOM_MOD_KEYS.pcaao).length, 1, 'PCAAO is forced whole through its one switch - the precedent');
-  assert.match(rd('src/systems/onlineLane.js'), /ONE RULESET PER ROOM\. PCAAO was forced\s+\/\/ whole/);
+  assert.match(rd('src/systems/online/onlineLane.js'), /ONE RULESET PER ROOM\. PCAAO was forced\s+\/\/ whole/);
 });

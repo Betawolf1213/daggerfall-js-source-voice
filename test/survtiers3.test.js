@@ -21,7 +21,7 @@ import { createRestDeps, createPlayerTicker } from '../src/scenes/shared.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setWorldMinutes, worldMinutes, setSharedClock, ownMinutes } from '../src/systems/worldTick.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { seedStartingEquipment } from '../src/systems/equip.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
@@ -496,10 +496,10 @@ test('CORPSE-FOOD, mounted: the dungeon\'s own `applyFoeRecord` rolls a joiner\'
     for (const k of Object.keys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v.type === 'string') walk(v); }
   })(ast);
   assert.ok(fn, 'dungeonContext.js has applyFoeRecord');
-  const { stampWonWeapons } = await import('../src/systems/lootRarity.js');   // SIGIL1: the stream's death marks the copy's weapons too (offline: nothing)
+  const { stampWonWeapons } = await import('../src/systems/loot/lootRarity.js');   // SIGIL1: the stream's death marks the copy's weapons too (offline: nothing)
   const { rollCorpseKit, capFoeLoot } = await import('../src/systems/foeLootCap.js');   // KIT-ROLL: and its kit (a bear wears none: nothing rolled); AUDIT 625 L5: and its cap (a bear has none)
-  const { dropFoeCard } = await import('../src/systems/cardSources.js');   // PIN MOVED (AUDIT CARDS-6 A3): and its card - KG-SET gave the bear one (the Grizzly Bear's), so its roll is pinned below
-  const { isIliacCard } = await import('../src/systems/iliacItems.js');
+  const { dropFoeCard } = await import('../src/systems/card/cardSources.js');   // PIN MOVED (AUDIT CARDS-6 A3): and its card - KG-SET gave the bear one (the Grizzly Bear's), so its roll is pinned below
+  const { isIliacCard } = await import('../src/systems/iliac/iliacItems.js');
   // KG-SET: the bear's card drops on a roll (Math.random's, at its death) - pinned to drop, so the run is one run (CI drew
   // it, and the meat check below read the card as a stray item)
   const state = { ...ROOM_LOOT_OFF, validFoeRecord, addCorpseFood, stampWonWeapons, rollCorpseKit, dropFoeCard: (/** @type {any} */ e, /** @type {any} */ o = {}) => dropFoeCard(e, { ...o, rolls: () => 0 }), capFoeLoot, liveStat: () => 50, playerEntity: {}, foes: [], _layoutFoes: 1, _retyping: new Set(), retypeFoe: async () => false, console, renownFoeDied, reportPlayerKill };   // RENOWN1: the stream's death asks whether I fought it

@@ -81,7 +81,7 @@ climate's, as DFU's - High Rock's mountains still walk Nords.
 One rule, asked by every population (ONE DFU MEMBER, ONE EXPORT - the climate's table was written three times, now
 once, `RACE_OF_PEOPLE` beside the sprite tables): the street's TownPopulation in both exterior hosts (world.js,
 exterior.js), the living world's census (`systems/livingWorld/census.js` mintResident), and - with Roleplay & Realism's
-Variant Residents on, its default - its house residents (`systems/rrVariants.js` rrVariantPerson asks walkerRace,
+Variant Residents on, its default - its house residents (`systems/roleplayRealism/rrVariants.js` rrVariantPerson asks walkerRace,
 handed the region by worldModes.js's interior; R&R's GetClimateRace, `rrClimateRace`, reads the one table - AUDIT
 FB1010 C3). dungeonContext.js stands no townsfolk. The body and the talk portrait follow the race (the face tables are
 the race's); the name and the talk's race already read the region. No new art: the three classic sets, which the other
@@ -98,7 +98,7 @@ Port-Ledger A, REGIONAL-FOLK. Pinned by `test/fb1010_regionalfolk.test.js` (5); 
 
 ## TRUE-CURSE: a damned Legendary weapon, which no temple lifts (6)
 
-`systems/lootRarity.js` (DAMNED_IN, DAMNED_DRAWBACK, isDamned, damnPiece, damnPass), `systems/lootCurse.js`
+`systems/loot/lootRarity.js` (DAMNED_IN, DAMNED_DRAWBACK, isDamned, damnPiece, damnPass), `systems/loot/lootCurse.js`
 liftRefusal. One cursed Legendary weapon in four is DAMNED, in its own pass after every draw a door makes - the curse's,
 the socket's and the late finds' (`damnPass`, both doors: `rollLootRarity` and `foeLootCap.js` rollCorpseKit;
 Loot-II-Arc law 9), so every other curse and socket draws as it drew (AUDIT FB1010 E3: the damning was drawn inside the
@@ -120,7 +120,7 @@ mounts no enchantment context of its own (`enchantCtx: false`), so both exterior
 bout's spare to the damage door (`arenaBouts.playerSpare`; AUDIT FB1010 D1 - before, a Health Leech blade, made or
 found, could kill on the sand, and a Legacy character's fall there was a permadeath).
 
-The item law (`systems/itemLaw.js`, the account service's too - it bundles `lootRarity.js` and deploys itself when it
+The item law (`systems/item/itemLaw.js`, the account service's too - it bundles `lootRarity.js` and deploys itself when it
 changes) stands behind a damned curse on a Legendary weapon and nowhere else (validCurse). No new field: a damned curse
 is a curse whose drawback is the damned row. The Test Room lays one, known, last (Wyrmbane, `systems/testRoom.js`); its
 cursed Legendary stays LOOT16's. LOOT16's own law and its pins stand as they were; LR3's count of the Test Room grew by
@@ -141,7 +141,7 @@ shelves are C&C's again.
 ## Waiting: Spell Icon Overhaul (4)
 
 The picker offers ICON00I0's 69 icons (`ui/spellIconPickerWindow.js`; `ui/enhancedPorts.js` iconPickerView), and the
-spell maker keeps every icon inside them (`systems/spellMaker.js` buildCustomSpell wraps the index by SPELL_ICON_COUNT).
+spell maker keeps every icon inside them (`systems/spell/spellMaker.js` buildCustomSpell wraps the index by SPELL_ICON_COUNT).
 Spell Icon Overhaul is a third party's art. Every pack this tree carries was handed over by the owner, nearly all on his
 word of their authors' permission (`01-Overview/Mod-Registry.md`; some authors' own words are still RECORD OPEN there),
 and none has been handed over for this one, so nothing is vendored. With it, the pack ships as the

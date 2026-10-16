@@ -3,14 +3,14 @@
 // ships and carts. You can summon your horse/cart from this page/send away much like the companion system") - THE
 // HOLDINGS TAB and THE STABLE (bible/03-World/Holdings.md): the pause window's fourth tab and its rail (ui/enhancedMenu.js
 // pauseHoldings), what moved off the Stats rail onto it, the landings; Horse Cart and Cargo's summon answered and its
-// new other half, Send away (systems/horseCart.js summonTransport, sendTransportAway, renameHorse, stableView - the
+// new other half, Send away (systems/horse/horseCart.js summonTransport, sendTransportAway, renameHorse, stableView - the
 // real runtime over test/hccWorld.mjs); the Stable page's words and acts (ui/holdingsPages.js); the one construction
 // seam the two hosts share. The Fleet page is test/fleet.test.js's.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeWorld } from './hccWorld.mjs';
-import { WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT } from '../src/systems/horse/horseCartLaw.js';
 import {
   drawStablePage, stableWords, stableProviderFor, setHoldingsProvider, stablePageShown, resetHoldingsPages, _setHoldingsIconForTests, farWords,
   STABLE_PAGE_SECTIONS, HORSE_ART, WAGON_ART,

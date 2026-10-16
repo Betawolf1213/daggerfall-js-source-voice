@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 import { expandRowValues, getMacroValue } from '../src/systems/quest/questMacros.js';
 import { useItem, MAP_TEXT_ID } from '../src/systems/useItem.js';
 import { useResultAction } from '../src/ui/enhancedInventory.js';
-import { expandGuildMacros, expandGuildRows } from '../src/systems/guildServiceActions.js';
+import { expandGuildMacros, expandGuildRows } from '../src/systems/guild/guildServiceActions.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 

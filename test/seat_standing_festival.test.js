@@ -25,7 +25,7 @@ import { createSeatBanners } from '../src/scenes/seatBanners.js';
 import { hallBannerAnchors, BANNER_REFRESH_MS } from '../src/scenes/hallBanners.js';
 import { fillLanternPool } from '../src/world/cityLights.js';
 import { createMusicDirector } from '../src/scenes/shared.js';
-import { LOCATION_TYPES, TAVERN_SONGS, MUSIC_ENV } from '../src/systems/songManager.js';
+import { LOCATION_TYPES, TAVERN_SONGS, MUSIC_ENV } from '../src/systems/song/songManager.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { createTownSeatBook, SEAT_LIST_CACHE_MS, SEAT_RED_READ_MS, SEAT_TURN_READ_SPREAD_MS } from '../src/net/townSeatBook.js';   // AUDIT FESTIVAL S1   // D1-LOAD: the Turning's read spread
 

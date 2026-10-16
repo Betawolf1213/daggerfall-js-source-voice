@@ -16,8 +16,8 @@ import { enchantmentSettings } from '../src/systems/enchantmentCatalogue.js';
 import { equipItem } from '../src/systems/equip.js';
 import { armorOfMaterial, weaponOfMaterial } from '../src/combat/enemyEquipment.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { conditionShare, mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
-import { randomConditionLootItems } from '../src/systems/rriRealism.js';
+import { conditionShare, mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
+import { randomConditionLootItems } from '../src/systems/roleplayRealismItems/rriRealism.js';
 
 const CUIRASS = 102, HELM = 107, BOOTS = 108, RING = 135, IRON_PLATE = 0x0200, LEATHER = 0x0000;
 const SLOWFALLING = 37;   // a Cast When Held row's spell (lootRarity.js's flavour list carries it)

@@ -10,28 +10,28 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById, ILIAC_TIERS } from '../src/net/iliacCards.js';
 import { CARD_WORTH, cardWorth, cardWorthOf, isCardRecord, cardRecordWorth, STARTER_DECK_WORTH, customsCardAllowance, CUSTOMS_CARD_WORTH_PER_LEVEL, ILIAC_CARD_TEMPLATE as LAW_TEMPLATE } from '../src/net/cardWorthLaw.js';
-import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, mintIliacCard, mintCardPack, isCardPack, cleanBinders, giveBinderAtChargen, CARD_PACK_ROW } from '../src/systems/iliacItems.js';
+import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, mintIliacCard, mintCardPack, isCardPack, cleanBinders, giveBinderAtChargen, CARD_PACK_ROW } from '../src/systems/iliac/iliacItems.js';
 import {
   FOE_CARDS, FOE_CARD_PER_MILLE, TITLED_FOE_CARD_MULT, foeCardRoll, dropFoeCard, CARD_DROP_HANDLER,
   GUILD_CARDS, guildNameOfFaction, guildCardRoll, GUILD_CARD_PER_MILLE,
   CARD_PACK_SIZE, PACK_POOL, PACK_SLOT_TIERS, PACK_TOP_TIERS, rollPackCards, openCardPack, buyCardPack, cardPackPrice, CARD_PACK_BASE_PRICE, packOpenedText,
   BOSS_CARDS, BOSS_CARD_IDS, BOSS_CARD_PER_MILLE, bossCardRoll,
-} from '../src/systems/cardSources.js';
+} from '../src/systems/card/cardSources.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { DIVINES, ORDERS } from '../src/systems/guildVariants.js';
-import { GUILDS } from '../src/systems/guilds.js';
-import { templateByIndex, itemUseHandler } from '../src/systems/itemTemplates.js';
+import { DIVINES, ORDERS } from '../src/systems/guild/guildVariants.js';
+import { GUILDS } from '../src/systems/guild/guilds.js';
+import { templateByIndex, itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { raiseEnemyDeath } from '../src/scenes/corpseMarker.js';
 import { capLootList, CARD_CAP_RANK } from '../src/systems/foeLootCap.js';
 import { calculateTradePrice, shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { rollSpoils } from '../src/systems/gateSpoils.js';
+import { rollSpoils } from '../src/systems/gate/gateSpoils.js';
 import { spoilsList } from '../src/scenes/spoilsPool.js';
-import { rollSerpentSpoils, serpentSpoilsList } from '../src/systems/serpentSpoils.js';
-import { rollSdSpoils, sdSpoilsList } from '../src/systems/sdSpoils.js';
+import { rollSerpentSpoils, serpentSpoilsList } from '../src/systems/serpent/serpentSpoils.js';
+import { rollSdSpoils, sdSpoilsList } from '../src/systems/superDungeon/sdSpoils.js';
 import { cardCustoms, applyCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { goodRefusal } from '../src/net/marketLaw.js';
 import { tradeableRecord } from '../src/net/realmTradeLaw.js';
 
@@ -162,7 +162,7 @@ test('CARDS9 the foes: a creature drops its own card - one draw at its card\'s t
   raiseEnemyDeath(body, { rolls: () => 0 });
   assert.deepEqual(body.items.filter(isCardRecord).map((c) => c.card), ['zombie']);
   assert.equal(dropFoeCard({ mobileType: MOBILE_TYPES.Rat, items: null }, { rolls: () => 0 }), null, 'a body with no list takes none');
-  assert.match(read('src/systems/cardSources.js'), /registerEnemyDeathHandler\(CARD_DROP_HANDLER, \(entity, opts = \{\}\) => \{ dropFoeCard\(entity, opts\); \}\);/);
+  assert.match(read('src/systems/card/cardSources.js'), /registerEnemyDeathHandler\(CARD_DROP_HANDLER, \(entity, opts = \{\}\) => \{ dropFoeCard\(entity, opts\); \}\);/);
   assert.equal(CARD_DROP_HANDLER, 'iliac-card');
   assert.match(read('src/systems/worldTick.js'), /^import '\.\/cardSources\.js';/m, 'the app carries the import (AUDIT-THUNDERLOCK F1\'s wire)');
   // THE CAP keeps it: three Common pieces and a card, capped to three - the card stays
@@ -237,9 +237,9 @@ test('CARDS9 THE BOSSES\' OWN: the Warden\'s, Sethrakul\'s and the Brass Remnant
   // by source: each draw sits after the hoard's last piece's
   // GEM1/GEM2 (bible/06-Systems/Gem-Sockets.md, PIN MOVED): the card is the last draw BEFORE the gem arc's - the sockets'
   // passes and the boss's gems follow it (law 9); test/gem1_sockets.test.js pins them
-  assert.match(read('src/systems/gateSpoils.js'), /lastPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*(\/\/[^\n]*\n\s*)*const card = bossCardRoll\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map/);
-  assert.match(read('src/systems/serpentSpoils.js'), /if \(coil\) pieces\.push\(\{ item: coil, tier: coil\.rarity \}\);\s*(\/\/[^\n]*\n\s*)*const card = dealt \? bossCardRoll\('serpent', rolls\) : null;/);
-  assert.match(read('src/systems/sdSpoils.js'), /if \(hourlock\) pieces\.push\(\{ item: hourlock, tier: hourlock\.rarity \}\);\s*(\/\/[^\n]*\n\s*)*const card = bossCardRoll\('abyss', rolls\);/);
+  assert.match(read('src/systems/gate/gateSpoils.js'), /lastPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*(\/\/[^\n]*\n\s*)*const card = bossCardRoll\('gate', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map/);
+  assert.match(read('src/systems/serpent/serpentSpoils.js'), /if \(coil\) pieces\.push\(\{ item: coil, tier: coil\.rarity \}\);\s*(\/\/[^\n]*\n\s*)*const card = dealt \? bossCardRoll\('serpent', rolls\) : null;/);
+  assert.match(read('src/systems/superDungeon/sdSpoils.js'), /if \(hourlock\) pieces\.push\(\{ item: hourlock, tier: hourlock\.rarity \}\);\s*(\/\/[^\n]*\n\s*)*const card = bossCardRoll\('abyss', rolls\);/);
 });
 
 test('CARDS9 THE CUSTOMS: a character brings cards worth the starter deck\'s and CUSTOMS_CARD_WORTH_PER_LEVEL a level; customs takes the dearest past it, one card at a time; the service holds a customs first save to it (\'customs-cards\') and a born one to the starter deck (\'realm-birth\'); the report says it (mutants: the allowance; the order; the service\'s bound; the birth\'s)', () => {

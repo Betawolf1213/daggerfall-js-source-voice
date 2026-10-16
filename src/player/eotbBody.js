@@ -52,7 +52,7 @@ import {
 } from './eotbBillboard.js';
 import { spriteFor, eotbSpriteUrl, spriteCount, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from './eotbSprite.js';
 import { decodePng } from '../systems/textureReplacement.js';   // EOTB-FLIP: the one PNG decoder the world's other PNG billboards take
-import { horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horseCoats.js';   // COATS1: the ridden horse's look
+import { horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horse/horseCoats.js';   // COATS1: the ridden horse's look
 import { getMeleeWeaponAnimTime } from '../characters/weaponStates.js';   // [IL] GetMeleeAnimTickTime reads FormulaHelper's own
 import { setPlayerTorchOffsetOverride, setPlayerWaistLightOverride } from '../systems/playerTorch.js';   // [IL] TorchOffset writes PlayerTorch's position; HT-WAIST: and the lantern at the waist lights from where it hangs
 import {
@@ -157,7 +157,7 @@ export function bodyState(s = {}) {
     died: !!s.died,
     transformed: !!s.transformed,
     lycanthropyType: s.lycanthropyType ?? 0,
-    horseLook: horseLookCode(horseLookOfCode(s.horseLook ?? 0)),   // COATS1: the ridden horse's look (systems/horseCoats.js, its code) - the mounted tables wear it
+    horseLook: horseLookCode(horseLookOfCode(s.horseLook ?? 0)),   // COATS1: the ridden horse's look (systems/horse/horseCoats.js, its code) - the mounted tables wear it
     riding,
     stopped,
     sheathed: s.sheathed ?? !s.weaponReady,

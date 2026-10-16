@@ -11,8 +11,8 @@ import {
   DEFAULT_TOOLTIP_TEXT_BG, DEFAULT_TOOLTIP_TEXT_FG,
 } from '../src/ui/toolTip.js';
 import { NATIVE_W, NATIVE_H } from '../src/ui/nativePanel.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
-import { DEFAULTS } from '../src/systems/settings.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
+import { DEFAULTS } from '../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 

@@ -13,8 +13,8 @@ import { herbKind } from '../src/scenes/herbHost.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { createProfBook } from '../src/net/profBook.js';
 import { veins, trees, utcDayOfMs } from '../src/net/nodeLaw.js';
-import { setForagingHost } from '../src/systems/foragingInstall.js';
-import { FT } from '../src/systems/foragingLaw.js';
+import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
+import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
 
 /** A dice that answers its numbers in turn, round and round. */

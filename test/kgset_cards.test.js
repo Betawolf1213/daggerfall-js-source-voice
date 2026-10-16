@@ -10,14 +10,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, CARD_EMBLEMS, cardById } from '../src/net/iliacCards.js';
 import { fxText, fxRefusal, deckValid } from '../src/net/iliacHand.js';
-import { cardRules, cardFlavor, cardWords, CARD_WORD_IDS } from '../src/systems/iliacCardWords.js';
+import { cardRules, cardFlavor, cardWords, CARD_WORD_IDS } from '../src/systems/iliac/iliacCardWords.js';
 import { paintIliacCard, EMBLEM_KEYS, wrapCardText } from '../src/render/iliacCardFaces.js';
 import { cardCanvas, _clearCardFacesForTests, drawCardsPart, resetCardsPart } from '../src/ui/cardBinderPage.js';
 import { iliacFace } from '../src/ui/iliacTableHud.js';
-import { iliacCardLines, mintIliacCard, giveBinder } from '../src/systems/iliacItems.js';
-import { FOE_CARDS } from '../src/systems/cardSources.js';
+import { iliacCardLines, mintIliacCard, giveBinder } from '../src/systems/iliac/iliacItems.js';
+import { FOE_CARDS } from '../src/systems/card/cardSources.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { seededUnit } from '../src/systems/iliacPatrons.js';
+import { seededUnit } from '../src/systems/iliac/iliacPatrons.js';
 import { randomDeck, measureRandom, measureRegulars } from '../tools/iliacBalance.mjs';
 import * as tm from '../src/systems/textManager.js';
 

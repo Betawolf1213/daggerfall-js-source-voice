@@ -14,7 +14,7 @@ under a second pass (Mac: "ensure any agents are opus and not fable").
 
 | # | Lens | What it read | Result |
 |---|---|---|---|
-| 1 | DS1 script fidelity | `BLBSkybox.cs`, `Scripts/*.cs` whole against `systems/dynamicSkies.js` and `dynamicSkiesRuntime.js` whole - every method, every quirk | **F1, F2**; one refuted |
+| 1 | DS1 script fidelity | `BLBSkybox.cs`, `Scripts/*.cs` whole against `systems/dynamicSkies/dynamicSkies.js` and `dynamicSkiesRuntime.js` whole - every method, every quirk | **F1, F2**; one refuted |
 | 2 | DS1 shader fidelity | `BLBProceduralSkybox.shader` and its includes against `render/dynamicSkiesRenderer.js` line by line - stages, keywords, sampling, colour space, uniform defaults | **F3**; one refuted |
 | 3 | DS1 against DFU's own systems | WeatherManager's fog, SunlightManager's curve and scale, RenderSettings.fogColor, AmbientEffectsPlayer, the snow renderer - against `world/weather.js`, `render/renderer.js`, `worldClock.js`, `systems/ambientEffects.js`, `render/precipitation.js`, the DS1 host hunks | **F4, F5**; two refuted |
 | 4 | DS1 on the enhanced environments | `createSkyController` whole, the dome's interface, WIND1/WIND2/WX2, EV4, EV5, the far ring, the strobe, the hosts' every `sky.` read | **F6, F7, F8, F9**, and F4 and F5 again by another route |

@@ -38,10 +38,10 @@ import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
 import { GROUND_OFFSET } from '../src/world/rmbLayout.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';   // AUDIT ARENA-LADDER A5: the bout's refusal of a Recall
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';   // AUDIT ARENA-LADDER A5: the bout's refusal of a Recall
 import { plainLines } from '../src/scenes/shared.js';
-import { ensureFactionRep, changeReputation } from '../src/systems/factionRep.js';
-import { findFactions, findFactionByTypeAndRegion, getPeopleOfCurrentRegion, getCourtOfCurrentRegion } from '../src/systems/talk.js';
+import { ensureFactionRep, changeReputation } from '../src/systems/faction/factionRep.js';
+import { findFactions, findFactionByTypeAndRegion, getPeopleOfCurrentRegion, getCourtOfCurrentRegion } from '../src/systems/talk/talk.js';
 import { FACTION_TYPES, SOCIAL_GROUPS, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { liveVampirism } from '../src/systems/racialLive.js';
 import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile } from '../src/scenes/questFoeHost.js';

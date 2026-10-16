@@ -343,7 +343,7 @@ the points left under the last number of the attributes not too close", "The gol
 - **TRADE-LOC** (Dudey: "when players trade in any ui the letter of credit doesnt show how many gold its worth when being
   clicked on it in the info box"): the player trade window - the one window every skin opens - says a letter of
   credit's worth (`systems/walletItem.js letterWorthLine`) in the detail a click opens and in the row's hover, for a
-  letter of either side; its value rides the wire whole (`systems/loot.js wireLootItem` floors, never drops it).
+  letter of either side; its value rides the wire whole (`systems/loot/loot.js wireLootItem` floors, never drops it).
   Pinned by `test/tradeinfo.test.js` TRADE-LOC. TRADE-LOC II (`01-Overview/Field-Bugs-2026-10-11d.md`): and on the
   row itself, under the letter's name - no hover on a phone, and two letters told apart without a click each - and as
   the pack's card's Worth (`letterWorthGold`).

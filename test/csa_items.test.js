@@ -13,8 +13,8 @@ import { createComeSailAwayRuntime, NO_WATER_LEVEL, CONSOLE } from '../src/syste
 import { CSA_ITEM_TEMPLATES, BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, mintShelfBoatUids, boatItemName, assignVariantsToShopItems, cargoLootTarget } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { remoteTarget, remoteTargetType } from '../src/systems/inventorySession.js';
 import { CONTAINER_IMAGES } from '../src/ui/targetIconPanel.js';
-import { customItemsForGroup, registerCustomItemGroup, templateByIndex } from '../src/systems/itemTemplates.js';
-import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWatersFishItems.js';
+import { customItemsForGroup, registerCustomItemGroup, templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWater/deepWatersFishItems.js';
 import { isStackable } from '../src/systems/inventory.js';
 import { setModSetting, latchModLoaded, modLatchedOn } from '../src/systems/modSettings.js';
 import { effectKindLoaded, WATER_WALKING_SILENT_KIND } from '../src/systems/effects.js';

@@ -24,7 +24,7 @@ import { CAGE_R, BROKER_BOX_HX, BROKER_BOX_HZ } from '../src/scenes/sigilBrokerP
 import { LocationSession, pickLocations } from '../src/world/wodLocationLoader.js';
 import { decodeRegionPack } from '../src/world/wodLocationPack.js';
 import { loadLocationPrefab } from '../src/world/wodLocationData.js';
-import { pathsDataPoint } from '../src/systems/travelPaths.js';
+import { pathsDataPoint } from '../src/systems/travel/travelPaths.js';
 import { wodSiteClear } from '../src/world/roadClearance.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ALL_KEYS, tierOf, LIVE, DEFAULTS, effectiveSettings, _resetForTests } from '../src/systems/settings.js';
+import { ALL_KEYS, tierOf, LIVE, DEFAULTS, effectiveSettings, _resetForTests } from '../src/systems/settings/settings.js';
 import { CATEGORIES, CATEGORY_IDS, keysOf, categoryOf } from '../src/ui/settingsMap.js';
 import { LABELS, labelOf, helpOf, READOUT, INSTEAD } from '../src/ui/settingsCopy.js';
 import { widgetFor, formatValue, stepValue, NUMBER_LAW, ENUM_LAW, COLOUR_KEYS } from '../src/ui/settingsLaw.js';

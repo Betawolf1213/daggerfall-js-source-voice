@@ -274,7 +274,7 @@
   },
   {
     "name": "SERPENT1-omen-line-twice",
-    "file": "src/systems/serpentOmen.js",
+    "file": "src/systems/serpent/serpentOmen.js",
     "old": "if (line && (t.day !== saidDay || rank > saidRank)) {",
     "new": "if (line && (t.day !== saidDay || rank >= saidRank)) {",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "SERPENT1-omen-site-cached",
-    "file": "src/systems/serpentOmen.js",
+    "file": "src/systems/serpent/serpentOmen.js",
     "old": "(!cache.site && now() - cache.at >= SITE_RETRY_MS)",
     "new": "false",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "SERPENT1-strike-middle-alone",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "return [[boat.x + fx, boat.z + fz], [boat.x, boat.z], [boat.x - fx, boat.z - fz]];",
     "new": "return [[boat.x, boat.z]];",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "SERPENT1-strike-ram-whole-lane",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "const run = Math.max(0, Math.min(len, ((t - atk.at) / 1000) * RAM_V));",
     "new": "const run = len;",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "SERPENT1-strike-grip-carry-dropped",
-    "file": "src/systems/serpentStrike.js",
+    "file": "src/systems/serpent/serpentStrike.js",
     "old": "const hull = carry.hull + (GRIP.hull * whole.maxHull + GRIP.base) * dtS * k, crew = carry.crew + GRIP.crew * dtS * k;",
     "new": "const hull = (GRIP.hull * whole.maxHull + GRIP.base) * dtS * k, crew = GRIP.crew * dtS * k;",
     "tests": [
@@ -337,7 +337,7 @@
   },
   {
     "name": "SERPENT1-spoils-stood-full-gold",
-    "file": "src/systems/serpentSpoils.js",
+    "file": "src/systems/serpent/serpentSpoils.js",
     "old": "* (dealt ? 1 : STOOD_GOLD));",
     "new": ");",
     "tests": [
@@ -346,7 +346,7 @@
   },
   {
     "name": "SERPENT1-sounds-roar-unpitched",
-    "file": "src/systems/serpentSounds.js",
+    "file": "src/systems/serpent/serpentSounds.js",
     "old": "roar: cue(DREUGH.barkSound, 0.42, 2.2, 60, 3200),",
     "new": "roar: cue(DREUGH.barkSound, 1, 2.2, 60, 3200),",
     "tests": [

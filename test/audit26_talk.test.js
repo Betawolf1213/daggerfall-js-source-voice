@@ -21,7 +21,7 @@ import { getNameBankOfRegion } from '../src/characters/nameHelper.js';
 import { RACES } from '../src/systems/races.js';
 import { getClassicQuestionIndex } from '../src/systems/answerPipeline.js';
 import { QUESTION_TYPE } from '../src/systems/topicTree.js';
-import { QUESTION_TYPE_REACTION_MODS } from '../src/systems/talkTopics.js';
+import { QUESTION_TYPE_REACTION_MODS } from '../src/systems/talk/talkTopics.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 
@@ -200,7 +200,7 @@ test('F097: the questor gender is read only on a Work question', () => {
     'both halves of the gate');
   assert.ok(arm.slice(0, 400).includes('return null;'), 'and a refusal falls to the male branch');
   // the macro's own male default is what null lands on
-  const tm = src('systems/talkMacros.js');
+  const tm = src('systems/talk/talkMacros.js');
   // E7 moved the shared read into one helper - the four pronoun
   // overrides all fork on it - but the law is unchanged: only
   // 'female' takes the female arm, and C#'s `default:` shares Male.

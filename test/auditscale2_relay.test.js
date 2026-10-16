@@ -36,10 +36,10 @@ import { webcrypto } from 'node:crypto';
 import { mintStakeOrder, mintDeckOrder, deckDigest } from '../src/net/identityToken.js';
 import { readCardReceipt } from '../src/net/cardReceipt.js';
 import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
-import { SIT_REFUSALS } from '../src/systems/cardRemoteTable.js';
+import { SIT_REFUSALS } from '../src/systems/card/cardRemoteTable.js';
 import { ILIAC_ONLINE_REFUSALS } from '../src/scenes/iliacTableGame.js';
 import { STARTER_DECK } from '../src/net/iliacCards.js';
-import { BAND_LIFE_MS } from '../src/systems/travelBands.js';
+import { BAND_LIFE_MS } from '../src/systems/travel/travelBands.js';
 import { riteNativeOf, RITE_UNITS_PER_M } from '../src/net/gateRite.js';
 import { gateTimes } from '../src/net/gateLaw.js';
 

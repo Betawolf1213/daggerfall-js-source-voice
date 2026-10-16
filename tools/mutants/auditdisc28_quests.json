@@ -75,7 +75,7 @@
   },
   {
     "name": "AD28Q-S5-ending-makes-a-copy",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (safe.questComplete === true || shareEnvelopeEnding(safe)) return { ok: false, reason: 'finished' };",
     "new": "  if (safe.questComplete === true) return { ok: false, reason: 'finished' };",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "AD28Q-S5-any-end-quest-reads-ending",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "if (action?.type === 'EndQuest' && action.isComplete === true) return true;",
     "new": "if (action?.type === 'EndQuest') return true;",
     "tests": [

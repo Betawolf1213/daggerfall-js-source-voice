@@ -15,11 +15,11 @@ import '../src/systems/featureLanes.js';
 import { FEATURES, featureForControl, resolveControl } from '../src/systems/features.js';
 import { CATEGORIES, CATEGORY_IDS, whereIs, optionPath, isSettingItem, keysOf } from '../src/ui/settingsMap.js';
 import { GRAPHICS_PRESETS, PRESET_ROWS, presetNow } from '../src/systems/graphicsPresets.js';
-import { ALL_KEYS, DEFAULTS, effectiveSettings, setValue, _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { ALL_KEYS, DEFAULTS, effectiveSettings, setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { getPref, setPref, PREF_DEFAULTS, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { _resetRenderScaleDoor } from '../src/systems/renderScale.js';
-import { restAloneText } from '../src/systems/partyRestLaw.js';
+import { restAloneText } from '../src/systems/party/partyRestLaw.js';
 import { tileStates, defaultSegment, applyGraphicsPreset, portPool, restoreTabDefaults } from '../src/ui/enhancedMenu.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -117,11 +117,11 @@ test('ORG2: optionPath names where an item lives, and every message that sends a
   assert.equal(restAloneText(false), `You rest on your own. Turn on "Rest with my party" (${optionPath('card:peerSprites')}) to rest with them.`);
   for (const [file, item] of [['src/ui/holdingsPages.js', 'feat:mod-horse-cart-and-cargo'], ['src/ui/shotsPane.js', 'feat:loading-screen'],
     ['src/ui/familyPages.js', 'feat:mod-project-legacy'], ['src/ui/familyPages.js', 'feat:living-world'], ['src/scenes/fleetHost.js', 'feat:naval-combat'],
-    ['src/scenes/dataSource.js', 'feat:modded-lighting'], ['src/systems/vanillaEnhanced.js', 'card:packs'], ['src/systems/partyRestLaw.js', 'card:peerSprites']]) {
+    ['src/scenes/dataSource.js', 'feat:modded-lighting'], ['src/systems/vanillaEnhanced/vanillaEnhanced.js', 'card:packs'], ['src/systems/party/partyRestLaw.js', 'card:peerSprites']]) {
     assert.ok(read(file).includes(`optionPath('${item}')`), `${file} names ${item} by the map`);
     assert.ok(whereIs(item), `${item} has a place to name`);
   }
-  for (const file of ['src/systems/vanillaEnhanced.js', 'src/scenes/dataSource.js', 'src/systems/partyRestLaw.js']) {
+  for (const file of ['src/systems/vanillaEnhanced/vanillaEnhanced.js', 'src/scenes/dataSource.js', 'src/systems/party/partyRestLaw.js']) {
     assert.doesNotMatch(read(file), /foot of Features|in Features &rarr;|\(Features, /, `${file} sends no one to a door that is gone`);
   }
 });

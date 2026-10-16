@@ -311,7 +311,7 @@ export function goodFamily(rec) {
 }
 let _storesForms = /** @type {Set<string>|null} */ (null);
 /** THE STORES' OWN MATERIALS AS THE PACK HOLDS THEM - every mined, smelted, cut, felled, skinned and gathered material
- *  with a template (systems/profItems.js mintMaterialItem mints these; the custom 600-699 rows by their index alone,
+ *  with a template (systems/professions/profItems.js mintMaterialItem mints these; the custom 600-699 rows by their index alone,
  *  DFU's own by their group and index), as `group:index` or `*:index`. The four foods are left out: their templates are
  *  Climates & Calories' or Foraging's as the client is set, and a Drake's worth of them is none. */
 export function storesForm(rec) {
@@ -325,7 +325,7 @@ export function storesForm(rec) {
 /**
  * WHY A PIECE OF THE PACK MAY NOT LIST - its record as the save holds it (plain data; both ends read it) - as a word, or
  * null. The trade's refusals first (realmTradeLaw tradeableRecord: worn, a quest's, summoned, bound, gold, a boat's),
- * then the market's own: LOCK1's lock (the player's own word closes selling - systems/itemLock.js), a letter of credit
+ * then the market's own: LOCK1's lock (the player's own word closes selling - systems/item/itemLock.js), a letter of credit
  * (it IS gold, and its value is its identity), arrows (a quiver's stack), a Stores material (storesForm - THE WALL of
  * 10.8, kept: a material bought with Drakes and withdrawn to the pack would otherwise list for gold, "a way round the
  * Bank's daily cap and spread"; the Stores list it, in its own currency) and a record past GOOD_RECORD_MAX. A crafted

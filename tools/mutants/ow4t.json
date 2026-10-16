@@ -1,7 +1,7 @@
 [
   {
     "name": "OW4-B1-mirror-back",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "export const bandPixelOf = (mapPixel) => ({ x: mapPixel.x, y: 499 - mapPixel.y });",
     "new": "export const bandPixelOf = (mapPixel) => ({ x: mapPixel.x, y: mapPixel.y });",
     "tests": [

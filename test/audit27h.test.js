@@ -13,11 +13,11 @@ import { createShieldWidget, readShieldWidgetSettings, shieldTextureIndex, SHIEL
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, detachedAutomapRecord, resetAutomapStore } from '../src/systems/automap.js';
-import { setValue, _resetForTests } from '../src/systems/settings.js';
+import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, detachedAutomapRecord, resetAutomapStore } from '../src/systems/automap/automap.js';
+import { setValue, _resetForTests } from '../src/systems/settings/settings.js';
 import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spellMakerWindow.js';
-import { spellMakerGroups, spellMakerSubgroups } from '../src/systems/spellEffects.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { spellMakerGroups, spellMakerSubgroups } from '../src/systems/spell/spellEffects.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

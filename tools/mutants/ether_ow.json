@@ -213,7 +213,7 @@
   },
   {
     "name": "EOW-word-bay-extent",
-    "file": "src/systems/travelBands.js",
+    "file": "src/systems/travel/travelBands.js",
     "old": "const chaserPlaceOk = (x, z) => Number.isInteger(x) && Number.isInteger(z) && worldPixelOk(Math.floor(x / PIXEL_NATIVE)) && worldPixelOk(499 - Math.floor(z / PIXEL_NATIVE));",
     "new": "const chaserPlaceOk = (x, z) => Number.isInteger(x) && Number.isInteger(z) && x >= 0 && z >= 0 && x <= 1000 * PIXEL_NATIVE && z <= 500 * PIXEL_NATIVE;",
     "tests": [

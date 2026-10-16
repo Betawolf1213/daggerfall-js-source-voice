@@ -4,7 +4,7 @@
 // reticleAnchor); the mine's points and the knife's line where they stand on the node, through the frame's own lens
 // (focal * tan of the angle off the look, one focal length both ways); the ring, the hold's arc, the glint, the float
 // and the haul's bar about the crosshair; the count's pips and one hint under it, fading once it has stood; still forms
-// under reduced motion; every cue a sound (systems/profSounds.js).
+// under reduced motion; every cue a sound (systems/professions/profSounds.js).
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { createProfHud } from '../src/ui/profHud.js';
 import { buildActReticle, marksOf, offsetOf, reachPx, HINT_MS, FOCAL_FALLBACK, NOTCH_PX, BASKET_SPREAD } from '../src/ui/profReticle.js';
 import { reticleAnchor } from '../src/ui/worldPlaque.js';
-import { PROF_CUES, profCue, setProfCueSink } from '../src/systems/profSounds.js';
+import { PROF_CUES, profCue, setProfCueSink } from '../src/systems/professions/profSounds.js';
 import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
 import { PROF_ACT_CSS } from '../src/ui/profActStyle.js';
 import { SOUND } from '../src/systems/soundClips.js';

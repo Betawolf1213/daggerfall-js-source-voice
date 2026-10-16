@@ -61,7 +61,7 @@
   },
   {
     "name": "LEGACY-CHOICE-not-saved",
-    "file": "src/systems/save.js",
+    "file": "src/systems/save/save.js",
     "old": "  'legacyChoice',\n",
     "new": "",
     "tests": [

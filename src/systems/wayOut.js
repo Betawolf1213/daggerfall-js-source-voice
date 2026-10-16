@@ -1,13 +1,13 @@
 // @ts-check
-import { TRAIL_CELL } from './automap.js';   // AUDIT DELVE C8: the trail's own grid
+import { TRAIL_CELL } from './automap/automap.js';   // AUDIT DELVE C8: the trail's own grid
 // WAYOUT1 (the delve arc, 2026-10-05 - the player, on the dungeon blocks: "removing the esoteric nature of dungeons"):
 // THE WAY OUT ON THE COMPASS.
 //
 // A Daggerfall dungeon is a maze, and the one place a lost player always wants is the way they came in. The held map
-// already keeps where they have STOOD - the walked trail, a one-metre grid at the reveal scan's 5 Hz (systems/automap.js
+// already keeps where they have STOOD - the walked trail, a one-metre grid at the reveal scan's 5 Hz (systems/automap/automap.js
 // automapTrailTick), saved with the map - so the way out is that trail walked backwards: a breadth-first field from the
 // way in over the cells stood in (a step between two cells may climb or drop WAY_STEP_DY, a storey's stair being a run
-// of such steps), each walked teleporter an edge from its entrance to its exit (systems/automap.js teleporters). The
+// of such steps), each walked teleporter an edge from its entrance to its exit (systems/automap/automap.js teleporters). The
 // compass points at the farthest cell along that path, WAY_LOOK_CELLS ahead at most, that the eye can see - so it turns
 // the corners the player turned, and never points through a wall. Where the trail does not reach the way in (a Recall
 // into the level, a save older than the trail), the mark stands on the way in itself, as the crow flies - the held

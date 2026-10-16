@@ -20,7 +20,7 @@ import { makeWindowStack } from '../src/ui/windowStack.js';
 import { DeathScreen } from '../src/ui/deathScreen.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { buildCureDiseaseFlow } from '../src/ui/guildServiceWindows.js';
-import { templeOf } from '../src/systems/guildVariants.js';
+import { templeOf } from '../src/systems/guild/guildVariants.js';
 import { SKILLS } from '../src/systems/skills.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

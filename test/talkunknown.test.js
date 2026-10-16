@@ -33,7 +33,7 @@ import assert from 'node:assert/strict';
 import {
   speakable, unknownTalkMacros, resetUnknownTalkMacros,
   expandRandomTextRecord, expandMessageBoxTokens, expandTalkMacros,
-} from '../src/systems/talkMacros.js';
+} from '../src/systems/talk/talkMacros.js';
 import { macroTableCoverage } from '../src/systems/quest/questMacros.js';
 
 const t = (text) => ({ text, formatting: 1 });

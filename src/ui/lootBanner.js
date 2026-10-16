@@ -40,11 +40,11 @@
 
 import { isEnhanced } from '../systems/uiSkin.js';
 import { createAcquireWatch, setCodexFindPresenter, tierIsBig, tierRank, isAcquired, announces } from '../systems/acquireWatch.js';
-import { tierLabel, RARITIES } from '../systems/lootRarity.js';
-import { isIliacCard } from '../systems/iliacItems.js';
+import { tierLabel, RARITIES } from '../systems/loot/lootRarity.js';
+import { isIliacCard } from '../systems/iliac/iliacItems.js';
 import { cardById } from '../net/iliacCards.js';
-import { itemLongName } from '../systems/itemInfo.js';
-import { inventoryItemImage, templateByIndex } from '../systems/itemTemplates.js';
+import { itemLongName } from '../systems/item/itemInfo.js';
+import { inventoryItemImage, templateByIndex } from '../systems/item/itemTemplates.js';
 import { paintIliacCard, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { screenDpr } from './iconFit.js';
@@ -561,7 +561,7 @@ function sound(entered) {
   if (entered.some((e) => e.codex)) _play(SOUND.LevelUp);
 }
 
-/** THE CODEX'S DOOR (systems/lootCodex.js noteFind, through systems/acquireWatch.js): a first find of a Legendary record
+/** THE CODEX'S DOOR (systems/loot/lootCodex.js noteFind, through systems/acquireWatch.js): a first find of a Legendary record
  *  is the banner's to say on Enhanced Plus - on the banner standing or waiting for it, or on the one the watcher will
  *  raise (the take told the codex before the frame read the pack). Declined - and the codex says its line - on the
  *  classic skin, for a piece already read whose banner has gone, and for one no frame will read (no host has drawn, or

@@ -16,8 +16,8 @@ import {
   applySpell, spellReflectionChance, comprehendLanguagesChance,
   hasActiveEffect, SPELL_REFLECTED_TEXT, BUFF_KINDS, MAGIC_ONLY_KEYS,
 } from '../src/systems/effects.js';
-import { buildCustomSpell, blankEffectSettings } from '../src/systems/spellMaker.js';
-import { effectByKey, PORTED_KEYS, SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
+import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
+import { effectByKey, PORTED_KEYS, SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
 import { calculateEnemyPacification } from '../src/combat/formulas.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { CANDLE, candleBase, createCandleWobble, insideUnitSphere, withPlayerLights } from '../src/scenes/magicCandle.js';

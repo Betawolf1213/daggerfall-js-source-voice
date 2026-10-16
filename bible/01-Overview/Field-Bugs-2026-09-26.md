@@ -62,7 +62,7 @@ Place and Foe set-ups keep their own headless charter), and the world's half -
 the sites, the NPCs, their homes - comes from the sender's envelope, as a save
 file's does.
 
-`shapeMismatch` (systems/questShare.js) matches a minted task by its TYPE and
+`shapeMismatch` (systems/quest/questShare.js) matches a minted task by its TYPE and
 its place in the order, a persist-until by the symbol it watches; the
 sender's number is kept (the restore keys the task by it, as a load does), so
 it must be a number and no two tasks may share a name. A Person's set-up over
@@ -207,7 +207,7 @@ houses were buyable all along; outside Info the door never asked.
 The offer asks in any mode but Steal now (a thief is not shopping), once a
 session per house: a No goes on through the door, as it always did, and
 that house asks no more unless it is pressed in Info, which always asks
-(`systems/onlineHomes.js` homeDoorPrompt; `scenes/worldModes.js` remembers
+(`systems/online/onlineHomes.js` homeDoorPrompt; `scenes/worldModes.js` remembers
 the No). The owner's menu stays Info's, since an owner's press is the way
 in.
 
@@ -364,7 +364,7 @@ Two causes in the code, and two things that are the design:
   was barred on some clients and not others, the region's suitable list
   changed length, and on the days that region drew the gate, `pixels[roll %
   length]` stood it in two places. The scan reads the game's own rows now,
-  as HUB1 does (`systems/gateSite.js`).
+  as HUB1 does (`systems/gate/gateSite.js`).
 - **By design:** the gate lets people in only while open (20:00-22:00
   game time - ten real minutes of each two-hour day), and a kill collapses it
   on every screen, so a late arrival after a quick kill finds nothing until

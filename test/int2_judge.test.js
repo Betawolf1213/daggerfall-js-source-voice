@@ -17,12 +17,12 @@ import worker from '../server-account/src/index.js';
 import { standService } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
 import { judgeSave, wealthOf, possessedItemLists, groundItemLists, characterFindings, realmLoanOwedMax, STRIKES_FOR_REVIEW } from '../server-account/src/judge.js';
-import { itemWorth } from '../src/systems/itemLaw.js';
+import { itemWorth } from '../src/systems/item/itemLaw.js';
 import { calculateMaxBankLoan, calculateBankLoanRepayment } from '../src/systems/banking.js';
 import { prepareRealmRecord, holdRefusal, dropObjects, JUDGE_COLUMNS } from '../server-account/src/realm.js';
 import { creditSave } from '../src/net/realmGoldLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { applyRarity } from '../src/systems/lootRarity.js';
+import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { seeded } from './honestItems.mjs';
 
 const dagger = () => createWeapon(113, 1, seeded(7));

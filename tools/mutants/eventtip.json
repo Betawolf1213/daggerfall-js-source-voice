@@ -172,7 +172,7 @@
   },
   {
     "name": "EVENT-TIP-the-fall-never-said",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "...(Number.isFinite(fell) ? [`${boss.name} has fallen`] : [`${boss.name}, ${boss.title}`, marksLineOf(c.t.day)])",
     "new": "...([`${boss.name}, ${boss.title}`, marksLineOf(c.t.day)])",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "EVENT-TIP-the-sealed-hours-said-as-open",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": ": `Sealed - collapses in ${countdownText(cd.ms)}`)",
     "new": ": `Open - seals in ${countdownText(cd.ms)}`)",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "EVENT-TIP-the-omen's-mark-carries-no-card",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": ", tip: gateTip(c, cd, fellAt(c.t.day)) };",
     "new": ", };",
     "tests": [

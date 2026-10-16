@@ -15,7 +15,7 @@ import { accountWrits, accountMarket, SESSION_KEY, REFUSALS } from '../src/net/a
 import { createWritBook, WRIT_KEPT_TEXT } from '../src/net/writBook.js';
 import { createMarketBook } from '../src/net/marketBook.js';
 import { saleTax, wearOf } from '../src/net/marketLaw.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { mintPiece, pieceOfRecipe } from '../src/systems/smithItems.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { commissionPieceText, writLeftText } from '../src/ui/workTab.js';

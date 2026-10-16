@@ -132,7 +132,7 @@ test('MWA4 (before the merge: "remove the on and off button (defunct) and only k
   // every consumer of the pack reads the files alone
   assert.doesNotMatch(read('src/combat/weaponRig.js'), /getPref\('mwArms'\)/, 'the boot build');
   assert.match(read('src/scenes/world.js'), /enabled: \(\) => enhanced && morrowindDataCount\(\) > 0,/, 'the peer bodies');
-  assert.doesNotMatch(read('src/systems/onlineLane.js'), /\bmwArms: true/, 'the lane forces no switch that is not there');
+  assert.doesNotMatch(read('src/systems/online/onlineLane.js'), /\bmwArms: true/, 'the lane forces no switch that is not there');
   assert.match(read('src/player/mwView.js'), /if \(fpArm\.canThirdPerson\(\)\) return false;/, 'and the view seam asks the arm, which unload() empties - so Remove data hands third person to the sprite');
 });
 

@@ -235,7 +235,7 @@ test('TV4 host wiring: the curtains built on the enhanced lane, drawn under the 
 
 test('AUDIT DEEP2 D1/D3/D5 curtains: the veil stands in its storm\'s own outline (the sky\'s polynomial), reaches in from where its shape does, carries its front\'s shaped clip to the shader; a veil that cannot be drawn takes no slot; the host hands the cells the sky draws', async () => {
   const { packShape } = await import('../src/render/rainCurtains.js');
-  const { shapeFactor, shapeBound } = await import('../src/systems/weatherMap.js');
+  const { shapeFactor, shapeBound } = await import('../src/systems/weather/weatherMap.js');
   const shape = [0.9, 0.3, 0.2, 0.1, -0.05, 0.08, 0.02];
   assert.deepEqual(packShape(shape), [...shape, 0]);
   assert.deepEqual(packShape(null), [1, 0, 0, 0, 0, 0, 0, 0], 'a circle for none');

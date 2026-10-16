@@ -5,10 +5,10 @@ import { equipItem, lowerCondition, equipTableOf } from '../src/systems/equip.js
 import { damageEquipment } from '../src/combat/formulas.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
 import { leaveForRepair, repairJobsAt, collectRepaired } from '../src/systems/repairService.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createTradePack } from '../src/systems/tradePack.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { magicPowersLines } from '../src/systems/itemPowers.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { magicPowersLines } from '../src/systems/item/itemPowers.js';
 import { powersRows } from '../src/ui/nativeInventory.js';
 import { itemInfoBoxes } from '../src/ui/enhancedInventory.js';
 import { SOUL_TRAP_TEMPLATE } from '../src/systems/mysticism.js';

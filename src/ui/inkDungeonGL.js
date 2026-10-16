@@ -25,9 +25,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { INK_RGB } from './inkMap.js';
-import { slicingPositionY, DEFAULT_SLICING_BIAS_Y } from '../systems/automap.js';
+import { slicingPositionY, DEFAULT_SLICING_BIAS_Y } from '../systems/automap/automap.js';
 import { EYE_HEIGHT } from '../player/motor.js';
-import { FLOOR_NY } from '../systems/automapFloors.js';   // FIELD BUGS 2026-10-05c (RAMP-INK): the plan's floor law
+import { FLOOR_NY } from '../systems/automap/automapFloors.js';   // FIELD BUGS 2026-10-05c (RAMP-INK): the plan's floor law
 import { loseGlContext, onPageGone } from '../render/glRelease.js';   // GL-LEAK: the context let go at once, and as the page goes
 
 /** How far over the player's feet the slice cuts (metres) - the classic window's own law (automap.js

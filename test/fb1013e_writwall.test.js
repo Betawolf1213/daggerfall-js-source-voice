@@ -16,7 +16,7 @@ import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import '../src/systems/profTemplates.js';
+import '../src/systems/professions/profTemplates.js';
 import { byClass } from './chargenDom.mjs';
 import { standService, T0, sessionStorageOf } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
@@ -26,12 +26,12 @@ import { createWritBook } from '../src/net/writBook.js';
 import { BAG_TEMPLATE } from '../src/net/bagLaw.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { writWalledText } from '../src/ui/workTab.js';
-import { materialCountLabel } from '../src/systems/profItems.js';
+import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { heldOf, roomFor, mintCarried, takeCarried, giveCarried, bagTakesOf, materialKeyOfItem } from '../src/systems/materialsBag.js';
-import { setItemFields } from '../src/systems/itemTemplates.js';
+import { setItemFields } from '../src/systems/item/itemTemplates.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { GUILD_FACTION_IDS } from '../src/systems/guildFactions.js';
+import { GUILD_FACTION_IDS } from '../src/systems/guild/guildFactions.js';
 
 let _now = T0;
 const realNow = Date.now;

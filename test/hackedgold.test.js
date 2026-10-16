@@ -6,7 +6,7 @@
 //     only from below (AUDIT WORLD6a B1's floor) - and a bank cashes a letter at its face, a counter pays a piece by its
 //     price. Reproduced on the real modules: one grant landed a 1,000,000,000,000-gold letter in an honest pack, and one
 //     word about a building's cupboard 9,000,000,000,000. A letter never rides a peer's word now (systems/peerWord.js), a
-//     peer's price is held under the law's ceiling (systems/loot.js lawPriced), and a worn offer lands what can be worn.
+//     peer's price is held under the law's ceiling (systems/loot/loot.js lawPriced), and a worn offer lands what can be worn.
 //   - THE LAW. A purse, a letter's worth and a coin pile's count are each one DFU `int` (GOLD-INT): past it is no honest
 //     count, a law finding, and the law holds the trade from day one - where the budget, still measuring, held nothing.
 //   - THE REVIEW. While the budget measures, nothing is held, so the developer's `holds` listed none of the characters that
@@ -20,8 +20,8 @@ import { standService } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
 import { seeded } from './honestItems.mjs';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { validLootItem, validLootList, LOOT_STACK_MAX } from '../src/systems/loot.js';
-import { itemFindings, worthCeiling, GOLD_INT_MAX, CLASSIC_VALUE_MAX } from '../src/systems/itemLaw.js';   // and the law registers itself, and its ceiling, with the wire
+import { validLootItem, validLootList, LOOT_STACK_MAX } from '../src/systems/loot/loot.js';
+import { itemFindings, worthCeiling, GOLD_INT_MAX, CLASSIC_VALUE_MAX } from '../src/systems/item/itemLaw.js';   // and the law registers itself, and its ceiling, with the wire
 import { characterFindings } from '../server-account/src/judge.js';
 import { isLetterOfCredit, neverPeerHanded, peerHanded, letterRefusesPut, letterPutText } from '../src/systems/peerWord.js';
 import { applyInteriorLoot, interiorLootRecords } from '../src/world/interiorShared.js';
@@ -29,9 +29,9 @@ import { letterOfCredit, goldStack } from '../src/systems/inventory.js';
 import { creditAmount } from '../src/systems/court.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { wearableItem } from '../src/systems/equip.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
-import { itemLongName } from '../src/systems/itemInfo.js';
+import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

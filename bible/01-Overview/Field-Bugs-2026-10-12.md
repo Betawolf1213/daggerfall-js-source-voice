@@ -33,7 +33,7 @@ earlier one's (separating axes). The fuzz: 20 towns to 0, berth count unchanged.
 
 ## VOID-ROOM: the void between storeys is no room (3)
 
-`src/systems/decorRooms.js` cast, sample.
+`src/systems/decor/decorRooms.js` cast, sample.
 
 FOUND. `sample()` took any surface with DECOR_ROOM_HEADROOM above it for a floor and never asked which side of a face
 its rays struck. The collider is two-sided: the ray down met the top of the lower room's ceiling, the ray up the
@@ -50,7 +50,7 @@ four tabs down to three.
 ## RING-HOLD: the hold that stays says whose it is, and a refusal names the piece (5)
 
 `server-account/src/verdict.js` verdictOn's `why`; `src/net/realmTradeLaw.js` TRADE_HELD_NOTICES.review,
-realmTradeRefusalText `said`; `src/systems/itemIds.js` tradeHeldNotice; `src/systems/realmSaves.js` heard,
+realmTradeRefusalText `said`; `src/systems/item/itemIds.js` tradeHeldNotice; `src/systems/realmSaves.js` heard,
 tradeHeldWhy, settleRealmTradeHalf `heldSaid`; `src/scenes/world.js` the escrow's `heldSaid`.
 
 FOUND. A strike counts each time a law hold rises, and dropping the ring lifts it - the ring's notice ("Trading is

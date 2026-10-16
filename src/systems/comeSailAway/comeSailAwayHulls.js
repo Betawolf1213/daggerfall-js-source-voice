@@ -1,5 +1,5 @@
 // COME SAIL AWAY's HULL TABLE - its names, prices, weights and variant names - a LEAF (INT1, 2026-10-09). The item law
-// (src/systems/itemLaw.js) reads the boats' items through comeSailAwayItems.js, and the account service runs the law: a
+// (src/systems/item/itemLaw.js) reads the boats' items through comeSailAwayItems.js, and the account service runs the law: a
 // table read through comeSailAwayBoat.js carried the boat's renderer into the Worker with it - comeSailAwayModels.js,
 // whose model URLs are made from `import.meta.url` as the module loads, which a Worker need not have. The boat module
 // imports these from here and re-exports them, so every reader keeps its import.

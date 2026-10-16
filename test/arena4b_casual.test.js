@@ -9,9 +9,9 @@ import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_TICK_MS, pairQueue, validArenaIn, validArenaOut } from '../src/net/arenaLaw.js';
 import { foldHall, HALL_EMPTY } from '../src/net/arenaLink.js';
-import { onlineCards } from '../src/systems/arenaBoard.js';
-import { ARENA_TEXT } from '../src/systems/arenaText.js';
-import { COUNT_MS, callMs } from '../src/systems/arenaBout.js';
+import { onlineCards } from '../src/systems/arena/arenaBoard.js';
+import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
+import { COUNT_MS, callMs } from '../src/systems/arena/arenaBout.js';
 
 const { subtle } = globalThis.crypto;
 const C = ARENA_FLOOR_CENTRE;

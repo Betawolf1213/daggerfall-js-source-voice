@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { saveSlot, loadSlot, saveInfoOf, screenshotOf, onSlotSaved } from '../src/systems/saveSlots.js';
+import { saveSlot, loadSlot, saveInfoOf, screenshotOf, onSlotSaved } from '../src/systems/save/saveSlots.js';
 
 test('failed overwrite restores the old checkpoint when a larger new thumbnail consumes rollback space', () => {
   const data = new Map();

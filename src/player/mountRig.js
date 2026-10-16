@@ -32,7 +32,7 @@
 
 import { TRANSPORT_MODES, isRiding, hasHorse, hasCart } from '../systems/transport.js';
 import { RidingAnimator, loadRidingArt, ridingRect, ridingLook, RIDING_VOLUME_SCALE } from '../systems/riding.js';
-import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the ridden horse's look, which the sprite wears
+import { riddenHorseLook } from '../systems/horse/horseCoats.js';   // COATS1: the ridden horse's look, which the sprite wears
 import { TransportWindow, transportArtLoaded } from '../ui/transportWindow.js';
 import { enhancedWindow } from '../ui/enhancedPorts.js';   // PORT4: the transport picker, in the enhanced skin
 import { ownsShip } from '../systems/banking.js';
@@ -41,7 +41,7 @@ import { mwViewHides, mwViewDrawSaddle } from './mwView.js';   // AUDIT-EOTB2: t
 import { SOUND } from '../systems/soundClips.js';
 import { isShipAvailable } from '../systems/ship.js';   // RR1: TransportManager.ShipAvailiable, the delegate
 import { NATIVE_SCREEN_HEIGHT } from '../systems/riding.js';   // RR2: the 200-line native screen the sprite scales by
-import { RR_RIDING, rrTerrainAngle, rrTerrainFollow, rrRidingYAdj, rrRidingNeckBand } from '../systems/rrRealism.js';   // RR2: EnhancedRiding's draw laws
+import { RR_RIDING, rrTerrainAngle, rrTerrainFollow, rrRidingYAdj, rrRidingNeckBand } from '../systems/roleplayRealism/rrRealism.js';   // RR2: EnhancedRiding's draw laws
 import { setPitchFloorProvider } from './lookFilter.js';   // RR2: PitchMaxLimit while riding
 import { uiCanvas, onUiScreen } from '../ui/uiScreen.js';   // RETRO-UI: the horse in the pillarbox (TransportManager's CustomScreenRect)
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page

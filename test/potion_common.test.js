@@ -14,7 +14,7 @@ import {
   HEALING_RECIPE_KEY, HEALING_ENEMY_CHANCE, HEALING_PILE_CHANCE, mintHealingPotion, healingShelfCount, installHealingSupply,
   MAGICKA_RECIPE_KEY, MAGICKA_ENEMY_CHANCE, MAGICKA_PILE_CHANCE, mintMagickaPotion,
 } from '../src/systems/healingSupply.js';
-import { CLASSIC_RECIPE_KEYS, POTION_TEMPLATE_INDEX, addEnemyLootExtras, addPileLootExtras } from '../src/systems/loot.js';
+import { CLASSIC_RECIPE_KEYS, POTION_TEMPLATE_INDEX, addEnemyLootExtras, addPileLootExtras } from '../src/systems/loot/loot.js';
 import { potionRecipeByKey } from '../src/systems/potions.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { installSmithing } from '../src/systems/smithItems.js';

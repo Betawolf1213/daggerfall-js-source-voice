@@ -172,7 +172,7 @@ test('AUDIT CC-A10: a pause holds the layer (no knock, no stand, no catch-up und
 
 import { EnemyAI, FOLLOW_LEASH, FOLLOW_SLACK } from '../src/characters/enemyMotor.js';
 import { runTargetMachine, getTargets } from '../src/characters/enemyTargets.js';
-import { isTownThreat } from '../src/systems/townWatch.js';
+import { isTownThreat } from '../src/systems/town/townWatch.js';
 
 const walkCollider = () => ({
   raycast: (o, d) => (d[1] < -0.5 ? Math.max(0, o[1]) + 0.5 : Infinity),

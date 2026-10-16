@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
 import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_SPELLS_IN, ARENA_SPELL_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { boutLive } from '../src/systems/arenaBout.js';
+import { boutLive } from '../src/systems/arena/arenaBout.js';
 
 const C = ARENA_FLOOR_CENTRE;
 /** A Grand Melee on the relay (tier 10's first bout: three of its fighters, every one for themselves), at its fight,

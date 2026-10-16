@@ -24,8 +24,8 @@ import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import {
   exteriorNpcFlags, staticNpcData, NPC_CONTEXT, ZERO_NPC_DATA,
 } from '../src/characters/staticNpc.js';
-import { staticNpcRoute } from '../src/systems/guildServiceFlow.js';
-import { npcServiceKind } from '../src/systems/guildServices.js';
+import { staticNpcRoute } from '../src/systems/guild/guildServiceFlow.js';
+import { npcServiceKind } from '../src/systems/guild/guildServices.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { RACES } from '../src/systems/races.js';

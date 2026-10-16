@@ -147,7 +147,7 @@ test('SPAWNED-DUNGEONS3: a spawn stands CENTRED in its pixel, so a walk-in is al
 });
 
 test('SPAWNED-DUNGEONS3: the line names the distance to the nearest ten metres and the compass word - talk.js\'s own eight bands, off the scene delta (east, north)', async () => {
-  const { directionHintString } = await import('../src/systems/talk.js');
+  const { directionHintString } = await import('../src/systems/talk/talk.js');
   assert.equal(dungeonSightLine(409.6, 'North'), 'You see a Dungeon 410 metres to the North!');
   assert.equal(dungeonSightLine(354.9, 'Southwest'), 'You see a Dungeon 350 metres to the Southwest!');
   assert.equal(dungeonSightLine(3, 'East'), 'You see a Dungeon 10 metres to the East!', 'never a zero');
@@ -354,7 +354,7 @@ test('TTL1 by source: the dungeon context tells the host, on a throttle, ahead o
 });
 
 test('TTL1: the ledger rides EVERY save - and the quickslots block it sat beside was being dropped', async () => {
-  const { snapshotPlayer, composeSessionState, restoreSessionState } = await import('../src/systems/save.js');
+  const { snapshotPlayer, composeSessionState, restoreSessionState } = await import('../src/systems/save/save.js');
   const { createSpawnLedger } = await import('../src/world/spawnedDungeons.js');
   const L = createSpawnLedger();
   L.note('9,9', 4000); L.clear('9,9', 5000);

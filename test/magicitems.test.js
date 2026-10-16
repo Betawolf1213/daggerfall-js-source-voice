@@ -6,7 +6,7 @@ import { readMagicDef, MAGIC_ITEM_RECORD_SIZE } from '../src/formats/magicDef.js
 import {
   createRegularMagicItem, setMagicItemTemplates, generateRandomLoot,
   LOOT_MATRICES, ITEM_GROUPS,
-} from '../src/systems/loot.js';
+} from '../src/systems/loot/loot.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
 

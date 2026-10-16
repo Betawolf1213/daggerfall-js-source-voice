@@ -15,7 +15,7 @@ import * as it from '../src/systems/immersiveTravel.js';
 import { IT_FACTIONS, installImmersiveTravel, _resetImmersiveTravel, IMMERSIVE_TRAVEL_VENDOR, CARRIAGE_DRIVERS_FACTION_ID } from '../src/systems/immersiveTravel.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { _resetCustomFactions } from '../src/formats/factionFile.js';
-import { _resetMerchantServices } from '../src/systems/guildServices.js';
+import { _resetMerchantServices } from '../src/systems/guild/guildServices.js';
 import { flatFaceOverride, _resetFlatFaceOverrides } from '../src/characters/staticNpc.js';
 import { portraitIndexFromStaticNPCBillboard, OOPS_PORTRAIT_RECORD } from '../src/systems/npcSession.js';
 

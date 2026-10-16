@@ -6,7 +6,7 @@
 // once it is shut, `dispose` to shut it, the keyboard and the pointer the window's own. It registers with the overlay
 // stack, so the QuickDial key puts it away as it puts away every enhanced window (PX28b).
 //
-// The Broker is online's, and online is the enhanced skin's (systems/onlineLane.js), so there is no classic window to
+// The Broker is online's, and online is the enhanced skin's (systems/online/onlineLane.js), so there is no classic window to
 // fork to: a page with no document answers null. One stands at a time - the host shuts it when the Broker goes (the
 // gate fell, the court was entered) through `closeBrokerDoor`.
 import { mountEnhancedChunk } from './enhancedChunk.js';

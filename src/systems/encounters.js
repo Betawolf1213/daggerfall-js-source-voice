@@ -355,7 +355,7 @@ export function areEnemiesNearby(foes, { resting = false, includingPacified = fa
   return false;
 }
 
-/** :709's hostility and team gate - one home, for the sweep above and OW6's slowing journey (systems/travelThreat.js):
+/** :709's hostility and team gate - one home, for the sweep above and OW6's slowing journey (systems/travel/travelThreat.js):
  *  a live foe, unpacified, not of the player's team. `isHostile ?? true`: EnemyMotor.IsHostile is initialised TRUE
  *  (:79) and only pacification clears it, so an ai without the field - a headless stub, a pool that predates the
  *  C-slice - reads hostile, which is the charter's "absent member idles the arm" for a flag whose absence means "no
@@ -368,7 +368,7 @@ export function foeHostile(f) {
  *  enemies do not slowdown or bother the player"): A FOE ALERTED TO ME - hostile (the gate above), its target me (the
  *  motor's own latch, `targetIsLocalPlayer`; a peer's puppet, its stream's), and seeing me or still hunting me blind
  *  (EnemyMotor.GiveUpTimer, the pursuit that outlives a lost sight). What holds a fast traveller's clock (OW6) and wears
- *  the "!" (systems/wildAlert.js); a foe that has not noticed me is neither. */
+ *  the "!" (systems/wild/wildAlert.js); a foe that has not noticed me is neither. */
 export function foeAlerted(f) {
   return foeHostile(f) && f.ai.targetIsLocalPlayer === true && (!!f.ai.detected || (f.ai.giveUpTimer ?? 0) > 0);
 }

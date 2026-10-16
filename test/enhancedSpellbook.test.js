@@ -77,7 +77,7 @@ test('PX23 book: it borrows every law and invents none', () => {
   assert.ok(rows[0].effects[0].group.length > 0);
   // ...and the source of the naming is the classic book's own module.
   const book = read('src/ui/enhancedSpellbook.js');
-  assert.match(book, /from '\.\.\/systems\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
+  assert.match(book, /from '\.\.\/systems\/spell\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
   assert.match(book, /spellEffects, spellPointCost, effectNotFoundText,/, 'the laws are imported, not rewritten');
   assert.doesNotMatch(book, /tag === 'lycanthrope'|tag === 'vampire'/, 'the tags are constants, never typed');
 });
@@ -249,9 +249,9 @@ test('PX23b: RENAME comes back, and the book says when you cannot afford a spell
 // Built from the PRODUCER, not a literal: the spell the real SpellMakerWindow inscribes, through its own clicks and
 // its own typed spinner field, then saved and restored the way a player's book is.
 import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spellMakerWindow.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
-import { spellMakerGroups, spellMakerSubgroups, SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
+import { spellMakerGroups, spellMakerSubgroups, SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { readSpellsStd } from '../src/formats/spellsStd.js';
 import { join } from 'node:path';
 
@@ -312,7 +312,7 @@ test('SB-FX: the book reads the spell the SPELL MAKER inscribed - its own settin
   const [row] = bookModel(entity.spells, () => 0);
   assert.deepEqual(row.effects.map((e) => [e.group, e.subgroup]), [['Damage', 'Health'], ['Paralyze', '']]);
   assert.deepEqual(row.effects.map((e) => e.parts), want);
-  // ...and the book a SAVE brings back says the same: a made spell travels whole (systems/save.js snapshotPlayer).
+  // ...and the book a SAVE brings back says the same: a made spell travels whole (systems/save/save.js snapshotPlayer).
   const back = { name: 'S' };
   restorePlayer(back, JSON.parse(JSON.stringify(snapshotPlayer(entity))), new Map());
   assert.deepEqual(back.spells[0].effects, spell.effects, 'the settings round-trip');

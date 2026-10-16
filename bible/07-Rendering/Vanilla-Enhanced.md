@@ -195,13 +195,13 @@ Game Artwork, after the loose folder, in the order their manifests'
 dependencies make. So they register IN the texture-mod door beside the
 attached mods, in one AutoSortMods order and one TryGetAsset walk. An add-on
 the player attaches that is built on the shipped Base loads after it.
-`systems/vanillaEnhancedPack.js` hands the door each mod's index and a client
+`systems/vanillaEnhanced/vanillaEnhancedPack.js` hands the door each mod's index and a client
 in unityBundleClient's shape:
 - `rgba` fetches the port's own file and decodes it at the texture detail as
   the mip a bundle would pick (`mipFitSize`, mipLevelFor's halving).
 - `layers` answers an array from its slices, `PRELOAD_CONCURRENCY` at once.
 - **The decode is a worker's** (AUDIT VE P1,
-  `systems/vanillaEnhancedDecodeWorker.js`): the fetch, the readback and the
+  `systems/vanillaEnhanced/vanillaEnhancedDecodeWorker.js`): the fetch, the readback and the
   detail's fit run off the main thread, as an attached bundle's decode does in
   its own worker, and the pixels come back moved, not copied. A browser with no
   OffscreenCanvas in a worker decodes on the page's thread instead - the same
@@ -233,7 +233,7 @@ ones, which carry no doll art.
 ## VE3/VE4 - the Texture Overhaul card
 
 OVH1b left the card standing empty "until the first texture pack". Vanilla
-Enhanced is that pack, beside **Classic** (`systems/vanillaEnhanced.js`,
+Enhanced is that pack, beside **Classic** (`systems/vanillaEnhanced/vanillaEnhanced.js`,
 `systems/overhauls.js`):
 
 - **Classic** is in use when Replace Game Artwork is off, or when no texture

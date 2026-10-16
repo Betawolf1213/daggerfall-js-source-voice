@@ -9,7 +9,7 @@ import {
   dailyStockRolls, stockDayIndex, SOUL_TRAP_BASE_VALUE,
 } from '../src/systems/shopStock.js';
 import { SOUL_TRAP_TEMPLATE, fillEmptyTrap } from '../src/systems/mysticism.js';
-import { serviceDestination } from '../src/systems/guildServiceFlow.js';
+import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 
 const soulPointsOf = (t) => ENEMY_BASICS[t]?.soulPts ?? 0;

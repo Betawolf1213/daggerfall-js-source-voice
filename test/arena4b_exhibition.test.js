@@ -15,7 +15,7 @@ import {
 import {
   exhibitionFor, exhibitionOpening, exhibitionAdmits, exhibitionBoutId, hourIndexOf, arenaHash, EXHIBITION_START_MINUTES, EXHIBITION_KEPT_HOURS,
 } from '../src/net/arenaExhibition.js';
-import * as LADDER from '../src/systems/arenaLadder.js';
+import * as LADDER from '../src/systems/arena/arenaLadder.js';
 import { arenaBoutSeed, openBout, stepBout, stateWord, liveEntry, boutFinished, arenaMarks } from '../src/net/arenaBrain.js';
 import { wallMsForClassicMinutes, sharedClassicMinutes } from '../src/net/wire.js';
 
@@ -41,7 +41,7 @@ async function stands(W, hour) {
 }
 
 test('ARENA4b the law moved, not copied: the game\'s exhibition IS the relay\'s (the same function, the same draw - the ladder hands it on), its room by its hour, its bout id carrying the hour\'s seed (mutants: the draw off another tier list; the bout id\'s seed not the hour\'s; the room key\'s hour misread)', () => {
-  assert.equal(LADDER.exhibitionFor, exhibitionFor, 'systems/arenaLadder.js hands on the one function');
+  assert.equal(LADDER.exhibitionFor, exhibitionFor, 'systems/arena/arenaLadder.js hands on the one function');
   assert.equal(LADDER.arenaHash, arenaHash);
   assert.equal(LADDER.hourIndexOf, hourIndexOf);
   for (let h = 0; h < 48; h++) {

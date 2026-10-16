@@ -1,7 +1,7 @@
 [
   {
     "name": "AD-A1-wire-name-not-checked",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };",
     "new": "  if (!data || typeof data !== 'object') return { ok: false, reason: 'mismatch' };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AD-A1-shape-not-checked",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  const why = shapeMismatch(local, data);\n  if (why) return { ok: false, reason: 'mismatch' };",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AD-A1-no-local-source-accepted",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (!local) return { ok: false, reason: 'unknown' };",
     "new": "  if (!local) return check.resync ? { ok: true, quest: machine.updateSharedQuest(questName, data), resync: true } : { ok: true, quest: machine.receiveSharedQuest(data) };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AD-A1-action-types-not-compared",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "    for (let j = 0; j < acts.length; j++) if (!sharedActionMatches(r.actions[j], acts[j])) return 'action';",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AD-A1-task-count-not-compared",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (!tasks || tasks.length !== ref.tasks.length) return 'tasks';",
     "new": "  if (!tasks) return 'tasks';",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AD-A1-resource-set-not-compared",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "    if (want.has(sym)) { if (want.get(sym) !== r.type) return 'resource'; continue; }",
     "new": "    continue;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AD-A1-senders-item-lands",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "      return { ...r, resourceSpecific: { ...(r.resourceSpecific ?? {}), artifact: !!own.artifact, item } };",
     "new": "      return r;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AD-A1-main-quest-received",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (isMainQuestName(questName)) return { ok: false, reason: 'mainQuest' };\n  // QUEST-SHELF",
     "new": "  // QUEST-SHELF",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AD-A2-finished-received-again",
-    "file": "src/systems/questShare.js",
+    "file": "src/systems/quest/questShare.js",
     "old": "  if (shareId !== undefined ? machine.hasFinishedSharedCopy?.(questName, shareId) : machine.hasFinishedSharedQuestNamed?.(questName)) return { ok: false, reason: 'done' };",
     "new": "",
     "tests": [

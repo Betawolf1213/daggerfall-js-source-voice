@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { restorePlayer, snapshotPlayer } from '../src/systems/save.js';
+import { restorePlayer, snapshotPlayer } from '../src/systems/save/save.js';
 import { respawnHealth } from '../src/systems/deathRespawn.js';
 
 // ONLINE-DEATH-FIX: (1) an online death always respawns - never the death video / title menu - and

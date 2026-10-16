@@ -1,7 +1,7 @@
 [
   {
     "name": "GILDED1-the-rung-under-the-artifact",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  gilded:    Object.freeze({ rank: 6, label: 'Gilded',",
     "new": "  gilded:    Object.freeze({ rank: 4, label: 'Gilded',",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "GILDED1-every-shot-tolls",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "const tollDue = (weapon, p) => !!weapon && (_tolls.get(weapon) ?? 0) === p.every - 1;",
     "new": "const tollDue = (weapon, p) => !!weapon && p.every > 0;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "GILDED1-a-miss-counted",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "      case 'toll': if (tollDue(weapon, p)) pct += p.pct; break;",
     "new": "      case 'toll': if (tollDue(weapon, p)) pct += p.pct; if (weapon) _tolls.set(weapon, ((_tolls.get(weapon) ?? 0) + 1) % p.every); break;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "GILDED1-the-count-never-turns",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "_tolls.set(weapon, ((_tolls.get(weapon) ?? 0) + 1) % p.every); _lastToll",
     "new": "_tolls.set(weapon, (_tolls.get(weapon) ?? 0) + 1); _lastToll",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "GILDED1-no-refund",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "{ addItem(me.items, createPellets(1)); _lastToll = null; }",
     "new": "{ _lastToll = null; }",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "GILDED1-any-kill-refunds",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "case 'toll': if (p.refund && _lastToll?.foe === foe && now",
     "new": "case 'toll': if (p.refund && now",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "GILDED1-the-metal-prefix",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "|| item?.legendary || item?.aetheric || item?.gilded) return { name: base, material: '' };",
     "new": "|| item?.legendary || item?.aetheric) return { name: base, material: '' };",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "GILDED1-the-codex-blind-to-it",
-    "file": "src/systems/lootCodex.js",
+    "file": "src/systems/loot/lootCodex.js",
     "old": "  if (item?.rarity === 'gilded' && typeof item.gilded === 'string' && gildedById(item.gilded)) return { kind: 'gilded', id: item.gilded };   // GILDED1\n",
     "new": "\n",
     "tests": [

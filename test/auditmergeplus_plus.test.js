@@ -33,7 +33,7 @@ import { plusPadLegend } from '../src/ui/plusPadBinds.js';
 import { setBindings } from '../src/ui/input.js';
 import { attachGamepad } from '../src/ui/gamepadInput.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

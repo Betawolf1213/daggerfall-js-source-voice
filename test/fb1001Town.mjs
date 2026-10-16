@@ -9,7 +9,7 @@ import { layoutLocation, RMB_SIDE } from '../src/world/locationLayout.js';
 import { setLocationTiles, getLocationTerrainTileOrigin } from '../src/world/terrainTiles.js';
 import { generatePixelTerrain } from '../src/world/terrainGen.js';
 import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { RMB_DIMENSION } from '../src/formats/blocksFile.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { MAP_W, MAP_H } from '../src/world/roadNetwork.js';

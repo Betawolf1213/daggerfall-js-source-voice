@@ -19,7 +19,7 @@
   },
   {
     "name": "ARMORMOUNT-armour-stands-as-a-billboard",
-    "file": "src/systems/decorItems.js",
+    "file": "src/systems/decor/decorItems.js",
     "old": "new Set(['Weapons', 'Armor', 'Transportation',",
     "new": "new Set(['Weapons', 'Transportation',",
     "tests": [

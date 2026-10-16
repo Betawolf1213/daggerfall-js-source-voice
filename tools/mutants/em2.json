@@ -1,7 +1,7 @@
 [
   {
     "name": "EM2-1-one-threshold-the-ramp-welds-two-storeys-into-one",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "export const LEVEL_NY = Math.cos((20 * Math.PI) / 180);",
     "new": "export const LEVEL_NY = FLOOR_NY;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "EM2-2-a-ramp-votes-for-a-storey-of-its-own",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const voters = tris.filter((t) => t.flat !== false);",
     "new": "  const voters = tris;",
     "tests": [
@@ -22,7 +22,7 @@
   },
   {
     "name": "EM2-3-a-ramp-is-walked-but-not-drawn",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (!(up >= FLOOR_NY)) continue;",
     "new": "    if (!(up >= LEVEL_NY)) continue;",
     "tests": [
@@ -32,7 +32,7 @@
   },
   {
     "name": "EM2-4-the-walk-limit-is-re-typed-rather-than-read",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "export const FLOOR_NY = Math.cos((SLOPE_LIMIT_DEG * Math.PI) / 180);",
     "new": "export const FLOOR_NY = Math.cos((45 * Math.PI) / 180);",
     "tests": [
@@ -42,7 +42,7 @@
   },
   {
     "name": "EM2-5-the-storey-gap-is-re-typed-rather-than-the-player-s-own-height",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "export const FLOOR_MIN_GAP = CAPSULE_HEIGHT + 1.2;",
     "new": "export const FLOOR_MIN_GAP = 3.0;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "EM2-6-a-step-is-a-storey",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (last && l.lo - last[last.length - 1].hi <= minGap) last.push(l); else runs.push([l]);",
     "new": "    if (last && l.lo - last[last.length - 1].hi <= 0.01) last.push(l); else runs.push([l]);",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "EM2-7-a-run-is-measured-from-its-floor-rather-than-its-ceiling",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (last && l.lo - last[last.length - 1].hi <= minGap) last.push(l); else runs.push([l]);",
     "new": "    if (last && l.lo - last[0].lo <= minGap) last.push(l); else runs.push([l]);",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "EM2-8-a-storey-s-height-is-the-plain-mean-not-the-area-weighted-one",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "      storeys.push({ y: area > 0 ? sum / area : a.y,",
     "new": "      storeys.push({ y: near.length ? near.reduce((n, l) => n + l.y, 0) / near.length : a.y,",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "EM2-9-the-triangles-are-not-sorted-before-the-runs-are-walked",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const sorted = [...(voters.length ? voters : tris)].sort((a, b) => a.y - b.y);",
     "new": "  const sorted = [...(voters.length ? voters : tris)];",
     "tests": [
@@ -90,7 +90,7 @@
   },
   {
     "name": "EM2-10-the-storeys-come-back-top-first",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  return storeys.map((st, index) => ({ index, y: st.y,",
     "new": "  return storeys.reverse().map((st, index) => ({ index, y: st.y,",
     "tests": [
@@ -99,7 +99,7 @@
   },
   {
     "name": "EM2-11-a-cave-of-nothing-but-slopes-answers-no-floors",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const sorted = [...(voters.length ? voters : tris)]",
     "new": "  const sorted = [...voters]",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "EM2-12-the-placement-matrix-is-ignored",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    tx(m, p[i0], p[i0 + 1], p[i0 + 2], A);",
     "new": "    tx(null, p[i0], p[i0 + 1], p[i0 + 2], A);",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "EM2-13-the-matrix-is-read-row-major",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  out[0] = m[0] * x + m[4] * y + m[8] * z + m[12];\n  out[1] = m[1] * x + m[5] * y + m[9] * z + m[13];\n  out[2] = m[2] * x + m[6] * y + m[10] * z + m[14];",
     "new": "  out[0] = m[0] * x + m[1] * y + m[2] * z + m[3];\n  out[1] = m[4] * x + m[5] * y + m[6] * z + m[7];\n  out[2] = m[8] * x + m[9] * y + m[10] * z + m[11];",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "EM2-14-a-floor-wound-the-other-way-is-dropped",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    const up = normals ? fileUp(m, normals, i0, i1, i2) : Math.abs(ny) / len;",
     "new": "    const up = normals ? fileUp(m, normals, i0, i1, i2) : ny / len;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "EM2-15-every-sliver-and-seam-votes-for-a-storey",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (area < MIN_TRI_AREA) continue;",
     "new": "    if (area < 0) continue;",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "EM2-16-a-degenerate-triangle-has-a-facing",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (!(len > 0)) continue;",
     "new": "    if (false) continue;",
     "tests": [
@@ -159,7 +159,7 @@
   },
   {
     "name": "EM2-17-a-triangle-sits-at-its-first-vertex-rather-than-its-centre",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "      y: (A[1] + B[1] + C[1]) / 3,",
     "new": "      y: A[1],",
     "tests": [
@@ -168,7 +168,7 @@
   },
   {
     "name": "EM2-18-a-triangle-lands-on-the-lowest-storey-rather-than-the-nearest",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    if (d < bestD) { bestD = d; best = i; }",
     "new": "    if (d <= bestD) { bestD = d; best = i; }",
     "tests": [
@@ -179,7 +179,7 @@
   },
   {
     "name": "EM2-19-the-plan-has-no-rim-to-close-against",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  return { x0: x0 - cell, z0: z0 - cell, x1: x1 + cell, z1: z1 + cell };",
     "new": "  return { x0, z0, x1, z1 };",
     "tests": [
@@ -189,7 +189,7 @@
   },
   {
     "name": "EM2-20-a-cell-is-covered-by-its-corner-rather-than-its-centre",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "      const px = b.x0 + (gx + 0.5) * cell;",
     "new": "      const px = b.x0 + gx * cell;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "EM2-21-the-cell-row-is-sampled-at-its-own-edge",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "    const pz = b.z0 + (gz + 0.5) * cell;",
     "new": "    const pz = b.z0 + gz * cell;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "EM2-22-a-triangle-s-cells-are-not-bounded-by-its-own-box",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const gx1 = Math.min(w - 1, Math.ceil((Math.max(t.ax, t.bx, t.cx) - b.x0) / cell));",
     "new": "  const gx1 = w - 1;",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "EM2-23-the-inside-test-takes-one-winding-only",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  return !(neg && pos);",
     "new": "  return !neg;",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "EM2-24-the-chains-come-back-in-CELLS-rather-than-world-units",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const toWorld = (chain) => chain.map((p) => ({ x: occ.x0 + p.x * cell, y: occ.z0 + p.y * cell }));",
     "new": "  const toWorld = (chain) => chain.map((p) => ({ x: p.x, y: p.y }));",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "EM2-25-the-plan-draws-every-storey-at-once",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  const mine = set.length ? trianglesFor(tris, floors, set) : [];\n  const bounds = box ?? planBounds(mine, cell);\n  const occ = floorOccupancy(mine, { cell, bounds, keep: (y) => want.has(floorAt(floors, y)) });",
     "new": "  const mine = tris;\n  const bounds = box ?? planBounds(mine, cell);\n  const occ = floorOccupancy(mine, { cell, bounds });",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "EM2-26-the-asked-for-storey-is-not-clamped-into-range",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  return [Math.max(0, Math.min(floors.length - 1, wanted ?? 0))];",
     "new": "  return [wanted ?? 0];",
     "tests": [
@@ -258,7 +258,7 @@
   },
   {
     "name": "EM2-27-an-empty-level-throws-rather-than-answering",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  if (!floors.length) return { floors, index: -1, chains: [], openChains: [], occupancy: null, bounds: box };",
     "new": "",
     "tests": [
@@ -267,7 +267,7 @@
   },
   {
     "name": "EM2-28-a-row-with-no-geometry-is-read-anyway",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "  if (!p || !idx) return out;",
     "new": "  if (false) return out;",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "EM2-29-the-storeys-are-labelled-from-zero",
-    "file": "src/systems/automapFloors.js",
+    "file": "src/systems/automap/automapFloors.js",
     "old": "label: `Floor ${index + 1}` }));",
     "new": "label: `Floor ${index}` }));",
     "tests": [

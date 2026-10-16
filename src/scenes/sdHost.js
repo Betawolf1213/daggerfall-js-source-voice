@@ -3,7 +3,7 @@
 // Only one can be active at a time. On discovery, Super dungeons have a a beginning and an end."; bible/11-Multiplayer/
 // Super-Dungeons.md sections 2-4): THE HOLLOW IN THE WORLD - the world host's half of the Super dungeon. The hub's record
 // (net/sdLaw.js, said by net/online.js onSd) comes in; the Hollow it names is found over this client's own map files
-// (systems/sdSite.js - the city, the site by the gate's own scan, the template, the clone), the same on every client;
+// (systems/superDungeon/sdSite.js - the city, the site by the gate's own scan, the template, the clone), the same on every client;
 // it stands in the location index at its pixel while the record's phase says it stands, and the host builds it there as
 // it builds any spawned dungeon; the first player at its door says so (`found`, to the cell its pixel is in, again every
 // SD_FOUND_RESEND_MS while the record still says risen); and the chat says the moves everyone online should hear - the
@@ -17,9 +17,9 @@
 // Pure but for its seams, which the world host hands in (scenes/world.js). Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { sdPhase, sdStands, sdFoundLine, sdFellLine, sdFadeLine, SD_FOUND_NEAR_M, SD_FOUND_RESEND_MS, SD_COLLAPSE_MS } from '../net/sdLaw.js';
 import { countdownText } from '../net/gateLaw.js';   // SD10: the collapse's countdown, the gate's own words
-import { findSdSite, pickSdTemplate, sdHollowLocation } from '../systems/sdSite.js';
+import { findSdSite, pickSdTemplate, sdHollowLocation } from '../systems/superDungeon/sdSite.js';
 import { worldRoom } from '../net/wire.js';
-import { sdMapMark, sdOmenLight, sdRumor, sdMarksLine, sdHourLine, SD_HOUR_LEFT_MS } from '../systems/sdOmen.js';   // SD2c: the Hollow seen and heard of; SD19: its marks and its last hour said
+import { sdMapMark, sdOmenLight, sdRumor, sdMarksLine, sdHourLine, SD_HOUR_LEFT_MS } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of; SD19: its marks and its last hour said
 
 /** A line the scan has not been able to place yet is said with the region's name after this long, never lost. */
 export const SD_LINE_WAIT_MS = 30_000;
@@ -221,7 +221,7 @@ export function createSdHost({ now, scan, warmScan = () => {}, cities, templates
     isHollow: (loc) => !!loc?.superTier && Number.isSafeInteger(loc?.sdSlot),
     /** The phase of the record now (relay clock). */
     phase: () => sdPhase(rec, now()),
-    /** SD2c: the held map's ring while the Hollow is news - found, or collapsing after the kill (systems/sdOmen.js
+    /** SD2c: the held map's ring while the Hollow is news - found, or collapsing after the kill (systems/superDungeon/sdOmen.js
      *  sdMapMark) - or null: a Hollow that has only risen is a find. */
     mapMark: () => sdMapMark(rec, stood && memo && memo.s === stood.s ? memo : null, now()),
     /** SD2c: the omen's column over the Hollow standing now - `{ hollow, light }`, its light 0..1 (sdOmenLight) - or null. */

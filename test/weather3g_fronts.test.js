@@ -17,12 +17,12 @@ import { readFileSync } from 'node:fs';
 import {
   birthsIn, cellsOf, systemAt, wornAmong, insideClip, birthLaw, coreVolume, exposure, weatherAt, resetWeatherMap,
   radialOf, shapeBound, shapeMax, shapeFactor, SYSTEM_TYPES, CELL_OF,
-} from '../src/systems/weatherMap.js';
+} from '../src/systems/weather/weatherMap.js';
 import { cellOfField, cellOf, packCells, FIELD_UNIFORMS, VC_PROFILE } from '../src/render/volumetricClouds.js';
 import { fieldFns, ZONE } from './cloudSky.mjs';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASONS, seasonValue, dateFromClassicMinutes } from '../src/systems/gameDate.js';
-import { seededRng } from '../src/systems/wind.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const YEAR = 405 * 360 * 1440;

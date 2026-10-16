@@ -45,7 +45,7 @@ blow can kill the man who strikes it:
   which is damageGuard for a watchman).
 - **The player's damage door.** The pool's `onPlayerHurt` is the hosts' `hurtPlayer` (world.js, exterior.js), and the
   damage door's hurt listeners answer a landed blow. Spite of the Spurned and the loot's thorns strike the foe that
-  struck (systems/sigilSetPowers.js `spite`, systems/lootPowers.js `lootLanded`), and the Warden's Nova strikes every
+  struck (systems/sigil/sigilSetPowers.js `spite`, systems/loot/lootPowers.js `lootLanded`), and the Warden's Nova strikes every
   foe around the player (`nova`). Each goes through the scene's published door (systems/playerDoor.js,
   scenes/hostMagic.js) to the host's sink and `cityGuards.hurtGuard`, which is damageGuard again.
 

@@ -38,9 +38,9 @@ import {
   socketPass,   // LOOT20
   weaponSocketPass,   // GEM1
   techniquePass,   // TECH1
-} from './lootRarity.js';
+} from './loot/lootRarity.js';
 import { isGoldPieces, ARROW_TEMPLATE } from './inventory.js';   // STUCK-ARROWS: the quiver rides past the cap
-import { wildFoeLoot } from './wildZone.js';   // WILD1: a foe of the open zone carries twice as much past its cap
+import { wildFoeLoot } from './wild/wildZone.js';   // WILD1: a foe of the open zone carries twice as much past its cap
 import { isPotion } from './useItem.js';   // CAP-SUPPLIES: a potion IS the glass bottle - DFU's IsPotion, its one export (AUDIT 625 L7)
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // KIT-ROLL: the row every host hands its spawn
 import { renownLootQuarters, lootEased } from './renownLoot.js';

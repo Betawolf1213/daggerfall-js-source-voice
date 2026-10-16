@@ -15,10 +15,10 @@ import assert from 'node:assert/strict';
 import {
   planStore, planTake, applyTransfer, REFUSAL,
   WAGON_KG_LIMIT, CANNOT_HOLD_TEXT, CANNOT_CARRY_TEXT,
-} from '../src/systems/itemTransfer.js';
+} from '../src/systems/item/itemTransfer.js';
 import { CANNOT_REMOVE_ITEM_TEXT } from '../src/systems/createItem.js';
 import { totalWeight, goldStack } from '../src/systems/inventory.js';
-import { createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot.js';   // BOOK-SPLIT: the producer's own potion
+import { createPotion, CLASSIC_RECIPE_KEYS } from '../src/systems/loot/loot.js';   // BOOK-SPLIT: the producer's own potion
 
 const book = (n = 1) => ({ group: 'Books', templateIndex: 277, name: 'Book', stackCount: n });
 const cart = () => ({ group: 'Transportation', templateIndex: 93, name: 'Small Cart' });

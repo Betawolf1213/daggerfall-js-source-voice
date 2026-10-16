@@ -136,7 +136,7 @@ level: the colosseum, its tiers and its crowd, built on its own (`world/arenaFlo
 left to the gate - so two bouts never share a floor, the city cell never fills with fights, and an online bout is
 its own relay room (`arena:<id>` - built as `arena:b<id>`, and the hour's exhibition `arena:x<hour>`, ARENA4/ARENA4b).
 
-**The bout.** Every bout runs one law (`systems/arenaBout.js`, pure, clock injected - on this screen the world's, held
+**The bout.** Every bout runs one law (`systems/arena/arenaBout.js`, pure, clock injected - on this screen the world's, held
 while a window pauses the game and a frame clamped as the foes' own, AUDIT PRE-MERGE 1003 B1): the Herald's call and the
 fighters' walk to their marks; **3 - 2 - 1 - Fight!**; the fight (no doors, no rest, no travel - the duel's law); the
 end - a **yield** (at 15% health a fighter may yield; an AI does by its temper), a **fall** (the 1 HP floor - nobody
@@ -318,7 +318,7 @@ city's people do. Placeholders for ARENA2/3.
 (`arenaRecordDisplaced`), so: a rented room is honoured at any inn of the city (`findRentedRoom`), a ticket at any smith
 (`isBeingRepairedAt`), a quest site is chosen again (`Place.reseatMovedSite`, run in `applyLayoutPins`), an inside save
 or a Recall anchor stands outside (`restoreInterior`'s new guard - the old block index alone could have matched another
-town's GEMSAL03). A house deed is moved once (`systems/arenaMove.js`): to a free house of its type in the city (any
+town's GEMSAL03). A house deed is moved once (`systems/arena/arenaMove.js`): to a free house of its type in the city (any
 house when none is free), never one another record holds or an active quest's, by the market's xorshift seeded by the
 map id and old key; its scene renamed with it (`sceneCache.renameScene` - the entry, its other layouts' visits, their
 permanence; SUPERSEDED at ARENA2: the old scene is emptied into the new house by what it held, `emptyArenaScene`, and
@@ -348,7 +348,7 @@ into the new house rather than renamed onto it - see the ARENA2 record.]
 
 ## ARENA2 record (2026-10-02) - SHIPPED
 
-**The bout law** (`src/systems/arenaBout.js`, pure - the clock and the dice handed in, so ARENA4's relay runs the same
+**The bout law** (`src/systems/arena/arenaBout.js`, pure - the clock and the dice handed in, so ARENA4's relay runs the same
 law): call (a beat for the bout's line and one per fighter, each cried) - walk (every fighter on their mark, or
 WALK_MAX_MS) - count (the duel's three seconds, said 3, 2, 1) - fight - end (END_HOLD_MS) - verdict (VERDICT_MS) - heal
 (the duel's DUEL_HEAL_HOLD_MS) - done. A side is out when all of it is; the bout ends when one side (or none) stands, so
@@ -361,7 +361,7 @@ health in one blow, or driven under the line), comeback (once low at 35%, drawn 
 stall), flee (outside the line inside the slack 1.5 s), yield, fall, ringout, timeout, end, verdict, heal, done. The purse:
 favour -1..1 raises it by up to half or cuts it by up to a quarter.
 
-**The fighters** (`src/scenes/arenaBouts.js` the driver, `src/systems/arenaFighters.js` who they are). Daggerfall's
+**The fighters** (`src/scenes/arenaBouts.js` the driver, `src/systems/arena/arenaFighters.js` who they are). Daggerfall's
 own class enemies and monsters, a name drawn by DFU's NameHelper over the bank of their home (High Rock's Bretons,
 Hammerfell's Redguards, Skyrim's Nords, ... Orsinium's orcs on the monster bank) on DFRandom seeded by the bout and put
 back as it stood, an epithet and the town, all from the seed. THE BOUT TEAM is a seam beside `campId` in
@@ -402,14 +402,14 @@ bout on every screen, so ARENA4's relay runs the schedule on the shared clock [B
 player stands within 150 m (dismissed past 260 m, unsaid, and restarted from its call on return inside the window); and
 in the instance when Watch is chosen.
 
-**The ladder** (`src/systems/arenaLadder.js`) is the design table row for row; Tier 9's third bout is Knight + Mage (the
+**The ladder** (`src/systems/arena/arenaLadder.js`) is the design table row for row; Tier 9's third bout is Knight + Mage (the
 table names two pairs for three bouts); Tier 10's three Grand Melees are Knight/Warrior/Healer at 20, Assassin/Battlemage/
 Monk at 21, and the champions' survivors (Vampire, Daedra Seducer, Orc Warlord), then the Iron Atronach. Purses: bouts
 50-1,800, champions 200-5,400, the Grand Champion 10,000. The save's `arena` (versioned `v: 1`; any older or broken shape
 reads back whole; a pre-ARENA2 save climbs from the Pit). Titles (Pit Fighter ... Paragon, Grand Champion) offline: in
 the Herald's lines and the character sheet's Arena section (`ui/enhancedCharSheet.js arenaSheetLine`).
 
-**The crowd** (`systems/arenaCrowd.js`, `systems/arenaSound.js`). Mood -1..1 (boo, jeer, murmur, cheer, roar), each event's
+**The crowd** (`systems/arena/arenaCrowd.js`, `systems/arena/arenaSound.js`). Mood -1..1 (boo, jeer, murmur, cheer, roar), each event's
 push, settling over 7 s; favour per fighter (Daggerfall's own start loved; the beast tier starts sour and pities the
 player); a fighter at -0.3 or worse is booed at every blow. Sight: billboards of 182:0, 182:47-53, 180:1-3, 183 and the
 High Rock commoners (182, 184) on seats sought by a down-ray over the tiers (5 to 14.5 m above the sand, never a roof),
@@ -421,7 +421,7 @@ applause synthesised at runtime from DAGGER.SND 441-450 (`audio.samplesOf`, a ne
 registered (`audio.registerSamples`); gasps 386/387, groan 458, drums 28/374, bell 107, fanfares 32/33 as they are; the
 bed's gain by mood and distance. Words: barks gapped 2.6 s, never repeated twice running, a town's chant.
 
-**Music** (`systems/arenaScore.js`): ARENAMAR (B-flat march, 116 BPM, 16 bars) through the call and the fight, ARENAWIN
+**Music** (`systems/arena/arenaScore.js`): ARENAMAR (B-flat march, 116 BPM, 16 bars) through the call and the fight, ARENAWIN
 for 9 s from the verdict, then quiet; held by world.js beside the court's score.
 
 **The HUD** (`ui/arenaHud.js`, a readout like the gate bar): the versus bar (names, banner marks for ARENA3, health, the
@@ -430,11 +430,11 @@ the yield hint; the Herald's calls and 3 - 2 - 1 - Fight! mid-screen (`setMidScr
 (both skins), dressed on Plus by the kit's roles (`.arena-plate` a panel, `.arena-timer`/`.arena-tag` chips) and
 `ONLINE_DRESS_CSS`'s fills; textContent only, widths alone inline, reduced motion, touch sizes.
 
-**The Herald** (`systems/arenaHerald.js`): a ChoiceWindow (the enhanced dialog on Plus, the panel on classic) - Watch,
+**The Herald** (`systems/arena/arenaHerald.js`): a ChoiceWindow (the enhanced dialog on Plus, the panel on classic) - Watch,
 Fight, the fighters' hall, Leave; a choice that cannot be taken is not offered and his lines say why (no bout until the
 hour, not fit to fight under half health, the ladder done).
 
-**The fix from ARENA1** (`systems/arenaMove.js emptyArenaScene`): the old house's scene is emptied into the new one by
+**The fix from ARENA1** (`systems/arena/arenaMove.js emptyArenaScene`): the old house's scene is emptied into the new one by
 what it held - the owner's own things back to the furnishings or the pack, the catalogue's placed pieces paid back whole
 into Daggerfall's bank account, the furniture marks dropped, every chest's, storage piece's and floor pile's item into the
 new house's `container:0` (a crate set down where the owner first walks in when the house has none) [FIELD BUGS 2026-10-07: never
@@ -548,7 +548,7 @@ headless suite (real motors on a flat floor) and only its first metre in the bro
 
 ## ARENA3 record (2026-10-02) - SHIPPED
 
-**The banners** (`src/systems/arenaLeague.js`, pure - the game minute handed in). The season offline is the game's year
+**The banners** (`src/systems/arena/arenaLeague.js`, pure - the game minute handed in). The season offline is the game's year
 (3E 405 at a new game; its day the day of the year). Joining is at the recruiters, free; quitting is at once and asked
 twice; the OTHER banner is refused until the next season ("you quit the Red Banner this season"), the banner quit takes
 you back at once. Team points: a ladder bout won 1, a tier champion 3, the Grand Champion 10, to the banner worn (none
@@ -568,7 +568,7 @@ season's day and standing, join / quit / the Arena window / leave, every refusal
 Team page), and the bookmaker. The Herald's choice carries "A - The Arena window" (the ARENA2 pin moved, its reason in
 the test) and names the banner you fight under, or the laurel.
 
-**The bookmaker** (`src/systems/arenaBook.js`). An exhibition fighter's record (6 to 35 bouts) and form come from the
+**The bookmaker** (`src/systems/arena/arenaBook.js`). An exhibition fighter's record (6 to 35 bouts) and form come from the
 bout's own seed; its strength is its level (the tier's, or Daggerfall's own for a beast) and its form; the chances are
 the two strengths apart. The price is the fair price less the house's tenth, rounded DOWN the bookmaker's ladder of 40
 prices ("5 to 6" on an even bout, 1 to 5 the shortest, 10 to 1 the longest - a favourite shorter than 1 to 5 is laid no
@@ -581,7 +581,7 @@ the house's - the stake lost whichever fighter led (a fall already standing is i
 here, to its verdict or left, takes no wager after, and the Herald's Watch does not fight it again (AUDIT PRE-MERGE 1003
 B3). Winnings wait at the stall ("C - Collect your 175 gold"): he pays in person.
 
-**The Arena window** (`src/ui/arenaWindow.js` over `src/systems/arenaBoard.js`; `src/ui/arenaDoor.js`, the Reforge's
+**The Arena window** (`src/ui/arenaWindow.js` over `src/systems/arena/arenaBoard.js`; `src/ui/arenaDoor.js`, the Reforge's
 door's shape). Bouts (the hour's exhibition or the next - the Red's fighter against the Blue's, each with pennant, home,
 epithet, class and level, record, price and the favourite; Watch and Wager - whom, how much, placed; the players' bouts
 said online; the ladder's next - Fight; every press refused at the press with its reason under it: at the gate only
@@ -662,7 +662,7 @@ world142 on its branch, renumbered past main's world154 at the merge, `ARENA_REL
 registered account's queue word with its season rating (the token's `ar`; a guest is refused), paired inside a band of
 100 that widens by 100 every 10 s, offered a bout both must accept within 20 s, a pair that declined not offered again for
 60 s; a bout's room is `arena:b<16 hex>` (the page's `arena:<id>`). PVP-REF: the relay runs the bout law
-(`systems/arenaBout.js`, pure, the clock and the dice handed in) and holds both fighters' health (300 + 2 a level); a blow
+(`systems/arena/arenaBout.js`, pure, the clock and the dice handed in) and holds both fighters' health (300 + 2 a level); a blow
 claim is held to reach (2.5 m and 3 m of slack, a bow 60 m), the poses' speed, four blows a second, a damage cap off DFU's
 own weapon and material tables and a bucket of 40 a second 120 deep; spells three casts in five seconds; the verdict a
 signed receipt. A fighter gone from a live fight past 15 s forfeits; a matched bout nobody comes to is void at 45 s. THE
@@ -677,7 +677,7 @@ fighters alone, and every watcher stood in an empty arena).
 `src/net/arenaClaims.js` the receipts carried - kept a week, offered for the signed-in account alone, retried every five
 minutes; `src/scenes/arenaOnline.js` the host's glue; `src/scenes/arenaBouts.js startRelay`/`relayWord` - the relay's
 bout stood on the floor's instance as puppets, the Herald and the HUD driven from its events, my health the relay's, my
-yield and misses told; `src/systems/arenaBoard.js` the window online - the Bouts page's live bouts with Watch, Find a
+yield and misses told; `src/systems/arena/arenaBoard.js` the window online - the Bouts page's live bouts with Watch, Find a
 match, Leave the queue, Accept/Decline on a 20 s clock, the rating and rank chips, the Rules page's "The realm").
 
 **Verified.** `test/arena4_client.test.js` (8), `test/arena4_relay.test.js` (7) and `test/arena4_service.test.js` (7):
@@ -691,7 +691,7 @@ the merge of the streams turned up (the blows' sequence, the banners billed); th
 merged onto the arena branch (the relay, the client, the account service) and the casual bout after them.
 
 **1. The hour's exhibition is the relay's** (section 2: "the relay runs it, every client sees one bout"). The schedule's
-law moved out of `systems/arenaLadder.js` into `src/net/arenaExhibition.js` (`exhibitionFor`, `exhibitionOpening`,
+law moved out of `systems/arena/arenaLadder.js` into `src/net/arenaExhibition.js` (`exhibitionFor`, `exhibitionOpening`,
 `exhibitionAdmits`, `arenaHash`, `hourIndexOf` - re-exported where it stood), so the relay draws the same pair from the
 same hour. Its room is `arena:x<hour>` (the game hours since the epoch, `floor(sharedClassicMinutes / 60)`); the Worker
 admits an hour from 25 back to one ahead. The first watcher inside its window (08:00-21:00, the first 20 game minutes)
@@ -803,7 +803,7 @@ What the audit found it closed - ARENA4's online gaps in ARENA4b (the record abo
 - **The banners' colours on the sand** (section 3; the ARENA3 record's "Recorded, not built"). The crowd's half in your
   colour: a per-batch wash the billboard pass now takes (`uBatchTint`, multiplied in after both maps are sampled - the
   classic lane's BB_FS and Enhanced Lighting's EL_BB_FS; white for every other batch, so nothing else changes), the west
-  half of the tiers side 0's and the east side 1's (`systems/arenaCrowd.js crowdHalfOf`/`crowdHalves`, `CROWD_WASH` - red
+  half of the tiers side 0's and the east side 1's (`systems/arena/arenaCrowd.js crowdHalfOf`/`crowdHalves`, `CROWD_WASH` - red
   [1, 0.8, 0.74], blue [0.78, 0.86, 1]), split only when a half has a banner (the save's offline, the realm's online; an
   exhibition red against blue). The hangings: on a bannered side, Kamer's ring banners at least 6 m from the middle line
   take the banner's cloth at his own hang points (`world/arenaFloor.js hangingModel`, `ARENA_BANNER_MODEL` red 42557,
@@ -817,7 +817,7 @@ What the audit found it closed - ARENA4's online gaps in ARENA4b (the record abo
   here yet" (`worldModes.js standArenaWall`/`readPlaque`); the save's names offline, the realm's online
   (`arenaBoard.js hallPlaques`, `arenaGate.plaques` - nothing online before the board, never the save's).
 - **Your ladder replay** (section 2's table: Spectate offline, "your ladder replay"). The last three ladder bouts kept in
-  the save (`systems/arenaReplay.js`, `snap.arena.replays`, versioned; an older save reads back none): 10 Hz, 0.1 m and
+  the save (`systems/arena/arenaReplay.js`, `snap.arena.replays`, versioned; an older save reads back none): 10 Hz, 0.1 m and
   1/256-turn steps as one signed byte a change, health, strikes and the law's events when they happen; at most four
   minutes, four fighters, 64 KB (measured: a 200 s duel moving every tick 20,190 bytes, a capped Grand Melee 47,964).
   Played back through the relay mirror's own door (`askReplay`/`replayFrame` feeding `relayWord`) - the fighters as
@@ -952,7 +952,7 @@ keeps the seat or the place on the sand it held (1003b R5).
   alarm). Every member's screen leaves the floor's instance on the word.
 
 **The client** (`scenes/arenaOnline.js` `enterSession` / `sessionTick` / `sessionState` / `sessionAct`;
-`systems/arenaBoard.js sessionCard`; `ui/arenaWindow.js`; `scenes/arenaGate.js` routes the `priv*` presses). The Arena
+`systems/arena/arenaBoard.js sessionCard`; `ui/arenaWindow.js`; `scenes/arenaGate.js` routes the `priv*` presses). The Arena
 window's Bouts tab carries a **Private session** card - first on the page while in one (1003b U6), spanning it (U1):
 out of one, *Host a session* (a registered account's) and a labelled code box with *Join* (and *Rejoin session <code>*
 for a session this screen stepped out of - C8 - with the last word the session said, a wrong code's included - U3/U8);
@@ -1007,7 +1007,7 @@ two (ONE-SEAT keeps two tabs online apart). Tab still closes the window (PX28b's
 The owner: "Do a comprehensive pass on any overexplained text and button text. Ensure simplicity and easy
 understanding. Don't let it seem like AI." Words only - no key, signature, template parameter or behaviour changed.
 
-**What was said again.** `src/systems/arenaText.js` (ARENA_TEXT: the Herald's, recruiters' and bookmaker's choices and
+**What was said again.** `src/systems/arena/arenaText.js` (ARENA_TEXT: the Herald's, recruiters' and bookmaker's choices and
 lines, the refusals, the notices, the window's pages and presses, the online cards and the private session's lines, the
 Rules). The house
 rules for them: a press is one to three words, a verb first where it acts ("Host", "Join", "Leave", "Find match",
@@ -1015,7 +1015,7 @@ rules for them: a press is one to three words, a verb first where it acts ("Host
 hedge and no word about the machinery ("relay", "socket", "the realm keeps..."); a refusal still says what is wrong.
 The crowd's barks, the Herald's calls on the sand, the verdicts, the tiers, titles and epithets kept their voice. The
 bookmaker's "wager" is a "bet" on every press and line. `ui/arenaWindow.js`, `ui/arenaHud.js`,
-`ui/arenaSessionButton.js` and `systems/arenaBoard.js` draw these words and needed none of their own changed.
+`ui/arenaSessionButton.js` and `systems/arena/arenaBoard.js` draw these words and needed none of their own changed.
 
 **Tests.** The suites that pinned a line by its words now pin the new words (`arena2_hud`, `arena3_book`,
 `arena3_window`, `arena5_plaques`, `arena_fix`, `audit1003b_client`); no test added or removed. Mutant records whose
@@ -1025,10 +1025,10 @@ AUDIT1003b-U9-DRAW-NO-RESULT; both dead).
 ## FIELD BUGS 2026-10-04e - the first tournament's report
 
 Draugr, after the first tournament: arrows spent on the sand were never handed back (ARENA-ARROWS - the quiver is counted
-as a bout begins and what the bout loosed is handed back with the healers, `systems/arenaQuiver.js`, `systems/
+as a bout begins and what the bout loosed is handed back with the healers, `systems/arena/arenaQuiver.js`, `systems/
 shotTally.js` - never an arrow dropped there); the Curse of Daggerfall's ghosts came for fighters at the gate
 (CURSE-OFF-SAND - its waves are kept off the grounds and the arena's two levels at CreateFoe's spawn event, so a rest
-there is never broken, `systems/arenaGround.js`); a two-against-one's pair seemed to fight each other (ARENA-TEAMS - an area spell's blast passes
+there is never broken, `systems/arena/arenaGround.js`); a two-against-one's pair seemed to fight each other (ARENA-TEAMS - an area spell's blast passes
 a bout teammate by, and a Grand Melee's HUD says "each alone"); the undercroft held no enemies (UNDERCROFT-DEEP, above).
 The record: `01-Overview/Field-Bugs-2026-10-04e.md`.
 
@@ -1044,8 +1044,8 @@ correctness, the online trust), every finding reproduced and fixed here:
   hit paths asking `blowConnects`/`blowScaled`; drawn for the stands to 100 m. A dodged telegraph is a miss for the
   judges (`registerBlowDodgedListener`). The relay's ladder fighters throw the same shapes (`net/arenaBrain.js`, the
   families moved to the leaf `ai/blowShapes.js`), the `atk` word carrying the shape, its facing and its origin.
-- **The climb.** A loss breaks the tier's run (`systems/arenaLadder.js` `ladderAfter`, said); every tier's champion an
-  elite (offline and on the relay); the sand's kit law (`systems/arenaKit.js`: no potion, no Invisibility, Levitate,
+- **The climb.** A loss breaks the tier's run (`systems/arena/arenaLadder.js` `ladderAfter`, said); every tier's champion an
+  elite (offline and on the relay); the sand's kit law (`systems/arena/arenaKit.js`: no potion, no Invisibility, Levitate,
   Chameleon, Shadow, Charm or Teleport, those already on the fighter stripped, a ceiling 4 m over the sand); on the
   relay the fighters run (5.0 / 6.0 m/s), a time-out is the fighter's card unless the player took half its whole
   health (`LADDER_JUDGES_SHARE`), and a ladder bout opens only for the account service's attempt ticket - an attempt

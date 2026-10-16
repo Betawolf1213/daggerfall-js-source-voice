@@ -136,7 +136,7 @@ rotation-sign inversion and the injected-vs-default water tint).
   the outline law, Enabled=false not drawn, the one-row wheel) and the
   pause window's save/load as a PUSH on B1's stack.
 - **C2 the automap pair**, ten judged stages in two flights. Flight 1
-  cut the shared halves (`systems/automapModel.js` + the AABB-shape
+  cut the shared halves (`systems/automap/automapModel.js` + the AABB-shape
   fix that had left the dungeon reveal probe dead, the renderer's
   panel bracket, `ui/automapCamera.js` pure, `ui/automapChrome.js`).
   Flight 2 built the windows: S5 the native dungeon window (UNLIT
@@ -224,7 +224,7 @@ blind to the others until the squash: E6 took the spell hands' release
 frame (`combat/fpsSpellCasting.js:"animation - and its"`) and the clear-path term
 (`characters/enemyCasting.js:"BEFORE the 1/40 roll"`), closing section C's `playSound` row
 with them; E4 took gold-as-a-bag-stack (`systems/inventory.js:"E4 (2026-09-02) RETIRED"`);
-E7 took `GetValue`'s empty-string arm (`systems/talkMacros.js:"ordering: the scan"`);
+E7 took `GetValue`'s empty-string arm (`systems/talk/talkMacros.js:"ordering: the scan"`);
 E5 took the docked bar's occlusion (`ui/hudLarge.js:"THE DOCKED BAR SHRINKS"`); and E1
 narrowed while E3 closed the two console verbs
 (`ui/exteriorAutomapWindow.js:"rect and was being"` - the site id the flag list was

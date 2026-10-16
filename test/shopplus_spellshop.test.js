@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SpellbookWindow } from '../src/ui/spellbookWindow.js';
 import { PORT_SPECS } from '../src/ui/enhancedPorts.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spell/spellMaker.js';
 
 const fx = (type, subType, o = {}) => ({ type, subType, magnitudeBaseLow: 0, magnitudeBaseHigh: 0, durationBase: 0, chanceBase: 0, ...o });
 function shop(gold = 400) {

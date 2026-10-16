@@ -1,7 +1,7 @@
 // RVN2 - ADAPTATIONS (bible/12-Enhanced-AI/Feud-Arc.md section 13; Mac, 2026-10-04: "more complex, less easy to
 // accomplish and more detailed", then "Go"). At each deed a revenant LEARNS one lesson of the fight - the first of its
 // scars (its leading source first) that teaches something it does not hold - and keeps its rank's worth (three at most),
-// the oldest forgotten. What it learned stands with it (`entity.revenant.edge`, systems/revenantFeud.js adaptEdge):
+// the oldest forgotten. What it learned stands with it (`entity.revenant.edge`, systems/revenant/revenantFeud.js adaptEdge):
 // a weapon class taken less (never below x0.6), an element resisted on the saving throw (+25 - the arc's +50 was
 // immunity), silver's double gone, its poise heavier, its blows iron, its wind-ups patient, never unaware, faster at
 // range, relentless, a creature of the night. Nothing touches its weakness.
@@ -20,9 +20,9 @@ globalThis.localStorage = {
   removeItem: (k) => { _store.delete(k); }, clear: () => _store.clear(), key: (i) => [..._store.keys()][i] ?? null, get length() { return _store.size; },
 };
 
-const N = await import('../src/systems/revenant.js');
+const N = await import('../src/systems/revenant/revenant.js');
 const L = await import('../src/systems/feudLedger.js');
-const F = await import('../src/systems/revenantFeud.js');
+const F = await import('../src/systems/revenant/revenantFeud.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { calculateAttackDamage, weaponAttackDamage, silverDoubles } = await import('../src/combat/formulas.js');
 const { pcaaoWeaponAttackDamage, pcaaoModules } = await import('../src/combat/pcaao.js');
@@ -56,7 +56,7 @@ const foe = ({ mobileType = M.Orc, level = 6, plain = false } = {}) => {
   if (!plain) e.champion = 'mighty';
   return e;
 };
-/** A stand-in revenant: `learned` stood on it as a stand does (systems/revenant.js revenantStamp's shape). */
+/** A stand-in revenant: `learned` stood on it as a stand does (systems/revenant/revenant.js revenantStamp's shape). */
 const adapted = (learned, { weak = null, ...o } = {}) => { const e = foe(o); e.revenant = { id: 'x', name: 'X', rank: 3, learned, weak, edge: F.adaptEdge(learned, weak) }; return e; };
 
 beforeEach(() => {
@@ -360,7 +360,7 @@ test('RVN2 THE EDGE: frozen, from its adaptations and its weakness - nothing tou
   assert.equal(F.adaptEdge(['fireproof'], 'fire').resist.fire, undefined);
   assert.equal(F.adaptEdge(['silverScarred'], 'silver').silverScarred, false);
   assert.equal(e.weak, 'blade');
-  assert.match(read('src/systems/revenantCompanions.js'), /entity\.revenant = \{ id: r\.id, name: r\.name, rank, sworn: true \};/, 'a sworn one: learned against me, none of it for me');
+  assert.match(read('src/systems/revenant/revenantCompanions.js'), /entity\.revenant = \{ id: r\.id, name: r\.name, rank, sworn: true \};/, 'a sworn one: learned against me, none of it for me');
   assert.equal(learnedWords({ learned: ['arrowWise', 'nightStalker', 'hewnHard'] }), 'Learned: Arrow-wise, Night-stalker, Hewn-hard.');
   assert.equal(learnedWords({ learned: [] }), '');
   // on a real drawn page

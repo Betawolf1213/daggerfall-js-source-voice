@@ -17,9 +17,9 @@ import { SKILLS, skillValue, permanentSkillValue } from '../src/systems/skills.j
 import { liveStat } from '../src/systems/statMods.js';
 import { playerEntity } from '../src/characters/playerEntity.js';
 import { computeEntityMods, weaponBlowMods, entityWeightMult, EMPTY_MODS } from '../src/systems/entityMods.js';
-import { spellPowerMult } from '../src/systems/spellPower.js';
+import { spellPowerMult } from '../src/systems/spell/spellPower.js';
 import { castRate } from '../src/systems/castSpeed.js';
-import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil.js';
+import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import { setRenownLayer, renownHpOf } from '../src/systems/renownLayer.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
 import { createFishAct } from '../src/systems/fishAct.js';

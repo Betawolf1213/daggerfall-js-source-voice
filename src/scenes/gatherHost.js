@@ -66,8 +66,8 @@ import { TERRAIN_SIZE } from '../world/terrainSampler.js';
 /** A map pixel's side in the scene (metres). */
 const PIXEL_M = TERRAIN_SIZE;
 import { rankName, professionName, DEEP_UNCONFIRMED_PER_DAY } from '../net/professionLaw.js';
-import { wearForagingTool } from '../systems/foragingInstall.js';
-import { materialCountLabel } from '../systems/profItems.js';
+import { wearForagingTool } from '../systems/foraging/foragingInstall.js';
+import { materialCountLabel } from '../systems/professions/profItems.js';
 import { accountRefusalText } from '../net/accountClient.js';
 import { DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { harvestHauls } from '../ui/haulCards.js';   // HAUL-CARDS: a harvest's goods and XP as one card, on the enhanced skin

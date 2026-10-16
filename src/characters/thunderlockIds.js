@@ -2,7 +2,7 @@
 // all, on purpose.
 //
 // systems/thunderlock.js is the weapon's home, but it reaches
-// systems/itemTemplates.js to register its rows, and that file imports
+// systems/item/itemTemplates.js to register its rows, and that file imports
 // characters/weapons.js for the condition ladder. So a weapons.js that
 // wanted the indices from the home would close a cycle
 // (weapons -> thunderlock -> itemTemplates -> weapons) and leave one

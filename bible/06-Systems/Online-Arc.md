@@ -152,7 +152,7 @@ Saving stays local; the relay never sees the save.
 
 **Mac: "one thing we need to add so I can test myself is multiple save
 slots and then the ability to choose which save to use in online."**
-The slot store was SAV4's (`src/systems/saveSlots.js`: a save is the
+The slot store was SAV4's (`src/systems/save/saveSlots.js`: a save is the
 (character, slot name) pair, SaveLoadManager's own identity), and the
 classic save window had the whole list; the enhanced skin drew one
 card - the most recent - and its Save pane wrote QuickSave alone.
@@ -617,7 +617,7 @@ GetLocation, StartDungeonInterior) and `RestorePosition` after it
 beside insideDungeon (:215-217). The port now:
 
 - **carries where the dungeon stands**: `snapshotPlayer` takes
-  `dungeon` ({pixel, mapId}, `src/systems/save.js`) and hands it back
+  `dungeon` ({pixel, mapId}, `src/systems/save/save.js`) and hands it back
   from `restorePlayer`; the dungeon host's composer fills it from its
   own map row through MapsFile's pixel law. A save from before the
   field is found by its dungeon id across the world's location index
@@ -1586,7 +1586,7 @@ shipped; PARTY-LOOT, below, is the law.
   `settleLootFlat` frees the flat of a pile the ROOM emptied while this
   player stood beside it (and re-mints one the room refilled - AUDIT
   WORLD4 C3/D2 gave the settle its second direction).
-- **The projection** (`src/systems/loot.js`): AUDIT WORLD3 A2's law
+- **The projection** (`src/systems/loot/loot.js`): AUDIT WORLD3 A2's law
   applied to the other thing the frame now carries. An item record is
   an OPEN shape (the inventory arc grows it; a magic item carries its
   enchantments), so `validLootItem`/`validLootList` CLAMP rather than
@@ -2269,7 +2269,7 @@ enabled, whatever the player's shelf says.
 > `SmoothRoads` a dial was giving the floor away anyway - is recorded
 > there.
 
-**A read, not a write.** The forcing lives in `systems/onlineLane.js`
+**A read, not a write.** The forcing lives in `systems/online/onlineLane.js`
 and is asked FIRST by the three places a switch is read - `uiSkin.js`
 (the skin), `uiPrefs.js getPref` (the port's own switches) and
 `modSettings.js modSetting` (a mod's `Enabled`). Nothing is forced at a
@@ -4330,7 +4330,7 @@ tick that rides the same sub-tick. You healed; nothing else happened.
 
 ### Where it lives
 
-`systems/restSession.js`, and nowhere else. The session asks
+`systems/rest/restSession.js`, and nowhere else. The session asks
 `sharedMinutes` - the dep it already had from WORLD5 - so the predicate
 is "the shared clock is standing AND this is not a loiter". **THE FOUR
 HOSTS are untouched by this slice**, which is OL1's own shape: a lane is
@@ -4487,7 +4487,7 @@ DUNGEON-RESPAWN (2026-10-08, the owner, in the Wrothgarian zone's merge):
 a dungeon's hour is its own now - a normal dungeon's twenty minutes, an
 elite one's forty, the open zone's halls and a Super dungeon keeping
 `RESPAWN_MS` (half an hour since RESPAWN-30, 2026-10-14, Mac: "I meant the chest and foe respawn"); each foe and container still on its own clock
-(`src/systems/dungeonRespawn.js`, `11-Multiplayer/Wild-Zone.md` section 21).
+(`src/systems/dungeon/dungeonRespawn.js`, `11-Multiplayer/Wild-Zone.md` section 21).
 
 - **A foe.** The one corpse door stamps `_diedAt`; the memory's record
   carries it as `died`; a record applied keeps the ROOM's stamp, not
@@ -7645,7 +7645,7 @@ recorded).
 
 **What arrived.** Four zips of whole files against older mains: `quest-sharing-FINAL`, `Trading`, `peer-footsteps-v3`, `EnemyDesyncDungeonFix`. Each file was three-way merged (`git merge-file`) against the main commit its copy was cut from (the smallest diff over the last six hundred), one drop at a time, conflicts resolved at BLOCK level - never a whole file taken from one side (that silently dropped main's hunks once before). The base-finder's smallest diff is not always the true base: for `ui/enhancedMenu.js` it chose a main from before BR1 and the merge quietly reverted the brand mark; the file was reset to main and only the two `prefRow` lines re-added. Every deletion against main was audited by hand; the rest were legitimate.
 
-**QUEST1 - a quest shared with the party.** `systems/questShare.js` (the three receiver gates over the catalog's own membership/minReq/oneTime rows) and `systems/quest/machine.js` (`getShareableQuestData`, `receiveSharedQuest` - a real live Quest rebuilt through restoreSaveData's own loop from a wire envelope, `updateSharedQuest` for a later resync, `REPLAYABLE_ONE_TIME_ACTIONS` = TeleportPc/GivePc/TrainPc re-armed on the receiver - GetItem since DISC28-I, RevealLocation since FIELD BUGS 2026-10-13e SHARE-REVEAL (the partner's `reveal` marked only the clicker's map); PayMoney and GiveItem deliberately not). The wire: `{t:'quest'}` under `QUEST_FRAME_MAX` (64 KiB, a quest's save-data is not a pose), `QUEST_HZ_MAX` = 0.1 (one share per ten seconds, `QUEST_SEND_MS`), `questShareGate`/`questInGate` as plain cooldowns (a sub-1 rate never passes a token bucket - the drop's own BUG note), the hub fans it to the sender's party. The Share button sits in the chronicle's opened quest frame (`ui/enhancedChronicle.js`, `.cr-rm cr-share`), through `chronicleDoor.js` to world.js `shareQuestWithParty`; a received quest lands as a HUD line (`setMidScreenText`). `receiveSharedQuest` is the FOURTH door a live quest is born through, so `world5`/`world7`'s `questClockStepMax` count moved 3 -> 4.
+**QUEST1 - a quest shared with the party.** `systems/quest/questShare.js` (the three receiver gates over the catalog's own membership/minReq/oneTime rows) and `systems/quest/machine.js` (`getShareableQuestData`, `receiveSharedQuest` - a real live Quest rebuilt through restoreSaveData's own loop from a wire envelope, `updateSharedQuest` for a later resync, `REPLAYABLE_ONE_TIME_ACTIONS` = TeleportPc/GivePc/TrainPc re-armed on the receiver - GetItem since DISC28-I, RevealLocation since FIELD BUGS 2026-10-13e SHARE-REVEAL (the partner's `reveal` marked only the clicker's map); PayMoney and GiveItem deliberately not). The wire: `{t:'quest'}` under `QUEST_FRAME_MAX` (64 KiB, a quest's save-data is not a pose), `QUEST_HZ_MAX` = 0.1 (one share per ten seconds, `QUEST_SEND_MS`), `questShareGate`/`questInGate` as plain cooldowns (a sub-1 rate never passes a token bucket - the drop's own BUG note), the hub fans it to the sender's party. The Share button sits in the chronicle's opened quest frame (`ui/enhancedChronicle.js`, `.cr-rm cr-share`), through `chronicleDoor.js` to world.js `shareQuestWithParty`; a received quest lands as a HUD line (`setMidScreenText`). `receiveSharedQuest` is the FOURTH door a live quest is born through, so `world5`/`world7`'s `questClockStepMax` count moved 3 -> 4.
 
 **TRADE1 - player-to-player trade.** `net/tradeSession.js` (the state machine: ask/yes/no, offer revisions, lock/confirm on both sides, commit only after MY goods left the socket - LOOT-DUP's law, `TRADE_RANGE_M` 5 metres between the two BODIES, never a pixel) and `systems/tradePack.js` (the real pack: reserve, release, apply). The wire: `{t:'trade', data}` projected by `validTradeData` per kind, `TRADE_FRAME_MAX` 12 KiB, routed by the relay to ONE peer inside one room (`server/src/index.js` `_meterTrade`), `sendTrade` down whichever open socket reports the peer (own cell or a halo - `_socketFor`), `TRADE_RELAY_MIN = 91` so a client never sends a frame an older relay would close the socket on (`relaySupportsTrade` off the welcome). The F-menu grew a third row (`ui/socialMenu.js` `canTrade`/`tradeLabel`: 'Accept trade' when the peer already asked), and the window is `ui/enhancedPlayerTrade.js` behind `ui/playerTradeDoor.js` - a DOM door in the enhanced skin alone, its overlay arms one per line so CRASH2's window gate reads it (the drop had them on one line and the gate reported the door unread). `tradeFrame()` ticks on the online frame after `chatFrame()`, before the dead return.
 
@@ -7673,7 +7673,7 @@ Not verified in a browser: no online session exists in this container. Pins: `te
 
 Three opus lenses, one each over the merge and the wire, the additions and the host wiring, the records and the pins. The merge itself was sound: no line of main's was lost but one comment (the `/unstuck` guard's AUDIT 24 wave37 rationale, restored) and three test messages' history (RELAY-H1's and ACC1d's version notes in watch1/soc1_hub/econ1, restored). The drops' own logic was not. Every finding below is paid, and pinned by execution in `test/auditdrops.test.js` (14) with `tools/mutants/auditdrops.json` (45: 41 dead, 4 equivalent as recorded).
 
-**A - the quest envelope was trusted whole (lens 1, HIGH).** `receiveSharedQuest` built a live Quest straight from the sender's bytes: any party member could hand the receiver a `GivePc` of anything, a `TeleportPc`, a global-var link. The wire's `questName` gated the receipt but the quest was built from `data.questName` (a share named HARMLESS with the data of a quest the receiver already ran gave them a second live copy); the main quest was refused on SEND only. Now (`systems/questShare.js`): the data must be the quest it names; the main quest is refused on RECEIPT; the envelope's SHAPE - every task symbol and every action TYPE in order, every resource symbol and type - must be the receiver's OWN parse of that quest by name (`machine.parseQuestShape`, the same parser the lists use, `shapeMismatch`), refused as 'mismatch', or 'unknown' with no local source; and every Item resource's item is the receiver's own roll (`takeLocalItems`) - a typed `daggerfallUnityItem` never lands. What remains the sender's: the Places' `siteDetails` (the party goes to the same dungeon), the Persons, the Foes, the task/action STATE - which is the point of sharing. **A2 - live sync paid rewards twice (HIGH).** A partner who was behind resynced my finished quest back into play (tombstoned -> live, a completed GivePc pending again), and a later resync re-armed it: paid twice; once the tombstone expired, a resync counted as a fresh receipt and re-armed everything. Now: a resync onto a `questComplete`/`questTombstoned` copy is refused; a tombstone moves the name from `sharedQuestNames` to `finishedSharedQuestNames`, and a fresh receipt of a finished name is 'done' for the session; action completion is MONOTONIC across a resync (never true -> false off an older copy - it would run, reward and all, when its task next ticked); a reward is re-armed AT MOST ONCE per action for the life of the quest (`_rearmed`). (AUDIT DISC28 QS-4, 2026-09-28: the once is the FIRING's - an action that ran reads complete, and completion is monotonic - and `_rearmed` is retired: spent by the arming, it refused a reward armed and not yet fired when the next envelope landed, and the reward never ran.) **A3 - a malformed resync corrupted the live quest (MEDIUM).** `restoreSaveData` clears as it goes; `{tasks: 7}` left the live quest with no resources and no tasks. Now the resync is DRY-RUN on a scratch Quest first and refused whole; a fresh receipt the restore chokes on lands nothing.
+**A - the quest envelope was trusted whole (lens 1, HIGH).** `receiveSharedQuest` built a live Quest straight from the sender's bytes: any party member could hand the receiver a `GivePc` of anything, a `TeleportPc`, a global-var link. The wire's `questName` gated the receipt but the quest was built from `data.questName` (a share named HARMLESS with the data of a quest the receiver already ran gave them a second live copy); the main quest was refused on SEND only. Now (`systems/quest/questShare.js`): the data must be the quest it names; the main quest is refused on RECEIPT; the envelope's SHAPE - every task symbol and every action TYPE in order, every resource symbol and type - must be the receiver's OWN parse of that quest by name (`machine.parseQuestShape`, the same parser the lists use, `shapeMismatch`), refused as 'mismatch', or 'unknown' with no local source; and every Item resource's item is the receiver's own roll (`takeLocalItems`) - a typed `daggerfallUnityItem` never lands. What remains the sender's: the Places' `siteDetails` (the party goes to the same dungeon), the Persons, the Foes, the task/action STATE - which is the point of sharing. **A2 - live sync paid rewards twice (HIGH).** A partner who was behind resynced my finished quest back into play (tombstoned -> live, a completed GivePc pending again), and a later resync re-armed it: paid twice; once the tombstone expired, a resync counted as a fresh receipt and re-armed everything. Now: a resync onto a `questComplete`/`questTombstoned` copy is refused; a tombstone moves the name from `sharedQuestNames` to `finishedSharedQuestNames`, and a fresh receipt of a finished name is 'done' for the session; action completion is MONOTONIC across a resync (never true -> false off an older copy - it would run, reward and all, when its task next ticked); a reward is re-armed AT MOST ONCE per action for the life of the quest (`_rearmed`). (AUDIT DISC28 QS-4, 2026-09-28: the once is the FIRING's - an action that ran reads complete, and completion is monotonic - and `_rearmed` is retired: spent by the arming, it refused a reward armed and not yet fired when the next envelope landed, and the reward never ran.) **A3 - a malformed resync corrupted the live quest (MEDIUM).** `restoreSaveData` clears as it goes; `{tasks: 7}` left the live quest with no resources and no tasks. Now the resync is DRY-RUN on a scratch Quest first and refused whole; a fresh receipt the restore chokes on lands nothing.
 
 *SHARE-COPY (2026-09-26): A refused EVERY quest - the shape check compared the task symbols minted from the UID counter at parse, and the reference parse ran over the receiver's world. `01-Overview/Field-Bugs-2026-09-26.md`.*
 
@@ -7693,7 +7693,7 @@ Not verified in a browser: no online session exists in this container.
 
 ## PARTY-REST DROP (2026-09-22, Mac: "Add this to the batch") - the party-rest feature zip integrated over the audit, one getter per host, world93
 
-Eight files from Mac's tree (`net/wire.js`, `ui/enhancedRest.js`, `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/shared.js`, `systems/restSession.js`, `systems/survival/rest.js`), each a whole-file copy against an older main, three-way merged per file against the main commit that minimised its diff, conflicts resolved at block level. What arrived, by the drop's own law names: PARTY-REST1 (the leader's live rest/loiter session rides the party pose; a follower near enough mirrors it - `partyRestFollowTick` every frame beside `partyFrame`, the mirror rolling no encounter of its own), PARTY-REST1c (ANY near resting member is mirrored, not the leader alone), PARTY-REST2/2b/2f/28 (`/ready` is a local chat command stamping `voteAt`, the vote expires in `PARTY_READY_TIMEOUT_MS`, `partyRestGate` refuses a rest until the near members are ready, `markPartyRestSpent` is the one reset every host runs on a granted rest, a refused gate clears back to -Infinity so a new vote can start), PARTY-REST4/4b (`partyRestMirrorDeps(restKind, targetAcct)` heals the follower at the leader's rate through `outdoorRestDeps.overrideRestKind`), PARTY-REST5/19 (the leader's `restEnemyAt` breaks every mirror; a follower's cancel rides `restCancelFor/At`), PARTY-REST6 (`restState` answers only while `state === 'resting'` - the wake box is not a live rest), PARTY-REST8 (`nearAccount`'s interior arm keys on `bk`, now 32-bit, PARTY-REST9), PARTY-REST10 (`restHour(entity, kind, tick, carry)`), PARTY-REST12/20/21/23/25/26/17/16/2d/2e (the gate's refusals and their cooldowns: `PARTY_REST_VOTE_COOLDOWN_MS` 60 s, `PARTY_REST_START_COOLDOWN_MS` 10 s), ONLINE-REST1 (the gate is enhanced+online only), TAVERN-REST1/GUILD-REST1 (`modes.insidePartyRestExempt`), STRANGER-REST1 (`strangerRestGate`: no rest within 100 m of a stranger outdoors, 30 m in a dungeon), REST-VITALS1/RESTFIX1/RESTFIX3/PARTY-REST1d (the enhanced rest window: vitals shown while healing, no rebuild per tick, the illegal-rest warning, pointer lock released for every member). The wire grew `rest.kind`, `voteAt`, `restEnemyAt`, `restCancelFor`, `restCancelAt`, `restStartedAt`; `RELAY_VERSION` is world93 (the LAW row hashed after the wire change; `server/src/index.js` is untouched by this drop - the version moves because the pose's shape did).
+Eight files from Mac's tree (`net/wire.js`, `ui/enhancedRest.js`, `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/shared.js`, `systems/rest/restSession.js`, `systems/survival/rest.js`), each a whole-file copy against an older main, three-way merged per file against the main commit that minimised its diff, conflicts resolved at block level. What arrived, by the drop's own law names: PARTY-REST1 (the leader's live rest/loiter session rides the party pose; a follower near enough mirrors it - `partyRestFollowTick` every frame beside `partyFrame`, the mirror rolling no encounter of its own), PARTY-REST1c (ANY near resting member is mirrored, not the leader alone), PARTY-REST2/2b/2f/28 (`/ready` is a local chat command stamping `voteAt`, the vote expires in `PARTY_READY_TIMEOUT_MS`, `partyRestGate` refuses a rest until the near members are ready, `markPartyRestSpent` is the one reset every host runs on a granted rest, a refused gate clears back to -Infinity so a new vote can start), PARTY-REST4/4b (`partyRestMirrorDeps(restKind, targetAcct)` heals the follower at the leader's rate through `outdoorRestDeps.overrideRestKind`), PARTY-REST5/19 (the leader's `restEnemyAt` breaks every mirror; a follower's cancel rides `restCancelFor/At`), PARTY-REST6 (`restState` answers only while `state === 'resting'` - the wake box is not a live rest), PARTY-REST8 (`nearAccount`'s interior arm keys on `bk`, now 32-bit, PARTY-REST9), PARTY-REST10 (`restHour(entity, kind, tick, carry)`), PARTY-REST12/20/21/23/25/26/17/16/2d/2e (the gate's refusals and their cooldowns: `PARTY_REST_VOTE_COOLDOWN_MS` 60 s, `PARTY_REST_START_COOLDOWN_MS` 10 s), ONLINE-REST1 (the gate is enhanced+online only), TAVERN-REST1/GUILD-REST1 (`modes.insidePartyRestExempt`), STRANGER-REST1 (`strangerRestGate`: no rest within 100 m of a stranger outdoors, 30 m in a dungeon), REST-VITALS1/RESTFIX1/RESTFIX3/PARTY-REST1d (the enhanced rest window: vitals shown while healing, no rebuild per tick, the illegal-rest warning, pointer lock released for every member). The wire grew `rest.kind`, `voteAt`, `restEnemyAt`, `restCancelFor`, `restCancelAt`, `restStartedAt`; `RELAY_VERSION` is world93 (the LAW row hashed after the wire change; `server/src/index.js` is untouched by this drop - the version moves because the pose's shape did).
 
 **What the zip did not carry, written here.** The drop's three hosts import `ui/restDoor.js`, which no zip shipped: written - `createRestWindow(deps, ignoreAllocatedBed)` opens `ui/enhancedRest.js` under the enhanced skin (`openEnhancedRest`, the fixed host at z-index 13, `registerOverlay` around its `dispose`) and `new RestWindow(deps, ignoreAllocatedBed)` under the classic one; it touches no DOM itself, so CRASH2's door contract reads the view, not the door. The drop's own restlodging pins expect `createRestWindow` in `scenes/exterior.js` (not in the zip): converted. The drop's partyrest1 pins name `.rest-shell` rules `enhancedStyle.js` never had: added (the centred 420 px dialog, the hours field, the vitals line, `font-family: inherit` on the field - FONT1's law).
 
@@ -7753,7 +7753,7 @@ the lens was running; the rest is paid here.
 - *A follower's Stop was ignored, or replayed.* `restCancelAt` was each follower's own `performance.now()`
   compared against ONE high-water mark for every sender: a Stop from a tab younger than the last canceller's did
   nothing (and that follower was pulled straight back in), and a reload of the rester's tab replayed an old
-  request on the next rest's first tick. `systems/partyRestLaw.js`: the marker is compared per sender against a
+  request on the next rest's first tick. `systems/party/partyRestLaw.js`: the marker is compared per sender against a
   snapshot taken as my rest begins (`snapshotCancels` in `markPartyRestSpent`, `cancelRequestFor` each tick), a
   mirror is nobody's target (`canceledByFollower: () => false` in its deps), and a follower's request is dropped
   when their next mirror starts.
@@ -7991,7 +7991,7 @@ deploys itself on the merge to main. Not verified in a browser: no online sessio
 Two archives from Mac's tree (`friendly-spells-patch_6`, `friendly-spells-and-Nightsound-toggle`), both whole-file
 copies cut from the PR #331 merge. Main had moved on since: ALLY-CAST and AUDIT ALLY-CAST (the `cast` frame, a
 party-only receiver, the gift landing as a self-cast), CRICKET-DUNGEON (the chorus stopped underground), and AUDIT
-PARTY8 / AUDIT PARTY-REST (`systems/partyRestLaw.js`, `voteStands`, the shared-clock `readyAt`). The caveat was
+PARTY8 / AUDIT PARTY-REST (`systems/party/partyRestLaw.js`, `voteStands`, the shared-clock `readyAt`). The caveat was
 not to override those. So nothing was copied over a file main had changed: each of the 29 files with real edits
 was a three-way merge against that base, and every doc file the drop carried differed from main only by its own
 citation shifts, so main's text stands and `tools/citeShift.mjs` re-maps it.
@@ -8222,7 +8222,7 @@ was to leave the party, or to be in a tavern, temple or guild hall.
 
 **THE SWITCH.** "Rest with my party" (uiPrefs `restWithParty`, default on, the player's own online, in the Features
 pane's "Other players" card, beside the other online switches). Off, my party pose carries `nr: 1` (net/wire.js validPartyPose, omitted
-otherwise; RELAY_VERSION world120 - the merged relay, which carries PARTY-BUFFS' fields too), and the law is `systems/partyRestLaw.js`'s:
+otherwise; RELAY_VERSION world120 - the merged relay, which carries PARTY-BUFFS' fields too), and the law is `systems/party/partyRestLaw.js`'s:
 
 - `restsAlone(m)` - a member whose pose says `nr` is no voter, nobody to gather, and no rest to mirror.
 - `partyRestsTogether(mineOn, party, iLead)` - my rest is the party's only while my switch is on AND the leader's
@@ -8250,7 +8250,7 @@ and `tools/mutants/restfar.json` (by content).
 
 ## SHARE-MEND (2026-09-27, Discord - Tabitha: "Fix sharing Guild & Temple quests - It says the quests don't match up, can't share, etc.") - the envelope fits, a skew is named, and a sync's refusal is said once
 
-**THE MARKERS TRAVEL SLIM** (`systems/questShare.js` slimShareMarkers, fullShareMarkers). A dungeon Place carries
+**THE MARKERS TRAVEL SLIM** (`systems/quest/questShare.js` slimShareMarkers, fullShareMarkers). A dungeon Place carries
 every quest marker in the dungeon (place.js `_enumerateDungeonQuestMarkers`; DFU's SiteDetails keeps them all, and
 a save must), about 240 bytes each. A guild's or a temple's "clear the dungeon" sends the party to a big one:
 three hundred markers were 71 KB, over QUEST_SHARE_MAX_BYTES on their own. No marker may be dropped, because its
@@ -8300,7 +8300,7 @@ item maker's - read "Magic" and nothing more, and with the tiers off it read not
 
 - the tier's lines (rarityLines);
 - for an enchanted item the tiers do not name (no `rarity`, or the tiers off), DFU's own Info-box powers
-  (`systems/itemPowers.js` magicPowersLines, the classic popup's words);
+  (`systems/item/itemPowers.js` magicPowersLines, the classic popup's words);
 - unidentified, "Powers unknown." - unless the tier list already said "Unidentified".
 
 The card, each trade row's hover (my pack, my offer and theirs) and the trade detail read it
@@ -8419,7 +8419,7 @@ Six lenses, each finding checked against the code before anything moved; `01-Ove
   `restOptOk` off the hub's welcome; world.js `restsWithParty()` is the switch as the party can hear it, read by the
   pose, `restTogether` and the vote's words. PARTY-TRAVEL's precedent: an older hub strips the field, and a switch
   it cannot carry is no switch.
-- **ANOTHER CAMP (C2).** `systems/partyRestLaw.js` restsApart: a mate resting (`rs`) alone, or resting at all while I
+- **ANOTHER CAMP (C2).** `systems/party/partyRestLaw.js` restsApart: a mate resting (`rs`) alone, or resting at all while I
   rest alone, is a camp of its own to STRANGER-REST's gate (REST_APART_TEXT) - two nights side by side had each
   rolled the night's foes for the whole party. A mate who opted out and stands awake beside the party is no camp.
 - **A NIGHT GRANTED ALONE (C3)** says `nr` to its end (`_restAloneNight`, set at markPartyRestSpent's grant and
@@ -8551,7 +8551,7 @@ Horse Cart and Cargo (`06-Systems/Horse-Cart-And-Cargo.md`) is single-player: it
 following horse and trailing team are objects in one Unity scene. Online they stand in a shared cell, so the port
 carries them to everyone near, under the camps' law (SURV3) and no new one:
 
-- **The record** (`systems/horseCartWire.js`): what the pool SHOWS, not the save - the wagon's kind (trailing /
+- **The record** (`systems/horse/horseCartWire.js`): what the pool SHOWS, not the save - the wagon's kind (trailing /
   parked / following), base, rotation as Unity spells it, cargo tier and wheel angle; the horse's base, horizontal
   forward, walk frame and walking; the horse's name. Positions in the wire frame (natives, the compensation-free
   height), rounded to the centimetre. It rides as `hv` on the cell's foes frame beside `c`: on every full frame
@@ -8913,7 +8913,7 @@ Online alone, as the gate is; client only; nothing on the wire.
 ## WB7 (2026-09-25, Mac: "Proper boss audio during the boss fight") - his voice and his music; see 11-Multiplayer/World-Bosses.md
 
 The Burning Court's boss is heard - steps, growls, grunts, the ground's shock, thunder, his fall - and the court has its
-own score (`systems/gateScore.js`), chosen from the fight state the court's link already holds: his phase, the Wrath's
+own score (`systems/gate/gateScore.js`), chosen from the fight state the court's link already holds: his phase, the Wrath's
 time, his fall. Client only; nothing on the wire.
 
 ## AUDIT WB (2026-09-25, Mac: "A proper audit on everything") - the relay's half; see 11-Multiplayer/World-Bosses.md section 11
@@ -8932,7 +8932,7 @@ travel together". Online only - both arms ask for a party first, and the party i
 mirrored: the leader's proposal rides the leader's own party pose, a member's answer rides theirs, "gathered" is the
 rest law's own near (the same place and, outdoors, within PARTY_REST_RADIUS), an offline seat is nobody here, and a
 stale vote is refused - here by identity, since a vote names the round it answers. The law is
-`systems/partyTravelLaw.js`, its session `systems/partyTravel.js` (driven by the host's seams in `scenes/world.js`, so
+`systems/party/partyTravelLaw.js`, its session `systems/party/partyTravel.js` (driven by the host's seams in `scenes/world.js`, so
 the pins RUN a leader and a member against each other rather than grep the closures).
 
 **To the leader.** A member on another map pixel than the leader is offered the journey to them: unasked when they
@@ -9137,7 +9137,7 @@ Asked two things first: how it is switched (Mac: **a staff command** - `/event d
 Asked three things, Mac answered: "+50% HP, +10% dmg" a player past the first; outdoors "One roll per group"; in a
 dungeon "Everyone in it" counts. Daggerfall Unity has no other players, so every foe is sized for one; this is a
 Ledger A departure (`Port-Ledger.md` section A, A FIGHT WEIGHS WHAT THE PARTY WEIGHS), and it is online's alone -
-offline the party is one and every number is DFU's. The law is `src/systems/partyScale.js`, pure, the count an
+offline the party is one and every number is DFU's. The law is `src/systems/party/partyScale.js`, pure, the count an
 argument. **AUDIT PSCALE1 (below) changed who counts**: a fight's weight is now its FOE'S FIGHTERS - the players who
 struck it within thirty seconds (Mac: "Whoever fights it") - and the notes marked so below are corrected there.
 
@@ -9295,13 +9295,13 @@ Mac answered "Bonus damage", "Magic and up, found online", "Bigger fights, stron
 then, of a sigil fixed at the drop ("Makes sigil a static element"; "What if the sigil is[n't] gaurenteed in of
 itself"), chose "Chance at the drop, then grows". Daggerfall Unity has neither online play nor Renown; this is a
 Ledger A departure (`Port-Ledger.md` section A, SOME WEAPONS WON ONLINE CARRY A SIGIL, AND IT GROWS), and what a sigil
-does is online's alone. The law is `src/systems/sigil.js`.
+does is online's alone. The law is `src/systems/sigil/sigil.js`.
 
-- **What a sigil is.** `item.sigil = { power, party, xp }`, a declared item field (`systems/itemFields.js`): it rides
+- **What a sigil is.** `item.sigil = { power, party, xp }`, a declared item field (`systems/item/itemFields.js`): it rides
   a save as the item does, and the wire's loot door checks it (`validLootItem` - a forged power or rank is no item at
   all). `power` is the per cent of damage it adds at its full rank; `party` the size of the fight that won it; `xp`
   what it has drunk.
-- **Who gets one** (`systems/lootRarity.js stampWonWeapons`). A Magic, Rare or Legendary weapon - never ammunition, an
+- **Who gets one** (`systems/loot/lootRarity.js stampWonWeapons`). A Magic, Rare or Legendary weapon - never ammunition, an
   artifact (its own tier has no band), a quest's item, armour, a Common weapon, or one already marked - in a list WON
   ONLINE: a body's at its death (the outdoor owner's kill door, the dungeon host's and the watch's; a dungeon joiner's
   own copy when the host's stream says it fell, at the host's count; a body the room's memory hands an arrival), and a
@@ -9395,7 +9395,7 @@ materials that feed them are `06-Systems/Professions-Arc.md` (PROF0).
 ## HUB1 (2026-09-25, Mac: the hub, "a color coded circle indicator or something along those lines for distinguishing") - every region's main city is its hub
 
 Daggerfall Unity has neither online play nor hubs; this is a Ledger A departure (`Port-Ledger.md` section A, EVERY
-REGION'S MAIN CITY IS ITS HUB), online's alone. The law is `src/systems/regionHubs.js`, pure.
+REGION'S MAIN CITY IS ITS HUB), online's alone. The law is `src/systems/region/regionHubs.js`, pure.
 
 - **The rule** (`pickRegionHubs`), over each region's OWN rows. `MapsFile.baseLocationCount` is the count the
   region's own MAPNAMES holds; a world-data mod's rows are appended past it and never count, so a player with
@@ -9447,7 +9447,7 @@ took: three town homes a character, no upkeep.
   any session's to read, a guest's too - whose each is, who may enter, which are the caller's own - never a price or
   another account's character. A release answers what was paid. The account deleted, its homes go with it.
   Routes `/v1/homes/town|mine|claim|release|entry`, POST; the deploy's smoke reads a town and refuses a guest's claim.
-- **The client's reading** (`src/systems/onlineHomes.js`): a town at a time, asked as the player walks into it
+- **The client's reading** (`src/systems/online/onlineHomes.js`): a town at a time, asked as the player walks into it
   (`scenes/world.js`, the location rect's entry, beside HUB1's arrival line) and by any door of it, believed for a
   minute; an unanswered ask keeps what was known and waits ten seconds before the next; a door waits at most 2.5
   seconds for a town it has never heard from and then goes on under Daggerfall's law. `own` is read against the
@@ -9466,14 +9466,14 @@ took: three town homes a character, no upkeep.
   can be your home. It costs N gold, from your purse and your account at the Bank of the Empire. Buy it?" - HOME-PRICE
   (2026-10-04, `06-Systems/Economy-Arc.md`): the ground its model stands on at 300 gold a square metre, raised by its
   town's size, 5,000 to 250,000 (`net/homeLaw.js homeOnlinePrice`; the model the door's own record carries,
-  `systems/talkTopics.js buildingDataForDoor`, and the town's blocks, `townBlocks`), never Daggerfall's radius x 1280,
+  `systems/talk/talkTopics.js buildingDataForDoor`, and the town's blocks, `townBlocks`), never Daggerfall's radius x 1280,
   which stays the bank's offline; Yes claims it first and takes the gold only once the claim
   lands (the purse, letters of credit too, then the Empire's account - EMPIRE-ACCOUNT - as Daggerfall's PurchaseHouse pays), asking the
   purse again after the answer and giving the claim back if it can no longer be paid; No goes on to the door, as
   Daggerfall's Info click does. HOME-OFFER (2026-09-26, Mac: "Enhanced plus cant buy house"): HOME1 asked in Info
   mode alone, which nothing on the enhanced skins says, and the default mode is Grab - so a press on a house for sale
   walked in. The offer asks in any mode but Steal now, once a session per house outside Info (a No is remembered;
-  Info always asks) - `systems/onlineHomes.js homeDoorPrompt`, `test/homeoffer.test.js`. A house is a candidate when it is Daggerfall's for-sale house or an ordinary
+  Info always asks) - `systems/online/onlineHomes.js homeDoorPrompt`, `test/homeoffer.test.js`. A house is a candidate when it is Daggerfall's for-sale house or an ordinary
   residence (House1-4) - never a faction's House2 - and is for sale when no active quest is set in it. In Info mode
   my own door is my menu: G go in, W who may enter (Only me, My party, Anyone), S sell it back - at Daggerfall's deed
   share (85%) of what the SERVICE says was paid, into the Empire's account, credited only once the service agrees;
@@ -9501,7 +9501,7 @@ took: three town homes a character, no upkeep.
   home - a claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a character deleted - answers a
   signed home order (`net/identityToken.js` kind `home`) that its client carries to the hub, which fans it to every page
   online and holds it for a page that joins after (relay world201); the registry keeps every home as it stands
-  (`systems/onlineHomes.js` hearEveryTown, hearHome, homeStands), and the quest machine's `isPlayerHome` asks it. A
+  (`systems/online/onlineHomes.js` hearEveryTown, hearHome, homeStands), and the quest machine's `isPlayerHome` asks it. A
   site its player has not reached whose building becomes a home is chosen again in its own town by the place's own law,
   its links, its journal name and its map mark following (`Place.repickHomedSite`, `QuestMachine.reseatHomedSites`);
   a site the player has stood in stays where they found it, and the quest rung opens the home to them.
@@ -9526,7 +9526,7 @@ to Info never met a single offer. And the account service's deploy after the mer
 migrations 0009-0013 applied, the guild trigger among them, and the live routes answered 401 minutes later), but a
 red deploy reads as a service that is not there.
 
-- **Every house type is a house** (`systems/onlineHomes.js homeCandidate`). House5 and House6 join House1-4 and the
+- **Every house type is a house** (`systems/online/onlineHomes.js homeCandidate`). House5 and House6 join House1-4 and the
   for-sale house - RMBLayout.IsResidence leaves them out, Mac's call is that any house sells. A guild's House2 (the
   Thieves Guild's, the Dark Brotherhood's) still never does: sold to one player it would shut the guild out.
 - **The door's verbs, on the plaque** (`homeBuyRows`, `homeOwnerRows`; `scenes/worldModes.js homeDoorVerbs`). Online,
@@ -9587,7 +9587,7 @@ changes to a placed piece.
   stool into a statue. The home released (sold, or its account deleted) takes its pieces with it. Routes
   `/v1/homes/decor` (read) and `/v1/homes/decor/place|move|remove`; the client's door `net/accountClient.js
   accountDecor`; the deploy's smoke reads a room and refuses a guest's placement.
-- **The catalogue** (`src/systems/decorCatalogue.js`). Every PROP model and flat Daggerfall lays out inside its town
+- **The catalogue** (`src/systems/decor/decorCatalogue.js`). Every PROP model and flat Daggerfall lays out inside its town
   blocks' buildings (BLOCKS.BSA's RMB interiors), counted, the editor's markers (TEXTURE.199) and the ladder (placed,
   it would not be climbed) left out. Kinds by the game's own sets: beds, shop shelves, house containers, other
   furniture, and the flat archives (lights 210, clothing 204, boxes and bottles 205, arms and armour 207, books and
@@ -9604,7 +9604,7 @@ changes to a placed piece.
   first), so no room's name moves (`01-Overview/Field-Bugs-2026-10-05b.md`). DECOR-MODS (the same record, the town
   mods' furnishings): and the pieces it stands in for what Beautiful Villages, Beautiful Cities and Detailed Ships place
   - 297, measured over their own blocks, a room's or a street's as the mods stand them, never the town's own structure -
-  named and numbered after every place of Daggerfall's (`systems/decorMods.js`), every one catalogued whatever is on and
+  named and numbered after every place of Daggerfall's (`systems/decor/decorMods.js`), every one catalogued whatever is on and
   offered while the port stands it (AUDIT 05b A3: asked as the offer is made).
 
 Pinned: `test/decor1.test.js` (4 of its 7) - the law, the store through the real Worker with every migration
@@ -9652,7 +9652,7 @@ and back, and the host's wiring. `tools/mutants/decor1.json` (54, DECOR1a's 32 a
 - **The panel** (`src/ui/decorPanel.js`). A window over the room: it sits in the room's own overlay slot (the
   enhanced merchant panel's pattern), so it pauses the room and frees the pointer as every window does, and
   Escape or Tab puts it away. The catalogue is read out of BLOCKS.BSA's town blocks a few blocks a frame the first
-  time the panel opens (`src/systems/decorScan.js`), and each piece's size is measured for its price: a model's
+  time the panel opens (`src/systems/decor/decorScan.js`), and each piece's size is measured for its price: a model's
   radius off its ARCH3D header, as the bank prices a house by its model; a flat's billboard, half its diagonal. A
   piece whose size cannot be read has no price and is not offered. The list is filtered by kind, by words, by size,
   by holds-things and by gives-light, and sorted most common first, cheapest first or by name. The piece pointed at
@@ -9660,7 +9660,7 @@ and back, and the host's wiring. `tools/mutants/decor1.json` (54, DECOR1a's 32 a
   automap's, and copied into the panel's own canvas, the panel over the game being opaque), a flat as its own
   picture (asked for as its row comes into view, never hundreds at once) - with its price and, when it cannot be placed, why: the gold short, the room full (200), or its size
   still being read.
-- **Placing** (`src/scenes/decorTool.js`, `src/systems/decorPlacer.js`). Place closes the panel and flies the
+- **Placing** (`src/scenes/decorTool.js`, `src/systems/decor/decorPlacer.js`). Place closes the panel and flies the
   camera. Every key press is the decorator's while it flies, read as the action it is bound to (the controls
   registry's, so a rebinding holds), and none reaches the body, so the body stands still and nothing else fires
   under a placement; a key's release still reaches the game, so a key held into the flight is let go of. The walk
@@ -9735,7 +9735,7 @@ Three parts: DECOR2a the player's own things in a room, DECOR2b the furnisher, D
 
 **DECOR2a - your own things in a room.**
 
-- **What can stand** (`src/systems/decorItems.js`). An item from the pack stands in a room as the picture Daggerfall
+- **What can stand** (`src/systems/decor/decorItems.js`). An item from the pack stands in a room as the picture Daggerfall
   itself gives it in the world - the item's own picture first (an artifact's, a potion's own bottle), else its
   template's: a statue, a painting, a gem, a book, a plant, a lit candle or torch (lit as the catalogue's are). Never
   anything worn, a quest's item, a summoned thing, a map, coin, a vehicle, a deed, a letter of credit or the spellbook
@@ -9768,7 +9768,7 @@ Pinned: `test/decor2a.test.js` (7), `test/decor1.test.js` (+1: the service's hal
 
 **DECOR2b - the furnisher.**
 
-- **What it sells** (`src/systems/decorFurnish.js`, `src/systems/shopStock.js`). Daggerfall's Furniture group: twenty-
+- **What it sells** (`src/systems/decor/decorFurnish.js`, `src/systems/shopStock.js`). Daggerfall's Furniture group: twenty-
   nine items (ItemTemplates 217-245) - beds, tables and chairs in oak, cherry, mahogany and teak, curtains, pillows,
   rugs, tapestries and skins. No loot table rolls them and no shop ever sold them: DFU's stock loop skips the group for
   every shop, and its Furniture Stores stand with empty shelves. Here the Furniture Store stocks them by Daggerfall's
@@ -9802,7 +9802,7 @@ records re-aimed.
 
 **DECOR2c - weapons and shields mounted.**
 
-- **What hangs** (`src/systems/decorItems.js` decorMountOf, `src/net/decorLaw.js` decorIsMount). A weapon from the pack
+- **What hangs** (`src/systems/decor/decorItems.js` decorMountOf, `src/net/decorLaw.js` decorIsMount). A weapon from the pack
   (never the arrows) or a piece of armour hangs (ARMOR-MOUNT, 2026-09-26, Mac: "Cant set down armor in house - Would
   be awesome to display armor as well": DECOR2c hung the four shields alone, and armour never stands, so a cuirass had
   no way into a room; every piece hangs now, `test/armormount.test.js`), as its own pack picture - the owner's body's, as the pack draws
@@ -9811,7 +9811,7 @@ records re-aimed.
   "a mount" off the item's own numbers, so a visitor sees it hang as the owner hung it; its dye is read off the same
   numbers (an artifact's colours its own). The law's archive bound rises from 511 to 999 so the port's own pictures -
   Roleplay & Realism's weapons at 513 and on - hang too.
-- **Hung ON a surface** (`src/systems/decorPlacer.js`). The flight sets it where the eye meets a wall - the ray's own
+- **Hung ON a surface** (`src/systems/decor/decorPlacer.js`). The flight sets it where the eye meets a wall - the ray's own
   surface normal, facing the eye - flat against it: its heading and tilt are the surface's (on a floor or a table the
   eye's own heading, so the picture reads upright from where the owner stands), the turn spins it clockwise on the
   surface, the grid snaps it across the surface and never off it, and the owner's lift moves it up the surface. It
@@ -10001,7 +10001,7 @@ home's alone - they are about other players.
 
 - **The door** is one of Daggerfall's own: the five interior door models DaggerfallInterior hangs (AddActionDoors'
   9000 + the record's index of five - `world/interiorLayout.js` DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT, now exported
-  once), read into the catalogue from the town blocks' own door records (`systems/decorCatalogue.js` collectDecor -
+  once), read into the catalogue from the town blocks' own door records (`systems/decor/decorCatalogue.js` collectDecor -
   kind "Doors", named "Door N"), priced by size as any piece. The account service keeps it as the piece it is (a model
   id and a place): nothing on the service knows a door from a chair.
 - **Placed, it is one of the room's own action doors** (`scenes/decorRoom.js` hands a door piece to the host's
@@ -10011,8 +10011,8 @@ home's alone - they are about other players.
   (a house's or a ship's) and shared through the room with whoever stands in it. Moved or removed, it is taken back out
   (`ActionSystem.removeDoor`, new: the object, its link and its bucket). No solid bucket or eye target of the pool's
   own - the door is both.
-- **Where one goes** (`systems/decorDoorways.js`): a DOORWAY - an opening in a wall between two floors the eye passes
-  between. The room finder (`systems/decorRooms.js`) now keeps the pairs of floors it joined (`links()`), and each is
+- **Where one goes** (`systems/decor/decorDoorways.js`): a DOORWAY - an opening in a wall between two floors the eye passes
+  between. The room finder (`systems/decor/decorRooms.js`) now keeps the pairs of floors it joined (`links()`), and each is
   looked across at waist height by rays along the way through, stepped sideways: the opening is the run that goes
   through, each jamb the first step either side that meets the wall - the same wall, going on past both jambs, no
   deeper than a wall is thick (1.2 m). Its middle is between the jambs and in the wall's thickness, on its floor, under
@@ -10053,7 +10053,7 @@ home's alone - they are about other players.
   comes with a sale. The town answer names each home's free rooms (`rent: { vacant, from }`) and, for the character
   the caller names, the end of its own tenancy (`tenant`) - which opens the door (`homeMayEnter`: a tenant walks in
   whoever else may).
-- **The door** (`systems/onlineHomes.js` homeVisitorRows, `scenes/worldModes.js` openHomeRent): a home with a room
+- **The door** (`systems/online/onlineHomes.js` homeVisitorRows, `scenes/worldModes.js` openHomeRent): a home with a room
   free lists "Rent a room: from N gold a day" on its plaque (and "Go in" where the door opens for me); a click on a home
   that would shut me out asks the same where no plaque is drawn. Which room, how many days (each with its cost), and the
   price asked again before it is paid (`systems/homeRent.js` rentHomeRoom - the purse pays at once and gets it back on
@@ -10161,9 +10161,9 @@ HOME-VOTE II (below).
 - **DECOR-FIGURE - one of Daggerfall's people stands at its own size.** A FIGURE is a piece that is a flat of a person's
   archive (RDBLayout.NPCFlatArchives - its one home now the leaf `world/npcFlatArchives.js`, re-exported by
   `world/rdbLayout.js`, so the decor law the account service bundles can read it) and never one's own item
-  (`net/decorLaw.js` decorIsFigure) - every one of the catalogue's Vendors (`systems/decorCatalogue.js`, HOME-VENDOR:
+  (`net/decorLaw.js` decorIsFigure) - every one of the catalogue's Vendors (`systems/decor/decorCatalogue.js`, HOME-VENDOR:
   BLOCKS.BSA's people records stand in those archives alone - `test/people.test.js`), inside and in a yard alike. ONE
-  LAW, the archive: the placer (`systems/decorPlacer.js` decorEntrySized), the room's draw and the service all ask it.
+  LAW, the archive: the placer (`systems/decor/decorPlacer.js` decorEntrySized), the room's draw and the service all ask it.
   The placer takes no size step for one: placed at 1, and a figure grown or shrunk before is brought back to 1 when it
   is moved - one grown gives its half back as any shrink does, one shrunk pays nothing (`scenes/decorTool.js`
   decorEditPrice: it stands at that size for everyone already). The bar hides Smaller and Bigger for it and its keys
@@ -10196,7 +10196,7 @@ HOME-VOTE II (below).
   its new row without the score - homes.js HOME_MOVE_CARRIED), and a home taken up by its line's heir keeps its own.
 - **HOME-VOTE - where it is cast: at the house.** A home's door's plaque lists the votes under whatever else the door
   does, where the plaque draws its list (II D1: `ui/worldPlaque.js` worldPlaqueOn - the classic face folds a door's rows
-  it never draws), to anyone who may vote on it (`systems/onlineHomes.js` homeVoteRows, homeVotable - the service's own line, read
+  it never draws), to anyone who may vote on it (`systems/online/onlineHomes.js` homeVoteRows, homeVotable - the service's own line, read
   off the town's answer: `mine`, a hall's `member` or `insider`): "Vote up" and "Vote down", the vote standing taken
   back by a row of its own ("Take back your vote up" - HOME_VOTE_VERB.clear), each row's verb the vote it sends
   (homeVoteOfVerb); the score and the reader's own vote are among the door's lines (homeVoteLines). Where those rows
@@ -10386,7 +10386,7 @@ a house. The system should primarily hide plagues that the majority hates."
 - **One law, every reader.** Everything that hides a home reads homeShunned: the room the service hands out
   (`server-account/src/homeVotes.js` homeShownTo, so a build from before HOME-SHUN is handed a home at -1 to -4 whole),
   the paint homesInTown says (`server-account/src/homes.js` lookFor), the client's room, yard and paint
-  (homeDecorShown), and the door's lines (`src/systems/onlineHomes.js` homeVoteLines). No migration: the score kept on
+  (homeDecorShown), and the door's lines (`src/systems/online/onlineHomes.js` homeVoteLines). No migration: the score kept on
   the row is unchanged, only what it means. A home that stood at -1 to -4 stands whole again at the next read of its
   town.
 - **The four hosts.** As HOME-VOTE: `scenes/world.js` and `scenes/worldModes.js` read the law and change no line;
@@ -10719,7 +10719,7 @@ other player the same - whose claim then took it (measured on the real service: 
 for it again. Online the bank sells no house (HOME1), so the order's gift is the one deed made in the realm.
 
 - **The knight's door.** A building the character's own deed names - one the realm gave, standing in its layout
-  (`net/homeLaw.js` homeDeedOf, `systems/onlineHomes.js` realmDeedAt) - is never priced to it (`homeOfferPrice`). A deed
+  (`net/homeLaw.js` homeDeedOf, `systems/online/onlineHomes.js` realmDeedAt) - is never priced to it (`homeOfferPrice`). A deed
   customs carried in is an offline house and stays HOME1's ("Stay offline only").
 - **Held from everyone else.** The account service HOLDS such a deed's building (`/v1/homes/deed`,
   `server-account/src/homes.js` holdDeed, migration 0079 `homes.deed`): read off the character's realm record (the deed
@@ -10799,7 +10799,7 @@ and `test/decor2b.test.js` (the sale's line, the tap under a flight) and the ACC
   trader: they stand VENDOR_LISTING_S (thirty days, not the market's 72 hours) and are bought at that trader alone. A
   vendor on the wire is `{ map, id }` - the home's town and the decor id. The directory is searched by EVERY word over
   the item, the owner and the town (vendorSearch).
-- **The catalogue** (`systems/decorCatalogue.js`): the people Daggerfall stands in its rooms (`blockPeopleRecords`) are
+- **The catalogue** (`systems/decor/decorCatalogue.js`): the people Daggerfall stands in its rooms (`blockPeopleRecords`) are
   catalogue pieces too, kind Vendors (Mac: "People category sounds wrong call it vendors") - placed, one is made the
   trader. NUDE-HOSTS (FIELD BUGS 2026-10-05b): Show Nudity governs them as it does the world's people - off, no nude
   figure is offered, and one placed stands, flies and is pictured as its clothed stand-in (`01-Overview/Field-Bugs-2026-10-05b.md`).
@@ -11029,7 +11029,7 @@ own module (`src/net/hallLaw.js`), never net/guildLaw.js, which is in the relay'
   field's for a hole, a stroke where a line is wanted - the port's own art; the banner the record's cloth, 1 by 3, the
   field the first colour, a border the second, the device centred in the second, its foot a swallowtail. One drawing,
   two faces: an SVG string for the Guild tab, a canvas for the world's cloth (Path2D reads the same path text).
-- **The door** (`systems/onlineHomes.js`, `scenes/worldModes.js`): a hall's door is "Your guild's hall" to its
+- **The door** (`systems/online/onlineHomes.js`, `scenes/worldModes.js`): a hall's door is "Your guild's hall" to its
   members and "<Guild>'s hall <TAG>" to everyone else ("This is the hall of <Guild>. Its doors open to its members.");
   its plaque lists "Go in" to its members and "Who may enter: Members / Anyone" to its keepers. Under a house anyone
   may buy, a guildmaster whose guild holds no hall reads a third row, "Buy it for <Guild>: N gold from the treasury",
@@ -11174,7 +11174,7 @@ migration (the look's column and the yard's flag stand on every homes row alread
   treasury (`hallPieceBack`, `hall-piece`), never to the keeper. The town's yards (`/v1/homes/yards`) carry the hall's.
 - **The sale**: `halls.js` sellHall's sum is every piece of the building, yard and room alike (`piecesBackOf`), half of
   what records paid back into the treasury with the deed share, and the yard goes with the row (the table's cascade).
-- **The client**: `systems/onlineHomes.js` homeOutsideKept - the playing character's own home, or a hall the town's
+- **The client**: `systems/online/onlineHomes.js` homeOutsideKept - the playing character's own home, or a hall the town's
   answer calls it a `keeper` of; `scenes/homeYards.js` stands an empty yard for its keeper (a yard with pieces for
   everyone), finds the keeper's lot under their feet, and opens the decorator there as "Your guild's yard"
   (`homeYardWhere`) with `hall` - the panel says a piece's half goes to the guild's treasury and the purse is given
@@ -11232,7 +11232,7 @@ guild's own notes, members only"). Rides the undeployed `acct47` with GUILD1d (m
   The book (`net/noticeBook.js`) keeps the guild board's minute cache and a pin's request id as a town's, and speaks
   the guild board's own words for its refusals.
 - **The board in the hall** (Seats-Arc 8.2's "private guild board"): Daggerfall's own board model
-  (`rmbLayout.js` BULLETIN_BOARD_MODEL_ID), offered by the decorator in a guild's hall alone (`systems/decorCatalogue.js`
+  (`rmbLayout.js` BULLETIN_BOARD_MODEL_ID), offered by the decorator in a guild's hall alone (`systems/decor/decorCatalogue.js`
   HALL_BOARD_ENTRY, `decorRoomEntries` - never a home or a yard; appended to the scan, measured and priced as every
   piece). Placed in a hall, a member's press opens the Notice Board window on the guild's notes alone (`guildOnly` - no
   town read); its plaque reads "The Guild's Board"; anyone else is told "This board is <Guild>'s. Its notes are for its
@@ -11415,7 +11415,7 @@ Rides the undeployed `acct47` (migration 0048 - `acct45` and 0047 until main's P
 the developers see the seats first). The arc's slice labels `acct47`-`acct60` are the branch's history: the arc deploys
 as `acct61`, and main's own `acct47` (BOULDERS) and `acct48` (MORE-NODES) are different releases.
 
-- **The derivation** (`src/systems/townSeats.js`, Seats-Arc 3.1): in the boot pass, over the rows `pickRegionHubs`
+- **The derivation** (`src/systems/town/townSeats.js`, Seats-Arc 3.1): in the boot pass, over the rows `pickRegionHubs`
   reads - MAPS.BSA's own, a world-data mod's never - a crown seat is a location named for Daggerfall, Wayrest or
   Sentinel standing in the region of that name (17, 23, 20); a palace seat every other location whose building records
   hold a Palace (buildingType 16). One seat a location; a capital with a palace record is a crown, never also a palace
@@ -11489,7 +11489,7 @@ event (Seats-Arc 4.1-4.2, 12: "summed on read, capped on write"); every number i
   one 4 KiB request holds - or ten minutes after the oldest; the service counts each once (`UNIQUE (source, ref)`), in
   the week it was stood, at most 60 an account a UTC day of issue, asked in the INSERT.
 - **Gate kills** (`creditGate`): a gate claim now carries the region the claiming client's own scan puts the day's gate
-  in (`systems/gateSite.js` findGateSite) and the claiming character; `gate_kills.region` keeps it, and a recorded kill
+  in (`systems/gate/gateSite.js` findGateSite) and the claiming character; `gate_kills.region` keeps it, and a recorded kill
   in this week is written for the war-guild where it pledged in that region - 300, counted on read only where at least
   three of the day's claims agree on the region (a level top agrees on neither), 900 an account a week.
 - **Renown's region** (`creditRenown`; `net/renownTracker.js`): the tracker keeps XP by the region it was earned in and
@@ -12506,7 +12506,7 @@ the day the JS check spares).
 2026-10-01, Mac: "Finish the seats"; "Let's pick up 482" (PR 482's remaining scope). Seats-Arc 7.5, 4.2; Professions-Arc
 3.3, 4.8. Law (`src/net/fortLaw.js`, `townSeatLaw.js`, `professionLaw.js`, `recipeLaw.js`), service (`seatForts.js`,
 `seatInfluence.js`, `seatTurning.js`, `professions.js`, `writs.js`; migration `0062_seat_works_peace.sql`) and client
-(`src/net/townSeatBook.js`, `profBook.js`, `src/systems/travelPorts.js`, the Seat tab, the Stores page, the host).
+(`src/net/townSeatBook.js`, `profBook.js`, `src/systems/travel/travelPorts.js`, the Seat tab, the Stores page, the host).
 `acct61`; the relay untouched (its hash unchanged).
 
 - **The Siegewright's day** (Carpentry 100: "Rams +50% vitality; siege works a day sooner" - chosen now, no longer
@@ -13355,7 +13355,7 @@ below says what moved and where it is pinned. Mutants: `tools/mutants/fieldbugs2
 spell maker through the guild dispatcher, whose maker arms hand their window back - and the spell maker keeps the
 host's TEXT.RSC reader as `rows`. Every reader of the dispatcher's answer took "has rows" for "is a box": the station
 mapped the reader as a list and threw on every press (the interior frame's crash), and the guild popup pushed the whole
-window onto itself as a message. One test now, `systems/guildServiceFlow.js` isServiceBox (rows that are a list),
+window onto itself as a message. One test now, `systems/guild/guildServiceFlow.js` isServiceBox (rows that are a list),
 read by the station, the popup's onService, the probe door and both popups' own box pushes (`ui/guildServiceWindow.js`,
 `ui/covenWindow.js`). `test/stationrows.test.js`.
 
@@ -13417,7 +13417,7 @@ cloth. The census counts the mod's templates. `test/mwassign.test.js`.
 
 **DECOR-ROOMS ("For a house with multiple connects, add room switching tabs").** The decorator's flight starts at the
 eye, is leashed, and since DECOR-SHELL stops at every face - so a room behind a shut door was furnished by shutting
-the decorator, walking there and opening it again. `systems/decorRooms.js` finds a house's rooms in its own collider,
+the decorator, walking there and opening it again. `systems/decor/decorRooms.js` finds a house's rooms in its own collider,
 a few hundred rays a frame while the panel is up: floors a body stands on (headroom, and a ceiling over them), joined
 where the rise is a step and nothing stands between them at waist height - a wall, or a door as it stands now, exactly
 what the flight cannot pass. A house of two rooms or more gets a tab a room (`ui/decorPanel.js`): the eye's own room
@@ -13428,7 +13428,7 @@ room's all); and the next flight begins over the chosen room's floor, a piece mo
 ## CSA-J ONLINE (2026-09-28) - a sailor's boats stand in the cell
 
 Come Sail Away (`03-World/Come-Sail-Away.md`) is single-player: a boat is a possession in its owner's save, placed
-and sailed on their client alone (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_MODS). Online the others in a cell SEE
+and sailed on their client alone (`systems/online/onlineLane.js` ONLINE_PLAYERS_OWN_MODS). Online the others in a cell SEE
 it - DECLARED (36) on the mod's Port-Ledger row - under HCC-ONLINE's law and no new one:
 
 - **The record** (`systems/comeSailAway/comeSailAwayWire.js`): what the presentation shows, not the save - each active boat's
@@ -13940,7 +13940,7 @@ departure (`Port-Ledger.md` section A, PROFESSIONS).
   foods), the Court writs; `src/net/nodeLaw.js` - a pixel's day of patches (the clock's: the UTC day, DFU's season at
   its first instant), the herb tables, the seasons, the yields, the witnessed pixel, a region's writs. The pure tables
   they share with the client moved to modules that read no file (`src/formats/mapsTables.js`,
-  `src/systems/foragingCore.js`), re-exported from their old homes.
+  `src/systems/foraging/foragingCore.js`), re-exported from their old homes.
 - **The store** (`server-account/migrations/0027_professions.sql`): `prof_tracks`, `prof_stores` (own and bought),
   `node_harvests` (a day's, kept two days), `prof_withdrawals`, `world_witness` (SEAT0 3.2's first kind, the pixel),
   `writ_days` and `writs` (the Court's).
@@ -13962,10 +13962,10 @@ departure (`Port-Ledger.md` section A, PROFESSIONS).
   `src/systems/herbAct.js` (the hand, the steady hand, the Basket's search; Gentle acts); `src/ui/profHud.js` (the
   prompt, the meter, four toasts of three seconds, the day's chip, the rank's banner); `src/ui/profPages.js` (the
   Professions and Stores pages on the Stats rail; withdraw to pack); `ui/noticeWindow.js`'s Work tab (the region's
-  writs, Take); `src/systems/profItems.js` (a material as DFU's own item). The refusals are the service's own words
+  writs, Take); `src/systems/professions/profItems.js` (a material as DFU's own item). The refusals are the service's own words
   (`net/accountClient.js`).
 - **FORAGE0 law 6's online exception**: online, Foraging's six tools shelve whatever its switch says
-  (`systems/foragingInstall.js`).
+  (`systems/foraging/foragingInstall.js`).
 - **The switch**: `PROFESSIONS_OPEN` in `server-account/wrangler.toml` - shipped at `dev`.
 - **Not built here** (PROF0 22): the hover, the pad's and touch's own act buttons, the held map's worked patches, the
   Morrowind lane's sickle (FLAGGED), nodes in the fixed city (FLAGGED).
@@ -13999,7 +13999,7 @@ departure (`Port-Ledger.md` section A, MINING).
   place of its own; the target, the prompt, the act, Escape in every mode, the tool in the hand, the toasts with a gem
   and the XP); `src/scenes/mineHost.js` (veins at the foot of the rock piece nearest their point, else a stone tile,
   else nature's ground; boulders only at a piece; a dungeon's veins on its walls; the plan; the Warhammer's StrikeDown
-  frames); `src/systems/mineAct.js` (the Pick-Axe's act); `src/systems/profTemplates.js` (the nineteen new templates on
+  frames); `src/systems/mineAct.js` (the Pick-Axe's act); `src/systems/professions/profTemplates.js` (the nineteen new templates on
   DFU's dyed pictures); `src/net/profBook.js` (the dungeons' witnessed state, a gem's Stores, the smelt, the asks on the
   wire the pump skips); `src/ui/profHud.js` (the face, the glint, the aim and the pips); `src/ui/profPages.js` (Mining
   practised, the Forge on the Stores page); the Prospector's veins on both compasses (`ui/hud.js`,
@@ -14109,14 +14109,14 @@ both built, or both numbered, is one now:
   audit29) behind main's 0016 (raid_cleanses) and 0017 (raid_spoils): D1 applies by name in order, and none of the
   five was ever applied anywhere. The account view carries main's `raids` beside the branch's `marks`.
 - **LootTables.OnLootSpawned, built twice, is one list.** FORAGE3 (the branch) and OH-E (main) each found the port
-  raising it inside J..O for RRI alone and each built it again. `systems/loot.js` keeps FORAGE3's named registry (RRI2
+  raising it inside J..O for RRI alone and each built it again. `systems/loot/loot.js` keeps FORAGE3's named registry (RRI2
   its seeded first subscriber, a thrower logged and the rest run) and OH-E's `tableLootSpawned` is an add-and-remove
   door onto the same Map; the raise carries both sides' args, `{ locationIndex, key, items, rolls, luck, where }`.
   The dungeon's pile passes its type's index, the player's luck and `where: 'dungeon'`.
 - **Come Sail Away's shelf subscriber is one of PlayerActivate.OnLootSpawned's** (`systems/containerLoot.js`, FORAGE3's
   one home), registered by the mod's name when the world is built - main had called it from a host hook at the two
   shelf doors, after RRI's; it runs after RRI's and the mods loaded before it, on a shop shelf alone.
-- **CSA-H's custom-item rows live in `systems/itemTemplates.js`,** GetCustomItemsForGroup's one home since FORAGE1:
+- **CSA-H's custom-item rows live in `systems/item/itemTemplates.js`,** GetCustomItemsForGroup's one home since FORAGE1:
   `registerCustomItemGroup` (Come Sail Away's boat parts and deed, Iliac Puddle No More's fish) is a provider that
   takes its place in the providers' order at its first row; `rriItems.js` answers RRI's own again.
 - **A camp's stand answers what stood or null** (`scenes/world.js` _standCampEncounter): main's AUDIT OW3/OW4 made it
@@ -14471,7 +14471,7 @@ numbered, is one now:
   `/v1/renown/xp` does (no `character`, `max` at the cap), and `net/professionLaw.js` writRenown passes through
   renownRate: a tier-2 writ of 30 units pays 112, 150 at the full rate. (RENOWN-CHAR, below, made it the delivering
   character's track again, under the tracks' bound.)
-- **The loot pile's call carries both sides' arguments** (`systems/loot.js` addPileLootExtras): FORAGE3's
+- **The loot pile's call carries both sides' arguments** (`systems/loot/loot.js` addPileLootExtras): FORAGE3's
   `locationIndex` and `luck` for OnLootSpawned's subscribers, and REALM P0.4's `level` (online, a pile's gold divided
   back by the level) - at the dungeon's pile, the camp's and a tavern's.
 - **A camp's stand** answers what stood or null (THE MERGE), counts its camps off the pool's one counter and grows by
@@ -14561,7 +14561,7 @@ the Stores, a craft's pieces and its fee, a smelt's fee, a market piece bought, 
 away, and the Bank's Marks sold for gold. Each waited for the two-minute checkpoint or the exit save, and a crash in
 between lost what the service had already moved (the Stores spent, the Marks paid).
 
-- **`createSaveSoon`** (`systems/onlineCheckpoint.js`): a change asks ONE checkpoint on the next task, so a settle that
+- **`createSaveSoon`** (`systems/online/onlineCheckpoint.js`): a change asks ONE checkpoint on the next task, so a settle that
   mints ten pieces, or a craft and its fee, is one save. The checkpoint is handed in once the host has built it, and a
   change made before then (a kept act settled as the page boots) is saved at that point. It is the host's
   `onlineCheckpoint`, refused where the periodic one is; the next periodic checkpoint writes what a refused one did not.
@@ -14699,7 +14699,7 @@ else).
 - **Once, and for existing online characters only.** A save carries `loanAmnesty`, the amnesty it has had
   (`LOAN_AMNESTY` 1). A save written before this build has none (0) and is forgiven as the character next boots online;
   it is then marked, and a loan taken afterwards is owed. Every save written after it carries the mark
-  (`systems/save.js`), so a character made now is born past it. A character crossing customs is marked as it crosses
+  (`systems/save/save.js`), so a character made now is born past it. A character crossing customs is marked as it crosses
   (`systems/realmCustoms.js` `applyCustoms`), so an offline loan walked online is called in as before, never forgiven.
 - **Where:** the realm boot (`scenes/world.js`), in the one parse of the save, after RESTORE's `reclaimFromDevice` and
   the test room's refusal - before the save is restored and before `empireJoin` settles a due loan into a default. Offline saves are never
@@ -15517,7 +15517,7 @@ guildWordText); a custom class the filter catches is no class at all (`src/net/w
 projection, so no peer sees it); a maker's mark the filter catches is left off the piece (`src/net/recipeLaw.js`
 makerMark - the service's mint, the client's smith and cook mints, and the card and the furniture that show a mark;
 makerName stays the SHAPE law `src/net/decorLaw.js` reads to tell a forged mark); and a name the Item Maker gave a piece
-is starred wherever the pack names it (`src/systems/itemInfo.js` shownItemName, in resolveItemName and the macro and
+is starred wherever the pack names it (`src/systems/item/itemInfo.js` shownItemName, in resolveItemName and the macro and
 survival names - every holder, shelf and market). DFU's Item Maker window is untouched.
 
 Relay **world175** (the relay's parse runs both laws); ACCOUNT_VERSION **acct90** (no migration). The four hosts

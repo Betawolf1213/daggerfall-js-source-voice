@@ -27,7 +27,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LookFilter, swingSuppressesLook } from '../src/player/lookFilter.js';
-import { setValue, loadSettings } from '../src/systems/settings.js';
+import { setValue, loadSettings } from '../src/systems/settings/settings.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

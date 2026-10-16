@@ -199,7 +199,7 @@ export function drawEnhancedMidText(frame, doc = (typeof document === 'undefined
 // "Connecting...", "Reconnecting", "The relay refused the name" - the
 // online session's own word on the socket (AUDIT ONLINE D12/E11),
 // drawn top-left over the world. It is drawn in the ONLINE lane, which
-// is the enhanced lane whole (systems/onlineLane.js), so it had no
+// is the enhanced lane whole (systems/online/onlineLane.js), so it had no
 // business being the one online surface still in the classic bitmap
 // font while the chat, the roster, the party HUD and the friends panel
 // beside it are all in the skin's own face.

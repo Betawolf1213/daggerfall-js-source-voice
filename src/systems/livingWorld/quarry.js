@@ -5,7 +5,7 @@
 // In the living world's lane one on the street, not of the watch, stands for the target machine as a body of their own:
 // a `civilian` at their feet, hunted by a hostile monster that fights hand to hand (characters/enemyTargets.js
 // huntsCivilians), struck down by its first landed blow as DFU's civilian is by the player's (cityGuards.js
-// resolveCivilianHit: one hit, `disable()`), and a fight the watch comes to (systems/townWatch.js isTownThreat).
+// resolveCivilianHit: one hit, `disable()`), and a fight the watch comes to (systems/town/townWatch.js isTownThreat).
 
 /** A townsperson's height for the target machine's eye and reach (m) - a person's billboard. */
 export const QUARRY_HEIGHT = 1.8;

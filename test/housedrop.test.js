@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { planStore, planDropGold } from '../src/systems/itemTransfer.js';
+import { planStore, planDropGold } from '../src/systems/item/itemTransfer.js';
 import { groundRefusalOf } from '../src/systems/inventorySession.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { createHandheldTorches, readTorchSettings, HANDHELD_TORCHES_VENDOR, ON_STOW } from '../src/systems/handheldTorches.js';

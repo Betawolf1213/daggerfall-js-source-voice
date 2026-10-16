@@ -199,5 +199,5 @@ test('MEDIUM-DISTINCT the quests: at every load a running quest at a medium size
   const bridge = src('src/scenes/questBridge.js');
   const restore = bridge.slice(bridge.indexOf('restore(data) {'));
   assert.match(restore, /if \(isOnlinePage\(\)\) relayOnlineDungeons\(machine, [^\n]*\n(?:\s*\/\/[^\n]*\n)+\s*relayMovedLayouts\(machine, \{ carriesQuestItem: \(item\) => ctx\.carriesQuestItem\?\.\(item\) \?\? false \}\);\n/);
-  // and a shared copy on arrival (systems/questShare.js) - pinned by test/sd20g_delve.test.js
+  // and a shared copy on arrival (systems/quest/questShare.js) - pinned by test/sd20g_delve.test.js
 });

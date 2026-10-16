@@ -1644,7 +1644,7 @@ reinitialize instances nothing).
 IsNearPort (1095-1117) walks a square centred on the player's pixel -
 range pixels every way, so the default 3 searches 7 x 7 - and a location
 there answers when it is a harbour the map draws (Travel Options' list,
-`systems/travelPorts.js`, 378) or its Exterior.ExteriorData.PortTownAndUnknown
+`systems/travel/travelPorts.js`, 378) or its Exterior.ExteriorData.PortTownAndUnknown
 is not nought (ContentReader.HasLocation and GetLocation: the host's map
 dictionary and its location). PortLocationSearchRange is read live. A
 refusal of the deed or the variant box names the nearest of those
@@ -1986,7 +1986,7 @@ screen and on a pad's d-pad (The helm on screen, CSA-L).
 
 ## Online (CSA-A, CSA-J)
 
-The player's own (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_MODS): a boat
+The player's own (`systems/online/onlineLane.js` ONLINE_PLAYERS_OWN_MODS): a boat
 is a possession in the player's save, placed and sailed by them - Horse
 Cart and Cargo's wagon's shape. Its wind is each machine's own roll
 (`UpdateWind` draws from UnityEngine.Random), as it is for each DFU
@@ -2465,7 +2465,7 @@ Mac: *"I want to make the boat interaction like the loot menu. Being able to pic
 simple menu and button press."* The mod answers a press on one of its seven boxes, each in its own place on the hull,
 and the hull between them answers nothing; taking the helm and packing the boat were the same box, told apart by the
 interaction mode set beforehand (Steal packs). The port's ACT-MENU already lists a namer's verbs on the plaque under
-the crosshair - a horse's and a wagon's (`systems/horseCartLaw.js hccActionRows`) - and a boat of mine now lists its
+the crosshair - a horse's and a wagon's (`systems/horse/horseCartLaw.js hccActionRows`) - and a boat of mine now lists its
 own (`systems/comeSailAway/csaBoatMenu.js`, pure):
 - **The rows are the boxes the boat carries** (`boatTriggers` walks the boat's nodes for the seven): Take the helm
   (Leave the helm at her helm), Board (not while aboard her deck or at her helm), Open storage, Pick up, Change style

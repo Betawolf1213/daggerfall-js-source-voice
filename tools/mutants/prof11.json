@@ -41,7 +41,7 @@
   },
   {
     "name": "PROF11-mortar-row-heavier",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "baseWeight: 1, hitPoints: 50, capacityOrTarget: 0, basePrice: 2,",
     "new": "baseWeight: 2, hitPoints: 50, capacityOrTarget: 0, basePrice: 2,",
     "tests": [
@@ -50,7 +50,7 @@
   },
   {
     "name": "PROF11-mortar-row-dearer",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "baseWeight: 1, hitPoints: 50, capacityOrTarget: 0, basePrice: 2,",
     "new": "baseWeight: 1, hitPoints: 50, capacityOrTarget: 0, basePrice: 3,",
     "tests": [
@@ -59,7 +59,7 @@
   },
   {
     "name": "PROF11-mortar-template-never-written",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "registerCustomTemplates(MASONRY_TEMPLATE_ROWS);",
     "new": "",
     "tests": [
@@ -68,7 +68,7 @@
   },
   {
     "name": "PROF11-mortars",
-    "file": "src/systems/profItems.js",
+    "file": "src/systems/professions/profItems.js",
     "old": "  'Mortar',   // PROF11 (FOUND by its pin)",
     "new": "  // PROF11 (FOUND by its pin)",
     "tests": [
@@ -516,7 +516,7 @@
   },
   {
     "name": "PROF11-decor-rows-stack",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "playerTextureArchive: 0, playerTextureRecord: 0, stackable: false,\n})));\nregisterCustomTemplates(STONE_DECOR_ROWS);",
     "new": "playerTextureArchive: 0, playerTextureRecord: 0, stackable: true,\n})));\nregisterCustomTemplates(STONE_DECOR_ROWS);",
     "tests": [
@@ -525,7 +525,7 @@
   },
   {
     "name": "PROF11-decor-rows-wood-hard",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "baseWeight: d.weight, hitPoints: 200,",
     "new": "baseWeight: d.weight, hitPoints: 100,",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "PROF11-decor-rows-never-written",
-    "file": "src/systems/profTemplates.js",
+    "file": "src/systems/professions/profTemplates.js",
     "old": "registerCustomTemplates(STONE_DECOR_ROWS);",
     "new": "",
     "tests": [
@@ -553,7 +553,7 @@
   },
   {
     "name": "PROF11-stone-not-delivered",
-    "file": "src/systems/decorFurnish.js",
+    "file": "src/systems/decor/decorFurnish.js",
     "old": " || STONE_DECOR_TEMPLATES.includes(item?.templateIndex));",
     "new": ");",
     "tests": [
@@ -562,7 +562,7 @@
   },
   {
     "name": "PROF11-stone-given-looks",
-    "file": "src/systems/decorFurnish.js",
+    "file": "src/systems/decor/decorFurnish.js",
     "old": "if (FURNISH_PILLOWS.has(t) || stoneDecorModel(t) !== null) return null;",
     "new": "if (FURNISH_PILLOWS.has(t)) return null;",
     "tests": [
@@ -571,7 +571,7 @@
   },
   {
     "name": "PROF11-stone-no-model",
-    "file": "src/systems/decorFurnish.js",
+    "file": "src/systems/decor/decorFurnish.js",
     "old": "  const model = stoneDecorModel(item.templateIndex);",
     "new": "  const model = null;",
     "tests": [
@@ -580,7 +580,7 @@
   },
   {
     "name": "PROF11-stone-stands-as-its-lump",
-    "file": "src/systems/decorFurnish.js",
+    "file": "src/systems/decor/decorFurnish.js",
     "old": "  const flat = model === null ? pic : null;",
     "new": "  const flat = pic;",
     "tests": [

@@ -35,7 +35,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | T4 | low | Two comments said what the code does not: the route table's `POST /v1/auth/guest { label? }` (that body is refused), and legalLaw.js's "a relative link would open nothing" in the desktop app (it opens the bundled copy in a window of the app). | Corrected; the absolute URL stays, for the live text. |
 
 **DISC29 A and B** (`src/world/actionSystem.js`, `src/player/collider.js`, `src/scenes/dungeonContext.js`,
-`src/player/motor.js`, `src/systems/save.js`; the pins in `test/audit0929_actions.test.js`, `test/disc29_throne.test.js`,
+`src/player/motor.js`, `src/systems/save/save.js`; the pins in `test/audit0929_actions.test.js`, `test/disc29_throne.test.js`,
 `test/disc29_rarity.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -53,8 +53,8 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | E2 | low | Finding the player's card walked every batch of every record, every frame, lamp or none (5.7 us of the pass's 7.6 over two thousand batches). | recordBillboards notes it as it passes it; the lamps read it only when one casts. |
 | E3 | low | The card's two lamps were ranked among the eight nearest the EYE: with the camera 4 m or more away (the setting runs to 10) the lamps nearest a still player were often not casters, and his silhouette still hopped as the camera circled (MAGEAA00: 12 of 39 spots at 6 m). | The two casting lights nearest the card, by the pick's own measure and DISC6's hold, are made casters (`reserveSelfCasters`), each in place of the eye's farthest pick. |
 
-**SWING-LAW** (`src/player/eotbBody.js`, `src/combat/weaponRig.js`, `src/combat/swingLaw.js`, `src/systems/rrRealism.js`,
-`src/systems/rrInstall.js`, `src/characters/weaponStates.js`; the pins in `test/audit0929_swing.test.js`,
+**SWING-LAW** (`src/player/eotbBody.js`, `src/combat/weaponRig.js`, `src/combat/swingLaw.js`, `src/systems/roleplayRealism/rrRealism.js`,
+`src/systems/roleplayRealism/rrInstall.js`, `src/characters/weaponStates.js`; the pins in `test/audit0929_swing.test.js`,
 `test/rr1_realism.test.js`, `test/swinglaw.test.js`, `test/disc28_speed.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -66,7 +66,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | S2, S4 | low | The handling table said "Dagger (and the tanto)" (DFU draws the tanto as a long blade) and that a staff "sweeps a little quicker" (every staff is two-handed: quicker than the other two-handers, not than a sword); the record's saber row gave 0.83 s mods off at Strength 50 (0.92 there - 0.83 from 56 up), and the PR's warhammer row left out the Strength. | The words corrected. |
 
 **WB8** (`src/net/gateBrain.js`, `src/net/gateMods.js`, `src/net/wire.js`, `src/net/gateLink.js`, `src/scenes/gateCourt.js`,
-`src/ui/gateBossBar.js`, `src/systems/gateOmen.js`, `src/net/gateLaw.js`; the pins in `test/audit0929_gate.test.js`,
+`src/ui/gateBossBar.js`, `src/systems/gate/gateOmen.js`, `src/net/gateLaw.js`; the pins in `test/audit0929_gate.test.js`,
 `test/wb8b_gate_marks.test.js`, `test/wb8c_gate_detail.test.js`)
 
 | ID | Sev | Finding | Fix |

@@ -535,7 +535,7 @@ test('BA1: the four hosts gate the classic stride through the one gate, drive th
   const music = rd('src/systems/music.js');
   assert.match(music, /new SongPlayer\(audio\.ctx, audio\.listenerBus\?\.\(\) \?\? null, audio\.reverbSend\?\.\(\) \?\? null\)/, 'the MIDI player hands its master to the send (DW-D: and its dry path to the listener, as every bus)');
   assert.match(music, /new AudioSongPlayer\(audio\.ctx, null, audio\.reverbSend\?\.\(\) \?\? null\)/, 'and the streamed one');
-  assert.equal((rd('src/systems/songPlayer.js').match(/if \(this\._reverbSend\) this\._master\.connect\(this\._reverbSend\);/g) ?? []).length, 2, 'both players\' masters');
+  assert.equal((rd('src/systems/song/songPlayer.js').match(/if \(this\._reverbSend\) this\._master\.connect\(this\._reverbSend\);/g) ?? []).length, 2, 'both players\' masters');
   const renderer = rd('src/render/renderer.js');
   assert.match(renderer, /uniform vec3 uAmbientSky;/); assert.match(renderer, /mix\(uAmbient, uAmbientSky, n\.y\) : mix\(uAmbient, uAmbientGround, -n\.y\)/, 'Trilight by the normal');
   assert.match(renderer, /setLighting\(ambient, sunScale, sunColor, trilight = null\) \{[\s\S]{0,400}this\.setAmbientTrilight\(trilight\);/, 'every flat caller clears it');

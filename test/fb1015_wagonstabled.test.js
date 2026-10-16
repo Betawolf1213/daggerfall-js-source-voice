@@ -1,6 +1,6 @@
 // FIELD BUGS 2026-10-15d WAGON-STABLED (Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
 // keep sending my wagon away, but every time I enter a building or dungeon it appears outside again"). HOLDINGS' Send
-// away (systems/horseCart.js sendTransportAway, 10155e299a) put the pair in the mod's WithPlayer - the same record as a
+// away (systems/horse/horseCart.js sendTransportAway, 10155e299a) put the pair in the mod's WithPlayer - the same record as a
 // pair beside a player on foot - and Horse Cart and Cargo's HandlePreTransition [IL_98f0] parks a WithPlayer wagon at
 // the next door and stands a WithPlayer horse behind the player there. The record now carries two words of the port's
 // own (WagonStabled, HorseStabled - horseCartLaw.js newSaveData): set by Send away, let go by a summon, a park, a mount,
@@ -9,9 +9,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeWorld } from './hccWorld.mjs';
-import { WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT, newSaveData, normalizeSaveData } from '../src/systems/horseCartLaw.js';
+import { WAGON_MODE, HORSE_MODE, TRANSPORT, HCC_TEXT, newSaveData, normalizeSaveData } from '../src/systems/horse/horseCartLaw.js';
 import { stableWords, stableProviderFor } from '../src/ui/holdingsPages.js';
-import { horseWhereOf } from '../src/systems/upkeepRuntime.js';
+import { horseWhereOf } from '../src/systems/upkeep/upkeepRuntime.js';
 
 /** Through a door and out again, as worldModes.js's interiorTransition / dungeonTransition and their exits call the
  *  runtime: the pre-transition before the dismount, the landing inside, the step back out. Answers the record as it

@@ -1,7 +1,7 @@
 // @ts-check
 // SD4a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 5): THE SUPER DUNGEON'S
 // DIFFICULTY - the port's hardest. A Hollow is a Super dungeon by its location's word (`superTier`, read by the one law,
-// systems/dungeonTier.js), and the dungeon host (scenes/dungeonContext.js) reads these where it reads the Elite's
+// systems/dungeon/dungeonTier.js), and the dungeon host (scenes/dungeonContext.js) reads these where it reads the Elite's
 // (world/spawnedDungeons.js ELITE_*):
 //
 //   |                        | Regular      | Elite        | Super                                                  |

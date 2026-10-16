@@ -380,7 +380,7 @@ CityNavigation / MobilePersonMotor / MobilePersonBillboard, verbatim:
   and no enemies near - PROBED LIVE (the closeup subject flipped to
   idle facing the camera). The billboard rides the monster wheel
   (records 0-4 mirrored, 4 fps move / 1 fps idle).
-- THE POOL (systems/townPopulation.js): max = clamp(blocks/16,1,4) *
+- THE POOL (systems/town/townPopulation.js): max = clamp(blocks/16,1,4) *
   24 (Daggerfall city: 96); one spawn per 10Hz tick on the navgrid
   within 96 cells; recycle past 150 units, after 4 failed seeks, or
   at NIGHT; pop-in/out allowed only beyond 120 units or outside the
@@ -466,7 +466,7 @@ Node-pure (the window UI and the scene activation wiring are T3b):
   bonus drawn in classic DFRandom call order (stream-position
   dependent in DFU too), relinkChildren building the tree. Enums:
   FactionTypes/SocialGroups (11)/GuildGroups.
-- THE REACTION LAYER (systems/talk.js): findFactions with the -1
+- THE REACTION LAYER (systems/talk/talk.js): findFactions with the -1
   wildcards (PersistentFactionData verbatim; region compares the
   parser's 0-based value - DFU's misleadingly named
   oneBasedRegionIndex parameter receives 0-based too);
@@ -503,7 +503,7 @@ exterior-capable hosts.
 Townsfolk can be talked to and pickpocketed, live in BOTH exterior
 motor hosts (the standing host rule; one shared seam module):
 
-- THE SESSION (systems/talkSession.js): mobile townsfolk all talk
+- THE SESSION (systems/talk/talkSession.js): mobile townsfolk all talk
   as the region's People faction whose parent is a PROVINCE - so
   DFU's guild-greeting branch never runs for them and the greeting
   is purely the reaction ladder, verbatim: < -20 refuses via
@@ -674,7 +674,7 @@ The talk window answers "Where is...?" in the test-city host:
   province ruler's title); banks "The Bank of <region>", guild
   halls = the faction name, temples = the faction's first child,
   palaces TEXT.RSC 475/476/477, houses empty.
-- THE NAMED-BUILDING POOL (systems/talkTopics.js, verbatim
+- THE NAMED-BUILDING POOL (systems/talk/talkTopics.js, verbatim
   GetCompleteBuildingData): the location's exterior building list is
   a pool; scanning blocks y->x, each named-type block building draws
   the first unused pool entry OF ITS TYPE (nameSeed/factionId/
@@ -1533,7 +1533,7 @@ because nothing in the suite drives that path.
 ### The slice ids were renamed
 
 W1/W2 became **WM1/WM2**: `W1` was already taken, 53 times, by the
-travel-map and live-weather slice - including `systems/weatherSim.js`'s
+travel-map and live-weather slice - including `systems/weather/weatherSim.js`'s
 own header. A slice id is a grep handle in this repo, and two meanings
 for one handle makes both useless.
 
@@ -1789,7 +1789,7 @@ About 5,200 lines.
 
 ### What was left standing, and why
 
-- **`systems/travel.js` IS THE VERBATIM PORT AGAIN.** The road term in
+- **`systems/travel/travel.js` IS THE VERBATIM PORT AGAIN.** The road term in
   `travelPixelMinutes` and the two optional deps on
   `calculateTravelTime` (`path`, `roadAt`) are gone. The only departure
   that ever touched the travel law is retired with the system, so that

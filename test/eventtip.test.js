@@ -10,7 +10,7 @@ import {
   RAID_MARK_CSS, RAID_LEGEND_TEXT, RAID_TIP_TITLE, TIP_LINES_MAX, TIP_TEXT_MAX, RAID_HIT_PX,
 } from '../src/ui/eventMapMarks.js';
 import { RAID_DURATION_MINUTES } from '../src/systems/raidingParties.js';
-import { createGateOmen, gateTip } from '../src/systems/gateOmen.js';
+import { createGateOmen, gateTip } from '../src/systems/gate/gateOmen.js';
 import { readGateMark, GATE_RING_CSS } from '../src/ui/gateMapMark.js';
 import { gateTimes, gatePhase, gateCountdown, countdownText, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
 import { gateModsWords } from '../src/net/gateMods.js';   // WB8c: tonight's marks on the card

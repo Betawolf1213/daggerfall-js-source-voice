@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // UI4 - THE ITEM INFO PANEL (DaggerfallInventoryWindow :303-307). Setup
 // only ADDS the panel when EnableInventoryInfoPanel is on, so with it
@@ -27,7 +27,7 @@ test('UI4: the panel draws behind the setting, not unconditionally', () => {
 
 test('UI4: it ships True, so the default is unchanged, and the key is LIVE', () => {
   resetToDefaults();
-  assert.match(read('src/systems/settingsDefaults.js'), /"EnableInventoryInfoPanel": "True"/,
+  assert.match(read('src/systems/settings/settingsDefaults.js'), /"EnableInventoryInfoPanel": "True"/,
     'the shipped default - the port has been RIGHT by accident, and is right on purpose now');
   setValue('GUI', 'EnableInventoryInfoPanel', false);
   resetToDefaults();

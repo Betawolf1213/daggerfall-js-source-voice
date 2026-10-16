@@ -1,7 +1,7 @@
 [
   {
     "name": "the-ground-is-freed-with-everything-else",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'roads-hazelnut': Object.freeze({\n    Enabled: true,        // which network is painted, and so which beds are smoothed\n    SmoothRoads: true,    // whether the beds are smoothed at all - the dial that gave the floor away\n    RiversAndStreams: true,   // LANDFORM3: whether rivers are painted, and so cut into the land - on, past the mod's shipped off (above)\n  }),",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "the-smoothing-goes-back-to-being-a-dial",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    SmoothRoads: true,    // whether the beds are smoothed at all - the dial that gave the floor away\n",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "the-water-is-freed-though-it-moves-the-ground",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    RiversAndStreams: true,   // LANDFORM3:",
     "new": "    // RiversAndStreams: true,   // LANDFORM3:",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "the-key-check-goes-so-every-switch-of-a-ground-mod-is-forced",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  if (!room || !Object.hasOwn(room, key)) return undefined;",
     "new": "  if (!room) return undefined;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "offline-starts-forcing-too",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  return isOnlinePage(search) ? room[key] : undefined;",
     "new": "  return room[key];",
     "tests": [
@@ -49,7 +49,7 @@
   },
   {
     "name": "the-forced-value-is-invented-rather-than-the-mods-own",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    Enabled: true,        // which network is painted, and so which beds are smoothed",
     "new": "    Enabled: false,",
     "tests": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "shield-widget-forced-again-though-the-block-is-the-defenders",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  'shield-widget',               // the block is the DEFENDER's - damageShieldPool runs where the blow lands\n",
     "new": "",
     "tests": [
@@ -126,7 +126,7 @@
   },
   {
     "name": "the-balance-three-are-freed-again",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  meanerMonsters: Object.freeze({ Enabled: true }),\n  pcaao: Object.freeze({ Enabled: true }),",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "the-loot-roll-is-freed-again",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "  unleveledLoot: Object.freeze({ Enabled: true }),\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "the-ruleset-frees-intensive-training",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "    'RefinedTraining.intensiveTraining': false,\n",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "the-ruleset-frees-weapon-speed",
-    "file": "src/systems/onlineLane.js",
+    "file": "src/systems/online/onlineLane.js",
     "old": "advancedArchery: true, weaponSpeed: true, weaponMaterials: true,",
     "new": "advancedArchery: true, weaponMaterials: true,",
     "tests": [

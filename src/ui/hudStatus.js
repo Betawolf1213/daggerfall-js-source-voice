@@ -197,7 +197,7 @@ export const STATUS_GLYPHS = Object.freeze({
     'kkkkbbaaacaakkkk', 'kaaaaaacaaaaaaak', 'kaaakaaaaaakaaak', 'kkakkkaaaakkkakk',
     '.kkkkaakkaakkkk.', '...kaaakkaaak...', '...kkaakkaakk...', '....kkkkkkkk....',
   ] }),
-  // WILD1 (systems/wildZone.js): two blades crossed over the zone's blood - the open zone, on both skins
+  // WILD1 (systems/wild/wildZone.js): two blades crossed over the zone's blood - the open zone, on both skins
   wild: Object.freeze({ pal: { a: '#cfd4dc', b: '#ffffff', g: '#c08a3e', c: '#a8241a' }, rows: [
     'kkk..........kkk', 'kbkk........kkbk', 'kabkk......kkbak', 'kkabkk....kkbakk',
     '.kkabkk..kkbakk.', '..kkabkkkkbakk..', '...kkabkkbakk...', '....kkabbakk....',
@@ -299,7 +299,7 @@ export function needGlyph(chip) {
  * The widget's tiles, in the order the foot row read them: the spells (mine, then others'), the set powers, the
  * poisons and diseases, the needs.
  * @param {{ spells?: any[], powers?: any[], afflictions?: any[], needs?: any[], rested?: { minutes: number }|null, zone?: { name: string, foot?: string|null }|null }} lists - `spells` ui/enhancedHud.js
- *   effectRows, `powers` the host's set chips (systems/sigilSetPowers.js setHudChips), `afflictions` afflictionRows,
+ *   effectRows, `powers` the host's set chips (systems/sigil/sigilSetPowers.js setHudChips), `afflictions` afflictionRows,
  *   `needs` survivalHudChips, `rested` REST1's night interval (its real minutes left), `zone` WILD1's open zone (its
  *   tile first)
  * @returns {StatusTile[]}
@@ -331,7 +331,7 @@ export function statusTiles({ spells = [], powers = [], afflictions = [], needs 
     tile({ key: `need:${c.key}`, kind: c.level === 'boon' ? 'buff' : c.level === 'danger' ? 'danger' : 'warn', name: String(c.text ?? ''), glyph: needGlyph(c), foot: c.foot != null ? String(c.foot) : c.tier ? `${c.tier}/${c.of}` : null,
       say: c.level === 'boon' ? null : levelSaid(String(c.text ?? ''), c.level), cost: c.level === 'danger' });
   }
-  // REST1: the night interval's real minutes left at its foot (systems/restAct.js nightRealMinutesLeft), a buff.
+  // REST1: the night interval's real minutes left at its foot (systems/rest/restAct.js nightRealMinutesLeft), a buff.
   // AUDIT C&C (lens S): named "Next night" (REST_ACT_TEXT.rested, held equal by its pin) - REST1's "Rested" stood online
   // beside Boons' Well rested, a bank of sleep and not a countdown; this is the wait until a night can pass again
   if (rested?.minutes > 0) tile({ key: 'rested', kind: 'buff', name: 'Next night', foot: `${rested.minutes}m`, glyph: 'rested' });

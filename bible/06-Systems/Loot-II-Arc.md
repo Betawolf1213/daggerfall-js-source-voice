@@ -65,9 +65,9 @@ And three of this arc's own, each the lesson of something this page found:
 Every number here was taken through the real code - the fold, the saving throw, `rarityChances` - by probes the
 answer's research ran, and each slice's pins drive the same paths.
 
-- **Clothing never rolls.** `src/systems/lootRarity.js` `rarityEligible` takes a weapon, a piece of armour or of
+- **Clothing never rolls.** `src/systems/loot/lootRarity.js` `rarityEligible` takes a weapon, a piece of armour or of
   jewellery and nothing else, so a garment is Common, or Magic only when DFU's own MAGIC.DEF roll lands on one
-  (`src/systems/loot.js` `createRegularMagicItem` - groups 6 and 12 are in both of its pick lists). It was not one
+  (`src/systems/loot/loot.js` `createRegularMagicItem` - groups 6 and 12 are in both of its pick lists). It was not one
   line to open: no kind in `AFFIX_KINDS` named a clothing group, so a garment let through would have rolled a "Rare"
   with no lines and a jewel's enchantment. And a crafted garment took NEITHER roll its quality promises
   (`Professions-Arc.md` 9.2: Superior a Magic roll, Masterwork a Rare): `src/systems/smithItems.js` `mintPiece` gates
@@ -286,7 +286,7 @@ DFU's magic items' charges among them - from tier 10. Things DFU's roll cannot m
 
 ### LOOT12 - honest resistance (2026-10-07)
 
-`src/systems/lootRarity.js`: `RESIST_CAP` (45) and the fold (`affixFold`): a piece of a ROLLED tier (`ROLLED_TIERS` -
+`src/systems/loot/lootRarity.js`: `RESIST_CAP` (45) and the fold (`affixFold`): a piece of a ROLLED tier (`ROLLED_TIERS` -
 Magic, Rare, Legendary) sums its resistance lines apart, and each element's rolled sum lands on the wearer held to the
 cap; a piece of any other tier (an Aetheric piece's fixed lines) lands whole beside it. `rolledResistOf(entity,
 element)` answers `{ worn, counts }` for the card (LOOT18). One fold, so DFU's every read of the channel - the saving
@@ -305,7 +305,7 @@ Resistance untouched, a bare body's third). `tools/mutants/loot12.json` (8, all 
 
 ### LOOT13 - luck, a nudge (2026-10-07)
 
-`src/systems/lootRarity.js`: `luckMult` - `1 + (luck - 50) x LUCK_PCT_PER_POINT / 100`, held to `LUCK_MULT_MIN` (0.5)
+`src/systems/loot/lootRarity.js`: `luckMult` - `1 + (luck - 50) x LUCK_PCT_PER_POINT / 100`, held to `LUCK_MULT_MIN` (0.5)
 and `LUCK_MULT_MAX` (1.5) - multiplies every threshold `rarityChances` computes, before its cap: the source's Magic,
 Rare and Legendary, and a champion's own Legendary source (CHAMP-LOOT's `legendaryTier`/`legendaryQuality`).
 `LUCK_PER_POINT` (2, added) is retired. Every door that reads `rarityChances` takes the law with it - the host door, the
@@ -328,7 +328,7 @@ clamp that holds).
 
 ### LOOT14 - the wardrobe (2026-10-07)
 
-`src/systems/lootRarity.js`: `CLOTHING_GROUPS`, `isGarment`, `garmentOnFeet` (the slot table's own Feet, `SLOT_RULES`);
+`src/systems/loot/lootRarity.js`: `CLOTHING_GROUPS`, `isGarment`, `garmentOnFeet` (the slot table's own Feet, `SLOT_RULES`);
 `rarityEligible` takes a garment; the three kinds `standing` (a param of `STANDING_GROUPS`, DRESS1's five), `warmth` and
 `dry` (each marked `survival`), appended after every kind before them so `AFFIX_IDS` keeps every other kind's place and
 no other piece's draw moves; `stat` and `skill` name the two clothing groups too, and `kindParams` holds a garment's
@@ -379,16 +379,16 @@ marked garment).
 
 ### LOOT15 - six Legendary garments (2026-10-07)
 
-`src/systems/lootRarity.js`: `WARDROBE_LEGENDARIES`, the six records, a table beside `LEGENDARIES` - so the thirty and
+`src/systems/loot/lootRarity.js`: `WARDROBE_LEGENDARIES`, the six records, a table beside `LEGENDARIES` - so the thirty and
 every reader of them (the Sigil Broker's `baseLegendaries`, the Test Room's thirty) stand as they were. Each names
 `GARMENT_RECORD_GROUP` (`Clothing`) and its templates of both cuts; `recordFitsGroup` lets a record land on its own
-group or, the wardrobe's, on a garment of either cut, and `legendariesFor`, `validImprint` and `src/systems/lootCodex.js`
+group or, the wardrobe's, on a garment of either cut, and `legendariesFor`, `validImprint` and `src/systems/loot/lootCodex.js`
 `imprintChoices` read it. `allLegendaries` lists the six after the thirty and before a mod's. Each record carries its
 power (`powerOf` reads a record's own, as a mod's), its family (`found`) and its lore. `powerFits` gives Unseen to a
 hood-capable piece alone (`survival/temperature.js` `hoodCapable`, HOOD-SAID's one law); `powerLine` writes
 " (survival off)" after a climate power's line (law 8).
 
-**The powers, through the seams that ran.** `src/systems/lootPowers.js` `wardrobeFold` is an entity fold, registered
+**The powers, through the seams that ran.** `src/systems/loot/lootPowers.js` `wardrobeFold` is an entity fold, registered
 beside the kit's seams - mine alone, nothing with the switch off, a power once however many pieces carry it. Desert-Born
 and Mountain-Born fold `heatDegrees` and `coldDegrees`, which `wardrobeCtx` hands beside the host's own fire and frost
 resistance, and `feltTemperature` takes off the felt number on its own side alone (AUDIT LOOT II A2, below - they had
@@ -420,7 +420,7 @@ the record).
 
 ### LOOT16 - cursed finds, and the temple's lifting (2026-10-07)
 
-`src/systems/lootRarity.js`: `CURSE_IN` (12) and `CURSE_DRAWBACKS`, six live rows of DFU's catalogue with the params a
+`src/systems/loot/lootRarity.js`: `CURSE_IN` (12) and `CURSE_DRAWBACKS`, six live rows of DFU's catalogue with the params a
 curse takes - Bad Rep With a social group (never All), Bad Reactions From humanoids, animals or Daedra, Item
 Deteriorates in holy places (a weapon's or armour's in the sun too), User Takes Damage in holy places, and on a weapon
 Low Damage Vs a kind and Health Leech unless used daily. `curseParams` also refuses a drawback that would undo the
@@ -432,10 +432,10 @@ Legendary a door laddered that is no Exalted, and draws for nothing else; `rollL
 pass, and `src/systems/foeLootCap.js` `rollCorpseKit` after the kit's - every body and pile door, never a made piece,
 the Broker's, the spoils or a quest's. `tierLabel` puts `CURSED_WORD` before a known curse's tier ("Cursed Rare",
 "Cursed Perfect Rare"); `affixBand` gives a cursed Legendary's line its band; `curseLine` names the drawback;
-`validCurse` is the wire's (`src/systems/loot.js` validLootItem). The payloads are DFU's, ungated by identification:
+`validCurse` is the wire's (`src/systems/loot/loot.js` validLootItem). The payloads are DFU's, ungated by identification:
 worn unknowing, a curse bites unsaid.
 
-`src/systems/lootCurse.js` (new): `liftPrice` (a quarter of the piece's price, at least `LIFT_FLOOR`, 300),
+`src/systems/loot/lootCurse.js` (new): `liftPrice` (a quarter of the piece's price, at least `LIFT_FLOOR`, 300),
 `liftRefusal` ('off', 'not', 'unknown', 'worn', 'gold'), `cursedKnown` and `liftCurse` - paid, the drawback out of the
 enchantments, the mark gone, the line and the price kept. The temple's row: `src/ui/guildServiceWindow.js` `LIFT_ROW`
 and `LIFT_KEY` (L, after DFU's own keys) in the Reforge's place when the host hands `hooks.lift`, and
@@ -474,7 +474,7 @@ guard, which `cursePiece` repeats: what it adds is that a Magic costs a seeded s
 
 ### LOOT17 - the hone (2026-10-07)
 
-`src/systems/lootRarity.js`: `honeableLines` - on a piece the Reforge takes (a Magic or Rare piece, an Exalted
+`src/systems/loot/lootRarity.js`: `honeableLines` - on a piece the Reforge takes (a Magic or Rare piece, an Exalted
 Legendary), every line a roll made (`affixBand`; a Legendary's record lines are its signature) that stands under its
 band's top; `honeAffix` takes one up its band, from one above its value to the top - never lower and never the same, so
 a paid press always moves it - its kind and param kept, so its name stands (a name's word reads the tier's band, never
@@ -501,7 +501,7 @@ and the host's hook. `tools/mutants/loot17.json` (31, all dead).
 
 ### LOOT18 - seen: the line compare, the junk and the filter (2026-10-07)
 
-**The line compare.** `src/systems/lootRarity.js` `lineComparison(entity, item, replaces)`: each of a known piece's
+**The line compare.** `src/systems/loot/lootRarity.js` `lineComparison(entity, item, replaces)`: each of a known piece's
 lines against the same line - its kind and its param - summed over the known pieces a wear would replace (`delta`, or
 null for a line they lack), their lines it would lose (`lost`, at their sum), and on a resistance line what of its
 element the wearer's rolled gear counts now and would count after, under LOOT12's cap (`resist`); null with the switch
@@ -511,7 +511,7 @@ struck through and `lost`, a resistance line's "20% → 15% counts" - over `wear
 second sword that would go to a free off-hand (DFU's EquipItem) compares with nothing; `src/ui/enhancedInventory.js`
 `infoCard` hangs it under the compare block.
 
-**Junk.** `src/systems/itemJunk.js` (new), the lock's twin: `junk: true` (a declared item field), on gear alone
+**Junk.** `src/systems/item/itemJunk.js` (new), the lock's twin: `junk: true` (a declared item field), on gear alone
 (`JUNK_GROUPS` - never a quest's item or a bound one, which no counter takes); marked, a piece's lock is lifted, and
 locked (`lockLiftsJunk`, the card's Lock), its mark is - the later word stands. The pack's card offers Junk beside the
 lock on a piece in the pack, not worn, says `JUNK_LINE`, and the picture of a junk piece is dimmed and greyed
@@ -548,7 +548,7 @@ its block on the card. `tools/mutants/loot18.json` (45, all dead).
 
 ### LOOT19 - scrying (2026-10-07)
 
-`src/systems/lootScry.js` (new): `SCRY_PRICE` (3 Welkynd Shards and 500 gold); `familyKinds` - a family's dungeon kinds,
+`src/systems/loot/lootScry.js` (new): `SCRY_PRICE` (3 Welkynd Shards and 500 gold); `familyKinds` - a family's dungeon kinds,
 read off LOOT6's `DUNGEON_FAMILY` - and `SCRY_FAMILIES`, every family (each has a kind of its own; a mine is no
 family's); `SCRY_FAMILY_WORDS`, `DUNGEON_KIND_WORDS` and `familyPlaces` ("crypts, vampire haunts, ruined castles and
 cemeteries"); `scryRows`, a region's map table as the law reads it (each row's name, its region's and its map pixel,
@@ -578,7 +578,7 @@ walked with a record of the family already lit: it walks another family's now).
 
 ### LOOT20 - sockets (2026-10-07)
 
-`src/systems/lootRarity.js`: `SOCKET_PER_MILLE` (a Rare 150, a Legendary 300), `SOCKET_GROUPS` (a weapon, armour, a
+`src/systems/loot/lootRarity.js`: `SOCKET_PER_MILLE` (a Rare 150, a Legendary 300), `SOCKET_GROUPS` (a weapon, armour, a
 jewel - never a garment: a gem's resistance or a blow's fire is a line of fight, which LOOT14's pool keeps off the
 clothes), `SOCKET_EMPTY` and `socket`, a declared item field (`SOCKET_VALUES`); `GEM_IDS` and `GEM_NAMES` - DFU's eight
 gems in their templates' order, the Gems group's 0 to 7 (`gemKindOf`) - and `GEM_LINES`, the design's table, each line of a
@@ -624,7 +624,7 @@ handed to the pass, and a gem's line marked with another gem).
 beside the shard's 571 and the Portal Stone's 572 - miscellany, as the Portal Stone is (a Gems piece is a crystal a slot
 takes), on DFU's gem art (TEXTURE.254: Turquoise's blue, Amber's lamplight). Both registered with the Thunderlock's
 registry (`registerUniqueFind`) as LATE finds, from source tier 6 (`WELKYND_STONE_TIER`) and tier 10
-(`VARLA_STONE_TIER`); `src/systems/lootRarity.js` grows `rollLateFinds`, which the host door runs as its very last draws
+(`VARLA_STONE_TIER`); `src/systems/loot/lootRarity.js` grows `rollLateFinds`, which the host door runs as its very last draws
 (after the sockets' pass), while `rollUniqueFinds` passes a late find by - so a find added after a seed was cut moves
 none of the draws the seed already made (law 9), and a find under its tier costs no draw. Their uses go through
 useItem's own registered arm (`registerItemUseHandler`): the Welkynd Stone fills the user's magicka; the Varla Stone

@@ -48,10 +48,10 @@ import { equipItem, equipTableOf, EQUIP_SLOTS, isBrokenItem, isForbiddenEquip, i
   getItemHands, ITEM_HANDS, getEquipSlot,   // UI2: the equip table's own answer - which pieces a slot of the body takes
   equipDelaySnapshot, billEquipDelayOnClose, ITEM_BROKEN_TEXT_ID, FORBIDDEN_EQUIPMENT_TEXT_ID } from './equip.js';
 import { isShieldTemplate } from './armorMaterials.js';
-import { itemLongName, conditionPercentage } from './itemInfo.js';
+import { itemLongName, conditionPercentage } from './item/itemInfo.js';
 import { isEnchanted } from './inventory.js';   // UI2: an enchanted piece shows its wear (its powers spend its condition - the pack's rule)
-import { shownSpellName } from './loot.js';   // L10N3e: a slotted spell's name as the book shows it - the stored name stays the canonical one
-import { isAmmunition } from './itemTemplates.js';   // THUNDERLOCK-ART: a stack of shot shows its count, never a wear bar (the pack's rule)
+import { shownSpellName } from './loot/loot.js';   // L10N3e: a slotted spell's name as the book shows it - the stored name stays the canonical one
+import { isAmmunition } from './item/itemTemplates.js';   // THUNDERLOCK-ART: a stack of shot shows its count, never a wear bar (the pack's rule)
 
 import { expandRowValues } from './quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
 import { racialSuppressInventory, LYCANTHROPY_SPELL_TAG } from './lycanthropy.js';   // DISC10-E L3: the pack's refusal, at the two doors that reach into it; HB-LYCFREE: the curse's free spell
@@ -107,9 +107,9 @@ const state = { c1: null, c2: null, swap: null };
  *  item: it carries no group, no template and no material, so
  *  `quickslotKey` has nothing to say about it. What it does carry is an
  *  INDEX - a SPELLS.STD record number, or the negative one a made spell
- *  mints (systems/spellMaker.js:"Mint the next custom") - and that index is already
+ *  mints (systems/spell/spellMaker.js:"Mint the next custom") - and that index is already
  *  this port's name for "which spell": it is what the save writes
- *  (systems/save.js:"TP-slice: the Recall"), what a restore reads back, and what
+ *  (systems/save/save.js:"TP-slice: the Recall"), what a restore reads back, and what
  *  `setReadiedByIndex` resolves a readied spell by. So the slot keeps
  *  the same key the rest of the port keeps, and a book that changed
  *  under it (a spell sold, a made spell deleted) leaves a GHOST that
@@ -887,7 +887,7 @@ export function tickQuickslotHold(dt, { isHeld = null, entity = null, onTap = nu
 }
 
 // ── THE SAVE ──────────────────────────────────────────────────────
-// Rides composeSessionState / restoreSessionState (systems/save.js),
+// Rides composeSessionState / restoreSessionState (systems/save/save.js),
 // the seam every host's save already passes through, so no host is
 // edited and none can forget it. A save without the block CLEARS the
 // slots - a pre-QS save, or another character's - exactly as FE1's
@@ -897,7 +897,7 @@ export function quickslotSaveData() {
   const out = {};
   for (const s of QUICKSLOTS) out[s] = state[s] ? { key: state[s].key, name: state[s].name } : null;
   // QS6: the spell slot rides the same block, keyed the way save.js
-  // already keys a spell - by index (systems/save.js:"TP-slice: the Recall").
+  // already keys a spell - by index (systems/save/save.js:"TP-slice: the Recall").
   out.spell = spellState ? { index: spellState.index, name: spellState.name } : null;
   // HB1: and the hotbar, on the same block - ten entries, each an item
   // kind or a spell index, exactly as the slots above key them.

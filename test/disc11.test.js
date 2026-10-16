@@ -3,7 +3,7 @@
 // street. 01-Overview/Field-Bugs-2026-09-23.md. Pinned by execution with the real component and the real ambience.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as W from '../src/systems/weatherSim.js';
+import * as W from '../src/systems/weather/weatherSim.js';
 import { createBetterAmbience, readBetterAmbienceSettings, BETTER_AMBIENCE_VENDOR, baSoundKey, AMBIENT_RAIN_CLIP } from '../src/systems/betterAmbience.js';
 import { AmbientEffects, AMBIENT_RAIN_LOOP } from '../src/systems/ambientEffects.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';

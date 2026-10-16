@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { lordNameForFaction, FACTION_RACE_KEYS } from '../src/systems/talk.js';
+import { lordNameForFaction, FACTION_RACE_KEYS } from '../src/systems/talk/talk.js';
 import { GENDERS, getNameBank, fullName } from '../src/characters/nameHelper.js';
 import { srand } from '../src/formats/dfRandom.js';
 import { getContextValue } from '../src/systems/quest/questMacros.js';
@@ -127,7 +127,7 @@ test('TN1 world: the seven hooks stand on questWorld, wired to their one homes',
   assert.match(world, /GUILD_GROUPS\.HolyOrder[^]{0,400}getDivine\(townTalk\.factionDict, modes\?\.interiorBuilding\?\.factionId \?\? 0\)/,
     'GetFactionName\'s HolyOrder arm answers the temple\'s deity (:1815-1822)');
   assert.match(world, /lordNameForFaction: \(id, old = false\) => lordNameForFaction\(townTalk\.factionDict, id, old\)/,
-    'the lord names ride the one home in systems/talk.js');
+    'the lord names ride the one home in systems/talk/talk.js');
   assert.match(world, /oldLeaderFate: \(i\) => answerPipeline\.getOldLeaderFateString\(i\)/,
     'the fates ride the pipeline\'s own localized strings');
 });

@@ -1,7 +1,7 @@
 # AUDIT KG (2026-10-13) - The King's Gambit, audited
 
 The owner, of the King's Gambit's work (`11-Multiplayer/Kings-Gambit.md`: KG0, the design record and its decisions;
-KG1, the law, `src/net/kingsGambit.js`; KG2, the innkeeper's play at a regular's chair, `src/systems/gambitPatrons.js`,
+KG1, the law, `src/net/kingsGambit.js`; KG2, the innkeeper's play at a regular's chair, `src/systems/gambit/gambitPatrons.js`,
 and its measure - the branch at 3b50a59b5): **"Audit this and ensure absolute perfection. Ensure any of the UI is
 enhanced plus, our own coat and easily understandable/readable"**. This page is the findings, each with its verdict.
 What the audit changed is written into the record's sections as they now stand, each marked AUDIT KG and its id, and
@@ -17,7 +17,7 @@ author's own lane, and every finding read again against the code or the C# by th
 | Lane | Over | How |
 |---|---|---|
 | A - the law | `src/net/kingsGambit.js`, `test/kg1_law.test.js`, `tools/mutants/kg1.json`, sections 2 and 11 | line by line against the C# and its IL; an independent transliteration of the C#'s game driven against the port on identical sources over 3,000 seeded games and 7.37 million steps, lawful and unlawful commands from both sides (0 mismatches); every recorded mutant and its own on a scratch copy |
-| B - the play | `src/systems/gambitPatrons.js`, `tools/kgMeasure.mjs`, `test/kg2_patrons.test.js`, `tools/mutants/kg2.json`, sections 2.7, 10.5, 10.7 and 12 | AiAction rule by rule against the IL (the order of draws, float32 at each step, every comparison); 800 games replayed decision for decision (98,442 decisions) against each mutant recorded as equivalent; the measure run again at another seed and played on past its caps |
+| B - the play | `src/systems/gambit/gambitPatrons.js`, `tools/kgMeasure.mjs`, `test/kg2_patrons.test.js`, `tools/mutants/kg2.json`, sections 2.7, 10.5, 10.7 and 12 | AiAction rule by rule against the IL (the order of draws, float32 at each step, every comparison); 800 games replayed decision for decision (98,442 decisions) against each mutant recorded as equivalent; the measure run again at another seed and played on past its caps |
 | C - the record | every claim of the record and its index lines | each against the code, the C#, the prop's geometry (the real `iliacPlaces` from every chair), the gates; the measure's 8,000 games run again |
 | D - the UI | the record's panel and cloth plans, against Enhanced Plus, the house's own coat and Plain Words | Hold'em's and Iliac Hand's panels - the two the game's panel was to copy - painted by their real painters in headless Chromium under the enhanced and the Plus sheets, at 390x844 and 1280x800; every planned mark's contrast on the four layouts' and the Open field's floor tones |
 | The author | the fixes; the record's own words | every lane's reproduction run again before acting; the measure run whole after the fixes (8,000 games); every mutant run |

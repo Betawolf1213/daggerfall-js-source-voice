@@ -15,8 +15,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tinyRmb } from './wd3Fakes.mjs';
-import { locationBuildings, buildingDataForDoor } from '../src/systems/talkTopics.js';
-import { homeCandidate, homePurchasable } from '../src/systems/onlineHomes.js';
+import { locationBuildings, buildingDataForDoor } from '../src/systems/talk/talkTopics.js';
+import { homeCandidate, homePurchasable } from '../src/systems/online/onlineHomes.js';
 import { hasInteriorModels, layoutInterior } from '../src/world/interiorLayout.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 
@@ -99,7 +99,7 @@ test('CRYPT-SALE with ARENA2: every graveyard block in every place - no building
 
 test('CRYPT-SALE: the arena\'s move never puts a displaced home in a room that cannot be laid out (AUDIT FB1005 C2: buildingSummaries carried no stamp - Daggerfall\'s GRVEAL27 holds twelve House5 graves, CUSTAA05 two empty House6)', async () => {
   const { buildingSummaries } = await import('../src/world/buildingSummaries.js');
-  const { arenaHomeFor } = await import('../src/systems/arenaMove.js');
+  const { arenaHomeFor } = await import('../src/systems/arena/arenaMove.js');
   const summaries = buildingSummaries([], [{ x: 1, y: 2, dfBlock: graveyard() }]);
   assert.deepEqual(summaries.map((s) => [s.recordIndex, s.hasInterior]), [[0, true], [1, false]], 'the producer stamps both');
   for (let oldKey = 1; oldKey <= 40; oldKey++) {

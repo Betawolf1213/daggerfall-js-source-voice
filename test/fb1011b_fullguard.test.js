@@ -10,14 +10,14 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { setStruck, setSetPowersVoice, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil.js';
-import { _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import { setStruck, setSetPowersVoice, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
+import { _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { hurtPlayer, setDeathPresenter } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';

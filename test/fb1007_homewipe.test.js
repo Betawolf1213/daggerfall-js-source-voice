@@ -1,7 +1,7 @@
 // FIELD BUGS 2026-10-07 HOME-WIPE and CRATE-LAYOUT (the Discord, Cruor: "Home storage randomly disappeared? ... all the
 // stuff I kept in them seems to have disappeared!", an hour later "Still empty ... it ate a bunch of
 // aetherics/legendaries"): A HOME THE ARENA MOVED KEEPS WHAT ITS OWNER PUT IN IT. moveArenaHomes empties every move it
-// has not heard read again at each boot (systems/onlineHomes.js, "harmless: a scene emptied once is gone"), and a read
+// has not heard read again at each boot (systems/online/onlineHomes.js, "harmless: a scene emptied once is gone"), and a read
 // lost to a refused checkpoint or a failed `arena-seen` - the account service's overloads of 2026-10-06 - left the move
 // unread. With the old scene long gone, emptyArenaScene cached an empty record over the new home's own: its chests, its
 // storage pieces, its owner's own things and its floor; and the boot's checkpoint wrote that to the realm. And the
@@ -11,13 +11,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/systems/arenaMove.js';
-import { moveArenaHomes, homeSceneName } from '../src/systems/onlineHomes.js';
+import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/systems/arena/arenaMove.js';
+import { moveArenaHomes, homeSceneName } from '../src/systems/online/onlineHomes.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, snapshotSceneCache, restoreSceneCache, restoreCachedScene } from '../src/systems/sceneCache.js';
 import { layoutsMatch } from '../src/systems/layoutPins.js';
 import { arenaRecordDisplaced, ARENA_LOCATION_KEY, ARENA_REGION } from '../src/world/arenaCity.js';
 import { createHouses } from '../src/systems/banking.js';
-import { makeBuildingKey } from '../src/systems/talkTopics.js';
+import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { HOME_ARENA_MAP_ID } from '../src/net/homeLaw.js';
 

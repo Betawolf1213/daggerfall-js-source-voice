@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {
   RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, LOITER_WAIT_PER_HOUR,
   loiterLimitHours, REST_TEXT,
-} from '../src/systems/restSession.js';
+} from '../src/systems/rest/restSession.js';
 
 const deps = (over = {}) => {
   const d = {

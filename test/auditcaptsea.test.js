@@ -25,7 +25,7 @@ import { attachGamepad, GLASS_PAD_ZOOM } from '../src/ui/gamepadInput.js';
 import { applyPlusPadLayout, registerCrossbar, crossbarApi, setPlusDpad } from '../src/ui/plusPad.js';
 import { setBindings } from '../src/ui/input.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { _resetForTests as resetSettings } from '../src/systems/settings.js';
+import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { sea, knowAll } from './navalSea.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

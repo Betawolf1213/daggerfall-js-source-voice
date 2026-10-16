@@ -1,7 +1,7 @@
 // @ts-check
 // WILD-ALERT (2026-10-04, Mac: "Enemies alerted are given an exclamation point"): THE MARK OVER AN ALERTED FOE - a "!" in
 // the HUD lines' own face (outlined gold, the pixel stack), over the head of each wilderness foe that has noticed the
-// player (systems/encounters.js foeAlerted; systems/wildAlert.js says when). It pops in as the foe notices, holds while
+// player (systems/encounters.js foeAlerted; systems/wild/wildAlert.js says when). It pops in as the foe notices, holds while
 // a fast traveller's clock is held for it (the host decides how long it stands - WILD_MARK_S in play), and goes.
 //
 // A READOUT, NOT A WINDOW, and DOM rather than the bitmap pass for the reason the crew's lines are (ui/navalHud.js
@@ -16,7 +16,7 @@
 // Not a DFU member: Daggerfall Unity marks no foe. Ledger A row (WILD-ALERT).
 import { PIXEL_STACK } from './pixelifyFive.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
-import { WILD_MARK } from '../systems/wildAlert.js';
+import { WILD_MARK } from '../systems/wild/wildAlert.js';
 
 export const WILD_MARKS_STYLE_ID = 'dfwild-style';
 /** The most marks standing at once - the nearest kept (an encounter pool is eight; a peer's camp rides beside it). */

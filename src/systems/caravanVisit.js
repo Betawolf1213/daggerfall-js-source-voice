@@ -4,11 +4,11 @@
 // public, the rules an online home's door keeps, and visitors cannot take from its storage; they come in "to craft,
 // rest, look around"): A VISIT TO ANOTHER PLAYER'S CARAVAN - THE LAW.
 //
-// WHO MAY ENTER is the caravan's own, so it rides the caravan item beside its paint (systems/wagonKinds.js's item,
-// systems/wagonLooks.js's `wagonLook`): `wagonEntry`, one of an online home's entries (net/homeLaw.js HOME_ENTRIES -
+// WHO MAY ENTER is the caravan's own, so it rides the caravan item beside its paint (systems/wagon/wagonKinds.js's item,
+// systems/wagon/wagonLooks.js's `wagonLook`): `wagonEntry`, one of an online home's entries (net/homeLaw.js HOME_ENTRIES -
 // 'private', absent, its default). Its owner moves it on from the caravan's plaque ("Who may enter: ..."), round as a
-// home's door does (systems/onlineHomes.js homeNextEntry). On the wire it is `we`, its place in HOME_ENTRIES (absent
-// for 'private' - systems/horseCartWire.js, and the cell's record of the parked caravan, net/wire.js validParkData),
+// home's door does (systems/online/onlineHomes.js homeNextEntry). On the wire it is `we`, its place in HOME_ENTRIES (absent
+// for 'private' - systems/horse/horseCartWire.js, and the cell's record of the parked caravan, net/wire.js validParkData),
 // and with the guild's entry `wg`, the owner's guild tag: the owner's own word about its own door, which only lets in
 // whoever wears that tag. A visitor's client reads it as a home's door is read (homeMayEnter): the owner by the name the
 // relay stamped, a party member by the handles the relay signed over the party, a guildmate by the tag.
@@ -30,7 +30,7 @@ import { HOME_ENTRIES, HOME_ENTRY_DEFAULT, homeEntryOk, homeMayEnter } from '../
 import { GUILD_TAG_RE } from '../net/guildLaw.js';
 import { decorPieceOf, DECOR_CAP, DECOR_BASE_KEY_RE, DECOR_HIDDEN_CAP } from '../net/decorLaw.js';
 import { MAX_FRAME_BYTES } from '../net/wire.js';
-import { activeWagonItem, wagonKindOf, isWagonItem } from './wagonKinds.js';
+import { activeWagonItem, wagonKindOf, isWagonItem } from './wagon/wagonKinds.js';
 
 /** The wire's code for an entry (`we`): its place in HOME_ENTRIES - 0 (said by no field) for the owner alone. */
 export const caravanEntryCode = (entry) => Math.max(0, HOME_ENTRIES.indexOf(homeEntryOk(entry) ? entry : HOME_ENTRY_DEFAULT));
@@ -46,7 +46,7 @@ export const caravanEntryOf = (item) => (isWagonItem(item) && wagonKindOf(item) 
 
 /**
  * THE DRIVEN CARAVAN'S DOOR SET: in the pack `items` (the host's own list - the caravan's place in it taken by its new
- * self, as a paint is, systems/wagonLooks.js paintDrivenWagon), the caravan a player drives given `entry`; the field
+ * self, as a paint is, systems/wagon/wagonLooks.js paintDrivenWagon), the caravan a player drives given `entry`; the field
  * dropped for the owner alone. Answers the entry set, or null - no caravan driven, or an entry the law does not know.
  */
 export function setDrivenCaravanEntry(items, entry) {
@@ -70,7 +70,7 @@ export function caravanMayEnter(t, { partyNames = [], guild = null } = {}) {
   return homeMayEnter({ owner: t.owner, entry: t.entry, guildmate: !!tag && caravanGuildTag(t.guild) === tag }, { partyNames });
 }
 
-/** The words: the owner's row and its line (the entry's own words are a home's - systems/onlineHomes.js
+/** The words: the owner's row and its line (the entry's own words are a home's - systems/online/onlineHomes.js
  *  HOME_ENTRY_WORDS, the host's to hand in), and what a visitor is told when the caravan has gone from under them. */
 export const CARAVAN_VISIT_TEXT = Object.freeze({
   entryRow: (words) => `Who may enter: ${words}`,

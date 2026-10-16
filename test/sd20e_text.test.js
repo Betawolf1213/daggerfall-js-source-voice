@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { drawGateBanner, destroyGateBanner, GATE_BANNER_CSS, SD_BANNER_BRASS } from '../src/ui/gateBanner.js';
-import { sdBannerText, sdMarksLine, sdHourLine, SD_ENDING_RUMOR } from '../src/systems/sdOmen.js';
+import { sdBannerText, sdMarksLine, sdHourLine, SD_ENDING_RUMOR } from '../src/systems/superDungeon/sdOmen.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdWhere, sdFoundLine, SD_CAST_OUT_LINE, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { SD_TITLE_CSS } from '../src/ui/sdTitleCard.js';
 import { GROUND_VIEW_CSS, PERIL_ARROW_R, PERIL_ARROW_R_LOW } from '../src/ui/gateGroundView.js';

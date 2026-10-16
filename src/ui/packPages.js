@@ -45,9 +45,9 @@
 import { isEquipped } from '../systems/equip.js';
 import { isEnchanted, LETTER_OF_CREDIT_TEMPLATE } from '../systems/inventory.js';
 import { isIngredientTemplate } from './nativeInventory.js';
-import { SPELLBOOK_TEMPLATE_INDEX } from '../systems/spellMaker.js';
-import { POTION_TEMPLATE_INDEX } from '../systems/loot.js';
-import { isCardBinder, isIliacCard } from '../systems/iliacItems.js';   // CARDS8: the binder and its cards
+import { SPELLBOOK_TEMPLATE_INDEX } from '../systems/spell/spellMaker.js';
+import { POTION_TEMPLATE_INDEX } from '../systems/loot/loot.js';
+import { isCardBinder, isIliacCard } from '../systems/iliac/iliacItems.js';   // CARDS8: the binder and its cards
 import { isWalletItem } from '../systems/walletItem.js';   // WALLET1: the wallet is a valuable
 
 /** The pages, in the order the spine shows them: [id, label]. */

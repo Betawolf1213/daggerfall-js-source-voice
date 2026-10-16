@@ -573,7 +573,7 @@
  },
  {
   "name": "AUDIT-MEADOW1-the-gust-carried-the-wrong-way",
-  "file": "src/systems/windDrive.js",
+  "file": "src/systems/wind/windDrive.js",
   "old": "(phase + GUST_K * (offset[0] * dx + offset[2] * dz))",
   "new": "(phase - GUST_K * (offset[0] * dx + offset[2] * dz))",
   "tests": [
@@ -582,7 +582,7 @@
  },
  {
   "name": "AUDIT-MEADOW1-the-clock-not-the-phases",
-  "file": "src/systems/windDrive.js",
+  "file": "src/systems/wind/windDrive.js",
   "old": "tsec + phase / GUST_RATE;",
   "new": "tsec + phase;",
   "tests": [

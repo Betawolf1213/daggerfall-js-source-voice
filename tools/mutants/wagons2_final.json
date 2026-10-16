@@ -136,7 +136,7 @@
   },
   {
     "name": "WAGONS2-FINAL-the-floor-are",
-    "file": "src/systems/wagonLooks.js",
+    "file": "src/systems/wagon/wagonLooks.js",
     "old": "`The ${part} ${part === 'walls' ? 'are' : 'is'} now ${name.toLowerCase()}.`",
     "new": "`The ${part} are now ${name.toLowerCase()}.`",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "WAGONS2-FINAL-a-following-team-always-goes",
-    "file": "src/systems/horseCart.js",
+    "file": "src/systems/horse/horseCart.js",
     "old": "    return physicalPersistenceEnabled && (followingTransportFastTravels || forceNextJourney) && isTeamFollowing();",
     "new": "    return isTeamFollowing();",
     "tests": [

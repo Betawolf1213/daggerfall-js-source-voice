@@ -12,7 +12,7 @@ import { parse } from 'acorn';
 import { isPrivateersHold, isStartDungeon, HOLD_ONCE_TEXT } from '../src/systems/startDungeon.js';
 import { PRIVATEERS_HOLD_MAP_ID, MAIN_STORY_DUNGEON_IDS } from '../src/world/dungeonTextures.js';
 import { mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 /** A location as MapsFile mints it, standing on map pixel (x, y). */

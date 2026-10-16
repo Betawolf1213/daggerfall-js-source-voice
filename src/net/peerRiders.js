@@ -73,7 +73,7 @@ async function decodeUrl(url) {
 export function createEotbArt({ renderer = null, urlFor = eotbSpriteUrl, decode = decodeUrl, clock = () => Date.now(), loadLantern = loadLanternArt } = {}) {
   const tex = new Map();      // `${archive}:${rec}` -> { w, h } | Promise | null (no art at all) | { failedAt } (asked again after RIDER_RETRY_MS)
   const pixels = new Map();   // sprite key -> decode promise
-  // COATS1: the riders' horses' looks (systems/horseCoats.js) - each its own dyed pictures, so a look is let go once
+  // COATS1: the riders' horses' looks (systems/horse/horseCoats.js) - each its own dyed pictures, so a look is let go once
   // RIDER_LOOKS_KEPT others were drawn since (EVERY ALLOCATION HAS AN OWNER: every horse is its own look, and a session
   // meets many riders). code -> { keys: Set<tex key>, used: clock() }
   const looks = new Map();

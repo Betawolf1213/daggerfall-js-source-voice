@@ -9,7 +9,7 @@ import {
   VID_MIN_FRAME_DELAY,
 } from '../src/formats/vidFile.js';
 import { VideoPlayer, playVideo } from '../src/ui/videoPlayer.js';
-import { setValue, resetToDefaults } from '../src/systems/settings.js';
+import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2)

@@ -27,7 +27,7 @@ lens re-ran its eight repros against the fixed tree: every loss it had shown was
 | B6 | low | `newer` read two devices' clocks: a PC two hours fast read the field case as "Backed up" again. | Later by EITHER clock - the device time or the game minute, which cannot be skewed. |
 | - | med | The restore's full-store path had no pin (moving the removal above the no-room answer survived the suite). | Pinned with a store that throws on write; and a renamed character's twin at the backup's minute (which SP1's name match does not see) pins the minute guard B4 had made redundant elsewhere. |
 
-**BALANCE1** (`systems/rrRidingHost.js`, `systems/rrInstall.js`)
+**BALANCE1** (`systems/roleplayRealism/rrRidingHost.js`, `systems/roleplayRealism/rrInstall.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

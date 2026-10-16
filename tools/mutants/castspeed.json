@@ -120,7 +120,7 @@
   },
   {
     "name": "CASTSPEED-loot-uncapped",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  return Math.min(CAST_SPEED_CAP, wornSum(entity, 'castSpeed'));",
     "new": "  return wornSum(entity, 'castSpeed');",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "CASTSPEED-loot-anyones",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  if (!mine(entity)) return 0;\n  return Math.min(CAST_SPEED_CAP",
     "new": "  return Math.min(CAST_SPEED_CAP",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "CASTSPEED-loot-unregistered",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "registerCastSpeedMod(LOOT_POWERS, lootCastSpeed);   // CAST-SPEED\n",
     "new": "",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "CASTSPEED-jewellery-alone",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  castSpeed: Object.freeze({ slot: 'suffix', groups: Object.freeze(['Jewellery', 'Weapons'])",
     "new": "  castSpeed: Object.freeze({ slot: 'suffix', groups: Object.freeze(['Jewellery'])",
     "tests": [

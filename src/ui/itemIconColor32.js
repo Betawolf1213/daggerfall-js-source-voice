@@ -1,6 +1,6 @@
 // @ts-check
 // WBX3 (2026-09-26, Mac: "Loot drops should show their sprite and have a small colored loot line that extrudes from the
-// sprite itself"): AN ITEM'S OWN PICTURE, FOR THE WORLD'S GL - the picture the pack shows (systems/itemTemplates.js
+// sprite itself"): AN ITEM'S OWN PICTURE, FOR THE WORLD'S GL - the picture the pack shows (systems/item/itemTemplates.js
 // inventoryItemImage: the archive, the record and the item's dye), through the pack's own door (ui/textureCanvas.js
 // requestIcon - the vendored arm, a replacement by the dye, the classic TEXTURE file with its mask stripped), handed back
 // in the port's color32 order (formats/color32Order.js - a canvas reads top row first; the GL wants the bottom row
@@ -11,7 +11,7 @@
 // item with no picture, a picture that has not come in ICON_WAIT_MS, and a page with no canvas (node - the pins).
 //
 // Not a DFU member. Ledger A (WB).
-import { inventoryItemImage } from '../systems/itemTemplates.js';
+import { inventoryItemImage } from '../systems/item/itemTemplates.js';
 import { requestIcon } from './textureCanvas.js';
 import { dyeToken } from '../characters/dyes.js';
 import { toColor32 } from '../formats/color32Order.js';
@@ -31,7 +31,7 @@ export function itemIconKey(img) {
 
 /**
  * The item's own picture as `{ key, width, height, colors }` (color32 order), or null. AUDIT WBX S6: `identity` the
- * wearer (the pack's own - systems/itemTemplates.js inventoryItemImage: a weapon or armour is drawn for its wearer's
+ * wearer (the pack's own - systems/item/itemTemplates.js inventoryItemImage: a weapon or armour is drawn for its wearer's
  * gender and race), so the floor draws what the pack will.
  * @param {any} item
  * @param {{ wait?: (ms: number) => Promise<void>, identity?: any }} [opts]

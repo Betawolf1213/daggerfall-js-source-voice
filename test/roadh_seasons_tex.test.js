@@ -43,7 +43,7 @@ import { DFPalette } from '../src/formats/dfPalette.js';
 import {
   clearTextureReplacements, setTextureReplacements, preloadTextureArchive, decodedTexture,
 } from '../src/systems/textureReplacement.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 // ═══ H3 - the refresh, per key ══════════════════════════════════════════
 

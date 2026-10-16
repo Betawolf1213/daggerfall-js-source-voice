@@ -10,7 +10,7 @@ import { CHAT_TABS, ChatLog, mentions, langJoinedText, NO_LANG_TEXT, LANG_OLD_RE
 import { CHAT_LANGS, CHAT_LANG_PREFIX, chatLangRoom, isChatRoom, isRegionRoom, relaySupportsLang, LANG_RELAY_MIN, RELAY_VERSION } from '../src/net/wire.js';
 import { parseChatLine, CHANNEL_COMMANDS, HELP_LINES, LANG_LINES, unknownLangText } from '../src/net/chatCommands.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
-import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
+import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { CHAT_CSS } from '../src/ui/chatPanel.js';
 import { GRIMOIRE_KIT_CSS } from '../src/ui/grimoireDress.js';
 

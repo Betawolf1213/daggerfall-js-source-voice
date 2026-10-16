@@ -26,7 +26,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { SpoilsGlowRenderer } from '../render/spoilsGlow.js';
-import { bestRarity, RARITIES, lootRarityOn } from '../systems/lootRarity.js';
+import { bestRarity, RARITIES, lootRarityOn } from '../systems/loot/lootRarity.js';
 import { isPresented } from '../systems/physicalItems.js';   // PI1: the items that stand as themselves
 
 /** The most lines a frame stands, and how far from the eye a find may be (metres). */

@@ -62,7 +62,7 @@ THREE LAWS, each pinned in `test/brand.test.js`:
   trademark notice (new on the landing page's credits and in the README:
   The Elder Scrolls and Daggerfall are trademarks of ZeniMax Media Inc.),
   Daggerfall Unity and the mods by their own names, DFU's own settings text
-  (`systems/settingsText.js`, generated verbatim) and a mod's own switches,
+  (`systems/settings/settingsText.js`, generated verbatim) and a mod's own switches,
   and the Iliac Bay's places - the city, the kingdom, its bank, its crown,
   its ships and songs are the world's, not the brand's. Everywhere else a
   player reads "the original game" or "classic": the tagline (An
@@ -1257,7 +1257,7 @@ None of these blocks anything; all are real.
                         makes it worth fixing: the overworld is the
                         first map a thumb could actually drive.
 
-    THE SPLIT POPUP     systems/itemTransfer.js:"or in the wagon;". TransferItem
+    THE SPLIT POPUP     systems/item/itemTransfer.js:"or in the wagon;". TransferItem
                         opens a numeric field DEFAULTED to maxAmount
                         when a stack will not fit whole (:1515);
                         BOTH skins take exactly what fits and never
@@ -1573,7 +1573,7 @@ rebuilding at the destination after the commit. A source pin holds
 beginFrame inside the camera-live arm, because the whole transition
 design is that ordering.
 
-THE FLIGHT IS THE LAW'S OWN PATH. systems/travel.js grew ONE export -
+THE FLIGHT IS THE LAW'S OWN PATH. systems/travel/travel.js grew ONE export -
 walkTravelPath, the classic longest-axis stepper extracted whole from
 calculateTravelTime, which now iterates it - so the route line and
 the camera fly exactly the pixels the time law charges. The pin that
@@ -2243,7 +2243,7 @@ and stopped being fine the moment a second one needed the same rungs.
 The choice at that point is EXTRACT OR COPY, and this port does not
 copy law: Port-Doctrine's translation rule allows simplification in
 structure and never in behaviour, and `audit24_onehome` is a standing
-gate against exactly the other outcome. So `systems/itemTransfer.js`
+gate against exactly the other outcome. So `systems/item/itemTransfer.js`
 now holds DaggerfallInventoryWindow.TransferItem, and the classic
 window calls it.
 
@@ -2527,7 +2527,7 @@ carries DFU's whole chain - the two-hander clearing both hands, a
 shield bumping a held two-hander, the forbidden and broken refusals,
 the swap delay billed per transition, the armour table and the
 enchantment hooks. The four tab pages are `TABS`/`filterByTab`. Weight,
-condition, material and damage strings are `systems/itemInfo.js`'s.
+condition, material and damage strings are `systems/item/itemInfo.js`'s.
 This module positions nodes and prints rows, and the node tests prove
 it by wearing a Claymore and watching both hands empty.
 
@@ -2931,7 +2931,7 @@ the hit boxes drifted off the labels. Art that carries text cannot
 reflow, scale, localise or be read on a phone.
 
 THE LAW IS BORROWED, NOT REWRITTEN. The settings pane renders through
-the same four modules the classic screen uses - `systems/settings.js`,
+the same four modules the classic screen uses - `systems/settings/settings.js`,
 `ui/settingsMap.js`, `ui/settingsLaw.js`, `ui/settingsCopy.js` - and
 `widgetFor` is total over all 171 keys, so the enhanced screen makes no
 judgement about any of them. ~850 lines of DFU-cited law reused
@@ -3224,7 +3224,7 @@ has its front door. Ported from DaggerfallRestWindow's rules (the
 panel is the U-arc's clean text idiom; backgrounds stay FLAGGED
 pending art-name verification):
 
-- **The session machine** (systems/restSession.js, pure + pinned):
+- **The session machine** (systems/rest/restSession.js, pure + pinned):
   an hour of rest passes in 0.75 REAL seconds (loiter 1.25),
   advanced in six 10-classic-minute sub-ticks so world time - magic
   rounds, diseases, poisons, the once-per-change fatigue drain -
@@ -3683,9 +3683,9 @@ each cited and pinned.
   ingredients / arrows / ReligiousItems / MiscItems
   (DaggerfallUnityItem.UseWorldTexture:1830-1855) - 111 of 288
   templates differ. The port only HAD the world texture because
-  systems/itemTemplatesData.js was a LOSSY second copy of
+  systems/item/itemTemplatesData.js was a LOSSY second copy of
   characters/itemTemplates.json. The two were verified identical
-  field-for-field, the copy was deleted, and systems/itemTemplates.js
+  field-for-field, the copy was deleted, and systems/item/itemTemplates.js
   now reads the verbatim DFU row - which also brings variants,
   drawOrder and enchantment points into the one place. inventoryItemImage
   ports GetInventoryTextureArchive/Record incl. the Katana +1 bump
@@ -3815,7 +3815,7 @@ honest.
 - F34 ONE DFU MEMBER, ONE EXPORT: droppedLoot.js re-declared
   randomTreasureArchive + randomTreasureIconIndices, regressing the
   single-sourcing the 2026-07-06b audit had already done in
-  systems/loot.js. Now imported and re-exported.
+  systems/loot/loot.js. Now imported and re-exported.
 - F35 A PIN MUST FAIL: equip.test.js asserted `bows >= 8`, a
   one-sided inequality that survives promoting ANY weapon to
   two-handed (mutation-proven with Mace). The whole 18-row
@@ -5322,7 +5322,7 @@ known".
 
 `src/ui/guildServiceWindow.js` + the interior host's static-NPC seam in
 `src/scenes/worldModes.js`. `test/guildservicewindow.test.js`, 8 tests.
-The law half is `systems/guildServiceFlow.js`, recorded in the Systems
+The law half is `systems/guild/guildServiceFlow.js`, recorded in the Systems
 arc; the calendar it needed is S28.
 
 **The thing that did not exist.** The people standing in a building
@@ -5402,7 +5402,7 @@ rows of their own.
 ## U24 - THE THREE GUILD SERVICE FLOWS + THE LIST PICKER (2026-08-19)
 
 `src/ui/listPicker.js` and `src/ui/guildServiceWindows.js`; the law is
-S29's `systems/guildServiceActions.js`. `test/guildserviceflows.test.js`,
+S29's `systems/guild/guildServiceActions.js`. `test/guildserviceflows.test.js`,
 17 tests.
 
 **None of DFU's three service classes has art of its own.** It says so
@@ -5460,7 +5460,7 @@ one-shot service list has nothing to preview.
 
 `src/systems/useItem.js` (DaggerfallInventoryWindow.UseItem :1661-1817
 + the DaggerfallUnityItem predicates and NextVariant),
-`src/systems/itemInfo.js` (ItemHelper.GetItemInfo :748-817 + the
+`src/systems/item/itemInfo.js` (ItemHelper.GetItemInfo :748-817 + the
 DaggerfallUnityItemMCP macros), and the wiring in
 `src/ui/nativeInventory.js`. `test/useitem.test.js` (12),
 `test/iteminfo.test.js` (9), `test/nativeinventory.test.js` (+4).
@@ -5693,7 +5693,7 @@ exposed that the port had no settings at all - every value it branched
 on was a constant, recorded that morning as a Ledger row saying so.
 The row lasted a few hours.
 
-**The store** (`systems/settings.js`) is DFU's SettingsManager. The 13
+**The store** (`systems/settings/settings.js`) is DFU's SettingsManager. The 13
 sections, 171 keys and every default come from the VENDORED
 `defaults.ini.txt` (`vendor/dfu-settings`, MIT, the same route the
 quest pack took) baked by `scripts/bakeSettings.mjs` - hand-copying
@@ -6870,7 +6870,7 @@ holds a single DaggerfallTravelMapWindow and re-PUSHES it, so its
 four filters and the popup's three choices survive a close - and
 SaveLoadManager writes them into every save as TravelMapSaveData.
 The port's windows are per-open objects, so that state moved to
-`systems/travelMapState.js` (the A2 zoom-memory shape) and rides
+`systems/travel/travelMapState.js` (the A2 zoom-memory shape) and rides
 `composeSessionState`, the one envelope composer both hosts already
 call. Two consequences worth naming: a filter set on the map is
 still set the next time V is pressed, and a save from before this
@@ -6979,7 +6979,7 @@ fires `hudFade.smashHUDToBlack()` on the frame the counter empties.
 keyed window and `knownSpells` in `src/ui/inventory.js` are DELETED,
 and what is left of that module is the death screen, so the file is
 `src/ui/deathScreen.js` now. Wired in all four hosts;
-`src/systems/guildServiceFlow.js`'s two BuySpells nulls close;
+`src/systems/guild/guildServiceFlow.js`'s two BuySpells nulls close;
 `src/systems/spellcast.js` gains the probe helper the fallback used
 to be. `test/spellbookwindow.test.js` (new), four pins re-aimed.
 
@@ -7129,7 +7129,7 @@ lookups.
   `GetSpellIcon` answers null outside `[0, Count)` and the panel
   shows its black background; the `index % 69` wrap is
   `SpellMakerWindow.SetIcon`'s law, applied at MINT time in
-  `systems/spellMaker.js`. A record carrying a bad icon byte now
+  `systems/spell/spellMaker.js`. A record carrying a bad icon byte now
   reads as a black square rather than as some other spell's icon.
 - **The effect labels read the wrong table.** `SetEffectLabels` goes
   through `EntityEffectBroker.GetEffectTemplate` - the whole registry
@@ -7255,7 +7255,7 @@ had each been waiting on the other, in writing:
 - `ui/travelMapWindow.js` (U41): *"FLAGGED, idling loudly: … the guild
   TELEPORT mode (ActivateTeleportationTravel + DaggerfallTeleportPopUp),
   **which waits on the guild arc's teleport service**."*
-- `systems/guildServiceFlow.js`: `Teleport: null, // FLAGGED: **the
+- `systems/guild/guildServiceFlow.js`: `Teleport: null, // FLAGGED: **the
   travel map's teleport mode**`
 
 Neither was waiting on anything that did not exist. Both flags retire
@@ -7572,7 +7572,7 @@ combat/fpsWeapon.js's one bottom-anchored quad. `horseOffsetHeight`
 docked whatever the setting says) live in `src/ui/hudLarge.js`, read by
 `ridingRect` in the world host and by fpsWeapon's default
 `offsetHeight`, and both keys are tiered live in
-`src/systems/settings.js`. Port-Ledger.md strikes the same clause. The interior
+`src/systems/settings/settings.js`. Port-Ledger.md strikes the same clause. The interior
 host's char-sheet and inventory panels swallow their click and do
 nothing, because F5 and F6 do not reach interiors either — the same
 arc, named in the same place.
@@ -10428,8 +10428,8 @@ in.
 
 **One structural move.** `DaggerfallLootDataTables.cs` is its own source
 file in DFU and is its own module here again
-(`systems/lootDataTables.js`, a leaf that imports nothing). Reading the
-table off `systems/loot.js` put `inventorySession.js` upstream of the
+(`systems/loot/lootDataTables.js`, a leaf that imports nothing). Reading the
+table off `systems/loot/loot.js` put `inventorySession.js` upstream of the
 whole loot generator and, through `potions.js`, built an import cycle
 that broke module initialisation across the tree - 228 test files red at
 once, none of them about loot. `loot.js` re-exports every name, so no
@@ -12919,7 +12919,7 @@ The port shared one row builder between popup and panel and applied
 the pass nowhere, so the panel printed "Weight: 3 kilograms" into a
 third of the space it needs.
 
-`infoPanelShorten` in `systems/itemInfo.js` is the pass, with the six
+`infoPanelShorten` in `systems/item/itemInfo.js` is the pass, with the six
 strings named and cited; `replaceAll` is C#'s `string.Replace`, which
 replaces every occurrence, and the `?? ''` is DFU's `text != null`
 guard at `:1148`. It is applied at the ONE point both of DFU's arms
@@ -14285,7 +14285,7 @@ signoff. The wear notices ("X is broken", "may not use X", "X cannot
 be worn") and the HUD's held-weapon plaque read the record's raw
 `name`, which names an unidentified magic item before Identify has.
 Every one of these was a departure from parity the enhanced skin took
-by re-deriving what `src/systems/itemInfo.js` already knew.
+by re-deriving what `src/systems/item/itemInfo.js` already knew.
 
 THE SHAPE. itemInfo.itemNameParts(item, { getQuest,
 differentiatePlantIngredients }) answers `{ name, material }` - the
@@ -15874,8 +15874,8 @@ fill without opening anything.
 
 **A slot holds a KIND, and a spell's kind is its INDEX.** That is not a
 new idea invented here: a SPELLS.STD record number, or the negative one
-`systems/spellMaker.js` mints for a made spell, is already this port's
-name for "which spell" - it is what `systems/save.js` writes, what a
+`systems/spell/spellMaker.js` mints for a made spell, is already this port's
+name for "which spell" - it is what `systems/save/save.js` writes, what a
 restore reads back, and what the cast engine's own `setReadiedByIndex`
 resolves a readied spell by. So the slot keys on it, and three things
 fall out for free: a made spell rides, a RENAME in the spellbook follows
@@ -18851,7 +18851,7 @@ Fifteen items in five groups, each answered on both skins where both have the sc
   even DFU's red clash was a plain key), and the sticky head the question stood in was a 35% wash with the rows
   printed through it - both fixed (`enhancedStyle.js`, the UXB1-S rules; the question later moved beside its row at
   KEY-IN-USE-TIP).
-- **E - Sync from server**: `systems/onlineSync.js`, a card under the Online pane's rules. THERE IS NO HOST TO ASK: a relay
+- **E - Sync from server**: `systems/online/onlineSync.js`, a card under the Online pane's rules. THERE IS NO HOST TO ASK: a relay
   serves the wire and /health and publishes no rules, because the rules are the online lane's - this build's, the same on
   every server. So the sync copies the lane into the offline stores (every forced pref, DFU setting and room mod key,
   and Smaller Dungeons off, since online every dungeon is full size), lists what differs before the press, and keeps
@@ -18880,7 +18880,7 @@ Fifteen items in five groups, each answered on both skins where both have the sc
 - **L - splitting a shop's stack** ("12 oil, I want 2"): the classic counter asks DFU's "how many" on a Control-click and
   when a stack only partly fits (TransferItem's gate); the enhanced counter carries a count on a clean stack. (Main's
   DISC25-F built the same split on both counters the same day; the merge kept DISC25-F's - one law in
-  `systems/itemTransfer.js`, the how-many field - and this list's two additions on top of it: the click's own Control,
+  `systems/item/itemTransfer.js`, the how-many field - and this list's two additions on top of it: the click's own Control,
   read off the pointer seam, and a returned lot rejoining its stack on both counters, AUDIT UXB1 F4.)
 - **M - the private-property question, clickable**: the keyed panel's click rows sat one row above their labels (a click
   on "Y - yes" answered No) - mended for every keyed menu - and the question is DFU's YesNo box now (`ui/yesNoBox.js`):
@@ -19071,9 +19071,9 @@ weapons/gear. Want to improve this and reduce text bloat"*. The whole record, be
   the numbers as whole pairs (`div.pair` groups in the `dl`, flowing two a line on the card, stepping out of every
   other grid by `.stats > .pair { display: contents; }`); four buttons a row (`min-width: 64px` - LAYOUT1's 104 px is a
   dialog's); the lore's dim italic by its own class (`li.lore`), since the card's last line is no longer the lore.
-- **The words**: `systems/sigilSets.js` gives every tier a `brief` (BRIEF_MAX 32) and the view its `recover`;
+- **The words**: `systems/sigil/sigilSets.js` gives every tier a `brief` (BRIEF_MAX 32) and the view its `recover`;
   `ui/setCard.js` and `ui/sigilCard.js` draw a card dress by default and the whole dress with `{ full: true }` (the Info
-  box's, which also says the tier's lines and the lore); `systems/lootRarity.js` rarityLines takes `lore: false`.
+  box's, which also says the tier's lines and the lore); `systems/loot/lootRarity.js` rarityLines takes `lore: false`.
 - **Measured**: `tools/cardFitProbe.mjs` (new; 438 checks at six screens - every button of eight heavy cards pressed,
   and read whole with no scroll on every screen 720 px tall and up). Pinned: `test/cardfit.test.js`; the old pins moved
   to the two dresses (`set5_ui`, `sigilui1`, `auditset_c` U13, `lr1`, `tradeinfo`, `dw3_icons`, `enhancedInventory`
@@ -19590,6 +19590,6 @@ A player expelled from the Mages Guild: "since I don't am part of the guild anym
 them ... I personally feel that could be a setting". The enhanced Standing page listed the guilds the player belongs to
 alone. With the Interface tab's Character sheet row on, "Every faction's standing" (prefs `standingAll`, on by
 default since STANDING-ON, 2026-10-11 - Mac: "should be on by default"), it lists every organization's reputation from the live faction store under its divider
-(`systems/factionStanding.js` standingGroups, drawn by `enhancedMenu.js` statsEveryStanding): the guilds, the temples,
+(`systems/faction/factionStanding.js` standingGroups, drawn by `enhancedMenu.js` statsEveryStanding): the guilds, the temples,
 the knightly orders, the kingdoms, the covens, the vampire clans, the Daedric Princes - a membership under Guilds above,
 with its rank, never twice. The classic skin's sheet is untouched. The record: `01-Overview/Field-Bugs-2026-10-09e.md`.

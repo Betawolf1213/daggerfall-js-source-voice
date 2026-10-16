@@ -67,7 +67,7 @@
   },
   {
     "name": "WB13b-a-dash-aside-back",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "${top?.length ? `, struck down by",
     "new": "${top?.length ? ` - struck down by",
     "tests": [

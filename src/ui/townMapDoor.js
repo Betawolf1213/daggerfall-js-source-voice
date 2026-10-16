@@ -14,7 +14,7 @@
 // enhanced skin is worn.
 //
 // A TOWN OFFERS TWO TABS, which is the first place Mac's tab law does
-// real work: `systems/mapTabs.js` says a town offers the streets AND
+// real work: `systems/map/mapTabs.js` says a town offers the streets AND
 // the bay, so the held window opens on the town sheet with the world
 // sheet one press away - and the travel key opens the same window on
 // the other tab. Two keys, one window, and neither of them a third map.

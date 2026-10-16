@@ -16,7 +16,7 @@ import {
   SPELL_MAKER_EFFECTS, STAT_SUBGROUPS, PORTED_KEYS,
   spellMakerGroups, spellMakerSubgroups, effectByKey,
   spellMakerDescriptionId, spellBookDescriptionId,
-} from '../src/systems/spellEffects.js';
+} from '../src/systems/spell/spellEffects.js';
 import {
   SpellMakerWindow, TARGET_LABELS, ELEMENT_LABELS,
   SPELL_MAKER_RECTS, EFFECT_NAME_PANELS, EFFECT_PANEL_X,
@@ -28,7 +28,7 @@ import {
 import {
   SPELLBOOK_TEMPLATE_INDEX, _resetCustomIndexForTests, blankEffectSettings,
   SPELL_ICON_COUNT,
-} from '../src/systems/spellMaker.js';
+} from '../src/systems/spell/spellMaker.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -535,7 +535,7 @@ test('E8 editor: the parchment is DFU\'s FIXED (7,19,306,69) panel, not a centre
 });
 
 test('E8 wiring pin: the guild destination mounts the NATIVE window behind an art gate', () => {
-  assert.match(src('src/systems/guildServiceFlow.js'), /MakeSpells: 'guildServiceSpellMaker'/);
+  assert.match(src('src/systems/guild/guildServiceFlow.js'), /MakeSpells: 'guildServiceSpellMaker'/);
   const wm = src('src/scenes/worldModes.js');
   assert.match(wm, /destination === 'guildServiceSpellMaker' && spellMakerArtLoaded\(\) && _shopFont/);
   assert.match(wm, /new SpellMakerWindow\(\{/);
@@ -543,7 +543,7 @@ test('E8 wiring pin: the guild destination mounts the NATIVE window behind an ar
     'the art warms at boot with its sibling maker windows');
   // the Mages Guild gate is membership; Kynareth's is rank 6 - both
   // already live, so the destination is all that was missing
-  assert.match(src('src/systems/guildServices.js'), /case 'MakeSpells':/);
+  assert.match(src('src/systems/guild/guildServices.js'), /case 'MakeSpells':/);
   // ...and the window really is native now: no `isChoiceWindow` false,
   // and the three ARENA2 sheets DFU names are the ones it loads.
   const file = src('src/ui/spellMakerWindow.js');

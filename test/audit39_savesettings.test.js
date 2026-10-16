@@ -24,10 +24,10 @@ import { fileURLToPath } from 'node:url';
 import {
   snapshotPlayer, restorePlayer, snapshotFactionRep, restoreFactionRep,
   FACTION_RELATION_COLUMNS,
-} from '../src/systems/save.js';
+} from '../src/systems/save/save.js';
 import {
   setValue, resetToDefaults, onSettingChange, getString, _resetForTests,
-} from '../src/systems/settings.js';
+} from '../src/systems/settings/settings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -70,7 +70,7 @@ test('AUDIT 39 #121: a save from before them restores the null/0 the arms alread
 // silence, and its `snap` literal. Its title also claimed "both hosts
 // pass all three", which is false and stays corrected below.
 test('AUDIT 39 #121: snapshotPlayer NAMES the three, and the hosts that own them pass them', () => {
-  const s = read('src/systems/save.js');
+  const s = read('src/systems/save/save.js');
   // the callee half - the line the fix changed
   assert.match(s, /interior = null, dungeon = null, travelMap = null, escortingFaces = null, quickslots = null, spawns = null, smallerDungeonsState = 0, modData = null \} = \{\}\)/,
     'the destructured options name all three, or they are dropped in silence');

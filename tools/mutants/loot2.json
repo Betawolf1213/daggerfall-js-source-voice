@@ -1,7 +1,7 @@
 [
   {
     "name": "LOOT2-a-record-line-banded",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    return own != null && i >= own ? AFFIX_RANGES[a.id].legendary : null;",
     "new": "    return AFFIX_RANGES[a.id].legendary;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "LOOT2-the-band-unsaid",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  return band ? `${label} [${band[0]}-${band[1]}]` : label;",
     "new": "  return label;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "LOOT2-a-magic-perfect",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (item?.rarity !== 'rare' || !Array.isArray(item.affixes) || !item.affixes.length) return false;",
     "new": "  if ((item?.rarity !== 'rare' && item?.rarity !== 'magic') || !Array.isArray(item.affixes) || !item.affixes.length) return false;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "LOOT2-perfect-by-any-line",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  return item.affixes.every((a, i) => { const b = affixBand(item, i); return !!b && a.value === b[1]; });",
     "new": "  return item.affixes.some((a, i) => { const b = affixBand(item, i); return !!b && a.value === b[1]; });",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "LOOT2-perfect-before-it-is-read",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (tier === 'rare' && isPerfect(item) && identified(item)) return `${cursed}Perfect Rare`;",
     "new": "  if (tier === 'rare' && isPerfect(item)) return `${cursed}Perfect Rare`;",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "LOOT2-the-chance-a-half",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "export const EXALTED_PER_MILLE = 100;",
     "new": "export const EXALTED_PER_MILLE = 500;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "LOOT2-a-carried-kind-first",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  let pool = kinds.filter((id) => !carried.has(id));",
     "new": "  let pool = kinds;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "LOOT2-the-whole-band",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const value = rangeInt(Math.ceil((lo + hi) / 2), hi, rolls);",
     "new": "  const value = rangeInt(lo, hi, rolls);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "LOOT2-exalted-twice",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (item?.rarity !== 'legendary' || item.exalted === true || !Array.isArray(item.affixes)) return false;",
     "new": "  if (item?.rarity !== 'legendary' || !Array.isArray(item.affixes)) return false;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "LOOT2-the-worth-forgotten",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  item.value = (Number.isFinite(item.value) ? item.value : itemBaseValue(item)) + exaltedWorth(item) + affixesWorth([line], item);   // LOOT14: a garment's at half",
     "new": "  item.value = (Number.isFinite(item.value) ? item.value : itemBaseValue(item)) + affixesWorth([line], item);",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "LOOT2-exalted-with-the-switch-off",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  if (!on || item?.rarity !== 'legendary' || item.exalted === true) return false;",
     "new": "  if (item?.rarity !== 'legendary' || item.exalted === true) return false;",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "LOOT2-the-door-forgets",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  lastPass(minted, rolls);   // LOOT2: the door's last pass, after every draw it already makes",
     "new": "",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "LOOT2-the-tier-line-plain",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "  const out = [tierLabel(item)];   // LOOT2: \"Exalted Legendary\", \"Perfect Rare\"",
     "new": "  const out = [RARITIES[tier].label];",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "LOOT2-the-gate-before-the-regalia",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  const regalia = rollRegalia(rolls);\n  if (regalia) pieces.push({ item: regalia, tier: regalia.rarity });\n  // LOOT2",
     "new": "  lastPass(pieces.map((p) => p.item), rolls);\n  const regalia = rollRegalia(rolls);\n  if (regalia) pieces.push({ item: regalia, tier: regalia.rarity });\n  // LOOT2",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "LOOT2-the-gate-never",
-    "file": "src/systems/gateSpoils.js",
+    "file": "src/systems/gate/gateSpoils.js",
     "old": "  lastPass(pieces.map((p) => p.item), rolls);\n  // CARDS9 (bible/11-Multiplayer/Tavern-Cards.md section 32): THE WARDEN'S OWN CARD",
     "new": "  // CARDS9 (bible/11-Multiplayer/Tavern-Cards.md section 32): THE WARDEN'S OWN CARD",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "LOOT2-the-exalted-field-undeclared",
-    "file": "src/systems/itemFields.js",
+    "file": "src/systems/item/itemFields.js",
     "old": "  exalted: bool(),   // LOOT2",
     "new": "  exalted: undefined,   // LOOT2",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "LOOT2-the-last-pass-mid-list",
-    "file": "src/systems/lootRarity.js",
+    "file": "src/systems/loot/lootRarity.js",
     "old": "    if (tier !== 'common') { applyRarity(it, tier, rolls, null, { family: source.family ?? null }); minted.push(it); }",
     "new": "    if (tier !== 'common') { applyRarity(it, tier, rolls, null, { family: source.family ?? null }); minted.push(it); lastPass([it], rolls); }",
     "tests": [

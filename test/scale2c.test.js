@@ -18,7 +18,7 @@ import { TOKEN_REUSE_MS } from '../src/net/accountClient.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { quietFoesFrame, quietFoesGate, FOES_FRAME_OWN } from '../src/net/foesQuiet.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { hccWireRecord } from '../src/systems/horseCartWire.js';
+import { hccWireRecord } from '../src/systems/horse/horseCartWire.js';
 
 const quiet = (fn) => { const keep = [console.info, console.warn, console.log]; console.info = console.warn = console.log = () => {}; try { return fn(); } finally { [console.info, console.warn, console.log] = keep; } };
 

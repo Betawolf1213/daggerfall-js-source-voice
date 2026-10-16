@@ -20,7 +20,7 @@ import { midScreenText } from '../src/ui/midScreenText.js';   // AUDIT 64 F34: F
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // SWING-DEFAULT1 (2026-09-22): the harness-artifact pin below reads the DRAG's direction (WeaponSwingMode 0); the port's default is 2 now (click or hold), so the drag is asked for here, once for the file.
-import { setValue as _swingSetValue } from '../src/systems/settings.js';
+import { setValue as _swingSetValue } from '../src/systems/settings/settings.js';
 _swingSetValue('Controls', 'WeaponSwingMode', '0');
 
 const stubAudio = () => {

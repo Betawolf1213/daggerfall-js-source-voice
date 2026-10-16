@@ -5,7 +5,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { paperDollBackground, REGION_BACKGROUND_CHARS } from '../src/ui/paperDoll.js';
-import { setValue, resetToDefaults, LIVE } from '../src/systems/settings.js';
+import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 
 // UI3 - GEOGRAPHIC BACKGROUNDS (PaperDoll.GetPaperDollBackground
 // :203-230). `EnableGeographicBackgrounds` ships FALSE, so DFU's

@@ -25,7 +25,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createAutomapSheet, FIT_MARGIN, READABLE_SCALE } from '../src/ui/automapSheet.js';
 import { isSheet, SHEET_MEMBERS } from '../src/ui/mapStrip.js';
-import { deriveFloors, floorTriangles, groupSheets, levelField, planBounds } from '../src/systems/automapFloors.js';
+import { deriveFloors, floorTriangles, groupSheets, levelField, planBounds } from '../src/systems/automap/automapFloors.js';
 import { scaleMinOf, toPaper, SCALE_MAX } from '../src/ui/inkMap.js';
 import { PLAN_PEN } from '../src/ui/inkAutomap.js';
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDWB-C1-the-sea-by-climate-alone",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "export const gateSeaPixel = (climate, byte) => climate === CLIMATES.Ocean || byte * BASE_HEIGHT_SCALE <= SCALED_OCEAN_ELEVATION;",
     "new": "export const gateSeaPixel = (climate, byte) => climate === CLIMATES.Ocean;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDWB-C1-the-sea-edge-off-by-one",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "export const gateSeaPixel = (climate, byte) => climate === CLIMATES.Ocean || byte * BASE_HEIGHT_SCALE <= SCALED_OCEAN_ELEVATION;",
     "new": "export const gateSeaPixel = (climate, byte) => climate === CLIMATES.Ocean || byte * BASE_HEIGHT_SCALE < SCALED_OCEAN_ELEVATION;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDWB-C1-the-scan-blind-to-the-heights",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "      if (gateSeaPixel(maps.getClimateIndex(x, y), heightAt ? heightAt(x, y) : 255)) continue;",
     "new": "      if (gateSeaPixel(maps.getClimateIndex(x, y), 255)) continue;",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "AUDWB-C1-the-coast-value-a-province",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "export const politicClaimed = (pol) => (pol >= 128 && pol < 128 + REGION_NAMES.length) || pol === 128 + 105;",
     "new": "export const politicClaimed = (pol) => (pol >= 128 && pol < 128 + REGION_NAMES.length) || pol === 128 + 105 || pol === 64;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "AUDWB-C3-the-town-named-with-the-gates-province",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "  const townRegion = town ? (REGION_NAMES[town.region] ?? '') : '';",
     "new": "  const townRegion = town ? regionName : '';",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "AUDWB-C7-a-slice-that-stops-at-the-first-row",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "      do { row(); y++; } while (y < H - 1 && more());",
     "new": "      do { row(); y++; } while (y < H - 2 && more());",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "AUDWB-C7-a-slice-that-skips-a-row",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "      do { row(); y++; } while (y < H - 1 && more());",
     "new": "      do { row(); y += 1 + (more() ? 0 : 0); y++; } while (y < H - 1 && more());",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "AUDWB-C7-a-finished-scan-made-again",
-    "file": "src/systems/gateSite.js",
+    "file": "src/systems/gate/gateSite.js",
     "old": "      if (done) return done;",
     "new": "      if (done && false) return done;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "AUDWB-C4-the-omen-before-the-clock",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (!ready()) { readyAt = null; settled = false; current = null; return null; }",
     "new": "      if (!ready() && false) { readyAt = null; settled = false; current = null; return null; }",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDWB-C4-no-settle",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "        if (now() - readyAt < settleMs) { current = null; return null; }",
     "new": "        if (now() - readyAt < 0) { current = null; return null; }",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDWB-C4-a-step-back-silences-the-settled",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "        settled = true;",
     "new": "        settled = false;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDWB-C4-a-link-lost-keeps-the-settle",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (!ready()) { readyAt = null; settled = false; current = null; return null; }",
     "new": "      if (!ready()) { readyAt = null; current = null; return null; }",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDWB-C4-a-line-said-twice-behind",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (line && (t.day !== saidDay || rank > saidRank) && !(line === 'wrath' && Number.isFinite(fell))) {",
     "new": "      if (line && (t.day !== saidDay || rank !== saidRank) && !(line === 'wrath' && Number.isFinite(fell))) {",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "AUDWB-C4-a-new-day-silenced-by-the-last",
-    "file": "src/systems/gateOmen.js",
+    "file": "src/systems/gate/gateOmen.js",
     "old": "      if (line && (t.day !== saidDay || rank > saidRank) && !(line === 'wrath' && Number.isFinite(fell))) {",
     "new": "      if (line && rank > saidRank && !(line === 'wrath' && Number.isFinite(fell))) {",
     "tests": [

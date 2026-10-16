@@ -15,7 +15,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { sendQuestItemClick } from '../src/systems/itemTransfer.js';
+import { sendQuestItemClick } from '../src/systems/item/itemTransfer.js';
 import { foldQuickLoot, quickLootTake, quickLootArm } from '../src/systems/quickLoot.js';
 import { inventoryQuickAct } from '../src/ui/enhancedInventory.js';
 import { ROOT, examination, noteCame, withQuickLoot, frameOf, thief, overPile, bedRoom } from './robesHarness.mjs';   // the harness the audit's file shares
@@ -117,7 +117,7 @@ test('WHERE-ROBES: every door onto a loot row clicks through the ONE home - no i
 
 test('WHERE-ROBES: a quest ITEM stand is named by the Item resource\'s own item - the robes read as the robes, not a nameless pile (mutant: the old field read)', async () => {
   const { questStandItem, questResourceName } = await import('../src/systems/worldTooltips.js');
-  const { itemLongName } = await import('../src/systems/itemInfo.js');
+  const { itemLongName } = await import('../src/systems/item/itemInfo.js');
   const e = examination();
   const clothing = e.q.getItem({ name: 'clothing' });
   assert.equal(questStandItem(clothing), e.robes, 'the resource the stand\'s behaviour targets carries its item here');

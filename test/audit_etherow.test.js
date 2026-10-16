@@ -19,7 +19,7 @@ import { LOCATION_TYPES, getWorldClimateSettings } from '../src/formats/mapsFile
 import * as ES from '../src/world/ethericSea.js';
 import { etherPlaceIsle, etherPlaceRows, etherTemplateOf, synthesizeEtherLocation, etherPlaceId, ETHER_REGION, ETHER_REGION_NAME } from '../src/world/etherPlaces.js';
 import { createCaptainLedger } from '../src/systems/naval/captainLedger.js';
-import { farPlaces, settlementPixels, TV_FAR_RANGE } from '../src/systems/travelFarPlaces.js';
+import { farPlaces, settlementPixels, TV_FAR_RANGE } from '../src/systems/travel/travelFarPlaces.js';
 import { shipTransition } from '../src/systems/ship.js';
 import { SHIP_TYPES } from '../src/systems/banking.js';
 

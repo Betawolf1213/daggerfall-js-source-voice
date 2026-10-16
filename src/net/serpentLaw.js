@@ -10,7 +10,7 @@
 // at 05:00, the storm closing its waters at 08:00 and its sounding - gone into the deep - at 10:00. Every client and
 // the relay compute the same instants with nothing sent.
 //
-// WHERE IS THE CLIENT'S (systems/serpentSite.js): the lane is rolled here over the Bay's packet lanes (systems/naval/
+// WHERE IS THE CLIENT'S (systems/serpent/serpentSite.js): the lane is rolled here over the Bay's packet lanes (systems/naval/
 // seaLanes.js laneNetwork - the same list on every client, made from the map files every client holds), the spot along
 // its way by the rolls below. The relay never reads a map file; the fight lives in the cell room the site stands in
 // (net/serpentBrain.js, server/src/index.js), whichever socket of a player's - its own cell's or a halo's - reaches it.
@@ -137,7 +137,7 @@ export const serpentCountdownWords = (cd) => (cd ? `${cd.to === 'rise' ? 'rises'
 // ═══ THE ROLLS ════════════════════════════════════════════════════════
 //
 // Which lane, and where along it - each a hash of the day, so every client rolls the same (gateLaw.js gateHash, the
-// spawned dungeons' mix). systems/serpentSite.js walks the tries in order until one is open sea.
+// spawned dungeons' mix). systems/serpent/serpentSite.js walks the tries in order until one is open sea.
 
 /** Roll `k` of a serpent's day, a whole number in [0, 2^32). */
 export const serpentRoll = (day, k) => gateHash(SERPENT_SALT, day, k);

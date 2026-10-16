@@ -197,7 +197,7 @@ test('poisons: the enemy weapon-poison roll + the formulas inflict-once seam', (
 });
 
 test('poisons: cure + the save round-trip carries the poison entry', async () => {
-  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save.js');
+  const { snapshotPlayer, restorePlayer } = await import('../src/systems/save/save.js');
   const p = P();
   const entry = startPoison(p, POISONS.Thyrwort, 0, seq(0, 0));
   updatePoisons(p, 3, sinkRec().sinks, seq(0));   // 2 waiting + 1 active: wil -5, per -10

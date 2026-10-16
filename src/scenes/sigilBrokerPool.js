@@ -24,7 +24,7 @@
 // come within BROKER_NOTICE_M of her - at a walk's pace, never a snap.
 //
 // NOTHING HERE IS SAVED OR SENT: where she stands is the breach's, and the breach is the clock's; her cage's word is the
-// rite's (scenes/riteHost.js). What she sells, and what a character bought of it, are the law's (systems/sigilBroker.js);
+// rite's (scenes/riteHost.js). What she sells, and what a character bought of it, are the law's (systems/sigil/sigilBroker.js);
 // the window is ui/brokerWindow.js behind ui/brokerDoor.js; the sale is the host's (scenes/world.js), through the law.
 //
 // Not a DFU member. Ledger A (SET).
@@ -114,7 +114,7 @@ export function cageSpotLocal(day) {
 }
 
 /**
- * Where she stands for the breach at `site` (`{day, px, py}` - the omen's, systems/gateOmen.js cageSite) at `nowMs`: her
+ * Where she stands for the breach at `site` (`{day, px, py}` - the omen's, systems/gate/gateOmen.js cageSite) at `nowMs`: her
  * cage's spot carried into the scene by the pixel's translation, on the ground there, facing the gate - or null with no
  * site, outside the omen to midnight (cageStands), or where the ground answers nothing (her pixel not built). Pure.
  * @param {{day: number, px: number, py: number}|null} site
@@ -174,7 +174,7 @@ export function turnToward(yaw, want, dt, rate = BROKER_TURN_RATE) {
  *   freedAt?: (day: number, px: number, py: number) => number,
  *   feet?: () => (number[]|null), cam?: () => (number[]|null),
  *   say?: (text: string) => void, open?: () => void, gone?: () => boolean, collider?: () => any,
- * }} deps  `site` the omen's breach (systems/gateOmen.js cageSite); `freed` whether every one of its faithful fell
+ * }} deps  `site` the omen's breach (systems/gate/gateOmen.js cageSite); `freed` whether every one of its faithful fell
  *   (scenes/riteHost.js isCleared) and `freedAt` when the hub said it (riteHost.js clearedAt; NaN unknown); `gone` is
  *   the host's: shut a window open on her, and say whether one was
  */

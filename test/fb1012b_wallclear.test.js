@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDecorPlacer, DECOR_WALL_GAP, DECOR_GRID } from '../src/systems/decorPlacer.js';
+import { createDecorPlacer, DECOR_WALL_GAP, DECOR_GRID } from '../src/systems/decor/decorPlacer.js';
 
 const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
 const origin = [10, 0, 10];

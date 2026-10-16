@@ -15,8 +15,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LocationSession, pickLocations, pickLocationsScan, WOD_OCEAN_REGIONS } from '../src/world/wodLocationLoader.js';
 import { decodeRegionPack } from '../src/world/wodLocationPack.js';
-import { seededRng, seededFirst } from '../src/systems/wind.js';
-import { windAt, windPath, weatherAt, systemsNear, resetWeatherMap } from '../src/systems/weatherMap.js';
+import { seededRng, seededFirst } from '../src/systems/wind/wind.js';
+import { windAt, windPath, weatherAt, systemsNear, resetWeatherMap } from '../src/systems/weather/weatherMap.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 

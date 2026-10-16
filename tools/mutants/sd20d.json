@@ -64,7 +64,7 @@
   },
   {
     "name": "SD20D-A10-no-hold",
-    "file": "src/systems/sdScore.js",
+    "file": "src/systems/superDungeon/sdScore.js",
     "old": "(was === 'arena' ? SD_SCORE_HOLD_M : 0)",
     "new": "0",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD20D-A10-the-steps-unheld",
-    "file": "src/systems/sdScore.js",
+    "file": "src/systems/superDungeon/sdScore.js",
     "old": "(was === 'steps' || was === 'arena' ? SD_SCORE_HOLD_M : 0)",
     "new": "0",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD20D-A10-the-steps-over-the-end",
-    "file": "src/systems/sdScore.js",
+    "file": "src/systems/superDungeon/sdScore.js",
     "old": "  if (ending) return SD_SCORE_SILENCE;   // the End: nothing over it\n  if (lastMinute) return HOUR_SONGS.last;\n  if (place === 'hall') return HOUR_SONGS.hall;\n  if (place !== 'arena' || !fight) return HOUR_SONGS.steps;\n",
     "new": "  if (place === 'hall') return HOUR_SONGS.hall;\n  if (place !== 'arena' || !fight) return HOUR_SONGS.steps;\n  if (ending) return SD_SCORE_SILENCE;   // the End: nothing over it\n  if (lastMinute) return HOUR_SONGS.last;\n",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD20D-A3-the-seam-stepped",
-    "file": "src/systems/arenaSound.js",
+    "file": "src/systems/arena/arenaSound.js",
     "old": "  for (let i = 0; i < x.length; i++) y += a * (x[i] - y);\n",
     "new": "",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "SD20D-A7-built-every-ask",
-    "file": "src/systems/sdRiftSound.js",
+    "file": "src/systems/superDungeon/sdRiftSound.js",
     "old": "  if (!samples) {",
     "new": "  if (true) {",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "SD20D-A8-the-hours-merge-undone",
-    "file": "src/systems/sdScore.js",
+    "file": "src/systems/superDungeon/sdScore.js",
     "old": "      if (was) { was.velocity = Math.max(was.velocity, v); was.duration = Math.max(was.duration, duration); return; }\n",
     "new": "",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SD20D-A8-the-gates-merge-undone",
-    "file": "src/systems/gateScore.js",
+    "file": "src/systems/gate/gateScore.js",
     "old": "      if (was) { was.velocity = Math.max(was.velocity, v); was.duration = Math.max(was.duration, duration); return; }\n",
     "new": "",
     "tests": [

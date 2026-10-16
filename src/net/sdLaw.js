@@ -8,7 +8,7 @@
 // online tab holds) keeps ONE record of it - `sdev` - and its director (server/src/index.js) moves it on: it RISES
 // where the census finds the most players (pickSdRegion), is FOUND by the first player at its door, FALLS when its
 // boss does, and is GONE three minutes later - or fades unbeaten when its time runs out - and the next rises after a
-// rest. Every change is fanned to every tab, which places the Hollow from its own map files (systems/sdSite.js): the
+// rest. Every change is fanned to every tab, which places the Hollow from its own map files (systems/superDungeon/sdSite.js): the
 // relay never knows the pixel, and needs not.
 //
 // PURE, and the relay's too: it imports wire.js and gateLaw.js (the port's one mix, gateHash, and a pixel's side), both

@@ -31,13 +31,13 @@ import { haulKey, parseNodeKey, schoolSpots, SCHOOLS_PER_PIXEL, SCHOOL_R, pixelK
 import { FISH_KEY, actBand, PEARL, storesFullIn, goneIn, fullWordsIn } from '../net/professionLaw.js';
 import { goodsWhere } from '../net/bagLaw.js';   // BAG1: where the haul went
 import { createFishAct } from '../systems/fishAct.js';
-import { FT, attributeAverage } from '../systems/foragingLaw.js';
-import { foragingActRefusal, actChecksRefusal, foragingToolIn, foragingHost } from '../systems/foragingInstall.js';
-import { materialCountLabel } from '../systems/profItems.js';
+import { FT, attributeAverage } from '../systems/foraging/foragingLaw.js';
+import { foragingActRefusal, actChecksRefusal, foragingToolIn, foragingHost } from '../systems/foraging/foragingInstall.js';
+import { materialCountLabel } from '../systems/professions/profItems.js';
 import { liveStat, maxFatigue } from '../systems/statMods.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { PASSIVE_FISH_SPECIES, pickSpecies } from '../world/passiveFish.js';
-import { templateByIndex } from '../systems/itemTemplates.js';
+import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { groundAt } from '../world/terrainNature.js';
 import { isOutdoorWaterTile } from '../world/terrainSurface.js';
 import { WORLD_MAP_TILE_DIM } from '../world/terrainTiles.js';
@@ -85,7 +85,7 @@ export const NET_WHERE_WORDS = Object.freeze({ inside: 'not in here', town: 'not
 /** FISH-TIRED (FIELD BUGS 2026-09-30b: "you can get instakilled when fishing"). The minute's band charges an angler
  *  treading water the swim's price, 8 or 33 fatigue every five real seconds (systems/worldTick.js; FATIGUE-IDLE spares
  *  dry ground only), and in the water a collapse was DFU's death whatever the health - now a tenth of the health a game
- *  minute (SWIM-SPENT, systems/rest.js exhaustionOutcome). Either way no net is cast in the water on the last quarter of
+ *  minute (SWIM-SPENT, systems/rest/rest.js exhaustionOutcome). Either way no net is cast in the water on the last quarter of
  *  the fatigue bar, and an act there ends when the bar falls into it: the prompt says why, with minutes left to swim out
  *  and rest. */
 export const NET_TIRED_SHARE = 0.25;

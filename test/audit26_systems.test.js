@@ -11,28 +11,28 @@ import { fileURLToPath } from 'node:url';
 import {
   PAINTING_TEXT_BASE, PAINTING_RECORD_COUNT, paintingRecordPart, initPaintingInfo,
   paintingMacros, expandItemInfo, itemInfoRows, itemInfoTextId, INFO_TEXT, setPaintFile,
-} from '../src/systems/itemInfo.js';
-import { PAINTING_MESSAGE_RANGE, rollPaintingMessage } from '../src/systems/itemTemplates.js';
+} from '../src/systems/item/itemInfo.js';
+import { PAINTING_MESSAGE_RANGE, rollPaintingMessage } from '../src/systems/item/itemTemplates.js';
 import { srand, rand, getSeed } from '../src/formats/dfRandom.js';
 import { fullName } from '../src/characters/nameHelper.js';
 
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import {
   claimMagicRounds, resetMagicRoundMarker, setWorldMinutes, MAX_CATCHUP_ROUNDS,
 } from '../src/systems/worldTick.js';
 
 import { applyCreationExtras } from '../src/systems/chargenSession.js';
-import { REGION_COUNT, REGION_FLAGS, conditionFlag } from '../src/systems/regionConditions.js';
+import { REGION_COUNT, REGION_FLAGS, conditionFlag } from '../src/systems/region/regionConditions.js';
 import { updateRegionalPrices, PRICE_ADJUSTMENT_MIN } from '../src/systems/shopStock.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 
-import { GUILDS, numHighLowSkills, calculateNewRank } from '../src/systems/guilds.js';
-import { tooSkilledToTrain } from '../src/systems/guildServiceActions.js';
-import { trainingMax } from '../src/systems/guildServices.js';
+import { GUILDS, numHighLowSkills, calculateNewRank } from '../src/systems/guild/guilds.js';
+import { tooSkilledToTrain } from '../src/systems/guild/guildServiceActions.js';
+import { trainingMax } from '../src/systems/guild/guildServices.js';
 import { SKILLS, SKILL_COUNT, skillValue, permanentSkillValue } from '../src/systems/skills.js';
-import { createFactionRep, setReputation } from '../src/systems/factionRep.js';
+import { createFactionRep, setReputation } from '../src/systems/faction/factionRep.js';
 
-import { createArtifact } from '../src/systems/loot.js';
+import { createArtifact } from '../src/systems/loot/loot.js';
 import { itemIsIdentified } from '../src/systems/tradeModes.js';
 
 import { loadQuestTables } from '../src/systems/quest/tables.js';

@@ -257,7 +257,7 @@
  },
  {
   "name": "ASO-gem-template",
-  "file": "src/systems/profTemplates.js",
+  "file": "src/systems/professions/profTemplates.js",
   "old": "registerCustomTemplates([SIEGE_GEM_ROW]);",
   "new": "",
   "tests": [

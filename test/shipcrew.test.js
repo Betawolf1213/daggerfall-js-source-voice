@@ -21,7 +21,7 @@ import { createGunDeck } from '../src/systems/naval/navalGunnery.js';
 import { yardText } from '../src/ui/navalYardWindow.js';
 import { helmButtons } from '../src/ui/enhancedHelm.js';
 import { boatMenuRows, BOAT_VERB } from '../src/systems/comeSailAway/csaBoatMenu.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const ship = (crew) => crewRoster({ hull: HULL.SmallShip, seed: 7, crew });

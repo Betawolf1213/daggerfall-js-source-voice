@@ -26,12 +26,12 @@ import { existsSync, readFileSync } from 'node:fs';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { ENCOUNTER_TABLES } from '../src/systems/encounters.js';
 import { RACE_TEMPLATES } from '../src/systems/races.js';
-import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { ITEM_GROUPS } from '../src/systems/loot.js';
+import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';
+import { ITEM_GROUPS } from '../src/systems/loot/loot.js';
 import { materialArmorValue } from '../src/systems/armorMaterials.js';
 import { materialArmorValue as eeMaterialArmorValue } from '../src/combat/enemyEquipment.js';
 import * as ACTIVATE from '../src/player/activate.js';
-import * as TALK from '../src/systems/talk.js';
+import * as TALK from '../src/systems/talk/talk.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { ENCOUNTER_TABLES as ENCOUNTER_TABLES_SRC } from '../src/characters/encounterTables.js';
 import { extractEnemyBasics, sliceEnemyTable } from '../tools/extractEnemyBasics.lib.mjs';
@@ -321,7 +321,7 @@ test('audit24 wave23: loot.js views the one item-group table, it does not copy i
       `loot's ${k} is the SAME frozen array, not one that happens to agree`);
   }
   assert.equal(Object.keys(ITEM_GROUPS).length, 12);
-  assert.doesNotMatch(readFileSync(new URL('../src/systems/loot.js', import.meta.url), 'utf8'),
+  assert.doesNotMatch(readFileSync(new URL('../src/systems/loot/loot.js', import.meta.url), 'utf8'),
     /PlantIngredients1: \[8, 9/, 'and no literal has grown back');
 });
 
@@ -387,7 +387,7 @@ test('audit24 wave23: the activation distances are REBUILT from PlayerActivate.c
 });
 
 test('audit24 wave23: the activation distances have ONE home', () => {
-  // systems/talk.js declared a second set as bare `256 * 0.025`
+  // systems/talk/talk.js declared a second set as bare `256 * 0.025`
   // literals, and wave 22 of this audit added a fourth constant to the
   // COPY rather than the original - which is how a duplicate set gets
   // built one honest commit at a time.
@@ -395,7 +395,7 @@ test('audit24 wave23: the activation distances have ONE home', () => {
     'STATIC_NPC_ACTIVATION_DISTANCE', 'MOBILE_NPC_ACTIVATION_DISTANCE', 'PICKPOCKET_DISTANCE']) {
     assert.equal(TALK[k], ACTIVATE[k], `talk.js re-exports ${k}`);
   }
-  const talkSrc = readFileSync(new URL('../src/systems/talk.js', import.meta.url), 'utf8');
+  const talkSrc = readFileSync(new URL('../src/systems/talk/talk.js', import.meta.url), 'utf8');
   assert.doesNotMatch(talkSrc, /export const \w*ACTIVATION_DISTANCE = /, 'no second declaration');
   assert.doesNotMatch(talkSrc, /export const RAY_DISTANCE = /);
   assert.doesNotMatch(talkSrc, /export const PICKPOCKET_DISTANCE = /);

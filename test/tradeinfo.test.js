@@ -12,13 +12,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { itemPowerLines } from '../src/ui/enhancedInventory.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
-import { POWERS_UNKNOWN_TEXT } from '../src/systems/itemPowers.js';
+import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
+import { POWERS_UNKNOWN_TEXT } from '../src/systems/item/itemPowers.js';
 import { createTradeManager, inTradeRange, OFFER_TOO_BIG_TEXT, tradeFrameBytes } from '../src/net/tradeSession.js';
 import { validTradeData, TRADE_FRAME_MAX, TRADE_DATA_MAX, TRADE_REV_MAX } from '../src/net/wire.js';
 import { letterWorthLine } from '../src/systems/walletItem.js';
 import { letterOfCredit } from '../src/systems/inventory.js';
-import { validLootList } from '../src/systems/loot.js';
+import { validLootList } from '../src/systems/loot/loot.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const tiers = (on, fn) => { setPref(LOOT_RARITY_KEY, on); try { return fn(); } finally { setPref(LOOT_RARITY_KEY, false); } };

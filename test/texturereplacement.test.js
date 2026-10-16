@@ -10,7 +10,7 @@ import {
   hasTextureReplacement, textureReplacementBytes,
   preloadTextureArchive, decodedTexture, decodedTextureCount,
 } from '../src/systems/textureReplacement.js';
-import { setValue } from '../src/systems/settings.js';
+import { setValue } from '../src/systems/settings/settings.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');
 const on = () => setValue('Enhancements', 'AssetInjection', 'True');

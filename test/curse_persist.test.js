@@ -12,8 +12,8 @@ import { createVampirismCurse, liveVampirism, cureVampirism, VAMPIRE_CLAN_SPELLS
 import { LYCANTHROPY_TYPES, VAMPIRE_CLANS, INFECTION, createInfection, liveInfection } from '../src/systems/infection.js';
 import { tickActiveEffects } from '../src/systems/effects.js';
 import { repairLostCurses, inferVampireClan } from '../src/systems/curseRepair.js';
-import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { setSpellRecordsByIndex } from '../src/systems/loot.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
+import { setSpellRecordsByIndex } from '../src/systems/loot/loot.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -111,7 +111,7 @@ test('CURSE-REPAIR1: nothing is given back where nothing was lost - a live curse
   assert.equal(repairLostCurses(again, { now: 1 }), 'lycanthropy');
   assert.equal(repairLostCurses(again, { now: 2 }), null, 'idempotent');
   // the hook sits AFTER the spellbook and the effect list are restored
-  const save = rd('src/systems/save.js');
+  const save = rd('src/systems/save/save.js');
   assert.ok(save.indexOf('repairLostCurses(entity, {') > save.indexOf('seedCustomSpellIndex(entity.spells);'), 'after the spellbook');
   assert.ok(save.indexOf('repairLostCurses(entity, {') > save.indexOf("entity.racialOverride = entity.activeEffects.find("), 'after the effect list and its marker');
 });

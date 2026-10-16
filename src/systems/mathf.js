@@ -64,7 +64,7 @@ export function colorLerp(a, b, t) {
  *  with a third party (GLSL) is two chances to disagree with it.
  *
  *  It was written a second time in `render/labGrass.js` and a first time
- *  in `systems/weatherFront.js`; both now import it from here. */
+ *  in `systems/weather/weatherFront.js`; both now import it from here. */
 export function smoothstep(a, b, x) {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
   return u * u * (3 - 2 * u);

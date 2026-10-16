@@ -248,7 +248,7 @@ carries no river switch of its own, so the painter's switch is the cut's.
 
 ONLINE TOO (2026-10-06, Mac, asked whether the channels should reach a room:
 *"Yes rivers should be online"*). This slice first kept them out: the river
-switch was each player's own online (`systems/onlineLane.js`: "a river paints
+switch was each player's own online (`systems/online/onlineLane.js`: "a river paints
 tiles and never moves a height"), and a channel one player cut and another did
 not would stand two players on two floors. A river cut into the land IS ground,
 so the switch is the room's now - in `ONLINE_ROOM_MOD_KEYS` beside Enabled and
@@ -880,7 +880,7 @@ Roads network, in scratch, with the slice's own functions:
   record on a road from before the row lands within 1.6 m over or 2.0 m under
   it; World of Daggerfall's flatten is not followed either.
 - OW-MOUNTAINS judges a travel route's open step on raw bytes
-  (`systems/travelRoute.js` openStepBlocked: 16 bytes, 160 m between pixel
+  (`systems/travel/travelRoute.js` openStepBlocked: 16 bytes, 160 m between pixel
   centres, DFU's slopes); with the row on, 251 of the 839,697 steps it admits
   outside the Mountain climate rise more than 160 m on the lifted ground (the
   worst 390 m, (803, 212) -> (804, 212), about 25 degrees). It said "No
