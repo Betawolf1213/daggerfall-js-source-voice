@@ -152,7 +152,7 @@ export const decorDrawnScale = (piece) => (decorIsFigure(piece) ? 1 : piece?.sca
 /** DECOR-FIGURE: whether a piece's scale is one the service writes - a figure's is 1, any other's the law's range. */
 export const decorScaleOk = (piece) => !decorIsFigure(piece) || piece.scale === 1;
 
-/** DECOR2c: how far a mount hangs off its surface, in metres - the blood marks' own hair (combat/bloodDecals.js
+/** DECOR2c: how far a mount hangs off its surface, in metres - the blood marks' own hair (combat/blood/bloodDecals.js
  *  SURFACE_LIFT), so it wins the depth test against the wall behind it. */
 export const DECOR_MOUNT_LIFT = 0.02;
 const RAD = Math.PI / 180;

@@ -27,7 +27,7 @@
 
 import { PARKOUR_GRIP_LOW, PARKOUR_HAND_SPAN } from './parkour.js';
 import { ClimbSounds } from './climbSounds.js';   // the ear's half, framed with the eye's
-import { stepTechniqueFx, techniqueView, resetTechniqueFx } from '../combat/techniqueFx.js';   // TECH-FX: a technique's camera rides the climb's view step
+import { stepTechniqueFx, techniqueView, resetTechniqueFx } from '../combat/technique/techniqueFx.js';   // TECH-FX: a technique's camera rides the climb's view step
 
 /** The constants of the feel. Angles in degrees where named _DEG, distances in metres, rates per second. */
 export const FEEL = Object.freeze({

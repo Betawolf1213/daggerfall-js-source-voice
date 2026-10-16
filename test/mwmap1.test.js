@@ -6,13 +6,13 @@
 // and building automaps) and none passed a holder, so every M-key sheet
 // fell to the painted gauntlets: a player with Morrowind arms saw the
 // Morrowind map on V outdoors and nowhere else. The holder is
-// combat/weaponRig.js's `sheetHolderOf(rig)` now, every host with a rig
+// combat/weapon/weaponRig.js's `sheetHolderOf(rig)` now, every host with a rig
 // hands it to every door it opens, and each of those doors goes into
 // the head first (MAP-POV's law).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sheetHolderOf } from '../src/combat/weaponRig.js';
+import { sheetHolderOf } from '../src/combat/weapon/weaponRig.js';
 import { createTownMapWindow } from '../src/ui/town/townMapDoor.js';
 import { createAutomapWindow } from '../src/ui/automap/automapDoor.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';

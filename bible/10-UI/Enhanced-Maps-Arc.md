@@ -482,7 +482,7 @@ ONE window with three sheets, and two laws that had been written for
 the travel map alone did not widen with it.
 
 **EM-BUG1 — one flag was answering two questions.** MAP-WEAPON gave the
-weapon rig a gate: `if (sheetWindowUp()) return;` (`combat/weaponRig.js`),
+weapon rig a gate: `if (sheetWindowUp()) return;` (`combat/weapon/weaponRig.js`),
 because hands holding a map are not also holding a sword. The host
 answered it off the window's own duck tag, `isTravelMap` — fine while
 this window WAS the travel map.
@@ -607,7 +607,7 @@ repo through this arc either.
 
 EM3 and EM4 opened this window from the M key on every host and handed
 it no `holder`, so the Morrowind hands lane (MAP3) stood only on the V
-key's travel map. The holder is combat/weaponRig.js's `sheetHolderOf`
+key's travel map. The holder is combat/weapon/weaponRig.js's `sheetHolderOf`
 now and every door on every host with a rig passes it; the record is
 Held-Map-Arc.md's MW-MAP1 section.
 

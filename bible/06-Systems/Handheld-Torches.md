@@ -44,7 +44,7 @@ CalculateSuccessfulHit`, `EntityEffectBroker.CreateSpellBundle` with
 ## The shape here
 
 `createHandheldTorches()` is the component; the weapon rig
-(`combat/weaponRig.js`) owns one per host beside the Weapon Widget
+(`combat/weapon/weaponRig.js`) owns one per host beside the Weapon Widget
 clone and feeds it the frame: `update()` is `Update`, `lateUpdate()` is
 `LateUpdate` (the mod runs both; the rig calls them in that order, after
 the machine's own step), `draw()` is `OnGUI`'s repaint, called in the
@@ -151,7 +151,7 @@ port carries as `playerTorch.setPlayerTorchOffsetOverride` (the
 transform keeps what was last written; `dispose` clears it). Bob,
 Inertia and Step are Weapon Widget's laws restated where the IL
 restates them, over the same modsettings tables (`BOB_SHAPE`,
-`STEP_CONDITION` - one home, `combat/weaponWidget.js`); the bob's
+`STEP_CONDITION` - one home, `combat/weapon/weaponWidget.js`); the bob's
 sideways term is signed by the hand. Drawn white: `FPSWeapon.Tint` is
 First-Person Lighting's channel and the port has no such mod.
 
@@ -315,7 +315,7 @@ port's `Enabled` and that one (HT-WAIST below).
 
 ## Hosts and seams
 
-- `combat/weaponRig.js`: `createHandheldTorches({ audio, say,
+- `combat/weapon/weaponRig.js`: `createHandheldTorches({ audio, say,
   torches })` beside the widget; `handheldOn()`; the pool bound to the
   component once (`setOnPickedUp`); the frame `tctx` (the machine, the
   sheathe, the hand, the cast, the third person, the climb, the swim,

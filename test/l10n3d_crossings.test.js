@@ -46,7 +46,7 @@ test('L10N3d crossings: the afloat latch says cannotFloat in the player\'s langu
   const w = new PlayerWeapon();
   assert.deepEqual([w.toggleHand({ apply: false, bowSwitching: false }), w.toggleHand({ apply: false, bowSwitching: false })].sort(),
     [USING_RIGHT_HAND_TEXT, USING_LEFT_HAND_TEXT].sort(), 'the hand\'s name, in any language (the rig reads it, and says the row)');
-  const rig = readFileSync(new URL('../src/combat/weaponRig.js', import.meta.url), 'utf8');
+  const rig = readFileSync(new URL('../src/combat/weapon/weaponRig.js', import.meta.url), 'utf8');
   assert.match(rig, /say\(line === USING_RIGHT_HAND_TEXT \? localizedText\('usingRightHand', 'Using weapon in right hand\.'\) : localizedText\('usingLeftHand', 'Using weapon in left hand\.'\)\);/);
   assert.equal(/\bsay\(line\);/.test(rig), false, 'never the bare English');
 });

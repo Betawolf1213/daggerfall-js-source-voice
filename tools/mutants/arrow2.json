@@ -1,7 +1,7 @@
 [
   {
     "name": "ARROW2-release-not-hidden",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (playerWeapon.machine.isBow && evs.includes('done')) _bowReleaseHidden = true;",
     "new": "      if (false) _bowReleaseHidden = true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARROW2-classic-sprite-ignores-the-hide",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (art && spriteShown()) drawFpsWeapon(",
     "new": "      if (art) drawFpsWeapon(",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARROW2-widget-fed-the-latched-shown",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "shown: spriteShown(), castPlaying",
     "new": "shown: shown(), castPlaying",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARROW2-hide-never-lifts",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    _bowReleaseHidden = false;   // ARROW2: the first Update past the cooldown writes ShowWeapons again\n",
     "new": "",
     "tests": [

@@ -32,7 +32,7 @@ async function load(path) {
 
 const LOOT = await load('../src/systems/loot/loot.js');
 const LR = await load('../src/systems/loot/lootRarity.js');
-const TECH_ROSTER = await load('../src/combat/techniqueRoster.js');   // TECH1: a piece's technique family
+const TECH_ROSTER = await load('../src/combat/technique/techniqueRoster.js');   // TECH1: a piece's technique family
 const PREFS = await load('../src/systems/uiPrefs.js');
 const SIGIL = await load('../src/systems/sigil/sigil.js');
 const MODS = await load('../src/systems/modSettings.js');

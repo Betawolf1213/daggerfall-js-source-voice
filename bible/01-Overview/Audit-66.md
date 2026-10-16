@@ -266,7 +266,7 @@ rival, dispose's owners) and 16 new ones.
 ## The cost
 
 Six source files (`systems/handheldTorches.js`,
-`scenes/droppedTorches.js`, `combat/weaponRig.js`, `scenes/world.js`,
+`scenes/droppedTorches.js`, `combat/weapon/weaponRig.js`, `scenes/world.js`,
 `scenes/exterior.js`, `scenes/worldModes.js`,
 `scenes/dungeonContext.js`, `systems/modSettings.js`), one new pin file,
 this record. No new dependency, no new renderer surface, one dep and one

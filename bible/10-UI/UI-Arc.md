@@ -12421,7 +12421,7 @@ one surface everywhere); the `youAreTooFarAway` refusals at `:780`,
 `LookAtInteriorLock`'s whole difficulty ladder and `magicLock`
 (`:991-1007`) in `scenes/dungeonContext.js` and both exterior arms of
 `scenes/worldModes.js`; and `FPSWeapon.cs:365`'s `youHaveNoArrows` in
-`combat/weaponRig.js`.
+`combat/weapon/weaponRig.js`.
 
 Two of those needed care rather than a rename. `weaponRig`'s `say`
 sink also carries the shield refusal (`WeaponManager.cs:704-705`),
@@ -13355,7 +13355,7 @@ after the Enhanced pane's "Build first-person arms", and `fpArm` is a
 module singleton that dies with the tab, so every launch began bare -
 not a first-launch bug, an every-launch one. The pane's Build now
 sets `mwArms` on the prefs shelf (only when the build stood) and
-Unload clears it; `combat/weaponRig.js autoBuildArms` is the one
+Unload clears it; `combat/weapon/weaponRig.js autoBuildArms` is the one
 home, four gates (a made character, the switch, the archives
 attached, the arm not already built), and each host that owns a rig
 calls it at every door a made character arrives through: the rig's
@@ -15033,7 +15033,7 @@ Mac: "So now I want to add a toggle for the morrowind asset pack."
 
 There was one already, wearing two buttons. MWA1's `mwArms` pref was
 the one gate every consumer of the pack reads: `autoBuildArms` at
-every door a made character arrives through (`combat/weaponRig.js`),
+every door a made character arrives through (`combat/weapon/weaponRig.js`),
 the peer bodies online (`scenes/world.js`), and - through
 `fpArm.canThirdPerson()`, which `unload()` empties - the view seam,
 which hands third person to Eye Of The Beholder wherever the

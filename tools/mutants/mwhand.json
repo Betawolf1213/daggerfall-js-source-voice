@@ -19,7 +19,7 @@
   },
   {
     "name": "MWHAND-the-hand-never-follows",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    if (fpArm.ready()) playerWeapon.followHeldHand();   // MW-HAND: under the Morrowind arm, never an empty hand while the other holds a weapon\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "MWHAND-the-classic-hand-follows-too",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    if (fpArm.ready()) playerWeapon.followHeldHand();",
     "new": "    if (true) playerWeapon.followHeldHand();",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "MWHAND-h-to-an-empty-hand",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon && playerWeapon.currentLeftHandWeapon)) return false;\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "MWHAND-classic-h-refused",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon",
     "new": "      if (bindWorn && !(playerWeapon.currentRightHandWeapon",
     "tests": [

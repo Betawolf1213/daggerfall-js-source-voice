@@ -29,7 +29,7 @@ import { hurtPlayer, playerDamageWithheld } from '../src/characters/playerEntity
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { PrisonScreenWindow } from '../src/ui/prisonScreen.js';
 import { ChoiceWindow } from '../src/ui/talkWindow.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { machineAttack, getMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
 import { EQUIP_SLOTS, equipTableOf } from '../src/systems/equip.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';

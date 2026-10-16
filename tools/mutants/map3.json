@@ -336,7 +336,7 @@
  },
  {
   "name": "armsDrawn-from-active",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "      _armDrewLast = !eotbHidesWeapon() && fpArm.active();   // MAP3: the two lines below draw the arm exactly when this is true\n",
   "new": "",
   "tests": [
@@ -345,7 +345,7 @@
  },
  {
   "name": "armsDrawn-ignores-drewLast",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "    armsDrawn() { return _armDrewLast && fpArm.drewLast(); },",
   "new": "    armsDrawn() { return _armDrewLast; },",
   "tests": [
@@ -354,7 +354,7 @@
  },
  {
   "name": "corners-without-draw",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "    corners: () => { const r = rig(); return (r?.armsDrawn?.() ? r.paperCorners() : null) ?? null; },",
   "new": "    corners: () => { const r = rig(); return r?.paperCorners?.() ?? null; },",
   "tests": [
@@ -646,7 +646,7 @@
  },
  {
   "name": "sheathed-arm-does-not-draw",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "      const sheetOnly = playerWeapon.sheathed && !spellArmed() && !fpsSpellCasting.isPlayingAnim\n        && (entity?.equipCountdown ?? 0) <= 0 && fpArm.active() && fpArm.holdingPaper();",
   "new": "      const sheetOnly = false;",
   "tests": [
@@ -655,7 +655,7 @@
  },
  {
   "name": "holder-asks-did-it-draw",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "    available: () => !!rig()?.armsAvailable?.(),   // MAP-FIELD: WOULD it draw - the arm is sheathed until it takes the sheet",
   "new": "    available: () => !!rig()?.armsDrawn?.(),",
   "tests": [
@@ -664,7 +664,7 @@
  },
  {
   "name": "sheet-leg-relaxes-every-leg-of-shown",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "      const sheetOnly = playerWeapon.sheathed && !spellArmed() && !fpsSpellCasting.isPlayingAnim\n        && (entity?.equipCountdown ?? 0) <= 0 && fpArm.active() && fpArm.holdingPaper();",
   "new": "      const sheetOnly = !shown() && fpArm.active() && fpArm.holdingPaper();",
   "tests": [
@@ -673,7 +673,7 @@
  },
  {
   "name": "MAP-WEAPON-the-gate-is-dropped",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "      if (sheetWindowUp()) return;",
   "new": "",
   "tests": [
@@ -682,7 +682,7 @@
  },
  {
   "name": "MAP-WEAPON-the-gate-stands-above-the-arm-branch",
-  "file": "src/combat/weaponRig.js",
+  "file": "src/combat/weapon/weaponRig.js",
   "old": "      if (fpArm.active()) { fpArm.draw(c); return; }",
   "new": "      if (sheetWindowUp()) return;\n      if (fpArm.active()) { fpArm.draw(c); return; }",
   "tests": [

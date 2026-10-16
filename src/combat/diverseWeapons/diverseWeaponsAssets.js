@@ -4,7 +4,7 @@
 // 12,624 sprites and one line of code. The line is
 // `FPSWeapon.moddedWeaponHUDAnimsEnabled = true` (DiverseWeaponsMain.cs
 // :37, carried verbatim in vendor/diverse-weapons/), and the law it
-// switches on lives in DFU itself - combat/diverseWeapons.js is the
+// switches on lives in DFU itself - combat/diverseWeapons/diverseWeapons.js is the
 // port's home for it. The sprites are a first-person set PER WEAPON
 // TEMPLATE where the classic art has one per weapon CLASS - eighteen
 // weapons, each in ten metals, each plain and enchanted, a record and
@@ -32,19 +32,19 @@
 // through the textures pick (a newer version's art wins over the
 // shipped set), and a loose PNG of a name in the texture folder too,
 // as TryImportCifRci reads one in DFU. The two arms are the widget
-// door's (combat/weaponWidgetAssets.js, systems/seasonsIliacBayAssets
+// door's (combat/weapon/weaponWidgetAssets.js, systems/seasonsIliacBayAssets
 // .js): the bundle opened once by its manifest's GUID, in a worker.
 //
 // Same registry shape as the widget's door - a name list and a loader,
 // the bundle opened once, never throwing.
 
-import { openUnityBundle } from '../formats/unityBundleClient.js';   // the open runs in a worker (~10 s of LZ4 for this bundle); this thread when there is none
-import { toScreenOrder } from '../formats/color32Order.js';   // DWHD1: EVERY arm keeps its rows - a screen quad, and the bundle reader already answers top-first
-import { decodePng } from '../systems/textureReplacement.js';
-import { DFMOD_KEY_PREFIX } from '../systems/seasonsIliacBayAssets.js';   // the stored-name prefix the texture pick writes for a bundle - one home
-import { weaponWidgetImage } from './weaponWidgetAssets.js';
-import { dfmodCifRciNamed } from '../systems/dfmodTextures.js';   // DFMOD2: an attached mod's handheld frames, after the two weapon mods
-import { APP_ROOT } from '../systems/appRoot.js';   // DW2: the shipped sprites hang off the site root, as the held map does
+import { openUnityBundle } from '../../formats/unityBundleClient.js';   // the open runs in a worker (~10 s of LZ4 for this bundle); this thread when there is none
+import { toScreenOrder } from '../../formats/color32Order.js';   // DWHD1: EVERY arm keeps its rows - a screen quad, and the bundle reader already answers top-first
+import { decodePng } from '../../systems/textureReplacement.js';
+import { DFMOD_KEY_PREFIX } from '../../systems/seasonsIliacBayAssets.js';   // the stored-name prefix the texture pick writes for a bundle - one home
+import { weaponWidgetImage } from '../weapon/weaponWidgetAssets.js';
+import { dfmodCifRciNamed } from '../../systems/dfmodTextures.js';   // DFMOD2: an attached mod's handheld frames, after the two weapon mods
+import { APP_ROOT } from '../../systems/appRoot.js';   // DW2: the shipped sprites hang off the site root, as the held map does
 import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_METALS, DIVERSE_WEAPONS_BARE, DIVERSE_WEAPONS_ODD } from './diverseWeaponsIndex.js';   // DW2: generated from the manifest
 
 export const DIVERSE_WEAPONS_MOD = Object.freeze({

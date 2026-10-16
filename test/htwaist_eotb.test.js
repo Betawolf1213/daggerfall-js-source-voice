@@ -70,7 +70,7 @@ const lanternDraws = (r) => r.draws.filter((d) => d.batch.archive === LANTERN_AR
 test('HT-WAIST (EOTB): the frame state carries the lantern at the waist - bodyState passes it through, and the rig hands it over (mutant: the field dropped)', () => {
   assert.equal(bodyState({ hipLantern: true }).hipLantern, true);
   assert.equal(bodyState({}).hipLantern, false);
-  assert.match(rd('src/combat/weaponRig.js'), /hipLantern: !!entity && lanternAtWaist\(entity\.lightSource\),/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /hipLantern: !!entity && lanternAtWaist\(entity\.lightSource\),/);
 });
 
 test('HT-WAIST (EOTB): lit at the waist, a SECOND billboard - Daggerfall\'s lantern picture under its own key, hung from the sprite\'s right hip; without it, the body draws alone (mutant: the lantern never drawn, or drawn with no lantern at the waist)', async () => {

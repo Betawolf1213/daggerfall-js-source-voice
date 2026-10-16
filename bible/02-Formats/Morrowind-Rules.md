@@ -7033,7 +7033,7 @@ fists. LH1 (the quickslot swap follows the hand) closed the swap's half;
 the equip window's half was still open.
 
 While the arm is built (`fpArm.ready()`), the hand in use follows the
-weapons: the rig's per-frame hand read (`combat/weaponRig.js` syncWorn)
+weapons: the rig's per-frame hand read (`combat/weapon/weaponRig.js` syncWorn)
 moves an empty hand in use to the other when it holds a weapon
 (`combat/playerWeapon.js` followHeldHand), and H moves only between two
 held weapons - to an empty hand it is refused without a line, as the
@@ -7104,7 +7104,7 @@ says, at a strike's first frame, when its hit lands and when the blow is
 done, at that frame's dt (`blowSchedule`: a step is the tick rounded up to
 whole frames, as the machine steps; the unarmed strike to the left its own
 eight ticks), handed over by `combat/playerWeapon.js` strikeSchedule and
-`combat/weaponRig.js` fpAttack. `combat/fpArm.js` fits the wind-up at the
+`combat/weapon/weaponRig.js` fpAttack. `combat/fpArm.js` fits the wind-up at the
 rate that brings the playhead from "<type> start" through the release to
 "<type> hit" by the machine's hit (`blowPace`), re-fits the release from
 where the arm stands when it begins (a frame that ran long is made up
@@ -7133,7 +7133,7 @@ of it reached the screen. Four faults, each pinned in `test/mwcast1.test.js`
 - **The draw gate hid it.** A readied spell hides the weapon (`shown()`'s
   HasReadySpell leg) and the first-person draw returned before the arm, so
   the spell stance and the cast were never on screen. The casting hands
-  are the gate's fifth exception (`combat/weaponRig.js`, `armCasts`), beside
+  are the gate's fifth exception (`combat/weapon/weaponRig.js`, `armCasts`), beside
   the torch, the held sheet, the shield and the sliding gun.
 - **The cast was dropped two tenths in.** Daggerfall clears the readied
   spell AT its release (EntityEffectManager.PlayerSpellCasting_OnReleaseFrame
@@ -7262,7 +7262,7 @@ have casting speed a new rarity affix along with scaling with speed"*.
 - **One rate for both lanes** (`src/systems/castSpeed.js`, a leaf).
   `castRate(entity)` is the live Speed's share (1 at 50, 0.75 at 0, 1.25
   at 100, the attribute clamped to its range) plus each registered
-  modifier's percent, clamped to [0.5, 2]. `combat/weaponRig.js`
+  modifier's percent, clamped to [0.5, 2]. `combat/weapon/weaponRig.js`
   castSpellAnim reads it once a cast and passes it to both lanes: the
   classic frames step at CAST_FRAME_PERIOD over it, and the Morrowind arm
   plays its spellcast group from "<type> start" to "<type> stop" at it

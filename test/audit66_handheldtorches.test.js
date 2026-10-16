@@ -239,7 +239,7 @@ test('AUDIT 66 F7: a dropped torch loses the click to a door, a board and a stat
 });
 
 test('AUDIT 66 F8: the component\'s teardown has owners - the switch\'s falling edge and the rig\'s own dispose - and it stops the burning loop and gives PlayerTorch its offset back', () => {
-  const rigSrc = rd('src/combat/weaponRig.js');
+  const rigSrc = rd('src/combat/weapon/weaponRig.js');
   assert.match(rigSrc, /if \(!_torchesOn && _handheldWasOn\) handheld\.dispose\(\);/, 'the switch off is a teardown: update() runs only while the mod is ON, so the loop could not stop itself');
   assert.match(rigSrc, /dispose\(\) \{ handheld\.dispose\(\); _handheldWasOn = false; \}/, 'and the host has a door');
   // and what dispose actually frees

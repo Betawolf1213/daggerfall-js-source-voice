@@ -339,7 +339,7 @@ test('CSA-J: the hosts - world.js hands the view seam this boot\'s runtime (its 
   assert.match(w, /setEotbComeSailAway\(csaRuntime \? \{ send: csaRuntime\.MessageReceiver, colliderBounds: \(go\) => csaColliderBoundsInChildren\(\{ models: csa\.models \}, go\) \} : null\);/);
   const v = src('player/mwView.js');
   assert.match(v, /export function setEotbComeSailAway\(mod\) \{\n\s+eotbCamera\.setComeSailAway\(mod\);/);
-  assert.doesNotMatch(src('combat/weaponRig.js'), /sailing: false/);
+  assert.doesNotMatch(src('combat/weapon/weaponRig.js'), /sailing: false/);
   assert.match(src('player/eotbBody.js'), /boatForward: boatForwardOf\(eotbCamera\.sailing\(\)\),/, 'the sprite reads the camera\'s fields');
   const node = new PrefabNode('A');
   assert.equal(colliderBoundsInChildren({ models: MODELS }, node), null, 'no collider: null');

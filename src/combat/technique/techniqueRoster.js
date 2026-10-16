@@ -17,10 +17,10 @@
 // CalculateAttackDamage for the weapon in hand (the skill, the material, the to-hit roll, the armour, a backstab, the
 // Physical Combat overhaul's model when it is on) - never a flat damage. A miss is still a miss.
 
-import { weaponSkillUsed } from '../characters/weapons.js';
-import { THUNDERLOCK_TEMPLATE } from '../characters/thunderlockIds.js';
-import { SKILLS } from '../systems/skills.js';
-import { RRI_CLASSES } from '../systems/roleplayRealismItems/rriItems.js';   // AUDIT TECH1: an RRI class answers its family whatever its switch says
+import { weaponSkillUsed } from '../../characters/weapons.js';
+import { THUNDERLOCK_TEMPLATE } from '../../characters/thunderlockIds.js';
+import { SKILLS } from '../../systems/skills.js';
+import { RRI_CLASSES } from '../../systems/roleplayRealismItems/rriItems.js';   // AUDIT TECH1: an RRI class answers its family whatever its switch says
 
 /** DFU's Gauntlets (ItemEnums.Armor.Gauntlets) - the one piece a bare-handed fighter's technique rides. */
 export const GAUNTLETS_TEMPLATE = 103;

@@ -91,7 +91,7 @@
   },
   {
     "name": "AR2-the-rig-hands-the-body-no-weapon",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    animCtx: playerWeapon.animCtx(),\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AR4-the-rig-freezes-its-speed-after-construction",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  playerWeapon.animCtx = () => ({ entity, weaponType",
     "new": "  playerWeapon.liveSpeed = playerWeapon.liveSpeed;\n  playerWeapon.animCtx = () => ({ entity, weaponType",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AR4-the-rig-blind-to-speed-on-the-real-rig",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "new PlayerWeapon({ liveSpeed: () => (entity ? liveStat(entity, 'speed') : 50) })",
     "new": "new PlayerWeapon({})",
     "tests": [

@@ -78,7 +78,7 @@ test('AUDIT 28 W12: held past MaxBowHeldDrawnSeconds the machine un-draws by its
   assert.equal(bow().gesture(0, 0, true, 1 / 60, DIM), 'StrikeUp', 'read live');
   resetToDefaults();
   assert.equal(LIVE['Controls/BowDrawback'], 'src/combat/playerWeapon.js');
-  assert.match(read('src/combat/weaponRig.js'), /\{ cancelHeld: activateHeld\(\) \}/, 'the rig hands the key to the gesture');
+  assert.match(read('src/combat/weapon/weaponRig.js'), /\{ cancelHeld: activateHeld\(\) \}/, 'the rig hands the key to the gesture');
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeon.js']) {
     assert.match(read(host), /activateHeld: \(\) => held\(keys, 'ActivateCenterObject'\)/, `${host}: the activate key reaches a rig`);
   }

@@ -23,7 +23,7 @@ import {
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY, blowRate, BLOW_RATE_MAX, BLOW_RATE_MIN } from '../src/combat/fpArm.js';
 import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
 import { PeerBodies, peerBlowPace, peerBlow, PEER_BLOW_MIN_S, PEER_BLOW_MAX_S } from '../src/net/peer/peerBodies.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setValue as setSetting } from '../src/systems/settings/settings.js';
 

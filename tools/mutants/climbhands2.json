@@ -166,7 +166,7 @@
   },
   {
     "name": "CLIMBHANDS2-rig-hands-no-lens",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "climbHands.update(dt, handsClimb, { yaw: camNow?.yaw, pitch: camNow?.pitch, lens: handsLens });",
     "new": "climbHands.update(dt, handsClimb, { yaw: camNow?.yaw, pitch: camNow?.pitch, lens: null });",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "CLIMBHANDS2-rig-hands-no-look",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "climbHands.update(dt, handsClimb, { yaw: camNow?.yaw, pitch: camNow?.pitch, lens: handsLens });",
     "new": "climbHands.update(dt, handsClimb, { pitch: camNow?.pitch, lens: handsLens });",
     "tests": [
@@ -186,7 +186,7 @@
   },
   {
     "name": "CLIMBHANDS2-rig-lens-at-the-port-60",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "climbLens(cv(), { fov: fieldOfView(),",
     "new": "climbLens(cv(), { fov: Math.PI / 3,",
     "tests": [
@@ -196,7 +196,7 @@
   },
   {
     "name": "CLIMBHANDS2-rig-lens-forgets-the-bar",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "offsetHeight: weaponOffsetHeight() }) : null;",
     "new": "offsetHeight: 0 }) : null;",
     "tests": [
@@ -206,7 +206,7 @@
   },
   {
     "name": "CLIMBHANDS2-morrowind-climbs-only-armed",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "!gunSliding && !armCasts && !armsClimb)) return;",
     "new": "!gunSliding && !armCasts)) return;",
     "tests": [
@@ -216,7 +216,7 @@
   },
   {
     "name": "CLIMBHANDS2-the-weapon-sway-on-the-stone",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "fpArm.setScreenTransform(widgetOn() && !armsClimb ? (base) => widget.armsTransform(base) : null);",
     "new": "fpArm.setScreenTransform(widgetOn() ? (base) => widget.armsTransform(base) : null);",
     "tests": [

@@ -872,7 +872,7 @@ export const SET_BLOCK_CSS = `.setbox { position: relative; margin: 8px 0 10px; 
 .setbox.compact .set-tier-every { flex: 0 0 auto; margin-left: auto; padding: 0 3px; font-size: 11px;
   line-height: 13px; color: var(--set-hi); border: 1px dashed var(--set-lo); font-variant-numeric: tabular-nums; }`;
 /** TECH-CARD: a technique's block on a card (ui/techniqueCard.js) - the sigil's and the set's kind, in the blue the
- *  technique's marks wear on the ground (combat/techniqueRoster.js TECH_CHIP_COLOUR, which `--tech` is - pinned), every
+ *  technique's marks wear on the ground (combat/technique/techniqueRoster.js TECH_CHIP_COLOUR, which `--tech` is - pinned), every
  *  rule its own class (`.techbox`, `.tech-*`), so a sheet lays it where nothing else is dressed. FINAL AUDIT: the card's
  *  dress one row at the head and its glyph on its own grid (16px), the price one group, and the shrink steps' share. */
 export const TECH_BLOCK_CSS = `.techbox { --tech: #59c7ff; --tech-hi: #c4ecff; --tech-mid: #2f8fc8; --tech-lo: #12405e; --tech-rgb: 89,199,255;

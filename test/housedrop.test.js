@@ -84,7 +84,7 @@ test('HOUSE-DROP by source: the building\'s refusal is a VISITOR\'s in someone e
   assert.match(wm, /const no = visitorDropRefusal\(\);\n\s*if \(no\) \{ for \(const it of \[\.\.\.items\]\) takeOneInto\(playerEntity, items, it\); say\(no\); return null; \}/, 'the belt at the close: back to the pack, gold to the counter');
   assert.match(wm, /dropRefusal: \(\) => visitorDropRefusal\(\),\n/, 'the window asks');
   assert.match(wm, /dropRefusal: \(\) => visitorDropRefusal\(\),   \/\/ HOUSE-DROP: and a light/, 'and the rig');
-  assert.match(rd('src/combat/weaponRig.js'), /createHandheldTorches\(\{ audio, say, torches, dropRefusal \}\)/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /createHandheldTorches\(\{ audio, say, torches, dropRefusal \}\)/);
   const nat = rd('src/ui/native/nativeInventory.js'), enh = rd('src/ui/enhanced/enhancedInventory.js');
   assert.equal((nat.match(/groundRefusal: groundRefusalOf\(this\.hooks, \{ usingWagon: this\.usingWagon, chooseOne: this\.chooseOne \}\)/g) ?? []).length, 2, 'the classic window: the item and the gold');
   assert.match(nat, /if \(!plan\.ok\) \{ if \(plan\.refusal\?\.reason === 'ground'\) this\._refuse\(plan\.refusal\); return; \}/, 'and the gold\'s refusal is said');

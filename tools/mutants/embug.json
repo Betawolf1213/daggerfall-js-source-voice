@@ -61,7 +61,7 @@
   },
   {
     "name": "EMBUG1-the-rig-stops-asking-at-all",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (sheetWindowUp()) return;",
     "new": "      if (false) return;",
     "tests": [

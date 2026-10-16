@@ -1,7 +1,7 @@
 [
   {
     "name": "F1-gate-back-to-isBow",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const armShoots = (fpArm.active() || fpArm.thirdActive()) && !!playerWeapon.machine.ranged;",
     "new": "const armShoots = (fpArm.active() || fpArm.thirdActive()) && !!playerWeapon.machine.isBow;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "F1-voice-fires-on-the-click-under-the-arm",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const trigger = armShoots ? fired : (m.state !== 'Idle' && _tlState === 'Idle');",
     "new": "const trigger = (m.state !== 'Idle' && _tlState === 'Idle');",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "F1-voice-never-fires-under-the-arm",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const trigger = armShoots ? fired : (m.state !== 'Idle' && _tlState === 'Idle');",
     "new": "const trigger = armShoots ? false : (m.state !== 'Idle' && _tlState === 'Idle');",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "F1-flash-on-the-machine-frame-under-the-arm",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "(armShoots ? flashFromClock(dt) : muzzleGlow(m.state !== 'Idle', m.frame))",
     "new": "muzzleGlow(m.state !== 'Idle', m.frame)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "F1-hold-reports-no-fire",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "          out.push('hit');\n          return { evs: out, fired: true };",
     "new": "          out.push('hit');\n          return { evs: out, fired: false };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "F2-muzzle-prefers-the-sprite-record-under-the-arm",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (fpArm.active() || fpArm.thirdActive()) return fpArm.weaponMuzzle();\n      return muzzleRay(_tlDrawn, fovRad, forward);",
     "new": "      return muzzleRay(_tlDrawn, fovRad, forward) ?? ((fpArm.active() || fpArm.thirdActive()) ? fpArm.weaponMuzzle() : null);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "F2-muzzle-first-person-only",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (fpArm.active() || fpArm.thirdActive()) return fpArm.weaponMuzzle();",
     "new": "      if (fpArm.active()) return fpArm.weaponMuzzle();",
     "tests": [

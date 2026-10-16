@@ -35,7 +35,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { createHandheldTorches, readTorchSettings, HANDHELD_TORCHES_VENDOR, ON_STOW } from '../src/systems/handheldTorches.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { TEMPLATES } from '../src/systems/useItem.js';

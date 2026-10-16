@@ -25,7 +25,7 @@ import { buildFpArm, createFpArm, fpArm, fpSkeletonPath, tpSkeletonPath, fpWeapo
 import { fpAnimSources, tpAnimSources, werewolfHeadRows, bodyParts, clothingRecords, extractArmRecords, ARM_RECORDS_VERSION } from '../src/formats/mwFirstPerson.js';
 import { correctActorModelPath } from '../src/formats/mwTexture.js';
 import { composeWornArmor, firstPersonPartGroup, werewolfRobeOf, WEREWOLF_ROBE_ID, RESERVES, ARMO_PART, mwClothingRecord, DF_CLOTHING_ROWS, DF_CLOTHING_DYE_RGB } from '../src/formats/mwItemMap.js';
-import { isMwWerewolf, armBuildOptsOf, armIdentityOf, armsStandFor, createWeaponRig } from '../src/combat/weaponRig.js';
+import { isMwWerewolf, armBuildOptsOf, armIdentityOf, armsStandFor, createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { PeerBodies, peerBuildOpts, peerBodyKey, peerIsWolf, BODY_REBUILD_MS, BODY_RETRY_MS, BODY_LINGER_MS } from '../src/net/peer/peerBodies.js';
 import { WERECLAWS_ITEM } from '../src/systems/lycanthropy.js';
 import { lookKey } from '../src/net/remotePlayers.js';
@@ -273,7 +273,7 @@ test('WEREWOLF1 (AUDIT D1) the per-frame door, through a REFUSAL and back: witho
     assert.equal(fpArm.ready(), true, 'the person again, at the turn');
     assert.equal(fpArm.builtFor()?.werewolf, false);
   } finally { fpArm.unload(); }
-  const w = rd('src/combat/weaponRig.js');
+  const w = rd('src/combat/weapon/weaponRig.js');
   const door = w.indexOf('fpArm.setWerewolf(wolf, { skin: wolfSkin });');
   assert.ok(door > 0 && door < w.indexOf('if (!paralyzed && fpArm.ready()) {'), 'ahead of the ready() gate');
   assert.match(w, /if \(wolf !== wolfForm\) \{ wolfForm = wolf; wolfSkin = wolf \? ownWerewolfSkin\(\) : null; \}/, 'the skin read at the change (AUDIT D5)');
@@ -322,7 +322,7 @@ test('WEREWOLF1 x BEAST-SELF (the merge): the arm stands aside only while it is 
     await until(() => !fpArm.ready());
     assert.equal(fpArm.standingIn(), true, 'a wolf refused: the sprite lane\'s beast, the view carried to it');
   } finally { fpArm.unload(); fpArm.setStandIn(was); }
-  assert.match(rd('src/combat/weaponRig.js'), /fpArm\.setStandIn\?\.\(beast \? !\(wolf && isMwWerewolf\(entity\)\) : wolf\);/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /fpArm\.setStandIn\?\.\(beast \? !\(wolf && isMwWerewolf\(entity\)\) : wolf\);/);
 });
 
 test('WEREWOLF1 the weapon rig: the werewolf is a transformed lycanthrope whose curse is the wolf\'s (the wereboar has no Morrowind form); it rides the build options and the identity, and every frame hands the rig the form ahead of the worn table (mutants: the wereboar taken for a wolf; the per-frame door dropped)', () => {
@@ -335,7 +335,7 @@ test('WEREWOLF1 the weapon rig: the werewolf is a transformed lycanthrope whose 
   const want = armIdentityOf(transformed(1));
   assert.equal(armsStandFor(transformed(1), { ready: () => true, builtFor: () => ({ ...want, werewolf: false }) }), false, 'the person standing is not the wolf\'s arm');
   assert.equal(armsStandFor(transformed(1), { ready: () => true, builtFor: () => want }), true);
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   const at = (t) => { const i = rig.indexOf(t); assert.ok(i > 0, t); return i; };
   assert.ok(at('fpArm.setWerewolf(wolf, { skin: wolfSkin });') < at('fpArm.setWeapon(playerWeapon.weapon,') && at('fpArm.setWeapon(playerWeapon.weapon,') < at('if (entity) fpArm.setWorn('),
     'every frame, ahead of the hand and the worn table (AUDIT D3: their queue waits on the form\'s build)');

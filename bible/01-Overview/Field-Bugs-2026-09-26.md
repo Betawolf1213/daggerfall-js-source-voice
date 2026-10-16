@@ -274,7 +274,7 @@ arm).
 
 The clone's bow release is silent now - a duplicate of the original's
 loose, which the port runs once, beside the five the page already lists
-(`combat/weaponWidget.js`, `05-Combat/Weapon-Widget.md`). One shot is one
+(`combat/weapon/weaponWidget.js`, `05-Combat/Weapon-Widget.md`). One shot is one
 twang, with its arrow, on the sprite and under the arm, drawback on or
 off. The clone's melee swing keeps its voice.
 
@@ -296,7 +296,7 @@ Asked, Mac chose "Never on an empty hand": while the Morrowind arm is
 built, the hand in use follows the weapons (right, else left), and H moves
 only between two held weapons. Bare hands and a shield alone still fight
 with fists. The classic sprite lane keeps DFU's ToggleHand whole
-(`combat/playerWeapon.js` followHeldHand, `combat/weaponRig.js`;
+(`combat/playerWeapon.js` followHeldHand, `combat/weapon/weaponRig.js`;
 `02-Formats/Morrowind-Rules.md` MW-HAND).
 
 `test/mwhand.test.js` (4); `tools/mutants/mwhand.json` 6, 6 dead.

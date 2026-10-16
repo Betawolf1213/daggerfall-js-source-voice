@@ -23,7 +23,7 @@ import {
   SpellCastAnim, fpsSpellCasting, spellHandRects, drawSpellCastHands, RIGHT_HAND_UV,
 } from '../src/combat/fpsSpellCasting.js';
 import { NATIVE_W, NATIVE_H } from '../src/combat/fpsWeapon.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { CifRciFile } from '../src/formats/cifRciFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 
@@ -240,7 +240,7 @@ test('fpsSpellCasting: WeaponManager.cs:247 - the weapon hides while the hands p
   // `HasReadySpell || PlayerSpellCasting.IsPlayingAnim`, BOTH legs.
   // DFU's own header: spellcasting animations "are never mixed with
   // weapons directly on screen at same time".
-  const rigSrc = rd('src/combat/weaponRig.js');
+  const rigSrc = rd('src/combat/weapon/weaponRig.js');
   assert.match(rigSrc, /if \(spellArmed\(\) \|\| fpsSpellCasting\.isPlayingAnim\) v = false;\s+\/\/ HasReadySpell \/ IsPlayingAnim/);
   // And the hands are drawn OUTSIDE that gate, or a cast would show
   // nothing at all: the weapon's hidden and the hands would be too.

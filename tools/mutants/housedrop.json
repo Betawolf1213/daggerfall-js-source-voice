@@ -118,7 +118,7 @@
   },
   {
     "name": "HOUSE-rig-drops-word",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "createHandheldTorches({ audio, say, torches, dropRefusal });",
     "new": "createHandheldTorches({ audio, say, torches });",
     "tests": [

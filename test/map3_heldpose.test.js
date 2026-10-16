@@ -518,7 +518,7 @@ test('MAP3 fpArm hides the hand-carried pieces while the sheet is up - the sourc
 // ── THE SEAM ─────────────────────────────────────────────────────
 
 test('MAP3 weaponRig: armsDrawn() is the draw seam\'s own record - reset at the top of every draw and set exactly where the arm takes the frame, before the untouched literal; the hold API passes straight through (mutants: armsDrawn-stale, armsDrawn-from-active)', () => {
-  const src = rd('src/combat/weaponRig.js');
+  const src = rd('src/combat/weapon/weaponRig.js');
   assert.match(src, /draw\(\{ paralyzed = false \} = \{\}\) \{\s*\n\s*_armDrewLast = false;/);
   assert.match(src, /_armDrewLast = !eotbHidesWeapon\(\) && fpArm\.active\(\);[^\n]*\n\s*if \(eotbHidesWeapon\(\)\) return;\s*\n\s*if \(fpArm\.active\(\)\) \{ fpArm\.draw\(c\); return; \}/, 'set on the line before the two-line seam (EOTB-IL keeps those two adjacent), with the same two conditions');
   assert.equal([...src.matchAll(/^\s*_armDrewLast = /gm)].length, 2, 'written in exactly those two places');
@@ -555,7 +555,7 @@ test('MAP3 world.js: the holder rides the ONE dep bag, asked per open through th
   const src = rd('src/scenes/world.js');
   const at = src.indexOf('createTravelMapWindow({');
   const bag = src.slice(at, src.indexOf('...extra,', at));
-  // MW-MAP1: the holder is combat/weaponRig.js's sheetHolderOf, handed the rig as a FUNCTION (never a snapshot) -
+  // MW-MAP1: the holder is combat/weapon/weaponRig.js's sheetHolderOf, handed the rig as a FUNCTION (never a snapshot) -
   // the same holder every M-key door on every host hands over now; its four doors are pinned in test/mwmap1.test.js
   assert.match(bag, /holder: sheetHolderOf\(\(\) => weaponRig\),/, 'the one holder, off the live rig');
   assert.doesNotMatch(bag, /available: \(\) =>/, 'no inline holder left in the travel builder');
@@ -588,7 +588,7 @@ test('MAP3 world.js: the holder rides the ONE dep bag, asked per open through th
 // sprite - the four the classic body would have painted.
 test('MAP-WEAPON: the sprite lane stands down while a map holds the screen, below the arm and above all four painters (mutant: map-weapon-gate-dropped)', async () => {
   const { readFileSync } = await import('node:fs');
-  const rig = readFileSync(new URL('../src/combat/weaponRig.js', import.meta.url), 'utf8');
+  const rig = readFileSync(new URL('../src/combat/weapon/weaponRig.js', import.meta.url), 'utf8');
 
   // the dep, defaulted FALSE - a host that never heard of it draws
   // exactly what it drew before
@@ -655,7 +655,7 @@ test('MAP-WEAPON / EM-BUG1: EVERY host asks its own live slot, and the tag it as
   assert.match(held, /this\.isTravelMap = this\._slot\.ids\.includes\('world'\);/);
   assert.doesNotMatch(held, /this\.isTravelMap = true;/, 'and it is never simply asserted');
   // the rig's gate itself, unchanged and still one line
-  assert.match(read('../src/combat/weaponRig.js'), /if \(sheetWindowUp\(\)\) return;/);
+  assert.match(read('../src/combat/weapon/weaponRig.js'), /if \(sheetWindowUp\(\)\) return;/);
 });
 
 test('MAP-WEAPON / EM4: the travel tag answers for the place, not for the class', async () => {

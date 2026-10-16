@@ -66,7 +66,7 @@
   },
   {
     "name": "CASTSPEED-rig-rate-one",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      const rate = castRate(entity);",
     "new": "      const rate = 1;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "CASTSPEED-classic-lane-no-rate",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "fpArm.takeCastRelease() || !fpArm.castInFlight(), rate } : { rate });",
     "new": "fpArm.takeCastRelease() || !fpArm.castInFlight(), rate } : {});",
     "tests": [

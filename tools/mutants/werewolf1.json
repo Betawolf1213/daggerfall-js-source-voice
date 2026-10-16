@@ -127,7 +127,7 @@
   },
   {
     "name": "WEREWOLF1-wereboar-a-wolf",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  return !!entity && isTransformedLycanthrope(entity) && ((liveLycanthropy(entity)?.infectionType | 0) === 1);",
     "new": "  return !!entity && isTransformedLycanthrope(entity) && ((liveLycanthropy(entity)?.infectionType | 0) >= 1);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WEREWOLF1-per-frame-door-dropped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "        fpArm.setWerewolf(wolf, { skin: wolfSkin });\n",
     "new": "\n",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WEREWOLF1-identity-without-the-form",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    && !!have.werewolf === want.werewolf && !!have.vampire === want.vampire;   // WEREWOLF1",
     "new": "    && !!have.vampire === want.vampire;   // WEREWOLF1",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "WEREWOLF1-MERGE-the-standing-wolf-stood-aside",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "fpArm.setStandIn?.(beast ? !(wolf && isMwWerewolf(entity)) : wolf);",
     "new": "fpArm.setStandIn?.(beast ? true : wolf);",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "WEREWOLF1-MERGE-the-wrong-beast-kept",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "beast ? !(wolf && isMwWerewolf(entity)) : wolf",
     "new": "beast ? !wolf : wolf",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "WEREWOLF1-MERGE-the-wolf-kept-for-the-person",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "beast ? !(wolf && isMwWerewolf(entity)) : wolf)",
     "new": "beast ? !(wolf && isMwWerewolf(entity)) : false)",
     "tests": [

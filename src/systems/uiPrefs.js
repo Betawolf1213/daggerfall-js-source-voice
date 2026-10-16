@@ -106,7 +106,7 @@ export const PREF_DEFAULTS = Object.freeze({
   // a control; off is DFU's linear cursor, on both skins
   padCursorAssist: true,
   // TECH-FX (bible/05-Combat/Weapon-Techniques.md THE FEEL): how much a weapon technique moves the screen - its camera
-  // springs, its shake and the hands' dip (combat/techniqueFx.js techniqueMotion); 0 moves nothing on the screen (its
+  // springs, its shake and the hands' dip (combat/technique/techniqueFx.js techniqueMotion); 0 moves nothing on the screen (its
   // burst and its sound stay). GATHER-FEEL II: and a gathering tool's landed blow (systems/gatherBlow.js gatherBlowFeel)
   techniqueMotion: 1,
   // PEERMENU1: the player menu's two binds, keyboard and controller, each { code, hold } (null = the defaults: hold E,
@@ -153,7 +153,7 @@ export const PREF_DEFAULTS = Object.freeze({
   gentleActs: false,
   showToTravellers: true,   // TV3: off - the region's travellers do not see where I am (my party always does)
   // MWA4 (2026-09-25): `mwArms` (MWA1's arms switch) is retired - the attached Morrowind files are the switch, and
-  // Remove data the off (combat/weaponRig.js autoBuildArms, ui/enhanced/enhancedMenu.js morrowindCard). A stored value is
+  // Remove data the off (combat/weapon/weaponRig.js autoBuildArms, ui/enhanced/enhancedMenu.js morrowindCard). A stored value is
   // read by nothing.
   // 2026-09-17 (per-request): a peer without a Morrowind body is drawn as their class's animated sprite by default
   // (net/remotePlayers.js classMobileType/_syncMobilePeer) - the same billboard a hostile Warrior/Mage/etc. already

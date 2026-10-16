@@ -129,7 +129,7 @@ export function createPlayerMagic({
   // PlayerSpellCasting_OnReleaseFrame (:2098-2143) is what tallies,
   // sounds, assigns/launches, raises OnCastReadySpell and clears the
   // ready. This dep is that PlayOneShot: the host hands it to its
-  // weapon rig (`combat/weaponRig.js` castSpellAnim) and answers TRUE
+  // weapon rig (`combat/weapon/weaponRig.js` castSpellAnim) and answers TRUE
   // when the hands actually started, which is when the resolution
   // parks on the release. A host with no rig - or an element with no
   // animation archive - answers false and the cast resolves HERE, on

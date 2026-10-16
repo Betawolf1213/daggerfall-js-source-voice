@@ -479,7 +479,7 @@ test('SW1: a widget whose door answers no size draws nothing', () => {
 // ---- the rig ---------------------------------------------------------
 
 test('SW1: the rig runs the shield beside the weapon’s clone - its own frame, its own draw step, the same end-of-frame edge', () => {
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   assert.match(rig, /const shield = createShieldWidget\(\{ textures: shieldWidgetTextures, audio \}\);/);
   assert.match(rig, /const shieldOn = \(\) => modSetting\('shield-widget', 'Enabled'\);/);
   // the Recoil module's trigger: PCAAO's event, at the tail of every
@@ -498,7 +498,7 @@ test('SW1: the left hand is read WITHOUT materialising the equip table', () => {
   // every frame GREW an empty table on an entity that had none, and
   // syncWorn then read that empty table and nulled the player's weapon -
   // the unsheathe went silent. The optional chain asks without writing.
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   const fn = rig.slice(rig.indexOf('const shieldItem = () => {'));
   const body = fn.slice(0, fn.indexOf('\n  };'));
   assert.match(body, /entity\?\.equip\?\.slots\?\.\[EQUIP_SLOTS\.LeftHand\] \?\? null/, 'read, not created');
@@ -522,7 +522,7 @@ test('SW1: the attack-resolution seam fires on EVERY resolution, hit or miss, wi
 // BEHAVIOURALLY - a real rig, the real mod settings, the real draw seam -
 // because a source-text pin would have matched the broken code too.
 
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 
@@ -592,7 +592,7 @@ test('SW1-GATE: the switch off is still off', () => {
 test('SW1-GATE: the shield alone is not a weapon - the seam stops before the clone and the sprite', () => {
   // `if (!shown()) return;` after the torch's own return. A no-op for
   // every path that predates it, and the whole point for the new one.
-  const rigSrc = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rigSrc = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   const seam = rigSrc.slice(rigSrc.indexOf('if (shieldRect) shield.draw('));
   const upTo = seam.slice(0, seam.indexOf('if (widgetOn() && c && widget.draw('));
   assert.match(upTo, /if \(torchOnly && !gunSliding\) return;/, 'the torch still stops first (FIELD-GUN13: unless the gun is mid-slide behind the hand)');
@@ -621,7 +621,7 @@ test('SW1-GATE: the shield’s verdict carries the draw step’s OWN two conditi
   // `fpArm.draw(c); return;` takes it, above the shield's own step. The
   // mutant is recorded (tools/mutants/sw1.json, SW1b-2b) and this is what
   // kills it, read out of the source so it cannot go vacuous.
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   const at = rig.indexOf('const shieldRect =');
   assert.ok(at > 0, 'the verdict is computed before the gate');
   const decl = rig.slice(at, rig.indexOf(';', at) + 1);
@@ -645,7 +645,7 @@ test('SW1-LOOK: the frame’s look reaches the shield as the ARRAY it is, or Ine
   // Inertia module's lean had the movement term and a constant zero for
   // the look. `Modules.Inertia` is off by default, which is the only
   // reason no pin and no player said so.
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   const feed = rig.slice(rig.indexOf('if (shieldOn()) shield.lateUpdate({'));
   const body = feed.slice(0, feed.indexOf('\n        });'));
   // WIDGET-LOOK (FIELD BUGS 2026-10-03): indexed off the frame's look converted to DFU's axes (dfuLookAxes answers the
@@ -656,7 +656,7 @@ test('SW1-LOOK: the frame’s look reaches the shield as the ARRAY it is, or Ine
   // not vacuous: the clone really does read it positionally. The
   // module moved to weaponWidgetMotion.js on 2026-09-19 (the gun lab
   // runs it); the LAW did not, which is what this reads.
-  assert.match(readFileSync('src/combat/weaponWidgetMotion.js', 'utf8'), /\(look\[0\] \+ mx\)/);
+  assert.match(readFileSync('src/combat/weapon/weaponWidgetMotion.js', 'utf8'), /\(look\[0\] \+ mx\)/);
   // and the widget really does spend both terms
   const sw = readFileSync('src/combat/shieldWidget.js', 'utf8');
   assert.match(sw, /\(\(Number\(look\.x\) \|\| 0\) \+ mx\) \* -0\.5 \* w\.s\.inertiaScale,/);

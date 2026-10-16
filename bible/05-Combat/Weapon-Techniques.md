@@ -1,8 +1,8 @@
 # Weapon Techniques - the key a weapon answers (TECH1)
 
-`src/combat/techniqueRoster.js` (the roster, a leaf) + `src/combat/techniques.js` (the runner) +
-`src/combat/techniqueBlow.js` (the blow, a leaf) + the line in `src/systems/loot/lootRarity.js` (`AFFIX_KINDS.technique`) +
-`src/combat/techniqueFx.js` (THE FEEL) + `src/ui/techniqueCard.js` and `src/ui/techniqueGlyph.js` (The card's block)
+`src/combat/technique/techniqueRoster.js` (the roster, a leaf) + `src/combat/techniques.js` (the runner) +
+`src/combat/technique/techniqueBlow.js` (the blow, a leaf) + the line in `src/systems/loot/lootRarity.js` (`AFFIX_KINDS.technique`) +
+`src/combat/technique/techniqueFx.js` (THE FEEL) + `src/ui/techniqueCard.js` and `src/ui/techniqueGlyph.js` (The card's block)
 (the owner, 2026-10-10)
 
 > "I want to talk about implementing detailed weapon skill affixes for each weapon type. For example, a bow could
@@ -55,7 +55,7 @@ through the doors a swing or a shot already goes through, in every host.
 
 ## The roster
 
-`combat/techniqueRoster.js` `TECHNIQUES` - the one table. The multiplier is `base`, raised by the line's value:
+`combat/technique/techniqueRoster.js` `TECHNIQUES` - the one table. The multiplier is `base`, raised by the line's value:
 `base * (1 + value/100)` (`techniqueMult`). `strike` is the screen weapon's state the swing plays, the one DFU's
 CalculateSwingModifiers reads (`combat/playerWeapon.js` `SWING_MODS`) - so a StrikeDown's +4 damage and -10 to hit ride
 a technique as they ride a click.
@@ -152,7 +152,7 @@ and so does a change of weapon, sheathing, a readied spell or a climb.
 frame steps it; a door crossed mid-aim or mid-leap hands it to another rig, which finds the aim and the act set aside
 (its price is paid). So walking through a door neither resets a cooldown nor runs two.
 
-**The order in a frame** (`combat/weaponRig.js`): the runner first, on the swing's own gate (`ready`: not paralyzed,
+**The order in a frame** (`combat/weapon/weaponRig.js`): the runner first, on the swing's own gate (`ready`: not paralyzed,
 drawn, `canAttack`, no Morrowind arm mid-loose, a camera with feet), then the gesture - a click's strike and a
 technique's are one machine, so whichever starts first holds it - and at the frame's end `claimShot` takes the bow's
 hit frame for a technique's loose before the host sees it.
@@ -178,7 +178,7 @@ has no chips to say it.
 
 **KICK-AIR - the Flying Kick from the air** (Mac's call, 2026-10-15, on the field report "Flying kick doesn't work ...
 tried doing it mid-air, off ledges"; `01-Overview/Field-Bugs-2026-10-15d.md`, KICK-AIR). The Flying Kick is the one
-exception to "in the air": the roster marks it `airborne` (`combat/techniqueRoster.js`) and the gate reads the mark, on the press and
+exception to "in the air": the roster marks it `airborne` (`combat/technique/techniqueRoster.js`) and the gate reads the mark, on the press and
 again on the release - so a kick goes from a jump, a fall, a step off a ledge, or pressed on the ground and let go after
 the takeoff. Every other leap and dash stays on the ground, and every other refusal (climbing, on a wall, mid-vault,
 swimming, on the open water, levitating, slow-falling, riding, knocked down) is the kick's too. From the air it is the
@@ -229,7 +229,7 @@ the ground beside him - and its landing ring strikes him there.
 
 ## The blow
 
-`combat/techniqueBlow.js` - a leaf both the weapon and the arrow read. `PlayerWeapon.resolveHit` - the one melee
+`combat/technique/techniqueBlow.js` - a leaf both the weapon and the arrow read. `PlayerWeapon.resolveHit` - the one melee
 resolution every host's hit goes through - asks it, for each foe, in place of the plain swing's reach:
 
 - **reach** (`blowReaches`): a lane's foes are those whose feet are along it and within its half-width plus their own
@@ -314,7 +314,7 @@ body of its own, drawn in code from what the engine already has - no new art, no
 It is the technique's: it plays wherever a technique does (the ladder's own gate - "Off is DFU exactly"), on either
 skin, its sound under Sound Enhancements as every added sound is.
 
-**The moments** (`combat/techniques.js` cues them; `combat/techniqueFx.js` holds what each technique does at each):
+**The moments** (`combat/techniques.js` cues them; `combat/technique/techniqueFx.js` holds what each technique does at each):
 
 | moment | when |
 | --- | --- |
@@ -383,7 +383,7 @@ the screen - its burst (the sparks, rings, glow and light) and its sound stay. B
 still bound the shake. The pitch, roll and eye are first person only (the climb's own rule); the field-of-view kick
 reaches every view, as the climb's does; in third person the hands' dip has no hands to move. GATHER-FEEL II
 (BLOW-SHAKE, `06-Systems/Professions-Arc.md` section 45): a gathering tool's landed blow goes into the same springs
-through their one door (`combat/techniqueFx.js` kickFx), so the same setting scales it - a dip of the look, the eye and
+through their one door (`combat/technique/techniqueFx.js` kickFx), so the same setting scales it - a dip of the look, the eye and
 the hands, each under the least any technique's hit dips it (AUDIT GATHER-FEEL F5/R1: the look's stood at and past
 cleave's), on the enhanced skin alone and never under reduced motion; the setting's note names it.
 

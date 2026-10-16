@@ -48,7 +48,7 @@ import { ActionSystem } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
 import { Collider } from '../src/player/collider.js';
 import { activationTargets, pickActivatableHit } from '../src/player/activate.js';
-import { envAttack } from '../src/combat/weaponRig.js';
+import { envAttack } from '../src/combat/weapon/weaponRig.js';
 import { isStaleChunk, STALE_CHUNK_IN_PLAY_TEXT } from '../src/systems/staleChunk.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

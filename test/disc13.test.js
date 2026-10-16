@@ -48,7 +48,7 @@ import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js'
 import { PAGE_IDS } from '../src/ui/packPages.js';
 import { PlayerMotor, FIXED_DT, walkSpeed, runSpeed } from '../src/player/motor.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, FP_FIELD_OF_VIEW } from '../src/combat/fpArm.js';
-import { createWeaponWidget, readWidgetSettings } from '../src/combat/weaponWidget.js';
+import { createWeaponWidget, readWidgetSettings } from '../src/combat/weapon/weaponWidget.js';
 import { WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { createWeaponMachine } from '../src/characters/weaponStates.js';
 import { perspective } from '../src/world/mat4.js';

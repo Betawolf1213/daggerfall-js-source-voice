@@ -37,7 +37,7 @@ const WORDS = routedWords();
 const ROUTED = {
   'src/characters/nameHelper.js': 1,
   'src/combat/formulas.js': 2,
-  'src/combat/weaponRig.js': 3,
+  'src/combat/weapon/weaponRig.js': 3,
   'src/player/activate.js': 2,
   'src/player/climbing.js': 1,
   'src/player/interactionMode.js': 5,

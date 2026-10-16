@@ -54,7 +54,7 @@ test('AUDIT-RR F1: the swing clock hands the rig\'s { entity, weaponType, usingR
   assert.match(rd('src/characters/weaponStates.js'), /export function machineStep\(m, dt, liveSpeed, animCtx = null\)/);
   assert.match(rd('src/characters/weaponStates.js'), /getMeleeWeaponAnimTime\(liveSpeed, animCtx\)/);
   assert.match(rd('src/combat/playerWeapon.js'), /machineStep\(this\.machine, dt, this\.liveSpeed, this\.animCtx\?\.\(\) \?\? null\)/);
-  assert.match(rd('src/combat/weaponRig.js'), /playerWeapon\.animCtx = \(\) => \(\{ entity, weaponType: weaponTypeForItem\(playerWeapon\.weapon\), usingRightHand: playerWeapon\.usingRightHand \}\)/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /playerWeapon\.animCtx = \(\) => \(\{ entity, weaponType: weaponTypeForItem\(playerWeapon\.weapon\), usingRightHand: playerWeapon\.usingRightHand \}\)/);
   assert.equal(typeof CLASSIC_FRAME_UPDATE, 'number');
 });
 

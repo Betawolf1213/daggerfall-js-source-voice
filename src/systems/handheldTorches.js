@@ -25,7 +25,7 @@
 // the notes below cite that reading.
 //
 // THE SHAPE HERE. createHandheldTorches() is the component; the weapon
-// rig (combat/weaponRig.js) owns one per host beside the widget and
+// rig (combat/weapon/weaponRig.js) owns one per host beside the widget and
 // feeds it the frame - update() is Update, lateUpdate() is LateUpdate
 // (the mod runs both; the rig calls them in that order), draw() is
 // OnGUI's repaint. The keys are read as KeyCode names the way the
@@ -52,7 +52,7 @@ import { getItemHands, EQUIP_SLOTS, ITEM_HANDS, addEquipChangeListener } from '.
 import { weaponTypeForItem, WEAPON_TYPES, NATIVE_W, NATIVE_H } from '../combat/fpsWeapon.js';
 import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';
 import { SOUND } from './soundClips.js';
-import { moveTowards, moveTowards2, snap, BOB_SHAPE, STEP_CONDITION } from '../combat/weaponWidget.js';   // WW1: Unity's pieces and the two choice tables, one home
+import { moveTowards, moveTowards2, snap, BOB_SHAPE, STEP_CONDITION } from '../combat/weapon/weaponWidget.js';   // WW1: Unity's pieces and the two choice tables, one home
 import { setPlayerTorchOffsetOverride } from './playerTorch.js';
 import { toScreenOrder } from '../formats/color32Order.js';   // HT3: a SCREEN sprite keeps its rows - see the note there   // TEX1: the SHAPE the upload path reads - `{ colors }`, never a decoded PNG's `{ data }`
 import { decodePng } from './textureReplacement.js';

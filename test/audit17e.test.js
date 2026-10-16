@@ -247,7 +247,7 @@ test('audit17e W1: F17 the worn-weapon bind lives in the RIG, so all four hosts 
   // THE FOUR HOSTS RULE. U8h bound it by hand in the two exterior
   // hosts; the interior host owns a fourth rig and kept swinging the
   // interim dagger inside every building.
-  const rigSrc = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'src/combat/weaponRig.js'), 'utf8');
+  const rigSrc = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'src/combat/weapon/weaponRig.js'), 'utf8');
   assert.ok(/EQUIP_SLOTS\.RightHand/.test(rigSrc), 'the rig reads the equip table');
   assert.ok(/syncWorn\(\);/.test(rigSrc), 'and syncs per frame');
   for (const host of ['src/scenes/exterior.js', 'src/scenes/world.js']) {

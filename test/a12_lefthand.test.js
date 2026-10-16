@@ -24,7 +24,7 @@ import {
   PlayerWeapon, INTERIM_WEAPON, BOW_SWITCH_DIVISOR,
   USING_RIGHT_HAND_TEXT, USING_LEFT_HAND_TEXT, usingRightHandFromSaveVars,
 } from '../src/combat/playerWeapon.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPON_TYPES, weaponTypeForItem } from '../src/combat/fpsWeapon.js';
 import { midScreenText } from '../src/ui/midScreenText.js';   // AUDIT 64 F34: FPSWeapon.cs:365's surface

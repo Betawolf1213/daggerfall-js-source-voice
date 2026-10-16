@@ -47,7 +47,7 @@ of OpenMW/openmw at 3ee798e, 0.52.0-dev), and the skin that dresses one player's
   ("Werewolfs can not cast spells", mechanicsmanagerimp.cpp:1888-1890), and the claws key as the empty hand. A form
   asked during the first build waits for it; one asked while a door's build is queued rides that build. A wolf refused
   (no Bloodmoon) still turns back - see AUDIT D1.
-- `combat/weaponRig.js`: `isMwWerewolf(entity)` - transformed, and the curse the wolf's (LycanthropyTypes 1); the
+- `combat/weapon/weaponRig.js`: `isMwWerewolf(entity)` - transformed, and the curse the wolf's (LycanthropyTypes 1); the
   wereboar has no Morrowind form and keeps the person's body. It rides `armBuildOptsOf` (a save loaded mid-change
   builds the wolf at the door) and `armIdentityOf`, and every frame the form is handed to `setWerewolf` AHEAD of the
   `ready()` gate and of the hand, the worn table and the spell; the skin is read when the form changes, not per frame.
@@ -197,7 +197,7 @@ fixes stand on this page's ground.
 
 - **BEAST-SELF** (`02-Formats/Morrowind-Rules.md`, its DECLARED DIVERGENCE): main stood the Morrowind arm and body
   aside for every transformed lycanthrope, because the rig had no beast. It has one here, so the stand-aside is asked
-  of the FORM (`combat/weaponRig.js` bindArm, `fpArm.wolfStanding()`): aside while the rig is not the form the curse
+  of the FORM (`combat/weapon/weaponRig.js` bindArm, `fpArm.wolfStanding()`): aside while the rig is not the form the curse
   holds - the person while the wolf builds, a wolf refused, a wereboar, the wolf while the person rebuilds after the
   turn back - and never while the wolf stands for a werewolf, whose arm draws in first person and whose body the wheel
   crosses into. A change of form is two edges, each carried by main's camera hand-off; with Eye Of The Beholder off a

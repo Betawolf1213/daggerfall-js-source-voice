@@ -94,7 +94,7 @@ export function swingFrameSeconds(speed, { heft = 1, handling = 1 } = {}) {
   return Math.max(SWING_FRAME_MIN, Math.min(SWING_FRAME_MAX, SWING_BASE_FRAME * swingTempo(speed) * heft * handling));
 }
 /** The weapon in the hand as the law reads it - `(ctx) => {weaponType, weight, strength, twoHanded}` or null - from a
- *  module that can read the equip table (combat/swingLaw.js, which registers it as it loads - combat/weaponRig.js
+ *  module that can read the equip table (combat/swingLaw.js, which registers it as it loads - combat/weapon/weaponRig.js
  *  imports it: AUDIT PRE-MERGE 0929 S5); this module is a leaf. Without one the
  *  law reads no heft, and the handling off `ctx.weaponType` alone. */
 let _swingReader = null;
@@ -242,7 +242,7 @@ export function machineCancelBowDraw(m, liveSpeed = 50) {
  * and when it is done, in seconds from its first frame. The Morrowind arm is a picture of this machine (rule 24's note,
  * Morrowind-Rules.md: the hit frame is FPSWeapon's, not the .kf's), and a picture paced by the WEAP record's own speed
  * drew one blow while the machine struck two - the second refused, the hit landing mid-wind-up. The caller that starts
- * the arm's wind-up reads this at the strike's first frame (combat/weaponRig.js fpAttack) and the arm fits each section
+ * the arm's wind-up reads this at the strike's first frame (combat/weapon/weaponRig.js fpAttack) and the arm fits each section
  * of its blow into it (combat/fpArm.js blowRate).
  *
  * The machine steps ONCE per frame and drops the remainder (ARROW2, machineStep below), so a tick lasts the whole

@@ -12,8 +12,8 @@
 // BLOOD AUDIT 4 said plainly that the capacity and the density were
 // read from two keys no row wrote; BLOOD2g retired those keys for the
 // one `blood-gore` tier below. Every key here has a registry row now.
-import { getPref } from '../systems/uiPrefs.js';
-import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
+import { getPref } from '../../systems/uiPrefs.js';
+import { pageParam } from '../../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 
 export const BLOOD_PREF = 'blood-marks';
 /** ON by default: the splash has always played, and the mark is what a

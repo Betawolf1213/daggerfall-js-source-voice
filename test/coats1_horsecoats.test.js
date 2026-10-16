@@ -428,7 +428,7 @@ test('COATS1 the Stable: the horse born before the card reads it; a row a part, 
 test('COATS1 the wiring: both exterior hosts bear the horses each frame; the rig\'s record carries the look to the body, the pose to the others, the pool\'s seam to both pools', () => {
   const rd = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
   for (const host of ['scenes/world.js', 'scenes/exterior.js']) assert.match(rd(host), /const hccTick = \(dt, nowMs\) => \{\n {4}birthHorses\(playerEntity\.items\);/, host);
-  assert.match(rd('combat/weaponRig.js'), /horseLook: entity \? riddenHorseLook\(entity\.items \?\? \[\]\) : 0/);
+  assert.match(rd('combat/weapon/weaponRig.js'), /horseLook: entity \? riddenHorseLook\(entity\.items \?\? \[\]\) : 0/);
   assert.match(rd('player/eotbBody.js'), /horse: last\.horseLook \?\? 0/);
   assert.match(rd('player/eotbBody.js'), /lookedPixels\(s, img\)/);
   assert.match(rd('player/eotbBody.js'), /renderer\?\.evictTexture\?\.\(k\.replace\(':', '_'\)\)/, 'a look left behind on my own rider is let go');

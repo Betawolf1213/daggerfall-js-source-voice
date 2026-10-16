@@ -34,7 +34,7 @@ import { Collider } from '../src/player/collider.js';
 import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
 import { objectAabb, worldAabb, activationTargets, pickActivatable } from '../src/player/activate.js';
-import { envAttack } from '../src/combat/weaponRig.js';
+import { envAttack } from '../src/combat/weapon/weaponRig.js';
 import { HudText, HUD_TEXT_POP_DELAY } from '../src/ui/hud/hudText.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

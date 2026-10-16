@@ -28,7 +28,7 @@ import { DEFAULT_BINDINGS } from '../src/systems/inputActions.js';
 import {
   playerTorchLight, tickPlayerTorch, setPlayerTorchOffsetOverride, setPlayerWaistLightOverride, TORCH_OFFSET, LANTERN_HIP,
 } from '../src/systems/playerTorch.js';
-import { armBuildOptsOf } from '../src/combat/weaponRig.js';
+import { armBuildOptsOf } from '../src/combat/weapon/weaponRig.js';
 
 const V = HANDHELD_TORCHES_VENDOR;
 const T = TEMPLATES;

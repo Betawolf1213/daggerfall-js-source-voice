@@ -295,7 +295,7 @@ export function peerBuildOpts(look, shown = null, glyphs = null) {
 }
 
 /** MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): ANOTHER PLAYER'S BUILD -
- *  peerBuildOpts, and the port's own heads, as the local player's body wears them (combat/weaponRig.js
+ *  peerBuildOpts, and the port's own heads, as the local player's body wears them (combat/weapon/weaponRig.js
  *  armBuildOptsOf). The peers' PeerBodies takes it (scenes/world.js); the people's lanes take peerBuildOpts, the data's
  *  heads. */
 export const playerBuildOpts = (look, shown = null, glyphs = null) => ({ ...peerBuildOpts(look, shown, glyphs), ownHeads: true });

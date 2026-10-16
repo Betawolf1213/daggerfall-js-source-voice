@@ -3,7 +3,7 @@
 // gate refused every leap and dash off the ground (combat/techniques.js refusal), asked on the press and again on the
 // release, so a kick pressed in a jump, in a fall or off a ledge - or pressed on the ground and let go after the takeoff -
 // said it. Mac's call (2026-10-15): the Flying Kick goes from the air - the roster marks it `airborne`
-// (combat/techniqueRoster.js) and the gate reads the mark; every other leap and dash stays on the ground, and every other
+// (combat/technique/techniqueRoster.js) and the gate reads the mark; every other leap and dash stays on the ground, and every other
 // refusal is the kick's too. A flight launched mid-fall keeps that fall's start (player/motor.js techniqueLaunch), so a
 // kick is no feather fall. Driven through the runner's press, hold and release on a REAL PlayerMotor over a real
 // Collider, built as the hosts build theirs (exterior.js, world.js: motorStats, the Jumping skill's boost, the Jump
@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
 import * as T from '../src/combat/techniques.js';
-import { TECHNIQUES } from '../src/combat/techniqueRoster.js';
+import { TECHNIQUES } from '../src/combat/technique/techniqueRoster.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';

@@ -468,7 +468,7 @@ test('CLIMB6 C16: THE FOUR HOSTS hand the rig the snapshot (world, exterior, int
   assert.match(fp, /climb: thirdClimb\(climbWorld, cam\),/, 'the body\'s pose');
   assert.match(fp, /climb: held \? null : firstClimb\(climbWorld, cam\),/, 'the arms\' pose (the sheet\'s hands are the sheet\'s)');
   assert.match(fp, /if \(climbHands && \(r\.slot === 'weapon' \|\| r\.slot === 'arrow' \|\| r\.slot === 'torch'\)\) r\.hidden = true;/, 'nothing in hands on the stone');
-  assert.match(rd('src/combat/weaponRig.js'), /if \(_climbLower > 0 && !armsClimb\)/, 'posed arms stay on the screen');
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /if \(_climbLower > 0 && !armsClimb\)/, 'posed arms stay on the screen');
   assert.match(rd('src/net/peer/peerBodies.js'), /b\.cam\.climb = \(b\.climbTrack \?\?= new PeerClimbTrack\(\)\)\.input\(peer\.shown, f, b\.yaw, this\._now\(\), this\._collider\(\)\);/, 'the peers\' bodies');
   assert.match(rd('src/formats/mwFirstPerson.js'), /applyFirstPersonNeck\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.climbFit = climb \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, climb\) : null;\n\s*const mats = fns\.skelMats/, 'the hook between the neck and the matrices');
 });

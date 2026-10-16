@@ -119,7 +119,7 @@ test('ch3 characters-13 -> FX1 (F128): the swap pause bills PER INVENTORY VISIT,
   billEquipDelayOnClose(e, snap);
   assert.equal(e.equipCountdown, 0, 'only hand slots pause the swing');
   // the rig: the block + the classic 980/s drain (unchanged)
-  const rig = src('src/combat/weaponRig.js');
+  const rig = src('src/combat/weapon/weaponRig.js');
   assert.ok(rig.includes("(entity?.equipCountdown ?? 0) > 0) return;"), 'a running pause blocks the attack input');
   assert.ok(rig.includes('entity.equipCountdown - dt * 980'), 'and drains at the classic approximation');
   // the window owns the clock: snapshot in the ctor, bill in the ONE

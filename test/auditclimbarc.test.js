@@ -5,7 +5,7 @@
 // can reach. The mutants that put each old behaviour back are tools/mutants/auditclimbarc.json.
 //
 // The peer and the body modules (net/peer/peerClimb.js, net/peer/peerRiders.js, net/remotePlayers.js, player/mwView.js,
-// combat/weaponRig.js) are imported inside their own tests: they reach CLIMB6's work in progress (player/climbPose.js,
+// combat/weapon/weaponRig.js) are imported inside their own tests: they reach CLIMB6's work in progress (player/climbPose.js,
 // combat/climbRig.js), and a slip there must cost those pins alone, not the file.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -221,7 +221,7 @@ test('AUDIT CLIMB-ARC F6: a teleport and a load reset the feel - no climb\'s tur
 });
 
 test('AUDIT CLIMB-ARC F7: a swing in flight when the hands take the wall lands nothing - WeaponManager\'s climbing return skips the hit frame (mutant: the swing\'s events kept on the wall)', async () => {
-  const { createWeaponRig } = await import('../src/combat/weaponRig.js');
+  const { createWeaponRig } = await import('../src/combat/weapon/weaponRig.js');
   const { setModSetting, _resetModSettings } = await import('../src/systems/modSettings.js');
   const { resetToDefaults } = await import('../src/systems/settings/settings.js');
   const { EQUIP_SLOTS } = await import('../src/systems/equip.js');

@@ -205,7 +205,7 @@ instead. Plus the port's `Enabled` (MO1: on).
 
 ## Hosts
 
-`combat/weaponRig.js` owns one, beside the weapon's clone, and drives it
+`combat/weapon/weaponRig.js` owns one, beside the weapon's clone, and drives it
 on the same frame from the same assembled answers - Unity handed the
 MonoBehaviour the motor, the look and the weapon manager, and so does
 the rig.

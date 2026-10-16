@@ -20,12 +20,12 @@
 // bundle means the modules run as the mod runs without its textures
 // (the classic frame at double size).
 
-import { readUnityBundle } from '../formats/unityBundle.js';
-import { toScreenOrder } from '../formats/color32Order.js';   // WW3: the ORDER *and* the shape the upload path reads - `{ colors }`, never a decoded PNG's `{ data }`
-import { decodePng } from '../systems/textureReplacement.js';
-import { MATERIAL_NAMES } from '../systems/item/itemInfo.js';   // MetalTypes' names, Iron..Daedric
-import { WEAPON_MATERIALS } from '../characters/weapons.js';
-import { customTextureNames } from './diverseWeapons.js';   // AUDIT 68 S09-texname-dup: the one spelling
+import { readUnityBundle } from '../../formats/unityBundle.js';
+import { toScreenOrder } from '../../formats/color32Order.js';   // WW3: the ORDER *and* the shape the upload path reads - `{ colors }`, never a decoded PNG's `{ data }`
+import { decodePng } from '../../systems/textureReplacement.js';
+import { MATERIAL_NAMES } from '../../systems/item/itemInfo.js';   // MetalTypes' names, Iron..Daedric
+import { WEAPON_MATERIALS } from '../../characters/weapons.js';
+import { customTextureNames } from '../diverseWeapons/diverseWeapons.js';   // AUDIT 68 S09-texname-dup: the one spelling
 
 export const WEAPON_WIDGET_MOD = Object.freeze({
   guid: '9f301f2b-298b-43d8-8f3f-c54deaa841e0',
@@ -34,7 +34,7 @@ export const WEAPON_WIDGET_MOD = Object.freeze({
   author: 'RedRoryOTheGlen',
 });
 
-import { DFMOD_KEY_PREFIX } from '../systems/seasonsIliacBayAssets.js';   // the stored-name prefix the texture pick writes for a bundle - one home (audit24's ratchet)
+import { DFMOD_KEY_PREFIX } from '../../systems/seasonsIliacBayAssets.js';   // the stored-name prefix the texture pick writes for a bundle - one home (audit24's ratchet)
 export { DFMOD_KEY_PREFIX };
 const isWidgetDfmod = (name) => /\.dfmod$/i.test(name) && /weapon.?widget/i.test(name.slice(name.lastIndexOf('/') + 1));
 const isPng = (name) => /\.png$/i.test(name);

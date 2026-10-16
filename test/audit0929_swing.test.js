@@ -3,11 +3,11 @@
 // swing law's reader in every rig (it was a boot call, and a rig built without that boot swung with no weight). The
 // record: bible/01-Overview/Audit-PreMerge-0929.md and bible/05-Combat/Combat.md SWING-LAW.
 //
-// This file never imports scenes/shared.js: the reader it finds is the one combat/weaponRig.js's import registered.
+// This file never imports scenes/shared.js: the reader it finds is the one combat/weapon/weaponRig.js's import registered.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { readSwing } from '../src/combat/swingLaw.js';
 import { getMeleeWeaponAnimTime, SWING_HEFT_FREE_KG } from '../src/characters/weaponStates.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';

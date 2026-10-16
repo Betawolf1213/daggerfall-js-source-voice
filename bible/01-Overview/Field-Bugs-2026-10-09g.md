@@ -36,7 +36,7 @@ button's alike (`armCannotDraw`). Only the start waits: a drawn bow's
 release (StrikeUp to StrikeDown) is never held, and the gesture is not asked while it waits, so its button latch keeps
 a press made meanwhile. While the arm is still drawing, the held hit waits for its release key past the 1.2s ceiling,
 to a 4s never-traps cap (`HELD_HIT_CAP_S`); a silent arm still falls through at 1.2s. A draw clears a release it has
-not reached (`attack()`), so a leftover key is never the next arrow's. All in `combat/weaponRig.js` (armCannotDraw before the
+not reached (`attack()`), so a leftover key is never the next arrow's. All in `combat/weapon/weaponRig.js` (armCannotDraw before the
 gesture and in clickAttack, holdShotForArm) and `combat/fpArm.js` (shotBusy, attack). THE FOUR HOSTS: the rig is all four's - world.js,
 exterior.js, worldModes.js (interiors) and dungeonContext.js each step `weaponRig.frame` and resolve its 'hit'; no host
 seam. Re-run, every arrow is its own draw's and leaves at that draw's release, at Speed 50 and 90 and draws of 0.8, 1.4

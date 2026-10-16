@@ -18,7 +18,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as homeYards from '../src/scenes/homeYards.js';
 import * as decorTool from '../src/scenes/decor/decorTool.js';
-import { DECAL_FLOATS } from '../src/combat/bloodDecals.js';
+import { DECAL_FLOATS } from '../src/combat/blood/bloodDecals.js';
 import { Collider } from '../src/player/collider.js';
 import { accountDecor, SESSION_KEY } from '../src/net/accountClient.js';
 import { RMB_TILE_SIDE } from '../src/world/locationEntrance.js';

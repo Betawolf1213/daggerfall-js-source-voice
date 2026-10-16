@@ -120,7 +120,7 @@
   },
   {
     "name": "HT-WAIST-the-build-never-asked",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    hipLight: lanternAtWaist(entity.lightSource),",
     "new": "    hipLight: false,",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "HT-WAIST-the-ladder-opens-for-the-waist",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "        && (!fpArm.active() || fpArm.torchShown())\n        && !lanternAtWaist(entity?.lightSource);",
     "new": "        && (!fpArm.active() || fpArm.torchShown());",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "HT-WAIST-the-arm-never-told",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "        fpArm.setHipLight(lanternAtWaist(entity?.lightSource));\n",
     "new": "",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "HT-WAIST-the-sprite-never-told",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    hipLantern: !!entity && lanternAtWaist(entity.lightSource),",
     "new": "    hipLantern: false,",
     "tests": [

@@ -57,7 +57,7 @@ empty screen (the weapon hides while a spell is readied) until the click.
 ## The port's reading, recorded
 
 See `src/combat/fpsSpellCasting.js` (`readiedHandsFrame`) and the RSH1 note in
-`src/combat/weaponRig.js`. In outline:
+`src/combat/weapon/weaponRig.js`. In outline:
 
 - **The same art, the same draw.** The port's `FPSSpellCasting` is already DFU's
   own, line for line; the mod's copy of `SetCurrentAnims`, `UpdateSpellCast`

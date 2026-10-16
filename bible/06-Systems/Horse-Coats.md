@@ -167,7 +167,7 @@ digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
 - **Eye Of The Beholder's rider** (`player/eotbSprite.js` spriteFor,
   `lookedPixels`): a mounted table's sprite in a look is its own record
   (`<record>-<frame>~<code>`), dyed before the mirror. The body reads the look
-  off the weapon rig's record (`combat/weaponRig.js` eotbState `horseLook`,
+  off the weapon rig's record (`combat/weapon/weaponRig.js` eotbState `horseLook`,
   shared by all four hosts), fetches its mounted tables whole when it
   changes, as a set chosen is, and lets the last look's pictures go. Another
   player's rider is dyed by their pose's `rc` (`net/peer/peerRiders.js`); past

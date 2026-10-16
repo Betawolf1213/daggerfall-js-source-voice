@@ -608,7 +608,7 @@ const SOURCE_CITES = [
   // the line goes red at the citation instead of at a reader.
   ['src/characters/playerEntity.js', /exterior\.js:"([^"]+)"(?:\.\."([^"]+)")? and applyHeadlessChargen/,
     EX, /createChargenFlow\(fetchBytes\)\.then/],
-  ['src/combat/weaponRig.js', /\(exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?, world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)\)/,
+  ['src/combat/weapon/weaponRig.js', /\(exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?, world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)\)/,
     EX, /^ {4}say: \(l\) => townTalk\.say\(l\),$/],
   ['src/scenes/dungeonContext.js', /exterior\.js:"([^"]+)"(?:\.\."([^"]+)")? and worldModes\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)/,
     EX, /onPlayerArrowHitFoe: \(m, t\) => playerArrowHitFoe\(/],

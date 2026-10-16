@@ -30,7 +30,7 @@ import { Renderer, asBytes, color32Bytes } from '../src/render/renderer.js';
 import { toColor32, toColor32Order } from '../src/formats/color32Order.js';
 import {
   setWeaponWidgetSources, clearWeaponWidgetSources, weaponWidgetImage, widgetTextureName,
-} from '../src/combat/weaponWidgetAssets.js';
+} from '../src/combat/weapon/weaponWidgetAssets.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -127,7 +127,7 @@ test('WW3 the regression, executed: the shape the door used to answer still thro
 });
 
 test('WW3 the door and the site: the widget converts with toColor32 in both arms and holds no toColor32Order; the load failure is said out loud, as the rig\'s neighbours say theirs', () => {
-  const door = rd('src/combat/weaponWidgetAssets.js');
+  const door = rd('src/combat/weapon/weaponWidgetAssets.js');
   assert.match(door, /import \{ toScreenOrder \} from '\.\.\/formats\/color32Order\.js';/);   // DWHD1: neither arm flips - both are top-first
   assert.ok(!/toColor32Order/.test(door.replace(/^\s*\*.*$/gm, '')), 'not in the code - the trap is named in the comment only');
   assert.equal((door.match(/toColor32\(/g) ?? []).length, 0, 'DWHD1: no arm flips - the reader answers top-first');
@@ -135,7 +135,7 @@ test('WW3 the door and the site: the widget converts with toColor32 in both arms
   assert.match(door, /try \{ return toScreenOrder\(tex\.rgba\(\)\); \}/, 'the bundle arm');
   assert.match(door, /return toScreenOrder\(await decodePng\(bytes\)\);/, 'the loose arm');
   assert.match(door, /`\{ width, height, colors \}` RGBA in the port's\n \*  color32 \(bottom-up\) order, the SHAPE renderer\.uploadTexture reads/, 'the door says which shape it answers');
-  const site = rd('src/combat/weaponWidget.js');
+  const site = rd('src/combat/weapon/weaponWidget.js');
   // DW1 reshaped the catch: a throw is ALSO a miss for that name (so the
   // `w_` ask falls through to the plain one next frame), and still says so
   assert.match(site, /\}\)\.catch\(\(e\) => \{ misses\.add\(name\); console\.warn\('\[weapon widget\] texture load failed', name, e\); \}\);/, 'no bare swallow');

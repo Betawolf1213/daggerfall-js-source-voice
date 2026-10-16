@@ -63,7 +63,7 @@ and MEND-WORN-pack-order (dead).
 
 ## KICK-AIR: the Flying Kick goes from the air (3)
 
-`src/combat/techniqueRoster.js` kick (`airborne`); `src/combat/techniques.js` refusal; `src/player/motor.js`
+`src/combat/technique/techniqueRoster.js` kick (`airborne`); `src/combat/techniques.js` refusal; `src/player/motor.js`
 techniqueLaunch.
 
 THE REPORT. "Flying kick doesn't work": "tried doing it mid-air, off ledges, flat ground aiming up aiming down etc nothing

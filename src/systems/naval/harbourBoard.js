@@ -32,7 +32,7 @@
 // clock, to a captain of its Privateer rank (`perks.marque`); THE ADMIRALTY'S CARRACK - the one Carrack the Bay sells
 // (Come Sail Away's shelves never carry one) - at ADMIRALTY_OFF off her price, to a Commodore (`perks.admiralty`).
 
-import { mulberry32 } from '../../combat/bloodArt.js';
+import { mulberry32 } from '../../combat/blood/bloodArt.js';
 import { classById, shipNames, SHIP_CLASSES } from './navalShips.js';
 import { HULL_PRICES } from '../comeSailAway/comeSailAwayHulls.js';
 import { MINUTES_PER_DAY } from '../gameDate.js';   // a day of the captain's clock (minutes)

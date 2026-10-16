@@ -79,7 +79,7 @@ under each shell and holds the box above them all.
 ## DISC28-D: the first-person swing reads the live Speed (8)
 
 The formula was right - GetMeleeWeaponAnimTime, `3 * (115 - LiveSpeed) / 980` a frame (FormulaHelper.cs:830-838) - and
-never saw the player. The rig built its `PlayerWeapon` with no speed (`combat/weaponRig.js`), the weapon took the default
+never saw the player. The rig built its `PlayerWeapon` with no speed (`combat/weapon/weaponRig.js`), the weapon took the default
 50 as a NUMBER once, and nothing wrote it again: every player's swing clock, hit frame, swing sound and bow cooldown ran
 at Speed 50, while the third-person body and the widget's clone read the live stat. DFU asks
 `player.Stats.LiveSpeed` on every UpdateWeapon (FPSWeapon.cs:431, :549-556). The weapon's `liveSpeed` is now a live

@@ -2,7 +2,7 @@
 // be in the codebase, not an attachable file"). public/art/diverse-
 // weapons/ carries Diverse Weapons' 12,624 sprites by the name DFU asks
 // for; the door's index of them is derived from the mod's own manifest
-// (tools/diverseWeaponsIndex.mjs -> combat/diverseWeaponsIndex.js), the
+// (tools/diverseWeaponsIndex.mjs -> combat/diverseWeapons/diverseWeaponsIndex.js), the
 // folder's membership from the same manifest (test/doctrine.test.js),
 // and the tool that writes the folder (tools/diverseWeaponsExtract.mjs)
 // checks each file against its texel. Pins: the generated index IS the
@@ -21,8 +21,8 @@ import { fileURLToPath } from 'node:url';
 import {
   hasDiverseWeaponsSprite, diverseWeaponsSpriteUrl, DIVERSE_WEAPONS_SPRITE_COUNT, SHIPPED_DIR,
   diverseWeaponsImage, setDiverseWeaponsSources, clearDiverseWeaponsSources, _resetDiverseWeaponsImages,
-} from '../src/combat/diverseWeaponsAssets.js';
-import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_ODD, DIVERSE_WEAPONS_METALS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeaponsIndex.js';
+} from '../src/combat/diverseWeapons/diverseWeaponsAssets.js';
+import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_ODD, DIVERSE_WEAPONS_METALS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeapons/diverseWeaponsIndex.js';
 import { MATERIAL_NAMES } from '../src/systems/item/itemInfo.js';
 import { manifestSpriteNames, encodeIndex, renderIndex, MANIFEST, INDEX_FILE, METALS, BARE_BIT } from '../tools/diverseWeaponsIndex.mjs';
 import { encodeSprite, sameOnScreen, OUT_DIR } from '../tools/diverseWeaponsExtract.mjs';

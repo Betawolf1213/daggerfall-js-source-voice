@@ -207,7 +207,7 @@ formulas. `test/fpsspellcasting.test.js`, 11 pins, 9 mutants, 9 dead.
 ## C9 (2026-08-16): the FP-weapon HOST ROLLOUT - SHIPPED
 
 The weapon audit's follow-up closes: the classic weapon was
-dungeon-only (the voxel path was too). combat/weaponRig.js bundles
+dungeon-only (the voxel path was too). combat/weapon/weaponRig.js bundles
 the host surface - PlayerWeapon + the WEAPON*.CIF art cache, the
 ShowWeapons legs (spellArmed a hook; hosts without casting omit it),
 ToggleSheath + DrawWeapon 78, the zero-arrow bow auto-sheathe, the
@@ -249,7 +249,7 @@ dungeon + exterior(&play) + world shot probes green.
 
 The C9 residual closes (the parallel FP lane has ended; this session
 is the only one): dungeonContext's inline weapon surface collapses
-onto combat/weaponRig.js - ONE home for the art cache, the
+onto combat/weapon/weaponRig.js - ONE home for the art cache, the
 ShowWeapons legs (spellArmed = the click-cast HasReadySpell leg,
 threaded), ToggleSheath + DrawWeapon 78, the zero-arrow bow guard
 (say -> hudText), the gesture buffer, the swing-sound edge, and the
@@ -1469,7 +1469,7 @@ with morrowind's first person view." The whole account is
 `Weapon-Widget.md` beside this file; the ledger row is Port-Ledger A.
 The short of it: RedRoryOTheGlen's Weapon Widget 1.6 - FPSWeaponClone,
 a compiled DLL read off its IL method by method - ported into
-`combat/weaponWidget.js` as a component the weapon rig runs BESIDE the
+`combat/weapon/weaponWidget.js` as a component the weapon rig runs BESIDE the
 machine, the way the clone runs beside FPSWeapon: its three coroutines
 are generators on Unity's own WaitForSeconds / WaitForEndOfFrame clock,
 its nine modules read their switches every frame, its Recoil is fed
@@ -1515,7 +1515,7 @@ a lycanthrope's +40 Speed puts any base of 60 or more (DISC29-G, `01-Overview/Fi
 **Who reads it.** A swing with a wielder the port knows (`ctx.entity`, AUDIT-RR F1's ctx) - the machine, the Weapon
 Widget's clone, the Eye of the Beholder body - asks the one function. The weapon in the hand is read by
 `combat/swingLaw.js` (the equip table's hand the swing is in, the template's base weight, `getItemHands` for both hands,
-the live Strength; bare hands and claws weigh nothing), registered as the module loads - `combat/weaponRig.js`, the one
+the live Strength; bare hands and claws weigh nothing), registered as the module loads - `combat/weapon/weaponRig.js`, the one
 maker of a swing's ctx, imports it (AUDIT PRE-MERGE 0929 S5: it was a boot call in `scenes/shared.js`, and a rig built
 without that boot swung with no weight and no second hand) - and it reads the equip table the way the rig's syncWorn
 does, never growing one (S6: through `equipTableOf` it grew an empty table on a body with none, and the rig then emptied
@@ -1532,7 +1532,7 @@ wielder the port does not know keeps DFU's line: a foe's machine (DFU never asks
 attack speed/multiple attacks when attack speed is high"). The arm used to play a blow at its WEAP record's own pace,
 so at a high Speed the machine began its next blow while the arm was still in the last, and one blow in two was drawn.
 At a strike's first frame the machine says when its hit lands and when the blow is done (`characters/weaponStates.js`
-blowSchedule, at that frame's dt; `combat/playerWeapon.js` strikeSchedule; `combat/weaponRig.js` fpAttack), and the arm
+blowSchedule, at that frame's dt; `combat/playerWeapon.js` strikeSchedule; `combat/weapon/weaponRig.js` fpAttack), and the arm
 fits its wind-up and release to the hit and its follow-through to the end (`02-Formats/Morrowind-Rules.md` MW-PACE1). A
 peer's body paces its blows by the burst's own gaps. A declared departure: Ledger A (MW-PACE1).
 
@@ -1560,7 +1560,7 @@ the reader that never writes), RR1's heft, `test/disc28_speed.test.js` on the we
 
 A weapon found on the loot ladder may carry a technique, done by its own key (WeaponTechnique, the mouse's back side
 button): a Volley, a Leap Strike, a Shadowstep, a Whirlwind and eight more. It rides the swing's own machine and the
-shot's own loose: `PlayerWeapon.resolveHit` reads the technique's blow (`combat/techniqueBlow.js`) for its reach and
+shot's own loose: `PlayerWeapon.resolveHit` reads the technique's blow (`combat/technique/techniqueBlow.js`) for its reach and
 scales DFU's rolled damage by its multiplier, and `playerArrowHitFoe` does the same for its shafts - the formula still
 decides, a miss is still a miss. The record, the roster and the four hosts' doors are `Weapon-Techniques.md`. A declared
 departure: Ledger A (TECH1).

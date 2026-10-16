@@ -1,7 +1,7 @@
 # The Dwarven Thunderlock — the port's own weapon
 
 `src/systems/thunderlock.js` + `src/characters/thunderlockIds.js` +
-`src/combat/thunderlockArt.js` + `src/combat/gunSheet.js`
+`src/combat/thunderlockArt.js` + `src/combat/gun/gunSheet.js`
 (Mac, 2026-09-19)
 
 > "The weapon itself will be called Dwarven Thunderlock. Ammo: Dwemer
@@ -82,13 +82,13 @@ register its rows, and *that* file imports `characters/weapons.js` for
 the condition ladder — so a `weapons.js` that wanted the indices from
 the home would close a cycle and leave one of the three holding an
 undefined const on the way up. `systems/inventory.js` is upstream too.
-The leaf breaks both. Same answer as `combat/weaponAlign.js`.
+The leaf breaks both. Same answer as `combat/weapon/weaponAlign.js`.
 
 ## The art
 
 Its first-person art is **a sheet, not a CIF**
 (`combat/thunderlockArt.js`), sliced by the laws the lab settled
-(`combat/gunSheet.js`) and handed back in the *same shape*
+(`combat/gun/gunSheet.js`) and handed back in the *same shape*
 `loadFpsWeaponArt` answers — so `drawFpsWeapon`, the rig and Weapon
 Widget's clone read it without any of them learning that a second kind
 of weapon art exists. Two records: 0 is the idle pose, 1 the six fire
@@ -288,13 +288,13 @@ because the second form says nothing about where on the doll it is.
 
 The largest of the three, and the one that says most about how this
 was built. **The lab settled the recoil, the shake and the reload
-lower, and then kept them.** `combat/weaponRig.js` — the thing that
+lower, and then kept them.** `combat/weapon/weaponRig.js` — the thing that
 actually draws the weapon, in all four hosts — had none of the three.
 The sprite arrived, the sounds arrived, and the weapon sat dead still
 while it fired.
 
-So the two machines moved to `combat/gunFeel.js` and the lab
-re-exports them, exactly as `combat/gunSheet.js` already works for the
+So the two machines moved to `combat/gun/gunFeel.js` and the lab
+re-exports them, exactly as `combat/gun/gunSheet.js` already works for the
 slicing laws. Tuning the lab now tunes the game, because there is one
 copy of each number.
 
@@ -419,7 +419,7 @@ moved.
 `thunderlockArt.js` hands over an **anchor-sized record** now, with
 the union beside it, and both draw sites expand at the moment of
 drawing — exactly the shape the lab has always had. `unionDrawRect`
-moved into `combat/gunSheet.js` so the lab reads the game's copy
+moved into `combat/gun/gunSheet.js` so the lab reads the game's copy
 rather than keeping its own.
 
 And the raise moved onto `_tlAdjust`, the one channel **both** draws
@@ -464,15 +464,15 @@ corrected; they converge by becoming one implementation.
 
 ### What moved
 
-`gun-proto.html`'s draw block is `combat/gunViewmodel.js` now, and
+`gun-proto.html`'s draw block is `combat/gun/gunViewmodel.js` now, and
 both sides call it:
 
 | was | is |
 | --- | --- |
 | lab's `createWidgetRig` / `widgetRigStep` | `createGunRig` / `gunRigStep` |
 | lab's `labMotion` / `labWidgetSettings` | `gunMotion` / `gunWidgetSettings` |
-| lab's `placeSprite` | `combat/gunPlacement.js` |
-| lab's `unionDrawRect` | `combat/gunSheet.js` |
+| lab's `placeSprite` | `combat/gun/gunPlacement.js` |
+| lab's `unionDrawRect` | `combat/gun/gunSheet.js` |
 | the lab's draw block | `gunFrameRect` |
 
 The lab imports every one of them back. **It is no longer a thing the
@@ -590,7 +590,7 @@ frames *is* the gun. Barrel, hand and flash brighten together and fall
 away over the smoke — one lamp switching on, not a sprite special-cased.
 
 **Why it lit nothing:** because the curve lived in `src/tools/`. It has
-moved to `combat/gunFeel.js` with the rest of the feel (`MUZZLE_CURVE`,
+moved to `combat/gun/gunFeel.js` with the rest of the feel (`MUZZLE_CURVE`,
 `muzzleGlow`), and the lab's own `muzzleLight(state, frame)` now asks
 the same question in its machine's words — one home, two spellings.
 
@@ -1865,14 +1865,14 @@ after the bang the hands stood still for the whole 1.7 s reload, the pump's two 
 clacks rode the machine's cooldown, which begins at its sixth frame (0.43 s after the click) - before a crossbow's
 release - so the breech was heard OPENING BEFORE THE BANG. AUDIT FIELD-GUN-MW recorded that and left it; it is paid.
 
-**One pose over the whole viewmodel** (`combat/gunFeel.js` `armGunPose`, `armKickMatrix`; `combat/fpArm.js`
+**One pose over the whole viewmodel** (`combat/gun/gunFeel.js` `armGunPose`, `armKickMatrix`; `combat/fpArm.js`
 `setGunFeel`): the gun's kick and its reload as `{ pitch, back, down }` in the eye's own axes, turned about the shoulder
 (`ARM_GUN_FEEL.pivot`) and laid IN FRONT of the lens at the first-person draw (`K x lens`) - the arms and the gun move
 as one and nothing else in the pass does. Not through the neck (`poseAssembly`'s `neckPitch`/`neckOffset`): glued arms
 take no look there by IG4's construction, and a kick is not a look. The frame record carries the moved view, so the
 muzzle (`weaponMuzzle`) and a held sheet's corners stand where the eye sees them.
 
-**The same spring** (`combat/weaponRig.js` `thunderlockFeel`): the classic lane's recoil (`createRecoil`, Mac's kick 5,
+**The same spring** (`combat/weapon/weaponRig.js` `thunderlockFeel`): the classic lane's recoil (`createRecoil`, Mac's kick 5,
 stiffness 400, damping 36) is stepped once and both views read it - a kick tuned on the lab's panel moves the sprite and
 the arm. Its 5 px peak is 3 degrees of muzzle climb and 2.5 cm into the shoulder; under a thousandth of a pixel
 (`ARM_KICK_REST_PX`) the spring's endless tail is rest, so the arm's pose can be none again.

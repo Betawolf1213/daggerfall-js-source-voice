@@ -28,9 +28,9 @@ import {
   addVendorTextures, clearVendorTextures, vendorTextureCount, preloadTextureArchive, preloadTextureRecord, PRELOAD_CONCURRENCY,
 } from '../src/systems/textureReplacement.js';
 import { setValue } from '../src/systems/settings/settings.js';
-import { diverseWeaponsIconEntries, installDiverseWeaponsIcons, _resetDiverseWeaponsIcons, ICON_ARCHIVES } from '../src/combat/diverseWeaponsIcons.js';
-import { hasDiverseWeaponsSprite, DIVERSE_WEAPONS_SPRITE_COUNT } from '../src/combat/diverseWeaponsAssets.js';
-import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeaponsIndex.js';
+import { diverseWeaponsIconEntries, installDiverseWeaponsIcons, _resetDiverseWeaponsIcons, ICON_ARCHIVES } from '../src/combat/diverseWeapons/diverseWeaponsIcons.js';
+import { hasDiverseWeaponsSprite, DIVERSE_WEAPONS_SPRITE_COUNT } from '../src/combat/diverseWeapons/diverseWeaponsAssets.js';
+import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_BARE } from '../src/combat/diverseWeapons/diverseWeaponsIndex.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { makeIconDrawer } from '../src/ui/item/itemScroller.js';
 

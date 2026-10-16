@@ -417,7 +417,7 @@
   },
   {
     "name": "F7-the-swing's-events-kept-on-the-wall",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      const evs = _climbing ? (playerWeapon.update(dt), []) : playerWeapon.update(dt);",
     "new": "      const evs = playerWeapon.update(dt);",
     "tests": [

@@ -2,7 +2,7 @@
 // formats/unityBundleClient.js), and the block-lazy reader behind them
 // (formats/unityBundle.js blockStream). Diverse Weapons' bundle is ~10 s
 // of LZ4 to index; the open runs in a worker, the reader keeps the
-// blocks compressed, and the door (combat/diverseWeaponsAssets.js) reads
+// blocks compressed, and the door (combat/diverseWeapons/diverseWeaponsAssets.js) reads
 // through the client. Pins: the wire (open, rgba, close, error), the
 // client over a fake worker (copied bytes, transferred pixels, the
 // fallback on a throwing factory and on a worker that dies), the
@@ -21,7 +21,7 @@ import { readUnityFs, readUnityBundle, BLOCK_CACHE, TEXTURE_FORMAT } from '../sr
 import { unityFs, serializedFile, texture2dBody, textAssetBody, testBundle, RGBA_2x2 } from './unityFixture.mjs';
 import {
   DIVERSE_WEAPONS_MOD, setDiverseWeaponsSources, clearDiverseWeaponsSources, diverseWeaponsBundle, diverseWeaponsImage, diverseWeaponsTexturesAttached, _resetDiverseWeaponsImages,
-} from '../src/combat/diverseWeaponsAssets.js';
+} from '../src/combat/diverseWeapons/diverseWeaponsAssets.js';
 import { DFMOD_KEY_PREFIX } from '../src/systems/seasonsIliacBayAssets.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -224,11 +224,11 @@ test('DW1 spellings: the worker is spelled the way the bundler reads, imports on
   const imports = [...worker.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]);
   assert.deepEqual(imports, ['./unityBundle.js'], 'the worker\'s whole import graph is the reader');
   assert.match(worker, /globalThis\.onmessage = \(ev\) => handle\(ev\.data \?\? \{\}, /);
-  const door = rd('src/combat/diverseWeaponsAssets.js');
+  const door = rd('src/combat/diverseWeapons/diverseWeaponsAssets.js');
   assert.match(door, /import \{ openUnityBundle \} from '\.\.\/formats\/unityBundleClient\.js';/);
   assert.ok(!/readUnityBundle/.test(door), 'the door never opens on this thread itself');
   assert.match(door, /const img = await b\.bundle\.rgba\(name\); if \(img\) return toScreenOrder\(img\);/, 'rows kept on this side of the wire (DWHD1)');
   assert.match(door, /if \(!manifest\) \{ bundle\.close\(\); continue; \}/, 'a bundle that is not a mod is closed, not leaked');
   // Weapon Widget's small bundle keeps its own in-thread door - nothing here reached into it
-  assert.match(rd('src/combat/weaponWidgetAssets.js'), /readUnityBundle\(/);
+  assert.match(rd('src/combat/weapon/weaponWidgetAssets.js'), /readUnityBundle\(/);
 });

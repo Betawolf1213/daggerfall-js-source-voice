@@ -452,7 +452,7 @@
   },
   {
     "name": "CLIMB4-lower-rate-swapped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const tau = climbing ? CLIMB_LOWER_TAU.down : CLIMB_LOWER_TAU.up;",
     "new": "const tau = climbing ? CLIMB_LOWER_TAU.up : CLIMB_LOWER_TAU.down;",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "CLIMB4-lower-never-snaps",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "return Math.abs(target - next) < 0.005 ? target : next;",
     "new": "return next;",
     "tests": [
@@ -470,7 +470,7 @@
   },
   {
     "name": "CLIMB4-arms-rise-instead",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "return { ...rect, y: rect.y + climbDrop(lower, rect.h) };",
     "new": "return { ...rect, y: rect.y - climbDrop(lower, rect.h) };",
     "tests": [
@@ -479,7 +479,7 @@
   },
   {
     "name": "CLIMB4-sprite-rises-instead",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "offsetHeight: weaponOffsetHeight() - climbDrop(_climbLower, c.height) }",
     "new": "offsetHeight: weaponOffsetHeight() + climbDrop(_climbLower, c.height) }",
     "tests": [
@@ -489,7 +489,7 @@
   },
   {
     "name": "CLIMB4-lowered-still-drawn",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "if (!armsClimb && (_climbLower >= CLIMB_LOWER_GONE || (_climbLower >= 0.5",
     "new": "if (!armsClimb && ((_climbLower >= 0.5",
     "tests": [
@@ -498,7 +498,7 @@
   },
   {
     "name": "CLIMB4-swing-while-climbing",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "!fpsSpellCasting.isPlayingAnim && !climbing && !actTool();",
     "new": "!fpsSpellCasting.isPlayingAnim && !actTool();",
     "tests": [
@@ -653,7 +653,7 @@
   },
   {
     "name": "CLIMB4-touch-swing-while-climbing",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (playerWeapon.sheathed || (entity?.equipCountdown ?? 0) > 0 || _climbing) return;   // CLIMB4: no swing with the hands on the wall",
     "new": "      if (playerWeapon.sheathed || (entity?.equipCountdown ?? 0) > 0) return;   // CLIMB4: no swing with the hands on the wall",
     "tests": [

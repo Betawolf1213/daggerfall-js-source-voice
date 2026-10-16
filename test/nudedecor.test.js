@@ -183,7 +183,7 @@ const PERSON_HOSTS = Object.freeze([
 ]);
 /** EVERY OTHER HOST, and why it draws no person - a claim, so it says what it draws instead. */
 const NO_PERSON = Object.freeze({
-  'src/combat/bloodMarks.js': 'blood marks and gibs',
+  'src/combat/blood/bloodMarks.js': 'blood marks and gibs',
   'src/net/peer/peerRiders.js': 'a peer\'s horse or cart under them',
   'src/net/remotePlayers.js': 'peers as their class\'s mobile sprites, their dolls and their corpses',
   'src/player/eotbBody.js': 'the player\'s own body as mobile sprites',

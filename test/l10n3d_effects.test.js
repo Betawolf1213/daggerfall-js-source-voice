@@ -28,7 +28,7 @@ import { buildingClosedText, lockedExteriorDoorText } from '../src/systems/build
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { sayEnemyDied, openCorpseLoot } from '../src/scenes/corpseMarker.js';
 import { BROKER_TEXT } from '../src/scenes/sigilBrokerPool.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { midScreenText } from '../src/ui/midScreenText.js';
 import { tickPlayerTorch } from '../src/systems/playerTorch.js';

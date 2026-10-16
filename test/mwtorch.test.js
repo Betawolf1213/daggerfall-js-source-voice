@@ -31,7 +31,7 @@ import {
   carriedLeftVisible, createFpArm, fpSkeletonPath, FP_CLIP_PATH,
 } from '../src/combat/fpArm.js';
 import { MW_WEAPON_TYPE, weaponFlags, MW_TWO_HANDED } from '../src/formats/mwFirstPerson.js';
-import { armBuildOptsOf, isLitTorch } from '../src/combat/weaponRig.js';
+import { armBuildOptsOf, isLitTorch } from '../src/combat/weapon/weaponRig.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -289,7 +289,7 @@ test('AUDIT MW-TORCH F6/F7: a build arriving mid-build is queued and runs (the n
 // The wiring, by source
 // ---------------------------------------------------------------
 test('MW-D51/52 pins: the rig hands the lit light over per frame and at the build; the arm hides the torch on the carried-left rule, overlays it on both rigs, re-picks it on a view switch; the idle reads the stance (mutant: a door dropped)', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /torch: isLitTorch\(entity\.lightSource\),/, 'armBuildOptsOf carries the lit light');
   assert.match(rig, /fpArm\.setWeapon\(playerWeapon\.weapon, \{ hasAmmo: hasAmmoFor\(entity\?\.items, playerWeapon\.weapon\), ammoCount: ammoCountFor\(entity\?\.items, playerWeapon\.weapon\) \}\);[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*fpArm\.setTorch\(isLitTorch\(entity\?\.lightSource\)\);/, 'the per-frame hand-over, beside the weapon');
   assert.equal(isLitTorch({ templateIndex: TEMPLATES.Torch }), true);

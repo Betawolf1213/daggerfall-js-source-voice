@@ -23,7 +23,7 @@ import { makeBlow, setLiveBlow, liveBlows, resetBlows, drawableBlows, shatterBlo
 import { puppetGapLanded } from '../src/ai/puppetBlows.js';
 import { TELL, poiseOf, kindHealth, weightClass, poiseSpecial, blowK } from '../src/ai/tells.js';
 import { BLOW_EFFECT, blowEffectOf, queueBlowEffect, drainBlowEffects, knockedDown, startBleed, tickBleed, resetBlowEffects, _resetBlowEffectsForTests } from '../src/systems/blowEffects.js';
-import { createBleedLedger, WOUND_SHARE, WOUND_WAIT, BLEED_THRESHOLD } from '../src/combat/bloodBleed.js';
+import { createBleedLedger, WOUND_SHARE, WOUND_WAIT, BLEED_THRESHOLD } from '../src/combat/blood/bloodBleed.js';
 import { setBatchGlint } from '../src/systems/hitFlash.js';
 import { tellCues } from '../src/scenes/hostCombat.js';
 import { markFoeStruck, markFoeThreat, foeTarget, clearFoeTarget, tickFoeTarget, THREAT_YIELD_S } from '../src/ui/hud/hudFoeTarget.js';

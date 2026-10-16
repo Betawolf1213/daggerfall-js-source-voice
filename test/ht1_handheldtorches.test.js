@@ -34,7 +34,7 @@ import {
 } from '../src/scenes/droppedTorches.js';
 import { domCodeForKeyCode, keyCodeForDomCode, isBindableKeyCode, KEYCODE_NONE } from '../src/systems/keyCodes.js';
 import { MOD_SETTINGS, isIntKey, isFloatKey, isChoiceKey, isTextKey, isTupleKey, modSettingsOf, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { BOB_SHAPE as WW_BOB_SHAPE, STEP_CONDITION as WW_STEP_CONDITION } from '../src/combat/weaponWidget.js';
+import { BOB_SHAPE as WW_BOB_SHAPE, STEP_CONDITION as WW_STEP_CONDITION } from '../src/combat/weapon/weaponWidget.js';
 import { FEATURES } from '../src/systems/features.js';
 import { DEFAULT_BINDINGS, DEFAULT_SHARES, PORT_ACTIONS, MOD_ACTIONS } from '../src/systems/inputActions.js';   // HT4: the keys DFU already answers; KB1: and the mods' own, which are actions now
 import { shortcutBinding } from '../src/systems/dialogShortcuts.js';   // KB1: DFU's world shortcuts
@@ -817,7 +817,7 @@ test('HT1: a foe struck - hostile, the to-hit roll with Accuracy, ContinuousDama
 // ═══ the seams ══════════════════════════════════════════════════════════
 
 test('HT1: the rig runs the component beside the widget - one per rig, the pool bound to it, Update then LateUpdate with the frame\'s inputs (the machine, the sheathe, the hand, the cast, the third person, the climb, the swim, the lycanthrope, the motion, the look, the camera, the collider, the raw keys, the sheathe door), the draw seam after the arms and before the widget', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /import \{ createHandheldTorches, isHeldLight \} from '\.\.\/systems\/handheldTorches\.js';/);   // TORCH-VIS: and the mod's own light test, so the ladder asks it in the mod's words
   assert.match(rig, /const handheld = createHandheldTorches\(\{ audio, say, torches(?:, dropRefusal)? \}\);/);
   assert.match(rig, /const handheldOn = \(\) => modSetting\('handheld-torches', 'Enabled'\);/);
@@ -1011,7 +1011,7 @@ test('TORCH-VIS (the law): the Morrowind rig already says a SHEATHED stance keep
   // ...and the ladder's test and the ARM's test are deliberately NOT the same question, which is why the arm gets
   // a veto: the Morrowind held-light art is the TORCH alone, so a lit LANTERN is a light the entity has and the
   // arm cannot paint. Opening the gate on the entity's answer alone would paint a sheathed idle holding nothing.
-  const { isLitTorch } = await import('../src/combat/weaponRig.js');
+  const { isLitTorch } = await import('../src/combat/weapon/weaponRig.js');
   const lantern = { templateIndex: TEMPLATES.Lantern }, torch = { templateIndex: TEMPLATES.Torch };
   assert.equal(isHeldLight(lantern), true, 'the ladder counts a lantern as a held light...');
   assert.equal(isLitTorch(lantern), false, '...and the Morrowind arm does not - it has no lantern in hand');
@@ -1019,7 +1019,7 @@ test('TORCH-VIS (the law): the Morrowind rig already says a SHEATHED stance keep
 });
 
 test('TORCH-VIS (the ladder): a lit hand draws while merely sheathed, the weapon does NOT come back with it, and the other three hiding laws stand', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   // the exception is computed from the OTHER legs of shown(), never from `sheathed` - so it can only ever widen
   // the sheathed case, and a readied spell, a cast in flight and an equip countdown all still hide the torch
   assert.match(rig, /const torchOnly = !shown\(\) && !spellArmed\(\) && !fpsSpellCasting\.isPlayingAnim\s*\n\s*&& \(entity\?\.equipCountdown \?\? 0\) <= 0 && isHeldLight\(entity\?\.lightSource\)\s*\n\s*&& \(!fpArm\.active\(\) \|\| fpArm\.torchShown\(\)\)\s*\n\s*&& !lanternAtWaist\(entity\?\.lightSource\);/,

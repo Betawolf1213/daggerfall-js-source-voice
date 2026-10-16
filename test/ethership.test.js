@@ -17,7 +17,7 @@ import { rangeOfHull } from '../src/systems/naval/navalAI.js';
 import { BANDS, VEIL_X, LEAGUE_PX, veilhaven, etherDepthAt, etherBandOf, inEther } from '../src/world/ethericSea.js';
 import { coloursWords } from '../src/systems/naval/shipKnowledge.js';
 import { etherWatersWords, navalHudText } from '../src/ui/naval/navalHud.js';
-import { mulberry32 } from '../src/combat/bloodArt.js';
+import { mulberry32 } from '../src/combat/blood/bloodArt.js';
 import { sea } from './navalSea.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

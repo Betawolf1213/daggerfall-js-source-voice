@@ -37,12 +37,12 @@ import { placeSprite } from './gunPlacement.js';
 import { unionDrawRect } from './gunSheet.js';
 import {
   readWidgetSettings, offsetStep, bobStep, inertiaStep, widgetTransformRect,
-} from './weaponWidgetMotion.js';
-import { MOD_SETTINGS } from '../systems/modSettings.js';
-import { WEAPON_WIDGET_VENDOR } from './weaponWidgetMotion.js';
+} from '../weapon/weaponWidgetMotion.js';
+import { MOD_SETTINGS } from '../../systems/modSettings.js';
+import { WEAPON_WIDGET_VENDOR } from '../weapon/weaponWidgetMotion.js';
 import { GUN_FEEL } from './gunFeel.js';
-import { ALIGN } from './weaponAlign.js';
-import { walkSpeed, runSpeed } from '../player/motor.js';
+import { ALIGN } from '../weapon/weaponAlign.js';
+import { walkSpeed, runSpeed } from '../../player/motor.js';
 
 /** FPSWeaponClone's .ctor fields, the ones the three modules carry
  *  between frames. The lab's `createWidgetRig`, verbatim. */

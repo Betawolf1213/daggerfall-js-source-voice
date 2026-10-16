@@ -230,7 +230,7 @@
   },
   {
     "name": "S3-rig-skips-the-off-frame",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "\n      if (!shieldOn()) shield.offFrame();",
     "new": "",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "S3b-count-inside-the-gate",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "if (!shieldOn()) shield.offFrame();",
     "new": "if (!shieldOn() && (widgetOn() || _torchesOn || thunderlockHeld())) shield.offFrame();",
     "tests": [

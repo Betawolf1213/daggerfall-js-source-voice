@@ -1,7 +1,7 @@
 [
   {
     "name": "TECHFX1-a-moment-dropped",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "    shaft: f({ burst: 'shaft' }),\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TECHFX1-a-sound-misnamed",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "sound: f(['FallHard', 1, 0.7])",
     "new": "sound: f(['FallHarder', 1, 0.7])",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TECHFX1-a-stiffness-moved",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "export const FX_K = Object.freeze([17, 11, 14, 9, 15]);",
     "new": "export const FX_K = Object.freeze([17, 11, 14, 9, 19]);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TECHFX1-the-kick-without-e",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "_sv[ch * 2 + 1] += peak * FX_K[ch] * Math.E;",
     "new": "_sv[ch * 2 + 1] += peak * FX_K[ch];",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "TECHFX1-the-closed-form-sign",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "v1 = (v - k * b * dt) * e;",
     "new": "v1 = (v + k * b * dt) * e;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "TECHFX1-no-rest-snap",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "if (Math.abs(x1) < REST_X && Math.abs(v1) < REST_V) { x1 = 0; v1 = 0; } else any = true;",
     "new": "any = true;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "TECHFX1-the-step-a-fixed-sixtieth",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "const k = FX_K[i], e = Math.exp(-k * dt), b = v + k * x;",
     "new": "dt = 1 / 60; const k = FX_K[i], e = Math.exp(-k * dt), b = v + k * x;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "TECHFX1-degrees-unconverted",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "kick(FX_CH.pitch, (c.pitch ?? 0) * DEG * m);",
     "new": "kick(FX_CH.pitch, (c.pitch ?? 0) * m);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "TECHFX1-the-motion-unread",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "  const m = techniqueMotion();\n",
     "new": "  const m = 1;\n",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "TECHFX1-the-motion-unclamped",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;",
     "new": "return Number.isFinite(v) ? v : 1;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "TECHFX1-the-shake-unscaled",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "door?.shake?.(row.shake * m);",
     "new": "door?.shake?.(row.shake);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "TECHFX1-the-burst-scaled",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "if (row.burst && place?.at) door",
     "new": "if (row.burst && place?.at && m === 1) door",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "TECHFX1-the-ring-radius-unread",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "row.r != null ? { ...place, r: row.r } : place",
     "new": "place",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TECHFX1-the-sound-ungated",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "if (row.sound && enhancedSoundsOn()) {",
     "new": "if (row.sound) {",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "TECHFX1-the-dip-dropped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "renderer.setScreenOffset(ox, oy + _dipPx);",
     "new": "renderer.setScreenOffset(ox, oy);",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "TECHFX1-the-offset-not-restored",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "try { return drawLayer(o); } finally { renderer.setScreenOffset(ox, oy); _dipPx = 0; }",
     "new": "return drawLayer(o);",
     "tests": [
@@ -331,7 +331,7 @@
   },
   {
     "name": "TECHFX1-the-dip-off-the-width",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "_dipPx = dy * (cv()?.height ?? 0);",
     "new": "_dipPx = dy * (cv()?.width ?? 0);",
     "tests": [
@@ -467,7 +467,7 @@
   },
   {
     "name": "TECHFX1-an-output-copied-a-frame",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "export const techniqueView = () => VIEW;",
     "new": "export const techniqueView = () => ({ ...VIEW });",
     "tests": [
@@ -476,7 +476,7 @@
   },
   {
     "name": "TECHFX1-the-hands-a-literal",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "const HANDS = new TechHands();",
     "new": "const HANDS = { x: 0, y: 0 };",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-arm-on-the-offset",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    if (fpArm.active()) { _armDip = dy; try { return drawLayer(o); } finally { _armDip = 0; } }\n",
     "new": "",
     "tests": [
@@ -524,7 +524,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-arm-transform-dropped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (_armDip > 0) { const armsBase = fpArm.screenTransform(); fpArm.setScreenTransform((base) => techniqueDipRect(armsBase ? armsBase(base) : base, _armDip, base.h)); }\n",
     "new": "",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-dip-rect-undipped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  return { ...rect, y: rect.y + dip * screenH };",
     "new": "  return { ...rect };",
     "tests": [
@@ -544,7 +544,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-roll-unmirrored",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "kick(FX_CH.roll, -(c.roll ?? 0) * DEG * m);",
     "new": "kick(FX_CH.roll, (c.roll ?? 0) * DEG * m);",
     "tests": [
@@ -554,7 +554,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-a-roll-past-the-sky",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "    release: f({ cam: f({ roll: -3 }), sound: f(['SwingMediumPitch', 1, 0.75]) }),",
     "new": "    release: f({ cam: f({ roll: -7 }), sound: f(['SwingMediumPitch', 1, 0.75]) }),",
     "tests": [
@@ -564,7 +564,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-bow-twang-doubled",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "    loose: f({ burst: 'flare' }),",
     "new": "    loose: f({ burst: 'flare', sound: f(['ArrowShoot', 0.75, 0.85]) }),",
     "tests": [
@@ -574,7 +574,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-a-hand-lifted",
-    "file": "src/combat/techniqueFx.js",
+    "file": "src/combat/technique/techniqueFx.js",
     "old": "    hit: f({ cam: f({ roll: 2 }), hands: f({ y: 0.04 }), shake: 0.9, burst: 'sweep', r: 3 }),",
     "new": "    hit: f({ cam: f({ roll: 2 }), hands: f({ y: -0.04 }), shake: 0.9, burst: 'sweep', r: 3 }),",
     "tests": [
@@ -700,7 +700,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-muzzle-undipped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    if (_dipPx) _tlDrawn.rect.y += _dipPx;",
     "new": "    // the muzzle undipped",
     "tests": [
@@ -763,7 +763,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-context-made-a-frame",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      _techCtx ??= {",
     "new": "      _techCtx = {",
     "tests": [

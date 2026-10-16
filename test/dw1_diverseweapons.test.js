@@ -17,13 +17,13 @@ import { dfuFile, missingDfu } from './dfuRoot.mjs';
 import {
   moddedWeaponHUDAnimsEnabled, moddedWeaponFilename, atlasFileName, customTextureNames,
   DIVERSE_WEAPONS_WIDGET_PRESET, diverseWeaponsWidgetPreset, diverseWeaponsPresetOn, withDiverseWeaponsPreset,
-} from '../src/combat/diverseWeapons.js';
+} from '../src/combat/diverseWeapons/diverseWeapons.js';
 import {
   DIVERSE_WEAPONS_MOD, setDiverseWeaponsSources, clearDiverseWeaponsSources, diverseWeaponsSourcesCount,
   diverseWeaponsBundle, diverseWeaponsImage, customWeaponImage, diverseWeaponsTexturesAttached, _resetDiverseWeaponsImages,
-} from '../src/combat/diverseWeaponsAssets.js';
+} from '../src/combat/diverseWeapons/diverseWeaponsAssets.js';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings, flattenModPreset } from '../src/systems/modSettings.js';
-import { readWidgetSettings } from '../src/combat/weaponWidgetMotion.js';
+import { readWidgetSettings } from '../src/combat/weapon/weaponWidgetMotion.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { MATERIAL_NAMES } from '../src/systems/item/itemInfo.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
@@ -121,13 +121,13 @@ test('DW1: the atlas asks by the per-template name under the flag, and by the cl
   assert.match(fp, /const customs = await customFrames\(askName, metal, cif, customImage\);/, 'AUDIT-DW F2: every frame asked together');
   assert.match(fp, /const custom = customs\[r\]\[f\];/);
   assert.match(fp, /records\.push\(\{ width: size\.width, height: size\.height, frames \}\);/, 'the record keeps the classic box');
-  const ww = src('src/combat/weaponWidget.js');
+  const ww = src('src/combat/weapon/weaponWidget.js');
   assert.match(ww, /const file = atlasFileName\(w\.specificWeapon, classic\);/);
   assert.match(ww, /for \(const name of customTextureNames\(file, record, frame, metal, w\.s\.doubleScale\)\) \{/);
   assert.match(ww, /customWeaponImage\(name\)\.then/);
   // and the rig's art cache carries the name the atlas is asked by, or
   // a longsword and a broadsword share the first one's frames
-  const rig = src('src/combat/weaponRig.js');
+  const rig = src('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const key = `\$\{type\}:\$\{item\?\.material \?\? 0\}:\$\{thunderlock \? \(gilded \? 'gilded' : ''\) : atlasFileName\(item, WEAPON_FILE\[type\] \?\? ''\)\}`;/);
   assert.match(rig, /loadFpsWeaponArt\(fetchBytes, palette, renderer, type, item\?\.material \?\? 0, item\)/, 'SpecificWeapon reaches the loader');
 });
@@ -142,7 +142,7 @@ test('DW1: the names one frame is asked by - the metal suffix, and the w_ ask fa
   for (const [name, i] of Object.entries(WEAPON_MATERIALS)) if (i >= 0) assert.equal(MATERIAL_NAMES[i], name);
   // the clone remembers a miss so the next name gets its turn, and
   // forgets them with the atlas
-  const ww = src('src/combat/weaponWidget.js');
+  const ww = src('src/combat/weapon/weaponWidget.js');
   assert.match(ww, /if \(misses\.has\(name\)\) continue;/);
   assert.match(ww, /if \(!img\) \{ misses\.add\(name\); return; \}/);
   assert.match(ww, /w\.customMisses = new Set\(\);/);
@@ -192,7 +192,7 @@ test('DW1: the door - a loose PNG spelt as the mod asks answers, keeps its rows,
   assert.equal(loads.length, 1, 'and a miss does not load');
   clearDiverseWeaponsSources();
   // BOTH DOORS behind the one ask, this mod's first
-  const a = src('src/combat/diverseWeaponsAssets.js');
+  const a = src('src/combat/diverseWeapons/diverseWeaponsAssets.js');
   assert.match(a, /return \(await diverseWeaponsImage\(name\)\) \?\? \(await weaponWidgetImage\(name\)\) \?\? null;/);
 });
 

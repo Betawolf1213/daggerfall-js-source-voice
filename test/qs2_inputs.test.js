@@ -35,7 +35,7 @@ import { gridButtons } from '../src/ui/controlsWindow.js';   // KB1: the classic
 import { KEYBIND_ROWS } from '../src/ui/mouseControlsWindow.js';
 import { ACTION_GROUPS, HIDDEN_ACTIONS } from '../src/systems/inputActions.js';
 const GRID_ACTIONS = gridButtons().map((b) => b.action);
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { equipItem, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { assignQuickslot, clearQuickslots, swapQuickslot, quickslotOf } from '../src/systems/quickslots.js';
 import { USE_PENDING as USE_PENDING_SYS } from '../src/systems/useItem.js';

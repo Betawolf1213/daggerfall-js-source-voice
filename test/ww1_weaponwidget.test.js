@@ -3,7 +3,7 @@
 // work with morrowind's first person view").
 //
 // The mod's script is a compiled DLL (FPSWeaponClone) read off the IL
-// and restated in combat/weaponWidget.js method by method; the pins
+// and restated in combat/weapon/weaponWidget.js method by method; the pins
 // here hold that restatement to the IL's arithmetic, its settings'
 // multipliers, GetWeaponRect's laws, the three coroutines following the
 // port's machine where the clone follows FPSWeapon, the recoil's
@@ -21,11 +21,11 @@ import { fileURLToPath } from 'node:url';
 import {
   createWeaponWidget, readWidgetSettings, widgetAnimTickTime, moveTowards, moveTowards2, roundHalfEven, snap,
   WEAPON_WIDGET_VENDOR, WINDUP, RECOVERY, BOB_SHAPE, STEP_CONDITION, RECOIL_CONDITION, MISS_VFX_AT, SHEATHE_CLIP, MISS_VFX,
-} from '../src/combat/weaponWidget.js';
+} from '../src/combat/weapon/weaponWidget.js';
 import {
   WEAPON_WIDGET_MOD, widgetTextureName, setWeaponWidgetSources, clearWeaponWidgetSources, weaponWidgetSourcesCount,
   weaponWidgetBundle, weaponWidgetImage, weaponWidgetTexturesAttached, DFMOD_KEY_PREFIX,
-} from '../src/combat/weaponWidgetAssets.js';
+} from '../src/combat/weapon/weaponWidgetAssets.js';
 import { DFMOD_KEY_PREFIX as SEASONS_PREFIX } from '../src/systems/seasonsIliacBayAssets.js';
 import { WEAPON_TYPES, STATE_INDEX, GENERAL_ANIMS, DAGGER_ANIMS, BOW_ANIMS, WERECREATURE_ANIMS, NATIVE_W, NATIVE_H } from '../src/combat/fpsWeapon.js';
 import {
@@ -460,7 +460,7 @@ test('WW1: Ambidexterity - the sprite in the hand you swing with (flipped for th
   assert.equal(c.widget.flipHorizontal, true, 'IL 0x3528: a claymore answers Both, and the swords switch mirrors it (FPSWeaponClone.cs:2378)');
   const c2 = bench({ weapon: { templateIndex: WEAPONS.Claymore, group: 'Weapons' }, over: { 'Miscellaneous.MirrorTwoHandedSwords': false } }); c2.frame();
   assert.equal(c2.widget.flipHorizontal, false, 'the switch off: as the original');
-  assert.match(rd('src/combat/weaponWidget.js'), /getItemHands\(w\.specificWeapon\) !== ITEM_HANDS\.Both\) return false;/, 'the compare names Both');
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /getItemHands\(w\.specificWeapon\) !== ITEM_HANDS\.Both\) return false;/, 'the compare names Both');
 });
 
 test('WW1: Offset, Bob and Inertia - the channels the frame publishes: the sheathe slide off the screen (and the equip countdown\'s jump), the walking bob\'s rate and size, the look\'s lag with its sign by hand, the forward depth over the scale; DoubleScaleTextures\' half-size shift on the idle; the module switches each silence their channel', () => {
@@ -570,7 +570,7 @@ test('WW1: the Morrowind arms take the frame\'s Position and Scale over their ow
 // ═══ the seams ══════════════════════════════════════════════════════════
 
 test('WW1: the rig runs the clone beside the machine - the late update after the machine\'s step with the frame\'s inputs, the draw seam after the arms and before the classic sprite, the end-of-frame resume, the recoil fed from resolveHit, the arms\' transform, the hosts\' motion words, the look latch, the miss billboard', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const widget = createWeaponWidget\(\{\s*audio, envHit: envCast, missEffect,/);
   assert.match(rig, /const widgetOn = \(\) => modSetting\('weapon-widget', 'Enabled'\);/);
   assert.match(rig, /playerWeapon\.onAttackResult = \(\{ foe, damage \}\) => widget\.onAttackDamageCalculated\(\{ damage, parrySounds: !!foe\?\.basics\?\.parrySounds, pos: foe\?\.pos \?\? foe\?\.ai\?\.pos \?\? null, isEnemy: true \}\);/);
@@ -664,7 +664,7 @@ test('WW1: the bundle door - TryImportCifRci\'s spelling with the w_ prefix and 
   assert.equal(await weaponWidgetTexturesAttached(), false);
   assert.equal(await weaponWidgetImage('w_WEAPON04.CIF_0-0_Elven'), null);
   assert.equal(setWeaponWidgetSources(null, null), 0);
-  assert.match(rd('src/combat/weaponWidgetAssets.js'), /import \{ DFMOD_KEY_PREFIX \} from '\.\.\/systems\/seasonsIliacBayAssets\.js';/);
+  assert.match(rd('src/combat/weapon/weaponWidgetAssets.js'), /import \{ DFMOD_KEY_PREFIX \} from '\.\.\/systems\/seasonsIliacBayAssets\.js';/);
   // the atlas asks the door by that name and, until it lands, draws the classic frame at the classic size.
   // DW1: WHICH file is FPSWeapon.cs:637-644's choice - Diverse Weapons is on
   // by default (MO1), so a longsword asks LONGSWORD.CIF (WeaponBasics.cs
@@ -701,7 +701,7 @@ test('WW4 (Mac\'s curated fix): a clone that chooses silence OWNS the draw seam 
   const none = bench({ weaponType: T.None }); none.frame();
   assert.equal(none.widget.draw(none.renderer, none.ctx.canvas), false, 'no weapon type: not the clone\'s');
   // and the rig's seam reads the answer exactly that way
-  assert.match(rd('src/combat/weaponRig.js'), /if \(widgetOn\(\) && c && widget\.draw\(renderer, c, fpTint\)\) return;/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /if \(widgetOn\(\) && c && widget\.draw\(renderer, c, fpTint\)\) return;/);
 });
 
 test('WW4b (Mac\'s curated fix): after a swing under Recovery = Hide the melee idle re-enters on a DRAWABLE frame, so it slides back into view instead of staying at -1 for ever', () => {

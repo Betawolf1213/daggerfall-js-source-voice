@@ -109,7 +109,7 @@ test('QS4: one home for the guard - the mod\'s own key and the port\'s action pr
   assert.equal((src.match(/MESSAGES\.noFreeHand\);/g) ?? []).length >= 1, true);
   // The rig's door is the only way the HUD reaches it, and the mod being
   // OFF is an answer rather than a throw.
-  const rigSrc = read('src/combat/weaponRig.js');
+  const rigSrc = read('src/combat/weapon/weaponRig.js');
   assert.match(rigSrc, /toggleLight\(\) \{ return handheldOn\(\) \? handheld\.toggleLightPress\(\) === true : false; \},/);
   // ...and no host lights a torch itself.
   for (const p of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) {

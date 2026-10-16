@@ -623,7 +623,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-weapon-back-under-the-hands",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "_climbLower = climbLowerStep(_climbLower, climbing || (handsLane && climbHands.showing()), dt);",
     "new": "_climbLower = climbLowerStep(_climbLower, climbing, dt);",
     "tests": [
@@ -633,7 +633,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-hands-over-the-weapon",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "handsLane && _climbLower >= CLIMB_HANDS_AFTER ? (camNow?.climb ?? null) : null",
     "new": "handsLane ? (camNow?.climb ?? null) : null",
     "tests": [
@@ -643,7 +643,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-hands-on-every-lane",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const handsLane = !fpArm.active() && !fpArm.thirdActive() && !eotbHidesWeapon();",
     "new": "const handsLane = true;",
     "tests": [
@@ -653,7 +653,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-hands-under-the-third-person-body",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const handsLane = !fpArm.active() && !fpArm.thirdActive() && !eotbHidesWeapon();",
     "new": "const handsLane = !fpArm.active() && !eotbHidesWeapon();",
     "tests": [
@@ -663,7 +663,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-drawn-under-the-map",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "!eotbHidesWeapon() && !sheetWindowUp()) climbHands.draw(c, { tint: fpTint });",
     "new": "!eotbHidesWeapon()) climbHands.draw(c, { tint: fpTint });",
     "tests": [

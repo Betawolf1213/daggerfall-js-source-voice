@@ -273,7 +273,7 @@ test('AUDIT 29: the hosts by source - the seams the audit moved', () => {
   const w = src('src/scenes/world.js');
   const m = src('src/scenes/worldModes.js');
   const d = src('src/scenes/dungeonContext.js');
-  const rigSrc = src('src/combat/weaponRig.js');
+  const rigSrc = src('src/combat/weapon/weaponRig.js');
   const g = src('src/scenes/gatherHost.js');
   // D1: the Escape the act spent is marked, and the mode machine lets it be
   assert.match(w, /e\.preventDefault\(\); e\.profActEnded = true; return true; \}/);

@@ -307,7 +307,7 @@ test('GILDED1 THE ART: in a list the gold gun (record 3), on the doll the gold l
   assert.equal(ownWeaponModelFor(h).model, 'thunderlock_gilded.nif');
   assert.equal(ownWeaponModelFor(g).model, 'thunderlock.nif');
   assert.equal(ownWeaponModelFor(h).bone, ownWeaponModelFor(g).bone, 'the same bone, the same hold');
-  const rig = strip(read('src/combat/weaponRig.js'));
+  const rig = strip(read('src/combat/weapon/weaponRig.js'));
   assert.match(rig, /const gilded = thunderlock && item\?\.rarity === 'gilded';/);
   assert.match(rig, /loadThunderlockArt\(renderer, \{ magic: type === WEAPON_TYPES\.Thunderlock_Magic, gilded \}\)/);
 });

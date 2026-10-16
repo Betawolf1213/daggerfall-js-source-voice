@@ -233,7 +233,7 @@ const out = await page.evaluate(async () => {
   // tint, fresh and dried. These rows read that - the "super dark
   // instead of red" Mac saw was the dried tint multiplying an already
   // red texel down to a black-red, and no row read the real art.
-  const { bloodAtlas, pickCell, freshTint, driedTint, DRY_STAGES, BLOOD_ATLAS_ARCHIVE, BLOOD_ATLAS_RECORD } = await import('/src/combat/bloodArt.js');
+  const { bloodAtlas, pickCell, freshTint, driedTint, DRY_STAGES, BLOOD_ATLAS_ARCHIVE, BLOOD_ATLAS_RECORD } = await import('/src/combat/blood/bloodArt.js');
   const atlas = bloodAtlas();
   const atlasTex = r.uploadTexture(BLOOD_ATLAS_ARCHIVE, BLOOD_ATLAS_RECORD, atlas, { smooth: true });
   const cell = pickCell(atlas, 'pool', () => 0);

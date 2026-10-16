@@ -37,7 +37,7 @@
   },
   {
     "name": "BEASTSELF-the-rig-never-asks",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    fpArm.setStandIn?.(beast ? !(wolf && isMwWerewolf(entity)) : wolf);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "BEASTSELF-the-rig-asks-the-curse-not-the-change",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const beast = !!entity && isTransformedLycanthrope(entity), wolf",
     "new": "const beast = !!entity && !!entity.racialOverride, wolf",
     "tests": [

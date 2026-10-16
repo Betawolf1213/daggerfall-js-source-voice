@@ -20,13 +20,13 @@ import {
   basisAlong, streakFor, STREAK_MAX,   // BLOOD2a
   bloodHit, LETHAL_HIT, SWING_PUSH, SWING_LEAN, swingThrow, looksUp, isCeilingNormal, CEILING_DOT, CEILING_EVERY, burstCount, burstRate, burstReach, BURST_DROPS_MAX, sprayCount, sprayRadius, sprayPattern, sprayScale, dropSize, SPRAY_SHARE, SPRAY_MAX, SPATTER_SCALE, SIZE_JITTER, SPRAY_RADIUS_MIN, SPRAY_RADIUS_MAX,   // BLOOD1b (BLOOD5: the pattern)
   SPRAY_NEAR, SPRAY_FLYER_REACH, SPRAY_SCALE_MIN, SPRAY_SCALE_MAX, SPRAY_LOBES_MAX,   // BLOOD5
-} from '../src/combat/bloodDecals.js';
+} from '../src/combat/blood/bloodDecals.js';
 
 import {
   throwGibs, gibStep, gibFly, gibLand, gibSprayOrigin, shiftGibs,
   GIB_COUNT, GIB_THROW_SIDE, GIB_THROW_UP, GIB_GRAVITY, GIB_GRAVITY_SCALE, UNITY_GRAVITY,
   GIB_DRAG, GIB_LIFE, GIB_SPLASH_RATE, GIB_SPLASH_SPEED, GIB_SPRAY_LIFT, DRIP_SPLASH_RATE, GIB_FIXED_DT,
-} from '../src/combat/bloodGibs.js';
+} from '../src/combat/blood/bloodGibs.js';
 import { GRAVITY as PLAYER_GRAVITY } from '../src/player/motor.js';
 
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -100,7 +100,7 @@ test('BLOOD1a: overkill is 175%, NOT the 200 the reference’s own setting text 
   assert.equal(OVERKILL_REACH_SCALE, 2.5);
   // ...and it is DERIVED from the two bands rather than typed again,
   // so a re-read that moves a band moves the scale with it
-  const src = readFileSync(new URL('../src/combat/bloodDecals.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodDecals.js', import.meta.url), 'utf8');
   const decl = src.slice(src.indexOf('export const OVERKILL_REACH_SCALE'), src.indexOf('/** THE WEAPON THAT ALWAYS'));
   assert.doesNotMatch(decl.replace(/\/\/.*$/gm, ''), /\b2\.5\b/, 'the scale is read off the bands, not typed');
 
@@ -230,7 +230,7 @@ test('BLOOD1a: a mark carries its size and tint, rides NOTHING, and the module k
   // host does with what it answers, and the first cut of this pin
   // failed on the sentence "the renderer's pass is plumbing over it".
   // A pin that cannot tell code from prose reports the prose.
-  const src = readFileSync(new URL('../src/combat/bloodDecals.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodDecals.js', import.meta.url), 'utf8');
   const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   for (const forbidden of ['renderer', 'drawScreenQuad', 'gl.', 'uploadTexture', 'import ', 'document', 'window.']) {
     assert.ok(!code.includes(forbidden), `bloodDecals.js must not reach for \`${forbidden}\``);
@@ -305,7 +305,7 @@ test('BLOOD1a by source: the decal pass is ONE draw call, depth-tested and depth
   // THE FORMAT HAS ONE HOME. The winding and the stride come from
   // bloodDecals.js, so the writer that fills a slot and the buffer that
   // reads it cannot disagree about what 36 floats mean.
-  assert.match(r, /import \{ decalIndices, DECAL_FLOATS_PER_VERTEX \} from '\.\.\/combat\/bloodDecals\.js';/);
+  assert.match(r, /import \{ decalIndices, DECAL_FLOATS_PER_VERTEX \} from '\.\.\/combat\/blood\/bloodDecals\.js';/);
   assert.match(r, /const DECAL_STRIDE = DECAL_FLOATS_PER_VERTEX \* 4;/);
   assert.match(r, /gl\.bufferData\(gl\.ELEMENT_ARRAY_BUFFER, decalIndices\(cap\), gl\.STATIC_DRAW\);/);
 
@@ -347,8 +347,8 @@ test('BLOOD1a by source: the decal pass is ONE draw call, depth-tested and depth
 // ---- the mark, on the seam the splash already uses ------------------
 
 import { createHitEffects } from '../src/scenes/hitEffects.js';
-import { createBloodMarks, MARK_DROP, MAX_BODIES, MAX_DRIPS, CEILING_REACH, GIB_QUAD, GIB_FRAME, WALL_RUN_LEAN } from '../src/combat/bloodMarks.js';
-import { markSize, marksBlood, MARK_SIZE_MIN, MARK_SIZE_MAX, BLOODLESS_INDEX } from '../src/combat/bloodDecals.js';
+import { createBloodMarks, MARK_DROP, MAX_BODIES, MAX_DRIPS, CEILING_REACH, GIB_QUAD, GIB_FRAME, WALL_RUN_LEAN } from '../src/combat/blood/bloodMarks.js';
+import { markSize, marksBlood, MARK_SIZE_MIN, MARK_SIZE_MAX, BLOODLESS_INDEX } from '../src/combat/blood/bloodDecals.js';
 
 /** A renderer stub that records what the mark asked of it. */
 function rigHitEffects(over = {}) {
@@ -572,7 +572,7 @@ test('BLOOD1a: the mark’s size band is the port’s own choice, and it reads t
   assert.equal(markSize(1e6), MARK_SIZE_MAX);
   // THE ENDS ARE READ, NOT COPIED: a second literal 30/200 here would
   // drift the day a rung moves.
-  const src = readFileSync(new URL('../src/combat/bloodDecals.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodDecals.js', import.meta.url), 'utf8');
   const fn = src.slice(src.indexOf('export function markSize('), src.indexOf('export const BLOODLESS_INDEX'));
   assert.match(fn, /const lo = ladderRate\(0\), hi = RATE_MAX;/);
   // comments stripped, for the reason the no-GL pin above strips them:
@@ -614,7 +614,7 @@ test('BLOOD1a/BLOOD2b: the mark wears the PORT’S OWN ART, made at boot - and t
   // the chunks' art, which is still the record's first frame, and only
   // the splash pool can see the record, so it still tells this one.
   assert.match(src, /if \(archive === BLOOD_ARCHIVE && record !== BLOODLESS_INDEX\) marks\?\.useArt\?\.\(archive, record, frameCount\);/);
-  const mk = readFileSync(new URL('../src/combat/bloodMarks.js', import.meta.url), 'utf8');
+  const mk = readFileSync(new URL('../src/combat/blood/bloodMarks.js', import.meta.url), 'utf8');
   assert.match(mk, /function useArt\(archive, record\) \{/, 'the frame count is no longer the mark’s business');
   assert.match(mk, /_gibArt = \{ archive, record \};/, 'the chunks still take the splash’s record');
   assert.doesNotMatch(mk, /_texKey/, 'no splash frame key remains');
@@ -636,8 +636,8 @@ test('BLOOD1a by source: FOUR HOSTS, one spelling - the switch bag, the draw und
   // and every host passes the same object.
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js', 'src/scenes/worldModes.js']) {
     const h = read(host);
-    assert.match(h, /import \{ bloodDecalDeps \} from '\.\.\/combat\/bloodSwitch\.js';/, `${host}: the one bag`);
-    assert.match(h, /import \{ createBloodMarks \} from '\.\.\/combat\/bloodMarks\.js';/, `${host}: the ring's own home`);
+    assert.match(h, /import \{ bloodDecalDeps \} from '\.\.\/combat\/blood\/bloodSwitch\.js';/, `${host}: the one bag`);
+    assert.match(h, /import \{ createBloodMarks \} from '\.\.\/combat\/blood\/bloodMarks\.js';/, `${host}: the ring's own home`);
     // HARD1: the ring is the HOST'S binding, not a property of the
     // splash pool - that pool is a hand-off and must own no GL.
     assert.match(h, /const \w*[bB]loodMarks = createBloodMarks\(\{ renderer, collider: \(\) => (collider|player\.collider), settings: bloodDecalDeps \}\)/,
@@ -751,7 +751,7 @@ test('BLOOD1a by source: FOUR HOSTS, one spelling - the switch bag, the draw und
 test('BLOOD1a: the feature row owns the key and the default, and online it is the player’s own', async () => {
   const { FEATURES } = await import('../src/systems/features.js');
   const { BLOOD_PREF, bloodMarksOn, bloodCapacity, bloodDensity, BLOOD_CAPACITY_DEFAULT, BLOOD_CAPACITY_MIN, BLOOD_CAPACITY_MAX } =
-    await import('../src/combat/bloodSwitch.js');
+    await import('../src/combat/blood/bloodSwitch.js');
   // FT18: the four blood rows are ONE - the marks are a part of the `blood` row, declared in its `also` (RF4's law, one
   // row over: the row that covers a key is the one declaration of it)
   const row = FEATURES.find((f) => f.id === 'blood');
@@ -781,7 +781,7 @@ test('BLOOD1a: the feature row owns the key and the default, and online it is th
   // ask for 180 MB of floats or a pool that divides by its own size -
   // and the old keys, which a hand-edited store could, are retired.
   const { setPref } = await import('../src/systems/uiPrefs.js');
-  const sw = await import('../src/combat/bloodSwitch.js');
+  const sw = await import('../src/combat/blood/bloodSwitch.js');
   const { BLOOD_GORE_PREF, GORE_TIERS, GORE_DEFAULT, bloodGore } = sw;
   assert.equal(sw.BLOOD_CAPACITY_PREF, undefined, 'the capacity key is retired'); assert.equal(sw.BLOOD_DENSITY_PREF, undefined, 'and the density key');
   const restore = [];
@@ -921,7 +921,7 @@ test('BLOOD1b: one blood event is a SPRAY, laid by area, and each drop finds its
   assert.ok(Math.abs(sprayRadius(RATE_MAX) - SPRAY_RADIUS_MAX) < 1e-9);
   assert.ok(sprayRadius(150) > sprayRadius(70) && sprayRadius(70) > sprayRadius(30));
   // ...and it reads the ends rather than keeping a second copy of them
-  const src = readFileSync(new URL('../src/combat/bloodDecals.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodDecals.js', import.meta.url), 'utf8');
   const fn = src.slice(src.indexOf('export function sprayRadius('), src.indexOf('export const SPRAY_LOBES_MAX'));
   assert.match(fn, /const lo = ladderRate\(0\), hi = RATE_MAX;/);
   assert.doesNotMatch(fn.replace(/\/\/.*$/gm, ''), /\b(30|200)\b/, 'no second copy of the ladder’s ends');
@@ -1355,7 +1355,7 @@ test('BLOOD1b by source: the chunks ride the tick every host already makes', () 
   // NO RENDERER, NO GL, NO COLLIDER in the gib law either - same
   // split as bloodDecals.js, and what lets the arc above be driven on
   // a table.
-  const src = readFileSync(new URL('../src/combat/bloodGibs.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodGibs.js', import.meta.url), 'utf8');
   const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   for (const forbidden of ['renderer', 'gl.', 'raycast', 'import ', 'document', 'window.']) {
     assert.ok(!code.includes(forbidden), `bloodGibs.js must not reach for \`${forbidden}\``);
@@ -1827,7 +1827,7 @@ test('BLOOD1 AUDIT: dispose is TERMINAL, the art may arrive after the throw, and
 });
 
 test('BLOOD1 AUDIT: the chunks’ centre list is the chunks’ OWN arrays, so a flight allocates nothing a frame', () => {
-  const src = readFileSync(new URL('../src/combat/bloodMarks.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/combat/blood/bloodMarks.js', import.meta.url), 'utf8');
   // Every entry of `_gibPos` is the chunk's own `pos` ARRAY, and
   // gibStep / gibFly / gibLand / shiftGibs all write through it in
   // place - so the references stay live for the whole flight and the
@@ -1840,7 +1840,7 @@ test('BLOOD1 AUDIT: the chunks’ centre list is the chunks’ OWN arrays, so a 
   // ...and the writers really do write THROUGH the array rather than
   // replacing it, or the references above would go stale on the first
   // step and every chunk would draw at its birthplace for ever.
-  const gibs = readFileSync(new URL('../src/combat/bloodGibs.js', import.meta.url), 'utf8');
+  const gibs = readFileSync(new URL('../src/combat/blood/bloodGibs.js', import.meta.url), 'utf8');
   for (const [fn, what] of [['gibFly', 'flying on'], ['gibLand', 'landing'], ['shiftGibs', 'the origin shift']]) {
     const body = gibs.slice(gibs.indexOf(`export function ${fn}(`), gibs.indexOf('\n}', gibs.indexOf(`export function ${fn}(`)));
     assert.match(body, /\.pos\[0\] [+]?= /, `${what} writes through the chunk’s own array`);
@@ -2307,7 +2307,7 @@ test('BLOOD1 AUDIT 3: the pure law refuses what would poison it - a NaN capacity
   assert.equal(throwGibs([0, 0, 0], () => 0.5, Infinity).length, GIB_COUNT, 'an endless throw is the default throw');
   assert.equal(shiftGibs([null, { pos: [0, 0, 0] }], [1, 0, 0]), 1, 'a hole in the list is skipped');
   assert.ok(!('parent' in pool.place([0, 0, 0], [0, 1, 0])), 'the dead field is gone');
-  const { bloodMarksOn } = await import('../src/combat/bloodSwitch.js');
+  const { bloodMarksOn } = await import('../src/combat/blood/bloodSwitch.js');
   assert.equal(bloodMarksOn('?blood=off'), false, 'the door the comment promised');
   assert.equal(bloodMarksOn('?blood=on'), true);
   assert.equal(bloodMarksOn(''), true);
@@ -2461,7 +2461,7 @@ test('BLOOD2a: a spray’s spatter lies ALONG its travel and longer the further 
 import {
   buildBloodAtlas, bloodAtlas, pickCell, bloodMarkKind, freshTint, freshShade, dryStage, driedTint, mulberry32,
   ATLAS_SIZE, ATLAS_CELLS, ATLAS_KINDS, BLOOD_BASE, FRESH_VARIANCE, DRIED_TINT, DRY_TIME, DRY_STAGES, DRY_TICK, BLOOD_ATLAS_ARCHIVE, BLOOD_ATLAS_RECORD,
-} from '../src/combat/bloodArt.js';
+} from '../src/combat/blood/bloodArt.js';
 
 test('BLOOD2b: the atlas is the kinds in four variants, every cell bordered so a soft sample cannot bleed, red, and the same picture on every boot', () => {
   const a = buildBloodAtlas();
@@ -2518,7 +2518,7 @@ test('BLOOD2b: the atlas is the kinds in four variants, every cell bordered so a
   // is pinned and not just the value.
   assert.ok(BLOOD_BASE[0] < 0.58, 'darker than the red it replaced');
   // no picture is shipped: the atlas is made, not read
-  const art = readFileSync(new URL('../src/combat/bloodArt.js', import.meta.url), 'utf8');
+  const art = readFileSync(new URL('../src/combat/blood/bloodArt.js', import.meta.url), 'utf8');
   assert.ok(!/BLOOD_BASE\[\d\] \* shade/.test(art), 'the atlas is not painted the base');
   assert.ok(!/\.png|fetch\(|import .*\.png/.test(art), 'nothing loaded');
 });
@@ -2533,7 +2533,7 @@ test('BLOOD4: a wall of marks is not one picture stamped - sixteen faces a kind,
   // floor's marks take from the throw. Four cells was four pictures,
   // upright, for ever. This pin holds the two things that fixed it and
   // the one thing that must not have changed with them.
-  const { filmThickness } = await import('../src/combat/bloodArt.js');   // BLOOD4: the dome is a THICKNESS law, so it is read back through the film's own inverse
+  const { filmThickness } = await import('../src/combat/blood/bloodArt.js');   // BLOOD4: the dome is a THICKNESS law, so it is read back through the film's own inverse
   const a = buildBloodAtlas();
   const drips = a.cells.filter((c) => c.kind === 'drip');
   assert.equal(drips.length, ATLAS_CELLS);
@@ -2787,8 +2787,8 @@ test('BLOOD2b: a mark wears a cell of its KIND, is born a fresh red of its own, 
 import {
   createBleedLedger, bleedShare, bleedDrops, poolSizeAt,
   BLEED_THRESHOLD, BLEED_WAIT, BLEED_DROPS_MAX, BLEED_RADIUS, BLEED_RATE, POOL_SIZE, POOL_SPREAD, POOL_STEPS,
-} from '../src/combat/bloodBleed.js';
-import { DRIP_FROM, BLEED_DROPS_CAP, MAX_SPREADS } from '../src/combat/bloodMarks.js';
+} from '../src/combat/blood/bloodBleed.js';
+import { DRIP_FROM, BLEED_DROPS_CAP, MAX_SPREADS } from '../src/combat/blood/bloodMarks.js';
 
 test('BLOOD2c: the ledger - the reference’s ramp and cadence on a wounded body, one pool for a body with a corpse, nothing for the bloodless', () => {
   // the ramp: nothing at the threshold, everything at one percent
@@ -2944,8 +2944,8 @@ test('BLOOD2c: the pool lays a drip at the feet and a corpse’s pool that sprea
 });
 
 // ── BLOOD2d (2026-09-21) - tracked blood: a walker who treads in it leaves prints ──
-import { STRIDE } from '../src/combat/bloodBleed.js';
-import { TRACK_STEPS, TRACK_WET_STAGE, PRINT_SIZE, PRINT_SPREAD } from '../src/combat/bloodMarks.js';
+import { STRIDE } from '../src/combat/blood/bloodBleed.js';
+import { TRACK_STEPS, TRACK_WET_STAGE, PRINT_SIZE, PRINT_SPREAD } from '../src/combat/blood/bloodMarks.js';
 import { PLAYER_WALKER } from '../src/scenes/hitEffects.js';
 
 test('BLOOD2d: treading in wet blood tracks it - alternating prints along the walk, fainter each step, none from dried blood or from a print', () => {
@@ -3153,9 +3153,9 @@ test('MAC-BUG W5: and the blood really lands - the whole ladder, on an outdoor c
 // ── BLOOD AUDIT 4 (2026-09-21, Mac: "I just want to audit everything so
 // far before we continue") - four lenses over BLOOD2a..2d, every finding
 // verified here before it was paid (bible/05-Combat/Blood-Arc.md item 8).
-import { createBleedLedger as a4Ledger, TELEPORT_SPEED as A4_TELEPORT, BLEED_RATE as A4_BLEED_RATE, POOL_SPREAD as A4_POOL_SPREAD } from '../src/combat/bloodBleed.js';
-import { GIB_SPLASH_RATE as A4_GIB_RATE } from '../src/combat/bloodGibs.js';
-import { BLOOD_BASE as A4_BASE, FRESH_VARIANCE as A4_VAR, DRY_TIME as A4_DRY_TIME, DRY_TICK as A4_DRY_TICK, DRY_STAGES as A4_DRY_STAGES, mulberry32 as a4Rng } from '../src/combat/bloodArt.js';
+import { createBleedLedger as a4Ledger, TELEPORT_SPEED as A4_TELEPORT, BLEED_RATE as A4_BLEED_RATE, POOL_SPREAD as A4_POOL_SPREAD } from '../src/combat/blood/bloodBleed.js';
+import { GIB_SPLASH_RATE as A4_GIB_RATE } from '../src/combat/blood/bloodGibs.js';
+import { BLOOD_BASE as A4_BASE, FRESH_VARIANCE as A4_VAR, DRY_TIME as A4_DRY_TIME, DRY_TICK as A4_DRY_TICK, DRY_STAGES as A4_DRY_STAGES, mulberry32 as a4Rng } from '../src/combat/blood/bloodArt.js';
 
 const a4Floor = () => ({ surfaceHit: (from, dir, max) => (dir[1] < 0 && from[1] <= max ? { dist: from[1], normal: [0, 1, 0] } : null), raycastHit: () => ({ dist: Infinity, normal: null }) });
 const a4Settings = { enabled: () => true, capacity: () => 64, density: () => 1, overkill: () => false };
@@ -3199,7 +3199,7 @@ test('BLOOD AUDIT 4: a walker’s step rays from the KNEE - prints land on a mes
   foe.feet = [5, 0, 5]; w.fx.bleed(0.1, [foe], (b) => b);   // one stride, ending a centimetre into the pool
   assert.equal(w.marks.tracked(foe), TRACK_STEPS, 'the foe’s stride, from its feet on the floor, picks it up');
   // by source: the knee, as the drip and the pool
-  const mk = a4Read('src/combat/bloodMarks.js');
+  const mk = a4Read('src/combat/blood/bloodMarks.js');
   const stepSrc = mk.slice(mk.indexOf('  function step(walker, pos, forward = null) {'), mk.indexOf('\n  }\n', mk.indexOf('  function step(walker, pos, forward = null) {')));
   assert.match(stepSrc, /const h = col\.surfaceHit\(\[pos\[0\], pos\[1\] \+ DRIP_FROM, pos\[2\]\], DOWN, MARK_DROP\);/);
   assert.match(stepSrc, /const foot = \[pos\[0\], pos\[1\] \+ DRIP_FROM - h\.dist, pos\[2\]\];/);
@@ -3285,7 +3285,7 @@ test('BLOOD AUDIT 4: the ledger - alive again is a new life, a body met dead has
   assert.equal(STRIDE, 0.7); assert.equal(A4_TELEPORT, 40); assert.equal(A4_POOL_SPREAD, 12); assert.equal(STREAK_MAX, 2.5);
   assert.equal(TRACK_WET_STAGE, 2); assert.equal(TRACK_STEPS, 6);
   assert.equal(A4_BLEED_RATE, A4_GIB_RATE, 'the drip’s rate IS the gib’s splat rate');
-  assert.match(a4Read('src/combat/bloodBleed.js'), /export const BLEED_RATE = GIB_SPLASH_RATE;/, '...by import, not a second copy');
+  assert.match(a4Read('src/combat/blood/bloodBleed.js'), /export const BLEED_RATE = GIB_SPLASH_RATE;/, '...by import, not a second copy');
 });
 
 test('BLOOD AUDIT 4: the wet test is a FLOOR test at the ceiling’s own number, and a drip’s drops never wear a streak', () => {
@@ -3405,7 +3405,7 @@ test('BLOOD AUDIT 4: nothing per frame - the spread and the step read slots, nev
   assert.equal(made, 1, 'the ring is the ring it always had');
   assert.equal(off.marks._pool().capacity, 8, '- at the boot tier, not the one the store holds now (the count takes effect when the game is next reloaded)');
   assert.deepEqual(uploads, ['38001_marks'], 'the first mark uploads the atlas');
-  const mk = a4Read('src/combat/bloodMarks.js');
+  const mk = a4Read('src/combat/blood/bloodMarks.js');
   assert.match(mk, /if \(renderer\?\.createDecalBatch\) ensure\(\);/);
   assert.match(mk, /const atlas = \(\) => \(_atlas \?\?= bloodAtlas\(\)\);/, 'the atlas is built when first worn');
   assert.doesNotMatch(mk, /const _atlas = bloodAtlas\(\)/);
@@ -3443,7 +3443,7 @@ test('BLOOD AUDIT 4: by source - the dungeon quickload clears the blood, every p
 // bleeding on the same ledger, its subtle flash, and blood on the lens ──
 import { playerDamageFlash, flashPlayerDamage, BLEED_FLASH_ALPHA, FLASH_ALPHA as E_FLASH_ALPHA } from '../src/ui/damageFlash.js';
 import { createBloodScreen, screenDrops, screenDropAlpha, SCREEN_SPATTER_MIN, SCREEN_DROPS_MAX, SCREEN_DROPS_AT, SCREEN_DROPS_CAP, SCREEN_DROP_LIFE, SCREEN_FADE_SHARE, SCREEN_DROP_SIZE, SCREEN_DROP_SLIDE } from '../src/ui/bloodScreen.js';
-import { bleedDrops as eBleedDrops, bleedShare as eBleedShare, BLEED_WAIT as E_WAIT } from '../src/combat/bloodBleed.js';
+import { bleedDrops as eBleedDrops, bleedShare as eBleedShare, BLEED_WAIT as E_WAIT } from '../src/combat/blood/bloodBleed.js';
 import { FEATURES as E_FEATURES } from '../src/systems/features.js';
 
 test('BLOOD2e: the player bleeds - the same ledger, no strides, no corpse, a subtle flash a drip that never lowers a blow’s, nothing at zero health', () => {
@@ -3561,7 +3561,7 @@ test('BLOOD2e: blood on the lens - a real blow throws drops that slide and fade,
   assert.ok(row && row.group === 'combat' && row.kinds.includes('enhanced'));
   assert.deepEqual(row.control.also.find((a) => a.key === 'blood-screen'), { store: 'prefs', key: 'blood-screen', initial: true, online: 'player' });
   assert.ok(row.control.parts.some((pt) => pt.key === 'blood-screen'), 'its own switch, in the tile\'s drawer');
-  assert.match(a4Read('src/combat/bloodSwitch.js'), /export const bloodScreenOn = \(\) => getPref\(BLOOD_SCREEN_PREF\) !== false;/);
+  assert.match(a4Read('src/combat/blood/bloodSwitch.js'), /export const bloodScreenOn = \(\) => getPref\(BLOOD_SCREEN_PREF\) !== false;/);
   // the HUD's one call: spattered off the detector CameraRecoiler reads, ticked and drawn above the `!art` return
   const hud = a4Read('src/ui/hud/hud.js');
   const spat = hud.indexOf("if (blow && bloodScreenOn() && lastHealthLostPercent() >= SCREEN_SPATTER_MIN) playerBloodScreen.spatter(lastHealthLostPercent(), bloodAtlas());");
@@ -3577,7 +3577,7 @@ test('BLOOD2e: blood on the lens - a real blow throws drops that slide and fade,
 
 // ── BLOOD2f (2026-09-21) - THE WET SHEEN: a fresh mark glints under the
 // enhanced lane, and the glint goes before the colour does ──
-import { wetAt, WET_POWER } from '../src/combat/bloodArt.js';
+import { wetAt, WET_POWER } from '../src/combat/blood/bloodArt.js';
 import { EL_WET_GLOSS, EL_WET_STRENGTH, EL_SPEC_GLOSS as F_SPEC_GLOSS, EL_SPEC_STRENGTH as F_SPEC_STRENGTH, EL_DECAL_FS as F_DECAL_FS } from '../src/render/enhancedLighting.js';
 
 test('BLOOD2f: the wet float rides the slot - one fresh, falling as the square with the stages, zero dried; a mark that says nothing is dry', () => {
@@ -3663,7 +3663,7 @@ test('BLOOD2f: the lane glints a wet mark - the lamp and the sun seen in it at t
 
 // ── BLOOD2g (2026-09-21) - THE GORE DIAL: one tier for how much blood there is ──
 test('BLOOD2g: the gore dial - one tier sets the amount and the count, the row names every tier and the default, a pool is sized by it', async () => {
-  const { GORE_TIERS, GORE_DEFAULT, BLOOD_GORE_PREF, bloodGore, bloodCapacity, bloodDensity, bloodDecalDeps, BLOOD_CAPACITY_MAX } = await import('../src/combat/bloodSwitch.js');
+  const { GORE_TIERS, GORE_DEFAULT, BLOOD_GORE_PREF, bloodGore, bloodCapacity, bloodDensity, bloodDecalDeps, BLOOD_CAPACITY_MAX } = await import('../src/combat/blood/bloodSwitch.js');
   const { setPref } = await import('../src/systems/uiPrefs.js');
   assert.deepEqual(Object.keys(GORE_TIERS), ['light', 'normal', 'heavy', 'abattoir']);
   assert.deepEqual(GORE_TIERS.normal, { density: 1, capacity: 600 }, 'Normal is the defaults - nothing changes for anyone who never touches it');
@@ -3692,8 +3692,8 @@ test('BLOOD2g: the gore dial - one tier sets the amount and the count, the row n
     assert.equal(bloodDecalDeps.density(), 1, 'the amount is live');
     assert.equal(bloodGore(), 'abattoir');
   } finally { restore(); }
-  assert.match(a4Read('src/combat/bloodSwitch.js'), /GORE_TIERS\[bloodGore\(\)\]\.capacity/); assert.match(a4Read('src/combat/bloodSwitch.js'), /GORE_TIERS\[bloodGore\(\)\]\.density/);
-  assert.doesNotMatch(a4Read('src/combat/bloodSwitch.js'), /'blood-capacity'|'blood-density'/, 'the old keys are gone, not aliased');
+  assert.match(a4Read('src/combat/blood/bloodSwitch.js'), /GORE_TIERS\[bloodGore\(\)\]\.capacity/); assert.match(a4Read('src/combat/blood/bloodSwitch.js'), /GORE_TIERS\[bloodGore\(\)\]\.density/);
+  assert.doesNotMatch(a4Read('src/combat/blood/bloodSwitch.js'), /'blood-capacity'|'blood-density'/, 'the old keys are gone, not aliased');
 });
 
 
@@ -3701,7 +3701,7 @@ test('BLOOD2g: the gore dial - one tier sets the amount and the count, the row n
 // BLOOD2e..2g and AUDIT 4's own fixes, every finding paid (Blood-Arc item 12) ──
 import { createDamageFlash as a5Flash } from '../src/ui/damageFlash.js';
 import { updateHudVitals as a5Vitals, resetVitalsDetector as a5Reset, lastHealthLostPercent as a5Lost, _resetHudVitals as a5Fresh } from '../src/ui/hud/hudVitals.js';
-import { STEP_ABOVE } from '../src/combat/bloodMarks.js';
+import { STEP_ABOVE } from '../src/combat/blood/bloodMarks.js';
 
 test('BLOOD AUDIT 5: the lens needs a BLOW - the RemoveHealth latch answers once; a load resets the detector, so the loaded health is no loss', () => {
   const f = a5Flash();
@@ -3803,7 +3803,7 @@ test('BLOOD AUDIT 5: by source - the menu shows a row’s default for a stored v
 // Two faults, one line of the decal shader each, and both laws are pure
 // functions here so a pin drives them rather than reading them.
 test('BLOOD3 flat: the film is the tint at full thickness and brightens - and DESATURATES - as it thins', async () => {
-  const { filmColour, BLOOD_ABSORB, BLOOD_ABSORB_ENCODED, DISPLAY_GAMMA, BLOOD_BASE } = await import('../src/combat/bloodArt.js');
+  const { filmColour, BLOOD_ABSORB, BLOOD_ABSORB_ENCODED, DISPLAY_GAMMA, BLOOD_BASE } = await import('../src/combat/blood/bloodArt.js');
   const sat = (c) => 1 - (c[1] + c[2]) / 2 / c[0];
   // THE ANCHOR, and the whole reason the lighting-parity law survives
   // this slice: at full thickness the film is exactly a no-op, so a
@@ -3854,7 +3854,7 @@ test('BLOOD3 flat: the film is the tint at full thickness and brightens - and DE
 });
 
 test('BLOOD3 depth: the atlas ink IS the thickness, inverted - and it runs the right way on every shape in the sheet', async () => {
-  const { buildBloodAtlas, ATLAS_KINDS, ATLAS_CELLS, INK_DEPTH, filmThickness } = await import('../src/combat/bloodArt.js');
+  const { buildBloodAtlas, ATLAS_KINDS, ATLAS_CELLS, INK_DEPTH, filmThickness } = await import('../src/combat/blood/bloodArt.js');
   // AUDIT BLOOD3 F1: THE PIN THAT WOULD HAVE CAUGHT IT. BLOOD3 read the
   // sheet's ink as a DENSITY when the art paints it as a DARKENING -
   // the same quantity with the sign reversed - so the film brightened
@@ -3917,7 +3917,7 @@ test('BLOOD3 depth: the atlas ink IS the thickness, inverted - and it runs the r
 });
 
 test('BLOOD3 shiny: the sheen is the mark’s own depth, the angle is Schlick at V.H per light, and a wet mark DARKENS', async () => {
-  const { wetGate, wetFresnel, wetSheen, wetAlbedo, WET_DARKEN, BLOOD_F0, WET_THICK_LO, WET_THICK_HI } = await import('../src/combat/bloodArt.js');
+  const { wetGate, wetFresnel, wetSheen, wetAlbedo, WET_DARKEN, BLOOD_F0, WET_THICK_LO, WET_THICK_HI } = await import('../src/combat/blood/bloodArt.js');
   // the gate: the mark's own depth, so a dried rim does not shine while
   // the heart still does. It carries NO angle (AUDIT BLOOD3 F5).
   assert.equal(wetGate(0, 1), 0, 'a dry mark, whatever its depth');
@@ -3980,7 +3980,7 @@ test('AUDIT BLOOD3 F9: every dial the blood shaders interpolate goes through gls
   // THE LAW, DRIVEN: build the shader at an integral value and read what
   // it actually emitted. A text pin on the built string proves nothing
   // here - it reads whatever the current value happens to produce.
-  const { BLOOD_MENISCUS, WET_DARKEN, INK_DEPTH, BLOOD_F0 } = await import('../src/combat/bloodArt.js');
+  const { BLOOD_MENISCUS, WET_DARKEN, INK_DEPTH, BLOOD_F0 } = await import('../src/combat/blood/bloodArt.js');
   for (const v of [BLOOD_MENISCUS, WET_DARKEN, INK_DEPTH, BLOOD_F0, 1 - BLOOD_F0, 0, 1, 0.5]) {
     assert.match(glslFloat(v), /^-?\d+(\.\d+)?$/, `${v} is a literal`);
     assert.ok(glslFloat(v).includes('.'), `${v} reaches GLSL as a FLOAT - an int here is a compile error, not a wrong picture`);
@@ -3989,7 +3989,7 @@ test('AUDIT BLOOD3 F9: every dial the blood shaders interpolate goes through gls
 
 test('BLOOD3 by source: both decal shaders recover the depth, and the LANE carries the meniscus, the wet darkening and the per-light Fresnel', async () => {
   const { EL_DECAL_FS, EL_WET_STRENGTH } = await import('../src/render/enhancedLighting.js');
-  const { BLOOD_ABSORB, BLOOD_ABSORB_ENCODED, BLOOD_F0, BLOOD_MENISCUS, WET_THICK_LO, WET_THICK_HI, INK_DEPTH, WET_DARKEN } = await import('../src/combat/bloodArt.js');
+  const { BLOOD_ABSORB, BLOOD_ABSORB_ENCODED, BLOOD_F0, BLOOD_MENISCUS, WET_THICK_LO, WET_THICK_HI, INK_DEPTH, WET_DARKEN } = await import('../src/combat/blood/bloodArt.js');
   const classic = readFileSync(new URL('../src/render/renderer.js', import.meta.url), 'utf8');
   const recover = `float thick = t.a * clamp((1.0 - t.r) / ${INK_DEPTH}, 0.0, 1.0);`;
   // AUDIT BLOOD3 F1: BOTH sets read the ink as the thickness INVERTED,
@@ -3997,7 +3997,7 @@ test('BLOOD3 by source: both decal shaders recover the depth, and the LANE carri
   // copy of the ramp, and never the raw channel again.
   assert.ok(EL_DECAL_FS.includes(recover), 'the lane recovers the depth');
   assert.ok(classic.includes('float thick = t.a * clamp((1.0 - t.r) / ${glslFloat(INK_DEPTH)}, 0.0, 1.0);'), 'and so does the classic set');
-  assert.match(classic, /import \{ BLOOD_ABSORB_ENCODED, INK_DEPTH \} from '\.\.\/combat\/bloodArt\.js'/);
+  assert.match(classic, /import \{ BLOOD_ABSORB_ENCODED, INK_DEPTH \} from '\.\.\/combat\/blood\/bloodArt\.js'/);
   assert.ok(!/float thick = t\.a \* t\.r;/.test(EL_DECAL_FS) && !/\* t\.a \* t\.r\)/.test(EL_DECAL_FS), 'the raw ink is never a thickness again (the prose above the meniscus may still name the bug it fixed)');
   assert.ok(!/vec3 albedo = elDecode\(t\.rgb\)/.test(EL_DECAL_FS) && !/vec3 rgb = t\.rgb \*/.test(classic),
     'and the ink is not an albedo factor either - it WAS the depth, painted as a grey darkener, and the film does that per channel now');

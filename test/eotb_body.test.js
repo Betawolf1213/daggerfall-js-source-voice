@@ -19,7 +19,7 @@ const MOD = 'eye-of-the-beholder';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const viteConfig = readFileSync(join(root, 'vite.config.js'), 'utf8');
-const weaponRig = readFileSync(join(root, 'src/combat/weaponRig.js'), 'utf8');
+const weaponRig = readFileSync(join(root, 'src/combat/weapon/weaponRig.js'), 'utf8');
 const bodySrc = readFileSync(join(root, 'src/player/eotbBody.js'), 'utf8');
 
 const renderer = () => ({

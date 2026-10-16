@@ -226,7 +226,7 @@ test('MODS-ONLINE-2: a mod the player owns reaches no wire, no save and no roll'
   const OWN_MODULES = {
     'dynamic-skies': ['src/systems/dynamicSkies/dynamicSkies.js'],
     'seasons-iliac-bay': ['src/systems/seasonsIliacBay.js'],
-    'weapon-widget': ['src/combat/weaponWidgetMotion.js'],
+    'weapon-widget': ['src/combat/weapon/weaponWidgetMotion.js'],
     'eye-of-the-beholder': ['src/player/eotbBody.js', 'src/player/eotbCamera.js'],
     'ambient-text': ['src/systems/ambientText.js'],
     'immersive-footsteps': ['src/systems/immersiveFootsteps.js'],

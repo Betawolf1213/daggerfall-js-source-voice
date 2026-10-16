@@ -174,7 +174,7 @@ test('CLIMB-HANDS the draw: Mac\'s two paintings, loaded once, each box a screen
 });
 
 test('CLIMB-HANDS by source: the rig steps the law on the frame\'s climb and draws it on the classic lane under the spell hands\' vetoes, above the sheathe gates; the paintings are on the allow-list', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   // PIN MOVED (CLIMB-HANDS II): the view the law is handed is the look and the frame's world lens (climbhands2.test.js
   // drives it through the rig)
   assert.match(rig, /_climbLower = climbLowerStep\(_climbLower, climbing \|\| \(handsLane && climbHands\.showing\(\)\), dt\);\n(?:\s*\/\/[^\n]*\n)*\s*const handsClimb = handsLane && _climbLower >= CLIMB_HANDS_AFTER \? \(camNow\?\.climb \?\? null\) : null;\n\s*const handsLens = handsClimb \|\| climbHands\.law\.present > 0 \? climbLens\(cv\(\), \{ fov: fieldOfView\(\), viewport: renderer\?\.worldViewportRect \?\? null, aspect: renderer\?\.worldProjAspect \?\? null, offsetHeight: weaponOffsetHeight\(\) \}\) : null;\n\s*climbHands\.update\(dt, handsClimb, \{ yaw: camNow\?\.yaw, pitch: camNow\?\.pitch, lens: handsLens \}\);/);

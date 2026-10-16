@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFpArm, fpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { createLycanthropyCurse, morphSelf } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { mwViewFrame, setEotbBodyReady, setEotbDrawBody } from '../src/player/mwView.js';

@@ -327,7 +327,7 @@ test('MW-HEADS1 (AUDIT): a real build - a Breton man wears the port\'s own head 
 });
 
 test('MW-HEADS2: the port\'s own heads are a player\'s alone - the local player\'s build and every peer\'s ask for them, the people\'s lanes and an escort\'s face do not; the face-match memo keyed on the pools it measured', async () => {
-  const { armBuildOptsOf } = await import('../src/combat/weaponRig.js');
+  const { armBuildOptsOf } = await import('../src/combat/weapon/weaponRig.js');
   const { peerBuildOpts, playerBuildOpts } = await import('../src/net/peer/peerBodies.js');
   assert.equal(armBuildOptsOf({ race: 'Breton', gender: 'male', faceIndex: 6, items: [] }).ownHeads, true, 'the local player');
   const look = { race: 'Breton', gender: 'male', faceIndex: 6, items: [] };

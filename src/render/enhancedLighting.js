@@ -58,7 +58,7 @@
 // so a test can pin the arithmetic the GPU runs without a GPU.
 
 import { getPref } from '../systems/uiPrefs.js';
-import { BLOOD_ABSORB, BLOOD_F0, BLOOD_MENISCUS, WET_THICK_LO, WET_THICK_HI, INK_DEPTH, WET_DARKEN } from '../combat/bloodArt.js';   // BLOOD3: the film's own law, beside the tints it already owns
+import { BLOOD_ABSORB, BLOOD_F0, BLOOD_MENISCUS, WET_THICK_LO, WET_THICK_HI, INK_DEPTH, WET_DARKEN } from '../combat/blood/bloodArt.js';   // BLOOD3: the film's own law, beside the tints it already owns
 import { isEnhanced } from '../systems/uiSkin.js';
 import { SHADOW_GLSL, shadowCacheOn } from './shadowPass.js';   // EL2: the receiver block - the sun map on the sun term, the cube map on its lantern; SC1: the cache's door
 import { FOG_GLSL as EL_FOG_GLSL } from './fogGlsl.js';   // AUDIT 68 S17-fog-glsl-dup: the fog law's one home, the classic lane's too (the lane's five interpolate it by this name)
@@ -836,7 +836,7 @@ void main() {
   // the colour a full mark already had does not move): blood absorbs
   // green and blue far harder than red, so a thinning rim brightens and
   // turns toward orange while the body stays a deep maroon. See
-  // combat/bloodArt.js BLOOD_ABSORB / filmColour.
+  // combat/blood/bloodArt.js BLOOD_ABSORB / filmColour.
   //
   // THE THICKNESS IS COVERAGE TIMES DENSITY (bloodArt.js filmThickness).
   // Alpha alone cancels itself out - it is also what the mark is blended

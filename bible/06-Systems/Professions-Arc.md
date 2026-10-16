@@ -1756,7 +1756,7 @@ what was found (FACT):
   **FLAGGED**). **Dungeons** (`scenes/dungeonContext.js`): no herbs - their
   veins are PROF2's.
 - **The tool in the hand**: for the steady hand's length the classic lane's rig draws the Sickle as DFU's Tanto
-  (template 114), its idle frame, and nothing else (`combat/weaponRig.js` `actTool`, above the sheathe gates, as the
+  (template 114), its idle frame, and nothing else (`combat/weapon/weaponRig.js` `actTool`, above the sheathe gates, as the
   held map's classic lane takes the hands). **The Morrowind lane keeps its stance - FLAGGED**: its arm draws a modelled
   weapon, not a sprite, and no model of a sickle is attached.
 - **The pages**: the Professions and Stores pages are two more sections on the Stats page's rail (`ui/enhanced/enhancedMenu.js`
@@ -4458,7 +4458,7 @@ Mac: "Do the not done" - section 44's three open items: a blow shook no camera; 
   dips its channel (the look cleave's 0.8 degrees, the eye execute's 6 cm, the hands whirlwind's 0.04 - AUDIT
   GATHER-FEEL F5/R1: three of the look's stood at 0.8 to 1.1, scaled now by the one share), with no shake, roll or lens
   of its own: an act repeats its blow every half second.
-- **One door.** It goes in through the technique springs' (`combat/techniqueFx.js` kickFx - techniqueCue's own kick
+- **One door.** It goes in through the technique springs' (`combat/technique/techniqueFx.js` kickFx - techniqueCue's own kick
   moved behind it, its lines unchanged), which every host's view already folds (`player/climbFeel.js`), and never
   through the look the act aims with: the glint's test reads the camera's yaw and pitch, which the springs leave alone.
 - **The port's own motion**: the enhanced skin alone (DFU moves no camera for a blow - CameraRecoiler and HeadBobber
@@ -4624,7 +4624,7 @@ AUDIT29-C5, `auditdrops.json` AD-E4, `cards2b.json` SB-wire-no-news, `disc12.jso
 VEIN-WASH-e, `mwnpc4.json` MWNPC4-peer-dead-arms and -counts-not-followed, `perfextb.json` PERF-EXT10-2,
 `werewolf1.json` WEREWOLF1-peer-wolf-holds-the-sword and `soc1.json` S38-version-not-bumped - each dead.
 Every existing record on a file whose logic the slice moved - `scenes/gatherHost.js`, `scenes/mineHost.js`,
-`net/remotePlayers.js`, `net/peer/peerBodies.js`, `net/peer/peerRiders.js`, `combat/techniqueFx.js`, `render/renderer.js`,
+`net/remotePlayers.js`, `net/peer/peerBodies.js`, `net/peer/peerRiders.js`, `combat/technique/techniqueFx.js`, `render/renderer.js`,
 `render/enhancedLighting.js` and the slice's own three - was judged again: 1,381 (AUDIT GATHER-FEEL R14: 1,276 of other
 slices' lists and 105 of its own - its other two judged in its list's own run), of which 1,372 dead (67 of them after
 the three pins above were moved - `test/mac7.test.js`, `test/peerstride.test.js`, `test/blood1_decals.test.js` read the

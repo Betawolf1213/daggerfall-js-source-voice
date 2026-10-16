@@ -88,7 +88,7 @@ import { survivalOn } from '../survival/switch.js';   // LOOT14: the warmth and 
 import { hoodCapable } from '../survival/temperature.js';   // LOOT15: Unseen answers a hood (HOOD-SAID's one law)
 import { ROLLED_TIERS } from '../rarityTier.js';   // RARE-BREAK1: the rolled tiers' one home
 import { setPieceKind, rollSetSigil, rollSetJoin, setLines, setSigilLines } from '../sigil/sigilSets.js';   // SET4: a won piece of armour or a shield may carry a set's sigil; a weapon's may join one; SET5: the set in words
-import { TECHNIQUE_IDS, TECHNIQUE_BANDS, TECHNIQUE_PER_MILLE, techniqueById, techniquesFor, techniqueBrief, techniqueParts } from '../../combat/techniqueRoster.js';   // TECH1: a weapon's technique - the roster's one table (a leaf)
+import { TECHNIQUE_IDS, TECHNIQUE_BANDS, TECHNIQUE_PER_MILLE, techniqueById, techniquesFor, techniqueBrief, techniqueParts } from '../../combat/technique/techniqueRoster.js';   // TECH1: a weapon's technique - the roster's one table (a leaf)
 
 export const LOOT_RARITY_KEY = 'lootRarity';
 /** The switch. Read at every seam, so a press takes effect on the next
@@ -467,7 +467,7 @@ export const AFFIX_RANGES = Object.freeze({
   // BAL9c: the caster's damage and its magicka (systems/spell/spellPower.js, systems/loot/lootPowers.js)
   potency:    Object.freeze({ magic: [3, 6], rare: [6, 10], legendary: [10, 15] }),  // % more of a damage spell's landing
   wellspring: Object.freeze({ magic: [2, 4], rare: [4, 7], legendary: [7, 10] }),    // % of my magicka back on a kill
-  // TECH1: a technique's power - +% on its own multiplier (combat/techniqueRoster.js TECHNIQUE_BANDS, one band for all)
+  // TECH1: a technique's power - +% on its own multiplier (combat/technique/techniqueRoster.js TECHNIQUE_BANDS, one band for all)
   technique: TECHNIQUE_BANDS,
 });
 /** How many affixes a tier rolls: [min, max]. A Legendary's are its record's. */
@@ -586,7 +586,7 @@ export const AFFIX_KINDS = Object.freeze({
   wellspring: Object.freeze({ slot: 'suffix', groups: Object.freeze(['Jewellery']), params: null, proc: true,
     word: (band) => WELLSPRING_SUFFIX[band], label: (a) => `${a.value}% magicka on a kill` }),
   // TECH1 (2026-10-10, bible/05-Combat/Weapon-Techniques.md): A WEAPON'S TECHNIQUE - what the WeaponTechnique key does
-  // with the weapon in hand (combat/techniques.js): its param the technique (combat/techniqueRoster.js, the piece's own
+  // with the weapon in hand (combat/techniques.js): its param the technique (combat/technique/techniqueRoster.js, the piece's own
   // family alone - kindParams), its value the power over the technique's own multiplier. APPENDED LAST and drawn in no
   // pool any other line is drawn from - it is not among AFFIX_IDS, the pools' kinds (rollAffixes, the proc line, the
   // Exalted, the curse, the Reforge), so every one of those draws is the draw it was: one line a piece at most, taken at a
@@ -1451,7 +1451,7 @@ export function rollTechniqueLine(item, rolls = Math.random) {
 export function techniquePass(pieces, rolls = Math.random) {
   for (const it of pieces ?? []) rollTechniqueLine(it, rolls);
 }
-/** The card's line under a technique line: what a press does, with its numbers (combat/techniqueRoster.js
+/** The card's line under a technique line: what a press does, with its numbers (combat/technique/techniqueRoster.js
  *  techniqueBrief). '' for any other line. */
 export const techniqueDetail = (a) => (isTechniqueAffix(a) && validAffix(a) ? techniqueBrief(a.param, a.value) : '');
 

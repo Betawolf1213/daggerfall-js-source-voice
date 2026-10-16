@@ -104,7 +104,7 @@
   },
   {
     "name": "MAC-I-the-switch-is-ignored",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      const fpTint = fpLightingOn() ? (renderer?.flatLightAt?.() ?? null) : null;",
     "new": "      const fpTint = renderer?.flatLightAt?.() ?? null;",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "MAC-I-the-weapon-sprite-drops-the-tint",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (art && spriteShown()) drawFpsWeapon(renderer, c, art, playerWeapon.machine.state, playerWeapon.machine.frame, { tint: fpTint, offsetHeight:",
     "new": "      if (art && spriteShown()) drawFpsWeapon(renderer, c, art, playerWeapon.machine.state, playerWeapon.machine.frame, { offsetHeight:",
     "tests": [

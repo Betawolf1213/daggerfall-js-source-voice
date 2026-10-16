@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import {
   CROWNS, CROWN_LORE, NAME_WORDS, SHIP_NAME_SALT, PIRATE_NAMES, MERCHANT_NAMES, classById, shipNames, shipNameOf,
 } from '../src/systems/naval/navalShips.js';
-import { mulberry32 } from '../src/combat/bloodArt.js';
+import { mulberry32 } from '../src/combat/blood/bloodArt.js';
 import { srand, getSeed } from '../src/formats/dfRandom.js';
 
 const W = NAME_WORDS;

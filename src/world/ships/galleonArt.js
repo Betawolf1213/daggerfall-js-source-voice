@@ -3,7 +3,7 @@
 //
 // Mac's export names two pictures (Wood.png and floorboards.png) and carries neither, and a ship wears more than two
 // woods. So she is painted here, from noise, as the boats' preload asks for her archive (AUDIT GN2-PF3: it was her first
-// mesh's ask, at her first draw - scenes/comeSailAway/comeSailAwayPool.js preload) - combat/bloodArt.js's law and world/gate/gateArt.js's:
+// mesh's ask, at her first draw - scenes/comeSailAway/comeSailAwayPool.js preload) - combat/blood/bloodArt.js's law and world/gate/gateArt.js's:
 // pixels and numbers, no renderer and no GL in this file, an atlas of the port's own under a pseudo-archive far above
 // any classic one (GALLEON_ARCHIVE). Deterministic, on fixed seeds, so every client's galleon is the same ship.
 // AUDIT GN-R12: HER TEXELS, AS SHE WEARS THEM (each picture's median over the area of every mesh she draws that wears it,
@@ -37,7 +37,7 @@
 // Each picture is `{ width, height, data }`, RGBA top-down (a PNG's order): textureReplacement.js's vendored-art door
 // (`addVendorTextures`, a `build` that returns one) takes it into the port's color32 order. Not a DFU member. Ledger A
 // (GALLEON).
-import { mulberry32 } from '../../combat/bloodArt.js';
+import { mulberry32 } from '../../combat/blood/bloodArt.js';
 import { dfLook, lookSeed } from '../dfLook.js';
 
 /** The galleon's pseudo-archive: past the gate's 38101, the court's 38111 and the spoils' 38121. */

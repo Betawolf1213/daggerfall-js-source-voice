@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { headPortrait, headFrame, headPortraitModel, headBounds, NIF_TO_PASS, tpSkeletonPath } from '../src/combat/fpArm.js';
-import { armBuildOptsOf, armIdentityOf } from '../src/combat/weaponRig.js';
+import { armBuildOptsOf, armIdentityOf } from '../src/combat/weapon/weaponRig.js';
 import { facePools, bodyParts, MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';
 import { makeVendoredArchive } from '../src/systems/urlArchive.js';
@@ -455,7 +455,7 @@ test('PORTRAIT3D: the tab dial\'s face - the player\'s Morrowind head first, tri
 test('PORTRAIT3D: the rig follows the curse - setVampire rebuilds the body with the vampire\'s head and back, one build a change and a boolean compare otherwise; asked mid-build it waits for the build; the standing arm counts as the entity\'s only with the curse matching, and the frame asks', async () => {
   const { createFpArm } = await import('../src/combat/fpArm.js');
   const { retailBodyDeps, countingRenderer: bodyRenderer } = await import('./fixtures/mw/bodyRig.mjs');
-  const { armsStandFor } = await import('../src/combat/weaponRig.js');
+  const { armsStandFor } = await import('../src/combat/weapon/weaponRig.js');
   const base = retailBodyDeps({});
   let opened = 0;
   const deps = { ...base, loadMorrowindArchives: async () => { opened++; return base.loadMorrowindArchives(); } };
@@ -481,5 +481,5 @@ test('PORTRAIT3D: the rig follows the curse - setVampire rebuilds the body with 
   const stood = { race: 'breton', female: false, faceIndex: 0, werewolf: false };
   assert.equal(armsStandFor(ent, { ready: () => true, builtFor: () => ({ ...stood, vampire: true }) }), true);
   assert.equal(armsStandFor(ent, { ready: () => true, builtFor: () => ({ ...stood, vampire: false }) }), false, 'the living face is not the vampire\'s');
-  assert.match(src('src/combat/weaponRig.js'), /fpArm\.setWerewolf\(wolf, \{ skin: wolfSkin \}\);\n\s*fpArm\.setVampire\?\.\(!!liveVampirism\(entity\)\);/, 'the frame asks, beside the wolf');
+  assert.match(src('src/combat/weapon/weaponRig.js'), /fpArm\.setWerewolf\(wolf, \{ skin: wolfSkin \}\);\n\s*fpArm\.setVampire\?\.\(!!liveVampirism\(entity\)\);/, 'the frame asks, beside the wolf');
 });

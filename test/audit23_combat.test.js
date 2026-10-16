@@ -90,7 +90,7 @@ test('AUDIT 23 combat-14: foes resolve before the environment; env is the no-ent
 
 test('AUDIT 23 C9/combat-2: the hosts own the swing sounds - whiff whoosh at hit frame, ArrowShoot at bow frame 4', () => {
   assert.equal(SOUND.ArrowShoot, 3, 'SoundClips.ArrowShoot');
-  const rig = src('src/combat/weaponRig.js');
+  const rig = src('src/combat/weapon/weaponRig.js');
   assert.equal(/startsWith\('Strike'\)\) audio\.playOneShot\(swingSoundFor/.test(rig), false,
     'the rig strike-entry whoosh is gone');
   const dc = src('src/scenes/dungeonContext.js');

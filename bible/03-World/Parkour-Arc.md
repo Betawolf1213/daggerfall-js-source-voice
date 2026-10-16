@@ -686,7 +686,7 @@ Mac: *"I reallty want go to go all in with the detai. Liike proer feel to climbi
   attack voice (`hostCombat.js playerClimbStrain` - the grunt's gates: CombatVoices, a transformed lycanthrope's
   silence, a vampire's override), never two within three seconds. Off with the port's own sounds (ES1, the enhanced
   skin's switch, whose row now says so).
-- **The hands on the wall** (`combat/weaponRig.js`). WeaponManager's climbing return (:236-240 - no swing, no weapon)
+- **The hands on the wall** (`combat/weapon/weaponRig.js`). WeaponManager's climbing return (:236-240 - no swing, no weapon)
   for the enhanced hold and moves as for the classic climb: the swing refused on both doors, the viewmodel eased down
   out of the screen and back after (`climbLowerStep`: down on 0.07 s, back on 0.14 s) - the classic sprite through
   OnGUI's own offset, the Morrowind arms through their screen transform, the gun and the widget's clone gone halfway
@@ -939,7 +939,7 @@ are climbing, or shifting left to right climbing/on a ledge"*.
 
 CLIMB4 lowered the classic sprite off the screen for the climb and left it empty; CLIMB6 posed the Morrowind arms. This is
 the sprite lane's half, in `combat/climbHands.js` (the law `ClimbHands`, pure; the draw `createClimbHands`), stepped and drawn
-by `combat/weaponRig.js`.
+by `combat/weapon/weaponRig.js`.
 
 - **The art**: Mac's two paintings, `public/art/climb-grip.png` (105x152) and `public/art/climb-reach.png` (183x114), on
   `test/doctrine.test.js`'s allow-list as ours. The fist's thumb is on the painting's right with the back of the hand to the

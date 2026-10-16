@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fpsStats, mountFpsCounter } from '../src/ui/fpsCounter.js';
-import { autoBuildArms, armsStandFor, armIdentityOf } from '../src/combat/weaponRig.js';
+import { autoBuildArms, armsStandFor, armIdentityOf } from '../src/combat/weapon/weaponRig.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { morrowindCard, morrowindArmsLine, morrowindTroubleLines, MW_CARD_LINE } from '../src/ui/enhanced/enhancedMenu.js';
 
@@ -110,7 +110,7 @@ test('MWA3 autoBuildArms: an arm standing for ANOTHER identity is no longer a re
 test('MWA1 pins: the hosts build at every door a made character arrives through - MWA4: with the files attached, no switch between (mutant: a door dropped, or the switch back)', () => {
   assert.equal(Object.hasOwn(PREF_DEFAULTS, 'mwArms'), false, 'MWA4: the switch is retired - the attached files are it');
   assert.equal(PREF_DEFAULTS.showFps, false, 'a diagnostic is off by default');
-  const rig = read('src/combat/weaponRig.js');
+  const rig = read('src/combat/weapon/weaponRig.js');
   assert.match(rig, /export async function autoBuildArms\(entity, \{ dataCount = morrowindDataCount, measure = registerMorrowindData, measured = morrowindDataFingerprint, standing = armsStandFor, intent = null \} = \{\}\)/);
   assert.match(rig, /if \(measured\(\) == null\) await measure\(\)\.catch\(\(\) => 0\);\n\s+const res = await buildArmsFor\(entity\);/, 'AUDIT 65 XL-6: the store is measured before the face verdict, not parsed a dozen times');
   assert.match(rig, /if \(!entity\?\.chargenDone \|\| !\(dataCount\(\) > 0\) \|\| standing\(entity\)\) return null;/, 'the three gates, the last so a second door does not rebuild an arm that already stands FOR THIS ENTITY (MWA3: not merely a built one)');
@@ -130,7 +130,7 @@ test('MWA4 (before the merge: "remove the on and off button (defunct) and only k
   assert.doesNotMatch(menu, /'Use Morrowind assets'|toggleMorrowind|prefRow\('mwArms'/, 'the row and its handler');
   assert.doesNotMatch(menu, /'Unload arms'|'Build first-person arms'/, 'MWA2\'s two retired buttons stay retired');
   // every consumer of the pack reads the files alone
-  assert.doesNotMatch(read('src/combat/weaponRig.js'), /getPref\('mwArms'\)/, 'the boot build');
+  assert.doesNotMatch(read('src/combat/weapon/weaponRig.js'), /getPref\('mwArms'\)/, 'the boot build');
   assert.match(read('src/scenes/world.js'), /enabled: \(\) => enhanced && morrowindDataCount\(\) > 0,/, 'the peer bodies');
   assert.doesNotMatch(read('src/systems/online/onlineLane.js'), /\bmwArms: true/, 'the lane forces no switch that is not there');
   assert.match(read('src/player/mwView.js'), /if \(fpArm\.canThirdPerson\(\)\) return false;/, 'and the view seam asks the arm, which unload() empties - so Remove data hands third person to the sprite');
@@ -194,6 +194,6 @@ test('MWA4 (before the merge: "reorganize the marrowind attachment selector, rem
   // the two doors, by source (a picker and a confirm box are the browser's): Attach builds for a character in play
   // and leaves the rest to the doors; Remove unloads, then clears
   const menu = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /const n = await ds\.pickMorrowindFiles\(\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(n > 0 && playerEntity\?\.chargenDone\) \{\n\s*const \{ buildArmsFor \} = await import\('\.\.\/combat\/weaponRig\.js'\);\n\s*await buildArmsFor\(playerEntity\);/);
+  assert.match(menu, /const n = await ds\.pickMorrowindFiles\(\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(n > 0 && playerEntity\?\.chargenDone\) \{\n\s*const \{ buildArmsFor \} = await import\('\.\.\/combat\/weapon\/weaponRig\.js'\);\n\s*await buildArmsFor\(playerEntity\);/);
   assert.match(menu, /async \(\) => \{\n\s*fpArm\.unload\(\);\n\s*const ds = await import\('\.\.\/scenes\/dataSource\.js'\);\n\s*await ds\.clearStoredMorrowind\(\);/);
 });

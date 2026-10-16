@@ -1,7 +1,7 @@
 [
   {
     "name": "MAC-BUG-W5-1-the-spray-goes-back-to-the-bucket-ray",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "      const h = col.surfaceHit([fromX, pos[1], fromZ], dir, reach);",
     "new": "      const h = col.raycastHit([fromX, pos[1], fromZ], dir, reach);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MAC-BUG-W5-2-the-fallers-go-back-to-it",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "      const h = col?.surfaceHit ? col.surfaceHit(step.from, step.dir, step.dist) : null;",
     "new": "      const h = col?.raycastHit ? col.raycastHit(step.from, step.dir, step.dist) : null;",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "MAC-BUG-W5-13-the-pools-gate-still-asks-for-the-door-it-no-longer-knocks-on",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "    if (!col?.surfaceHit) return null;",
     "new": "    if (!col?.raycastHit) return null;",
     "tests": [

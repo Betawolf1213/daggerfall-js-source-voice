@@ -27,8 +27,8 @@ import { getInt } from '../systems/settings/settings.js';   // AUDIT 28 W13: Con
 import { getPref } from '../systems/uiPrefs.js';   // MAC-I: the first-person lighting switch
 import { isEnchanted } from '../systems/inventory.js';   // AUDIT 17e C2
 import { WEAPONS, WEAPON_MATERIALS, weaponDyeColor } from '../characters/weapons.js';
-import { atlasFileName } from './diverseWeapons.js';   // DW1: FPSWeapon.cs:637-644 - the per-template name under Diverse Weapons' flag
-import { customWeaponImage } from './diverseWeaponsAssets.js';   // DW1: TryImportCifRci's answer, off the player's own bundles
+import { atlasFileName } from './diverseWeapons/diverseWeapons.js';   // DW1: FPSWeapon.cs:637-644 - the per-template name under Diverse Weapons' flag
+import { customWeaponImage } from './diverseWeapons/diverseWeaponsAssets.js';   // DW1: TryImportCifRci's answer, off the player's own bundles
 import { MATERIAL_NAMES } from '../systems/item/itemInfo.js';   // MetalTypes' names, for GetNameCifRci's suffix
 import { customItemClass } from '../systems/roleplayRealismItems/rriItems.js';   // RRI1: GetWeaponType is a virtual a custom class answers
 import { THUNDERLOCK_TEMPLATE } from '../characters/thunderlockIds.js';   // the port's own weapon (a leaf - see the file)
@@ -67,11 +67,11 @@ export const WEAPON_FILE = Object.freeze({
   [WEAPON_TYPES.Werecreature]: 'WEAPON11.CIF',
 });
 
-// WeaponBasics' Alignment - a leaf now (combat/weaponAlign.js), so a
+// WeaponBasics' Alignment - a leaf now (combat/weapon/weaponAlign.js), so a
 // reader that wants only the enum does not take this module's world
 // with it. Re-exported here: this is still the enum's front door.
-export { ALIGN } from './weaponAlign.js';
-import { ALIGN } from './weaponAlign.js';
+export { ALIGN } from './weapon/weaponAlign.js';
+import { ALIGN } from './weapon/weaponAlign.js';
 
 // The classic 320x200 design surface every weapon image overlays.
 // AUDIT 24 (wave 24): the classic 320x200 panel has one home in
@@ -365,7 +365,7 @@ export function drawFpsWeapon(renderer, canvas, art, state, frame, {
   // ROAD-D D10: weaponOffsetHeight (FPSWeapon.cs:146-155). Read
   // through the ONE home for the large HUD's laws rather than
   // recomputed - and DEFAULTED here, so the single caller
-  // (combat/weaponRig.js) does not have to know the bar exists.
+  // (combat/weapon/weaponRig.js) does not have to know the bar exists.
   offsetHeight = weaponOffsetHeight(),
   // MAC-I: FPSWeapon.Tint (FPSWeapon.cs:108), which DFU passes to its
   // own draw (:182) and never writes - the port writes it from the

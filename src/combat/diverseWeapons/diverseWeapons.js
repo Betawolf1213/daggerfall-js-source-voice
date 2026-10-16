@@ -29,17 +29,17 @@
 //
 // The port draws the first-person weapon down two lanes - its own
 // FPSWeapon (combat/fpsWeapon.js loadFpsWeaponArt) and the Weapon
-// Widget clone that is the default renderer (combat/weaponWidget.js
+// Widget clone that is the default renderer (combat/weapon/weaponWidget.js
 // customTexture) - and both take this law through the same two doors
 // below, because in DFU both read the same static and the same
 // TextureReplacement folder.
 // ═══════════════════════════════════════════════════════════════════
 
-import { modSetting, flattenModPreset } from '../systems/modSettings.js';
-import { WEAPONS } from '../characters/weapons.js';
-import { isEnchanted } from '../systems/inventory.js';
-import { hasArtifactEffect, hasArtifactSubtype, ARTIFACTS } from '../systems/artifactEffects.js';
-import { ENCHANTMENT_TYPES } from '../systems/enchantments.js';
+import { modSetting, flattenModPreset } from '../../systems/modSettings.js';
+import { WEAPONS } from '../../characters/weapons.js';
+import { isEnchanted } from '../../systems/inventory.js';
+import { hasArtifactEffect, hasArtifactSubtype, ARTIFACTS } from '../../systems/artifactEffects.js';
+import { ENCHANTMENT_TYPES } from '../../systems/enchantments.js';
 
 /** FPSWeapon.moddedWeaponHUDAnimsEnabled (FPSWeapon.cs:97) - a static
  *  false until a mod sets it; Diverse Weapons' Start sets it true. The

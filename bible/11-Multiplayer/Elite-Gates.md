@@ -1046,7 +1046,7 @@ each band's slice adds its own.
   carries it: the Drop's walls, the headroom and the crossing's bound are all taken with it.
 - **Technique flights are refused on traversal ground.** A weapon technique's leap or dash (the motor's
   `techniqueLaunch`, called by `src/combat/techniques.js`) flies its own arc at up to `TECHNIQUE_MAX_SPEED` (12 m/s,
-  `src/combat/techniqueRoster.js`) toward a target. On a fight
+  `src/combat/technique/techniqueRoster.js`) toward a target. On a fight
   floor it is a technique; on a span it would be a bridge. The Spire refuses its launch while the member stands on
   traversal ground.
 - The staff command `/fly` is exempt.

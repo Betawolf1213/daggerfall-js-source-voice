@@ -663,7 +663,7 @@ swung. Now:
 - **the session** (`src/net/online.js`): a draw or a swing is a change
   worth sending at once (`poseChanged`), and the eased pose carries the
   three whole (`lerpPose`).
-- **the rig** (`src/combat/weaponRig.js`): `swing` {n, strike} counts
+- **the rig** (`src/combat/weapon/weaponRig.js`): `swing` {n, strike} counts
   every strike the machine starts, BEFORE the Morrowind arm's own gate
   - a classic-skin player swings too, and the peers in Morrowind bodies
   must see it. The host (`src/scenes/world.js`) reads it and the

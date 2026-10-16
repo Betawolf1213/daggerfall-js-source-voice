@@ -4895,7 +4895,7 @@ mutant is the reported bug itself, restored one character at a time
 
 **Two things worth recording about the report.** The user said "restore
 whatever you did to the swing combat", and I did not do anything to it:
-`git log -- src/combat/fpsWeapon.js src/combat/weaponRig.js
+`git log -- src/combat/fpsWeapon.js src/combat/weapon/weaponRig.js
 src/combat/playerWeapon.js` last touches wave 24, and waves 30-44
 changed no weapon file. What changed is that **wave 37 fixed the boot
 crash**, so the player could reach an interior at all for the first

@@ -5833,7 +5833,7 @@ transport arc above closed TR1-TR5, so two arcs claimed the same three
 ids and a grep for "TR2" answered with the riding sprite AND the
 gender bug. The room is **TSR** from now on (renumbered in
 `test/testroom.test.js` and Testing.md's row); the transport arc keeps
-TR. Source comments in `ui/enhanced/enhancedMenu.js` and `combat/weaponRig.js`
+TR. Source comments in `ui/enhanced/enhancedMenu.js` and `combat/weapon/weaponRig.js`
 still carry the old spelling, which this paragraph exists to catch.
 
 **TSR1 - ONE HOME.** `systems/testRoom.js` holds all three parts: the

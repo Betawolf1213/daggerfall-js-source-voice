@@ -308,7 +308,7 @@
   },
   {
     "name": "DISC19-E-swing-takes-the-nearest-box",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (first.key != null && first.key !== o.key && actions.objects.has(first.key)) continue;",
     "new": "",
     "tests": [

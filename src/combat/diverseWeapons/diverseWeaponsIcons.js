@@ -11,12 +11,12 @@
 // is systems/textureReplacement.js, keyed the same way since DW3, and
 // the icon doors (the GL lists, the DOM screens, the paper doll) ask
 // it by the item's dye. So this is a registration and nothing else:
-// which names, from the shipped index (combat/diverseWeaponsIndex.js),
+// which names, from the shipped index (combat/diverseWeapons/diverseWeaponsIndex.js),
 // each loaded from public/art/diverse-weapons/ when an item wearing it
 // is first drawn (`lazy`), and answering only while the mod is on
 // (`gate`).
-import { addVendorTextures, vendorTextureCount } from '../systems/textureReplacement.js';
-import { DYE_COLORS, dyeToken } from '../characters/dyes.js';
+import { addVendorTextures, vendorTextureCount } from '../../systems/textureReplacement.js';
+import { DYE_COLORS, dyeToken } from '../../characters/dyes.js';
 import { moddedWeaponHUDAnimsEnabled } from './diverseWeapons.js';
 import { diverseWeaponsSpriteUrl } from './diverseWeaponsAssets.js';
 import { DIVERSE_WEAPONS_STEMS, DIVERSE_WEAPONS_METALS, DIVERSE_WEAPONS_BARE } from './diverseWeaponsIndex.js';

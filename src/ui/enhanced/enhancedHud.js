@@ -97,7 +97,7 @@ import { inventoryItemImage } from '../../systems/item/itemTemplates.js';
 import { quickslotTag, quickslotOffTag, quickslotSpellTag, tagKey, CELL_ACTIONS } from '../quickslotTags.js';   // QS6: the caption's spell chip names its own action
 import { glyphSvg, padFamily } from '../padGlyphs.js';
 import { hdGlyphSvg } from '../padGlyphsHD.js';   // PADPLUS1: Plus draws the pad's buttons as vectors
-import { TECH_CHIP_COLOUR } from '../../combat/techniqueRoster.js';   // TECH1: a technique's chip wears its marks' blue (the roster is a leaf)
+import { TECH_CHIP_COLOUR } from '../../combat/technique/techniqueRoster.js';   // TECH1: a technique's chip wears its marks' blue (the roster is a leaf)
 import { rarityAttr, RARITIES } from '../../systems/loot/lootRarity.js';   // RARITY-UI: a quickslot cell's frame wears its item's tier; LOOT5: a power chip the Legendary's colour
 import { validSigil } from '../../systems/sigil/sigil.js';   // SIGIL-UI: and a sigil weapon's rune
 import { markSetFrame, setShades } from '../setCard.js';   // SET5: a set piece's rune in its set's colour; a set power's chip in it

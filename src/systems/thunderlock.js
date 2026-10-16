@@ -35,7 +35,7 @@ import { addVendorTextures, vendorTextureCount } from './textureReplacement.js';
 import { registerUniqueFind, registerLegendary, FOE_FAMILIES } from './loot/lootRarity.js';
 import { SKILLS } from './skills.js';
 import { APP_ROOT } from './appRoot.js';   // AUDIT-THUNDERLOCK F7
-import { GUN_FEEL } from '../combat/gunFeel.js';   // FIELD-GUN13: the flash's reach, from the one home the feel lives in (a leaf - no imports of its own)
+import { GUN_FEEL } from '../combat/gun/gunFeel.js';   // FIELD-GUN13: the flash's reach, from the one home the feel lives in (a leaf - no imports of its own)
 // The indices live in a LEAF (characters/thunderlockIds.js) because
 // characters/weapons.js needs them too and importing this file from
 // there would close a cycle through systems/item/itemTemplates.js. Said out
@@ -403,7 +403,7 @@ export function installThunderlockSounds(audio, { fetchBytes = null } = {}) {
 //
 // TWO ASKS IN ONE SENTENCE, and they are opposite ends of the same
 // fact. The flash is the brightest thing in the room for two frames,
-// so (a) it cannot be DARKENED by the room - combat/weaponRig.js's
+// so (a) it cannot be DARKENED by the room - combat/weapon/weaponRig.js's
 // `drawThunderlock` lifts the sprite's tint to white on the curve -
 // and (b) it must LIGHT the room, which is this.
 //

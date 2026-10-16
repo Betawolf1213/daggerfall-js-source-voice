@@ -1,7 +1,7 @@
 [
   {
     "name": "BOWCLOCK-a-shot-starts-the-arm-cannot-draw",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "const strike = !paralyzed && c && canAttack && !armLoosing && !techniqueFlying()\n",
     "new": "const strike = !paralyzed && c && canAttack && !techniqueFlying()\n",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "BOWCLOCK-the-drawn-release-waits-on-the-arm",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "!!m.ranged && m.state === 'Idle' && (",
     "new": "!!m.ranged && (",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "BOWCLOCK-the-touch-tap-starts-a-shot-the-arm-cannot-draw",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (armCannotDraw()) return;   // BOW-CLOCK: nor a shot the Morrowind arm cannot draw yet\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "BOWCLOCK-the-ceiling-lets-go-mid-draw",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "(_heldHitAge >= HELD_HIT_MAX_S && !fpArm.shotBusy())",
     "new": "_heldHitAge >= HELD_HIT_MAX_S",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BOWCLOCK-a-busy-arm-holds-the-arrow-for-ever",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": " || _heldHitAge >= HELD_HIT_CAP_S) {",
     "new": ") {",
     "tests": [

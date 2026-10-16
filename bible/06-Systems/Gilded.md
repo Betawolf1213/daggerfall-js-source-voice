@@ -87,7 +87,7 @@ the switch off. Its brief fits the card's row (BRIEF_MAX 32): "Every 3rd hit x2;
 ## 3. The numbers - powerful, not overpowered
 
 Measured with the port's own laws (`characters/weapons.js` spans, `combat/formulas.js` order and WEAPON_MATERIAL_MODIFIER,
-`combat/gunFeel.js` cadence), at each span's mean, Strength 50, Speed 50, before the hit roll, a critical and armour:
+`combat/gun/gunFeel.js` cadence), at each span's mean, Strength 50, Speed 50, before the hit roll, a critical and armour:
 
 | Weapon | A landed blow | A cycle | A second |
 |---|---|---|---|
@@ -128,7 +128,7 @@ its mutant (the Hourlock before the Brass) hold the order.
   frame's foot in its left 45% (where the fist enters) is the hand. Found once on the idle frame - the sheet's cells
   share one union box, so the fist stands in the same pixels throughout - and spared in every frame; only the idle
   frame's own silhouette is gilded, so the flash and the smoke stay theirs. `gildFrame` pulls each kept pixel toward
-  GILD_RAMP by its lightness, alpha never written. The rig keys the art `:gilded` (`combat/weaponRig.js`), so a gold
+  GILD_RAMP by its lightness, alpha never written. The rig keys the art `:gilded` (`combat/weapon/weaponRig.js`), so a gold
   gun and a plain one never share frames.
 - **In the Morrowind hand** (`characters/ownModels/ownWeaponModels.js` OWN_MW_GILDED): its own twin, `thunderlock_gilded.nif`
   over `thunderlock_gilded.dds` - the same capped mesh, the same bone, animation and speed, its texture baked off the

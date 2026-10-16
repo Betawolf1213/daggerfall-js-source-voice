@@ -70,7 +70,7 @@
   },
   {
     "name": "QS2-the-rig-never-re-reads-the-hand-after-a-swap",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    refreshWorn() { syncWorn(); },",
     "new": "    refreshWorn() { },",
     "tests": [

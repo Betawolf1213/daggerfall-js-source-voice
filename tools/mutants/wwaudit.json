@@ -1,7 +1,7 @@
 [
   {
     "name": "WWAUDIT-D1-form-under-the-ready-gate",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (entity && !paralyzed) {\n        const wolf = isMwWerewolf(entity);",
     "new": "      if (entity && !paralyzed && fpArm.ready()) {\n        const wolf = isMwWerewolf(entity);",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "WWAUDIT-D5-skin-read-every-frame",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "        if (wolf !== wolfForm) { wolfForm = wolf; wolfSkin = wolf ? ownWerewolfSkin() : null; }",
     "new": "        wolfForm = wolf; wolfSkin = wolf ? ownWerewolfSkin() : null;",
     "tests": [

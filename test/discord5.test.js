@@ -81,7 +81,7 @@ test('BLACK-ARMS by source: the rig hands the triple through as it is (the fix i
   const rr = rd('src/render/renderer.js');
   assert.match(rr, /const a = color\[3\] \?\? 1;\s*if \(q\.r !== color\[0\] \|\| q\.g !== color\[1\] \|\| q\.b !== color\[2\] \|\| q\.a !== a\) \{\s*gl\.uniform4f\(this\._screenQuad\.color, color\[0\], color\[1\], color\[2\], a\);\s*q\.r = color\[0\]; q\.g = color\[1\]; q\.b = color\[2\]; q\.a = a;/);
   assert.match(rr, /return \(!tex && \(color\[3\] \?\? 1\) < 1\) \|\| Boolean\(tex && \(opts\.blend \|\| alphaArt\)\);/, 'OVH2: a texture uploaded as alpha art blends too - the solid arm is unchanged');
-  assert.match(rd('src/combat/weaponRig.js'), /const fpTint = fpLightingOn\(\) \? \(renderer\?\.flatLightAt\?\.\(\) \?\? null\) : null;/, 'the triple, unchanged - MAC-I\'s own shape');
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /const fpTint = fpLightingOn\(\) \? \(renderer\?\.flatLightAt\?\.\(\) \?\? null\) : null;/, 'the triple, unchanged - MAC-I\'s own shape');
   assert.match(rr, /for \(let i = 0; i < 3; i\+\+\) out\[i\] = Math\.max\(floor, Math\.min\(1, out\[i\]\)\);\s*return out;/, 'flatLightAt answers THREE');
   const probe = rd('tools/macfpLightProbe.mjs');
   assert.match(probe, /res\.pixelTorch = drawWith\(r\.flatLightAt\(\[0, 0, 0\]\)\);/, 'the probe no longer appends the 1 the runtime never passes');
@@ -95,7 +95,7 @@ test('3ARMS by source: both mods compare the IL\'s 2 to the port\'s Both - DFU d
   assert.match(ht, /if \(left\) \{\s*w\.handLeft = false;\s*if \(getItemHands\(left\) === ITEM_HANDS\.Both \|\| isBow\(left\)\) w\.handRight = false;\s*\} else if \(!sheathedNow && !usingRightNow\) w\.handLeft = false;/, 'the left slot: a Both item or a bow takes the right; an empty left hand you punch with is in use');
   assert.match(ht, /if \(right\) \{\s*w\.handRight = false;\s*if \(getItemHands\(right\) === ITEM_HANDS\.Both\) \{[^}]*if \(w\.s\.twoHandedRelaxed\) \{ if \(isBow\(right\) \|\| w\.attacking\) w\.handLeft = false; \}\s*else w\.handLeft = false;/, 'the right slot: a two-hander takes the off hand - always, or for a bow and a swing when relaxed');
   assert.doesNotMatch(ht, /ITEM_HANDS\.LeftOnly/, 'the misread is gone from the hand law');
-  assert.match(rd('src/combat/weaponWidget.js'), /if \(getItemHands\(w\.specificWeapon\) !== ITEM_HANDS\.Both\) return false;/, 'and from the widget\'s mirror override');
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /if \(getItemHands\(w\.specificWeapon\) !== ITEM_HANDS\.Both\) return false;/, 'and from the widget\'s mirror override');
   assert.notEqual(ITEM_HANDS.Both, 2, 'the port\'s own numbering is not DFU\'s - which is how 2 was misread');
   assert.equal(MOD_SETTINGS['handheld-torches'].keys['Handling.RelaxedTwoHandedWeapons'].default, false, 'the mod ships true; the port ships false');
 });

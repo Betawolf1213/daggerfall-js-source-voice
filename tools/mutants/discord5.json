@@ -79,7 +79,7 @@
   },
   {
     "name": "D5-3ARMS-widget-mirror-back-to-LeftOnly",
-    "file": "src/combat/weaponWidget.js",
+    "file": "src/combat/weapon/weaponWidget.js",
     "old": "    if (getItemHands(w.specificWeapon) !== ITEM_HANDS.Both) return false;",
     "new": "    if (getItemHands(w.specificWeapon) !== ITEM_HANDS.LeftOnly) return false;",
     "tests": [

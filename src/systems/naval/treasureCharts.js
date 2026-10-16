@@ -11,7 +11,7 @@
 // The item is the port's own (DECLARED - itemLaw.js imports this module): Daggerfall's parchment picture, its `message`
 // the chart's seed.
 
-import { mulberry32 } from '../../combat/bloodArt.js';
+import { mulberry32 } from '../../combat/blood/bloodArt.js';
 import { registerCustomTemplates, setItemFields, mintCondition } from '../item/itemTemplates.js';
 import { siteFor, compassWords, leaguesWords } from './harbourBoard.js';
 

@@ -46,7 +46,7 @@ import { figureLook, personActor } from '../../characters/peopleBodies.js';   //
 import { decorMountDye, decorMountDyeTarget, decorMountItem } from '../../systems/decor/decorItems.js';
 import { toColor32 } from '../../formats/color32Order.js';   // MW-MOUNT: a rendered picture's rows, as the upload reads them
 import { preloadTextureRecord } from '../../systems/textureReplacement.js';   // MOUNT-LAZY: the record's own replacement, decoded before its upload
-import { writeDecalQuad, clearDecalQuad, DECAL_FLOATS } from '../../combat/bloodDecals.js';
+import { writeDecalQuad, clearDecalQuad, DECAL_FLOATS } from '../../combat/blood/bloodDecals.js';
 import { decorIsDoor } from '../../systems/decor/decorDoorways.js';   // HOME-DOORS: a door piece hangs as one of the room's own doors
 import { drawnFlat } from '../../characters/nudeFlats.js';   // NUDE-DECOR: a nude figure stands as its clothed stand-in while Show Nudity is off
 import { StaticBatchBuilder, keyResolver } from '../../render/staticBatch.js';   // YARD-MERGE: a yard's models as one mesh, as a town's statics are

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { modSetting, setModSetting, _resetModSettings, SWITCH_RESETS, KEY_MIGRATIONS, MOD_SETTINGS } from '../src/systems/modSettings.js';
-import { diverseWeaponsPresetOn } from '../src/combat/diverseWeapons.js';
+import { diverseWeaponsPresetOn } from '../src/combat/diverseWeapons/diverseWeapons.js';
 import {
   LAB_GRASS_HEAD, LAB_GRASS_FS, GAME_GRASS_FS, GAME_GRASS_VS, GRASSPX_FS_EDITS, GRASSFOG_FS_EDITS, GRASSFOG_VS_EDITS,
   FOG_FACTOR_GLSL, applyGrassEdits, GRASSLIT_FS_EDITS, GRASS_TONES,

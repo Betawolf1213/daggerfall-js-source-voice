@@ -27,8 +27,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { modSettingsOf, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { readWidgetSettings, WEAPON_WIDGET_VENDOR } from '../src/combat/weaponWidget.js';
-import { createWeaponWidget } from '../src/combat/weaponWidget.js';
+import { readWidgetSettings, WEAPON_WIDGET_VENDOR } from '../src/combat/weapon/weaponWidget.js';
+import { createWeaponWidget } from '../src/combat/weapon/weaponWidget.js';
 import { WEAPON_TYPES, GENERAL_ANIMS } from '../src/combat/fpsWeapon.js';
 import { createWeaponMachine, machineStep } from '../src/characters/weaponStates.js';
 import { WEAPON_MATERIALS, WEAPONS } from '../src/characters/weapons.js';

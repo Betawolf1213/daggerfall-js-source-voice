@@ -179,7 +179,7 @@ test('MW-CAST1: a cast whose group carries no release key still lets the spell g
 // ── the rig and the hosts ────────────────────────────────────────────────────────────────────────────────────────
 
 test('MW-CAST1: the rig holds the release for the arm on screen, draws the casting arm, and the world starts a cast on the LIVE rig', async () => {
-  const { createWeaponRig } = await import('../src/combat/weaponRig.js');
+  const { createWeaponRig } = await import('../src/combat/weapon/weaponRig.js');
   const { fpArm } = await import('../src/combat/fpArm.js');
   const { fpsSpellCasting } = await import('../src/combat/fpsSpellCasting.js');
   const saved = { castSpell: fpArm.castSpell, active: fpArm.active, thirdActive: fpArm.thirdActive, takeCastRelease: fpArm.takeCastRelease, castInFlight: fpArm.castInFlight };
@@ -211,7 +211,7 @@ test('MW-CAST1: the rig holds the release for the arm on screen, draws the casti
     Object.assign(fpArm, saved);
     for (let i = 0; i < 200; i++) fpsSpellCasting.tick(0.05);
   }
-  const rig = src('src/combat/weaponRig.js');
+  const rig = src('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const armCasts = fpArm\.active\(\) && \(spellArmed\(\) \|\| fpsSpellCasting\.isPlayingAnim \|\| fpArm\.castInFlight\(\)\);\n(?:\s*\/\/[^\n]*\n)*\s*const armsClimb = fpArm\.active\(\) && !!fpArm\.climbPosed\?\.\(\);\n\s+if \(paralyzed \|\| \(!shown\(\) && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb\)\) return;/,   // PIN MOVED (CLIMB-HANDS II): the climbing arms' leg beside the casting arm's
     'the casting arm is not returned past');
   const world = src('src/scenes/world.js');

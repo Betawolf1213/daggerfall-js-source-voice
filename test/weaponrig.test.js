@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createWeaponRig, envAttack } from '../src/combat/weaponRig.js';
+import { createWeaponRig, envAttack } from '../src/combat/weapon/weaponRig.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { equipSoundFor } from '../src/characters/weapons.js';

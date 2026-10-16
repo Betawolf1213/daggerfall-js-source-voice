@@ -443,7 +443,7 @@
   },
   {
     "name": "AUDIT29-D2-the-rig-swings-behind-the-tool",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "&& !fpsSpellCasting.isPlayingAnim && !climbing && !actTool();",
     "new": "&& !fpsSpellCasting.isPlayingAnim && !climbing;",
     "tests": [

@@ -16,7 +16,7 @@ import { navalHitData } from '../src/systems/naval/navalWire.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { NOTORIETY } from '../src/systems/naval/navalLaw.js';
 import { hash32 } from '../src/world/spawnedDungeons.js';
-import { mulberry32 } from '../src/combat/bloodArt.js';
+import { mulberry32 } from '../src/combat/blood/bloodArt.js';
 import { sea } from './navalSea.mjs';
 
 const world = (o = {}) => ({ now: 0, dt: 1, seaY: 0, wind: [0, 0, 1], isWater: () => true, contacts: [], random: () => 0.5, ...o });

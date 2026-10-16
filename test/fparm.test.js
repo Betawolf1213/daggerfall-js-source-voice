@@ -609,7 +609,7 @@ test('MW-D9f: a built arm reaches the screen - the update gate is not the draw g
 });
 
 test('MW-D9f: the rig gates the step on ready() and the draw on active()', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /if \(!paralyzed && fpArm\.ready\(\)\) \{/,
     'the per-frame step rides ready()');
   assert.match(rig, /fpArm\.update\(dt\);/, 'and update is what it gates');
@@ -1191,7 +1191,7 @@ test('MW-D24: in third person NOTHING first-person draws - the rig\'s one seam i
   // is inactive - and active() is now view-gated, so without its own
   // gate the sprite would paste a floating weapon overlay over the
   // player's back. Morrowind's third person has no viewmodel.
-  const src = rd('src/combat/weaponRig.js');
+  const src = rd('src/combat/weapon/weaponRig.js');
   const drawAt = src.indexOf('if (fpArm.thirdActive()) return;');
   const armAt = src.indexOf('if (fpArm.active()) { fpArm.draw(c); return; }');
   assert.ok(drawAt !== -1, 'the third-person gate exists');
@@ -1443,7 +1443,7 @@ test('MW-D27: the faceIndex THREAD is unbroken, swept at the source', () => {
   const menu = readFileSync('src/ui/enhanced/enhancedMenu.js', 'utf8');
   assert.match(menu, /buildArmsFor\(playerEntity\)/,
     'the card no longer routes the live player through the one home');
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   assert.match(rig, /faceIndex: entity\.faceIndex \| 0/,
     'the live player\u2019s classic face no longer reaches the build');
   assert.match(rig, /return fpArm\.build\(armBuildOptsOf\(entity\)\)/,
@@ -1745,7 +1745,7 @@ test('MW-D29: the thread is unbroken - the menu reads the equip table, the build
   assert.match(arm, /shadowSkinRows\(\n      wanted\.filter/, 'the fp skin does not take the shadows');
   // TR2: the worn read lives in weaponRig's opts home now; the menu
   // reaches it through buildArmsFor (swept in the MW-D27 pin above).
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   assert.match(rig, /armor: dfWornEquipment\(equipTableOf\(entity\), EQUIP_SLOTS, ARMOR_ENUM\)/);
   // and the readout itself: armor slots in, shields from hands, a
   // sword in a hand refused.
@@ -1939,7 +1939,7 @@ test('MW-D32: setWorn is one key compare per frame, and a change rebuilds throug
 });
 
 test('MW-D32: the per-frame read in weaponRig hands the rig its worn list', () => {
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   assert.match(rig, /fpArm\.setWorn\(dfWornEquipment\(equipTableOf\(entity\), EQUIP_SLOTS, ARMOR_ENUM\)\)/,
     'the game no longer dresses the rig from the equip table');
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
@@ -3074,7 +3074,7 @@ test('MW-D39: readySpell and castSpell are the two doors, and neither gates the 
 });
 
 test('MW-D39: the hosts wire it through the rig\u2019s one door, on the reference\u2019s own moments', () => {
-  const rig = readFileSync('src/combat/weaponRig.js', 'utf8');
+  const rig = readFileSync('src/combat/weapon/weaponRig.js', 'utf8');
   // the ready rides the per-frame read the rig already makes
   assert.match(rig, /fpArm\.readySpell\(spellArmed\(\)\);/, 'the arm must follow the rig\u2019s own HasReadySpell read');
   // ROAD-tail: the door now carries the ELEMENT too - the classic

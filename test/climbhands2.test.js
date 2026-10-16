@@ -16,7 +16,7 @@ import { inflateSync } from 'node:zlib';
 import { ClimbHands, climbLens, pinToView, DESIGN_LENS, HANDS, GRIP_ART, REACH_ART } from '../src/combat/climbHands.js';
 import { POSE } from '../src/player/climbPose.js';
 import { SETTINGS_DEFAULTS } from '../src/systems/settings/settingsDefaults.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { fieldOfView } from '../src/ui/viewSettings.js';
 import { weaponOffsetHeight } from '../src/ui/hud/hudLarge.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
@@ -327,7 +327,7 @@ test('CLIMB-HANDS II the Morrowind arms climb sheathed: drawn while their pose i
     resetToDefaults(); _resetModSettings();
   }
   // the gate's sixth exception, beside the five, and the lowering reads the same answer
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const armsClimb = fpArm\.active\(\) && !!fpArm\.climbPosed\?\.\(\);\n\s+if \(paralyzed \|\| \(!shown\(\) && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb\)\) return;/);
   assert.match(rig, /if \(_climbLower > 0 && !armsClimb\) \{/);
   assert.match(rd('src/combat/fpArm.js'), /climbPosed\(\) \{ return climbHands && viewMode === 'first' && !held; \},/, 'the arm says it is posed on the climb: first person, the hands on the stone, no sheet');

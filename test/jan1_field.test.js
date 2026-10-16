@@ -106,7 +106,7 @@ test('JAN1 (fist): THE POSE IS THE PLAYER\'S, NOT THE RIG\'S - the port has four
     assert.doesNotMatch(inv, /\bweaponPose:/, `${f}: the inventory window reads no pose - a door parked there is dead`);
   }
   // the asymmetry that made the picture: the torch is read off the ENTITY, the sheath off the RIG
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.ok(rig.includes('fpArm.setTorch(isLitTorch(entity?.lightSource))'), 'the torch is the entity\'s');
   assert.ok(/playerWeapon\.sheathed/.test(rig), 'the sheath is the rig\'s - a door that carries one and not the other is exactly this bug');
 });

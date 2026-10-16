@@ -5,7 +5,7 @@
 // The runner (combat/techniques.js) cues a moment - `release`, `hit`, `loose`, `shaft`, `close` - with the host's door
 // and the place; this file answers it from its table (TECH_FX). The camera's channel is read by the climb's own view
 // step (player/climbFeel.js createClimbFeelHost - the pitch, roll and eye first person only, the field of view's kick
-// every lens's as the climb's, and the sky's pitch); the hands' by the rig's draw (combat/weaponRig.js drawInner: the
+// every lens's as the climb's, and the sky's pitch); the hands' by the rig's draw (combat/weapon/weaponRig.js drawInner: the
 // classic sprites through the renderer's screen offset, the Morrowind arm through its own screen transform); the
 // shake, the burst and the sound go out through the door at the moment (betterAmbience.weaponKick, the cast engine's
 // impact engine, the audio bus).
@@ -14,9 +14,9 @@
 // the two outputs are filled in place, and the step returns at once when every spring is still. A moment allocates at
 // the moment (its place, its burst's sparks under the impact engine's caps, a sound) - never a frame.
 
-import { getPref } from '../systems/uiPrefs.js';
-import { enhancedSoundsOn } from '../systems/enhancedSounds.js';
-import { SOUND } from '../systems/soundClips.js';
+import { getPref } from '../../systems/uiPrefs.js';
+import { enhancedSoundsOn } from '../../systems/enhancedSounds.js';
+import { SOUND } from '../../systems/soundClips.js';
 
 const DEG = Math.PI / 180;
 

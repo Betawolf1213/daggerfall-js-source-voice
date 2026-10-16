@@ -1,7 +1,7 @@
 [
  {
   "name": "F1-latch-dropped",
-  "file": "src/combat/weaponWidget.js",
+  "file": "src/combat/weapon/weaponWidget.js",
   "old": "      if (!reversed && (recover || w.hasCurrentAttackHit)) {\n        reversed = true;\n        while (w.currentFrame > 0) { w.offsetCurrent = [0, 0]; w.offsetTarget = [0, 0]; w.currentFrame -= 1; updateWeapon(); yield tickTime; }\n        continue;\n      }",
   "new": "      if (recover || w.hasCurrentAttackHit) {\n        while (w.currentFrame > 0) { w.offsetCurrent = [0, 0]; w.offsetTarget = [0, 0]; w.currentFrame -= 1; updateWeapon(); yield tickTime; }\n      }",
   "tests": [

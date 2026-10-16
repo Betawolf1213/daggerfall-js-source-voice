@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 import { customFrames, WEAPON_TYPES, STATE_INDEX, GENERAL_ANIMS } from '../src/combat/fpsWeapon.js';
 import { makeIconDrawer } from '../src/ui/item/itemScroller.js';
-import { createWeaponWidget, readWidgetSettings, WEAPON_WIDGET_VENDOR } from '../src/combat/weaponWidget.js';
+import { createWeaponWidget, readWidgetSettings, WEAPON_WIDGET_VENDOR } from '../src/combat/weapon/weaponWidget.js';
 import { createWeaponMachine, machineStep } from '../src/characters/weaponStates.js';
 import { WEAPON_MATERIALS, WEAPONS } from '../src/characters/weapons.js';
 import { modSettingsOf, _resetModSettings, setModSetting } from '../src/systems/modSettings.js';
@@ -86,7 +86,7 @@ test('AUDIT-DW F1: the list drawer decodes THE RECORD it draws before the upload
   assert.match(rd('src/ui/item/itemScroller.js'), /const ask = icons\?\.preloadRecord \?\? \(\(archive, record, dye\) => preloadTextureRecord\(archive, record, 0, 'Albedo', dye\)\.catch\(\(\) => null\)\);/);
   assert.match(rd('src/ui/textureCanvas.js'), /\? preloadTextureRecord\(archive, record, 0, 'Albedo', dye\)\.catch\(\(\) => null\)/, 'the DOM door');
   assert.match(rd('src/ui/paperDoll.js'), /await preloadTextureRecord\(archive, record, 0, 'Albedo', dye\);[^\n]*\n\s+const swap = decodedTextureTopDown/, 'the doll');
-  assert.match(rd('src/combat/diverseWeaponsIcons.js'), /gate: moddedWeaponHUDAnimsEnabled, lazy: true/, 'the mod\'s icons are lazy');
+  assert.match(rd('src/combat/diverseWeapons/diverseWeaponsIcons.js'), /gate: moddedWeaponHUDAnimsEnabled, lazy: true/, 'the mod\'s icons are lazy');
   // PIN MOVED (AUDIT VE R1): the preload decodes each key from the one entry that answers it now - a lazy one is still skipped
   assert.match(rd('src/systems/textureReplacement.js'), /if \(entry && !entry\.lazy && !decodedFrom\(key, entry\)\) todo\.push\(\[key, entry\]\);/, 'and the archive preload skips them');
 });
@@ -144,12 +144,12 @@ test('AUDIT-DW F3: under DoubleScaleTextures a `w_` hit draws into the doubled b
   w.customCache.set('w_LONGSWORD.CIF_0-0_Steel', { tex: 'legacy', width: 100, height: 80 });
   b.frame();
   assert.deepEqual([b.draws.at(-1).rect.w, b.draws.at(-1).rect.h], [400, 240]);
-  assert.match(rd('src/combat/weaponWidget.js'), /doubled: name\.startsWith\('w_'\)/);
-  assert.match(rd('src/combat/weaponWidget.js'), /else if \(w\.s\.doubleScale && custom\.doubled !== false\) \{/);
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /doubled: name\.startsWith\('w_'\)/);
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /else if \(w\.s\.doubleScale && custom\.doubled !== false\) \{/);
 });
 
 test('AUDIT-DW F4 (named, not changed): DFU keeps the first template\'s custom frames within a class and metal; the port keys the atlas by the name it is asked by', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const key = `\$\{type\}:\$\{item\?\.material \?\? 0\}:\$\{thunderlock \? \(gilded \? 'gilded' : ''\) : atlasFileName\(item, WEAPON_FILE\[type\] \?\? ''\)\}`;/);
   assert.match(rig, /WHICH IS WHAT DFU DOES \(AUDIT-DW\n\s+\/\/ F4, a named departure\): FPSWeapon reloads its atlas only when\n\s+\/\/ WeaponType or MetalType change \(FPSWeapon\.cs:138\)/, 'the departure is named where the key is');
   assert.match(rd('bible/05-Combat/Diverse-Weapons.md'), /## AUDIT-DW/, 'and recorded');
@@ -157,7 +157,7 @@ test('AUDIT-DW F4 (named, not changed): DFU keeps the first template\'s custom f
 
 test('AUDIT-DW: checked and standing - the shipped set, the index, the door order, the dye law, the install site; the suites and campaign the audit leaves behind', () => {
   // the attached bundle still answers first, the shipped set second, the miss third
-  const door = rd('src/combat/diverseWeaponsAssets.js');
+  const door = rd('src/combat/diverseWeapons/diverseWeaponsAssets.js');
   assert.match(door, /const attached = _names\.length \? await attachedImage\(name, decode\) : null;/);
   assert.match(door, /if \(!hasDiverseWeaponsSprite\(name\) \|\| typeof fetchFn !== 'function'\) return null;/);
   // the icon install sits at the scene boot, after the survival pair and before the archives load
@@ -192,9 +192,9 @@ test('DW-CLIP: under the Diverse Weapons preset (DoubleScaleTextures + TrueTextu
   c.frame();
   assert.deepEqual(cw.offset, [0.5, 0.5]);
   // DISC14-C: the gate is one helper now, shared with the doubled idle's bob - the shift and the centred bob ride the same doubling
-  assert.match(rd('src/combat/weaponWidget.js'), /function doubledIdleNow\(\) \{\s*\n\s*if \(!w\.s\.doubleScale \|\| w\.s\.trueSize \|\| !w\.art\) return false;/);
-  assert.match(rd('src/combat/weaponWidget.js'), /return record != null && !!customTexture\(record, Math\.max\(0, w\.currentFrame\)\)\?\.doubled;/);
-  assert.match(rd('src/combat/weaponWidget.js'), /if \(\(w\.weaponState === S\.Idle \|\| \(w\.currentWeaponType === T\.Bow && w\.currentFrame === 0\)\) && doubledIdleNow\(\)\) \{\s*\n\s*w\.offset = /);
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /function doubledIdleNow\(\) \{\s*\n\s*if \(!w\.s\.doubleScale \|\| w\.s\.trueSize \|\| !w\.art\) return false;/);
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /return record != null && !!customTexture\(record, Math\.max\(0, w\.currentFrame\)\)\?\.doubled;/);
+  assert.match(rd('src/combat/weapon/weaponWidget.js'), /if \(\(w\.weaponState === S\.Idle \|\| \(w\.currentWeaponType === T\.Bow && w\.currentFrame === 0\)\) && doubledIdleNow\(\)\) \{\s*\n\s*w\.offset = /);
   _resetModSettings();
   assert.equal(modSettingsOf('diverse-weapons').WeaponWidgetPreset, false, 'DISC16-B: the preset defaults off, as at DW1 (DW-CLIP had it on)');
 });

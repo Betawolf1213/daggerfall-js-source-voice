@@ -7,7 +7,7 @@
 // one of them, and this is it - the lab's, unchanged, in a leaf both
 // sides can read.
 
-import { ALIGN } from './weaponAlign.js';
+import { ALIGN } from '../weapon/weaponAlign.js';
 
 /**
  * FPSWeapon's OnGUI rect (:378-388), with the width taken as a

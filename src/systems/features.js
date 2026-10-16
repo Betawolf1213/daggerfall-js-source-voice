@@ -816,7 +816,7 @@ export const FEATURES = Object.freeze([
       + 'hands, the torch in your off hand and the Morrowind arms.'); },
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced', 'classic']),
-    control: Object.freeze({ store: 'prefs', key: 'firstPersonLighting', initial: true, online: 'player' }),   // MAC-I: combat/weaponRig.js fpLightingOn
+    control: Object.freeze({ store: 'prefs', key: 'firstPersonLighting', initial: true, online: 'player' }),   // MAC-I: combat/weapon/weaponRig.js fpLightingOn
   }),
   // MAP-TOGGLE (2026-09-22, Mac: "is the enhanced map a toggle?" - "Yes
   // needs to be a toggle"): the held sheet was the enhanced skin's alone,
@@ -1556,7 +1556,7 @@ export const FEATURES = Object.freeze([
     // are PARTS, each its own in the drawer. ONLINE THEY ARE THE PLAYER'S: a mark is a local picture with no
     // gameplay in it, so every player answers for themselves.
     control: Object.freeze({
-      store: 'prefs', key: 'blood-gore', initial: 'normal', online: 'player', lane: 'blood',   // BLOOD2g: combat/bloodSwitch.js GORE_TIERS
+      store: 'prefs', key: 'blood-gore', initial: 'normal', online: 'player', lane: 'blood',   // BLOOD2g: combat/blood/bloodSwitch.js GORE_TIERS
       also: Object.freeze([
         Object.freeze({ store: 'prefs', key: 'blood-marks', initial: true, online: 'player' }),
         Object.freeze({ store: 'prefs', key: 'blood-overkill', initial: true, online: 'player' }),

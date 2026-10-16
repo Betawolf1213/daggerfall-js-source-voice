@@ -47,7 +47,7 @@
   },
   {
     "name": "FIELD-GUN17-6-the-muzzle-stops-following-the-handedness-mirror",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  const fx = flip ? 1 - muzzle.x : muzzle.x;",
     "new": "  const fx = muzzle.x;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "FIELD-GUN17-7-the-offset-forgets-the-aspect-ratio",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  const tanX = tanY * (aspect > 0 ? aspect : r.w / r.h);",
     "new": "  const tanX = tanY;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "FIELD-GUN17-8-the-screen-y-flip-is-dropped",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    up: (1 - ((py - r.y) / r.h) * 2) * tanY * forward,",
     "new": "    up: (((py - r.y) / r.h) * 2 - 1) * tanY * forward,",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "FIELD-GUN17-9-every-weapon-claims-a-muzzle",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (!thunderlockHeld()) return null;",
     "new": "      if (true) return muzzleRay(_tlDrawn, fovRad, forward);",
     "tests": [
@@ -152,7 +152,7 @@
   },
   {
     "name": "FIELD-GUN17-17-the-flash-is-painted-white-again",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "    const flash = orbColour();",
     "new": "    const flash = [1, 1, 1];",
     "tests": [

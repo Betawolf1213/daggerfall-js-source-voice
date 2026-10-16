@@ -463,7 +463,7 @@ test('D10: the offset really moves the horse rect and the viewmodel quad', () =>
   assert.equal(flat.y - lifted.y, 46);
   assert.equal(flat.h, lifted.h, 'the sprite is moved, not resized');
   // and the weapon quad takes the same subtraction - the ONE caller
-  // (combat/weaponRig.js) passes nothing, so the default reads the bar
+  // (combat/weapon/weaponRig.js) passes nothing, so the default reads the bar
   const w = src('combat/fpsWeapon.js');
   assert.ok(w.includes('offsetHeight = weaponOffsetHeight(),'), 'the default IS the law');
   // FIELD-GUN6: `let`, because the Thunderlock's recoil and reload

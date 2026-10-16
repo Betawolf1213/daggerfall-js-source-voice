@@ -263,8 +263,8 @@ test('AUDIT 64 F34: every SetMidScreenText caller speaks to the label, and the t
   // line is one arm of a ternary rather than the whole call. Both arms
   // are asserted: the Thunderlock gained a line, the bow did not lose
   // one.
-  assert.match(src('combat/weaponRig.js'), /setMidScreenText\([^)]*'You have no arrows\.'/);
-  assert.match(src('combat/weaponRig.js'), /'You have no pellets\.'/);
+  assert.match(src('combat/weapon/weaponRig.js'), /setMidScreenText\([^)]*'You have no arrows\.'/);
+  assert.match(src('combat/weapon/weaponRig.js'), /'You have no pellets\.'/);
   // ...and the siblings that are PopupMessage in the reference stay on
   // the popup queue: PlayerActivate.cs:527 (lockedExteriorDoor, one
   // line above LookAtInteriorLock) and :553/:564 with

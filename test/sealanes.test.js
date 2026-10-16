@@ -35,7 +35,7 @@ import { DENSITY } from '../src/systems/naval/navalDirector.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { findHarbour, alongside } from '../src/systems/naval/shipLife.js';
 import { hash32 } from '../src/world/spawnedDungeons.js';
-import { mulberry32 } from '../src/combat/bloodArt.js';
+import { mulberry32 } from '../src/combat/blood/bloodArt.js';
 import { sea } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

@@ -13,7 +13,7 @@ import { veilhaven, landfall, HOME_WATERS, VEIL_X, isleOfCell, islesNear, LEAGUE
 import { LEGENDS, hauntOf, legendById } from '../src/systems/naval/etherShips.js';
 import { goodOfTemplate } from '../src/systems/naval/tradeGoods.js';
 import { classById } from '../src/systems/naval/navalShips.js';
-import { mulberry32 } from '../src/combat/bloodArt.js';
+import { mulberry32 } from '../src/combat/blood/bloodArt.js';
 import { CHART_ZOOMS, CHART_ZOOM_DEFAULT, toScreen, toChart, chartZoomAt, clampChartView, chartModel, wayWords, isleWords, LABEL_ZOOM } from '../src/ui/etherChartWindow.js';
 import { officeText, etherOfficeText } from '../src/ui/naval/navalYardWindow.js';
 

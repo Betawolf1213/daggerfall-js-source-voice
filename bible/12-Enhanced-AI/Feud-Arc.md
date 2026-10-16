@@ -449,7 +449,7 @@ Only on a hit (a dodged blow does nothing), and only to the local player (each c
 - **RATTLE** (slam, ring, leap): 0.6 s at 60% of the walk, and a camera dip (the damage shake).
 - **BLEED** (sweep): 30% of the blow's damage again over 3 s, in three ticks through `hurtPlayer` (the harm mark names
   the foe, so REVENANT-HARM credits a death to it); shown as an active effect with its icon; ended by any healing (a
-  spell, a potion, a bandage) or a rest. `combat/bloodBleed.js`'s drips (cosmetic today) follow it.
+  spell, a potion, a bandage) or a rest. `combat/blood/bloodBleed.js`'s drips (cosmetic today) follow it.
 - **KNOCKDOWN** (an iron slam, ring or charge - OPEN 6): 0.9 s down (the camera drops 0.6 m and rises), no move, swing
   or cast; 5 s before another.
 

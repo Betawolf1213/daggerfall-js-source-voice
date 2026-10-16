@@ -24,7 +24,7 @@
 // `scenes/worldModes.js` and `scenes/dungeonContext.js`. NONE carries
 // a call for this body, and that is the wiring rather than a gap.
 //
-// All four build a weapon rig (`combat/weaponRig.js`, the one place
+// All four build a weapon rig (`combat/weapon/weaponRig.js`, the one place
 // `fpArm.attach` is called), so the body attaches THERE, once, beside
 // the arm it stands in for. Four call sites would be four chances to
 // forget one - which is the failure MW-D15 recorded for the camera dep
@@ -855,7 +855,7 @@ export function createEotbBody({ count = spriteCount, urlFor = eotbSpriteUrl, de
     facing() { return facingDrawn; },
     faceYaw,
     /**
-     * Called by `combat/weaponRig.js` beside `fpArm.attach`.
+     * Called by `combat/weapon/weaponRig.js` beside `fpArm.attach`.
      *
      * `playerState` is the per-frame answer only the rig can give -
      * the weapon's facts and the motion bag - and it is handed HERE

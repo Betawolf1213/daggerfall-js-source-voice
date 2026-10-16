@@ -11,7 +11,7 @@ is the one no source sweep can: what does it FEEL like on the classic
 surface, at a real window size, with a real cadence.
 
 **Nothing here touches the game.** `combat/fpsWeapon.js`,
-`combat/weaponRig.js` and `characters/weapons.js` are untouched; no
+`combat/weapon/weaponRig.js` and `characters/weapons.js` are untouched; no
 module the game runs imports `src/tools/gunLab.js`, and
 `test/gunLab.test.js` fails if one ever does. This port is a 1:1 DFU
 translation — a gun is a DEPARTURE, and a departure gets prototyped
@@ -29,7 +29,7 @@ ever built for real:
   Left/Center/Right with a fractional offset, with the large-HUD
   offset lifting it. The alignment enum is the port's OWN — asserted
   identical, not equal — and it moved to a leaf
-  (`src/combat/weaponAlign.js`, which `fpsWeapon.js` re-exports, so
+  (`src/combat/weapon/weaponAlign.js`, which `fpsWeapon.js` re-exports, so
   its surface is unchanged) because three integers living in a module
   that reaches the CIF reader, the inventory and the Morrowind arms
   cost the lab's standalone build four megabytes of `.nif` it never
@@ -63,7 +63,7 @@ open on the same weapon.
 Mac: *"all the idle, bob enhancements from our in-game weapon mods
 need to be applied"*. They are — by **running** them. `Offset`, `Bob`
 and `Inertia`, and `GetWeaponRect`'s transform, are imported from
-`src/combat/weaponWidgetMotion.js`, which is WW1's 1:1 port of
+`src/combat/weapon/weaponWidgetMotion.js`, which is WW1's 1:1 port of
 FPSWeaponClone's own modules; the settings come from the mod's
 declared defaults through `readWidgetSettings`, so every multiplier
 LoadSettings applies (Offset.Speed ×10, Bob.Length ÷100, SizeX/Y ×2,
@@ -72,7 +72,7 @@ SpeedMove ×4, SpeedState ×500, Inertia.Scale/Speed ×500, Forward
 mod's switches.
 
 **The split.** Those four functions were inline in
-`combat/weaponWidget.js`; the arithmetic is untouched, the component
+`combat/weapon/weaponWidget.js`; the arithmetic is untouched, the component
 imports them back and calls them where it used to do the work itself,
 and `test/ww1_weaponwidget.test.js` passes unchanged. They are their
 own file for two reasons: a second copy of a bob pinned to an IL
@@ -341,7 +341,7 @@ the recoil, the shake and the sounds were settled, and it is still the
 fastest way to change any of them.
 
 What the lab settled and the weapon inherited: the sprite sheet and
-its slicing (moved to `src/combat/gunSheet.js`, the game's home now -
+its slicing (moved to `src/combat/gun/gunSheet.js`, the game's home now -
 the lab reads it from there), the six-frame cycle, the sounds, and the
 art. What the weapon needed that the lab could not give it: the
 templates, the skill, the damage, the ammunition and the hosts.

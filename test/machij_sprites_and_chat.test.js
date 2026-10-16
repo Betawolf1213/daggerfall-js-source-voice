@@ -215,7 +215,7 @@ test('MAC-I: the switch, and every sprite in the seam wearing the tint', () => {
   assert.equal(row.control.key, 'firstPersonLighting');
   assert.deepEqual([...row.kinds], ['enhanced', 'classic'], 'the CLASSIC skin draws this sprite too');
 
-  const rig = read('src/combat/weaponRig.js');
+  const rig = read('src/combat/weapon/weaponRig.js');
   // ONE read a frame, above the draws, so the four sprites cannot disagree
   assert.match(rig, /const fpTint = fpLightingOn\(\) \? \(renderer\?\.flatLightAt\?\.\(\) \?\? null\) : null;/);
   assert.match(rig, /drawSpellCastHands\(renderer, c, spellArtFor\(fpsSpellCasting\.element\), fpsSpellCasting\.frameIndex, \{ tint: fpTint \}\)/);
@@ -229,7 +229,7 @@ test('MAC-I: the switch, and every sprite in the seam wearing the tint', () => {
   // sheet). The TINT riding through untouched is what this holds.
   assert.match(read('src/combat/fpsWeapon.js'), /renderer\.drawScreenQuad\(tex, \{ x, y, w, h \}, src, tint \?\? undefined\);/);
   // FIELD-GUN6: the rect is taken into a local first so the gun's kick can move it; the TINT still rides through untouched, which is what this pin is about
-  assert.match(read('src/combat/weaponWidget.js'), /renderer\.drawScreenQuad\(tex, getWeaponRect\(\), w\.curAnimRect, tint \?\? undefined\);/);
+  assert.match(read('src/combat/weapon/weaponWidget.js'), /renderer\.drawScreenQuad\(tex, getWeaponRect\(\), w\.curAnimRect, tint \?\? undefined\);/);
   assert.match(read('src/combat/fpsSpellCasting.js'), /renderer\.drawScreenQuad\(rec\.tex, right, RIGHT_HAND_UV, tint \?\? undefined\);/);
   // the Morrowind arms are a LIT MESH and are not in this seam at all
   const seam = rig.slice(rig.indexOf('const fpTint ='), rig.indexOf('drawFpsWeapon('));

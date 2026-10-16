@@ -354,7 +354,7 @@ Mac: "Morrowind will need its own handcrafted map with hand placement
 just like the sprite. Our first custom rig change." `src/combat/heldPose.js`
 (the pose and the paper), `src/ui/quadMap.js` (the sheet over the
 paper's corners), and the seams in `src/combat/fpArm.js`,
-`src/combat/weaponRig.js`, `src/scenes/world.js` and `src/ui/heldMap.js`.
+`src/combat/weapon/weaponRig.js`, `src/scenes/world.js` and `src/ui/heldMap.js`.
 The record of the rig change itself is in
 `bible/02-Formats/Morrowind-Rules.md` (MAP3); this is the window's side.
 
@@ -1154,7 +1154,7 @@ but the world) is the sprite lane", written before the other doors
 existed and never revisited when they were.
 
 **One holder, off the rig, on every door.** `sheetHolderOf(rig)` in
-combat/weaponRig.js is the holder - the four doors (would the arm draw,
+combat/weapon/weaponRig.js is the holder - the four doors (would the arm draw,
 take the sheet, let it go, where are the corners), with AUDIT-MAP2's law
 kept (corners only from a frame the arm DREW) - handed the rig as a
 FUNCTION so a host whose rig can be swapped answers live and never a

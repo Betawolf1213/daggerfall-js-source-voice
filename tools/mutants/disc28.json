@@ -109,7 +109,7 @@
   },
   {
     "name": "DISC28-D-rig-blind-to-speed",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "new PlayerWeapon({ liveSpeed: () => (entity ? liveStat(entity, 'speed') : 50) })",
     "new": "new PlayerWeapon({})",
     "tests": [

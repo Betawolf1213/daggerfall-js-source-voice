@@ -139,7 +139,7 @@ import { pieceLines } from '../../net/recipeLaw.js';   // PROF3: a crafted piece
 import { craftedJewelPoints } from '../../systems/enchanting.js';   // AUDIT PROF-541 R2-C4: a jewel's points as the item maker reads them
 import { sigilCard } from '../sigilCard.js';   // SIGIL-UI: the sigil's own block on the card
 import { techniqueCard } from '../techniqueCard.js';   // TECH-CARD: a technique's own block on the card
-import { TECHNIQUE_ACTION } from '../../combat/techniqueRoster.js';   // TECH-CARD: the key its block names (the leaf, never the runner)
+import { TECHNIQUE_ACTION } from '../../combat/technique/techniqueRoster.js';   // TECH-CARD: the key its block names (the leaf, never the runner)
 import { actionKeyWord } from '../quickslotTags.js';   // FINAL AUDIT: the word for the key that answers - the HUD chip's too
 import { validSigil } from '../../systems/sigil/sigil.js';   // SIGIL-UI: the tile's corner rune
 import { setCard, setStrip, markSetFrame } from '../setCard.js';   // SET5: a set piece's set on its card, the worn sets on the doll's column, a set piece's rune

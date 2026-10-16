@@ -1,7 +1,7 @@
 // GATHER-FEEL II - BLOW-SHAKE (2026-10-13, Mac: "Do the not done" - GATHER-FEEL's open "a blow shakes no camera";
 // bible/06-Systems/Professions-Arc.md section 45): A LANDED BLOW MOVES THE VIEW. The table (systems/gatherBlow.js
 // GATHER_BLOW_FEEL) under every technique's hit; its gates (the enhanced skin, the player's technique motion, the
-// system's reduced motion); the springs' one door (combat/techniqueFx.js kickFx) - the peaks the table names, the
+// system's reduced motion); the springs' one door (combat/technique/techniqueFx.js kickFx) - the peaks the table names, the
 // technique's own moments through it still; the clean blow off the real machines (landedBlow); and the host over the real
 // kinds (scenes/gatherHost.js stepAct) - the kick on the frame the ear clacks, never at the press, nothing for a blow
 // Escape took or an act that swings nothing, the last blow's too.
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GATHER_BLOW_FEEL, gatherBlowFeel, landedBlow } from '../src/systems/gatherBlow.js';
-import { TECH_FX, kickFx, techniqueCue, stepTechniqueFx, techniqueView, techniqueHands, resetTechniqueFx } from '../src/combat/techniqueFx.js';
+import { TECH_FX, kickFx, techniqueCue, stepTechniqueFx, techniqueView, techniqueHands, resetTechniqueFx } from '../src/combat/technique/techniqueFx.js';
 import { createChopAct } from '../src/systems/chopAct.js';
 import { createMineAct, MINE_POINTS } from '../src/systems/mineAct.js';
 import { CHOP_ACT, MINE_ACT } from '../src/net/professionLaw.js';
@@ -105,7 +105,7 @@ test('GF2-BLOWSHAKE B3: the springs\' one door - a blow peaks at the table\'s ow
   for (let i = 0; i < 60; i++) stepTechniqueFx(0.001);
   assert.ok(techniqueView().roll < 0, 'the camera\'s own roll negated: the screen leans right');
   resetTechniqueFx();
-  const fx = src('src/combat/techniqueFx.js');
+  const fx = src('src/combat/technique/techniqueFx.js');
   assert.equal(fx.match(/-\(c\.roll \?\? 0\)/g)?.length, 1, 'the mirror said once');
   assert.match(fx, /kickFx\(row\.cam, row\.hands, m\);/, 'techniqueCue kicks through the door');
 });
@@ -220,7 +220,7 @@ test('GF2-BLOWSHAKE B7: the seams - the host steps its machines through stepAct 
   assert.match(host, /function stepAct\(a, dt, input\) \{\n\s+const was = a\.act\.state\?\.landed \| 0;\n\s+a\.act\.tick\(dt, input\);/);   // PIN MOVED (AUDIT GATHER-FEEL LANDING): a blow landed is the machine's count
   assert.match(host, /const feel = deps\.feel \?\? gatherBlowFeel;/);
   const blow = src('src/systems/gatherBlow.js');
-  assert.match(blow, /import \{ kickFx, techniqueMotion \} from '\.\.\/combat\/techniqueFx\.js';/, 'the springs\' one door');
+  assert.match(blow, /import \{ kickFx, techniqueMotion \} from '\.\.\/combat\/technique\/techniqueFx\.js';/, 'the springs\' one door');
   assert.doesNotMatch(blow, /\b(cam|camera|view)\.(pitch|yaw)\s*[-+*/]?=/, 'no camera written: the springs are folded into the view by every host (player/climbFeel.js)');
   const menu = src('src/ui/enhanced/enhancedMenu.js');
   // PIN MOVED (AUDIT GATHER-FEEL F8): the note says what a blow does, and where - a dip, never a shake or a tilt, on the Enhanced skin alone

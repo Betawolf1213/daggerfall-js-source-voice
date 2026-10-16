@@ -40,10 +40,10 @@
 
 import { FlatAnim, isAnimatedFlat, IMPACT_FPS, MISSILE_FPS } from '../render/flatAnimation.js';   // AUDIT 26 F033: ImpactBillboardFramesPerSecond   // FIELD-GUN14: a flying flat's own rate, which is the missile's
 import { billboardSize, centredBase } from '../world/rmbFlats.js';
-import { BLOODLESS_INDEX } from '../combat/bloodDecals.js';   // BLOOD1a: which foes bleed, for the art hand-off below
+import { BLOODLESS_INDEX } from '../combat/blood/bloodDecals.js';   // BLOOD1a: which foes bleed, for the art hand-off below
 
 /** EnemyBlood.cs:23. */
-import { createBleedLedger } from '../combat/bloodBleed.js';   // BLOOD2c
+import { createBleedLedger } from '../combat/blood/bloodBleed.js';   // BLOOD2c
 import { flashPlayerBleed } from '../ui/damageFlash.js';   // BLOOD2e: the reference's subtle flash with each of the player's own drips
 export const BLOOD_ARCHIVE = 380;
 /** BLOOD2d: the player's key in the marks' tracking table (a foe's is its own record). */
@@ -265,7 +265,7 @@ export function createHitEffects({
     bleedPlayer: (dt, feet, entity) => {
       if (!marks || !feet || !entity) return 0;
       const health = entity.health ?? 0, maxHealth = entity.maxHealth ?? 0;
-      const view = () => ({ feet, health, maxHealth, bloodIndex: 0, dead: !(health > 0), corpse: false, strides: false, wound: !!entity.bleed });   // AUDIT TELL: a sweep's bleed drips (combat/bloodBleed.js WOUND_*)
+      const view = () => ({ feet, health, maxHealth, bloodIndex: 0, dead: !(health > 0), corpse: false, strides: false, wound: !!entity.bleed });   // AUDIT TELL: a sweep's bleed drips (combat/blood/bloodBleed.js WOUND_*)
       let n = 0;
       for (const a of bleeding.tick(dt, [PLAYER_WALKER], view)) {
         if (a.kind === 'drip' && marks.drip?.(a.bloodIndex, a.pos, a.count)) { n++; flashPlayerBleed(); }

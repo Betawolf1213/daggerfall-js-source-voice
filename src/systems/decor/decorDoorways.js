@@ -279,7 +279,7 @@ export function decorDoorFit(doorway, box, flip = false) {
   };
 }
 
-/** A DOORWAY'S MARK: the quad that fills its opening (the tool's decal pass - combat/bloodDecals.js writeDecalQuad's
+/** A DOORWAY'S MARK: the quad that fills its opening (the tool's decal pass - combat/blood/bloodDecals.js writeDecalQuad's
  *  shape: `pos` its middle, `size` its height, `stretch` its width over its height, `right` across it, `up`). */
 export function decorDoorwayQuad(w) {
   const high = Math.min(w.height, DOORWAY_MARK_HIGH);

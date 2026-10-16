@@ -26,7 +26,7 @@ port is the mod's code.
 
 | DFU | port |
 |---|---|
-| `FPSWeapon.moddedWeaponHUDAnimsEnabled` (FPSWeapon.cs:97) - a static, false until a mod sets it | `moddedWeaponHUDAnimsEnabled()` - the mod's `Enabled` switch (`combat/diverseWeapons.js`) |
+| `FPSWeapon.moddedWeaponHUDAnimsEnabled` (FPSWeapon.cs:97) - a static, false until a mod sets it | `moddedWeaponHUDAnimsEnabled()` - the mod's `Enabled` switch (`combat/diverseWeapons/diverseWeapons.js`) |
 | `WeaponBasics.GetModdedWeaponFilename(item)` - three tables: the named artifact CIFs, `<NAME>MAGIC.CIF`, `<NAME>.CIF`; a custom template answers `""` | `moddedWeaponFilename(item)`, verbatim, the Staff arm's loop included |
 | `FPSWeapon.GetWeaponTextureAtlas` :637-644 - the per-template name when the flag is on and a weapon is in hand, else `GetWeaponFilename` | `atlasFileName(item, classic)` |
 | :647 - `TryImportCifRci(name, record, frame, metalType)` for every frame; a hit replaces that frame | `loadFpsWeaponArt` (base lane) and the widget clone's `customTexture` |
@@ -36,7 +36,7 @@ port is the mod's code.
 
 **Two lanes, one law.** The port draws the first-person weapon down
 its own `FPSWeapon` (`combat/fpsWeapon.js`) and down the Weapon Widget
-clone that is the default renderer (`combat/weaponWidget.js`). In DFU
+clone that is the default renderer (`combat/weapon/weaponWidget.js`). In DFU
 both read the same static and the same texture folder; here both call
 `atlasFileName` and ask `customWeaponImage`.
 
@@ -73,7 +73,7 @@ frame draws, exactly as in DFU with no texture installed.
 
 ## The door
 
-`combat/diverseWeaponsAssets.js`, the widget door's shape: a name list
+`combat/diverseWeapons/diverseWeaponsAssets.js`, the widget door's shape: a name list
 and a loader from the textures pick, the bundle opened once by its
 manifest's GUID (`8e83d67c-a0ac-4935-a8c5-6b18c9f35bfc`), a texture by
 name. Two things differ from the widget's:
@@ -217,7 +217,7 @@ doors carried one. DW3:
   replacement arm before the classic one), and the paper doll
   (`ui/paperDoll.js loadRecord(..., dye)`: the import arm first, blitted
   as RGBA as the vendor arm is, the remap untouched).
-- `combat/diverseWeaponsIcons.js` registers the shipped icons off the
+- `combat/diverseWeapons/diverseWeaponsIcons.js` registers the shipped icons off the
   index as vendor entries by dye (the bare stem for the silver ask; the
   one `_Silver` file skipped, since keyed by its dye it would be the
   bare key; `513`/`514` skipped, no template here draws them), loaded
@@ -377,5 +377,5 @@ TrueTextureSize, a `w_` hit takes the doubled box and its shift.
 `tools/mutants/dw1.json` (21: 20 dead, 1 equivalent as recorded). Suites
 `test/dw1_diverseweapons.test.js`, `test/unitybundleworker.test.js`,
 `test/dw2_shipped.test.js`, `test/dw3_icons.test.js`, `test/auditdw.test.js`. The shipped set: `public/art/diverse-weapons/`
-(12,624 PNGs), `src/combat/diverseWeaponsIndex.js` (generated), the two
+(12,624 PNGs), `src/combat/diverseWeapons/diverseWeaponsIndex.js` (generated), the two
 tools.

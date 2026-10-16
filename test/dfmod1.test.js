@@ -244,7 +244,7 @@ test('DFMOD2 memory: Seasons\' door opens only its own bundle, not every attache
   assert.equal(DFMOD_DETAIL_DEFAULT, 256);
   assert.match(src('systems/dfmodTextures.js'), /error: _openErrors\.get\(key\) \?\? null,/);
   assert.match(src('ui/enhanced/enhancedMenu.js'), /if \(m\.error\) row\.append\(el\('p', 'meta', t\('menu\.packs\.notWorking', 'Not working: \{error\}\.', \{ error: m\.error \}\)\)\);/);
-  assert.match(src('combat/diverseWeaponsAssets.js'), /return \(await dfmodWeaponImage\(name\)\) \?\? \(await weaponModImage\(name\)\);/, 'DWHD1: an attached replacer first');
+  assert.match(src('combat/diverseWeapons/diverseWeaponsAssets.js'), /return \(await dfmodWeaponImage\(name\)\) \?\? \(await weaponModImage\(name\)\);/, 'DWHD1: an attached replacer first');
 });
 
 // ---- DFMOD3: a shared pool, a bounded queue, a memory budget ----
@@ -315,7 +315,7 @@ test('DWHD1 crunch: a non-CRN stream is refused; formats 28/29 are known to the 
   assert.equal(F.DXT1Crunched, 28); assert.equal(F.DXT5Crunched, 29);
   assert.ok(!hasOwnDoor('dfmod/diverse weapons hd - handhelds i.dfmod') && !hasOwnDoor('dfmod/diverse weapons hd - inventory.dfmod'));
   assert.ok(hasOwnDoor('dfmod/diverse weapons.dfmod'), 'RealAKP\'s own bundle stays with its door');
-  assert.match(src('combat/diverseWeaponsAssets.js'), /&& !\/\\bhd\\b\/i\.test\(name\.slice\(name\.lastIndexOf\('\/'\) \+ 1\)\);/, 'and that door no longer opens the HD ones to read their GUID');
+  assert.match(src('combat/diverseWeapons/diverseWeaponsAssets.js'), /&& !\/\\bhd\\b\/i\.test\(name\.slice\(name\.lastIndexOf\('\/'\) \+ 1\)\);/, 'and that door no longer opens the HD ones to read their GUID');
 });
 
 // The crunch decoder was checked block for block against texture2ddecoder's unpack_unity_crunch on 122 of Diverse

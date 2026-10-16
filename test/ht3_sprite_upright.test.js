@@ -60,17 +60,17 @@ test('HT3 the two orders, executed: one keeps the rows, the other turns them ove
 test('HT3 the SCREEN doors keep their rows; the WORLD doors still flip', () => {
   // the two that draw on a screen quad
   assert.match(read('src/systems/handheldTorches.js'), /return toScreenOrder\(await decodePng\(bytes\)\);/, 'the held torch');
-  assert.match(read('src/combat/weaponWidgetAssets.js'), /return toScreenOrder\(await decodePng\(bytes\)\);/, 'the widget\'s loose PNG');
+  assert.match(read('src/combat/weapon/weaponWidgetAssets.js'), /return toScreenOrder\(await decodePng\(bytes\)\);/, 'the widget\'s loose PNG');
   // DWHD1: and so does the widget's BUNDLE arm - the reader answers top-first already (decodeTexture2D flips Unity's
   // bottom-up rows), so a flip here drew every bundle frame upside down ("all weapons are overhead")
-  assert.match(read('src/combat/weaponWidgetAssets.js'), /try \{ return toScreenOrder\(tex\.rgba\(\)\); \}/);
+  assert.match(read('src/combat/weapon/weaponWidgetAssets.js'), /try \{ return toScreenOrder\(tex\.rgba\(\)\); \}/);
   // the ones that draw in the world are untouched
   assert.match(read('src/scenes/droppedTorches.js'), /return toColor32\(await decodePng\(new Uint8Array\(await res\.arrayBuffer\(\)\)\)\);/, 'the dropped torches are billboards');
   assert.match(read('src/systems/seasonsIliacBayAssets.js'), /const image = toColor32\(await decode\(bytes\)\);/, 'seasons: terrain');
   assert.match(read('src/systems/textureReplacement.js'), /toColor32\(await decode\(bytes\)\)/, 'M-TEX: world textures');
   // and TEX1's law still holds: the flip-only conversion has no importers
   assert.ok(!/import[^;]*\btoColor32Order\b[^;]*from/.test(read('src/systems/handheldTorches.js')));
-  assert.ok(!/import[^;]*\btoColor32Order\b[^;]*from/.test(read('src/combat/weaponWidgetAssets.js')));
+  assert.ok(!/import[^;]*\btoColor32Order\b[^;]*from/.test(read('src/combat/weapon/weaponWidgetAssets.js')));
 });
 
 test('HT3 the convention is written down where the two answers live', () => {

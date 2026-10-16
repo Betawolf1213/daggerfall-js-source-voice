@@ -7,13 +7,13 @@ import assert from 'node:assert/strict';
 
 import {
   createBloodMarks, dropArc, dropAt, DROP_GRAVITY, DROP_LAUNCH, DRIP_LAUNCH, DROP_CEILING_SPARE, MAX_FLYING, DROP_QUAD,
-} from '../src/combat/bloodMarks.js';
-import { SURFACE_LIFT, impactStretch, STREAK_MAX } from '../src/combat/bloodDecals.js';
+} from '../src/combat/blood/bloodMarks.js';
+import { SURFACE_LIFT, impactStretch, STREAK_MAX } from '../src/combat/blood/bloodDecals.js';
 import {
   buildBloodAtlas, atlasBuilder, bloodDropletArt, bloodNoise, smin, taperDist, mulberry32,
   ATLAS_SIZE, ATLAS_CELLS, ATLAS_KINDS, BLOOD_ATLAS_ARCHIVE, BLOOD_DROP_RECORD, DROP_ART_SIZE,
-} from '../src/combat/bloodArt.js';
-import { bloodDecalDeps } from '../src/combat/bloodSwitch.js';
+} from '../src/combat/blood/bloodArt.js';
+import { bloodDecalDeps } from '../src/combat/blood/bloodSwitch.js';
 
 const close = (a, b, eps = 1e-9) => Math.abs(a - b) <= eps;
 

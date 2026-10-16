@@ -9,7 +9,7 @@
 // the TRANSPORT arc closed TR1-TR5 (Systems-Arc.md), so one id named
 // two slices in two arcs and the ledger could not be grepped. The test
 // room is TSR; the transport arc keeps TR. Source comments in
-// ui/enhanced/enhancedMenu.js and combat/weaponRig.js still carry the old
+// ui/enhanced/enhancedMenu.js and combat/weapon/weaponRig.js still carry the old
 // spelling.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -22,7 +22,7 @@ import { hasHorse, TRANSPORT_HORSE_TEMPLATE } from '../src/systems/inventorySess
 import { positionPlayerToLocation, EXTRA_DISTANCE } from '../src/world/locationEntrance.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';
 import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
-import { armBuildOptsOf } from '../src/combat/weaponRig.js';
+import { armBuildOptsOf } from '../src/combat/weapon/weaponRig.js';
 import { RACES } from '../src/systems/races.js';
 import { CLASS_CAREERS } from '../src/systems/chargen.js';
 import { ITEM_TEMPLATES, templateByIndex } from '../src/systems/item/itemTemplates.js';

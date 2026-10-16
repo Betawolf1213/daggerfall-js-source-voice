@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITBLOOD3-the-ink-is-read-as-a-density-again-the-bug-this-audit-found",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  Math.max(0, Math.min(1, alpha)) * Math.max(0, Math.min(1, (1 - Math.max(0, Math.min(1, ink))) / INK_DEPTH));",
     "new": "  Math.max(0, Math.min(1, alpha)) * Math.max(0, Math.min(1, ink));",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-thickness-is-coverage-alone",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  Math.max(0, Math.min(1, alpha)) * Math.max(0, Math.min(1, (1 - Math.max(0, Math.min(1, ink))) / INK_DEPTH));",
     "new": "  Math.max(0, Math.min(1, alpha));",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-ink-ramp-is-not-the-one-the-sheet-was-written-from",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const INK_DEPTH = 0.18;",
     "new": "export const INK_DEPTH = 0.5;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-painter-writes-a-shade-again-not-a-depth",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "          const ink = Math.round(255 * (1 - INK_DEPTH * thick));",
     "new": "          const ink = Math.round(255 * (1 - INK_DEPTH * (1 - thick)));",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDITBLOOD3-a-pools-heart-is-its-thinnest-point",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  FIELD.depth = sdf >= 0 ? 0 : Math.pow(Math.min(1, -sdf / reach), 0.8);",
     "new": "  FIELD.depth = sdf >= 0 ? 0 : 1 - Math.pow(Math.min(1, -sdf / reach), 0.8);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDITBLOOD3-a-drips-bead-is-its-thinnest-point",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "    return { a, depth: Math.max(0, Math.min(1, Math.max(dBead, dFoot, dRun))) };",
     "new": "    return { a, depth: 1 - Math.max(0, Math.min(1, Math.max(dBead, dFoot, dRun))) };",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-sheet-stops-being-white-ink-so-the-lens-tints-green",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "          colors[o] = ink; colors[o + 1] = ink; colors[o + 2] = ink;",
     "new": "          colors[o] = ink; colors[o + 1] = Math.round(255 * thick); colors[o + 2] = ink;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDITBLOOD3-blood-absorbs-every-channel-alike-so-a-thinning-mark-never-shifts",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const BLOOD_ABSORB = Object.freeze([0.50, 0.95, 0.95]);",
     "new": "export const BLOOD_ABSORB = Object.freeze([0.95, 0.95, 0.95]);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITBLOOD3-blood-is-a-tinted-filter-rather-than-a-red-one",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const BLOOD_ABSORB = Object.freeze([0.50, 0.95, 0.95]);",
     "new": "export const BLOOD_ABSORB = Object.freeze([0.50, 0.95, 0.80]);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-film-is-too-faint-to-see",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const BLOOD_ABSORB = Object.freeze([0.50, 0.95, 0.95]);",
     "new": "export const BLOOD_ABSORB = Object.freeze([0.05, 0.09, 0.09]);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-classic-set-takes-the-linear-absorption-so-the-lanes-disagree",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const BLOOD_ABSORB_ENCODED = Object.freeze(BLOOD_ABSORB.map((a) => a / DISPLAY_GAMMA));",
     "new": "export const BLOOD_ABSORB_ENCODED = Object.freeze(BLOOD_ABSORB.map((a) => a));",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-film-is-a-glass-plate-rather-than-a-water-one",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const BLOOD_F0 = 0.02;",
     "new": "export const BLOOD_F0 = 0.2;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDITBLOOD3-Schlicks-fifth-power-is-a-straight-line-so-the-whole-mark-glints",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  return BLOOD_F0 + (1 - BLOOD_F0) * Math.pow(1 - Math.max(0, Math.min(1, vdoth)), 5);",
     "new": "  return BLOOD_F0 + (1 - BLOOD_F0) * Math.pow(1 - Math.max(0, Math.min(1, vdoth)), 1);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-angle-is-ignored-so-a-wet-mark-is-plastic-again",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  return BLOOD_F0 + (1 - BLOOD_F0) * Math.pow(1 - Math.max(0, Math.min(1, vdoth)), 5);",
     "new": "  return 1;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-sheen-ignores-the-marks-depth-so-a-dried-rim-shines",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "  return Math.max(0, Math.min(1, wet)) * (x * x * (3 - 2 * x));   // smoothstep, the shader's own",
     "new": "  return Math.max(0, Math.min(1, wet));   // smoothstep, the shader's own",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDITBLOOD3-the-wet-band-sits-where-no-mark-ever-is",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const WET_THICK_LO = 0.15;\nexport const WET_THICK_HI = 0.75;",
     "new": "export const WET_THICK_LO = 0.0;\nexport const WET_THICK_HI = 1.0;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDITBLOOD3-a-wet-mark-does-not-darken-so-nothing-reads-as-wet-from-above",
-    "file": "src/combat/bloodArt.js",
+    "file": "src/combat/blood/bloodArt.js",
     "old": "export const WET_DARKEN = 0.72;",
     "new": "export const WET_DARKEN = 1.0;",
     "tests": [

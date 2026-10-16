@@ -2,7 +2,7 @@
 // modules and the transform they feed - the parts of Weapon Widget 1.6
 // that are arithmetic rather than component.
 //
-// WW-LAB (2026-09-19). They were inline in combat/weaponWidget.js and
+// WW-LAB (2026-09-19). They were inline in combat/weapon/weaponWidget.js and
 // the arithmetic is UNTOUCHED - every line here is the line that was
 // there, in the order it was in; the component imports them back and
 // calls them where it used to do the work itself.
@@ -22,8 +22,8 @@
 //
 // Nothing here knows about the lab; the arrow points one way.
 
-import { modSettingsOf } from '../systems/modSettings.js';
-import { withDiverseWeaponsPreset } from './diverseWeapons.js';   // DW1
+import { modSettingsOf } from '../../systems/modSettings.js';
+import { withDiverseWeaponsPreset } from '../diverseWeapons/diverseWeapons.js';   // DW1
 
 export const WEAPON_WIDGET_VENDOR = 'weapon-widget';
 

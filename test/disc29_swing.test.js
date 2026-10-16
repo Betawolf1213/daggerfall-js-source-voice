@@ -12,7 +12,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { machineAttack, getMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
 import { installSwingLaw } from '../src/combat/swingLaw.js';
 import { EQUIP_SLOTS, equipTableOf } from '../src/systems/equip.js';

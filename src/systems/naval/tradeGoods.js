@@ -15,7 +15,7 @@
 // template from GOODS_TEMPLATE on, stackable, its weight and its base price the row's: a cask of wine in a pack or a
 // hold is a cask of wine, sold at any shop at its base like any item.
 
-import { mulberry32 } from '../../combat/bloodArt.js';
+import { mulberry32 } from '../../combat/blood/bloodArt.js';
 import { registerCustomTemplates, setItemFields, mintCondition } from '../item/itemTemplates.js';
 import { hashKey } from './harbourBoard.js';
 

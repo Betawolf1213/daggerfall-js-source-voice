@@ -83,7 +83,7 @@ test('CAMP-GROUND: the host wires the door that sees terrain, and falls back rat
 
   // THE CLASS, not the call site: blood was moved onto surfaceHit for
   // this exact reason two days earlier. Both outdoor placers use it now.
-  const marks = readFileSync(join(ROOT, 'src/combat/bloodMarks.js'), 'utf8');
+  const marks = readFileSync(join(ROOT, 'src/combat/blood/bloodMarks.js'), 'utf8');
   assert.match(marks, /surfaceHit/, 'blood asks the same door (MAC-BUG W5)');
 });
 

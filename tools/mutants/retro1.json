@@ -425,7 +425,7 @@
   },
   {
     "name": "RETRO1-muzzle-strip-aspect",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  const tanX = tanY * (aspect > 0 ? aspect : r.w / r.h);",
     "new": "  const tanX = tanY * (r.w / r.h);",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "RETRO1-rig-parks-no-aspect",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": ", aspect: renderer.worldProjAspect ?? null };",
     "new": "};",
     "tests": [

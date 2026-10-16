@@ -2,7 +2,7 @@
 // SW1 (2026-09-19, Mac: "This is the next mod I want to integrate 1:1"):
 // SHIELD WIDGET 1.6 by RedRoryOTheGlen - ported 1:1.
 //
-// The sibling of WW1 (combat/weaponWidget.js), by the same author and
+// The sibling of WW1 (combat/weapon/weaponWidget.js), by the same author and
 // built against the same DFU: one MonoBehaviour, `ShieldWidget`, that
 // draws the classic shield sprite in the first-person view when a
 // shield is in the left hand. Where the weapon clone REPLACED DFU's
@@ -54,7 +54,7 @@
 import { modSettingsOf } from '../systems/modSettings.js';
 import { getInt } from '../systems/settings/settings.js';
 import { liveStat } from '../systems/statMods.js';
-import { moveTowards, moveTowards2, snap, STEP_CONDITION } from './weaponWidgetMotion.js';   // AUDIT 68 S09-unused-and-heavy-imports: the leaf built for these, not the component
+import { moveTowards, moveTowards2, snap, STEP_CONDITION } from './weapon/weaponWidgetMotion.js';   // AUDIT 68 S09-unused-and-heavy-imports: the leaf built for these, not the component
 export { STEP_CONDITION };   // the same enum, one home (the sibling's)
 import { shieldProtectedBodyParts } from './enemyEquipment.js';
 // the classic 320x200 the sprite's scale is measured against (SetGuard

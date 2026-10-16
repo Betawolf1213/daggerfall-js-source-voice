@@ -1713,7 +1713,7 @@ content again: the potion sentence's four, the kit's three, the rest
 window's `input.js`.
 
 The gate is green on the merged tree. One mutant survives that is not
-this branch's: main's own `MAC-BUG-W5-13` (`combat/bloodMarks.js`'s pool
+this branch's: main's own `MAC-BUG-W5-13` (`combat/blood/bloodMarks.js`'s pool
 gate asking `raycastHit` in place of `surfaceHit`) lives on main's head
 too - a gap in main's pins, left to its owner.
 

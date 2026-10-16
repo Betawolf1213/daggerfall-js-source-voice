@@ -14,7 +14,7 @@ import { adoptIdentity, storedSession, SESSION_KEY } from '../src/net/accountCli
 import { createFpArm, _skinPainted } from '../src/combat/fpArm.js';
 import { werewolfBodyDeps, WOLF_HEAD_EYES } from './fixtures/mw/bodyRig.mjs';
 import { PeerBodies, peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
-import { armBuildOptsOf } from '../src/combat/weaponRig.js';
+import { armBuildOptsOf } from '../src/combat/weapon/weaponRig.js';
 import { GLYPHS } from '../src/net/identityToken.js';
 import { GLYPH_DETAIL, cssRgba } from '../src/ui/playerBadge.js';
 

@@ -66,7 +66,7 @@
   },
   {
     "name": "MWCAST1-the-rig-never-holds",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      return fpsSpellCasting.playOneShot(element, onRelease, armCasts ? { hold: () => fpArm.takeCastRelease() || !fpArm.castInFlight(), rate } : { rate });",
     "new": "      return fpsSpellCasting.playOneShot(element, onRelease, { rate });",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "MWCAST1-the-casting-arm-hidden",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (paralyzed || (!shown() && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb)) return;",
     "new": "      if (paralyzed || (!shown() && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armsClimb)) return;",
     "tests": [

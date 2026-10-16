@@ -392,7 +392,7 @@ test('MW-D15 rule 32(a): the arm reads the stance off the camera dep, in all fou
   // of truth for a stance.
   const src = rd('src/combat/fpArm.js');
   assert.match(src, /sneaking = !!\(cam && cam\.sneaking\);/);
-  assert.ok(!/entity\.sneaking/.test(rd('src/combat/weaponRig.js')));
+  assert.ok(!/entity\.sneaking/.test(rd('src/combat/weapon/weaponRig.js')));
 });
 
 test('MW-D15 rule 32(a): the LIVE arm sinks when the camera dep says sneak', async () => {

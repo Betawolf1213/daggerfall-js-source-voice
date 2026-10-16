@@ -136,7 +136,7 @@
  },
  {
   "name": "GF2-BLOWSHAKE-the-door-skipped",
-  "file": "src/combat/techniqueFx.js",
+  "file": "src/combat/technique/techniqueFx.js",
   "old": "    kickFx(row.cam, row.hands, m);   // GATHER-FEEL II: the springs' one door\n",
   "new": "    /* the door skipped */\n",
   "tests": [

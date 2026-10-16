@@ -10,7 +10,7 @@ import { pauseMenuAct } from '../src/ui/pauseDoor.js';
 import { endingGesture } from '../src/ui/enhanced/enhancedHud.js';
 import { activeSpellIconsPlaced } from '../src/ui/hud/hud.js';
 import { createShieldWidget, readShieldWidgetSettings, shieldTextureIndex, SHIELD_TEMPLATES } from '../src/combat/shieldWidget.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { enterDungeonAutomap, exitDungeonAutomap, getDungeonAutomap, detachedAutomapRecord, resetAutomapStore } from '../src/systems/automap/automap.js';

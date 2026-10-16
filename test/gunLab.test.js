@@ -15,7 +15,7 @@ import {
 } from '../src/tools/gunLab.js';
 import { ALIGN as FPS_ALIGN } from '../src/combat/fpsWeapon.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';   // DW-CLIP: the Diverse Weapons preset defaults on; the lab's subject is Weapon Widget's own numbers
-import { bobStep, offsetStep, inertiaStep } from '../src/combat/weaponWidgetMotion.js';
+import { bobStep, offsetStep, inertiaStep } from '../src/combat/weapon/weaponWidgetMotion.js';
 
 test('the lab is a lab: nothing the game runs imports it, and it changes no weapon law', () => {
   // The arrow points ONE WAY. The lab reads FPSWeapon's alignment and
@@ -23,7 +23,7 @@ test('the lab is a lab: nothing the game runs imports it, and it changes no weap
   // the prototype has quietly become a dependency of the game.
   // an IMPORT, not the word: weaponWidgetMotion.js names the lab in
   // its header, which is the point of the split being written down
-  for (const f of ['src/combat/weaponRig.js', 'src/combat/fpsWeapon.js', 'src/combat/weaponWidget.js', 'src/combat/weaponWidgetMotion.js']) {
+  for (const f of ['src/combat/weapon/weaponRig.js', 'src/combat/fpsWeapon.js', 'src/combat/weapon/weaponWidget.js', 'src/combat/weapon/weaponWidgetMotion.js']) {
     assert.doesNotMatch(readFileSync(f, 'utf8'), /^\s*import[\s\S]*?from\s+'[^']*gunLab/m, `${f} does not import the lab`);
   }
   assert.ok(readFileSync('gun-proto.html', 'utf8').includes('/src/tools/gunLab.js'), 'the page is the only consumer');
@@ -31,7 +31,7 @@ test('the lab is a lab: nothing the game runs imports it, and it changes no weap
 
 test('the mod\u2019s movement is RUN, not copied - the lab imports the modules themselves', () => {
   const lab = readFileSync('src/tools/gunLab.js', 'utf8');
-  assert.match(lab, /import \{[\s\S]*?offsetStep, bobStep, inertiaStep, widgetTransformRect,[\s\S]*?\} from '\.\.\/combat\/weaponWidgetMotion\.js'/,
+  assert.match(lab, /import \{[\s\S]*?offsetStep, bobStep, inertiaStep, widgetTransformRect,[\s\S]*?\} from '\.\.\/combat\/weapon\/weaponWidgetMotion\.js'/,
     'Offset, Bob, Inertia and the rect transform come from the mod\u2019s own module');
   // and they are the same functions, not same-named ones
   assert.equal(typeof bobStep, 'function');

@@ -30,7 +30,7 @@ import { islesNear, isleByKey, etherDepthAt, etherBandOf, BANDS, LEAGUE_PX, KIND
 import { ETHER_CHARTED_MAX } from '../systems/naval/captainLedger.js';   // AUDIT CAPTAIN'S SEA X5: the charts' room
 import { LEGENDS, legendAt, legendSails, legendAbroad, legendById, rumourOf } from '../systems/naval/etherShips.js';
 import { mintGood, goodById } from '../systems/naval/tradeGoods.js';
-import { mulberry32 } from '../combat/bloodArt.js';
+import { mulberry32 } from '../combat/blood/bloodArt.js';
 
 /** An isle comes onto the captain's charts within this many map pixels of the ship (Chebyshev) - its shore half a league
  *  to two leagues off. */

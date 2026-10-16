@@ -3040,7 +3040,7 @@ export function morrowindCard({ count = morrowindDataCount(), armState = fpArm.s
     // A character in play gets the body now (seconds, once); otherwise the next one made or loaded builds it at its
     // door (autoBuildArms). TR2: the opts come from weaponRig's one home.
     if (n > 0 && playerEntity?.chargenDone) {
-      const { buildArmsFor } = await import('../../combat/weaponRig.js');
+      const { buildArmsFor } = await import('../../combat/weapon/weaponRig.js');
       await buildArmsFor(playerEntity);
     }
     render();
@@ -3447,7 +3447,7 @@ export function classicSegment(f, st) {
  *  holster until the next build - while the row's effect line promised it at once. */
 const rebuildMorrowindBody = async () => {
   if (!morrowindDataCount() || !playerEntity?.chargenDone) return;   // MWA4: attached is on - a character in play wears it
-  const { buildArmsFor } = await import('../../combat/weaponRig.js');
+  const { buildArmsFor } = await import('../../combat/weapon/weaponRig.js');
   await buildArmsFor(playerEntity);
   render();
 };

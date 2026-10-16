@@ -506,7 +506,7 @@
   },
   {
     "name": "AUDIT-DISC19-E1-cast-cut-at-reach",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      first ??= collider.raycastHit(eye, lookDir, RAY_DISTANCE);",
     "new": "      first ??= collider.raycastHit(eye, lookDir, WEAPON_REACH);",
     "tests": [
@@ -524,7 +524,7 @@
   },
   {
     "name": "AUDIT-DISC19-E2-swing-skips-own-mesh",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "      if (first.key != null && first.key !== o.key && actions.objects.has(first.key)) continue;",
     "new": "      if (first.key != null && actions.objects.has(first.key)) continue;",
     "tests": [

@@ -5,7 +5,7 @@
 //     every registered modifier's percent added on, the whole clamped to [0.5, 2].
 //   - THE CLASSIC HANDS (combat/fpsSpellCasting.js): CAST_FRAME_PERIOD over the cast's rate - the release at 0.5 s and
 //     the hands down at 0.7 s at rate 1, where DFU's animSpeed put them at 0.2 s and 0.28 s.
-//   - THE RIG (combat/weaponRig.js castSpellAnim) reads the caster's rate once a cast and hands it to BOTH lanes.
+//   - THE RIG (combat/weapon/weaponRig.js castSpellAnim) reads the caster's rate once a cast and hands it to BOTH lanes.
 //   - THE MORROWIND ARM (combat/fpArm.js castSpell) plays its spellcast group at that rate.
 //   - THE LOOT LINE (systems/loot/lootRarity.js castSpeed, systems/loot/lootPowers.js lootCastSpeed): a line that does something,
 //     on jewellery and weapons, banded, worded, summed over what I wear under its cap, mine alone, none with the switch off.
@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as CS from '../src/systems/castSpeed.js';
 import { SpellCastAnim, CAST_FRAME_PERIOD, CAST_RECOVER_S, RELEASE_FRAME, FRAME_INDICES, fpsSpellCasting } from '../src/combat/fpsSpellCasting.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY, fpArm } from '../src/combat/fpArm.js';
 import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
 import { castClip } from './fixtures/mw/castClip.mjs';

@@ -44,7 +44,7 @@ import '../src/world/outdoors.js';
 import '../src/systems/featureLanes.js';   // FT18: the wind, the quick slots and the blood lanes register themselves too
 import * as LR from '../src/systems/loot/lootRarity.js';
 import { AETHERIC_RECORDS } from '../src/systems/aetheric.js';   // SET6: the test room shows the Aetheric rung too (RAID4b: the raids' sets with it)
-import { TECHNIQUE_IDS } from '../src/combat/techniqueRoster.js';   // TECH1: the Test Room lays one Rare a technique
+import { TECHNIQUE_IDS } from '../src/combat/technique/techniqueRoster.js';   // TECH1: the Test Room lays one Rare a technique
 import { createRandomWeapon, createRandomArmor, LOOT_ARRAY_FIELDS, validLootItem, validLootList } from '../src/systems/loot/loot.js';   // AUDIT-LR: a container's whole list, the shape both online doors send
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintCondition, itemBaseValue } from '../src/systems/item/itemTemplates.js';

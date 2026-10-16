@@ -42,7 +42,7 @@ import { SD_SKY_PAINT_FS, SD_SKY_SHARDS, SD_SHARD_TOP, SD_CLOCK_FACE, SD_CLOCK_R
 import { skyBasis, DEAD_NOISE_GLSL } from '../src/render/deadlands.js';
 import { AURA_FS } from '../src/render/auraRing.js';
 import { SHADOW_POINT_NEAR } from '../src/render/shadowPass.js';
-import { createBloodMarks, onMover } from '../src/combat/bloodMarks.js';
+import { createBloodMarks, onMover } from '../src/combat/blood/bloodMarks.js';
 import { Collider } from '../src/player/collider.js';
 import { GRAVITY, runSpeed } from '../src/player/motor.js';
 

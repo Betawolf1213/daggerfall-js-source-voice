@@ -28,7 +28,7 @@ no licence line of their own.]**
   the bundle carries FOR WEAPON WIDGET, verbatim: "Recommended settings
   for DW". The readme says "For Weapon Widget users, select Diverse
   Weapons settings preset in Weapon Widget mod options."
-  `src/combat/diverseWeapons.js` restates it as the store's own keys
+  `src/combat/diverseWeapons/diverseWeapons.js` restates it as the store's own keys
   and lays it over the player's Weapon Widget settings while the mod's
   `WeaponWidgetPreset` switch is on (their own values kept underneath).
 - `Readme.txt` - the zip's own readme, verbatim.

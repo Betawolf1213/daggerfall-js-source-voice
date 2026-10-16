@@ -20,11 +20,11 @@ import { SOUND } from '../src/systems/soundClips.js';
 import { MISSILE_SPEED } from '../src/systems/spellcast.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
 import * as T from '../src/combat/techniques.js';
-import * as FX from '../src/combat/techniqueFx.js';
-import { TECHNIQUES } from '../src/combat/techniqueRoster.js';
+import * as FX from '../src/combat/technique/techniqueFx.js';
+import { TECHNIQUES } from '../src/combat/technique/techniqueRoster.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
@@ -79,7 +79,7 @@ function feelDoor(extra = {}) {
   };
   return { log, door, bursts: () => log.filter((e) => e.k === 'fx').map((e) => e.recipe), shakes: () => log.filter((e) => e.k === 'shake').map((e) => e.n), sounds: () => log.filter((e) => e.k === 'sound') };
 }
-/** A rig over a fake host, stepped in THE RIG'S OWN ORDER (combat/weaponRig.js frame): the runner, then the machine,
+/** A rig over a fake host, stepped in THE RIG'S OWN ORDER (combat/weapon/weaponRig.js frame): the runner, then the machine,
  *  then the frame's events handed back (claimShot) - `frame(held)` answers that frame's events. */
 function rig({ pw, entity, door, cam = { pos: [0, 1.7, 0], yaw: 0, pitch: -0.2, feet: feet(0, 0, 0) }, collider = ground() }) {
   const started = [];
@@ -483,7 +483,7 @@ test('TECHFX1 THE HANDS\' DIP: the rig lowers its classic layer by the spring th
   assert.deepEqual(calls[1], [3, 4], 'and back');
   assert.deepEqual(renderer.screenOffset, [3, 4]);
   // the source: the arm through its transform, the classic lane through the offset, restored in a finally
-  const src = code('src/combat/weaponRig.js');
+  const src = code('src/combat/weapon/weaponRig.js');
   assert.match(src, /function drawInner\(o\) \{\s*const dy = techniqueHands\(\)\.y;\s*if \(!\(dy > 0\)\) return drawLayer\(o\);\s*if \(fpArm\.active\(\)\) \{ _armDip = dy; try \{ return drawLayer\(o\); \} finally \{ _armDip = 0; \} \}/);
   assert.match(src, /_dipPx = dy \* \(cv\(\)\?\.height \?\? 0\);\s*renderer\.setScreenOffset\(ox, oy \+ _dipPx\);\s*try \{ return drawLayer\(o\); \} finally \{ renderer\.setScreenOffset\(ox, oy\); _dipPx = 0; \}/);
   assert.match(src, /if \(_armDip > 0\) \{ const armsBase = fpArm\.screenTransform\(\); fpArm\.setScreenTransform\(\(base\) => techniqueDipRect\(armsBase \? armsBase\(base\) : base, _armDip, base\.h\)\); \}/);
@@ -584,7 +584,7 @@ test('TECHFX1 THE FRAME MAKES NOTHING (L2 F9\'s measure, in a child with a 64 MB
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
     await import(${url('test/modsOff.js')});
-    const FX = await import(${url('src/combat/techniqueFx.js')});
+    const FX = await import(${url('src/combat/technique/techniqueFx.js')});
     const T = await import(${url('src/combat/techniques.js')});
     const LR = await import(${url('src/systems/loot/lootRarity.js')});
     const { createClimbFeelHost } = await import(${url('src/player/climbFeel.js')});

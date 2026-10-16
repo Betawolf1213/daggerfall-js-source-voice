@@ -1169,8 +1169,8 @@ export const textureStoreSettled = () => _textureStoreSettled;
 async function registerTextureStoreNow({ warm }) {
   const { setTextureReplacements } = await import('../systems/textureReplacement.js');
   const { setSeasonsSources } = await import('../systems/seasonsIliacBayAssets.js');
-  const { setWeaponWidgetSources } = await import('../combat/weaponWidgetAssets.js');   // WW1
-  const { setDiverseWeaponsSources } = await import('../combat/diverseWeaponsAssets.js');   // DW1
+  const { setWeaponWidgetSources } = await import('../combat/weapon/weaponWidgetAssets.js');   // WW1
+  const { setDiverseWeaponsSources } = await import('../combat/diverseWeapons/diverseWeaponsAssets.js');   // DW1
   const { setDfmodSources, setDfmodDetailSource } = await import('../systems/dfmodTextures.js');   // DFMOD1
   const { installVanillaEnhancedPack } = await import('../systems/vanillaEnhanced/vanillaEnhancedPack.js');   // VE4
   const { getPref } = await import('../systems/uiPrefs.js');

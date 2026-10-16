@@ -23,76 +23,76 @@
 // optional environment-attack ray (interiors: bash/Receive on action
 // objects; open exteriors have nothing in reach).
 
-import { PlayerWeapon, WEAPON_REACH, setWeaponPoseProbe, weaponPoseOf, USING_RIGHT_HAND_TEXT } from './playerWeapon.js';   // RR1: the rig's drawn state and weapon type, for laws that ask off-rig
-import { eotbBody } from '../player/eotbBody.js';   // EOTB5: the sprite body, for a player with no Morrowind data
-import { eotbCamera } from '../player/eotbCamera.js';
-import { racialFpsWeapon } from '../systems/lycanthropy.js';   // V4: the transformed rig's claws
-import { EQUIP_SLOTS, equipTableOf, fillEquipTable } from '../systems/equip.js';   // AUDIT 17e F17; MW-D32 the worn read; MW-EARLY: a save's worn set
-import { setItemFields } from '../systems/item/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
-import { dfWornEquipment } from '../formats/mwItemMap.js';   // MW-D32
-import { ownWerewolfSkin } from '../systems/ownGlyphs.js';   // SHADOW-FANG: the skin my own werewolf wears
-import { ARMOR_ENUM } from './enemyEquipment.js';   // MW-D32
-import { loadFpsWeaponArt, drawFpsWeapon, weaponTypeForItem, WEAPON_TYPES, fpLightingOn, WEAPON_FILE } from './fpsWeapon.js';
-import { loadThunderlockArt } from './thunderlockArt.js';
-import { createRecoil, GUN_FEEL, gunPitch, muzzleGlow, GUN_TICK_SECONDS, armGunPose } from './gunFeel.js';   // AUDIT FIELD-GUN-MW F1: the flash's own clock under the arm; MW-GUN-FEEL: the arm's kick and reload
-import { createGunRig, gunRigStep, gunWidgetSettings, gunMotion, gunFrameRect } from './gunViewmodel.js';   // FIELD-GUN12: the PROTOTYPE's frame, run rather than resembled
+import { PlayerWeapon, WEAPON_REACH, setWeaponPoseProbe, weaponPoseOf, USING_RIGHT_HAND_TEXT } from '../playerWeapon.js';   // RR1: the rig's drawn state and weapon type, for laws that ask off-rig
+import { eotbBody } from '../../player/eotbBody.js';   // EOTB5: the sprite body, for a player with no Morrowind data
+import { eotbCamera } from '../../player/eotbCamera.js';
+import { racialFpsWeapon } from '../../systems/lycanthropy.js';   // V4: the transformed rig's claws
+import { EQUIP_SLOTS, equipTableOf, fillEquipTable } from '../../systems/equip.js';   // AUDIT 17e F17; MW-D32 the worn read; MW-EARLY: a save's worn set
+import { setItemFields } from '../../systems/item/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
+import { dfWornEquipment } from '../../formats/mwItemMap.js';   // MW-D32
+import { ownWerewolfSkin } from '../../systems/ownGlyphs.js';   // SHADOW-FANG: the skin my own werewolf wears
+import { ARMOR_ENUM } from '../enemyEquipment.js';   // MW-D32
+import { loadFpsWeaponArt, drawFpsWeapon, weaponTypeForItem, WEAPON_TYPES, fpLightingOn, WEAPON_FILE } from '../fpsWeapon.js';
+import { loadThunderlockArt } from '../thunderlockArt.js';
+import { createRecoil, GUN_FEEL, gunPitch, muzzleGlow, GUN_TICK_SECONDS, armGunPose } from '../gun/gunFeel.js';   // AUDIT FIELD-GUN-MW F1: the flash's own clock under the arm; MW-GUN-FEEL: the arm's kick and reload
+import { createGunRig, gunRigStep, gunWidgetSettings, gunMotion, gunFrameRect } from '../gun/gunViewmodel.js';   // FIELD-GUN12: the PROTOTYPE's frame, run rather than resembled
 import { readWidgetSettings } from './weaponWidgetMotion.js';   // FIELD-GUN8: the mod's own reader, so the Thunderlock's Inertia rides its multipliers   // FIELD-GUN6: the lab's own feel, in the game at last
-import { betterAmbience } from '../systems/betterAmbience.js';   // FIELD-GUN6: the ONE camera shaker in the port, already wired through all four hosts
-import { orbColour, MUZZLE_FORWARD, orbArchiveFor } from '../characters/thunderlockIds.js';   // FIELD-GUN17: the flash wears the orb's own colour, sampled rather than named
-import { worldRectPx } from '../player/tapRay.js';   // FIELD-GUN19: the docked HUD's world strip, in canvas pixels - ROAD-E E5's one home for that flip
-import { installThunderlockSounds, SFX as TL_SFX } from '../systems/thunderlock.js';   // AUDIT-THUNDERLOCK F8: the weapon's own clips, through the mod-sound door   // the port's own weapon: its art is a sheet, not a CIF   // MAC-I: the tint's switch, with the sprite it tints
+import { betterAmbience } from '../../systems/betterAmbience.js';   // FIELD-GUN6: the ONE camera shaker in the port, already wired through all four hosts
+import { orbColour, MUZZLE_FORWARD, orbArchiveFor } from '../../characters/thunderlockIds.js';   // FIELD-GUN17: the flash wears the orb's own colour, sampled rather than named
+import { worldRectPx } from '../../player/tapRay.js';   // FIELD-GUN19: the docked HUD's world strip, in canvas pixels - ROAD-E E5's one home for that flip
+import { installThunderlockSounds, SFX as TL_SFX } from '../../systems/thunderlock.js';   // AUDIT-THUNDERLOCK F8: the weapon's own clips, through the mod-sound door   // the port's own weapon: its art is a sheet, not a CIF   // MAC-I: the tint's switch, with the sprite it tints
 // ROAD-tail (FPSSpellCasting.cs): the classic spellcasting HANDS. A
 // separate component in DFU and a separate module here, drawn by the
 // same rig because this is the one surface every FPS-weapon host
 // already mounts - so wiring it here wires all four at once.
-import { fpsSpellCasting, loadSpellCastArt, drawSpellCastHands, magicAnimFilename, readiedHandsFrame } from './fpsSpellCasting.js';   // RSH1: the readied hands
-import { createClimbHands, climbLens } from './climbHands.js';   // CLIMB-HANDS: the classic lane's hands on the wall; II: the lens they are pinned through
-import { fieldOfView } from '../ui/viewSettings.js';   // CLIMB-HANDS II: the world's own field of view, the hands' lens
+import { fpsSpellCasting, loadSpellCastArt, drawSpellCastHands, magicAnimFilename, readiedHandsFrame } from '../fpsSpellCasting.js';   // RSH1: the readied hands
+import { createClimbHands, climbLens } from '../climbHands.js';   // CLIMB-HANDS: the classic lane's hands on the wall; II: the lens they are pinned through
+import { fieldOfView } from '../../ui/viewSettings.js';   // CLIMB-HANDS II: the world's own field of view, the hands' lens
 // MW-D8: the classic sprite is still the DEFAULT and still the fallback,
 // and runs untouched otherwise. The Morrowind arm below is an opt-in
 // layer that either draws whole or does not draw at all - there is no
 // state in which both reach the screen, and none in which neither does.
-import { fpArm, hasAmmoFor } from './fpArm.js';
-import { ammoCountFor } from '../systems/inventory.js';   // AUDIT 68 S27-ammoCount-dup: the quiver's count, from the spend law's own module
-import { getPref } from '../systems/uiPrefs.js';   // MWA1: the arms switch
-import { morrowindDataCount, morrowindDataFingerprint, registerMorrowindData, morrowindDataCounted, countMorrowindArchives } from '../scenes/dataSource.js';   // MWA1: are the archives attached; AUDIT 65 XL-6: and measured; MW-EARLY: and counted
-import { mwRaceId } from '../formats/mwNpc.js';   // TR2: the one race-id spelling
-import { TEMPLATES } from '../systems/useItem.js';   // MW-D51: the Torch template - the lit light the Morrowind hand holds
-import { morrowindDataGeneration } from '../scenes/dataSource.js';
-import { objectAabb, rayAabb, hasMeshCollider, RAY_DISTANCE } from '../player/activate.js';   // AUDIT 63 F37: one live box for both rays
-import { SOUND } from '../systems/soundClips.js';
-import { equipSoundFor } from '../characters/weapons.js';   // F023: GetEquipSound
-import { setMidScreenText } from '../ui/midScreenText.js'; import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';   // AUDIT 64 F34: FPSWeapon.cs:365's mid-screen line; CLIMB4: OnGUI's own offset, the climb's drop under it
+import { fpArm, hasAmmoFor } from '../fpArm.js';
+import { ammoCountFor } from '../../systems/inventory.js';   // AUDIT 68 S27-ammoCount-dup: the quiver's count, from the spend law's own module
+import { getPref } from '../../systems/uiPrefs.js';   // MWA1: the arms switch
+import { morrowindDataCount, morrowindDataFingerprint, registerMorrowindData, morrowindDataCounted, countMorrowindArchives } from '../../scenes/dataSource.js';   // MWA1: are the archives attached; AUDIT 65 XL-6: and measured; MW-EARLY: and counted
+import { mwRaceId } from '../../formats/mwNpc.js';   // TR2: the one race-id spelling
+import { TEMPLATES } from '../../systems/useItem.js';   // MW-D51: the Torch template - the lit light the Morrowind hand holds
+import { morrowindDataGeneration } from '../../scenes/dataSource.js';
+import { objectAabb, rayAabb, hasMeshCollider, RAY_DISTANCE } from '../../player/activate.js';   // AUDIT 63 F37: one live box for both rays
+import { SOUND } from '../../systems/soundClips.js';
+import { equipSoundFor } from '../../characters/weapons.js';   // F023: GetEquipSound
+import { setMidScreenText } from '../../ui/midScreenText.js'; import { weaponOffsetHeight } from '../../ui/hud/hudLarge.js';   // AUDIT 64 F34: FPSWeapon.cs:365's mid-screen line; CLIMB4: OnGUI's own offset, the climb's drop under it
 import { createWeaponWidget } from './weaponWidget.js';
-import { atlasFileName } from './diverseWeapons.js';   // DW1: the art cache's third key
+import { atlasFileName } from '../diverseWeapons/diverseWeapons.js';   // DW1: the art cache's third key
 // SW1: SHIELD WIDGET. The sibling, beside the weapon's clone and driven
 // on the same frame - the shield the game never drew, in the hand the
 // weapon is not in.
-import { createShieldWidget } from './shieldWidget.js';
-import { shieldWidgetTextures, shieldWidgetImage } from './shieldWidgetAssets.js';
-import { setAttackOnPlayerHook } from './formulas.js';   // SW1: PCAAO's onAttackDamageCalculated, for the Recoil module
-import { conditionPercentage } from '../systems/item/itemInfo.js';   // SW1: the condition tier
-import { isShieldTemplate } from '../systems/armorMaterials.js';   // SW1: GetShieldProtectedBodyParts' own test
-import { rriNativeMaterialValue } from '../systems/roleplayRealismItems/rriItems.js';
-import { riddenHorseLook } from '../systems/horse/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
-import { createHandheldTorches, isHeldLight } from '../systems/handheldTorches.js';   // HT1: Handheld Torches' component, one per rig beside the widget; TORCH-VIS: and its own light test
-import { lanternAtWaist } from '../systems/playerTorch.js';   // HT-WAIST: a lantern hung at the waist is in no hand - the ladder, the Morrowind body and the sprite ask the one question
-import { liveVampirism } from '../systems/racialLive.js';   // PORTRAIT3D: a vampire's body wears the race's vampire head
-import { isTransformedLycanthrope, liveLycanthropy } from '../systems/lycanthropy.js';   // WW1: Weapon Widget's FPSWeaponClone, beside the machine; AUDIT-EOTB2: the sprite's form
-import { concealmentFlags } from '../systems/effects.js';   // EOTB-IL: PlayerBillboard.UpdateMaterial reads the player's own IsInvisible / IsAShade / IsBlending
-import { getBool, getInt } from '../systems/settings/settings.js';   // EOTB-IL: PlayerBillboard.LateUpdate reads DaggerfallUnity.Settings.BowDrawback
-import { modSetting } from '../systems/modSettings.js';   // WW1: its Enabled
-import { takeFrameLook } from '../player/lookFilter.js';   // WW1: the frame's look for the widget's inertia
-import { uiCanvas, onUiScreen, fromUiPoint } from '../ui/uiScreen.js';   // RETRO-UI: the viewmodel in DFU's CustomScreenRect
-import { dfuLookAxes } from '../ui/lookSettings.js';   // WIDGET-LOOK: the mods' Inertia reads DFU's look axes, not the camera's radians
-import { cursorActive } from '../player/pointerLock.js';   // WW1: PlayerMouseLook.cursorActive
-import { liveStat } from '../systems/statMods.js';   // WW1: the widget's speed ratio
-import { castRate } from '../systems/castSpeed.js';   // CAST-SPEED: the rate both lanes' hands cast at
-import './swingLaw.js';   // AUDIT PRE-MERGE 0929 S5: SWING-LAW's reader of the weapon in the hand, registered as it loads - every rig's
-import { walkSpeed } from '../player/motor.js';   // WW1: GetBaseSpeed's walk arm
-import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
-import { stepTechnique, claimShot, techniqueFlying, TECHNIQUE_ACTION } from './techniques.js';   // TECH1: the technique key - every host's rig steps the one runner
-import { techniqueHands } from './techniqueFx.js';   // TECH-FX: a technique's push of the first-person layer
+import { createShieldWidget } from '../shieldWidget.js';
+import { shieldWidgetTextures, shieldWidgetImage } from '../shieldWidgetAssets.js';
+import { setAttackOnPlayerHook } from '../formulas.js';   // SW1: PCAAO's onAttackDamageCalculated, for the Recoil module
+import { conditionPercentage } from '../../systems/item/itemInfo.js';   // SW1: the condition tier
+import { isShieldTemplate } from '../../systems/armorMaterials.js';   // SW1: GetShieldProtectedBodyParts' own test
+import { rriNativeMaterialValue } from '../../systems/roleplayRealismItems/rriItems.js';
+import { riddenHorseLook } from '../../systems/horse/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
+import { createHandheldTorches, isHeldLight } from '../../systems/handheldTorches.js';   // HT1: Handheld Torches' component, one per rig beside the widget; TORCH-VIS: and its own light test
+import { lanternAtWaist } from '../../systems/playerTorch.js';   // HT-WAIST: a lantern hung at the waist is in no hand - the ladder, the Morrowind body and the sprite ask the one question
+import { liveVampirism } from '../../systems/racialLive.js';   // PORTRAIT3D: a vampire's body wears the race's vampire head
+import { isTransformedLycanthrope, liveLycanthropy } from '../../systems/lycanthropy.js';   // WW1: Weapon Widget's FPSWeaponClone, beside the machine; AUDIT-EOTB2: the sprite's form
+import { concealmentFlags } from '../../systems/effects.js';   // EOTB-IL: PlayerBillboard.UpdateMaterial reads the player's own IsInvisible / IsAShade / IsBlending
+import { getBool, getInt } from '../../systems/settings/settings.js';   // EOTB-IL: PlayerBillboard.LateUpdate reads DaggerfallUnity.Settings.BowDrawback
+import { modSetting } from '../../systems/modSettings.js';   // WW1: its Enabled
+import { takeFrameLook } from '../../player/lookFilter.js';   // WW1: the frame's look for the widget's inertia
+import { uiCanvas, onUiScreen, fromUiPoint } from '../../ui/uiScreen.js';   // RETRO-UI: the viewmodel in DFU's CustomScreenRect
+import { dfuLookAxes } from '../../ui/lookSettings.js';   // WIDGET-LOOK: the mods' Inertia reads DFU's look axes, not the camera's radians
+import { cursorActive } from '../../player/pointerLock.js';   // WW1: PlayerMouseLook.cursorActive
+import { liveStat } from '../../systems/statMods.js';   // WW1: the widget's speed ratio
+import { castRate } from '../../systems/castSpeed.js';   // CAST-SPEED: the rate both lanes' hands cast at
+import '../swingLaw.js';   // AUDIT PRE-MERGE 0929 S5: SWING-LAW's reader of the weapon in the hand, registered as it loads - every rig's
+import { walkSpeed } from '../../player/motor.js';   // WW1: GetBaseSpeed's walk arm
+import { localizedText } from '../../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { stepTechnique, claimShot, techniqueFlying, TECHNIQUE_ACTION } from '../techniques.js';   // TECH1: the technique key - every host's rig steps the one runner
+import { techniqueHands } from '../technique/techniqueFx.js';   // TECH-FX: a technique's push of the first-person layer
 
 /**
  * TR2: THE ARMS-BUILD OPTS, ONE HOME. The pause card and the Test
@@ -988,7 +988,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
   // shake and a reload lower, and NONE of the three was ever carried
   // across - the sprite arrived, the sounds arrived, and the weapon
   // sat dead still while it fired. The spring is the lab's own
-  // machine, from the one home both read (combat/gunFeel.js), on Mac's
+  // machine, from the one home both read (combat/gun/gunFeel.js), on Mac's
   // own numbers; the shake is the room's (betterAmbience, below).
   const _tlRecoil = createRecoil();
   /** FIELD-GUN12: the prototype's own module state, carried between
@@ -1217,7 +1217,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
     // when both are true: a shot fired on the same frame the weapon is
     // put away leaves, it does not dip.
     const sheathed = !!playerWeapon.sheathed;
-    // MW-GUN-FEEL (combat/gunFeel.js): the Morrowind arm takes the SAME spring - stepped above, once - and the reload's
+    // MW-GUN-FEEL (combat/gun/gunFeel.js): the Morrowind arm takes the SAME spring - stepped above, once - and the reload's
     // share of its clock, from the breech's open (tlReloadFrom) to the ready, as one pose over its viewmodel - the
     // classic lane's dip runs on the same span. Sheathed, it takes none.
     const from = _tlShotAt >= 0 ? tlReloadFrom(m) : Infinity;
@@ -1905,7 +1905,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
     silenceTorch() { handheld.silence(); },
   };
   /** TECH-FX (bible/05-Combat/Weapon-Techniques.md THE FEEL): THE HANDS' DIP - a technique's spring lowers the
-   *  first-person layer (combat/techniqueFx.js techniqueHands, screen heights - only ever down: every sprite sits on a
+   *  first-person layer (combat/technique/techniqueFx.js techniqueHands, screen heights - only ever down: every sprite sits on a
    *  screen edge). The CLASSIC lane (the weapon, the clone, the gun, the shield, the torch hand, the spell's hands) takes
    *  it through the renderer's screen offset, the seam retro mode's pillarbox places it with (ui/uiScreen.js
    *  onUiScreen), put back however the layer leaves; the Morrowind ARM takes it through its own screen transform (AUDIT
@@ -2201,7 +2201,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
       // things have, and this weapon is neither's. Five rounds were
       // spent making a rect built for a CIF record come back right
       // for a contact sheet. It still RUNS the mod's three modules,
-      // on the mod's own settings (combat/gunViewmodel.js imports
+      // on the mod's own settings (combat/gun/gunViewmodel.js imports
       // them; it does not imitate them) - what it no longer does is
       // compose the frame a second way and then be corrected.
       const tlArt = c && thunderlockHeld() ? artFor(playerWeapon.weapon) : null;

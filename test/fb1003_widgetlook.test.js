@@ -16,7 +16,7 @@ import { readFileSync } from 'node:fs';
 import { LookFilter, takeFrameLook } from '../src/player/lookFilter.js';
 import { dfuLookAxes, lookScale } from '../src/ui/lookSettings.js';
 import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
-import { inertiaStep, readWidgetSettings } from '../src/combat/weaponWidgetMotion.js';
+import { inertiaStep, readWidgetSettings } from '../src/combat/weapon/weaponWidgetMotion.js';
 import { calculateAttackDamage, setAttackOnPlayerHook } from '../src/combat/formulas.js';
 import { installPcaao, uninstallPcaao } from '../src/combat/pcaao.js';
 import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
@@ -62,7 +62,7 @@ test('WIDGET-LOOK: through the mod\'s own inertia step, a turn sways the sprite 
     assert.ok(Math.abs(raw.inertiaTarget[0] + 0.5 * 500 * 4 * DEG) < 1e-6, `the radians were the bug: ${raw.inertiaTarget[0]} - a fourteenth of the mod's sway`);
   });
   // the rig: one read of the latch, the radians to the Thunderlock (its lab's), the axes to the three mods
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const look = takeFrameLook\(\);[^\n]*\n\s*const lookAxes = dfuLookAxes\(look\);/);
   assert.match(rig, /thunderlockFeel\(dt, \{ width: c\?\.width \?\? 320, height: c\?\.height \?\? 200, motion: frameMotion, look \}\);/, 'the gun keeps the radians its lab is tuned on');
   assert.match(rig, /look: lookAxes, swingHeld: _held, cursorActive: cursorActive\(\), camera: camThunk, collider:/, 'Handheld Torches');

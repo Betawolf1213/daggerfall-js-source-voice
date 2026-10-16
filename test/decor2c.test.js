@@ -16,7 +16,7 @@ import { decorMountOf, decorMountDye, decorMountDyeTarget, decorOwnEntry, decorS
 import { itemDyeColor } from '../src/systems/item/itemDye.js';
 import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot/loot.js';
-import { SURFACE_LIFT } from '../src/combat/bloodDecals.js';
+import { SURFACE_LIFT } from '../src/combat/blood/bloodDecals.js';
 import { createDecorPlacer } from '../src/systems/decor/decorPlacer.js';
 import { createDecorRoom, decorMountQuad, decorMountFloats } from '../src/scenes/decor/decorRoom.js';
 import { DECOR_MOUNT_NO_SURFACE } from '../src/scenes/decor/decorTool.js';

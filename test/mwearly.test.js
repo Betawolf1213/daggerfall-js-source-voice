@@ -25,7 +25,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
-import { armsStandFor, armIdentityOf, armBuildOptsOf, saveArmsEntity, prebuildArmsForSave, autoBuildArms } from '../src/combat/weaponRig.js';
+import { armsStandFor, armIdentityOf, armBuildOptsOf, saveArmsEntity, prebuildArmsForSave, autoBuildArms } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS, equipTableOf, rebuildEquipState, fillEquipTable } from '../src/systems/equip.js';
 import { setItemFields } from '../src/systems/item/itemTemplates.js';
 
@@ -100,7 +100,7 @@ test('MW-EARLY autoBuildArms: the restore\'s door finds the early build under wa
   const underWay = (who) => (e) => armsStandFor(e, { ready: () => false, builtFor: () => null, buildingFor: () => who });
   assert.equal(await autoBuildArms(her, { ...opts, standing: underWay(armIdentityOf(her)) }), null, 'no second build of the same body');
   assert.equal(measured, 0, 'and nothing measured for it');
-  assert.match(rd('src/combat/weaponRig.js'), /export async function autoBuildArms\(entity, \{ dataCount = morrowindDataCount, measure = registerMorrowindData, measured = morrowindDataFingerprint, standing = armsStandFor, intent = null \} = \{\}\) \{/, 'the door\'s own standing law is armsStandFor');
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /export async function autoBuildArms\(entity, \{ dataCount = morrowindDataCount, measure = registerMorrowindData, measured = morrowindDataFingerprint, standing = armsStandFor, intent = null \} = \{\}\) \{/, 'the door\'s own standing law is armsStandFor');
 });
 
 test('MW-EARLY saveArmsEntity: the save\'s own race, sex, face and chargenDone; the items as restorePlayer reads them; the worn table by fillEquipTable (the first claim of a slot wins); the light by its index; exactly the build opts a restored entity gives (mutant: the table unfilled, the light dropped, the items raw)', () => {

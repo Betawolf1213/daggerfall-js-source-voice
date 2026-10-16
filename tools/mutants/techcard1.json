@@ -1,7 +1,7 @@
 [
   {
     "name": "TECHCARD-every-technique-aims",
-    "file": "src/combat/techniqueRoster.js",
+    "file": "src/combat/technique/techniqueRoster.js",
     "old": "  return { what, mult: m, fatigue: t.fatigue, cooldown: t.cooldown, aims: t.aim != null };",
     "new": "  return { what, mult: m, fatigue: t.fatigue, cooldown: t.cooldown, aims: true };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TECHCARD-the-line-off-its-parts",
-    "file": "src/combat/techniqueRoster.js",
+    "file": "src/combat/technique/techniqueRoster.js",
     "old": "  return p ? `${p.what}. ${p.fatigue} fatigue, ${p.cooldown}s` : '';",
     "new": "  return p ? `${p.what}. ${p.cooldown}s` : '';",
     "tests": [

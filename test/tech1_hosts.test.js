@@ -14,7 +14,7 @@ import { TOUCH_BUTTON_ACTIONS } from '../src/ui/touch/touchButtons.js';
 import { DPAD_CHOICES } from '../src/ui/plus/plusPad.js';
 import { PLUS_BIND_ROWS } from '../src/ui/plus/plusPadBinds.js';
 import { TECHNIQUE_ACTION } from '../src/combat/techniques.js';
-import { TECH_CHIP_COLOUR } from '../src/combat/techniqueRoster.js';
+import { TECH_CHIP_COLOUR } from '../src/combat/technique/techniqueRoster.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => readFileSync(join(ROOT, f), 'utf8');
@@ -40,7 +40,7 @@ test('TECH1 THE ACTION: WeaponTechnique appended last, a port row the classic wi
 });
 
 test('TECH1 THE RIG: the one runner stepped AHEAD of the gesture on the swing\'s own gate, the key through the registry\'s held read, the loose claimed as the frame\'s events leave (mutants: stepped after the gesture; the gate dropped; the claim dropped)', () => {
-  const rig = code('src/combat/weaponRig.js');
+  const rig = code('src/combat/weapon/weaponRig.js');
   assert.match(rig, /technique = null \}\)/, 'the host\'s door, defaulted');
   const step = rig.indexOf('stepTechnique(dt, _techCtx);');
   const gesture = rig.indexOf('? playerWeapon.gesture(_dx, _dy, _held, dt');

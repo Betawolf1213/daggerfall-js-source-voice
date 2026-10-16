@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { fpsSpellCasting, readiedHandsFrame, READIED_HANDS_FRAME, SpellCastAnim } from '../src/combat/fpsSpellCasting.js';
 import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { setModSetting, _resetModSettings, MOD_SETTINGS } from '../src/systems/modSettings.js';
@@ -111,7 +111,7 @@ test('RSH1: a CasterOnly spell raises nothing, and the switch takes them away at
 });
 
 test('RSH1: the rig reads the readied hands under the cast hands\' own two lane gates, after the cast\'s draw, and every host hands it the engine\'s readied() (mutants: the Morrowind arm or the Beholder drawing them too, a host left out)', () => {
-  const rig = read('src/combat/weaponRig.js').toString();
+  const rig = read('src/combat/weapon/weaponRig.js').toString();
   const at = rig.indexOf('if (c && !fpArm.active() && !eotbHidesSpellHands()) {');
   const end = rig.indexOf('// PROF1', at);
   const block = rig.slice(at, end);

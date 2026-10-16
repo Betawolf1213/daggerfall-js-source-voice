@@ -1,4 +1,4 @@
-// TECH1 (bible/05-Combat/Weapon-Techniques.md): THE TECHNIQUES AS LINES - the roster's one table (combat/techniqueRoster.js),
+// TECH1 (bible/05-Combat/Weapon-Techniques.md): THE TECHNIQUES AS LINES - the roster's one table (combat/technique/techniqueRoster.js),
 // the line on the weapon (systems/loot/lootRarity.js AFFIX_KINDS.technique), its draw at a door's END (Loot-II law 9), the
 // Reforge, the hone and the card, and the item law that judges it (systems/item/itemLaw.js - the account service's too).
 import './modsOff.js';
@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
-import * as RO from '../src/combat/techniqueRoster.js';
+import * as RO from '../src/combat/technique/techniqueRoster.js';
 import { itemFindings, ITEM_LAW_VERSION } from '../src/systems/item/itemLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';

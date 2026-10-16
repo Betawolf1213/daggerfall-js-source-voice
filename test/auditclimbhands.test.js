@@ -12,7 +12,7 @@ import { ClimbHands, createClimbHands, HANDS } from '../src/combat/climbHands.js
 import { ClimbPose, POSE } from '../src/player/climbPose.js';
 import { FEEL } from '../src/player/climbFeel.js';
 import { PARKOUR_HAND_SPAN } from '../src/player/parkour.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { resetToDefaults } from '../src/systems/settings/settings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
@@ -380,7 +380,7 @@ test('AUDIT CLIMB-HANDS A15: the weapon and the hands are never on the screen to
 });
 
 test('AUDIT CLIMB-HANDS A16: by source - the hands are stepped on the classic lane alone (the Morrowind arms and the third-person body take the climb themselves) and the weapon\'s lowering waits on them', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const handsLane = !fpArm\.active\(\) && !fpArm\.thirdActive\(\) && !eotbHidesWeapon\(\);/);
   assert.match(rig, /_climbLower = climbLowerStep\(_climbLower, climbing \|\| \(handsLane && climbHands\.showing\(\)\), dt\);/);
   // PIN MOVED (CLIMB-HANDS II): the lane's climb named first, then handed on with the look and the frame's lens
@@ -506,5 +506,5 @@ test('AUDIT CLIMB-HANDS B5 (second round): looking straight back from the wall t
 });
 
 test('AUDIT CLIMB-HANDS B6 (second round): by source - the law is handed no climb when the Morrowind body is drawn in third person (the arm is not first person\'s alone: fpArm.active() is), so it never holds that weapon down', () => {
-  assert.match(rd('src/combat/weaponRig.js'), /const handsLane = !fpArm\.active\(\) && !fpArm\.thirdActive\(\) && !eotbHidesWeapon\(\);/);
+  assert.match(rd('src/combat/weapon/weaponRig.js'), /const handsLane = !fpArm\.active\(\) && !fpArm\.thirdActive\(\) && !eotbHidesWeapon\(\);/);
 });

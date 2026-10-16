@@ -37,7 +37,7 @@
   },
   {
     "name": "RETROUI-rig-on-canvas",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "  const cv = () => uiCanvas(typeof canvas === 'function' ? canvas() : canvas);",
     "new": "  const cv = () => (typeof canvas === 'function' ? canvas() : canvas);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "RETROUI-muzzle-in-layer",
-    "file": "src/combat/weaponRig.js",
+    "file": "src/combat/weapon/weaponRig.js",
     "old": "_tlDrawn = { rect: { ...rect, x: rx, y: ry },",
     "new": "_tlDrawn = { rect: { ...rect, x: rect.x, y: rect.y },",
     "tests": [

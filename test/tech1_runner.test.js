@@ -1,5 +1,5 @@
 // TECH1 (bible/05-Combat/Weapon-Techniques.md): THE TECHNIQUE KEY AT WORK - the blow every host's swing and shaft resolve
-// through (combat/techniqueBlow.js, PlayerWeapon.resolveHit, arrowFlight.js playerArrowHitFoe), the one runner every rig
+// through (combat/technique/techniqueBlow.js, PlayerWeapon.resolveHit, arrowFlight.js playerArrowHitFoe), the one runner every rig
 // steps (combat/techniques.js), the motor's flight (player/motor.js techniqueLaunch), the marks on the ground and the chip.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -7,8 +7,8 @@ import assert from 'node:assert/strict';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
 import * as T from '../src/combat/techniques.js';
-import { blowReaches, blowMult, scaleBlowDamage, playerBody, TECH_BODY_RADIUS } from '../src/combat/techniqueBlow.js';
-import { TECHNIQUES, techniqueMult } from '../src/combat/techniqueRoster.js';
+import { blowReaches, blowMult, scaleBlowDamage, playerBody, TECH_BODY_RADIUS } from '../src/combat/technique/techniqueBlow.js';
+import { TECHNIQUES, techniqueMult } from '../src/combat/technique/techniqueRoster.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { ArrowFlight, playerArrowHitFoe, techniquePierces } from '../src/combat/arrowFlight.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
@@ -43,7 +43,7 @@ const flatGround = () => ({
   heightAt: () => 0,
 });
 const R1 = {}, R2 = {};
-/** A rig's frame context over a fake host: what the rig hands the runner (combat/weaponRig.js frame). */
+/** A rig's frame context over a fake host: what the rig hands the runner (combat/weapon/weaponRig.js frame). */
 function rig({ pw, entity, door = null, cam = null, collider = flatGround(), rigId = R1 }) {
   const log = { said: [], started: [], shots: 0 };
   const ctx = (held, extra = {}) => ({

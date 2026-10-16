@@ -23,7 +23,7 @@ import { playerWeaponHitEntity, setWorldMinutes } from '../src/systems/worldTick
 import { createVampirismCurse, liveVampirism } from '../src/systems/vampirism.js';
 import { playerAttackGrunt, playerPainVoice, suppressOptionalCombatVoices } from '../src/scenes/hostCombat.js';
 import { acuteHearingMultiplier } from '../src/characters/enemy/enemySounds.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { fpArm } from '../src/combat/fpArm.js';
 import { SPECIAL_ABILITY_BITS } from '../src/systems/specialAdvantages.js';
 

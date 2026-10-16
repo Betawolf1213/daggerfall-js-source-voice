@@ -22,7 +22,7 @@ by tests that fail on the record's own code (7305011de), the new pins mutation-c
 
 ## RETRO-UI (1)
 
-`ui/uiScreen.js` (new): `uiCanvas`, `onUiScreen`, `toUiPoint`, `fromUiPoint`; `ui/hud/hud.js` drawHud; `combat/weaponRig.js`
+`ui/uiScreen.js` (new): `uiCanvas`, `onUiScreen`, `toUiPoint`, `fromUiPoint`; `ui/hud/hud.js` drawHud; `combat/weapon/weaponRig.js`
 (`cv`, `draw`, drawThunderlock's `_tlDrawn`); `player/mountRig.js`; `ui/hud/hudLarge.js` routeLargeHudClick,
 trackLargeHudPointer; `ui/hud/hudActiveSpells.js` trackHudPointer; `ui/enhanced/enhancedHud.js` wearUiPillar;
 `ui/enhanced/enhancedStyle.js`, `ui/revenant/revenantCard.js` (`--ui-pillar`). With retro mode's aspect correction on, DFU's 2D layer
@@ -133,7 +133,7 @@ running and the pay closes it within the short wait; offline, DFU's day and thre
 
 ## WIDGET-LOOK, WIDGET-RECOIL (7)
 
-`ui/lookSettings.js` dfuLookAxes; `combat/weaponRig.js`; `player/lookFilter.js` (its doc); `combat/pcaao.js`
+`ui/lookSettings.js` dfuLookAxes; `combat/weapon/weaponRig.js`; `player/lookFilter.js` (its doc); `combat/pcaao.js`
 pcaaoAttackDamage's `onStruck`; `combat/formulas.js`. INERTIA: Weapon Widget's, Shield Widget's and Handheld Torches'
 Inertia read InputManager.LookX/LookY - the axis PlayerMouseLook.ApplyLook (:126-132) turns into degrees at
 `sensitivity` (the serialized 2, gamepad.js LOOK_SENSITIVITY_FIELD) times MouseLookSensitivity, InvertMouseVertical

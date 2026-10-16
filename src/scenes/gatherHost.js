@@ -1061,7 +1061,7 @@ export function createGatherHost(deps) {
       clickHeld = !!down && taken;
       return taken;
     },
-    /** The tool in the hand for the rig (combat/weaponRig.js actTool): the act's, as DFU's own sprite. */
+    /** The tool in the hand for the rig (combat/weapon/weaponRig.js actTool): the act's, as DFU's own sprite. */
     handTool: () => (act?.hand ? act.hand(act) : follow?.hand ? follow.hand(follow) : null),   // GATHER-FEEL: and a finished act's last swing, until it runs out
     /** PEER-ACTS (GATHER-FEEL II): the pose's gathering fields (net/wire.js validPose `ga`, `gb`, `gm`) - the act the hand
      *  is on, as `handTool` holds it (the one playing, or a finished one's last swing), and the beats counted. */

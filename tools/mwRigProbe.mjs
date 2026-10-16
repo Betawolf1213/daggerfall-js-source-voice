@@ -82,7 +82,7 @@ const out = await page.evaluate(async ({ bsa, esm }) => {
     import('/src/render/renderer.js'),
     import('/src/formats/mwBsaFile.js'),
     import('/src/combat/fpArm.js'),
-    import('/src/combat/weaponRig.js'),
+    import('/src/combat/weapon/weaponRig.js'),
   ]);
   const cv = document.createElement('canvas');
   cv.style.width = '960px'; cv.style.height = '720px';

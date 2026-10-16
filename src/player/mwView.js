@@ -64,7 +64,7 @@ let eotbBodyReady = () => false;
  * not own. `weaponReady` is the weapon rig's to answer (it holds the
  * machine); `sailing` is the camera's own field since CSA-J, raised by
  * Come Sail Away's OnUpdateSailing (eotbCamera.setComeSailAway).
- * Registered once by `combat/weaponRig.js`, so no host re-derives it -
+ * Registered once by `combat/weapon/weaponRig.js`, so no host re-derives it -
  * MW-D25's law, the reason this seam exists at all.
  */
 let eotbPlayerState = () => ({});

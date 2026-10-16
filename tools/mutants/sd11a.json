@@ -203,7 +203,7 @@
   },
   {
     "name": "SD11A-L2F8-blood-on-a-mover-the-wall",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "          if (onMover(col, wall)) continue;   // AUDIT SD II (L2 F8): it met a surface that moves\n",
     "new": "",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "SD11A-L2F8-blood-on-a-mover-the-floor",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "      if (onMover(col, h)) continue;   // AUDIT SD II (L2 F8): a surface that moves takes no mark\n",
     "new": "",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "SD11A-L2F8-blood-on-a-mover-the-pool",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "    if (onMover(col, h)) return null;   // AUDIT SD II (L2 F8): nor one that moves\n",
     "new": "",
     "tests": [
@@ -233,7 +233,7 @@
   },
   {
     "name": "SD11A-L2F8-blood-on-a-mover-the-print",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "    if (onMover(col, h)) return null;   // AUDIT SD II (L2 F8): a foot on a surface that moves prints nothing, and picks nothing up\n",
     "new": "",
     "tests": [
@@ -243,7 +243,7 @@
   },
   {
     "name": "SD11A-L2F8-every-surface-still",
-    "file": "src/combat/bloodMarks.js",
+    "file": "src/combat/blood/bloodMarks.js",
     "old": "export const onMover = (col, h) => h?.key != null && !!col?.bucketPose?.(h.key);",
     "new": "export const onMover = (col, h) => false && h?.key != null && !!col?.bucketPose?.(h.key);",
     "tests": [

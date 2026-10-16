@@ -111,7 +111,7 @@ test('MWFIX 3 (restored at MW-D8): the rig watches the attach GENERATION, not a 
   // at construction, so attaching data to a running game changed nothing
   // until a reload - which is what the report "after uploading does not
   // work at all" actually was.
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /morrowindDataGeneration\(\)/, 'the rig polls the generation');
   assert.match(rig, /let _mwGen = morrowindDataGeneration\(\);/, 'seeded once');
   assert.match(rig, /const fpRecheck = \(\) => \{[\s\S]{0,240}?if \(g === _mwGen\) return;[\s\S]{0,200}?fpArm\.unload\(\);/,
@@ -157,7 +157,7 @@ test('MWFIX2: the mesh-viewer link resolved to the SITE ROOT, from the game as w
 });
 
 test('MWFIX: the classic sprite path is the ONLY path, and fpsWeapon never hears of the layer', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   // THE RIG HAS RETURNED, so this is the else-of-an-active-view form the
   // previous version named as its own successor: "When the rig returns
   // this reverts to the else-of-an-active-view form."
@@ -279,14 +279,14 @@ test('MW-D40: the attach generation answers for the WHOLE STORED SET, not the .b
 test('MW-D9g: the rig unloads on a CHANGE only, and the arm survives an unchanged poll', async () => {
   // The other half of the same law, at the consumer. A rig that unloads
   // whenever it re-reads the counter is the bug wearing the other face.
-  const rig = readFileSync(join(ROOT, 'src/combat/weaponRig.js'), 'utf8');
+  const rig = readFileSync(join(ROOT, 'src/combat/weapon/weaponRig.js'), 'utf8');
   const body = rig.slice(rig.indexOf('const fpRecheck'), rig.indexOf('// AUDIT 17e F17 / THE FOUR HOSTS RULE'));
   assert.match(body, /if \(g === _mwGen\) return;/, 'an unchanged generation returns before touching the arm');
   assert.match(body, /_mwGen = g;\s*\n\s*fpArm\.unload\(\);/, 'and the latch moves BEFORE the unload, so one change unloads once');
 });
 
 test('MW-D19: the rig hands the worn item to the arm every frame, in machine order', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   // The classic sprite already re-reads the equip slot per frame
   // (syncWorn); the Morrowind arm rides the same read or it is a
   // snapshot again. Sheathe state first (it is the cheaper compare and

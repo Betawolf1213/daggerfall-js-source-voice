@@ -606,7 +606,7 @@
   },
   {
     "name": "AUDITTELL-wound-cadence",
-    "file": "src/combat/bloodBleed.js",
+    "file": "src/combat/blood/bloodBleed.js",
     "old": "      if (wound && s.next > WOUND_WAIT) s.next = WOUND_WAIT;   // AUDIT TELL: a wound opened drips on its own cadence\n",
     "new": "",
     "tests": [
@@ -615,7 +615,7 @@
   },
   {
     "name": "AUDITTELL-wound-share",
-    "file": "src/combat/bloodBleed.js",
+    "file": "src/combat/blood/bloodBleed.js",
     "old": "const share = Math.max(bleedShare(v.health, v.maxHealth), wound ? WOUND_SHARE : 0);",
     "new": "const share = bleedShare(v.health, v.maxHealth);",
     "tests": [

@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { SFX as TL_SFX } from '../src/systems/thunderlock.js';
@@ -160,7 +160,7 @@ test('AUDIT FIELD-GUN-MW F2: the muzzle vertex is the one farthest from the grip
 });
 
 test('AUDIT FIELD-GUN-MW by source: the gate reads `ranged`; the voice is told the hold; the arm keeps its third-person frame; the flight takes a world muzzle; every host still asks the one door', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const armShoots = \(fpArm\.active\(\) \|\| fpArm\.thirdActive\(\)\) && !!playerWeapon\.machine\.ranged;/, 'ranged, not isBow');
   assert.match(rig, /const held = holdShotForArm\(evs, dt, armShoots\);\n\s*thunderlockVoice\(dt, \{ armShoots, fired: held\.fired \}\);/, 'the hold first, the voice told');
   assert.match(rig, /const trigger = armShoots \? fired : \(m\.state !== 'Idle' && _tlState === 'Idle'\);/, 'the trigger under the arm is the release; classic keeps the click');

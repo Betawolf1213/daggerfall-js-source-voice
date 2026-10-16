@@ -21,7 +21,7 @@
 // HOW IT IS SHAPED HERE. The C# is a MonoBehaviour that reaches
 // GameManager for everything; this is a plain object built over an
 // injected `deps` bag, the way every ported system in this port is
-// (systems/weaponSheathing.js, combat/weaponWidget.js). It reads
+// (systems/weaponSheathing.js, combat/weapon/weaponWidget.js). It reads
 // nothing global, touches no DOM and draws nothing, which is what lets
 // the pins fly whole journeys on a table of positions - and it is why
 // `update()` takes the frame's numbers rather than asking for them.

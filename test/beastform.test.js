@@ -96,7 +96,7 @@ test('V4: SetFPSWeapon - the transformed rig IS the wereclaws, silent draw, high
   assert.equal(racialFpsWeapon(p), WERECLAWS_ITEM);
   assert.equal(weaponTypeForItem(WERECLAWS_ITEM), WEAPON_TYPES.Werecreature, 'the WEAPON11.CIF animation set');
   assert.equal(swingSoundFor(WERECLAWS_ITEM), SOUND.SwingHighPitch, 'SetFPSWeapon:339');
-  const rig = read('src/combat/weaponRig.js');
+  const rig = read('src/combat/weapon/weaponRig.js');
   assert.ok(rig.includes('const claws = racialFpsWeapon(entity);'), 'the per-frame sync consults the override');
   // AUDIT 26 F023 made the draw clip per-weapon, so the gate grew a
   // block - but the claws arm is unchanged: they still draw silently

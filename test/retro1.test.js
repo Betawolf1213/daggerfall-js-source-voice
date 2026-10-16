@@ -30,7 +30,7 @@ import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings
 import { ENUM_LAW, NUMBER_LAW, formatValue, stepValue } from '../src/ui/settings/settingsLaw.js';
 import { largeHudWorldAspect, worldViewportRect, largeHudViewportRect } from '../src/ui/hud/hudLarge.js';
 import { hudShortcutKey } from '../src/ui/hud/hudShortcuts.js';
-import { muzzleRay } from '../src/combat/weaponRig.js';
+import { muzzleRay } from '../src/combat/weapon/weaponRig.js';
 import { LightningBoltsRenderer } from '../src/render/lightningBolts.js';
 
 const src = (rel) => readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8');
@@ -537,7 +537,7 @@ test('RETRO1: the muzzle maps through the LENS\'s aspect - a retro world is proj
   const proj = new Float32Array(16); proj[0] = -1 / 1.6; proj[5] = 1;   // a mirrored projection at 1.6
   r.beginFrame(proj, I, L);
   assert.ok(near(r.worldProjAspect, 1.6));
-  assert.match(src('combat/weaponRig.js'), /aspect: renderer\.worldProjAspect \?\? null \};/, 'the rig parks it with the rect');
+  assert.match(src('combat/weapon/weaponRig.js'), /aspect: renderer\.worldProjAspect \?\? null \};/, 'the rig parks it with the rect');
 });
 
 test('RETRO1: a bolt\'s minimum width is the world IMAGE\'s pixels - 200 of them on a retro frame - and the drawing buffer\'s when the host names none', () => {

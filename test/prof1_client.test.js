@@ -388,7 +388,7 @@ test('PROF1 keys and hosts: the act choice is KB1\'s, on ;, in a Professions gro
   assert.equal((w.match(/gatherHost\?\.tick\(dt\)/g) ?? []).length, 2, 'the street\'s frame and the modal one');
   assert.doesNotMatch(src('src/scenes/exterior.js'), /gatherHost|herbHost|createProfBook/, 'the fixed city: no wilderness, no nodes (PROF0 17.1)');
   assert.doesNotMatch(src('src/scenes/dungeonContext.js'), /herbHost|herbKind/, 'the dungeons: no herbs (their veins are PROF2\'s)');
-  const rig = src('src/combat/weaponRig.js');
+  const rig = src('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const tool = c && !paralyzed && !fpArm\.active\(\) && !eotbHidesWeapon\(\) \? actTool\(\) : null;/);
   assert.ok(rig.indexOf('actTool()') < rig.indexOf('const torchOnly ='), 'above every sheathe gate');
   assert.equal(accountRefusalText('writ-cap'), 'You have filled 3 writs today - the most a day allows.');   // PIN MOVED (CHAP2a): the three are the Court's and the halls' together

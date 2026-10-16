@@ -6,20 +6,20 @@
 //
 // THE LAB IS WHERE THESE WERE DECIDED and the lab was where they
 // STAYED: `gun-proto.html` drove a recoil spring, a trauma shake and a
-// reload lower, and `combat/weaponRig.js` - the thing that actually
+// reload lower, and `combat/weapon/weaponRig.js` - the thing that actually
 // draws the weapon in the game, in all four hosts - had none of the
 // three. The sprite arrived, the sounds arrived, and the weapon sat
 // dead still while it fired. A prototype whose findings do not reach
 // the product is a demo.
 //
 // So the two machines move HERE, out of `src/tools/`, and the lab
-// re-exports them - exactly what `combat/gunSheet.js` already is for
+// re-exports them - exactly what `combat/gun/gunSheet.js` already is for
 // the slicing laws. A number that appears in both places is a number
 // that will disagree with itself; there is one home and the lab reads
 // it, so tuning the lab tunes the game.
 //
 // WHAT IS NOT HERE: the Weapon Widget's Offset, Bob and Inertia. Those
-// are RedRoryOTheGlen's modules, ported 1:1 in combat/weaponWidget.js,
+// are RedRoryOTheGlen's modules, ported 1:1 in combat/weapon/weaponWidget.js,
 // and the game already runs them on this weapon like any other. The
 // lab ran the same three from the same home. They needed no second
 // copy then and need none now.

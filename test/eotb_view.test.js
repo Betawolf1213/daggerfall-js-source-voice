@@ -350,7 +350,7 @@ test('AUDIT-EOTB F2/F4: the camera reads the PLAYER’s settings, and the overri
 test('AUDIT-EOTB F2b: the weapon rig loads the settings and hands the body the state - WITHOUT reaching the view', () => {
   // The two calls that had no caller, pinned at the ONE site that makes
   // them - beside `fpArm.attach`, where the body already attaches.
-  const rig = readFileSync(join(root, 'src/combat/weaponRig.js'), 'utf8');
+  const rig = readFileSync(join(root, 'src/combat/weapon/weaponRig.js'), 'utf8');
   assert.match(rig, /eotbCamera\.loadSettings\(modSetting\)/, 'the camera is given the player’s settings reader');
   assert.match(rig, /const bindBody = \(\) => eotbBody\.attach\(renderer, eotbState\);/, 'and the state only this rig can answer goes in through the body');
   assert.match(rig, /weaponReady: !playerWeapon\.sheathed \|\| spellArmed\(\)/,

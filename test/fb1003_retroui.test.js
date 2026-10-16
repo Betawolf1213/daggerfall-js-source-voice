@@ -11,7 +11,7 @@ import { uiCanvas, onUiScreen, toUiPoint, fromUiPoint, _resetUiScreenForTests } 
 import { drawHud, largeHudBar } from '../src/ui/hud/hud.js';
 import { dockedLargeHudHeight, worldViewportRect } from '../src/ui/hud/hudLarge.js';
 import { drawFpsWeapon, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
-import { muzzleRay } from '../src/combat/weaponRig.js';
+import { muzzleRay } from '../src/combat/weapon/weaponRig.js';
 import { setUiSkin } from '../src/systems/uiSkin.js';
 import { setValue, _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
@@ -103,7 +103,7 @@ test('RETRO-UI the viewmodel and the horse: a right-aligned weapon\'s edge is th
     assert.ok(Math.abs(q.x + q.w - 1680) < 1e-6, `flush with the picture's right edge (${q.x + q.w}), not the screen's 1920`);
     assert.deepEqual(r._o, [0, 0]);
   });
-  const rig = src('combat/weaponRig.js');
+  const rig = src('combat/weapon/weaponRig.js');
   assert.match(rig, /const cv = \(\) => uiCanvas\(typeof canvas === 'function' \? canvas\(\) : canvas\);/);
   assert.match(rig, /return onUiScreen\(renderer, cv\(\), \(\) => drawInner\(\{ paralyzed \}\)\);/);
   assert.match(rig, /const \[rx, ry\] = fromUiPoint\(canvas, rect\.x, rect\.y\), real = canvas\.canvas \?\? canvas;/);

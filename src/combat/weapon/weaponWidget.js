@@ -20,7 +20,7 @@
 // offsets in the notes below cite that reading.
 //
 // THE SHAPE HERE. createWeaponWidget() is the component; the rig
-// (combat/weaponRig.js) owns one per host and feeds it what Unity
+// (combat/weapon/weaponRig.js) owns one per host and feeds it what Unity
 // handed the clone - the frame's dt, the machine, the motor's answers,
 // the frame's look - through lateUpdate(); draw() is OnGUI's repaint.
 // The three animation coroutines are GENERATORS driven by the same
@@ -63,20 +63,20 @@ export {
   readWidgetSettings, moveTowards, moveTowards2, roundHalfEven, snap,
   offsetStep, bobStep, inertiaStep, widgetTransformRect,
 } from './weaponWidgetMotion.js';
-import { getBool, getInt } from '../systems/settings/settings.js';
-import { liveStat } from '../systems/statMods.js';
+import { getBool, getInt } from '../../systems/settings/settings.js';
+import { liveStat } from '../../systems/statMods.js';
 import {
   getMeleeWeaponAnimTime, getBowCooldownTime, CLASSIC_UPDATE_INTERVAL, HIT_FRAME_MELEE, HIT_FRAME_BOW, MELEE_NUM_FRAMES, BOW_NUM_FRAMES,
-} from '../characters/weaponStates.js';
-import { WEAPON_TYPES, STATE_INDEX, ALIGN, NATIVE_W, NATIVE_H, WEAPON_FILE, weaponTypeForItem } from './fpsWeapon.js';
-import { weaponOffsetHeight } from '../ui/hud/hudLarge.js';
-import { swingSoundFor } from '../systems/soundClips.js';
-import { isEnchanted } from '../systems/inventory.js';
-import { atlasFileName, customTextureNames } from './diverseWeapons.js';   // DW1
-import { customWeaponImage } from './diverseWeaponsAssets.js';   // DW1: both bundles, this mod's first
+} from '../../characters/weaponStates.js';
+import { WEAPON_TYPES, STATE_INDEX, ALIGN, NATIVE_W, NATIVE_H, WEAPON_FILE, weaponTypeForItem } from '../fpsWeapon.js';
+import { weaponOffsetHeight } from '../../ui/hud/hudLarge.js';
+import { swingSoundFor } from '../../systems/soundClips.js';
+import { isEnchanted } from '../../systems/inventory.js';
+import { atlasFileName, customTextureNames } from '../diverseWeapons/diverseWeapons.js';   // DW1
+import { customWeaponImage } from '../diverseWeapons/diverseWeaponsAssets.js';   // DW1: both bundles, this mod's first
 import { widgetMetalName } from './weaponWidgetAssets.js';
-import { getItemHands } from '../systems/equip.js';
-import { ITEM_HANDS } from '../characters/equipTable.js';
+import { getItemHands } from '../../systems/equip.js';
+import { ITEM_HANDS } from '../../characters/equipTable.js';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const inverseLerp = (a, b, v) => (a === b ? 0 : clamp((v - a) / (b - a), 0, 1));
@@ -238,7 +238,7 @@ export function createWeaponWidget({
     // DW1: the name is the per-template one under Diverse Weapons' flag
     // (FPSWeapon.cs:637-644 - the clone reads the same static), and
     // under DoubleScaleTextures the `w_` ask falls through to the plain
-    // one (combat/diverseWeapons.js customTextureNames says why).
+    // one (combat/diverseWeapons/diverseWeapons.js customTextureNames says why).
     const file = atlasFileName(w.specificWeapon, classic);
     const metal = widgetMetalName(w.currentMetalType);   // AUDIT 68 S09-texname-dup: the one metal rule
     const cache = (w.customCache ??= new Map());

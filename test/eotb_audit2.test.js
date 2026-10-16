@@ -29,7 +29,7 @@ import {
 import { mwCamera } from '../src/player/mwCamera.js';
 import { FootstepMachine, FOOTSTEP_VOLUME } from '../src/systems/footsteps.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
-import { createWeaponRig } from '../src/combat/weaponRig.js';
+import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { domCodeForKeyCode } from '../src/systems/keyCodes.js';
 import { held, setBindings } from '../src/ui/input.js';   // KB1: the rig reads the registry's actions
 import { createBindings, resetDefaults } from '../src/systems/inputActions.js';
@@ -114,7 +114,7 @@ test('EOTB-IL: THE STATUE WALKS - through the seam, the rig\'s record drives the
 });
 
 test('EOTB-IL: the rig registers the WHOLE record - the motion bag and what LateUpdate polls off DFU - and the bag carries what PlayerMotor is read for', () => {
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   const reg = /const eotbState = \(\) => \(\{([\s\S]*?)\}\);\s*\n\s*const bindBody = \(\) => eotbBody\.attach\(renderer, eotbState\);/.exec(rig);   // MAC-O3: the thunk is named so the frame can re-claim it
   assert.ok(reg, 'the one registration');
   for (const f of ['weaponReady:', 'sheathed: playerWeapon.sheathed', 'spellcasting: spellArmed()', 'usingBow: !!playerWeapon.machine.isBow',
@@ -388,7 +388,7 @@ test('EOTB-IL: the hides - the FPV weapon and horse behind their keys, the spell
   } finally { eotbCamera.toggleOffset(false); _resetModSettings(); }
   closeLane();
   assert.deepEqual(mwViewHides(), { weapon: false, horse: false, spellHands: false });
-  const rig = rd('src/combat/weaponRig.js');
+  const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const eotbHidesWeapon = \(\) => !fpArm\.canThirdPerson\(\) && eotbBody\.hides\(\)\.weapon;/);
   assert.match(rig, /const eotbHidesSpellHands = \(\) => !fpArm\.canThirdPerson\(\) && eotbBody\.hides\(\)\.spellHands;/);
   // the hide folds into the frame's texture read, so the gate keeps the
