@@ -10,8 +10,10 @@
 //
 //   ?band=0-3        a circle of that band (its first: 1, 6, 11, 16)    ?c=<circle> instead      ?seed=<n> (7 by default)
 //   ?h=<slot 0-4>    the hall of the circle the views stand in
-//   ?view=plate|course|court|sky|over|edge|under|wide   a camera (the panel's list) - EG-LOOK: `under` a court's foundations
-//                    from below its rim, `wide` the wreck and the Spire overhead from far out
+//   ?view=plate|course|court|sky|over|edge|under|wide|spire|deep   a camera (the panel's list) - EG-LOOK: `under` a court's
+//                    foundations from below its rim, `wide` the wreck and the Spire overhead from far out, `spire` the
+//                    Spire's underside straight up from the plate, `deep` the wreck below over the plate's edge
+//   ?wing=<n>        THE WRECK: view `wing` stands 70 m from the band's wing n, looking at it
 //   ?piece=<kind>    EG-LOOK: the views `piece` (over its corner), `pieceback` (over its far one) and `pieceunder` (its foundation from under its side) at
 //                    the circle's `?pi=`th step of that kind (still, ledge, drift, beat, riser, crumble, drop, rail, vent...;
 //                    `isle` Grath's isle)
@@ -36,6 +38,7 @@ import { realmArt } from '../world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
 import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
 import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
+import { EG_VISTA_PLACES, EG_VISTA_REACH } from '../world/egVista.js';   // EG-LOOK (THE WRECK): where a wing hangs, for ?wing
 import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/egBandArt.js';
 import { createMeshKit } from '../world/meshKit.js';   // EG-LOOK: the swatch wall
 import { egAtmosOf } from '../world/egAtmos.js';
@@ -134,6 +137,9 @@ const VIEWS = {
   mist: MIST ? { at: [(MIST.x0 + MIST.x1) / 2, MIST.hz.y + 6.5, MIST.z0 - 3], yaw: 0, pitch: -38 } : null,
   under: { at: [court.x + (court.r ?? 12) + 14, (court.y ?? 0) - 9, court.z - 6], yaw: -110, pitch: 18 },   // EG-LOOK: the court's foundations, from a span below its rim
   wide: { at: [-70, 26, (SPEC.len ?? 80) * 0.15], yaw: 55, pitch: 4 },   // EG-LOOK: the wreck drifting, the Spire overhead
+  spire: { at: [0, 1.7, SPEC.arrive?.z ?? 0], yaw: 0, pitch: 76 },   // EG-LOOK (THE WRECK): the sealed Spire's underside, straight up from the plate
+  deep: { at: [(SPEC.arrive?.r ?? 5) - 0.5, 1.7, SPEC.arrive?.z ?? 0], yaw: 100, pitch: -32 },   // EG-LOOK (THE WRECK): over the plate's edge, the wreck drifting in the deep
+  wing: wingView(Number(params.get('wing') ?? -1)),
   // EG-LOOK (the spans' pieces): a close look at a piece of `?piece=<kind>` (the `?pi=`th of the circle's, any hall) - from
   // over its corner, and from under its side at its foundation; `?piece=isle` Grath's isle (circle 1's Court)
   ...(PIECE ? {
@@ -143,6 +149,14 @@ const VIEWS = {
   } : {}),
   swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
 };
+/** EG-LOOK (THE WRECK): ?wing=<n> - the camera 70 m from the band's wing n toward its hall (world/egVista.js EG_VISTA_PLACES,
+ *  at the band's reach; a Court's place in a Court hall), looking at it. */
+function wingView(n) {
+  const P = EG_VISTA_PLACES[n];
+  if (!P) return null;
+  const a = (P.bearing * Math.PI) / 180, d = P.d * EG_VISTA_REACH[BAND], y = SPEC.lord ? P.court ?? P.h : P.h, back = 70;
+  return { at: [Math.sin(a) * (d - back), y + 12, (SPEC.len ?? 80) / 2 + Math.cos(a) * (d - back)], yaw: P.bearing, pitch: -10 };
+}
 const viewSel = $('view');
 for (const k of Object.keys(VIEWS)) if (VIEWS[k]) { const o = document.createElement('option'); o.value = o.textContent = k; viewSel.append(o); }
 viewSel.value = VIEWS[params.get('view')] ? params.get('view') : SWATCH ? 'swatch' : MIST ? 'mist' : 'plate';

@@ -21,6 +21,11 @@ import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 import { egBeatTellDown } from '../src/scenes/egSpan.js';   // AUDIT EG III (lane4 #4): the band dress's owner frees the Beats' pictures too
 import { createEgGroundLook } from '../src/scenes/egGroundLook.js';   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
+import { buildEgVista } from '../src/world/egVista.js';
+/** PIN MOVED (EG-LOOK THE WRECK - Elite-Gates-Look.md section 4, "one mesh a band ..., made once a band, freed with it"):
+ *  the band's wreck (scenes/egWreckLook.js: its wings batched, the Spire's underside) outlives a circle of its band and goes
+ *  with the band's dress at the breach's end (egBandsDown) - these meshes of it stay live after a context's end. */
+const WRECK = ((v) => (v.wings.length ? 1 : 0) + (v.under ? 1 : 0))(buildEgVista(egBandOfCircle(4)));
 
 const SEED = 12345;
 const B = '0123456789abcdef';
@@ -84,7 +89,7 @@ test('EG-ZP THE CIRCLE LET GO WITH ITS CONTEXT (scenes/worldModes.js egCircleDow
   // the context's end: every way out of the Spire destroys it, and the mode is the exterior's after
   ctx.destroy();
   R.wm.mode = 'exterior';
-  assert.equal(R.live.size, 0, 'every mesh freed');
+  assert.equal(R.live.size, WRECK, 'every mesh of the circle freed - only its band\'s wreck kept (PIN MOVED, EG-LOOK: the band\'s, freed with its dress)');
   assert.deepEqual([R.twice, R.heldAtFree], [0, 0], 'each once, its slots emptied before the first free');
   assert.deepEqual([R.wm.mesh, R.wm.look, R.wm.gates, R.wm.lamps, R.wm.key, R.wm.draw], [null, null, [], [], '', null], 'every slot empty');
   assert.equal(ctx.dynamicDraws.filter((d) => meshes.includes(d.gpu)).length, 0, 'no draw of it left');
@@ -97,6 +102,7 @@ test('EG-ZP THE CIRCLE LET GO WITH ITS CONTEXT (scenes/worldModes.js egCircleDow
   // and only then the dress it wore
   const n = R.wm.egBandsDown();
   assert.equal(n, EG_BAND_RECORDS.length * 2, 'the band dress freed at the breach\'s end');
+  assert.equal(R.live.size, 0, 'and its wreck with it (EG-LOOK)');
   const lastMesh = R.log.map((e) => e[0]).lastIndexOf('mesh'), firstTex = R.log.findIndex((e) => e[0] !== 'mesh');
   assert.ok(lastMesh >= 0 && firstTex > lastMesh, 'the circle before its dress');
 });
@@ -107,7 +113,7 @@ test('EG-ZP THE NEXT STAND BUILDS ANEW, THE SWAP THROUGH THE SAME TEARDOWN (scen
   R.wm.ctx = a; R.wm.standEgHall(a, eh(4));
   assert.equal(R.wm.egCircleDown(a), 4, 'four meshes let go');
   a.destroy();
-  assert.equal(R.live.size, 0, 'and its context\'s end frees nothing more');
+  assert.equal(R.live.size, WRECK, 'and its context\'s end frees nothing more (its band\'s wreck kept - PIN MOVED, EG-LOOK)');
   const b = contextOf();
   R.wm.ctx = b; R.wm.mode = 'dungeon';
   const before = R.made;
@@ -121,7 +127,7 @@ test('EG-ZP THE NEXT STAND BUILDS ANEW, THE SWAP THROUGH THE SAME TEARDOWN (scen
   assert.ok(b.dynamicDraws.every((d) => R.live.has(d.gpu)) && R.live.size > 0, 'the new one stands');
   b.destroy();
   R.wm.mode = 'exterior';
-  assert.deepEqual([R.live.size, R.twice], [0, 0], 'the swapped circle goes with its context, once');
+  assert.deepEqual([R.live.size, R.twice], [WRECK, 0], 'the swapped circle goes with its context, once (its band\'s wreck kept - PIN MOVED, EG-LOOK)');
 });
 
 test('EG-ZP EVERY WAY OUT ENDS THE CONTEXT (scenes/worldModes.js, scenes/dungeonContext.js, by source): the stand hands its context the circle\'s teardown; the context runs its teardowns in its own destroy(); and every road that ends the Spire\'s context destroys it - the exit (the way home, the tear, a fall\'s walk out, forsaking, a void), the forced exit (a load, a teleport, a respawn) and the two abandoned builds after the stand (mutants: the teardown unhanded; the run lost from destroy())', () => {
