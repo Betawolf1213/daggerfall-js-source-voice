@@ -139,8 +139,10 @@ so a checkpoint that loses its race writes no verdict either:
 The answer says the hold (`tradeHeld`) and, when the law holds it, the first piece it found (`tradeHeldWhy`: its code
 and template); the client's session keeps it and tells the player as it moves, naming the piece (`systems/realmSaves.js`
 onTradeHeld, `systems/itemIds.js` tradeHeldNotice) - and a trade refused over its own hold says that notice, the piece
-named; a law hold standing past STRIKES_FOR_REVIEW with nothing found answers `tradeHeldWhy: { code: 'review' }`, said as
-staff's (RING-HOLD, `01-Overview/Field-Bugs-2026-10-12.md`: it read "something" once the Ring was gone). The cutover (decision 3): the first judgement's baseline is the
+named; a law hold the third strike made TIMED answers `tradeHeldWhy: { code: 'until', t, until }`, said with its end
+(AUTO-HOLD, below; RING-HOLD, `01-Overview/Field-Bugs-2026-10-12.md`, had said it as staff's: it read "something" once the
+Ring was gone). It answers `locked` too, the keys of the copies its record shows, which the session names to its player
+once (AUTO-HOLD). The cutover (decision 3): the first judgement's baseline is the
 record the realm ALREADY HELD for the character, read once from R2 - never the save the first judged checkpoint brings,
 which is charged for what it adds like any other (the audit: the first judged save could hold anything, and was the
 baseline); a new character's baseline is a newborn's purse, a customs character's its level's allowance. A wealth past
@@ -149,15 +151,16 @@ object lands, so a read that fails leaves nothing in R2.
 
 ### INT3 - the hold
 
-`held` on the character's row, with its reason in order - staff's, the copies', the law's, the budget's (`verdict.js`
-holdOf). Staff's and the copies' are staff's alone to lift - a breach of the law over a copies' hold is no way out (the
-audit: a 'law' checkpoint stepped it down, and the next clean one lifted it). The law's lifts at the next clean
-checkpoint until `STRIKES_FOR_REVIEW` (3) HOLDS have come - a strike a hold, never a checkpoint (the audit: one piece
-carried six minutes was staff's), the same piece taken up again included - and every law hold's notice says the holds
-are counting (RING-WARN, `01-Overview/Field-Bugs-2026-10-12.md`); its finding is written once a signature. Staff who judge the law's word wrong clear it
-(`law_excused`): the same signature holds nothing again, a new one does. A verdict writes over the row only as it read
-it (`judge_rev`): a staff act, or a copy another's checkpoint charged, landing in between stands, and the next checkpoint
-judges again.
+`held` on the character's row, with its reason in order - staff's, the law's, the budget's (`verdict.js` holdOf).
+Staff's is staff's alone to lift. A copy holds no character (AUTO-HOLD, below): the copied piece is locked, and the
+copies' hold - staff's alone to lift - is retired; a row still holding it lifts at its next checkpoint. The law's lifts
+at the next clean checkpoint until `STRIKES_FOR_TIMED` (3) HOLDS have come - a strike a hold, never a checkpoint (the
+audit: one piece carried six minutes was staff's), the same piece taken up again included - and the third is TIMED: a
+week, a month each after it, a clean checkpoint inside it no way out and the first past it lifting it (AUTO-HOLD); every
+law hold's notice says the holds are counting (RING-WARN, `01-Overview/Field-Bugs-2026-10-12.md`); its finding is
+written once a signature. Staff who judge the law's word wrong clear it (`law_excused`): the same signature holds
+nothing again, a new one does. A verdict writes over the row only as it read it (`judge_rev`): a staff act landing in
+between stands, and the next checkpoint judges again.
 
 Every route that hands a realm character's value to another player says so - `prepareRealmRecord(..., { outbound: true
 })`: a market listing and purchase, a vault deposit, a treasury deposit, a rent, a card table's stake, a disenchant - and
@@ -184,11 +187,13 @@ finding).
 
 **The first holder keeps it.** The record that shows a key first holds it; another record showing it while the holder
 still does CLAIMS it. The holder's checkpoint without it moves it to the claimant (a drop, a chest, a peer's hands - no
-witness needed); still with it past `DUPE_GRACE_S` (300 s), the claim was a COPY: the CLAIMANT counts it (`dupes` on its
-row; `DUPES_FOR_HOLD`, 3, hold its trade for staff), its copy is written down (`item_dupes` - that piece moves by no route
-from it, and is never charged twice), and the holder's piece stays the holder's to sell. A crafted piece's copy is told
-by its craft's record: the account `products` names owns it, so a seller that kept a sold piece is the copier, never the
-buyer. A piece shown twice in one record is that record's copy at once. A piece let go is no row (a row kept `gone` only
+witness needed); still with it past `DUPE_GRACE_S` (300 s), the claim was a COPY: the CLAIMANT's copy is written down
+and locked (`item_dupes` - that piece moves by no route from it, and is never found twice), and the holder's piece stays
+the holder's to sell. It is no strike (AUTO-HOLD): the holder's checkpoint cannot tell a copier from a receiver whose
+giver's game died before its record saw the give. A crafted piece's copy is told by its craft's record: the account
+`products` names owns it, so a seller that kept a sold piece is the copier, never the buyer. A piece shown twice in one
+record is that record's copy at once - one strike on `dupes` a checkpoint, however many pieces, and `dupes` holds
+nothing. A piece let go is no row (a row kept `gone` only
 while a copy of it is known, so the copy cannot take it up); a character that dies, retires or is deleted lets go of all
 it held. The service's own moves move the ledger in the same batch (`ledgerMoves`): a piece listed or vaulted is in
 ESCROW, held by no record (one still showing it claims it); a piece the service hands a record is that record's; a piece
@@ -238,7 +243,7 @@ The record and staff's check: `01-Overview/Field-Bugs-2026-10-11g.md` HELD-SIDE.
 ### INT6 - the review (`server-account/src/review.js`, `tools/realmReview.mjs`)
 
 A developer's alone: `/v1/mod/realm-holds` (the held and flagged, each with its last finding), `realm-findings` (a
-character's findings and its wealth by the hour), `realm-clear` (a hold and its strikes lifted, a flag cleared, the law's
+character's findings and its wealth by the hour), `realm-clear` (a hold, its strikes and its timed holds lifted, a flag cleared, the law's
 finding standing excused, the bucket refilled), `realm-hold` (a hold by hand), `realm-rollback` (the record back to its
 last checkpoint judged clean - kept past the row's rotation, and carried forward by a service move made ON a clean record
 - its seat taken from any tab so the next join loads it; never past a move the service made since (`service-moved`: a
@@ -274,6 +279,49 @@ node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x
 Pinned by `test/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
 `tools/mutants/fb1014_summonrepair.json` (16, dead).
 
+### AUTO-HOLD - no hold waits on a person (2026-10-16, `server-account/src/verdict.js`, `ledger.js`, migration 0120)
+
+Players on Discord, frozen "until staff have looked" because "copies of an item were found", none of them meaning to
+copy; Mac: "We need to figure out a better system for trade banning. I dont want to have to manually review". Read
+against the code, two paths made copies no player chose, and the hold made every one of them staff's:
+
+- **The shop's shelf** (`world/interiorShared.js` applyInteriorLoot). A building's containers are the room's, the last
+  writer's word wins, and a shelf's word carries each piece's `uid`. A word from before the reader took a piece - another
+  player's close of a window opened earlier, the room's memory of an earlier visit - put it back, the reader took it
+  again, and the pack held one piece twice: a copy at the next checkpoint. Stealing from a vendor and selling the piece
+  back met it most. Now a word never lands a piece the reader carries (its own lists' ledger keys, `systems/itemIds.js`
+  carriedLedgerKeys - the key rule, `ledgerKeyOf`, moved there from the judge, which hands it on) nor one piece twice.
+  STILL OPEN: a second player whose window was open on the stale shelf can still buy or steal the piece the first
+  already took; that buyer's copy is the contested claim below - locked, no strike. The dungeon's containers were not
+  traced.
+- **A giver's game killed after a chest's hand-off.** The giver's record had not seen the give (a checkpoint every 120
+  s), it rejoined with the piece, and its next checkpoint past the grace proved the RECEIVER the copier - three of those
+  and the receiver's trade was staff's. Reproduced over the real Worker in the session (a scratch test, not kept). The
+  realm trade window is not this path: the service settles both records at once.
+- **The hold itself:** `dupes` counted pieces, not incidents (one copied save of three pieces held the character at
+  once), never fell, staff alone lifted it, and the player was never told which piece.
+
+Mac's calls (asked, 2026-10-16): **a copy locks the piece only** - the character is never held for one (the cost, said
+and taken: a modified client can still sell a locked copy to a shop for gold, which the budget measures and does not
+hold); **a contested claim locks the receiver's copy and is no strike** (the first holder keeps it, so a forged claim
+takes no victim's piece, and a deliberate copy gains nothing); **the law's third hold is timed** - a week, a month each
+after it, the strikes and the timed holds served forgotten a month after the last finding that held, or after the last
+timed hold's end (`verdict.js` lawCountOf; `held_until`, `law_holds`, `law_at` on the row); **every copies' hold
+standing is lifted** - migration 0120, each written among the character's findings as a staff act `by: 'auto-hold'`, and
+a law hold that was waiting for staff became the first timed hold, a week from the migration.
+
+What the player hears: a checkpoint answers `locked`, the keys of the copies its record shows (`LOCKED_SAID_MAX`, 40);
+the session tells each once (`systems/realmSaves.js` onPiecesLocked), and the notice names the piece from the
+character's own lists (`scenes/realmHoldHost.js`, wired at bootWorld's one line that wired the hold's notice) - "A copy
+of your ... was found in the realm, so that piece is locked: it cannot be traded, sold to other players or stored for
+others. Your other pieces and your trading are not affected." A timed hold answers `tradeHeldWhy: { code: 'until', t,
+until }` and is said with its end, in the player's own clock. `dupes` stays, counting incidents, for staff to read; it
+holds nothing. Staff's acts stand as overrides: `realm-clear` lifts a timed hold and forgets its count (the rollback too),
+`realm-hold` holds by hand. `ACCOUNT_VERSION` acct139. Pinned by `test/autohold.test.js` (9) over the real Worker, the
+real session and the migration's own statements; `tools/mutants/autohold.json` (29, all dead). The records it moved
+re-aimed by content, and two retired with the law they held (`INT4-dupes-never-hold`, `INTA-law-over-copies`: a copies'
+hold, and its order beside the law's).
+
 ### 4b. The audit (2026-10-09, Mac: "Lets do a comprehensive audit on this")
 
 Five reviews ran on lane 1 as first built: the service's correctness and races, a modified client's ways round it, the
@@ -298,7 +346,7 @@ route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own record
   and the client takes the piece out of its pack only locally (`net/marketBook.js` postPiece). So a tab that lost its
   seat to a second device (it sends no checkpoint, so it never hears `lease`) lists a piece the live record still holds:
   the gold is collected (witnessed, so no budget gain) and the piece sold to a shop inside `DUPE_GRACE_S` leaves nobody
-  charged; kept past it, one dupe is counted and nothing held (`DUPES_FOR_HOLD` 3). A piece realm-traded away moves the
+  charged; kept past it, the copy is locked and nothing held (AUTO-HOLD: no copy holds a character). A piece realm-traded away moves the
   piece but never `products.owner`, so its maker can still list it, and the honest holder is the one the ledger
   charges. THE PLAN, the shape `alchemy.js` disenchantPiece already has ("the maker's record says where the piece is,
   never the products row"): each crafted act asks `realmActFirst`, takes the piece out of the record by provenance
@@ -731,6 +779,14 @@ the clock, and the legacy record held to its own law.
 
 ## Progress
 
+- **AUTO-HOLD (2026-10-16, Mac: "We need to figure out a better system for trade banning. I dont want to have to manually
+  review"): no hold waits on a person.** Section 4, AUTO-HOLD. A copy locks its piece and never the character, and a
+  contested claim is no strike; the law's third hold is timed (a week, then a month) and lifts on its own; a checkpoint
+  names the locked pieces; the shop's shelf never lands back a piece its reader carries. Migration `0120_auto_hold` (the
+  timed hold's columns; every copies' hold lifted; a law hold waiting for staff the first timed hold), `ACCOUNT_VERSION`
+  acct139. `test/autohold.test.js` (9); `tools/mutants/autohold.json` (29, all dead). Pins moved (each marked PIN MOVED
+  where it stands): `int2_judge`, `int4_itemids`, `ringhold`, `fb1011g_heldside` and `crafthold` (a staff hold where
+  it set a copies' one), and the version pins at acct139.
 - **HACKED-GOLD (2026-10-12, in a session: "apparently theres people handing out hacked gold ingame"): what a peer's
   word hands on, what the law counts, and what staff see.** `01-Overview/Field-Bugs-2026-10-12f.md`. A peer's word (a
   room's container record, a body's grant, a foe's heir's pack, a worn offer) credited value no record held - a letter
