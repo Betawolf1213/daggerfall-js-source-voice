@@ -19703,6 +19703,7 @@ READING). What they found, and what became of it:
   count measured nothing once a landing stopped repainting; it counts the landings now - unrun here, because that
   probe stops at the front door's intro and account stage, which it predates.
 
-The whole suite on the slice: 28,025 passed and one failed - `test/fb1013e_writwall.test.js`, the notice board's writs,
-which passes alone three times of three and touches nothing here.
+The whole suite on the slice: 28,025 passed and one failed - `test/fb1013e_writwall.test.js`, the notice board's writs
+(its "a mix" card not found). It fails the same way on the commit before VIRT, in the same 248-file batch at four at a
+time, and passes alone and under a loaded CPU on both: older than this slice, and left for its own.
 
