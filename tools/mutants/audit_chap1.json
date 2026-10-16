@@ -104,8 +104,8 @@
   {
     "name": "ACHAP-S7-NOOP",
     "file": "server-account/src/npcRoll.js",
-    "old": "if (!changed.length) return { roll: viewOf(kseq, rows), credited };",
-    "new": "if (false) return { roll: viewOf(kseq, rows), credited };",
+    "old": "if (!changed.length) return { roll: viewOf(kseq, rows), credited, paid: drained };",
+    "new": "if (false) return { roll: viewOf(kseq, rows), credited, paid: drained };",
     "tests": [
       "test/chap1_roll.test.js",
       "test/audit_chap1.test.js",
@@ -475,12 +475,13 @@
   },
   {
     "name": "ACHAP-CEILING-LINE",
-    "file": "src/net/npcChapterLaw.js",
-    "old": "rises no further today. The rest will follow in the days to come.",
-    "new": "can rise no further today.",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "quests raise your standing no further today. {owed} more is owed, and follows in the days to come.",
+    "new": "quests raise your standing no further today.",
     "tests": [
       "test/chap1_roll.test.js",
-      "test/audit_chap1.test.js"
+      "test/audit_chap1.test.js",
+      "test/fb1015g_guildwords.test.js"
     ]
   },
   {

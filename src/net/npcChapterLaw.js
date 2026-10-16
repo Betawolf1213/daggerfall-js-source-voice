@@ -265,6 +265,40 @@ export function rollKeptOf(/** @type {unknown} */ rec) {
   return { seq, factions: out };
 }
 
+/** STANDING-WORDS (AUDIT GUILD-WORDS L2-2, L2-4; II B-4, B-5): WHAT THE ROLL'S WORD MOVED since its last - each of the
+ *  twenty-two whose standing or owed moved, against the last word's `last`/`lastOwed`, with what the service says this
+ *  answer paid of what was owed (`paid`, `{ [faction]: n }` - readRoll's and claimRoll's): `delta` the move of the two
+ *  together (a quest's whole reward, though the day's room owes part; a loss the owed absorbed) - or, where the two
+ *  together stand still, the standing's own move past what was paid (a hall writ the owed's room trimmed beside it);
+ *  `paid` that payment; `now` the Roll's standing, `owed` what it still owes. Both where both moved. A faction either
+ *  word lacks is not read. With no last word (a page's first) only what was paid is said - never a move an earlier page
+ *  said. With no `paid` at all (a service before it) a standing that moved alone is taken as paid. */
+export function rollMovesOf(/** @type {Record<string, number> | null} */ last, /** @type {Record<string, number>} */ lastOwed,
+  /** @type {Record<string, number>} */ next, /** @type {Record<string, number>} */ nextOwed, /** @type {Record<string, number> | null} */ paid = null) {
+  const out = [];
+  for (const f of ROLL_FACTIONS) {
+    if (!Object.hasOwn(next ?? {}, f)) continue;
+    const now = rollRep(next[f]), owed = Math.max(0, whole(nextOwed?.[f]));
+    const p = paid ? Math.max(0, whole(paid[f])) : 0;
+    if (!last) {
+      if (p > 0) out.push({ f, paid: p, now, owed });
+      continue;
+    }
+    if (!Object.hasOwn(last, f)) continue;
+    const was = rollRep(last[f]);
+    const owedWas = Math.max(0, whole(lastOwed?.[f]));
+    const together = (now + owed) - (was + owedWas);
+    if (!paid) {
+      if (together !== 0) out.push({ f, delta: together, now, owed });
+      else if (now !== was) out.push({ f, paid: now - was, now, owed });
+      continue;
+    }
+    const delta = together !== 0 ? together : now - was - p;
+    if (delta !== 0 || p > 0) out.push({ f, ...(delta !== 0 ? { delta } : {}), ...(p > 0 ? { paid: p } : {}), now, owed });
+  }
+  return out;
+}
+
 /** The faction a membership record names (guilds.js joinGuild's `guild`: a guild's name, `Temple:<divine>` or
  *  `Order:<order>`), or null. */
 export function rollFactionOfGuild(/** @type {unknown} */ name) {
@@ -333,10 +367,8 @@ export function rollMembersOk(/** @type {unknown} */ v) {
 /** The memberships as one comparable word - a claim is due when it changes; null (no book) is never a change. */
 export const rollMembersKey = (/** @type {{ f: number, rank: number, d?: number }[] | null} */ list) => (list ? list.map((m) => `${m.f}:${m.rank}${m.d === 1 ? 'd' : ''}`).join(',') : null);   // AUDIT CHAP4 D1: a book's swap moves it
 
-/** A faction's name as a sentence carries it: FACTION.TXT's "The Mages Guild" mid-sentence is "the Mages Guild". */
-export const rollFactionName = (/** @type {unknown} */ raw) => (typeof raw === 'string' && raw ? raw.replace(/^The /, 'the ') : 'the guild');
-/** THE PACE SAID (AUDIT CHAP D2): a gain the day's room cut is owed, not lost - the line says the rest will follow. */
-export const rollCeilingLine = (/** @type {unknown} */ raw) => `Your standing with ${rollFactionName(raw)} rises no further today. The rest will follow in the days to come.`;
+// THE PACE SAID (AUDIT CHAP D2) is the streaming host's module's now, in the player's language and with what is owed
+// (scenes/rollNoticeHost.js rollNoticeDoors' onCeiling and onFull - AUDIT GUILD-WORDS II B-3, C-4)
 
 // ═══ CHAP2a - THE HALLS AND THEIR WRITS (Chapters-Arc section 4) ═════
 //

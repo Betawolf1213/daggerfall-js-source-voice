@@ -17,7 +17,10 @@ const fighters = GUILDS.FightersGuild;
 const hero = (extra = {}) => ({ name: 'Aldric Vane', stats: {}, level: 10, ...extra });
 
 test('GUILD-REP: the book - affiliation, rank title and live reputation, one row a membership', () => {
+  // PIN MOVED (AUDIT GUILD-WORDS II A-7): a Swordsman with every guild skill at 0 is one the next review puts on
+  // probation, and the book now says so - the hero holds the skills its rank asks
   const e = hero({
+    skills: Object.fromEntries(fighters.skills.map((s) => [s, 40])),
     guildMemberships: {
       [fighters.guildGroup]: { guild: fighters.name, rank: 2, lastRankChange: 0 },
       HolyOrder: { guild: 'Temple:Julianos', rank: 0, lastRankChange: 0 },
@@ -31,7 +34,7 @@ test('GUILD-REP: the book - affiliation, rank title and live reputation, one row
   const book = affiliations(e);
   assert.equal(book.length, 2, 'a membership naming no guild is no row');
   // REP6: PIN MOVED - the row carries the probation too (the Standing page tags a member on it)
-  assert.deepEqual(book[0], { affiliation: 'The Fighters Guild', title: 'Swordsman', rep: 37, factionId: fighters.factionId, probation: false });
+  assert.deepEqual(book[0], { affiliation: 'The Fighters Guild', title: 'Swordsman', rep: 37, factionId: fighters.factionId, probation: false, owed: 0, warnings: [] });   // PIN MOVED (STANDING-WORDS, AUDIT GUILD-WORDS L1-2): the owed and the review's warnings
   assert.equal(book[1].affiliation, 'Julianos');
   assert.equal(book[1].rep, -4);
   assert.deepEqual(affiliations(hero({ guildMemberships: {} })), [], 'no memberships, no rows');
@@ -79,7 +82,7 @@ test('GUILD-REP: the enhanced Standing page draws each guild - name, rank and a 
 test('GUILD-REP: one model, both skins - the classic box and the enhanced page read the same book', () => {
   assert.match(read('src/ui/charsheet.js'), /const book = affiliations\(entity\);/);
   const menu = read('src/ui/enhancedMenu.js');
-  assert.match(menu, /const book = affiliations\(entity\);/);
+  assert.match(menu, /const book = affiliations\(entity, \{ now: dateFromClassicMinutes\(Math\.floor\(ownMinutes\(\)\)\), online: isOnlinePage\(\) \}\);/);   // PIN MOVED (AUDIT GUILD-WORDS II C-7): and online, where a promotion may end a probation sooner. PIN MOVED (STANDING-WORDS): the character's own date for a probation's days
   // REP5: PIN MOVED - the law of each region stands between the social groups and the guilds (test/rep5_notices.test.js)
   // DRESS1 (2026-09-30): PIN MOVED again - the Dress line (test/dress_standing.test.js) sits under the groups, before the law
   assert.match(menu, /r\.append\(el\('span', 'k', groupNames\[i\]\), signedRep\(reps\[i\] \?\? 0\)\);\s*detail\.append\(r\);\s*\}\s*statsDress\(detail, playerEntity\);\s*statsLaw\(detail, playerEntity\);\s*statsGuilds\(detail, playerEntity\);/,

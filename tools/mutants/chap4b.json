@@ -164,8 +164,8 @@
   {
     "name": "CHAP4B-CEILING",
     "file": "src/systems/guilds.js",
-    "old": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
-    "new": "const newRank = ruled;",
+    "old": "  return Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
+    "new": "  return ruled;",
     "tests": [
       "test/chap4b_seats.test.js"
     ]
@@ -173,8 +173,8 @@
   {
     "name": "CHAP4B-CEILING-DEMOTES",
     "file": "src/systems/guilds.js",
-    "old": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
-    "new": "const newRank = Number.isInteger(ceiling) && ruled > ceiling ? ceiling : ruled;",
+    "old": "  return Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;",
+    "new": "  return Number.isInteger(ceiling) && ruled > ceiling ? ceiling : ruled;",
     "tests": [
       "test/chap4b_seats.test.js"
     ]
@@ -246,8 +246,8 @@
   {
     "name": "CHAP4B-WM-SEATED",
     "file": "src/scenes/worldModes.js",
-    "old": "const access = serviceAccess(guild, membershipOf(seated(), guild), service);",
-    "new": "const access = serviceAccess(guild, membershipOf(memberships, guild), service);",
+    "old": "const access = serviceAccess(guild, membershipOf(seated(), guild), service, {",
+    "new": "const access = serviceAccess(guild, membershipOf(memberships, guild), service, {",
     "tests": [
       "test/chap4b_seats.test.js"
     ]
