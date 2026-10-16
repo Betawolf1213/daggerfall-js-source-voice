@@ -9,7 +9,7 @@ import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { currentWeaponPose } from '../src/combat/playerWeapon.js';
 import { createShieldWidget, readShieldWidgetSettings, shieldTextureIndex, SHIELD_TEMPLATES, SHIELD_RECOIL_CONDITION, PARRY_CLIP_FIRST, PARRY_CLIP_COUNT } from '../src/combat/shieldWidget.js';
 import { fpArm } from '../src/combat/fpArm.js';
-import { eotbBody } from '../src/player/eotbBody.js';
+import { eotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.js';

@@ -89,8 +89,8 @@ import { TRANSPORT, WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js'
 import { CARGO_DEFINITIONS } from '../src/systems/wagon/wagon41214.js';
 import { syntheticWagon41214 } from './hccModel.mjs';
 import * as mw from '../src/player/mwView.js';
-import { eotbWagon, createEotbWagon, WAGON_MODEL, wagonHoverName } from '../src/player/eotbWagon.js';
-import { eotbCamera } from '../src/player/eotbCamera.js';
+import { eotbWagon, createEotbWagon, WAGON_MODEL, wagonHoverName } from '../src/player/eyeOfTheBeholder/eotbWagon.js';
+import { eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { mwCamera } from '../src/player/mwCamera.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { RIDE_EYE_HEIGHT, EYE_HEIGHT, RIDE_HEIGHT, CAPSULE_HEIGHT } from '../src/player/motor.js';

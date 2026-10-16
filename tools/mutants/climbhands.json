@@ -21,7 +21,7 @@
   },
   {
     "name": "CLIMBHANDS-snapshot-never-classic",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    classic,   // CLIMB-HANDS",
     "new": "    classic: false,   // CLIMB-HANDS",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-pose-restarts-every-height",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "!(Math.abs(c.lipY - this.hangLip) <= PARKOUR_LIP_FOLLOW)",
     "new": "this.hangLip !== c.lipY",
     "tests": [
@@ -673,7 +673,7 @@
   },
   {
     "name": "AUDIT-CLIMBHANDS-pose-corner-right-leads",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "const way = toward && m.from ? Math.sign((toward[0] - m.from[0]) * was.right[0] + (toward[2] - m.from[2]) * was.right[2]) || 1 : 1;",
     "new": "const way = 1;",
     "tests": [

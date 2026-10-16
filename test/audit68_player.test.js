@@ -5,9 +5,9 @@
 // module through the producers that feed it, and each failed on the base.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spriteCount } from '../src/player/eotbSprite.js';
-import { createEotbBody } from '../src/player/eotbBody.js';
-import { createEotbCamera } from '../src/player/eotbCamera.js';
+import { spriteCount } from '../src/player/eyeOfTheBeholder/eotbSprite.js';
+import { createEotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { createEotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { LookFilter, frameRateScaledFraction, frameSmoothing, SMOOTHING_MAX } from '../src/player/lookFilter.js';
 import { createLockOn } from '../src/player/lockOn.js';
 import { objectAabb } from '../src/player/activate.js';

@@ -53,7 +53,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | E2 | low | Finding the player's card walked every batch of every record, every frame, lamp or none (5.7 us of the pass's 7.6 over two thousand batches). | recordBillboards notes it as it passes it; the lamps read it only when one casts. |
 | E3 | low | The card's two lamps were ranked among the eight nearest the EYE: with the camera 4 m or more away (the setting runs to 10) the lamps nearest a still player were often not casters, and his silhouette still hopped as the camera circled (MAGEAA00: 12 of 39 spots at 6 m). | The two casting lights nearest the card, by the pick's own measure and DISC6's hold, are made casters (`reserveSelfCasters`), each in place of the eye's farthest pick. |
 
-**SWING-LAW** (`src/player/eotbBody.js`, `src/combat/weapon/weaponRig.js`, `src/combat/swingLaw.js`, `src/systems/roleplayRealism/rrRealism.js`,
+**SWING-LAW** (`src/player/eyeOfTheBeholder/eotbBody.js`, `src/combat/weapon/weaponRig.js`, `src/combat/swingLaw.js`, `src/systems/roleplayRealism/rrRealism.js`,
 `src/systems/roleplayRealism/rrInstall.js`, `src/characters/weaponStates.js`; the pins in `test/audit0929_swing.test.js`,
 `test/rr1_realism.test.js`, `test/swinglaw.test.js`, `test/disc28_speed.test.js`)
 

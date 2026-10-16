@@ -327,7 +327,7 @@ skin, its sound under Sound Enhancements as every added sound is.
 **The channels**, each through a seam that already carries its kind in all four hosts:
 
 - **The camera** - a pitch, a roll, an eye dip and a field-of-view kick, each a critically damped spring kicked at the
-  moment and settling back (`techniqueView`). It rides the climb's own view step (`player/climbFeel.js`
+  moment and settling back (`techniqueView`). It rides the climb's own view step (`player/climb/climbFeel.js`
   `createClimbFeelHost`: its `view` folds the pitch, roll and eye into the view matrix first person only, its `fovRad`
   adds the field-of-view kick to every lens in every view - as the climb's own does - and its `pitch` hands the sky the
   same pitch) - the four view lines, pinned by CLIMB4, are untouched. The springs step on every frame the host draws,
@@ -578,7 +578,7 @@ Kept, with the reason:
   impact (a foe struck, a wall) is the host's and plays its own.
 - **The technique camera on horseback in the world host** (and not in the exterior host) - each host's climb view line
   decides, as it does for the climb (CLIMB4's seam).
-- **The climb's own roll is mirrored too** (`player/climbFeel.js` - a side leap leans away from its side on screen; CLIMB4
+- **The climb's own roll is mirrored too** (`player/climb/climbFeel.js` - a side leap leans away from its side on screen; CLIMB4
   F6 pins the camera's axis). It is the climb's, not this arc's: noted here for its own audit.
 - **No reduced-motion default.** The setting is the player's own and Off moves nothing; no project rule binds an OS
   preference to an in-game camera.

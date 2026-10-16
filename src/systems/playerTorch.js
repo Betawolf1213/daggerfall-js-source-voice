@@ -241,7 +241,7 @@ export const waistLanternPoseBit = (light) => (lanternAtWaist(light) ? 1 : undef
 
 /** Where a body that DRAWS the hanging lantern puts it, when that is not the yaw-frame hip above: Eye Of The
  *  Beholder's sprite faces the way it walks, not the camera's yaw, so it hands the drawn lantern's point in
- *  here (player/eotbBody.js) and clears it when it stops drawing. `null`: LANTERN_HIP. */
+ *  here (player/eyeOfTheBeholder/eotbBody.js) and clears it when it stops drawing. `null`: LANTERN_HIP. */
 let _waistOverride = null;
 const _waistPoint = { left: 0, up: 0, forward: 0 };   // written in place: its writer runs every frame the lantern is drawn
 export function setPlayerWaistLightOverride(o) {

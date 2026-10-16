@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { nearDungeons, dungeonToFind, dungeonApproach, pixelBox, NATIVE_PER_M, TV_DUNGEON_MAX } from '../src/systems/travel/travelDungeons.js';
 import { chaseStep as raiderChaseStep, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, NATIVE_PIXEL as RAID_NATIVE_PIXEL } from '../src/systems/seaRaiders.js';
-import { AUTO_TOGGLE } from '../src/player/eotbBillboard.js';
+import { AUTO_TOGGLE } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { planRoute, routeLegs, crossesWater } from '../src/systems/travel/travelRoute.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
@@ -171,7 +171,7 @@ test('AUDIT OW5 V2: the head\'s activation is never pressed from under the view 
 });
 
 test('AUDIT OW5 V3: a door\'s POV row that DECIDES (armed, first or third person) is kept over the travel view\'s hold - the view\'s release at the door put the head back; Don\'tChange leaves the hold to hand back what it found', async () => {
-  const { createEotbCamera, eotbCamera } = await import('../src/player/eotbCamera.js');
+  const { createEotbCamera, eotbCamera } = await import('../src/player/eyeOfTheBeholder/eotbCamera.js');
   const mv = await import('../src/player/mwView.js');
   const rows = (interior) => (v, k) => ({ 'AutoTogglePerspective.OnTransitionInterior': interior, 'AutoTogglePerspective.OnFoot': AUTO_TOGGLE.FirstPerson })[k];
   const cam = createEotbCamera();

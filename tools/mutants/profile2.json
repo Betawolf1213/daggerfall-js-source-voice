@@ -191,7 +191,7 @@
   },
   {
     "name": "P2-body-set-change-not-preloaded",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    if (renderer && (was.onFoot !== cfg.onFoot || was.onHorse !== cfg.onHorse)) preload();\n",
     "new": "",
     "tests": [

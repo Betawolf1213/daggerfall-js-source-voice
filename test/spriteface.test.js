@@ -13,8 +13,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { portrayedYaw, orientationFor, signedAngleY, ORIENTATIONS, ANGLE_PER_ORIENTATION, DELAYED_FRAMES } from '../src/player/eotbBillboard.js';
-import { createEotbBody } from '../src/player/eotbBody.js';
+import { portrayedYaw, orientationFor, signedAngleY, ORIENTATIONS, ANGLE_PER_ORIENTATION, DELAYED_FRAMES } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
+import { createEotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { auraSpritePosed, auraCapeStep, auraMotionStep, auraSpriteBones, CLOAK_REST_POSE } from '../src/render/auraRing.js';
 
@@ -205,7 +205,7 @@ test('SPRITE-FACE the wiring: the view keeps the sprite\'s facing beside its fig
   const mv = rd('src/player/mwView.js');
   assert.match(mv, /spriteFigure = drawn \? eotbFigure\(\) : null; spriteFacing = drawn \? eotbFacing\(\) : null; return drawn;/);
   assert.match(mv, /export function mwViewSpriteFacing\(\) \{ return eotbLane\(\) \? spriteFacing : null; \}/);
-  const eb = rd('src/player/eotbBody.js');
+  const eb = rd('src/player/eyeOfTheBeholder/eotbBody.js');
   assert.match(eb, /const seen = FP \? null : portrayedYaw\(shown\.orientation, \[cam\.pos\[0\] - cam\.feet\[0\], 0, cam\.pos\[2\] - cam\.feet\[2\]\]\);\n\s+facingDrawn = seen === null \? null : \{ yaw: seen, turn: turnYaw\(\) \?\? seen \};/, 'the picture shown, about the eye of the frame it was drawn in');
   const w = rd('src/scenes/world.js');
   assert.ok(w.includes('_auraSelf.yaw = mwViewSpriteFacing()?.yaw ?? player.bodyYawFor(cam.yaw);'), 'the gather: mine as my picture faces');

@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createMwCamera, MAX_DISTANCE, MIN_DISTANCE, MW_UNITS_PER_METER, WHEEL_STEP } from '../src/player/mwCamera.js';
-import { createEotbCamera, MAX_Z } from '../src/player/eotbCamera.js';
+import { createEotbCamera, MAX_Z } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { SEA_ZOOM_REACH, SEA_ZOOM_RATIO, seaZoomReach, seaZoomStep } from '../src/player/seaZoom.js';
 import { Collider } from '../src/player/collider.js';
 import { colliderPoses } from '../src/world/prefabColliders.js';
@@ -16,7 +16,7 @@ import { meshLocalBounds, Boat } from '../src/systems/comeSailAway/comeSailAwayB
 import { readyPool } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const EOTB = readFileSync(new URL('../src/player/eotbCamera.js', import.meta.url), 'utf8');
+const EOTB = readFileSync(new URL('../src/player/eyeOfTheBeholder/eotbCamera.js', import.meta.url), 'utf8');
 
 test('FIELD BUGS 2026-09-29 (the sea) #3: THE MORROWIND CAMERA AT A HELM - a notch out is a ratio, the hull\'s reach in ten; in by the ratio (HELM-ZOOM: the whole range, from the base in a dozen notches - the reference\'s ten-unit ladder below 800 took sixty); off the helm the distance comes back to 800 and the save keeps no more; on foot the reference\'s far end stands (mutants: the ratio unapplied, the reach unclamped, the helm\'s distance kept off it, the save past the reference)', () => {
   const cam = createMwCamera();

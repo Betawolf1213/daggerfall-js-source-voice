@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { inflateSync } from 'node:zlib';
 import { ClimbHands, climbLens, pinToView, DESIGN_LENS, HANDS, GRIP_ART, REACH_ART } from '../src/combat/climbHands.js';
-import { POSE } from '../src/player/climbPose.js';
+import { POSE } from '../src/player/climb/climbPose.js';
 import { SETTINGS_DEFAULTS } from '../src/systems/settings/settingsDefaults.js';
 import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { fieldOfView } from '../src/ui/viewSettings.js';

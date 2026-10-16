@@ -22,7 +22,7 @@ import { composeLook } from '../src/net/remotePlayers.js';
 import { validLook, FOOT_SKINS } from '../src/net/wire.js';
 import { EOTB_FOOT_SET_COUNT } from '../src/player/classSkins.js';
 import { createPeerWalkers, createPeerRiders, createEotbArt, WALK_ONE_SHOTS } from '../src/net/peer/peerRiders.js';
-import { ARCHIVE_FOOT, frameCount } from '../src/player/eotbBillboard.js';
+import { ARCHIVE_FOOT, frameCount } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 
 const V = 'eye-of-the-beholder';
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

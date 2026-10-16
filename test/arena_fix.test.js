@@ -24,7 +24,7 @@ import { EnemyAI, WALK_ARRIVE_M } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { calculateAttackDamage, registerAttackResolutionListener } from '../src/combat/formulas.js';
 import { droppedLightItem } from '../src/systems/arena/arenaMove.js';
-import { createEotbBody, PLACE_JUMP_M } from '../src/player/eotbBody.js';
+import { createEotbBody, PLACE_JUMP_M } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { HAS_ARENA2, classicModels, vendorBytes } from './arena1Data.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -426,7 +426,7 @@ test('ARENA-FIX 14: the player\'s own sprite (Eye of the Beholder) turned with a
   assert.deepEqual(b.state().lastMoveDirection.map((v) => Math.round(v)), [1, 0, 0], 'facing the way the view was placed (yaw a quarter turn: +x)');
   b.tick(0.016, { feet: [PLACE_JUMP_M + 1.5, 0, 0], yaw: 0 });
   assert.deepEqual(b.state().lastMoveDirection.map((v) => Math.round(v)), [1, 0, 0], 'a step is no placing - the facing is the walk\'s');
-  const S = rd('src/player/eotbBody.js');
+  const S = rd('src/player/eyeOfTheBeholder/eotbBody.js');
   assert.match(S, /Math\.hypot\(state\.feet\[0\] - was\[0\], state\.feet\[2\] - was\[2\]\) > PLACE_JUMP_M\) faceYaw\(/);
   assert.ok(PLACE_JUMP_M >= 6, 'further than a frame of any walk, fall or gallop');
   // the hud model: a quiet bout has no crowd row

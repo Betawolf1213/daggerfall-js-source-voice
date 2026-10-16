@@ -811,7 +811,7 @@ when i use my carriage"; the owner: "Thirs person view isnt working properly
 for wagon traversal".
 
 **The cause.** Both third-person cameras turn about a point on the driver:
-the sprite's camera (`src/player/eotbCamera.js`) about the head itself, the
+the sprite's camera (`src/player/eyeOfTheBeholder/eotbCamera.js`) about the head itself, the
 Morrowind camera (`src/player/mwCamera.js`) about its focal, FOCAL_HEIGHT
 over the feet. On the Caravan's bench the head stands 0.43 m under the roof
 and the room's front wall 0.37 m behind the seat. The sprite camera's cast

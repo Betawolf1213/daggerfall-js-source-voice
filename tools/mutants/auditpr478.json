@@ -184,7 +184,7 @@
   },
   {
     "name": "AHZ-E3-ratio-below-base",
-    "file": "src/player/eotbCamera.js",
+    "file": "src/player/eyeOfTheBeholder/eotbCamera.js",
     "old": "(clicks < 0 && -z >= baseDist - 1e-6)",
     "new": "clicks < 0",
     "tests": [

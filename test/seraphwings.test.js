@@ -27,7 +27,7 @@ import {
   EOTB_FIGURE, AURA_SADDLE_M, WING_HALO_NEAR, WING_COVERT, WING_BEAT, WING_HALO_M, WING_MOTE_LEN, WING_MOTE_M, WING_LIGHT, auraWingLights,
   WING_SPRITE_BACK,
 } from '../src/render/auraRing.js';
-import { createEotbBody } from '../src/player/eotbBody.js';
+import { createEotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { RIDE_EYE_HEIGHT, EYE_HEIGHT } from '../src/player/motor.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
@@ -451,8 +451,8 @@ test('SERAPH-WINGS on the back of an Eye of the Beholder sprite: its bones read 
   assert.equal(b.figure(), null, 'but no figure');
   // the plumbing: the door hands the figure, the view keeps it, a peer's walker or beast gives its own
   const src = (f) => readFileSync(new URL('../' + f, import.meta.url), 'utf8');
-  assert.match(src('src/player/eotbBody.js'), /setEotbDrawBody\(\(canvas, f\) => this\.draw\(canvas, f\), \(\) => this\.figure\(\), \(\) => this\.facing\(\)\);/);   // SPRITE-FACE (PIN MOVED): and the way it faces
-  assert.match(src('src/player/eotbBody.js'), /figure = last\.riding \|\| FP \? null : \{ base: c\[1\] - cam\.feet\[1\], mpp: batchPx > 0 \? batchSize\.h \* grow \/ batchPx : 0, beast: !!last\.transformed \};/, 'none in the saddle - a rider\'s frame is the horse\'s too - nor in first person (SPRITE-FACE, PIN MOVED: its facing is facing()\'s)');
+  assert.match(src('src/player/eyeOfTheBeholder/eotbBody.js'), /setEotbDrawBody\(\(canvas, f\) => this\.draw\(canvas, f\), \(\) => this\.figure\(\), \(\) => this\.facing\(\)\);/);   // SPRITE-FACE (PIN MOVED): and the way it faces
+  assert.match(src('src/player/eyeOfTheBeholder/eotbBody.js'), /figure = last\.riding \|\| FP \? null : \{ base: c\[1\] - cam\.feet\[1\], mpp: batchPx > 0 \? batchSize\.h \* grow \/ batchPx : 0, beast: !!last\.transformed \};/, 'none in the saddle - a rider\'s frame is the horse\'s too - nor in first person (SPRITE-FACE, PIN MOVED: its facing is facing()\'s)');
   const mv = src('src/player/mwView.js');
   assert.match(mv, /const drawn = drawEotbBody\([^;]*\); spriteFigure = drawn \? eotbFigure\(\) : null; spriteFacing = drawn \? eotbFacing\(\) : null; return drawn;/);   // SPRITE-FACE (PIN MOVED): and its facing
   assert.match(mv, /export function mwViewSpriteFigure\(\) \{ return eotbLane\(\) \? spriteFigure : null; \}/);

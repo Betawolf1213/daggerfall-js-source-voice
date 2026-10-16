@@ -4,7 +4,7 @@
 //
 // The runner (combat/techniques.js) cues a moment - `release`, `hit`, `loose`, `shaft`, `close` - with the host's door
 // and the place; this file answers it from its table (TECH_FX). The camera's channel is read by the climb's own view
-// step (player/climbFeel.js createClimbFeelHost - the pitch, roll and eye first person only, the field of view's kick
+// step (player/climb/climbFeel.js createClimbFeelHost - the pitch, roll and eye first person only, the field of view's kick
 // every lens's as the climb's, and the sky's pitch); the hands' by the rig's draw (combat/weapon/weaponRig.js drawInner: the
 // classic sprites through the renderer's screen offset, the Morrowind arm through its own screen transform); the
 // shake, the burst and the sound go out through the door at the moment (betterAmbience.weaponKick, the cast engine's
@@ -35,7 +35,7 @@ let _live = false;
 /** Below these, a spring has settled and is put to rest exactly. */
 const REST_X = 1e-5, REST_V = 1e-4;
 
-/** THE OUTPUTS, filled in place - the shape player/climbFeel.js applyClimbView reads (`pitch`, `roll`, `eye`), and the
+/** THE OUTPUTS, filled in place - the shape player/climb/climbFeel.js applyClimbView reads (`pitch`, `roll`, `eye`), and the
  *  field of view's kick in degrees; the hands' dip in screen heights (`y`, down). A class each, never a literal: a
  *  literal's shape is shared with every `{ x, y }` and `{ pitch, roll, ... }` the game makes, and one of those holding
  *  anything but a number turns the field general - then each write here boxed its number (32 bytes a frame in flight,
@@ -131,7 +131,7 @@ function kick(ch, peak) {
  * THE SPRINGS' ONE DOOR: a moment's camera (`c`, as TECH_FX's rows speak it - the screen's own degrees and metres) and
  * its hands' dip (`hands.y`, screen heights, down), kicked at `m` of their peaks. A technique's moment comes through it
  * (techniqueCue), and GATHER-FEEL II's landed blow - an axe in the trunk, a pick on the stone (systems/gatherBlow.js
- * gatherBlowFeel) - so both ride the one set of springs every host's view already folds (player/climbFeel.js), and the
+ * gatherBlowFeel) - so both ride the one set of springs every host's view already folds (player/climb/climbFeel.js), and the
  * roll's mirror is said once. Nothing at m 0 or below.
  * @param {{ pitch?: number, roll?: number, eye?: number, fov?: number }|null|undefined} c
  * @param {{ y?: number }|null|undefined} hands @param {number} [m]

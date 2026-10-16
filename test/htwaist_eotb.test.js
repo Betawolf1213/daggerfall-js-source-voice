@@ -16,7 +16,7 @@
 // HT-WAIST-BACK (2026-09-24, Mac: "Just have it show on the back of the
 // sprite, not all angles"): the picture is drawn only from behind - the
 // painted orientation 4, straight behind - not the back diagonals 3 and 5
-// (Mac: "It still shows on the back side angle"; player/eotbLantern.js isRearView;
+// (Mac: "It still shows on the back side angle"; player/eyeOfTheBeholder/eotbLantern.js isRearView;
 // test/htwaistback.test.js pins the rule and the peers'). So every body here
 // is first walked a step away from the camera, sheathed and with no lantern,
 // and stands with its back to the eye (orientation 4 - the IL keeps a
@@ -29,8 +29,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { createEotbBody, bodyState } from '../src/player/eotbBody.js';
-import { loadLanternArt, LANTERN_ART_KEY, HIP_LANTERN_SPRITE } from '../src/player/eotbLantern.js';   // HT-WAIST-BACK: the one home of the lantern on every EOTB sprite
+import { createEotbBody, bodyState } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { loadLanternArt, LANTERN_ART_KEY, HIP_LANTERN_SPRITE } from '../src/player/eyeOfTheBeholder/eotbLantern.js';   // HT-WAIST-BACK: the one home of the lantern on every EOTB sprite
 import { playerWaistLightOverride, setPlayerWaistLightOverride, LANTERN_TEMPLATE } from '../src/systems/playerTorch.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
@@ -199,7 +199,7 @@ test('HT-WAIST (EOTB): it lights you from where it hangs, and stops the moment i
 test('HT-WAIST (EOTB): the picture is the Lantern template\'s own world texture - read off the template, never a literal; no data, no throw (mutant: the art door throwing, or a hard-wired record)', async () => {
   const t = templateByIndex(LANTERN_TEMPLATE);
   assert.deepEqual([t.worldTextureArchive, t.worldTextureRecord], [200, 10], 'TEXTURE.200 record 10, the shipping template\'s own');
-  const src = rd('src/player/eotbLantern.js');   // HT-WAIST-BACK: the art door every EOTB sprite takes
+  const src = rd('src/player/eyeOfTheBeholder/eotbLantern.js');   // HT-WAIST-BACK: the art door every EOTB sprite takes
   assert.match(src, /const t = templateByIndex\(LANTERN_TEMPLATE\);/);
   assert.doesNotMatch(src, /getDFBitmap\(10\b|texName\(200\)/, 'no literal record');
   const warn = console.warn; console.warn = () => {};

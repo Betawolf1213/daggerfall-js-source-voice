@@ -327,7 +327,7 @@ test('SPYGLASS the lens: eased to the glass\'s magnification over GLASS_EASE_S a
 
 test('SPYGLASS the head: while the glass is up the view is held in first person - a third-person body put into the head and handed back as it stood, the perspective key refused meanwhile; the travel view\'s hold wins (mutants: the hand-back, the refusal, the travel view\'s precedence)', async () => {
   const mv = await import('../src/player/mwView.js');
-  const { eotbCamera } = await import('../src/player/eotbCamera.js');
+  const { eotbCamera } = await import('../src/player/eyeOfTheBeholder/eotbCamera.js');
   const { setModSetting } = await import('../src/systems/modSettings.js');
   setModSetting('eye-of-the-beholder', 'Enabled', true);   // the sprite's lane (this suite runs with every mod off)
   mv.setEotbBodyReady(() => true);

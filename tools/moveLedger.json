@@ -743,5 +743,14 @@
   ["src/formats/unityBundle.js","src/formats/unity/unityBundle.js"],
   ["src/formats/unityBundleClient.js","src/formats/unity/unityBundleClient.js"],
   ["src/formats/unityBundlePool.js","src/formats/unity/unityBundlePool.js"],
-  ["src/formats/unityBundleWorker.js","src/formats/unity/unityBundleWorker.js"]
+  ["src/formats/unityBundleWorker.js","src/formats/unity/unityBundleWorker.js"],
+  ["src/player/eotbBillboard.js","src/player/eyeOfTheBeholder/eotbBillboard.js"],
+  ["src/player/eotbBody.js","src/player/eyeOfTheBeholder/eotbBody.js"],
+  ["src/player/eotbCamera.js","src/player/eyeOfTheBeholder/eotbCamera.js"],
+  ["src/player/eotbLantern.js","src/player/eyeOfTheBeholder/eotbLantern.js"],
+  ["src/player/eotbSprite.js","src/player/eyeOfTheBeholder/eotbSprite.js"],
+  ["src/player/eotbWagon.js","src/player/eyeOfTheBeholder/eotbWagon.js"],
+  ["src/player/climbFeel.js","src/player/climb/climbFeel.js"],
+  ["src/player/climbPose.js","src/player/climb/climbPose.js"],
+  ["src/player/climbSounds.js","src/player/climb/climbSounds.js"]
 ]

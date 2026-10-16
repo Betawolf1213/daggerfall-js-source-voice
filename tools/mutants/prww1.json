@@ -101,7 +101,7 @@
   },
   {
     "name": "PRWW1-local-body-on-the-settings-alone",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0 });",
     "new": "  const lookNow = () => ({ ...cfg, horse: last.horseLook ?? 0 });",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "PRWW1-local-form-change-fetches-nothing",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      if (renderer && last.lycanthropyType !== preloadedForm) preload(true);",
     "new": "      if (false) preload(true);",
     "tests": [

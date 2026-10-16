@@ -1043,7 +1043,7 @@ before it was touched. The pins are `test/disc10.test.js`; the mutants are
 **Cause.** Not a stale or parked copy of the wagon, and not my own team
 echoed back online (both were ruled out by probes and by the relay's own
 exclusions). Two vendored mods each stand a cart for the Cart transport:
-Eye Of The Beholder's ShowCart (model 41239, `player/eotbWagon.js`, through
+Eye Of The Beholder's ShowCart (model 41239, `player/eyeOfTheBeholder/eotbWagon.js`, through
 the view seam) and Horse Cart and Cargo's trailing wagon (41214). Both ship
 on, EOTB's lane is open for every rider without the Morrowind body, and
 neither mod's code knows the other - DFU with both installed would stand

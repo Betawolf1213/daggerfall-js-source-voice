@@ -451,7 +451,7 @@ export function playerAttackGrunt(playerEntity, isBow, rolls = Math.random) {
  *  from a hang, a leap's launch, a fall caught, the grip gone - in the attack grunt's own voice: the port's departure
  *  (DFU's climber climbs in silence), so it rides the attack grunt's gates exactly (the CombatVoices switch, a
  *  transformed lycanthrope's silence) and its clip (a vampire's override, else GetRaceGenderAttackSound by race and
- *  gender). WHEN is the caller's (player/climbSounds.js: a chance per move, never two within seconds). Returns
+ *  gender). WHEN is the caller's (player/climb/climbSounds.js: a chance per move, never two within seconds). Returns
  *  { clip, pitchLift } or null. */
 export function playerClimbStrain(playerEntity, rolls = Math.random) {
   if (!playerEntity || !combatVoicesEnabled() || suppressOptionalCombatVoices(playerEntity)) return null;

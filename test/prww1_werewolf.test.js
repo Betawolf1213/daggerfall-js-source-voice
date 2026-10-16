@@ -17,9 +17,9 @@ import { lerpPose } from '../src/net/online.js';
 import * as PR from '../src/net/peer/peerRiders.js';   // the namespace, so a pin run on the unfixed layer fails assertion by assertion, not at the import
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
-import { ARCHIVE_LYCAN, ARCHIVE_HORSE, STATE_TABLES, LYCAN_TICK, frameTime, chooseTable } from '../src/player/eotbBillboard.js';
-import { SIZE_RIDING_OR_TRANSFORMED } from '../src/player/eotbSprite.js';
-import { createEotbBody } from '../src/player/eotbBody.js';
+import { ARCHIVE_LYCAN, ARCHIVE_HORSE, STATE_TABLES, LYCAN_TICK, frameTime, chooseTable } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
+import { SIZE_RIDING_OR_TRANSFORMED } from '../src/player/eyeOfTheBeholder/eotbSprite.js';
+import { createEotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 
 const { createPeerRiders } = PR;
 const CLAW_TABLE = 'AttackMeleeLycan';   // eotbBody playLycanAttack's clip
@@ -249,8 +249,8 @@ test('PR-WW1 the local body: the lycan sprite is the LIVE form\'s - a wereboar s
     // fetched on the first tick that names it - a walk it has not drawn yet included - not a sprite at a time
     assert.ok(r.uploads.includes(`${archive}:${STATE_TABLES.MoveLycan.base + 2}-3`), `form ${form}: the preload re-run for its own archive`);
   }
-  assert.match(rd('src/player/eotbBody.js'), /const lookNow = \(\) => \(\{ \.\.\.cfg, lycanthropyType: last\.lycanthropyType, horse: last\.horseLook \?\? 0 \}\);/);
-  assert.doesNotMatch(rd('src/player/eotbBody.js'), /spriteFor\([^)]*, cfg[,)]/, 'no spriteFor on the settings alone');
+  assert.match(rd('src/player/eyeOfTheBeholder/eotbBody.js'), /const lookNow = \(\) => \(\{ \.\.\.cfg, lycanthropyType: last\.lycanthropyType, horse: last\.horseLook \?\? 0 \}\);/);
+  assert.doesNotMatch(rd('src/player/eyeOfTheBeholder/eotbBody.js'), /spriteFor\([^)]*, cfg[,)]/, 'no spriteFor on the settings alone');
 });
 
 test('PR-WW1 hosts: the modal passes draw the lycanthrope too - world.js\'s extraBillboards hands worldModes the peerRiders batches beside remotePlayers\', and worldModes\' dungeon and interior runs draw that hook alone; the beast still takes no Morrowind body (mutant: the hook narrowed back)', () => {

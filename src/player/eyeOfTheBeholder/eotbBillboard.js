@@ -54,7 +54,7 @@
 // So the table below is 21 BASE RECORDS and the wheel above. A rule
 // enforced by an enumeration is a rule enforced by memory.
 
-import { roundToInt } from '../systems/mathf.js';
+import { roundToInt } from '../../systems/mathf.js';
 
 /** The wheel: which record each of the eight orientations draws, and
  *  which of them are drawn flipped. */

@@ -31,7 +31,7 @@ import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { mintCondition, setItemFields } from '../src/systems/item/itemTemplates.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
-import { createClimbFeelHost } from '../src/player/climbFeel.js';
+import { createClimbFeelHost } from '../src/player/climb/climbFeel.js';
 import { SpellImpactFx, TECH_FX_LOOK, TECH_FX_RECIPES, FX_MAX_PARTS } from '../src/render/spellImpactFx.js';
 import { CATEGORIES } from '../src/ui/settings/settingsMap.js';
 
@@ -460,7 +460,7 @@ test('TECHFX1 THE CAMERA\'S CHANNEL: the climb\'s view step folds the technique\
   host.reset();
   assert.equal(host.tech, null);
   // the host's source: the step first, the fold after the climb's
-  const src = code('src/player/climbFeel.js');
+  const src = code('src/player/climb/climbFeel.js');
   assert.match(src, /frame\(dt, held = false\) \{\s*stepTechniqueFx\(dt\);\s*const m = player\(\);\s*if \(!m \|\| held\) return;/);
   assert.match(src, /if \(this\.applied\) applyClimbView\(view, this\.applied\);\s*this\.tech = firstPerson \? techniqueView\(\) : null;\s*if \(this\.tech\) applyClimbView\(view, this\.tech\);\s*return view;/);
 });
@@ -587,7 +587,7 @@ test('TECHFX1 THE FRAME MAKES NOTHING (L2 F9\'s measure, in a child with a 64 MB
     const FX = await import(${url('src/combat/technique/techniqueFx.js')});
     const T = await import(${url('src/combat/techniques.js')});
     const LR = await import(${url('src/systems/loot/lootRarity.js')});
-    const { createClimbFeelHost } = await import(${url('src/player/climbFeel.js')});
+    const { createClimbFeelHost } = await import(${url('src/player/climb/climbFeel.js')});
     const { setPref } = await import(${url('src/systems/uiPrefs.js')});
     const { PlayerWeapon } = await import(${url('src/combat/playerWeapon.js')});
     const { createWeapon } = await import(${url('src/combat/enemyEquipment.js')});

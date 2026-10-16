@@ -200,8 +200,8 @@ test('F11 BELONGS TO THE GAME: the desktop shell claims no key the default bindi
 // port has and the reference does not - and it is the OTHER half of a
 // death that the player survives.
 test('DEATH-BODY1: coming back to life lowers the death latch, wherever the life came from', async () => {
-  const { eotbBody } = await import('../src/player/eotbBody.js');
-  const src = readFileSync(new URL('../src/player/eotbBody.js', import.meta.url), 'utf8');
+  const { eotbBody } = await import('../src/player/eyeOfTheBeholder/eotbBody.js');
+  const src = readFileSync(new URL('../src/player/eyeOfTheBeholder/eotbBody.js', import.meta.url), 'utf8');
 
   // The latch is read at the top of LateUpdate and it is the ENTITY's
   // state that lowers it - not a toggle, not a load hook, not any one

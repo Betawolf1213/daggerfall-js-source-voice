@@ -112,7 +112,7 @@ sets: 1,191 uploads -> 306, the run's script 1,210 -> 777 ms, the steady frame's
 
 ## PERF-PEERS5 — a decoded sprite turned in its own bytes
 
-The sprite door (net/peer/peerRiders.js decodeUrl, the walkers' and riders'; player/eotbBody.js decodeSprite, the local
+The sprite door (net/peer/peerRiders.js decodeUrl, the walkers' and riders'; player/eyeOfTheBeholder/eotbBody.js decodeSprite, the local
 body's) decoded a PNG and handed it to the row converter, which copied it into a second raster to turn it bottom-up.
 The decode is that door's alone, so it is turned in place (`toColor32OrderInPlace`, formats/color32Order.js;
 `worldOrderColors(image, { owned: true })`): toColor32Order's answer byte for byte, without a raster a sprite. The peer

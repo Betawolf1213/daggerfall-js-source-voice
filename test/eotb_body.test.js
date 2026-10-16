@@ -7,10 +7,10 @@ import { fileURLToPath } from 'node:url';
 import {
   sizeMod, spriteSize, spriteOffset, spriteFor, tableKeys, flipRows,
   spriteCount, eotbSpriteUrl, SIZE_ON_FOOT, SIZE_RIDING_OR_TRANSFORMED,
-} from '../src/player/eotbSprite.js';
-import { createEotbBody, bodyState } from '../src/player/eotbBody.js';
-import { createEotbCamera, eotbCamera } from '../src/player/eotbCamera.js';
-import { ARCHIVE_FOOT, ARCHIVE_HORSE, frameTime, TABLE_FRAMES } from '../src/player/eotbBillboard.js';
+} from '../src/player/eyeOfTheBeholder/eotbSprite.js';
+import { createEotbBody, bodyState } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { createEotbCamera, eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
+import { ARCHIVE_FOOT, ARCHIVE_HORSE, frameTime, TABLE_FRAMES } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 
 const MOD = 'eye-of-the-beholder';
@@ -20,7 +20,7 @@ const MOD = 'eye-of-the-beholder';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const viteConfig = readFileSync(join(root, 'vite.config.js'), 'utf8');
 const weaponRig = readFileSync(join(root, 'src/combat/weapon/weaponRig.js'), 'utf8');
-const bodySrc = readFileSync(join(root, 'src/player/eotbBody.js'), 'utf8');
+const bodySrc = readFileSync(join(root, 'src/player/eyeOfTheBeholder/eotbBody.js'), 'utf8');
 
 const renderer = () => ({
   uploads: [], batches: [], draws: 0,
@@ -71,7 +71,7 @@ test('EOTB-IL: the per-sprite offsets are the XML’s, in metres, six triples ov
   const triples = new Set(Object.values(info.offsets).map((o) => `${o.scale},${o.x},${o.y}`));
   assert.equal(triples.size, 6);
   // the dial the pane still shows is inert in the assembly: get_scaleOffset has no caller
-  assert.ok(!/(function|const|let)\s+scaleOffset\b/.test(readFileSync(join(root, 'src/player/eotbSprite.js'), 'utf8')), 'no scaleOffset in the port either');
+  assert.ok(!/(function|const|let)\s+scaleOffset\b/.test(readFileSync(join(root, 'src/player/eyeOfTheBeholder/eotbSprite.js'), 'utf8')), 'no scaleOffset in the port either');
 });
 
 test('EOTB-IL: bodyState reads the motion bag the way LoopIdleBillboard reads PlayerMotor', () => {
@@ -382,7 +382,7 @@ test('EOTB-IL: the placement is UpdateBillboard’s - the feet on the ground, su
   // shader anchors at the base, and place() converts the mod's centre.
   const vs = readFileSync(join(root, 'src/render/renderer.js'), 'utf8');
   assert.match(vs, /\+ uUp \* \(\((?:aCorner|cn)\.y \+ 0\.5\) \* uSize\.y\);/, 'the billboard shader is bottom-anchored');   // ELITE FOES: `cn` is aCorner, widened only for an elite
-  assert.match(readFileSync(join(root, 'src/player/eotbBody.js'), 'utf8'), /const base = y - size\.h \* 0\.5;\n\s+return \[origin\[0\] \+ right\[0\] \* x \+ fwd\[0\] \* z, origin\[1\] \+ base,/, 'and the body hands it the base');
+  assert.match(readFileSync(join(root, 'src/player/eyeOfTheBeholder/eotbBody.js'), 'utf8'), /const base = y - size\.h \* 0\.5;\n\s+return \[origin\[0\] \+ right\[0\] \* x \+ fwd\[0\] \* z, origin\[1\] \+ base,/, 'and the body hands it the base');
   // the XML X: record 18 (x -0.2) is index 5 straight and index 3
   // mirrored, and UpdateBillboard negates X for the mirrored state
   // (IL_4ba7-IL_4bd1). A drawn weapon faces the camera's forward (+z);

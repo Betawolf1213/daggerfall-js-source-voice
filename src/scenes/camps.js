@@ -7,7 +7,7 @@
 // lights archive at 12 fps - FlatAnim picks the rate off the archive)
 // as one billboard batch, base-aligned at the spot, with a point light
 // over it while it burns. A TENT is model 41606 through the host's
-// pipeline (the wagon's getGpuMesh law, player/eotbWagon.js), stood
+// pipeline (the wagon's getGpuMesh law, player/eyeOfTheBeholder/eotbWagon.js), stood
 // TENT_BEHIND behind its fire and facing it. Both are one activation
 // target at CAMP_REACH under the host's one ray; Info and Talk name it,
 // Grab and Steal open the menu (a list picker: rest, cook, stoke, pack).

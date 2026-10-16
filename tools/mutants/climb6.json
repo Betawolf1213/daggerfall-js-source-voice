@@ -55,7 +55,7 @@
   },
   {
     "name": "CLIMB6-climb-foot-phase-same-side",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "s === 'R' ? 0.75 : 0.25, POSE.CLIMB_DUTY",
     "new": "s === 'R' ? 0.25 : 0.75, POSE.CLIMB_DUTY",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CLIMB6-hang-legs-short",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "HANG_LEG: 0.96,",
     "new": "HANG_LEG: 0.5,",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "CLIMB6-shimmy-leader-swapped",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "s === 'R' ? span / 2 : 1.5 * span, POSE.SHIMMY_REACH",
     "new": "s === 'R' ? 1.5 * span : span / 2, POSE.SHIMMY_REACH",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "CLIMB6-shimmy-bands-together",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "s === 'R' ? span / 2 : 1.5 * span, POSE.SHIMMY_REACH",
     "new": "s === 'R' ? span / 2 : span / 2, POSE.SHIMMY_REACH",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "CLIMB6-shimmy-reach-whole-turn",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "SHIMMY_REACH: 0.8,",
     "new": "SHIMMY_REACH: 1.2,",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "CLIMB6-shimmy-grid-off-the-hold",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "  const v = (travel - (centre - width / 2)) / stride;",
     "new": "  const v = (travel + stride / 4 - (centre - width / 2)) / stride;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "CLIMB6-shimmy-never-restarts",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    if (this.prevMode !== 'hang' || !(Math.abs(c.lipY - this.hangLip) <= PARKOUR_LIP_FOLLOW)) {",
     "new": "    if (this.prevMode === undefined) {",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "CLIMB6-settle-always-finishes",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    if (!moving) st.v = st.v >= 0.5 ? Math.min(1, st.v + dt / POSE.SETTLE_S) : Math.max(0, st.v - dt / POSE.SETTLE_S);",
     "new": "    if (!moving) st.v = Math.min(1, st.v + dt / POSE.SETTLE_S);",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "CLIMB6-settle-follows-gait-going-on",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    else if (sw >= st.prev) st.v = st.prev < 1 ? st.v + (1 - st.v) * (sw - st.prev) / (1 - st.prev) : sw;",
     "new": "    else if (sw >= st.prev) st.v = sw;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "CLIMB6-settle-follows-gait-going-back",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    else st.v = st.prev > 0 ? st.v * sw / st.prev : sw;",
     "new": "    else st.v = sw;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "CLIMB6-settle-finished-back-to-the-anchor",
-    "file": "src/player/climbPose.js",
+    "file": "src/player/climb/climbPose.js",
     "old": "    if (sw <= 0) { st.v = 0; st.cycle = null; return 0; }",
     "new": "    if (sw <= 0 || (!moving && st.v >= 1)) { st.v = 0; st.cycle = null; return 0; }",
     "tests": [

@@ -12,7 +12,7 @@
 //   - the enhanced inventory's transfer cues (ui/enhanced/enhancedInventory.js,
 //     MAC-O6): DoTransferItem's own gold clink and button click, which
 //     the classic window always played and the enhanced one never did.
-//   - the climb's sounds (player/climbSounds.js, CLIMB4): hands on stone,
+//   - the climb's sounds (player/climb/climbSounds.js, CLIMB4): hands on stone,
 //     boots on the wall, the haul over a sill, a leap's rush and the grit
 //     a failing grip lets go - eleven clips of the port's own
 //     (tools/climbSfx.mjs); Daggerfall's climber climbs in silence.

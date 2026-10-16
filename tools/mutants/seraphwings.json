@@ -463,7 +463,7 @@
   },
   {
     "name": "SERAPHWINGS-the-figure-never-kept",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      figure = last.riding || FP ? null : { base: c[1] - cam.feet[1], mpp: batchPx > 0 ? batchSize.h * grow / batchPx : 0, beast: !!last.transformed };   // SERAPH-WINGS: a rider's frame is the horse's too - no shoulders read off it; AUDIT 3: nor the first-person billboard's (the camera is in it), and its metres a pixel (the shoulders by the pixel - auraSpriteBones) and its form",
     "new": "",
     "tests": [
@@ -473,7 +473,7 @@
   },
   {
     "name": "SERAPHWINGS-a-riders-figure",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "figure = last.riding || FP ? null :",
     "new": "figure = FP ? null :",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "SERAPHWINGS-a-stale-figure",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      face = faceNow && Number.isFinite(faceNow.yaw) ? faceNow : null;\n      figure = null; facingDrawn = null;\n",
     "new": "      face = faceNow && Number.isFinite(faceNow.yaw) ? faceNow : null;\n      facingDrawn = null;\n",
     "tests": [
@@ -681,7 +681,7 @@
   },
   {
     "name": "SERAPHWINGS-a-figure-in-first-person",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "figure = last.riding || FP ? null :",
     "new": "figure = last.riding ? null :",
     "tests": [
@@ -690,7 +690,7 @@
   },
   {
     "name": "SERAPHWINGS-the-camera-facing",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "facingDrawn = seen === null ? null : { yaw: seen, turn: turnYaw() ?? seen };",
     "new": "facingDrawn = seen === null ? null : { yaw: cam.yaw, turn: turnYaw() ?? seen };",
     "tests": [
@@ -1008,7 +1008,7 @@
   },
   {
     "name": "WINGSFIT-facing-nowhere-the-cameras",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "facingDrawn = seen === null ? null : { yaw: seen, turn: turnYaw() ?? seen };",
     "new": "facingDrawn = seen === null ? null : { yaw: seen, turn: turnYaw() ?? cam.yaw };",
     "tests": [

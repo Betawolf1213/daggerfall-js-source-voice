@@ -250,7 +250,7 @@ test('AUDIT CAPTAIN\'S SEA S7: her guns out ON ME tell her colours - never a fig
 
 test('AUDIT CAPTAIN\'S SEA S8/S9: the glass\'s head handed back true - the travel view taken under it reads the body the player stood in, a door\'s own POV (the map\'s head) keeps the head, a load decides alone; a save under it records the player\'s own camera (mutants: the view\'s release first, the map\'s claim, the save\'s camera, the load\'s forgetting)', async () => {
   const mv = await import('../src/player/mwView.js');
-  const { eotbCamera } = await import('../src/player/eotbCamera.js');
+  const { eotbCamera } = await import('../src/player/eyeOfTheBeholder/eotbCamera.js');
   const { mwCamera } = await import('../src/player/mwCamera.js');
   const { setModSetting } = await import('../src/systems/modSettings.js');
   // the Morrowind lane: a save under the glass

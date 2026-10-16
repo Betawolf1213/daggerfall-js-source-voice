@@ -981,7 +981,7 @@ redrawn); `tools/mutants/tv3.json` and `tv5.json` (the OVERWORLD-NAMES records).
   traveller's own sprite is drawn `tvOwnGrow(distance)` times its size (`player/travelCamera.js`: one more for every
   `TV_OWN_GROW_M` = 32 m from the eye to the feet, never past `TV_OWN_GROW_MAX` = 12, 1 near the ground) - about
   40-50 px tall at 1080p at every zoom, a Mount & Blade party's icon. The view hands the step (`frame().grow`), the
-  host passes it on the body's `face`, and the sprite lane (`player/eotbBody.js`) makes its batch again at each whole
+  host passes it on the body's `face`, and the sprite lane (`player/eyeOfTheBeholder/eotbBody.js`) makes its batch again at each whole
   step; a grown sprite casts no giant's shadow (`selfCard` off) and hangs no lantern on a waist that moved.
 - **OW-PEERS** (FIELD BUGS 2026-10-01 #11, "you cannot see other player's sprites"): OW-BIG grew the traveller
   alone, so every other player stood at their own size - a speck at 330 m under the name that stood over them. Each

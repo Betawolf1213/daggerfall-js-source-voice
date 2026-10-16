@@ -42,8 +42,8 @@
 // (UpdateBillboardDelayed, three frames) is kept exactly.
 
 import { eotbCamera } from './eotbCamera.js';
-import { setEotbBodyReady, setEotbDrawBody, setEotbPlayerState } from './mwView.js';
-import { modSettingIfDeclared, modSettingsOf, modSettingsGeneration } from '../systems/modSettings.js';
+import { setEotbBodyReady, setEotbDrawBody, setEotbPlayerState } from '../mwView.js';
+import { modSettingIfDeclared, modSettingsOf, modSettingsGeneration } from '../../systems/modSettings.js';
 import {
   chooseTable, deathTable, ORIENTATIONS, orientationFor, facingFor, boatForwardOf, frameTime, speedMod, frameCount, isFootstepFrame,
   stateFor, STATE_TABLES, STRING, meleeAnimTickTime, RANGED_TICK, SPELL_TICK, LYCAN_TICK, DEATH_TICK,
@@ -51,10 +51,10 @@ import {
   DELAYED_FRAMES, ORIENTATION_TIME, signedAngleY, tableMoveSpeed, portrayedYaw,
 } from './eotbBillboard.js';
 import { spriteFor, eotbSpriteUrl, spriteCount, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from './eotbSprite.js';
-import { decodePng } from '../systems/textureReplacement.js';   // EOTB-FLIP: the one PNG decoder the world's other PNG billboards take
-import { horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horse/horseCoats.js';   // COATS1: the ridden horse's look
-import { getMeleeWeaponAnimTime } from '../characters/weaponStates.js';   // [IL] GetMeleeAnimTickTime reads FormulaHelper's own
-import { setPlayerTorchOffsetOverride, setPlayerWaistLightOverride } from '../systems/playerTorch.js';   // [IL] TorchOffset writes PlayerTorch's position; HT-WAIST: and the lantern at the waist lights from where it hangs
+import { decodePng } from '../../systems/textureReplacement.js';   // EOTB-FLIP: the one PNG decoder the world's other PNG billboards take
+import { horseLookCode, horseLookOfCode, lookSuffix } from '../../systems/horse/horseCoats.js';   // COATS1: the ridden horse's look
+import { getMeleeWeaponAnimTime } from '../../characters/weaponStates.js';   // [IL] GetMeleeAnimTickTime reads FormulaHelper's own
+import { setPlayerTorchOffsetOverride, setPlayerWaistLightOverride } from '../../systems/playerTorch.js';   // [IL] TorchOffset writes PlayerTorch's position; HT-WAIST: and the lantern at the waist lights from where it hangs
 import {
   isRearView, createLanternArt, loadLanternArt, createSpriteLantern, restSpriteLantern, stepSpriteLantern, spriteStride,
   hangSpriteLantern, mintSpriteLantern, dropSpriteLantern,
@@ -110,7 +110,7 @@ export const FOOTSTEP_VOLUME_SCALE = Object.freeze({ thirdPerson: 2, firstPerson
 // angle"): the picture is DRAWN only while the sprite is seen from straight behind - the painted orientation 4 of
 // EOTB's wheel, the one view that draws its back - and never from the back diagonals, the front or the side. It still hangs there, lit, whatever the view: the swing runs on and the light stays at the hip, so
 // turning round neither restarts the swing nor moves the light. Everything the peers' sprites share with this one
-// - the rear-view rule, the picture, the hang, the swing's drive, the batch - is player/eotbLantern.js's; this
+// - the rear-view rule, the picture, the hang, the swing's drive, the batch - is player/eyeOfTheBeholder/eotbLantern.js's; this
 // body keeps what is its alone: whether it hangs, and the light.
 
 /** The mod's own settings, resolved - read at attach and on `reload`,
@@ -280,7 +280,7 @@ export function createEotbBody({ count = spriteCount, urlFor = eotbSpriteUrl, de
   let firstUp = false;
 
   // ── HT-WAIST: the lantern at the waist (see the head above) ───────
-  const lantern = createSpriteLantern();   // HT-WAIST-BACK: its swing, its batch, its placement - player/eotbLantern.js
+  const lantern = createSpriteLantern();   // HT-WAIST-BACK: its swing, its batch, its placement - player/eyeOfTheBeholder/eotbLantern.js
   const lanternArt = createLanternArt(() => renderer, loadLantern);
   let waistWritten = false;
   // the frame's scratch - drawLantern and stepLantern run every Eye Of The Beholder frame and allocate nothing

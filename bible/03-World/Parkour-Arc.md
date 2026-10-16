@@ -666,7 +666,7 @@ Mac: *"I reallty want go to go all in with the detai. Liike proer feel to climbi
 - **The motor tells the frame its climb** (`motor.js _pkEmit`, `climbEvents`, cleared each render frame): a hold taken
   (its mode) and let go (the mode it was), a move begun (its kind, time, rise, split and the speed the body came at; a
   chained move is told as its own), a corner's turn, a leap's launch, the grip failing.
-- **The camera** (`player/climbFeel.js`, a pure law; one per host view, beside the HeadBobber): a catch dips the eye
+- **The camera** (`player/climb/climbFeel.js`, a pure law; one per host view, beside the HeadBobber): a catch dips the eye
   and pitches the view down, harder the faster the body came; hanging sways a little on the arms; the shimmy rolls toward
   its way with each hand; the free climb bobs hand over hand, the roll swapping hands; a failing grip trembles; a
   pull-up looks up at the lip, then down over it as the body crests; a vault pitches down over the top; a lower looks
@@ -675,7 +675,7 @@ Mac: *"I reallty want go to go all in with the detai. Liike proer feel to climbi
   The view half (`applyClimbView`) is the view matrix's alone, first person only; turns are headings paid through the
   look filter (`LookFilter.turn`), never latched as the mouse's; the kick and the pitch reach the sky, the far ring and
   the spawn view's lens, so the horizon stands where the view's does.
-- **The sounds** (`player/climbSounds.js`, framed with the camera). Eleven clips of the port's own, synthesised
+- **The sounds** (`player/climb/climbSounds.js`, framed with the camera). Eleven clips of the port's own, synthesised
   deterministically by `tools/climbSfx.mjs` and baked to DAGGER.SND's format (`public/sfx/climb-*.wav`, provenance in
   `public/sfx/SOURCES.md`): hands on stone, the catch with the body's weight, hand over hand, boots scrabbling, the haul
   over a sill, a leap's rush, the grit a failing grip lets go. Every move sounds on its own clock (a pull-up's haul and
@@ -828,7 +828,7 @@ retail-shaped `xbase_anim_sh.nif` (Weapon Sheathing).
   head's look. CONVENTION-FREE: it reads the joints, never a bone axis, so a retail X-along-bone rig, a Y-along-bone one and
   random rest frames solve alike (pinned on 40 random chains). The hand's palm is read off the thumb's side. Bones by
   their Bip01 names with the held-bone aliases.
-- **The law** (`player/climbPose.js ClimbPose`): one per body. It turns the climb's snapshot (`climbRigInput`: the motor's
+- **The law** (`player/climb/climbPose.js ClimbPose`): one per body. It turns the climb's snapshot (`climbRigInput`: the motor's
   hold, its lip, the move in flight by its own object, the grip, a leap's flight) into world targets.
   - **The hang**: both hands on the lip, `HANDS_APART`, the wrists over the top and past the face, palms down, elbows out
     and back. The feet on the face below with the knees forward. The body in to the wall and let down to straight arms.
@@ -971,7 +971,7 @@ by `combat/weapon/weaponRig.js`.
 
 Mac: *"Audit this and ensure all the animations and stuff are perfect"*. The classic lane's hands held to the climb they
 draw: the motor's moves (`player/parkour.js`'s plans, `motor.js _parkourAdvance`), the 3D body's choreography
-(`player/climbPose.js`), the camera's feel and the ear (`climbFeel.js`, `climbSounds.js`). First measured: a harness drove
+(`player/climb/climbPose.js`), the camera's feel and the ear (`climbFeel.js`, `climbSounds.js`). First measured: a harness drove
 the law through every state with the motor's own move shapes and flagged each frame a hand on the screen jumped; then
 contact sheets of every animation, frame by frame. ClimbPose is now the one choreography: the sprite law runs its gaits
 (`gait`, `shimmyGait`, its `_settled` law) and its moves' windows, drawn as a hand's way on the wall relative to the body

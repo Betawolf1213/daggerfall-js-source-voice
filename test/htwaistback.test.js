@@ -9,9 +9,9 @@
 // record is a back was read off the vendored art (112364 idle 0-4, walk 5-9, armed walk 20-24; 112372 idle 0-4).
 // Unseen, it still HANGS: it swings on, and the local player's light stays at the hip.
 //
-// EVERY SPRITE: the local body in every on-foot set (player/eotbBody.js) and every other player drawn as the set
+// EVERY SPRITE: the local body in every on-foot set (player/eyeOfTheBeholder/eotbBody.js) and every other player drawn as the set
 // they chose (DISC23-B's walkers, net/peer/peerRiders.js) off their pose's `hl` (HT-WAIST-NET). One home for what the two
-// share: player/eotbLantern.js - the rule, the art, the hang, the swing's drive, the batch. The rider and the beast
+// share: player/eyeOfTheBeholder/eotbLantern.js - the rule, the art, the hang, the swing's drive, the batch. The rider and the beast
 // hang none (the local sprite's own rule; a walker is never either). A peer's lantern lights nothing.
 //
 // Driven through the real body (createEotbBody, the eotb_body harness's renderer, an injected art door) and the real
@@ -21,12 +21,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { createEotbBody } from '../src/player/eotbBody.js';
-import { RECORD_OFFSETS, ORIENTATIONS, orientationFor, stateFor } from '../src/player/eotbBillboard.js';
+import { createEotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { RECORD_OFFSETS, ORIENTATIONS, orientationFor, stateFor } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { createPeerWalkers, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { playerWaistLightOverride, setPlayerWaistLightOverride } from '../src/systems/playerTorch.js';
 
-const L = await import('../src/player/eotbLantern.js').catch(() => ({}));
+const L = await import('../src/player/eyeOfTheBeholder/eotbLantern.js').catch(() => ({}));
 const KEY = L.LANTERN_ART_KEY ?? 'htwaist-lantern';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const settle = (ms = 5) => new Promise((res) => setTimeout(res, ms));
@@ -84,7 +84,7 @@ function viewFrom(b, o, extra = {}, motion = {}) {
 }
 
 test('HT-WAIST-BACK rule: the rear view is 4 alone - the one whose record is the sprite\'s back (+4) on EOTB\'s wheel; the back diagonals 3 and 5 (+3) are not, nor are 0, 1, 2, 6, 7, and nothing that is not an orientation is (mutants: a side view let in; a back diagonal left out)', () => {
-  assert.equal(typeof L.isRearView, 'function', 'player/eotbLantern.js isRearView - the one rule every EOTB sprite asks');
+  assert.equal(typeof L.isRearView, 'function', 'player/eyeOfTheBeholder/eotbLantern.js isRearView - the one rule every EOTB sprite asks');
   assert.deepEqual(EIGHT.filter((o) => L.isRearView(o)), [4], 'straight behind - not the back diagonals (Mac: "It still shows on the back side angle")');
   // the rule IS the wheel's: a view is the rear view exactly when the record it draws is +4
   for (const o of EIGHT) assert.equal(L.isRearView(o), RECORD_OFFSETS[o] === 4, `orientation ${o} draws record +${RECORD_OFFSETS[o]}`);
@@ -294,9 +294,9 @@ test('HT-WAIST-BACK (the others): EVERY ALLOCATION HAS AN OWNER - the lantern\'s
   assert.equal(minted(), freed(), 'every batch minted was freed');
 });
 
-test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through player/eotbLantern.js and neither keeps its own rule, hang, swing drive or art door; the host draws the walkers\' lanterns in the hook every mode\'s pass calls after your body; the pace is net/peer/peerPace.js\'s (mutants: a second copy; the host never draws them)', () => {
-  const lantern = rd('src/player/eotbLantern.js');
-  const body = rd('src/player/eotbBody.js');
+test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through player/eyeOfTheBeholder/eotbLantern.js and neither keeps its own rule, hang, swing drive or art door; the host draws the walkers\' lanterns in the hook every mode\'s pass calls after your body; the pace is net/peer/peerPace.js\'s (mutants: a second copy; the host never draws them)', () => {
+  const lantern = rd('src/player/eyeOfTheBeholder/eotbLantern.js');
+  const body = rd('src/player/eyeOfTheBeholder/eotbBody.js');
   const riders = rd('src/net/peer/peerRiders.js');
   for (const [name, src] of [['eotbBody.js', body], ['peerRiders.js', riders]]) {
     assert.match(src, /from '(?:\.|\.\.\/player)\/eotbLantern\.js';/, `${name} takes the lantern from its one home`);
@@ -331,7 +331,7 @@ test('HT-WAIST-BACK: recorded - the HT-WAIST sections of Handheld-Torches.md and
   assert.match(hts, /straight behind/);
   assert.match(hts, /It still shows on the back side angle/, 'Mac\'s word on the back diagonals, quoted');
   assert.doesNotMatch(hts, /3, 4 (?:and|or) 5|three views of Eye Of The Beholder\'s eight/, 'the three-rear-views rule is rewritten');
-  assert.match(hts, /player\/eotbLantern\.js/);
+  assert.match(hts, /player\/eyeOfTheBeholder\/eotbLantern\.js/);
   assert.match(hts, /createPeerWalkers|walkers/);
   const eo = rd('bible/06-Systems/Eye-Of-The-Beholder.md');
   const eos = eo.slice(eo.indexOf('## HT-WAIST (2026-09-24)'));

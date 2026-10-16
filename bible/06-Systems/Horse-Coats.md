@@ -164,7 +164,7 @@ digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
   (`lookOfOwner`) - the bay's until the look's are up. Past `HORSE_LOOKS_KEPT`
   (16) looks, the one longest undrawn is let go (`trimLooks`). Both hosts hand
   the pool the look through the one seam, `world/wagonModels.js` wagonPoolDeps.
-- **Eye Of The Beholder's rider** (`player/eotbSprite.js` spriteFor,
+- **Eye Of The Beholder's rider** (`player/eyeOfTheBeholder/eotbSprite.js` spriteFor,
   `lookedPixels`): a mounted table's sprite in a look is its own record
   (`<record>-<frame>~<code>`), dyed before the mirror. The body reads the look
   off the weapon rig's record (`combat/weapon/weaponRig.js` eotbState `horseLook`,

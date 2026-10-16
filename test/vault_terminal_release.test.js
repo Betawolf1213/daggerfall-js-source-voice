@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { planVault } from '../src/player/parkour.js';
-import { ClimbPose, climbRigInput } from '../src/player/climbPose.js';
+import { ClimbPose, climbRigInput } from '../src/player/climb/climbPose.js';
 
 test('completed vault releases hands when a slow frame skips the release window', () => {
   const motor = new PlayerMotor(new Collider(() => -100), {}, {});

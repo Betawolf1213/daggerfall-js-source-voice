@@ -1883,8 +1883,8 @@ callback nothing is read.
 
 ### Eye of the Beholder's boat
 
-The second consumer the port carries (`player/eotbCamera.js`,
-`player/eotbBillboard.js`; `06-Systems/Eye-Of-The-Beholder.md`), and its
+The second consumer the port carries (`player/eyeOfTheBeholder/eotbCamera.js`,
+`player/eyeOfTheBeholder/eotbBillboard.js`; `06-Systems/Eye-Of-The-Beholder.md`), and its
 two rows of `test/eotb_scope.test.js` are ported. ModCompatibilityChecking
 finds the mod once, in Start, and subscribes OnUpdateSailing; each boot
 hands the camera that boot's runtime (`player/mwView.js`
@@ -2935,7 +2935,7 @@ making their keys' names for windows they were not showing. Measured, before and
   (`world/deepWater/deepWaterSwim.js` `isBoatEffectBundle`): the mod's effect bundle
   is "I'm On A Boat", and that literal is in the assembly's heap.
 - Eye of the Beholder's boat camera (`CameraOverrideBoat.*`,
-  `player/eotbCamera.js`) read a `sailing` state, and its
+  `player/eyeOfTheBeholder/eotbCamera.js`) read a `sailing` state, and its
   `OnUpdateSailing` hook was a row of `test/eotb_scope.test.js` waiting for
   this mod; CSA-J ported it (The close, above).
 - Item templates 1320 and 1321 are free.

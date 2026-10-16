@@ -25,9 +25,9 @@
 //   - LEAPS: the launch kicks the field of view and the eject turns the view to face the way it flew; a side leap rolls
 //     toward its side, an up leap looks up; the WALL RUN looks up the wall.
 
-import { PARKOUR_GRIP_LOW, PARKOUR_HAND_SPAN } from './parkour.js';
+import { PARKOUR_GRIP_LOW, PARKOUR_HAND_SPAN } from '../parkour.js';
 import { ClimbSounds } from './climbSounds.js';   // the ear's half, framed with the eye's
-import { stepTechniqueFx, techniqueView, resetTechniqueFx } from '../combat/technique/techniqueFx.js';   // TECH-FX: a technique's camera rides the climb's view step
+import { stepTechniqueFx, techniqueView, resetTechniqueFx } from '../../combat/technique/techniqueFx.js';   // TECH-FX: a technique's camera rides the climb's view step
 
 /** The constants of the feel. Angles in degrees where named _DEG, distances in metres, rates per second. */
 export const FEEL = Object.freeze({
@@ -291,7 +291,7 @@ export function applyClimbView(view, fx) {
  *  firstPerson)` at the view line (the pitch, the roll and the eye - first person only, never the travel view's or a
  *  free camera's), and the lens terms every other pass of the frame takes so its horizon stands where the view's does
  *  (`fovRad()` - the kick, any view; `pitch()` - the pitch the view took). `player` is a thunk: hosts build the handle
- *  beside their bobber, before the motor stands. With `audio`, the frame also sounds the climb (player/climbSounds.js -
+ *  beside their bobber, before the motor stands. With `audio`, the frame also sounds the climb (player/climb/climbSounds.js -
  *  any view: the ear is the body's), `strain(rolls)` its effort voice (scenes/hostCombat.js playerClimbStrain). */
 export function createClimbFeelHost(player, cam, lookFilter, { audio = null, strain = null } = {}) {
   const law = new ClimbFeel();

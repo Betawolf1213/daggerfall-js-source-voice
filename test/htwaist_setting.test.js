@@ -92,5 +92,5 @@ test('HT-WAIST: the departure is RECORDED where this pane\'s others are - Handhe
   const row = a.split('\n').find((l) => l.startsWith('|') && /HT-WAIST/.test(l));
   assert.ok(row, 'a section-A row');
   assert.match(row, /Handling\.LanternsAtWaist/);
-  for (const f of ['systems/playerTorch.js', 'systems/handheldTorches.js', 'systems/lanternSwing.js', 'combat/fpArm.js', 'player/eotbBody.js']) assert.ok(row.includes(f), `the row names ${f}`);
+  for (const f of ['systems/playerTorch.js', 'systems/handheldTorches.js', 'systems/lanternSwing.js', 'combat/fpArm.js', 'player/eyeOfTheBeholder/eotbBody.js']) assert.ok(row.includes(f), `the row names ${f}`);
 });

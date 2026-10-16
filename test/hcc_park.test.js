@@ -21,7 +21,7 @@ import { fakeRooms, fakeRoom } from './fakeRoom.mjs';
 import { createHorseCartPool, ownedLine } from '../src/scenes/horseCartPool.js';
 import { WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { createPeerRiders, rideTable, RIDER_RETRY_MS } from '../src/net/peer/peerRiders.js';
-import { ARCHIVE_HORSE } from '../src/player/eotbBillboard.js';
+import { ARCHIVE_HORSE } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 // a team in map pixel (100, 150): cell world:6,9

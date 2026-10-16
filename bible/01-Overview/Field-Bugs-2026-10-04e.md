@@ -236,7 +236,7 @@ with no journey, a journey, the Overworld, a rest); PIN MOVED: `auditpscale1` (t
 
 ## HORSE-FACE (6)
 
-`player/eotbBody.js` (faceYaw's `forceOrient`; the placing gate; `rebase`), `player/mwView.js` (mwViewRebase). Eye Of
+`player/eyeOfTheBeholder/eotbBody.js` (faceYaw's `forceOrient`; the placing gate; `rebase`), `player/mwView.js` (mwViewRebase). Eye Of
 The Beholder's body faced a PLACING (ARENA-FIX 14: feet carried past PLACE_JUMP_M, 8 m, in one frame - a door, a warp)
 the view's way, and asked the next UpdateOrientation for a repaint by writing -1 into `lastOrientation`. Every repaint
 the walk loop queued meanwhile painted that -1, which stateFor wraps to orientation 7 - one front-three-quarter view.

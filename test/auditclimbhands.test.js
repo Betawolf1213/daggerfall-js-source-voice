@@ -1,7 +1,7 @@
 // AUDIT CLIMB-HANDS (2026-10-02, Mac: "Audit this and ensure all the animations and stuff are perfect"). The classic
 // lane's hands on the wall (combat/climbHands.js, CLIMB-HANDS) held to the climb they draw: every hand continuous through
 // every change of state; the shimmy's and the free climb's grips on the beats the ear plays and the 3D body takes
-// (player/climbPose.js's own gaits); each move on ClimbPose's windows, from where the hands were; the hands leaving the
+// (player/climb/climbPose.js's own gaits); each move on ClimbPose's windows, from where the hands were; the hands leaving the
 // wall from where they were; the large HUD's bar; the weapon and the hands never on the screen together; and, found on
 // the way, ClimbPose's corner leading with the wrong hand half the time. Each finding pinned red, then fixed. Record:
 // bible/03-World/Parkour-Arc.md (AUDIT CLIMB-HANDS).
@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ClimbHands, createClimbHands, HANDS } from '../src/combat/climbHands.js';
-import { ClimbPose, POSE } from '../src/player/climbPose.js';
-import { FEEL } from '../src/player/climbFeel.js';
+import { ClimbPose, POSE } from '../src/player/climb/climbPose.js';
+import { FEEL } from '../src/player/climb/climbFeel.js';
 import { PARKOUR_HAND_SPAN } from '../src/player/parkour.js';
 import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
@@ -385,7 +385,7 @@ test('AUDIT CLIMB-HANDS A16: by source - the hands are stepped on the classic la
   assert.match(rig, /_climbLower = climbLowerStep\(_climbLower, climbing \|\| \(handsLane && climbHands\.showing\(\)\), dt\);/);
   // PIN MOVED (CLIMB-HANDS II): the lane's climb named first, then handed on with the look and the frame's lens
   assert.match(rig, /const handsClimb = handsLane && _climbLower >= CLIMB_HANDS_AFTER \? \(camNow\?\.climb \?\? null\) : null;[\s\S]{0,400}?climbHands\.update\(dt, handsClimb, \{ yaw: camNow\?\.yaw, pitch: camNow\?\.pitch, lens: handsLens \}\);/);
-  const pose = rd('src/player/climbPose.js');
+  const pose = rd('src/player/climb/climbPose.js');
   assert.doesNotMatch(pose, /m\.way \? Math\.sign\(m\.way\[0\]/, 'the corner reads its own path, not a field the motor never sets');
 });
 
@@ -393,7 +393,7 @@ test('AUDIT CLIMB-HANDS A16: by source - the hands are stepped on the classic la
 
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { climbRigInput } from '../src/player/climbPose.js';
+import { climbRigInput } from '../src/player/climb/climbPose.js';
 import { PARKOUR_LIP_FOLLOW } from '../src/player/parkour.js';
 
 const I4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

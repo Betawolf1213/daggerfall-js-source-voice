@@ -73,7 +73,7 @@
   },
   {
     "name": "S2-horse-drawn-as-the-class",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "const skin = !table.endsWith('Horse') && !table.endsWith('Lycan') ? classSkinOf(look.onFoot) : null;",
     "new": "const skin = !table.endsWith('Lycan') ? classSkinOf(look.onFoot) : null;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "S2-beast-drawn-as-the-class",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "const skin = !table.endsWith('Horse') && !table.endsWith('Lycan') ? classSkinOf(look.onFoot) : null;",
     "new": "const skin = !table.endsWith('Horse') ? classSkinOf(look.onFoot) : null;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "S2-class-never-mirrored",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "return { archive: skin.archive, record, frame: f, mirror, key:",
     "new": "return { archive: skin.archive, record, frame: f, mirror: false, key:",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "S2-mirror-shares-the-cache",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "rec: `${record}-${f}${mirror ? 'm' : ''}` };",
     "new": "rec: `${record}-${f}` };",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "S2-wrong-orientation-offset",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "const record = classRecord(skin, table, st.record - STATE_TABLES[table].base);",
     "new": "const record = classRecord(skin, table, 0);",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "ACRO-SHORT-scale-unread",
-    "file": "src/player/eotbSprite.js",
+    "file": "src/player/eyeOfTheBeholder/eotbSprite.js",
     "old": "  const k = classRecordScale(archive, record);",
     "new": "  const k = 1;",
     "tests": [

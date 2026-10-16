@@ -11,7 +11,7 @@ import {
   FRAME_TIME_ON_FOOT, FRAME_TIME_RIDING, chooseTable, deathTable, spriteKey, GALLOP_SPEED,
   STRING, meleeAnimTickTime, meleeStrokeFrames, forwardFrames, holdDrawFrames,
   mirrorFlips, MIRROR_TABLES, mirrorRevertTime, autoToggleRows, DELAYED_FRAMES, ORIENTATION_TIME,
-} from '../src/player/eotbBillboard.js';
+} from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 
 // ═══ EOTB3: THE PLAYER BILLBOARD ══════════════════════════════════
 //

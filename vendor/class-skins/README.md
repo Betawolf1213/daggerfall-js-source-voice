@@ -15,7 +15,7 @@ here. The archive names one artist folder, "KAMER - Bounty Hunter".]**
 ## Layout
 
 `Textures/<archive>/<archive>_<record>-<frame>.png`, the key the port's sprite
-bundle already indexes by (`player/eotbSprite.js`). A sheet is
+bundle already indexes by (`player/eyeOfTheBeholder/eotbSprite.js`). A sheet is
 Daggerfall's enemy-class shape, five orientation records per group:
 
 | Records | Group | Frames |

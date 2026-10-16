@@ -38,9 +38,9 @@ import { SKILL_COUNT } from '../src/systems/skills.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
 import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
-import { eotbBody } from '../src/player/eotbBody.js';
-import { eotbCamera } from '../src/player/eotbCamera.js';
-import { STRING } from '../src/player/eotbBillboard.js';
+import { eotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
+import { STRING } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { mwViewFrame, setEotbBodyReady, setEotbPlayerState, eotbLane } from '../src/player/mwView.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

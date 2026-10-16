@@ -10,8 +10,8 @@ import {
 } from '../src/player/mwView.js';
 import { mwCamera } from '../src/player/mwCamera.js';
 import { fpArm } from '../src/combat/fpArm.js';
-import { eotbCamera, createEotbCamera } from '../src/player/eotbCamera.js';
-import { eotbBody } from '../src/player/eotbBody.js';
+import { eotbCamera, createEotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
+import { eotbBody } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { setModSetting, modSetting } from '../src/systems/modSettings.js';
 
 // ═══ EOTB4: ONE WHEEL, ONE LADDER ═════════════════════════════════
@@ -364,7 +364,7 @@ test('AUDIT-EOTB F2b: the weapon rig loads the settings and hands the body the s
   // can be satisfied by moving the breakage to the other file: the rig
   // never names the view, and the body is the module that does.
   assert.ok(!rig.includes('mwView'), 'the rig never names the view layer');
-  const body = readFileSync(join(root, 'src/player/eotbBody.js'), 'utf8');
+  const body = readFileSync(join(root, 'src/player/eyeOfTheBeholder/eotbBody.js'), 'utf8');
   assert.match(body, /setEotbPlayerState\(playerState\);/,
     'the body owns the seam, as it already owns setEotbBodyReady and setEotbDrawBody');
   assert.match(body, /setEotbBodyReady|setEotbDrawBody/, 'alongside the two it already owned');

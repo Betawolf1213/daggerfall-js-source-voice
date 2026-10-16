@@ -14,7 +14,7 @@
 // left arm: drawn as it is from the left, mirrored from the right).
 //
 // THE LAW (`ClimbHands`, pure: no renderer, no clock but the `dt` it is handed) reads the climb's snapshot
-// (player/climbPose.js climbRigInput) and the view, and answers each sprite's rect on DFU's 320x200 design surface. The
+// (player/climb/climbPose.js climbRigInput) and the view, and answers each sprite's rect on DFU's 320x200 design surface. The
 // hands do what the climbing body does (AUDIT CLIMB-HANDS: ClimbPose is the one choreography - its gaits, its moves'
 // windows - drawn here as a hand's way on the wall relative to the body, GAIT_PX to the metre):
 //   - THE HOLD: both fists up, the arms running off the bottom of the screen; a still hang sways on the arms, the two
@@ -48,9 +48,9 @@
 //
 // The enhanced climb only (the motor's hold, a move in flight): DFU's own climb keeps WeaponManager's empty screen.
 
-import { FEEL, tremble } from '../player/climbFeel.js';
+import { FEEL, tremble } from '../player/climb/climbFeel.js';
 import { PARKOUR_GRIP_LOW, PARKOUR_HANG_DROP, PARKOUR_LIP_FOLLOW } from '../player/parkour.js';
-import { POSE, gait, shimmyGait, wallFrame } from '../player/climbPose.js';
+import { POSE, gait, shimmyGait, wallFrame } from '../player/climb/climbPose.js';
 import { decodePng } from '../systems/textureReplacement.js';
 import { toScreenOrder } from '../formats/color32Order.js';
 import { APP_ROOT } from '../systems/appRoot.js';

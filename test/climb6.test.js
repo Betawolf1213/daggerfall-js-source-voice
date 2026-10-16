@@ -4,7 +4,7 @@
 // Sheathing's vendored retail-shaped biped (bones along their local X, three-digit hands, clavicles under the neck)
 // and chains of random rest frames take a hold to the same place; the hands set by their fingers and palms, the
 // elbows and knees to their poles, the body fitted under its hands, the shoulders drawn up. The climb's half
-// (player/climbPose.js) - every hold and every move puts the limbs ON the stone the motor proved: the hang's hands on
+// (player/climb/climbPose.js) - every hold and every move puts the limbs ON the stone the motor proved: the hang's hands on
 // the lip (past its edge, palms on its top), the shimmy hand over hand (each hold fixed while held, the hands never
 // crossing), the free climb's diagonal gait (a hand every FEEL.REACH, the other foot half a reach after), the pull-up,
 // the vault's tuck, the lower's squat and slide, the leap's reach, the wall run's steps. The maps into each rig
@@ -19,8 +19,8 @@ import {
   applyClimbRig, climbBones, handFrame, solveReach, rotFromTo, rotFrames, rotFraction, rotAxisAngle, onRay, RAY_REACH,
   climbRequestToRig, climbRequestToFirstPerson,
 } from '../src/combat/climbRig.js';
-import { ClimbPose, POSE, gait, shimmyGait, wallFrame, climbRigInput, peerLipY, floorGapAt } from '../src/player/climbPose.js';
-import { FEEL } from '../src/player/climbFeel.js';
+import { ClimbPose, POSE, gait, shimmyGait, wallFrame, climbRigInput, peerLipY, floorGapAt } from '../src/player/climb/climbPose.js';
+import { FEEL } from '../src/player/climb/climbFeel.js';
 import { PARKOUR_HANG_DROP, movePoint, planLower } from '../src/player/parkour.js';
 import { poseAssembly, MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { NIF_TO_PASS } from '../src/combat/fpArm.js';

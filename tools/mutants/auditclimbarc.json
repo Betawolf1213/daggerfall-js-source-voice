@@ -336,7 +336,7 @@
   },
   {
     "name": "F5-the-semi-implicit-spring",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "  const w = Math.sqrt(k), y = x - target, e = Math.exp(-w * dt), c = v + w * y;\n  return [target + (y + c * dt) * e, (v - w * c * dt) * e];",
     "new": "  const c = 2 * Math.sqrt(k);\n  v += (-k * (x - target) - c * v) * dt;\n  x += v * dt;\n  return [x, v];",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "F5-a-long-frame-cut-to-1/20",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "dt = Math.min(Math.max(dt, 0), 0.25);",
     "new": "dt = Math.min(Math.max(dt, 0), 1 / 20);",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "F9-the-leap-dips-at-its-push-off",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "        if (e.kind === 'catch' || e.kind === 'reach') {",
     "new": "        if (e.kind === 'catch' || e.kind === 'reach' || e.kind === 'leap') {",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "F9-no-dip-at-the-leap's-hold",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "        if (this.move?.kind === 'leap') this._dip(this.move.speed ?? 0);   // AUDIT CLIMB-ARC F9: the leap lands on its hold\n",
     "new": "",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "nit-_turnTo-replaces-the-owed-turn",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "    this.turnLeft += wrap(target - (yaw + this.turnLeft));",
     "new": "    this.turnLeft = wrap(target - (yaw + this.turnLeft));",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "F2/F4-held-ignored",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "      if (!m || held) return;",
     "new": "      if (!m) return;",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "F3-the-feel-reads-the-physics-feet",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "    const p = m.climbTrackPos?.() ?? m.pos;   // AUDIT CLIMB-ARC F3/F8",
     "new": "    const p = m.pos;   // AUDIT CLIMB-ARC F3/F8",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "F3/F8-the-sounds-read-the-physics-feet",
-    "file": "src/player/climbSounds.js",
+    "file": "src/player/climb/climbSounds.js",
     "old": "    const p = m.climbTrackPos?.() ?? m.pos;   // AUDIT CLIMB-ARC F3/F8",
     "new": "    const p = m.pos;   // AUDIT CLIMB-ARC F3/F8",
     "tests": [

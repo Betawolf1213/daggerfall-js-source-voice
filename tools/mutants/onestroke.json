@@ -1,7 +1,7 @@
 [
   {
     "name": "ONE-STROKE-every-blow-the-first-stroke",
-    "file": "src/player/eotbBillboard.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBillboard.js",
     "old": "  const from = (((blow | 0) % 2) + 2) % 2 ? half : 0;",
     "new": "  const from = 0;",
     "tests": [
@@ -12,7 +12,7 @@
   },
   {
     "name": "ONE-STROKE-the-second-stroke-loses-the-odd-frame",
-    "file": "src/player/eotbBillboard.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBillboard.js",
     "old": "  return Array.from({ length: from ? len - half : half }, (_, i) => from + i);",
     "new": "  return Array.from({ length: half }, (_, i) => from + i);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "ONE-STROKE-the-body-plays-both-strokes",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    const frames = meleeStrokeFrames(n, Number.isInteger(last.swingN) ? last.swingN : strokeCount++);",
     "new": "    const frames = forwardFrames(n);",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "ONE-STROKE-the-body-ignores-the-rig-count",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    const frames = meleeStrokeFrames(n, Number.isInteger(last.swingN) ? last.swingN : strokeCount++);",
     "new": "    const frames = meleeStrokeFrames(n, strokeCount++);",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "ONE-STROKE-the-body-stroke-ticks-as-the-whole-swing",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    return startClip('AttackMelee', frames, meleeAnimTickTime(animTime, frames.length));",
     "new": "    return startClip('AttackMelee', frames, meleeAnimTickTime(animTime, n));",
     "tests": [

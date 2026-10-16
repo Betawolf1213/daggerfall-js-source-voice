@@ -12,8 +12,8 @@ import { validPose, poseChanged } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
 import { peerCamera } from '../src/net/peer/peerBodies.js';
 import { PeerClimbSounds, peerClimbCues, peerBodyYaw, peerMoving, peerClimbing, PEER_CLIMB } from '../src/net/peer/peerClimb.js';
-import { CLIMB_SFX, CLIMB_SOUND } from '../src/player/climbSounds.js';
-import { FEEL } from '../src/player/climbFeel.js';
+import { CLIMB_SFX, CLIMB_SOUND } from '../src/player/climb/climbSounds.js';
+import { FEEL } from '../src/player/climb/climbFeel.js';
 import { PEER_SOUND_PROFILE } from '../src/net/remotePlayers.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

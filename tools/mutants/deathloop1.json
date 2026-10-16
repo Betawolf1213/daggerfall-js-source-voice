@@ -119,7 +119,7 @@
   },
   {
     "name": "corpse-latch-never-lowers",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    if (died) {\n      if (last.died) return;\n      initialize();",
     "new": "    if (died) {\n      return;\n      initialize();",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "corpse-latch-lowers-even-while-dead",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      if (last.died) return;\n      initialize();",
     "new": "      initialize();",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "corpse-latch-lowered-without-reinit",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      if (last.died) return;\n      initialize();   // alive again: the clip stops, the table returns to Idle, one forced orientation",
     "new": "      if (last.died) return;\n      died = false;",
     "tests": [

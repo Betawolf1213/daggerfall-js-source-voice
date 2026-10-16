@@ -19,7 +19,7 @@
 // rules untouched): thirty-six clips of the port's own (tools/
 // gatherSfx.mjs -> public/sfx/gather-*.wav, provenance in public/sfx/
 // SOURCES.md), registered on the bus under string keys the climb's way
-// (player/climbSounds.js), each at the node in the world (a node in
+// (player/climb/climbSounds.js), each at the node in the world (a node in
 // reach at its full volume), the net's where it landed, a hand's and a
 // chime at the ear. A blow sounds as it LANDS - the tool's swing is
 // DFU's melee strike, and its blow lands on the strike's hit frame

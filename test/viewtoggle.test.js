@@ -14,7 +14,7 @@ const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
 test('VIEW-TOGGLE seam: the sprite lane flips first to third and back, one press each; no body to show refuses; the travel view\'s hold refuses it and keeps the body', async () => {
   const mv = await import('../src/player/mwView.js');
-  const { eotbCamera } = await import('../src/player/eotbCamera.js');
+  const { eotbCamera } = await import('../src/player/eyeOfTheBeholder/eotbCamera.js');
   assert.equal(mv.eotbLane(), false);
   assert.equal(mv.mwViewTogglePerspective(), false, 'no sprite, no Morrowind body: nothing to show, nothing moves');
   mv.setEotbBodyReady(() => true);

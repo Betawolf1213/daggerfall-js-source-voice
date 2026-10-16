@@ -61,9 +61,9 @@
 // head, which this camera never moves, so there is nothing to
 // re-origin and `Don'tOffsetAttacks` has nothing to stop.
 
-import { MOD_SETTINGS, modSettingsGeneration } from '../systems/modSettings.js';
+import { MOD_SETTINGS, modSettingsGeneration } from '../../systems/modSettings.js';
 import { AUTO_TOGGLE_ROWS, AUTO_TOGGLE, autoToggleRows } from './eotbBillboard.js';   // [IL] LateUpdate's table
-import { seaZoomStep } from './seaZoom.js';   // FIELD BUGS 2026-09-29 (the sea) #3: the zoom at a helm
+import { seaZoomStep } from '../seaZoom.js';   // FIELD BUGS 2026-09-29 (the sea) #3: the zoom at a helm
 
 /** `eyeRadius` is a field initialiser in the mod's own .ctor, not a
  *  setting - the clearance the camera keeps off a wall. */

@@ -1,7 +1,7 @@
 [
   {
     "name": "SPRITEFACE-the-walks-facing-hung",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "facingDrawn = seen === null ? null : { yaw: seen, turn: turnYaw() ?? seen };",
     "new": "facingDrawn = seen === null ? null : { yaw: turnYaw() ?? seen, turn: turnYaw() ?? seen };",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SPRITEFACE-read-before-the-repaint",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "const seen = FP ? null : portrayedYaw(shown.orientation, ",
     "new": "const seen = FP ? null : portrayedYaw(pending.length ? pending[pending.length - 1].orientation : shown.orientation, ",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "SPRITEFACE-the-saddles-facing-dropped",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "const seen = FP ? null : portrayedYaw(",
     "new": "const seen = FP || last.riding ? null : portrayedYaw(",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "SPRITEFACE-first-person-faced",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "const seen = FP ? null : portrayedYaw(",
     "new": "const seen = portrayedYaw(",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "SPRITEFACE-the-sign-turned",
-    "file": "src/player/eotbBillboard.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBillboard.js",
     "old": "  const y = Math.atan2(toCamera[0], toCamera[2]) - orientation * ANGLE_PER_ORIENTATION * Math.PI / 180;",
     "new": "  const y = Math.atan2(toCamera[0], toCamera[2]) + orientation * ANGLE_PER_ORIENTATION * Math.PI / 180;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "SPRITEFACE-the-step-not-the-pictures",
-    "file": "src/player/eotbBillboard.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBillboard.js",
     "old": "  const y = Math.atan2(toCamera[0], toCamera[2]) - orientation * ANGLE_PER_ORIENTATION * Math.PI / 180;",
     "new": "  const y = Math.atan2(toCamera[0], toCamera[2]) - orientation * 40 * Math.PI / 180;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "SPRITEFACE-the-bearing-not-the-eyes",
-    "file": "src/player/eotbBillboard.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBillboard.js",
     "old": "  const y = Math.atan2(toCamera[0], toCamera[2]) - orientation",
     "new": "  const y = Math.atan2(toCamera[2], toCamera[0]) - orientation",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT0929-S1-a-clip-on-the-attacking-state",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "        const fresh = last.swingN == null || last.swingN !== clipSwing;",
     "new": "        const fresh = true;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT0929-S1-a-new-rig-keeps-the-old-count",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      clipSwing = null;   // AUDIT PRE-MERGE 0929 S1",
     "new": "      /* kept */   // AUDIT PRE-MERGE 0929 S1",
     "tests": [

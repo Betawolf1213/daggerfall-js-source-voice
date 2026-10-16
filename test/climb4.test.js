@@ -1,9 +1,9 @@
 // CLIMB4 (the Enhanced Climbing arc - bible/03-World/Parkour-Arc.md; Mac: "I reallty want go to go all in with the
 // detai. Liike proer feel to climbing"): THE FEEL. The motor's climb events (motor.js _pkEmit), the camera's law over
-// them (player/climbFeel.js - the catch's dip, the sway, the shimmy's and the free climb's rhythm, the pull-up's look,
+// them (player/climb/climbFeel.js - the catch's dip, the sway, the shimmy's and the free climb's rhythm, the pull-up's look,
 // the lower's and the corner's and the eject's turn, the leap's kick, the grip's tremble), its view half
 // (applyClimbView), the look filter's turn, and every host that draws a first-person view applying it. And THE
-// SOUNDS (player/climbSounds.js, F9-F15): the eleven clips of our own (tools/climbSfx.mjs), registered once; the catch,
+// SOUNDS (player/climb/climbSounds.js, F9-F15): the eleven clips of our own (tools/climbSfx.mjs), registered once; the catch,
 // the hands and boots on the wall, every move's cues on its own clock, the grip failing and gone, the effort's voice
 // (hostCombat.playerClimbStrain) - and the port's own sounds' switch over all of it.
 import { test } from 'node:test';
@@ -15,8 +15,8 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { ClimbFeel, applyClimbView, FEEL, bump, tremble, createClimbFeelHost } from '../src/player/climbFeel.js';
-import { ClimbSounds, CLIMB_SFX, CLIMB_SFX_FILES, CLIMB_SOUND, installClimbSounds, _resetClimbSounds, moveCues } from '../src/player/climbSounds.js';
+import { ClimbFeel, applyClimbView, FEEL, bump, tremble, createClimbFeelHost } from '../src/player/climb/climbFeel.js';
+import { ClimbSounds, CLIMB_SFX, CLIMB_SFX_FILES, CLIMB_SOUND, installClimbSounds, _resetClimbSounds, moveCues } from '../src/player/climb/climbSounds.js';
 import { enhancedSoundsOn } from '../src/systems/enhancedSounds.js';
 import { playerClimbStrain, playerAttackGrunt } from '../src/scenes/hostCombat.js';
 import { getBool, setValue, resetToDefaults } from '../src/systems/settings/settings.js';

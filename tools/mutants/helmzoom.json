@@ -28,7 +28,7 @@
   },
   {
     "name": "HELMZOOM-eotb-the-ladder-below-ten",
-    "file": "src/player/eotbCamera.js",
+    "file": "src/player/eyeOfTheBeholder/eotbCamera.js",
     "old": "      if (far < MAX_Z && clicks && (-z > baseDist + 1e-6 || (clicks < 0 && -z >= baseDist - 1e-6))) {",
     "new": "      if (far < MAX_Z && clicks && (z < MAX_Z || (clicks < 0 && z <= MAX_Z))) {",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "HELMZOOM-eotb-the-base-passed",
-    "file": "src/player/eotbCamera.js",
+    "file": "src/player/eyeOfTheBeholder/eotbCamera.js",
     "old": "        offsetScroll += z + seaZoomStep(-z, clicks > 0 ? 1 : -1, Math.min(baseDist, -MAX_Z), -far);",
     "new": "        offsetScroll += z + seaZoomStep(-z, clicks > 0 ? 1 : -1, 0, -far);",
     "tests": [

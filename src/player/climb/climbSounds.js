@@ -2,7 +2,7 @@
 // CLIMB4 - THE FEEL: THE CLIMB'S SOUNDS (the Enhanced Climbing arc - bible/03-World/Parkour-Arc.md; Mac: "I reallty
 // want go to go all in with the detai. Liike proer feel to climbing").
 //
-// The camera's twin (player/climbFeel.js): fed the same frame of the motor - its climb events (motor.js _pkEmit), the
+// The camera's twin (player/climb/climbFeel.js): fed the same frame of the motor - its climb events (motor.js _pkEmit), the
 // move in flight and its clock, the hold, the position and the grip - and answering with what the ear hears, played
 // flat at the listener as the stride is (the climber's own body). DAGGER.SND has none of it, so the eleven clips are
 // ours (tools/climbSfx.mjs -> public/sfx/climb-*.wav, provenance in public/sfx/SOURCES.md), registered on the bus
@@ -29,9 +29,9 @@
 // never rings as one sample again and again. Off with the port's own sounds (systems/enhancedSounds.js - the enhanced
 // skin's ES1 switch): the classic skin plays what DFU plays and nothing more.
 
-import { APP_ROOT } from '../systems/appRoot.js';
-import { enhancedSoundsOn } from '../systems/enhancedSounds.js';
-import { PARKOUR_GRIP_LOW } from './parkour.js';
+import { APP_ROOT } from '../../systems/appRoot.js';
+import { enhancedSoundsOn } from '../../systems/enhancedSounds.js';
+import { PARKOUR_GRIP_LOW } from '../parkour.js';
 import { FEEL } from './climbFeel.js';
 
 /** The sounds, each its clips' keys (a clip of several is never the one just heard). */

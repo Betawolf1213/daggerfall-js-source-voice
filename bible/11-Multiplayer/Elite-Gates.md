@@ -1309,7 +1309,7 @@ audit39. Everything else is painted in code into the band's archives (section 25
   - the Morrowind body's camera pivot rides 1.77 m up (`FOCAL_HEIGHT` 124 units) and drops at most 0.14 m under a
     ceiling (`FOCAL_OBSTACLE_LIMIT` 10 units, `src/player/mwCamera.js`);
   - the Eye Of The Beholder camera rides 0.5 m over the eye and 2 m behind it, and casts twice its offset upward
-    (`checkBounds`, `src/player/eotbCamera.js`), so it wants about 2.7 m for its whole offset.
+    (`checkBounds`, `src/player/eyeOfTheBeholder/eotbCamera.js`), so it wants about 2.7 m for its whole offset.
   - 3.5 m gives both their whole offset with room for a ledge's step. No fragment asks for a crouch.
 - **The camera in rock.** In the Spire both cameras pull in at once against a wall and ease back out over 0.25 s,
   never snapping. Occluders between the camera and the body dither out (`setDissolve`). On a shaft's ledge facing a
@@ -3197,7 +3197,7 @@ They are grounded in:
 - the collider (`src/player/collider.js`);
 - the telegraph pass, and how flat it is (`src/render/gate/gateTelegraph.js`);
 - `deepIn`'s margin (`src/net/bossBody.js`);
-- the cameras (`src/player/mwCamera.js`, `src/player/eotbCamera.js`);
+- the cameras (`src/player/mwCamera.js`, `src/player/eyeOfTheBeholder/eotbCamera.js`);
 - the light caps;
 - the reverb presets;
 - TEXTURE.356, the Mantellan Crux's fire walls.

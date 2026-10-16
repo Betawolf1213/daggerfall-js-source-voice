@@ -2,7 +2,7 @@
 // still getting this problem with Enhanced Lighting" - DISC13-A's flicker, in a lit interior, with the player's whole
 // silhouette thrown up the wall by a ceiling lamp).
 //
-// THE CAUSE: the player's own sprite body (player/eotbBody.js - "Shadows Only" in first person, the body in third) is
+// THE CAUSE: the player's own sprite body (player/eyeOfTheBeholder/eotbBody.js - "Shadows Only" in first person, the body in third) is
 // the one caster that moves with the view, and the lamps' shadow laws handled it as any flat:
 //  - STILL WHEN THE PLAYER STOPPED: SHADOW_DYNAMIC_HOLD frames after a pause it joined the static cache of every
 //    lamp in reach, and the next step or turn threw it out - every one of those caches rebuilt in one frame, and its
@@ -13,7 +13,7 @@
 //    transform - Eye_Of_The_Beholder.il IL_4e42), so walking round a lamp swung the silhouette through a half turn.
 //
 // Driven through the real Renderer and its real shadow pass on a recording fake GL (sc1_shadowcache's), with the card
-// flagged as player/eotbBody.js flags it.
+// flagged as player/eyeOfTheBeholder/eotbBody.js flags it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';

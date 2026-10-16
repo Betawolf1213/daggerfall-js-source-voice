@@ -119,7 +119,7 @@ test('TORCH-BIND (re-aimed by KB1): every key a vendored mod answers is a regist
   }
   assert.ok(modDials('handheld-torches').includes('Handling.RelaxedTwoHandedWeapons'));
   // the reads are gone, so the table above cannot go stale in silence
-  assert.doesNotMatch(rd('src/player/eotbCamera.js'), /g\('Camera\.SwitchShoulder'\)|g\('AutoTogglePerspective\.ToggleInput'\)/);
+  assert.doesNotMatch(rd('src/player/eyeOfTheBeholder/eotbCamera.js'), /g\('Camera\.SwitchShoulder'\)|g\('AutoTogglePerspective\.ToggleInput'\)/);
   assert.doesNotMatch(rd('src/systems/travel/travelOptions.js'), /get\('RoadsIntegration\.FollowPaths(Key|CustomKeyBind)'\)/);
   assert.doesNotMatch(rd('src/systems/handheldTorches.js'), /s\['Handling\.ToggleLightInput'\]|s\['Handling\.ManualDropInput'\]|s\['Throwing\.ThrowTorchInput'\]/);
 });

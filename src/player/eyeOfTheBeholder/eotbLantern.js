@@ -2,14 +2,14 @@
 // the front, the side, walking and behind: "Just have it show on the back of the sprite, not all angles. Make sure
 // all the eye of the Beholder sprites get this change"): THE LANTERN ON AN EYE OF THE BEHOLDER SPRITE, ONE HOME.
 //
-// HT-WAIST hung Daggerfall's lantern picture from the local sprite's right hip (player/eotbBody.js). DISC23-B draws
+// HT-WAIST hung Daggerfall's lantern picture from the local sprite's right hip (player/eyeOfTheBeholder/eotbBody.js). DISC23-B draws
 // the other players on foot as the EOTB set they chose (net/peer/peerRiders.js createPeerWalkers), and HT-WAIST-NET put
 // the lantern on their pose (`hl`). Two kinds of sprite hang the same lantern, so everything they share is stated
 // here, once, and both call it - a second copy is how the player's own sprite and everyone else's would come to
 // show it differently:
 //
 //   THE REAR-VIEW RULE (`isRearView`). The picture is drawn only while the viewer sees the sprite STRAIGHT FROM
-//   BEHIND. EOTB's wheel (player/eotbBillboard.js RECORD_OFFSETS, [0, 1, 2, 3, 4, 3, 2, 1]; orientationFor's 0 is
+//   BEHIND. EOTB's wheel (player/eyeOfTheBeholder/eotbBillboard.js RECORD_OFFSETS, [0, 1, 2, 3, 4, 3, 2, 1]; orientationFor's 0 is
 //   the camera in front, 4 the camera behind) draws five records from front to back, and the vendored art says
 //   which: record +0 is the face, +1 the front three-quarter, +2 the profile, +3 the back three-quarter (the
 //   shoulder blades, the seat, the heels) and +4 the back - read off archives 112364 (idle 0-4, walk 5-9, armed
@@ -43,10 +43,10 @@
 // option bags, so the per-frame paths build nothing.
 
 import { RECORD_OFFSETS, ORIENTATIONS } from './eotbBillboard.js';
-import { createLanternSwing, stepLanternSwing, lanternSwingDown } from '../systems/lanternSwing.js';
-import { LANTERN_TEMPLATE } from '../systems/playerTorch.js';
-import { templateByIndex } from '../systems/item/itemTemplates.js';
-import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the one angle wrap
+import { createLanternSwing, stepLanternSwing, lanternSwingDown } from '../../systems/lanternSwing.js';
+import { LANTERN_TEMPLATE } from '../../systems/playerTorch.js';
+import { templateByIndex } from '../../systems/item/itemTemplates.js';
+import { wrapAngle } from '../../world/mat4.js';   // ONCRASH1: the one angle wrap
 
 /** The record of EOTB's wheel that shows the sprite's back, straight on (+4; +3 is the back three-quarter). */
 export const BACK_RECORD = 4;
@@ -72,7 +72,7 @@ export async function loadLanternArt() {
   if (!Number.isInteger(archive) || !Number.isInteger(record)) return null;
   try {
     const [{ TextureFile, texName }, { DFPalette }, { changeMask }, { getBytes }] = await Promise.all([
-      import('../formats/textureFile.js'), import('../formats/dfPalette.js'), import('../formats/baseImageFile.js'), import('../scenes/dataSource.js'),
+      import('../../formats/textureFile.js'), import('../../formats/dfPalette.js'), import('../../formats/baseImageFile.js'), import('../../scenes/dataSource.js'),
     ]);
     const pal = new DFPalette();
     pal.load(await getBytes('ART_PAL.COL'), 'ART_PAL.COL');

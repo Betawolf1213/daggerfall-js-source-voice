@@ -37,7 +37,7 @@
 // The weight eases in fast (a catch is a grab) and out slower; a limb's own weight lets it go (a pull-up's hands) or
 // take hold (a lower's). The head's look and the shoulders' shrug are shares, never all of the rig.
 
-import { PARKOUR_BODY_RADIUS, PARKOUR_HANG_GAP, PARKOUR_UP_GAP, PARKOUR_HANG_DROP, PARKOUR_GRIP_LOW, PARKOUR_LIP_FOLLOW } from './parkour.js';
+import { PARKOUR_BODY_RADIUS, PARKOUR_HANG_GAP, PARKOUR_UP_GAP, PARKOUR_HANG_DROP, PARKOUR_GRIP_LOW, PARKOUR_LIP_FOLLOW } from '../parkour.js';
 import { FEEL } from './climbFeel.js';   // the reach and the shimmy's span: the body's hands keep the camera's rhythm
 
 /** The constants of the pose. Metres, radians, seconds. */

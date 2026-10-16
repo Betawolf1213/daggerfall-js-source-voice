@@ -228,7 +228,7 @@ the string as a binding, which it is not and never could be.
 
 ## The camera (EOTB2), as the IL has it
 
-`src/player/eotbCamera.js`, and the derivation worth keeping:
+`src/player/eyeOfTheBeholder/eotbCamera.js`, and the derivation worth keeping:
 
     posOffset  = boat, then mount, then weapon, then base - the FIRST
                  arm that matches returns, so a mounted player with a
@@ -284,7 +284,7 @@ spends them the same way.
 
 ## The player sprite (EOTB3)
 
-`src/player/eotbBillboard.js`. **The state table is one law, not 168
+`src/player/eyeOfTheBeholder/eotbBillboard.js`. **The state table is one law, not 168
 rows.** `InitializeStates` writes out 21 arrays of 8 - idle, move and
 death across melee, ranged and spell, plus the horse and both
 lycanthrope forms - and every one of the 168 follows the same wheel:
@@ -1001,7 +1001,7 @@ but its facing (`lastMoveDirection`), its frame clock and the placed base (`plac
 and behind: "Just have it show on the back of the sprite, not all angles. Make sure all the eye of the Beholder sprites
 get this change"; then, of the back diagonals it first let in: "It still shows on the back side angle").**
 
-- **The rule** (`player/eotbLantern.js isRearView`): the lantern's picture is drawn only from straight behind - the
+- **The rule** (`player/eyeOfTheBeholder/eotbLantern.js isRearView`): the lantern's picture is drawn only from straight behind - the
   one view that shows the sprite's back square on, orientation 4 - and from none of 0, 1, 2, 3, 5, 6, 7: not the back
   diagonals 3 and 5, which draw the back three-quarter. It is asked of the
   orientation UpdateBillboard last PAINTED (`shown.orientation`, the delayed repaint's), not of the one just measured,
@@ -1021,7 +1021,7 @@ get this change"; then, of the back diagonals it first let in: "It still shows o
   `net/peer/peerRiders.js`) hang it too, off their pose's `hl` (HT-WAIST-NET), by the same rule, art, hang and swing law,
   swung off their own drawn motion; their riders and beasts hang none, as yours do not. It lights nothing on their
   side (the waist light is the local player's). Handheld-Torches.md HT-WAIST has the peers' wiring.
-- **One home**: `player/eotbLantern.js` holds everything the two share (the rule, `loadLanternArt` and the art store,
+- **One home**: `player/eyeOfTheBeholder/eotbLantern.js` holds everything the two share (the rule, `loadLanternArt` and the art store,
   the hang, the swing's drive, the batch); this body keeps whether it hangs and the light.
 
 Pins: `test/htwaist_eotb.test.js` (its bodies stand with their backs to the camera now; its sideways walk is a back

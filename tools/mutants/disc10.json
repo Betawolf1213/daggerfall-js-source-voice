@@ -55,7 +55,7 @@
   },
   {
     "name": "DISC10-the-cart-offers-no-turned-box",
-    "file": "src/player/eotbWagon.js",
+    "file": "src/player/eyeOfTheBeholder/eotbWagon.js",
     "old": "obb: localBox ? { m, box: localBox } : null, noSurface: true,",
     "new": "noSurface: true,",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DISC10-the-cart-names-the-ground-inside-it",
-    "file": "src/player/eotbWagon.js",
+    "file": "src/player/eyeOfTheBeholder/eotbWagon.js",
     "old": "obb: localBox ? { m, box: localBox } : null, noSurface: true,",
     "new": "obb: localBox ? { m, box: localBox } : null,",
     "tests": [

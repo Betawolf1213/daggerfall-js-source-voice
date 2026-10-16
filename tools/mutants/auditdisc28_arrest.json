@@ -73,7 +73,7 @@
   },
   {
     "name": "AR2-the-body-asks-with-the-speed-alone",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "getMeleeWeaponAnimTime(last.liveSpeed, last.animCtx)",
     "new": "getMeleeWeaponAnimTime(last.liveSpeed)",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AR2-the-body-drops-the-weapon",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    animCtx: s.animCtx ?? null,",
     "new": "    animCtx: null,",
     "tests": [

@@ -13,7 +13,7 @@ import { createLycanthropyCurse, morphSelf } from '../src/systems/lycanthropy.js
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { mwViewFrame, setEotbBodyReady, setEotbDrawBody } from '../src/player/mwView.js';
 import { mwCamera } from '../src/player/mwCamera.js';
-import { eotbCamera } from '../src/player/eotbCamera.js';
+import { eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

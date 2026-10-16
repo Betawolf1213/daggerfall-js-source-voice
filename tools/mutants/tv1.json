@@ -621,7 +621,7 @@
   },
   {
     "name": "AUDIT-DEEP-R2-the-body-ignores-it",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      const by = face ? face.yaw : cam.yaw;",
     "new": "      const by = cam.yaw;",
     "tests": [

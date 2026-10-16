@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
 import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import { applyClimbRig, climbBones, climbRequestToFirstPerson } from '../src/combat/climbRig.js';
-import { ClimbPose } from '../src/player/climbPose.js';
+import { ClimbPose } from '../src/player/climb/climbPose.js';
 import { planVault, movePoint } from '../src/player/parkour.js';
 import { createFpArm } from '../src/combat/fpArm.js';
 import { MW_UNITS_PER_METER as U } from '../src/formats/morrowind/mwFirstPerson.js';

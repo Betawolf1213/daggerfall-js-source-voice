@@ -6,7 +6,7 @@
 // painted, sixteen a second, as orientation 7: one fixed front-three-quarter view whatever the heading.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createEotbBody, PLACE_JUMP_M } from '../src/player/eotbBody.js';
+import { createEotbBody, PLACE_JUMP_M } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 
 const renderer = () => ({
   uploadTexture() {}, createBillboardBatch(archive, rec, size) { return { archive, rec, size, origin: [0, 0, 0] }; },

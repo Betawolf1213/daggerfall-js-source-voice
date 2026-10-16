@@ -3326,7 +3326,7 @@ branch):
 
 **The change reaches your own body at once.** The Skin card writes the
 mod's store, which the body re-reads. A changed set is now fetched whole
-(`player/eotbBody.js` reload -> `preload`), as the mod's LoadSettings ->
+(`player/eyeOfTheBeholder/eotbBody.js` reload -> `preload`), as the mod's LoadSettings ->
 Initialize -> InitializeTextures does. Before, each new frame was fetched
 when first drawn and its slot drew the old set's frame meanwhile, so a
 skin changed mid-walk showed two people for a second.
@@ -5051,7 +5051,7 @@ painting is used.
   - A MORROWIND BODY: its posed bones as drawn (fpArm.thirdBones mine, peerBodies.bonesOf a peer's) - the shoulders'
     middle (`uCapeS`, its breadth setting the roots apart), the torso above.
   - AN EYE OF THE BEHOLDER SPRITE has no bones: what stands for them is read off the frame drawn (`auraSpriteBones`,
-    EOTB_FIGURE) - its base over the feet, its metres a pixel, its form and its facing (player/eotbBody.js `figure()`,
+    EOTB_FIGURE) - its base over the feet, its metres a pixel, its form and its facing (player/eyeOfTheBeholder/eotbBody.js `figure()`,
     handed to player/mwView.js through the sprite's door and kept as `mwViewSpriteFigure()`; a peer's walker's or, on
     foot, a beast's `figureOf`, net/peer/peerRiders.js). AUDIT 3: BY THE PIXEL - the shoulder line 86 px over the frame's
     foot (the sets' own measure 78 - 88 px whatever the frame holds: Idle 88, IdleMelee 80, IdleSpell 84, IdleRanged
@@ -5187,7 +5187,7 @@ behind the head.
   the light on the world sits behind the roots where they are. A wing crosses the card no nearer the axis, as the eye
   sees it, than its own depth behind the axis (`|z| / sin` of the bearing) - past the body's outline. A Morrowind body
   is unchanged.
-- **AND TURNING WITH IT** (`player/eotbBody.js` `figureYaw`): a sprite facing nowhere yet (Vector3.zero - before a
+- **AND TURNING WITH IT** (`player/eyeOfTheBeholder/eotbBody.js` `figureYaw`): a sprite facing nowhere yet (Vector3.zero - before a
   first walk or placing) shows the eye its FRONT (ARENA-FIX 14), but its figure answered no facing and the camera's yaw
   stood in: the wings hung on the eye's side, over the sprite's face, and turned with the camera round it. It now
   faces the eye there, so the wings hang behind it.
@@ -5333,7 +5333,7 @@ Mac: "For the wing aura we implemented for developers. The sprite rotation on ch
 make the aura misallign".
 
 - **The cause.** An Eye of the Beholder sprite is drawn from one of ORIENTATIONS (8) pictures, ANGLE_PER_ORIENTATION
-  (45) degrees apart about the line from the figure to the eye (`player/eotbBillboard.js` orientationFor), and a change
+  (45) degrees apart about the line from the figure to the eye (`player/eyeOfTheBeholder/eotbBillboard.js` orientationFor), and a change
   of facing reaches the picture only at UpdateOrientation's tenth-of-a-second gate and then DELAYED_FRAMES (3) frames
   later, when the mod's delayed repaint lands (UpdateBillboardDelayed - the mod's own, ported 1:1 and left as it is).
   The Seraph Wings and the Shadow Cloak were hung on the facing the walk WANTS (`lastMoveDirection`; a peer's pose
@@ -5341,11 +5341,11 @@ make the aura misallign".
   stood up to half a picture (22.5 degrees) off it - sliding as the eye went round while the picture held, then the
   picture jumped. A peer's (8-way `viewOf` against the pose's smooth facing) and a rider's (the horse's picture, the
   camera-turned body's yaw standing in) the same.
-- **The law** (`portrayedYaw`, beside orientationFor in `player/eotbBillboard.js`): orientationFor run backwards - the
+- **The law** (`portrayedYaw`, beside orientationFor in `player/eyeOfTheBeholder/eotbBillboard.js`): orientationFor run backwards - the
   facing a picture SHOWS, seen along the line to the eye: that line's bearing turned back by the picture's angle, the
   middle of its bucket. A figure facing it is drawn in that picture from every line of sight; any facing portrays its
   bucket's middle, never more than half a picture off; no line of sight, no facing.
-- **Mine** (`player/eotbBody.js` `facing()`): each frame drawn, `{ yaw, turn }` - `yaw` the picture SHOWN (the repaint
+- **Mine** (`player/eyeOfTheBeholder/eotbBody.js` `facing()`): each frame drawn, `{ yaw, turn }` - `yaw` the picture SHOWN (the repaint
   that has landed) about the eye of the frame it was drawn in, `turn` the walk's facing (`turnYaw`) - before any walk
   the picture's own, its front to the eye (WINGS-FIT's law; the re-run of the re-aimed mutant lists found `turnYaw`'s own
   reading of the eye could never differ from it - `WINGSFIT-facing-nowhere-the-cameras` survived on it - so that branch

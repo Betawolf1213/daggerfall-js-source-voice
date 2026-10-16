@@ -17,7 +17,7 @@ import {
 import { createHorseRig, horseRigFor, HORSE3D_LOOKS_KEPT, DYE_ROWS, HORSE_SEAT, HORSE_SEAT_BONE, LOOK_ASK_STALE, outOfView } from '../src/world/horseRig.js';
 import { createRoadTeams } from '../src/world/road/roadTeams.js';
 import { createPeerRiders } from '../src/net/peer/peerRiders.js';
-import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eotbBody.js';
+import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eyeOfTheBeholder/eotbBody.js';
 import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horse/horseCoats.js';
 import { skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/morrowind/mwGpuSkin.js';
 import { saddleRigInput, saddleRequestFor, seatedCamera, STIRRUP_SIDE, STIRRUP_DROP, STIRRUP_AHEAD, REIN_AHEAD, REIN_UP, REIN_SIDE, SADDLE_LEAN_GALLOP, SEAT_PELVIS_HEIGHT } from '../src/player/seatPose.js';

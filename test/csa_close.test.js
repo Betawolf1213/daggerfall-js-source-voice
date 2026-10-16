@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { spawnBoat, colliderBoundsInChildren, colliderBounds, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, MOD_OBJECT_NAME, WOD_TERRAIN, ANIMATED_WATER, WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
-import { createEotbCamera } from '../src/player/eotbCamera.js';
-import { facingFor, boatForwardOf } from '../src/player/eotbBillboard.js';
+import { createEotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
+import { facingFor, boatForwardOf } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
 import { quatRotate, quatAngleAxis } from '../src/world/quat.js';
 
@@ -340,7 +340,7 @@ test('CSA-J: the hosts - world.js hands the view seam this boot\'s runtime (its 
   const v = src('player/mwView.js');
   assert.match(v, /export function setEotbComeSailAway\(mod\) \{\n\s+eotbCamera\.setComeSailAway\(mod\);/);
   assert.doesNotMatch(src('combat/weapon/weaponRig.js'), /sailing: false/);
-  assert.match(src('player/eotbBody.js'), /boatForward: boatForwardOf\(eotbCamera\.sailing\(\)\),/, 'the sprite reads the camera\'s fields');
+  assert.match(src('player/eyeOfTheBeholder/eotbBody.js'), /boatForward: boatForwardOf\(eotbCamera\.sailing\(\)\),/, 'the sprite reads the camera\'s fields');
   const node = new PrefabNode('A');
   assert.equal(colliderBoundsInChildren({ models: MODELS }, node), null, 'no collider: null');
   const hidden = new PrefabNode('C'); hidden.setParent(node); hidden.setActive(false);

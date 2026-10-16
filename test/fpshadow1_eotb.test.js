@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-const src = readFileSync(new URL('../src/player/eotbBody.js', import.meta.url), 'utf8');
+const src = readFileSync(new URL('../src/player/eyeOfTheBeholder/eotbBody.js', import.meta.url), 'utf8');
 
 test('FP-SHADOW1: in first person only "visible" draws the body; "Shadows Only" records it for the shadows alone; third person draws as before (mutant: draw always)', () => {
   assert.match(src, /if \(!FP \|\| cfg\.visibility === 2\) renderer\.drawBillboards\(\[batch\], camRight, bbUp\);/, 'drawn in third person, or in first person when the setting says visible');

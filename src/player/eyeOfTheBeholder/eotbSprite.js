@@ -26,10 +26,10 @@
 // drive this module through its seams rather than through the bundle.
 
 import { ORIENTATIONS, stateFor, tableArchive, spriteKey, STATE_TABLES, frameCount } from './eotbBillboard.js';
-import { classSkinOf, classRecord, classFrame, classRecordScale } from './classSkins.js';   // SKIN2: Daggerfall's classes, past the mod's sixteen
-import { toColor32, toColor32OrderInPlace } from '../formats/color32Order.js';   // EOTB-FLIP: the ONE row-order door a PNG crosses on its way to a world billboard
-import { horseLookCode, horseLookOfCode, lookSuffix, recolorHorse } from '../systems/horse/horseCoats.js';   // COATS1: the mount's look
-import spriteInfo from '../../vendor/eye-of-the-beholder/spriteInfo.json' with { type: 'json' };
+import { classSkinOf, classRecord, classFrame, classRecordScale } from '../classSkins.js';   // SKIN2: Daggerfall's classes, past the mod's sixteen
+import { toColor32, toColor32OrderInPlace } from '../../formats/color32Order.js';   // EOTB-FLIP: the ONE row-order door a PNG crosses on its way to a world billboard
+import { horseLookCode, horseLookOfCode, lookSuffix, recolorHorse } from '../../systems/horse/horseCoats.js';   // COATS1: the mount's look
+import spriteInfo from '../../../vendor/eye-of-the-beholder/spriteInfo.json' with { type: 'json' };
 
 const IN_BROWSER = typeof window !== 'undefined';
 const URLS = IN_BROWSER

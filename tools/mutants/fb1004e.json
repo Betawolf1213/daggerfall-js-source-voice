@@ -211,7 +211,7 @@
   },
   {
     "name": "HORSEFACE-the-placing-paints-minus-one",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "    forceOrient = true;\n  }",
     "new": "    forceOrient = true;\n    lastOrientation = -1;\n  }",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "HORSEFACE-the-moving-gate-gone",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "if (state.feet && was && !(last.forward || last.strafe) && Math.hypot(",
     "new": "if (state.feet && was && Math.hypot(",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "HORSEFACE-the-body-forgets-the-shift",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      cam.feet = [cam.feet[0] + delta[0], cam.feet[1] + delta[1], cam.feet[2] + delta[2]];",
     "new": "      void delta;",
     "tests": [

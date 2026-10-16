@@ -91,7 +91,7 @@
   },
   {
     "name": "OW-BIG-grow-ignored",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      const grow = face && face.grow > 1 ? face.grow : 1;",
     "new": "      const grow = 1;",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "OW-BIG-giant-shadow",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "          batch.noShadow = grow > 1;",
     "new": "          batch.noShadow = false;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "OW-BIG-self-card",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "          batch.selfCard = grow === 1;",
     "new": "          batch.selfCard = true;",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "OW-BIG-lantern-adrift",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "      if (grow === 1) drawLantern();",
     "new": "      drawLantern();",
     "tests": [

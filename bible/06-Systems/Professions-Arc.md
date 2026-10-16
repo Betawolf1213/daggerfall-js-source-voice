@@ -4459,7 +4459,7 @@ Mac: "Do the not done" - section 44's three open items: a blow shook no camera; 
   GATHER-FEEL F5/R1: three of the look's stood at 0.8 to 1.1, scaled now by the one share), with no shake, roll or lens
   of its own: an act repeats its blow every half second.
 - **One door.** It goes in through the technique springs' (`combat/technique/techniqueFx.js` kickFx - techniqueCue's own kick
-  moved behind it, its lines unchanged), which every host's view already folds (`player/climbFeel.js`), and never
+  moved behind it, its lines unchanged), which every host's view already folds (`player/climb/climbFeel.js`), and never
   through the look the act aims with: the glint's test reads the camera's yaw and pitch, which the springs leave alone.
 - **The port's own motion**: the enhanced skin alone (DFU moves no camera for a blow - CameraRecoiler and HeadBobber
   answer a wound and a step), at the player's own "Technique camera motion" (uiPrefs `techniqueMotion` - its note names

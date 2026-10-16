@@ -787,7 +787,7 @@ compare, the slow path binding once on the body, a failed bind remembered (`hipL
 body's one mesh, so it needs no owner of its own (`releaseThirdMesh` frees it with the rest). Morrowind-Rules.md
 HT-WAIST.
 
-**Eye Of The Beholder's sprite** (`player/eotbBody.js`; the lantern's law `player/eotbLantern.js` since HT-WAIST-BACK).
+**Eye Of The Beholder's sprite** (`player/eyeOfTheBeholder/eotbBody.js`; the lantern's law `player/eyeOfTheBeholder/eotbLantern.js` since HT-WAIST-BACK).
 A second billboard, apart from the IL's machine: the Lantern template's own world texture (TEXTURE.200 record 10, read
 off the template, loaded from the player's ARENA2 - never vendored; the mod's hand-and-lantern frames are the author's
 art of a hand), hung by its top from the sprite's right hip in the sprite's facing frame, swung by the same law off the
@@ -804,7 +804,7 @@ Beholder sprites get this change"; then, of the back diagonals it first let in:
 "It still shows on the back side angle").** The lantern's picture is drawn only from straight behind: the one view of Eye Of The Beholder's eight
 that shows the sprite's back square on, orientation 4 (the camera straight behind, record +4) - never from the back
 diagonals 3 and 5 (record +3, the back three-quarter), the front, the front diagonals or the sides (0, 1, 2, 6, 7).
-The rule is `isRearView` (`player/eotbLantern.js`), read against the view the sprite is PAINTED from, so the lantern
+The rule is `isRearView` (`player/eyeOfTheBeholder/eotbLantern.js`), read against the view the sprite is PAINTED from, so the lantern
 and the picture under it always agree; the numbering is `orientationFor`'s (0 the camera in front) through the wheel,
 and which record is a back was checked against the vendored art (Eye-Of-The-Beholder.md HT-WAIST has how). Unseen, it
 still hangs: the swing runs on (turning round shows a lantern already swinging), the batch is kept, and your light
@@ -814,7 +814,7 @@ in every on-foot set, and every other player drawn online as the set they chose 
 store, `createEotbArt`, holds its own `createLanternArt`; the renderer caches the texture once under the key), hung by
 the same law, swung off that walker's own motion (its pace off the drawn feet - MWBODY1's law, lifted to
 `net/peer/peerPace.js` so the bodies and the walkers read one -, its yaw's turn, its walk clip's phase), drawn from
-straight behind them alone. One home for all of it: `player/eotbLantern.js` (the rule, the art, the hang, the swing's drive, the batch);
+straight behind them alone. One home for all of it: `player/eyeOfTheBeholder/eotbLantern.js` (the rule, the art, the hang, the swing's drive, the batch);
 `eotbBody.js` keeps what is the local body's alone (whether it hangs, and the light), a walker keeps its `hl`. A peer's
 lantern is drawn by `drawLanterns`, called from world.js's `drawPeerBodies` - the hook world.js's exterior pass and
 worldModes' dungeon and interior passes all call right after your own body (the tilt is the lantern's own right and

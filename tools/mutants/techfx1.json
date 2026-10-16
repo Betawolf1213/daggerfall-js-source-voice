@@ -266,7 +266,7 @@
   },
   {
     "name": "TECHFX1-the-view-unapplied",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "      if (this.tech) applyClimbView(view, this.tech);\n",
     "new": "",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "TECHFX1-first-person-ignored",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "this.tech = firstPerson ? techniqueView() : null;",
     "new": "this.tech = techniqueView();",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "TECHFX1-the-lens-unadded",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "fovRad() { return (((this.fx?.fov ?? 0) + techniqueView().fov) * Math.PI) / 180; }",
     "new": "fovRad() { return ((this.fx?.fov ?? 0) * Math.PI) / 180; }",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "TECHFX1-the-sky-pitch-dropped",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "pitch() { return (this.applied?.pitch ?? 0) + (this.tech?.pitch ?? 0); }",
     "new": "pitch() { return this.applied?.pitch ?? 0; }",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-held-with-the-body",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "      stepTechniqueFx(dt);\n      const m = player();\n      if (!m || held) return;\n",
     "new": "      const m = player();\n      if (!m || held) return;\n      stepTechniqueFx(dt);\n",
     "tests": [
@@ -485,7 +485,7 @@
   },
   {
     "name": "TECHFX1-the-fold-eye-destructured",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "const e = fx.eye, ex = e[0], ey = e[1], ez = e[2];",
     "new": "const [ex, ey, ez] = fx.eye;",
     "tests": [
@@ -584,7 +584,7 @@
   },
   {
     "name": "TECHFX1-AUDIT-the-host-reset-forgets-the-feel",
-    "file": "src/player/climbFeel.js",
+    "file": "src/player/climb/climbFeel.js",
     "old": "sounds?.reset(); resetTechniqueFx(); this.fx",
     "new": "sounds?.reset(); this.fx",
     "tests": [

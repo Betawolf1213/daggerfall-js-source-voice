@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ClimbHands, createClimbHands, climbHandsWanted, lookOffWall, wallYawOf, HANDS, GRIP_ART, REACH_ART } from '../src/combat/climbHands.js';
-import { climbRigInput } from '../src/player/climbPose.js';
+import { climbRigInput } from '../src/player/climb/climbPose.js';
 import { PARKOUR_HAND_SPAN } from '../src/player/parkour.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

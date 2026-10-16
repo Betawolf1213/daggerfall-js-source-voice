@@ -1766,7 +1766,7 @@ test('AUDIT-WH M1: every family in the ray carries a reach, and the widest of th
     STATIC_NPC_ACTIVATION_DISTANCE: A.STATIC_NPC_ACTIVATION_DISTANCE,
     PICKUP_REACH: (await import('../src/scenes/droppedTorches.js')).PICKUP_REACH,
     CAMP_REACH: (await import('../src/systems/survival/camp.js')).CAMP_REACH,
-    WAGON_REACH: (await import('../src/player/eotbWagon.js')).WAGON_REACH,
+    WAGON_REACH: (await import('../src/player/eyeOfTheBeholder/eotbWagon.js')).WAGON_REACH,
   };
   const CLAMP = A.STATIC_NPC_ACTIVATION_DISTANCE;   // the mod's `rayDistance`, its widest band
   assert.equal(CLAMP, 6.4);
@@ -1833,7 +1833,7 @@ test('AUDIT-WH M2/M3/M4/M9: the mod\'s own asymmetries, ported as the mod has th
 });
 
 test('AUDIT-WH M6: the two families the press has always acted on, driven', async () => {
-  const { wagonHoverName, WAGON_HOVER_TEXT, WAGON_INFO_TEXT } = await import('../src/player/eotbWagon.js');
+  const { wagonHoverName, WAGON_HOVER_TEXT, WAGON_INFO_TEXT } = await import('../src/player/eyeOfTheBeholder/eotbWagon.js');
   const { waterSourceHoverName, WATER_SOURCE_NAME, DRY_SOURCE_TEXT } = await import('../src/systems/survival/items.js');
   // The cart: the noun out of the Info line the press already says, so
   // the plaque and the button cannot call one thing two things.
@@ -1922,7 +1922,7 @@ test('AUDIT-WH M5/M6/M7/M10: every family the press acts on has a word, and the 
       `${f}: the invented word is nowhere in the tree`);
   }
   // ...each beside the module that STANDS it, never written out at the host.
-  assert.match(read('src/player/eotbWagon.js'), /export const wagonHoverName = /);
+  assert.match(read('src/player/eyeOfTheBeholder/eotbWagon.js'), /export const wagonHoverName = /);
   assert.match(read('src/systems/survival/items.js'), /export const waterSourceHoverName = /);
 
   // M7. GetStaticDoorText routes on `door.doorType` BEFORE it touches

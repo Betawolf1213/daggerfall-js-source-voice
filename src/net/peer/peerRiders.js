@@ -7,7 +7,7 @@
 // sprite set the rider chose), and this draws a riding peer as the only art the port has of a person on a horse:
 // Eye Of The Beholder's mounted player sprites (vendor/eye-of-the-beholder, archives 112382-112386), the same eight
 // views, the same idle / walk / gallop tables and clip lengths, the same size and offsets its own billboard takes
-// (player/eotbBillboard.js, player/eotbSprite.js) - so a rider looks the same to the others as to themselves in third
+// (player/eyeOfTheBeholder/eotbBillboard.js, player/eyeOfTheBeholder/eotbSprite.js) - so a rider looks the same to the others as to themselves in third
 // person. A peer in the saddle stands no doll, sprite or Morrowind body (the host hands the other two layers the
 // rider's height, MWBODY1's hand-off), and their name rides over the rider.
 //
@@ -25,16 +25,16 @@
 // ('AttackMeleeLycan' at LYCAN_TICK, the mob's strike DISC12 showed). The hand-off is unchanged: until the art is up
 // (or when it failed, or the build has none) `isRiding` stays false and remotePlayers' DISC12 enemy sprite stands for
 // them - a beast is never nothing. (DISC23-B's walkers leave a beast to this layer: `pose.wb` skips them.)
-import { orientationFor, portrayedYaw, frameCount, frameTime, chooseTable, speedMod, LYCAN_TICK, meleeAnimTickTime, meleeStrokeFrames, forwardFrames, RANGED_TICK, SPELL_TICK } from '../../player/eotbBillboard.js';
+import { orientationFor, portrayedYaw, frameCount, frameTime, chooseTable, speedMod, LYCAN_TICK, meleeAnimTickTime, meleeStrokeFrames, forwardFrames, RANGED_TICK, SPELL_TICK } from '../../player/eyeOfTheBeholder/eotbBillboard.js';
 import { getMeleeWeaponAnimTime } from '../../characters/weaponStates.js';
 import { EOTB_FOOT_SET_COUNT } from '../../player/classSkins.js';   // PEERFX3: a class skin is a set past the mod's
-import { spriteFor, eotbSpriteUrl, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from '../../player/eotbSprite.js';
+import { spriteFor, eotbSpriteUrl, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from '../../player/eyeOfTheBeholder/eotbSprite.js';
 import { decodePng } from '../../systems/textureReplacement.js';
 import { POSE_RIDE } from '../wire.js';
 import {
   isRearView, createLanternArt, loadLanternArt, createSpriteLantern, stepSpriteLantern, spriteStride, hangSpriteLantern,
   mintSpriteLantern, dropSpriteLantern,
-} from '../../player/eotbLantern.js';   // HT-WAIST-BACK: the lantern on every EOTB sprite, one home - the local body's and these
+} from '../../player/eyeOfTheBeholder/eotbLantern.js';   // HT-WAIST-BACK: the lantern on every EOTB sprite, one home - the local body's and these
 import { quadHalfDiagonal } from '../../render/bounds.js';   // AUDIT FLICKER R1: a sprite's reach, as the batch was made with
 import { stepPeerPace } from './peerPace.js';   // HT-WAIST-BACK: the pace off the drawn pose, MWBODY1's law
 import { peerBodyYaw, peerMoving } from './peerClimb.js';   // CLIMB5: a walker on the wall faces it and takes no stride
@@ -67,7 +67,7 @@ async function decodeUrl(url) {
  * texture is up, else null (asked, loading, failed and cooling down, or no art at all).
  *
  * HT-WAIST-BACK: and the LANTERN's picture - `lantern.ensure()`, the local body's own store and loader
- * (player/eotbLantern.js createLanternArt, loadLanternArt from the player's ARENA2), uploaded under the same key, which
+ * (player/eyeOfTheBeholder/eotbLantern.js createLanternArt, loadLanternArt from the player's ARENA2), uploaded under the same key, which
  * the renderer caches once for both. Asked only when a pose first says `hl`. `loadLantern` is the pins' door.
  */
 export function createEotbArt({ renderer = null, urlFor = eotbSpriteUrl, decode = decodeUrl, clock = () => Date.now(), loadLantern = loadLanternArt } = {}) {
@@ -357,7 +357,7 @@ export const walkerHands = (pose) => (gatherActOf(pose)
  * Mage was the Mage monster whatever they had chosen, and the Eye Of The Beholder set the player picked for themselves
  * (Graphics.OnFoot, sixteen of them) was on nobody's screen but their own. The look carries it now (`eo`, wire.js
  * validLook - sent while the player's mod is on) and this draws it: the same eight views, the same tables and clip
- * lengths the player's own third-person body takes (player/eotbBillboard.js chooseTable, eotbBody.js's one-shots),
+ * lengths the player's own third-person body takes (player/eyeOfTheBeholder/eotbBillboard.js chooseTable, eotbBody.js's one-shots),
  * off the shown pose - the move bit walks it, the drawn weapon or readied spell stands it ready, and each new swing,
  * loosed arrow or cast plays its clip once.
  *
@@ -368,7 +368,7 @@ export const walkerHands = (pose) => (gatherActOf(pose)
  *
  * HT-WAIST-BACK (2026-09-24, Mac: "Make sure all the eye of the Beholder sprites get this change"): AND THEIR LANTERN.
  * A walker whose shown pose says `hl` (HT-WAIST-NET: their lit lantern hangs at the waist) hangs Daggerfall's lantern
- * picture at the sprite's right hip by the local body's own law (player/eotbLantern.js - the art, the hang, the swing's
+ * picture at the sprite's right hip by the local body's own law (player/eyeOfTheBeholder/eotbLantern.js - the art, the hang, the swing's
  * drive, the batch), swung off this walker's own motion - its pace off the drawn feet (net/peer/peerPace.js, MWBODY1's),
  * the pose's yaw's turn, the walk clip's phase - and DRAWN only from straight behind (`isRearView` of the view this
  * walker is drawn from, the local sprite's rule). Seen from a back diagonal, the side or the front it still hangs and

@@ -118,7 +118,7 @@
   },
   {
     "name": "PERF-WAGON-n-the-cart-box-unmade",
-    "file": "src/player/eotbWagon.js",
+    "file": "src/player/eyeOfTheBeholder/eotbWagon.js",
     "old": "cull && localBox ? transformedAabb(localBox, m) : null",
     "new": "null",
     "tests": [

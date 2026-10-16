@@ -2,7 +2,7 @@
 // filling the screen; asked, "Thirs person view isnt working properly for wagon traversal"). THE CAMERA ON A WAGON'S
 // BENCH turns about a pivot over the wagon's roof (bible/06-Systems/Wagons.md BENCH-CAM): the wagon's `shell` (both bench
 // wagons' body box - world/wagonModels.js wagonGeometry), the height the pivot rises to (scenes/horseCartPool.js
-// cameraFloor), both cameras reading it (player/eotbCamera.js, player/mwCamera.js), the seam that hands it on
+// cameraFloor), both cameras reading it (player/eyeOfTheBeholder/eotbCamera.js, player/mwCamera.js), the seam that hands it on
 // (player/mwView.js) and the two exterior hosts that say it (scenes/world.js, scenes/exterior.js).
 import './modsOff.js';
 import { test } from 'node:test';
@@ -13,7 +13,7 @@ import { TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { SHELL_CLEAR_M, MEASURED, LIFT, wagonGeometry } from '../src/world/wagonModels.js';
 import { SEATED_EYE_HEIGHT } from '../src/player/seatPose.js';
-import { createEotbCamera } from '../src/player/eotbCamera.js';
+import { createEotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { createMwCamera, FOCAL_HEIGHT, MW_UNITS_PER_METER } from '../src/player/mwCamera.js';
 import { quatAngleAxis, quatRotate } from '../src/world/quat.js';
 import { setModSetting } from '../src/systems/modSettings.js';
@@ -131,7 +131,7 @@ test('BENCH-CAM THE CAMERA OFF THE DRIVER\'S HEAD: on the caravan\'s bench Eye O
 
 test('BENCH-CAM THE SEAM AND THE HOSTS: mwViewFrame hands `pivotFloor` to whichever camera answers (the sprite\'s lane, driven through the seam), and both exterior hosts hand it my wagon\'s floor while I sit its bench - null off it; the interiors and the dungeon drive no wagon (mutants: the seam drops it for either lane, a host hands none)', async () => {
   const mv = await import('../src/player/mwView.js');
-  const { eotbCamera } = await import('../src/player/eotbCamera.js');
+  const { eotbCamera } = await import('../src/player/eyeOfTheBeholder/eotbCamera.js');
   const { pool, seat } = await onTheBench('caravan');
   const casts = castsOf(pool), floor = pool.cameraFloor();
   setModSetting('eye-of-the-beholder', 'Enabled', true);

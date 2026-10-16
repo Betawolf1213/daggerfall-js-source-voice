@@ -5,7 +5,7 @@
 // can reach. The mutants that put each old behaviour back are tools/mutants/auditclimbarc.json.
 //
 // The peer and the body modules (net/peer/peerClimb.js, net/peer/peerRiders.js, net/remotePlayers.js, player/mwView.js,
-// combat/weapon/weaponRig.js) are imported inside their own tests: they reach CLIMB6's work in progress (player/climbPose.js,
+// combat/weapon/weaponRig.js) are imported inside their own tests: they reach CLIMB6's work in progress (player/climb/climbPose.js,
 // combat/climbRig.js), and a slip there must cost those pins alone, not the file.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { PlayerMotor, GRAVITY, CAPSULE_RADIUS, climbPoseOf } from '../src/player/motor.js';
 import { Collider, _setFixedPointStopForTest } from '../src/player/collider.js';
 import * as P from '../src/player/parkour.js';
-import { ClimbFeel, createClimbFeelHost } from '../src/player/climbFeel.js';
+import { ClimbFeel, createClimbFeelHost } from '../src/player/climb/climbFeel.js';
 import { LookFilter } from '../src/player/lookFilter.js';
 import { tickPlayerMinutes } from '../src/systems/worldTick.js';
 import { SKILLS } from '../src/systems/skills.js';
@@ -919,7 +919,7 @@ test('AUDIT CLIMB-ARC N1: the sprite lane\'s body is drawn on the VIEW\'s yaw (i
 
 test('AUDIT CLIMB-ARC N2: a beast on the wall is drawn as every other peer - facing the wall it climbs, and standing, no stride (mutants: the camera\'s yaw, the move bit read raw)', async () => {
   const { createPeerRiders, beastTable } = await import('../src/net/peer/peerRiders.js');
-  const { spriteFor } = await import('../src/player/eotbSprite.js');
+  const { spriteFor } = await import('../src/player/eyeOfTheBeholder/eotbSprite.js');
   const shown = { x: 0, y: 2, z: 0, yaw: Math.PI, pitch: 0, mv: 1, wd: 0, wb: 1, cl: 2, cw: 0 };
   assert.equal(beastTable(shown), beastTable({ ...shown, mv: 0 }), 'on the wall the beast walks no stride');
   const drawn = [];

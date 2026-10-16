@@ -7,7 +7,7 @@
 // it does (scenes/gatherHost.js stepAct) and hands it here:
 //
 // BLOW-SHAKE - the view answers it: the look and the eye dip, the hands go down with the tool. Through the technique
-// springs' one door (combat/technique/techniqueFx.js kickFx), which every host's view already folds (player/climbFeel.js
+// springs' one door (combat/technique/techniqueFx.js kickFx), which every host's view already folds (player/climb/climbFeel.js
 // createClimbFeelHost) and never the look the act aims with (gatherHost.js aimAt - the glint's own test reads the
 // camera's yaw and pitch, which the springs leave alone). A port's own motion: the enhanced skin alone (the classic
 // skin is DFU's, and DFU moves no camera for a blow - its two, CameraRecoiler and HeadBobber, answer a wound and a

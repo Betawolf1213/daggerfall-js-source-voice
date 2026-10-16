@@ -24,8 +24,8 @@
 // objects; open exteriors have nothing in reach).
 
 import { PlayerWeapon, WEAPON_REACH, setWeaponPoseProbe, weaponPoseOf, USING_RIGHT_HAND_TEXT } from '../playerWeapon.js';   // RR1: the rig's drawn state and weapon type, for laws that ask off-rig
-import { eotbBody } from '../../player/eotbBody.js';   // EOTB5: the sprite body, for a player with no Morrowind data
-import { eotbCamera } from '../../player/eotbCamera.js';
+import { eotbBody } from '../../player/eyeOfTheBeholder/eotbBody.js';   // EOTB5: the sprite body, for a player with no Morrowind data
+import { eotbCamera } from '../../player/eyeOfTheBeholder/eotbCamera.js';
 import { racialFpsWeapon } from '../../systems/lycanthropy.js';   // V4: the transformed rig's claws
 import { EQUIP_SLOTS, equipTableOf, fillEquipTable } from '../../systems/equip.js';   // AUDIT 17e F17; MW-D32 the worn read; MW-EARLY: a save's worn set
 import { setItemFields } from '../../systems/item/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
@@ -628,7 +628,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
   // MWFIX's pin says this file must never so much as NAME that layer -
   // the classic sprite path is the only path it knows - and F2's first
   // cut broke it by importing the layer's setter here. The body owns
-  // that seam already (see `player/eotbBody.js`, which explains why).
+  // that seam already (see `player/eyeOfTheBeholder/eotbBody.js`, which explains why).
   // AUDIT-EOTB2: THE WHOLE STATE, ONE HOME. The body's table, facing,
   // clips and size all read this record (`eotbBody.bodyState`), and it
   // used to carry the first two fields alone - so the sprite stood in

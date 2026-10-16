@@ -603,7 +603,7 @@ merge").**
   empty road was measured as the wagon (0.60 m where the wagon is 2.33 m
   away), so a wagon beyond reach could be named. The peer
   wagon now carries DISC10's `obb`, the same as Eye Of The Beholder's cart
-  (`player/eotbWagon.js`): the ray meets the wagon's own box, an eye in a
+  (`player/eyeOfTheBeholder/eotbWagon.js`): the ray meets the wagon's own box, an eye in a
   corner is outside it, and an eye inside the wagon itself still names
   nothing. Pinned at an eighth turn (the prwagon1 pins parked only at a quarter
   turn, where the two boxes are the same). Mutant: the `obb` dropped.

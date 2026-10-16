@@ -233,7 +233,7 @@
   },
   {
     "name": "D24C-eotb-card-unflagged",
-    "file": "src/player/eotbBody.js",
+    "file": "src/player/eyeOfTheBeholder/eotbBody.js",
     "old": "          batch.selfCard = grow === 1;",
     "new": "          batch.selfCard = false;",
     "tests": [

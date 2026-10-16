@@ -18,7 +18,7 @@
  * Where it bites, in the two callers that have it:
  *   - `ui/horizontalSlider.js` - SetIndicator runs three values through
  *     it (:207-211) and SetValue one more (:246-250).
- *   - `player/eotbBillboard.js` - the 8-orientation snap divides the
+ *   - `player/eyeOfTheBeholder/eotbBillboard.js` - the 8-orientation snap divides the
  *     angle by 45, so a player standing exactly side-on to the camera
  *     lands on a tie, and JS's round-toward-+infinity would flip the
  *     sprite one orientation early on one side and not the other.

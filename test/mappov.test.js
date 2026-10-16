@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { mwViewFirstPerson, eotbLane, setEotbBodyReady, setEotbDrawBody } from '../src/player/mwView.js';
 import { mwCamera } from '../src/player/mwCamera.js';
 import { fpArm } from '../src/combat/fpArm.js';
-import { eotbCamera } from '../src/player/eotbCamera.js';
+import { eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

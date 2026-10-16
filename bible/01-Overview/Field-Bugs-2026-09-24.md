@@ -1222,7 +1222,7 @@ was left with nothing, because no TEXTURE archive carries a cart.
 
 ## DISC24-C: the player's own shadow, indoors
 
-**Cause.** The player's own sprite body (`player/eotbBody.js`: "Shadows
+**Cause.** The player's own sprite body (`player/eyeOfTheBeholder/eotbBody.js`: "Shadows
 Only" in first person, the body in third) is the one caster that moves
 with the view. The lamps' shadow laws treated it as any flat, and three of
 them were wrong for it:

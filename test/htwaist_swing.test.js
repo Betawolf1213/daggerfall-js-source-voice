@@ -1,7 +1,7 @@
 // HT-WAIST (2026-09-24, Mac: "Let it be a separate animated item on
 // movement"). THE SWING LAW - systems/lanternSwing.js, the one law both
 // bodies that draw the lantern at the waist feed (the Morrowind body in
-// combat/fpArm.js, Eye Of The Beholder's sprite in player/eotbBody.js).
+// combat/fpArm.js, Eye Of The Beholder's sprite in player/eyeOfTheBeholder/eotbBody.js).
 //
 // Two damped pendulums on the hip's own acceleration. What must hold, and
 // is driven here through the law itself: still, it hangs plumb and stays

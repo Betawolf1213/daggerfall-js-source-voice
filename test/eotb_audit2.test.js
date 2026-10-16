@@ -16,11 +16,11 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createEotbBody, eotbBody, MATERIAL, FOOTSTEP_VOLUME_SCALE } from '../src/player/eotbBody.js';
-import { eotbCamera, createEotbCamera, readCameraSettings, AUTO_TOGGLE_MESSAGES } from '../src/player/eotbCamera.js';
-import { STRING, frameCount, AUTO_TOGGLE, TABLE_FRAMES } from '../src/player/eotbBillboard.js';
+import { createEotbBody, eotbBody, MATERIAL, FOOTSTEP_VOLUME_SCALE } from '../src/player/eyeOfTheBeholder/eotbBody.js';
+import { eotbCamera, createEotbCamera, readCameraSettings, AUTO_TOGGLE_MESSAGES } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
+import { STRING, frameCount, AUTO_TOGGLE, TABLE_FRAMES } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { getMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
-import { worldOrderColors, flipRows } from '../src/player/eotbSprite.js';
+import { worldOrderColors, flipRows } from '../src/player/eyeOfTheBeholder/eotbSprite.js';
 import { toColor32 } from '../src/formats/color32Order.js';
 import {
   mwViewFrame, mwViewFootstep, mwViewHides, mwViewTransition, mwViewLoadPose, mwViewNewGame, mwViewRebase, mwViewPendingClicks,
@@ -588,11 +588,11 @@ test('EOTB-FLIP: a decoded PNG is turned into the world billboard\'s row order O
 });
 
 test('EOTB-FLIP: the body\'s decode is the dropped torch\'s door - decodePng, then the converter - and never a canvas of its own', () => {
-  const body = rd('src/player/eotbBody.js');
+  const body = rd('src/player/eyeOfTheBeholder/eotbBody.js');
   assert.match(body, /export async function decodeSprite\(url\) \{\s*const res = await fetch\(url\);\s*if \(!res\.ok\) throw new Error\([^)]*\);\s*return worldOrderColors\(await decodePng\(new Uint8Array\(await res\.arrayBuffer\(\)\)\), \{ owned: true \}\);[^\n]*\s*\}/,
     'fetch, decodePng, worldOrderColors - the same three the dropped torch takes');
   assert.ok(!/getImageData|new Image\(|OffscreenCanvas/.test(body), 'no canvas door of its own');
-  assert.match(rd('src/player/eotbSprite.js'), /import \{ toColor32, toColor32OrderInPlace \} from '\.\.\/formats\/color32Order\.js';/, 'the converter is the tree\'s (PERF-PEERS5: its in-place twin beside it)');
+  assert.match(rd('src/player/eyeOfTheBeholder/eotbSprite.js'), /import \{ toColor32, toColor32OrderInPlace \} from '\.\.\/formats\/color32Order\.js';/, 'the converter is the tree\'s (PERF-PEERS5: its in-place twin beside it)');
   assert.match(rd('src/scenes/droppedTorches.js'), /return toColor32\(await decodePng\(new Uint8Array\(await res\.arrayBuffer\(\)\)\)\);/, 'and the torch still takes it too');
   assert.deepEqual(MATERIAL.shade, { mode: 4, alpha: 0.6 });
   assert.equal(TABLE_FRAMES.Death, 2);

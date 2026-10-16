@@ -8,13 +8,13 @@ import {
   WAGON_MODEL, WAGON_REACH, OFFSET_LAST_SEED, SPAWN_BEHIND, FOLLOW_TRIGGER, TELEPORT_TRIGGER, FOLLOW_DISTANCE,
   PROBE_BACK, PROBE_UP, PROBE_DOWN, GROUND_LIFT, WOBBLE_SPEED, WAGON_INFO_TEXT,
   wobbleRoll, lookAtEuler, updateWagon, freshWagon, wagonMatrix, checkWagon, createEotbWagon, eotbWagon,
-} from '../src/player/eotbWagon.js';
+} from '../src/player/eyeOfTheBeholder/eotbWagon.js';
 import { raceActivation } from '../src/player/activationRace.js';
 import {
   mwViewFrame, mwViewRebase, mwViewDrawWagon, mwViewWagonTargets, mwViewWagonActivate, mwViewAttachWagon,
   setEotbBodyReady, setEotbPlayerState, eotbLane,
 } from '../src/player/mwView.js';
-import { eotbCamera } from '../src/player/eotbCamera.js';
+import { eotbCamera } from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { mwCamera } from '../src/player/mwCamera.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { trs } from '../src/world/mat4.js';
@@ -24,7 +24,7 @@ import { trs } from '../src/world/mat4.js';
 // `SpawnWagon` / `UpdateWagon` / `CheckWagon`, the three rows the scope
 // ledger carried as NOT DONE ("ShowCart, the wagon that follows") until
 // the assembly was read. Every number here is an IL literal, cited in
-// player/eotbWagon.js beside the law that carries it.
+// player/eyeOfTheBeholder/eotbWagon.js beside the law that carries it.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(root, p), 'utf8');

@@ -168,6 +168,6 @@ test('SWING-LAW: one law, every clock that times the player\'s swing - the leaf 
   for (const [f, re] of [
     ['src/characters/weaponStates.js', /getMeleeWeaponAnimTime\(liveSpeed, animCtx\)/],   // the machine
     ['src/combat/weapon/weaponWidget.js', /getMeleeWeaponAnimTime\(liveSpeed, ctx\)/],          // the Weapon Widget's clone
-    ['src/player/eotbBody.js', /getMeleeWeaponAnimTime\(last\.liveSpeed, last\.animCtx\)/],   // the third-person body
+    ['src/player/eyeOfTheBeholder/eotbBody.js', /getMeleeWeaponAnimTime\(last\.liveSpeed, last\.animCtx\)/],   // the third-person body
   ]) assert.match(rd(f), re, `${f} asks the one law with the wielder`);
 });

@@ -4,7 +4,7 @@
 //
 // (1) Daggerfall's own classes - twenty sheets, the enemy-class layout (walk, attack, hurt, idle, ranged/spell, bow) -
 // are on-foot skins 16..35, after Eye of the Beholder's sixteen, drawn through the one door every sprite reader uses
-// (player/eotbSprite.js spriteFor): the body, the preload, the peers and the Skin card. (2) The card is two panels,
+// (player/eyeOfTheBeholder/eotbSprite.js spriteFor): the body, the preload, the peers and the Skin card. (2) The card is two panels,
 // ON FOOT and MOUNTED, each closed to the worn skin and opened on a press to the skins it offers.
 //
 // Driven through the real manifest and files on disk, the real spriteFor, the real settings store, the real look and
@@ -16,8 +16,8 @@ import {
   CLASS_SKINS, EOTB_FOOT_SET_COUNT, FOOT_SKIN_COUNT, classSkinOf, classSkinLabel, classRecord, classFrame,
   CLASS_TABLE_BASE, CLASS_BOW_BASE, classRecordScale,
 } from '../src/player/classSkins.js';
-import { spriteFor, tableKeys, spriteOffset, spriteSize, SIZE_ON_FOOT } from '../src/player/eotbSprite.js';
-import { STATE_TABLES, frameCount, ORIENTATIONS, ARCHIVE_FOOT } from '../src/player/eotbBillboard.js';
+import { spriteFor, tableKeys, spriteOffset, spriteSize, SIZE_ON_FOOT } from '../src/player/eyeOfTheBeholder/eotbSprite.js';
+import { STATE_TABLES, frameCount, ORIENTATIONS, ARCHIVE_FOOT } from '../src/player/eyeOfTheBeholder/eotbBillboard.js';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { composeLook } from '../src/net/remotePlayers.js';
 import { validLook, FOOT_SKINS } from '../src/net/wire.js';

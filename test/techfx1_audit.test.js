@@ -21,7 +21,7 @@ import { fpFrameWindow } from '../src/combat/fpArm.js';
 import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { ARROW_TEMPLATE } from '../src/systems/inventory.js';
-import { createClimbFeelHost } from '../src/player/climbFeel.js';
+import { createClimbFeelHost } from '../src/player/climb/climbFeel.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { perspective, mirrorProjectionX, lookAt, multiply } from '../src/world/mat4.js';

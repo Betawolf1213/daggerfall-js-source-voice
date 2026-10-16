@@ -10,17 +10,17 @@
 //     any yaw, the billboards and the riders' sprites take it as their facing;
 //   - THE POSE: off the ground (the Morrowind body's own in-air pose, the one the local third person takes on the wall),
 //     and no walk on the wall (peerMoving) - a shimmy is hands, not strides;
-//   - THE SOUNDS: the climb's own clips (player/climbSounds.js), played AT the peer as their steps are
+//   - THE SOUNDS: the climb's own clips (player/climb/climbSounds.js), played AT the peer as their steps are
 //     (remotePlayers.js PEER_SOUND_PROFILE) - the catch, the hands onto a face, the haul over a lip, a hand at every
 //     reach up the wall and every span along a lip, the hands letting go - off the changes of their climb, since the
 //     wire carries the state and not the frame's events. The port's own sounds' switch (ES1) over them, as over the
 //     local climb's.
 
-import { CLIMB_SOUND, climbClip, installClimbSounds } from '../../player/climbSounds.js';
-import { POSE, peerLipY, floorGapAt } from '../../player/climbPose.js';   // CLIMB6: a peer's limbs on the climb, the own body's law
+import { CLIMB_SOUND, climbClip, installClimbSounds } from '../../player/climb/climbSounds.js';
+import { POSE, peerLipY, floorGapAt } from '../../player/climb/climbPose.js';   // CLIMB6: a peer's limbs on the climb, the own body's law
 import { CLIMB_MOVE_KINDS } from '../wire.js';
 import { PARKOUR_UP_GAP } from '../../player/parkour.js';
-import { FEEL } from '../../player/climbFeel.js';
+import { FEEL } from '../../player/climb/climbFeel.js';
 import { enhancedSoundsOn } from '../../systems/enhancedSounds.js';
 
 /** The wire's climb states (`cl`). */
@@ -139,7 +139,7 @@ export const PEER_MOVE_DUR = 0.9;
 const PEER_SPLIT = Object.freeze({ mantle: 0.6, vault: 0.4 });
 
 /**
- * CLIMB6: A PEER'S CLIMB, AS THE BODY'S LAW READS IT (player/climbPose.js ClimbPose - the own body's law, the same
+ * CLIMB6: A PEER'S CLIMB, AS THE BODY'S LAW READS IT (player/climb/climbPose.js ClimbPose - the own body's law, the same
  * limbs on the same kind of stone). The wire carries the climb's state, the way the body faces and, a move in flight,
  * its kind, its lip and its time (wire.js climbOf) - not the frame's geometry - and every hold the motor takes stands
  * the body the same way to its stone (parkour.js senseGrip: the face POSE.FACE_BACK ahead of the feet, a hang's lip

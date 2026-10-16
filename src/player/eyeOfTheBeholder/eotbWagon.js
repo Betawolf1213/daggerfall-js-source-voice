@@ -18,10 +18,10 @@
 // FloatingOrigin does for every world object and which the streaming
 // host here has to do by hand (scenes/world.js's rebase block).
 
-import { modSettingsOf } from '../systems/modSettings.js';
-import { trs } from '../world/mat4.js';
-import { localAabb, transformedAabb } from '../render/frustum.js';
-import { drawSeen } from '../scenes/decor/decorRoom.js';   // PERF-WAGON: one mesh by the street's view test
+import { modSettingsOf } from '../../systems/modSettings.js';
+import { trs } from '../../world/mat4.js';
+import { localAabb, transformedAabb } from '../../render/frustum.js';
+import { drawSeen } from '../../scenes/decor/decorRoom.js';   // PERF-WAGON: one mesh by the street's view test
 
 /** [IL] IL_1e4d, IL_1eef: the mesh, and the model id the activation is keyed on. */
 export const WAGON_MODEL = 41239;

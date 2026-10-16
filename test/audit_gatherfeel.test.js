@@ -26,7 +26,7 @@ import { createFishAct } from '../src/systems/fishAct.js';
 import { gatherBlowFeel, VEIN_CHUNKS, chunkSink } from '../src/systems/gatherBlow.js';
 import { VEIN_CRACK_SHADE, VEIN_CRACK_ORDER, VEIN_CRACK_CELL } from '../src/systems/veinCrack.js';
 import { stepTechniqueFx, techniqueView, techniqueHands, resetTechniqueFx } from '../src/combat/technique/techniqueFx.js';
-import { createClimbFeelHost } from '../src/player/climbFeel.js';
+import { createClimbFeelHost } from '../src/player/climb/climbFeel.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { setUiSkin } from '../src/systems/uiSkin.js';
 import { prefersReducedMotion } from '../src/systems/hitFlash.js';

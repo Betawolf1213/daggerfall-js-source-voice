@@ -2409,7 +2409,7 @@ export class ShadowPass {
   /**
    * DISC24-C (icebreyker on Discord, 2026-09-24, "Lights/shadows are still bugged": "i am still getting this problem
    * with Enhanced Lighting" - the flicker of DISC13-A, in a lit interior, the player's whole silhouette thrown on the
-   * wall): THE SELF CARD. The player's own sprite body (player/eotbBody.js - "Shadows Only" in first person, the body
+   * wall): THE SELF CARD. The player's own sprite body (player/eyeOfTheBeholder/eotbBody.js - "Shadows Only" in first person, the body
    * itself in third) is the one caster that moves WITH the view, and three of the lamps' laws were wrong for it:
    *  - it was judged still whenever the player stopped (the origin test above), so a pause baked it into the static
    *    cache of every lamp in reach and the next step or turn threw it out again - every cache rebuilt at once and its

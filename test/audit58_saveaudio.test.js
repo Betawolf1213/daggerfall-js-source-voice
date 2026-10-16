@@ -68,7 +68,7 @@ test('AUDIT 58: every combat-voice play site spends the lift it was handed', () 
     ['src/scenes/exteriorFoes.js', 6],   // WORLD6b: applyHit plays a peer's blow's pain at the owner - the fifth site; WORLD6b-ii: my foe's swing at a peer, the sixth
     ['src/scenes/cityGuards.js', 4],
     ['src/combat/arrowFlight.js', 1],
-    ['src/player/climbSounds.js', 1],   // CLIMB4: the climber's effort (hostCombat.playerClimbStrain) - the seventeenth
+    ['src/player/climb/climbSounds.js', 1],   // CLIMB4: the climber's effort (hostCombat.playerClimbStrain) - the seventeenth
   ];
   let total = 0;
   for (const [f, n] of SITES) {

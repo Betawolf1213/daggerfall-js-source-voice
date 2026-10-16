@@ -171,7 +171,7 @@ gallop under horse care out of DFU's running band (`upkeepRuntime.js` riderPaysG
 The owner: "I want to make it where when youre riding a horse, it walks by default and to gallop you must shift to
 sprint, just like when you are walking as a character". DFU's horse has one pace, GetBaseSpeed's riding arm on
 dfRideBase (375): 10.8 m/s at Speed 50, which every picture already drew as a gallop (Eye Of The Beholder's table
-gallops past 10 m/s, `player/eotbBillboard.js` GALLOP_SPEED; the Courser from 5, `world/horseModel.js` HORSE_GAIT_FROM);
+gallops past 10 m/s, `player/eyeOfTheBeholder/eotbBillboard.js` GALLOP_SPEED; the Courser from 5, `world/horseModel.js` HORSE_GAIT_FROM);
 and the run galloped it faster still. Under horse care a horse WALKS, and the run gallops it:
 
 | | The law | Speed 50, Running 50, a horse of Speed 50 |

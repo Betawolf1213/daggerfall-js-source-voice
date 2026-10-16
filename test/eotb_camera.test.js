@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   createEotbCamera, readCameraSettings, eyeVector, eyeBasis, bodyVector, EYE_RADIUS, MAX_Z,
-} from '../src/player/eotbCamera.js';
+} from '../src/player/eyeOfTheBeholder/eotbCamera.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { PrefabNode } from '../src/world/prefabNode.js';
 
