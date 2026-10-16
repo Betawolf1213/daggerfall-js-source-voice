@@ -14,6 +14,7 @@ main's `7e0424e0`.
 | 7 | "I've been using a 3x disintegrate as my main spell lately ... I believe it bypasses the kill/spare on revenants. And it seems it does this to other players' revenants, too" | a Disintegrate is a whole blow, and both damage doors passed every whole blow over a revenant's last stand, will and kneel; a party member's blow reaches the owner as a kill (`z`), so anyone's Disintegrate closed anyone's revenant, record and all, its owner never asked | fixed (RVN-OWNERS-CHOICE) |
 | 8 | "market stalls all shifted into the ground/walls"; "at least the lawn decoration owns" | TEMPLE-STEPS set the stall's box and scale right but kept a guessed shape inside it: a counter 0.75 m high under goods laid for 1.04 m, the awning's edge at 1.84 m, a bench where 20 of 30 stall-keepers stood, the second mesh given a counter over its goods; and its new origins moved every yard's saved stall 2 m back into its wall and grew saved boulders 2-8x | fixed (STALL-SHAPE) |
 | 9 | "you steal something from the shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle"; "when you're sent to prison, all the stolen items stay with you" | nothing marked a piece stolen: a sale landed the very record back on the shelf (T2), where a shut shop's shelf - no roll - gave it up again that night; and no court exit touched an item | fixed (STOLEN-GOODS) |
+| 10 | "Friend invivible and randomly popping up"; "Partied players popping in and out randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time" | every place change is a new relay room whose socket asked for its identity token only as it opened - a mint on the wire (seconds) between the door and the hello, paid going in past the reuse minute and always coming out (the cell outside spent by the token that left it); a hello sent tokenless because its token came late waited out its backoff after the token arrived | fixed (DOOR-TOKEN) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -390,3 +391,59 @@ shelf beside the pack today).
 What the reporter is owed: a piece you steal is marked stolen. A merchant still pays for it but gets rid of it - it never
 goes back on the shelf, so the circle is broken. Found guilty - jail, a fine or banishment - the guards take every stolen
 thing you carry and say how many. Win your case, or have the Thieves Guild get you out, and you keep them.
+
+## DOOR-TOKEN: the next room's token is minted at the door (10)
+
+`src/net/accountClient.js` TOKEN_AHEAD_MS, the minter's `ahead` and `holds`; `src/scenes/doorTokenHost.js` (new);
+`src/net/online.js` `tick`'s token retry, the close paths' `_tokenRetry`; `src/scenes/world.js` the door module's
+construction and its five calls.
+
+THE REPORT. "Friend invivible and randomly popping up" (title only). "Partied players popping in and out randomly after
+leaving tombs at graveyard ... also partied players inside tombs are invisible for a time."
+
+FOUND. The relay and session layer is clean - measured with real OnlineSessions over the real relay Room
+(test/fakeRoom.mjs), one clock for all, world.js's online block a frame: a party at a graveyard with 5 and then 30 others
+moving in the cell, one member pacing a cell edge 60 s - no frame lost (the halo promotes in place); a standing peer heard
+every HEARTBEAT_MS (20 s) and hidden only at PEER_TIMEOUT_MS (80 s), never fired; a relay restart keeps peers frozen, not
+hidden. Layers are not the cause at today's counts (an overflow forced with a 12-socket cap walked the party into one
+layer together; a real cell overflows past 256 sockets). What hides a peer is any socket opening into a room the held
+token cannot open: a room's socket mints its token in `ws.onopen`, before any hello, and the minter hands over a held
+token only under TOKEN_REUSE_MS (60 s) old and unspent in that room. A crypt visit over a minute minted going in, and
+always minted coming out (the cell outside was spent by the token that left it). With a 3 s mint (TOKEN-WAIT measured
+over 2.5 s for a player) each side was invisible to the other 3.1 s, into and out of the crypt; a player's own blip hid
+them a mint plus the backoff (4.4-5.2 s at a 2.5 s mint); a relay restart with a queueing account service froze them
+23-36 s. And a token later than TOKEN_WAIT_MS sent the hello tokenless, refused, and its retry waited out the backoff
+after the token had arrived (3.1 s past it).
+
+CHANGED:
+- **The token goes at the door.** The minter's `ahead(room)` mints now, only when the held token could not open the next
+  room by the time its socket asks (none held, spent in that room, or under TOKEN_AHEAD_MS (20 s) of its minute left);
+  never with a mint in flight, through STORM-SHED's hold, or signed out. The next room's own mint simply goes early; a
+  token minted ahead and never used is at most one a page per 40 s.
+- **The host module** `scenes/doorTokenHost.js` calls it at a door in (`onPreTransition`, while the place builds - the
+  cell left remembered as the way back), a door out (`onDungeonLeave`, `onInteriorLeave`), every jump
+  (`_teleportToPixel`: fast travel, teleport, recall), and the walk back to an exit door (within EXIT_NEAR_M 16 m after
+  standing EXIT_ARM_M 32 m from every exit; the spawn beside the door does not count). Online only.
+- **The retry.** A hello refused for want of a token (the primary's and each halo's) retries the frame the minter `holds`
+  a token for its room; the hard backoff stands for every other wait.
+- Measured again (two real sessions, the real Room, a 3 s mint): into the crypt 3.1 s -> 0.7 s (the build covers the
+  rest), back out 3.1 s -> 0.1 s; five mints on the same walk either way. `11-Multiplayer/Scale-Arc.md` DOOR-TOKEN.
+
+THE FOUR HOSTS: world.js - WIRED on existing lines (bootWorld 21,679 code lines, its ceiling); worldModes.js and
+dungeonContext.js - reached through world.js's host hooks (onPreTransition, onInteriorLeave, onDungeonLeave), the module
+reading their exit doors through `modes.dungeonCtx.exitDoors` and `modes.interiorCtx.doors`, neither file changed;
+exterior.js - no online session. Pinned by `test/fb1016_doortoken.test.js` (5, the first the crypt both ways over the real
+session, Room and minter); `tools/mutants/fb1016_doortoken.json` (25, all dead). PINS MOVED: `stormshed.json`'s
+STORM-SHED-primary-unheld re-aimed by content.
+
+FLAGGED, not taken: in an overflowing place a party can split across layers (a member asks its party's layer only at its
+join; a reconnect reuses that hint; a halo opens at layer 0) - unreachable at today's counts; a lone player's blip that
+drops two of a page's sockets is read as a deploy wave (SCALE2c) and waits its share of the spread (up to 10 s at 500
+online); a reconnect after a relay restart still costs a mint (the relay forgets spent tokens on restart, the client
+cannot know it, and replaying a spent token would trade away replay protection); a player who never stands 32 m from an
+exit (a shop counter) still pays the mint at the door out.
+
+What the reporter is owed: your party mates were never gone. Every door into a tomb, and back out, opened a new
+connection that waited a few seconds for the account server to vouch for you, and for those seconds neither side could
+see the other. The game now asks for that pass while the tomb loads and while you walk back to its door, so you appear to
+each other as you step through.
