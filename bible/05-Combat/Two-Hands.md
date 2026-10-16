@@ -241,26 +241,25 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
   frame, with nothing of the pump drawn, takes the bob's phase at once. Worst one-frame jump at a stutter-step: 37 px.
   - **THE RUNNING ARM IS THE ART'S OWN** (Mac, of the first cut: "theres no arm portion of the sprite, so it looks like
     floating hands"). The first cut lifted the bare hand's idle - `WEAPON10.CIF` record 0, a 63x53 fist cut at the
-    wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. The one record of
-    the bare hand's art that lifts a fist on its own forearm from the frame's foot is the right arm's rising punch
-    (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then the follow-through across). So a
-    running hand is drawn in that record (`ARM_STATE`), **in one frame, the rise's lowest - frame 1** (`ARM_FRAME`;
-    TWO-HANDS FIELD, Mac after the merge: the running hands were "Too high, like uppercuts"). The merged cut drew the
-    rise's frames 1, 2 and 3 by how far up its stroke was, with a snap (|sin|^0.7) that held the hand at the top: 2 and
-    3 are the punch's own peak, a fist on an upright forearm standing 98 of the view's 200 design pixels - half the
-    screen, every stride. Frame 1 is a fist on its sleeve 62 pixels high (the idle fists stand 53), so the running fist
-    comes up to about where the fists rest and drops away, and the STROKE is the motion: an even sine, fastest through
-    the middle. Frame 1 is the one frame whose arm leaves its frame through its foot alone and stands no taller than the
-    idle: frame 0's sleeve also leaves through its right side (14 rows cut down its right column above its foot's row)
-    and the stroke's outward swing drew that cut into the view (Mac: "The sprite on the right moves to the right and
-    exposes where it clips off"); frame 4's leaves through its left (8). Measured on the shipped file and pinned there
-    (the ARENA2 test). It is placed as FPSWeapon places a frame - **its foot on the view's bottom edge at the top of the
-    stroke, never lifted** (OnGUI's `height - h`): the stroke only LOWERS it (`DROP` 1.05 of its height at the back,
-    out of the view - the hand passing the hip, half of it at the stroke's middle), so the forearm always runs off the
-    screen. Across the view it stands where
-    its fist rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom;
-    the left hand is record 5's right arm in the mirror (the one rule). Measured on the real art: the fist at the top of
-    the stroke stands 31% up the view (the idle fists 27%), one arm rising as the other drops.
+    wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. So a running
+    hand is a frame of the bare hand's art that holds a fist on its own grey forearm from the frame's foot:
+    **record 2 (StrikeDownLeft, the right arm's jab across), frame 1** (`ARM_STATE`, `ARM_FRAME`) - a closed fist seen
+    from its BACK, knuckles leading toward the middle, as the idle fist is seen, on its forearm reaching in from the
+    outer foot, 67 of the view's 200 design pixels. TWO-HANDS FIELD, Mac after the merge, twice. The merged cut drew
+    record 5 (StrikeDownRight, the uppercut), its frames 1, 2 and 3 by how far up the stroke was with a snap
+    (|sin|^0.7) that held the hand at the top - "Too high, like uppercuts": 2 and 3 are the punch's peak, a fist on an
+    upright forearm 98 pixels high, half the screen, every stride. Its lowest frame alone then - "Why is the underhand
+    showing when extended and not the fist": an uppercut shows the fist's INSIDE, curled fingers toward the eye, in
+    every frame. Record 2's frame 1 leaves its frame through its FOOT alone (no row cut down either side, measured on
+    the shipped file and pinned there, the ARENA2 test; record 5's frame 0 had 14 rows down its right, which the
+    stroke's outward swing drew into the view - Mac: "The sprite on the right moves to the right and exposes where it
+    clips off"). The STROKE is the motion: an even sine, fastest through the middle. It is placed as FPSWeapon places a
+    frame - **its foot on the view's bottom edge at the top of the stroke, never lifted** (OnGUI's `height - h`): the
+    stroke only LOWERS it (`DROP` 1.05 of its height at the back, out of the view - the hand passing the hip, half of
+    it at the stroke's middle), so the forearm always runs off the screen. Across the view it stands where its fist
+    rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom; the left
+    hand is record 2's right arm in the mirror (the one rule). Measured on the real art: the fist at the top of the
+    stroke stands a third of the way up the view (the idle fists 27%), one arm rising as the other drops.
   - **The art changes under the view, never in sight**: as the run starts, the fists' own rest (the idle, where the pair
     draws it) goes DOWN out of the view over the first half of the run's weight (`SWAP` 0.5) and the arms come up from
     under it over the second; as it ends, the reverse (a sheathed body's fists were down - the arms simply rise). The
@@ -459,8 +458,8 @@ one, never one hand's glow on both:
   the mirrored blow's way, the guard's dip, the fists, the running hands under the climb and on the pitched lens, the
   portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 78 mutants, all dead (8 the field reports',
   `FIELD-*`: each fix reverted).
-- `tools/mutants/twohands.json`: 183 mutants, all dead (3 the field report's, `TWOHANDS-FIELD-*`: the run on the
-  uppercut's frame, the snap, the fist held at the top - AUDIT 2's `RUN_PUMP-shape` and the first audit's
+- `tools/mutants/twohands.json`: 184 mutants, all dead (4 the field reports', `TWOHANDS-FIELD-*`: the run on the
+  uppercut, on a high frame, the snap, the fist held at the top - AUDIT 2's `RUN_PUMP-shape` and the first audit's
   `run-pump-frame-by-stroke` retired with the code they reverted, `hands-in-step` and two `TWOHANDS-ARM-*` re-aimed
   onto the one frame; 65 of them AUDIT 2's, `TWOHANDS-AUDIT2-*` and `TWOHANDS-SPRITE2-*`; 39 the first audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
   each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,

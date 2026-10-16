@@ -286,20 +286,20 @@ export const RUN_STEP_M = 2.5;
 /**
  * The pump. THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands").
  * The bare hand's idle (WEAPON10.CIF record 0, 63x53) is a fist cut at the wrist, painted to stand on the view's bottom
- * edge - lifted, its cut floats. The one record of the bare hand's art that lifts a fist on its own forearm from the
- * frame's foot is the right arm's rising punch (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then
- * the follow-through across). A running hand is drawn in its frame as FPSWeapon draws a frame - its foot on the view's
- * bottom edge (OnGUI's `height - h`) at the top of the stroke: THE PUMP NEVER LIFTS A SPRITE. The stroke lowers it, on
- * an even sine, down past the view at the back of the stroke, so the arm always runs off the bottom of the screen.
- * ONE FRAME, THE RISE'S LOWEST (TWO-HANDS FIELD, Mac after the merge: the running hands were "Too high, like
- * uppercuts"): the pump drew the rise's frames by how far up its stroke was - 1, 2 and 3 - and 2 and 3 are the punch's
- * own peak, a fist on an upright forearm standing 98 of the view's 200 pixels, half the screen, held at the top of every
- * stroke by its snap. Frame 1 is a fist on its sleeve 62 pixels high - the idle fists stand 53 - so the running fist
- * comes up to about where the fists rest and drops away, and the stroke itself is the motion. THE CUT STAYS OFF THE
- * SCREEN: frame 1 leaves its frame through its FOOT alone (frame 0's sleeve also leaves through its right side - 15 rows
- * cut on WEAPON10's right column; the pump's sideways stroke drew that cut into the view, Mac: "The sprite on the right
- * moves to the right and exposes where it clips off" - and frame 4's through its left, 8; measured on the shipped file).
- *   ARM_STATE / ARM_FRAME - the record (by its state) and its frame: the rise's lowest that leaves only at the foot;
+ * edge - lifted, its cut floats. So a running hand is a frame of the bare hand's art that holds a fist on its own grey
+ * forearm from the frame's foot, drawn as FPSWeapon draws a frame - its foot on the view's bottom edge (OnGUI's
+ * `height - h`) at the top of the stroke: THE PUMP NEVER LIFTS A SPRITE. The stroke lowers it, on an even sine, down past
+ * the view at the back of the stroke, so the arm always runs off the bottom of the screen.
+ * THE FIST'S BACK, A THIRD OF THE VIEW HIGH - record 2 (StrikeDownLeft, the right arm's jab across), frame 1: a closed
+ * fist seen from its back, knuckles leading, as the idle fist is seen, on its forearm reaching in from the frame's foot,
+ * 67 of the view's 200 pixels. TWO-HANDS FIELD (Mac after the merge): the merged cut drew record 5 (StrikeDownRight,
+ * the uppercut) - "Too high, like uppercuts": its frames 1, 2 and 3 by how far up the stroke was, 2 and 3 the punch's
+ * peak, an upright forearm 98 pixels high, half the screen, held at the top by a snap; and then, its lowest frame alone,
+ * "Why is the underhand showing when extended and not the fist": an uppercut shows the fist's INSIDE, curled fingers
+ * toward the eye, in every frame. THE CUT STAYS OFF THE SCREEN: record 2's frame 1 leaves its frame through its FOOT
+ * alone (measured on the shipped file: no row cut down either side; record 5's frame 0 had 15 down its right - Mac: "The
+ * sprite on the right moves to the right and exposes where it clips off").
+ *   ARM_STATE / ARM_FRAME - the record (by its state) and its frame: the fist's back, leaving only at the foot;
  *   DROP      - the back of the stroke, down, of the frame's height (past the view's edge: the hand passing the hip);
  *   IN/OUT    - toward the middle at the top (the arm across the chest) and out at the bottom, of the view's width;
  *   SWAP      - the run's weight at which a hand changes its art - the fists' rest for the running arm, or back - the
@@ -315,7 +315,7 @@ export const RUN_STEP_M = 2.5;
  *               the air).
  */
 export const RUN_PUMP = Object.freeze({
-  ARM_STATE: 'StrikeDownRight',
+  ARM_STATE: 'StrikeDownLeft',
   ARM_FRAME: 1,
   DROP: 1.05,
   IN: 0.06,
