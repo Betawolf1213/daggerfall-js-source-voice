@@ -36,7 +36,7 @@ import { payFromSave, creditSave } from '../../src/net/realm/realmGoldLaw.js';  
 import { GUILD_TREASURY_MAX } from '../../src/net/guild/guildLaw.js';   // GUILD1d: a hall's treasury's cap
 import { HALL_POWERS } from '../../src/net/hallLaw.js';   // GUILD1d: a hall's keepers
 import { SEAT_HALL_DECOR_CAP } from '../../src/net/townSeatLaw.js';   // SEAT-HALL: the Charter Room's pieces
-import { homeShownTo } from './homeVotes.js';   // AUDIT HOME-VOTE A3: a shunned home's room, its insiders' alone
+import { homeShownRead, homeShownOf } from './homeVotes.js';   // AUDIT HOME-VOTE A3: a shunned home's room, its insiders' alone; DECOR-BATCH: its read in the room's one request
 import { decorStaysShunned } from '../../src/net/homeVoteLaw.js';   // AUDIT HOME-VOTE B2: its hired trader stands
 
 /**
@@ -218,30 +218,46 @@ async function writeDoor({ db, nowS }, player, { mapId, buildingKey, character }
 /** HOME-VENDOR: whether a home's trader (the piece `id` in town `mapId`) still has goods standing at it - its open
  *  market listings (net/vendorLaw.js). A stocked trader is neither removed nor unmade: its stock would stand nowhere. */
 export async function vendorStocked(db, mapId, id) {
-  const r = await db.prepare(`SELECT COUNT(*) AS n FROM market_listings WHERE vendor_map = ? AND vendor_id = ? AND state = 'open'`).bind(mapId, id).first();
-  return Number(r?.n ?? 0) > 0;
+  return stockedOf(await vendorStockedRead(db, mapId, id).first());
 }
+/** DECOR-BATCH: vendorStocked's read as a statement, and its answer off the row. */
+const vendorStockedRead = (db, mapId, id) => db.prepare(`SELECT COUNT(*) AS n FROM market_listings WHERE vendor_map = ? AND vendor_id = ? AND state = 'open'`).bind(mapId, id);
+const stockedOf = (r) => Number(r?.n ?? 0) > 0;
 
 /** AUDIT HOME-VOTE II A1: WHAT OF A SHUNNED HOME STANDS FOR A STRANGER - its hired traders (decorStaysShunned) with goods
  *  on sale at them (vendorStocked): a shop. A trader with nothing on sale is a decoration like any other - any piece may
  *  be made one, and a statue's licence kept it standing in a home the town voted down; a hall's is never stocked. */
 async function shopOf(db, mapId, pieces) {
-  const kept = [];
-  for (const p of pieces.filter(decorStaysShunned)) if (await vendorStocked(db, mapId, p.id)) kept.push(p);
-  return kept;
+  const traders = pieces.filter(decorStaysShunned);
+  if (!traders.length) return [];
+  const stock = await db.batch(traders.map((p) => vendorStockedRead(db, mapId, p.id)));   // DECOR-BATCH: every trader's in one request
+  return traders.filter((_, i) => stockedOf(stock[i]?.results?.[0]));
 }
 
+/**
+ * A HOME'S PIECES, for anyone at its door. DECOR-BATCH (2026-10-16, the owner's screenshots of every account deploy since
+ * #952: "/v1/homes/decor did not answer a home's pieces (000)", seven asks of 15 s each with no byte back while every
+ * other smoke call answered, slowly - the database overloaded, homes/town 11 s for its one batch): the room's pieces,
+ * whether the caller is shown them and what its owner took out are ONE request, a batch, where they were three round
+ * trips in a row - three waits in the primary's queue for a read every visitor at a door makes (HOMES-SHED's law for
+ * homes/town, Scale-Arc). A shunned home's traders, its shop, go as one more (they had been a trip apiece).
+ */
 export async function decorOf({ db }, player, { mapId, buildingKey, seat = false } = {}) {
   if (!homeMapIdOk(mapId) || !homeBuildingKeyOk(buildingKey)) return { error: 'bad-home' };
   const S = storeOf(seat);   // SEAT-HALL: a palace's Charter Room, its own table - nothing taken out of a palace
-  const { results = [] } = await db.prepare(`SELECT * FROM ${S.table} WHERE map_id = ? AND building_key = ? AND yard = 0
-    ORDER BY placed_at, id LIMIT ?`).bind(mapId, buildingKey, S.cap).all();   // HOME-YARD: the room's alone
+  const piecesRead = db.prepare(`SELECT * FROM ${S.table} WHERE map_id = ? AND building_key = ? AND yard = 0
+    ORDER BY placed_at, id LIMIT ?`).bind(mapId, buildingKey, S.cap);   // HOME-YARD: the room's alone
+  if (S.seat) {
+    const { results = [] } = await piecesRead.all();
+    return { mapId, buildingKey, pieces: results.map(pieceOfRow).filter(Boolean), hidden: [] };
+  }
+  const [{ results = [] }, shown, hidden] = await db.batch([piecesRead, homeShownRead(db, mapId, buildingKey, player?.id), hiddenRead(db, mapId, buildingKey)]);
   const pieces = results.map(pieceOfRow).filter(Boolean);
   // AUDIT HOME-VOTE A3: a home the town voted below zero is handed to anyone but its insiders as Daggerfall furnished it
   // - no placed piece but its hired trader with goods on sale (a shop, never a decoration: B2, II A1), nothing taken out
   // - by the service, so a build from before HOME-VOTE shows no more than the law (homeVotes.js homeShownTo)
-  if (!S.seat && !(await homeShownTo(db, mapId, buildingKey, player?.id))) return { mapId, buildingKey, pieces: await shopOf(db, mapId, pieces), hidden: [] };
-  return { mapId, buildingKey, pieces, hidden: S.seat ? [] : await hiddenOf(db, mapId, buildingKey) };
+  if (!homeShownOf(shown?.results?.[0] ?? null)) return { mapId, buildingKey, pieces: await shopOf(db, mapId, pieces), hidden: [] };
+  return { mapId, buildingKey, pieces, hidden: hiddenListOf(hidden?.results?.[0] ?? null) };
 }
 
 /**
@@ -345,8 +361,9 @@ export function _resetYardsKept() { keptYards.clear(); askingYards.clear(); yard
 
 /** BASE-HIDE: what the home's owner took out of the room (migration 0015) - projected on the way out, so a list the law
  *  would refuse is handed out as none. */
-async function hiddenOf(db, mapId, buildingKey) {
-  const row = await db.prepare('SELECT keys FROM home_hidden WHERE map_id = ? AND building_key = ?').bind(mapId, buildingKey).first();
+const hiddenRead = (db, mapId, buildingKey) => db.prepare('SELECT keys FROM home_hidden WHERE map_id = ? AND building_key = ?').bind(mapId, buildingKey);
+/** DECOR-BATCH: the list off its row (hiddenRead's, in decorOf's batch). */
+function hiddenListOf(row) {
   if (!row) return [];
   try { return decorHiddenOf(JSON.parse(row.keys)) ?? []; } catch { return []; }
 }

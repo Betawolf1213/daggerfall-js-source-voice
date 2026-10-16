@@ -282,6 +282,51 @@ test('HOME-VOTE the yard: a home voted down to HOME_SHUN_AT stands no yard for a
   assert.equal(live(mine.made).filter((b) => b.a === 209).length, 1, 'its owner sees it');
 });
 
+test('DECOR-BATCH (2026-10-16, the owner\'s screenshots of every account deploy since #952: "/v1/homes/decor did not answer a home\'s pieces (000)", seven asks of 15 s while the overloaded database answered homes/town\'s one batch in 11): A HOME\'S ROOM IS ONE REQUEST - its pieces, whether the caller is shown them and what its owner took out, one batch where they were three trips in a row - and a shunned home\'s traders one more, never a trip each; every answer as it was (mutants: a read its own trip again; the shop a trip a trader)', async (t) => {
+  const { svc, raw, owner, ownerChar, aged, shun } = await town(t);
+  const place = (id, over = {}) => raw.prepare(`INSERT INTO home_decor (map_id, building_key, id, model, flat_archive, flat_record, place, placed_at, paid, yard)
+    VALUES (7, 300, ?, 41000, NULL, NULL, ?, ?, 0, 0)`).run(id, JSON.stringify({ pos: [1, 0, 1], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 0, ...over }), T0);
+  place('chair');
+  place('trader', { station: 'vendor' });
+  place('statue', { station: 'vendor' });
+  raw.prepare(`INSERT INTO market_listings (id, seller, char_id, region, kind, material, units, price, fee, at, expires_at, rid, n, vendor_map, vendor_id)
+    VALUES ('l1', ?, ?, 17, 'material', 'iron', 1, 10, 1, ?, ?, 'r1', 'n1', 7, 'trader')`).run(owner.id, ownerChar, T0, T0 + 86_400);
+  raw.prepare('INSERT INTO home_hidden (map_id, building_key, keys) VALUES (7, 300, ?)').run(JSON.stringify(['m0:41000']));
+  // every round trip the service asks of its database, where the Worker asks it (PRIMARY-TRIPS' count): a statement's
+  // own first/all/run one trip, a batch one trip
+  const db = svc.env.DB;
+  const trips = [];
+  const prepare = db.prepare.bind(db);
+  db.prepare = (sql) => {
+    const st = prepare(sql);
+    const one = (fn) => async (...a) => { trips.push({ sql }); return fn(...a); };
+    return Object.assign(st, { first: one(st.first), all: one(st.all), run: one(st.run), _sql: sql });
+  };
+  const batch = db.batch.bind(db);
+  db.batch = async (list) => { trips.push({ batch: list.map((st) => st._sql) }); return batch(list); };
+  const ROOM = /home_decor|home_hidden|FROM homes h|market_listings/;
+  const room = async (who) => {
+    trips.length = 0;
+    const r = await svc.call('/v1/homes/decor', { mapId: 7, buildingKey: 300 }, who.secret);
+    assert.equal(r.status, 200);
+    return { r: r.body, shape: trips.filter((x) => (x.batch ? x.batch.some((q) => ROOM.test(q)) : ROOM.test(x.sql))).map((x) => (x.batch ? `batch ${x.batch.length}` : 'trip')) };
+  };
+  const bob = aged(await svc.registered('Bob'));
+  let { r, shape } = await room(bob);
+  assert.deepEqual(shape, ['batch 3'], 'shown: the room in one request - its pieces, whether it is shown, what was taken out');
+  assert.equal(r.pieces.length, 3);
+  assert.deepEqual(r.hidden, ['m0:41000']);
+  await shun();
+  ({ r, shape } = await room(bob));
+  assert.deepEqual(shape, ['batch 3', 'batch 2'], 'shunned: and its two traders\' stock in one more - never a trip each');
+  assert.deepEqual(r.pieces.map((p) => p.id), ['trader'], 'the shop as it was: the trader with goods on sale');
+  assert.deepEqual(r.hidden, []);
+  ({ r, shape } = await room(owner));
+  assert.deepEqual(shape, ['batch 3'], 'its owner: one request');
+  assert.deepEqual(r.pieces.map((p) => p.id).sort(), ['chair', 'statue', 'trader']);
+  assert.deepEqual(r.hidden, ['m0:41000']);
+});
+
 test('HOME-VOTE the hosts by source: the interior stands a shunned home bare but its trader, nothing taken out; the world paints a shunned home in its town\'s own look and keeps it in the merge; the door lists the votes unlit where they are all it lists and still says "Locked"; a vote row presses the vote it says, before the lock, and a home gone is said so (AUDIT B3, B5); the Info box asks only where no plaque is drawn (B1), says the lock, and carries the door\'s rows; presses keep their order (mutants: the room stood, the look painted, the rows lit, the vote inverted, the press after the lock, the box over a drawn plaque, the order dropped, the way in dropped)', () => {
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /const shown = homeDecorShown\(interiorHome\);\n\s*const pieces = r\.data\.pieces\.map\(decorPieceOf\)\.filter\(\(p\) => p && \(shown \|\| decorStaysShunned\(p\)\)\);/);
