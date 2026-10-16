@@ -484,6 +484,26 @@ export function raiseRepForSentence(player, court, { acquitted = false } = {}) {
   if (people && refund.people) changeReputation(store, people.id, refund.people, true);
 }
 
+/** FIELD BUGS 2026-10-16 FINE-PEOPLE (the Discord's "Possible bug: Repeated ..." thread again: "I paid 2 x 600 gold
+ *  today, and even though it said +5 reputation, my reputation didn't go up at all"): THE PEOPLE'S HALF OF AN ANSWER SHORT
+ *  OF THE COURT. A charge costs two names (lowerRepForCrime: the law's, and half of it off the region's People, spread to
+ *  the kingdom it belongs to - the Standing page's Kingdoms row); a sentence gives back both (raiseRepForSentence), but the
+ *  watch's fine (standing.js settleChallenge, FINE-MENDS) and a temple's penance (doPenance, REP4) mended the law's alone,
+ *  so the People - who the commoners' reactions read (talk.js getReactionToPlayer) - and the kingdom kept the whole
+ *  charge however much was paid. Now `legalPts` of the law mended give the People half of them back (sentenceRefund's
+ *  own half, truncated as the charge's was), spread as the charge spread - never past 0: an answer mends a charge, it
+ *  buys no favour. Answers the points. */
+export function raisePeopleForAnswer(player, regionIndex, legalPts) {
+  const store = player?.factionRep;
+  if (!store || !(legalPts > 0)) return 0;
+  const people = getPeopleOfCurrentRegion(store.dict, regionIndex);
+  if (!people) return 0;
+  const pts = Math.min(Math.trunc(legalPts / 2), -people.rep);
+  if (pts <= 0) return 0;
+  changeReputation(store, people.id, pts, true);
+  return pts;
+}
+
 /** REP2 (Mac: "The charge, with a mark" - "Lesser crimes come back in full; Murder and Assault leave half as a lasting
  *  mark"): what a sentence served, a fine paid or a guild's rescue gives back of the arrest's charge (lowerRepForCrime
  *  above: the legal loss, and half of it off the region's People). DFU gave back half the loss less one on the legal side

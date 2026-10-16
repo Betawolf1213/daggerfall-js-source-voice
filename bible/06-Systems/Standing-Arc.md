@@ -48,8 +48,9 @@ gold, or come with me."* (or *"You are banished from ..."*).
 
 - **P - pay**: the court's own Criminal Conspiracy penalty at that standing, every unit in coin and no days (520 at -11,
   720 at -50, 1,000 at -100; double for a banished face). The fine mends the name a penance's five points, never past
-  the -10 line (FINE-MENDS, `01-Overview/Field-Bugs-2026-10-14.md`), and a day's grace follows. Offered only to a purse
-  that can pay.
+  the -10 line (FINE-MENDS, `01-Overview/Field-Bugs-2026-10-14.md`) - and the region's People half of them, never past 0
+  (FINE-PEOPLE, `01-Overview/Field-Bugs-2026-10-16.md`: the charge's People half, which the kingdom and the commoners
+  read, was left whole by a fine) - and a day's grace follows. Offered only to a purse that can pay.
 - **S - come quietly**: a Criminal Conspiracy, charged once, and the court - whose sentence gives the charge back.
 - **R - refuse**: the Conspiracy held and the watch called as a seen crime calls it; the chase is DFU's from there.
 
@@ -105,7 +106,8 @@ started (DFU: -16).
   nothing to a good name). A positive standing wears down on DFU's 112 days only; the 112th day pays a bad name one
   point, not two. At the 12x clock a week is about fourteen real hours: -20 is home in about twelve real days untouched.
 - **A penance** at the region's temple (the donation's priest, before DFU's donation field): five points of the region's
-  law back toward zero, never past it - 200 gold, then 400, 600, one step more each time in that region.
+  law back toward zero, never past it - 200 gold, then 400, 600, one step more each time in that region - and half of
+  them to the region's People, never past 0 (FINE-PEOPLE, as the fine's).
 - **A bounty contract** finished for a region's board: two points of its law (`bountyHost.js pay` -> `rewardContract`).
 - **Raid defence** already paid +5 (RAID1), and says so since AUDIT REP F5; quests and their `legal repute` actions pay
   as they did.

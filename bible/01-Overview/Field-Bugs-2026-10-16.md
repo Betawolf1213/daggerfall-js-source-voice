@@ -7,6 +7,7 @@ main's `7e0424e0`.
 |---|---|---|---|
 | 1 | "I respeced yesterday and have a timer on my 50 lvl smithing, however, when I reached level 100, I can not choose level 100 perk" | the Professions page greyed every card of a track while a paid change waited at either rank; the service already took a first pick (and the merge's free change) before its one-change-at-a-time refusal | fixed (FIRST-PICK) |
 | 2 | "I reloaded my game near the arena ... I've done all 40 fights already for this season, so I hit fight, and it reset my rank, and when I look at the season it doesn't have a number" | on the online lane before the relay's first welcome every arena door ran the offline law: the Herald offered Fight off the save's ladder, the bout and its purse were this screen's, the window drew the save's season ("Season of 3E 406") and roster - the account's forty wins untouched | fixed (ARENA-WAIT) |
+| 3 | "I paid 2 x 600 gold today, and even though it said +5 reputation, my reputation didn't go up at all ... why I still have a penalty" (the "Possible bug: Repeated ..." thread, after FINE-MENDS); "It didn't work for me either" | the +5 was the law's and it held; a charge costs two names - the law's and half of it off the region's People, spread to the kingdom (the Standing page's Kingdoms row) and read by every commoner - and a sentence gives back both, but the watch's fine and a temple's penance mended the law's alone | fixed (FINE-PEOPLE) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -88,3 +89,37 @@ climb is a design call; no arena door reads it online any more.
 What the reporter is owed: your Grand Champion title and your forty wins were never lost - the rank and the season you
 saw were the offline arena's, shown for the seconds before the server answered. The arena now waits for the server
 instead.
+
+## FINE-PEOPLE: a fine and a penance give the People's half back too (3)
+
+`src/systems/court.js` raisePeopleForAnswer; `src/systems/standing.js` settleChallenge, doPenance.
+
+THE REPORT. The FINE-MENDS thread again, a day after it shipped: two fines of 600 paid, the HUD said +5 each time,
+"my reputation didn't go up at all", and "I still have a penalty". A second player: "It didn't work for me either".
+
+FOUND. The +5 held: the law's number (`legalRep`, client-held, saved whole - no service touches it) rose five a fine,
+to the -10 line, as FINE-MENDS shipped. But a crime costs two names (`court.js` lowerRepForCrime,
+`PlayerEntity.cs:2294-2298`): the law's loss, and half of it off the region's People faction, spread up to the kingdom it
+hangs from - which the Standing page lists apart, under Kingdoms ("Daggerfall"), and which every commoner's reaction reads
+(`talk.js` getReactionToPlayer). A sentence served gives back both (raiseRepForSentence, REP2: "the legal loss, and half
+of it off the region's People"); the watch's fine and a temple's penance - the port's own answers short of the court -
+mended the law's alone. Driven on the real watch: a murder and an assault (the law -28, the People and the kingdom -14),
+two fines - the law -18, the People and the kingdom still -14. And the fine's price moves in 40-gold steps (eight points
+of standing), so -27 and -22 are both asked 600: two fines of the same sum read as nothing moved.
+
+CHANGED: an answer short of the court gives the People half the points it gave the law (`raisePeopleForAnswer`:
+sentenceRefund's own half, truncated as the charge's was), spread as the charge spread, never past 0 - it mends a
+charge and buys no favour. The fine (`settleChallenge`) and the penance (`doPenance`) both call it; the HUD's law line is
+unchanged. No store (a host that never ran chargen), nothing - the charge's own silence. `06-Systems/Standing-Arc.md` and
+Port-Ledger's REP row say it.
+
+THE FOUR HOSTS: none - the watch is `standingHost.js`'s (both open-world hosts wire it) and the penance the temple's
+window; the law is one module. Pinned by `test/fb1016_finepeople.test.js` (3, the first through the real watch's stop);
+`tools/mutants/fb1016_finepeople.json` (7, all dead).
+
+NOT TAKEN (Mac's to decide): the fine's 40-gold steps and the -10 line together make a deep standing a run of same-price
+fines; the stop reads the law's number alone, never the People's.
+
+What the reporter is owed: the +5 you paid for was real - your standing with the law rose each time. What did not move
+was your name with the people of the kingdom, which the same crimes cost and only a prison sentence gave back. A fine or
+a penance now mends that too.
