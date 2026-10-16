@@ -86,10 +86,15 @@ const VIEWS = {
   mist: MIST ? { at: [(MIST.x0 + MIST.x1) / 2, MIST.hz.y + 6.5, MIST.z0 - 3], yaw: 0, pitch: -38 } : null,
   under: { at: [court.x + (court.r ?? 12) + 14, (court.y ?? 0) - 9, court.z - 6], yaw: -110, pitch: 18 },   // EG-LOOK: the court's foundations, from a span below its rim
   wide: { at: [-70, 26, (SPEC.len ?? 80) * 0.15], yaw: 55, pitch: 4 },   // EG-LOOK: the wreck drifting, the Spire overhead
+  // EG-LOOK (THE RUIN): `ring` the court's column ring from beside its rim, `bridge` a way's arches from below its side;
+  // ?eye=x,y,z,yaw,pitch any camera of the hall's frame
+  ring: { at: [court.x + (court.r ?? 12) * 0.7, (court.y ?? 0) + 2.2, court.z - (court.r ?? 12) * 0.7], yaw: 40, pitch: 6 },
+  bridge: { at: [9, -6, (SPEC.len ?? 80) * 0.12], yaw: -35, pitch: 12 },
+  eye: params.has('eye') ? (([x, y, z, yaw, pitch]) => ({ at: [x, y, z], yaw, pitch }))(params.get('eye').split(',').map(Number)) : null,
 };
 const viewSel = $('view');
 for (const k of Object.keys(VIEWS)) if (VIEWS[k]) { const o = document.createElement('option'); o.value = o.textContent = k; viewSel.append(o); }
-viewSel.value = VIEWS[params.get('view')] ? params.get('view') : MIST ? 'mist' : 'plate';
+viewSel.value = VIEWS.eye ? 'eye' : VIEWS[params.get('view')] ? params.get('view') : MIST ? 'mist' : 'plate';
 if (params.get('lane') === 'off') $('lane').checked = false;
 if (params.has('still') || params.has('t')) $('still').checked = true;
 const cam = { pos: [0, 0, 0], yaw: 0, pitch: 0 };

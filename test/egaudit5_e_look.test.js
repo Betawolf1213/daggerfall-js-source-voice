@@ -22,6 +22,7 @@ import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { egHallCentre, egCircleLights, egToDungeon, EG_LAMP, EG_DROP_LAMP, EG_LAMP_BUDGET } from '../src/world/egHall.js';
+import { egRuinColumns } from '../src/world/egRuin.js';   // PIN MOVED (EG-LOOK): the lamps on the ruin's columns
 import { egFightFloors, egFloorPlan, EG_AURA_RING } from '../src/world/egTelegraph.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
@@ -235,9 +236,13 @@ test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lamps stand
     for (const s of specs) {
       for (const [x, y, z] of s.lights ?? []) assert.ok(at(L, egToDungeon(s, x, y, z)), `seed ${seed} hall ${s.h}: its fragment's light stands`);
       for (const q of s.steps) if (q.kind === 'drop') assert.ok(at(L, egToDungeon(s, q.x, q.y + EG_DROP_LAMP.h, q.z + q.d / 2 - EG_DROP_LAMP.off)), `seed ${seed} hall ${s.h}: its Drop's wall lit`);
-      for (const d of s.discs) {
+      // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 3.3): a court's and an isle's lamps stand on the ruin's columns at their
+      // fixtures (world/egRuin.js egRuinColumns' `lamp(d, k)`), each nearest its old bearing - the old place (the rim less a
+      // metre, EG_LAMP.h up) only where no column stands clear; the ring's spread order is the same law
+      for (const [i, d] of s.discs.entries()) {
         if (d.role !== 'court' && d.role !== 'isle') continue;
-        const ring = [0, 1, 2, 3, 4, 5].map((k) => { const a = (k / 6) * Math.PI * 2 + Math.PI / 4; return !!at(L, egToDungeon(s, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1))); });
+        const plan = egRuinColumns(s);
+        const ring = [0, 1, 2, 3, 4, 5].map((k) => { const a = (k / 6) * Math.PI * 2 + Math.PI / 4, on = plan.lamp(i, k); return !!at(L, on ? egToDungeon(s, on.at[0], on.at[1], on.at[2]) : egToDungeon(s, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1))); });
         const n = ring.filter(Boolean).length;
         assert.ok(n >= 2, `seed ${seed} hall ${s.h}: a ${d.role}'s ring keeps ${n} of 6`);
         assert.deepEqual(ring, [0, 1, 2, 3, 4, 5].map((k) => [0, 3, 2, 4, 1, 5].indexOf(k) < n), `seed ${seed} hall ${s.h}: a ring thinned spread - two facing lamps, then those between (${ring.map(Number).join('')})`);
