@@ -319,7 +319,7 @@ of your ... was found in the realm, so that piece is locked: it cannot be traded
 others. Your other pieces and your trading are not affected." A timed hold answers `tradeHeldWhy: { code: 'until', t,
 until }` and is said with its end, in the player's own clock. `dupes` stays, counting incidents, for staff to read; it
 holds nothing. Staff's acts stand as overrides: `realm-clear` lifts a timed hold and forgets its count (the rollback too),
-`realm-hold` holds by hand. `ACCOUNT_VERSION` acct139. Pinned by `test/autohold.test.js` (9) over the real Worker, the
+`realm-hold` holds by hand. `ACCOUNT_VERSION` acct141 (acct139 on its branch, renumbered past main's PRIMARY-TRIPS and AUDIT GUILD-WORDS at the merge). Pinned by `test/autohold.test.js` (9) over the real Worker, the
 real session and the migration's own statements; `tools/mutants/autohold.json` (29, all dead). The records it moved
 re-aimed by content, and two retired with the law they held (`INT4-dupes-never-hold`, `INTA-law-over-copies`: a copies'
 hold, and its order beside the law's).
@@ -786,9 +786,9 @@ the clock, and the legacy record held to its own law.
   contested claim is no strike; the law's third hold is timed (a week, then a month) and lifts on its own; a checkpoint
   names the locked pieces; the shop's shelf never lands back a piece its reader carries. Migration `0120_auto_hold` (the
   timed hold's columns; every copies' hold lifted; a law hold waiting for staff the first timed hold), `ACCOUNT_VERSION`
-  acct139. `test/autohold.test.js` (9); `tools/mutants/autohold.json` (29, all dead). Pins moved (each marked PIN MOVED
+  acct141 (acct139 on its branch, renumbered at the merge). `test/autohold.test.js` (9); `tools/mutants/autohold.json` (29, all dead). Pins moved (each marked PIN MOVED
   where it stands): `int2_judge`, `int4_itemids`, `ringhold`, `fb1011g_heldside` and `crafthold` (a staff hold where
-  it set a copies' one), and the version pins at acct139.
+  it set a copies' one), and the version pins at acct141.
 - **HACKED-GOLD (2026-10-12, in a session: "apparently theres people handing out hacked gold ingame"): what a peer's
   word hands on, what the law counts, and what staff see.** `01-Overview/Field-Bugs-2026-10-12f.md`. A peer's word (a
   room's container record, a body's grant, a foe's heir's pack, a worn offer) credited value no record held - a letter
