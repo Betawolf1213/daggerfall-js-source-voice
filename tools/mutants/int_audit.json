@@ -65,11 +65,12 @@
   {
     "name": "INTA-escrow-forgotten",
     "file": "server-account/src/ledger.js",
-    "old": "  const left = escrow\n",
-    "new": "  const left = false\n",
+    "old": "  const held = escrow === true ? gone : escrow instanceof Set ? gone.filter((k) => escrow.has(k)) : [];\n",
+    "new": "  const held = escrow instanceof Set ? gone.filter((k) => escrow.has(k)) : [];\n",
     "tests": [
       "test/int4_itemids.test.js"
-    ]
+    ],
+    "note": "MAC (2026-10-14, re-aimed by content): the two-phase handoff gave ledgerMoves a Set of escrowed keys beside the whole-record escrow; this is the whole record forgotten"
   },
   {
     "name": "INTA-delivery-unledgered",

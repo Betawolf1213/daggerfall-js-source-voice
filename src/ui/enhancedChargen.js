@@ -139,7 +139,7 @@ function mapPane() {
     // rectangles, so a hover on the sea inside High Rock's bounds
     // would have lit High Rock.
     const path = svg('path', {
-      d: p.d, 'fill-rule': 'evenodd',
+      d: p.d, 'fill-rule': 'evenodd', 'data-prov': p.key,
       class: `prov${p.inert ? ' inert' : ''}${p.key === sel ? ' on' : ''}`,
     });
     // The Imperial Province is drawn and NOT offered: no homeland, no
@@ -165,20 +165,78 @@ function mapPane() {
     }
     frame.append(path);
   }
-  // Labels last so no coastline crosses a word, and sized in map units
-  // so they scale with the picture rather than pinning it to one size.
+  // UI-CALM (2026-10-14, a player: "letters overlapping ... the highlighting of words is bad"): THE NAMES ARE THE PAGE'S
+  // OWN WORDS, NOT THE MAP'S. Said in map units inside the SVG, a name was as tall as the dress's type made it - DFO
+  // Grimoire's face stands only at its whole sizes (16, 32, 48), so a 6-unit label became a 16-unit one, three times the
+  // map's own scale, and High Rock ran into Hammerfell and Valenwood into Elsweyr. Each name is now a small plate laid
+  // over the map at its province's label point, in the screen's own pixels (crisp in either dress), and a name that
+  // would touch another is moved off it (untangleLabels) - the Imperial Province's, the one no one can choose, first.
+  const box = el('div', 'mapbox');
+  box.append(frame);
+  const names = el('div', 'maplabels');
+  const plates = [];
   for (const p of provinces) {
-    const t = svg('text', {
-      x: p.label[0], y: p.label[1],
-      class: `provlabel${p.inert ? ' inert' : ''}${p.key === sel ? ' on' : ''}`,
-      'text-anchor': 'middle', 'dominant-baseline': 'middle',
-    });
-    t.textContent = p.name;
-    if (!p.inert) t.addEventListener('click', () => pick(p.key));
-    frame.append(t);
+    const tag = el(p.inert ? 'span' : 'button', `maplabel${p.inert ? ' inert' : ''}${p.key === sel ? ' on' : ''}`, p.name);
+    tag.dataset.prov = p.key;
+    if (tag.style) { tag.style.left = `${(p.label[0] / MAP_W) * 100}%`; tag.style.top = `${(p.label[1] / MAP_H) * 100}%`; }
+    if (!p.inert) {
+      tag.type = 'button';
+      tag.onclick = () => pick(p.key);
+      tag.addEventListener?.('pointerenter', () => { hover = p.key; refreshHover(); });
+      tag.addEventListener?.('pointerleave', () => { if (hover === p.key) { hover = null; refreshHover(); } });
+    }
+    names.append(tag);
+    plates.push({ tag, inert: !!p.inert, x: p.label[0] / MAP_W, y: p.label[1] / MAP_H });
   }
-  wrap.append(frame);
+  box.append(names);
+  const lay = () => {
+    const W = box.clientWidth, H = box.clientHeight;
+    if (!W || !H) return;
+    const at = untangleLabels(plates.map((q) => ({ x: q.x * W, y: q.y * H, w: q.tag.offsetWidth, h: q.tag.offsetHeight, inert: q.inert })), { width: W, height: H });
+    plates.forEach((q, i) => { q.tag.style.left = `${at[i].x}px`; q.tag.style.top = `${at[i].y}px`; });
+  };
+  globalThis.requestAnimationFrame?.(lay);
+  // AUDIT UICALM-FIRM1 L3 M6: each plate watched too - a dress's face that arrives late widens the names after the first
+  // lay, and laid once they touched and left the map (its left and top move no plate's size, so no loop)
+  if (typeof globalThis.ResizeObserver === 'function') {
+    const ro = new globalThis.ResizeObserver(() => lay());
+    ro.observe(box);
+    for (const q of plates) ro.observe(q.tag);
+  }
+  wrap.append(box);
   return wrap;
+}
+
+/**
+ * UI-CALM: names that would touch are moved apart, up and down - never across, so a name stays over its own land. Each
+ * item is a plate's centre and size in pixels (`inert` a name no one can choose, which gives way first and alone); the
+ * answer is each plate's centre, kept inside `bounds`. Pure, for the pins.
+ * @param {{ x: number, y: number, w: number, h: number, inert?: boolean }[]} items
+ * @param {{ width: number, height: number }} bounds
+ */
+export function untangleLabels(items, { width, height }, gap = 4) {
+  const at = items.map((q) => ({ x: q.x, y: q.y }));
+  const clampY = (i) => { const h = items[i].h / 2; at[i].y = Math.max(h, Math.min(height - h, at[i].y)); };
+  const clampX = (i) => { const w = items[i].w / 2; at[i].x = Math.max(w, Math.min(width - w, at[i].x)); };
+  items.forEach((_, i) => { clampX(i); clampY(i); });
+  for (let round = 0; round < 60; round++) {
+    let moved = false;
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        const dx = (items[i].w + items[j].w) / 2 + gap - Math.abs(at[i].x - at[j].x);
+        const dy = (items[i].h + items[j].h) / 2 + gap - Math.abs(at[i].y - at[j].y);
+        if (dx <= 0 || dy <= 0) continue;
+        moved = true;
+        const down = at[j].y > at[i].y || (at[j].y === at[i].y && j > i) ? 1 : -1;   // j moves the way it already leans
+        const [si, sj] = items[i].inert === items[j].inert ? [0.5, 0.5] : items[i].inert ? [1, 0] : [0, 1];
+        at[i].y -= down * dy * si;
+        at[j].y += down * dy * sj;
+        clampY(i); clampY(j);
+      }
+    }
+    if (!moved) break;
+  }
+  return at;
 }
 
 let hoverTitle = null;
@@ -188,6 +246,8 @@ let hoverBody = null;
  *  carry it. See the pointerenter handler for why this is not a
  *  repaint. */
 function refreshHover() {
+  // UI-CALM: the land and its name light together, whichever the pointer is on (a class, never a repaint - see above)
+  for (const n of host?.querySelectorAll?.('[data-prov]') ?? []) n.classList.toggle('hot', !!hover && n.dataset.prov === hover);
   if (!hoverTitle || !hoverBody) return;
   const who = hover ? RACE_TEMPLATES.find((r) => r.key === hover) : null;
   hoverTitle.textContent = who ? (PROVINCE_NAMES[who.key] ?? who.name) : 'Where are you from?';
@@ -208,6 +268,7 @@ function pick(raceKey) {
 
 function raceStage() {
   const pane = el('div', 'stagebody stacked-short');   // the pre-merge audit (0927b): on a SHORT phone the map and its prompt scroll as one - in landscape the map had 0-30px
+  pane.classList.add('mapstage');   // UI-CALM: the map's stage takes the wider column (uiCalmStyle.js)
   pane.append(mapPane());
 
   // THE DETAIL IS ONLY A SHEET WHEN IT HAS TO BE. On a desk it is the
@@ -238,8 +299,13 @@ function raceStage() {
     // flowing prose and the browser wraps them for the width it has;
     // a BLANK line in the record is the paragraph break it always
     // meant. The flow's data is untouched - this is the view's job.
+    // UI-CALM ("the summary board looks cut off"): the words scroll inside the card and its two presses stand under them,
+    // always on screen - TEXT.RSC's longest ran past the card's foot and took "Play as" with it
+    const body = el('div', 'dscroll');
+    d.classList.add('confirm');
+    d.append(body);
     let para = [];
-    const flush = () => { if (para.length) { d.append(el('p', null, para.join(' '))); para = []; } };
+    const flush = () => { if (para.length) { body.append(el('p', null, para.join(' '))); para = []; } };
     for (const line of flow.raceConfirm) {
       const text = (typeof line === 'string' ? line : line.text) ?? '';
       if (text.trim()) para.push(text.trim()); else flush();
@@ -351,7 +417,7 @@ function classQuestionsStage() {
       if (text?.trim()) card.append(el('p', null, text));
     }
     const a = el('div', 'acts');
-    const yes = el('button', 'act primary', `Play as a ${named}`);
+    const yes = el('button', 'act primary', `Play as ${/^[aeiou]/i.test(named) ? 'an' : 'a'} ${named}`);   // AUDIT UICALM-FIRM1 L3 N2: an Acrobat
     yes.onclick = () => { flow.applyHit({ confirmQClass: true }); paint(); };
     const no = el('button', 'act', 'Choose again');
     no.onclick = () => { flow.applyHit({ cancelQClass: true }); paint(); };
@@ -391,16 +457,79 @@ function classQuestionsStage() {
 // gesture its own BUTTON and lets a tap select. The flow's own
 // clickClassRow is still what a tap calls, double-tap included, so the
 // classic gesture keeps working for anyone who uses it.
+/**
+ * UI-CALM (2026-10-14, a player: "Character selection and creation look like placeholders made of text and buttons"):
+ * THE CLASS IS SHOWN BEFORE IT IS READ ABOUT. Each row says, under its name, the two attributes the class leans on; the
+ * list stands in Daggerfall's three ways - its manual's mages, thieves and warriors - each under its own head; and the
+ * card beside it is the class's own profile before a word of TEXT.RSC is asked for: its eight attributes as bars, its
+ * primary and major skills, its hit points a level. Every number is the career's own (CLASS*.CFG); nothing here is law.
+ */
+export const CLASS_WAYS = Object.freeze([
+  Object.freeze(['Magic', Object.freeze(['Mage', 'Spellsword', 'Battlemage', 'Sorcerer', 'Healer', 'Nightblade'])]),
+  Object.freeze(['Stealth', Object.freeze(['Bard', 'Burglar', 'Rogue', 'Acrobat', 'Thief', 'Assassin'])]),
+  Object.freeze(['Combat', Object.freeze(['Monk', 'Archer', 'Ranger', 'Barbarian', 'Warrior', 'Knight'])]),
+]);
+/** UI-CALM: the way a class walks, by its career's KEY (CLASS*.CFG's own name, never the shown one - a translated name
+ *  matched no way and every head went; AUDIT UICALM-FIRM1 L3 M3) - null for one Daggerfall does not ship (a custom class). */
+export const classWayOf = (name) => CLASS_WAYS.find(([, names]) => names.includes(name))?.[0] ?? null;
+/** UI-CALM: a career's two strongest attributes, by name, strongest first (ties in the sheet's order). */
+export function leadingAttributes(career, n = 2) {
+  if (!career) return [];
+  return STAT_KEYS_ORDER.map((k, i) => [k, Number(career[k]) || 0, i]).sort((a, b) => b[1] - a[1] || a[2] - b[2]).slice(0, n).map(([k]) => attrName(k));
+}
+/** UI-CALM: the class's profile on its card - its attributes as bars, its skills, its hit points a level. */
+function classProfile(career) {
+  const box = el('div', 'cprofile');
+  const attrs = el('div', 'cprof-attrs');
+  for (const k of STAT_KEYS_ORDER) {
+    const v = Math.max(0, Math.min(100, Number(career[k]) || 0));
+    const row = el('div', 'cprof-attr');
+    const bar = el('span', 'cprof-bar');
+    const fill = el('i', 'cprof-fill');
+    if (fill.style) fill.style.width = `${v}%`;
+    bar.append(fill);
+    row.append(el('span', 'cprof-name', attrName(k)), bar, el('span', 'cprof-v', String(v)));
+    attrs.append(row);
+  }
+  box.append(attrs);
+  const skills = (label, ids) => {
+    const names = (ids ?? []).map((id) => SKILL_NAMES[id]).filter(Boolean);
+    if (!names.length) return null;
+    const p = el('p', 'cprof-skills');
+    p.append(el('span', 'cprof-label', label), document.createTextNode(names.join(', ')));
+    return p;
+  };
+  for (const p of [skills('Primary', career.primarySkills), skills('Major', career.majorSkills)]) if (p) box.append(p);
+  if (Number.isFinite(career.hitPointsPerLevel)) {
+    const hp = el('p', 'cprof-skills');
+    // AUDIT UICALM-FIRM1 L3 L2: a level's roll is half the career's to all of it, Endurance's modifier on top
+    // (systems/chargen.js hitPointsPerLevelUp) - "up to N" undersold every hardy character
+    hp.append(el('span', 'cprof-label', 'Health'), document.createTextNode(`${Math.trunc(career.hitPointsPerLevel / 2)}-${career.hitPointsPerLevel} a level, more with Endurance`));
+    box.append(hp);
+  }
+  return box;
+}
+
 function classStage() {
   const pane = el('div', 'stagebody stacked-short');   // the pre-merge audit (0927b): on a SHORT phone the list and its detail scroll as one - in landscape the list had 0-8px; a tall one keeps its rows, "Read about" on screen
 
   const list = el('div', 'list classlist');   // UXB1-J: two columns on a desk (enhancedStyle.js)
+  let way = null;
   for (let i = 0; i < flow.classRowCount(); i++) {
     const name = flow.classRowName(i);
+    const custom = i === flow.careers.length;
+    // UI-CALM: a head where the way changes (the careers stand in the ways' own order, CLASS00..17)
+    const w = custom ? 'Your own' : classWayOf(flow.careers[i]?.name);   // AUDIT UICALM-FIRM1 L3 M3: by the career's own key - its shown name is the player's language's
+    if (w && w !== way) list.append(el('div', 'classway', w));
+    way = w;
     const row = el('div', `row${i === flow.classListIndex ? ' on' : ''}`);
     const main = el('button', 'row-main');
     main.append(el('div', 'row-name', name));
-    if (i === flow.careers.length) main.append(el('div', 'row-sub', 'Build a class of your own'));
+    if (custom) main.append(el('div', 'row-sub', 'Build a class of your own'));
+    else {
+      const lead = leadingAttributes(flow.careers[i]?.career);
+      if (lead.length) main.append(el('div', 'row-sub', lead.join(' · ')));
+    }
     main.onclick = () => { flow.clickClassRow(i, flow._now()); paint(); };
     row.append(main);
     list.append(row);
@@ -414,19 +543,30 @@ function classStage() {
   const d = el('div', 'dcard');
   const picked = flow.classRowName(flow.classListIndex);
   d.append(el('h3', null, picked));
+  const pickedWay = flow.classListIndex === flow.careers.length ? null : classWayOf(flow.careers[flow.classListIndex]?.name);
+  if (pickedWay) d.append(el('div', 'cprof-way', pickedWay));
   if (flow.classConfirm) {
+    const body = el('div', 'dscroll');   // UI-CALM: the words scroll, the presses stand (the race's card, above)
+    d.classList.add('confirm');
+    d.append(body);
+    // and its hard-wrapped lines flow as the race's do (PX17a): a blank line is the paragraph's end
+    let para = [];
+    const flush = () => { if (para.length) { body.append(el('p', null, para.join(' '))); para = []; } };
     for (const line of flow.classConfirm) {
-      const text = typeof line === 'string' ? line : line.text;
-      if (text?.trim()) d.append(el('p', null, text));
+      const text = (typeof line === 'string' ? line : line.text) ?? '';
+      if (text.trim()) para.push(text.trim()); else flush();
     }
+    flush();
     const a = el('div', 'acts');
-    const yes = el('button', 'act primary', `Play as a ${picked}`);
+    const yes = el('button', 'act primary', `Play as ${/^[aeiou]/i.test(picked) ? 'an' : 'a'} ${picked}`);   // AUDIT UICALM-FIRM1 L3 N2: an Archer, an Assassin
     yes.onclick = () => { flow.applyHit({ confirmClass: true }); paint(); };
     const no = el('button', 'act', 'Choose again');
     no.onclick = () => { flow.applyHit({ cancelClass: true }); paint(); };
     a.append(yes, no);
     d.append(a);
   } else {
+    const career = flow.classListIndex === flow.careers.length ? null : flow.careers[flow.classListIndex]?.career;
+    if (career) d.append(classProfile(career));
     d.append(el('p', null, flow.classListIndex === flow.careers.length
       ? 'Twelve skills, your own attributes, your own advantages, and a difficulty that moves as you spend.'
       : 'Read what this class is before you commit to it.'));
@@ -1379,13 +1519,12 @@ function summaryStage() {
   d.append(fa);
 
   const left = (flow.sumStatPool ?? 0) + Object.values(flow.pools ?? {}).reduce((n, v) => n + v, 0);   // AUDIT 64 F33
-  const a = el('div', 'acts');
-  const ok = el('button', 'act primary', left > 0 ? `${left} left to spend` : 'Begin your life');
-  ok.onclick = () => { flow.confirmSummary(); if (flow.done) onExit('done'); else paint(); };
-  const restart = el('button', 'act', 'Start over');
-  restart.onclick = () => { flow.applyHit({ restart: true }); paint(); };
-  a.append(ok, restart);
-  d.append(a);
+  // UI-CALM: THE LAST PRESS OF THE WIZARD IS ITS LOUDEST - Begin your life stands in the action bar, where every stage's
+  // way on stands (stagePrimary), not among the face's presses; Start over keeps the card, out of the way
+  stagePrimary = { label: left > 0 ? `${left} left to spend` : 'Begin your life', act: () => { flow.confirmSummary(); if (flow.done) onExit('done'); else paint(); } };
+  // UI-CALM (a player: "start over looks misplaced"): Start over leaves the face's presses for the action bar, beside
+  // Back - the bar's two ways out, the way on at its far end
+  stageSecondary = { label: 'Start over', act: () => { flow.applyHit({ restart: true }); paint(); } };
   detail.append(d);
   pane.append(detail);
   ensureFaces();
@@ -1443,6 +1582,8 @@ let groundTimer = null;   // PX13: the wizard sky's 8fps clock - cleared by ever
 // Back. Reset on every repaint BEFORE the stage runs, so a stage that
 // declares nothing cannot inherit the last one's button.
 let stagePrimary = null;
+/** UI-CALM: a stage's quieter press in the action bar, beside Back (the review's Start over) - or null. */
+let stageSecondary = null;
 let nameOk = null;   // the name stage's own handle on the bar's button
 
 function paintInto() {
@@ -1522,6 +1663,7 @@ function paintInto() {
     reflexes: reflexStage, summary: summaryStage,
   };
   if (flow.state !== 'customClass') { classIo = null; classIoNote = null; }   // UXB1-H: the card is the builder's, and leaves with it
+  stageSecondary = null;   // UI-CALM: the bar's quieter press, cleared with its primary
   stagePrimary = null;
   nameOk = null;
   pane.append(flow.biogRepBox?.length
@@ -1541,6 +1683,11 @@ function paintInto() {
     paint();
   };
   bar.append(back);
+  if (stageSecondary) {
+    const b2 = el('button', 'act', stageSecondary.label);
+    b2.onclick = stageSecondary.act;
+    bar.append(b2);
+  }
   if (stagePrimary) {
     const go = el('button', 'act primary', stagePrimary.label);
     go.disabled = !!stagePrimary.disabled;
@@ -1681,6 +1828,9 @@ function releaseLock() {
  */
 export function muteConstellation(f) {
   if (f) f.constellationAnim = { start: () => 0, tick: () => false, stop: () => {} };
+  // UI-CALM: and the class list is browsed quietly - a double click is two on one row, the drums the choice's
+  // (ui/chargen.js clickClassRow, useClass, confirmClass)
+  if (f) f.classCalm = true;
   return f;
 }
 

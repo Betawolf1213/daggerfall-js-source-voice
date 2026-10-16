@@ -319,7 +319,7 @@
   {
     "name": "LOOT14-the-kit-garment-on-the-whole-ladder",
     "file": "src/systems/foeLootCap.js",
-    "old": "  kit.weights = plainFoeRarityWeights();\n",
+    "old": "  kit.weights = plainFoeRarityWeights(quarters);\n",
     "new": "\n",
     "tests": [
       "test/loot14_wardrobe.test.js"

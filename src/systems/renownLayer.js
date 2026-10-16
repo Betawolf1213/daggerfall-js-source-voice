@@ -47,8 +47,13 @@ export function keepFraction(v, from, to) {
  * @param {number|null} level
  */
 export function setRenownLayer(entity, level) {
-  const b = Number.isSafeInteger(level) && level > 1 ? renownBonus(level) : { hp: 0, mp: 0 };
-  if (!entity) return b;
+  const r = Number.isSafeInteger(level) && level > 1 ? renownBonus(level) : { hp: 0, mp: 0 };
+  if (!entity) return r;
+  // FIRM1: the Firmament's health and magicka ride the same layer (setOnlineLayerExtra) - on while online, off with it
+  const online = Number.isSafeInteger(level) && level >= 1;
+  _levels.set(entity, online ? level : null);
+  const x = online ? _extras.get(entity) : null;
+  const b = x ? { hp: r.hp + x.hp, mp: r.mp + x.mp } : r;
   if (renownHpOf(entity) === b.hp && renownMpOf(entity) === b.mp) return b;
   const hpFrom = entity.maxHealth, mpFrom = entity.maxMagicka;
   entity.renownHp = b.hp;
@@ -56,6 +61,25 @@ export function setRenownLayer(entity, level) {
   if (Number.isFinite(entity.health)) entity.health = keepFraction(entity.health, hpFrom, entity.maxHealth);
   if (Number.isFinite(entity.magicka)) entity.magicka = keepFraction(entity.magicka, mpFrom, entity.maxMagicka);
   return b;
+}
+
+/** FIRM1: the layer's other part - the Firmament's health and magicka (systems/firmamentPowers.js), by entity - and
+ *  the Renown level each entity's layer was last put on for (null: off). */
+const _extras = new WeakMap();
+const _levels = new WeakMap();
+/**
+ * FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S HEALTH AND MAGICKA, laid on the online layer beside Renown's -
+ * the same two fields, so the same never-saved, fraction-kept law holds for them (offlineVitals takes the whole layer
+ * off). `extra` `{ hp, mp }`, whole and never negative; laid on at once where the layer is on, and kept for when it
+ * goes on. Answers the layer's bonus as it now stands.
+ * @param {any} entity @param {{ hp?: number, mp?: number }|null} extra
+ */
+export function setOnlineLayerExtra(entity, extra) {
+  if (!entity) return { hp: 0, mp: 0 };
+  const hp = Math.max(0, Math.trunc(Number(extra?.hp) || 0)), mp = Math.max(0, Math.trunc(Number(extra?.mp) || 0));
+  if (hp || mp) _extras.set(entity, { hp, mp }); else _extras.delete(entity);
+  const level = _levels.get(entity);
+  return level == null ? { hp: renownHpOf(entity), mp: renownMpOf(entity) } : setRenownLayer(entity, level);
 }
 
 /**

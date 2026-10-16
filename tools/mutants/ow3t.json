@@ -71,7 +71,7 @@
   },
   {
     "name": "OW3-T7-2-chaser-unshown",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "    for (const c of _bandChase.values()) if (!shown.some((o) => o.id === c.band.id)) shown.push(c.band);",
     "new": "",
     "tests": [

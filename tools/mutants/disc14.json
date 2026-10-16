@@ -11,8 +11,8 @@
   {
     "name": "DISC14-A-world-draws-no-weapon",
     "file": "src/scenes/world.js",
-    "old": "      if (walkMode && playerSpawned && !tvf) weaponRig.draw({ paralyzed });   // TV1: no hand on a camera 450 m up\n",
-    "new": "",
+    "old": "{ if (walkMode && playerSpawned && !tvf) weaponRig.draw({ paralyzed }); }",
+    "new": "{ }",
     "tests": [
       "test/disc14.test.js"
     ]

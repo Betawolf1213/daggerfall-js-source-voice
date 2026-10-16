@@ -25,6 +25,7 @@ import { fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs,
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { adoptLight } from '../src/render/lightId.js';
 import { Boat, setLights } from '../src/systems/comeSailAwayBoat.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -164,11 +165,13 @@ function exteriorFrame({ lane, night, town, boats, eye }) {
     naval: null,   // NAV-B: the broadsides' flashes and the burning decks join the hand lights - no sea in this pin
     festivalStage: null,   // FESTIVAL-STAGE: no Festival in this pin
     quays: null,   // PIN MOVED (QUAYS): the quays' lanterns join the night's extras - no harbour in this pin
+    poiHost: null,   // PIN MOVED (POI-2): a POI's own lights join the scene's - no POI in this pin
     yards: null,   // PIN MOVED (YARD-LIGHT): the yards' lamps join the scene lights - no yard in this pin (test/yardlight.test.js runs them)
     portHost: null,   // PIN MOVED (SHIPYARDS): the lighthouses' lamps join the scene lights - no port in this pin (test/shipyards1_found.test.js runs them)
     CITY_LIGHT_COLOR_F32: lanternColor(lane, new Float32Array(CITY_LIGHT_COLOR)),
     fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, withPlayerLights, wodLightColors,
     meterFor: () => null,   // PIN MOVED (PERF-SIM3): the frame's CPU meter marks its spans inside this source - no meter in this pin
+    adoptLight,   // PIN MOVED (LIGHT-ID): the World of Daggerfall lights and the boats' lanterns in the pool name each entry by its light (render/lightId.js)
   };
   exteriorLightsSource()(scope);
   const L = renderer._pointLights, n = Math.min(L.length / 4, renderer.maxPointLights);

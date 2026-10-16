@@ -4,6 +4,7 @@
 // range, a check a classic minute apart on the traveller's clock), the alert predicate (systems/encounters.js
 // foeAlerted), the host's gate, band spotting and "!" marks lifted out of scenes/world.js and RUN, and the mark's DOM
 // layer (ui/wildMarks.js) over a fake document.
+import { concealmentFlags } from '../src/systems/effects.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -115,7 +116,7 @@ function gateHost(over = {}) {
   };
   const wildFoes = createWildAlert({ weak: true, rng: () => { d.rolls = (d.rolls ?? 0) + 1; return d.die ?? 0.999; } });
   const scope = {
-    wildFoes, playerEntity: {}, SKILLS: { Stealth: 'Stealth' }, skillValue: () => d.stealth,
+    wildFoes, playerEntity: {}, SKILLS: { Stealth: 'Stealth' }, skillValue: () => d.stealth, concealmentFlags,   // INVIS-SWING: the real flags (an unconcealed traveller)
     travelControlUI: { get isShowing() { return d.travelling; } }, travelOptions: { state: { get autopilot() { return d.travelling ? {} : null; } } },
     tvWalking: 0, modes: { get mode() { return d.mode; } }, get walkMode() { return d.walkMode; }, get playerSpawned() { return d.spawned; },
     player: { feetAt: () => [0, 0, 0] }, worldTimeScale: () => d.scale, performance: { now: () => 0 }, gamePaused: () => !!d.paused,
@@ -271,8 +272,10 @@ test('WILD-ALERT host: the Overworld\'s marks - a chase wears the "!", and so do
   const keys = new Function('exteriorFoes', 'foeAlerted', `${cutFn('wildCampKeys')} return wildCampKeys;`)({ foes: pool }, foeAlerted)();
   assert.deepEqual([...keys].sort(), ['me:7', 'p2:3']);
   assert.equal(WILD_MARK, '!');
-  assert.match(W, /label: chasing \? `\$\{WILD_MARK\} \$\{bandLabel\(mk\.name, mk\.mobileTypes\.length\)\}` : bandLabel/);
-  assert.match(W, /label: wildCamps\.has\(c\.key\) \? `\$\{WILD_MARK\} \$\{c\.label\}` : c\.label/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
+  assert.match(tvm, /label: chasing \? `\$\{WILD_MARK\} \$\{bandLabel\(mk\.name, mk\.mobileTypes\.length\)\}` : bandLabel/);
+  assert.match(tvm, /label: wildCamps\.has\(c\.key\) \? `\$\{WILD_MARK\} \$\{c\.label\}` : c\.label/);
 });
 
 test('WILD-ALERT host: a wilderness band no longer holds the journey for its sight - journeyThreats asks a chase alone (mutant: the wanderers counted again)', () => {

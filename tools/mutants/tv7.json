@@ -151,7 +151,7 @@
   },
   {
     "name": "TV7-unseen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "      marks.push({ key: `band:${b.id}`,",
     "new": "      if (false) marks.push({ key: `band:${b.id}`,",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "TV7-chaser-lost-off-screen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "kind: chasing ? 'band chase' : 'band', edge: chasing, pick: true });",
     "new": "kind: chasing ? 'band chase' : 'band', edge: false, pick: true });",
     "tests": [

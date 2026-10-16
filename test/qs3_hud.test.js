@@ -210,7 +210,7 @@ test('QS3: the diamond is a block of its own on the HUD root, and the hand plaqu
   // QS6: the caption carries the spell chip between the mode word and
   // the readied one - the diamond's four corners are the hands and the
   // consumables, and a spell is in none of them.
-  assert.match(HUD, /cap\.append\(cornerWord, spellChip, readied\);/);
+  assert.match(HUD, /cap\.append\(temp, cornerWord, spellChip, readied\);/);
   assert.ok(CSS.includes('.hud-qspell'), 'and the sheet dresses it');
   // The four cells and the four tags.
   assert.match(HUD, /const cells = \{ c1: cellOf\('c1'\), off: cellOf\('off'\), main: cellOf\('main'\), c2: cellOf\('c2'\) \};/);

@@ -19,6 +19,7 @@
 import { getPref, setPref } from '../systems/uiPrefs.js';
 import { isEnhanced } from '../systems/uiSkin.js';   // ENHANCED PLUS ONLY: no other UI is customisable
 import { seatHudPlacer } from './hudPlacer.js';   // MOVED-NOTICE: a piece's builder places it at once, through the leaf
+import { t } from '../systems/textManager.js';   // L10N4: a piece's name in the player's language, read as it is read (HUD-SADDLE's the first)
 
 
 export const HUD_LOCK_PREF = 'hudLocked';
@@ -35,10 +36,10 @@ export const HUD_PIECES = Object.freeze([
   // (its own press, beside the X); a dress that draws a compass with a top and a bottom (DFO Grimoire's, hung from the
   // screen's top) stands it up again when it is turned. The flag rides the piece's layout and Reset clears it
   { id: 'compass', sel: '.hud .hud-compass', name: 'Compass', len: true, turn: true },
-  // AUDIT C&C S3: the temperature plate stands INSIDE the compass in the page (ui/enhancedHud.js, off its right end) but
-  // is its own piece, as the status widget is the quick block's - the compass's move and size undone on it, its own X:
-  // the compass's X hid the plate with it while the plate's own part stood on
-  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'compass' },
+  // AUDIT C&C S3: the temperature plate stands INSIDE another piece in the page but is its own piece, as the status
+  // widget is the quick block's - the outer piece's move and size undone on it, its own X. UI-CALM (2026-10-14): it stands
+  // in the bottom-left corner now, the quick block's caption (ui/enhancedHud.js), so the quick block is its outer piece
+  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'quick' },
   // `dummy`: hidden until there is something to show (no foe targeted) - while unlocked it stands as a preview to move
   { id: 'foe', sel: '.hud .hud-foe', name: 'Target bar', dummy: true, len: true },
   { id: 'hotbar', sel: '.hud .hb', name: 'Hotbar' },
@@ -61,6 +62,15 @@ export const HUD_PIECES = Object.freeze([
   { id: 'boss', sel: '.wb-boss-bar', name: 'Boss bar', dummy: true, ghost: 'boss', len: true },   // HUD-LEN: and its length
   { id: 'revenant', sel: '.rvncard-stack', name: 'Revenant taunts', dummy: true, ghost: 'revenant' },   // REVENANT-CARD
   { id: 'loot', sel: '.lootbanner-stack', name: 'Loot banners', dummy: true, ghost: 'loot' },   // LOOT-BANNER
+  // HUD-SADDLE (FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor (Alt+U)"): the
+  // saddle panel's bar (ui/enhancedSaddle.js) - its layer is the whole screen, so the piece is the bar inside it; a
+  // preview while nobody rides (its stand-in is that layer, the bar inside it the piece - ghostOf). No `dummy`: the
+  // panel is built only when there is a ride to show, and a window over the HUD covers it as it covers the HUD
+  { id: 'saddle', sel: '.saddlepanel .saddlepanel-bar', get name() { return t('menu.hud.piece.saddle', 'Riding panel'); }, ghost: 'saddle' },
+  // HUD-HELM (2026-10-15, Mac: "Yes, same branch"): the helm panel's bar (ui/enhancedHelm.js), the saddle's twin - its
+  // layer the whole screen, the piece the bar inside it, a preview while nobody is at a helm; the sea's target card
+  // stands under the bar wherever it is moved (ui/navalHud.js drawNavalHud's `under`)
+  { id: 'helm', sel: '.helmpanel .helmpanel-bar', get name() { return t('menu.hud.piece.helm', 'Helm panel'); }, ghost: 'helm' },
   { id: 'fps', sel: '#fps-counter', name: 'FPS counter' },
   { id: 'midtext', sel: '#enhanced-midtext, .hudmid[data-hm-ghost="midtext"]', name: 'Screen messages', dummy: true, ghost: 'midtext' },
   { id: 'netstatus', sel: '#enhanced-netstatus, .hudstatus[data-hm-ghost="netstatus"]', name: 'Online status', dummy: true, ghost: 'netstatus' },
@@ -85,6 +95,8 @@ export const hudLocked = () => getPref(HUD_LOCK_PREF) !== false;
  *  exactly as their sheets have them. The layout is kept for when Enhanced Plus is chosen again. */
 const customisable = () => { try { return isEnhanced(); } catch { return false; } };
 const locked = () => !customisable() || hudLocked();
+/** Whether the HUD is being arranged now (its editor up: unlocked where it can be). */
+export const hudArranging = () => !locked();
 export const hudBarsSplit = () => getPref(HUD_BARS_SPLIT_PREF) === true;
 export const hudSnap = () => getPref(HUD_SNAP_PREF) !== false;
 const editable = (p) => !p.edit || (p.edit === 'split') === hudBarsSplit();
@@ -129,7 +141,7 @@ ${MOVED} { translate: var(--hmx, 0px) var(--hmy, 0px); scale: var(--hms, 1); }
 /* the quick block turned off leaves the buffs (their own piece) standing, unless they are off too */
 .hud-quick[data-hm-off]:not([data-hm-edit]) .hud-stat[data-hm]:not([data-hm-off]) { visibility: visible !important; }
 /* AUDIT C&C S3: ...and the compass turned off leaves the temperature plate (its own piece) standing, unless it is off too */
-.hud-compass[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }
+.hud-quick[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }   /* UI-CALM: the plate's outer piece is the quick block */
 /* LENGTH (only once a piece's length is changed - the sheet's own widths, small-screen ones too, stand until then) */
 .hud .hud-bars[data-hm-len] .hud-vital .hud-track, .hud .hud-bars .hud-vital[data-hm-len] .hud-track {
   width: calc(min(190px, 23vw) * var(--hml-g, 1) * var(--hml-b, 1)) !important; }
@@ -275,12 +287,15 @@ let ghostDeps = null, ghostDepsLoading = false;
 function ensureGhostDeps() {
   if (ghostDeps || ghostDepsLoading) return;
   ghostDepsLoading = true;
-  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js')])
-    .then(([boss, party, revenant, loot]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview }; })
+  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js'), import('./enhancedSaddle.js'), import('./enhancedHelm.js')])
+    .then(([boss, party, revenant, loot, saddle, helm]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview, buildSaddlePreview: saddle.buildSaddlePreview, buildHelmPreview: helm.buildHelmPreview }; })
     .catch(() => { ghostDeps = {}; });
 }
+/** HUD-SADDLE: the stand-in a node belongs to - the node itself, or the layer it stands in (the saddle panel's bar and
+ *  the helm panel's are their pieces, their whole-screen layers the stand-ins); null for a host's real node. */
+const ghostOf = (n) => (n?.hasAttribute?.('data-hm-ghost') ? n : n?.closest?.('[data-hm-ghost]') ?? null);
 function buildGhost(doc, kind) {
-  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
+  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot' || kind === 'saddle' || kind === 'helm') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
   const div = (cls, text) => { const n = doc.createElement('div'); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   let g = null;
   if (kind === 'notices') {
@@ -311,6 +326,10 @@ function buildGhost(doc, kind) {
     try { g = ghostDeps.buildRevenantPreview?.(doc) ?? null; } catch { g = null; }   // REVENANT-CARD: a card as one will stand
   } else if (kind === 'loot') {
     try { g = ghostDeps.buildLootBannerPreview?.(doc) ?? null; } catch { g = null; }   // LOOT-BANNER: a banner as one will stand
+  } else if (kind === 'saddle') {
+    try { g = ghostDeps.buildSaddlePreview?.(doc) ?? null; } catch { g = null; }   // HUD-SADDLE: the panel as it stands astride
+  } else if (kind === 'helm') {
+    try { g = ghostDeps.buildHelmPreview?.(doc) ?? null; } catch { g = null; }   // HUD-HELM: the panel as it stands at a helm
   }
   if (g) { g.setAttribute('data-hm-ghost', kind); doc.body.append(g); }
   return g;
@@ -321,7 +340,7 @@ function syncGhosts(doc, edit) {
     if (!p.ghost) continue;
     let all = [];
     try { all = [...doc.querySelectorAll(p.sel)]; } catch { continue; }
-    const ghosts = all.filter((n) => n.hasAttribute?.('data-hm-ghost'));
+    const ghosts = all.map(ghostOf).filter(Boolean);
     const real = all.length - ghosts.length;
     if (!edit || real > 0) { for (const g of ghosts) g.remove(); continue; }   // locked, or the real one is here now
     if (!ghosts.length) buildGhost(doc, p.ghost);
@@ -354,7 +373,7 @@ export function sweepHudLayout(doc = docRef) {
     for (const n of nodes) {
       if (n.dataset.hm !== p.id) n.dataset.hm = p.id;
       if (!drag || drag.node !== n) paint(n, layout[p.id] || p.inside ? layoutOf(p.id) : null);
-      if (p.dummy && !n.hasAttribute('data-hm-ghost')) { if (edit) { if (!n.hasAttribute('data-hm-dummy')) n.setAttribute('data-hm-dummy', ''); } else if (n.hasAttribute('data-hm-dummy')) n.removeAttribute('data-hm-dummy'); }
+      if (p.dummy && !ghostOf(n)) { if (edit) { if (!n.hasAttribute('data-hm-dummy')) n.setAttribute('data-hm-dummy', ''); } else if (n.hasAttribute('data-hm-dummy')) n.removeAttribute('data-hm-dummy'); }
       if (edit && editable(p)) { if (!n.hasAttribute('data-hm-edit')) { n.setAttribute('data-hm-edit', ''); n.setAttribute('data-hm-name', p.name); } }
       else if (n.hasAttribute('data-hm-edit')) { n.removeAttribute('data-hm-edit'); n.removeAttribute('data-hm-drag'); }
     }

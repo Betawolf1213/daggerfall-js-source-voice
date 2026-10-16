@@ -570,7 +570,8 @@ test('LOAD1 the menu: Screenshots is on every rail, the System page and both dis
   assert.ok(SYSTEM_PANES.some(([id, label]) => id === 'screenshots' && label === 'Screenshots'));
   assert.equal((menu.match(/screenshots: drawShotsPane,/g) ?? []).length, 2, 'both dispatch tables');
   assert.match(menu, /if \(label === 'About' \|\| label === 'Screenshots'\) continue;/, 'the door\'s list leaves it to the foot');
-  assert.match(menu, /const shots = el\('button', 'px-about px-shots', 'Screenshots'\);\n\s*shots\.onclick = \(\) => go\('screenshots'\);/);
+  // PIN MOVED (AUDIT UICALM-FIRM1 L3 N3): its word the player's language's (RAIL_TEXT), as About's beside it
+  assert.match(menu, /const shots = el\('button', 'px-about px-shots', RAIL_TEXT\.screenshots\(\)\);\n\s*shots\.onclick = \(\) => go\('screenshots'\);/);
   assert.match(menu, /stopTimers\(\);   \/\/ TIMERS1\n\s*releaseShotsPane\(\);/);
 });
 

@@ -159,7 +159,7 @@ test('the two rails differ only where the question does', () => {
   // ONLINE1: Online joins the boot-only set - "which game" again, the
   // one brought into the shared world.
   assert.deepEqual(boot.filter((x) => !shared.includes(x)),
-    ['Continue', 'New Game', 'Online', 'Test Room']);
+    ['Online', 'Continue', 'New Game', 'Test Room']);   // UI-CALM: Online first, as the door asks it
   assert.ok(!pause.includes('Test Room'), 'the room is a front door, not a pause row');
   assert.ok(!boot.includes('Enhanced') && !pause.includes('Enhanced'), 'Enhanced is a settings category, not a rail entry (SO1)');
   // FD1: the classic rail is the shared set behind one door

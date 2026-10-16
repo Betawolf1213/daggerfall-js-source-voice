@@ -228,5 +228,8 @@ test('GATHER-OW the glyph: the HUD draws a group by its work in its own colour -
 
 test('GATHER-OW the world host: the Overworld\'s marks take the gathering host\'s groups at the player\'s feet, beside the camps (by source)', () => {
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-  assert.match(w, /for \(const c of travelViewCamps\(\)\) marks\.push\(\{[^\n]*\}\); for \(const g of gatherHost\?\.overworldGroups\(walkMode \? player\.pos : cam\.pos\) \?\? \[\]\) marks\.push\(g\);/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js - the gathering host read live
+  const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
+  assert.match(tvm, /for \(const c of travelViewCamps\(\)\) marks\.push\(\{[^\n]*\}\); for \(const g of host\.gatherHost\?\.overworldGroups\(walkMode \? player\.pos : cam\.pos\) \?\? \[\]\) marks\.push\(g\);/);
+  assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get gatherHost\(\) \{ return gatherHost; \},[^]*?\n\s+\}\);/, 'handed over live');
 });

@@ -1,6 +1,6 @@
 # project-dagger
 
-**DFO Online** - an open-source reimplementation of The Elder Scrolls II: Daggerfall (BR5, 2026-10-11; it was DAGGERFALL ONLINE from BR4, 2026-09-27, DAGGERFALL ENHANCED from BR1, 2026-09-13, and DAGGERFALL JAVASCRIPT from U60 until then - `10-UI/UI-Arc.md` BR5 says where the original game is still named, and why). A 1:1 port, built the way we build: hand-rolled WebGL2, Vite, Node ESM, no framework. Data layer and game logic ported faithfully from Daggerfall Unity's reverse-engineered C#; presentation rebuilt on our stack; characters rebuilt on our voxel system.
+**DFO Online** - an open-source reimplementation of The Elder Scrolls II: Daggerfall (BR5, 2026-10-11; it was DAGGERFALL ONLINE from BR4, 2026-09-27, DAGGERFALL ENHANCED from BR1, 2026-09-13, and DAGGERFALL JAVASCRIPT from U60 until then - `10-UI/UI-Arc.md` BR5 says where the original game is still named, and why). Its own game, built the way we build: hand-rolled WebGL2, Vite, Node ESM, no framework. It began as a 1:1 port - data layer and game logic ported faithfully from Daggerfall Unity's reverse-engineered C#, presentation rebuilt on our stack, characters rebuilt on our voxel system - and since SCOPE1 (Mac, 2026-10-14) parity with DFU is no longer the goal: DFU is the reference we read first, not the target (`01-Overview/Port-Doctrine.md`, Scope).
 
 Read `01-Overview/Port-Doctrine.md` before touching anything.
 
@@ -176,7 +176,9 @@ the DFU value is unknown, the element does not draw until it is
 looked up. And native-window screenshots are eyeballed against the
 CLASSIC layout (the art's own frames are the ruler - an icon
 crossing a baked slot border is a positioning bug even when the
-code "looks right").
+code "looks right"). SCOPE1 (2026-10-14): this binds the windows that
+keep DFU's layout; a window redesigned on purpose cites its own design
+record instead (`01-Overview/Port-Doctrine.md`, Scope).
 
 **THE ONE CONSTRUCTION SEAM** (AUDIT 17i). When two hosts build the
 same object, every dependency it grows must be remembered twice - and
@@ -222,6 +224,17 @@ version (`app-v0.1.<count>`, which the updater compares): the release is
 named `Update <n>` and the game shows it beside the commit
 (`01-Overview/Desktop-App.md` REL8).
 
+THE HOSTS DO NOT GROW (HOST-SPLIT, 2026-10-15). bootWorld, createWorldModes,
+buildDungeonContext and bootExterior each keep their whole state in one
+function's scope, and world.js grew from 8,897 lines to 36,374 in a month. New
+behaviour goes into a module the host wires (`fishHost.js` is the shape) - and
+on the relay into a Room method of its own, not into `_message` - never into the
+host's own function. `test/hostceiling.test.js` holds each to a ceiling in code
+lines (comments are no weight; a fix's 250 lines of room), on a pull request
+and on a contributor's machine, never on a deploy; a slice that moves code out
+lowers it in the same change. The method and the map are
+`01-Overview/Host-Split.md`.
+
 ## Sections
 
 - `01-Overview/` - vision, port doctrine, phase plan, Port-Ledger (departures/quirks/unported)
@@ -234,7 +247,7 @@ named `Update <n>` and the game shows it beside the commit
 - `08-Audio/` - music (HMI/XMI), sound effects, audio state machine
 - `09-Testing/` - test doctrine, harnesses, data validation
 - `10-UI/` - HUD, menus, native Daggerfall UI reproduction
-- `11-Multiplayer/` - co-op: the three locked decisions, the architecture, the arc (the design the ONLINE arc grows into - presence, then chat, then the room's memory (WORLD1), then the room's simulation (WORLD2), then the room's events (WORLD3), then the room's loot (WORLD4) - `06-Systems/Online-Arc.md`); and `World-Bosses.md` (WB, 2026-09-25) - the Oblivion Gate: a world boss on the shared clock, the relay's first authority over a foe; and `Sigil-Sets.md` (SET, 2026-09-26) - SIGIL SETS: armour, shields and weapons whose sigils name a Daedric Prince's set, 2 / 4 / 6-piece abilities that grow with the set's lowest piece, the gate boss's Aetheric Ruhn's Regalia, and the Sigil Broker beside the gate; and `Super-Dungeons-Look.md` (SD-LOOK, 2026-10-08) - the Abyss Dungeon's visual spec: the Rift, the Return, the step through and the Hour's set pieces rebuilt in Daggerfall's pixel art, five lights with five meanings, and the build order its slices ship in; and `Elite-Gates.md` (EG, 2026-10-11; revised by AUDIT EG0, widened by EG0b, polished by AUDIT EG II) - ELITE GATES: the gate's Elite tier, the Elite Breach - a Weir Key (account-held, rolled by the service: from Dagon's Breach with a pity count, a fallen Valkynaz, the Remnant and, rarely, dungeons' elites by tier) raises a company's arch, timed like the gate's, into the Battlespire's torn halls: endless procedural halls in a fixed rhythm (Rift-Yards, Spans, Ramparts, Athenaeums, Proving Walks and the Deepway, each with variants; twists; Brink halls), fragments the courses pass through (the Oblivion Caverns and nine kin, set-piece passages, a High Road and a Low Road at every fork, engines, alcoves), nine Court lords with three phases each and four Valkynaz on their own ground, Redoubts as checkpoints with one life and one recall (at a Redoubt or by a Memento), Reliquaries opened only by walking home, Vestiges with Masteries and Accords, five laws that keep every blow fair and nothing faster, the Covenant's patience, two season boards and an all-time one, and a presentation built to be read by everyone
+- `11-Multiplayer/` - co-op: the three locked decisions, the architecture, the arc (the design the ONLINE arc grows into - presence, then chat, then the room's memory (WORLD1), then the room's simulation (WORLD2), then the room's events (WORLD3), then the room's loot (WORLD4) - `06-Systems/Online-Arc.md`); and `World-Bosses.md` (WB, 2026-09-25) - the Oblivion Gate: a world boss on the shared clock, the relay's first authority over a foe; and `Sigil-Sets.md` (SET, 2026-09-26) - SIGIL SETS: armour, shields and weapons whose sigils name a Daedric Prince's set, 2 / 4 / 6-piece abilities that grow with the set's lowest piece, the gate boss's Aetheric Ruhn's Regalia, and the Sigil Broker beside the gate; and `Super-Dungeons-Look.md` (SD-LOOK, 2026-10-08) - the Abyss Dungeon's visual spec: the Rift, the Return, the step through and the Hour's set pieces rebuilt in Daggerfall's pixel art, five lights with five meanings, and the build order its slices ship in; and `Elite-Gates.md` (EG, 2026-10-11; revised by AUDIT EG0, widened by EG0b, polished by AUDIT EG II) - ELITE GATES: the gate's Elite tier, the Elite Breach - a Weir Key (account-held, rolled by the service: from Dagon's Breach with a pity count, a fallen Valkynaz, the Remnant and, rarely, dungeons' elites by tier) raises a company's arch, timed like the gate's, into the Battlespire's torn halls: endless procedural halls in a fixed rhythm (Rift-Yards, Spans, Ramparts, Athenaeums, Proving Walks and the Deepway, each with variants; twists; Brink halls), fragments the courses pass through (the Oblivion Caverns and nine kin, set-piece passages, a High Road and a Low Road at every fork, engines, alcoves), nine Court lords with three phases each and four Valkynaz on their own ground, Redoubts as checkpoints with one life and one recall (at a Redoubt or by a Memento), Reliquaries opened only by walking home, Vestiges with Masteries and Accords, five laws that keep every blow fair and nothing faster, the Covenant's patience, two season boards and an all-time one, and a presentation built to be read by everyone; and `Kings-Gambit.md` (KG0, 2026-10-13) - THE KING'S GAMBIT: a Daggerfall Unity mod's tactics game - two armies of Daggerfall's bestiary and their kings on a board of fifteen by thirteen - read off its assembly and designed onto the tavern's card table: the army the Iliac cards, the kings the Bay's, the board the cloth, the relay running it online; decided whole (the owner: "Make the best and most detailed decisions. We also have permission" - section 10): the cards standing, the mod's roster, nine creatures painted into the set, the Bay's kings, a regular's tier, the lean, a night's purse; KG1 SHIPPED the same day (section 11): the law, `src/net/kingsGambit.js` - the mod's whole game as pure data, every board, unit, blow and hazard its own, pinned by `test/kg1_law.test.js` and 98 mutants, all dead; KG2 SHIPPED (section 12): the innkeeper's play, `src/systems/gambitPatrons.js` - a regular's tier the regular's seed's, the army Auto-filled to it, AiAction verbatim at float32 - and the tiers measured, 1,000 games each (`tools/kgMeasure.mjs`); AUDIT KG (section 13, `01-Overview/Audit-Kings-Gambit.md`): the law, the play and the record read cold and every finding fixed, and section 14 binds the table's UI to Enhanced Plus, the house's own coat and plain words; then KG-SET, KG3, KG4, KG5 (online) and KG6 (gold and the season's Grandmaster) shipped (sections 15-19), and AUDIT KG II (section 20, `01-Overview/Audit-Kings-Gambit-II.md`) read them all cold - 83 findings, each fixed or pinned
 - `01-Overview/Active-Arcs.md` - ACTIVE ARCS, one line per arc, each naming its own page (HARD5, 2026-09-15: moved out of this file, which was 291 KB)
 - `01-Overview/Audit-Log.md` - THE AUDIT LOG, newest first: every audit that has no page of its own (HARD5, same move)
 
@@ -286,6 +299,7 @@ alone, flagged at its new site inside calculateAttackDamage.
 - `src/scenes/horseCartPool.js` - FLAGGED: a peer's word does not say how many horses they own - their parked pair is drawn whole, and their second horse is not drawn at their parked wagon while they ride the first (bible/06-Systems/Wagons.md WAGONS3).
 - `src/scenes/horseCartPool.js` - FLAGGED: the horses are billboards, so a trace's collar and a rein's bit are measured points on the picture, not on a body - from some angles a trace meets the picture beside the horse's chest (bible/06-Systems/Wagons.md WAGONS3).
 - `src/scenes/merchantYardsHost.js` - scenes/exterior.js - FLAGGED: the single-town bench stands no yard; the streaming host is where its towns are played.
+- `src/scenes/poiHost.js` - scenes/exterior.js - FLAGGED: the fixed-city bench (`?exterior`, `?region&loc`) has no feed; a POI stands in the streamed world.
 - `src/scenes/portHost.js` - scenes/exterior.js - FLAGGED: the single-town bench stands no port; the streaming host is where its towns are played.
 - `src/scenes/seatBanners.js` - and dungeonContext.js stand no street; exterior.js (the bench) FLAGGED -
 - `src/scenes/wagonWardenHost.js` - scenes/exterior.js - FLAGGED: the single-town bench runs no town watch (its wagon is never stamped nor thrown).
@@ -331,7 +345,7 @@ held by text pins - tdz_selfreference.test.js is the standing guard.
 
 - Desktop-first. A mobile touch layer (`src/ui/touch.js`: virtual stick +
   look/attack drag + button row speaking the desktop input language) ships
-  for on-device testing and is wired into all four hosts - Port-Doctrine.md:19,
+  for on-device testing and is wired into all four hosts - Port-Doctrine.md (Rebuilt on our stack, 3),
   approved by Mac 2026-08-13. (AUDIT 18: this bullet denied the touch
   layer outright for six days after it landed (approved 2026-08-13). The
   open-flags list below is grep-regenerated from `src/`, so it can never catch

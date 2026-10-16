@@ -202,9 +202,9 @@
  },
  {
   "name": "AUDITMWNPC-C6-flats-left-cast-only",
-  "file": "src/scenes/dungeonContext.js",
-  "old": "    showBodyFlats: () => { for (const f of foes) if (f.corpseBatch) f.corpseBatch.castOnly = false; },",
-  "new": "    showBodyFlats: () => {},",
+  "file": "src/characters/foeBodies.js",
+  "old": "  for (const f of foes) { const b = corpseFlat(f); if (b) b.castOnly = false; }\n",
+  "new": "\n",
   "tests": [
    "test/mwnpc_audit.test.js"
   ]

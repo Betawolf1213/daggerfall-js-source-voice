@@ -36,6 +36,7 @@ import { PIXELIFY_FIVE_FACE, PIXEL_STACK, PIXEL_FONT_CSS } from './pixelifyFive.
 import { badgeCss } from './playerBadge.js';   // ACC3c: one rule per title and per glyph, walked out of the vocabulary - the card writes a class and the skin carries the colour
 import { STONE_WORD, PLUS_CSS, PLUS_STYLE_ID, applyPlusTheme } from './enhancedPlusStyle.js';   // PLUS1: the Enhanced Plus sheet, laid over this one
 import { installPlusCursor } from './plusCursor.js';   // PLUS7: the gauntlet cursor
+import { injectUiCalmStyle } from './uiCalmStyle.js';   // UI-CALM: the quiet pass, laid after the Plus sheet
 import { installWindowMotion } from './windowMotion.js';   // PLUS1/WM1: windows unfold and fold - Enhanced Plus only
 import { isEnhancedPlus } from '../systems/uiSkin.js';   // PLUS1: the Plus sheet is laid only under Plus
 import { pageHas } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
@@ -2168,12 +2169,30 @@ ${badgeCss()}
 }
 .ctl-foot { display: flex; justify-content: flex-end; }
 .ctl-row:last-child { border-bottom: 0; }
-/* UXB1-D (2026-09-25, the UX backlog): a question about a key stands in the
-   sticky head (brass-edged, so it reads as the thing waiting on an answer)
-   over the list it no longer replaces - and the rows it is about say so:
-   the row the key would go to in brass, the row that holds it now in the
-   duplicate's red. */
+/* UXB1-D: Defaults still asks in the sticky head. A question about a key is a
+   viewport-fitted tooltip beside the binding being changed, so a conflict far
+   down the list never sends the player back to the top. The list remains in
+   place and inert, and the two rows involved still say what is happening. */
 .ctl-head.ctl-asking { border-color: var(--brass); box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
+.ctl-row .ctl { position: relative; }
+.ctl-tooltip {
+  position: fixed; z-index: 30; inset: auto; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); margin: 0; box-sizing: border-box;
+  width: min(420px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto;
+  padding: 16px 18px; border: 2px solid var(--brass); background: #0d1014; color: inherit;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.7); text-align: left;
+}
+.ctl-tooltip::backdrop { background: transparent; }
+.ctl-key.ctl-tip-anchor { anchor-name: --ctl-key-in-use-anchor; }
+@supports (position-anchor: --ctl-key-in-use-anchor) {
+  .ctl-tooltip {
+    position-anchor: --ctl-key-in-use-anchor; position-area: bottom span-left;
+    position-try-fallbacks: flip-block, flip-inline;
+    top: auto; left: auto; transform: none; margin-block: 10px;
+  }
+}
+.ctl-tooltip h3 { margin: 0 0 8px; }
+.ctl-tooltip .acts { flex-wrap: wrap; }
 .ctl-row.ctl-want { box-shadow: inset 3px 0 0 var(--brass); }
 .ctl-row.ctl-want .ctl-key { color: var(--brass); border-color: var(--brass); }
 .ctl-row.ctl-holder { box-shadow: inset 3px 0 0 var(--blood); }
@@ -2919,7 +2938,7 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
   cursor: pointer; background: none; border: 0; padding: 2px 0; min-height: 24px; text-align: left; }
 /* AUDIT PLAIN-UI U10: the badge says it can be pressed - a mark after the number, the name underlined under a pointer */
 .talk-regard-value::after { content: ' ?'; color: #9c937d; }
-.talk-regard:hover .talk-regard-name, .talk-regard:focus-visible .talk-regard-name { text-decoration: underline dotted; }
+.talk-regard:hover .talk-regard-name, .talk-regard:focus-visible .talk-regard-name { text-decoration: underline solid; text-underline-offset: 0.2em; }
 .talk-regard:focus-visible { outline: 1px dashed currentColor; outline-offset: 2px; }
 .talk-regard-words { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.45; color: #c9bfa3; max-height: 4.4em; overflow-y: auto; max-width: 72ch; }   /* AUDIT PLAIN-UI C5: a short screen keeps its conversation; U9: a line a reader can follow */
 .talk-regard-name { text-transform: uppercase; }
@@ -3252,14 +3271,15 @@ ${paceControlsCss('tview')}
 .hud-point.hud-cardinal { font-size: 15px; color: #d8cfae; }
 .hud-needle { position: absolute; left: 50%; bottom: -2px; width: 2px; height: 8px;
   transform: translateX(-50%); background: var(--brass); }
-/* TEMP-UI: THE TEMPERATURE PLATE (ui/enhancedHud.js), hung off the compass's right end on the compass's own middle, so
-   it rides the HUD's scale and moves with the compass. A chip of the kit (enhancedFrame.js FRAME_ROLES.chip): the
+/* TEMP-UI: THE TEMPERATURE PLATE (ui/enhancedHud.js) - since UI-CALM the quick block's caption's first word, in the
+   bottom-left corner (uiCalmStyle.js .hud .hud-qcap .hud-temp; its fit off the compass's end retired with the place it
+   measured - AUDIT UICALM-FIRM1 L5 M10 took the compass's placement, the compact plate and the hung one out). A chip of the kit (enhancedFrame.js FRAME_ROLES.chip): the
    glyph, the number, the word, and a scale from deadly cold to scorching in the bands' own colours - the deadly cold,
    the freezing, the cold, the comfortable band (bone, in the middle), the warm, the hot, the scorching - over
    TEMP_SCALE's -60..+60 (each band a sixth of 120 but the ends), the mark where you stand. Its frame wears the strip's
    levels (the status tiles' own --hst pairs): amber felt, red where the live tier charges for the reading (AUDIT C&C S5,
    survival/status.js needLevel). */
-.hud-temp { position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+.hud-temp { position: relative;
   display: flex; align-items: center; gap: 6px; padding: 2px 8px 2px 4px; white-space: nowrap;
   background: rgba(10,12,17,0.75); border: 2px solid; border-color: #c2b79a #3a352a #3a352a #c2b79a; box-shadow: 0 0 0 1px #050608; }
 .hud-temp[data-level="warn"] { border-color: #f3cf86 #7a5424 #7a5424 #f3cf86; }
@@ -3273,13 +3293,6 @@ ${paceControlsCss('tview')}
 .hud-tempscale { position: relative; width: 60px; height: 6px; border: 1px solid #050608;
   background: linear-gradient(90deg, #3a5fb0 0 8.333%, #5d8fe0 8.333% 25%, #9ec3ff 25% 41.667%, #d8cfae 41.667% 58.333%,
     #ffd27a 58.333% 75%, #ffb02a 75% 91.667%, #e0584a 91.667% 100%); }
-.hud-temp.compact .hud-tempword, .hud-temp.compact .hud-tempscale { display: none; }   /* no room for the whole plate: the glyph and the number */
-/* AUDIT C&C S3: no room for even the glyph and the number right of the compass (a phone at a HUD scale of 1.25 and up,
-   a narrow one at 1, the FPS read-out over it - ui/enhancedHud.js fitTemp): the compact plate HUNG under the compass's
-   right end, moved in by what would pass the screen's edge and down past what stands there (the read-out's foot, a
-   foe's bar); and where even that meets something, aside until there is room (the status widget's own law) */
-.hud-temp.temp-hung { left: auto; right: var(--hud-temp-in, 0px); top: calc(100% + 6px + var(--hud-temp-drop, 0px)); transform: none; }
-.hud-temp.temp-aside { display: none !important; }
 .hud-tempmark { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: #fff8e8; box-shadow: 0 0 0 1px #050608; }
 /* AUDIT C&C S14: A COST SAID WITHOUT ITS COLOUR - a costing reading's plate and a costing need's tile carry a mark on
    their top corner (and say it on their title), so the red is never the only word for a cost; out of the flow, it moves
@@ -3707,7 +3720,7 @@ ${paceControlsCss('tview')}
 
 @media (max-width: 860px) {
   .hud-top { top: 10px; }
-  .hud-temp { left: calc(100% + 6px); gap: 4px; padding: 2px 5px 2px 3px; }   /* TEMP-UI: a phone keeps the glyph and the number */
+  .hud-temp { gap: 4px; padding: 2px 5px 2px 3px; }   /* TEMP-UI: a phone keeps the glyph and the number */
   .hud-temp .hud-tempword, .hud-temp .hud-tempscale { display: none; }
   .hud-bottom { bottom: 12px; gap: 8px; }
   .hud-bars { gap: 10px; }
@@ -5299,6 +5312,10 @@ ${paceControlsCss('tview')}
 .wplaque-row { display: flex; align-items: baseline; gap: 10px; font-size: 14px;
   line-height: 1.5; }
 .wplaque-count { margin-left: auto; color: var(--brass); font-size: 12px; }
+/* PARTY-LOOT: a row of this player's own bonus - the tag after the count, the rest of the list the room's */
+.wplaque-mine { color: var(--brass); font-size: 11px; font-style: italic; opacity: 0.85; }
+.wplaque-row.mine .wplaque-mine { margin-left: 6px; }
+.wplaque-row.mine:not(:has(.wplaque-count)) .wplaque-mine { margin-left: auto; }
 /* QUICK-LOOT B3: THE HIGHLIGHT. Negative margins with matching padding
    so the band reaches the plaque's inner edges without the row's own
    box moving - a highlight that reflowed the list would shift every
@@ -6494,6 +6511,7 @@ export function injectEnhancedStyle(doc = document) {
     doc.head.append(plus);
     installWindowMotion(doc);  installPlusCursor(doc);   // PLUS7: the gauntlet presses while a button is held
     applyPlusTheme(doc);   // PLUS2: the stored colour
+    injectUiCalmStyle(doc);   // UI-CALM: the quiet pass - its type, its space - laid after Plus's, so it wins by order
   }
   // SND1: every enhanced surface is styled through here once, so the UI's
   // click sound is installed with it. Loaded late, so this sheet (which

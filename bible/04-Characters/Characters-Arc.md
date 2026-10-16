@@ -307,7 +307,10 @@ rig is the authoring bench for monster morphologies. Slices:
   (0-floor), speed floor 8, the classic per-update roll
   DFRandom.rand() % speed >= (speed >> 3) + 6 (DFU keeps classic's
   reversed comparison; so do we), MeleeAnimation gates (in sight,
-  22.5deg yaw, distance <= MeleeDistance + rate-of-approach),
+  22.5deg yaw toward the LAST-KNOWN target position - INVIS-SWING,
+  2026-10-15: the port faced the live feet, so an undetected invisible
+  player was struck, `01-Overview/Field-Bugs-2026-10-15f.md` -
+  distance <= MeleeDistance + rate-of-approach),
   ResetMeleeTimer arithmetic exact (Range(1500,3001), -50/level over
   10, +450/reflex step, 0-floor, /980). Unity-Random slots stay
   uniform rolls (DFU's own choice); DFRandom used exactly where DFU
@@ -2854,6 +2857,18 @@ Collider recording the height every move carries, a sweep of every
 ARENA2 in the container: the bats' height, the halved capsule's feel
 at doors, and flyers and swimmers in every host want Mac's eyes on the
 live site.
+
+DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/Field-Bugs-2026-10-14b.md`):
+the sized capsule met the doors. A Mage's, a Healer's, a Spellsword's, a
+Lich's and a Daedra Lord's stand taller than nine in ten of the dungeons'
+doorways, and DFU's counterpart to SetupDemoEnemy's height - EnemyMotor
+.HeightAdjust, the 1.65 duck for half a second after a bump on the sides
+- was not ported, so every one walked into the lintel for good. It is
+now (`enemyMotor.js:"this._heightAdjust(FIXED_DT);"`): `height` is DFU's
+originalHeight, which the probes read; `controllerHeight` the one every
+Move sweeps, and nothing else reads it (Mac, 2026-10-15: "Keep full
+height" - missiles, touches, sight, the crosshair, the lock-on and the
+bars keep the whole body; Port-Ledger A).
 
 ### REVIEW 2026-09-05 - the adversarial round over PR #55
 

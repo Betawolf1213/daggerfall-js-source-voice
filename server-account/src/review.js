@@ -24,6 +24,12 @@
 //                            budget only measures nothing is held, so `holds` lists none of them
 //   /v1/mod/realm-trades     HACKED-GOLD: one character's realm trades, newest first - whom it traded with, and what each
 //                            gave (tradesOf): a trade is witnessed on both rows, so no finding names its receiver
+//   /v1/mod/realm-characters SUMMON-REPAIR: an account's realm characters by its handle - the id every act above names
+//   /v1/mod/realm-repair     SUMMON-REPAIR (FIELD BUGS 2026-10-14 SUMMON-OFFER): one of FactionFile's flag bits cleared on
+//                            one faction of the record and gold given back as a letter of credit (net/repairLaw.js), once
+//                            a ticket (`realm_repairs`); the record moves one sequence on with its seat taken from any tab
+//                            (realm.js seizeRealmRecord - the rollback's way), so the playing tab writes it over never and
+//                            its next join plays it. The gold is the service's own faucet (`repair`) and witnessed
 //
 // THE MEASURE (Mac: "Measure 7 days, then enforce"). realm_wealth_hours keeps each character's hour - the gain no witness
 // explained and the seconds it played. The report reads every hour with play enough to say something (MEASURE_PLAYED_MIN),
@@ -32,8 +38,10 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { isDeveloper } from './titles.js';
-import { REALM_ID_RE, realmSaveTextOf, dropObjects } from './realm.js';
-import { budgetConfig, budgetConfigOf, forgetBudgetConfig, BUDGET_DEFAULT, FAUCET_KINDS } from './budget.js';   // AUDIT LW-II-2 S6: and the service's own faucets
+import { REALM_ID_RE, REALM_PLAYING_S, realmSaveTextOf, dropObjects, seizeRealmRecord, dropIfUnnamed } from './realm.js';
+import { budgetConfig, budgetConfigOf, forgetBudgetConfig, BUDGET_DEFAULT, FAUCET_KINDS, faucetStatement } from './budget.js';   // AUDIT LW-II-2 S6: and the service's own faucets; SUMMON-REPAIR: a refund is one
+import { repairOf, applyRepair } from '../../src/net/repairLaw.js';   // SUMMON-REPAIR: the repair's law, the tool's too
+import { isHandleShaped } from '../../src/net/handleShape.js';   // SUMMON-REPAIR: an account named by its handle
 import { wealthOf } from './judge.js';
 import { REALM_LETTER_TEMPLATE } from '../../src/net/realmGoldLaw.js';   // HACKED-GOLD: a trade's letters, at their worth
 
@@ -52,6 +60,10 @@ export const MEASURE_QUANTILES = Object.freeze([0.5, 0.9, 0.99, 0.999]);
 /** HACKED-GOLD: how many characters one read of the gains lists, and how many trades one character's. */
 export const GAINS_LIST_MAX = 200;
 export const TRADES_LIST_MAX = 200;
+/** SUMMON-REPAIR: a repair's row, as its answer says it. */
+const repairAnswer = (/** @type {any} */ r, /** @type {boolean} */ repeat) => ({
+  ok: true, repeat, ticket: r.ticket, seq: r.seq, faction: r.faction, flag: r.flag, was: r.was, cleared: (r.was & r.flag) !== 0, gold: r.gold, by: r.by_handle, at: r.at,
+});
 
 const noteOf = (/** @type {unknown} */ v) => (typeof v === 'string' ? v.slice(0, NOTE_MAX) : null);
 const parse = (/** @type {string} */ t) => { try { return JSON.parse(t); } catch { return null; } };
@@ -68,10 +80,13 @@ const rowOf = (/** @type {any} */ db, /** @type {unknown} */ id) => (typeof id =
 /**
  * ONE REVIEW ACT, by its route's name - `{ error }` 'not-developer' (403), 'body' (400), 'no-realm-character' (404),
  * 'no-clean' (409: no clean checkpoint kept to roll back to), 'service-moved' (409: the service moved the record since
- * it), 'dead' (409), or the act's answer.
+ * it), 'dead' (409), SUMMON-REPAIR's 'no-player' (404: no account by that handle), 'repair-no-faction' (409: the record
+ * holds no such faction), 'repair-not-set' (409: its faction does not carry the bit - the wrong character?) and 'seq'
+ * (409: the record moved while the repair was written - ask again), or the act's answer.
  * @param {any} ctx @param {any} player @param {any} env @param {string} act @param {any} body
  */
-export async function reviewAct({ db, bucket, nowS }, player, env, act, body = {}) {
+export async function reviewAct(ctx, player, env, act, body = {}) {
+  const { db, bucket, nowS } = ctx;
   if (!isDeveloper(player, env)) return { error: 'not-developer' };
   const by = player.handle;
   if (act === 'holds') {
@@ -95,6 +110,21 @@ export async function reviewAct({ db, bucket, nowS }, player, env, act, body = {
   }
   if (act === 'bodies') return bodiesMeasure(db, nowS, Number.isSafeInteger(body.days) && body.days >= 1 && body.days <= 30 ? body.days : 7);
   if (act === 'gains') return gainsMeasure(db, nowS, Number.isSafeInteger(body.days) && body.days >= 1 && body.days <= 30 ? body.days : 7);
+  if (act === 'characters') {
+    // SUMMON-REPAIR: the account by its handle as the service folds it (the customs pass's way), and its realm characters -
+    // the dead too, said so - with the id every act on one names
+    if (!isHandleShaped(body.name)) return { error: 'body' };
+    const account = await db.prepare('SELECT id, handle FROM players WHERE handle_lc = ? AND handle IS NOT NULL').bind(body.name.toLowerCase()).first();
+    if (!account) return { error: 'no-player' };
+    const { results = [] } = await db.prepare('SELECT id, name, seq, lease, lease_at, dead_at, held, created_at, updated_at FROM realm_characters WHERE player = ? ORDER BY created_at')
+      .bind(account.id).all();
+    return {
+      player: { id: account.id, handle: account.handle },
+      characters: results.map((/** @type {any} */ c) => ({
+        id: c.id, name: c.name, seq: c.seq, playing: !!c.lease && nowS - (c.lease_at ?? 0) < REALM_PLAYING_S, dead: c.dead_at != null, held: c.held, createdAt: c.created_at, updatedAt: c.updated_at,
+      })),
+    };
+  }
   const row = await rowOf(db, body.id);
   if (!row) return typeof body.id === 'string' ? { error: 'no-realm-character' } : { error: 'body' };
   const note = noteOf(body.note);
@@ -124,6 +154,7 @@ export async function reviewAct({ db, bucket, nowS }, player, env, act, body = {
     ]);
     return { ok: true };
   }
+  if (act === 'repair') return repairAct(ctx, row, by, note, body);
   if (act === 'rollback') {
     if (row.dead_at != null) return { error: 'dead' };
     if (!row.clean_obj || !bucket) return { error: 'no-clean' };
@@ -144,6 +175,53 @@ export async function reviewAct({ db, bucket, nowS }, player, env, act, body = {
     return { ok: true, seq: row.seq + 1 };
   }
   return { error: 'body' };
+}
+
+/**
+ * SUMMON-REPAIR: ONE REALM CHARACTER MENDED BY STAFF (net/repairLaw.js) - `{ ticket, faction, flag, gold }` as the body
+ * names them, checked by the law; the dead mended never. ONCE A TICKET: a ticket this character's `realm_repairs` already
+ * holds answers its row again (`repeat`) and moves nothing. Otherwise the record is SEIZED (realm.js seizeRealmRecord,
+ * INT9's and the rollback's way): read where it stands, the repair applied, written one sequence on with the lease cleared
+ * - so the tab playing it can write over it never (its next checkpoint is refused, its device's copy follows a sequence
+ * the record has left, and its next join plays the repaired record) - and the gold given back is WITNESSED (the judge
+ * charges no gain the service made). In the record's own batch: the repair's row (the ticket's key - two asked at once,
+ * one rolls back), the staff finding (who, the note, the ticket, what was cleared and given) and the gold as the service's
+ * own faucet, `repair`.
+ * @param {any} ctx @param {any} row the character's row @param {string} by @param {string | null} note @param {any} body
+ */
+async function repairAct(ctx, row, by, note, body) {
+  const { db, bucket, nowS } = ctx;
+  const repair = repairOf(body);
+  if (!repair) return { error: 'body' };
+  if (row.dead_at != null) return { error: 'dead' };
+  const done = () => db.prepare('SELECT * FROM realm_repairs WHERE char_id = ? AND ticket = ?').bind(row.id, repair.ticket).first();
+  const had = await done();
+  if (had) return repairAnswer(had, true);
+  let was = 0;
+  const prep = await seizeRealmRecord({ ...ctx, bucket }, row.player, row.id, (save) => {
+    const r = applyRepair(save, repair);
+    if (typeof r === 'string') return r;
+    was = r.was;
+    return null;
+  }, { escrow: false });
+  if ('error' in prep) return { error: prep.error };
+  const steps = [
+    ...prep.steps,
+    db.prepare('INSERT INTO realm_repairs (char_id, ticket, player, by_handle, at, faction, flag, was, gold, seq, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(row.id, repair.ticket, row.player, by, nowS, repair.faction, repair.flag, was, repair.gold, prep.seq, note),
+    staffFinding(db, row, nowS, { act: 'repair', by, note, ticket: repair.ticket, faction: repair.faction, flag: repair.flag, was, gold: repair.gold, from: row.seq, to: prep.seq }),
+    ...(repair.gold > 0 ? [faucetStatement(db, 'repair', Math.floor(nowS / 3600), repair.gold)] : []),
+  ];
+  try {
+    await db.batch(steps);
+  } catch {
+    await dropIfUnnamed(db, bucket, row.player, row.id, prep.key);
+    // the same ticket landed meanwhile (asked twice at once): that one is the repair; else the record moved under it
+    const landed = await done();
+    return landed ? repairAnswer(landed, true) : { error: 'seq' };
+  }
+  await dropObjects(bucket, [prep.prev]);
+  return repairAnswer({ ticket: repair.ticket, seq: prep.seq, faction: repair.faction, flag: repair.flag, was, gold: repair.gold, by_handle: by, at: nowS }, false);
 }
 
 /** AUDIT INT14: THE RANKS OF `n` ROWS - each of MEASURE_QUANTILES and the most, every one read by its rank in order (`at`,

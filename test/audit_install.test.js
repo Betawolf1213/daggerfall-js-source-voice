@@ -178,8 +178,12 @@ test('L1-3: "Leave the game?" is asked when the PLAYER leaves - a close, a quit,
 test('L1-1/L1-5/L3-2/L3-5/L3-6: the release workflow - no token left behind, a tag of digits, nothing re-cut in place, "latest" never by default', () => {
   const wf = rd('.github/workflows/release-desktop.yml');
   const checkouts = wf.match(/- uses: actions\/checkout@v4/g) ?? [];
-  assert.equal(checkouts.length, 4);
+  // PIN MOVED (REL-FAST): the gate's checkout is verify.yml's now - its three checkouts held to the same law
+  assert.equal(checkouts.length, 3);
   assert.equal((wf.match(/persist-credentials: false/g) ?? []).length, checkouts.length, 'EVERY checkout - nothing here pushes, and the publish job holds contents: write');
+  const v = rd('.github/workflows/verify.yml');
+  assert.equal((v.match(/- uses: actions\/checkout@v4/g) ?? []).length, 3);
+  assert.equal((v.match(/persist-credentials: false/g) ?? []).length, 3, 'and the gate\'s - verify.yml - leaves no token behind either');
   assert.doesNotMatch(wf, /\$\{\{ needs\.version\.outputs\.version \}\}"? --no-git-tag-version|run: .*\$\{\{ (inputs|github\.ref_name|needs\.version)/, 'no tag or input text is pasted into a script');
   const publish = wf.slice(wf.indexOf('\n  publish:'));
   const guard = publish.indexOf('- name: The tag has no published release'), stage = publish.indexOf('uses: softprops/action-gh-release@');
@@ -220,8 +224,9 @@ test('L5-15: the Mac build is signed ad hoc after packing, and says why it reads
 test('L5-2/L5-3: the landing page promises what each download does, and a Mac player is sent where the files are', () => {
   const landing = rd('index.html');
   const entry = landing.slice(landing.indexOf('<dt id="desktop">'), landing.indexOf('</dd>', landing.indexOf('<dt id="desktop">')));
-  assert.match(entry, /The Windows installer and the Linux AppImage update themselves before you play; the portable exe and the Mac tell you when a new version is out\./,
-    'the portable exe never updated itself (lib/autoUpdate.cjs: notice)');
+  // PIN MOVED: DA13 - the GAME updates itself on every copy (the files that changed); the app itself as before
+  assert.match(entry, /The game updates itself before you play on every one, downloading only the files that changed; when the app itself changes, the Windows installer and the Linux AppImage update themselves, and the portable exe and the Mac tell you a new version is out\./,
+    'the portable exe\'s and the Mac\'s SHELL never updates itself (lib/autoUpdate.cjs: notice) - their game does (DA13)');
   assert.doesNotMatch(entry, /Steam or GOG/, 'both sell Daggerfall for Windows only');
   assert.match(entry, /on a Mac open it once, then choose Open Anyway under System Settings, Privacy &amp; Security/);
   const mac = L.viewOf(run(fresh({ platform: 'darwin', arena2Dir: null }), { type: 'found', found: [] }));

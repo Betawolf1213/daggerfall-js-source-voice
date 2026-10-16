@@ -1406,9 +1406,17 @@ export function sneakOffset(sneaking, delta) {
  *     that exists; nothing here is right.
  *   - STAFF. Daggerfall's staff is a two-handed blunt; Morrowind's own
  *     staves are BluntTwoWide, so that is where it goes.
- *   - WAR AXE vs BATTLE AXE. Daggerfall splits them one/two-handed and
- *     Morrowind's AxeOneHand / AxeTwoHand split the same way, which is
- *     the cleanest row in the table.
+ *   - WAR AXE vs BATTLE AXE. Daggerfall's names are the REVERSE of
+ *     Morrowind's: its Battle Axe is the one-hander (DFU's ItemTemplates,
+ *     WEAPON_HANDS 127 'Either') and its War Axe the two-hander (128
+ *     'Both'), where every later game - Morrowind's records included -
+ *     calls the one-hander the war axe. So a Daggerfall Battle Axe draws
+ *     Morrowind's AxeOneHand (its war axes) and a War Axe its AxeTwoHand
+ *     (its battle axes), the grip and the clips following the hands the
+ *     item really has (MW-AXES, FIELD BUGS 2026-10-15c: the rows had
+ *     matched the names, and a War Axe swung one-handed beside a torch
+ *     while a Battle Axe took both hands). dfWeaponShape crosses the
+ *     two names for the same reason.
  *   - DAI-KATANA and CLAYMORE are LongBladeTwoHand, which costs them
  *     Daggerfall's own one-handed animation - a real behavioural change,
  *     not just a mesh swap.
@@ -1428,8 +1436,8 @@ export const DF_TO_MW_WEAPON = Object.freeze({
   Flail: MW_WEAPON_TYPE.BluntOneHand,
   Warhammer: MW_WEAPON_TYPE.BluntTwoClose,
   Staff: MW_WEAPON_TYPE.BluntTwoWide,
-  War_Axe: MW_WEAPON_TYPE.AxeOneHand,
-  Battle_Axe: MW_WEAPON_TYPE.AxeTwoHand,
+  War_Axe: MW_WEAPON_TYPE.AxeTwoHand,
+  Battle_Axe: MW_WEAPON_TYPE.AxeOneHand,
   Short_Bow: MW_WEAPON_TYPE.MarksmanBow,
   Long_Bow: MW_WEAPON_TYPE.MarksmanBow,
 });
@@ -1668,8 +1676,8 @@ export function armReport(parts, race, female) {
  *  the data's would have drawn. All or none: a pool half-present would
  *  walk a save's face onto another index. No `has` - a caller with no
  *  archives - reads the own as shipped. */
-export function facePools(parts, race, female, { has = null } = {}) {
-  const own = ownFacePools(race, female);
+export function facePools(parts, race, female, { has = null, own: ownAsked = false } = {}) {
+  const own = ownAsked ? ownFacePools(race, female) : null;   // MW-HEADS2: the port's own heads are a player's alone - asked for
   if (own && (!has || [...own.heads, ...own.hairs].every((r) => has(`meshes/${r.model}`)))) return { heads: own.heads, hairs: own.hairs };
   const want = String(race || '').toLowerCase();
   const pool = (slot) => {
@@ -1720,7 +1728,7 @@ export function curatedAnswersFace(pools, race, female, faceIndex, faceTable = F
   return !!c && !!poolRecord(pools.heads, c.head) && !!poolRecord(pools.hairs, c.hair);
 }
 
-export function playerBodyRows(parts, race, female, { beast = false, faceIndex = 0, faceTable = FACE_TABLE, faceMatch = null, vampire = false, walk = null, has = null } = {}) {   // MWNPC14: `vampire` the race's vampire head; MWNPC17: `walk` an NPC's { head, hair }; AUDIT MW-HEADS1: `has` the archives' (facePools)
+export function playerBodyRows(parts, race, female, { beast = false, faceIndex = 0, faceTable = FACE_TABLE, faceMatch = null, vampire = false, walk = null, has = null, ownHeads = false } = {}) {   // MWNPC14: `vampire` the race's vampire head; MWNPC17: `walk` an NPC's { head, hair }; AUDIT MW-HEADS1: `has` the archives' (facePools); MW-HEADS2: `ownHeads` a player's - the port's own heads
   const want = String(race || '').toLowerCase();
   // MW-D32: the sweep slots resolve through getBodyParts-whole
   // (npcanimation.cpp:1167-1297 - LAST proper match wins, male-for-
@@ -1762,7 +1770,7 @@ export function playerBodyRows(parts, race, female, { beast = false, faceIndex =
   // AUDIT 68 S11-facepools-dup: facePools IS that law - the pools the
   // matcher measured are the pools walked here, by construction (the
   // same `has`: AUDIT MW-HEADS1).
-  const pools = facePools(parts, race, female, { has });
+  const pools = facePools(parts, race, female, { has, own: ownHeads });
   for (const slot of ['head', 'hair']) {
     const sorted = slot === 'head' ? pools.heads : pools.hairs;
     let chosen = null;
@@ -3389,9 +3397,12 @@ export function clipUnionBounds(assembly, poseAt, times) {
 
 /** Preserve the item's shape within an animation class, after material and archive
  * availability. An absent equivalent keeps the existing fallback. Retail uses Wakizashi
- * in record IDs, while Daggerfall's template enum spells it Wakazashi. */
+ * in record IDs, while Daggerfall's template enum spells it Wakazashi. MW-AXES: and the two
+ * axes cross - a Daggerfall Battle Axe is Morrowind's war axe shape, its War Axe the battle axe. */
+const DF_TO_MW_SHAPE = Object.freeze({ wakazashi: 'wakizashi', battleaxe: 'waraxe', waraxe: 'battleaxe' });
 export function dfWeaponShape(item, weaponsTable) {
   if (!item || item.werecreatureClaws) return null;
   const name = Object.keys(weaponsTable ?? {}).find((key) => weaponsTable[key] === item.templateIndex);
-  return name ? name.toLowerCase().replace(/[^a-z]/g, '').replace('wakazashi', 'wakizashi') : null;
+  const shape = name ? name.toLowerCase().replace(/[^a-z]/g, '') : null;
+  return shape ? (DF_TO_MW_SHAPE[shape] ?? shape) : null;
 }

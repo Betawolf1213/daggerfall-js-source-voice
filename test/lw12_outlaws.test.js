@@ -456,7 +456,8 @@ test('LW12 the host\'s wiring: the trouble world\'s bands over the trip\'s two r
   assert.match(w, /if \(livingWorldOn\(\) && _mode\(\) === 'exterior' && !tvf\) \{ livingHideoutsHostOf\(\)\.frame\(dt\); livePersonBatches\.push\(\.\.\.livingHideoutsHostOf\(\)\.batches\(\)\); \}/);
   assert.match(w, /\n\s*else _livingHideoutsHost\?\.clear\(\);/);
   assert.match(w, /_livingHideoutsHost\?\.draw\(renderer, null, yardCull\);   \/\/ LW12/);   // PIN MOVED (PERF-WAGON): the tents by the street's view test
-  assert.match(w, /for \(const m of livingHideoutsHostOf\(\)\.marks\(hereN\.x, hereN\.z, skyMinutes\(\)\)\) if \(markShown\(\{ kind: m\.kind \}\)\) marks\.push\(/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  assert.match(readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8'), /for \(const m of livingHideoutsHostOf\(\)\.marks\(hereN\.x, hereN\.z, skyMinutes\(\)\)\) if \(markShown\(\{ kind: m\.kind \}\)\) marks\.push\(/);
   assert.match(w, /foe: n\.band \?\? \(n\.foe != null \? livingFoeWord\(n\.foe, 2\) : ''\)/);
   assert.match(w, /spawn: \(type, feet, o\) => exteriorFoes\.spawnFoe\(type, feet, \{ yaw: o\.yaw, gender: o\.gender, level: o\.level, allied: false, loose: true, transient: true, managed: true \}\),/);   // PIN MOVED (AUDIT LW-II C3): managed - the host owns their lives
   // AUDIT LW-II C3: the pool's relevance cull passes a managed foe by (DW-E4's own law), and marks a kill with its body

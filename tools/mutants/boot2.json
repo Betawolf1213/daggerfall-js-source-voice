@@ -29,6 +29,15 @@
     ]
   },
   {
+    "name": "LIGHT-ID-the-seam-imports-on-the-boot-path",
+    "file": "src/render/lightId.js",
+    "old": "const LIGHT_ID = Symbol('lightId');",
+    "new": "import { MAP_W } from '../world/roadNetwork.js'; void MAP_W;\nconst LIGHT_ID = Symbol('lightId');",
+    "tests": [
+      "test/boot2.test.js"
+    ]
+  },
+  {
     "name": "ECOTONE1-the-border-law-imports-on-the-boot-path",
     "file": "src/world/ecotone.js",
     "old": "export const ECOTONE = Object.freeze({",

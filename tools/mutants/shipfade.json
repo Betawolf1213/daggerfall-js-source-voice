@@ -221,8 +221,8 @@
   {
     "name": "EL-no-cut-declared",
     "file": "src/render/enhancedLighting.js",
-    "old": "${EL_POINT_LIT_GLSL}\n${DISSOLVE_GLSL}\nout vec4 outColor;",
-    "new": "${EL_POINT_LIT_GLSL}\nvoid dissolveCut() {}\nout vec4 outColor;",
+    "old": "${EL_POINT_LIT_GLSL}\n${DISSOLVE_GLSL}\n${MESH_ALPHA_GLSL}\nout vec4 outColor;",
+    "new": "${EL_POINT_LIT_GLSL}\nvoid dissolveCut() {}\n${MESH_ALPHA_GLSL}\nout vec4 outColor;",
     "tests": [
       "test/shipfade.test.js"
     ]

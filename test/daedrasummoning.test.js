@@ -131,12 +131,16 @@ test('G7: the four outcomes, and the gold that is spent before the roll', () => 
   assert.equal(poor.kind, 'poor');
   assert.equal(poor.cost, 200000);
 
-  // no hijack (roll 100 > 5), then a low summoning roll against 60
-  const ok = go({ gold: 1e6, rolls: seq(0.99, 0) });
+  // no hijack (roll 100 > 5), then a low summoning roll against 60 - and
+  // the prince's quest made (SUMMON-OFFER: the offer flow's step, driven
+  // through the real producer in test/fb1014_summonoffer.test.js)
+  const step = {};
+  const ok = go({ gold: 1e6, rolls: seq(0.99, 0), offerQuest: () => step });
   assert.equal(ok.kind, 'quest');
   assert.equal(ok.daedra, meridia);
   assert.equal(ok.quest, meridia.quest);
   assert.equal(ok.flag, FACTION_FLAGS.Summoned);
+  assert.equal(ok.offered, step, 'the offer rides the decision');
 
   // a high roll misses - and the cost is still reported, because the
   // caller has already been told to spend it

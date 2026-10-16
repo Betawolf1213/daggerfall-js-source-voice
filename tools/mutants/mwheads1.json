@@ -72,7 +72,7 @@
   {
     "name": "MWHEADS1-the-eyepatch-on-another-portrait",
     "file": "src/formats/mwFaceTable.json",
-    "old": "      \"6\": {\n        \"head\": \"breton_m_head_h0423\",",
+    "old": "      \"6\": {\n        \"head\": \"breton_m_head_h0411\",",
     "new": "      \"6\": {\n        \"head\": \"breton_m_head_h04\",",
     "tests": [
       "test/mwheads1.test.js"
@@ -93,7 +93,7 @@
     "name": "MWHEADS1-two-eyepatches",
     "file": "tools/bakeHeads.mjs",
     "old": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H04.png',",
-    "new": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H0423.png',",
+    "new": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H0411.png',",
     "tests": [
       "test/mwheads1.test.js"
     ],
@@ -122,8 +122,8 @@
   {
     "name": "MWHEADS1-AUDIT-rows-ignore-the-archives",
     "file": "src/formats/mwFirstPerson.js",
-    "old": "  const pools = facePools(parts, race, female, { has });\n",
-    "new": "  const pools = facePools(parts, race, female);\n",
+    "old": "  const pools = facePools(parts, race, female, { has, own: ownHeads });\n",
+    "new": "  const pools = facePools(parts, race, female, { own: ownHeads });\n",
     "tests": [
       "test/mwheads1.test.js"
     ],
@@ -132,8 +132,8 @@
   {
     "name": "MWHEADS1-AUDIT-third-body-ignores-the-archives",
     "file": "src/combat/fpArm.js",
-    "old": "{ beast, faceIndex, faceMatch, vampire, walk, has: exists });",
-    "new": "{ beast, faceIndex, faceMatch, vampire, walk });",
+    "old": "{ beast, faceIndex, faceMatch, vampire, walk, has: exists, ownHeads });",
+    "new": "{ beast, faceIndex, faceMatch, vampire, walk, ownHeads });",
     "tests": [
       "test/mwheads1.test.js"
     ],
@@ -142,8 +142,8 @@
   {
     "name": "MWHEADS1-AUDIT-match-pools-ignore-the-archives",
     "file": "src/combat/fpArm.js",
-    "old": "const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives) });",
-    "new": "const pools = werewolf || npcFace ? null : facePools(parts, race, female);",
+    "old": "const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives), own: ownHeads });",
+    "new": "const pools = werewolf || npcFace ? null : facePools(parts, race, female, { own: ownHeads });",
     "tests": [
       "test/mwheads1.test.js",
       "test/fparm.test.js"

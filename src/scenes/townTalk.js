@@ -62,7 +62,7 @@ import { startMobileTalk, expandMacros, expandAnswerRecord, oathTextId, honorifi
 import { REGION_RACES } from '../formats/mapsFile.js';
 import { getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js'; import { shownFactionNames } from '../world/buildingNames.js';   // L10N3e: the place names shown, and the faction names a guild hall and a temple show
 import { ChoiceWindow } from '../ui/talkWindow.js';
-import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint } from '../systems/talkTopics.js';
+import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint, toneTaste } from '../systems/talkTopics.js';
 import { yardDirectoryRows } from '../systems/merchantYards.js';   // YARDS-FOUND: the town's yards in its directory
 import { portDirectoryRows, FOUND_KIND_ORDER, FOUND_TALK_GROUPS, lettersOnMap } from '../systems/portPlaces.js';   // SHIPYARDS-FOUND: and a port town's shipyard, crew hall, lighthouse and docks - the found places' one order
 import { OPENED_SHOP_TYPES, OPENED_SHOP_GROUPS } from '../world/buildingNames.js';   // PROF-FOUND: the shops the port opened, asked after
@@ -77,6 +77,7 @@ import { liveStat } from '../systems/statMods.js';   // AUDIT 63 F4: TalkManager
 import { ActionTextBox } from '../ui/actionText.js';   // ROAD-D D10: DaggerfallUI.MessageBox, the port's parchment
 import { registerPresenter, messageBox } from '../systems/notify.js';   // ENH-NOTICE3: this slot and this PopupText, offered to the one door every message goes through - and the door itself, for this host's own box seam
 import { preloadTalkArt, setNpcPortrait, clearNpcPortrait } from '../ui/nativeTalk.js';   // U8b   // ROAD-D D10: SetNPCPortrait
+import { npcHeadImage } from '../characters/headPortraits.js';   // PORTRAIT3D: the face as the head the body wears
 import { createTalkWindow, talkDoorReady } from '../ui/talkDoor.js';   // ET1: the ONE door - the classic window or the enhanced panel over it
 import { requestLook } from '../player/pointerLock.js';   // ET1: the panel's Goodbye relocks inside its own gesture (MAC1)
 import { nativeMetrics, pointToNative } from '../ui/nativePanel.js';   // U8b: pointer routing
@@ -142,7 +143,7 @@ export function rayPersonDistance(camPos, fwd, feet) {
   return t / fl * Math.hypot(fwd[0], fwd[1], fwd[2]);
 }
 
-export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, regionIndex, onCrime = null, topics = null, palette = null, rolls = Math.random, talkEngine = null, onBuildingList = null, otherOverlayActive = null, otherHudCovered = null, keysLive = null, questBuildingSource = null, livingTalk = null, livingTone = null, legacyTopics = null }) {   // LW2: `livingTalk` the living world's doors - { refuses(person) -> text|null, talked(person), caught(person) } (bible/06-Systems/Living-World.md); LEGACY-HOME: `kin(person, talk)` true when one of the player's line took the activation (`talk` the conversation, should they ask for it); LW7: `livingTone(person, tone)` a question's tone   // AUDIT ENH-NOTICE3 C2: `otherHudCovered` is the mode host's previousWindow-chain answer (modes.hudCovered), for the toasts   // AUDIT 63 F49: PlayerGPS.DiscoverBuilding's quest name-override seam ({ currentMapID, isBuildingQuestResource }), null in a host with no topic tree
+export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, regionIndex, onCrime = null, topics = null, palette = null, rolls = Math.random, talkEngine = null, onBuildingList = null, otherOverlayActive = null, otherHudCovered = null, keysLive = null, questBuildingSource = null, livingTalk = null, livingTone = null, legacyTopics = null }) {   // LW2: `livingTalk` the living world's doors - { refuses(person) -> text|null, talked(person), caught(person) } (bible/06-Systems/Living-World.md); LEGACY-HOME: `kin(person, talk)` true when one of the player's line took the activation (`talk` the conversation, should they ask for it); LW7: `livingTone(person, taste)` a question's tone, as they took it (TONE-TASTE)   // AUDIT ENH-NOTICE3 C2: `otherHudCovered` is the mode host's previousWindow-chain answer (modes.hudCovered), for the toasts   // AUDIT 63 F49: PlayerGPS.DiscoverBuilding's quest name-override seam ({ currentMapID, isBuildingQuestResource }), null in a host with no topic tree
   // RP1 - THE REGION IS READ LIVE, NOT CAPTURED AT BOOT.
   //
   // This took a plain number, and the world host had no choice but to
@@ -833,7 +834,9 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
 
   /** LEGACY-HOME: a mobile's portrait - a resident's own (one of the line: the chargen head they were made with), else
    *  TalkManager.cs:817's: a mobile ALWAYS portraits from TFAC00I0.RCI, at the record SetPerson minted for it. */
-  const portraitOf = (person) => person?.living?.res?.portrait ?? { archive: 'CommonFaces', record: person?.personFaceRecordId ?? 0 };
+  // PORTRAIT3D: and the look the walker's body is built from (folkBodies.js folkLook, rosterBodies.js residentLook, a
+  // kin's own) - its face as that body's head where the people stand in Morrowind bodies
+  const portraitOf = (person) => ({ ...(person?.living?.res?.portrait ?? { archive: 'CommonFaces', record: person?.personFaceRecordId ?? 0 }), head: person?._mwRes?.look ?? person?._mwFolk?.look ?? person?.living?.res?.look ?? null });
 
   /** The conversation itself, once nothing stands before it (the activation's gates above). */
   function converse(target) {
@@ -932,7 +935,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
     // :817 for a mobile, :849 for a static NPC), so it lands here -
     // the port's one window door. A caller with no portrait clears
     // the last one rather than inheriting a stranger's face.
-    if (portrait) setNpcPortrait(portrait.archive, portrait.record);
+    if (portrait) setNpcPortrait(portrait.archive, portrait.record, { picture: portrait.head ? (renderer) => npcHeadImage(portrait.head, { renderer }) : null });   // PORTRAIT3D
     else clearNpcPortrait();
     _talkSeed = npcSeed;   // F043: whoever we are talking to now
     // V4: GetSuppressTalk (LycanthropyEffect.cs:423-437) - every
@@ -973,7 +976,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
         })),
         answer: (row) => {
           _toneHeard();   // LW7: the question's tone, in a resident's regard
-          if (row.legacy) return row.legacy.answer(tone);   // LEGACY5: the host's answer
+          if (row.legacy) return row.legacy.answer(tone, _toneTaste());   // LEGACY5: the host's answer - TONE-TASTE: and how the tone was taken
           if (row.listItem) return eng.pipeline.getAnswerText(row.listItem, { npcSeed });
           const a = answerText(row); _questionsAsked++; return a;   // AUDIT 17e F13, moved to DFU's own site
         },
@@ -1074,7 +1077,10 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
    *  every other door leaves nobody), whose regard hears each question's tone - a courteous one or a blunt one
    *  (relations.js: once a day each). */
   let _toneTarget = null, _toneNext = null;
-  const _toneHeard = () => { if (_toneTarget) livingTone?.(_toneTarget, tone); };
+  /** TONE-TASTE: how the one spoken to takes the question's tone (talkTopics.js toneTaste) - their group's, as the
+   *  reaction reads it (a mobile's is a Commoner's, npcSession.js setTargetMobileNPC; with no engine, the same). */
+  const _toneTaste = () => toneTaste(tone, engine()?.session?.npcData?.socialGroup ?? 0);
+  const _toneHeard = () => { if (_toneTarget) livingTone?.(_toneTarget, _toneTaste()); };
   // AUDIT 26 F043: the CURRENT partner's reaction seed. DFU seeds the
   // roll from whichever NPC is being spoken to - `DFRandom.Seed =
   // lastTargetMobileNPC.GetHashCode()` or `lastTargetStaticNPC`'s

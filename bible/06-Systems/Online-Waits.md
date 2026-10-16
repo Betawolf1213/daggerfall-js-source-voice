@@ -31,7 +31,7 @@ on a clock nobody moves - the sky, the event clock, real time, a UTC day - or on
 | The full moon | thirty minutes held in the beast; two such nights four hours apart, then none for twenty-eight | sky | a Hircine ring | left - TIME 6.1, SKY-SLOW; OPEN 3 |
 | The Sea Serpent | every four real hours, a fifteen-minute door, a ship needed; at worst 3 h 45 min | event (the relay's law) | nothing | left - OPEN 5 |
 | An Oblivion gate | every two real hours, ten minutes' entry; at worst 1 h 50 min | event (the relay's law) | nothing | left - TIME OPEN 6 |
-| The respawn of a dungeon's foes and chests | one real hour (`wire.js` RESPAWN_MS) | real (the relay's law) | nothing | left - TIME OPEN 8 |
+| The respawn of a dungeon's foes and chests | half a real hour in the zone's halls and an Abyss Dungeon (`wire.js` RESPAWN_MS - an hour until RESPAWN-30, 2026-10-14); twenty minutes in a normal dungeon, forty in an elite (`dungeonRespawn.js`) | real (the relay's law) | nothing | left - TIME OPEN 8 |
 | The Sigil Broker's Regalia | twelve stones: twelve gates, a real day at every one | event; the stock a UTC day | nothing | left - SS2 (Mac doubled the prices) |
 | A Motherlode | three a UTC day, two hours each; gaps of up to about twelve hours | UTC | nothing | left - `Professions-Arc.md` |
 | A profession's nodes, harvests and specialisation | a node back at UTC midnight, sixty harvests a day, a respec seven real days | UTC, real | nothing | left - `Professions-Arc.md` |
@@ -105,7 +105,10 @@ asks in its own words; its "Today is %dat, the day of summoning for %dae" would 
 vendored rows, `SUMMON_BY_NAME_ROWS`, for a record with no second sentence). The Yes is DFU's summoning of that prince,
 whole: the price off the summoner's regard (200,000 less a thousand a point), the chance off the prince's own regard and
 his weather - read at the Yes, the sky the summoning is made under (AUDIT WAITS S1) - Sheogorath's gatecrash, the prince
-met before, the gold gone before the roll, the quest he offers and his film.
+met before, the gold gone whatever the roll, the quest he offers and his film. (SUMMON-OFFER,
+`01-Overview/Field-Bugs-2026-10-14.md`: the gold and the Summoned flag are taken only once his quest is made - in a
+region where it cannot be, a palace it wants and the region lacks, the summoning spends and records nothing, and says
+so. DFU's own order left that hole; naming a prince from any region made it a common one.)
 
 A witches' coven keeps its own law - one prince a day, drawn (the event clock's day online, TIME1) - and Glenmoril its
 Hircine; they are told apart by the summoner's faction, as DFU's own service tells them (AUDIT WAITS S5), so a coven
@@ -267,7 +270,8 @@ Pins and mutants: `test/wavewait_quests.test.js` 8 (`wavewait.json` 19), `test/s
 4. **Banishment's length.** Built: REP3's thirty days, of the calendar the player sees (thirty real hours).
    The alternative: REP3's "~2.5 real days", said as sixty days of that calendar.
 5. **The cadences the relay keeps** - the serpent's four hours and fifteen-minute door, the gate's ten minutes'
-   entry, the hour's respawn. Recommended: leave until a relay deploy happens for its own reason, then decide with it.
+   entry. Recommended: leave until a relay deploy happens for its own reason, then decide with it. The respawn is
+   decided: Mac halved it to half an hour (RESPAWN-30, relay world202 - `bible/01-Overview/Five-Asks-2026-10-14.md`).
 
 ## Record
 

@@ -11,8 +11,8 @@
   {
     "name": "HERB-XP-the-xp-at-the-node",
     "file": "server-account/src/professions.js",
-    "old": "const xp = harvestXp(xpTier ?? tier, rank, clean);",
-    "new": "const xp = harvestXp(tier, rank, clean);",
+    "old": "const xp = scaleXp(harvestXp(xpTier ?? tier, rank, clean),",
+    "new": "const xp = scaleXp(harvestXp(tier, rank, clean),",
     "tests": [
       "test/fb1001_herbxp.test.js"
     ]

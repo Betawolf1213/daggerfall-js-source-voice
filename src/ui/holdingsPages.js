@@ -7,7 +7,7 @@
 // and the Companions, Revenants and Stores pages that stood on the Stats rail before it.
 //
 //  - THE STABLE: the horse and the wagon - owned or not, where each is (ridden, following, parked or waiting how far
-//    off, or stabled), the wagon's load against its limit; SUMMON (Horse Cart and Cargo's own summon) and SEND AWAY
+//    off, with the player, or stabled - WAGON-STABLED: sent away), the wagon's load against its limit; SUMMON (Horse Cart and Cargo's own summon) and SEND AWAY
 //    (its other half, systems/horseCart.js sendTransportAway), and the horse renamed in place. Each act's word is said
 //    under its card, never on a HUD the window covers.
 //  - THE FLEET: every ship the player holds - drawn by ui/fleetPage.js over the same provider.
@@ -24,6 +24,7 @@ import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { WAGON_MODE, HORSE_MODE, TRANSPORT, HORSE_NAME_MAX } from '../systems/horseCartLaw.js';
 import { optionPath } from './settingsMap.js';   // ORG2: a switch named in a window says where it lives
 import { upkeepReach } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: a horse fed by hand only beside it, a kit spent only at the wagon
+import { t } from '../systems/textManager.js';   // HORSE-TIERS: Boons' two hunger lines in the player's language
 
 export const STABLE_PAGE_SECTIONS = Object.freeze([Object.freeze(['stable', 'Stable'])]);
 export const HOLDINGS_STYLE_ID = 'holdings-pages-css';
@@ -99,28 +100,51 @@ export const HOLDINGS_CSS = `
 .px-sys .hld-art .hld-glyph { font-size: 22px; color: #8b8578; }
 .px-sys .hld-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .px-sys .hld-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.px-sys .hld-name { font-size: 15px; color: #f3cf86; overflow-wrap: anywhere; }
-.px-sys .hld-state { flex: none; padding: 0 5px; border-width: 1px; border-style: solid; font-size: 10px; line-height: 1.5; letter-spacing: 0.12em; text-transform: uppercase; color: #8fc7a0; }
+.px-sys .hld-name { font-size: 17px; color: #f3cf86; overflow-wrap: anywhere; }
+.px-sys .hld-state { flex: none; padding: 0 6px; border-width: 1px; border-style: solid; font-size: 12px; line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase; color: #8fc7a0; }
 .px-sys .hld-state.is-away { color: #b8b0a0; }
 .px-sys .hld-state.is-hurt { color: #e0a54a; }
 .px-sys .hld-state.is-lost { color: #ff8a78; }
-.px-sys .hld-sub { font-size: 11px; color: #8b8578; }
-.px-sys .hld-meter { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; max-width: 320px; }
-.px-sys .hld-meter.hld-stat { grid-template-columns: 76px 1fr 64px; }
-.px-sys .hld-mk { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; }
-.px-sys .hld-mn { font-size: 11px; color: #b8b0a0; font-variant-numeric: tabular-nums; }
-.px-sys .hld-why { font-size: 11px; color: #e0a54a; }
-.px-sys .hld-said { font-size: 11px; color: #8fc7a0; }
+.px-sys .hld-sub { font-size: 14px; line-height: 1.35; color: #bdb4a0; }   /* UI-CALM: the card's words were 11px grey under 17px presses */
+.px-sys .hld-meter { display: grid; grid-template-columns: 96px minmax(0, 1fr) 104px; align-items: center; gap: 10px; max-width: 400px; }
+.px-sys .hld-meter.hld-stat { grid-template-columns: 96px minmax(0, 1fr) 104px; }
+.px-sys .hld-mk { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc7b1; }
+.px-sys .hld-mn { font-size: 13px; color: #ddd5bd; font-variant-numeric: tabular-nums; }
+.px-sys .hld-why { font-size: 13px; color: #e0a54a; }
+.px-sys .hld-said { font-size: 13px; color: #8fc7a0; }
 .px-sys .hld-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.px-sys .hld-acts .act { min-width: 0; padding-left: 10px; padding-right: 10px; }
+.px-sys .hld-acts .act { min-width: 0; padding-left: 12px; padding-right: 12px; font-size: 14px; letter-spacing: 0.06em; }
 .px-sys .hld-acts .act[aria-disabled="true"] { opacity: 0.55; }
 .px-sys .hld-field { font: inherit; font-size: 14px; min-height: 32px; padding: 2px 8px; box-sizing: border-box; width: 100%; max-width: 260px;
   color: #e9e4d9; background: rgba(15,17,22,0.75); border: 2px solid rgba(125,116,96,0.7); }
-.px-sys .hld-foot { font-size: 11px; color: #8b8578; margin: 4px 0 0; }
+.px-sys .hld-foot { font-size: 13px; line-height: 1.35; color: #bdb4a0; margin: 6px 0 0; }
+/* UI-CALM: the card's sections - the care, then the stats under a small head, then the look a line and a small press */
+.px-sys .hld-stats { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
+.px-sys .hld-subhead { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c937d; margin-bottom: 2px; }
+.px-sys .hld-lookline { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.px-sys .hld-linkbtn { font: inherit; font-size: 13px; letter-spacing: 0.04em; padding: 2px 0; min-height: 0; background: none; border: 0;
+  color: #f3cf86; text-decoration: none; cursor: pointer; }
+.px-sys .hld-linkbtn::before { content: '\\203a  '; }
+.px-sys .hld-linkbtn:hover, .px-sys .hld-linkbtn:focus-visible { color: rgb(243,239,44); outline: none; }
+/* UI-CALM: a look's choice is a SELECTOR - swatches where each choice is a colour, a stepper where it is a word */
+.px-sys .hld-pick { display: grid; grid-template-columns: 96px auto 1fr; align-items: center; gap: 10px; min-height: 30px; }
+.px-sys .hld-picklabel { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc7b1; }
+.px-sys .hld-pickname { font-size: 14px; color: #ddd5bd; }
+.px-sys .hld-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.px-sys .hld-swatch { width: 22px; height: 22px; padding: 0; min-height: 0; box-sizing: border-box; cursor: pointer; background: var(--sw, #555);
+  border: 2px solid #050608; box-shadow: 0 0 0 1px #5a5446; }
+.px-sys .hld-swatch:hover, .px-sys .hld-swatch:focus-visible { outline: none; box-shadow: 0 0 0 2px #f3cf86; }
+.px-sys .hld-swatch.on { box-shadow: 0 0 0 2px rgb(243,239,44), 0 0 0 4px #050608; }
+.px-sys .hld-step { font: inherit; font-size: 18px; line-height: 1; width: 28px; height: 28px; min-height: 0; padding: 0; cursor: pointer;
+  color: #ddd5bd; background: rgba(10,12,17,0.6); border: 2px solid #5a5446; }
+.px-sys .hld-step:hover, .px-sys .hld-step:focus-visible { outline: none; color: rgb(243,239,44); border-color: #f3cf86; }
+.px-sys .hld-pick:has(.hld-step) { grid-template-columns: 96px auto minmax(7em, auto) auto 1fr; }
+.px-sys .hld-stepname { text-align: center; }
 .px-sys .hld-refit { display: flex; flex-direction: column; gap: 3px; padding: 6px 9px 7px; border-width: 2px; border-style: solid; box-sizing: border-box; margin-top: 6px; }
 .px-sys .hld-log { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; align-items: baseline; gap: 8px; }
 @media (max-width: 480px) { .px-sys .hld-field { font-size: 16px; } }
 :root[data-plus-theme="stone"] .px-sys .hld-sub, :root[data-plus-theme="stone"] .px-sys .hld-foot { color: #e2d9c4; }
+@media (max-width: 480px) { .px-sys .hld-pick { grid-template-columns: 1fr; gap: 4px; } .px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto minmax(0, 1fr) auto; } .px-sys .hld-pick:has(.hld-step) .hld-picklabel { grid-column: 1 / -1; } .px-sys .hld-stepname { min-width: 0; overflow-wrap: anywhere; } }   /* AUDIT UICALM-FIRM1 L4 L6: the name gives way, the › stays on the card */
 `;
 export function ensureHoldingsStyle(doc = typeof document === 'undefined' ? null : document) {
   if (!doc?.getElementById || doc.getElementById(HOLDINGS_STYLE_ID)) return;
@@ -164,13 +188,20 @@ function statMeter(el, meter, label, now, plus, tone, why = '') {
 }
 /** STEED-UI: a stat's making in words - born, the bond's points, hunger's. */
 export const statWhy = (st, bonus, penalty, hunger) => [`Born ${st.born}`, bonus ? `+${bonus} from your bond` : '', penalty ? `−${penalty} ${String(hunger).toLowerCase()}` : ''].filter(Boolean).join(', ');
-/** STEED1: a hunger's chip tone. */
+/** STEED1: a hunger's chip tone. HORSE-TIERS: NO RED where hunger costs nothing (Boons) - amber at most. */
 const HUNGER_TONE = Object.freeze({ fed: '', hungry: 'is-hurt', starving: 'is-lost' });
-/** STEED1: what a hunger costs, in the card's words. STEED-UI: a fed horse says how long its food lasts. */
+export const hungerTone = (h, care) => (care?.hungerCosts === false && h.hungerKey === 'starving' ? HUNGER_TONE.hungry : HUNGER_TONE[h.hungerKey] ?? '');
+/** STEED1: what a hunger costs, in the card's words. STEED-UI: a fed horse says how long its food lasts. HORSE-TIERS:
+ *  each tier's own words - Hard's what hunger takes, Boons' only the gallop a starving horse has not earned. */
 const HUNGER_LINE = Object.freeze({
   fed: 'Fed.',
   hungry: 'Hungry - every stat ten lower, and its breath slower back.',
   starving: 'Starving - every stat twenty-five lower, no gallop, and your bond fading. Feed it.',
+});
+const HUNGER_LINE_BOONS = Object.freeze({   // HORSE-TIERS: in the player's language (L10N4's ratchet), read as it is shown
+  fed: 'Fed.',
+  get hungry() { return t('holdings.horse.boons.hungry', 'Hungry - it costs nothing yet.'); },
+  get starving() { return t('holdings.horse.boons.starving', 'Starving - no gallop until it eats. Feed it.'); },
 });
 /** STEED-UI: the bond's row - the kit's bar of the way from its word to the next, and the points still to go (whole at
  *  Kindred). */
@@ -185,7 +216,7 @@ function bondMeter(el, meter, h) {
 }
 /** STEED-UI: hours of food as a card says them. */
 const foodHours = (hours) => (hours >= 2 ? `${Math.floor(hours)} hours` : hours * 60 >= 2 ? `${Math.round(hours * 60)} minutes` : 'a minute');
-export const hungerLine = (h) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : HUNGER_LINE[h.hungerKey] ?? '');
+export const hungerLine = (h, care = null) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : (care?.hungerCosts === false ? HUNGER_LINE_BOONS : HUNGER_LINE)[h.hungerKey] ?? '');
 /**
  * STEED1: a horse's care on its card - its bond and hunger in words, its breath (the one ridden), its four stats, and
  * the acts: oats and an apple from the pack, and the one ridden chosen. `h` a horse of the upkeep's model.
@@ -193,13 +224,12 @@ export const hungerLine = (h) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed
  */
 function steedLines(el, meter, h, care, act) {
   const out = [];
-  out.push(el('span', 'hld-sub', `${h.tier} - bond ${Math.floor(h.bond)} of 100${h.bonus ? `, +${h.bonus} to every stat` : ''}. ${hungerLine(h)}`));
+  out.push(el('span', 'hld-sub', `${h.tier} - bond ${Math.floor(h.bond)} of 100${h.bonus ? `, +${h.bonus} to every stat` : ''}. ${hungerLine(h, care)}`));
   out.push(bondMeter(el, meter, h));
   if (h.ridden) {
     out.push(holdingMeter(el, meter, 'Breath', h.breath * 100, 100, h.breath < 0.25 || h.winded ? 'blood' : 'verdigris'));
     if (h.winded) out.push(el('span', 'hld-sub hld-why', 'Winded - it will not gallop until its breath is back.'));
   }
-  for (const st of h.stats) out.push(statMeter(el, meter, st.name, st.now, Math.max(0, st.now - st.born), 'thin', statWhy(st, h.bonus, h.penalty, h.hunger)));
   const row = el('div', 'hld-acts');
   const feed = el('button', h.full ? 'act' : 'act primary', `Feed oats (${care.oats})`);
   feed.title = h.full ? 'It is not hungry' : 'A sack of oats - a day’s food';
@@ -217,18 +247,35 @@ function steedLines(el, meter, h, care, act) {
     row.append(ride);
   }
   out.push(row);
+  // UI-CALM: the care first - its words, its bond and breath and the presses that answer them - then the four stats, a
+  // block of their own under a small head (they are read, never pressed)
+  const stats = el('div', 'hld-stats');
+  stats.append(el('span', 'hld-subhead', 'Stats'));
+  for (const st of h.stats) stats.append(statMeter(el, meter, st.name, st.now, Math.max(0, st.now - st.born), 'thin', statWhy(st, h.bonus, h.penalty, h.hunger)));
+  out.push(stats);
   return out;
 }
 /** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing blood. */
 const WAGON_METER_TONE = Object.freeze({ sound: 'verdigris', worn: 'verdigris', rickety: '', failing: 'blood' });
+/** WAGON-TIERS: NO RED where wear costs nothing (Boons - Climates & Calories' RED MEANS IT COSTS): a failing wagon's bar
+ *  is rickety's plain. A read that does not say (`wearSlows` absent) is the system as it stood. */
+export const wagonMeterTone = (w) => (w.wearSlows === false && w.stateKey === 'failing' ? WAGON_METER_TONE.rickety : WAGON_METER_TONE[w.stateKey] ?? 'verdigris');
+/** WAGON-TIERS: Boons' words - a worn-down wagon rolls at its pace (the yard's price follows, mendLine), and a Sound one
+ *  rolls faster for it. */
+const WAGON_ADVICE_BOONS = Object.freeze({   // in the player's language (L10N4's ratchet), read as it is shown
+  get rickety() { return t('holdings.wagon.boons.rickety', 'Rickety - it still rolls at its pace.'); },
+  get failing() { return t('holdings.wagon.boons.failing', 'Failing - it still rolls at its pace.'); },
+  get sound() { return t('holdings.wagon.boons.sound', 'Sound - it rolls faster for it.'); },   // Mac: "Sound wagon rolls faster"
+});
 /** STEED-UI: what a Wagon Yard asks to make it whole - at the yard, and with its wright going out to it. */
 export const mendLine = (w) => (w.mend > 0 ? `A Wagon Yard makes it whole for ${w.mend} gold - ${w.mendAway} if its wright must go out to it.` : 'A town’s Wagon Yard mends it.');
 /** WAGONS4: the wagon's soundness on its card - its condition, its state's word, and a kit's act. STEED-UI: its bar in
  *  its state's tone, and the yard's price. */
 function wagonLines(el, meter, w, care, act) {
   const out = [];
-  out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, WAGON_METER_TONE[w.stateKey] ?? 'verdigris'));
-  const advice = w.stateKey === 'failing' ? 'Failing - its team pulls it at its slowest.'
+  out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, wagonMeterTone(w)));
+  const advice = w.wearSlows === false && Object.hasOwn(WAGON_ADVICE_BOONS, w.stateKey) ? WAGON_ADVICE_BOONS[w.stateKey]   // WAGON-TIERS: Boons says no slowness, and the boon
+    : w.stateKey === 'failing' ? 'Failing - its team pulls it at its slowest.'
     : w.stateKey === 'rickety' ? 'Rickety - its team pulls it slower.' : w.stateKey === 'worn' ? 'Worn - a Wagon Yard can make it whole.' : 'Sound.';
   out.push(el('span', `hld-sub${w.tone ? ' hld-why' : ''}`, `${advice} ${mendLine(w)}`));
   if (w.kitWorks) {
@@ -246,6 +293,10 @@ function wagonLines(el, meter, w, care, act) {
 /** How far a thing stands, in the words a card uses. */
 export const farWords = (m) => (m == null ? 'away from here' : m < 1000 ? `${m} m away` : `${(m / 1000).toFixed(1)} km away`);
 
+/** The chip of a horse or a wagon with the player: the classic transport's (the mod off, or its persistence), and
+ *  WAGON-STABLED's - the mod's WithPlayer never sent to the stable, which the next door leaves outside. */
+const WITH_YOU = 'With you';
+
 /**
  * THE STABLE'S WORDS: where the horse and the wagon each are, as a chip's word and a line under it, off the runtime's
  * view (systems/horseCart.js stableView) - or, with Horse Cart and Cargo off, the classic transport's: with the player.
@@ -254,16 +305,17 @@ export const farWords = (m) => (m == null ? 'away from here' : m < 1000 ? `${m} 
  */
 export function stableWords(m) {
   if (!m.hcc || !m.view) {
-    const classic = { state: 'With you', tone: '', line: 'Ride from the Transport window.' };
+    const classic = { state: WITH_YOU, tone: '', line: 'Ride from the Transport window.' };
     return { horse: m.hasHorse ? classic : null, wagon: m.hasCart ? { ...classic, line: 'Its load rides with you.' } : null };
   }
   const v = m.view;
   if (!v.persistence) {
-    const classic = { state: 'With you', tone: '', line: 'Physical persistence is off: it travels with you.' };
+    const classic = { state: WITH_YOU, tone: '', line: 'Physical persistence is off: it travels with you.' };
     return { horse: v.hasHorse ? classic : null, wagon: v.hasCart ? classic : null };
   }
   const riding = v.transport === TRANSPORT.Horse, driving = v.transport === TRANSPORT.Cart;
   const teamFollowing = v.wagonMode === WAGON_MODE.FollowingPlayer && v.horseMode === HORSE_MODE.HitchedToWagon;
+  const beside = { state: WITH_YOU, tone: '', line: 'At your side - left outside the next door you go through.' };   // WAGON-STABLED
   let horse = null, wagon = null;
   if (v.hasHorse) {
     if (riding) horse = { state: 'Riding', tone: '', line: 'You are in the saddle.' };
@@ -271,12 +323,16 @@ export function stableWords(m) {
     else if (teamFollowing || v.horseMode === HORSE_MODE.FollowingPlayer) horse = { state: 'Following', tone: '', line: teamFollowing ? 'Following you with the wagon.' : 'Following you.' };
     else if (v.horseMode === HORSE_MODE.LooseStationary) horse = { state: 'Waiting', tone: 'is-away', line: `Waiting where you left it, ${farWords(v.horseAt)}.` };
     else if (v.horseMode === HORSE_MODE.HitchedToWagon && v.wagonMode === WAGON_MODE.Deployed) horse = { state: 'Hitched', tone: 'is-away', line: `Hitched to your parked wagon, ${farWords(v.wagonAt)}.` };
+    // WAGON-STABLED: Stabled is sent away (the runtime's word); the mod's WithPlayer never sent is beside the player, and
+    // the next door stands it outside
+    else if (!v.horseStabled) horse = beside;
     else horse = { state: 'Stabled', tone: 'is-away', line: 'Out of the world - mount it from the Transport window, or summon it to your side.' };
   }
   if (v.hasCart) {
     if (driving) wagon = { state: 'Driving', tone: '', line: 'You are on the box.' };
     else if (teamFollowing) wagon = { state: 'Following', tone: '', line: 'Following you behind your horse.' };
     else if (v.wagonMode === WAGON_MODE.Deployed) wagon = { state: 'Parked', tone: 'is-away', line: `Parked ${farWords(v.wagonAt)}.` };
+    else if (!v.wagonStabled) wagon = beside;
     else wagon = { state: 'Stabled', tone: 'is-away', line: v.hasHorse ? 'Out of the world - drive it from the Transport window, or summon it.' : 'Out of the world - you need a horse to pull it.' };
   }
   return { horse, wagon };
@@ -285,17 +341,61 @@ export function stableWords(m) {
 let _said = null;   // { who: 'horse'|'wagon'|'both', ok, text } - the last act's word
 let _renaming = false;   // the horse's name field open
 let _draft = '';
+let _lookOpen = '';   // UI-CALM: whose look's pickers are open - 'horse', 'wagon', or none
 
-/** WAGONS2/COATS1: a card's row of choices - its word, then a button a choice, the one worn pressed. */
+/** UI-CALM: a colour a look's swatch wears, by the name the card says - a horse's coats, a wagon's outside paints. A
+ *  name with none is drawn as a word (the stepper). */
+export const LOOK_SWATCHES = Object.freeze({
+  Bay: '#7a4527', Chestnut: '#9c5224', Black: '#26211e', Grey: '#9d9a93', Dun: '#b39a6b', Buckskin: '#c9a256', Palomino: '#dcbd7c',
+  'Weathered oak': '#7d6a4f', Red: '#9a2f24', Blue: '#2f4f8a', Green: '#3d6a3a', White: '#e4ded0', 'Cream canvas': '#e3d6b4',
+  Ochre: '#c08a2e', Oxblood: '#5e1d1b',
+});
+
+/**
+ * WAGONS2/COATS1: a card's row of choices. UI-CALM (2026-10-14, a player: "Why are horse coat colors huge buttons
+ * instead of a selector? Why do they take up more space than the horse stats?"): A SELECTOR, NOT A WALL OF PRESSES - its
+ * word, then where every choice has a colour (a coat, a wagon's paint) a row of small swatches, the one worn ringed and
+ * named beside them; else a stepper, ‹ the one worn › . Each swatch says its name to a reader and under the pointer.
+ */
 function choiceRow(el, word, { choices, current }, choose) {
-  const row = el('div', 'hld-acts');
-  row.append(el('span', 'hld-sub', `${word}:`));
-  choices.forEach((name, i) => {
-    const b = el('button', i === current ? 'act primary' : 'act', name);
-    b.setAttribute('aria-pressed', i === current ? 'true' : 'false');
-    b.onclick = () => choose(i);
-    row.append(b);
-  });
+  const row = el('div', 'hld-pick');
+  row.append(el('span', 'hld-picklabel', word));
+  const colours = choices.map((name) => LOOK_SWATCHES[name] ?? null);
+  if (colours.every(Boolean)) {
+    const set = el('div', 'hld-swatches');
+    set.setAttribute('role', 'radiogroup');
+    set.setAttribute('aria-label', word);
+    choices.forEach((name, i) => {
+      const b = el('button', `hld-swatch${i === current ? ' on' : ''}`);
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', i === current ? 'true' : 'false');
+      b.setAttribute('aria-label', name);
+      b.title = name;
+      if (b.style) b.style.setProperty?.('--sw', colours[i]);
+      b.onclick = () => choose(i);
+      set.append(b);
+    });
+    row.append(set, el('span', 'hld-pickname', choices[current] ?? ''));
+    return row;
+  }
+  const n = choices.length;
+  const step = (d, glyph, aria) => {
+    const b = el('button', 'hld-step', glyph);
+    b.setAttribute('aria-label', aria);
+    b.onclick = () => choose(((current + d) % n + n) % n);
+    return b;
+  };
+  row.append(step(-1, '\u2039', `${word}: previous`), el('span', 'hld-pickname hld-stepname', choices[current] ?? ''), step(1, '\u203a', `${word}: next`));
+  return row;
+}
+/** UI-CALM: a look in words, and the small press that opens its pickers (or closes them). */
+function lookLine(el, who, desc, rerender) {
+  const row = el('div', 'hld-lookline');
+  row.append(el('span', 'hld-sub', desc));
+  const b = el('button', 'hld-linkbtn', _lookOpen === who ? 'Done' : 'Change look');
+  b.setAttribute('aria-expanded', _lookOpen === who ? 'true' : 'false');
+  b.onclick = () => { _lookOpen = _lookOpen === who ? '' : who; rerender(); };
+  row.append(b);
   return row;
 }
 
@@ -352,23 +452,28 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
       row.append(ok, no);
       extra.push(row);
     }
-    if (m.look) {   // COATS1: its look in words, then its coats, patterns and legs, a button each - pressed, worn
-      extra.push(el('span', 'hld-sub', `${m.look.desc[0].toUpperCase()}${m.look.desc.slice(1)}.`));
-      for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
-    }
     const ridden = care?.horseCare ? care.horses.find((h) => h.ridden) : null;
     if (ridden) extra.push(...steedLines(el, meter, ridden, care, act));   // STEED1: its care
+    // COATS1: its look in words, and (UI-CALM) behind a small press its coats, patterns and legs as selectors - the look
+    // is chosen once in a while, the care read every visit, so the care comes first and the look waits to be asked for
+    if (m.look) {
+      extra.push(lookLine(el, 'horse', `${m.look.desc[0].toUpperCase()}${m.look.desc.slice(1)}.`, rerender));
+      if (_lookOpen === 'horse') for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
+    }
     list.append(card(el, { art: HORSE_ART, glyph: '♞', name, words: words.horse, sub: v?.horseName ? 'Your horse' : null, extra, rerender }).item);
     // STEED1: every other horse owned - its look, its care, and the choice to ride it
     for (const h of care?.horseCare ? care.horses.filter((x) => !x.ridden) : []) {
-      list.append(card(el, { art: HORSE_ART, glyph: '♞', name: `${h.look[0].toUpperCase()}${h.look.slice(1)}`, words: { state: h.hunger, tone: HUNGER_TONE[h.hungerKey] ?? '', line: null }, sub: 'Another horse of yours', extra: steedLines(el, meter, h, care, act), rerender }).item);
+      list.append(card(el, { art: HORSE_ART, glyph: '♞', name: `${h.look[0].toUpperCase()}${h.look.slice(1)}`, words: { state: h.hunger, tone: hungerTone(h, care), line: null }, sub: 'Another horse of yours', extra: steedLines(el, meter, h, care, act), rerender }).item);
     }
   }
   if (words.wagon) {
     const extra = [];
     if (v && v.limit > 0) extra.push(holdingMeter(el, meter, 'Load', v.kg, v.limit, 'thin'));
     if (care?.wagonUpkeep && care.wagon) extra.push(...wagonLines(el, meter, care.wagon, care, act));   // WAGONS4: its soundness, and a kit
-    if (m.paint) extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));   // WAGONS2: its outside's paints, a button each - pressed, painted
+    if (m.paint) {   // WAGONS2: its outside's paints - UI-CALM: swatches, behind the same small press as the horse's look
+      extra.push(lookLine(el, 'wagon', `${LOOK_TEXT.paint}: ${m.paint.choices[m.paint.current] ?? ''}.`, rerender));
+      if (_lookOpen === 'wagon') extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));
+    }
     list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: words.wagon, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
   }
   detail.append(list);
@@ -399,4 +504,4 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
 }
 
 /** A visit's words forgotten (an act's answer, an open name field) - the pause menu's every mount. */
-export function resetHoldingsPages() { _said = null; _renaming = false; _draft = ''; }
+export function resetHoldingsPages() { _said = null; _renaming = false; _draft = ''; _lookOpen = ''; }

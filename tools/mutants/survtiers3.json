@@ -560,8 +560,8 @@
   {
     "name": "SURVTIERS3-corpse-food-a-joiner's-stream-rolls-none",
     "file": "src/scenes/dungeonContext.js",
-    "old": "if (r.d === 1 && !f.dead) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); addCorpseFood(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
-    "new": "if (r.d === 1 && !f.dead) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
+    "old": "if (r.d === 1 && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); addCorpseFood(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
+    "new": "if (r.d === 1 && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -569,8 +569,8 @@
   {
     "name": "SURVTIERS3-corpse-food-an-arrival's-body-rolls-none",
     "file": "src/scenes/dungeonContext.js",
-    "old": "if (wire && sf.dead && !f.dead && sf.items == null) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); addCorpseFood(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
-    "new": "if (wire && sf.dead && !f.dead && sf.items == null) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
+    "old": "if (wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); addCorpseFood(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
+    "new": "if (wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(f.entity, { luck: liveStat(playerEntity, 'luck') }); stampWonWeapons(",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -578,8 +578,8 @@
   {
     "name": "SURVTIERS3-corpse-food-an-arrival-rolls-over-the-room's-list",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    if (wire && sf.dead && !f.dead && sf.items == null) { rollCorpseKit(",
-    "new": "    if (wire && sf.dead && !f.dead) { rollCorpseKit(",
+    "old": "    if (wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
+    "new": "    if (wire && sf.dead && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -587,8 +587,8 @@
   {
     "name": "SURVTIERS3-corpse-food-a-joiner-rolls-every-frame",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    if (r.d === 1 && !f.dead) { rollCorpseKit(",
-    "new": "    if (r.d === 1) { rollCorpseKit(",
+    "old": "    if (r.d === 1 && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
+    "new": "    if (r.d === 1 && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
     "tests": [
       "test/survtiers3.test.js"
     ]

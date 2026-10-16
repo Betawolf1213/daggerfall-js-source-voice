@@ -3285,14 +3285,11 @@ export function createNavalHost(deps) {
   function boardable(boat, { anySpeed = false, at = null } = {}) {
     if (!boat) return null;
     const pose = boatPose(boat);
-    const speed = Math.hypot(pose.velocity[0], pose.velocity[2]);
-    if (speed > BOARD_SPEED && !anySpeed) return null;
     const look = deps.look?.();
     let best = null, bestScore = Infinity;
     for (const e of sea.values()) {
-      if (e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded || !e.boat) continue;
-      const d = dist2d(e.ship.pos, at ?? pose.position) - (hullBuild(e.ship.hull).beam + hullBuild(boat.hull).beam);
-      if (d > BOARD_RANGE) continue;
+      const d = boardingGap(boat, e, { anySpeed, at, pose });
+      if (d == null) continue;
       let score = d;
       if (look) {
         const to = [e.ship.pos[0] - look.origin[0], 0, e.ship.pos[2] - look.origin[2]];
@@ -3303,6 +3300,21 @@ export function createNavalHost(deps) {
       if (score < bestScore) { bestScore = score; best = e; }
     }
     return best;
+  }
+  /** THE HELM'S BOARDING REACH, one law (`boardable`'s, and CREW-MUSTER's: the crews muster for a boarding this would
+   *  allow, never for one it would not - FIELD BUGS 2026-10-14): her water between the two hulls (m) when the helm of
+   *  `boat` could throw the grapples on `e` - struck, not taken, her hull standing, within BOARD_RANGE past the two
+   *  beams of `at` (else where `boat` lies), `boat`'s way under BOARD_SPEED unless `anySpeed` - else null. */
+  function boardingGap(boat, e, { anySpeed = false, at = null, pose = boatPose(boat) } = {}) {
+    if (!anySpeed && Math.hypot(pose.velocity[0], pose.velocity[2]) > BOARD_SPEED) return null;
+    if (e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded || !e.boat) return null;
+    const d = dist2d(e.ship.pos, at ?? pose.position) - (hullBuild(e.ship.hull).beam + hullBuild(boat.hull).beam);
+    return d > BOARD_RANGE ? null : d;
+  }
+  /** ON FOOT, one law (`boardableOnFoot`'s, and CREW-MUSTER's): whether `feet` stand within FOOT_BOARD_M of struck `e`'s
+   *  side - not taken, her hull standing - to go over her rail. */
+  function footReach(e, feet) {
+    return e.ship.damage.state === SHIP_STATES.struck && !e.ship.boarded && !!e.boat && dist2d(e.ship.pos, feet) - hullBuild(e.ship.hull).beam <= FOOT_BOARD_M;
   }
 
   // ── heave to (AUDIT NAV1, the helm) ─────────────────────────────────────────────────────────────────────────────
@@ -3391,8 +3403,7 @@ export function createNavalHost(deps) {
     const feet = deps.feet();
     const look = deps.look?.();
     for (const e of sea.values()) {
-      if (e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded || !e.boat) continue;
-      if (dist2d(e.ship.pos, feet) - hullBuild(e.ship.hull).beam > FOOT_BOARD_M) continue;
+      if (!footReach(e, feet)) continue;
       if (look) {
         const box = hullBox(e.boat);
         const to = box ? [box.c[0] - look.origin[0], 0, box.c[2] - look.origin[2]] : null;
@@ -5452,9 +5463,10 @@ export function createNavalHost(deps) {
      *  seed, her faction, whether her guns are out (`battle`: she engages, boards, runs or answers gunfire), AUDIT NAV2
      *  F46: whether her colours are down (`struck`: struck, taken or going down - no song, no calm word), whether her
      *  crew is held off her deck (`hold`: a prize, or her men the fight's - my boarding's, or another's in a room) and,
-     *  AUDIT NAV2 F40, a boarding at hand (`toward`, the point her crew musters toward): the ship she closes on to board
-     *  (her 'board' course), or me in reach to board her once she has struck (my helm within BOARD_RANGE past the two
-     *  beams, my feet within FOOT_BOARD_M of her side) - a ship to come alongside set abeam of her on the side it will
+     *  AUDIT NAV2 F40, a boarding at hand (`toward`, the point her crew musters toward, and CREW-MUSTER's `way`, her side
+     *  of it): the ship she closes on to board (her 'board' course: 'board'), or me able to board her now she has struck
+     *  ('repel': my helm's own reach, boardingGap - in range, my way under BOARD_SPEED - or my feet's, footReach) - a ship
+     *  to come alongside set abeam of her on the side it will
      *  lie once she is (berthPose's: she lies on the side of its keel she is on, her heading its own or its reciprocal),
      *  at its distance (her men swung rail to rail while she came up bow-on). */
     crewShips() {
@@ -5473,37 +5485,43 @@ export function createNavalHost(deps) {
         const mine = boarding?.shipId === e.id;
         const hold = st === SHIP_STATES.prize || (mine ? boarding.phase === 'fight' && boarding.kind === 'board' : !!e.ship.boarded);
         const battle = st === SHIP_STATES.afloat && e.ship.mode !== 'cruise';
-        let toward = null;
+        let toward = null, way = null;
         if (st === SHIP_STATES.afloat && e.ship.mode === 'board' && !e.ship.boarded) {
           const t = e.ship.target, me = t === myId() ? boatInPlay() : null, other = me ? null : sea.get(t);
           const peer = me || other ? null : (deps.peerBoats?.() ?? []).find((p) => p.id === t);
           const [pos, yaw] = me ? [me.GameObject.position, yawOfRot(me.GameObject.rotation)] : other ? [other.ship.pos, other.ship.yaw] : [peer?.pos ?? null, peer?.yaw];
-          if (pos) toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos;
+          if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }   // CREW-MUSTER: she goes over the other's rail
         } else if (st === SHIP_STATES.struck && !e.ship.boarded && !boarding) {
+          // CREW-MUSTER (FIELD BUGS 2026-10-14; Mac's call): a boarding of her I could make NOW - my helm's own reach
+          // (boardingGap: in range and my way under BOARD_SPEED), or my feet's (footReach) - and hers is the repel's side
           const from = helm ? helm.GameObject.position : (feet ??= deps.feet());
-          const gap = dist2d(e.ship.pos, from) - hullBuild(e.ship.hull).beam - (helm ? hullBuild(helm.hull).beam : 0);
-          if (gap <= (helm ? BOARD_RANGE : FOOT_BOARD_M)) toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from;
+          if (helm ? boardingGap(helm, e) != null : footReach(e, from)) { toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from; way = 'repel'; }
         }
-        out.push({ key: e.id, boat: e.boat, pos: e.ship.pos, shipClass: e.ship.cls, crewShare: e.ship.damage.crewShare(), seed: e.ship.seed, faction: e.ship.cls.faction, battle, struck: st !== SHIP_STATES.afloat, hold, toward, work: st === SHIP_STATES.afloat ? workOf(e.ship.damage) : 0 });   // SHIP-WATCH: her hurts, mended
+        out.push({ key: e.id, boat: e.boat, pos: e.ship.pos, shipClass: e.ship.cls, crewShare: e.ship.damage.crewShare(), seed: e.ship.seed, faction: e.ship.cls.faction, way, battle, struck: st !== SHIP_STATES.afloat, hold, toward, work: st === SHIP_STATES.afloat ? workOf(e.ship.damage) : 0 });   // SHIP-WATCH: her hurts, mended
       }
       return out;
     },
     /** LIVING CREW: a sea ship's boat by her id (a grapple's other ship, whose rail a crew musters toward). */
     boatOf: (id) => sea.get(id)?.boat ?? null,
     /** LIVING CREW: a boat of mine's crew - her count, whether she is in a fight (the aim laid, a hostile near) and, AUDIT
-     *  NAV2 F40, a boarding at hand (`toward`, the point her crew musters toward): a ship closing on her to board, or -
-     *  at her helm - a struck ship in her reach (BOARD_RANGE past the two beams). */
+     *  NAV2 F40, a boarding at hand (`toward`, the point her crew musters toward, and CREW-MUSTER's `way`, her side of it):
+     *  a ship closing on her to board ('repel'), or - at her helm - the struck ship a boarding from it would take now
+     *  ('board': `boardable`). */
     myCrew(boat) {
       const st = myBoatState(boat);
       if (!st) return null;
-      let toward = null;
+      let toward = null, way = null;
       for (const e of sea.values()) {
-        const s = e.ship.damage.state;
-        if (s === SHIP_STATES.afloat && e.ship.mode === 'board' && !e.ship.boarded && e.ship.target === myId()) {
+        if (e.ship.damage.state === SHIP_STATES.afloat && e.ship.mode === 'board' && !e.ship.boarded && e.ship.target === myId()) {
           if (boat === boatInPlay()) { toward = e.ship.pos; break; }
-        } else if (!toward && !boarding && boat === myBoat() && s === SHIP_STATES.struck && !e.ship.boarded && e.boat
-          && dist2d(e.ship.pos, boat.GameObject.position) - hullBuild(e.ship.hull).beam - hullBuild(boat.hull).beam <= BOARD_RANGE) toward = e.ship.pos;
+        }
       }
+      if (toward) way = 'repel';   // CREW-MUSTER: she comes over our rail
+      // CREW-MUSTER (FIELD BUGS 2026-10-14, "Crew Attacking Me"; Mac's call): at her helm, the struck ship a boarding from it
+      // would take NOW (the boarding's own `boardable`: in reach, her way under BOARD_SPEED) - never one it would not
+      // (they stood at the rail crying the repel's words for as long as I sat at her helm with a struck ship in reach, at
+      // any way - and to the player, with none coming aboard, they were crying them at him)
+      else if (!boarding && boat === myBoat()) { const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'board'; } }
       // SHIP-CREW: her standing order (the guns manned, the rail, the repairs), whether her spirits sing, and a line of theirs
       // SHIP-WATCH: her work (what her hurts leave to mend - all hands to it under a repair order) and her lookout's cry
       const call = hailCalls.get(boat) ?? null;
@@ -5512,7 +5530,7 @@ export function createNavalHost(deps) {
       // AUDIT WK-W10: the hand her card names Lookout keeps her bow - his roster place (the crew's members stand in it)
       const lookout = st.crew.hands.findIndex((h) => h.role === LOOKOUT_ROLE);
       const roles = boat.crewed ? st.crew.hands.map((h) => h.role) : null;   // HOLDINGS: each at his role's post
-      return { crew: st.damage.crew, battle: aiming || crewAlarm(), toward, order: boat.crewed ? st.crew.order : CREW_ORDERS.stand, sings: !boat.crewed || st.crew.sings(), line: () => (boat.crewed ? st.crew.line() : null), repairing: !!st.repairing, work, call, lookout, roles };
+      return { crew: st.damage.crew, way, battle: aiming || crewAlarm(), toward, order: boat.crewed ? st.crew.order : CREW_ORDERS.stand, sings: !boat.crewed || st.crew.sings(), line: () => (boat.crewed ? st.crew.line() : null), repairing: !!st.repairing, work, call, lookout, roles };
     },
     /** SHIP-CREW: a hand of a boat of mine by where he stands in her roster - his name, or null. */
     crewName: (boat, i) => (boat?.crewed ? myBoatState(boat)?.crew.nameOf(i) ?? null : null),

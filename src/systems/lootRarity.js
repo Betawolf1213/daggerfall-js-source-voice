@@ -1293,9 +1293,9 @@ export function craftedRarityWorth(item) {
  *  against the source; a no-op with the switch off or no source, so
  *  the DFU loot list is returned untouched. `luck` is the player's
  *  live luck. Returns the list for chaining. */
-export function rollLootRarity(items, source, { rolls = Math.random, luck = 50 } = {}) {
+export function rollLootRarity(items, source, { rolls = Math.random, luck = 50, find: findIn = undefined } = {}) {   // PARTY-LOOT: `find` the roll's own finders' word (a room's base reads none of a player's)
   if (!lootRarityOn() || !source || !Array.isArray(items)) return items;
-  const find = legendaryFindMult();   // LOOT5: the finders' word, once for the list
+  const find = findIn ?? legendaryFindMult();   // LOOT5: the finders' word, once for the list
   const minted = [];
   for (const it of items) {
     if (isGarment(it)) continue;   // LOOT14: a garment rolls in the wardrobe's pass, after every draw below
@@ -2038,14 +2038,14 @@ export const championSource = (source, qualityMult = 1) => ({
  *  list it is handed - so the find landed on the copy and was thrown away with it: no body ever kept one (the
  *  Thunderlock's "tier-4 corpse, about 1 in 700"; 0 of 20,000 level-12 champions' bodies, where the list door kept 111).
  *  What the roll added past the carried pieces goes onto the body. */
-export function rollCorpseLoot(entity, basics, { rolls = Math.random, luck = 50, qualityMult = 1, weights = null } = {}) {   // FOE-CAP: `weights` the plain foe's ladder (systems/foeLootCap.js)
+export function rollCorpseLoot(entity, basics, { rolls = Math.random, luck = 50, qualityMult = 1, weights = null, find = undefined } = {}) {   // FOE-CAP: `weights` the plain foe's ladder (systems/foeLootCap.js)
   if (!lootRarityOn() || !entity) return entity?.items ?? [];
   const worn = new Set(entity.equip ? equipTableOf(entity).filter(Boolean) : []);
   const loot = (entity.items ?? []).filter((it) => it && !worn.has(it));
   const carried = loot.length;
   const source = corpseSource(basics, entity.level, entity.mobileType);   // LOOT6: its family
   const champ = typeof entity.champion === 'string' && entity.champion !== '';   // LOOT7: a champion is a stronger source
-  rollLootRarity(loot, champ ? championSource(source, qualityMult) : { ...source, qualityMult, ...(weights ? { weights } : {}) }, { rolls, luck });   // CHAMP-LOOT: a champion's own source (half an elite's); FOE-CAP: a plain foe's ladder
+  rollLootRarity(loot, champ ? championSource(source, qualityMult) : { ...source, qualityMult, ...(weights ? { weights } : {}) }, { rolls, luck, find });   // CHAMP-LOOT: a champion's own source (half an elite's); FOE-CAP: a plain foe's ladder
   if (loot.length > carried) (entity.items ??= []).push(...loot.slice(carried));   // LOOT7-CHECK CORPSE-FIND: the find onto the body
   return entity.items;
 }

@@ -691,67 +691,72 @@
   {
     "name": "AC5-A-cat-wayrest-2",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'ongoing', do: 'room', n: 3 }], text: 'Each side holds only 3 cards here.'",
-    "new": "fx: [{ on: 'ongoing', do: 'room', n: 2 }], text: 'Each side holds only 2 cards here.'",
+    "old": "fx: [{ on: 'ongoing', do: 'room', n: 3 }] }",
+    "new": "fx: [{ on: 'ongoing', do: 'room', n: 2 }] }",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-rose-daedra-lord",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'reveal', do: 'summon', card: 'daedroth' }], text: 'Summon a Daedroth here.'",
-    "new": "fx: [{ on: 'reveal', do: 'summon', card: 'daedra-lord' }], text: 'Summon a Daedra Lord here.'",
+    "old": "fx: [{ on: 'reveal', do: 'summon', card: 'daedroth' }] }",
+    "new": "fx: [{ on: 'reveal', do: 'summon', card: 'daedra-lord' }] }",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-clavicus-2",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 1 }], text: 'Ongoing: your spells cost 1 less.'",
-    "new": "fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 2 }], text: 'Ongoing: your spells cost 2 less.'",
+    "old": "emblem: 'daedric',\n    fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 1 }] },\n",
+    "new": "emblem: 'daedric',\n    fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 2 }] },\n",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, with the card's emblem line to name it (the effects are another card's too), the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-frostbite-1",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 2 }], text: 'The weakest enemy unit here loses 2 power.'",
-    "new": "fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 1 }], text: 'The weakest enemy unit here loses 1 power.'",
+    "old": "tags: [], emblem: 'frost',\n    fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 2 }] },\n",
+    "new": "tags: [], emblem: 'frost',\n    fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 1 }] },\n",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, with the card's emblem line to name it (the effects are another card's too), the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-sentinel-1-3",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 2], n: 1 }], text: 'Units here that cost 1 or 2 have +1 power.'",
-    "new": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 3], n: 1 }], text: 'Units here that cost 1 to 3 have +1 power.'",
+    "old": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 2], n: 1 }] }",
+    "new": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 3], n: 1 }] }",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-dagon-power-7",
@@ -821,28 +826,30 @@
   {
     "name": "AC5-A-cat-ancient-lich-all",
     "file": "src/net/iliacCards.js",
-    "old": "{ on: 'ongoing', do: 'buff', to: 'all.mine', tag: 'undead', n: 1 }], text: 'Reveal: destroy the weakest enemy unit here. Ongoing: your undead units have +1 power.'",
-    "new": "{ on: 'ongoing', do: 'buff', to: 'here.mine', tag: 'undead', n: 1 }], text: 'Reveal: destroy the weakest enemy unit here. Ongoing: your undead units here have +1 power.'",
+    "old": "{ on: 'ongoing', do: 'buff', to: 'all.mine', tag: 'undead', n: 1 }] }",
+    "new": "{ on: 'ongoing', do: 'buff', to: 'here.mine', tag: 'undead', n: 1 }] }",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-A-cat-hold-spells-ok",
     "file": "src/net/iliacCards.js",
-    "old": "fx: [{ on: 'ongoing', do: 'veil' }, { on: 'ongoing', do: 'nospell' }], text: 'Cards here are played face down and unveiled when the game ends. Spells cannot be played here.'",
-    "new": "fx: [{ on: 'ongoing', do: 'veil' }], text: 'Cards here are played face down and unveiled when the game ends.'",
+    "old": "fx: [{ on: 'ongoing', do: 'veil' }, { on: 'ongoing', do: 'nospell' }] }",
+    "new": "fx: [{ on: 'ongoing', do: 'veil' }] }",
     "tests": [
       "test/cards7_rules.test.js",
       "test/cards8_catalog.test.js",
       "test/cards8_binder.test.js",
       "test/cards8_faces.test.js",
       "test/auditcards5_ui.test.js"
-    ]
+    ],
+    "note": "KG-SET (re-aimed by content): the catalog holds no word now - the effects alone, the words systems/iliacCardWords.js's (their fxText pin dies with the effects)."
   },
   {
     "name": "AC5-C-M1",
@@ -923,8 +930,8 @@
   {
     "name": "AC5-C-M7",
     "file": "src/systems/iliacItems.js",
-    "old": ", c.text, ...(c.flavor ? [c.flavor] : [])];",
-    "new": ", c.text];",
+    "old": ", cardRules(c), ...(flavor ? [flavor] : [])];",
+    "new": ", cardRules(c)];",
     "tests": [
       "test/auditcards5_items.test.js",
       "test/cards8_binder.test.js",
@@ -1480,7 +1487,7 @@
   {
     "name": "AC5-D-C15-never-whole",
     "file": "src/ui/collectionsPage.js",
-    "old": "if (_picked === r.id) list.append(codexWhole(el, r));",
+    "old": "if (_picked === r.id) out.push(codexWhole(el, r));",
     "new": "",
     "tests": [
       "test/auditcards5_ui.test.js",
@@ -3278,8 +3285,8 @@
   {
     "name": "faces5-F23-tier-colour-ignored",
     "file": "src/render/iliacCardFaces.js",
-    "old": "const colour = RARITIES[tier].colour;",
-    "new": "const colour = RARITIES.common.colour;",
+    "old": "const colour = picture ? PICTURE_RIM : RARITIES[tier].colour;",
+    "new": "const colour = picture ? PICTURE_RIM : RARITIES.common.colour;",
     "tests": [
       "test/cards8_faces.test.js"
     ]
@@ -3395,8 +3402,8 @@
   {
     "name": "faces5-N02-tile-writes-rules",
     "file": "src/render/iliacCardFaces.js",
-    "old": "if (L.box) paintText(ctx, L, card?.text ?? '', card?.flavor ?? '');",
-    "new": "paintText(ctx, L.box ? L : { ...L, box: { x: L.p, y: h * 0.8, w: w - 2 * L.p, h: h * 0.15 } }, card?.text ?? '', card?.flavor ?? '');",
+    "old": "if (L.box) paintText(ctx, L, words?.rules ?? '', words?.flavor ?? '');",
+    "new": "paintText(ctx, L.box ? L : { ...L, box: { x: L.p, y: h * 0.8, w: w - 2 * L.p, h: h * 0.15 } }, words?.rules ?? '', words?.flavor ?? '');",
     "tests": [
       "test/cards8_faces.test.js"
     ]

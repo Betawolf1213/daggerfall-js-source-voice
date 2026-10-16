@@ -5,15 +5,13 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 import {
   WAGON_KINDS, WAGON_KIND_ORDER, SMALL_CART_KG, activeWagonItem, activeWagonKind, wagonKgFor, wagonKgLimitOf, wagonHitchOf,
   newWagonItem, wagonKindOf, isWagonItem, wagonKindCode, wagonKindOfCode, stableWagonName,
 } from '../src/systems/wagonKinds.js';
-import { WAGON_SOURCES, TEX, WAGON_ARCHIVE, BANDS, SIDE_Y0, SIDE_Y1 } from '../src/world/wagonArt.js';
-import { DF, classicPictures, SEE_THROUGH_WINDOW } from '../src/world/classicArt.js';
-import { setTextureDeriveContext } from '../src/systems/textureReplacement.js';
-import { fakeClassicRgba, texelOf, texel } from './classicArtFake.mjs';
+import { wagonArt, TEX, WAGON_ARCHIVE, BANDS, SIDE_Y0, SIDE_Y1 } from '../src/world/wagonArt.js';
 import {
   wagonGeometry, buildBakedWagonParts, wagonFaceSkin, MEASURED, LIFT, CART_REST_PITCH_DEG, cargoFor, seatsFor, doorFor, pitchedPoint,
   wagonIconModel, wagonPoolDeps, WAGON_MODEL_URLS,
@@ -30,8 +28,6 @@ import { resolveItemName } from '../src/systems/itemInfo.js';
 const bakeOf = (kind) => JSON.parse(readFileSync(new URL(`../src/assets/wagons/${kind}.json`, import.meta.url), 'utf8'));
 const geo = Object.fromEntries(WAGON_KIND_ORDER.map((k) => [k, wagonGeometry(bakeOf(k))]));
 const id = (g) => g;
-// DF-ART: the wagons' pictures are read from the player's ARENA2 - here the tests' stand-in (test/classicArtFake.mjs)
-setTextureDeriveContext({ classicRgba: fakeClassicRgba() });
 const tick = () => new Promise((r) => setTimeout(r, 0));
 const flush = async (n = 8) => { for (let i = 0; i < n; i++) await tick(); };
 
@@ -70,19 +66,13 @@ test('WAGONS1 THE CAPACITY: the wagon store takes what the DRIVEN wagon holds - 
   assert.equal(p.ok, true); assert.equal(p.amount, 8, 'the open wagon: 800 kg free, eight of them');
 });
 
-test('WAGONS1 THE PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI generated"): twenty-one - the wagons\' fifteen, the caravan\'s room\'s five and the harness\'s leather (WAGONS3) - each a Daggerfall record read from the player\'s own ARENA2 under the wagons\' own archive, opaque: plank boards for the bed and the sides, its woods, its spoked wheel and iron, the sails\' cloth for the tilt; the caravan\'s walls a flat swatch with Daggerfall\'s leaded window or its door laid in (mutants: a record read from the wrong Daggerfall record)', async () => {
-  assert.deepEqual(Object.keys(WAGON_SOURCES).map(Number), Object.values(TEX).sort((a, b) => a - b));
-  assert.equal(Object.keys(WAGON_SOURCES).length, 21, 'the title\'s count (FINAL AUDIT: it said fifteen; PIN MOVED, WAGONS3: and the harness)');
-  const sources = { floor: DF.deck, side: DF.hullPlanks, wheel: DF.wheel, iron: DF.iron, tilt: DF.sailcloth, harness: DF.leather };
-  for (const [name, from] of Object.entries(sources)) assert.deepEqual(WAGON_SOURCES[TEX[name]], from, name);
-  for (const name of ['caravanSide', 'caravanFront', 'roomSide', 'roomFront']) assert.deepEqual(WAGON_SOURCES[TEX[name]].insets.map((i) => i.from), [SEE_THROUGH_WINDOW.from], `${name}: Daggerfall's window in it`);
-  for (const name of ['caravanRear', 'roomRear']) assert.deepEqual(WAGON_SOURCES[TEX[name]].insets.map((i) => i.from), [DF.door], `${name}: Daggerfall's door in it`);
-  const art = await classicPictures(WAGON_SOURCES, fakeClassicRgba());
-  assert.equal(art.length, 21);
-  for (const [r, p] of art) {
-    const from = WAGON_SOURCES[r], body = Array.isArray(from) ? from : from.body;
-    assert.deepEqual(texel(p, 0, 0), [...texelOf(body[0], body[1]), 255], `record ${r}: read from ${body.join('_')}, opaque`);
-  }
+test('WAGONS1 THE PICTURES: twenty-one - the wagons\' fifteen, the caravan\'s room\'s five and the harness\'s leather (WAGONS3) - each 64 x 64, painted from numbers to the same bytes every time under the wagons\' own archive (mutant: a seed from the clock)', () => {
+  const hash = () => createHash('sha256').update(Buffer.concat(wagonArt().map(([, p]) => Buffer.from(p.data)))).digest('hex');
+  assert.equal(hash(), hash());
+  const art = wagonArt();
+  assert.deepEqual(art.map(([r]) => r), Object.values(TEX).sort((a, b) => a - b));
+  assert.equal(art.length, 21, 'the title\'s count (FINAL AUDIT: it said fifteen; PIN MOVED, WAGONS3: and the harness)');
+  for (const [, p] of art) { assert.equal(p.width, 64); assert.equal(p.height, 64); assert.equal(p.data.length, 64 * 64 * 4); }
   assert.equal(WAGON_ARCHIVE, 38181);
   assert.deepEqual([SIDE_Y0, SIDE_Y1], [0.94, 3.06]);
   assert.deepEqual(BANDS.caravanSide.recs, [TEX.caravanSide]);

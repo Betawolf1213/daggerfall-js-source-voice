@@ -148,6 +148,7 @@
 // }
 
 import { Boat, setLights, HULL_NAMES, HULL_PRICES, packedHullWeight, CARGO_CONTAINER_IMAGE, TRIGGER_MODEL, goModelName, meshLocalBounds, colliderBounds, animatorOf, boatAnimators, boatParticleSystems, nodeOf, AUDIO_CLIPS, SAIL_ANIMATION_SPEED } from './comeSailAwayBoat.js';
+import { firmStat } from './firmamentLive.js';   // FIRM1: the Firmament's helmsman (sailSpeed)
 import { constantCurve, twoConstantsCurve, SPACE } from '../world/unityParticles.js';
 import { quatEuler } from '../world/unityAnimator.js';
 import { quatLookRotation, quatRotate, quatAngleAxis, quatMultiply, quatSlerp } from '../world/quat.js';
@@ -160,6 +161,7 @@ import { monthNames } from './gameDate.js';   // CSA-I: WorldTime.Now.MonthName,
 import { HELM_WAY, CARGO_HOLD_MISSING, steerage, isResponsive, pointOfSail, seaWind, SAIL_FREE, sailFreeGain, WIND_RATED } from './helmWay.js';   // HELM-WAY: the responsive helm; SAIL-FREE: her way under sail
 import { MAP_MARKER_MODE_COLORS, mapRect, guiMouse, mapPixelUnder, guiRectContains, vector2IntDistance, markerLabel, dayOfMonthWithSuffix, mapOverlayDraws, csFloatString, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_BLACK, DAGGERFALL_DEFAULT_SHADOW_POS } from './comeSailAwayMap.js';   // CSA-I: the position reading
 import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { BOAT_ACTIONS } from './comeSailAwayActions.js';   // HUD-HELM: the helm keys' table, a leaf the HUD's helm panel reads
 
 export const COME_SAIL_AWAY_VENDOR = 'come-sail-away';
 /**
@@ -289,16 +291,9 @@ export const DEED_NOT_HELD_TEXT = 'Her deed must be in your pack to pick her up.
 /** HOLD-WEIGHT (FIELD BUGS 2026-10-05c, the port's own): the pick-up's refusal of a boat whose parts, her hold's weight on
  *  them, would weigh more than the bearer can carry at all - parts no take could ever lift out of a chest again. */
 export const HOLD_TOO_HEAVY_TEXT = 'Her hold is too heavy to carry her packed. Lighten it first.';
-/** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action). */
-export const BOAT_ACTIONS = Object.freeze({
-  disembark: 'BoatDisembark', toggleLight: 'BoatToggleLight',
-  // CSA-E: the sails' and the trim's (Controls.ToggleSail, TrimRight, TrimLeft, TrimModifier)
-  toggleSail: 'BoatToggleSail', trimRight: 'BoatTrimRight', trimLeft: 'BoatTrimLeft', trimModifier: 'BoatTrimModifier',
-  // CSA-G: the time scale's three (Controls.IncreaseTimeScale, DecreaseTimeScale, ResetTimeScale)
-  timeScaleUp: 'BoatTimeScaleUp', timeScaleDown: 'BoatTimeScaleDown', timeScaleReset: 'BoatTimeScaleReset',
-  // HELM-KEYS (the port's, DECLARED): the arrows' more and less sail (MoreSail, LessSail)
-  sailUp: 'BoatSailUp', sailDown: 'BoatSailDown',
-});
+/** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action) - their table a
+ *  leaf since HUD-HELM (comeSailAwayActions.js), re-exported here so every reader keeps its import. */
+export { BOAT_ACTIONS };
 /** HELM-TIME-ONLINE: the three time keys - the helm's time dial, retired online. */
 export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown, BOAT_ACTIONS.timeScaleReset]);
 /** FIELD BUGS 2026-10-02b PLACE-AFLOAT: the placing's word for a water tile that stands over the sea's line. */
@@ -1173,11 +1168,15 @@ export function createComeSailAwayRuntime(deps) {
    *  the wind on her quarter, about half dead into it, never astern - no tack), in the sea's bounded wind (seaWind), at
    *  her pace (SAIL_FREE.pace). The mod's GetSailPower times the wind under Classic. */
   function sailDrive(boat) { return freeDrive(canvasPull(), boat); }
+  /** FIRM1: the Firmament's `sailSpeed` as a multiplier - under either helm (AUDIT UICALM-FIRM1 L1 L1: the Classic helm's
+   *  drive had never read it, so the star said +15% and did nothing there) */
+  const firmSail = () => 1 + firmStat('sailSpeed') / 100;
   /** SAIL-FREE: `canvas` drawing by the point of sail at her heading, in the sea's wind, at her pace (sailDrive's law). */
   function freeDrive(canvas, boat) {
     const offRun = Math.abs(vSignedAngle(flat(forwardOf(boat.GameObject)), flat(state.windVectorCurrent), V_UP));
     // SERPENT4: in a gale on her quarter whatever her heading, at its wind (galeWind)
-    return f(f(f(canvas * f(state.gale ? 1 : pointOfSail(offRun))) * f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace));
+    // FIRM1 (bible/06-Systems/Firmament.md): her pace the Firmament's `sailSpeed` more - the sea wedge's helmsman, online alone
+    return f(f(f(canvas * f(state.gale ? 1 : pointOfSail(offRun))) * f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace * firmSail()));
   }
   /** AUDIT SHIPS A4 (2026-10-06): HER WAY UNDER SAIL as she lies (m/s) - every sail she has drawing, at her heading in this
    *  wind, at her pace under sail, whether they are set or not: SAIL-FREE's drive under the responsive helm (freeDrive),
@@ -1186,7 +1185,7 @@ export function createComeSailAwayRuntime(deps) {
    *  galleon's crew rowed her at 1 m/s where her sails made four. */
   function sailWayOf(boat) {
     if (!boat || boat !== state.CurrentBoat || boat.Sails.length < 1) return 0;
-    const drive = responsive() ? freeDrive(GetSailPower(sailCrest, true), boat) : f(GetSailPower(null, true) * vMagnitude(state.windVectorCurrent));
+    const drive = responsive() ? freeDrive(GetSailPower(sailCrest, true), boat) : f(f(GetSailPower(null, true) * vMagnitude(state.windVectorCurrent)) * f(firmSail()));
     return f(drive * sailSpeed(boat, wayHurt(true)));
   }
   /** AUDIT SHIPS A4: her way under oars (m/s), her oars pulling whole - what sailWayOf is weighed against. */
@@ -1406,7 +1405,7 @@ export function createComeSailAwayRuntime(deps) {
       }
       if (trimAuto()) autoTrim(boat, num6);
     }
-    const num17 = f(GetSailPower() * vMagnitude(state.windVectorCurrent));
+    const num17 = f(f(GetSailPower() * vMagnitude(state.windVectorCurrent)) * f(firmSail()));   // FIRM1: the Firmament's helmsman under Classic too
     let num18 = 0;
     if (has('MoveRight')) num18 = 1;
     else if (has('MoveLeft')) num18 = -1;

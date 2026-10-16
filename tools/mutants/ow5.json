@@ -267,7 +267,7 @@
   },
   {
     "name": "OW5-P6-marked-twice",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "(m.peers ?? []).some((id) => near.has(id))) continue;",
     "new": "false) continue;",
     "tests": [
@@ -277,7 +277,7 @@
   },
   {
     "name": "OW5-P6-region-mark-unseen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "      near.add(t.id);\n    }\n    // AUDIT OW5 P6:",
     "new": "    }\n    // AUDIT OW5 P6:",
     "tests": [

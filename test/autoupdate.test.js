@@ -77,7 +77,10 @@ test('DA7: the shell - the updater downloads on its own, installs on quit, never
     'the launch forks on the transport - and an updater that declines to check at all (null, no event to come) is said at once, not after the timeout');
   assert.match(main, /if \(recheckTimer \|\| !updateChecksEnabled\(\)\) return;/, 'and the hourly re-check sits inside the same gates');
   // THE MENU: the loud path on either transport
-  assert.match(main, /click: \(\) => \(currentUpdateTransport\(\) === 'updater' \? checkForUpdatesViaUpdater\(\) : checkForUpdates\(\)\)/);
+  // PIN MOVED: DA13 - the game's own channel is asked first, and what it cannot carry goes the transport's loud way
+  assert.match(main, /click: \(\) => checkForUpdatesLoudly\(\),/);
+  const loudly = main.slice(main.indexOf('async function checkForUpdatesLoudly()'), main.indexOf('/** While the app runs, ask again every RECHECK_MS'));
+  assert.match(loudly, /const g = await askGame\(\);\s*if \(g === 'installer'\) return currentUpdateTransport\(\) === 'updater' \? checkForUpdatesViaUpdater\(\) : checkForUpdates\(\);/);
   const loud = main.slice(main.indexOf('async function checkForUpdatesViaUpdater'), main.indexOf('// ---- the window'));
   assert.match(loud, /isNewerRelease\(app\.getVersion\(\), `app-v\$\{v\}`\)/, 'the manual check compares by DA6\'s own law - the yml\'s version is the tag less its prefix');
   assert.match(loud, /It installs itself the next time you quit/, 'and says what will happen, because the player has nothing to click');

@@ -99,6 +99,7 @@ export const TITLE_TEXT = Object.freeze({
   hourbreaker: 'Hourbreaker',        // SD9b (2026-10-07, the Super Dungeons arc): one Brass Remnant's kill in four grants it
   hoursfirst: "Hour's First",       // HOURS-FIRST (2026-10-08, Mac: "a title named Hour's First"): the first group to break an Abyss Dungeon, by name
   iliacchampion: 'Iliac Champion',   // CARDS10 (2026-10-08, Tavern-Cards section 6.4: "a title for the top of it"): Iliac Hand's season #1, while they hold the top
+  grandmaster: 'Grandmaster',        // KG6 (2026-10-15, Kings-Gambit.md 10.7: "wears GRANDMASTER - the mod's highest tier's name"): The King's Gambit's season #1, while they hold the top
   // CHAP4c (2026-10-08, the Chapters arc): a chapter's seats' - worded off their claim (npcChapterLaw.js chapterTitleText,
   // "Master of the Fighters Guild, Anticlere"); these where the claim names no chapter this client knows
   chaptermaster: 'Chapter Master',
@@ -106,6 +107,8 @@ export const TITLE_TEXT = Object.freeze({
   formermaster: 'Former Master',
   highmaster: 'High Master',      // CHAP6e: a Master's in its chapter's Ascendancy - GUILD3e: while its chapter stands Ascendant
   seasonmaster: 'Season Master',  // CHAP6e: a Season's Master's, kept for good
+  ilovelamp: 'I Love Lamp',       // LAMP-KEEPER II (2026-10-14, Mac: "the 'I Love Lamp' title"): a lamp keeper spoken to
+  coilbreaker: 'Coilbreaker',     // SERPENT5 (2026-10-15, Sea-Serpent.md section 17): one dealing ship's serpent kill in twenty grants it
 });
 
 /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"): AN
@@ -119,6 +122,7 @@ export const AURA_TEXT = Object.freeze({
   resonance: 'Crystal Resonance',   // CRYSTAL-FIST: the Crystal Fist's ring of purple squares rising and falling, granted with the title
   turninghour: 'The Turning Hour',   // SD9c: the Brass Remnant's wheel of brass gears and gold light, one kill in eight
   firsthour: 'The First Hour',   // HOURS-FIRST: The Turning Hour in the first dawn's light, Hour's First's own, granted with the title
+  maelstrom: 'The Maelstrom',   // SERPENT5: the Old Coil's whirlpool of tide and foam, one dealing ship's serpent kill in fifty
 });
 
 /** SHADOW-FANG (2026-09-26, Mac): "SirMcMobdon gets a brand new
@@ -196,6 +200,13 @@ export const HOUR_LIGHT = Object.freeze([1, 0.945, 0.769, 1]);      // #fff1c4
 export const HOUR_DAWN = Object.freeze([0.902, 0.553, 0.443, 1]);   // #e68d71
 export const HOUR_PEARL = Object.freeze([1, 0.851, 0.659, 1]);       // #ffd9a8
 export const HOUR_SUN = Object.freeze([1, 0.969, 0.918, 1]);         // #fff7ea
+/** SERPENT5 (2026-10-15; bible/11-Multiplayer/Sea-Serpent.md section 17): COILBREAKER - the Old Coil's title, one dealing
+ *  ship's kill in twenty on its first write. Drawn in the sea Sethrakul is fought in: the open water's blue into the
+ *  tide's green into the foam; its one colour the tide's - greener and deeper than the Disciple's teal. The Maelstrom is
+ *  cast in all three (render/auraRing.js MAELSTROM_RGB reads them from here). */
+export const COIL_SEA = Object.freeze([0.165, 0.561, 0.651, 1]);    // #2a8fa6
+export const COIL_TIDE = Object.freeze([0.122, 0.682, 0.549, 1]);   // #1fae8c
+export const COIL_FOAM = Object.freeze([0.847, 0.976, 0.937, 1]);   // #d8f9ef
 
 /** A title's colour, RGBA 0..1 - the same shape SOC4's PARTY_GREEN is
  *  in, so `nameLayer.cssRgba` turns it into CSS and `drawText` takes it
@@ -250,6 +261,9 @@ export const TITLE_RGBA = Object.freeze({
   // CARDS10: the ILIAC CHAMPION in the Bay's own sea-blue - the water the game is named for, bluer and brighter than the
   // Apostle's periwinkle, no gold (the Founder's) and no green (the Arena Champion's laurel)
   iliacchampion: Object.freeze([0.239, 0.608, 0.820, 1]),   // #3d9bd1
+  // KG6: the GRANDMASTER in a king's purple - a crown's, the board's royal; deeper than the Hierophant's violet and warmer
+  // than the Iliac Champion's sea-blue
+  grandmaster: Object.freeze([0.706, 0.22, 0.824, 1]),   // #b438d2 - AUDIT KG II D12: #9c57ca stood 18 apart from the Protector's; this one stands 49 from every title
   // CHAP4c: a chapter's seats' - a guild banner's steel blue for its Master, paler for an officer, weathered grey for a
   // Master who lost the seat; lighter and greyer than the Herald's azure, darker than the Champion's silver
   chaptermaster: Object.freeze([0.498, 0.698, 0.898, 1]),   // #7fb2e5
@@ -259,6 +273,10 @@ export const TITLE_RGBA = Object.freeze({
   // aged to slate, the colour of a banner kept on a hall's wall
   highmaster: Object.freeze([0.365, 0.612, 0.925, 1]),      // #5d9cec
   seasonmaster: Object.freeze([0.435, 0.561, 0.722, 1]),    // #6f8fb8
+  // LAMP-KEEPER II (no colour named): LAMPLIGHT - the warm amber of a wick behind glass, deeper and redder than the
+  // Founder's gold and the Hour's, lighter than the Dungeon Master's orange
+  ilovelamp: Object.freeze([1, 0.698, 0.376, 1]),           // #ffb260
+  coilbreaker: COIL_TIDE,                                   // SERPENT5: the tide's green, #1fae8c
 });
 
 /** SHADOW-FANG: A TITLE DRAWN AS A GRADIENT - its stops, RGBA 0..1, left
@@ -273,6 +291,7 @@ export const TITLE_GRADIENT = Object.freeze({
   hourbreaker: Object.freeze([HOUR_BRASS, HOUR_GOLD, HOUR_LIGHT]),   // SD9b: the Remnant's brass into the light of its heart
   hoursfirst: Object.freeze([HOUR_DAWN, HOUR_PEARL, HOUR_SUN]),   // HOURS-FIRST: rose gold into pearl into the dawn's white
   aegis: Object.freeze([OBLIVION_VOID, OBLIVION_VIOLET, OBLIVION_LILAC]),   // AEGIS: out of the void into the ward's light
+  coilbreaker: Object.freeze([COIL_SEA, COIL_TIDE, COIL_FOAM]),   // SERPENT5: the open sea into the tide into the foam
 });
 
 /** PENITENT: THE EDGE A GRADIENT TITLE WEARS, where it is not the title's
@@ -287,6 +306,7 @@ export const TITLE_EDGE = Object.freeze({
   gatebreaker: Object.freeze([0, 0, 0, 1]),   // WB9g: its ember end is bright - edged in black, as Penitent's
   aegis: Object.freeze([0, 0, 0, 1]),   // AEGIS: its lilac end is bright - edged in black, as Penitent's and the Gatebreaker's
   hoursfirst: Object.freeze([0, 0, 0, 1]),   // HOURS-FIRST: its dawn end is near white - edged in black, as Penitent's
+  coilbreaker: Object.freeze([0, 0, 0, 1]),   // SERPENT5: its foam end is near white - edged in black, as Penitent's
 });
 
 /** A glyph's colour. The sprout is green because Mac said green; the
@@ -556,7 +576,7 @@ export const badgeClass = (kind, key) => `${kind}-${key}`;
  *  the Gatebreaker's, the Oblivion Ward the Aegis of Oblivion's, the Golden Radiance the Primarch's (PRIMARCH), the Holo
  *  Shadow Cloak the Shadow Fang's black and crimson (SHADOW-CLOAK), the Seraph Wings the Founder's gold - the wings' own, where
  *  the developer's paint is a red (SERAPH-WINGS), the Crystal Resonance the Crystal Fist's purple (CRYSTAL-FIST). A pin walks AURA_TEXT and requires an entry. */
-export const AURA_PAINT = Object.freeze({ dagonfire: 'gatebreaker', oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst' });   // HOURS-FIRST: The First Hour in Hour's First's rose gold
+export const AURA_PAINT = Object.freeze({ dagonfire: 'gatebreaker', oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', maelstrom: 'coilbreaker' });   // HOURS-FIRST: The First Hour in Hour's First's rose gold; SERPENT5: The Maelstrom in the Coilbreaker's sea
 /** SHADOW-FANG: `titlePaint`'s properties as CSS declarations, the colour
  *  left to the button (its border is drawn in it) - so a gradient title's
  *  word on the card is the SAME paint as over a head, not a second one. */

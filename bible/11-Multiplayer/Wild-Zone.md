@@ -99,7 +99,8 @@ ordinary dungeon.
 
 ## 3. The fights
 
-Two players standing in the zone may strike each other - never a member of my party, never my duel's opponent - in the
+Two players standing in the zone may strike each other - never KIN: a member of my party or one under its truce, my
+duel's opponent, or - MAC'S DECISION (2026-10-14, "Guildmates are friends") - a member of my guild - in the
 open country and, since PVPDUNGEON (2026-10-08, the owner: "players should be able to attack each other in dungeons
 too in the pvp zone"), in its dungeons (`wildCan`, `world.js:"const wildCan = ()"`). THE RELAY REFEREES EVERY BLOW
 (INT9, 2026-10-09, `06-Systems/Integrity-Arc.md` section 5; `src/net/wildRef.js`): my own cell's socket says I stand in
@@ -107,7 +108,11 @@ the zone (`zone` - its audit: never a halo's, again at each crossing and every `
 where both fighters said so in the same cell, at the Royal Tourney's vitality (never the save's health; the bar kept at
 the hub as I cross, whole again only unstruck and in the zone `WILD_REF.mendMs`, or away `WILD_REF.riseMs`), every strike and spell a number the striker's own sheet rolled, judged on the weapon its look holds and the
 arms its token signs, the reach from the places the relay believes; the referee's word (`wref`) says what landed, and
-a fall. There is no floor - a blow can kill. Outdoors the melee arm, the arrows and the cast
+a fall. There is no floor - a blow can kill. Kin is one law at both ends (`wildRef.js:"export function wildKin"`): the
+referee asks it of every blow and cast, a duel's two and one guild read off the two sockets' verified guilds, the party
+and its truce asked of the hub only when neither is (`server/src/index.js:"const kin = wildKin({ duel: duelKin, guilds: [a.gi, tb.gi] })"`),
+and every client door asks it of its targets, a guild by the tags the relay stamps - a tag is one guild's alone
+(`world.js:"if (wildKin({ party: !!social?.isPartyPeer(peerId)"`). Outdoors the melee arm, the arrows and the cast
 engine's marks reach fair players through the duel's own arms (each falls through to the zone when no duel or battle
 stands). Underground the dungeon's own swing takes a fair player in reach, in view and in sight before any foe
 (`dungeonContext.js:"function resolvePlayerHit"` resolvePlayerHit, over the host's `wildBodies`/`wildStrike`), and its
@@ -134,8 +139,9 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   organizer, its pieces lie in the pack itself, so the rule names each (`isWalletItem`, `walletHolds`;
   `wildDropLaw.js:"if (isWalletItem(item) || walletHolds(item)) return false;"`). `src/systems/wildDropLaw.js` (INT9:
   the law's home, a leaf the account Worker bundles; `src/systems/wildDeath.js` re-exports it).
-- DROPPED: every other thing in the bag and in the cart, into the room's remains (section 5). INT9: TAKEN OFF THE
-  RECORD BY THE ACCOUNT SERVICE (`server-account/src/wild.js`, `/v1/wild/fall`), never handed over by the fallen's game:
+- DROPPED: every other thing in the bag and - while the wagon is with them (CART-AWAY, below) - in the cart, into the
+  room's remains (section 5). INT9: TAKEN OFF THE RECORD BY THE ACCOUNT SERVICE (`server-account/src/wild.js`,
+  `/v1/wild/fall`), never handed over by the fallen's game:
   the fallen's tab asks as an act on its record (checkpointed as it will rise; the law
   `wildDropLaw.js:"export function takeWildDeath"` the service's alone - the killer's piece, the gold, then the drop by
   worth), against the relay's signed fall at a player's hand or on its own nonce at a foe's, naming the room its remains
@@ -143,18 +149,55 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   `wildDropLaw.js:"export function wildTakeTook"`) and its `remains` order over them for that room, the same order each
   asking, good its minute; and the tab deposits them on it - the room keeps nothing else (INT9's audit: each valuable
   piece under a fresh id, the id it had the fallen's own copy). WILD GOLD: and half the gold - `WILD_GOLD_LOSS` (0.5) of
-  the purse and of the cart's gold stack, as ONE pile record in the same remains (`takeWildGold`,
-  `wildDropLaw.js:"export function takeWildGold"`),
+  the purse and, while the wagon is with them, of the cart's gold stack, as ONE pile record in the same remains
+  (`takeWildGold`, `wildDropLaw.js:"export function takeWildGold"`),
   for anyone to take; the usual death penalty is not taken on top (`world.js:"const goldLost ="`). LETTERS-DROP (the
   owner: "letter of credits should be dropped"): a letter of credit is the one piece the wallet holds that the death
   takes, as it takes the purse's coin - into the same remains at its whole value, unless a quest's or one the trade
   refuses (`wildDropLaw.js:"item.templateIndex === TEMPLATES.Letter_of_credit && !item.questItem"`) - answered ahead
   of the decor's kept-back list, which names the letter too.
+- CART-AWAY (FIELD BUGS 2026-10-15d; MAC'S DECISION, 2026-10-15, asked "If parked outside of the pvp zone in the
+  wrothgarian mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost"): THE CART'S
+  SHARE ONLY WHEN THE WAGON IS WITH THEM. Where it stands is the Horse Cart and Cargo record's
+  (`horseCartLaw.js:"export function newSaveData"`, the save's modData). WITH THEM: driven, beside them on foot (the
+  mod's WithPlayer never sent away - its next door parks it there), following, or parked (Deployed) on a map pixel of
+  the zone. AWAY: parked on any other pixel - the band about the zone (`wildNear`) is not the zone, no blow lands and
+  nothing drops there - stabled (WithPlayer with WAGON-STABLED's word, `03-World/Holdings.md`), or no wagon. Away, the
+  death takes nothing of the cart, neither a piece nor its gold's share (`takeWildDeath`'s `cart` option, and
+  `wildDropCandidates`' and `takeWildGold`'s); the bag, the purse and the killer's piece go as ever. THE TRUST: the
+  zone's mask is the map files', which the account service does not hold, so the fallen's own tab SAYS its wagon is away
+  (`cart` 0 on `/v1/wild/fall`, `src/systems/wildCart.js` wildCartAway over the record the save writes and
+  `wildMaskOf`; with the mod switched off the wagon is Daggerfall's own, which goes where its owner goes), and the
+  service honours the word only where the record it keeps agrees by its mode
+  (`wildDropLaw.js:"export function wildCartMayBeAway"`: parked, stabled or none - never driven, following or beside
+  them unstabled; `server-account/src/wild.js:"const away = !seize"`), so a tab cannot keep a cart its own record says it
+  drives. A seizure honours no word - its carrier holds neither the record nor the mask - and a tab from before the word
+  says none: both take the cart as before. A fall asked again answers its first take whatever is said, so the fallen's
+  own ask, made first, is what its killer's seizure is answered too. Its limit is section 22's.
 - WORN: kept on a death to a foe. At another player's hand, in the open country (a cell room), the killer may take
   ONE worn piece: the fallen's game shows the list (`worn`, under the fall's id), the killer's body window picks
   (`pick`, INT9: to the relay, in the room that refereed the fall, within `WILD_REF.pickMs`, naming what the offer
-  showed there), and the relay signs the fall with it - the service takes that piece off the fallen's record first, and the remains hold it for the killer
-  alone (their game asks for it as the room says the remains). While the body lies the fallen's socket stays in the
+  showed there), and the relay signs the fall with it. MAC'S DECISION (2026-10-14, "Yes, build it" - THE TWO-PHASE
+  HANDOFF): the fallen loses that piece only once the killer has it. The service takes it off the fallen's record INTO
+  ESCROW (`server-account/src/wild.js`, `wild_escrow`, in the fall's own batch - its ledger key the service's), where the
+  fallen's tab says its room signs collects (`collect` 1, online.js `wildCollectAt` over `relaySupportsWildCollect`); its
+  order says so (`we`), and the remains list the piece as their killer's alone. The killer's game asks the room for it
+  the moment the room says the remains, and the room answers no record - it signs the killer's COLLECT
+  (`wildReceipt.js:"export async function mintWildCollect"`, `g1`: the remains' id, the killer, the realm character its
+  socket plays), once, and says the same collect each time it is asked (`wildLaw.js:"export function collectAsk"`). The
+  killer's tab carries it to the service as an act on its own record (`/v1/wild/collect`, wildCollect): the piece into
+  that record and the escrow ended, one batch guarded to the one row - only then is it the killer's, and it arrives in
+  the service's answer, carried, never in a slot (`wildEscrowHost.js:"const wildCollected = (d) =>"`). NOBODY COLLECTING by the
+  remains' latest end (`until`: the order's minute and `WILD_REMAINS_MS`, WILD_ESCROW_HOLD_S) and a collect signed at
+  that moment spent (`WILD_COLLECT_TTL_S`, `escrowBackAt`), the fallen's own tab takes it back into its record
+  (`/v1/wild/reclaim`, wildReclaim) - watched on the zone's frame (`wildEscrowHost.js:"const wildEscrowFrame = () =>"`), and a
+  game closed meanwhile asks the service at its next play (`/v1/wild/escrows`). The piece is in the fallen's record, the
+  escrow, or one record - never two, never none; an end asked twice moves nothing twice. What the fallen sees: the
+  death screen says the piece is held until the killer collects it and comes back otherwise (`WILD_TEXT.deathHeld`), a
+  line says when (`heldNote`), and its return or its collection is said (`heldBack`, `heldTaken`). A record the judge
+  holds keeps the piece outright: it could never reach its killer. A tab whose room does not sign collects (an older
+  relay) is the room's old take: the piece off the record into the remains, the killer's alone (section 5).
+  While the body lies the fallen's socket stays in the
   room, so the signed fall reaches them; a fallen that lets `WILD_FALL_GRACE_S` (30 s) go by is seized by its killer
   (the record moved where it stands, its lease cleared). A death at a player's hand underground drops the bag and the
   gold as any death there does, and offers no worn piece.
@@ -193,6 +236,14 @@ with the minutes left.
   guilds (the remains keep the fallen's `gi` - INT9's audit: the service's order's `wg`, whoever carries it), a party member asked of the hub (`_wdunKinOf`,
   `server/src/index.js:"async _wdunKinOf"`, over `WDUN_INTERNAL_KIN`, kept a minute a pair, the stalest pair let go first past 512 - never the whole cache; a hub that does not answer is kin, kept `WDUN_KIN_SILENT_MS`) - and a member's game
   never seeds the pile at all (`canTake`, `world.js:"canTake: (rec) =>"` and `wildRemains.js:"if (!canTake(rec))"`).
+  PVP-LOOT (FIELD BUGS 2026-10-14, "Equipped items Disappear after looting in PvP zone"): the DROP's law, never the
+  killer's worn piece. The record the service's order names (`wk`, `wi`) is its killer's whoever the fallen's guild or
+  party counts them (`wildLaw.js:"export const remainsNamedFor"`), and the room asks the friend law only of a record it
+  names for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`); a piece in escrow is a
+  collect, which the friend law never reads (section 4). The room had refused a killer who was the fallen's guildmate the
+  piece the service had already taken off the fallen's record, and it lay there for nobody
+  (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT). Guildmates are kin since (section 3), so the named piece meets the
+  friend law only where a party or a guild was joined between the fall and the take, or the hub is silent at it.
 - BESIDE THE BODY (PVPFIX, the owner: "place the pile next to the body not on top of it"): the pile stands a fixed
   step to the side of where they fell, the same on every client (`wildRemains.js:"- on top it was hidden"`) - on top
   it was inside the body and could not be aimed at.
@@ -263,6 +314,13 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
   its takes (section 3-5). INT9 (world185, `WILD_REF_RELAY_MIN`): the zone word (`zone`), the blows refereed and routed
   to nobody, the killer's `pick` the room's, a deposit carrying the service's order on every chunk; `gave` and
   `result` retired. The referee's own frame `{t:'wref', k}` (`validWildRefOut`): `hp`, `fell`, `rc` (the signed fall).
+  PVP-LOOT (world205 - world201 on its branch, one bump past main's world201 and world202 at the merge, and world203 on the integration, renumbered past main's world203 and world204 at the merge of main): the room's take asks the friend law of the drop's records alone (section 5); a guildmate is kin
+  at the referee (section 3); and the two-phase handoff (section 4) - the order's `we`
+  (`identityToken.js:"if (c.we !== undefined && c.we !== 1) return false;"`), the room's `cr` word to the killer
+  (`validWildOut`, the collect `g1`, `WILD_COLLECT_MAX`), `WILD_COLLECT_RELAY_MIN` (205; 201 on its branch and 203 on the integration, and main's world201 to world204 hand the record) for a tab to ask the escrow - an
+  older client drops `cr`, so it never takes the room's copy of a piece in escrow. Deploy the relay first, then the
+  account service (acct136: `wild_escrow`, migration 0118 - acct133 and 0113 on its branch, acct134 and 0115 on the integration; `/v1/wild/collect`, `/v1/wild/reclaim`, `/v1/wild/escrows`),
+  then the site.
 - `{t:'wdun', k, ...}` (`validWdunIn`/`validWdunOut`, `wire.js:"export function validWdunIn"` and
   `wire.js:"export function validWdunOut"`), to the social hub alone, from a socket whose social hello named its
   verified account, gated on `WDUN_RELAY_MIN` and `WDUN_GIANTS_RELAY_MIN` (177,
@@ -281,6 +339,10 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
 first, then the site. A client on an older relay plays the mountains as they were - the zone is not raised there at
 all (`wildFrame` reads `online.wildOk`), and no `wdun` word is sent to a hub that would close the socket on it
 (`online.wdunOk`, `online.wdunGiantsOk`).
+
+CART-AWAY (2026-10-15, section 4) is one field on the account service's `/v1/wild/fall` body, `cart` (0 the wagon away,
+1 with them) - no relay frame and no migration. A service from before it ignores the word and a tab from before it says
+none: either way the cart is taken as it was, so the two deploy in either order.
 
 ## 9. The journeys (WILD3, PVPTIERS)
 
@@ -419,7 +481,7 @@ wdun*); the hub reads, calls it and writes.
   refuses while anyone stands in it, `server/src/index.js:"async _wdunResetInternal"`; AUDIT SCALE II R3-9: every layer of it
   at once, SCALE5d - anyone standing in any layer holds the wipe) - and its EPOCH moves on: every
   client keys the hall's chests by it (`searchLocationKey`, `dungeonContext.js:"function searchLocationKey"`), so a
-  reset fills them again for everyone. The halls keep WORLD8's hour for the rest (DUNGEON-RESPAWN, section 21).
+  reset fills them again for everyone. The halls keep WORLD8's respawn for the rest - half an hour since RESPAWN-30 (DUNGEON-RESPAWN, section 21).
 - THE CROWS: a death in a hall (`wdunDie`, `wildLaw.js:"export function wdunDie"`) sets crows over it until the last
   remains in it go (`wdunGone`, `wildLaw.js:"export function wdunGone"`, told by the place room over
   `WDUN_INTERNAL_GONE`), said to everyone online (`cr`). On both maps three small black birds circle each such hall
@@ -510,7 +572,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
   `world.js:"const wildGiantMarks"` - a stood one at its body's own place); eleven by ten since GIANT-SKULL2 (the
   owner: "make the skulls a bit smaller", `wildMapInk.js:"the skulls a bit"`); a fallen one crossed out in red where
   it fell until it walks again. On the Overworld a Greater Giant stood near is marked "Giant", as the enemy it is
-  (PVPGIANT, `world.js:"PVPGIANT: the zone's"`).
+  (PVPGIANT, `travelViewMarks.js:"PVPGIANT: the zone's"`).
 
 ## 16. The zone's other laws (PVPDUNGEONS)
 
@@ -617,7 +679,8 @@ each is a line here, findable by its tag.
   someone was in and left) for everything and the same for elite dungeons 40 mins respawn timer for everything"):
   WORLD8's respawn (`06-Systems/Online-Arc.md`: a dead foe and an emptied container each back on their OWN clock from
   when it fell or was emptied) at the dungeon's own pace - a normal dungeon twenty minutes, an elite one forty; the
-  zone's halls and a Super dungeon keep the hour (`dungeonRespawnMs`,
+  zone's halls and a Super dungeon keep WORLD8's `RESPAWN_MS` - half an hour since RESPAWN-30 (2026-10-14, Mac: "Reduce
+  dungeon cooldown from 1 hour to 30 minutes" - "I meant the chest and foe respawn"; it was the hour) (`dungeonRespawnMs`,
   `dungeonRespawn.js:"export const dungeonRespawnMs"`; `dungeonContext.js:"const _respawnMs"`). Online alone, as
   WORLD8 is.
 - HEAL-CURSE (the owner: "Add a button to the temple services under heal disease named heal curse it removes being a
@@ -705,9 +768,8 @@ the instant, and the walk in (the one door into the zone no journey's gate asks,
   doctored attacker gains nothing.
 - A party's walk that ends in the zone or within its band says so in its question (`world.js` `wildWalkRow`,
   `WILD_TEXT.walkInto`), between the leader's line and "Travel with them?".
-- Not done, and the owner's to decide: a floor for new players (a level, a Renown, a first entry acknowledged), and
-  whether a guild's members - who already cannot take each other's remains and are never drawn as strangers - may
-  fight each other here.
+- Not done, and the owner's to decide: a floor for new players (a level, a Renown, a first entry acknowledged). A
+  guild's members fight nobody of their own guild here (Mac, 2026-10-14, "Guildmates are friends" - section 3).
 
 Pinned by `test/fb1009b_partytruce.test.js` and `test/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
 
@@ -728,6 +790,14 @@ Pinned by `test/fb1009b_partytruce.test.js` and `test/tv8_party_walk.test.js`; `
 
 - PARTY-TRUCE (FIELD BUGS 2026-10-09b) is held in memory: a player who reloads forgets the truces they stood in, and
   the hub's record holds them for the referee (INT9).
+- A piece in escrow comes back only when its fallen plays again (its tab takes it back - there is no clock that moves a
+  record nobody plays); until then it is the escrow's, in no record. A fallen character deleted or dead for good while
+  one is held has no record to take it back into, and it stays the escrow's.
+- CART-AWAY (section 4): where a parked wagon stands is the fallen's own word, held to its record's mode alone. The
+  wagon's record is the player's own (whose horse and wagon stand where is never the service's), so a modified client
+  that writes its wagon parked off the zone keeps a cart it drove in - and rises with that record, the wagon parked where
+  it wrote. A fallen whose tab never asks is seized with its cart taken wherever it stood; and an ask that finds its
+  fallen already risen meets a hitched team the rise called to follow, with them: the cart is taken.
 
 ## 23. What the suite caught (WILD-SUITE, 2026-10-08)
 
@@ -755,4 +825,11 @@ relay's hub and no friend's take); the host seams of section 23 in `test/bootord
 `test/audit68_worldmodes.test.js`, `test/mapkeep.test.js`, `test/mwattach.test.js`, `test/audit26_uiwindows.test.js`
 and `test/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
 `test/wild1_zone.test.js`, `tools/mutants/keepwallet.json`. INT9 (the zone refereed, a death's drop taken off the record):
-`test/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5).
+`test/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5). PVP-LOOT (the
+killer's worn piece theirs whoever the fallen's guild or party counts them, end to end over the game's own pieces):
+`test/fb1014_pvploot.test.js`, `tools/mutants/fb1014_pvploot.json`. Mac's two decisions of 2026-10-14 - guildmates kin,
+the two-phase handoff - end to end through the real relay room, account service and clients:
+`test/fb1014_pvpescrow.test.js`, `tools/mutants/fb1014_pvpescrow.json`. CART-AWAY (Mac, 2026-10-15 - the cart's share
+only while the wagon is with them; through the real drop law, the real Horse Cart and Cargo runtime's records, the zone's
+own mask and the real account service): `test/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
+dead).
