@@ -356,7 +356,7 @@ point the player is looking at is the point they struck - with a
 little scatter so a flurry fans out. Enhanced only: the enhanced HUD
 registers the hook; the classic path never has one.
 
-ROSE-SEEN (`01-Overview/Field-Bugs-2026-10-15c.md`): a follow-up blow -
+ROSE-SEEN (`01-Overview/Field-Bugs-2026-10-15e.md`): a follow-up blow -
 Open Hand's second, Many Endings' echo - runs no formula, so the seam
 never heard it and the Rose looked like nothing. It raises its own
 number through `showFollowUp`, tagged with the power's name, under the

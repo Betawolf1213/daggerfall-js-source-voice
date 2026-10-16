@@ -1,10 +1,10 @@
-// FIELD BUGS 2026-10-15c - a player on the Gauntlets of the Rose: "Do gauntlets of the rose actually work? 'Fists land
+// FIELD BUGS 2026-10-15e - a player on the Gauntlets of the Rose: "Do gauntlets of the rose actually work? 'Fists land
 // again for half' I haven't noticed any difference in damage or anything proccing while using them" and "Does having a
 // shield equipped make them not work?". SHIELD-FIST: they work, shield or none - DFU's UpdateHands forces the right hand
 // when a shield is in the left (WeaponManager.cs:656), an empty right hand is the bare fist, and every landed fist strikes
 // again for half. ROSE-SEEN: the second blow lands through the struck foe's door, which runs no formula, so HN1's numbers
 // - a readout of the formula - showed the first blow alone and the Rose looked like nothing. It raises its own number now,
-// the power's name its tag. bible/01-Overview/Field-Bugs-2026-10-15c.md.
+// the power's name its tag. bible/01-Overview/Field-Bugs-2026-10-15e.md.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -62,7 +62,7 @@ test('SHIELD-FIST a shield in the left hand leaves the bare fist the striking ha
   assert.deepEqual(runs[1], runs[0], 'the shield changes nothing');
 });
 
-test('ROSE-SEEN the second blow raises its own number, tagged with the power\'s name - on a fist that lands, Many Endings\' echo too; none for a weapon\'s blow, a dead foe, the warded Warden, or the classic skin (mutants: no number; the whole blow\'s; untagged; a number for a dead foe or into the ward; drawn unmounted)', () => {
+test('ROSE-SEEN the second blow raises its own number, tagged with the power\'s name - on a fist that lands, Many Endings\' echo too; none for a weapon\'s blow, a dead foe, the warded Warden, or the classic skin (mutants: no number; the whole blow\'s; untagged; a number for a dead foe; drawn unmounted)', () => {
   const nodes = [];
   const fakeEl = (tag) => {
     const el = { tag, children: [], style: { setProperty(k, v) { this[k] = v; } }, dataset: {}, className: '', textContent: '', listeners: {},
