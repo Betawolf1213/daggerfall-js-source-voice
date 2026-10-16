@@ -18,6 +18,7 @@ import { egPieceAt } from '../src/net/egSpanLaw.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { egToDungeon } from '../src/world/egHall.js';
 import { spherePlanes } from '../src/render/bounds.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): law 8's circles given
 
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -152,8 +153,12 @@ test('EG-G2 THE CULL (section 11.9): against this frame\'s frustum, a copy behin
 });
 
 test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seeds, the spans\' pieces stand in a handful of batched draws where they stood a draw a piece - the batched GL draws at most 48 a circle, the dynamic draws at most a tenth of a draw a piece, and one, on the Falling Walls\' circles; the copies the law\'s own pose (a Drift where egPieceAt swings it); from Hall 1\'s plate looking down its course the other halls\' pieces culled; the cull of a whole circle well under a millisecond (mutants: a kind a piece; the pose not written; the cull skipped)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): measured over spec law 8's circles, each given as a breach of law 8's
+  // is (test/egGive8.mjs) - the Stacks' hero, the Falling Wall's circle, Grath's isles where law 8 lays them; a LAW 9 circle's
+  // budget (its rooms beside its pieces) is THE DRESS's to measure
   let worstGl = 0, sumPieces = 0, sumKinds = 0, fw = null;
   for (const seed of [7, 99, 12345]) for (let c = 1; c <= 20; c += 1) {
+    egGive8(seed, [c]);
     const plain = createEgSpan({ renderer: { createMesh: (m) => ({ subMeshes: m.subMeshes }), destroyMesh: () => {} }, seed, c });
     const plainDraws = [];
     plain.stand({ dynamicDraws: plainDraws, collider: null });
@@ -171,17 +176,20 @@ test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seed
     // PIN MOVED (AUDIT EG IV, the Fallen Stacks laid since): a hero's inner course is pieces of its own sizes, a draw each
     // (seed 7's circle 3 lays the Stacks: 23 draws where 204 stood) - so the Falling Walls' tenth is held with a draw a hero
     // piece beside it
-    const heroPieces = egCircleSpecs(seed, c, 0).reduce((n, s) => n + (s.heroes ?? []).reduce((k, q) => k + EG_HERO_FRAGS[q.id].course.length, 0), 0);
+    // (THE ASCENT, LAW 9: a room is a hero of no course - net/egRoomLaw.js - and lays no piece)
+    const heroPieces = egCircleSpecs(seed, c, 0).reduce((n, s) => n + (s.heroes ?? []).filter((q) => !q.room).reduce((k, q) => k + EG_HERO_FRAGS[q.id].course.length, 0), 0);
     if (!fw && egCircleSpecs(seed, c, 0).some((s) => s.variant === 'fallingwall')) fw = { plain: plainDraws.length, batched: draws.length, heroPieces };
   }
   assert.ok(worstGl <= 48, `the worst circle: ${worstGl} batched GL draws`);
   assert.ok(sumKinds * 3 <= sumPieces, `${sumKinds} draws where ${sumPieces} stood`);
   // the batched kinds wear their band's dress (the Shade's, circle 11)
+  egGive8(7, [11]);
   const RS = fakeRenderer(), shade = createEgSpan({ renderer: RS, seed: 7, c: 11 });
   shade.stand({ dynamicDraws: [], collider: null });
   const dressed = RS.made.filter((g) => g.subMeshes.some((sm) => sm.textureRecord === 0));
   assert.ok(dressed.length && dressed.every((g) => g.subMeshes.filter((sm) => [0, 1, 32].includes(sm.textureRecord)).every((sm) => sm.textureArchive === 38261)), 'the batched slabs in the Shade\'s dress');
   // Grath's islands and the false walls: their own draws, culled outside the frustum
+  egGive8(7, [1]);
   const RG = fakeRenderer(), gs = createEgSpan({ renderer: RG, seed: 7, c: 1 }), gd = [];
   gs.stand({ dynamicDraws: gd, collider: null });
   gs.ride(1, 0.016, null, false);
@@ -197,7 +205,8 @@ test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seed
   assert.equal(fw.heroPieces, 2, 'the Stacks\' two shelves');
   // the copies are the law's pose, and the other halls are culled from Hall 1's plate
   let found = null;
-  for (let c = 1; c <= 20 && !found; c++) for (const s of egCircleSpecs(7, c, 0)) { const d = s.steps.find((q) => q.kind === 'drift' && q.amp > 0); if (d) { found = { c, s, d }; break; } }
+  for (let c = 1; c <= 20 && !found; c++) { egGive8(7, [c]); for (const s of egCircleSpecs(7, c, 0)) { const d = s.steps.find((q) => q.kind === 'drift' && q.amp > 0); if (d) { found = { c, s, d }; break; } } }
+
   const R = fakeRenderer(), span = createEgSpan({ renderer: R, seed: 7, c: found.c });
   span.stand({ dynamicDraws: [], collider: null });
   const t = 3.21;

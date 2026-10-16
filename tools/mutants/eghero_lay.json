@@ -2,7 +2,7 @@
   {
     "name": "EGHL-law-seven-not-the-law",
     "file": "src/net/egLaw.js",
-    "old": "export const EG_SPEC = 8;",
+    "old": "export const EG_SPEC = 9;",
     "new": "export const EG_SPEC = 6;",
     "tests": [
       "test/eghero_lay.test.js"
@@ -65,8 +65,8 @@
   {
     "name": "EGHL-refused-kept",
     "file": "src/net/egLaw.js",
-    "old": "    if (!why) return H;",
-    "new": "    if (fit.ok) return H;",
+    "old": "if (!why) { if (out) out.at = t;",
+    "new": "if (fit.ok) { if (out) out.at = t;",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -227,8 +227,8 @@
   {
     "name": "EGHL-hall-too-long",
     "file": "src/net/egLaw.js",
-    "old": "if (edge > EG_HALL_LEN_MAX * 100)",
-    "new": "if (edge > EG_HALL_LEN_MAX * 1000)",
+    "old": "if (!l9 && edge > EG_HALL_LEN_MAX * 100)",
+    "new": "if (!l9 && edge > EG_HALL_LEN_MAX * 1000)",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -317,8 +317,8 @@
   {
     "name": "EGHL-alcove-unlifted",
     "file": "src/net/egLaw.js",
-    "old": "y: y0 + a.y, seal: a.seal, side: a.side, holds: a.holds",
-    "new": "y: a.y, seal: a.seal, side: a.side, holds: a.holds",
+    "old": "y: y0 + a.y, seal: a.seal, side: a.side, holds: a.holds });\n    for (const l of rec.lights) P.lights.push([x0 + l[0], y0 + l[1], z0 + l[2], l[3]]);\n    kitNow = rec.kit;",
+    "new": "y: a.y, seal: a.seal, side: a.side, holds: a.holds });\n    for (const l of rec.lights) P.lights.push([x0 + l[0], y0 + l[1], z0 + l[2], l[3]]);\n    kitNow = rec.kit;",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -326,8 +326,8 @@
   {
     "name": "EGHL-light-unlifted",
     "file": "src/net/egLaw.js",
-    "old": "for (const l of rec.lights) P.lights.push([x0 + l[0], y0 + l[1], z0 + l[2], l[3]]);",
-    "new": "for (const l of rec.lights) P.lights.push([x0 + l[0], l[1], z0 + l[2], l[3]]);",
+    "old": "for (const l of rec.lights) P.lights.push([x0 + l[0], y0 + l[1], z0 + l[2], l[3]]);\n    kitNow = rec.kit;",
+    "new": "for (const l of rec.lights) P.lights.push([x0 + l[0], l[1], z0 + l[2], l[3]]);\n    kitNow = rec.kit;",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -398,8 +398,8 @@
   {
     "name": "EGHL-shaft-as-passage",
     "file": "src/net/egLaw.js",
-    "old": "    const H = heroAt('shaft');",
-    "new": "    const H = heroAt('passage');",
+    "old": "const H = heroAt('shaft', false, kit);",
+    "new": "const H = heroAt('passage', false, kit);",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -407,8 +407,8 @@
   {
     "name": "EGHL-slot-any-earlier",
     "file": "src/net/egLaw.js",
-    "old": "if (!hero || hero.rec.class !== cls || P.frags.length !== hero.n || P.heroes.length) return null;",
-    "new": "if (!hero || hero.rec.class !== cls || P.frags.length > hero.n || P.heroes.length) return null;",
+    "old": "P.frags.filter((f) => !f.room).length !== hero.n",
+    "new": "P.frags.filter((f) => !f.room).length > hero.n",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -479,8 +479,8 @@
   {
     "name": "EGHL-after-hero-unread",
     "file": "src/net/egLaw.js",
-    "old": "if (Math.min(...xs) - s.w <= s.x && s.x <= Math.max(...xs) + s.w && z0 >= far - 1) take(z0 - far, q.y + g.y);",
-    "new": "if (false) take(z0 - far, q.y + g.y);",
+    "old": "if (Math.min(...xs) - s.w <= s.x && s.x <= Math.max(...xs) + s.w && z0 >= far - 1 && !q.rec.room) take(",
+    "new": "if (false) take(",
     "tests": [
       "test/eghero_lay.test.js"
     ]

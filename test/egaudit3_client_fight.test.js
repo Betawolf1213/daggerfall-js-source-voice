@@ -7,7 +7,7 @@
 // fixture the producers': the breach and its Court from the director (egBreachNew, egEnter, egStep - the Twins and
 // Morvayn stood and woken by their own kits, Morvayn's soul-chains bound by its own tick), each blow egAim's, each mark
 // egMark's, the whole fight egFightState's, all through the wire into the link's fold; the screen createEgFight.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { validEgOut } from '../src/net/wire.js';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
@@ -55,6 +55,15 @@ function held(C, t, extra = []) {
   return E;
 }
 import { egStateOf } from '../src/net/egBrain.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1, 6, 10]);
+});
 const stateOf = (C) => { const { k: _k, ...rest } = egStateOf(C.B, C.t); return rest; };
 
 /** My screen judging one blow aimed at the hall's (x, z) with radius `r` - me `acct-0` at my place, each companion where

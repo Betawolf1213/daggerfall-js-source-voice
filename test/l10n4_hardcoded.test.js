@@ -82,14 +82,16 @@ const HARDCODED = {
   'src/net/duelRecord.js': 6,
   'src/net/duelSession.js': 36,
   'src/net/egAnnals.js': 57,
+  'src/net/egAscent.js': 15,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): THE ROUTE PLANNER's refusals and THE ROUTE'S SANITY's (egAscentWhy's and egAscentSane's `why` - no program stands, the way's height, a stair too steep, the main way crossing itself) - read by a test and the lab, never said to a player, kept as egSpanLaw.js's are
   'src/net/egBrain.js': 10,
   'src/net/egFeats.js': 19,
   'src/net/egFragLaw.js': 85,
   'src/net/egHerald.js': 14,   // AUDIT EG V (a2, L8-7): +1, a deeper breach's start on the herald's Redoubt posts (', from Redoubt N') - the Discord channel's English, as every herald post is
-  'src/net/egLaw.js': 191,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are; AUDIT EG V (a1): +2, The Fraying's name and line (the decrees' table, the arc's English, owed its localization wave with the rest)
+  'src/net/egLaw.js': 196,   // THE ASCENT - THE ROOMS (LAW 9): +5, a law 9 try's refusals (egAscentProof's `why` - a course's, the way's, the pieces in no course; ascentLaid's note past the wire's bound) - read by a test and the lab, never said to a player; EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are; AUDIT EG V (a1): +2, The Fraying's name and line (the decrees' table, the arc's English, owed its localization wave with the rest)
   'src/net/egLegion.js': 10,
   'src/net/egLords.js': 89,   // AUDIT EG V (the lords' group): +34, every lord's two phase cards, each its name and its one order (EG_LORD_PHASES, EG_GAROTH_SIG_ORDERS - section 13.2's card, drawn on every screen) - the arc's English, owed EG-L10N with the rest; AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
   'src/net/egRouteProof.js': 8,   // THE ASCENT - THE PROOFS (LAW 9): THE ROUTE'S refusals (egLegRefusal's and egClimbGrip's `why` - a stair too steep, a Drop upward or past the billed fall, a climb downward, faceless or past the grip) - read by a test and the sweep's tool, never said to a player, kept as egSpanLaw.js's are
+  'src/net/egRoomLaw.js': 31,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): the room reader's faults (egRoomFault's `why` - read by a test, never said to a player, kept as egFragLaw.js's record faults are) and the ten rooms' names (EG_ROOM_NAMES - the lab's map; the arc's English, owed its localization wave with the rest)
   'src/net/egRun.js': 18,
   'src/net/egSpanLaw.js': 16,   // PIN MOVED (AUDIT EG V, f: +4, THE TIMED SOLVER's law-8 refusals (egSpanProof's `why` - the set pieces' margin, the Collapsing Tube's, the Forge Line's hammers) - read by a test and the sweep's tool, never said to a player, kept as egLaw.js's hero refusals are)
   'src/net/egVestige.js': 60,
@@ -553,6 +555,7 @@ const HARDCODED = {
   'src/tools/gunLab.js': 7,
   'src/tools/mwViewer.js': 9,
   'src/tools/paperdollViewer.js': 18,
+  'src/tools/spireMap.js': 3,   // THE ASCENT - THE ROOMS (LAW 9): the lab's map legend (its roads' names) - the bench page's, never a player's
   'src/ui/accountFlow.js': 2,
   'src/ui/arenaWindow.js': 4,
   'src/ui/armourCard.js': 5,

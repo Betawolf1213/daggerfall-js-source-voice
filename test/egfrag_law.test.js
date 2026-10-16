@@ -15,6 +15,13 @@ import { EG_ANNALS, EG_ANNALS_FOUND, EG_ANNALS_LORDS, egAnnalsLordPage, egAnnals
 import { EG_BOSS_KEYS } from '../src/net/egLords.js';
 import { egWindupFloorMs, shLane, shDisc, egPolyIn } from '../src/net/egShape.js';
 import { egFightView } from '../src/net/egWalkGraph.js';   // AUDIT EG V: a caster pillar's stair climbs to the fight ground
+import { egLawSeam } from '../src/net/egLaw.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named
+// (net/egLaw.js egLawSeam - a test's seam, never a breach's: a breach draws its own law), the dress, the camera and the client
+// as they were written over law 8's ground; LAW 9's dress is THE DRESS slice's (Elite-Gates-Ascent.md section 8) and its
+// ground test/law9_rooms.test.js's
+egLawSeam(8);
 
 const SEEDS = [77, 0xbeef, 3, 0x51ee, 12345];
 /** Every hall over the seeds and twenty circles (the plain ground and one of each span decree). */

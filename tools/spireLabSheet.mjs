@@ -7,6 +7,9 @@
 //     node tools/spireLabSheet.mjs                              every band, the views plate course court over
 //     node tools/spireLabSheet.mjs 0 2 -- court under wide      the named bands, the named views
 //     SPIRE_SHOTS=dir SPIRE_TAG=after SPIRE_W=640 SPIRE_H=360 SPIRE_PORT=5251 SPIRE_Q='&lane=off' node tools/spireLabSheet.mjs
+//
+// THE ASCENT (LAW 9): the MAP view (and any view with `&route` in SPIRE_Q, or SPIRE_PAGE=1) is shot as the page shows it - its
+// route is drawn on a canvas over the frame (src/tools/spireMap.js), which the frame's own pixels do not hold.
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -54,7 +57,8 @@ try {
       return { w, h, px: btoa(bin), ms: window.__labMs ?? null, stats: window.__lab?.stats?.() ?? null, err: window.__labError ?? null };
     });
     const file = `${shots}/spire-b${band}-${view}${tag}.png`;
-    writeFileSync(file, png(Buffer.from(r.px, 'base64'), r.w, r.h));
+    if (process.env.SPIRE_PAGE === '1' || view === 'map' || extra.includes('route')) await page.screenshot({ path: file });   // THE ASCENT: the route's canvas over the frame
+    else writeFileSync(file, png(Buffer.from(r.px, 'base64'), r.w, r.h));
     if (r.err || errors.length) failed++;
     console.log(`${r.err || errors.length ? 'ERR ' : 'shot'} b${band} ${view} ${((Date.now() - t0) / 1000).toFixed(1)}s ${file}${r.ms ? ` frame ${JSON.stringify(r.ms)}` : ''}${r.stats ? ` ${JSON.stringify(r.stats)}` : ''}${r.err ? ` ${r.err}` : ''}${errors.length ? ` ${errors.slice(0, 3).join(' | ')}` : ''}`);
   }

@@ -14,7 +14,7 @@
 //   L8-5   THE SPOILS ROLL ON THE CLAIM'S SEED, a Redoubt's and an end's Reliquaries alike - never the receipt's own;
 //   L8-9   THE DEPTHS' ROW NAMES ITS WAGER.
 import './modsOff.js';
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { validEgOut, SOCIAL_ROOM } from '../src/net/wire.js';
 import { egHallOf, EG_TEXT, EG_SEALED_MS, EG_DECREES } from '../src/net/egLaw.js';
@@ -45,6 +45,15 @@ import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
 import { readFileSync } from 'node:fs';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+});
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000, ME = 'acct-mac', Y = '0123456789abcdef', X = 'fedcba9876543210', SEED = 12345;

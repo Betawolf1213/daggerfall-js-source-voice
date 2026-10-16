@@ -21,6 +21,12 @@ import { egLordsAwake } from '../src/net/egLords.js';
 import { egWagerOf } from '../src/net/egStartLaw.js';
 import { EG_V_BY_KEY } from '../src/net/egVestige.js';
 import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { egGive8Hall } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
+// lords, its courses along +z from the plate, where law 8 lays them) and stand on it still - a finder scans law 8's halls by
+// name, and a breach stands in a circle given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs
+// egGive8Hall); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -33,7 +39,7 @@ const risen = (fs) => fs.filter((f) => f.k === 'ead').flatMap((f) => f.a.map((t)
 /** The first hall of the law (seeds 1-399, circles c0-c1, every slot) satisfying `want`: `{ seed, h, spec }`. */
 function findHall(want, [c0, c1] = [1, 20], seeds = 400) {
   for (let seed = 1; seed < seeds; seed++) for (let c = c0; c <= c1; c++) for (let s = 1; s <= 5; s++) {
-    const h = egFirstHallOf(c) + s - 1, spec = egHallOf(seed, h, 0);
+    const h = egFirstHallOf(c) + s - 1, spec = egHallOf(seed, h, 0, 8);
     if (want(spec)) return { seed, h, spec };
   }
   throw new Error('no such hall');
@@ -52,7 +58,7 @@ function breach({ seed, h, n = 3, at = null, clear = false, vs = {}, wg = [], dc
   for (const [sub, v] of Object.entries(vs)) B.mem[sub].vs = v;
   if (dc) B.dc = dc;
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;
-  const spec = egHallOf(seed, h, egGeo(B));
+  const spec = egGive8Hall(seed, h, egGeo(B));
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
   const frames = [];
   const step = (ms = 250) => { now += ms; const o = egStep(B, now, co.filter(([sub]) => B.mem[sub].alive && !B.mem[sub].home).map(([sub]) => ({ sub, ...pos[sub], dead: false, at: now })), rng); frames.push(...o); return o; };
@@ -212,7 +218,7 @@ test('AUDIT EG V L2-8 A WELLSPRING RAISES SAPPERS THAT RELIGHT A BROKEN ANCHOR (
 
 // ── L2-12: SWARM-MOTHER ON EVERY WAVE ─────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT EG V L2-12 SWARM-MOTHER\'S BINDER IN EVERY WAVE THE LEGION DRAWS (section 14: "every wave carries a Binder"): the decree is the fight\'s own (`F.D.swarm`), read by egWaveKinds whoever pours the wave - a lord\'s fury, its Muster-Call, a champion\'s escort - two at rank II, none unless a caller names its own; a Wager\'s Swarm-Mother bites from Hall 1 (the company\'s chosen pain - section 14\'s standing decrees), a Galleries Proving Walk\'s escort carrying its Binder (mutants: the default swarm 0; the escort without it)', () => {
-  const F = egFightNew(egHallOf(1, 31, 0), T0, [40, 40, 40], ['a', 'b', 'c']);
+  const F = egFightNew(egHallOf(1, 31, 0, 8), T0, [40, 40, 40], ['a', 'b', 'c']);
   F.D = { swarm: 1 };
   assert.equal(egWaveKinds(F, seeded(3), 3).filter((k) => k === EG_KIND.binder).length, 1, 'a lord\'s wave, its decree read');
   F.D = { swarm: 2 };

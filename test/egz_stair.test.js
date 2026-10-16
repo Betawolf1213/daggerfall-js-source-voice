@@ -10,7 +10,7 @@
 // lights' pass and the look's seam (scenes/egLookDraw.js) over a recording GL; and the breach client (scenes/egClient.js)
 // played - the pull, the swap and the step in under the stair, the compass's door, a ping's chime and its pillar drawn,
 // the witness's ping and sight.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
@@ -37,6 +37,17 @@ import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { EG_BEAT_SOUNDS } from '../src/ui/egBeats.js';
 import { EG_SCORE_BAND_MOTIFS } from '../src/systems/egScore.js';
 import { midiNote } from '../src/systems/gateScore.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(77, [1, 2, 6]);
+  egGive8(2, [1]);
+  egGive8(1, [2, 5]);
+});
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T0 = 1_800_000_000_000;

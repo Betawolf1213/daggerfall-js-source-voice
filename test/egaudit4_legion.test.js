@@ -18,6 +18,12 @@ import { EG_V_BY_KEY } from '../src/net/egVestige.js';
 import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH, SAP_HEAL, SAP_FEEDS_MAX, HIT_KINDS } from '../src/net/gateBrain.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { egTalliesOf } from '../src/net/egTally.js';
+import { egGive8Hall } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
+// lords, its courses along +z from the plate, where law 8 lays them) and stand on it still - a finder scans law 8's halls by
+// name, and a breach stands in a circle given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs
+// egGive8Hall); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -29,7 +35,7 @@ const vId = (key) => EG_V_BY_KEY[key].id;
 // ── a lord's fight stood straight from the law ─────────────────────────────────────────────────────────────────────────
 /** The first Court the law lays for `lord` (from Hall 5, every fifth). */
 function courtOf(lord) {
-  for (let seed = 1; seed < 300; seed++) for (let h = 5; h <= 200; h += 5) { const spec = egHallOf(seed, h, 0); if (spec.kind === 'court' && spec.lord === lord) return spec; }
+  for (let seed = 1; seed < 300; seed++) for (let h = 5; h <= 200; h += 5) { const spec = egHallOf(seed, h, 0, 8); if (spec.kind === 'court' && spec.lord === lord) return spec; }
   throw new Error(`no Court of ${lord}`);
 }
 /** Lord `lord`'s fight for a company of `n` (level 40), woken, the company about the fight's heart: `beat(now)` its lords. */
@@ -57,7 +63,7 @@ function breach({ seed = 12345, h = 5, n = 3, strata = [], at = null, clear = tr
   for (const [sub] of co) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now);
   B.strata = [...strata];
   for (const [sub, v] of Object.entries(vs)) B.mem[sub].vs = v;
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
   const frames = [];
@@ -202,7 +208,7 @@ test('AUDIT EG IV A BINDER RAISES ONCE (section 12: "raises the last fallen add 
 // ── lane1 #16: THE GATE'S ROWS, READ ───────────────────────────────────────────────────────────────────────────────────
 test('AUDIT EG IV THE GATE\'S ROWS READ, NEVER COPIED (ONE DFU MEMBER, ONE EXPORT; AUDIT EG III L1-23\'s class): a Caster\'s Bolt leaves the gate\'s burning ground (POOLS.hellfire: r 3, 6 s, 8% + 3); the Daedra Lord\'s Cleave is ATTACKS.cleave\'s row and reach; the Harrier\'s health, mark and bite the gate\'s; the Mother of Dusk\'s Hellfire is the gate\'s row with its pool - and no gate row stands as a literal in net/egLegion.js or net/egLords.js (mutants: the Bolt\'s pool at the old 6% + 2; the Cleave\'s reach drifted; the Hellfire\'s pool dropped)', () => {
   // the Caster: a Bolt at a member, the pool it lays
-  const spec = egHallOf(1, 1, 0), F = egFightNew(spec, T0, [40], ['m0']);
+  const spec = egHallOf(1, 1, 0, 8), F = egFightNew(spec, T0, [40], ['m0']);
   const [c] = egLegionRaise(F, [EG_KIND.caster], [[spec.fight.x, spec.fight.z]], T0, [], {});
   c.up = 0; c.next = 0;
   const pools = [];
@@ -276,7 +282,7 @@ test('AUDIT EG IV ROLE READS OVER ALL SIXTEEN KINDS (section 12: "one sprite nev
 
 // ── lane1 #22: A HARRIER'S MARK ────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT EG IV A HARRIER\'S MARK (section 12\'s table, the page to the code): in a Court it runs at the member farthest from the lord, elsewhere at the nearest, and the page says so (mutants: the anchor unread)', () => {
-  const spec = egHallOf(1, 1, 0), F = egFightNew(spec, T0, [40, 40], ['a', 'b']);
+  const spec = egHallOf(1, 1, 0, 8), F = egFightNew(spec, T0, [40, 40], ['a', 'b']);
   const [h] = egLegionRaise(F, [EG_KIND.harrier], [[0, 30]], T0, [], {});
   h.up = 0;
   const here = [{ sub: 'a', x: 0, z: 33 }, { sub: 'b', x: 0, z: 45 }];

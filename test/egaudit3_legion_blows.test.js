@@ -5,7 +5,7 @@
 // a Soul-Pool said in the blow that left it, the Cantrips used anywhere outside a lord's shield, a trial's absence counted from
 // its wake, the way home's 'gone', and Lifeline held open only by a heal worth a window. Every fixture is the producers' own:
 // the breach and its Court from the director, blows through egBlow, words through egWord, heals through egHeal.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, EG_SEALED_MS, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow, egWord, egHome, egHeal, egCensusDr, egWatchOf, egLifelineMin, EG_LIFELINE_MIN, EG_RD_WINDOW_MS } from '../src/net/egBrain.js';
@@ -18,6 +18,15 @@ import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_M_ID, EG_MASTERIES, EG_SWEEP_M, EG_MARK_MS, EG_COUNTER_MS, EG_COUNTER_X, EG_COUNTER_M, EG_SPILL_M, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX } from '../src/net/egVestige.js';
 import { HIT_KINDS, HIT_CAP_X, dpsRef, healRef } from '../src/net/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

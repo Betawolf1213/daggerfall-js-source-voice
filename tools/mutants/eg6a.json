@@ -83,8 +83,8 @@
   {
     "name": "EG6A-a-crumble-stepping-under",
     "file": "src/net/egSpanLaw.js",
-    "old": "for (let q = 0; q < count; q++) { if (L.y > 0) L.y = Math.max(0, L.y - drop); step('crumble', gap(), { x, kit }); }",
-    "new": "for (let q = 0; q < count; q++) { if (L.y > 0) L.y = L.y - drop - 1; step('crumble', gap(), { x, kit }); }",
+    "old": "{ if (L.y > L.base) L.y = Math.max(L.base, L.y - drop); step('crumble', gap(), { x, kit }); }",
+    "new": "{ if (L.y > L.base) L.y = L.y - drop - 1; step('crumble', gap(), { x, kit }); }",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -92,8 +92,8 @@
   {
     "name": "EG6A-a-road-begun-on-the-last",
     "file": "src/net/egSpanLaw.js",
-    "old": "    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...from }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: from.z + from.r, y: from.y, said: from.y });",
-    "new": "    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...start }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: start.z + start.r, y: start.y, said: start.y });",
+    "old": "    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...from }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: from.z + from.r, y: from.y, said: from.y, base: floors ? from.y : 0 });",
+    "new": "    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...start }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: start.z + start.r, y: start.y, said: start.y, base: floors ? start.y : 0 });",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -317,8 +317,8 @@
   {
     "name": "EG6A-the-hall-s-ground-unsaid",
     "file": "src/net/egLaw.js",
-    "old": "  const run = (k, n) => { S.at(edge, y); S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; };",
-    "new": "  const run = (k, n) => { S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; };",
+    "old": "  const run = (k, n) => { S.at(edge, y); S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; if (n > 0) stepEdge = edge; };",
+    "new": "  const run = (k, n) => { S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; if (n > 0) stepEdge = edge; };",
     "tests": [
       "test/eg6a_span.test.js"
     ]
@@ -533,7 +533,7 @@
   {
     "name": "EG6A-a-gust-launched-into",
     "file": "tools/egSpanSolve.mjs",
-    "old": " && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1) && ",
+    "old": " && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null) && ",
     "new": " && ",
     "tests": [
       "test/eg6a_sweep.test.js"

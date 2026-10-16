@@ -12,6 +12,7 @@ import worker from '../server/src/index.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCountLeft, egSpecGive, egSpecForget, EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_LAST_WORD_MS, EG_ARRIVE_MAX_MS, EG_ADMIT_MAX_MS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, egLawKnown, egReceiptSeed, egGiveBack, egResume, egHoldDone, egRelease, egBeatGap, egBetween, EG_DONE_KEY, EG_LIVE_SAID_MS } from '../src/net/egDurable.js';
 import { egBreachNew } from '../src/net/egBrain.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
@@ -66,6 +67,9 @@ async function withBreach(fn, { party = false, b = B } = {}) {
 const held = (eg) => eg.room._eg ?? eg.store.get(EG_KEY);
 /** Hall 1 woken with `acct-mac` in it - the trial's first beat. */
 async function toTrial({ eg, beat, enter, step }) {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the breach's first circle given at spec law 8 (test/egGive8.mjs - its
+  // seed the hub's own draw): the member strikes the rifts and walks to the door straight down law 8's line
+  egGive8(eg.store.get(EG_KEY).seed, [1]);
   const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
   step(EG_SEALED_MS); await beat(1000);
   const ws = await enter('acct-mac', 'peer-mac', spec.x0 + spec.arrive.x, spec.arrive.z);
@@ -239,12 +243,15 @@ test('EG-H2 THE LAW PIN (section 22): a member\'s `spec` answered with its hall 
   // PIN MOVED (EG-ZC): spec law 5 (the last fragments) became the law on 2026-10-12, and law 4 is kept beside it its seven days.
   // PIN MOVED (AUDIT EG III): spec law 6 (the span decrees on every span) became the law on 2026-10-13, laws 4 and 5 kept beside it
   // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) became the law on 2026-10-13 too, laws 4, 5 and 6 kept beside it.
-  // PIN MOVED (AUDIT EG V, f): spec law 8 (the ways laid) became the law on 2026-10-15, laws 4 to 7 kept beside it
-  assert.equal(EG_LAWS[EG_SPEC], '2026-10-15', 'this build draws its own law');
-  assert.equal(EG_LAWS[EG_SPEC - 1], '2026-10-13', 'and the law before, kept');
+  // PIN MOVED (AUDIT EG V, f): spec law 8 (the ways laid) became the law on 2026-10-15, laws 4 to 7 kept beside it.
+  // PIN MOVED (THE ASCENT - THE ROOMS): spec law 9 (the hall a way of rooms) became the law on 2026-10-16, laws 4 to 8 kept beside it
+  assert.equal(EG_LAWS[EG_SPEC], '2026-10-16', 'this build draws its own law');
+  assert.equal(EG_LAWS[EG_SPEC - 1], '2026-10-15', 'and the law before, kept');
   assert.equal(EG_LAWS[EG_SPEC - 2], '2026-10-13', 'and the one before it, inside its seven days');
-  assert.equal(EG_LAWS[EG_SPEC - 3], '2026-10-12', 'and the one before that, inside its seven days');
-  assert.equal(EG_LAWS[EG_SPEC - 4], '2026-10-11', 'and the first, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 3], '2026-10-13', 'and the one before that, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 4], '2026-10-12', 'and the one before that, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 5], '2026-10-11', 'and the first, inside its seven days');
+
   assert.equal(EG_LAW_KEEP_DAYS, 7);
   assert.deepEqual([egLawKnown(EG_SPEC), egLawKnown(EG_SPEC - 1), egLawKnown(999), egLawKnown('4')], [true, true, false, false]);
   // a woken room whose law this build does not draw: the breach a void

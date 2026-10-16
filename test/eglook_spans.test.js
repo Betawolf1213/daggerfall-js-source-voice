@@ -23,6 +23,13 @@ import { BAYER4 } from '../src/world/sdPixelKit.js';
 import { createEgSpan, egSlabTris, egDropTris, EG_SPAN_KINDS_MAX, EG_SPAN_MOVERS } from '../src/scenes/egSpan.js';
 import { createEgPieceBatch, EG_BATCH_HIDE_Y } from '../src/scenes/egPieceBatch.js';
 import { egCircleSpecs, egBandOfCircle, EG_STEP } from '../src/net/egLaw.js';
+import { egLawSeam } from '../src/net/egLaw.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named
+// (net/egLaw.js egLawSeam - a test's seam, never a breach's: a breach draws its own law), the dress, the camera and the client
+// as they were written over law 8's ground; LAW 9's dress is THE DRESS slice's (Elite-Gates-Ascent.md section 8) and its
+// ground test/law9_rooms.test.js's
+egLawSeam(8);
 
 const T = SD_STEP_THICK, L = EG_PIECE_LOOK, E = 1e-4;
 const SEEDS = [7, 99, 12345];

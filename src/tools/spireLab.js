@@ -24,6 +24,13 @@
 //   ?reduced         reduced motion (EG-LOOK: the air held still - scenes/egLookDraw.js drawAir)
 //   ?door            the door open at the hall's end plate: its gold beam (render/egLightPass.js) and its foot's halo
 //   ?frames=<n>      draw n frames and rest (a probe reads the last - tools/spireLabProbe.mjs)
+//   ?view=map        THE ASCENT (LAW 9 - Elite-Gates-Ascent.md section 8): THE MAP - the hall straight down, in plan (an
+//                    orthographic eye, no haze), its ROUTE drawn over it (src/tools/spireMap.js: links by kind and road, the
+//                    main way's nodes, the plate, the door, the rooms named, the climbs' faces, the voids); ?route draws the
+//                    route over any other view
+//   ?view=room-<k>   THE ASCENT: inside the hall's first room of archetype k (stair, tower, gallery, cloister, broken,
+//                    undercroft, crossing, corridor, switchback, scarp - the circle's, any hall), a body's eyes a step in from
+//                    its mouth; `room-<k>-over` from over its middle, looking down across it
 //   ?view=swatch (or ?swatch)   EG-LOOK: THE BAND'S PICTURES on a wall in the void beside the arrival plate - every record
 //                    the band paints on a quad at its intended texels a metre, the right way up (world/egBandArt.js
 //                    EG_KIT_MAP), lit by the band's own light and three of its lamps; ?rec=<record> the eye 5 m before one
@@ -54,7 +61,8 @@ import { egIsleDisc } from '../world/egHall.js';
 import { egMistAt } from '../net/egFragLaw.js';
 import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
 import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
-import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
+import { perspective, lookAt, identity, mirrorProjectionX, ortho, multiply } from '../world/mat4.js';
+import { egMapDraw, egRoomViews } from './spireMap.js';   // THE ASCENT: the map's route, the rooms' views
 
 const params = new URLSearchParams(location.search);
 const canvas = document.getElementById('c');
@@ -164,6 +172,10 @@ const VIEWS = {
   chamber: RING ? { at: [RING.x - (RING.r ?? RING.hw) * 0.3, (RING.y ?? 0) + 1.7, (RING.z ?? (RING.z0 + RING.z1) / 2) - (RING.r ?? 12) * 0.55], yaw: 22, pitch: 12 } : null,
   door: { at: [SPEC.end?.x ?? 0, (SPEC.end?.y ?? 0) + 2.2, (SPEC.end?.z ?? 60) - 7.5], yaw: 0, pitch: 9 },
   mosaic: { at: [court.x, (court.y ?? 0) + 24, court.z - 9], yaw: 0, pitch: -66 },
+  // THE ASCENT: THE MAP - straight down over the hall's bound (x ±150 m, z -10 to 158 m), over its highest ground
+  map: { at: [0, Math.max(0, ...(SPEC.route?.nodes ?? [[0, 0, 0]]).map((n) => n[1])) + 90, 74], yaw: 0, pitch: -89.9 },
+  // THE ASCENT: inside each room archetype (the circle's first of each, any hall), and over it
+  ...Object.fromEntries(egRoomViews(SPECS).reverse().map((v) => [`room-${v.name}`, { spec: v.spec, at: v.at, yaw: v.yaw, pitch: v.pitch }])),
 };
 /** EG-LOOK (THE WRECK): ?wing=<n> - the camera 70 m from the band's wing n toward its hall (world/egVista.js EG_VISTA_PLACES,
  *  at the band's reach; a Court's place in a Court hall), looking at it. */
@@ -253,13 +265,15 @@ function frame(now) {
   if (keys.has('KeyD')) mv(right, -sp); if (keys.has('KeyA')) mv(right, sp);
   if (keys.has('KeyE')) cam.pos[1] += sp; if (keys.has('KeyQ')) cam.pos[1] -= sp;
   const view = lookAt(cam.pos, [cam.pos[0] + fwd[0], cam.pos[1] + fwd[1], cam.pos[2] + fwd[2]], [0, 1, 0]);
-  const proj = mirrorProjectionX(perspective((65 * Math.PI) / 180, w / h, 0.1, 2000));
+  // THE ASCENT: THE MAP's eye in plan - the hall's bound whole on the frame
+  const MAPV = viewSel.value === 'map', mapH = Math.max(92, 158 / (w / h));
+  const proj = mirrorProjectionX(MAPV ? ortho(mapH * (w / h), mapH, 0.1, 2000) : perspective((65 * Math.PI) / 180, w / h, 0.1, 2000));
   const lane = !!renderer.lightingLane;
   // the circle, as the dungeon arm draws it (scenes/worldModes.js - the Spire's light, its haze, the Hour's grade, its lamps)
   const L = egHallLighting(C), T = dungeonTrilight(lane, L.tri);
   renderer.setLighting(equator(T), 0, undefined, T);
   renderer.setMoonlight(L.key);
-  applyFog(renderer, dungeonFog(lane, egHallFog(C)));
+  applyFog(renderer, MAPV ? { ...dungeonFog(lane, egHallFog(C)), density: 0, start: 1e6, end: 2e6 } : dungeonFog(lane, egHallFog(C)));   // THE ASCENT: the map unhazed
   renderer.setSceneGrade?.(egHallGrade(C));
   ground.frame(cam.pos, clock);   // EG-LOOK: the eye's hall's ruin drawn, the wreck placed about it (scenes/egCircleHost.js egCircleFrame)
   const lit = egLightsWith(EMPTY_LIT, [], lamps, cam.pos);
@@ -281,8 +295,24 @@ function frame(now) {
   if (params.get('lines') !== 'off' && look.drawOver(proj, view, cam.pos, clock, courtFogNow())) renderer.markForeignPass();   // ?lines=off: the probe's frame without them, to tell the line pass's own pixels
   if (look.drawLights(proj, view, cam.pos, clock, courtFogNow(), LIGHTS, REDUCED)) renderer.markForeignPass();   // EG-LOOK: ?door's beam, over the lines
   renderer.resolveFrame();
+  if (MAPV || params.has('route')) drawRoute(proj, view); else if (routeOn) { mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height); routeOn = false; }
   window.__frame++;
   if (params.has('frames') && window.__frame >= Number(params.get('frames'))) return;   // a probe's still: the frames it reads, then the page rests (SwiftShader draws a circle in seconds)
   requestAnimationFrame(frame);
+}
+// ── THE ASCENT: THE ROUTE over the frame (src/tools/spireMap.js), each point by the frame's own eye ────────────────────────
+const mapCanvas = /** @type {HTMLCanvasElement} */ ($('map')), mapCtx = mapCanvas.getContext('2d');
+let routeOn = false;
+function drawRoute(proj, view) {
+  const w = canvas.width, h = canvas.height, vp = multiply(proj, view);
+  if (mapCanvas.width !== w || mapCanvas.height !== h) { mapCanvas.width = w; mapCanvas.height = h; }
+  const project = (x, y, z) => {
+    const [px, py, pz] = egToDungeon(SPEC, x, y, z);
+    const cw = vp[3] * px + vp[7] * py + vp[11] * pz + vp[15];
+    if (!(cw > 1e-6)) return null;
+    return [((vp[0] * px + vp[4] * py + vp[8] * pz + vp[12]) / cw * 0.5 + 0.5) * w, (1 - ((vp[1] * px + vp[5] * py + vp[9] * pz + vp[13]) / cw * 0.5 + 0.5)) * h];
+  };
+  window.__labMap = egMapDraw(mapCtx, SPEC, project, w, h);
+  routeOn = true;
 }
 requestAnimationFrame(frame);

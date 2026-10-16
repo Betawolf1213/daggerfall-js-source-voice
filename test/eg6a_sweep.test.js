@@ -9,6 +9,17 @@ import { readFileSync } from 'node:fs';
 import { sweepSeed, sweepStand, sweepCourse, sweepCircleOf, sweepPath, sweepSeeds, runSweep, main, solveReport, SWEEP_BUILD, SWEEP_GOLDEN } from '../tools/egSpanSolve.mjs';
 import { egStepKey } from '../src/scenes/egSpan.js';
 import { egCourseOf, egSpanPairs } from '../src/net/egSpanLaw.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's
+egGive8(1, [2], 1);
+egGive8(3, [4], 3);
+egGive8(10, [1]);
+/** Seed `seed`'s swept circle of band `band` given at spec law 8 (each sweep's own - more circles than the given halls hold). */
+const give8 = (seed, band) => { const { c, geo } = sweepCircleOf(seed, band); egGive8(seed, [c], geo); };
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -20,6 +31,7 @@ test('EG6a THE SWEEP (section 10.5): every course of a seed\'s circle in each ba
   // its courses; seed 6's circle crosses one in place of seed 1's (whose pieces seeds 2 and 6 cross too). PIN MOVED (AUDIT EG V,
   // f): spec law 8 draws seed 1's Shade circle with no Pendulum on its swept roads - seed 9's crosses one beside it
   for (const [band, seed] of [[0, 1], [0, 3], [0, 5], [1, 1], [1, 2], [1, 5], [2, 1], [2, 9], [3, 6], [3, 2]]) {
+    give8(seed, band);
     for (const r of sweepSeed(seed, band)) {
       assert.ok(r.ok, `band ${band}: seed ${r.seed} hall ${r.h} road ${r.road} step ${r.step} - ${r.why}`);
       courses++;
@@ -32,6 +44,7 @@ test('EG6a THE SWEEP (section 10.5): every course of a seed\'s circle in each ba
   assert.ok(courses >= 25 && forks >= 4, `${courses} courses, ${forks} Low Roads`);
   for (const k of ['still', 'beat', 'riser', 'drift', 'crumble', 'gust', 'drop', 'ledge', 'bone', 'rail', 'drum', 'sink', 'pend', 'vent', 'moon', 'slag']) assert.ok(kinds.has(k), `a ${k} crossed`);
   // the chain the pilot crosses is the solver's own, road by road (the Low Road's the trunk to the fork, then its own)
+  give8(1, 0);
   const { c, geo } = sweepCircleOf(1, 0), S = sweepStand(1, c, geo), fork = S.specs.find((q) => q.fork);
   const high = sweepPath(fork, 0), low = sweepPath(fork, 1);
   assert.ok(low.some((p) => (p.b ?? p.a).road === 0) && low.some((p) => (p.b ?? p.a).road === 1), 'the Low Road crossed from the trunk');
@@ -42,7 +55,9 @@ test('EG6a THE SWEEP (section 10.5): every course of a seed\'s circle in each ba
 });
 
 test('EG6a A COURSE NOT CROSSED FAILS, NAMING ITS SEED, HALL, ROAD AND STEP: a piece gone from the collider is fallen short of, and the run says which; the CLI\'s exit says so; the seeds a run asks (mutants: a fall called a crossing; the failure unnamed; the exit always clean)', () => {
+  give8(3, 0);
   const { c, geo } = sweepCircleOf(3, 0), S = sweepStand(3, c, geo), spec = S.specs.find((q) => egCourseOf(q, 0)?.steps.length >= 6);
+
   const gone = egCourseOf(spec, 0).steps.find((q, k) => k >= 3 && q.kind !== 'riser');
   S.col.removeBucket(egStepKey(spec.h, gone.i));
   const r = sweepCourse(S, spec, 0, 1_800_000_000 + 7.37);
@@ -89,6 +104,7 @@ test('EG6a THE SWEEP IN CI: verify.yml (every pull request, every deploy) runs e
 
 test('EG6a THE SWEEP\'S HARD COURSES (found sweeping seeds 1 to 500 of every band): a Drum\'s widest roll and a gap of 3.19 m to a round island, the jump pressed at the edge (short of it the motor falls short); a vault\'s side lane laid across the gap before a step, landed on at the step\'s height; two Rails whose travels meet, the next stood on as it slides under (mutants: the jump pressed short of the edge; the side lane refused; the Rail jumped past)', () => {
   const crossed = (seed, band, h) => {
+    give8(seed, band);
     const out = sweepSeed(seed, band);
     for (const r of out) assert.ok(r.ok, `band ${band}: seed ${seed} hall ${r.h} road ${r.road} step ${r.step} - ${r.why}`);
     assert.ok(out.some((r) => r.h === h && r.road === 0), `hall ${h} swept`);

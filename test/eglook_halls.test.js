@@ -22,6 +22,13 @@ import {
   egDiscFloor, egPassage, egPassageGrid, egRingArcade, egLongWalls, egTierBenches, egDoorway, egVignette, egKitInto, egArchCurve, egVaultOpen,
   EG_GROUND_RECORD, EG_GROUND_RECORDS, EG_FLOOR_LOOK, EG_WALL, EG_VAULT, EG_ARCADE, EG_VIGNETTE_BOX, EG_SIGILS, EG_ROCK,
 } from '../src/world/egGround.js';
+import { egLawSeam } from '../src/net/egLaw.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named
+// (net/egLaw.js egLawSeam - a test's seam, never a breach's: a breach draws its own law), the dress, the camera and the client
+// as they were written over law 8's ground; LAW 9's dress is THE DRESS slice's (Elite-Gates-Ascent.md section 8) and its
+// ground test/law9_rooms.test.js's
+egLawSeam(8);
 
 const R = EG_GROUND_RECORD;
 /** Every triangle of faces `f` (or a packed model) as [record, [a, b, c]] - its corners in the dungeon's frame. */

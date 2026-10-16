@@ -5,7 +5,7 @@
 // lords' own law handed the arguments the director handed it before (so every frame is the frame it said); and the lords
 // walking the hall's graph - a champion in an arch's chamber through the arch, Grath along his bridges and never over the
 // magma, a champion up a stair to a member on the floor above, a run cut at an arch's wall and never up a ledge's face.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { egHallOf, egOnFight, EG_SEALED_MS } from '../src/net/egLaw.js';
@@ -17,6 +17,17 @@ import { judgeShapes } from '../src/net/bossRef.js';
 import { egFightView, egWalkGraph, egArchCut } from '../src/net/egWalkGraph.js';
 import { egInBlow } from '../src/net/egShape.js';
 import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+  egGive8(1, [5]);
+  egGive8(31337, [9]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

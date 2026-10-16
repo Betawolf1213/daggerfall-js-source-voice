@@ -11,7 +11,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
-import { egHallOf, egCircleSpecs, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
+import { egHallOf, egCircleSpecs, egSpecForget, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): law 8's circles given
 import { egBreachNew, egEnter, egStep, egStateOf } from '../src/net/egBrain.js';
 import { egTethersOut } from '../src/net/egBodies.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';
@@ -227,11 +228,18 @@ test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lamps stand
   const at = (L, p) => L.find((q) => Math.hypot(q.x - p[0], q.y - p[1], q.z - p[2]) < 1e-6);
   let full = 0;
   const thinned = [];
-  for (const seed of [1, 2]) for (let c = 1; c <= 20; c++) {
-    const geo = c <= 1 ? 0 : seed % 9, L = egCircleLights(seed, c, geo), specs = egCircleSpecs(seed, c, geo);
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the budget held over spec law 9's circles and law 8's alike; the lights'
+  // places and a ring's spread order over law 8's (given - test/egGive8.mjs), as this audit counted them - a LAW 9 circle's rooms
+  // carry lamps of their own (a fragment's, kept first), so a court's ring beside a room is thinned where the room's stand
+  for (const law of [9, 8]) for (const seed of [1, 2]) for (let c = 1; c <= 20; c++) {
+    const geo = c <= 1 ? 0 : seed % 9;
+    if (law === 8) egGive8(seed, [c], geo);
+    const L = egCircleLights(seed, c, geo), specs = egCircleSpecs(seed, c, geo);
+    assert.ok(specs.every((s) => s.v === law), `seed ${seed} circle ${c}: law ${law}'s`);
     let worst = 0;
     for (const p of L) worst = Math.max(worst, L.filter((q) => near(p, q)).length);
-    assert.ok(worst <= EG_LAMP_BUDGET.n, `seed ${seed} circle ${c}: ${worst} lamps within 40 m of one`);
+    assert.ok(worst <= EG_LAMP_BUDGET.n, `law ${law} seed ${seed} circle ${c}: ${worst} lamps within 40 m of one`);
+    if (law === 9) continue;
     if (worst === EG_LAMP_BUDGET.n) full++;
     for (const s of specs) {
       for (const [x, y, z] of s.lights ?? []) assert.ok(at(L, egToDungeon(s, x, y, z)), `seed ${seed} hall ${s.h}: its fragment's light stands`);
@@ -250,6 +258,8 @@ test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lamps stand
       }
     }
   }
+  egSpecForget();
   assert.ok(full >= 7, `the budget met where it was passed (${full} circles at 12)`);
   assert.ok(thinned.some((n) => n <= 4), `rings thinned (${thinned.join(',')})`);
+
 });

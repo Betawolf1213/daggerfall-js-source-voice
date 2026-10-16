@@ -4,6 +4,9 @@
 // byte the halls they laid before; every hall's road is a course courseOf lays from its own record, and egCourseOf reads it
 // back as the Steps' readers take it; the crossing's lower bound (EG_CROSS_MIN) is the timed solver's fastest crossing at
 // THE FAST BUILD - its waits counted, any piece within its jump leapt past - less 15%, a measure that gates nothing.
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): every hall read below is spec law 8's, by name - one course a road, laid
+// from the plate along +z, as egCourseOf reads it; a LAW 9 hall's courses stand along its way (test/law9_rooms.test.js reads them
+// course by course - net/egLaw.js egAscentCourses).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egSpanOf, courseOf, egCourseOf, egFastCross, egFastCrossAt, egFastReach, egCrossMin, egJumpLands, egSpanPairs, egPairWindows, egDieBetween, egRoadCross,
@@ -71,7 +74,7 @@ test('EG6a THE HALLS THE GENERATOR LAYS, BYTE FOR BYTE (section 22\'s law pin ke
   // the round trip: each road's course re-said as a courseOf spec lays its own steps again
   let roads = 0;
   for (const seed of [1, 46, 0xbeef]) for (let h = 1; h <= 100; h += 3) {
-    const spec = egHallOf(seed, h, h % 9);
+    const spec = egHallOf(seed, h, h % 9, 8);
     for (const road of [0, 1]) {
       const c = egCourseOf(spec, road);
       if (!c?.steps.length) continue;
@@ -104,7 +107,7 @@ test('EG6a THE HALLS THE GENERATOR LAYS, BYTE FOR BYTE (section 22\'s law pin ke
 });
 
 test('EG6a THE COURSE A READER TAKES (egCourseOf, section 10.1): a hall\'s road as the Steps\' readers take it - its steps the spec\'s of that road; its checkpoints where it begins (the arrival plate, the Low Road\'s island) and its islands; its end where it meets its goal (the end plate\'s edge, the Low Road\'s last step, a Court\'s ground\'s end); none for a road not laid (mutants: the Low Road begun on the plate; the end plate\'s middle; a road\'s steps mixed)', () => {
-  const f = egHallOf(1, 7, 0);
+  const f = egHallOf(1, 7, 0, 8);
   assert.ok(f.fork, 'a forked span');
   const c0 = egCourseOf(f, 0), c1 = egCourseOf(f, 1);
   assert.deepEqual(c0.checkpoints[0], { x: f.arrive.x, y: 0, z: f.arrive.z, r: f.arrive.r }, 'the High Road begins on the arrival plate');
@@ -117,13 +120,13 @@ test('EG6a THE COURSE A READER TAKES (egCourseOf, section 10.1): a hall\'s road 
   assert.equal(c1.end, last.z + last.d / 2);
   assert.ok(c1.steps.every((s) => s.road === 1) && c1.steps.length === f.steps.filter((s) => s.road === 1).length);
   assert.equal(egCourseOf(f, 2), null, 'an alcove\'s side way is no road');
-  const court = egHallOf(1, 10, 0);
+  const court = egHallOf(1, 10, 0, 8);
   assert.equal(court.kind, 'court');
   assert.equal(egCourseOf(court, 0).end, court.len, 'a Court\'s approach meets its lord\'s ground');
   assert.equal(egCourseOf(court, 1), null);
   // PIN MOVED (EG-HERO-LAY, spec law 7): a hero chamber laid in a Rift-Yard brings its own inner course - the yard's course is
   // its hero's pieces alone, inside its box
-  const yard = egHallOf(1, 9, 0), own = (s) => (yard.heroes ?? []).some((q) => s.z >= q.box[2] && s.z <= q.box[5]);
+  const yard = egHallOf(1, 9, 0, 8), own = (s) => (yard.heroes ?? []).some((q) => s.z >= q.box[2] && s.z <= q.box[5]);
   assert.equal(yard.kind, 'yard');
   assert.deepEqual(egCourseOf(yard, 0).steps.filter((s) => !own(s)), [], 'a Rift-Yard lays no course of its own');
 });
@@ -177,7 +180,7 @@ test('EG6a THE CROSSING\'S BOUND AT THE FAST BUILD (sections 10.2 and 10.5): THE
   // the bound, and its measure
   assert.equal(egCrossMin(lone, 0), Math.round(floor * (1 - EG_CROSS_SLACK) * 1000));
   for (const [seed, h] of [[1, 7], [46, 8], [77, 2], [3, 18]]) {
-    const spec = egHallOf(seed, h, 0);
+    const spec = egHallOf(seed, h, 0, 8);
     for (const road of spec.fork ? [0, 1] : [0]) {
       const across = road === 1 ? (2 * Math.abs(spec.fork.lowX - spec.fork.x)) / EG_FAST_RUN_MPS : 0, len = (spec.end.z - spec.arrive.z) / EG_FAST_RUN_MPS;
       assert.ok(egFastCross(spec, road) >= len + across - 1e-9, `seed ${seed} hall ${h} road ${road}: never below its length at the fast run`);
@@ -185,15 +188,15 @@ test('EG6a THE CROSSING\'S BOUND AT THE FAST BUILD (sections 10.2 and 10.5): THE
       assert.equal(egCrossMinMs(spec, road), egCrossMin(spec, road), 'the fair trail\'s bound is the law\'s');
     }
   }
-  const court = egHallOf(1, 10, 0);
+  const court = egHallOf(1, 10, 0, 8);
   assert.equal(egCrossMinMs(court), 0, 'a Court has no door to cross to');
-  const spec = egHallOf(1, 7, 0), A = { ...egFairNew(), span: 4000, cross: 9000, road: 1, blind: 0, cblind: 0 };
+  const spec = egHallOf(1, 7, 0, 8), A = { ...egFairNew(), span: 4000, cross: 9000, road: 1, blind: 0, cblind: 0 };
   assert.equal(egFairMeasure(A, spec)[1], Math.round(egCrossMin(spec, 1) / 100), 'the measure carries the bound');
   assert.ok(egCrossMin(spec, 1) > egCrossMin(spec, 0), 'the Low Road\'s bridges across and back run too');
 });
 
 test('EG6a egJumpLands IS THE SOLVER\'S OWN ANSWER (the sweep\'s pilot launches inside its windows): its landing launches over the horizon are each pair\'s open share (mutants: another answer than the windows\')', () => {
-  const spec = egHallOf(46, 8, 1);
+  const spec = egHallOf(46, 8, 1, 8);
   let pairs = 0;
   for (const pair of egSpanPairs(spec)) {
     const w = egPairWindows(pair), n = Math.round(EG_SOLVE_HORIZON_S / EG_SOLVE_STEP_S);

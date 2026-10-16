@@ -21,6 +21,13 @@ import { egAtmosOf } from '../src/world/egAtmos.js';
 import { createEgGroundLook } from '../src/scenes/egGroundLook.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';
 import { SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+import { egLawSeam } from '../src/net/egLaw.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named
+// (net/egLaw.js egLawSeam - a test's seam, never a breach's: a breach draws its own law), the dress, the camera and the client
+// as they were written over law 8's ground; LAW 9's dress is THE DRESS slice's (Elite-Gates-Ascent.md section 8) and its
+// ground test/law9_rooms.test.js's
+egLawSeam(8);
 
 const K = EG_KIT_RECORD;
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

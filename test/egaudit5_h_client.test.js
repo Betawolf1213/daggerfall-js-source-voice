@@ -26,6 +26,7 @@ import { createEgClient } from '../src/scenes/egClient.js';
 import { CONCEAL_MODE } from '../src/systems/combatVisuals.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
+import { egGive8 } from './egGive8.mjs';
 
 const T0 = 1_800_000_000_000, ME = 'acct-0', BID = '0123456789abcdef';
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -207,7 +208,12 @@ test('AUDIT EG V L3-10 (b) THE TRAIL\'S LINE (render/egLinePass.js; sections 25.
 });
 
 // ── L3-10 (c): THE ALLIES ON TRAVERSAL GROUND AT 60% ────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L3-10 (c) AN ALLY ON TRAVERSAL GROUND DRAWN AT 60% (section 8.2: "so an ally never hides an edge line"): a living companion standing on a span\'s Drift - no fight floor - is drawn through ECV1\'s plain blend at 0.6, its name kept; on an island (a fight floor), in another hall, out of the Spire, a stranger, and I myself are drawn whole; the host\'s every-peer veil asks it, and the peers\' layer keeps the name of a veil that keeps it (mutants: the veil on a fight floor; the alpha; another hall\'s; the name dropped; the host never asking)', () => {
+test('AUDIT EG V L3-10 (c) AN ALLY ON TRAVERSAL GROUND DRAWN AT 60% (section 8.2: "so an ally never hides an edge line"): a living companion standing on a span\'s Drift - no fight floor - is drawn through ECV1\'s plain blend at 0.6, its name kept; on an island (a fight floor), in another hall, out of the Spire, a stranger, and I myself are drawn whole; the host\'s every-peer veil asks it, and the peers\' layer keeps the name of a veil that keeps it (mutants: the veil on a fight floor; the alpha; another hall\'s; the name dropped; the host never asking)', (t) => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): written on spec law 8's span hall (its first fight floor an island
+  // disc on its course) and read on it still - seed 77's first circle of law 8, given as a breach of law 8's is given to a client
+  // (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
+  egGive8(77, [1]);
+  t.after(() => egSpecForget());
   const P = inBreach(2), spec = P.spec, drift = spec.steps.find((s) => s.kind === 'drift');
   P.state();
   P.client.frame();

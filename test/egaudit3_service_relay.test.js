@@ -4,7 +4,7 @@
 // (#3); the room checking an admission's start (#9); the hub's live list letting ended breaches go at the cap (#5) and its
 // public door's answer kept (#19); THE HOLD giving the gap back to what it found, never to its company's own stamps, and a
 // beat gap the same (#8, net/egDurable.js). Played against the real Room (test/fakeRoom.mjs) and the director's own law.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../server/src/index.js';
 import { fakeRoom, fakeRooms } from './fakeRoom.mjs';
@@ -12,10 +12,19 @@ import { SOCIAL_ROOM, EG_KEY, EG_INTERNAL_OPEN, POSE_TS_MOD } from '../src/net/w
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_ABSENT_TRIAL_MS } from '../src/net/egLaw.js';
 import { EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, EG_LIVE_SAID_MS, egResume, egRelease, egBeatGap } from '../src/net/egDurable.js';
 import { egBreachNew, egEnter, egFall, egForsake, egEnd, egWord } from '../src/net/egBrain.js';
+import { egGive8 } from './egGive8.mjs';
 import { egAim } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (a cave's floor at the
+// plate's height, a blow thrown on it) and stand on it still - the halls they read are law 8's, given as a breach of law 8's
+// are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's.
+// Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+});
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;

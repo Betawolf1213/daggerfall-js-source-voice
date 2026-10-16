@@ -8,7 +8,7 @@
 // under the Spire's held block (world/pseudoArchives.js EG_ARCH_BLOCK.key), on the key's row and on the texture door as its
 // archive's stand-in, where TEXTURE.211 record 50 stood.
 import './modsOff.js';
-import { test } from 'node:test';
+import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { unityColor32, unityColor32Lerp } from '../src/formats/baseImageFile.js';
@@ -29,6 +29,15 @@ import { isVendorArchive, vendorRecordCount, vendorTextureStandIn, setTextureDer
 import { CELL_W, SLOT_H } from '../src/ui/itemScroller.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
 import { addVendorTextures } from '../src/systems/textureReplacement.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(3, [1]);
+});
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

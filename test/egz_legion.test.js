@@ -5,7 +5,7 @@
 // going about the rock; a blow struck only from the fight ground; a member off the floors past six seconds hunted; THE FAIR
 // TRAIL's census (fallen segments, the drains, the traversal hazards, the Vestiges); the feats reading who a burning bridge
 // caught.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut } from '../src/net/wire.js';
@@ -23,6 +23,16 @@ import { egHazardParts, EG_HAZARDS, egWispAt } from '../src/net/egFragLaw.js';
 import { egFeatBits, EG_FEAT_BRIDGE, egCaughtBy } from '../src/net/egFeats.js';
 import { shDisc, shLane } from '../src/net/egShape.js';
 import { EG_VESTIGES, EG_MASTERIES, EG_DR_MAX } from '../src/net/egVestige.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1, 4, 11]);
+  egGive8(77, [3]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

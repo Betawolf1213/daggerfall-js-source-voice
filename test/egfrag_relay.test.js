@@ -47,8 +47,12 @@ function at(seed, h, n = 2) {
 }
 
 test('EG-FULL LAYER THREE AN ENGINE (section 11.10): worked from within 2 m it tells its blow 1.5 s - a member caught takes the place\'s 20% - and its landing takes its share from the adds caught; once in 30 s; from too far, nothing; the Shelf topples once; every frame the wire\'s (mutants: an engine worked from across the hall; the cooldown forgotten; the adds untouched)', () => {
-  const { seed, h, spec } = findHall((q) => q.engines.some((e) => EG_ENGINES[e.kind].pct > 0 && !EG_ENGINES[e.kind].once) && (q.kind === 'yard' || q.kind === 'proving'));
-  const w = at(seed, h, 2), e = spec.engines.find((q) => EG_ENGINES[q.kind].pct > 0 && !EG_ENGINES[q.kind].once);
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): an engine of the place's 20% - never a flood (the Sluice's blow is its
+  // fire, `p` 0 - net/egBrain.js): the first such hall found was one before LAW 9's halls, and is the first whose engine is
+  // no flood now
+  const blows = (k) => EG_ENGINES[k].pct > 0 && !EG_ENGINES[k].once && !EG_ENGINES[k].flood;
+  const { seed, h, spec } = findHall((q) => q.engines.some((e) => blows(e.kind)) && (q.kind === 'yard' || q.kind === 'proving'));
+  const w = at(seed, h, 2), e = spec.engines.find((q) => blows(q.kind));
   for (let k = 0; k < 24; k++) w.step();   // a wave risen
   w.put('acct-0', e.x + 10, e.z);
   assert.equal(w.say('acct-0', { k: 'use', i: e.i }).length, 0, 'from 10 m - nothing');

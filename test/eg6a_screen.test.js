@@ -4,7 +4,7 @@
 // breath and its banners keep to its own run of pieces on its own road's line (world/egLook.js egGustSections,
 // EG_GUST_REACH_M); and the ghosts are drawn once a frame. The stones' look, the ghosts and their pass are EG-ZL's
 // (test/egz_tells.test.js) - at the merge each was built twice, and EG-ZL's is the one kept.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createEgSpan, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/scenes/egSpan.js';
@@ -14,6 +14,16 @@ import { egCourseOf } from '../src/net/egSpanLaw.js';
 import { sdVaneAt } from '../src/world/sdStepsModel.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { gustAt } from '../src/world/sdSteps.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(1, [2], 1);
+  egGive8(25, [6], 7);
+});
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** The span over a fake renderer (a mesh a model, every free heard). */

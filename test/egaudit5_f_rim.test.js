@@ -6,7 +6,7 @@
 // and L3-18 (the Reliquary Vault stood and taken in a Proving Walk and on a forked span, in the trial and in the closing).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egMoltenRim, egRimCastsBack, egOnFight, EG_SEALED_MS, EG_LORDS, EG_RIM_IN_M, EG_RIM_OUT_M } from '../src/net/egLaw.js';
+import { egHallOf, egSpecForget, egMoltenRim, egRimCastsBack, egOnFight, EG_SEALED_MS, EG_LORDS, EG_RIM_IN_M, EG_RIM_OUT_M } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egGeo } from '../src/net/egBrain.js';
 import { egSpanPairs, egJumpReach } from '../src/net/egSpanLaw.js';
 import { egObjsOf, zoneOut } from '../src/net/egLords.js';
@@ -15,6 +15,14 @@ import { validEgOut } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
+import { egGive8Halls } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's
+const GIVEN = [[1, 115, 0], [1, 105, 0], [1, 110, 0], [3, 110, 0], [1, 125, 0], [3, 105, 0], [4, 110, 0], [4, 38, 0], [1, 122, 0]];
+egGive8Halls(GIVEN);
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -132,5 +140,7 @@ test('AUDIT EG V L3-18 THE RELIQUARY VAULT STOOD AND TAKEN (section 8.7: "a side
   S.put('acct-1', [ss.x, ss.z]);
   const sgot = S.step().filter((o) => o.k === 'egot' && o.w === 'rel');
   assert.deepEqual(sgot.map((o) => o.to), ['acct-1'], 'taken in the closing');
+  egSpecForget();   // (the law 8 hall given aside: law 7's own asked)
   assert.equal(egHallOf(1, 122, 0, 7).spots.vault, undefined, 'law 7 laid it nowhere');
+  egGive8Halls(GIVEN);
 });

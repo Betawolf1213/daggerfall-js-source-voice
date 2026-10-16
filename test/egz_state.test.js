@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs';
 import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCircleSpecs, EG_LORDS, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
+import { egGive8, egGive8Hall } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { egBreachNew, egEnter, egStep, egStateOf, egFightStateOf, champRing } from '../src/net/egBrain.js';
@@ -34,9 +35,11 @@ const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
 /** Whole centimetres - the law's heights, and the wire's (section 9). */
 const cmExact = (v) => Number.isFinite(v) && Math.round(v * 100) / 100 === v;
 const near = (a, b, e = 1e-9) => Math.abs(a - b) <= e;
-/** The first hall (seeds 1-`seeds`, circles 1-20) `want` takes - the law's own, never a literal. */
+/** The first hall (seeds 1-`seeds`, circles 1-20) `want` takes - the law's own, never a literal. PIN MOVED (THE ASCENT - THE
+ *  ROOMS, LAW 9 - 2026-10-16): of spec law 8's halls, its circle given (test/egGive8.mjs) - the feet's pins were written on law 8's
+ *  ground (its courts, its shafts, its lords' heights); LAW 9's storeys are test/law9_height.test.js's */
 function findSpec(want, seeds = 120) {
-  for (let seed = 1; seed <= seeds; seed++) for (let c = 1; c <= 20; c++) for (const s of egCircleSpecs(seed, c, 0)) if (want(s)) return { seed, c, s };
+  for (let seed = 1; seed <= seeds; seed++) for (let c = 1; c <= 20; c++) for (const s8 of egCircleSpecs(seed, c, 0, 8)) if (want(s8)) { egGive8(seed, [c]); return { seed, c, s: egHallOf(seed, s8.h, 0) }; }
   throw new Error('no such hall');
 }
 /** A frame as the wire carries it to a screen (JSON, then validEgOut). */
@@ -53,7 +56,7 @@ function breachAt(seed, h, { n = 2 } = {}) {
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'M0', ew: 0, rh: 0, seed, op: T0, co, site: SITE, wg: [] });
   let now = T0 + EG_SEALED_MS + 100;
   for (const [sub] of co) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now);
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);   // PIN MOVED (THE ASCENT): its circle given at law 8 (findSpec, above)
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z, y: spec.arrive.y ?? 0 }]));
   const frames = [];
@@ -533,7 +536,7 @@ test('EG-ZJ A RELOAD MID-FIGHT IN THE ROOM (server/src/index.js _egHello; sectio
     assert.equal(res.status, 200);
     const beat = async (ms) => { const end = clock + ms; while (eg.alarm.at != null && eg.alarm.at <= end) { clock = Math.max(clock, eg.alarm.at); await eg.fire(); } clock = end; };
     clock += EG_SEALED_MS; await beat(1000);
-    const spec = egHallOf(12345, 1, 0), socks = {};
+    const spec = egGive8Hall(12345, 1, 0), socks = {};
     for (const [i, [sub]] of co.entries()) {
       const ws = eg.connect();
       await eg.hello(ws, `peer-${sub}`, poseAt(spec, spec.arrive.x, spec.arrive.z), { kind: 'linked', tokenSub: sub, charLevel: 20 });

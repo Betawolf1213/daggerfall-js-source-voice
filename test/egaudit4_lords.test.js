@@ -25,6 +25,12 @@ import { egVestigeX } from '../src/net/egRun.js';
 import { SD_ECHO_PAIR_MS } from '../src/net/sdRemnant.js';
 import { HIT_KINDS, PHASE_AT, ATTACKS } from '../src/net/gateBrain.js';
 import { validEgOut } from '../src/net/wire.js';
+import { egGive8Hall } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
+// lords, its courses along +z from the plate, where law 8 lays them) and stand on it still - a finder scans law 8's halls by
+// name, and a breach stands in a circle given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs
+// egGive8Hall); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -33,7 +39,7 @@ const seeded = (seed) => { let s = seed; return () => { s = (Math.imul(s, 110351
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 /** The first hall of a seed (from `from`) whose spec passes `ok` - `[seed, h, spec]`. */
 function hallWhere(ok, { seeds = 400, from = 1, to = 200, step = 1 } = {}) {
-  for (let seed = 1; seed <= seeds; seed++) for (let h = from; h <= to; h += step) { const s = egHallOf(seed, h, 0); if (ok(s)) return [seed, h, s]; }
+  for (let seed = 1; seed <= seeds; seed++) for (let h = from; h <= to; h += step) { const s = egHallOf(seed, h, 0, 8); if (ok(s)) return [seed, h, s]; }
   throw new Error('no hall found');
 }
 
@@ -43,7 +49,7 @@ function hallWhere(ok, { seeds = 400, from = 1, to = 200, step = 1 } = {}) {
  * counted.
  */
 function court(seed, h, key, { n = 2, rng = seeded(seed), decrees = {} } = {}) {
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   assert.equal(spec.lord, key, `hall ${h} of seed ${seed} is ${key}'s`);
   const subs = Array.from({ length: n }, (_, i) => `acct-${i}`);
   const F = egFightNew(spec, T0, subs.map(() => 40), subs), frames = [], view = egFightView(spec), said = {};
@@ -73,7 +79,7 @@ function breachAt(seed, h, { n = 1, strata = [], tide = null, dc = [], wake = tr
   let now = T0 + EG_SEALED_MS + 100;
   for (const [sub] of co) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now);
   B.strata = [...strata]; B.tide = tide; B.dc = dc;
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 30 * MIN, at: now }; B.pulledAt = now; B.su = now + 30_000;
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
   const frames = [];

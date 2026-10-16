@@ -83,9 +83,11 @@ test('AUDIT EG V L5-15 A RAISED FLOOR CLIMBED BY THE REAL MOTOR (sections 8.3: "
 });
 
 test('AUDIT EG V L5-1 A HERO\'S STAIR JOINED AT ITS OWN EDGES (section 11.7: "the legion walks the graph"; the EG-HERO (the Shade Perilous) record: "up both stairs and onto both galleries"): wherever the Eclipse Vault is laid, the walk graph joins each of its stairs to the floor at its foot and the gallery at its top - the foot the point of its low edge on a floor of its height, never the middle of its low corners 1.5 m off its floor - so a walker on the court reaches a member on either gallery, and every hero\'s raised floor is climbed (mutants: a hero\'s stair read by its middle; a hero\'s stair dropped; its foot taken off the floor)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): spec law 8's halls by name, here and in the alcoves' pin below - the
+  // hero laid where law 8 lays it, the hall's one hero (a LAW 9 hall's heroes are its rooms beside it)
   let laid = 0;
   for (const [seed, h] of [[2, 52], [2, 62], [2, 72], [4, 74]]) {
-    const spec = egHallOf(seed, h, 0), H = spec.heroes?.[0];
+    const spec = egHallOf(seed, h, 0, 8), H = spec.heroes?.[0];
     assert.equal(H?.id, 'egheroEclipse', `seed ${seed} hall ${h}: the Eclipse Vault laid`);
     laid++;
     const view = egFightView(spec), G = egWalkGraph(view), R = EG_HERO_FRAGS.egheroEclipse;
@@ -113,7 +115,7 @@ test('AUDIT EG V L5-1 A HERO\'S STAIR JOINED AT ITS OWN EDGES (section 11.7: "th
 
 test('AUDIT EG V L5-8 A HERO ALCOVE\'S DOORWAY (section 11.10: "behind a false wall (one blow; a faint gold seam shows within 4 m)"): a hero\'s seam alcove opens off its own hero\'s floor - its false wall stands in the hero\'s wall where the line from the alcove back toward the course meets the floor it opens off, at the alcove\'s own height, flush along that wall (the Clan Pit\'s slanted west wall); a code-built niche keeps its 1.2 m rule (mutants: the hero\'s door by the code-built rule; the slab across the wall\'s way; the door at the floor\'s height under a raised niche)', () => {
   // the Mist Stair (a shaft): its alcove 0.6 m over its rim floor, the rim floor's east edge 4.0 m out - the slab in the doorway
-  const mist = egHallOf(2, 42, 0), Hm = mist.heroes[0];
+  const mist = egHallOf(2, 42, 0, 8), Hm = mist.heroes[0];
   assert.equal(Hm.id, 'egheroMistStair');
   const am = mist.alcoves.find((a) => a.x >= Hm.box[0] && a.x <= Hm.box[3] && a.z >= Hm.box[2] && a.z <= Hm.box[5]);
   const dm = egHeroDoor(mist, am), nb = egNicheBoxes(mist).find((q) => q.a === am);
@@ -122,7 +124,7 @@ test('AUDIT EG V L5-8 A HERO ALCOVE\'S DOORWAY (section 11.10: "behind a false w
   assert.deepEqual(nb.door.map((v) => +v.toFixed(3)), egToDungeon(mist, dm.x + 0.3, am.y, am.z).map((v) => +v.toFixed(3)), 'the door 0.3 m into it, at the niche\'s own height');
   assert.ok(Math.abs(am.y - (Hm.y + 0.6)) < 1e-9, 'a niche 0.6 m over the rim');
   // the Clan Pit (a chamber): its west wall slants - the slab stands flush along it, never into the pit floor
-  const pit = egHallOf(1, 77, 0), Hp = pit.heroes[0];
+  const pit = egHallOf(1, 77, 0, 8), Hp = pit.heroes[0];
   assert.equal(Hp.id, 'egheroClanPit');
   const ap = pit.alcoves.find((a) => a.x >= Hp.box[0] && a.x <= Hp.box[3] && a.z >= Hp.box[2] && a.z <= Hp.box[5]);
   const dp = egHeroDoor(pit, ap), floor = Hp.floors.find((g) => g.fight && Math.abs(g.y - Hp.y) < 1e-9);
@@ -136,7 +138,7 @@ test('AUDIT EG V L5-8 A HERO ALCOVE\'S DOORWAY (section 11.10: "behind a false w
   for (let i = 0; i < old.length; i += 3) { const [x, , z] = dungeonToRealm(old[i], old[i + 1], old[i + 2]); if (egPolyIn(floor.poly, x - pit.x0, z, -0.05)) oldIn++; }
   assert.ok(oldIn > 0, 'the code-built rule stood it on the pit floor');
   // a code-built niche: its 1.2 m rule, its wall along z
-  const code = [1, 2, 3, 4, 5, 6].flatMap((c) => egCircleSpecs(1, c, 0)).flatMap((s) => egNicheBoxes(s).map((q) => [s, q])).find(([s]) => !(s.heroes ?? []).length);
+  const code = [1, 2, 3, 4, 5, 6].flatMap((c) => egCircleSpecs(1, c, 0, 8)).flatMap((s) => egNicheBoxes(s).map((q) => [s, q])).find(([s]) => !(s.heroes ?? []).length);
   assert.ok(code, 'a code-built alcove');
   const [cs, cq] = code;
   assert.equal(egHeroDoor(cs, cq.a), null);

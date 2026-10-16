@@ -7,7 +7,7 @@
 // route and Grath's Gore twice as often alone (#11); Morvayn's shared blow in the census (#12); the aspects - Garoth's each of
 // the four in turn, an earlier band's lord re-aspected (#18); the gate's rows read from net/gateBrain.js ATTACKS, the Meteor's
 // burning ground with them (#23).
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
@@ -20,6 +20,15 @@ import { EG_KIND } from '../src/net/egLegion.js';
 import { egFeatBits } from '../src/net/egFeats.js';
 import { ATTACKS, POOLS, STUN_HIT_X, HIT_KINDS } from '../src/net/gateBrain.js';
 import { validEgOut } from '../src/net/wire.js';
+import { egGive8Halls } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8Halls([[1, 70, 0], [1, 85, 0], [1, 35, 0], [12345, 5, 0], [2, 95, 0], [12345, 50, 0], [1, 125, 0], [1, 100, 0], [2, 30, 0], [77, 25, 0]]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
