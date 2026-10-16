@@ -131,7 +131,7 @@ test('FT2: every builder asks the registry (one home per idea, every store), the
   assert.ok(!/LAND_VIEW_TIERS/.test(menu), 'the menu no longer knows the tiers; the registry hands them over');
   // the world host reads through the same function the row shows
   const world = read('src/scenes/world.js');
-  assert.match(world, /import \{ landViewRead \} from '\.\.\/\.\.\/world\/landView\.js';/);
+  assert.match(world, /import \{ landViewRead \} from '\.\.\/world\/landView\.js';/);
   assert.match(world, /const fogDistance = landViewRead\(\);/);
   assert.ok(!/landViewDistance\(\{/.test(world), 'no second composition of the read');
   // the DFU key stays in its category (the map is total) and its settings row is settingRow's pointer, through featureForControl

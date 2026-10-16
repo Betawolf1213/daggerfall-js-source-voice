@@ -1170,7 +1170,7 @@ test('PX21c / WORLD-HOVER: the plaque names a pile without opening it, on the ta
   // `button`, `#app`) onto the classic page. "A player who chose
   // classic never loads a byte of this" is enhancedStyle.js's own
   // doctrine, and this is the line that keeps it true.
-  assert.match(hov, /import \{ isEnhanced \} from '\.\.\/\.\.\/systems\/uiSkin\.js';/);
+  assert.match(hov, /import \{ isEnhanced \} from '\.\.\/systems\/uiSkin\.js';/);
   // BOTH doors gate, and each gates FIRST. worldHoverFrame is the one
   // four hosts call, and it must refuse before it pulls a target list
   // or casts a ray, not only before it paints.
@@ -1791,8 +1791,9 @@ test('AUDIT INV2: the ghost is the item\'s own tile, and the ladder it rides is 
   // which is enhancedChunk's "the game was updated" scrim.
   const z = Number(/\.dragghost \{[\s\S]*?z-index: (\d+);/.exec(css)?.[1]);
   const others = [];
-  for (const f of ['enhancedStyle.js', 'enhancedChunk.js', 'enhancedMenu.js', 'touch.js', 'chatPanel.js'])
-    for (const m of read(`src/ui/${f}`).matchAll(/z-index:\s*(\d+)/g)) if (Number(m[1]) !== z || f !== 'enhancedStyle.js') others.push(Number(m[1]));
+  // TIDY2: each where its feature folder keeps it
+  for (const f of ['enhanced/enhancedStyle.js', 'enhanced/enhancedChunk.js', 'enhanced/enhancedMenu.js', 'touch/touch.js', 'chatPanel.js'])
+    for (const m of read(`src/ui/${f}`).matchAll(/z-index:\s*(\d+)/g)) if (Number(m[1]) !== z || f !== 'enhanced/enhancedStyle.js') others.push(Number(m[1]));
   assert.ok(z > 14, `the ghost clears every door host (read ${z})`);
   assert.ok(!others.includes(z), `and shares its rung with nothing else in src/ (read ${z}; found ${[...new Set(others)].sort((a, b) => a - b).join(', ')})`);
 

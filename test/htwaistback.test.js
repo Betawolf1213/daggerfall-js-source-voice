@@ -299,7 +299,7 @@ test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through play
   const body = rd('src/player/eyeOfTheBeholder/eotbBody.js');
   const riders = rd('src/net/peer/peerRiders.js');
   for (const [name, src] of [['eotbBody.js', body], ['peerRiders.js', riders]]) {
-    assert.match(src, /from '(?:\.|\.\.\/player)\/eotbLantern\.js';/, `${name} takes the lantern from its one home`);
+    assert.match(src, /from '(?:\.|(?:\.\.\/)+player\/eyeOfTheBeholder)\/eotbLantern\.js';/, `${name} takes the lantern from its one home`);
     for (const fn of ['isRearView', 'createLanternArt', 'createSpriteLantern', 'stepSpriteLantern', 'spriteStride', 'hangSpriteLantern', 'mintSpriteLantern', 'dropSpriteLantern']) {
       assert.match(src, new RegExp(`\\b${fn}\\(`), `${name} calls ${fn}`);
     }
