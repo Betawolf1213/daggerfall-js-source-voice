@@ -559,8 +559,10 @@ The law now (`systems/enchantments.js` `repairsObjectsTarget`, `repairsObjectsMe
   DISC22-A).
 - **How much.** A tick mends a fiftieth of the piece's own condition, never less than DFU's point (`repairsObjectsMend`):
   the classic Dagger's point of its 50 (Mac, asked: "Weapons as a classic dagger"), every piece's alike since
-  MEND-ARMOUR (FIELD BUGS 2026-10-16) - a weapon, armour of any material, clothing, a magic item's or an artifact's
-  uses. Every piece's share climbs 2% a tick, whatever its kind, its material or its size; an iron weapon's tick is 32,
+  MEND-ARMOUR (FIELD BUGS 2026-10-16) - a weapon, armour of any material, clothing. A magic item's or an artifact's
+  USES keep DFU's point (MEND-ARMOUR's audit: the round runs through every rest and fast travel too, and a fiftieth gave a
+  spent Cast When Used piece all 1,000 uses back in one 8-hour rest - 100 casts, where the point gives 12; a charge is
+  not wear). Every other piece's share climbs 2% a tick, whatever its kind, its material or its size; an iron weapon's tick is 32,
   MEND-WORN's own, and any piece's whole condition is 50 ticks' mending (about 3.3 game hours), as a classic iron
   dagger's was. MEND-WORN gave the share to a weapon on the pool alone, on the pool (32: Daedric 0.25% a tick), and
   left everything else DFU's point (`RepairsObjects.cs:26`, conditionAmount): beside a blade that climbed, a steel
@@ -589,7 +591,7 @@ enchantmentMagicRound) that every host's ticker feeds: exterior.js, world.js and
 service's bundle reaches these files. `test/mend_worn.test.js` (8); `tools/mutants/mend_worn.json` (15 of 15 dead, the
 old walk restored among them). Re-aimed by content, because the kit's comparator moved into `mendOrder`:
 `tools/mutants/mend_aim.json` MEND-AIM-loot-before-worn and `tools/mutants/prof3.json` PROF3-kit-least-worn (both dead).
-MEND-ARMOUR (FIELD BUGS 2026-10-16): `test/fb1016b_mendarmour.test.js` (2); `tools/mutants/fb1016b_mendarmour.json` (6, all
+MEND-ARMOUR (FIELD BUGS 2026-10-16): `test/fb1016b_mendarmour.test.js` (3); `tools/mutants/fb1016b_mendarmour.json` (7, all
 dead). Its pins moved where they said a point: `test/mend_worn.test.js` (the rate, uses, the setting, the pump),
 `test/fb1014_mendstarve.test.js` and `test/fb1015_mendtiers.test.js` (a self-wearing piece is mended past its wear now,
 not held), `test/enchantments.test.js` (E1's one item); `tools/mutants/mend_worn.json`'s six records on the old law

@@ -378,7 +378,11 @@ export function mobileAffinityMatches(mobileType, paramType) {
  *  (4,096) 1% every 41 ticks, a steel one (6,144) every 61, a Daedric one (32,768) every 328 - beside a blade that
  *  climbed, the armour's % never moved. An iron weapon's tick is MEND-WORN's 32 still. */
 export const MEND_SHARE_OF = ITEM_TEMPLATES[WEAPONS.Dagger].hitPoints;
-export const repairsObjectsMend = (it) => Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF));
+/** AUDIT (FIELD BUGS 2026-10-16b MEND-ARMOUR): USES KEEP THE POINT. A MAGIC.DEF item's or an artifact's condition is its
+ *  USES (loot.js), and this round runs through every rest, fast travel and prison stay as well as play (worldTick.js's
+ *  catch-up, MAX_CATCHUP_ROUNDS): at a fiftieth a tick, one 8-hour rest gave a spent Cast When Used piece back 100 casts,
+ *  where the point gave it 12. A charge is not wear - it is mended at DFU's point, as it was before MEND-ARMOUR. */
+export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));
 
 /** MEND-WORN: THE PIECE A REPAIRS OBJECTS TICK MENDS in `items` (the pack), or null. Among the pieces below their
  *  condition that a repair may touch, the first of MEND-TIERS' three tiers (mendTier: what is worn, then a worn piece

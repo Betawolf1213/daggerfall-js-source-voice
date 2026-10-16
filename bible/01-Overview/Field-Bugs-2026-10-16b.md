@@ -180,24 +180,29 @@ with a shirt and breeches under the plate the kit wanted 8,408 ticks to be whole
 
 CHANGED (the owner: "Stop trying to match DFU"): one law, `repairsObjectsMend` - a tick mends a fiftieth of the piece's
 own condition, rounded, never under DFU's point. That is MEND-WORN's yardstick (the classic Dagger's point of its 50,
-Mac's "Weapons as a classic dagger"), now every piece's: a weapon of any material, armour, clothing, a magic item's or an
-artifact's uses - every share climbs 2% a tick (an iron weapon 32, a Daedric one 256, an iron cuirass 82, steel 123,
+Mac's "Weapons as a classic dagger"), now every piece's: a weapon of any material, armour, clothing (a magic item's or an
+artifact's uses keep the point - the AUDIT below) - every share climbs 2% a tick (an iron weapon 32, a Daedric one 256, an iron cuirass 82, steel 123,
 Daedric 655, a shirt 2, Armbands the floor's 1). Unchanged: which piece the tick takes (worn first, least share first,
 MEND-TIERS' tiers), the cadence, the player alone, one piece a tick. The same kit is whole in 164 ticks, about 55 real
 minutes. `05-Combat/Physical-Combat-Overhaul.md` MEND-WORN and Port-Ledger A's MEND-WORN row say so.
 
 THE FOUR HOSTS: none changed - the law runs in the one round pump (`systems/worldTick.js` runMagicRoundsFor, then
 enchantmentMagicRound) that every host's ticker feeds: exterior.js, world.js and worldModes.js through `scenes/shared.js`
-createPlayerTicker, dungeonContext.js through tickPlayerMinutes. Pinned by `test/fb1016b_mendarmour.test.js` (2, the
-first the report's kit through the pump, tick by tick); `tools/mutants/fb1016b_mendarmour.json` (6, all dead). PINS
-MOVED: `mend_worn.test.js` (the rate; a magic blade's 1,000 uses +20 and an artifact's 400 +8; the Wall of Daggerfall
+createPlayerTicker, dungeonContext.js through tickPlayerMinutes. Pinned by `test/fb1016b_mendarmour.test.js` (3, the
+first the report's kit through the pump, tick by tick); `tools/mutants/fb1016b_mendarmour.json` (7, all dead). PINS
+MOVED: `mend_worn.test.js` (the rate; a magic blade's and an artifact's uses DFU's point, the audit's; the Wall of Daggerfall
 +41 and the helm +51; the pump's cuirass +820), `fb1014_mendstarve.test.js` and `fb1015_mendtiers.test.js` (a worn piece
 mended whole in a tick or two where it was held), `enchantments.test.js` E1 (a 100-point sword +2); `tools/mutants/
 mend_worn.json`'s six records on the old law re-aimed by content, 15 of 15 dead.
 
-FLAGGED: uses mend by the same law. Under AllowMagicRepairs (the port's default, forced online) a 1,000-use item gets 20
-uses a tick - two Cast When Used casts' worth every twenty seconds - where it got 1. If uses should keep the point, it
-is one guard in repairsObjectsMend.
+AUDIT (2026-10-16, the branch read cold): USES KEEP THE POINT. The round runs through every rest, fast travel and prison
+stay as well as play (`worldTick.js`'s catch-up, MAX_CATCHUP_ROUNDS), and a MAGIC.DEF item's or an artifact's condition is
+its uses (loot.js): at a fiftieth, one 8-hour rest gave a spent Cast When Used piece all 1,000 uses back - 100 casts,
+where DFU's point gives 12. A charge is not wear: `repairsObjectsMend` gives uses the point, as before MEND-ARMOUR, and
+every other piece its fiftieth (an enchanted loot piece whose condition is wear, never uses, keeps the share). Pinned by
+the slice's third test (a MAGIC.DEF piece through an 8-hour rest of the pump: 120 uses; the cuirass beside it its
+fiftieth); MEND-WORN-uses-on-the-share and -artifact-on-the-share (re-aimed) and MEND-ARMOUR-AUDIT-uses-on-the-share
+dead.
 
 What the reporter is owed: your armour was being repaired - one point of its thousands every twenty seconds, so its %
 never moved. Every worn piece now mends 2% of itself a tick, as your weapon did: a battered steel kit is whole in under

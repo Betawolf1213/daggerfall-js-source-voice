@@ -123,19 +123,20 @@ test('MEND-WORN: a weapon on the pool mends the share a classic Dagger did - 32 
   assert.equal(nearly.currentCondition, nearly.maxCondition);
 });
 
-// PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR): uses kept DFU's point, while the pool's 32 was not their size; a share of
-// their own condition is, so they mend as every piece does - a fiftieth of their uses.
-test('MEND-WORN: a magic item\'s and an artifact\'s condition is their uses, not the pool - each mends a fiftieth of its uses (MEND-ARMOUR), and the artifact keeps its own maximum', () => {
+// PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR, then its AUDIT): MEND-ARMOUR gave uses a fiftieth as it gave every piece;
+// the audit found the round runs through every rest too (one 8-hour rest refilled a spent Cast When Used piece: 100 casts),
+// so a charge keeps DFU's point - test/fb1016b_mendarmour.test.js holds the rest.
+test('MEND-WORN: a magic item\'s and an artifact\'s condition is their uses, not the pool - each mends DFU\'s point (MEND-ARMOUR\'s audit: a charge is not wear), and the artifact keeps its own maximum', () => {
   // MAGIC.DEF's record, through the real producer: group 2 is always a weapon, its condition the record's uses
   const magicDef = [{ index: 0, name: 'Blade of the Test', type: 0, group: 2, groupIndex: 0, enchantments: [{ type: T.PotentVs, param: 0 }], uses: 1000, value: 0, material: 0 }];
   const blade = createRegularMagicItem(magicDef, 1, 'male', seeded(2));
   assert.deepEqual([blade.group, blade.magic, blade.maxCondition], ['Weapons', true, 1000]);
   blade.currentCondition = 500;
-  assert.equal(gain(blade, true), 20, 'a magic weapon: a fiftieth of its 1,000 uses back a tick');
+  assert.equal(gain(blade, true), 1, 'a magic weapon: DFU\'s point of its 1,000 uses back a tick');
   // a classic save's artifact, through the importer: `artifact` and never `magic` (AUDIT WEAPON-POOL P4)
   const artifact = classicItemFromRecord({ parsedData: { group: 3, index: 0, name: 'Dagger', material: WEAPON_MATERIALS.Daedric, value: 1, flags: ITEM_ARTIFACT_MASK, currentCondition: 300, maxCondition: 400, typeDependentData: 0, enchantmentPoints: 0, message: 0, magic: [] } });
   assert.deepEqual([artifact.group, artifact.artifact, artifact.magic], ['Weapons', true, undefined]);
-  assert.equal(gain(artifact, true), 8, 'a fiftieth of its 400');
+  assert.equal(gain(artifact, true), 1, 'the point of its 400');
   assert.equal(artifact.maxCondition, 400, 'its uses, not moved to the pool');
 });
 

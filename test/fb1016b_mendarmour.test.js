@@ -18,6 +18,7 @@ import { weaponOfMaterial, armorOfMaterial } from '../src/combat/enemyEquipment.
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { mintCondition, setItemFields, conditionPercentage } from '../src/systems/itemTemplates.js';
+import { createRegularMagicItem } from '../src/systems/loot.js';
 
 const CUIRASS = 102, GAUNTLETS = 103, GREAVES = 104, LEFT_PAULDRON = 105, RIGHT_PAULDRON = 106, HELM = 107, BOOTS = 108;
 const KITE_SHIELD = 111, RING = 135, ARMBANDS = 142, CASUAL_PANTS = 151, SHORT_SHIRT = 165;
@@ -95,4 +96,22 @@ test('MEND-ARMOUR: one law for every kind and material - a tick mends a fiftieth
   for (const [name, max, got] of [gain(armorOfMaterial(CUIRASS, ARMOR_MATERIAL.Iron)), gain(weaponOfMaterial(WEAPONS.Longsword, WEAPON_MATERIALS.Steel))]) {
     assert.ok(Math.abs(got / max - 1 / 50) <= 0.5 / max, `${name}: 2% a tick, to the point`);
   }
+});
+
+test('MEND-ARMOUR AUDIT: a charge is not wear - a MAGIC.DEF piece\'s spent uses come back DFU\'s point a tick through the pump, a rest\'s catch-up included (an 8-hour rest: 120 uses, 12 Cast When Used casts - the fiftieth gave all 1,000), while the steel cuirass worn beside it still mends its fiftieth (mutants: uses on the share)', () => {
+  const seeded = (s0) => { let s = s0; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; };
+  const magicDef = [{ index: 0, name: 'Amulet of the Test', type: 0, group: 2, groupIndex: 0, enchantments: [{ type: T.CastWhenUsed, param: 14 }], uses: 1000, value: 0, material: 0 }];
+  const charged = createRegularMagicItem(magicDef, 1, 'male', seeded(2));
+  assert.deepEqual([charged.magic, charged.maxCondition], [true, 1000], 'the producer\'s piece: its condition its uses');
+  charged.currentCondition = 0;
+  const p = wearing([charged]);
+  runMagicRoundsFor(p, 0, 4, { sinks: {}, enchantCtx: { allowMagicRepairs: true } });
+  assert.equal(charged.currentCondition, 1, 'a tick: the point');
+  runMagicRoundsFor(p, 4, 480, { sinks: {}, enchantCtx: { allowMagicRepairs: true } });
+  assert.equal(charged.currentCondition, 120, 'an 8-hour rest: 120 uses, never the whole 1,000');
+  const cuirass = at(armorOfMaterial(CUIRASS, ARMOR_MATERIAL.Steel), 50);
+  const from = cuirass.currentCondition;
+  const q = wearing([cuirass]);
+  runMagicRoundsFor(q, 0, 4, { sinks: {}, enchantCtx: { allowMagicRepairs: true } });
+  assert.equal(cuirass.currentCondition - from, fiftieth(cuirass), 'armour beside it: its fiftieth');
 });

@@ -65,24 +65,25 @@
     "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - a pool weapon's 32 is one case of every piece's fiftieth now; DFU's point restored on every piece."
   },
   {
-    "name": "MEND-WORN-uses-on-the-point",
+    "name": "MEND-WORN-uses-on-the-share",
     "file": "src/systems/enchantments.js",
-    "old": "export const repairsObjectsMend = (it) => Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF));",
+    "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
+    "new": "export const repairsObjectsMend = (it) => (it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
+    "tests": [
+      "test/mend_worn.test.js",
+      "test/fb1016b_mendarmour.test.js"
+    ],
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b MEND-ARMOUR's audit): uses keep the point - a magic item's uses on the share"
+  },
+  {
+    "name": "MEND-WORN-artifact-on-the-share",
+    "file": "src/systems/enchantments.js",
+    "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "tests": [
       "test/mend_worn.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - was MEND-WORN-uses-on-the-pool (a magic item's uses handed the pool's 32). The pool was not their size and a share of their own condition is, so they mend a fiftieth of their uses as every piece does; the mutant keeps them on DFU's point."
-  },
-  {
-    "name": "MEND-WORN-artifact-on-the-point",
-    "file": "src/systems/enchantments.js",
-    "old": "export const repairsObjectsMend = (it) => Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF));",
-    "new": "export const repairsObjectsMend = (it) => (it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
-    "tests": [
-      "test/mend_worn.test.js"
-    ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - was MEND-WORN-artifact-on-the-pool (an artifact's uses handed the pool's 32); an artifact mends a fiftieth of its own as every piece does, and the mutant keeps it on DFU's point."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b MEND-ARMOUR's audit): an artifact's uses on the share"
   },
   {
     "name": "MEND-WORN-past-its-condition",
