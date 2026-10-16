@@ -59,6 +59,11 @@
 // egEchoShare - War-Chorus whole), Ambush spent by the blow after a Fade, a mark's layer kept (Hammer and Anvil); and in the
 // census STONESKIN COUNTED (egCountWhole: a holder's count is of its whole body, the cushion with it, so it falls where its
 // screen does) and LIVING WALL on the room's heals (egWallOf).
+// THE ASCENT (LAW 9, 2026-10-16; Elite-Gates-Ascent.md section 1): PROGRESS IS ALONG THE ROUTE (net/egRoute.js) - the toll's
+// road and its road ahead (egTollOf), the Captive's chains along the course (egCaptiveSpots), the Low Road's member and a
+// trail's road (onLowRoad, egPoseIn - the road of the route's nearest way, by height too), the leading member, the Divers'
+// island ahead and the Harriers' rise ahead of their member (spanLegion) - never z. Laws 4-8: the route's measure is their
+// z, their road the fork's by x, every number the number it was.
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_REST_MS,
@@ -110,6 +115,7 @@ import { egTallyWake, egTallyBlow, egTallyFall, egTallyHeal, egChartOf, egTallie
 import { healRef } from './gateBrain.js';   // EG-ZF: a heal's share of the count, at the gate's reference health
 import { BRAIN_TICK_MS } from './gateBrain.js';   // EG-ZI: Lifeline's look back over the beat a count was last seen low
 import { EG_TRAIL_MS } from './egFair.js';   // EG-ZI: a Lifeline window kept while a blow in it may still be judged
+import { egRouteAlong, egRouteAlongAt, egRouteRoad, egRouteRoadAt, egRouteAhead } from './egRoute.js';   // THE ASCENT (LAW 9): progress along the hall's route
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
  *  rift and each anchor; a Rampart's gate's Ward-Bearers; a Muster's standard; a captive's chains; a Holdfast's hold. */
@@ -750,8 +756,9 @@ function fragStand(B, F, spec, now, out) {
   }
   if (lurks.length) egLegionRaise(F, lurks.map(() => EG_KIND.lurker), lurks, now, out, { wave: 0 });   // AUDIT EG V (L2-3): statues - the cap counts each from its waking (net/egLegion.js egLegionRoom)
 }
-/** The Low Road's member (section 11.4): past the fork, on its side of the hall. */
-const onLowRoad = (spec, b) => !!spec.fork && b.z >= spec.fork.z && b.x >= (spec.fork.lowX + spec.fork.x) / 2;
+/** The Low Road's member (section 11.4): on THE FORK's other road (net/egRoute.js egRouteRoad - laws 4-8 past the fork, on
+ *  its side of the hall; LAW 9 on the route's road 1, by height too). */
+const onLowRoad = (spec, b) => !!spec.fork && egRouteRoad(spec, b) === 1;
 /**
  * The fragments' beat, in a trial and its closing: the alcoves (a member within reach of an open one takes what it
  * holds, once), the High Road's cache (a Reliquary to each who touches it) and the Low Road's niche (15% once, a shard
@@ -904,8 +911,9 @@ export function egCaptiveSpots(spec) {
   if (law.length >= EG_CHAINS) return law.slice(0, EG_CHAINS).map((q) => [q.x, q.z]);
   const about = (d) => [0, 120, 240].map((deg) => /** @type {[number, number]} */ ([d.x + Math.sin((deg * Math.PI) / 180) * (d.r / 2), d.z + Math.cos((deg * Math.PI) / 180) * (d.r / 2)]));
   if (spec.kind === 'span' || spec.kind === 'brink') {
-    const fl = egFightView(spec).fl, isles = fl.filter((f) => f.g === 'island').sort((a, b) => a.z - b.z);
-    const ground = isles.length >= EG_CHAINS ? isles : [...isles, ...fl.filter((f) => f.g === 'plate').sort((a, b) => a.z - b.z)];
+    const fl = egFightView(spec).fl, by = (a, b) => egRouteAlong(spec, a) - egRouteAlong(spec, b);   // THE ASCENT: along the route
+    const isles = fl.filter((f) => f.g === 'island').sort(by);
+    const ground = isles.length >= EG_CHAINS ? isles : [...isles, ...fl.filter((f) => f.g === 'plate').sort(by)];
     if (ground.length >= EG_CHAINS) return [0, 1, 2].map((j) => { const d = ground[Math.round((j * (ground.length - 1)) / 2)]; return [d.x, d.z]; });
     if (ground.length) return about(ground[0]);
   }
@@ -1039,7 +1047,8 @@ function pull(B, now, out) {
 /**
  * EG-ZI - THE PULL'S TOLL (section 10.6): the quarters of its road a member pulled from hall `h` (its `spec`) pays - each
  * EG_TOLL_STEP of its health, at most EG_TOLL_QUARTERS - for the road still ahead of its furthest fair point (`A.far`,
- * net/egFair.js), measured along the hall's +z from the arrival plate to the end plate in whole centimetres, every quarter
+ * net/egFair.js), measured along THE ROUTE (net/egRoute.js - laws 4-8 the hall's +z) from the arrival plate to the end
+ * plate in whole centimetres, every quarter
  * begun counted whole (a member a step short of the end pays one). Nothing after a hall that is not crossed
  * (EG_TOLL_KINDS), for a member who stepped through the door or stood at it on a fair trail (`A.atEnd`), or who reached
  * new ground - an island, a fragment's floor - in its last EG_TOLL_WAIVE_MS (`A.fnew`): only the idle pay, and trying and
@@ -1050,9 +1059,9 @@ function pull(B, now, out) {
 export function egTollOf(spec, m, A, h, now) {
   if (!EG_TOLL_KINDS.includes(spec?.kind) || !spec.arrive || !spec.end || m?.downH === h || A?.atEnd) return 0;
   if (A?.fnew > 0 && now - A.fnew <= EG_TOLL_WAIVE_MS) return 0;
-  const road = Math.round((spec.end.z - spec.arrive.z) * 100);
+  const a = egRouteAlong(spec, spec.arrive), e = egRouteAlong(spec, spec.end), road = Math.round((e - a) * 100);   // THE ASCENT: along the route
   if (!(road > 0)) return 0;
-  const ahead = Math.max(0, Math.round((spec.end.z - (A?.far ?? spec.arrive.z)) * 100));
+  const ahead = Math.max(0, Math.round((e - (A?.far ?? a)) * 100));
   return Math.min(EG_TOLL_QUARTERS, Math.ceil((EG_TOLL_QUARTERS * ahead) / road));
 }
 /** EG-ZI: THE TOLL SAID - each living member who owes one is told it (`toll`, to it alone: `q` its quarters, `h` the hall it
@@ -1594,7 +1603,10 @@ function fightTail(F, now, out) {
  * legion's cap (`cap`, the room left under it). The Harriers rise in the air beside the members in turn, EG_SHADOW_SIDE_M
  * out and EG_SHADOW_AHEAD_M ahead (kept out of a passage's rock); from the Shade every other wave is led at half by Divers
  * over the island (or plate) the leading member stands on or comes to next (net/egLegion.js egIsleAhead). No die is drawn: a span's legion keeps the breach's rolls where they were.
+ * THE ASCENT (LAW 9): "ahead" and "leading" are along THE ROUTE (net/egRoute.js) - the member furthest along it leads, and a
+ * Harrier rises ahead along its member's way and beside it (laws 4-8: +z and +-x, as ever).
  */
+const _ahead = [0, 0];   // egRouteAhead's answer, read at once
 function spanLegion(F, view, now, inHall, cap, out) {
   if (!inHall.length) return;
   const D = F.D ?? {};
@@ -1607,13 +1619,16 @@ function spanLegion(F, view, now, inHall, cap, out) {
     if (n <= 0) return;
     room -= n;
     F.waveNo = (F.waveNo ?? 0) + 1;
-    const lead = inHall.reduce((p, q) => (q.z > p.z ? q : p)), isle = egIsleAhead(isles, lead.z);
+    let la = egRouteAlong(view, inHall[0]);   // THE ASCENT: the member furthest along the route leads, its island ahead along it
+    for (const q of inHall) la = Math.max(la, egRouteAlong(view, q));
+    const isle = egIsleAhead(isles, la, view);
     const divers = F.band >= 2 && isle && F.waveNo % 2 === 1 ? Math.ceil(n / 2) : 0;
     const kinds = [], spots = [];
     for (let j = 0; j < n; j++) {
       if (j < divers) { const a = (j / divers) * Math.PI * 2; kinds.push(EG_KIND.diver); spots.push([...egAirKeep(view, isle.x + Math.sin(a) * EG_DIVER_WAIT_R, isle.z + Math.cos(a) * EG_DIVER_WAIT_R), isle.y ?? 0]); continue; }
       const m = inHall[j % inHall.length], s = j % 2 ? 1 : -1;
-      kinds.push(EG_KIND.harrier); spots.push([...egAirKeep(view, m.x + s * EG_SHADOW_SIDE_M, m.z + EG_SHADOW_AHEAD_M), egAirY(view, m, {})]);   // EG-ZJ: risen at their member's height (the Divers at the island's)
+      const [hx, hz] = egRouteAhead(view, m, EG_SHADOW_AHEAD_M, s * EG_SHADOW_SIDE_M, _ahead);   // THE ASCENT: ahead along the route, beside it
+      kinds.push(EG_KIND.harrier); spots.push([...egAirKeep(view, hx, hz), egAirY(view, m, {})]);   // EG-ZJ: risen at their member's height (the Divers at the island's)
     }
     egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo });
   }
@@ -2039,7 +2054,7 @@ export function egPoseIn(B, sub, p, t) {
     if (m.fair?.k !== k) { measureFold(m, m.fair); m.fair = { ...egFairNew(B.h, B.hw), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }   // EG-ZA: the trail it closes folded into the circle's measures
     const A = m.fair;
     egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t, B.sb);   // AUDIT EG III: a standing Spirebridge is ground
-    if (spec.fork && z >= spec.fork.z && x >= (spec.fork.lowX + spec.fork.x) / 2) A.road = 1;
+    if (egRouteRoadAt(spec, x, y, z) === 1) A.road = 1;   // THE ASCENT: the route's road 1 (laws 4-8: past the fork, by x)
     if (egAtDoor(spec, x, z)) { egFairCross(A, t, A.road); if (A.cross > 0 && A.cmin == null) A.cmin = egCrossMinMs(spec, A.road); if (egFairOk(A)) A.atEnd = 1; }   // EG-ZA: the crossing's bound kept with it (its hall's spec is this one); EG-ZI: the end reached on a fair trail owes no toll
     // a fall past EG_VOID_Y - EG-ZB (section 21): or feet on a Falling Wall's or the Collapsing Tube's fallen ground, which the
     // screen casts on to the nearest standing segment at the same cost (net/egFair.js egFallenAt) - owes one cast-back

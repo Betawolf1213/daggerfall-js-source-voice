@@ -86,8 +86,8 @@
   {
     "name": "EGZI-fair-the-furthest-the-last",
     "file": "src/net/egFair.js",
-    "old": "  if (A.far == null || p.z > A.far) A.far = p.z;",
-    "new": "  A.far = p.z;",
+    "old": "  if (A.far == null || at > A.far) A.far = at;",
+    "new": "  A.far = at;",
     "tests": ["test/egz_rules.test.js"]
   },
   {
@@ -142,8 +142,8 @@
   {
     "name": "EGZI-brain-the-far-unread",
     "file": "src/net/egBrain.js",
-    "old": "(spec.end.z - (A?.far ?? spec.arrive.z)) * 100",
-    "new": "(spec.end.z - spec.arrive.z) * 100",
+    "old": "(e - (A?.far ?? a)) * 100",
+    "new": "(e - a) * 100",
     "tests": ["test/egz_rules.test.js"]
   },
   {

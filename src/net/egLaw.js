@@ -83,6 +83,7 @@ import { EG_HERO_FRAGS, egHeroFragLaws } from './egHeroFrags.js';   // EG-HERO-L
 import { egPieceIn, egPolyIn, egPolyKeep } from './egShape.js';   // EG-HERO-LAY: a hero's fight floors are polygons
 import { egInShape, shRing, shLane } from './egShape.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM's magma and its ways across
 import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
+import { egRouteInHall } from './egRoute.js';   // THE ASCENT (LAW 9): a hall's ground is its route's bound (a leaf - it imports nothing)
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
  *  fragments (the law before kept - net/egDurable.js EG_LAWS). AUDIT EG III: 6, the span decrees on every span (laws 4 and 5
@@ -1624,9 +1625,10 @@ export function egOnFloor(spec, x, z, pad = 0) {
   for (const q of spec.heroes ?? []) for (const g of [...q.floors, ...q.ramps]) if (egPolyIn(g.poly.map((p) => (p.length > 2 ? [p[0], p[2]] : p)), x, z, pad)) return true;
   return false;
 }
-/** Is the Spire-frame point (sx, z) within hall `spec`'s ground at all (its x strip about its origin and its length,
- *  `pad` m about) - a member is in a hall when their pose is. */
-export const egInHall = (spec, sx, z, pad = 40) => Math.abs(sx - spec.x0) <= 120 + pad && z >= -pad && z <= spec.len + pad;
+/** Is the Spire-frame point (sx, z) within hall `spec`'s ground at all (`pad` m about) - a member is in a hall when their
+ *  pose is. THE ASCENT: the route's own (net/egRoute.js egRouteInHall - laws 4-8 their x strip about their origin and their
+ *  length, as ever; LAW 9 its bound, section 7). */
+export const egInHall = (spec, sx, z, pad = 40) => egRouteInHall(spec, sx, z, pad);
 /** A Spire-frame x in a hall's own frame, and back. */
 export const egLocalX = (spec, sx) => sx - spec.x0;
 export const egSpireX = (spec, x) => x + spec.x0;

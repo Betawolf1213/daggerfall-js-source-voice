@@ -137,8 +137,8 @@
   {
     "name": "EGZ-the-island-ahead-misread",
     "file": "src/net/egLegion.js",
-    "old": "if (d.z + d.r > z && (!isle || d.z < isle.z)) isle = d;",
-    "new": "if (d.z > z && (!isle || d.z < isle.z)) isle = d;",
+    "old": "if (a + d.r > s && (!isle || a < ia)) { isle = d; ia = a; }",
+    "new": "if (a > s && (!isle || a < ia)) { isle = d; ia = a; }",
     "tests": [
       "test/egz_legion.test.js"
     ]

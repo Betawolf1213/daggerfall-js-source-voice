@@ -38,6 +38,10 @@
 //     - EG-ZI (2026-10-12; section 10.6): THE FURTHEST FAIR POINT - the furthest along the road a held pose stood with no
 //       break since the last island (`far`), and when still ground was last first stood on so (`fnew`, groundAt's keys):
 //       the pull's toll counts the road still ahead of the one and is waived by the other (net/egBrain.js egTollOf).
+//     - THE ASCENT (LAW 9, 2026-10-16; Elite-Gates-Ascent.md section 1): "along the road" and a cast-back's "behind" are
+//       THE ROUTE's (net/egRoute.js egRouteAlongAt - the progress of the route's nearest point, by height too), never z: a
+//       hall that turns, doubles back and crosses over itself is measured along its ways. Laws 4-8: their route's measure is
+//       exactly their z, and every number is the number it was.
 //   AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; section 15): SPIREBRIDGE IS GROUND WHILE IT STANDS - a plank the room
 //     raised over a gap (net/egVestige.js egSpirebridge - `{ h, g, from, until }`, its gap's number) holds a body on its top
 //     from its raising to its end (net/egSpanLaw.js egBridgeOf, egOnBridge): SUPPORT as a piece's (never still ground - the
@@ -56,6 +60,7 @@ import { egBridgeOf, egOnBridge } from './egSpanLaw.js';   // AUDIT EG III: Spir
 import { segDist, egPolyIn } from './egShape.js';   // EG-HERO-LAY: a hero's floors are polygons
 import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
 import { egTubeEdge } from './egFragLaw.js';
+import { egRouteAlongAt } from './egRoute.js';   // THE ASCENT (LAW 9): progress is along the hall's route, never its z
 
 // ── THE TIME LAW ─────────────────────────────────────────────────────────────────────────────────────────────
 /** A socket's offset to relay time is the least `arrival - ts` over this many of its last poses. */
@@ -299,9 +304,10 @@ export const EG_FAIR_REPEAT_MS = 5000;
  * crossing's start (its first judged pose), `cross` its time at the end plate, `blind`/`span` the ms blind and judged,
  * `brk` breaks since the last island, `brks` the hall's, `fast` its fastest stretch (cm/s), `refuse` hits refused until.
  * EG-ZB: `hw` the hall's wake (relay ms) - after it a Falling Wall's and the Collapsing Tube's fallen segments hold nothing.
- * EG-ZI (section 10.6): `far` the furthest fair point (the road's +z, null none yet), `fnew` when the newest still ground
- * was first stood on fairly (shared ms), `seen` the still ground so stood on (groundAt's keys), `atEnd` stood at the door
- * on a fair trail (net/egBrain.js egPoseIn) - the pull's toll reads them.
+ * EG-ZI (section 10.6): `far` the furthest fair point (its progress along THE ROUTE - net/egRoute.js; laws 4-8 the road's
+ * +z - null none yet), `fnew` when the newest still ground was first stood on fairly (shared ms), `seen` the still ground
+ * so stood on (groundAt's keys), `atEnd` stood at the door on a fair trail (net/egBrain.js egPoseIn) - the pull's toll
+ * reads them.
  * @param {number} h @param {number} [hw]
  */
 export const egFairNew = (h, hw = 0) => ({ h, hw, last: /** @type {number[]|null} */ (null), sup: /** @type {number[]|null} */ (null), isl: /** @type {number[]|null} */ (null), airAt: 0, airBrk: 0,
@@ -342,7 +348,7 @@ export function egFairPose(A, spec, p, t, bridges = null) {
     const d = Math.hypot(p.x - L[1], p.z - L[3]);
     const fell = !!A.sup && L[2] < A.sup[2] - EG_FALL_M;
     const home = (q) => !!q && Math.hypot(p.x - q[0], p.z - q[1]) <= EG_CAST_NEAR_M;
-    const back = hold === EG_HOLD.island && p.z < L[3] - EG_FAIR_SNAP_M;   // a cast back onto still ground behind - a Pendulum's, a waystone's: it gains nothing
+    const back = hold === EG_HOLD.island && egRouteAlongAt(spec, p.x, p.y, p.z) < egRouteAlongAt(spec, L[1], L[2], L[3]) - EG_FAIR_SNAP_M;   // a cast back onto still ground behind along the route - a Pendulum's, a waystone's: it gains nothing
     if (fell || (d > EG_FAIR_SNAP_M && hold && (back || home(A.isl) || (A.sup && home([A.sup[1], A.sup[3]]))))) A.win = null;
     else {
       const w = (A.win ??= [0, 0]);
@@ -368,13 +374,15 @@ export function egFairPose(A, spec, p, t, bridges = null) {
 /**
  * EG-ZI (section 10.6) - THE FURTHEST FAIR POINT, after a pose of the trail: a held pose (still ground, a piece, the end
  * plate - never one in the air, a leap toward the end is no ground reached) with no break since the last island moves `far`
- * along the road's +z; still ground stood on so for the first time this hall (an island, a passage's or a chamber's floor,
- * a stair - the arrival plate it began on aside) is new ground, `fnew` its instant. The pull's toll reads both.
+ * along THE ROUTE (net/egRoute.js - laws 4-8 the road's +z); still ground stood on so for the first time this hall (an
+ * island, a passage's or a chamber's floor, a stair - the arrival plate it began on aside) is new ground, `fnew` its
+ * instant. The pull's toll reads both.
  * @param {ReturnType<typeof egFairNew>} A @param {any} spec @param {{x: number, y: number, z: number}} p @param {number} t @param {number} hold
  */
 function farther(A, spec, p, t, hold) {
   if (!hold || A.brk !== 0) return;
-  if (A.far == null || p.z > A.far) A.far = p.z;
+  const at = egRouteAlongAt(spec, p.x, p.y, p.z);
+  if (A.far == null || at > A.far) A.far = at;
   if (hold !== EG_HOLD.island) return;
   const g = groundAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0);
   if (!g || g === 'a' || (A.seen ??= []).includes(g)) return;

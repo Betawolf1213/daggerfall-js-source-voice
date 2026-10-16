@@ -28,6 +28,8 @@
 // a member off the fight floors past the director's six seconds is HUNTED - the Harriers go to them first, along the graph
 // to the floor's edge nearest them and on through the air, and their Bite carries `hn` (the census judges it off the floors
 // for that member alone - net/bossRef.js judgeShapes).
+// THE ASCENT (LAW 9, 2026-10-16; Elite-Gates-Ascent.md section 1): the Divers' island ahead is ahead along THE ROUTE
+// (net/egRoute.js egRouteAlong - a hall that turns and doubles back), never along z; laws 4-8 read the numbers they did.
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle (the looks are data the client reads). Not a DFU member.
 // Ledger A (ELITE-GATES).
@@ -40,6 +42,7 @@ import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, eg
 import { harrierCountFor } from './gateBrain.js';
 import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH } from './gateBrain.js';   // AUDIT EG IV (lane1 #16; ONE DFU MEMBER, ONE EXPORT): the gate's rows read, never copied - the Daedra Lord's Cleave, the Caster's burning ground, the Harrier's health, mark and bite
 import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
+import { egRouteAlong } from './egRoute.js';   // THE ASCENT (LAW 9): the island ahead along the hall's route
 
 /** The kinds by name. */
 export const EG_KIND = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, breaker: 3, caster: 4, diver: 5, lurker: 6, binder: 7, wraith: 8, dlord: 9, kynval: 10, ghost: 11, deserter: 12, standard: 13, shade: 14, thrall: 15 });
@@ -502,11 +505,16 @@ export function egLurkerWake(F, a, now, out) {
   if (!F.mem.stirred) { F.mem.stirred = 1; out.push({ k: 'esay', w: 'stirs' }); }
   return true;
 }
-/** EG-ZB (section 8.2): the island (or plate) a body at `z` stands on or comes to next along the course - of `isles`, the
- *  nearest whose far edge lies past it; null past the last. */
-export function egIsleAhead(isles, z) {
-  let isle = null;
-  for (const d of isles ?? []) if (d.z + d.r > z && (!isle || d.z < isle.z)) isle = d;
+/** EG-ZB (section 8.2): the island (or plate) a body at progress `s` stands on or comes to next along the course - of
+ *  `isles`, the nearest whose far edge lies past it; null past the last. THE ASCENT (LAW 9): with its hall's `spec`, each
+ *  island's progress is its centre's along THE ROUTE (net/egRoute.js egRouteAlong) and `s` the body's; with none, the
+ *  course's z (laws 4-8: the same numbers). */
+export function egIsleAhead(isles, s, spec = null) {
+  let isle = null, ia = 0;
+  for (const d of isles ?? []) {
+    const a = spec ? egRouteAlong(spec, d) : d.z;
+    if (a + d.r > s && (!isle || a < ia)) { isle = d; ia = a; }
+  }
   return isle;
 }
 /**
@@ -518,7 +526,7 @@ export function egIsleAhead(isles, z) {
 function diverOnSpan(F, view, a, K, now, here, out, ctx, chain, shadow = ctx.shadow ?? here) {
   const m = near(a, shadow)?.m ?? null;
   if (!m) { egStop(F, a, now); return; }
-  const isle = egIsleAhead(ctx.isles, m.z) ?? { t: 'd', x: m.x, z: m.z, r: 0, y: 0 };
+  const isle = egIsleAhead(ctx.isles, egRouteAlong(view, m), view) ?? { t: 'd', x: m.x, z: m.z, r: 0, y: 0 };   // THE ASCENT: ahead along the route
   const on = here.some((q) => q.sub === m.sub) && egGroundAt({ fl: [isle] }, m.x, m.y, m.z, 0.3);
   if (on && 2 * isle.r >= EG_DIVE_GROUND_M && Math.hypot(a.x - m.x, a.z - m.z) <= K.blow.len && now >= (a.next ?? 0)) {
     a.next = now + K.blow.every;
