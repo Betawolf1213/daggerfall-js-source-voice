@@ -270,14 +270,13 @@ test('WEAPON-GLOW1: the Morrowind pass - rings before the body, the charge after
   ];
   const mesh = { vao: { id: 'arm' }, ranges, weaponGlow: WG.glowSpec('fire', 2) };
   const draws = () => log.filter((c) => c[0] === 'drawArrays').map((c) => [c[2], c[3]]);
-  // outside a sprite pass: none
+  // outside a sprite pass (the world pass): none
   log.length = 0;
   r.drawCharacter(mesh, I());
   assert.deepEqual(draws(), [[0, 30], [30, 12], [42, 6]], 'the world pass draws the body alone');
-  // in a sprite pass
-  r._glowVpW = 800; r._glowVpH = 600;
+  // in the real sprite pass (the arm's picture, a third-person body's)
   log.length = 0;
-  r.drawCharacter(mesh, I());
+  r.renderCharacterSprite(mesh, I(), I(), I(), 800, 600);
   const ringDraws = GL.glowRingDraws('fire').length;
   const got = draws();
   assert.deepEqual(got.slice(0, ringDraws), Array(ringDraws).fill([30, 12]), 'every ring draw is the shown weapon range');
@@ -300,22 +299,21 @@ test('WEAPON-GLOW1: the Morrowind pass - rings before the body, the charge after
   assert.deepEqual(ringFars, GL.GLOW_RINGS.map((d) => GL.GLOW_RING_FAR + d * GL.GLOW_RING_STEP));
   assert.ok(ringFars.every((f, i) => i === 0 || f < ringFars[i - 1]) && ringFars.every((f) => f < 1), 'outer first, farther; inside the clip');
   // the weapon sheathed: nothing of the glow
-  r._glowVpW = 800; r._glowVpH = 600;
   log.length = 0;
-  r.drawCharacter({ ...mesh, ranges: ranges.map((x) => (x.slot === 'weapon' ? { ...x, hidden: true } : x)) }, I());
+  r.renderCharacterSprite({ ...mesh, ranges: ranges.map((x) => (x.slot === 'weapon' ? { ...x, hidden: true } : x)) }, I(), I(), I(), 800, 600);
   assert.deepEqual(draws(), [[0, 30], [42, 6]]);
-  // a picture read back (the inventory's figure, an icon) is a still: no glow is baked into it
-  r._glowOff = 1;
+  // a picture read back (the inventory's figure, an icon - the studio bake) is a still: no glow is baked into it
+  log.length = 0;
+  try { r.renderCharacterSpriteImage(mesh, I(), I(), I(), 800, 600); } catch { /* the stub reads back no pixels to make an image of */ }
+  assert.deepEqual(draws(), [[0, 30], [30, 12], [42, 6]], 'a read-back draws the body alone');
+  // and after the passes, the world's draw is the body alone again
   log.length = 0;
   r.drawCharacter(mesh, I());
-  assert.deepEqual(draws(), [[0, 30], [30, 12], [42, 6]], 'a read-back draws the body alone');
-  r._glowOff = 0;
-  assert.match(strip(read('src/render/renderer.js')), /this\._glowOff = \(this\._glowOff \?\? 0\) \+ 1;\s*try \{\s*this\.renderCharacterSprite\(mesh, modelMatrix, proj, view, pw, ph\);\s*\} finally \{\s*this\._glowOff--;/);
-  // and the two sprite passes set the pass's pixels and take them back
+  assert.deepEqual(draws(), [[0, 30], [30, 12], [42, 6]], 'the passes leave nothing on');
+  // the two sprite passes say their pixels before they draw
   const rs = strip(read('src/render/renderer.js'));
-  assert.equal((rs.match(/this\._glowVpW = 0; this\._glowVpH = 0;/g) || []).length, 2, 'both passes put the unit back in their finally');
-  assert.match(rs, /this\._glowVpW = pw; this\._glowVpH = ph;/);
-  assert.match(rs, /this\._glowVpW = it\.pw; this\._glowVpH = it\.ph;/);
+  assert.match(rs, /this\._glowVpW = pw; this\._glowVpH = ph;[^\n]*\n\s*try \{\s*this\.drawCharacter\(mesh, modelMatrix\);/);
+  assert.match(rs, /this\._glowVpW = it\.pw; this\._glowVpH = it\.ph;[^\n]*\n\s*this\.drawCharacter\(it\.mesh, it\.model\);/);
 });
 
 test('WEAPON-GLOW1: the rings - outermost first, round every direction, fire stretched up, its embers last', () => {

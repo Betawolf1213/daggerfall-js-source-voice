@@ -3693,10 +3693,12 @@ export class Renderer {
     // warning and a program that links clean.
     this._activeTexture(gl.TEXTURE0);
     gl.uniform1i(c.tex, 0);
-    // WEAPON-GLOW1: the held weapon's element, in a sprite pass alone (the arm's and a third-person body's picture),
-    // while this body's palette is on its unit: the outline's rings BEFORE the body (at the back of the pass, so
-    // everything drawn after covers them) and its charge after; each hands charProgram back for the lines that follow
-    const glow = !!mesh.weaponGlow && this._glowVpH > 0 && !this._glowOff && !!mesh.ranges;
+    // WEAPON-GLOW1: the held weapon's element, in a sprite pass alone (the arm's and a third-person body's picture -
+    // `_spriteDepth`, whose two passes set `_glowVpW`/`_glowVpH` before they draw) and never in the studio bake (a UI
+    // picture read back - the inventory's figure, an icon - is a still, and no moment of a glow is baked into it), while
+    // this body's palette is on its unit: the outline's rings BEFORE the body (at the back of the pass, so everything
+    // drawn after covers them) and its charge after; each hands charProgram back for the lines that follow
+    const glow = !!mesh.weaponGlow && this._spriteDepth > 0 && this._studioDepth === 0 && this._glowVpH > 0 && !!mesh.ranges;
     if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, false);
     if (mesh.ranges && mesh.ranges.length) {
       for (const r of mesh.ranges) {
@@ -4008,13 +4010,12 @@ export class Renderer {
     // setClearColor (:1953) is idempotent against the `_clearColor`
     // shadow this path no longer matches - AUDIT 26 F034's bug back,
     // permanently, off one caught exception.
-    this._glowVpW = pw; this._glowVpH = ph;   // WEAPON-GLOW1: the pass's pixels, the glow's unit
+    this._glowVpW = pw; this._glowVpH = ph;   // WEAPON-GLOW1: the pass's pixels, the glow's unit (read inside a sprite pass alone)
     try {
       this.drawCharacter(mesh, modelMatrix);
       if (also) for (const o of also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
     }
     finally {
-      this._glowVpW = 0; this._glowVpH = 0;
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);   // EL4: the frame, or the canvas
       // ROAD-E E5: the viewport is BORROWED here too. This pass runs in
       // the middle of the world pass (every voxel character composites
@@ -4133,7 +4134,6 @@ export class Renderer {
         if (it.also) for (const o of it.also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
       }
     } finally {
-      this._glowVpW = 0; this._glowVpH = 0;
       gl.disable(gl.SCISSOR_TEST);
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);
       this._restoreWorldViewport();
@@ -4175,11 +4175,9 @@ export class Renderer {
       this._moonScale = 0;
     }
     if (studio) this._studioDepth++;   // AUDIT-EL F1: a UI picture takes no eye
-    this._glowOff = (this._glowOff ?? 0) + 1;   // WEAPON-GLOW1: a picture read back is a still - no moment of a glow is baked into it
     try {
       this.renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph);
     } finally {
-      this._glowOff--;
       if (saved) {
         this._lightDir = saved.lightDir; this._ambient = saved.ambient; this._sunScale = saved.sunScale;
         this._sunColor = saved.sunColor; this._pointLights = saved.pointLights; this._indirect = saved.indirect;

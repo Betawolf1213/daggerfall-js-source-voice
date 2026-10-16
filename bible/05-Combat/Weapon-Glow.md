@@ -89,7 +89,8 @@ a fire outline round the blue-painted WEAPO1xx frames said two things at once. T
 read that one answer.
 
 **The Morrowind mesh** (`Renderer._drawWeaponGlow`, inside `drawCharacter`, in a sprite pass alone - the arm's
-picture and a third-person body's tile; the world pass and the inventory figure draw none). `fpArm.js`
+picture and a third-person body's tile, `_spriteDepth`; the world pass draws none, and nor does the studio bake,
+`_studioDepth` - the inventory's figure and an icon are stills read back, and no moment of a glow is baked into them). `fpArm.js`
 `setWeaponGlow` hands the spec to the arm, which lays it on the mesh it draws (`mesh.weaponGlow`, first person and
 third), and the renderer lights the weapon's own shown ranges (`slot` 'weapon' - never the nocked arrow, never a
 sheathed blade):
@@ -157,7 +158,7 @@ and hands the arm its spec in every one. A peer's body glows wherever `peerBodie
 - `test/weaponglow1.test.js` - the law off producer-minted weapons (`applyRarity`, `addProcLine`, `setGem`), the plain
   sheet, the sprite drawer's order and rect, the fourth primitive and the Morrowind pass against a recording GL stub,
   the rings, the vertex shader's edit, the clock's rates, the wire both ways. Its mutants:
-  `tools/mutants/weaponglow1.json`, twenty, all dead.
+  `tools/mutants/weaponglow1.json`, twenty-one, all dead.
 - `tools/weaponGlowProbe.mjs` - the looks through the REAL renderer in headless Chromium (SwiftShader), on art that is
   not game data: a pixel sword drawn by the probe and a sword mesh built by it. Top row the sprite's outline (fire,
   frost, shock, bare), bottom row the Morrowind pass (fire, frost, shock, arcane), at levels 1 and 3. It is how the

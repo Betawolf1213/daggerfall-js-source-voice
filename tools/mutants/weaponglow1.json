@@ -173,8 +173,17 @@
   {
     "name": "WEAPON-GLOW1-a-still-bakes-the-glow",
     "file": "src/render/renderer.js",
-    "old": "this._glowVpH > 0 && !this._glowOff && !!mesh.ranges;",
-    "new": "this._glowVpH > 0 && !!mesh.ranges;",
+    "old": "this._spriteDepth > 0 && this._studioDepth === 0 && this._glowVpH > 0",
+    "new": "this._spriteDepth > 0 && this._glowVpH > 0",
+    "tests": [
+      "test/weaponglow1.test.js"
+    ]
+  },
+  {
+    "name": "WEAPON-GLOW1-the-world-pass-glows",
+    "file": "src/render/renderer.js",
+    "old": "const glow = !!mesh.weaponGlow && this._spriteDepth > 0 && this._studioDepth",
+    "new": "const glow = !!mesh.weaponGlow && this._studioDepth",
     "tests": [
       "test/weaponglow1.test.js"
     ]
