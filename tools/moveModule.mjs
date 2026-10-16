@@ -13,7 +13,7 @@
 //              (`new URL('../' + p, ...)`), an `import.meta.glob` pattern's folder (GLOBBED), and the module's own
 //              folder (ROOTED). A runtime URL (`fetch('./sfx/…')`) is the page's, not the module's, and is left alone.
 //   ROOT PATH  `src/systems/arenaBout.js` anywhere in a tracked text file, with an optional `/`, `./` or `../..`
-//              before it, or a host's (`http://localhost:5241/`) - pins, docs, mutant records, workflows, comments.
+//              before it, or a host's (`http://localhost:5241/src/x.js`) - pins, docs, mutant records, workflows, comments.
 //   SRC PATH   `systems/arenaBout.js` - the spelling the bible (a cite's path form among them), the comments and the
 //              tests' `src()` helpers use for a file under src/; and `01-Overview/X.md`, the bible's own spelling of
 //              a page. With `./` or `../..` before it, it is a specifier quoted by a pin, rewritten the same - not in
