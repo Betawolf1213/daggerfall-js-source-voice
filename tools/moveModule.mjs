@@ -362,7 +362,33 @@ export function planMove(moves, texts, exists = null) {
     if (n) counts.set(home, n);
     if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
   }
+  // a workflow's path GLOB is no path to rewrite: one that matched a moved file where it stood and does not where it
+  // goes stops running that workflow for it, silently (AUDIT TIDY: `src/ui/intro*.js` lost the four intro modules)
+  for (const [file, text] of texts) {
+    if (!/^\.github\/workflows\/.*\.ya?ml$/.test(file)) continue;
+    for (const m of text.matchAll(/^\s*-\s*['"]?(!?[^'"\s#]*\*[^'"\s#]*)['"]?\s*$/gm)) {
+      const re = globRe(m[1].replace(/^!/, ''));
+      const lost = moves.filter(([f, to]) => re.test(f) && !re.test(to));
+      if (lost.length) blind.push(`${file}: '${m[1]}' matched ${lost.length} moved file(s) where they stood and not where they go (${lost[0][1]}) - a glob, rewrite it by hand`);
+    }
+  }
   return { writes, counts, blind };
+}
+
+/** A path glob as a pattern: `**` any depth, `*` and `?` within a folder, `{a,b}` either. */
+export function globRe(glob) {
+  let out = '';
+  for (let i = 0; i < glob.length; i++) {
+    const c = glob[i];
+    if (c === '*' && glob[i + 1] === '*') { out += glob[i + 2] === '/' ? '(?:.*/)?' : '.*'; i += glob[i + 2] === '/' ? 2 : 1; }
+    else if (c === '*') out += '[^/]*';
+    else if (c === '?') out += '[^/]';
+    else if (c === '{') out += '(?:';
+    else if (c === '}') out += ')';
+    else if (c === ',' && out.lastIndexOf('(?:') > out.lastIndexOf(')')) out += '|';
+    else out += c.replace(/[.+^$()|[\]\\]/g, '\\$&');
+  }
+  return new RegExp(`^${out}$`);
 }
 
 /** The specifiers a rewrite changed in one file, old spelling to new - null where one spelling became two - and, as
