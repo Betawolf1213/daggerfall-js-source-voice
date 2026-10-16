@@ -162,29 +162,45 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
   forever and its fist sat off the screen until its next blow. DFU's one machine always reaches the hit frame first, so
   the one hand never comes there. The left clone is stepped only while a pair is up, or until its swing has ended and
   its slide settled out of sight (`settledHidden`): single-hand play never pays for it.
-- **The guard** (`GUARD`): while one hand strikes the other draws in toward the middle (10 px) and down (9 px) on the
-  320x200 surface, eased in fast (0.05 s time constant) and out slower (0.14 s) - ClimbPose's limb law, no pop; laid in
-  SCREEN space, from the hand's own side, whatever its picture. The fists' guard is alive standing: a 1.6 px bounce at
-  1.15 Hz, the two hands out of step, gone in a strike or a walk.
+- **The guard** (`GUARD`): while one hand strikes the other draws in toward the middle (10 px on the 320x200 surface)
+  and down - a fist by 9 px; **a pair's resting weapon by `LOWER`, 0.12 of its own drawn height** (Mac, after the first
+  pictures: "When attacking with a weapon, the other weapon in hand should lower slightly"). A weapon's picture is several
+  fists tall (WEAPON02's dagger 143 design px, WEAPON04's katana 86), so the fists' 9 px, which the pair had, did not
+  read on it; a share of its own height lowers every weapon alike - the dagger 17 px, the katana 10, its hand still in
+  the view. Eased in fast (0.05 s time constant) and out slower (0.14 s) - ClimbPose's limb law, no pop; laid in SCREEN
+  space, from the hand's own side, whatever its picture, on the classic sprite and on a Weapon Widget clone alike (the
+  clone's own rect height). The fists' guard is alive standing: a 1.6 px bounce at 1.15 Hz, the two hands out of step,
+  gone in a strike or a walk.
 - **The running hands** (`RUN_PUMP`): running on the feet (DFU's run - not standing, crouched, mounted, swimming, in the
   air or on a wall) at 1 m/s or more with NOTHING in either hand (`weaponRig.js` `handsEmpty`: no weapon or shield, no
   light a lane draws, not the beast, no spell, no act's tool, no held sheet, no swap under way) - drawn or sheathed - the
-  two fists pump, ON THE HEAD BOB'S OWN CLOCK (AUDIT): `HeadBobber` hands its timer out every frame
+  two arms pump, ON THE HEAD BOB'S OWN CLOCK (AUDIT): `HeadBobber` hands its timer out every frame
   (`player/headBobber.js`'s `out`, `player/motor.js` `motionBagOf`'s `bobTimer`) and the pump's phase is that timer a
   quarter turn behind (`runPhaseOfBob`) - the right arm most forward as the left foot is planted, every step, with no
-  drift; with head bobbing off the pump keeps its own stride (`RUN_STEP_M` 2.5 m a step). The stroke snaps (|sin|^0.7) -
-  up 0.42 of the fist's height and toward the middle at the top, down 1.05 (out of the view, the hand passing the hip)
-  and outward at the bottom, 9% nearer the eye at the top. Measured on the real `WEAPON10.CIF` (a 63x53 idle on DFU's
-  320x200): the fist's top edge never rises above 60% down the screen. Up from the guard when the fists were up, or up
-  from below the view when the hands were down (as CLIMB-HANDS' hands rise, no sleeve shown); the weight follows time
-  constants of 0.12 s in and 0.16 s out. A punch thrown on the run is drawn from its FIRST frame over the other fist,
-  which eases out of the pump (0.04 s); a hand TAKEN mid-run (a weapon, a shield, a light, a spell, a tool, the beast, a
-  swap) ends the run at once - the fade is for a run that ends with the hands still empty. The ground speed is read off
-  the eye every frame, whatever mods are on (AUDIT: kept inside the mods' gate, the running hands never ran with the
-  Weapon Widget, Handheld Torches and Shield Widget off).
+  drift; with head bobbing off the pump keeps its own stride (`RUN_STEP_M` 2.5 m a step).
+  - **THE RUNNING ARM IS THE ART'S OWN** (Mac, of the first cut: "theres no arm portion of the sprite, so it looks like
+    floating hands"). The first cut lifted the bare hand's idle - `WEAPON10.CIF` record 0, a 63x53 fist cut at the
+    wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. The one record of
+    the bare hand's art that lifts a fist on its own forearm from the frame's foot is the right arm's rising punch
+    (record 5, StrikeDownRight: frames 0-3 the fist coming up on its grey sleeve, 4 the follow-through across). So a
+    running hand is drawn in those frames (`ARM_STATE`, `ARM_FRAMES`), the frame by how far up its stroke is (the
+    stroke snaps, |sin|^0.7), each placed as FPSWeapon places a frame - **its foot on the view's bottom edge, never
+    lifted** (OnGUI's `height - h`): the pump only LOWERS a sprite (1.05 of its height at the back of the stroke, out
+    of the view - the hand passing the hip), so the forearm always runs off the screen. Across the view it stands where
+    its fist rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom;
+    the left hand is record 5's right arm in the mirror (the one rule). Measured on the real art: the fist at the top of
+    the stroke stands about half way up the view on its forearm, and only one arm is up at a time.
+  - **The art changes under the view, never in sight**: as the run starts, the fists' own rest (the idle, where the pair
+    draws it) goes DOWN out of the view over the first half of the run's weight (`SWAP` 0.5) and the arms come up from
+    under it over the second; as it ends, the reverse (a sheathed body's fists were down - the arms simply rise). The
+    weight follows time constants of 0.12 s in and 0.16 s out. A punch thrown on the run is drawn from its FIRST frame
+    over the other arm (0.04 s away); a hand TAKEN mid-run (a weapon, a shield, a light, a spell, a tool, the beast, a
+    swap) ends the run at once - the fade is for a run that ends with the hands still empty. The ground speed is read
+    off the eye every frame, whatever mods are on (AUDIT: kept inside the mods' gate, the running hands never ran with
+    the Weapon Widget, Handheld Torches and Shield Widget off).
 - **The draw seam** (`weaponRig.js`): the two-hands branch stands after the climb's return and before the Morrowind
   arm's seam, never under the Beholder's sprite, the Morrowind arm or the held map's window (MAP-WEAPON); it draws whole
-  and returns - the running fists first, then the pair (a punch on the run over them). A pair holds no shield and no
+  and returns - the running arms first, then the pair (a punch on the run over them). A pair holds no shield and no
   light, so the one-hand ladder below it (the shield, the torch hand, the gun, the clone, the sprite) is the single
   hand's, untouched. The gate gains `runHands` and `armsRun`: an empty-handed run is often a sheathed one, and the
   running hands are not a weapon either (as CLIMB-HANDS' `armsClimb`).
@@ -263,8 +279,9 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 - `test/twohands_mw.test.js` (10): the mirror rig on the retail biped (counterparts, the plan, the law, no pop, which
   fist a clip throws) and the arm over the fixture arm (the left weapon, the pair, the fists, the running hands, by
   source).
-- `tools/mutants/twohands.json`: 98 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and each
-  claim the record made that no pin could fail).
+- `tools/mutants/twohands.json`: 110 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+  each claim the record made that no pin could fail; 12 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
+  `TWOHANDS-LOWER-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
   bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and `duel_combat` DUEL1 (the off hand's blow between
   players), `enhancedHud` AUDIT 39 (the plaque reads the resting weapon), `ww2_idlebob` WW2 (the motion bag's

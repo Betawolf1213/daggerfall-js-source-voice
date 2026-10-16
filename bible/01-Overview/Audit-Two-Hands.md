@@ -78,7 +78,7 @@ Severity: **Blocker** breaks the feature or its balance for everyone; **Major** 
 ## Pinned
 
 `test/twohands.test.js` (19) - every FIXED finding of L1, L2, L4 and L5 above, by execution through the real machine,
-formula, rig and Weapon Widget; `test/twohands_mw.test.js` - L3's. Mutants: `tools/mutants/twohands.json` (98, 39 of
+formula, rig and Weapon Widget; `test/twohands_mw.test.js` - L3's. Mutants: `tools/mutants/twohands.json` (110, 39 of
 them the audit's `TWOHANDS-AUDIT-*`: each fix reverted, and L5's 16 scratch mutants of the record's claims, three of
 which still lived after the first fixes - the sheathed run from below, the pair on the climb, one hand's H line -
 until pinned), every one dead. PIN MOVED (AUDIT): `a12_lefthand` (the bow-switch arm on a bow in the left hand),

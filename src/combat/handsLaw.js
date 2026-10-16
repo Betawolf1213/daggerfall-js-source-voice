@@ -212,12 +212,16 @@ export function offHandDamage(damage) {
 
 // ---- THE GUARD (the hand that is not striking) ----------------------------------------------------------------------
 
-/** While one hand strikes, the other draws in: toward the middle of the view and a little down, the shoulder turned
- *  behind the blow - eased in fast, back out slower (ClimbPose's limb law: no pop between states). Design pixels on DFU's
- *  320x200 surface. The fists' guard is alive at rest: a slow bounce, the two hands out of step. */
+/** While one hand strikes, the other draws in: toward the middle of the view and down, the shoulder turned behind the
+ *  blow - eased in fast, back out slower (ClimbPose's limb law: no pop between states). IN and DOWN are design pixels on
+ *  DFU's 320x200 surface - the fists' tuck. A pair's resting WEAPON lowers by LOWER of its own drawn height (Mac: "When
+ *  attacking with a weapon, the other weapon in hand should lower slightly"): a weapon's picture is several fists tall
+ *  (a dagger's 143 design pixels, a katana's 86), so the fists' nine pixels did not read on it - a share of its own
+ *  height lowers every weapon alike. The fists' guard is alive at rest: a slow bounce, the two hands out of step. */
 export const GUARD = Object.freeze({
   IN: 10,
   DOWN: 9,
+  LOWER: 0.12,
   IN_TAU: 0.05,
   OUT_TAU: 0.14,
   BOUNCE_PX: 1.6,
@@ -236,12 +240,14 @@ export function guardStep(g, otherStriking, dt) {
 }
 
 /** The guard's offset in design pixels for a hand at weight `g` drawn on `side` ('right'|'left'): x toward the middle,
- *  y down. And the fists' bounce at `time` seconds, out of step between the hands, faded by `bounce` (0..1). */
-export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R' } = {}) {
+ *  y down - a fist's DOWN, or a weapon's LOWER of its drawn `height` (design pixels) when one is handed. And the fists'
+ *  bounce at `time` seconds, out of step between the hands, faded by `bounce` (0..1). */
+export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R', height = null } = {}) {
   const toMid = side === 'left' ? 1 : -1;
   const phase = hand === 'L' ? Math.PI : 0;
   const b = bounce > 0 ? Math.sin(time * 2 * Math.PI * GUARD.BOUNCE_HZ + phase) * GUARD.BOUNCE_PX * bounce : 0;
-  return [toMid * GUARD.IN * g, GUARD.DOWN * g + b];
+  const down = Number.isFinite(height) ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;
+  return [toMid * GUARD.IN * g, down * g + b];
 }
 
 // ---- THE RUNNING HANDS ----------------------------------------------------------------------------------------------
@@ -252,23 +258,32 @@ export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R' } = {}) 
 export const RUN_STEP_M = 2.5;
 
 /**
- * The pump, in shares of the fist's own drawn size and of the screen (so it reads the same on any canvas):
- *   RISE/DROP - the fist's top of stroke above its guard and bottom below it, of its height (the bottom takes it out of the
- *               view: a running arm's hand passes behind the hip);
- *   IN/OUT    - toward the middle at the top (the arm swings across the chest) and outward at the bottom, of the width;
- *   GROW      - nearer the eye at the top, bigger;
+ * The pump. THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands").
+ * The bare hand's idle (WEAPON10.CIF record 0, 63x53) is a fist cut at the wrist, painted to stand on the view's bottom
+ * edge - lifted, its cut floats. The one record of the bare hand's art that lifts a fist on its own forearm from the
+ * frame's foot is the right arm's rising punch (record 5, StrikeDownRight: frames 0-3 the fist coming up on its grey
+ * sleeve, 4 the follow-through across). So a running hand is drawn in those frames, by how far up its stroke is, each as
+ * FPSWeapon draws a frame - its foot on the view's bottom edge (OnGUI's `height - h`): THE PUMP NEVER LIFTS A SPRITE. It
+ * only lowers one (the back of the stroke, out of the view), so the arm always runs off the bottom of the screen.
+ *   ARM_STATE / ARM_FRAMES - the record (by its state) and the rise's frames, low to high;
+ *   DROP      - the back of the stroke, down, of the frame's height (past the view's edge: the hand passing the hip);
+ *   IN/OUT    - toward the middle at the top (the arm across the chest) and out at the bottom, of the view's width;
  *   SHAPE     - the stroke's snap: the hand drives up and falls, not a sine's even glide (|sin|^SHAPE);
+ *   SWAP      - the run's weight at which a hand changes its art - the fists' rest for the running arm, or back - the
+ *               rest lowered out of the view below it and the arm come up from under the view above it, so the art
+ *               never changes in sight;
  *   IN_TAU/OUT_TAU - the hands up as the run begins and away as it ends (CLIMB-HANDS' presence, ClimbPose IN/OUT);
  *   PUNCH_TAU - away at once for a punch thrown on the run (the punch is the fist's own strike);
  *   MIN_SPEED - metres a second over the ground before a run is a run (a run key held standing is not).
  */
 export const RUN_PUMP = Object.freeze({
-  RISE: 0.42,
+  ARM_STATE: 'StrikeDownRight',
+  ARM_FRAMES: Object.freeze([0, 1, 2, 3]),
   DROP: 1.05,
-  IN: 0.085,
+  IN: 0.06,
   OUT: 0.03,
-  GROW: 0.09,
   SHAPE: 0.7,
+  SWAP: 0.5,
   IN_TAU: 0.12,
   OUT_TAU: 0.16,
   PUNCH_TAU: 0.04,
@@ -297,15 +312,21 @@ export function runHandsWanted({ running = false, standing = false, grounded = t
 }
 
 /**
- * One hand's place in the pump at stride phase `phase`: `{ dx, dy, scale, s }` - dx a share of the screen's width toward
- * the middle (+), dy a share of the fist's height down (+), scale on the drawn size, `s` the stroke (-1 back .. 1 forward).
- * The right arm swings forward as the left foot falls - the hands out of step by half a stride.
+ * One hand's place in the pump at stride phase `phase`: `{ dx, dy, frame, s }` - dx a share of the view's width toward
+ * the middle (+), dy a share of the frame's height DOWN (never up: 0 on the forward stroke, the rise is the art's),
+ * `frame` the arm's frame (RUN_PUMP.ARM_FRAMES, by how far up the forward stroke is - the lowest through the back), `s`
+ * the stroke (-1 back .. 1 forward). The right arm swings forward as the left foot falls - the hands out of step by half
+ * a stride.
  */
 export function pumpOf(phase, hand) {
   const raw = Math.sin(phase + (hand === 'L' ? Math.PI : 0));
   const s = Math.sign(raw) * Math.pow(Math.abs(raw), RUN_PUMP.SHAPE);
   const fwd = Math.max(0, s), back = Math.max(0, -s);
-  return { dx: RUN_PUMP.IN * fwd - RUN_PUMP.OUT * back, dy: -RUN_PUMP.RISE * fwd + RUN_PUMP.DROP * back, scale: 1 + RUN_PUMP.GROW * s, s };
+  const frames = RUN_PUMP.ARM_FRAMES;
+  return {
+    dx: RUN_PUMP.IN * fwd - RUN_PUMP.OUT * back, dy: RUN_PUMP.DROP * back,
+    frame: frames[Math.min(frames.length - 1, Math.floor(fwd * frames.length))], s,
+  };
 }
 
 /**

@@ -21,26 +21,28 @@
 // machine (it plays a strike the machine starts, LateUpdate 0x1b97); handed its hand's view, each clone plays its own
 // hand's blows and holds its idle - bob, slide and all - through the other's.
 //
-// THE GUARD (handsLaw.js GUARD): while one hand strikes the other draws in toward the middle and down, the way the
-// climbing hands carry a held hand from one place to the next (ClimbPose's limb law, eased - no pop); the fists' guard is
-// alive at rest, the two out of step.
+// THE GUARD (handsLaw.js GUARD): while one hand strikes the other draws in toward the middle and down - a pair's resting
+// weapon lowered by a share of its own height - the way the climbing hands carry a held hand from one place to the next
+// (ClimbPose's limb law, eased - no pop); the fists' guard is alive at rest, the two out of step.
 //
-// THE RUNNING HANDS (handsLaw.js RUN_PUMP): running with nothing in either hand, the two fists pump with the stride - the right
+// THE RUNNING HANDS (handsLaw.js RUN_PUMP): running with nothing in either hand, the two arms pump with the stride - the right
 // forward as the left foot falls, one stroke a step on the head bob's own clock (DFU's HeadBobber walks its timer by the
-// footstep interval) - up from where the fists were, or up from below the view when the hands were down, and back when
-// the run ends; a punch thrown on the run takes the fist at once. The climbing hands' wall run pumps the same way.
+// footstep interval). A running hand is the art's own arm - the bare hand's rising punch, a fist on its forearm - drawn
+// with its foot on the view's bottom edge, never lifted (the idle fist is cut at the wrist: lifted, it floated). The fists
+// go down out of the view as the run starts and the arms come up from under it, and back when it ends; a punch thrown on
+// the run takes the fist at once.
 
 import { createWeaponWidget } from './weaponWidget.js';
 import { fpsWeaponQuad, getWeaponAnims, STATE_INDEX, WEAPON_TYPES, NATIVE_W, NATIVE_H } from './fpsWeapon.js';
 import {
   HANDS_MODE, twoHanded, otherHand, mirrorRect, MIRROR_UV, handOnLeft, MELEE_PAINTED_ARM, strikePicture,
-  guardStep, guardOffset, easeTo, runPhaseStep, runPhaseOfBob, pumpOf, runWeightStep,
+  guardStep, guardOffset, easeTo, runPhaseStep, runPhaseOfBob, pumpOf, runWeightStep, RUN_PUMP,
 } from './handsLaw.js';
 
 /** The fists' guard bounce comes and goes over this (the guard alive at rest, gone in a strike or a walk). */
 const BOUNCE_TAU = 0.3;
-/** Below the view: a hand that comes up for the run from nothing starts this far under the screen's bottom edge, in
- *  its own heights (CLIMB-HANDS' BOTTOM_SLACK - no sleeve shows as it rises). */
+/** Below the view: a hand on its way into or out of the run (the fists' rest going down, the running arm coming up) is
+ *  this far under the screen's bottom edge at the far end, in its own heights (CLIMB-HANDS' BOTTOM_SLACK). */
 const BELOW = 0.15;
 /** The bare hand's records by state - WeaponBasics' melee anims (the art the fists are drawn in). */
 const MELEE_ANIMS = getWeaponAnims(WEAPON_TYPES.Melee);
@@ -112,13 +114,15 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
 
   /** The guard's offset for a hand in canvas pixels, ON THE SCREEN - toward the middle from the hand's own side, and
    *  down, and the fists' bounce. Laid on the picture after its mirror (a hand's picture may be its own arm as painted
-   *  or the other's in the mirror - the painted arm, strikePicture - so the side is the hand's, never the picture's). */
-  function nudge(hand, canvas) {
-    const [gx, gy] = guardOffset(st.guard[hand], handOnLeft(hand, st.leftHanded) ? 'left' : 'right', { time: st.time, bounce: st.bounce, hand });
+   *  or the other's in the mirror - the painted arm, strikePicture - so the side is the hand's, never the picture's).
+   *  `h` is the picture's drawn height: a pair's weapon lowers by its share of it (GUARD.LOWER). */
+  function nudge(hand, canvas, h = null) {
+    const height = st.mode === HANDS_MODE.Dual && Number.isFinite(h) ? /** @type {number} */ (h) * NATIVE_H / canvas.height : null;
+    const [gx, gy] = guardOffset(st.guard[hand], handOnLeft(hand, st.leftHanded) ? 'left' : 'right', { time: st.time, bounce: st.bounce, hand, height });
     return [gx * canvas.width / NATIVE_W, gy * canvas.height / NATIVE_H];
   }
   /** The same offset laid BEFORE a mirror (a widget clone's transform runs ahead of its mirror): x turned about. */
-  const nudgeBefore = (hand, canvas, mirror) => { const [dx, dy] = nudge(hand, canvas); return [mirror ? -dx : dx, dy]; };
+  const nudgeBefore = (hand, canvas, mirror, h = null) => { const [dx, dy] = nudge(hand, canvas, h); return [mirror ? -dx : dx, dy]; };
   const moved = (r, [dx, dy]) => ({ ...r, x: r.x + dx, y: r.y + dy });
 
   /** The two hands in the order they are drawn: the one striking last, over the other. */
@@ -133,7 +137,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     const q = fpsWeaponQuad(canvas, art, v.state, v.frame, { flipHorizontal: false, offsetHeight });
     if (!q) return null;
     const mirror = mirrorOf(hand, painted(v.state));
-    const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas));
+    const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas, q.rect.h));
     renderer.drawScreenQuad(q.tex, rect, mirror ? MIRROR_UV : q.uv, tint ?? undefined);
     return rect;
   }
@@ -152,7 +156,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
       if (running && hand !== st.strikeHand) continue;
       const clone = hand === 'R' ? widget : offWidget;
       const mirror = mirrorOf(hand, paintedAt(clone?.state ?? 0));   // the record the clone draws - it plays its strike a frame behind the machine
-      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror)), mirror })) continue;
+      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror, r.h)), mirror })) continue;
       if (shown) drawClassicHand(renderer, canvas, hand, artFor(hand), { tint, offsetHeight });
     }
     return true;
@@ -172,37 +176,49 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
   }
 
   /**
-   * THE RUNNING HANDS, DRAWN - the two fists (the bare hand's idle frame, `fistArt`: WEAPON10.CIF's record 0, the art the
-   * fists are drawn in) at the run's weight between where they rest (restRect - or below the view when they were down)
-   * and their place in the pump. The hand on its back stroke first, the one coming forward over it. True when it drew.
+   * THE RUNNING HANDS, DRAWN (handsLaw.js RUN_PUMP) - every hand not throwing a punch. Below the run's SWAP weight they are
+   * the fists' own rest (the idle frame, `fistArt`'s record 0, where the pair draws it - restRect), lowered out of the
+   * view by the weight (a sheathed body's fists were down: nothing to lower); above it, THE RUNNING ARM - the art's own
+   * rising punch (RUN_PUMP.ARM_STATE's frames), the frame by the stroke, placed as FPSWeapon places a frame (its foot on
+   * the view's bottom edge, so the forearm runs off the screen) at the idle's own place across the view, the pump's
+   * dx/dy on it and the rest of the weight under the view. The art changes only there, never in sight. The hand on its
+   * back stroke first, the one coming forward over it. True when it drew.
    */
   function drawRun(renderer, canvas, fistArt, { widget = null, widgetOn = false, shown = true, tint = null, offsetHeight = 0 } = {}) {
     const w = st.run.w;
     if (!(w > 0) || !renderer || !canvas || !fistArt) return false;
-    const q = fpsWeaponQuad(canvas, fistArt, 'Idle', 0, { flipHorizontal: false, offsetHeight });
-    if (!q) return false;
-    const hands = /** @type {const} */ (['R', 'L']).filter((hand) => hand !== st.strikeHand).map((hand) => {   // a punch on the run is drawPair's
-      const left = handOnLeft(hand, st.leftHanded);
-      const mirror = mirrorOf(hand, painted('Idle'));
-      const base = mirror ? mirrorRect(q.rect, canvas.width) : q.rect;
+    const hands = /** @type {const} */ (['R', 'L']).filter((hand) => hand !== st.strikeHand);   // a punch on the run is drawPair's
+    const under = (r) => canvas.height + BELOW * r.h;   // a rect's top just under the view
+    if (w < RUN_PUMP.SWAP) {
+      const k = w / RUN_PUMP.SWAP;
+      const q = fpsWeaponQuad(canvas, fistArt, 'Idle', 0, { flipHorizontal: false, offsetHeight });
+      if (!q) return false;
+      for (const hand of hands) {
+        const rest = restRect(hand, canvas, { widget, widgetOn, art: fistArt, shown, offsetHeight });
+        if (!rest) continue;
+        const mirror = mirrorOf(hand, painted('Idle'));
+        renderer.drawScreenQuad(q.tex, { ...rest, y: rest.y + (under(rest) - rest.y) * k }, mirror ? MIRROR_UV : q.uv, tint ?? undefined);
+      }
+      return true;
+    }
+    const k = (w - RUN_PUMP.SWAP) / (1 - RUN_PUMP.SWAP);
+    const idle = fpsWeaponQuad(canvas, fistArt, 'Idle', 0, { flipHorizontal: false, offsetHeight });
+    if (!idle) return false;
+    const cx = idle.rect.x + idle.rect.w / 2;   // the right hand's place across the view: where its fist rests
+    const drawn = [];
+    for (const hand of hands) {
       const p = pumpOf(st.run.phase, hand);
-      const toMid = left ? 1 : -1;
-      const pw = base.w * p.scale, ph = base.h * p.scale;
-      const pump = {
-        x: base.x + (base.w - pw) / 2 + toMid * p.dx * canvas.width,
-        y: base.y + (base.h - ph) + p.dy * base.h,
-        w: pw, h: ph,
-      };
-      const rest = restRect(hand, canvas, { widget, widgetOn, art: fistArt, shown, offsetHeight })
-        ?? { ...base, y: canvas.height + BELOW * base.h };
-      const rect = {
-        x: rest.x + (pump.x - rest.x) * w, y: rest.y + (pump.y - rest.y) * w,
-        w: rest.w + (pump.w - rest.w) * w, h: rest.h + (pump.h - rest.h) * w,
-      };
-      return { hand, mirror, rect, s: p.s };
-    });
-    hands.sort((a, b) => a.s - b.s);
-    for (const h of hands) renderer.drawScreenQuad(q.tex, h.rect, h.mirror ? MIRROR_UV : q.uv, tint ?? undefined);
+      const q = fpsWeaponQuad(canvas, fistArt, RUN_PUMP.ARM_STATE, p.frame, { flipHorizontal: false, offsetHeight });
+      if (!q) continue;
+      // placed as the right hand, then turned about for a hand on the left (the side is the hand's - the mirror of the
+      // art is the painted arm's rule, as every draw's)
+      const right = { x: cx - q.rect.w / 2 - p.dx * canvas.width, y: q.rect.y + p.dy * q.rect.h, w: q.rect.w, h: q.rect.h };
+      const placed = handOnLeft(hand, st.leftHanded) ? mirrorRect(right, canvas.width) : right;
+      const rect = { ...placed, y: placed.y + (under(placed) - placed.y) * (1 - k) };
+      drawn.push({ tex: q.tex, uv: mirrorOf(hand, painted(RUN_PUMP.ARM_STATE)) ? MIRROR_UV : q.uv, rect, s: p.s });
+    }
+    drawn.sort((a, b) => a.s - b.s);
+    for (const h of drawn) renderer.drawScreenQuad(h.tex, h.rect, h.uv, tint ?? undefined);
     return true;
   }
 

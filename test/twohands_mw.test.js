@@ -278,6 +278,6 @@ test('TWO-HANDS the arm, by source: the mirror is posed over the clip ahead of t
   assert.match(rig, /fpArm\.setHands\(\{ mode: pairUp\(\) \? playerWeapon\.handsMode : HANDS_MODE\.Single, lead: playerWeapon\.leadHand \}\);/);
   assert.match(rig, /fpArm\.setOffWeapon\(pairUp\(\) && playerWeapon\.handsMode === HANDS_MODE\.Dual \? playerWeapon\.handItem\('L'\) : null\);/);
   assert.match(rig, /hand: pairUp\(\) \? playerWeapon\.strike\?\.hand \?\? null : null \}\);/);
-  assert.match(rig, /fpArm\.setRunHands\?\.\(wanted, \{ speed \}\);/);
+  assert.match(rig, /fpArm\.setRunHands\?\.\(wanted, \{ speed, phase: Number\.isFinite\(mv\.bobTimer\) \? runPhaseOfBob\(mv\.bobTimer\) : null \}\);/);   // PIN MOVED (TWO-HANDS AUDIT): the arms on the head bob's clock
   assert.match(rig, /const armsRun = fpArm\.active\(\) && !!fpArm\.runPosed\?\.\(\);/);
 });
